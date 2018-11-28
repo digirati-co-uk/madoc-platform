@@ -1,0 +1,245 @@
+#!/usr/bin/env bash
+repos=(
+   'annotation-studio,git@github.com:digirati-co-uk/omeka-annotation-studio-module.git'
+   'bookmarking,git@github.com:digirati-co-uk/omeka-bookmarking-module.git'
+   'capture-model-import,git@github.com:digirati-co-uk/omeka-capture-model-import.git'
+   'comments,git@github.com:digirati-co-uk/omeka-comments-module.git'
+   'elucidate,git@github.com:digirati-co-uk/omeka-elucidate-module.git'
+   'elucidate-proxy,git@github.com:digirati-co-uk/omeka-elucidate-proxy-module.git'
+   'google-analytics,git@github.com:digirati-co-uk/omeka-google-analytics-module.git'
+   'public-user,git@github.com:digirati-co-uk/omeka-public-user-module.git'
+   'resource-provider,git@github.com:digirati-co-uk/omeka-resource-provider.git'
+   'auto-complete,git@github.com:digirati-co-uk/omeka-auto-complete-module.git'
+);
+
+init() {
+    local folderName=$1; shift;
+    local gitRepo=$1; shift;
+
+    # install module.
+    echo "=> Installing module ${folderName} (${gitRepo})";
+    cd bare;
+    git clone ${gitRepo} --bare --quiet ${folderName};
+    cd - 2>&1 >/dev/null;
+
+    # add changes.
+    gitProxy ${folderName} add --all
+
+    # show status.
+    gitProxy ${folderName} status --short
+
+    # blank link
+    echo "";
+}
+
+
+gitProxyCmd() {
+    local folderName=$1; shift;
+    local gitRepo=$1; shift;
+
+    gitProxy ${folderName} "${@}"
+}
+
+gitProxy() {
+    local folderName=$1; shift;
+
+    cd ./bare/${folderName}
+    git --work-tree=../../repos/${folderName} "${@}"
+    cd - 2>&1 >/dev/null;
+}
+
+cleanSingle() {
+    local folderName=$1;
+    echo "Cleaning ${folderName}";
+    rm -rf bare/${folderName};
+}
+
+loopModules() {
+    local callback=${1}; shift;
+
+    for i in "${repos[@]}"
+    do
+    :
+        IFS=',' read -r -a repo <<< "$i"
+        folderName=${repo[0]};
+        gitRepo=${repo[1]};
+        ${callback} ${folderName} ${gitRepo} "${@}"
+    done
+}
+
+findModule() {
+    local folderName=$1; shift;
+    local gitRepo=$1; shift;
+    local moduleName=$1; shift;
+    local callback="${1}"; shift;
+
+    if [ "$folderName" == "$moduleName" ]; then
+        ${callback} ${folderName} ${gitRepo} "${@}"
+    fi
+}
+
+newModule() {
+    # CHECK IF DIRECTORY EXISTS, FAIL IF IT DOES!
+    # git --work-tree=./repos/NAME checkout master
+    # git --work-tree=./repos/NAME reset --hard
+    echo "new module"
+}
+
+gitStatus() {
+    local folderName=$1; shift;
+
+    gitProxy ${folderName} status
+}
+
+oneModuleByName() {
+    loopModules findModule "${@}"
+}
+
+installPHPCSFixerIfMissing() {
+    if [ ! -e /bin/php-cs-fixer ]; then
+        curl -L https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -o php-cs-fixer
+        chmod a+x php-cs-fixer
+        mv php-cs-fixer ./bin/php-cs-fixer
+    fi;
+}
+
+lintModule() {
+    folderName=$1; shift;
+    if [ -d "./repos/${folderName}/src" ]; then
+        ./bin/php-cs-fixer fix ./repos/${folderName}/src --rules=@PSR2,@Symfony --show-progress=dots
+    fi;
+    if [ -f "./repos/${folderName}/Module.php" ]; then
+        ./bin/php-cs-fixer fix ./repos/${folderName}/Module.php --rules=@PSR2,@Symfony --show-progress=dots
+    fi;
+    if [ -d "./repos/${folderName}/config" ]; then
+        ./bin/php-cs-fixer fix ./repos/${folderName}/config --rules=@PSR2,@Symfony --show-progress=dots
+    fi;
+}
+
+commandToRun=$1;shift;
+
+case "${commandToRun}" in
+    init)
+        loopModules init
+        cd bare;
+        git clone git@github.com:digirati-co-uk/omeka-s.git
+            cd omeka-s
+            git checkout bugfix/7.2-rebase
+            cd ../;
+        cd ../;
+
+        ## Install CS Fixer.
+        curl -L https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -o php-cs-fixer
+        chmod a+x php-cs-fixer
+        mv php-cs-fixer ./bin/php-cs-fixer
+
+        ## Install vendors for development
+        rm ./composer.json
+        rm ./composer.lock
+        rm -rf ./vendor
+        cp ./config/composer.json ./composer.json
+        cp ./config/patch-composer.php ./patch-composer.php
+        php patch-composer.php
+        composer install --no-dev --no-scripts --optimize-autoloader
+    ;;
+    server-init)
+        cd bare;
+            git clone https://github.com/digirati-co-uk/omeka-s.git --branch bugfix/7.2-rebase --depth 1
+        cd ../;
+
+        cd repos;
+            git clone https://github.com/digirati-co-uk/iiif-php.git --branch feature/expanded-api --depth 1
+        cd ../;
+    ;;
+    start)
+         docker-compose up -d --build "$@"
+    ;;
+    stop)
+         docker-compose stop "$@"
+    ;;
+    server-start)
+         docker-compose -f docker-compose.server.yml build
+         docker-compose -f docker-compose.server.yml up -d
+    ;;
+    server-stop)
+         docker-compose -f docker-compose.server.yml stop
+    ;;
+    server-down)
+        docker-compose -f docker-compose.server.yml down
+    ;;
+    logs)
+        docker-compose logs -f --tail=50
+    ;;
+    server-logs)
+         docker-compose -f docker-compose.server.yml logs -f --tail=50
+    ;;
+    server-rebuild)
+        read -p "WARNING: if you have not set up volumes for files or database these will be deleted. Are you sure you want to rebuild? (Y) " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]
+        then
+            [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1
+        fi
+        echo "=> Stopping running containers"
+        docker-compose -f docker-compose.server.yml stop
+        echo "=> Removing containers and network"
+        docker-compose -f docker-compose.server.yml down
+        echo "=> Building new containers"
+        docker-compose -f docker-compose.server.yml up --build --force-recreate -d
+        echo "done."
+    ;;
+    lint-module)
+        installPHPCSFixerIfMissing
+        lintModule $1
+    ;;
+    lint-all)
+        installPHPCSFixerIfMissing
+        loopModules lintModule
+    ;;
+    clean)
+        loopModules cleanSingle
+        rm -rf ./bare/omeka-s
+    ;;
+    git-all)
+        loopModules gitProxyCmd "$@";
+    ;;
+    git)
+        moduleName=$1; shift;
+        oneModuleByName ${moduleName} gitProxyCmd "$@";
+    ;;
+    status)
+        moduleName=$1; shift;
+        oneModuleByName ${moduleName} gitStatus
+    ;;
+    status-all)
+        loopModules gitStatus
+    ;;
+    *)
+
+    echo
+    echo
+    echo "   Omeka command line helpers"
+    echo
+    echo
+    echo "Available commands:"
+    echo
+    echo "  init                      Initialise dev environment"
+    echo "  lint-module <module>      Lint a single module"
+    echo "  lint-all                  Lint all modules"
+    echo "  clean                     Clean up, opposite of init"
+    echo "  git-all <command>         Run git command on all linked repos (e.g. git-all status)"
+    echo "  git <module> <command>    Run git command in single module"
+    echo "  status <module>           Git status on single module"
+    echo "  start                     Starts up fresh set of docker containers (detached)"
+    echo "  stop                      Stops all containers"
+    echo "  logs                      Show and tail the logs in the docker containers"
+    echo
+    echo "Server commands:"
+    echo
+    echo "  server-init                Initialise server environment"
+    echo "  server-start               Starts containers using server docker compose"
+    echo "  server-stop                Stops all containers"
+    echo "  server-rebuild             Rebuilds all containers. WARNING: deletes containers before rebuilds"
+    echo "  server-logs                Show and tail the logs in the server docker containers"
+    echo "  server-down                Bring server down and remove containers"
+esac

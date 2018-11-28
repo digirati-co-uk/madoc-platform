@@ -1,0 +1,41 @@
+{% if (annotationStudio) %}
+    <div class="iiif-view-annotation-studio" id="annotation-studio">
+        <div class="iiif-view-annotation-studio__viewer">
+            {% include 'annotation-studio/viewer.twig' %}
+        </div>
+        <div class="iiif-view-annotation-studio__resource-editor">
+            {% set editorOptions = {
+                enableLocalStorage: true,
+                enableIncomplete: true,
+                enableEditing: siteSetting('cs-annotation-studio', true) ? pageMarkedAsComplete != 1 : false,
+                enablePublishing: false,
+                disableConfirmation: false,
+            } %}
+            {% include 'annotation-studio/resource-editor.twig' %}
+
+            {% if (
+                siteSetting('cs-bookmarking', true) or
+                siteSetting('cs-mark-as-complete', true) or
+                siteSetting('cs-annotation-studio', true) or
+                siteSetting('cs-flagging', true) or
+                siteSetting('cs-show-annotations', true)
+            ) %}
+            <div class="canvas-actions">
+                <h5 class="canvas-actions__title">Interact with this document</h5>
+                <ul>
+                    {#{% include 'iiif-storage/partials/canvas-activity.twig' %}#}
+                    {% include 'iiif-storage/partials/canvas-bookmark.twig' %}
+                    {% include 'iiif-storage/partials/canvas-history.twig' %}
+                    {% include 'iiif-storage/partials/canvas-flagging.twig' %}
+                    {% include 'iiif-storage/partials/canvas-mark-as-complete.twig' %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+        {% if siteSetting('cs-show-annotations', true) %}
+            <div class="iiif-view-annotation-studio__drafts">
+                {% include 'annotation-studio/drafts.twig' %}
+            </div>
+        {% endif %}
+    </div>
+{% endif %}

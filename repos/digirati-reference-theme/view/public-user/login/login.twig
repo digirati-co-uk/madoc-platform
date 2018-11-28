@@ -1,0 +1,23 @@
+<div class="c-form-block c-form-block--lg  c-form-block--center">
+    <div class="c-form-block__form">
+        <div class="c-form c-form--login">
+            <h1 class="c-form__heading">{{ translate('Login') }}.</h1>
+            {{ form(form) }}
+            <p class="c-form__forgot-password">
+                <a href="{{ url('site/publicuser-forgot', {}, true) }}">
+                    {{ translate('Forgot password?') }}
+                </a>
+            </p>
+            <br />
+            <p>
+                {{ translate('Not yet registered') }}?
+                <a href="{{ url('site/publicuser-register', {}, true) }}">
+                    {{ translate('Click here to sign up') }}.
+                </a>
+            </p>
+            <div class="c-form__content">
+                {{ content|raw }}
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,22 @@
+{
+  "name": "digirati/omeka-google-analytics-module",
+  "description": "Omeka-S module to enable Google Analytics tracking code",
+  "type": "omeka-s-module",
+  "version": "1.0.1",
+  "license": "MIT",
+  "require": {},
+  "require-dev": {
+    "stephenwf/omeka-s": "dev-develop",
+    "phpunit/phpunit": "~4.2",
+    "friendsofphp/php-cs-fixer": "^2.0",
+    "digirati/omeka-shared": "1.0.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "GoogleAnalytics\\": "src/"
+    }
+  },
+  "extra": {
+        "install-name": "GoogleAnalytics"
+    }
+}

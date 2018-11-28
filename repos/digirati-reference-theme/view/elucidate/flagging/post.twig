@@ -1,0 +1,12 @@
+<div class="c-dig-grid__container">
+    <div class="c-dig-grid__col--8">
+        <h1 class="h1">{{  translate('Flag content') }}</h1>
+        <p>Your submission has been added to the system for review.</p>
+
+        {% if redirect %}
+            <a class="c-button c-button--primary" href="{{ redirect }}">Back to previous page</a>
+        {% endif %}
+        <br/>
+        <div class="c-divider"></div>
+    </div>
+</div>

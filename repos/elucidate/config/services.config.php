@@ -1,0 +1,298 @@
+<?php
+
+use Digirati\OmekaShared\Factory\EventDispatcherFactory;
+use Digirati\OmekaShared\Factory\UrlHelperFactory;
+use Digirati\OmekaShared\Helper\UrlHelper;
+use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\Common\Cache\ChainCache;
+use Doctrine\Common\Cache\PhpFileCache;
+use Elucidate\Adapter\GuzzleHttpAdapter;
+use Elucidate\Client as ElucidateClient;
+use Elucidate\ClientInterface;
+use Elucidate\EventAwareClient;
+use ElucidateModule\Config\ElucidateModuleConfiguration;
+use ElucidateModule\Domain\ElucidateAnnotationMapper;
+use ElucidateModule\Domain\Topics\TopicType;
+use ElucidateModule\Domain\Topics\TopicTypeRepository;
+use ElucidateModule\Domain\ViewEventSubscriber;
+use ElucidateModule\Mapping\OmekaItemMapper;
+use ElucidateModule\Service\TacsiClient;
+use ElucidateModule\Site\BlockLayout\LatestAnnotations;
+use ElucidateModule\Subscriber\AnnotationModerationSubscriber;
+use ElucidateModule\Subscriber\BookmarkSubscriber;
+use ElucidateModule\Subscriber\CommentSubscriber;
+use ElucidateModule\Subscriber\CompletionSubscriber;
+use ElucidateModule\Subscriber\CreatedTimestampSubscriber;
+use ElucidateModule\Subscriber\ElucidateItemImporter;
+use ElucidateModule\Subscriber\FlaggingNotificationSubscriber;
+use ElucidateModule\Subscriber\FlaggingSubscriber;
+use ElucidateModule\Subscriber\TaggingSubscriber;
+use ElucidateModule\Subscriber\TranscriptionSubscriber;
+use ElucidateModule\View\CanvasView;
+use ElucidateModule\View\ManifestView;
+use GuzzleHttp\HandlerStack;
+use Interop\Container\ContainerInterface;
+use Kevinrob\GuzzleCache\CacheMiddleware;
+use Kevinrob\GuzzleCache\KeyValueHttpHeader;
+use Kevinrob\GuzzleCache\Storage\DoctrineCacheStorage;
+use Kevinrob\GuzzleCache\Strategy\GreedyCacheStrategy;
+use Kevinrob\GuzzleCache\Strategy\PublicCacheStrategy;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Zend\Uri\Uri;
+
+return [
+    'service_manager' => [
+        'factories' => [
+            // From the shared library
+            UrlHelper::class => UrlHelperFactory::class,
+            EventDispatcher::class => EventDispatcherFactory::class,
+
+            // Everything else.
+            ElucidateAnnotationMapper::class => function (ContainerInterface $c) {
+                return new ElucidateAnnotationMapper(
+                    $c->get('Omeka\ApiManager'),
+                    $c->get(\GuzzleHttp\Client::class),
+                    $c->get('mapping_cache'),
+                    $c->get(UrlHelper::class),
+                    $c->get('Omeka\Logger')
+                );
+            },
+            'mapping_cache' => function ($c) {
+                return new ChainCache([
+                    new ArrayCache(),
+                    new PhpFileCache(OMEKA_PATH.'/files'),
+                ]);
+            },
+            OmekaItemMapper::class => function (ContainerInterface $c) {
+                return new OmekaItemMapper($c->get('Omeka\ApiManager'), $c->get(\GuzzleHttp\Client::class));
+            },
+            ElucidateItemImporter::class => function (ContainerInterface $c) {
+                return new ElucidateItemImporter(
+                    $c->get(OmekaItemMapper::class),
+                    $c->get(UrlHelper::class)
+                );
+            },
+            ElucidateModuleConfiguration::class => function ($c) {
+                return new ElucidateModuleConfiguration($c->get('Config'));
+            },
+            ViewEventSubscriber::class => function () {
+                return new ViewEventSubscriber();
+            },
+            AnnotationModerationSubscriber::class => function ($c) {
+                $settings = $c->get('Omeka\Settings');
+
+                return new AnnotationModerationSubscriber(
+                    new Uri($settings->get('elucidate_site_domain', '')),
+                    $c->get(UrlHelper::class),
+                    $c->get(ElucidateModuleConfiguration::class)
+                );
+            },
+            BookmarkSubscriber::class => function (ContainerInterface $c) {
+                $elucidate = $c->has(ClientInterface::class) ? $c->get(ClientInterface::class) : $c->get(ClientInterface::class);
+                $config = $c->get('Omeka\Settings');
+
+                return new BookmarkSubscriber(
+                    $config->get('elucidate_server_url') ?? '',
+                    $elucidate
+                );
+            },
+            FlaggingSubscriber::class => function (ContainerInterface $c) {
+                $elucidate = $c->has(ClientInterface::class) ? $c->get(ClientInterface::class) : $c->get(ClientInterface::class);
+                $config = $c->get('Omeka\Settings');
+
+                return new FlaggingSubscriber(
+                    $config->get('elucidate_server_url') ?? '',
+                    $elucidate
+                );
+            },
+            CommentSubscriber::class => function (ContainerInterface $c) {
+                $elucidate = $c->has(ClientInterface::class) ? $c->get(ClientInterface::class) : $c->get(ClientInterface::class);
+                $config = $c->get('Omeka\Settings');
+
+                return new CommentSubscriber(
+                    $config->get('elucidate_server_url'),
+                    $elucidate
+                );
+            },
+            CompletionSubscriber::class => function (ContainerInterface $c) {
+                $elucidate = $c->has(ClientInterface::class) ? $c->get(ClientInterface::class) : $c->get(ClientInterface::class);
+                $config = $c->get('Omeka\Settings');
+
+                return new CompletionSubscriber(
+                    $config->get('elucidate_server_url'),
+                    $elucidate
+                );
+            },
+            TranscriptionSubscriber::class => function (ContainerInterface $c) {
+                $elucidate = $c->has(ClientInterface::class) ? $c->get(ClientInterface::class) : $c->get(ClientInterface::class);
+                $config = $c->get('Omeka\Settings');
+
+                return new TranscriptionSubscriber(
+                    $config->get('elucidate_server_url'),
+                    $elucidate
+                );
+            },
+            TaggingSubscriber::class => function (ContainerInterface $c) {
+                $elucidate = $c->has(ClientInterface::class) ? $c->get(ClientInterface::class) : $c->get(ClientInterface::class);
+                $config = $c->get('Omeka\Settings');
+
+                return new TaggingSubscriber(
+                    $config->get('elucidate_server_url'),
+                    $elucidate
+                );
+            },
+            CreatedTimestampSubscriber::class => function () {
+                return new CreatedTimestampSubscriber();
+            },
+            CanvasView::class => function (ContainerInterface $c) {
+                $config = $c->get('Omeka\Settings');
+
+                return new CanvasView(
+                    $c->get(ClientInterface::class),
+                    $c->get(ElucidateAnnotationMapper::class),
+                    [
+                        'path' => $config->get('elucidate_item_endpoint'),
+                        'field_name' => $config->get('elucidate_search_field_name'),
+                        'field_is_property' => $config->get('elucidate_search_field_is_property'),
+                        'search_using_class' => $config->get('elucidate_search_search_using_class'),
+                        'has_virtual' => $config->get('elucidate_search_has_virtual'),
+                        'virtual_prefix' => $config->get('elucidate_search_virtual_prefix'),
+                        'search_uri' => $config->get('elucidate_search_search_uri'),
+                        'search_https' => $config->get('elucidate_search_search_https'),
+                        'search_by_id' => $config->get('elucidate_search_by_id'),
+                        'transcriptions_endpoint' => $config->get('elucidate_transcriptions_endpoint'),
+                    ],
+                    $c->get(UrlHelper::class),
+                    $c->get('Omeka\AuthenticationService'),
+                    $c->get(\GuzzleHttp\Client::class)
+                );
+            },
+            ManifestView::class => function (ContainerInterface $c) {
+                $config = $c->get('Omeka\Settings');
+
+                return new ManifestView(
+                    $c->get(ClientInterface::class),
+                    $c->get(ElucidateAnnotationMapper::class),
+                    [
+                        'path' => $config->get('elucidate_item_endpoint'),
+                        'field_name' => $config->get('elucidate_search_field_name'),
+                        'field_is_property' => $config->get('elucidate_search_field_is_property'),
+                        'search_using_class' => $config->get('elucidate_search_search_using_class'),
+                        'has_virtual' => $config->get('elucidate_search_has_virtual'),
+                        'virtual_prefix' => $config->get('elucidate_search_virtual_prefix'),
+                        'search_uri' => $config->get('elucidate_search_search_uri'),
+                        'search_https' => $config->get('elucidate_search_search_https'),
+                        'search_by_id' => $config->get('elucidate_search_by_id'),
+                    ],
+                    $c->get(UrlHelper::class)
+                );
+            },
+            \GuzzleHttp\Client::class => function () {
+                $stack = HandlerStack::create();
+
+                $cacheChain = new ChainCache(
+                    [
+                        new ArrayCache(),
+                        new PhpFileCache(OMEKA_PATH.'/files'),
+                    ]
+                );
+
+                $cacheStorage = new DoctrineCacheStorage($cacheChain);
+                $stack->push(
+                    new CacheMiddleware(
+                        new GreedyCacheStrategy(
+                            $cacheStorage,
+                            36 * 60 * 60,
+                            new KeyValueHttpHeader(['Last-Modified'])
+                        )
+                    )
+                );
+
+                $stack->push(new CacheMiddleware(new PublicCacheStrategy($cacheStorage)));
+
+                return new \GuzzleHttp\Client([
+                    'handler' => $stack,
+                ]);
+            },
+            'elucidate.guzzle' => function (ContainerInterface $c) {
+                $config = $c->get('Omeka\Settings');
+
+                return new GuzzleHttpAdapter(
+                    new GuzzleHttp\Client(['base_uri' => $config->get('elucidate_server_url')])
+                );
+            },
+            'mathmos.guzzle' => function (ContainerInterface $c) {
+                $config = $c->get('Omeka\Settings');
+
+                return new GuzzleHttpAdapter(
+                    new GuzzleHttp\Client(['base_uri' => $config->get('mathmos_server_url', 'http://mathmos.dlcs-ida.org/search/')])
+                );
+            },
+            ElucidateClient::class => function ($c) {
+                return $c->get(ClientInterface::class);
+            },
+            ClientInterface::class => function (ContainerInterface $c) {
+                return new EventAwareClient(
+                    new ElucidateClient($c->get('elucidate.guzzle')),
+                    $c->get(EventDispatcher::class)
+                );
+            },
+
+            FlaggingNotificationSubscriber::class => function ($c) {
+                return new FlaggingNotificationSubscriber(
+                    $c->get('Omeka\ApiManager'),
+                    $c->get('Omeka\Mailer')
+                );
+            },
+
+            'topic_types' => function () {
+                return [
+                    new TopicType('Roll', true, 'roll'),
+                    new TopicType('Series', true, 'series'),
+                    new TopicType('Theme', true, 'theme'),
+                    new TopicType('Collection', true, 'collection'),
+                    new TopicType('Tribe', true, 'tribe'),
+                    new TopicType('Person', true, 'person'),
+                    new TopicType('School', true, 'school'),
+                    new TopicType('Organization', true, 'org'),
+                    new TopicType('Place', true, 'gpe', 'loc', 'place', 'fac'),
+                    new TopicType('Product', false, 'product'),
+                ];
+            },
+
+            TopicTypeRepository::class => function (ContainerInterface $c) {
+                $config = $c->get('Config');
+                $tacsi = $config['tacsi_uri'] ?: '';
+                if (!$tacsi) {
+                    $settings = $c->get('Omeka\Settings');
+                    $tacsi = $settings->get('elucidate_tacsi_url');
+                }
+
+                return new TopicTypeRepository(...(empty($tacsi) ? [] : $c->get('topic_types')));
+            },
+
+            TacsiClient::class => function (ContainerInterface $c) {
+                $config = $c->get('Config');
+                $tacsi = $config['tacsi_uri'] ?: '';
+                if (!$tacsi) {
+                    $settings = $c->get('Omeka\Settings');
+                    $tacsi = $settings->get('elucidate_tacsi_url');
+                }
+
+                return new TacsiClient(new GuzzleHttp\Client(), $tacsi);
+            },
+        ],
+    ],
+    'block_layouts' => [
+        'factories' => [
+            LatestAnnotations::class => function (ContainerInterface $c) {
+                return new LatestAnnotations(
+                    $c->get(ElucidateClient::class),
+                    $c->get(ElucidateAnnotationMapper::class),
+                    $c->get('Omeka\Logger'),
+                    $c->get('ZfcTwig\View\TwigRenderer')
+                );
+            },
+        ],
+    ],
+];

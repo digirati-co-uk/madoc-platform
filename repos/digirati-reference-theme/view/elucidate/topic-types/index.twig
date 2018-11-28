@@ -1,0 +1,24 @@
+<ul class="c-breadcrumbs">
+    <li class="c-breadcrumbs__crumb">
+        <a href="{{ site.url() }} ">{{ site.title() }}</a>
+    </li>
+    <li class="c-breadcrumbs__crumb">
+        <a href="{{ url('site/elucidate_topic_types_index', { name: collection.omekaId }, true) }}">
+            Topics</a>
+    </li>
+</ul>
+
+{% for type in types %}
+    <h2 class="h2">
+        <a href="{{ url('site/elucidate_topic_types_view', {name: type.label}, true) }}">
+            {{ type.label }}
+        </a>
+    </h2>
+
+    <div>
+        {% for topic in topicGroups[type.label] %}
+            <a class="c-cloud" data-score="{{ topic.getScore() }}"
+                    href="{{ topic.uri }}">{{ topic.label }}</a>
+        {% endfor %}
+    </div>
+{% endfor %}

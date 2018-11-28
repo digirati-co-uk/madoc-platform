@@ -1,0 +1,29 @@
+<?php
+/**
+ * @var $annotations \ElucidateModule\Domain\SortableAnnotationList
+ * @var $numAnnotations int
+ */
+
+$allAnnotations = $annotations->groupByCanvas()->get();
+$toDisplay = array_slice($allAnnotations, 0, $numAnnotations ?? 10, true);
+?>
+
+<section class="latest-annotations">
+    <h1 class="latest-annotations__title">Latest annotated images</h1>
+    <?php foreach ($toDisplay as $annotation) : ?>
+        <?php if ($annotation['manifestSource']['omekaUri'] && $annotation['thumbnail']['full']): ?>
+            <div class="latest-annotations__inner">
+                <div class="latest-annotations__image-container">
+                    <a class="latest-annotations__image-element"
+                       href="<?php echo $annotation['canvasSource']['omekaUri']; ?>">
+                        <img src="<?php echo $annotation['thumbnail']['full']; ?>"/>
+                    </a>
+                </div>
+                <div class="latest-annotations__label">
+                    <a class="latest-annotations__label-link"
+                       href="<?php echo $annotation['canvasSource']['omekaUri']; ?>"><?php echo $annotation['canvasSource']['label']; ?></a>
+                </div>
+            </div>
+        <?php endif; ?>
+    <?php endforeach; ?>
+</section>

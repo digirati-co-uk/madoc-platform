@@ -1,0 +1,89 @@
+{% set escape = this.plugin('escapeHtml') %}
+
+
+ {% if item.resourceClass() %}
+     {{ escapeHtml(item.resourceClass().label()) | raw }}
+ {% else %}
+     {{ topicType }}
+ {% endif %}
+
+<h1>{{ topic }}</h1>
+
+
+
+{% if results.total > 0 and results.total <= 1 %}
+    <p>Found {{ results.total }} note</p>
+{%  elseif results.total > 1 %}
+    <p>Found {{ results.total }} note(s)</p>
+{% else %}
+    <p>No notes found</p>
+{% endif %}
+
+
+{{ item.displayValues() | raw }}
+
+    {% set subjects = item.subjectValues() %}
+    {% set objects = item.objectValues() %}
+    {% if  subjects  or  objects %}
+        {{ item.displayLinkedResources() | raw }}
+    {% else %}
+            <p>{{ this.translate('There are no linked resources for this item.') }} </p>
+    {% endif %}
+
+
+{% if results.total > 0 %}
+
+    <h2>All annotations for {{ topic }}:</h2>
+    {% for annotation in annotationsSortable.get() %}
+        
+
+        <strong>Id:</strong> {{ annotation.id }}<br />
+        <strong>Label:</strong> {{ annotation.label }}<br />
+        <strong>CanvasSource Label:</strong> {{ annotation.canvasSource.label }}<br />
+        <strong>CanvasSource Omeka Url:</strong> {{ annotation.canvasSource.omekaUri }}<br />
+        <strong>ManifestSource Label:</strong> {{ annotation.manifestSource.label }}<br />
+        <strong>ManifestSource Omeka Url:</strong> {{ annotation.manifestSource.omekaUri }}<br />
+        <strong>Source Id:</strong> {{ annotation.source.id }}<br />
+        <strong>Source Type:</strong> {{ annotation.source.type }}<br />
+        <strong>Thumbnail Full:</strong> {{ annotation.thumbnail.full }}<br />
+        <strong>Thumbnail Region:</strong> {{ annotation.thumbnail.region }}<br />
+        <strong>Thumbnails:</strong> {{ annotation.thumbnails }}<br />
+        <hr/>
+        
+    {% endfor %}
+
+
+    {% if annotationsSortable.groupByCanvas().orderByLabel().get() %}
+        <h2>Canvases featuring {{ topic }}:</h2>
+            {% for annotation in annotationsSortable.groupByCanvas().orderByLabel().get() %}
+                        <a href="{{ annotation.canvasSource.omekaUri }}">
+                            <img src="{{ annotation.thumbnails[0].full }}" height="150">
+                        </a>
+                
+                    {% for thumbnail in annotation.thumbnails %}
+                        <img src="{{ thumbnail.region }}" alt="">
+                        <br/>
+                    {% endfor %}
+                    <p>
+                        <a href="{{ annotation.canvasSource.omekaUri }}">{{ annotation.canvasSource.label }}</a>
+                    </p>
+                
+            {% endfor %}
+    {% endif %}
+
+    {% if(annotationsSortable.deduplicateByManifest().orderByLabel().get()) %}
+        <h2>Manifests that refer to {{ topic }}</h2>
+            {% for annotation in annotationsSortable.deduplicateByManifest().orderByLabel().get() %}
+                        <a href="{{ annotation.manifestSource.omekaUri }}">
+                            <img src="{{ annotation.thumbnail.full }}">
+                        </a>
+                    <p>
+                        <a href="{{ annotation.manifestSource.omekaUri }}">{{ annotation.manifestSource.label }}</a>
+                    </p>
+                    
+            {% endfor %}
+    {% endif %}
+
+
+{% endif %}
+

@@ -1,0 +1,109 @@
+<div class="c-navigation-bar">
+    <nav class="c-navigation-primary js-navigation-primary">
+        <div class="c-navigation-primary__toggle">
+            <a class="c-navigation-primary__toggle-link js-navigation-primary__toggle-link"
+               href="#primary-menu"><?= $this->translate('Menu'); // @translate ?></a>
+        </div>
+        <ul id="primary-menu" class="c-navigation-primary__nav js-navigation-primary__nav">
+            <?php
+            foreach ($this->container as $n => $page) {
+                // There is a $subPage->isActive() method, should we be doing something with css when active ?
+                if ($page->getLabel() !== 'right' && count($page->getPages()) > 0) {
+                    foreach ($page->getPages() as $subPage) {
+                        if (count($subPage->getPages()) < 1) {
+                            ?>
+                            <li class="c-navigation-primary__item <?php if($subPage->isActive()) { echo 'c-navigation-primary__item--active'; } ?>">
+                                <a href="<?php echo $subPage->getHref(); ?>"
+                                   class="c-navigation-primary__link"><?php echo $subPage->getLabel() ?></a>
+                            </li>
+                            <?php
+                        } else {
+                            ?>
+                            <li class="c-navigation-primary__item js-navigation-primary__subnav--has-children <?php if($subPage->isActive()) { echo 'c-navigation-primary__item--active'; } ?>">
+                                <a href="#" class="c-navigation-primary__link"><?php echo $subPage->getLabel() ?></a>
+                                <ul class="c-navigation-primary__subnav">
+                                    <?php
+                                    foreach ($subPage->getPages() as $childSubPage) {
+                                        ?>
+                                        <li class="c-navigation-primary__item <?php if($subPage->isActive()) { echo 'c-navigation-primary__item--active'; } ?>">
+                                            <a href="<?php echo $childSubPage->getHref() ?>"
+                                               class="c-navigation-primary__link"><?php echo $childSubPage->getLabel() ?></a>
+                                        </li>
+                                        <?php
+                                    }
+                                    ?>
+                                </ul>
+                                <button class="c-navigation-primary__subnav-toggle" aria-label="toggle sub navigation" title="toggle sub navigation"></button>
+                            </li>
+                            <?php
+                        }
+                    }
+                }
+            }
+            ?>
+        </ul>
+        <ul class="c-navigation-primary__nav c-navigation-primary__nav--global">
+            <?php
+            foreach ($this->container as $page) {
+                // There is a $subPage->isActive() method, should we be doing soemthing with css when active ?
+                if ($page->getLabel() == 'right' && count($page->getPages()) > 0) {
+                    foreach ($page->getPages() as $subPage) {
+                        if (count($subPage->getPages()) < 1) {
+                            ?>
+                            <li class="c-navigation-primary__item <?php if($subPage->isActive()) { echo 'c-navigation-primary__item--active'; } ?>">
+                                <a href="<?php echo $subPage->getHref(); ?>"
+                                   class="c-navigation-primary__link"><?php echo $subPage->getLabel() ?></a>
+                            </li>
+                            <?php
+                        } else {
+                            ?>
+                            <li class="c-navigation-primary__item js-navigation-primary__subnav--has-children  <?php if($subPage->isActive()) { echo 'c-navigation-primary__item--active'; } ?>">
+                                <a href="#" class="c-navigation-primary__link"><?php echo $subPage->getLabel() ?></a>
+                                <ul class="c-navigation-primary__subnav">
+                                    <?php
+                                    foreach ($subPage->getPages() as $childSubPage) {
+                                        ?>
+                                        <li class="c-navigation-primary__item  <?php if($subPage->isActive()) { echo 'c-navigation-primary__item--active'; } ?>">
+                                            <a href="<?php echo $childSubPage->getHref() ?>"
+                                               class="c-navigation-primary__link"><?php echo $childSubPage->getLabel() ?></a>
+                                        </li>
+                                        <?php
+                                    }
+                                    ?>
+                                </ul>
+                                <button class="c-navigation-primary__subnav-toggle" aria-label="toggle sub navigation" title="toggle sub navigation"></button>
+                            </li>
+                            <?php
+                        }
+                    }
+                }
+            }
+            ?>
+            <li class="c-navigation-primary__item">
+                <?php try { ?>
+                <?php $languageOptions = $this->languageSwitcher(); ?>
+                <?php if (count($languageOptions) === 1): ?>
+                    <?php $option = array_pop($languageOptions); ?>
+                    <a href="<?= $option['uri'] ?>" class="c-navigation-primary__link"><?= $option['label'] ?></a>
+                <?php else: ?>
+                    <ul class="c-navigation-primary__subnav">
+                        <?php $languageOptions = $this->languageSwitcher(); ?>
+
+                        <?php foreach ($languageOptions as $option): //@translate ?>
+                            <li class="c-navigation-primary__item">
+                                <a href="<?= $option['uri'] ?>"
+                                   class="c-navigation-primary__link"><?= $option['label'] ?></a>
+                            </li>
+                        <?php endforeach ?>
+                    </ul>
+                <?php endif; ?>
+                <?php } catch(Throwable $err) {} ?>
+            </li>
+        </ul>
+
+    </nav>
+</div>
+
+
+
+

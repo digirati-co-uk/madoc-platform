@@ -1,0 +1,26 @@
+{% do headLink().prependStylesheet(assetUrl('css/iiif-storage.css', 'IIIFStorage')) %}
+
+<h3>
+    <a href="{{ router.collection(collection) }}">
+        {{ title ? title : collection.getLabel() }}
+    </a>
+</h3>
+<div class="iiif-view-manifest-grid">
+    {% for manifest in collection.getManifests()[:manifestsToShow] %}
+        <div class="iiif-view-manifest-grid__manifest">
+            <a class="iiif-view-playlist-grid"
+               href="{{ router.manifest(manifest, collection) }}">
+                {% for thumbnail in manifest.getThumbnails()[:4] %}
+                    <span class="iiif-view-playlist-grid__image" style="background-image: url('{{ thumbnail }}')"></span>
+                {% endfor %}
+            </a>
+            <p>
+                <a class="iiif-view-manifest-grid__manifest-label"
+                   href="{{ router.manifest(manifest,collection) }}">
+                    {{ manifest.getLabel() }}
+                </a>
+                {{ manifest.getThumbnails() |length }} images
+            </p>
+        </div>
+    {% endfor %}
+</div>

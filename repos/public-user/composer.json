@@ -1,0 +1,24 @@
+{
+    "name": "digirati/omeka-public-user-module",
+    "license": "MIT",
+    "description": "Omeka-S Public User Module",
+    "version": "1.0.0",
+    "type": "omeka-s-module",
+    "require": {
+        "php": ">=7.0",
+        "dlcs/elucidate-php": "~3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.2",
+        "friendsofphp/php-cs-fixer": "^2.0"
+    },
+    "scripts": {
+        "post-autoload-dump": "./bin/vendors"
+    },
+    "autoload": {
+        "psr-4": {"PublicUser\\": "src"}
+    },
+    "extra": {
+        "install-name": "PublicUser"
+    }
+}

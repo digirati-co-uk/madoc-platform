@@ -1,0 +1,113 @@
+<main class="c-main">
+
+    <div class="c-main__context c-new-context">
+        <div class="c-new-context__page">
+            {{ topic }}
+        </div>
+        <div class="c-new-context__attribution">
+            {% if (itemCreatedBy) %}
+                Created by {{ itemCreatedBy }} |
+            {% endif %}
+            {% if item.resourceClass() %}
+                {% set topicTypeEncoded = escapeHtml(item.resourceClass().label()) | raw %}
+                <a href="{{ url('site/elucidate_topic_types_view', { name: topicTypeUrl }, true) }}">
+                    {{ topicTypeEncoded }}
+                </a>
+            {% else %}
+                {{ topicType }}
+            {% endif %}
+            {% if (editLink) %}
+                <form action="{{ url('site/elucidate_create_topic') }}" method="post" target="_blank">
+                    <input type="hidden" name="topic-page" value="{{ url(null, {}, {'force_canonical': true}, true) }}"/>
+                    <input type="submit" value="{% if (itemCreatedBy) %}Edit topic{% else %}Create topic{% endif %}" class="c-button c-button--secondary">
+                </form>
+            {% endif %}
+            {% if results.total > 0 and results.total <= 1 %}
+                <p>Found {{ results.total }} note</p>
+            {% elseif results.total > 1 %}
+                <p>Found {{ results.total }} notes</p>
+            {% else %}
+                <p>No notes found</p>
+            {% endif %}
+        </div>
+
+
+        {% if(flagActionEndpoint) %}
+            <div class="c-action c-flagged">
+                <a href="{{ flagActionEndpoint }}" class="c-button c-button--secondary">
+                    <i class="fa fa-flag" aria-hidden="true"></i>
+                    Flag this page
+                </a>
+            </div>
+        {% endif %}
+        {% if topicCollection %}
+            <div class="c-action c-action--viewer-links">
+                <a href="{{ topicCollection }}?manifest={{ topicCollection }}" target="_blank" title="Drag and drop this link into a IIIF viewer">
+                    <img src="/themes/ida/asset/common/img/atoms/logo-iiif.png" width="30"
+                         alt="Open manifest json">
+                </a>
+                {% if universalViewerEndpoint %}
+                    <a href="{{ universalViewerEndpoint }}?manifest={{ topicCollection }}" target="_blank" title="Open this image in the Universal Viewer">
+                        <img src="/themes/ida/asset/common/img/atoms/logo-uv.png" width="30"
+                             alt="Open in UV">
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+
+    {% if(itemFields) %}
+        <section class="c-topic-container">
+            <article class="c-topic-details c-topic-container__metadata">
+            {% for field in itemFields %}
+                <section class="c-topic-details__content">
+                    {% if (field.label) %}
+                        <span class="c-topic-details__label">{{ field.label }}</span>
+                    {% endif %}
+                    <p class="c-topic-details__body">
+                        {% if (field.link) %}
+                            <a class="c-topic-details__link" href="{{ field.link }}">{{ field.value }}</a>
+                        {% else %}
+                            {{ field.value }}
+                        {% endif %}
+                    </p>
+                </section>
+            {% endfor %}
+        </article>
+            <article class="c-topic-images c-topic-container__images">
+                {% for image in itemImages %}
+                    <div class="c-topic-images__item">
+                        <a href="#" class="c-image__src" data-featherlight="{{ image.url }}">
+                            <img class="c-topic-images__image" src="{{ image.thumbnail.large }}"/>
+                        </a>
+                        <div class="c-topic-images__label">
+                            {{ image.label }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </article>
+        </section>
+    {% endif %}
+
+    {% if(annotationsSortable.deduplicateByManifest().orderByLabel().get()) %}
+        <section class="c-main__tiles c-grid-flex">
+            {% for annotation in annotationsSortable.deduplicateByManifest().orderByLabel().get() %}
+                {% if(annotation.manifestSource.omekaUri and annotation.thumbnail.full) %}
+                    <div class="c-grid-flex__thirds">
+                        <div class="c-image">
+                            <div class="c-image__container">
+                                <a class="c-image__src" href="{{ annotation.canvasSource.omekaUri }}">
+                                    <img src="{{ annotation.thumbnail.full }}"/>
+                                </a>
+                            </div>
+                            <div class="c-image__label">
+                                <a href="{{ annotation.canvasSource.omekaUri }}">{{ annotation.canvasSource.label }}</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </section>
+    {% endif %}
+</main>

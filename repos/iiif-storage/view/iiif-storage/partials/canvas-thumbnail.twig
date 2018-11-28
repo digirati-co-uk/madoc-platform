@@ -1,0 +1,22 @@
+<div class="c-image c-image--sm {{ active ? 'c-carousel--active' : '' }}">
+    <a href="{{ router.canvas(canvas, manifest, collection) }}{% if hash %}#{{ hash }}{% endif %}">
+        <div class="c-image__src ">
+            <img src="{{ image.getThumbnail() }}"
+                 height="{{ thumbnailWidth | default(150) }}"
+                 alt="{{ thumbnailAlt | default('Image thumbnail') }}"/>
+            {% if (showImageStatus | default(true)) %}
+                {% if image.complete %}
+                    {% set statusClass = 'complete' %}
+                    {% set statusTitle = translate('Editing complete') %}
+                {% elseif image.edited %}
+                    {% set statusClass = 'started' %}
+                    {% set statusTitle = translate('Editing started') %}
+                {% else %}
+                    {% set statusClass = 'not-started' %}
+                    {% set statusTitle = translate('Editing not started') %}
+                {% endif %}
+                <div class="c-image__status c-image__status--{{ statusClass }}" title="{{ statusTitle }}"></div>
+            {% endif %}
+        </div>
+    </a>
+</div>

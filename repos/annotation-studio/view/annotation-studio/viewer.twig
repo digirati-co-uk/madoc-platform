@@ -1,0 +1,19 @@
+{% include 'annotation-studio/core.twig' %}
+
+<div {{ annotationStudio.viewer(viewerOptions | default({
+    toggleable: true,
+    showControls: true,
+    height: canvas ? canvas.getHeight() : 0,
+    width: canvas ? canvas.getWidth() : 0,
+    toggleable: true,
+    showControls: true
+})) | raw }}>
+    <div class="annotation-studio-ghost">
+        {% if canvas %}
+            <img src="{{ canvas.getThumbnail() }}"
+                 alt="{% if(canvas.thumbnailAlt) %}{{ canvas.thumbnailAlt }}{% else %}Annotation studio ghost image{% endif %}"/>
+        {% else %}
+            <img alt="Loading..." src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
+        {% endif %}
+    </div>
+</div>

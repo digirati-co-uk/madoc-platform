@@ -1,0 +1,18 @@
+<div class="c-form-block c-form-block--lg  c-form-block--center">
+    <div class="c-form-block__form">
+        <div class="c-form c-form--register">
+            <h1 class="c-form__heading">{{ translate('Register') }}</h1>
+            {{ form(form) }}
+            <br />
+            <p>
+                {{ translate('Already registered') }}?
+                <a href="{{ url('site/publicuser-login', {}, true) }}">
+                    {{ translate('Click here to login') }}.
+                </a>
+            </p>
+            <div class="c-form__content">
+                {{ content|raw }}
+            </div>
+        </div>
+    </div>
+</div>

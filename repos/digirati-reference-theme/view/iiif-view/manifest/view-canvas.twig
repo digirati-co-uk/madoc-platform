@@ -1,0 +1,428 @@
+{# Canvas View Template
+
+Variables:
+    manifest - IIIF\Model\Manifest
+    canvas - IIIF\Model\Canvas
+
+Default Extensions:
+    manifest.omekaId => string
+    canvas.smallThumbnail => string
+    canvas.omekaId => string
+    canvas.previous => IIIF\Model\Canvas
+    canvas.allPrevious => IIIF\Model\Canvas[]
+    canvas.next => IIIF\Model\Canvas
+    canvas.allNext => IIIF\Model\Canvas[]
+    canvas.position => int
+
+Plugbable Extensions:
+    canvas.showStatistics => bool
+    canvas.annotationTotal => int
+    canvas.flagActionEndpoint => string
+    canvas.thumbnailAlt => string
+
+Remaining extensions:
+    social.facebook
+    social.twitter
+    social.pinterest
+    social.google
+    social.mail
+
+
+#}
+
+{% import 'iiif-view/helpers' as helpers %}
+
+<ul class="c-breadcrumbs">
+    {% if site.title() %}
+        <li class="c-breadcrumbs__crumb">
+            <a href="{{ site.url() }} ">{{ site.title() }}</a>
+        </li>
+    {% endif %}
+    {% if collection %}
+        <li class="c-breadcrumbs__crumb">
+            <a href="{{ url('site/iiif-view-collection-view', {collection: collection.omekaId }, true) }}">{{ pageTitle(collection.getLabel(), 0) }}</a>
+        </li>
+    {% endif %}
+    {% if manifest %}
+        <li class="c-breadcrumbs__crumb">
+            <a href="{{ url('site/iiif-view-manifest-view', {manifest: manifest.omekaId }, true) }}">{{ pageTitle(manifest.getLabel(), 0) }}</a>
+        </li>
+    {% endif %}
+    {% if canvas %}
+        <li class="c-breadcrumbs__crumb">
+            {% if canvas.getLabel() %}
+                {{ pageTitle(canvas.getLabel(), 0) }}
+            {% else %}
+                {{ translate('Image') }}
+            {% endif %}
+        </li>
+    {% endif %}
+</ul>
+
+{% if canvas.getLabel() %}
+    <h1 class="h1">{{ canvas.getLabel() }}</h1>
+{% endif %}
+{% if (attribution) %}
+    <p>
+        {{ attribution | raw }}
+    </p>
+{% endif %}
+
+<!--
+{% if canvas.complete %}
+    <p>{{ translate('Completed') }}</p>
+{% elseif canvas.edited %}
+    <p>{{ translate('Edited') }}</p>
+{% else %}
+    <p>{{ translate('Not started') }}</p>
+{% endif %}
+-->
+
+{% if canvas.next or canvas.previous %}
+    <br/>
+{% endif %}
+<div class="c-divider clear"></div>
+{% if (annotationStudio) %}
+    <div class="c-dig-grid__container annotation-studio">
+        <div class="c-dig-grid__col--8 annotation-studio__left">
+            {# This is required to bootstrap the annotation studio #}
+            <div {{ annotationStudio.core()| raw }}></div>
+
+            {{ annotationStudio.getAssets() | raw }}
+
+            <div {{ annotationStudio.viewer({ toggleable: 'true', 'show-controls': 'true' }) | raw }}>
+                <div class="annotation-studio-ghost">
+                    <img src="{{ canvas.getThumbnail() }}"
+                         alt="{% if(canvas.thumbnailAlt) %}{{ canvas.thumbnailAlt }}{% else %}Annotation studio ghost image{% endif %}"/>
+                </div>
+            </div>
+
+        </div>
+        <div class="c-dig-grid__col--4 annotation-studio__right">
+            {% if (isLoggedIn) %}
+                <div {{ annotationStudio.editor({'enable-publishing':'false', 'enable-editing': pageMarkedAsComplete ? 'false' : 'true' }) | raw }}></div>
+                <div class="c-divider"></div>
+
+                <div id="mark-as-complete">
+                    {% if (pageMarkedAsComplete) %}
+                        <h2 class="h3">{{ translate('Is this page complete?') }}</h2>
+                        <p>
+                            {{ translate('This page has been marked as completed.<br/>
+                        You can mark as incomplete if it needs more work.') }}
+                        </p>
+                    {% else %}
+                        <h2 class="h3">{{ translate('Is this page complete?') }}</h2>
+                        <p>
+                            {{ translate('Marking this page as complete helps us to understand the progress of annotations.') }}
+                        </p>
+                    {% endif %}
+                    {% if (completionForm) %}
+                        <div class="c-button c-button--primary">
+                            {% include 'elucidate/completion/form' with { form: completionForm.withRedirect(url('site/iiif-view-canvas-view', { manifest: manifest.omekaId, canvas: canvas.omekaId }, {force_canonical: true}, true)) } %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% else %}
+                <h2 class="h3">{{ translate('Contribute') }}</h2>
+                <p>{{ translate('login or register to contribute.') }}</p>
+                <a class="c-button c-button--primary" href="{{ url('site/publicuser-login', {}, true) }}">
+                    {{ translate('login') }}
+                </a>
+                <a class="c-button c-button--secondary" href="{{ url('site/publicuser-register', {}, true) }}">
+                    {{ translate('register') }}
+                </a>
+            {% endif %}
+        </div>
+        <div class="c-dig-grid__col--12">
+            {% set draftLabel = translate('User submitted annotations') %}
+            {% set draftDesc = translate('These are annotations created by the community and may need extra work to complete.') %}
+            <div {{ annotationStudio.drafts({
+                'filter-by': 'elucidate',
+                label: draftLabel,
+                description: draftDesc,
+                'hide-if-empty': 'true',
+                'show-thumbnail': 'true',
+                'thumbnail-size': '150'
+            }) | raw }}></div>
+        </div>
+    </div>
+{% endif %}
+
+
+{% if(canvas.meta or canvas.editLink or social or canvas.bookmark or history or canvas.flagActionEndpoint) %}
+    <div class="c-divider"></div>
+    <h3 class="h3">{{ translate('About this photograph') }}</h3>
+    <div class="c-dig-grid__container c-dig-grid--no-padding ">
+        <div class="c-dig-grid__col--10">
+            {% if(canvas.meta) %}
+                <div class="c-dig-grid">
+                    <div class="c-dig-grid__item">
+                        <p>{{ translate('Location:') }} {{ canvas.meta.location ?? 'unknown' }}</p>
+                        <p>{{ translate('Year:') }} {{ canvas.meta ?? 'unknown' }}</p>
+                    </div>
+                    <div class="c-dig-grid__item">
+                        <p>{{ translate('Wikipedia event link:') }}
+                            <a href="{{ canvas.meta.wikipediaLink }}">{{ canvas.meta.wikipediaLabel }}</a>
+                        </p>
+                        {% if(canvas.meta.tags) %}
+                            <p>{{ translate('Tags:') }}
+                                {# Commas should be added with css. .c-tag ~ .c-tag:before { content: ', '; } #}
+                            </p>
+                            <ul class="c-tag-list">
+                                {% for tag in canvas.meta.tags %}
+                                    <li class="c-tag-list__list"><a href="{{ tag.link }}"
+                                                                    class="c-tag c-tag-list__item">{{ tag.label }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+            {% if(canvas.editLink) %}
+                <a href="{{ canvas.editLink }}" class="c-button">{{ translate('Edit') }}</a>
+            {% endif %}
+            &nbsp;
+        </div>
+        <div class="c-dig-grid__col--2">
+            {% if(social) %}
+                <ul class="c-social">
+                    {% if(social.twitter) %}
+                        <li class="c-social__item">
+                            <a href="{{ social.twitter }}" aria-label="Twitter" class="c-social__link">
+                                <span class="fa fa-twitter" aria-hidden="true"></span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if(social.facebook) %}
+                        <li class="c-social__item">
+                            <a href="{{ social.facebook }}" aria-label="Facebook" class="c-social__link">
+                                <span class="fa fa-facebook" aria-hidden="true"></span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if(social.pinterest) %}
+                        <li class="c-social__item">
+                            <a href="{{ social.pinterest }}" aria-label="Pinterest" class="c-social__link">
+                                <span class="fa fa-pinterest" aria-hidden="true"></span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if(social.google) %}
+                        <li class="c-social__item">
+                            <a href="{{ social.google }}" aria-label="Google+" class="c-social__link">
+                                <span class="fa fa-google-plus" aria-hidden="true"></span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if(social.mail) %}
+                        <li class="c-social__item">
+                            <a href="{{ social.mail }}" aria-label="Mail" class="c-social__link">
+                                <span class="fa fa-envelope" aria-hidden="true"></span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            {% endif %}
+
+
+            {% if(canvas.bookmark and isLoggedIn) %}
+                {% if hasBookmark is defined and hasBookmark %}
+                    <div class="c-action c-save-for-later">
+                        <span class="fa fa-bookmark" aria-hidden="true"></span>
+                        {{ translate('Bookmarked') }}
+                    </div>
+                {% else %}
+                    <div class="c-action c-save-for-later c-action--link">
+                        <span class="fa fa-bookmark-o" aria-hidden="true"></span>
+                        {% if canvas.bookmark %}
+                            {% include 'bookmarking/bookmark/bookmark' with { form: canvas.bookmark } %}
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            {% if(history) %}
+                <div class="c-action">
+                    <a href="{{ history }}" class="link--plain" aria-label="{{ translate('Changes to this page') }}">
+                        <span class="fa fa-history" aria-hidden="true"></span> {{ translate('Changes to this page') }}
+                    </a>
+                </div>
+            {% endif %}
+
+            {% if(canvas.flagActionEndpoint and isLoggedIn) %}
+                <div class="c-action c-flagged c-action--link">
+                    <a href="{{ canvas.flagActionEndpoint }}&redirect={{ url('site/iiif-view-canvas-view', { manifest: manifest.omekaId, canvas: canvas.omekaId }, {force_canonical: true}, true) }}"
+                       class="link--plain" aria-label="{{ translate('Flag as inappropriate') }}">
+                        <span class="fa fa-flag-o" aria-hidden="true"></span> {{ translate('Flag as inappropriate') }}
+                    </a>
+                </div>
+            {% endif %}
+
+            {% if (isLoggedIn) %}
+                {% if (pageMarkedAsComplete == false) %}
+                    <a data-mark-as-complete="mark-as-complete" href="#mark-as-complete" class="c-action"
+                       aria-label="{{ translate('Mark as complete') }}">
+                        <span class="fa fa-check" aria-hidden="true"></span>
+                        {{ translate('Mark as complete') }}
+                    </a>
+                {% endif %}
+            {% endif %}
+
+        </div>
+    </div>
+{% endif %}
+
+
+{% if(comments) %}
+    {% include 'comments/comments/view-comments' %}
+{% endif %}
+
+{# Transcription #}
+{% set transcriptions = annotationsSortable.onlyMotivations('describing').get() %}
+{% if (textTranscription) %}
+    {% if(textTranscription or transcriptions) %}
+        <section class="c-transcriptions" xmlns="http://www.w3.org/1999/html">
+            <h2 class="h3">Transcriptions</h2>
+            {% if(textTranscription) %}
+                <article class="c-transcriptions__transcription">
+                    {% if(user) %}
+                        <div class="c-annotation-studio c-annotation-studio--transcriber" {{ annotationStudio.transcriber({ label: 'Can you help improve this?', 'enable-incomplete': 'false' }) | raw }}>
+                            {{ textTranscription }}
+                        </div>
+                    {% else %}
+                        <div class="c-annotation-studio c-annotation-studio--transcriber">
+                            <a href="/s/{{ slug }}/login" class="transcriber__edit">Can you help
+                                improve this?</a>
+                            <div class="transcriber__transcription">
+                                {{ textTranscription }}
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="transcriber__meta">
+                        <p>Transcription automatically generated</p>
+                    </div>
+                </article>
+            {% endif %}
+            {% if (transcriptions) %}
+                <input class="c-transcriptions__view-all-checkbox" type="checkbox" id="view-all-transcriptions"
+                       name="view-all-transcriptions"/>
+                <label for="view-all-transcriptions" class="c-transcriptions__view-all c-button c-button--secondary">
+                    <i class="fa fa-plus"></i> View all transcriptions
+                </label>
+                <div class="c-transcriptions__history">
+                    {% for transcription in transcriptions %}
+                        <article class="c-transcriptions__transcription">
+                            {% if(user) %}
+                                <div class="c-transcription">
+                                    {{ transcription.getAnnotation().body.value }}
+                                </div>
+                            {% endif %}
+                            <div class="transcriber__meta">
+                                <p>Transcription generated by
+                                    {% if transcription.getAnnotation().creator.id %}
+                                        <a href="{{ url('site/elucidate_user_activity', { user: transcription.getAnnotation().creator.id }, true) }}">
+                                            {{ transcription.getAnnotation().creator.name ?? 'unknown user' }}
+                                        </a>
+                                    {% else %}
+                                        {{ transcription.getAnnotation().creator.name ?? 'unknown user' }}
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </section>
+    {% endif %}
+{% endif %}
+
+
+{# THIS IS DUPLICATED FROM collection/view  @todo split into macro/partial #}
+<div class="c-collection">
+    {% if collection %}
+        <h2 class="c-collection__title invisible-link">
+            <a href="{{ url('site/iiif-view-collection-manifest-view', {collection: collection.omekaId, manifest: manifest.omekaId }, true) }}">
+                {{ manifest.getLabel() }}</a>
+        </h2>
+        <div class="c-collection__cta">
+            <a href="{{ url('site/iiif-view-collection-manifest-view', {collection: collection.omekaId, manifest: manifest.omekaId }, true) }}"
+               class="c-button c-button--primary"
+               aria-label="{{ manifest.getLabel() }}">{{ translate('View whole collection') }}</a>
+        </div>
+    {% else %}
+        <h2 class="c-collection__title invisible-link">
+            <a href="{{ url('site/iiif-view-manifest-view', {manifest: manifest.omekaId }, true) }}">
+                {{ manifest.getLabel() }}</a>
+        </h2>
+        <div class="c-collection__cta">
+            <a href="{{ url('site/iiif-view-manifest-view', {manifest: manifest.omekaId }, true) }}"
+               class="c-button c-button--primary"
+               aria-label="{{ manifest.getLabel() }}">{{ translate('View whole collection') }}</a>
+        </div>
+    {% endif %}
+    {% if(manifest.imagesAnnotated or manifest.annotationCount or manifest.imagesWaiting) %}
+        <div class="c-collection__statistics">
+            <div class="c-statistics ">
+                {% if(manifest.imagesAnnotated) %}
+                    <dl class="c-statistic c-statistic--sm c-statistic--inline">
+                        <dt>{{ translate('Images annotated') }}</dt>
+                        <dd>{{ manifest.imagesAnnotated }}</dd>
+                    </dl>
+                {% endif %}
+                {% if(manifest.annotationCount) %}
+                    <dl class="c-statistic c-statistic--sm c-statistic--inline">
+                        <dt>{{ translate('Annotations') }}</dt>
+                        <dd>{{ manifest.annotationCount }}</dd>
+                    </dl>
+                {% endif %}
+                {% if(manifest.imagesWaiting) %}
+                    <dl class="c-statistic c-statistic--sm c-statistic--inline">
+                        <dt>{{ translate('Images waiting') }}</dt>
+                        <dd>{{ manifest.imagesWaiting }}</dd>
+                    </dl>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+    <div class="c-collection__images">
+        <div class="c-carousel c-carousel--sm {% if (canvas.previous) %} c-carousel--has-prev{% endif %} ">
+
+            {% if (canvas.previous) %}
+                <div class="c-carousel__prev">
+                    <a href="{{ url('site/iiif-view-canvas-view', { manifest: manifest.omekaId, canvas: canvas.previous.omekaId }, true) }}"
+                       class="c-carousel__nav" title="Scroll carousel left" aria-label="Scroll carousel left">
+                        <div class="c-carousel__nav-text"><span class="fa fa-long-arrow-left" aria-hidden="true"></span>
+                        </div>
+                    </a>
+                </div>
+            {% endif %}
+
+            <div class="c-carousel__content">
+                {% for image in canvas.allPrevious | slice(-4, 5) %}
+                    {{ helpers.canvas_thumbnail(manifest, image) }}
+                {% endfor %}
+
+                {{ helpers.canvas_thumbnail(manifest, canvas, true) }}
+
+                {% for image in canvas.allNext | slice(1, 5) %}
+                    {{ helpers.canvas_thumbnail(manifest, image) }}
+                {% endfor %}
+            </div>
+
+
+            {% if (canvas.next) %}
+                <div class="c-carousel__next">
+                    <a href="{{ url('site/iiif-view-canvas-view', { manifest: manifest.omekaId, canvas: canvas.next.omekaId }, true) }}"
+                       class="c-carousel__nav" title="Scroll carousel right" aria-label="Scroll carousel right">
+                        <div class="c-carousel__nav-text"><span class="fa fa-long-arrow-right"
+                                                                aria-hidden="true"></span>
+                        </div>
+                    </a>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+

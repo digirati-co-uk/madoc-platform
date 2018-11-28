@@ -1,0 +1,16 @@
+<?php
+
+$pages = array_reduce($this->pages, function ($pages, $page) {
+    if ($page->getLabel() !== 'right' && $page->getLabel() !== 'left') {
+        $pages[] = $page;
+    }
+    return $pages;
+}, []);
+
+echo implode(' ', array_map(function ($a) {
+    return sprintf('
+        <li class="c-breadcrumbs__crumb">
+            <a href="%s">%s</a>
+        </li>
+    ', $a->getHref(), $a->getLabel());
+}, $pages));

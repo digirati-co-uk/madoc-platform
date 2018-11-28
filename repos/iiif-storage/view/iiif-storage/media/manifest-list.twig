@@ -1,0 +1,20 @@
+<div class="iiif-view-manifest-grid">
+    {% for manifestResource in manifests %}
+        {% set manifest = manifestResource.getManifest() %}
+        <div class="iiif-view-manifest-grid__manifest">
+            <a class="iiif-view-playlist-grid"
+               style="background-image: url('{{ manifest.thumbnail }}');background-size: cover;background-position: center;"
+               href="{{ router.manifest(manifest, collection) }}">
+            </a>
+            <p>
+                <a class="iiif-view-manifest-grid__manifest-label" href="{{ router.manifest(manifest, collection) }}">
+                    {{ manifest.getLabel() }}
+                </a>
+                {# Getting the number of canvases causes the whole manifest to be loaded, so only do this if there are a couple of manifests. #}
+                {% if manifests|length < 10 %}
+                    {{ manifest.getCanvases() |length }} images
+                {% endif %}
+            </p>
+        </div>
+    {% endfor %}
+</div>

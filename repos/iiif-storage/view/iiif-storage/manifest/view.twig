@@ -1,0 +1,27 @@
+{% do headLink().prependStylesheet(assetUrl('css/iiif-storage.css', 'IIIFStorage')) %}
+{% do headLink().prependStylesheet(assetUrl('css/breadcrumbs.css', 'IIIFStorage')) %}
+
+{% include 'iiif-storage/partials/breadcrumbs.twig' %}
+
+{% if renderMetadata %}
+    {% set title = manifest.label() %}
+    {% include 'iiif-storage/partials/title.twig' %}
+{% endif %}
+
+{% for mediaItem in media %}
+    {{ mediaItem.render() | raw }}
+{% endfor %}
+
+<div class="iiif-view-manifest-list">
+{% for canvas in manifest.getCanvases() %}
+    <div class="iiif-view-manifest-list__canvas">
+        <div class="iiif-view-manifest-list__canvas-image">
+            {% set image = canvas %}
+            {% include 'iiif-storage/partials/canvas-thumbnail.twig' %}
+        </div>
+        <div class="iiif-view-manifest-list__canvas-label">
+            {{ canvas.getLabel() }}
+        </div>
+    </div>
+{% endfor %}
+</div>

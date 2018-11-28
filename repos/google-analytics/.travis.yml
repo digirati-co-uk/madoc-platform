@@ -1,0 +1,19 @@
+language: php
+sudo: false
+cache:
+    directories:
+        - vendor
+        - $HOME/.composer/cache
+php:
+    - 7.0
+    - 7.1
+
+install:
+    - travis_retry composer install
+    - composer require php-coveralls/php-coveralls
+script:
+    - ./vendor/bin/phpunit -c ./phpunit.xml -v --coverage-clover ./tests/logs/clover.xml
+after_script:
+    - php vendor/bin/coveralls -v
+    - chmod +x pushUpstreamIntoDockerImages.sh
+    - ./pushUpstreamIntoDockerImages.sh

@@ -1,0 +1,43 @@
+<ul class="c-breadcrumbs">
+    <li class="c-breadcrumbs__crumb">
+        <a href="{{ site.url() }} ">{{ site.title() }}</a>
+    </li>
+    <li class="c-breadcrumbs__crumb">
+        <a href="{{ url('site/elucidate_topic_types_index', { name: collection.omekaId }, true) }}">Topics</a>
+    </li>
+</ul>
+<h2>{{ type.label }}</h2>
+<div class="clouds">
+{% for topic in topics %}
+    <a class="cloud" data-score="{{ topic.getScore() }}" href="{{ topic.uri }}">{{ topic.label }}</a>
+{% endfor %}
+</div>
+<style type="text/css">
+    .clouds {
+        display: block;
+        flex: 1;
+    }
+    .cloud {
+        display: inline-block;
+        padding: 10px 20px;
+        margin: 10px;
+        font-size: 16px;
+        background-color: #EEE;
+        border-radius: 3px;
+    }
+    .cloud:hover {
+        transition: all .2s;
+        transform: scale(1.2);
+        color: #000;
+        background-color: cornflowerblue;
+    }
+    .cloud[data-score="0"] {
+        opacity: 0.3;
+        transform: scale(0.5);
+    }
+    .cloud[data-score="0"]:hover {
+        opacity: 1.0;
+        transform: scale(1);
+    }
+</style>
+

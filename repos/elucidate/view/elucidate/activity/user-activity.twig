@@ -1,0 +1,41 @@
+<h2 class="h2">Activity for {{ userDetails.name }}</h2>
+
+{% if annotationsSortable.groupByCanvas().orderByLabel().get() %}
+    <div class="c-dig-grid">
+        {% set canvasList = annotationsSortable.groupByCanvas().get() %}
+        {% for canvas in canvasList %}
+
+            <div class="c-dig-grid__col--2">
+                <a href="{{ canvas.canvasSource.omekaUri }}">
+                    <img src="{{ canvas.thumbnail.full }}" height="150">
+                </a>
+                <p>
+                    <a class="muted" href="{{ canvas.canvasSource.omekaUri }}">{{ canvas.canvasSource.label }}</a>
+                </p>
+            </div>
+            <div class="c-dig-grid__col--10">
+                {% for annotation in annotationsSortable.onlyCanvas(canvas.canvasSource.omekaUri).get() %}
+                    <div class="c-dig-grid">
+                        <div class="c-dig-grid__col--2">
+                            {# @todo timeAgo to be added #}
+                            {{ annotation.timeAgo }}
+                        </div>
+                        <div class="c-dig-grid__col--10">
+                            {# @todo motiviation to be added #}
+                            {% if(annotation.label or canvas.label) %}
+                                Added a <strong>{{ annotation.motivation }}</strong> annotation to
+                                <a href="{{ canvas.canvasSource.omekaUri }}">
+                                    {{ annotation.label ?? canvas.label }}
+                                </a>
+                            {% else %}
+                                Added a <strong>{{ annotation.motivation }}</strong>
+                                annotation
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}

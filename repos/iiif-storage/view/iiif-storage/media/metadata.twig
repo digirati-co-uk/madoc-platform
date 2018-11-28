@@ -1,0 +1,18 @@
+{% do headLink().prependStylesheet(assetUrl('css/iiif-storage.css', 'IIIFStorage')) %}
+
+<div class="iiif-view-metadata">
+    <h2>{{ label }}</h2>
+
+    <p>{{ description }}</p>
+
+    <p class="iiif-view-attribution">
+        {{ requiredStatement | raw }}
+    </p>
+
+    <dl>
+        {% for singleMetadata in metadata %}
+            <dt>{{ singleMetadata.label }}</dt>
+            <dd>{{ singleMetadata.value | raw }}</dd>
+        {% endfor %}
+    </dl>
+</div>

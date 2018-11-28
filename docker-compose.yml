@@ -1,0 +1,54 @@
+version: "3"
+services:
+  omeka_ecosystem:
+    build:
+      context: .
+    links:
+      - mysql
+    environment:
+      - PHP_IDE_CONFIG=serverName=omeka-workspace
+      - APP_ENV=DEV
+      - OMEKA__MODULES=${OMEKA_MODULES}
+      - OMEKA__DATABASE_HOST=omeka_db
+      - OMEKA__DATABASE_NAME=${MYSQL_DATABASE}
+      - OMEKA__DATABASE_USER=${MYSQL_USER}
+      - OMEKA__DATABASE_PASSWORD=${MYSQL_PASSWORD}
+      - OMEKA__DATABASE_PORT=${MYSQL_PORT}
+      - OMEKA_ELUCIDATE_URL=elucidate-server
+    ports:
+      - "8888:80"
+    volumes:
+      - ./repos:/srv/omeka/repos
+      - ./bare/omeka-s/application:/srv/omeka/application
+      - ./config/omeka-app/application.config.php:/srv/omeka/application/config/application.config.php
+
+  mysql:
+    container_name: omeka_db
+    build:
+      context: ./
+      dockerfile: Dockerfile.db
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_PORT=${MYSQL_PORT}
+    volumes:
+      - ./database/sql /docker-entrypoint-initdb.d/
+    ports:
+      - "3334:3306"
+
+  annotation-server:
+    container_name: elucidate-server
+    image: "garyttierneydi/elucidate-server:1.4.3-SNAPSHOT"
+    links:
+      - annotation-database:database
+    environment:
+      - DATABASE_USER=postgres
+      - CATALINA_OPTS=-Ddb.url=jdbc:postgresql://database:5432/annotations -Ddb.user="postgres" -Ddb.password=$MYSQL_PASSWORD
+    ports:
+      - 8889:8080
+  annotation-database:
+    image: "garyttierneydi/elucidate-database:1.4.3-SNAPSHOT"
+    environment:
+      - POSTGRES_DB=annotations

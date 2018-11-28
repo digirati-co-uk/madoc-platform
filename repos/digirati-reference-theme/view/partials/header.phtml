@@ -1,0 +1,38 @@
+<header class="c-header">
+    <div class="c-header__logo">
+        <div class="c-logo">
+            <a class="c-logo__link" href="<?php echo $site->url(); ?>">
+                <div class="c-logo__text"><?php echo $site->title(); ?></div>
+            </a>
+        </div>
+        <?php if ($projectName = $this->themeSetting('project_name', 'Default Omeka site')): ?>
+            <a class="c-header__site-name" href="<?php echo $site->url(); ?>">
+                <?php echo $projectName; ?>
+            </a>
+        <?php endif; ?>
+    </div>
+
+    <div class="c-header__search-and-user">
+        <div class="c-user-menu">
+            <ul class="c-user-menu__list">
+                <?php try { ?>
+                <?php if ($isLoggedIn): ?>
+                    <li class="c-user-menu__item">
+                        <a href="<?php echo $this->url('site/publicuser-profile', [], true); ?>"><?php echo $currentUser->getName(); ?></a>
+                    </li>
+                    <li class="c-user-menu__item">
+                        <a href="<?php echo $this->url('site/publicuser-logout', [], true); ?>"><?= $this->translate('Logout'); // @translate ?></a>
+                    </li>
+                <?php else: ?>
+                    <li class="c-user-menu__item">
+                        <a href="<?php echo $this->url('site/publicuser-login', [], true); ?>"><?= $this->translate('Login'); // @translate ?></a>
+                    </li>
+                    <li class="c-user-menu__item">
+                        <a href="<?php echo $this->url('site/publicuser-register', [], true); ?>"><?= $this->translate('Register'); // @translate ?></a>
+                    </li>
+                <?php endif; ?>
+                <?php } catch (\Throwable $e){ } ?>
+            </ul>
+        </div>
+    </div>
+</header>

@@ -1,0 +1,42 @@
+<?php
+$escape = $this->plugin('escapeHtml');
+$this->htmlElement('html')->setAttribute('lang', 'en')->setAttribute('class', 'no-js');
+$this->headMeta()->setCharset('utf-8');
+$this->headMeta()->appendName('viewport', 'width=device-width, initial-scale=1');
+$this->headTitle($this->setting('installation_title', 'Omeka S'))->setSeparator(' · ');
+$this->headLink()->prependStylesheet($this->assetUrl('css/styles.css'));
+$this->headScript()->prependFile($this->assetUrl('js/script.js'));
+$this->trigger('view.layout');
+?>
+<?php echo $this->doctype(); ?>
+<?php echo $this->htmlElement('html'); ?>
+<head>
+    <?php echo $this->headMeta(); ?>
+    <?php echo $this->headTitle(); ?>
+    <?php echo $this->headLink(); ?>
+    <?php echo $this->headStyle(); ?>
+    <link href="https://fonts.googleapis.com/css?family=Lato:700|Roboto:400" rel="stylesheet">
+    <script>document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, 'js');</script>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+</head>
+
+<body>
+
+<div class="container">
+
+
+    <div class="main">
+        <?php echo $this->partial('partials/header'); ?>
+        <?php echo $site->publicNav()->menu()->renderPartial(null, 'partials/navigation-bar.phtml'); ?>
+        <div class="main__inner" role="main">
+            <?php echo $this->content; ?>
+        </div>
+
+        <?php echo $this->partial('partials/footer.phtml'); ?>
+    </div>
+
+
+</div>
+<?php echo $this->headScript(); ?>
+</body>
+</html>

@@ -1,0 +1,36 @@
+{# @var annotationsSortable \ElucidateModule\Domain\SortableAnnotationsList #}
+{% if annotationsSortable.groupByCanvas().orderByLabel().get() %}
+    {% set canvasList = annotationsSortable.groupByCanvas().get() %}
+    {% for canvas in canvasList %}
+        <a href="{{ canvas.canvasSource.omekaUri }}">
+            <span class="fa fa-long-arrow-left" aria-hidden="true"></span> Back to item
+        </a>
+
+        <h2>Activity for {{ canvas.canvasSource.label }}</h2>
+
+        <div class="c-dig-grid__col--2">
+            <a href="{{ canvas.canvasSource.omekaUri }}">
+                <img src="{{ canvas.thumbnail.full }}" height="150">
+            </a>
+        </div>
+        <div class="c-dig-grid__col--10">
+            {% for annotation in annotationsSortable.onlyCanvas(canvas.canvasSource.omekaUri).get() %}
+                <div class="c-dig-grid">
+                    <div class="c-dig-grid__col--2">
+                        {# @todo timeAgo to be added #}
+                        {{ annotation.timeAgo }}
+                    </div>
+                    <div class="c-dig-grid__col--10">
+                        {# @todo motiviation to be added #}
+                        {% if annotation.motivation == 'http://www.digirati.com/ns/crowds#drafting' %}
+                            Added an <strong>editable</strong> annotation (draft)
+                        {% else %}
+                            Added a <strong>{{ annotation.motivation }}</strong> annotation
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+    {% endfor %}
+{% endif %}

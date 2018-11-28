@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+	xmlns:owl="http://www.w3.org/2002/07/owl#"
+	xmlns:prov="http://www.w3.org/ns/prov#"
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:oa="http://www.w3.org/ns/oa#"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:dcterms="http://purl.org/dc/terms/"
+	xmlns:foaf="http://xmlns.com/foaf/0.1/"
+	xmlns:madoc="http://www.digirati.com/ns/madoc#"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    >
+	<rdf:Property rdf:about="http://www.digirati.com/ns/madoc#textbox">
+		<rdfs:isDefinedBy rdf:resource="http://www.digirati.com/ns/madoc#"/>
+		<rdfs:comment>UI: Render a TEXTBOX to capture input for value of annotation body.</rdfs:comment>
+		<rdfs:label>textbox</rdfs:label>
+	</rdf:Property>
+	<rdf:Property rdf:about="http://www.digirati.com/ns/madoc#hiddenvalue">
+		<rdfs:isDefinedBy rdf:resource="http://www.digirati.com/ns/madoc#"/>
+		<rdfs:comment>UI: Hidden form field which can carry values.</rdfs:comment>
+		<rdfs:label>hiddenvalue</rdfs:label>
+	</rdf:Property>
+	<rdf:Property rdf:about="http://www.digirati.com/ns/madoc#textarea">
+		<rdfs:isDefinedBy rdf:resource="http://www.digirati.com/ns/madoc#"/>
+		<rdfs:comment>UI: Render a TEXTAREA to capture input for value of annotation body.</rdfs:comment>
+		<rdfs:label>textarea</rdfs:label>
+	</rdf:Property>
+	<rdf:Property rdf:about="http://www.digirati.com/ns/madoc#listbox">
+		<rdfs:isDefinedBy rdf:resource="http://www.digirati.com/ns/madoc#"/>
+		<rdfs:comment>UI: Render a DROPDOWN LIST to capture input for value of annotation body.</rdfs:comment>
+		<rdfs:label>listbox</rdfs:label>
+	</rdf:Property>
+	<rdf:Property rdf:about="http://www.digirati.com/ns/madoc#dropdown">
+		<rdfs:isDefinedBy rdf:resource="http://www.digirati.com/ns/madoc#"/>
+		<rdfs:comment>UI: Render a DROPDOWN LIST to capture input for value of annotation body.</rdfs:comment>
+		<rdfs:label>dropdown</rdfs:label>
+	</rdf:Property>
+	<rdf:Property rdf:about="http://www.digirati.com/ns/madoc#combobox">
+		<rdfs:isDefinedBy rdf:resource="http://www.digirati.com/ns/madoc#"/>
+		<rdfs:comment>UI: Render a COMBOBOX to capture input for value of annotation body.</rdfs:comment>
+		<rdfs:label>combobox</rdfs:label>
+	</rdf:Property>
+	<rdf:Property rdf:about="http://www.digirati.com/ns/madoc#datepicker">
+		<rdfs:isDefinedBy rdf:resource="http://www.digirati.com/ns/madoc#"/>
+		<rdfs:comment>UI: Render a DATE PICKER to capture calendar input for value of annotation body.</rdfs:comment>
+		<rdfs:label>datepicker</rdfs:label>
+	</rdf:Property>
+	<rdf:Property rdf:about="http://www.digirati.com/ns/madoc#mappicker">
+		<rdfs:isDefinedBy rdf:resource="http://www.digirati.com/ns/madoc#"/>
+		<rdfs:comment>UI: Render a MAPPICKER to capture lat-long or geo information for value of annotation body.</rdfs:comment>
+		<rdfs:label>mappicker</rdfs:label>
+	</rdf:Property>
+	<rdf:Property rdf:about="http://www.digirati.com/ns/madoc#radio">
+		<rdfs:isDefinedBy rdf:resource="http://www.digirati.com/ns/madoc#"/>
+		<rdfs:comment>UI: Render a CHOICE as a set of RADIO BUTTONS.</rdfs:comment>
+		<rdfs:label>radio</rdfs:label>
+	</rdf:Property>
+	<rdf:Property rdf:about="http://www.digirati.com/ns/madoc#checkbox">
+		<rdfs:isDefinedBy rdf:resource="http://www.digirati.com/ns/madoc#"/>
+		<rdfs:comment>UI: Render a CHOICE as a set of CHECK BOXES.</rdfs:comment>
+		<rdfs:label>checkbox</rdfs:label>
+	</rdf:Property>
+	<rdf:Property rdf:about="http://www.digirati.com/ns/madoc#capturemodel">
+		<rdfs:isDefinedBy rdf:resource="http://www.digirati.com/ns/madoc#"/>
+		<rdfs:comment>UI: Render an additional capture model.</rdfs:comment>
+		<rdfs:label>captureModel</rdfs:label>
+	</rdf:Property>
+	<rdf:Property rdf:about="http://www.digirati.com/ns/madoc#button">
+		<rdfs:isDefinedBy rdf:resource="http://www.digirati.com/ns/madoc#"/>
+		<rdfs:comment>UI: Render a CHOICE as a set of BUTTONS.</rdfs:comment>
+		<rdfs:label>button</rdfs:label>
+	</rdf:Property>
+	<rdf:Property rdf:about="http://www.digirati.com/ns/madoc#boxdraw">
+		<rdfs:isDefinedBy rdf:resource="http://www.digirati.com/ns/madoc#"/>
+		<rdfs:comment>UI: Draw a BOX to capture #xywh values for a selector.</rdfs:comment>
+		<rdfs:label>boxdraw</rdfs:label>
+	</rdf:Property>
+	<rdf:Property rdf:about="http://www.digirati.com/ns/madoc#ellipse">
+		<rdfs:isDefinedBy rdf:resource="http://www.digirati.com/ns/madoc#"/>
+		<rdfs:comment>UI: Draw an ELLIPSE to capture an SVG path for a selector.</rdfs:comment>
+		<rdfs:label>ellipse</rdfs:label>
+	</rdf:Property>
+	<rdf:Property rdf:about="http://www.digirati.com/ns/madoc#svg">
+		<rdfs:isDefinedBy rdf:resource="http://www.digirati.com/ns/madoc#"/>
+		<rdfs:comment>UI: Draw a freehand SVG path for a selector.</rdfs:comment>
+		<rdfs:label>svg</rdfs:label>
+	</rdf:Property>
+	<rdf:Property rdf:about="http://www.digirati.com/ns/madoc#polygon">
+		<rdfs:isDefinedBy rdf:resource="http://www.digirati.com/ns/madoc#"/>
+		<rdfs:comment>UI: Draw a POLYGON to capture an SVG path for a selector.</rdfs:comment>
+		<rdfs:label>polygon</rdfs:label>
+	</rdf:Property>
+	<rdf:Property rdf:about="http://www.digirati.com/ns/madoc#pin">
+		<rdfs:isDefinedBy rdf:resource="http://www.digirati.com/ns/madoc#"/>
+		<rdfs:comment>UI: Drop a pin for a selector.</rdfs:comment>
+		<rdfs:label>pin</rdfs:label>
+	</rdf:Property>
+	<rdf:Property rdf:about="http://www.digirati.com/ns/madoc#nullableCaptureModel">
+		<rdfs:isDefinedBy rdf:resource="http://www.digirati.com/ns/madoc#"/>
+		<rdfs:comment>UI: nullable capture model. Render options, following inputOptions, with the possibility of not following through to the linked capture model.</rdfs:comment>
+		<rdfs:label>nullableCaptureModel</rdfs:label>
+	</rdf:Property>
+	<rdf:Property rdf:about="http://www.digirati.com/ns/madoc#fallback_autocomplete">
+		<rdfs:isDefinedBy rdf:resource="http://www.digirati.com/ns/madoc#"/>
+		<rdfs:comment>UI: Render an Autocomplete field to capture input for value of annotation body, and fallback to additional input methods.</rdfs:comment>
+		<rdfs:label>fallback_autocomplete</rdfs:label>
+	</rdf:Property>
+	<rdf:Property rdf:about="http://www.digirati.com/ns/madoc#autocomplete">
+		<rdfs:isDefinedBy rdf:resource="http://www.digirati.com/ns/madoc#"/>
+		<rdfs:comment>UI: Render an Autocomplete field to capture input for value of annotation body.</rdfs:comment>
+		<rdfs:label>autocomplete</rdfs:label>
+	</rdf:Property>
+	<rdf:Property rdf:about="http://www.digirati.com/ns/madoc#fallback_boolean">
+		<rdfs:isDefinedBy rdf:resource="http://www.digirati.com/ns/madoc#"/>
+		<rdfs:comment>UI: Boolean input, and fallback to additional input methods on True.</rdfs:comment>
+		<rdfs:label>fallback_boolean</rdfs:label>
+	</rdf:Property>
+	<rdf:Property rdf:about="http://www.digirati.com/ns/madoc#fallbackOptions">
+		<rdfs:isDefinedBy rdf:resource="http://www.digirati.com/ns/madoc#"/>
+		<rdfs:comment>UI: Generic fallback between additional input methods described via ui:inputOptions.</rdfs:comment>
+		<rdfs:label>fallbackOptions</rdfs:label>
+	</rdf:Property>
+		<rdf:Property rdf:about="http://www.digirati.com/ns/madoc#group">
+		<rdfs:isDefinedBy rdf:resource="http://www.digirati.com/ns/madoc#"/>
+		<rdfs:comment>Capture model object is a group, comprising one or more capture model elements. </rdfs:comment>
+		<rdfs:label>group</rdfs:label>
+	</rdf:Property>
+		<rdf:Property rdf:about="http://www.digirati.com/ns/madoc#element">
+		<rdfs:isDefinedBy rdf:resource="http://www.digirati.com/ns/madoc#"/>
+		<rdfs:comment>Capture model object is an element, i.e. a single data capture element (form field, picker, etc.)</rdfs:comment>
+		<rdfs:label>element</rdfs:label>
+	</rdf:Property>
+</rdf:RDF>

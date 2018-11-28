@@ -1,0 +1,16 @@
+{
+    "name": "digirati/omeka-reference-theme-module",
+    "license": "MIT",
+    "description": "Omeka S Reference theme module - Digirati",
+    "version": "1.0.0",
+    "type": "omeka-s-module",
+    "require": {
+        "kokspflanze/zfc-twig": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {"DigiratiReferenceTheme\\": "src"}
+    },
+    "extra": {
+        "install-name": "DigiratiReferenceTheme"
+    }
+}

@@ -1,0 +1,38 @@
+{
+    "name": "digirati/omeka-comments-module",
+    "version": "1.0.0",
+    "license": "MIT",
+    "description": "Omeka comments module",
+    "type": "omeka-s-module",
+    "authors": [
+        {
+            "name": "Stephen Fraser",
+            "email": "stephen.fraser@digirati.co.uk"
+        }
+    ],
+    "require": {
+        "dlcs/elucidate-php": "~3.0",
+        "php": ">=7.0"
+    },
+    "scripts": {
+        "post-autoload-dump": "./bin/vendors"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.2",
+        "friendsofphp/php-cs-fixer": "^2.0",
+        "dlcs/iiif-php": "^1.2"
+    },
+    "suggest": {
+        "dlcs/elucidate-php": "For integration with Elucidate Annotation Server",
+        "dlcs/iiif-php": "For commenting with IIIF Resources"
+    },
+    "autoload": {
+        "psr-4": {"Comments\\": "src"}
+    },
+    "autoload-dev": {
+        "psr-4": {"Comments\\Tests\\": "tests/src"}
+    },
+    "extra": {
+        "install-name": "Comments"
+    }
+}

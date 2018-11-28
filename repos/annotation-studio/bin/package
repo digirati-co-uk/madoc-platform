@@ -1,0 +1,34 @@
+#!/usr/bin/env php
+<?php
+include __DIR__ . '/../vendor/autoload.php';
+
+use Alchemy\Zippy\Zippy;
+
+$composer = json_decode(file_get_contents(__DIR__. '/../composer.json'));
+$moduleName = $composer->extra->{'omeka-module-name'};
+$zippy = Zippy::load();
+
+$process = new \Symfony\Component\Process\Process('composer install --no-dev --optimize-autoloader');
+$process->setEnv([
+    'COMPOSER_HOME' => __DIR__ . '/../vendor/bin/composer',
+    'COMPOSER_VENDOR_DIR' => __DIR__ . '/../build/vendor-dist',
+]);
+$process->run(function($type, $input) {
+  print $input;
+});
+$process->wait();
+
+print "Creating archive... \n";
+
+$path = __DIR__ . '/../';
+
+$archive = $zippy->create(__DIR__ . '/../build/' . $moduleName . '.zip', [
+    $moduleName . '/vendor' => $path . 'build/vendor-dist/',
+    $moduleName . '/src' => $path . 'src/',
+    $moduleName . '/config' => $path . 'config/',
+    $moduleName . '/asset' => $path . 'assets/',
+    $moduleName . '/view' => $path . 'view/',
+    $moduleName . '/Module.php' => $path . 'Module.php',
+], true);
+
+print "\n----> Success! \n";

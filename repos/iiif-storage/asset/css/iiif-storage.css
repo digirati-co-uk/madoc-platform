@@ -1,0 +1,216 @@
+.iiif-view-annotation-studio {
+    display: flex;
+    flex-wrap: wrap;
+    background: #fff;
+}
+.iiif-view-annotation-studio__viewer {
+    flex: 1;
+    background: #000;
+}
+.iiif-view-annotation-studio__drafts {
+    width: 100%;
+    flex-basis: 100%;
+    background: #fff;
+    padding: 20px;
+    font-size: 14px;
+    line-height: 1.1;
+}
+.iiif-view-annotation-studio__resource-editor {
+    width: 350px;
+    flex-basis: 350px;
+    background: #fff;
+    padding: 20px;
+    font-size: 14px;
+    line-height: 1.25;
+    position: sticky;
+    top: 0;
+    margin-bottom: auto;
+}
+
+.iiif-view-attribution {
+    color: #444;
+    font-size: 12px;
+    line-height: 18px;
+    margin-bottom: 20px;
+}
+
+.canvas-navigation {
+    width: 100%;
+    margin-bottom: 20px;
+}
+.canvas-navigation:after {
+    clear: both;
+    content: '';
+    display: table;
+}
+.canvas-navigation__next,
+.canvas-navigation__previous {
+    background: #B9DAEB;
+    border: 1px solid #80B6D2;
+    padding: 5px 10px;
+    font-size: 14px;
+    color: #fff;
+}
+
+.canvas-navigation__next span,
+.canvas-navigation__previous span {
+    margin: 0 5px;
+}
+
+.canvas-navigation__next {
+    float: right;
+}
+.canvas-navigation__previous {
+    float: left;
+}
+
+.iiif-view-manifest-list {
+    display: flex;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+    align-items: stretch;
+}
+.iiif-view-manifest-list * {
+    box-sizing: border-box;
+    max-width: 100%;
+    height: auto;
+}
+.iiif-view-manifest-list__canvas-image .c-image {
+    margin: auto;
+}
+.iiif-view-manifest-list__canvas {
+    width: 25%;
+    flex-basis: 25%;
+    padding: 10px;
+    margin: 20px 0;
+    text-align: center;
+}
+.iiif-view-manifest-list__canvas-image {
+    padding: 30px;
+    background: #000;
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.canvas-actions {
+    margin-top: 40px;
+    font-size: 16px;
+}
+.canvas-actions ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.canvas-actions span {
+    margin: 0 10px;
+}
+.canvas-actions li {
+    margin-bottom: 10px;
+}
+.canvas-actions li a {
+    color: #2b91af;
+}
+.canvas-actions li a:hover {
+    color: #2458af;
+}
+.canvas-actions li span {
+    width: 20px;
+}
+.canvas-actions li a span,
+.canvas-actions li a span:hover{
+    color: #000;
+}
+
+.c-save-for-later input[name="bookmark"] {
+    display: inline;
+    background: none;
+    padding: 0;
+    margin: 0;
+    font-size: inherit;
+    line-height: inherit;
+    color: #2b91af;
+}
+.c-save-for-later input[name="bookmark"]:hover {
+    color: #2458af;
+}
+.c-save-for-later form {
+    display: inline;
+}
+
+.iiif-view-playlist-grid {
+    display: flex;
+    flex-wrap: wrap;
+    height: 250px;
+    width: 250px;
+    justify-content: space-around;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #aaa;
+}
+.iiif-view-playlist-grid__image {
+    flex-basis: 50%;
+    height: 50%;
+    width: 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.iiif-view-manifest-grid {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    /*justify-content: space-around;*/
+    justify-content: left;
+}
+.iiif-view-manifest-grid__manifest {
+    font-size: 14px;
+    line-height: 18px;
+}
+.iiif-view-manifest-grid__manifest ~ .iiif-view-manifest-grid__manifest {
+    margin-left: 30px;
+}
+
+.iiif-view-manifest-grid__manifest-label {
+    display: block;
+    font-weight: bold;
+    max-width: 250px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+#media-metadata .media-render {
+    background: #fff;
+    padding: 35px;
+    margin: 20px 20px 40px 20px;
+    border: 1px solid #ccc;
+    position: relative;
+    border-radius: 3px;
+    box-shadow: 0px 3px 20px 0px rgba(0,0,0,.2);
+}
+#media-metadata .media-render:before {
+    position: absolute;
+    content: 'preview';
+    top: -1px;
+    right: -1px;
+    color: #A61D1F;
+    background: #eee;
+    border: 1px solid #ccc;
+    border-radius: 0px 3px 0px 3px;
+    font-size: 10px;
+    text-transform: uppercase;
+    padding: 0 10px;
+    font-weight: bold;
+
+}
+
+.iiif-view-metadata {
+
+}
+
+.iiif-view-metadata dt {
+    font-weight: 600;
+}
+.iiif-view-metadata dd ~ dt {
+    margin-top: 20px;
+}

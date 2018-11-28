@@ -1,0 +1,589 @@
+.annotation-studio-ghost {
+    width: 100%;
+    max-height: 65vh;
+    text-align: center;
+}
+
+.annotation-studio-ghost img {
+    filter: blur(10px);
+    height: 65vh;
+    border: 1px solid #c4569b;
+}
+
+.annotation-studio-ghost-panel {
+    padding: 5px 20px;
+}
+
+.annotation-studio-ghost-panel .ghost-title {
+    width: 100%;
+    height: 42px;
+    margin: 0.3em 0;
+}
+
+.annotation-studio-ghost-panel .ghost-line {
+    width: 100%;
+    height: 16px;
+    margin: 6px;
+}
+
+.annotation-studio-ghost-panel .ghost-choice {
+    padding: 20px;
+    cursor: pointer;
+    border: 3px solid #dcdcd9;
+    margin-top: 20px;
+}
+
+@keyframes placeHolderShimmer {
+    0% {
+        background-position: -468px 0;
+    }
+    100% {
+        background-position: 468px 0;
+    }
+}
+
+.annotation-studio-animated-background {
+    animation-duration: 1.25s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: placeHolderShimmer;
+    animation-timing-function: linear;
+    background: #4a4a49;
+    background: linear-gradient(to right, #eeeeee 10%, #e9e9e9 18%, #eee 33%);
+    background-size: 800px 104px;
+    height: 100px;
+    position: relative;
+}
+
+/*
+<div class="autocomplete">
+<label class="autocomplete__label"></label>
+<input type="text" class="autocomplete__input" value="">
+<ul class="autocomplete__suggestions"></ul>
+</div>
+
+*/
+.annotation-studio .autocomplete {
+    padding: 10px 0 !important;
+}
+
+.annotation-studio .autocomplete__label {
+    font-size: 16px;
+}
+
+.annotation-studio .autocomplete__label a {
+    float: right;
+}
+
+.annotation-studio .autocomplete__input {
+    width: 100% !important;
+    padding: 12px;
+    font-weight: bold;
+    font-size: 14px;
+    margin: 5px 0;
+    background-color: #FFF;
+    border: 2px solid #c1c7ca !important;
+}
+
+.annotation-studio .autocomplete__input:focus {
+    border-color: transparent;
+    outline: #97c0f6 auto 5px !important;
+}
+
+.box-selector {
+    border: 3px dashed #e2231a !important;
+}
+
+.box-selector__button {
+    background-color: #eaeced;
+    border: 0;
+    border-radius: 0;
+    color: #484848;
+    display: inline-block;
+    padding: 10px;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    width: auto;
+    background-color: #e2231a;
+    color: #fff;
+}
+
+.box-selector__button:hover {
+    background-color: #dce0e1;
+    color: #fff;
+}
+
+.box-selector__button:hover {
+    background-color: #cb1f17;
+    color: #fff;
+}
+
+.full-form {
+    counter-reset: section;
+}
+
+.full-form__title {
+    padding: 5px 0;
+}
+
+.full-form__description {
+    margin-top: 10px;
+}
+
+.full-form__selector-info {
+    border-radius: 0 !important;
+    background: #d1ecf1 !important;
+    border-color: #bee5eb !important;
+    color: #0c5460 !important;
+    font-size: 14px !important;
+    margin: 5px 0 !important;
+}
+
+.full-form__selector-info a {
+    color: #094049;
+}
+
+.full-form__container {
+    padding-bottom: 10px;
+}
+
+.full-form__back-btn, .full-form__action-btn {
+    background: none;
+    border: 0;
+    font-size: 20px;
+    color: #e2231a;
+}
+
+.full-form__back-btn:hover, .full-form__action-btn:hover {
+    background-color: #f2f3f4;
+}
+
+.full-form__action-btn {
+    float: right;
+}
+
+.full-form__action-btn::after {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "";
+    padding-left: 10px;
+}
+
+.full-form__back-btn::before {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "";
+    padding-right: 10px;
+}
+
+.full-form__done-btn {
+    background-color: #e2231a;
+    border: 0;
+    color: #fff;
+    display: inline-block;
+    padding: 10px;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    width: auto;
+    float: right;
+}
+
+.full-form__done-btn:hover {
+    background-color: #cb1f17;
+    color: #fff;
+}
+
+.full-form__edit-btn {
+    display: none;
+}
+
+/**
+<div class="google-map-search">
+    <div class="google-map-search__label">
+        Place of Residence
+    </div>
+    <div class="google-map-search__container">
+        <div class="geosuggest">
+            <div class="geosuggest__input-wrapper">
+                <input type="text" class="geosuggest__input" autocomplete="off" placeholder="Search places" value="">
+            </div>
+            <div class="geosuggest__suggests-wrapper">
+                <ul class="geosuggest__suggests geosuggest__suggests--hidden"></ul>
+            </div>
+        </div>
+        <div>
+    <div class="google-map-search__map-object">
+        <div class="google-map-search__map-object google-map-search__map-object--inner" style="position: relative; overflow: hidden;">
+
+        </div>
+        <div>
+            <div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+    <button class="google-map-search__button">save</button>
+</div>
+    </div>
+</div>
+ */
+.google-map-search__container {
+    border-color: #c1c7ca !important;
+}
+
+.google-map-search__button {
+    background-color: #eaeced;
+    border: 0;
+    border-radius: 0;
+    color: #484848;
+    display: inline-block;
+    padding: 10px;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    width: auto;
+    display: block;
+    width: 100%;
+    background-color: #e2231a;
+    color: #fff;
+    background-color: #e2231a !important;
+    border-radius: 0;
+    text-transform: capitalize;
+}
+
+.google-map-search__button:hover {
+    background-color: #dce0e1;
+    color: #fff;
+}
+
+.google-map-search__button:hover {
+    background-color: #cb1f17;
+    color: #fff;
+}
+
+.geosuggest__input-wrapper {
+    margin-bottom: 0;
+}
+
+.geosuggest__input {
+    border: 0 !important;
+    width: 100%;
+}
+
+.geosuggest__suggests {
+    position: relative;
+    border: 2px solid #c1c7ca;
+    border-top: 0;
+    margin: 0 -2px;
+}
+
+.geosuggest__item:nth-of-type(odd) {
+    background: #f8f8f9;
+}
+
+/**
+ <span class="help-tooltip">
+      <span class="help-tooltip__label"></span>
+      <span class="help-tooltip__tooltip">Place of residence of the person selected</span>
+    </span>
+ */
+.help-tooltip__label:after {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "" !important;
+    font-size: 1.5em;
+    padding-left: 5px;
+}
+
+.input-drop-down {
+    padding: 10px 0 !important;
+    width: 100%;
+}
+
+.input-drop-down__label {
+    font-size: 16px;
+}
+
+.input-drop-down__label a {
+    float: right;
+}
+
+.input-drop-down__input,
+.input-drop-down input {
+    width: 100% !important;
+    padding: 12px;
+    font-weight: bold;
+    font-size: 14px;
+    margin: 5px 0;
+    background-color: #FFF;
+    border: 2px solid #c1c7ca !important;
+}
+
+.input-drop-down__input:focus,
+.input-drop-down input:focus {
+    border-color: transparent;
+    outline: #97c0f6 auto 5px !important;
+}
+
+.input-form__group-fields {
+    padding-top: 20px;
+}
+
+.input-form__group-fields .nullable-capture-model__label {
+    margin-left: 10px;
+}
+
+.input-form__group {
+    border: 0;
+    margin-bottom: 0;
+}
+
+.input-form__group:last-child {
+    margin-bottom: 20px;
+}
+
+.input-form__group-name {
+    position: relative;
+    margin-bottom: 0 !important;
+}
+
+.input-form__group-name::after {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "";
+    color: #4c5559;
+    position: absolute;
+    right: 0;
+    top: 5px;
+    cursor: pointer;
+}
+
+.input-form__group-name--open::after {
+    content: "";
+}
+
+.input-text-box {
+    padding: 10px 0 !important;
+}
+
+.input-text-box__label {
+    font-size: 16px;
+}
+
+.input-text-box__label a {
+    float: right;
+}
+
+.input-text-box__description {
+    padding-bottom: 10px;
+}
+
+.input-text-box__input {
+    width: 100% !important;
+    padding: 12px;
+    font-weight: bold;
+    font-size: 14px;
+    margin: 5px 0;
+    background-color: #FFF;
+    border: 2px solid #c1c7ca !important;
+}
+
+.input-text-box__input:focus {
+    border-color: transparent;
+    outline: #97c0f6 auto 5px !important;
+}
+
+.nullable-capture-model {
+    padding: 10px 0 !important;
+}
+
+.nullable-capture-model__checkbox-container {
+    display: inline-block;
+    padding-bottom: 10px;
+    width: 20px;
+    height: 20px;
+    overflow: hidden;
+    position: relative;
+    top: 2px;
+}
+
+.nullable-capture-model__checkbox-container--is-checked:after {
+    content: "" !important;
+}
+
+.nullable-capture-model__checkbox-container:after {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "";
+    font-size: 20px;
+    position: absolute;
+    top: 3px;
+    left: 0;
+}
+
+.nullable-capture-model__checkbox {
+    width: 100px;
+    height: 100px;
+}
+
+.nullable-capture-model__label {
+    display: inline-block;
+    font-size: 16px;
+    padding-bottom: 10px;
+}
+
+.nullable-capture-model__label:after {
+    clear: both;
+    content: "";
+    display: table;
+}
+
+.nullable-capture-model__label a {
+    float: right;
+}
+
+/**
+<div class="osd-viewer__controls"><div class="osd-viewer__control osd-viewer__control--plus">+</div><div class="osd-viewer__control osd-viewer__control--minus">-</div></div>
+ */
+.osd-viewer__control {
+    border: 0 !important;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+/**
+<div class="react-datepicker__input-container react-datepicker__tether-target react-datepicker__tether-abutted react-datepicker__tether-abutted-left react-datepicker__tether-element-attached-top react-datepicker__tether-element-attached-left react-datepicker__tether-target-attached-bottom react-datepicker__tether-target-attached-left react-datepicker__tether-enabled">
+    <input type="text" class="input-text-box__input input-text-box__input--datepicker react-datepicker-ignore-onclickoutside"
+        value="02/11/2017">
+</div>
+ */
+.react-datepicker__input-container {
+    width: 100%;
+    font-family: "Roboto", Arial, "Helvetica Neue", Helvetica, sans-serif;
+    display: block;
+}
+
+.react-datepicker__input-container::after {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "\f073";
+    color: #c1c7ca;
+    margin-left: 10px;
+    font-size: 30px;
+    position: absolute;
+    right: 7px;
+    top: 11px;
+    z-index: 0;
+}
+
+.react-datepicker__input-container input {
+    z-index: 1;
+    display: inline-block;
+    position: relative;
+    background: none;
+}
+
+/**
+<div data-behaviour="annotation-studio-resource-editor" data-resource-templates="http://localhost:8888/en/s/site-one/annotation-studio/open/resource"
+    data-canvas="http://dams.llgc.org.uk/iiif/2.0/4693064/canvas/4693065.json">
+    <div data-reactroot="">
+        <div class="resource-navigation">
+        </div>
+    </div>
+</div>
+ */
+/**
+        <div class="resource-navigation">
+            <h2 class="resource-navigation__heading">What do you want to tag</h2>
+            <div class="resource-navigation__metadata">
+                <div class="resource-navigation__title">Person</div>
+                <div class="resource-navigation__description">Tag and identify a person</div>
+            </div>
+            <div class="resource-navigation__metadata">
+                <div class="resource-navigation__title">Whole Photograph</div>
+                <div class="resource-navigation__description">Describe the contents of the photograph</div>
+            </div>
+        </div>
+ */
+.resource-navigation__metadata {
+    background: #eaeced;
+    border: 0 !important;
+}
+
+.resource-navigation__title {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.resource-navigation__back {
+    border: 0 !important;
+    font-size: 20px;
+    color: #e2231a;
+    text-transform: capitalize;
+}
+
+.resource-navigation__back::before {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "";
+    padding-right: 10px;
+}
+
+.confirmation-page {
+    text-align: center;
+}
+
+.confirmation-page__title {
+    border-bottom: 1px solid #0f813e;
+    border-top: 4px solid #0f813e;
+    color: #0f813e;
+    font-size: 21px;
+    padding: 20px 20px 40px;
+}
+
+.confirmation-page__title::before {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "\f058";
+    display: block;
+}
+
+.confirmation-page__copy {
+    font-size: 16px;
+    font-weight: bold;
+    padding-top: 20px;
+}

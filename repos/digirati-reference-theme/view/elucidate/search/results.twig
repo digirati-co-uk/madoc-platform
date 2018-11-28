@@ -1,0 +1,74 @@
+<main class="c-main">
+
+    <h1>Search results</h1>
+{% if annotations|length > 0 and annotations|length <= 1 %}
+    <p class="lede">Found <strong>{{ annotations|length }}</strong> result for '{{ query }}'</p>
+{% elseif annotations|length > 1 %}
+    <p class="lede">Found <strong>{{ annotations|length }}</strong> results for '{{ query }}'</p>
+{% else %}
+    <p>No search results</p>
+{% endif %}
+
+    <div class="c-search-block">
+        <div class="c-search-block__search">
+            <div class="form-search ">
+                <form>
+                    <div class="c-form-field c-form-field--with-button">
+                        <label for="q" class="c-form-field__label sr-only">Search the collection</label>
+                        <input type="text" name="q" id="q" value="{{ query }}" placeholder="Search the collection"
+                               class="c-form-field__input c-form-field__search"/>
+                        <button class="c-form-field__button c-form-field__input" type="submit">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+
+    {% if annotations|length > 0 %}
+
+
+        {% if(annotationsSortable.deduplicateByManifest().orderByLabel().get()) %}
+            <h2>Units that refer to {{ topic }}</h2>
+            <section class="c-main__tiles c-grid-flex">
+                {% for annotation in annotationsSortable.deduplicateByManifest().orderByLabel().get() %}
+                    <div class="c-grid-flex__thirds">
+                        <div class="c-image">
+                            <div class="c-image__container">
+                                <a class="c-image__src" href="{{ annotation.manifestSource.omekaUri }}">
+                                    <img src="{{ annotation.thumbnail.full }}"/>
+                                </a>
+                            </div>
+                            <div class="c-image__label">
+                                <a href="{{ annotation.manifestSource.omekaUri }}">{{ annotation.manifestSource.label }}</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </section>
+        {% endif %}
+
+        {% if annotationsSortable.groupByCanvas().orderByLabel().get() %}
+            <h2 class="h2">Microfilm pages that mention {{ topic }}:</h2>
+            <section class="c-main__tiles c-grid-flex">
+                {% for annotation in annotationsSortable.groupByCanvas().orderByLabel().get() %}
+                    <div class="c-grid-flex__thirds">
+                        <div class="c-image">
+                            <div class="c-image__container">
+                                <a class="c-image__src" href="{{ annotation.manifestSource.omekaUri }}">
+                                    <img src="{{ annotation.thumbnails[0].full }}"/>
+                                </a>
+                            </div>
+                            <div class="c-image__label">
+                                <a href="{{ annotation.canvasSource.omekaUri }}">{{ annotation.canvasSource.label }}</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </section>
+        {% endif %}
+
+
+    {% endif %}
+</main>

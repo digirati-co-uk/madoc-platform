@@ -1,0 +1,18 @@
+{
+  "name": "digirati/omeka-iiif-storage-module",
+  "license": "MIT",
+  "version": "1.0.0",
+  "description": "Omeka Sentry module",
+  "type": "omeka-s-module",
+  "require": {
+    "digirati/omeka-shared": "~1.0.0",
+    "dlcs/iiif-php": "^1.2",
+    "php": ">=7.0"
+  },
+  "autoload": {
+    "psr-4": {"IIIFStorage\\": "src"}
+  },
+  "extra": {
+    "install-name": "IIIFStorage"
+  }
+}

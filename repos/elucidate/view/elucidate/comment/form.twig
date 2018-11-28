@@ -1,0 +1,9 @@
+{% if (form) %}
+    <div class="c-form">
+        <h3 class="h4">{{ translate(formLabel ?? 'Join the conversation') }}?</h3>
+        {{ form(form) }}
+        <div class="c-form__content">
+            {{ content|raw }}
+        </div>
+    </div>
+{% endif %}

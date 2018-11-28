@@ -1,0 +1,23 @@
+{% do headLink().prependStylesheet(assetUrl('css/iiif-storage.css', 'IIIFStorage')) %}
+
+{% include 'iiif-storage/partials/breadcrumbs' %}
+
+{% include 'iiif-storage/partials/canvas-navigation.twig' %}
+
+{% if renderMetadata %}
+    {% set title = canvas.getLabel() | default(manifest.getLabel()) %}
+    {% include 'iiif-storage/partials/title.twig' %}
+
+    {% include 'iiif-storage/partials/canvas-attribution.twig' %}
+{% endif %}
+
+{% include 'iiif-storage/partials/canvas-status.twig' %}
+
+{% for mediaItem in media %}
+    {{ mediaItem.render({ context: _context }) | raw }}
+{% endfor %}
+
+{% if(comments) %}
+    {% include 'comments/comments/view-comments.twig' %}
+{% endif %}
+

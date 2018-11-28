@@ -1,0 +1,8 @@
+{% if (form) %}
+    <div class="c-form c-form--comments">
+        {{ form(form) }}
+        <div class="c-form__content">
+            {{ content|raw }}
+        </div>
+    </div>
+{% endif %}

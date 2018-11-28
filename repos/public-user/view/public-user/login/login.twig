@@ -1,0 +1,9 @@
+{# htmlElement('body').appendAttribute('class', 'login') #}
+<div class="c-form c-form--login">
+  <h1 class="c-form__heading">{{  translate('Login') }}</h1>
+  {{ form(form) }}
+  <p class="c-form__forgot-password">{{ hyperlink(translate('Forgot password?'), url('forgot-password')) }}</p>
+  <div class="c-form__content">
+      {{ content|raw }}
+  </div>
+</div>

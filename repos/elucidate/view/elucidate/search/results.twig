@@ -1,0 +1,68 @@
+<h1>Search results</h1>
+{% if annotations|length > 0 and annotations|length <= 1 %}
+    <p class="lede">Found <strong>{{ annotations|length }}</strong> result for '{{ query }}'</p>
+{% elseif annotations|length > 1 %}
+    <p class="lede">Found <strong>{{ annotations|length }}</strong> results for '{{ query }}'</p>
+{% else %}
+    <p>No search results</p>
+{% endif %}
+
+<div class="c-search-block">
+    <div class="c-search-block__search">
+        <div class="form-search ">
+            <form>
+                <div class="form-field form-field--with-button">
+                    <label for="q" class="form-field__label sr-only">Search the collection</label>
+                    <input type="text" name="q" id="q" value="{{ query }}" placeholder="Search the collection"
+                           class="form-field__input form-field__search"/>
+                    <button class="form-field__button form-field__input" type="submit">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% if annotations|length > 0 %}
+
+    {% if annotationsSortable.groupByCanvas().orderByLabel().get() %}
+        <h2>Canvases featuring {{ topic }}</h2>
+        <div class="c-dig-grid ">
+            {% for annotation in annotationsSortable.groupByCanvas().orderByLabel().get() %}
+                <div class="c-dig-grid__col--3">
+                    <div class="c-thumbnail c-thumbnail--sm">
+                        <a href="{{ annotation.canvasSource.omekaUri }}">
+                            <img src="{{ annotation.thumbnails[0].full }}" height="150">
+                        </a>
+                    </div>
+                    <p>
+                        <a href="{{ annotation.canvasSource.omekaUri }}">{{ annotation.canvasSource.label }}</a>
+                    </p>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if(annotationsSortable.deduplicateByManifest().orderByLabel().get()) %}
+        <h2>Manifests that refer to {{ topic }}</h2>
+        <div class="c-dig-grid ">
+            {% for annotation in annotationsSortable.deduplicateByManifest().orderByLabel().get() %}
+                <div class="c-dig-grid__col--3">
+                    <div class="c-thumbnail c-thumbnail--sm">
+                        <a href="{{ annotation.manifestSource.omekaUri }}">
+                            <img src="{{ annotation.thumbnail.full }}" height="150">
+                        </a>
+                    </div>
+
+                    <p>
+                        <a href="{{ annotation.manifestSource.omekaUri }}">{{ annotation.manifestSource.label }}</a>
+                    </p>
+                </div>
+
+            {% endfor %}
+        </div>
+    {% endif %}
+
+
+{% endif %}

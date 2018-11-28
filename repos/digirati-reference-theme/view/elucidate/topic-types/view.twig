@@ -1,0 +1,36 @@
+<ul class="c-breadcrumbs">
+    <li class="c-breadcrumbs__crumb">
+        <a href="{{ site.url() }} ">{{ site.title() }}</a>
+    </li>
+    <li class="c-breadcrumbs__crumb">
+        <a href="{{ url('site/elucidate_topic_types_index', { name: collection.omekaId }, true) }}">Topics</a>
+    </li>
+    <li class="c-breadcrumbs__crumb">
+        <a href="{{ url('site/elucidate_topic_types_view', { name: type.label }, true) }}">{{ type.label }}</a>
+    </li>
+</ul>
+<h2>{{ type.label }}</h2>
+<div>
+    {% for topic in topics %}
+        <a class="c-cloud" data-score="{{ topic.getScore() }}" href="{{ topic.uri }}">{{ topic.label }}</a>
+    {% endfor %}
+</div>
+<div class="c-divider"></div>
+
+<div class="c-dig-grid">
+    <div class="c-dig-grid__col--6">
+
+            <div class="c-action c-flagged">
+                <a href="{{ url('site/elucidate_flagging', {}, { query: {
+                    subject: url('site/elucidate_topic_types_view', {name: type.label}, true),
+                    redirect: url('site/elucidate_topic_types_view', {name: type.label}, true)
+                } }, true) }}" class="link--plain">
+                    <i class="fa fa-flag-o" aria-hidden="true"></i> Flag this image
+                </a>
+            </div>
+        &nbsp;
+    </div>
+    <div class="c-dig-grid__col--6 c-dig-grid__col--last">
+
+    </div>
+</div>
