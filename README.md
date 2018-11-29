@@ -1,6 +1,4 @@
-Madoc Platform README.md
-
-# Introduction
+# Madoc platform
 
 ## Background
 
