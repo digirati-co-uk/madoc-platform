@@ -32,15 +32,15 @@ _Madoc_ is the product of work for three projects/institutions:
 
 
 
-# Documentation
+## Documentation
 
 Full documentation for the platform can be found here.
 
 [https://madoc.netlify.com/](https://madoc.netlify.com/)
 
-## Installation
+### Installation
 
-### Quick Start
+#### Quick Start
 Get started quickly with the Madoc Platform with Docker and a pre-built database, with our modules configured.
 
 To get started, pull down the madoc-platform repository
@@ -98,11 +98,11 @@ Server commands:
   server-down                Bring server down and remove containers
 ```
 
-### System requirements
+#### System requirements
 
 We bundle a full annotation server into our distribution. You can change this in the docker-compose.yaml file if you need to. With the annotation server, we recommend running with at least 4GB of memory free.
 
-# Next Steps
+## Next Steps
 
 We would like to develop Madoc further and welcome funded projects and collaborations to add new features. 
 
@@ -117,12 +117,12 @@ We would like to turn our attention to:
 * Support for AV collections.
 
 
-# Contribution Guidelines
+## Contribution Guidelines
 
 
 Please feel free to raise Github issues for bugs, or new feature requests.
 
-# LICENSE
+## LICENSE
 
 Omeka S is licensed under the GPL, and the license information can be found here:
 
