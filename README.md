@@ -26,7 +26,7 @@ _Madoc_ is built on:
 
 _Madoc_ is the product of work for three projects/institutions:
 
-* Indigenous Digital Archive: a project from the [Museum of Indian Arts and Culture](http://indianartsandculture.org/) in Santa Fe, New Mexico.
+* Indigenous Digital Archive: a project from the [Museum of Indian Arts and Culture](http://indianartsandculture.org/) in Santa Fe, New Mexico, funded by an IMLS National Leadership Grant and a Knight Foundation prototyping grant.
 * Crowdsourcing Platform for Wales: a project with the [National Library of Wales](https://www.library.wales/), funded by the Welsh government, to build a reusable IIIF-based crowdsourcing platform.
 * DARIAH-VL VRE Service Infrastructure project: [Ghent Centre for Digital Humanities ](https://www.ghentcdh.ugent.be/).
 
