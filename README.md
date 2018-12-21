@@ -106,6 +106,13 @@ Server commands:
   server-down                Bring server down and remove containers
 ```
 
+#### Logging in
+If you use the provided database a new Admin user will be created with the following details:
+```
+username: admin@example.org
+password: Testpass123_
+```
+
 #### System requirements
 
 We bundle a full annotation server into our distribution. You can change this in the docker-compose.yaml file if you need to. With the annotation server, we recommend running with at least 4GB of memory free.
