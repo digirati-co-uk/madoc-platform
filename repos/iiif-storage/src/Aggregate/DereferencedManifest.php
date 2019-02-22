@@ -92,7 +92,7 @@ class DereferencedManifest implements AggregateInterface
                             ->setUri($url)
                             ->setMethod('GET')
                     )
-                    ->getContent();
+                    ->getBody();
 
                 $this->manifestCache[$url] = (string) $body;
             } catch (\Throwable $e) {

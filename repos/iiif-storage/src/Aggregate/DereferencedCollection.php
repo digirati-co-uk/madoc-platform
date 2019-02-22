@@ -93,7 +93,7 @@ class DereferencedCollection implements AggregateInterface
                             ->setUri($url)
                             ->setMethod('GET')
                     )
-                    ->getContent();
+                    ->getBody();
 
                 $this->collectionCache[$url] = (string)$body;
             } catch (\Throwable $e) {
