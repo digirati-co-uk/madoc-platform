@@ -16,16 +16,16 @@
             {% set hash = 'carousel' %}
             {% for image in canvas.allPrevious | slice(-4, 5) %}
                 {% set active = false %}
-                {% include 'iiif-view/partials/canvas-thumbnail' %}
+                {% include 'iiif-storage/partials/canvas-thumbnail' %}
             {% endfor %}
 
             {% set image = canvas %}
             {% set active = true %}
-            {% include 'iiif-view/partials/canvas-thumbnail' %}
+            {% include 'iiif-storage/partials/canvas-thumbnail' %}
 
             {% for image in canvas.allNext | slice(1, 5) %}
                 {% set active = false %}
-                {% include 'iiif-view/partials/canvas-thumbnail' %}
+                {% include 'iiif-storage/partials/canvas-thumbnail' %}
             {% endfor %}
         </div>
 

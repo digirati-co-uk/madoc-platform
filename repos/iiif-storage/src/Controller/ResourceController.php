@@ -60,6 +60,8 @@ class ResourceController extends AbstractPsr7ActionController
     public function manifestAction()
     {
         $id = $this->params()->fromRoute('manifest');
+        $originalId = $this->params()->fromRoute('original', false);
+
         try {
             $manifest = $this->manifests->getById($id);
         } catch (\Throwable $e) {
@@ -67,12 +69,14 @@ class ResourceController extends AbstractPsr7ActionController
         }
 
         // Item-set ID to manifest
-        return new JsonResponse($this->manifestBuilder->build($manifest), 200, []);
+        return new JsonResponse($this->manifestBuilder->build($manifest, $originalId), 200, []);
     }
 
     public function canvasAction()
     {
         $id = $this->params()->fromRoute('canvas');
+        $originalId = $this->params()->fromRoute('original', false);
+
         try {
             $canvas = $this->canvasRepository->getById($id);
         } catch (\Throwable $e) {
@@ -80,12 +84,14 @@ class ResourceController extends AbstractPsr7ActionController
         }
 
         // Item ID to canvas
-        return new JsonResponse($this->canvasBuilder->build($canvas));
+        return new JsonResponse($this->canvasBuilder->build($canvas, $originalId));
     }
 
     public function collectionAction()
     {
         $id = $this->params()->fromRoute('collection');
+        $originalId = $this->params()->fromRoute('original', false);
+
         try {
             $collection = $this->collections->getById($id);
         } catch (\Throwable $e) {

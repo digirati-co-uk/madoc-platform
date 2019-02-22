@@ -39,9 +39,9 @@ class ManifestBuilder
         $this->canvasBuilder = $canvasBuilder;
     }
 
-    public function buildResource(ItemRepresentation $manifest)
+    public function buildResource(ItemRepresentation $manifest, bool $originalIds = false)
     {
-        $json = $this->build($manifest);
+        $json = $this->build($manifest, $originalIds);
         $manifestObject = Manifest::fromArray($json);
 
         return new ManifestRepresentation(
@@ -51,12 +51,14 @@ class ManifestBuilder
         );
     }
 
-    public function build(ItemRepresentation $manifest): array
+    public function build(ItemRepresentation $manifest, bool $originalIds = false): array
     {
         $json = $this->extractSource($manifest);
 
         $json['@context'] = $json['@context'] ?? 'http://iiif.io/api/presentation/2/context.json';
-        $json['@id'] = $this->router->manifest($manifest->id(), !!$this->siteId);
+        if ($originalIds === false) {
+            $json['@id'] = $this->router->manifest($manifest->id(), !!$this->siteId);
+        }
         $json['@type'] = $json['@type'] ?? 'sc:Manifest';
         $json['o:id'] = $manifest->id();
 
@@ -64,7 +66,9 @@ class ManifestBuilder
             [
                 '@id' => $json['@id'] . '/sequence',
                 '@type' => 'sc:Sequence',
-                'canvases' => array_map([$this->canvasBuilder, 'build'], $this->manifest->getCanvases($manifest)),
+                'canvases' => array_map(function($canvas) use ($originalIds) {
+                    return $this->canvasBuilder->build($canvas, $originalIds);
+                }, $this->manifest->getCanvases($manifest)),
             ]
         ];
 

@@ -66,9 +66,24 @@ class Module extends AbstractModule implements ConfigProviderInterface
         $viewContent = $container->get(ViewContentListener::class);
         $viewContent->attach($sharedEventManager);
 
-        $sharedEventManager->attach(SiteSettingsForm::class, 'form.add_elements', function(Event $event) {
+        $sharedEventManager->attach(SiteSettingsForm::class, 'form.add_elements', function (Event $event) {
             /** @var SiteSettingsForm $form */
             $form = $event->getTarget();
+
+            $form->add(
+                (new Fieldset('iiif-storage'))
+                    ->add(
+                        (new Checkbox('original-ids'))
+                            ->setOptions([
+                                'label' => 'Use original IDs',
+                                'info' => 'By default, '
+                            ])
+                        ->setValue($form->getSiteSettings()->get('original-ids', false))
+                    )
+                    ->setOptions([
+                        'label' => 'IIIF Storage options',
+                    ])
+            );
 
             $form->add(
                 (new Fieldset('crowd-sourcing'))
@@ -150,7 +165,8 @@ class Module extends AbstractModule implements ConfigProviderInterface
         $events->attach(ModuleEvent::EVENT_MERGE_CONFIG, array($this, 'onMergeConfig'));
     }
 
-    public function onView(Event $e) {
+    public function onView(Event $e)
+    {
         /** @var PhpRenderer $renderer */
         $renderer = $e->getTarget();
         /** @var \Zend\View\Variables $variables */

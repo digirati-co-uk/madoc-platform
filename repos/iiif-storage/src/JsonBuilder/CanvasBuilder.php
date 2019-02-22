@@ -34,9 +34,9 @@ class CanvasBuilder
         $this->imageServiceBuilder = $imageServiceBuilder;
     }
 
-    public function buildResource(ItemRepresentation $canvas)
+    public function buildResource(ItemRepresentation $canvas, bool $originalIds = false)
     {
-        $json = $this->build($canvas);
+        $json = $this->build($canvas, $originalIds);
         $canvasObject = Canvas::fromArray($json);
 
         return new CanvasRepresentation(
@@ -46,12 +46,14 @@ class CanvasBuilder
         );
     }
 
-    public function build(ItemRepresentation $canvas): array
+    public function build(ItemRepresentation $canvas, bool $originalIds = false): array
     {
         $json = $this->extractSource($canvas);
 
         $json['@context'] = $json['@context'] ?? 'http://iiif.io/api/presentation/2/context.json';
-        $json['@id'] = $this->router->canvas($canvas->id(), !!$this->siteId);
+        if ($originalIds === false) {
+            $json['@id'] = $this->router->canvas($canvas->id(), !!$this->siteId);
+        }
         $json['@type'] = $json['@type'] ?? 'sc:Canvas';
         $json['o:id'] = $canvas->id();
 
