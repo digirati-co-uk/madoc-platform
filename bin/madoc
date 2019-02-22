@@ -120,6 +120,29 @@ commandToRun=$1;shift;
 
 case "${commandToRun}" in
     init)
+        cd bare;
+            git clone https://github.com/digirati-co-uk/omeka-s.git --branch bugfix/7.2-rebase --depth 1
+        cd ../;
+
+        cd repos;
+            git clone https://github.com/digirati-co-uk/iiif-php.git --branch feature/expanded-api --depth 1
+        cd ../;
+
+        ## Install CS Fixer.
+        curl -L https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -o php-cs-fixer
+        chmod a+x php-cs-fixer
+        mv php-cs-fixer ./bin/php-cs-fixer
+
+        ## Install vendors for development
+        rm ./composer.json
+        rm ./composer.lock
+        rm -rf ./vendor
+        cp ./config/composer.json ./composer.json
+        cp ./config/patch-composer.php ./patch-composer.php
+        php patch-composer.php
+        composer install --no-dev --no-scripts --optimize-autoloader
+    ;;
+    init-internal)
         loopModules init
         cd bare;
         git clone git@github.com:digirati-co-uk/omeka-s.git

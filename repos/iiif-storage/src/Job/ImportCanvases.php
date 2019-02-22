@@ -10,6 +10,7 @@ use Omeka\Api\Manager;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Job\AbstractJob;
 use Omeka\Job\JobInterface;
+use Throwable;
 use Zend\Log\Logger;
 
 class ImportCanvases extends AbstractJob implements JobInterface
@@ -58,14 +59,17 @@ class ImportCanvases extends AbstractJob implements JobInterface
             // I think this was missing.
             $saturator->addPropertyIds($item);
 
-            /** @var ItemRepresentation $response */
-            $response = $api->create('items', $item->export())->getContent();
-            $logger->info('Finished creating canvas, with id ' . $response->id());
+            /** @var ItemRepresentation|null $response */
+            $response = $this->createItem($api, $logger, $item);
+            if ($response) {
+                $logger->info('Finished creating canvas, with id ' . $response->id());
+            } else {
+                $logger->warn('Canvas may not have been imported');
+            }
 
-            if ($manifestItemId && $response->id()) {
+            if ($manifestItemId && $response && $response->id()) {
                 $canvasIds[$manifestItemId] = isset($canvasIds[$manifestItemId]) ? $canvasIds[$manifestItemId] : [];
                 $canvasIds[$manifestItemId][] = (string)$response->id();
-
             }
         }
 
@@ -73,6 +77,23 @@ class ImportCanvases extends AbstractJob implements JobInterface
         // Finally add canvases to manifests.
         foreach ($canvasIds as $manifestId => $idList) {
             $this->addCanvasesToManifest($manifestId, $idList);
+        }
+    }
+
+    public function createItem(Manager $api, Logger $logger, ItemRequest $item)
+    {
+        try {
+            return $api->create('items', $item->export())->getContent();
+        } catch (Throwable $e) {
+            $logger->warn('Failed to import canvas, trying without media');
+            try {
+                $export = $item->export();
+                unset($export['o:media']);
+                return $api->create('items', $export)->getContent();
+            } catch (Throwable $e) {
+                $logger->err($e->getMessage());
+                return null;
+            }
         }
     }
 
