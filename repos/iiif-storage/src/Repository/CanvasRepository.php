@@ -77,6 +77,34 @@ class CanvasRepository
         return $this->api->read(static::API_TYPE, $id, $this->getDefaultQuery())->getContent();
     }
 
+    /**
+     * @param string $id
+     * @return null|ItemRepresentation
+     */
+    public function getByResource(string $id)
+    {
+        $items = $this->api->search(static::API_TYPE, [
+            'resource_class_id' => $this->saturator->getResourceClassByTerm('sc:Canvas')->id(),
+            'property' => [
+                [
+                    'joiner' => 'and',
+                    'property' => $this->saturator->loadPropertyId('dcterms:identifier'),
+                    'type' => 'eq',
+                    'text' => $id
+                ]
+            ]
+        ])->getContent();
+
+        if (empty($items)) {
+            return null;
+        }
+
+        // @todo there can be more than one.
+        $canvasId = array_pop($items);
+
+        return $canvasId;
+    }
+
     public function getAll(): array
     {
         return $this->api->search(static::API_TYPE, $this->getDefaultQuery())->getContent();

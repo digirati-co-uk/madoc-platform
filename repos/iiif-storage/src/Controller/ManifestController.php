@@ -4,12 +4,14 @@ namespace IIIFStorage\Controller;
 
 
 use Digirati\OmekaShared\Framework\AbstractPsr7ActionController;
+use IIIFStorage\Extension\SettingsHelper;
 use IIIFStorage\JsonBuilder\CanvasBuilder;
 use IIIFStorage\JsonBuilder\CollectionBuilder;
 use IIIFStorage\JsonBuilder\ManifestBuilder;
 use IIIFStorage\Repository\CanvasRepository;
 use IIIFStorage\Repository\CollectionRepository;
 use IIIFStorage\Repository\ManifestRepository;
+use IIIFStorage\Utility\ApiRouter;
 use IIIFStorage\Utility\Router;
 use Omeka\Api\Exception\NotFoundException;
 use Omeka\Api\Representation\MediaRepresentation;
@@ -47,6 +49,14 @@ class ManifestController extends AbstractPsr7ActionController
      * @var CanvasBuilder
      */
     private $canvasBuilder;
+    /**
+     * @var SettingsHelper
+     */
+    private $settingsHelper;
+    /**
+     * @var ApiRouter
+     */
+    private $apiRouter;
 
     public function __construct(
         ManifestRepository $repo,
@@ -55,7 +65,9 @@ class ManifestController extends AbstractPsr7ActionController
         CollectionRepository $collectionRepo,
         CollectionBuilder $collectionBuilder,
         CanvasRepository $canvasRepository,
-        CanvasBuilder $canvasBuilder
+        CanvasBuilder $canvasBuilder,
+        ApiRouter $apiRouter,
+        SettingsHelper $settingsHelper
     ) {
         $this->repo = $repo;
         $this->builder = $builder;
@@ -64,6 +76,8 @@ class ManifestController extends AbstractPsr7ActionController
         $this->collectionBuilder = $collectionBuilder;
         $this->canvasRepository = $canvasRepository;
         $this->canvasBuilder = $canvasBuilder;
+        $this->settingsHelper = $settingsHelper;
+        $this->apiRouter = $apiRouter;
     }
 
     public function addCollectionToViewModel(array $vm, string $collectionId, string $manifestId) {
@@ -72,7 +86,7 @@ class ManifestController extends AbstractPsr7ActionController
             if (!$this->collectionRepo->containsManifest($collection, $manifestId)) {
                 throw new NotFoundException();
             }
-            $collectionRepresentation = $this->collectionBuilder->buildResource($collection);
+            $collectionRepresentation = $this->collectionBuilder->buildResource($collection, $this->shouldUseOriginalIds());
             $vm['collection'] = $collectionRepresentation->getCollection();
             $vm['collectionResource'] = $collectionRepresentation;
         }
@@ -80,11 +94,16 @@ class ManifestController extends AbstractPsr7ActionController
 
     public function viewAction()
     {
+        // Set up the API Router to use original IDs for this request.
+        if ($this->settingsHelper->__invoke('original-ids', false)) {
+            $this->apiRouter->useOriginalUrls();
+        }
+
         $manifestId = $this->params()->fromRoute('manifest');
         $collectionId = $this->params()->fromRoute('collection');
 
         $manifest = $this->repo->getById($manifestId);
-        $manifestRepresentation = $this->builder->buildResource($manifest);
+        $manifestRepresentation = $this->builder->buildResource($manifest, $this->shouldUseOriginalIds());
 
         $vm = [
             'manifest' => $manifestRepresentation->getManifest(),
@@ -103,14 +122,24 @@ class ManifestController extends AbstractPsr7ActionController
         return $this->render('iiif.manifest.view', $vm);
     }
 
+    private function shouldUseOriginalIds(): bool
+    {
+        return $this->settingsHelper->__invoke('original-ids', false);
+    }
+
     public function viewCanvasAction()
     {
+        // Set up the API Router to use original IDs for this request.
+        if ($this->shouldUseOriginalIds()) {
+            $this->apiRouter->useOriginalUrls();
+        }
+
         $canvasId = $this->params()->fromRoute('canvas');
         $manifestId = $this->params()->fromRoute('manifest');
         $collectionId = $this->params()->fromRoute('collection');
 
         $canvasRepresentation = $this->canvasRepository->getById($canvasId);
-        $canvas = $this->canvasBuilder->buildResource($canvasRepresentation);
+        $canvas = $this->canvasBuilder->buildResource($canvasRepresentation, $this->shouldUseOriginalIds());
 
         $vm = [
             'router' => $this->router,
@@ -129,7 +158,7 @@ class ManifestController extends AbstractPsr7ActionController
             if (!$this->repo->containsCanvas($manifest, $canvasId)) {
                 throw new NotFoundException();
             }
-            $manifestRepresentation = $this->builder->buildResource($manifest);
+            $manifestRepresentation = $this->builder->buildResource($manifest, $this->shouldUseOriginalIds());
             $vm['manifest'] = $manifestRepresentation->getManifest();
             $vm['manifestResource'] = $manifestRepresentation;
 

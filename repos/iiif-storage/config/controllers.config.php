@@ -3,12 +3,14 @@
 use IIIFStorage\Controller\CollectionController;
 use IIIFStorage\Controller\ManifestController;
 use IIIFStorage\Controller\ResourceController;
+use IIIFStorage\Extension\SettingsHelper;
 use IIIFStorage\JsonBuilder\CanvasBuilder;
 use IIIFStorage\JsonBuilder\CollectionBuilder;
 use IIIFStorage\JsonBuilder\ManifestBuilder;
 use IIIFStorage\Repository\CanvasRepository;
 use IIIFStorage\Repository\CollectionRepository;
 use IIIFStorage\Repository\ManifestRepository;
+use IIIFStorage\Utility\ApiRouter;
 use IIIFStorage\Utility\Router;
 use Psr\Container\ContainerInterface;
 
@@ -30,7 +32,9 @@ return [
                 return new CollectionController(
                     $c->get(CollectionRepository::class),
                     $c->get(CollectionBuilder::class),
-                    $c->get(Router::class)
+                    $c->get(Router::class),
+                    $c->get(ApiRouter::class),
+                    $c->get(SettingsHelper::class)
                 );
             },
             ManifestController::class => function(ContainerInterface $c) {
@@ -41,7 +45,9 @@ return [
                     $c->get(CollectionRepository::class),
                     $c->get(CollectionBuilder::class),
                     $c->get(CanvasRepository::class),
-                    $c->get(CanvasBuilder::class)
+                    $c->get(CanvasBuilder::class),
+                    $c->get(ApiRouter::class),
+                    $c->get(SettingsHelper::class)
                 );
             }
         ],

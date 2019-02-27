@@ -59,6 +59,40 @@ $iiifStorageRoutes = [
                     'defaults' => ['action' => 'imageService'],
                 ],
             ],
+            'original-site-collection' => [
+                'type' => 'segment',
+                'options' => [
+                    'route' => '/api/original/top',
+                    'defaults' => ['action' => 'siteCollection'],
+                ],
+            ],
+
+            'original-collection' => [
+                'type' => 'segment',
+                'options' => [
+                    'constraints' => ['collection' => '[0-9]+'],
+                    'route' => '/api/original/collection/:collection',
+                    'defaults' => ['action' => 'collection'],
+                ],
+            ],
+
+            'original-manifest' => [
+                'type' => 'segment',
+                'options' => [
+                    'constraints' => ['manifest' => '[0-9]+'],
+                    'route' => '/api/original/manifest/:manifest',
+                    'defaults' => ['action' => 'manifest', 'original' => true],
+                ],
+            ],
+
+            'original-canvas' => [
+                'type' => 'segment',
+                'options' => [
+                    'constraints' => ['canvas' => '[0-9]+'],
+                    'route' => '/api/original/canvas/:canvas',
+                    'defaults' => ['action' => 'canvas'],
+                ],
+            ],
         ]
     ],
 ];

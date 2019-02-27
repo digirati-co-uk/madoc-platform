@@ -133,7 +133,12 @@ return [
                 return new ApiRouter($c->get(UrlHelper::class));
             },
             Router::class => function (ContainerInterface $c) {
-                return new Router($c->get(UrlHelper::class));
+                return new Router(
+                    $c->get(UrlHelper::class),
+                    $c->get(ManifestRepository::class),
+                    $c->get(CollectionRepository::class),
+                    $c->get(CanvasRepository::class)
+                );
             },
             CanvasBuilder::class => function (ContainerInterface $c) {
                 return new CanvasBuilder($c->get(ApiRouter::class), $c->get(ImageServiceBuilder::class));
@@ -255,12 +260,15 @@ return [
                     $c->get(CollectionBuilder::class)
                 );
             },
+            SettingsHelper::class => function (ContainerInterface $c) {
+                return new SettingsHelper($c->get('Omeka\Settings\Site'));
+            }
         ]
     ],
     'view_helpers' => [
         'factories' => [
             'siteSetting' => function (ContainerInterface $c) {
-                return new SettingsHelper($c->get('Omeka\Settings\Site'));
+                return $c->get(SettingsHelper::class);
             }
         ]
     ],

@@ -13,6 +13,8 @@ use Omeka\Api\Representation\ValueRepresentation;
 
 class CollectionBuilder
 {
+    use MetadataAggregator;
+
     /**
      * @var ApiRouter
      */
@@ -21,6 +23,7 @@ class CollectionBuilder
      * @var ManifestBuilder
      */
     private $manifestBuilder;
+
     /**
      * @var string
      */
@@ -32,11 +35,9 @@ class CollectionBuilder
         $this->manifestBuilder = $builder;
     }
 
-    use MetadataAggregator;
-
-    public function buildResource(ItemSetRepresentation $omekaCollection): CollectionRepresentation
+    public function buildResource(ItemSetRepresentation $omekaCollection, $originalIds = false): CollectionRepresentation
     {
-        $json = $this->build($omekaCollection);
+        $json = $this->build($omekaCollection, $originalIds);
         // Map children.
         $manifestIndex = array_reduce(
             $omekaCollection->value('sc:hasManifests', ['all' => true]),
@@ -50,8 +51,8 @@ class CollectionBuilder
             }, []
         );
         // Build collection.
-        $collection = ResourceFactory::createCollection($json, function ($url) use ($manifestIndex) {
-            return $this->manifestBuilder->build($manifestIndex[$url]);
+        $collection = ResourceFactory::createCollection($json, function ($url) use ($manifestIndex, $originalIds) {
+            return $this->manifestBuilder->build($manifestIndex[$url], $originalIds);
         });
 
         return new CollectionRepresentation(
@@ -61,12 +62,14 @@ class CollectionBuilder
         );
     }
 
-    public function build(ItemSetRepresentation $collection): array
+    public function build(ItemSetRepresentation $collection, $originalIds = false): array
     {
         $json = $this->extractSource($collection);
 
         $json['@context'] = $json['@context'] ?? 'http://iiif.io/api/presentation/2/context.json';
-        $json['@id'] = $this->router->collection($collection->id(), !!$this->siteId);
+        if ($originalIds === false) {
+            $json['@id'] = $this->router->collection($collection->id(), !!$this->siteId);
+        }
         $json['@type'] = $json['@type'] ?? 'sc:Collection';
         $json['o:id'] = $collection->id();
 

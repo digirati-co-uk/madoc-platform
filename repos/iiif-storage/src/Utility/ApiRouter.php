@@ -12,9 +12,16 @@ class ApiRouter
      */
     private $url;
 
+    private $isContextOriginal = false;
+
     public function __construct(UrlHelper $url)
     {
         $this->url = $url;
+    }
+
+    public function useOriginalUrls()
+    {
+        $this->isContextOriginal = true;
     }
 
     public function collection(string $id, bool $site = false)
@@ -60,6 +67,8 @@ class ApiRouter
 
     public function getRoute(string $name, bool $site)
     {
+        $name = $this->isContextOriginal ? 'original-' . $name : $name;
+
         if ($site) {
             return "site/iiif-storage/$name";
         }

@@ -9,6 +9,10 @@ use IIIF\Model\Collection;
 use IIIF\Model\Manifest;
 use IIIFStorage\Model\CollectionRepresentation;
 use IIIFStorage\Model\ManifestRepresentation;
+use IIIFStorage\Repository\CanvasRepository;
+use IIIFStorage\Repository\CollectionRepository;
+use IIIFStorage\Repository\ManifestRepository;
+use Omeka\Api\Manager;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Api\Representation\ItemSetRepresentation;
 use Omeka\Api\Representation\ValueRepresentation;
@@ -20,11 +24,26 @@ class Router
      * @var UrlHelper
      */
     private $url;
+    /**
+     * @var ManifestRepository
+     */
+    private $manifest;
+    /**
+     * @var CollectionRepository
+     */
+    private $collection;
+    /**
+     * @var CanvasRepository
+     */
+    private $canvas;
 
-    public function __construct(UrlHelper $helper)
+    public function __construct(UrlHelper $helper, ManifestRepository $manifest, CollectionRepository $collection, CanvasRepository $canvas)
     {
 
         $this->url = $helper;
+        $this->manifest = $manifest;
+        $this->collection = $collection;
+        $this->canvas = $canvas;
     }
 
     public function isAdmin()
@@ -138,7 +157,8 @@ class Router
 
             $id = isset($entityOrId->omekaId) ? $entityOrId->omekaId : null;
             if ($id === null) {
-                throw new \LogicException('Omeka ID not found on resource.');
+                // THIS IS NOT A GOOD PATH.
+                return $this->expensiveFetchId($entityOrId);
             }
             return $id;
         }
@@ -163,9 +183,45 @@ class Router
         }
         $manifests = $canvas->value('dcterms:isPartOf', ['all' => true]) ?? [];
         return current(
-            array_map(function (ValueRepresentation $value) {
-                return $value->valueResource();
-            }, $manifests)
-        ) ?? null;
+                array_map(function (ValueRepresentation $value) {
+                    return $value->valueResource();
+                }, $manifests)
+            ) ?? null;
+    }
+
+    private function expensiveFetchId($entityOrId)
+    {
+
+        if ($entityOrId instanceof Collection) {
+            $resource = $this->manifest->getByResource($entityOrId->getId());
+            if ($resource) {
+                return $resource->id();
+            }
+        }
+        if ($entityOrId instanceof Manifest) {
+            $resource = $this->manifest->getByResource($entityOrId->getId());
+
+            if ($resource) {
+                return $resource->id();
+            }
+        }
+        if ($entityOrId instanceof Canvas) {
+            $resource = $this->canvas->getByResource($entityOrId->getId());
+            if ($resource) {
+                return $resource->id();
+            }
+        }
+
+        // It might be possible to extract ID.
+        // NOTE: This is last resort to show something to user.
+        $id = $entityOrId->getId();
+        if (strpos($id, 'iiif/api') !== false) {
+            $id = array_pop(explode('/', array_shift(explode('?', $id))));
+            if ($id) {
+                return $id;
+            }
+        }
+
+        throw new \LogicException('Entity ID not found');
     }
 }
