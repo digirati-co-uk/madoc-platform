@@ -17,7 +17,7 @@
 {% for manifest in manifests %}
     <div class="iiif-view-manifest-grid__manifest">
         <a class="iiif-view-playlist-grid"
-           style="background-image: url('{{ manifest.thumbnail }}');background-size: cover;background-position: center;"
+           style="background-image: url('{{ manifest.getThumbnails()[0] }}');background-size: cover;background-position: center;"
            href="{{ router.manifest(manifest, collection) }}">
         </a>
         <p>

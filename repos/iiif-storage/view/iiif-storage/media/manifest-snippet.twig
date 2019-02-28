@@ -1,11 +1,17 @@
 {% do headLink().prependStylesheet(assetUrl('css/iiif-storage.css', 'IIIFStorage')) %}
 
+{% set thumbnails = manifest.getThumbnails() %}
 <div class="iiif-view-manifest-grid__manifest">
     <a class="iiif-view-playlist-grid"
+            {% if thumbnails|length < 4 %}
+                style="background-image: url('{{ thumbnails[0] }}')"
+            {% endif %}
        href="{{ router.manifest(manifest, collection) }}">
-        {% for thumbnail in manifest.getThumbnails()[:4] %}
-            <span class="iiif-view-playlist-grid__image" style="background-image: url('{{ thumbnail }}')"></span>
-        {% endfor %}
+        {% if thumbnails|length >= 4 %}
+            {% for thumbnail in manifest.getThumbnails()[:4] %}
+                <span class="iiif-view-playlist-grid__image" style="background-image: url('{{ thumbnail }}')"></span>
+            {% endfor %}
+        {% endif %}
     </a>
     <p>
         <a class="iiif-view-manifest-grid__manifest-label"
@@ -15,3 +21,4 @@
         {{ manifest.getThumbnails() |length }} images
     </p>
 </div>
+{% endif %}
