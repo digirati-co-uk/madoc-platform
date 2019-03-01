@@ -161,15 +161,14 @@
     display: flex;
     flex-wrap: wrap;
     align-content: center;
-    /*justify-content: space-around;*/
-    justify-content: left;
+    justify-content: space-around;
+    margin-left: -15px;
+    margin-right: -15px;
 }
 .iiif-view-manifest-grid__manifest {
     font-size: 14px;
     line-height: 18px;
-}
-.iiif-view-manifest-grid__manifest ~ .iiif-view-manifest-grid__manifest {
-    margin-left: 30px;
+    margin: 0 15px 30px 15px;
 }
 
 .iiif-view-manifest-grid__manifest-label {
