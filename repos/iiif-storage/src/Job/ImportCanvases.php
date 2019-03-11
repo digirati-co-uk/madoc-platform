@@ -53,9 +53,11 @@ class ImportCanvases extends AbstractJob implements JobInterface
                         FieldValue::entity('dcterms:isPartOf', $manifestItemId, 'resource:item')
                     );
                     $logger->info("(isPartOf) Attaching node id: {$id} to {$manifestItemId}");
+                } else {
+                    $logger->warn('WARNING: Orphaned canvas, this will not be attached to a manifest. Could not find manifest defined in `partOf` property on canvas');
                 }
             } else {
-                $logger->warn('WARNING: Orphaned canvas, this will not be attached to a manifest.');
+                $logger->warn('WARNING: Orphaned canvas, this will not be attached to a manifest. Imported manifests need a `partOf` property to be attached to a manifest.');
             }
 
             // I think this was missing.
