@@ -54,6 +54,8 @@ class ImportCanvases extends AbstractJob implements JobInterface
                     );
                     $logger->info("(isPartOf) Attaching node id: {$id} to {$manifestItemId}");
                 }
+            } else {
+                $logger->warn('WARNING: Orphaned canvas, this will not be attached to a manifest.');
             }
 
             // I think this was missing.
