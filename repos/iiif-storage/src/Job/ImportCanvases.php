@@ -48,6 +48,7 @@ class ImportCanvases extends AbstractJob implements JobInterface
             if (isset($canvas['partOf']['id'])) {
                 $manifestId = $canvas['partOf']['id'];
                 $manifestItemId = $this->getManifestItemId($manifestId);
+                $logger->info("Found manifest in `partOf` field: {$manifestItemId}");
                 if ($manifestItemId) {
                     $item->addField(
                         FieldValue::entity('dcterms:isPartOf', $manifestItemId, 'resource:item')
