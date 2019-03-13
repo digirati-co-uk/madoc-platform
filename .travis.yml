@@ -2,7 +2,7 @@
 ## https://github.com/libero/sample-configuration/blob/master/.travis.yml
 sudo: required
 
-language: minimal
+language: php
 
 before_install:
   - docker -v
