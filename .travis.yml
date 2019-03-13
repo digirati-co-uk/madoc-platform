@@ -24,6 +24,6 @@ script:
 after_script:
   - ./bin/madoc stop
 
-if: |
-  branch = master OR \
-  type = pull_request
+#if: |
+#  branch = master OR \
+#  type = pull_request
