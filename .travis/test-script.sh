@@ -10,7 +10,7 @@ URL='http://localhost:8888/'
 waitForUrl() {
     while [[ ${MAX_TRIES} -gt 0 ]]
     do
-      STATUS=$(curl -L --max-time 1 -s -o /dev/null -w '%{http_code}' ${URL})
+      STATUS=$(curl --max-time 1 -s -o /dev/null -w '%{http_code}' ${URL})
       if [[ ${STATUS} -eq 200 ]]; then
         return 0
       else
