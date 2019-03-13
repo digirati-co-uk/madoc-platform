@@ -118,6 +118,10 @@ SQL;
             $target = $target['source'];
         }
 
+        if (isset($target['type']) && $target['type'] === 'Canvas') {
+            $target = $target['id'];
+        }
+
         if (!$target) {
             return;
         }

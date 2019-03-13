@@ -2,6 +2,8 @@
 
 use Interop\Container\ContainerInterface;
 use PublicUser\Controller\AccountController;
+use PublicUser\Auth\TokenService;
+use PublicUser\Controller\AuthController;
 use PublicUser\Controller\LoginController;
 use PublicUser\Controller\SiteLoginRedirectController;
 use PublicUser\Controller\UserProfileController;
@@ -26,6 +28,12 @@ return [
             },
             SiteLoginRedirectController::class => function ($c) {
                 return new SiteLoginRedirectController();
+            },
+            AuthController::class => function(ContainerInterface $c) {
+                return new AuthController(
+                    $c->get('Omeka\AuthenticationService'),
+                    $c->get(TokenService::class)
+                );
             },
             AccountController::class => function (ContainerInterface $c) {
                 return new AccountController(
