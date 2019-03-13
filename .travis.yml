@@ -12,10 +12,12 @@ before_install:
 
 install:
   - travis_retry docker-compose pull
+  # Add any database test fixtures to `database/sql` before madoc init-ci.
   - ./bin/madoc init-ci
 
 before_script:
   - ./bin/madoc start
+  - ./.travis/wait-for-omeka.sh
 
 script:
   - .travis/test-script.sh
