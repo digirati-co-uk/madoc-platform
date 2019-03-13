@@ -6,7 +6,8 @@ language: minimal
 
 before_install:
   - docker -v
-  - cp .env.test .env
+  # @todo change the name of env, add to ignore and add copy to init.
+  # - cp .env.dist .env
   # Travis starts these, stop them.
   - sudo /etc/init.d/postgresql stop
   - sudo service mysql stop
