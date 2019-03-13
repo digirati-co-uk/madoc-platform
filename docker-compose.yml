@@ -17,6 +17,9 @@ services:
       - OMEKA_ELUCIDATE_URL=elucidate-server
     ports:
       - "8888:80"
+    healthcheck:
+      test: sh -c 'nc -z localhost 8888'
+      interval: 5s
     volumes:
       - ./repos:/srv/omeka/repos
       - ./bare/omeka-s/application:/srv/omeka/application
@@ -46,6 +49,9 @@ services:
     environment:
       - DATABASE_USER=postgres
       - CATALINA_OPTS=-Ddb.url=jdbc:postgresql://database:5432/annotations -Ddb.user="postgres" -Ddb.password=$MYSQL_PASSWORD
+    healthcheck:
+      test: sh -c 'nc -z localhost 8889'
+      interval: 5s
     ports:
       - 8889:8080
   annotation-database:
