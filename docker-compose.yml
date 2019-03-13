@@ -9,17 +9,14 @@ services:
     environment:
       - PHP_IDE_CONFIG=serverName=omeka-workspace
       - APP_ENV=${APP_ENV}
-      - OMEKA__DATABASE_HOST=omeka_db
+      - OMEKA__DATABASE_HOST=madoc-platform-database
       - OMEKA__DATABASE_NAME=${MYSQL_DATABASE}
       - OMEKA__DATABASE_USER=${MYSQL_USER}
       - OMEKA__DATABASE_PASSWORD=${MYSQL_PASSWORD}
       - OMEKA__DATABASE_PORT=${MYSQL_PORT}
-      - OMEKA_ELUCIDATE_URL=elucidate-server
+      - OMEKA_ELUCIDATE_URL=madoc-annotation-server
     ports:
       - "8888:80"
-    healthcheck:
-      test: sh -c 'nc -z localhost 80'
-      interval: 5s
     volumes:
       - ./repos:/srv/omeka/repos
       - ./bare/omeka-s/application:/srv/omeka/application
@@ -49,9 +46,6 @@ services:
     environment:
       - DATABASE_USER=postgres
       - CATALINA_OPTS=-Ddb.url=jdbc:postgresql://database:5432/annotations -Ddb.user="postgres" -Ddb.password=$MYSQL_PASSWORD
-    healthcheck:
-      test: sh -c 'nc -z localhost 8080'
-      interval: 5s
     ports:
       - 8889:8080
   annotation-database:

@@ -1,9 +1,33 @@
 #!/usr/bin/env bash
 set -ex
 
-echo "Wait for containers health"
-.scripts/docker/wait-healthy.sh "madoc-platform-omeka" 60
-.scripts/docker/wait-healthy.sh "madoc-annotation-server" 60
+echo "=> Wait for Omeka to be available"
+
+MAX_TRIES=30
+SECONDS_BETWEEN_CHECKS=5
+URL='http://localhost:8888/'
+
+waitForUrl() {
+    while [[ ${MAX_TRIES} -gt 0 ]]
+    do
+      STATUS=$(curl -L --max-time 1 -s -o /dev/null -w '%{http_code}' ${URL})
+      if [[ ${STATUS} -eq 200 ]]; then
+        return 0
+      else
+        MAX_TRIES=$((MAX_TRIES - 1))
+      fi
+      sleep ${SECONDS_BETWEEN_CHECKS};
+    done
+    return 1
+}
+
+
+if ! waitForUrl; then
+    echo "=> Omeka not available"
+    exit 1;
+fi;
+
+echo "=> Omeka appears to be available";
 
 # Test homepage
 [[ "$(curl -sS "http://localhost:8888/" --output /dev/null --write-out '%{http_code}' 2>&1)" == "200" ]]
