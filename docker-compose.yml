@@ -8,7 +8,6 @@ services:
     environment:
       - PHP_IDE_CONFIG=serverName=omeka-workspace
       - APP_ENV=${APP_ENV}
-      - OMEKA__MODULES=${OMEKA_MODULES}
       - OMEKA__DATABASE_HOST=omeka_db
       - OMEKA__DATABASE_NAME=${MYSQL_DATABASE}
       - OMEKA__DATABASE_USER=${MYSQL_USER}
