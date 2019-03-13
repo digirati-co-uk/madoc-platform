@@ -5,12 +5,11 @@ echo "=> Wait for Omeka to be available"
 
 MAX_TRIES=30
 SECONDS_BETWEEN_CHECKS=5
-URL='http://localhost:8888/'
 
 waitForUrl() {
     while [[ ${MAX_TRIES} -gt 0 ]]
     do
-      STATUS=$(curl --max-time 1 -s -o /dev/null -w '%{http_code}' ${URL})
+      STATUS=$(curl -sS "http://localhost:8888/" --output /dev/null --write-out '%{http_code}' 2>&1)
       if [[ ${STATUS} -eq 200 ]]; then
         return 0
       else
