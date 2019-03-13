@@ -11,13 +11,13 @@ before_install:
 
 install:
   - travis_retry docker-compose pull
-  - ./bin/madoc init
+  - ./bin/madoc init-ci
 
 before_script:
   - ./bin/madoc start
 
 script:
-  - .travis/smoke-test.sh
+  - .travis/test-script.sh
 
 after_script:
   - ./bin/madoc stop
