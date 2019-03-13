@@ -61,7 +61,6 @@ ADD --chown=www-data:www-data bare/omeka-s/themes/ /srv/omeka/themes
 ADD --chown=www-data:www-data repos/ /srv/omeka/repos/
 ADD --chown=www-data:www-data config/patch-composer.php /srv/omeka/patch-composer.php
 ADD --chown=www-data:www-data config/omeka-app/*.config.php  /srv/omeka/application/config/
-ADD --chown=www-data:www-data config/omeka-app/*.config.php  /srv/omeka/application/config/
 ADD --chown=www-data:www-data config/omeka/*  /srv/omeka/config/
 ADD --chown=www-data:www-data config/error.phtml /srv/omeka/application/view/error/index.phtml
 
