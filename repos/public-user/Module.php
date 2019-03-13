@@ -223,7 +223,7 @@ class Module extends AbstractModule
         ]);
 
         $assertionAggregate = new AssertionAggregate();
-        $assertionAggregate->setMode(AssertionAggregate::MODE_ALL);
+        $assertionAggregate->setMode(AssertionAggregate::MODE_AT_LEAST_ONE);
         $assertionAggregate->addAssertion(new SiteIsPublicAssertion());
         $assertionAggregate->addAssertion($isOnRoute);
 
@@ -267,7 +267,7 @@ class Module extends AbstractModule
             ],
             ['search', 'register', 'thanks'],
             (new AssertionAggregate())
-                ->setMode(AssertionAggregate::MODE_ALL)
+                ->setMode(AssertionAggregate::MODE_AT_LEAST_ONE)
                 ->addAssertion(new IsRegistrationPermittedAssertion($siteProvider, $settings))
                 ->addAssertion($isOnRoute)
         );
