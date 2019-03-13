@@ -87,6 +87,7 @@ class CollectionController extends AbstractPsr7ActionController
         } catch (\Throwable $e) {
             throw new NotFoundException();
         }
+
         $collections = array_map(
             function($collection){
                 return $this->builder->buildResource($collection, $this->shouldUseOriginalIds());

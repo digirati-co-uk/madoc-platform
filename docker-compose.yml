@@ -1,13 +1,13 @@
 version: "3"
 services:
-  omeka_ecosystem:
+  omeka-ecosystem:
     build:
       context: .
     links:
       - mysql
     environment:
       - PHP_IDE_CONFIG=serverName=omeka-workspace
-      - APP_ENV=DEV
+      - APP_ENV=${APP_ENV}
       - OMEKA__MODULES=${OMEKA_MODULES}
       - OMEKA__DATABASE_HOST=omeka_db
       - OMEKA__DATABASE_NAME=${MYSQL_DATABASE}

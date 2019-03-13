@@ -1,0 +1,29 @@
+## Adapted from Libero sample configuration.
+## https://github.com/libero/sample-configuration/blob/master/.travis.yml
+sudo: required
+
+language: minimal
+
+before_install:
+  - docker -v
+  - cp .env.test .env
+  # Travis starts these, stop them.
+  - sudo /etc/init.d/postgresql stop
+  - sudo service mysql stop
+
+install:
+  - travis_retry docker-compose pull
+  - ./bin/madoc init
+
+before_script:
+  - ./bin/madoc start
+
+script:
+  - .travis/smoke-test.sh
+
+after_script:
+  - ./bin/madoc stop
+
+if: |
+  branch = master OR \
+  type = pull_request
