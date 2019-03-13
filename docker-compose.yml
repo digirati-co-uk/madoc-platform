@@ -1,6 +1,7 @@
 version: "3"
 services:
   omeka-ecosystem:
+    container_name: madoc-platform-omeka
     build:
       context: .
     links:
@@ -22,7 +23,7 @@ services:
       - ./config/omeka-app/application.config.php:/srv/omeka/application/config/application.config.php
 
   mysql:
-    container_name: omeka_db
+    container_name: madoc-platform-database
     build:
       context: ./
       dockerfile: Dockerfile.db
@@ -38,7 +39,7 @@ services:
       - "3334:3306"
 
   annotation-server:
-    container_name: elucidate-server
+    container_name: madoc-annotation-server
     image: "garyttierneydi/elucidate-server:1.4.3-SNAPSHOT"
     links:
       - annotation-database:database
@@ -48,6 +49,7 @@ services:
     ports:
       - 8889:8080
   annotation-database:
+    container_name: madoc-annotation-database
     image: "garyttierneydi/elucidate-database:1.4.3-SNAPSHOT"
     environment:
       - POSTGRES_DB=annotations
