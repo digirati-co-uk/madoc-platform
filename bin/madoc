@@ -142,6 +142,15 @@ case "${commandToRun}" in
         php patch-composer.php
         composer install --no-dev --no-scripts --optimize-autoloader
     ;;
+    init-ci)
+      cd bare;
+        git clone https://github.com/digirati-co-uk/omeka-s.git --branch bugfix/7.2-rebase --depth 1
+      cd ../;
+
+      cd repos;
+        git clone https://github.com/digirati-co-uk/iiif-php.git --branch feature/expanded-api --depth 1
+      cd ../;
+    ;;
     init-internal)
         loopModules init
         cd bare;

@@ -1,20 +1,20 @@
 version: "3"
 services:
-  omeka_ecosystem:
+  omeka-ecosystem:
+    container_name: madoc-platform-omeka
     build:
       context: .
     links:
       - mysql
     environment:
       - PHP_IDE_CONFIG=serverName=omeka-workspace
-      - APP_ENV=DEV
-      - OMEKA__MODULES=${OMEKA_MODULES}
-      - OMEKA__DATABASE_HOST=omeka_db
+      - APP_ENV=${APP_ENV}
+      - OMEKA__DATABASE_HOST=madoc-platform-database
       - OMEKA__DATABASE_NAME=${MYSQL_DATABASE}
       - OMEKA__DATABASE_USER=${MYSQL_USER}
       - OMEKA__DATABASE_PASSWORD=${MYSQL_PASSWORD}
       - OMEKA__DATABASE_PORT=${MYSQL_PORT}
-      - OMEKA_ELUCIDATE_URL=elucidate-server
+      - OMEKA_ELUCIDATE_URL=madoc-annotation-server
     ports:
       - "8888:80"
     volumes:
@@ -23,7 +23,7 @@ services:
       - ./config/omeka-app/application.config.php:/srv/omeka/application/config/application.config.php
 
   mysql:
-    container_name: omeka_db
+    container_name: madoc-platform-database
     build:
       context: ./
       dockerfile: Dockerfile.db
@@ -34,12 +34,12 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_PORT=${MYSQL_PORT}
     volumes:
-      - ./database/sql /docker-entrypoint-initdb.d/
+      - ./database/sql:/docker-entrypoint-initdb.d/
     ports:
       - "3334:3306"
 
   annotation-server:
-    container_name: elucidate-server
+    container_name: madoc-annotation-server
     image: "garyttierneydi/elucidate-server:1.4.3-SNAPSHOT"
     links:
       - annotation-database:database
@@ -49,6 +49,7 @@ services:
     ports:
       - 8889:8080
   annotation-database:
+    container_name: madoc-annotation-database
     image: "garyttierneydi/elucidate-database:1.4.3-SNAPSHOT"
     environment:
       - POSTGRES_DB=annotations

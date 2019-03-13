@@ -18,8 +18,8 @@ return [
     ],
     'thumbnails' => [
         'types' => [
-            'large' => ['constraint' => 1024],
-            'medium' => ['constraint' => 512],
+            'large' => ['constraint' => 384],
+            'medium' => ['constraint' => 256],
             'square' => ['constraint' => 256],
         ],
         'thumbnailer_options' => [

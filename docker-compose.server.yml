@@ -7,7 +7,6 @@ services:
       - mysql
     environment:
       - APP_ENV=PROD
-      - OMEKA__MODULES=${OMEKA_MODULES}
       - OMEKA__DATABASE_HOST=omeka_db
       - OMEKA__DATABASE_NAME=${MYSQL_DATABASE}
       - OMEKA__DATABASE_USER=${MYSQL_USER}
