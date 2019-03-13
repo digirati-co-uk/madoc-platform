@@ -31,6 +31,6 @@ cache:
   directories:
     - $HOME/docker
 
-#if: |
-#  branch = master OR \
-#  type = pull_request
+if: |
+  branch = master OR \
+  type = pull_request
