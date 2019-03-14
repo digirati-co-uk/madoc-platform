@@ -44,6 +44,9 @@ class CollectionController extends AbstractPsr7ActionController
         $this->settingsHelper = $settingsHelper;
     }
 
+    // @todo move this configuration.
+    const PER_PAGE = 24;
+
     public function viewAction()
     {
         $this->repo->setSiteId($this->currentSite()->id());
@@ -61,12 +64,22 @@ class CollectionController extends AbstractPsr7ActionController
         }
 
         $collectionRepresentation = $this->builder->buildResource($collection, $this->shouldUseOriginalIds());
+        $collectionObj = $collectionRepresentation->getCollection();
+        $manifests = $collectionObj->getManifests();
 
-        return new ViewModel([
-            'collection' => $collectionRepresentation->getCollection(),
+        $viewModel = new ViewModel([
+            'collection' => $collectionObj,
             'resource' => $this->builder->buildResource($collection, $this->shouldUseOriginalIds()),
             'router' => $this->router,
         ]);
+
+        $this->paginate($viewModel, 'manifests', $manifests, self::PER_PAGE);
+
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            $viewModel->setTerminal(true);
+        }
+
+        return $viewModel;
     }
 
     public function viewTopAction()
@@ -92,10 +105,14 @@ class CollectionController extends AbstractPsr7ActionController
             function($collection){
                 return $this->builder->buildResource($collection, $this->shouldUseOriginalIds());
             }, $omekaCollections);
-        return new ViewModel([
-            'collections' => $collections,
+
+        $viewModel = new ViewModel([
             'router' => $this->router,
         ]);
+
+        $this->paginate($viewModel, 'collections', $collections, self::PER_PAGE / 4);
+
+        return $viewModel;
     }
 
     private function shouldUseOriginalIds(): bool

@@ -5,6 +5,8 @@
 {% set title = 'All Collections' %}
 {% include 'iiif-storage/partials/title.twig' %}
 
+{% include 'iiif-storage/partials/pagination.twig' %}
+
 {% for collectionRepresentation in collections %}
     {% set collection = collectionRepresentation.collection() %}
     <h3>
@@ -13,10 +15,10 @@
         </a>
     </h3>
     <div class="iiif-view-manifest-grid">
-        {% for manifest in collection.getManifests() %}
+        {% for manifest in collection.getManifests()[:4] %}
             <div class="iiif-view-manifest-grid__manifest">
                 <a class="iiif-view-playlist-grid"
-                   style="background-image: url('{{ manifest.getThumbnail() }}');background-size: cover;background-position: center;"
+                   style="background-image: url('{{ manifest.getThumbnail() }}');background-size: cover;background-position: top;"
                    href="{{ router.manifest(manifest, collection) }}">
                 </a>
                 <p>
@@ -29,3 +31,5 @@
         {% endfor %}
     </div>
 {% endfor %}
+
+{% include 'iiif-storage/partials/pagination.twig' %}
