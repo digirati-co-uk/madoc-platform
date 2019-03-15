@@ -14,4 +14,4 @@ rm -Rf /srv/omeka/.local /srv/omeka/.config /srv/omeka/.composer
 
 ## Ensure files exists.
 mkdir -p /srv/omeka/files
-chmod 777 /srv/omeka/files
+chmod 770 /srv/omeka/files
