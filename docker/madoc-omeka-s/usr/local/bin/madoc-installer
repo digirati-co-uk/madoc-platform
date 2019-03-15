@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -e
+
+## Set up in the Omeka directory.
+cd /srv/omeka;
+
+## PHP Composer
+patch-composer
+composer update --lock --optimize-autoloader --no-dev --prefer-source --no-interaction
+
+## Clear caches.
+composer clearcache
+rm -Rf /srv/omeka/.local /srv/omeka/.config /srv/omeka/.composer
+
+## Ensure files exists.
+mkdir -p /srv/omeka/files
+chmod 770 /srv/omeka/files
