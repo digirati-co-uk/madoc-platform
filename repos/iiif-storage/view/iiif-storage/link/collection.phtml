@@ -1,0 +1,32 @@
+<?php
+$escape = $this->plugin('escapeHtml');
+
+/** @var \Omeka\Api\Representation\SiteRepresentation $site */
+$pages = $site->pages();
+
+// Disclaimer, this is nasty.
+$container = $site->getServiceLocator();
+/** @var \IIIFStorage\Repository\CollectionRepository $collection */
+$collection = $container->get(\IIIFStorage\Repository\CollectionRepository::class);
+
+$collectionList = $collection->getAll();
+
+$id = isset($data['id']) && '' !== trim($data['id']) ? $data['id'] : null;
+$label = isset($data['label']) && '' !== trim($data['label']) ? $data['label'] : null;
+
+?>
+<label>
+    Label to show
+    <input type="text" data-name="label" value="<?php echo $label; ?>"/>
+</label>
+<label>
+    Collection to link to
+    <select data-name="id">
+        <?php foreach ($collectionList as $collectionItem): ?>
+            <?php /** @var \Omeka\Api\Representation\ItemRepresentation $collectionItem */ ?>
+            <option value="<?php echo $collectionItem->id(); ?>" <?php if ($id === (string)$collectionItem->id()): ?>selected="selected"<?php endif; ?>>
+                <?php echo $collectionItem->displayTitle(); ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+</label>

@@ -387,4 +387,10 @@ return [
             },
         ],
     ],
+    'navigation_links' => [
+        'invokables' => [
+            'manifest' => \IIIFStorage\Link\ManifestLink::class,
+            'collection' => \IIIFStorage\Link\CollectionLink::class,
+        ],
+    ],
 ];
