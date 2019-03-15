@@ -8,14 +8,18 @@ use IIIFImport\Extension\Entity\IiifCanvasEntity;
 use IIIFImport\Extension\Entity\IiifCollectionEntity;
 use IIIFImport\Extension\Entity\IiifManifestEntity;
 use Omeka\Api\Adapter\UserAdapter;
+use Omeka\Api\Manager;
 use Omeka\Api\Representation\SiteRepresentation;
+use Omeka\Api\Representation\UserRepresentation;
 use Omeka\Api\Response;
 use Omeka\Entity\User;
 use Omeka\Module\AbstractModule;
 use Omeka\Permissions\Assertion\SiteIsPublicAssertion;
 use PublicUser\Acl\IsOnRouteAssertion;
 use PublicUser\Acl\IsRegistrationPermittedAssertion;
+use PublicUser\Auth\TokenService;
 use PublicUser\Controller\AccountController;
+use PublicUser\Controller\AuthController;
 use PublicUser\Controller\LoginController;
 use PublicUser\Controller\SiteLoginRedirectController;
 use PublicUser\Settings\PublicUserSettings;
@@ -26,6 +30,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Throwable;
 use Zend\Authentication\AuthenticationService;
 use Zend\Config\Factory;
+use Zend\EventManager\EventManager;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Mvc\Controller\AbstractController;
 use Zend\Mvc\MvcEvent;
@@ -49,7 +54,7 @@ class Module extends AbstractModule
         // Load our composer dependencies.
         $this->loadVendor();
         $this->config = Factory::fromFiles(
-            glob(__DIR__.'/config/*.config.*')
+            glob(__DIR__ . '/config/*.config.*')
         );
 
         return $this->config;
@@ -57,10 +62,10 @@ class Module extends AbstractModule
 
     public function loadVendor()
     {
-        if (file_exists(__DIR__.'/build/vendor-dist/autoload.php')) {
-            require_once __DIR__.'/build/vendor-dist/autoload.php';
-        } elseif (file_exists(__DIR__.'/vendor/autoload.php')) {
-            require_once __DIR__.'/vendor/autoload.php';
+        if (file_exists(__DIR__ . '/build/vendor-dist/autoload.php')) {
+            require_once __DIR__ . '/build/vendor-dist/autoload.php';
+        } elseif (file_exists(__DIR__ . '/vendor/autoload.php')) {
+            require_once __DIR__ . '/vendor/autoload.php';
         }
     }
 
@@ -144,6 +149,28 @@ class Module extends AbstractModule
                     );';
             $connection->exec($sql);
         }
+        if (version_compare($oldVersion, '1.0.3', '<') && version_compare($newVersion, '1.0.3', '>=')) {
+            $sql = '
+            CREATE TABLE oauth_access_tokens (
+              access_token  VARCHAR(40) NOT NULL,
+              client_id     VARCHAR(80),
+              user_id       VARCHAR(80),
+              expires       TIMESTAMP NOT NULL,
+              scope         VARCHAR(4000),
+              PRIMARY KEY (access_token)
+            );
+            CREATE TABLE oauth_authorization_codes (
+              authorization_code   VARCHAR(40) NOT NULL,
+              client_id            VARCHAR(80),
+              user_id              VARCHAR(80),
+              redirect_uri         VARCHAR(2000) NOT NULL,
+              expires              TIMESTAMP NOT NULL,
+              scope                VARCHAR(4000),
+              PRIMARY KEY (authorization_code)
+            );
+            ';
+            $connection->exec($sql);
+        }
 
         parent::upgrade($oldVersion, $newVersion, $serviceLocator);
     }
@@ -152,6 +179,13 @@ class Module extends AbstractModule
     public function onBootstrap(MvcEvent $event)
     {
         parent::onBootstrap($event);
+
+        /** @var EventManager $em */
+        $em = $event->getApplication()->getEventManager();
+        $em->attach(
+            MvcEvent::EVENT_ROUTE,
+            [$this, 'authenticateOAuth']
+        );
 
         $this->addAclRules($event->getRouter(), $event->getRequest());
 
@@ -177,17 +211,21 @@ class Module extends AbstractModule
             ['view-all']
         );
 
-        $assertionAggregate = new AssertionAggregate();
-        $assertionAggregate->setMode(AssertionAggregate::MODE_AT_LEAST_ONE);
-        $assertionAggregate->addAssertion(new SiteIsPublicAssertion());
-        $assertionAggregate->addAssertion(new IsOnRouteAssertion($router, $request, [
+        $isOnRoute = new IsOnRouteAssertion($router, $request, [
             'site/publicuser-register-success',
             'site/publicuser-register',
             'site/publicuser-login',
             'site/publicuser-logout',
             'site/publicuser-forgot',
+            'site/publicuser-auth',
+            'site/publicuser-auth-token',
             'change-password',
-        ]));
+        ]);
+
+        $assertionAggregate = new AssertionAggregate();
+        $assertionAggregate->setMode(AssertionAggregate::MODE_AT_LEAST_ONE);
+        $assertionAggregate->addAssertion(new SiteIsPublicAssertion());
+        $assertionAggregate->addAssertion($isOnRoute);
 
         $acl->allow(
             null,
@@ -217,13 +255,21 @@ class Module extends AbstractModule
 
         $acl->allow(
             null,
+            AuthController::class,
+            ['auth', 'token']
+        );
+
+        $acl->allow(
+            null,
             [
                 UserAdapter::class,
                 LoginController::class,
-                UserAdapter::class,
             ],
             ['search', 'register', 'thanks'],
-            new IsRegistrationPermittedAssertion($siteProvider, $settings)
+            (new AssertionAggregate())
+                ->setMode(AssertionAggregate::MODE_AT_LEAST_ONE)
+                ->addAssertion(new IsRegistrationPermittedAssertion($siteProvider, $settings))
+                ->addAssertion($isOnRoute)
         );
 
         $acl->allow(
@@ -309,11 +355,38 @@ class Module extends AbstractModule
         return true;
     }
 
+    public function authenticateOAuth(MvcEvent $event) {
+        $request = $event->getRequest();
+        $bearer = $request->getHeaders()->get('Bearer');
+        if (!$bearer) {
+            return null;
+        }
+        /** @var TokenService $tokenService */
+        $tokenService = $this->getServiceLocator()->get(TokenService::class);
+        $accessToken = $tokenService->getAccessToken($bearer->getFieldValue());
+        if ($accessToken) {
+            /** @var Acl $acl */
+            $acl = $this->getServiceLocator()->get('Omeka\Acl');
+            $acl->allow(null, ['Omeka\Api\Adapter\UserAdapter', 'Omeka\Entity\User'], ['read']);
+            /** @var Manager $manager */
+            $manager = $this->getServiceLocator()->get('Omeka\ApiManager');
+            /** @var UserRepresentation $user */
+            $user = $manager->read('users', $accessToken->getUserId())->getContent();
+            $acl->removeAllow(null,['Omeka\Api\Adapter\UserAdapter', 'Omeka\Entity\User'], ['read']);
+            if ($user) {
+                /** @var AuthenticationService $auth */
+                $auth = $this->getServiceLocator()->get('Omeka\AuthenticationService');
+                $auth->getStorage()->write($user->getEntity());
+            }
+        }
+    }
+
     /**
      * @param SharedEventManagerInterface $sharedEventManager
      */
     public function attachListeners(SharedEventManagerInterface $sharedEventManager)
     {
+
         $serviceContainer = $this->getServiceLocator();
         $authenticationService = $serviceContainer->get('Omeka\AuthenticationService');
         $user = $authenticationService->getIdentity();
@@ -322,8 +395,8 @@ class Module extends AbstractModule
             /**
              * @var EventDispatcher
              * @var AnnotationCreatorElucidateSubscriber $elucidateSubscriber
-             * @var AuthenticationService                $authenticationService
-             * @var User                                 $user
+             * @var AuthenticationService $authenticationService
+             * @var User $user
              */
             $eventDispatcher = $serviceContainer->get(EventDispatcher::class);
             $elucidateSubscriber = $serviceContainer->get(AnnotationCreatorElucidateSubscriber::class);

@@ -1,5 +1,6 @@
 <?php
 
+use PublicUser\Controller\AuthController;
 use PublicUser\Controller\LoginController;
 use PublicUser\Controller\AccountController;
 use PublicUser\Controller\SiteLoginRedirectController;

@@ -120,7 +120,10 @@ class LoginController extends AbstractActionController
 
         $siteUri = $this->url()->fromRoute('site', [], [], true);
         $currentUri = $this->url()->fromRoute(null, [], [], true);
-        $redirectUri = (string) $referer ?: $this->userSettings->getUserLoginRedirect($site);
+        $redirectUri = $this->params()->fromQuery('redirect');
+        if (!$redirectUri) {
+            $redirectUri = (string)$referer ?: $this->userSettings->getUserLoginRedirect($site);
+        }
 
         if ($redirectUri === $currentUri) {
             $redirectUri = $siteUri;
@@ -268,6 +271,14 @@ class LoginController extends AbstractActionController
             $this->mailer->sendUserActivation($user);
         } catch (Throwable $e) {
             $this->logger->err($e->getMessage());
+        }
+
+        if (
+            $this->userSettings->isActivationAutomatic($site) &&
+            isset($formData['change-password']) &&
+            isset($formData['change-password']['password'])
+        ) {
+            $user->setPassword($formData['change-password']['password']);
         }
 
         $perms = new SitePermission();

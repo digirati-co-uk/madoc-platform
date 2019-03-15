@@ -1,7 +1,10 @@
 <?php
 
+use PublicUser\Auth\TokenService;
+use PublicUser\Auth\TokenStorage;
 use PublicUser\Extension\ConfigurableMailer;
 use PublicUser\Extension\ConfigurableMailerFactory;
+use PublicUser\Settings\AuthSettings;
 use PublicUser\Settings\PublicUserSettings;
 use PublicUser\Site\SiteListeners;
 use PublicUser\Site\SiteProvider;
@@ -19,6 +22,27 @@ return [
             PublicUserSettings::class => function (ContainerInterface $container) {
                 return new PublicUserSettings(
                     $container->get('Omeka\Settings')
+                );
+            },
+
+            AuthSettings::class => function (ContainerInterface $container) {
+                // @todo hook up to actual settings.
+                return new AuthSettings(
+                    AuthSettings::EXAMPLE_SETTINGS['clients'],
+                    AuthSettings::EXAMPLE_SETTINGS['scopes']
+                );
+            },
+
+            TokenService::class => function (ContainerInterface $container) {
+                return new TokenService(
+                    $container->get(AuthSettings::class),
+                    $container->get(TokenStorage::class)
+                );
+            },
+
+            TokenStorage::class => function ($container) {
+                return new TokenStorage(
+                    $container->get('Omeka\Connection')
                 );
             },
 

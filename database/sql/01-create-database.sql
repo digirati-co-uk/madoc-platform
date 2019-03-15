@@ -767,6 +767,37 @@ CREATE TABLE `vocabulary` (
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Table structure for table `oauth_access_tokens`
+--
+
+DROP TABLE IF EXISTS `oauth_access_tokens`;
+
+CREATE TABLE `oauth_access_tokens` (
+  `access_token`  VARCHAR(40) NOT NULL,
+  `client_id`     VARCHAR(80),
+  `user_id`       VARCHAR(80),
+  `expires`       TIMESTAMP NOT NULL,
+  `scope`         VARCHAR(4000),
+  PRIMARY KEY (`access_token`)
+);
+
+--
+-- Table structure for table `oauth_authorization_codes`
+--
+
+DROP TABLE IF EXISTS `oauth_authorization_codes`;
+
+CREATE TABLE `oauth_authorization_codes` (
+  `authorization_code`   VARCHAR(40) NOT NULL,
+  `client_id`            VARCHAR(80),
+  `user_id`              VARCHAR(80),
+  `redirect_uri`         VARCHAR(2000) NOT NULL,
+  `expires`              TIMESTAMP NOT NULL,
+  `scope`                VARCHAR(4000),
+  PRIMARY KEY (`authorization_code`)
+);
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
