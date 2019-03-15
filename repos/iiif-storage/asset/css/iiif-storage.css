@@ -142,11 +142,11 @@
     display: flex;
     flex-wrap: wrap;
     height: 250px;
-    width: 250px;
     justify-content: space-around;
-    border-radius: 10px;
+    border-radius: 3px;
     overflow: hidden;
-    border: 1px solid #aaa;
+    box-shadow: inset 0px 0px 0px 1px rgba(0,0,0,.3);
+    /*border: 1px solid #aaa;*/
 }
 .iiif-view-playlist-grid__image {
     flex-basis: 50%;
@@ -168,7 +168,9 @@
 .iiif-view-manifest-grid__manifest {
     font-size: 14px;
     line-height: 18px;
-    margin: 0 15px 30px 15px;
+    padding: 0 15px 30px 15px;
+    width: 25%;
+    flex-basis: 25%;
 }
 
 .iiif-view-manifest-grid__manifest-label {
@@ -212,4 +214,17 @@
 }
 .iiif-view-metadata dd ~ dt {
     margin-top: 20px;
+}
+
+
+.iiif-storage-pagination {
+
+}
+.iiif-storage-pagination__section {
+    display: block;
+    margin: 8px;
+    padding: 16px;
+    font-size: 18px;
+    max-width: 300px;
+    border: 1px solid #999;
 }

@@ -2,6 +2,7 @@
   "name": "digirati/other-vendors",
   "license": "MIT",
   "require": {
+    "doctrine/orm": "^2.5",
     "zendframework/zend-authentication": "^2.5.3",
     "zendframework/zend-barcode": "^2.6",
     "zendframework/zend-cache": "^2.7.1",

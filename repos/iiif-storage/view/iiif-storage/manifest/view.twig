@@ -11,8 +11,14 @@
     {{ mediaItem.render() | raw }}
 {% endfor %}
 
+{% include 'iiif-storage/partials/pagination.twig' %}
+
+{% if not canvases %}
+    {% set canvases = manifest.getCanvases() %}
+{% endif %}
+
 <div class="iiif-view-manifest-list">
-{% for canvas in manifest.getCanvases() %}
+{% for canvas in canvases %}
     <div class="iiif-view-manifest-list__canvas">
         <div class="iiif-view-manifest-list__canvas-image">
             {% set image = canvas %}
@@ -24,3 +30,5 @@
     </div>
 {% endfor %}
 </div>
+
+{% include 'iiif-storage/partials/pagination.twig' %}

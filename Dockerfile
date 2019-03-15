@@ -22,6 +22,7 @@ RUN dnf update -y && \
         php-opcache \
         php-json \
         php-pear \
+        php-apcu \
         ImageMagick \
         ImageMagick-devel \
         nginx \

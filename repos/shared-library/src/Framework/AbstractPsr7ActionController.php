@@ -8,6 +8,7 @@ use Zend\Diactoros\Response;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mvc\MvcEvent;
 use Zend\Psr7Bridge\Psr7Response;
+use Zend\View\Model\ViewModel;
 
 /**
  * @method SiteRepresentation currentSite()
@@ -38,5 +39,37 @@ class AbstractPsr7ActionController extends AbstractActionController
         }
 
         return $result;
+    }
+
+    public function paginate(ViewModel $viewModel, $name, $list, $perPage) {
+        if (sizeof($list) > $perPage) {
+            $page = $this->params()->fromQuery('page') ?? 1;
+            $maxPage = ceil(sizeof($list) / $perPage);
+            if ($page > $maxPage) {
+                $page = $maxPage;
+            }
+
+            $viewModel->setVariable($name, array_slice($list, ($page-1) * $perPage, $perPage));
+            if (($page + 1) <= $maxPage) {
+                $viewModel->setVariable('nextPage', $this->url()->fromRoute(null, [], [
+                    'query' => [
+                        'page' => $page + 1,
+                    ]
+                ], true));
+            }
+            if ($page > 1) {
+                $viewModel->setVariable('prevPage', $this->url()->fromRoute(null, [], [
+                    'query' => [
+                        'page' => $page - 1,
+                    ]
+                ], true));
+            }
+            $viewModel->setVariable('totalPages', $maxPage);
+            $viewModel->setVariable('page', $page);
+
+
+        } else {
+            $viewModel->setVariable($name, $list);
+        }
     }
 }

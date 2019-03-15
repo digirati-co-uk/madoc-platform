@@ -119,7 +119,11 @@ class ManifestController extends AbstractPsr7ActionController
             $this->addCollectionToViewModel($vm, $collectionId, $manifest->id());
         }
 
-        return $this->render('iiif.manifest.view', $vm);
+        $viewModel = new ViewModel($vm);
+
+        $this->paginate($viewModel, 'canvases', $manifestRepresentation->getManifest()->getCanvases(), 12);
+
+        return $this->render('iiif.manifest.view', $viewModel->getVariables());
     }
 
     private function shouldUseOriginalIds(): bool

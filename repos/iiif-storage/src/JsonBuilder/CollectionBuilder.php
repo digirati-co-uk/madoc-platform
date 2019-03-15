@@ -3,8 +3,11 @@
 namespace IIIFStorage\JsonBuilder;
 
 
+use IIIF\Model\Manifest;
 use IIIF\ResourceFactory;
 use IIIFStorage\Model\CollectionRepresentation;
+use IIIFStorage\Repository\CollectionRepository;
+use IIIFStorage\Repository\ManifestRepository;
 use IIIFStorage\Utility\ApiRouter;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Api\Representation\ItemSetRepresentation;
@@ -28,31 +31,37 @@ class CollectionBuilder
      * @var string
      */
     private $siteId;
+    /**
+     * @var CollectionRepository
+     */
+    private $collectionRepository;
+    /**
+     * @var ManifestRepository
+     */
+    private $manifestRepository;
 
-    public function __construct(ApiRouter $router, ManifestBuilder $builder)
-    {
+    public function __construct(
+        ApiRouter $router,
+        ManifestBuilder $builder,
+        ManifestRepository $manifestRepository,
+        CollectionRepository $collectionRepository
+    ) {
         $this->router = $router;
         $this->manifestBuilder = $builder;
+        $this->collectionRepository = $collectionRepository;
+        $this->manifestRepository = $manifestRepository;
     }
 
     public function buildResource(ItemSetRepresentation $omekaCollection, $originalIds = false): CollectionRepresentation
     {
         $json = $this->build($omekaCollection, $originalIds);
-        // Map children.
-        $manifestIndex = array_reduce(
-            $omekaCollection->value('sc:hasManifests', ['all' => true]),
-            function($acc, ValueRepresentation $next) {
-                /** @var ItemSetRepresentation $manifest */
-                $manifest = $next->valueResource();
-                /** @var ValueRepresentation $identifier */
-                $identifier = $this->router->manifest($manifest->id());
-                $acc[$identifier] = $manifest;
-                return $acc;
-            }, []
-        );
         // Build collection.
-        $collection = ResourceFactory::createCollection($json, function ($url) use ($manifestIndex, $originalIds) {
-            return $this->manifestBuilder->build($manifestIndex[$url], $originalIds);
+        $collection = ResourceFactory::createCollection($json, function (string $url, Manifest $manifest) use ($originalIds) {
+            $metadata = $manifest->getSource();
+            if (!isset($metadata['o:id'])) {
+                return (array)$manifest->getSource();
+            }
+            return $this->manifestBuilder->build($this->manifestRepository->getById($metadata['o:id']), $originalIds);
         });
 
         return new CollectionRepresentation(
@@ -89,7 +98,8 @@ class CollectionBuilder
         $this->siteId = $siteId;
     }
 
-    private function mapManifest(ValueRepresentation $value) {
+    private function mapManifest(ValueRepresentation $value)
+    {
         /** @var ItemRepresentation $manifest */
         $manifest = $value->valueResource();
         $manifestJson = [

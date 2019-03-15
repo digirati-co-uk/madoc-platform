@@ -2,6 +2,7 @@
 
 namespace IIIFStorage\Repository;
 
+use Doctrine\DBAL\Connection;
 use IIIFStorage\Model\ItemRequest;
 use IIIFStorage\Utility\PropertyIdSaturator;
 use Omeka\Api\Exception\NotFoundException;
@@ -9,12 +10,31 @@ use Omeka\Api\Manager;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Api\Representation\ItemSetRepresentation;
 use Omeka\Api\Representation\ValueRepresentation;
+use Omeka\Service\ConnectionFactory;
 use Zend\Log\Logger;
 
 class CollectionRepository
 {
     const RESOURCE_TEMPLATE = 'IIIF Collection';
     const API_TYPE = 'item_sets';
+
+    const SELECT_MANIFESTS = <<<SQL
+ select V2.value_resource_id as omeka_id, V1.uri as uri
+ from value V2
+        left join value V1 on V1.resource_id = V2.value_resource_id
+ WHERE V2.property_id = :hasManifestsId
+   AND V1.property_id = 10
+   AND V2.resource_id = :resourceId;
+SQL;
+
+    const SELECT_MANIFESTS_WITH_LABELS = <<<SQL
+ select V2.value_resource_id as omeka_id, V1.uri, V1.value, V1.property_id
+ from value V2
+        left join value V1 on V1.resource_id = V2.value_resource_id
+ WHERE V2.property_id = :hasManifestsId
+   AND (V1.property_id = 1 OR V1.property_id = 10)
+   AND V2.resource_id = :resourceId;
+SQL;
 
     /**
      * @var Manager
@@ -30,12 +50,17 @@ class CollectionRepository
      * @var string
      */
     private $siteId;
+    /**
+     * @var Connection
+     */
+    private $connection;
 
-    public function __construct(Manager $api, PropertyIdSaturator $saturator)
+    public function __construct(Manager $api, PropertyIdSaturator $saturator, Connection $connection)
     {
 
         $this->api = $api;
         $this->saturator = $saturator;
+        $this->connection = $connection;
     }
 
     public function getPropertyId(): string
@@ -57,6 +82,23 @@ class CollectionRepository
             $query['site_id'] = $this->siteId;
         }
         return $query;
+    }
+
+    public function getManifestMapFromCollection(int $collectionOmekaId)
+    {
+        $query = self::SELECT_MANIFESTS;
+        $statement = $this->connection->prepare($query);
+        $statement->bindValue('hasManifestsId', (int) $this->saturator->loadPropertyId('sc:hasManifests'));
+        $statement->bindValue('resourceId', (int) $collectionOmekaId);
+        $statement->execute();
+
+        $indexMap = [];
+        foreach ($statement->fetchAll() as $manifest) {
+            if ($manifest['uri']) {
+                $indexMap[$manifest['uri']] = $manifest['omeka_id'];
+            }
+        }
+        return $indexMap;
     }
 
     public function getById(string $id): ItemSetRepresentation

@@ -126,7 +126,8 @@ return [
             CollectionRepository::class => function (ContainerInterface $c) {
                 return new CollectionRepository(
                     $c->get('Omeka\ApiManager'),
-                    $c->get(PropertyIdSaturator::class)
+                    $c->get(PropertyIdSaturator::class),
+                    $c->get('Omeka\Connection')
                 );
             },
             ApiRouter::class => function (ContainerInterface $c) {
@@ -151,7 +152,12 @@ return [
                 );
             },
             CollectionBuilder::class => function (ContainerInterface $c) {
-                return new CollectionBuilder($c->get(ApiRouter::class), $c->get(ManifestBuilder::class));
+                return new CollectionBuilder(
+                    $c->get(ApiRouter::class),
+                    $c->get(ManifestBuilder::class),
+                    $c->get(ManifestRepository::class),
+                    $c->get(CollectionRepository::class)
+                );
             },
             ImageServiceBuilder::class => function (ContainerInterface $c) {
                 return new ImageServiceBuilder($c->get(ApiRouter::class));

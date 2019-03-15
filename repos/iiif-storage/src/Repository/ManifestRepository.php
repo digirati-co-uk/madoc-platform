@@ -2,12 +2,14 @@
 
 namespace IIIFStorage\Repository;
 
+use Error;
 use IIIFStorage\Model\ItemRequest;
 use IIIFStorage\Utility\PropertyIdSaturator;
 use Omeka\Api\Manager;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Api\Representation\ValueRepresentation;
 use RoyalSocietyDB\Process\QueryExecutor;
+use Throwable;
 
 class ManifestRepository
 {
@@ -84,7 +86,22 @@ class ManifestRepository
         // Re-export.
         $toUpdate = $itemRequest->export();
         // Update.
-        return $this->api->update(static::API_TYPE, $id, $toUpdate, [], ['isPartial' => true])->getContent();
+
+        $updateFunction = function() use ($id, $toUpdate) {
+            $this->api->update(static::API_TYPE, $id, $toUpdate, [], ['isPartial' => true])->getContent();
+        };
+
+        $tries = 5;
+        while ($tries) {
+            try {
+                return $updateFunction();
+            } catch (Throwable $e) {
+                error_log((string) $e);
+            }
+            $tries -= 1;
+            sleep(2);
+        }
+        throw new Error('Could not save manifest');
     }
 
     public function getById(string $id): ItemRepresentation
