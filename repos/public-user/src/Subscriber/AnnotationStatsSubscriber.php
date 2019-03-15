@@ -5,6 +5,7 @@ namespace PublicUser\Subscriber;
 use Doctrine\DBAL\Connection;
 use Elucidate\Event\AnnotationLifecycleEvent;
 use Exception;
+use LogicException;
 use Omeka\Api\Manager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Zend\Authentication\AuthenticationServiceInterface;
@@ -51,19 +52,6 @@ ON DUPLICATE KEY UPDATE
 incomplete_count = incomplete_count + VALUES(incomplete_count);
 SQL;
 
-    public static function getSubscribedEvents()
-    {
-        return [
-            AnnotationLifecycleEvent::PRE_CREATE => ['handleAnnotationCreatedEvent'],
-            AnnotationLifecycleEvent::PRE_DELETE => ['handleAnnotationDeletedEvent'],
-        ];
-    }
-
-    private static function getValue($data)
-    {
-        return $data[0]['@value'] ?? $data['@value'] ?? $data['@id'] ?? $data;
-    }
-
     /**
      * @var Connection
      */
@@ -79,13 +67,28 @@ SQL;
      */
     private $auth;
 
-    public function __construct(Manager $api, Connection $db, AuthenticationServiceInterface $auth)
-    {
+    public function __construct(
+        Manager $api,
+        Connection $db,
+        AuthenticationServiceInterface $auth
+    ) {
         $this->api = $api;
         $this->db = $db;
         $this->auth = $auth;
     }
 
+    public static function getSubscribedEvents()
+    {
+        return [
+            AnnotationLifecycleEvent::PRE_CREATE => ['handleAnnotationCreatedEvent'],
+            AnnotationLifecycleEvent::PRE_DELETE => ['handleAnnotationDeletedEvent'],
+        ];
+    }
+
+    private static function getValue($data)
+    {
+        return $data[0]['@value'] ?? $data['@value'] ?? $data['@id'] ?? $data;
+    }
     /**
      * Handle {@code create}/{@code update} events and set the {@code completed} flag to true on the given Target.
      *
@@ -131,9 +134,17 @@ SQL;
         $targetUri->setFragment(null);
 
         $canvasMappingSearch = $this->api->search(
-            'canvas_mappings',
+            'items',
             [
-                'canvas_url' => $targetUri->toString(),
+                'resource_class_id' => $this->getResourceClassByTerm('sc:Canvas')->id(),
+                'property' => [
+                    [
+                        'joiner' => 'and',
+                        'property' => $this->loadPropertyId('dcterms:identifier'),
+                        'type' => 'eq',
+                        'text' => $targetUri->toString(),
+                    ]
+                ]
             ]
         );
 
@@ -178,5 +189,35 @@ SQL;
         } catch (Exception $ex) {
             $this->db->rollBack();
         }
+    }
+
+    private function getResourceClassByTerm(string $term)
+    {
+        $response = $this->api
+            ->search('resource_classes', [
+                'term' => $term
+            ])
+            ->getContent();
+
+        if (empty($response)) {
+            throw new LogicException("Invalid resource class term {$term}");
+        }
+        return array_pop($response);
+    }
+
+    private function loadPropertyId(string $term)
+    {
+        $propertyRepresentationResponse = $this->api
+            ->search('properties', [
+                'term' => $term
+            ])
+            ->getContent();
+
+        if (empty($propertyRepresentationResponse)) {
+            throw new LogicException("Invalid term {$term}, you may be missing a vocabulary");
+        }
+
+        $propertyRepresentation = array_pop($propertyRepresentationResponse);
+        return $propertyRepresentation->id();
     }
 }
