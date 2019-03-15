@@ -121,7 +121,7 @@ commandToRun=$1;shift;
 case "${commandToRun}" in
     init)
         cd bare;
-            git clone https://github.com/digirati-co-uk/omeka-s.git --branch bugfix/7.2-rebase --depth 1
+            git clone https://github.com/digirati-co-uk/omeka-s.git --branch bugfix/7.2-rebase-1.3.0 --depth 1
         cd ../;
 
         cd repos;
@@ -144,7 +144,7 @@ case "${commandToRun}" in
     ;;
     init-ci)
       cd bare;
-        git clone https://github.com/digirati-co-uk/omeka-s.git --branch bugfix/7.2-rebase --depth 1
+        git clone https://github.com/digirati-co-uk/omeka-s.git --branch bugfix/7.2-rebase-1.3.0 --depth 1
       cd ../;
 
       cd repos;
@@ -176,7 +176,7 @@ case "${commandToRun}" in
     ;;
     server-init)
         cd bare;
-            git clone https://github.com/digirati-co-uk/omeka-s.git --branch bugfix/7.2-rebase --depth 1
+            git clone https://github.com/digirati-co-uk/omeka-s.git --branch bugfix/7.2-rebase-1.3.0 --depth 1
         cd ../;
 
         cd repos;
