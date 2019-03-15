@@ -30,6 +30,7 @@ use Zend\Http\Response;
 use Zend\Log\Logger;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Session\Container;
+use Zend\Uri\Uri;
 use Zend\View\Model\ViewModel;
 use Omeka\Mvc\Controller\Plugin\Messenger;
 
@@ -126,7 +127,7 @@ class LoginController extends AbstractActionController
         }
 
         if ($redirectUri === $currentUri) {
-            $redirectUri = $siteUri;
+            $redirectUri = new Uri($siteUri);
         }
 
         if ($this->auth->hasIdentity()) {
@@ -141,6 +142,7 @@ class LoginController extends AbstractActionController
 
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost();
+
             $form->setData($data);
             if ($form->isValid()) {
                 $sessionManager = Container::getDefaultManager();
@@ -153,8 +155,7 @@ class LoginController extends AbstractActionController
                 $result = $this->auth->authenticate();
                 if ($result->isValid()) {
                     $this->messenger()->addSuccess($this->translate('You have successfully logged in')); // @translate
-
-                    return $this->redirect()->toUrl($data['redir']);
+                    return $this->redirect()->toUrl($data['redir'] ? $data['redir'] : $redirectUri);
                 }
                 $this->messenger()->addError($this->translate('Your email or password is invalid')); // @translate
             }
