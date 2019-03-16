@@ -60,15 +60,21 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `asset`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `asset` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `media_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `storage_id` varchar(190) COLLATE utf8mb4_unicode_ci NOT NULL,
   `extension` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `owner_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `UNIQ_2AF5A5C5CC5DB90` (`storage_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  UNIQUE KEY `UNIQ_2AF5A5C5CC5DB90` (`storage_id`),
+  KEY `IDX_2AF5A5C7E3C61F9` (`owner_id`),
+  CONSTRAINT `FK_2AF5A5C7E3C61F9` FOREIGN KEY (`owner_id`) REFERENCES `user` (`id`) ON DELETE
+  SET
+    NULL
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -322,22 +328,33 @@ DROP TABLE IF EXISTS `resource`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `resource` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `owner_id` int(11) DEFAULT NULL,
-  `resource_class_id` int(11) DEFAULT NULL,
-  `resource_template_id` int(11) DEFAULT NULL,
-  `is_public` tinyint(1) NOT NULL,
-  `created` datetime NOT NULL,
-  `modified` datetime DEFAULT NULL,
-  `resource_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `IDX_BC91F4167E3C61F9` (`owner_id`),
-  KEY `IDX_BC91F416448CC1BD` (`resource_class_id`),
-  KEY `IDX_BC91F41616131EA` (`resource_template_id`),
-  CONSTRAINT `FK_BC91F41616131EA` FOREIGN KEY (`resource_template_id`) REFERENCES `resource_template` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `FK_BC91F416448CC1BD` FOREIGN KEY (`resource_class_id`) REFERENCES `resource_class` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `FK_BC91F4167E3C61F9` FOREIGN KEY (`owner_id`) REFERENCES `user` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `owner_id` int(11) DEFAULT NULL,
+    `resource_class_id` int(11) DEFAULT NULL,
+    `resource_template_id` int(11) DEFAULT NULL,
+    `is_public` tinyint(1) NOT NULL,
+    `created` datetime NOT NULL,
+    `modified` datetime DEFAULT NULL,
+    `resource_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `thumbnail_id` int(11) DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    KEY `IDX_BC91F4167E3C61F9` (`owner_id`),
+    KEY `IDX_BC91F416448CC1BD` (`resource_class_id`),
+    KEY `IDX_BC91F41616131EA` (`resource_template_id`),
+    KEY `IDX_BC91F416FDFF2E92` (`thumbnail_id`),
+    CONSTRAINT `FK_BC91F41616131EA` FOREIGN KEY (`resource_template_id`) REFERENCES `resource_template` (`id`) ON DELETE
+    SET
+      NULL,
+      CONSTRAINT `FK_BC91F416448CC1BD` FOREIGN KEY (`resource_class_id`) REFERENCES `resource_class` (`id`) ON DELETE
+    SET
+      NULL,
+      CONSTRAINT `FK_BC91F4167E3C61F9` FOREIGN KEY (`owner_id`) REFERENCES `user` (`id`) ON DELETE
+    SET
+      NULL,
+      CONSTRAINT `FK_BC91F416FDFF2E92` FOREIGN KEY (`thumbnail_id`) REFERENCES `asset` (`id`) ON DELETE
+    SET
+      NULL
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -409,6 +426,7 @@ CREATE TABLE `resource_template_property` (
   `position` int(11) DEFAULT NULL,
   `data_type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `is_required` tinyint(1) NOT NULL,
+  `is_private` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNIQ_4689E2F116131EA549213EC` (`resource_template_id`,`property_id`),
   KEY `IDX_4689E2F116131EA` (`resource_template_id`),
@@ -465,6 +483,7 @@ CREATE TABLE `site` (
   `created` datetime NOT NULL,
   `modified` datetime DEFAULT NULL,
   `is_public` tinyint(1) NOT NULL,
+  `summary` longtext COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNIQ_694309E4989D9B62` (`slug`),
   KEY `IDX_694309E47E3C61F9` (`owner_id`),
@@ -724,6 +743,7 @@ CREATE TABLE `value` (
   `lang` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `value` longtext COLLATE utf8mb4_unicode_ci,
   `uri` longtext COLLATE utf8mb4_unicode_ci,
+  `is_public` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_1D77583489329D25` (`resource_id`),
   KEY `IDX_1D775834549213EC` (`property_id`),

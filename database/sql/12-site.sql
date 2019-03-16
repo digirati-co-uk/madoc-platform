@@ -17,7 +17,7 @@
 
 LOCK TABLES `site` WRITE;
 /*!40000 ALTER TABLE `site` DISABLE KEYS */;
-INSERT INTO `site` VALUES (1,1,'default','default','Default site','[{\"type\":\"page\",\"data\":{\"id\":1,\"label\":\"\"},\"links\":[]}]','{\"resource_class_id\":\"\",\"property\":[{\"joiner\":\"and\",\"property\":\"\",\"type\":\"eq\",\"text\":\"\"}],\"site_id\":\"\",\"item_set_id\":[\"\"]}','2018-05-31 13:40:10','2018-09-20 07:36:50',1);
+INSERT INTO `site` VALUES (1,1,'default','default','Default site','[{\"type\":\"page\",\"data\":{\"id\":1,\"label\":\"\"},\"links\":[]}]','{\"resource_class_id\":\"\",\"property\":[{\"joiner\":\"and\",\"property\":\"\",\"type\":\"eq\",\"text\":\"\"}],\"site_id\":\"\",\"item_set_id\":[\"\"]}','2018-05-31 13:40:10','2018-09-20 07:36:50',1, NULL);
 /*!40000 ALTER TABLE `site` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

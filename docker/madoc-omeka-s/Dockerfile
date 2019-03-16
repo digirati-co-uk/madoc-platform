@@ -51,16 +51,16 @@ RUN groupadd www-data && \
 
 # Composer cache warming.
 # Can't enable this until we remove the `repositories`
-#RUN curl -o /srv/omeka/composer.json -sSL "https://raw.githubusercontent.com/digirati-co-uk/omeka-s/bugfix/7.2-rebase/composer.json" && \
-#    curl -o /srv/omeka/composer.lock -sSL "https://raw.githubusercontent.com/digirati-co-uk/omeka-s/bugfix/7.2-rebase/composer.lock" && \
+#RUN curl -o /srv/omeka/composer.json -sSL "https://raw.githubusercontent.com/digirati-co-uk/omeka-s/bugfix/7.2-rebase-1.3.0/composer.json" && \
+#    curl -o /srv/omeka/composer.lock -sSL "https://raw.githubusercontent.com/digirati-co-uk/omeka-s/bugfix/7.2-rebase-1.3.0/composer.lock" && \
 #    composer update --working-dir=/srv/omeka --lock --optimize-autoloader --no-dev --prefer-source --no-interaction
 
 # Download our fork.
-ADD --chown=www-data:www-data https://github.com/digirati-co-uk/omeka-s/archive/bugfix/7.2-rebase.tar.gz /srv/omeka/
+ADD --chown=www-data:www-data https://github.com/digirati-co-uk/omeka-s/archive/bugfix/7.2-rebase-1.3.0.tar.gz /srv/omeka/
 
-RUN tar --strip-components=1 -zxf /srv/omeka/7.2-rebase.tar.gz -C /srv/omeka/ && \
+RUN tar --strip-components=1 -zxf /srv/omeka/7.2-rebase-1.3.0.tar.gz -C /srv/omeka/ && \
     chown -R www-data:www-data /srv/omeka && \
-    rm -Rf /src/omeka/7.2-rebase.tar.gz
+    rm -Rf /src/omeka/7.2-rebase-1.3.0.tar.gz
 
 # Custom overrides to Omeka core.
 ADD --chown=www-data:www-data srv/omeka/application/view/error/index.phtml /srv/omeka/application/view/error/index.phtml
