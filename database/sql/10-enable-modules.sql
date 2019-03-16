@@ -14,7 +14,6 @@ LOCK TABLES `module` WRITE;
 /*!40000 ALTER TABLE `module` DISABLE KEYS */;
 INSERT INTO `module` VALUES
   ('AnnotationStudio',1,'1.0.0-rc.17'),
-  ('DigiratiReferenceTheme',1,'1.0'),
   ('ElucidateProxy',1,'0.1'),
   ('PublicUser',1,'1.0.3'),
   ('ElucidateModule',1,'1.2'),

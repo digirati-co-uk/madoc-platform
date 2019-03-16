@@ -1,0 +1,10 @@
+{
+  "name": "digirati/madoc-crowd-sourcing-theme",
+  "license": "MIT",
+  "type": "omeka-s-theme",
+  "description": "",
+  "version": "1.0.0",
+  "extra": {
+    "install-name": "madoc-crowd-sourcing-theme"
+  }
+}
