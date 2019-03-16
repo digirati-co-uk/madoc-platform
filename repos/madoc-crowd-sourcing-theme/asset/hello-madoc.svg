@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="939px" height="939px" viewBox="0 0 939 939" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.1 (51147) - http://www.bohemiancoding.com/sketch -->
+    <title>Madoc hello</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="61.2364087" y="29.6376893" width="283" height="410" rx="8"></rect>
+        <rect id="path-2" x="107.829348" y="279.331873" width="222" height="82"></rect>
+        <rect id="path-3" x="10" y="0" width="283" height="410" rx="8"></rect>
+        <rect id="path-4" x="35" y="37" width="74" height="62"></rect>
+        <rect id="path-5" x="121" y="37" width="74" height="62"></rect>
+        <rect id="path-6" x="204" y="37" width="74" height="62"></rect>
+        <rect id="path-7" x="35" y="129" width="74" height="62"></rect>
+        <rect id="path-8" x="121" y="129" width="74" height="62"></rect>
+        <rect id="path-9" x="204" y="129" width="74" height="62"></rect>
+        <rect id="path-10" x="35" y="221" width="74" height="62"></rect>
+        <rect id="path-11" x="121" y="221" width="74" height="62"></rect>
+        <rect id="path-12" x="204" y="221" width="74" height="62"></rect>
+        <rect id="path-13" x="35" y="311" width="74" height="62"></rect>
+        <rect id="path-14" x="121" y="311" width="74" height="62"></rect>
+        <rect id="path-15" x="204" y="311" width="74" height="62"></rect>
+        <rect id="path-16" x="64.2364087" y="29.6376893" width="283" height="410" rx="8"></rect>
+        <rect id="path-17" x="108.164695" y="103.608131" width="164.185274" height="96.2023087"></rect>
+        <rect id="path-18" x="59.3759741" y="309.088422" width="68.9606827" height="49.054554"></rect>
+        <rect id="path-19" x="139.033426" y="331.059072" width="68.7104484" height="48.8765521"></rect>
+        <rect id="path-20" x="219.154465" y="353.059072" width="68.7104484" height="48.8765521"></rect>
+        <rect id="path-21" x="290.93633" y="138.928188" width="64.3477439" height="18.0200005"></rect>
+        <rect id="path-22" x="283.93633" y="161.928188" width="64.3477439" height="18.0200005"></rect>
+        <rect id="path-23" x="299.93633" y="220.928188" width="27.3500004" height="12.0200005"></rect>
+    </defs>
+    <g id="Madoc-hello" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Page-1" transform="translate(149.000000, 82.000000)">
+            <rect id="Rectangle-7" fill-opacity="0.052904212" fill="#000000" transform="translate(189.736409, 241.637689) rotate(-15.000000) translate(-189.736409, -241.637689) " x="48.2364087" y="36.6376893" width="283" height="410" rx="8"></rect>
+            <g id="Rectangle-7" transform="translate(202.736409, 234.637689) rotate(-15.000000) translate(-202.736409, -234.637689) ">
+                <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                <rect stroke="#333333" stroke-width="2" x="62.2364087" y="30.6376893" width="281" height="408" rx="8"></rect>
+            </g>
+            <path d="M43.5,97.5 L270.5,37.5" id="Line-2" stroke="#979797" stroke-width="2" stroke-linecap="square"></path>
+            <path d="M51.5,128.5 L278.5,68.5" id="Line-2" stroke="#979797" stroke-width="2" stroke-linecap="square"></path>
+            <path d="M60.5,158.5 L287.5,98.5" id="Line-2" stroke="#979797" stroke-width="2" stroke-linecap="square"></path>
+            <path d="M69.5,188.5 L296.5,128.5" id="Line-2" stroke="#979797" stroke-width="2" stroke-linecap="square"></path>
+            <path d="M77.5,219.5 L304.5,159.5" id="Line-2" stroke="#979797" stroke-width="2" stroke-linecap="square"></path>
+            <path d="M87.5,250.5 L314.5,190.5" id="Line-2" stroke="#979797" stroke-width="2" stroke-linecap="square"></path>
+            <path d="M95.5,281.5 L322.5,221.5" id="Line-2" stroke="#979797" stroke-width="2" stroke-linecap="square"></path>
+            <path d="M130.5,413.5 L357.5,353.5" id="Line-2" stroke="#979797" stroke-width="2" stroke-linecap="square"></path>
+            <g id="Rectangle-10" transform="translate(218.829348, 320.331873) rotate(-15.000000) translate(-218.829348, -320.331873) ">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-2"></use>
+                <rect stroke="#979797" stroke-width="2" x="108.829348" y="280.331873" width="220" height="80"></rect>
+            </g>
+        </g>
+        <g id="Page-2" transform="translate(322.000000, 52.000000)">
+            <rect id="Rectangle-7" fill-opacity="0.052904212" fill="#000000" x="0" y="6" width="283" height="410" rx="8"></rect>
+            <g id="Rectangle-7">
+                <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-3"></use>
+                <rect stroke="#333333" stroke-width="2" x="11" y="1" width="281" height="408" rx="8"></rect>
+            </g>
+            <g id="Rectangle-9">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-4"></use>
+                <rect stroke="#979797" stroke-width="2" x="36" y="38" width="72" height="60"></rect>
+            </g>
+            <g id="Rectangle-9">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-5"></use>
+                <rect stroke="#979797" stroke-width="2" x="122" y="38" width="72" height="60"></rect>
+            </g>
+            <g id="Rectangle-9">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-6"></use>
+                <rect stroke="#979797" stroke-width="2" x="205" y="38" width="72" height="60"></rect>
+            </g>
+            <g id="Rectangle-9">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-7"></use>
+                <rect stroke="#979797" stroke-width="2" x="36" y="130" width="72" height="60"></rect>
+            </g>
+            <g id="Rectangle-9">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-8"></use>
+                <rect stroke="#979797" stroke-width="2" x="122" y="130" width="72" height="60"></rect>
+            </g>
+            <g id="Rectangle-9">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-9"></use>
+                <rect stroke="#979797" stroke-width="2" x="205" y="130" width="72" height="60"></rect>
+            </g>
+            <g id="Rectangle-9">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-10"></use>
+                <rect stroke="#979797" stroke-width="2" x="36" y="222" width="72" height="60"></rect>
+            </g>
+            <g id="Rectangle-9">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-11"></use>
+                <rect stroke="#979797" stroke-width="2" x="122" y="222" width="72" height="60"></rect>
+            </g>
+            <g id="Rectangle-9">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-12"></use>
+                <rect stroke="#979797" stroke-width="2" x="205" y="222" width="72" height="60"></rect>
+            </g>
+            <g id="Rectangle-9">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-13"></use>
+                <rect stroke="#979797" stroke-width="2" x="36" y="312" width="72" height="60"></rect>
+            </g>
+            <g id="Rectangle-9">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-14"></use>
+                <rect stroke="#979797" stroke-width="2" x="122" y="312" width="72" height="60"></rect>
+            </g>
+            <g id="Rectangle-9">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-15"></use>
+                <rect stroke="#979797" stroke-width="2" x="205" y="312" width="72" height="60"></rect>
+            </g>
+            <path d="M35.5,109.5 L88.1165373,109.5" id="Line" stroke="#333333" stroke-width="2" stroke-linecap="square"></path>
+            <path d="M123.5,109.5 L176.116537,109.5" id="Line" stroke="#333333" stroke-width="2" stroke-linecap="square"></path>
+            <path d="M35.5,203.5 L88.1165373,203.5" id="Line" stroke="#333333" stroke-width="2" stroke-linecap="square"></path>
+            <path d="M123.5,203.5 L176.116537,203.5" id="Line" stroke="#333333" stroke-width="2" stroke-linecap="square"></path>
+            <path d="M35.5,293.5 L88.1165373,293.5" id="Line" stroke="#333333" stroke-width="2" stroke-linecap="square"></path>
+            <path d="M123.5,293.5 L176.116537,293.5" id="Line" stroke="#333333" stroke-width="2" stroke-linecap="square"></path>
+            <path d="M35.5,384.5 L88.1165373,384.5" id="Line" stroke="#333333" stroke-width="2" stroke-linecap="square"></path>
+            <path d="M123.5,384.5 L176.116537,384.5" id="Line" stroke="#333333" stroke-width="2" stroke-linecap="square"></path>
+        </g>
+        <g id="Page-3" transform="translate(409.000000, 123.000000)">
+            <rect id="Rectangle-7" fill-opacity="0.052904212" fill="#000000" transform="translate(189.736409, 239.637689) rotate(15.000000) translate(-189.736409, -239.637689) " x="48.2364087" y="34.6376893" width="283" height="410" rx="8"></rect>
+            <g id="Rectangle-7" transform="translate(205.736409, 234.637689) rotate(15.000000) translate(-205.736409, -234.637689) ">
+                <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-16"></use>
+                <rect stroke="#333333" stroke-width="2" x="65.2364087" y="30.6376893" width="281" height="408" rx="8"></rect>
+            </g>
+            <path d="M136.5,37.5 L364,97" id="Line" stroke="#333333" stroke-width="2" stroke-linecap="square"></path>
+            <path d="M129.5,61.5 L357,121" id="Line" stroke="#333333" stroke-width="2" stroke-linecap="square"></path>
+            <path d="M92.5,205.5 L320,265" id="Line" stroke="#333333" stroke-width="2" stroke-linecap="square"></path>
+            <path d="M85.5,233.5 L313,293" id="Line" stroke="#333333" stroke-width="2" stroke-linecap="square"></path>
+            <path d="M77.5,259.5 L305,319" id="Line" stroke="#333333" stroke-width="2" stroke-linecap="square"></path>
+            <path d="M71.5,284.5 L299,344" id="Line" stroke="#333333" stroke-width="2" stroke-linecap="square"></path>
+            <g id="Rectangle-8" transform="translate(190.257332, 151.709285) rotate(15.000000) translate(-190.257332, -151.709285) ">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-17"></use>
+                <rect stroke="#979797" stroke-width="2" x="109.164695" y="104.608131" width="162.185274" height="94.2023087"></rect>
+            </g>
+            <g id="Rectangle-8" transform="translate(93.856315, 333.615699) rotate(15.000000) translate(-93.856315, -333.615699) ">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-18"></use>
+                <rect stroke="#979797" stroke-width="2" x="60.3759741" y="310.088422" width="66.9606827" height="47.054554"></rect>
+            </g>
+            <g id="Rectangle-8" transform="translate(173.388650, 355.497348) rotate(15.000000) translate(-173.388650, -355.497348) ">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-19"></use>
+                <rect stroke="#979797" stroke-width="2" x="140.033426" y="332.059072" width="66.7104484" height="46.8765521"></rect>
+            </g>
+            <g id="Rectangle-8" transform="translate(253.509690, 377.497348) rotate(15.000000) translate(-253.509690, -377.497348) ">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-20"></use>
+                <rect stroke="#979797" stroke-width="2" x="220.154465" y="354.059072" width="66.7104484" height="46.8765521"></rect>
+            </g>
+            <g id="Rectangle-8" transform="translate(323.110202, 147.938188) rotate(15.000000) translate(-323.110202, -147.938188) ">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-21"></use>
+                <rect stroke="#979797" stroke-width="2" x="291.93633" y="139.928188" width="62.3477439" height="16.0200005"></rect>
+            </g>
+            <g id="Rectangle-8" transform="translate(316.110202, 170.938188) rotate(15.000000) translate(-316.110202, -170.938188) ">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-22"></use>
+                <rect stroke="#979797" stroke-width="2" x="284.93633" y="162.928188" width="62.3477439" height="16.0200005"></rect>
+            </g>
+            <g id="Rectangle-8" transform="translate(313.611330, 226.938188) rotate(15.000000) translate(-313.611330, -226.938188) ">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-23"></use>
+                <rect stroke="#979797" stroke-width="2" x="300.93633" y="221.928188" width="25.3500004" height="10.0200005"></rect>
+            </g>
+        </g>
+        <rect id="Rectangle-11" fill="#333333" x="296" y="639" width="48" height="48"></rect>
+        <text id="adoc-platform" font-family="IowanOldStyle-Roman, Iowan Old Style" font-size="48" font-weight="normal" fill="#333333">
+            <tspan x="347" y="679">adoc platform</tspan>
+        </text>
+        <text id="M" font-family="IowanOldStyle-Roman, Iowan Old Style" font-size="48" font-weight="normal" fill="#FFFFFF">
+            <tspan x="299" y="680">M</tspan>
+        </text>
+        <text id="Login-and-add-some-c" font-family="IowanOldStyle-Roman, Iowan Old Style" font-size="24" font-weight="normal" fill="#333333">
+            <tspan x="243" y="753">Login and add some content to get started</tspan>
+        </text>
+    </g>
+</svg>

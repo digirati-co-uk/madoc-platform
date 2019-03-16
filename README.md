@@ -1,4 +1,4 @@
-# Madoc platform
+<img src="https://raw.githubusercontent.com/digirati-co-uk/madoc-platform/master/madoc-logo.png" width="413" />
 
 ## Background
 
