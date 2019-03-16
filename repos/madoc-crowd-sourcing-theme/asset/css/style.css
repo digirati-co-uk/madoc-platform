@@ -14,6 +14,7 @@ html, body {
 body {
     display: flex;
     flex-direction: column;
+    background: #fff; /* Body background */
 }
 
 header {
@@ -21,10 +22,10 @@ header {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
-    padding: 0 20px;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    background: #fff; /* Main header background */
 }
 
 /* Logo */
@@ -32,10 +33,18 @@ header {
     align-self: flex-start;
     color: #333;
     text-decoration: none;
-    margin-right: 40px;
+    margin-right: 20px;
+    margin-left: 20px;
 }
+
+.site-title img {
+    margin: 24px 0;
+    max-width: 240px;
+}
+
 #search {
     flex: 1;
+    margin-right: 20px;
 }
 #search form {
     float: right;
@@ -59,9 +68,8 @@ header {
 
 header nav {
     width: 100%;
-
-    padding-bottom: 20px;
-    margin-bottom: 20px;
+    padding: 10px;
+    background: #eee; /* Menu background */
 }
 header nav ul.navigation {
     margin: 0;
@@ -71,6 +79,7 @@ header nav ul.navigation {
 header nav ul.navigation li {
     display: inline-block;
     font-size: 14px;
+    background: #fff;
 }
 header nav ul.navigation li a {
     text-decoration: none;
@@ -97,7 +106,8 @@ main {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
-    padding: 0 20px;
+    padding: 20px;
+    background: #fff;
 }
 footer {
     background: #333;
@@ -203,3 +213,22 @@ footer {
     margin: 20px;
 }
 
+.canvas-actions .c-action--link {
+    border: none;
+}
+
+.canvas-actions .c-save-for-later input[name="bookmark"] {
+    color: #333;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.canvas-actions .c-save-for-later input[name="bookmark"]:hover,
+.canvas-actions.canvas-actions li a:hover {
+    color: #666;
+}
+
+.canvas-actions.canvas-actions li a {
+    color: #333;
+}

@@ -2,14 +2,14 @@
 
 {% include 'iiif-storage/partials/breadcrumbs' %}
 
-{% include 'iiif-storage/partials/canvas-navigation.twig' %}
-
 {% if renderMetadata %}
     {% set title = canvas.getLabel() | default(manifest.getLabel()) %}
     {% include 'iiif-storage/partials/title.twig' %}
 
     {% include 'iiif-storage/partials/canvas-attribution.twig' %}
 {% endif %}
+
+{% include 'iiif-storage/partials/canvas-navigation.twig' %}
 
 {% include 'iiif-storage/partials/canvas-status.twig' %}
 
