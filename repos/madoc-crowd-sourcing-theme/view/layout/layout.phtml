@@ -46,7 +46,7 @@ $userBar = $this->partial('common/user-bar', ['site' => $site]);
     </nav>
 </header>
 <main id="content" role="main">
-    <?php echo $this->content; ?>
+    <?php print $this->content; ?>
 </main>
 <footer>
     <?php if ($footerContent = $this->themeSetting('footer')): ?>
