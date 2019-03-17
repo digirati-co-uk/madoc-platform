@@ -40,6 +40,18 @@ class MediaValue implements ValueInterface
         );
     }
 
+    public static function IIIFImageThumbnail(string $url, string $label, string $thumbnailService)
+    {
+        return new static(
+            $url,
+            'iiif',
+            [
+                FieldValue::literal('dcterms:title', 'Title', $label),
+                FieldValue::literal('thumbnail-service', 'Thumbnail service', $thumbnailService),
+            ]
+        );
+    }
+
     public function addField(FieldValue $fieldValue)
     {
         $this->values[$fieldValue->getTerm()] = $fieldValue;

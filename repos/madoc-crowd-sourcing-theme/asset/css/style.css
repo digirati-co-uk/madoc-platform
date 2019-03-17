@@ -116,6 +116,15 @@ footer {
     padding: 40px;
 }
 
+footer .footer-inner {
+    flex: 1 1 0;
+    max-width: 1200px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 20px;
+}
+
 
 /* Breadcrumbs */
 .c-breadcrumbs {
