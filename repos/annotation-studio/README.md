@@ -1,19 +1,17 @@
 # Annotation Studio Module
-[![Build Status](https://travis-ci.com/digirati-co-uk/omeka-annotation-studio-module.svg?token=a5qCzEBD9SzwsGr2LNL2&branch=master)](https://travis-ci.com/digirati-co-uk/omeka-annotation-studio-module)
-
 This module provides various rich javascript components that can consume IIIF content and author W3C annotations onto that content, displaying it back in a variety of ways.
 
 ## Requirements
-This module has no hard dependencies on other modules, but we have created a reference implementation: [IIIF View](https://github.com/digirati-co-uk/omeka-iiif-view-module). 
+This module has no hard dependencies on other modules, but we have created a reference implementation: [IIIF Storage](https://github.com/digirati-co-uk/madoc-platform/tree/master/repos/annotation-studio). 
 
 ### Dependencies
 - Omeka
-- PHP 7+
+- PHP 7.2+
 - Composer
-- IIIF View implementation
+- IIIF Storage implementation
 
 ### Required events
-As mentioned, the IIIF View reference implementation fires the following events that this module listens to in order to generate the components to be used in Omeka templates. If you want to create your own implementations using the [IIIF PHP library](github.com/digirati-co-uk/iiif-php), then you must implement the following event:
+As mentioned, the IIIF Storage reference implementation fires the following events that this module listens to in order to generate the components to be used in Omeka templates. If you want to create your own implementations using the [IIIF PHP library](https://github.com/digirati-co-uk/iiif-php), then you must implement the following event:
 
 Event name: `iiif.canvas.view`
 Event Variables:
