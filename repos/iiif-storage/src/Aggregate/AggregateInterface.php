@@ -2,7 +2,7 @@
 
 namespace IIIFStorage\Aggregate;
 
-use IIIFStorage\Model\ItemRequest;
+use Digirati\OmekaShared\Model\ItemRequest;
 
 interface AggregateInterface
 {

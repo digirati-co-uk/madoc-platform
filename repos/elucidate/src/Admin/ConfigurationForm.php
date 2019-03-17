@@ -15,7 +15,6 @@ class ConfigurationForm extends AbstractConfigurationForm
     /** @return Element[] */
     protected function getFormFields(): array
     {
-        // TODO: Implement getFormFields() method.
         return [
             'site_domain' => (new Element\Url())
                 ->setOptions([

@@ -3,14 +3,13 @@
 namespace IIIFStorage\Repository;
 
 use Doctrine\DBAL\Connection;
-use IIIFStorage\Model\ItemRequest;
-use IIIFStorage\Utility\PropertyIdSaturator;
+use Digirati\OmekaShared\Model\ItemRequest;
+use Digirati\OmekaShared\Utility\PropertyIdSaturator;
 use Omeka\Api\Exception\NotFoundException;
 use Omeka\Api\Manager;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Api\Representation\ItemSetRepresentation;
 use Omeka\Api\Representation\ValueRepresentation;
-use Omeka\Service\ConnectionFactory;
 use Zend\Log\Logger;
 
 class CollectionRepository

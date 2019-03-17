@@ -2,10 +2,10 @@
 
 namespace IIIFStorage\Job;
 
-use IIIFStorage\Model\FieldValue;
-use IIIFStorage\Model\ItemRequest;
+use Digirati\OmekaShared\Model\FieldValue;
+use Digirati\OmekaShared\Model\ItemRequest;
 use IIIFStorage\Repository\ManifestRepository;
-use IIIFStorage\Utility\PropertyIdSaturator;
+use Digirati\OmekaShared\Utility\PropertyIdSaturator;
 use Omeka\Api\Manager;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Job\AbstractJob;

@@ -1,7 +1,6 @@
 <?php
 
-namespace IIIFStorage\Model;
-
+namespace Digirati\OmekaShared\Model;
 
 class ItemRequest
 {

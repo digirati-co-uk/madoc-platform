@@ -4,7 +4,7 @@ namespace IIIFStorage\Aggregate;
 
 
 use IIIFStorage\Job\ImportManifests;
-use IIIFStorage\Model\ItemRequest;
+use Digirati\OmekaShared\Model\ItemRequest;
 use Omeka\Job\Dispatcher;
 
 class ScheduleEmbeddedManifests

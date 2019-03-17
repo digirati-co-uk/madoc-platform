@@ -2,8 +2,8 @@
 
 namespace IIIFStorage\Aggregate;
 
-use IIIFStorage\Model\FieldValue;
-use IIIFStorage\Model\ItemRequest;
+use Digirati\OmekaShared\Model\FieldValue;
+use Digirati\OmekaShared\Model\ItemRequest;
 use Zend\Http\Client;
 use Zend\Http\Request;
 

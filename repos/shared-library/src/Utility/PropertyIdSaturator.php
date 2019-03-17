@@ -1,9 +1,9 @@
 <?php
 
-namespace IIIFStorage\Utility;
+namespace Digirati\OmekaShared\Utility;
 
-use IIIFStorage\Model\FieldValue;
-use IIIFStorage\Model\ItemRequest;
+use Digirati\OmekaShared\Model\FieldValue;
+use Digirati\OmekaShared\Model\ItemRequest;
 use LogicException;
 use Omeka\Api\Manager;
 use Omeka\Api\Representation\ResourceClassRepresentation;

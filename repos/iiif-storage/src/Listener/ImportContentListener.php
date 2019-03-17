@@ -3,8 +3,8 @@
 namespace IIIFStorage\Listener;
 
 use IIIFStorage\Aggregate\AggregateInterface;
-use IIIFStorage\Model\ItemRequest;
-use IIIFStorage\Utility\PropertyIdSaturator;
+use Digirati\OmekaShared\Model\ItemRequest;
+use Digirati\OmekaShared\Utility\PropertyIdSaturator;
 use Omeka\Api\Adapter\ItemAdapter;
 use Omeka\Api\Adapter\ItemSetAdapter;
 use Omeka\Api\Request;

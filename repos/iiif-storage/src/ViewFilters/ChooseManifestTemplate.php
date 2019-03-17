@@ -2,8 +2,7 @@
 
 namespace IIIFStorage\ViewFilters;
 
-
-use IIIFStorage\Utility\PropertyIdSaturator;
+use Digirati\OmekaShared\Utility\PropertyIdSaturator;
 use Zend\View\Model\ModelInterface;
 use Zend\View\Renderer\PhpRenderer;
 

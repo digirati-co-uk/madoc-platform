@@ -38,7 +38,7 @@ use IIIFStorage\Media\PageBlockMediaAdapter;
 use IIIFStorage\Repository\CanvasRepository;
 use IIIFStorage\Repository\CollectionRepository;
 use IIIFStorage\Repository\ManifestRepository;
-use IIIFStorage\Utility\PropertyIdSaturator;
+use Digirati\OmekaShared\Utility\PropertyIdSaturator;
 use IIIFStorage\Utility\ApiRouter;
 use IIIFStorage\Utility\Router;
 use IIIFStorage\ViewFilters\ChooseManifestTemplate;
