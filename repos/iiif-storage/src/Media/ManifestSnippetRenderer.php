@@ -81,7 +81,7 @@ class ManifestSnippetRenderer implements RendererInterface, MediaPageBlockDualRe
             'resource' => $manifest,
         ]);
 
-        $vm->setTemplate('iiif-storage/media/manifest-snippet');
+        $vm->setTemplate('iiif-storage/media/manifest-snippet-carousel');
         return $this->twig->render($vm);
     }
 

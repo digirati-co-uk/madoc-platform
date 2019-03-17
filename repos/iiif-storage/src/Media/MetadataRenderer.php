@@ -67,13 +67,42 @@ class MetadataRenderer implements RendererInterface
         }
 
         $vm = new ViewModel([
-            'label' => $data['show_title'] ? $resource->getLabel() : null,
-            'summary' => $data['show_summary'] ? $resource->getDescription() : null,
-            'requiredStatement' => $data['show_required'] ? $resource->getAttribution() : null,
-            'metadata' => $data['show_metadata_pairs'] ? $resource->getMetaData() : null,
+            'label' => $data['show_title'] ? $this->translate($resource->getLabel()) : null,
+            'summary' => $data['show_summary'] ? $this->translate($resource->getDescription()) : null,
+            'requiredStatement' => $data['show_required'] ? $this->translate($resource->getAttribution()) : null,
+            'metadata' => $data['show_metadata_pairs'] ? $this->translateMetadata($resource->getMetaData()) : null,
         ]);
         $vm->setTemplate('iiif-storage/media/metadata');
         return $this->twig->render($vm);
+    }
+
+    /**
+     * @todo this needs to be implemented.
+     * @param $objOrString
+     * @return mixed
+     */
+    private function translate($objOrString) {
+        if (is_string($objOrString)) {
+            return $objOrString;
+        }
+        foreach ($objOrString as $candidate) {
+            if ($candidate['@language'] === 'en') {
+                return $candidate['@value'];
+            }
+        }
+
+        return $objOrString[0]['@value'] ?? '';
+    }
+
+    private function translateMetadata($metadata) {
+        $newMetadata = [];
+        foreach ($metadata as $pair) {
+            $newMetadata[] = [
+                'label' => $this->translate($pair['label']),
+                'value' => $this->translate($pair['value']),
+            ];
+        }
+        return $newMetadata;
     }
 
     /**

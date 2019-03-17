@@ -29,7 +29,8 @@ $userBar = $this->partial('common/user-bar', ['site' => $site]);
 <?php echo $userBar; ?>
 <header>
     <?php if ($this->themeSetting('logo')): ?>
-        <a href="<?php echo $site->url(); ?>" class="site-title"><img src="<?php echo $this->themeSettingAssetUrl('logo'); ?>" title="Logo"></a>
+        <a href="<?php echo $site->url(); ?>" class="site-title"><img
+                    src="<?php echo $this->themeSettingAssetUrl('logo'); ?>" title="Logo"></a>
     <?php else: ?>
         <a href="<?php echo $site->url(); ?>" class="site-title"><?php echo $this->pageTitle($site->title()); ?></a>
     <?php endif; ?>
@@ -49,11 +50,14 @@ $userBar = $this->partial('common/user-bar', ['site' => $site]);
     <?php print $this->content; ?>
 </main>
 <footer>
-    <?php if ($footerContent = $this->themeSetting('footer')): ?>
-        <?php echo $footerContent; ?>
-    <?php else: ?>
-        <?php echo $this->translate('Powered by Madoc Platform running on Omeka S'); ?>
-    <?php endif; ?>
+
+    <div class="footer-inner">
+        <?php if ($footerContent = $this->themeSetting('footer')): ?>
+            <?php echo $footerContent; ?>
+        <?php else: ?>
+            <?php echo $this->translate('Powered by Madoc Platform running on Omeka S'); ?>
+        <?php endif; ?>
+    </div>
 </footer>
 <?php echo $this->headScript(); ?>
 </body>

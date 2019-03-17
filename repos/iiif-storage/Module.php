@@ -3,6 +3,8 @@
 namespace IIIFStorage;
 
 use Digirati\OmekaShared\Helper\UrlHelper;
+use Digirati\OmekaShared\ModuleExtensions\ConfigurationFormAutoloader;
+use IIIFStorage\Admin\ConfigurationForm;
 use IIIFStorage\Controller\CollectionController;
 use IIIFStorage\Controller\ManifestController;
 use IIIFStorage\Controller\ResourceController;
@@ -28,6 +30,8 @@ use Zend\View\Renderer\PhpRenderer;
 
 class Module extends AbstractModule implements ConfigProviderInterface
 {
+    use ConfigurationFormAutoloader;
+
     private $config;
 
     public function loadVendor()
@@ -251,5 +255,10 @@ class Module extends AbstractModule implements ConfigProviderInterface
 
         // Pass the changed configuration back to the listener:
         $configListener->setMergedConfig($config);
+    }
+
+    function getConfigFormClass(): string
+    {
+        return ConfigurationForm::class;
     }
 }

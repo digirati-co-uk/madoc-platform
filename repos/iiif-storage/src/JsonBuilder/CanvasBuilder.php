@@ -98,7 +98,7 @@ class CanvasBuilder
 
         if ($media) {
             $json['thumbnail'] = [
-                '@id' => $media->thumbnailUrl('medium'),
+                '@id' => $media->thumbnailUrl('large'),
                 '@type' => 'dctypes:Image',
                 // @todo height and width of thumbnails.
             ];

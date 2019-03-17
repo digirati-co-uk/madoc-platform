@@ -78,34 +78,38 @@ class ImageSourceRenderer extends IIIF implements EventManagerAwareInterface
 
     public function renderCanvas(MediaRepresentation $image, ItemRepresentation $canvasRepresentation, callable $fallback, array $context = [])
     {
-        $canvas = $this->canvasBuilder->buildResource($canvasRepresentation);
+        try {
+            $canvas = $this->canvasBuilder->buildResource($canvasRepresentation);
 
-        $viewModel = new ViewModel(array_merge([
-            'router' => $this->router,
-            'canvas' => $canvas->getCanvas(),
-            'resource' => $canvas,
-        ], $context));
+            $viewModel = new ViewModel(array_merge([
+                'router' => $this->router,
+                'canvas' => $canvas->getCanvas(),
+                'resource' => $canvas,
+            ], $context));
 
 
-        $manifests = $this->canvasRepository->getManifests($canvasRepresentation);
+            $manifests = $this->canvasRepository->getManifests($canvasRepresentation);
 
-        if (!empty($manifests)) {
-            // @todo might be more than one manifest.
-            $manifestRepresentation = array_shift($manifests);
-            $manifest = $this->manifestBuilder->buildResource($manifestRepresentation);;
-            $viewModel->setVariable('manifest', $manifest->getManifest());
-            $viewModel->setVariable('manifestResource', $manifest);
-        }
+            if (!empty($manifests)) {
+                // @todo might be more than one manifest.
+                $manifestRepresentation = array_shift($manifests);
+                $manifest = $this->manifestBuilder->buildResource($manifestRepresentation);;
+                $viewModel->setVariable('manifest', $manifest->getManifest());
+                $viewModel->setVariable('manifestResource', $manifest);
+            }
 
-        $viewModel->setTemplate('iiif-storage/canvas/view-image');
+            $viewModel->setTemplate('iiif-storage/canvas/view-image');
 
-        /** @var GenericEvent $event */
-        $this->dispatcher->dispatch('iiif.canvas.view', new GenericEvent($canvas, ['viewModel' => $viewModel]));
+            /** @var GenericEvent $event */
+            $this->dispatcher->dispatch('iiif.canvas.view', new GenericEvent($canvas, ['viewModel' => $viewModel]));
 
-        if (!$viewModel->getVariable('annotationStudio')) {
+            if (!$viewModel->getVariable('annotationStudio')) {
+                return $fallback();
+            }
+
+            return $this->twig->render($viewModel);
+        } catch (\Throwable $e) {
             return $fallback();
         }
-
-        return $this->twig->render($viewModel);
     }
 }

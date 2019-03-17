@@ -44,6 +44,7 @@ use IIIFStorage\Utility\Router;
 use IIIFStorage\ViewFilters\ChooseManifestTemplate;
 use IIIFStorage\ViewFilters\DisableJsonField;
 use Omeka\Job\Dispatcher;
+use IIIFStorage\Media\IIIFImageIngester;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Zend\Http\Client;
@@ -188,6 +189,15 @@ return [
                     $c->get(PropertyIdSaturator::class)
                 );
             },
+            IIIFImageIngester::class => function (ContainerInterface $c) {
+                /** @var \Omeka\Settings\Settings $settings */
+                $settings = $c->get('Omeka\Settings');
+                return new IIIFImageIngester(
+                    $c->get('Omeka\HttpClient'),
+                    $c->get('Omeka\File\Downloader'),
+                    (int) $settings->get('iiif-storage_thumbnail-size', 256)
+                );
+            },
             ManifestListIngester::class => function (ContainerInterface $c) {
                 return new ManifestListIngester();
             },
@@ -280,6 +290,9 @@ return [
     ],
     'media_ingesters' => [
         'factories' => [
+            'iiif' => function (ContainerInterface $c) {
+                return $c->get(IIIFImageIngester::class);
+            },
             'iiif-banner-image' => function (ContainerInterface $c) {
                 return $c->get(BannerImageIngester::class);
             },
