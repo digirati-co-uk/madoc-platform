@@ -1,5 +1,0 @@
-<?php /** @var $this \Zend\View\Renderer\PhpRenderer */ ?>
-<p><?php echo $this->translate('There was an error.'); ?></p>
-<pre><?php foreach(debug_backtrace() as $backtrace): ?><?php print $backtrace['file']; print "\n";?><?php endforeach; ?>
-    <?php echo $this->exception; ?>
-</pre>
