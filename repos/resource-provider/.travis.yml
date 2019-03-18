@@ -1,5 +1,0 @@
-language: bash
-before_script:
-  - chmod +x pushUpstreamIntoDockerImages.sh
-script:
-  - ./pushUpstreamIntoDockerImages.sh

@@ -2,7 +2,6 @@
 
 namespace IIIFStorage\Model;
 
-
 use IIIF\Model\Canvas;
 use Omeka\Api\Representation\ItemRepresentation;
 

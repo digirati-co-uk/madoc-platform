@@ -2,15 +2,26 @@
 
 namespace IIIFStorage\Aggregate;
 
-use IIIFStorage\Model\FieldValue;
-use IIIFStorage\Model\ItemRequest;
+use Digirati\OmekaShared\Model\FieldValue;
+use Digirati\OmekaShared\Model\ItemRequest;
+use IIIFStorage\Utility\Translate;
 use Zend\Http\Client;
 use Zend\Http\Request;
 
 class DereferencedCollection implements AggregateInterface
 {
+    use Translate;
+
+    /**
+     * @var array
+     */
     private $collectionRequests = [];
+
+    /**
+     * @var array
+     */
     private $collectionCache = [];
+
     /**
      * @var Client
      */
@@ -39,9 +50,11 @@ class DereferencedCollection implements AggregateInterface
                 $title = $input->getValue('dcterms:title');
                 if (!$title || empty($title) || current($title)->getValue() === '') {
                     $collection = json_decode($json, true);
-                    if (isset($collection['label']) && is_string($collection['label'])) {
+
+                    $label = $this->translate($collection['label'] ?? '');
+                    if ($label) {
                         $input->addField(
-                            FieldValue::literal('dcterms:title', 'Title', $collection['label'])
+                            FieldValue::literal('dcterms:title', 'Title', $label)
                         );
                     }
                 }

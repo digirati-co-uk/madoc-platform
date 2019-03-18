@@ -2,8 +2,8 @@
 
 namespace IIIFStorage\Aggregate;
 
-use IIIFStorage\Model\ItemRequest;
-use IIIFStorage\Model\MediaValue;
+use Digirati\OmekaShared\Model\ItemRequest;
+use Digirati\OmekaShared\Model\MediaValue;
 use Zend\Log\Logger;
 
 class AddImageService implements AggregateInterface

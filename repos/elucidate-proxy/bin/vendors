@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-export COMPOSER_HOME=./vendor/bin/composer
-export COMPOSER_VENDOR_DIR=./build/vendor-dist
-composer install --no-dev --optimize-autoloader --no-scripts

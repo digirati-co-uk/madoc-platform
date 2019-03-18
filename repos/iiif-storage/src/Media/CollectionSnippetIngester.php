@@ -2,7 +2,7 @@
 
 namespace IIIFStorage\Media;
 
-use IIIFStorage\Utility\PropertyIdSaturator;
+use Digirati\OmekaShared\Utility\PropertyIdSaturator;
 use Omeka\Api\Manager;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Form\Element\ResourceSelect;

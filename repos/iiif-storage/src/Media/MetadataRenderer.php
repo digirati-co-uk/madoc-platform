@@ -6,6 +6,7 @@ namespace IIIFStorage\Media;
 use IIIFStorage\JsonBuilder\CanvasBuilder;
 use IIIFStorage\JsonBuilder\CollectionBuilder;
 use IIIFStorage\JsonBuilder\ManifestBuilder;
+use IIIFStorage\Utility\Translate;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Api\Representation\ItemSetRepresentation;
 use Omeka\Api\Representation\MediaRepresentation;
@@ -16,6 +17,8 @@ use ZfcTwig\View\TwigRenderer;
 
 class MetadataRenderer implements RendererInterface
 {
+
+    use Translate;
 
     /**
      * @var TwigRenderer
@@ -74,24 +77,6 @@ class MetadataRenderer implements RendererInterface
         ]);
         $vm->setTemplate('iiif-storage/media/metadata');
         return $this->twig->render($vm);
-    }
-
-    /**
-     * @todo this needs to be implemented.
-     * @param $objOrString
-     * @return mixed
-     */
-    private function translate($objOrString) {
-        if (is_string($objOrString)) {
-            return $objOrString;
-        }
-        foreach ($objOrString as $candidate) {
-            if ($candidate['@language'] === 'en') {
-                return $candidate['@value'];
-            }
-        }
-
-        return $objOrString[0]['@value'] ?? '';
     }
 
     private function translateMetadata($metadata) {

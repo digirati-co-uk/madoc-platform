@@ -1,22 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: stephen
- * Date: 2018-09-24
- * Time: 16:52
- */
 
 namespace IIIFStorage\Job;
 
 
-use IIIFStorage\Model\FieldValue;
-use IIIFStorage\Model\ItemRequest;
+use Digirati\OmekaShared\Model\FieldValue;
+use Digirati\OmekaShared\Model\ItemRequest;
 use IIIFStorage\Repository\CollectionRepository;
 use IIIFStorage\Repository\ManifestRepository;
-use IIIFStorage\Utility\PropertyIdSaturator;
-use Omeka\Api\Manager;
-use Omeka\Api\Representation\ItemRepresentation;
-use Omeka\Api\Representation\ItemSetRepresentation;
 use Omeka\Job\AbstractJob;
 use Omeka\Job\JobInterface;
 use Zend\Log\Logger;

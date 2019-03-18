@@ -18,7 +18,6 @@ INSERT INTO `module` VALUES
   ('PublicUser',1,'1.0.3'),
   ('ElucidateModule',1,'1.2'),
   ('CaptureModelImport',1,'1.0'),
-  ('Comments',1,'0.1.0'),
   ('GoogleAnalytics',1,'1.0.1'),
   ('ResourceProvider',1,'1.0.1'),
   ('Bookmarking',1,'0.1.0'),

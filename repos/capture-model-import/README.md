@@ -1,25 +1,10 @@
 # Capture Model Import / Export
+Capture model import will import certain formats of capture models into the Omeka CMS.
 
 ## Export endpoint
-
-eg.
-GET http://example.org/model-export/inline/:id
+eg. GET http://example.org/model-export/inline/:id
 
 Where id is the id of an Item-Set or Item in omeka
- 
- ### Installation
- 
- ##### Repository
- Clone this repository into your modules folder in Omeka-S
-```
-$ cd modules
-$ git clone git@github.com:digirati-co-uk/omeka-capture-model-import.git CaptureModelImport
-```
- and run composer install from the folder
- ```
- $ cd CaptureModelImport
- $ composer install
- ```
  
 ### Running
 Install module in the usual way from within the Modules section of the Admin UI in Omeka-S.

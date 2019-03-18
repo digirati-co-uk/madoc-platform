@@ -1,6 +1,6 @@
 <?php
 
-namespace IIIFStorage\Model;
+namespace Digirati\OmekaShared\Model;
 
 class FieldValue implements ValueInterface
 {

@@ -2,8 +2,8 @@
 
 namespace IIIFStorage\Repository;
 
-use IIIFStorage\Model\ItemRequest;
-use IIIFStorage\Utility\PropertyIdSaturator;
+use Digirati\OmekaShared\Model\ItemRequest;
+use Digirati\OmekaShared\Utility\PropertyIdSaturator;
 use Omeka\Api\Manager;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Api\Representation\ValueRepresentation;
