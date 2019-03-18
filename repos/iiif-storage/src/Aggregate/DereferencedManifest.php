@@ -4,13 +4,24 @@ namespace IIIFStorage\Aggregate;
 
 use Digirati\OmekaShared\Model\FieldValue;
 use Digirati\OmekaShared\Model\ItemRequest;
+use IIIFStorage\Utility\Translate;
 use Zend\Http\Client;
 use Zend\Http\Request;
 
 class DereferencedManifest implements AggregateInterface
 {
+    use Translate;
+
+    /**
+     * @var array
+     */
     private $manifestRequests = [];
+
+    /**
+     * @var array
+     */
     private $manifestCache = [];
+
     /**
      * @var Client
      */
@@ -38,9 +49,10 @@ class DereferencedManifest implements AggregateInterface
                 $title = $input->getValue('dcterms:title');
                 if (!$title || empty($title) || current($title)->getValue() === '') {
                     $manifest = json_decode($json, true);
-                    if (isset($manifest['label']) && is_string($manifest['label'])) {
+                    $label = $this->translate($manifest['label'] ?? '');
+                    if ($label) {
                         $input->addField(
-                            FieldValue::literal('dcterms:title', 'Title', $manifest['label'])
+                            FieldValue::literal('dcterms:title', 'Title', $label)
                         );
                     }
                 }
