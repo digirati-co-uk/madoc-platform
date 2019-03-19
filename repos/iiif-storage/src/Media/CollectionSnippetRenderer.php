@@ -67,7 +67,7 @@ class CollectionSnippetRenderer implements RendererInterface, MediaPageBlockDual
         $collection = $this->collectionBuilder->buildResource(
             $collectionRepresentation,
             false,
-            0,
+            1,
             $manifestsToShow,
             1
         );
