@@ -62,7 +62,10 @@ class CanvasListRenderer implements RendererInterface, MediaPageBlockDualRender
             'search_fallback' => false,
         ], $data);
 
-        $data['canvases'] = array_map([$this->builder, 'buildResource'], array_slice($this->repo->search($data['search_query']), 0, $data['search_results']));
+        // @todo original ids
+        $data['canvases'] = array_map(function ($canvas) {
+            $this->builder->buildResource($canvas, false);
+        }, array_slice($this->repo->search($data['search_query']), 0, $data['search_results']));
         $data['router'] = $this->router;
         $vm = new ViewModel(array_merge([], $options, $data));
         $vm->setTemplate('iiif-storage/media/canvas-list');

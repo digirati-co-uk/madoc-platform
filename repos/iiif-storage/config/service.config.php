@@ -244,6 +244,7 @@ return [
                     $c->get('ZfcTwig\View\TwigRenderer'),
                     $c->get('Omeka\ApiManager'),
                     $c->get(CanvasBuilder::class),
+                    $c->get(CanvasRepository::class),
                     $c->get(Router::class)
                 );
             },
@@ -276,6 +277,7 @@ return [
                     $c->get('ZfcTwig\View\TwigRenderer'),
                     $c->get('Omeka\ApiManager'),
                     $c->get(ManifestBuilder::class),
+                    $c->get(ManifestRepository::class),
                     $c->get(Router::class)
                 );
             },

@@ -253,4 +253,16 @@ class ManifestRepository
         }
         return false;
     }
+    /**
+     * @param int $manifestId
+     * @return PaginatedResult
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function getCollections(int $manifestId): PaginatedResult
+    {
+        return $this->relationshipRequest->getUriMapping(
+            $manifestId,
+            'dcterms:isPartOf'
+        );
+    }
 }

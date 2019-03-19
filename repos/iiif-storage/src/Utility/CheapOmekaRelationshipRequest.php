@@ -91,7 +91,7 @@ SQL;
         $statement->bindValue('resourceId', (int)$fromId, PDO::PARAM_INT);
         if ($limit !== -1) {
             $statement->bindValue('lim', (int)$limit, PDO::PARAM_INT);
-            $statement->bindValue('off', (int)$offset + 1, PDO::PARAM_INT);
+            $statement->bindValue('off', (int)$offset, PDO::PARAM_INT);
         }
         $statement->execute();
 
