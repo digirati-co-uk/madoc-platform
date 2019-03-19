@@ -171,7 +171,7 @@ class ManifestController extends AbstractPsr7ActionController
             if (!$this->repo->containsCanvas($manifest->id(), $canvasId)) {
                 throw new NotFoundException();
             }
-            $manifestRepresentation = $this->builder->buildResource($manifest, $this->shouldUseOriginalIds(), 0, 1);
+            $manifestRepresentation = $this->builder->buildResource($manifest, $this->shouldUseOriginalIds(), 1, 1);
             $vm['manifest'] = $manifestRepresentation->getManifest();
             $vm['manifestResource'] = $manifestRepresentation;
 

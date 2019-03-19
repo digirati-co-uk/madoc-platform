@@ -50,6 +50,9 @@ class ManifestBuilder
         int $page = -1,
         int $perPage = -1
     ) {
+        if ($page < 1) {
+            $page = 1;
+        }
         $builtManifest = $this->build($manifest, $originalIds, $page, $perPage);
         $manifestObject = Manifest::fromArray($builtManifest->getJson());
 
@@ -66,6 +69,9 @@ class ManifestBuilder
         int $page = -1,
         int $perPage = -1
     ): BuiltManifest {
+        if ($page < 1) {
+            $page = 1;
+        }
         $json = $this->extractSource($manifest);
 
         $json['@context'] = $json['@context'] ?? 'http://iiif.io/api/presentation/2/context.json';

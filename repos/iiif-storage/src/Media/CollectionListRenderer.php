@@ -64,7 +64,7 @@ class CollectionListRenderer implements RendererInterface, MediaPageBlockDualRen
 
         // @todo original ids
         $data['collections'] = array_map(function($resource) {
-            return $this->builder->buildResource($resource, false, 0, 4, 1);
+            return $this->builder->buildResource($resource, false, 1, 4, 1);
         }, array_slice($this->repo->search($data['search_query']), 1, $data['search_results']));
         $data['router'] = $this->router;
         $vm = new ViewModel(array_merge([], $options, $data));

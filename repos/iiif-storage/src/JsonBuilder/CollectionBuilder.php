@@ -101,6 +101,9 @@ class CollectionBuilder
         int $page = -1,
         int $perPage = -1
     ): BuiltCollection {
+        if ($page < 1) {
+            $page = 1;
+        }
         $json = $this->extractSource($collection);
 
         $json['@context'] = $json['@context'] ?? 'http://iiif.io/api/presentation/2/context.json';
