@@ -2,38 +2,19 @@
 
 namespace IIIFStorage\Repository;
 
-use Doctrine\DBAL\Connection;
 use Digirati\OmekaShared\Model\ItemRequest;
 use Digirati\OmekaShared\Utility\PropertyIdSaturator;
+use IIIFStorage\Model\PaginatedResult;
+use IIIFStorage\Utility\CheapOmekaRelationshipRequest;
 use Omeka\Api\Exception\NotFoundException;
 use Omeka\Api\Manager;
-use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Api\Representation\ItemSetRepresentation;
-use Omeka\Api\Representation\ValueRepresentation;
 use Zend\Log\Logger;
 
 class CollectionRepository
 {
     const RESOURCE_TEMPLATE = 'IIIF Collection';
     const API_TYPE = 'item_sets';
-
-    const SELECT_MANIFESTS = <<<SQL
- select V2.value_resource_id as omeka_id, V1.uri as uri
- from value V2
-        left join value V1 on V1.resource_id = V2.value_resource_id
- WHERE V2.property_id = :hasManifestsId
-   AND V1.property_id = 10
-   AND V2.resource_id = :resourceId;
-SQL;
-
-    const SELECT_MANIFESTS_WITH_LABELS = <<<SQL
- select V2.value_resource_id as omeka_id, V1.uri, V1.value, V1.property_id
- from value V2
-        left join value V1 on V1.resource_id = V2.value_resource_id
- WHERE V2.property_id = :hasManifestsId
-   AND (V1.property_id = 1 OR V1.property_id = 10)
-   AND V2.resource_id = :resourceId;
-SQL;
 
     /**
      * @var Manager
@@ -50,16 +31,19 @@ SQL;
      */
     private $siteId;
     /**
-     * @var Connection
+     * @var CheapOmekaRelationshipRequest
      */
-    private $connection;
+    private $relationshipRequest;
 
-    public function __construct(Manager $api, PropertyIdSaturator $saturator, Connection $connection)
-    {
+    public function __construct(
+        Manager $api,
+        PropertyIdSaturator $saturator,
+        CheapOmekaRelationshipRequest $relationshipRequest
+    ) {
 
         $this->api = $api;
         $this->saturator = $saturator;
-        $this->connection = $connection;
+        $this->relationshipRequest = $relationshipRequest;
     }
 
     public function getPropertyId(): string
@@ -83,21 +67,24 @@ SQL;
         return $query;
     }
 
-    public function getManifestMapFromCollection(int $collectionOmekaId)
+    public function getSource(int $id): array
     {
-        $query = self::SELECT_MANIFESTS;
-        $statement = $this->connection->prepare($query);
-        $statement->bindValue('hasManifestsId', (int) $this->saturator->loadPropertyId('sc:hasManifests'));
-        $statement->bindValue('resourceId', (int) $collectionOmekaId);
-        $statement->execute();
+        return $this->relationshipRequest->selectSource($id);
+    }
 
-        $indexMap = [];
-        foreach ($statement->fetchAll() as $manifest) {
-            if ($manifest['uri']) {
-                $indexMap[$manifest['uri']] = $manifest['omeka_id'];
-            }
+    public function getManifestMapFromCollection(int $collectionOmekaId, $limit = -1, int $offset = 0): PaginatedResult
+    {
+        try {
+            return $this->relationshipRequest->getUriMapping(
+                $collectionOmekaId,
+                'sc:hasManifests',
+                $limit,
+                $offset
+            );
+        } catch (\Throwable $e) {
+            error_log((string) $e);
+            return new PaginatedResult([], $offset, $limit);
         }
-        return $indexMap;
     }
 
     public function getById(string $id): ItemSetRepresentation
@@ -130,13 +117,23 @@ SQL;
         return $this->api->update(static::API_TYPE, $id, $toUpdate, [], ['isPartial' => true])->getContent();
     }
 
-    public function containsManifest(ItemSetRepresentation $collection, string $manifestId): bool
+    public function containsManifest(int $collection, string $manifestId): bool
     {
-        $manifests = $collection->value('sc:hasManifests', ['all' => true]);
-        foreach ($manifests as $manifestValue) {
-            /** @var ValueRepresentation $manifestValue */
-            $manifest = $manifestValue->valueResource();
-            if ($manifest && (string)$manifest->id() === (string)$manifestId) {
+        try {
+            $manifestMapping = $this->relationshipRequest->getUriMapping(
+                $collection,
+                'sc:hasManifests'
+            );
+        } catch (\Throwable $e) {
+            error_log((string) $e);
+            return false;
+        }
+
+        foreach ($manifestMapping->getList() as $omekaId => $urlId) {
+            if (
+                (string)$omekaId === (string)$manifestId ||
+                (string)$urlId === (string)$manifestId
+            ) {
                 return true;
             }
         }
@@ -176,17 +173,5 @@ SQL;
         $query = $this->getDefaultQuery();
         $query['search'] = $search;
         return $this->api->search(static::API_TYPE, $query)->getContent();
-    }
-
-    /**
-     * @param ItemSetRepresentation $collection
-     * @return ItemRepresentation[]
-     */
-    public function getManifests(ItemSetRepresentation $collection)
-    {
-        $manifests = $collection->value('sc:hasManifests', ['all' => true]);
-        return array_map(function (ValueRepresentation $manifestValue) {
-            return $manifestValue->valueResource();
-        }, $manifests);
     }
 }

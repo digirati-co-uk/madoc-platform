@@ -19,20 +19,20 @@ class ManifestRepresentation implements ResourceRepresentation
     private $manifest;
 
     /**
-     * @var array
+     * @var BuiltManifest
      */
-    private $json;
+    private $builtManifest;
 
-    public function __construct(ItemRepresentation $item, Manifest $manifest, array $json)
+    public function __construct(ItemRepresentation $item, Manifest $manifest, BuiltManifest $builtManifest)
     {
         $this->item = $item;
         $this->manifest = $manifest;
-        $this->json = $json;
+        $this->builtManifest = $builtManifest;
     }
 
     public function getId(): string
     {
-        return $this->json['@id'];
+        return $this->builtManifest->getJson()['@id'];
     }
 
     public function getOmekaId(): string
@@ -45,8 +45,33 @@ class ManifestRepresentation implements ResourceRepresentation
      */
     public function getJson(): array
     {
-        return $this->json;
+        return $this->builtManifest->getJson();
     }
+
+    /**
+     * @return int
+     */
+    public function getPage(): int
+    {
+        return $this->builtManifest->getPage();
+    }
+
+    /**
+     * @return int
+     */
+    public function getPerPage(): int
+    {
+        return $this->builtManifest->getPerPage();
+    }
+
+    /**
+     * @return int
+     */
+    public function getTotalResults(): int
+    {
+        return $this->builtManifest->getTotalResults();
+    }
+
 
     /**
      * @return Manifest

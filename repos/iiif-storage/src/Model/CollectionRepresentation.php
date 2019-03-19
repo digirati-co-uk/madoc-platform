@@ -18,15 +18,19 @@ class CollectionRepresentation implements ResourceRepresentation
     private $collection;
 
     /**
-     * @var array
+     * @var BuiltCollection
      */
-    private $json;
+    private $builtCollection;
 
-    public function __construct(ItemSetRepresentation $itemSet, Collection $collection, array $json)
+    public function __construct(
+        ItemSetRepresentation $itemSet,
+        Collection $collection,
+        BuiltCollection $json
+    )
     {
         $this->itemSet = $itemSet;
         $this->collection = $collection;
-        $this->json = $json;
+        $this->builtCollection = $json;
     }
 
     /**
@@ -34,7 +38,7 @@ class CollectionRepresentation implements ResourceRepresentation
      */
     public function getId(): string
     {
-        return $this->json['@id'];
+        return $this->builtCollection->getJson()['@id'];
     }
 
     /**
@@ -46,11 +50,35 @@ class CollectionRepresentation implements ResourceRepresentation
     }
 
     /**
+     * @return int
+     */
+    public function getPage(): int
+    {
+        return $this->builtCollection->getPage();
+    }
+
+    /**
+     * @return int
+     */
+    public function getPerPage(): int
+    {
+        return $this->builtCollection->getPerPage();
+    }
+
+    /**
+     * @return int
+     */
+    public function getTotalResults(): int
+    {
+        return $this->builtCollection->getTotalResults();
+    }
+
+    /**
      * @return array
      */
     public function getJson(): array
     {
-        return $this->json;
+        return $this->builtCollection->getJson();
     }
 
     /**

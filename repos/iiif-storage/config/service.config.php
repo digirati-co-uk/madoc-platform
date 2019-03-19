@@ -40,6 +40,7 @@ use IIIFStorage\Repository\CollectionRepository;
 use IIIFStorage\Repository\ManifestRepository;
 use Digirati\OmekaShared\Utility\PropertyIdSaturator;
 use IIIFStorage\Utility\ApiRouter;
+use IIIFStorage\Utility\CheapOmekaRelationshipRequest;
 use IIIFStorage\Utility\Router;
 use IIIFStorage\ViewFilters\ChooseManifestTemplate;
 use IIIFStorage\ViewFilters\DisableJsonField;
@@ -115,12 +116,21 @@ return [
             ManifestRepository::class => function (ContainerInterface $c) {
                 return new ManifestRepository(
                     $c->get('Omeka\ApiManager'),
-                    $c->get(PropertyIdSaturator::class)
+                    $c->get(CanvasRepository::class),
+                    $c->get(PropertyIdSaturator::class),
+                    $c->get(CheapOmekaRelationshipRequest::class)
                 );
             },
             CanvasRepository::class => function (ContainerInterface $c) {
                 return new CanvasRepository(
                     $c->get('Omeka\ApiManager'),
+                    $c->get(PropertyIdSaturator::class),
+                    $c->get(CheapOmekaRelationshipRequest::class)
+                );
+            },
+            CheapOmekaRelationshipRequest::class => function (ContainerInterface $c) {
+                return new CheapOmekaRelationshipRequest(
+                    $c->get('Omeka\Connection'),
                     $c->get(PropertyIdSaturator::class)
                 );
             },
@@ -128,7 +138,7 @@ return [
                 return new CollectionRepository(
                     $c->get('Omeka\ApiManager'),
                     $c->get(PropertyIdSaturator::class),
-                    $c->get('Omeka\Connection')
+                    $c->get(CheapOmekaRelationshipRequest::class)
                 );
             },
             ApiRouter::class => function (ContainerInterface $c) {
@@ -215,6 +225,7 @@ return [
                     $c->get('ZfcTwig\View\TwigRenderer'),
                     $c->get(CanvasRepository::class),
                     $c->get(CanvasBuilder::class),
+                    $c->get(ManifestRepository::class),
                     $c->get(ManifestBuilder::class),
                     $c->get(Router::class),
                     $c->get(EventDispatcher::class)
@@ -329,6 +340,7 @@ return [
                     $c->get('ZfcTwig\View\TwigRenderer'),
                     $c->get(CanvasRepository::class),
                     $c->get(CanvasBuilder::class),
+                    $c->get(ManifestRepository::class),
                     $c->get(ManifestBuilder::class),
                     $c->get(Router::class),
                     $c->get(EventDispatcher::class)

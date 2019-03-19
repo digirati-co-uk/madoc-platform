@@ -3,9 +3,11 @@
 namespace IIIFStorage\JsonBuilder;
 
 use IIIF\Model\Manifest;
+use IIIFStorage\Model\BuiltManifest;
 use IIIFStorage\Model\ManifestRepresentation;
 use IIIFStorage\Repository\ManifestRepository;
 use IIIFStorage\Utility\ApiRouter;
+use IIIFStorage\Utility\CheapOmekaRelationshipRequest;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Api\Representation\ValueRepresentation;
 
@@ -31,28 +33,39 @@ class ManifestBuilder
      */
     private $canvasBuilder;
 
-    public function __construct(ApiRouter $router, ManifestRepository $manifest, CanvasBuilder $canvasBuilder)
-    {
+    public function __construct(
+        ApiRouter $router,
+        ManifestRepository $manifest,
+        CanvasBuilder $canvasBuilder
+    ) {
 
         $this->router = $router;
         $this->manifest = $manifest;
         $this->canvasBuilder = $canvasBuilder;
     }
 
-    public function buildResource(ItemRepresentation $manifest, bool $originalIds = false)
-    {
-        $json = $this->build($manifest, $originalIds);
-        $manifestObject = Manifest::fromArray($json);
+    public function buildResource(
+        ItemRepresentation $manifest,
+        bool $originalIds = false,
+        int $page = -1,
+        int $perPage = -1
+    ) {
+        $builtManifest = $this->build($manifest, $originalIds, $page, $perPage);
+        $manifestObject = Manifest::fromArray($builtManifest->getJson());
 
         return new ManifestRepresentation(
             $manifest,
             $manifestObject,
-            $json
+            $builtManifest
         );
     }
 
-    public function build(ItemRepresentation $manifest, bool $originalIds = false): array
-    {
+    public function build(
+        ItemRepresentation $manifest,
+        bool $originalIds = false,
+        int $page = -1,
+        int $perPage = -1
+    ): BuiltManifest {
         $json = $this->extractSource($manifest);
 
         $json['@context'] = $json['@context'] ?? 'http://iiif.io/api/presentation/2/context.json';
@@ -62,17 +75,26 @@ class ManifestBuilder
         $json['@type'] = $json['@type'] ?? 'sc:Manifest';
         $json['o:id'] = $manifest->id();
 
+        $canvases = $this->manifest->getCanvases($manifest, $page, $perPage);
+
         $json['sequences'] = [
             [
                 '@id' => $json['@id'] . '/sequence',
                 '@type' => 'sc:Sequence',
-                'canvases' => array_map(function($canvas) use ($originalIds) {
-                    return $this->canvasBuilder->build($canvas, $originalIds);
-                }, $this->manifest->getCanvases($manifest)),
+                'canvases' => array_map(function ($canvas) use ($originalIds, $page, $perPage) {
+                    return $canvas ? $this->canvasBuilder->build($canvas, $originalIds) : null;
+                }, $canvases['canvases']),
             ]
         ];
 
-        return $this->aggregateMetadata($manifest, $json);
+        $json = $this->aggregateMetadata($manifest, $json);
+
+        return new BuiltManifest(
+            $json,
+            $canvases['totalResults'],
+            $page,
+            $perPage
+        );
     }
 
     public function setSiteId(string $siteId)
@@ -82,12 +104,7 @@ class ManifestBuilder
 
     private function extractSource(ItemRepresentation $manifest): array
     {
-        /** @var ValueRepresentation $source */
-        $source = $manifest->value('dcterms:source');
-        if (!$source) {
-            return [];
-        }
-        return json_decode($source->value(), true);
+        return $this->manifest->getSource($manifest->id());
     }
 
     function getFunctionalFields(): array

@@ -47,11 +47,16 @@ class ImageSourceRenderer extends IIIF implements EventManagerAwareInterface
      * @var ManifestBuilder
      */
     private $manifestBuilder;
+    /**
+     * @var ManifestRepository
+     */
+    private $manifestRepository;
 
     public function __construct(
         TwigRenderer $twig,
         CanvasRepository $canvasRepository,
         CanvasBuilder $canvasBuilder,
+        ManifestRepository $manifestRepository,
         ManifestBuilder $manifestBuilder,
         Router $router,
         EventDispatcher $dispatcher
@@ -59,9 +64,10 @@ class ImageSourceRenderer extends IIIF implements EventManagerAwareInterface
         $this->twig = $twig;
         $this->canvasRepository = $canvasRepository;
         $this->canvasBuilder = $canvasBuilder;
+        $this->manifestRepository = $manifestRepository;
+        $this->manifestBuilder = $manifestBuilder;
         $this->router = $router;
         $this->dispatcher = $dispatcher;
-        $this->manifestBuilder = $manifestBuilder;
     }
 
     public function render(PhpRenderer $view, MediaRepresentation $media, array $options = [])
@@ -87,13 +93,14 @@ class ImageSourceRenderer extends IIIF implements EventManagerAwareInterface
                 'resource' => $canvas,
             ], $context));
 
+            $manifestMapping = $this->canvasRepository->getManifests($canvasRepresentation);
+            $manifestIds = $manifestMapping->getList();
 
-            $manifests = $this->canvasRepository->getManifests($canvasRepresentation);
-
-            if (!empty($manifests)) {
+            if (!empty($manifestIds)) {
                 // @todo might be more than one manifest.
-                $manifestRepresentation = array_shift($manifests);
-                $manifest = $this->manifestBuilder->buildResource($manifestRepresentation);;
+                $manifestId = array_shift($manifestIds);
+                $manifestRepresentation = $this->manifestRepository->getById($manifestId);
+                $manifest = $this->manifestBuilder->buildResource($manifestRepresentation, false, 1, 1);
                 $viewModel->setVariable('manifest', $manifest->getManifest());
                 $viewModel->setVariable('manifestResource', $manifest);
             }
