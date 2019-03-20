@@ -4,9 +4,10 @@ namespace IIIFStorage\Repository;
 
 use Digirati\OmekaShared\Model\ItemRequest;
 use Digirati\OmekaShared\Utility\PropertyIdSaturator;
+use IIIFStorage\Model\PaginatedResult;
+use IIIFStorage\Utility\CheapOmekaRelationshipRequest;
 use Omeka\Api\Manager;
 use Omeka\Api\Representation\ItemRepresentation;
-use Omeka\Api\Representation\ValueRepresentation;
 
 class CanvasRepository
 {
@@ -27,12 +28,17 @@ class CanvasRepository
      * @var string
      */
     private $siteId;
+    /**
+     * @var CheapOmekaRelationshipRequest
+     */
+    private $relationshipRequest;
 
-    public function __construct(Manager $api, PropertyIdSaturator $saturator)
+    public function __construct(Manager $api, PropertyIdSaturator $saturator, CheapOmekaRelationshipRequest $relationshipRequest)
     {
 
         $this->api = $api;
         $this->saturator = $saturator;
+        $this->relationshipRequest = $relationshipRequest;
     }
 
     public function getPropertyId(): string
@@ -117,16 +123,21 @@ class CanvasRepository
         return $this->api->search(static::API_TYPE, $query)->getContent();
     }
 
+    public function getSource(int $id): array
+    {
+        return $this->relationshipRequest->selectSource($id);
+    }
 
     /**
      * @param ItemRepresentation $canvas
-     * @return ItemRepresentation[]
+     * @return PaginatedResult
+     * @throws \Doctrine\DBAL\DBALException
      */
-    public function getManifests(ItemRepresentation $canvas)
+    public function getManifests(ItemRepresentation $canvas): PaginatedResult
     {
-        $manifests = $canvas->value('dcterms:isPartOf', ['all' => true]) ?? [];
-        return array_map(function (ValueRepresentation $value) {
-            return $value->valueResource();
-        }, $manifests);
+        return $this->relationshipRequest->getUriMapping(
+            $canvas->id(),
+            'dcterms:isPartOf'
+        );
     }
 }

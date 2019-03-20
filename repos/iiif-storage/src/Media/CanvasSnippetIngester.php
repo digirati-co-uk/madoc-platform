@@ -4,6 +4,7 @@ namespace IIIFStorage\Media;
 
 use IIIFStorage\Repository\ManifestRepository;
 use Digirati\OmekaShared\Utility\PropertyIdSaturator;
+use IIIFStorage\Utility\CheapOmekaRelationshipRequest;
 use Omeka\Api\Manager;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Api\Representation\ValueRepresentation;
@@ -20,13 +21,19 @@ class CanvasSnippetIngester extends AbstractIngester implements IngesterInterfac
      * @var PropertyIdSaturator
      */
     private $saturator;
+    /**
+     * @var CheapOmekaRelationshipRequest
+     */
+    private $relationshipRequest;
 
     public function __construct(
         Manager $api,
-        PropertyIdSaturator $saturator
+        PropertyIdSaturator $saturator,
+        CheapOmekaRelationshipRequest $relationshipRequest
     ) {
         $this->api = $api;
         $this->saturator = $saturator;
+        $this->relationshipRequest = $relationshipRequest;
     }
 
     /**
@@ -64,34 +71,13 @@ class CanvasSnippetIngester extends AbstractIngester implements IngesterInterfac
      */
     public function getFormElements(string $operation): array
     {
-        $canvas = new ResourceSelect('canvas');
-        $canvas->setApiManager($this->api);
+        $canvas = new Element\Text('canvas');
         $canvas->setAttributes([
             'required' => false,
-            'id' => 'canvas-select',
-            'class' => 'chosen-select',
-            'data-placeholder' => 'Select a canvas', // @translate
-            'data-api-base-url' => '/api/items',
         ]);
         $canvas->setOptions([
-            'label' => 'Choose canvas', // @translate
-            'info' => 'Choose a canvas to be displayed.', // @translate
-            'empty_option' => '',
-            'resource_value_options' => [
-                'resource' => 'items',
-                'query' => [
-                    'resource_class_id' => $this->saturator->getResourceClassByTerm('sc:Canvas')->id() // @todo get resource class ID dynamically.
-                ],
-                'option_text_callback' => function (ItemRepresentation $item) {
-                    // Get the manifest if possible
-                    $manifestLabel = $this->getManifestLabel($item);
-                    if ($manifestLabel) {
-                        return "$manifestLabel - " . $item->displayTitle();
-                    }
-                    /** @var ItemRepresentation $item */
-                    return $item->displayTitle();
-                },
-            ],
+            'label' => 'Canvas ID', // @translate
+            'info' => 'Paste in an ID of the canvas to be displayed.', // @translate
         ]);
 
         return [
@@ -101,20 +87,7 @@ class CanvasSnippetIngester extends AbstractIngester implements IngesterInterfac
 
     public function getManifestLabel(ItemRepresentation $item): string
     {
-        /** @var ValueRepresentation $manifestId */
-        $manifestId = $item->value('dcterms:isPartOf');
-
-
-        if (!$manifestId || !$manifestId->valueResource()) {
-            return '';
-        }
-
-        try {
-            /** @var ItemRepresentation $manifest */
-            $manifest = $this->api->read(ManifestRepository::API_TYPE, $manifestId->valueResource()->id())->getContent();
-            return $manifest ? $manifest->displayTitle() : '';
-        } catch (Throwable $e) {
-            return '';
-        }
+        $manifest = $this->relationshipRequest->getManifestFromCanvas($item->id());
+        return $manifest['label'] ?? '';
     }
 }

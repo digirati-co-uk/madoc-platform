@@ -1,6 +1,6 @@
 <?php
 
-namespace IIIFStorage\Extension;
+namespace Digirati\OmekaShared\Helper;
 
 use Omeka\View\Helper\Setting;
 use Throwable;
@@ -24,6 +24,11 @@ class SettingsHelper extends Setting
         } catch (Throwable $e) {
             return $default;
         }
+    }
+
+    public function get($id, $default = null, $targetId = null)
+    {
+        return $this->__invoke($id, $default, $targetId);
     }
 
 }

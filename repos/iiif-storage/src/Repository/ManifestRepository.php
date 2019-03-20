@@ -5,9 +5,10 @@ namespace IIIFStorage\Repository;
 use Error;
 use Digirati\OmekaShared\Model\ItemRequest;
 use Digirati\OmekaShared\Utility\PropertyIdSaturator;
+use IIIFStorage\Model\PaginatedResult;
+use IIIFStorage\Utility\CheapOmekaRelationshipRequest;
 use Omeka\Api\Manager;
 use Omeka\Api\Representation\ItemRepresentation;
-use Omeka\Api\Representation\ValueRepresentation;
 use Throwable;
 
 class ManifestRepository
@@ -30,11 +31,25 @@ class ManifestRepository
      */
     private $siteId;
 
-    public function __construct(Manager $api, PropertyIdSaturator $saturator)
-    {
+    /**
+     * @var CanvasRepository
+     */
+    private $canvasRepository;
+    /**
+     * @var CheapOmekaRelationshipRequest
+     */
+    private $relationshipRequest;
 
+    public function __construct(
+        Manager $api,
+        CanvasRepository $canvasRepository,
+        PropertyIdSaturator $saturator,
+        CheapOmekaRelationshipRequest $relationshipRequest
+    ) {
         $this->api = $api;
+        $this->canvasRepository = $canvasRepository;
         $this->saturator = $saturator;
+        $this->relationshipRequest = $relationshipRequest;
     }
 
     public function getPropertyId(): string
@@ -86,7 +101,7 @@ class ManifestRepository
         $toUpdate = $itemRequest->export();
         // Update.
 
-        $updateFunction = function() use ($id, $toUpdate) {
+        $updateFunction = function () use ($id, $toUpdate) {
             $this->api->update(static::API_TYPE, $id, $toUpdate, [], ['isPartial' => true])->getContent();
         };
 
@@ -95,7 +110,7 @@ class ManifestRepository
             try {
                 return $updateFunction();
             } catch (Throwable $e) {
-                error_log((string) $e);
+                error_log((string)$e);
             }
             $tries -= 1;
             sleep(2);
@@ -148,26 +163,106 @@ class ManifestRepository
         return $manifestItem;
     }
 
-    /**
-     * @param ItemRepresentation $manifest
-     * @return ItemRepresentation[]
-     */
-    public function getCanvases(ItemRepresentation $manifest): array
+    public function getSource(int $id): array
     {
-        $canvases = $manifest->value('sc:hasCanvases', ['all' => true]) ?? [];
-        return array_map(function (ValueRepresentation $canvasValue) {
-            return $canvasValue->valueResource();
-        }, $canvases);
+        return $this->relationshipRequest->selectSource($id);
     }
 
-    public function containsCanvas(ItemRepresentation $manifest, string $canvasId): bool
+    /**
+     * @param ItemRepresentation $manifest
+     * @param int $page
+     * @param int $perPage
+     * @return array
+     */
+    public function getCanvases(ItemRepresentation $manifest, $page = 1, $perPage = -1): array
     {
-        $canvases = $this->getCanvases($manifest);
-        foreach ($canvases as $canvas) {
-            if ($canvas && (string)$canvas->id() === (string)$canvasId) {
+        if ($page < 1) {
+            $page = 1;
+        }
+
+        $canvasMapping = $perPage === -1
+            ? $this->getCanvasMapFromManifest($manifest->id())
+            : $this->getCanvasMapFromManifest($manifest->id(), $perPage, ($page - 1) * $perPage);
+
+        $canvases = [];
+        foreach ($canvasMapping->getList() as $canvasId) {
+            $canvases[] = $this->canvasRepository->getById($canvasId);
+        }
+
+        return [
+            'canvases' => $canvases,
+            'totalResults' => $canvasMapping->getTotalResults(),
+        ];
+    }
+
+    public function getPreviousNext(int $manifestId, int $canvasId, int $number = 1)
+    {
+        $canvases = array_values($this->getCanvasMapFromManifest($manifestId)->getList());
+        $max = sizeof($canvases);
+        foreach ($canvases as $key => $canvas) {
+            if ((int)$canvas === (int)$canvasId) {
+                $start = ($key < $number) ? 0 : $number + 1;
+                return [
+                  'previous' => array_slice($canvases, $start, $key - $start),
+                  'next' => ($key + 1 <= $max) ? array_slice($canvases, $key + 1, $number) : [],
+                ];
+            }
+        }
+        return [];
+    }
+
+    public function getCanvasMapFromManifest(int $manifestId, $limit = -1, int $offset = 0): PaginatedResult
+    {
+        try {
+            return $this->relationshipRequest->getUriMapping(
+                $manifestId,
+                'sc:hasCanvases',
+                $limit,
+                $offset
+            );
+        } catch (\Throwable $e) {
+            error_log((string)$e);
+            return new PaginatedResult([], $limit, $offset);
+        }
+    }
+
+    public function getEtag(int $resourceId)
+    {
+        return $this->relationshipRequest->getEtag($resourceId);
+    }
+
+    public function containsCanvas(int $manifest, string $canvasId): bool
+    {
+        try {
+            $canvasMapping = $this->relationshipRequest->getUriMapping(
+                $manifest,
+                'sc:hasCanvases'
+            );
+        } catch (\Throwable $e) {
+            error_log((string)$e);
+            return false;
+        }
+
+        foreach ($canvasMapping->getList() as $omekaId => $urlId) {
+            if (
+                (string)$omekaId === (string)$canvasId ||
+                (string)$urlId === (string)$canvasId
+            ) {
                 return true;
             }
         }
         return false;
+    }
+    /**
+     * @param int $manifestId
+     * @return PaginatedResult
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function getCollections(int $manifestId): PaginatedResult
+    {
+        return $this->relationshipRequest->getUriMapping(
+            $manifestId,
+            'dcterms:isPartOf'
+        );
     }
 }

@@ -6,24 +6,27 @@ use AnnotationStudio\Admin\ConfigurationForm;
 use AnnotationStudio\CaptureModel\Router;
 use AnnotationStudio\Controller\CaptureModelController;
 use AnnotationStudio\Subscriber\ModerationStatusVerificationSubscriber;
+use Digirati\OmekaShared\Helper\SettingsHelper;
 use Digirati\OmekaShared\Helper\UrlHelper;
 use Digirati\OmekaShared\ModuleExtensions\ConfigurationFormAutoloader;
-use IIIF\Model\Canvas;
 use IIIF\Model\Manifest;
 use IIIFStorage\Model\CanvasRepresentation;
 use IIIFStorage\Model\ManifestRepresentation;
 use Omeka\Api\Representation\SiteRepresentation;
+use Omeka\Form\SiteSettingsForm;
 use Omeka\Module\AbstractModule;
+use Omeka\Permissions\Acl;
+use Omeka\Settings\SiteSettings;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use Symfony\Component\Yaml\Yaml as SymfonyYaml;
 use Throwable;
 use Zend\Config\Factory;
-use Zend\Config\Reader\Yaml as YamlConfig;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
+use Zend\Form\Element\Checkbox;
+use Zend\Form\Element\Text;
+use Zend\Form\Fieldset;
 use Zend\Mvc\MvcEvent;
-use Zend\Uri\Uri;
 use Zend\View\Model\ViewModel;
 
 class Module extends AbstractModule
@@ -82,16 +85,29 @@ class Module extends AbstractModule
 
     private function getCaptureModelUrl($type, $id = null)
     {
+
+        /** @var SettingsHelper $siteModerationStatus */
+        $siteSettings = $this->getServiceLocator()->get(SettingsHelper::class);
         /** @var $settings \Omeka\Settings\Settings */
         $settings = $this->getServiceLocator()->get('Omeka\Settings');
+
         $currentSite = $this->getCurrentSite();
+        // Static capture model on site.
+        $staticCaptureModel = $siteSettings->get('annotation-studio-static-capture-model', '');
+        if ($staticCaptureModel) {
+            return $staticCaptureModel;
+        }
+
+        /** @var Router $router */
         $router = $this->getServiceLocator()->get(Router::class);
 
         if ($currentSite) {
             $router->setSiteId($currentSite->id());
         }
 
-        $moderation = $settings->get('annotation_studio_default_moderation_status', 'open');
+        $moderation = $siteSettings->get('annotation-studio-moderation-status', '')
+            ? $siteSettings->get('annotation-studio-moderation-status', '')
+            : $settings->get('annotation_studio_default_moderation_status', 'open');
 
         if ($id) {
             return $router->model($id, $type, $moderation, !!$currentSite);
@@ -114,6 +130,7 @@ class Module extends AbstractModule
 
     public function getElucidateEndpoint($settings)
     {
+        /** @var SiteSettings  $settings */
         $elucidate = $settings->get('annotation_studio_elucidate_server');
         $elucidateProxy = $settings->get('annotation_studio_use_elucidate_proxy');
         if ($elucidateProxy) {
@@ -142,6 +159,40 @@ class Module extends AbstractModule
         /** @var ModerationStatusVerificationSubscriber $elucidateSubscriber */
         $elucidateSubscriber = $serviceContainer->get(ModerationStatusVerificationSubscriber::class);
         $eventDispatcher->addSubscriber($elucidateSubscriber);
+
+        $sharedEventManager->attach(SiteSettingsForm::class, 'form.add_elements', function (Event $event) {
+            /** @var SiteSettingsForm $form */
+            $form = $event->getTarget();
+
+            $form->add(
+                (new Fieldset('annotation-studio'))
+                    ->add(
+                        (new Text('annotation-studio-moderation-status'))
+                            ->setOptions([
+                                'label' => 'Default moderation status', // @translate
+                                'info' => 'Moderation status that will be applied to annotations created', // @translate
+                            ])
+                            ->setAttribute('required', false)
+                            ->setValue(
+                                $form->getSiteSettings()->get('annotation-studio-moderation-status', 'open')
+                            )
+                    )
+                    ->add(
+                        (new Text('annotation-studio-static-capture-model'))
+                            ->setOptions([
+                                'label' => 'Static capture model', // @translate
+                                'info' => 'A full URL to an external capture model to use for this site', // @translate
+                            ])
+                            ->setAttribute('required', false)
+                            ->setValue(
+                                $form->getSiteSettings()->get('annotation-studio-static-capture-model', '')
+                            )
+                    )
+                    ->setOptions([
+                        'label' => 'Annotation studio',
+                    ])
+            );
+        });
 
         $eventDispatcher->addListener('iiif.canvas.view', function (GenericEvent $event) use ($settings) {
             /** @var CanvasRepresentation $canvas */

@@ -2,15 +2,14 @@
 
 namespace IIIFStorage\Controller;
 
-
 use Digirati\OmekaShared\Framework\AbstractPsr7ActionController;
-use IIIFStorage\Extension\SettingsHelper;
+use Digirati\OmekaShared\Helper\SettingsHelper;
+use Omeka\Mvc\Exception\NotFoundException;
+use Zend\View\Model\ViewModel;
 use IIIFStorage\JsonBuilder\CollectionBuilder;
 use IIIFStorage\Repository\CollectionRepository;
 use IIIFStorage\Utility\ApiRouter;
 use IIIFStorage\Utility\Router;
-use Omeka\Mvc\Exception\NotFoundException;
-use Zend\View\Model\ViewModel;
 
 class CollectionController extends AbstractPsr7ActionController
 {
@@ -35,8 +34,13 @@ class CollectionController extends AbstractPsr7ActionController
      */
     private $settingsHelper;
 
-    public function __construct(CollectionRepository $repo, CollectionBuilder $builder, Router $router, ApiRouter $apiRouter, SettingsHelper $settingsHelper)
-    {
+    public function __construct(
+        CollectionRepository $repo,
+        CollectionBuilder $builder,
+        Router $router,
+        ApiRouter $apiRouter,
+        SettingsHelper $settingsHelper
+    ) {
         $this->repo = $repo;
         $this->builder = $builder;
         $this->router = $router;
@@ -63,17 +67,24 @@ class CollectionController extends AbstractPsr7ActionController
             throw new NotFoundException();
         }
 
-        $collectionRepresentation = $this->builder->buildResource($collection, $this->shouldUseOriginalIds());
+        $collectionRepresentation = $this->builder->buildResource(
+            $collection,
+            $this->shouldUseOriginalIds(),
+            $this->params()->fromQuery('page') ?? 1,
+            self::PER_PAGE,
+            1
+        );
         $collectionObj = $collectionRepresentation->getCollection();
         $manifests = $collectionObj->getManifests();
 
         $viewModel = new ViewModel([
             'collection' => $collectionObj,
-            'resource' => $this->builder->buildResource($collection, $this->shouldUseOriginalIds()),
+            'resource' => $collectionRepresentation,
+            'manifests' => $manifests,
             'router' => $this->router,
         ]);
 
-        $this->paginate($viewModel, 'manifests', $manifests, self::PER_PAGE);
+        $this->paginateControls($viewModel, $collectionRepresentation->getTotalResults(), self::PER_PAGE);
 
         if ($this->getRequest()->isXmlHttpRequest()) {
             $viewModel->setTerminal(true);
@@ -101,16 +112,24 @@ class CollectionController extends AbstractPsr7ActionController
             throw new NotFoundException();
         }
 
-        $collections = array_map(
-            function($collection){
-                return $this->builder->buildResource($collection, $this->shouldUseOriginalIds());
-            }, $omekaCollections);
-
         $viewModel = new ViewModel([
             'router' => $this->router,
         ]);
 
-        $this->paginate($viewModel, 'collections', $collections, self::PER_PAGE / 4);
+        $this->paginate($viewModel, 'itemSets', $omekaCollections, 3);
+
+        $collections = array_map(
+            function($collection) {
+                return $this->builder->buildResource(
+                    $collection,
+                    $this->shouldUseOriginalIds(),
+                    0,
+                    5,
+                    1
+                );
+            }, $viewModel->getVariable('itemSets'));
+
+        $viewModel->setVariable('collections', $collections);
 
         return $viewModel;
     }

@@ -62,7 +62,10 @@ class ManifestListRenderer implements RendererInterface, MediaPageBlockDualRende
             'search_fallback' => false,
         ], $data);
 
-        $data['manifests'] = array_map([$this->builder, 'buildResource'], array_slice($this->repo->search($data['search_query']), 0, $data['search_results']));
+        // @todo original ids
+        $data['manifests'] = array_map(function ($manifest) {
+            $this->builder->buildResource($manifest, false, 1, 4);
+        }, array_slice($this->repo->search($data['search_query']), 0, $data['search_results']));
         $data['router'] = $this->router;
         $vm = new ViewModel(array_merge([], $options, $data));
         $vm->setTemplate('iiif-storage/media/manifest-list');

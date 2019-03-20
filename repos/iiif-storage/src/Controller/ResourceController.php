@@ -10,6 +10,7 @@ use IIIFStorage\Repository\CanvasRepository;
 use IIIFStorage\Repository\CollectionRepository;
 use IIIFStorage\Repository\ManifestRepository;
 use Omeka\Mvc\Exception\NotFoundException;
+use Zend\Diactoros\Response;
 use Zend\Diactoros\Response\JsonResponse;
 
 class ResourceController extends AbstractPsr7ActionController
@@ -62,6 +63,16 @@ class ResourceController extends AbstractPsr7ActionController
         $id = $this->params()->fromRoute('manifest');
         $originalId = $this->params()->fromRoute('original', false);
 
+        // Web caching for manifests
+        $eTag = $this->params()->fromHeader('If-None-Match');
+        $freshETag = $this->manifests->getEtag((int)$id);
+        if ($eTag && (int)$eTag->getFieldValue() === (int)$freshETag) {
+            return new Response\EmptyResponse(304, [
+                'ETag' => $freshETag,
+                'Cache-Control' => 'public, max-age=3600'
+            ]);
+        }
+
         try {
             $manifest = $this->manifests->getById($id);
         } catch (\Throwable $e) {
@@ -69,7 +80,10 @@ class ResourceController extends AbstractPsr7ActionController
         }
 
         // Item-set ID to manifest
-        return new JsonResponse($this->manifestBuilder->build($manifest, $originalId), 200, []);
+        return new JsonResponse($this->manifestBuilder->build($manifest, $originalId)->getJson(), 200, [
+            'ETag' => $manifest->modified()->getTimestamp(),
+            'Cache-Control' => 'public, max-age=3600'
+        ]);
     }
 
     public function canvasAction()
@@ -98,8 +112,10 @@ class ResourceController extends AbstractPsr7ActionController
             throw new NotFoundException();
         }
 
+        $buildCollection = $this->collectionBuilder->build($collection, $originalId);
+
         // Item-set ID to collection
-        return new JsonResponse($this->collectionBuilder->build($collection));
+        return new JsonResponse($buildCollection->getJson());
     }
 
     public function siteCollectionAction()

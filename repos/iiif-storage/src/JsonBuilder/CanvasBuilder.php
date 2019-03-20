@@ -46,65 +46,71 @@ class CanvasBuilder
         );
     }
 
+    private $buildCache = [];
+
     public function build(ItemRepresentation $canvas, bool $originalIds = false): array
     {
-        $json = $this->extractSource($canvas);
+        if (!isset($this->buildCache[$canvas->id()])) {
+            $json = $this->extractSource($canvas);
 
-        $json['@context'] = $json['@context'] ?? 'http://iiif.io/api/presentation/2/context.json';
-        if ($originalIds === false) {
-            $json['@id'] = $this->router->canvas($canvas->id(), !!$this->siteId);
-        }
-        $json['@type'] = $json['@type'] ?? 'sc:Canvas';
-        $json['o:id'] = $canvas->id();
+            $json['@context'] = $json['@context'] ?? 'http://iiif.io/api/presentation/2/context.json';
+            if ($originalIds === false) {
+                $json['@id'] = $this->router->canvas($canvas->id(), !!$this->siteId);
+            }
 
-        $images = array_values(
-            array_map(
-                function ($image) use ($canvas, $json) {
-                    return $this->mapAnnotation($image, $json);
-                },
+            $json['@type'] = $json['@type'] ?? 'sc:Canvas';
+            $json['o:id'] = $canvas->id();
+
+            $images = array_values(
                 array_map(
-                    [$this->imageServiceBuilder, 'build'],
-                    array_filter($canvas->media(), function (MediaRepresentation $mediaItem) {
-                        return $mediaItem->ingester() === 'iiif';
-                    })
+                    function ($image) use ($canvas, $json) {
+                        return $this->mapAnnotation($image, $json);
+                    },
+                    array_map(
+                        [$this->imageServiceBuilder, 'build'],
+                        array_filter($canvas->media(), function (MediaRepresentation $mediaItem) {
+                            return $mediaItem->ingester() === 'iiif';
+                        })
+                    )
                 )
-            )
-        );
+            );
 
-        if (!empty($images)) {
-            $json['images'] = $images;
-        }
+            if (!empty($images)) {
+                $json['images'] = $images;
+            }
 
 
-        $manifests = $canvas->value('dcterms:isPartOf', ['all' => true]);
-        if (isset($manifests) && !empty($manifests)) {
-            /** @var ItemRepresentation[] $manifests */
-            $json['partOf'] = array_map(function (ValueRepresentation $value) {
-                /** @var ItemRepresentation $manifest */
-                $manifest = $value->valueResource();
+            $manifests = $canvas->value('dcterms:isPartOf', ['all' => true]);
+            if (isset($manifests) && !empty($manifests)) {
+                /** @var ItemRepresentation[] $manifests */
+                $json['partOf'] = array_map(function (ValueRepresentation $value) {
+                    /** @var ItemRepresentation $manifest */
+                    $manifest = $value->valueResource();
 
-                return [
-                    '@id' => $this->router->manifest($manifest->id(), !!$this->siteId),
-                    'label' => $manifest->displayTitle(),
-                    '@type' => 'sc:Manifest',
+                    return [
+                        '@id' => $this->router->manifest($manifest->id(), !!$this->siteId),
+                        'label' => $manifest->displayTitle(),
+                        '@type' => 'sc:Manifest',
+                    ];
+                }, $manifests);
+            }
+
+            /** @var MediaRepresentation $media */
+            $media = current(array_filter($canvas->media(), function (MediaRepresentation $m) {
+                return $m->hasThumbnails();
+            }));
+
+            if ($media) {
+                $json['thumbnail'] = [
+                    '@id' => $media->thumbnailUrl('large'),
+                    '@type' => 'dctypes:Image',
+                    // @todo height and width of thumbnails.
                 ];
-            }, $manifests);
+            }
+
+            $this->buildCache[$canvas->id()] = $this->aggregateMetadata($canvas, $json);
         }
-
-        /** @var MediaRepresentation $media */
-        $media = current(array_filter($canvas->media(), function (MediaRepresentation $m) {
-            return $m->hasThumbnails();
-        }));
-
-        if ($media) {
-            $json['thumbnail'] = [
-                '@id' => $media->thumbnailUrl('large'),
-                '@type' => 'dctypes:Image',
-                // @todo height and width of thumbnails.
-            ];
-        }
-
-        return $this->aggregateMetadata($canvas, $json);
+        return $this->buildCache[$canvas->id()];
     }
 
     public function mapAnnotation(array $image, array $canvasJson)

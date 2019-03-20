@@ -1,6 +1,3 @@
-{% set previous = manifestResource.getPreviousCanvas(canvas) %}
-{% set next = manifestResource.getNextCanvas(canvas) %}
-
 <nav class="canvas-navigation" id="canvas">
     {% if (previous) %}
         <a class="canvas-navigation__previous" href="{{ router.canvas(previous, manifest, collection) }}#canvas">

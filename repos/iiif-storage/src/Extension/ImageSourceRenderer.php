@@ -2,7 +2,7 @@
 
 namespace IIIFStorage\Extension;
 
-
+use Digirati\OmekaShared\Helper\SettingsHelper;
 use IIIFStorage\JsonBuilder\CanvasBuilder;
 use IIIFStorage\JsonBuilder\ManifestBuilder;
 use IIIFStorage\Repository\CanvasRepository;
@@ -47,21 +47,33 @@ class ImageSourceRenderer extends IIIF implements EventManagerAwareInterface
      * @var ManifestBuilder
      */
     private $manifestBuilder;
+    /**
+     * @var ManifestRepository
+     */
+    private $manifestRepository;
+    /**
+     * @var SettingsHelper
+     */
+    private $settingsHelper;
 
     public function __construct(
         TwigRenderer $twig,
         CanvasRepository $canvasRepository,
         CanvasBuilder $canvasBuilder,
+        ManifestRepository $manifestRepository,
         ManifestBuilder $manifestBuilder,
         Router $router,
-        EventDispatcher $dispatcher
+        EventDispatcher $dispatcher,
+        SettingsHelper $settingsHelper
     ) {
         $this->twig = $twig;
         $this->canvasRepository = $canvasRepository;
         $this->canvasBuilder = $canvasBuilder;
+        $this->manifestRepository = $manifestRepository;
+        $this->manifestBuilder = $manifestBuilder;
         $this->router = $router;
         $this->dispatcher = $dispatcher;
-        $this->manifestBuilder = $manifestBuilder;
+        $this->settingsHelper = $settingsHelper;
     }
 
     public function render(PhpRenderer $view, MediaRepresentation $media, array $options = [])
@@ -87,13 +99,24 @@ class ImageSourceRenderer extends IIIF implements EventManagerAwareInterface
                 'resource' => $canvas,
             ], $context));
 
+            $manifestMapping = $this->canvasRepository->getManifests($canvasRepresentation);
+            $manifestIds = $manifestMapping->getList();
 
-            $manifests = $this->canvasRepository->getManifests($canvasRepresentation);
+            // Embedded settings.
+            $canvasesToLoadPerManifest = 1;
+            $originalIds = $this->settingsHelper->get('original-ids', false);
+            $canvasesPage = 1;
 
-            if (!empty($manifests)) {
+            if (!empty($manifestIds)) {
                 // @todo might be more than one manifest.
-                $manifestRepresentation = array_shift($manifests);
-                $manifest = $this->manifestBuilder->buildResource($manifestRepresentation);;
+                $manifestId = array_shift($manifestIds);
+                $manifestRepresentation = $this->manifestRepository->getById($manifestId);
+                $manifest = $this->manifestBuilder->buildResource(
+                    $manifestRepresentation,
+                    $originalIds,
+                    $canvasesPage,
+                    $canvasesToLoadPerManifest
+                );
                 $viewModel->setVariable('manifest', $manifest->getManifest());
                 $viewModel->setVariable('manifestResource', $manifest);
             }
@@ -109,6 +132,7 @@ class ImageSourceRenderer extends IIIF implements EventManagerAwareInterface
 
             return $this->twig->render($viewModel);
         } catch (\Throwable $e) {
+            error_log((string) $e);
             return $fallback();
         }
     }

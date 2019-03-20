@@ -1,7 +1,9 @@
 <?php
 
 use Digirati\OmekaShared\Factory\EventDispatcherFactory;
+use Digirati\OmekaShared\Factory\SettingsHelperFactory;
 use Digirati\OmekaShared\Factory\UrlHelperFactory;
+use Digirati\OmekaShared\Helper\SettingsHelper;
 use Digirati\OmekaShared\Helper\UrlHelper;
 use IIIFStorage\Aggregate\AddImageService;
 use IIIFStorage\Aggregate\DereferencedCollection;
@@ -9,7 +11,6 @@ use IIIFStorage\Aggregate\DereferencedManifest;
 use IIIFStorage\Aggregate\ScheduleEmbeddedCanvases;
 use IIIFStorage\Aggregate\ScheduleEmbeddedManifests;
 use IIIFStorage\Extension\ImageSourceRenderer;
-use IIIFStorage\Extension\SettingsHelper;
 use IIIFStorage\FieldFilters\HideCanvasJson;
 use IIIFStorage\FieldFilters\HideManifestCollectionJson;
 use IIIFStorage\JsonBuilder\CanvasBuilder;
@@ -40,6 +41,7 @@ use IIIFStorage\Repository\CollectionRepository;
 use IIIFStorage\Repository\ManifestRepository;
 use Digirati\OmekaShared\Utility\PropertyIdSaturator;
 use IIIFStorage\Utility\ApiRouter;
+use IIIFStorage\Utility\CheapOmekaRelationshipRequest;
 use IIIFStorage\Utility\Router;
 use IIIFStorage\ViewFilters\ChooseManifestTemplate;
 use IIIFStorage\ViewFilters\DisableJsonField;
@@ -115,12 +117,21 @@ return [
             ManifestRepository::class => function (ContainerInterface $c) {
                 return new ManifestRepository(
                     $c->get('Omeka\ApiManager'),
-                    $c->get(PropertyIdSaturator::class)
+                    $c->get(CanvasRepository::class),
+                    $c->get(PropertyIdSaturator::class),
+                    $c->get(CheapOmekaRelationshipRequest::class)
                 );
             },
             CanvasRepository::class => function (ContainerInterface $c) {
                 return new CanvasRepository(
                     $c->get('Omeka\ApiManager'),
+                    $c->get(PropertyIdSaturator::class),
+                    $c->get(CheapOmekaRelationshipRequest::class)
+                );
+            },
+            CheapOmekaRelationshipRequest::class => function (ContainerInterface $c) {
+                return new CheapOmekaRelationshipRequest(
+                    $c->get('Omeka\Connection'),
                     $c->get(PropertyIdSaturator::class)
                 );
             },
@@ -128,7 +139,7 @@ return [
                 return new CollectionRepository(
                     $c->get('Omeka\ApiManager'),
                     $c->get(PropertyIdSaturator::class),
-                    $c->get('Omeka\Connection')
+                    $c->get(CheapOmekaRelationshipRequest::class)
                 );
             },
             ApiRouter::class => function (ContainerInterface $c) {
@@ -177,7 +188,8 @@ return [
             CanvasSnippetIngester::class => function (ContainerInterface $c) {
                 return new CanvasSnippetIngester(
                     $c->get('Omeka\ApiManager'),
-                    $c->get(PropertyIdSaturator::class)
+                    $c->get(PropertyIdSaturator::class),
+                    $c->get(CheapOmekaRelationshipRequest::class)
                 );
             },
             CollectionListIngester::class => function (ContainerInterface $c) {
@@ -215,9 +227,11 @@ return [
                     $c->get('ZfcTwig\View\TwigRenderer'),
                     $c->get(CanvasRepository::class),
                     $c->get(CanvasBuilder::class),
+                    $c->get(ManifestRepository::class),
                     $c->get(ManifestBuilder::class),
                     $c->get(Router::class),
-                    $c->get(EventDispatcher::class)
+                    $c->get(EventDispatcher::class),
+                    $c->get(SettingsHelper::class)
                 );
             },
             CanvasListRenderer::class => function (ContainerInterface $c) {
@@ -233,6 +247,7 @@ return [
                     $c->get('ZfcTwig\View\TwigRenderer'),
                     $c->get('Omeka\ApiManager'),
                     $c->get(CanvasBuilder::class),
+                    $c->get(CanvasRepository::class),
                     $c->get(Router::class)
                 );
             },
@@ -265,6 +280,7 @@ return [
                     $c->get('ZfcTwig\View\TwigRenderer'),
                     $c->get('Omeka\ApiManager'),
                     $c->get(ManifestBuilder::class),
+                    $c->get(ManifestRepository::class),
                     $c->get(Router::class)
                 );
             },
@@ -276,9 +292,7 @@ return [
                     $c->get(CollectionBuilder::class)
                 );
             },
-            SettingsHelper::class => function (ContainerInterface $c) {
-                return new SettingsHelper($c->get('Omeka\Settings\Site'));
-            }
+            SettingsHelper::class => SettingsHelperFactory::class,
         ]
     ],
     'view_helpers' => [
@@ -329,9 +343,11 @@ return [
                     $c->get('ZfcTwig\View\TwigRenderer'),
                     $c->get(CanvasRepository::class),
                     $c->get(CanvasBuilder::class),
+                    $c->get(ManifestRepository::class),
                     $c->get(ManifestBuilder::class),
                     $c->get(Router::class),
-                    $c->get(EventDispatcher::class)
+                    $c->get(EventDispatcher::class),
+                    $c->get(SettingsHelper::class)
                 );
             },
             'iiif-banner-image' => function (ContainerInterface $c) {

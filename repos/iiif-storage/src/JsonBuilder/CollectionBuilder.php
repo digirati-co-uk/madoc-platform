@@ -5,10 +5,12 @@ namespace IIIFStorage\JsonBuilder;
 
 use IIIF\Model\Manifest;
 use IIIF\ResourceFactory;
+use IIIFStorage\Model\BuiltCollection;
 use IIIFStorage\Model\CollectionRepresentation;
 use IIIFStorage\Repository\CollectionRepository;
 use IIIFStorage\Repository\ManifestRepository;
 use IIIFStorage\Utility\ApiRouter;
+use IIIFStorage\Utility\CheapOmekaRelationshipRequest;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Api\Representation\ItemSetRepresentation;
 use Omeka\Api\Representation\MediaRepresentation;
@@ -39,6 +41,10 @@ class CollectionBuilder
      * @var ManifestRepository
      */
     private $manifestRepository;
+    /**
+     * @var int
+     */
+    private $perPage;
 
     public function __construct(
         ApiRouter $router,
@@ -52,17 +58,35 @@ class CollectionBuilder
         $this->manifestRepository = $manifestRepository;
     }
 
-    public function buildResource(ItemSetRepresentation $omekaCollection, $originalIds = false): CollectionRepresentation
-    {
-        $json = $this->build($omekaCollection, $originalIds);
+    public function buildResource(
+        ItemSetRepresentation $omekaCollection,
+        $originalIds = false,
+        int $page = -1,
+        int $perPage = -1,
+        $numberOfCanvases = -1
+    ): CollectionRepresentation {
+        if ($page < 1) {
+            $page = 1;
+        }
+        $json = $this->build($omekaCollection, $originalIds, $page, $perPage);
         // Build collection.
-        $collection = ResourceFactory::createCollection($json, function (string $url, Manifest $manifest) use ($originalIds) {
-            $metadata = $manifest->getSource();
-            if (!isset($metadata['o:id'])) {
-                return (array)$manifest->getSource();
+        $collection = ResourceFactory::createCollection(
+            $json->getJson(),
+            function (string $url, Manifest $manifest) use ($originalIds, $numberOfCanvases) {
+                $metadata = $manifest->getSource();
+                if (!isset($metadata['o:id'])) {
+                    // Or try getting by url.
+                    return (array)$manifest->getSource();
+                }
+
+                return $this->manifestBuilder->build(
+                    $this->manifestRepository->getById($metadata['o:id']),
+                    $originalIds,
+                    0,
+                    $numberOfCanvases
+                )->getJson();
             }
-            return $this->manifestBuilder->build($this->manifestRepository->getById($metadata['o:id']), $originalIds);
-        });
+        );
 
         return new CollectionRepresentation(
             $omekaCollection,
@@ -71,8 +95,15 @@ class CollectionBuilder
         );
     }
 
-    public function build(ItemSetRepresentation $collection, $originalIds = false): array
-    {
+    public function build(
+        ItemSetRepresentation $collection,
+        $originalIds = false,
+        int $page = -1,
+        int $perPage = -1
+    ): BuiltCollection {
+        if ($page < 1) {
+            $page = 1;
+        }
         $json = $this->extractSource($collection);
 
         $json['@context'] = $json['@context'] ?? 'http://iiif.io/api/presentation/2/context.json';
@@ -85,12 +116,25 @@ class CollectionBuilder
         unset($json['manifests']);
         unset($json['members']);
 
+        $hasManifests = [];
 
-        /** @var ValueRepresentation[] $hasManifests */
-        $hasManifests = $collection->value('sc:hasManifests', ['all' => true]);
+        $manifestOmekaMapping =
+            ($perPage === -1 || $page === -1)
+                ? $this->collectionRepository->getManifestMapFromCollection($collection->id())
+                : $this->collectionRepository->getManifestMapFromCollection($collection->id(), $perPage, ($page - 1) * $perPage);
+
+        foreach ($manifestOmekaMapping->getList() as $omekaId) {
+            $hasManifests[] = $this->manifestRepository->getById($omekaId);
+        }
+
         $json['members'] = array_map([$this, 'mapManifest'], $hasManifests) ?? [];
 
-        return $this->aggregateMetadata($collection, $json);
+        return new BuiltCollection(
+            $this->aggregateMetadata($collection, $json),
+            $manifestOmekaMapping->getTotalResults(),
+            $page,
+            $perPage
+        );
     }
 
     public function setSiteId(string $siteId)
@@ -98,10 +142,10 @@ class CollectionBuilder
         $this->siteId = $siteId;
     }
 
-    private function mapManifest(ValueRepresentation $value)
+    private function mapManifest($value)
     {
         /** @var ItemRepresentation $manifest */
-        $manifest = $value->valueResource();
+        $manifest = $value instanceof ValueRepresentation ? $value->valueResource() : $value;
         $manifestJson = [
             '@id' => $this->router->manifest($manifest->id(), !!$this->siteId),
             'o:id' => $manifest->id(),

@@ -41,15 +41,13 @@ class AbstractPsr7ActionController extends AbstractActionController
         return $result;
     }
 
-    public function paginate(ViewModel $viewModel, $name, $list, $perPage) {
-        if (sizeof($list) > $perPage) {
+    public function paginateControls(ViewModel $viewModel, $totalResults, $perPage) {
+        if ($totalResults > $perPage) {
             $page = $this->params()->fromQuery('page') ?? 1;
-            $maxPage = ceil(sizeof($list) / $perPage);
+            $maxPage = ceil($totalResults / $perPage);
             if ($page > $maxPage) {
                 $page = $maxPage;
             }
-
-            $viewModel->setVariable($name, array_slice($list, ($page-1) * $perPage, $perPage));
             if (($page + 1) <= $maxPage) {
                 $viewModel->setVariable('nextPage', $this->url()->fromRoute(null, [], [
                     'query' => [
@@ -66,7 +64,19 @@ class AbstractPsr7ActionController extends AbstractActionController
             }
             $viewModel->setVariable('totalPages', $maxPage);
             $viewModel->setVariable('page', $page);
+        }
+    }
 
+    public function paginate(ViewModel $viewModel, $name, $list, $perPage) {
+        if (sizeof($list) > $perPage) {
+            $page = $this->params()->fromQuery('page') ?? 1;
+            $maxPage = ceil(sizeof($list) / $perPage);
+            if ($page > $maxPage) {
+                $page = $maxPage;
+            }
+            $viewModel->setVariable($name, array_slice($list, ($page-1) * $perPage, $perPage));
+
+            $this->paginateControls($viewModel, sizeof($list), $perPage);
 
         } else {
             $viewModel->setVariable($name, $list);

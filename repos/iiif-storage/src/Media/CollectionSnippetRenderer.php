@@ -61,8 +61,16 @@ class CollectionSnippetRenderer implements RendererInterface, MediaPageBlockDual
         /** @var ItemSetRepresentation $canvasRepresentation */
         $collectionRepresentation = $this->api->read('item_sets', $data['collection'])->getContent();
         if (!$collectionRepresentation) return '';
+        $manifestsToShow = $data['manifestsToShow'] ?? 4;
 
-        $collection = $this->collectionBuilder->buildResource($collectionRepresentation);
+        // @todo original ids
+        $collection = $this->collectionBuilder->buildResource(
+            $collectionRepresentation,
+            false,
+            1,
+            $manifestsToShow,
+            1
+        );
 
         $vm = new ViewModel([
             'manifestsToShow' => $data['manifestsToShow'] ?? 4,
