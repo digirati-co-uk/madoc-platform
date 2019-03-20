@@ -4,7 +4,9 @@ namespace IIIFStorage\Aggregate;
 
 use Digirati\OmekaShared\Model\FieldValue;
 use Digirati\OmekaShared\Model\ItemRequest;
+use IIIFStorage\Utility\CheapOmekaRelationshipRequest;
 use IIIFStorage\Utility\Translate;
+use Omeka\Api\Exception\ValidationException;
 use Zend\Http\Client;
 use Zend\Http\Request;
 
@@ -26,10 +28,17 @@ class DereferencedCollection implements AggregateInterface
      * @var Client
      */
     private $client;
+    /**
+     * @var CheapOmekaRelationshipRequest
+     */
+    private $relationshipRequest;
 
-    public function __construct(Client $client)
-    {
+    public function __construct(
+        Client $client,
+        CheapOmekaRelationshipRequest $relationshipRequest
+    ) {
         $this->client = $client;
+        $this->relationshipRequest = $relationshipRequest;
     }
 
     public function mutate(ItemRequest $input)
@@ -38,6 +47,9 @@ class DereferencedCollection implements AggregateInterface
             $collectionUrl = $field->getId();
             if ($collectionUrl) {
                 $json = $this->getCollection($collectionUrl);
+                $collection = json_decode($json, true);
+                $collectionId = $collection['@id'] ?? $collection['id'] ?? $collectionUrl;
+
                 $input->addField(
                     FieldValue::literal(
                         'dcterms:source',
@@ -46,11 +58,21 @@ class DereferencedCollection implements AggregateInterface
                     )
                 );
 
+                // Check if $json['@id'] !== $collectionUrl and update that field too.
+                // @todo this could be optional, but that might be dangerous.
+                if ($collectionId !== $collectionUrl) {
+                    $input->overwriteSingleValue(
+                        FieldValue::url(
+                            'dcterms:identifier',
+                            'Manifest URI',
+                            $collectionId
+                        )
+                    );
+                }
+
                 /** @var FieldValue $title */
                 $title = $input->getValue('dcterms:title');
                 if (!$title || empty($title) || current($title)->getValue() === '') {
-                    $collection = json_decode($json, true);
-
                     $label = $this->translate($collection['label'] ?? '');
                     if ($label) {
                         $input->addField(
@@ -83,10 +105,23 @@ class DereferencedCollection implements AggregateInterface
 
     public function prepare()
     {
-        foreach ($this->collectionRequests as $request) {
-            $this->getCollection($request);
+        foreach ($this->collectionRequests as $manifestUri) {
+            $json = $this->getCollection($manifestUri);
+            $collection = json_decode($json, true);
+            $id = $collection['@id'] ?? $collection['id'] ?? null;
+            $type = $collection['@type'] ?? $collection['type'] ?? null;
+            if (
+                strtolower($type) !== 'sc:collection' &&
+                strtolower($type) !== 'collection'
+            ) {
+                throw new ValidationException('Resource is not a collection');
+            }
+
+            if ($this->relationshipRequest->collectionExists($id)) {
+                $label = $this->translate($collection['label']);
+                throw new ValidationException("$label already exists");
+            }
         }
-        $this->collectionRequests = [];
     }
 
     public function queueCollection($url)

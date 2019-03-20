@@ -78,6 +78,20 @@ WHERE V2.property_id = :isPartOfId
 GROUP BY omeka_id;
 SQL;
 
+    const RESOURCE_EXISTS = <<<SQL
+    SELECT COUNT(V1.uri) as resourceExists from value as V1
+      LEFT JOIN resource R on V1.resource_id = R.id
+      WHERE V1.uri = :resourceUri
+        AND R.resource_class_id = :resourceClassId
+SQL;
+
+    const RESOURCE_ID_FROM_URI = <<<SQL
+    SELECT R.id as id from value as V1
+      LEFT JOIN resource R on V1.resource_id = R.id
+      WHERE V1.uri = :resourceUri
+        AND R.resource_class_id = :resourceClassId
+SQL;
+
 
     /**
      * @param int $fromId
@@ -168,6 +182,53 @@ SQL;
         }
 
         return $this->manifestsByCanvasId[$canvasId]; // keys: [ 'omeka_id', 'uri', 'label']
+    }
+
+    public function manifestExists(string $manifestUri)
+    {
+        return $this->resourceExists('sc:Manifest', $manifestUri);
+    }
+
+    public function canvasExists(string $canvasUri)
+    {
+        return $this->resourceExists('sc:Canvas', $canvasUri);
+    }
+
+    public function collectionExists(string $collectionUri)
+    {
+        return $this->resourceExists('sc:Collection', $collectionUri);
+    }
+
+    public function resourceExists(string $resource, string $id): bool
+    {
+        $statement = $this->connection->prepare(self::RESOURCE_EXISTS);
+        $statement->bindValue('resourceUri', $id, PDO::PARAM_STR);
+        $statement->bindValue('resourceClassId',
+            (int)$this->saturator->getResourceClassByTerm($resource)->id(),
+            PDO::PARAM_INT
+        );
+        $statement->execute();
+
+        $result = $statement->fetch();
+        $statement->closeCursor();
+
+        return (bool)((int)$result['resourceExists'] ?? false);
+    }
+
+    public function getResourceIdByUri(string $resource, string $id): int
+    {
+        $statement = $this->connection->prepare(self::RESOURCE_ID_FROM_URI);
+        $statement->bindValue('resourceUri', $id, PDO::PARAM_STR);
+        $statement->bindValue('resourceClassId',
+            (int)$this->saturator->getResourceClassByTerm($resource)->id(),
+            PDO::PARAM_INT
+        );
+        $statement->execute();
+
+        $result = $statement->fetch();
+        $statement->closeCursor();
+
+        return ($result['id'] ?? null) ? (int)$result['id'] : null;
     }
 
 }

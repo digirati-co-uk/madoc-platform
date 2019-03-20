@@ -50,6 +50,7 @@ use IIIFStorage\Media\IIIFImageIngester;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Zend\Http\Client;
+use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
 
 return [
     'service_manager' => [
@@ -57,10 +58,16 @@ return [
             EventDispatcher::class => EventDispatcherFactory::class,
             UrlHelper::class => UrlHelperFactory::class,
             DereferencedManifest::class => function (ContainerInterface $c) {
-                return new DereferencedManifest(new Client());
+                return new DereferencedManifest(
+                    new Client(),
+                    $c->get(CheapOmekaRelationshipRequest::class)
+                );
             },
             DereferencedCollection::class => function (ContainerInterface $c) {
-                return new DereferencedCollection(new Client());
+                return new DereferencedCollection(
+                    new Client(),
+                    $c->get(CheapOmekaRelationshipRequest::class)
+                );
             },
             ImportContentListener::class => function (ContainerInterface $c) {
                 return new ImportContentListener(
@@ -72,7 +79,8 @@ return [
                         $c->get(AddImageService::class),
                         $c->get(DereferencedCollection::class),
                         $c->get(ScheduleEmbeddedManifests::class)
-                    ]
+                    ],
+                    new \Omeka\Mvc\Controller\Plugin\Messenger()
                 );
             },
             ViewContentListener::class => function (ContainerInterface $c) {
@@ -97,7 +105,10 @@ return [
                 return new ScheduleEmbeddedCanvases($c->get(Dispatcher::class));
             },
             ScheduleEmbeddedManifests::class => function (ContainerInterface $c) {
-                return new ScheduleEmbeddedManifests($c->get(Dispatcher::class));
+                return new ScheduleEmbeddedManifests(
+                    $c->get(Dispatcher::class),
+                    $c->get(CheapOmekaRelationshipRequest::class)
+                );
             },
             AddImageService::class => function (ContainerInterface $c) {
                 return new AddImageService($c->get('Omeka\Logger'));

@@ -252,6 +252,32 @@ class ItemRequest
         return $this->fields[$term];
     }
 
+    public function overwriteSingleValue(FieldValue $value): self
+    {
+        $term = $value->getTerm();
+        if (!$this->hasField($term)) return $this;
+        $this->fields[$term] = [$value];
+        return $this;
+    }
+
+    public function overwriteValue(array $values): self
+    {
+        $term = null;
+        foreach ($values as $value) {
+            if (!$value instanceof FieldValue) {
+                throw new \InvalidArgumentException('$values must be of type ValueInterface[]');
+            }
+            if (!$term) {
+                $term = $value->getTerm();
+            } else if ($term !==  $value->getTerm()) {
+                throw new \InvalidArgumentException('$values must have the same term');
+            }
+        }
+        if (!$this->hasField($term)) return $this;
+        $this->fields[$term] = $values;
+        return $this;
+    }
+
     /**
      * @param string $resourceClass
      */

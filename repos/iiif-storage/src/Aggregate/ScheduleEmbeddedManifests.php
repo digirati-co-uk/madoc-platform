@@ -3,8 +3,10 @@
 namespace IIIFStorage\Aggregate;
 
 
+use Digirati\OmekaShared\Model\FieldValue;
 use IIIFStorage\Job\ImportManifests;
 use Digirati\OmekaShared\Model\ItemRequest;
+use IIIFStorage\Utility\CheapOmekaRelationshipRequest;
 use Omeka\Job\Dispatcher;
 
 class ScheduleEmbeddedManifests
@@ -13,22 +15,31 @@ class ScheduleEmbeddedManifests
      * @var Dispatcher
      */
     private $dispatcher;
+    /**
+     * @var CheapOmekaRelationshipRequest
+     */
+    private $relationshipRequest;
 
-    public function __construct(Dispatcher $dispatcher)
-    {
+    public function __construct(
+        Dispatcher $dispatcher,
+        CheapOmekaRelationshipRequest $relationshipRequest
+    ) {
         $this->dispatcher = $dispatcher;
+        $this->relationshipRequest = $relationshipRequest;
     }
 
     public $queue = [];
     public $manifests = [];
     public $prepared = [];
     public $collectionIds = [];
+    public $existingManifests = [];
 
     public function mutate(ItemRequest $input)
     {
         $collectionJsonValues = $input->getValue('dcterms:source');
         foreach ($collectionJsonValues as $collectionJsonValue) {
             $id = md5($collectionJsonValue->getValue());
+            $json = $this->queue[$id];
             if (isset($this->manifests[$id])) {
                 $this->dispatcher->dispatch(
                     ImportManifests::class,
@@ -38,7 +49,19 @@ class ScheduleEmbeddedManifests
                     ]
                 );
             }
+            // Remove manifests.
+            unset($json['manifests']);
+            unset($json['members']);
+            // Save the json back, performance grounds, they are never used.
+            $input->overwriteSingleValue(
+                FieldValue::literal(
+                    'dcterms:source',
+                    'Collection JSON',
+                    json_encode($json)
+                )
+            );
         }
+
     }
 
     public function supports(ItemRequest $input)
@@ -77,7 +100,15 @@ class ScheduleEmbeddedManifests
             $this->manifests[$id] = [];
             foreach ($manifests as $manifest) {
                 if ($manifest) {
-                    $this->manifests[$id][] = $manifest;
+                    $manifestId = $manifest['@id'] ?? $manifest['id'];
+                    if ($this->relationshipRequest->manifestExists($manifestId)) {
+                        $this->manifests[$id][] = [
+                            'type' => ImportManifests::MANIFEST_REFERENCE,
+                            'id' => $manifestId,
+                        ];
+                    } else {
+                        $this->manifests[$id][] = $manifest;
+                    }
                 }
             }
         }

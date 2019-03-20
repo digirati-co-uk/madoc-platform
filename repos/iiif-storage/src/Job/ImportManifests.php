@@ -7,12 +7,15 @@ use Digirati\OmekaShared\Model\FieldValue;
 use Digirati\OmekaShared\Model\ItemRequest;
 use IIIFStorage\Repository\CollectionRepository;
 use IIIFStorage\Repository\ManifestRepository;
+use IIIFStorage\Utility\CheapOmekaRelationshipRequest;
 use Omeka\Job\AbstractJob;
 use Omeka\Job\JobInterface;
 use Zend\Log\Logger;
 
 class ImportManifests extends AbstractJob implements JobInterface
 {
+
+    const MANIFEST_REFERENCE = 'MANIFEST_REFERENCE';
 
     /**
      * Perform this job.
@@ -25,6 +28,8 @@ class ImportManifests extends AbstractJob implements JobInterface
         $repository = $this->getServiceLocator()->get(ManifestRepository::class);
         /** @var CollectionRepository $collectionRepository */
         $collectionRepository = $this->getServiceLocator()->get(CollectionRepository::class);
+        /** @var CheapOmekaRelationshipRequest $relationshipRequest */
+        $relationshipRequest = $this->getServiceLocator()->get(CheapOmekaRelationshipRequest::class);
         $manifestList = $this->getArg('manifestList');
         $collectionId = $this->getArg('collection');
 
@@ -36,6 +41,21 @@ class ImportManifests extends AbstractJob implements JobInterface
         $manifestIds = [];
 
         foreach ($manifestList as $manifest) {
+            // Add existing manifests to list.
+            $type = $manifest['type'] ?? null;
+            if ($type === self::MANIFEST_REFERENCE) {
+                $id = $manifest['id'];
+                $logger->info("ID already exists: $id adding as reference");
+                $omekaId = $relationshipRequest->getResourceIdByUri('sc:Manifest', $id);
+                $logger->info("Found Omeka ID: $omekaId");
+                if (!$omekaId) {
+                    $logger->warn("Resource with id: $id has been removed since adding to job, skipping...");
+                    continue;
+                }
+                $manifestIds[] = $omekaId;
+                continue;
+            }
+
             $id = $manifest['@id'];
             // Create item using repository.
             $manifestItem = $repository->create(function (ItemRequest $item) use ($manifest, $id) {
