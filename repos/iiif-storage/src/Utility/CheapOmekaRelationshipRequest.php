@@ -130,7 +130,11 @@ SQL;
         $sourceStatement->bindValue('termId', (int)$dcTermsSource, PDO::PARAM_INT);
         $sourceStatement->bindValue('resourceId', (int)$fromId, PDO::PARAM_INT);
         $sourceStatement->execute();
+
+        // Fetch and close.
         $sourceResult = $sourceStatement->fetch();
+        $sourceStatement->closeCursor();
+
         return json_decode($sourceResult['json'], true);
     }
 
@@ -141,12 +145,13 @@ SQL;
         $statement->execute();
 
         $result = $statement->fetch();
+        $statement->closeCursor();
 
         if (!$result) {
             throw new NotFoundException('Resource not found');
         }
 
-        return strtotime($result['modified'] );
+        return strtotime($result['modified']);
     }
 
     private $manifestsByCanvasId = [];
