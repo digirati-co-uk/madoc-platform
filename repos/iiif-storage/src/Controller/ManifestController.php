@@ -4,7 +4,7 @@ namespace IIIFStorage\Controller;
 
 
 use Digirati\OmekaShared\Framework\AbstractPsr7ActionController;
-use IIIFStorage\Extension\SettingsHelper;
+use Digirati\OmekaShared\Helper\SettingsHelper;
 use IIIFStorage\JsonBuilder\CanvasBuilder;
 use IIIFStorage\JsonBuilder\CollectionBuilder;
 use IIIFStorage\JsonBuilder\ManifestBuilder;
@@ -16,7 +16,6 @@ use IIIFStorage\Utility\Router;
 use Omeka\Api\Exception\NotFoundException;
 use Omeka\Api\Representation\MediaRepresentation;
 use Omeka\Api\Representation\SiteRepresentation;
-use Omeka\Db\Logging\FileSqlLogger;
 use Zend\View\Model\ViewModel;
 
 class ManifestController extends AbstractPsr7ActionController

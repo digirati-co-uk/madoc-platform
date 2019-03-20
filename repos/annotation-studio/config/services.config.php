@@ -3,7 +3,9 @@
 use AnnotationStudio\CaptureModel\CaptureModelRepository;
 use AnnotationStudio\CaptureModel\Router;
 use AnnotationStudio\Subscriber\ModerationStatusVerificationSubscriber;
+use Digirati\OmekaShared\Factory\SettingsHelperFactory;
 use Digirati\OmekaShared\Factory\UrlHelperFactory;
+use Digirati\OmekaShared\Helper\SettingsHelper;
 use Digirati\OmekaShared\Helper\UrlHelper;
 use Psr\Container\ContainerInterface;
 use Zend\Http\Request;
@@ -20,6 +22,7 @@ return [
                 );
             },
             UrlHelper::class => UrlHelperFactory::class,
+            SettingsHelper::class => SettingsHelperFactory::class,
             Router::class => function (ContainerInterface $c) {
                 /** @var \Omeka\Settings\Settings $config */
                 $config = $c->get('Omeka\Settings');

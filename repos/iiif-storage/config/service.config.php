@@ -1,7 +1,9 @@
 <?php
 
 use Digirati\OmekaShared\Factory\EventDispatcherFactory;
+use Digirati\OmekaShared\Factory\SettingsHelperFactory;
 use Digirati\OmekaShared\Factory\UrlHelperFactory;
+use Digirati\OmekaShared\Helper\SettingsHelper;
 use Digirati\OmekaShared\Helper\UrlHelper;
 use IIIFStorage\Aggregate\AddImageService;
 use IIIFStorage\Aggregate\DereferencedCollection;
@@ -9,7 +11,6 @@ use IIIFStorage\Aggregate\DereferencedManifest;
 use IIIFStorage\Aggregate\ScheduleEmbeddedCanvases;
 use IIIFStorage\Aggregate\ScheduleEmbeddedManifests;
 use IIIFStorage\Extension\ImageSourceRenderer;
-use IIIFStorage\Extension\SettingsHelper;
 use IIIFStorage\FieldFilters\HideCanvasJson;
 use IIIFStorage\FieldFilters\HideManifestCollectionJson;
 use IIIFStorage\JsonBuilder\CanvasBuilder;
@@ -291,9 +292,7 @@ return [
                     $c->get(CollectionBuilder::class)
                 );
             },
-            SettingsHelper::class => function (ContainerInterface $c) {
-                return new SettingsHelper($c->get('Omeka\Settings\Site'));
-            }
+            SettingsHelper::class => SettingsHelperFactory::class,
         ]
     ],
     'view_helpers' => [

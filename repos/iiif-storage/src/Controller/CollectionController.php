@@ -2,15 +2,14 @@
 
 namespace IIIFStorage\Controller;
 
-
 use Digirati\OmekaShared\Framework\AbstractPsr7ActionController;
-use IIIFStorage\Extension\SettingsHelper;
+use Digirati\OmekaShared\Helper\SettingsHelper;
+use Omeka\Mvc\Exception\NotFoundException;
+use Zend\View\Model\ViewModel;
 use IIIFStorage\JsonBuilder\CollectionBuilder;
 use IIIFStorage\Repository\CollectionRepository;
 use IIIFStorage\Utility\ApiRouter;
 use IIIFStorage\Utility\Router;
-use Omeka\Mvc\Exception\NotFoundException;
-use Zend\View\Model\ViewModel;
 
 class CollectionController extends AbstractPsr7ActionController
 {

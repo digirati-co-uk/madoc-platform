@@ -1,6 +1,6 @@
 <?php
 
-namespace IIIFStorage\Extension;
+namespace Digirati\OmekaShared\Helper;
 
 use Omeka\View\Helper\Setting;
 use Throwable;

@@ -1,9 +1,10 @@
 <?php
 
+use Digirati\OmekaShared\Helper\SettingsHelper;
+use Psr\Container\ContainerInterface;
 use IIIFStorage\Controller\CollectionController;
 use IIIFStorage\Controller\ManifestController;
 use IIIFStorage\Controller\ResourceController;
-use IIIFStorage\Extension\SettingsHelper;
 use IIIFStorage\JsonBuilder\CanvasBuilder;
 use IIIFStorage\JsonBuilder\CollectionBuilder;
 use IIIFStorage\JsonBuilder\ManifestBuilder;
@@ -12,7 +13,6 @@ use IIIFStorage\Repository\CollectionRepository;
 use IIIFStorage\Repository\ManifestRepository;
 use IIIFStorage\Utility\ApiRouter;
 use IIIFStorage\Utility\Router;
-use Psr\Container\ContainerInterface;
 
 return [
     'controllers' => [

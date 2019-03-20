@@ -2,7 +2,7 @@
 
 namespace IIIFStorage\Extension;
 
-
+use Digirati\OmekaShared\Helper\SettingsHelper;
 use IIIFStorage\JsonBuilder\CanvasBuilder;
 use IIIFStorage\JsonBuilder\ManifestBuilder;
 use IIIFStorage\Repository\CanvasRepository;
