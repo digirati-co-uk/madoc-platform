@@ -96,11 +96,21 @@ class ImageSourceRenderer extends IIIF implements EventManagerAwareInterface
             $manifestMapping = $this->canvasRepository->getManifests($canvasRepresentation);
             $manifestIds = $manifestMapping->getList();
 
+            // Embedded settings.
+            $canvasesToLoadPerManifest = 1;
+            $originalIds = false; // @todo get from site settings.
+            $canvasesPage = 1;
+
             if (!empty($manifestIds)) {
                 // @todo might be more than one manifest.
                 $manifestId = array_shift($manifestIds);
                 $manifestRepresentation = $this->manifestRepository->getById($manifestId);
-                $manifest = $this->manifestBuilder->buildResource($manifestRepresentation, false, 1, 1);
+                $manifest = $this->manifestBuilder->buildResource(
+                    $manifestRepresentation,
+                    $originalIds,
+                    $canvasesPage,
+                    $canvasesToLoadPerManifest
+                );
                 $viewModel->setVariable('manifest', $manifest->getManifest());
                 $viewModel->setVariable('manifestResource', $manifest);
             }

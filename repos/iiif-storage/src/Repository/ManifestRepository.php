@@ -195,7 +195,7 @@ class ManifestRepository
         ];
     }
 
-    public function getPreviousNext(int $manifestId, int $canvasId, int $number)
+    public function getPreviousNext(int $manifestId, int $canvasId, int $number = 1)
     {
         $canvases = array_values($this->getCanvasMapFromManifest($manifestId)->getList());
         $max = sizeof($canvases);

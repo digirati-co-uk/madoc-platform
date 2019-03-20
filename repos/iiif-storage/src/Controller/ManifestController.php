@@ -88,7 +88,16 @@ class ManifestController extends AbstractPsr7ActionController
                 throw new NotFoundException();
             }
             $collection = $this->collectionRepo->getById($collectionId);
-            $collectionRepresentation = $this->collectionBuilder->buildResource($collection, $this->shouldUseOriginalIds(), 1, 1, 0);
+            $embeddedManifestsToLoad = 1;
+            $embeddedManifestPage = 1;
+            $embeddedCanvasesToLoadPerManifest = 0;
+            $collectionRepresentation = $this->collectionBuilder->buildResource(
+                $collection,
+                $this->shouldUseOriginalIds(),
+                $embeddedManifestPage,
+                $embeddedManifestsToLoad,
+                $embeddedCanvasesToLoadPerManifest
+            );
             $vm['collection'] = $collectionRepresentation->getCollection();
             $vm['collectionResource'] = $collectionRepresentation;
         }
@@ -101,6 +110,8 @@ class ManifestController extends AbstractPsr7ActionController
             $this->apiRouter->useOriginalUrls();
         }
 
+        $canvasesPerPage = 12;
+
         $manifestId = $this->params()->fromRoute('manifest');
         $collectionId = $this->params()->fromRoute('collection');
 
@@ -109,7 +120,7 @@ class ManifestController extends AbstractPsr7ActionController
             $manifest,
             $this->shouldUseOriginalIds(),
             $this->params()->fromQuery('page') ?? 1,
-            12
+            $canvasesPerPage
         );
 
         $vm = [
@@ -128,7 +139,7 @@ class ManifestController extends AbstractPsr7ActionController
 
         $viewModel = new ViewModel($vm);
 
-        $this->paginateControls($viewModel, $manifestRepresentation->getTotalResults(), 12);
+        $this->paginateControls($viewModel, $manifestRepresentation->getTotalResults(), $canvasesPerPage);
 
         return $this->render('iiif.manifest.view', $viewModel->getVariables());
     }
@@ -151,7 +162,8 @@ class ManifestController extends AbstractPsr7ActionController
 
         $canvasRepresentation = $this->canvasRepository->getById($canvasId);
         $canvas = $this->canvasBuilder->buildResource($canvasRepresentation, $this->shouldUseOriginalIds());
-        $nextPrev = $this->repo->getPreviousNext($manifestId, $canvasId,1);
+
+        $nextPrev = $this->repo->getPreviousNext($manifestId, $canvasId);
 
         $vm = [
             'router' => $this->router,
@@ -171,7 +183,14 @@ class ManifestController extends AbstractPsr7ActionController
             if (!$this->repo->containsCanvas($manifest->id(), $canvasId)) {
                 throw new NotFoundException();
             }
-            $manifestRepresentation = $this->builder->buildResource($manifest, $this->shouldUseOriginalIds(), 1, 1);
+            $canvasPage = 1;
+            $canvasesToLoad = 1;
+            $manifestRepresentation = $this->builder->buildResource(
+                $manifest,
+                $this->shouldUseOriginalIds(),
+                $canvasPage,
+                $canvasesToLoad
+            );
             $vm['manifest'] = $manifestRepresentation->getManifest();
             $vm['manifestResource'] = $manifestRepresentation;
 
