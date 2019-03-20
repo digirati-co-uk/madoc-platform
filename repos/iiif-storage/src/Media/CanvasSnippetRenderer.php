@@ -66,6 +66,8 @@ class CanvasSnippetRenderer implements RendererInterface, MediaPageBlockDualRend
      */
     public function renderFromData(PhpRenderer $view, array $data, array $options = [])
     {
+        var_dump("tried to render form data");
+        exit;
         if (!$data['canvas']) return '';
 
         /** @var ItemRepresentation $canvasRepresentation */

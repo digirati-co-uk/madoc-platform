@@ -67,6 +67,16 @@ SELECT modified FROM resource WHERE id = :resourceId
 SQL;
 
 
+    const MANIFEST_LABEL_FROM_CANVAS = <<<SQL
+SELECT V2.value_resource_id as omeka_id, MAX(V1.uri) as uri, MAX(V1.value) as label
+FROM value V2
+       LEFT JOIN value V1 on V1.resource_id = V2.value_resource_id
+WHERE V2.property_id = :isPartOfId
+  AND (V1.property_id = 1 OR V1.property_id = 10)
+  AND V2.resource_id = :canvasId
+GROUP BY omeka_id;
+SQL;
+
 
     /**
      * @param int $fromId
@@ -136,6 +146,22 @@ SQL;
         }
 
         return strtotime($result['modified'] );
+    }
+
+    private $manifestsByCanvasId = [];
+
+    public function getManifestFromCanvas(int $canvasId)
+    {
+        if (!isset($this->manifestsByCanvasId[$canvasId])) {
+            $statement = $this->connection->prepare(self::MANIFEST_LABEL_FROM_CANVAS);
+            $statement->bindValue('canvasId', $canvasId);
+            $statement->bindValue('isPartOfId', $this->saturator->loadPropertyId('dcterms:isPartOf'));
+            $statement->execute();
+
+            $this->manifestsByCanvasId[$canvasId] = $statement->fetch();
+        }
+
+        return $this->manifestsByCanvasId[$canvasId]; // keys: [ 'omeka_id', 'uri', 'label']
     }
 
 }

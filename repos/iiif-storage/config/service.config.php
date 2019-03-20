@@ -187,7 +187,8 @@ return [
             CanvasSnippetIngester::class => function (ContainerInterface $c) {
                 return new CanvasSnippetIngester(
                     $c->get('Omeka\ApiManager'),
-                    $c->get(PropertyIdSaturator::class)
+                    $c->get(PropertyIdSaturator::class),
+                    $c->get(CheapOmekaRelationshipRequest::class)
                 );
             },
             CollectionListIngester::class => function (ContainerInterface $c) {

@@ -65,29 +65,13 @@ class ManifestSnippetIngester extends AbstractIngester implements IngesterInterf
      */
     public function getFormElements(string $operation): array
     {
-        $manifest = new ResourceSelect('manifest');
-        $manifest->setApiManager($this->api);
+        $manifest = new Element\Text('manifest');
         $manifest->setAttributes([
             'required' => false,
-            'id' => 'manifest-select',
-            'class' => 'chosen-select',
-            'data-placeholder' => 'Select a manifest', // @translate
-            'data-api-base-url' => '/api/items',
         ]);
         $manifest->setOptions([
-            'label' => 'Choose manifest', // @translate
-            'info' => 'Choose a manifest to be displayed.', // @translate
-            'empty_option' => '',
-            'resource_value_options' => [
-                'resource' => 'items',
-                'query' => [
-                    'resource_class_id' => $this->saturator->getResourceClassByTerm('sc:Manifest')->id()
-                ],
-                'option_text_callback' => function ($item) {
-                    /** @var ItemRepresentation $item */
-                    return $item->displayTitle();
-                },
-            ],
+            'label' => 'Manifest ID', // @translate
+            'info' => 'Paste in an ID of the manifest to be displayed.', // @translate
         ]);
 
         return [
