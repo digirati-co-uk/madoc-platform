@@ -1,7 +1,7 @@
 {% include 'annotation-studio/core.twig' %}
 
 <div {{ annotationStudio.drafts(draftOptions | default({
-    filterBy: 'elucidate,localStorage,memory',
+    filterBy: 'elucidate,localStorage',
     label: 'User submitted annotations',
     description: 'These are annotations created by the community and may need extra work to complete.',
     hideIfEmpty: true,

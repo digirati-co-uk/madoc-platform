@@ -26,4 +26,9 @@ class SettingsHelper extends Setting
         }
     }
 
+    public function get($id, $default = null, $targetId = null)
+    {
+        return $this->__invoke($id, $default, $targetId);
+    }
+
 }

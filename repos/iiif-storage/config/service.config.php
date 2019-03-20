@@ -229,7 +229,8 @@ return [
                     $c->get(ManifestRepository::class),
                     $c->get(ManifestBuilder::class),
                     $c->get(Router::class),
-                    $c->get(EventDispatcher::class)
+                    $c->get(EventDispatcher::class),
+                    $c->get(SettingsHelper::class)
                 );
             },
             CanvasListRenderer::class => function (ContainerInterface $c) {
@@ -346,7 +347,8 @@ return [
                     $c->get(ManifestRepository::class),
                     $c->get(ManifestBuilder::class),
                     $c->get(Router::class),
-                    $c->get(EventDispatcher::class)
+                    $c->get(EventDispatcher::class),
+                    $c->get(SettingsHelper::class)
                 );
             },
             'iiif-banner-image' => function (ContainerInterface $c) {

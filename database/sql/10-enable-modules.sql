@@ -22,7 +22,7 @@ INSERT INTO `module` VALUES
   ('ResourceProvider',1,'1.0.1'),
   ('Bookmarking',1,'0.1.0'),
   ('IIIFStorage',1,'1.0'),
-  ('AutoComplete',1,'1.0')
+  ('AutoComplete',1,'1.0.0')
 ;
 /*!40000 ALTER TABLE `module` ENABLE KEYS */;
 UNLOCK TABLES;

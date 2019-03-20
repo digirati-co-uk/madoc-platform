@@ -51,6 +51,10 @@ class ImageSourceRenderer extends IIIF implements EventManagerAwareInterface
      * @var ManifestRepository
      */
     private $manifestRepository;
+    /**
+     * @var SettingsHelper
+     */
+    private $settingsHelper;
 
     public function __construct(
         TwigRenderer $twig,
@@ -59,7 +63,8 @@ class ImageSourceRenderer extends IIIF implements EventManagerAwareInterface
         ManifestRepository $manifestRepository,
         ManifestBuilder $manifestBuilder,
         Router $router,
-        EventDispatcher $dispatcher
+        EventDispatcher $dispatcher,
+        SettingsHelper $settingsHelper
     ) {
         $this->twig = $twig;
         $this->canvasRepository = $canvasRepository;
@@ -68,6 +73,7 @@ class ImageSourceRenderer extends IIIF implements EventManagerAwareInterface
         $this->manifestBuilder = $manifestBuilder;
         $this->router = $router;
         $this->dispatcher = $dispatcher;
+        $this->settingsHelper = $settingsHelper;
     }
 
     public function render(PhpRenderer $view, MediaRepresentation $media, array $options = [])
@@ -98,7 +104,7 @@ class ImageSourceRenderer extends IIIF implements EventManagerAwareInterface
 
             // Embedded settings.
             $canvasesToLoadPerManifest = 1;
-            $originalIds = false; // @todo get from site settings.
+            $originalIds = $this->settingsHelper->get('original-ids', false);
             $canvasesPage = 1;
 
             if (!empty($manifestIds)) {
@@ -126,6 +132,7 @@ class ImageSourceRenderer extends IIIF implements EventManagerAwareInterface
 
             return $this->twig->render($viewModel);
         } catch (\Throwable $e) {
+            error_log((string) $e);
             return $fallback();
         }
     }
