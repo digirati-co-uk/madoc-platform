@@ -6,6 +6,7 @@ namespace IIIFStorage\Utility;
 use Digirati\OmekaShared\Utility\PropertyIdSaturator;
 use Doctrine\DBAL\Connection;
 use IIIFStorage\Model\PaginatedResult;
+use Omeka\Mvc\Exception\NotFoundException;
 use PDO;
 
 class CheapOmekaRelationshipRequest
@@ -142,7 +143,7 @@ SQL;
         $result = $statement->fetch();
 
         if (!$result) {
-            return null;
+            throw new NotFoundException('Resource not found');
         }
 
         return strtotime($result['modified'] );
