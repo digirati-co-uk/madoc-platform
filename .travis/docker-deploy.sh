@@ -24,7 +24,7 @@ fi;
 if [[ "$(docker images -q digirati/madoc-omeka-s:latest 2> /dev/null)" == "" ]]; then
   echo -e "\033[00;32m Image was NOT built, failing the build";
   exit 1
-fi
+fi;
 
 # Login to Docker hub.
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
@@ -38,7 +38,11 @@ REPO_NAME="$1"
 # Tag..
 docker tag ${REPO_NAME} ${REPO_NAME}:${COMMIT_HASH}
 docker tag ${REPO_NAME} ${REPO_NAME}:${TRAVIS_BRANCH}
-docker tag ${REPO_NAME} ${REPO_NAME}:latest
+
+# Only tag latest on master.
+if [[ "$TRAVIS_BRANCH" = "master" ]] && [[ "$TRAVIS_PULL_REQUEST" = "false" ]]; then
+    docker tag ${REPO_NAME} ${REPO_NAME}:latest
+fi;
 
 # ..and push
 docker push ${REPO_NAME}
