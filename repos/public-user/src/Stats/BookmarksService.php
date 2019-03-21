@@ -31,7 +31,7 @@ final class BookmarksService
     {
         $query = $this->db->createQueryBuilder();
         $query->from('user_canvas_mapping', 'uc')->select('uc.*', 'cm.*');
-        $query->innerJoin('uc', 'iiif_integration_canvas_mapping', 'cm', 'cm.id = uc.canvas_mapping_id');
+        $query->innerJoin('uc', 'item', 'cm', 'cm.id = uc.canvas_mapping_id');
         $query->where('uc.user_id = :uid');
         $query->andWhere('uc.bookmarked != 0');
         $query->setParameter('uid', $uid);

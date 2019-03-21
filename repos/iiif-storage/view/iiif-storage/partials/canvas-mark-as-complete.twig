@@ -25,7 +25,7 @@
                 {% endif %}
                 {% if (completionForm) %}
                     <div class="c-button c-button--primary">
-                        {% include 'elucidate/completion/form' with { form: completionForm.withRedirect(router.canvas(canvas)) } %}
+                        {% include 'elucidate/completion/form' with { form: completionForm.withRedirect(router.canvas(canvas, manifest, collection)) } %}
                     </div>
                 {% endif %}
             </div>

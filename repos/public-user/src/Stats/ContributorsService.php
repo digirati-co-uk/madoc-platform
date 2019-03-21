@@ -31,7 +31,7 @@ class ContributorsService
         $query->select('u.name, u.email');
         $query->from('user_canvas_mapping', 'uc');
         $query->innerJoin('uc', 'user', 'u', 'u.id = uc.user_id');
-        $query->innerJoin('uc', 'iiif_integration_canvas_mapping', 'cm', 'cm.id = uc.canvas_mapping_id');
+        $query->innerJoin('uc', 'user', 'cm', 'cm.id = uc.canvas_mapping_id');
         $query->orderBy('SUM(uc.complete_count + uc.incomplete_count)', 'DESC');
         $query->groupBy('uc.user_id');
         $query->setMaxResults($limit);

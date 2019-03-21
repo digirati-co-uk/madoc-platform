@@ -30,3 +30,22 @@ CREATE TABLE user_canvas_mapping (
   FOREIGN KEY (user_id) REFERENCES user(id),
   CONSTRAINT uc_user_canvas UNIQUE (user_id, canvas_mapping_id)
 );
+
+CREATE TABLE oauth_access_tokens (
+  access_token  VARCHAR(40) NOT NULL,
+  client_id     VARCHAR(80),
+  user_id       VARCHAR(80),
+  expires       TIMESTAMP NOT NULL,
+  scope         VARCHAR(4000),
+  PRIMARY KEY (access_token)
+);
+
+CREATE TABLE oauth_authorization_codes (
+  authorization_code   VARCHAR(40) NOT NULL,
+  client_id            VARCHAR(80),
+  user_id              VARCHAR(80),
+  redirect_uri         VARCHAR(2000) NOT NULL,
+  expires              TIMESTAMP NOT NULL,
+  scope                VARCHAR(4000),
+  PRIMARY KEY (authorization_code)
+);

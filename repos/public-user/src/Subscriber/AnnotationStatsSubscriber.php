@@ -204,7 +204,8 @@ SQL;
         // @todo this is a nasty hack for changes to the ID field.
         //       taken from the Router in IIIF Storage.
         if (strpos($target, 'iiif/api') !== false) {
-            $id = array_pop(explode('/', array_shift(explode('?', $target))));
+            $pieces = explode('/', array_shift(explode('?', $target)));
+            $id = array_pop($pieces);
             if ($id) {
                 return $id;
             }

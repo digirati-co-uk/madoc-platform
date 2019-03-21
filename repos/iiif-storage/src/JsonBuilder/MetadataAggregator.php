@@ -52,7 +52,8 @@ trait MetadataAggregator
     public function getBlacklist() {
         return [
             'dcterms:source',
-            'dcterms:identifier'
+            'dcterms:identifier',
+            'exif:versionInfo'
         ];
     }
 
