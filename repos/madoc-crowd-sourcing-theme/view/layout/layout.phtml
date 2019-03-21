@@ -27,6 +27,7 @@ $userBar = $this->partial('common/user-bar', ['site' => $site]);
 
 <?php echo $this->htmlElement('body'); ?>
 <?php echo $userBar; ?>
+
 <header>
     <?php if ($this->themeSetting('logo')): ?>
         <a href="<?php echo $site->url(); ?>" class="site-title"><img
@@ -44,7 +45,9 @@ $userBar = $this->partial('common/user-bar', ['site' => $site]);
             'maxDepth' => $this->themeSetting('nav_depth') - 1
         ]);
         ?>
+
     </nav>
+    <?php echo $this->messages(); ?>
 </header>
 <main id="content" role="main">
     <?php print $this->content; ?>

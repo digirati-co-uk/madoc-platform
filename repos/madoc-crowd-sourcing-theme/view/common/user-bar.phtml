@@ -1,0 +1,44 @@
+<?php
+$escape = $this->plugin('escapeHtml');
+$user = $this->identity();
+$enableRegistration = $this->siteSetting('public-user-enable-registration', false);
+?>
+<div class="madoc-user-bar">
+    <?php if ($user): ?>
+        <?php if ($this->userIsAllowed('Omeka\Controller\Admin\Index', 'index')): ?>
+            <div class="madoc-user-bar__logo">
+                <a href="<?php echo $this->url('admin'); ?>">
+                    <?php echo $this->setting('installation_title', 'Omeka S'); ?>
+                </a>
+            </div>
+            <span class="madoc-user-bar__current-site">
+            <a href="<?php echo $site->adminUrl('show'); ?>">
+                <?php echo $site->title(); ?>
+            </a>
+        </span>
+        <?php endif; ?>
+    <?php endif; ?>
+    <div class="madoc-user-bar__expander"></div>
+    <?php if ($user): ?>
+        <span class="madoc-user-bar__user-id">
+        <?php
+        echo sprintf($this->translate('Signed in as %s'), '<a href="' . $this->url('site/publicuser-profile', [], true) . '">' . $escape($user->getName()) . '</a>');
+        ?>
+    </span>
+        <span class="madoc-user-bar__logout">
+        <a href="<?php echo $this->url('site/publicuser-logout', [], true); ?>">
+            <?php echo $this->translate('Logout'); ?>
+        </a>
+    </span>
+    <?php else: ?>
+        <?php if ($enableRegistration): ?>
+            <span class="madoc-user-bar__register">
+                <a href="<?php echo $this->url('site/publicuser-register', [], true); ?>"><?php echo $this->translate('Register'); ?></a>
+            </span>
+        <?php endif; ?>
+        <span class="madoc-user-bar__login">
+            <a href="<?php echo $this->url('site/publicuser-login', [], true); ?>"><?php echo $this->translate('Log in'); ?></a>
+        </span>
+    <?php endif; ?>
+</div>
+<div class="madoc-user-bar-spacer"></div>

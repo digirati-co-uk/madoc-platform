@@ -137,44 +137,6 @@ Your activation link will expire on %4$s. If you have not completed the user act
         $globalConfig->add($userResetPasswordCopy);
         $this->add($globalConfig);
 
-        foreach ($this->sites as $site) {
-            $name = $site->slug();
-            $this->add(
-                (new Fieldset($name))
-                    ->add(
-                        (new Checkbox(
-                            $name.'_user_register',
-                            [
-                                'label' => 'Allow users to register',
-                                'info' => 'This will disable public registrations to the site',
-                            ]
-                        ))->setValue($this->castBool($this->options['settings'][$name][$name.'_user_register']))
-                    )
-                    ->add(
-                        (new Checkbox(
-                            $name.'_user_active',
-                            [
-                                'label' => 'Automatically activate users',
-                                'info' => 'When a user registers they will have to confirm their email',
-                            ]
-                        ))->setValue($this->castBool($this->options['settings'][$name][$name.'_user_active']))
-                    )
-                    ->add(
-                        (new Text($name.'_redirect', [
-                            'label' => 'Login redirection location',
-                            'info' => 'Where will the user end up after logging in',
-                        ]))->setValue($this->options['settings'][$name][$name.'_redirect'] ?? '')
-                    )
-                    ->add(
-                        (new Select($name.'_user_role', [
-                            'label' => 'Omeka User Role',
-                            'info' => 'The user role for users when registering',
-                        ]))
-                            ->setValueOptions($this->options['roles'])
-                            ->setValue($this->options['settings'][$name][$name.'_user_role'] ?? '')
-                    )
-            );
-        }
     }
 
     public function castBool($value)

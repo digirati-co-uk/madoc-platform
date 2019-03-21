@@ -13,6 +13,7 @@ use Omeka\Form\ActivateForm;
 use Omeka\Form\ForgotPasswordForm;
 use Omeka\Form\LoginForm;
 use Omeka\Form\UserForm;
+use Omeka\Permissions\Acl;
 use Omeka\Service\Mailer;
 use Omeka\Settings\Settings;
 use Omeka\Stdlib\Message;
@@ -254,7 +255,10 @@ class LoginController extends AbstractActionController
         }
 
         $userResponse = $this->api()->searchOne('users',
-            ['email' => $formData['user-information']['o:email']]);
+            [
+                'email' => $formData['user-information']['o:email']
+            ]
+        );
 
         $userDetails = $userResponse->getContent();
         if ($userDetails) {
@@ -263,16 +267,16 @@ class LoginController extends AbstractActionController
 
         $formData['user-information']['o:role'] = $role;
         $formData['user-information']['o:is_active'] = $active;
+
+        // Permissions.
+        /** @var Acl $acl */
+//        $acl = $this->getServiceLocator()->get('Omeka\Acl');
+//        $acl->allow(null, )
+
         $response = $this->api($form)->create('users', $formData['user-information']);
         /** @var User $user */
         $user = $response->getContent()->getEntity();
         $this->entityManager->flush();
-
-        try {
-            $this->mailer->sendUserActivation($user);
-        } catch (Throwable $e) {
-            $this->logger->err($e->getMessage());
-        }
 
         if (
             $this->userSettings->isActivationAutomatic($site) &&
@@ -280,6 +284,12 @@ class LoginController extends AbstractActionController
             isset($formData['change-password']['password'])
         ) {
             $user->setPassword($formData['change-password']['password']);
+        } else {
+            try {
+                $this->mailer->sendUserActivation($user);
+            } catch (Throwable $e) {
+                $this->logger->err($e->getMessage());
+            }
         }
 
         $perms = new SitePermission();
@@ -325,14 +335,17 @@ class LoginController extends AbstractActionController
             try {
                 return $this->registerUser($omekaPublicUserSettings, $site, $form);
             } catch (BlacklistedEmailException $e) {
+                error_log((string) $e);
                 $this->messenger()->addError(
                     $this->translate('Your email address has been blacklisted') // @translate
                 );
             } catch (RuntimeException $e) {
+                error_log((string) $e);
                 $this->messenger()->addError(
                     $this->translate($e->getMessage()) // @translate
                 );
             } catch (Throwable $e) {
+                error_log((string) $e);
                 $this->messenger()->addError(
                     $this->translate('Something went wrong, please try registering again') // @translate
                 );

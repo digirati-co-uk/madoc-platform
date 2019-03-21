@@ -13,6 +13,7 @@ use Omeka\Api\Representation\SiteRepresentation;
 use Omeka\Api\Representation\UserRepresentation;
 use Omeka\Api\Response;
 use Omeka\Entity\User;
+use Omeka\Form\SiteSettingsForm;
 use Omeka\Module\AbstractModule;
 use Omeka\Permissions\Assertion\SiteIsPublicAssertion;
 use PublicUser\Acl\IsOnRouteAssertion;
@@ -30,8 +31,13 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Throwable;
 use Zend\Authentication\AuthenticationService;
 use Zend\Config\Factory;
+use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\SharedEventManagerInterface;
+use Zend\Form\Element\Checkbox;
+use Zend\Form\Element\Select;
+use Zend\Form\Element\Text;
+use Zend\Form\Fieldset;
 use Zend\Mvc\Controller\AbstractController;
 use Zend\Mvc\MvcEvent;
 use Zend\Permissions\Acl\Acl;
@@ -267,7 +273,7 @@ class Module extends AbstractModule
             ],
             ['search', 'register', 'thanks'],
             (new AssertionAggregate())
-                ->setMode(AssertionAggregate::MODE_AT_LEAST_ONE)
+                ->setMode(AssertionAggregate::MODE_ALL)
                 ->addAssertion(new IsRegistrationPermittedAssertion($siteProvider, $settings))
                 ->addAssertion($isOnRoute)
         );
@@ -420,6 +426,55 @@ class Module extends AbstractModule
             $viewModel->currentUser = $user;
             $layoutViewModel->setVariable('isLoggedIn', !!$user);
             $layoutViewModel->setVariable('currentUser', $user);
+        });
+
+        $acl = $serviceContainer->get('Omeka\Acl');
+        $roles = $acl->getRoleLabels();
+
+        $sharedEventManager->attach(SiteSettingsForm::class, 'form.add_elements', function (Event $event) use ($roles) {
+            /** @var SiteSettingsForm $form */
+            $form = $event->getTarget();
+
+            $form->add(
+                (new Fieldset('public-user'))
+                    ->add(
+                        (new Checkbox('public-user-enable-registration'))
+                            ->setOptions([
+                                'label' => 'Registrations',
+                                'info' => 'Enable user registrations on this site'
+                            ])
+                            ->setValue($form->getSiteSettings()->get('public-user-enable-registration', false))
+                    )
+                    ->add(
+                        (new Checkbox('public-user-automatic-activation'))
+                            ->setOptions([
+                                'label' => 'Automatically activate users',
+                                'info' => 'If false, when a user registers they will have to confirm their email'
+                            ])
+                            ->setValue($form->getSiteSettings()->get('public-user-automatic-activation', false))
+                    )
+                    ->add(
+                        (new Text('public-user-login-redirect'))
+                            ->setOptions([
+                                'label' => 'Login redirection location',
+                                'info' => 'Where will the user end up after logging in'
+                            ])
+                            ->setValue($form->getSiteSettings()->get('public-user-login-redirect', ''))
+                    )
+                    ->add(
+                        (new Select('public-user-registration-role'))
+                            ->setOptions([
+                                'label' => 'New user role',
+                                'info' => 'The user role for users when registering'
+                            ])
+                            ->setValueOptions($roles)
+                            ->setValue($form->getSiteSettings()->get('public-user-registration-role', 'researcher'))
+                    )
+                    ->setOptions([
+                        'label' => 'Public user options',
+                    ])
+            );
+
         });
     }
 }
