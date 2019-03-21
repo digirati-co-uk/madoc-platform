@@ -12,7 +12,9 @@ services:
       - OMEKA__DATABASE_USER=${MYSQL_USER}
       - OMEKA__DATABASE_PASSWORD=${MYSQL_PASSWORD}
       - OMEKA__DATABASE_PORT=${MYSQL_PORT}
-      - OMEKA_ELUCIDATE_URL=elucidate-server
+      - OMEKA__MAIN_SITE_DOMAIN=http://localhost:8888/
+      - OMEKA__ELUCIDATE_URL=elucidate-server:8080
+      - OMEKA__ELUCIDATE_PUBLIC_DOMAIN=http://localhost:8888/
     ports:
       - "80:80"
     volumes:
