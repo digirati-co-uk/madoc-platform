@@ -131,8 +131,8 @@ class Module extends AbstractModule
     public function getElucidateEndpoint($settings)
     {
         /** @var SiteSettings  $settings */
-        $elucidate = $settings->get('annotation_studio_elucidate_server');
-        $elucidateProxy = $settings->get('annotation_studio_use_elucidate_proxy');
+        $elucidate = getenv('OMEKA__ELUCIDATE_URL');
+        $elucidateProxy = getenv('OMEKA__ELUCIDATE_PUBLIC_DOMAIN') || $elucidate;
         if ($elucidateProxy) {
             /** @var UrlHelper $url */
             $url = $this->getServiceLocator()->get(UrlHelper::class);

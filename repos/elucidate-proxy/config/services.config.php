@@ -10,16 +10,17 @@ use ElucidateProxy\Domain\ElucidateResponseFactory;
 use ElucidateProxy\Subscriber\ElucidateErrorSubscriber;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Zend\Uri\Uri;
 
 return [
     'service_manager' => [
         'factories' => [
             EventDispatcher::class => EventDispatcherFactory::class,
             HttpAdapter::class => function (ContainerInterface $c) {
-                $config = $c->get('Omeka\Settings');
-
                 return new GuzzleHttpAdapter(
-                    new GuzzleHttp\Client(['base_uri' => $config->get('elucidate_proxy_url')]), false
+                    new GuzzleHttp\Client([
+                        'base_uri' => getenv('OMEKA__ELUCIDATE_URL') . '/annotation/w3c/',
+                    ]), false
                 );
             },
             ClientInterface::class => function (ContainerInterface $c) {

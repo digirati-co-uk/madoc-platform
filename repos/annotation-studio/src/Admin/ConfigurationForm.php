@@ -24,27 +24,6 @@ class ConfigurationForm extends AbstractConfigurationForm
                 ])
                 ->setAttribute('required', false),
 
-            'site_domain' => (new Element\Url())
-                ->setOptions([
-                    'label' => 'Primary site domain', // @translate
-                    'info' => 'This should be the primary site domain that can be used for linking capture model resources.', // @translate
-                ])
-                ->setAttribute('required', true),
-
-            'elucidate_server' => (new Element\Text())
-                ->setOptions([
-                    'label' => 'Elucidate server', // @translate
-                    'info' => 'This can also use the Elucidate Proxy module', // @translate
-                ])
-                ->setAttribute('required', false),
-
-            'use_elucidate_proxy' => (new Element\Checkbox())
-                ->setOptions([
-                    'label' => 'Use Elucidate proxy (replaced the above endpoint)', // @translate
-                    'info' => 'Will take the current domain from the page requested from.', // @translate
-                ])
-                ->setAttribute('required', false),
-
             'default_resource_template' => (new Element\Text())
                 ->setOptions([
                     'label' => 'Default Resource Template endpoint', // @translate

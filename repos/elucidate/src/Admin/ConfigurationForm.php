@@ -16,13 +16,6 @@ class ConfigurationForm extends AbstractConfigurationForm
     protected function getFormFields(): array
     {
         return [
-            'site_domain' => (new Element\Url())
-                ->setOptions([
-                    'label' => 'Primary site domain', // @translate
-                    'info' => 'This should be used as the domain for generating `generator` URIs', // @translate
-                ])
-                ->setAttribute('required', true),
-
             'item_endpoint' => (new Element\Text())
                 ->setOptions([
                     'label' => 'Endpoint for elucidate pages (BROKEN, default is /topics)', // @translate
@@ -59,13 +52,6 @@ class ConfigurationForm extends AbstractConfigurationForm
                     'info' => 'Check this if the field is a property ID, a fallback to normal searching.', // @translate
                 ])
                 ->setAttribute('required', false),
-
-            'server_url' => (new Element\Text())
-                ->setOptions([
-                    'label' => 'Elucidate server (with trailing slash)', // @translate
-                    'info' => 'This has to be a W3C annotation server capable of searching for driving the results.', // @translate
-                ])
-                ->setAttribute('required', true),
 
             'search_search_using_class' => (new Element\Checkbox())
                 ->setOptions([
@@ -107,13 +93,6 @@ class ConfigurationForm extends AbstractConfigurationForm
                 ->setOptions([
                     'label' => 'Import Omeka items', // @translate
                     'info' => 'Import Omeka items that are posted in elucidate', // @translate
-                ])
-                ->setAttribute('required', false),
-
-            'generator_value' => (new Element\Text())
-                ->setOptions([
-                    'label' => 'Value for generator element', // @translate
-                    'info' => 'Value for generator element in created Annotations', // @translate
                 ])
                 ->setAttribute('required', false),
 
