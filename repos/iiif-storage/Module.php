@@ -9,12 +9,14 @@ use IIIFStorage\Controller\CollectionController;
 use IIIFStorage\Controller\ManifestController;
 use IIIFStorage\Controller\ResourceController;
 use IIIFStorage\Listener\ImportContentListener;
+use IIIFStorage\Listener\TargetStatusUpdateListener;
 use IIIFStorage\Listener\ViewContentListener;
 use IIIFStorage\Utility\Router;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Form\SiteSettingsForm;
 use Omeka\Module\AbstractModule;
 use Omeka\Permissions\Acl;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Zend\Config\Factory;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
@@ -63,6 +65,12 @@ class Module extends AbstractModule implements ConfigProviderInterface
     public function attachListeners(SharedEventManagerInterface $sharedEventManager)
     {
         $container = $this->getServiceLocator();
+
+        // Annotation events.
+        if ($container->has(EventDispatcher::class)) {
+            $eventDispatcher = $container->get(EventDispatcher::class);
+            $eventDispatcher->addSubscriber($container->get(TargetStatusUpdateListener::class));
+        }
 
         $importContent = $container->get(ImportContentListener::class);
         $importContent->attach($sharedEventManager);

@@ -41,7 +41,8 @@ class AccountController extends AbstractActionController
         }
 
         $uid = $user->getId();
-        $bookmarks = $this->bookmarks->getBookmarks($uid);
+        // @todo this will not work until the query is join from Items
+//        $bookmarks = $this->bookmarks->getBookmarks($uid);
         $stats = $this->statistics->getUserStats($uid);
 
         $view = new ViewModel();

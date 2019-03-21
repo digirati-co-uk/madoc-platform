@@ -18,6 +18,7 @@ use IIIFStorage\JsonBuilder\CollectionBuilder;
 use IIIFStorage\JsonBuilder\ImageServiceBuilder;
 use IIIFStorage\JsonBuilder\ManifestBuilder;
 use IIIFStorage\Listener\ImportContentListener;
+use IIIFStorage\Listener\TargetStatusUpdateListener;
 use IIIFStorage\Listener\ViewContentListener;
 use IIIFStorage\Media\BannerImageIngester;
 use IIIFStorage\Media\BannerImageRenderer;
@@ -81,6 +82,11 @@ return [
                         $c->get(ScheduleEmbeddedManifests::class)
                     ],
                     new \Omeka\Mvc\Controller\Plugin\Messenger()
+                );
+            },
+            TargetStatusUpdateListener::class => function (ContainerInterface $c) {
+                return new TargetStatusUpdateListener(
+                    $c->get(CanvasRepository::class)
                 );
             },
             ViewContentListener::class => function (ContainerInterface $c) {

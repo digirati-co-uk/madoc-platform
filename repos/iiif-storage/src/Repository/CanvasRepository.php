@@ -51,10 +51,17 @@ class CanvasRepository
         $this->siteId = $siteId;
     }
 
-    public function mutate(string $id, callable $mutation)
+    /**
+     * @param string|ItemRepresentation $id
+     * @param callable $mutation
+     * @return ItemRepresentation
+     */
+    public function mutate($id, callable $mutation)
     {
         // Get fresh
-        $item = $this->getById($id);
+        $item = $id instanceof ItemRepresentation ? $id : $this->getById($id);
+        // Get id
+        $id = $item->id();
         // Turn into request.
         $itemRequest = ItemRequest::fromSource(json_decode(json_encode($item), true));
         // Mutate from params.

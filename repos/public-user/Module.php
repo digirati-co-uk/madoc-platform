@@ -143,7 +143,7 @@ class Module extends AbstractModule
                         bookmarked INT,
                         complete_count INT,
                         incomplete_count INT,
-                        FOREIGN KEY (canvas_mapping_id) REFERENCES iiif_integration_canvas_mapping(id),
+                        FOREIGN KEY (canvas_mapping_id) REFERENCES resource(id),
                         FOREIGN KEY (user_id) REFERENCES user(id),
                         CONSTRAINT uc_user_canvas UNIQUE (user_id, canvas_mapping_id)
                     );';

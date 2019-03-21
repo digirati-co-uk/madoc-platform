@@ -7,8 +7,10 @@ use Elucidate\Event\AnnotationLifecycleEvent;
 use Exception;
 use LogicException;
 use Omeka\Api\Manager;
+use Omeka\Api\Representation\ItemRepresentation;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Zend\Authentication\AuthenticationServiceInterface;
+use Zend\Log\Logger;
 use Zend\Uri\Uri;
 
 class AnnotationStatsSubscriber implements EventSubscriberInterface
@@ -47,7 +49,7 @@ INSERT INTO user_canvas_mapping
     VALUES 
   (:canvasId, :uid, :bookmarked, :complete, :incomplete)
 ON DUPLICATE KEY UPDATE
-  bookmarked = VALUES(bookmarked),
+  bookmarked = bookmarked + VALUES(bookmarked),
   complete_count = complete_count + VALUES(complete_count),
 incomplete_count = incomplete_count + VALUES(incomplete_count);
 SQL;
@@ -66,15 +68,21 @@ SQL;
      * @var AuthenticationServiceInterface
      */
     private $auth;
+    /**
+     * @var Logger
+     */
+    private $logger;
 
     public function __construct(
         Manager $api,
         Connection $db,
-        AuthenticationServiceInterface $auth
+        AuthenticationServiceInterface $auth,
+        Logger $logger
     ) {
         $this->api = $api;
         $this->db = $db;
         $this->auth = $auth;
+        $this->logger = $logger;
     }
 
     public static function getSubscribedEvents()
@@ -107,9 +115,15 @@ SQL;
         $this->handleAnnotationLifecycleEvent($event, true);
     }
 
+    public function log($priority, $message, $extra = []) {
+        $this->logger->log($priority, __CLASS__ . ': ' . $message, $extra);
+    }
+
     public function handleAnnotationLifecycleEvent(AnnotationLifecycleEvent $event, bool $isDelete)
     {
         $annotation = $event->getLatestAnnotation();
+
+        $this->log(Logger::INFO, 'Testing this actually gets called');
 
         // We need to use -> to access a property backed by metadata,
         // since `Annotation` is a class that implements both ArrayAccess
@@ -117,6 +131,7 @@ SQL;
 
         $motivation = self::getValue($annotation->motivation);
         $target = self::getValue($annotation['target']);
+
         if (is_array($target) && isset($target['source'])) {
             $target = $target['source'];
         }
@@ -126,6 +141,7 @@ SQL;
         }
 
         if (!$target) {
+            $this->log(Logger::INFO, 'Found annotation without target, skipping');
             return;
         }
 
@@ -133,23 +149,11 @@ SQL;
         $targetUri = new Uri($target);
         $targetUri->setFragment(null);
 
-        $canvasMappingSearch = $this->api->search(
-            'items',
-            [
-                'resource_class_id' => $this->getResourceClassByTerm('sc:Canvas')->id(),
-                'property' => [
-                    [
-                        'joiner' => 'and',
-                        'property' => $this->loadPropertyId('dcterms:identifier'),
-                        'type' => 'eq',
-                        'text' => $targetUri->toString(),
-                    ]
-                ]
-            ]
-        );
-
-        $canvasMappings = $canvasMappingSearch->getContent();
-        if (!$canvasMappings) {
+        $targetOmekaId = $this->getCanvasOmekaId($targetUri->toString());
+        if (!$targetOmekaId) {
+            $this->log(Logger::INFO, 'Could not find canvas targeted', [
+                'targetUri' => $targetUri->toString(),
+            ]);
             return;
         }
 
@@ -161,15 +165,16 @@ SQL;
         $incomplete = false;
 
         if (self::OA_MOTIVATION_BOOKMARKING === $motivation) {
+            $this->log(Logger::DEBUG, 'Found bookmarking annotation');
             $bookmarked = true;
         } elseif (self::CROWDS_MOTIVATION_DRAFTING === $motivation) {
+            $this->log(Logger::DEBUG, 'Found incomplete annotation');
             $incomplete = true;
         } elseif (!in_array($motivation, self::OA_MOTIVATION_IGNORE, true)) {
+            $this->log(Logger::DEBUG, 'Found completion annotation');
             $complete = true;
         }
 
-        $canvasMapping = array_pop($canvasMappings);
-        $canvasMappingId = $canvasMapping->id();
         $identity = $this->auth->getIdentity();
         $updateValue = $isDelete ? -1 : 1;
 
@@ -182,13 +187,56 @@ SQL;
                 'bookmarked' => $bookmarked ? $updateValue : 0,
                 'complete' => $complete ? $updateValue : 0,
                 'incomplete' => $incomplete ? $updateValue : 0,
-                'canvasId' => $canvasMappingId,
+                'canvasId' => $targetOmekaId,
                 'uid' => $identity->getId(),
             ]);
             $this->db->commit();
         } catch (Exception $ex) {
+            $this->log(Logger::WARN, 'Could not save statistics', [
+                'error' => (string) $ex,
+            ]);
             $this->db->rollBack();
         }
+    }
+
+    public function getCanvasOmekaId(string $target): int
+    {
+        // @todo this is a nasty hack for changes to the ID field.
+        //       taken from the Router in IIIF Storage.
+        if (strpos($target, 'iiif/api') !== false) {
+            $pieces = explode('/', array_shift(explode('?', $target)));
+            $id = array_pop($pieces);
+            if ($id) {
+                return $id;
+            }
+        }
+
+        $canvasMappings = $this->api->search(
+            'items',
+            [
+                'resource_class_id' => $this->getResourceClassByTerm('sc:Canvas')->id(),
+                'property' => [
+                    [
+                        'joiner' => 'and',
+                        'property' => $this->loadPropertyId('dcterms:identifier'),
+                        'type' => 'eq',
+                        'text' => $target,
+                    ]
+                ]
+            ]
+        )->getContent();
+
+        if (empty($canvasMappings)) {
+            return null;
+        }
+
+        $canvasMapping = array_pop($canvasMappings);
+
+        if (!$canvasMapping instanceof ItemRepresentation) {
+            return null;
+        }
+
+        return $canvasMapping->id();
     }
 
     private function getResourceClassByTerm(string $term)

@@ -3,11 +3,15 @@
 namespace ElucidateProxy\Controller;
 
 use Elucidate\ClientInterface;
+use Elucidate\Exception\ElucidateRequestException;
 use Elucidate\Model\Container;
 use ElucidateProxy\Domain\ElucidateResponseFactory;
 use LogicException;
+use Omeka\Mvc\Exception\NotFoundException;
 use Throwable;
+use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Psr7Bridge\Psr7Response;
 
 class ContainerController extends AbstractActionController
 {
@@ -31,7 +35,11 @@ class ContainerController extends AbstractActionController
             $containerId .= '/?'.http_build_query($query).'#';
         }
 
-        $container = $this->elucidate->getContainer($containerId);
+        try {
+            $container = $this->elucidate->getContainer($containerId);
+        } catch (ElucidateRequestException $requestException) {
+            return Psr7Response::toZend(new EmptyResponse($requestException->getCode()));
+        }
 
         return $this->responseFactory->create($this->getRequest(), $container);
     }

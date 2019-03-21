@@ -21,7 +21,7 @@ class AnnotationStatisticsService
     public function createStatsQuery(): QueryBuilder
     {
         $queryBuilder = $this->connection->createQueryBuilder();
-        $queryBuilder->from('iiif_integration_canvas_mapping', 'cm');
+        $queryBuilder->from('item', 'cm');
         $queryBuilder->leftJoin('cm', 'user_canvas_mapping', 'uc', 'uc.canvas_mapping_id = cm.id');
 
         $queryBuilder->select(

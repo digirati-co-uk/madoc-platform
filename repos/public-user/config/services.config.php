@@ -69,7 +69,8 @@ return [
                 return new AnnotationStatsSubscriber(
                     $container->get('Omeka\ApiManager'),
                     $container->get('Omeka\Connection'),
-                    $container->get('Omeka\AuthenticationService')
+                    $container->get('Omeka\AuthenticationService'),
+                    $container->get('Omeka\Logger')
                 );
             },
 
