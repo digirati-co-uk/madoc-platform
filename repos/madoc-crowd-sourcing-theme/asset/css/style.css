@@ -56,7 +56,8 @@ header {
     border: 2px solid #333;
     border-bottom-width: 3px;
 }
-#search form button {
+#search form button,
+.c-form.c-form--login input[type="submit"] {
     font-size: 16px;
     line-height: 22px;
     padding: 3px 10px;
@@ -64,6 +65,109 @@ header {
     color: #fff;
     border: 2px solid #333;
     border-bottom-width: 3px;
+}
+
+.madoc-user-bar {
+    position: absolute;
+    height: 36px;
+    background: #333;
+    left: 0;
+    right: 0;
+    top: 0;
+    color: #fff;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    z-index: 10;
+    padding: 0 18px;
+}
+.madoc-user-bar a {
+    color: #fff;
+}
+.madoc-user-bar__logo a {
+    text-decoration: none;
+    font-size: 16px;
+    color: rgba(255, 255, 255, .5);
+    margin-right: 20px;
+}
+
+.madoc-user-bar__current-site a {
+    text-decoration: none;
+}
+.madoc-user-bar__current-site:hover a {
+    text-decoration: underline;
+}
+.madoc-user-bar__logo a:hover {
+    color: #fff;
+}
+
+.madoc-user-bar__user-id {
+    font-size: 13px;
+    margin-right: 10px;
+    color: rgba(255, 255, 255, .5);
+}
+.madoc-user-bar__logout {
+    font-size: 13px;
+}
+
+.madoc-user-bar__expander {
+    flex: 1 1 0px;
+}
+
+.madoc-user-bar__login {
+    font-size: 13px;
+}
+.madoc-user-bar__register {
+    font-size: 13px;
+    margin-right: 10px;
+}
+
+.madoc-user-bar-spacer {
+    position: relative;
+    height: 36px;
+    display: block;
+}
+
+/** Flash messages */
+.messages {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+.messages .error {
+    display: block;
+    padding: 10px;
+    background: #DA4939;
+    color: #fff;
+    margin-bottom: 10px;
+}
+.messages .success {
+    display: block;
+    padding: 10px;
+    background: #00da9d;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+
+.c-form.c-form--login {
+    margin: 0 auto;
+    max-width: 300px;
+}
+.c-form.c-form--login .field {
+    width: 100%;
+    margin-bottom: 10px;
+}
+.c-form.c-form--login .field input {
+    width: 100%;
+    border: 2px solid #999;
+    padding: 5px;
+    font-size: 16px;
+}
+.c-form.c-form--login .field input:focus {
+    border: 2px solid #333;
+    outline: none;
 }
 
 header nav {

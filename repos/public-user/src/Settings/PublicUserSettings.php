@@ -2,8 +2,8 @@
 
 namespace PublicUser\Settings;
 
+use Digirati\OmekaShared\Helper\SettingsHelper;
 use Omeka\Api\Representation\SiteRepresentation;
-use Omeka\Entity\Site;
 use Omeka\Settings\Settings;
 
 /**
@@ -11,16 +11,22 @@ use Omeka\Settings\Settings;
  */
 class PublicUserSettings
 {
-    const REGISTRATION_ALLOWED = 'user_register';
-    const DEFAULT_NEW_TO_ACTIVE = 'user_active';
-    const DEFAULT_NEW_ROLE = 'user_role';
+    const ENABLE_REGISTRATION = 'public-user-enable-registration';
+    const ACTIVATION_AUTOMATIC = 'public-user-automatic-activation';
+    const LOGIN_REDIRECT = 'public-user-login-redirect';
+    const DEFAULT_NEW_ROLE = 'public-user-registration-role';
+
 
     const GLOBAL_SETTING_SCOPE = '__global__';
     private $settings;
+    private $currentSiteSettings;
 
-    public function __construct(Settings $settings)
-    {
+    public function __construct(
+        Settings $settings,
+        SettingsHelper $currentSiteSettings
+    ) {
         $this->settings = $settings;
+        $this->currentSiteSettings = $currentSiteSettings;
     }
 
     /**
@@ -56,55 +62,47 @@ class PublicUserSettings
     /**
      * Check if registration is permitted by the given {@link Site}.
      *
-     * @param SiteRepresentation $site
-     *
      * @return bool
      */
-    public function isRegistrationPermitted(SiteRepresentation $site)
+    public function isRegistrationPermitted()
     {
-        return (bool) $this->siteSetting($site, self::REGISTRATION_ALLOWED);
-    }
-
-    private function siteSetting(SiteRepresentation $site, string $settingName)
-    {
-        $siteSlug = $site->slug();
-        $publicUserSettings = $this->settings->get('publicuser');
-
-        if (!isset($publicUserSettings[$siteSlug])) {
-            return null;
-        }
-
-        return $publicUserSettings[$siteSlug]["${siteSlug}_${settingName}"];
+        return (bool) $this->currentSiteSettings->get(self::ENABLE_REGISTRATION);
     }
 
     /**
      * Check if newly registered users should be activated automatically and allowed
      * to start interacting with the {@link Site}.
      *
-     * @param SiteRepresentation $site
-     *
      * @return bool
      */
-    public function isActivationAutomatic(SiteRepresentation $site)
+    public function isActivationAutomatic()
     {
-        return (bool) $this->siteSetting($site, self::DEFAULT_NEW_TO_ACTIVE);
+        return (bool) $this->currentSiteSettings->get(self::ACTIVATION_AUTOMATIC);
     }
 
     /**
      * Get the default role associated with new users signing up to the given {@link Site}.
      *
-     * @param SiteRepresentation $site
-     *
      * @return string
      */
-    public function getDefaultUserRole(SiteRepresentation $site)
+    public function getDefaultUserRole()
     {
-        return (string) $this->siteSetting($site, self::DEFAULT_NEW_ROLE);
+        return (bool) $this->currentSiteSettings->get(self::DEFAULT_NEW_ROLE);
     }
 
     public function isUserProfilesEnabled(): bool
     {
         return (bool) $this->globalSetting('user_profiles_enabled');
+    }
+
+    public function getUserLoginRedirect()
+    {
+        return $this->currentSiteSettings->get(self::LOGIN_REDIRECT);
+    }
+
+    public function getUserProfilesResourceTemplate(): int
+    {
+        return (int) $this->globalSetting('user_profiles_resource_template');
     }
 
     private function globalSetting(string $settingName)
@@ -116,15 +114,5 @@ class PublicUserSettings
         }
 
         return $publicUserSettings[self::GLOBAL_SETTING_SCOPE][$settingName];
-    }
-
-    public function getUserLoginRedirect(SiteRepresentation $site)
-    {
-        return $this->siteSetting($site, 'redirect');
-    }
-
-    public function getUserProfilesResourceTemplate(): int
-    {
-        return (int) $this->globalSetting('user_profiles_resource_template');
     }
 }

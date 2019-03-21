@@ -21,7 +21,8 @@ return [
             ConfigurableMailer::class => ConfigurableMailerFactory::class,
             PublicUserSettings::class => function (ContainerInterface $container) {
                 return new PublicUserSettings(
-                    $container->get('Omeka\Settings')
+                    $container->get('Omeka\Settings'),
+                    $container->get(\Digirati\OmekaShared\Helper\SettingsHelper::class)
                 );
             },
 
