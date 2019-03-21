@@ -10,6 +10,7 @@ use Digirati\OmekaShared\Helper\UrlHelper;
 use Psr\Container\ContainerInterface;
 use Zend\Http\Request;
 use Zend\I18n\Translator\TranslatorInterface;
+use Zend\Uri\Uri;
 
 return [
     'service_manager' => [
@@ -24,12 +25,9 @@ return [
             UrlHelper::class => UrlHelperFactory::class,
             SettingsHelper::class => SettingsHelperFactory::class,
             Router::class => function (ContainerInterface $c) {
-                /** @var \Omeka\Settings\Settings $config */
-                $config = $c->get('Omeka\Settings');
-
                 return new Router(
                     $c->get(UrlHelper::class),
-                    $config->get('annotation_studio_site_domain', null)
+                    getenv('OMEKA__ELUCIDATE_PUBLIC_DOMAIN')
                 );
             },
             ModerationStatusVerificationSubscriber::class => function (ContainerInterface $c) {

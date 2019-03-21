@@ -40,6 +40,13 @@ use Kevinrob\GuzzleCache\Strategy\PublicCacheStrategy;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Zend\Uri\Uri;
 
+if (!defined('ELUCIDATE_URL')) {
+    define(
+        'ELUCIDATE_URL',
+        getenv('OMEKA__ELUCIDATE_URL') . '/annotation/w3c/'
+    );
+}
+
 return [
     'service_manager' => [
         'factories' => [
@@ -79,65 +86,57 @@ return [
                 return new ViewEventSubscriber();
             },
             AnnotationModerationSubscriber::class => function ($c) {
-                $settings = $c->get('Omeka\Settings');
-
                 return new AnnotationModerationSubscriber(
-                    new Uri($settings->get('elucidate_site_domain', '')),
+                    new Uri(getenv('OMEKA__ELUCIDATE_PUBLIC_DOMAIN')),
                     $c->get(UrlHelper::class),
                     $c->get(ElucidateModuleConfiguration::class)
                 );
             },
             BookmarkSubscriber::class => function (ContainerInterface $c) {
                 $elucidate = $c->has(ClientInterface::class) ? $c->get(ClientInterface::class) : $c->get(ClientInterface::class);
-                $config = $c->get('Omeka\Settings');
 
                 return new BookmarkSubscriber(
-                    $config->get('elucidate_server_url') ?? '',
+                    ELUCIDATE_URL,
                     $elucidate
                 );
             },
             FlaggingSubscriber::class => function (ContainerInterface $c) {
                 $elucidate = $c->has(ClientInterface::class) ? $c->get(ClientInterface::class) : $c->get(ClientInterface::class);
-                $config = $c->get('Omeka\Settings');
 
                 return new FlaggingSubscriber(
-                    $config->get('elucidate_server_url') ?? '',
+                    ELUCIDATE_URL,
                     $elucidate
                 );
             },
             CommentSubscriber::class => function (ContainerInterface $c) {
                 $elucidate = $c->has(ClientInterface::class) ? $c->get(ClientInterface::class) : $c->get(ClientInterface::class);
-                $config = $c->get('Omeka\Settings');
 
                 return new CommentSubscriber(
-                    $config->get('elucidate_server_url'),
+                    ELUCIDATE_URL,
                     $elucidate
                 );
             },
             CompletionSubscriber::class => function (ContainerInterface $c) {
                 $elucidate = $c->has(ClientInterface::class) ? $c->get(ClientInterface::class) : $c->get(ClientInterface::class);
-                $config = $c->get('Omeka\Settings');
 
                 return new CompletionSubscriber(
-                    $config->get('elucidate_server_url'),
+                    ELUCIDATE_URL,
                     $elucidate
                 );
             },
             TranscriptionSubscriber::class => function (ContainerInterface $c) {
                 $elucidate = $c->has(ClientInterface::class) ? $c->get(ClientInterface::class) : $c->get(ClientInterface::class);
-                $config = $c->get('Omeka\Settings');
 
                 return new TranscriptionSubscriber(
-                    $config->get('elucidate_server_url'),
+                    ELUCIDATE_URL,
                     $elucidate
                 );
             },
             TaggingSubscriber::class => function (ContainerInterface $c) {
                 $elucidate = $c->has(ClientInterface::class) ? $c->get(ClientInterface::class) : $c->get(ClientInterface::class);
-                $config = $c->get('Omeka\Settings');
 
                 return new TaggingSubscriber(
-                    $config->get('elucidate_server_url'),
+                    ELUCIDATE_URL,
                     $elucidate
                 );
             },
@@ -218,7 +217,7 @@ return [
                 $config = $c->get('Omeka\Settings');
 
                 return new GuzzleHttpAdapter(
-                    new GuzzleHttp\Client(['base_uri' => $config->get('elucidate_server_url')])
+                    new GuzzleHttp\Client(['base_uri' => ELUCIDATE_URL])
                 );
             },
             'mathmos.guzzle' => function (ContainerInterface $c) {

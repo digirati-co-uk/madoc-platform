@@ -78,7 +78,7 @@ class Module extends AbstractModule
 
         $serviceContainer = $this->getServiceLocator();
         // Symfony events.
-        if ($serviceContainer->has(EventDispatcher::class) && $settings->get('elucidate_server_url')) {
+        if ($serviceContainer->has(EventDispatcher::class) && getenv('OMEKA__ELUCIDATE_URL')) {
 
             $eventDispatcher = $serviceContainer->get(EventDispatcher::class);
             $elucidateSubscriber = $serviceContainer->get(ElucidateItemImporter::class);

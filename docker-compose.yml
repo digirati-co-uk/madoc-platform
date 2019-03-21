@@ -14,7 +14,9 @@ services:
       - OMEKA__DATABASE_USER=${MYSQL_USER}
       - OMEKA__DATABASE_PASSWORD=${MYSQL_PASSWORD}
       - OMEKA__DATABASE_PORT=${MYSQL_PORT}
-      - OMEKA_ELUCIDATE_URL=madoc-annotation-server
+      - OMEKA__MAIN_SITE_DOMAIN=http://localhost:8888/
+      - OMEKA__ELUCIDATE_URL=madoc-annotation-server:8080
+      - OMEKA__ELUCIDATE_PUBLIC_DOMAIN=http://localhost:8888/
     ports:
       - "8888:80"
     volumes:
