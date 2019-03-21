@@ -25,7 +25,7 @@ init() {
     # add changes.
     gitProxy ${folderName} add --all
 
-    # show status.
+    # show status
     gitProxy ${folderName} status --short
 
     # blank link
@@ -138,8 +138,7 @@ case "${commandToRun}" in
         rm ./composer.lock
         rm -rf ./vendor
         cp ./config/composer.json ./composer.json
-        cp ./config/patch-composer.php ./patch-composer.php
-        php patch-composer.php
+        php ./config/patch-composer.php
         composer install --no-dev --no-scripts --optimize-autoloader
     ;;
     init-ci)
@@ -170,8 +169,7 @@ case "${commandToRun}" in
         rm ./composer.lock
         rm -rf ./vendor
         cp ./config/composer.json ./composer.json
-        cp ./config/patch-composer.php ./patch-composer.php
-        php patch-composer.php
+        php ./config/patch-composer.php
         composer install --no-dev --no-scripts --optimize-autoloader
     ;;
     server-init)
@@ -189,6 +187,12 @@ case "${commandToRun}" in
     stop)
          docker-compose stop "$@"
     ;;
+    down)
+        docker-compose down "$@"
+    ;;
+    logs)
+        docker-compose logs -f --tail=50
+    ;;
     server-start)
          docker-compose -f docker-compose.server.yml build
          docker-compose -f docker-compose.server.yml up -d
@@ -198,9 +202,6 @@ case "${commandToRun}" in
     ;;
     server-down)
         docker-compose -f docker-compose.server.yml down
-    ;;
-    logs)
-        docker-compose logs -f --tail=50
     ;;
     server-logs)
          docker-compose -f docker-compose.server.yml logs -f --tail=50
@@ -264,6 +265,7 @@ case "${commandToRun}" in
     echo "  status <module>           Git status on single module"
     echo "  start                     Starts up fresh set of docker containers (detached)"
     echo "  stop                      Stops all containers"
+    echo "  down                      Stop all containers if running and remove all containers"
     echo "  logs                      Show and tail the logs in the docker containers"
     echo
     echo "Server commands:"
