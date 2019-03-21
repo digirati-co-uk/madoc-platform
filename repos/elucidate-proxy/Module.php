@@ -3,7 +3,6 @@
 namespace ElucidateProxy;
 
 use Digirati\OmekaShared\ModuleExtensions\ConfigurationFormAutoloader;
-use ElucidateProxy\Admin\ConfigurationForm;
 use ElucidateProxy\Controller\AnnotationController;
 use ElucidateProxy\Controller\ContainerController;
 use ElucidateProxy\Controller\ElucidateProxyController;
@@ -19,7 +18,6 @@ use Zend\View\Helper\ServerUrl;
 
 class Module extends AbstractModule
 {
-    use ConfigurationFormAutoloader;
 
     private $config;
 
@@ -45,11 +43,6 @@ class Module extends AbstractModule
         );
 
         return $this->config;
-    }
-
-    function getConfigFormClass(): string
-    {
-        return ConfigurationForm::class;
     }
 
     public function getServerUrl()
