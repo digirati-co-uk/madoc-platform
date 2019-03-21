@@ -102,7 +102,10 @@ return [
                 return new PropertyIdSaturator($c->get('Omeka\ApiManager'));
             },
             ScheduleEmbeddedCanvases::class => function (ContainerInterface $c) {
-                return new ScheduleEmbeddedCanvases($c->get(Dispatcher::class));
+                return new ScheduleEmbeddedCanvases(
+                    $c->get(Dispatcher::class),
+                    $c->get(CheapOmekaRelationshipRequest::class)
+                );
             },
             ScheduleEmbeddedManifests::class => function (ContainerInterface $c) {
                 return new ScheduleEmbeddedManifests(
