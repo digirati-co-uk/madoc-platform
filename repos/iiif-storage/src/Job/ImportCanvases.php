@@ -6,6 +6,7 @@ use Digirati\OmekaShared\Model\FieldValue;
 use Digirati\OmekaShared\Model\ItemRequest;
 use IIIFStorage\Repository\ManifestRepository;
 use Digirati\OmekaShared\Utility\PropertyIdSaturator;
+use IIIFStorage\Utility\CheapOmekaRelationshipRequest;
 use Omeka\Api\Manager;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Job\AbstractJob;
@@ -15,6 +16,8 @@ use Zend\Log\Logger;
 
 class ImportCanvases extends AbstractJob implements JobInterface
 {
+    const CANVAS_REFERENCE = 'CANVAS_REFERENCE';
+
     public function perform()
     {
         /** @var Logger $logger */
@@ -23,58 +26,81 @@ class ImportCanvases extends AbstractJob implements JobInterface
         $api = $this->getServiceLocator()->get('Omeka\ApiManager');
         /** @var PropertyIdSaturator $saturator */
         $saturator = $this->getServiceLocator()->get(PropertyIdSaturator::class);
+        /** @var CheapOmekaRelationshipRequest $relationshipRequest */
+        $relationshipRequest = $this->getServiceLocator()->get(CheapOmekaRelationshipRequest::class);
         $canvasList = $this->getArg('canvasList');
 
         $canvasIds = [];
         foreach ($canvasList as $canvas) {
-            $id = ($canvas['@id'] ?? $canvas['id']);
-            $logger->info("Importing {$id}");
-            $item = ItemRequest::fromScratch();
-            $saturator->addResourceTemplateByName('IIIF Canvas', $item);
-            // @todo get international string from label (P2 and P3)
-            $item->addField(
-                FieldValue::literal('dcterms:title', 'Label', $canvas['label'] ?? 'Untitled canvas')
-            );
-            $item->addField(
-                FieldValue::url('dcterms:identifier', 'Canvas ID', $id)
-            );
-            $item->addField(
-                FieldValue::literal('dcterms:source', 'Source', json_encode($canvas, JSON_UNESCAPED_SLASHES))
-            );
-
-            $manifestId = null;
-            $manifestItemId = null;
-
-            if (isset($canvas['partOf']['id'])) {
-                $manifestId = $canvas['partOf']['id'];
-                $manifestItemId = $this->getManifestItemId($manifestId);
-                $logger->info("Found manifest in `partOf` field: {$manifestItemId}");
-                if ($manifestItemId) {
-                    $item->addField(
-                        FieldValue::entity('dcterms:isPartOf', $manifestItemId, 'resource:item')
-                    );
-                    $logger->info("(isPartOf) Attaching node id: {$id} to {$manifestItemId}");
-                } else {
-                    $logger->warn('WARNING: Orphaned canvas, this will not be attached to a manifest. Could not find manifest defined in `partOf` property on canvas');
+            try {
+                // Add existing manifests to list.
+                $type = $canvas['type'] ?? null;
+                if ($type === self::CANVAS_REFERENCE) {
+                    $id = $canvas['id'];
+                    $logger->info("ID already exists: $id adding as reference");
+                    $omekaId = $relationshipRequest->getResourceIdByUri('sc:Canvas', $id);
+                    $logger->info("Found Omeka ID: $omekaId");
+                    if (!$omekaId) {
+                        $logger->warn("Resource with id: $id has been removed since adding to job, skipping...");
+                        continue;
+                    }
+                    $canvasIds[] = $omekaId;
+                    continue;
                 }
-            } else {
-                $logger->warn('WARNING: Orphaned canvas, this will not be attached to a manifest. Imported manifests need a `partOf` property to be attached to a manifest.');
-            }
 
-            // I think this was missing.
-            $saturator->addPropertyIds($item);
+                $id = ($canvas['@id'] ?? $canvas['id']);
+                $logger->info("Importing {$id}");
 
-            /** @var ItemRepresentation|null $response */
-            $response = $this->createItem($api, $logger, $item);
-            if ($response) {
-                $logger->info('Finished creating canvas, with id ' . $response->id());
-            } else {
-                $logger->warn('Canvas may not have been imported');
-            }
+                $item = ItemRequest::fromScratch();
+                $saturator->addResourceTemplateByName('IIIF Canvas', $item);
+                // @todo get international string from label (P2 and P3)
+                $item->addField(
+                    FieldValue::literal('dcterms:title', 'Label', $canvas['label'] ?? 'Untitled canvas')
+                );
+                $item->addField(
+                    FieldValue::url('dcterms:identifier', 'Canvas ID', $id)
+                );
+                $item->addField(
+                    FieldValue::literal('dcterms:source', 'Source', json_encode($canvas, JSON_UNESCAPED_SLASHES))
+                );
 
-            if ($manifestItemId && $response && $response->id()) {
-                $canvasIds[$manifestItemId] = isset($canvasIds[$manifestItemId]) ? $canvasIds[$manifestItemId] : [];
-                $canvasIds[$manifestItemId][] = (string)$response->id();
+                $manifestId = null;
+                $manifestItemId = null;
+
+                if (isset($canvas['partOf']['id'])) {
+                    $manifestId = $canvas['partOf']['id'];
+                    $manifestItemId = $this->getManifestItemId($manifestId);
+                    $logger->info("Found manifest in `partOf` field: {$manifestItemId}");
+                    if ($manifestItemId) {
+                        $item->addField(
+                            FieldValue::entity('dcterms:isPartOf', $manifestItemId, 'resource:item')
+                        );
+                        $logger->info("(isPartOf) Attaching node id: {$id} to {$manifestItemId}");
+                    } else {
+                        $logger->warn('WARNING: Orphaned canvas, this will not be attached to a manifest. Could not find manifest defined in `partOf` property on canvas');
+                    }
+                } else {
+                    $logger->warn('WARNING: Orphaned canvas, this will not be attached to a manifest. Imported manifests need a `partOf` property to be attached to a manifest.');
+                }
+
+                // I think this was missing.
+                $saturator->addPropertyIds($item);
+
+                /** @var ItemRepresentation|null $response */
+                $response = $this->createItem($api, $logger, $item);
+                if ($response) {
+                    $logger->info('Finished creating canvas, with id ' . $response->id());
+                } else {
+                    $logger->warn('Canvas may not have been imported');
+                }
+
+                if ($manifestItemId && $response && $response->id()) {
+                    $canvasIds[$manifestItemId] = isset($canvasIds[$manifestItemId]) ? $canvasIds[$manifestItemId] : [];
+                    $canvasIds[$manifestItemId][] = (string)$response->id();
+                }
+            } catch (Throwable $e) {
+                $logger->err((string)$e);
+                $logger->err('This loop must go on..');
             }
         }
 

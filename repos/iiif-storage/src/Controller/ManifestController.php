@@ -162,7 +162,7 @@ class ManifestController extends AbstractPsr7ActionController
         $canvasRepresentation = $this->canvasRepository->getById($canvasId);
         $canvas = $this->canvasBuilder->buildResource($canvasRepresentation, $this->shouldUseOriginalIds());
 
-        $nextPrev = $this->repo->getPreviousNext($manifestId, $canvasId);
+        $nextPrev = $manifestId ? $this->repo->getPreviousNext($manifestId, $canvasId) : [];
 
         $vm = [
             'router' => $this->router,
