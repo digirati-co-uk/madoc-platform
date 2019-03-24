@@ -38,7 +38,8 @@ return [
                 return new AccountController(
                     $c->get('Omeka\EntityManager'),
                     $c->get(AnnotationStatisticsService::class),
-                    $c->get(BookmarksService::class)
+                    $c->get(BookmarksService::class),
+                    $c->Get('Omeka\Settings')
                 );
             },
             UserProfileController::class => function ($c) {

@@ -4,6 +4,7 @@ namespace PublicUser\Controller;
 
 use LogicException;
 use Doctrine\ORM\EntityManager;
+use Omeka\Settings\Settings;
 use PublicUser\Stats\AnnotationStatisticsService;
 use PublicUser\Stats\BookmarksService;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -21,15 +22,21 @@ class AccountController extends AbstractActionController
      * @var BookmarksService
      */
     private $bookmarks;
+    /**
+     * @var Settings
+     */
+    private $settings;
 
     public function __construct(
         EntityManager $entityManager,
         AnnotationStatisticsService $statistics,
-        BookmarksService $bookmarks
+        BookmarksService $bookmarks,
+        Settings $settings
     ) {
         $this->entityManager = $entityManager;
         $this->statistics = $statistics;
         $this->bookmarks = $bookmarks;
+        $this->settings = $settings;
     }
 
     public function profileAction()
@@ -74,7 +81,10 @@ class AccountController extends AbstractActionController
             ],
         ];
 
-        $form = new UserForm('userForm', $options);
+
+        /** @var UserForm $form */
+        $form = $this->getForm(UserForm::class, $options);
+        $form->setSettings($this->settings);
         $form->init();
 
         $formData = [
@@ -92,7 +102,7 @@ class AccountController extends AbstractActionController
             if ($form->isValid()) {
                 $values = $form->getData();
                 $passwordValues = $values['change-password'];
-                $response = $this->api($form)->update('users', $uid, $values['user-information']);
+                $response = $this->api()->update('users', $uid, $values['user-information']);
 
                 // Stop early if the API update fails
                 if (!$response) {
@@ -140,9 +150,9 @@ class AccountController extends AbstractActionController
         $view->setVariable('user', $user);
         $view->setVariable('messages', $this->messenger()->get());
         $view->setVariable('manifest', $manifest);
-        $view->setVariable('canvases', $bookmarks);
+//        $view->setVariable('canvases', $bookmarks);
 
-        $this->messenger()->clear();
+//        $this->messenger()->clear();
 
         return $view;
     }
