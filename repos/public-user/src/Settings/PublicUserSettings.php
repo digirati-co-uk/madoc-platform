@@ -87,7 +87,7 @@ class PublicUserSettings
      */
     public function getDefaultUserRole()
     {
-        return (bool) $this->currentSiteSettings->get(self::DEFAULT_NEW_ROLE);
+        return (string) $this->currentSiteSettings->get(self::DEFAULT_NEW_ROLE);
     }
 
     public function isUserProfilesEnabled(): bool

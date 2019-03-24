@@ -20,10 +20,9 @@ return [
                     $c->get('Omeka\EntityManager'),
                     $c->get('Omeka\AuthenticationService'),
                     $c->get(PublicUserSettings::class),
-                    $c->get('Omeka\Settings'),
-                    $c->get('Omeka\Connection'),
                     $c->get('Omeka\Logger'),
-                    $c->get(ConfigurableMailer::class)
+                    $c->get(ConfigurableMailer::class),
+                    $c->get('Omeka\Acl')
                 );
             },
             SiteLoginRedirectController::class => function ($c) {
