@@ -27,9 +27,7 @@ class AnnotationStatisticsService
         $queryBuilder->select(
             'SUM(uc.bookmarked) as bookmarked',
             'SUM(uc.complete_count) as complete_count',
-            'SUM(uc.incomplete_count) as incomplete_count',
-            'SUM(cm.complete) complete_images',
-            'SUM(cm.edited) incomplete_images'
+            'SUM(uc.incomplete_count) as incomplete_count'
         );
 
         $queryBuilder->where('(uc.bookmarked > 0 OR uc.complete_count > 0 OR uc.incomplete_count > 0)');
@@ -46,8 +44,8 @@ class AnnotationStatisticsService
             (int) $result['bookmarked'],
             (int) $result['incomplete_count'],
             (int) $result['complete_count'],
-            (int) $result['complete_images'],
-            (int) $result['incomplete_images']
+            (int) $result['complete_images'] ?? 0,
+            (int) $result['incomplete_images'] ?? 0
         );
     }
 
@@ -63,8 +61,8 @@ class AnnotationStatisticsService
             (int) $result['bookmarked'],
             (int) $result['incomplete_count'],
             (int) $result['complete_count'],
-            (int) $result['complete_images'],
-            (int) $result['incomplete_images']
+            (int) $result['complete_images'] ?? 0,
+            (int) $result['incomplete_images'] ?? 0
         );
     }
 }

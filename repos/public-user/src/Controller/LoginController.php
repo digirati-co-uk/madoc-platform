@@ -6,6 +6,7 @@ use DateTime;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use LogicException;
 use Omeka\Api\Representation\SiteRepresentation;
 use Omeka\Entity\User;
@@ -13,8 +14,9 @@ use Omeka\Form\ActivateForm;
 use Omeka\Form\ForgotPasswordForm;
 use Omeka\Form\LoginForm;
 use Omeka\Form\UserForm;
+use Omeka\I18n\Translator;
+use Omeka\Mvc\Controller\Plugin\Mailer;
 use Omeka\Permissions\Acl;
-use Omeka\Service\Mailer;
 use Omeka\Settings\Settings;
 use Omeka\Stdlib\Message;
 use PublicUser\Entity\SitePermission;
@@ -28,10 +30,12 @@ use Zend\Authentication\Validator\Authentication;
 use Zend\Form\Element\Hidden;
 use Zend\Form\Form;
 use Zend\Http\Response;
+use Zend\I18n\View\Helper\AbstractTranslatorHelper;
 use Zend\Log\Logger;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Session\Container;
 use Zend\Uri\Uri;
+use Zend\View\Helper\TranslatorAwareTrait;
 use Zend\View\Model\ViewModel;
 use Omeka\Mvc\Controller\Plugin\Messenger;
 
@@ -39,14 +43,14 @@ use Omeka\Mvc\Controller\Plugin\Messenger;
  * Class LoginController.
  *
  * @method LoginForm getForm($className)
- * @method           getPost()
+ * @method getPost()
  * @method Messenger messenger()
- * @method Mailer    mailer()
+ * @method Mailer mailer()
+ * @method SiteRepresentation currentSite()
+ * @method translate
  */
 class LoginController extends AbstractActionController
 {
-    protected $globalSettings;
-
     /**
      * @var EntityManager
      */
@@ -55,10 +59,6 @@ class LoginController extends AbstractActionController
      * @var AuthenticationService
      */
     protected $auth;
-    /**
-     * @var Connection Connection
-     */
-    protected $connection;
     /**
      * @var Logger
      */
@@ -72,31 +72,33 @@ class LoginController extends AbstractActionController
      * @var ConfigurableMailer
      */
     private $mailer;
+    /**
+     * @var Acl
+     */
+    private $acl;
 
     /**
-     * @param EntityManager         $entityManager
+     * @param EntityManager $entityManager
      * @param AuthenticationService $auth
-     * @param PublicUserSettings    $userSettings
-     * @param Settings              $settings
-     * @param Connection            $connection
-     * @param Logger                $logger
-     * @param ConfigurableMailer    $mailer
+     * @param PublicUserSettings $userSettings
+     * @param Logger $logger
+     * @param ConfigurableMailer $mailer
+     * @param Acl $acl
      */
     public function __construct(
         EntityManager $entityManager,
         AuthenticationService $auth,
         PublicUserSettings $userSettings,
-        Settings $settings,
-        Connection $connection,
         Logger $logger,
-        ConfigurableMailer $mailer
+        ConfigurableMailer $mailer,
+        Acl $acl
     ) {
         $this->entityManager = $entityManager;
         $this->auth = $auth;
-        $this->globalSettings = $settings;
         $this->logger = $logger;
         $this->userSettings = $userSettings;
         $this->mailer = $mailer;
+        $this->acl = $acl;
     }
 
     public function loginAction()
@@ -124,7 +126,7 @@ class LoginController extends AbstractActionController
         $currentUri = $this->url()->fromRoute(null, [], [], true);
         $redirectUri = $this->params()->fromQuery('redirect');
         if (!$redirectUri) {
-            $redirectUri = (string)$referer ?: $this->userSettings->getUserLoginRedirect($site);
+            $redirectUri = (string)$referer ?: $this->userSettings->getUserLoginRedirect();
         }
 
         if ($redirectUri === $currentUri) {
@@ -188,10 +190,7 @@ class LoginController extends AbstractActionController
 
     public function logoutAction()
     {
-        $site = $this->currentSite();
-        $publicuserSettings = $this->globalSettings->get('publicuser');
-        $omekaPublicUserSettings = $publicuserSettings[$site->slug()];
-        $redirection_config_value = $omekaPublicUserSettings[$site->slug().'_redirect'] ?? null;
+        $redirection_config_value = $this->userSettings->getUserLoginRedirect();
         $login_redirect = $this->getRedirectFromSettings($redirection_config_value);
 
         $this->auth->clearIdentity();
@@ -227,23 +226,22 @@ class LoginController extends AbstractActionController
     }
 
     /**
-     * @param $omekaPublicUserSettings
      * @param SiteRepresentation $site
-     * @param Form               $form
+     * @param Form $form
      *
      * @return Response
      *
      * @throws OptimisticLockException
      * @throws BlacklistedEmailException
      * @throws RuntimeException
+     * @throws \Doctrine\ORM\ORMException
      */
     private function registerUser(
-        $omekaPublicUserSettings,
         SiteRepresentation $site,
         Form $form
     ) {
-        $role = $omekaPublicUserSettings[$site->slug().'_user_role'];
-        $active = $this->userSettings->isActivationAutomatic($site);
+        $role = $this->userSettings->getDefaultUserRole();
+        $active = $this->userSettings->isActivationAutomatic();
         $form->setData($this->params()->fromPost());
 
         if (!$form->isValid()) {
@@ -270,16 +268,17 @@ class LoginController extends AbstractActionController
 
         // Permissions.
         /** @var Acl $acl */
-//        $acl = $this->getServiceLocator()->get('Omeka\Acl');
-//        $acl->allow(null, )
+        $this->acl->allow(null, ['Omeka\Entity\User']);
 
         $response = $this->api($form)->create('users', $formData['user-information']);
         /** @var User $user */
         $user = $response->getContent()->getEntity();
         $this->entityManager->flush();
 
+        $this->acl->removeAllow(null, ['Omeka\Controller\Admin\User']);
+
         if (
-            $this->userSettings->isActivationAutomatic($site) &&
+            $this->userSettings->isActivationAutomatic() &&
             isset($formData['change-password']) &&
             isset($formData['change-password']['password'])
         ) {
@@ -316,16 +315,14 @@ class LoginController extends AbstractActionController
         }
         $site = $this->currentSite();
 
-        $publicuserSettings = $this->globalSettings->get('publicuser');
-        $omekaPublicUserSettings = $publicuserSettings[$site->slug()];
-
-        if (!$omekaPublicUserSettings[$site->slug().'_user_register']) {
+        if (!$this->userSettings->isRegistrationPermitted()) {
             $this->response->setStatusCode(Response::STATUS_CODE_404);
         }
 
         $form = $this->getForm(UserForm::class,
             [
-                'include_password' => $this->userSettings->isActivationAutomatic($site),
+                'include_role' => false,
+                'include_password' => $this->userSettings->isActivationAutomatic(),
             ]
         );
 
@@ -333,7 +330,7 @@ class LoginController extends AbstractActionController
 
         if ($this->getRequest()->isPost()) {
             try {
-                return $this->registerUser($omekaPublicUserSettings, $site, $form);
+                return $this->registerUser($site, $form);
             } catch (BlacklistedEmailException $e) {
                 error_log((string) $e);
                 $this->messenger()->addError(
@@ -454,7 +451,7 @@ class LoginController extends AbstractActionController
 
         $view = new ViewModel([
             'site' => $site,
-            'activated' => $this->userSettings->isActivationAutomatic($site),
+            'activated' => $this->userSettings->isActivationAutomatic(),
         ]);
 
         return $view;
@@ -477,11 +474,18 @@ class LoginController extends AbstractActionController
         }
         $user = $passwordCreation->getUser();
 
-        if (new DateTime() > $passwordCreation->getExpiration()) {
-            $user->setIsActive(false);
-            $this->entityManager->remove($passwordCreation);
-            $this->entityManager->flush();
-            $this->messenger()->addError('Password creation key expired.'); // @translate
+        try {
+            if (new DateTime() > $passwordCreation->getExpiration()) {
+                $user->setIsActive(false);
+                $this->entityManager->remove($passwordCreation);
+                $this->entityManager->flush();
+                $this->messenger()->addError('Password creation key expired.'); // @translate
+                return $this->redirect()->toRoute('login');
+            }
+        } catch (OptimisticLockException $e) {
+            $this->messenger()->addError('Something went wrong.'); // @translate
+            return $this->redirect()->toRoute('login');
+        } catch (ORMException $e) {
             return $this->redirect()->toRoute('login');
         }
 

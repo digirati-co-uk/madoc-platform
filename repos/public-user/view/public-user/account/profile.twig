@@ -16,13 +16,9 @@
 {{ form().openTag(form) | raw }}
     {{ sectionNav(sectionNavs, 'view.edit.section_nav' ) }}
 
+    {{ form(form) }}
+
     {{ trigger('view.edit.form.before', {'form': form }) }}
-<fieldset id="user-information" class="section active">
-    {{ formCollection(form.get('user-information'), false) }}
-</fieldset>
-<fieldset id="change-password" class="section">
-    {{ formCollection(form.get('change-password'), false) }}
-</fieldset>
 
 {{ trigger('view.edit.form.after', {'form': form }) }}
 <div id="page-actions">
