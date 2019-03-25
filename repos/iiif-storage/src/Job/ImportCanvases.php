@@ -100,8 +100,10 @@ class ImportCanvases extends AbstractJob implements JobInterface
                     $canvasIds[$manifestItemId][] = (string)$response->id();
                 }
             } catch (ValidationException $e) {
+                $logger->warn($e->getMessage());
                 $logger->warn('Validation failed for canvas: ' . (string)$e);
             } catch (Throwable $e) {
+                $logger->err($e->getMessage());
                 $logger->err('Skipping canvas, unknown error: ' . (string)$e);
             }
         }

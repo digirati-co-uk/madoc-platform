@@ -71,8 +71,10 @@ class ImportManifests extends AbstractJob implements JobInterface
                 // Create list of ids.
                 $manifestIds[] = $manifestItem->id();
             } catch (ValidationException $e) {
+                $logger->warn($e->getMessage());
                 $logger->warn('Validation failed for manifest: ' . (string) $e);
             } catch (\Throwable $e) {
+                $logger->err($e->getMessage());
                 $logger->err('Skipping manifest, unknown error: ' . (string) $e);
             }
         }
