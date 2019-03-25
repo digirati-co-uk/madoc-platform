@@ -7,6 +7,7 @@ use Digirati\OmekaShared\Model\ItemRequest;
 use IIIFStorage\Repository\ManifestRepository;
 use Digirati\OmekaShared\Utility\PropertyIdSaturator;
 use IIIFStorage\Utility\CheapOmekaRelationshipRequest;
+use Omeka\Api\Exception\ValidationException;
 use Omeka\Api\Manager;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Job\AbstractJob;
@@ -98,13 +99,16 @@ class ImportCanvases extends AbstractJob implements JobInterface
                     $canvasIds[$manifestItemId] = isset($canvasIds[$manifestItemId]) ? $canvasIds[$manifestItemId] : [];
                     $canvasIds[$manifestItemId][] = (string)$response->id();
                 }
+            } catch (ValidationException $e) {
+                $logger->warn('Validation failed for canvas: ' . (string)$e);
             } catch (Throwable $e) {
-                $logger->err((string)$e);
-                $logger->err('This loop must go on..');
+                $logger->err('Skipping canvas, unknown error: ' . (string)$e);
             }
         }
 
-        $logger->info('Found some canvases to add to manifests', $canvasIds);
+        if (empty($canvasIds)) return;
+
+        $logger->info('Found ' . sizeof($canvasIds) . ' canvases to add to manifests', $canvasIds);
         // Finally add canvases to manifests.
         foreach ($canvasIds as $manifestId => $idList) {
             $this->addCanvasesToManifest($manifestId, $idList);
