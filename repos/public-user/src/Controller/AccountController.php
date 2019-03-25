@@ -81,7 +81,6 @@ class AccountController extends AbstractActionController
             ],
         ];
 
-
         /** @var UserForm $form */
         $form = $this->getForm(UserForm::class, $options);
         $form->setSettings($this->settings);
@@ -96,6 +95,18 @@ class AccountController extends AbstractActionController
 
         $form->setData($formData);
 
+        $returnError = function() use ($view, $form, $manifest, $user) {
+            $view->setVariable('form', $form);
+
+            $this->messenger()->addFormErrors($form);
+
+            $view->setVariable('form', $form);
+            $view->setVariable('user', $user);
+            $view->setVariable('manifest', $manifest);
+
+            return $view;
+        };
+
         if ($this->getRequest()->isPost()) {
             $postData = $this->params()->fromPost();
             $form->setData($postData);
@@ -104,18 +115,10 @@ class AccountController extends AbstractActionController
                 $passwordValues = $values['change-password'];
                 $response = $this->api()->update('users', $uid, $values['user-information']);
 
-                // Stop early if the API update fails
-                // @todo deduplicate.
                 if (!$response) {
-                    $view->setVariable('form', $form);
+                    $this->messenger()->addError('Something went wrong updating your details.'); // @translate
 
-                    $this->messenger()->addFormErrors($form);
-
-                    $view->setVariable('form', $form);
-                    $view->setVariable('user', $user);
-                    $view->setVariable('manifest', $manifest);
-
-                    return $view;
+                    return $returnError();
                 }
 
                 if (!empty($passwordValues['password'])) {
@@ -127,15 +130,7 @@ class AccountController extends AbstractActionController
                     if ($user && !$user->verifyPassword($passwordValues['current-password'])) {
                         $this->messenger()->addError('The current password entered was invalid'); // @translate
 
-                        $view->setVariable('form', $form);
-
-                        $this->messenger()->addFormErrors($form);
-
-                        $view->setVariable('form', $form);
-                        $view->setVariable('user', $user);
-                        $view->setVariable('manifest', $manifest);
-
-                        return $view;
+                        return $returnError();
                     } else {
                         $user->setPassword($passwordValues['password']);
                         $successMessages[] = 'Password successfully changed'; // @translate
@@ -156,13 +151,15 @@ class AccountController extends AbstractActionController
 
         $view->setVariable('form', $form);
         $view->setVariable('user', $user);
-        $view->setVariable('messages', $this->messenger()->get());
         $view->setVariable('manifest', $manifest);
-//        $view->setVariable('canvases', $bookmarks);
-
-//        $this->messenger()->clear();
 
         return $view;
+    }
+
+
+    public function validate()
+    {
+
     }
 
     public function editDetailsAction()
