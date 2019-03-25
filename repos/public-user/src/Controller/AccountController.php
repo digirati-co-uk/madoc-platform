@@ -60,7 +60,7 @@ class AccountController extends AbstractActionController
                 'include_admin_roles' => false,
                 'include_is_active' => false,
                 'include_password' => true,
-                'current_password' => false,
+                'current_password' => true,
                 'include_key' => false,
             ];
 
@@ -105,6 +105,7 @@ class AccountController extends AbstractActionController
                 $response = $this->api()->update('users', $uid, $values['user-information']);
 
                 // Stop early if the API update fails
+                // @todo deduplicate.
                 if (!$response) {
                     $view->setVariable('form', $form);
 
@@ -112,14 +113,10 @@ class AccountController extends AbstractActionController
 
                     $view->setVariable('form', $form);
                     $view->setVariable('user', $user);
-                    $view->setVariable('messages', $this->messenger()->get());
                     $view->setVariable('manifest', $manifest);
-
-                    $this->messenger()->clear();
 
                     return $view;
                 }
-                $this->messenger()->addSuccess($this->translate('User successfully updated')); // @translate
 
                 if (!empty($passwordValues['password'])) {
                     if (!$this->userIsAllowed($user, 'change-password')) {
@@ -129,9 +126,20 @@ class AccountController extends AbstractActionController
                     }
                     if ($user && !$user->verifyPassword($passwordValues['current-password'])) {
                         $this->messenger()->addError('The current password entered was invalid'); // @translate
+
+                        $view->setVariable('form', $form);
+
+                        $this->messenger()->addFormErrors($form);
+
+                        $view->setVariable('form', $form);
+                        $view->setVariable('user', $user);
+                        $view->setVariable('manifest', $manifest);
+
+                        return $view;
+                    } else {
+                        $user->setPassword($passwordValues['password']);
+                        $successMessages[] = 'Password successfully changed'; // @translate
                     }
-                    $user->setPassword($passwordValues['password']);
-                    $successMessages[] = 'Password successfully changed'; // @translate
                 }
 
                 $this->entityManager->flush();

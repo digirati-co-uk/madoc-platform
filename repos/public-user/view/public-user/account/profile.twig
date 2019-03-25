@@ -1,30 +1,26 @@
 {% set theForm = form.prepare() %}
 {% set sectionNavs = {'user-information': translate('User information'), 'change-password': translate('Password')} %}
 
-{% if(messages) %}
-    <ul>
-        {% for messageList in messages %}
-            {% for message in messageList %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        {% endfor %}
-    </ul>
-{% endif %}
-
 {{ pageTitle(translate('Edit User: “{user}”')|replace({'{user}': user.getName()})) | raw }}
 {{ trigger('view.edit.before') }}
 {{ form().openTag(form) | raw }}
     {{ sectionNav(sectionNavs, 'view.edit.section_nav' ) }}
 
-    {{ form(form) }}
-
     {{ trigger('view.edit.form.before', {'form': form }) }}
+
+<fieldset id="user-information" class="section active">
+    {{ formCollection(form.get('user-information'), false) }}
+</fieldset>
+<fieldset id="change-password" class="section">
+    {{ formCollection(form.get('change-password'), false) }}
+</fieldset>
 
 {{ trigger('view.edit.form.after', {'form': form }) }}
 <div id="page-actions">
     <button type="submit">{{ translate('Save') }}</button>
 </div>
 
+{{ formElement(form.get('csrf')) }}
 {{ form().closeTag()| raw }}
 {{ trigger('view.edit.after') }}
 
