@@ -34,33 +34,40 @@ class ImportManifests extends AbstractJob implements JobInterface
         $manifestList = $this->getArg('manifestList');
         $collectionId = $this->getArg('collection');
 
-        $logger->info('Importing manifests', $manifestList);
         if ($collectionId) {
             $logger->info('Importing into collection', ['collection' => $collectionId]);
         }
 
         $manifestIds = [];
 
-        foreach ($manifestList as $manifest) {
-            // Add existing manifests to list.
-            $type = $manifest['type'] ?? null;
-            if ($type === self::MANIFEST_REFERENCE) {
-                $id = $manifest['id'];
-                $logger->info("ID already exists: $id adding as reference");
-                $omekaId = $relationshipRequest->getResourceIdByUri('sc:Manifest', $id);
-                $logger->info("Found Omeka ID: $omekaId");
-                if (!$omekaId) {
-                    $logger->warn("Resource with id: $id has been removed since adding to job, skipping...");
+        $totalManifests = sizeof($manifestList);
+        $logger->info("Collection contains $totalManifests manifests");
+
+
+        for ($i = 0; $i < $totalManifests; $i ++) {
+            $manifest = $manifestList[$i] ?? null;
+            $id = $manifest['@id'] ?? '';
+            $logger->info("Importing ${$id}");
+            try {
+                // Add existing manifests to list.
+                $type = $manifest['type'] ?? null;
+                if ($type === self::MANIFEST_REFERENCE) {
+                    $id = $manifest['id'];
+                    $logger->info("ID already exists: $id adding as reference");
+                    $omekaId = $relationshipRequest->getResourceIdByUri('sc:Manifest', $id);
+                    $logger->info("Found Omeka ID: $omekaId");
+                    if (!$omekaId) {
+                        $logger->warn("Resource with id: $id has been removed since adding to job, skipping...");
+                        continue;
+                    }
+                    $manifestIds[] = $omekaId;
                     continue;
                 }
-                $manifestIds[] = $omekaId;
-                continue;
-            }
 
-            $id = $manifest['@id'];
-            try {
+                $id = $manifest['@id'];
+                $logger->info("Importing manifest $id");
                 // Create item using repository.
-                $manifestItem = $repository->create(function (ItemRequest $item) use ($manifest, $id) {
+                $manifestItem = $repository->create(function (ItemRequest $item) use ($manifest, $id, $logger) {
                     $item->addField(
                         FieldValue::literal('dcterms:title', 'Label', $manifest['label'] ?? 'Untitled manifest')
                     );
@@ -72,10 +79,12 @@ class ImportManifests extends AbstractJob implements JobInterface
                 $manifestIds[] = $manifestItem->id();
             } catch (ValidationException $e) {
                 $logger->warn($e->getMessage());
-                $logger->warn('Validation failed for manifest: ' . (string) $e);
+                $logger->warn('Validation failed for manifest: ' . (string)$e);
+                continue;
             } catch (\Throwable $e) {
                 $logger->err($e->getMessage());
-                $logger->err('Skipping manifest, unknown error: ' . (string) $e);
+                $logger->err('Skipping manifest, unknown error: ' . (string)$e);
+                continue;
             }
         }
 

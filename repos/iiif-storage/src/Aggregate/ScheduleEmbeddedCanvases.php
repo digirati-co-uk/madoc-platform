@@ -101,4 +101,9 @@ class ScheduleEmbeddedCanvases implements AggregateInterface
             }
         }
     }
+
+    public function reset()
+    {
+        $this->queue = [];
+    }
 }
