@@ -8,6 +8,7 @@ use Digirati\OmekaShared\Model\ItemRequest;
 use IIIFStorage\Repository\CollectionRepository;
 use IIIFStorage\Repository\ManifestRepository;
 use IIIFStorage\Utility\CheapOmekaRelationshipRequest;
+use Omeka\Api\Exception\ValidationException;
 use Omeka\Job\AbstractJob;
 use Omeka\Job\JobInterface;
 use Zend\Log\Logger;
@@ -57,19 +58,24 @@ class ImportManifests extends AbstractJob implements JobInterface
             }
 
             $id = $manifest['@id'];
-            // Create item using repository.
-            $manifestItem = $repository->create(function (ItemRequest $item) use ($manifest, $id) {
-                $item->addField(
-                    FieldValue::literal('dcterms:title', 'Label', $manifest['label'] ?? 'Untitled manifest')
-                );
-                $item->addField(
-                    FieldValue::url('dcterms:identifier', 'Manifest URI', $id)
-                );
-            });
-            // Create list of ids.
-            $manifestIds[] = $manifestItem->id();
+            try {
+                // Create item using repository.
+                $manifestItem = $repository->create(function (ItemRequest $item) use ($manifest, $id) {
+                    $item->addField(
+                        FieldValue::literal('dcterms:title', 'Label', $manifest['label'] ?? 'Untitled manifest')
+                    );
+                    $item->addField(
+                        FieldValue::url('dcterms:identifier', 'Manifest URI', $id)
+                    );
+                });
+                // Create list of ids.
+                $manifestIds[] = $manifestItem->id();
+            } catch (ValidationException $e) {
+                $logger->warn('Validation failed for manifest: ' . (string) $e);
+            } catch (\Throwable $e) {
+                $logger->err('Skipping manifest, unknown error: ' . (string) $e);
+            }
         }
-
 
         if (!$collectionId) {
             $logger->info('Skipping adding to collection');
