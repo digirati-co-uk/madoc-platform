@@ -6,7 +6,8 @@
     "type": "omeka-s-module",
     "require": {
         "php": ">=7.0",
-        "dlcs/elucidate-php": "~3.0"
+        "dlcs/elucidate-php": "~3.0",
+        "digirati/omeka-shared": "1.0.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.2",

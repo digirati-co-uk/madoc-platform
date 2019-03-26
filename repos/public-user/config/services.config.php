@@ -1,5 +1,7 @@
 <?php
 
+use Digirati\OmekaShared\Factory\SettingsHelperFactory;
+use Digirati\OmekaShared\Helper\SettingsHelper;
 use PublicUser\Auth\TokenService;
 use PublicUser\Auth\TokenStorage;
 use PublicUser\Extension\ConfigurableMailer;
@@ -18,11 +20,12 @@ use PublicUser\Subscriber\AnnotationStatsSubscriber;
 return [
     'service_manager' => [
         'factories' => [
+            SettingsHelper::class => SettingsHelperFactory::class,
             ConfigurableMailer::class => ConfigurableMailerFactory::class,
             PublicUserSettings::class => function (ContainerInterface $container) {
                 return new PublicUserSettings(
                     $container->get('Omeka\Settings'),
-                    $container->get(\Digirati\OmekaShared\Helper\SettingsHelper::class)
+                    $container->get(SettingsHelper::class)
                 );
             },
 
