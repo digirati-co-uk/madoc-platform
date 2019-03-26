@@ -30,6 +30,8 @@ use IIIFStorage\Media\CollectionListIngester;
 use IIIFStorage\Media\CollectionListRenderer;
 use IIIFStorage\Media\CollectionSnippetIngester;
 use IIIFStorage\Media\CollectionSnippetRenderer;
+use IIIFStorage\Media\LatestAnnotatedImagesIngester;
+use IIIFStorage\Media\LatestAnnotatedImagesRenderer;
 use IIIFStorage\Media\ManifestListIngester;
 use IIIFStorage\Media\ManifestListRenderer;
 use IIIFStorage\Media\ManifestSnippetIngester;
@@ -233,6 +235,9 @@ return [
                     (int) $settings->get('iiif-storage_thumbnail-size', 256)
                 );
             },
+            LatestAnnotatedImagesIngester::class => function (ContainerInterface $c) {
+                return new LatestAnnotatedImagesIngester();
+            },
             ManifestListIngester::class => function (ContainerInterface $c) {
                 return new ManifestListIngester();
             },
@@ -287,6 +292,15 @@ return [
                     $c->get('ZfcTwig\View\TwigRenderer'),
                     $c->get('Omeka\ApiManager'),
                     $c->get(CollectionBuilder::class),
+                    $c->get(Router::class)
+                );
+            },
+            LatestAnnotatedImagesRenderer::class => function (ContainerInterface $c) {
+                return new LatestAnnotatedImagesRenderer(
+                    $c->get('ZfcTwig\View\TwigRenderer'),
+                    $c->get('Omeka\Connection'),
+                    $c->get(CanvasRepository::class),
+                    $c->get(CanvasBuilder::class),
                     $c->get(Router::class)
                 );
             },
@@ -354,6 +368,9 @@ return [
             'iiif-metadata' => function (ContainerInterface $c) {
                 return $c->get(MetadataIngester::class);
             },
+            'latest-annotated-images' => function (ContainerInterface $c) {
+                return $c->get(LatestAnnotatedImagesIngester::class);
+            },
         ],
     ],
     'media_renderers' => [
@@ -396,6 +413,9 @@ return [
             },
             'iiif-metadata' => function (ContainerInterface $c) {
                 return $c->get(MetadataRenderer::class);
+            },
+            'latest-annotated-images' => function (ContainerInterface $c) {
+                return $c->get(LatestAnnotatedImagesIngester::class);
             },
         ],
     ],
@@ -441,6 +461,12 @@ return [
                 return new PageBlockMediaAdapter(
                     $c->get(ManifestSnippetIngester::class),
                     $c->get(ManifestSnippetRenderer::class)
+                );
+            },
+            'latest-annotated-images' => function (ContainerInterface $c) {
+                return new PageBlockMediaAdapter(
+                    $c->get(LatestAnnotatedImagesIngester::class),
+                    $c->get(LatestAnnotatedImagesRenderer::class)
                 );
             },
         ],
