@@ -211,10 +211,16 @@ class ManifestRepository
         $max = sizeof($canvases);
         foreach ($canvases as $key => $canvas) {
             if ((int)$canvas === (int)$canvasId) {
-                $start = ($key < $number) ? 0 : $number + 1;
+                $hasPrevious = ($key - $number >= 0);
+                $previousStart = $key - $number;
+                $previousLength = $number;
+                $hasNext = ($key !== $max);
+                $nextStart = $key + 1;
+                $nextLength = $number;
+
                 return [
-                  'previous' => array_slice($canvases, $start, $key - $start),
-                  'next' => ($key + 1 <= $max) ? array_slice($canvases, $key + 1, $number) : [],
+                  'previous' => $hasPrevious ? array_slice($canvases, $previousStart, $previousLength) : [],
+                  'next' => $hasNext ? array_slice($canvases, $nextStart, $nextLength) : [],
                 ];
             }
         }
