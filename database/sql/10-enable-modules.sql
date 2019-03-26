@@ -13,15 +13,15 @@ USE `omeka_s`;
 LOCK TABLES `module` WRITE;
 /*!40000 ALTER TABLE `module` DISABLE KEYS */;
 INSERT INTO `module` VALUES
-  ('AnnotationStudio',1,'1.0.0-rc.17'),
-  ('ElucidateProxy',1,'0.1'),
-  ('PublicUser',1,'1.0.3'),
-  ('ElucidateModule',1,'1.2'),
-  ('CaptureModelImport',1,'1.0'),
+  ('AnnotationStudio',1,'1.0.0'),
+  ('ElucidateProxy',1,'1.0.0'),
+  ('PublicUser',1,'1.0.0'),
+  ('ElucidateModule',1,'1.0.0'),
+  ('CaptureModelImport',1,'1.0.0'),
   ('GoogleAnalytics',1,'1.0.1'),
-  ('ResourceProvider',1,'1.0.1'),
-  ('Bookmarking',1,'0.1.0'),
-  ('IIIFStorage',1,'1.0'),
+  ('ResourceProvider',1,'1.0.0'),
+  ('Bookmarking',1,'1.0.0'),
+  ('IIIFStorage',1,'1.0.0'),
   ('AutoComplete',1,'1.0.0')
 ;
 /*!40000 ALTER TABLE `module` ENABLE KEYS */;
