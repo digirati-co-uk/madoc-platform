@@ -77,86 +77,21 @@ class Module extends AbstractModule
 
     public function install(ServiceLocatorInterface $serviceLocator)
     {
-        try {
-            $apiManager = $serviceLocator->get('Omeka\ApiManager');
-            /** @var Response $response */
-            $response = $apiManager->search('sites', []);
-            /** @var SiteRepresentation[] $sites */
-            $sites = $response->getContent();
-
-            foreach ($sites as $site) {
-                $formData['o:title'] = 'Login';
-                $formData['o:slug'] = 'login';
-                $formData['o:site']['o:id'] = $site->id();
-                $apiManager->create('site_pages', $formData);
-
-                $formData['o:title'] = 'Register';
-                $formData['o:slug'] = 'register';
-                $apiManager->create('site_pages', $formData);
-            }
-        } catch (Throwable $e) {
-            // Deal with it.
-        }
-    }
-
-    public function uninstall(ServiceLocatorInterface $serviceLocator)
-    {
-        $logger = $serviceLocator->get('Omeka\Logger');
-        $settings = $serviceLocator->get('Omeka\Settings');
-
-        $settings->delete('publicuser');
-
-        $apiManager = $serviceLocator->get('Omeka\ApiManager');
-        /** @var Response $response */
-        $response = $apiManager->search('sites', []);
-        /** @var SiteRepresentation[] $sites */
-        $sites = $response->getContent();
-
-        foreach ($sites as $site) {
-            try {
-                $apiManager->delete('site_pages',
-                    [
-                        'slug' => 'login',
-                        'site' => $site->id(),
-                    ]);
-            } catch (Throwable $e) {
-                $logger->info($e->getMessage());
-            }
-
-            try {
-                $apiManager->delete('site_pages',
-                    [
-                        'slug' => 'register',
-                        'site' => $site->id(),
-                    ]);
-            } catch (Throwable $e) {
-                $logger->info($e->getMessage());
-            }
-        }
-    }
-
-    public function upgrade($oldVersion, $newVersion, ServiceLocatorInterface $serviceLocator)
-    {
         $connection = $serviceLocator->get('Omeka\Connection');
-        if ('1.0.0' === $oldVersion) {
-            $upgradeSql = "UPDATE `module` SET `id` = 'PublicUser' WHERE `id` = 'Kindred'; UPDATE `setting` SET `id` = 'publicuser' WHERE `id` = 'kindred';";
-            $connection->exec($upgradeSql);
-        } elseif ('1.0.1' === $oldVersion) {
-            $sql = 'CREATE TABLE user_canvas_mapping (
-                        id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
-                        canvas_mapping_id INT,
-                        user_id INT,
-                        bookmarked INT,
-                        complete_count INT,
-                        incomplete_count INT,
-                        FOREIGN KEY (canvas_mapping_id) REFERENCES resource(id),
-                        FOREIGN KEY (user_id) REFERENCES user(id),
-                        CONSTRAINT uc_user_canvas UNIQUE (user_id, canvas_mapping_id)
-                    );';
-            $connection->exec($sql);
-        }
-        if (version_compare($oldVersion, '1.0.3', '<') && version_compare($newVersion, '1.0.3', '>=')) {
-            $sql = '
+
+        $sql = ['
+            CREATE TABLE user_canvas_mapping (
+              id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+              canvas_mapping_id INT,
+              user_id INT,
+              bookmarked INT,
+              complete_count INT,
+              incomplete_count INT,
+              FOREIGN KEY (canvas_mapping_id) REFERENCES resource(id),
+              FOREIGN KEY (user_id) REFERENCES user(id),
+              CONSTRAINT uc_user_canvas UNIQUE (user_id, canvas_mapping_id)
+            );
+            ','
             CREATE TABLE oauth_access_tokens (
               access_token  VARCHAR(40) NOT NULL,
               client_id     VARCHAR(80),
@@ -165,6 +100,7 @@ class Module extends AbstractModule
               scope         VARCHAR(4000),
               PRIMARY KEY (access_token)
             );
+            ','
             CREATE TABLE oauth_authorization_codes (
               authorization_code   VARCHAR(40) NOT NULL,
               client_id            VARCHAR(80),
@@ -174,11 +110,14 @@ class Module extends AbstractModule
               scope                VARCHAR(4000),
               PRIMARY KEY (authorization_code)
             );
-            ';
-            $connection->exec($sql);
-        }
+        '];
 
-        parent::upgrade($oldVersion, $newVersion, $serviceLocator);
+        foreach ($sql as $query) {
+            try {
+                $connection->exec($query);
+            } catch (Throwable $e) {
+            }
+        }
     }
 
     // PublicUser\Controller\LoginController

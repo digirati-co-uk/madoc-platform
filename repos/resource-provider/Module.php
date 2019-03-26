@@ -36,9 +36,6 @@ class Module extends AbstractModule
             throw new ModuleCannotInstallException($e->getMessage());
         }
 
-        $this->importCrowdSourceElementTemplate($connection);
-        $this->importCrowdSourceGroupTemplate($connection);
-
         return true;
     }
 
