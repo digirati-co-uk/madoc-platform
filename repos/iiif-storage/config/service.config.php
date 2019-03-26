@@ -39,6 +39,8 @@ use IIIFStorage\Media\ManifestSnippetRenderer;
 use IIIFStorage\Media\MetadataIngester;
 use IIIFStorage\Media\MetadataRenderer;
 use IIIFStorage\Media\PageBlockMediaAdapter;
+use IIIFStorage\Media\TopContributorsIngester;
+use IIIFStorage\Media\TopContributorsRenderer;
 use IIIFStorage\Repository\CanvasRepository;
 use IIIFStorage\Repository\CollectionRepository;
 use IIIFStorage\Repository\ManifestRepository;
@@ -238,6 +240,9 @@ return [
             LatestAnnotatedImagesIngester::class => function (ContainerInterface $c) {
                 return new LatestAnnotatedImagesIngester();
             },
+            TopContributorsIngester::class => function (ContainerInterface $c) {
+                return new TopContributorsIngester();
+            },
             ManifestListIngester::class => function (ContainerInterface $c) {
                 return new ManifestListIngester();
             },
@@ -301,6 +306,13 @@ return [
                     $c->get('Omeka\Connection'),
                     $c->get(CanvasRepository::class),
                     $c->get(CanvasBuilder::class),
+                    $c->get(Router::class)
+                );
+            },
+            TopContributorsRenderer::class => function (ContainerInterface $c) {
+                return new TopContributorsRenderer(
+                    $c->get('ZfcTwig\View\TwigRenderer'),
+                    $c->get('Omeka\Connection'),
                     $c->get(Router::class)
                 );
             },
@@ -371,6 +383,9 @@ return [
             'latest-annotated-images' => function (ContainerInterface $c) {
                 return $c->get(LatestAnnotatedImagesIngester::class);
             },
+            'top-contributors' => function (ContainerInterface $c) {
+                return $c->get(TopContributorsIngester::class);
+            },
         ],
     ],
     'media_renderers' => [
@@ -416,6 +431,9 @@ return [
             },
             'latest-annotated-images' => function (ContainerInterface $c) {
                 return $c->get(LatestAnnotatedImagesIngester::class);
+            },
+            'top-contributors' => function (ContainerInterface $c) {
+                return $c->get(TopContributorsIngester::class);
             },
         ],
     ],
@@ -467,6 +485,12 @@ return [
                 return new PageBlockMediaAdapter(
                     $c->get(LatestAnnotatedImagesIngester::class),
                     $c->get(LatestAnnotatedImagesRenderer::class)
+                );
+            },
+            'top-contributors' => function (ContainerInterface $c) {
+                return new PageBlockMediaAdapter(
+                    $c->get(TopContributorsIngester::class),
+                    $c->get(TopContributorsRenderer::class)
                 );
             },
         ],
