@@ -10,10 +10,12 @@
         {{ manifest.getThumbnails() |length }} images
     </div>
     <div class="iiif-storage-manifest-snippet__thumbnail-list">
-        {% for thumbnail in manifest.getThumbnails()[:6] %}
-            <div class="iiif-storage-manifest-snippet__thumbnail">
-                <img src="{{ thumbnail }}" alt="{{ manifest.getLabel() }} thumbnail"/>
-            </div>
+        {% for canvas in manifest.getCanvases()[:6] %}
+            <a href="{{ router.canvas(canvas, manifest, collection) }}">
+                <div class="iiif-storage-manifest-snippet__thumbnail">
+                    <img src="{{ canvas.getThumbnail() }}" alt="{{ manifest.getLabel() }} thumbnail"/>
+                </div>
+            </a>
         {% endfor %}
     </div>
 

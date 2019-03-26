@@ -13,6 +13,7 @@ use IIIFStorage\Listener\TargetStatusUpdateListener;
 use IIIFStorage\Listener\ViewContentListener;
 use IIIFStorage\Utility\Router;
 use Omeka\Api\Representation\ItemRepresentation;
+use Omeka\Form\SitePageForm;
 use Omeka\Form\SiteSettingsForm;
 use Omeka\Module\AbstractModule;
 use Omeka\Permissions\Acl;
@@ -29,6 +30,7 @@ use Zend\ModuleManager\ModuleEvent;
 use Zend\ModuleManager\ModuleManager;
 use Zend\Mvc\MvcEvent;
 use Zend\View\Renderer\PhpRenderer;
+use Zend\View\Renderer\RendererInterface;
 
 class Module extends AbstractModule implements ConfigProviderInterface
 {
@@ -150,6 +152,21 @@ class Module extends AbstractModule implements ConfigProviderInterface
             'view.show.before',
             array($this, 'onView')
         );
+
+        $sharedEventManager->attach(
+            'Omeka\Controller\SiteAdmin\Page',
+            'view.layout',
+            array($this, 'onEditPage')
+        );
+    }
+
+    public function onEditPage(Event $e)
+    {
+        $view = $e->getTarget();
+        if ($view instanceof RendererInterface) {
+            $view->headLink()->appendStylesheet($view->assetUrl('css/asset-form.css', 'Omeka'));
+            $view->headScript()->appendFile($view->assetUrl('js/asset-form.js', 'Omeka'));
+        }
     }
 
     public function onBootstrap(MvcEvent $event)

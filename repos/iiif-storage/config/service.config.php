@@ -30,6 +30,10 @@ use IIIFStorage\Media\CollectionListIngester;
 use IIIFStorage\Media\CollectionListRenderer;
 use IIIFStorage\Media\CollectionSnippetIngester;
 use IIIFStorage\Media\CollectionSnippetRenderer;
+use IIIFStorage\Media\CrowdSourcingBannerIngester;
+use IIIFStorage\Media\CrowdSourcingBannerRenderer;
+use IIIFStorage\Media\LatestAnnotatedImagesIngester;
+use IIIFStorage\Media\LatestAnnotatedImagesRenderer;
 use IIIFStorage\Media\ManifestListIngester;
 use IIIFStorage\Media\ManifestListRenderer;
 use IIIFStorage\Media\ManifestSnippetIngester;
@@ -37,6 +41,8 @@ use IIIFStorage\Media\ManifestSnippetRenderer;
 use IIIFStorage\Media\MetadataIngester;
 use IIIFStorage\Media\MetadataRenderer;
 use IIIFStorage\Media\PageBlockMediaAdapter;
+use IIIFStorage\Media\TopContributorsIngester;
+use IIIFStorage\Media\TopContributorsRenderer;
 use IIIFStorage\Repository\CanvasRepository;
 use IIIFStorage\Repository\CollectionRepository;
 use IIIFStorage\Repository\ManifestRepository;
@@ -224,6 +230,11 @@ return [
                     $c->get(PropertyIdSaturator::class)
                 );
             },
+            CrowdSourcingBannerIngester::class => function (ContainerInterface $c) {
+                return new CrowdSourcingBannerIngester(
+                    $c->get('Omeka\ApiManager')
+                );
+            },
             IIIFImageIngester::class => function (ContainerInterface $c) {
                 /** @var \Omeka\Settings\Settings $settings */
                 $settings = $c->get('Omeka\Settings');
@@ -232,6 +243,12 @@ return [
                     $c->get('Omeka\File\Downloader'),
                     (int) $settings->get('iiif-storage_thumbnail-size', 256)
                 );
+            },
+            LatestAnnotatedImagesIngester::class => function (ContainerInterface $c) {
+                return new LatestAnnotatedImagesIngester();
+            },
+            TopContributorsIngester::class => function (ContainerInterface $c) {
+                return new TopContributorsIngester();
             },
             ManifestListIngester::class => function (ContainerInterface $c) {
                 return new ManifestListIngester();
@@ -290,6 +307,29 @@ return [
                     $c->get(Router::class)
                 );
             },
+            CrowdSourcingBannerRenderer::class => function (ContainerInterface $c) {
+                return new CrowdSourcingBannerRenderer(
+                    $c->get('ZfcTwig\View\TwigRenderer'),
+                    $c->get('Omeka\ApiManager'),
+                    $c->get(Router::class)
+                );
+            },
+            LatestAnnotatedImagesRenderer::class => function (ContainerInterface $c) {
+                return new LatestAnnotatedImagesRenderer(
+                    $c->get('ZfcTwig\View\TwigRenderer'),
+                    $c->get('Omeka\Connection'),
+                    $c->get(CanvasRepository::class),
+                    $c->get(CanvasBuilder::class),
+                    $c->get(Router::class)
+                );
+            },
+            TopContributorsRenderer::class => function (ContainerInterface $c) {
+                return new TopContributorsRenderer(
+                    $c->get('ZfcTwig\View\TwigRenderer'),
+                    $c->get('Omeka\Connection'),
+                    $c->get(Router::class)
+                );
+            },
             ManifestListRenderer::class => function (ContainerInterface $c) {
                 return new ManifestListRenderer(
                     $c->get('ZfcTwig\View\TwigRenderer'),
@@ -327,6 +367,9 @@ return [
     ],
     'media_ingesters' => [
         'factories' => [
+            'crowd-sourcing-banner' => function (ContainerInterface $c) {
+                return $c->get(CrowdSourcingBannerIngester::class);
+            },
             'iiif' => function (ContainerInterface $c) {
                 return $c->get(IIIFImageIngester::class);
             },
@@ -354,6 +397,12 @@ return [
             'iiif-metadata' => function (ContainerInterface $c) {
                 return $c->get(MetadataIngester::class);
             },
+            'latest-annotated-images' => function (ContainerInterface $c) {
+                return $c->get(LatestAnnotatedImagesIngester::class);
+            },
+            'top-contributors' => function (ContainerInterface $c) {
+                return $c->get(TopContributorsIngester::class);
+            },
         ],
     ],
     'media_renderers' => [
@@ -361,6 +410,9 @@ return [
             'iiif' => null,
         ],
         'factories' => [
+            'crowd-sourcing-banner' => function (ContainerInterface $c) {
+                return $c->get(CrowdSourcingBannerRenderer::class);
+            },
             'iiif' => function (ContainerInterface $c) {
                 return new ImageSourceRenderer(
                     $c->get('ZfcTwig\View\TwigRenderer'),
@@ -397,10 +449,22 @@ return [
             'iiif-metadata' => function (ContainerInterface $c) {
                 return $c->get(MetadataRenderer::class);
             },
+            'latest-annotated-images' => function (ContainerInterface $c) {
+                return $c->get(LatestAnnotatedImagesIngester::class);
+            },
+            'top-contributors' => function (ContainerInterface $c) {
+                return $c->get(TopContributorsIngester::class);
+            },
         ],
     ],
     'block_layouts' => [
         'factories' => [
+            'crowd-sourcing-banner' => function (ContainerInterface $c) {
+                return new PageBlockMediaAdapter(
+                    $c->get(CrowdSourcingBannerIngester::class),
+                    $c->get(CrowdSourcingBannerRenderer::class)
+                );
+            },
             'iiif-banner-image' => function (ContainerInterface $c) {
                 return new PageBlockMediaAdapter(
                     $c->get(BannerImageIngester::class),
@@ -441,6 +505,18 @@ return [
                 return new PageBlockMediaAdapter(
                     $c->get(ManifestSnippetIngester::class),
                     $c->get(ManifestSnippetRenderer::class)
+                );
+            },
+            'latest-annotated-images' => function (ContainerInterface $c) {
+                return new PageBlockMediaAdapter(
+                    $c->get(LatestAnnotatedImagesIngester::class),
+                    $c->get(LatestAnnotatedImagesRenderer::class)
+                );
+            },
+            'top-contributors' => function (ContainerInterface $c) {
+                return new PageBlockMediaAdapter(
+                    $c->get(TopContributorsIngester::class),
+                    $c->get(TopContributorsRenderer::class)
                 );
             },
         ],

@@ -274,3 +274,102 @@
     padding: 6px 12px;
     display: inline-block;
 }
+.c-contributors {
+    list-style: none;
+    position: relative;
+    padding: 0;
+    margin: 0 0 40px;
+}
+
+.c-contributors li {
+    border-bottom: 1px solid #f2f3f4;
+    padding: 15px 0;
+    position: relative;
+}
+
+.c-contributors li:last-of-type {
+    border: 0;
+}
+
+.c-contributors li:nth-of-type(even) {
+    background-color: #fafbfb;
+}
+
+.c-contributors__icon {
+    color: #c1c7ca;
+    left: 0;
+    position: relative;
+    top: 0;
+}
+
+@media (max-width: 768px) {
+    .c-contributors {
+        padding: 5px 0;
+    }
+}
+
+.c-button {
+    background-color: #eaeced;
+    border: 0;
+    border-radius: 0;
+    color: #484848;
+    display: inline-block;
+    padding: 10px;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    width: auto;
+}
+
+.c-button:hover {
+    background-color: #dce0e1;
+    color: #fff;
+}
+
+.c-button--block {
+    display: block;
+    width: 100%;
+}
+
+.c-button--lg {
+    font-size: 20px;
+    font-size: 2rem;
+    padding: 15px 50px;
+}
+
+.c-button--primary {
+    background-color: #333;
+    color: #fff;
+}
+
+.c-button--primary:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+.c-button--secondary {
+    background-color: #4a4a49;
+    color: #fff;
+}
+
+.c-button--secondary:hover {
+    background-color: #3d3d3c;
+    color: #fff;
+}
+
+.c-button button,
+.c-button input[type="submit"],
+.c-button input[type="button"] {
+    background: none;
+    border: 0;
+}
+
+.c-button--plain {
+    background-color: transparent;
+    color: #484848;
+}
+
+.c-button--link {
+    background-color: transparent;
+    color: #333;
+}
