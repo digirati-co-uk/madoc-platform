@@ -68,7 +68,7 @@ class CollectionSnippetRenderer implements RendererInterface, MediaPageBlockDual
             $collectionRepresentation,
             false,
             1,
-            $manifestsToShow,
+            (int)$manifestsToShow,
             1
         );
 

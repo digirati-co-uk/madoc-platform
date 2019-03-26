@@ -4,8 +4,12 @@ namespace IIIFStorage\Listener;
 
 use Digirati\OmekaShared\Model\FieldValue;
 use Digirati\OmekaShared\Model\ItemRequest;
+use Digirati\OmekaShared\Utility\PropertyIdSaturator;
 use Elucidate\Event\AnnotationLifecycleEvent;
 use IIIFStorage\Repository\CanvasRepository;
+use Omeka\Api\Manager;
+use Omeka\Api\Representation\ItemRepresentation;
+use Omeka\Permissions\Acl;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class TargetStatusUpdateListener implements EventSubscriberInterface
@@ -21,6 +25,18 @@ class TargetStatusUpdateListener implements EventSubscriberInterface
      * @var CanvasRepository
      */
     private $repository;
+    /**
+     * @var Manager
+     */
+    private $api;
+    /**
+     * @var PropertyIdSaturator
+     */
+    private $saturator;
+    /**
+     * @var Acl
+     */
+    private $acl;
 
 
     public static function getSubscribedEvents()
@@ -32,9 +48,16 @@ class TargetStatusUpdateListener implements EventSubscriberInterface
         ];
     }
 
-    public function __construct(CanvasRepository $repository)
-    {
+    public function __construct(
+        CanvasRepository $repository,
+        Manager $api,
+        PropertyIdSaturator $saturator,
+        Acl $acl
+    ) {
         $this->repository = $repository;
+        $this->api = $api;
+        $this->saturator = $saturator;
+        $this->acl = $acl;
     }
 
     /**
@@ -44,7 +67,11 @@ class TargetStatusUpdateListener implements EventSubscriberInterface
      */
     public function handleAnnotationPersistedEvent(AnnotationLifecycleEvent $event)
     {
-        $this->handleAnnotationLifecycleEvent($event, false);
+        try {
+            $this->handleAnnotationLifecycleEvent($event, false);
+        } catch (\Throwable $e) {
+            error_log('Unable to update annotation statistics: ' . (string)$e);
+        }
     }
 
     /**
@@ -54,7 +81,11 @@ class TargetStatusUpdateListener implements EventSubscriberInterface
      */
     public function handleAnnotationDeletedEvent(AnnotationLifecycleEvent $event)
     {
-        $this->handleAnnotationLifecycleEvent($event, true);
+        try {
+            $this->handleAnnotationLifecycleEvent($event, true);
+        } catch (\Throwable $e) {
+            error_log('Unable to update annotation statistics: ' . (string)$e);
+        }
     }
 
     public function getValue($data)
@@ -80,8 +111,18 @@ class TargetStatusUpdateListener implements EventSubscriberInterface
         $motivation = $this->getValue($annotation->motivation);
         $target = $this->getTarget($annotation);
 
+        $omekaId = $this->getCanvasOmekaId($target);
+        if (!$omekaId) {
+            error_log("Could not find Omeka id for target: $target");
+            return;
+        }
+
+        $this->acl->allow(null, [
+            'Omeka\Api\Adapter\ItemAdapter',
+            'Omeka\Entity\Item',
+        ]);
         $this->repository->mutate(
-            $this->getCanvasOmekaId($target),
+            $omekaId,
             function (ItemRequest $itemRequest) use ($motivation, $isDelete) {
                 $value = FieldValue::url(
                     'exif:versionInfo',
@@ -104,9 +145,13 @@ class TargetStatusUpdateListener implements EventSubscriberInterface
                 }
             }
         );
+        $this->acl->removeAllow(null, [
+            'Omeka\Api\Adapter\ItemAdapter',
+            'Omeka\Entity\Item',
+        ]);
     }
 
-    public function getCanvasOmekaId(string $target): int
+    public function getCanvasOmekaId(string $target)
     {
         // @todo this is a nasty hack for changes to the ID field.
         //       taken from the Router in IIIF Storage.
@@ -121,13 +166,13 @@ class TargetStatusUpdateListener implements EventSubscriberInterface
         $canvasMappings = $this->api->search(
             'items',
             [
-                'resource_class_id' => $this->getResourceClassByTerm('sc:Canvas')->id(),
+                'resource_class_id' => $this->saturator->getResourceClassByTerm('sc:Canvas')->id(),
                 'property' => [
                     [
                         'joiner' => 'and',
-                        'property' => $this->loadPropertyId('dcterms:identifier'),
+                        'property' => $this->saturator->loadPropertyId('dcterms:identifier'),
                         'type' => 'eq',
-                        'text' => $target,
+                        'text' => trim($target),
                     ]
                 ]
             ]

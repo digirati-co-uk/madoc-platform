@@ -1,7 +1,26 @@
 {# htmlElement('body').appendAttribute('class', 'login') #}
 <div class="c-form c-form--register">
     <h1 class="c-form__heading">{{ translate('Register') }}</h1>
-    {{ form(form) }}
+    {{ trigger('view.edit.before') }}
+    {{ form().openTag(form) | raw }}
+
+    {{ trigger('view.edit.form.before', {'form': form }) }}
+
+    <fieldset id="user-information" class="section active">
+        {{ formCollection(form.get('user-information'), false) }}
+    </fieldset>
+    <fieldset id="change-password" class="section">
+        {{ formCollection(form.get('change-password'), false) }}
+    </fieldset>
+
+    {{ trigger('view.edit.form.after', {'form': form }) }}
+    <div id="page-actions">
+        <button type="submit">{{ translate('Save') }}</button>
+    </div>
+
+    {{ formElement(form.get('csrf')) }}
+    {{ form().closeTag()| raw }}
+    {{ trigger('view.edit.after') }}
     <div class="c-form__content">
         {{ content|raw }}
     </div>

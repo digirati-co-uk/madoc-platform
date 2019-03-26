@@ -86,7 +86,10 @@ return [
             },
             TargetStatusUpdateListener::class => function (ContainerInterface $c) {
                 return new TargetStatusUpdateListener(
-                    $c->get(CanvasRepository::class)
+                    $c->get(CanvasRepository::class),
+                    $c->get('Omeka\ApiManager'),
+                    $c->get(PropertyIdSaturator::class),
+                    $c->get('Omeka\Acl')
                 );
             },
             ViewContentListener::class => function (ContainerInterface $c) {
