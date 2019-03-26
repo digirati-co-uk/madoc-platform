@@ -41,7 +41,9 @@ endif;
     <nav>
         <?php
         echo $site->publicNav()->menu()->renderMenu(null, [
-            'maxDepth' => $this->themeSetting('nav_depth') - 1
+            'maxDepth' => 0
+            // @todo revert this change when styles for dropdown come in.
+            // 'maxDepth' => $this->themeSetting('nav_depth') - 1
         ]);
         ?>
 
