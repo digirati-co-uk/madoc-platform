@@ -10,4 +10,5 @@ interface AggregateInterface
     public function supports(ItemRequest $input);
     public function parse(ItemRequest $input);
     public function prepare();
+    public function reset();
 }

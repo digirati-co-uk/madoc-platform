@@ -114,14 +114,16 @@ class DereferencedCollection implements AggregateInterface
                 strtolower($type) !== 'sc:collection' &&
                 strtolower($type) !== 'collection'
             ) {
-                throw new ValidationException('Resource is not a collection');
+               // @todo re-evaluate how to best manages cases where this is not true.
+                throw new ValidationException("Resource is not a collection ($id)");
             }
 
             if ($this->relationshipRequest->collectionExists($id)) {
                 $label = $this->translate($collection['label']);
-                throw new ValidationException("$label already exists");
+                throw new ValidationException("$label ($id) already exists");
             }
         }
+        $this->collectionRequests = [];
     }
 
     public function queueCollection($url)
@@ -151,5 +153,10 @@ class DereferencedCollection implements AggregateInterface
             }
         }
         return $this->collectionCache[$url];
+    }
+
+    public function reset()
+    {
+        $this->collectionRequests = [];
     }
 }

@@ -48,6 +48,7 @@ class AccountController extends AbstractActionController
         }
 
         $uid = $user->getId();
+
         // @todo this will not work until the query is join from Items
 //        $bookmarks = $this->bookmarks->getBookmarks($uid);
         $stats = $this->statistics->getUserStats($uid);
@@ -60,7 +61,7 @@ class AccountController extends AbstractActionController
                 'include_admin_roles' => false,
                 'include_is_active' => false,
                 'include_password' => true,
-                'current_password' => false,
+                'current_password' => true,
                 'include_key' => false,
             ];
 
@@ -81,7 +82,6 @@ class AccountController extends AbstractActionController
             ],
         ];
 
-
         /** @var UserForm $form */
         $form = $this->getForm(UserForm::class, $options);
         $form->setSettings($this->settings);
@@ -96,6 +96,18 @@ class AccountController extends AbstractActionController
 
         $form->setData($formData);
 
+        $returnError = function() use ($view, $form, $manifest, $user) {
+            $view->setVariable('form', $form);
+
+            $this->messenger()->addFormErrors($form);
+
+            $view->setVariable('form', $form);
+            $view->setVariable('user', $user);
+            $view->setVariable('manifest', $manifest);
+
+            return $view;
+        };
+
         if ($this->getRequest()->isPost()) {
             $postData = $this->params()->fromPost();
             $form->setData($postData);
@@ -104,22 +116,11 @@ class AccountController extends AbstractActionController
                 $passwordValues = $values['change-password'];
                 $response = $this->api()->update('users', $uid, $values['user-information']);
 
-                // Stop early if the API update fails
                 if (!$response) {
-                    $view->setVariable('form', $form);
+                    $this->messenger()->addError('Something went wrong updating your details.'); // @translate
 
-                    $this->messenger()->addFormErrors($form);
-
-                    $view->setVariable('form', $form);
-                    $view->setVariable('user', $user);
-                    $view->setVariable('messages', $this->messenger()->get());
-                    $view->setVariable('manifest', $manifest);
-
-                    $this->messenger()->clear();
-
-                    return $view;
+                    return $returnError();
                 }
-                $this->messenger()->addSuccess($this->translate('User successfully updated')); // @translate
 
                 if (!empty($passwordValues['password'])) {
                     if (!$this->userIsAllowed($user, 'change-password')) {
@@ -129,9 +130,12 @@ class AccountController extends AbstractActionController
                     }
                     if ($user && !$user->verifyPassword($passwordValues['current-password'])) {
                         $this->messenger()->addError('The current password entered was invalid'); // @translate
+
+                        return $returnError();
+                    } else {
+                        $user->setPassword($passwordValues['password']);
+                        $successMessages[] = 'Password successfully changed'; // @translate
                     }
-                    $user->setPassword($passwordValues['password']);
-                    $successMessages[] = 'Password successfully changed'; // @translate
                 }
 
                 $this->entityManager->flush();
@@ -148,13 +152,15 @@ class AccountController extends AbstractActionController
 
         $view->setVariable('form', $form);
         $view->setVariable('user', $user);
-        $view->setVariable('messages', $this->messenger()->get());
         $view->setVariable('manifest', $manifest);
-//        $view->setVariable('canvases', $bookmarks);
-
-//        $this->messenger()->clear();
 
         return $view;
+    }
+
+
+    public function validate()
+    {
+
     }
 
     public function editDetailsAction()

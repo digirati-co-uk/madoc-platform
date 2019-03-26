@@ -79,6 +79,12 @@ class AddImageService implements AggregateInterface
         }
     }
 
+    public function reset()
+    {
+        $this->imageServices = [];
+        $this->thumbnailServices = [];
+    }
+
     public function prepare()
     {
 

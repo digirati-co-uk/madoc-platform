@@ -40,6 +40,11 @@ class ManifestRepository
      */
     private $relationshipRequest;
 
+    /**
+     * @var mixed
+     */
+    private $lastError;
+
     public function __construct(
         Manager $api,
         CanvasRepository $canvasRepository,
@@ -85,6 +90,11 @@ class ManifestRepository
         $this->saturator->addPropertyIds($item);
         // Create.
         return $this->api->create(static::API_TYPE, $item->export())->getContent();
+    }
+
+    public function getLastError()
+    {
+        return $this->lastError;
     }
 
     public function mutate(string $id, callable $mutation)

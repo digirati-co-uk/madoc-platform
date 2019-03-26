@@ -64,6 +64,10 @@ class ImportContentListener
         );
     }
 
+    /**
+     * @param Event $event
+     * @throws \Throwable
+     */
     public function handleImport(Event $event)
     {
         $this->logger->notice(implode(' : ', array_keys($event->getParams())));
@@ -84,11 +88,15 @@ class ImportContentListener
                 }
             }
         } catch (\Throwable $e) {
+            // Reset step, and any queues it might hold.
+            $step->reset();
+            // Log first
             if ($e instanceof ValidationException) {
                 error_log((string)$e);
                 $this->messenger->addError($e->getMessage());
                 $event->stopPropagation();
             }
+            // then rethrow
             throw $e;
         }
         // Add property ids, as a shim.

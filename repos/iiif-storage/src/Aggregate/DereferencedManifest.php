@@ -92,6 +92,7 @@ class DereferencedManifest implements AggregateInterface
 
     public function parse(ItemRequest $input)
     {
+        $this->manifestRequests = [];
         foreach ($input->getValue('dcterms:identifier') as $field) {
             $manifestUrl = $field->getId();
 
@@ -112,12 +113,15 @@ class DereferencedManifest implements AggregateInterface
                 strtolower($type) !== 'sc:manifest' &&
                 strtolower($type) !== 'manifest'
             ) {
-                throw new ValidationException('Resource is not a manifest');
+                $this->manifestRequests = [];
+                throw new ValidationException("Resource ($id) is not a manifest");
             }
 
             if ($this->relationshipRequest->manifestExists($id)) {
                 $label = $this->translate($manifest['label']);
-                throw new ValidationException("$label already exists");
+                // reset the request stack.
+                $this->manifestRequests = [];
+                throw new ValidationException("$label ($id) already exists");
             }
         }
         $this->manifestRequests = [];
@@ -147,9 +151,14 @@ class DereferencedManifest implements AggregateInterface
                 if ($retry > 0) {
                     return $this->getManifest($url, $retry - 1);
                 }
-                throw new ValidationException('Could not fetch resource');
+                throw new ValidationException("Could not fetch resource ($url)");
             }
         }
         return $this->manifestCache[$url];
+    }
+
+     public function reset()
+    {
+        $this->manifestRequests = [];
     }
 }
