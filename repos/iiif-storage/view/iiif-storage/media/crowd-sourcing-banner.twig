@@ -1,0 +1,49 @@
+{% do headLink().prependStylesheet(assetUrl('css/masthead.css', 'IIIFStorage')) %}
+{% do headLink().prependStylesheet(assetUrl('css/iiif-storage.css', 'IIIFStorage')) %}
+
+<div class="c-masthead" style="background-image: url('{{ background }}')">
+    <div class="c-masthead__main">
+        {% if title or text %}
+        <div class="c-masthead__intro">
+            <h1 class="c-masthead__title">{{ title | raw }}</h1>
+            <p class="c-masthead__description">
+                {{ text | raw }}
+            </p>
+        </div>
+        {% else %}
+            <div class="c-masthead__spacer"></div>
+        {% endif %}
+    </div>
+    <div class="c-masthead__footer">
+        <div class="c-masthead__panel">
+            <div class="c-panel">
+                <h2 class="c-panel__title">{{ subtitle | raw }}</h2>
+                <div class="c-panel__content">
+                    {{ subtext | raw }}
+                </div>
+                <div class="c-panel__foot">
+                    <a href="{{ collectionId ? router.collection(collectionId) : router.collections() }}"
+                       class="c-button c-button--primary">
+                        {{ buttonText ? buttonText : 'Get started' }}
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="c-masthead__panel c-masthead__statistics">
+            <div class="c-statistics c-statistics--center">
+                {% if stats.images %}
+                <dl class="c-statistic c-statistic--xl">
+                    <dt>Images annotated</dt>
+                    <dd>{{ stat.images }}</dd>
+                </dl>
+                {% endif %}
+                {% if stats.annotations %}
+                <dl class="c-statistic c-statistic--xl">
+                    <dt>Annotations</dt>
+                    <dd>{{ stats.annotations }}</dd>
+                </dl>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

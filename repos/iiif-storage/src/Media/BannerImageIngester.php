@@ -5,6 +5,7 @@ namespace IIIFStorage\Media;
 
 use Omeka\Media\Ingester\MutableIngesterInterface;
 use Omeka\Form\Element;
+use Zend\View\Renderer\PhpRenderer;
 
 class BannerImageIngester extends AbstractIngester implements MutableIngesterInterface
 {

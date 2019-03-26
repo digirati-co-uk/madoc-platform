@@ -60,10 +60,7 @@ class Router
 
     public function collections()
     {
-        if ($this->isAdmin()) {
-            return '';
-        }
-        return $this->url->create($this->getRoute('collection/list'), [], ['force_canonical' => true], true);
+        return $this->siteCollection();
     }
 
     public function collection($collection)
