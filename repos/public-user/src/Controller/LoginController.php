@@ -168,22 +168,29 @@ class LoginController extends AbstractActionController
         $view = new ViewModel();
         $view->setVariable('form', $form);
 
-        $page = $this->api()->read('site_pages',
-            [
-                'slug' => 'login',
-                'site' => $site->id(),
-            ]
-        )->getContent();
+        try {
+
+            $page = $this->api()->read('site_pages',
+                [
+                    'slug' => 'login',
+                    'site' => $site->id(),
+                ]
+            )->getContent();
+        } catch (Throwable $e) {
+            $page = null;
+        }
 
         $view->setVariable('site', $site);
         $view->setVariable('page', $page);
         $view->setVariable('displayNavigation', true);
 
-        $contentView = clone $view;
-        $contentView->setTemplate('omeka/site/page/content');
-        $contentView->setVariable('pageViewModel', $view);
+        if ($page) {
+            $contentView = clone $view;
+            $contentView->setTemplate('omeka/site/page/content');
+            $contentView->setVariable('pageViewModel', $view);
 
-        $view->addChild($contentView, 'content');
+            $view->addChild($contentView, 'content');
+        }
 
         return $view;
     }
@@ -363,22 +370,28 @@ class LoginController extends AbstractActionController
         $view = new ViewModel();
         $view->setVariable('form', $form);
 
-        $page = $this->api()->read('site_pages',
-            [
-                'slug' => 'register',
-                'site' => $site->id(),
-            ])->getContent();
+        try {
+            $page = $this->api()->read('site_pages',
+                [
+                    'slug' => 'register',
+                    'site' => $site->id(),
+                ])->getContent();
+        } catch (Throwable $e) {
+            $page = null;
+        }
 
         $view->setVariable('site', $site);
         $view->setVariable('page', $page);
         $view->setVariable('displayNavigation', true);
 
-        $contentView = clone $view;
-        $contentView->setTemplate('omeka/site/page/content');
-        $contentView->setVariable('pageViewModel', $view);
+        if ($page) {
 
-        $view->addChild($contentView, 'content');
+            $contentView = clone $view;
+            $contentView->setTemplate('omeka/site/page/content');
+            $contentView->setVariable('pageViewModel', $view);
 
+            $view->addChild($contentView, 'content');
+        }
         return $view;
     }
 

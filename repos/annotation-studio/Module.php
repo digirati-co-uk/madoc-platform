@@ -128,8 +128,16 @@ class Module extends AbstractModule
         return $site();
     }
 
-    public function getElucidateEndpoint($settings)
+    public function getElucidateEndpoint()
     {
+        /** @var SettingsHelper $siteModerationStatus */
+        $siteSettings = $this->getServiceLocator()->get(SettingsHelper::class);
+        // Static elucidate on site.
+        $staticElucidate = $siteSettings->get('annotation-studio-static-elucidate', '');
+        if ($staticElucidate) {
+            return $staticElucidate;
+        }
+
         /** @var SiteSettings  $settings */
         $elucidate = getenv('OMEKA__ELUCIDATE_URL');
         $elucidateProxy = getenv('OMEKA__ELUCIDATE_PUBLIC_DOMAIN') || $elucidate;
@@ -188,6 +196,17 @@ class Module extends AbstractModule
                                 $form->getSiteSettings()->get('annotation-studio-static-capture-model', '')
                             )
                     )
+                    ->add(
+                        (new Text('annotation-studio-static-elucidate'))
+                            ->setOptions([
+                                'label' => 'Static elucidate', // @translate
+                                'info' => 'A full URL to an external elucidate to use for this site', // @translate
+                            ])
+                            ->setAttribute('required', false)
+                            ->setValue(
+                                $form->getSiteSettings()->get('annotation-studio-static-elucidate', '')
+                            )
+                    )
                     ->setOptions([
                         'label' => 'Annotation studio',
                     ])
@@ -203,7 +222,7 @@ class Module extends AbstractModule
             $manifest = $vm->getVariable('manifest');
             /** @var AnnotationStudio $annotationStudio */
             $annotationStudio = $vm->getVariable('annotationStudio', new AnnotationStudio());
-            $elucidate = $this->getElucidateEndpoint($settings);
+            $elucidate = $this->getElucidateEndpoint();
             $useOsd = $settings->get('annotation_studio_use_open_seadragon', true);
             $googleMapApiKey = $settings->get('annotation_studio_google_map_api');
 
@@ -232,7 +251,7 @@ class Module extends AbstractModule
             $annotationStudio = $vm->getVariable('annotationStudio', new AnnotationStudio());
             $canvases = $manifest->getManifest()->getCanvases();
             $useOsd = $settings->get('annotation_studio_use_open_seadragon', true);
-            $elucidate = $this->getElucidateEndpoint($settings);
+            $elucidate = $this->getElucidateEndpoint();
             $googleMapApiKey = $settings->get('annotation_studio_google_map_api');
 
             if (!$manifest) return;
