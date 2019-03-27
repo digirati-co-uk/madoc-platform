@@ -68,7 +68,7 @@ class CrowdSourcingBannerIngester extends AbstractIngester implements IngesterIn
                     'label' => 'Button text',
                     'info' => 'Label for button'
                 ]),
-            (new Element\Text())
+            (new Element\Text('collection'))
                 ->setOptions([
                     'label' => 'Collection ID', // @translate
                     'info' => 'ID Main collection used in call to action, defaults to all collections in site (/collections/all)', // @translate
