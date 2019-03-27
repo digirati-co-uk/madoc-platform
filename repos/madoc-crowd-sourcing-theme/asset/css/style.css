@@ -29,17 +29,38 @@ header {
 }
 
 /* Logo */
-.site-title {
+.site-details {
     align-self: flex-start;
     color: #333;
     text-decoration: none;
-    margin-right: 20px;
-    margin-left: 20px;
+    margin: 24px 0;
 }
 
 .site-title img {
-    margin: 24px 0;
-    max-width: 240px;
+    max-width: 400px;
+}
+
+@media (max-width: 1024px) {
+    .site-details {
+        margin: 15px;
+    }
+}
+
+@media (max-width: 575px) {
+    header {
+        flex-direction: column;
+    }
+    #search {
+        margin-bottom: 15px;
+        width: 100%;
+    }
+}
+
+.site-name {
+    font-size: 18px;
+    margin: 15px 0 10px;
+    color: #4a4a49;
+    font-weight: bold;
 }
 
 #search {
