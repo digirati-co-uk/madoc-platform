@@ -4,6 +4,8 @@
 
 _Madoc_ is an Omeka S based platform for the display, enrichment, and curation of IIIF-based digital objects.
 
+Check out the [Example configuration](https://github.com/digirati-co-uk/madoc-example-config) to quickly get up and running.
+
 ![](https://i.imgur.com/HSDXvUL.png)
 
 
