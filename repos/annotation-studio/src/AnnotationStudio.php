@@ -6,7 +6,7 @@ use AnnotationStudio\Components\Component;
 
 class AnnotationStudio
 {
-    const VERSION = '1.0.0-rc.25';
+    const VERSION = '1.0.0-rc.26';
 
     private $components;
     private $isLocked = false;

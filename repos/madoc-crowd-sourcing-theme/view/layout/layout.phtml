@@ -28,12 +28,17 @@ endif;
 <?php echo $this->userBar(); ?>
 
 <header>
+    <div class="site-details">
     <?php if ($this->themeSetting('logo')): ?>
         <a href="<?php echo $site->url(); ?>" class="site-title"><img
                     src="<?php echo $this->themeSettingAssetUrl('logo'); ?>" title="Logo"></a>
+        <?php if ($this->themeSetting('show_title_and_logo')): ?>
+                <p class="site-name"><?php echo $site->title(); ?></p>
+        <?php endif; ?>
     <?php else: ?>
         <a href="<?php echo $site->url(); ?>" class="site-title"><?php echo $this->pageTitle($site->title()); ?></a>
     <?php endif; ?>
+    </div>
     <div id="search">
         <?php echo $this->partial('common/search-form'); ?>
     </div>
