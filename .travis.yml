@@ -34,6 +34,7 @@ cache:
     - $HOME/docker
 
 deploy:
+# Publishing master branch
   - provider: script
     script: bash ./.travis/docker-deploy.sh digirati/madoc-platform
     on:
@@ -42,6 +43,15 @@ deploy:
     script: bash ./.travis/docker-deploy.sh digirati/madoc-platform-db
     on:
       branch: master
+# Publishing tags
+  - provider: script
+    script: bash ./.travis/docker-deploy.sh digirati/madoc-platform
+    on:
+      tags: true
+  - provider: script
+    script: bash ./.travis/docker-deploy.sh digirati/madoc-platform-db
+    on:
+      tags: true
 
 if: |
   branch = master OR \
