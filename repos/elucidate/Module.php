@@ -7,6 +7,7 @@ use ElucidateModule\Admin\ConfigurationForm;
 use ElucidateModule\Controller\ActivityController;
 use ElucidateModule\Controller\CommentController;
 use ElucidateModule\Controller\CompletionController;
+use ElucidateModule\Controller\FlaggingController;
 use ElucidateModule\Controller\ItemController;
 use ElucidateModule\Controller\SearchController;
 use ElucidateModule\Controller\TopicTypesController;
@@ -121,6 +122,7 @@ class Module extends AbstractModule
                 ActivityController::class,
                 ItemController::class,
                 CompletionController::class,
+                FlaggingController::class,
                 CommentController::class,
             ]
         );

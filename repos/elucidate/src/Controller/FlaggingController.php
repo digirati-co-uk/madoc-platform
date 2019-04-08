@@ -46,11 +46,16 @@ class FlaggingController extends AbstractActionController
         $form = $this->getForm(FlaggingForm::class);
         $data = $this->getRequest()->getPost();
         $form->setData($data);
+
         if (false === $form->isValid()) {
             // @todo
             return null;
         }
-        $this->ev->dispatch('content.flagging', new GenericEvent($data));
+        try {
+            $this->ev->dispatch('content.flagging', new GenericEvent($data));
+        } catch (\Throwable $e) {
+            error_log((string) $e);
+        }
 
         return (new ViewModel($data))->setTemplate('elucidate/flagging/post');
     }

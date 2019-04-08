@@ -5,7 +5,7 @@ use PublicUser\Site\SiteListeners;
 return [
     'view_manager' => [
         'template_path_stack' => [
-            realpath(__DIR__.'/../view'),
+            realpath(__DIR__ . '/../view'),
         ],
     ],
     'listeners' => [
@@ -35,20 +35,25 @@ return [
         ],
     ],
     'mail' => [
-        'transport' => [
-            'type' => 'smtp',
-            'options' => [
-                'name' => 'localhost',
-                'host' => getenv('OMEKA__SMTP_HOST'),
-                'port' => intval(getenv('OMEKA__SMTP_PORT') ?: 587),
-                'connection_class' => 'login',
-                'connection_config' => [
-                    'username' => getenv('OMEKA__SMTP_USERNAME'),
-                    'password' => getenv('OMEKA__SMTP_PASSWORD'),
-                    'ssl' => getenv('OMEKA__SMTP_SECURITY'),
-                    'use_complete_quit' => true,
+        'transport' => getenv('OMEKA__SMTP_HOST')
+            ? [
+                'type' => 'smtp',
+                'options' => [
+                    'name' => 'localhost',
+                    'host' => getenv('OMEKA__SMTP_HOST'),
+                    'port' => intval(getenv('OMEKA__SMTP_PORT') ?: 587),
+                    'connection_class' => 'login',
+                    'connection_config' => [
+                        'username' => getenv('OMEKA__SMTP_USERNAME'),
+                        'password' => getenv('OMEKA__SMTP_PASSWORD'),
+                        'ssl' => getenv('OMEKA__SMTP_SECURITY'),
+                        'use_complete_quit' => true,
+                    ],
                 ],
+            ]
+            : [
+                'type' => 'sendmail',
+                'options' => [],
             ],
-        ],
     ],
 ];
