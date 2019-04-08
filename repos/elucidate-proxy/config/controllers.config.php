@@ -11,7 +11,11 @@ return [
     'controllers' => [
         'factories' => [
             AnnotationController::class => function (ContainerInterface $c) {
-                return new AnnotationController($c->get(ElucidateResponseFactory::class), $c->get(ClientInterface::class));
+                return new AnnotationController(
+                    $c->get(ElucidateResponseFactory::class),
+                    $c->get(ClientInterface::class),
+                    $c->get('Omeka\AuthenticationService')
+                );
             },
             ContainerController::class => function (ContainerInterface $c) {
                 return new ContainerController($c->get(ElucidateResponseFactory::class), $c->get(ClientInterface::class));
