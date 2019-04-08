@@ -19,7 +19,8 @@
         "guzzlehttp/guzzle": "~6.0",
         "babdev/transifex": "^2.0",
         "symfony/translation": "^3.3",
-        "kevinrob/guzzle-cache-middleware": "^3.2"
+        "kevinrob/guzzle-cache-middleware": "^3.2",
+        "digirati/omeka-shared": "1.0.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.2",
