@@ -1,0 +1,5 @@
+/vendor/
+/build/
+/*/.gitkeep
+/languages/
+.DS_Store

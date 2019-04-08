@@ -1,0 +1,39 @@
+{
+    "name": "digirati/omeka-i18n-module",
+    "license": "MIT",
+    "description": "Omeka-S module for translating dynamic site resources",
+    "type": "omeka-s-module",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Stephen Fraser",
+            "email": "stephen.fraser@digirati.com"
+        },
+        {
+            "name": "Gary Tierney",
+            "email": "gary.tierney@digirati.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "guzzlehttp/guzzle": "~6.0",
+        "babdev/transifex": "^2.0",
+        "symfony/translation": "^3.3",
+        "kevinrob/guzzle-cache-middleware": "^3.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.2",
+        "friendsofphp/php-cs-fixer": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "i18n\\": "src/"
+        }
+    },
+    "extra": {
+        "install-name": "i18n"
+    },
+    "config": {
+        "platform": {"php": "7.0"}
+    }
+}

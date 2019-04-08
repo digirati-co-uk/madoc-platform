@@ -10,6 +10,7 @@ repos=(
    'public-user,git@github.com:digirati-co-uk/omeka-public-user-module.git'
    'resource-provider,git@github.com:digirati-co-uk/omeka-resource-provider.git'
    'auto-complete,git@github.com:digirati-co-uk/omeka-auto-complete-module.git'
+   'i18n,git@github.com:digirati-co-uk/omeka-i18n-module.git'
 );
 
 init() {

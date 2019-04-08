@@ -1,0 +1,12 @@
+{% do form.setAttribute('action', url('admin/i18n-synchronize-submit')) %}
+{% do form.prepare() %}
+
+{{ pageTitle(translate('Synchronize translations')) }}
+
+{{ form().openTag(form) | raw }}
+<p><b>Are you sure?</b> Clicking Submit will dispatch jobs that will resynchronize localization resources
+    for all applicable Omeka content.  Synchronization may take some time</p>
+<button type="submit">Submit</button>
+
+{{ formCollection(form, false) }}
+{{ form().closeTag(form) | raw }}
