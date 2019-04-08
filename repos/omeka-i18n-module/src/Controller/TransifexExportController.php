@@ -2,7 +2,7 @@
 
 namespace i18n\Controller;
 
-use i18n\Framework\Support\AbstractPsr7ActionController;
+use Digirati\OmekaShared\Framework\AbstractPsr7ActionController;
 use i18n\Resource\Exporter\TranslatableResourceExporter;
 use i18n\Resource\TranslatableResourceManager;
 use i18n\Resource\Writer\TranslatableResourceWriter;

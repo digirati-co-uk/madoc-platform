@@ -7,9 +7,8 @@ use Zend\View\Helper\AbstractHelper;
 
 class LanguageSwitcher extends AbstractHelper
 {
-    private static $languages = [
+    private static $DEFAULT_LANGUAGE_MAP = [
         'en' => 'English', //@translate
-        'cy' => 'Cymraeg', //@translate
     ];
 
     /**
@@ -17,16 +16,22 @@ class LanguageSwitcher extends AbstractHelper
      */
     private $translator;
 
-    public function __construct(TranslatorInterface $translator)
+    /**
+     * @var array
+     */
+    private $languageMap;
+
+    public function __construct(TranslatorInterface $translator, $languageMap = null)
     {
         $this->translator = $translator;
+        $this->languageMap = $languageMap ?? self::$DEFAULT_LANGUAGE_MAP;
     }
 
     public function __invoke()
     {
-        $selected = $this->getView()->locale() ?: 'en';
+        $selected = $this->getView()->locale() ?: 'en'; // @todo - fetch from "default locale"
 
-        $languages = self::$languages;
+        $languages = $this->languageMap;
         unset($languages[$selected]);
 
         $languageOptions = [];

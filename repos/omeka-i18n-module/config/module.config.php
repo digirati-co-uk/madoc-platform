@@ -22,7 +22,8 @@ return [
     'view_helpers' => [
         'factories' => [
             'languageSwitcher' => function ($c) {
-                return new LanguageSwitcher($c->get('MvcTranslator'));
+                $config = $c->get('Config');
+                return new LanguageSwitcher($c->get('MvcTranslator'), $config['locales']);
             },
             'locale' => function ($c) {
                 return new Locale();
