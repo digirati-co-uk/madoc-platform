@@ -133,6 +133,7 @@
     font-size: inherit;
     line-height: inherit;
     color: #2b91af;
+    transform: translateX(-4px);
 }
 .c-save-for-later input[name="bookmark"]:hover {
     color: #2458af;

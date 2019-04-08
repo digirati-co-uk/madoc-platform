@@ -7,18 +7,20 @@
             {% set editorOptions = {
                 enableLocalStorage: true,
                 enableIncomplete: true,
-                enableEditing: siteSetting('cs-annotation-studio', true) ? pageMarkedAsComplete != 1 : false,
+                enableEditing: siteSetting('cs-annotation-studio', true) ? pageMarkedAsComplete != 1 and currentUser : false,
                 enablePublishing: false,
                 disableConfirmation: false,
             } %}
             {% include 'annotation-studio/resource-editor.twig' %}
 
             {% if (
-                siteSetting('cs-bookmarking', true) or
-                siteSetting('cs-mark-as-complete', true) or
-                siteSetting('cs-annotation-studio', true) or
-                siteSetting('cs-flagging', true) or
-                siteSetting('cs-show-annotations', true)
+                currentUser and (
+                    siteSetting('cs-bookmarking', true) or
+                    siteSetting('cs-mark-as-complete', true) or
+                    siteSetting('cs-annotation-studio', true) or
+                    siteSetting('cs-flagging', true) or
+                    siteSetting('cs-show-annotations', true)
+                )
             ) %}
             <div class="canvas-actions">
                 <h5 class="canvas-actions__title">Interact with this document</h5>
