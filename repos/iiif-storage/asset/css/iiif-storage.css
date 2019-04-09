@@ -235,6 +235,7 @@
 
 .iiif-storage-manifest-snippet {
     margin: 40px 0;
+    width: 100%;
 }
 
 .iiif-storage-manifest-snippet__link {
@@ -256,11 +257,17 @@
     overflow: hidden;
     align-items: center;
     height: 200px;
+    padding: 3px;
+}
+
+.iiif-storage-manifest-snippet__thumbnail:hover {
+    transform: scale(1.05);
 }
 
 .iiif-storage-manifest-snippet__thumbnail {
     height: 100%;
     margin-right: 10px;
+    transition: transform .4s;
 }
 
 .iiif-storage-manifest-snippet__thumbnail img {
