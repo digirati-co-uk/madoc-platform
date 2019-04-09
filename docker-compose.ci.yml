@@ -7,7 +7,6 @@ services:
     links:
       - mysql
     environment:
-      - PHP_IDE_CONFIG=serverName=omeka-workspace
       - APP_ENV=${APP_ENV}
       - OMEKA__DATABASE_HOST=madoc-platform-database
       - OMEKA__DATABASE_NAME=${MYSQL_DATABASE}
@@ -19,11 +18,6 @@ services:
       - OMEKA__ELUCIDATE_PUBLIC_DOMAIN=${ELUCIDATE_PUBLIC_DOMAIN}
     ports:
       - "8888:80"
-    volumes:
-      - ./repos:/srv/omeka/repos
-      - ./bare/omeka-s/application:/srv/omeka/application
-      - ./files:/srv/omeka/files
-      - ./config/omeka-app/application.config.php:/srv/omeka/application/config/application.config.php
 
   mysql:
     container_name: madoc-platform-database
@@ -38,7 +32,6 @@ services:
       - MYSQL_PORT=${MYSQL_PORT}
     volumes:
       - ./database/sql:/docker-entrypoint-initdb.d/
-      - ./database/data:/var/lib/mysql/
     ports:
       - "3334:3306"
 

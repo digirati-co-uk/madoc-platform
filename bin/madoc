@@ -193,6 +193,12 @@ case "${commandToRun}" in
     logs)
         docker-compose logs -f --tail=50
     ;;
+    ci-start)
+        docker-compose -f docker-compose.ci.yml up -d --build
+    ;;
+    ci-stop)
+        docker-compose -f docker-compose.ci.yml stop
+    ;;
     server-start)
          docker-compose -f docker-compose.server.yml build
          docker-compose -f docker-compose.server.yml up -d

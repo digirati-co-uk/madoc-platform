@@ -1,13 +1,6 @@
-mysql/*
-!mysql/.gitkeep
-modules/*
-!modules/.gitkeep
-themes/*
-!themes/.gitkeep
 bare/*
 !bare/.gitkeep
 .idea
-dump.sql
 database/data
 bin/php-cs-fixer
 .php_cs.cache
@@ -15,3 +8,5 @@ bin/php-cs-fixer
 /composer.lock
 /vendor
 repos/iiif-php
+files/*
+!files/.gitkeep

@@ -19,14 +19,14 @@ install:
   - ./bin/madoc init-ci
 
 before_script:
-  - ./bin/madoc start
+  - ./bin/madoc ci-start
   - ./.travis/wait-for-omeka.sh
 
 script:
   - .travis/test-script.sh
 
 after_script:
-  - ./bin/madoc stop
+  - ./bin/madoc ci-stop
 
 cache:
   bundler: true
