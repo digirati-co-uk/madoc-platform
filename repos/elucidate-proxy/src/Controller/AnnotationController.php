@@ -6,7 +6,9 @@ use Elucidate\ClientInterface;
 use Elucidate\Model\Annotation;
 use ElucidateProxy\Domain\ElucidateResponseFactory;
 use LogicException;
+use Omeka\Api\Exception\NotFoundException;
 use Throwable;
+use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Mvc\Controller\AbstractActionController;
 
 class AnnotationController extends AbstractActionController
@@ -17,11 +19,19 @@ class AnnotationController extends AbstractActionController
      * @var ElucidateResponseFactory
      */
     private $responseFactory;
+    /**
+     * @var AuthenticationServiceInterface
+     */
+    private $auth;
 
-    public function __construct(ElucidateResponseFactory $responseFactory, ClientInterface $client)
-    {
+    public function __construct(
+        ElucidateResponseFactory $responseFactory,
+        ClientInterface $client,
+        AuthenticationServiceInterface $auth
+    ) {
         $this->elucidate = $client;
         $this->responseFactory = $responseFactory;
+        $this->auth = $auth;
     }
 
     public function getAnnotationAction()
@@ -35,6 +45,10 @@ class AnnotationController extends AbstractActionController
 
     public function postAnnotationAction()
     {
+        if(!$this->auth->getIdentity()) {
+            throw new NotFoundException();
+        }
+
         $containerId = $this->params()->fromRoute('container');
 
         try {
@@ -51,6 +65,10 @@ class AnnotationController extends AbstractActionController
 
     public function putAnnotationAction()
     {
+        if (!$this->auth->getIdentity()) {
+            throw new NotFoundException();
+        }
+
         $containerId = $this->params()->fromRoute('container');
         $annotationId = $this->params()->fromRoute('annotation');
         $eTag = $this->params()->fromHeader('If-Match');
@@ -80,6 +98,10 @@ class AnnotationController extends AbstractActionController
 
     public function deleteAnnotationAction()
     {
+        if (!$this->auth->getIdentity()) {
+            throw new NotFoundException();
+        }
+
         $containerId = $this->params()->fromRoute('container');
 
         try {
