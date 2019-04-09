@@ -22,6 +22,7 @@ services:
     volumes:
       - ./repos:/srv/omeka/repos
       - ./bare/omeka-s/application:/srv/omeka/application
+      - ./files:/srv/omeka/files
       - ./config/omeka-app/application.config.php:/srv/omeka/application/config/application.config.php
 
   mysql:
@@ -37,6 +38,7 @@ services:
       - MYSQL_PORT=${MYSQL_PORT}
     volumes:
       - ./database/sql:/docker-entrypoint-initdb.d/
+      - ./database/data:/var/lib/mysql/
     ports:
       - "3334:3306"
 
