@@ -1,0 +1,52 @@
+version: "3"
+services:
+  omeka-ecosystem:
+    container_name: madoc-platform-omeka
+    build:
+      context: .
+    links:
+      - mysql
+    environment:
+      - APP_ENV=${APP_ENV}
+      - OMEKA__DATABASE_HOST=madoc-platform-database
+      - OMEKA__DATABASE_NAME=${MYSQL_DATABASE}
+      - OMEKA__DATABASE_USER=${MYSQL_USER}
+      - OMEKA__DATABASE_PASSWORD=${MYSQL_PASSWORD}
+      - OMEKA__DATABASE_PORT=${MYSQL_PORT}
+      - OMEKA__MAIN_SITE_DOMAIN=${MAIN_SITE_DOMAIN}
+      - OMEKA__ELUCIDATE_URL=${ELUCIDATE_URL}
+      - OMEKA__ELUCIDATE_PUBLIC_DOMAIN=${ELUCIDATE_PUBLIC_DOMAIN}
+    ports:
+      - "8888:80"
+
+  mysql:
+    container_name: madoc-platform-database
+    build:
+      context: ./
+      dockerfile: Dockerfile.db
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_PORT=${MYSQL_PORT}
+    volumes:
+      - ./database/sql:/docker-entrypoint-initdb.d/
+    ports:
+      - "3334:3306"
+
+  annotation-server:
+    container_name: madoc-annotation-server
+    image: "garyttierneydi/elucidate-server:1.4.3-SNAPSHOT"
+    links:
+      - annotation-database:database
+    environment:
+      - DATABASE_USER=postgres
+      - CATALINA_OPTS=-Ddb.url=jdbc:postgresql://database:5432/annotations -Ddb.user="postgres" -Ddb.password=$MYSQL_PASSWORD
+    ports:
+      - 8889:8080
+  annotation-database:
+    container_name: madoc-annotation-database
+    image: "garyttierneydi/elucidate-database:1.4.3-SNAPSHOT"
+    environment:
+      - POSTGRES_DB=annotations
