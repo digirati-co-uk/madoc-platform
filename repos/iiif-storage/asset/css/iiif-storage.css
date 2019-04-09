@@ -26,8 +26,11 @@
     font-size: 14px;
     line-height: 1.25;
     position: sticky;
-    top: 0;
     margin-bottom: auto;
+    margin-left: 10px;
+    top: 10px;
+    box-shadow: 0 3px 20px 0 rgba(0,0,0,.2);
+    border-radius: 3px;
 }
 
 .iiif-view-attribution {
