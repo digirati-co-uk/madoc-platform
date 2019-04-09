@@ -15,7 +15,7 @@
         </a>
     </h3>
     <div class="iiif-view-manifest-grid">
-        {% for manifest in collection.getManifests()[:4] %}
+        {% for manifest in collection.getManifests()[:manifestsPerCollection] %}
             <div class="iiif-view-manifest-grid__manifest">
                 <a class="iiif-view-playlist-grid"
                    style="background-image: url('{{ manifest.getThumbnail() }}');background-size: cover;background-position: top;"

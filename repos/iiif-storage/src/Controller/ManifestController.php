@@ -109,7 +109,7 @@ class ManifestController extends AbstractPsr7ActionController
             $this->apiRouter->useOriginalUrls();
         }
 
-        $canvasesPerPage = 12;
+        $canvasesPerPage = $this->getCanvasesPerPage();
 
         $manifestId = $this->params()->fromRoute('manifest');
         $collectionId = $this->params()->fromRoute('collection');
@@ -146,6 +146,12 @@ class ManifestController extends AbstractPsr7ActionController
     private function shouldUseOriginalIds(): bool
     {
         return $this->settingsHelper->__invoke('original-ids', false);
+    }
+
+    private function getCanvasesPerPage(): int
+    {
+        $perPage = (int)$this->settingsHelper->get('canvases-per-page', 12);
+        return $perPage ? $perPage : 12;
     }
 
     public function viewCanvasAction()
