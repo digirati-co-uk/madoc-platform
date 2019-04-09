@@ -574,6 +574,7 @@ return [
         'invokables' => [
             'manifest' => \IIIFStorage\Link\ManifestLink::class,
             'collection' => \IIIFStorage\Link\CollectionLink::class,
+            'all-collections' => \IIIFStorage\Link\AllCollectionsLink::class,
         ],
     ],
 ];
