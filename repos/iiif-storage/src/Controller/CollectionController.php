@@ -48,9 +48,6 @@ class CollectionController extends AbstractPsr7ActionController
         $this->settingsHelper = $settingsHelper;
     }
 
-    // @todo move this configuration.
-    const PER_PAGE = 24;
-
     public function viewAction()
     {
         $this->repo->setSiteId($this->currentSite()->id());
@@ -71,7 +68,7 @@ class CollectionController extends AbstractPsr7ActionController
             $collection,
             $this->shouldUseOriginalIds(),
             $this->params()->fromQuery('page') ?? 1,
-            self::PER_PAGE,
+            $this->getManifestsPerPage(),
             1
         );
         $collectionObj = $collectionRepresentation->getCollection();
@@ -84,7 +81,7 @@ class CollectionController extends AbstractPsr7ActionController
             'router' => $this->router,
         ]);
 
-        $this->paginateControls($viewModel, $collectionRepresentation->getTotalResults(), self::PER_PAGE);
+        $this->paginateControls($viewModel, $collectionRepresentation->getTotalResults(), $this->getManifestsPerPage());
 
         if ($this->getRequest()->isXmlHttpRequest()) {
             $viewModel->setTerminal(true);
@@ -116,7 +113,7 @@ class CollectionController extends AbstractPsr7ActionController
             'router' => $this->router,
         ]);
 
-        $this->paginate($viewModel, 'itemSets', $omekaCollections, 3);
+        $this->paginate($viewModel, 'itemSets', $omekaCollections, $this->getCollectionsPerPage());
 
         $collections = array_map(
             function($collection) {
@@ -124,12 +121,13 @@ class CollectionController extends AbstractPsr7ActionController
                     $collection,
                     $this->shouldUseOriginalIds(),
                     0,
-                    5,
+                    $this->getManifestsPerCollection(),
                     1
                 );
             }, $viewModel->getVariable('itemSets'));
 
         $viewModel->setVariable('collections', $collections);
+        $viewModel->setVariable('manifestsPerCollection', $this->getManifestsPerCollection());
 
         return $viewModel;
     }
@@ -137,5 +135,23 @@ class CollectionController extends AbstractPsr7ActionController
     private function shouldUseOriginalIds(): bool
     {
         return $this->settingsHelper->__invoke('original-ids', false);
+    }
+
+    private function getManifestsPerPage(): int
+    {
+        $perPage = (int)$this->settingsHelper->get('manifests-per-page', 24);
+        return $perPage ? $perPage : 24;
+    }
+
+    private function getCollectionsPerPage(): int
+    {
+        $perPage = (int)$this->settingsHelper->get('collections-per-page', 3);
+        return $perPage ? $perPage : 3;
+    }
+
+    private function getManifestsPerCollection(): int
+    {
+        $perPage = (int)$this->settingsHelper->get('collection-manifests-per-page', 5);
+        return $perPage ? $perPage : 5;
     }
 }

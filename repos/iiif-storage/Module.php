@@ -94,6 +94,38 @@ class Module extends AbstractModule implements ConfigProviderInterface
                             ])
                         ->setValue($form->getSiteSettings()->get('original-ids', false))
                     )
+                    ->add(
+                        (new Text('collections-per-page'))
+                            ->setOptions([
+                                'label' => 'Collections per page',
+                                'info' => 'Amount of collections to view on top level collection per page',
+                            ])
+                            ->setValue($form->getSiteSettings()->get('collections-per-page', 3))
+                    )
+                    ->add(
+                        (new Text('collection-manifests-per-page'))
+                            ->setOptions([
+                                'label' => 'Manifests per collection',
+                                'info' => 'Amount of manifests to show per collection',
+                            ])
+                            ->setValue($form->getSiteSettings()->get('collection-manifests-per-page', 5))
+                    )
+                    ->add(
+                        (new Text('manifests-per-page'))
+                            ->setOptions([
+                                'label' => 'Manifests per page',
+                                'info' => 'Amount of manifests to view on a collection per page',
+                            ])
+                            ->setValue($form->getSiteSettings()->get('manifests-per-page', 24))
+                    )
+                    ->add(
+                        (new Text('canvases-per-page'))
+                            ->setOptions([
+                                'label' => 'Canvases per page',
+                                'info' => 'Amount of canvases to view on a manifest per page',
+                            ])
+                            ->setValue($form->getSiteSettings()->get('canvases-per-page', 12))
+                    )
                     ->setOptions([
                         'label' => 'IIIF Storage options',
                     ])
