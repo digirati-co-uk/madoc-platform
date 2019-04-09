@@ -35,7 +35,7 @@ class DelegateTranslatorFactory implements DelegatorFactoryInterface
         /** @var Translator $delegate */
         $delegate = $translator->getDelegatedTranslator();
 
-        if (I18nModule::isFeatureFlagEnabled($container)) {
+        if (I18nModule::isTransifexEnabled($container)) {
             $pluginManager = new LoaderPluginManager($container);
             $pluginManager->setService(
                 TransifexThemeMessageLoader::class,
