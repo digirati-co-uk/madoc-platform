@@ -237,9 +237,10 @@ return [
                 );
             },
 
-            FlaggingNotificationSubscriber::class => function ($c) {
+            FlaggingNotificationSubscriber::class => function (ContainerInterface $c) {
                 return new FlaggingNotificationSubscriber(
                     $c->get('Omeka\ApiManager'),
+                    $c->get('Omeka\Acl'),
                     $c->get('Omeka\Mailer')
                 );
             },

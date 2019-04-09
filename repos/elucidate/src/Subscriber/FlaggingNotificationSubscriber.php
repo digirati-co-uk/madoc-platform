@@ -11,6 +11,11 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 
 class FlaggingNotificationSubscriber implements EventSubscriberInterface
 {
+    /**
+     * @var Acl
+     */
+    private $acl;
+
     public static function getSubscribedEvents()
     {
         return [
@@ -28,45 +33,54 @@ class FlaggingNotificationSubscriber implements EventSubscriberInterface
      */
     private $mailer;
 
-    public function __construct(ApiManager $manager, Mailer $mailer)
-    {
+    public function __construct(
+        ApiManager $manager,
+        Acl $acl,
+        Mailer $mailer
+    ) {
         $this->manager = $manager;
+        $this->acl = $acl;
         $this->mailer = $mailer;
     }
 
     public function triggerNotification(GenericEvent $event)
     {
-        $data = $event->getSubject();
+        try {
+            $data = $event->getSubject();
 
-        $users = $this->manager->search('users')->getContent();
-        $notifiedUsersAddressList = [];
-        $notifiedUsers = array_filter(
-            $users,
-            function (UserRepresentation $user) {
-                return in_array($user->role(), [Acl::ROLE_GLOBAL_ADMIN, Acl::ROLE_SITE_ADMIN]);
+            $this->acl->allow(null, ['Omeka\Api\Adapter\UserAdapter']);
+            $users = $this->manager->search('users')->getContent();
+
+            $notifiedUsersAddressList = [];
+            $notifiedUsers = array_filter(
+                $users,
+                function (UserRepresentation $user) {
+                    return in_array($user->role(), [Acl::ROLE_GLOBAL_ADMIN, Acl::ROLE_SITE_ADMIN]);
+                }
+            );
+
+            /** @var UserRepresentation $user */
+            foreach ($notifiedUsers as $user) {
+                $notifiedUsersAddressList[$user->email()] = $user->name();
             }
-        );
 
-        /** @var UserRepresentation $user */
-        foreach ($notifiedUsers as $user) {
-            $notifiedUsersAddressList[$user->email()] = $user->name();
-        }
-
-        $message = $this->mailer->createMessage();
-        $message->setTo($notifiedUsersAddressList);
-        $message->setSubject('An item has been flagged');
-        $message->setBody(
-            "An item has been flagged.
+            $message = $this->mailer->createMessage();
+            $message->setTo($notifiedUsersAddressList);
+            $message->setSubject('An item has been flagged');
+            $message->setBody(
+                "An item has been flagged.
 
 Item: ${data['subject']}
 Reason: ${data['reason']}
 Details: ${data['detail']}"
-        );
+            );
 
-        try {
+
             $this->mailer->send($message);
         } catch (\Throwable $e) {
-            // @todo log error.
+            error_log('Could not send email about reported annotation');
+            error_log((string) $e);
         }
+        $this->acl->removeAllow(null, ['Omeka\Api\Adapter\UserAdapter']);
     }
 }

@@ -46,5 +46,14 @@ return [
             'Omeka\Status' => 'Omeka\Service\StatusFactory',
         ],
     ],
+    'mail' => [
+        'transport' => [
+            'type' => 'sendmail',
+            'options' => [],
+        ],
+        'default_message_options' => [
+            'encoding' => 'UTF-8',
+        ],
+    ],
     'connection' => $reader->fromFile(OMEKA_PATH . '/config/database.ini'),
 ];
