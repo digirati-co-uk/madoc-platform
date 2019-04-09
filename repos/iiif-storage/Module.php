@@ -84,6 +84,16 @@ class Module extends AbstractModule implements ConfigProviderInterface
             /** @var SiteSettingsForm $form */
             $form = $event->getTarget();
 
+            // Ensure we get a numeric value from the settings.
+            $numericValue = function (string $id, int $default) use ($form): int {
+                $value = $form->getSiteSettings()->get($id, $default);
+                $intValue = (int) $value;
+                if (!is_numeric($value) || $intValue === 0) {
+                    return $default;
+                }
+                return $intValue;
+            };
+
             $form->add(
                 (new Fieldset('iiif-storage'))
                     ->add(
@@ -100,7 +110,7 @@ class Module extends AbstractModule implements ConfigProviderInterface
                                 'label' => 'Collections per page',
                                 'info' => 'Amount of collections to view on top level collection per page',
                             ])
-                            ->setValue($form->getSiteSettings()->get('collections-per-page', 3))
+                            ->setValue($numericValue('collections-per-page', 3))
                     )
                     ->add(
                         (new Text('collection-manifests-per-page'))
@@ -108,7 +118,7 @@ class Module extends AbstractModule implements ConfigProviderInterface
                                 'label' => 'Manifests per collection',
                                 'info' => 'Amount of manifests to show per collection',
                             ])
-                            ->setValue($form->getSiteSettings()->get('collection-manifests-per-page', 5))
+                            ->setValue($numericValue('collection-manifests-per-page', 5))
                     )
                     ->add(
                         (new Text('manifests-per-page'))
@@ -116,7 +126,7 @@ class Module extends AbstractModule implements ConfigProviderInterface
                                 'label' => 'Manifests per page',
                                 'info' => 'Amount of manifests to view on a collection per page',
                             ])
-                            ->setValue($form->getSiteSettings()->get('manifests-per-page', 24))
+                            ->setValue($numericValue('manifests-per-page', 24))
                     )
                     ->add(
                         (new Text('canvases-per-page'))
@@ -124,7 +134,7 @@ class Module extends AbstractModule implements ConfigProviderInterface
                                 'label' => 'Canvases per page',
                                 'info' => 'Amount of canvases to view on a manifest per page',
                             ])
-                            ->setValue($form->getSiteSettings()->get('canvases-per-page', 12))
+                            ->setValue($numericValue('canvases-per-page', 12))
                     )
                     ->setOptions([
                         'label' => 'IIIF Storage options',
