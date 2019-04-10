@@ -3,6 +3,7 @@
 namespace Digirati\OmekaShared\Utility;
 
 
+use Locale;
 use LogicException;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Api\Representation\ItemSetRepresentation;
@@ -21,13 +22,6 @@ class OmekaValue
             throw new LogicException('Only Items and ItemSets can be translated.');
         }
 
-        // Examples of input/output:
-        // en-gb -> en
-        // en-us -> en
-        // en    -> en
-        // cy-gb -> cy
-        $primaryLang = explode('-', $lang)[0] ?? $lang;
-
         $values = $representation->values()[$term]['values'];
         $fallback = $values[0];
 
@@ -37,8 +31,18 @@ class OmekaValue
             if ($value->lang() === $lang) {
                 return $value;
             }
-            // Sub-optimal, but partial match.
-            if (substr($value->lang(), 0, strlen($primaryLang)) === $primaryLang) {
+
+            $valueLanguage = Locale::parseLocale($value->lang())['language'];
+            // Check if they match each other, in either direction.
+            if (
+                $value->lang() &&
+                (
+                    Locale::filterMatches($value->lang(), $lang) ||
+                    Locale::filterMatches($lang, $value->lang()) ||
+                    // When checking es-ES vs. es-MX for example, we need to check just the language.
+                    Locale::filterMatches($lang, $valueLanguage)
+                )
+            ) {
                 $fallback = $value;
             }
         }
