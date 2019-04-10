@@ -2,6 +2,7 @@
 
 namespace i18n;
 
+use Digirati\OmekaShared\ModuleExtensions\ConfigurationFormAutoloader;
 use i18n\Controller\LanguageSelectionController;
 use i18n\Event\TransifexProjectListener;
 use i18n\Event\TranslatableResourceListener;
@@ -10,7 +11,9 @@ use i18n\Job\TransifexExportJob;
 use i18n\Job\TransifexItemExportJob;
 use i18n\Site\LocalizationListener;
 use Omeka\Module\AbstractModule;
+use Omeka\Settings\Settings;
 use Psr\Container\ContainerInterface;
+use Zend\Config\Config;
 use Zend\Config\Factory;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\ModuleManager\Feature\InitProviderInterface;
@@ -20,22 +23,28 @@ use Zend\Mvc\Controller\AbstractController;
 use Zend\Mvc\MvcEvent;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Session\Container;
-use Zend\View\Renderer\PhpRenderer;
-
-if (file_exists(__DIR__.'/vendor/autoload.php')) {
-    require_once __DIR__.'/vendor/autoload.php';
-}
 
 class Module extends AbstractModule implements InitProviderInterface
 {
+    use ConfigurationFormAutoloader;
+
     /**
      * Check whether the Omeka setting is toggled to enable localization features using Transifex.  This
      * flag prevents any services accidentally lazy loading anything from Transifex while `transifex.apikey` and
      * `transifex.secret_key` aren't present.
      *
+     * @param ContainerInterface $container
      * @return bool
      */
     public static function isFeatureFlagEnabled(ContainerInterface $container)
+    {
+        /** @var Settings $globalSettings */
+        $globalSettings = $container->get('Omeka\Settings');
+
+        return boolval($globalSettings->get('i18n_enabled', false));
+    }
+
+    public static function isTransifexEnabled(ContainerInterface $container)
     {
         $config = $container->get('Config');
         $transifexConfig = $config['transifex'] ?? [];
@@ -46,13 +55,17 @@ class Module extends AbstractModule implements InitProviderInterface
         }
 
         $globalSettings = $container->get('Omeka\Settings');
-        $localizationSettings = $globalSettings->get('i18n', []);
+        $transifexEnabled = boolval($globalSettings->get('i18n_transifex-enabled', false));
 
-        return isset($localizationSettings['enabled']) && true === (bool) $localizationSettings['enabled'];
+        return (
+            $transifexEnabled && self::isFeatureFlagEnabled($container)
+        );
     }
 
     /**
      * Attach a configuration listener to override the main site routing.
+     *
+     * @param ModuleManagerInterface $moduleManager
      */
     public function init(ModuleManagerInterface $moduleManager)
     {
@@ -62,12 +75,14 @@ class Module extends AbstractModule implements InitProviderInterface
 
     /**
      * Attach Omeka resource events that trigger translation exports.
+     *
+     * @param SharedEventManagerInterface $events
      */
     public function attachListeners(SharedEventManagerInterface $events)
     {
         $serviceLocator = $this->getServiceLocator();
 
-        if (!self::isFeatureFlagEnabled($serviceLocator)) {
+        if (!self::isTransifexEnabled($serviceLocator)) {
             return;
         }
 
@@ -89,6 +104,8 @@ class Module extends AbstractModule implements InitProviderInterface
     /**
      * Override the default routing configuration to add an option locale prefix parameter
      * to site-level routing.
+     *
+     * @param ModuleEvent $e
      */
     public function onMergeConfig(ModuleEvent $e)
     {
@@ -128,13 +145,14 @@ class Module extends AbstractModule implements InitProviderInterface
             $events->attach(MvcEvent::EVENT_ROUTE, $serviceLocator->get(LocalizationListener::class));
         }
 
-        $defaultLocale = 'en';
-        $sessionContainer = Container::getDefaultManager();
-        $session = $sessionContainer->getStorage();
-
-        if (null !== $session && isset($session['locale'])) {
-            $defaultLocale = $session['locale'];
-        }
+        // @todo this doesn't appear to be being used.
+//        $defaultLocale = 'en';
+//        $sessionContainer = Container::getDefaultManager();
+//        $session = $sessionContainer->getStorage();
+//
+//        if (null !== $session && isset($session['locale'])) {
+//            $defaultLocale = $session['locale'];
+//        }
 
         $acl = $this->getServiceLocator()->get('Omeka\Acl');
         $acl->allow(
@@ -145,54 +163,39 @@ class Module extends AbstractModule implements InitProviderInterface
         );
     }
 
-    public function getConfigForm(PhpRenderer $renderer)
-    {
-        $serviceLocator = $this->getServiceLocator();
-
-        $form = new LocalizationConfigForm(
-            'localization',
-            [
-                'enabled' => self::isFeatureFlagEnabled($serviceLocator),
-            ]
-        );
-
-        $form->init();
-
-        return $renderer->formCollection($form, false);
-    }
-
     public function handleConfigForm(AbstractController $controller)
     {
-        $globalSettings = $this->getServiceLocator()->get('Omeka\Settings');
+        /** @var Settings $settings */
+        $settings = $this->getServiceLocator()->get('Omeka\Settings');
+        /** @var LocalizationConfigForm $form */
+        $form = LocalizationConfigForm::fromPost($controller->params()->fromPost());
+        /** @var Config $formData */
         $config = $this->getServiceLocator()->get('Config');
-        $formData = $controller->params()->fromPost();
 
-        $localizationSettings = $globalSettings->get(
-            'i18n',
-            [
-                'enabled' => false,
-            ]
-        );
+        if (!$form->isValid()) {
+            $controller->messenger()->addErrors($form->getMessages());
+            return false;
+        }
 
-        if (true === boolval($formData['enable'])) {
+        $formData = $form->getData();
+
+        if (true === boolval($formData['transifex-enabled'])) {
             $transifex = $config['transifex'] ?: [];
             if (!isset($transifex['apikey']) || empty($transifex['apikey']) ||
                 !isset($transifex['secret_key']) || empty($transifex['secret_key'])) {
-                $controller->getPluginManager()->get('messenger')->addError(
-                    'Refusing to enable transifex, no `transifex.apikey` or '.
+                $controller->messenger()->addError(
+                    'Refusing to enable transifex, no `transifex.apikey` or ' .
                     '`transifex.secret_key` configuration option set'
                 );
-
-                return;
+                return false;
             }
-
-            $localizationSettings['enabled'] = true;
-            $globalSettings->set('i18n', $localizationSettings);
-
-            $this->installOrUpgrade($this->getServiceLocator());
-        } else {
-            $localizationSettings['enabled'] = false;
         }
+
+        if ($formData['transifex-enabled'] === true) {
+            $this->installOrUpgrade($this->getServiceLocator());
+        }
+
+        return $form->saveToSettings($settings);
     }
 
     public function install(ServiceLocatorInterface $serviceLocator)
@@ -202,7 +205,7 @@ class Module extends AbstractModule implements InitProviderInterface
 
     private function installOrUpgrade(ServiceLocatorInterface $services)
     {
-        if (self::isFeatureFlagEnabled($services)) {
+        if (self::isTransifexEnabled($services)) {
             $jobDispatcher = $services->get('Omeka\JobDispatcher');
             $jobDispatcher->dispatch(TransifexItemExportJob::class, []);
 
@@ -217,5 +220,10 @@ class Module extends AbstractModule implements InitProviderInterface
                 );
             }
         }
+    }
+
+    function getConfigFormClass(): string
+    {
+        return LocalizationConfigForm::class;
     }
 }
