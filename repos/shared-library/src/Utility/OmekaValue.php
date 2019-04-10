@@ -32,7 +32,7 @@ class OmekaValue
                 return $value;
             }
 
-            $valueLanguage = Locale::parseLocale($value->lang())['language'];
+            $valueLanguage = Locale::parseLocale($value->lang())['language'] ?? null;
             // Check if they match each other, in either direction.
             if (
                 $value->lang() &&
@@ -40,7 +40,7 @@ class OmekaValue
                     Locale::filterMatches($value->lang(), $lang) ||
                     Locale::filterMatches($lang, $value->lang()) ||
                     // When checking es-ES vs. es-MX for example, we need to check just the language.
-                    Locale::filterMatches($lang, $valueLanguage)
+                    ($valueLanguage && Locale::filterMatches($lang, $valueLanguage))
                 )
             ) {
                 $fallback = $value;
