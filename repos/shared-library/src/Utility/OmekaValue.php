@@ -26,7 +26,7 @@ class OmekaValue
             $concreteValue = $getLabel ? $value->property()->label() : $value->value();
 
             if ($value->lang()) {
-                return ['@language' => $value->lang(), '@value' => $concreteValue];
+                return ['@value' => $concreteValue, '@language' => $value->lang()];
             }
 
             return $concreteValue;
@@ -36,7 +36,7 @@ class OmekaValue
         return array_map(function (ValueRepresentation $value) use ($getLabel) {
             $concreteValue = $getLabel ? $value->property()->label() : $value->value();
             return $value->lang()
-                ? ['@language' => $value->lang(), '@value' => $concreteValue]
+                ? ['@value' => $concreteValue, '@language' => $value->lang()]
                 : $concreteValue;
         }, $values);
     }
