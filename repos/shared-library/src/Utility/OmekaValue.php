@@ -20,6 +20,12 @@ class OmekaValue
         if (!$representation instanceof ItemRepresentation && !$representation instanceof ItemSetRepresentation) {
             throw new LogicException('Only Items and ItemSets can be translated.');
         }
+
+        // Examples of input/output:
+        // en-gb -> en
+        // en-us -> en
+        // en    -> en
+        // cy-gb -> cy
         $primaryLang = explode('-', $lang)[0] ?? $lang;
 
         $values = $representation->values()[$term]['values'];
