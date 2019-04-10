@@ -1,8 +1,10 @@
 <?php
 
 use Digirati\OmekaShared\Factory\EventDispatcherFactory;
+use Digirati\OmekaShared\Factory\LocaleHelperFactory;
 use Digirati\OmekaShared\Factory\SettingsHelperFactory;
 use Digirati\OmekaShared\Factory\UrlHelperFactory;
+use Digirati\OmekaShared\Helper\LocaleHelper;
 use Digirati\OmekaShared\Helper\SettingsHelper;
 use Digirati\OmekaShared\Helper\UrlHelper;
 use IIIFStorage\Aggregate\AddImageService;
@@ -64,6 +66,7 @@ return [
         'factories' => [
             EventDispatcher::class => EventDispatcherFactory::class,
             UrlHelper::class => UrlHelperFactory::class,
+            LocaleHelper::class => LocaleHelperFactory::class,
             DereferencedManifest::class => function (ContainerInterface $c) {
                 return new DereferencedManifest(
                     new Client(),
