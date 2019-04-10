@@ -51,7 +51,7 @@ class FieldValue implements ValueInterface
         );
     }
 
-    public static function literal(string $term, string $label, string $value)
+    public static function literal(string $term, string $label, string $value, string $language = null)
     {
         return new static(
             $term,
@@ -60,7 +60,7 @@ class FieldValue implements ValueInterface
             null,
             $label,
             $value,
-            null
+            $language
         );
     }
 

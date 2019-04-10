@@ -99,8 +99,11 @@ return [
                 );
             },
 
-            SiteListener::class => function ($container) {
-                return new SiteListener();
+            SiteListener::class => function (ContainerInterface $container) {
+                return new SiteListener(
+                    $container->get(LocaleHelper::class),
+                    $container->get(UrlHelper::class)
+                );
             },
 
             ContextualTranslator::class => function ($container) {
