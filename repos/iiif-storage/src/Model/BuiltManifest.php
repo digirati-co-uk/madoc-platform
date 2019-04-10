@@ -4,6 +4,7 @@ namespace IIIFStorage\Model;
 
 class BuiltManifest
 {
+    use GetJsonWithStringLabel;
 
     /**
      * @var array
@@ -24,14 +25,24 @@ class BuiltManifest
      * @var int
      */
     private $perPage;
+    /**
+     * @var string
+     */
+    private $lang;
 
-    public function __construct(array $json, int $totalResults, int $page, int $perPage)
-    {
+    public function __construct(
+        array $json,
+        int $totalResults,
+        int $page,
+        int $perPage,
+        string $lang
+    ) {
 
         $this->json = $json;
         $this->totalResults = $totalResults;
         $this->page = $page;
         $this->perPage = $perPage;
+        $this->lang = $lang;
     }
 
     /**
@@ -64,6 +75,11 @@ class BuiltManifest
     public function getJson(): array
     {
         return $this->json;
+    }
+
+    public function getLang(): string
+    {
+        return $this->lang;
     }
 
 }

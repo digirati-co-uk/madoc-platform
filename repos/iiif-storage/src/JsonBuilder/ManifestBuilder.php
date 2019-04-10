@@ -3,6 +3,7 @@
 namespace IIIFStorage\JsonBuilder;
 
 use Digirati\OmekaShared\Helper\LocaleHelper;
+use Digirati\OmekaShared\Utility\OmekaValue;
 use IIIF\Model\Manifest;
 use IIIFStorage\Model\BuiltManifest;
 use IIIFStorage\Model\ManifestRepresentation;
@@ -58,7 +59,9 @@ class ManifestBuilder
             $page = 1;
         }
         $builtManifest = $this->build($manifest, $originalIds, $page, $perPage);
-        $manifestObject = Manifest::fromArray($builtManifest->getJson());
+        $manifestObject = Manifest::fromArray(
+            $builtManifest->getJsonWithStringLabel()
+        );
 
         return new ManifestRepresentation(
             $manifest,
@@ -92,7 +95,7 @@ class ManifestBuilder
                 '@id' => $json['@id'] . '/sequence',
                 '@type' => 'sc:Sequence',
                 'canvases' => array_map(function ($canvas) use ($originalIds, $page, $perPage) {
-                    return $canvas ? $this->canvasBuilder->build($canvas, $originalIds) : null;
+                    return $canvas ? $this->canvasBuilder->build($canvas, $originalIds)->getJson() : null;
                 }, $canvases['canvases']),
             ]
         ];
@@ -103,7 +106,8 @@ class ManifestBuilder
             $json,
             $canvases['totalResults'],
             $page,
-            $perPage
+            $perPage,
+            $this->getLang()
         );
     }
 

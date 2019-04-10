@@ -98,7 +98,7 @@ class ResourceController extends AbstractPsr7ActionController
         }
 
         // Item ID to canvas
-        return new JsonResponse($this->canvasBuilder->build($canvas, $originalId));
+        return new JsonResponse($this->canvasBuilder->build($canvas, $originalId)->getJson());
     }
 
     public function collectionAction()

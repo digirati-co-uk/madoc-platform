@@ -4,6 +4,7 @@ namespace IIIFStorage\JsonBuilder;
 
 use Digirati\OmekaShared\Helper\LocaleHelper;
 use IIIF\Model\Canvas;
+use IIIFStorage\Model\BuiltCanvas;
 use IIIFStorage\Model\CanvasRepresentation;
 use IIIFStorage\Utility\ApiRouter;
 use Omeka\Api\Representation\ItemRepresentation;
@@ -46,18 +47,18 @@ class CanvasBuilder
     public function buildResource(ItemRepresentation $canvas, bool $originalIds = false)
     {
         $json = $this->build($canvas, $originalIds);
-        $canvasObject = Canvas::fromArray($json);
+        $canvasObject = Canvas::fromArray($json->getJsonWithStringLabel());
 
         return new CanvasRepresentation(
             $canvas,
             $canvasObject,
-            $json
+            $json->getJson()
         );
     }
 
     private $buildCache = [];
 
-    public function build(ItemRepresentation $canvas, bool $originalIds = false): array
+    public function build(ItemRepresentation $canvas, bool $originalIds = false): BuiltCanvas
     {
         if (!isset($this->buildCache[$canvas->id()])) {
             $json = $this->extractSource($canvas);
@@ -117,8 +118,12 @@ class CanvasBuilder
                 ];
             }
 
-            $this->buildCache[$canvas->id()] = $this->aggregateMetadata($canvas, $json);
+            $this->buildCache[$canvas->id()] = new BuiltCanvas(
+                $this->aggregateMetadata($canvas, $json),
+                $this->getLang()
+            );
         }
+
         return $this->buildCache[$canvas->id()];
     }
 

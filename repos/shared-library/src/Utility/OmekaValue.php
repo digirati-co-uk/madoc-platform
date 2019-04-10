@@ -16,6 +16,31 @@ class OmekaValue
     {
     }
 
+    public static function toRdf($representation, $term, $getLabel = false)
+    {
+        /** @var ValueRepresentation[] $values */
+        $values = $representation->values()[$term]['values'];
+
+        if (count($values) === 1) {
+            $value = $values[0];
+            $concreteValue = $getLabel ? $value->property()->label() : $value->value();
+
+            if ($value->lang()) {
+                return ['@language' => $value->lang(), '@value' => $concreteValue];
+            }
+
+            return $concreteValue;
+        }
+
+
+        return array_map(function (ValueRepresentation $value) use ($getLabel) {
+            $concreteValue = $getLabel ? $value->property()->label() : $value->value();
+            return $value->lang()
+                ? ['@language' => $value->lang(), '@value' => $concreteValue]
+                : $concreteValue;
+        }, $values);
+    }
+
     public static function translateValue($representation, $term, $lang = '')
     {
         if (!$representation instanceof ItemRepresentation && !$representation instanceof ItemSetRepresentation) {
@@ -31,24 +56,33 @@ class OmekaValue
             if ($value->lang() === $lang) {
                 return $value;
             }
-
-            $valueLanguage = Locale::parseLocale($value->lang())['language'] ?? null;
             // Check if they match each other, in either direction.
-            if (
-                $value->lang() &&
-                (
-                    Locale::filterMatches($value->lang(), $lang) ||
-                    Locale::filterMatches($lang, $value->lang()) ||
-                    // When checking es-ES vs. es-MX for example, we need to check just the language.
-                    ($valueLanguage && Locale::filterMatches($lang, $valueLanguage))
-                )
-            ) {
+            if (self::langMatches($value->lang(), $lang)) {
                 $fallback = $value;
             }
         }
 
         // Fallback found, then return that.
         return $fallback;
+    }
+
+    static public function langMatches($langA, $langB)
+    {
+        if ($langA === $langB) {
+            return true;
+        }
+        $valueLanguage = Locale::parseLocale($langA)['language'] ?? null;
+
+        // Check if they match each other, in either direction.
+        return (
+            $langA &&
+            (
+                Locale::filterMatches($langA, $langB) ||
+                Locale::filterMatches($langB, $langA) ||
+                // When checking es-ES vs. es-MX for example, we need to check just the language.
+                ($valueLanguage && Locale::filterMatches($langB, $valueLanguage))
+            )
+        );
     }
 
 }

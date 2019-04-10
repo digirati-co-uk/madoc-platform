@@ -70,11 +70,21 @@ class DereferencedManifest implements AggregateInterface
                 }
 
                 $title = $input->getValue('dcterms:title');
-                if (!$title || empty($title) || current($title)->getValue() === '') {
-                    $label = $this->translate($manifest['label'] ?? '');
+                if (!$title || empty($title) || trim(current($title)->getValue()) === '') {
+                    $label = $manifest['label'] ?? null;
                     if ($label) {
-                        $input->addField(
-                            FieldValue::literal('dcterms:title', 'Title', $label)
+                        $input->addFields(
+                            FieldValue::literalsFromRdf('dcterms:title', 'Title', $label)
+                        );
+                    }
+                }
+
+                $title = $input->getValue('dcterms:description');
+                if (!$title || empty($title) || trim(current($title)->getValue()) === '') {
+                    $label = $manifest['description'] ?? null;
+                    if ($label) {
+                        $input->addFields(
+                            FieldValue::literalsFromRdf('dcterms:description', 'Summary', $label)
                         );
                     }
                 }
@@ -146,7 +156,7 @@ class DereferencedManifest implements AggregateInterface
                     )
                     ->getBody();
 
-                $this->manifestCache[$url] = (string) $body;
+                $this->manifestCache[$url] = (string)$body;
             } catch (\Throwable $e) {
                 if ($retry > 0) {
                     return $this->getManifest($url, $retry - 1);
@@ -157,7 +167,7 @@ class DereferencedManifest implements AggregateInterface
         return $this->manifestCache[$url];
     }
 
-     public function reset()
+    public function reset()
     {
         $this->manifestRequests = [];
     }

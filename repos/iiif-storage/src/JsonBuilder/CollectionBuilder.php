@@ -76,7 +76,7 @@ class CollectionBuilder
         $json = $this->build($omekaCollection, $originalIds, $page, $perPage);
         // Build collection.
         $collection = ResourceFactory::createCollection(
-            $json->getJson(),
+            $json->getJsonWithStringLabel(),
             function (string $url, Manifest $manifest) use ($originalIds, $numberOfCanvases) {
                 $metadata = $manifest->getSource();
                 if (!isset($metadata['o:id'])) {
@@ -89,7 +89,7 @@ class CollectionBuilder
                     $originalIds,
                     0,
                     $numberOfCanvases
-                )->getJson();
+                )->getJsonWithStringLabel();
             }
         );
 
@@ -138,7 +138,8 @@ class CollectionBuilder
             $this->aggregateMetadata($collection, $json),
             $manifestOmekaMapping->getTotalResults(),
             $page,
-            $perPage
+            $perPage,
+            $this->getLang()
         );
     }
 
