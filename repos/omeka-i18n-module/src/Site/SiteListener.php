@@ -110,10 +110,6 @@ class SiteListener extends AbstractListenerAggregate
         $this->localeHelper->setLocale($locale);
         $session['locale'] = $locale;
 
-//        /** @var TreeRouteStack $router */
-//        $router = $event->getRouter();
-//        $router->setDefaultParam(LocalizationListener::LOCALE_PARAM, $locale);
-
         return true;
     }
 
