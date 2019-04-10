@@ -79,12 +79,22 @@ class DereferencedManifest implements AggregateInterface
                     }
                 }
 
-                $title = $input->getValue('dcterms:description');
-                if (!$title || empty($title) || trim(current($title)->getValue()) === '') {
-                    $label = $manifest['description'] ?? null;
-                    if ($label) {
+                $description = $input->getValue('dcterms:description');
+                if (!$description || empty($description) || trim(current($description)->getValue()) === '') {
+                    $summary = $manifest['description'] ?? null;
+                    if ($summary) {
                         $input->addFields(
-                            FieldValue::literalsFromRdf('dcterms:description', 'Summary', $label)
+                            FieldValue::literalsFromRdf('dcterms:description', 'Summary', $summary)
+                        );
+                    }
+                }
+
+                $attribution = $input->getValue('sc:attributionLabel');
+                if (!$attribution || empty($attribution) || trim(current($attribution)->getValue()) === '') {
+                    $attribution = $manifest['attribution'] ?? null;
+                    if ($attribution) {
+                        $input->addFields(
+                            FieldValue::literalsFromRdf('sc:attributionLabel', 'Attribution', $attribution)
                         );
                     }
                 }

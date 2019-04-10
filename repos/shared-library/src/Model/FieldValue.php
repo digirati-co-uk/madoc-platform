@@ -53,6 +53,10 @@ class FieldValue implements ValueInterface
 
     public static function literalsFromRdf(string $term, string $label, $rdf)
     {
+        if (!$rdf) {
+            return [];
+        }
+
         if (is_string($rdf)) {
             return [self::literal($term, $label, $rdf)];
         }

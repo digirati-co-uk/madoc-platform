@@ -177,6 +177,7 @@ class CollectionBuilder
         return [
             'dcterms:title' => 'label',
             'dcterms:description' => 'description',
+            'sc:attributionLabel' => 'attribution',
         ];
     }
 

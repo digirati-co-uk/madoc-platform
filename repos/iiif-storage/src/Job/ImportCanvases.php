@@ -4,6 +4,7 @@ namespace IIIFStorage\Job;
 
 use Digirati\OmekaShared\Model\FieldValue;
 use Digirati\OmekaShared\Model\ItemRequest;
+use Digirati\OmekaShared\Utility\OmekaValue;
 use IIIFStorage\Repository\ManifestRepository;
 use Digirati\OmekaShared\Utility\PropertyIdSaturator;
 use IIIFStorage\Utility\CheapOmekaRelationshipRequest;
@@ -54,15 +55,17 @@ class ImportCanvases extends AbstractJob implements JobInterface
 
                 $item = ItemRequest::fromScratch();
                 $saturator->addResourceTemplateByName('IIIF Canvas', $item);
-                // @todo get international string from label (P2 and P3)
-                $item->addField(
-                    FieldValue::literal('dcterms:title', 'Label', $canvas['label'] ?? 'Untitled canvas')
+                $item->addFields(
+                    FieldValue::literalsFromRdf('dcterms:title', 'Label', $canvas['label'] ?? 'Untitled canvas')
                 );
                 $item->addField(
                     FieldValue::url('dcterms:identifier', 'Canvas ID', $id)
                 );
                 $item->addField(
                     FieldValue::literal('dcterms:source', 'Source', json_encode($canvas, JSON_UNESCAPED_SLASHES))
+                );
+                $item->addFields(
+                    FieldValue::literalsFromRdf('sc:attributionLabel', 'Attribution', $manifest['attribution'] ?? null)
                 );
 
                 $manifestId = null;

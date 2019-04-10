@@ -1,6 +1,7 @@
 <?php
 
 use Digirati\OmekaShared\Factory\EventDispatcherFactory;
+use Digirati\OmekaShared\Factory\LocaleFromRdfFactory;
 use Digirati\OmekaShared\Factory\LocaleHelperFactory;
 use Digirati\OmekaShared\Factory\SettingsHelperFactory;
 use Digirati\OmekaShared\Factory\UrlHelperFactory;
@@ -371,7 +372,8 @@ return [
         'factories' => [
             'siteSetting' => function (ContainerInterface $c) {
                 return $c->get(SettingsHelper::class);
-            }
+            },
+            'localeFromRdf' => LocaleFromRdfFactory::class,
         ]
     ],
     'media_ingesters' => [
