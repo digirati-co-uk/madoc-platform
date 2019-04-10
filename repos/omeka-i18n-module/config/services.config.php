@@ -12,6 +12,10 @@ namespace i18n;
  * common library pulled in. Factory|Event
  */
 
+use Digirati\OmekaShared\Factory\LocaleHelperFactory;
+use Digirati\OmekaShared\Factory\UrlHelperFactory;
+use Digirati\OmekaShared\Helper\LocaleHelper;
+use Digirati\OmekaShared\Helper\UrlHelper;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\ChainCache;
 use Doctrine\Common\Cache\FilesystemCache;
@@ -37,11 +41,15 @@ use i18n\Translator\DelegateTranslatorFactory;
 use Kevinrob\GuzzleCache\CacheMiddleware;
 use Kevinrob\GuzzleCache\Storage\DoctrineCacheStorage;
 use Kevinrob\GuzzleCache\Strategy\PublicCacheStrategy;
+use Psr\Container\ContainerInterface;
 use Zend\I18n\Translator\TranslatorInterface;
 
 return [
     'service_manager' => [
         'factories' => [
+            LocaleHelper::class => LocaleHelperFactory::class,
+            UrlHelper::class => UrlHelperFactory::class,
+
             'transifex.projects' => TransifexObjectFactory::class,
             'transifex.resources' => TransifexObjectFactory::class,
             'transifex.translations' => TransifexObjectFactory::class,

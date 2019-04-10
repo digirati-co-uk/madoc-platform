@@ -2,6 +2,7 @@
 
 namespace IIIFStorage\JsonBuilder;
 
+use Digirati\OmekaShared\Helper\LocaleHelper;
 use IIIF\Model\Canvas;
 use IIIFStorage\Model\CanvasRepresentation;
 use IIIFStorage\Utility\ApiRouter;
@@ -27,11 +28,19 @@ class CanvasBuilder
      * @var ImageServiceBuilder
      */
     private $imageServiceBuilder;
+    /**
+     * @var LocaleHelper
+     */
+    private $localeHelper;
 
-    public function __construct(ApiRouter $router, ImageServiceBuilder $imageServiceBuilder)
-    {
+    public function __construct(
+        ApiRouter $router,
+        ImageServiceBuilder $imageServiceBuilder,
+        LocaleHelper $localeHelper
+    ) {
         $this->router = $router;
         $this->imageServiceBuilder = $imageServiceBuilder;
+        $this->localeHelper = $localeHelper;
     }
 
     public function buildResource(ItemRepresentation $canvas, bool $originalIds = false)
@@ -145,5 +154,10 @@ class CanvasBuilder
             'dcterms:title' => 'label',
             'dcterms:description' => 'description',
         ];
+    }
+
+    function getLang(): string
+    {
+        return $this->localeHelper->getLocale();
     }
 }

@@ -2,14 +2,13 @@
 
 namespace IIIFStorage\JsonBuilder;
 
+use Digirati\OmekaShared\Helper\LocaleHelper;
 use IIIF\Model\Manifest;
 use IIIFStorage\Model\BuiltManifest;
 use IIIFStorage\Model\ManifestRepresentation;
 use IIIFStorage\Repository\ManifestRepository;
 use IIIFStorage\Utility\ApiRouter;
-use IIIFStorage\Utility\CheapOmekaRelationshipRequest;
 use Omeka\Api\Representation\ItemRepresentation;
-use Omeka\Api\Representation\ValueRepresentation;
 
 class ManifestBuilder
 {
@@ -32,16 +31,21 @@ class ManifestBuilder
      * @var CanvasBuilder
      */
     private $canvasBuilder;
+    /**
+     * @var LocaleHelper
+     */
+    private $locale;
 
     public function __construct(
         ApiRouter $router,
         ManifestRepository $manifest,
-        CanvasBuilder $canvasBuilder
+        CanvasBuilder $canvasBuilder,
+        LocaleHelper $locale
     ) {
-
         $this->router = $router;
         $this->manifest = $manifest;
         $this->canvasBuilder = $canvasBuilder;
+        $this->locale = $locale;
     }
 
     public function buildResource(
@@ -119,5 +123,10 @@ class ManifestBuilder
             'dcterms:title' => 'label',
             'dcterms:description' => 'description',
         ];
+    }
+
+    function getLang(): string
+    {
+        return $this->locale->getLocale();
     }
 }

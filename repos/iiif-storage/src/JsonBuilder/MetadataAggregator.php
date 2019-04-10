@@ -2,6 +2,7 @@
 
 namespace IIIFStorage\JsonBuilder;
 
+use Digirati\OmekaShared\Utility\OmekaValue;
 use LogicException;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Api\Representation\ItemSetRepresentation;
@@ -22,7 +23,7 @@ trait MetadataAggregator
             }
             /** @var ValueRepresentation $value */
             $mappingField = $mapping[$key] ?? null;
-            $value = $representation->value($key);
+            $value = OmekaValue::translateValue($representation, $key, $this->getLang());
             if ($mappingField) {
                 $json[$mappingField] = $value->value();
             } else {
@@ -46,6 +47,8 @@ trait MetadataAggregator
         }
         return $json;
     }
+
+    abstract function getLang(): string;
 
     abstract function getFunctionalFields(): array;
 

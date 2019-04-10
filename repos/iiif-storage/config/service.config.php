@@ -186,13 +186,18 @@ return [
                 );
             },
             CanvasBuilder::class => function (ContainerInterface $c) {
-                return new CanvasBuilder($c->get(ApiRouter::class), $c->get(ImageServiceBuilder::class));
+                return new CanvasBuilder(
+                    $c->get(ApiRouter::class),
+                    $c->get(ImageServiceBuilder::class),
+                    $c->get(LocaleHelper::class)
+                );
             },
             ManifestBuilder::class => function (ContainerInterface $c) {
                 return new ManifestBuilder(
                     $c->get(ApiRouter::class),
                     $c->get(ManifestRepository::class),
-                    $c->get(CanvasBuilder::class)
+                    $c->get(CanvasBuilder::class),
+                    $c->get(LocaleHelper::class)
                 );
             },
             CollectionBuilder::class => function (ContainerInterface $c) {
@@ -200,7 +205,8 @@ return [
                     $c->get(ApiRouter::class),
                     $c->get(ManifestBuilder::class),
                     $c->get(ManifestRepository::class),
-                    $c->get(CollectionRepository::class)
+                    $c->get(CollectionRepository::class),
+                    $c->get(LocaleHelper::class)
                 );
             },
             ImageServiceBuilder::class => function (ContainerInterface $c) {
