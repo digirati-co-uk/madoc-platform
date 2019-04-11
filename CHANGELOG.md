@@ -21,6 +21,11 @@ The internationalisation release.
     - Transifex integration, with syncing
     - Imported IIIF resources will import multi-lingual fields into Omeka
     - Configurable language switcher page block
+- Added various features to make our modules more translatable
+    - Added locale fields to page blocks / media that contain free-text
+    - Added attribution to list of IIIF fields imported into Omekas CMS - with importing of different locals
+    - IIIF JSON-LD in Omeka will show all available languages in the JSON
+    - Replaced build-in omeka HTML media and page block with additional locale setting 
 - Added files and database volumes to default docker-compose
 - Added new docker compose specifically for running on CI
 - Added new `ci-start` and `ci-stop` commands to madoc cli
@@ -30,6 +35,8 @@ The internationalisation release.
 - Fixed default mailer configuration, so you can send emails without configuration SMTP
 - Fixed bug where flagging may cause an error for some users (permissions)
 - Fixed icon spacing on page actions on canvas page
+- Fixed bug in container with latest annotated images media - would before throw error
+- Fixed bug in container with top contributors media - would also throw error 
 
 ## [1.0.1](https://github.com/digirati-co-uk/madoc-platform/compare/v1.0.0...v1.0.1)  - 2019-03-27
 
