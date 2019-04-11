@@ -1,7 +1,13 @@
-# 1.1.0
+# Changelog
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v1.0.1...HEAD)
 The internationalisation release.
 
-### Features
+### Added
 - Added new module (not installed by default) for internationalisation
 - Added authentication check in Elucidate proxy to stop logged out users being able to create, update or delete annotations.
 - New IIIF Storage configuration
@@ -22,21 +28,23 @@ The internationalisation release.
 - Fixed bug where flagging may cause an error for some users (permissions)
 - Fixed icon spacing on page actions on canvas page
 
-### Misc
+### Added
 - Added files and database volumes to default docker-compose
 - Added new docker compose specifically for running on CI
 - Added new `ci-start` and `ci-stop` commands to madoc cli
 
-# 1.0.1
+## [1.0.1](https://github.com/digirati-co-uk/madoc-platform/compare/v1.0.0...v1.0.1)  - 2019-03-27
 
-### Features
+### Added
 - Exposed configuration for showing both logo and title on site (theme settings)
 
 ### Fixes
-- Update [Annotation Studio](https://annotation-studio.digirati.com) to v1.0.0-rc.26
 - Fixed bug where collection was not able to be set in CrowdSourcingBanner media item
-- Small CSS fixes when adding both an image logo and sub-text
+- Fixed small CSS fixes when adding both an image logo and sub-text
 
-# 1.0.0
+### Changes
+- Update [Annotation Studio](https://annotation-studio.digirati.com) to v1.0.0-rc.26
+
+## [1.0.0](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v1.0.0) - 2019-03-27
 First stable release of Madoc Platform!
 Check out the [documentation](https://madoc.netlify.com) to see it's features.
