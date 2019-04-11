@@ -66,8 +66,11 @@ class OmekaValue
         return $fallback;
     }
 
-    static public function langMatches($langA, $langB)
+    public static function langMatches($langA, $langB)
     {
+        if (!$langA || !$langB) {
+            return false;
+        }
         if ($langA === $langB) {
             return true;
         }
@@ -75,13 +78,10 @@ class OmekaValue
 
         // Check if they match each other, in either direction.
         return (
-            $langA &&
-            (
-                Locale::filterMatches($langA, $langB) ||
-                Locale::filterMatches($langB, $langA) ||
-                // When checking es-ES vs. es-MX for example, we need to check just the language.
-                ($valueLanguage && Locale::filterMatches($langB, $valueLanguage))
-            )
+            Locale::filterMatches($langA, $langB) ||
+            Locale::filterMatches($langB, $langA) ||
+            // When checking es-ES vs. es-MX for example, we need to check just the language.
+            ($valueLanguage && Locale::filterMatches($langB, $valueLanguage))
         );
     }
 

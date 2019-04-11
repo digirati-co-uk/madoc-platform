@@ -68,15 +68,13 @@ class LocalizationListener
             $locale = 'en';
         }
 
-        $isMultiLingual = $isOnSite ? boolval($this->siteSettings->get('i18n-multi-lingual-site')) : false;
+        $isMultilingual = $isOnSite ? boolval($this->siteSettings->get('i18n-multi-lingual-site')) : false;
         /** @var TreeRouteStack $router */
         $router = $event->getRouter();
 
-        if ($isMultiLingual && $routerLocale) {
-            $router->setDefaultParam(LocalizationListener::LOCALE_PARAM, $locale);
-        } else {
-            $router->setDefaultParam(LocalizationListener::LOCALE_PARAM, null);
-        }
+        $uriLocale = ($isMultilingual && $routerLocale) ? $locale : null;
+
+        $router->setDefaultParam(LocalizationListener::LOCALE_PARAM, $uriLocale);
 
         if (extension_loaded('intl')) {
             Locale::setDefault($locale);
