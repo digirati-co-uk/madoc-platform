@@ -19,12 +19,9 @@ class SkippableSegment extends Segment
      * @var array map of skippable segments
      */
     protected $skippable = array();
+
     /**
-     * Create a new regex route.
-     *
-     * @param string $route
-     * @param array $constraints
-     * @param array $defaults
+     * {@inheritdoc}
      */
     public function __construct($route, array $constraints = array(), array $defaults = array(), array $skippable = array())
     {
@@ -33,13 +30,9 @@ class SkippableSegment extends Segment
         $this->parts = $this->parseRouteDefinition($route);
         $this->regex = $this->buildRegex($this->parts, $constraints);
     }
+
     /**
-     * factory(): defined by RouteInterface interface.
-     *
-     * @see \Zend\Mvc\Router\RouteInterface::factory()
-     * @param array|Traversable $options
-     * @return Segment
-     * @throws Exception\InvalidArgumentException
+     * {@inheritdoc}
      */
     public static function factory($options = array())
     {
@@ -62,17 +55,9 @@ class SkippableSegment extends Segment
         }
         return new static($options['route'], $options['constraints'], $options['defaults'], $options['skippable']);
     }
+
     /**
-     * Build a path.
-     *
-     * @param array $parts
-     * @param array $mergedParams
-     * @param bool $isOptional
-     * @param bool $hasChild
-     * @param array $options
-     * @return string
-     * @throws Exception\InvalidArgumentException
-     * @throws Exception\RuntimeException
+     * {@inheritdoc}
      */
     protected function buildPath(array $parts, array $mergedParams, $isOptional, $hasChild, array $options)
     {
