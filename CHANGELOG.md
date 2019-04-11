@@ -8,14 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 The internationalisation release.
 
 ### Added
-- Added new module (not installed by default) for internationalisation
 - Added authentication check in Elucidate proxy to stop logged out users being able to create, update or delete annotations.
 - Added IIIF Storage configuration
     - Collections per page (collection list)
     - Collection manifests per page (collection page)
     - Manifests per page (manifest list)
     - Canvases per page (manifest page)
-- Added internationalisation module
+- Added internationalisation module (not installed by default)
     - Multi-lingual sites configurable per page
     - Translated resources in Omeka will show on sites in correct locale
     - Transifex integration, with syncing
