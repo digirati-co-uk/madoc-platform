@@ -4,12 +4,13 @@
 namespace IIIFStorage\Media;
 
 
+use Locale;
 use Omeka\Api\Representation\MediaRepresentation;
 use Omeka\Api\Request;
 use Omeka\Entity\Media;
 use Omeka\Media\Ingester\MutableIngesterInterface;
-use Omeka\Site\BlockLayout\BlockLayoutInterface;
 use Omeka\Stdlib\ErrorStore;
+use ResourceBundle;
 use Zend\Form\Element;
 use Zend\View\Renderer\PhpRenderer;
 
@@ -21,8 +22,46 @@ abstract class AbstractIngester implements MutableIngesterInterface
      * @param bool $isInitial
      * @param ErrorStore $errorStore
      */
-    public function saveFormValues(Media $media, array $formValues, bool $isInitial, ErrorStore $errorStore) {
+    public function saveFormValues(Media $media, array $formValues, bool $isInitial, ErrorStore $errorStore)
+    {
+        $this->prepareData($formValues, $errorStore);
+
         $media->setData($formValues);
+    }
+
+    public function prepareData(array &$data, ErrorStore $errorStore)
+    {
+    }
+
+    static $LOCALES = null;
+
+    /**
+     * @return Element|\Zend\Form\ElementInterface
+     */
+    public function getLocaleField()
+    {
+        if (!self::$LOCALES) {
+            $allLocals = ResourceBundle::getLocales('');
+            self::$LOCALES = array_reduce($allLocals, function ($acc, $code) {
+                $acc[$code] = Locale::getDisplayName($code, $code) . ' (' . $code . ')';
+                return $acc;
+            }, ['default' => 'Default']);
+        }
+
+        return (new Element\Select('locale'))
+            ->setValueOptions(self::$LOCALES)
+            ->setOptions([
+                'label' => 'Locale',
+                'info' => 'If you want this block to be associated with a particular ' .
+                    'locale you can select one here. By default this will show the ' .
+                    'block to users with the selected locale. Remember to add different ' .
+                    'locales you may have on the site, or the block may not be visible to users. ' .
+                    'If "Default" is selected, this block will show on all pages.'
+            ])
+            ->setAttributes([
+                'id' => 'locale',
+                'class' => 'chosen-select',
+            ]);
     }
 
     /**
@@ -54,7 +93,7 @@ abstract class AbstractIngester implements MutableIngesterInterface
         foreach ($formElements as $formElement) {
             $name = $formElement->getName();
             if (strpos($name, $fieldset) !== 0) {
-                $formElement->setName($fieldset. '[' . $name. ']');
+                $formElement->setName($fieldset . '[' . $name . ']');
             }
         }
         return $formElements;

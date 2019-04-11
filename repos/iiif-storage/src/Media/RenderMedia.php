@@ -4,6 +4,7 @@
 namespace IIIFStorage\Media;
 
 
+use Digirati\OmekaShared\Utility\OmekaValue;
 use Omeka\Api\Representation\MediaRepresentation;
 use Zend\View\Renderer\PhpRenderer;
 
@@ -17,7 +18,22 @@ trait RenderMedia
         array $options = []
     ) {
         $this->currentMedia = $media;
-        return $this->renderFromData($view, $media->mediaData(), $options);
+        $data = $media->mediaData();
+
+        if ($this instanceof LocalisedMedia) {
+            $locale = $data['locale'] ?? null;
+            $pageLocale = $this->getLang();
+            if (
+                $pageLocale &&
+                $locale &&
+                $locale !== 'default' &&
+                OmekaValue::langMatches($locale, $pageLocale) === false
+            ) {
+                return '';
+            }
+        }
+
+        return $this->renderFromData($view, $data, $options);
     }
 
     public function getCurrentMedia()

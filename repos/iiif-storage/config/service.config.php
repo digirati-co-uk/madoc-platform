@@ -35,6 +35,8 @@ use IIIFStorage\Media\CollectionSnippetIngester;
 use IIIFStorage\Media\CollectionSnippetRenderer;
 use IIIFStorage\Media\CrowdSourcingBannerIngester;
 use IIIFStorage\Media\CrowdSourcingBannerRenderer;
+use IIIFStorage\Media\HtmlIngester;
+use IIIFStorage\Media\HtmlRenderer;
 use IIIFStorage\Media\LatestAnnotatedImagesIngester;
 use IIIFStorage\Media\LatestAnnotatedImagesRenderer;
 use IIIFStorage\Media\ManifestListIngester;
@@ -60,7 +62,6 @@ use IIIFStorage\Media\IIIFImageIngester;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Zend\Http\Client;
-use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
 
 return [
     'service_manager' => [
@@ -135,16 +136,16 @@ return [
             AddImageService::class => function (ContainerInterface $c) {
                 return new AddImageService($c->get('Omeka\Logger'));
             },
-            DisableJsonField::class => function (ContainerInterface $c) {
+            DisableJsonField::class => function () {
                 return new DisableJsonField();
             },
             ChooseManifestTemplate::class => function (ContainerInterface $c) {
                 return new ChooseManifestTemplate($c->get(PropertyIdSaturator::class));
             },
-            HideManifestCollectionJson::class => function (ContainerInterface $c) {
+            HideManifestCollectionJson::class => function () {
                 return new HideManifestCollectionJson();
             },
-            HideCanvasJson::class => function (ContainerInterface $c) {
+            HideCanvasJson::class => function () {
                 return new HideCanvasJson();
             },
             ManifestRepository::class => function (ContainerInterface $c) {
@@ -218,10 +219,10 @@ return [
             BannerImageRenderer::class => function (ContainerInterface $c) {
                 return new BannerImageRenderer($c->get('ZfcTwig\View\TwigRenderer'));
             },
-            BannerImageIngester::class => function (ContainerInterface $c) {
+            BannerImageIngester::class => function () {
                 return new BannerImageIngester();
             },
-            CanvasListIngester::class => function (ContainerInterface $c) {
+            CanvasListIngester::class => function () {
                 return new CanvasListIngester();
             },
             CanvasSnippetIngester::class => function (ContainerInterface $c) {
@@ -231,7 +232,7 @@ return [
                     $c->get(CheapOmekaRelationshipRequest::class)
                 );
             },
-            CollectionListIngester::class => function (ContainerInterface $c) {
+            CollectionListIngester::class => function () {
                 return new CollectionListIngester();
             },
             CollectionSnippetIngester::class => function (ContainerInterface $c) {
@@ -254,13 +255,13 @@ return [
                     (int) $settings->get('iiif-storage_thumbnail-size', 256)
                 );
             },
-            LatestAnnotatedImagesIngester::class => function (ContainerInterface $c) {
+            LatestAnnotatedImagesIngester::class => function () {
                 return new LatestAnnotatedImagesIngester();
             },
-            TopContributorsIngester::class => function (ContainerInterface $c) {
+            TopContributorsIngester::class => function () {
                 return new TopContributorsIngester();
             },
-            ManifestListIngester::class => function (ContainerInterface $c) {
+            ManifestListIngester::class => function () {
                 return new ManifestListIngester();
             },
             ManifestSnippetIngester::class => function (ContainerInterface $c) {
@@ -269,8 +270,11 @@ return [
                     $c->get(PropertyIdSaturator::class)
                 );
             },
-            MetadataIngester::class => function (ContainerInterface $c) {
+            MetadataIngester::class => function () {
                 return new MetadataIngester();
+            },
+            HtmlIngester::class => function (ContainerInterface $c) {
+                return new HtmlIngester($c->get('Omeka\HtmlPurifier'));
             },
             ImageSourceRenderer::class => function (ContainerInterface $c) {
                 return new ImageSourceRenderer(
@@ -321,7 +325,8 @@ return [
                 return new CrowdSourcingBannerRenderer(
                     $c->get('ZfcTwig\View\TwigRenderer'),
                     $c->get('Omeka\ApiManager'),
-                    $c->get(Router::class)
+                    $c->get(Router::class),
+                    $c->get(LocaleHelper::class)
                 );
             },
             LatestAnnotatedImagesRenderer::class => function (ContainerInterface $c) {
@@ -330,14 +335,16 @@ return [
                     $c->get('Omeka\Connection'),
                     $c->get(CanvasRepository::class),
                     $c->get(CanvasBuilder::class),
-                    $c->get(Router::class)
+                    $c->get(Router::class),
+                    $c->get(LocaleHelper::class)
                 );
             },
             TopContributorsRenderer::class => function (ContainerInterface $c) {
                 return new TopContributorsRenderer(
                     $c->get('ZfcTwig\View\TwigRenderer'),
                     $c->get('Omeka\Connection'),
-                    $c->get(Router::class)
+                    $c->get(Router::class),
+                    $c->get(LocaleHelper::class)
                 );
             },
             ManifestListRenderer::class => function (ContainerInterface $c) {
@@ -365,6 +372,10 @@ return [
                     $c->get(CollectionBuilder::class)
                 );
             },
+            HtmlRenderer::class => function (ContainerInterface $c) {
+                return new HtmlRenderer($c->get(LocaleHelper::class));
+            },
+
             SettingsHelper::class => SettingsHelperFactory::class,
         ]
     ],
@@ -377,6 +388,9 @@ return [
         ]
     ],
     'media_ingesters' => [
+        'invokables' => [
+            'html' => null,
+        ],
         'factories' => [
             'crowd-sourcing-banner' => function (ContainerInterface $c) {
                 return $c->get(CrowdSourcingBannerIngester::class);
@@ -414,11 +428,15 @@ return [
             'top-contributors' => function (ContainerInterface $c) {
                 return $c->get(TopContributorsIngester::class);
             },
+            'html' => function (ContainerInterface $c) {
+                return $c->get(HtmlIngester::class);
+            },
         ],
     ],
     'media_renderers' => [
         'invokables' => [
             'iiif' => null,
+            'html' => null,
         ],
         'factories' => [
             'crowd-sourcing-banner' => function (ContainerInterface $c) {
@@ -461,10 +479,13 @@ return [
                 return $c->get(MetadataRenderer::class);
             },
             'latest-annotated-images' => function (ContainerInterface $c) {
-                return $c->get(LatestAnnotatedImagesIngester::class);
+                return $c->get(LatestAnnotatedImagesRenderer::class);
             },
             'top-contributors' => function (ContainerInterface $c) {
-                return $c->get(TopContributorsIngester::class);
+                return $c->get(TopContributorsRenderer::class);
+            },
+            'html' => function (ContainerInterface $c) {
+                return $c->get(HtmlRenderer::class);
             },
         ],
     ],
@@ -473,61 +494,78 @@ return [
             'crowd-sourcing-banner' => function (ContainerInterface $c) {
                 return new PageBlockMediaAdapter(
                     $c->get(CrowdSourcingBannerIngester::class),
-                    $c->get(CrowdSourcingBannerRenderer::class)
+                    $c->get(CrowdSourcingBannerRenderer::class),
+                    $c->get(LocaleHelper::class)
                 );
             },
             'iiif-banner-image' => function (ContainerInterface $c) {
                 return new PageBlockMediaAdapter(
                     $c->get(BannerImageIngester::class),
-                    $c->get(BannerImageRenderer::class)
+                    $c->get(BannerImageRenderer::class),
+                    $c->get(LocaleHelper::class)
                 );
             },
             'iiif-canvas-list' => function (ContainerInterface $c) {
                 return new PageBlockMediaAdapter(
                     $c->get(CanvasListIngester::class),
-                    $c->get(CanvasListRenderer::class)
+                    $c->get(CanvasListRenderer::class),
+                    $c->get(LocaleHelper::class)
                 );
             },
             'iiif-canvas-snippet' => function (ContainerInterface $c) {
                 return new PageBlockMediaAdapter(
                     $c->get(CanvasSnippetIngester::class),
-                    $c->get(CanvasSnippetRenderer::class)
+                    $c->get(CanvasSnippetRenderer::class),
+                    $c->get(LocaleHelper::class)
                 );
             },
             'iiif-collection-list' => function (ContainerInterface $c) {
                 return new PageBlockMediaAdapter(
                     $c->get(CollectionListIngester::class),
-                    $c->get(CollectionListRenderer::class)
+                    $c->get(CollectionListRenderer::class),
+                    $c->get(LocaleHelper::class)
                 );
             },
             'iiif-collection-snippet' => function (ContainerInterface $c) {
                 return new PageBlockMediaAdapter(
                     $c->get(CollectionSnippetIngester::class),
-                    $c->get(CollectionSnippetRenderer::class)
+                    $c->get(CollectionSnippetRenderer::class),
+                    $c->get(LocaleHelper::class)
                 );
             },
             'iiif-manifest-list' => function (ContainerInterface $c) {
                 return new PageBlockMediaAdapter(
                     $c->get(ManifestListIngester::class),
-                    $c->get(ManifestListRenderer::class)
+                    $c->get(ManifestListRenderer::class),
+                    $c->get(LocaleHelper::class)
                 );
             },
             'iiif-manifest-snippet' => function (ContainerInterface $c) {
                 return new PageBlockMediaAdapter(
                     $c->get(ManifestSnippetIngester::class),
-                    $c->get(ManifestSnippetRenderer::class)
+                    $c->get(ManifestSnippetRenderer::class),
+                    $c->get(LocaleHelper::class)
                 );
             },
             'latest-annotated-images' => function (ContainerInterface $c) {
                 return new PageBlockMediaAdapter(
                     $c->get(LatestAnnotatedImagesIngester::class),
-                    $c->get(LatestAnnotatedImagesRenderer::class)
+                    $c->get(LatestAnnotatedImagesRenderer::class),
+                    $c->get(LocaleHelper::class)
                 );
             },
             'top-contributors' => function (ContainerInterface $c) {
                 return new PageBlockMediaAdapter(
                     $c->get(TopContributorsIngester::class),
-                    $c->get(TopContributorsRenderer::class)
+                    $c->get(TopContributorsRenderer::class),
+                    $c->get(LocaleHelper::class)
+                );
+            },
+            'html' => function (ContainerInterface $c) {
+                return new PageBlockMediaAdapter(
+                    $c->get(HtmlIngester::class),
+                    $c->get(HtmlRenderer::class),
+                    $c->get(LocaleHelper::class)
                 );
             },
         ],

@@ -2,6 +2,7 @@
 
 namespace IIIFStorage\Media;
 
+use Digirati\OmekaShared\Helper\LocaleHelper;
 use Doctrine\DBAL\Connection;
 use IIIFStorage\JsonBuilder\CanvasBuilder;
 use IIIFStorage\Repository\CanvasRepository;
@@ -13,7 +14,7 @@ use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
 use ZfcTwig\View\TwigRenderer;
 
-class TopContributorsRenderer implements RendererInterface, MediaPageBlockDualRender
+class TopContributorsRenderer implements RendererInterface, MediaPageBlockDualRender, LocalisedMedia
 {
     use RenderMedia;
 
@@ -37,15 +38,21 @@ class TopContributorsRenderer implements RendererInterface, MediaPageBlockDualRe
      * @var Router
      */
     private $router;
+    /**
+     * @var LocaleHelper
+     */
+    private $localeHelper;
 
     public function __construct(
         TwigRenderer $twig,
         Connection $connection,
-        Router $router
+        Router $router,
+        LocaleHelper $localeHelper
     ) {
         $this->twig = $twig;
         $this->connection = $connection;
         $this->router = $router;
+        $this->localeHelper = $localeHelper;
     }
 
     public function renderFromData(PhpRenderer $view, array $data, array $options = [])
@@ -87,5 +94,10 @@ class TopContributorsRenderer implements RendererInterface, MediaPageBlockDualRe
     public function pageBlockOptions(SitePageBlockRepresentation $pageBlock): array
     {
         return [];
+    }
+
+    public function getLang(): string
+    {
+        return $this->localeHelper->getLocale();
     }
 }
