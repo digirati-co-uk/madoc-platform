@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -ex
+
 bin/madoc generate-language
 
 git diff --exit-code || (
