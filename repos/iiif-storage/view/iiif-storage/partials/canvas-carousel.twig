@@ -5,7 +5,7 @@
         {% if (canvas.previous) %}
             <div class="c-carousel__prev">
                 <a href="{{ url(routeName | default(null), { manifest: manifest.omekaId, canvas: canvas.previous.omekaId }, true) }}#carousel"
-                   class="c-carousel__nav" title="Scroll carousel left" aria-label="Scroll carousel left">
+                   class="c-carousel__nav" title="Scroll carousel left" aria-label="{{ translate('Scroll carousel left') }}">
                     <div class="c-carousel__nav-text"><span class="fa fa-long-arrow-left" aria-hidden="true"></span>
                     </div>
                 </a>
@@ -33,7 +33,7 @@
         {% if (canvas.next) %}
             <div class="c-carousel__next">
                 <a href="{{ url(routeName | default(null), { manifest: manifest.omekaId, canvas: canvas.next.omekaId }, true) }}#carousel"
-                   class="c-carousel__nav" title="Scroll carousel right" aria-label="Scroll carousel right">
+                   class="c-carousel__nav" title="Scroll carousel right" aria-label="{{ translate('Scroll carousel right') }}">
                     <div class="c-carousel__nav-text"><span class="fa fa-long-arrow-right"
                                                             aria-hidden="true"></span>
                     </div>
