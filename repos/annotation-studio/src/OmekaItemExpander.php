@@ -3,8 +3,10 @@
 namespace AnnotationStudio;
 
 use Digirati\OmekaShared\Utility\OmekaValue;
+use Omeka\Api\Representation\AbstractRepresentation;
 use Omeka\Api\Representation\ItemSetRepresentation;
 use Omeka\Api\Representation\ValueRepresentation;
+use Omeka\I18n\Translator;
 use Zend\I18n\Translator\TranslatorInterface;
 
 class OmekaItemExpander
@@ -22,7 +24,7 @@ class OmekaItemExpander
     const FIELD_RENAMED_FROM = 'xx';
     const FIELD_RENAMED_TO = 'oa';
 
-    public static function expandChoices($items, callable $resolveUrl = null, TranslatorInterface $translator = null)
+    public static function expandChoices($items, callable $resolveUrl = null, Translator $translator = null)
     {
         $itemToReturn = [];
         /** @var $item ValueRepresentation */
@@ -43,11 +45,11 @@ class OmekaItemExpander
     /**
      * @param ItemSetRepresentation $document
      * @param callable $resolveUrl
-     * @param TranslatorInterface|null $translator
+     * @param Translator|null $translator
      *
      * @return array
      */
-    public static function expandDocument($document, callable $resolveUrl = null, TranslatorInterface $translator = null): array
+    public static function expandDocument($document, callable $resolveUrl = null, Translator $translator = null): array
     {
         $item = $document->getJsonLd();
         $jsonLd = [];
@@ -69,7 +71,20 @@ class OmekaItemExpander
                     // Can't translate URI.
                     $jsonLd[$key] = $field;
                 } else {
-                    $jsonLd[$key] = OmekaValue::translateValue($document, $key, $locale)->value();
+                    $fallback = $first;
+
+                    foreach ($field as $singleField) {
+                        if ($singleField->lang() === $locale) {
+                            $jsonLd[$key] = self::toJsonValue($singleField, $translator);
+                            break;
+                        }
+                        if (OmekaValue::langMatches($singleField->lang(), $locale)) {
+                            $fallback = self::toJsonValue($singleField, $translator);
+                        }
+                    }
+                    if (!$jsonLd[$key]) {
+                        $jsonLd[$key] = $fallback;
+                    }
                 }
             } else {
                 $jsonLd[$key] = $field;
@@ -79,6 +94,11 @@ class OmekaItemExpander
         return static::addMissingIds($jsonLd, $document, $resolveUrl);
     }
 
+    /**
+     * @param AbstractRepresentation $field
+     * @param Translator $translator
+     * @return mixed
+     */
     private static function toJsonValue($field, $translator)
     {
         $json = $field->jsonSerialize();

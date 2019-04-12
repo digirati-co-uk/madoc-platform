@@ -6,6 +6,7 @@ use AnnotationStudio\OmekaItemExpander;
 use Omeka\Api\Manager;
 use Omeka\Api\Representation\ItemSetRepresentation;
 use Omeka\Api\Representation\PropertyRepresentation;
+use Omeka\I18n\Translator;
 use Throwable;
 use Zend\EventManager\EventManagerInterface;
 use Zend\I18n\Translator\TranslatorInterface;
@@ -18,7 +19,7 @@ class CaptureModelRepository
      */
     private $api;
     /**
-     * @var TranslatorInterface
+     * @var Translator
      */
     private $translator;
     /**
@@ -33,7 +34,7 @@ class CaptureModelRepository
     public function __construct(
         Manager $api,
         Router $router,
-        TranslatorInterface $translator = null
+        Translator $translator = null
     ) {
         $this->api = $api;
         $this->translator = $translator;
