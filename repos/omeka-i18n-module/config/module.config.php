@@ -2,30 +2,36 @@
 
 namespace i18n;
 
+use Digirati\OmekaShared\Helper\LocaleHelper;
+use Digirati\OmekaShared\Helper\UrlHelper;
+use i18n\Mvc\Router\SkippableSegment;
 use i18n\View\Helper\LanguageSwitcher;
 use i18n\View\Helper\Locale;
+use Psr\Container\ContainerInterface;
 
-/*
- * Module configuration
- *
- * This contains an example of an extra field of configuration that needs
- * to be included BUT it contains a PHP constant, so cannot be in a YAML file.
- *
- * These are most commonly paths and environment.
- */
 return [
     'view_manager' => [
         'template_path_stack' => [
             realpath(__DIR__.'/../view'),
         ],
     ],
+    'route_manager' => [
+        'invokables' => [
+            'SkippableSegment' => SkippableSegment::class,
+        ],
+    ],
     'view_helpers' => [
         'factories' => [
-            'languageSwitcher' => function ($c) {
+            'languageSwitcher' => function (ContainerInterface $c) {
                 $config = $c->get('Config');
-                return new LanguageSwitcher($c->get('MvcTranslator'), $config['locales']);
+                return new LanguageSwitcher(
+                    $c->get('MvcTranslator'),
+                    $c->get(LocaleHelper::class),
+                    $c->get(UrlHelper::class),
+                    $config['locales'] ?? null
+                );
             },
-            'locale' => function ($c) {
+            'locale' => function () {
                 return new Locale();
             },
         ],

@@ -5,6 +5,8 @@ namespace IIIFStorage\Model;
 class BuiltCollection
 {
 
+    use GetJsonWithStringLabel;
+
     /**
      * @var array
      */
@@ -24,14 +26,19 @@ class BuiltCollection
      * @var int
      */
     private $perPage;
+    /**
+     * @var string
+     */
+    private $lang;
 
-    public function __construct(array $json, int $totalResults, int $page, int $perPage)
+    public function __construct(array $json, int $totalResults, int $page, int $perPage, string $lang)
     {
 
         $this->json = $json;
         $this->totalResults = $totalResults;
         $this->page = $page;
         $this->perPage = $perPage;
+        $this->lang = $lang;
     }
 
     /**
@@ -66,4 +73,8 @@ class BuiltCollection
         return $this->json;
     }
 
+    public function getLang(): string
+    {
+        return $this->lang;
+    }
 }

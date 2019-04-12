@@ -2,14 +2,14 @@
 
 namespace IIIFStorage\JsonBuilder;
 
+use Digirati\OmekaShared\Helper\LocaleHelper;
+use Digirati\OmekaShared\Utility\OmekaValue;
 use IIIF\Model\Manifest;
 use IIIFStorage\Model\BuiltManifest;
 use IIIFStorage\Model\ManifestRepresentation;
 use IIIFStorage\Repository\ManifestRepository;
 use IIIFStorage\Utility\ApiRouter;
-use IIIFStorage\Utility\CheapOmekaRelationshipRequest;
 use Omeka\Api\Representation\ItemRepresentation;
-use Omeka\Api\Representation\ValueRepresentation;
 
 class ManifestBuilder
 {
@@ -32,16 +32,21 @@ class ManifestBuilder
      * @var CanvasBuilder
      */
     private $canvasBuilder;
+    /**
+     * @var LocaleHelper
+     */
+    private $locale;
 
     public function __construct(
         ApiRouter $router,
         ManifestRepository $manifest,
-        CanvasBuilder $canvasBuilder
+        CanvasBuilder $canvasBuilder,
+        LocaleHelper $locale
     ) {
-
         $this->router = $router;
         $this->manifest = $manifest;
         $this->canvasBuilder = $canvasBuilder;
+        $this->locale = $locale;
     }
 
     public function buildResource(
@@ -54,7 +59,9 @@ class ManifestBuilder
             $page = 1;
         }
         $builtManifest = $this->build($manifest, $originalIds, $page, $perPage);
-        $manifestObject = Manifest::fromArray($builtManifest->getJson());
+        $manifestObject = Manifest::fromArray(
+            $builtManifest->getJsonWithStringLabel()
+        );
 
         return new ManifestRepresentation(
             $manifest,
@@ -88,7 +95,7 @@ class ManifestBuilder
                 '@id' => $json['@id'] . '/sequence',
                 '@type' => 'sc:Sequence',
                 'canvases' => array_map(function ($canvas) use ($originalIds, $page, $perPage) {
-                    return $canvas ? $this->canvasBuilder->build($canvas, $originalIds) : null;
+                    return $canvas ? $this->canvasBuilder->build($canvas, $originalIds)->getJson() : null;
                 }, $canvases['canvases']),
             ]
         ];
@@ -99,7 +106,8 @@ class ManifestBuilder
             $json,
             $canvases['totalResults'],
             $page,
-            $perPage
+            $perPage,
+            $this->getLang()
         );
     }
 
@@ -118,6 +126,12 @@ class ManifestBuilder
         return [
             'dcterms:title' => 'label',
             'dcterms:description' => 'description',
+            'sc:attributionLabel' => 'attribution',
         ];
+    }
+
+    function getLang(): string
+    {
+        return $this->locale->getLocale();
     }
 }

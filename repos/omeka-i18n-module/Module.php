@@ -10,12 +10,16 @@ use i18n\Form\LocalizationConfigForm;
 use i18n\Job\TransifexExportJob;
 use i18n\Job\TransifexItemExportJob;
 use i18n\Site\LocalizationListener;
+use Omeka\Form\SiteSettingsForm;
 use Omeka\Module\AbstractModule;
 use Omeka\Settings\Settings;
 use Psr\Container\ContainerInterface;
 use Zend\Config\Config;
 use Zend\Config\Factory;
+use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
+use Zend\Form\Element\Checkbox;
+use Zend\Form\Fieldset;
 use Zend\ModuleManager\Feature\InitProviderInterface;
 use Zend\ModuleManager\ModuleEvent;
 use Zend\ModuleManager\ModuleManagerInterface;
@@ -82,6 +86,12 @@ class Module extends AbstractModule implements InitProviderInterface
     {
         $serviceLocator = $this->getServiceLocator();
 
+        $events->attach(SiteSettingsForm::class, 'form.add_elements', function (Event $event) {
+            /** @var SiteSettingsForm $form */
+            $form = $event->getTarget();
+            $this->extendSiteSettings($event, $form);
+        });
+
         if (!self::isTransifexEnabled($serviceLocator)) {
             return;
         }
@@ -101,6 +111,30 @@ class Module extends AbstractModule implements InitProviderInterface
         );
     }
 
+    public function extendSiteSettings(Event $event, SiteSettingsForm $form)
+    {
+        $form->add(
+            (new Fieldset('i18n'))
+                ->add(
+                    (new Checkbox('i18n-multi-lingual-site'))
+                        ->setOptions([
+                            'label' => 'Multi-lingual site', // @translate
+                            'info' => 'This will change the URL of the site based on the current locale' // @translate
+                        ])
+                        ->setValue($form->getSiteSettings()->get('i18n-multi-lingual-site', false))
+                )
+                ->add(
+                    (new Checkbox('i18n-redirect-from-multi-lingual'))
+                        ->setOptions([
+                            'label' => 'Redirect to default site path', // @translate
+                            'info' => 'This will redirect from /en/s/site to /s/site automatically' // @translate
+                        ])
+                        ->setValue($form->getSiteSettings()->get('i18n-redirect-from-multi-lingual', false))
+                )
+            ->setLabel('Internationalisation') // @translate
+        );
+    }
+
     /**
      * Override the default routing configuration to add an option locale prefix parameter
      * to site-level routing.
@@ -112,6 +146,8 @@ class Module extends AbstractModule implements InitProviderInterface
         $configListener = $e->getConfigListener();
         $config = $configListener->getMergedConfig(false);
         $config['router']['routes']['site']['options']['route'] = '[/:locale]/s/:site-slug';
+        $config['router']['routes']['site']['options']['skippable']['locale'] = true;
+        $config['router']['routes']['site']['type'] = 'SkippableSegment';
 
         $configListener->setMergedConfig($config);
     }
@@ -140,7 +176,7 @@ class Module extends AbstractModule implements InitProviderInterface
 
         $serviceLocator = $event->getApplication()->getServiceManager();
 
-        if (!self::isFeatureFlagEnabled($serviceLocator)) {
+        if (self::isFeatureFlagEnabled($serviceLocator)) {
             $events = $event->getApplication()->getEventManager();
             $events->attach(MvcEvent::EVENT_ROUTE, $serviceLocator->get(LocalizationListener::class));
         }

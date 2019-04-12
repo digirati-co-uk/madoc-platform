@@ -25,7 +25,8 @@ class TopContributorsIngester extends AbstractIngester implements IngesterInterf
                 ->setOptions([
                     'label' => 'Number of contributors', // @translate
                     'info' => 'How many contributors should be shown.', // @translate
-                ])
+                ]),
+            $this->getLocaleField(),
         ];
     }
 

@@ -178,6 +178,14 @@ class ItemRequest
         }
     }
 
+    public function addFields(array $values): self
+    {
+        foreach ($values as $value) {
+            $this->addField($value);
+        }
+        return $this;
+    }
+
     /**
      * @param ValueInterface $value
      * @return ItemRequest

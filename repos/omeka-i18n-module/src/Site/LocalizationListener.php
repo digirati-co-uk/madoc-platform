@@ -2,12 +2,14 @@
 
 namespace i18n\Site;
 
+use Locale;
 use Omeka\I18n\Translator;
 use Omeka\Settings\Settings;
 use Omeka\Settings\SiteSettings;
 use Zend\EventManager\EventManagerInterface;
 use Zend\Mvc\I18n\Translator as MvcTranslator;
 use Zend\Mvc\MvcEvent;
+use Zend\Router\Http\TreeRouteStack;
 use Zend\Session\Container as SessionContainer;
 
 /**
@@ -43,7 +45,7 @@ class LocalizationListener
     public function __construct(Settings $settings, SiteSettings $siteSettings, Translator $translator)
     {
         $this->settings = $settings;
-        $this->siteSettings = $settings;
+        $this->siteSettings = $siteSettings;
         $this->translator = $translator;
     }
 
@@ -51,11 +53,14 @@ class LocalizationListener
     {
         $route = $event->getRouteMatch();
         $globalLocale = $this->settings->get('locale');
-        $fallbackLocale = $route->getParam('__SITE__', false) ? $this->siteSettings->get('locale') : $globalLocale;
+        $isOnSite = $route->getParam('__SITE__', false);
+        $fallbackLocale = $isOnSite ? $this->siteSettings->get('locale') : $globalLocale;
+        $routerLocale = $route->getParam(self::LOCALE_PARAM);
 
         $sessionManager = SessionContainer::getDefaultManager();
         $session = $sessionManager->getStorage();
 
+        /** @var \Zend\I18n\Translator\Translator $delegateTranslator */
         $delegateTranslator = $this->translator->getDelegatedTranslator();
         $locale = $route->getParam(self::LOCALE_PARAM) ?? $session['locale'] ?? $fallbackLocale;
 
@@ -63,8 +68,19 @@ class LocalizationListener
             $locale = 'en';
         }
 
+        $isMultilingual = $isOnSite ? boolval($this->siteSettings->get('i18n-multi-lingual-site')) : false;
+        /** @var TreeRouteStack $router */
+        $router = $event->getRouter();
+
+        $uriLocale = ($isMultilingual && $routerLocale) ? $locale : null;
+
+        $router->setDefaultParam(LocalizationListener::LOCALE_PARAM, $uriLocale);
+
+        if (extension_loaded('intl')) {
+            Locale::setDefault($locale);
+        }
+
         $delegateTranslator->setLocale($locale);
-        $event->getRouter()->setDefaultParam(LocalizationListener::LOCALE_PARAM, $locale);
 
         return true;
     }

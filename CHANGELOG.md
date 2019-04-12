@@ -4,23 +4,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v1.0.1...HEAD)
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v1.0.1...master)
 The internationalisation release.
 
 ### Added
-- Added new module (not installed by default) for internationalisation
 - Added authentication check in Elucidate proxy to stop logged out users being able to create, update or delete annotations.
 - Added IIIF Storage configuration
     - Collections per page (collection list)
     - Collection manifests per page (collection page)
     - Manifests per page (manifest list)
     - Canvases per page (manifest page)
-- Added internationalisation module
+- Added internationalisation module (not installed by default)
     - Multi-lingual sites configurable per page
     - Translated resources in Omeka will show on sites in correct locale
     - Transifex integration, with syncing
     - Imported IIIF resources will import multi-lingual fields into Omeka
     - Configurable language switcher page block
+- Added various features to make our modules more translatable
+    - Added locale fields to page blocks / media that contain free-text
+    - Added attribution to list of IIIF fields imported into Omekas CMS - with importing of different locals
+    - IIIF JSON-LD in Omeka will show all available languages in the JSON
+    - Replaced build-in omeka HTML media and page block with additional locale setting 
 - Added files and database volumes to default docker-compose
 - Added new docker compose specifically for running on CI
 - Added new `ci-start` and `ci-stop` commands to madoc cli
@@ -30,6 +34,8 @@ The internationalisation release.
 - Fixed default mailer configuration, so you can send emails without configuration SMTP
 - Fixed bug where flagging may cause an error for some users (permissions)
 - Fixed icon spacing on page actions on canvas page
+- Fixed bug in container with latest annotated images media - would before throw error
+- Fixed bug in container with top contributors media - would also throw error 
 
 ## [1.0.1](https://github.com/digirati-co-uk/madoc-platform/compare/v1.0.0...v1.0.1)  - 2019-03-27
 

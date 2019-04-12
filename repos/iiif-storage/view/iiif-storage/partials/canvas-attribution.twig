@@ -1,10 +1,10 @@
 {% if (canvas.attribution) %}
     <p class="iiif-view-attribution">
-        {{ canvas.attribution | raw }}
+        {{ localeFromRdf(canvas.attribution) | raw }}
     </p>
 {% endif %}
 {% if (manifest.attribution) %}
     <p class="iiif-view-attribution">
-        {{ manifest.attribution | raw }}
+        {{ localeFromRdf(manifest.attribution) | raw }}
     </p>
 {% endif %}

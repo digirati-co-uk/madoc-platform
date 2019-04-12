@@ -51,7 +51,43 @@ class FieldValue implements ValueInterface
         );
     }
 
-    public static function literal(string $term, string $label, string $value)
+    public static function literalsFromRdf(string $term, string $label, $rdf)
+    {
+        if (!$rdf) {
+            return [];
+        }
+
+        if (is_string($rdf)) {
+            return [self::literal($term, $label, $rdf)];
+        }
+
+        if (isset($rdf['@language']) && isset($rdf['@value'])) {
+            return [
+                self::literal(
+                    $term,
+                    $label,
+                    $rdf['@value'],
+                    $rdf['@language']
+                )
+            ];
+        }
+
+        $literals = [];
+        foreach ($rdf as $value) {
+            if (isset($value['@language']) && isset($value['@value'])) {
+                $literals[] = self::literal(
+                    $term,
+                    $label,
+                    $value['@value'],
+                    $value['@language']
+                );
+            }
+        }
+
+        return $literals;
+    }
+
+    public static function literal(string $term, string $label, string $value, string $language = null)
     {
         return new static(
             $term,
@@ -60,7 +96,7 @@ class FieldValue implements ValueInterface
             null,
             $label,
             $value,
-            null
+            $language
         );
     }
 

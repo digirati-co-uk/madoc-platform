@@ -68,11 +68,14 @@ class ImportManifests extends AbstractJob implements JobInterface
                 $logger->info("Importing manifest $id");
                 // Create item using repository.
                 $manifestItem = $repository->create(function (ItemRequest $item) use ($manifest, $id, $logger) {
-                    $item->addField(
-                        FieldValue::literal('dcterms:title', 'Label', $manifest['label'] ?? 'Untitled manifest')
+                    $item->addFields(
+                        FieldValue::literalsFromRdf('dcterms:title', 'Label', $manifest['label'] ?? 'Untitled manifest')
                     );
                     $item->addField(
                         FieldValue::url('dcterms:identifier', 'Manifest URI', $id)
+                    );
+                    $item->addFields(
+                        FieldValue::literalsFromRdf('sc:attributionLabel', 'Attribution', $manifest['attribution'] ?? null)
                     );
                 });
                 // Create list of ids.

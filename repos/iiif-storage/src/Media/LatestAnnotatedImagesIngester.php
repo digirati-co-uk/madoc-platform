@@ -25,7 +25,8 @@ class LatestAnnotatedImagesIngester extends AbstractIngester implements Ingester
                 ->setOptions([
                     'label' => 'Number of images', // @translate
                     'info' => 'How many images should be shown.', // @translate
-                ])
+                ]),
+            $this->getLocaleField(),
         ];
     }
 

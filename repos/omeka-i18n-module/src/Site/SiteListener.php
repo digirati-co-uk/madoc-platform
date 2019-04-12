@@ -2,11 +2,15 @@
 
 namespace i18n\Site;
 
+use Digirati\OmekaShared\Helper\LocaleHelper;
+use Digirati\OmekaShared\Helper\UrlHelper;
 use i18n\Module as I18nModule;
 use i18n\Translator\ContextualTranslator;
+use Omeka\Settings\Settings;
+use Omeka\Settings\SiteSettings;
 use Zend\EventManager\AbstractListenerAggregate;
 use Zend\EventManager\EventManagerInterface;
-use Zend\I18n\Translator\TranslatorInterface;
+use Zend\Http\Request;
 use Zend\Mvc\Application;
 use Zend\Mvc\MvcEvent;
 use Zend\Session\Container as SessionContainer;
@@ -14,6 +18,23 @@ use Zend\Session\Container as SessionContainer;
 class SiteListener extends AbstractListenerAggregate
 {
     const LOCALE_PARAM = 'locale';
+
+    /**
+     * @var LocaleHelper
+     */
+    private $localeHelper;
+    /**
+     * @var UrlHelper
+     */
+    private $urlHelper;
+
+    public function __construct(
+        LocaleHelper $localeHelper,
+        UrlHelper $urlHelper
+    ) {
+        $this->localeHelper = $localeHelper;
+        $this->urlHelper = $urlHelper;
+    }
 
     /**
      * {@inheritdoc}
@@ -27,19 +48,23 @@ class SiteListener extends AbstractListenerAggregate
     public function prepareLocale(MvcEvent $event)
     {
         $services = $event->getApplication()->getServiceManager();
-
+        /** @var Settings $settings */
         $settings = $services->get('Omeka\Settings');
+        /** @var SiteSettings $siteSettings */
         $siteSettings = $services->get('Omeka\Settings\Site');
-
         $route = $event->getRouteMatch();
+        /** @var Request $request */
         $request = $event->getRequest();
+
+        $isOnSite = $route->getParam('__SITE__', false);
+
+        $isMultiLingual = $isOnSite ? boolval($siteSettings->get('i18n-multi-lingual-site')) : false;
+        $redirectMulti = $isOnSite ? boolval($siteSettings->get('i18n-redirect-from-multi-lingual')) : false;
         $globalLocale = $settings->get('locale');
-        $fallbackLocale = $route->getParam('__SITE__', false) ? $siteSettings->get('locale') : $globalLocale;
+        $fallbackLocale = $isOnSite ? $siteSettings->get('locale') : $globalLocale;
         $sessionManager = SessionContainer::getDefaultManager();
         $session = $sessionManager->getStorage();
-
-        $translator = $services->get(TranslatorInterface::class);
-        $delegateTranslator = $translator->getDelegatedTranslator();
+        $routeLocale = (string)$route->getParam(self::LOCALE_PARAM);
 
         $localeHeaderValue = null;
         $localeHeader = $request->getHeaders()->get('X-Annotation-Studio-Locale');
@@ -47,19 +72,43 @@ class SiteListener extends AbstractListenerAggregate
             $localeHeaderValue = $localeHeader->getFieldValue();
         }
 
-        $locale = $route->getParam(self::LOCALE_PARAM) ?? $session['locale'] ?? $localeHeaderValue ?? $fallbackLocale;
-
-        if (null === $locale || empty($locale)) {
-            $locale = 'en';
+        if (
+            // If its configured
+            $redirectMulti &&
+            // And the sites not multilingual
+            $isMultiLingual === false &&
+            // And we are on a site
+            $isOnSite &&
+            // But its not an annotation studio request
+            !$localeHeaderValue &&
+            // But the url is /es/s/site-name
+            $routeLocale
+        ) {
+            // Redirect to /s/site-name
+            $url =  $this->urlHelper->create(
+                null,
+                [
+                    'locale' => null,
+                ],
+                [],
+                true
+            );
+            $response = $event->getResponse();
+            $response->getHeaders()->addHeaderLine('Location', $url);
+            $response->setStatusCode(302);
+            return $response;
         }
 
-        $viewHelperManager = $services->get('ViewHelperManager');
-        $languageSwitcher = $viewHelperManager->get('locale');
-        $languageSwitcher->setCurrentLocale($locale);
-        $delegateTranslator->setLocale($locale);
-        $session['locale'] = $locale;
+        // By default.
+        $locale = (string)$fallbackLocale ?: $globalLocale ?: 'en';
 
-        $event->getRouter()->setDefaultParam(LocalizationListener::LOCALE_PARAM, $locale);
+        // If multi-lingual is set.
+        if ($isMultiLingual) {
+            $locale = (string)($route->getParam(self::LOCALE_PARAM) ?? $session['locale'] ?? $localeHeaderValue ?? $locale);
+        }
+
+        $this->localeHelper->setLocale($locale);
+        $session['locale'] = $locale;
 
         return true;
     }

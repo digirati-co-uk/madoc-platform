@@ -3,6 +3,7 @@
 namespace IIIFStorage\JsonBuilder;
 
 
+use Digirati\OmekaShared\Helper\LocaleHelper;
 use IIIF\Model\Manifest;
 use IIIF\ResourceFactory;
 use IIIFStorage\Model\BuiltCollection;
@@ -10,10 +11,8 @@ use IIIFStorage\Model\CollectionRepresentation;
 use IIIFStorage\Repository\CollectionRepository;
 use IIIFStorage\Repository\ManifestRepository;
 use IIIFStorage\Utility\ApiRouter;
-use IIIFStorage\Utility\CheapOmekaRelationshipRequest;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Api\Representation\ItemSetRepresentation;
-use Omeka\Api\Representation\MediaRepresentation;
 use Omeka\Api\Representation\ValueRepresentation;
 
 class CollectionBuilder
@@ -45,17 +44,23 @@ class CollectionBuilder
      * @var int
      */
     private $perPage;
+    /**
+     * @var LocaleHelper
+     */
+    private $localeHelper;
 
     public function __construct(
         ApiRouter $router,
         ManifestBuilder $builder,
         ManifestRepository $manifestRepository,
-        CollectionRepository $collectionRepository
+        CollectionRepository $collectionRepository,
+        LocaleHelper $localeHelper
     ) {
         $this->router = $router;
         $this->manifestBuilder = $builder;
         $this->collectionRepository = $collectionRepository;
         $this->manifestRepository = $manifestRepository;
+        $this->localeHelper = $localeHelper;
     }
 
     public function buildResource(
@@ -71,7 +76,7 @@ class CollectionBuilder
         $json = $this->build($omekaCollection, $originalIds, $page, $perPage);
         // Build collection.
         $collection = ResourceFactory::createCollection(
-            $json->getJson(),
+            $json->getJsonWithStringLabel(),
             function (string $url, Manifest $manifest) use ($originalIds, $numberOfCanvases) {
                 $metadata = $manifest->getSource();
                 if (!isset($metadata['o:id'])) {
@@ -84,7 +89,7 @@ class CollectionBuilder
                     $originalIds,
                     0,
                     $numberOfCanvases
-                )->getJson();
+                )->getJsonWithStringLabel();
             }
         );
 
@@ -133,7 +138,8 @@ class CollectionBuilder
             $this->aggregateMetadata($collection, $json),
             $manifestOmekaMapping->getTotalResults(),
             $page,
-            $perPage
+            $perPage,
+            $this->getLang()
         );
     }
 
@@ -171,6 +177,12 @@ class CollectionBuilder
         return [
             'dcterms:title' => 'label',
             'dcterms:description' => 'description',
+            'sc:attributionLabel' => 'attribution',
         ];
+    }
+
+    function getLang(): string
+    {
+        return $this->localeHelper->getLocale();
     }
 }

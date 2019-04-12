@@ -2,7 +2,9 @@
 
 namespace IIIFStorage\JsonBuilder;
 
+use Digirati\OmekaShared\Helper\LocaleHelper;
 use IIIF\Model\Canvas;
+use IIIFStorage\Model\BuiltCanvas;
 use IIIFStorage\Model\CanvasRepresentation;
 use IIIFStorage\Utility\ApiRouter;
 use Omeka\Api\Representation\ItemRepresentation;
@@ -27,28 +29,36 @@ class CanvasBuilder
      * @var ImageServiceBuilder
      */
     private $imageServiceBuilder;
+    /**
+     * @var LocaleHelper
+     */
+    private $localeHelper;
 
-    public function __construct(ApiRouter $router, ImageServiceBuilder $imageServiceBuilder)
-    {
+    public function __construct(
+        ApiRouter $router,
+        ImageServiceBuilder $imageServiceBuilder,
+        LocaleHelper $localeHelper
+    ) {
         $this->router = $router;
         $this->imageServiceBuilder = $imageServiceBuilder;
+        $this->localeHelper = $localeHelper;
     }
 
     public function buildResource(ItemRepresentation $canvas, bool $originalIds = false)
     {
         $json = $this->build($canvas, $originalIds);
-        $canvasObject = Canvas::fromArray($json);
+        $canvasObject = Canvas::fromArray($json->getJsonWithStringLabel());
 
         return new CanvasRepresentation(
             $canvas,
             $canvasObject,
-            $json
+            $json->getJson()
         );
     }
 
     private $buildCache = [];
 
-    public function build(ItemRepresentation $canvas, bool $originalIds = false): array
+    public function build(ItemRepresentation $canvas, bool $originalIds = false): BuiltCanvas
     {
         if (!isset($this->buildCache[$canvas->id()])) {
             $json = $this->extractSource($canvas);
@@ -108,8 +118,12 @@ class CanvasBuilder
                 ];
             }
 
-            $this->buildCache[$canvas->id()] = $this->aggregateMetadata($canvas, $json);
+            $this->buildCache[$canvas->id()] = new BuiltCanvas(
+                $this->aggregateMetadata($canvas, $json),
+                $this->getLang()
+            );
         }
+
         return $this->buildCache[$canvas->id()];
     }
 
@@ -144,6 +158,12 @@ class CanvasBuilder
         return [
             'dcterms:title' => 'label',
             'dcterms:description' => 'description',
+            'sc:attributionLabel' => 'attribution',
         ];
+    }
+
+    function getLang(): string
+    {
+        return $this->localeHelper->getLocale();
     }
 }

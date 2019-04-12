@@ -70,11 +70,31 @@ class DereferencedManifest implements AggregateInterface
                 }
 
                 $title = $input->getValue('dcterms:title');
-                if (!$title || empty($title) || current($title)->getValue() === '') {
-                    $label = $this->translate($manifest['label'] ?? '');
+                if (!$title || empty($title) || trim(current($title)->getValue()) === '') {
+                    $label = $manifest['label'] ?? null;
                     if ($label) {
-                        $input->addField(
-                            FieldValue::literal('dcterms:title', 'Title', $label)
+                        $input->addFields(
+                            FieldValue::literalsFromRdf('dcterms:title', 'Title', $label)
+                        );
+                    }
+                }
+
+                $description = $input->getValue('dcterms:description');
+                if (!$description || empty($description) || trim(current($description)->getValue()) === '') {
+                    $summary = $manifest['description'] ?? null;
+                    if ($summary) {
+                        $input->addFields(
+                            FieldValue::literalsFromRdf('dcterms:description', 'Summary', $summary)
+                        );
+                    }
+                }
+
+                $attribution = $input->getValue('sc:attributionLabel');
+                if (!$attribution || empty($attribution) || trim(current($attribution)->getValue()) === '') {
+                    $attribution = $manifest['attribution'] ?? null;
+                    if ($attribution) {
+                        $input->addFields(
+                            FieldValue::literalsFromRdf('sc:attributionLabel', 'Attribution', $attribution)
                         );
                     }
                 }
@@ -146,7 +166,7 @@ class DereferencedManifest implements AggregateInterface
                     )
                     ->getBody();
 
-                $this->manifestCache[$url] = (string) $body;
+                $this->manifestCache[$url] = (string)$body;
             } catch (\Throwable $e) {
                 if ($retry > 0) {
                     return $this->getManifest($url, $retry - 1);
@@ -157,7 +177,7 @@ class DereferencedManifest implements AggregateInterface
         return $this->manifestCache[$url];
     }
 
-     public function reset()
+    public function reset()
     {
         $this->manifestRequests = [];
     }

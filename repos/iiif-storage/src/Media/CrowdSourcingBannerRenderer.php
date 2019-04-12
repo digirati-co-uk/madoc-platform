@@ -2,20 +2,17 @@
 
 namespace IIIFStorage\Media;
 
-use Doctrine\DBAL\Connection;
-use IIIFStorage\JsonBuilder\CanvasBuilder;
-use IIIFStorage\Repository\CanvasRepository;
+use Digirati\OmekaShared\Helper\LocaleHelper;
 use IIIFStorage\Utility\Router;
 use Omeka\Api\Exception\NotFoundException;
 use Omeka\Api\Manager;
 use Omeka\Api\Representation\SitePageBlockRepresentation;
 use Omeka\Media\Renderer\RendererInterface;
-use PDO;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
 use ZfcTwig\View\TwigRenderer;
 
-class CrowdSourcingBannerRenderer implements RendererInterface, MediaPageBlockDualRender
+class CrowdSourcingBannerRenderer implements RendererInterface, MediaPageBlockDualRender, LocalisedMedia
 {
     use RenderMedia;
 
@@ -31,15 +28,21 @@ class CrowdSourcingBannerRenderer implements RendererInterface, MediaPageBlockDu
      * @var Manager
      */
     private $api;
+    /**
+     * @var LocaleHelper
+     */
+    private $localeHelper;
 
     public function __construct(
         TwigRenderer $twig,
         Manager $api,
-        Router $router
+        Router $router,
+        LocaleHelper $localeHelper
     ) {
         $this->twig = $twig;
         $this->router = $router;
         $this->api = $api;
+        $this->localeHelper = $localeHelper;
     }
 
     public function getBackgroundImage(string $id) {
@@ -83,5 +86,10 @@ class CrowdSourcingBannerRenderer implements RendererInterface, MediaPageBlockDu
     public function pageBlockOptions(SitePageBlockRepresentation $pageBlock): array
     {
         return [];
+    }
+
+    public function getLang(): string
+    {
+        return $this->localeHelper->getLocale();
     }
 }
