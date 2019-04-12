@@ -10,3 +10,4 @@ bin/php-cs-fixer
 repos/iiif-php
 files/*
 !files/.gitkeep
+translations/*.po~
