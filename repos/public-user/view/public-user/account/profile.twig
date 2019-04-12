@@ -1,7 +1,7 @@
 {% set theForm = form.prepare() %}
 {% set sectionNavs = {'user-information': translate('User information'), 'change-password': translate('Password')} %}
 
-{{ pageTitle(translate('Edit User: “{user}”')|replace({'{user}': user.getName()})) | raw }}
+{{ pageTitle(translate('Edit User: {user}')|replace({'{user}': user.getName()})) | raw }}
 {{ trigger('view.edit.before') }}
 {{ form().openTag(form) | raw }}
     {{ sectionNav(sectionNavs, 'view.edit.section_nav' ) }}

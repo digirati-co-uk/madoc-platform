@@ -191,6 +191,10 @@ case "${commandToRun}" in
     down)
         docker-compose down "$@"
     ;;
+    generate-language)
+        vendor/bin/twig-extract -R -d madoc -o ./translations ./repos
+        php ./repos/extract-tagged-strings/extract-tagged-strings.php repos >> ./translations/madoc.en_GB.po
+    ;;
     logs)
         docker-compose logs -f --tail=50
     ;;

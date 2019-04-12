@@ -9,7 +9,7 @@ use Zend\Form\Form;
 
 class CommentForm extends Form
 {
-    private $buttonText = 'Save'; // @translate
+    private $buttonText = 'Post comment'; // @translate
     private $commentLabel = 'Leave a comment'; // @translate
 
     public function withRedirect($redirect)
