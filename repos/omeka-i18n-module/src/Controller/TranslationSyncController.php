@@ -9,6 +9,7 @@ use Omeka\Job\Dispatcher;
 use Zend\Form\Element\Button;
 use Zend\Form\Element\Hidden;
 use Zend\Form\Form;
+use Zend\Http\Response;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
@@ -23,11 +24,19 @@ class TranslationSyncController extends AbstractActionController
      * @var Manager
      */
     private $api;
+    /**
+     * @var bool
+     */
+    private $isEnabled;
 
-    public function __construct(Dispatcher $jobDispatcher, Manager $api)
-    {
+    public function __construct(
+        Dispatcher $jobDispatcher,
+        Manager $api,
+        bool $isEnabled
+    ) {
         $this->jobDispatcher = $jobDispatcher;
         $this->api = $api;
+        $this->isEnabled = $isEnabled;
     }
 
     public function showAction()
@@ -40,12 +49,15 @@ class TranslationSyncController extends AbstractActionController
         return (new ViewModel(
             [
                 'form' => $form,
+                'isEnabled' => $this->isEnabled,
             ]
         ))->setTemplate('admin/i18n-synchronize/show');
     }
 
     public function processAction()
     {
+        if (!$this->isEnabled) return null;
+
         $this->jobDispatcher->dispatch(TransifexItemExportJob::class, []);
 
         foreach ($this->api->search('sites')->getContent() as $site) {
