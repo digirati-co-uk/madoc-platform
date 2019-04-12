@@ -25,7 +25,7 @@ The internationalisation release.
     - Added attribution to list of IIIF fields imported into Omekas CMS - with importing of different locals
     - IIIF JSON-LD in Omeka will show all available languages in the JSON
     - Replaced build-in omeka HTML media and page block with additional locale setting 
-    - Capture models can now be translated inside of Omeka and will correctly be served depending on your locale
+    - Capture models can now be translated inside of Omeka and will correctly be served depending on your locale (#72)
 - Added files and database volumes to default docker-compose
 - Added new docker compose specifically for running on CI
 - Added new `ci-start` and `ci-stop` commands to madoc cli
@@ -52,6 +52,7 @@ The internationalisation release.
 - Fixed bug where a mis-configured Elucidate may break some pages on the site
 - Fixed issue where multiple HTML page blocks on the same page would not save
 - Fixed bug where you could sync without Transfiex enabled
+- Fixed bug where locale was not being passed to annotation studio (#74)
 
 ## [1.0.1](https://github.com/digirati-co-uk/madoc-platform/compare/v1.0.0...v1.0.1)  - 2019-03-27
 
