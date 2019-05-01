@@ -2,6 +2,7 @@
 
 namespace AnnotationStudio;
 
+use Digirati\OmekaShared\Utility\OmekaValue;
 use Omeka\Api\Representation\ItemSetRepresentation;
 use Omeka\Api\Representation\ValueRepresentation;
 use Zend\I18n\Translator\TranslatorInterface;
@@ -50,6 +51,7 @@ class OmekaItemExpander
     {
         $item = $document->getJsonLd();
         $jsonLd = [];
+        $locale = $translator->getDelegatedTranslator()->getLocale();
 
         foreach ($item as $key => $field) {
             $key = static::renameField($key);
@@ -67,12 +69,7 @@ class OmekaItemExpander
                     // Can't translate URI.
                     $jsonLd[$key] = $field;
                 } else {
-                    $jsonLd[$key] = array_map(
-                        function ($data) use ($translator) {
-                            return self::toJsonValue($data, $translator);
-                        },
-                        $field
-                    );
+                    $jsonLd[$key] = OmekaValue::translateValue($document, $key, $locale)->value();
                 }
             } else {
                 $jsonLd[$key] = $field;
