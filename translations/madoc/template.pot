@@ -74,6 +74,8 @@ msgid "Marking this page as complete helps us to understand the progress of anno
 msgstr ""
 msgid "Page marked as complete"
 msgstr ""
+msgid "View all images"
+msgstr ""
 msgid "No search term provided"
 msgstr ""
 msgid "Default moderation status"
