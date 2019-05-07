@@ -92,7 +92,7 @@ abstract class FilesystemTranslationGroup implements TranslationGroup
             $domain[$key] = $value;
         }
 
-        return $domain;
+        return array_merge($this->getTemplate(), $domain->getArrayCopy());
     }
 
 }

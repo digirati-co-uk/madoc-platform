@@ -52,8 +52,8 @@
     {% set langs = group.listLanguages() %}
     {% for lang in langs %}
         <li class="hb">
-            {{ lang.label }} <span class="language">{{ lang.code }}</span> <span style="float:right">(<a href="#">download</a> | <a
-                        href="{{ url('i18n-admin-translate-view-language', { lang: lang.code }, {}, true) }}">view</a>)</span>
+            {{ lang.label }} <span class="language">{{ lang.code }}</span> <span style="float:right"><a
+                        href="{{ url('i18n-admin-translate-view-language', { lang: lang.code }, {}, true) }}">view</a></span>
         </li>
     {% endfor %}
     {% if langs|length == 0 %}

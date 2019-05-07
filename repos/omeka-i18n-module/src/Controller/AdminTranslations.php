@@ -101,8 +101,6 @@ class AdminTranslations extends AbstractPsr7ActionController
         ]);
     }
 
-    public function exportLanguageAction() {}
-
     public function downloadTemplateAction()
     {
         $id = $this->params('group-id');
@@ -131,46 +129,6 @@ POT;
 
     public function listAction()
     {
-        // $this->translator->setLocale('es');
-
-        // @todo will be injected.
-
-        // List of translations (global)
-        // - Core omeka (read-only -- link to open Github issue)
-        // - Madoc (read-only -- link to open Github issue)
-        // List of translations (site)
-        // - Theme (view | missing | export)
-        // - Navigation (view | missing | export)
-        // - Page blocks (view | missing | export)
-        // - Omeka items (view | missing)
-
-        // Flow for pages will be:
-        // - Choose group of translations
-        // - See overview of translation group
-        //    - Statistics on translations per language
-        //    - List of languages - request language button
-        // - Choose language
-        // - See translations that are not in the on-disk template
-        // - See list of all translations
-        //   - Export button (optional)
-        //   - "show only missing" button
-        //   - Report missing translation (Github issue)
-
-        // So 5 actions:
-        // list
-        // viewGroup
-        // viewLanguage (?missing=true)
-        // exportLanguage
-        // reportLanguage
-
-        // Class representing a language:
-        // listLanguages()
-        // getTemplate()
-        // reportOptions()
-        // export()
-        // getStatistics()
-        // isVirtual()
-
         return new ViewModel([
             'locale' => $this->translator->getLocale(),
             'messages' => $this->translator->getAllMessages(),
