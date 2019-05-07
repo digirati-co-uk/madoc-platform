@@ -3,13 +3,16 @@
 namespace i18n;
 
 use Digirati\OmekaShared\ModuleExtensions\ConfigurationFormAutoloader;
+use i18n\Controller\AdminTranslations;
 use i18n\Controller\LanguageSelectionController;
 use i18n\Event\TransifexProjectListener;
 use i18n\Event\TranslatableResourceListener;
 use i18n\Form\LocalizationConfigForm;
 use i18n\Job\TransifexExportJob;
 use i18n\Job\TransifexItemExportJob;
+use i18n\Loader\MadocMessageLoader;
 use i18n\Site\LocalizationListener;
+use Omeka\Api\Representation\SiteRepresentation;
 use Omeka\Form\SiteSettingsForm;
 use Omeka\Module\AbstractModule;
 use Omeka\Settings\Settings;
@@ -20,13 +23,18 @@ use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Form\Element\Checkbox;
 use Zend\Form\Fieldset;
+use Zend\I18n\Translator\TranslatorInterface;
 use Zend\ModuleManager\Feature\InitProviderInterface;
 use Zend\ModuleManager\ModuleEvent;
 use Zend\ModuleManager\ModuleManagerInterface;
 use Zend\Mvc\Controller\AbstractController;
+use Zend\Mvc\I18n\Translator;
 use Zend\Mvc\MvcEvent;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\ServiceManager;
 use Zend\Session\Container;
+use Zend\View\Renderer\PhpRenderer;
+use Zend\View\Renderer\RendererInterface;
 
 class Module extends AbstractModule implements InitProviderInterface
 {
@@ -131,7 +139,7 @@ class Module extends AbstractModule implements InitProviderInterface
                         ])
                         ->setValue($form->getSiteSettings()->get('i18n-redirect-from-multi-lingual', false))
                 )
-            ->setLabel('Internationalisation') // @translate
+                ->setLabel('Internationalisation') // @translate
         );
     }
 
@@ -159,7 +167,7 @@ class Module extends AbstractModule implements InitProviderInterface
      */
     public function getConfig()
     {
-        return Factory::fromFiles(glob(__DIR__.'/config/*.config.*'));
+        return Factory::fromFiles(glob(__DIR__ . '/config/*.config.*'));
     }
 
     public function upgrade($oldVersion, $newVersion, ServiceLocatorInterface $serviceLocator)

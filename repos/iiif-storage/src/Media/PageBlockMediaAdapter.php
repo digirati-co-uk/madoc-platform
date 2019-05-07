@@ -99,6 +99,20 @@ class PageBlockMediaAdapter extends AbstractBlockLayout implements BlockLayoutIn
         ) {
             return '';
         }
+
+        if ($this->renderer instanceof TranslatableRenderer) {
+            $names = $this->renderer->getTranslatableFieldNames();
+            /** @var \Zend\I18n\Translator\TranslatorInterface $translator */
+            $translator = $block->getServiceLocator()->get('Zend\I18n\Translator\TranslatorInterface')->getDelegatedTranslator();
+
+            foreach ($names as $key) {
+                if (isset($data[$key]) && $data[$key]) {
+                    $data[$key] = $translator->translate($data[$key], 'default:page_block');
+                }
+            }
+        }
+
+
         return $this->renderer->renderFromData($view, $data, $this->renderer->pageBlockOptions($block));
     }
 

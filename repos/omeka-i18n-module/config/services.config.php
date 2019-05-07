@@ -36,9 +36,11 @@ use i18n\Resource\TranslatableResourceManager;
 use i18n\Resource\Writer\JsonResourceWriter;
 use i18n\Resource\Writer\TranslatableResourceWriter;
 use i18n\Site\LocalizationListener;
+use i18n\Site\NavigationTranslator;
 use i18n\Site\SiteListener;
 use i18n\Translator\ContextualTranslator;
 use i18n\Translator\DelegateTranslatorFactory;
+use i18n\Translator\NavigationMvcTranslator;
 use Kevinrob\GuzzleCache\CacheMiddleware;
 use Kevinrob\GuzzleCache\Storage\DoctrineCacheStorage;
 use Kevinrob\GuzzleCache\Strategy\PublicCacheStrategy;
@@ -56,7 +58,19 @@ return [
             'transifex.translations' => TransifexObjectFactory::class,
             'transifex' => TransifexClientFactory::class,
 
-            TransifexProjectListener::class => function ($container) {
+            'Omeka\Site\NavigationTranslator' => function (ContainerInterface $container) {
+                return new NavigationTranslator(
+                    $container->get('Omeka\Site\NavigationLinkManager'),
+                    $container->get(NavigationMvcTranslator::class),
+                    $container->get('ViewHelperManager')->get('Url')
+                );
+            },
+
+            NavigationMvcTranslator::class => function (ContainerInterface $container) {
+                return new NavigationMvcTranslator($container->get(ContextualTranslator::class));
+            },
+
+            TransifexProjectListener::class => function (ContainerInterface $container) {
                 return new TransifexProjectListener(
                     $container->get('transifex.projects'),
                     $container->get('Omeka\Settings'),
@@ -64,7 +78,7 @@ return [
                 );
             },
 
-            TranslatableResourceListener::class => function ($container) {
+            TranslatableResourceListener::class => function (ContainerInterface $container) {
                 return new TranslatableResourceListener(
                     $container->get('Omeka\Logger'),
                     $container->get('Omeka\Settings'),
@@ -74,7 +88,7 @@ return [
                 );
             },
 
-            'i18n.guzzle.client' => function ($container) {
+            'i18n.guzzle.client' => function (ContainerInterface $container) {
                 $stack = HandlerStack::create();
                 $stack->push(
                     new CacheMiddleware(
@@ -83,7 +97,7 @@ return [
                                 new ChainCache(
                                     [
                                         new ArrayCache(),
-                                        new FilesystemCache(OMEKA_PATH.'/files'),
+                                        new FilesystemCache(OMEKA_PATH . '/files'),
                                     ]
                                 )
                             )
@@ -107,25 +121,25 @@ return [
                 );
             },
 
-            ContextualTranslator::class => function ($container) {
+            ContextualTranslator::class => function (ContainerInterface $container) {
                 return new ContextualTranslator($container->get('MvcTranslator'));
             },
 
-            TransifexResourceMessageLoader::class => function ($container) {
+            TransifexResourceMessageLoader::class => function (ContainerInterface $container) {
                 return new TransifexResourceMessageLoader(
                     $container->get('Omeka\Logger'),
                     $container->get('transifex.translations')
                 );
             },
 
-            TransifexCoreMessageLoader::class => function ($container) {
+            TransifexCoreMessageLoader::class => function (ContainerInterface $container) {
                 return new TransifexCoreMessageLoader(
                     $container->get('Omeka\Logger'),
                     $container->get('transifex.translations')
                 );
             },
 
-            TransifexThemeMessageLoader::class => function ($container) {
+            TransifexThemeMessageLoader::class => function (ContainerInterface $container) {
                 return new TransifexThemeMessageLoader(
                     $container->get('Omeka\Logger'), $container->get('transifex.translations')
                 );
@@ -135,7 +149,7 @@ return [
                 return new MadocMessageLoader();
             },
 
-            LocalizationListener::class => function ($container) {
+            LocalizationListener::class => function (ContainerInterface $container) {
                 $settings = $container->get('Omeka\Settings');
                 $siteSettings = $container->get('Omeka\Settings\Site');
 
@@ -146,7 +160,7 @@ return [
                 );
             },
 
-            TranslatableResourceExporter::class => function ($container) {
+            TranslatableResourceExporter::class => function (ContainerInterface $container) {
                 return new TransifexResourceExporter(
                     $container->get('Omeka\Logger'),
                     $container->get('transifex.resources'),
@@ -154,7 +168,7 @@ return [
                 );
             },
 
-            TranslatableResourceManager::class => function ($container) {
+            TranslatableResourceManager::class => function (ContainerInterface $container) {
                 return new TranslatableResourceManager($container->get('Omeka\ApiManager'));
             },
 
@@ -162,7 +176,7 @@ return [
                 return new JsonResourceWriter();
             },
 
-            TranslationMissingListener::class => function ($container) {
+            TranslationMissingListener::class => function (ContainerInterface $container) {
                 return new TranslationMissingListener(
                     $container->get('Omeka\Logger'),
                     $container->get('transifex.translations')

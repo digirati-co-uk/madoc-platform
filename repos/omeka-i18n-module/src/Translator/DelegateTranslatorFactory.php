@@ -48,7 +48,7 @@ class DelegateTranslatorFactory implements DelegatorFactoryInterface
 
         // Add Madoc translations.
         $pluginManager->setService(MadocMessageLoader::class, $container->get(MadocMessageLoader::class));
-        $delegate->addRemoteTranslations(MadocMessageLoader::class);
+//        $delegate->addRemoteTranslations(MadocMessageLoader::class);
 
         return $translator;
     }

@@ -33,6 +33,16 @@ trait RenderMedia
             }
         }
 
+        if ($this instanceof TranslatableRenderer) {
+            $names = $this->getTranslatableFieldNames();
+            /** @var \Zend\I18n\Translator\TranslatorInterface $translator */
+            $translator = $media->getServiceLocator()->get('Zend\I18n\Translator\TranslatorInterface')->getDelegatedTranslator();
+
+            foreach ($names as $key) {
+                $data[$key] = $translator->translate($data[$key], 'default:page_block');
+            }
+        }
+
         return $this->renderFromData($view, $data, $options);
     }
 

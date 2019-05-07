@@ -1,0 +1,85 @@
+<h1>Translations</h1>
+<style>
+    header nav a[href="{{ url(null, {}, {}, true) }}"] {
+        color: #fff;
+    }
+
+    div.sec {
+        margin: 10px;
+        border: 2px solid #eee;
+        padding: 20px;
+    }
+</style>
+
+
+<h3>Global translations</h3>
+{% for group in groups %}
+    <div class="sec">
+        <h4>
+            <a href="{{ url('i18n-admin-translate-view-group', { 'group-id': group.getId() }, {}, true) }}">
+                {{ group.getLabel() }}
+            </a>
+        </h4>
+        <div>
+            {% for report in group.reportOptions() %}
+                <a target="_blank" href="{{ report.getLink('Request for translation') }}">
+                    {{ report.getLabel('Request translation') }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+{% endfor %}
+
+<h3>Site specific translations</h3>
+{% for group in siteGroups %}
+    <div class="sec">
+        <h4>
+            <a href="{{ url('i18n-admin-translate-view-group', { 'group-id': group.getId() }, {}, true) }}">
+                {{ group.getLabel() }}
+            </a>
+        </h4>
+        <div>
+            {% for report in group.reportOptions() %}
+                <a target="_blank" href="{{ report.getLink('Request for translation') }}">
+                    {{ report.getLabel('Request translation') }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+{% endfor %}
+
+{#
+<h4>Locale: {{ locale }}</h4>
+
+
+<table>
+    <thead>
+    <tr>
+        <th>Key</th>
+        <th>Message</th>
+    </tr>
+    </thead>
+    {% for key, message in messages %}
+        <tr>
+            <td>
+                {% if message %}
+                    {{ key }}
+                {% else %}
+                    <strong style="color: red">
+                        {{ key }}
+                    </strong>
+                {% endif %}
+            </td>
+            <td>
+                {% if message %}
+                    {{ message }}
+                {% else %}
+                    <strong style="color: red">
+                        {{ this.translate(key) }}
+                    </strong>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+#}

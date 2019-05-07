@@ -24,6 +24,7 @@ services:
       - ./bare/omeka-s/application:/srv/omeka/application
       - ./files:/srv/omeka/files
       - ./config/omeka-app/application.config.php:/srv/omeka/application/config/application.config.php
+      - ./translations:/srv/omeka/translations
 
   mysql:
     container_name: madoc-platform-database

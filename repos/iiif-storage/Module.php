@@ -12,7 +12,9 @@ use IIIFStorage\Listener\ImportContentListener;
 use IIIFStorage\Listener\TargetStatusUpdateListener;
 use IIIFStorage\Listener\ViewContentListener;
 use IIIFStorage\Utility\Router;
+use Omeka\Api\Adapter\ItemAdapter;
 use Omeka\Api\Representation\ItemRepresentation;
+use Omeka\Api\Response;
 use Omeka\Form\SitePageForm;
 use Omeka\Form\SiteSettingsForm;
 use Omeka\Module\AbstractModule;
@@ -24,10 +26,13 @@ use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Form\Element\Checkbox;
 use Zend\Form\Element\Text;
 use Zend\Form\Fieldset;
+use Zend\Http\Headers;
+use Zend\Http\Request;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Listener\ConfigMergerInterface;
 use Zend\ModuleManager\ModuleEvent;
 use Zend\ModuleManager\ModuleManager;
+use Zend\Mvc\Controller\AbstractController;
 use Zend\Mvc\MvcEvent;
 use Zend\View\Renderer\PhpRenderer;
 use Zend\View\Renderer\RendererInterface;
@@ -87,7 +92,7 @@ class Module extends AbstractModule implements ConfigProviderInterface
             // Ensure we get a numeric value from the settings.
             $numericValue = function (string $id, int $default) use ($form): int {
                 $value = $form->getSiteSettings()->get($id, $default);
-                $intValue = (int) $value;
+                $intValue = (int)$value;
                 if (!is_numeric($value) || $intValue === 0) {
                     return $default;
                 }
@@ -102,7 +107,7 @@ class Module extends AbstractModule implements ConfigProviderInterface
                                 'label' => 'Use original IDs',
                                 'info' => 'By default, '
                             ])
-                        ->setValue($form->getSiteSettings()->get('original-ids', false))
+                            ->setValue($form->getSiteSettings()->get('original-ids', false))
                     )
                     ->add(
                         (new Text('collections-per-page'))

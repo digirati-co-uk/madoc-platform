@@ -27,19 +27,68 @@ function i18n_route($route, $class, $method)
 return [
     'router' => [
         'routes' => [
-            'i18n-page-translate' => [
+            'i18n-admin-translate' => [
                 'type' => 'Segment',
                 'options' => [
-                    'route' => '/admin/s/:site-slug/page/:page-slug/translate',
-                    'constraints' => [
-                        'site-slug' => '[a-zA-Z0-9_-]+',
-                        'page-slug' => '[a-zA-Z0-9_-]+',
-                    ],
+                    'route' => '/admin/site/s/:site-slug/translations',
                     'defaults' => [
-                        'controller' => Transifex::class,
-                        'action' => 'show',
-                        '__SITE__' => true,
+                        '__NAMESPACE__' => '',
+                        'controller' => AdminTranslations::class,
+                        'action' => 'list',
                         '__ADMIN__' => true,
+                        '__SITEADMIN__' => true,
+                    ],
+                ],
+            ],
+            'i18n-admin-translate-view-group' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/admin/site/s/:site-slug/translations/group/:group-id',
+                    'defaults' => [
+                        '__NAMESPACE__' => '',
+                        'controller' => AdminTranslations::class,
+                        'action' => 'view-group',
+                        '__ADMIN__' => true,
+                        '__SITEADMIN__' => true,
+                    ],
+                ],
+            ],
+            'i18n-admin-translate-view-group-language' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/admin/site/s/:site-slug/translations/group/:group-id/list',
+                    'defaults' => [
+                        '__NAMESPACE__' => '',
+                        'controller' => AdminTranslations::class,
+                        'action' => 'view-group-list',
+                        '__ADMIN__' => true,
+                        '__SITEADMIN__' => true,
+                    ],
+                ],
+            ],
+            'i18n-admin-translate-download-template' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/admin/site/s/:site-slug/translations/group/:group-id/template.pot',
+                    'defaults' => [
+                        '__NAMESPACE__' => '',
+                        'controller' => AdminTranslations::class,
+                        'action' => 'download-template',
+                        '__ADMIN__' => true,
+                        '__SITEADMIN__' => true,
+                    ],
+                ],
+            ],
+            'i18n-admin-translate-view-language' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/admin/site/s/:site-slug/translations/group/:group-id/language/:lang',
+                    'defaults' => [
+                        '__NAMESPACE__' => '',
+                        'controller' => AdminTranslations::class,
+                        'action' => 'view-language',
+                        '__ADMIN__' => true,
+                        '__SITEADMIN__' => true,
                     ],
                 ],
             ],

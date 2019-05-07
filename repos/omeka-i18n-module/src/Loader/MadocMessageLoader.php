@@ -24,7 +24,7 @@ class MadocMessageLoader implements RemoteLoaderInterface
         $loader = new PoFileLoader();
 
         // @todo is this the right thing to do?
-        $iterator = new FilesystemIterator(__DIR__ . "/../../../../translations");
+        $iterator = new FilesystemIterator(__DIR__ . "/../../../../translations/madoc");
         $filter = new RegexIterator($iterator, '/.(po)$/');
 
         $fallback = null;
@@ -32,12 +32,11 @@ class MadocMessageLoader implements RemoteLoaderInterface
 
         foreach($filter as $entry) {
             $name = $entry->getBasename('.po');
-            list(, $fileLocale) = explode('.', $name);
 
-            if ($fileLocale === $locale) {
+            if ($name === $locale) {
                 $catalogue = $loader->load($entry->getPathName(), $locale, $textDomain);
             }
-            if (OmekaValue::langMatches($locale, $fileLocale)) {
+            if (OmekaValue::langMatches($locale, $name)) {
                 $fallback = $entry->getPathName();
             }
         }

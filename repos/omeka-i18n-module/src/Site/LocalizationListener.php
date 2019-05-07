@@ -62,6 +62,22 @@ class LocalizationListener
 
         /** @var \Zend\I18n\Translator\Translator $delegateTranslator */
         $delegateTranslator = $this->translator->getDelegatedTranslator();
+
+        $madocTranslationPaths = [
+            [OMEKA_PATH . '/translations/madoc', 'default'],
+            [OMEKA_PATH . '/translations/s/' . $route->getParam('site-slug') . '/page-blocks', 'default:page_block'],
+            [OMEKA_PATH . '/translations/s/' . $route->getParam('site-slug') . '/navigation', 'default:navigation'],
+        ];
+
+        foreach ($madocTranslationPaths as $path) {
+            $delegateTranslator->addTranslationFilePattern(
+                'gettext',
+                $path[0],
+                '%s.mo',
+                $path[1]
+            );
+        }
+
         $locale = $route->getParam(self::LOCALE_PARAM) ?? $session['locale'] ?? $fallbackLocale;
 
         if (null === $locale || empty($locale)) {

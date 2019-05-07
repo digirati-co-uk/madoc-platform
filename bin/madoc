@@ -192,8 +192,10 @@ case "${commandToRun}" in
         docker-compose down "$@"
     ;;
     generate-language)
-        vendor/bin/twig-extract -R -d madoc -o ./translations ./repos
-        php ./repos/extract-tagged-strings/extract-tagged-strings.php repos >> ./translations/madoc.en_GB.po
+        vendor/bin/twig-extract -vvv -R -d madoc -o ./translations ./repos
+        rm ./translations/madoc/template.pot
+        mv ./translations/madoc.en_GB.po ./translations/madoc/template.pot
+        php ./repos/extract-tagged-strings/extract-tagged-strings.php repos >> ./translations/madoc/template.pot
     ;;
     logs)
         docker-compose logs -f --tail=50
@@ -278,6 +280,7 @@ case "${commandToRun}" in
     echo "  stop                      Stops all containers"
     echo "  down                      Stop all containers if running and remove all containers"
     echo "  logs                      Show and tail the logs in the docker containers"
+    echo "  generate-language         Generate language files for the current build of Madoc"
     echo
     echo "Server commands:"
     echo

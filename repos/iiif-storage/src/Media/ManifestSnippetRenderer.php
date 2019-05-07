@@ -12,6 +12,7 @@ use Omeka\Api\Representation\MediaRepresentation;
 use Omeka\Api\Representation\SitePageBlockRepresentation;
 use Omeka\Api\Representation\ValueRepresentation;
 use Omeka\Media\Renderer\RendererInterface;
+use Zend\Validator\Translator\TranslatorAwareInterface;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
 use ZfcTwig\View\TwigRenderer;

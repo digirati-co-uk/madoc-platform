@@ -12,7 +12,7 @@ use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
 use ZfcTwig\View\TwigRenderer;
 
-class CrowdSourcingBannerRenderer implements RendererInterface, MediaPageBlockDualRender, LocalisedMedia
+class CrowdSourcingBannerRenderer implements RendererInterface, MediaPageBlockDualRender, LocalisedMedia, TranslatableRenderer
 {
     use RenderMedia;
 
@@ -81,6 +81,17 @@ class CrowdSourcingBannerRenderer implements RendererInterface, MediaPageBlockDu
         ]);
         $vm->setTemplate('iiif-storage/media/crowd-sourcing-banner');
         return $this->twig->render($vm);
+    }
+
+    public function getTranslatableFieldNames(): array
+    {
+        return [
+            'title',
+            'text',
+            'subtitle',
+            'subtext',
+            'buttonText',
+        ];
     }
 
     public function pageBlockOptions(SitePageBlockRepresentation $pageBlock): array

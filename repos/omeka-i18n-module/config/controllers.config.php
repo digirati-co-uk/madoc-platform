@@ -19,6 +19,9 @@
 
 namespace i18n\Controller;
 
+use Psr\Container\ContainerInterface;
+use Zend\Validator\Translator\TranslatorInterface;
+
 return [
     'controllers' => [
         'factories' => [
@@ -32,6 +35,12 @@ return [
 
             LanguageSelectionController::class => function ($c) {
                 return new LanguageSelectionController();
+            },
+            AdminTranslations::class => function (ContainerInterface $c) {
+                return new AdminTranslations(
+                    $c->get('Zend\I18n\Translator\TranslatorInterface'),
+                    $c->get('Omeka\Media\Renderer\Manager')
+                );
             },
         ],
     ],
