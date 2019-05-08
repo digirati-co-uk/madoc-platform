@@ -1,12 +1,12 @@
 <nav class="canvas-navigation" id="canvas">
     {% if (previous) %}
         <a class="canvas-navigation__previous" href="{{ router.canvas(previous, manifest, collection) }}">
-            <span class="fa fa-long-arrow-left" aria-hidden="true"></span> Previous Image
+            <span class="fa fa-long-arrow-left" aria-hidden="true"></span> {{ translate('Previous Image') }}
         </a>
     {% endif %}
     {% if (next) %}
         <a class="canvas-navigation__next" href="{{ router.canvas(next, manifest, collection) }}">
-            Next Image <span class="fa fa-long-arrow-right" aria-hidden="true"></span>
+            {{ translate('Next Image') }} <span class="fa fa-long-arrow-right" aria-hidden="true"></span>
         </a>
     {% endif %}
 </nav>

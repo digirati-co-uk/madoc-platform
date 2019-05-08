@@ -1,5 +1,5 @@
 <?php $label = isset($data['label']) && '' !== trim($data['label']) ? $data['label'] : null; ?>
 <label>
-    Label to show
+    <?php print $this->translate('Label to show'); ?>
     <input type="text" data-name="label" value="<?php echo $label; ?>"/>
 </label>

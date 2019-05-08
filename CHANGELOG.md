@@ -28,6 +28,8 @@ The internationalisation release.
 - Added files and database volumes to default docker-compose
 - Added new docker compose specifically for running on CI
 - Added new `ci-start` and `ci-stop` commands to madoc cli
+- Added carousel variation to site navigation, configurable in the site settings
+- Added "all collections" link to the site navigation
 
 ### Fixes
 - [UPSTREAM](https://github.com/digirati-co-uk/madoc-omeka-s/commit/b50bdb40fd586f32ae2466862dbe596cb6aeb1f2) Added send mail to base container
@@ -35,7 +37,8 @@ The internationalisation release.
 - Fixed bug where flagging may cause an error for some users (permissions)
 - Fixed icon spacing on page actions on canvas page
 - Fixed bug in container with latest annotated images media - would before throw error
-- Fixed bug in container with top contributors media - would also throw error 
+- Fixed bug in container with top contributors media - would also throw error
+- Fixed height of annotation studio and other smaller styling issues
 
 ## [1.0.1](https://github.com/digirati-co-uk/madoc-platform/compare/v1.0.0...v1.0.1)  - 2019-03-27
 
