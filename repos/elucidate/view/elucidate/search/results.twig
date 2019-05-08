@@ -4,7 +4,7 @@
 {% elseif annotations|length > 1 %}
     <p class="lede">Found <strong>{{ annotations|length }}</strong> results for '{{ query }}'</p>
 {% else %}
-    <p>No search results</p>
+    <p>{{ translate('No search results') }}</p>
 {% endif %}
 
 <div class="c-search-block">
@@ -12,8 +12,8 @@
         <div class="form-search ">
             <form>
                 <div class="form-field form-field--with-button">
-                    <label for="q" class="form-field__label sr-only">Search the collection</label>
-                    <input type="text" name="q" id="q" value="{{ query }}" placeholder="Search the collection"
+                    <label for="q" class="form-field__label sr-only">{{ translate('Search the collection') }}</label>
+                    <input type="text" name="q" id="q" value="{{ query }}" placeholder="{{ translate('Search the collection') }}"
                            class="form-field__input form-field__search"/>
                     <button class="form-field__button form-field__input" type="submit">
                         <i class="fa fa-search" aria-hidden="true"></i>

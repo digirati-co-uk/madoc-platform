@@ -1,7 +1,7 @@
-<h1>Bookmarking</h1>
+<h1>{{ translate('Bookmarking') }}</h1>
 <p>
-    Sorry, there was a problem saving your bookmark, please contact your site administrator.
+    {{ translate('Sorry, there was a problem saving your bookmark, please contact your site administrator.') }}
 </p>
 {% if(back) %}
-    <a class="button" href="{{ back }}">Go back to page</a>
+    <a class="button" href="{{ back }}">{{ translate('Go back to page') }}</a>
 {% endif %}

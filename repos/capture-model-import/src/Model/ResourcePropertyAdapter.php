@@ -32,13 +32,13 @@ class ResourcePropertyAdapter
     public function toJsonLd()
     {
         return [
-      '@id' => $this->id,
-      'o:label' => $this->label,
-      '@type' => $this->type,
-      'o:comment' => $this->comment,
-      'o:vocabulary' => $this->vocabulary,
-      'o:term' => $this->term,
-    ];
+            '@id' => $this->id,
+            'o:label' => $this->label,
+            '@type' => $this->type,
+            'o:comment' => $this->comment,
+            'o:vocabulary' => $this->vocabulary,
+            'o:term' => $this->term,
+        ];
     }
 
     /**

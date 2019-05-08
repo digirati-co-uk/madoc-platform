@@ -4,7 +4,7 @@
 </p>
 
 <div id="page-actions">
-    <a class="button" href="{{ url('i18n-admin-translate', {}, {}, true) }}">Back to all groups</a>
+    <a class="button" href="{{ url('i18n-admin-translate', {}, {}, true) }}">{{ translate('Back to all groups') }}</a>
     {% for report in group.reportOptions() %}
         <a class="button" target="_blank" href="{{ report.getLink('Request for translation') }}">
             {{ report.getLabel('Request translation') }}
@@ -12,12 +12,12 @@
     {% endfor %}
 </div>
 
-<h3>{{ label }} translations</h3>
+<h3>{{ label }} {{ translate('translations') }}</h3>
 <table>
     <thead>
     <tr>
-        <th>Key</th>
-        <th>Message</th>
+        <th>{{ translate('Key') }}</th>
+        <th>{{ translate('Message') }}</th>
     </tr>
     </thead>
     {% for key, message in messages %}

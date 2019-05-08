@@ -13,7 +13,7 @@
             <img src="{{ canvas.getThumbnail() }}"
                  alt="{% if(canvas.thumbnailAlt) %}{{ canvas.thumbnailAlt }}{% else %}Annotation studio ghost image{% endif %}"/>
         {% else %}
-            <img alt="Loading..." src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
+            <img alt="{{ translate('Loading') }}..." src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
         {% endif %}
     </div>
 </div>
