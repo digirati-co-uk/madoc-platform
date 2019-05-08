@@ -9,23 +9,6 @@
     <code><pre>{{ group.getPath() }}</pre></code>
 {% endif %}
 
-<style>
-    .language {
-        font-size: 12px;
-        padding: 0 6px;
-        margin-right: 6px;
-        background-color: rgba(0, 0, 0, 0.04);
-    }
-
-    .hb, .hb-1 {
-        padding: 5px 10px;
-        list-style: none;
-    }
-
-    .hb:hover {
-        background: #ddd;
-    }
-</style>
 <div id="page-actions">
     <a class="button" href="{{ url('i18n-admin-translate', {}, {}, true) }}">Back to all groups</a>
     {% for report in group.reportOptions() %}
@@ -73,3 +56,21 @@
         </a>
     {% endfor %}
 {% endif %}
+
+<style>
+    .language {
+        font-size: 12px;
+        padding: 0 6px;
+        margin-right: 6px;
+        background-color: rgba(0, 0, 0, 0.04);
+    }
+
+    .hb, .hb-1 {
+        padding: 5px 10px;
+        list-style: none;
+    }
+
+    .hb:hover {
+        background: #ddd;
+    }
+</style>

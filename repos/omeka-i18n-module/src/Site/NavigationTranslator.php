@@ -11,15 +11,10 @@ class NavigationTranslator extends Translator
 {
 
     /**
-     * Get the label for a link.
+     * {@inheritdoc}
      *
-     * User-provided labels should be used as-is, while system-provided "backup" labels
-     * should be translated.
-     *
-     * @param LinkInterface $linkType
-     * @param array $data
-     * @param SiteRepresentation $site
-     * @return string
+     * This overrides a single line in this single method. It wraps the label in a translate
+     * call in order for it to be picked up by Zend and translated.
      */
     public function getLinkLabel(LinkInterface $linkType, array $data, SiteRepresentation $site)
     {

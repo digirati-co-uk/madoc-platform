@@ -1,16 +1,4 @@
 <h1>Translations</h1>
-<style>
-    header nav a[href="{{ url(null, {}, {}, true) }}"] {
-        color: #fff;
-    }
-
-    div.sec {
-        margin: 10px;
-        border: 2px solid #eee;
-        padding: 20px;
-    }
-</style>
-
 
 <h3>Global translations</h3>
 {% for group in groups %}
@@ -48,38 +36,14 @@
     </div>
 {% endfor %}
 
-{#
-<h4>Locale: {{ locale }}</h4>
+<style>
+    header nav a[href="{{ url(null, {}, {}, true) }}"] {
+        color: #fff;
+    }
 
-
-<table>
-    <thead>
-    <tr>
-        <th>Key</th>
-        <th>Message</th>
-    </tr>
-    </thead>
-    {% for key, message in messages %}
-        <tr>
-            <td>
-                {% if message %}
-                    {{ key }}
-                {% else %}
-                    <strong style="color: red">
-                        {{ key }}
-                    </strong>
-                {% endif %}
-            </td>
-            <td>
-                {% if message %}
-                    {{ message }}
-                {% else %}
-                    <strong style="color: red">
-                        {{ this.translate(key) }}
-                    </strong>
-                {% endif %}
-            </td>
-        </tr>
-    {% endfor %}
-</table>
-#}
+    div.sec {
+        margin: 10px;
+        border: 2px solid #eee;
+        padding: 20px;
+    }
+</style>
