@@ -14,7 +14,7 @@ use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
 use ZfcTwig\View\TwigRenderer;
 
-class TopContributorsRenderer implements RendererInterface, MediaPageBlockDualRender, LocalisedMedia
+class TopContributorsRenderer implements RendererInterface, MediaPageBlockDualRender, TranslatableRenderer, LocalisedMedia
 {
     use RenderMedia;
 
@@ -83,7 +83,7 @@ class TopContributorsRenderer implements RendererInterface, MediaPageBlockDualRe
         }
 
         $vm = new ViewModel([
-            'title' => $data['title'],
+            'title' => $data['title'] ?? '',
             'users' => $users,
             'router' => $this->router,
         ]);
@@ -99,5 +99,10 @@ class TopContributorsRenderer implements RendererInterface, MediaPageBlockDualRe
     public function getLang(): string
     {
         return $this->localeHelper->getLocale();
+    }
+
+    public function getTranslatableFieldNames(): array
+    {
+        return ['title'];
     }
 }
