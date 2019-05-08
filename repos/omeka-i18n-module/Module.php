@@ -10,7 +10,6 @@ use i18n\Event\TranslatableResourceListener;
 use i18n\Form\LocalizationConfigForm;
 use i18n\Job\TransifexExportJob;
 use i18n\Job\TransifexItemExportJob;
-use i18n\Loader\MadocMessageLoader;
 use i18n\Site\LocalizationListener;
 use Omeka\Api\Representation\SiteRepresentation;
 use Omeka\Form\SiteSettingsForm;

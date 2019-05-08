@@ -67,6 +67,7 @@ class LocalizationListener
             [OMEKA_PATH . '/translations/madoc', 'default'],
             [OMEKA_PATH . '/translations/s/' . $route->getParam('site-slug') . '/page-blocks', 'default:page_block'],
             [OMEKA_PATH . '/translations/s/' . $route->getParam('site-slug') . '/navigation', 'default:navigation'],
+            // @todo find out how to get theme at current step in pipeline.
         ];
 
         foreach ($madocTranslationPaths as $path) {

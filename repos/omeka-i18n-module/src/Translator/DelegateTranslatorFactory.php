@@ -2,7 +2,6 @@
 
 namespace i18n\Translator;
 
-use i18n\Loader\MadocMessageLoader;
 use i18n\Loader\TransifexThemeMessageLoader;
 use i18n\Module as I18nModule;
 use Interop\Container\ContainerInterface;
@@ -45,10 +44,6 @@ class DelegateTranslatorFactory implements DelegatorFactoryInterface
             );
             $delegate->addRemoteTranslations(TransifexThemeMessageLoader::class);
         }
-
-        // Add Madoc translations.
-        $pluginManager->setService(MadocMessageLoader::class, $container->get(MadocMessageLoader::class));
-//        $delegate->addRemoteTranslations(MadocMessageLoader::class);
 
         return $translator;
     }

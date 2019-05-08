@@ -26,7 +26,6 @@ use i18n\Event\TranslatableResourceListener;
 use i18n\Event\TranslationMissingListener;
 use i18n\Factory\TransifexClientFactory;
 use i18n\Factory\TransifexObjectFactory;
-use i18n\Loader\MadocMessageLoader;
 use i18n\Loader\TransifexCoreMessageLoader;
 use i18n\Loader\TransifexResourceMessageLoader;
 use i18n\Loader\TransifexThemeMessageLoader;
@@ -143,10 +142,6 @@ return [
                 return new TransifexThemeMessageLoader(
                     $container->get('Omeka\Logger'), $container->get('transifex.translations')
                 );
-            },
-
-            MadocMessageLoader::class => function () {
-                return new MadocMessageLoader();
             },
 
             LocalizationListener::class => function (ContainerInterface $container) {
