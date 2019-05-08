@@ -137,12 +137,12 @@ class CollectionController extends AbstractPsr7ActionController
 
     private function shouldUseCarousel(): bool
     {
-        return (bool) $this->settingsHelper->__invoke('collection-manifest-carousel', false);
+        return (bool) $this->settingsHelper->get('collection-manifest-carousel', false);
     }
 
     private function shouldUseOriginalIds(): bool
     {
-        return $this->settingsHelper->__invoke('original-ids', false);
+        return $this->settingsHelper->get('original-ids', false);
     }
 
     private function getManifestsPerPage(): int

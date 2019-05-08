@@ -41,7 +41,7 @@
                 </div>
 
                 <a class="iiif-storage-manifest-snippet__button" href="{{ router.manifest(manifest, collection) }}">
-                    view all images
+                    {{ translate('view all images') }}
                 </a>
             </div>
         {% else %}
@@ -56,7 +56,7 @@
                     </a>
                     {# Getting the number of canvases causes the whole manifest to be loaded, so only do this if there are a couple of manifests. #}
                     {% if manifests|length < 10 %}
-                        {{ manifest.getCanvases() |length }} images
+                        {{ manifest.getCanvases() |length }} {{ translate('images') }}
                     {% endif %}
                 </p>
             </div>
