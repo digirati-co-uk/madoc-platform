@@ -64,12 +64,14 @@ class CollectionController extends AbstractPsr7ActionController
             throw new NotFoundException();
         }
 
+        $carousel = $this->shouldUseCarousel();
+
         $collectionRepresentation = $this->builder->buildResource(
             $collection,
             $this->shouldUseOriginalIds(),
             $this->params()->fromQuery('page') ?? 1,
             $this->getManifestsPerPage(),
-            1
+            $carousel ? 5 : 1
         );
         $collectionObj = $collectionRepresentation->getCollection();
         $manifests = $collectionObj->getManifests();
@@ -79,6 +81,7 @@ class CollectionController extends AbstractPsr7ActionController
             'resource' => $collectionRepresentation,
             'manifests' => $manifests,
             'router' => $this->router,
+            'carousel' => $carousel,
         ]);
 
         $this->paginateControls($viewModel, $collectionRepresentation->getTotalResults(), $this->getManifestsPerPage());
@@ -132,9 +135,14 @@ class CollectionController extends AbstractPsr7ActionController
         return $viewModel;
     }
 
+    private function shouldUseCarousel(): bool
+    {
+        return (bool) $this->settingsHelper->get('collection-manifest-carousel', false);
+    }
+
     private function shouldUseOriginalIds(): bool
     {
-        return $this->settingsHelper->__invoke('original-ids', false);
+        return $this->settingsHelper->get('original-ids', false);
     }
 
     private function getManifestsPerPage(): int

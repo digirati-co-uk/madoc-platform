@@ -29,6 +29,8 @@ The internationalisation release.
 - Added files and database volumes to default docker-compose
 - Added new docker compose specifically for running on CI
 - Added new `ci-start` and `ci-stop` commands to madoc cli
+- Added carousel variation to site navigation, configurable in the site settings
+- Added "all collections" link to the site navigation
 - Added new `generate-translations` command to madoc cli for creating template files
 - Added various translation calls to template files
 - Added `TranslatableRenderer` for page blocks, allowing them to advertise localised fields
@@ -47,6 +49,8 @@ The internationalisation release.
 - Fixed bug where flagging may cause an error for some users (permissions)
 - Fixed icon spacing on page actions on canvas page
 - Fixed bug in container with latest annotated images media - would before throw error
+- Fixed bug in container with top contributors media - would also throw error
+- Fixed height of annotation studio and other smaller styling issues
 - Fixed bug in container with top contributors media - would also throw error 
 - Fixed capture model translations in annotation studio module
 - Fixed bug where a mis-configured Elucidate may break some pages on the site

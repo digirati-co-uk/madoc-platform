@@ -102,6 +102,14 @@ class Module extends AbstractModule implements ConfigProviderInterface
             $form->add(
                 (new Fieldset('iiif-storage'))
                     ->add(
+                        (new Checkbox('collection-manifest-carousel'))
+                            ->setOptions([
+                                'label' => 'Use carousel on collection page',
+                                'info' => 'When viewing a collection of manifests, show each manifest as a carousel, instead of a single thumbnail. NOTE: this will request more canvases and may slow down page, consider reducing the manifests per page below.'
+                            ])
+                            ->setValue($form->getSiteSettings()->get('collection-manifest-carousel', false))
+                    )
+                    ->add(
                         (new Checkbox('original-ids'))
                             ->setOptions([
                                 'label' => 'Use original IDs',
