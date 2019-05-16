@@ -20,15 +20,15 @@ class LocalizationConfigForm extends AbstractConfigurationForm
         return [
             'enabled' => (new Checkbox(
                 'enabled', [
-                    'label' => 'Enable Omeka localization',
-                    'info' => 'When enabled, locally found translations will be applied',
+                    'label' => 'Enable Omeka localization', // @translate
+                    'info' => 'When enabled, locally found translations will be applied', // @translate
                 ]
             )),
             'transifex-enabled' => (new Checkbox('transifex-enabled', [
-                'label' => 'Enable Transifex localization',
+                'label' => 'Enable Transifex localization', // @translate
                 'info' => 'A feature flag to enable/disable integration with ' .
                     'Transifex.  When enabled, any translatable content will' .
-                    'be mirrorred to a Transifex project for the site it belongs to.',
+                    'be mirrorred to a Transifex project for the site it belongs to.', // @translate
             ]))
         ];
     }

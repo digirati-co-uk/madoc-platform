@@ -30,7 +30,7 @@ class AnnotationModerationSubscriber implements EventSubscriberInterface
      */
     private $router;
 
-    public function __construct(Uri $generatorBaseUri, UrlHelper $router, ElucidateModuleConfiguration $configuration)
+    public function __construct(string $generatorBaseUri, UrlHelper $router, ElucidateModuleConfiguration $configuration)
     {
         $this->generatorBaseUri = $generatorBaseUri;
         $this->router = $router;
@@ -66,7 +66,7 @@ class AnnotationModerationSubscriber implements EventSubscriberInterface
                 ],
                 [
                     'force_canonical' => false,
-                    'uri' => $this->generatorBaseUri,
+                    'uri' => new Uri($this->generatorBaseUri),
                 ],
                 true
             );

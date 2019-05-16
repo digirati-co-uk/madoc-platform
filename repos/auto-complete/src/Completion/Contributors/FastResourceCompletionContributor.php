@@ -29,23 +29,23 @@ final class FastResourceCompletionContributor implements CompletionContributor
         switch($tag)
         {
             case 100:
-                return "Personal Name";
+                return "Personal Name"; // @translate
             case 110:
-                return "Corporate Name";
+                return "Corporate Name"; // @translate
             case 111:
-                return "Event";
+                return "Event"; // @translate
             case 130:
-                return "Uniform Title";
+                return "Uniform Title"; // @translate
             case 148:
-                return "Period";
+                return "Period"; // @translate
             case 150:
-                return "Topic";
+                return "Topic"; // @translate
             case 151:
-                return "Geographic";
+                return "Geographic"; // @translate
             case 155:
-                return "Form/Genre";
+                return "Form/Genre"; // @translate
             default:
-                return "unknown";
+                return "unknown"; // @translate
         }
     }
 

@@ -14,7 +14,7 @@ use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
 use ZfcTwig\View\TwigRenderer;
 
-class LatestAnnotatedImagesRenderer implements RendererInterface, MediaPageBlockDualRender, LocalisedMedia
+class LatestAnnotatedImagesRenderer implements RendererInterface, MediaPageBlockDualRender, TranslatableRenderer, LocalisedMedia
 {
     use RenderMedia;
 
@@ -91,7 +91,7 @@ class LatestAnnotatedImagesRenderer implements RendererInterface, MediaPageBlock
         }
 
         $vm = new ViewModel([
-            'title' => $data['title'],
+            'title' => $data['title'] ?? '',
             'numberOfImages' => $numberOfImages,
             'canvases' => $canvases,
             'router' => $this->router,
@@ -108,5 +108,10 @@ class LatestAnnotatedImagesRenderer implements RendererInterface, MediaPageBlock
     public function getLang(): string
     {
         return $this->localeHelper->getLocale();
+    }
+
+    public function getTranslatableFieldNames(): array
+    {
+        return ['title'];
     }
 }

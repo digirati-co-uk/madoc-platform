@@ -2,8 +2,11 @@
 
 namespace AnnotationStudio;
 
+use Digirati\OmekaShared\Utility\OmekaValue;
+use Omeka\Api\Representation\AbstractRepresentation;
 use Omeka\Api\Representation\ItemSetRepresentation;
 use Omeka\Api\Representation\ValueRepresentation;
+use Omeka\I18n\Translator;
 use Zend\I18n\Translator\TranslatorInterface;
 
 class OmekaItemExpander
@@ -21,7 +24,7 @@ class OmekaItemExpander
     const FIELD_RENAMED_FROM = 'xx';
     const FIELD_RENAMED_TO = 'oa';
 
-    public static function expandChoices($items, callable $resolveUrl = null, TranslatorInterface $translator = null)
+    public static function expandChoices($items, callable $resolveUrl = null, Translator $translator = null)
     {
         $itemToReturn = [];
         /** @var $item ValueRepresentation */
@@ -42,14 +45,15 @@ class OmekaItemExpander
     /**
      * @param ItemSetRepresentation $document
      * @param callable $resolveUrl
-     * @param TranslatorInterface|null $translator
+     * @param Translator|null $translator
      *
      * @return array
      */
-    public static function expandDocument($document, callable $resolveUrl = null, TranslatorInterface $translator = null): array
+    public static function expandDocument($document, callable $resolveUrl = null, Translator $translator = null): array
     {
         $item = $document->getJsonLd();
         $jsonLd = [];
+        $locale = $translator->getDelegatedTranslator()->getLocale();
 
         foreach ($item as $key => $field) {
             $key = static::renameField($key);
@@ -67,12 +71,10 @@ class OmekaItemExpander
                     // Can't translate URI.
                     $jsonLd[$key] = $field;
                 } else {
-                    $jsonLd[$key] = array_map(
-                        function ($data) use ($translator) {
-                            return self::toJsonValue($data, $translator);
-                        },
-                        $field
-                    );
+                    $translatedValue = OmekaValue::translateValue($document, $key, $locale);
+                    if ($translatedValue) {
+                        $jsonLd[$key] = $translatedValue->value();
+                    }
                 }
             } else {
                 $jsonLd[$key] = $field;
@@ -82,6 +84,11 @@ class OmekaItemExpander
         return static::addMissingIds($jsonLd, $document, $resolveUrl);
     }
 
+    /**
+     * @param AbstractRepresentation $field
+     * @param Translator $translator
+     * @return mixed
+     */
     private static function toJsonValue($field, $translator)
     {
         $json = $field->jsonSerialize();

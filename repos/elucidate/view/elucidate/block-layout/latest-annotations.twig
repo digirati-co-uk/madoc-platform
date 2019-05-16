@@ -1,6 +1,6 @@
 {% if (allAnnotations) %}
     <section class="latest-annotations">
-        <h1 class="latest-annotations__title">Latest annotated images</h1>
+        <h1 class="latest-annotations__title">{{ translate('Latest annotated images') }}</h1>
         {% for annotation in allAnnotations|slice(0, 5) %}
             {% if annotation.manifestSource.omekaUri  and  annotation.thumbnail.full %}
                 <div class="latest-annotations__inner">

@@ -87,7 +87,7 @@ return [
             },
             AnnotationModerationSubscriber::class => function ($c) {
                 return new AnnotationModerationSubscriber(
-                    new Uri(getenv('OMEKA__ELUCIDATE_PUBLIC_DOMAIN')),
+                    getenv('OMEKA__ELUCIDATE_PUBLIC_DOMAIN') ?? '',
                     $c->get(UrlHelper::class),
                     $c->get(ElucidateModuleConfiguration::class)
                 );

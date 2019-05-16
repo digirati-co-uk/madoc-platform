@@ -25,11 +25,23 @@ The internationalisation release.
     - Added attribution to list of IIIF fields imported into Omekas CMS - with importing of different locals
     - IIIF JSON-LD in Omeka will show all available languages in the JSON
     - Replaced build-in omeka HTML media and page block with additional locale setting 
+    - Capture models can now be translated inside of Omeka and will correctly be served depending on your locale (#72)
 - Added files and database volumes to default docker-compose
 - Added new docker compose specifically for running on CI
 - Added new `ci-start` and `ci-stop` commands to madoc cli
 - Added carousel variation to site navigation, configurable in the site settings
 - Added "all collections" link to the site navigation
+- Added new `generate-translations` command to madoc cli for creating template files
+- Added various translation calls to template files
+- Added `TranslatableRenderer` for page blocks, allowing them to advertise localised fields
+- Added translation of page blocks and media items
+- Added alt text to default main logo in default theme
+- Added new translation management per site (see docs for details)
+    - See Omeka and Madoc translations
+    - Generate and download `template.pot` files for navigation and page blocks
+    - See missing translated strings quickly for a particular language
+- Added translation of navigation
+- Added core Madoc translations for Madoc modules 
 
 ### Fixes
 - [UPSTREAM](https://github.com/digirati-co-uk/madoc-omeka-s/commit/b50bdb40fd586f32ae2466862dbe596cb6aeb1f2) Added send mail to base container
@@ -39,6 +51,12 @@ The internationalisation release.
 - Fixed bug in container with latest annotated images media - would before throw error
 - Fixed bug in container with top contributors media - would also throw error
 - Fixed height of annotation studio and other smaller styling issues
+- Fixed bug in container with top contributors media - would also throw error 
+- Fixed capture model translations in annotation studio module
+- Fixed bug where a mis-configured Elucidate may break some pages on the site
+- Fixed issue where multiple HTML page blocks on the same page would not save
+- Fixed bug where you could sync without Transfiex enabled
+- Fixed bug where locale was not being passed to annotation studio (#74)
 
 ## [1.0.1](https://github.com/digirati-co-uk/madoc-platform/compare/v1.0.0...v1.0.1)  - 2019-03-27
 

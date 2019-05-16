@@ -4,7 +4,7 @@ namespace i18n\Translator;
 
 use Zend\Mvc\I18n\Translator as MvcTranslator;
 
-class NavigationTranslator extends MvcTranslator
+class NavigationMvcTranslator extends MvcTranslator
 {
     /**
      * @var ContextualTranslator

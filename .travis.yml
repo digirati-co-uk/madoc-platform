@@ -24,6 +24,8 @@ before_script:
 
 script:
   - .travis/test-script.sh
+# Travis build does not have PHP at this stage.
+#  - .travis/check-translations.sh
 
 after_script:
   - ./bin/madoc ci-stop

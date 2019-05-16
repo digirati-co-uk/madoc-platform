@@ -1,0 +1,76 @@
+<h1>{{ group.getLabel() }}</h1>
+<p>
+    {{ group.getDescription() }}
+</p>
+
+{% set path = group.getPath() %}
+{% if path %}
+    <h4>{{ translate('Where to add translations') }}</h4>
+    <code><pre>{{ group.getPath() }}</pre></code>
+{% endif %}
+
+<div id="page-actions">
+    <a class="button" href="{{ url('i18n-admin-translate', {}, {}, true) }}">{{ translate('Back to all groups') }}</a>
+    {% for report in group.reportOptions() %}
+        <a class="button" target="_blank" href="{{ report.getLink('Request for translation') }}">
+            {{ report.getLabel('Request translation') }}
+        </a>
+    {% endfor %}
+</div>
+
+
+<h4>{{ translate('Actions') }}</h4>
+
+<ul>
+    <li>
+        <a href="{{ url('i18n-admin-translate-download-template', {}, {}, true) }}">{{ translate('Download template') }} (.pot)</a>
+    </li>
+    <li>
+        <a href="{{ url('i18n-admin-translate-view-group-language', {}, {}, true) }}">{{ translate('View translatable strings') }}</a>
+    </li>
+</ul>
+
+<h4>Available languages</h4>
+<ul>
+    {% set langs = group.listLanguages() %}
+    {% for lang in langs %}
+        <li class="hb">
+            {{ lang.label }} <span class="language">{{ lang.code }}</span> <span style="float:right"><a
+                        href="{{ url('i18n-admin-translate-view-language', { lang: lang.code }, {}, true) }}">{{ translate('view') }}</a></span>
+        </li>
+    {% endfor %}
+    {% if langs|length == 0 %}
+        <li class="hb-1">
+            {{ translate('No languages added yet.') }}
+        </li>
+    {% endif %}
+</ul>
+
+{% set reports = group.reportOptions() %}
+{% if reports|length != 0 %}
+    <h4>{{ translate('Can\'t find the language you\'re looking for?') }}</h4>
+    <br/>
+    {% for report in reports %}
+        <a class="button" target="_blank" href="{{ report.getLink('Request for translation') }}">
+            {{ report.getLabel('Request translation') }}
+        </a>
+    {% endfor %}
+{% endif %}
+
+<style>
+    .language {
+        font-size: 12px;
+        padding: 0 6px;
+        margin-right: 6px;
+        background-color: rgba(0, 0, 0, 0.04);
+    }
+
+    .hb, .hb-1 {
+        padding: 5px 10px;
+        list-style: none;
+    }
+
+    .hb:hover {
+        background: #ddd;
+    }
+</style>

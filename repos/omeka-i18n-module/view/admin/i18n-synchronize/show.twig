@@ -3,10 +3,14 @@
 
 {{ pageTitle(translate('Synchronize translations')) }}
 
-{{ form().openTag(form) | raw }}
-<p><b>Are you sure?</b> Clicking Submit will dispatch jobs that will resynchronize localization resources
-    for all applicable Omeka content.  Synchronization may take some time</p>
-<button type="submit">Submit</button>
+{% if isEnabled %}
+    {{ form().openTag(form) | raw }}
+    <p><b>{{ translate('Are you sure?') }}</b> {{ translate('Clicking Submit will dispatch jobs that will resynchronize localization resources
+    for all applicable Omeka content.  Synchronization may take some time') }}</p>
+    <button type="submit">{{ translate('Submit') }}</button>
 
-{{ formCollection(form, false) }}
-{{ form().closeTag(form) | raw }}
+    {{ formCollection(form, false) }}
+    {{ form().closeTag(form) | raw }}
+{% else %}
+    <p>{{ translate('Please enable and configure Transifex to enable sync.') }}</p>
+{% endif %}

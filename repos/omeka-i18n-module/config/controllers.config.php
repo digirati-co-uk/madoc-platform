@@ -19,6 +19,9 @@
 
 namespace i18n\Controller;
 
+use Psr\Container\ContainerInterface;
+use Zend\Validator\Translator\TranslatorInterface;
+
 return [
     'controllers' => [
         'factories' => [
@@ -27,11 +30,22 @@ return [
             },
 
             TranslationSyncController::class => function ($c) {
-                return new TranslationSyncController($c->get('Omeka\JobDispatcher'), $c->get('Omeka\ApiManager'));
+                $config = $c->get('Omeka\Settings');
+                return new TranslationSyncController(
+                    $c->get('Omeka\JobDispatcher'),
+                    $c->get('Omeka\ApiManager'),
+                    boolval($config->get('i18n_transifex-enabled', false))
+                );
             },
 
             LanguageSelectionController::class => function ($c) {
                 return new LanguageSelectionController();
+            },
+            AdminTranslations::class => function (ContainerInterface $c) {
+                return new AdminTranslations(
+                    $c->get('Zend\I18n\Translator\TranslatorInterface'),
+                    $c->get('Omeka\Media\Renderer\Manager')
+                );
             },
         ],
     ],

@@ -11,7 +11,9 @@ class ImportForm extends Form
 
     public function setSiteList(array $sites)
     {
-        $this->sites = array_merge([0 => 'Choose site...'], $sites);
+        $this->sites = array_merge([
+            0 => 'Choose site...' // @translate
+        ], $sites);
     }
 
     public function init()
@@ -27,8 +29,8 @@ class ImportForm extends Form
         if ($this->sites) {
             $this->add(
                 (new Element\Select('resource_site'))->setValueOptions($this->sites)->setOptions([
-                    'label' => 'Add to site',
-                    'info' => 'Add directly to site after importing',
+                    'label' => 'Add to site', // @translate
+                    'info' => 'Add directly to site after importing', // @translate
                 ])
             );
         }

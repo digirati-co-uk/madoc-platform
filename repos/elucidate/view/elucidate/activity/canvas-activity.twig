@@ -3,7 +3,7 @@
     {% set canvasList = annotationsSortable.groupByCanvas().get() %}
     {% for canvas in canvasList %}
         <a href="{{ canvas.canvasSource.omekaUri }}">
-            <span class="fa fa-long-arrow-left" aria-hidden="true"></span> Back to item
+            <span class="fa fa-long-arrow-left" aria-hidden="true"></span> {{ translate('Back to item') }}
         </a>
 
         <h2>Activity for {{ canvas.canvasSource.label }}</h2>
