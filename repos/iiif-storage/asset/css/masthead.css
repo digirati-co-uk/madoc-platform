@@ -30,6 +30,7 @@
 }
 
 .c-masthead__description {
+    line-height: 26px;
     color: #fff;
 }
 
@@ -122,6 +123,7 @@
 
 .c-panel__content {
     padding: 10px 0;
+    line-height: 1.4em;
 }
 
 .c-panel__foot {
