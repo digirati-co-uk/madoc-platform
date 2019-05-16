@@ -49,6 +49,17 @@ return [
                 'route' => 'admin/i18n-synchronize',
             ],
         ],
+        'site' => [
+            [
+                'label' => 'Translations', // @translate
+                'class' => 'vocabularies',
+                'order' => 5,
+                'route' => 'i18n-admin-translate',
+                'action' => 'edit',
+                'privilege' => 'update',
+                'useRouteMatch' => true,
+            ],
+        ]
     ],
     'transifex' => [
         'apikey' => getenv('OMEKA__TRANSIFEX_KEY'),

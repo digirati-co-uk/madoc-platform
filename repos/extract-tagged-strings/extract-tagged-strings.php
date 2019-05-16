@@ -1,6 +1,6 @@
 #!/usr/bin/env php
 <?php
-include __DIR__ . '/../../autoload.php';
+include __DIR__ . '/../../vendor/autoload.php';
 
 $tag = '@translate';
 $excludes = ['vendor', 'modules', 'themes'];
@@ -40,12 +40,6 @@ foreach ($finder as $file) {
 }
 
 $header = <<<'POT'
-#, fuzzy
-msgid ""
-msgstr ""
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
 
 
 POT;
@@ -55,14 +49,12 @@ $template = <<<POT
 msgid "%s"
 msgstr ""
 
-
 POT;
-
 $output = '';
 foreach ($strings as $string => $lineInfo) {
-    foreach ($lineInfo as $occurrence) {
-        $output .= sprintf($commentTemplate, $occurrence[0], $occurrence[1]);
-    }
+//    foreach ($lineInfo as $occurrence) {
+//        $output .= sprintf($commentTemplate, $occurrence[0], $occurrence[1]);
+//    }
 
     // $string is always a T_CONSTANT_ENCAPSED_STRING so we can safely eval it
     $string = eval("return $string;");

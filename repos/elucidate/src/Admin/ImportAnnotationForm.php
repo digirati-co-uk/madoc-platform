@@ -11,8 +11,8 @@ class ImportAnnotationForm extends Form
     {
         $this->add(
             (new Textarea('annotation_body', [
-                'label' => 'Annotation body',
-                'info' => 'Paste in an annotation body that you want to import',
+                'label' => 'Annotation body', // @translate
+                'info' => 'Paste in an annotation body that you want to import', // @translate
             ]))->setAttribute('rows', 20)
         );
     }

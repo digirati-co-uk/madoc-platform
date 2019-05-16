@@ -26,7 +26,7 @@ if ($activePage):
     <?php $content = trim($this->content); ?>
     <?php if (!$content): ?>
         <a href="/admin/site/s/<?php print $site->slug(); ?>/page/<?php print $page->slug(); ?>" style="display: block;text-align: center">
-            <img src="<?php echo $this->assetUrl('hello-madoc.svg'); ?>" alt="Login and add some content" />
+            <img src="<?php echo $this->assetUrl('hello-madoc.svg'); ?>" alt="<?php print $this->translate('Login and add some content'); ?>" />
         </a>
     <?php else: ?>
         <?php echo $content; ?>

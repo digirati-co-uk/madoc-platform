@@ -31,12 +31,12 @@ class ResourceTemplateAdapter
     public function toJsonLd()
     {
         return [
-      'o:label' => $this->label,
-      '@type' => 'o:Property',
-      'o:owner' => $this->owner,
-      'o:resource_class' => $this->resourceClass,
-      'o:resource_template_property' => $this->getPropertiesJson(),
-    ];
+            'o:label' => $this->label,
+            '@type' => 'o:Property',
+            'o:owner' => $this->owner,
+            'o:resource_class' => $this->resourceClass,
+            'o:resource_template_property' => $this->getPropertiesJson(),
+        ];
     }
 
     private function getPropertiesJson()

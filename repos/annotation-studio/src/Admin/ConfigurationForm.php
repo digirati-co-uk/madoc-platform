@@ -33,8 +33,8 @@ class ConfigurationForm extends AbstractConfigurationForm
 
             'google_map_api' => (new Element\Text())
                 ->setOptions([
-                    'label' => 'Google map API key',
-                    'info' => 'Generate a google map API, required if you use capture models with locations'
+                    'label' => 'Google map API key', // @translate
+                    'info' => 'Generate a google map API, required if you use capture models with locations' // @translate
                 ])
                 ->setAttribute('required', false),
 

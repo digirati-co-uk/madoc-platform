@@ -18,8 +18,8 @@ class ConfigurationForm extends AbstractConfigurationForm
         return [
             'key' => (new Element\Text())
                 ->setOptions([
-                    'label' => 'Google Analytics tracking code',
-                    'info' => 'The tracking code to be used in Google Analytics tracking snippets',
+                    'label' => 'Google Analytics tracking code', // @translate
+                    'info' => 'The tracking code to be used in Google Analytics tracking snippets', // @translate
                 ])
         ];
     }

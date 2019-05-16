@@ -34,14 +34,14 @@ class DelegateTranslatorFactory implements DelegatorFactoryInterface
         $translator = $callback();
         /** @var Translator $delegate */
         $delegate = $translator->getDelegatedTranslator();
+        $pluginManager = new LoaderPluginManager($container);
+        $delegate->setPluginManager($pluginManager);
 
         if (I18nModule::isTransifexEnabled($container)) {
-            $pluginManager = new LoaderPluginManager($container);
             $pluginManager->setService(
                 TransifexThemeMessageLoader::class,
                 $container->get(TransifexThemeMessageLoader::class)
             );
-            $delegate->setPluginManager($pluginManager);
             $delegate->addRemoteTranslations(TransifexThemeMessageLoader::class);
         }
 

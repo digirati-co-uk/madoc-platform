@@ -7,7 +7,7 @@ use Omeka\Api\Representation\SitePageBlockRepresentation;
 use Omeka\Media\Renderer\RendererInterface;
 use Zend\View\Renderer\PhpRenderer;
 
-class HtmlRenderer implements RendererInterface, MediaPageBlockDualRender, LocalisedMedia
+class HtmlRenderer implements RendererInterface, MediaPageBlockDualRender, TranslatableRenderer, LocalisedMedia
 {
     use RenderMedia;
 
@@ -34,5 +34,10 @@ class HtmlRenderer implements RendererInterface, MediaPageBlockDualRender, Local
     public function pageBlockOptions(SitePageBlockRepresentation $pageBlock): array
     {
         return [];
+    }
+
+    public function getTranslatableFieldNames(): array
+    {
+        return ['html'];
     }
 }

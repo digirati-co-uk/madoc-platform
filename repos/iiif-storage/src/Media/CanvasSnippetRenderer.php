@@ -16,7 +16,7 @@ use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
 use ZfcTwig\View\TwigRenderer;
 
-class CanvasSnippetRenderer implements RendererInterface, MediaPageBlockDualRender
+class CanvasSnippetRenderer implements RendererInterface, TranslatableRenderer, MediaPageBlockDualRender
 {
     use RenderMedia;
 
@@ -66,8 +66,6 @@ class CanvasSnippetRenderer implements RendererInterface, MediaPageBlockDualRend
      */
     public function renderFromData(PhpRenderer $view, array $data, array $options = [])
     {
-        var_dump("tried to render form data");
-        exit;
         if (!$data['canvas']) return '';
 
         /** @var ItemRepresentation $canvasRepresentation */
@@ -97,5 +95,10 @@ class CanvasSnippetRenderer implements RendererInterface, MediaPageBlockDualRend
     public function pageBlockOptions(SitePageBlockRepresentation $pageBlock): array
     {
         return [];
+    }
+
+    public function getTranslatableFieldNames(): array
+    {
+        return ['label'];
     }
 }

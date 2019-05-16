@@ -15,9 +15,9 @@ class FlaggingForm extends Form
             (new Select('reason', [
                 'label' => 'Select reason for flagging',
                 'options' => [
-                    'offensive' => 'Mark as offensive',
-                    'incorrect' => 'Mark as incorrect',
-                    'deviation' => 'Mark as irrelevant',
+                    'offensive' => 'Mark as offensive', // @translate
+                    'incorrect' => 'Mark as incorrect', // @translate
+                    'deviation' => 'Mark as irrelevant', // @translate
                 ],
             ]))->setAttribute('required', true)
         );
@@ -32,7 +32,7 @@ class FlaggingForm extends Form
 
         $this->add(
             (new Textarea('detail', [
-                'label' => 'Further information',
+                'label' => 'Further information', // @translate
             ]))
         );
 
@@ -40,7 +40,7 @@ class FlaggingForm extends Form
             'name' => 'submit',
             'type' => 'Submit',
             'attributes' => [
-                'value' => 'Flag',
+                'value' => 'Flag', // @translate
             ],
         ]);
     }

@@ -25,6 +25,7 @@ class HtmlIngester extends AbstractIngester implements IngesterInterface
     /**
      * @param string $operation either "create" or "update"
      * @return Element[]
+     * @throws \Exception
      */
     public function getFormElements(string $operation): array
     {
@@ -37,7 +38,7 @@ class HtmlIngester extends AbstractIngester implements IngesterInterface
                 ])
                 ->setAttributes([
                     'rows' => 15,
-                    'id' => 'media-html-__index__',
+                    'id' => 'media-html-' . bin2hex(random_bytes(10)),
                     'class' => 'media-html',
                 ]),
             $this->getLocaleField(),
