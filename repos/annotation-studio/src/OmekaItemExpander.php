@@ -71,19 +71,9 @@ class OmekaItemExpander
                     // Can't translate URI.
                     $jsonLd[$key] = $field;
                 } else {
-                    $fallback = $first;
-
-                    foreach ($field as $singleField) {
-                        if ($singleField->lang() === $locale) {
-                            $jsonLd[$key] = self::toJsonValue($singleField, $translator);
-                            break;
-                        }
-                        if (OmekaValue::langMatches($singleField->lang(), $locale)) {
-                            $fallback = self::toJsonValue($singleField, $translator);
-                        }
-                    }
-                    if (!$jsonLd[$key]) {
-                        $jsonLd[$key] = $fallback;
+                    $translatedValue = OmekaValue::translateValue($document, $key, $locale);
+                    if ($translatedValue) {
+                        $jsonLd[$key] = $translatedValue->value();
                     }
                 }
             } else {

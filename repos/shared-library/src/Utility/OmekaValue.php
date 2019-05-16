@@ -48,7 +48,7 @@ class OmekaValue
         }
 
         $values = $representation->values()[$term]['values'];
-        $fallback = $values[0];
+        $fallback = $values[0] ?? null;
 
         foreach ($representation->values()[$term]['values'] as $value) {
             /** @var ValueRepresentation $value */
