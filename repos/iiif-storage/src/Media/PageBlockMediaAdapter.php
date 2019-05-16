@@ -113,7 +113,7 @@ class PageBlockMediaAdapter extends AbstractBlockLayout implements BlockLayoutIn
         }
 
 
-        return $this->renderer->renderFromData($view, $data, $this->renderer->pageBlockOptions($block));
+        return $this->renderer->renderFromData($view, $data ?? [], $this->renderer->pageBlockOptions($block));
     }
 
     private function getLang()
