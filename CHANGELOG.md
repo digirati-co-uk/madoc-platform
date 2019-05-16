@@ -42,6 +42,7 @@ The internationalisation release.
     - See missing translated strings quickly for a particular language
 - Added translation of navigation
 - Added core Madoc translations for Madoc modules 
+- Added logging when sending emails using the flagging feature to aid debugging and setting up SMTP
 
 ### Fixes
 - [UPSTREAM](https://github.com/digirati-co-uk/madoc-omeka-s/commit/b50bdb40fd586f32ae2466862dbe596cb6aeb1f2) Added send mail to base container
