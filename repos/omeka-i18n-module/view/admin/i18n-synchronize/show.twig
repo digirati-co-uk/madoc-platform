@@ -12,5 +12,5 @@
     {{ formCollection(form, false) }}
     {{ form().closeTag(form) | raw }}
 {% else %}
-    <p>Please enable and configure Transifex to enable sync</p>
+    <p>{{ translate('Please enable and configure Transifex to enable sync.') }}</p>
 {% endif %}

@@ -90,6 +90,8 @@ msgid "Clicking Submit will dispatch jobs that will resynchronize localization r
 msgstr ""
 msgid "Submit"
 msgstr ""
+msgid "Please enable and configure Transifex to enable sync."
+msgstr ""
 msgid "Back to all groups"
 msgstr ""
 msgid "translations"
