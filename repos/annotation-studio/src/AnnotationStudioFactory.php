@@ -21,6 +21,7 @@ class AnnotationStudioFactory
     private $canvas;
     private $isLocked;
     private $googleMapApiKey;
+    private $locale;
 
     public function __construct(
         AnnotationStudio $instance,
@@ -151,6 +152,13 @@ class AnnotationStudioFactory
         return $this;
     }
 
+    public function withLocale(string $locale)
+    {
+        $this->locale = $locale;
+
+        return $this;
+    }
+
     public function build(): AnnotationStudio
     {
         $this->instance->addComponent(
@@ -158,7 +166,9 @@ class AnnotationStudioFactory
             new CorePlugin(
                 $this->canvas,
                 $this->manifest,
-                $this->elucidateServer ?? ''
+                $this->elucidateServer ?? '',
+                null,
+                $this->locale
             )
         );
 

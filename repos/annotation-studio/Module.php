@@ -6,6 +6,7 @@ use AnnotationStudio\Admin\ConfigurationForm;
 use AnnotationStudio\CaptureModel\Router;
 use AnnotationStudio\Controller\CaptureModelController;
 use AnnotationStudio\Subscriber\ModerationStatusVerificationSubscriber;
+use Digirati\OmekaShared\Helper\LocaleHelper;
 use Digirati\OmekaShared\Helper\SettingsHelper;
 use Digirati\OmekaShared\Helper\UrlHelper;
 use Digirati\OmekaShared\ModuleExtensions\ConfigurationFormAutoloader;
@@ -166,6 +167,8 @@ class Module extends AbstractModule
         $eventDispatcher = $serviceContainer->get(EventDispatcher::class);
         /** @var ModerationStatusVerificationSubscriber $elucidateSubscriber */
         $elucidateSubscriber = $serviceContainer->get(ModerationStatusVerificationSubscriber::class);
+        /** @var LocaleHelper $localeHelper */
+        $localeHelper = $serviceContainer->get(LocaleHelper::class);
         $eventDispatcher->addSubscriber($elucidateSubscriber);
 
         $sharedEventManager->attach(SiteSettingsForm::class, 'form.add_elements', function (Event $event) {
@@ -213,7 +216,7 @@ class Module extends AbstractModule
             );
         });
 
-        $eventDispatcher->addListener('iiif.canvas.view', function (GenericEvent $event) use ($settings) {
+        $eventDispatcher->addListener('iiif.canvas.view', function (GenericEvent $event) use ($settings, $localeHelper) {
             /** @var CanvasRepresentation $canvas */
             $canvas = $event->getSubject();
             /** @var ViewModel $viewModel */
@@ -237,12 +240,13 @@ class Module extends AbstractModule
                 ->withDrafts()
                 ->withTagging($this->getCaptureModelUrl('tagging'))
                 ->withViewer($useOsd ? 'OpenSeadragonViewer' : 'StaticImageViewer')
+                ->withLocale($localeHelper->getLocale())
                 ->build();
 
             $vm->setVariable('annotationStudio', $annotationStudio);
         });
 
-        $eventDispatcher->addListener('iiif.manifest.view', function (GenericEvent $event) use ($settings) {
+        $eventDispatcher->addListener('iiif.manifest.view', function (GenericEvent $event) use ($settings, $localeHelper) {
             /** @var ManifestRepresentation $manifest */
             $manifest = $event->getSubject();
             /** @var ViewModel $viewModel */
@@ -267,12 +271,14 @@ class Module extends AbstractModule
                     ->withDrafts()
                     ->withTagging()
                     ->withViewer($useOsd ? 'OpenSeadragonViewer' : 'StaticImageViewer')
+                    ->withLocale($localeHelper->getLocale())
                     ->build();
             } else {
                 $annotationStudio = AnnotationStudioFactory::forManifestPage($manifest->getManifest(), $annotationStudio)
                     ->attachElucidateServer($elucidate)
                     ->setGoogleMapApiKey($googleMapApiKey)
                     ->withResourceEditor($this->getCaptureModelUrl('resource'))
+                    ->withLocale($localeHelper->getLocale())
                     ->build();
             }
             $vm->setVariable('annotationStudio', $annotationStudio);
