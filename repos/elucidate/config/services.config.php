@@ -241,7 +241,8 @@ return [
                 return new FlaggingNotificationSubscriber(
                     $c->get('Omeka\ApiManager'),
                     $c->get('Omeka\Acl'),
-                    $c->get('Omeka\Mailer')
+                    $c->get('Omeka\Mailer'),
+                    $c->get('Omeka\Logger')
                 );
             },
 

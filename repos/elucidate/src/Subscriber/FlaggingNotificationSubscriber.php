@@ -8,6 +8,7 @@ use Omeka\Permissions\Acl;
 use Omeka\Stdlib\Mailer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Zend\Log\Logger;
 
 class FlaggingNotificationSubscriber implements EventSubscriberInterface
 {
@@ -15,6 +16,10 @@ class FlaggingNotificationSubscriber implements EventSubscriberInterface
      * @var Acl
      */
     private $acl;
+    /**
+     * @var Logger
+     */
+    private $logger;
 
     public static function getSubscribedEvents()
     {
@@ -36,11 +41,13 @@ class FlaggingNotificationSubscriber implements EventSubscriberInterface
     public function __construct(
         ApiManager $manager,
         Acl $acl,
-        Mailer $mailer
+        Mailer $mailer,
+        Logger $logger
     ) {
         $this->manager = $manager;
         $this->acl = $acl;
         $this->mailer = $mailer;
+        $this->logger = $logger;
     }
 
     public function triggerNotification(GenericEvent $event)
@@ -63,6 +70,8 @@ class FlaggingNotificationSubscriber implements EventSubscriberInterface
             foreach ($notifiedUsers as $user) {
                 $notifiedUsersAddressList[$user->email()] = $user->name();
             }
+
+            $this->logger->info('Sending email to', $notifiedUsersAddressList);
 
             $message = $this->mailer->createMessage();
             $message->setTo($notifiedUsersAddressList);
