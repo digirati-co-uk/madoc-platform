@@ -2,7 +2,7 @@
   "name": "digirati/omeka-iiif-storage-module",
   "license": "MIT",
   "version": "1.0.0",
-  "description": "Omeka Sentry module",
+  "description": "Omeka IIIF Storage module",
   "type": "omeka-s-module",
   "require": {
     "digirati/omeka-shared": "~1.0.0",

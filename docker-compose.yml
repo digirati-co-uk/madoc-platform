@@ -17,6 +17,8 @@ services:
       - OMEKA__MAIN_SITE_DOMAIN=${MAIN_SITE_DOMAIN}
       - OMEKA__ELUCIDATE_URL=${ELUCIDATE_URL}
       - OMEKA__ELUCIDATE_PUBLIC_DOMAIN=${ELUCIDATE_PUBLIC_DOMAIN}
+      - OMEKA__SEARCH_ELASTICSEARCH=search-elasticsearch:9200
+      - OMEKA__SEARCH_INDEXER=search-indexer:8000
     ports:
       - "8888:80"
     volumes:
@@ -53,8 +55,47 @@ services:
       - CATALINA_OPTS=-Ddb.url=jdbc:postgresql://database:5432/annotations -Ddb.user="postgres" -Ddb.password=$MYSQL_PASSWORD
     ports:
       - 8889:8080
+
   annotation-database:
     container_name: madoc-annotation-database
     image: "garyttierneydi/elucidate-database:1.4.3-SNAPSHOT"
     environment:
       - POSTGRES_DB=annotations
+
+  search-elasticsearch:
+    container_name: search-elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.7.2
+    environment:
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.type=single-node"
+    ports:
+      - 9203:9200
+
+  search-founda:
+    image: digirati/jane-founda:d0e7610dc15073e85fce20ee42215e192b16907b
+    environment:
+      - WORKERS=2
+      - SEARCH_ANNOTATION_INDEX=jane-annotations
+      - SEARCH_ELASTICSEARCH_BASE=search-elasticsearch
+      - SEARCH_ELASTICSEARCH_PORT=9200
+      - SEARCH_SSL_BOOLEAN=false
+    ports:
+      - 8103:8000
+    links:
+      - search-elasticsearch
+
+  search-indexer:
+    container_name: search-indexer
+    image: digirati/madoc_indexer:88aed89770405ffcb5a553aee3bc3475f840cd8c
+    environment:
+      - WORKERS=2
+      - SEARCH_ANNOTATION_INDEX=jane-annotations
+      - SEARCH_ELASTICSEARCH_BASE=search-elasticsearch
+      - SEARCH_ELASTICSEARCH_PORT=9200
+      - SEARCH_SSL_BOOLEAN=false
+    ports:
+      - 8104:8000
+    links:
+      - search-elasticsearch
+      - search-founda
