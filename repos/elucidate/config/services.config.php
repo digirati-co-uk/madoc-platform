@@ -67,7 +67,6 @@ return [
             'mapping_cache' => function ($c) {
                 return new ChainCache([
                     new ArrayCache(),
-                    new PhpFileCache(OMEKA_PATH.'/files'),
                 ]);
             },
             OmekaItemMapper::class => function (ContainerInterface $c) {
@@ -192,7 +191,6 @@ return [
                 $cacheChain = new ChainCache(
                     [
                         new ArrayCache(),
-                        new PhpFileCache(OMEKA_PATH.'/files'),
                     ]
                 );
 

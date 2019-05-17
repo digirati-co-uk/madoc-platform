@@ -96,7 +96,6 @@ return [
                                 new ChainCache(
                                     [
                                         new ArrayCache(),
-                                        new FilesystemCache(OMEKA_PATH . '/files'),
                                     ]
                                 )
                             )
