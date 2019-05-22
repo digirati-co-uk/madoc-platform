@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v1.1.2...master)
 
 ### Added
-no new features in this release yet.
+- Added configuration option to the site settings for official locales to be shown in a language switcher
+- Added language switcher to the i18n module, available to be pulled into a theme
 
 ### Fixes
 no fixes in this release yet
