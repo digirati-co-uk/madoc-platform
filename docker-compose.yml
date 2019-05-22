@@ -89,7 +89,7 @@ services:
 
   search-indexer:
     container_name: search-indexer
-    image: digirati/madoc_indexer:0d2e60935aa2b2f5de45f1e4d9bfd424af4dc44c
+    image: digirati/madoc_indexer:25dae2e18a6f1fb06f910e21c519fad583ec4ede
     environment:
       - WORKERS=2
       - SEARCH_ANNOTATION_INDEX=jane-annotations
