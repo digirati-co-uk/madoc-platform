@@ -1,0 +1,27 @@
+<?php if ($this->siteSetting('i18n-language-list', '')): ?>
+    <?php $langs = explode(',', $this->siteSetting('i18n-language-list', '')); ?>
+    <?php if (count($langs) === 2): ?>
+        <?php foreach ($langs as $lang): ?>
+            <?php if ($lang !== $this->lang()): ?>
+                <a href="<?php print $this->url(null, ['locale' => $lang], [], true); ?>">
+                    <?php print Locale::getDisplayName($lang, $lang); ?>
+                </a>
+                <?php break; ?>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    <?php elseif (count($langs) > 1): ?>
+        <ul class="locale-switcher">
+            <?php foreach ($langs as $lang): ?>
+                <li class="locale-switcher__item  <?php if ($lang === $this->lang()): ?>locale-switcher__item--active<?php endif; ?>">
+                    <?php if ($lang === $this->lang()): ?>
+                        <?php print Locale::getDisplayName($lang, $lang); ?>
+                    <?php else: ?>
+                        <a href="<?php print $this->url(null, ['locale' => $lang], [], true); ?>">
+                            <?php print Locale::getDisplayName($lang, $lang); ?>
+                        </a>
+                    <?php endif; ?>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
+<?php endif; ?>
