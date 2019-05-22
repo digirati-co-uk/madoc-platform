@@ -53,6 +53,8 @@ services:
     environment:
       - DATABASE_USER=postgres
       - CATALINA_OPTS=-Ddb.url=jdbc:postgresql://database:5432/annotations -Ddb.user="postgres" -Ddb.password=$MYSQL_PASSWORD
+      - BASE_HOST=localhost
+      - BASE_PORT=8889
     ports:
       - 8889:8080
 
@@ -87,7 +89,7 @@ services:
 
   search-indexer:
     container_name: search-indexer
-    image: digirati/madoc_indexer:88aed89770405ffcb5a553aee3bc3475f840cd8c
+    image: digirati/madoc_indexer:0d2e60935aa2b2f5de45f1e4d9bfd424af4dc44c
     environment:
       - WORKERS=2
       - SEARCH_ANNOTATION_INDEX=jane-annotations
@@ -97,5 +99,7 @@ services:
     ports:
       - 8104:8000
     links:
+      - omeka-ecosystem
+      - annotation-server
       - search-elasticsearch
       - search-founda
