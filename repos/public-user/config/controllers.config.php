@@ -1,16 +1,19 @@
 <?php
 
+use Digirati\OmekaShared\Helper\SettingsHelper;
 use Interop\Container\ContainerInterface;
 use PublicUser\Controller\AccountController;
 use PublicUser\Auth\TokenService;
 use PublicUser\Controller\AuthController;
 use PublicUser\Controller\LoginController;
+use PublicUser\Controller\PublicProfileController;
 use PublicUser\Controller\SiteLoginRedirectController;
 use PublicUser\Controller\UserProfileController;
 use PublicUser\Extension\ConfigurableMailer;
 use PublicUser\Settings\PublicUserSettings;
 use PublicUser\Stats\AnnotationStatisticsService;
 use PublicUser\Stats\BookmarksService;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 return [
     'controllers' => [
@@ -25,7 +28,7 @@ return [
                     $c->get('Omeka\Acl')
                 );
             },
-            SiteLoginRedirectController::class => function ($c) {
+            SiteLoginRedirectController::class => function () {
                 return new SiteLoginRedirectController();
             },
             AuthController::class => function(ContainerInterface $c) {
@@ -42,13 +45,20 @@ return [
                     $c->Get('Omeka\Settings')
                 );
             },
-            UserProfileController::class => function ($c) {
+            UserProfileController::class => function (ContainerInterface $c) {
                 return new UserProfileController(
                     $c->get('Omeka\ApiManager'),
                     $c->get('Omeka\AuthenticationService'),
                     $c->get(PublicUserSettings::class)
                 );
             },
+            PublicProfileController::class => function (ContainerInterface $c) {
+                return new PublicProfileController(
+                    $c->get(SettingsHelper::class),
+                    $c->get('Omeka\AuthenticationService'),
+                    $c->get(EventDispatcher::class)
+                );
+            }
         ],
     ],
 ];
