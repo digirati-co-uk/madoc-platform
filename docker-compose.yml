@@ -73,15 +73,16 @@ services:
       - "discovery.type=single-node"
     ports:
       - 9203:9200
+      - 9204:9201
 
   search-founda:
     image: digirati/jane-founda:d0e7610dc15073e85fce20ee42215e192b16907b
     environment:
       - WORKERS=2
-      - SEARCH_ANNOTATION_INDEX=jane-annotations
-      - SEARCH_ELASTICSEARCH_BASE=search-elasticsearch
-      - SEARCH_ELASTICSEARCH_PORT=9200
-      - SEARCH_SSL_BOOLEAN=false
+      - search_annotation_index=jane-annotations
+      - search_elasticsearch_base=search-elasticsearch
+      - search_elasticsearch_port=9200
+      - search_ssl_boolean=false
     ports:
       - 8103:8000
     links:
@@ -89,13 +90,13 @@ services:
 
   search-indexer:
     container_name: search-indexer
-    image: digirati/madoc_indexer:25dae2e18a6f1fb06f910e21c519fad583ec4ede
+    image: digirati/madoc_indexer:3334192560beb77842ac03bdb681c758419d4a33
     environment:
       - WORKERS=2
-      - SEARCH_ANNOTATION_INDEX=jane-annotations
-      - SEARCH_ELASTICSEARCH_BASE=search-elasticsearch
-      - SEARCH_ELASTICSEARCH_PORT=9200
-      - SEARCH_SSL_BOOLEAN=false
+      - search_annotation_index=jane-annotations
+      - search_elasticsearch_base=search-elasticsearch
+      - search_elasticsearch_port=9200
+      - search_ssl_boolean=false
     ports:
       - 8104:8000
     links:
