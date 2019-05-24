@@ -2,7 +2,7 @@
 
 namespace IIIFStorage\Media;
 
-
+use Digirati\OmekaShared\Framework\AbstractIngester;
 use Omeka\Media\Ingester\IngesterInterface;
 use Zend\Form\Element;
 

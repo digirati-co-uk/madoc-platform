@@ -2,13 +2,13 @@
 
 namespace IIIFStorage\Media;
 
+use Digirati\OmekaShared\Framework\AbstractIngester;
 use Omeka\Api\Manager;
 use Omeka\Form\Element\Asset;
 use Omeka\Form\Element\HtmlTextarea;
 use Omeka\Form\Element\ItemSetSelect;
 use Omeka\Media\Ingester\IngesterInterface;
 use Zend\Form\Element;
-use Zend\View\Renderer\PhpRenderer;
 
 class CrowdSourcingBannerIngester extends AbstractIngester implements IngesterInterface
 {

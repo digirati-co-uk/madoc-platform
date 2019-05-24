@@ -1,7 +1,6 @@
 <?php
 
-namespace IIIFStorage\Media;
-
+namespace Digirati\OmekaShared\Framework;
 
 interface TranslatableRenderer
 {

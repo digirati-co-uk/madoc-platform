@@ -1,6 +1,6 @@
 <?php
 
-namespace IIIFStorage\Media;
+namespace Digirati\OmekaShared\Framework;
 
 use Digirati\OmekaShared\Helper\LocaleHelper;
 use Digirati\OmekaShared\Utility\OmekaValue;

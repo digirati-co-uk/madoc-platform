@@ -2,6 +2,10 @@
 
 namespace IIIFStorage\Media;
 
+use Digirati\OmekaShared\Framework\RenderMedia;
+use Digirati\OmekaShared\Framework\LocalisedMedia;
+use Digirati\OmekaShared\Framework\MediaPageBlockDualRender;
+use Digirati\OmekaShared\Framework\TranslatableRenderer;
 use Digirati\OmekaShared\Helper\LocaleHelper;
 use IIIFStorage\Utility\Router;
 use Omeka\Api\Exception\NotFoundException;

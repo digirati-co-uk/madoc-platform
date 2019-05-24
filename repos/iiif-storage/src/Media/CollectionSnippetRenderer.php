@@ -2,7 +2,8 @@
 
 namespace IIIFStorage\Media;
 
-
+use Digirati\OmekaShared\Framework\MediaPageBlockDualRender;
+use Digirati\OmekaShared\Framework\RenderMedia;
 use IIIFStorage\JsonBuilder\CollectionBuilder;
 use IIIFStorage\Utility\Router;
 use Omeka\Api\Manager;

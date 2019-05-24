@@ -2,11 +2,11 @@
 
 namespace IIIFStorage\Media;
 
-
+use Digirati\OmekaShared\Framework\MediaPageBlockDualRender;
+use Digirati\OmekaShared\Framework\RenderMedia;
 use IIIFStorage\JsonBuilder\CollectionBuilder;
 use IIIFStorage\Repository\CollectionRepository;
 use IIIFStorage\Utility\Router;
-use Omeka\Api\Representation\MediaRepresentation;
 use Omeka\Api\Representation\SitePageBlockRepresentation;
 use Omeka\Media\Renderer\RendererInterface;
 use Zend\View\Model\ViewModel;

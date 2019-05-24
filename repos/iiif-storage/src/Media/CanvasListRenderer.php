@@ -2,7 +2,7 @@
 
 namespace IIIFStorage\Media;
 
-
+use Digirati\OmekaShared\Framework\RenderMedia;
 use IIIFStorage\JsonBuilder\CanvasBuilder;
 use IIIFStorage\Repository\CanvasRepository;
 use IIIFStorage\Repository\ManifestRepository;
@@ -12,6 +12,7 @@ use Omeka\Media\Renderer\RendererInterface;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
 use ZfcTwig\View\TwigRenderer;
+use Digirati\OmekaShared\Framework\MediaPageBlockDualRender;
 
 class CanvasListRenderer implements RendererInterface, MediaPageBlockDualRender
 {

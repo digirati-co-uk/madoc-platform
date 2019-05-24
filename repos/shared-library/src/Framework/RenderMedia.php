@@ -1,8 +1,6 @@
 <?php
 
-
-namespace IIIFStorage\Media;
-
+namespace Digirati\OmekaShared\Framework;
 
 use Digirati\OmekaShared\Utility\OmekaValue;
 use Omeka\Api\Representation\MediaRepresentation;
@@ -43,7 +41,11 @@ trait RenderMedia
             }
         }
 
-        return $this->renderFromData($view, $data, $options);
+        if ($this instanceof MediaPageBlockDualRender) {
+            return $this->renderFromData($view, $data, $options);
+        }
+
+        return '';
     }
 
     public function getCurrentMedia()

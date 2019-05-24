@@ -2,15 +2,12 @@
 
 namespace IIIFStorage\Media;
 
-use IIIFStorage\Repository\ManifestRepository;
 use Digirati\OmekaShared\Utility\PropertyIdSaturator;
+use Digirati\OmekaShared\Framework\AbstractIngester;
 use IIIFStorage\Utility\CheapOmekaRelationshipRequest;
 use Omeka\Api\Manager;
 use Omeka\Api\Representation\ItemRepresentation;
-use Omeka\Api\Representation\ValueRepresentation;
-use Omeka\Form\Element\ResourceSelect;
 use Omeka\Media\Ingester\IngesterInterface;
-use Throwable;
 use Zend\Form\Element;
 use Zend\View\Renderer\PhpRenderer;
 

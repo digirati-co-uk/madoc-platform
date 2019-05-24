@@ -2,14 +2,14 @@
 
 namespace IIIFStorage\Media;
 
-
+use Digirati\OmekaShared\Framework\RenderMedia;
 use Omeka\Api\Exception\NotFoundException;
-use Omeka\Api\Representation\MediaRepresentation;
 use Omeka\Api\Representation\SitePageBlockRepresentation;
 use Omeka\Media\Renderer\RendererInterface;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
 use ZfcTwig\View\TwigRenderer;
+use Digirati\OmekaShared\Framework\MediaPageBlockDualRender;
 
 class BannerImageRenderer implements RendererInterface, MediaPageBlockDualRender
 {

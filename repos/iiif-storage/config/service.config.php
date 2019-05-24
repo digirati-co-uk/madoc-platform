@@ -46,7 +46,7 @@ use IIIFStorage\Media\ManifestSnippetIngester;
 use IIIFStorage\Media\ManifestSnippetRenderer;
 use IIIFStorage\Media\MetadataIngester;
 use IIIFStorage\Media\MetadataRenderer;
-use IIIFStorage\Media\PageBlockMediaAdapter;
+use Digirati\OmekaShared\Framework\PageBlockMediaAdapter;
 use IIIFStorage\Media\TopContributorsIngester;
 use IIIFStorage\Media\TopContributorsRenderer;
 use IIIFStorage\Repository\CanvasRepository;

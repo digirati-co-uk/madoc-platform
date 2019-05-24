@@ -1,8 +1,6 @@
 <?php
 
-
-namespace IIIFStorage\Media;
-
+namespace Digirati\OmekaShared\Framework;
 
 use Locale;
 use Omeka\Api\Representation\MediaRepresentation;
@@ -182,3 +180,4 @@ abstract class AbstractIngester implements MutableIngesterInterface
         );
     }
 }
+

@@ -2,7 +2,6 @@
 
 namespace IIIFStorage\Media;
 
-
 use IIIFStorage\JsonBuilder\CanvasBuilder;
 use IIIFStorage\JsonBuilder\CollectionBuilder;
 use IIIFStorage\JsonBuilder\ManifestBuilder;

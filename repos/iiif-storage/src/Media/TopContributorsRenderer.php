@@ -2,8 +2,13 @@
 
 namespace IIIFStorage\Media;
 
+use Digirati\OmekaShared\Framework\RenderMedia;
+use Digirati\OmekaShared\Framework\MediaPageBlockDualRender;
+use Digirati\OmekaShared\Framework\TranslatableRenderer;
+use Digirati\OmekaShared\Framework\LocalisedMedia;
 use Digirati\OmekaShared\Helper\LocaleHelper;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DBALException;
 use IIIFStorage\JsonBuilder\CanvasBuilder;
 use IIIFStorage\Repository\CanvasRepository;
 use IIIFStorage\Utility\Router;
@@ -62,24 +67,29 @@ class TopContributorsRenderer implements RendererInterface, MediaPageBlockDualRe
         $query = 'SELECT COUNT(id) as total_contributions, MAX(user_id) as user_id from user_canvas_mapping GROUP BY user_id ORDER BY COUNT(id) DESC LIMIT :limit';
         $userQuery = 'SELECT id, name from user WHERE id = :id';
 
-        $statement = $this->connection->prepare($query);
-        $statement->bindValue('limit', $numberOfContributor, PDO::PARAM_INT);
-        $statement->execute();
+        try {
+            $statement = $this->connection->prepare($query);
+            $statement->bindValue('limit', $numberOfContributor, PDO::PARAM_INT);
+            $statement->execute();
 
-        $results = $statement->fetchAll();
+            $results = $statement->fetchAll();
 
-        $users = [];
-        foreach ($results as $result) {
-            $userStatement = $this->connection->prepare($userQuery);
-            $userStatement->bindValue('id', (int)$result['user_id'], PDO::PARAM_INT);
-            $userStatement->execute();
-            $user = $userStatement->fetch();
+            $users = [];
+            foreach ($results as $result) {
+                $userStatement = $this->connection->prepare($userQuery);
+                $userStatement->bindValue('id', (int)$result['user_id'], PDO::PARAM_INT);
+                $userStatement->execute();
+                $user = $userStatement->fetch();
 
-            $users[] = [
-                'id' => $user['id'] ?? '',
-                'name' => $user['name'] ?? 'unknown',
-                'contributions' => $result['total_contributions'] ?? 0,
-            ];
+                $users[] = [
+                    'id' => $user['id'] ?? '',
+                    'name' => $user['name'] ?? 'unknown',
+                    'contributions' => $result['total_contributions'] ?? 0,
+                ];
+            }
+        } catch (DBALException $e) {
+            error_log($e->getMessage());
+            return '';
         }
 
         $vm = new ViewModel([
