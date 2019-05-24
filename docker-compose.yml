@@ -16,6 +16,8 @@ services:
       - OMEKA__DATABASE_PORT=${MYSQL_PORT}
       - OMEKA__MAIN_SITE_DOMAIN=${MAIN_SITE_DOMAIN}
       - OMEKA__ELUCIDATE_URL=${ELUCIDATE_URL}
+      - OMEKA__INTERNAL_URL=${OMEKA_INTERNAL_URL}
+      - OMEKA__ANNOTATION_INDEXER=${ANNOTATION_INDEXER}
       - OMEKA__ELUCIDATE_PUBLIC_DOMAIN=${ELUCIDATE_PUBLIC_DOMAIN}
       - OMEKA__SEARCH_ELASTICSEARCH=search-elasticsearch:9200
       - OMEKA__SEARCH_INDEXER=search-indexer:8000
@@ -90,7 +92,7 @@ services:
 
   search-indexer:
     container_name: search-indexer
-    image: digirati/madoc_indexer:3334192560beb77842ac03bdb681c758419d4a33
+    image: digirati/madoc_indexer:a0b59d90bb8ab77d45fc158259bced784259acb8
     environment:
       - WORKERS=2
       - search_annotation_index=jane-annotations

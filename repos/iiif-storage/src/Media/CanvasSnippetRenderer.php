@@ -2,15 +2,15 @@
 
 namespace IIIFStorage\Media;
 
-
+use Digirati\OmekaShared\Framework\RenderMedia;
+use Digirati\OmekaShared\Framework\TranslatableRenderer;
+use Digirati\OmekaShared\Framework\MediaPageBlockDualRender;
 use IIIFStorage\JsonBuilder\CanvasBuilder;
 use IIIFStorage\Repository\CanvasRepository;
 use IIIFStorage\Utility\Router;
 use Omeka\Api\Manager;
 use Omeka\Api\Representation\ItemRepresentation;
-use Omeka\Api\Representation\MediaRepresentation;
 use Omeka\Api\Representation\SitePageBlockRepresentation;
-use Omeka\Api\Representation\ValueRepresentation;
 use Omeka\Media\Renderer\RendererInterface;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;

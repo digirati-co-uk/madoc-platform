@@ -3,12 +3,17 @@
 namespace MadocSearch;
 
 use Digirati\OmekaShared\ModuleExtensions\ConfigurationFormAutoloader;
+use Elucidate\Event\AnnotationLifecycleEvent;
+use GuzzleHttp\Client;
 use Omeka\Module\AbstractModule;
 use Omeka\Permissions\Acl;
 use MadocSearch\Admin\ConfigurationForm;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Zend\Config\Factory;
+use Zend\EventManager\SharedEventManagerInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\Mvc\MvcEvent;
+use Zend\Uri\Uri;
 
 class Module extends AbstractModule implements ConfigProviderInterface
 {
@@ -40,6 +45,69 @@ class Module extends AbstractModule implements ConfigProviderInterface
             null,
             []
         );
+    }
+
+    public function attachListeners(SharedEventManagerInterface $em)
+    {
+        $container = $this->getServiceLocator();
+        // @todo better feature flagging system.
+        if ($container->has(EventDispatcher::class) && getenv('OMEKA__ELUCIDATE_URL')) {
+            /** @var EventDispatcher $ev */
+            $ev = $container->get(EventDispatcher::class);
+
+            // @todo clean up a lot of the noise of the configuration, move to subscriber.
+            //       It will adapt with the indexer, but getting the annotations into elasticsearch
+            //       is a good starting point.
+            $ev->addListener(AnnotationLifecycleEvent::CREATE, function (AnnotationLifecycleEvent $event) {
+                try {
+                    $annotation = $event->getOriginalAnnotation();
+                    $internalAnnotationServer = getenv('OMEKA__ELUCIDATE_URL');
+                    $internalAnnotationServerUri = new Uri(
+                        substr($internalAnnotationServer, 0, 4) === 'http'
+                            ? $internalAnnotationServer
+                            : 'http://' . $internalAnnotationServer
+                    );
+                    $internalOmekaServer = getenv('OMEKA__INTERNAL_URL');
+                    $internalOmekaServerUri = new Uri($internalOmekaServer);
+                    $annotationIndexer = getenv('OMEKA__ANNOTATION_INDEXER');
+                    $mainSite = getenv('OMEKA__MAIN_SITE_DOMAIN');
+                    $mainSiteUri = new Uri($mainSite);
+
+                    if (!$annotation['generator'] || !$annotationIndexer) {
+                        return;
+                    }
+
+                    $captureModel = $annotation['generator'];
+                    $generator = new Uri($captureModel);
+                    if ($generator->getHost() === $mainSiteUri->getHost() && $internalOmekaServer) {
+                        $generator->setHost($internalOmekaServerUri->getHost());
+                        $generator->setPort($internalOmekaServerUri->getPort());
+                        $generator->setScheme($internalOmekaServerUri->getScheme());
+                    }
+
+                    $annotationId = $annotation['id'];
+                    $annotationUri = new Uri($annotationId);
+                    if ($annotationUri->getHost() === $mainSiteUri->getHost() && $internalAnnotationServer) {
+                        $annotationUri->setHost($internalAnnotationServerUri->getHost());
+                        $annotationUri->setPort($internalAnnotationServerUri->getPort());
+                        $annotationUri->setScheme($internalAnnotationServerUri->getScheme());
+                    }
+
+                    $url = new Uri($annotationIndexer);
+                    $url->setPath('/index-annotation');
+                    $url->setQuery([
+                        'annotation' => $annotationUri->toString(),
+                        'capture_model' => $generator->toString(),
+                    ]);
+
+                    $client = new Client();
+                    $client->get($url->toString());
+
+                } catch (\Throwable $e) {
+                    error_log($e->getMessage());
+                }
+            });
+        }
     }
 
     function getConfigFormClass(): string

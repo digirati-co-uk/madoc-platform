@@ -1,6 +1,7 @@
 <?php
 namespace IIIFStorage\Media;
 
+use Digirati\OmekaShared\Framework\AbstractIngester;
 use Omeka\Entity\Media;
 use Omeka\File\Downloader;
 use Omeka\Media\Ingester\IngesterInterface;
@@ -135,6 +136,8 @@ class IIIFImageIngester extends AbstractIngester implements IngesterInterface
             }
             $tempFile->delete();
         }
+
+        return true;
     }
 
     //This check comes from Open Seadragon's own validation check
@@ -221,6 +224,7 @@ class IIIFImageIngester extends AbstractIngester implements IngesterInterface
 
     private function getThumbnailService($thumbnailService, $fallback, $errorStore)
     {
+        /** @var ErrorStore $errorStore */
         try {
             $uri = new HttpUri($thumbnailService);
             if (!($uri->isValid() && $uri->isAbsolute())) {

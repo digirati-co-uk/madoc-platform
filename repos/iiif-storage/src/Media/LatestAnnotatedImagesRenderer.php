@@ -2,6 +2,10 @@
 
 namespace IIIFStorage\Media;
 
+use Digirati\OmekaShared\Framework\RenderMedia;
+use Digirati\OmekaShared\Framework\MediaPageBlockDualRender;
+use Digirati\OmekaShared\Framework\TranslatableRenderer;
+use Digirati\OmekaShared\Framework\LocalisedMedia;
 use Digirati\OmekaShared\Helper\LocaleHelper;
 use Doctrine\DBAL\Connection;
 use IIIFStorage\JsonBuilder\CanvasBuilder;

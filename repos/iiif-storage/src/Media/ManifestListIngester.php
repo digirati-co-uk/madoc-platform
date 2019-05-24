@@ -1,15 +1,10 @@
 <?php
 
-
 namespace IIIFStorage\Media;
 
-
-use Omeka\Api\Request;
-use Omeka\Entity\Media;
+use Digirati\OmekaShared\Framework\AbstractIngester;
 use Omeka\Media\Ingester\IngesterInterface;
-use Omeka\Stdlib\ErrorStore;
 use Zend\Form\Element;
-use Zend\View\Renderer\PhpRenderer;
 
 class ManifestListIngester extends AbstractIngester implements IngesterInterface
 {

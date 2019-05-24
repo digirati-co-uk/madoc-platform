@@ -1,8 +1,6 @@
 <?php
 
-
-namespace IIIFStorage\Media;
-
+namespace Digirati\OmekaShared\Framework;
 
 use Omeka\Api\Representation\SitePageBlockRepresentation;
 use Omeka\Media\Renderer\RendererInterface;

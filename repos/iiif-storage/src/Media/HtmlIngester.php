@@ -2,6 +2,7 @@
 
 namespace IIIFStorage\Media;
 
+use Digirati\OmekaShared\Framework\AbstractIngester;
 use Omeka\Form\Element\Ckeditor;
 use Omeka\Media\Ingester\IngesterInterface;
 use Omeka\Stdlib\ErrorStore;
