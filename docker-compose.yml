@@ -20,6 +20,7 @@ services:
       - OMEKA__ANNOTATION_INDEXER=${ANNOTATION_INDEXER}
       - OMEKA__ELUCIDATE_PUBLIC_DOMAIN=${ELUCIDATE_PUBLIC_DOMAIN}
       - OMEKA__SEARCH_ELASTICSEARCH=search-elasticsearch:9200
+      - OMEKA__ANNOTATION_ES_INDEX=jane-annotations
       - OMEKA__SEARCH_INDEXER=search-indexer:8000
     ports:
       - "8888:80"

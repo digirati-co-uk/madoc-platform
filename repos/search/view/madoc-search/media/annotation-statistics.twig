@@ -1,0 +1,12 @@
+{% do headLink().prependStylesheet(assetUrl('css/statistics.css', 'MadocSearch')) %}
+
+<div class="c-statistics c-statistics--center">
+    <dl class="c-statistic c-statistic--xl">
+        <dt>Images annotated</dt>
+        <dd>{{ totalImages }}</dd>
+    </dl>
+    <dl class="c-statistic c-statistic--xl">
+        <dt>Annotations</dt>
+        <dd>{{ totalAnnotations }}</dd>
+    </dl>
+</div>
