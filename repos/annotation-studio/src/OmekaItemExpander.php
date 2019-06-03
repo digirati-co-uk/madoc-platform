@@ -15,7 +15,6 @@ class OmekaItemExpander
         'dcterms:description',
         'dcterms:title',
         'rdfs:label',
-        'crowds:uiInputOptions',
         'crowds:group',
         'crowds:uiFormGroup',
     ];

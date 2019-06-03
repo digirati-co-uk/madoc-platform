@@ -4,13 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v1.1.2...master)
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v1.1.3...master)
 
 ### Added
 no new features in this release yet.
 
 ### Fixes
 no fixes in this release yet
+
+## [1.1.3](https://github.com/digirati-co-uk/madoc-platform/compare/v1.1.2...v1.1.3) - 2019-06-03
+
+### Fixes
+- Remove translation of dropdown (uiInputOptions) in capture model
 
 ## [1.1.2](https://github.com/digirati-co-uk/madoc-platform/compare/v1.1.1...v1.1.2) - 2019-03-27
 
