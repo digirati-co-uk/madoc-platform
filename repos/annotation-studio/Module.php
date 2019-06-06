@@ -228,6 +228,8 @@ class Module extends AbstractModule
             $elucidate = $this->getElucidateEndpoint();
             $useOsd = $settings->get('annotation_studio_use_open_seadragon', true);
             $googleMapApiKey = $settings->get('annotation_studio_google_map_api');
+            $version = $settings->get('annotation_studio_version', AnnotationStudio::DEFAULT_VERSION);
+            $debug = $settings->get('annotation_studio_debug', false);
 
             if (!$manifest || !$canvas) return;
 
@@ -240,8 +242,13 @@ class Module extends AbstractModule
                 ->withDrafts()
                 ->withTagging($this->getCaptureModelUrl('tagging'))
                 ->withViewer($useOsd ? 'OpenSeadragonViewer' : 'StaticImageViewer')
+                ->atVersion($version)
                 ->withLocale($localeHelper->getLocale())
                 ->build();
+
+            if ($debug) {
+                $annotationStudio->debug();
+            }
 
             $vm->setVariable('annotationStudio', $annotationStudio);
         });
@@ -257,6 +264,8 @@ class Module extends AbstractModule
             $useOsd = $settings->get('annotation_studio_use_open_seadragon', true);
             $elucidate = $this->getElucidateEndpoint();
             $googleMapApiKey = $settings->get('annotation_studio_google_map_api');
+            $version = $settings->get('annotation_studio_version', AnnotationStudio::DEFAULT_VERSION);
+            $debug = $settings->get('annotation_studio_debug', false);
 
             if (!$manifest) return;
 
@@ -271,6 +280,7 @@ class Module extends AbstractModule
                     ->withDrafts()
                     ->withTagging()
                     ->withViewer($useOsd ? 'OpenSeadragonViewer' : 'StaticImageViewer')
+                    ->atVersion($version)
                     ->withLocale($localeHelper->getLocale())
                     ->build();
             } else {
@@ -278,9 +288,15 @@ class Module extends AbstractModule
                     ->attachElucidateServer($elucidate)
                     ->setGoogleMapApiKey($googleMapApiKey)
                     ->withResourceEditor($this->getCaptureModelUrl('resource'))
+                    ->atVersion($viewModel)
                     ->withLocale($localeHelper->getLocale())
                     ->build();
             }
+
+            if ($debug) {
+                $annotationStudio->debug();
+            }
+
             $vm->setVariable('annotationStudio', $annotationStudio);
         });
     }

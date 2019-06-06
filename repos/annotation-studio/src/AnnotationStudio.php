@@ -6,11 +6,13 @@ use AnnotationStudio\Components\Component;
 
 class AnnotationStudio
 {
-    const VERSION = '1.0.0-rc.26';
+    const DEFAULT_VERSION = '1.0.0-rc.27';
+
+    private $version;
 
     private $components;
     private $isLocked = false;
-    private $googleMapApiKey;
+    private $debug = false;
 
     public function __construct()
     {
@@ -24,8 +26,10 @@ class AnnotationStudio
         return $this;
     }
 
-    public function setGoogleMapApiKey(string $key) {
-        $this->googleMapApiKey = $key;
+    public function debug()
+    {
+        $this->debug = true;
+        return $this;
     }
 
     public function isLocked()
@@ -33,22 +37,51 @@ class AnnotationStudio
         return $this->isLocked;
     }
 
-    public function getAssets()
+    public function getVersion(): string
     {
+        return $this->version ? $this->version : static::DEFAULT_VERSION;
+    }
+
+    public function setVersion(string $version)
+    {
+        if ($version === 'latest') {
+            $version = self::DEFAULT_VERSION;
+        }
+        $this->version = $version;
+    }
+
+    public function getWarning(): string
+    {
+        return (
+            '<script type="application/javascript">' .
+            'console.warn("The AnnotationStudio module is in debug mode, this should never be enabled on production")' .
+            '</script>'
+        );
+    }
+
+    public function getAssets($baseUrl = '')
+    {
+        $bundle = sprintf(
+            'https://unpkg.com/@annotation-studio/bundle@%s/umd/@annotation-studio/bundle.min.js',
+            $this->getVersion()
+        );
+        if ($this->debug) {
+            $bundle = sprintf(
+                'https://unpkg.com/@annotation-studio/bundle@%s/umd/@annotation-studio/bundle.js',
+                $this->getVersion()
+            );
+        }
+
+
         return implode("\n", [
-            $this->googleMapApiKey ? (
-                sprintf(
-                    '<script type="application/javascript" src="https://maps.googleapis.com/maps/api/js?key=%s&libraries=places"></script>',
-                    $this->googleMapApiKey
-                )
-            ): '',
             sprintf(
-                '<script type="application/javascript" src="https://unpkg.com/@annotation-studio/bundle@%s/umd/@annotation-studio/bundle.min.js"></script>',
-                static::VERSION
+                '<script type="application/javascript" src="%s"></script>',
+                $bundle
             ),
+            $this->debug ? $this->getWarning() : '',
             sprintf(
                 '<link rel="stylesheet" type="text/css" href="https://unpkg.com/@annotation-studio/bundle@%s/umd/main.css" />',
-                static::VERSION
+                $this->getVersion()
             ),
         ]);
     }

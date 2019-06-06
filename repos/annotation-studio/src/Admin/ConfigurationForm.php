@@ -2,8 +2,11 @@
 
 namespace AnnotationStudio\Admin;
 
+use AnnotationStudio\AnnotationStudio;
 use Digirati\OmekaShared\Framework\AbstractConfigurationForm;
+use GuzzleHttp\Client;
 use Zend\Form\Element;
+use Zend\Form\Element\Select;
 
 class ConfigurationForm extends AbstractConfigurationForm
 {
@@ -16,7 +19,33 @@ class ConfigurationForm extends AbstractConfigurationForm
     /** @return Element[] */
     protected function getFormFields(): array
     {
+        $versions = ['latest'];
+        try {
+            $client = new Client();
+            $resp = $client->get('https://registry.npmjs.org/@annotation-studio/bundle');
+            $bundle = json_decode($resp->getBody(), true);
+            $bundleVersions = array_reverse($bundle['versions']);
+            foreach ($bundleVersions as $version => $b) {
+                $versions[$version] = $version;
+            }
+        } catch (\Throwable $e) {
+            error_log($e);
+        }
+
         return [
+            'version' => (new Select('version', [
+                'label' => 'Annotation studio version', // @translate
+                'info' => 'The version of the Javascript to use. NOTE: Older versions may not work with this module.', // @translate
+                'options' => $versions,
+            ])),
+
+            'debug' => (new Element\Checkbox())
+                ->setOptions([
+                    'label' => 'Debug mode', // @translate
+                    'info' => 'This should never be run in production and is for testing only.', // @translate
+                ])
+                ->setAttribute('required', false),
+
             'use_open_seadragon' => (new Element\Checkbox())
                 ->setOptions([
                     'label' => 'Use Open Seadragon as the viewer', // @translate
