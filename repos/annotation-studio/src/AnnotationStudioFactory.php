@@ -20,18 +20,21 @@ class AnnotationStudioFactory
     private $manifest;
     private $canvas;
     private $isLocked;
-    private $googleMapApiKey;
     private $locale;
 
     public function __construct(
         AnnotationStudio $instance,
         Manifest $manifest = null,
-        Canvas $canvas = null
+        Canvas $canvas = null,
+        string $version = null
     ) {
         $this->isLocked = $instance->isLocked();
         $this->instance = $instance;
         $this->manifest = $manifest;
         $this->canvas = $canvas;
+        if ($version) {
+            $this->instance->setVersion($version);
+        }
     }
 
     public static function forManifestPage(Manifest $manifest, AnnotationStudio $annotationStudio = null)
@@ -57,6 +60,12 @@ class AnnotationStudioFactory
             $this->instance->setGoogleMapApiKey($key);
         }
 
+        return $this;
+    }
+
+    public function atVersion(string $version)
+    {
+        $this->instance->setVersion($version);
         return $this;
     }
 

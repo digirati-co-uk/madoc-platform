@@ -1,4 +1,13 @@
-{% if (annotationStudio) %}
+{% if (
+    annotationStudio and
+    currentUser and (
+    siteSetting('cs-bookmarking', true) or
+    siteSetting('cs-mark-as-complete', true) or
+    siteSetting('cs-annotation-studio', true) or
+    siteSetting('cs-flagging', true) or
+    siteSetting('cs-show-annotations', true) or
+    siteSetting('cs-annotation-studio', true) ? pageMarkedAsComplete != 1 and currentUser : false
+)) %}
     <div class="iiif-view-annotation-studio" id="annotation-studio">
         <div class="iiif-view-annotation-studio__viewer">
             {% include 'annotation-studio/viewer.twig' %}
@@ -39,5 +48,11 @@
                 {% include 'annotation-studio/drafts.twig' %}
             </div>
         {% endif %}
+    </div>
+{% else %}
+    <div class="iiif-view-annotation-studio" id="annotation-studio">
+        <div class="iiif-view-annotation-studio__viewer">
+            {% include 'annotation-studio/viewer.twig' %}
+        </div>
     </div>
 {% endif %}
