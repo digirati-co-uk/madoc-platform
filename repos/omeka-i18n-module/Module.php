@@ -21,6 +21,7 @@ use Zend\Config\Factory;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Form\Element\Checkbox;
+use Zend\Form\Element\Text;
 use Zend\Form\Fieldset;
 use Zend\I18n\Translator\TranslatorInterface;
 use Zend\ModuleManager\Feature\InitProviderInterface;
@@ -137,6 +138,14 @@ class Module extends AbstractModule implements InitProviderInterface
                             'info' => 'This will redirect from /en/s/site to /s/site automatically' // @translate
                         ])
                         ->setValue($form->getSiteSettings()->get('i18n-redirect-from-multi-lingual', false))
+                )
+                ->add(
+                    (new Text('i18n-language-list'))
+                        ->setOptions([
+                            'label' => 'List of languages (comma separated)',
+                            'info' => 'This will be used in language switcher and will be used in the URLs (example: "en,es")'
+                        ])
+                    ->setValue($form->getSiteSettings()->get('i18n-language-list', ''))
                 )
                 ->setLabel('Internationalisation') // @translate
         );
