@@ -10,9 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added configuration option to the site settings for official locales to be shown in a language switcher
 - Added language switcher to the i18n module, available to be pulled into a theme
 - Added configurable Annotation Studio version allowing new versions to be selected and used without a deployment.
+- Added new hidden UI for administrating canvases which lets you re-ingest a thumbnail if it had previously failed.
 
 ### Fixes
-no fixes in this release yet
+- Fixed bug where canvas ID list may be only a single element
+- Fixed inaccurate "total images" count on manifest snippet block
+- Fixed inaccurate "total images" count on manifest list by hiding it
 
 ## [1.1.3](https://github.com/digirati-co-uk/madoc-platform/compare/v1.1.2...v1.1.3) - 2019-06-03
 
