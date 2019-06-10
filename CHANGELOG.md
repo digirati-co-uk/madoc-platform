@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added language switcher to the i18n module, available to be pulled into a theme
 - Added configurable Annotation Studio version allowing new versions to be selected and used without a deployment.
 - Added new hidden UI for administrating canvases which lets you re-ingest a thumbnail if it had previously failed.
+- Local tool (for now) to build pre-release docker tags, without creating a latest tag to be manually pushed to Dockerhub.
 
 ### Fixes
 - Fixed bug where canvas ID list may be only a single element
