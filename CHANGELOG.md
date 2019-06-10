@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug where canvas ID list may be only a single element
 - Fixed inaccurate "total images" count on manifest snippet block
 - Fixed inaccurate "total images" count on manifest list by hiding it
+- Fixed inaccurate "total images" count on collections by hiding it
 
 ## [1.1.3](https://github.com/digirati-co-uk/madoc-platform/compare/v1.1.2...v1.1.3) - 2019-06-03
 
