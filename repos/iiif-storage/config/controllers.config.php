@@ -1,6 +1,7 @@
 <?php
 
 use Digirati\OmekaShared\Helper\SettingsHelper;
+use IIIFStorage\Controller\AdminController;
 use Psr\Container\ContainerInterface;
 use IIIFStorage\Controller\CollectionController;
 use IIIFStorage\Controller\ManifestController;
@@ -49,7 +50,14 @@ return [
                     $c->get(ApiRouter::class),
                     $c->get(SettingsHelper::class)
                 );
-            }
+            },
+            AdminController::class => function (ContainerInterface $c) {
+                return new AdminController(
+                    $c->get(CanvasRepository::class),
+                    $c->get(CanvasBuilder::class),
+                    $c->get('Omeka\Job\Dispatcher')
+                );
+            },
         ],
     ],
 ];

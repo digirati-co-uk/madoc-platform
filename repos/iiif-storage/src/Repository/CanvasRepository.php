@@ -66,12 +66,17 @@ class CanvasRepository
         $itemRequest = ItemRequest::fromSource(json_decode(json_encode($item), true));
         // Mutate from params.
         $mutation($itemRequest, $item, $id);
+        // Update.
+        $this->update($id, $itemRequest);
+    }
+
+    public function update($id, ItemRequest $itemRequest) {
         // Saturate.
         $this->saturator->addPropertyIds($itemRequest);
-        // Re-export.
+        // Export.
         $toUpdate = $itemRequest->export();
         // Update.
-        return $this->api->update(static::API_TYPE, $id, $toUpdate, [], ['isPartial' => true])->getContent();
+        $this->api->update(static::API_TYPE, $id, $toUpdate, [], ['isPartial' => true])->getContent();
     }
 
     public function getDefaultQuery()

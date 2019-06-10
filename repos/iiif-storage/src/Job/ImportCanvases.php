@@ -137,8 +137,9 @@ class ImportCanvases extends AbstractJob implements JobInterface
         }
     }
 
-    public function addCanvasesToManifest(string $manifestId, array $idList)
+    public function addCanvasesToManifest(string $manifestId, $idList)
     {
+        $idList = is_array($idList) ? $idList : [$idList];
         /** @var ManifestRepository $manifestRepo */
         $manifestRepo = $this->getServiceLocator()->get(ManifestRepository::class);
         $manifestRepo->mutate($manifestId, function (ItemRequest $item) use ($idList) {

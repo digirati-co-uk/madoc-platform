@@ -89,6 +89,7 @@ class ManifestSnippetRenderer implements RendererInterface, MediaPageBlockDualRe
             'manifest' => $manifest->getManifest(),
             'router' => $this->router,
             'resource' => $manifest,
+            'totalCanvases' => $this->manifestRepository->getTotalCanvases((int)$manifestRepresentation->id()),
         ]);
 
         $vm->setTemplate('iiif-storage/media/manifest-snippet-carousel');
