@@ -4,6 +4,7 @@ namespace IIIFStorage\Aggregate;
 
 use Digirati\OmekaShared\Model\ItemRequest;
 use Digirati\OmekaShared\Model\MediaValue;
+use Digirati\OmekaShared\Utility\PropertyIdSaturator;
 use Zend\Log\Logger;
 
 class AddImageService implements AggregateInterface
@@ -16,10 +17,17 @@ class AddImageService implements AggregateInterface
     private $thumbnailServices = [];
 
     private $imageServices = [];
+    /**
+     * @var PropertyIdSaturator
+     */
+    private $saturator;
 
-    public function __construct(Logger $logger)
-    {
+    public function __construct(
+        Logger $logger,
+        PropertyIdSaturator $saturator
+    ) {
         $this->logger = $logger;
+        $this->saturator = $saturator;
     }
 
     public function mutate(ItemRequest $input)
@@ -45,8 +53,10 @@ class AddImageService implements AggregateInterface
 
     public function supports(ItemRequest $input)
     {
+        $canvas = $this->saturator->getResourceClassByTerm('sc:Canvas');
+
         return (
-            $input->getResourceTemplateName() === 'IIIF Canvas' &&
+            (string)$input->getResourceClass() === (string)$canvas->id() &&
             $input->hasField('dcterms:source')
         );
     }

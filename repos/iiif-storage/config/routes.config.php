@@ -1,5 +1,6 @@
 <?php
 
+use IIIFStorage\Controller\AdminController;
 use IIIFStorage\Controller\CollectionController;
 use IIIFStorage\Controller\ManifestController;
 use IIIFStorage\Controller\ResourceController;
@@ -134,6 +135,46 @@ return [
     ],
     'router' => [
         'routes' => array_merge([
+            'iiif-storage-admin' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/admin/iiif',
+                ],
+                'defaults' => [
+                    '__NAMESPACE__' => '',
+                    '__ADMIN__' => true,
+                    'controller' => AdminController::class,
+                ],
+                'child_routes' => [
+                    'canvas-admin' => [
+                        'type' => 'segment',
+                        'may_terminate' => true,
+                        'options' => [
+                            'route' => '/canvas/:canvas',
+                            'defaults' => [
+                                '__NAMESPACE__' => '',
+                                '__ADMIN__' => true,
+                                'action' => 'canvasAdmin',
+                                'controller' => AdminController::class,
+                            ],
+                        ],
+                        'child_routes' => [
+                            'ingest-thumbnail' => [
+                                'type' => 'segment',
+                                'options' => [
+                                    'route' => '/ingest-thumbnail',
+                                    'defaults' => [
+                                        '__NAMESPACE__' => '',
+                                        '__ADMIN__' => true,
+                                        'action' => 'ingestCanvasThumbnail',
+                                        'controller' => AdminController::class,
+                                    ],
+                                ]
+                            ],
+                        ]
+                    ],
+                ]
+            ],
             'site' => [
                 'type' => 'Segment',
                 'options' => [

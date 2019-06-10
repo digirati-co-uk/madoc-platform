@@ -134,7 +134,7 @@ return [
                 );
             },
             AddImageService::class => function (ContainerInterface $c) {
-                return new AddImageService($c->get('Omeka\Logger'));
+                return new AddImageService($c->get('Omeka\Logger'), $c->get(PropertyIdSaturator::class));
             },
             DisableJsonField::class => function () {
                 return new DisableJsonField();

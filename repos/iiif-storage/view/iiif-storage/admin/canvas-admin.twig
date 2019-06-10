@@ -1,0 +1,16 @@
+<h1>{{ canvas.getLabel() }}</h1>
+
+<div style="padding: 20px;">
+    <h4>Canvas actions</h4>
+    <br />
+    {% if (canvasRepresentation.media() | length < 0) %}
+        <form method="post" action="{{ url('iiif-storage-admin/canvas-admin/ingest-thumbnail', {}, true) }}">
+            <button type="submit">Ingest thumbnail</button>
+        </form>
+    {% else %}
+        <img src="{{ canvas.getThumbnail() }}" />
+        <form method="post" action="{{ url('iiif-storage-admin/canvas-admin/ingest-thumbnail', {}, true) }}">
+            <button type="submit">Re-Ingest thumbnail</button>
+        </form>
+    {% endif %}
+</div>
