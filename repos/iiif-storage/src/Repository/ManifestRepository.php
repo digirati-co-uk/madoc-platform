@@ -269,6 +269,13 @@ class ManifestRepository
         }
         return false;
     }
+
+    public function getTotalCanvases(int $manifestId) {
+        $canvases = $this->getCanvasMapFromManifest($manifestId);
+
+        return $canvases->getTotalResults();
+    }
+
     /**
      * @param int $manifestId
      * @return PaginatedResult
