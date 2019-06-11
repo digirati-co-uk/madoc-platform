@@ -135,8 +135,9 @@ class Module extends AbstractModule
         $this->addAclRules($event->getRouter(), $event->getRequest());
 
         $event->getRouteMatch();
+        /** @var \Omeka\Permissions\Acl $acl */
         $acl = $this->getServiceLocator()->get('Omeka\Acl');
-        $guest = new Role('transcriber');
+        $guest = new Role('Transcriber');
 
         $acl->addRole($guest);
         $acl->addRoleLabel('Transcriber', 'Transcriber');
@@ -370,7 +371,7 @@ class Module extends AbstractModule
         $acl = $serviceContainer->get('Omeka\Acl');
         $roles = $acl->getRoleLabels();
         // @todo fix when we get this.
-        $roles['transcriber'] = 'Transcriber';
+        $roles['Transcriber'] = 'Transcriber';
 
         $sharedEventManager->attach(SiteSettingsForm::class, 'form.add_elements', function (Event $event) use ($roles) {
             /** @var SiteSettingsForm $form */

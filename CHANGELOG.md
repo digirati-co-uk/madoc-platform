@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed inaccurate "total images" count on manifest snippet block
 - Fixed inaccurate "total images" count on manifest list by hiding it
 - Fixed inaccurate "total images" count on collections by hiding it
+- Fixed transcriber role issue
 
 ## [1.1.3](https://github.com/digirati-co-uk/madoc-platform/compare/v1.1.2...v1.1.3) - 2019-06-03
 
