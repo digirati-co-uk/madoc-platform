@@ -42,11 +42,20 @@ class ImportCanvases extends AbstractJob implements JobInterface
                     $logger->info("ID already exists: $id adding as reference");
                     $omekaId = $relationshipRequest->getResourceIdByUri('sc:Canvas', $id);
                     $logger->info("Found Omeka ID: $omekaId");
+
                     if (!$omekaId) {
                         $logger->warn("Resource with id: $id has been removed since adding to job, skipping...");
                         continue;
                     }
-                    $canvasIds[] = $omekaId;
+                    if (isset($canvas['manifestId']) && $canvas['manifestId']) {
+                        $manifestItemId = $this->getManifestItemId($canvas['manifestId']);
+                        if ($manifestItemId) {
+                            $canvasIds[$manifestItemId] = isset($canvasIds[$manifestItemId]) ? $canvasIds[$manifestItemId] : [];
+                            $canvasIds[$manifestItemId][] = $omekaId;
+                        }
+                    } else {
+                        $logger->warn("WARNING: Orphaned canvas $id, this will not be attached to a manifest. Canvas references need `manifestId` argument in the job in order to attach to manifest.");
+                    }
                     continue;
                 }
 
@@ -75,6 +84,7 @@ class ImportCanvases extends AbstractJob implements JobInterface
                     $manifestId = $canvas['partOf']['id'];
                     $manifestItemId = $this->getManifestItemId($manifestId);
                     $logger->info("Found manifest in `partOf` field: {$manifestItemId}");
+
                     if ($manifestItemId) {
                         $item->addField(
                             FieldValue::entity('dcterms:isPartOf', $manifestItemId, 'resource:item')
@@ -116,7 +126,12 @@ class ImportCanvases extends AbstractJob implements JobInterface
         $logger->info('Found ' . sizeof($canvasIds) . ' canvases to add to manifests', $canvasIds);
         // Finally add canvases to manifests.
         foreach ($canvasIds as $manifestId => $idList) {
-            $this->addCanvasesToManifest($manifestId, $idList);
+            try {
+                $this->addCanvasesToManifest($manifestId, $idList);
+            } catch (Throwable $e) {
+                $logger->err("Could not add canvases to $manifestId");
+                $logger->err((string) $e);
+            }
         }
     }
 
