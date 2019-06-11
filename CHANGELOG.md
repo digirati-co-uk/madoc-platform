@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed inaccurate "total images" count on collections by hiding it
 - Fixed transcriber role issue
 - Fixed "Got a packet bigger than 'max_allowed_packet' bytes" when adding very large IIIF manifests.
+- Fixed import canvas reference when importing a manifest with previously imported canvases.
 
 ## [1.1.3](https://github.com/digirati-co-uk/madoc-platform/compare/v1.1.2...v1.1.3) - 2019-06-03
 
