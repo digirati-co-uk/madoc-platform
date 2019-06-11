@@ -88,6 +88,7 @@ class ScheduleEmbeddedCanvases implements AggregateInterface
                 if ($this->relationshipRequest->canvasExists($canvasId)) {
                     $this->canvases[$id][] = [
                         'type' => ImportCanvases::CANVAS_REFERENCE,
+                        'manifestId' => $manifestId,
                         'id' => $canvasId,
                     ];
                 } else {

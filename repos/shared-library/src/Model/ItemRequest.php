@@ -92,6 +92,11 @@ class ItemRequest
         );
     }
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
     /**
      * @return array
      */
