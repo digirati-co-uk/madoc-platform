@@ -1,0 +1,34 @@
+#!/usr/bin/env php
+<?php
+
+include __DIR__ . '/../vendor/autoload.php';
+
+$excludes = ['vendor', 'modules', 'themes'];
+
+$finder = new Symfony\Component\Finder\Finder;
+$finder->files()->in(__DIR__ . '/../repos')
+    ->name('*.twig')
+    ->name('*.phtml')
+    ->ignoreDotFiles(true)
+    ->ignoreVCS(true)
+    ->exclude($excludes);
+
+
+$zip = new ZipArchive();
+
+if ($zip->open(__DIR__ . '/../theme.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
+    foreach ($finder as $file) {
+        [$module, $path] = explode('/view/', $file->getRelativePath());
+        $modules[$module] = $modules[$module] ?? [];
+
+        $contents = $file->openFile();
+
+        $newPath = 'views/' . $path . '/' . $file->getFilename();
+
+        $zip->addFile($file->getRealPath(), $newPath);
+    }
+
+    $zip->close();
+} else {
+    echo "Could not create zip.";
+}

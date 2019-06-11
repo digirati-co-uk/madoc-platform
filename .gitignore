@@ -13,3 +13,4 @@ files/*
 translations/*.po~
 translations/s/*
 !translations/s/.gitkeep
+theme.zip
