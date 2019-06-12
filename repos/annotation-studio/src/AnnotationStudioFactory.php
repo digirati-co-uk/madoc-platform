@@ -20,7 +20,7 @@ class AnnotationStudioFactory
     private $manifest;
     private $canvas;
     private $isLocked;
-    private $locale;
+    private $locale = 'en';
 
     public function __construct(
         AnnotationStudio $instance,
@@ -163,7 +163,7 @@ class AnnotationStudioFactory
 
     public function withLocale(string $locale)
     {
-        $this->locale = $locale;
+        $this->locale = $locale ? $locale : 'en';
 
         return $this;
     }
