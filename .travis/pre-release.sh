@@ -6,6 +6,10 @@ NEXT_VERSION=$1;shift;
 # Create short commit hash for tagging.
 COMMIT_HASH="$(git rev-parse --short HEAD)"
 
+echo "Updating dependencies...";
+
+docker pull digirati/madoc-omeka-s:latest
+
 echo "Building v$NEXT_VERSION-$COMMIT_HASH";
 
 # Build.
