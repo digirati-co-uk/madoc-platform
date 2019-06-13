@@ -29,6 +29,7 @@ use PublicUser\Settings\PublicUserSettings;
 use PublicUser\Site\SiteProvider;
 use PublicUser\Subscriber\AnnotationCreatorElucidateSubscriber;
 use PublicUser\Subscriber\AnnotationStatsSubscriber;
+use PublicUser\Subscriber\PreDeleteCanvasSubscriber;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Throwable;
 use Zend\Authentication\AuthenticationService;
@@ -383,6 +384,10 @@ class Module extends AbstractModule
             $layoutViewModel->setVariable('isLoggedIn', !!$user);
             $layoutViewModel->setVariable('currentUser', $user);
         });
+
+        // Pre-delete
+        $preDelete = $serviceContainer->get(PreDeleteCanvasSubscriber::class);
+        $preDelete->attach($sharedEventManager);
 
         $acl = $serviceContainer->get('Omeka\Acl');
         $roles = $acl->getRoleLabels();
