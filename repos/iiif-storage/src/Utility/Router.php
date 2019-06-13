@@ -101,7 +101,11 @@ class Router
             return '#';
         }
         if (!$manifest) {
-            $manifest = $this->extractManifest($canvas);
+            try {
+                $manifest = $this->extractManifest($canvas);
+            } catch (\Throwable $e) {
+
+            }
         }
 
         if ($collection && $manifest) {
@@ -165,6 +169,11 @@ class Router
         if ($entityOrId instanceof ItemSetRepresentation) {
             return (string)$entityOrId->id();
         }
+
+        if (is_string($entityOrId)) {
+            return $this->expensiveFetchId($entityOrId);
+        }
+
         return (string)$entityOrId;
     }
 
@@ -175,9 +184,17 @@ class Router
 
     private function extractManifest($canvas)
     {
+        if ($canvas instanceof Canvas) {
+            $source = $canvas->getSource();
+            if (isset($source['partOf'])) {
+                return $source['partOf']['@id'] ?? $source['partOf'][0]['@id'] ?? null;
+            }
+        }
+
         if (!$canvas instanceof ItemRepresentation) {
             return null;
         }
+
         $manifests = $canvas->value('dcterms:isPartOf', ['all' => true]) ?? [];
         return current(
                 array_map(function (ValueRepresentation $value) {
@@ -211,12 +228,17 @@ class Router
 
         // It might be possible to extract ID.
         // NOTE: This is last resort to show something to user.
-        $id = $entityOrId->getId();
+        $id = is_string($entityOrId) ? $entityOrId : $entityOrId->getId();
         if (strpos($id, 'iiif/api') !== false) {
             $id = array_pop(explode('/', array_shift(explode('?', $id))));
             if ($id) {
                 return $id;
             }
+        }
+
+        // A better default path, where an ID was already passed in.
+        if (is_numeric($id)) {
+            return $id;
         }
 
         throw new \LogicException('Entity ID not found');
