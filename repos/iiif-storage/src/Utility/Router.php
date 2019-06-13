@@ -230,7 +230,7 @@ class Router
         // NOTE: This is last resort to show something to user.
         $id = is_string($entityOrId) ? $entityOrId : $entityOrId->getId();
 
-        // A better default path, where an ID was already passed in.
+        // A better default path, where an ID was already passed in
         if (is_numeric($id)) {
             return $id;
         }
