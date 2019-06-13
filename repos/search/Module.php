@@ -93,11 +93,21 @@ class Module extends AbstractModule implements ConfigProviderInterface
                         $annotationUri->setScheme($internalAnnotationServerUri->getScheme());
                     }
 
+                    // Special case for part-of
+                    $partOf = is_array($annotation['target']) ? $annotation['target']['dcterms:isPartOf']['id'] ?? '' : '';
+                    $partOfUri = $partOf ? new Uri($partOf) : null;
+                    if ($partOfUri && $partOfUri->getHost() === $mainSiteUri->getHost() && $internalOmekaServer) {
+                        $partOfUri->setHost($internalOmekaServerUri->getHost());
+                        $partOfUri->setPort($internalOmekaServerUri->getPort());
+                        $partOfUri->setScheme($internalOmekaServerUri->getScheme());
+                    }
+
                     $url = new Uri($annotationIndexer);
                     $url->setPath('/index-annotation');
                     $url->setQuery([
                         'annotation' => $annotationUri->toString(),
                         'capture_model' => $generator->toString(),
+                        'manifest' => $partOfUri ? $partOfUri->toString() : '',
                     ]);
 
                     $client = new Client();
