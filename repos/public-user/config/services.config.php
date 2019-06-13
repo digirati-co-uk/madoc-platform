@@ -17,6 +17,7 @@ use PublicUser\Stats\ContributorsService;
 use PublicUser\Subscriber\AnnotationCreatorElucidateSubscriber;
 use PublicUser\Subscriber\AnnotationStatsSubscriber;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use PublicUser\Subscriber\PreDeleteCanvasSubscriber;
 
 return [
     'service_manager' => [
@@ -48,32 +49,32 @@ return [
                 );
             },
 
-            TokenStorage::class => function ($container) {
+            TokenStorage::class => function (ContainerInterface $container) {
                 return new TokenStorage(
                     $container->get('Omeka\Connection')
                 );
             },
 
-            ContributorsService::class => function ($container) {
+            ContributorsService::class => function (ContainerInterface $container) {
                 return new ContributorsService(
                     $container->get('Omeka\Connection')
                 );
             },
 
-            BookmarksService::class => function ($container) {
+            BookmarksService::class => function (ContainerInterface $container) {
                 return new BookmarksService(
                     $container->get(GuzzleHttp\Client::class),
                     $container->get('Omeka\Connection')
                 );
             },
 
-            AnnotationStatisticsService::class => function ($container) {
+            AnnotationStatisticsService::class => function (ContainerInterface $container) {
                 return new AnnotationStatisticsService(
                     $container->get('Omeka\Connection')
                 );
             },
 
-            AnnotationStatsSubscriber::class => function ($container) {
+            AnnotationStatsSubscriber::class => function (ContainerInterface $container) {
                 return new AnnotationStatsSubscriber(
                     $container->get('Omeka\ApiManager'),
                     $container->get('Omeka\Connection'),
@@ -94,6 +95,13 @@ return [
 
             AnnotationCreatorElucidateSubscriber::class => function () {
                 return new AnnotationCreatorElucidateSubscriber();
+            },
+
+            PreDeleteCanvasSubscriber::class => function (ContainerInterface $container) {
+                return new PreDeleteCanvasSubscriber(
+                    $container->get('Omeka\Logger'),
+                    $container->get('Omeka\Connection')
+                );
             },
         ],
     ],
