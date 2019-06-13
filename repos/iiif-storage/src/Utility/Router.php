@@ -229,6 +229,12 @@ class Router
         // It might be possible to extract ID.
         // NOTE: This is last resort to show something to user.
         $id = is_string($entityOrId) ? $entityOrId : $entityOrId->getId();
+
+        // A better default path, where an ID was already passed in.
+        if (is_numeric($id)) {
+            return $id;
+        }
+
         if (strpos($id, 'iiif/api') !== false) {
             $id = array_pop(explode('/', array_shift(explode('?', $id))));
             if ($id) {
@@ -236,9 +242,10 @@ class Router
             }
         }
 
-        // A better default path, where an ID was already passed in.
-        if (is_numeric($id)) {
-            return $id;
+        // One more case, we might have a string that is the full URL of the manifest.
+        $resource = $this->canvas->getByResource($id);
+        if ($resource) {
+            return $resource;
         }
 
         throw new \LogicException('Entity ID not found');
