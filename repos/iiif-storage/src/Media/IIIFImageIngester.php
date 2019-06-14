@@ -103,6 +103,9 @@ class IIIFImageIngester extends AbstractIngester implements IngesterInterface
 
         $thumbnailSize = $data['thumbnail-size'] ?? $this->defaultThumbnailSize;
         $thumbnailSize = $thumbnailSize ? $thumbnailSize : 256;
+        if (is_array($thumbnailSize)) {
+            $thumbnailSize = $thumbnailSize['@value'] ?? 256;
+        }
         $getImageApiVersion = $this->getImageApiVersion($thumbnailIIIData['@context']);
         $fileName = $getImageApiVersion == 2 ? 'default' : 'native';
         $format = 'jpg'; // @todo customise - this is required for level0 support.
@@ -255,7 +258,7 @@ class IIIFImageIngester extends AbstractIngester implements IngesterInterface
         }
     }
 
-    private function getSizesFromService(array $thumbnailIIIData, int $thumbnailSize): string
+    private function getSizesFromService(array $thumbnailIIIData, $thumbnailSize): string
     {
         $sizes = $thumbnailIIIData['sizes'] ?? null;
         $fallback = "$thumbnailSize,";
