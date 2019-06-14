@@ -48,6 +48,8 @@ class MediaValue implements ValueInterface
             [
                 FieldValue::literal('dcterms:title', 'Title', $label),
                 FieldValue::literal('thumbnail-service', 'Thumbnail service', $thumbnailService),
+                // import at 512, although this should come from config, currently importing the largest.
+                FieldValue::literal('thumbnail-size', 'Thumbnail size', 512),
             ]
         );
     }

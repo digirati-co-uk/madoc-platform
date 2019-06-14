@@ -102,6 +102,7 @@ class IIIFImageIngester extends AbstractIngester implements IngesterInterface
         }
 
         $thumbnailSize = $data['thumbnail-size'] ?? $this->defaultThumbnailSize;
+        $thumbnailSize = $thumbnailSize ? $thumbnailSize : 256;
         $getImageApiVersion = $this->getImageApiVersion($thumbnailIIIData['@context']);
         $fileName = $getImageApiVersion == 2 ? 'default' : 'native';
         $format = 'jpg'; // @todo customise - this is required for level0 support.
@@ -233,6 +234,7 @@ class IIIFImageIngester extends AbstractIngester implements IngesterInterface
             }
             $client = $this->httpClient;
             $client->reset();
+            $client->setOptions([ 'timeout' => 120 ]);
             $client->setUri($uri);
             $response = $client->send();
             if (!$response->isOk()) {
@@ -247,6 +249,7 @@ class IIIFImageIngester extends AbstractIngester implements IngesterInterface
 
             return json_decode($response->getBody(), true);
         } catch (\Throwable $e) {
+            $errorStore->addError('thumbnail-service', (string) $e);
             error_log((string) $e);
             return $fallback;
         }
@@ -259,11 +262,11 @@ class IIIFImageIngester extends AbstractIngester implements IngesterInterface
         // We have defined sizes
         if ($sizes) {
             if (!$thumbnailSize) {
-                // Return largest size
+                // Return largest size that is less than 1000
                 $maxSize = ['width' => 0, 'height' => 0];
 
                 foreach ($sizes as $size) {
-                    if ($size['width'] > $maxSize['width']) {
+                    if ($size['width'] > $maxSize['width'] && $sizes['width'] <= 1000) {
                         $maxSize = $size;
                     }
                 }
