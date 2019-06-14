@@ -140,6 +140,7 @@ class ImportCanvases extends AbstractJob implements JobInterface
         try {
             return $api->create('items', $item->export())->getContent();
         } catch (Throwable $e) {
+            $logger->warn((string) $e);
             $logger->warn('Failed to import canvas, trying without media');
             try {
                 $export = $item->export();

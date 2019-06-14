@@ -47,9 +47,8 @@ class MediaValue implements ValueInterface
             'iiif',
             [
                 FieldValue::literal('dcterms:title', 'Title', $label),
-                FieldValue::literal('thumbnail-service', 'Thumbnail service', $thumbnailService),
-                // import at 512, although this should come from config, currently importing the largest.
-                FieldValue::literal('thumbnail-size', 'Thumbnail size', 512),
+                'thumbnail-service' => $thumbnailService,
+                'thumbnail-size' => 512,
             ]
         );
     }
@@ -72,8 +71,12 @@ class MediaValue implements ValueInterface
         $mediaItem['o:source'] = $this->source;
         $mediaItem['o:ingester'] = $this->ingester;
 
-        foreach ($this->values as $value) {
-            $mediaItem[$value->getTerm()] = $value->export();
+        foreach ($this->values as $key => $value) {
+            if ($value instanceof FieldValue) {
+                $mediaItem[$value->getTerm()] = $value->export();
+            } else {
+                $mediaItem[$key] = $value;
+            }
         }
 
         return $mediaItem;
