@@ -1,7 +1,9 @@
 <?php
 
+use Digirati\OmekaShared\Factory\PropertyIdSaturatorFactory;
 use Digirati\OmekaShared\Factory\SettingsHelperFactory;
 use Digirati\OmekaShared\Helper\SettingsHelper;
+use Digirati\OmekaShared\Utility\PropertyIdSaturator;
 use PublicUser\Auth\TokenService;
 use PublicUser\Auth\TokenStorage;
 use PublicUser\Extension\ConfigurableMailer;
@@ -17,6 +19,7 @@ use PublicUser\Stats\ContributorsService;
 use PublicUser\Subscriber\AnnotationCreatorElucidateSubscriber;
 use PublicUser\Subscriber\AnnotationStatsSubscriber;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use PublicUser\Subscriber\ManifestStatsSubscriber;
 use PublicUser\Subscriber\PreDeleteCanvasSubscriber;
 
 return [
@@ -27,6 +30,7 @@ return [
             },
             SettingsHelper::class => SettingsHelperFactory::class,
             ConfigurableMailer::class => ConfigurableMailerFactory::class,
+            PropertyIdSaturator::class => PropertyIdSaturatorFactory::class,
             PublicUserSettings::class => function (ContainerInterface $container) {
                 return new PublicUserSettings(
                     $container->get('Omeka\Settings'),
@@ -103,6 +107,13 @@ return [
                     $container->get('Omeka\Connection')
                 );
             },
+
+            ManifestStatsSubscriber::class => function (ContainerInterface $c) {
+                return new ManifestStatsSubscriber(
+                    $c->get('Omeka\Connection'),
+                    $c->get(PropertyIdSaturator::class)
+                );
+            }
         ],
     ],
 ];

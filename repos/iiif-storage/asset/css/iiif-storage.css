@@ -389,3 +389,18 @@
     background-color: transparent;
     color: #333;
 }
+
+.c-image {
+    position: relative;;
+}
+.c-image__status--started:after {
+    position: absolute;
+    bottom: -2px;
+    border: 2px solid #000;
+    right: -7px;
+    width: 14px;
+    height: 14px;
+    content: '';
+    background: dodgerblue;
+    border-radius: 50%;
+}

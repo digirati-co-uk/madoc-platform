@@ -4,6 +4,7 @@ use Digirati\OmekaShared\Factory\EventDispatcherFactory;
 use Digirati\OmekaShared\Factory\LocaleFromRdfFactory;
 use Digirati\OmekaShared\Factory\LocaleHelperFactory;
 use Digirati\OmekaShared\Factory\ProxyClientFactory;
+use Digirati\OmekaShared\Factory\PropertyIdSaturatorFactory;
 use Digirati\OmekaShared\Factory\SettingsHelperFactory;
 use Digirati\OmekaShared\Factory\UrlHelperFactory;
 use Digirati\OmekaShared\Helper\LocaleHelper;
@@ -120,9 +121,7 @@ return [
                     ]
                 );
             },
-            PropertyIdSaturator::class => function (ContainerInterface $c) {
-                return new PropertyIdSaturator($c->get('Omeka\ApiManager'));
-            },
+            PropertyIdSaturator::class => PropertyIdSaturatorFactory::class,
             ScheduleEmbeddedCanvases::class => function (ContainerInterface $c) {
                 return new ScheduleEmbeddedCanvases(
                     $c->get(Dispatcher::class),
