@@ -15,7 +15,7 @@
                     {% set statusClass = 'not-started' %}
                     {% set statusTitle = translate('Editing not started') %}
                 {% endif %}
-                <div class="c-image__status c-image__status--{{ statusClass }}" title="{{ statusTitle }}"></div>
+                <div class="c-image__status c-image__status--{{ statusClass }}" title="{{ statusTitle }} ({{ image.edited ? image.edited : '0' }} edited, {{ image.completed ? image.completed : '0' }} completed)"></div>
             {% endif %}
         </div>
     </a>

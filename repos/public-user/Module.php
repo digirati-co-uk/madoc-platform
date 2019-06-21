@@ -29,6 +29,7 @@ use PublicUser\Settings\PublicUserSettings;
 use PublicUser\Site\SiteProvider;
 use PublicUser\Subscriber\AnnotationCreatorElucidateSubscriber;
 use PublicUser\Subscriber\AnnotationStatsSubscriber;
+use PublicUser\Subscriber\ManifestStatsSubscriber;
 use PublicUser\Subscriber\PreDeleteCanvasSubscriber;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Throwable;
@@ -388,6 +389,10 @@ class Module extends AbstractModule
         // Pre-delete
         $preDelete = $serviceContainer->get(PreDeleteCanvasSubscriber::class);
         $preDelete->attach($sharedEventManager);
+
+        // Manifest stats
+        $manifestStats = $serviceContainer->get(ManifestStatsSubscriber::class);
+        $manifestStats->attach($sharedEventManager);
 
         $acl = $serviceContainer->get('Omeka\Acl');
         $roles = $acl->getRoleLabels();
