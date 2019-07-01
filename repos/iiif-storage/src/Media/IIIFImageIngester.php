@@ -118,14 +118,6 @@ class IIIFImageIngester extends AbstractIngester implements IngesterInterface
                 return false;
             }
 
-            //Check if valid IIIF data
-            if ($this->validate($IIIFData)) {
-                $media->setData($IIIFData);
-            } else {
-                $errorStore->addError('o:source', 'URL does not link to IIIF JSON');
-                return false;
-            }
-
             $thumbnailUrl = implode('/', [
                 $id,
                 'full',
@@ -135,6 +127,13 @@ class IIIFImageIngester extends AbstractIngester implements IngesterInterface
             ]);
         }
 
+        //Check if valid IIIF data
+        if ($this->validate($IIIFData)) {
+            $media->setData($IIIFData);
+        } else {
+            $errorStore->addError('o:source', 'URL does not link to IIIF JSON');
+            return false;
+        }
 
         $tempFile = $this->downloader->download($thumbnailUrl);
         if ($tempFile) {
