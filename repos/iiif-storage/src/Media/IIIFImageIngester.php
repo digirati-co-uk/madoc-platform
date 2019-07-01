@@ -69,6 +69,7 @@ class IIIFImageIngester extends AbstractIngester implements IngesterInterface
             return false;
         }
         $source = $data['o:source'];
+        $thumbnailUrl = $data['thumbnail-url'] ?? null;
         //Make a request and handle any errors that might occur.
         $uri = new HttpUri($source);
         if (!($uri->isValid() && $uri->isAbsolute())) {
@@ -94,45 +95,48 @@ class IIIFImageIngester extends AbstractIngester implements IngesterInterface
             return false;
         }
 
-        $thumbnailService = $data['thumbnail-service'] ?? null;
-        $thumbnailIIIData = $thumbnailService ? $this->getThumbnailService($thumbnailService, $IIIFData, $errorStore) : $IIIFData;
-        // Error with thumbnail service.
-        if ($thumbnailIIIData === false) {
-            return false;
+        if (!$thumbnailUrl) {
+            $thumbnailService = $data['thumbnail-service'] ?? null;
+            $thumbnailIIIData = $thumbnailService ? $this->getThumbnailService($thumbnailService, $IIIFData, $errorStore) : $IIIFData;
+            // Error with thumbnail service.
+            if ($thumbnailIIIData === false) {
+                return false;
+            }
+
+            $thumbnailSize = $data['thumbnail-size'] ?? $this->defaultThumbnailSize;
+            $thumbnailSize = $thumbnailSize ? $thumbnailSize : 256;
+            if (is_array($thumbnailSize)) {
+                $thumbnailSize = $thumbnailSize['@value'] ?? 256;
+            }
+            $getImageApiVersion = $this->getImageApiVersion($thumbnailIIIData['@context']);
+            $fileName = $getImageApiVersion == 2 ? 'default' : 'native';
+            $format = 'jpg'; // @todo customise - this is required for level0 support.
+            $sizes = $this->getSizesFromService($thumbnailIIIData, $thumbnailSize);
+            $id = $this->getIdFromService($thumbnailIIIData, $errorStore);
+            // Error getting ID.
+            if ($id === false) {
+                return false;
+            }
+
+            //Check if valid IIIF data
+            if ($this->validate($IIIFData)) {
+                $media->setData($IIIFData);
+            } else {
+                $errorStore->addError('o:source', 'URL does not link to IIIF JSON');
+                return false;
+            }
+
+            $thumbnailUrl = implode('/', [
+                $id,
+                'full',
+                $sizes,
+                '0',
+                $fileName . '.' . $format,
+            ]);
         }
 
-        $thumbnailSize = $data['thumbnail-size'] ?? $this->defaultThumbnailSize;
-        $thumbnailSize = $thumbnailSize ? $thumbnailSize : 256;
-        if (is_array($thumbnailSize)) {
-            $thumbnailSize = $thumbnailSize['@value'] ?? 256;
-        }
-        $getImageApiVersion = $this->getImageApiVersion($thumbnailIIIData['@context']);
-        $fileName = $getImageApiVersion == 2 ? 'default' : 'native';
-        $format = 'jpg'; // @todo customise - this is required for level0 support.
-        $sizes = $this->getSizesFromService($thumbnailIIIData, $thumbnailSize);
-        $id = $this->getIdFromService($thumbnailIIIData, $errorStore);
-        // Error getting ID.
-        if ($id === false) {
-            return false;
-        }
 
-        //Check if valid IIIF data
-        if ($this->validate($IIIFData)) {
-            $media->setData($IIIFData);
-        } else {
-            $errorStore->addError('o:source', 'URL does not link to IIIF JSON');
-            return false;
-        }
-
-        $imageUrl = implode('/', [
-            $id,
-            'full',
-            $sizes,
-            '0',
-            $fileName . '.' . $format,
-        ]);
-
-        $tempFile = $this->downloader->download($imageUrl);
+        $tempFile = $this->downloader->download($thumbnailUrl);
         if ($tempFile) {
             if ($tempFile->storeThumbnails()) {
                 $media->setStorageId($tempFile->getStorageId());

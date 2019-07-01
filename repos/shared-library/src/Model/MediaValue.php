@@ -29,13 +29,14 @@ class MediaValue implements ValueInterface
         $this->isPublic = $isPublic;
     }
 
-    public static function IIIFImage(string $url, string $label)
+    public static function IIIFImage(string $url, string $label, string $thumbnailUrl = null)
     {
         return new static(
             $url,
             'iiif',
             [
-                FieldValue::literal('dcterms:title', 'Title', $label)
+                FieldValue::literal('dcterms:title', 'Title', $label),
+                'thumbnail-url' => $thumbnailUrl,
             ]
         );
     }

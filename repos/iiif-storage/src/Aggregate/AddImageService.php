@@ -17,6 +17,8 @@ class AddImageService implements AggregateInterface
     private $thumbnailServices = [];
 
     private $imageServices = [];
+
+    private $thumbnailUrls = [];
     /**
      * @var PropertyIdSaturator
      */
@@ -37,17 +39,39 @@ class AddImageService implements AggregateInterface
             $id = md5($source->getValue());
             $imageService = $this->imageServices[$id];
             $thumbnailService = $this->thumbnailServices[$id];
+            $thumbnailUrl = $this->thumbnailUrls[$id];
             $this->logger->debug("Adding image service as media to Canvas {$imageService}");
             if ($thumbnailService) {
                 $this->logger->debug("Found thumbnail service on Canvas {$thumbnailService}");
             }
-            if ($imageService) {
-                $input->addField(
-                    $thumbnailService ?
-                        MediaValue::IIIFImageThumbnail($imageService, 'Image service', $thumbnailService) :
-                        MediaValue::IIIFImage($imageService, 'Image service')
-                );
+            if ($thumbnailUrl) {
+                $this->logger->debug("Found thumbnail URL on Canvas {$thumbnailUrl}");
             }
+
+            if (!$imageService) {
+                continue;
+            }
+
+            // Direct URL available for thumbnail.
+            if ($thumbnailUrl) {
+                $input->addField(
+                    MediaValue::IIIFImage($imageService, 'Image service', $thumbnailUrl)
+                );
+                continue;
+            }
+
+            // Thumbnail service (ext)
+            if ($thumbnailService) {
+                $input->addField(
+                    MediaValue::IIIFImageThumbnail($imageService, 'Image service', $thumbnailService)
+                );
+                continue;
+            }
+
+            // No thumbnail service available.
+            $input->addField(
+                    MediaValue::IIIFImage($imageService, 'Image service')
+            );
         }
     }
 
@@ -71,6 +95,7 @@ class AddImageService implements AggregateInterface
             $this->logger->debug("Found images on Canvas {$id}");
             foreach ($images as $image) {
                 $service = $image['resource']['service']['@id'] ?? null;
+                $thumbnailResource = $canvasJson['thumbnail'] ?? null;
                 $thumbnailService = $canvasJson['thumbnail']['service']['@id'] ?? null;
                 $this->logger->debug("Found image service {$service}");
                 if ($id && $service) {
@@ -83,6 +108,12 @@ class AddImageService implements AggregateInterface
                             $thumbnailService = "$thumbnailService/info.json";
                         }
                         $this->thumbnailServices[$id] = $thumbnailService;
+                    }
+                    if ($thumbnailResource) {
+                        $width = $thumbnailResource['width'] ?? null;
+                        if ($width <= 1000) {
+                            $this->thumbnailUrls[$id] = $thumbnailResource['@id'] ?? $thumbnailResource['id'] ?? null;
+                        }
                     }
                 }
             }
