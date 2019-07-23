@@ -404,3 +404,10 @@
     background: dodgerblue;
     border-radius: 50%;
 }
+
+.info-panel {
+    background: palegoldenrod;
+    color: #333;
+    padding: 5px;
+    margin: 10px -5px;
+}
