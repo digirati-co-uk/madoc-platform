@@ -2,6 +2,12 @@
 
 {% include 'iiif-storage/partials/breadcrumbs' %}
 
+{% if currentUser and currentUser.role == 'global_admin' and isClone %}
+    <div class="info-panel">
+        <strong>Warning</strong>: This resource may be duplicated in this manifest
+    </div>
+{% endif %}
+
 {% if renderMetadata %}
     {% set title = canvas.getLabel() | default(manifest.getLabel()) %}
     {% include 'iiif-storage/partials/title.twig' %}
@@ -12,7 +18,6 @@
 {% include 'iiif-storage/partials/canvas-navigation.twig' %}
 
 {% include 'iiif-storage/partials/canvas-status.twig' %}
-
 {% for mediaItem in media %}
     {{ mediaItem.render({ context: _context }) | raw }}
 {% endfor %}

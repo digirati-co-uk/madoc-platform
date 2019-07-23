@@ -125,6 +125,10 @@ SQL;
         $indexMap = [];
         foreach ($statement->fetchAll() as $canvas) {
             if ($canvas['uri']) {
+                if (isset($indexMap[$canvas['uri']])) {
+                    error_log('Found duplicate Omeka ID: "' . $canvas['omeka_id'] . '" which is ignored');
+                    continue;
+                }
                 $indexMap[$canvas['uri']] = $canvas['omeka_id'];
             }
         }
