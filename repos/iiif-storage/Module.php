@@ -196,6 +196,14 @@ class Module extends AbstractModule implements ConfigProviderInterface
                             ])
                             ->setValue($form->getSiteSettings()->get('cs-show-annotations', true))
                     )
+                    ->add(
+                        (new Checkbox('cs-single-collection'))
+                            ->setOptions([
+                                'label' => 'Show single collection', // @translate
+                                'info' => 'By default if there is only one collection, the collection list will redirect to this. This option will disable that behaviour' // @translate
+                            ])
+                            ->setValue($form->getSiteSettings()->get('cs-single-collection', true))
+                    )
                     ->setOptions([
                         'label' => 'Crowd sourcing',
                     ])
