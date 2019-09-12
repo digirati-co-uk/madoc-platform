@@ -3,6 +3,7 @@
 use Digirati\OmekaShared\Factory\EventDispatcherFactory;
 use Digirati\OmekaShared\Factory\LocaleFromRdfFactory;
 use Digirati\OmekaShared\Factory\LocaleHelperFactory;
+use Digirati\OmekaShared\Factory\ProxyClientFactory;
 use Digirati\OmekaShared\Factory\SettingsHelperFactory;
 use Digirati\OmekaShared\Factory\UrlHelperFactory;
 use Digirati\OmekaShared\Helper\LocaleHelper;
@@ -59,9 +60,9 @@ use IIIFStorage\ViewFilters\ChooseManifestTemplate;
 use IIIFStorage\ViewFilters\DisableJsonField;
 use Omeka\Job\Dispatcher;
 use IIIFStorage\Media\IIIFImageIngester;
+use Omeka\Mvc\Controller\Plugin\Messenger;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Zend\Http\Client;
 
 return [
     'service_manager' => [
@@ -69,15 +70,16 @@ return [
             EventDispatcher::class => EventDispatcherFactory::class,
             UrlHelper::class => UrlHelperFactory::class,
             LocaleHelper::class => LocaleHelperFactory::class,
+            'iiif-storage/proxy-client' => ProxyClientFactory::class,
             DereferencedManifest::class => function (ContainerInterface $c) {
                 return new DereferencedManifest(
-                    new Client(),
+                    $c->get('iiif-storage/proxy-client'),
                     $c->get(CheapOmekaRelationshipRequest::class)
                 );
             },
             DereferencedCollection::class => function (ContainerInterface $c) {
                 return new DereferencedCollection(
-                    new Client(),
+                    $c->get('iiif-storage/proxy-client'),
                     $c->get(CheapOmekaRelationshipRequest::class)
                 );
             },
@@ -92,7 +94,7 @@ return [
                         $c->get(DereferencedCollection::class),
                         $c->get(ScheduleEmbeddedManifests::class)
                     ],
-                    new \Omeka\Mvc\Controller\Plugin\Messenger()
+                    new Messenger()
                 );
             },
             TargetStatusUpdateListener::class => function (ContainerInterface $c) {
@@ -250,7 +252,7 @@ return [
                 /** @var \Omeka\Settings\Settings $settings */
                 $settings = $c->get('Omeka\Settings');
                 return new IIIFImageIngester(
-                    $c->get('Omeka\HttpClient'),
+                    $c->get('iiif-storage/proxy-client'),
                     $c->get('Omeka\File\Downloader'),
                     (int) $settings->get('iiif-storage_thumbnail-size', 256)
                 );
