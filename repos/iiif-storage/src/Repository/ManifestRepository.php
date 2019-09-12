@@ -219,8 +219,8 @@ class ManifestRepository
                 $nextLength = $number;
 
                 return [
-                  'previous' => $hasPrevious ? array_slice($canvases, $previousStart, $previousLength) : [],
-                  'next' => $hasNext ? array_slice($canvases, $nextStart, $nextLength) : [],
+                    'previous' => $hasPrevious ? array_slice($canvases, $previousStart, $previousLength) : [],
+                    'next' => $hasNext ? array_slice($canvases, $nextStart, $nextLength) : [],
                 ];
             }
         }
@@ -247,7 +247,7 @@ class ManifestRepository
         return $this->relationshipRequest->getEtag($resourceId);
     }
 
-    public function containsCanvas(int $manifest, string $canvasId): bool
+    public function containsCanvas(int $manifest, string $canvasId, string $alt = null): bool
     {
         try {
             $canvasMapping = $this->relationshipRequest->getUriMapping(
@@ -261,8 +261,10 @@ class ManifestRepository
 
         foreach ($canvasMapping->getList() as $omekaId => $urlId) {
             if (
-                (string)$omekaId === (string)$canvasId ||
-                (string)$urlId === (string)$canvasId
+            (string)$omekaId === (string)$canvasId ||
+            (string)$urlId === (string)$canvasId ||
+            (string)$omekaId === (string)$alt ||
+            (string)$urlId === (string)$alt
             ) {
                 return true;
             }
@@ -270,7 +272,8 @@ class ManifestRepository
         return false;
     }
 
-    public function getTotalCanvases(int $manifestId) {
+    public function getTotalCanvases(int $manifestId)
+    {
         $canvases = $this->getCanvasMapFromManifest($manifestId);
 
         return $canvases->getTotalResults();

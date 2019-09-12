@@ -186,7 +186,7 @@ class ManifestController extends AbstractPsr7ActionController
         if ($manifestId) {
             $manifest = $this->repo->getById($manifestId);
 
-            if (!$this->repo->containsCanvas($manifest->id(), $canvas->getId())) {
+            if (!$this->repo->containsCanvas($manifest->id(), $canvas->getOmekaId(), $canvas->getId())) {
                 throw new NotFoundException();
             }
 
