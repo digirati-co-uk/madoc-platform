@@ -116,6 +116,12 @@ class CollectionController extends AbstractPsr7ActionController
             'router' => $this->router,
         ]);
 
+        $singleCollection = $this->siteSettings()->get('cs-single-collection', true);
+
+        if ($singleCollection && sizeof($omekaCollections) === 1) {
+            return $this->redirect()->toRoute('site/iiif-collection/view', ['collection' => $omekaCollections[0]->id()], [], true);
+        }
+
         $this->paginate($viewModel, 'itemSets', $omekaCollections, $this->getCollectionsPerPage());
 
         $collections = array_map(
