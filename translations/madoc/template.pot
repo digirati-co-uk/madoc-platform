@@ -6,166 +6,244 @@ msgstr ""
 
 msgid "Loading"
 msgstr ""
+
 msgid "User submitted annotations"
 msgstr ""
+
 msgid "These are annotations created by the community and may need extra work to complete."
 msgstr ""
+
 msgid "No annotations currently"
 msgstr ""
+
 msgid "wants to use your Omeka account"
 msgstr ""
+
 msgid "Update your profile"
 msgstr ""
+
 msgid "User information"
 msgstr ""
+
 msgid "Password"
 msgstr ""
+
 msgid "Edit User: {user}"
 msgstr ""
+
 msgid "Save"
 msgstr ""
+
 msgid "Thank you for registering"
 msgstr ""
+
 msgid "Forgot password"
 msgstr ""
+
 msgid "Login"
 msgstr ""
+
 msgid "Forgot password?"
 msgstr ""
+
 msgid "Register"
 msgstr ""
+
 msgid "Latest annotated images"
 msgstr ""
+
 msgid "Flag content"
 msgstr ""
+
 msgid "Thanks for flagging."
 msgstr ""
+
 msgid "Back to page"
 msgstr ""
+
 msgid "Back to item"
 msgstr ""
+
 msgid "Join the conversation"
 msgstr ""
+
 msgid "Import Annotation"
 msgstr ""
+
 msgid "No search results"
 msgstr ""
+
 msgid "Search the collection"
 msgstr ""
+
 msgid "Search"
 msgstr ""
+
 msgid "There are no linked resources for this item."
 msgstr ""
+
 msgid "Generating inline json for ID"
 msgstr ""
+
 msgid "Import A Capture Model from Json or Yaml"
 msgstr ""
+
 msgid "Next"
 msgstr ""
+
 msgid "Processing"
 msgstr ""
+
 msgid "Job has started with ID"
 msgstr ""
+
 msgid "View details at"
 msgstr ""
+
 msgid "View Log at"
 msgstr ""
+
 msgid "Bookmarking"
 msgstr ""
+
 msgid "Sorry, there was a problem saving your bookmark, please contact your site administrator."
 msgstr ""
+
 msgid "Go back to page"
 msgstr ""
+
 msgid "Synchronizing"
 msgstr ""
+
 msgid "Your resource translations are now being synchronized.  This could take a few minutes depending on the number of jobs\nrunning and the amount of resources to synchronize."
 msgstr ""
+
 msgid "Go to jobs"
 msgstr ""
+
 msgid "Synchronize translations"
 msgstr ""
+
 msgid "Are you sure?"
 msgstr ""
+
 msgid "Clicking Submit will dispatch jobs that will resynchronize localization resources\n    for all applicable Omeka content.  Synchronization may take some time"
 msgstr ""
+
 msgid "Submit"
 msgstr ""
+
 msgid "Please enable and configure Transifex to enable sync."
 msgstr ""
+
 msgid "Back to all groups"
 msgstr ""
+
 msgid "translations"
 msgstr ""
+
 msgid "Key"
 msgstr ""
+
 msgid "Message"
 msgstr ""
+
 msgid "Actions"
 msgstr ""
+
 msgid "Download template"
 msgstr ""
+
 msgid "View translatable strings"
 msgstr ""
+
 msgid "Where to add translations"
 msgstr ""
+
 msgid "view"
 msgstr ""
+
 msgid "No languages added yet."
 msgstr ""
+
 msgid "Can't find the language you're looking for?"
 msgstr ""
+
 msgid "Translations"
 msgstr ""
+
 msgid "Global translations"
 msgstr ""
+
 msgid "view all images"
 msgstr ""
-msgid "images"
-msgstr ""
+
 msgid "Previous Image"
 msgstr ""
+
 msgid "Next Image"
 msgstr ""
+
 msgid "Flag as inappropriate"
 msgstr ""
+
 msgid "Editing complete"
 msgstr ""
+
 msgid "Editing started"
 msgstr ""
+
 msgid "Editing not started"
 msgstr ""
+
 msgid "Changes to this page"
 msgstr ""
+
 msgid "Scroll carousel left"
 msgstr ""
+
 msgid "Scroll carousel right"
 msgstr ""
+
 msgid "Completed"
 msgstr ""
+
 msgid "Edited"
 msgstr ""
+
 msgid "Not started"
 msgstr ""
+
 msgid "Bookmarked"
 msgstr ""
+
 msgid "View activity"
 msgstr ""
+
 msgid "All collections"
 msgstr ""
+
 msgid "Image"
 msgstr ""
+
 msgid "Mark as complete"
 msgstr ""
+
+msgid "This page needs more work"
+msgstr ""
+
 msgid "Is this page complete?"
 msgstr ""
+
 msgid "This page has been marked as completed.<br/>\n                        You can mark as incomplete if it needs more work."
 msgstr ""
+
 msgid "Marking this page as complete helps us to understand the progress of annotations."
 msgstr ""
-msgid "Page marked as complete"
-msgstr ""
+
 msgid "View all images"
 msgstr ""
+
 msgid "Google Analytics tracking code"
 msgstr ""
 msgid "The tracking code to be used in Google Analytics tracking snippets"
@@ -201,6 +279,14 @@ msgstr ""
 msgid "Static elucidate"
 msgstr ""
 msgid "A full URL to an external elucidate to use for this site"
+msgstr ""
+msgid "Annotation studio version"
+msgstr ""
+msgid "The version of the Javascript to use. NOTE: Older versions may not work with this module."
+msgstr ""
+msgid "Debug mode"
+msgstr ""
+msgid "This should never be run in production and is for testing only."
 msgstr ""
 msgid "Use Open Seadragon as the viewer"
 msgstr ""
@@ -422,6 +508,10 @@ msgid "Add directly to site after importing"
 msgstr ""
 msgid "Bookmark"
 msgstr ""
+msgid "Enable item search"
+msgstr ""
+msgid "When enabled, the search will return Omeka items"
+msgstr ""
 msgid "Translations"
 msgstr ""
 msgid "Multi-lingual site"
@@ -461,6 +551,58 @@ msgstr ""
 msgid "Create IIIF Manifest"
 msgstr ""
 msgid "Create IIIF Canvas"
+msgstr ""
+msgid "Use carousel on collection page"
+msgstr ""
+msgid "When viewing a collection of manifests, show each manifest as a carousel, instead of a single thumbnail. NOTE: this will request more canvases and may slow down page, consider reducing the manifests per page below."
+msgstr ""
+msgid "Use original IDs"
+msgstr ""
+msgid "By default, "
+msgstr ""
+msgid "Collections per page"
+msgstr ""
+msgid "Amount of collections to view on top level collection per page"
+msgstr ""
+msgid "Manifests per collection"
+msgstr ""
+msgid "Amount of manifests to show per collection"
+msgstr ""
+msgid "Manifests per page"
+msgstr ""
+msgid "Amount of manifests to view on a collection per page"
+msgstr ""
+msgid "Canvases per page"
+msgstr ""
+msgid "Amount of canvases to view on a manifest per page"
+msgstr ""
+msgid "IIIF Storage options"
+msgstr ""
+msgid "Enable bookmarking"
+msgstr ""
+msgid "Allows logged in users to bookmark IIIF canvases"
+msgstr ""
+msgid "Enable mark as complete"
+msgstr ""
+msgid "Allows users to mark a page as complete, allowing no further annotations"
+msgstr ""
+msgid "Enable user created annotations"
+msgstr ""
+msgid "Allows users to create annotations"
+msgstr ""
+msgid "Enable user flagging"
+msgstr ""
+msgid "Allows users to flag content (requires backend service)"
+msgstr ""
+msgid "Enable users to see annotations"
+msgstr ""
+msgid "Allows users to see created annotations"
+msgstr ""
+msgid "Show single collection"
+msgstr ""
+msgid "By default if there is only one collection, the collection list will redirect to this. This option will disable that behaviour"
+msgstr ""
+msgid "Crowd sourcing"
 msgstr ""
 msgid "Manifests"
 msgstr ""
