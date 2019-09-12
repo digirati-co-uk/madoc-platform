@@ -104,53 +104,53 @@ class Module extends AbstractModule implements ConfigProviderInterface
                     ->add(
                         (new Checkbox('collection-manifest-carousel'))
                             ->setOptions([
-                                'label' => 'Use carousel on collection page',
-                                'info' => 'When viewing a collection of manifests, show each manifest as a carousel, instead of a single thumbnail. NOTE: this will request more canvases and may slow down page, consider reducing the manifests per page below.'
+                                'label' => 'Use carousel on collection page', // @translate
+                                'info' => 'When viewing a collection of manifests, show each manifest as a carousel, instead of a single thumbnail. NOTE: this will request more canvases and may slow down page, consider reducing the manifests per page below.'  // @translate
                             ])
                             ->setValue($form->getSiteSettings()->get('collection-manifest-carousel', false))
                     )
                     ->add(
                         (new Checkbox('original-ids'))
                             ->setOptions([
-                                'label' => 'Use original IDs',
-                                'info' => 'By default, '
+                                'label' => 'Use original IDs', // @translate
+                                'info' => 'By default, ' // @translate
                             ])
                             ->setValue($form->getSiteSettings()->get('original-ids', false))
                     )
                     ->add(
                         (new Text('collections-per-page'))
                             ->setOptions([
-                                'label' => 'Collections per page',
-                                'info' => 'Amount of collections to view on top level collection per page',
+                                'label' => 'Collections per page', // @translate
+                                'info' => 'Amount of collections to view on top level collection per page', // @translate
                             ])
                             ->setValue($numericValue('collections-per-page', 3))
                     )
                     ->add(
                         (new Text('collection-manifests-per-page'))
                             ->setOptions([
-                                'label' => 'Manifests per collection',
-                                'info' => 'Amount of manifests to show per collection',
+                                'label' => 'Manifests per collection', // @translate
+                                'info' => 'Amount of manifests to show per collection', // @translate
                             ])
                             ->setValue($numericValue('collection-manifests-per-page', 5))
                     )
                     ->add(
                         (new Text('manifests-per-page'))
                             ->setOptions([
-                                'label' => 'Manifests per page',
-                                'info' => 'Amount of manifests to view on a collection per page',
+                                'label' => 'Manifests per page', // @translate
+                                'info' => 'Amount of manifests to view on a collection per page', // @translate
                             ])
                             ->setValue($numericValue('manifests-per-page', 24))
                     )
                     ->add(
                         (new Text('canvases-per-page'))
                             ->setOptions([
-                                'label' => 'Canvases per page',
-                                'info' => 'Amount of canvases to view on a manifest per page',
+                                'label' => 'Canvases per page', // @translate
+                                'info' => 'Amount of canvases to view on a manifest per page', // @translate
                             ])
                             ->setValue($numericValue('canvases-per-page', 12))
                     )
                     ->setOptions([
-                        'label' => 'IIIF Storage options',
+                        'label' => 'IIIF Storage options', // @translate
                     ])
             );
 
@@ -159,40 +159,40 @@ class Module extends AbstractModule implements ConfigProviderInterface
                     ->add(
                         (new Checkbox('cs-bookmarking'))
                             ->setOptions([
-                                'label' => 'Enable bookmarking',
-                                'info' => 'Allows logged in users to bookmark IIIF canvases'
+                                'label' => 'Enable bookmarking', // @translate
+                                'info' => 'Allows logged in users to bookmark IIIF canvases' // @translate
                             ])
                             ->setValue($form->getSiteSettings()->get('cs-bookmarking', true))
                     )
                     ->add(
                         (new Checkbox('cs-mark-as-complete'))
                             ->setOptions([
-                                'label' => 'Enable mark as complete',
-                                'info' => 'Allows users to mark a page as complete, allowing no further annotations'
+                                'label' => 'Enable mark as complete', // @translate
+                                'info' => 'Allows users to mark a page as complete, allowing no further annotations' // @translate
                             ])
                             ->setValue($form->getSiteSettings()->get('cs-mark-as-complete', true))
                     )
                     ->add(
                         (new Checkbox('cs-annotation-studio'))
                             ->setOptions([
-                                'label' => 'Enable user created annotations',
-                                'info' => 'Allows users to create annotations'
+                                'label' => 'Enable user created annotations', // @translate
+                                'info' => 'Allows users to create annotations' // @translate
                             ])
                             ->setValue($form->getSiteSettings()->get('cs-annotation-studio', true))
                     )
                     ->add(
                         (new Checkbox('cs-flagging'))
                             ->setOptions([
-                                'label' => 'Enable user flagging',
-                                'info' => 'Allows users to flag content (requires backend service)'
+                                'label' => 'Enable user flagging', // @translate
+                                'info' => 'Allows users to flag content (requires backend service)' // @translate
                             ])
                             ->setValue($form->getSiteSettings()->get('cs-flagging', true))
                     )
                     ->add(
                         (new Checkbox('cs-show-annotations'))
                             ->setOptions([
-                                'label' => 'Enable users to see annotations',
-                                'info' => 'Allows users to see created annotations'
+                                'label' => 'Enable users to see annotations', // @translate
+                                'info' => 'Allows users to see created annotations' // @translate
                             ])
                             ->setValue($form->getSiteSettings()->get('cs-show-annotations', true))
                     )
@@ -205,7 +205,7 @@ class Module extends AbstractModule implements ConfigProviderInterface
                             ->setValue($form->getSiteSettings()->get('cs-single-collection', true))
                     )
                     ->setOptions([
-                        'label' => 'Crowd sourcing',
+                        'label' => 'Crowd sourcing', // @translate
                     ])
             );
         });
