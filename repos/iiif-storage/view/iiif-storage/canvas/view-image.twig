@@ -6,7 +6,7 @@
     siteSetting('cs-annotation-studio', true) or
     siteSetting('cs-flagging', true) or
     siteSetting('cs-show-annotations', true) or
-    siteSetting('cs-annotation-studio', true) ? pageMarkedAsComplete != 1 and currentUser : false
+    (siteSetting('cs-annotation-studio', true) ? pageMarkedAsComplete != 1 and currentUser : false)
 )) %}
     <div class="iiif-view-annotation-studio" id="annotation-studio">
         <div class="iiif-view-annotation-studio__viewer">
