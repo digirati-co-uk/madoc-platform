@@ -24,8 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `OMEKA__ANNOTATION_ES_INDEX` environment variables for annotation indexer service
 - Added `OMEKA__SEARCH_INDEXER` environment variable for search indexer
 - Added elasticsearch to base docker compose
-- Added [https://github.com/digirati-co-uk/jane-founda](Jane Founda) IIIF Search service
-- Added [https://github.com/digirati-co-uk/madoc_draft_indexer](Madoc Indexer) service
+- Added [Jane Founda](https://github.com/digirati-co-uk/jane-founda) IIIF Search service
+- Added [Madoc Indexer](https://github.com/digirati-co-uk/madoc_draft_indexer) service
 - Added constraints to thumbnail size with customisable import options (1000px max)
 - Added final case for partOf that matches original id
 - Added extra check for manifest when only canvas is provided
