@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added basic public user profiles
 - Added option to show email on public user profiles (logged in only)
 - Added option for semi-public profiles, requiring authentication
+- Added new `HTTP_PROXY` environment variable support for setting HTTP proxy for requesting IIIF resources
+- Added new `HTTP_PROXY_PORT`, `HTTP_PROXY_USER` and `HTTP_PROXY_PASS` environment variables to easily configure an HTTP proxy.
 
 ### Fixes
 - Fixed bug where canvas ID list may be only a single element
@@ -25,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed transcriber role issue
 - Fixed "Got a packet bigger than 'max_allowed_packet' bytes" when adding very large IIIF manifests.
 - Fixed import canvas reference when importing a manifest with previously imported canvases.
+- Fixed IIIF requesting resources not using the HTTP client configuration from Omeka
 
 ## [1.1.3](https://github.com/digirati-co-uk/madoc-platform/compare/v1.1.2...v1.1.3) - 2019-06-03
 
