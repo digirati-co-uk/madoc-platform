@@ -39,9 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixes
 - Removes on-disk file cache for unused modules
 
-## [1.1.0](https://github.com/digirati-co-uk/madoc-platform/compare/v1.0.1...v1.1.0) - 2019-03-27
-The internationalisation release.
-
 ## [1.1.1](https://github.com/digirati-co-uk/madoc-platform/compare/v1.1.0...v1.1.1) - 2019-03-27
 
 ### Fixes
