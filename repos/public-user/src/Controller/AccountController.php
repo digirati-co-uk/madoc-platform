@@ -65,20 +65,18 @@ class AccountController extends AbstractActionController
                 'include_key' => false,
             ];
 
-        $manifest = [
-            'statistics' => [
-                [
-                    'label' => 'Bookmarked images', // @translate
-                    'value' => $stats->getBookmarks(),
-                ],
-                [
-                    'label' => 'Images annotated', // @translate
-                    'value' => $stats->getIncompleteImages(),
-                ],
-                [
-                    'label' => 'Total annotations', // @translate
-                    'value' => $stats->getIncompleteAnnotations() + $stats->getCompleteAnnotations(),
-                ],
+        $statistics = [
+            [
+                'label' => 'Bookmarked images', // @translate
+                'value' => $stats->getBookmarks(),
+            ],
+            [
+                'label' => 'Images annotated', // @translate
+                'value' => $stats->getIncompleteImages(),
+            ],
+            [
+                'label' => 'Total annotations', // @translate
+                'value' => $stats->getIncompleteAnnotations() + $stats->getCompleteAnnotations(),
             ],
         ];
 
@@ -96,14 +94,14 @@ class AccountController extends AbstractActionController
 
         $form->setData($formData);
 
-        $returnError = function() use ($view, $form, $manifest, $user) {
+        $returnError = function () use ($view, $form, $statistics, $user) {
             $view->setVariable('form', $form);
 
             $this->messenger()->addFormErrors($form);
 
             $view->setVariable('form', $form);
             $view->setVariable('user', $user);
-            $view->setVariable('manifest', $manifest);
+            $view->setVariable('statistics', $statistics);
 
             return $view;
         };
@@ -152,7 +150,7 @@ class AccountController extends AbstractActionController
 
         $view->setVariable('form', $form);
         $view->setVariable('user', $user);
-        $view->setVariable('manifest', $manifest);
+        $view->setVariable('statistics', $statistics);
 
         return $view;
     }

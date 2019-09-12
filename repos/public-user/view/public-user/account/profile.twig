@@ -1,5 +1,8 @@
+{% do headLink().prependStylesheet(assetUrl('css/statistics.css', 'PublicUser')) %}
 {% set theForm = form.prepare() %}
 {% set sectionNavs = {'user-information': translate('User information'), 'change-password': translate('Password')} %}
+
+
 
 {{ pageTitle(translate('Edit User: {user}')|replace({'{user}': user.getName()})) | raw }}
 {{ trigger('view.edit.before') }}
@@ -8,12 +11,26 @@
 
     {{ trigger('view.edit.form.before', {'form': form }) }}
 
+{% if statistics %}
+    <div class="c-collection__statistics">
+        <div class="c-statistics">
+            {% for statistic in statistics %}
+                <dl class="c-statistic c-statistic--sm">
+                    <dt>{{ statistic.label }}</dt>
+                    <dd>{{ statistic.value }}</dd>
+                </dl>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+
 <fieldset id="user-information" class="section active">
     {{ formCollection(form.get('user-information'), false) }}
 </fieldset>
 <fieldset id="change-password" class="section">
     {{ formCollection(form.get('change-password'), false) }}
 </fieldset>
+
 
 {{ trigger('view.edit.form.after', {'form': form }) }}
 <div id="page-actions">
@@ -23,17 +40,3 @@
 {{ formElement(form.get('csrf')) }}
 {{ form().closeTag()| raw }}
 {{ trigger('view.edit.after') }}
-
-
-{% if(manifest.statistics) %}
-    <div class="c-collection__statistics">
-        <div class="c-statistics ">
-            {% for statistic in manifest.statistics %}
-                <dl class="c-statistic c-statistic--sm c-statistic--inline">
-                    <dt>{{ manifest.statistics.label }}</dt>
-                    <dd>{{ manifest.statistics.value }}</dd>
-                </dl>
-            {% endfor %}
-        </div>
-    </div>
-{% endif %}
