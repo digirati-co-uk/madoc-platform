@@ -3,6 +3,7 @@
 use PublicUser\Controller\AuthController;
 use PublicUser\Controller\LoginController;
 use PublicUser\Controller\AccountController;
+use PublicUser\Controller\PublicProfileController;
 use PublicUser\Controller\SiteLoginRedirectController;
 use PublicUser\Controller\UserProfileController;
 
@@ -62,6 +63,7 @@ return [
                     'publicuser-register-success' => route_public_user('/register/thank-you', LoginController::class, 'thanks'),
                     'publicuser-profile' => route_public_user('/profile', AccountController::class, 'profile'),
                     'publicuser-profile-info' => route_public_user('/profile-info', UserProfileController::class, 'edit'),
+                    'publicuser-public-profile-view' => route_public_user('/user/:id', PublicProfileController::class, 'viewProfile'),
                 ],
             ],
         ],

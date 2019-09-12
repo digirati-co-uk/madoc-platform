@@ -16,12 +16,14 @@ use Omeka\Entity\User;
 use Omeka\Form\SiteSettingsForm;
 use Omeka\Module\AbstractModule;
 use Omeka\Permissions\Assertion\SiteIsPublicAssertion;
+use Omeka\Permissions\Assertion\UserIsAdminAssertion;
 use PublicUser\Acl\IsOnRouteAssertion;
 use PublicUser\Acl\IsRegistrationPermittedAssertion;
 use PublicUser\Auth\TokenService;
 use PublicUser\Controller\AccountController;
 use PublicUser\Controller\AuthController;
 use PublicUser\Controller\LoginController;
+use PublicUser\Controller\PublicProfileController;
 use PublicUser\Controller\SiteLoginRedirectController;
 use PublicUser\Settings\PublicUserSettings;
 use PublicUser\Site\SiteProvider;
@@ -91,7 +93,7 @@ class Module extends AbstractModule
               FOREIGN KEY (user_id) REFERENCES user(id),
               CONSTRAINT uc_user_canvas UNIQUE (user_id, canvas_mapping_id)
             );
-            ','
+            ', '
             CREATE TABLE oauth_access_tokens (
               access_token  VARCHAR(40) NOT NULL,
               client_id     VARCHAR(80),
@@ -100,7 +102,7 @@ class Module extends AbstractModule
               scope         VARCHAR(4000),
               PRIMARY KEY (access_token)
             );
-            ','
+            ', '
             CREATE TABLE oauth_authorization_codes (
               authorization_code   VARCHAR(40) NOT NULL,
               client_id            VARCHAR(80),
@@ -165,6 +167,7 @@ class Module extends AbstractModule
             'site/publicuser-forgot',
             'site/publicuser-auth',
             'site/publicuser-auth-token',
+            'site/publicuser-public-profile-view',
             'change-password',
         ]);
 
@@ -216,6 +219,18 @@ class Module extends AbstractModule
                 ->setMode(AssertionAggregate::MODE_ALL)
                 ->addAssertion(new IsRegistrationPermittedAssertion($siteProvider, $settings))
                 ->addAssertion($isOnRoute)
+        );
+
+        $acl->allow(
+            null,
+            [
+                PublicProfileController::class,
+                User::class,
+            ],
+            ['read', 'viewProfile'],
+            new IsOnRouteAssertion($router, $request, [
+                'site/publicuser-public-profile-view'
+            ])
         );
 
         $acl->allow(
@@ -301,7 +316,8 @@ class Module extends AbstractModule
         return true;
     }
 
-    public function authenticateOAuth(MvcEvent $event) {
+    public function authenticateOAuth(MvcEvent $event)
+    {
         $request = $event->getRequest();
         $bearer = $request->getHeaders()->get('Bearer');
         if (!$bearer) {
@@ -318,7 +334,7 @@ class Module extends AbstractModule
             $manager = $this->getServiceLocator()->get('Omeka\ApiManager');
             /** @var UserRepresentation $user */
             $user = $manager->read('users', $accessToken->getUserId())->getContent();
-            $acl->removeAllow(null,['Omeka\Api\Adapter\UserAdapter', 'Omeka\Entity\User'], ['read']);
+            $acl->removeAllow(null, ['Omeka\Api\Adapter\UserAdapter', 'Omeka\Entity\User'], ['read']);
             if ($user) {
                 /** @var AuthenticationService $auth */
                 $auth = $this->getServiceLocator()->get('Omeka\AuthenticationService');
@@ -354,7 +370,7 @@ class Module extends AbstractModule
             }
         }
 
-        $sharedEventManager->attach('*', MvcEvent::EVENT_RENDER, function(MvcEvent $e) use ($user) {
+        $sharedEventManager->attach('*', MvcEvent::EVENT_RENDER, function (MvcEvent $e) use ($user) {
             $layoutViewModel = $e->getViewModel();
             $childViewModels = $layoutViewModel->getChildren();
             if (count($childViewModels) === 0) {
@@ -382,38 +398,54 @@ class Module extends AbstractModule
                     ->add(
                         (new Checkbox('public-user-enable-registration'))
                             ->setOptions([
-                                'label' => 'Registrations',
-                                'info' => 'Enable user registrations on this site'
+                                'label' => 'Registrations', // @translate
+                                'info' => 'Enable user registrations on this site' // @translate
                             ])
                             ->setValue($form->getSiteSettings()->get('public-user-enable-registration', false))
                     )
                     ->add(
                         (new Checkbox('public-user-automatic-activation'))
                             ->setOptions([
-                                'label' => 'Automatically activate users',
-                                'info' => 'If false, when a user registers they will have to confirm their email'
+                                'label' => 'Automatically activate users', // @translate
+                                'info' => 'If false, when a user registers they will have to confirm their email' // @translate
                             ])
                             ->setValue($form->getSiteSettings()->get('public-user-automatic-activation', false))
                     )
                     ->add(
                         (new Text('public-user-login-redirect'))
                             ->setOptions([
-                                'label' => 'Login redirection location',
-                                'info' => 'Where will the user end up after logging in'
+                                'label' => 'Login redirection location', // @translate
+                                'info' => 'Where will the user end up after logging in' // @translate
                             ])
                             ->setValue($form->getSiteSettings()->get('public-user-login-redirect', ''))
                     )
                     ->add(
                         (new Select('public-user-registration-role'))
                             ->setOptions([
-                                'label' => 'New user role',
-                                'info' => 'The user role for users when registering'
+                                'label' => 'New user role', // @translate
+                                'info' => 'The user role for users when registering' // @translate
                             ])
                             ->setValueOptions($roles)
                             ->setValue($form->getSiteSettings()->get('public-user-registration-role', 'researcher'))
                     )
+                    ->add(
+                        (new Checkbox('public-user-profile-logged-in'))
+                            ->setOptions([
+                                'label' => 'Semi-public profile', // @translate
+                                'info' => 'Only show user profiles for logged in users, otherwise for all visitors', // @translate
+                            ])
+                            ->setValue($form->getSiteSettings()->get('public-user-profile-logged-in', false))
+                    )
+                    ->add(
+                        (new Checkbox('public-user-profile-email'))
+                            ->setOptions([
+                                'label' => 'Show email on public profile', // @translate
+                                'info' => 'Shows the users email on their public profile', // @translate
+                            ])
+                            ->setValue($form->getSiteSettings()->get('public-user-profile-email', false))
+                    )
                     ->setOptions([
-                        'label' => 'Public user options',
+                        'label' => 'Public user options', // @translate
                     ])
             );
 

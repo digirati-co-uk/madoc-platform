@@ -16,10 +16,14 @@ use PublicUser\Stats\BookmarksService;
 use PublicUser\Stats\ContributorsService;
 use PublicUser\Subscriber\AnnotationCreatorElucidateSubscriber;
 use PublicUser\Subscriber\AnnotationStatsSubscriber;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 return [
     'service_manager' => [
         'factories' => [
+            EventDispatcher::class => function() {
+                return new EventDispatcher();
+            },
             SettingsHelper::class => SettingsHelperFactory::class,
             ConfigurableMailer::class => ConfigurableMailerFactory::class,
             PublicUserSettings::class => function (ContainerInterface $container) {
