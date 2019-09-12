@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added manifest statistics subscriber to track statistics
 - Added new Search Omeka module to index created annotations in Elasticsearch
 - Added annotation statistics age block, powered by Elasticsearch
+- Added redirect for single collection sites when viewing entire collection
 
 ### Fixes
 - Fixed bug where canvas ID list may be only a single element
@@ -58,6 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixes contrast issue when marking page as complete (Fixes #111)
 - Fixed mark page as incomplete behaviour
 - Fixed user statistics on profile page
+- Fixed missing translations in Admin site
 
 ## [1.1.3](https://github.com/digirati-co-uk/madoc-platform/compare/v1.1.2...v1.1.3) - 2019-06-03
 
