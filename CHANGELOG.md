@@ -55,6 +55,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Moved media helpers to shared modules
 - Fixed unhandled exception in top contributor page block
 - Fixed bug with checking if canvas inside of manifest
+- Fixes contrast issue when marking page as complete (Fixes #111)
+- 
 
 ## [1.1.3](https://github.com/digirati-co-uk/madoc-platform/compare/v1.1.2...v1.1.3) - 2019-06-03
 

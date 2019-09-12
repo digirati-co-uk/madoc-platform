@@ -377,6 +377,8 @@
 .c-button input[type="submit"],
 .c-button input[type="button"] {
     background: none;
+    color: #fff;
+    font-size: inherit;
     border: 0;
 }
 
