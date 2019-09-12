@@ -18,6 +18,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added option for semi-public profiles, requiring authentication
 - Added new `HTTP_PROXY` environment variable support for setting HTTP proxy for requesting IIIF resources
 - Added new `HTTP_PROXY_PORT`, `HTTP_PROXY_USER` and `HTTP_PROXY_PASS` environment variables to easily configure an HTTP proxy.
+- Added `OMEKA__INTERNAL_URL` environment variable for internal network requests
+- Added `OMEKA__ANNOTATION_INDEXER` environment variable for annotation indexer service
+- Added `OMEKA__SEARCH_ELASTICSEARCH` environment variable for elasticsearch service
+- Added `OMEKA__ANNOTATION_ES_INDEX` environment variables for annotation indexer service
+- Added `OMEKA__SEARCH_INDEXER` environment variable for search indexer
+- Added elasticsearch to base docker compose
+- Added [https://github.com/digirati-co-uk/jane-founda](Jane Founda) IIIF Search service
+- Added [https://github.com/digirati-co-uk/madoc_draft_indexer](Madoc Indexer) service
+- Added constraints to thumbnail size with customisable import options (1000px max)
+- Added final case for partOf that matches original id
+- Added extra check for manifest when only canvas is provided
+- Added simple statistics module, talking to Elasticsearch
+- Added option for static thumbnail URL
+- Added logging of duplicate Omeka IDs when requesting manifests
+- Added expensive option for resolving Omeka ID from IIIF resource ID
+- Added warning for admin users when they are on a duplicated manifest page
+- Added manifest statistics subscriber to track statistics
+- Added new Search Omeka module to index created annotations in Elasticsearch
+- Added annotation statistics age block, powered by Elasticsearch
 
 ### Fixes
 - Fixed bug where canvas ID list may be only a single element
@@ -28,6 +47,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed "Got a packet bigger than 'max_allowed_packet' bytes" when adding very large IIIF manifests.
 - Fixed import canvas reference when importing a manifest with previously imported canvases.
 - Fixed IIIF requesting resources not using the HTTP client configuration from Omeka
+- Fixed stale docker images on CI
+- Fixed default locale on Annotation Studio (en)
+- Fixed missing styles for in-progress crowd-sourcing pages
+- Fixed error during import of images with thumbnails (thumbnail image service)
+- Fixed error when duplicate canvases where imported into single manifest
+- Moved media helpers to shared modules
+- Fixed unhandled exception in top contributor page block
 
 ## [1.1.3](https://github.com/digirati-co-uk/madoc-platform/compare/v1.1.2...v1.1.3) - 2019-06-03
 
