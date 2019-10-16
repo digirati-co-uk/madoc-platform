@@ -27,6 +27,21 @@ function i18n_route($route, $class, $method)
 return [
     'router' => [
         'routes' => [
+            'root-language' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/:locale',
+                    'defaults' => [
+                        '__NAMESPACE__' => '',
+                        'controller' => LanguageSelectionController::class,
+                        'action' => 'home',
+                    ],
+                    'constraints' => [
+                        'locale' => '[a-z]{2}(-[A-Z]{2})?'
+                    ]
+                ]
+            ],
+
             'i18n-admin-translate' => [
                 'type' => 'Segment',
                 'options' => [

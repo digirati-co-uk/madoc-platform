@@ -16,4 +16,12 @@ class LanguageSelectionController extends AbstractActionController
 
         return $this->redirect()->toUrl($referrer);
     }
+
+    public function homeAction()
+    {
+        $sessionContainer = Container::getDefaultManager();
+        $session = $sessionContainer->getStorage();
+        $session->locale = $this->params()->fromRoute('locale');
+        return $this->redirect()->toUrl('/');
+    }
 }
