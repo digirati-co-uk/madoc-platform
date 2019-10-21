@@ -38,13 +38,6 @@ class Module extends AbstractModule implements ConfigProviderInterface
     public function onBootstrap(MvcEvent $event)
     {
         parent::onBootstrap($event);
-
-        /** @var Acl $acl */
-        $acl = $this->getServiceLocator()->get('Omeka\Acl');
-        $acl->allow(
-            null,
-            []
-        );
     }
 
     public function attachListeners(SharedEventManagerInterface $em)
