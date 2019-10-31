@@ -3,8 +3,8 @@
 use IIIFStorage\Controller\AdminController;
 use IIIFStorage\Controller\CollectionController;
 use IIIFStorage\Controller\ManifestController;
+use IIIFStorage\Controller\PresleyController;
 use IIIFStorage\Controller\ResourceController;
-
 
 $iiifStorageRoutes = [
     'iiif-storage' => [
@@ -131,6 +131,14 @@ return [
                 'privilege' => 'browse',
                 'query' => ['resource_template' => 'IIIF Canvas']
             ],
+            [
+                'label' => 'Sorting room', // @translate
+                'class' => 'items',
+                'id' => 'sorty',
+                'action' => '',
+                'uri' => '/sorting-room',
+                'privilege' => 'browse',
+            ]
         ],
     ],
     'router' => [
@@ -309,9 +317,61 @@ return [
                                 ],
                             ],
                         ]
-                    ]
+                    ],
                 ]),
             ],
+            'presley-adapter' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/presley',
+                    'defaults' => [
+                        '__NAMESPACE__' => '',
+                        'controller' => PresleyController::class,
+                        'action' => 'getRootCollection',
+                    ],
+                ],
+                'child_routes' => [
+                    'root-collection' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/collection',
+                            'defaults' => ['action' => 'getRootCollection'],
+                        ],
+                    ],
+                    'manifest-collection' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/collection/:collection',
+                            'defaults' => ['action' => 'getManifestsCollection']
+                        ]
+                    ],
+                    'manifest-collection-contents' => [
+                        'type' => 'segment',
+                        'may_terminate' => false,
+                        'options' => [
+                            'verb' => 'POST',
+                            'route' => '/collection/:collection/manifest',
+                            'defaults' => [
+                                'type' => 'json',
+                            ]
+                        ],
+                        'child_routes' => [
+                            'create' => [
+                                'type' => 'method',
+                                'options' => [
+                                    'verb' => 'POST,OPTIONS',
+                                    'defaults' => [
+                                        'action' => 'addManifestToCollection'
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ],
+
+//                    'manifest-get' => [],
+//                    'manifest-create' => [],
+                ]
+            ]
         ], $iiifStorageRoutes),
     ]
 ];

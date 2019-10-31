@@ -45,7 +45,7 @@ class DereferencedManifest implements AggregateInterface
     {
         foreach ($input->getValue('dcterms:identifier') as $field) {
             $manifestUrl = $field->getId();
-            if ($manifestUrl) {
+            if ($manifestUrl && $manifestUrl !== 'uri:internal') {
                 $json = $this->getManifest($manifestUrl);
                 $manifest = json_decode($json, true);
                 $manifestId = $manifest['@id'] ?? $manifest['id'] ?? $manifestUrl;
@@ -125,6 +125,9 @@ class DereferencedManifest implements AggregateInterface
     public function prepare()
     {
         foreach ($this->manifestRequests as $manifestUri) {
+            if ($manifestUri === 'uri:internal') {
+                continue;
+            }
             $json = $this->getManifest($manifestUri);
             $manifest = json_decode($json, true);
             $id = $manifest['@id'] ?? $manifest['id'] ?? null;

@@ -13,6 +13,7 @@ function route_public_user($route, $class, $method)
         'type' => 'segment',
         'options' => [
             'route' => $route,
+            'verb' => 'get,put,post,options',
             'defaults' => [
                 '__NAMESPACE__' => '',
                 'controller' => $class,
@@ -64,6 +65,9 @@ return [
                     'publicuser-profile' => route_public_user('/profile', AccountController::class, 'profile'),
                     'publicuser-profile-info' => route_public_user('/profile-info', UserProfileController::class, 'edit'),
                     'publicuser-public-profile-view' => route_public_user('/user/:id', PublicProfileController::class, 'viewProfile'),
+
+                    'publicuser-auth-login' => route_public_user('/auth', AuthController::class, 'auth'),
+                    'publicuser-auth-token' => route_public_user('/auth/token', AuthController::class, 'token'),
                 ],
             ],
         ],

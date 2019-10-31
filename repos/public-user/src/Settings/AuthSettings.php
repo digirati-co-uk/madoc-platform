@@ -19,7 +19,13 @@ class AuthSettings
             [
                 'id' => 'local-testing',
                 'name' => 'Local testing',
-                'redirect-url' => 'http://localhost:5000',
+                'redirect-url' => 'http://localhost:3000/cb.html',
+                'available-scopes' => ['import-iiif']
+            ],
+            [
+                'id' => 'same-origin',
+                'name' => 'Same origin',
+                'redirect-url' => '/sorting-room/cb.html',
                 'available-scopes' => ['import-iiif']
             ]
         ],

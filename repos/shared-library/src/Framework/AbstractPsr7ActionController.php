@@ -5,6 +5,7 @@ namespace Digirati\OmekaShared\Framework;
 use Omeka\Api\Representation\SiteRepresentation;
 use Omeka\Api\Representation\UserRepresentation;
 use Zend\Diactoros\Response;
+use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mvc\MvcEvent;
 use Zend\Psr7Bridge\Psr7Response;
@@ -24,6 +25,23 @@ class AbstractPsr7ActionController extends AbstractActionController
         $this->corsEnabled = true;
     }
 
+    public function preflightAction() {
+        $request = $this->getRequest();
+        $response = new \Zend\Http\Response();
+        $headers = $response->getHeaders();
+        $origin = $request->getHeader('Origin');
+        $originValue = $origin ? $origin->getFieldValue() : '*';
+        $headers->addHeaders([
+            'Access-Control-Allow-Headers' => 'Content-Type,Authorization',
+            'Access-Control-Allow-Methods' => 'GET, POST, PUT, OPTIONS',
+            'Access-Control-Allow-Credentials' => 'true',
+            'Access-Control-Allow-Origin' => $originValue,
+        ]);
+        $response->setStatusCode(200);
+        $response->setHeaders($headers);
+        return $response;
+    }
+
     public function onDispatch(MvcEvent $e)
     {
         $result = parent::onDispatch($e);
@@ -33,7 +51,11 @@ class AbstractPsr7ActionController extends AbstractActionController
 
         if ($this->corsEnabled) {
             $headers = $result->getHeaders();
-            $headers->addHeaderLine('Access-Control-Allow-Origin: *');
+            /** @var Request $req */
+            $req = $e->getRequest();
+            $reqHeaders = $req->getHeaders()->toArray() ?? [];
+            $origin = $reqHeaders['Origin'] ?? '*';
+            $headers->addHeaderLine('Access-Control-Allow-Origin: ' . $origin);
             $headers->addHeaderLine('Access-Control-Allow-Methods: PUT, GET, POST, PATCH, DELETE, OPTIONS');
             $headers->addHeaderLine('Access-Control-Allow-Headers: Authorization, Origin, X-Requested-With, Content-Type, Accept');
         }

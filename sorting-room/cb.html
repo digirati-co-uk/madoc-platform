@@ -1,0 +1,33 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>SORTY</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+  </head>
+  <body>
+    <strong>logging you in</strong> 
+    <script>
+      function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]?' + name + '=([^&#]*)');
+        var results = regex.exec(location.hash);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+      }
+      if (window.opener) {
+        var code = getUrlParameter('code');
+        var state = getUrlParameter('state');
+        window.opener.postMessage({
+          code: code,
+          state: state
+        }, window.origin);
+        setTimeout(function() {
+          window.close();
+        }, 300);
+      } else {
+        window.location = '/';
+      }
+    </script>
+  </body>
+</html>

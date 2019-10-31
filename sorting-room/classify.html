@@ -1,0 +1,174 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>List | SORTY</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Open+Sans:400,600" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1 class="header__title">
+          <a href="index.html">Sorty</a> 
+        </h1>
+        <ul class="header-nav">
+          <li class="header-nav__item">
+            <a class="header-nav__link" href="docs.html">Native docs</a> 
+          </li>
+          <li class="header-nav__item">
+            <a class="header-nav__link" href="list.html">136 reels</a> 
+            <progress class="header-nav__progress" value="10" max="100"></progress>
+          </li>
+          <li class="header-nav__item header-nav__item--manifest">
+            <i class="material-icons">arrow_forward</i>
+            <a class="header-nav__link" href="classify.html">T-21/01/</a> 
+          </li>
+        </ul>
+        <div class="toolbar">
+          <div class="thumb-size">
+            <label class="thumb-size__label">Image size</label>
+            <button class="thumb-size__button thumb-size__button--small thumb-size__button--active">Small</button>
+            <button class="thumb-size__button thumb-size__button--medium">Medium</button>
+            <button class="thumb-size__button thumb-size__button--large">Large</button>
+          </div>
+          <button class="help-button">Help
+            <i class="material-icons">arrow_drop_down</i>
+          </button>
+        </div>
+      </header>
+      <div class="help">
+        <div class="help__text">
+          <h2 class="help__heading">Making items is easy!</h2>
+          <p class="help__description">Just click on an image to select it for an item.</p>
+        </div>
+        <ul class="help__list">
+          <li class="help__list-item help__list-item--control">
+            <span class="help__item-description">Hold the <strong>CONTROL</strong>  key to deselect an image</span> 
+            <ul class="help__visual" aria-hidden="true">
+              <li><span></span> </li>
+              <li><span></span> </li>
+              <li><span></span> </li>
+              <li><span></span> </li>
+            </ul>
+          </li>
+          <li class="help__list-item help__list-item--shift">
+            <span class="help__item-description">Hold the <strong>SHIFT</strong>  key to add a range</span> 
+            <ul class="help__visual" aria-hidden="true">
+              <li><span></span> </li>
+              <li><span></span> </li>
+              <li><span></span> </li>
+              <li><span></span> </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <main>
+        <div class="container body-content" id="mainContainer">
+          <section class="page page--classify">
+            <div class="workspace">
+
+              <!-- <nav class="workspace-tabs">
+  <ul class="workspace-tabs__list">
+    <li class="workspace-tabs__item">
+      <a class="workspace-tabs__link workspace-tabs__link--active" href="#all" data-modifier="all"><i class="material-icons">theaters</i><br/>All Images</a> 
+    </li>
+    <li class="workspace-tabs__item workspace-tabs__item--dm">
+      <a class="workspace-tabs__link" href="#add" data-modifier="add"><i class="material-icons">library_add</i><br/>To Classify</a> 
+    </li>
+    <li class="workspace-tabs__item workspace-tabs__item--dm">
+      <a class="workspace-tabs__link" href="#done" data-modifier="done"><i class="material-icons">done</i><br/>Completed</a> 
+    </li>
+  </ul>
+</nav>
+ -->
+
+              <!-- viewer--done -->
+
+              <!-- viewer--all -->
+              <div class="viewer viewer--add">
+                <div class="classify-tools classify-tools--no-selection">
+                  <div class="classify-tools__title-block">
+                    <h3 class="classify-tools__title">Unit title</h3>
+                    <h4 class="classify-tools__sub-title">Unit subtitle</h4>
+                  </div>
+                  <div class="classify-tools__progress">
+                    <div class="classify-tools__no-selection">
+                      <a class="classify-tools__num-sets" href="#">{x} items</a> 
+                    </div>
+                    <div class="classify-tools__selection">
+                      <span class="classify-tools__feedback">{x} selected</span> 
+                      <a class="classify-tools__clear" href="#">Clear</a> 
+                    </div>
+                    <span class="classify-tools__num-images">{x} images</span> 
+                    <progress class="classify-tools__progress-bar" value="0" max="100"></progress>
+                    <button class="classify-tools__make btn">
+                      <i class="material-icons">note_add</i> Make item</button>
+                  </div>
+                </div>
+                <div class="viewer__classify">
+                  <div class="thumbs-container">
+                  </div>
+                </div>
+                <div class="viewer__classified">
+
+                  <!-- <div class="manifest-select">
+  <select class="manifest-select__dropdown"></select>
+  <button class="manifest-select__view-uv btn">View in UV</button>
+</div>
+ -->
+                  <h3 class="viewer__classified-title">{x} sets</h3>
+                  <div class="classified-material">
+                  </div>
+                </div>
+                <div class="viewer__saved saved">
+                  <p class="saved__feedback">
+                    <i class="material-icons">done</i> Your new set "{set label}" is saved. <span><a href="">Start another set</a>, or <a href="">view all the sets</a> ?</span> </p>
+                  <progress class="saved__progress-bar" value="0" max="100"></progress>
+                  <div class="saved__collection">
+                  </div>
+                </div>
+              </div>
+              <div class="loading-screen">
+                <h1>Loading reel...</h1>
+                <i class="loading"><span></span> </i>
+              </div>
+            </div>
+            <div class="info-bar">
+              <div class="info-bar__selection">
+                <p class="info-bar__tip">Hold [shift] to select a range</p>
+                <p class="info-bar__tip">Hold [ctrl] to add/remove from selection</p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+    <div id="manifestmodal" class="manifest-modal manifest-modal--make mfp-hide">
+      <h1 class="manifest-modal__heading">Give your {set} a label?</h1>
+      <label class="vh" for="manifestLabel">Set label</label>
+      <input class="manifest-modal__input" id="manifestLabel" name="manifestLabel" type="text" placeholder="Set label" value="" />
+      <p class="manifest-modal__saving"><span class="manifest-modal__saving-text">Saving your {set}</span> 
+        <i class="loading"><span></span> </i>
+      </p>
+      <p class="manifest-modal__actions">
+        <button class="btn manifest-modal__make">Save</button>
+        <button class="btn manifest-modal__dismiss popup-modal-dismiss">Cancel</button>
+      </p>
+    </div>
+    <div id="deleteManifestmodal" class="manifest-modal manifest-modal--delete mfp-hide">
+      <h1 class="manifest-modal__heading">Are you sure you want to delete this {item}?</h1>
+      <p class="manifest-modal__deleting"><span class="manifest-modal__deleting-text">Deleting your {set}</span> 
+        <i class="loading"><span></span> </i>
+      </p>
+      <p class="manifest-modal__actions">
+        <button class="btn manifest-modal__delete">Delete</button>
+        <button class="btn manifest-modal__dismiss popup-modal-dismiss">Cancel</button>
+      </p>
+    </div>
+    <script src="assets/js/env.js"></script>
+    <script src="assets/js/script.js"></script>
+  </body>
+</html>

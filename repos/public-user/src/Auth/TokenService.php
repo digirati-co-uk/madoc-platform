@@ -31,7 +31,7 @@ class TokenService
      */
     public function getAccessToken(string $token)
     {
-        $accessToken = $this->storage->getAccessTokenById($token);
+        $accessToken = $this->storage->getAccessTokenById(trim($token));
         if (!$accessToken) {
             return null;
         }

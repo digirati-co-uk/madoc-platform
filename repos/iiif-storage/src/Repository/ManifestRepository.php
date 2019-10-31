@@ -145,6 +145,39 @@ class ManifestRepository
         return $this->api->search(static::API_TYPE, $query)->getContent();
     }
 
+    public function getNonReplacements(): array
+    {
+        $items = $this->api->search(static::API_TYPE, [
+            'resource_class_id' => $this->saturator->getResourceClassByTerm('sc:Manifest')->id(),
+            'property' => [
+                [
+                    'joiner' => 'and',
+                    'property' => $this->saturator->loadPropertyId('dcterms:replaces'),
+                    'type' => 'nex',
+                ]
+            ]
+        ])->getContent();
+
+        return $items;
+    }
+
+    public function getReplacements(string $id): array
+    {
+        $items = $this->api->search(static::API_TYPE, [
+            'resource_class_id' => $this->saturator->getResourceClassByTerm('sc:Manifest')->id(),
+            'property' => [
+                [
+                    'joiner' => 'and',
+                    'property' => $this->saturator->loadPropertyId('dcterms:replaces'),
+                    'type' => 'res',
+                    'text' => $id
+                ]
+            ]
+        ])->getContent();
+
+        return $items;
+    }
+
     /**
      * @param string $id
      * @return null|ItemRepresentation
@@ -175,7 +208,7 @@ class ManifestRepository
 
     public function getSource(int $id): array
     {
-        return $this->relationshipRequest->selectSource($id);
+        return $this->relationshipRequest->selectSource($id) ?? [];
     }
 
     /**

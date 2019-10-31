@@ -321,13 +321,18 @@ class Module extends AbstractModule
     public function authenticateOAuth(MvcEvent $event)
     {
         $request = $event->getRequest();
-        $bearer = $request->getHeaders()->get('Bearer');
+        $bearerHeader = $request->getHeaders()->get('Authorization');
+        if (!$bearerHeader) {
+            return null;
+        }
+        $bearer = $bearerHeader ? trim(explode('Bearer', $bearerHeader->getFieldValue())[1]?? '') : '';
+
         if (!$bearer) {
             return null;
         }
         /** @var TokenService $tokenService */
         $tokenService = $this->getServiceLocator()->get(TokenService::class);
-        $accessToken = $tokenService->getAccessToken($bearer->getFieldValue());
+        $accessToken = $tokenService->getAccessToken($bearer);
         if ($accessToken) {
             /** @var Acl $acl */
             $acl = $this->getServiceLocator()->get('Omeka\Acl');
