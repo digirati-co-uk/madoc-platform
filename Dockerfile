@@ -28,9 +28,6 @@ ADD --chown=www-data:www-data repos/ /srv/omeka/repos/
 # Add our translations
 ADD --chown=www-data:www-data translations/ /srv/omeka/translations/
 
-# Add sorting room
-ADD --chown=www-data:www-data sorting-room/ /srv/omeka/sorting-room/
-
 COPY --from=build /app/dist /srv/omeka/sorting-room
 
 # Run madoc installer

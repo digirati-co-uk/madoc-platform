@@ -29,7 +29,7 @@ layout: none
             window.close();
         }, 300);
     } else {
-        window.location = '/';
+        window.location = location.origin + (location.port ? ':' + location.port : '') + '/';
     }
 </script>
 </body>

@@ -4,12 +4,12 @@ module.exports = function (grunt) {
   grunt.registerTask('dist', [
     'clean:dist',
     'assemble:dist',
-    'sasslint',
+    // 'sasslint',
     'sass:dist',
     'postcss:dist',
     'browserify:dist',
     //'accessibility',
-    'groc',
+    // 'groc',
     'modernizr:dist',
     'copy:dist']);
 };

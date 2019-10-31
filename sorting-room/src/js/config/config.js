@@ -81,7 +81,7 @@ SortyConfiguration.getLoginUrl = function getLoginUrl() {
 };
 
 function goTo(url) {
-  window.location.href = `${SortyConfiguration.path}${url}`;
+  window.location.href = `${location.origin}${(location.port ? ':' + location.port : '')}${SortyConfiguration.path}${url}`;
 }
 
 SortyConfiguration.navigate = {
