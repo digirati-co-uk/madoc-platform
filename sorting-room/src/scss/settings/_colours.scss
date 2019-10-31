@@ -1,0 +1,31 @@
+// Primary colour declarations
+// - Direct mappings of variable names to colour values
+$white: #fff;
+$black: #000;
+$blue: #5eabed;
+
+$lightest-grey: #f0f0f0;
+$light-grey: #ebebeb;
+$grey-2: #dddddd;
+$grey: #aaaaaa;
+
+$selected: #44bdd5;
+$progress-background: #5E5E5E;
+$progress-foreground: $selected;
+$highlight: #FFFED5;
+$highlighted: #FFFE75;
+$help: #424242;
+$cancel: #c73535;
+$cancel-hover: darken($cancel, 10%);
+
+$link: darken($selected, 20%);
+$link-hover: darken($selected, 10%);
+
+$publish: #1c8c59;
+
+$primary: #104E8B;
+$black90: rgba(0, 0, 0, .9);
+$black50: rgba(0, 0, 0, .5);
+
+// Secondary colour declarations
+// - Mapping of features to colour names

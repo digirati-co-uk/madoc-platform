@@ -1,0 +1,43 @@
+.saved {
+  padding: 0 20px;
+
+  &__collection {
+    align-items: flex-start;
+    background-color: $lightest-grey;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin: 25px 0;
+    padding: 20px;
+
+    .thumb__zoom {
+      display: none !important;
+    }
+  }
+
+  &__feedback {
+    font-size: 1.2rem;
+    max-width: none !important;
+    min-height: 64px;
+    padding-left: 80px;
+    padding-top: 14px;
+    position: relative;
+
+    i {
+      font-size: 4rem;
+      font-weight: bold;
+      left: 0;
+      margin-right: .5rem;
+      position: absolute;
+      top: -.2rem;
+      vertical-align: middle;
+    }
+  }
+
+  &__progress-bar {
+    height: 25px;
+    max-width: 800px;
+    transition-delay: 1s;
+    width: 100%;
+  }
+}

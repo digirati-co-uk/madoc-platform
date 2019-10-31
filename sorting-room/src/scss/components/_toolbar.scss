@@ -1,0 +1,33 @@
+.toolbar {
+  clear: both;
+  float: right;
+  margin-top: 25px;
+
+  @media (min-width: 740px) {
+    clear: none;
+    margin-top: 0;
+  }
+
+  &__label,
+  &__thumb-size,
+  &__clear,
+  &__make {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  &__label {
+    color: $white;
+    font-size: .8rem;
+    margin-right: 5px;
+  }
+
+  &__thumb-size {
+    font-size: .8rem;
+    margin-right: 50px;
+  }
+
+  i {
+    vertical-align: middle;
+  }
+}

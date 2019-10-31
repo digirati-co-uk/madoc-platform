@@ -1,0 +1,6 @@
+input[type=text],
+input[type=password] {
+  border: 1px solid lighten($black, 80%);
+  border-radius: 3px;
+  padding: $form-elements-padding;
+}

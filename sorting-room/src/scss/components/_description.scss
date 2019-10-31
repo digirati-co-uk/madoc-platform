@@ -1,0 +1,67 @@
+@mixin description-visual-box {
+  background: $light-grey;
+  float: left;
+  height: 60px;
+  margin: 0 6px 6px 0;
+  width: 29%;
+}
+
+.description {
+  padding: 20px 20px 20px 200px;
+  position: relative;
+
+  &__body {
+    float: left;
+    font-size: 1.4rem;
+    max-width: 700px;
+    padding: 10px 30px;
+  }
+
+  &__visual {
+    left: 20px;
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0;
+    position: absolute;
+    width: 150px;
+
+    span {
+      @include description-visual-box;
+    }
+
+    li {
+      clear: both;
+      overflow: hidden;
+
+      &:before,
+      &:after {
+        @include description-visual-box;
+        content: "";
+      }
+
+      &:after {
+        margin-right: 0;
+      }
+
+      &:nth-child(4) {
+        &:after {
+          background-color: $selected;
+        }
+      }
+
+      &:nth-child(5) {
+        &:before,
+        span,
+        &:after {
+          background-color: $selected;
+        }
+      }
+
+      &:nth-child(6) {
+        &:before {
+          background-color: $selected;
+        }
+      }
+    }
+  }
+}

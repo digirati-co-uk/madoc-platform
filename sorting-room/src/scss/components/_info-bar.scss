@@ -1,0 +1,24 @@
+.info-bar {
+  bottom: 0;
+  font-size: .8rem;
+  opacity: 0;
+  padding: 5px;
+  position: fixed;
+  text-align: right;
+  transform: translateY(50px);
+  transition: .3s all ease;
+  width: 100%;
+
+  &--active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  &__tip {
+    background: $black;
+    color: $white;
+    display: inline-block;
+    margin: 0;
+    padding: 5px 8px;
+  }
+}

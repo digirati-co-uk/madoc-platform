@@ -1,3 +1,16 @@
+FROM node:8-alpine AS build
+
+COPY ./sorting-room/package.json /app/package.json
+COPY ./sorting-room/yarn.lock /app/yarn.lock
+
+WORKDIR /app
+
+RUN yarn install
+
+COPY ./sorting-room /app
+
+RUN yarn grunt dist
+
 FROM digirati/madoc-omeka-s:latest
 
 MAINTAINER "Gary Tierney" <gary.tierney@digirati.com>
@@ -17,6 +30,8 @@ ADD --chown=www-data:www-data translations/ /srv/omeka/translations/
 
 # Add sorting room
 ADD --chown=www-data:www-data sorting-room/ /srv/omeka/sorting-room/
+
+COPY --from=build /app/dist /srv/omeka/sorting-room
 
 # Run madoc installer
 RUN madoc-installer

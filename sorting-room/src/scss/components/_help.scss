@@ -1,0 +1,121 @@
+.help {
+  background-color: $help;
+  color: $white;
+  display: none;
+  overflow: hidden;
+  padding: 20px;
+
+  &--active {
+    display: block;
+  }
+
+  &__heading {
+    color: $selected;
+    margin: 0;
+  }
+
+  &__list {
+    clear: left;
+    display: inline-block;
+    list-style: none;
+    margin: 20px 0 0;
+    padding: 0;
+
+    @media (min-width: 1030px) {
+      clear: none;
+      float: right;
+    }
+  }
+
+  &__list-item {
+    color: darken($white, 15%);
+
+    @media (min-width: 660px) {
+      float: right;
+      margin-left: 50px;
+    }
+
+    &:last-child {
+      margin-left: 0;
+    }
+
+    strong {
+      color: $white;
+    }
+  }
+
+  &__item-description {
+    display: inline-block;
+    max-width: 150px;
+    vertical-align: top;
+  }
+
+  &__text {
+    float: left;
+  }
+
+  &__visual {
+    display: inline-block;
+    list-style: none;
+    margin: 5px 0 15px 5px;
+    padding: 0;
+    width: 125px;
+
+    li {
+      span,
+      &:before,
+      &:after {
+        background: lighten($black, 50%);
+        float: left;
+        height: 25px;
+        margin: 0 5px 5px 0;
+        width: 15px;
+      }
+
+      &:before,
+      &:after {
+        content: "";
+      }
+    }
+  }
+
+  &__list-item {
+    &--control {
+      .help__visual li:nth-child(2) {
+        &:before {
+          background-color: $selected;
+        }
+      }
+
+      .help__visual li:nth-child(3) {
+        span {
+          background-color: $selected;
+        }
+      }
+
+      .help__visual li:nth-child(4) {
+        &:before,
+        &:after {
+          background-color: $selected;
+        }
+      }
+    }
+
+    &--shift {
+      .help__visual li:nth-child(2),
+      .help__visual li:nth-child(3) {
+        span,
+        &:before,
+        &:after {
+          background-color: $selected;
+        }
+      }
+
+      .help__visual li:nth-child(4) {
+        &:before {
+          background-color: $selected;
+        }
+      }
+    }
+  }
+}

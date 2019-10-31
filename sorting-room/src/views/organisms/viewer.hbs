@@ -1,0 +1,31 @@
+<div class="workspace">
+  <!-- {{> workspace-tabs }} -->
+  <!-- viewer--done -->
+  <!-- viewer--all -->
+  <div class="viewer viewer--add">
+    {{> classify-tools }}
+    <div class="viewer__classify">
+      <div class="thumbs-container">
+      </div>
+    </div>
+    <div class="viewer__classified">
+      <!-- {{> manifest-select }} -->
+      <h3 class="viewer__classified-title">{x} sets</h3>
+
+      <div class="classified-material">
+      </div>
+    </div>
+    <div class="viewer__saved saved">
+      <p class="saved__feedback"><i class="material-icons">done</i> Your new set "{set label}" is saved. <span><a href="">Start another set</a>, or <a href="">view all the sets</a>?</span></p>
+      <progress class="saved__progress-bar" value="0" max="100"></progress>
+      <div class="saved__collection">
+
+      </div>
+    </div>
+  </div>
+
+  <div class="loading-screen">
+    <h1>Loading reel...</h1>
+    <i class="loading"><span></span></i>
+  </div>
+</div>

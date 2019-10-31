@@ -1,0 +1,85 @@
+.mfp-toolbar {
+  cursor: default;
+}
+
+.mfp-close {
+  font-size: 44px;
+}
+
+.mfp-container {
+  img.mfp-img {
+    padding-bottom: 60px;
+    padding-top: 60px;
+  }
+
+  .mfp-figure:after {
+    bottom: 60px;
+    top: 60px;
+  }
+}
+
+.zoom-toolbar {
+  cursor: default;
+  left: 40px;
+  margin: 10px 0 0;
+  position: absolute;
+  right: 40px;
+  text-align: center;
+  top: 0;
+  z-index: 2000;
+
+  &__item {
+    display: inline-block;
+    list-style: none;
+    margin-right: 3px;
+  }
+
+  &__map {
+    bottom: 0;
+    left: 70px;
+    position: absolute !important;
+    right: 70px;
+    top: 60px;
+    z-index: 2000;
+  }
+
+  &__collection-name {
+    position: relative;
+
+    label {
+      color: $white;
+      font-size: 1rem;
+      margin-right: 5px;
+      top: -20px;
+    }
+
+    input {
+      width: 300px;
+    }
+  }
+
+  &__zoom-button-add {
+    display: inline-block;
+  }
+
+  &__zoom-button-remove {
+    display: none;
+  }
+
+  &--selected &__select-button {
+    background-color: $white;
+    color: $primary;
+  }
+
+  &--selected &__zoom-button-add {
+    display: none;
+  }
+
+  &--selected &__zoom-button-remove {
+    display: inline-block;
+  }
+}
+
+.leaflet-container {
+  background: $black;
+}

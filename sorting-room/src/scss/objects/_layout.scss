@@ -1,0 +1,12 @@
+.page {
+  padding: 20px;
+
+  h1:first-child,
+  p:first-child {
+    margin-top: 0;
+  }
+
+  p {
+    max-width: 700px;
+  }
+}

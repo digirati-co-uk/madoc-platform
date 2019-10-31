@@ -1,1 +1,8 @@
 vendor
+repos/**/vendor
+sorting-room/node_modules
+sorting-room/dist
+sorting-room/docs
+files
+database/data
+bare

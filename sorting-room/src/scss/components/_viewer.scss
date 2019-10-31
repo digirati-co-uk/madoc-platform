@@ -1,0 +1,93 @@
+.loading-manifest {
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+.workspace {
+  .loading-manifest & {
+    position: relative;
+
+    &:after {
+      background-color: $white;
+      content: "";
+      height: 100%;
+      left: 0;
+      pointer-events: none;
+      position: fixed;
+      top: 0;
+      width: 100%;
+    }
+  }
+}
+
+.loading-screen {
+  display: none;
+  position: absolute;
+  text-align: center;
+  top: 30vh;
+  width: 100%;
+  z-index: 10000;
+
+  .loading-manifest & {
+    display: inline-block;
+  }
+}
+
+.viewer {
+  opacity: 0;
+  transition: 1s opacity ease;
+  transition-delay: 1s;
+
+  .manifest-loaded & {
+    opacity: 1;
+  }
+
+  &__title--all,
+  &__title--add {
+    display: none;
+  }
+
+  &--all &__title--all,
+  &--add &__title--add {
+    display: inline-block;
+  }
+
+  &__title,
+  &__classified-title {
+    font-size: 1.4rem;
+    font-weight: bold;
+    padding: 10px 20px;
+  }
+
+  &__classify,
+  &__classified,
+  &__saved {
+    display: none;
+  }
+
+  &--add &__classify,
+  &--all &__classify {
+    display: block;
+  }
+
+  &--done &__classified {
+    display: block;
+  }
+
+  /*
+  &--all {
+    .thumb--classified {
+
+    }
+  }*/
+
+  &--add {
+    .tc--classified {
+      display: none;
+    }
+  }
+
+  &--saved &__saved {
+    display: block;
+  }
+}

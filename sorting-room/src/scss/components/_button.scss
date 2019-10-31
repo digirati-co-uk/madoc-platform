@@ -1,0 +1,56 @@
+.btn {
+  background-color: $link;
+  border: 2px solid $link;
+  border-radius: 3px;
+  color: $white;
+  display: inline-block;
+  font-size: .9rem;
+  line-height: 1.5rem;
+  margin-top: -2px;
+  padding: 6px 10px;
+  text-decoration: none;
+  vertical-align: middle;
+
+  i {
+    line-height: 1;
+    margin-right: 3px;
+    vertical-align: middle;
+  }
+
+  &:hover {
+    background-color: $link-hover;
+    border: 2px solid $link-hover;
+  }
+
+  &[disabled] {
+    background-color: darken($white, 30%);
+    color: lighten($black, 40%);
+  }
+
+  // &:active {
+
+  // }
+
+  // &:focus {
+
+  // }
+
+  // &:hover {
+
+  // }
+
+}
+
+.mark {
+  position: absolute;
+  top: 10px;
+  z-index: 1000;
+
+  &--start {
+    left: 10px;
+  }
+
+  &--end {
+    right: 10px;
+  }
+}

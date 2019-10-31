@@ -1,0 +1,120 @@
+.classify-tools {
+  overflow: hidden;
+  padding: 0 20px 30px;
+
+  &__progress {
+    clear: both;
+    float: left;
+    margin-top: 20px;
+    padding-left: 110px;
+    padding-right: 0;
+    padding-top: 20px;
+    position: relative;
+
+    @media (min-width: 900px) {
+      clear: none;
+      float: right;
+    }
+  }
+
+  &__progress-bar {
+    height: 25px;
+    width: 310px;
+  }
+
+  &__num-images {
+    left: 0;
+    position: absolute;
+  }
+
+  &__num-sets {
+    color: $link;
+
+    &:hover {
+      color: $link-hover;
+      text-decoration: underline;
+    }
+
+    .viewer--done & {
+      color: $black;
+      text-decoration: none;
+
+      &:hover {
+        cursor: default;
+        text-decoration: none;
+      }
+    }
+  }
+
+  &__selection,
+  &__no-selection {
+    display: none;
+    position: absolute;
+    top: -10px;
+  }
+
+  &--no-selection &__no-selection,
+  &--selection &__selection {
+    display: block;
+  }
+
+  &__feedback {
+    margin-right: 5px;
+  }
+
+  &__clear {
+    color: $cancel;
+
+    &:hover {
+      color: $cancel-hover;
+    }
+  }
+
+  &__make {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 16px;
+  }
+
+  &--selection &__make {
+    display: block;
+  }
+
+  &__title-block {
+    float: left;
+    max-width: 500px;
+  }
+
+  &__title {
+    font-size: 1.1rem;
+    margin-bottom: 0;
+    margin-top: 10px;
+  }
+
+  &__sub-title {
+    font-size: 1rem;
+    font-weight: normal;
+    margin-top: 5px;
+
+    .viewer--add & {
+      display: none;
+    }
+  }
+
+  &__back {
+    color: $link;
+
+    &:hover {
+      color: $link-hover;
+    }
+  }
+
+  &__link {
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

@@ -1,0 +1,30 @@
+// Start component variables
+$input-border-color: $black;
+$input-border-thickness: 1px;
+
+.c-example {
+
+  // SCSS nesting allows you to build up a BEM naming structure while keeping the code minimal
+
+  //Generates: .c-example__input
+  &__input {
+    border: $input-border-thickness solid $input-border-color;
+    border-radius: 3px;
+    padding: .5em;
+  }
+
+  &__hello {
+    @include button-style;
+  }
+
+  &__goodbye {
+    @include button-style;
+  }
+
+  &__output {
+    border: 1px solid $black;
+    font-size: 2em;
+    margin-top: 20px;
+    padding: 20px 10px;
+  }
+}

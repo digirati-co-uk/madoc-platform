@@ -1,0 +1,51 @@
+.thumbs-container {
+  align-items: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  padding: 10px;
+}
+
+.thumb {
+  &--active {
+    outline: 18px solid $selected;
+  }
+
+  &__zoom {
+    background: $help;
+    border: 0;
+    color: $white;
+    display: none;
+    opacity: .8;
+    padding: 4px 4px 0;
+    position: absolute;
+    right: 3px;
+    top: 3px;
+
+    i {
+      display: inline-block;
+      font-size: 1.5rem;
+    }
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.tc {
+  margin: 10px;
+  position: relative;
+
+  &:hover {
+    .thumb__zoom {
+      display: block;
+    }
+  }
+
+  &.selected {
+    .thumb {
+      outline: 12px solid $selected;
+    }
+  }
+}

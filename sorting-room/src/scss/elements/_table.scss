@@ -1,0 +1,15 @@
+table {
+  text-align: left;
+  width: 100%;
+}
+
+td,
+th {
+  padding: 8px 8px;
+  vertical-align: top;
+}
+
+th {
+  background: lighten($black, 95%);
+  padding: 15px 8px 15px;
+}
