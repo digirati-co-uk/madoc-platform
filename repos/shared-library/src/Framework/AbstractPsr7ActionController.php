@@ -10,6 +10,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mvc\MvcEvent;
 use Zend\Psr7Bridge\Psr7Response;
 use Zend\View\Model\ViewModel;
+use Zend\Http\Response as ZendResponse;
 
 /**
  * @method SiteRepresentation currentSite()
@@ -45,8 +46,13 @@ class AbstractPsr7ActionController extends AbstractActionController
     public function onDispatch(MvcEvent $e)
     {
         $result = parent::onDispatch($e);
+
         if ($result instanceof Response) {
             $result = Psr7Response::toZend($result);
+        }
+
+        if (!$result instanceof ZendResponse) {
+            return $result;
         }
 
         if ($this->corsEnabled) {
