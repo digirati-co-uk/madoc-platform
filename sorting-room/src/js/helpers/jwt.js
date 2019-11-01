@@ -1,3 +1,6 @@
+import {SortyConfiguration} from "../config/config";
+const $ = require('jquery');
+
 function parseJwt(token) {
   return token;
   const base64Url = token.split('.')[1];
@@ -16,7 +19,24 @@ function getUserToken() {
   return localStorage.getItem('id_token');
 }
 
+export function checkLogin() {
+  return new Promise((success, error) => {
+    $.ajax(`${SortyConfiguration.oauthSiteEndpoint}/auth/me`, {
+      type: 'POST',
+      crossDomain: true,
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      beforeSend: function(xhr) {
+        xhr.setRequestHeader('Authorization', 'Bearer ' + getUserToken());
+      },
+      success,
+      error,
+    });
+  });
+}
+
 function hasValidToken() {
+
   const token = getUserToken();
   return !!(token && isStillValid(token));
 }

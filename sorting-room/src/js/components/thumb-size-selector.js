@@ -7,17 +7,13 @@ import {
 import {
   drawThumbs,
 } from './thumbs.js';
+import { store, manifestStore } from '../store';
 
 const $ = require('jquery');
 
-let store = null;
-let manifestStore = null;
-
 let lastState = null;
 
-const Init = (globalStore, globalManifestStore) => {
-  store = globalStore;
-  manifestStore = globalManifestStore;
+const Init = () => {
   const thumbSize = window.localStorage ? localStorage.getItem('thumbSize') : null;
   if (typeof thumbSize !== 'undefined' && thumbSize !== null) {
     store.dispatch(setThumbSize(thumbSize));

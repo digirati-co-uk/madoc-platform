@@ -15,14 +15,14 @@ import { IIIFActions } from './iiif-actions.js';
 import { getTerm } from '../config/terms.js';
 import { OmekaActions, omekaServiceProfile } from './omeka-actions.js';
 import {getOmekaToken} from "../helpers/oauth";
+import { store, manifestStore } from '../store';
 
 const $ = require('jquery');
 
 const manifestSelector = '.manifest-select__dropdown';
 const viewManifest = '.manifest-select__view-uv';
 
-let store = null;
-let manifestStore = null;
+
 let lastLocalState = null;
 let lastTitleText = null;
 
@@ -456,7 +456,7 @@ export const getCreatedManifests = Events.getCreatedManifests;
 $(document).ready(Events.domReady);
 
 export const derivedManifestsInit = (globalStore, globalManifestStore) => {
-  store = globalStore;
-  manifestStore = globalManifestStore;
+  // store = globalStore;
+  // manifestStore = globalManifestStore;
   manifestStore.subscribe(Events.subscribeActions);
 };

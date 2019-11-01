@@ -68,6 +68,7 @@ return [
 
                     'publicuser-auth-login' => route_public_user('/auth', AuthController::class, 'auth'),
                     'publicuser-auth-token' => route_public_user('/auth/token', AuthController::class, 'token'),
+                    'publicuser-auth-me' => route_public_user('/auth/me', AuthController::class, 'me'),
                 ],
             ],
         ],

@@ -1,18 +1,22 @@
 import { hasPropertyChanged } from '../helpers/helpers.js';
 import { toggleHelpVisible } from '../actions/ui.js';
+import { store } from '../store';
+import {removeUserToken} from "../helpers/jwt";
+import {SortyConfiguration} from "../config/config";
 
 const $ = require('jquery');
 
-let store = null;
 let lastState = null;
 
 const DOM = {
   $helpButton: null,
   $helpText: null,
+  $logout: null,
 
   init() {
     DOM.$helpButton = $('.help-button');
     DOM.$helpText = $('.help');
+    DOM.$logout = $('.logout');
   },
 };
 
@@ -24,6 +28,11 @@ const Events = {
   },
   init() {
     DOM.$helpButton.click(Events.helpToggle);
+    DOM.$logout.click(Events.logout);
+  },
+  logout() {
+    removeUserToken();
+    SortyConfiguration.navigate.login();
   },
   helpToggle() {
     store.dispatch(toggleHelpVisible());
@@ -43,8 +52,8 @@ const Events = {
   },
 };
 
-export const helpInit = (globalStore) => {
-  store = globalStore;
+export const helpInit = () => {
+  // store = globalStore;
 };
 
 $(document).ready(Events.domReady);

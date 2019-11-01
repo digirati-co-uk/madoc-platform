@@ -8,11 +8,9 @@ import {
 import {
   attachLightboxBehaviour,
 } from './lightbox';
+import { store, manifestStore } from '../store';
 
 const $ = require('jquery');
-
-let store = null;
-let manifestStore = null;
 
 let lastLocalSelectedCollectionState = null;
 let lastLocalLoadedManifestState = null;
@@ -80,9 +78,7 @@ export const attachSelectionBehaviour = () => {
   $thumb.unveil(300);
 };
 
-export const selectionInit = (globalStore, globalManifestStore) => {
-  store = globalStore;
-  manifestStore = globalManifestStore;
+export const selectionInit = () => {
   $(document).ready(Events.domReady);
   store.subscribe(Events.storeSubscribe);
   manifestStore.subscribe(Events.manifestStoreSubscribe);

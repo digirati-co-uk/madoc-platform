@@ -12,7 +12,7 @@
   resolved "https://registry.yarnpkg.com/@types/selenium-webdriver/-/selenium-webdriver-3.0.16.tgz#50a4755f8e33edacd9c406729e9b930d2451902a"
   integrity sha512-lMC2G0ItF2xv4UCiwbJGbnJlIuUixHrioOhNGHSCsYCJ8l4t9hMCUimCytvFv7qy6AfSzRxhRHoGa+UqaqwyeA==
 
-"HTML_CodeSniffer@github:squizlabs/HTML_CodeSniffer#2.0.7":
+HTML_CodeSniffer@squizlabs/HTML_CodeSniffer#2.0.7:
   version "2.0.7"
   resolved "https://codeload.github.com/squizlabs/HTML_CodeSniffer/tar.gz/d209ce54876657858a8a01528ad812cd234f37f0"
 

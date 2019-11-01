@@ -11,11 +11,9 @@ import {
 import {
   setThumbSize,
 } from '../actions/ui.js';
+import { store, manifestStore } from '../store';
 
 const $ = require('jquery');
-
-let store = null;
-let manifestStore = null;
 
 // Keep track of previous state for state diffing
 // let lastState = null;
@@ -216,9 +214,9 @@ const Events = {
   },
 };
 
-export const thumbsInit = (globalStore, globalManifestStore) => {
-  store = globalStore;
-  manifestStore = globalManifestStore;
+export const thumbsInit = () => {
+  // store = globalStore;
+  // manifestStore = globalManifestStore;
   thumbSizeInit(store, manifestStore);
 };
 

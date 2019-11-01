@@ -1,11 +1,10 @@
 import { hasPropertyChanged } from '../helpers/helpers.js';
 import { switchView } from './workspace.js';
 import { getTerm } from '../config/terms.js';
+import { store, manifestStore } from '../store';
 
 const $ = require('jquery');
 
-let store = null;
-let manifestStore = null;
 let lastSelectionState = null;
 let lastManifestState = null;
 
@@ -115,8 +114,8 @@ const Events = {
 
 const Init = (globalStore, globalManifestStore) => {
   // console.log('classify init');
-  store = globalStore;
-  manifestStore = globalManifestStore;
+  // store = globalStore;
+  // manifestStore = globalManifestStore;
 };
 
 export default Init;

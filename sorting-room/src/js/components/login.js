@@ -3,8 +3,8 @@ import {receiveLogin, requestLogin} from '../actions/auth';
 import {getOmekaToken} from "../helpers/oauth";
 import {SortyConfiguration} from "../config/config";
 const $ = require('jquery');
+import { store } from '../store';
 
-let store = null;
 let lastState = null;
 
 const DOM = {
@@ -32,8 +32,13 @@ const Events = {
   init() {
     // DOM.$loginForm.submit(Events.login);
     DOM.$omekaButton.on('click', () => {
-        getOmekaToken().then(({ accessToken }) => {
-          store.dispatch(receiveLogin({ token: accessToken }));
+        getOmekaToken().then(({ accessToken, expires }) => {
+          store.dispatch(receiveLogin({ token: accessToken, expires }));
+
+          setTimeout(() => {
+            DOM.$error.text('Your session will expire in 2 minutes, after this point you will not be able to save to Madoc.');
+          }, expires - 120);
+
           SortyConfiguration.navigate.home();
         });
     });
@@ -56,8 +61,7 @@ const Events = {
   },
 };
 
-export const loginInit = (globalStore) => {
-  store = globalStore;
+export const loginInit = () => {
   $(document).ready(Events.domReady);
 };
 

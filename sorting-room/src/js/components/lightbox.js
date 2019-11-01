@@ -7,10 +7,9 @@ import {
   addOrRemoveFromSelection,
   setCollectionName,
 } from '../actions/selected-collection.js';
+import { store } from '../store';
 
 const $ = require('jquery');
-
-let store = null;
 
 let lastLocalLightboxState = null;
 const thumbsContainer = '.thumbs-container';
@@ -188,8 +187,7 @@ export const attachMagnific = () => {
   $(thumbsContainer).magnificPopup(Config.magnificOptions);
 };
 
-export const lightboxInit = (globalStore) => {
-  store = globalStore;
+export const lightboxInit = () => {
   store.subscribe(Events.storeSubscribe);
 };
 

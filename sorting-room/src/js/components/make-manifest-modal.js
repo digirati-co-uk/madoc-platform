@@ -5,6 +5,7 @@ import {
 import {
   getTerm,
 } from '../config/terms.js';
+import { store, manifestStore } from '../store';
 
 // IIIF helpers
 import {
@@ -34,9 +35,6 @@ import {
 } from '../actions/loaded-manifest.js';
 
 const $ = require('jquery');
-
-let store = null;
-let manifestStore = null;
 
 const DOM = {
   init() {
@@ -234,8 +232,6 @@ const Events = {
 };
 
 export const makeManifestInit = (globalStore, globalManifestStore) => {
-  store = globalStore;
-  manifestStore = globalManifestStore;
 };
 
 $(document).ready(Events.domReady);

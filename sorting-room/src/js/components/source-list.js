@@ -10,16 +10,14 @@ import {
 import {
   // setManifestMetaData,
 } from '../actions/loaded-manifest.js';
+import { store } from '../store';
 
 const $ = require('jquery');
 
-let store = null;
-// let manifestStore = null;
-
 let lastLocalSourceListState = null;
 
-const Init = (globalStore) => {
-  store = globalStore;
+const Init = () => {
+  // store = globalStore;
   // manifestStore = globalManifestStore;
 };
 export default Init;

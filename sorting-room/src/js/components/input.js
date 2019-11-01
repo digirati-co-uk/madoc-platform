@@ -15,11 +15,9 @@ import { thumbsUpdate } from './thumbs.js';
 import { getCreatedManifests } from './derived-manifests.js';
 import { IIIF } from '../helpers/iiif.js';
 import { IIIFActions } from './iiif-actions.js';
+import { store, manifestStore } from '../store';
 
 const $ = require('jquery');
-
-let store = null;
-let manifestStore = null;
 
 let lastLocalLoadedManifestState = null;
 let lastLocalState = null;
@@ -153,9 +151,7 @@ Events = {
   },
 };
 
-export const inputInit = (globalStore, globalManifestStore) => {
-  store = globalStore;
-  manifestStore = globalManifestStore;
+export const inputInit = () => {
   // Subscribe to store changes
   manifestStore.subscribe(Events.manifestStoreSubscribe);
   store.subscribe(Events.storeSubscribe);
