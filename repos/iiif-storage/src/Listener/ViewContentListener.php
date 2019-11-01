@@ -109,7 +109,21 @@ class ViewContentListener
             }
             if ($resourceClass === 'sc:Manifest') {
                 $url = $this->router->manifest($itemSet->id());
-                echo '<p>This appears to be a IIIF Manifest, you can view the JSON representation of this resource &nbsp;<a class="button"  target="_blank" href="' . $url . '">view resource</a></p>';
+
+                $sorty = $itemSet->value('dcterms:replaces') ? '' : '
+                    <a class="button"  target="_blank" href="/sorting-room/classify.html?manifest=' . $url . '">
+                        Open in Sorty
+                    </a>';
+
+                echo '
+                    <p>
+                        This appears to be a IIIF Manifest, you can view the JSON representation of this resource &nbsp;
+                        <a class="button"  target="_blank" href="' . $url . '">
+                            View resource
+                        </a>
+                        ' . $sorty . '
+                    </p>';
+
                 return $this->renderMetadata($itemSet);
             }
             if ($resourceClass === 'sc:Canvas') {

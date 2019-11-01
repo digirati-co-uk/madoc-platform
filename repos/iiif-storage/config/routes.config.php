@@ -131,14 +131,6 @@ return [
                 'privilege' => 'browse',
                 'query' => ['resource_template' => 'IIIF Canvas']
             ],
-            [
-                'label' => 'Sorting room', // @translate
-                'class' => 'items',
-                'id' => 'sorty',
-                'action' => '',
-                'uri' => '/sorting-room',
-                'privilege' => 'browse',
-            ]
         ],
     ],
     'router' => [
@@ -366,10 +358,7 @@ return [
                                 ]
                             ]
                         ]
-                    ],
-
-//                    'manifest-get' => [],
-//                    'manifest-create' => [],
+                    ]
                 ]
             ]
         ], $iiifStorageRoutes),
