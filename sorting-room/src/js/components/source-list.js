@@ -99,16 +99,12 @@ function renderCollection(collection) {
                 ${m.service.values[1]}
               </a>
             </h2>
-            <p>${m.service.values[2]}: ${m.service.values[4]}</p>
+            ${m.service.values[2] || m.service.values[4] ? `
+                <p>${m.service.values[2] ? m.service.values[2] + ':' : ''} ${m.service.values[4]}</p>
+            ` : ''}
           </div>
           <div class="source-list__roll-data">
             <h3>${m.service.values[0]}</h3>
-            <p>X images, <a href="sets.html?manifest=${m['@id']}"
-            data-short-name="${m.service.values[0]}"
-            data-title="${m.service.values[1]}">Y sets</a></p>
-          </div>
-          <div class="source-list__progress">
-            <progress value="0" max="100" class="source-list__progress-bar"></progress>
           </div>
         </li>
         `;

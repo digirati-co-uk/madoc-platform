@@ -74,16 +74,15 @@
     display: block;
   }
 
-  /*
-  &--all {
-    .thumb--classified {
-
-    }
-  }*/
-
   &--add {
     .tc--classified {
       display: none;
+    }
+  }
+
+  &--all {
+    .tc--classified {
+      display: block;
     }
   }
 
