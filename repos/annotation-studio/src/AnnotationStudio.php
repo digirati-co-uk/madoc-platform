@@ -13,6 +13,7 @@ class AnnotationStudio
     private $components;
     private $isLocked = false;
     private $debug = false;
+    private $googleMapApiKey;
 
     public function __construct()
     {
@@ -72,13 +73,16 @@ class AnnotationStudio
             );
         }
 
-
         return implode("\n", [
             sprintf(
                 '<script type="application/javascript" src="%s"></script>',
                 $bundle
             ),
             $this->debug ? $this->getWarning() : '',
+            $this->googleMapApiKey ? sprintf(
+                '<script src="https://maps.googleapis.com/maps/api/js?key=%s&libraries=places"></script>',
+                $this->googleMapApiKey
+            ) : '',
             sprintf(
                 '<link rel="stylesheet" type="text/css" href="https://unpkg.com/@annotation-studio/bundle@%s/umd/main.css" />',
                 $this->getVersion()
@@ -91,6 +95,13 @@ class AnnotationStudio
         if (false === $this->isLocked()) {
             $this->components[$name] = $component;
         }
+    }
+
+    public function setGoogleMapApiKey(string $key)
+    {
+        $this->googleMapApiKey = $key;
+
+        return $this;
     }
 
     public function __get($name)
