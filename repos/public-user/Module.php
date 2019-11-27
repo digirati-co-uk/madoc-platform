@@ -435,8 +435,11 @@ class Module extends AbstractModule
                                 'label' => 'New user role', // @translate
                                 'info' => 'The user role for users when registering' // @translate
                             ])
-                            ->setValueOptions($roles)
-                            ->setValue($form->getSiteSettings()->get('public-user-registration-role', 'researcher'))
+                            ->setValueOptions([
+                                // This can only be transcriber for the time being.
+                                'transcriber' => 'Transcriber'
+                            ])
+                            ->setValue($form->getSiteSettings()->get('public-user-registration-role', 'transcriber'))
                     )
                     ->add(
                         (new Checkbox('public-user-profile-logged-in'))
