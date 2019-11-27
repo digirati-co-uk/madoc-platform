@@ -5,7 +5,7 @@
                  height="{{ thumbnailWidth | default(150) }}"
                  alt="{{ thumbnailAlt | default('Image thumbnail') }}"/>
             {% if (showImageStatus | default(true)) %}
-                {% if image.complete %}
+                {% if image.completed %}
                     {% set statusClass = 'complete' %}
                     {% set statusTitle = translate('Editing complete') %}
                 {% elseif image.edited %}

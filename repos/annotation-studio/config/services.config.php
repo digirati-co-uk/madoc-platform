@@ -7,10 +7,10 @@ use Digirati\OmekaShared\Factory\SettingsHelperFactory;
 use Digirati\OmekaShared\Factory\UrlHelperFactory;
 use Digirati\OmekaShared\Helper\SettingsHelper;
 use Digirati\OmekaShared\Helper\UrlHelper;
+use Omeka\Settings\Settings;
 use Psr\Container\ContainerInterface;
 use Zend\Http\Request;
 use Zend\I18n\Translator\TranslatorInterface;
-use Zend\Uri\Uri;
 
 return [
     'service_manager' => [
@@ -31,7 +31,7 @@ return [
                 );
             },
             ModerationStatusVerificationSubscriber::class => function (ContainerInterface $c) {
-                /** @var \Omeka\Settings\Settings $config */
+                /** @var Settings $config */
                 $config = $c->get('Omeka\Settings');
                 /** @var Request $request */
                 $request = $c->get('Request');

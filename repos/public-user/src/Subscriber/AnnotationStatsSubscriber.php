@@ -170,7 +170,7 @@ SQL;
         } elseif (self::CROWDS_MOTIVATION_DRAFTING === $motivation) {
             $this->log(Logger::DEBUG, 'Found incomplete annotation');
             $incomplete = true;
-        } elseif (!in_array($motivation, self::OA_MOTIVATION_IGNORE, true)) {
+        } elseif (self::CROWDS_MOTIVATION_COMPLETED === $motivation) {
             $this->log(Logger::DEBUG, 'Found completion annotation');
             $complete = true;
         }
