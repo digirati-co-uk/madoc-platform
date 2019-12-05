@@ -2,7 +2,6 @@
 
 namespace AnnotationStudio\Admin;
 
-use AnnotationStudio\AnnotationStudio;
 use Digirati\OmekaShared\Framework\AbstractConfigurationForm;
 use GuzzleHttp\Client;
 use Zend\Form\Element;

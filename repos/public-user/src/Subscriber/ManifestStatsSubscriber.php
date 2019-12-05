@@ -78,13 +78,15 @@ SQL;
 
                 if ($omekaId && $map[(string)$omekaId] ?? null) {
                     $stats = $map[(string)$omekaId];
-                    $incomplete = $stats['incomplete_count'] ?: 0;
-                    $complete = $stats['complete_count'] ?: 0;
-                    $bookmarks = $stats['bookmarks'] ?: 0;
+
+                    $incomplete = intval($stats['incomplete_count'], 10) ?? 0;
+                    $complete = intval($stats['complete_count'], 10) ?? 0;
+                    $bookmarks = intval($stats['bookmarks'], 10) ?? 0;
 
                     $canvas->addMetaData([
                         'edited' => $incomplete,
-                        'completed' => $complete > 0 && $incomplete === 0,
+                        // Incomplete count does not reset when marking as complete.
+                        'completed' => $complete > 0 /*&& $incomplete === 0*/,
                         'totalBookmarks' => $bookmarks,
                     ]);
                 }

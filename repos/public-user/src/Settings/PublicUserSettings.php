@@ -87,7 +87,13 @@ class PublicUserSettings
      */
     public function getDefaultUserRole()
     {
-        return (string) $this->currentSiteSettings->get(self::DEFAULT_NEW_ROLE);
+        $role = (string) $this->currentSiteSettings->get(self::DEFAULT_NEW_ROLE, 'transcriber');
+
+        if ($role !== 'transcriber') {
+            error_log('Warning: One of your sites is configured to give users permissions on this Madoc site.');
+        }
+
+        return 'transcriber';
     }
 
     public function isUserProfilesEnabled(): bool

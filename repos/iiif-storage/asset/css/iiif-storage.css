@@ -395,7 +395,9 @@
 .c-image {
     position: relative;;
 }
-.c-image__status--started:after {
+
+.c-image__status--started:after,
+.c-image__status--complete:after {
     position: absolute;
     bottom: -2px;
     border: 2px solid #000;
@@ -403,8 +405,22 @@
     width: 14px;
     height: 14px;
     content: '';
-    background: dodgerblue;
     border-radius: 50%;
+}
+
+.c-image__status--started:after {
+    background: #ffc645;
+}
+
+.c-image__status--complete:after {
+    background: #37804a;
+    content: '✔';
+    color: #fff;
+    font-size: 11px;
+    right: -9px;
+    bottom: -4px;
+    width: 18px;
+    height: 18px;
 }
 
 .info-panel {
