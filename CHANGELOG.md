@@ -4,11 +4,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.0...master)
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.4...master)
 
 ### Added
 
 ### Fixed
+
+## [1.2.4](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.4...master)
+
+### Fixed
+- Bug where all but the `default` site were able to be translated correctly.
+
+## [1.2.3](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.2...v1.2.3) - 2019-12-06
+
+### Fixed
+- Changed the options presented for registering users when creating a site. Will not only allow `transcriber` role to be an option. This is the only user with locked down permissions.
+- Fixed the google map API configuration in the backend - will now use the configured key and load in the google maps api with that key
+- Fixed the progress dots shown when transcribing an image. Will show in progress, not started and completed on the canvas page and add css classes to them.
+
+## [1.2.2](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.1...v1.2.2) - 2019-10-21
+
+### Fixed
+- Fixes an issue in the MadocSearch module that allowed any user with a role to access all administrative functionality.
+
+## [1.2.1](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.0...v1.2.1) - 2019-10-16
+
+### Added
+- Added root redirect for languages
+
+### Fixed
+- Fixed Public User configuration for sites (not long exists)
+- Removing carousel image count - inaccurate due to performance
+- Removing list image count - inaccurate due to performance
 
 ## [1.2.0](https://github.com/digirati-co-uk/madoc-platform/compare/v1.1.3...v1.2.0) - 2019-09-13
 
