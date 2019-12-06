@@ -21,8 +21,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Cross-origin errors while loading manifests in the Universal Viewer
 - Support for making requests to Omeka using valid Bearer token from OAuth flow in Public User module.
 
-
-
 ## [1.2.5](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.4...v1.2.5)
 
 ### Fixed
