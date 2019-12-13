@@ -26,6 +26,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Hotfix for broken transcriber role
 
+## [1.2.5](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.4...v1.2.5)
+
+### Fixed
+- Hotfix for broken transcriber role
+
 ## [1.2.4](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.4...master)
 
 ### Fixed
