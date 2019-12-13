@@ -437,9 +437,9 @@ class Module extends AbstractModule
                             ])
                             ->setValueOptions([
                                 // This can only be transcriber for the time being.
-                                'transcriber' => 'Transcriber'
+                                'Transcriber' => 'Transcriber'
                             ])
-                            ->setValue($form->getSiteSettings()->get('public-user-registration-role', 'transcriber'))
+                            ->setValue($form->getSiteSettings()->get('public-user-registration-role', 'Transcriber'))
                     )
                     ->add(
                         (new Checkbox('public-user-profile-logged-in'))
