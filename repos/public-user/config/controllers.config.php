@@ -27,7 +27,8 @@ return [
                     $c->get(PublicUserSettings::class),
                     $c->get('Omeka\Logger'),
                     $c->get(ConfigurableMailer::class),
-                    $c->get('Omeka\Acl')
+                    $c->get('Omeka\Acl'),
+                    $c->get(InvitationService::class)
                 );
             },
             SiteLoginRedirectController::class => function () {

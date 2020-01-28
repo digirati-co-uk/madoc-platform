@@ -2,6 +2,11 @@
 <div class="c-form c-form--register">
     <h1 class="c-form__heading">{{ translate('Register') }}</h1>
     {{ trigger('view.edit.before') }}
+
+    {% if invitation %}
+        <p style="font-size: 1.2em; white-space: pre">{{ invitation.message }}</p>
+    {% endif %}
+
     {{ form().openTag(form) | raw }}
 
     {{ trigger('view.edit.form.before', {'form': form }) }}
