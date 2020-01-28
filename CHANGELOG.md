@@ -19,8 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added "display_errors" PHP configuration when `APP_ENV` is set to dev.
 
 ### Fixed
+
 - Cross-origin errors while loading manifests in the Universal Viewer
 - Support for making requests to Omeka using valid Bearer token from OAuth flow in Public User module.
+- Fixed bug in is registration permitted for non-public sites
 
 ## [1.2.5](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.4...v1.2.5)
 
