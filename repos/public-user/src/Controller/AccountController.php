@@ -4,6 +4,7 @@ namespace PublicUser\Controller;
 
 use LogicException;
 use Doctrine\ORM\EntityManager;
+use Omeka\Mvc\Exception\PermissionDeniedException;
 use Omeka\Settings\Settings;
 use PublicUser\Stats\AnnotationStatisticsService;
 use PublicUser\Stats\BookmarksService;
@@ -122,7 +123,7 @@ class AccountController extends AbstractActionController
 
                 if (!empty($passwordValues['password'])) {
                     if (!$this->userIsAllowed($user, 'change-password')) {
-                        throw new Exception\PermissionDeniedException(
+                        throw new PermissionDeniedException(
                             'User does not have permission to change the password'
                         );
                     }
