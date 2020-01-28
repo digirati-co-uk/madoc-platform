@@ -36,7 +36,11 @@ class IsRegistrationPermittedAssertion implements AssertionInterface
         $site = $this->siteProvider->get();
 
         if (null !== $site && null === $role) {
-            return $this->settings->isRegistrationPermitted($site);
+            if ($site->isPublic() === false) {
+                return false;
+            }
+
+            return $this->settings->isRegistrationPermitted();
         }
 
         return true;
