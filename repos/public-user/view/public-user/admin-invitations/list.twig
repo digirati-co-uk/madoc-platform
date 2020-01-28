@@ -1,0 +1,52 @@
+<h1>Invitations</h1>
+{% for invitation in invitations %}
+    <div style="border: 1px solid #ddd; margin: 20px; padding: 10px;">
+        <div style="white-space: pre;">{{ invitation.message }}</div>
+        <br/>
+        <h4>Copy link</h4>
+        {% if inviteSlug %}
+            <input style="width: 100%" type="text" onfocus="this.select();" onmouseup="return false;"
+                   value="{{ url('site/publicuser-register', { 'site-slug': inviteSlug }, {query: { code: invitation. invitationId }, force_canonical: true}, true) }}">
+        {% else %}
+            <em>Link unavailable, set site to public or configure a default site</em>
+        {% endif %}
+
+        {% if showDelete %}
+            <form style="margin: 10px 0" method="post"
+                  action="{{ url('public-user-invitations-remove', {}, {}, true) }}">
+                <input type="hidden" name="invitation_id" value="{{ invitation.invitationId }}"/>
+                <button type="submit">remove invitation</button>
+            </form>
+        {% endif %}
+    </div>
+
+{% endfor %}
+<br/>
+<br/>
+<h3>Permissions overview for current site</h3>
+<div style="display: flex;">
+    {% for role in matrix %}
+        <div style="flex: 1 1 0px; margin: 10px">
+            <h4>{{ role.label }}</h4>
+            <ul style="margin: 0; padding: 0;">
+                {% for perm in role.permissions %}
+                    <li style="list-style: none; padding: 10px; background: {{ perm.value ? 'lightgreen' : 'pink' }}">
+                        {{ perm.permission }}
+                        <strong style="float: right">{{ perm.value ? 'yes' : 'no' }}</strong>
+                    </li>
+                {% endfor %}
+                <li style="list-style: none;margin-top: 10px">
+                    <a href="{{ url('admin/site/slug/action', { action: 'settings' }, {}, true) }}#{{ role.key }}-permissions"
+                       class="button">
+                        Edit <strong>{{ role.label }}</strong>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    {% endfor %}
+</div>
+
+<br/>
+<br/>
+<h3>Create new invitation link</h3>
+{{ form(createNew) }}

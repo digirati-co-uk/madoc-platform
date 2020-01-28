@@ -2,14 +2,16 @@
 
 use Digirati\OmekaShared\Helper\SettingsHelper;
 use Interop\Container\ContainerInterface;
-use PublicUser\Controller\AccountController;
 use PublicUser\Auth\TokenService;
+use PublicUser\Controller\AccountController;
+use PublicUser\Controller\AdminInvitationsController;
 use PublicUser\Controller\AuthController;
 use PublicUser\Controller\LoginController;
 use PublicUser\Controller\PublicProfileController;
 use PublicUser\Controller\SiteLoginRedirectController;
 use PublicUser\Controller\UserProfileController;
 use PublicUser\Extension\ConfigurableMailer;
+use PublicUser\Invitation\InvitationService;
 use PublicUser\Settings\PublicUserSettings;
 use PublicUser\Stats\AnnotationStatisticsService;
 use PublicUser\Stats\BookmarksService;
@@ -31,10 +33,18 @@ return [
             SiteLoginRedirectController::class => function () {
                 return new SiteLoginRedirectController();
             },
-            AuthController::class => function(ContainerInterface $c) {
+            AuthController::class => function (ContainerInterface $c) {
                 return new AuthController(
                     $c->get('Omeka\AuthenticationService'),
                     $c->get(TokenService::class)
+                );
+            },
+            AdminInvitationsController::class => function (ContainerInterface $c) {
+                return new AdminInvitationsController(
+                    $c->get(InvitationService::class),
+                    $c->get('Omeka\AuthenticationService'),
+                    $c->get(PublicUserSettings::class),
+                    $c->get('Omeka\EntityManager')
                 );
             },
             AccountController::class => function (ContainerInterface $c) {

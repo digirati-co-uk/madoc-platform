@@ -1,8 +1,8 @@
 <?php
 
-use PublicUser\Controller\AuthController;
-use PublicUser\Controller\LoginController;
 use PublicUser\Controller\AccountController;
+use PublicUser\Controller\AdminInvitationsController;
+use PublicUser\Controller\LoginController;
 use PublicUser\Controller\PublicProfileController;
 use PublicUser\Controller\SiteLoginRedirectController;
 use PublicUser\Controller\UserProfileController;
@@ -69,6 +69,32 @@ return [
                     'publicuser-auth-login' => route_public_user('/auth', AuthController::class, 'auth'),
                     'publicuser-auth-token' => route_public_user('/auth/token', AuthController::class, 'token'),
                     'publicuser-auth-me' => route_public_user('/auth/me', AuthController::class, 'me'),
+                ],
+            ],
+            'public-user-invitations' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/admin/site/s/:site-slug/invitations',
+                    'defaults' => [
+                        '__NAMESPACE__' => '',
+                        'controller' => AdminInvitationsController::class,
+                        'action' => 'list',
+                        '__ADMIN__' => true,
+                        '__SITEADMIN__' => true,
+                    ],
+                ],
+            ],
+            'public-user-invitations-remove' => [
+                'type' => 'segment',
+                'options' => [
+                    'route' => '/admin/site/s/:site-slug/invitations/remove',
+                    'defaults' => [
+                        '__NAMESPACE__' => '',
+                        'controller' => AdminInvitationsController::class,
+                        'action' => 'remove',
+                        '__ADMIN__' => true,
+                        '__SITEADMIN__' => true,
+                    ],
                 ],
             ],
         ],
