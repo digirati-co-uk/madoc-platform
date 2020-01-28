@@ -78,7 +78,8 @@ header {
     border-bottom-width: 3px;
 }
 #search form button,
-.c-form.c-form--login input[type="submit"] {
+.c-form.c-form--login input[type="submit"],
+.c-form.c-form--register button[type="submit"]{
     font-size: 16px;
     line-height: 22px;
     padding: 3px 10px;
@@ -86,6 +87,23 @@ header {
     color: #fff;
     border: 2px solid #333;
     border-bottom-width: 3px;
+}
+
+.c-form.c-form--login input[type="submit"],
+.c-form.c-form--register button[type="submit"] {
+    float: right;
+}
+
+.c-form.c-form--register form {
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+    margin: auto;
+}
+.c-form.c-form--register fieldset {
+    border: none;
+    padding: 0;
+    margin-bottom: 1em;
 }
 
 .madoc-user-bar {
@@ -172,21 +190,25 @@ header {
 }
 
 
-.c-form.c-form--login {
+.c-form.c-form--login,
+.c-form.c-form--register {
     margin: 0 auto;
     max-width: 300px;
 }
-.c-form.c-form--login .field {
+.c-form.c-form--login .field,
+.c-form.c-form--register .field {
     width: 100%;
     margin-bottom: 10px;
 }
-.c-form.c-form--login .field input {
+.c-form.c-form--login .field input,
+.c-form.c-form--register .field input {
     width: 100%;
     border: 2px solid #999;
     padding: 5px;
     font-size: 16px;
 }
-.c-form.c-form--login .field input:focus {
+.c-form.c-form--login .field input:focus,
+.c-form.c-form--register .field input:focus {
     border: 2px solid #333;
     outline: none;
 }
