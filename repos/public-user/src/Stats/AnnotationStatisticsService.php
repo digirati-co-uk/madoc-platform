@@ -55,7 +55,13 @@ class AnnotationStatisticsService
         $query->andWhere('uc.user_id = :uid');
         $query->setParameter('uid', $uid);
 
-        $result = $query->execute()->fetch(PDO::FETCH_ASSOC);
+        $result = array_merge([
+            'complete_images' => 0,
+            'incomplete_images' => 0,
+            'bookmarked' => 0,
+            'incomplete_count' => 0,
+            'complete_count' => 0,
+        ], $query->execute()->fetch(PDO::FETCH_ASSOC));
 
         return new AnnotationStatistics(
             (int) $result['bookmarked'],
