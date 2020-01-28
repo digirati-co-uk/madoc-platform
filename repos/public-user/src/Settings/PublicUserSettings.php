@@ -3,7 +3,6 @@
 namespace PublicUser\Settings;
 
 use Digirati\OmekaShared\Helper\SettingsHelper;
-use Omeka\Api\Representation\SiteRepresentation;
 use Omeka\Settings\Settings;
 
 /**
@@ -15,7 +14,22 @@ class PublicUserSettings
     const ACTIVATION_AUTOMATIC = 'public-user-automatic-activation';
     const LOGIN_REDIRECT = 'public-user-login-redirect';
     const DEFAULT_NEW_ROLE = 'public-user-registration-role';
+    const INVITE_ONLY = 'public-user-invite-only';
 
+    const ADDITIONAL_ROLES = [
+        // Original Omeka roles
+        'viewer' => 'Viewer',
+        'editor' => 'Editor',
+        'admin' => 'Admin',
+        // Can transcribe tasks assigned to them.
+        'limited-transcriber' => 'Limited Transcriber',
+        // Can transcribe and review tasks assigned to them.
+        'limited-reviewer' => 'Limited Reviewer',
+        // Can transcribe anything
+        'transcriber' => 'Transcriber',
+        // Can transcribe and review anything.
+        'reviewer' => 'Reviewer',
+    ];
 
     const GLOBAL_SETTING_SCOPE = '__global__';
     private $settings;
@@ -27,6 +41,32 @@ class PublicUserSettings
     ) {
         $this->settings = $settings;
         $this->currentSiteSettings = $currentSiteSettings;
+    }
+
+    const APPLY_CUSTOM_SITE_PERMISSION_TO_ROLES = [
+        'viewer',
+        'limited-transcriber',
+        'limited-reviewer',
+        'transcriber',
+    ];
+
+    const CUSTOM_SITE_PERMISSIONS = [
+        'view-canvas',
+        'view-manifest',
+        'view-collection',
+        'view-all-collections',
+    ];
+
+    public function canUserWithRole(string $role, string $perm)
+    {
+        if (
+            !in_array($role, self::APPLY_CUSTOM_SITE_PERMISSION_TO_ROLES) ||
+            !in_array($perm, self::CUSTOM_SITE_PERMISSIONS)
+        ) {
+            return false;
+        }
+
+        return (bool)$this->currentSiteSettings->get("public-user-site-permissions-$role-$perm", true);
     }
 
     /**
@@ -43,11 +83,16 @@ class PublicUserSettings
         return in_array(strtolower($emailDomain), $blacklist);
     }
 
+    public function getInviteOnlyStatus()
+    {
+        return boolval($this->currentSiteSettings->get(self::INVITE_ONLY, false));
+    }
+
     public function getActivationEmailTemplate()
     {
         return [
-          'subject' => $this->globalSetting('user_activation_subject'),
-          'copy' => $this->globalSetting('user_activation_copy'),
+            'subject' => $this->globalSetting('user_activation_subject'),
+            'copy' => $this->globalSetting('user_activation_copy'),
         ];
     }
 
@@ -66,7 +111,7 @@ class PublicUserSettings
      */
     public function isRegistrationPermitted()
     {
-        return (bool) $this->currentSiteSettings->get(self::ENABLE_REGISTRATION);
+        return (bool)$this->currentSiteSettings->get(self::ENABLE_REGISTRATION);
     }
 
     /**
@@ -77,7 +122,7 @@ class PublicUserSettings
      */
     public function isActivationAutomatic()
     {
-        return (bool) $this->currentSiteSettings->get(self::ACTIVATION_AUTOMATIC);
+        return (bool)$this->currentSiteSettings->get(self::ACTIVATION_AUTOMATIC);
     }
 
     /**
@@ -87,7 +132,7 @@ class PublicUserSettings
      */
     public function getDefaultUserRole()
     {
-        $role = (string) $this->currentSiteSettings->get(self::DEFAULT_NEW_ROLE, 'Transcriber');
+        $role = (string)$this->currentSiteSettings->get(self::DEFAULT_NEW_ROLE, 'Transcriber');
 
         if ($role !== 'Transcriber') {
             error_log('Warning: One of your sites is configured to give users permissions on this Madoc site.');
@@ -98,7 +143,7 @@ class PublicUserSettings
 
     public function isUserProfilesEnabled(): bool
     {
-        return (bool) $this->globalSetting('user_profiles_enabled');
+        return (bool)$this->globalSetting('user_profiles_enabled');
     }
 
     public function getUserLoginRedirect()
@@ -108,7 +153,7 @@ class PublicUserSettings
 
     public function getUserProfilesResourceTemplate(): int
     {
-        return (int) $this->globalSetting('user_profiles_resource_template');
+        return (int)$this->globalSetting('user_profiles_resource_template');
     }
 
     private function globalSetting(string $settingName)
