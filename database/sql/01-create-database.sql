@@ -818,6 +818,27 @@ CREATE TABLE `oauth_authorization_codes` (
   PRIMARY KEY (`authorization_code`)
 );
 
+--
+-- Table structure for table `user_invitations`
+--
+
+DROP TABLE IF EXISTS `user_invitations`;
+
+CREATE TABLE user_invitations (
+  `id`                  INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+  `invitation_id`       VARCHAR(40) NOT NULL,
+  `owner_id`            INT(11),
+  `site_id`             int(11) NOT NULL,
+  `role`                varchar(80) NOT NULL,
+  `site_role`           varchar(80) NOT NULL,
+  `expires`             TIMESTAMP NOT NULL,
+  `created_at`          TIMESTAMP NOT NULL,
+  `uses_left`           INT,
+  `message`             VARCHAR(4000),
+  CONSTRAINT `user_invitations__owner_id` FOREIGN KEY (`owner_id`) REFERENCES `user` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `user_invitations__site_id` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`) ON DELETE CASCADE
+);
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -827,5 +848,3 @@ CREATE TABLE `oauth_authorization_codes` (
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2018-05-31 12:23:28

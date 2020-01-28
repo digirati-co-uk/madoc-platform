@@ -15,7 +15,7 @@ LOCK TABLES `module` WRITE;
 INSERT INTO `module` VALUES
   ('AnnotationStudio',1,'1.0.0'),
   ('ElucidateProxy',1,'1.0.0'),
-  ('PublicUser',1,'1.0.0'),
+  ('PublicUser',1,'1.1.0'),
   ('ElucidateModule',1,'1.0.0'),
   ('CaptureModelImport',1,'1.0.0'),
   ('GoogleAnalytics',1,'1.0.1'),
