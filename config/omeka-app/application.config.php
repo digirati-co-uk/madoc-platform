@@ -5,6 +5,11 @@ if (!defined('OMEKA_PATH')) {
     define('OMEKA_PATH', __DIR__ . 'omeka-workspace/');
 }
 
+$env = $_ENV['APP_ENV'] ?? null;
+if ($env === 'dev') {
+    ini_set('display_errors', 1);
+}
+
 return [
     'modules' => [
         'Zend\Form',

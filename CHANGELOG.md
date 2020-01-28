@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added missing routes for OAuth login flow
 - Pre-flight request handling for `OPTIONS` requests
 - Added Presley API implementation for CRUD operations on IIIF resources
+- Added "display_errors" PHP configuration when `APP_ENV` is set to dev.
 
 ### Fixed
 - Cross-origin errors while loading manifests in the Universal Viewer
