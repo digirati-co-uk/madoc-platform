@@ -2,8 +2,11 @@
 
 namespace Digirati\OmekaShared\Framework;
 
+use Digirati\OmekaShared\Helper\SitePermissionsHelper;
 use Digirati\OmekaShared\Utility\OmekaValue;
 use Omeka\Api\Representation\MediaRepresentation;
+use Omeka\Api\Representation\SiteRepresentation;
+use Omeka\Entity\User;
 use Zend\View\Renderer\PhpRenderer;
 
 trait RenderMedia
@@ -17,6 +20,16 @@ trait RenderMedia
     ) {
         $this->currentMedia = $media;
         $data = $media->mediaData();
+
+//        if (isset($data[AbstractIngester::SITE_ROLE_ID])) {
+//            /** @var User $user */
+//            $user = $media->getServiceLocator()->get('Omeka\AuthenticationService')->getIdentity();
+//            // Get the role from the site.
+//            $role = SitePermissionsHelper::userRoleForSite($user, $site);
+//            if (!in_array($role, $data[AbstractIngester::SITE_ROLE_ID])) {
+//                return '';
+//            }
+//        }
 
         if ($this instanceof LocalisedMedia) {
             $locale = $data['locale'] ?? null;

@@ -8,12 +8,17 @@ use Omeka\Api\Request;
 use Omeka\Entity\Media;
 use Omeka\Media\Ingester\MutableIngesterInterface;
 use Omeka\Stdlib\ErrorStore;
+use PublicUser\Settings\PublicUserSettings;
 use ResourceBundle;
 use Zend\Form\Element;
+use Zend\ModuleManager\ModuleManager;
 use Zend\View\Renderer\PhpRenderer;
 
 abstract class AbstractIngester implements MutableIngesterInterface
 {
+    const SITE_ROLE_ID = 'site-role';
+    static $LOCALES = null;
+
     /**
      * @param Media $media
      * @param array $formValues
@@ -35,7 +40,32 @@ abstract class AbstractIngester implements MutableIngesterInterface
         return $data;
     }
 
-    static $LOCALES = null;
+    /**
+     * @return Element|\Zend\Form\ElementInterface
+     */
+    public function getSiteRolesField()
+    {
+        try {
+            if (class_exists(PublicUserSettings::class)) {
+                return (new Element\MultiCheckbox(self::SITE_ROLE_ID))
+                    ->setValueOptions(PublicUserSettings::ADDITIONAL_ROLES)
+                    ->setValue(array_keys(PublicUserSettings::ADDITIONAL_ROLES))
+                    ->setOptions([
+                        'label' => 'Visible only to roles',
+                        'info' => 'Only users with the roles that are checked will be able to see this block.'
+                    ])
+                    ->setAttributes([
+                        'id' => 'locale',
+                        'class' => 'chosen-select',
+                    ]);
+            }
+        } catch (\Throwable $e) {
+            error_log($e->getMessage());
+        }
+
+        // Default to hidden element with viewer (all users).
+        return (new Element\Hidden('site-role'))->setValue('viewer');
+    }
 
     /**
      * @return Element|\Zend\Form\ElementInterface
