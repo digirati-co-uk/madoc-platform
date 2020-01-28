@@ -3,13 +3,15 @@
 namespace IIIFStorage\Controller;
 
 use Digirati\OmekaShared\Framework\AbstractPsr7ActionController;
+use Digirati\OmekaShared\Framework\ResourceWrapper;
 use Digirati\OmekaShared\Helper\SettingsHelper;
-use Omeka\Mvc\Exception\NotFoundException;
-use Zend\View\Model\ViewModel;
 use IIIFStorage\JsonBuilder\CollectionBuilder;
 use IIIFStorage\Repository\CollectionRepository;
 use IIIFStorage\Utility\ApiRouter;
 use IIIFStorage\Utility\Router;
+use Omeka\Mvc\Exception\NotFoundException;
+use Omeka\Permissions\Acl;
+use Zend\View\Model\ViewModel;
 
 class CollectionController extends AbstractPsr7ActionController
 {
@@ -33,19 +35,25 @@ class CollectionController extends AbstractPsr7ActionController
      * @var SettingsHelper
      */
     private $settingsHelper;
+    /**
+     * @var Acl
+     */
+    private $acl;
 
     public function __construct(
         CollectionRepository $repo,
         CollectionBuilder $builder,
         Router $router,
         ApiRouter $apiRouter,
-        SettingsHelper $settingsHelper
+        SettingsHelper $settingsHelper,
+        Acl $acl
     ) {
         $this->repo = $repo;
         $this->builder = $builder;
         $this->router = $router;
         $this->apiRouter = $apiRouter;
         $this->settingsHelper = $settingsHelper;
+        $this->acl = $acl;
     }
 
     public function viewAction()
@@ -86,6 +94,11 @@ class CollectionController extends AbstractPsr7ActionController
 
         $this->paginateControls($viewModel, $collectionRepresentation->getTotalResults(), $this->getManifestsPerPage());
 
+        if (!$this->acl->userIsAllowed($this->getAclResource('iiif-collection'), 'view')) {
+            $viewModel->setTemplate('iiif-storage/collection/cannot-view');
+            return $viewModel;
+        }
+
         if ($this->getRequest()->isXmlHttpRequest()) {
             $viewModel->setTerminal(true);
         }
@@ -125,7 +138,7 @@ class CollectionController extends AbstractPsr7ActionController
         $this->paginate($viewModel, 'itemSets', $omekaCollections, $this->getCollectionsPerPage());
 
         $collections = array_map(
-            function($collection) {
+            function ($collection) {
                 return $this->builder->buildResource(
                     $collection,
                     $this->shouldUseOriginalIds(),
@@ -138,12 +151,17 @@ class CollectionController extends AbstractPsr7ActionController
         $viewModel->setVariable('collections', $collections);
         $viewModel->setVariable('manifestsPerCollection', $this->getManifestsPerCollection());
 
+        if (!$this->acl->userIsAllowed($this->getAclResource('iiif-collection'), 'view-all')) {
+            $viewModel->setTemplate('iiif-storage/collection/cannot-view-all');
+            return $viewModel;
+        }
+
         return $viewModel;
     }
 
     private function shouldUseCarousel(): bool
     {
-        return (bool) $this->settingsHelper->get('collection-manifest-carousel', false);
+        return (bool)$this->settingsHelper->get('collection-manifest-carousel', false);
     }
 
     private function shouldUseOriginalIds(): bool

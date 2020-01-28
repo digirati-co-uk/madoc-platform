@@ -3,11 +3,16 @@
 namespace Digirati\OmekaShared\Framework;
 
 use Digirati\OmekaShared\Helper\LocaleHelper;
+use Digirati\OmekaShared\Helper\SitePermissionsHelper;
 use Digirati\OmekaShared\Utility\OmekaValue;
 use Omeka\Api\Representation\SitePageBlockRepresentation;
 use Omeka\Api\Representation\SitePageRepresentation;
+use Omeka\Api\Representation\SitePermissionRepresentation;
 use Omeka\Api\Representation\SiteRepresentation;
+use Omeka\Entity\Site;
 use Omeka\Entity\SitePageBlock;
+use Omeka\Entity\SitePermission;
+use Omeka\Entity\User;
 use Omeka\Media\Renderer\RendererInterface;
 use Omeka\Site\BlockLayout\AbstractBlockLayout;
 use Omeka\Site\BlockLayout\BlockLayoutInterface;
@@ -98,6 +103,19 @@ class PageBlockMediaAdapter extends AbstractBlockLayout implements BlockLayoutIn
             OmekaValue::langMatches($locale, $pageLocale) === false
         ) {
             return '';
+        }
+
+        // This means we need to only display to users with that role.
+        if (isset($data[AbstractIngester::SITE_ROLE_ID])) {
+            /** @var User $user */
+            $user = $block->getServiceLocator()->get('Omeka\AuthenticationService')->getIdentity();
+            /** @var SiteRepresentation $site */
+            $site = $block->page()->site();
+            // Get the role from the site.
+            $role = SitePermissionsHelper::userRoleForSite($user, $site);
+            if (!in_array($role, $data[AbstractIngester::SITE_ROLE_ID])) {
+                return '';
+            }
         }
 
         if ($this->renderer instanceof TranslatableRenderer) {

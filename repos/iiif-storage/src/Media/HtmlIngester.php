@@ -43,6 +43,7 @@ class HtmlIngester extends AbstractIngester implements IngesterInterface
                     'class' => 'media-html',
                 ]),
             $this->getLocaleField(),
+            $this->getSiteRolesField(),
         ];
     }
 

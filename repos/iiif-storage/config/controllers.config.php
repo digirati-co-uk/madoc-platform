@@ -36,7 +36,8 @@ return [
                     $c->get(CollectionBuilder::class),
                     $c->get(Router::class),
                     $c->get(ApiRouter::class),
-                    $c->get(SettingsHelper::class)
+                    $c->get(SettingsHelper::class),
+                    $c->get('Omeka\Acl')
                 );
             },
             ManifestController::class => function (ContainerInterface $c) {
@@ -49,7 +50,8 @@ return [
                     $c->get(CanvasRepository::class),
                     $c->get(CanvasBuilder::class),
                     $c->get(ApiRouter::class),
-                    $c->get(SettingsHelper::class)
+                    $c->get(SettingsHelper::class),
+                    $c->get('Omeka\Acl')
                 );
             },
             AdminController::class => function (ContainerInterface $c) {

@@ -5,6 +5,8 @@ namespace Digirati\OmekaShared\Framework;
 use Digirati\OmekaShared\Helper\RouteMatchHelper;
 use Omeka\Api\Representation\SiteRepresentation;
 use Omeka\Api\Representation\UserRepresentation;
+use Omeka\Entity\User;
+use Omeka\Mvc\Exception\PermissionDeniedException;
 use Zend\Diactoros\Response;
 use Zend\Http\Request;
 use Zend\Http\Response as ZendResponse;
@@ -18,7 +20,7 @@ use Zend\View\Model\ViewModel;
 /**
  * @method SiteRepresentation currentSite()
  * @method setBrowseDefaults(string $created)
- * @method UserRepresentation identity()
+ * @method User | null identity()
  */
 class AbstractPsr7ActionController extends AbstractActionController
 {
@@ -63,7 +65,7 @@ class AbstractPsr7ActionController extends AbstractActionController
      */
     public function matchOnRoute(string $url, $route = null)
     {
-        $baseUrl = (string) $this->getBaseUri();
+        $baseUrl = (string)$this->getBaseUri();
         $match = RouteMatchHelper::matchFrom(
             $this->getEvent()->getApplication()->getServiceManager()->get('Router'),
             $url,
@@ -75,6 +77,24 @@ class AbstractPsr7ActionController extends AbstractActionController
         }
 
         return null;
+    }
+
+    public function getAclResource(string $name, $subject = null)
+    {
+        return new ResourceWrapper(
+            $this->currentSite(),
+            $this->getCurrentUser(),
+            $name,
+            $subject
+        );
+    }
+
+    /**
+     * @return User | null
+     */
+    public function getCurrentUser()
+    {
+        return $this->identity();
     }
 
     public function onDispatch(MvcEvent $e)

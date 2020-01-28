@@ -16,6 +16,7 @@ use IIIFStorage\Utility\Router;
 use Omeka\Api\Exception\NotFoundException;
 use Omeka\Api\Representation\MediaRepresentation;
 use Omeka\Api\Representation\SiteRepresentation;
+use Omeka\Permissions\Acl;
 use Zend\View\Model\ViewModel;
 
 class ManifestController extends AbstractPsr7ActionController
@@ -57,6 +58,10 @@ class ManifestController extends AbstractPsr7ActionController
      * @var ApiRouter
      */
     private $apiRouter;
+    /**
+     * @var Acl
+     */
+    private $acl;
 
     public function __construct(
         ManifestRepository $repo,
@@ -67,7 +72,8 @@ class ManifestController extends AbstractPsr7ActionController
         CanvasRepository $canvasRepository,
         CanvasBuilder $canvasBuilder,
         ApiRouter $apiRouter,
-        SettingsHelper $settingsHelper
+        SettingsHelper $settingsHelper,
+        Acl $acl
     ) {
         $this->repo = $repo;
         $this->builder = $builder;
@@ -78,6 +84,7 @@ class ManifestController extends AbstractPsr7ActionController
         $this->canvasBuilder = $canvasBuilder;
         $this->settingsHelper = $settingsHelper;
         $this->apiRouter = $apiRouter;
+        $this->acl = $acl;
     }
 
     public function addCollectionToViewModel(array $vm, string $collectionId, string $manifestId)
@@ -141,6 +148,11 @@ class ManifestController extends AbstractPsr7ActionController
         $viewModel = new ViewModel($vm);
 
         $this->paginateControls($viewModel, $manifestRepresentation->getTotalResults(), $canvasesPerPage);
+
+        if (!$this->acl->userIsAllowed($this->getAclResource('iiif-manifest'), 'view')) {
+            $viewModel->setTemplate('iiif-storage/manifest/cannot-view');
+            return $viewModel;
+        }
 
         return $this->render('iiif.manifest.view', $viewModel->getVariables());
     }
@@ -209,6 +221,14 @@ class ManifestController extends AbstractPsr7ActionController
             if ($collectionId) {
                 $this->addCollectionToViewModel($vm, $collectionId, $manifest->id());
             }
+        }
+
+        // When it comes to adding support for bypassing this rule (task API), pass in a canvas
+        // into the second argument and write a new ACL rule to check if the user is assigned the task.
+        if (!$this->acl->userIsAllowed($this->getAclResource('iiif-canvas'), 'view')) {
+            $viewModel = new ViewModel($vm);
+            $viewModel->setTemplate('iiif-storage/canvas/cannot-view');
+            return $viewModel;
         }
 
         return $this->render('iiif.canvas.view', $vm);
