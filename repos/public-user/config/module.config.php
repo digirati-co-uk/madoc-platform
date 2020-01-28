@@ -56,4 +56,17 @@ return [
                 'options' => [],
             ],
     ],
+    'navigation' => [
+        'site' => [
+            [
+                'label' => 'Invitations', // @translate
+                'class' => 'resource-templates',
+                'order' => 3,
+                'route' => 'public-user-invitations',
+                'action' => 'list',
+                'privilege' => 'update',
+                'useRouteMatch' => true,
+            ],
+        ]
+    ],
 ];
