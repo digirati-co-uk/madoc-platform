@@ -18,12 +18,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Presley API implementation for CRUD operations on IIIF resources
 - Added "display_errors" PHP configuration when `APP_ENV` is set to dev.
 - Added new style for registration to match login in default theme
+- Added ability to invite users to
+- Added new UI for creating, and managing invitations
+- Added ability to create non-public site and invite users to it, registering through the default site
+- Added 4 new site-specific roles in preparation for upcoming changes
+    - Limited Transcriber - Can transcribe tasks assigned to them.
+    - Limited Reviewer - Can transcribe and review tasks assigned to them.
+    - Transcriber - Can transcribe anything
+    - Reviewer - Can transcribe and review anything
+- Added ability to control how far down IIIF navigation each user role can go
+- Added new fields to page blocks allowing you to target different site-roles with different blocks
+- Added ability for existing users to be invited to new sites using the same links without re-registering
+- Added automatic login when automatically activate is configured
+- Added login or "view site" link to the thank you page, shown after registering
 
 ### Fixed
 
 - Cross-origin errors while loading manifests in the Universal Viewer
 - Support for making requests to Omeka using valid Bearer token from OAuth flow in Public User module.
 - Fixed bug in is registration permitted for non-public sites
+- Fixed warning from undefined index when requesting user statistics
+- Fixed various permissions and ACL surrounding non-public sites
 
 ## [1.2.5](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.4...v1.2.5)
 
