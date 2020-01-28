@@ -3,7 +3,9 @@
 namespace PublicUser\Controller;
 
 use Omeka\Form\LoginForm;
+use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Router\Http\RouteMatch;
 use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
 
@@ -11,6 +13,28 @@ class SiteLoginRedirectController extends AbstractActionController
 {
     public function loginAction()
     {
+
+        // This is a long-winded check for the referer site.
+        /** @var Request $req */
+        $req = $this->getRequest();
+        $referer = $req->getHeader('referer');
+        if ($referer && $referer->getUri()) {
+            $refererRequest = new Request();
+            $refererRequest->setUri($referer->getUri());
+
+            $routeStack = $this->getEvent()->getApplication()->getServiceManager()->get('Router');
+            $match = $routeStack->match($refererRequest);
+            if ($match instanceof RouteMatch) {
+                $siteId = $match->getParam('site-slug');
+                return $this->redirect()->toRoute('site/publicuser-login',
+                    [
+                        'site-slug' => $siteId,
+                    ]
+                );
+            }
+        }
+
+
         $defaultSite = $this->settings()->get('default_site');
         if ($defaultSite) {
             $site = $this->api()->read('sites', $defaultSite)->getContent();

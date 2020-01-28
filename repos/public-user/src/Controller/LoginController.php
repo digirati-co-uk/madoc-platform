@@ -3,25 +3,27 @@
 namespace PublicUser\Controller;
 
 use DateTime;
-use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\TransactionRequiredException;
 use LogicException;
 use Omeka\Api\Representation\SiteRepresentation;
+use Omeka\Entity\Site;
 use Omeka\Entity\User;
 use Omeka\Form\ActivateForm;
 use Omeka\Form\ForgotPasswordForm;
 use Omeka\Form\LoginForm;
 use Omeka\Form\UserForm;
-use Omeka\I18n\Translator;
 use Omeka\Mvc\Controller\Plugin\Mailer;
+use Omeka\Mvc\Controller\Plugin\Messenger;
 use Omeka\Permissions\Acl;
-use Omeka\Settings\Settings;
 use Omeka\Stdlib\Message;
+use PublicUser\Entity\Invitation;
 use PublicUser\Entity\SitePermission;
 use PublicUser\Exception\BlacklistedEmailException;
 use PublicUser\Extension\ConfigurableMailer;
+use PublicUser\Invitation\InvitationService;
 use PublicUser\Settings\PublicUserSettings;
 use RuntimeException;
 use Throwable;
@@ -30,24 +32,21 @@ use Zend\Authentication\Validator\Authentication;
 use Zend\Form\Element\Hidden;
 use Zend\Form\Form;
 use Zend\Http\Response;
-use Zend\I18n\View\Helper\AbstractTranslatorHelper;
 use Zend\Log\Logger;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Session\Container;
 use Zend\Uri\Uri;
-use Zend\View\Helper\TranslatorAwareTrait;
 use Zend\View\Model\ViewModel;
-use Omeka\Mvc\Controller\Plugin\Messenger;
 
 /**
  * Class LoginController.
  *
- * @method LoginForm getForm($className)
+ * @method LoginForm getForm($className, $options = [])
  * @method getPost()
  * @method Messenger messenger()
  * @method Mailer mailer()
  * @method SiteRepresentation currentSite()
- * @method translate
+ * @method translate($term)
  */
 class LoginController extends AbstractActionController
 {
@@ -76,6 +75,10 @@ class LoginController extends AbstractActionController
      * @var Acl
      */
     private $acl;
+    /**
+     * @var InvitationService
+     */
+    private $invitations;
 
     /**
      * @param EntityManager $entityManager
@@ -84,6 +87,7 @@ class LoginController extends AbstractActionController
      * @param Logger $logger
      * @param ConfigurableMailer $mailer
      * @param Acl $acl
+     * @param InvitationService $invitations
      */
     public function __construct(
         EntityManager $entityManager,
@@ -91,7 +95,8 @@ class LoginController extends AbstractActionController
         PublicUserSettings $userSettings,
         Logger $logger,
         ConfigurableMailer $mailer,
-        Acl $acl
+        Acl $acl,
+        InvitationService $invitations
     ) {
         $this->entityManager = $entityManager;
         $this->auth = $auth;
@@ -99,6 +104,7 @@ class LoginController extends AbstractActionController
         $this->userSettings = $userSettings;
         $this->mailer = $mailer;
         $this->acl = $acl;
+        $this->invitations = $invitations;
     }
 
     public function loginAction()
@@ -200,6 +206,10 @@ class LoginController extends AbstractActionController
         $redirection_config_value = $this->userSettings->getUserLoginRedirect();
         $login_redirect = $this->getRedirectFromSettings($redirection_config_value);
 
+        if (!$this->currentSite()->isPublic()) {
+            $login_redirect = '/';
+        }
+
         $this->auth->clearIdentity();
         $sessionManager = Container::getDefaultManager();
         $sessionManager->destroy();
@@ -220,7 +230,7 @@ class LoginController extends AbstractActionController
 
         // No slash at the beginning, return.
         if ('/' !== substr($setting, 0, 1)) {
-            $setting = '/'.$setting;
+            $setting = '/' . $setting;
         }
 
         // Slash at the end? No nginx, return.
@@ -229,23 +239,23 @@ class LoginController extends AbstractActionController
         }
 
         // reacquaint.
-        return $default.$setting;
+        return $default . $setting;
     }
 
     /**
      * @param SiteRepresentation $site
      * @param Form $form
-     *
+     * @param Invitation|null $invitation
      * @return Response
      *
+     * @throws ORMException
      * @throws OptimisticLockException
-     * @throws BlacklistedEmailException
-     * @throws RuntimeException
-     * @throws \Doctrine\ORM\ORMException
+     * @throws TransactionRequiredException
      */
     private function registerUser(
         SiteRepresentation $site,
-        Form $form
+        Form $form,
+        Invitation $invitation = null
     ) {
         $role = $this->userSettings->getDefaultUserRole();
         $active = $this->userSettings->isActivationAutomatic();
@@ -259,25 +269,44 @@ class LoginController extends AbstractActionController
             throw new BlacklistedEmailException();
         }
 
+        // Temporarily allow to search and read.
+        $this->acl->allow(null, ['Omeka\Api\Adapter\UserAdapter', 'Omeka\Entity\User'], ['read', 'search']);
         $userResponse = $this->api()->searchOne('users',
             [
                 'email' => $formData['user-information']['o:email']
             ]
         );
+        $this->acl->removeAllow(null, ['Omeka\Api\Adapter\UserAdapter', 'Omeka\Entity\User'], ['read', 'search']);
 
         $userDetails = $userResponse->getContent();
         if ($userDetails) {
             throw new RuntimeException('There is already an account registered with your email');
         }
 
-        $formData['user-information']['o:role'] = $role;
-        $formData['user-information']['o:is_active'] = $active;
+        if ($invitation) {
+            $formData['user-information']['o:role'] = $invitation->role;
+            $formData['user-information']['o:is_active'] = $active;
+        } else {
+            $formData['user-information']['o:role'] = $role;
+            $formData['user-information']['o:is_active'] = $active;
+        }
+
+
+        if ($invitation) {
+            try {
+                $this->invitations->redeemInvitation($invitation);
+            } catch (Throwable $err) {
+                throw new RuntimeException('Invalid registration details');
+            }
+        }
 
         // Permissions.
         /** @var Acl $acl */
         $this->acl->allow(null, ['Omeka\Entity\User']);
 
+        $this->acl->allow(null, ['Omeka\Api\Adapter\UserAdapter', 'Omeka\Entity\User'], ['create']);
         $response = $this->api($form)->create('users', $formData['user-information']);
+        $this->acl->removeAllow(null, ['Omeka\Api\Adapter\UserAdapter', 'Omeka\Entity\User'], ['create']);
         /** @var User $user */
         $user = $response->getContent()->getEntity();
         $this->entityManager->flush();
@@ -299,31 +328,129 @@ class LoginController extends AbstractActionController
         }
 
         $perms = new SitePermission();
-        $perms->setSite($site->id());
+        $perms->setSite($invitation ? $invitation->siteId : $site->id());
         $perms->setUser($user->getId());
-        $perms->setRole('viewer');
+        $perms->setRole($invitation ? $invitation->siteRole : 'viewer');
 
         $this->entityManager->persist($perms);
         $this->entityManager->flush();
 
         $message = new Message(
-            $this->translate('User successfully created.')
+            $this->translate('Registration successful')
         );
         $message->setEscapeHtml(false);
         $this->messenger()->addSuccess($message);
 
+        if ($this->userSettings->isActivationAutomatic()) {
+            $sessionManager = Container::getDefaultManager();
+            $sessionManager->regenerateId();
+            $validatedData = $form->getData();
+            /** @var Authentication $adapter */
+            $adapter = $this->auth->getAdapter();
+            $adapter->setIdentity($formData['user-information']['o:email']);
+            $adapter->setCredential($formData['change-password']['password']);
+            $this->auth->authenticate();
+        }
+
+        if ($invitation) {
+            $newSite = $this->entityManager->find(Site::class, $invitation->siteId);
+            return $this->redirect()->toRoute('site/publicuser-register-success', [
+                'site-slug' => $newSite->getSlug(),
+            ], []);
+        }
         return $this->redirect()->toUrl('register/thank-you');
     }
 
+    public function getSiteWithoutAcl(string $slug)
+    {
+        $siteDetails = $this->entityManager
+            ->getConnection()
+            ->fetchAssoc('SELECT id from site WHERE slug = ?', [
+                $slug
+            ], ['string']);
+
+        /** @var Site $site */
+        try {
+            return $this->entityManager->find(Site::class, $siteDetails['id']);
+        } catch (OptimisticLockException $e) {
+        } catch (TransactionRequiredException $e) {
+        } catch (ORMException $e) {
+        }
+
+        return null;
+    }
+
+
     public function registerAction()
     {
-        if ($this->auth->getIdentity()) {
-            return $this->redirect()->toUrl($this->url()->fromRoute('site', [], [], true));
-        }
         $site = $this->currentSite();
 
-        if (!$this->userSettings->isRegistrationPermitted()) {
-            $this->response->setStatusCode(Response::STATUS_CODE_404);
+        $invitationCode = $this->params()->fromQuery('code') ?: $this->params()->fromPost('invitation_id');
+        $invitation = $invitationCode ? $this->invitations->isValidInvitation($invitationCode) : null;
+
+        $defaultSiteId = $this->settings()->get('default_site');
+        if ($invitation && (string)$invitation->siteId !== (string)$site->id()) {
+            // Figure out if this is allowed.
+            if ((string)$site->id() === (string)$defaultSiteId && !$this->getRequest()->isPost()) {
+                if (!$this->auth->getIdentity()) {
+                    $this->messenger()->addSuccess("You've been invited to a different site, you will have access to it once you register here");
+                }
+            } else {
+                $this->messenger()->addError("Invalid or expired invitation code");
+                return $this->redirect()->toRoute('site', [], [], true);
+            }
+        }
+
+        if ($invitationCode && !$invitation) {
+            $this->messenger()->addError("Invalid or expired invitation code");
+        }
+
+        if ($user = $this->auth->getIdentity()) {
+            /** @var User $user */
+            // Existing user, redirect.
+            if (!$invitation || ($invitationCode && !$invitation)) {
+                return $this->redirect()->toUrl($this->url()->fromRoute('site', [], [], true));
+            }
+
+            $alreadyOnSite = $this->entityManager->getConnection()->fetchAssoc(
+                'SELECT role FROM site_permission WHERE site_id = ? AND user_id = ?',
+                [
+                    (int)$invitation->siteId,
+                    (int)$user->getId(),
+                ],
+                [
+                    'integer',
+                    'integer'
+                ]
+            );
+
+            if ($alreadyOnSite) {
+                // Redirect to site, they are already registered.
+                $this->messenger()->addError('You are already a member of this site');
+            } else {
+
+                $perms = new SitePermission();
+                $perms->setSite($invitation->siteId);
+                $perms->setUser($user->getId());
+                $perms->setRole($invitation->siteRole);
+
+                $this->entityManager->persist($perms);
+                $this->entityManager->flush();
+
+                $this->messenger()->addSuccess('You have been added to the new site');
+            }
+
+            $newSite = $this->entityManager->find(Site::class, $invitation->siteId);
+            return $this->redirect()->toRoute('site', [
+                'site-slug' => $newSite->getSlug(),
+            ], []);
+        }
+
+        if (
+            !$this->userSettings->isRegistrationPermitted() ||
+            ($this->userSettings->getInviteOnlyStatus() && !$invitation)
+        ) {
+            return $this->redirect()->toRoute('site', [], [], true);
         }
 
         $form = $this->getForm(UserForm::class,
@@ -333,23 +460,31 @@ class LoginController extends AbstractActionController
             ]
         );
 
+        if ($invitation) {
+            $form->add(
+                new Hidden('invitation_id', [
+                    'value' => $invitation->invitationId,
+                ])
+            );
+        }
+
         $form->prepare();
 
         if ($this->getRequest()->isPost()) {
             try {
-                return $this->registerUser($site, $form);
+                return $this->registerUser($site, $form, $invitation);
             } catch (BlacklistedEmailException $e) {
-                error_log((string) $e);
+                error_log((string)$e);
                 $this->messenger()->addError(
                     $this->translate('Your email address has been blacklisted') // @translate
                 );
             } catch (RuntimeException $e) {
-                error_log((string) $e);
+                error_log((string)$e);
                 $this->messenger()->addError(
                     $this->translate($e->getMessage()) // @translate
                 );
             } catch (Throwable $e) {
-                error_log((string) $e);
+                error_log((string)$e);
                 $this->messenger()->addError(
                     $this->translate('Something went wrong, please try registering again') // @translate
                 );
@@ -380,6 +515,7 @@ class LoginController extends AbstractActionController
             $page = null;
         }
 
+        $view->setVariable('invitation', $invitation);
         $view->setVariable('site', $site);
         $view->setVariable('page', $page);
         $view->setVariable('displayNavigation', true);
