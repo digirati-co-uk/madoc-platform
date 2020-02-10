@@ -1,13 +1,13 @@
-FROM node:10-alpine AS build
+FROM node:10-alpine AS sorting-room
 
-COPY ./sorting-room/package.json /app/package.json
-COPY ./sorting-room/yarn.lock /app/yarn.lock
+COPY ./services/sorting-room/package.json /app/package.json
+COPY ./services/sorting-room/yarn.lock /app/yarn.lock
 
 WORKDIR /app
 
 RUN yarn install
 
-COPY ./sorting-room /app
+COPY ./services/sorting-room /app
 
 RUN yarn grunt dist
 
@@ -28,7 +28,7 @@ ADD --chown=www-data:www-data repos/ /srv/omeka/repos/
 # Add our translations
 ADD --chown=www-data:www-data translations/ /srv/omeka/translations/
 
-COPY --from=build /app/dist /srv/omeka/sorting-room
+COPY --from=sorting-room /app/dist /srv/omeka/sorting-room
 
 # Run madoc installer
 RUN madoc-installer

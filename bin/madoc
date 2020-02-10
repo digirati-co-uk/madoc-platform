@@ -143,9 +143,9 @@ case "${commandToRun}" in
         composer install --no-dev --no-scripts --optimize-autoloader
 
         ## Sorting room
-        cd sorting-room;
+        cd services/sorting-room;
           ./build.sh
-        cd ../;
+        cd ../../;
     ;;
     init-ci)
       cd bare;

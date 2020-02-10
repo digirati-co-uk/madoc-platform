@@ -1,8 +1,8 @@
 vendor
 repos/**/vendor
-sorting-room/node_modules
-sorting-room/dist
-sorting-room/docs
+services/sorting-room/node_modules
+services/sorting-room/dist
+services/sorting-room/docs
 files
 database/data
 bare
