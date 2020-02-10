@@ -1,4 +1,4 @@
-FROM node:8-alpine AS build
+FROM node:10-alpine AS build
 
 COPY ./sorting-room/package.json /app/package.json
 COPY ./sorting-room/yarn.lock /app/yarn.lock

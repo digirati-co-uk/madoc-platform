@@ -87,6 +87,8 @@ class PresleyController extends AbstractPsr7ActionController
 
     /**
      * Gets single derived manifest collection by ID
+     *
+     * @todo create fallback for collection IDs that are passed in, which will just return normal collections.
      */
     public function getManifestsCollectionAction()
     {
@@ -156,13 +158,20 @@ class PresleyController extends AbstractPsr7ActionController
 
     public function extractCanvasId($id)
     {
-        if (strpos($id, 'iiif/api') !== false) {
-            $parts = explode('/', array_shift(explode('?', $id)));
-            $id = array_pop($parts);
-            if ($id) {
-                return $id;
-            }
-        }
-        return null;
+        preg_match('#iiif/api/canvas/([^/?]+)#', $id, $matches);
+        return $matches[1] ?? null;
     }
+
+    // Rest of Presley API.
+
+    // GET /iiif/collection?collection={full-url} - Missing for real collections
+    // POST /iiif/collection/add - creating collection (data = collection)
+    // POST /iiif/collection/delete {collection: 'http://..'} - remove collection with ID.
+    // GET /iiif/manifest?manifest={full-url} - get manifest
+    // POST /iiif/manifest/add - post manifest (data = manifest)
+    // POST /iiif/manifest/delete {manifest: 'http://..'} - remove manifest with ID.
+    // POST /iiif/manifest/service/add { @id, service } - add service
+    // GET /iiif/canvas?canvas=http://... - get canvas
+    // POST /iiif/canvas/otherContent/add - { @id, otherContent } - add other content
+    // POST /iiif/canvas/service/add - { @id, service } - add service
 }

@@ -141,6 +141,11 @@ case "${commandToRun}" in
         cp ./config/composer.json ./composer.json
         php ./config/patch-composer.php
         composer install --no-dev --no-scripts --optimize-autoloader
+
+        ## Sorting room
+        cd sorting-room;
+          ./build.sh
+        cd ../;
     ;;
     init-ci)
       cd bare;

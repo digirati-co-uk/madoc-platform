@@ -1,9 +1,14 @@
-FROM  digirati/node8-npm5-alpine37
+FROM node:10-alpine AS build
 
-COPY . /srv/sorting-room
+COPY ./package.json /app/package.json
+COPY ./yarn.lock /app/yarn.lock
 
-WORKDIR /srv/sorting-room
+WORKDIR /app
 
-RUN apk add --no-cache yarn && npm install -g grunt-cli http-server --unsafe-perm && yarn && grunt dist
+RUN yarn install
 
-CMD sh ./makeConfig.sh && http-server ./dist -p 3000
+COPY . /app
+
+RUN yarn grunt dist
+
+CMD sh ./makeConfig.sh && npx http-server ./dist -p 3000

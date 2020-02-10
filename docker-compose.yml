@@ -30,7 +30,7 @@ services:
       - ./files:/srv/omeka/files
       - ./config/omeka-app/application.config.php:/srv/omeka/application/config/application.config.php
       - ./translations:/srv/omeka/translations
-      - ./sorting-room/build:/srv/omeka/sorting-room
+      - ./sorting-room/${SORTING_ROOM_DEV:-dist}:/srv/omeka/sorting-room
 
   mysql:
     container_name: madoc-platform-database
