@@ -78,6 +78,13 @@ class ImportCanvases extends AbstractJob implements JobInterface
                 $item->addFields(
                     FieldValue::literalsFromRdf('sc:attributionLabel', 'Attribution', $manifest['attribution'] ?? null)
                 );
+                if (isset($canvas['otherContent'])) {
+                    $item->addFields(
+                        array_map(function ($otherContent) {
+                            return FieldValue::url('sc:hasLists', $otherContent['label'], $otherContent['@id']);
+                        }, $canvas['otherContent'])
+                    );
+                }
 
                 $manifestId = null;
                 $manifestItemId = null;

@@ -16,6 +16,25 @@ class OmekaValue
     {
     }
 
+    public static function toRdfEntity($representation, $term, $type)
+    {
+        /** @var ValueRepresentation[] $values */
+        $values = $representation->values()[$term]['values'];
+
+        $urlValues = array_filter($values, function (ValueRepresentation $value) {
+            return $value->type() === 'uri';
+        });
+
+        return array_map(function (ValueRepresentation $value) use ($type) {
+            return [
+                "@id" => $value->uri(),
+                "@type" => $type,
+                "label" => $value->value(),
+            ];
+
+        }, $urlValues);
+    }
+
     public static function toRdf($representation, $term, $getLabel = false)
     {
         /** @var ValueRepresentation[] $values */

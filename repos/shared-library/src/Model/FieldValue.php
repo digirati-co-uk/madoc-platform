@@ -150,7 +150,7 @@ class FieldValue implements ValueInterface
             $value['property_id'],
             $value['type'],
             $value['@id'] ?? null,
-            $value['label'] ?? null,
+            $value['o:label'] ?? $value['label'] ??null,
             $value['@value'] ?? null,
             $value['@language'] ?? null,
             $value['value_resource_id'] ?? null
@@ -192,7 +192,7 @@ class FieldValue implements ValueInterface
         if ($this->value) {
             $data['@value'] = $this->value;
         }
-        if ($this->language) {
+        if ($this->label) {
             $data['o:label'] = $this->label;
         }
         return $data;

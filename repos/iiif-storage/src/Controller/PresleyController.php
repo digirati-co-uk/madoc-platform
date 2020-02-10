@@ -269,6 +269,8 @@ class PresleyController extends AbstractPsr7ActionController
 
         $manifestJson = json_decode($this->getRequest()->getContent(), true);
 
+        // @todo check for existing ID.
+
         $manifestItem = $this->repo->create(function (ItemRequest $item) use ($manifestJson) {
             $item->addField(
                 FieldValue::url('dcterms:identifier', 'Collection URI', $manifestJson['@id'])
@@ -282,6 +284,32 @@ class PresleyController extends AbstractPsr7ActionController
             $item->addField(
                 FieldValue::literal('dcterms:source', 'Source', json_encode($manifestJson, JSON_UNESCAPED_SLASHES))
             );
+
+            $summary = $manifestJson['description'] ?? null;
+            if ($summary) {
+                $item->addFields(
+                    FieldValue::literalsFromRdf('dcterms:description', 'Summary', $summary)
+                );
+            }
+
+            $attribution = $manifestJson['attribution'] ?? null;
+            if ($attribution) {
+                $item->addFields(
+                    FieldValue::literalsFromRdf('sc:attributionLabel', 'Attribution', $attribution)
+                );
+            }
+
+            if (isset($manifestJson['otherContent']) && !empty($manifestJson['otherContent'])) {
+                $item->addFields(
+                    array_map(function ($otherContent) {
+                        return FieldValue::url('sc:hasLists', $otherContent['label'], $otherContent['@id']);
+                    }, $manifestJson['otherContent'])
+                );
+            }
+
+            // @todo Services
+            //   These will be custom media items, either specific to the service with custom UI and functionality
+            //   bridging other parts of the platform, or generic for external and custom services.
         });
 
         $manifest = $this->builder->build($manifestItem);

@@ -98,6 +98,15 @@ class DereferencedManifest implements AggregateInterface
                         );
                     }
                 }
+
+                $otherContent = $input->getValue('sc:hasLists');
+                if (!$otherContent || empty($otherContent) || trim(current($otherContent)->getValue()) === '') {
+                    $input->addFields(
+                        array_map(function ($otherContent) {
+                            return FieldValue::url('sc:hasLists', $otherContent['label'], $otherContent['@id']);
+                        }, $manifest['otherContent'] ?? [])
+                    );
+                }
             }
         }
     }

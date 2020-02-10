@@ -22,10 +22,17 @@ trait MetadataAggregator
             if (in_array($key, $blacklist)) {
                 continue;
             }
+
             /** @var ValueRepresentation $value */
             $mappingField = $mapping[$key] ?? null;
             if ($mappingField) {
-                $json[$mappingField] = OmekaValue::toRdf($representation, $key);
+
+                // @todo switch/case
+                if ($mappingField === 'otherContent') {
+                    $json[$mappingField] = OmekaValue::toRdfEntity($representation, $key, 'sc:AnnotationList');
+                } else {
+                    $json[$mappingField] = OmekaValue::toRdf($representation, $key);
+                }
             } else {
                 // @todo Pass the labels through the translator in Omeka
                 //       All of the field should be translated by Omeka and available
@@ -35,10 +42,11 @@ trait MetadataAggregator
 
                 /** @var ValueRepresentation $first */
                 $first = $values['values'][0];
+
                 if ($first->type() === 'uri') {
                     $json['metadata'][] = [
-                        'label' => $value->property()->label(),
-                        'value' => $value->asHtml(),
+                        'label' => $first->property()->label(),
+                        'value' => $first->asHtml(),
                     ];
                 }
 

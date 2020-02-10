@@ -458,6 +458,13 @@ INSERT INTO `property` VALUES (1,NULL,1,'title','Title','A name given to the res
 (445,1,11,'via','via','A object of the relationship is a resource from which the source resource was retrieved by the providing system.'),
 (446,1,11,'annotationService','annotationService','The object of the relationship is the end point of a service that conforms to the annotation-protocol, and it may be associated with any resource.  The expectation of asserting the relationship is that the object is the preferred service for maintaining annotations about the subject resource, according to the publisher of the relationship.\n\n  This relationship is intended to be used both within Linked Data descriptions and as the  rel  type of a Link, via HTTP Link Headers rfc5988 for binary resources and in HTML <link> elements.  For more information about these, please see the Annotation Protocol specification annotation-protocol.\n  '),
 (447,1,11,'prefix','prefix','The object of the property is a snippet of content that occurs immediately before the content which is being selected by the Selector.'),
-(448,1,11,'hasSource','hasSource','The resource that the ResourceSelection, or its subclass SpecificResource, is refined from, or more specific than. Please note that the domain ( oa:ResourceSelection ) is not used directly in the Web Annotation model.');
+(448,1,11,'hasSource','hasSource','The resource that the ResourceSelection, or its subclass SpecificResource, is refined from, or more specific than. Please note that the domain ( oa:ResourceSelection ) is not used directly in the Web Annotation model.'),
+(449, 1, 12, 'has_service', 'has service', 'A Service associated with this SIOC object.'),
+(450, 1, 12, 'max_results', 'max results', 'Maximum number of results results returned by a web service.'),
+(451, 1, 12, 'results_format', 'results format', 'Format of results returned by a web service.'),
+(452, 1, 12, 'service_of', 'service of', 'A SIOC object this Service is associated with.'),
+(453, 1, 12, 'service_definition', 'service definition', 'Links to a web service definition of this sioc:Service.'),
+(454, 1, 12, 'service_endpoint', 'service endpoint', 'URL of a web service endpoint.'),
+(455, 1, 12, 'service_protocol', 'service protocol', 'A protocol used by a web service. Possible protocol values include SOAP, REST, SPARQL-QUERY, GData and OpenSearch. These will be added to this module later.');
 /*!40000 ALTER TABLE `property` ENABLE KEYS */;
 UNLOCK TABLES;
