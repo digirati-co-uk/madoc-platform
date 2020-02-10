@@ -2,6 +2,7 @@
 
 namespace IIIFStorage\Repository;
 
+use Digirati\OmekaShared\Model\FieldValue;
 use Error;
 use Digirati\OmekaShared\Model\ItemRequest;
 use Digirati\OmekaShared\Utility\PropertyIdSaturator;
@@ -310,6 +311,11 @@ class ManifestRepository
         $canvases = $this->getCanvasMapFromManifest($manifestId);
 
         return $canvases->getTotalResults();
+    }
+
+    public function delete(int $id)
+    {
+        $this->api->delete(static::API_TYPE, $id);
     }
 
     /**

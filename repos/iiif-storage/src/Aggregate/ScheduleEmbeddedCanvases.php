@@ -18,6 +18,7 @@ class ScheduleEmbeddedCanvases implements AggregateInterface
      * @var CheapOmekaRelationshipRequest
      */
     private $relationshipRequest;
+    private $baseUrl;
 
     public function __construct(
         Dispatcher $dispatcher,
@@ -66,8 +67,9 @@ class ScheduleEmbeddedCanvases implements AggregateInterface
         );
     }
 
-    public function parse(ItemRequest $input)
+    public function parse(ItemRequest $input, array $metadata = [])
     {
+        $this->baseUrl = $metadata['base_url'];
         $manifestJsonValues = $input->getValue('dcterms:source');
         foreach ($manifestJsonValues as $manifestJsonValue) {
             $parsed = json_decode($manifestJsonValue->getValue(), true);
@@ -85,11 +87,12 @@ class ScheduleEmbeddedCanvases implements AggregateInterface
             $this->canvases[$id] = [];
             foreach ($firstSequenceCanvases as $canvas) {
                 $canvasId = $canvas['@id'] ?? $canvas['id'];
-                if ($this->relationshipRequest->canvasExists($canvasId)) {
+                if ($omekaId = $this->relationshipRequest->canvasExists($canvasId, $this->baseUrl)) {
                     $this->canvases[$id][] = [
                         'type' => ImportCanvases::CANVAS_REFERENCE,
                         'manifestId' => $manifestId,
                         'id' => $canvasId,
+                        'omeka_id' => $omekaId,
                     ];
                 } else {
                     // @todo check for existing canvases, make new list for assigning existing to this item set.

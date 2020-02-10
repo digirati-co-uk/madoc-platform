@@ -358,7 +358,49 @@ return [
                                 ]
                             ]
                         ]
-                    ]
+                    ],
+                    'add-collection' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/collection/add',
+                            'defaults' => ['action' => 'addCollection']
+                        ]
+                    ],
+                    'delete-collection' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/collection/delete',
+                            'defaults' => ['action' => 'deleteCollection']
+                        ]
+                    ],
+                    'get-manifest' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/manifest',
+                            'defaults' => ['action' => 'getManifest']
+                        ],
+                    ],
+                    'add-manifest' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/manifest/add',
+                            'defaults' => ['action' => 'addManifest']
+                        ]
+                    ],
+                    'delete-manifest' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/manifest/delete',
+                            'defaults' => ['action' => 'deleteManifest']
+                        ]
+                    ],
+                    'get-canvas' => [
+                        'type' => 'segment',
+                        'options' => [
+                            'route' => '/canvas',
+                            'defaults' => ['action' => 'getCanvas']
+                        ],
+                    ],
                 ]
             ]
         ], $iiifStorageRoutes),

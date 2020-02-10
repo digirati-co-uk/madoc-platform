@@ -85,7 +85,7 @@ class AddImageService implements AggregateInterface
         );
     }
 
-    public function parse(ItemRequest $input)
+    public function parse(ItemRequest $input, array $metadata = [])
     {
         $sources = $input->getValue('dcterms:source');
         foreach ($sources as $source) {

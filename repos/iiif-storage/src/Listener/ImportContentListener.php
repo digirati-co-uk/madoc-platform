@@ -34,17 +34,23 @@ class ImportContentListener
      * @var Messenger
      */
     private $messenger;
+    /**
+     * @var \Zend\Http\Request
+     */
+    private $request;
 
     public function __construct(
         Logger $logger,
         PropertyIdSaturator $saturator,
         array $aggregations = [],
-        Messenger $messenger
+        Messenger $messenger,
+    \Zend\Http\Request $request
     ) {
         $this->logger = $logger;
         $this->saturator = $saturator;
         $this->aggregations = $aggregations;
         $this->messenger = $messenger;
+        $this->request = $request;
     }
 
     public function attach(SharedEventManagerInterface $events)
@@ -77,12 +83,16 @@ class ImportContentListener
         $itemOrItemSet = ItemRequest::fromPost($request->getContent());
         // Add missing data.
         $this->saturator->addResourceIds($itemOrItemSet);
+        // Set some metadata
+        $metadata = [
+          'base_url' => getenv('OMEKA__MAIN_SITE_DOMAIN'),
+        ];
         try {
             // Parse the starting resource.
             foreach ($this->aggregations as $step) {
                 if ($step->supports($itemOrItemSet)) {
                     // Run these sequentially for now, will become relevant when batching.
-                    $step->parse($itemOrItemSet);
+                    $step->parse($itemOrItemSet, $metadata);
                     $step->prepare();
                     $step->mutate($itemOrItemSet);
                 }

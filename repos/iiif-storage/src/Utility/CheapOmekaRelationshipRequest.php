@@ -3,11 +3,14 @@
 namespace IIIFStorage\Utility;
 
 
+use Digirati\OmekaShared\Helper\RouteMatchHelper;
 use Digirati\OmekaShared\Utility\PropertyIdSaturator;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DBALException;
 use IIIFStorage\Model\PaginatedResult;
 use Omeka\Mvc\Exception\NotFoundException;
 use PDO;
+use Zend\Router\Http\TreeRouteStack;
 
 class CheapOmekaRelationshipRequest
 {
@@ -20,13 +23,19 @@ class CheapOmekaRelationshipRequest
      * @var PropertyIdSaturator
      */
     private $saturator;
+    /**
+     * @var TreeRouteStack
+     */
+    private $routeStack;
 
     public function __construct(
         Connection $connection,
-        PropertyIdSaturator $saturator
+        PropertyIdSaturator $saturator,
+        TreeRouteStack $routeStack
     ) {
         $this->connection = $connection;
         $this->saturator = $saturator;
+        $this->routeStack = $routeStack;
     }
 
     const SELECT_URI_RELATIONSHIP = <<<SQL
@@ -79,7 +88,7 @@ GROUP BY omeka_id;
 SQL;
 
     const RESOURCE_EXISTS = <<<SQL
-    SELECT COUNT(V1.uri) as resourceExists from value as V1
+    SELECT R.id as id, V1.uri as resourceExists from value as V1
       LEFT JOIN resource R on V1.resource_id = R.id
       WHERE V1.uri = :resourceUri
         AND R.resource_class_id = :resourceClassId
@@ -100,7 +109,7 @@ SQL;
      * @param int $offset
      * @return PaginatedResult
      *
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function getUriMapping(int $fromId, string $relationTerm, int $limit = -1, int $offset = 0): PaginatedResult
     {
@@ -188,35 +197,90 @@ SQL;
         return $this->manifestsByCanvasId[$canvasId]; // keys: [ 'omeka_id', 'uri', 'label']
     }
 
-    public function manifestExists(string $manifestUri)
+    /**
+     * @param string $manifestUri
+     * @param string|null $baseUrl
+     * @return int|false
+     */
+    public function manifestExists(string $manifestUri, string $baseUrl = null)
     {
-        return $this->resourceExists('sc:Manifest', $manifestUri);
+        return $this->resourceExists('sc:Manifest', $manifestUri, $baseUrl);
     }
 
-    public function canvasExists(string $canvasUri)
+    /**
+     * @param string $canvasUri
+     * @param string|null $baseUrl
+     * @return int|false
+     */
+    public function canvasExists(string $canvasUri, string $baseUrl = null)
     {
-        return $this->resourceExists('sc:Canvas', $canvasUri);
+        return $this->resourceExists('sc:Canvas', $canvasUri, $baseUrl);
     }
 
-    public function collectionExists(string $collectionUri)
+    /**
+     * @param string $collectionUri
+     * @param string|null $baseUrl
+     * @return int|false
+     */
+    public function collectionExists(string $collectionUri, string $baseUrl = null)
     {
-        return $this->resourceExists('sc:Collection', $collectionUri);
+        return $this->resourceExists('sc:Collection', $collectionUri, $baseUrl);
     }
 
-    public function resourceExists(string $resource, string $id): bool
+    /**
+     * @param string $resource
+     * @param string $id
+     * @param string|null $baseUrl
+     * @return int | false
+     */
+    public function resourceExists(string $resource, string $id, string $baseUrl = null)
     {
-        $statement = $this->connection->prepare(self::RESOURCE_EXISTS);
-        $statement->bindValue('resourceUri', $id, PDO::PARAM_STR);
-        $statement->bindValue('resourceClassId',
-            (int)$this->saturator->getResourceClassByTerm($resource)->id(),
-            PDO::PARAM_INT
-        );
-        $statement->execute();
+        $match = RouteMatchHelper::matchFrom($this->routeStack, $id, $baseUrl);
 
-        $result = $statement->fetch();
-        $statement->closeCursor();
+        if ($match) {
+            $itemId = null;
+            switch ($resource) {
+                case 'sc:Manifest':
+                    $itemId = $match->getParam('manifest');
+                    break;
+                case 'sc:Canvas':
+                    $itemId = $match->getParam('canvas');
+                    break;
+                case 'sc:Collection':
+                    $itemId = $match->getParam('collection');
+                    break;
+            }
+            if ($itemId) {
+                try {
+                    $this->getEtag((int)$itemId);
+                    return (int)$itemId;
+                } catch (\Throwable $err) {
+                }
+            }
+        }
 
-        return (bool)((int)$result['resourceExists'] ?? false);
+        try {
+            $statement = $this->connection->prepare(self::RESOURCE_EXISTS);
+            $statement->bindValue('resourceUri', $id, PDO::PARAM_STR);
+            $statement->bindValue('resourceClassId',
+                (int)$this->saturator->getResourceClassByTerm($resource)->id(),
+                PDO::PARAM_INT
+            );
+
+            $statement->execute();
+
+            $result = $statement->fetch();
+            $statement->closeCursor();
+
+            if (!$result) {
+                return false;
+            }
+            return $result['id'];
+
+        } catch (\Throwable $e) {
+            error_log((string)$e);
+        }
+        return false;
     }
 
     public function getResourceIdByUri(string $resource, string $id): int

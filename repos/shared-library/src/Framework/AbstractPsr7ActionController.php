@@ -2,15 +2,18 @@
 
 namespace Digirati\OmekaShared\Framework;
 
+use Digirati\OmekaShared\Helper\RouteMatchHelper;
 use Omeka\Api\Representation\SiteRepresentation;
 use Omeka\Api\Representation\UserRepresentation;
 use Zend\Diactoros\Response;
 use Zend\Http\Request;
+use Zend\Http\Response as ZendResponse;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mvc\MvcEvent;
 use Zend\Psr7Bridge\Psr7Response;
+use Zend\Router\Http\RouteMatch;
+use Zend\Uri\Uri;
 use Zend\View\Model\ViewModel;
-use Zend\Http\Response as ZendResponse;
 
 /**
  * @method SiteRepresentation currentSite()
@@ -26,7 +29,8 @@ class AbstractPsr7ActionController extends AbstractActionController
         $this->corsEnabled = true;
     }
 
-    public function preflightAction() {
+    public function preflightAction()
+    {
         $request = $this->getRequest();
         $response = new \Zend\Http\Response();
         $headers = $response->getHeaders();
@@ -41,6 +45,36 @@ class AbstractPsr7ActionController extends AbstractActionController
         $response->setStatusCode(200);
         $response->setHeaders($headers);
         return $response;
+    }
+
+    public function getBaseUri()
+    {
+        /** @var Uri $uri */
+        $uri = clone $this->getRequest()->getUri();
+        $uri->setPath(null);
+        $uri->setQuery(null);
+        return $uri;
+    }
+
+    /**
+     * @param string $url
+     * @param null $route
+     * @return RouteMatch|null
+     */
+    public function matchOnRoute(string $url, $route = null)
+    {
+        $baseUrl = (string) $this->getBaseUri();
+        $match = RouteMatchHelper::matchFrom(
+            $this->getEvent()->getApplication()->getServiceManager()->get('Router'),
+            $url,
+            $baseUrl
+        );
+
+        if ($match && ($route ? $match->getMatchedRouteName() === $route : true)) {
+            return $match;
+        }
+
+        return null;
     }
 
     public function onDispatch(MvcEvent $e)
@@ -69,7 +103,8 @@ class AbstractPsr7ActionController extends AbstractActionController
         return $result;
     }
 
-    public function paginateControls(ViewModel $viewModel, $totalResults, $perPage) {
+    public function paginateControls(ViewModel $viewModel, $totalResults, $perPage)
+    {
         if ($totalResults > $perPage) {
             $page = $this->params()->fromQuery('page') ?? 1;
             $maxPage = ceil($totalResults / $perPage);
@@ -95,14 +130,15 @@ class AbstractPsr7ActionController extends AbstractActionController
         }
     }
 
-    public function paginate(ViewModel $viewModel, $name, $list, $perPage) {
+    public function paginate(ViewModel $viewModel, $name, $list, $perPage)
+    {
         if (sizeof($list) > $perPage) {
             $page = $this->params()->fromQuery('page') ?? 1;
             $maxPage = ceil(sizeof($list) / $perPage);
             if ($page > $maxPage) {
                 $page = $maxPage;
             }
-            $viewModel->setVariable($name, array_slice($list, ($page-1) * $perPage, $perPage));
+            $viewModel->setVariable($name, array_slice($list, ($page - 1) * $perPage, $perPage));
 
             $this->paginateControls($viewModel, sizeof($list), $perPage);
 

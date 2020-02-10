@@ -65,6 +65,7 @@ return [
                     $c->get(ManifestRepository::class),
                     $c->get(CanvasRepository::class),
                     $c->get(CollectionRepository::class),
+                    $c->get(CollectionBuilder::class),
                     $c->get('Omeka\Acl')
                 );
             }

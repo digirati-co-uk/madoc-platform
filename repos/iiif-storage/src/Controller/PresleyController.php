@@ -7,10 +7,12 @@ namespace IIIFStorage\Controller;
 use Digirati\OmekaShared\Framework\AbstractPsr7ActionController;
 use Digirati\OmekaShared\Model\FieldValue;
 use Digirati\OmekaShared\Model\ItemRequest;
+use IIIFStorage\JsonBuilder\CollectionBuilder;
 use IIIFStorage\JsonBuilder\ManifestBuilder;
 use IIIFStorage\Repository\CanvasRepository;
 use IIIFStorage\Repository\CollectionRepository;
 use IIIFStorage\Repository\ManifestRepository;
+use Omeka\Api\Exception\NotFoundException;
 use Omeka\Permissions\Acl;
 use Zend\Diactoros\Response\JsonResponse;
 
@@ -37,12 +39,17 @@ class PresleyController extends AbstractPsr7ActionController
      * @var Acl
      */
     private $acl;
+    /**
+     * @var CollectionBuilder
+     */
+    private $collectionBuilder;
 
     public function __construct(
         ManifestBuilder $builder,
         ManifestRepository $repo,
         CanvasRepository $canvasRepo,
         CollectionRepository $collectionRepo,
+        CollectionBuilder $collectionBuilder,
         Acl $acl
     ) {
         $this->builder = $builder;
@@ -50,6 +57,19 @@ class PresleyController extends AbstractPsr7ActionController
         $this->canvasRepo = $canvasRepo;
         $this->collectionRepo = $collectionRepo;
         $this->acl = $acl;
+        $this->collectionBuilder = $collectionBuilder;
+    }
+
+    public function getSingleCollectionById(string $collectionId)
+    {
+        $match = $this->matchOnRoute($collectionId, 'iiif-storage/collection');
+        if (!$match) {
+            throw new NotFoundException();
+        }
+
+        $collectionId = $match->getParam('collection');
+
+        return $this->redirect()->toRoute('iiif-storage/collection', ['collection' => $collectionId]);
     }
 
     /**
@@ -58,7 +78,13 @@ class PresleyController extends AbstractPsr7ActionController
     public function getRootCollectionAction()
     {
         $this->allowCors();
+
         $manifests = $this->repo->getNonReplacements();
+
+        $collectionId = $this->params()->fromQuery('collection_id');
+        if ($collectionId) {
+            return $this->getSingleCollectionById($collectionId);
+        }
 
         return new JsonResponse(
             [
@@ -107,7 +133,7 @@ class PresleyController extends AbstractPsr7ActionController
         unset($json['sequences']);
         $json['@type'] = 'sc:Collection';
         $json['@id'] = $this->url()->fromRoute(null, [], ['force_canonical' => true], true);
-        $json['members'] = array_map(function($manifest) {
+        $json['members'] = array_map(function ($manifest) {
             return $this->builder->build($manifest, false, 0, 1)->getJson();
         }, $manifests);
 
@@ -162,16 +188,182 @@ class PresleyController extends AbstractPsr7ActionController
         return $matches[1] ?? null;
     }
 
-    // Rest of Presley API.
+    // POST /presley/collection/add - creating collection (data = collection)
+    public function addCollectionAction()
+    {
+        $request = $this->getRequest();
+        if ($request->isOptions()) {
+            return $this->preflightAction();
+        }
+        $this->allowCors();
 
-    // GET /iiif/collection?collection={full-url} - Missing for real collections
-    // POST /iiif/collection/add - creating collection (data = collection)
-    // POST /iiif/collection/delete {collection: 'http://..'} - remove collection with ID.
-    // GET /iiif/manifest?manifest={full-url} - get manifest
-    // POST /iiif/manifest/add - post manifest (data = manifest)
-    // POST /iiif/manifest/delete {manifest: 'http://..'} - remove manifest with ID.
-    // POST /iiif/manifest/service/add { @id, service } - add service
-    // GET /iiif/canvas?canvas=http://... - get canvas
-    // POST /iiif/canvas/otherContent/add - { @id, otherContent } - add other content
-    // POST /iiif/canvas/service/add - { @id, service } - add service
+        $collectionJson = json_decode($this->getRequest()->getContent(), true);
+
+        $collectionItem = $this->collectionRepo->create(function (ItemRequest $item) use ($collectionJson) {
+            $item->addField(
+                FieldValue::url('dcterms:identifier', 'Collection URI', $collectionJson['@id'])
+            );
+
+            $label = $collectionJson['label'] ?? 'Untitled collection';
+            $item->addFields(
+                FieldValue::literalsFromRdf('dcterms:title', 'Label', $label)
+            );
+
+            $item->addField(
+                FieldValue::literal('dcterms:source', 'Source', json_encode($collectionJson, JSON_UNESCAPED_SLASHES))
+            );
+        });
+
+        $collection = $this->collectionBuilder->build($collectionItem);
+
+        return new JsonResponse($collection->getJson());
+    }
+
+    // POST /presley/collection/delete {collection: 'http://..'} - remove collection with ID.
+    public function deleteCollectionAction()
+    {
+        $request = $this->getRequest();
+        if ($request->isOptions()) {
+            return $this->preflightAction();
+        }
+        $this->allowCors();
+
+        $collectionUrl = $this->params()->fromQuery('collection') ?: $this->params()->fromQuery('collection_id');
+
+        $match = $this->matchOnRoute($collectionUrl, 'iiif-storage/collection');
+        if (!$match) {
+            throw new NotFoundException();
+        }
+
+        $collectionId = $match->getParam('collection');
+
+        $this->collectionRepo->delete((int)$collectionId);
+
+        return new JsonResponse([
+            'result' => 'success'
+        ]);
+    }
+
+    // GET /presley/manifest?manifest_id={full-url} - get manifest
+    public function getManifestAction()
+    {
+        $manifestUrl = $this->params()->fromQuery('manifest_id');
+        $match = $this->matchOnRoute($manifestUrl, 'iiif-storage/manifest');
+        if (!$match) {
+            throw new NotFoundException();
+        }
+
+        $manifestId = $match->getParam('manifest');
+
+        return $this->redirect()->toRoute('iiif-storage/manifest', ['manifest' => $manifestId]);
+    }
+
+    // POST /presley/manifest/add - post manifest (data = manifest)
+    public function addManifestAction()
+    {
+        $request = $this->getRequest();
+        if ($request->isOptions()) {
+            return $this->preflightAction();
+        }
+        $this->allowCors();
+
+        $manifestJson = json_decode($this->getRequest()->getContent(), true);
+
+        $manifestItem = $this->repo->create(function (ItemRequest $item) use ($manifestJson) {
+            $item->addField(
+                FieldValue::url('dcterms:identifier', 'Collection URI', $manifestJson['@id'])
+            );
+
+            $label = $manifestJson['label'] ?? 'Untitled manifest';
+            $item->addFields(
+                FieldValue::literalsFromRdf('dcterms:title', 'Label', $label)
+            );
+
+            $item->addField(
+                FieldValue::literal('dcterms:source', 'Source', json_encode($manifestJson, JSON_UNESCAPED_SLASHES))
+            );
+        });
+
+        $manifest = $this->builder->build($manifestItem);
+
+        return new JsonResponse($manifest->getJson());
+    }
+
+    // POST /presley/manifest/delete {manifest: 'http://..'} - remove manifest with ID.
+    public function deleteManifestAction()
+    {
+        $request = $this->getRequest();
+        if ($request->isOptions()) {
+            return $this->preflightAction();
+        }
+        $this->allowCors();
+
+        $manifestUrl = $this->params()->fromQuery('manifest');
+
+        $match = $this->matchOnRoute($manifestUrl, 'iiif-storage/manifest');
+        if (!$match) {
+            throw new NotFoundException();
+        }
+
+        $collectionId = $match->getParam('manifest');
+
+        $this->repo->delete((int)$collectionId);
+
+        return new JsonResponse([
+            'result' => 'success'
+        ]);
+    }
+
+    // GET /presley/canvas?canvas_id=http://... - get canvas
+    public function getCanvasAction()
+    {
+        $manifestUrl = $this->params()->fromQuery('canvas_id');
+        $match = $this->matchOnRoute($manifestUrl, 'iiif-storage/canvas');
+        if (!$match) {
+            throw new NotFoundException();
+        }
+
+        $canvasId = $match->getParam('canvas');
+
+        return $this->redirect()->toRoute('iiif-storage/canvas', ['canvas' => $canvasId]);
+    }
+
+    // POST /presley/manifest/service/add { @id, service } - add service
+    public function addServiceToManifestAction()
+    {
+        throw new \Error('Not implemented');
+    }
+
+    // POST /presley/canvas/otherContent/add - { @id, otherContent } - add other content
+    public function addOtherContentToCanvasAction()
+    {
+        throw new \Error('Not implemented');
+    }
+
+    // POST /presley/canvas/service/add - { @id, service } - add service
+    public function addServiceToCanvasAction()
+    {
+        throw new \Error('Not implemented');
+    }
+
+    // POST manifest/redact json={"@id": manifest}
+    // POST /manifest/redact', json={"@id": manifest, "undo": True}
+    public function redactManifestAction()
+    {
+        throw new \Error('Not implemented');
+    }
+
+    // POST /canvas/redact json={"@id": canvas}
+    // POST /canvas/redact', json={"@id": manifest, "undo": True}
+    public function redactCanvasAction()
+    {
+        throw new \Error('Not implemented');
+    }
+
+    // POST /presley/login for JWT?
+    //  - POST { username, password } -> { token }
+    public function loginAction()
+    {
+        throw new \Error('Not implemented');
+    }
 }

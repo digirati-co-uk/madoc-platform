@@ -44,7 +44,7 @@ class ImportManifests extends AbstractJob implements JobInterface
         $logger->info("Collection contains $totalManifests manifests");
 
 
-        for ($i = 0; $i < $totalManifests; $i ++) {
+        for ($i = 0; $i < $totalManifests; $i++) {
             $manifest = $manifestList[$i] ?? null;
             $id = $manifest['@id'] ?? '';
             $logger->info("Importing ${$id}");
@@ -54,7 +54,9 @@ class ImportManifests extends AbstractJob implements JobInterface
                 if ($type === self::MANIFEST_REFERENCE) {
                     $id = $manifest['id'];
                     $logger->info("ID already exists: $id adding as reference");
-                    $omekaId = $relationshipRequest->getResourceIdByUri('sc:Manifest', $id);
+                    $omekaId = isset($manifest['omeka_id'])
+                        ? $manifest['omeka_id']
+                        : $relationshipRequest->getResourceIdByUri('sc:Manifest', $id);
                     $logger->info("Found Omeka ID: $omekaId");
                     if (!$omekaId) {
                         $logger->warn("Resource with id: $id has been removed since adding to job, skipping...");

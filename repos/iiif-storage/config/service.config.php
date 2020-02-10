@@ -95,7 +95,8 @@ return [
                         $c->get(DereferencedCollection::class),
                         $c->get(ScheduleEmbeddedManifests::class)
                     ],
-                    new Messenger()
+                    new Messenger(),
+                    $c->get('Request')
                 );
             },
             TargetStatusUpdateListener::class => function (ContainerInterface $c) {
@@ -167,7 +168,8 @@ return [
             CheapOmekaRelationshipRequest::class => function (ContainerInterface $c) {
                 return new CheapOmekaRelationshipRequest(
                     $c->get('Omeka\Connection'),
-                    $c->get(PropertyIdSaturator::class)
+                    $c->get(PropertyIdSaturator::class),
+                    $c->get('Router')
                 );
             },
             CollectionRepository::class => function (ContainerInterface $c) {

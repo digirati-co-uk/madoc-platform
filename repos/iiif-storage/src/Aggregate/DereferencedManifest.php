@@ -106,11 +106,12 @@ class DereferencedManifest implements AggregateInterface
     {
         return (
             $input->getResourceTemplateName() === 'IIIF Manifest' &&
-            $input->hasField('dcterms:identifier')
+            $input->hasField('dcterms:identifier') &&
+            !$input->hasField('dcterms:source')
         );
     }
 
-    public function parse(ItemRequest $input)
+    public function parse(ItemRequest $input, array $metadata = [])
     {
         $this->manifestRequests = [];
         foreach ($input->getValue('dcterms:identifier') as $field) {
