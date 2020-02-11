@@ -310,6 +310,30 @@ class PresleyController extends AbstractPsr7ActionController
             // @todo Services
             //   These will be custom media items, either specific to the service with custom UI and functionality
             //   bridging other parts of the platform, or generic for external and custom services.
+            /**
+             * First we need to POST the media, which we can do here.
+             *
+             * o:media[0][dcterms:title][0][@value]: Generic service
+             * o:media[0][dcterms:title][0][property_id]: 1
+             * o:media[0][dcterms:title][0][type]: literal
+             * o:media[0][raw-json]: {
+             *   "@context": "http://wellcomelibrary.org/ld/iiif-ext/0/context.json",
+             *   "@id": "https://wellcomelibrary.org/iiif/b18035723-0/access-control-hints-service",
+             *   "profile": "http://wellcomelibrary.org/ld/iiif-ext/access-control-hints",
+             *   "accessHint": "open"
+             * }
+             * o:media[0][o:ingester]: generic-service
+             */
+            // Then we need a new listener for media created. We will apply any GenericService to the service field.
+            // In the future we can find a way to detect any service and add any service into this listener or maybe
+            // map media types onto fields.
+            /**
+             * svcs:has_service[0][property_id]: 449
+             * svcs:has_service[0][type]: resource
+             * svcs:has_service[0][value_resource_id]: 1190
+             * svcs:has_service[0][is_public]: 1
+             */
+
         });
 
         $manifest = $this->builder->build($manifestItem);

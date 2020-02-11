@@ -3,13 +3,15 @@
 use Digirati\OmekaShared\Factory\EventDispatcherFactory;
 use Digirati\OmekaShared\Factory\LocaleFromRdfFactory;
 use Digirati\OmekaShared\Factory\LocaleHelperFactory;
-use Digirati\OmekaShared\Factory\ProxyClientFactory;
 use Digirati\OmekaShared\Factory\PropertyIdSaturatorFactory;
+use Digirati\OmekaShared\Factory\ProxyClientFactory;
 use Digirati\OmekaShared\Factory\SettingsHelperFactory;
 use Digirati\OmekaShared\Factory\UrlHelperFactory;
+use Digirati\OmekaShared\Framework\PageBlockMediaAdapter;
 use Digirati\OmekaShared\Helper\LocaleHelper;
 use Digirati\OmekaShared\Helper\SettingsHelper;
 use Digirati\OmekaShared\Helper\UrlHelper;
+use Digirati\OmekaShared\Utility\PropertyIdSaturator;
 use IIIFStorage\Aggregate\AddImageService;
 use IIIFStorage\Aggregate\DereferencedCollection;
 use IIIFStorage\Aggregate\DereferencedManifest;
@@ -37,8 +39,11 @@ use IIIFStorage\Media\CollectionSnippetIngester;
 use IIIFStorage\Media\CollectionSnippetRenderer;
 use IIIFStorage\Media\CrowdSourcingBannerIngester;
 use IIIFStorage\Media\CrowdSourcingBannerRenderer;
+use IIIFStorage\Media\GenericServiceIngester;
+use IIIFStorage\Media\GenericServiceRenderer;
 use IIIFStorage\Media\HtmlIngester;
 use IIIFStorage\Media\HtmlRenderer;
+use IIIFStorage\Media\IIIFImageIngester;
 use IIIFStorage\Media\LatestAnnotatedImagesIngester;
 use IIIFStorage\Media\LatestAnnotatedImagesRenderer;
 use IIIFStorage\Media\ManifestListIngester;
@@ -47,20 +52,17 @@ use IIIFStorage\Media\ManifestSnippetIngester;
 use IIIFStorage\Media\ManifestSnippetRenderer;
 use IIIFStorage\Media\MetadataIngester;
 use IIIFStorage\Media\MetadataRenderer;
-use Digirati\OmekaShared\Framework\PageBlockMediaAdapter;
 use IIIFStorage\Media\TopContributorsIngester;
 use IIIFStorage\Media\TopContributorsRenderer;
 use IIIFStorage\Repository\CanvasRepository;
 use IIIFStorage\Repository\CollectionRepository;
 use IIIFStorage\Repository\ManifestRepository;
-use Digirati\OmekaShared\Utility\PropertyIdSaturator;
 use IIIFStorage\Utility\ApiRouter;
 use IIIFStorage\Utility\CheapOmekaRelationshipRequest;
 use IIIFStorage\Utility\Router;
 use IIIFStorage\ViewFilters\ChooseManifestTemplate;
 use IIIFStorage\ViewFilters\DisableJsonField;
 use Omeka\Job\Dispatcher;
-use IIIFStorage\Media\IIIFImageIngester;
 use Omeka\Mvc\Controller\Plugin\Messenger;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -255,7 +257,7 @@ return [
                 return new IIIFImageIngester(
                     $c->get('iiif-storage/proxy-client'),
                     $c->get('Omeka\File\Downloader'),
-                    (int) $settings->get('iiif-storage_thumbnail-size', 256)
+                    (int)$settings->get('iiif-storage_thumbnail-size', 256)
                 );
             },
             LatestAnnotatedImagesIngester::class => function () {
@@ -278,6 +280,9 @@ return [
             },
             HtmlIngester::class => function (ContainerInterface $c) {
                 return new HtmlIngester($c->get('Omeka\HtmlPurifier'));
+            },
+            GenericServiceIngester::class => function (ContainerInterface $c) {
+                return new GenericServiceIngester();
             },
             ImageSourceRenderer::class => function (ContainerInterface $c) {
                 return new ImageSourceRenderer(
@@ -378,6 +383,9 @@ return [
             HtmlRenderer::class => function (ContainerInterface $c) {
                 return new HtmlRenderer($c->get(LocaleHelper::class));
             },
+            GenericServiceRenderer::class => function (ContainerInterface $c) {
+                return new GenericServiceRenderer();
+            },
 
             SettingsHelper::class => SettingsHelperFactory::class,
         ]
@@ -434,6 +442,9 @@ return [
             'html' => function (ContainerInterface $c) {
                 return $c->get(HtmlIngester::class);
             },
+            'generic-service' => function (ContainerInterface $c) {
+                return $c->get(GenericServiceIngester::class);
+            }
         ],
     ],
     'media_renderers' => [
@@ -490,6 +501,9 @@ return [
             'html' => function (ContainerInterface $c) {
                 return $c->get(HtmlRenderer::class);
             },
+            'generic-service' => function (ContainerInterface $c) {
+                return $c->get(GenericServiceRenderer::class);
+            }
         ],
     ],
     'block_layouts' => [
@@ -571,6 +585,13 @@ return [
                     $c->get(LocaleHelper::class)
                 );
             },
+            'generic-service' => function (ContainerInterface $c) {
+                return new PageBlockMediaAdapter(
+                    $c->get(GenericServiceIngester::class),
+                    $c->get(GenericServiceRenderer::class),
+                    $c->get(LocaleHelper::class)
+                );
+            }
         ],
     ],
     'navigation_links' => [

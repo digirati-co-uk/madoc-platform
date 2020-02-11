@@ -59,7 +59,7 @@ class PageBlockMediaAdapter extends AbstractBlockLayout implements BlockLayoutIn
         $elements = $this->ingester->getFormElements($block ? 'update' : 'create');
 
         if ($block) {
-            $data = $block->data();
+            $data = $this->ingester->parseFormData($block->data());
             foreach ($elements as $element) {
                 $name = $element->getName();
                 if (isset($data[$name])) {
