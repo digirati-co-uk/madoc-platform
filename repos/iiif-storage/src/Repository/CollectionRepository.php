@@ -174,4 +174,23 @@ class CollectionRepository
         $query['search'] = $search;
         return $this->api->search(static::API_TYPE, $query)->getContent();
     }
+
+    public function delete(int $id)
+    {
+        $this->api->delete(static::API_TYPE, $id);
+    }
+
+    public function create(callable $mutation): ItemSetRepresentation
+    {
+        // Item request from scratch.
+        $item = ItemRequest::fromScratch();
+        // Add resource template.
+        $this->saturator->addResourceTemplateByName('IIIF Collection', $item);
+        // Mutate from params.
+        $mutation($item);
+        // Saturate.
+        $this->saturator->addPropertyIds($item);
+        // Create.
+        return $this->api->create(static::API_TYPE, $item->export())->getContent();
+    }
 }

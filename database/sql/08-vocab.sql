@@ -24,6 +24,7 @@ INSERT INTO `vocabulary` VALUES
 (8,1,'http://iiif.io/api/presentation/2#','sc','Shared Canvas',''),
 (9,1,'http://iiif.io/api/image/2#','iiif','IIIF Image',''),
 (10,1,'http://www.w3.org/2003/12/exif/ns#','exif','Exif',''),
-(11,1,'http://www.w3.org/ns/oa#','oa','Open Annotation','');
+(11,1,'http://www.w3.org/ns/oa#','oa','Open Annotation',''),
+(12,1,'http://rdfs.org/sioc/services#','svcs','SIOC Services Ontology Module Namespace', '');
 /*!40000 ALTER TABLE `vocabulary` ENABLE KEYS */;
 UNLOCK TABLES;

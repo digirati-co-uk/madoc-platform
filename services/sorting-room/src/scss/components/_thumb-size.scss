@@ -1,0 +1,55 @@
+.thumb-size {
+  box-sizing: border-box;
+  display: none;
+  height: 58px;
+  margin-right: 20px;
+  padding-top: 9px;
+  vertical-align: top;
+
+  .manifest-loaded & {
+    display: inline-block;
+  }
+
+  &__label {
+    color: $white;
+    display: inline-block;
+    font-size: .9rem;
+    margin-right: 5px;
+    margin-top: 1px;
+    vertical-align: middle;
+  }
+
+  &__button {
+    background-color: $white;
+    border: 0;
+    display: inline-block;
+    height: 40px;
+    margin: 0 8px 0;
+    overflow: hidden;
+    padding: 0;
+    text-indent: -99em;
+    vertical-align: middle;
+    width: 29px;
+
+    &--small {
+      height: 22px;
+      width: 16px;
+    }
+
+    &--medium {
+      height: 30px;
+      width: 22px;
+    }
+
+    &:focus,
+    &:hover {
+      background-color: $highlight;
+      outline: 0;
+    }
+
+    &--active,
+    &--active:hover {
+      background-color: $highlighted;
+    }
+  }
+}

@@ -1,0 +1,52 @@
+.workspace-tabs {
+  background: $black;
+  border-bottom: 1px solid $black;
+  padding: 20px 20px 0;
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  &__item {
+    display: inline-block;
+
+    &--dm {
+      display: none;
+
+      .dm-loaded & {
+        display: inline-block;
+      }
+    }
+  }
+
+  &__link {
+    background: darken($white, 15%);
+    border-radius: 3px 3px 0 0;
+    bottom: -1px;
+    color: $black;
+    display: inline-block;
+    font-size: .7rem;
+    min-width: 110px;
+    padding: 15px 20px 10px;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+
+    i {
+      font-size: 1.8rem;
+      margin-bottom: 6px;
+    }
+
+    &:hover {
+      background: darken($white, 10%);
+    }
+
+    &--active,
+    &--active:hover {
+      background: $white;
+    }
+  }
+}

@@ -109,6 +109,8 @@ class ManifestController extends AbstractPsr7ActionController
             $this->apiRouter->useOriginalUrls();
         }
 
+        $this->allowCors();
+
         $canvasesPerPage = $this->getCanvasesPerPage();
 
         $manifestId = $this->params()->fromRoute('manifest');

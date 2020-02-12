@@ -1,0 +1,52 @@
+.manifest-input {
+  border-bottom: 1px solid $black;
+  padding: 20px;
+
+  &--loading {
+    .manifest-input__input {
+      display: none;
+    }
+
+    .manifest-input__feedback {
+      display: block;
+    }
+  }
+
+  &__text-input {
+    display: inline-block;
+    width: 40%;
+  }
+
+  &__feedback {
+    display: none;
+    line-height: 36px;
+    margin-top: 0;
+    min-height: 36px;
+  }
+
+  &__expand-button,
+  &__load-button {
+    display: inline-block;
+  }
+
+  &__expand-button {
+    display: none;
+
+    &--active {
+      display: inline-block;
+    }
+  }
+
+  &__list {
+    display: none;
+    padding: 30px 0;
+
+    .info {
+      background-color: lighten($black, 95%);
+    }
+
+    &--active {
+      display: block;
+    }
+  }
+}

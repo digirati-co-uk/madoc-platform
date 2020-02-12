@@ -88,11 +88,12 @@ class DereferencedCollection implements AggregateInterface
     {
         return (
             $input->getResourceTemplateName() === 'IIIF Collection' &&
-            $input->hasField('dcterms:identifier')
+            $input->hasField('dcterms:identifier') &&
+            !$input->hasField('dcterms:source')
         );
     }
 
-    public function parse(ItemRequest $input)
+    public function parse(ItemRequest $input, array $metadata = [])
     {
         foreach ($input->getValue('dcterms:identifier') as $field) {
             $collectionUrl = $field->getId();
@@ -114,7 +115,7 @@ class DereferencedCollection implements AggregateInterface
                 strtolower($type) !== 'sc:collection' &&
                 strtolower($type) !== 'collection'
             ) {
-               // @todo re-evaluate how to best manages cases where this is not true.
+                // @todo re-evaluate how to best manages cases where this is not true.
                 throw new ValidationException("Resource is not a collection ($id)");
             }
 

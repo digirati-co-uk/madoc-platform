@@ -1,0 +1,35 @@
+{
+  "name": "Omeka",
+  "api_id": "1",
+  "org_id": "default",
+  "definition": {
+    "location": "",
+    "key": ""
+  },
+  "use_keyless": true,
+  "auth": {
+    "auth_header_name": ""
+  },
+  "version_data": {
+    "not_versioned": true,
+    "versions": {
+      "Default": {
+        "name": "Default",
+        "expires": "3000-01-02 15:04"
+      }
+    }
+  },
+  "cache_options": {
+    "cache_timeout": 60,
+    "enable_cache": false,
+    "cache_all_safe_requests": false,
+    "cache_response_codes": [],
+    "enable_upstream_cache_control": false
+  },
+  "proxy": {
+    "preserve_host_header": true,
+    "listen_path": "/",
+    "target_url": "http://madoc-platform-omeka/"
+  },
+  "do_not_track": true
+}

@@ -1,0 +1,210 @@
+.classified-material {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 20px 20px;
+}
+
+.classified-manifest {
+  background: lighten($lightest-grey, 10%);
+  margin-bottom: 40px;
+  margin-right: 40px;
+  padding: 20px;
+  position: relative;
+  width: 300px;
+
+  &:hover {
+    // outline: 10px solid lighten($selected, 35%);
+    background: $lightest-grey;
+  }
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 5px 0 0;
+    white-space: nowrap;
+
+    /*
+    &:hover {
+      span {
+        border: 2px dotted lighten($black, 90%);
+        margin: 0 0 0 -10px;
+        outline: 0;
+      }
+    }*/
+  }
+
+  &__title-text {
+    display: inline-block;
+    margin: 2px 2px 2px -8px;
+    max-width: 240px;
+    padding: 10px;
+    white-space: normal;
+  }
+
+  &__title-text[contenteditable=true] {
+    background-color: $white;
+    border: 2px dotted $help;
+    margin: 0 0 0 -10px;
+    outline: 0;
+  }
+
+  &__title-edit,
+  &__title-save {
+    background-color: transparent;
+    border: 0;
+    position: relative;;
+    top: 3px;
+    vertical-align: top;
+
+    &:hover {
+      color: $selected;
+    }
+  }
+
+  &__title-edit {
+    .classified-manifest__title--edit & {
+      display: none;
+    }
+  }
+
+  &__title-save {
+    display: none;
+
+    .classified-manifest__title--edit & {
+      display: inline-block;
+    }
+  }
+
+  &__num {
+    font-size: .9rem;
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+
+  &__front,
+  &__second,
+  &__third {
+    display: inline-block;
+    position: relative;
+    transition: .5s transform ease;
+    vertical-align: top;
+
+    img {
+      box-shadow: 1px 1px 2px 0 $black50;
+      height: auto;
+      max-height: 120px;
+      max-width: 100px;
+      width: auto;
+    }
+
+    &--placeholder {
+      img {
+        height: 120px;
+        width: 100px;
+      }
+    }
+  }
+
+  &__front {
+    z-index: 100;
+  }
+
+  &__second {
+    margin-left: -20%;
+    margin-top: 10px;
+    z-index: 50;
+  }
+
+  &__third {
+    margin-left: -22%;
+    margin-top: 25px;
+
+    img {
+      box-shadow: none;
+    }
+  }
+
+  &:hover {
+    .classified-manifest__front {
+      transform: translateX(-3%) rotate(-5deg);
+    }
+
+    .classified-manifest__second {
+      transform: translateX(20%);
+    }
+
+    .classified-manifest__third {
+      transform: translateX(40%) rotate(5deg);
+    }
+  }
+
+  &--saving-label {
+    .classified-manifest__title-text {
+      background-color: $highlighted;
+      border-color: transparent;
+    }
+
+    .classified-manifest__title-save {
+      display: none;
+    }
+  }
+
+  &__status {
+    color: $publish;
+    font-size: .9rem;
+  }
+
+  &__actions {
+    padding-top: 18px;
+  }
+
+  &__actions-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  &__actions-item {
+    margin-bottom: 3px;
+
+    .material-icons {
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    a {
+      background-color: transparent;
+      box-sizing: border-box;
+      color: $black;
+      display: block;
+      font-size: .9rem;
+      padding: 5px;
+      text-decoration: none;
+
+      &:hover {
+        color: $white;
+      }
+    }
+
+    .action__publish {
+      &:hover {
+        background-color: $publish;
+      }
+    }
+
+    .action__view {
+      &:hover {
+        background-color: $link;
+      }
+    }
+
+    .action__delete {
+      &:hover {
+        background-color: $cancel;
+      }
+    }
+  }
+
+
+
+}

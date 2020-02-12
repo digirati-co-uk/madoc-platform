@@ -1,0 +1,23 @@
+.help-button {
+  background-color: $help;
+  border: 0;
+  box-sizing: border-box;
+  color: $white;
+  font-size: .9rem;
+  height: 58px;
+  line-height: 58px;
+  margin: 0;
+  padding: 0 20px 0 25px;
+
+  &:focus,
+  &:hover {
+    background-color: lighten($help, 5%);
+    outline: none;
+  }
+
+  &--active {
+    i {
+      transform: rotate(180deg);
+    }
+  }
+}

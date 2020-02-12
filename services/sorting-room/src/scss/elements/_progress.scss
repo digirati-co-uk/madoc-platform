@@ -1,0 +1,18 @@
+progress {
+  appearance: none;
+  background-color: $progress-background;
+  color: $progress-foreground;
+  display: block;
+  height: 12px;
+  max-width: 100%;
+  transition: all .5s ease;
+
+  &::-webkit-progress-bar {
+    background-color: $progress-background;
+  }
+
+  &::-webkit-progress-value {
+    background-color: $progress-foreground;
+    transition: all .5s ease;
+  }
+}

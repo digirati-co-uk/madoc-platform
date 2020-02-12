@@ -9,7 +9,7 @@ use Digirati\OmekaShared\Model\ItemRequest;
 use IIIFStorage\Utility\CheapOmekaRelationshipRequest;
 use Omeka\Job\Dispatcher;
 
-class ScheduleEmbeddedManifests
+class ScheduleEmbeddedManifests implements AggregateInterface
 {
     /**
      * @var Dispatcher
@@ -19,6 +19,7 @@ class ScheduleEmbeddedManifests
      * @var CheapOmekaRelationshipRequest
      */
     private $relationshipRequest;
+    private $baseUrl;
 
     public function __construct(
         Dispatcher $dispatcher,
@@ -72,8 +73,9 @@ class ScheduleEmbeddedManifests
         );
     }
 
-    public function parse(ItemRequest $input)
+    public function parse(ItemRequest $input, array $metadata = [])
     {
+        $this->baseUrl = $metadata['base_url'];
         $collectionJsonValues = $input->getValue('dcterms:source');
         foreach ($collectionJsonValues as $collectionJsonValue) {
             $parsed = json_decode($collectionJsonValue->getValue(), true);
@@ -101,10 +103,11 @@ class ScheduleEmbeddedManifests
             foreach ($manifests as $manifest) {
                 if ($manifest) {
                     $manifestId = $manifest['@id'] ?? $manifest['id'];
-                    if ($this->relationshipRequest->manifestExists($manifestId)) {
+                    if ($omekaId = $this->relationshipRequest->manifestExists($manifestId, $this->baseUrl)) {
                         $this->manifests[$id][] = [
                             'type' => ImportManifests::MANIFEST_REFERENCE,
                             'id' => $manifestId,
+                            'omeka_id' => $omekaId,
                         ];
                     } else {
                         $this->manifests[$id][] = $manifest;
@@ -112,5 +115,10 @@ class ScheduleEmbeddedManifests
                 }
             }
         }
+    }
+
+    public function reset()
+    {
+        // TODO: Implement reset() method.
     }
 }

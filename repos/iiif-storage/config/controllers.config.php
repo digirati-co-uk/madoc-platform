@@ -2,6 +2,7 @@
 
 use Digirati\OmekaShared\Helper\SettingsHelper;
 use IIIFStorage\Controller\AdminController;
+use IIIFStorage\Controller\PresleyController;
 use Psr\Container\ContainerInterface;
 use IIIFStorage\Controller\CollectionController;
 use IIIFStorage\Controller\ManifestController;
@@ -38,7 +39,7 @@ return [
                     $c->get(SettingsHelper::class)
                 );
             },
-            ManifestController::class => function(ContainerInterface $c) {
+            ManifestController::class => function (ContainerInterface $c) {
                 return new ManifestController(
                     $c->get(ManifestRepository::class),
                     $c->get(ManifestBuilder::class),
@@ -58,6 +59,16 @@ return [
                     $c->get('Omeka\Job\Dispatcher')
                 );
             },
+            PresleyController::class => function (ContainerInterface $c) {
+                return new PresleyController(
+                    $c->get(ManifestBuilder::class),
+                    $c->get(ManifestRepository::class),
+                    $c->get(CanvasRepository::class),
+                    $c->get(CollectionRepository::class),
+                    $c->get(CollectionBuilder::class),
+                    $c->get('Omeka\Acl')
+                );
+            }
         ],
     ],
 ];

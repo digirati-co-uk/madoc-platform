@@ -1,0 +1,28 @@
+@mixin button-style {
+  background: none;
+  border: 1px solid $black;
+}
+
+@mixin hidden {
+  height: 1px;
+  left: -10000px;
+  overflow: hidden;
+  position: absolute;
+  top: auto;
+  width: 1px;
+}
+
+@mixin unhidden {
+  height: auto;
+  left: auto;
+  overflow: visible;
+  position: static;
+  top: auto;
+  width: auto;
+}
+
+@mixin list-reset {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}

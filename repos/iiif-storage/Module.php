@@ -7,6 +7,7 @@ use Digirati\OmekaShared\ModuleExtensions\ConfigurationFormAutoloader;
 use IIIFStorage\Admin\ConfigurationForm;
 use IIIFStorage\Controller\CollectionController;
 use IIIFStorage\Controller\ManifestController;
+use IIIFStorage\Controller\PresleyController;
 use IIIFStorage\Controller\ResourceController;
 use IIIFStorage\Listener\ImportContentListener;
 use IIIFStorage\Listener\TargetStatusUpdateListener;
@@ -244,6 +245,7 @@ class Module extends AbstractModule implements ConfigProviderInterface
                 ResourceController::class,
                 ManifestController::class,
                 CollectionController::class,
+                PresleyController::class,
             ]
         );
     }

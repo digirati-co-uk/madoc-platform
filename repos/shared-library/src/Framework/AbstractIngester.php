@@ -31,6 +31,10 @@ abstract class AbstractIngester implements MutableIngesterInterface
     {
     }
 
+    public function parseFormData($data) {
+        return $data;
+    }
+
     static $LOCALES = null;
 
     /**
@@ -175,7 +179,7 @@ abstract class AbstractIngester implements MutableIngesterInterface
         return $this->renderFormElements(
             $view,
             $this->parseFormElements(
-                $this->setFormValues($formElements, $media->mediaData())
+                $this->setFormValues($formElements, $this->parseFormData($media->mediaData()))
             )
         );
     }

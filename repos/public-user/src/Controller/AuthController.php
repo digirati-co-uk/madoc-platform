@@ -2,17 +2,18 @@
 
 namespace PublicUser\Controller;
 
+use Digirati\OmekaShared\Framework\AbstractPsr7ActionController;
 use Omeka\Api\Exception\BadRequestException;
 use Omeka\Mvc\Exception\NotFoundException;
 use PublicUser\Auth\TokenService;
 use PublicUser\Form\AuthTokenForm;
 use Zend\Authentication\AuthenticationService;
+use Zend\Diactoros\Response\JsonResponse;
 use Zend\Http\Response;
-use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
 
-class AuthController extends AbstractActionController
+class AuthController extends AbstractPsr7ActionController
 {
 
     /**
@@ -38,6 +39,11 @@ class AuthController extends AbstractActionController
             $this->getRequest()->getContent(),
             true
         );
+    }
+
+    public function meAction()
+    {
+        return new JsonResponse(['success' => true]);
     }
 
     public function authAction()
@@ -109,6 +115,12 @@ class AuthController extends AbstractActionController
 
     public function tokenAction()
     {
+        $request = $this->getRequest();
+        if ($request->isOptions()) {
+            return $this->preflightAction();
+        }
+        $this->allowCors();
+
         $httpResponse = $this->getResponse();
         $httpResponse->getHeaders()->addHeaderLine('Content-Type', 'application/json');
 

@@ -45,7 +45,7 @@ class DereferencedManifest implements AggregateInterface
     {
         foreach ($input->getValue('dcterms:identifier') as $field) {
             $manifestUrl = $field->getId();
-            if ($manifestUrl) {
+            if ($manifestUrl && $manifestUrl !== 'uri:internal') {
                 $json = $this->getManifest($manifestUrl);
                 $manifest = json_decode($json, true);
                 $manifestId = $manifest['@id'] ?? $manifest['id'] ?? $manifestUrl;
@@ -98,6 +98,15 @@ class DereferencedManifest implements AggregateInterface
                         );
                     }
                 }
+
+                $otherContent = $input->getValue('sc:hasLists');
+                if (!$otherContent || empty($otherContent) || trim(current($otherContent)->getValue()) === '') {
+                    $input->addFields(
+                        array_map(function ($otherContent) {
+                            return FieldValue::url('sc:hasLists', $otherContent['label'], $otherContent['@id']);
+                        }, $manifest['otherContent'] ?? [])
+                    );
+                }
             }
         }
     }
@@ -106,11 +115,12 @@ class DereferencedManifest implements AggregateInterface
     {
         return (
             $input->getResourceTemplateName() === 'IIIF Manifest' &&
-            $input->hasField('dcterms:identifier')
+            $input->hasField('dcterms:identifier') &&
+            !$input->hasField('dcterms:source')
         );
     }
 
-    public function parse(ItemRequest $input)
+    public function parse(ItemRequest $input, array $metadata = [])
     {
         $this->manifestRequests = [];
         foreach ($input->getValue('dcterms:identifier') as $field) {
@@ -125,6 +135,9 @@ class DereferencedManifest implements AggregateInterface
     public function prepare()
     {
         foreach ($this->manifestRequests as $manifestUri) {
+            if ($manifestUri === 'uri:internal') {
+                continue;
+            }
             $json = $this->getManifest($manifestUri);
             $manifest = json_decode($json, true);
             $id = $manifest['@id'] ?? $manifest['id'] ?? null;

@@ -131,6 +131,7 @@ INSERT INTO `resource_class` VALUES
   (117,1,8,'Manifest','Manifest','The manifest resource represents a single object and any intellectual work or works embodied within that object'),
   (118,1,8,'Range','Range','Ranges describe additional structure within an object, such as newspaper articles that span pages, the range of non-content-bearing pages at the beginning of a work, or chapters within a book'),
   (119,1,8,'Collection','Collection','Collections are used to list the manifests available for viewing, and to describe the structures, hierarchies or collections that the physical objects are part of.'),
-  (120,1,8,'ViewingDirection','ViewingDirection',NULL);
+  (120,1,8,'ViewingDirection','ViewingDirection',NULL),
+  (121, 1, 12, 'Service', 'Service', 'A Service is web service associated with a Site or part of it.');
 /*!40000 ALTER TABLE `resource_class` ENABLE KEYS */;
 UNLOCK TABLES;

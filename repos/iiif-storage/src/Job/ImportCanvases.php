@@ -40,7 +40,9 @@ class ImportCanvases extends AbstractJob implements JobInterface
                 if ($type === self::CANVAS_REFERENCE) {
                     $id = $canvas['id'];
                     $logger->info("ID already exists: $id adding as reference");
-                    $omekaId = $relationshipRequest->getResourceIdByUri('sc:Canvas', $id);
+                    $omekaId = isset($canvas['omeka_id'])
+                        ? $canvas['omeka_id']
+                        : $relationshipRequest->getResourceIdByUri('sc:Canvas', $id);
                     $logger->info("Found Omeka ID: $omekaId");
 
                     if (!$omekaId) {
@@ -76,13 +78,22 @@ class ImportCanvases extends AbstractJob implements JobInterface
                 $item->addFields(
                     FieldValue::literalsFromRdf('sc:attributionLabel', 'Attribution', $manifest['attribution'] ?? null)
                 );
+                if (isset($canvas['otherContent'])) {
+                    $item->addFields(
+                        array_map(function ($otherContent) {
+                            return FieldValue::url('sc:hasLists', $otherContent['label'], $otherContent['@id']);
+                        }, $canvas['otherContent'])
+                    );
+                }
 
                 $manifestId = null;
                 $manifestItemId = null;
 
                 if (isset($canvas['partOf']['id'])) {
                     $manifestId = $canvas['partOf']['id'];
-                    $manifestItemId = $this->getManifestItemId($manifestId);
+                    $manifestItemId = isset($canvas['partOf']['omeka_id'])
+                        ? $canvas['partOf']['omeka_id']
+                        : $this->getManifestItemId($manifestId) ;
                     $logger->info("Found manifest in `partOf` field: {$manifestItemId}");
 
                     if ($manifestItemId) {
