@@ -233,7 +233,7 @@ SQL;
      * @param string|null $baseUrl
      * @return int | false
      */
-    public function resourceExists(string $resource, string $id, string $baseUrl = null)
+    private function resourceExists(string $resource, string $id, string $baseUrl = null)
     {
         $match = RouteMatchHelper::matchFrom($this->routeStack, $id, $baseUrl);
 

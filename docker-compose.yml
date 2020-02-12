@@ -6,7 +6,6 @@ services:
       context: .
     links:
       - mysql
-      - sorting-room
     environment:
       - PHP_IDE_CONFIG=serverName=omeka-workspace
       - APP_ENV=${APP_ENV}
@@ -29,7 +28,6 @@ services:
       - ./files:/srv/omeka/files
       - ./config/omeka-app/application.config.php:/srv/omeka/application/config/application.config.php
       - ./translations:/srv/omeka/translations
-      - ./services/sorting-room/${SORTING_ROOM_DEV:-dist}:/srv/omeka/sorting-room
   sorting-room:
     build:
       context: services/sorting-room

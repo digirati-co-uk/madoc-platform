@@ -45,7 +45,7 @@ class GenericServiceIngester extends AbstractIngester implements IngesterInterfa
      */
     public function getLabel()
     {
-        return 'Generic service';
+        return 'Generic service'; // @translate
     }
 
     /**
