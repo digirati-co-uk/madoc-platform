@@ -2,7 +2,7 @@ version: "3"
 services:
   omeka_ecosystem:
     build:
-      context: .
+      context: services/madoc
     links:
       - mysql
     environment:
@@ -23,8 +23,7 @@ services:
   mysql:
     container_name: omeka_db
     build:
-      context: ./
-      dockerfile: services/madoc-database/Dockerfile
+      context: services/madoc-database
     environment:
       - MYSQL_RANDOM_ROOT_PASSWORD=yes
       - MYSQL_DATABASE=${MYSQL_DATABASE}
