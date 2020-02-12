@@ -97,7 +97,7 @@ class ViewContentListener
         $itemSet = $e->getParam('resource');
         if ($itemSet instanceof ItemSetRepresentation || $itemSet instanceof ItemRepresentation) {
             $resourceTemplate = $itemSet->resourceTemplate();
-            if (!$resourceTemplate) {
+            if (!$resourceTemplate || !$itemSet->resourceClass()) {
                 return null;
             }
 

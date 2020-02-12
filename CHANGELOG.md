@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug in is registration permitted for non-public sites
 - Fixed warning from undefined index when requesting user statistics
 - Fixed various permissions and ACL surrounding non-public sites
+- Fixed when adding an Omeka item, if you do not add a class you can no longer access the Omeka item
 
 ## [1.2.5](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.4...v1.2.5)
 
