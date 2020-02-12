@@ -7,8 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.0...master)
 
 ### Added
+- Sorting room service under `/sorting-room` for splitting large manifests into smaller manifests
+- Gateway for composing multiple services under the main Madoc host
+- Manifests with `otherContent` will now have that field imported into Omeka as a manageable resource
+- Manifests with OtherContent will now have that field imported into Omeka as a manageable resource
+- Added "edit in sorting room" button to Manifests in Admin
+- Added "GenericService" to media items that can be attached to IIIF items
+- Added missing routes for OAuth login flow
+- Pre-flight request handling for `OPTIONS` requests
+- Added Presley API implementation for CRUD operations on IIIF resources
 
 ### Fixed
+- Cross-origin errors while loading manifests in the Universal Viewer
+- Support for making requests to Omeka using valid Bearer token from OAuth flow in Public User module.
+
 
 ## [1.2.0](https://github.com/digirati-co-uk/madoc-platform/compare/v1.1.3...v1.2.0) - 2019-09-13
 
