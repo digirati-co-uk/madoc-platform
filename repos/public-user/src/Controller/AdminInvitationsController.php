@@ -103,7 +103,11 @@ class AdminInvitationsController extends AbstractPsr7ActionController
         $defaultSiteId = $this->settings()->get('default_site');
         $inviteSiteSlug = $site->slug();
 
-        if (!$this->settings->getInviteOnlyStatus() && $site->isPublic()) {
+        if (!$this->settings->isRegistrationPermitted()) {
+            $message->addError(
+                'Registrations are not enabled for this site. Users you invite will not be able to register'
+            );
+        } else if (!$this->settings->getInviteOnlyStatus() && $site->isPublic()) {
             $message->addWarning(
                 'Warning, your site is not configured to only allow registrations for invited users ' .
                 'you can change this setting under "Settings" on the left navigation under your site.'
