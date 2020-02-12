@@ -23,8 +23,6 @@ services:
       - OMEKA__SEARCH_ELASTICSEARCH=search-elasticsearch:9200
       - OMEKA__ANNOTATION_ES_INDEX=jane-annotations
       - OMEKA__SEARCH_INDEXER=search-indexer:8000
-    ports:
-      - "8888:80"
     volumes:
       - ./repos:/srv/omeka/repos
       - ./bare/omeka-s/application:/srv/omeka/application
@@ -35,6 +33,24 @@ services:
   sorting-room:
     build:
       context: services/sorting-room
+
+  gateway:
+    container_name: madoc-gateway
+    build:
+      context: ./services/gateway
+    environment:
+      - TYK_GW_STORAGE_HOST=gateway-redis
+      - TYK_GW_SECRET=${GATEWAY_SECRET}
+    ports:
+      - "8888:8080"
+    links:
+      - sorting-room
+      - omeka-ecosystem
+    volumes:
+      - ./services/gateway/services:/opt/tyk-gateway/apps
+  gateway-redis:
+    image: redis:4.0-alpine
+
   mysql:
     container_name: madoc-platform-database
     build:
