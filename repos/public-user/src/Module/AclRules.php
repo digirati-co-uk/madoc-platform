@@ -142,7 +142,7 @@ trait AclRules
         $acl->allow(
             null,
             LoginController::class,
-            ['login', 'logout', 'register', 'forgotPassword', 'resetPassword', 'create-password']
+            ['login', 'logout', 'register', 'forgotPassword', 'thanks', 'resetPassword', 'create-password']
         );
 
         $acl->allow(
