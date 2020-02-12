@@ -248,6 +248,16 @@ class Module extends AbstractModule implements ConfigProviderInterface
                 PresleyController::class,
             ]
         );
+        // Also add resources here.
+        if (!$acl->hasResource('iiif-collection')) {
+            $acl->addResource('iiif-collection');
+        }
+        if (!$acl->hasResource('iiif-manifest')) {
+            $acl->addResource('iiif-manifest');
+        }
+        if (!$acl->hasResource('iiif-canvas')) {
+            $acl->addResource('iiif-canvas');
+        }
     }
 
     public function init(ModuleManager $moduleManager)

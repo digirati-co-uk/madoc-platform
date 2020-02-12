@@ -29,7 +29,7 @@
   "proxy": {
     "preserve_host_header": true,
     "listen_path": "/",
-    "target_url": "http://madoc-platform-omeka/"
+    "target_url": "http://madoc/"
   },
   "do_not_track": true
 }

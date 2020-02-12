@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.5...master)
 
 ### Added
+- BREAKING: Changed file structure of repository
+- BREAKING: Removed bin/madoc commands for managing legacy git repositories (lint-module, lint-all, clean, git, git-all, status)
+- BREAKING: Changed names of containers inside of `docker-compose`
+- BREAKING: Changed location of local Omeka-S install from `bare` to `.omeka`
 - Sorting room service under `/sorting-room` for splitting large manifests into smaller manifests
 - Gateway for composing multiple services under the main Madoc host
 - Manifests with `otherContent` will now have that field imported into Omeka as a manageable resource
@@ -31,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ability for existing users to be invited to new sites using the same links without re-registering
 - Added automatic login when automatically activate is configured
 - Added login or "view site" link to the thank you page, shown after registering
+- Added new commands to bin/madoc (restart, rebuild)
 
 ### Fixed
 

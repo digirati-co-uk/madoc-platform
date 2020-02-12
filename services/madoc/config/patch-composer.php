@@ -7,11 +7,11 @@ $composerJson['require']['wikimedia/composer-merge-plugin'] = '1.4.1';
 $composerJson['require']['kokspflanze/zfc-twig'] = '2.2.0';
 
 $repos = array_diff(
-    scandir(getcwd()  . '/repos'), ['..', '.', '.DS_Store']
+    scandir(getcwd()  . '/packages'), ['..', '.', '.DS_Store']
 );
 
 foreach ($repos as $repo) {
-    $composeFileLocation = getcwd()  . '/repos/'. $repo . '/composer.json';
+    $composeFileLocation = getcwd()  . '/packages/'. $repo . '/composer.json';
     if (file_exists($composeFileLocation)) {
         $composer = json_decode(file_get_contents($composeFileLocation), true);
         if (!isset($composerJson['require'][$composer['name']]) && isset($composer['version'])) {
@@ -22,7 +22,7 @@ foreach ($repos as $repo) {
 
 $composerJson['extra']['merge-plugin'] = [
     "include" => [
-        "modules/*/composer.json"
+        "packages/*/composer.json"
     ],
 ];
 
@@ -37,7 +37,7 @@ $composerJson['repositories'] = array_merge(
         function ($dir) {
             return [
                 'type' => 'path',
-                'url' => 'repos/' . $dir
+                'url' => 'packages/' . $dir
             ];
         },
         $repos

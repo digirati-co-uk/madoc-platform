@@ -23,7 +23,7 @@ services:
     container_name: madoc-platform-database
     build:
       context: ./
-      dockerfile: Dockerfile.db
+      dockerfile: services/madoc-database/Dockerfile
     environment:
       - MYSQL_RANDOM_ROOT_PASSWORD=yes
       - MYSQL_DATABASE=${MYSQL_DATABASE}

@@ -2,6 +2,7 @@
 
 use PublicUser\Controller\AccountController;
 use PublicUser\Controller\AdminInvitationsController;
+use PublicUser\Controller\AuthController;
 use PublicUser\Controller\LoginController;
 use PublicUser\Controller\PublicProfileController;
 use PublicUser\Controller\SiteLoginRedirectController;
