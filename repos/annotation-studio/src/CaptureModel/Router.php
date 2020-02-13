@@ -35,30 +35,48 @@ class Router
         $this->siteId = $id;
     }
 
-    public function component($component, $moderation, $site = false)
+    public function component($component, $moderation, $siteId = false)
     {
+
+        $options = [
+            'component' => $component,
+            'moderation' => $moderation,
+            'locale' => null,
+        ];
+        if ($siteId) {
+            $options['site-slug'] = $this->siteId;
+        }
+
+
+        error_log($this->url->create(
+            $this->getRoute('component', !!$siteId),
+            $options,
+            $this->getOptions()
+        ));
+
         return $this->url->create(
-            $this->getRoute('component', $site),
-            [
-                'component' => $component,
-                'moderation' => $moderation,
-            ],
-            $this->getOptions(),
-            $site
+            $this->getRoute('component', !!$siteId),
+            $options,
+            $this->getOptions()
         );
     }
 
-    public function model($model, $component, $moderation, $site = false)
+    public function model($model, $component, $moderation, $siteId = false)
     {
+        $options = [
+            'model' => $model,
+            'component' => $component,
+            'moderation' => $moderation,
+            'locale' => null,
+        ];
+        if ($this->siteId) {
+            $options['site-slug'] = $this->siteId;
+        }
+
         return $this->url->create(
-            $this->getRoute('model', $site),
-            [
-                'model' => $model,
-                'component' => $component,
-                'moderation' => $moderation,
-            ],
-            $this->getOptions(),
-            $site
+            $this->getRoute('model', !!$siteId),
+            $options,
+            $this->getOptions()
         );
     }
 
