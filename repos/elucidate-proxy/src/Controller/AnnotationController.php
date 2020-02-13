@@ -79,6 +79,8 @@ class AnnotationController extends AbstractActionController
             if (isset($headers['ETag'][0])) {
                 $eTag = substr($headers['ETag'][0], 3, -1);
             }
+        } else {
+            $eTag = $eTag->getFieldValue();
         }
 
         try {
@@ -90,6 +92,8 @@ class AnnotationController extends AbstractActionController
         /** @var Annotation $annotation */
         $headers = $this->getRequest()->getHeaders()->toArray();
         $headers['If-Match'] = $eTag;
+        unset($headers['Host']);
+        unset($headers['Location']);
         $annotation = $annotation->withRelativeId()->withContainer($containerId)->setHeaders($headers);
         $annotation = $this->elucidate->updateAnnotation($annotation);
 
@@ -110,7 +114,11 @@ class AnnotationController extends AbstractActionController
             return $this->responseFactory->create($this->getRequest(), 'Invalid JSON provided', 400);
         }
 
-        $annotation->setHeaders($this->getRequest()->getHeaders()->toArray());
+        $headers = $this->getRequest()->getHeaders()->toArray();
+        unset($headers['Host']);
+        unset($headers['Location']);
+
+        $annotation->setHeaders($headers);
         $annotation->withContainer($containerId);
 
         $this->elucidate->deleteAnnotation($annotation);

@@ -35,6 +35,11 @@ final class ElucidateErrorSubscriber
                 return $this->responseFactory->create($request, $exception->getMessage(), 500);
             }
 
+            if (!method_exists($exception, 'getResponse')) {
+                error_log('Unknown error');
+                return $this->responseFactory->create($request, $exception->getMessage(), 500);
+            }
+
             $response = $exception->getResponse();
             if ($response) {
                 return $this->responseFactory->create(
