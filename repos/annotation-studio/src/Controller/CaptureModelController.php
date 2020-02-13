@@ -116,8 +116,8 @@ class CaptureModelController extends AbstractPsr7ActionController
     {
         $site = $this->currentSite();
         if ($site) {
-            $this->router->setSiteId($site->id());
-            $this->repo->setSiteId($site->id());
+            $this->router->setSiteId($site->slug());
+            $this->repo->setSiteId($site->id(), $site->slug());
         }
     }
 

@@ -41,10 +41,10 @@ class CaptureModelRepository
         $this->router = $router;
     }
     
-    public function setSiteId(string $id)
+    public function setSiteId(string $id, string $slug)
     {
         $this->siteId = $id;
-        $this->router->setSiteId($id);
+        $this->router->setSiteId($slug);
     }
 
     public function getPropertyByName(string $property)

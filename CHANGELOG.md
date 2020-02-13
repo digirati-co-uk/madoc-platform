@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Fixed
+- Fixed annotation studio bug with multi-lingual sites and saving of annotations
 
 ## [1.2.5](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.4...v1.2.5)
 

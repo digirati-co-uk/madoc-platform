@@ -103,7 +103,7 @@ class Module extends AbstractModule
         $router = $this->getServiceLocator()->get(Router::class);
 
         if ($currentSite) {
-            $router->setSiteId($currentSite->id());
+            $router->setSiteId($currentSite->slug());
         }
 
         $moderation = $siteSettings->get('annotation-studio-moderation-status', '')
