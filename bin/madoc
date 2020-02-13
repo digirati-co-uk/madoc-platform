@@ -28,6 +28,10 @@ case "${commandToRun}" in
         )
     ;;
 
+    up)
+         docker-compose up -d "$@"
+    ;;
+
     start)
          docker-compose up -d --build "$@"
     ;;
@@ -84,11 +88,12 @@ case "${commandToRun}" in
     ;;
 
     ci-start)
-        docker-compose -f docker-compose.ci.yml up -d --build
+        docker-compose -p ci -f docker-compose.ci.yml up -d --build
     ;;
 
     ci-stop)
-        docker-compose -f docker-compose.ci.yml stop
+        docker-compose -p ci -f docker-compose.ci.yml stop
+        docker-compose -p ci -f docker-compose.ci.yml down
     ;;
 
     server-init)

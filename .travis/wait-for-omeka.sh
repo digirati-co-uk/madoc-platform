@@ -23,7 +23,7 @@ waitForUrl() {
 
 if ! waitForUrl; then
     echo "=> Omeka not available"
-    docker-compose -f docker-compose.ci.yml logs
+    docker-compose -p ci -f docker-compose.ci.yml logs
     exit 1;
 fi;
 
