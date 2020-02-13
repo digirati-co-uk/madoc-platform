@@ -4,20 +4,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.5...master)
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.6...master)
 
 ### Added
+
+### Fixed
+
+## [1.2.6](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.5...v1.2.6) - 2020-02-13
 
 ### Fixed
 - Fixed annotation studio bug with multi-lingual sites and saving of annotations
 - Fixed issue with Proxy when `Host` header is sent causing infinite loop.
 
-## [1.2.5](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.4...v1.2.5)
+## [1.2.5](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.4...v1.2.5) - 2019-12-13
 
 ### Fixed
 - Hotfix for broken transcriber role
 
-## [1.2.4](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.4...master)
+## [1.2.4](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.4...master) - 2019-12-06
 
 ### Fixed
 - Bug where all but the `default` site were able to be translated correctly.
