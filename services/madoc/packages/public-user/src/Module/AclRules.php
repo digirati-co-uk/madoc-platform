@@ -41,9 +41,15 @@ trait AclRules
         // The configuration for the extended site permissions (what the new roles can do) is added by the PublicUser
         // and so the definitions for the site permissions are too. This is crossing over the modules a little bit,
         // and they should live in the IIIF-Storage module.
-        $acl->addResource('iiif-collection');
-        $acl->addResource('iiif-manifest');
-        $acl->addResource('iiif-canvas');
+        if (!$acl->hasResource('iiif-collection')) {
+            $acl->addResource('iiif-collection');
+        }
+        if (!$acl->hasResource('iiif-manifest')) {
+            $acl->addResource('iiif-manifest');
+        }
+        if (!$acl->hasResource('iiif-canvas')) {
+            $acl->addResource('iiif-canvas');
+        }
 
         $acl->allow(
             null,

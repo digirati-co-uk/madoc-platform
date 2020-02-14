@@ -26,11 +26,13 @@ class SiteLoginRedirectController extends AbstractActionController
             $match = $routeStack->match($refererRequest);
             if ($match instanceof RouteMatch) {
                 $siteId = $match->getParam('site-slug');
-                return $this->redirect()->toRoute('site/publicuser-login',
-                    [
-                        'site-slug' => $siteId,
-                    ]
-                );
+                if ($siteId) {
+                    return $this->redirect()->toRoute('site/publicuser-login',
+                        [
+                            'site-slug' => $siteId,
+                        ]
+                    );
+                }
             }
         }
 

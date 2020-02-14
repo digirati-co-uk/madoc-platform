@@ -13,7 +13,7 @@ docker pull digirati/madoc-omeka-s:latest
 echo "Building v$NEXT_VERSION-$COMMIT_HASH";
 
 # Build.
-docker build -t madoc-platform-prerelease .
+docker build -t madoc-platform-prerelease services/madoc
 
 # Tag.
 docker tag madoc-platform-prerelease:latest digirati/madoc-platform:v"$NEXT_VERSION"-"$COMMIT_HASH"

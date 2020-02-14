@@ -13,8 +13,9 @@ before_install:
 
 install:
   - travis_retry docker-compose pull
-  - docker build -t digirati/madoc-platform .
-  - docker build -f Dockerfile.db -t digirati/madoc-platform-db .
+  - docker build -t digirati/madoc-platform services/madoc
+  - docker build -t digirati/madoc-platform-db services/madoc-database
+  - docker build -t digirati/madoc-platform-db services/sorting-room
   # Add any database test fixtures to `database/sql` before madoc init-ci.
   - ./bin/madoc init-ci
 

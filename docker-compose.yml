@@ -1,15 +1,32 @@
 version: "3"
 services:
-  omeka-ecosystem:
-    container_name: madoc-platform-omeka
+
+  # Internal services
+
+  gateway:
     build:
-      context: .
+      context: services/gateway
+    environment:
+      - TYK_GW_STORAGE_HOST=gateway-redis
+      - TYK_GW_SECRET=${GATEWAY_SECRET}
+    ports:
+      - "8888:8080"
     links:
-      - mysql
+      - sorting-room
+      - madoc
+      - gateway-redis
+    volumes:
+      - ./services/gateway/services:/opt/tyk-gateway/apps
+
+  madoc:
+    build:
+      context: services/madoc
+    links:
+      - madoc-database
     environment:
       - PHP_IDE_CONFIG=serverName=omeka-workspace
       - APP_ENV=${APP_ENV}
-      - OMEKA__DATABASE_HOST=madoc-platform-database
+      - OMEKA__DATABASE_HOST=madoc-database
       - OMEKA__DATABASE_NAME=${MYSQL_DATABASE}
       - OMEKA__DATABASE_USER=${MYSQL_USER}
       - OMEKA__DATABASE_PASSWORD=${MYSQL_PASSWORD}
@@ -23,51 +40,37 @@ services:
       - OMEKA__ANNOTATION_ES_INDEX=jane-annotations
       - OMEKA__SEARCH_INDEXER=search-indexer:8000
     volumes:
-      - ./repos:/srv/omeka/repos
-      - ./bare/omeka-s/application:/srv/omeka/application
-      - ./files:/srv/omeka/files
-      - ./config/omeka-app/application.config.php:/srv/omeka/application/config/application.config.php
-      - ./translations:/srv/omeka/translations
+      - ./services/madoc/packages:/srv/omeka/repos
+      - ./services/madoc/.omeka/omeka-s/application:/srv/omeka/application
+      - ./var/files:/srv/omeka/files
+      - ./services/madoc/config/omeka-app/application.config.php:/srv/omeka/application/config/application.config.php
+      - ./services/madoc/translations:/srv/omeka/translations
+
   sorting-room:
     build:
       context: services/sorting-room
 
-  gateway:
-    container_name: madoc-gateway
-    build:
-      context: ./services/gateway
-    environment:
-      - TYK_GW_STORAGE_HOST=gateway-redis
-      - TYK_GW_SECRET=${GATEWAY_SECRET}
-    ports:
-      - "8888:8080"
-    links:
-      - sorting-room
-      - omeka-ecosystem
-    volumes:
-      - ./services/gateway/services:/opt/tyk-gateway/apps
   gateway-redis:
     image: redis:4.0-alpine
 
-  mysql:
-    container_name: madoc-platform-database
+  madoc-database:
     build:
-      context: ./
-      dockerfile: Dockerfile.db
+      context: services/madoc-database
     environment:
       - MYSQL_RANDOM_ROOT_PASSWORD=yes
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_PORT=${MYSQL_PORT}
-    volumes:
-      - ./database/sql:/docker-entrypoint-initdb.d/
-      - ./database/data:/var/lib/mysql/
+#    volumes:
+#      - ./var/database/sql:/docker-entrypoint-initdb.d/
+#      - ./var/database/data:/var/lib/mysql/
     ports:
       - "3334:3306"
 
+  # External services
+
   annotation-server:
-    container_name: madoc-annotation-server
     image: "garyttierneydi/elucidate-server:1.4.3-SNAPSHOT"
     links:
       - annotation-database:database
@@ -80,13 +83,11 @@ services:
       - 8889:8080
 
   annotation-database:
-    container_name: madoc-annotation-database
     image: "garyttierneydi/elucidate-database:1.4.3-SNAPSHOT"
     environment:
       - POSTGRES_DB=annotations
 
   search-elasticsearch:
-    container_name: search-elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch:6.7.2
     environment:
       - bootstrap.memory_lock=true
@@ -110,7 +111,6 @@ services:
       - search-elasticsearch
 
   search-indexer:
-    container_name: search-indexer
     image: digirati/madoc-indexer:c26e42ad8b8e721d20d254e5214679498868518d
     environment:
       - WORKERS=2
@@ -121,7 +121,7 @@ services:
     ports:
       - 8104:8000
     links:
-      - omeka-ecosystem
+      - madoc
       - annotation-server
       - search-elasticsearch
       - search-founda

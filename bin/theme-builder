@@ -1,12 +1,12 @@
 #!/usr/bin/env php
 <?php
 
-include __DIR__ . '/../vendor/autoload.php';
+include __DIR__ . '/../services/madoc/vendor/autoload.php';
 
 $excludes = ['vendor', 'modules', 'themes'];
 
 $finder = new Symfony\Component\Finder\Finder;
-$finder->files()->in(__DIR__ . '/../repos')
+$finder->files()->in(__DIR__ . '/../services/madoc/repos')
     ->name('*.twig')
     ->name('*.phtml')
     ->ignoreDotFiles(true)

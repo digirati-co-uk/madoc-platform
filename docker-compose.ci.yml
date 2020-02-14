@@ -1,39 +1,37 @@
 version: "3"
 services:
-  omeka-ecosystem:
-    container_name: madoc-platform-omeka
+  madoc:
     build:
-      context: .
+      context: services/madoc
     links:
-      - mysql
+      - madoc-database
     environment:
       - APP_ENV=${APP_ENV}
-      - OMEKA__DATABASE_HOST=madoc-platform-database
-      - OMEKA__DATABASE_NAME=${MYSQL_DATABASE}
-      - OMEKA__DATABASE_USER=${MYSQL_USER}
-      - OMEKA__DATABASE_PASSWORD=${MYSQL_PASSWORD}
-      - OMEKA__DATABASE_PORT=${MYSQL_PORT}
+      - OMEKA__DATABASE_HOST=madoc-database
+      - OMEKA__DATABASE_NAME=omeka_s
+      - OMEKA__DATABASE_USER=omeka_s
+      - OMEKA__DATABASE_PASSWORD=ci_db_password
+      - OMEKA__DATABASE_PORT=3306
       - OMEKA__MAIN_SITE_DOMAIN=${MAIN_SITE_DOMAIN}
       - OMEKA__ELUCIDATE_URL=${ELUCIDATE_URL}
+      - OMEKA__INTERNAL_URL=${OMEKA_INTERNAL_URL}
+      - OMEKA__ANNOTATION_INDEXER=${ANNOTATION_INDEXER}
       - OMEKA__ELUCIDATE_PUBLIC_DOMAIN=${ELUCIDATE_PUBLIC_DOMAIN}
+      - OMEKA__SEARCH_ELASTICSEARCH=search-elasticsearch:9200
+      - OMEKA__ANNOTATION_ES_INDEX=jane-annotations
+      - OMEKA__SEARCH_INDEXER=search-indexer:8000
     ports:
       - "8888:80"
 
-  mysql:
-    container_name: madoc-platform-database
+  madoc-database:
     build:
-      context: ./
-      dockerfile: Dockerfile.db
+      context: services/madoc-database
     environment:
       - MYSQL_RANDOM_ROOT_PASSWORD=yes
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_PORT=${MYSQL_PORT}
-    volumes:
-      - ./database/sql:/docker-entrypoint-initdb.d/
-    ports:
-      - "3334:3306"
+      - MYSQL_DATABASE=omeka_s
+      - MYSQL_USER=omeka_s
+      - MYSQL_PASSWORD=ci_db_password
+      - MYSQL_PORT=3306
 
   annotation-server:
     container_name: madoc-annotation-server
@@ -45,6 +43,7 @@ services:
       - CATALINA_OPTS=-Ddb.url=jdbc:postgresql://database:5432/annotations -Ddb.user="postgres" -Ddb.password=$MYSQL_PASSWORD
     ports:
       - 8889:8080
+
   annotation-database:
     container_name: madoc-annotation-database
     image: "garyttierneydi/elucidate-database:1.4.3-SNAPSHOT"
