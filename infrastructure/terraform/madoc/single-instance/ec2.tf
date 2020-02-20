@@ -1,3 +1,38 @@
+# Permissions for user_data
+data "aws_iam_policy_document" "assume_role_policy_ec2" {
+  statement {
+    actions = [
+      "ssm:DescribeParameters",
+      "ssm:GetParameter*",
+      "ssm:List*"
+    ]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_policy" "madoc_abilities" {
+  name        = "${terraform.workspace}-${var.prefix}-madoc-abilities"
+  description = "Policy for madoc EC2 user-data (read parametStore)"
+  policy      = data.aws_iam_policy_document.assume_role_policy_ec2.json
+}
+
+resource "aws_iam_role" "madoc_bootstrap" {
+  name               = "${terraform.workspace}-${var.prefix}-madoc"
+  assume_role_policy = data.aws_iam_policy_document.assume_role_policy_ec2.json
+
+  tags = local.common_tags
+}
+
+resource "aws_iam_instance_profile" "madoc" {
+  name = "${terraform.workspace}-${var.prefix}-madoc"
+  role = aws_iam_role.madoc_bootstrap.name
+}
+
+# EC2 Instance
 data "aws_ami" "ubuntu" {
   most_recent = true
 
@@ -14,14 +49,6 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
-resource "aws_ebs_volume" "mysql_data" {
-  availability_zone = var.availability_zone
-  size              = var.ebs_size
-  type              = "standard"
-
-  tags = local.common_tags
-}
-
 resource "aws_instance" "madoc" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
@@ -34,6 +61,8 @@ resource "aws_instance" "madoc" {
 
   user_data = file("./files/bootstrap_ec2.sh")
 
+  iam_instance_profile = aws_iam_instance_profile.madoc.name
+
   # docker-compose file
   provisioner "file" {
     source      = "../../../../docker-compose.madoc.yml"
@@ -45,6 +74,15 @@ resource "aws_instance" "madoc" {
     source      = "./files/systemd.conf"
     destination = "/etc/systemd/system/docker-compose-madoc"
   }
+
+  tags = local.common_tags
+}
+
+# EBS Instance
+resource "aws_ebs_volume" "mysql_data" {
+  availability_zone = var.availability_zone
+  size              = var.ebs_size
+  type              = "standard"
 
   tags = local.common_tags
 }
