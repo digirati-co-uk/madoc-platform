@@ -13,7 +13,7 @@ variable "region" {
 }
 
 variable availability_zone {
-  description = "Availability zone for EBS"
+  description = "Availability zone"
   default     = "eu-west-1a"
 }
 
@@ -25,4 +25,8 @@ variable ebs_size {
 variable "instance_type" {
   description = "Instance size of EC2 instance"
   default     = "t2.small"
+}
+
+variable "prefix" {
+  description = "Prefix to help uniquely identify resources"
 }
