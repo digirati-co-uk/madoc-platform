@@ -1,4 +1,5 @@
 services/madoc/.omeka/*
+services/madoc/omeka-s/
 .idea
 var/database/data
 services/madoc.php_cs.cache
@@ -10,3 +11,5 @@ var/files/*
 services/madoc/translations/*.po~
 services/madoc/translations/s/*
 theme.zip
+
+.terraform
