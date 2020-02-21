@@ -1,5 +1,25 @@
-# Permissions for user_data reading parameterstore
-data "aws_iam_policy_document" "assume_role_policy_ec2" {
+# IAM
+resource "aws_iam_role" "madoc" {
+  name = "${terraform.workspace}-${var.prefix}-madoc"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+
+data "aws_iam_policy_document" "madoc_abilities" {
   statement {
     actions = [
       "ssm:DescribeParameters",
@@ -7,29 +27,40 @@ data "aws_iam_policy_document" "assume_role_policy_ec2" {
       "ssm:List*"
     ]
 
-    principals {
-      type        = "Service"
-      identifiers = ["ec2.amazonaws.com"]
-    }
+    resources = [
+      "arn:aws:ssm:${var.region}:${local.account_id}:parameter/madoc/${var.prefix}/${terraform.workspace}*",
+    ]
   }
 }
 
 resource "aws_iam_policy" "madoc_abilities" {
   name        = "${terraform.workspace}-${var.prefix}-madoc-abilities"
-  description = "Policy for madoc EC2 user-data (read parametStore)"
-  policy      = data.aws_iam_policy_document.assume_role_policy_ec2.json
+  description = "Policy for madoc EC2 user-data (read parameterStore)"
+  policy      = data.aws_iam_policy_document.madoc_abilities.json
 }
 
-resource "aws_iam_role" "madoc_bootstrap" {
-  name               = "${terraform.workspace}-${var.prefix}-madoc"
-  assume_role_policy = data.aws_iam_policy_document.assume_role_policy_ec2.json
-
-  tags = local.common_tags
+resource "aws_iam_role_policy_attachment" "basic_abilities" {
+  role       = aws_iam_role.madoc.name
+  policy_arn = aws_iam_policy.madoc_abilities.arn
 }
 
 resource "aws_iam_instance_profile" "madoc" {
-  name = "${terraform.workspace}-${var.prefix}-madoc"
-  role = aws_iam_role.madoc_bootstrap.name
+  name = "${terraform.workspace}-${var.prefix}-madoc-instance"
+  role = aws_iam_role.madoc.name
+}
+
+# keypair
+data "template_file" "public_key" {
+  template = file("./files/key.pub")
+}
+
+resource "aws_key_pair" "auth" {
+  key_name   = "${terraform.workspace}-${var.prefix}"
+  public_key = data.template_file.public_key.rendered
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 # EC2 Instance
@@ -54,10 +85,12 @@ resource "aws_instance" "madoc" {
   instance_type = var.instance_type
 
   security_groups = [
-    aws_security_group.web.id
+    aws_security_group.web.id,
+    aws_security_group.ssh.id
 
   ]
   subnet_id = aws_subnet.public.id
+  key_name  = aws_key_pair.auth.key_name
 
   user_data = templatefile("./files/bootstrap_ec2.tmpl", { prefix = var.prefix, workspace = terraform.workspace })
 
@@ -73,6 +106,12 @@ resource "aws_instance" "madoc" {
   provisioner "file" {
     source      = "./files/systemd.conf"
     destination = "/etc/systemd/system/docker-compose-madoc"
+  }
+
+  connection {
+    private_key = file(var.key_pair_private_path)
+    password    = var.key_pair_private_key_passphrase
+    host        = self.public_ip
   }
 
   tags = local.common_tags
