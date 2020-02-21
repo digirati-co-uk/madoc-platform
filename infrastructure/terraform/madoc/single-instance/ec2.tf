@@ -1,4 +1,4 @@
-# Permissions for user_data
+# Permissions for user_data reading parameterstore
 data "aws_iam_policy_document" "assume_role_policy_ec2" {
   statement {
     actions = [
@@ -59,7 +59,7 @@ resource "aws_instance" "madoc" {
   ]
   subnet_id = aws_subnet.public.id
 
-  user_data = file("./files/bootstrap_ec2.sh")
+  user_data = templatefile("./files/bootstrap_ec2.tmpl", { prefix = var.prefix, workspace = terraform.workspace })
 
   iam_instance_profile = aws_iam_instance_profile.madoc.name
 

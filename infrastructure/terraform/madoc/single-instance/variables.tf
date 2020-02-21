@@ -4,6 +4,7 @@ locals {
     "environment" = terraform.workspace
     "terraform"   = true
     "system"      = "madoc"
+    "prefix"      = var.prefix
   }
 }
 
