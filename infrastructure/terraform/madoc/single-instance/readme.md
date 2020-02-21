@@ -7,6 +7,7 @@ Sample configuration for creating required infrastructure for hosting Madoc and 
 * [Terraform](https://www.terraform.io) 0.12+.
 * A value for the Terraform `prefix` variable will need to be specified. This is to help uniquely identify any resources. This will typically be the project/client name.
 * Any Madoc variables will need to be configured in [AWS Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html). See [environment variables](#Madoc-Environment-Variables), below, for more information.
+* Ensure there is a public key in `files\key.pub` for adding to the EC2 instance. If there is an existing key to be used comment out the `data.template_file` and `aws_key_pair.auth` resources and set the key name in `aws_instance.madoc.key_name` property.
 
 ## Usage
 

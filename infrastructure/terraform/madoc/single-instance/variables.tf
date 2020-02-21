@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 locals {
   # Common tags to be assigned to all resources
   common_tags = {
@@ -6,6 +8,8 @@ locals {
     "system"      = "madoc"
     "prefix"      = var.prefix
   }
+
+  account_id = data.aws_caller_identity.current.account_id
 }
 
 variable "region" {
@@ -30,4 +34,12 @@ variable "instance_type" {
 
 variable "prefix" {
   description = "Prefix to help uniquely identify resources"
+}
+
+variable key_pair_private_key_path {
+  description = "Path to private key for connecting to EC2 instance"
+}
+
+variable key_pair_private_key_passphrase {
+  description = "Passphrase for private key for connecting to EC2 instance"
 }
