@@ -11,5 +11,9 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io awscli
 sudo mkdir -p /etc/docker/compose/madoc/
 sudo mkdir -p /etc/systemd/system/
 
+# move files added by file provisioner
+sudo mv /tmp/docker-compose.yml /etc/docker/compose/madoc/docker-compose.yml
+sudo mv /tmp/docker-compose-madoc /etc/systemd/system/docker-compose-madoc
+
 # read parameterstore values and add to EnvironmentFile for systemd
 aws ssm get-parameters-by-path --path /madoc/${prefix}/${workspace} --region eu-west-1 --recursive --with-decryption --no-paginate --output text --query "Parameters[].[Name,'=',Value]" | sed 's/\/madoc\/${prefix}\/${workspace}\///g' | tr -d '[:blank:]' > /etc/madoc-environment

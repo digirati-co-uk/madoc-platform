@@ -57,10 +57,6 @@ data "template_file" "public_key" {
 resource "aws_key_pair" "auth" {
   key_name   = "${terraform.workspace}-${var.prefix}"
   public_key = data.template_file.public_key.rendered
-
-  lifecycle {
-    create_before_destroy = true
-  }
 }
 
 # EC2 Instance
@@ -99,18 +95,18 @@ resource "aws_instance" "madoc" {
   # docker-compose file
   provisioner "file" {
     source      = "../../../../docker-compose.madoc.yml"
-    destination = "/etc/docker/compose/madoc/docker-compose.yml"
+    destination = "/tmp/docker-compose.yml"
   }
 
   # systemd unit for docker-compose
   provisioner "file" {
     source      = "./files/systemd.conf"
-    destination = "/etc/systemd/system/docker-compose-madoc"
+    destination = "/tmp/docker-compose-madoc"
   }
 
   connection {
-    private_key = file(var.key_pair_private_path)
-    password    = var.key_pair_private_key_passphrase
+    private_key = file(var.key_pair_private_key_path)
+    user        = "ubuntu"
     host        = self.public_ip
   }
 
@@ -127,7 +123,8 @@ resource "aws_ebs_volume" "mysql_data" {
 }
 
 resource "aws_volume_attachment" "mysql_ebs_att" {
-  device_name = "/opt/mysql_data"
+  #device_name = "/opt/mysql_data"
+  device_name = "/dev/data"
   volume_id   = aws_ebs_volume.mysql_data.id
   instance_id = aws_instance.madoc.id
 }

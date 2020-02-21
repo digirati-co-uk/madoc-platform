@@ -39,7 +39,3 @@ variable "prefix" {
 variable key_pair_private_key_path {
   description = "Path to private key for connecting to EC2 instance"
 }
-
-variable key_pair_private_key_passphrase {
-  description = "Passphrase for private key for connecting to EC2 instance"
-}
