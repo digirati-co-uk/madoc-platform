@@ -32,6 +32,11 @@ variable "instance_type" {
   default     = "t2.small"
 }
 
+variable "docker_compose_file" {
+  description = "Relative path to compose file for Madoc"
+  default     = "../../../../docker-compose.madoc.yml"
+}
+
 variable "prefix" {
   description = "Prefix to help uniquely identify resources"
 }

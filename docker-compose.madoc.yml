@@ -1,8 +1,7 @@
 version: "3"
 services:
   omeka_ecosystem:
-    build:
-      context: services/madoc
+    image: digirati/madoc-platform:latest
     links:
       - mysql
     environment:
@@ -20,8 +19,7 @@ services:
 
   mysql:
     container_name: omeka_db
-    build:
-      context: services/madoc-database
+    image: digirati/madoc-platform-db:latest
     environment:
       - MYSQL_RANDOM_ROOT_PASSWORD=yes
       - MYSQL_DATABASE=${MYSQL_DATABASE}
