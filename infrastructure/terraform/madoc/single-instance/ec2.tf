@@ -78,10 +78,9 @@ resource "aws_instance" "madoc" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
 
-  security_groups = [
+  vpc_security_group_ids = [
     aws_security_group.web.id,
     aws_security_group.ssh.id
-
   ]
   subnet_id = aws_subnet.public.id
   key_name  = aws_key_pair.auth.key_name
@@ -92,7 +91,7 @@ resource "aws_instance" "madoc" {
 
   # docker-compose file
   provisioner "file" {
-    source      = "../../../../docker-compose.madoc.yml"
+    source      = var.docker_compose_file
     destination = "/tmp/docker-compose.yml"
   }
 

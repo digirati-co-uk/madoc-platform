@@ -7,6 +7,9 @@ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubun
 sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io awscli
 
+sudo curl -L "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/bin/docker-compose
+sudo chmod +x /usr/bin/docker-compose
+
 # mount the EBS volume and add to fstab so it mounts at boot
 mkdir -p /opt/data
 mkfs -t ext4 /dev/xvdf
