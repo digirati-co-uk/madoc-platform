@@ -7,13 +7,25 @@ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubun
 sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io awscli
 
+# mount the EBS volume and add to fstab so it mounts at boot
+mkdir -p /opt/data
+mkfs -t ext4 /dev/xvdf
+mount /dev/xvdf /opt/data
+echo /dev/xvdf /opt/data ext4 defaults,nofail 0 2 >> /etc/fstab
+
 # create dirs
 sudo mkdir -p /etc/docker/compose/madoc/
 sudo mkdir -p /etc/systemd/system/
+sudo mkdir -p /opt/data/mysql_data
+sudo mkdir -p /opt/data/omeka_files
 
 # move files added by file provisioner
 sudo mv /tmp/docker-compose.yml /etc/docker/compose/madoc/docker-compose.yml
-sudo mv /tmp/docker-compose-madoc /etc/systemd/system/docker-compose-madoc
+sudo mv /tmp/madoc.service /etc/systemd/system/madoc.service
 
 # read parameterstore values and add to EnvironmentFile for systemd
 aws ssm get-parameters-by-path --path /madoc/${prefix}/${workspace} --region eu-west-1 --recursive --with-decryption --no-paginate --output text --query "Parameters[].[Name,'=',Value]" | sed 's/\/madoc\/${prefix}\/${workspace}\///g' | tr -d '[:blank:]' > /etc/madoc-environment
+
+# start madoc systemd service
+sudo systemctl start madoc.service
+sudo systemctl enable madoc.service

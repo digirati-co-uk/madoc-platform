@@ -1,22 +1,20 @@
 # IAM
-resource "aws_iam_role" "madoc" {
-  name = "${terraform.workspace}-${var.prefix}-madoc"
+data "aws_iam_policy_document" "assume_role_policy_ec2" {
+  statement {
+    actions = [
+      "sts:AssumeRole",
+    ]
 
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "ec2.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
     }
-  ]
+  }
 }
-EOF
+
+resource "aws_iam_role" "madoc" {
+  name               = "${terraform.workspace}-${var.prefix}-madoc"
+  assume_role_policy = data.aws_iam_policy_document.assume_role_policy_ec2.json
 }
 
 data "aws_iam_policy_document" "madoc_abilities" {
@@ -98,10 +96,10 @@ resource "aws_instance" "madoc" {
     destination = "/tmp/docker-compose.yml"
   }
 
-  # systemd unit for docker-compose
+  # systemd unit for madoc via docker-compose
   provisioner "file" {
-    source      = "./files/systemd.conf"
-    destination = "/tmp/docker-compose-madoc"
+    source      = "./files/madoc.service"
+    destination = "/tmp/madoc.service"
   }
 
   connection {
@@ -114,7 +112,7 @@ resource "aws_instance" "madoc" {
 }
 
 # EBS Instance
-resource "aws_ebs_volume" "mysql_data" {
+resource "aws_ebs_volume" "madoc_data" {
   availability_zone = var.availability_zone
   size              = var.ebs_size
   type              = "standard"
@@ -122,9 +120,8 @@ resource "aws_ebs_volume" "mysql_data" {
   tags = local.common_tags
 }
 
-resource "aws_volume_attachment" "mysql_ebs_att" {
-  #device_name = "/opt/mysql_data"
-  device_name = "/dev/data"
-  volume_id   = aws_ebs_volume.mysql_data.id
+resource "aws_volume_attachment" "madoc_data_att" {
+  device_name = "/dev/sdf"
+  volume_id   = aws_ebs_volume.madoc_data.id
   instance_id = aws_instance.madoc.id
 }
