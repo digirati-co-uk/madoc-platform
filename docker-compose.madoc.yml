@@ -16,7 +16,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - /opt/omeka-files:/srv/omeka/files:Z
+      - /opt/data/omeka_files:/srv/omeka/files:Z
 
   mysql:
     container_name: omeka_db
@@ -29,4 +29,4 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_PORT=${MYSQL_PORT}
     volumes:
-      - /opt/mysql_data:/var/lib/mysql:Z
+      - /opt/data/mysql_data:/var/lib/mysql:Z
