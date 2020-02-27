@@ -1,34 +1,58 @@
 #! /bin/bash
 
 # ensure deps
-sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
+apt install -y apt-transport-https ca-certificates curl software-properties-common
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic test"
-sudo apt-get update
-sudo apt-get install -y docker-ce docker-ce-cli containerd.io awscli
+add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic test"
+apt-get update
+apt-get install -y docker-ce docker-ce-cli containerd.io awscli rsnapshot mysql-client-5.7
 
-sudo curl -L "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/bin/docker-compose
-sudo chmod +x /usr/bin/docker-compose
+curl -L "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/bin/docker-compose
+chmod +x /usr/bin/docker-compose
 
-# mount the EBS volume and add to fstab so it mounts at boot
+# mount the EBS volumes and add to fstab so they mount at boot
+# working
 mkdir -p /opt/data
-mkfs -t ext4 /dev/xvdf
+if blkid --probe --match-types ext4 /dev/xvdf ; then
+    mkfs -t ext4 /dev/xvdf
+fi
 mount /dev/xvdf /opt/data
 echo /dev/xvdf /opt/data ext4 defaults,nofail 0 2 >> /etc/fstab
 
+# backup
+mkdir -p /mnt/backup
+if blkid --probe --match-types ext4 /dev/xvdg ; then
+    mkfs -t ext4 /dev/xvdg
+fi
+mount /dev/xvdg /mnt/backup
+echo /dev/xvdg /mnt/backup ext4 defaults,nofail 0 2 >> /etc/fstab
+
 # create dirs
-sudo mkdir -p /etc/docker/compose/madoc/
-sudo mkdir -p /etc/systemd/system/
-sudo mkdir -p /opt/data/mysql_data
-sudo mkdir -p /opt/data/omeka_files
+mkdir -p /etc/docker/compose/madoc/
+mkdir -p /etc/systemd/system/
+mkdir -p /opt/data/mysql_data
+mkdir -p /opt/data/omeka_files
+
+# backup rsnapshot default conf
+cp /etc/rsnapshot.conf /etc/rsnapshot.conf.default
 
 # move files added by file provisioner
-sudo mv /tmp/docker-compose.yml /etc/docker/compose/madoc/docker-compose.yml
-sudo mv /tmp/madoc.service /etc/systemd/system/madoc.service
+mv /tmp/docker-compose.yml /etc/docker/compose/madoc/docker-compose.yml
+mv /tmp/madoc.service /etc/systemd/system/madoc.service
+mv /tmp/madoc-backup/*.timer /etc/systemd/system/
+mv /tmp/madoc-backup/*.service /etc/systemd/system/
+mv /tmp/madoc-backup/*.sh /usr/bin/
+mv /tmp/madoc-backup/rsnapshot.conf /etc/rsnapshot.conf
 
 # read parameterstore values and add to EnvironmentFile for systemd
 aws ssm get-parameters-by-path --path /madoc/${prefix}/${workspace} --region eu-west-1 --recursive --with-decryption --no-paginate --output text --query "Parameters[].[Name,'=',Value]" | sed 's/\/madoc\/${prefix}\/${workspace}\///g' | tr -d '[:blank:]' > /etc/madoc-environment
 
-# start madoc systemd service
-sudo systemctl start madoc.service
-sudo systemctl enable madoc.service
+# start systemd services
+systemctl start madoc.service
+systemctl enable madoc.service
+
+systemctl enable madoc-backup.timer
+systemctl enable --now madoc-db-backup-hourly.timer
+systemctl enable --now madoc-db-backup-daily.timer
+systemctl enable --now madoc-db-backup-weekly.timer
+systemctl enable --now madoc-db-backup-monthly.timer

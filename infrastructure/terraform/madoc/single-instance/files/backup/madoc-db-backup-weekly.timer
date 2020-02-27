@@ -1,0 +1,10 @@
+[Unit]
+Description=MySQL weekly backup
+
+[Timer]
+OnCalendar=Sunday  *-*-* 01:30:00
+Persistent=true
+Unit=madoc-db-backup@weekly.service
+
+[Install]
+WantedBy=timers.target

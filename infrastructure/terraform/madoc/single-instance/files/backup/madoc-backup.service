@@ -1,0 +1,10 @@
+[Unit]
+Description=Backup madoc files and mysql db
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/madoc-environment
+ExecStart=/usr/bin/backup-madoc.sh
+
+[Install]
+WantedBy=multi-user.target

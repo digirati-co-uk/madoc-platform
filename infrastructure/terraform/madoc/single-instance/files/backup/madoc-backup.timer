@@ -1,0 +1,12 @@
+[Unit]
+Description=Run madoc-backup every 15-30 minutes
+Requires=madoc-backup.service
+
+[Timer]
+Unit=madoc-backup.service
+# run hourly +/- 5min
+OnCalendar=*-*-* *:00:00
+RandomizedDelaySec=5m
+
+[Install]
+WantedBy=timers.target

@@ -13,7 +13,7 @@ data "aws_iam_policy_document" "assume_role_policy_ec2" {
 }
 
 resource "aws_iam_role" "madoc" {
-  name               = "${terraform.workspace}-${var.prefix}-madoc"
+  name               = "${var.prefix}-${terraform.workspace}-madoc"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy_ec2.json
 }
 
@@ -32,7 +32,7 @@ data "aws_iam_policy_document" "madoc_abilities" {
 }
 
 resource "aws_iam_policy" "madoc_abilities" {
-  name        = "${terraform.workspace}-${var.prefix}-madoc-abilities"
+  name        = "${var.prefix}-${terraform.workspace}-madoc-abilities"
   description = "Policy for madoc EC2 user-data (read parameterStore)"
   policy      = data.aws_iam_policy_document.madoc_abilities.json
 }
@@ -43,7 +43,7 @@ resource "aws_iam_role_policy_attachment" "basic_abilities" {
 }
 
 resource "aws_iam_instance_profile" "madoc" {
-  name = "${terraform.workspace}-${var.prefix}-madoc-instance"
+  name = "${var.prefix}-${terraform.workspace}-madoc-instance"
   role = aws_iam_role.madoc.name
 }
 
@@ -53,7 +53,7 @@ data "template_file" "public_key" {
 }
 
 resource "aws_key_pair" "auth" {
-  key_name   = "${terraform.workspace}-${var.prefix}"
+  key_name   = "${var.prefix}-${terraform.workspace}"
   public_key = data.template_file.public_key.rendered
 }
 
@@ -101,26 +101,52 @@ resource "aws_instance" "madoc" {
     destination = "/tmp/madoc.service"
   }
 
+  # systemd units and scripts for backup
+  provisioner "file" {
+    source      = "./files/backup/"
+    destination = "/tmp/madoc-backup/"
+  }
+
   connection {
     private_key = file(var.key_pair_private_key_path)
     user        = "ubuntu"
     host        = self.public_ip
   }
 
-  tags = local.common_tags
+  tags = merge(
+    local.common_tags,
+    map("Name", "${var.prefix}-${terraform.workspace}-madoc")
+  )
 }
 
-# EBS Instance
+# EBS Instances
 resource "aws_ebs_volume" "madoc_data" {
   availability_zone = var.availability_zone
   size              = var.ebs_size
-  type              = "standard"
+  type              = "gp2"
 
   tags = local.common_tags
+}
+
+resource "aws_ebs_volume" "madoc_backup" {
+  availability_zone = var.availability_zone
+  size              = var.ebs_backup_size
+  type              = "standard"
+
+  tags = merge(
+    local.common_tags,
+    map("Snapshot", "true")
+  )
 }
 
 resource "aws_volume_attachment" "madoc_data_att" {
   device_name = "/dev/sdf"
   volume_id   = aws_ebs_volume.madoc_data.id
+  instance_id = aws_instance.madoc.id
+}
+
+resource "aws_volume_attachment" "madoc_backup_att" {
+  device_name = "/dev/sdg"
+  volume_id   = aws_ebs_volume.madoc_backup.id
   instance_id = aws_instance.madoc.id
 }

@@ -1,0 +1,12 @@
+[Unit]
+Description=Madoc db backup (%I)
+
+[Service]
+EnvironmentFile=/etc/madoc-environment
+Type=oneshot
+Nice=19
+IOSchedulingClass=idle
+ExecStart=/usr/bin/rsnapshot %I
+
+[Install]
+WantedBy=multi-user.target

@@ -42,7 +42,6 @@ The following files are provided, these can be altered to suit exact requirement
 
 * provider.tf - basic provider + backend setup.
 * variables.tf - optional/required values for managing setup.
-* ec2.tf - creates and bootstraps EC2 instance with docker-compose file running under systemd. Creates EBS instance for storing mysql data.
-* backup.tf - infrastructure for backing up mysql data from EBS to S3 bucket.
+* ec2.tf - creates and bootstraps EC2 instance with docker-compose file running under systemd. Creates EBS instance for storing data.
+* backup.tf - infrastructure for taking EBS snapshots.
 * networking.tf - route53 infrastructure for routing traffic to machine.
-* output.tf - 

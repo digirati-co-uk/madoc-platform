@@ -1,0 +1,11 @@
+[Unit]
+Description=MySQL hourly backup
+
+[Timer]
+# Run hourly
+OnCalendar=*-*-* *:00:00
+Persistent=true
+Unit=madoc-db-backup@hourly.service
+
+[Install]
+WantedBy=timers.target

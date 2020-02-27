@@ -1,0 +1,10 @@
+[Unit]
+Description=MySQL daily backup
+
+[Timer]
+OnCalendar=02:30
+Persistent=true
+Unit=madoc-db-backup@daily.service
+
+[Install]
+WantedBy=timers.target
