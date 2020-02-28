@@ -11,5 +11,6 @@ var/files/*
 services/madoc/translations/*.po~
 services/madoc/translations/s/*
 theme.zip
+key.pub
 
 .terraform
