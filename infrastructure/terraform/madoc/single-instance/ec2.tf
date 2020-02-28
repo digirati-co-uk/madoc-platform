@@ -103,8 +103,8 @@ resource "aws_instance" "madoc" {
 
   # systemd units and scripts for backup
   provisioner "file" {
-    source      = "./files/backup/"
-    destination = "/tmp/madoc-backup/"
+    source      = "./files/backup"
+    destination = "/tmp"
   }
 
   connection {
@@ -143,10 +143,67 @@ resource "aws_volume_attachment" "madoc_data_att" {
   device_name = "/dev/sdf"
   volume_id   = aws_ebs_volume.madoc_data.id
   instance_id = aws_instance.madoc.id
+  #force_detach = true
 }
 
 resource "aws_volume_attachment" "madoc_backup_att" {
   device_name = "/dev/sdg"
   volume_id   = aws_ebs_volume.madoc_backup.id
   instance_id = aws_instance.madoc.id
+  #force_detach = true
+}
+
+# see https://github.com/terraform-providers/terraform-provider-aws/issues/1991
+resource "null_resource" "unmount_data_drive" {
+  triggers = {
+    public_ip = aws_instance.madoc.public_ip
+  }
+
+  depends_on = [aws_volume_attachment.madoc_data_att, aws_instance.madoc]
+
+  provisioner "remote-exec" {
+    when       = destroy
+    on_failure = continue
+    connection {
+      type        = "ssh"
+      agent       = false
+      host        = self.triggers.public_ip
+      user        = "ubuntu"
+      private_key = file(var.key_pair_private_key_path)
+    }
+    inline = [
+      "sudo systemctl stop madoc.service",
+      "sudo umount /opt/data",
+      "sudo sed -i '/opt\\/data/d' /etc/fstab"
+    ]
+  }
+}
+
+resource "null_resource" "unmount_backup_drive" {
+  triggers = {
+    public_ip = aws_instance.madoc.public_ip
+  }
+
+  depends_on = [aws_volume_attachment.madoc_backup_att, aws_instance.madoc]
+
+  provisioner "remote-exec" {
+    when       = destroy
+    on_failure = continue
+    connection {
+      type        = "ssh"
+      agent       = false
+      host        = self.triggers.public_ip
+      user        = "ubuntu"
+      private_key = file(var.key_pair_private_key_path)
+    }
+    inline = [
+      "sudo systemctl disable madoc-backup.timer",
+      "sudo systemctl disable madoc-db-backup-hourly.timer",
+      "sudo systemctl disable madoc-db-backup-daily.timer",
+      "sudo systemctl disable madoc-db-backup-weekly.timer",
+      "sudo systemctl disable madoc-db-backup-monthly.timer",
+      "sudo umount /mnt/backup",
+      "sudo sed -i '/mnt\\/backup/d' /etc/fstab"
+    ]
+  }
 }
