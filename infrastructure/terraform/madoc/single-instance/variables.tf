@@ -27,7 +27,7 @@ variable availability_zone {
 variable ebs_size {
   type        = number
   description = "Size of EBS volume, in GB"
-  default     = 30
+  default     = 20
 }
 
 variable ebs_backup_size {

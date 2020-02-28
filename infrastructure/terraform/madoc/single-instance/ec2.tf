@@ -125,7 +125,10 @@ resource "aws_ebs_volume" "madoc_data" {
   size              = var.ebs_size
   type              = "gp2"
 
-  tags = local.common_tags
+  tags = merge(
+    local.common_tags,
+    map("Name", "${var.prefix}-${terraform.workspace}-madoc-data")
+  )
 }
 
 resource "aws_ebs_volume" "madoc_backup" {
@@ -135,22 +138,23 @@ resource "aws_ebs_volume" "madoc_backup" {
 
   tags = merge(
     local.common_tags,
-    map("Snapshot", "true")
+    map("Snapshot", "true"),
+    map("Name", "${var.prefix}-${terraform.workspace}-madoc-backup")
   )
 }
 
 resource "aws_volume_attachment" "madoc_data_att" {
-  device_name = "/dev/sdf"
-  volume_id   = aws_ebs_volume.madoc_data.id
-  instance_id = aws_instance.madoc.id
-  #force_detach = true
+  device_name  = "/dev/sdf"
+  volume_id    = aws_ebs_volume.madoc_data.id
+  instance_id  = aws_instance.madoc.id
+  force_detach = true
 }
 
 resource "aws_volume_attachment" "madoc_backup_att" {
-  device_name = "/dev/sdg"
-  volume_id   = aws_ebs_volume.madoc_backup.id
-  instance_id = aws_instance.madoc.id
-  #force_detach = true
+  device_name  = "/dev/sdg"
+  volume_id    = aws_ebs_volume.madoc_backup.id
+  instance_id  = aws_instance.madoc.id
+  force_detach = true
 }
 
 # see https://github.com/terraform-providers/terraform-provider-aws/issues/1991

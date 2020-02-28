@@ -45,7 +45,7 @@ resource "aws_iam_role_policy" "dlm_lifecycle" {
 
 # DLM Policy
 resource "aws_dlm_lifecycle_policy" "ebs_backup_policy" {
-  description        = "DLM Policy for backing up Madoc EBS volume"
+  description        = "Backing up Madoc EBS volume ${var.prefix}-${terraform.workspace}"
   execution_role_arn = aws_iam_role.dlm_lifecycle_role.arn
   state              = "ENABLED"
 
