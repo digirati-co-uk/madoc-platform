@@ -85,7 +85,7 @@ resource "aws_instance" "madoc" {
   subnet_id = aws_subnet.public.id
   key_name  = aws_key_pair.auth.key_name
 
-  user_data = templatefile("./files/bootstrap_ec2.tmpl", { prefix = var.prefix, workspace = terraform.workspace })
+  user_data = templatefile("./files/bootstrap_ec2.tmpl", { prefix = var.prefix, workspace = terraform.workspace, region = var.region })
 
   iam_instance_profile = aws_iam_instance_profile.madoc.name
 

@@ -50,7 +50,7 @@ chmod +rwx /usr/bin/backup-mysql.sh
 mv /tmp/backup/rsnapshot.conf /etc/rsnapshot.conf
 
 # read parameterstore values and add to EnvironmentFile for systemd
-aws ssm get-parameters-by-path --path /madoc/${prefix}/${workspace} --region eu-west-1 --recursive --with-decryption --no-paginate --output text --query "Parameters[].[Name,'=',Value]" | sed 's/\/madoc\/${prefix}\/${workspace}\///g' | tr -d '[:blank:]' > /etc/madoc-environment
+aws ssm get-parameters-by-path --path /madoc/${prefix}/${workspace} --region ${region} --recursive --with-decryption --no-paginate --output text --query "Parameters[].[Name,'=',Value]" | sed 's/\/madoc\/${prefix}\/${workspace}\///g' | tr -d '[:blank:]' > /etc/madoc-environment
 
 # start systemd services
 systemctl start madoc.service
