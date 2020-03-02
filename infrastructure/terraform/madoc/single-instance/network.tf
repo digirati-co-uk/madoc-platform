@@ -6,19 +6,6 @@ resource "aws_vpc" "vpc" {
   tags = local.common_tags
 }
 
-resource "aws_eip" "nat" {
-  vpc = true
-
-  tags = local.common_tags
-}
-
-resource "aws_nat_gateway" "gw" {
-  allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.public.id
-
-  depends_on = [aws_internet_gateway.main]
-}
-
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.vpc.id
 
