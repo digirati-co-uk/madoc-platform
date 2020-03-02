@@ -6,3 +6,4 @@ services/sorting-room/docs
 files
 database/data
 bare
+node_modules

@@ -1,0 +1,7 @@
+{
+  "name": "madoc-platform",
+  "private": true,
+  "workspaces": [
+    "services/tasks-api"
+  ]
+}

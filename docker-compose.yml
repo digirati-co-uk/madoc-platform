@@ -46,6 +46,12 @@ services:
       - ./services/madoc/config/omeka-app/application.config.php:/srv/omeka/application/config/application.config.php
       - ./services/madoc/translations:/srv/omeka/translations
 
+  shared-postgres:
+    build:
+      context: services/shared-postgres
+    ports:
+      - "5400:5432"
+
   sorting-room:
     build:
       context: services/sorting-room

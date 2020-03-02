@@ -1,0 +1,23 @@
+import { TypedRouter } from './utility/typed-router';
+import { indexPage } from './routes/index-page';
+import { getSingleTask } from './routes/get-single-task';
+import { updateSingleTask } from './routes/update-single-task';
+import { deleteTask } from './routes/delete-task';
+import { createSubtask } from './routes/create-subtask';
+import { getAllTasks } from './routes/get-all-tasks';
+import { createTask } from './routes/create-task';
+
+export const router = new TypedRouter({
+  // Single task.
+  'get-single-task': [TypedRouter.GET, '/tasks/:id', getSingleTask],
+  'update-single-task': [TypedRouter.PATCH, '/tasks/:id', updateSingleTask],
+  'delete-task': [TypedRouter.DELETE, '/tasks/:id', deleteTask],
+  'create-subtask': [TypedRouter.POST, '/tasks/:id/subtasks', createSubtask],
+
+  // All tasks
+  'get-all-tasks': [TypedRouter.GET, '/tasks', getAllTasks],
+  'create-task': [TypedRouter.POST, '/tasks', createTask],
+
+  // Other.
+  'index-page': [TypedRouter.GET, '/', indexPage],
+});
