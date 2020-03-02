@@ -119,6 +119,16 @@ resource "aws_instance" "madoc" {
   )
 }
 
+resource "aws_eip" "madoc" {
+  instance = aws_instance.madoc.id
+  vpc      = true
+
+  tags = merge(
+    local.common_tags,
+    map("Name", "${var.prefix}-${terraform.workspace}-madoc")
+  )
+}
+
 # EBS Instances
 resource "aws_ebs_volume" "madoc_data" {
   availability_zone = var.availability_zone
@@ -160,7 +170,7 @@ resource "aws_volume_attachment" "madoc_backup_att" {
 # see https://github.com/terraform-providers/terraform-provider-aws/issues/1991
 resource "null_resource" "unmount_data_drive" {
   triggers = {
-    public_ip = aws_instance.madoc.public_ip
+    public_ip = aws_eip.madoc.public_ip
   }
 
   depends_on = [aws_volume_attachment.madoc_data_att, aws_instance.madoc]
@@ -185,7 +195,7 @@ resource "null_resource" "unmount_data_drive" {
 
 resource "null_resource" "unmount_backup_drive" {
   triggers = {
-    public_ip = aws_instance.madoc.public_ip
+    public_ip = aws_eip.madoc.public_ip
   }
 
   depends_on = [aws_volume_attachment.madoc_backup_att, aws_instance.madoc]
