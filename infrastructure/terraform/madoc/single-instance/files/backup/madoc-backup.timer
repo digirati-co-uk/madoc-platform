@@ -5,7 +5,7 @@ Requires=madoc-backup.service
 [Timer]
 Unit=madoc-backup.service
 # run hourly +/- 5min
-OnCalendar=*-*-* *:00:00
+OnCalendar=hourly
 RandomizedDelaySec=5m
 
 [Install]
