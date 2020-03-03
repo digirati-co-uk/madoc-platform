@@ -1,10 +1,11 @@
 import Router from '@koa/router';
 import koaBody from 'koa-body';
 import { requestBody } from '../middleware/request-body';
-
 import { RouteMiddleware } from '../types';
 
-export type RouteWithParams<Props, Body = any> = [string, string, RouteMiddleware<Props, Body>];
+export type RouteWithParams<Props, Body = any> =
+  | [string, string, RouteMiddleware<Props, Body>]
+  | [string, string, RouteMiddleware<Props, Body>, string];
 
 export type GetRoute<
   Routes extends { [key in RouteName]: Value },
@@ -33,20 +34,20 @@ export class TypedRouter<
   constructor(routes: MappedRoutes) {
     const routeNames = Object.keys(routes) as Routes[];
     for (const route of routeNames) {
-      const [method, path, func] = routes[route];
+      const [method, path, func, schemaName] = routes[route];
 
       switch (method) {
         case TypedRouter.PUT:
           // @ts-ignore
-          this.router.put(route, path, koaBody(), requestBody, func);
+          this.router.put(route, path, koaBody(), requestBody(schemaName), func);
           break;
         case TypedRouter.POST:
           // @ts-ignore
-          this.router.post(route, path, koaBody(), requestBody, func);
+          this.router.post(route, path, koaBody(), requestBody(schemaName), func);
           break;
         case TypedRouter.PATCH:
           // @ts-ignore
-          this.router.patch(route, path, koaBody(), requestBody, func);
+          this.router.patch(route, path, koaBody(), requestBody(schemaName), func);
           break;
         case TypedRouter.GET:
           // @ts-ignore

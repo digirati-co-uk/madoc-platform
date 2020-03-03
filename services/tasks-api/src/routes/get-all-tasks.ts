@@ -1,7 +1,32 @@
 import { RouteMiddleware } from '../types';
+import { NotFoundError, sql } from 'slonik';
 
 export const getAllTasks: RouteMiddleware = async context => {
-  context.response.body = await context.connection.many(
-    context.sql.TaskSnippet`SELECT t.id, t.name, t.status from tasks t WHERE parent_task IS NULL`
-  );
+  try {
+    if (context.state.jwt.scope.indexOf('tasks.admin') === -1) {
+      const userId = context.state.jwt.user.id;
+      // Not an admin.
+      context.response.body = await context.connection.many(
+        sql`
+        SELECT t.id, t.name, t.status 
+        FROM tasks t 
+        WHERE t.parent_task IS NULL 
+          AND (t.creator_id = ${userId} OR t.assignee_id = ${userId})`
+      );
+      return;
+    }
+
+    context.response.body = await context.connection.many(
+      sql`
+        SELECT t.id, t.name, t.status 
+        FROM tasks t 
+        WHERE t.parent_task IS NULL`
+    );
+  } catch (e) {
+    if (e instanceof NotFoundError) {
+      context.response.body = [];
+    } else {
+      throw e;
+    }
+  }
 };

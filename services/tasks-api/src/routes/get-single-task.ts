@@ -1,18 +1,30 @@
-import { FullSingleTask, RouteMiddleware } from '../types';
+import { RouteMiddleware } from '../types';
+import { mapSingleTask } from '../utility/map-single-task';
+import { sql } from 'slonik';
 
-export const getSingleTask: RouteMiddleware<{ id: string }> = async ({ params, connection, sql, response }) => {
-  const singleTask = await connection.one(sql.SingleTask`SELECT * FROM tasks WHERE id = ${params.id}`);
+export const getSingleTask: RouteMiddleware<{ id: string }> = async context => {
+  if (context.state.jwt.scope.indexOf('tasks.admin') === -1) {
+    const userId = context.state.jwt.user.id;
+    // Not an admin.
+    const singleTask = await context.connection.one(
+      sql`
+        SELECT * 
+        FROM tasks t 
+        WHERE id = ${context.params.id}
+        AND (t.creator_id = ${userId} OR t.assignee_id = ${userId})`
+    );
 
-  const { id, creator_id, parent_task, creator_name, ...args } = singleTask;
+    context.response.body = mapSingleTask(singleTask);
 
-  response.body = {
-    id: id,
-    ...args,
-    creator: {
-      id: creator_id,
-      name: creator_name,
-    },
-    parent_task: parent_task,
-    subtasks: [],
-  } as FullSingleTask;
+    return;
+  }
+
+  const singleTask = await context.connection.one(
+    sql`
+        SELECT * 
+        FROM tasks t 
+        WHERE id = ${context.params.id}`
+  );
+
+  context.response.body = mapSingleTask(singleTask);
 };

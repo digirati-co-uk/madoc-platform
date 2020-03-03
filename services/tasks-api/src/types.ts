@@ -2,20 +2,28 @@ import { RouterParamContext } from '@koa/router';
 import * as Koa from 'koa';
 import { router } from './router';
 import { DatabasePoolConnectionType } from 'slonik';
-import { sql } from './database/sql';
+import { Ajv } from 'ajv';
+
+export type Scopes = 'tasks.admin' | 'tasks.create' | 'tasks.progress';
 
 export interface ApplicationState {
   // User.
   // JWT.
   // Role.
   // etc...
-  jwtToken: any;
+  jwt: {
+    scope: Scopes[];
+    user: {
+      name: string;
+      id: string;
+    };
+  };
 }
 
 export interface ApplicationContext {
   routes: typeof router;
   connection: DatabasePoolConnectionType;
-  sql: typeof sql;
+  ajv: Ajv;
 }
 
 export type RouteMiddleware<Params = any, Body = any> = Koa.Middleware<
@@ -25,28 +33,3 @@ export type RouteMiddleware<Params = any, Body = any> = Koa.Middleware<
       requestBody: Body;
     }
 >;
-
-export type SingleTaskListing = {
-  id: string;
-  name: string;
-  status: number;
-  subtasks: number;
-};
-
-export type FullSingleTask = {
-  id: string;
-  name: string;
-  description: string;
-  type: string;
-  subject: string;
-  status: number;
-  subtasks: Array<{ name: string; id: string }>;
-  creator: {
-    id: string;
-    name: string;
-  };
-  parent_task: string;
-  parameters: any[];
-  state: any;
-  created_at: string;
-};

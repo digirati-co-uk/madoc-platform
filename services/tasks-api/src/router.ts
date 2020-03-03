@@ -8,15 +8,15 @@ import { getAllTasks } from './routes/get-all-tasks';
 import { createTask } from './routes/create-task';
 
 export const router = new TypedRouter({
-  // Single task.
-  'get-single-task': [TypedRouter.GET, '/tasks/:id', getSingleTask],
-  'update-single-task': [TypedRouter.PATCH, '/tasks/:id', updateSingleTask],
-  'delete-task': [TypedRouter.DELETE, '/tasks/:id', deleteTask],
-  'create-subtask': [TypedRouter.POST, '/tasks/:id/subtasks', createSubtask],
-
   // All tasks
   'get-all-tasks': [TypedRouter.GET, '/tasks', getAllTasks],
-  'create-task': [TypedRouter.POST, '/tasks', createTask],
+  'create-task': [TypedRouter.POST, '/tasks', createTask, 'create-task'],
+
+  // Single task.
+  'get-single-task': [TypedRouter.GET, '/tasks/:id', getSingleTask],
+  'update-single-task': [TypedRouter.PATCH, '/tasks/:id', updateSingleTask, 'update-task'],
+  'delete-task': [TypedRouter.DELETE, '/tasks/:id', deleteTask],
+  'create-subtask': [TypedRouter.POST, '/tasks/:id/subtasks', createSubtask, 'create-task'],
 
   // Other.
   'index-page': [TypedRouter.GET, '/', indexPage],
