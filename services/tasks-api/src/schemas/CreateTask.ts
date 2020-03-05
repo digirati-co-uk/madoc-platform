@@ -54,6 +54,11 @@ export type CreateTask = {
      */
     id: string;
     /**
+     * Optional flat to indicate that the assignee is a service, not a user. Can be used to prevent the assignee being
+     * changed.
+     */
+    is_service?: boolean;
+    /**
      * Optional name of the user assigned, should be added if known.
      */
     name?: string;

@@ -1,5 +1,4 @@
 import { TypedRouter } from './utility/typed-router';
-import { indexPage } from './routes/index-page';
 import { getSingleTask } from './routes/get-single-task';
 import { updateSingleTask } from './routes/update-single-task';
 import { deleteTask } from './routes/delete-task';
@@ -17,7 +16,4 @@ export const router = new TypedRouter({
   'update-single-task': [TypedRouter.PATCH, '/tasks/:id', updateSingleTask, 'update-task'],
   'delete-task': [TypedRouter.DELETE, '/tasks/:id', deleteTask],
   'create-subtask': [TypedRouter.POST, '/tasks/:id/subtasks', createSubtask, 'create-task'],
-
-  // Other.
-  'index-page': [TypedRouter.GET, '/', indexPage],
 });

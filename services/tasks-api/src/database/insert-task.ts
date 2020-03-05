@@ -3,7 +3,7 @@ import { CreateTask } from '../schemas/CreateTask';
 
 export function insertTask(
   connection: DatabasePoolConnectionType,
-  { id, task, user }: { id: string; task: CreateTask; user: { id: string; name: string } }
+  { id, task, user, context }: { id: string; task: CreateTask; user: { id: string; name: string }; context: string[] }
 ) {
   return connection.query(
     sql`INSERT INTO tasks (
@@ -20,7 +20,9 @@ export function insertTask(
        creator_name, 
        assignee_id, 
        assignee_name, 
-       status_text
+       assignee_is_service,
+       status_text,
+       context
     ) VALUES (
       ${id},
       ${task.name},
@@ -35,7 +37,9 @@ export function insertTask(
       ${user.name},
       ${task.assignee ? task.assignee.id : null},
       ${task.assignee ? task.assignee.name || null : null},
-      ${task.status_text || 'no status'}
+      ${task.assignee ? task.assignee.is_service || false : false},
+      ${task.status_text || 'no status'},
+      ${JSON.stringify(context)}
     )`
   );
 }

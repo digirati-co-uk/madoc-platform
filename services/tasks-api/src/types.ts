@@ -13,6 +13,7 @@ export interface ApplicationState {
   // etc...
   jwt: {
     scope: Scopes[];
+    context: string[];
     user: {
       name: string;
       id: string;

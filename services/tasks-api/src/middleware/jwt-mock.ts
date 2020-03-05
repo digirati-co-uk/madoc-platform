@@ -2,6 +2,7 @@ import { Middleware } from 'koa';
 
 export const jwtMock: Middleware = async (context, next) => {
   context.state.jwt = {
+    context: ['urn:madoc:1'],
     scope: ['tasks.admin'],
     user: {
       name: 'Test Admin User',

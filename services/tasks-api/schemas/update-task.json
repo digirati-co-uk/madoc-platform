@@ -10,6 +10,10 @@
                     "description": "Id of the user",
                     "type": "string"
                 },
+                "is_service": {
+                    "description": "Optional flat to indicate that the assignee is a service, not a user. Can be used to prevent the assignee being\nchanged.",
+                    "type": "boolean"
+                },
                 "name": {
                     "description": "Optional name of the user assigned, should be added if known.",
                     "type": "string"

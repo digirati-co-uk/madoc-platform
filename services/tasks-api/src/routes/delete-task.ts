@@ -7,7 +7,10 @@ export const deleteTask: RouteMiddleware<{ id: string }> = async context => {
     throw new NotFound();
   }
 
-  const { rowCount } = await context.connection.query(sql`DELETE FROM tasks WHERE id = ${context.params.id}`);
+  const { rowCount } = await context.connection.query(sql`
+    DELETE FROM tasks 
+    WHERE id = ${context.params.id}
+  `);
 
   if (rowCount === 0) {
     context.response.status = 404;

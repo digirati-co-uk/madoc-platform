@@ -27,6 +27,7 @@ export const createSubtask: RouteMiddleware<{ id: string }, CreateTask> = async 
     id,
     task,
     user: context.state.jwt.user,
+    context: context.state.jwt.context,
   });
 
   // @todo change this to return the task.

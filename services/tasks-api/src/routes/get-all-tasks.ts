@@ -11,7 +11,8 @@ export const getAllTasks: RouteMiddleware = async context => {
         SELECT t.id, t.name, t.status 
         FROM tasks t 
         WHERE t.parent_task IS NULL 
-          AND (t.creator_id = ${userId} OR t.assignee_id = ${userId})`
+          AND (t.creator_id = ${userId} OR t.assignee_id = ${userId})
+          AND context ?& ${sql.array(context.state.jwt.context, 'text')}`
       );
       return;
     }
@@ -20,7 +21,8 @@ export const getAllTasks: RouteMiddleware = async context => {
       sql`
         SELECT t.id, t.name, t.status 
         FROM tasks t 
-        WHERE t.parent_task IS NULL`
+        WHERE t.parent_task IS NULL
+          AND context ?& ${sql.array(context.state.jwt.context, 'text')}`
     );
   } catch (e) {
     if (e instanceof NotFoundError) {
