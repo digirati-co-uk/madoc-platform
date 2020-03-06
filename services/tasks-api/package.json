@@ -6,6 +6,7 @@
   "author": "Stephen Fraser <stephen.fraser@digirati.com>",
   "scripts": {
     "start": "nodemon",
+    "build": "NODE_ENV=production tsc -p .",
     "generate-create-task-schema": "typescript-json-schema ./src/schemas/CreateTask.ts CreateTask -o ./schemas/create-task.json --required --noExtraProps",
     "generate-update-task-schema": "typescript-json-schema ./src/schemas/UpdateTask.ts UpdateTask -o ./schemas/update-task.json --required --noExtraProps"
   },

@@ -15,6 +15,7 @@ services:
       - sorting-room
       - madoc
       - gateway-redis
+      - tasks-api
     volumes:
       - ./services/gateway/services:/opt/tyk-gateway/apps
 
@@ -45,6 +46,22 @@ services:
       - ./var/files:/srv/omeka/files
       - ./services/madoc/config/omeka-app/application.config.php:/srv/omeka/application/config/application.config.php
       - ./services/madoc/translations:/srv/omeka/translations
+
+  tasks-api:
+    build:
+      context: services/tasks-api
+    environment:
+      - SERVER_PORT=3000
+      - DATABASE_HOST=shared-postgres
+      - DATABASE_NAME=tasks_api
+      - DATABASE_PORT=5432
+      - DATABASE_USER=tasks_api
+      - DATABASE_SCHEMA=public
+      - DATABASE_PASSWORD=tasks_api_password
+    ports:
+      - "8105:3000"
+    links:
+      - shared-postgres
 
   shared-postgres:
     build:
