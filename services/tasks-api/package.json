@@ -5,7 +5,7 @@
   "license": "MIT",
   "author": "Stephen Fraser <stephen.fraser@digirati.com>",
   "scripts": {
-    "start": "nodemon",
+    "start": "pm2 install typescript && pm2 start ecosystem.config.js --watch --only tasks-api-dev --no-daemon",
     "build": "NODE_ENV=production tsc -p .",
     "generate-create-task-schema": "typescript-json-schema ./src/schemas/CreateTask.ts CreateTask -o ./schemas/create-task.json --required --noExtraProps",
     "generate-update-task-schema": "typescript-json-schema ./src/schemas/UpdateTask.ts UpdateTask -o ./schemas/update-task.json --required --noExtraProps"

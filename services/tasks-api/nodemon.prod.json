@@ -1,4 +1,0 @@
-{
-  "ext": "js",
-  "exec": "node ./lib/index.js"
-}

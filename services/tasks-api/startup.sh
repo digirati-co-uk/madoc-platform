@@ -1,2 +1,0 @@
-node migrate up
-nodemon

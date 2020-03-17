@@ -1,11 +1,8 @@
 const { setupSlonikMigrator } = require('@slonik/migrator');
 const { createPool } = require('slonik');
-const nodeMon = require('nodemon');
-
-const env = nodeMon.env ? nodeMon.env : process.env;
 
 const slonik = createPool(
-  `postgres://${env.DATABASE_USER}:${env.DATABASE_PASSWORD}@${env.DATABASE_HOST}:${env.DATABASE_PORT}/${env.DATABASE_NAME}`
+  `postgres://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE_HOST}:${process.env.DATABASE_PORT}/${process.env.DATABASE_NAME}`
 );
 
 const migrator = setupSlonikMigrator({

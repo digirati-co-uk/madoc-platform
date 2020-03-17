@@ -7,10 +7,13 @@ import { TypedRouter } from './utility/typed-router';
 import { createPostgresPool } from './database/create-postgres-pool';
 import { dbConnection } from './middleware/db-connection';
 import { jwtMock } from './middleware/jwt-mock';
+import { migrate } from './migrate';
 
 export async function createApp(router: TypedRouter<any, any>) {
   const app = new Koa();
   const pool = createPostgresPool();
+
+  await migrate();
 
   app.context.routes = router;
 

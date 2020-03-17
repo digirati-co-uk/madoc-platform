@@ -1,0 +1,28 @@
+{
+  "name": "Model API",
+  "api_id": "5",
+  "org_id": "default",
+  "definition": {
+    "location": "",
+    "key": ""
+  },
+  "use_keyless": true,
+  "auth": {
+    "auth_header_name": ""
+  },
+  "version_data": {
+    "not_versioned": true,
+    "versions": {
+      "Default": {
+        "name": "Default",
+        "expires": "3000-01-02 15:04"
+      }
+    }
+  },
+  "proxy": {
+    "listen_path": "/api/crowdsourcing",
+    "target_url": "http://model-api:3000/api/crowdsourcing/",
+    "strip_listen_path": true
+  },
+  "do_not_track": true
+}

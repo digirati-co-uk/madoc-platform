@@ -11,3 +11,4 @@ services/madoc/translations/*.po~
 services/madoc/translations/s/*
 theme.zip
 node_modules
+var/shared-database/*

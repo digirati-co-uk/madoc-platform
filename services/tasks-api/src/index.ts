@@ -13,5 +13,6 @@ async function main() {
 }
 
 main().catch(err => {
-  throw err;
+  console.error(err);
+  process.exit(1);
 });
