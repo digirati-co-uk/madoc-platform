@@ -15,6 +15,8 @@ services:
       - sorting-room
       - madoc
       - gateway-redis
+      - tasks-api
+      - model-api
     volumes:
       - ./services/gateway/services:/opt/tyk-gateway/apps
 
@@ -46,6 +48,50 @@ services:
       - ./services/madoc/config/omeka-app/application.config.php:/srv/omeka/application/config/application.config.php
       - ./services/madoc/translations:/srv/omeka/translations
 
+  tasks-api:
+    build:
+      context: services/tasks-api
+    environment:
+      - SERVER_PORT=3000
+      - DATABASE_HOST=shared-postgres
+      - DATABASE_NAME=tasks_api
+      - DATABASE_PORT=5432
+      - DATABASE_USER=tasks_api
+      - DATABASE_SCHEMA=public
+      - DATABASE_PASSWORD=tasks_api_password
+    ports:
+      - "8105:3000"
+    links:
+      - shared-postgres
+
+  model-api:
+    image: digirati/capture-models:v0.1.1
+    environment:
+      - SERVER_PORT=3000
+      - DATABASE_HOST=shared-postgres
+      - DATABASE_NAME=model_api
+      - DATABASE_PORT=5432
+      - DATABASE_USER=model_api
+      - DATABASE_SCHEMA=public
+      - DATABASE_PASSWORD=model_api_password
+    ports:
+      - "8106:3000"
+    links:
+      - shared-postgres
+    restart: "always"
+
+  shared-postgres:
+    build:
+      context: services/shared-postgres
+    environment:
+      - POSTGRES_PASSWORD=postgres_password
+      - TASKS_API_PASSWORD=tasks_api_password
+      - MODEL_API_PASSWORD=model_api_password
+    ports:
+      - "5400:5432"
+    volumes:
+      - ./var/shared-database:/var/lib/postgresql/data
+
   sorting-room:
     build:
       context: services/sorting-room
@@ -62,66 +108,66 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_PORT=${MYSQL_PORT}
-#    volumes:
+    volumes:
 #      - ./var/database/sql:/docker-entrypoint-initdb.d/
-#      - ./var/database/data:/var/lib/mysql/
+      - ./var/database/data:/var/lib/mysql/
     ports:
       - "3334:3306"
 
   # External services
-
-  annotation-server:
-    image: "garyttierneydi/elucidate-server:1.4.3-SNAPSHOT"
-    links:
-      - annotation-database:database
-    environment:
-      - DATABASE_USER=postgres
-      - CATALINA_OPTS=-Ddb.url=jdbc:postgresql://database:5432/annotations -Ddb.user="postgres" -Ddb.password=$MYSQL_PASSWORD
-      - BASE_HOST=localhost
-      - BASE_PORT=8889
-    ports:
-      - 8889:8080
-
-  annotation-database:
-    image: "garyttierneydi/elucidate-database:1.4.3-SNAPSHOT"
-    environment:
-      - POSTGRES_DB=annotations
-
-  search-elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.7.2
-    environment:
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "discovery.type=single-node"
-    ports:
-      - 9203:9200
-      - 9204:9201
-
-  search-founda:
-    image: digirati/jane-founda:d0e7610dc15073e85fce20ee42215e192b16907b
-    environment:
-      - WORKERS=2
-      - search_annotation_index=jane-annotations
-      - search_elasticsearch_base=search-elasticsearch
-      - search_elasticsearch_port=9200
-      - search_ssl_boolean=false
-    ports:
-      - 8103:8000
-    links:
-      - search-elasticsearch
-
-  search-indexer:
-    image: digirati/madoc-indexer:c26e42ad8b8e721d20d254e5214679498868518d
-    environment:
-      - WORKERS=2
-      - search_annotation_index=jane-annotations
-      - search_elasticsearch_base=search-elasticsearch
-      - search_elasticsearch_port=9200
-      - search_ssl_boolean=false
-    ports:
-      - 8104:8000
-    links:
-      - madoc
-      - annotation-server
-      - search-elasticsearch
-      - search-founda
+#
+#  annotation-server:
+#    image: "garyttierneydi/elucidate-server:1.4.3-SNAPSHOT"
+#    links:
+#      - annotation-database:database
+#    environment:
+#      - DATABASE_USER=postgres
+#      - CATALINA_OPTS=-Ddb.url=jdbc:postgresql://database:5432/annotations -Ddb.user="postgres" -Ddb.password=$MYSQL_PASSWORD
+#      - BASE_HOST=localhost
+#      - BASE_PORT=8889
+#    ports:
+#      - 8889:8080
+#
+#  annotation-database:
+#    image: "garyttierneydi/elucidate-database:1.4.3-SNAPSHOT"
+#    environment:
+#      - POSTGRES_DB=annotations
+#
+#  search-elasticsearch:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:6.7.2
+#    environment:
+#      - bootstrap.memory_lock=true
+#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#      - "discovery.type=single-node"
+#    ports:
+#      - 9203:9200
+#      - 9204:9201
+#
+#  search-founda:
+#    image: digirati/jane-founda:d0e7610dc15073e85fce20ee42215e192b16907b
+#    environment:
+#      - WORKERS=2
+#      - search_annotation_index=jane-annotations
+#      - search_elasticsearch_base=search-elasticsearch
+#      - search_elasticsearch_port=9200
+#      - search_ssl_boolean=false
+#    ports:
+#      - 8103:8000
+#    links:
+#      - search-elasticsearch
+#
+#  search-indexer:
+#    image: digirati/madoc-indexer:c26e42ad8b8e721d20d254e5214679498868518d
+#    environment:
+#      - WORKERS=2
+#      - search_annotation_index=jane-annotations
+#      - search_elasticsearch_base=search-elasticsearch
+#      - search_elasticsearch_port=9200
+#      - search_ssl_boolean=false
+#    ports:
+#      - 8104:8000
+#    links:
+#      - madoc
+#      - annotation-server
+#      - search-elasticsearch
+#      - search-founda
