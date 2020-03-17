@@ -44,5 +44,9 @@ if [[ "$TRAVIS_BRANCH" = "master" ]] && [[ "$TRAVIS_PULL_REQUEST" = "false" ]]; 
     docker tag ${REPO_NAME} ${REPO_NAME}:latest
 fi;
 
+if [[ "$TRAVIS_BRANCH" = "v2" ]] && [[ "$TRAVIS_PULL_REQUEST" = "false" ]]; then
+    docker tag ${REPO_NAME} ${REPO_NAME}:latest
+fi;
+
 # ..and push
 docker push ${REPO_NAME}
