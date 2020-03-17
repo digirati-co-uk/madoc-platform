@@ -32,7 +32,7 @@ BEGIN
   GRANT ALL PRIVILEGES ON DATABASE tasks_api TO tasks_api;
 
   EXCEPTION WHEN DUPLICATE_OBJECT THEN
-  RAISE NOTICE 'not creating role my_role -- it already exists';
+  RAISE NOTICE 'not creating role tasks_api -- it already exists';
 END
 $$;
 EOSQL
@@ -48,7 +48,7 @@ BEGIN
   GRANT ALL PRIVILEGES ON DATABASE model_api TO model_api;
 
   EXCEPTION WHEN DUPLICATE_OBJECT THEN
-  RAISE NOTICE 'not creating role my_role -- it already exists';
+  RAISE NOTICE 'not creating role model_api -- it already exists';
 END
 $$;
 EOSQL
