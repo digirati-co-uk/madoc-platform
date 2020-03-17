@@ -96,5 +96,6 @@ deploy:
 
 if: |
   branch = master OR \
+  branch = v2 OR \
   type = pull_request OR \
   tag IS present
