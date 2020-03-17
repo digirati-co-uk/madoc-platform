@@ -1,0 +1,10 @@
+[Unit]
+Description=MySQL monthly backup
+
+[Timer]
+OnCalendar=*-*-1 00:30:00
+Persistent=true
+Unit=madoc-db-backup@monthly.service
+
+[Install]
+WantedBy=timers.target
