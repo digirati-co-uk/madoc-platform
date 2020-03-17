@@ -22,7 +22,7 @@ install:
 
   # v2 Beta tags
   - docker tag digirati/madoc-platform digirati/madoc-platform-beta
-  - docker tag digirati/madoc-platform-db digirati/madoc-platform-db-beta
+  - docker tag digirati/madoc-platform-db digirati/madoc-platform-beta-db
   - docker tag digirati/madoc-sorting-room digirati/madoc-sorting-room-beta
   - docker tag digirati/madoc-gateway digirati/madoc-gateway-beta
   - docker tag digirati/madoc-shared-postgres digirati/madoc-shared-postgres-beta
