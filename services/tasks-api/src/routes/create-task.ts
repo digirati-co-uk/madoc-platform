@@ -21,6 +21,5 @@ export const createTask: RouteMiddleware<{}, CreateTask> = async (context, next)
     context: context.state.jwt.context,
   });
 
-  // @todo change this to return the task.
-  context.redirect(context.routes.url('get-single-task', { id }));
+  context.response.status = 201;
 };
