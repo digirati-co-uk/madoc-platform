@@ -31,6 +31,7 @@ export function mapSingleTask(singleTask: any, subtasks?: any[]) {
       ? subtasks.map(task => {
           return {
             id: task.id,
+            type: task.type,
             name: task.name,
             status: task.status,
             status_text: task.status_text,

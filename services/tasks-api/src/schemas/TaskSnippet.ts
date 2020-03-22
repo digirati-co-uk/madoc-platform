@@ -4,5 +4,6 @@ export type TaskSnippet = {
   name: string;
   status: number;
   subtasks: number;
+  type: string;
 };
 
