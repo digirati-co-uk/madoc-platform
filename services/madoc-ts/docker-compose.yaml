@@ -1,0 +1,26 @@
+version: "3"
+services:
+
+  service:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./src:/home/node/app/src
+      - ./migrations:/home/node/app/migrations
+      - ./schemas:/home/node/app/schemas
+      - ./ecosystem.config.js:/home/node/app/ecosystem.config.js
+    environment:
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+    ports:
+      - "3000:3000"
+    links:
+      - postgres
+
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5402:5432"

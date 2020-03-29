@@ -1,0 +1,28 @@
+{
+  "name": "Madoc TS",
+  "api_id": "7",
+  "org_id": "default",
+  "definition": {
+    "location": "",
+    "key": ""
+  },
+  "use_keyless": true,
+  "auth": {
+    "auth_header_name": ""
+  },
+  "version_data": {
+    "not_versioned": true,
+    "versions": {
+      "Default": {
+        "name": "Default",
+        "expires": "3000-01-02 15:04"
+      }
+    }
+  },
+  "proxy": {
+    "listen_path": "/s/{slug}/madoc",
+    "target_url": "http://madoc-ts:3000/",
+    "strip_listen_path": false
+  },
+  "do_not_track": true
+}

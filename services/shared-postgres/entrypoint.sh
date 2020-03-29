@@ -59,6 +59,23 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 EOSQL
 
+## Madoc database
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-"EOSQL"
+
+SELECT 'CREATE DATABASE madoc'
+WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'madoc')\gexec
+
+DO $$
+BEGIN
+  CREATE ROLE madoc LOGIN PASSWORD 'madoc_password';
+  GRANT ALL PRIVILEGES ON DATABASE madoc TO madoc;
+
+  EXCEPTION WHEN DUPLICATE_OBJECT THEN
+  RAISE NOTICE 'not creating role madoc -- it already exists';
+END
+$$;
+EOSQL
+
     docker_temp_server_stop
 fi
 
