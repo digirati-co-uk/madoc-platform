@@ -7,9 +7,6 @@
     "key": ""
   },
   "use_keyless": true,
-  "auth": {
-    "auth_header_name": ""
-  },
   "version_data": {
     "not_versioned": true,
     "versions": {
