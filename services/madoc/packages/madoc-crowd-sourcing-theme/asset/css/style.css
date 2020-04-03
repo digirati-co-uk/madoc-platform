@@ -196,18 +196,29 @@ header {
     max-width: 300px;
 }
 .c-form.c-form--login .field,
-.c-form.c-form--register .field {
+.c-form.c-form--register .field,
+.c-form.c-form--account .field {
     width: 100%;
     margin-bottom: 10px;
+    max-width: 300px;
 }
 .c-form.c-form--login .field input,
-.c-form.c-form--register .field input {
+.c-form.c-form--register .field input,
+.c-form.c-form--account .field input {
     width: 100%;
     border: 2px solid #999;
     padding: 5px;
     font-size: 16px;
 }
+.c-form.c-form--login .field label,
+.c-form.c-form--register .field label,
+.c-form.c-form--account .field label {
+    margin-bottom: 4px;
+    font-size: 14px;
+    display: block;
+}
 .c-form.c-form--login .field input:focus,
+.c-form.c-form--account .field input:focus,
 .c-form.c-form--register .field input:focus {
     border: 2px solid #333;
     outline: none;

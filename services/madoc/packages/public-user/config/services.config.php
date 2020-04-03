@@ -1,9 +1,19 @@
 <?php
 
+use Digirati\OmekaShared\Factory\GuzzleClientFactory;
 use Digirati\OmekaShared\Factory\PropertyIdSaturatorFactory;
 use Digirati\OmekaShared\Factory\SettingsHelperFactory;
 use Digirati\OmekaShared\Helper\SettingsHelper;
 use Digirati\OmekaShared\Utility\PropertyIdSaturator;
+use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\Common\Cache\ChainCache;
+use GuzzleHttp\Client;
+use GuzzleHttp\HandlerStack;
+use Kevinrob\GuzzleCache\CacheMiddleware;
+use Kevinrob\GuzzleCache\KeyValueHttpHeader;
+use Kevinrob\GuzzleCache\Storage\DoctrineCacheStorage;
+use Kevinrob\GuzzleCache\Strategy\GreedyCacheStrategy;
+use Kevinrob\GuzzleCache\Strategy\PublicCacheStrategy;
 use Psr\Container\ContainerInterface;
 use PublicUser\Auth\TokenService;
 use PublicUser\Auth\TokenStorage;
@@ -34,6 +44,7 @@ return [
             SettingsHelper::class => SettingsHelperFactory::class,
             ConfigurableMailer::class => ConfigurableMailerFactory::class,
             PropertyIdSaturator::class => PropertyIdSaturatorFactory::class,
+            Client::class => GuzzleClientFactory::class,
             PublicUserSettings::class => function (ContainerInterface $container) {
                 return new PublicUserSettings(
                     $container->get('Omeka\Settings'),

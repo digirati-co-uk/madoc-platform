@@ -1,6 +1,7 @@
 <?php
 
 use Digirati\OmekaShared\Factory\EventDispatcherFactory;
+use Digirati\OmekaShared\Factory\GuzzleClientFactory;
 use Digirati\OmekaShared\Factory\UrlHelperFactory;
 use Digirati\OmekaShared\Helper\UrlHelper;
 use Doctrine\Common\Cache\ArrayCache;
@@ -30,6 +31,7 @@ use ElucidateModule\Subscriber\TaggingSubscriber;
 use ElucidateModule\Subscriber\TranscriptionSubscriber;
 use ElucidateModule\View\CanvasView;
 use ElucidateModule\View\ManifestView;
+use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use Interop\Container\ContainerInterface;
 use Kevinrob\GuzzleCache\CacheMiddleware;
@@ -58,7 +60,7 @@ return [
             ElucidateAnnotationMapper::class => function (ContainerInterface $c) {
                 return new ElucidateAnnotationMapper(
                     $c->get('Omeka\ApiManager'),
-                    $c->get(\GuzzleHttp\Client::class),
+                    $c->get(Client::class),
                     $c->get('mapping_cache'),
                     $c->get(UrlHelper::class),
                     $c->get('Omeka\Logger')
@@ -70,7 +72,7 @@ return [
                 ]);
             },
             OmekaItemMapper::class => function (ContainerInterface $c) {
-                return new OmekaItemMapper($c->get('Omeka\ApiManager'), $c->get(\GuzzleHttp\Client::class));
+                return new OmekaItemMapper($c->get('Omeka\ApiManager'), $c->get(Client::class));
             },
             ElucidateItemImporter::class => function (ContainerInterface $c) {
                 return new ElucidateItemImporter(
@@ -162,7 +164,7 @@ return [
                     ],
                     $c->get(UrlHelper::class),
                     $c->get('Omeka\AuthenticationService'),
-                    $c->get(\GuzzleHttp\Client::class)
+                    $c->get(Client::class)
                 );
             },
             ManifestView::class => function (ContainerInterface $c) {
@@ -185,32 +187,7 @@ return [
                     $c->get(UrlHelper::class)
                 );
             },
-            \GuzzleHttp\Client::class => function () {
-                $stack = HandlerStack::create();
-
-                $cacheChain = new ChainCache(
-                    [
-                        new ArrayCache(),
-                    ]
-                );
-
-                $cacheStorage = new DoctrineCacheStorage($cacheChain);
-                $stack->push(
-                    new CacheMiddleware(
-                        new GreedyCacheStrategy(
-                            $cacheStorage,
-                            36 * 60 * 60,
-                            new KeyValueHttpHeader(['Last-Modified'])
-                        )
-                    )
-                );
-
-                $stack->push(new CacheMiddleware(new PublicCacheStrategy($cacheStorage)));
-
-                return new \GuzzleHttp\Client([
-                    'handler' => $stack,
-                ]);
-            },
+            Client::class => GuzzleClientFactory::class,
             'elucidate.guzzle' => function (ContainerInterface $c) {
                 $config = $c->get('Omeka\Settings');
 
