@@ -11,6 +11,7 @@ import { createMysqlPool } from './database/create-mysql-pool';
 import { omekaPage } from './middleware/omeka-page';
 import { omekaApi } from './middleware/omeka-api';
 import { ExternalConfig } from './types';
+import { syncOmeka } from './utility/sync-omeka';
 import { generateKeys } from './utility/generate-keys';
 
 export async function createApp(router: TypedRouter<any, any>, config: ExternalConfig) {
@@ -19,6 +20,8 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   const mysqlPool = createMysqlPool();
 
   await migrate();
+
+  await syncOmeka(mysqlPool, pool, config);
 
   // Generate cookie keys.
   app.keys = generateKeys();
