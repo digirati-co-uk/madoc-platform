@@ -49,17 +49,8 @@ export const loginPage: RouteMiddleware<{ slug: string }, { email: string; passw
         id: user.id,
         sites,
       };
-      // Omeka page.
-      context.omekaPage = `
-        Hello ${user.name}!
-        ${sites.map(site => `<h3>${site.title} ${site.role}`).join('')}
-      `;
-      // @todo.. possibly redirect?
 
-      // In PHP:
-      // Check for lack of JWT when on site route, redirecting to a madoc-ts route to set the cookie which could then
-      // redirect to login.
-
+      context.redirect(`/s/${context.params.slug}`);
       return;
     } else {
       context.omekaMessages.push({ type: 'error', message: 'Your email or password is invalid' });
