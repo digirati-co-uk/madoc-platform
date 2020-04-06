@@ -15,6 +15,7 @@ COPY ./ecosystem.config.js /home/node/app/ecosystem.config.js
 COPY ./migrate.js /home/node/app/migrate.js
 COPY ./tsconfig.json /home/node/app/tsconfig.json
 COPY ./migrations /home/node/app/migrations
+COPY ./config.json /home/node/app/config.json
 
 RUN yarn build
 

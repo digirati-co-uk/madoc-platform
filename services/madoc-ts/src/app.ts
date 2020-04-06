@@ -10,14 +10,16 @@ import { jwtMock } from './middleware/jwt-mock';
 import { migrate } from './migrate';
 import { createMysqlPool } from './database/create-mysql-pool';
 import { omekaPage } from './middleware/omeka-page';
+import { ExternalConfig } from './types';
 
-export async function createApp(router: TypedRouter<any, any>) {
+export async function createApp(router: TypedRouter<any, any>, config: ExternalConfig) {
   const app = new Koa();
   const pool = createPostgresPool();
   const mysqlPool = createMysqlPool();
 
   await migrate();
 
+  app.context.externalConfig = config;
   app.context.routes = router;
   app.context.mysql = mysqlPool;
 

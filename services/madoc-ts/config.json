@@ -1,0 +1,44 @@
+{
+  "cookieName": "madoc",
+  "tokenExpires": 3600,
+  "permissions": {
+    "admin": [
+      "site.admin",
+      "tasks.admin",
+      "models.admin"
+    ],
+    "reviewer": [
+      "tasks.create",
+      "tasks.progress",
+      "models.revision",
+      "models.create",
+      "models.contribute",
+      "models.view_published"
+    ],
+    "limited-reviewer": [
+      "tasks.create",
+      "tasks.progress",
+      "models.revision",
+      "models.contribute",
+      "models.view_published"
+    ],
+    "transcriber": [
+      "tasks.progress",
+      "models.revision",
+      "models.contribute",
+      "models.view_published"
+    ],
+    "limited-transcriber": [
+      "tasks.progress",
+      "models.revision",
+      "models.contribute",
+      "models.view_published"
+    ],
+    "viewer": [
+      "models.view_published"
+    ],
+    "editor": [
+      "models.view_published"
+    ]
+  }
+}

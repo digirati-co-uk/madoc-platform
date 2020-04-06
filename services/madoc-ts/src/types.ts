@@ -6,6 +6,13 @@ import { Ajv } from 'ajv';
 import { Pool } from 'mysql';
 
 export type Scopes = 'tasks.admin' | 'tasks.create' | 'tasks.progress';
+export type ExternalConfig = {
+  cookieName?: string;
+  tokenExpires?: number;
+  permissions: {
+    [role: string]: string[];
+  };
+};
 
 export interface ApplicationState {
   // User.
@@ -23,6 +30,7 @@ export interface ApplicationState {
 }
 
 export interface ApplicationContext {
+  externalConfig: ExternalConfig;
   routes: typeof router;
   mysql: Pool;
   connection: DatabasePoolConnectionType;
