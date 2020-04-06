@@ -5,7 +5,6 @@ import { DatabasePoolConnectionType } from 'slonik';
 import { Ajv } from 'ajv';
 import { Pool } from 'mysql';
 
-export type Scopes = 'tasks.admin' | 'tasks.create' | 'tasks.progress';
 export type ExternalConfig = {
   cookieName?: string;
   tokenExpires?: number;
@@ -19,12 +18,24 @@ export interface ApplicationState {
   // JWT.
   // Role.
   // etc...
-  jwt: {
-    scope: Scopes[];
+  authenticatedUser?: {
+    name: string;
+    id: number;
+    sites: Array<{ id: number; slug: string; title: string; role: string }>;
+    role: string;
+  };
+  loggedOut?: boolean;
+  jwt?: {
+    token: string;
+    scope: string[];
     context: string[];
+    site: {
+      id: number;
+      name: string;
+    };
     user: {
       name: string;
-      id: string;
+      id: number;
     };
   };
 }
