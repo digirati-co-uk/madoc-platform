@@ -4,6 +4,7 @@ namespace PublicUser\Controller;
 
 use LogicException;
 use Doctrine\ORM\EntityManager;
+use Omeka\Entity\User;
 use Omeka\Mvc\Exception\PermissionDeniedException;
 use Omeka\Settings\Settings;
 use PublicUser\Stats\AnnotationStatisticsService;
@@ -42,6 +43,7 @@ class AccountController extends AbstractActionController
 
     public function profileAction()
     {
+        /** @var User $user */
         $user = $this->identity();
 
         if (is_null($user)) {
@@ -149,9 +151,21 @@ class AccountController extends AbstractActionController
             }
         }
 
+        $statement = $this->entityManager->getConnection()
+            ->prepare('
+                select site.id, site.title as title, site.slug, s.role
+                from site_permission s 
+                    LEFT JOIN site ON s.site_id = site.id 
+                WHERE s.user_id = :userId
+             ');
+        $statement->bindValue('userId', $user->getId(), \PDO::PARAM_INT);
+        $statement->execute();
+        $sites = $statement->fetchAll();
+
         $view->setVariable('form', $form);
         $view->setVariable('user', $user);
         $view->setVariable('statistics', $statistics);
+        $view->setVariable('sites', $sites);
 
         return $view;
     }

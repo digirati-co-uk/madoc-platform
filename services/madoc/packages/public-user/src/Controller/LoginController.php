@@ -386,20 +386,8 @@ class LoginController extends AbstractActionController
         $site = $this->currentSite();
 
         $invitationCode = $this->params()->fromQuery('code') ?: $this->params()->fromPost('invitation_id');
-        $invitation = $invitationCode ? $this->invitations->isValidInvitation($invitationCode) : null;
 
-        $defaultSiteId = $this->settings()->get('default_site');
-        if ($invitation && (string)$invitation->siteId !== (string)$site->id()) {
-            // Figure out if this is allowed.
-            if ((string)$site->id() === (string)$defaultSiteId && !$this->getRequest()->isPost()) {
-                if (!$this->auth->getIdentity()) {
-                    $this->messenger()->addSuccess("You've been invited to a different site, you will have access to it once you register here");
-                }
-            } else {
-                $this->messenger()->addError("Invalid or expired invitation code");
-                return $this->redirect()->toRoute('site', [], [], true);
-            }
-        }
+        $invitation = $invitationCode ? $this->invitations->isValidInvitation($invitationCode) : null;
 
         if ($invitationCode && !$invitation) {
             $this->messenger()->addError("Invalid or expired invitation code");
@@ -451,6 +439,22 @@ class LoginController extends AbstractActionController
             ($this->userSettings->getInviteOnlyStatus() && !$invitation)
         ) {
             return $this->redirect()->toRoute('site', [], [], true);
+        }
+
+
+        $defaultSiteId = $this->settings()->get('default_site');
+        if ($invitation && (string)$invitation->siteId !== (string)$site->id()) {
+            // Figure out if this is allowed.
+            if (!$this->getRequest()->isPost()) {
+                if ((string)$site->id() === (string)$defaultSiteId) {
+                    if (!$this->auth->getIdentity()) {
+                        $this->messenger()->addSuccess("You've been invited to a different site, you will have access to it once you register here");
+                    }
+                } else {
+                    $this->messenger()->addError("Invalid or expired invitation code");
+                    return $this->redirect()->toRoute('site', [], [], true);
+                }
+            }
         }
 
         $form = $this->getForm(UserForm::class,

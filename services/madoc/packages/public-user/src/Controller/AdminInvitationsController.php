@@ -6,6 +6,7 @@ use Digirati\OmekaShared\Framework\AbstractPsr7ActionController;
 use Digirati\OmekaShared\Helper\SitePermissionsHelper;
 use Doctrine\ORM\EntityManager;
 use Omeka\Entity\Site;
+use Omeka\Entity\SiteSetting;
 use Omeka\Entity\User;
 use Omeka\Mvc\Controller\Plugin\Messenger;
 use Omeka\Mvc\Exception\NotFoundException;
@@ -103,26 +104,43 @@ class AdminInvitationsController extends AbstractPsr7ActionController
         $defaultSiteId = $this->settings()->get('default_site');
         $inviteSiteSlug = $site->slug();
 
+        $success = true;
         if (!$this->settings->isRegistrationPermitted()) {
             $message->addError(
                 'Registrations are not enabled for this site. Users you invite will not be able to register'
             );
+            $success = false;
         } else if (!$this->settings->getInviteOnlyStatus() && $site->isPublic()) {
             $message->addWarning(
                 'Warning, your site is not configured to only allow registrations for invited users ' .
                 'you can change this setting under "Settings" on the left navigation under your site.'
             );
+            $success = false;
         } else if (!$defaultSiteId && $site->isPublic() === false) {
             $inviteSiteSlug = null;
             $message->addWarning(
                 'If you want users to be able to register to your site (while not public) you need to ' .
                 'set up a default site to allow them to register.'
             );
+            $success = false;
         } else {
             if ($site->isPublic() === false) {
+                /** @var Site $defaultSite */
                 $defaultSite = $this->entityManager->find(Site::class, $defaultSiteId);
+
+                if (!$defaultSite->isPublic()) {
+                    $message->addWarning(
+                        'Your default site "' . $defaultSite->getTitle() . '" is not public, users will ' .
+                        'not be able to register. Only users who have access to that site will be able to register.'
+                    );
+                    $success = false;
+                }
+
                 $inviteSiteSlug = $defaultSite->getSlug();
             }
+        }
+
+        if ($success) {
             $message->addSuccess('🎉 Your site is configured to be invite only, you can generate invite links below');
         }
 

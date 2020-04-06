@@ -4,39 +4,57 @@
 
 
 
-{{ pageTitle(translate('Edit User: {user}')|replace({'{user}': user.getName()})) | raw }}
+{{ pageTitle(translate('Profile: {user}')|replace({'{user}': user.getName()})) | raw }}
+
+<h3>Your sites</h3>
+<ul>
+    {% for site in sites %}
+        <li>
+            {% set link = url('site', { 'site-slug': site.slug }) %}
+            {% if (link == url('site', {}, {}, true)) %}
+                {{ site.title }} ({{ site.role }})
+            {% else %}
+                <a href="{{ link }}">{{ site.title }} ({{ site.role }})</a>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
+
+
 {{ trigger('view.edit.before') }}
-{{ form().openTag(form) | raw }}
-    {{ sectionNav(sectionNavs, 'view.edit.section_nav' ) }}
+<div class="c-form c-form--account">
+    {{ form().openTag(form) | raw }}
 
     {{ trigger('view.edit.form.before', {'form': form }) }}
 
-{% if statistics %}
-    <div class="c-collection__statistics">
-        <div class="c-statistics">
-            {% for statistic in statistics %}
-                <dl class="c-statistic c-statistic--sm">
-                    <dt>{{ statistic.label }}</dt>
-                    <dd>{{ statistic.value }}</dd>
-                </dl>
-            {% endfor %}
+    {% if statistics %}
+        <h3>Your statistics</h3>
+        <div class="c-collection__statistics">
+            <div class="c-statistics">
+                {% for statistic in statistics %}
+                    <dl class="c-statistic c-statistic--sm">
+                        <dt>{{ statistic.label }}</dt>
+                        <dd>{{ statistic.value }}</dd>
+                    </dl>
+                {% endfor %}
+            </div>
         </div>
-    </div>
-{% endif %}
+    {% endif %}
 
-<fieldset id="user-information" class="section active">
+    <h3>Edit Information</h3>
     {{ formCollection(form.get('user-information'), false) }}
-</fieldset>
-<fieldset id="change-password" class="section">
+
+    <h3>Change password</h3>
     {{ formCollection(form.get('change-password'), false) }}
-</fieldset>
 
 
-{{ trigger('view.edit.form.after', {'form': form }) }}
-<div id="page-actions">
-    <button type="submit">{{ translate('Save') }}</button>
+
+    {{ trigger('view.edit.form.after', {'form': form }) }}
+    <div id="page-actions">
+        <button type="submit">{{ translate('Save') }}</button>
+    </div>
+
+    {{ formElement(form.get('csrf')) }}
+    {{ form().closeTag()| raw }}
 </div>
-
-{{ formElement(form.get('csrf')) }}
-{{ form().closeTag()| raw }}
 {{ trigger('view.edit.after') }}

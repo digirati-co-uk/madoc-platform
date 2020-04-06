@@ -5,8 +5,8 @@ namespace PublicUser\Controller;
 use Omeka\Api\Manager;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Api\Representation\ResourceTemplateRepresentation;
-use Omeka\Api\Request;
 use Omeka\Api\Response;
+use Omeka\Entity\User;
 use Omeka\View\Helper\Api;
 use PublicUser\Form\ResourceForm;
 use PublicUser\Settings\PublicUserSettings;
@@ -47,6 +47,7 @@ class UserProfileController extends AbstractActionController
 
         /** @var Api $api */
         $api = $this->api();
+        /** @var User $user */
         $user = $this->auth->getIdentity();
         $userId = $user->getId();
         /** @var ItemRepresentation $userIdProperty */
