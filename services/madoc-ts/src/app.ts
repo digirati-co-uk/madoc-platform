@@ -9,7 +9,9 @@ import { postgresConnection } from './middleware/postgres-connection';
 import { migrate } from './migrate';
 import { createMysqlPool } from './database/create-mysql-pool';
 import { omekaPage } from './middleware/omeka-page';
+import { omekaApi } from './middleware/omeka-api';
 import { ExternalConfig } from './types';
+import { generateKeys } from './utility/generate-keys';
 
 export async function createApp(router: TypedRouter<any, any>, config: ExternalConfig) {
   const app = new Koa();
@@ -17,6 +19,9 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   const mysqlPool = createMysqlPool();
 
   await migrate();
+
+  // Generate cookie keys.
+  app.keys = generateKeys();
 
   app.context.externalConfig = config;
   app.context.routes = router;
@@ -31,6 +36,7 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   app.use(logger());
   app.use(errorHandler);
   app.use(omekaPage);
+  app.use(omekaApi);
   app.use(router.routes()).use(router.allowedMethods());
 
   return app;
