@@ -6,9 +6,13 @@
     "location": "",
     "key": ""
   },
-  "use_keyless": true,
+  "use_keyless": false,
   "auth": {
-    "auth_header_name": ""
+    "use_param": true,
+    "param_name": "token",
+    "use_cookie": false,
+    "auth_header_name": "Authorization",
+    "use_certificate": true
   },
   "version_data": {
     "not_versioned": true,
@@ -19,6 +23,11 @@
       }
     }
   },
+  "enable_jwt": true,
+  "jwt_identity_base_field": "sub",
+  "jwt_policy_field_name": "",
+  "jwt_default_policies": ["default"],
+  "jwt_signing_method": "rsa",
   "proxy": {
     "listen_path": "/api/tasks",
     "target_url": "http://tasks-api:3000/tasks/",

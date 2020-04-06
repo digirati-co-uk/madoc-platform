@@ -19,6 +19,7 @@ install:
   - docker build -t digirati/madoc-gateway services/gateway
   - docker build -t digirati/madoc-shared-postgres services/shared-postgres
   - docker build -t digirati/madoc-tasks-api services/tasks-api
+  - docker build -t digirati/madoc-ts services/madoc-ts
 
   # v2 Beta tags
   - docker tag digirati/madoc-platform digirati/madoc-platform-beta
@@ -27,6 +28,7 @@ install:
   - docker tag digirati/madoc-gateway digirati/madoc-gateway-beta
   - docker tag digirati/madoc-shared-postgres digirati/madoc-shared-postgres-beta
   - docker tag digirati/madoc-tasks-api digirati/madoc-tasks-api-beta
+  - docker tag digirati/madoc-ts digirati/madoc-ts-beta
 
   # Add any database test fixtures to `database/sql` before madoc init-ci.
   - ./bin/madoc init-ci
@@ -72,6 +74,10 @@ deploy:
       branch: v2
   - provider: script
     script: bash ./.travis/docker-deploy.sh digirati/madoc-tasks-api-beta
+    on:
+      branch: v2
+  - provider: script
+    script: bash ./.travis/docker-deploy.sh digirati/madoc-ts-beta
     on:
       branch: v2
 

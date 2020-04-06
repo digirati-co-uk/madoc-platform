@@ -18,6 +18,10 @@ export interface ApplicationState {
       name: string;
       id: string;
     };
+    site?: {
+      id: string;
+      name?: string;
+    };
   };
 }
 

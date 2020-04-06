@@ -9,6 +9,7 @@ services:
     environment:
       - TYK_GW_STORAGE_HOST=gateway-redis
       - TYK_GW_SECRET=${GATEWAY_SECRET}
+      - JWT_SERVICES=tasks-api,madoc-api
     ports:
       - "8888:8080"
     links:
@@ -17,8 +18,12 @@ services:
       - gateway-redis
       - tasks-api
       - model-api
+      - madoc-ts
     volumes:
-      - ./services/gateway/services:/opt/tyk-gateway/apps
+      - ./services/gateway/gateway.conf:/opt/tyk-gateway/tyk.conf
+      - ./var/certs:/openssl-certs
+    depends_on:
+      - certs
 
   madoc:
     build:
@@ -47,6 +52,44 @@ services:
       - ./var/files:/srv/omeka/files
       - ./services/madoc/config/omeka-app/application.config.php:/srv/omeka/application/config/application.config.php
       - ./services/madoc/translations:/srv/omeka/translations
+      - ./var/certs:/openssl-certs
+
+  certs:
+    build:
+      context: services/certs
+    volumes:
+      - ./var/certs:/openssl-certs
+
+  madoc-ts:
+    build:
+      context: services/madoc-ts
+      dockerfile: Dockerfile.dev
+    restart: always
+    volumes:
+      - ./services/madoc-ts/src:/home/node/app/src
+      - ./services/madoc-ts/migrations:/home/node/app/migrations
+      - ./services/madoc-ts/schemas:/home/node/app/schemas
+      - ./services/madoc-ts/ecosystem.config.js:/home/node/app/ecosystem.config.js
+      - ./var/certs:/openssl-certs
+    environment:
+      - DATABASE_HOST=shared-postgres
+      - DATABASE_NAME=madoc
+      - DATABASE_PORT=5432
+      - DATABASE_USER=madoc
+      - DATABASE_SCHEMA=public
+      - DATABASE_PASSWORD=madoc_password
+      - OMEKA__DATABASE_HOST=madoc-database
+      - OMEKA__DATABASE_NAME=${MYSQL_DATABASE}
+      - OMEKA__DATABASE_USER=${MYSQL_USER}
+      - OMEKA__DATABASE_PASSWORD=${MYSQL_PASSWORD}
+      - OMEKA__DATABASE_PORT=${MYSQL_PORT}
+      - OMEKA__URL=http://madoc
+    links:
+      - shared-postgres
+      - madoc-database
+      - madoc
+    depends_on:
+      - certs
 
   tasks-api:
     build:
@@ -63,6 +106,8 @@ services:
       - "8105:3000"
     links:
       - shared-postgres
+    volumes:
+    - ./services/tasks-api/lib:/home/node/app/lib
 
   model-api:
     image: digirati/capture-models:v0.1.1

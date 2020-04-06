@@ -1,0 +1,33 @@
+FROM node:12
+
+WORKDIR /home/node/app
+
+RUN npm install -g pm2 ts-node
+
+COPY ./package.json /home/node/app/package.json
+COPY ./yarn.lock /home/node/app/yarn.lock
+
+RUN yarn install --no-dev --no-interactive --frozen-lockfile
+
+COPY ./schemas /home/node/app/schemas
+COPY ./src /home/node/app/src
+COPY ./ecosystem.config.js /home/node/app/ecosystem.config.js
+COPY ./migrate.js /home/node/app/migrate.js
+COPY ./tsconfig.json /home/node/app/tsconfig.json
+COPY ./migrations /home/node/app/migrations
+COPY ./config.json /home/node/app/config.json
+
+RUN yarn build
+
+ENV SERVER_PORT=3000
+ENV DATABASE_HOST=localhost
+ENV DATABASE_NAME=postgres
+ENV DATABASE_PORT=5400
+ENV DATABASE_USER=postgres
+ENV DATABASE_SCHEMA=public
+ENV DATABASE_PASSWORD=postgres
+
+EXPOSE 3000
+
+CMD ["yarn", "start"]
+

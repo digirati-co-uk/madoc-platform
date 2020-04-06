@@ -1,0 +1,20 @@
+{
+  "default": {
+    "access_rights": {
+      "2": {
+        "api_id": "2",
+        "versions": [
+          "Default"
+        ]
+      },
+      "4": {
+        "api_id": "4",
+        "versions": [
+          "Default"
+        ]
+      }
+    },
+    "org_id": "default",
+    "active": true
+  }
+}
