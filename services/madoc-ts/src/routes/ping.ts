@@ -1,9 +1,5 @@
 import { RouteMiddleware } from '../types';
-import { escape } from 'mysql';
-
-function mysql(strings: TemplateStringsArray, ...values: any[]) {
-  return strings.map((s, index) => (index < values.length ? `${s}${escape(values[index])}` : s)).join('');
-}
+import { mysql } from '../utility/mysql';
 
 export const ping: RouteMiddleware = async context => {
   context.response.body = await new Promise(resolve =>
