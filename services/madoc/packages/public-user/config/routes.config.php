@@ -56,16 +56,23 @@ return [
                     ],
                 ],
                 'child_routes' => [
-                    'publicuser-login' => route_public_user('/login', LoginController::class, 'login'),
-                    'publicuser-login-page' => route_public_user('/page/login', LoginController::class, 'login'),
-                    'publicuser-logout' => route_public_user('/logout', LoginController::class, 'logout'),
+                    // Replaced with Madoc TS endpoints
+                    'publicuser-login' => route_public_user('/madoc/login', LoginController::class, 'login'),
+                    'publicuser-logout' => route_public_user('/madoc/logout', LoginController::class, 'logout'),
+
+                    // Will be replaced.
                     'publicuser-forgot' => route_public_user('/forgotten-password', LoginController::class, 'forgotPassword'),
                     'publicuser-register' => route_public_user('/register', LoginController::class, 'register'),
-                    'publicuser-register-page' => route_public_user('/page/register', LoginController::class, 'register'),
                     'publicuser-register-success' => route_public_user('/register/thank-you', LoginController::class, 'thanks'),
                     'publicuser-profile' => route_public_user('/profile', AccountController::class, 'profile'),
                     'publicuser-profile-info' => route_public_user('/profile-info', UserProfileController::class, 'edit'),
                     'publicuser-public-profile-view' => route_public_user('/user/:id', PublicProfileController::class, 'viewProfile'),
+
+
+                    // Omeka-only logout
+                    'publicuser-root-logout' => route_public_user('/logout', LoginController::class, 'logout'),
+                    'publicuser-root-login' => route_public_user('/login', LoginController::class, 'login'),
+
 
                     'publicuser-auth-login' => route_public_user('/auth', AuthController::class, 'auth'),
                     'publicuser-auth-token' => route_public_user('/auth/token', AuthController::class, 'token'),
