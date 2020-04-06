@@ -21,6 +21,19 @@ export const updateSingleTask: RouteMiddleware<{ id: string }> = async context =
 
   if (canOnlyProgress && (creator_id !== userId || assignee_id !== userId)) {
     // Only apply status change.
+    const updateRows = [];
+    if (typeof taskChanges.status !== 'undefined') {
+      updateRows.push(sql`status = ${taskChanges.status}`);
+    }
+    if (typeof taskChanges.status_text !== 'undefined') {
+      updateRows.push(sql`status_text = ${taskChanges.status_text}`);
+    }
+
+    const task = await context.connection.one(sql`
+      UPDATE tasks SET ${sql.join(updateRows, sql`, `)} WHERE id = ${id} RETURNING *
+    `);
+
+    context.response.body = mapSingleTask(task);
     return;
   }
 
