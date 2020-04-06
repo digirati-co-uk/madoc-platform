@@ -5,7 +5,8 @@
   "version": "1.0.0",
   "license": "MIT",
   "require": {
-    "digirati/omeka-shared": "1.0.0"
+    "digirati/omeka-shared": "1.0.0",
+    "miladrahimi/php-jwt": "2.*"
   },
   "autoload": {
     "psr-4": {
