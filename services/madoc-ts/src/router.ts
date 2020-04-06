@@ -7,6 +7,8 @@ import { keys } from './routes/keys';
 export const router = new TypedRouter({
   // Normal route
   'get-ping': [TypedRouter.GET, '/api/madoc', ping],
+  'get-scopes': [TypedRouter.GET, '/api/madoc/site/:siteId/permissions', getSiteScopes],
+  'update-scopes': [TypedRouter.POST, '/api/madoc/site/:siteId/permissions', saveSiteScopes],
   'omeka-test': [TypedRouter.GET, '/s/:slug/madoc/hello-world', omekaHelloWorld],
   'get-keys': [TypedRouter.GET, '/s/:slug/madoc/test-key', keys],
   'omeka-404': [TypedRouter.GET, '/s/:slug/madoc*', madocNotFound],
