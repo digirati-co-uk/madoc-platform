@@ -52,6 +52,7 @@ services:
       - ./var/files:/srv/omeka/files
       - ./services/madoc/config/omeka-app/application.config.php:/srv/omeka/application/config/application.config.php
       - ./services/madoc/translations:/srv/omeka/translations
+      - ./var/certs:/openssl-certs
 
   certs:
     build:
