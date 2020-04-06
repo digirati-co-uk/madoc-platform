@@ -2,6 +2,7 @@ import Router from '@koa/router';
 import koaBody from 'koa-body';
 import { requestBody } from '../middleware/request-body';
 import { RouteMiddleware } from '../types';
+import {parseJwt} from '../middleware/parse-jwt';
 
 export type RouteWithParams<Props, Body = any> =
   | [string, string, RouteMiddleware<Props, Body>]
@@ -39,23 +40,23 @@ export class TypedRouter<
       switch (method) {
         case TypedRouter.PUT:
           // @ts-ignore
-          this.router.put(route, path, koaBody(), requestBody(schemaName), func);
+          this.router.put(route, path, koaBody(), parseJwt, requestBody(schemaName), func);
           break;
         case TypedRouter.POST:
           // @ts-ignore
-          this.router.post(route, path, koaBody(), requestBody(schemaName), func);
+          this.router.post(route, path, koaBody(), parseJwt, requestBody(schemaName), func);
           break;
         case TypedRouter.PATCH:
           // @ts-ignore
-          this.router.patch(route, path, koaBody(), requestBody(schemaName), func);
+          this.router.patch(route, path, koaBody(), parseJwt, requestBody(schemaName), func);
           break;
         case TypedRouter.GET:
           // @ts-ignore
-          this.router.get(route, path, func);
+          this.router.get(route, path, parseJwt, func);
           break;
         case TypedRouter.DELETE:
           // @ts-ignore
-          this.router.delete(route, path, func);
+          this.router.delete(route, path, parseJwt, func);
           break;
       }
     }

@@ -12,6 +12,7 @@ import { omekaPage } from './middleware/omeka-page';
 import { omekaApi } from './middleware/omeka-api';
 import { ExternalConfig } from './types';
 import { syncOmeka } from './utility/sync-omeka';
+import { setJwt } from './middleware/set-jwt';
 import { generateKeys } from './utility/generate-keys';
 
 export async function createApp(router: TypedRouter<any, any>, config: ExternalConfig) {
@@ -39,6 +40,7 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   app.use(logger());
   app.use(errorHandler);
   app.use(omekaPage);
+  app.use(setJwt);
   app.use(omekaApi);
   app.use(router.routes()).use(router.allowedMethods());
 
