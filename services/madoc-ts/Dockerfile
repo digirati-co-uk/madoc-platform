@@ -33,6 +33,7 @@ ENV DATABASE_PORT=5400
 ENV DATABASE_USER=postgres
 ENV DATABASE_SCHEMA=public
 ENV DATABASE_PASSWORD=postgres
+ENV NODE_ENV=production
 
 EXPOSE 3000
 
@@ -42,5 +43,5 @@ COPY ./migrate.js /home/node/app/migrate.js
 COPY ./migrations /home/node/app/migrations
 COPY ./config.json /home/node/app/config.json
 
-CMD ["pm2-runtime", "start", "./ecosystem.config.js", "--only", "tasks-api-prod"]
+CMD ["pm2-runtime", "start", "./ecosystem.config.js"]
 
