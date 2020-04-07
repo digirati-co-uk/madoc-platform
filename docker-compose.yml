@@ -71,7 +71,9 @@ services:
       - ./services/madoc-ts/migrations:/home/node/app/migrations
       - ./services/madoc-ts/schemas:/home/node/app/schemas
       - ./services/madoc-ts/ecosystem.config.js:/home/node/app/ecosystem.config.js
+      - ./services/madoc-ts/service-jwts:/home/node/app/service-jwts
       - ./var/certs:/openssl-certs
+      - ./var/jwt:/home/node/app/service-jwt-responses
     environment:
       - DATABASE_HOST=shared-postgres
       - DATABASE_NAME=madoc
@@ -86,6 +88,7 @@ services:
       - OMEKA__DATABASE_PORT=${MYSQL_PORT}
       - OMEKA__URL=http://madoc
       - REDIS_HOST=gateway-redis
+      - API_GATEWAY=http://gateway:8080
     links:
       - shared-postgres
       - madoc-database

@@ -34,6 +34,7 @@ ENV DATABASE_USER=postgres
 ENV DATABASE_SCHEMA=public
 ENV DATABASE_PASSWORD=postgres
 ENV NODE_ENV=production
+ENV API_GATEWAY_HOST=http://gateway
 
 EXPOSE 3000
 
@@ -41,7 +42,11 @@ USER node
 
 COPY ./migrate.js /home/node/app/migrate.js
 COPY ./migrations /home/node/app/migrations
+COPY ./service-jwts /home/node/app/service-jwts
 COPY ./config.json /home/node/app/config.json
+
+RUN mkdir -p /home/node/app/service-jwt && \
+    mkdir -p /home/node/app/service-jwt-responses
 
 CMD ["pm2-runtime", "start", "./ecosystem.config.js"]
 
