@@ -9,6 +9,8 @@ export function mapSingleTask(singleTask: any, subtasks?: any[]) {
     assignee_id,
     assignee_is_service,
     creator_name,
+    queue_id,
+    events,
     ...args
   } = singleTask;
 
@@ -27,6 +29,8 @@ export function mapSingleTask(singleTask: any, subtasks?: any[]) {
         }
       : null,
     parent_task: parent_task,
+    queue_id: queue_id,
+    events: events,
     subtasks: subtasks
       ? subtasks.map(task => {
           return {
