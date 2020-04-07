@@ -24,6 +24,7 @@ services:
       - ./var/certs:/openssl-certs
     depends_on:
       - certs
+      - gateway-redis
 
   madoc:
     build:
@@ -102,10 +103,12 @@ services:
       - DATABASE_USER=tasks_api
       - DATABASE_SCHEMA=public
       - DATABASE_PASSWORD=tasks_api_password
+      - QUEUE_LIST=tasks-api
     ports:
       - "8105:3000"
     links:
       - shared-postgres
+      - gateway-redis
     volumes:
     - ./services/tasks-api/lib:/home/node/app/lib
 
@@ -142,7 +145,7 @@ services:
       context: services/sorting-room
 
   gateway-redis:
-    image: redis:4.0-alpine
+    image: redis:5-alpine
 
   madoc-database:
     build:
