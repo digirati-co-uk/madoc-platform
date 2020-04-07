@@ -7,6 +7,10 @@ export const deleteTask: RouteMiddleware<{ id: string }> = async context => {
     throw new NotFound();
   }
 
+  const task = await context.connection.one<{ id: string; queue_id: string; events: string[] }>(sql`
+    SELECT id, queue_id, events FROM tasks WHERE id = ${context.params.id}
+  `);
+
   const { rowCount } = await context.connection.query(sql`
     DELETE FROM tasks 
     WHERE id = ${context.params.id}
@@ -16,6 +20,8 @@ export const deleteTask: RouteMiddleware<{ id: string }> = async context => {
     context.response.status = 404;
     return;
   }
+
+  context.state.dispatch(task, 'deleted');
 
   context.response.status = 204;
 };

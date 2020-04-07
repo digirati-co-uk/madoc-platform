@@ -22,7 +22,9 @@ export function insertTask(
        assignee_name, 
        assignee_is_service,
        status_text,
-       context
+       context,
+       events,
+       queue_id
     ) VALUES (
       ${id},
       ${task.name},
@@ -39,7 +41,9 @@ export function insertTask(
       ${task.assignee ? task.assignee.name || null : null},
       ${task.assignee ? task.assignee.is_service || false : false},
       ${task.status_text || 'no status'},
-      ${JSON.stringify(context)}
+      ${JSON.stringify(context)},
+      ${task.events ? sql.array(task.events, 'text') : null},
+      ${task.queue_id || null}
     )`
   );
 }
