@@ -21,7 +21,14 @@ export const eventPrefixes: EventPrefix[] = [
   'deleted',
 ];
 
-export const standaloneEvents: EventPrefix[] = ['created', 'modified', 'assigned', 'subtask_created', 'deleted'];
+export const standaloneEvents: EventPrefix[] = [
+  'created',
+  'modified',
+  'assigned',
+  'subtask_created',
+  'deleted',
+  'subtask_status',
+];
 
 type Event<Prefix extends EventPrefix, Value extends any = never> = Value extends never ? [Prefix] : [Prefix, Value];
 
