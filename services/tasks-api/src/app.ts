@@ -8,6 +8,8 @@ import { createPostgresPool } from './database/create-postgres-pool';
 import { dbConnection } from './middleware/db-connection';
 import { jwtMock } from './middleware/jwt-mock';
 import { migrate } from './migrate';
+import { Queue } from 'bullmq';
+import { queueEvents } from './middleware/queue-events';
 
 export async function createApp(router: TypedRouter<any, any>) {
   const app = new Koa();
@@ -21,7 +23,15 @@ export async function createApp(router: TypedRouter<any, any>) {
   app.context.ajv = new Ajv();
   app.context.ajv.addSchema(require('../schemas/create-task.json'), 'create-task');
   app.context.ajv.addSchema(require('../schemas/update-task.json'), 'update-task');
+  app.context.getQueue = (name: string) =>
+    new Queue(name, {
+      connection: {
+        host: process.env.REDIS_HOST,
+        db: 2,
+      },
+    });
 
+  app.use(queueEvents);
   app.use(jwtMock);
   app.use(dbConnection(pool));
   app.use(json({ pretty: process.env.NODE_ENV !== 'production' }));

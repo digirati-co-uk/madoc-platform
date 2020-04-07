@@ -46,6 +46,15 @@ export type CreateTask = {
   state?: any;
 
   /**
+   * Events that will be dispatched for this task.
+   */
+  events?: string[];
+  /**
+   * Queue the events will be pushed to.
+   */
+  queue_id?: string;
+
+  /**
    * The user who is assigned to this task.
    */
   assignee?: {

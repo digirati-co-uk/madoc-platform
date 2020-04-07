@@ -28,6 +28,13 @@
             "description": "An optional description of the task.",
             "type": "string"
         },
+        "events": {
+            "description": "Events that will be dispatched for this task.",
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
         "name": {
             "description": "A human-readable name for your task.",
             "type": "string"
@@ -40,6 +47,10 @@
         },
         "parent_task": {
             "description": "Identifier of the tasks parent, which will appear as it's subtask.",
+            "type": "string"
+        },
+        "queue_id": {
+            "description": "Queue the events will be pushed to.",
             "type": "string"
         },
         "state": {
