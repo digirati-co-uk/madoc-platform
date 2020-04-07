@@ -1,4 +1,5 @@
 import { Worker } from 'bullmq';
+import { getTaskById } from '../gateway/tasks';
 
 const configOptions = {
   connection: {
@@ -11,9 +12,12 @@ const worker = new Worker(
   'tasks-api',
   async job => {
     switch (job.name) {
-      case 'created':
-        console.log('Task ID created', job.data.taskId);
+      case 'created': {
+        console.log('Fetching task...');
+        const fullTask = await getTaskById(job.data.taskId);
+        console.log('Task ID created', fullTask);
         break;
+      }
     }
 
     // Artificial timeout.
