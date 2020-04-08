@@ -38,15 +38,17 @@ ENV API_GATEWAY_HOST=http://gateway
 
 EXPOSE 3000
 
+RUN mkdir -p /home/node/app/service-jwt && \
+    mkdir -p /home/node/app/service-jwt-responses && \
+    chown node:node /home/node/app/service-jwt && \
+    chown node:node /home/node/app/service-jwt-responses
+
 USER node
 
 COPY ./migrate.js /home/node/app/migrate.js
 COPY ./migrations /home/node/app/migrations
 COPY ./service-jwts /home/node/app/service-jwts
 COPY ./config.json /home/node/app/config.json
-
-RUN mkdir -p /home/node/app/service-jwt && \
-    mkdir -p /home/node/app/service-jwt-responses
 
 CMD ["pm2-runtime", "start", "./ecosystem.config.js"]
 
