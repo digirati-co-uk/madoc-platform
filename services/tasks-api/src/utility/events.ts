@@ -7,6 +7,7 @@ export type EventPrefix =
   | 'subtask_created'
   | 'subtask_type_created'
   | 'subtask_status'
+  | 'subtask_type_status'
   | 'deleted';
 
 export const eventPrefixes: EventPrefix[] = [
@@ -18,6 +19,7 @@ export const eventPrefixes: EventPrefix[] = [
   'subtask_created',
   'subtask_type_created',
   'subtask_status',
+  'subtask_type_status',
   'deleted',
 ];
 
@@ -41,6 +43,7 @@ export type AssignedTo = Event<'assigned_to', string>;
 export type StatusChanged = Event<'status', string>;
 export type SubtaskOfTypeCreated = Event<'subtask_type_created', string>;
 export type SubtaskStatus = Event<'subtask_status', number>;
+export type SubtaskTypeStatus = Event<'subtask_type_status', string>;
 
 export type AnyEvent =
   | CreatedEvent
@@ -50,7 +53,8 @@ export type AnyEvent =
   | AssignedTo
   | StatusChanged
   | SubtaskOfTypeCreated
-  | SubtaskStatus;
+  | SubtaskStatus
+  | SubtaskTypeStatus;
 
 export type FromPrefix<Prefix extends EventPrefix, A extends AnyEvent = AnyEvent> = A extends Event<Prefix, infer Value>
   ? Value

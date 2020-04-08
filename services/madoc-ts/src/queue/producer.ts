@@ -12,6 +12,11 @@ const worker = new Worker(
   'tasks-api',
   async job => {
     switch (job.name) {
+
+      case 'subtask_type_status.type-a.1':
+        console.log('ALL TASKS ARE of type A are at status 1');
+        break;
+
       case 'created': {
         console.log('Fetching task...');
         const fullTask = await getTaskById(job.data.taskId);

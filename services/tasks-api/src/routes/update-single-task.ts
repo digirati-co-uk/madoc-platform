@@ -4,6 +4,7 @@ import { sql } from 'slonik';
 import { UpdateTask } from '../schemas/UpdateTask';
 import { RequestError } from '../errors/request-error';
 import { mapSingleTask } from '../utility/map-single-task';
+import { dispatchUpdateSubtaskStatus } from '../utility/dispatch-update-subtask-status';
 
 export const updateSingleTask: RouteMiddleware<{ id: string }> = async context => {
   const id = context.params.id;
@@ -46,6 +47,11 @@ export const updateSingleTask: RouteMiddleware<{ id: string }> = async context =
     context.state.dispatch(taskWithId, 'status', taskChanges.status, { status_text: taskChanges.status_text });
 
     context.response.body = mapSingleTask(task);
+
+    // Special event:
+    // subtask_type_status.{type}.{status}
+    await dispatchUpdateSubtaskStatus(task, context.connection, context.state);
+
     return;
   }
 
@@ -92,6 +98,10 @@ export const updateSingleTask: RouteMiddleware<{ id: string }> = async context =
   const task = await context.connection.one(sql`
     UPDATE tasks SET ${sql.join(updateRows, sql`, `)} WHERE id = ${id} RETURNING *
   `);
+
+  // Special event:
+  // subtask_type_status.{type}.{status}
+  await dispatchUpdateSubtaskStatus(task, context.connection, context.state);
 
   context.state.dispatch(taskWithId, 'modified');
 
