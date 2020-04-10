@@ -11,7 +11,6 @@ export async function dispatchUpdateSubtaskStatus(
     // Get count of siblings that DON'T have the same type and status
     // If that count is 0, then load the parent – possibly in the same query.
     // Check if the parent has a matching event – also possibly in the same query.
-    const candidateEvent = `subtask_type_status.${task.type}.${task.status}`;
     // This query will look for
     // - The tasks with the same parent id
     // - Where the parent id listens on the event above
@@ -22,7 +21,6 @@ export async function dispatchUpdateSubtaskStatus(
       SELECT t.status as all_status, p.* FROM tasks t
       LEFT JOIN tasks p ON t.parent_task = p.id
       WHERE p.id = ${task.parent_task}
-          AND p.events @> ${sql.array([candidateEvent], 'text')}
           AND t.type = ${task.type}
       GROUP BY t.status, p.id
     `);

@@ -5,8 +5,8 @@ import { RequestError } from '../errors/request-error';
 import { v4 } from 'uuid';
 import { insertTask } from '../database/insert-task';
 import { getTask } from '../database/get-task';
-import {validateEvents} from '../utility/events';
-import {mapSingleTask} from '../utility/map-single-task';
+import { validateEvents } from '../utility/events';
+import { mapSingleTask } from '../utility/map-single-task';
 
 export const createSubtask: RouteMiddleware<{ id: string }, CreateTask> = async context => {
   const task = context.requestBody;
@@ -22,12 +22,8 @@ export const createSubtask: RouteMiddleware<{ id: string }, CreateTask> = async 
     throw new RequestError('Parent task provided does not match');
   }
 
-  if (task.queue_id && context.state.queueList.indexOf(task.queue_id) === -1) {
-    throw new RequestError(`Queue ${task.queue_id} does not exist`);
-  }
-
   if (task.events) {
-    task.events = validateEvents(task.events);
+    task.events = validateEvents(task.events, context.state.queueList);
   }
 
   const parentTask = await getTask(context.connection, {

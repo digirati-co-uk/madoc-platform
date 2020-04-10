@@ -3,7 +3,6 @@ import { NotFound } from '../errors/not-found';
 import { CreateTask } from '../schemas/CreateTask';
 import { v4 } from 'uuid';
 import { insertTask } from '../database/insert-task';
-import { RequestError } from '../errors/request-error';
 import { validateEvents } from '../utility/events';
 import { mapSingleTask } from '../utility/map-single-task';
 
@@ -16,12 +15,8 @@ export const createTask: RouteMiddleware<{}, CreateTask> = async (context, next)
     throw new NotFound();
   }
 
-  if (task.queue_id && context.state.queueList.indexOf(task.queue_id) === -1) {
-    throw new RequestError(`Queue ${task.queue_id} does not exist`);
-  }
-
   if (task.events) {
-    task.events = validateEvents(task.events);
+    task.events = validateEvents(task.events, context.state.queueList);
   }
 
   const id = v4();

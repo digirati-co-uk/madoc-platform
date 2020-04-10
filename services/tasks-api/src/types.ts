@@ -28,7 +28,7 @@ export interface ApplicationState {
   queueList: string[];
   queue: Array<{ queue_id: string; event: { name: string; data: any } }>;
   dispatch: (
-    task: { id: string; type: string; queue_id?: string; events?: string[] },
+    task: { id: string; type: string; events?: string[] },
     eventName: EventPrefix,
     subject?: string | number,
     state?: any

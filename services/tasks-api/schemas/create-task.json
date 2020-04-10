@@ -49,10 +49,6 @@
             "description": "Identifier of the tasks parent, which will appear as it's subtask.",
             "type": "string"
         },
-        "queue_id": {
-            "description": "Queue the events will be pushed to.",
-            "type": "string"
-        },
         "state": {
             "description": "Custom state, can change during the tasks lifecycle."
         },

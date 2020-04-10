@@ -32,7 +32,9 @@ export const standaloneEvents: EventPrefix[] = [
   'subtask_status',
 ];
 
-type Event<Prefix extends EventPrefix, Value extends any = never> = Value extends never ? [Prefix] : [Prefix, Value];
+type Event<Prefix extends EventPrefix, Value extends any = never> = Value extends never
+  ? [string, Prefix]
+  : [string, Prefix, Value];
 
 export type CreatedEvent = Event<'created'>;
 export type Modified = Event<'modified'>;
@@ -60,38 +62,42 @@ export type FromPrefix<Prefix extends EventPrefix, A extends AnyEvent = AnyEvent
   ? Value
   : never;
 
-export function parseEvent<E extends AnyEvent>(event: string): E | undefined {
-  const [prefix, value, value2] = event.split('.') as
-    | [EventPrefix, string, string]
-    | [EventPrefix, string]
-    | [EventPrefix];
+export function parseEvent<E extends AnyEvent>(event: string, queueList: string[]): E | undefined {
+  const [queue, prefix, value, value2] = event.split('.') as
+    | [string, EventPrefix, string, string]
+    | [string, EventPrefix, string]
+    | [string, EventPrefix];
+
+  if (queueList.indexOf(queue) === -1) {
+    return undefined;
+  }
 
   if (eventPrefixes.indexOf(prefix) === -1) {
     return undefined;
   }
 
   if (prefix === 'subtask_type_status') {
-    return [prefix, `${value}.${value2}`] as E;
+    return [queue, prefix, `${value}.${value2}`] as E;
   }
 
   if (standaloneEvents.indexOf(prefix) === -1) {
-    return [prefix] as any;
+    return [queue, prefix] as any;
   }
 
-  return [prefix, value] as E;
+  return [queue, prefix, value] as E;
 }
 
-export function parseEvents(events: string[] = []): AnyEvent[] {
-  return events.map(parseEvent).filter(ev => ev !== undefined) as AnyEvent[];
+export function parseEvents(events: string[] = [], queueList: string[] = []): AnyEvent[] {
+  return events.map(e => parseEvent(e, queueList)).filter(ev => ev !== undefined) as AnyEvent[];
 }
 
-export function validateEvents(events: string[]) {
-  const parsed = parseEvents(events);
+export function validateEvents(events: string[], queueList: string[]) {
+  const parsed = parseEvents(events, queueList);
   if (parsed.length === 0) {
     return undefined;
   }
-  return parsed.map(([prefix, value]) => {
-    return `${prefix}${value ? `.${value}` : ''}`;
+  return parsed.map(([queue, prefix, value]) => {
+    return `${queue}.${prefix}${value ? `.${value}` : ''}`;
   });
 }
 
@@ -101,7 +107,7 @@ export async function ifEvent<Prefix extends EventPrefix>(
   callback: (value: FromPrefix<Prefix>) => void
 ) {
   const parsed = parseEvents(events);
-  for (const [prefix, arg] of parsed) {
+  for (const [, prefix, arg] of parsed) {
     if (prefix === event) {
       await (callback as any)(prefix, arg);
     }

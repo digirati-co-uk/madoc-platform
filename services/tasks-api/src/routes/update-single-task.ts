@@ -13,20 +13,19 @@ export const updateSingleTask: RouteMiddleware<{ id: string }> = async context =
   const canOnlyProgress = !isAdmin && context.state.jwt.scope.indexOf('tasks.progress') !== -1;
   const taskChanges: UpdateTask = context.requestBody;
 
-  const { assignee_id, creator_id, events, queue_id, type } = await context.connection.one<{
+  const { assignee_id, creator_id, events, type } = await context.connection.one<{
     assignee_id: string;
     creator_id: string;
     events?: string[];
-    queue_id?: string;
     type: string;
   }>(sql`
-      SELECT t.assignee_id, t.creator_id, t.events, t.queue_id, t.type 
+      SELECT t.assignee_id, t.creator_id, t.events, t.type 
       FROM tasks t 
       WHERE id = ${id} 
         AND context ?& ${sql.array(context.state.jwt.context, 'text')}
     `);
 
-  const taskWithId = { id, type, events, queue_id };
+  const taskWithId = { id, type, events };
   if (canOnlyProgress && (creator_id !== userId || assignee_id !== userId)) {
     // Only apply status change.
     const updateRows = [];
