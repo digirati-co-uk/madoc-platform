@@ -16,6 +16,6 @@ export const router = new TypedRouter({
   'get-single-task': [TypedRouter.GET, '/tasks/:id', getSingleTask],
   'update-single-task': [TypedRouter.PATCH, '/tasks/:id', updateSingleTask, 'update-task'],
   'delete-task': [TypedRouter.DELETE, '/tasks/:id', deleteTask],
-  'create-subtask': [TypedRouter.POST, '/tasks/:id/subtasks', createSubtask, 'create-task'],
+  'create-subtask': [TypedRouter.POST, '/tasks/:id/subtasks', createSubtask, 'create-sub-task'],
   'accept-task': [TypedRouter.POST, '/tasks/:id/accept', acceptTask],
 });

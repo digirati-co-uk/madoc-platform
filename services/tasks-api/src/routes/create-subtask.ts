@@ -8,22 +8,13 @@ import { getTask } from '../database/get-task';
 import { validateEvents } from '../utility/events';
 import { mapSingleTask } from '../utility/map-single-task';
 
-export const createSubtask: RouteMiddleware<{ id: string }, CreateTask> = async context => {
-  const task = context.requestBody;
+export const createSubtask: RouteMiddleware<{ id: string }, CreateTask | CreateTask[]> = async context => {
   const parentId = context.params.id;
   const isAdmin = context.state.jwt.scope.indexOf('tasks.admin') !== -1;
   const canCreate = isAdmin || context.state.jwt.scope.indexOf('tasks.create') !== -1;
 
   if (!canCreate) {
     throw new NotFound();
-  }
-
-  if (task.parent_task && task.parent_task !== parentId) {
-    throw new RequestError('Parent task provided does not match');
-  }
-
-  if (task.events) {
-    task.events = validateEvents(task.events, context.state.queueList);
   }
 
   const parentTask = await getTask(context.connection, {
@@ -33,34 +24,59 @@ export const createSubtask: RouteMiddleware<{ id: string }, CreateTask> = async 
     scope: context.state.jwt.scope,
   });
 
-  // Override the parent task.
-  task.parent_task = parentId;
+  const returnTasks: any[] = [];
+  const isMany = Array.isArray(context.requestBody);
+  const tasks: CreateTask[] = isMany ? (context.requestBody as CreateTask[]) : [context.requestBody as CreateTask];
+  for (const task of tasks) {
+    if (task.parent_task && task.parent_task !== parentId) {
+      // Skip any mis-matched items.
+      continue;
+    }
 
-  const id = v4();
-  const createdTask = await insertTask(context.connection, {
-    id,
-    task,
-    user: context.state.jwt.user,
-    context: context.state.jwt.context,
-  });
+    if (task.events) {
+      task.events = validateEvents(task.events, context.state.queueList);
+    }
 
-  context.response.status = 201;
-  context.response.body = mapSingleTask(createdTask);
+    // Override the parent task.
+    task.parent_task = parentId;
 
-  // Task events
-  const taskWithId = { id, ...task };
-  context.state.dispatch(taskWithId, 'created');
-  if (task.assignee) {
-    context.state.dispatch(taskWithId, 'assigned', undefined, task.assignee);
-    context.state.dispatch(taskWithId, 'assigned_to', task.assignee.id, task.assignee);
+    const id = v4();
+    const createdTask = await insertTask(context.connection, {
+      id,
+      task,
+      user: context.state.jwt.user,
+      context: context.state.jwt.context,
+    });
+
+    returnTasks.push(mapSingleTask(createdTask));
+
+    // Task events
+    const taskWithId = { id, ...task };
+    context.state.dispatch(taskWithId, 'created');
+    if (task.assignee) {
+      context.state.dispatch(taskWithId, 'assigned', undefined, task.assignee);
+      context.state.dispatch(taskWithId, 'assigned_to', task.assignee.id, task.assignee);
+    }
+    if (typeof task.status !== 'undefined') {
+      context.state.dispatch(taskWithId, 'status', task.status, { status_text: task.status_text });
+    }
+
+    // Parent task events.
+    context.state.dispatch(parentTask, 'modified');
+    context.state.dispatch(parentTask, 'subtask_created', undefined, { subtaskId: id });
+    context.state.dispatch(parentTask, 'subtask_type_created', task.type);
+    context.state.dispatch(parentTask, 'subtask_status', task.status, { status_text: task.status_text });
   }
-  if (typeof task.status !== 'undefined') {
-    context.state.dispatch(taskWithId, 'status', task.status, { status_text: task.status_text });
+
+  if (returnTasks.length === 0) {
+    throw new RequestError();
   }
 
-  // Parent task events.
-  context.state.dispatch(parentTask, 'modified');
-  context.state.dispatch(parentTask, 'subtask_created', undefined, { subtaskId: id });
-  context.state.dispatch(parentTask, 'subtask_type_created', task.type);
-  context.state.dispatch(parentTask, 'subtask_status', task.status, { status_text: task.status_text });
+  if (isMany) {
+    context.response.status = 201;
+    context.response.body = returnTasks;
+  } else {
+    context.response.status = 201;
+    context.response.body = returnTasks[0];
+  }
 };
