@@ -8,4 +8,5 @@ export type FullSingleTask = CreateTask & {
     name: string;
   };
   created_at: string;
+  context: string[];
 };

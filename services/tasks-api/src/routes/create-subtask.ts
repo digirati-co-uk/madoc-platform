@@ -18,12 +18,13 @@ export const createSubtask: RouteMiddleware<{ id: string }, CreateTask | CreateT
   }
 
   const parentTask = await getTask(context.connection, {
-    context: context.state.jwt.context,
     user: context.state.jwt.user,
     id: parentId,
     scope: context.state.jwt.scope,
+    context: context.state.jwt.context,
   });
 
+  const contextForSubtask = parentTask.context;
   const returnTasks: any[] = [];
   const isMany = Array.isArray(context.requestBody);
   const tasks: CreateTask[] = isMany ? (context.requestBody as CreateTask[]) : [context.requestBody as CreateTask];
@@ -45,7 +46,7 @@ export const createSubtask: RouteMiddleware<{ id: string }, CreateTask | CreateT
       id,
       task,
       user: context.state.jwt.user,
-      context: context.state.jwt.context,
+      context: contextForSubtask,
     });
 
     returnTasks.push(mapSingleTask(createdTask));

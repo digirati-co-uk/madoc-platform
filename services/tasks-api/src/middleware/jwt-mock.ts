@@ -7,6 +7,7 @@ export const jwtMock: RouteMiddleware = async (context, next) => {
     scope: string;
     iss_name: string;
     name: string;
+    service: boolean;
     sub: string;
     iss: string;
     iat: number;
@@ -17,7 +18,7 @@ export const jwtMock: RouteMiddleware = async (context, next) => {
   }
 
   context.state.jwt = {
-    context: [jwt.iss],
+    context: jwt.service ? [] : [jwt.iss],
     scope: jwt.scope.split(' ') as any[],
     user: {
       id: jwt.sub,
