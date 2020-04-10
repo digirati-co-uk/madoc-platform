@@ -40,6 +40,8 @@ export const updateSingleTask: RouteMiddleware<{ id: string }> = async context =
       throw new RequestError('Status not updated');
     }
 
+    updateRows.push(sql`modified_at = CURRENT_TIMESTAMP`);
+
     const task = await context.connection.one(sql`
       UPDATE tasks SET ${sql.join(updateRows, sql`, `)} WHERE id = ${id} RETURNING *
     `);
@@ -98,6 +100,8 @@ export const updateSingleTask: RouteMiddleware<{ id: string }> = async context =
   if (updateRows.length === 0) {
     throw new RequestError('No data provided to update.');
   }
+
+  updateRows.push(sql`modified_at = CURRENT_TIMESTAMP`);
 
   const task = await context.connection.one(sql`
     UPDATE tasks SET ${sql.join(updateRows, sql`, `)} WHERE id = ${id} RETURNING *
