@@ -21,7 +21,10 @@ export const queueEvents: RouteMiddleware = async (context, next) => {
     if (task.events.indexOf(realEvent) !== -1) {
       context.state.queue.push({
         queue_id: task.queue_id,
-        event: { name: `${eventName}${subject ? `.${subject}` : ''}`, data: { subject, state, taskId: task.id } },
+        event: {
+          name: `${eventName}${subject ? `.${subject}` : ''}`,
+          data: { subject, state, taskId: task.id, type: task.type },
+        },
       });
     }
   };
