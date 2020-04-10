@@ -8,7 +8,7 @@ export const getAllTasks: RouteMiddleware = async context => {
       // Not an admin.
       context.response.body = await context.connection.many(
         sql`
-        SELECT t.id, t.name, t.status, t.type
+        SELECT t.id, t.name, t.status, t.status_text, t.type
         FROM tasks t 
         WHERE t.parent_task IS NULL 
           AND (t.creator_id = ${userId} OR t.assignee_id = ${userId})
@@ -19,7 +19,7 @@ export const getAllTasks: RouteMiddleware = async context => {
 
     context.response.body = await context.connection.many(
       sql`
-        SELECT t.id, t.name, t.status, t.type
+        SELECT t.id, t.name, t.status, t.status_text, t.type
         FROM tasks t 
         WHERE t.parent_task IS NULL
           AND context ?& ${sql.array(context.state.jwt.context, 'text')}`

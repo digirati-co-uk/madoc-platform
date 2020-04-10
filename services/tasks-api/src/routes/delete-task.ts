@@ -7,8 +7,8 @@ export const deleteTask: RouteMiddleware<{ id: string }> = async context => {
     throw new NotFound();
   }
 
-  const task = await context.connection.one<{ id: string; queue_id: string; events: string[] }>(sql`
-    SELECT id, queue_id, events FROM tasks WHERE id = ${context.params.id}
+  const task = await context.connection.one<{ id: string; type: string; queue_id: string; events: string[] }>(sql`
+    SELECT id, type, queue_id, events FROM tasks WHERE id = ${context.params.id}
   `);
 
   const { rowCount } = await context.connection.query(sql`

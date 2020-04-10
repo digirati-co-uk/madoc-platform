@@ -13,19 +13,20 @@ export const updateSingleTask: RouteMiddleware<{ id: string }> = async context =
   const canOnlyProgress = !isAdmin && context.state.jwt.scope.indexOf('tasks.progress') !== -1;
   const taskChanges: UpdateTask = context.requestBody;
 
-  const { assignee_id, creator_id, events, queue_id } = await context.connection.one<{
+  const { assignee_id, creator_id, events, queue_id, type } = await context.connection.one<{
     assignee_id: string;
     creator_id: string;
     events?: string[];
     queue_id?: string;
+    type: string;
   }>(sql`
-      SELECT t.assignee_id, t.creator_id, t.events, t.queue_id 
+      SELECT t.assignee_id, t.creator_id, t.events, t.queue_id, t.type 
       FROM tasks t 
       WHERE id = ${id} 
         AND context ?& ${sql.array(context.state.jwt.context, 'text')}
     `);
 
-  const taskWithId = { id, events, queue_id };
+  const taskWithId = { id, type, events, queue_id };
   if (canOnlyProgress && (creator_id !== userId || assignee_id !== userId)) {
     // Only apply status change.
     const updateRows = [];
@@ -76,6 +77,10 @@ export const updateSingleTask: RouteMiddleware<{ id: string }> = async context =
     updateRows.push(sql`assignee_name = ${null}`);
     updateRows.push(sql`assignee_is_service = ${false}`);
     context.state.dispatch(taskWithId, 'assigned');
+  }
+
+  if (typeof taskChanges.name !== 'undefined') {
+    updateRows.push(sql`name = ${taskChanges.name}`);
   }
 
   if (typeof taskChanges.description !== 'undefined') {

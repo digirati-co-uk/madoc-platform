@@ -41,6 +41,6 @@ export function mapSingleTask(singleTask: any, subtasks?: any[]) {
             status_text: task.status_text,
           };
         })
-      : [],
+      : undefined,
   } as FullSingleTask;
 }

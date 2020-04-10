@@ -1,5 +1,9 @@
 export type UpdateTask = {
   /**
+   * The name of the task.
+   */
+  name?: string;
+  /**
    * An optional description of the task.
    */
   description?: string;
