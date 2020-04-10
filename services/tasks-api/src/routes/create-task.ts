@@ -5,6 +5,7 @@ import { v4 } from 'uuid';
 import { insertTask } from '../database/insert-task';
 import { RequestError } from '../errors/request-error';
 import { validateEvents } from '../utility/events';
+import { mapSingleTask } from '../utility/map-single-task';
 
 export const createTask: RouteMiddleware<{}, CreateTask> = async (context, next) => {
   const isAdmin = context.state.jwt.scope.indexOf('tasks.admin') !== -1;
@@ -24,7 +25,7 @@ export const createTask: RouteMiddleware<{}, CreateTask> = async (context, next)
   }
 
   const id = v4();
-  await insertTask(context.connection, {
+  const insertedTask = await insertTask(context.connection, {
     id,
     task,
     user: context.state.jwt.user,
@@ -43,4 +44,5 @@ export const createTask: RouteMiddleware<{}, CreateTask> = async (context, next)
   }
 
   context.response.status = 201;
+  context.response.body = mapSingleTask(insertedTask);
 };

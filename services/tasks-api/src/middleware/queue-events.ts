@@ -6,7 +6,7 @@ export const queueEvents: RouteMiddleware = async (context, next) => {
   context.state.queue = [];
   context.state.queueList = queueList;
   context.state.dispatch = (
-    task: { id: string; queue_id?: string; events?: string[] },
+    task: { id: string; type: string; queue_id?: string; events?: string[] },
     eventName: string,
     subject?: string | number,
     state: any = {}

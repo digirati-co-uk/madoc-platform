@@ -5,7 +5,7 @@ export function insertTask(
   connection: DatabasePoolConnectionType,
   { id, task, user, context }: { id: string; task: CreateTask; user: { id: string; name: string }; context: string[] }
 ) {
-  return connection.query(
+  return connection.one<any>(
     sql`INSERT INTO tasks (
        id, 
        name, 
@@ -44,6 +44,6 @@ export function insertTask(
       ${JSON.stringify(context)},
       ${task.events ? sql.array(task.events, 'text') : null},
       ${task.queue_id || null}
-    )`
+    ) RETURNING  *`
   );
 }

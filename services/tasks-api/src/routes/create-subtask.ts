@@ -6,6 +6,7 @@ import { v4 } from 'uuid';
 import { insertTask } from '../database/insert-task';
 import { getTask } from '../database/get-task';
 import {validateEvents} from '../utility/events';
+import {mapSingleTask} from '../utility/map-single-task';
 
 export const createSubtask: RouteMiddleware<{ id: string }, CreateTask> = async context => {
   const task = context.requestBody;
@@ -40,7 +41,7 @@ export const createSubtask: RouteMiddleware<{ id: string }, CreateTask> = async 
   task.parent_task = parentId;
 
   const id = v4();
-  await insertTask(context.connection, {
+  const createdTask = await insertTask(context.connection, {
     id,
     task,
     user: context.state.jwt.user,
@@ -48,6 +49,7 @@ export const createSubtask: RouteMiddleware<{ id: string }, CreateTask> = async 
   });
 
   context.response.status = 201;
+  context.response.body = mapSingleTask(createdTask);
 
   // Task events
   const taskWithId = { id, ...task };

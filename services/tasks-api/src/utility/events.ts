@@ -61,10 +61,17 @@ export type FromPrefix<Prefix extends EventPrefix, A extends AnyEvent = AnyEvent
   : never;
 
 export function parseEvent<E extends AnyEvent>(event: string): E | undefined {
-  const [prefix, value] = event.split('.') as [EventPrefix, string] | [EventPrefix];
+  const [prefix, value, value2] = event.split('.') as
+    | [EventPrefix, string, string]
+    | [EventPrefix, string]
+    | [EventPrefix];
 
   if (eventPrefixes.indexOf(prefix) === -1) {
     return undefined;
+  }
+
+  if (prefix === 'subtask_type_status') {
+    return [prefix, `${value}.${value2}`] as E;
   }
 
   if (standaloneEvents.indexOf(prefix) === -1) {
