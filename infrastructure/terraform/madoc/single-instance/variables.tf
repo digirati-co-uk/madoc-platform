@@ -24,15 +24,21 @@ variable availability_zone {
   default     = "eu-west-1a"
 }
 
+variable root_size {
+  type        = number
+  description = "Size of root EBS volume, in GiB"
+  default     = 30
+}
+
 variable ebs_size {
   type        = number
-  description = "Size of EBS volume, in GB"
+  description = "Size of EBS data volume, in GiB"
   default     = 20
 }
 
 variable ebs_backup_size {
   type        = number
-  description = "Size of EBS backup volume, in GB"
+  description = "Size of EBS backup volume, in GiB"
   default     = 30
 }
 
