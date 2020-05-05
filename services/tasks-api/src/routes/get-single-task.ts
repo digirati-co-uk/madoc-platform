@@ -7,5 +7,6 @@ export const getSingleTask: RouteMiddleware<{ id: string }> = async context => {
     user: context.state.jwt.user,
     id: context.params.id,
     scope: context.state.jwt.scope,
+    page: Number(context.query.page || 1),
   });
 };

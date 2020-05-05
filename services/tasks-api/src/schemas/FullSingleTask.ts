@@ -10,4 +10,9 @@ export type FullSingleTask = CreateTask & {
   created_at: string;
   modified_at: string;
   context: string[];
+  pagination?: {
+    page: number;
+    total_results: number;
+    total_pages: number;
+  };
 };
