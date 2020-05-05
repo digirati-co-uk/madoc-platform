@@ -14,5 +14,6 @@ theme.zip
 node_modules
 var/shared-database/*
 var/certs/*
+var/jwt/*
 key.pub
 .terraform

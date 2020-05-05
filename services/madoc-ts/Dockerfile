@@ -33,14 +33,22 @@ ENV DATABASE_PORT=5400
 ENV DATABASE_USER=postgres
 ENV DATABASE_SCHEMA=public
 ENV DATABASE_PASSWORD=postgres
+ENV NODE_ENV=production
+ENV API_GATEWAY_HOST=http://gateway
 
 EXPOSE 3000
+
+RUN mkdir -p /home/node/app/service-jwt && \
+    mkdir -p /home/node/app/service-jwt-responses && \
+    chown node:node /home/node/app/service-jwt && \
+    chown node:node /home/node/app/service-jwt-responses
 
 USER node
 
 COPY ./migrate.js /home/node/app/migrate.js
 COPY ./migrations /home/node/app/migrations
+COPY ./service-jwts /home/node/app/service-jwts
 COPY ./config.json /home/node/app/config.json
 
-CMD ["pm2-runtime", "start", "./ecosystem.config.js", "--only", "tasks-api-prod"]
+CMD ["pm2-runtime", "start", "./ecosystem.config.js"]
 

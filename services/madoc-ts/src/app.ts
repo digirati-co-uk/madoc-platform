@@ -14,11 +14,14 @@ import { ExternalConfig } from './types';
 import { syncOmeka } from './utility/sync-omeka';
 import { setJwt } from './middleware/set-jwt';
 import { generateKeys } from './utility/generate-keys';
+import { syncJwtRequests } from './utility/sync-jwt-requests';
 
 export async function createApp(router: TypedRouter<any, any>, config: ExternalConfig) {
   const app = new Koa();
   const pool = createPostgresPool();
   const mysqlPool = createMysqlPool();
+
+  await syncJwtRequests();
 
   await migrate();
 

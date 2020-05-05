@@ -46,6 +46,11 @@ export type CreateTask = {
   state?: any;
 
   /**
+   * Events that will be dispatched for this task.
+   */
+  events?: string[];
+
+  /**
    * The user who is assigned to this task.
    */
   assignee?: {

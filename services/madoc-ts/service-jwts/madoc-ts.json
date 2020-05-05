@@ -1,0 +1,7 @@
+{
+  "scope": ["models.admin", "site.admin", "tasks.admin"],
+  "service": {
+    "id": "madoc-ts",
+    "name": "Madoc TS"
+  }
+}

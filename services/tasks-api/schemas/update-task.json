@@ -28,6 +28,10 @@
             "description": "An optional description of the task.",
             "type": "string"
         },
+        "name": {
+            "description": "The name of the task.",
+            "type": "string"
+        },
         "state": {
             "description": "Custom state, can change during the tasks lifecycle."
         },

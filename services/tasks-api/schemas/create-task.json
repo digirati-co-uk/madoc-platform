@@ -28,6 +28,13 @@
             "description": "An optional description of the task.",
             "type": "string"
         },
+        "events": {
+            "description": "Events that will be dispatched for this task.",
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
         "name": {
             "description": "A human-readable name for your task.",
             "type": "string"

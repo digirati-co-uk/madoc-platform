@@ -2,28 +2,49 @@ import { RouteMiddleware } from '../types';
 import { NotFoundError, sql } from 'slonik';
 
 export const getAllTasks: RouteMiddleware = async context => {
-  try {
-    if (context.state.jwt.scope.indexOf('tasks.admin') === -1) {
-      const userId = context.state.jwt.user.id;
-      // Not an admin.
-      context.response.body = await context.connection.many(
-        sql`
-        SELECT t.id, t.name, t.status, t.type
-        FROM tasks t 
-        WHERE t.parent_task IS NULL 
-          AND (t.creator_id = ${userId} OR t.assignee_id = ${userId})
-          AND context ?& ${sql.array(context.state.jwt.context, 'text')}`
-      );
-      return;
-    }
+  // Subject facet.
+  // Type filter.
+  // Include sub-tasks filter.
+  const isAdmin = context.state.jwt.scope.indexOf('tasks.admin') !== -1;
+  const userId = context.state.jwt.user.id;
+  const typeFilter = context.query.type ? sql`and t.type = ${context.query.type}` : sql``;
+  const subjectFilter = context.query.subject ? sql`and t.subject = ${context.query.subject}` : sql``;
+  const subtaskExclusion = context.query.all_tasks ? sql`` : sql`and t.parent_task is null`;
+  const userExclusion = isAdmin ? sql`` : sql`and (t.creator_id = ${userId} OR t.assignee_id = ${userId})`;
 
-    context.response.body = await context.connection.many(
+  const page = Number(context.query.page || 1);
+  const perPage = 50;
+  const offset = (page - 1) * perPage;
+  const taskPagination = sql`limit ${perPage} offset ${offset}`;
+
+  try {
+    const query = sql`
+      SELECT t.id, t.name, t.status, t.status_text, t.type
+      FROM tasks t 
+      WHERE context ?& ${sql.array(context.state.jwt.context, 'text')}
+        ${subtaskExclusion}
+        ${userExclusion}
+        ${typeFilter}
+        ${subjectFilter}
+    `;
+
+    const { rowCount } = await context.connection.query(query);
+
+    const taskList = await context.connection.many(
       sql`
-        SELECT t.id, t.name, t.status, t.type
-        FROM tasks t 
-        WHERE t.parent_task IS NULL
-          AND context ?& ${sql.array(context.state.jwt.context, 'text')}`
+        ${query}
+        ${taskPagination}
+      `
     );
+
+    context.response.body = {
+      tasks: taskList,
+      pagination: {
+        page,
+        total_results: rowCount,
+        total_pages: Math.ceil(rowCount / perPage),
+      },
+    };
   } catch (e) {
     if (e instanceof NotFoundError) {
       context.response.body = [];
