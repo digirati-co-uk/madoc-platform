@@ -45,6 +45,11 @@ export const updateSingleTask: RouteMiddleware<{ id: string }> = async context =
     const task = await context.connection.one(sql`
       UPDATE tasks SET ${sql.join(updateRows, sql`, `)} WHERE id = ${id} RETURNING *
     `);
+
+    if (taskChanges.status === 0) {
+      context.state.dispatch(taskWithId, 'created');
+    }
+
     context.state.dispatch(taskWithId, 'modified');
     context.state.dispatch(taskWithId, 'status', taskChanges.status, { status_text: taskChanges.status_text });
 
@@ -106,6 +111,10 @@ export const updateSingleTask: RouteMiddleware<{ id: string }> = async context =
   const task = await context.connection.one(sql`
     UPDATE tasks SET ${sql.join(updateRows, sql`, `)} WHERE id = ${id} RETURNING *
   `);
+
+  if (taskChanges.status === 0) {
+    context.state.dispatch(taskWithId, 'created');
+  }
 
   // Special event:
   // subtask_type_status.{type}.{status}

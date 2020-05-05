@@ -39,6 +39,9 @@ export const queueEvents: RouteMiddleware = async (context, next) => {
           event: {
             name: realEvent,
             data: { subject, state, taskId: task.id, type: task.type },
+            opts: {
+              lifo: eventName !== 'created',
+            },
           },
         });
       }
