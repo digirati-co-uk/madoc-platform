@@ -6,6 +6,7 @@ import { createSubtask } from './routes/create-subtask';
 import { getAllTasks } from './routes/get-all-tasks';
 import { createTask } from './routes/create-task';
 import { acceptTask } from './routes/accept-task';
+import { postEvent } from './routes/event';
 
 export const router = new TypedRouter({
   // All tasks
@@ -18,4 +19,5 @@ export const router = new TypedRouter({
   'delete-task': [TypedRouter.DELETE, '/tasks/:id', deleteTask],
   'create-subtask': [TypedRouter.POST, '/tasks/:id/subtasks', createSubtask, 'create-sub-task'],
   'accept-task': [TypedRouter.POST, '/tasks/:id/accept', acceptTask],
+  'post-task-event': [TypedRouter.POST, '/tasks/:id/dispatch/:event', postEvent],
 });
