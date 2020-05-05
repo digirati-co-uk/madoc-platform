@@ -3,7 +3,7 @@ import * as Koa from 'koa';
 import { router } from './router';
 import { DatabasePoolConnectionType } from 'slonik';
 import { Ajv } from 'ajv';
-import { Queue } from 'bullmq';
+import { JobsOptions, Queue } from 'bullmq';
 import { EventPrefix } from './utility/events';
 
 export type Scopes = 'tasks.admin' | 'tasks.create' | 'tasks.progress';
@@ -26,7 +26,7 @@ export interface ApplicationState {
     };
   };
   queueList: string[];
-  queue: Array<{ queue_id: string; event: { name: string; data: any } }>;
+  queue: Array<{ queue_id: string; event: { name: string; data: any; opts?: JobsOptions } }>;
   dispatch: (
     task: { id: string; type: string; events?: string[] },
     eventName: EventPrefix,
