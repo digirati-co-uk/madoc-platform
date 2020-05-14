@@ -24,6 +24,7 @@ import { getCanvas } from './routes/iiif/canvases/get-canvas';
 import { getCanvasMetadata } from './routes/iiif/canvases/get-canvas-metadata';
 import { updateManifestStructure } from './routes/iiif/manifests/update-manifest-structure';
 import { getManifestStructure } from './routes/iiif/manifests/get-manifest-structure';
+import { updateMetadata } from './routes/iiif/update-metadata';
 import { getManifestAutocomplete } from './routes/iiif/manifests/get-manifest-autocomplete';
 import { getCollectionAutocomplete } from './routes/iiif/collections/get-collection-autocomplete';
 
@@ -65,6 +66,12 @@ export const router = new TypedRouter({
   'delete-manifest': [TypedRouter.DELETE, '/api/madoc/iiif/manifests/:id', deleteManifest],
   'get-manifest-metadata': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/metadata', getManifestMetadata],
   'get-manifest-structure': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/structure', getManifestStructure],
+  'put-manifest-metadata': [
+    TypedRouter.PUT,
+    '/api/madoc/iiif/manifests/:id/metadata',
+    updateMetadata,
+    'MetadataUpdate',
+  ],
   'put-manifest-structure': [
     TypedRouter.PUT,
     '/api/madoc/iiif/manifests/:id/structure',
@@ -78,6 +85,7 @@ export const router = new TypedRouter({
   'get-canvas': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id', getCanvas],
   'create-canvas': [TypedRouter.POST, '/api/madoc/iiif/canvases', createCanvas],
   'get-canvas-metadata': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/metadata', getCanvasMetadata],
+  'put-canvas-metadata': [TypedRouter.PUT, '/api/madoc/iiif/canvases/:id/metadata', updateMetadata, 'MetadataUpdate'],
 
   'omeka-test': [TypedRouter.GET, '/s/:slug/madoc/hello-world', omekaHelloWorld],
   'get-keys': [TypedRouter.GET, '/s/:slug/madoc/test-key', keys],
