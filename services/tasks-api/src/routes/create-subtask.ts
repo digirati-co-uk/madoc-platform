@@ -29,6 +29,12 @@ export const createSubtask: RouteMiddleware<{ id: string }, CreateTask | CreateT
   const isMany = Array.isArray(context.requestBody);
   const tasks: CreateTask[] = isMany ? (context.requestBody as CreateTask[]) : [context.requestBody as CreateTask];
   await context.connection.transaction(async connection => {
+    const rootTaskId = parentTask.root_task
+      ? parentTask.root_task
+      : parentTask.parent_task
+      ? parentTask.parent_task
+      : parentTask.id;
+
     for (const task of tasks) {
       if (task.parent_task && task.parent_task !== parentId) {
         // Skip any mis-matched items.
@@ -41,6 +47,8 @@ export const createSubtask: RouteMiddleware<{ id: string }, CreateTask | CreateT
 
       // Override the parent task.
       task.parent_task = parentId;
+      // Override the root task.
+      task.root_task = rootTaskId;
 
       const id = v4();
       const createdTask = await insertTask(connection as any, {

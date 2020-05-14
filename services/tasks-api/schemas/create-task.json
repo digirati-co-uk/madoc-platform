@@ -49,6 +49,10 @@
             "description": "Identifier of the tasks parent, which will appear as it's subtask.",
             "type": "string"
         },
+        "root_task": {
+            "description": "Identifier of the top level root task.",
+            "type": "string"
+        },
         "state": {
             "description": "Custom state, can change during the tasks lifecycle."
         },

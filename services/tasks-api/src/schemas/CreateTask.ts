@@ -36,6 +36,11 @@ export type CreateTask = {
   parent_task?: string;
 
   /**
+   * Identifier of the top level root task.
+   */
+  root_task?: string;
+
+  /**
    * Custom parameters, cannot be changed after creation.
    */
   parameters?: any[];
