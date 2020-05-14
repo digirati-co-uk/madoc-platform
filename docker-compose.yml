@@ -48,8 +48,8 @@ services:
       - OMEKA__ANNOTATION_ES_INDEX=jane-annotations
       - OMEKA__SEARCH_INDEXER=search-indexer:8000
     volumes:
-      - ./services/madoc/packages:/srv/omeka/repos
-      - ./services/madoc/.omeka/omeka-s/application:/srv/omeka/application
+      - ./services/madoc/packages:/srv/omeka/repos:delegated
+      - ./services/madoc/.omeka/omeka-s/application:/srv/omeka/application:cached
       - ./var/files:/srv/omeka/files
       - ./services/madoc/config/omeka-app/application.config.php:/srv/omeka/application/config/application.config.php
       - ./services/madoc/translations:/srv/omeka/translations
@@ -67,13 +67,14 @@ services:
       dockerfile: Dockerfile.dev
     restart: always
     volumes:
-      - ./services/madoc-ts/src:/home/node/app/src
-      - ./services/madoc-ts/migrations:/home/node/app/migrations
-      - ./services/madoc-ts/schemas:/home/node/app/schemas
+      - ./services/madoc-ts/lib:/home/node/app/lib:delegated
+      - ./services/madoc-ts/migrations:/home/node/app/migrations:delegated
+      - ./services/madoc-ts/schemas:/home/node/app/schemas:delegated
       - ./services/madoc-ts/ecosystem.config.js:/home/node/app/ecosystem.config.js
       - ./services/madoc-ts/service-jwts:/home/node/app/service-jwts
       - ./var/certs:/openssl-certs
       - ./var/jwt:/home/node/app/service-jwt-responses
+      - ./var/files:/home/node/app/omeka-files
     environment:
       - DATABASE_HOST=shared-postgres
       - DATABASE_NAME=madoc
@@ -89,6 +90,7 @@ services:
       - OMEKA__URL=http://madoc
       - REDIS_HOST=gateway-redis
       - API_GATEWAY=http://gateway:8080
+      - OMEKA_FILE_DIRECTORY=/home/node/app/omeka-files
     links:
       - shared-postgres
       - madoc-database
