@@ -1,6 +1,5 @@
 version: "3"
 services:
-
   # Internal services
 
   gateway:
@@ -9,7 +8,7 @@ services:
     environment:
       - TYK_GW_STORAGE_HOST=gateway-redis
       - TYK_GW_SECRET=${GATEWAY_SECRET}
-      - JWT_SERVICES=tasks-api,madoc-api
+      - JWT_SERVICES=tasks-api,madoc-api,configuration-api
     ports:
       - "8888:8080"
     links:
@@ -19,6 +18,7 @@ services:
       - tasks-api
       - model-api
       - madoc-ts
+      - config-service
     volumes:
       - ./services/gateway/gateway.conf:/opt/tyk-gateway/tyk.conf
       - ./var/certs:/openssl-certs
@@ -167,6 +167,26 @@ services:
     ports:
       - "3334:3306"
 
+  config-service:
+    image: digirati/madoc_config_service_django:f640bbfe39f7df961ab82414ace3e4bd4e5fe9f2
+    environment:
+      - USE_DOCKER=yes
+      - IPYTHONDIR=/app/.ipython
+      - MIGRATE=True
+      - LOAD=False
+      - DJANGO_DEBUG=False
+      - WAITRESS=False
+      - POSTGRES_HOST=shared-postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=config_service
+      - POSTGRES_PASSWORD=config_service_password
+      - POSTGRES_DB=config_service
+      - DATABASE_URL=postgres://config_service:config_service_password@shared-postgres:5432/config_service
+    links:
+      - shared-postgres
+    volumes:
+      - ./configuration/schemas:/app/configurator/schemas
+      - ./configuration/defaults:/app/configurator/default_config
   # External services
 #
 #  annotation-server:

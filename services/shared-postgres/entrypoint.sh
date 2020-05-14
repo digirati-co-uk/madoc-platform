@@ -59,6 +59,30 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 EOSQL
 
+# Config Service Database -- not sure if it needs the uuid-ossp extenstion 
+
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-"EOSQL"
+
+SELECT 'CREATE DATABASE config_service'
+WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'config_service')\gexec
+
+DO $$
+BEGIN
+  CREATE ROLE config_service LOGIN PASSWORD 'config_service_password';
+  GRANT ALL PRIVILEGES ON DATABASE config_service TO config_service;
+
+  EXCEPTION WHEN DUPLICATE_OBJECT THEN
+  RAISE NOTICE 'not creating role config_service -- it already exists';
+END
+$$;
+EOSQL
+
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" -d config_service <<-"EOSQL"
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+EOSQL
+
 ## Madoc database
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-"EOSQL"
 
@@ -74,6 +98,12 @@ BEGIN
   RAISE NOTICE 'not creating role madoc -- it already exists';
 END
 $$;
+EOSQL
+
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" -d madoc <<-"EOSQL"
+
+CREATE EXTENSION IF NOT EXISTS "ltree";
+
 EOSQL
 
     docker_temp_server_stop

@@ -3,15 +3,15 @@
     "access_rights": {
       "2": {
         "api_id": "2",
-        "versions": [
-          "Default"
-        ]
+        "versions": ["Default"]
       },
       "4": {
         "api_id": "4",
-        "versions": [
-          "Default"
-        ]
+        "versions": ["Default"]
+      },
+      "8": {
+        "api_id": "8",
+        "versions": ["Default"]
       }
     },
     "org_id": "default",
