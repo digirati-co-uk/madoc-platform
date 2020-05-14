@@ -24,6 +24,8 @@ import { getCanvas } from './routes/iiif/canvases/get-canvas';
 import { getCanvasMetadata } from './routes/iiif/canvases/get-canvas-metadata';
 import { updateManifestStructure } from './routes/iiif/manifests/update-manifest-structure';
 import { getManifestStructure } from './routes/iiif/manifests/get-manifest-structure';
+import { getManifestAutocomplete } from './routes/iiif/manifests/get-manifest-autocomplete';
+import { getCollectionAutocomplete } from './routes/iiif/collections/get-collection-autocomplete';
 
 export const router = new TypedRouter({
   // Normal route
@@ -50,6 +52,11 @@ export const router = new TypedRouter({
     updateCollectionStructure,
     'UpdateStructureList',
   ],
+  'get-collection-autocomplete': [
+    TypedRouter.GET,
+    '/api/madoc/iiif/autocomplete/collections',
+    getCollectionAutocomplete,
+  ],
 
   // Manifest API.
   'list-manifests': [TypedRouter.GET, '/api/madoc/iiif/manifests', listManifests],
@@ -64,6 +71,8 @@ export const router = new TypedRouter({
     updateManifestStructure,
     'UpdateStructureList',
   ],
+  'get-manifest-autocomplete': [TypedRouter.GET, '/api/madoc/iiif/autocomplete/manifests', getManifestAutocomplete],
+
   // Canvas API
   'list-canvases': [TypedRouter.GET, '/api/madoc/iiif/canvases', listCanvases],
   'get-canvas': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id', getCanvas],
