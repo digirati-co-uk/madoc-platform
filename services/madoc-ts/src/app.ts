@@ -14,6 +14,8 @@ import { syncOmeka } from './utility/sync-omeka';
 import { setJwt } from './middleware/set-jwt';
 import { generateKeys } from './utility/generate-keys';
 import { syncJwtRequests } from './utility/sync-jwt-requests';
+import { readdirSync, readFileSync } from 'fs';
+import * as path from 'path';
 import { ExternalConfig } from './types/external-config';
 
 export async function createApp(router: TypedRouter<any, any>, config: ExternalConfig) {
@@ -38,7 +40,13 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
 
   // Validator.
   app.context.ajv = new Ajv();
-  app.context.ajv.addSchema(require('../schemas/example.json'), 'example');
+  for (const file of readdirSync(path.resolve(__dirname, '..', 'schemas'))) {
+    const name = path.basename(file, '.json');
+    app.context.ajv.addSchema(
+      JSON.parse(readFileSync(path.resolve(__dirname, '..', 'schemas', file)).toString('utf-8')),
+      name
+    );
+  }
 
   app.use(postgresConnection(pool));
   app.use(json({ pretty: process.env.NODE_ENV !== 'production' }));
