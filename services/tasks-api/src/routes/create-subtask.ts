@@ -28,47 +28,48 @@ export const createSubtask: RouteMiddleware<{ id: string }, CreateTask | CreateT
   const returnTasks: any[] = [];
   const isMany = Array.isArray(context.requestBody);
   const tasks: CreateTask[] = isMany ? (context.requestBody as CreateTask[]) : [context.requestBody as CreateTask];
-  for (const task of tasks) {
-    if (task.parent_task && task.parent_task !== parentId) {
-      // Skip any mis-matched items.
-      continue;
+  await context.connection.transaction(async connection => {
+    for (const task of tasks) {
+      if (task.parent_task && task.parent_task !== parentId) {
+        // Skip any mis-matched items.
+        continue;
+      }
+
+      if (task.events) {
+        task.events = validateEvents(task.events, context.state.queueList);
+      }
+
+      // Override the parent task.
+      task.parent_task = parentId;
+
+      const id = v4();
+      const createdTask = await insertTask(connection as any, {
+        id,
+        task,
+        user: context.state.jwt.user,
+        context: contextForSubtask,
+      });
+
+      returnTasks.push(mapSingleTask(createdTask));
+
+      // Task events
+      const taskWithId = { id, ...task };
+      context.state.dispatch(taskWithId, 'created');
+      if (task.assignee) {
+        context.state.dispatch(taskWithId, 'assigned', undefined, task.assignee);
+        context.state.dispatch(taskWithId, 'assigned_to', task.assignee.id, task.assignee);
+      }
+      if (typeof task.status !== 'undefined') {
+        context.state.dispatch(taskWithId, 'status', task.status, { status_text: task.status_text });
+      }
+
+      // Parent task events.
+      context.state.dispatch(parentTask, 'modified');
+      context.state.dispatch(parentTask, 'subtask_created', undefined, { subtaskId: id });
+      context.state.dispatch(parentTask, 'subtask_type_created', task.type);
+      context.state.dispatch(parentTask, 'subtask_status', task.status, { status_text: task.status_text });
     }
-
-    if (task.events) {
-      task.events = validateEvents(task.events, context.state.queueList);
-    }
-
-    // Override the parent task.
-    task.parent_task = parentId;
-
-    const id = v4();
-    const createdTask = await insertTask(context.connection, {
-      id,
-      task,
-      user: context.state.jwt.user,
-      context: contextForSubtask,
-    });
-
-    returnTasks.push(mapSingleTask(createdTask));
-
-    // Task events
-    const taskWithId = { id, ...task };
-    context.state.dispatch(taskWithId, 'created');
-    if (task.assignee) {
-      context.state.dispatch(taskWithId, 'assigned', undefined, task.assignee);
-      context.state.dispatch(taskWithId, 'assigned_to', task.assignee.id, task.assignee);
-    }
-    if (typeof task.status !== 'undefined') {
-      context.state.dispatch(taskWithId, 'status', task.status, { status_text: task.status_text });
-    }
-
-    // Parent task events.
-    context.state.dispatch(parentTask, 'modified');
-    context.state.dispatch(parentTask, 'subtask_created', undefined, { subtaskId: id });
-    context.state.dispatch(parentTask, 'subtask_type_created', task.type);
-    context.state.dispatch(parentTask, 'subtask_status', task.status, { status_text: task.status_text });
-  }
-
+  });
   if (returnTasks.length === 0) {
     throw new RequestError();
   }

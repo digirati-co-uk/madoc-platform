@@ -8,15 +8,19 @@ export async function getTask(
     user,
     scope,
     context,
+    status,
     page = 1,
     perPage = 20,
+    all,
   }: {
     id: string;
     scope: string[];
     user: { id: string; name: string };
     context: string[];
+    status?: number;
     page?: number;
     perPage?: number;
+    all?: boolean;
   }
 ) {
   const isAdmin = scope.indexOf('tasks.admin') !== -1;
@@ -24,14 +28,15 @@ export async function getTask(
   const userCheck = isAdmin ? sql`` : sql`AND (t.creator_id = ${userId} OR t.assignee_id = ${userId})`;
 
   const offset = (page - 1) * perPage;
-  const subtaskPagination = sql`limit ${perPage} offset ${offset}`;
+  const subtaskPagination = all ? sql`` : sql`limit ${perPage} offset ${offset}`;
+  const statusQuery = typeof status !== 'undefined' ? sql`and status = ${status}` : sql``;
 
   const fullTaskList = sql`
       select *
       from tasks
       where context ?& ${sql.array(context, 'text')}
         ${userCheck}
-        and (id = ${id} or parent_task = ${id}) order by created_at
+        and (id = ${id} or (parent_task = ${id} ${statusQuery})) order by created_at
     `;
 
   const { rowCount } = await connection.query(fullTaskList);

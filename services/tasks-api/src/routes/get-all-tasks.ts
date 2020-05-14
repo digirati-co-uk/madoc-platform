@@ -9,6 +9,7 @@ export const getAllTasks: RouteMiddleware = async context => {
   const userId = context.state.jwt.user.id;
   const typeFilter = context.query.type ? sql`and t.type = ${context.query.type}` : sql``;
   const subjectFilter = context.query.subject ? sql`and t.subject = ${context.query.subject}` : sql``;
+  const statusFilter = context.query.status ? sql`and t.status = ${Number(context.query.status)}` : sql``;
   const subtaskExclusion = context.query.all_tasks ? sql`` : sql`and t.parent_task is null`;
   const userExclusion = isAdmin ? sql`` : sql`and (t.creator_id = ${userId} OR t.assignee_id = ${userId})`;
 
@@ -26,6 +27,7 @@ export const getAllTasks: RouteMiddleware = async context => {
         ${userExclusion}
         ${typeFilter}
         ${subjectFilter}
+        ${statusFilter}
     `;
 
     const { rowCount } = await context.connection.query(query);

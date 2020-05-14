@@ -36,6 +36,7 @@ export function mapSingleTask(singleTask: any, subtasks?: any[]) {
             type: task.type,
             name: task.name,
             status: task.status,
+            subject: task.subject,
             status_text: task.status_text,
             state: task.state,
           };
