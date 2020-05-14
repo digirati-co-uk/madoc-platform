@@ -13,32 +13,38 @@
       "models.revision",
       "models.create",
       "models.contribute",
-      "models.view_published"
+      "models.view_published",
+      "site.view"
     ],
     "limited-reviewer": [
       "tasks.create",
       "tasks.progress",
       "models.revision",
       "models.contribute",
-      "models.view_published"
+      "models.view_published",
+      "site.view"
     ],
     "transcriber": [
       "tasks.progress",
       "models.revision",
       "models.contribute",
-      "models.view_published"
+      "models.view_published",
+      "site.view"
     ],
     "limited-transcriber": [
       "tasks.progress",
       "models.revision",
       "models.contribute",
-      "models.view_published"
+      "models.view_published",
+      "site.view"
     ],
     "viewer": [
-      "models.view_published"
+      "models.view_published",
+      "site.view"
     ],
     "editor": [
-      "models.view_published"
+      "models.view_published",
+      "site.view"
     ]
   }
 }
