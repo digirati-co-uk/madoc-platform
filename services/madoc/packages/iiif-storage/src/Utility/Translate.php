@@ -12,9 +12,12 @@ trait Translate {
         if (is_string($objOrString)) {
             return $objOrString;
         }
-        foreach ($objOrString as $candidate) {
-            if ($candidate['@language'] === 'en') {
-                return $candidate['@value'];
+
+        if (!empty($objOrString)) {
+            foreach ($objOrString as $candidate) {
+                if ($candidate['@language'] === 'en') {
+                    return $candidate['@value'];
+                }
             }
         }
 
