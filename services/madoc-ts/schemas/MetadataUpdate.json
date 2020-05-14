@@ -1,0 +1,96 @@
+{
+  "type": "object",
+  "properties": {
+    "added": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "language": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "edited": {
+            "type": "boolean"
+          },
+          "auto_update": {
+            "type": "boolean"
+          },
+          "readonly": {
+            "type": "boolean"
+          },
+          "data": {}
+        },
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "language",
+          "value"
+        ]
+      }
+    },
+    "removed": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "modified": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "language": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "edited": {
+            "type": "boolean"
+          },
+          "auto_update": {
+            "type": "boolean"
+          },
+          "readonly": {
+            "type": "boolean"
+          },
+          "data": {}
+        },
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "language",
+          "value"
+        ]
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "added",
+    "modified",
+    "removed"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

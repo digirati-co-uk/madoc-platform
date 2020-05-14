@@ -1,0 +1,24 @@
+--iiif-tables (down)
+drop table if exists iiif_metadata cascade;
+drop table if exists iiif_derived_resource cascade;
+drop table if exists iiif_derived_resource_items cascade;
+drop table if exists iiif_resource_items cascade;
+drop table if exists iiif_resource cascade;
+drop table if exists iiif_project cascade;
+drop view if exists iiif_derived_resource_item_counts;
+drop function add_single_metadata(term text, language_map json, input_source text, rid integer, sid integer);
+drop function add_metadata(test json, input_source text, rid integer, sid integer);
+drop function add_metadata_key_value_pairs(input_metadata json, resource_id integer, site_id integer, input_source text);
+drop function create_canvas(canvas json, local_source text, thumbnail text, sid integer, added_by text);
+drop function create_manifest(manifest json, local_source text, sid integer, added_by text, task_id text);
+drop function create_collection(collection json, sid integer, added_by text, task_id text);
+drop function update_metadata_field(input_resource_id integer, input_key text, input_language text, input_source text, input_value text, sid integer);
+drop function derive_resource(canonical_resource_id integer, sid integer, added_by text, tid text);
+drop function add_item_context(sid integer, rid integer, item_ids integer[]);
+drop function remove_item_context(sid integer, rid integer, to_remove_id integer);
+drop function add_sub_resources(site_id integer, parent_resource_id integer, item_ids integer[], added_by text);
+drop function modify_derived_items(sid integer, parent_resource_id integer, ids integer[]);
+drop function manifest_thumbnail(sid integer, manifest_id integer);
+drop function get_flat_collections(input_id integer, sid integer);
+drop function unflatten_derived_collection(input_id integer, sid integer, id_stack integer[]);
+drop function update_flat_collection_items(add_this integer, to_this integer, sid integer);

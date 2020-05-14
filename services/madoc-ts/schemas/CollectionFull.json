@@ -1,0 +1,162 @@
+{
+  "type": "object",
+  "properties": {
+    "collection": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "thumbnail": {
+          "type": "string"
+        },
+        "label": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "metadata": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "value": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "label",
+              "value"
+            ]
+          }
+        },
+        "requiredStatement": {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "value": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "label",
+            "value"
+          ]
+        },
+        "summary": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "type": {
+                "type": "string"
+              },
+              "label": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "thumbnail": {
+                "type": "string"
+              },
+              "canvasCount": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "label",
+              "thumbnail",
+              "type"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "items",
+        "label",
+        "thumbnail"
+      ]
+    },
+    "pagination": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "number"
+        },
+        "totalResults": {
+          "type": "number"
+        },
+        "totalPages": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "page",
+        "totalPages",
+        "totalResults"
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "collection",
+    "pagination"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

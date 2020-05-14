@@ -16,8 +16,8 @@ COPY ./migrate.js /home/node/app/migrate.js
 COPY ./tsconfig.json /home/node/app/tsconfig.json
 COPY ./migrations /home/node/app/migrations
 COPY ./config.json /home/node/app/config.json
-
-RUN yarn build
+COPY ./generate-schemas.js /home/node/app/generate-schemas.js
+COPY ./schemas /home/node/app/schemas
 
 ENV SERVER_PORT=3000
 ENV DATABASE_HOST=localhost
@@ -28,6 +28,8 @@ ENV DATABASE_SCHEMA=public
 ENV DATABASE_PASSWORD=postgres
 ENV NODE_ENV=development
 ENV API_GATEWAY_HOST=http://gateway
+
+RUN yarn build
 
 EXPOSE 3000
 

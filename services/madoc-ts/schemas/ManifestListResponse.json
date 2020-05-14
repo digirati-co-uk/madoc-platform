@@ -1,0 +1,63 @@
+{
+  "type": "object",
+  "properties": {
+    "manifests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "thumbnail": {
+            "type": "string"
+          },
+          "label": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "canvasCount": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "label",
+          "thumbnail"
+        ]
+      }
+    },
+    "pagination": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "number"
+        },
+        "totalResults": {
+          "type": "number"
+        },
+        "totalPages": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "page",
+        "totalPages",
+        "totalResults"
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "manifests",
+    "pagination"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

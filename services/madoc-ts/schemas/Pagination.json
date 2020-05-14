@@ -1,0 +1,21 @@
+{
+  "type": "object",
+  "properties": {
+    "page": {
+      "type": "number"
+    },
+    "totalResults": {
+      "type": "number"
+    },
+    "totalPages": {
+      "type": "number"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "page",
+    "totalPages",
+    "totalResults"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

@@ -1,0 +1,31 @@
+{
+  "type": "object",
+  "properties": {
+    "config": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "object",
+          "properties": {
+            "identifier": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "identifier"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "query"
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "config"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

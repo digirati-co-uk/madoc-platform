@@ -1,0 +1,115 @@
+{
+  "type": "object",
+  "properties": {
+    "canvas": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "thumbnail": {
+          "type": "string"
+        },
+        "label": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "metadata": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "value": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "label",
+              "value"
+            ]
+          }
+        },
+        "requiredStatement": {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "value": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "label",
+            "value"
+          ]
+        },
+        "summary": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "height": {
+          "type": "number"
+        },
+        "width": {
+          "type": "number"
+        },
+        "source": {},
+        "duration": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "height",
+        "id",
+        "label",
+        "width"
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "canvas"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
