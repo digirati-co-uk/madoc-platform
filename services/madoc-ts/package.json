@@ -9,6 +9,7 @@
     "build": "NODE_ENV=production tsc -p .",
     "generate-migration": "node migrate.js create",
     "generate-example-schema": "typescript-json-schema ./src/schemas/Example.ts Example -o ./schemas/example.json --required --noExtraProps"
+    "generate-schema": "node generate-schemas.js",
   },
   "dependencies": {
     "@hyperion-framework/types": "^0.3.0",

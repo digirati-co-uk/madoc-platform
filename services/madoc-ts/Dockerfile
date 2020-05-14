@@ -9,6 +9,7 @@ RUN yarn install
 COPY ./src /home/node/app/src
 COPY ./schemas /home/node/app/schemas
 COPY ./tsconfig.json /home/node/app/tsconfig.json
+COPY ./generate-schemas.js /home/node/app/generate-schemas.js
 
 RUN yarn build
 
@@ -49,6 +50,8 @@ COPY ./migrate.js /home/node/app/migrate.js
 COPY ./migrations /home/node/app/migrations
 COPY ./service-jwts /home/node/app/service-jwts
 COPY ./config.json /home/node/app/config.json
+COPY ./schemas /home/node/app/schemas
+COPY ./generate-schemas.js /home/node/app/generate-schemas.js
 
 CMD ["pm2-runtime", "start", "./ecosystem.config.js"]
 
