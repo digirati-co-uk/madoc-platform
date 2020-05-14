@@ -1,0 +1,6 @@
+{
+  "allowManifestNavigation": true,
+  "allowCanvasNavigation": true,
+  "claimGranularity": "canvas",
+  "maxContributionsPerResource": false
+}
