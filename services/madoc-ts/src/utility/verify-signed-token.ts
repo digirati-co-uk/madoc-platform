@@ -7,6 +7,7 @@ export type TokenReturn = {
   token: string;
   key: JWK.Key;
   payload: {
+    service: boolean;
     scope: string;
     iss_name: string;
     name: string;
@@ -17,12 +18,13 @@ export type TokenReturn = {
   };
 };
 
-export function verifySignedToken(token: string): TokenReturn | undefined {
+export function verifySignedToken(token: string, ignoreExpired = false): TokenReturn | undefined {
   const { payload, header, key } = JWT.verify(token, publicKey, {
     algorithms: ['RS256'],
     typ: 'JWT',
     clockTolerance: '1 min',
     complete: true,
+    ignoreExp: ignoreExpired,
   });
 
   if (key && payload && header) {

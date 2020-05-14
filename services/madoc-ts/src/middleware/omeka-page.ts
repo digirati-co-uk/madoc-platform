@@ -35,14 +35,20 @@ export const omekaPage: RouteMiddleware<{ slug: string }> = async (context, next
     // Split it by the comment indicating the content.
     const [header, footer] = html.split('<!--{{ content }}-->');
 
-    // Return the response wrapped in Omeka.
-    context.response.body = `
-      ${header}
-      ${(context.omekaMessages || []).map(
-        ({ type, message }) => `<ul class="messages messages--body"><li class="${type}">${message}</li></ul>`
-      )}
-      ${context.omekaPage}
-      ${footer}
-    `;
+    if (typeof context.omekaPage !== 'string') {
+      context.omekaPage = await context.omekaPage(context.state.jwt ? context.state.jwt.token : '');
+    }
+
+    if (context.omekaPage) {
+      // Return the response wrapped in Omeka.
+      context.response.body = `
+        ${header}
+        ${(context.omekaMessages || []).map(
+          ({ type, message }) => `<ul class="messages messages--body"><li class="${type}">${message}</li></ul>`
+        )}
+        ${context.omekaPage}
+        ${footer}
+      `;
+    }
   }
 };

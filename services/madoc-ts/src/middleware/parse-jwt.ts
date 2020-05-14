@@ -6,6 +6,17 @@ import { RouteMiddleware } from '../types/route-middleware';
 
 export const parseJwt: RouteMiddleware<{ slug?: string }> = async (context, next) => {
   const slug = context.params ? context.params.slug : undefined;
+  const asUser =
+    context.request.headers['x-madoc-site-id'] || context.request.headers['x-madoc-user-id']
+      ? {
+          userId: context.request.headers['x-madoc-site-id']
+            ? Number(context.request.headers['x-madoc-site-id'])
+            : undefined,
+          siteId: context.request.headers['x-madoc-user-id']
+            ? Number(context.request.headers['x-madoc-user-id'])
+            : undefined,
+        }
+      : undefined;
 
   // Only from the context of the Madoc site /s/{slug}/madoc
   if (slug) {
@@ -30,18 +41,15 @@ export const parseJwt: RouteMiddleware<{ slug?: string }> = async (context, next
   } else {
     // If there is no slug, then a JWT is always required, BUT it is always verified by the Gateway. We will verify
     // it anyway.
-    try {
-      const jwt = getToken(context);
-      if (jwt) {
-        const token = verifySignedToken(jwt);
-        if (token) {
-          context.state.jwt = parseJWT(token);
-          await next(); // only here.
-        }
+
+    const jwt = getToken(context);
+    if (jwt) {
+      const token = verifySignedToken(jwt);
+      if (token) {
+        context.state.jwt = parseJWT(token, asUser);
+        await next(); // only here.
+        return;
       }
-    } catch (e) {
-      // Nothing to catch here, rethrow below.
-      console.log(e);
     }
 
     // If we get to here, no valid token on a non-madoc endpoint.
