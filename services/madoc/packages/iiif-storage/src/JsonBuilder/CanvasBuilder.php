@@ -6,6 +6,7 @@ use Digirati\OmekaShared\Helper\LocaleHelper;
 use IIIF\Model\Canvas;
 use IIIFStorage\Model\BuiltCanvas;
 use IIIFStorage\Model\CanvasRepresentation;
+use IIIFStorage\Repository\CanvasRepository;
 use IIIFStorage\Utility\ApiRouter;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Api\Representation\MediaRepresentation;
@@ -33,15 +34,21 @@ class CanvasBuilder
      * @var LocaleHelper
      */
     private $localeHelper;
+    /**
+     * @var CanvasRepository
+     */
+    private $canvas;
 
     public function __construct(
         ApiRouter $router,
         ImageServiceBuilder $imageServiceBuilder,
-        LocaleHelper $localeHelper
+        LocaleHelper $localeHelper,
+        CanvasRepository $canvas
     ) {
         $this->router = $router;
         $this->imageServiceBuilder = $imageServiceBuilder;
         $this->localeHelper = $localeHelper;
+        $this->canvas = $canvas;
     }
 
     public function buildResource(ItemRepresentation $canvas, bool $originalIds = false)
@@ -145,12 +152,7 @@ class CanvasBuilder
 
     private function extractSource(ItemRepresentation $canvas): array
     {
-        /** @var ValueRepresentation $source */
-        $source = $canvas->value('dcterms:source');
-        if (!$source) {
-            return [];
-        }
-        return json_decode($source->value(), true);
+        return $this->canvas->getSource($canvas->id());
     }
 
     function getFunctionalFields(): array

@@ -10,6 +10,7 @@ use IIIFStorage\Model\ManifestRepresentation;
 use IIIFStorage\Repository\ManifestRepository;
 use IIIFStorage\Utility\ApiRouter;
 use Omeka\Api\Representation\ItemRepresentation;
+use Omeka\Api\Representation\ValueRepresentation;
 
 class ManifestBuilder
 {

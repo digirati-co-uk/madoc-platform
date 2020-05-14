@@ -81,7 +81,7 @@ class ResourceController extends AbstractPsr7ActionController
 
         // Item-set ID to manifest
         return new JsonResponse($this->manifestBuilder->build($manifest, $originalId)->getJson(), 200, [
-            'ETag' => $manifest->modified()->getTimestamp(),
+            'ETag' => $manifest->modified() ? $manifest->modified()->getTimestamp() : (new \DateTime())->getTimestamp(),
             'Cache-Control' => 'public, max-age=3600'
         ]);
     }

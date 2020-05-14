@@ -196,7 +196,8 @@ return [
                 return new CanvasBuilder(
                     $c->get(ApiRouter::class),
                     $c->get(ImageServiceBuilder::class),
-                    $c->get(LocaleHelper::class)
+                    $c->get(LocaleHelper::class),
+                    $c->get(CanvasRepository::class)
                 );
             },
             ManifestBuilder::class => function (ContainerInterface $c) {

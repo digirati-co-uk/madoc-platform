@@ -68,6 +68,7 @@ trait MetadataAggregator
     public function getBlacklist()
     {
         return [
+            'foaf:thumbnail',
             'dcterms:source',
             'dcterms:identifier',
             'exif:versionInfo'

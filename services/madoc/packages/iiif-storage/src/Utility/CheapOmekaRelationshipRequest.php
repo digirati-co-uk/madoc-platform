@@ -66,7 +66,7 @@ SELECT COUNT(V2.value_resource_id) as count
 SQL;
 
     const SELECT_SOURCE = <<<SQL
-SELECT value as json 
+SELECT value as json, value_resource_id as media_id 
   FROM value 
   WHERE property_id = :termId 
     AND resource_id = :resourceId
@@ -161,6 +161,14 @@ SQL;
         // Fetch and close.
         $sourceResult = $sourceStatement->fetch();
         $sourceStatement->closeCursor();
+
+        if (!$sourceResult['json'] && $sourceResult['media_id']) {
+            $mediaStatement = $this->connection->prepare('SELECT extension, storage_id FROM media WHERE id = :id');
+            $mediaStatement->bindValue('id', $sourceResult['media_id'], PDO::PARAM_INT);
+            $mediaStatement->execute();
+            $mediaItem = $mediaStatement->fetch();
+            return json_decode(file_get_contents(OMEKA_PATH . '/files/original/'.$mediaItem['storage_id'] . '.' .$mediaItem['extension']), true);
+        }
 
         return json_decode($sourceResult['json'], true);
     }

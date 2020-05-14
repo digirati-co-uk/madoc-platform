@@ -12,7 +12,7 @@ class HideManifestCollectionJson implements FieldFilterInterface
     {
         $resourceTemplate = $itemSet->resourceTemplate();
         if ($resourceTemplate && $resourceTemplate->label() === 'IIIF Collection') {
-            if ($data['dcterms:source']) {
+            if (isset($data['dcterms:source'])) {
                 unset($data['dcterms:source']);
             }
         }
