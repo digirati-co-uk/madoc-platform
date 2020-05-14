@@ -1,5 +1,5 @@
 import { TokenReturn } from './verify-signed-token';
-import { ApplicationState } from '../types';
+import { ApplicationState } from '../types/application-state';
 
 export function parseJWT(token: TokenReturn): ApplicationState['jwt'] {
   return {

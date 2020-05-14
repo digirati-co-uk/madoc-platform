@@ -1,4 +1,4 @@
-import { RouteMiddleware } from '../types';
+import { RouteMiddleware } from '../types/route-middleware';
 
 export const madocNotFound: RouteMiddleware = context => {
   context.status = 404;

@@ -1,12 +1,11 @@
-import { RouteMiddleware } from '../../types';
+import { RouteMiddleware } from '../../types/route-middleware';
 
 export const logout: RouteMiddleware<{ slug: string }> = async context => {
   const jwt = context.state.jwt;
-  if (jwt) {
-    const user = jwt.user;
+  if (jwt && jwt.user.id) {
     const cookieName = context.externalConfig.cookieName || 'madoc';
     // Get user sites
-    const sites = await context.omeka.getUserSites(user.id);
+    const sites = await context.omeka.getUserSites(jwt.user.id, 'admin'); // @todo change this to avoid leaking sites
     // Unset cookies.
     for (const site of sites) {
       const domain = `/s/${site.slug}`;

@@ -1,5 +1,5 @@
-import { RouteMiddleware } from '../types';
 import fetch from 'node-fetch';
+import { RouteMiddleware } from '../types/route-middleware';
 
 const omekaUrl = process.env.OMEKA__URL as string;
 

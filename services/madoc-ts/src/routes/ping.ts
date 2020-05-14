@@ -1,5 +1,5 @@
-import { RouteMiddleware } from '../types';
 import { mysql } from '../utility/mysql';
+import { RouteMiddleware } from '../types/route-middleware';
 
 export const ping: RouteMiddleware = async context => {
   context.response.body = await new Promise(resolve =>

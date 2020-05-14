@@ -1,4 +1,4 @@
-import { RouteMiddleware } from '../types';
+import { RouteMiddleware } from '../types/route-middleware';
 
 export const omekaHelloWorld: RouteMiddleware<{ slug: string }> = async context => {
   context.omekaPage = `

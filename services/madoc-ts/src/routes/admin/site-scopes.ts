@@ -1,6 +1,7 @@
-import { ApplicationState, RouteMiddleware } from '../../types';
 import { NotFoundError, sql } from 'slonik';
-import { NotFound } from '../../errors/not-found';
+import { NotFound } from '../../utility/errors/not-found';
+import { ApplicationState } from '../../types/application-state';
+import { RouteMiddleware } from '../../types/route-middleware';
 
 type SiteScope = {
   id?: number;
@@ -23,7 +24,9 @@ function checkAdminForSite(siteId: number, jwt: ApplicationState['jwt']) {
   const jwtSiteId = jwt.site.id;
   if (!canSave || !siteId || jwtSiteId !== siteId) {
     console.log(
-      `Error: User<${jwt.user.id}> tried to administer site<${jwtSiteId}> (canSave=${canSave ? 'true' : 'false'} site<${siteId}>)`,
+      `Error: User<${jwt.user.id}> tried to administer site<${jwtSiteId}> (canSave=${
+        canSave ? 'true' : 'false'
+      } site<${siteId}>)`,
       jwt.scope
     );
     throw new NotFound();

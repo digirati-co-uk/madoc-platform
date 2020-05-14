@@ -1,7 +1,7 @@
 import { Middleware } from 'koa';
-import { NotFound } from '../errors/not-found';
-import { RequestError } from '../errors/request-error';
-import { ServerError } from '../errors/server-error';
+import { NotFound } from '../utility/errors/not-found';
+import { RequestError } from '../utility/errors/request-error';
+import { ServerError } from '../utility/errors/server-error';
 import { SlonikError } from 'slonik';
 
 export const errorHandler: Middleware = async (context, next) => {

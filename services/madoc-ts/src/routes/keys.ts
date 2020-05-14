@@ -1,6 +1,6 @@
-import { RouteMiddleware } from '../types';
 import { JWK, JWT } from 'jose';
 import { readFileSync } from 'fs';
+import { RouteMiddleware } from '../types/route-middleware';
 
 export const keys: RouteMiddleware = async context => {
   const key = JWK.asKey(readFileSync('/openssl-certs/madoc.key'));

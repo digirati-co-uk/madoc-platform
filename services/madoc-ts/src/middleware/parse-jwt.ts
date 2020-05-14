@@ -1,8 +1,8 @@
 import { verifySignedToken } from '../utility/verify-signed-token';
-import { RouteMiddleware } from '../types';
 import { parseJWT } from '../utility/parse-jwt';
 import { getToken } from '../utility/get-token';
-import { NotFound } from '../errors/not-found';
+import { NotFound } from '../utility/errors/not-found';
+import { RouteMiddleware } from '../types/route-middleware';
 
 export const parseJwt: RouteMiddleware<{ slug?: string }> = async (context, next) => {
   const slug = context.params ? context.params.slug : undefined;

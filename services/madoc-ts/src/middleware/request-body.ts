@@ -1,5 +1,5 @@
-import { RouteMiddleware } from '../types';
-import { RequestError } from '../errors/request-error';
+import { RequestError } from '../utility/errors/request-error';
+import { RouteMiddleware } from '../types/route-middleware';
 
 export const requestBody = (schemaName?: string): RouteMiddleware => async (context, next) => {
   if (context.request.body) {

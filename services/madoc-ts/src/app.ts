@@ -10,11 +10,11 @@ import { migrate } from './migrate';
 import { createMysqlPool } from './database/create-mysql-pool';
 import { omekaPage } from './middleware/omeka-page';
 import { omekaApi } from './middleware/omeka-api';
-import { ExternalConfig } from './types';
 import { syncOmeka } from './utility/sync-omeka';
 import { setJwt } from './middleware/set-jwt';
 import { generateKeys } from './utility/generate-keys';
 import { syncJwtRequests } from './utility/sync-jwt-requests';
+import { ExternalConfig } from './types/external-config';
 
 export async function createApp(router: TypedRouter<any, any>, config: ExternalConfig) {
   const app = new Koa();
