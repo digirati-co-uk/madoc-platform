@@ -23,7 +23,9 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
 
   await syncJwtRequests();
 
-  await migrate();
+  if (process.env.NODE_ENV === 'production' || process.env.MIGRATE) {
+    await migrate();
+  }
 
   await syncOmeka(mysqlPool, pool, config);
 
@@ -46,6 +48,13 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   app.use(setJwt);
   app.use(omekaApi);
   app.use(router.routes()).use(router.allowedMethods());
+
+  process.on('SIGINT', async () => {
+    console.log('closing database connections...');
+    await Promise.all([pool.end(), new Promise(resolve => mysqlPool.end(resolve))]);
+    console.log('done');
+    process.exit(0);
+  });
 
   return app;
 }
