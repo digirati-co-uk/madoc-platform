@@ -2,6 +2,7 @@
 use AutoComplete\Api\OmekaResourceClassQueryListener;
 use AutoComplete\Completion\CompletionService;
 use AutoComplete\Completion\Contributors\FastResourceCompletionContributor;
+use AutoComplete\Completion\Contributors\WikiDataResourceCompletionContributor;
 use AutoComplete\Completion\Contributors\OmekaItemCompletionContributor;
 use GuzzleHttp\Client;
 
@@ -17,11 +18,17 @@ return [
                 return new FastResourceCompletionContributor(new Client());
             },
 
+            WikiDataResourceCompletionContributor::class => function () {
+                return new WikiDataResourceCompletionContributor(new Client());
+            },
+
+
             CompletionService::class => function ($container) {
 
                 return new CompletionService(
                     $container->get(OmekaItemCompletionContributor::class),
-                    $container->get(FastResourceCompletionContributor::class)
+                    $container->get(FastResourceCompletionContributor::class),
+                    $container->get(WikiDataResourceCompletionContributor::class)
                 );
             },
 
