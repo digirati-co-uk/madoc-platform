@@ -17,6 +17,7 @@ COPY ./tsconfig.json /home/node/app/tsconfig.json
 COPY ./migrations /home/node/app/migrations
 COPY ./config.json /home/node/app/config.json
 COPY ./generate-schemas.js /home/node/app/generate-schemas.js
+COPY ./translations /home/node/app/translations
 COPY ./schemas /home/node/app/schemas
 
 ENV SERVER_PORT=3000

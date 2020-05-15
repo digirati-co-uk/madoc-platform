@@ -16,10 +16,12 @@ import { generateKeys } from './utility/generate-keys';
 import { syncJwtRequests } from './utility/sync-jwt-requests';
 import { readdirSync, readFileSync } from 'fs';
 import * as path from 'path';
+import { createBackend } from './middleware/i18n/i18next.server';
 import { ExternalConfig } from './types/external-config';
 
 export async function createApp(router: TypedRouter<any, any>, config: ExternalConfig) {
   const app = new Koa();
+  const i18nextPromise = createBackend();
   const pool = createPostgresPool();
   const mysqlPool = createMysqlPool();
 
@@ -38,6 +40,10 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   app.context.routes = router;
   app.context.mysql = mysqlPool;
 
+  // Set i18next
+  const [, i18next] = await i18nextPromise;
+  app.context.i18next = await i18next;
+
   // Validator.
   app.context.ajv = new Ajv();
   for (const file of readdirSync(path.resolve(__dirname, '..', 'schemas'))) {
@@ -51,9 +57,11 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   app.use(postgresConnection(pool));
   app.use(json({ pretty: process.env.NODE_ENV !== 'production' }));
   app.use(logger());
+
   app.use(errorHandler);
   app.use(omekaPage);
   app.use(setJwt);
+
   app.use(omekaApi);
   app.use(router.routes()).use(router.allowedMethods());
 
