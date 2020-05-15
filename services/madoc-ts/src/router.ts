@@ -24,6 +24,7 @@ import { getCanvas } from './routes/iiif/canvases/get-canvas';
 import { getCanvasMetadata } from './routes/iiif/canvases/get-canvas-metadata';
 import { updateManifestStructure } from './routes/iiif/manifests/update-manifest-structure';
 import { getManifestStructure } from './routes/iiif/manifests/get-manifest-structure';
+import { getLocale } from './routes/locales';
 import { updateMetadata } from './routes/iiif/update-metadata';
 import { getManifestAutocomplete } from './routes/iiif/manifests/get-manifest-autocomplete';
 import { getCollectionAutocomplete } from './routes/iiif/collections/get-collection-autocomplete';
@@ -33,6 +34,9 @@ export const router = new TypedRouter({
   'get-ping': [TypedRouter.GET, '/api/madoc', ping],
   'get-scopes': [TypedRouter.GET, '/api/madoc/site/:siteId/permissions', getSiteScopes],
   'update-scopes': [TypedRouter.POST, '/api/madoc/site/:siteId/permissions', saveSiteScopes],
+
+  // Locale
+  'get-locale': [TypedRouter.GET, '/api/madoc/locales/:lng/:ns', getLocale],
 
   // Collection API.
   'list-collections': [TypedRouter.GET, '/api/madoc/iiif/collections', listCollections],

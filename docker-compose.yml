@@ -72,6 +72,7 @@ services:
       - ./services/madoc-ts/schemas:/home/node/app/schemas:delegated
       - ./services/madoc-ts/ecosystem.config.js:/home/node/app/ecosystem.config.js
       - ./services/madoc-ts/service-jwts:/home/node/app/service-jwts
+      - ./services/madoc-ts/translations:/home/node/app/translations
       - ./var/certs:/openssl-certs
       - ./var/jwt:/home/node/app/service-jwt-responses
       - ./var/files:/home/node/app/omeka-files
