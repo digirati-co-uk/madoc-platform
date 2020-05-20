@@ -15,9 +15,21 @@ class TemplateController extends AbstractPsr7ActionController
 {
     public function viewAction()
     {
+        /**
+         * @var $req Request
+         */
+        $req = $this->getRequest();
+        $minimal = $req->getQuery()->get('minimal', false);
+        if ($minimal) {
+            $vm = new ViewModel();
+            $vm->setTemplate('madoc-bridge/template/view-minimal');
+            $vm->setVariable('site', $this->currentSite());
+            $vm->setTerminal(true);
+            return $vm;
+        }
 
         $user = $this->getCurrentUser();
-        return new ViewModel();
+        return new ViewModel(['user' => $user]);
     }
 
     public function onDispatch(MvcEvent $e)
