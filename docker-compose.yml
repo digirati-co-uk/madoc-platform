@@ -110,7 +110,7 @@ services:
       - DATABASE_USER=tasks_api
       - DATABASE_SCHEMA=public
       - DATABASE_PASSWORD=tasks_api_password
-      - QUEUE_LIST=tasks-api
+      - QUEUE_LIST=tasks-api,madoc-ts
       - REDIS_HOST=gateway-redis
     ports:
       - "8105:3000"
@@ -118,7 +118,7 @@ services:
       - shared-postgres
       - gateway-redis
     volumes:
-    - ./services/tasks-api/lib:/home/node/app/lib
+      - ./services/tasks-api/lib:/home/node/app/lib
 
   model-api:
     image: digirati/capture-models:v0.1.1
