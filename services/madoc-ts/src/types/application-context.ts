@@ -16,4 +16,5 @@ export interface ApplicationContext {
   ajv: Ajv;
   omekaPage?: string | ((token: string) => Promise<string | undefined>) | ((token: string) => undefined | string);
   omekaMessages: Array<{ type: 'success' | 'error'; message: string }>;
+  omekaMinimal?: boolean;
 }
