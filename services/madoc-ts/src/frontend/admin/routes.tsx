@@ -14,6 +14,10 @@ import { CanvasView } from './pages/content/canvases/canvas';
 import { CanvasDetails } from './pages/content/canvases/canvas-details';
 import { EditCanvasMetadata } from './pages/content/canvases/edit-canvas-metadata';
 import { ManifestView } from './pages/content/manifests/manifest';
+import { NewProjectPage } from './pages/crowdsourcing/projects/new-project';
+import { ListProjects } from './pages/crowdsourcing/projects/list-projects';
+import { Project } from './pages/crowdsourcing/projects/project';
+import { ProjectModelEditor } from './pages/crowdsourcing/projects/project-model-editor';
 import { CreateCollection } from './pages/content/collections/create-collection';
 import { CreateManifest } from './pages/content/manifests/create-manifest';
 import { TaskRouter } from './pages/tasks/task-router';
@@ -110,6 +114,27 @@ export const routes: UniversalRoute[] = [
         path: '/canvases/:id/metadata',
         exact: true,
         component: EditCanvasMetadata,
+      },
+    ],
+  },
+  {
+    path: '/projects/create',
+    exact: true,
+    component: NewProjectPage,
+  },
+  {
+    path: '/projects',
+    exact: true,
+    component: ListProjects,
+  },
+  {
+    path: '/projects/:id',
+    component: Project,
+    routes: [
+      {
+        path: '/projects/:id/model',
+        exact: true,
+        component: ProjectModelEditor,
       },
     ],
   },
