@@ -27,6 +27,7 @@ import { getLocale } from './routes/locales';
 import { updateMetadata } from './routes/iiif/update-metadata';
 import { getManifestAutocomplete } from './routes/iiif/manifests/get-manifest-autocomplete';
 import { getCollectionAutocomplete } from './routes/iiif/collections/get-collection-autocomplete';
+import { refreshToken } from './routes/user/refresh';
 
 export const router = new TypedRouter({
   // Normal route
@@ -96,6 +97,7 @@ export const router = new TypedRouter({
   'get-login': [TypedRouter.GET, '/s/:slug/madoc/login', loginPage],
   'post-login': [TypedRouter.POST, '/s/:slug/madoc/login', loginPage],
   'get-logout': [TypedRouter.GET, '/s/:slug/madoc/logout', logout],
+  'refresh-login': [TypedRouter.POST, '/s/:slug/madoc/auth/refresh', refreshToken],
 
   // Make sure this is last.
   'omeka-404': [TypedRouter.GET, '/s/:slug/madoc*', madocNotFound],
