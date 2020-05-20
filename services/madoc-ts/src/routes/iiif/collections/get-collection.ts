@@ -3,8 +3,8 @@ import { userWithScope } from '../../../utility/user-with-scope';
 import { CollectionFull } from '../../../types/schemas/collection-full';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import {
-  getCollectionList,
-  getCollectionSnippets, getSingleCollection,
+  getCollectionSnippets,
+  getSingleCollection,
   mapCollectionSnippets,
 } from '../../../database/queries/get-collection-snippets';
 

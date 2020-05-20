@@ -3,9 +3,6 @@ import { userWithScope } from '../../../utility/user-with-scope';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { CreateManifest } from '../../../types/schemas/create-manifest';
 
-// @todo create manifest via source, check if already exists and just derive it if it does.
-// @todo fix bug with create_manifest where multiple derived are inserted - probably missing index.
-// @todo create from service (like queue) with user proxy.
 export const createManifest: RouteMiddleware<{}, CreateManifest> = async context => {
   const { userUrn, siteId } = userWithScope(context, ['site.admin']);
 

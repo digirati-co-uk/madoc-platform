@@ -5,6 +5,7 @@ import { getMetadata } from '../../../utility/iiif-database-helpers';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { ManifestListResponse } from '../../../types/schemas/manifest-list';
 import { InternationalString } from '@hyperion-framework/types';
+import { countResources } from '../../../database/queries/resource-queries';
 
 type ManifestSnippetRow = {
   resource_id: number;
@@ -22,12 +23,7 @@ export const listManifests: RouteMiddleware = async context => {
 
   const manifestCount = 24;
   const pageQuery = Number(context.query.page) || 1;
-  const { total = 0 } = await context.connection.one<{ total: number }>(sql`
-      select count(*) as total
-          from iiif_derived_resource
-          where resource_type = 'manifest' 
-          and site_id = ${siteId}
-  `);
+  const { total = 0 } = await context.connection.one<{ total: number }>(countResources('manifest', siteId));
   const totalPages = Math.ceil(total / manifestCount);
   const page = (pageQuery > totalPages ? totalPages : pageQuery) || 1;
 
@@ -47,8 +43,6 @@ export const listManifests: RouteMiddleware = async context => {
       ['label']
     )
   );
-
-  console.log(manifestRows);
 
   const manifests = mapMetadata<{ label: InternationalString }, ManifestSnippetRow>(manifestRows, row => ({
     id: row.resource_id,

@@ -2,6 +2,37 @@ import { MetadataUpdate } from '../../types/schemas/metadata-update';
 import { sql } from 'slonik';
 import { SQL_COMMA, SQL_INT_ARRAY } from '../../utility/postgres-tags';
 
+export function getDerivedMetadata(resource_id: number, resource_type: string, site_id: number) {
+  return sql<{
+    key: string;
+    value: string;
+    language: string;
+    source: string;
+    edited: boolean;
+    auto_update: boolean;
+    readonly: boolean;
+    data: any;
+  }>`
+    select 
+        im.id,
+        im.key, 
+        im.value, 
+        im.language, 
+        im.source,
+        im.edited,
+        im.auto_update,
+        im.readonly,
+        im.data
+    from iiif_derived_resource ifd
+    left join  iiif_metadata im 
+        on ifd.resource_id = im.resource_id 
+    where ifd.site_id=${site_id}
+        and ifd.resource_id=${resource_id}
+        and ifd.resource_type=${resource_type}
+        and im.site_id=${site_id}
+  `;
+}
+
 export function addDerivedMetadata(added: MetadataUpdate['added'], resource_id: number, site_id: number) {
   if (added.length === 0) {
     return;
