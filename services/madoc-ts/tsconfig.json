@@ -24,6 +24,11 @@
       // "PACKAGE_NAME": ["../SERVICE_NAME"]
     }
   },
+  "exclude": [
+    "node_modules",
+    "lib/",
+    "**/*.stories.tsx"
+  ],
   "references": [
     // { "path": "../SERVICE_NAME" }
   ]
