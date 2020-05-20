@@ -50,10 +50,7 @@ export function createTask(collectionUrl: string, omekaUserId: number, siteId?: 
   };
 }
 
-export function changeStatus<K extends any>(
-  newStatus: typeof status[K],
-  data: { state?: any; name?: string; description?: string } = {}
-) {
+export function changeStatus(newStatus: string, data: { state?: any; name?: string; description?: string } = {}) {
   return tasks.changeStatus(status, newStatus, data);
 }
 

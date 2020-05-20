@@ -1,0 +1,33 @@
+{
+  "type": "object",
+  "properties": {
+    "label": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "slug": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "label",
+    "slug",
+    "summary"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
