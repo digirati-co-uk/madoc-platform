@@ -1,32 +1,49 @@
-import { Worker } from 'bullmq';
-import { getTaskById } from '../gateway/tasks';
+import { Worker, WorkerOptions } from 'bullmq';
+import * as manifest from '../gateway/tasks/import-manifest';
+import * as collection from '../gateway/tasks/import-collection';
+import * as canvas from '../gateway/tasks/import-canvas';
+import { api } from '../gateway/api.server';
+import * as tasks from '../gateway/tasks/task-helpers';
 
-const configOptions = {
+const configOptions: WorkerOptions = {
   connection: {
     host: process.env.REDIS_HOST,
     db: 2,
   },
+  concurrency: 2,
 };
 
 const worker = new Worker(
-  'tasks-api',
+  'madoc-ts',
   async job => {
-    switch (job.name) {
-
-      case 'subtask_type_status.type-a.1':
-        console.log('ALL TASKS ARE of type A are at status 1');
-        break;
-
-      case 'created': {
-        console.log('Fetching task...');
-        const fullTask = await getTaskById(job.data.taskId);
-        console.log('Task ID created', fullTask);
-        break;
+    console.log('starting job..', job.id);
+    try {
+      switch (job.data.type) {
+        case collection.type:
+          return await collection.jobHandler(job.name, job.data.taskId, api).catch(err => {
+            throw err;
+          });
+        case manifest.type:
+          return await manifest.jobHandler(job.name, job.data.taskId, api).catch(err => {
+            throw err;
+          });
+        case canvas.type:
+          return await canvas.jobHandler(job.name, job.data.taskId, api).catch(err => {
+            throw err;
+          });
       }
+    } catch (e) {
+      if (job.data.taskId) {
+        await api.updateTask(
+          job.data.taskId,
+          tasks.changeStatus([], 'error', {
+            state: { error: e.toString() },
+          })
+        );
+      }
+      console.log(e);
+      await job.retry('failed');
     }
-
-    // Artificial timeout.
-    await new Promise(resolve => setTimeout(resolve, 500));
   },
   configOptions
 );

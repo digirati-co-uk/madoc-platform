@@ -1,6 +1,7 @@
 import { TypedRouter } from './utility/typed-router';
 import { ping } from './routes/ping';
 import { madocNotFound } from './routes/madoc-not-found';
+import { importCollection, importManifest } from './routes/iiif-import/import';
 import { loginPage } from './routes/user/login';
 import { getSiteScopes, saveSiteScopes } from './routes/admin/site-scopes';
 import { logout } from './routes/user/logout';
@@ -89,6 +90,9 @@ export const router = new TypedRouter({
   'get-canvas-metadata': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/metadata', getCanvasMetadata],
   'put-canvas-metadata': [TypedRouter.PUT, '/api/madoc/iiif/canvases/:id/metadata', updateMetadata, 'MetadataUpdate'],
 
+  // Import API
+  'import-manifest': [TypedRouter.POST, '/api/madoc/iiif/import/manifest', importManifest],
+  'import-collection': [TypedRouter.POST, '/api/madoc/iiif/import/collection', importCollection],
   'get-login': [TypedRouter.GET, '/s/:slug/madoc/login', loginPage],
   'post-login': [TypedRouter.POST, '/s/:slug/madoc/login', loginPage],
   'get-logout': [TypedRouter.GET, '/s/:slug/madoc/logout', logout],
