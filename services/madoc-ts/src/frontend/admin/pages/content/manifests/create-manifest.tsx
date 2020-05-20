@@ -14,6 +14,8 @@ import { MetadataEditor } from '../../../molecules/MetadataEditor';
 import { Button, SmallButton } from '../../../atoms/Button';
 import { Input, InputContainer, InputLabel } from '../../../atoms/Input';
 import { PreviewManifest } from '../../../molecules/PreviewManifest';
+import { AdminHeader } from '../../../molecules/AdminHeader';
+import { WidePage } from '../../../atoms/WidePage';
 
 export const CreateManifest: React.FC = () => {
   const {
@@ -48,55 +50,62 @@ export const CreateManifest: React.FC = () => {
 
   return (
     <>
-      <Header>
-        <ContextHeading>{t('Import manifest')}</ContextHeading>
-      </Header>
-      {urlManifest ? (
-        <div>
-          <Button disabled={isCreating} onClick={() => importManifest(urlManifest)}>
-            {t('Import manifest')}
-          </Button>
-          <hr />
-          <div style={{ background: '#eee', borderRadius: 5, padding: '1em' }}>
-            <VaultProvider>
-              <PreviewManifest id={urlManifest} />
-            </VaultProvider>
+      <AdminHeader
+        breadcrumbs={[
+          { label: t('Site admin'), link: '/' },
+          { label: t('Manifests'), link: '/manifests' },
+          { label: t('Add new manifest'), link: `/import/manifest`, active: true },
+        ]}
+        title={t('Add new manifest')}
+      />
+      <WidePage>
+        {urlManifest ? (
+          <div>
+            <Button disabled={isCreating} onClick={() => importManifest(urlManifest)}>
+              {t('Import manifest')}
+            </Button>
+            <hr />
+            <div style={{ background: '#eee', borderRadius: 5, padding: '1em' }}>
+              <VaultProvider>
+                <PreviewManifest id={urlManifest} />
+              </VaultProvider>
+            </div>
           </div>
-        </div>
-      ) : (
-        <GridContainer>
-          <HalfGird>
-            <Heading3>{t('Create new')}</Heading3>
-            <Subheading3>{t('Add a new empty manifest and start adding IIIF manifests to it.')}</Subheading3>
-            <MetadataEditor
-              disabled={isCreating}
-              fields={manifestToAdd.label}
-              onSave={ret => setManifestToAdd({ label: ret.toInternationalString() })}
-              metadataKey="label"
-              availableLanguages={['en', 'es', 'fr', 'de']}
-            />
-            <SmallButton disabled={manifestToAdd && isCreating} onClick={() => createManifest(manifestToAdd)}>
-              Create manifest
-            </SmallButton>
-          </HalfGird>
-          <HalfGird>
-            <Heading3>Import existing</Heading3>
-            <Subheading3>Import a manifest using a URL pointing to an existing IIIF manifest.</Subheading3>
-            <InputContainer>
-              <InputLabel>Manifest URL</InputLabel>
-              <Input type="text" onChange={e => setImportedManifestId(e.currentTarget.value)} />
-            </InputContainer>
-            <SmallButton
-              disabled={isCreating}
-              onClick={() => {
-                history.push(`/import/manifest?manifest=${importedManifestId}`);
-              }}
-            >
-              Import
-            </SmallButton>
-          </HalfGird>
-        </GridContainer>
-      )}
+        ) : (
+          <GridContainer>
+            <HalfGird>
+              <Heading3>{t('Create new')}</Heading3>
+              <Subheading3>{t('Add a new empty manifest and start adding IIIF manifests to it.')}</Subheading3>
+              <MetadataEditor
+                disabled={isCreating}
+                fields={manifestToAdd.label}
+                onSave={ret => setManifestToAdd({ label: ret.toInternationalString() })}
+                metadataKey="label"
+                availableLanguages={['en', 'es', 'fr', 'de']}
+              />
+              <SmallButton disabled={manifestToAdd && isCreating} onClick={() => createManifest(manifestToAdd)}>
+                Create manifest
+              </SmallButton>
+            </HalfGird>
+            <HalfGird>
+              <Heading3>Import existing</Heading3>
+              <Subheading3>Import a manifest using a URL pointing to an existing IIIF manifest.</Subheading3>
+              <InputContainer>
+                <InputLabel>Manifest URL</InputLabel>
+                <Input type="text" onChange={e => setImportedManifestId(e.currentTarget.value)} />
+              </InputContainer>
+              <SmallButton
+                disabled={isCreating}
+                onClick={() => {
+                  history.push(`/import/manifest?manifest=${importedManifestId}`);
+                }}
+              >
+                Import
+              </SmallButton>
+            </HalfGird>
+          </GridContainer>
+        )}
+      </WidePage>
     </>
   );
 };

@@ -4,6 +4,9 @@ import React from 'react';
 import { LocaleString } from '../../../molecules/LocaleString';
 import { renderUniversalRoutes } from '../../../server-utils';
 import { Link } from 'react-router-dom';
+import { AdminHeader } from '../../../molecules/AdminHeader';
+import { WidePage } from '../../../atoms/WidePage';
+import { useTranslation } from 'react-i18next';
 
 type ProjectType = {
   params: { id: string };
@@ -14,6 +17,7 @@ type ProjectType = {
 
 export const Project: UniversalComponent<ProjectType> = createUniversalComponent<ProjectType>(
   ({ route }) => {
+    const { t } = useTranslation();
     const { data, status } = useData(Project);
 
     if (!data || status === 'loading' || status === 'error') {
@@ -21,13 +25,21 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
     }
 
     return (
-      <div>
-        <h1>
-          <LocaleString>{data.label}</LocaleString>
-        </h1>
-        <Link to={`/projects/${data.id}/model`}>Model</Link>
-        <div>{renderUniversalRoutes(route.routes)}</div>
-      </div>
+      <>
+        <AdminHeader
+          breadcrumbs={[
+            { label: t('Site admin'), link: '/' },
+            { label: t('Projects'), link: '/projects' },
+            { label: <LocaleString>{data.label}</LocaleString>, link: `/projects/${data.id}`, active: true },
+          ]}
+          menu={[
+            { label: t('Overview'), link: `/projects/${data.id}` },
+            { label: t('Model'), link: `/projects/${data.id}/model` },
+          ]}
+          title={<LocaleString>{data.label}</LocaleString>}
+        />
+        <WidePage>{renderUniversalRoutes(route.routes)}</WidePage>
+      </>
     );
   },
   {
