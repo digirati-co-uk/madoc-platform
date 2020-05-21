@@ -1427,13 +1427,13 @@
     eslint-plugin-react-hooks "^2.1.2"
     typescript "^3.7.5"
 
-"@hyperion-framework/react-vault@0.4.4":
-  version "0.4.4"
-  resolved "https://registry.yarnpkg.com/@hyperion-framework/react-vault/-/react-vault-0.4.4.tgz#9ff8aad3b456f3de170d45935f93592588e1bc2d"
-  integrity sha512-YtzzgWygQxrfnZUwfCB3qVttFF+JtBOybgdc60P1BoOi8bF64efUfyAmGqWSg4dCerQBeesL5fvMoZI9TEfkQg==
+"@hyperion-framework/react-vault@0.4.6":
+  version "0.4.6"
+  resolved "https://registry.yarnpkg.com/@hyperion-framework/react-vault/-/react-vault-0.4.6.tgz#459b646b01dd5d04f9f8b1fd44a971a62e76f63e"
+  integrity sha512-VX+n4NAGb4EzbkBFofpbre6+TL2ZPEb7jNF73vMn3KCrSqrAR+RnXnTYlPezwUn+zOashHDNehOy9w8dAKW6Rg==
   dependencies:
     "@atlas-viewer/iiif-image-api" "^1.0.9"
-    "@hyperion-framework/vault" "^0.4.4"
+    "@hyperion-framework/vault" "^0.4.6"
     redux-react-hook "^3.2.0"
 
 "@hyperion-framework/types@0.4.0", "@hyperion-framework/types@^0.4.0":
@@ -1446,10 +1446,10 @@
   resolved "https://registry.yarnpkg.com/@hyperion-framework/types/-/types-0.3.9.tgz#cef05af120967f825477b1e95a0b670efa5989ac"
   integrity sha512-AvMp3VP2pGDY1+h/s4HSuyNvqwJ1E/BluY+BBzFXTN4ZcvdN5667hJsH2cYIybBREoo0tiJe9daSiX1xCJy6xw==
 
-"@hyperion-framework/vault@0.4.4", "@hyperion-framework/vault@^0.4.4":
-  version "0.4.4"
-  resolved "https://registry.yarnpkg.com/@hyperion-framework/vault/-/vault-0.4.4.tgz#a41394057e5796a03e426d3c5ad2d9e6c39ba7ac"
-  integrity sha512-nrJhIocsvs6tCAbMqyXFCGLzKmgnbLnVfFNMQqnMzvXoCqixIQ4XkLhZ2WGgp+m78pKRXhfIMummsqmYau5ukQ==
+"@hyperion-framework/vault@0.4.6", "@hyperion-framework/vault@^0.4.6":
+  version "0.4.6"
+  resolved "https://registry.yarnpkg.com/@hyperion-framework/vault/-/vault-0.4.6.tgz#cf8763d0159ef01793d031c30c48149eeb8dea90"
+  integrity sha512-i4NR0TbKRfcFZ+xG/lpU7J46gF+Un+Jr7iRLAv3sBK7UyqllP9/1vPLwajrbFeOsTMDcb699APoVnpN6RM1Xlg==
   dependencies:
     "@atlas-viewer/iiif-image-api" "^1.0.9"
     "@hyperion-framework/types" "^0.4.0"
