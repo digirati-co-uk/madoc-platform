@@ -41,8 +41,7 @@ const worker = new Worker(
           })
         );
       }
-      console.log(e);
-      await job.retry('failed');
+      throw e;
     }
   },
   configOptions
