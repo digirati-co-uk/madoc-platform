@@ -1,9 +1,13 @@
-import { createApp } from './app';
-import { port } from './config';
-import { router } from './router';
-const config = require('../config.json');
+import { syncJwtRequests } from './utility/sync-jwt-requests';
 
 async function main() {
+  await syncJwtRequests();
+
+  const config = require('../config.json');
+  const { createApp } = require('./app');
+  const { port } = require('./config');
+  const { router } = require('./router');
+
   const app = await createApp(router, config);
 
   app.listen(port);

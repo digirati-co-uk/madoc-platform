@@ -1,6 +1,5 @@
 import { BaseTask } from './base-task';
 import * as tasks from './task-helpers';
-import { CanvasNormalized, ManifestNormalized } from '@hyperion-framework/types';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
 import { ApiClient } from '../api';
 
@@ -61,24 +60,14 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       const task = await api.acceptTask<ImportCanvasTask>(taskId);
 
       const [userId, pathToManifest, manifestId, siteId] = task.parameters;
-      const [manifestJson, unmodifiedManifest] = tasks.loadManifest(pathToManifest);
-
-      const vault = tasks.sharedVault(manifestId);
-
-      await tasks.ensureManifestLoaded(vault, manifestId, manifestJson);
-
-      const manifest = vault.fromRef<ManifestNormalized>({ id: manifestId, type: 'Manifest' });
-
-      const ref: { id: string; type: 'Canvas' } = { id: task.subject, type: 'Canvas' };
-      // @todo handle case where canvas does not exist.
-      const canvas = vault.fromRef<CanvasNormalized>(ref);
-
-      if (canvas === ref) {
-        console.log(manifestId, JSON.stringify(manifestJson));
-        throw new Error('Could not load manifest from vault.');
-      }
 
       const idHash = tasks.manifestHash(manifestId);
+
+      const { manifest, unmodifiedManifest, canvas, vault } = await tasks.tryGetManifest(
+        manifestId,
+        pathToManifest,
+        task.subject
+      );
 
       const idList = (manifest.items || []).map(r => r.id);
       const canvasOrder = idList.indexOf(canvas.id);

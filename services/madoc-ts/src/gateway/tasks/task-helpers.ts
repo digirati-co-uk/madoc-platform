@@ -1,9 +1,9 @@
 import { BaseTask } from './base-task';
 import mkdirp from 'mkdirp';
-import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync, readFile, writeFileSync } from 'fs';
 import cache from 'memory-cache';
 import { Vault } from '@hyperion-framework/vault';
-import { Manifest } from '@hyperion-framework/types';
+import { CanvasNormalized, Manifest, ManifestNormalized } from '@hyperion-framework/types';
 import { createHash } from 'crypto';
 
 // @ts-ignore
@@ -41,7 +41,34 @@ export function saveManifestToDisk(idHash: string, content: string) {
   return fileLocation;
 }
 
-export function loadManifest(file: string) {
+export function loadFileWithRetries(file: string): Promise<string> {
+  if (!existsSync(file)) {
+    throw new Error('File does not exist');
+  }
+
+  function doLoad() {
+    return new Promise<string>((resolve, reject) => {
+      readFile(file, { encoding: 'utf-8' }, (err, data) => {
+        if (err) reject(err);
+        resolve(data.toString());
+      });
+    });
+  }
+
+  let maxTries = 5;
+
+  while (maxTries > 0) {
+    try {
+      return doLoad();
+    } catch (e) {
+      maxTries--;
+    }
+  }
+
+  throw new Error(`File ${file} could not be opened`);
+}
+
+export async function loadManifest(file: string) {
   const fileFromCache = cache.get(file);
   if (fileFromCache) {
     const file1 = JSON.parse(fileFromCache);
@@ -49,7 +76,8 @@ export function loadManifest(file: string) {
     return [file1, file2];
   }
 
-  const manifestJson = readFileSync(file).toString('utf-8');
+  const manifestJson = await loadFileWithRetries(file);
+
   cache.put(file, manifestJson, 300); // 5 minutes cache a manifest.
   const file1 = JSON.parse(manifestJson);
   const file2 = JSON.parse(manifestJson);
@@ -165,4 +193,43 @@ export function manifestHash(manifestId: string) {
   return createHash('sha1')
     .update(manifestId)
     .digest('hex');
+}
+
+export async function tryGetManifest(manifestId: string, pathToManifest: string, canvasId: string) {
+  async function doGet() {
+    const [manifestJson, unmodifiedManifest] = await loadManifest(pathToManifest);
+    const vault = sharedVault(manifestId);
+
+    await ensureManifestLoaded(vault, manifestId, manifestJson);
+
+    const manifest = vault.fromRef<ManifestNormalized>({ id: manifestId, type: 'Manifest' });
+    const ref: { id: string; type: 'Canvas' } = { id: canvasId, type: 'Canvas' };
+    // @todo handle case where canvas does not exist.
+    const canvas = vault.fromRef<CanvasNormalized>(ref);
+    if (Object.keys(canvas).length === 2) {
+      throw new Error('Could not load manifest from vault.');
+    }
+
+    return { manifest, unmodifiedManifest, canvas, vault };
+  }
+
+  let maxTries = 5;
+  let returnManifest;
+  while (maxTries > 0) {
+    try {
+      returnManifest = await doGet();
+      if (returnManifest) {
+        break;
+      }
+    } catch (err) {
+      console.log(err);
+      // do nothing.
+      maxTries--;
+    }
+  }
+
+  if (returnManifest) {
+    return returnManifest;
+  }
+  throw new Error('Could not load manifest from vault after 5 tries');
 }

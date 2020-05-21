@@ -13,7 +13,6 @@ import { omekaApi } from './middleware/omeka-api';
 import { syncOmeka } from './utility/sync-omeka';
 import { setJwt } from './middleware/set-jwt';
 import { generateKeys } from './utility/generate-keys';
-import { syncJwtRequests } from './utility/sync-jwt-requests';
 import { readdirSync, readFileSync } from 'fs';
 import * as path from 'path';
 import { createBackend } from './middleware/i18n/i18next.server';
@@ -24,8 +23,6 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   const i18nextPromise = createBackend();
   const pool = createPostgresPool();
   const mysqlPool = createMysqlPool();
-
-  await syncJwtRequests();
 
   if (process.env.NODE_ENV === 'production' || process.env.MIGRATE) {
     await migrate();
