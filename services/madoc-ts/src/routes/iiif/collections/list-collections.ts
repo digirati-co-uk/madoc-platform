@@ -8,18 +8,14 @@ import {
   mapCollectionSnippets,
 } from '../../../database/queries/get-collection-snippets';
 import { SQL_INT_ARRAY } from '../../../utility/postgres-tags';
+import { countResources } from '../../../database/queries/resource-queries';
 
 export const listCollections: RouteMiddleware<{ page: number }> = async context => {
   const { siteId } = userWithScope(context, []);
 
   const collectionCount = 5;
   const page = Number(context.query.page) || 1;
-  const { total = 0 } = await context.connection.one<{ total: number }>(sql`
-      select count(*) as total
-          from iiif_derived_resource
-          where resource_type = 'collection' 
-          and site_id = ${siteId}
-  `);
+  const { total = 0 } = await context.connection.one(countResources('collection', siteId));
   const totalPages = Math.ceil(total / collectionCount);
 
   const rows = await context.connection.any(

@@ -3,6 +3,7 @@ import { sql } from 'slonik';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { ItemStructureList, ItemStructureListItem } from '../../../types/schemas/item-structure-list';
 import { mapMetadata, MetadataField } from '../../../utility/iiif-metadata';
+import { getItemStructures } from '../../../database/queries/structure-queries';
 
 /**
  * @todo when canvas exist.
@@ -14,6 +15,7 @@ export const getManifestStructure: RouteMiddleware<{ id: number }> = async conte
 
   const manifest_id = context.params.id;
 
+  // @todo use getItemStructures
   const query = sql<MetadataField>`
     select distinct im.resource_id as resource_id,
            im.key         as key,

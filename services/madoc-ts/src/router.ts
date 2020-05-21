@@ -1,11 +1,12 @@
 import { TypedRouter } from './utility/typed-router';
 import { ping } from './routes/ping';
-import { omekaHelloWorld } from './routes/omeka-hello-world';
 import { madocNotFound } from './routes/madoc-not-found';
-import { keys } from './routes/keys';
+import { importCollection, importManifest } from './routes/iiif-import/import';
 import { loginPage } from './routes/user/login';
 import { getSiteScopes, saveSiteScopes } from './routes/admin/site-scopes';
 import { logout } from './routes/user/logout';
+import { frontendBundles } from './routes/assets/frontend-bundles';
+import { adminFrontend } from './routes/admin/frontend';
 import { createCollection } from './routes/iiif/collections/create-collection';
 import { deleteCollection } from './routes/iiif/collections/delete-collection';
 import { getCollection } from './routes/iiif/collections/get-collection';
@@ -28,6 +29,11 @@ import { getLocale } from './routes/locales';
 import { updateMetadata } from './routes/iiif/update-metadata';
 import { getManifestAutocomplete } from './routes/iiif/manifests/get-manifest-autocomplete';
 import { getCollectionAutocomplete } from './routes/iiif/collections/get-collection-autocomplete';
+import { refreshToken } from './routes/user/refresh';
+import { createNewProject } from './routes/projects/create-new-project';
+import { listProjects } from './routes/projects/list-projects';
+import { updateProject } from './routes/projects/update-project';
+import { getProject } from './routes/projects/get-project';
 
 export const router = new TypedRouter({
   // Normal route
@@ -91,11 +97,26 @@ export const router = new TypedRouter({
   'get-canvas-metadata': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/metadata', getCanvasMetadata],
   'put-canvas-metadata': [TypedRouter.PUT, '/api/madoc/iiif/canvases/:id/metadata', updateMetadata, 'MetadataUpdate'],
 
-  'omeka-test': [TypedRouter.GET, '/s/:slug/madoc/hello-world', omekaHelloWorld],
-  'get-keys': [TypedRouter.GET, '/s/:slug/madoc/test-key', keys],
+  // Import API
+  'import-manifest': [TypedRouter.POST, '/api/madoc/iiif/import/manifest', importManifest],
+  'import-collection': [TypedRouter.POST, '/api/madoc/iiif/import/collection', importCollection],
+
+  // Projects
+  'create-project': [TypedRouter.POST, '/api/madoc/projects', createNewProject],
+  'list-projects': [TypedRouter.GET, '/api/madoc/projects', listProjects],
+  'get-project': [TypedRouter.GET, '/api/madoc/projects/:id', getProject],
+  'update-project': [TypedRouter.PUT, '/api/madoc/projects/:id/metadata', updateProject],
+
+  // Omeka routes
   'get-login': [TypedRouter.GET, '/s/:slug/madoc/login', loginPage],
   'post-login': [TypedRouter.POST, '/s/:slug/madoc/login', loginPage],
   'get-logout': [TypedRouter.GET, '/s/:slug/madoc/logout', logout],
+  'refresh-login': [TypedRouter.POST, '/s/:slug/madoc/auth/refresh', refreshToken],
+  'assets-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleId/bundle.js', frontendBundles],
+  'assets-sub-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleId/:bundleName', frontendBundles],
+
+  // Frontend
+  'admin-frontend': [TypedRouter.GET, '/s/:slug/madoc/admin*', adminFrontend],
 
   // Make sure this is last.
   'omeka-404': [TypedRouter.GET, '/s/:slug/madoc*', madocNotFound],

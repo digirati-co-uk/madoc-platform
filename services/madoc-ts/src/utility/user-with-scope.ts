@@ -16,6 +16,7 @@ export function userWithScope(context: { state: ApplicationState }, scopes: stri
     id: context.state.jwt.user.id,
     name: context.state.jwt.user.name,
     siteId: context.state.jwt.site.id,
-    userUrn: `urn:madoc:user_${context.state.jwt.user.id}`,
+    siteUrn: `urn:madoc:site:${context.state.jwt.site.id}`,
+    userUrn: `urn:madoc:user:${context.state.jwt.user.id}`,
   };
 }

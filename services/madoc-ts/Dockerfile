@@ -8,10 +8,20 @@ RUN yarn install
 
 COPY ./src /home/node/app/src
 COPY ./schemas /home/node/app/schemas
+COPY ./webpack.frontend.js /home/node/app/webpack.frontend.js
 COPY ./tsconfig.json /home/node/app/tsconfig.json
 COPY ./generate-schemas.js /home/node/app/generate-schemas.js
 
 RUN yarn build
+
+FROM node:12 as modules
+
+WORKDIR /home/node/app
+
+COPY --from=build /home/node/app/package.json /home/node/app/package.json
+COPY --from=build /home/node/app/yarn.lock /home/node/app/yarn.lock
+
+RUN yarn install --no-interactive --frozen-lockfile --production=true
 
 FROM node:12-alpine
 
@@ -19,13 +29,13 @@ WORKDIR /home/node/app
 
 RUN npm install -g pm2
 
-COPY --from=build /home/node/app/lib /home/node/app/lib
 COPY --from=build /home/node/app/package.json /home/node/app/package.json
 COPY --from=build /home/node/app/yarn.lock /home/node/app/yarn.lock
+COPY --from=modules /home/node/app/node_modules /home/node/app/node_modules
+COPY --from=build /home/node/app/lib /home/node/app/lib
 COPY ./schemas /home/node/app/schemas
+COPY ./webpack.frontend.js /home/node/app/webpack.frontend.js
 COPY ./ecosystem.config.js /home/node/app/ecosystem.config.js
-
-RUN yarn install --no-interactive --frozen-lockfile
 
 ENV SERVER_PORT=3000
 ENV DATABASE_HOST=localhost

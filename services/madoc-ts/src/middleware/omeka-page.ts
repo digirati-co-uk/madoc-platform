@@ -11,12 +11,15 @@ export const omekaPage: RouteMiddleware<{ slug: string }> = async (context, next
   // Only want to enable this from the context of the madoc site.
   if (typeof context.omekaPage !== 'undefined' && context.params && context.params.slug) {
     // We fetch from Omeka, passing both the cookie and JWT (in-case Omeka is not yet aware of the user.)
-    const response = await fetch(`${omekaUrl}/s/${context.params.slug}/_template`, {
-      headers: {
-        cookie: context.req.headers.cookie ? context.req.headers.cookie.toString() : '',
-        Authorization: context.state.jwt ? `Bearer ${context.state.jwt.token}` : '',
-      },
-    });
+    const response = await fetch(
+      `${omekaUrl}/s/${context.params.slug}/_template${context.omekaMinimal ? '?minimal=true' : ''}`,
+      {
+        headers: {
+          cookie: context.req.headers.cookie ? context.req.headers.cookie.toString() : '',
+          Authorization: context.state.jwt ? `Bearer ${context.state.jwt.token}` : '',
+        },
+      }
+    );
 
     // If Omeka is logged in, but the application is not, then we should return the login page, where this will bee
     // picked up and the JWT for the logged in user will be created.

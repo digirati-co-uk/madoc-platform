@@ -27,7 +27,6 @@ export const updateCollectionStructure: RouteMiddleware<{ id: number }, UpdateSt
     throw new RequestError('Cannot add flat collection to another collection');
   }
 
-  // [15]
   // Find the originals.
   const ids = (
     await context.connection.any(sql<{ id: number }>`
@@ -48,6 +47,7 @@ export const updateCollectionStructure: RouteMiddleware<{ id: number }, UpdateSt
     await context.connection.query(removeQuery);
   }
 
+  // Then add missing.
   const toAdd = manifestIds.filter(id => ids.indexOf(id) === -1);
   if (toAdd.length) {
     const toAddArray = sql.array(toAdd, SQL_INT_ARRAY);
@@ -68,6 +68,7 @@ export const updateCollectionStructure: RouteMiddleware<{ id: number }, UpdateSt
     }
   }
 
+  // Then reorder everything at the end.
   const reorderArray = sql.array(manifestIds, SQL_INT_ARRAY);
   // Then reorder.
   const updateQuery = sql`
@@ -77,23 +78,6 @@ export const updateCollectionStructure: RouteMiddleware<{ id: number }, UpdateSt
   `;
 
   await context.connection.query(updateQuery);
-
-  // This won't work for reordering.
-  // We need to do the following:
-  // - Select existing structure.
-  // - Create list of items to add
-  // - Create list of items to remove
-  // - Update order of remaining items.
-  //
-  // - Reordering
-  // - Adding new item
-  // - Removing existing item.
-  // await context.connection.any(
-  //   sql`select * from add_manifests_to_collection(${siteId}, ${collectionId}, ${sql.array(
-  //     manifestIds,
-  //     SQL_INT_ARRAY
-  //   )}, ${userId})`
-  // );
 
   context.response.status = 200;
 };

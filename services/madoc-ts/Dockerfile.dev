@@ -16,6 +16,7 @@ COPY ./migrate.js /home/node/app/migrate.js
 COPY ./tsconfig.json /home/node/app/tsconfig.json
 COPY ./migrations /home/node/app/migrations
 COPY ./config.json /home/node/app/config.json
+COPY ./webpack.frontend.js /home/node/app/webpack.frontend.js
 COPY ./generate-schemas.js /home/node/app/generate-schemas.js
 COPY ./translations /home/node/app/translations
 COPY ./schemas /home/node/app/schemas
