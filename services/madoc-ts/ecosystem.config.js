@@ -17,7 +17,7 @@ module.exports = {
           {
             name: 'queue',
             script: 'lib/queue/producer.js',
-            instances: 8,
+            instances: 2,
             autorestart: true,
             watch: false,
             max_memory_restart: '1G',
