@@ -3,7 +3,6 @@ import mkdirp from 'mkdirp';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import cache from 'memory-cache';
 import { Vault } from '@hyperion-framework/vault';
-import { fileExistsSync } from 'fork-ts-checker-webpack-plugin/lib/FsHelper';
 import { Manifest } from '@hyperion-framework/types';
 import { createHash } from 'crypto';
 
@@ -72,7 +71,7 @@ export function sharedVault(manifestId: string): Vault {
 export function writeCanvasToDisk(idHash: string, content: any, canvasOrder: number) {
   mkdirp.sync(`${fileDirectory}/original/madoc-manifests/${idHash}/canvases/`);
   const fileLocation = `${fileDirectory}/original/madoc-manifests/${idHash}/canvases/c${canvasOrder}.json`;
-  if (!fileExistsSync(fileLocation)) {
+  if (!existsSync(fileLocation)) {
     writeFileSync(fileLocation, Buffer.from(JSON.stringify(content)));
   }
   return fileLocation;
