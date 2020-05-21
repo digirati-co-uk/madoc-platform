@@ -8,6 +8,7 @@ import { CollectionImportTask } from './collection-import-task';
 import { AdminHeader } from '../../molecules/AdminHeader';
 import { WidePage } from '../../atoms/WidePage';
 import { useTranslation } from 'react-i18next';
+import { SubtaskProgress } from '../../atoms/SubtaskProgress';
 
 type TaskRouterType = {
   query: { page: number };
@@ -53,7 +54,16 @@ export const TaskRouter: UniversalComponent<TaskRouterType> = createUniversalCom
           title={data.task.name}
           subtitle={data.task.description}
         />
-        <WidePage>{renderTask(data)}</WidePage>
+        <WidePage>
+          {data.task ? (
+            <SubtaskProgress
+              total={(data.task.subtasks || []).length}
+              done={(data.task.subtasks || []).filter(e => e.status === 3).length}
+              progress={(data.task.subtasks || []).filter(e => e.status === 2).length}
+            />
+          ) : null}
+          {renderTask(data)}
+        </WidePage>
       </>
     );
   },
