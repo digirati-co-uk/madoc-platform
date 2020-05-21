@@ -5,6 +5,7 @@ import cache from 'memory-cache';
 import { Vault } from '@hyperion-framework/vault';
 import { CanvasNormalized, Manifest, ManifestNormalized } from '@hyperion-framework/types';
 import { createHash } from 'crypto';
+import * as path from 'path';
 
 // @ts-ignore
 global.fetch = require('node-fetch');
@@ -68,6 +69,12 @@ export function loadFileWithRetries(file: string): Promise<string> {
   throw new Error(`File ${file} could not be opened`);
 }
 
+export function manifestHash(manifestId: string) {
+  return createHash('sha1')
+    .update(manifestId)
+    .digest('hex');
+}
+
 export async function loadManifest(file: string) {
   const fileFromCache = cache.get(file);
   if (fileFromCache) {
@@ -78,7 +85,7 @@ export async function loadManifest(file: string) {
 
   const manifestJson = await loadFileWithRetries(file);
 
-  cache.put(file, manifestJson, 300); // 5 minutes cache a manifest.
+  cache.put(file, manifestJson, 30 * 60 * 1000); // 30 minutes cache a manifest.
   const file1 = JSON.parse(manifestJson);
   const file2 = JSON.parse(manifestJson);
 
@@ -86,13 +93,13 @@ export async function loadManifest(file: string) {
 }
 
 export function sharedVault(manifestId: string): Vault {
-  const oldVault = cache.get(`vault:${manifestId}`);
+  const oldVault = cache.get(`vault:${manifestHash(manifestId)}`);
   if (oldVault) {
     return oldVault;
   }
 
   const vault = new Vault();
-  cache.put(`vault:${manifestId}`, vault, 600); // 10 minutes cache for vault.
+  cache.put(`vault:${manifestHash(manifestId)}`, vault, 10 * 60 * 1000); // 10 minutes cache for vault.
   return vault;
 }
 
@@ -137,7 +144,6 @@ export async function ensureManifestLoaded(vault: Vault, manifestId: string, man
   const manifestJsonId = manifestJson['@id'] ? manifestJson['@id'] : manifestJson.id;
 
   if (state.hyperion.requests[manifestId]) {
-    // console.log('-> Found manifest');
     let times = 0;
     if (state.hyperion.requests[manifestId].loadingState === 'RESOURCE_LOADING') {
       while (times < 10) {
@@ -150,14 +156,12 @@ export async function ensureManifestLoaded(vault: Vault, manifestId: string, man
       }
     }
     if (state.hyperion.requests[manifestId].loadingState === 'RESOURCE_ERROR') {
-      // console.log('-> Did errored manifest');
       // I don't know? Try again?
       await vault.loadManifest(manifestJsonId, manifestJson);
     }
   } else if (!state.hyperion.entities.Manifest[manifestJsonId]) {
-    // console.log('-> Did not find manifest');
     await vault.loadManifest(manifestJsonId, manifestJson).catch(err => {
-      // console.log(err);
+      console.log(err);
     });
   }
 }
@@ -189,12 +193,6 @@ export function getCanvasFromManifest(manifest: any, canvasId: string) {
   return undefined;
 }
 
-export function manifestHash(manifestId: string) {
-  return createHash('sha1')
-    .update(manifestId)
-    .digest('hex');
-}
-
 export async function tryGetManifest(manifestId: string, pathToManifest: string, canvasId: string) {
   async function doGet() {
     const [manifestJson, unmodifiedManifest] = await loadManifest(pathToManifest);
@@ -222,14 +220,15 @@ export async function tryGetManifest(manifestId: string, pathToManifest: string,
         break;
       }
     } catch (err) {
-      console.log(err);
       // do nothing.
       maxTries--;
+      await new Promise(resolve => setTimeout(resolve, 500));
     }
   }
 
   if (returnManifest) {
     return returnManifest;
   }
+
   throw new Error('Could not load manifest from vault after 5 tries');
 }
