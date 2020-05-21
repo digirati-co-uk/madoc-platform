@@ -431,9 +431,15 @@ export class ApiClient {
     return this.request(`/api/tasks?all=true`, { jwt });
   }
 
-  async acceptTask<Task extends BaseTask>(id: string): Promise<Task> {
+  async acceptTask<Task extends BaseTask>(
+    id: string,
+    options?: {
+      omitSubtasks?: boolean;
+    }
+  ): Promise<Task> {
     return this.request(`/api/tasks/${id}/accept`, {
       method: 'POST',
+      body: options,
     });
   }
 

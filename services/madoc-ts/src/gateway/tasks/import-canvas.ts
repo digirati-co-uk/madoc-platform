@@ -57,7 +57,9 @@ export function changeStatus(newStatus: string, data: { state?: any; name?: stri
 export const jobHandler = async (name: string, taskId: string, api: ApiClient) => {
   switch (name) {
     case 'created': {
-      const task = await api.acceptTask<ImportCanvasTask>(taskId);
+      const task = await api.acceptTask<ImportCanvasTask>(taskId, {
+        omitSubtasks: true,
+      });
 
       const [userId, pathToManifest, manifestId, siteId] = task.parameters;
 
