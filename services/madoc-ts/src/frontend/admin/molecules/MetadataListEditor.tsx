@@ -37,7 +37,7 @@ export const MetadataSection: React.FC<{
   const keys = Object.keys(metadata);
 
   return (
-    <div style={{ margin: 10, background: 'blue', padding: 20 }}>
+    <div style={{ margin: 10, padding: 20 }}>
       {keys.map((itemId, itemIndex) => {
         const item = metadata[itemId];
         const itemKey = `${sectionKey}.${itemIndex}.${itemId}`;
@@ -62,17 +62,20 @@ export const MetadataSection: React.FC<{
 
 export const MetadataListEditor: React.FC<{
   metadata: ParsedMetadata;
+  template?: string[];
   onSave: (opts: { diff: MetadataDiff; empty: boolean }) => void;
-}> = ({ metadata, onSave }) => {
+}> = ({ metadata, onSave, template = [] }) => {
   // Props
-  const metadataKeys = Object.keys(metadata);
+  const metadataKeys = Object.keys(metadata).sort((a, b) => template.indexOf(a) - template.indexOf(b));
   const availableLanguages = ['en', 'es', 'fr'];
+  const templateKeys = template.filter(key => metadataKeys.indexOf(key) === -1);
 
   // State.
   const [metadataMap, setMetadataMap] = useState<{ [key: string]: MetadataDiff }>({});
 
   const [saveChanges] = useMutation(async () => {
     const keys = Object.keys(metadataMap);
+
     const fullDiff: MetadataDiff = {
       added: [],
       modified: [],
@@ -137,6 +140,16 @@ export const MetadataListEditor: React.FC<{
           />
         );
       })}
+      {templateKeys.map(templateKey => (
+        <MetadataListItem
+          key={templateKey}
+          itemKey={templateKey}
+          labelKey={templateKey}
+          items={[]}
+          onSaveField={onSaveField}
+          availableLanguages={availableLanguages}
+        />
+      ))}
       <Button onClick={() => saveChanges()}>Save changes</Button>
     </>
   );

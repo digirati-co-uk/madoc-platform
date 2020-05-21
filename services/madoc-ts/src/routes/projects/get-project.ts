@@ -23,8 +23,6 @@ export const getProject: RouteMiddleware<{ id: string }> = async context => {
     )
   );
 
-  console.log(projects);
-
   const mappedProjects = mapMetadata(projects, project => {
     return {
       id: project.project_id,

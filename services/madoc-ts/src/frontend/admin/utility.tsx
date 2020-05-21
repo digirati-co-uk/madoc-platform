@@ -10,7 +10,7 @@ import { useApi } from './hooks/use-api';
 
 export function createUniversalComponent<
   Definition extends { query: any; params: any; variables: any; data: any },
-  GetData = (key: string, vars: Definition['variables'], api: ApiClient) => Promise<Definition['data']>,
+  GetData = (key: string, vars: Definition['variables'], api: ApiClient) => Promise<Definition['data']> | Definition['data'],
   GetKey = (params: Definition['params'], query: Definition['query']) => [string, Definition['variables']]
 >(
   Component: React.FC<{ route: UniversalRoute }>,

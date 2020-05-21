@@ -1237,10 +1237,10 @@
     screenfull "^3.3.2"
     whatwg-fetch "^3.0.0"
 
-"@capture-models/editor@0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.3.0.tgz#2c4d754bf5c4609d48097ea7c6337dd8fbbd05ef"
-  integrity sha512-4qAU9BeXnYmUiH94ax8c1x5JQI7NfIzhsKCJZtL4S/RwxPeXwsRtiVIbE1KGMVcL0/JXrmufl+BOxTC9N421Fg==
+"@capture-models/editor@0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.3.2.tgz#cf39ce376bc9af05c7effff5206a9c8a8929d28e"
+  integrity sha512-4R2JrZgI6H67VwgyyO6xS0N40qjkZa1r9dzqXGMDfB9OQ79/DwKqsrdjIJoH4oqK8Pbe1fM8B8zbOCisXopYsg==
   dependencies:
     "@canvas-panel/core" "^0.2.0"
     "@capture-models/helpers" "^0.3.0"
@@ -1257,7 +1257,7 @@
     react-beautiful-dnd "^13.0.0"
     react-dom "^16.10.2"
     react-draggable "^4.2.0"
-    react-functional-select "^2.3.4"
+    react-functional-select "^2.3.5"
     react-router-dom "^5.1.2"
     react-window "^1.8.5"
     styled-components "^5.0.1"
@@ -12219,10 +12219,10 @@ react-focus-lock@^2.1.0:
     use-callback-ref "^1.2.1"
     use-sidecar "^1.0.1"
 
-react-functional-select@^2.3.4:
-  version "2.3.4"
-  resolved "https://registry.yarnpkg.com/react-functional-select/-/react-functional-select-2.3.4.tgz#cd680439253daa870ac0fb02e4c6f1ad70178e2e"
-  integrity sha512-dKO97Rb792HQOliC1QRIPw+wcArJ03Ie41jUGDZl7t7NOKraEuGXLWxwR8byOaKIlv3tvReQfnQhUyiz5y79VQ==
+react-functional-select@^2.3.5:
+  version "2.3.5"
+  resolved "https://registry.yarnpkg.com/react-functional-select/-/react-functional-select-2.3.5.tgz#458fd23ba764c7800f64a0913aedd0fee89550f7"
+  integrity sha512-9Z3YQSvKxdmrK722MjYaueS+gqaHUED+EZXDmQJZv+HwAmITORu4sROsx5dLxSqi1epdenkXuzifCZWimpP+tw==
 
 react-helmet-async@^1.0.2:
   version "1.0.5"

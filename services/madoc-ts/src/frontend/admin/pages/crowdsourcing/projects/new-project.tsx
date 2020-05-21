@@ -6,17 +6,19 @@ import { CreateProject } from '../../../../../types/schemas/create-project';
 import { useApi } from '../../../hooks/use-api';
 import { Button } from '../../../atoms/Button';
 import { Input, InputContainer, InputLabel } from '../../../atoms/Input';
+import { useHistory } from 'react-router-dom';
 
 export const NewProjectPage: React.FC = () => {
   const api = useApi();
   const [label, setLabel] = useState<InternationalString>({ en: [''] });
   const [summary, setSummary] = useState<InternationalString>({ en: [''] });
   const [slug, setSlug] = useState('');
+  const history = useHistory();
 
   const [saveProject] = useMutation(async (data: CreateProject) => {
     const response = await api.createProject(data);
 
-    console.log(response);
+    history.push(`/projects/${response.id}`);
   });
 
   return (

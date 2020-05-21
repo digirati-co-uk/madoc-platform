@@ -17,11 +17,15 @@ export const createNewProject: RouteMiddleware<{}, CreateProject> = async contex
   const { label, slug, summary } = context.requestBody;
 
   // 1. Create collection [flat]
-  const collection = await userApi.createCollection({
-    type: 'Collection',
-    label: label,
-    summary: summary,
-  });
+  const collection = await userApi.createCollection(
+    {
+      type: 'Collection',
+      label: label,
+      summary: summary,
+    },
+    undefined,
+    true
+  );
 
   // 2. Create or fork capture model
   const captureModel = await userApi.createCaptureModel('Transcribe all of the books');

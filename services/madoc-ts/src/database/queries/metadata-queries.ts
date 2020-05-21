@@ -44,7 +44,7 @@ export function addDerivedMetadata(added: MetadataUpdate['added'], resource_id: 
           item.key,
           item.value,
           item.language,
-          item.source || null,
+          item.source || 'madoc',
           resource_id,
           site_id,
           item.readonly || false,

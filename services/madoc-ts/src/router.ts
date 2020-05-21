@@ -32,8 +32,10 @@ import { getCollectionAutocomplete } from './routes/iiif/collections/get-collect
 import { refreshToken } from './routes/user/refresh';
 import { createNewProject } from './routes/projects/create-new-project';
 import { listProjects } from './routes/projects/list-projects';
-import { updateProject } from './routes/projects/update-project';
 import { getProject } from './routes/projects/get-project';
+import { getProjectMetadata } from './routes/projects/get-project-metadata';
+import { updateProjectMetadata } from './routes/projects/update-project-metadata';
+import { getProjectStructure } from './routes/projects/get-project-structure';
 
 export const router = new TypedRouter({
   // Normal route
@@ -105,7 +107,9 @@ export const router = new TypedRouter({
   'create-project': [TypedRouter.POST, '/api/madoc/projects', createNewProject],
   'list-projects': [TypedRouter.GET, '/api/madoc/projects', listProjects],
   'get-project': [TypedRouter.GET, '/api/madoc/projects/:id', getProject],
-  'update-project': [TypedRouter.PUT, '/api/madoc/projects/:id/metadata', updateProject],
+  'get-project-structure': [TypedRouter.GET, '/api/madoc/projects/:id/structure', getProjectStructure],
+  'get-project-metadata': [TypedRouter.GET, '/api/madoc/projects/:id/metadata', getProjectMetadata],
+  'update-project-metadata': [TypedRouter.PUT, '/api/madoc/projects/:id/metadata', updateProjectMetadata],
 
   // Omeka routes
   'get-login': [TypedRouter.GET, '/s/:slug/madoc/login', loginPage],

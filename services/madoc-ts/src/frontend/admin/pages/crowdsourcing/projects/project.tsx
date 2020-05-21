@@ -34,6 +34,8 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
           ]}
           menu={[
             { label: t('Overview'), link: `/projects/${data.id}` },
+            { label: t('Details'), link: `/projects/${data.id}/metadata` },
+            { label: t('Content'), link: `/projects/${data.id}/content` },
             { label: t('Model'), link: `/projects/${data.id}/model` },
           ]}
           title={<LocaleString>{data.label}</LocaleString>}

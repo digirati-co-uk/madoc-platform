@@ -10,6 +10,7 @@ import { useClosestLanguage } from './LocaleString';
 import { InternationalString } from '@hyperion-framework/types';
 import { useTranslation } from 'react-i18next';
 import { MetadataDefinition } from '../../../types/schemas/metadata-definition';
+import { EmptyInputValue } from '../atoms/Input';
 
 export type MetadataDiff = {
   added: Array<{ key: string; language: string; value: string }>;
@@ -382,9 +383,9 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
 
   if (!firstItem || !defaultItem) {
     return (
-      <div>
+      <EmptyInputValue>
         {t('No values exist for this')} <LinkButton onClick={createNewItem(false)}>{t('Add new')}</LinkButton>
-      </div>
+      </EmptyInputValue>
     );
   }
 

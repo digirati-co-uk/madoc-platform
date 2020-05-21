@@ -4,13 +4,14 @@ import { GetMetadata } from '../../../types/schemas/get-metadata';
 import { getDerivedMetadata } from '../../../database/queries/metadata-queries';
 
 // @todo join to original columns to get canonical value.
-export const getCollectionMetadata: RouteMiddleware<{ id: number }> = async context => {
+export const getCollectionMetadata: RouteMiddleware<{ id: string }> = async context => {
   const { siteId } = userWithScope(context, []);
-  const collectionId = context.params.id;
+  const collectionId = Number(context.params.id);
 
   const collection = await context.connection.many(getDerivedMetadata(collectionId, 'collection', siteId));
 
   context.response.body = {
     fields: collection,
+    template: ['label', 'summary'],
   } as GetMetadata;
 };

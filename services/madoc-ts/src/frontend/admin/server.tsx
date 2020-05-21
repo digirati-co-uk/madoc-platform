@@ -6,11 +6,6 @@
 import { matchUniversalRoutes } from './server-utils';
 import React from 'react';
 
-// SSR Workarounds. PRs open.
-// @ts-ignore
-global.navigator = {};
-// @ts-ignore
-global.window = {};
 // Silence warning.
 React.useLayoutEffect = React.useEffect;
 

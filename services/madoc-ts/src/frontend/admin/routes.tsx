@@ -21,6 +21,11 @@ import { ProjectModelEditor } from './pages/crowdsourcing/projects/project-model
 import { CreateCollection } from './pages/content/collections/create-collection';
 import { CreateManifest } from './pages/content/manifests/create-manifest';
 import { TaskRouter } from './pages/tasks/task-router';
+import { ProjectContent } from './pages/crowdsourcing/projects/project-content';
+import { ProjectMetadata } from './pages/crowdsourcing/projects/project-metadata';
+import { FullDocumentEditor } from './pages/crowdsourcing/projects/model-editor/full-document-editor';
+import { FullStructureEditor } from './pages/crowdsourcing/projects/model-editor/full-structure-editor';
+import { CaptureModelEditorHomepage } from './pages/crowdsourcing/projects/model-editor/home';
 
 export const routes: UniversalRoute[] = [
   {
@@ -97,7 +102,7 @@ export const routes: UniversalRoute[] = [
             exact: true,
             component: EditCanvasMetadata,
           },
-        ]
+        ],
       },
     ],
   },
@@ -132,9 +137,35 @@ export const routes: UniversalRoute[] = [
     component: Project,
     routes: [
       {
-        path: '/projects/:id/model',
+        path: '/projects/:id/metadata',
         exact: true,
+        component: ProjectMetadata,
+      },
+      {
+        path: '/projects/:id/content',
+        exact: true,
+        component: ProjectContent,
+      },
+      {
+        path: '/projects/:id/model',
         component: ProjectModelEditor,
+        routes: [
+          {
+            path: '/projects/:id/model',
+            component: CaptureModelEditorHomepage,
+            exact: true,
+          },
+          {
+            path: '/projects/:id/model/document',
+            component: FullDocumentEditor,
+            exact: true,
+          },
+          {
+            path: '/projects/:id/model/structure',
+            component: FullStructureEditor,
+            exact: true,
+          },
+        ],
       },
     ],
   },

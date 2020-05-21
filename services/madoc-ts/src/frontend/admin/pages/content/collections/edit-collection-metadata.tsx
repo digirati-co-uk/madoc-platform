@@ -7,7 +7,6 @@ import { MetadataDiff } from '../../../molecules/MetadataEditor';
 import { useApi } from '../../../hooks/use-api';
 import { mapMetadataList, ParsedMetadata } from '../../../../../utility/map-metadata-list';
 import { MetadataListEditor } from '../../../molecules/MetadataListEditor';
-import { AdminHeader } from '../../../molecules/AdminHeader';
 
 type EditCollectionMetadataType = {
   params: { id: number };
@@ -46,7 +45,9 @@ export const EditCollectionMetadata: UniversalComponent<EditCollectionMetadataTy
       return <div>loading...</div>;
     }
 
-    return <MetadataListEditor key={invalidateTime} metadata={data} onSave={saveChanges} />;
+    return (
+      <MetadataListEditor key={invalidateTime} metadata={data} template={['label', 'summary']} onSave={saveChanges} />
+    );
   },
   {
     getData: async (key, vars, api) => {

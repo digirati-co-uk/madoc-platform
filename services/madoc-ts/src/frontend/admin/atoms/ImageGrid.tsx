@@ -12,7 +12,7 @@ export const ImageGrid = styled.div`
 
 export const ImageGridItem = styled.div`
   padding: 0.5em;
-  width: 160px;
+  width: 180px;
   display: flex;
   flex-direction: column;
   border-radius: 3px;

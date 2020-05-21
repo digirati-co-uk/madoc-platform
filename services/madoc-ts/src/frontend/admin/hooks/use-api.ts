@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { ApiClient } from '../../../gateway/api';
 
 export const ApiContext = createContext<ApiClient | undefined>(undefined);
@@ -12,3 +12,21 @@ export const useApi = () => {
 
   return api;
 };
+
+export function useIsApiRestarting(api: ApiClient) {
+  const [isDown, setIsDown] = useState(false);
+
+  useEffect(() => {
+    return api.onError(() => {
+      setIsDown(true);
+    });
+  }, [api]);
+
+  useEffect(() => {
+    return api.onErrorRecovery(() => {
+      setIsDown(false);
+    });
+  }, [api]);
+
+  return isDown;
+}

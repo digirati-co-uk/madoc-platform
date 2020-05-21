@@ -5,7 +5,7 @@ import { CreateCollection } from '../types/schemas/create-collection';
 import { CollectionListResponse } from '../types/schemas/collection-list';
 import { CollectionFull } from '../types/schemas/collection-full';
 import { CreateManifest } from '../types/schemas/create-manifest';
-import { ItemStructureList, UpdateStructureList } from '../types/schemas/item-structure-list';
+import { ItemStructureList, ItemStructureListItem, UpdateStructureList } from '../types/schemas/item-structure-list';
 import { CreateCanvas } from '../types/schemas/create-canvas';
 import { ManifestListResponse } from '../types/schemas/manifest-list';
 import { ImportManifestTask } from './tasks/import-manifest';
@@ -26,6 +26,9 @@ export class ApiClient {
   private readonly isServer: boolean;
   private readonly user?: { userId: number; siteId?: number };
   private fetcher: typeof fetchJson;
+  private errorHandlers: Array<() => void> = [];
+  private errorRecoveryHandlers: Array<() => void> = [];
+  private isDown = false;
 
   constructor(
     gateway: string,
@@ -38,6 +41,24 @@ export class ApiClient {
     this.user = asUser;
     this.isServer = !(globalThis as any).window;
     this.fetcher = customerFetcher || fetchJson;
+  }
+
+  onError(func: () => void) {
+    if (this.errorHandlers.indexOf(func) === -1) {
+      this.errorHandlers.push(func);
+    }
+    return () => {
+      this.errorHandlers = this.errorHandlers.filter(e => e !== func);
+    };
+  }
+
+  onErrorRecovery(func: () => void) {
+    if (this.errorRecoveryHandlers.indexOf(func) === -1) {
+      this.errorRecoveryHandlers.push(func);
+    }
+    return () => {
+      this.errorRecoveryHandlers = this.errorRecoveryHandlers.filter(e => e !== func);
+    };
   }
 
   async request<Return, Body = any>(
@@ -57,6 +78,10 @@ export class ApiClient {
 
     if (response.error) {
       if (response.data.error === 'There was a problem proxying the request') {
+        this.isDown = true;
+        for (const err of this.errorHandlers) {
+          err();
+        }
         await new Promise(resolve => setTimeout(resolve, 1000));
         // Always retry this error.
         return this.request(endpoint, { method, body, jwt });
@@ -88,6 +113,11 @@ export class ApiClient {
       }
 
       return response.data as any;
+    } else if (this.isDown) {
+      for (const rec of this.errorRecoveryHandlers) {
+        rec();
+      }
+      this.isDown = false;
     }
 
     return response.data;
@@ -104,6 +134,17 @@ export class ApiClient {
 
   async getProject(id: number) {
     return this.request<any>(`/api/madoc/projects/${id}`);
+  }
+
+  async getProjectMetadata(id: number) {
+    return this.request<GetMetadata>(`/api/madoc/projects/${id}/metadata`);
+  }
+
+  async getProjectStructure(id: number) {
+    return this.request<{
+      collectionId: number;
+      items: ItemStructureListItem[];
+    }>(`/api/madoc/projects/${id}/structure`);
   }
 
   async getProjectsByResource(resourceId: number, context: string[]) {
@@ -311,6 +352,14 @@ export class ApiClient {
   // Capture model API.
   async getCaptureModel(id: string) {
     return this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model/${id}`);
+  }
+
+  // Capture model API.
+  async updateCaptureModel(id: string, captureModel: CaptureModel) {
+    return this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model/${id}`, {
+      method: 'PUT',
+      body: captureModel,
+    });
   }
 
   async createCaptureModel(label: string) {

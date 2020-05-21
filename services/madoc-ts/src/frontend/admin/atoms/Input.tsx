@@ -28,6 +28,23 @@ export const InputContainer = styled.div<{ wide?: boolean }>`
   margin: 0.5em 0;
 `;
 
+export const EmptyInputValue = styled.div<{ wide?: boolean }>`
+  background: #eee;
+  border: 2px solid #999;
+  padding: 0.55em;
+  font-size: 0.9em;
+  line-height: 1.3em;
+  border-radius: 0;
+  width: 100%;
+  box-shadow: none;
+  max-width: ${props => (props.wide ? '550px' : '450px')};
+  margin-bottom: 0.8em;
+  &:focus {
+    border-color: #333;
+    outline: none;
+  }
+`;
+
 export const InputLink = styled.a`
   margin: 0.5em 0;
   font-size: 0.75em;

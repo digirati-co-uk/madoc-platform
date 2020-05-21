@@ -44,8 +44,7 @@ export const AdminHeader: React.FC<{
   breadcrumbs?: BreadcrumbItem[];
   menu?: BreadcrumbItem[];
 }> = ({ title, subtitle, breadcrumbs, menu }) => {
-
-  const {pathname} = useLocation();
+  const { pathname } = useLocation();
 
   return (
     <AdminHeaderBackground>
@@ -55,8 +54,13 @@ export const AdminHeader: React.FC<{
         {subtitle ? <AdminPageSubtitle>{subtitle}</AdminPageSubtitle> : null}
         {menu ? (
           <AdminTabRow>
-            {menu.map(item => (
-              <AdminTabItem key={item.link} active={pathname === item.link} as={Link} to={item.link}>
+            {menu.map((item, n) => (
+              <AdminTabItem
+                key={item.link}
+                active={pathname === item.link || (pathname.indexOf(item.link) !== -1 && n > 0)}
+                as={Link}
+                to={item.link}
+              >
                 {item.label}
               </AdminTabItem>
             ))}

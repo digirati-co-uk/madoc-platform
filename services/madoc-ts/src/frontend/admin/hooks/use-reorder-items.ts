@@ -8,7 +8,7 @@ export function useReorderItems({
   saveOrder,
 }: {
   items?: ItemStructureListItem[];
-  saveOrder: (newOrder: number[]) => Promise<void>;
+  saveOrder: (newOrder: number[]) => void | Promise<void>;
 }) {
   const [itemIds, setItemIds] = useState<number[]>([]); // Disable SSR.
   const [additionalItems, setAdditionalItems] = useState<ItemStructureListItem[]>([]);
@@ -16,7 +16,9 @@ export function useReorderItems({
   const [unsaved, setUnsaved] = useState(false);
   const [saving, setIsSaving] = useState(false);
 
-  const itemMap = useMemo<{ [id: string]: { id: number; label: InternationalString; thumbnail?: string } }>(() => {
+  const itemMap = useMemo<{
+    [id: string]: { id: number; type?: string; label: InternationalString; thumbnail?: string };
+  }>(() => {
     if (items) {
       const ret: any = {};
       for (const item of items) {
