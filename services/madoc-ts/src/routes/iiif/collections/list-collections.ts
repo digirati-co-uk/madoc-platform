@@ -1,5 +1,5 @@
 import { sql } from 'slonik';
-import { userWithScope } from '../../../utility/user-with-scope';
+import { optionalUserWithScope } from '../../../utility/user-with-scope';
 import { CollectionListResponse } from '../../../types/schemas/collection-list';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import {
@@ -11,11 +11,12 @@ import { SQL_INT_ARRAY } from '../../../utility/postgres-tags';
 import { countResources } from '../../../database/queries/resource-queries';
 
 export const listCollections: RouteMiddleware<{ page: number }> = async context => {
-  const { siteId } = userWithScope(context, []);
+  const { siteId } = optionalUserWithScope(context, []);
+  const parent = context.query.parent ? Number(context.query.parent) : undefined;
 
   const collectionCount = 5;
   const page = Number(context.query.page) || 1;
-  const { total = 0 } = await context.connection.one(countResources('collection', siteId));
+  const { total = 0 } = await context.connection.one(countResources('collection', siteId, parent));
   const totalPages = Math.ceil(total / collectionCount);
 
   const rows = await context.connection.any(
@@ -24,6 +25,7 @@ export const listCollections: RouteMiddleware<{ page: number }> = async context 
         siteId,
         perPage: collectionCount,
         page,
+        parentCollectionId: parent,
       }),
       {
         siteId: Number(siteId),
