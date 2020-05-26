@@ -36,6 +36,8 @@ import { getProject } from './routes/projects/get-project';
 import { getProjectMetadata } from './routes/projects/get-project-metadata';
 import { updateProjectMetadata } from './routes/projects/update-project-metadata';
 import { getProjectStructure } from './routes/projects/get-project-structure';
+import { getCollectionProjects } from './routes/iiif/collections/get-collection-projects';
+import { getManifestProjects } from './routes/iiif/manifests/get-manifest-projects';
 
 export const router = new TypedRouter({
   // Normal route
@@ -53,6 +55,7 @@ export const router = new TypedRouter({
   'delete-collection': [TypedRouter.DELETE, '/api/madoc/iiif/collections/:id', deleteCollection],
   'get-collection-metadata': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/metadata', getCollectionMetadata],
   'get-collection-structure': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/structure', getCollectionStructure],
+  'get-collection-projects': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/projects', getCollectionProjects],
   'put-collection-metadata': [
     TypedRouter.PUT,
     '/api/madoc/iiif/collections/:id/metadata',
@@ -78,6 +81,7 @@ export const router = new TypedRouter({
   'delete-manifest': [TypedRouter.DELETE, '/api/madoc/iiif/manifests/:id', deleteManifest],
   'get-manifest-metadata': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/metadata', getManifestMetadata],
   'get-manifest-structure': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/structure', getManifestStructure],
+  'get-manifest-projects': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/projects', getManifestProjects],
   'put-manifest-metadata': [
     TypedRouter.PUT,
     '/api/madoc/iiif/manifests/:id/metadata',
