@@ -150,7 +150,7 @@ export const router = new TypedRouter({
   'site-topic-types': [TypedRouter.GET, '/s/:slug/madoc/api/topics', siteTopicTypes],
 
   // Test omeka pages.
-  'get-page': [TypedRouter.GET, '/s/:slug/madoc/page/:pageSlug+', sitePage],
+  // 'get-page': [TypedRouter.GET, '/s/:slug/madoc/page/:pageSlug+', sitePage],
 
   // Frontend
   'admin-frontend': [TypedRouter.GET, '/s/:slug/madoc/admin*', adminFrontend],
