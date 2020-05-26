@@ -1,5 +1,5 @@
 import { sql } from 'slonik';
-import { userWithScope } from '../../../utility/user-with-scope';
+import { optionalUserWithScope } from '../../../utility/user-with-scope';
 import { CollectionListResponse } from '../../../types/schemas/collection-list';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import {
@@ -9,13 +9,15 @@ import {
 } from '../../../database/queries/get-collection-snippets';
 import { SQL_INT_ARRAY } from '../../../utility/postgres-tags';
 import { countResources } from '../../../database/queries/resource-queries';
+import { getResourceCount } from '../../../database/queries/count-queries';
 
 export const listCollections: RouteMiddleware<{ page: number }> = async context => {
-  const { siteId } = userWithScope(context, []);
+  const { siteId } = optionalUserWithScope(context, []);
+  const parent = context.query.parent ? Number(context.query.parent) : undefined;
 
   const collectionCount = 5;
   const page = Number(context.query.page) || 1;
-  const { total = 0 } = await context.connection.one(countResources('collection', siteId));
+  const { total = 0 } = await context.connection.one(countResources('collection', siteId, parent));
   const totalPages = Math.ceil(total / collectionCount);
 
   const rows = await context.connection.any(
@@ -24,6 +26,7 @@ export const listCollections: RouteMiddleware<{ page: number }> = async context 
         siteId,
         perPage: collectionCount,
         page,
+        parentCollectionId: parent,
       }),
       {
         siteId: Number(siteId),
@@ -35,14 +38,10 @@ export const listCollections: RouteMiddleware<{ page: number }> = async context 
 
   const table = mapCollectionSnippets(rows);
 
-  const collectionsIds = Object.keys(table.collections);
+  const collectionsIds = Object.keys(table.collections).map(t => Number(t));
 
   // Not ideal being it's own query.
-  const totals = await context.connection.any<{ resource_id: number; total: number }>(sql`
-      select resource_id, item_total as total
-        from iiif_derived_resource_item_counts
-        where resource_id = ANY (${sql.array(collectionsIds, SQL_INT_ARRAY)}) 
-    `);
+  const totals = await context.connection.any(getResourceCount(collectionsIds, siteId));
 
   const totalsIdMap = totals.reduce((state, row) => {
     state[row.resource_id] = row.total;

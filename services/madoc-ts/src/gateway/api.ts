@@ -19,12 +19,15 @@ import { createChoice, createDocument } from '@capture-models/helpers';
 import { generateId } from '@capture-models/helpers';
 import { stringify } from 'query-string';
 import { CreateProject } from '../types/schemas/create-project';
+import { ProjectSnippet } from '../types/schemas/project-snippet';
+import { CaptureModelSnippet } from '../types/schemas/capture-model-snippet';
+import { ApiError } from '../utility/errors/api-error';
 
 export class ApiClient {
   private readonly gateway: string;
   private jwt: string;
   private readonly isServer: boolean;
-  private readonly user?: { userId: number; siteId?: number };
+  private readonly user?: { userId?: number; siteId?: number };
   private fetcher: typeof fetchJson;
   private errorHandlers: Array<() => void> = [];
   private errorRecoveryHandlers: Array<() => void> = [];
@@ -33,7 +36,7 @@ export class ApiClient {
   constructor(
     gateway: string,
     jwt: string,
-    asUser?: { userId: number; siteId?: number },
+    asUser?: { userId?: number; siteId?: number },
     customerFetcher?: typeof fetchJson
   ) {
     this.gateway = gateway;
@@ -112,7 +115,7 @@ export class ApiClient {
         }
       }
 
-      return response.data as any;
+      throw new ApiError(response.data.error);
     } else if (this.isDown) {
       for (const rec of this.errorRecoveryHandlers) {
         rec();
@@ -123,7 +126,7 @@ export class ApiClient {
     return response.data;
   }
 
-  asUser(user: { userId: number; siteId?: number }): ApiClient {
+  asUser(user: { userId?: number; siteId?: number }): ApiClient {
     return new ApiClient(this.gateway, this.jwt, user);
   }
 
@@ -132,7 +135,7 @@ export class ApiClient {
     return this.request<any[]>(`/api/madoc/projects?page=${page}`);
   }
 
-  async getProject(id: number) {
+  async getProject(id: number | string) {
     return this.request<any>(`/api/madoc/projects/${id}`);
   }
 
@@ -207,17 +210,21 @@ export class ApiClient {
     });
   }
 
-  async getConfiguration<T = any>(service: string, context: string[]): Promise<T> {
+  async getConfiguration<T = any>(service: string, context: string[]) {
     return this.request<T>(`/api/configurator/?${stringify({ context, service }, { arrayFormat: 'none' })}`);
   }
 
   // IIIF.
-  async getCollections(page = 0) {
-    return this.request<CollectionListResponse>(`/api/madoc/iiif/collections${page ? `?page=${page}` : ''}`);
+  async getCollections(page = 0, parent?: number) {
+    return this.request<CollectionListResponse>(`/api/madoc/iiif/collections?${stringify({ page, parent })}`);
   }
 
-  async getManifests(page = 0) {
-    return this.request<ManifestListResponse>(`/api/madoc/iiif/manifests${page ? `?page=${page}` : ''}`);
+  async getManifests(page = 0, parent?: number) {
+    return this.request<ManifestListResponse>(`/api/madoc/iiif/manifests?${stringify({ page, parent })}`);
+  }
+
+  async getManifestProjects(id: number) {
+    return this.request<{ projects: ProjectSnippet[] }>(`/api/madoc/iiif/manifests/${id}/projects`);
   }
 
   async createCollection(collection: Partial<CollectionNormalized>, taskId?: string, flat?: boolean) {
@@ -229,6 +236,10 @@ export class ApiClient {
       },
       method: 'POST',
     });
+  }
+
+  async getCollectionProjects(id: number) {
+    return this.request<{ projects: ProjectSnippet[] }>(`/api/madoc/iiif/collections/${id}/projects`);
   }
 
   async createManifest(manifest: Partial<ManifestNormalized>, source?: string, taskId?: string) {
@@ -355,6 +366,11 @@ export class ApiClient {
   }
 
   // Capture model API.
+  async getAllCaptureModels() {
+    return this.request<CaptureModelSnippet[]>(`/api/crowdsourcing/model`);
+  }
+
+  // Capture model API.
   async updateCaptureModel(id: string, captureModel: CaptureModel) {
     return this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model/${id}`, {
       method: 'PUT',
@@ -393,7 +409,7 @@ export class ApiClient {
   }
 
   // Tasks.
-  async getTaskById<Task extends BaseTask>(id: string, all = true, page?: number): Promise<Task> {
+  async getTaskById<Task extends BaseTask>(id: string, all = true, page?: number) {
     if (all) {
       return this.request<Task>(`/api/tasks/${id}?all=true`);
     }
@@ -427,8 +443,8 @@ export class ApiClient {
     });
   }
 
-  async getTasks(jwt?: string): Promise<{ tasks: BaseTask[] }> {
-    return this.request(`/api/tasks?all=true`, { jwt });
+  async getTasks(jwt?: string) {
+    return this.request<{ tasks: BaseTask[] }>(`/api/tasks?all=true`, { jwt });
   }
 
   async acceptTask<Task extends BaseTask>(
@@ -436,8 +452,8 @@ export class ApiClient {
     options?: {
       omitSubtasks?: boolean;
     }
-  ): Promise<Task> {
-    return this.request(`/api/tasks/${id}/accept`, {
+  ) {
+    return this.request<Task>(`/api/tasks/${id}/accept`, {
       method: 'POST',
       body: options,
     });

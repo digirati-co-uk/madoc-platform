@@ -8,8 +8,10 @@ import { entity, MediaValue, urlMedia, VirtualMedia } from './field-value';
 import { Media } from '../types/omeka/Media';
 import { writeFileSync } from 'fs';
 import mkdirp from 'mkdirp';
+import cache from 'memory-cache';
 
 type UserSite = { id: number; role: string; slug: string; title: string };
+export type PublicSite = { id: number; slug: string; title: string; is_public: number };
 
 const fileDirectory = process.env.OMEKA_FILE_DIRECTORY || '/home/node/app/omeka-files';
 
@@ -497,6 +499,50 @@ export class OmekaApi {
         });
       });
     });
+  }
+
+  async getSiteIdBySlug(slug: string, userId?: number, isAdmin = false) {
+    const cacheKey = `public-site-id:${slug}`;
+    const publicSiteId: PublicSite | undefined = cache.get(cacheKey);
+    if (publicSiteId) {
+      return publicSiteId;
+    }
+
+    const site = await this.one<PublicSite>(mysql`
+      select id, title, slug, is_public from site where slug = ${slug}
+    `);
+
+    if (!site) {
+      return undefined;
+    }
+
+    if (site.is_public) {
+      cache.put(cacheKey, site, 60 * 60 * 1000); // 1-hour cache.
+    }
+
+    // Always return if public, or if user is admin.
+    if (site.is_public || isAdmin) {
+      return site;
+    }
+
+    try {
+      const closedSite = this.one<PublicSite>(
+        mysql`
+          select s.id, s.slug, s.title, s.is_public 
+            from site_permission sp 
+            left join site s on sp.site_id = s.id 
+            where user_id=${userId} and s.id = ${site.id}
+        `
+      );
+
+      if (!closedSite) {
+        return undefined;
+      }
+
+      return closedSite;
+    } catch (err) {
+      return undefined;
+    }
   }
 
   async one<Result>(query: Query | string, connection?: Connection): Promise<Result> {

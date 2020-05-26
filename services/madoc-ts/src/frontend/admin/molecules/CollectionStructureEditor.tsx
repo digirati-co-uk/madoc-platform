@@ -1,5 +1,5 @@
 import { useApi } from '../hooks/use-api';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import React, { useState } from 'react';
 import { useData } from '../utility';
 import { useReorderItems } from '../hooks/use-reorder-items';
@@ -17,9 +17,10 @@ export const CollectionEditorStructure: React.FC<{
   searchManifests?: boolean;
   searchCollections?: boolean;
   hideManifests?: boolean;
+  enableNavigation?: boolean;
   items?: ItemStructureListItem[];
   saveOrder: (newOrder: number[]) => Promise<void> | void;
-}> = ({ items, saveOrder, searchCollections, hideManifests, searchManifests }) => {
+}> = ({ items, saveOrder, searchCollections, hideManifests, searchManifests, enableNavigation }) => {
   const { t } = useTranslation();
   const api = useApi();
   const [search, setSearch] = useState('');
@@ -167,7 +168,13 @@ export const CollectionEditorStructure: React.FC<{
                 idx={key}
                 label={
                   <>
-                    <LocaleString>{item.label}</LocaleString>{' '}
+                    {enableNavigation ? (
+                      <LocaleString as={Link} to={`/${item.type}s/${item.id}`}>
+                        {item.label}
+                      </LocaleString>
+                    ) : (
+                      <LocaleString>{item.label}</LocaleString>
+                    )}{' '}
                     {item.type ? (
                       <>
                         - <strong>{item.type}</strong>

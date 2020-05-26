@@ -5,7 +5,6 @@ import cache from 'memory-cache';
 import { Vault } from '@hyperion-framework/vault';
 import { CanvasNormalized, Manifest, ManifestNormalized } from '@hyperion-framework/types';
 import { createHash } from 'crypto';
-import * as path from 'path';
 
 // @ts-ignore
 global.fetch = require('node-fetch');

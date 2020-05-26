@@ -5,8 +5,6 @@ export type UniversalRoute = {
   path: string;
   exact?: boolean;
   component: QueryComponent;
-  groupLabel?: string;
-  group?: string;
   routes?: UniversalRoute[];
 };
 

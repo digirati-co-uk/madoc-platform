@@ -74,17 +74,52 @@ export function getSingleCollection({
   `;
 }
 
-export function getCollectionList({
-  siteId,
-  page = 0,
+function selectCollections({
   perPage = 24,
+  page = 0,
+  parentCollectionId,
+  siteId,
 }: {
   siteId: number;
   page?: number;
   perPage?: number;
+  parentCollectionId?: number;
 }) {
   const offset = (page - 1) * perPage;
 
+  if (parentCollectionId) {
+    return sql`
+      select cidr.resource_id as collection_id
+      from iiif_derived_resource cidr
+      left join iiif_derived_resource_items cidri on cidr.id = cidri.item_id
+      where resource_type = 'collection'  
+        and cidr.site_id = ${siteId}
+        and cidri.site_id = ${siteId}
+        and cidri.resource_id = ${parentCollectionId} 
+      limit ${perPage} offset ${offset}
+    `;
+  }
+
+  return sql`
+    select cidr.resource_id as collection_id
+    from iiif_derived_resource cidr
+    where resource_type = 'collection'  
+      and cidr.site_id = ${siteId} 
+    limit ${perPage} offset ${offset}
+  `;
+}
+
+export function getCollectionList({
+  siteId,
+  page = 0,
+  perPage = 24,
+  parentCollectionId,
+}: {
+  siteId: number;
+  page?: number;
+  perPage?: number;
+  parentCollectionId?: number;
+}) {
   return sql<{
     collection_id: number;
     manifest_id: number;
@@ -100,17 +135,11 @@ export function getCollectionList({
             canvas_count.item_total                       as manifest_canvas_count,
             manifest_count.item_total                     as collection_manifest_count,
             manifest_thumbnail(${siteId}, manifest_links.item_id) as manifest_thumbnail
-     from (
-              select resource_id as collection_id
-              from iiif_derived_resource
-              where resource_type = 'collection'
-                and site_id = ${siteId}
-              limit ${perPage} offset ${offset}
-          ) collection
+     from (${selectCollections({ parentCollectionId, siteId, perPage, page })}) collection(collection_id)
               left join (select im.item_id, im.resource_id, ir.type
                          from iiif_derived_resource_items im
                             left join iiif_resource ir on im.item_id = ir.id
-                         where item_index <= 5
+                         where item_index <= 6
                            and type = 'manifest'
                            and site_id = ${siteId}) manifest_links on resource_id = collection_id
               left join site_counts canvas_count
@@ -164,31 +193,15 @@ export function getCollectionSnippets(
 export function mapCollectionSnippets(rows: CollectionSnippetsRow[]) {
   return rows.reduce(
     (state, row) => {
-      if (state.metadata_ids.indexOf(row.metadata_id) !== -1) {
-        return state;
+      let { collections, manifests } = state;
+      const { collection_to_manifest, metadata_ids } = state;
+
+      // Always add mapping for collection to manifest.
+      if (!collection_to_manifest[row.collection_id]) {
+        collection_to_manifest[row.collection_id] = [];
       }
-
-      state.metadata_ids.push(row.metadata_id);
-
-      if (row.is_manifest) {
-        if (!state.collection_to_manifest[row.collection_id]) {
-          state.collection_to_manifest[row.collection_id] = [];
-        }
-        if (state.collection_to_manifest[row.collection_id].indexOf(row.manifest_id) === -1) {
-          state.collection_to_manifest[row.collection_id].push(row.manifest_id);
-        }
-
-        const manifests = metadataReducer(state.manifests, row);
-
-        // Add any extra rows.
-        manifests[row.resource_id].canvasCount = row.canvas_count || 0;
-
-        return {
-          collection_to_manifest: state.collection_to_manifest,
-          manifests,
-          collections: state.collections,
-          metadata_ids: state.metadata_ids,
-        };
+      if (collection_to_manifest[row.collection_id].indexOf(row.manifest_id) === -1) {
+        collection_to_manifest[row.collection_id].push(row.manifest_id);
       }
 
       if (row.resource_id === null && row.collection_id) {
@@ -199,11 +212,26 @@ export function mapCollectionSnippets(rows: CollectionSnippetsRow[]) {
         row.value = 'Untitled';
       }
 
+      if (metadata_ids.indexOf(row.metadata_id) === -1) {
+        if (row.is_manifest) {
+          manifests = metadataReducer(manifests, row);
+
+          // Add any extra rows.
+          manifests[row.resource_id].canvasCount = row.canvas_count || 0;
+        } else {
+          collections = metadataReducer(state.collections, row);
+        }
+
+        // Track which metadata ids have been reduced.
+        metadata_ids.push(row.metadata_id);
+      }
+
+
       return {
-        collection_to_manifest: state.collection_to_manifest,
-        manifests: state.manifests,
-        collections: metadataReducer(state.collections, row),
-        metadata_ids: state.metadata_ids,
+        collection_to_manifest,
+        manifests,
+        collections,
+        metadata_ids,
       };
     },
     {

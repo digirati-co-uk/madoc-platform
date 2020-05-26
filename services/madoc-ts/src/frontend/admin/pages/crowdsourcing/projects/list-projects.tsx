@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { WidePage } from '../../../atoms/WidePage';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { useTranslation } from 'react-i18next';
+import { TinyButton } from '../../../atoms/Button';
 
 type ListProjectsType = {
   params: {};
@@ -33,6 +34,9 @@ export const ListProjects: UniversalComponent<ListProjectsType> = createUniversa
           title={t('Projects')}
         />
         <WidePage>
+          <TinyButton as={Link} to={`/projects/create`}>
+            {t('Create project')}
+          </TinyButton>
           {data.map((project: any) => {
             return (
               <div key={project.id}>

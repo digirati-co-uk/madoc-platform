@@ -17,6 +17,7 @@ import { readdirSync, readFileSync } from 'fs';
 import * as path from 'path';
 import { createBackend } from './middleware/i18n/i18next.server';
 import { ExternalConfig } from './types/external-config';
+import { omekaSite } from './middleware/omeka-site';
 
 export async function createApp(router: TypedRouter<any, any>, config: ExternalConfig) {
   const app = new Koa();

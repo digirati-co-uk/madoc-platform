@@ -1,5 +1,4 @@
-import { sql } from 'slonik';
-import { userWithScope } from '../../../utility/user-with-scope';
+import { optionalUserWithScope } from '../../../utility/user-with-scope';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import {
   getManifestSnippets,
@@ -7,21 +6,14 @@ import {
   mapManifestSnippets,
 } from '../../../database/queries/get-manifest-snippets';
 import { ManifestFull } from '../../../types/schemas/manifest-full';
+import { getResourceCount } from '../../../database/queries/count-queries';
 
-// @todo come back to group by for multiple scopes.
-// @todo manifest thumbnail from canvas
-// @todo return all canvases - paginated.
 export const getManifest: RouteMiddleware<{ id: string }> = async context => {
-  const { siteId } = userWithScope(context, []);
+  const { siteId } = optionalUserWithScope(context, ['site.read']);
   const manifestId = Number(context.params.id);
 
-  const canvasesPerPage = 24;
-  const { total = 0 } = (await context.connection.maybeOne<{ total: number }>(sql`
-      select item_total as total
-          from iiif_derived_resource_item_counts
-          where resource_id = ${manifestId}
-          and site_id = ${siteId}
-  `)) || { total: 0 };
+  const canvasesPerPage = 2;
+  const { total = 0 } = (await context.connection.maybeOne(getResourceCount(manifestId, siteId))) || { total: 0 };
   const totalPages = Math.ceil(total / canvasesPerPage) || 1;
   const requestedPage = Number(context.query.page) || 1;
   const page = requestedPage < totalPages ? requestedPage : totalPages;

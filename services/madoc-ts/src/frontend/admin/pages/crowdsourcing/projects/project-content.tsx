@@ -47,6 +47,7 @@ export const ProjectContent: UniversalComponent<ProjectContentType> = createUniv
         <CollectionEditorStructure
           searchCollections={true}
           searchManifests={false}
+          enableNavigation={true}
           hideManifests={false}
           items={data ? data.items : undefined}
           saveOrder={async newOrder => {

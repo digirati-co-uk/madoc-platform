@@ -7,9 +7,13 @@ import { useApi } from '../../../hooks/use-api';
 import { Button } from '../../../atoms/Button';
 import { Input, InputContainer, InputLabel } from '../../../atoms/Input';
 import { useHistory } from 'react-router-dom';
+import { AdminHeader } from '../../../molecules/AdminHeader';
+import { WidePage } from '../../../atoms/WidePage';
+import { useTranslation } from 'react-i18next';
 
 export const NewProjectPage: React.FC = () => {
   const api = useApi();
+  const { t } = useTranslation();
   const [label, setLabel] = useState<InternationalString>({ en: [''] });
   const [summary, setSummary] = useState<InternationalString>({ en: [''] });
   const [slug, setSlug] = useState('');
@@ -22,36 +26,45 @@ export const NewProjectPage: React.FC = () => {
   });
 
   return (
-    <div>
-      <h1>Create new project</h1>
-      <InputContainer>
-        <InputLabel htmlFor="label">Label</InputLabel>
-        <MetadataEditor
-          id={'label'}
-          fields={label}
-          onSave={output => setLabel(output.toInternationalString())}
-          availableLanguages={['en', 'fr', 'es']}
-          metadataKey={'label'}
-        />
-      </InputContainer>
+    <>
+      <AdminHeader
+        breadcrumbs={[
+          { label: t('Site admin'), link: '/' },
+          { label: t('Projects'), link: '/projects' },
+          { label: t('Create project'), link: '/projects/create', active: true },
+        ]}
+        title={t('Create new project')}
+      />
+      <WidePage>
+        <InputContainer>
+          <InputLabel htmlFor="label">Label</InputLabel>
+          <MetadataEditor
+            id={'label'}
+            fields={label}
+            onSave={output => setLabel(output.toInternationalString())}
+            availableLanguages={['en', 'fr', 'es']}
+            metadataKey={'label'}
+          />
+        </InputContainer>
 
-      <InputContainer>
-        <InputLabel htmlFor="summary">Description</InputLabel>
-        <MetadataEditor
-          id={'summary'}
-          fields={summary}
-          onSave={output => setSummary(output.toInternationalString())}
-          availableLanguages={['en', 'fr', 'es']}
-          metadataKey={'summary'}
-        />
-      </InputContainer>
+        <InputContainer>
+          <InputLabel htmlFor="summary">Description</InputLabel>
+          <MetadataEditor
+            id={'summary'}
+            fields={summary}
+            onSave={output => setSummary(output.toInternationalString())}
+            availableLanguages={['en', 'fr', 'es']}
+            metadataKey={'summary'}
+          />
+        </InputContainer>
 
-      <InputContainer>
-        <InputLabel htmlFor="summary">Slug</InputLabel>
-        <Input type="text" value={slug} onChange={e => setSlug(e.currentTarget.value)} id={'summary'} />
-      </InputContainer>
+        <InputContainer>
+          <InputLabel htmlFor="summary">Slug</InputLabel>
+          <Input type="text" value={slug} onChange={e => setSlug(e.currentTarget.value)} id={'summary'} />
+        </InputContainer>
 
-      <Button onClick={() => saveProject({ label, summary, slug })}>Create</Button>
-    </div>
+        <Button onClick={() => saveProject({ label, summary, slug })}>Create</Button>
+      </WidePage>
+    </>
   );
 };

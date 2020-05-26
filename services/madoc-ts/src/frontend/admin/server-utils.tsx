@@ -1,12 +1,12 @@
 import { UniversalRoute } from '../types';
 import { matchRoutes, renderRoutes } from 'react-router-config';
 
-export function renderUniversalRoutes(routes?: UniversalRoute[]) {
+export function renderUniversalRoutes(routes?: UniversalRoute[], params?: any) {
   if (!routes) {
     console.warn('renderUniversalRoutes called without routes');
     return null;
   }
-  return renderRoutes(routes as any);
+  return renderRoutes(routes as any, params);
 }
 
 export function matchUniversalRoutes(

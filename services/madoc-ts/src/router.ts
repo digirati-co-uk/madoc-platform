@@ -36,6 +36,20 @@ import { getProject } from './routes/projects/get-project';
 import { getProjectMetadata } from './routes/projects/get-project-metadata';
 import { updateProjectMetadata } from './routes/projects/update-project-metadata';
 import { getProjectStructure } from './routes/projects/get-project-structure';
+import { getCollectionProjects } from './routes/iiif/collections/get-collection-projects';
+import { getManifestProjects } from './routes/iiif/manifests/get-manifest-projects';
+import { sitePage } from './routes/site/site-page';
+import { siteCollections } from './routes/site/site-collections';
+import { siteCollection } from './routes/site/site-collection';
+import { siteCanvas } from './routes/site/site-canvas';
+import { siteManifest } from './routes/site/site-manifest';
+import { siteManifests } from './routes/site/site-manifests';
+import { siteProject } from './routes/site/site-project';
+import { siteProjects } from './routes/site/site-projects';
+import { siteSearch } from './routes/site/site-search';
+import { siteTopic } from './routes/site/site-topic';
+import { siteTopicType } from './routes/site/site-topic-type';
+import { siteTopicTypes } from './routes/site/site-topic-types';
 
 export const router = new TypedRouter({
   // Normal route
@@ -53,6 +67,7 @@ export const router = new TypedRouter({
   'delete-collection': [TypedRouter.DELETE, '/api/madoc/iiif/collections/:id', deleteCollection],
   'get-collection-metadata': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/metadata', getCollectionMetadata],
   'get-collection-structure': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/structure', getCollectionStructure],
+  'get-collection-projects': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/projects', getCollectionProjects],
   'put-collection-metadata': [
     TypedRouter.PUT,
     '/api/madoc/iiif/collections/:id/metadata',
@@ -78,6 +93,7 @@ export const router = new TypedRouter({
   'delete-manifest': [TypedRouter.DELETE, '/api/madoc/iiif/manifests/:id', deleteManifest],
   'get-manifest-metadata': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/metadata', getManifestMetadata],
   'get-manifest-structure': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/structure', getManifestStructure],
+  'get-manifest-projects': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/projects', getManifestProjects],
   'put-manifest-metadata': [
     TypedRouter.PUT,
     '/api/madoc/iiif/manifests/:id/metadata',
@@ -118,6 +134,23 @@ export const router = new TypedRouter({
   'refresh-login': [TypedRouter.POST, '/s/:slug/madoc/auth/refresh', refreshToken],
   'assets-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleId/bundle.js', frontendBundles],
   'assets-sub-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleId/:bundleName', frontendBundles],
+
+  // New Site routes.
+  'site-canvas': [TypedRouter.GET, '/s/:slug/madoc/api/canvases/:id', siteCanvas],
+  'site-collection': [TypedRouter.GET, '/s/:slug/madoc/api/collections/:id', siteCollection],
+  'site-collections': [TypedRouter.GET, '/s/:slug/madoc/api/collections', siteCollections],
+  'site-manifest': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id', siteManifest],
+  'site-manifests': [TypedRouter.GET, '/s/:slug/madoc/api/manifests', siteManifests],
+  'site-page': [TypedRouter.GET, '/s/:slug/madoc/api/page/:pageSlug+', sitePage],
+  'site-project': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug', siteProject],
+  'site-projects': [TypedRouter.GET, '/s/:slug/madoc/api/projects', siteProjects],
+  'site-search': [TypedRouter.GET, '/s/:slug/madoc/api/search', siteSearch],
+  'site-topic': [TypedRouter.GET, '/s/:slug/madoc/api/topics/:type/:id', siteTopic],
+  'site-topic-type': [TypedRouter.GET, '/s/:slug/madoc/api/topics/:type', siteTopicType],
+  'site-topic-types': [TypedRouter.GET, '/s/:slug/madoc/api/topics', siteTopicTypes],
+
+  // Test omeka pages.
+  // 'get-page': [TypedRouter.GET, '/s/:slug/madoc/page/:pageSlug+', sitePage],
 
   // Frontend
   'admin-frontend': [TypedRouter.GET, '/s/:slug/madoc/admin*', adminFrontend],

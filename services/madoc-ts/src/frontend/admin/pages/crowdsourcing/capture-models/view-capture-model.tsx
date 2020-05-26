@@ -11,19 +11,19 @@ import { useMutation } from 'react-query';
 import { useApi } from '../../../hooks/use-api';
 import { Button } from '../../../atoms/Button';
 
-type ProjectModelEditorType = {
+type ViewCaptureModelType = {
   params: { id: string; captureModelId: string };
   query: {};
-  variables: { id: number };
+  variables: { id: string };
   data: CaptureModel;
 };
 
-export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = createUniversalComponent<
-  ProjectModelEditorType
+export const ViewCaptureModel: UniversalComponent<ViewCaptureModelType> = createUniversalComponent<
+  ViewCaptureModelType
 >(
   ({ route }) => {
     const { id } = useParams<{ id: string }>();
-    const { data, status } = useData(ProjectModelEditor, {}, { refetchInterval: false });
+    const { data, status } = useData(ViewCaptureModel, {}, { refetchInterval: false });
     const [newStructure, setNewStructure] = useState<CaptureModel['structure'] | undefined>();
     const [newDocument, setNewDocument] = useState<CaptureModel['document'] | undefined>();
     const api = useApi();
@@ -44,9 +44,9 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
       <>
         <ThemeProvider theme={defaultTheme}>
           <div>
-            [ <Link to={`/projects/${id}/model`}>Home</Link> |{' '}
-            <Link to={`/projects/${id}/model/document`}>Document</Link> |{' '}
-            <Link to={`/projects/${id}/model/structure`}>Structure</Link> ]
+            [ <Link to={`/capture-models/${id}`}>Home</Link> |{' '}
+            <Link to={`/capture-models/${id}/document`}>Document</Link> |{' '}
+            <Link to={`/capture-models/${id}/structure`}>Structure</Link> ]
           </div>
           {newStructure || newDocument ? (
             <Button
@@ -82,12 +82,10 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
   },
   {
     getData: async (key, { id }, api) => {
-      const { capture_model_id } = await api.getProject(id);
-
-      return api.getCaptureModel(capture_model_id);
+      return api.getCaptureModel(id);
     },
     getKey: params => {
-      return ['project-model', { id: Number(params.id) }];
+      return ['capture-model', { id: params.id }];
     },
   }
 );
