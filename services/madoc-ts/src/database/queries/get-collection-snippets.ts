@@ -193,31 +193,15 @@ export function getCollectionSnippets(
 export function mapCollectionSnippets(rows: CollectionSnippetsRow[]) {
   return rows.reduce(
     (state, row) => {
-      if (state.metadata_ids.indexOf(row.metadata_id) !== -1) {
-        return state;
+      let { collections, manifests } = state;
+      const { collection_to_manifest, metadata_ids } = state;
+
+      // Always add mapping for collection to manifest.
+      if (!collection_to_manifest[row.collection_id]) {
+        collection_to_manifest[row.collection_id] = [];
       }
-
-      state.metadata_ids.push(row.metadata_id);
-
-      if (row.is_manifest) {
-        if (!state.collection_to_manifest[row.collection_id]) {
-          state.collection_to_manifest[row.collection_id] = [];
-        }
-        if (state.collection_to_manifest[row.collection_id].indexOf(row.manifest_id) === -1) {
-          state.collection_to_manifest[row.collection_id].push(row.manifest_id);
-        }
-
-        const manifests = metadataReducer(state.manifests, row);
-
-        // Add any extra rows.
-        manifests[row.resource_id].canvasCount = row.canvas_count || 0;
-
-        return {
-          collection_to_manifest: state.collection_to_manifest,
-          manifests,
-          collections: state.collections,
-          metadata_ids: state.metadata_ids,
-        };
+      if (collection_to_manifest[row.collection_id].indexOf(row.manifest_id) === -1) {
+        collection_to_manifest[row.collection_id].push(row.manifest_id);
       }
 
       if (row.resource_id === null && row.collection_id) {
@@ -228,11 +212,26 @@ export function mapCollectionSnippets(rows: CollectionSnippetsRow[]) {
         row.value = 'Untitled';
       }
 
+      if (metadata_ids.indexOf(row.metadata_id) === -1) {
+        if (row.is_manifest) {
+          manifests = metadataReducer(manifests, row);
+
+          // Add any extra rows.
+          manifests[row.resource_id].canvasCount = row.canvas_count || 0;
+        } else {
+          collections = metadataReducer(state.collections, row);
+        }
+
+        // Track which metadata ids have been reduced.
+        metadata_ids.push(row.metadata_id);
+      }
+
+
       return {
-        collection_to_manifest: state.collection_to_manifest,
-        manifests: state.manifests,
-        collections: metadataReducer(state.collections, row),
-        metadata_ids: state.metadata_ids,
+        collection_to_manifest,
+        manifests,
+        collections,
+        metadata_ids,
       };
     },
     {
