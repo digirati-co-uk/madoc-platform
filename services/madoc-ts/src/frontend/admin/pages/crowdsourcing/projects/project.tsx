@@ -3,7 +3,6 @@ import { createUniversalComponent, useData } from '../../../utility';
 import React from 'react';
 import { LocaleString } from '../../../molecules/LocaleString';
 import { renderUniversalRoutes } from '../../../server-utils';
-import { Link } from 'react-router-dom';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { WidePage } from '../../../atoms/WidePage';
 import { useTranslation } from 'react-i18next';
@@ -40,7 +39,7 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
           ]}
           title={<LocaleString>{data.label}</LocaleString>}
         />
-        <WidePage>{renderUniversalRoutes(route.routes)}</WidePage>
+        <WidePage>{renderUniversalRoutes(route.routes, { captureModelId: data.capture_model_id })}</WidePage>
       </>
     );
   },

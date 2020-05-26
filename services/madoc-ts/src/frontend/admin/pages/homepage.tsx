@@ -118,7 +118,7 @@ const Homepage: React.FC = () => {
                 <Link to="/projects">{t('Manage projects')}</Link>
               </li>
               <li>
-                <span>Capture model editor</span>
+                <Link to="/capture-models">{t('Manage capture models')}</Link>
               </li>
               <li>
                 <span>Reviews</span>

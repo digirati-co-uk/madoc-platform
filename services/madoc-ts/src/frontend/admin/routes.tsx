@@ -23,11 +23,14 @@ import { CreateManifest } from './pages/content/manifests/create-manifest';
 import { TaskRouter } from './pages/tasks/task-router';
 import { ProjectContent } from './pages/crowdsourcing/projects/project-content';
 import { ProjectMetadata } from './pages/crowdsourcing/projects/project-metadata';
-import { FullDocumentEditor } from './pages/crowdsourcing/projects/model-editor/full-document-editor';
-import { FullStructureEditor } from './pages/crowdsourcing/projects/model-editor/full-structure-editor';
-import { CaptureModelEditorHomepage } from './pages/crowdsourcing/projects/model-editor/home';
+import { FullDocumentEditor } from './pages/crowdsourcing/model-editor/full-document-editor';
+import { FullStructureEditor } from './pages/crowdsourcing/model-editor/full-structure-editor';
+import { CaptureModelEditorHomepage } from './pages/crowdsourcing/model-editor/home';
 import { CollectionProjects } from './pages/content/collections/collection-projects';
 import { ManifestProjects } from './pages/content/manifests/manifest-projects';
+import { CaptureModelList } from './pages/crowdsourcing/capture-models/capture-model-list';
+import { CaptureModels } from './pages/crowdsourcing/capture-models/capture-models';
+import { ViewCaptureModel } from './pages/crowdsourcing/capture-models/view-capture-model';
 
 export const routes: UniversalRoute[] = [
   {
@@ -192,6 +195,38 @@ export const routes: UniversalRoute[] = [
     path: '/import/manifest',
     exact: true,
     component: CreateManifest,
+  },
+  {
+    path: '/capture-models',
+    component: CaptureModels,
+    routes: [
+      {
+        path: '/capture-models',
+        exact: true,
+        component: CaptureModelList,
+      },
+      {
+        path: '/capture-models/:id',
+        component: ViewCaptureModel,
+        routes: [
+          {
+            path: '/capture-models/:id',
+            component: CaptureModelEditorHomepage,
+            exact: true,
+          },
+          {
+            path: '/capture-models/:id/document',
+            component: FullDocumentEditor,
+            exact: true,
+          },
+          {
+            path: '/capture-models/:id/structure',
+            component: FullStructureEditor,
+            exact: true,
+          },
+        ],
+      },
+    ],
   },
   {
     path: '/tasks/:id',
