@@ -27,6 +27,7 @@ import { FullDocumentEditor } from './pages/crowdsourcing/projects/model-editor/
 import { FullStructureEditor } from './pages/crowdsourcing/projects/model-editor/full-structure-editor';
 import { CaptureModelEditorHomepage } from './pages/crowdsourcing/projects/model-editor/home';
 import { CollectionProjects } from './pages/content/collections/collection-projects';
+import { ManifestProjects } from './pages/content/manifests/manifest-projects';
 
 export const routes: UniversalRoute[] = [
   {
@@ -109,6 +110,11 @@ export const routes: UniversalRoute[] = [
             component: EditCanvasMetadata,
           },
         ],
+      },
+      {
+        path: '/manifests/:id/projects',
+        exact: true,
+        component: ManifestProjects,
       },
     ],
   },
