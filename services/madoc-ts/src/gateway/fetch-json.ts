@@ -12,7 +12,7 @@ export async function fetchJson<Return>(
     method?: 'GET' | 'PUT' | 'POST' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD';
     body?: any;
     jwt?: string;
-    asUser?: { userId: number; siteId?: number };
+    asUser?: { userId?: number; siteId?: number };
   }
 ): Promise<{ error: true; data: { error: string }; status: number } | { error: false; data: Return; status: number }> {
   const headers: any = {
@@ -28,7 +28,9 @@ export async function fetchJson<Return>(
   }
 
   if (asUser) {
-    headers['x-madoc-user-id'] = `${asUser.userId}`;
+    if (asUser.userId) {
+      headers['x-madoc-user-id'] = `${asUser.userId}`;
+    }
     if (asUser.siteId) {
       headers['x-madoc-site-id'] = `${asUser.siteId}`;
     }

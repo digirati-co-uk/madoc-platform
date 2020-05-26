@@ -20,12 +20,13 @@ import { generateId } from '@capture-models/helpers';
 import { stringify } from 'query-string';
 import { CreateProject } from '../types/schemas/create-project';
 import { ProjectSnippet } from '../types/schemas/project-snippet';
+import { CaptureModelSnippet } from '../types/schemas/capture-model-snippet';
 
 export class ApiClient {
   private readonly gateway: string;
   private jwt: string;
   private readonly isServer: boolean;
-  private readonly user?: { userId: number; siteId?: number };
+  private readonly user?: { userId?: number; siteId?: number };
   private fetcher: typeof fetchJson;
   private errorHandlers: Array<() => void> = [];
   private errorRecoveryHandlers: Array<() => void> = [];
@@ -34,7 +35,7 @@ export class ApiClient {
   constructor(
     gateway: string,
     jwt: string,
-    asUser?: { userId: number; siteId?: number },
+    asUser?: { userId?: number; siteId?: number },
     customerFetcher?: typeof fetchJson
   ) {
     this.gateway = gateway;
@@ -124,7 +125,7 @@ export class ApiClient {
     return response.data;
   }
 
-  asUser(user: { userId: number; siteId?: number }): ApiClient {
+  asUser(user: { userId?: number; siteId?: number }): ApiClient {
     return new ApiClient(this.gateway, this.jwt, user);
   }
 
@@ -213,12 +214,16 @@ export class ApiClient {
   }
 
   // IIIF.
-  async getCollections(page = 0) {
-    return this.request<CollectionListResponse>(`/api/madoc/iiif/collections${page ? `?page=${page}` : ''}`);
+  async getCollections(page = 0, parent?: number) {
+    return this.request<CollectionListResponse>(`/api/madoc/iiif/collections?${stringify({ page, parent })}`);
   }
 
   async getManifests(page = 0) {
     return this.request<ManifestListResponse>(`/api/madoc/iiif/manifests${page ? `?page=${page}` : ''}`);
+  }
+
+  async getManifestProjects(id: number) {
+    return this.request<{ projects: ProjectSnippet[] }>(`/api/madoc/iiif/manifests/${id}/projects`);
   }
 
   async createCollection(collection: Partial<CollectionNormalized>, taskId?: string, flat?: boolean) {
@@ -357,6 +362,11 @@ export class ApiClient {
   // Capture model API.
   async getCaptureModel(id: string) {
     return this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model/${id}`);
+  }
+
+  // Capture model API.
+  async getAllCaptureModels() {
+    return this.request<CaptureModelSnippet[]>(`/api/crowdsourcing/model`);
   }
 
   // Capture model API.
