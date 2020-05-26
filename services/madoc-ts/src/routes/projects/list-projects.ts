@@ -2,20 +2,21 @@
 //  - Statistics from the task service.
 import { RouteMiddleware } from '../../types/route-middleware';
 import { sql } from 'slonik';
-import { userWithScope } from '../../utility/user-with-scope';
+import { optionalUserWithScope } from '../../utility/user-with-scope';
 import { api } from '../../gateway/api.server';
 import { getMetadata } from '../../utility/iiif-database-helpers';
 import { mapMetadata } from '../../utility/iiif-metadata';
 
 export const listProjects: RouteMiddleware = async context => {
-  const { id, siteId, siteUrn } = userWithScope(context, []);
+  const { id, siteId, siteUrn } = optionalUserWithScope(context, []);
 
+  const projectsPerPage = 5;
   const projects = await context.connection.any(
     getMetadata<{ resource_id: number; project_id: number }>(
       sql`
         select *, collection_id as resource_id, iiif_project.id as project_id from iiif_project 
             left join iiif_resource ir on iiif_project.collection_id = ir.id
-        where site_id = ${siteId} limit 5
+        where site_id = ${siteId} limit ${projectsPerPage}
       `,
       siteId
     )
@@ -44,7 +45,7 @@ export const listProjects: RouteMiddleware = async context => {
       `urn:madoc:project:${project.id}`,
       siteUrn,
     ])) as any).config[0].config_object;
-    project.model = (await api.asUser({ userId: id, siteId }).getCaptureModel(project.capture_model_id as any)) as any;
+    // project.model = (await api.asUser({ userId: id, siteId }).getCaptureModel(project.capture_model_id as any)) as any;
   }
 
   context.response.body = mappedProjects;
