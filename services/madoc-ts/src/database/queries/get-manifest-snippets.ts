@@ -79,7 +79,7 @@ export function getManifestSnippets(
            metadata.language as language,
            metadata.source as source,
            metadata.resource_id as resource_id
-      from (${query}) manifest_aggregate
+      from (${query}) manifest_aggregate(manifest_id, canvas_id, canvas_count, canvas_thumbnail)
           left join iiif_metadata metadata
               on (manifest_aggregate.canvas_id = metadata.resource_id or
                  manifest_aggregate.manifest_id = metadata.resource_id)
@@ -93,6 +93,46 @@ export function getManifestSnippets(
               )`
               : sql``
           }
+  `;
+}
+
+export function getManifestList({
+  siteId,
+  page,
+  manifestCount,
+  parentId,
+}: {
+  siteId: number;
+  page: number;
+  manifestCount: number;
+  parentId?: number;
+}) {
+  if (parentId) {
+    return sql<{ resource_id: number; thumbnail: string; canvas_total: number }>`
+      with site_counts as (select * from iiif_derived_resource_item_counts where site_id = ${siteId})
+      select manifests.resource_id as resource_id, manifest_thumbnail(${siteId}, manifests.resource_id) as thumbnail, canvas_count.item_total as canvas_total
+      from iiif_derived_resource manifests
+      left join iiif_derived_resource_items midr 
+          on midr.item_id = manifests.resource_id
+      left join site_counts canvas_count
+           on canvas_count.resource_id = manifests.resource_id
+      where manifests.resource_type = 'manifest' 
+        and manifests.site_id = ${siteId}
+        and midr.resource_id = ${parentId}
+        and midr.site_id = ${siteId}
+      limit ${manifestCount} offset ${(page - 1) * manifestCount}
+  `;
+  }
+
+  return sql<{ resource_id: number; thumbnail: string; canvas_total: number }>`
+    with site_counts as (select * from iiif_derived_resource_item_counts where site_id = ${siteId})
+    select manifests.resource_id as resource_id, manifest_thumbnail(${siteId}, manifests.resource_id) as thumbnail, canvas_count.item_total as canvas_total
+    from iiif_derived_resource manifests
+    left join site_counts canvas_count
+         on canvas_count.resource_id = manifests.resource_id
+    where manifests.resource_type = 'manifest' 
+      and manifests.site_id = ${siteId}
+      limit ${manifestCount} offset ${(page - 1) * manifestCount}
   `;
 }
 
@@ -133,7 +173,6 @@ export function mapManifestSnippets(rows: ManifestSnippetsRow[]) {
         row.language = 'none';
         row.value = 'Untitled';
       }
-
 
       return {
         manifest_to_canvas: state.manifest_to_canvas,
