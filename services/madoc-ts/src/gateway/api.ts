@@ -19,6 +19,7 @@ import { createChoice, createDocument } from '@capture-models/helpers';
 import { generateId } from '@capture-models/helpers';
 import { stringify } from 'query-string';
 import { CreateProject } from '../types/schemas/create-project';
+import { ProjectSnippet } from '../types/schemas/project-snippet';
 
 export class ApiClient {
   private readonly gateway: string;
@@ -229,6 +230,10 @@ export class ApiClient {
       },
       method: 'POST',
     });
+  }
+
+  async getCollectionProjects(id: number) {
+    return this.request<{ projects: ProjectSnippet[] }>(`/api/madoc/iiif/collections/${id}/projects`);
   }
 
   async createManifest(manifest: Partial<ManifestNormalized>, source?: string, taskId?: string) {

@@ -2,7 +2,7 @@ import { InternationalString } from '@hyperion-framework/types';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useMemo, useState } from 'react';
 
-export const LanguageString: React.FC<{ [key: string]: any } & { as?: React.FC<any>; language: string }> = ({
+export const LanguageString: React.FC<{ [key: string]: any } & { as?: string | React.FC<any>; language: string }> = ({
   as: Component,
   language,
   children,
@@ -94,7 +94,7 @@ export const LocaleString = ({
   as: Component,
   children,
   ...props
-}: { [key: string]: any } & { as?: React.FC<any>; children: InternationalString }): JSX.Element => {
+}: { [key: string]: any } & { as?: string | React.FC<any>; children: InternationalString }): JSX.Element => {
   const language = useClosestLanguage(() => Object.keys(children), [children]);
   const text = useMemo(() => {
     const candidateText = language ? children[language] : undefined;

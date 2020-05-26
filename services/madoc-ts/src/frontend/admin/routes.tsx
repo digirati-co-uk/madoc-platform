@@ -26,6 +26,7 @@ import { ProjectMetadata } from './pages/crowdsourcing/projects/project-metadata
 import { FullDocumentEditor } from './pages/crowdsourcing/projects/model-editor/full-document-editor';
 import { FullStructureEditor } from './pages/crowdsourcing/projects/model-editor/full-structure-editor';
 import { CaptureModelEditorHomepage } from './pages/crowdsourcing/projects/model-editor/home';
+import { CollectionProjects } from './pages/content/collections/collection-projects';
 
 export const routes: UniversalRoute[] = [
   {
@@ -61,6 +62,11 @@ export const routes: UniversalRoute[] = [
         path: '/collections/:id/delete',
         exact: true,
         component: DeleteCollection,
+      },
+      {
+        path: '/collections/:id/projects',
+        exact: true,
+        component: CollectionProjects,
       },
     ],
   },

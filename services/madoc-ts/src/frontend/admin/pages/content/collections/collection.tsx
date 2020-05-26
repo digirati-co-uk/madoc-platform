@@ -45,6 +45,7 @@ export const CollectionView: UniversalComponent<CollectionViewType> = createUniv
             { label: t('manifests'), link: `/collections/${id}` },
             { label: t('edit metadata'), link: `/collections/${id}/metadata` },
             { label: t('edit structure'), link: `/collections/${id}/structure` },
+            { label: t('projects'), link: `/collections/${id}/projects` },
           ]}
           title={title}
           subtitle={t('{{count}} manifests', { count: pagination.totalResults })}
