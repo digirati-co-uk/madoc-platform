@@ -9,6 +9,7 @@ import {
 } from '../../../database/queries/get-collection-snippets';
 import { SQL_INT_ARRAY } from '../../../utility/postgres-tags';
 import { countResources } from '../../../database/queries/resource-queries';
+import { getResourceCount } from '../../../database/queries/count-queries';
 
 export const listCollections: RouteMiddleware<{ page: number }> = async context => {
   const { siteId } = optionalUserWithScope(context, []);
@@ -37,14 +38,10 @@ export const listCollections: RouteMiddleware<{ page: number }> = async context 
 
   const table = mapCollectionSnippets(rows);
 
-  const collectionsIds = Object.keys(table.collections);
+  const collectionsIds = Object.keys(table.collections).map(t => Number(t));
 
   // Not ideal being it's own query.
-  const totals = await context.connection.any<{ resource_id: number; total: number }>(sql`
-      select resource_id, item_total as total
-        from iiif_derived_resource_item_counts
-        where resource_id = ANY (${sql.array(collectionsIds, SQL_INT_ARRAY)}) 
-    `);
+  const totals = await context.connection.any(getResourceCount(collectionsIds, siteId));
 
   const totalsIdMap = totals.reduce((state, row) => {
     state[row.resource_id] = row.total;
