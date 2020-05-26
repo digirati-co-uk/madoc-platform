@@ -6,9 +6,11 @@ export function userWithScope(context: { state: ApplicationState }, scopes: stri
     throw new NotFound('No id');
   }
 
-  for (const scope of scopes) {
-    if (context.state.jwt.scope.indexOf(scope) === -1) {
-      throw new NotFound('Scope');
+  if (context.state.jwt.scope.indexOf('site.admin') === -1) {
+    for (const scope of scopes) {
+      if (context.state.jwt.scope.indexOf(scope) === -1) {
+        throw new NotFound('Scope');
+      }
     }
   }
 
@@ -26,9 +28,11 @@ export function optionalUserWithScope(context: { state: ApplicationState }, scop
     throw new NotFound('No JWT');
   }
 
-  for (const scope of scopes) {
-    if (context.state.jwt.scope.indexOf(scope) === -1) {
-      throw new NotFound('Scope');
+  if (context.state.jwt.scope.indexOf('site.admin') === -1) {
+    for (const scope of scopes) {
+      if (context.state.jwt.scope.indexOf(scope) === -1) {
+        throw new NotFound('Scope');
+      }
     }
   }
 

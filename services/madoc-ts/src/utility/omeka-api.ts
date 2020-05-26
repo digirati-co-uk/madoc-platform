@@ -11,7 +11,7 @@ import mkdirp from 'mkdirp';
 import cache from 'memory-cache';
 
 type UserSite = { id: number; role: string; slug: string; title: string };
-type PublicSite = { id: number; slug: string; title: string; is_public: number };
+export type PublicSite = { id: number; slug: string; title: string; is_public: number };
 
 const fileDirectory = process.env.OMEKA_FILE_DIRECTORY || '/home/node/app/omeka-files';
 
