@@ -21,6 +21,7 @@ import { stringify } from 'query-string';
 import { CreateProject } from '../types/schemas/create-project';
 import { ProjectSnippet } from '../types/schemas/project-snippet';
 import { CaptureModelSnippet } from '../types/schemas/capture-model-snippet';
+import { ApiError } from '../utility/errors/api-error';
 
 export class ApiClient {
   private readonly gateway: string;
@@ -114,7 +115,7 @@ export class ApiClient {
         }
       }
 
-      return response.data as any;
+      throw new ApiError(response.data.error);
     } else if (this.isDown) {
       for (const rec of this.errorRecoveryHandlers) {
         rec();
@@ -134,7 +135,7 @@ export class ApiClient {
     return this.request<any[]>(`/api/madoc/projects?page=${page}`);
   }
 
-  async getProject(id: number) {
+  async getProject(id: number | string) {
     return this.request<any>(`/api/madoc/projects/${id}`);
   }
 
@@ -209,7 +210,7 @@ export class ApiClient {
     });
   }
 
-  async getConfiguration<T = any>(service: string, context: string[]): Promise<T> {
+  async getConfiguration<T = any>(service: string, context: string[]) {
     return this.request<T>(`/api/configurator/?${stringify({ context, service }, { arrayFormat: 'none' })}`);
   }
 
@@ -218,8 +219,8 @@ export class ApiClient {
     return this.request<CollectionListResponse>(`/api/madoc/iiif/collections?${stringify({ page, parent })}`);
   }
 
-  async getManifests(page = 0) {
-    return this.request<ManifestListResponse>(`/api/madoc/iiif/manifests${page ? `?page=${page}` : ''}`);
+  async getManifests(page = 0, parent?: number) {
+    return this.request<ManifestListResponse>(`/api/madoc/iiif/manifests?${stringify({ page, parent })}`);
   }
 
   async getManifestProjects(id: number) {
@@ -408,7 +409,7 @@ export class ApiClient {
   }
 
   // Tasks.
-  async getTaskById<Task extends BaseTask>(id: string, all = true, page?: number): Promise<Task> {
+  async getTaskById<Task extends BaseTask>(id: string, all = true, page?: number) {
     if (all) {
       return this.request<Task>(`/api/tasks/${id}?all=true`);
     }
@@ -442,8 +443,8 @@ export class ApiClient {
     });
   }
 
-  async getTasks(jwt?: string): Promise<{ tasks: BaseTask[] }> {
-    return this.request(`/api/tasks?all=true`, { jwt });
+  async getTasks(jwt?: string) {
+    return this.request<{ tasks: BaseTask[] }>(`/api/tasks?all=true`, { jwt });
   }
 
   async acceptTask<Task extends BaseTask>(
@@ -451,8 +452,8 @@ export class ApiClient {
     options?: {
       omitSubtasks?: boolean;
     }
-  ): Promise<Task> {
-    return this.request(`/api/tasks/${id}/accept`, {
+  ) {
+    return this.request<Task>(`/api/tasks/${id}/accept`, {
       method: 'POST',
       body: options,
     });
