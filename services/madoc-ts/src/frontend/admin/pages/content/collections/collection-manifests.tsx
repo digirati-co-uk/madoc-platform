@@ -1,14 +1,15 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { createUniversalComponent, usePaginatedData } from '../../../utility';
 import { UniversalComponent } from '../../../../types';
-import { LocaleString } from '../../../molecules/LocaleString';
+import { LocaleString } from '../../../../shared/components/LocaleString';
 import { CollectionFull } from '../../../../../types/schemas/collection-full';
 import { Pagination } from '../../../molecules/Pagination';
-import { ImageGrid, ImageGridItem } from '../../../atoms/ImageGrid';
-import { CroppedImage } from '../../../atoms/Images';
-import { SingleLineHeading5, Subheading5 } from '../../../atoms/Heading5';
+import { ImageGrid, ImageGridItem } from '../../../../shared/atoms/ImageGrid';
+import { CroppedImage } from '../../../../shared/atoms/Images';
+import { SingleLineHeading5, Subheading5 } from '../../../../shared/atoms/Heading5';
 import { Link } from 'react-router-dom';
+import { usePaginatedData } from '../../../../shared/hooks/use-data';
+import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 
 type CollectionManifestsType = {
   data: CollectionFull;

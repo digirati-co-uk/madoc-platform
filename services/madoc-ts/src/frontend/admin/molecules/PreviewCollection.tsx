@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { CollectionNormalized, ManifestNormalized } from '@hyperion-framework/types';
 import { useVaultEffect } from '@hyperion-framework/react-vault';
-import { LocaleString } from './LocaleString';
-import { TableActions, TableContainer, TableRow, TableRowLabel } from '../atoms/Table';
-import { Button, TinyButton } from '../atoms/Button';
-import { Header } from '../atoms/Header';
-import { Heading1 } from '../atoms/Heading1';
+import { LocaleString } from '../../shared/components/LocaleString';
+import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../shared/atoms/Table';
+import { Button, TinyButton } from '../../shared/atoms/Button';
+import { Header } from '../../shared/atoms/Header';
+import { Heading1 } from '../../shared/atoms/Heading1';
 import { useTranslation } from 'react-i18next';
 import { PreviewManifest } from './PreviewManifest';
 

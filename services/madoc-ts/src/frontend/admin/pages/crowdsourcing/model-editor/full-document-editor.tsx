@@ -1,7 +1,7 @@
 import React from 'react';
 import { DocumentEditor, DocumentStore, FieldEditor, StructureStore } from '@capture-models/editor';
 import { BaseField } from '@capture-models/types';
-import { Header } from '../../../atoms/Header';
+import { Header } from '../../../../shared/atoms/Header';
 
 export const FullDocumentEditor: React.FC = () => {
   const state = DocumentStore.useStoreState(s => ({

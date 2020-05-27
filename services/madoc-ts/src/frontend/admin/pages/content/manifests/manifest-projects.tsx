@@ -1,9 +1,10 @@
 import { ProjectSnippet } from '../../../../../types/schemas/project-snippet';
-import { createUniversalComponent, useData } from '../../../utility';
 import React from 'react';
-import { LocaleString } from '../../../molecules/LocaleString';
-import { SmallButton } from '../../../atoms/Button';
+import { LocaleString } from '../../../../shared/components/LocaleString';
+import { SmallButton } from '../../../../shared/atoms/Button';
 import { Link } from 'react-router-dom';
+import { useData } from '../../../../shared/hooks/use-data';
+import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 
 type ManifestProjectsType = {
   params: { id: string };

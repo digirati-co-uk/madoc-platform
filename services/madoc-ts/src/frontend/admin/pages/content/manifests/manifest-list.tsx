@@ -1,18 +1,19 @@
 import React from 'react';
-import { createUniversalComponent, usePaginatedData } from '../../../utility';
 import { UniversalComponent } from '../../../../types';
-import { TinyButton } from '../../../atoms/Button';
+import { TinyButton } from '../../../../shared/atoms/Button';
 import { Link } from 'react-router-dom';
 import { Pagination } from '../../../molecules/Pagination';
 import { useTranslation } from 'react-i18next';
-import { ImageStripBox } from '../../../atoms/ImageStrip';
-import { CroppedImage } from '../../../atoms/Images';
-import { LocaleString } from '../../../molecules/LocaleString';
-import { SingleLineHeading5, Subheading5 } from '../../../atoms/Heading5';
-import { ImageGrid } from '../../../atoms/ImageGrid';
+import { ImageStripBox } from '../../../../shared/atoms/ImageStrip';
+import { CroppedImage } from '../../../../shared/atoms/Images';
+import { LocaleString } from '../../../../shared/components/LocaleString';
+import { SingleLineHeading5, Subheading5 } from '../../../../shared/atoms/Heading5';
+import { ImageGrid } from '../../../../shared/atoms/ImageGrid';
 import { ManifestListResponse } from '../../../../../types/schemas/manifest-list';
 import { AdminHeader } from '../../../molecules/AdminHeader';
-import { WidePage } from '../../../atoms/WidePage';
+import { WidePage } from '../../../../shared/atoms/WidePage';
+import { usePaginatedData } from '../../../../shared/hooks/use-data';
+import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 
 type ManifestListType = {
   query: { page?: number };

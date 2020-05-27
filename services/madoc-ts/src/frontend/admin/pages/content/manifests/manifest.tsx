@@ -1,14 +1,15 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { createUniversalComponent, usePaginatedData } from '../../../utility';
 import { UniversalComponent } from '../../../../types';
-import { LocaleString } from '../../../molecules/LocaleString';
+import { LocaleString } from '../../../../shared/components/LocaleString';
 import { ManifestFull } from '../../../../../types/schemas/manifest-full';
-import { ButtonRow, TinyButton } from '../../../atoms/Button';
+import { ButtonRow, TinyButton } from '../../../../shared/atoms/Button';
 import { Link, useParams } from 'react-router-dom';
 import { AdminHeader } from '../../../molecules/AdminHeader';
-import { renderUniversalRoutes } from '../../../server-utils';
-import { WidePage } from '../../../atoms/WidePage';
+import { renderUniversalRoutes } from '../../../../shared/utils/server-utils';
+import { WidePage } from '../../../../shared/atoms/WidePage';
+import { usePaginatedData } from '../../../../shared/hooks/use-data';
+import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 
 type ManifestViewType = {
   data: ManifestFull;

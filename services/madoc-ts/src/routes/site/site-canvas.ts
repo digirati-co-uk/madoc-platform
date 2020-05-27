@@ -1,10 +1,10 @@
 import { RouteMiddleware } from '../../types/route-middleware';
 
-export type SiteManifestQuery = {
-  manifestId?: string;
-  collectionId?: string;
-  parentCollectionIds?: string;
-  projectId?: string;
+export type SiteCanvasQuery = {
+  manifest_id?: number;
+  collection_id?: number;
+  parent_collection_ids?: number[];
+  project_id?: number;
 };
 
 export const siteCanvas: RouteMiddleware<{ slug: string; id: string }> = async context => {

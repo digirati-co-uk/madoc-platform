@@ -1,7 +1,8 @@
 import React from 'react';
 import { UniversalComponent } from '../../../../types';
-import { createUniversalComponent, useData } from '../../../utility';
 import { CanvasFull } from '../../../../../types/schemas/canvas-full';
+import { useData } from '../../../../shared/hooks/use-data';
+import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 
 type CanvasDetailsType = {
   params: { id: number; manifestId: number };

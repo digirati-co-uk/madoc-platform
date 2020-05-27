@@ -1,7 +1,7 @@
 import { RouteMiddleware } from '../../types/route-middleware';
 
 export type SiteManifestQuery = {
-  projectId?: string;
+  project_id?: number;
 };
 
 export const siteManifests: RouteMiddleware<{ slug: string }> = async context => {

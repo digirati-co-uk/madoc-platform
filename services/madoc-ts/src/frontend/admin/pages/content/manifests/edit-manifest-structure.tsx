@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
 import { UniversalComponent } from '../../../../types';
 import { ItemStructureList } from '../../../../../types/schemas/item-structure-list';
-import { createUniversalComponent, useData } from '../../../utility';
-import { LocaleString } from '../../../molecules/LocaleString';
-import { useApi } from '../../../hooks/use-api';
+import { LocaleString } from '../../../../shared/components/LocaleString';
+import { useApi } from '../../../../shared/hooks/use-api';
 import { Link, useParams } from 'react-router-dom';
-import { SmallButton, TinyButton } from '../../../atoms/Button';
-import { ContextHeading, Header } from '../../../atoms/Header';
-import { Subheading1 } from '../../../atoms/Heading1';
-import { ReorderTable, ReorderTableRow } from '../../../atoms/ReorderTable';
+import { SmallButton, TinyButton } from '../../../../shared/atoms/Button';
+import { ContextHeading, Header } from '../../../../shared/atoms/Header';
+import { Subheading1 } from '../../../../shared/atoms/Heading1';
+import { ReorderTable, ReorderTableRow } from '../../../../shared/atoms/ReorderTable';
 import { resetServerContext } from 'react-beautiful-dnd';
-import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../../atoms/Table';
-import { Heading3 } from '../../../atoms/Heading3';
+import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../../../shared/atoms/Table';
+import { Heading3 } from '../../../../shared/atoms/Heading3';
 import { useReorderItems } from '../../../hooks/use-reorder-items';
 import { useTranslation } from 'react-i18next';
 import { InView } from 'react-intersection-observer';
+import { useData } from '../../../../shared/hooks/use-data';
+import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 
 type EditManifestStructureType = {
   data: ItemStructureList;

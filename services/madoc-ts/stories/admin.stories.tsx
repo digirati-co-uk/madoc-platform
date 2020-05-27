@@ -1,7 +1,7 @@
 import { MemoryRouter } from 'react-router-dom';
 import { AdminHeader } from '../src/frontend/admin/molecules/AdminHeader';
 import * as React from 'react';
-import { WidePage } from '../src/frontend/admin/atoms/WidePage';
+import { WidePage } from '../src/frontend/shared/atoms/WidePage';
 
 export default { title: 'Admin' };
 

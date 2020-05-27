@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { MetadataDiff, MetadataEditor, MetadataEditorProps } from './MetadataEditor';
 import { useMutation } from 'react-query';
-import { Button } from '../atoms/Button';
+import { Button } from '../../shared/atoms/Button';
 import { MetadataDefinition } from '../../../types/schemas/metadata-definition';
 import { useTranslation } from 'react-i18next';
 import { ParsedMetadata } from '../../../utility/map-metadata-list';

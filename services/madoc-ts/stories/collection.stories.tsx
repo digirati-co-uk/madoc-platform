@@ -1,19 +1,19 @@
 import * as React from 'react';
-import { Button, ButtonRow, SmallButton, TinyButton } from '../src/frontend/admin/atoms/Button';
-import { Heading3, Subheading3 } from '../src/frontend/admin/atoms/Heading3';
-import { Heading5, Subheading5, SingleLineHeading5 } from '../src/frontend/admin/atoms/Heading5';
-import { ImageStrip, ImageStripBox } from '../src/frontend/admin/atoms/ImageStrip';
-import { MoreContainer, MoreDot, MoreIconContainer, MoreLabel } from '../src/frontend/admin/atoms/MoreButton';
+import { Button, ButtonRow, SmallButton, TinyButton } from '../src/frontend/shared/atoms/Button';
+import { Heading3, Subheading3 } from '../src/frontend/shared/atoms/Heading3';
+import { Heading5, Subheading5, SingleLineHeading5 } from '../src/frontend/shared/atoms/Heading5';
+import { ImageStrip, ImageStripBox } from '../src/frontend/shared/atoms/ImageStrip';
+import { MoreContainer, MoreDot, MoreIconContainer, MoreLabel } from '../src/frontend/shared/atoms/MoreButton';
 import styled from 'styled-components';
-import { ImageGrid, ImageGridItem } from '../src/frontend/admin/atoms/ImageGrid';
-import { CroppedImage } from '../src/frontend/admin/atoms/Images';
-import { Heading1, Subheading1 } from '../src/frontend/admin/atoms/Heading1';
-import { ReorderTable, ReorderTableRow } from '../src/frontend/admin/atoms/ReorderTable';
-import { ContextHeading, Header } from '../src/frontend/admin/atoms/Header';
-import { TableActions, TableContainer, TableRow, TableRowLabel } from '../src/frontend/admin/atoms/Table';
-import { Input, InputContainer, InputLabel, InputLink } from '../src/frontend/admin/atoms/Input';
-import { IntlField } from '../src/frontend/admin/atoms/IntlField';
-import { ExpandGrid, GridContainer, HalfGird } from '../src/frontend/admin/atoms/Grid';
+import { ImageGrid, ImageGridItem } from '../src/frontend/shared/atoms/ImageGrid';
+import { CroppedImage } from '../src/frontend/shared/atoms/Images';
+import { Heading1, Subheading1 } from '../src/frontend/shared/atoms/Heading1';
+import { ReorderTable, ReorderTableRow } from '../src/frontend/shared/atoms/ReorderTable';
+import { ContextHeading, Header } from '../src/frontend/shared/atoms/Header';
+import { TableActions, TableContainer, TableRow, TableRowLabel } from '../src/frontend/shared/atoms/Table';
+import { Input, InputContainer, InputLabel, InputLink } from '../src/frontend/shared/atoms/Input';
+import { IntlField } from '../src/frontend/shared/atoms/IntlField';
+import { ExpandGrid, GridContainer, HalfGird } from '../src/frontend/shared/atoms/Grid';
 import {
   InnerModalContainer,
   ModalBackground,
@@ -22,8 +22,8 @@ import {
   ModalContainer,
   ModalHeader,
   ModalHeaderTitle,
-} from '../src/frontend/admin/atoms/Modal';
-import { ModalButton } from '../src/frontend/admin/molecules/Modal';
+} from '../src/frontend/shared/atoms/Modal';
+import { ModalButton } from '../src/frontend/shared/components/Modal';
 import { MetadataEditor } from '../src/frontend/admin/molecules/MetadataEditor';
 import { useState } from 'react';
 

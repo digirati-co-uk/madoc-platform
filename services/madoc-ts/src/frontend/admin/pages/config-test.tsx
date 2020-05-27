@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
-import { createUniversalComponent, useData } from '../utility';
 import { useMutation } from 'react-query';
 import styled from 'styled-components';
-import { useApi } from '../hooks/use-api';
+import { useApi } from '../../shared/hooks/use-api';
 import { UniversalRoute } from '../../types';
+import { useData } from '../../shared/hooks/use-data';
+import { createUniversalComponent } from '../../shared/utility/create-universal-component';
 
 const Textarea = styled.textarea`
   width: 100%;

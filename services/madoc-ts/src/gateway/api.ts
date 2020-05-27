@@ -25,25 +25,27 @@ import { ApiError } from '../utility/errors/api-error';
 
 export class ApiClient {
   private readonly gateway: string;
-  private jwt: string;
+  private jwt?: string;
   private readonly isServer: boolean;
   private readonly user?: { userId?: number; siteId?: number };
-  private fetcher: typeof fetchJson;
+  private readonly fetcher: typeof fetchJson;
   private errorHandlers: Array<() => void> = [];
   private errorRecoveryHandlers: Array<() => void> = [];
   private isDown = false;
+  private publicSiteSlug?: string;
 
-  constructor(
-    gateway: string,
-    jwt: string,
-    asUser?: { userId?: number; siteId?: number },
-    customerFetcher?: typeof fetchJson
-  ) {
-    this.gateway = gateway;
-    this.jwt = jwt;
-    this.user = asUser;
+  constructor(options: {
+    gateway: string;
+    publicSiteSlug?: string;
+    jwt?: string;
+    asUser?: { userId?: number; siteId?: number };
+    customerFetcher?: typeof fetchJson;
+  }) {
+    this.gateway = options.gateway;
+    this.jwt = options.jwt;
+    this.user = options.asUser;
     this.isServer = !(globalThis as any).window;
-    this.fetcher = customerFetcher || fetchJson;
+    this.fetcher = options.customerFetcher || fetchJson;
   }
 
   onError(func: () => void) {
@@ -70,8 +72,18 @@ export class ApiClient {
       method = 'GET',
       body,
       jwt = this.jwt,
-    }: { method?: 'GET' | 'PUT' | 'POST' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD'; body?: Body; jwt?: string } = {}
+      publicRequest = false,
+    }: {
+      method?: 'GET' | 'PUT' | 'POST' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD';
+      body?: Body;
+      jwt?: string;
+      publicRequest?: boolean;
+    } = {}
   ): Promise<Return> {
+    if (!publicRequest && !jwt) {
+      throw new ApiError('Not authorised');
+    }
+
     const response = await this.fetcher<Return>(this.gateway, endpoint, {
       method,
       body,
@@ -126,8 +138,41 @@ export class ApiClient {
     return response.data;
   }
 
+  async publicRequest<Return, Query = any, Body = any>(
+    endpoint: string,
+    query?: Query,
+    {
+      method = 'GET',
+      body,
+      jwt = this.jwt,
+    }: {
+      method?: 'GET' | 'PUT' | 'POST' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD';
+      body?: Body;
+      jwt?: string;
+    } = {}
+  ) {
+    if (!this.publicSiteSlug) {
+      throw new Error('Site slug not found');
+    }
+
+    const queryString = query ? `?${stringify(query)}` : '';
+
+    return this.request<Return, Body>(`/s/${this.publicSiteSlug}${endpoint}${queryString}`, {
+      method,
+      body,
+      jwt,
+      publicRequest: true,
+    });
+  }
+
   asUser(user: { userId?: number; siteId?: number }): ApiClient {
-    return new ApiClient(this.gateway, this.jwt, user);
+    return new ApiClient({
+      gateway: this.gateway,
+      jwt: this.jwt,
+      asUser: user,
+      customerFetcher: this.fetcher,
+      publicSiteSlug: this.publicSiteSlug,
+    });
   }
 
   // Projects.
@@ -472,5 +517,39 @@ export class ApiClient {
       method: 'POST',
       body: tasks,
     });
+  }
+
+  // Public API.
+
+  async getSiteCanvas(id: string, query?: import('../routes/site/site-canvas').SiteCanvasQuery) {
+    return this.publicRequest<CanvasFull>(`/madoc/api/canvases/${id}`, query);
+  }
+
+  async getSiteCollection(id: string, query?: import('../routes/site/site-collection').SiteCollectionQuery) {
+    return this.publicRequest<CollectionFull>(`/madoc/api/collection/${id}`, query);
+  }
+
+  async getSiteCollections(query?: import('../routes/site/site-collections').SiteCollectionQuery) {
+    return this.publicRequest<CollectionListResponse>(`/madoc/api/collections`, query);
+  }
+
+  async getSiteManifest(id: string, query?: import('../routes/site/site-manifest').SiteManifestQuery) {
+    return this.publicRequest<ManifestFull>(`/madoc/api/manifests/${id}`, query);
+  }
+
+  async getSiteManifests(query?: import('../routes/site/site-manifests').SiteManifestQuery) {
+    return this.publicRequest<ManifestListResponse>(`/madoc/api/manifests`, query);
+  }
+
+  async getSitePage(path: string) {
+    return this.publicRequest<any>(`/madoc/api/page/${path}`);
+  }
+
+  async getSiteProject(id: string) {
+    return this.publicRequest<any>(`/madoc/api/projects/${id}`);
+  }
+
+  async getSiteProjects(query?: import('../routes/site/site-projects').SiteProjectsQuery) {
+    return this.publicRequest<any[]>(`/madoc/api/projects`, query);
   }
 }

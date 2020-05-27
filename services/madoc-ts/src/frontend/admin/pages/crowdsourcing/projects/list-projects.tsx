@@ -1,12 +1,13 @@
 import { UniversalComponent } from '../../../../types';
-import { createUniversalComponent, useData } from '../../../utility';
 import React from 'react';
-import { LocaleString } from '../../../molecules/LocaleString';
+import { LocaleString } from '../../../../shared/components/LocaleString';
 import { Link } from 'react-router-dom';
-import { WidePage } from '../../../atoms/WidePage';
+import { WidePage } from '../../../../shared/atoms/WidePage';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { useTranslation } from 'react-i18next';
-import { TinyButton } from '../../../atoms/Button';
+import { TinyButton } from '../../../../shared/atoms/Button';
+import { useData } from '../../../../shared/hooks/use-data';
+import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 
 type ListProjectsType = {
   params: {};

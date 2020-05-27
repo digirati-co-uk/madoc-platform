@@ -17,16 +17,18 @@ const BreadcrumbContainer = styled.div`
 `;
 
 const BreadcrumbItem = styled.div<{ active?: boolean }>`
-  text-decoration: none;
-  color: rgba(255, 255, 255, 0.7);
-  &:hover {
-    color: rgba(255, 255, 255, 1);
+  a {
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.7);
+    &:hover {
+      color: rgba(255, 255, 255, 1);
+    }
+    ${props =>
+      props.active &&
+      css`
+        color: #fff;
+      `}
   }
-  ${props =>
-    props.active &&
-    css`
-      color: #fff;
-    `}
 `;
 
 const BreadcrumbSeparator = styled.div`
@@ -45,8 +47,8 @@ export const Breadcrumbs: React.FC<{ items: BreadcrumbItem[] }> = ({ items }) =>
         return (
           <>
             {n !== 0 ? <BreadcrumbSeparator>{`/`}</BreadcrumbSeparator> : null}
-            <BreadcrumbItem key={item.link} as={Link} to={item.link} active={item.active}>
-              {item.label}
+            <BreadcrumbItem key={item.link} active={item.active}>
+              <Link to={item.link}>{item.label}</Link>
             </BreadcrumbItem>
           </>
         );

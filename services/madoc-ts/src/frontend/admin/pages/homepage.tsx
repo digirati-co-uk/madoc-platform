@@ -2,10 +2,10 @@ import React from 'react';
 import { UniversalComponent } from '../../types';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { createUniversalComponent } from '../utility';
 import { useTranslation } from 'react-i18next';
 import { AdminHeader } from '../molecules/AdminHeader';
-import { WidePage } from '../atoms/WidePage';
+import { WidePage } from '../../shared/atoms/WidePage';
+import { createUniversalComponent } from '../../shared/utility/create-universal-component';
 
 const StatisticLabel = styled.div`
   color: #333;

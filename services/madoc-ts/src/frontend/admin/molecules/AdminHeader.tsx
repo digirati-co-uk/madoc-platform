@@ -1,9 +1,9 @@
 import React from 'react';
-import { AdminPageTitle, AdminPageSubtitle } from '../atoms/AdminPageTitle';
+import { AdminPageTitle, AdminPageSubtitle } from '../../shared/atoms/AdminPageTitle';
 import styled, { css } from 'styled-components';
-import { BreadcrumbItem, Breadcrumbs } from '../atoms/Breadcrumbs';
+import { BreadcrumbItem, Breadcrumbs } from '../../shared/atoms/Breadcrumbs';
 import { Link, useLocation } from 'react-router-dom';
-import { WidePage } from '../atoms/WidePage';
+import { WidePage } from '../../shared/atoms/WidePage';
 
 const AdminHeaderBackground = styled.div`
   background: #333;

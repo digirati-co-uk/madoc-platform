@@ -1,14 +1,15 @@
 import { BaseTask } from '../../../../gateway/tasks/base-task';
 import { UniversalComponent } from '../../../types';
-import { createUniversalComponent, usePaginatedData } from '../../utility';
 import React from 'react';
 import { ManifestImportTask } from './manifest-import-task';
 import { ImportManifestTask } from '../../../../gateway/tasks/import-manifest';
 import { CollectionImportTask } from './collection-import-task';
 import { AdminHeader } from '../../molecules/AdminHeader';
-import { WidePage } from '../../atoms/WidePage';
+import { WidePage } from '../../../shared/atoms/WidePage';
 import { useTranslation } from 'react-i18next';
-import { SubtaskProgress } from '../../atoms/SubtaskProgress';
+import { SubtaskProgress } from '../../../shared/atoms/SubtaskProgress';
+import { usePaginatedData } from '../../../shared/hooks/use-data';
+import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 
 type TaskRouterType = {
   query: { page: number };

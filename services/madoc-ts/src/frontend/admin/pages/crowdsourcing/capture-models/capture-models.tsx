@@ -1,9 +1,9 @@
 import React from 'react';
-import { renderUniversalRoutes } from '../../../server-utils';
+import { renderUniversalRoutes } from '../../../../shared/utils/server-utils';
 import { useTranslation } from 'react-i18next';
-import { createUniversalComponent } from '../../../utility';
 import { AdminHeader } from '../../../molecules/AdminHeader';
-import { WidePage } from '../../../atoms/WidePage';
+import { WidePage } from '../../../../shared/atoms/WidePage';
+import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 
 export const CaptureModels = createUniversalComponent(({ route }) => {
   const { t } = useTranslation();

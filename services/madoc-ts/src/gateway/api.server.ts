@@ -4,4 +4,7 @@ import { getServiceJwt } from './token';
 const token = getServiceJwt();
 const apiGateway = process.env.API_GATEWAY as string;
 
-export const api = new ApiClient(apiGateway, token);
+export const api = new ApiClient({
+  gateway: apiGateway,
+  jwt: token,
+});

@@ -1,12 +1,12 @@
 import { ImportManifestTask } from '../../../../gateway/tasks/import-manifest';
 import React, { useState } from 'react';
-import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../atoms/Table';
-import { Status } from '../../atoms/Status';
-import { Button, TinyButton } from '../../atoms/Button';
+import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../../shared/atoms/Table';
+import { Status } from '../../../shared/atoms/Status';
+import { Button, TinyButton } from '../../../shared/atoms/Button';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { useApi } from '../../hooks/use-api';
+import { useApi } from '../../../shared/hooks/use-api';
 
 export const CollectionImportTask: React.FC<{ task: ImportManifestTask }> = ({ task }) => {
   const { t } = useTranslation();

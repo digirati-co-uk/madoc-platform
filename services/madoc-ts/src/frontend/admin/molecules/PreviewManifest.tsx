@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { CanvasNormalized, ManifestNormalized } from '@hyperion-framework/types';
 import { useVaultEffect } from '@hyperion-framework/react-vault';
-import { Heading3 } from '../atoms/Heading3';
-import { LocaleString } from './LocaleString';
-import { ImageGrid, ImageGridItem } from '../atoms/ImageGrid';
-import { CroppedImage } from '../atoms/Images';
-import { SingleLineHeading5 } from '../atoms/Heading5';
-import { TinyButton } from '../atoms/Button';
+import { Heading3 } from '../../shared/atoms/Heading3';
+import { LocaleString } from '../../shared/components/LocaleString';
+import { ImageGrid, ImageGridItem } from '../../shared/atoms/ImageGrid';
+import { CroppedImage } from '../../shared/atoms/Images';
+import { SingleLineHeading5 } from '../../shared/atoms/Heading5';
+import { TinyButton } from '../../shared/atoms/Button';
 
 const CanvasThumbnail: React.FC<{ canvas: CanvasNormalized; height: number }> = ({ canvas, height }) => {
   const [thumbnail, setThumbnail] = useState<string | undefined>();

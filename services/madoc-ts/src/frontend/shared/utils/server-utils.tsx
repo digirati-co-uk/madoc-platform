@@ -1,4 +1,4 @@
-import { UniversalRoute } from '../types';
+import { UniversalRoute } from '../../types';
 import { matchRoutes, renderRoutes } from 'react-router-config';
 
 export function renderUniversalRoutes(routes?: UniversalRoute[], params?: any) {

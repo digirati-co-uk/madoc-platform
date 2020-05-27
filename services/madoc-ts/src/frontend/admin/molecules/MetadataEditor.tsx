@@ -1,16 +1,16 @@
 import React, { useMemo, useReducer, useState } from 'react';
 import produce from 'immer';
-import { Button, LinkButton } from '../atoms/Button';
-import { IntlInput, IntlInputButton, IntlInputContainer, IntlInputDefault } from '../atoms/IntlField';
-import { ModalButton } from './Modal';
-import { CloseIcon } from '../atoms/CloseIcon';
+import { Button, LinkButton } from '../../shared/atoms/Button';
+import { IntlInput, IntlInputButton, IntlInputContainer, IntlInputDefault } from '../../shared/atoms/IntlField';
+import { ModalButton } from '../../shared/components/Modal';
+import { CloseIcon } from '../../shared/atoms/CloseIcon';
 import styled, { css } from 'styled-components';
-import { ExpandGrid, GridContainer } from '../atoms/Grid';
-import { useClosestLanguage } from './LocaleString';
+import { ExpandGrid, GridContainer } from '../../shared/atoms/Grid';
+import { useClosestLanguage } from '../../shared/components/LocaleString';
 import { InternationalString } from '@hyperion-framework/types';
 import { useTranslation } from 'react-i18next';
 import { MetadataDefinition } from '../../../types/schemas/metadata-definition';
-import { EmptyInputValue } from '../atoms/Input';
+import { EmptyInputValue } from '../../shared/atoms/Input';
 
 export type MetadataDiff = {
   added: Array<{ key: string; language: string; value: string }>;

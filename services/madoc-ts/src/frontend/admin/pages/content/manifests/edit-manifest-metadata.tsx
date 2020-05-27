@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 import { useParams, useHistory } from 'react-router-dom';
 import { UniversalComponent } from '../../../../types';
-import { createUniversalComponent, useData } from '../../../utility';
 import { MetadataDiff } from '../../../molecules/MetadataEditor';
-import { useApi } from '../../../hooks/use-api';
+import { useApi } from '../../../../shared/hooks/use-api';
 import { mapMetadataList, ParsedMetadata } from '../../../../../utility/map-metadata-list';
 import { MetadataListEditor } from '../../../molecules/MetadataListEditor';
+import { useData } from '../../../../shared/hooks/use-data';
+import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 
 type EditManifestMetadataType = {
   params: { id: number };

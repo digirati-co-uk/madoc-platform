@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
-import { GridContainer, HalfGird } from '../../../atoms/Grid';
-import { Heading3, Subheading3 } from '../../../atoms/Heading3';
+import { GridContainer, HalfGird } from '../../../../shared/atoms/Grid';
+import { Heading3, Subheading3 } from '../../../../shared/atoms/Heading3';
 import { MetadataEditor } from '../../../molecules/MetadataEditor';
-import { SmallButton } from '../../../atoms/Button';
-import { Input, InputContainer, InputLabel } from '../../../atoms/Input';
+import { SmallButton } from '../../../../shared/atoms/Button';
+import { Input, InputContainer, InputLabel } from '../../../../shared/atoms/Input';
 import { useMutation } from 'react-query';
 import { useTranslation } from 'react-i18next';
-import { useApi } from '../../../hooks/use-api';
+import { useApi } from '../../../../shared/hooks/use-api';
 import { CreateCollection as CreateCollectionType } from '../../../../../types/schemas/create-collection';
 import { InternationalString } from '@hyperion-framework/types';
 import { useHistory } from 'react-router-dom';
 import { PreviewCollection } from '../../../molecules/PreviewCollection';
 import { VaultProvider } from '@hyperion-framework/react-vault';
-import { useLocationQuery } from '../../../utility';
 import { AdminHeader } from '../../../molecules/AdminHeader';
-import { WidePage } from '../../../atoms/WidePage';
+import { WidePage } from '../../../../shared/atoms/WidePage';
+import { useLocationQuery } from '../../../../shared/hooks/use-location-query';
 
 export const CreateCollection: React.FC = () => {
   const {

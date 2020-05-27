@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Button, SmallButton, TinyButton } from '../src/frontend/admin/atoms/Button';
-import { Breadcrumbs } from '../src/frontend/admin/atoms/Breadcrumbs';
+import { Button, SmallButton, TinyButton } from '../src/frontend/shared/atoms/Button';
+import { Breadcrumbs } from '../src/frontend/shared/atoms/Breadcrumbs';
 import { MemoryRouter } from 'react-router-dom';
 
 export default { title: 'Atoms' };

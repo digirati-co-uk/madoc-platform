@@ -1,17 +1,17 @@
-import { useApi } from '../hooks/use-api';
+import { useApi } from '../../shared/hooks/use-api';
 import { Link, useParams } from 'react-router-dom';
 import React, { useState } from 'react';
-import { useData } from '../utility';
 import { useReorderItems } from '../hooks/use-reorder-items';
-import { ExpandGrid, GridContainer, HalfGird } from '../atoms/Grid';
-import { Input, InputContainer, InputLabel } from '../atoms/Input';
-import { Button, SmallButton, TinyButton } from '../atoms/Button';
-import { Heading3 } from '../atoms/Heading3';
-import { TableActions, TableContainer, TableRow, TableRowLabel } from '../atoms/Table';
-import { ReorderTable, ReorderTableRow } from '../atoms/ReorderTable';
-import { LocaleString } from './LocaleString';
+import { ExpandGrid, GridContainer, HalfGird } from '../../shared/atoms/Grid';
+import { Input, InputContainer, InputLabel } from '../../shared/atoms/Input';
+import { Button, SmallButton, TinyButton } from '../../shared/atoms/Button';
+import { Heading3 } from '../../shared/atoms/Heading3';
+import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../shared/atoms/Table';
+import { ReorderTable, ReorderTableRow } from '../../shared/atoms/ReorderTable';
+import { LocaleString } from '../../shared/components/LocaleString';
 import { ItemStructureListItem } from '../../../types/schemas/item-structure-list';
 import { useTranslation } from 'react-i18next';
+import { useData } from '../../shared/hooks/use-data';
 
 export const CollectionEditorStructure: React.FC<{
   searchManifests?: boolean;

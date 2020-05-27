@@ -1,15 +1,16 @@
 import React from 'react';
 import { ManifestFull } from '../../../../../types/schemas/manifest-full';
 import { UniversalComponent } from '../../../../types';
-import { createUniversalComponent, usePaginatedData } from '../../../utility';
 import { useTranslation } from 'react-i18next';
-import { LocaleString } from '../../../molecules/LocaleString';
+import { LocaleString } from '../../../../shared/components/LocaleString';
 import { Pagination } from '../../../molecules/Pagination';
-import { ImageStripBox } from '../../../atoms/ImageStrip';
-import { CroppedImage } from '../../../atoms/Images';
-import { Heading5 } from '../../../atoms/Heading5';
-import { ImageGrid } from '../../../atoms/ImageGrid';
+import { ImageStripBox } from '../../../../shared/atoms/ImageStrip';
+import { CroppedImage } from '../../../../shared/atoms/Images';
+import { Heading5 } from '../../../../shared/atoms/Heading5';
+import { ImageGrid } from '../../../../shared/atoms/ImageGrid';
 import { Link } from 'react-router-dom';
+import { usePaginatedData } from '../../../../shared/hooks/use-data';
+import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 
 export type ManifestViewType = {
   query: { page: number };

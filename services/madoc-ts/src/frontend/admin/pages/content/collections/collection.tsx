@@ -1,13 +1,14 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { createUniversalComponent, usePaginatedData } from '../../../utility';
 import { UniversalComponent } from '../../../../types';
-import { LocaleString } from '../../../molecules/LocaleString';
+import { LocaleString } from '../../../../shared/components/LocaleString';
 import { CollectionFull } from '../../../../../types/schemas/collection-full';
 import { useParams } from 'react-router-dom';
 import { AdminHeader } from '../../../molecules/AdminHeader';
-import { renderUniversalRoutes } from '../../../server-utils';
-import { WidePage } from '../../../atoms/WidePage';
+import { renderUniversalRoutes } from '../../../../shared/utils/server-utils';
+import { WidePage } from '../../../../shared/atoms/WidePage';
+import { usePaginatedData } from '../../../../shared/hooks/use-data';
+import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 
 type CollectionViewType = {
   data: CollectionFull;

@@ -1,11 +1,12 @@
 import { UniversalComponent } from '../../../../types';
-import { createUniversalComponent, useData } from '../../../utility';
 import React from 'react';
-import { useApi } from '../../../hooks/use-api';
+import { useApi } from '../../../../shared/hooks/use-api';
 import { CollectionEditorStructure } from '../../../molecules/CollectionStructureEditor';
 import { ItemStructureListItem } from '../../../../../types/schemas/item-structure-list';
 import { useTranslation } from 'react-i18next';
-import { HelpText } from '../../../atoms/HelpText';
+import { HelpText } from '../../../../shared/atoms/HelpText';
+import { useData } from '../../../../shared/hooks/use-data';
+import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 
 type ProjectContentType = {
   params: { id: string };

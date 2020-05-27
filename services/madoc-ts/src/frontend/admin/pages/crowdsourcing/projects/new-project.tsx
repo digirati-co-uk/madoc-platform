@@ -3,12 +3,12 @@ import { InternationalString } from '@hyperion-framework/types';
 import { MetadataEditor } from '../../../molecules/MetadataEditor';
 import { useMutation } from 'react-query';
 import { CreateProject } from '../../../../../types/schemas/create-project';
-import { useApi } from '../../../hooks/use-api';
-import { Button } from '../../../atoms/Button';
-import { Input, InputContainer, InputLabel } from '../../../atoms/Input';
+import { useApi } from '../../../../shared/hooks/use-api';
+import { Button } from '../../../../shared/atoms/Button';
+import { Input, InputContainer, InputLabel } from '../../../../shared/atoms/Input';
 import { useHistory } from 'react-router-dom';
 import { AdminHeader } from '../../../molecules/AdminHeader';
-import { WidePage } from '../../../atoms/WidePage';
+import { WidePage } from '../../../../shared/atoms/WidePage';
 import { useTranslation } from 'react-i18next';
 
 export const NewProjectPage: React.FC = () => {

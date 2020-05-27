@@ -1,17 +1,15 @@
-import React, { createContext, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { routes } from './routes';
 import { ApiClient } from '../../gateway/api';
 import { useTranslation } from 'react-i18next';
-import { renderUniversalRoutes } from './server-utils';
-import { ApiContext, useIsApiRestarting } from './hooks/use-api';
-import { ErrorMessage } from './atoms/ErrorMessage';
+import { renderUniversalRoutes } from '../shared/utils/server-utils';
+import { ApiContext, useIsApiRestarting } from '../shared/hooks/use-api';
+import { ErrorMessage } from '../shared/atoms/ErrorMessage';
 
 export type AdminAppProps = {
   jwt?: string;
   api: ApiClient;
 };
-
-export const SSRContext = createContext<any>(undefined);
 
 const AdminApp: React.FC<AdminAppProps> = ({ api }) => {
   const { i18n } = useTranslation();

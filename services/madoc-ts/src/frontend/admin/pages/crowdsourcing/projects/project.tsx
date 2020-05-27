@@ -1,11 +1,12 @@
 import { UniversalComponent } from '../../../../types';
-import { createUniversalComponent, useData } from '../../../utility';
 import React from 'react';
-import { LocaleString } from '../../../molecules/LocaleString';
-import { renderUniversalRoutes } from '../../../server-utils';
+import { LocaleString } from '../../../../shared/components/LocaleString';
+import { renderUniversalRoutes } from '../../../../shared/utils/server-utils';
 import { AdminHeader } from '../../../molecules/AdminHeader';
-import { WidePage } from '../../../atoms/WidePage';
+import { WidePage } from '../../../../shared/atoms/WidePage';
 import { useTranslation } from 'react-i18next';
+import { useData } from '../../../../shared/hooks/use-data';
+import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 
 type ProjectType = {
   params: { id: string };

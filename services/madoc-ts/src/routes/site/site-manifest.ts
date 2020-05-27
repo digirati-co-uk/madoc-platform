@@ -1,9 +1,9 @@
 import { RouteMiddleware } from '../../types/route-middleware';
 
 export type SiteManifestQuery = {
-  collectionId?: string;
-  parentCollectionIds?: string;
-  projectId?: string;
+  collection_id?: number;
+  parent_collection_ids?: number[];
+  project_id?: number;
 };
 
 export const siteManifest: RouteMiddleware<{ slug: string; id: string }> = async context => {

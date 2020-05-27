@@ -1,19 +1,20 @@
 import React from 'react';
-import { createUniversalComponent, usePaginatedData } from '../../../utility';
-import { ButtonRow, TinyButton } from '../../../atoms/Button';
-import { Heading3, Subheading3 } from '../../../atoms/Heading3';
-import { ImageStrip, ImageStripBox } from '../../../atoms/ImageStrip';
-import { CroppedImage } from '../../../atoms/Images';
-import { SingleLineHeading5, Subheading5 } from '../../../atoms/Heading5';
-import { MoreContainer, MoreDot, MoreIconContainer, MoreLabel } from '../../../atoms/MoreButton';
+import { ButtonRow, TinyButton } from '../../../../shared/atoms/Button';
+import { Heading3, Subheading3 } from '../../../../shared/atoms/Heading3';
+import { ImageStrip, ImageStripBox } from '../../../../shared/atoms/ImageStrip';
+import { CroppedImage } from '../../../../shared/atoms/Images';
+import { SingleLineHeading5, Subheading5 } from '../../../../shared/atoms/Heading5';
+import { MoreContainer, MoreDot, MoreIconContainer, MoreLabel } from '../../../../shared/atoms/MoreButton';
 import { useTranslation } from 'react-i18next';
 import { UniversalComponent } from '../../../../types';
 import { Pagination } from '../../../molecules/Pagination';
-import { LocaleString } from '../../../molecules/LocaleString';
+import { LocaleString } from '../../../../shared/components/LocaleString';
 import { CollectionListResponse } from '../../../../../types/schemas/collection-list';
 import { Link } from 'react-router-dom';
 import { AdminHeader } from '../../../molecules/AdminHeader';
-import { WidePage } from '../../../atoms/WidePage';
+import { WidePage } from '../../../../shared/atoms/WidePage';
+import { usePaginatedData } from '../../../../shared/hooks/use-data';
+import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 
 type CollectionListType = {
   data: CollectionListResponse;

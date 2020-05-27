@@ -1,15 +1,16 @@
 import { UniversalComponent } from '../../../../types';
-import { createUniversalComponent, useData } from '../../../utility';
 import { EditorContext } from '@capture-models/editor';
 import React, { useState } from 'react';
-import { renderUniversalRoutes } from '../../../server-utils';
+import { renderUniversalRoutes } from '../../../../shared/utils/server-utils';
 import { Link, useParams } from 'react-router-dom';
 import { defaultTheme } from '@capture-models/editor';
 import { ThemeProvider } from 'styled-components';
 import { CaptureModel } from '@capture-models/types';
 import { useMutation } from 'react-query';
-import { useApi } from '../../../hooks/use-api';
-import { Button } from '../../../atoms/Button';
+import { useApi } from '../../../../shared/hooks/use-api';
+import { Button } from '../../../../shared/atoms/Button';
+import { useData } from '../../../../shared/hooks/use-data';
+import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 
 type ProjectModelEditorType = {
   params: { id: string; captureModelId: string };

@@ -1,9 +1,9 @@
 import { RouteMiddleware } from '../../types/route-middleware';
 
-type SiteCollectionQuery = {
-  parent_collections?: string;
-  project_id?: string;
-  page?: string;
+export type SiteCollectionQuery = {
+  parent_collections?: number[];
+  project_id?: number;
+  page?: number;
 };
 
 export const siteCollection: RouteMiddleware<{ slug: string; id: string }> = async context => {
