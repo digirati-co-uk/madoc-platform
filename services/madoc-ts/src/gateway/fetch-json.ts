@@ -44,6 +44,14 @@ export async function fetchJson<Return>(
   });
 
   if (resp.ok) {
+    if (!resp.body) {
+      return {
+        error: false,
+        status: resp.status,
+        data: undefined as any,
+      };
+    }
+
     try {
       return {
         error: false,

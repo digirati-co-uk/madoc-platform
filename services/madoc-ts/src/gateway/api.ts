@@ -25,14 +25,14 @@ import { ApiError } from '../utility/errors/api-error';
 
 export class ApiClient {
   private readonly gateway: string;
-  private jwt?: string;
   private readonly isServer: boolean;
   private readonly user?: { userId?: number; siteId?: number };
   private readonly fetcher: typeof fetchJson;
+  private readonly publicSiteSlug?: string;
   private errorHandlers: Array<() => void> = [];
+  private jwt?: string;
   private errorRecoveryHandlers: Array<() => void> = [];
   private isDown = false;
-  private publicSiteSlug?: string;
 
   constructor(options: {
     gateway: string;
@@ -46,6 +46,7 @@ export class ApiClient {
     this.user = options.asUser;
     this.isServer = !(globalThis as any).window;
     this.fetcher = options.customerFetcher || fetchJson;
+    this.publicSiteSlug = options.publicSiteSlug;
   }
 
   onError(func: () => void) {
@@ -521,19 +522,19 @@ export class ApiClient {
 
   // Public API.
 
-  async getSiteCanvas(id: string, query?: import('../routes/site/site-canvas').SiteCanvasQuery) {
+  async getSiteCanvas(id: number, query?: import('../routes/site/site-canvas').SiteCanvasQuery) {
     return this.publicRequest<CanvasFull>(`/madoc/api/canvases/${id}`, query);
   }
 
-  async getSiteCollection(id: string, query?: import('../routes/site/site-collection').SiteCollectionQuery) {
-    return this.publicRequest<CollectionFull>(`/madoc/api/collection/${id}`, query);
+  async getSiteCollection(id: number, query?: import('../routes/site/site-collection').SiteCollectionQuery) {
+    return this.publicRequest<CollectionFull>(`/madoc/api/collections/${id}`, query);
   }
 
   async getSiteCollections(query?: import('../routes/site/site-collections').SiteCollectionQuery) {
     return this.publicRequest<CollectionListResponse>(`/madoc/api/collections`, query);
   }
 
-  async getSiteManifest(id: string, query?: import('../routes/site/site-manifest').SiteManifestQuery) {
+  async getSiteManifest(id: number, query?: import('../routes/site/site-manifest').SiteManifestQuery) {
     return this.publicRequest<ManifestFull>(`/madoc/api/manifests/${id}`, query);
   }
 
@@ -545,11 +546,11 @@ export class ApiClient {
     return this.publicRequest<any>(`/madoc/api/page/${path}`);
   }
 
-  async getSiteProject(id: string) {
+  async getSiteProject(id: number) {
     return this.publicRequest<any>(`/madoc/api/projects/${id}`);
   }
 
   async getSiteProjects(query?: import('../routes/site/site-projects').SiteProjectsQuery) {
-    return this.publicRequest<any[]>(`/madoc/api/projects`, query);
+    return this.publicRequest<{ projects: any[] }>(`/madoc/api/projects`, query);
   }
 }
