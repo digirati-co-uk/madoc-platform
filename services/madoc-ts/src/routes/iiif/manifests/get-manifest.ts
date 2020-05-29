@@ -12,7 +12,7 @@ export const getManifest: RouteMiddleware<{ id: string }> = async context => {
   const { siteId } = optionalUserWithScope(context, ['site.read']);
   const manifestId = Number(context.params.id);
 
-  const canvasesPerPage = 2;
+  const canvasesPerPage = 24;
   const { total = 0 } = (await context.connection.maybeOne(getResourceCount(manifestId, siteId))) || { total: 0 };
   const totalPages = Math.ceil(total / canvasesPerPage) || 1;
   const requestedPage = Number(context.query.page) || 1;
