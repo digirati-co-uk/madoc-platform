@@ -37,6 +37,7 @@ final class WikiDataResourceCompletionContributor implements CompletionContribut
 
         return $request->then(function (ResponseInterface $response) {
             $content = json_decode((string)$response->getBody(), true);
+            $term = $content['searchinfo']['search'];
 
             if (json_last_error() !== JSON_ERROR_NONE) {
                 throw new Exception("Unable to parse response from WIKIDATA endpoint");
@@ -49,11 +50,13 @@ final class WikiDataResourceCompletionContributor implements CompletionContribut
                     return $record['repository'] === 'local';
                 }
             );
+
+            $authoritativeRecords = $this->sortWikiDataResults($authoritativeRecords, $term);
             
             return array_map(
                 function (array $result) {
                     $uri = $result['concepturi'];
-                    $text = $result['description'] ?? $result['label'];
+                    $text = $result['label'] . ' - ' . $result['description'];
                     $tag = $result['id'];
 
                     return new CompletionItem($uri, $text, $tag);
@@ -67,6 +70,32 @@ final class WikiDataResourceCompletionContributor implements CompletionContribut
     public function advertises(string $resourceClass): bool
     {
         return strtolower($resourceClass) === 'wikidata';
+    }
+
+
+    private function sortWikiDataResults(array $list, string $term)
+    {
+        // reorder wiki data results
+        $size = count($list);
+        for($pass_num = $size - 1; $pass_num >= 0; $pass_num--){
+            for($i = 0; $i < $pass_num; $i++){
+
+              similar_text($term, $list[$i]['label'], $percentA);
+              similar_text($term, $list[$i+1]['label'], $percentB);
+
+              $res = $percentA === $percentB ? 0 : ($percentA > $percentB ? -1 : 1);
+
+              if($res == -1){
+                $tmp = $list[$i];
+                $list[$i] = $list[$i+1];
+                $list[$i+1] = $tmp;
+              }
+            }
+        }
+
+        $list = array_reverse($list);
+
+        return $list;
     }
 
 }
