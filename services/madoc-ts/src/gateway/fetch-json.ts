@@ -44,14 +44,6 @@ export async function fetchJson<Return>(
   });
 
   if (resp.ok) {
-    if (!resp.body) {
-      return {
-        error: false,
-        status: resp.status,
-        data: undefined as any,
-      };
-    }
-
     try {
       return {
         error: false,
@@ -59,11 +51,13 @@ export async function fetchJson<Return>(
         data: await resp.json(),
       };
     } catch (err) {
-      return {
-        error: true,
-        status: 500,
-        data: { error: 'Unknown error' },
-      };
+      if (resp.statusText === 'OK') {
+        return {
+          error: false,
+          status: resp.status,
+          data: undefined as any,
+        };
+      }
     }
   }
 
