@@ -197,10 +197,10 @@ export function mapCollectionSnippets(rows: CollectionSnippetsRow[]) {
       const { collection_to_manifest, metadata_ids } = state;
 
       // Always add mapping for collection to manifest.
-      if (!collection_to_manifest[row.collection_id]) {
+      if (row.manifest_id && !collection_to_manifest[row.collection_id]) {
         collection_to_manifest[row.collection_id] = [];
       }
-      if (collection_to_manifest[row.collection_id].indexOf(row.manifest_id) === -1) {
+      if (row.manifest_id && collection_to_manifest[row.collection_id].indexOf(row.manifest_id) === -1) {
         collection_to_manifest[row.collection_id].push(row.manifest_id);
       }
 

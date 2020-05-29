@@ -149,7 +149,7 @@ export function mapManifestSnippets(rows: ManifestSnippetsRow[]) {
         if (!state.manifest_to_canvas[row.manifest_id]) {
           state.manifest_to_canvas[row.manifest_id] = [];
         }
-        if (state.manifest_to_canvas[row.manifest_id].indexOf(row.canvas_id) === -1) {
+        if (row.canvas_id && state.manifest_to_canvas[row.manifest_id].indexOf(row.canvas_id) === -1) {
           state.manifest_to_canvas[row.manifest_id].push(row.canvas_id);
         }
 
