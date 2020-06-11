@@ -65,6 +65,10 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       const json = await fetch(task.subject).then(r => r.json());
       const iiifCollection = await vault.loadCollection(task.subject, json);
 
+      if (!iiifCollection) {
+        throw new Error(`Error importing collection ${task.subject}`);
+      }
+
       // 2. Post request to /api/madoc/iiif/collection (type CreateCollection)
       const response = await api.asUser({ userId, siteId }).createCollection(
         {
@@ -151,6 +155,10 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       // 2. Fetch collection
       const json = await fetch(task.subject).then(r => r.json());
       const iiifCollection = await vault.loadCollection(task.subject, json);
+
+      if (!iiifCollection) {
+        throw new Error(`Error loading IIIF collection ${task.subject}`);
+      }
 
       // 3. Get the manifests in order.
       const manifestIds = iiifCollection.items.map(r => r.id);

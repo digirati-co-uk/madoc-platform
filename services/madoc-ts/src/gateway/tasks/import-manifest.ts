@@ -69,6 +69,11 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       const text = await fetch(task.subject).then(r => r.text());
       const json = JSON.parse(text);
       const iiifManifest = await vault.loadManifest(task.subject, json);
+
+      if (!iiifManifest) {
+        throw new Error(`Error loading manifest ${task.subject}`);
+      }
+
       const idHash = tasks.manifestHash(iiifManifest.id);
 
       // 2. Save manifest to disk, IF it does not already exist.
