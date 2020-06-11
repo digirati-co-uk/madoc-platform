@@ -25,6 +25,7 @@ export function getProjectsByResource(resourceType: string, resourceId: number, 
              left join iiif_metadata metadata on project.collection_id = metadata.resource_id and metadata.site_id = project.site_id
     where iri.item_id = ${resourceId}
       and iri.site_id = ${siteId}
+      and ir.site_id = ${siteId}
       and ir.resource_type = ${resourceType} 
       and project.collection_id = iri.resource_id
 `;
