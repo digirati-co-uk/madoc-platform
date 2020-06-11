@@ -122,7 +122,7 @@ services:
       - ./services/tasks-api/lib:/home/node/app/lib
 
   model-api:
-    image: digirati/capture-models:v0.1.1
+    image: digirati/capture-models:v0.4.0
     environment:
       - SERVER_PORT=3000
       - DATABASE_HOST=shared-postgres
@@ -172,7 +172,7 @@ services:
       - "3334:3306"
 
   config-service:
-    image: digirati/madoc_config_service_django:62ea5e029fc5d6323c8c87c67fb836c25347938d
+    image: digirati/madoc_config_service_django:175410fc5b7dbef4cc259686564fbedeb60c8789
     environment:
       - USE_DOCKER=yes
       - IPYTHONDIR=/app/.ipython

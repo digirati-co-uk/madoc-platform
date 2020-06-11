@@ -1263,20 +1263,22 @@
     screenfull "^3.3.2"
     whatwg-fetch "^3.0.0"
 
-"@capture-models/editor@0.3.2":
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.3.2.tgz#cf39ce376bc9af05c7effff5206a9c8a8929d28e"
-  integrity sha512-4R2JrZgI6H67VwgyyO6xS0N40qjkZa1r9dzqXGMDfB9OQ79/DwKqsrdjIJoH4oqK8Pbe1fM8B8zbOCisXopYsg==
+"@capture-models/editor@0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.4.0.tgz#4627b772f5d905c688325f5b324b09a5a26dc010"
+  integrity sha512-NdxFW3PQgOKxItZXrMAgMpPtIVucdohibZLrucruo+XeZSxgAQZKgKmoEaEvjXKyAcFGepeX+8h7cAE4PWHfrQ==
   dependencies:
-    "@canvas-panel/core" "^0.2.0"
-    "@capture-models/helpers" "^0.3.0"
-    "@capture-models/plugin-api" "^0.3.0"
-    "@capture-models/types" "^0.3.0"
+    "@capture-models/helpers" "^0.4.0"
+    "@capture-models/plugin-api" "^0.4.0"
+    "@capture-models/types" "^0.4.0"
     "@styled-icons/entypo" "^10.0.0"
+    "@styled-icons/styled-icon" "^10.0.0"
+    canvas-panel-beta "2.0.0"
     easy-peasy "^3.2.3"
     fast-copy "^2.0.4"
     formik "^2.0.6"
     immer "^4.0.1"
+    manifesto.js "4.0.4"
     normalize.css "^8.0.1"
     prop-types "^15.7.2"
     react "^16.10.2"
@@ -1290,30 +1292,30 @@
     use-async-effect "^2.2.1"
     use-debounce "^3.3.0"
 
-"@capture-models/helpers@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@capture-models/helpers/-/helpers-0.3.0.tgz#5b18c500981217cbb350a96c8fb4c2ecda68c251"
-  integrity sha512-5TBShNTh/JAaEEpztlCbuxbGQht6eHyx5YVnqgmpEU273VZA9eJI6cNdI4skvsudmPbNoXGtrlNWxATSZ+sRvQ==
+"@capture-models/helpers@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@capture-models/helpers/-/helpers-0.4.0.tgz#21de094de094092b90586ebfe83e5d33e8c9b3f3"
+  integrity sha512-pEvdKhw8pUbOAqsd3VCyC5g2FOC/ncZVpYlYMYdioTB5zoaD2CTQ1afpOG2rM3uV0wufei5JZ9EP8701SwlCUQ==
   dependencies:
-    "@capture-models/plugin-api" "^0.3.0"
-    "@capture-models/types" "^0.3.0"
+    "@capture-models/plugin-api" "^0.4.0"
+    "@capture-models/types" "^0.4.0"
     fast-copy "^2.0.4"
     immer "^4.0.1"
     react "^16.10.2"
     uuid "^3.4.0"
 
-"@capture-models/plugin-api@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@capture-models/plugin-api/-/plugin-api-0.3.0.tgz#0bab7856ddcb07ae876393836d7f5de05bfcac00"
-  integrity sha512-1yQncVjmYpPTbR95IZwy2JXU+aULqAROjPT3W6ZewpzglRsBKUNh7/2tC9Vft+vfMdM4cZ7sjX0Ctae1p2aGuw==
+"@capture-models/plugin-api@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@capture-models/plugin-api/-/plugin-api-0.4.0.tgz#c3d72c93366eeee9284de668f73f40546d08da4e"
+  integrity sha512-jcyM56hXP0XD1vs3znQnI5Ny2oipiSPxnL68f60IBNA4X9CNk1GNnyGUIwql9khynSVe0qe5amtkHmroR09jCQ==
   dependencies:
-    "@capture-models/types" "^0.3.0"
+    "@capture-models/types" "^0.4.0"
     react "^16.12.0"
 
-"@capture-models/types@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@capture-models/types/-/types-0.3.0.tgz#e806866a1ae377a4a86fd565ab27f1ce2fb96bb6"
-  integrity sha512-JElN6nGBoABKrGRVJCFrz1nbSNih/vVYWZlkaSgMKk6svNK/S/crzniXcGq61Ep46/6bROey9NmnzY0AFdaH0A==
+"@capture-models/types@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@capture-models/types/-/types-0.4.0.tgz#e1f16d8097961d1ca69e3413b1a230a03b3b3675"
+  integrity sha512-2Fabq4TlNw14uk5INufqCs5QYDPYdH7myvIINDtBADZ5JjQXC/aTgf8x79UmhEG92HdRN2gl+itkJhG4kuUKTQ==
 
 "@cnakazawa/watch@^1.0.3":
   version "1.0.4"
@@ -1322,6 +1324,11 @@
   dependencies:
     exec-sh "^0.3.2"
     minimist "^1.2.0"
+
+"@edsilv/http-status-codes@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@edsilv/http-status-codes/-/http-status-codes-1.0.3.tgz#a1b767c552ac43f2983ab2b9ee20e9c73b79960b"
+  integrity sha512-HLK2FS5sZqxPqD53D6hhZxC6C8THTVwlyZDZ7J0iWsrB8JmMA69m/CQuNKZc1kki9WSVeck2fXna26NL0SE7cg==
 
 "@egoist/vue-to-react@^1.1.0":
   version "1.1.0"
@@ -1430,7 +1437,7 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
-"@fesk/bem-js@^1.0.0":
+"@fesk/bem-js@1.0.1", "@fesk/bem-js@^1.0.0":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@fesk/bem-js/-/bem-js-1.0.1.tgz#ac7c74351e34835274aef0506146709d3046cef1"
   integrity sha512-eYRmfzvQ002PSHZ+Q8sV0gs0ld+nVQOoKH8yJoPq2R7j7nPLbqaej3a/kNl5qIXX4hW1Bum3mN74cEqAt4AvaQ==
@@ -1539,6 +1546,11 @@
   dependencies:
     "@types/jquery" "^2.0.40"
     natives "^1.1.6"
+
+"@iiif/vocabulary@1.0.16", "@iiif/vocabulary@^1.0.11":
+  version "1.0.16"
+  resolved "https://registry.yarnpkg.com/@iiif/vocabulary/-/vocabulary-1.0.16.tgz#63f5898318688d46d9a444fee68b6d10ef746709"
+  integrity sha512-DI9KeHu78BplPrBWnDlDDxw+5pHWHN7oAMa1bCKtHCzeU+upxk0htREYE4f7f3zK2fEpEWnrCQUmGwVueutTJw==
 
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.0.0"
@@ -4734,6 +4746,18 @@ caniuse-lite@^1.0.30000989, caniuse-lite@^1.0.30001039, caniuse-lite@^1.0.300010
   version "1.0.30001048"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001048.tgz#4bb4f1bc2eb304e5e1154da80b93dee3f1cf447e"
   integrity sha512-g1iSHKVxornw0K8LG9LLdf+Fxnv7T1Z+mMsf0/YYLclQX4Cd522Ap0Lrw6NFqHgezit78dtyWxzlV2Xfc7vgRg==
+
+canvas-panel-beta@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/canvas-panel-beta/-/canvas-panel-beta-2.0.0.tgz#3b2ab981f1b5c373d99bccc51646cf2744871a60"
+  integrity sha512-CKYu5G7jHTYt4B72ewNPHhxqKkGBeeqRQUe19OikruDNdqY4xSCPsyQEyyHdjoQERakwvfGLWr9/oAkomZ+Faw==
+  dependencies:
+    "@canvas-panel/core" "^0.2.0"
+    "@fesk/bem-js" "1.0.1"
+    "@iiif/vocabulary" "1.0.16"
+    manifesto.js "^4.0.0"
+    react "^16.10.2"
+    react-dom "^16.10.2"
 
 canvas-text-wrapper@^0.10.2:
   version "0.10.2"
@@ -8745,6 +8769,14 @@ isomorphic-fetch@^2.1.1:
     node-fetch "^1.0.1"
     whatwg-fetch ">=0.10.0"
 
+isomorphic-unfetch@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/isomorphic-unfetch/-/isomorphic-unfetch-3.0.0.tgz#de6d80abde487b17de2c400a7ef9e5ecc2efb362"
+  integrity sha512-V0tmJSYfkKokZ5mgl0cmfQMTb7MLHsBMngTkbLY0eXvKqiVRRoZP04Ly+KhKrJfKtzC9E6Pp15Jo+bwh7Vi2XQ==
+  dependencies:
+    node-fetch "^2.2.0"
+    unfetch "^4.0.0"
+
 isstream@~0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/isstream/-/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
@@ -9939,6 +9971,24 @@ makeerror@1.0.x:
   dependencies:
     tmpl "1.0.x"
 
+manifesto.js@4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/manifesto.js/-/manifesto.js-4.0.4.tgz#e229f4927cbd06ce99f79d82b89a878544c7e5c7"
+  integrity sha512-LAP1WwWMfu7T++Bk8tEr0etRrnVvmODJ2GVGB6Zw5YAwxVrIJyvnz/7O0Vf8G1kLejoBsAkpDuYdzcbcsAt+9w==
+  dependencies:
+    "@edsilv/http-status-codes" "^1.0.3"
+    "@iiif/vocabulary" "^1.0.11"
+    isomorphic-unfetch "^3.0.0"
+
+manifesto.js@^4.0.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/manifesto.js/-/manifesto.js-4.1.0.tgz#de57ad17f5923957c64f4352e95778f5ce137790"
+  integrity sha512-E/qm2LiIxI2PZEVow6nJJrYjaAqpwJfLXhuwkWNXP/BEy70OhQIoVLvmWQMtKVsgEdCQC8NqbFZRPPdINfe5pQ==
+  dependencies:
+    "@edsilv/http-status-codes" "^1.0.3"
+    "@iiif/vocabulary" "^1.0.11"
+    isomorphic-unfetch "^3.0.0"
+
 "manifesto.js@https://github.com/stephenwf/manifesto.git#feature/p3-alpha-3":
   version "3.0.9"
   resolved "https://github.com/stephenwf/manifesto.git#6a87dec4ef445fac1bb470a0c359ac452c1d1fc0"
@@ -10595,7 +10645,7 @@ node-dir@^0.1.10, node-dir@^0.1.17:
   dependencies:
     minimatch "^3.0.2"
 
-node-fetch@2.6.0, node-fetch@^2.6.0:
+node-fetch@2.6.0, node-fetch@^2.2.0, node-fetch@^2.6.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.0.tgz#e633456386d4aa55863f676a7ab0daa8fdecb0fd"
   integrity sha512-8dG4H5ujfvFiqDmVu9fQ5bOHUC15JMjMY/Zumv26oOvvVJjM67KF8koCWIabKQ1GJIa9r2mMZscBq/TbdOcmNA==
@@ -15037,7 +15087,7 @@ umzug@^2.2.0:
   dependencies:
     bluebird "^3.7.2"
 
-unfetch@^4.1.0:
+unfetch@^4.0.0, unfetch@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/unfetch/-/unfetch-4.1.0.tgz#6ec2dd0de887e58a4dee83a050ded80ffc4137db"
   integrity sha512-crP/n3eAPUJxZXM9T80/yv0YhkTEx2K1D3h7D1AJM6fzsWZrxdyRuLN0JH/dkZh1LNH8LxCnBzoPFCPbb2iGpg==
