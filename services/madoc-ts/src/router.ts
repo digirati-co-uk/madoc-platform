@@ -7,6 +7,7 @@ import { getSiteScopes, saveSiteScopes } from './routes/admin/site-scopes';
 import { logout } from './routes/user/logout';
 import { frontendBundles } from './routes/assets/frontend-bundles';
 import { adminFrontend } from './routes/admin/frontend';
+import { adminFrontend, siteFrontend } from './routes/admin/frontend';
 import { createCollection } from './routes/iiif/collections/create-collection';
 import { deleteCollection } from './routes/iiif/collections/delete-collection';
 import { getCollection } from './routes/iiif/collections/get-collection';
@@ -156,6 +157,7 @@ export const router = new TypedRouter({
 
   // Frontend
   'admin-frontend': [TypedRouter.GET, '/s/:slug/madoc/admin*', adminFrontend],
+  'site-frontend': [TypedRouter.GET, '/s/:slug/madoc*', siteFrontend],
 
   // Make sure this is last.
   'omeka-404': [TypedRouter.GET, '/s/:slug/madoc*', madocNotFound],

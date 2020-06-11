@@ -7,4 +7,5 @@ const jwt = cookies.get(`madoc/${slug}`) || undefined;
 export const api = new ApiClient({
   gateway: `${window.location.protocol}//${window.location.host}`,
   jwt,
+  publicSiteSlug: slug,
 });
