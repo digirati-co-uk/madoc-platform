@@ -78,7 +78,7 @@ export const updateSingleTask: RouteMiddleware<{ id: string }> = async context =
       name: taskChanges.assignee.name,
       is_service: taskChanges.assignee.is_service,
     });
-  } else if (taskChanges.assignee === undefined && assignee_id) {
+  } else if (taskChanges.assignee === null && assignee_id) {
     updateRows.push(sql`assignee_id = ${null}`);
     updateRows.push(sql`assignee_name = ${null}`);
     updateRows.push(sql`assignee_is_service = ${false}`);
