@@ -1,0 +1,1 @@
+export { UniversalRoute } from '../types';
