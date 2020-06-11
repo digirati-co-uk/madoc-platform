@@ -41,10 +41,13 @@ export const listProjects: RouteMiddleware = async context => {
       ...((await api.getTaskStats(project.task_id as string)).statuses || ({} as any)),
     } as any;
 
-    project.config = ((await api.getConfiguration('madoc', [
-      `urn:madoc:project:${project.id}`,
-      siteUrn,
-    ])) as any).config[0].config_object;
+    const config = await api.getConfiguration('madoc', [`urn:madoc:project:${project.id}`, siteUrn]);
+
+    project.config =
+      config && config.config && config.config[0] && config.config[0].config_object
+        ? config.config[0].config_object
+        : {};
+
     // project.model = (await api.asUser({ userId: id, siteId }).getCaptureModel(project.capture_model_id as any)) as any;
   }
 

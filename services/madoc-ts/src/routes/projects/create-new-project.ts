@@ -13,7 +13,6 @@ const firstLang = (field: InternationalString) => {
 export const createNewProject: RouteMiddleware<{}, CreateProject> = async context => {
   const { siteId, id } = userWithScope(context, ['site.admin']);
   const userApi = api.asUser({ userId: id, siteId });
-
   const { label, slug, summary } = context.requestBody;
 
   // 1. Create collection [flat]

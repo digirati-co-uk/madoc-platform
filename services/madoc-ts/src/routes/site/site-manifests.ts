@@ -2,6 +2,7 @@ import { RouteMiddleware } from '../../types/route-middleware';
 
 export type SiteManifestQuery = {
   project_id?: number;
+  page?: number;
 };
 
 export const siteManifests: RouteMiddleware<{ slug: string }> = async context => {
@@ -12,8 +13,6 @@ export const siteManifests: RouteMiddleware<{ slug: string }> = async context =>
   if (site.is_public) {
     // @todo try cache.
   }
-
-
 
   if (projectId) {
     const project = await siteApi.getProject(Number(projectId));

@@ -1,11 +1,11 @@
 import { sql } from 'slonik';
-import { userWithScope } from '../../../utility/user-with-scope';
+import { optionalUserWithScope } from '../../../utility/user-with-scope';
 import { mapMetadata } from '../../../utility/iiif-metadata';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { readLocalSource } from '../../../utility/read-local-source';
 
 export const getCanvas: RouteMiddleware<{ id: string }> = async context => {
-  const { siteId } = userWithScope(context, []);
+  const { siteId } = optionalUserWithScope(context, []);
 
   const canvasId = context.params.id;
 

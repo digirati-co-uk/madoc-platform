@@ -6,7 +6,6 @@ import { loginPage } from './routes/user/login';
 import { getSiteScopes, saveSiteScopes } from './routes/admin/site-scopes';
 import { logout } from './routes/user/logout';
 import { frontendBundles } from './routes/assets/frontend-bundles';
-import { adminFrontend } from './routes/admin/frontend';
 import { adminFrontend, siteFrontend } from './routes/admin/frontend';
 import { createCollection } from './routes/iiif/collections/create-collection';
 import { deleteCollection } from './routes/iiif/collections/delete-collection';

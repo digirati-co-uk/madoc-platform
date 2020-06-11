@@ -9,7 +9,7 @@ React.useLayoutEffect = React.useEffect;
 
 import AdminApp from './index';
 import { routes } from './routes';
-import { createServerRenderer } from '../shared/utils/create-server-renderer';
+import { createServerRenderer } from '../shared/utility/create-server-renderer';
 
 const apiGateway = process.env.API_GATEWAY as string;
 
