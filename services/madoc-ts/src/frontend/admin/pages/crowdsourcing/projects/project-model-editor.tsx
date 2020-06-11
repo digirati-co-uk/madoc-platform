@@ -1,7 +1,7 @@
 import { UniversalComponent } from '../../../../types';
 import { EditorContext } from '@capture-models/editor';
 import React, { useState } from 'react';
-import { renderUniversalRoutes } from '../../../../shared/utils/server-utils';
+import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
 import { Link, useParams } from 'react-router-dom';
 import { defaultTheme } from '@capture-models/editor';
 import { ThemeProvider } from 'styled-components';

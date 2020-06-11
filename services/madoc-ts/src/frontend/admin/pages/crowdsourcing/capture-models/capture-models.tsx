@@ -1,5 +1,5 @@
 import React from 'react';
-import { renderUniversalRoutes } from '../../../../shared/utils/server-utils';
+import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
 import { useTranslation } from 'react-i18next';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { WidePage } from '../../../../shared/atoms/WidePage';

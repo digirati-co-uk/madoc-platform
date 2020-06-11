@@ -52,11 +52,13 @@ export const PreviewManifest: React.FC<{ id: string }> = props => {
     vault => {
       vault.loadManifest(props.id).then(man => {
         setManifest(man);
-        setCanvases(
-          man.items.map(can => {
-            return vault.fromRef(can);
-          })
-        );
+        if (man) {
+          setCanvases(
+            man.items.map(can => {
+              return vault.fromRef(can);
+            })
+          );
+        }
       });
     },
     [props.id]

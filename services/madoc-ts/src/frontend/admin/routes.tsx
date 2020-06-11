@@ -31,6 +31,7 @@ import { ManifestProjects } from './pages/content/manifests/manifest-projects';
 import { CaptureModelList } from './pages/crowdsourcing/capture-models/capture-model-list';
 import { CaptureModels } from './pages/crowdsourcing/capture-models/capture-models';
 import { ViewCaptureModel } from './pages/crowdsourcing/capture-models/view-capture-model';
+import { ProjectTasks } from './pages/crowdsourcing/projects/project-tasks';
 
 export const routes: UniversalRoute[] = [
   {
@@ -181,6 +182,16 @@ export const routes: UniversalRoute[] = [
             exact: true,
           },
         ],
+      },
+      {
+        path: '/projects/:id/tasks',
+        component: ProjectTasks,
+        exact: true,
+      },
+      {
+        path: '/projects/:id/tasks/:taskId',
+        component: ProjectTasks,
+        exact: true,
       },
     ],
   },

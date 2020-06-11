@@ -29,6 +29,8 @@ export const CollectionList: UniversalComponent<CollectionListType> = createUniv
     const { t } = useTranslation();
     // const isRefreshing = !latestData;
 
+    console.log(data, status);
+
     if (status === 'error') {
       return <div>{t('Loading')}</div>;
     }

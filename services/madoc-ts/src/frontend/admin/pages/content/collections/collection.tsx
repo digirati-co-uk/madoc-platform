@@ -5,7 +5,7 @@ import { LocaleString } from '../../../../shared/components/LocaleString';
 import { CollectionFull } from '../../../../../types/schemas/collection-full';
 import { useParams } from 'react-router-dom';
 import { AdminHeader } from '../../../molecules/AdminHeader';
-import { renderUniversalRoutes } from '../../../../shared/utils/server-utils';
+import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
 import { WidePage } from '../../../../shared/atoms/WidePage';
 import { usePaginatedData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
