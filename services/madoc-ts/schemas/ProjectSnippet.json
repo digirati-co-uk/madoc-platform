@@ -4,9 +4,6 @@
     "id": {
       "type": "number"
     },
-    "type": {
-      "type": "string"
-    },
     "label": {
       "type": "object",
       "additionalProperties": {
@@ -16,14 +13,21 @@
         }
       }
     },
-    "thumbnail": {
-      "type": "string"
+    "summary": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
     }
   },
   "additionalProperties": false,
   "required": [
     "id",
-    "label"
+    "label",
+    "summary"
   ],
   "$schema": "http://json-schema.org/draft-07/schema#"
 }

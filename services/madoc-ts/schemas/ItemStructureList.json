@@ -9,6 +9,9 @@
           "id": {
             "type": "number"
           },
+          "type": {
+            "type": "string"
+          },
           "label": {
             "type": "object",
             "additionalProperties": {

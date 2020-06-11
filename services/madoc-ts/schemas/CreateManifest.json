@@ -298,23 +298,7 @@
         "service": {
           "type": "array",
           "items": {
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "enum": [
-                  "Service"
-                ]
-              },
-              "id": {
-                "type": "string"
-              }
-            },
-            "additionalProperties": false,
-            "required": [
-              "id",
-              "type"
-            ]
+            "$ref": "#/definitions/Required<Pick<Service,\"id\"|\"profile\"|\"protocol\"|\"width\"|\"height\"|\"sizes\"|\"tiles\">>"
           }
         },
         "logo": {
@@ -417,6 +401,202 @@
         "Selector"
       ],
       "type": "string"
+    },
+    "Required<Pick<Service,\"id\"|\"profile\"|\"protocol\"|\"width\"|\"height\"|\"sizes\"|\"tiles\">>": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "profile": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "@context": {
+                  "type": "string",
+                  "enum": [
+                    "http://iiif.io/api/image/2/context.json"
+                  ]
+                },
+                "@type": {
+                  "type": "string",
+                  "enum": [
+                    "iiif:ImageProfile"
+                  ]
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "ImageProfile"
+                  ]
+                },
+                "formats": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "qualities": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "supports": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "maxArea": {
+                  "type": "number"
+                },
+                "maxHeight": {
+                  "type": "number"
+                },
+                "maxWidth": {
+                  "type": "number"
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "@context": {
+                        "type": "string",
+                        "enum": [
+                          "http://iiif.io/api/image/2/context.json"
+                        ]
+                      },
+                      "@type": {
+                        "type": "string",
+                        "enum": [
+                          "iiif:ImageProfile"
+                        ]
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "ImageProfile"
+                        ]
+                      },
+                      "formats": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "qualities": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "supports": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "maxArea": {
+                        "type": "number"
+                      },
+                      "maxHeight": {
+                        "type": "number"
+                      },
+                      "maxWidth": {
+                        "type": "number"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "protocol": {
+          "type": "string"
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "sizes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "width": {
+                "type": "number"
+              },
+              "height": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "height",
+              "width"
+            ]
+          }
+        },
+        "tiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "width": {
+                "type": "number"
+              },
+              "height": {
+                "type": "number"
+              },
+              "scaleFactors": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              },
+              "maxWidth": {
+                "type": "number"
+              },
+              "maxHeight": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "scaleFactors",
+              "width"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "height",
+        "id",
+        "profile",
+        "protocol",
+        "sizes",
+        "tiles",
+        "width"
+      ]
     },
     "T_1": {
       "enum": [

@@ -1,27 +1,19 @@
 {
   "type": "object",
   "properties": {
-    "id": {
+    "derivatives": {
       "type": "number"
     },
-    "type": {
+    "id": {
       "type": "string"
     },
     "label": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "array",
-        "items": {
-          "type": "string"
-        }
-      }
-    },
-    "thumbnail": {
       "type": "string"
     }
   },
   "additionalProperties": false,
   "required": [
+    "derivatives",
     "id",
     "label"
   ],
