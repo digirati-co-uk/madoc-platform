@@ -50,6 +50,7 @@ import { siteSearch } from './routes/site/site-search';
 import { siteTopic } from './routes/site/site-topic';
 import { siteTopicType } from './routes/site/site-topic-type';
 import { siteTopicTypes } from './routes/site/site-topic-types';
+import { createResourceClaim } from './routes/projects/create-resource-claim';
 
 export const router = new TypedRouter({
   // Normal route
@@ -126,6 +127,7 @@ export const router = new TypedRouter({
   'get-project-structure': [TypedRouter.GET, '/api/madoc/projects/:id/structure', getProjectStructure],
   'get-project-metadata': [TypedRouter.GET, '/api/madoc/projects/:id/metadata', getProjectMetadata],
   'update-project-metadata': [TypedRouter.PUT, '/api/madoc/projects/:id/metadata', updateProjectMetadata],
+  'create-project-resource-claim': [TypedRouter.POST, '/api/madoc/projects/:id/claim', createResourceClaim],
 
   // Omeka routes
   'get-login': [TypedRouter.GET, '/s/:slug/madoc/login', loginPage],
