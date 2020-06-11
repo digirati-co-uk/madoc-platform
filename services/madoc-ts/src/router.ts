@@ -58,9 +58,6 @@ export const router = new TypedRouter({
   'get-scopes': [TypedRouter.GET, '/api/madoc/site/:siteId/permissions', getSiteScopes],
   'update-scopes': [TypedRouter.POST, '/api/madoc/site/:siteId/permissions', saveSiteScopes],
 
-  // Locale
-  'get-locale': [TypedRouter.GET, '/api/madoc/locales/:lng/:ns', getLocale],
-
   // Collection API.
   'list-collections': [TypedRouter.GET, '/api/madoc/iiif/collections', listCollections],
   'get-collection': [TypedRouter.GET, '/api/madoc/iiif/collections/:id', getCollection],
@@ -150,6 +147,9 @@ export const router = new TypedRouter({
   'site-topic': [TypedRouter.GET, '/s/:slug/madoc/api/topics/:type/:id', siteTopic],
   'site-topic-type': [TypedRouter.GET, '/s/:slug/madoc/api/topics/:type', siteTopicType],
   'site-topic-types': [TypedRouter.GET, '/s/:slug/madoc/api/topics', siteTopicTypes],
+
+  // Locale
+  'get-locale': [TypedRouter.GET, '/s/:slug/madoc/api/locales/:lng/:ns', getLocale],
 
   // Test omeka pages.
   // 'get-page': [TypedRouter.GET, '/s/:slug/madoc/page/:pageSlug+', sitePage],
