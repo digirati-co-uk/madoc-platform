@@ -1,0 +1,37 @@
+{
+  "name": "@madoc-platform/storage",
+  "dependencies": {
+    "@slynova/flydrive": "1.0.1-alpha.0",
+    "@koa/router": "^8.0.6",
+    "koa": "^2.11.0",
+    "koa-body": "^4.1.1",
+    "koa-i18next": "^1.1.1",
+    "koa-json": "^2.0.2",
+    "koa-logger": "^3.2.1",
+    "koa-send": "^5.0.0"
+  },
+  "devDependencies": {
+    "@fesk/eslint-config-standard": "1.4.0-pr.b6dc2fa3",
+    "@types/koa": "^2.11.0",
+    "@types/koa-json": "^2.0.18",
+    "@types/koa-logger": "^3.1.1",
+    "@types/koa__router": "^8.0.2",
+    "@types/koa-send": "^4.1.2",
+    "@typescript-eslint/eslint-plugin": "^2.4.0",
+    "@typescript-eslint/parser": "^2.4.0",
+    "babel-loader": "^8.1.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-babel": "^5.3.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "eslint-plugin-react-hooks": "^2.1.2",
+    "pm2": "^4.2.3",
+    "prettier": "^1.19.1",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.8.3"
+  },
+  "scripts": {
+    "start": "pm2 start ecosystem.config.js --watch --no-daemon",
+    "watch": "tsc -p . --watch",
+    "build": "NODE_ENV=production yarn generate-schema && tsc -p . && yarn build:admin && yarn build:site"
+  }
+}
