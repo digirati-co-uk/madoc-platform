@@ -1,3 +1,8 @@
+// @ts-ignore
+global.window = global.window ? global.window : {};
+// @ts-ignore
+global.navigator = global.navigator ? global.navigator : {};
+
 import { render as renderAdmin } from '../../frontend/admin/server';
 import { render as renderSite } from '../../frontend/site/server';
 import { RouteMiddleware } from '../../types/route-middleware';

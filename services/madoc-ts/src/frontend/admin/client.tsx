@@ -1,3 +1,6 @@
+// @ts-ignore
+global.window = global.window ? global.window : {};
+
 import { renderClient } from '../shared/utility/render-client';
 
 Promise.all([
