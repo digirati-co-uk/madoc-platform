@@ -37,23 +37,28 @@ export const loginPage: RouteMiddleware<{ slug: string }, { email: string; passw
 
   const { email, password } = context.requestBody || {};
   if (context.request.method === 'POST') {
-    const resp = await context.omeka.verifyLogin(email, password);
-    if (resp) {
-      const { user, sites } = resp;
-      // Success.
-      context.omekaMessages.push({ type: 'success', message: 'Logged in' });
-      // Authenticate
-      context.state.authenticatedUser = {
-        role: user.role,
-        name: user.name,
-        id: user.id,
-        sites,
-      };
+    try {
+      const resp = await context.omeka.verifyLogin(email, password);
+      if (resp) {
+        const { user, sites } = resp;
+        // Success.
+        context.omekaMessages.push({ type: 'success', message: 'Logged in' });
+        // Authenticate
+        context.state.authenticatedUser = {
+          role: user.role,
+          name: user.name,
+          id: user.id,
+          sites,
+        };
 
-      context.redirect(`/s/${context.params.slug}`);
-      return;
-    } else {
-      context.omekaMessages.push({ type: 'error', message: 'Your email or password is invalid' });
+        context.redirect(`/s/${context.params.slug}`);
+        return;
+      } else {
+        context.omekaMessages.push({ type: 'error', message: 'Your email or password is invalid' });
+      }
+    } catch (err) {
+      console.log(err);
+      context.omekaMessages.push({ type: 'error', message: 'Unknown error' });
     }
   }
 
