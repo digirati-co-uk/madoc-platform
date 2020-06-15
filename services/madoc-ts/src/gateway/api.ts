@@ -22,6 +22,10 @@ import { CreateProject } from '../types/schemas/create-project';
 import { ProjectSnippet } from '../types/schemas/project-snippet';
 import { CaptureModelSnippet } from '../types/schemas/capture-model-snippet';
 import { ApiError } from '../utility/errors/api-error';
+import { Pagination } from '../types/schemas/_pagination';
+import { CrowdsourcingTask } from '../types/tasks/crowdsourcing-task';
+import { ResourceClaim } from '../routes/projects/create-resource-claim';
+import { RevisionRequest } from '@capture-models/types';
 
 export class ApiClient {
   private readonly gateway: string;
@@ -33,6 +37,7 @@ export class ApiClient {
   private jwt?: string;
   private errorRecoveryHandlers: Array<() => void> = [];
   private isDown = false;
+  private currentUser?: { scope: string[]; user: { id: string; name?: string } };
 
   constructor(options: {
     gateway: string;
@@ -47,6 +52,43 @@ export class ApiClient {
     this.isServer = !(globalThis as any).window;
     this.fetcher = options.customerFetcher || fetchJson;
     this.publicSiteSlug = options.publicSiteSlug;
+  }
+
+  getCurrentUser() {
+    if (this.isServer) {
+      throw new Error('Can only be called from the browser.');
+    }
+    if (!this.isAuthorised() || !this.jwt) {
+      return;
+    }
+
+    if (!this.currentUser) {
+      const [, base64Payload] = this.jwt.split('.');
+
+      if (!base64Payload) {
+        return;
+      }
+
+      const payload = atob(base64Payload);
+      const token = JSON.parse(payload);
+
+      this.currentUser = {
+        scope: token.scope.split(' '),
+        user: {
+          id: token.sub,
+          name: token.name,
+        },
+      };
+    }
+    return this.currentUser;
+  }
+
+  isAuthorised() {
+    if (this.isServer) {
+      return !!this.user;
+    }
+
+    return !!this.jwt;
   }
 
   onError(func: () => void) {
@@ -82,6 +124,8 @@ export class ApiClient {
     } = {}
   ): Promise<Return> {
     if (!publicRequest && !jwt) {
+      console.log(`Not authorised to ${method} ${endpoint}`);
+
       throw new ApiError('Not authorised');
     }
 
@@ -176,6 +220,12 @@ export class ApiClient {
     });
   }
 
+  async getStatistics() {
+    return this.request<{ collections: number; manifests: number; canvases: number; projects: number }>(
+      `/api/madoc/iiif/statistics`
+    );
+  }
+
   // Projects.
   async getProjects(page: number) {
     return this.request<any[]>(`/api/madoc/projects?page=${page}`);
@@ -220,8 +270,11 @@ export class ApiClient {
     });
   }
 
-  async createResourceClaim(projectId: number, resourceId: number, context: string[]) {
-    throw new Error('Not yet implemented');
+  async createResourceClaim(projectId: string | number, claim: ResourceClaim) {
+    return this.request<{ claim: CrowdsourcingTask }>(`/api/madoc/projects/${projectId}/claim`, {
+      method: 'POST',
+      body: claim,
+    });
   }
   async deleteResourceClaim(taskId: string) {
     throw new Error('Not yet implemented');
@@ -257,7 +310,7 @@ export class ApiClient {
   }
 
   async getConfiguration<T = any>(service: string, context: string[]) {
-    return this.request<T>(`/api/configurator/?${stringify({ context, service }, { arrayFormat: 'none' })}`);
+    return this.request<T>(`/api/configurator/query?${stringify({ context, service }, { arrayFormat: 'none' })}`);
   }
 
   // IIIF.
@@ -281,6 +334,12 @@ export class ApiClient {
         flat,
       },
       method: 'POST',
+    });
+  }
+
+  async deleteCollection(id: number): Promise<void> {
+    return this.request(`/api/madoc/iiif/collections/${id}`, {
+      method: 'DELETE',
     });
   }
 
@@ -310,7 +369,7 @@ export class ApiClient {
     });
   }
 
-  async getCollectionById(id: number, page: number) {
+  async getCollectionById(id: number, page = 0) {
     return this.request<CollectionFull>(`/api/madoc/iiif/collections/${id}${page ? `?page=${page}` : ''}`);
   }
 
@@ -340,7 +399,7 @@ export class ApiClient {
     });
   }
 
-  async getManifestById(id: number, page: number) {
+  async getManifestById(id: number, page = 0) {
     return this.request<ManifestFull>(`/api/madoc/iiif/manifests/${id}${page ? `?page=${page}` : ''}`);
   }
 
@@ -435,7 +494,41 @@ export class ApiClient {
     });
   }
 
-  async updateTaskStatus(
+  resolveUrn(urn: string) {
+    const regex = /^urn:madoc:([A-Za-z]+):([\d]+)$/g;
+    const match = regex.exec(urn);
+
+    if (!match) {
+      return;
+    }
+
+    return { id: Number(match[2]), type: match[1] };
+  }
+
+  async cloneCaptureModel(id: string, target: Array<{ id: string; type: string }>) {
+    return this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model/${id}/clone`, {
+      method: 'POST',
+      body: {
+        target,
+      },
+    });
+  }
+
+  async createCaptureModelRevision(req: RevisionRequest, status?: string) {
+    return this.request<RevisionRequest>(`/api/crowdsourcing/model/${req.captureModelId}/revision`, {
+      method: 'POST',
+      body: status ? { ...req, revision: { ...req.revision, status } } : req,
+    });
+  }
+
+  async updateCaptureModelRevision(req: RevisionRequest, status?: string) {
+    return this.request<RevisionRequest>(`/api/crowdsourcing/revision/${req.revision.id}`, {
+      method: 'PUT',
+      body: status ? { ...req, revision: { ...req.revision, status } } : req,
+    });
+  }
+
+  async updateTaskStatus<Task extends BaseTask>(
     taskId: string,
     availableStatuses: any,
     newStatus: string,
@@ -443,11 +536,11 @@ export class ApiClient {
   ) {
     const statusIdx = availableStatuses.indexOf(newStatus);
 
-    return this.updateTask(taskId, {
+    return this.updateTask<Task>(taskId, {
       status: statusIdx,
       status_text: statusIdx === -1 ? 'error' : availableStatuses[statusIdx],
       ...data,
-    });
+    } as Partial<Task>);
   }
 
   async getTaskStats(id: string) {
@@ -455,16 +548,8 @@ export class ApiClient {
   }
 
   // Tasks.
-  async getTaskById<Task extends BaseTask>(id: string, all = true, page?: number) {
-    if (all) {
-      return this.request<Task>(`/api/tasks/${id}?all=true`);
-    }
-
-    if (page) {
-      return this.request<Task>(`/api/tasks/${id}?page=${page}`);
-    }
-
-    return this.request<Task>(`/api/tasks/${id}`);
+  async getTaskById<Task extends BaseTask>(id: string, all = true, page?: number, assignee?: boolean) {
+    return this.request<Task & { id: string }>(`/api/tasks/${id}?${stringify({ page, all, assignee })}`);
   }
 
   async getTasksByStatus<Task extends BaseTask>(status: number) {
@@ -489,8 +574,8 @@ export class ApiClient {
     });
   }
 
-  async getTasks(jwt?: string) {
-    return this.request<{ tasks: BaseTask[] }>(`/api/tasks?all=true`, { jwt });
+  async getTasks(page?: number, query: { all?: boolean; status?: number; subject?: string; type?: string } = {}) {
+    return this.request<{ tasks: BaseTask[]; pagination: Pagination }>(`/api/tasks?${stringify({ page, ...query })}`);
   }
 
   async acceptTask<Task extends BaseTask>(
@@ -513,7 +598,7 @@ export class ApiClient {
     });
   }
 
-  async addSubtasks<Task extends BaseTask>(tasks: Partial<Task>[], parentId: string) {
+  async addSubtasks<Task extends BaseTask>(tasks: Partial<Task> | Partial<Task>[], parentId: string) {
     return this.request<Task>(`/api/tasks/${parentId}/subtasks`, {
       method: 'POST',
       body: tasks,
@@ -546,7 +631,7 @@ export class ApiClient {
     return this.publicRequest<any>(`/madoc/api/page/${path}`);
   }
 
-  async getSiteProject(id: number) {
+  async getSiteProject(id: string | number) {
     return this.publicRequest<any>(`/madoc/api/projects/${id}`);
   }
 

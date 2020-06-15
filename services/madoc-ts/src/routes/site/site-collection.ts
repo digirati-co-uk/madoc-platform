@@ -2,7 +2,7 @@ import { RouteMiddleware } from '../../types/route-middleware';
 
 export type SiteCollectionQuery = {
   parent_collections?: number[];
-  project_id?: number;
+  project_id?: string | number;
   page?: number;
 };
 

@@ -12,7 +12,7 @@ import React from 'react';
 import { UniversalRoute } from '../../types';
 
 export function createServerRenderer(
-  RootApplication: React.FC<{ api: ApiClient }>,
+  RootApplication: React.FC<{ api: ApiClient; routes: UniversalRoute[] }>,
   routes: UniversalRoute[],
   apiGateway: string
 ) {
@@ -21,16 +21,19 @@ export function createServerRenderer(
     basename,
     jwt,
     i18next,
+    siteSlug,
   }: {
     url: string;
     basename: string;
     jwt: string;
     i18next: i18n;
+    siteSlug?: string;
   }) {
     const sheet = new ServerStyleSheet(); // <-- creating out stylesheet
     const api = new ApiClient({
       gateway: apiGateway,
       jwt,
+      publicSiteSlug: siteSlug,
     });
     const context: StaticRouterContext = {};
     const [urlPath, urlQuery] = url.split('?');
@@ -64,7 +67,7 @@ export function createServerRenderer(
         <SSRContext.Provider value={dataCache}>
           <I18nextProvider i18n={i18next}>
             <StaticRouter basename={basename} location={url} context={context}>
-              <RootApplication api={api} />
+              <RootApplication api={api} routes={routes} />
             </StaticRouter>
           </I18nextProvider>
         </SSRContext.Provider>

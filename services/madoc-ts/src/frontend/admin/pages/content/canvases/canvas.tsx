@@ -5,7 +5,7 @@ import { LocaleString } from '../../../../shared/components/LocaleString';
 import { Subheading1 } from '../../../../shared/atoms/Heading1';
 import { ButtonRow, TinyButton } from '../../../../shared/atoms/Button';
 import { Link, useParams, useLocation } from 'react-router-dom';
-import { renderUniversalRoutes } from '../../../../shared/utils/server-utils';
+import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
 import { CanvasFull } from '../../../../../types/schemas/canvas-full';
 import { ContextHeading, Header } from '../../../../shared/atoms/Header';
 import { useData } from '../../../../shared/hooks/use-data';

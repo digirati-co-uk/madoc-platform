@@ -1,0 +1,21 @@
+{
+  "type": "object",
+  "properties": {
+    "derivatives": {
+      "type": "number"
+    },
+    "id": {
+      "type": "string"
+    },
+    "label": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "derivatives",
+    "id",
+    "label"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

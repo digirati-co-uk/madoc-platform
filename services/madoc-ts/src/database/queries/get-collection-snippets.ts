@@ -1,5 +1,6 @@
 import { sql, SqlSqlTokenType } from 'slonik';
 import { metadataReducer } from '../../utility/iiif-metadata';
+import { SQL_EMPTY } from '../../utility/postgres-tags';
 
 export type CollectionSnippetsRow = {
   collection_id: number;
@@ -78,11 +79,13 @@ function selectCollections({
   perPage = 24,
   page = 0,
   parentCollectionId,
+  hideFlat = true,
   siteId,
 }: {
   siteId: number;
   page?: number;
   perPage?: number;
+  hideFlat?: boolean;
   parentCollectionId?: number;
 }) {
   const offset = (page - 1) * perPage;
@@ -95,6 +98,7 @@ function selectCollections({
       where resource_type = 'collection'  
         and cidr.site_id = ${siteId}
         and cidri.site_id = ${siteId}
+        ${hideFlat ? sql`and cidr.flat = false` : SQL_EMPTY}
         and cidri.resource_id = ${parentCollectionId} 
       limit ${perPage} offset ${offset}
     `;
@@ -104,7 +108,8 @@ function selectCollections({
     select cidr.resource_id as collection_id
     from iiif_derived_resource cidr
     where resource_type = 'collection'  
-      and cidr.site_id = ${siteId} 
+      and cidr.site_id = ${siteId}
+      ${hideFlat ? sql`and cidr.flat = false` : SQL_EMPTY}
     limit ${perPage} offset ${offset}
   `;
 }
@@ -225,7 +230,6 @@ export function mapCollectionSnippets(rows: CollectionSnippetsRow[]) {
         // Track which metadata ids have been reduced.
         metadata_ids.push(row.metadata_id);
       }
-
 
       return {
         collection_to_manifest,

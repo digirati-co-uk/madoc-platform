@@ -5,7 +5,7 @@ import { LocaleString } from '../../../../shared/components/LocaleString';
 import { CollectionFull } from '../../../../../types/schemas/collection-full';
 import { useParams } from 'react-router-dom';
 import { AdminHeader } from '../../../molecules/AdminHeader';
-import { renderUniversalRoutes } from '../../../../shared/utils/server-utils';
+import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
 import { WidePage } from '../../../../shared/atoms/WidePage';
 import { usePaginatedData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
@@ -47,11 +47,12 @@ export const CollectionView: UniversalComponent<CollectionViewType> = createUniv
             { label: t('edit metadata'), link: `/collections/${id}/metadata` },
             { label: t('edit structure'), link: `/collections/${id}/structure` },
             { label: t('projects'), link: `/collections/${id}/projects` },
+            { label: t('delete'), link: `/collections/${id}/delete` },
           ]}
           title={title}
           subtitle={t('{{count}} manifests', { count: pagination.totalResults })}
         />
-        <WidePage>{renderUniversalRoutes(route.routes)}</WidePage>
+        <WidePage>{renderUniversalRoutes(route.routes, { collection })}</WidePage>
       </>
     );
   },

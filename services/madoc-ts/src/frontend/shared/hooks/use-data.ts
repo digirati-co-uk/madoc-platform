@@ -46,6 +46,19 @@ export function useData<Data = any, TKey = any, TVariables = any>(
   );
 }
 
+export function useStaticData<Data = any, TKey = any, TVariables = any>(
+  component: QueryComponent<Data, TKey, TVariables>,
+  vars: Partial<TVariables> = {},
+  config: QueryOptions<Data> = {}
+): QueryResult<Data> {
+  return useData<Data, TKey, TVariables>(component, vars, {
+    refetchInterval: false,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    ...config,
+  });
+}
+
 export function usePaginatedData<Data = any, TKey = any, TVariables = any>(
   component: QueryComponent<Data, TKey, TVariables>,
   vars: Partial<TVariables> = {},

@@ -1,6 +1,7 @@
 import { sql } from 'slonik';
+import { SQL_EMPTY } from '../../utility/postgres-tags';
 
-export function countResources(resource_type: string, site_id: number, parent_id?: number) {
+export function countResources(resource_type: string, site_id: number, parent_id?: number, showFlat = false) {
   if (parent_id) {
     return sql<{ total: number }>`
     select count(*) as total
@@ -9,6 +10,7 @@ export function countResources(resource_type: string, site_id: number, parent_id
             on cidr.resource_id = cidri.item_id
       where cidr.resource_type = ${resource_type} 
       and cidr.site_id = ${site_id}
+      ${showFlat ? SQL_EMPTY : sql`and cidr.flat = false`}
       and cidri.resource_id = ${parent_id}
   `;
   }
@@ -18,6 +20,7 @@ export function countResources(resource_type: string, site_id: number, parent_id
       from iiif_derived_resource
       where resource_type = ${resource_type} 
       and site_id = ${site_id}
+      ${showFlat ? SQL_EMPTY : sql`and flat = false`}
   `;
 }
 

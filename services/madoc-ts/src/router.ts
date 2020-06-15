@@ -6,7 +6,7 @@ import { loginPage } from './routes/user/login';
 import { getSiteScopes, saveSiteScopes } from './routes/admin/site-scopes';
 import { logout } from './routes/user/logout';
 import { frontendBundles } from './routes/assets/frontend-bundles';
-import { adminFrontend } from './routes/admin/frontend';
+import { adminFrontend, siteFrontend } from './routes/admin/frontend';
 import { createCollection } from './routes/iiif/collections/create-collection';
 import { deleteCollection } from './routes/iiif/collections/delete-collection';
 import { getCollection } from './routes/iiif/collections/get-collection';
@@ -50,15 +50,14 @@ import { siteSearch } from './routes/site/site-search';
 import { siteTopic } from './routes/site/site-topic';
 import { siteTopicType } from './routes/site/site-topic-type';
 import { siteTopicTypes } from './routes/site/site-topic-types';
+import { createResourceClaim } from './routes/projects/create-resource-claim';
+import { statistics } from './routes/iiif/statistics';
 
 export const router = new TypedRouter({
   // Normal route
   'get-ping': [TypedRouter.GET, '/api/madoc', ping],
   'get-scopes': [TypedRouter.GET, '/api/madoc/site/:siteId/permissions', getSiteScopes],
   'update-scopes': [TypedRouter.POST, '/api/madoc/site/:siteId/permissions', saveSiteScopes],
-
-  // Locale
-  'get-locale': [TypedRouter.GET, '/api/madoc/locales/:lng/:ns', getLocale],
 
   // Collection API.
   'list-collections': [TypedRouter.GET, '/api/madoc/iiif/collections', listCollections],
@@ -119,6 +118,9 @@ export const router = new TypedRouter({
   'import-manifest': [TypedRouter.POST, '/api/madoc/iiif/import/manifest', importManifest],
   'import-collection': [TypedRouter.POST, '/api/madoc/iiif/import/collection', importCollection],
 
+  // Stats.
+  'get-statistics': [TypedRouter.GET, '/api/madoc/iiif/statistics', statistics],
+
   // Projects
   'create-project': [TypedRouter.POST, '/api/madoc/projects', createNewProject],
   'list-projects': [TypedRouter.GET, '/api/madoc/projects', listProjects],
@@ -126,6 +128,7 @@ export const router = new TypedRouter({
   'get-project-structure': [TypedRouter.GET, '/api/madoc/projects/:id/structure', getProjectStructure],
   'get-project-metadata': [TypedRouter.GET, '/api/madoc/projects/:id/metadata', getProjectMetadata],
   'update-project-metadata': [TypedRouter.PUT, '/api/madoc/projects/:id/metadata', updateProjectMetadata],
+  'create-project-resource-claim': [TypedRouter.POST, '/api/madoc/projects/:id/claim', createResourceClaim],
 
   // Omeka routes
   'get-login': [TypedRouter.GET, '/s/:slug/madoc/login', loginPage],
@@ -149,11 +152,15 @@ export const router = new TypedRouter({
   'site-topic-type': [TypedRouter.GET, '/s/:slug/madoc/api/topics/:type', siteTopicType],
   'site-topic-types': [TypedRouter.GET, '/s/:slug/madoc/api/topics', siteTopicTypes],
 
+  // Locale
+  'get-locale': [TypedRouter.GET, '/s/:slug/madoc/api/locales/:lng/:ns', getLocale],
+
   // Test omeka pages.
   // 'get-page': [TypedRouter.GET, '/s/:slug/madoc/page/:pageSlug+', sitePage],
 
   // Frontend
   'admin-frontend': [TypedRouter.GET, '/s/:slug/madoc/admin*', adminFrontend],
+  'site-frontend': [TypedRouter.GET, '/s/:slug/madoc*', siteFrontend],
 
   // Make sure this is last.
   'omeka-404': [TypedRouter.GET, '/s/:slug/madoc*', madocNotFound],

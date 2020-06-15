@@ -23,12 +23,16 @@ export const PreviewCollection: React.FC<{
   useVaultEffect(
     vault => {
       vault.loadCollection(props.id).then(col => {
-        setCollection(col);
-        setManifests(
-          col.items.map(man => {
-            return vault.fromRef(man);
-          })
-        );
+        if (col) {
+          setCollection(col);
+          setManifests(
+            col.items.map(man => {
+              return vault.fromRef(man);
+            })
+          );
+        } else {
+          // error?
+        }
       });
     },
     [props.id]

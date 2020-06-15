@@ -6,8 +6,12 @@ export type BaseTask = {
     type: string;
     status: number;
     state: any;
-    status_text: string;
+    status_text?: string;
     subject: string;
+    assignee?: {
+      id: string;
+      name?: string;
+    };
   }>;
   creator?: {
     id: string;

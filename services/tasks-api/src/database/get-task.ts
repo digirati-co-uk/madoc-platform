@@ -12,6 +12,7 @@ export async function getTask(
     page = 1,
     perPage = 20,
     all,
+    subtaskFields = [],
   }: {
     id: string;
     scope: string[];
@@ -21,6 +22,7 @@ export async function getTask(
     page?: number;
     perPage?: number;
     all?: boolean;
+    subtaskFields?: string[];
   }
 ) {
   const isAdmin = scope.indexOf('tasks.admin') !== -1;
@@ -61,7 +63,7 @@ export async function getTask(
   const actualTask = taskList.find(t => t.id === id);
   const subtasks = taskList.filter(t => t.id !== id);
 
-  const task = mapSingleTask(actualTask, subtasks);
+  const task = mapSingleTask(actualTask, subtasks, subtaskFields);
 
   task.pagination = {
     page,

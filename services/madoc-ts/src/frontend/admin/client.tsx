@@ -1,5 +1,10 @@
-import { renderClient } from '../shared/utils/render-client';
+import { renderClient } from '../shared/utility/render-client';
 
-import('./index').then(mod => {
-  renderClient(mod.default);
+Promise.all([
+  // The component.
+  import('./index'),
+  // The routes themselves.
+  import('./routes'),
+]).then(([mod, routes]) => {
+  renderClient(mod.default, routes.routes);
 });

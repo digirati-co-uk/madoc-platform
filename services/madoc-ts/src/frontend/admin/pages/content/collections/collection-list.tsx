@@ -27,7 +27,6 @@ export const CollectionList: UniversalComponent<CollectionListType> = createUniv
   () => {
     const { status, resolvedData: data, latestData } = usePaginatedData(CollectionList);
     const { t } = useTranslation();
-    // const isRefreshing = !latestData;
 
     if (status === 'error') {
       return <div>{t('Loading')}</div>;

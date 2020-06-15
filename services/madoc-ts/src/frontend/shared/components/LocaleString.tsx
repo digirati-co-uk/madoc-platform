@@ -92,18 +92,27 @@ export const useClosestLanguage = (getLanguages: () => string[], deps: any[] = [
 
 export const LocaleString = ({
   as: Component,
+  defaultText,
   children,
   ...props
-}: { [key: string]: any } & { as?: string | React.FC<any>; children: InternationalString }): JSX.Element => {
-  const language = useClosestLanguage(() => Object.keys(children), [children]);
+}: { [key: string]: any } & {
+  as?: string | React.FC<any>;
+  defaultText?: string;
+  children: InternationalString | null | undefined;
+}): JSX.Element => {
+  const language = useClosestLanguage(() => Object.keys(children || {}), [children]);
   const text = useMemo(() => {
+    if (!children) {
+      return defaultText || '';
+    }
+
     const candidateText = language ? children[language] : undefined;
     if (candidateText) {
       return candidateText.join('');
     }
 
     return '';
-  }, [language, children]);
+  }, [language, defaultText, children]);
 
   if (language) {
     return (

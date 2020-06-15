@@ -1,7 +1,7 @@
 import { UniversalComponent } from '../../../../types';
 import React from 'react';
 import { LocaleString } from '../../../../shared/components/LocaleString';
-import { renderUniversalRoutes } from '../../../../shared/utils/server-utils';
+import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { WidePage } from '../../../../shared/atoms/WidePage';
 import { useTranslation } from 'react-i18next';
@@ -37,10 +37,13 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
             { label: t('Details'), link: `/projects/${data.id}/metadata` },
             { label: t('Content'), link: `/projects/${data.id}/content` },
             { label: t('Model'), link: `/projects/${data.id}/model` },
+            { label: t('Crowdsourcing'), link: `/projects/${data.id}/tasks` },
           ]}
           title={<LocaleString>{data.label}</LocaleString>}
         />
-        <WidePage>{renderUniversalRoutes(route.routes, { captureModelId: data.capture_model_id })}</WidePage>
+        <WidePage>
+          {renderUniversalRoutes(route.routes, { captureModelId: data.capture_model_id, project: data })}
+        </WidePage>
       </>
     );
   },

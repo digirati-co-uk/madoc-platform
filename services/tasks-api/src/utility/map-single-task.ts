@@ -1,6 +1,6 @@
 import { FullSingleTask } from '../schemas/FullSingleTask';
 
-export function mapSingleTask(singleTask: any, subtasks?: any[]) {
+export function mapSingleTask(singleTask: any, subtasks?: any[], fields?: string[]) {
   const {
     id,
     creator_id,
@@ -31,7 +31,7 @@ export function mapSingleTask(singleTask: any, subtasks?: any[]) {
     events: events,
     subtasks: subtasks
       ? subtasks.map(task => {
-          return {
+          const subtask: any = {
             id: task.id,
             type: task.type,
             name: task.name,
@@ -40,6 +40,23 @@ export function mapSingleTask(singleTask: any, subtasks?: any[]) {
             status_text: task.status_text,
             state: task.state,
           };
+
+          if (fields) {
+            for (const field of fields) {
+              if (field === 'assignee') {
+                subtask.assignee = task.assignee_id
+                  ? {
+                      id: task.assignee_id,
+                      name: task.assignee_name,
+                    }
+                  : undefined;
+              } else {
+                subtask[field] = task[field];
+              }
+            }
+          }
+
+          return subtask;
         })
       : undefined,
   } as FullSingleTask;

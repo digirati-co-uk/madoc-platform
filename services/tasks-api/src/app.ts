@@ -6,7 +6,7 @@ import { errorHandler } from './middleware/error-handler';
 import { TypedRouter } from './utility/typed-router';
 import { createPostgresPool } from './database/create-postgres-pool';
 import { dbConnection } from './middleware/db-connection';
-import { jwtMock } from './middleware/jwt-mock';
+import { parseJwt } from './middleware/parse-jwt';
 import { migrate } from './migrate';
 import { Queue } from 'bullmq';
 import { queueEvents } from './middleware/queue-events';
@@ -32,7 +32,7 @@ export async function createApp(router: TypedRouter<any, any>) {
     });
 
   app.use(queueEvents);
-  app.use(jwtMock);
+  app.use(parseJwt);
   app.use(dbConnection(pool));
   app.use(json({ pretty: process.env.NODE_ENV !== 'production' }));
   app.use(logger());

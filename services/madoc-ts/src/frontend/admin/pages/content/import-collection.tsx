@@ -12,11 +12,13 @@ const PreviewCollection: React.FC<{ id: string }> = props => {
     vault => {
       vault.loadCollection(props.id).then(col => {
         setCollection(col);
-        setManifests(
-          col.items.map(man => {
-            return vault.fromRef(man);
-          })
-        );
+        if (col) {
+          setManifests(
+            col.items.map(man => {
+              return vault.fromRef(man);
+            })
+          );
+        }
       });
     },
     [props.id]
