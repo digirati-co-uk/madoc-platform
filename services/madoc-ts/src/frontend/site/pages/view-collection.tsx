@@ -1,6 +1,4 @@
 import React from 'react';
-import { UniversalComponent } from '../../types';
-import { createUniversalComponent } from '../../shared/utility/create-universal-component';
 import { CollectionFull } from '../../../types/schemas/collection-full';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { useApi } from '../../shared/hooks/use-api';
