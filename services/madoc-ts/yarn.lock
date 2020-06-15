@@ -1263,10 +1263,10 @@
     screenfull "^3.3.2"
     whatwg-fetch "^3.0.0"
 
-"@capture-models/editor@^0.4.3":
-  version "0.4.3"
-  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.4.3.tgz#7ae7188510dddfc4f21211e556d891bf04030fd9"
-  integrity sha512-gkHLMFBuA9IG9CTdqytD1uaO2XxvTrLmajd+9s4aJtxwo9UpIFbV7XYiY8N95JwzYCyOOzjxEvHuauqc8CIGxw==
+"@capture-models/editor@^0.4.7":
+  version "0.4.7"
+  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.4.7.tgz#98e93fad4371afc44a5de3a6e80dea7595dcd2dd"
+  integrity sha512-XJiePXtHeHu3hZR45focXKau1NXQQEZakEGd7DhjIivjm+900H4qAC4QYCpLJxd2FfLY+KECbDmdXVpNxjrZxA==
   dependencies:
     "@capture-models/helpers" "^0.4.0"
     "@capture-models/plugin-api" "^0.4.0"
@@ -4789,19 +4789,7 @@ caniuse-lite@^1.0.30000989, caniuse-lite@^1.0.30001039, caniuse-lite@^1.0.300010
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001048.tgz#4bb4f1bc2eb304e5e1154da80b93dee3f1cf447e"
   integrity sha512-g1iSHKVxornw0K8LG9LLdf+Fxnv7T1Z+mMsf0/YYLclQX4Cd522Ap0Lrw6NFqHgezit78dtyWxzlV2Xfc7vgRg==
 
-canvas-panel-beta@2.0.0, canvas-panel-beta@2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/canvas-panel-beta/-/canvas-panel-beta-2.0.3.tgz#0461f39228c02cff7fc5ce2520cfa43434436ed5"
-  integrity sha512-LyKplkJYMrmKXkS/0hWFQTXdhzlGrRQktvhoStGrIB0IZ4hZAQiKrMGPISLbKo4mkG4ySYZEUcCBV9YWwGdAcA==
-  dependencies:
-    "@canvas-panel/core" "^0.2.0"
-    "@fesk/bem-js" "1.0.1"
-    "@iiif/vocabulary" "1.0.16"
-    manifesto.js "^4.0.0"
-    react "^16.10.2"
-    react-dom "^16.10.2"
-
-canvas-panel-beta@2.0.2:
+canvas-panel-beta@2.0.0, canvas-panel-beta@2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/canvas-panel-beta/-/canvas-panel-beta-2.0.2.tgz#ba930793e09f88f6572d8384e806e17b96e5d5b6"
   integrity sha512-bq+DIpdYSCXBymyzQgIM76Uc1muYs0FosD0xq6LeKs0Lz7jvp9Ws/ZWYulg6jte4c2DTWBAZjEnW+QvpqZI7yQ==

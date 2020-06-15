@@ -137,7 +137,7 @@ async function ensureProjectTaskStructure(
   userId: number,
   claim: ResourceClaim
 ): Promise<(CrowdsourcingCollectionTask | CrowdsourcingManifestTask | CrowdsourcingCanvasTask) & { id: string }> {
-  const userApi = api.asUser({ userId, siteId });
+  const userApi = api.asUser({ siteId });
   // Get top level project task.
   const { task_id } = await context.connection.one(
     sql<{
@@ -243,7 +243,6 @@ async function getTaskFromClaim(
   parent: CrowdsourcingCollectionTask | CrowdsourcingManifestTask | CrowdsourcingCanvasTask,
   claim: ResourceClaim
 ): Promise<BaseTask | undefined> {
-
   console.log(JSON.stringify(parent, null, 2));
 
   if (!parent.subtasks || parent.subtasks.length === 0) {

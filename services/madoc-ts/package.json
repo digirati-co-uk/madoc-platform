@@ -15,13 +15,13 @@
     "build:site": "webpack --config webpack.frontend.js src/frontend/site/client.ts --output-path lib/frontend/site/build"
   },
   "resolutions": {
-    "canvas-panel-beta": "2.0.3",
+    "canvas-panel-beta": "2.0.2",
     "@iiif/vocabulary": "1.0.17"
   },
   "dependencies": {
     "@atlas-viewer/iiif-image-api": "^1.1.0",
     "@atlas-viewer/atlas": "^1.0.0-alpha.1",
-    "@capture-models/editor": "^0.4.3",
+    "@capture-models/editor": "^0.4.7",
     "@capture-models/helpers": "^0.4.0",
     "@capture-models/types": "^0.4.0",
     "@hyperion-framework/react-vault": "1.0.0-alpha.6",

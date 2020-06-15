@@ -21,19 +21,17 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
     if (!data) {
       return <>Loading...</>;
     }
-
     return (
       <>
         <h1>All tasks</h1>
 
-        {data.tasks.map(task => {
+        {(data.tasks || []).map(task => {
           return (
             <div key={task.id}>
               <Link to={`/tasks/${task.id}`}>{task.name}</Link>
             </div>
           );
         })}
-
         <Pagination
           page={latestData ? latestData.pagination.page : 1}
           totalPages={latestData ? latestData.pagination.totalPages : 1}
@@ -47,7 +45,7 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
       return ['all-tasks', { page: Number(query.page) || 1 }];
     },
     getData: (key, vars, api) => {
-      return api.getTasks(vars.page);
+      return api.getTasks(vars.page, { all_tasks: true });
     },
   }
 );

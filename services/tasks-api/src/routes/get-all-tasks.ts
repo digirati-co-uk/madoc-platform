@@ -49,7 +49,7 @@ export const getAllTasks: RouteMiddleware = async context => {
     };
   } catch (e) {
     if (e instanceof NotFoundError) {
-      context.response.body = [];
+      context.response.body = { tasks: [], pagination: { page: 1, total_pages: 1, total_results: 0 } };
     } else {
       throw e;
     }

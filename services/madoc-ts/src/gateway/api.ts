@@ -576,7 +576,10 @@ export class ApiClient {
     });
   }
 
-  async getTasks(page?: number, query: { all?: boolean; status?: number; subject?: string; type?: string } = {}) {
+  async getTasks(
+    page?: number,
+    query: { all?: boolean; all_tasks?: boolean; status?: number; subject?: string; type?: string } = {}
+  ) {
     return this.request<{ tasks: BaseTask[]; pagination: Pagination }>(`/api/tasks?${stringify({ page, ...query })}`);
   }
 
