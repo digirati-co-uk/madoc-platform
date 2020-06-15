@@ -7,6 +7,7 @@ import { mapMetadata } from '../../utility/iiif-metadata';
 import { api } from '../../gateway/api.server';
 import { NotFound } from '../../utility/errors/not-found';
 import { SQL_EMPTY } from '../../utility/postgres-tags';
+import { ProjectListItem } from '../../types/schemas/project-list-item';
 
 function parseProjectId(id: string) {
   const idAsNumber = Number(id);

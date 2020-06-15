@@ -10,6 +10,7 @@ import { useHistory } from 'react-router-dom';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { WidePage } from '../../../../shared/atoms/WidePage';
 import { useTranslation } from 'react-i18next';
+import { ErrorMessage } from '../../../../shared/atoms/ErrorMessage';
 
 export const NewProjectPage: React.FC = () => {
   const api = useApi();
@@ -17,12 +18,18 @@ export const NewProjectPage: React.FC = () => {
   const [label, setLabel] = useState<InternationalString>({ en: [''] });
   const [summary, setSummary] = useState<InternationalString>({ en: [''] });
   const [slug, setSlug] = useState('');
+  const [error, setError] = useState('');
   const history = useHistory();
 
-  const [saveProject] = useMutation(async (data: CreateProject) => {
-    const response = await api.createProject(data);
+  const [saveProject, { status }] = useMutation(async (data: CreateProject) => {
+    setError('');
+    try {
+      const response = await api.createProject(data);
 
-    history.push(`/projects/${response.id}`);
+      history.push(`/projects/${response.id}`);
+    } catch (err) {
+      setError(err.message);
+    }
   });
 
   return (
@@ -35,6 +42,7 @@ export const NewProjectPage: React.FC = () => {
         ]}
         title={t('Create new project')}
       />
+      {error ? <ErrorMessage>{error}</ErrorMessage> : null}
       <WidePage>
         <InputContainer>
           <InputLabel htmlFor="label">Label</InputLabel>
@@ -63,7 +71,9 @@ export const NewProjectPage: React.FC = () => {
           <Input type="text" value={slug} onChange={e => setSlug(e.currentTarget.value)} id={'summary'} />
         </InputContainer>
 
-        <Button onClick={() => saveProject({ label, summary, slug })}>Create</Button>
+        <Button disabled={status === 'loading'} onClick={() => saveProject({ label, summary, slug })}>
+          Create
+        </Button>
       </WidePage>
     </>
   );

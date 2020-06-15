@@ -26,6 +26,8 @@ import { Pagination } from '../types/schemas/_pagination';
 import { CrowdsourcingTask } from '../types/tasks/crowdsourcing-task';
 import { ResourceClaim } from '../routes/projects/create-resource-claim';
 import { RevisionRequest } from '@capture-models/types';
+import { ProjectList } from '../types/schemas/project-list';
+import { ProjectListItem } from '../types/schemas/project-list-item';
 
 export class ApiClient {
   private readonly gateway: string;
@@ -227,12 +229,12 @@ export class ApiClient {
   }
 
   // Projects.
-  async getProjects(page: number) {
-    return this.request<any[]>(`/api/madoc/projects?page=${page}`);
+  async getProjects(page?: number) {
+    return this.request<ProjectList>(`/api/madoc/projects?page=${page || 0}`);
   }
 
   async getProject(id: number | string) {
-    return this.request<any>(`/api/madoc/projects/${id}`);
+    return this.request<ProjectListItem>(`/api/madoc/projects/${id}`);
   }
 
   async getProjectMetadata(id: number) {

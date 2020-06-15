@@ -6,20 +6,22 @@ import { WidePage } from '../../../../shared/atoms/WidePage';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { useTranslation } from 'react-i18next';
 import { TinyButton } from '../../../../shared/atoms/Button';
-import { useData } from '../../../../shared/hooks/use-data';
+import { useData, usePaginatedData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
+import { ProjectList } from '../../../../../types/schemas/project-list';
+import { Pagination } from '../../../molecules/Pagination';
 
 type ListProjectsType = {
   params: {};
   query: { page: string };
   variables: { page: number };
-  data: any;
+  data: ProjectList;
 };
 
 export const ListProjects: UniversalComponent<ListProjectsType> = createUniversalComponent<ListProjectsType>(
   () => {
     const { t } = useTranslation();
-    const { data, status } = useData(ListProjects);
+    const { latestData, resolvedData: data, status } = usePaginatedData(ListProjects);
 
     if (!data || status === 'loading' || status === 'error') {
       return <div>Loading...</div>;
@@ -38,7 +40,12 @@ export const ListProjects: UniversalComponent<ListProjectsType> = createUniversa
           <TinyButton as={Link} to={`/projects/create`}>
             {t('Create project')}
           </TinyButton>
-          {data.map((project: any) => {
+          <Pagination
+            page={latestData ? latestData.pagination.page : 1}
+            totalPages={latestData ? latestData.pagination.totalPages : 1}
+            stale={!latestData}
+          />
+          {data.projects.map((project: any) => {
             return (
               <div key={project.id}>
                 <h3>
