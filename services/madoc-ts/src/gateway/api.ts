@@ -337,6 +337,12 @@ export class ApiClient {
     });
   }
 
+  async deleteCollection(id: number): Promise<void> {
+    return this.request(`/api/madoc/iiif/collections/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
   async getCollectionProjects(id: number) {
     return this.request<{ projects: ProjectSnippet[] }>(`/api/madoc/iiif/collections/${id}/projects`);
   }

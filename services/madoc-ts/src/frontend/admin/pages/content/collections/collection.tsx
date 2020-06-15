@@ -47,11 +47,12 @@ export const CollectionView: UniversalComponent<CollectionViewType> = createUniv
             { label: t('edit metadata'), link: `/collections/${id}/metadata` },
             { label: t('edit structure'), link: `/collections/${id}/structure` },
             { label: t('projects'), link: `/collections/${id}/projects` },
+            { label: t('delete'), link: `/collections/${id}/delete` },
           ]}
           title={title}
           subtitle={t('{{count}} manifests', { count: pagination.totalResults })}
         />
-        <WidePage>{renderUniversalRoutes(route.routes)}</WidePage>
+        <WidePage>{renderUniversalRoutes(route.routes, { collection })}</WidePage>
       </>
     );
   },
