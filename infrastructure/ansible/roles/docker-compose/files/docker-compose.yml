@@ -1,0 +1,10 @@
+version: "3"
+services:
+  http_test:
+    image: crccheck/hello-world
+    ports:
+      - 80:8000
+  http_test_3:
+    image: crccheck/hello-world
+    ports:
+      - 8080:8000

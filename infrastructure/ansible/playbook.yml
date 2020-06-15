@@ -1,0 +1,12 @@
+---
+- hosts: "{{instance}}"
+  vars_files:
+    - vars/default.yml
+  roles:
+    - docker-compose
+
+  tasks:
+    - command: "cat /srv/madoc/docker-compose.yml"
+      register: cat
+    - debug:
+        var: cat
