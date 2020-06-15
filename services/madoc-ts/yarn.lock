@@ -1263,57 +1263,60 @@
     screenfull "^3.3.2"
     whatwg-fetch "^3.0.0"
 
-"@capture-models/editor@0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.3.0.tgz#2c4d754bf5c4609d48097ea7c6337dd8fbbd05ef"
-  integrity sha512-4qAU9BeXnYmUiH94ax8c1x5JQI7NfIzhsKCJZtL4S/RwxPeXwsRtiVIbE1KGMVcL0/JXrmufl+BOxTC9N421Fg==
+"@capture-models/editor@^0.4.3":
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.4.3.tgz#7ae7188510dddfc4f21211e556d891bf04030fd9"
+  integrity sha512-gkHLMFBuA9IG9CTdqytD1uaO2XxvTrLmajd+9s4aJtxwo9UpIFbV7XYiY8N95JwzYCyOOzjxEvHuauqc8CIGxw==
   dependencies:
-    "@canvas-panel/core" "^0.2.0"
-    "@capture-models/helpers" "^0.3.0"
-    "@capture-models/plugin-api" "^0.3.0"
-    "@capture-models/types" "^0.3.0"
+    "@capture-models/helpers" "^0.4.0"
+    "@capture-models/plugin-api" "^0.4.0"
+    "@capture-models/types" "^0.4.0"
+    "@iiif/vocabulary" "1.0.17"
     "@styled-icons/entypo" "^10.0.0"
+    "@styled-icons/styled-icon" "^10.0.0"
+    canvas-panel-beta "2.0.0"
     easy-peasy "^3.2.3"
     fast-copy "^2.0.4"
     formik "^2.0.6"
     immer "^4.0.1"
+    manifesto.js "4.1.0"
     normalize.css "^8.0.1"
     prop-types "^15.7.2"
     react "^16.10.2"
     react-beautiful-dnd "^13.0.0"
     react-dom "^16.10.2"
     react-draggable "^4.2.0"
-    react-functional-select "^2.3.4"
+    react-functional-select "^2.3.5"
     react-router-dom "^5.1.2"
     react-window "^1.8.5"
     styled-components "^5.0.1"
     use-async-effect "^2.2.1"
     use-debounce "^3.3.0"
 
-"@capture-models/helpers@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@capture-models/helpers/-/helpers-0.3.0.tgz#5b18c500981217cbb350a96c8fb4c2ecda68c251"
-  integrity sha512-5TBShNTh/JAaEEpztlCbuxbGQht6eHyx5YVnqgmpEU273VZA9eJI6cNdI4skvsudmPbNoXGtrlNWxATSZ+sRvQ==
+"@capture-models/helpers@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@capture-models/helpers/-/helpers-0.4.0.tgz#21de094de094092b90586ebfe83e5d33e8c9b3f3"
+  integrity sha512-pEvdKhw8pUbOAqsd3VCyC5g2FOC/ncZVpYlYMYdioTB5zoaD2CTQ1afpOG2rM3uV0wufei5JZ9EP8701SwlCUQ==
   dependencies:
-    "@capture-models/plugin-api" "^0.3.0"
-    "@capture-models/types" "^0.3.0"
+    "@capture-models/plugin-api" "^0.4.0"
+    "@capture-models/types" "^0.4.0"
     fast-copy "^2.0.4"
     immer "^4.0.1"
     react "^16.10.2"
     uuid "^3.4.0"
 
-"@capture-models/plugin-api@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@capture-models/plugin-api/-/plugin-api-0.3.0.tgz#0bab7856ddcb07ae876393836d7f5de05bfcac00"
-  integrity sha512-1yQncVjmYpPTbR95IZwy2JXU+aULqAROjPT3W6ZewpzglRsBKUNh7/2tC9Vft+vfMdM4cZ7sjX0Ctae1p2aGuw==
+"@capture-models/plugin-api@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@capture-models/plugin-api/-/plugin-api-0.4.0.tgz#c3d72c93366eeee9284de668f73f40546d08da4e"
+  integrity sha512-jcyM56hXP0XD1vs3znQnI5Ny2oipiSPxnL68f60IBNA4X9CNk1GNnyGUIwql9khynSVe0qe5amtkHmroR09jCQ==
   dependencies:
-    "@capture-models/types" "^0.3.0"
+    "@capture-models/types" "^0.4.0"
     react "^16.12.0"
 
-"@capture-models/types@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@capture-models/types/-/types-0.3.0.tgz#e806866a1ae377a4a86fd565ab27f1ce2fb96bb6"
-  integrity sha512-JElN6nGBoABKrGRVJCFrz1nbSNih/vVYWZlkaSgMKk6svNK/S/crzniXcGq61Ep46/6bROey9NmnzY0AFdaH0A==
+"@capture-models/types@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@capture-models/types/-/types-0.4.0.tgz#e1f16d8097961d1ca69e3413b1a230a03b3b3675"
+  integrity sha512-2Fabq4TlNw14uk5INufqCs5QYDPYdH7myvIINDtBADZ5JjQXC/aTgf8x79UmhEG92HdRN2gl+itkJhG4kuUKTQ==
 
 "@cnakazawa/watch@^1.0.3":
   version "1.0.4"
@@ -4786,10 +4789,22 @@ caniuse-lite@^1.0.30000989, caniuse-lite@^1.0.30001039, caniuse-lite@^1.0.300010
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001048.tgz#4bb4f1bc2eb304e5e1154da80b93dee3f1cf447e"
   integrity sha512-g1iSHKVxornw0K8LG9LLdf+Fxnv7T1Z+mMsf0/YYLclQX4Cd522Ap0Lrw6NFqHgezit78dtyWxzlV2Xfc7vgRg==
 
-canvas-panel-beta@2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/canvas-panel-beta/-/canvas-panel-beta-2.0.1.tgz#00ef0619a9ce25449d423a8e07ca1861d046f927"
-  integrity sha512-jSS5/bTC3Yi5CVJjD5nnA/DBIOP/46kOZLQO/tWqWvzMGt61UcVwkG4Q7LZEZ8vi/0WDURtoeYokoZXhvz1PXg==
+canvas-panel-beta@2.0.0, canvas-panel-beta@2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/canvas-panel-beta/-/canvas-panel-beta-2.0.3.tgz#0461f39228c02cff7fc5ce2520cfa43434436ed5"
+  integrity sha512-LyKplkJYMrmKXkS/0hWFQTXdhzlGrRQktvhoStGrIB0IZ4hZAQiKrMGPISLbKo4mkG4ySYZEUcCBV9YWwGdAcA==
+  dependencies:
+    "@canvas-panel/core" "^0.2.0"
+    "@fesk/bem-js" "1.0.1"
+    "@iiif/vocabulary" "1.0.16"
+    manifesto.js "^4.0.0"
+    react "^16.10.2"
+    react-dom "^16.10.2"
+
+canvas-panel-beta@2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/canvas-panel-beta/-/canvas-panel-beta-2.0.2.tgz#ba930793e09f88f6572d8384e806e17b96e5d5b6"
+  integrity sha512-bq+DIpdYSCXBymyzQgIM76Uc1muYs0FosD0xq6LeKs0Lz7jvp9Ws/ZWYulg6jte4c2DTWBAZjEnW+QvpqZI7yQ==
   dependencies:
     "@canvas-panel/core" "^0.2.0"
     "@fesk/bem-js" "1.0.1"
@@ -9967,7 +9982,7 @@ makeerror@1.0.x:
   dependencies:
     tmpl "1.0.x"
 
-manifesto.js@^4.0.0:
+manifesto.js@4.1.0, manifesto.js@^4.0.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/manifesto.js/-/manifesto.js-4.1.0.tgz#de57ad17f5923957c64f4352e95778f5ce137790"
   integrity sha512-E/qm2LiIxI2PZEVow6nJJrYjaAqpwJfLXhuwkWNXP/BEy70OhQIoVLvmWQMtKVsgEdCQC8NqbFZRPPdINfe5pQ==
@@ -12404,7 +12419,7 @@ react-focus-lock@^2.1.0:
     use-callback-ref "^1.2.1"
     use-sidecar "^1.0.1"
 
-react-functional-select@^2.3.4:
+react-functional-select@^2.3.5:
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/react-functional-select/-/react-functional-select-2.5.1.tgz#9d292e54c2631faa8164ffe4e4717aec53c44c72"
   integrity sha512-yUihrO0CLqX7OZmyp7ozM6kHvBoYSqssu7Z/P2pZi4Cn0WbpzuPC8h0Kk+2jg61ecVK29IPl6PpwEceMsN6UMw==
