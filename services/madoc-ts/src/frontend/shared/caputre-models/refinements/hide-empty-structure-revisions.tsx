@@ -12,7 +12,7 @@ const FilteredRevisionList: React.FC<RevisionListProps> = props => {
     [props.revisions]
   );
 
-  return <RevisionList model={props.model} {...props} revisions={filteredRevisions} />;
+  return <RevisionList {...props} revisions={filteredRevisions} />;
 };
 
 registerRefinement({
