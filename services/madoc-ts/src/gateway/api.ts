@@ -185,6 +185,10 @@ export class ApiClient {
     return response.data;
   }
 
+  getSiteSlug() {
+    return this.publicSiteSlug;
+  }
+
   async publicRequest<Return, Query = any, Body = any>(
     endpoint: string,
     query?: Query,
@@ -550,7 +554,14 @@ export class ApiClient {
   }
 
   // Tasks.
-  async getTaskById<Task extends BaseTask>(id: string, all = true, page?: number, assignee?: boolean) {
+  async getTaskById<Task extends BaseTask>(
+    id: string,
+    all = true,
+    status?: number,
+    type?: string,
+    page?: number,
+    assignee?: boolean
+  ) {
     return this.request<Task & { id: string }>(`/api/tasks/${id}?${stringify({ page, all, assignee })}`);
   }
 
