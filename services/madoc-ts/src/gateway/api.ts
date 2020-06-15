@@ -220,6 +220,12 @@ export class ApiClient {
     });
   }
 
+  async getStatistics() {
+    return this.request<{ collections: number; manifests: number; canvases: number; projects: number }>(
+      `/api/madoc/iiif/statistics`
+    );
+  }
+
   // Projects.
   async getProjects(page: number) {
     return this.request<any[]>(`/api/madoc/projects?page=${page}`);

@@ -51,6 +51,7 @@ import { siteTopic } from './routes/site/site-topic';
 import { siteTopicType } from './routes/site/site-topic-type';
 import { siteTopicTypes } from './routes/site/site-topic-types';
 import { createResourceClaim } from './routes/projects/create-resource-claim';
+import { statistics } from './routes/iiif/statistics';
 
 export const router = new TypedRouter({
   // Normal route
@@ -116,6 +117,9 @@ export const router = new TypedRouter({
   // Import API
   'import-manifest': [TypedRouter.POST, '/api/madoc/iiif/import/manifest', importManifest],
   'import-collection': [TypedRouter.POST, '/api/madoc/iiif/import/collection', importCollection],
+
+  // Stats.
+  'get-statistics': [TypedRouter.GET, '/api/madoc/iiif/statistics', statistics],
 
   // Projects
   'create-project': [TypedRouter.POST, '/api/madoc/projects', createNewProject],
