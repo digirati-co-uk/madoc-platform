@@ -27,6 +27,8 @@ FROM node:12-alpine
 
 WORKDIR /home/node/app
 
+RUN apk --no-cache add --virtual builds-deps build-base python
+
 RUN npm install -g pm2
 
 COPY --from=build /home/node/app/package.json /home/node/app/package.json
