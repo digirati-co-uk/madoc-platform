@@ -6,9 +6,8 @@ import { usePaginatedData } from '../../shared/hooks/use-data';
 import { Pagination as PaginationType } from '../../../types/schemas/_pagination';
 import { Pagination } from '../../shared/components/Pagination';
 import { Link } from 'react-router-dom';
-import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../shared/atoms/Table';
+import { TableContainer, TableRow, TableRowLabel } from '../../shared/atoms/Table';
 import { Status } from '../../shared/atoms/Status';
-import { TinyButton } from '../../shared/atoms/Button';
 import { useTranslation } from 'react-i18next';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 

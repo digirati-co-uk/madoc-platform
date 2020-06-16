@@ -146,7 +146,7 @@ async function ensureProjectTaskStructure(
     }>`select task_id, collection_id from iiif_project where site_id = ${siteId} and id = ${projectId}`
   );
 
-  const rootTask = await userApi.getTaskById(task_id, true, 0, true);
+  const rootTask = await userApi.getTaskById(task_id, true, 0, undefined, undefined, true);
 
   let parent = rootTask;
 
@@ -160,7 +160,7 @@ async function ensureProjectTaskStructure(
   if (claim.collectionId) {
     // 1. Search by subect + root.
     const foundCollectionTask = (parent.subtasks || []).find(
-      task => task.subject === `urn:madoc:collection:${claim.collectionId}`
+      (task: any) => task.subject === `urn:madoc:collection:${claim.collectionId}`
     );
 
     if (!foundCollectionTask) {
@@ -178,13 +178,13 @@ async function ensureProjectTaskStructure(
 
       parent = await userApi.addSubtasks<BaseTask & { id: string }>(task, parent.id);
     } else {
-      parent = await userApi.getTaskById(foundCollectionTask.id, true, 0, true);
+      parent = await userApi.getTaskById(foundCollectionTask.id, true, 0, undefined, undefined, true);
     }
   }
 
   if (claim.manifestId) {
     const foundManifestTask = (parent.subtasks || []).find(
-      task => task.subject === `urn:madoc:manifest:${claim.manifestId}`
+      (task: any) => task.subject === `urn:madoc:manifest:${claim.manifestId}`
     );
 
     if (!foundManifestTask) {
@@ -204,11 +204,13 @@ async function ensureProjectTaskStructure(
 
       parent = await userApi.addSubtasks<BaseTask & { id: string }>(task, parent.id);
     } else {
-      parent = await userApi.getTaskById(foundManifestTask.id, true, 0, true);
+      parent = await userApi.getTaskById(foundManifestTask.id, true, 0, undefined, undefined, true);
     }
   }
   if (claim.canvasId) {
-    const foundCanvasTask = (parent.subtasks || []).find(task => task.subject === `urn:madoc:canvas:${claim.canvasId}`);
+    const foundCanvasTask = (parent.subtasks || []).find(
+      (task: any) => task.subject === `urn:madoc:canvas:${claim.canvasId}`
+    );
 
     if (!foundCanvasTask) {
       const { canvas } = await userApi.getCanvasById(claim.canvasId);
@@ -227,7 +229,7 @@ async function ensureProjectTaskStructure(
 
       parent = await userApi.addSubtasks<BaseTask & { id: string }>(task, parent.id);
     } else {
-      parent = await userApi.getTaskById(foundCanvasTask.id, true, 0, true);
+      parent = await userApi.getTaskById(foundCanvasTask.id, true, 0, undefined, undefined, true);
     }
   }
 
