@@ -14,6 +14,7 @@ export type MetadataField = {
 
 export const setValueDotNotation = (property: any, key: string, setValue: (prop: any) => void) => {
   // @ts-ignore
+  // eslint-disable-next-line eqeqeq
   const properties = key ? key.split('.').map(r => (r == Number(r) ? Number(r) : r)) : [];
   for (let i = 0; i < properties.length; i++) {
     if (!property[properties[i]]) {

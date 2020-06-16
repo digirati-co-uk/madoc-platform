@@ -5,6 +5,7 @@ import { Button } from '../../shared/atoms/Button';
 import { MetadataDefinition } from '../../../types/schemas/metadata-definition';
 import { useTranslation } from 'react-i18next';
 import { ParsedMetadata } from '../../../utility/map-metadata-list';
+import { Heading3 } from '../../shared/atoms/Heading3';
 
 export const MetadataListItem: React.FC<{
   labelKey: string;
@@ -29,18 +30,77 @@ export const MetadataListItem: React.FC<{
 };
 
 export const MetadataSection: React.FC<{
+  sectionIndex: number;
   sectionKey: string;
   metadata: ParsedMetadata;
   onSaveField: MetadataEditorProps['onSave'];
   availableLanguages: string[];
-}> = ({ sectionKey, metadata, onSaveField, availableLanguages }) => {
+}> = ({ sectionKey, sectionIndex, metadata, onSaveField, availableLanguages }) => {
   const keys = Object.keys(metadata);
+  const [isRemoved, setIsRemoved] = useState(false);
+
+  const undoRemove = () => {
+    if (onSaveField) {
+      for (const itemId of keys) {
+        onSaveField({
+          items: [],
+          key: `${sectionKey}.${sectionIndex}.${itemId}`,
+          toInternationalString() {
+            return {}; // @todo figure out how to implement this part.
+          },
+          getDiff() {
+            return {
+              added: [],
+              modified: [],
+              removed: [],
+            };
+          },
+        });
+      }
+    }
+    setIsRemoved(false);
+  };
+
+  const removeAll = () => {
+    if (onSaveField) {
+      for (const itemId of keys) {
+        const item = metadata[itemId];
+        if (Array.isArray(item)) continue;
+
+        onSaveField({
+          items: [],
+          key: `${sectionKey}.${sectionIndex}.${itemId}`,
+          getDiff() {
+            return {
+              added: [],
+              modified: [],
+              removed: item.items.map(arr => {
+                return arr.id;
+              }),
+            };
+          },
+          toInternationalString() {
+            return {};
+          },
+        });
+      }
+      setIsRemoved(true);
+    }
+  };
+
+  if (isRemoved) {
+    return (
+      <div style={{ padding: '4em' }}>
+        Field removed, <Button onClick={undoRemove}>undo</Button>
+      </div>
+    );
+  }
 
   return (
     <div style={{ margin: 10, padding: 20 }}>
-      {keys.map((itemId, itemIndex) => {
+      {keys.map(itemId => {
         const item = metadata[itemId];
-        const itemKey = `${sectionKey}.${itemIndex}.${itemId}`;
+        const itemKey = `${sectionKey}.${sectionIndex}.${itemId}`;
         if (Array.isArray(item)) {
           return null; // not supported.
         }
@@ -56,6 +116,57 @@ export const MetadataSection: React.FC<{
           />
         );
       })}
+      <button onClick={removeAll}>Remove</button>
+    </div>
+  );
+};
+
+export const MetadataSectionEditor: React.FC<{
+  itemId: string;
+  item: ParsedMetadata[];
+  onSaveField: MetadataEditorProps['onSave'];
+  availableLanguages: string[];
+}> = ({ itemId, item, onSaveField, availableLanguages }) => {
+  const [newSections, setNewSections] = useState<ParsedMetadata[]>([]);
+
+  const addNewSection = () => {
+    setNewSections(sections => [
+      ...sections,
+      {
+        label: { type: 'values', items: [] },
+        value: { type: 'values', items: [] },
+      },
+    ]);
+  };
+
+  return (
+    <div style={{ marginBottom: 20, border: '2px solid #ddd', padding: 10 }}>
+      <Heading3 style={{ marginLeft: 20 }}>{itemId}</Heading3>
+      {item.map((section, key) => {
+        return (
+          <MetadataSection
+            sectionIndex={key}
+            metadata={section}
+            key={key}
+            sectionKey={itemId}
+            onSaveField={onSaveField}
+            availableLanguages={availableLanguages}
+          />
+        );
+      })}
+      {newSections.map((section, key) => {
+        return (
+          <MetadataSection
+            sectionIndex={key + item.length}
+            metadata={section}
+            key={key}
+            sectionKey={itemId}
+            onSaveField={onSaveField}
+            availableLanguages={availableLanguages}
+          />
+        );
+      })}
+      <Button onClick={addNewSection}>Add new {itemId} field</Button>
     </div>
   );
 };
@@ -109,24 +220,17 @@ export const MetadataListEditor: React.FC<{
 
   return (
     <>
+      <pre>{JSON.stringify(metadataMap, null, 2)}</pre>
       {metadataKeys.map(itemId => {
         const item = metadata[itemId];
         if (Array.isArray(item)) {
           return (
-            <div style={{ marginLeft: 10, border: '2px solid #ddd', padding: 20 }}>
-              <h4>{itemId}</h4>
-              {item.map((section, key) => {
-                return (
-                  <MetadataSection
-                    metadata={section}
-                    key={key}
-                    sectionKey={itemId}
-                    onSaveField={onSaveField}
-                    availableLanguages={availableLanguages}
-                  />
-                );
-              })}
-            </div>
+            <MetadataSectionEditor
+              availableLanguages={availableLanguages}
+              item={item}
+              itemId={itemId}
+              onSaveField={onSaveField}
+            />
           );
         }
         return (
