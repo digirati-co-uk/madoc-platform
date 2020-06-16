@@ -409,6 +409,12 @@ export class ApiClient {
     return this.request<ManifestFull>(`/api/madoc/iiif/manifests/${id}${page ? `?page=${page}` : ''}`);
   }
 
+  async getManifestCollections(id: number, query?: { project_id?: number }) {
+    return this.request<{ collections: number[] }>(
+      `/api/madoc/iiif/manifests/${id}/collections${query ? `?${stringify(query)}` : ''}`
+    );
+  }
+
   async getCollectionMetadata(id: number) {
     return this.request<GetMetadata>(`/api/madoc/iiif/collections/${id}/metadata`);
   }
@@ -469,6 +475,12 @@ export class ApiClient {
   }
   async getCanvasById(id: number) {
     return this.request<CanvasFull>(`/api/madoc/iiif/canvases/${id}`);
+  }
+
+  async getCanvasManifests(id: number, query?: { project_id?: number }) {
+    return this.request<{ manifests: number[] }>(
+      `/api/madoc/iiif/canvases/${id}/manifests${query ? `?${stringify(query)}` : ''}`
+    );
   }
 
   // Capture model API.
