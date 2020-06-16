@@ -376,7 +376,9 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
   console.log({ existingClaim });
   if (existingClaim) {
     // @todo is there more to a claim.
-    context.response.body = { claim: await userApi.getTaskById(existingClaim.id as string, true, 0, true) };
+    context.response.body = {
+      claim: await userApi.getTaskById(existingClaim.id as string, true, 0, undefined, undefined, true),
+    };
     return;
   }
 
