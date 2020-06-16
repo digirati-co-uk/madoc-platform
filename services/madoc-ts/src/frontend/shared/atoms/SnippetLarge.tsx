@@ -86,6 +86,7 @@ const SnippetSubtitle = styled.div`
 
 const SnippetSummary = styled.div`
   font-size: 0.8em;
+  margin-bottom: 0.8em;
 `;
 
 const SnippetButton = styled.a<{ button?: boolean }>`
