@@ -355,11 +355,38 @@ async function createUserCrowdsourcingTask(
   return userApi.addSubtasks(task, parentTaskId);
 }
 
+async function getCanonicalClaim(
+  resourceClaim: ResourceClaim,
+  siteId: number,
+  projectId: number,
+  userId: number
+): Promise<ResourceClaim> {
+  const userApi = api.asUser({ userId, siteId });
+
+  if (resourceClaim.canvasId && !resourceClaim.manifestId) {
+    const { manifests } = await userApi.getCanvasManifests(resourceClaim.canvasId, { project_id: projectId });
+
+    if (manifests.length === 1) {
+      resourceClaim.manifestId = manifests[0];
+    }
+  }
+
+  if (resourceClaim.manifestId && !resourceClaim.collectionId) {
+    const { collections } = await userApi.getManifestCollections(resourceClaim.manifestId, { project_id: projectId });
+
+    if (collections.length === 1) {
+      resourceClaim.collectionId = collections[0];
+    }
+  }
+
+  return resourceClaim;
+}
+
 export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim> = async context => {
   const { id, name, siteId, siteUrn } = userWithScope(context, ['models.contribute']);
   // Get the params.
   const projectId = Number(context.params.id);
-  const claim = context.requestBody;
+  const claim = await getCanonicalClaim(context.requestBody, siteId, projectId, id);
   const userApi = api.asUser({ userId: id, siteId });
 
   const isInProject = await verifyResourceInProject(context, siteId, projectId, id, claim);
@@ -373,7 +400,7 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
 
   // Check for existing claim
   const existingClaim = await getTaskFromClaim(context, siteUrn, projectId, id, parent, claim);
-  console.log({ existingClaim });
+
   if (existingClaim) {
     // @todo is there more to a claim.
     context.response.body = {

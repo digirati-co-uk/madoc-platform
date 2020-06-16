@@ -52,6 +52,8 @@ import { siteTopicType } from './routes/site/site-topic-type';
 import { siteTopicTypes } from './routes/site/site-topic-types';
 import { createResourceClaim } from './routes/projects/create-resource-claim';
 import { statistics } from './routes/iiif/statistics';
+import { getCanvasManifests } from './routes/iiif/canvases/get-canvas-manifests';
+import { getManifestCollections } from './routes/iiif/manifests/get-manifest-collections';
 
 export const router = new TypedRouter({
   // Normal route
@@ -105,6 +107,7 @@ export const router = new TypedRouter({
     updateManifestStructure,
     'UpdateStructureList',
   ],
+  'get-manifest-collections': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/collections', getManifestCollections],
   'get-manifest-autocomplete': [TypedRouter.GET, '/api/madoc/iiif/autocomplete/manifests', getManifestAutocomplete],
 
   // Canvas API
@@ -113,9 +116,10 @@ export const router = new TypedRouter({
   'create-canvas': [TypedRouter.POST, '/api/madoc/iiif/canvases', createCanvas],
   'get-canvas-metadata': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/metadata', getCanvasMetadata],
   'put-canvas-metadata': [TypedRouter.PUT, '/api/madoc/iiif/canvases/:id/metadata', updateMetadata, 'MetadataUpdate'],
+  'get-canvas-manifests': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/manifests', getCanvasManifests],
 
   // Import API
-  'import-manifest': [TypedRouter.POST, '/api/madoc/iiif/import/manifest', importManifest],
+  'import-manifest': [TypedRouter.POST, '/api/madoc/iiif/import/manifest' + '', importManifest],
   'import-collection': [TypedRouter.POST, '/api/madoc/iiif/import/collection', importCollection],
 
   // Stats.
