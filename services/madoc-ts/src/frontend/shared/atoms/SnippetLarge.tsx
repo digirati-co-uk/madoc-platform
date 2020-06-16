@@ -89,7 +89,7 @@ const SnippetSummary = styled.div`
   margin-bottom: 0.8em;
 `;
 
-const SnippetButton = styled.a<{ button?: boolean }>`
+const SnippetButton = styled.a<{ role?: string }>`
   margin-top: auto;
   margin-right: auto;
   display: inline-block;
@@ -100,7 +100,7 @@ const SnippetButton = styled.a<{ button?: boolean }>`
   text-decoration: none;
   color: #3773db;
   ${props =>
-    props.button &&
+    props.role === 'button' &&
     css`
       padding: 0.4em 0.8em;
       background: #ecf0ff;
@@ -123,7 +123,7 @@ export const SnippetLarge: React.FC<SnippetLargeProps> = props => {
         <SnippetLabel>{props.label}</SnippetLabel>
         <SnippetSubtitle>{props.subtitle}</SnippetSubtitle>
         {!props.portrait ? <SnippetSummary>{props.summary}</SnippetSummary> : null}
-        <SnippetButton as={props.linkAs} button={!props.portrait} href={props.link}>
+        <SnippetButton as={props.linkAs} role={props.portrait ? 'link' : 'button'} href={props.link}>
           {props.buttonText}
         </SnippetButton>
       </SnippetMetadata>

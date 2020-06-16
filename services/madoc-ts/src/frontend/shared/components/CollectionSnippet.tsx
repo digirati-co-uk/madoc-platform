@@ -8,13 +8,23 @@ import { HrefLink } from '../utility/href-link';
 export const CollectionSnippet: React.FC<{ id: number }> = props => {
   const api = useApi();
 
-  const { data } = useQuery(
+  const { data, failureCount } = useQuery(
     ['collection', { id: props.id }],
     () => {
       return api.getCollectionById(props.id);
     },
-    { refetchInterval: false, refetchOnWindowFocus: false, refetchOnMount: false, refetchIntervalInBackground: false }
+    {
+      refetchInterval: false,
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      refetchIntervalInBackground: false,
+      retry: false,
+    }
   );
+
+  if (failureCount) {
+    return null;
+  }
 
   if (!data) {
     return (
