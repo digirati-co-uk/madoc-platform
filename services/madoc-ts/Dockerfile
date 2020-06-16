@@ -23,11 +23,9 @@ COPY --from=build /home/node/app/yarn.lock /home/node/app/yarn.lock
 
 RUN yarn install --no-interactive --frozen-lockfile --production=true
 
-FROM node:12-alpine
+FROM node:12
 
 WORKDIR /home/node/app
-
-RUN apk --no-cache add --virtual builds-deps build-base python
 
 RUN npm install -g pm2
 
