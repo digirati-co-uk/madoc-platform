@@ -43,13 +43,13 @@ export const getAllTasks: RouteMiddleware = async context => {
       tasks: taskList,
       pagination: {
         page,
-        total_results: rowCount,
-        total_pages: Math.ceil(rowCount / perPage),
+        totalResults: rowCount,
+        totalPages: Math.ceil(rowCount / perPage),
       },
     };
   } catch (e) {
     if (e instanceof NotFoundError) {
-      context.response.body = [];
+      context.response.body = { tasks: [], pagination: { page: 1, totalPages: 1, totalResults: 0 } };
     } else {
       throw e;
     }

@@ -26,6 +26,8 @@ import { Pagination } from '../types/schemas/_pagination';
 import { CrowdsourcingTask } from '../types/tasks/crowdsourcing-task';
 import { ResourceClaim } from '../routes/projects/create-resource-claim';
 import { RevisionRequest } from '@capture-models/types';
+import { ProjectList } from '../types/schemas/project-list';
+import { ProjectListItem } from '../types/schemas/project-list-item';
 
 export class ApiClient {
   private readonly gateway: string;
@@ -183,6 +185,10 @@ export class ApiClient {
     return response.data;
   }
 
+  getSiteSlug() {
+    return this.publicSiteSlug;
+  }
+
   async publicRequest<Return, Query = any, Body = any>(
     endpoint: string,
     query?: Query,
@@ -227,12 +233,12 @@ export class ApiClient {
   }
 
   // Projects.
-  async getProjects(page: number) {
-    return this.request<any[]>(`/api/madoc/projects?page=${page}`);
+  async getProjects(page?: number) {
+    return this.request<ProjectList>(`/api/madoc/projects?page=${page || 0}`);
   }
 
   async getProject(id: number | string) {
-    return this.request<any>(`/api/madoc/projects/${id}`);
+    return this.request<ProjectListItem>(`/api/madoc/projects/${id}`);
   }
 
   async getProjectMetadata(id: number) {
@@ -548,7 +554,14 @@ export class ApiClient {
   }
 
   // Tasks.
-  async getTaskById<Task extends BaseTask>(id: string, all = true, page?: number, assignee?: boolean) {
+  async getTaskById<Task extends BaseTask>(
+    id: string,
+    all = true,
+    status?: number,
+    type?: string,
+    page?: number,
+    assignee?: boolean
+  ) {
     return this.request<Task & { id: string }>(`/api/tasks/${id}?${stringify({ page, all, assignee })}`);
   }
 
@@ -574,7 +587,10 @@ export class ApiClient {
     });
   }
 
-  async getTasks(page?: number, query: { all?: boolean; status?: number; subject?: string; type?: string } = {}) {
+  async getTasks(
+    page?: number,
+    query: { all?: boolean; all_tasks?: boolean; status?: number; subject?: string; type?: string } = {}
+  ) {
     return this.request<{ tasks: BaseTask[]; pagination: Pagination }>(`/api/tasks?${stringify({ page, ...query })}`);
   }
 

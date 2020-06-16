@@ -14,10 +14,18 @@ export const setJwt: RouteMiddleware<{ slug?: string }> = async (context, next) 
     // This indicates that the application has authenticated the user, but not yet assigned permissions.
     const user = context.state.authenticatedUser;
 
-    const { lastToken, cookiesToAdd } = await getJwtCookies(context, user);
+    const { lastToken, cookiesToAdd, siteIds } = await getJwtCookies(context, user);
 
     for (const cookie of cookiesToAdd) {
       context.cookies.set(cookie.name, cookie.value, cookie.options);
+    }
+
+    if (siteIds) {
+      context.cookies.set('madoc-sites', siteIds.join(','), {
+        overwrite: true,
+        signed: true,
+        httpOnly: false,
+      });
     }
 
     if (lastToken) {

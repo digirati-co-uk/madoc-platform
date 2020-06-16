@@ -10,8 +10,10 @@ import { LocaleString } from '../../../shared/components/LocaleString';
 import { Status } from '../../../shared/atoms/Status';
 import { Heading3 } from '../../../shared/atoms/Heading3';
 import { queryCache } from 'react-query';
+import '@capture-models/editor/lib/input-types/TextField';
+import '@capture-models/editor/lib/input-types/HTMLField';
 
-export const ViewCrowdsourcingTask: React.FC<{ task: CrowdsourcingTask }> = ({ task }) => {
+const ViewCrowdsourcingTask: React.FC<{ task: CrowdsourcingTask }> = ({ task }) => {
   const api = useApi();
 
   const { data: captureModel, refetch } = useQuery(
@@ -110,3 +112,5 @@ export const ViewCrowdsourcingTask: React.FC<{ task: CrowdsourcingTask }> = ({ t
     </div>
   );
 };
+
+export default ViewCrowdsourcingTask;

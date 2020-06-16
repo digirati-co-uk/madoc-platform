@@ -137,7 +137,7 @@ async function ensureProjectTaskStructure(
   userId: number,
   claim: ResourceClaim
 ): Promise<(CrowdsourcingCollectionTask | CrowdsourcingManifestTask | CrowdsourcingCanvasTask) & { id: string }> {
-  const userApi = api.asUser({ userId, siteId });
+  const userApi = api.asUser({ siteId });
   // Get top level project task.
   const { task_id } = await context.connection.one(
     sql<{
@@ -146,7 +146,7 @@ async function ensureProjectTaskStructure(
     }>`select task_id, collection_id from iiif_project where site_id = ${siteId} and id = ${projectId}`
   );
 
-  const rootTask = await userApi.getTaskById(task_id, true, 0, true);
+  const rootTask = await userApi.getTaskById(task_id, true, 0, undefined, undefined, true);
 
   let parent = rootTask;
 
@@ -160,7 +160,7 @@ async function ensureProjectTaskStructure(
   if (claim.collectionId) {
     // 1. Search by subect + root.
     const foundCollectionTask = (parent.subtasks || []).find(
-      task => task.subject === `urn:madoc:collection:${claim.collectionId}`
+      (task: any) => task.subject === `urn:madoc:collection:${claim.collectionId}`
     );
 
     if (!foundCollectionTask) {
@@ -178,13 +178,13 @@ async function ensureProjectTaskStructure(
 
       parent = await userApi.addSubtasks<BaseTask & { id: string }>(task, parent.id);
     } else {
-      parent = await userApi.getTaskById(foundCollectionTask.id, true, 0, true);
+      parent = await userApi.getTaskById(foundCollectionTask.id, true, 0, undefined, undefined, true);
     }
   }
 
   if (claim.manifestId) {
     const foundManifestTask = (parent.subtasks || []).find(
-      task => task.subject === `urn:madoc:manifest:${claim.manifestId}`
+      (task: any) => task.subject === `urn:madoc:manifest:${claim.manifestId}`
     );
 
     if (!foundManifestTask) {
@@ -204,11 +204,13 @@ async function ensureProjectTaskStructure(
 
       parent = await userApi.addSubtasks<BaseTask & { id: string }>(task, parent.id);
     } else {
-      parent = await userApi.getTaskById(foundManifestTask.id, true, 0, true);
+      parent = await userApi.getTaskById(foundManifestTask.id, true, 0, undefined, undefined, true);
     }
   }
   if (claim.canvasId) {
-    const foundCanvasTask = (parent.subtasks || []).find(task => task.subject === `urn:madoc:canvas:${claim.canvasId}`);
+    const foundCanvasTask = (parent.subtasks || []).find(
+      (task: any) => task.subject === `urn:madoc:canvas:${claim.canvasId}`
+    );
 
     if (!foundCanvasTask) {
       const { canvas } = await userApi.getCanvasById(claim.canvasId);
@@ -227,7 +229,7 @@ async function ensureProjectTaskStructure(
 
       parent = await userApi.addSubtasks<BaseTask & { id: string }>(task, parent.id);
     } else {
-      parent = await userApi.getTaskById(foundCanvasTask.id, true, 0, true);
+      parent = await userApi.getTaskById(foundCanvasTask.id, true, 0, undefined, undefined, true);
     }
   }
 
@@ -243,7 +245,6 @@ async function getTaskFromClaim(
   parent: CrowdsourcingCollectionTask | CrowdsourcingManifestTask | CrowdsourcingCanvasTask,
   claim: ResourceClaim
 ): Promise<BaseTask | undefined> {
-
   console.log(JSON.stringify(parent, null, 2));
 
   if (!parent.subtasks || parent.subtasks.length === 0) {
@@ -375,7 +376,9 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
   console.log({ existingClaim });
   if (existingClaim) {
     // @todo is there more to a claim.
-    context.response.body = { claim: await userApi.getTaskById(existingClaim.id as string, true, 0, true) };
+    context.response.body = {
+      claim: await userApi.getTaskById(existingClaim.id as string, true, 0, undefined, undefined, true),
+    };
     return;
   }
 

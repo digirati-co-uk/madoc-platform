@@ -9,6 +9,7 @@ export async function getJwtCookies(context: ApplicationContext, user: Authentic
   let siteToken;
   const expiresIn = context.externalConfig.tokenExpires || 24 * 60 * 60 * 7; // 7-day token.
   const cookieName = context.externalConfig.cookieName || 'madoc';
+  const siteIds: string[] = [];
   // Loop all of the sites the user is to be logged into.
   for (const site of user.sites) {
     // Find the scopes for this site and user with this role.
@@ -28,6 +29,8 @@ export async function getJwtCookies(context: ApplicationContext, user: Authentic
       console.log(`Unable to generate token for user ${user.name} (id: ${user.id})`);
       return { lastToken: undefined, cookiesToAdd: [] };
     }
+
+    siteIds.push(site.slug);
 
     cookiesToAdd.push({
       name: `${cookieName}/${site.slug}`,
@@ -49,8 +52,8 @@ export async function getJwtCookies(context: ApplicationContext, user: Authentic
   }
 
   if (siteToken) {
-    return { lastToken: siteToken, cookiesToAdd };
+    return { lastToken: siteToken, cookiesToAdd, siteIds };
   }
 
-  return { lastToken, cookiesToAdd };
+  return { lastToken, cookiesToAdd, siteIds };
 }

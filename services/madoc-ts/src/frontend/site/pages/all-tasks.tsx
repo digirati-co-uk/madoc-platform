@@ -6,17 +6,23 @@ import { usePaginatedData } from '../../shared/hooks/use-data';
 import { Pagination as PaginationType } from '../../../types/schemas/_pagination';
 import { Pagination } from '../../shared/components/Pagination';
 import { Link } from 'react-router-dom';
+import { TableContainer, TableRow, TableRowLabel } from '../../shared/atoms/Table';
+import { Status } from '../../shared/atoms/Status';
+import { useTranslation } from 'react-i18next';
+import { useLocationQuery } from '../../shared/hooks/use-location-query';
 
 type AllTasksType = {
   query: { page: string };
-  variables: { page: number };
+  variables: { page: number; query: { type?: string } };
   params: {};
   data: { tasks: BaseTask[]; pagination: PaginationType };
 };
 
 export const AllTasks: UniversalComponent<AllTasksType> = createUniversalComponent<AllTasksType>(
   () => {
+    const { page: _, ...query } = useLocationQuery();
     const { resolvedData: data, latestData } = usePaginatedData(AllTasks);
+    const { t } = useTranslation();
 
     if (!data) {
       return <>Loading...</>;
@@ -25,16 +31,28 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
     return (
       <>
         <h1>All tasks</h1>
-
-        {data.tasks.map(task => {
-          return (
-            <div key={task.id}>
-              <Link to={`/tasks/${task.id}`}>{task.name}</Link>
-            </div>
-          );
-        })}
+        <Pagination
+          extraQuery={query}
+          page={latestData ? latestData.pagination.page : 1}
+          totalPages={latestData ? latestData.pagination.totalPages : 1}
+          stale={!latestData}
+        />
+        <hr />
+        <TableContainer>
+          {(data.tasks || []).map(subtask => (
+            <TableRow key={subtask.id}>
+              <TableRowLabel>
+                <Status status={subtask.status || 0} text={t(subtask.status_text || 'unknown')} />
+              </TableRowLabel>
+              <TableRowLabel>
+                <Link to={`/tasks/${subtask.id}`}>{subtask.name}</Link>
+              </TableRowLabel>
+            </TableRow>
+          ))}
+        </TableContainer>
 
         <Pagination
+          extraQuery={query}
           page={latestData ? latestData.pagination.page : 1}
           totalPages={latestData ? latestData.pagination.totalPages : 1}
           stale={!latestData}
@@ -43,11 +61,11 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
     );
   },
   {
-    getKey: (params, query) => {
-      return ['all-tasks', { page: Number(query.page) || 1 }];
+    getKey: (params, { page = '1', ...query }) => {
+      return ['all-tasks', { page: Number(page) || 1, query }];
     },
     getData: (key, vars, api) => {
-      return api.getTasks(vars.page);
+      return api.getTasks(vars.page, { all_tasks: true, ...vars.query });
     },
   }
 );

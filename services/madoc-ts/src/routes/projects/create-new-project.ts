@@ -4,6 +4,7 @@ import { userWithScope } from '../../utility/user-with-scope';
 import { sql } from 'slonik';
 import { CreateProject } from '../../types/schemas/create-project';
 import { InternationalString } from '@hyperion-framework/types';
+import { ConflictError } from '../../utility/errors/conflict';
 
 const firstLang = (field: InternationalString) => {
   const keys = Object.keys(field);
@@ -14,6 +15,15 @@ export const createNewProject: RouteMiddleware<{}, CreateProject> = async contex
   const { siteId, id } = userWithScope(context, ['site.admin']);
   const userApi = api.asUser({ userId: id, siteId });
   const { label, slug, summary } = context.requestBody;
+
+  // 0 Check if slug exists.
+  const { rowCount } = await context.connection.query(
+    sql`select * from iiif_project where site_id = ${siteId} and slug = ${slug}`
+  );
+
+  if (rowCount) {
+    throw new ConflictError('Slug is already used.');
+  }
 
   // 1. Create collection [flat]
   const collection = await userApi.createCollection(

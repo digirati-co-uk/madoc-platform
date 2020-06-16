@@ -31,14 +31,14 @@ export async function getTask(
 
   const offset = (page - 1) * perPage;
   const subtaskPagination = all ? sql`` : sql`limit ${perPage} offset ${offset}`;
-  const statusQuery = typeof status !== 'undefined' ? sql`and status = ${status}` : sql``;
+  const statusQuery = typeof status !== 'undefined' ? sql`and t.status = ${status}` : sql``;
 
   const fullTaskList = sql`
       select *
-      from tasks
-      where context ?& ${sql.array(context, 'text')}
+      from tasks t
+      where t.context ?& ${sql.array(context, 'text')}
         ${userCheck}
-        and (id = ${id} or (parent_task = ${id} ${statusQuery})) order by created_at
+        and (t.id = ${id} or (t.parent_task = ${id} ${statusQuery})) order by t.created_at
     `;
 
   const { rowCount } = await connection.query(fullTaskList);
