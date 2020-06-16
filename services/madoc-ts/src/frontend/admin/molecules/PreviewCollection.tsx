@@ -19,6 +19,7 @@ export const PreviewCollection: React.FC<{
   const { t } = useTranslation();
   const [currentManifest, setCurrentManifest] = useState<string>();
   const [excludedManifests, setExcludedManifests] = useState<string[]>([]);
+  const excludeEnabled = false; // @todo enable
 
   useVaultEffect(
     vault => {
@@ -75,18 +76,23 @@ export const PreviewCollection: React.FC<{
                 <LocaleString>{manifest.label || { none: ['Untitled manifest'] }}</LocaleString>
               </TableRowLabel>
               <TableActions>
-                {excludedManifests.indexOf(manifest.id) !== -1 ? (
-                  <TinyButton
-                    disabled={props.disabled}
-                    onClick={() => setExcludedManifests(m => m.filter(id => id !== manifest.id))}
-                  >
-                    {t('add to import')}
-                  </TinyButton>
-                ) : (
-                  <TinyButton disabled={props.disabled} onClick={() => setExcludedManifests(m => [...m, manifest.id])}>
-                    {t('exclude')}
-                  </TinyButton>
-                )}
+                {excludeEnabled ? (
+                  excludedManifests.indexOf(manifest.id) !== -1 ? (
+                    <TinyButton
+                      disabled={props.disabled}
+                      onClick={() => setExcludedManifests(m => m.filter(id => id !== manifest.id))}
+                    >
+                      {t('add to import')}
+                    </TinyButton>
+                  ) : (
+                    <TinyButton
+                      disabled={props.disabled}
+                      onClick={() => setExcludedManifests(m => [...m, manifest.id])}
+                    >
+                      {t('exclude')}
+                    </TinyButton>
+                  )
+                ) : null}
                 <TinyButton
                   disabled={props.disabled}
                   style={{ marginLeft: 10 }}
