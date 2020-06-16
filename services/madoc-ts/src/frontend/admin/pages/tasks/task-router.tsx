@@ -18,12 +18,12 @@ type TaskRouterType = {
   variables: { id: string; page: number };
 };
 
-function renderTask({ task }: TaskRouterType['data']) {
+function renderTask({ task }: TaskRouterType['data'], statusBar?: JSX.Element) {
   switch (task.type) {
     case 'madoc-manifest-import':
-      return <ManifestImportTask task={task as ImportManifestTask} />;
+      return <ManifestImportTask task={task as ImportManifestTask} statusBar={statusBar} />;
     case 'madoc-collection-import':
-      return <CollectionImportTask task={task as ImportManifestTask} />;
+      return <CollectionImportTask task={task as ImportManifestTask} statusBar={statusBar} />;
   }
 
   return (
@@ -56,14 +56,18 @@ export const TaskRouter: UniversalComponent<TaskRouterType> = createUniversalCom
           subtitle={data.task.description}
         />
         <WidePage>
-          {data.task ? (
-            <SubtaskProgress
-              total={(data.task.subtasks || []).length}
-              done={(data.task.subtasks || []).filter(e => e.status === 3).length}
-              progress={(data.task.subtasks || []).filter(e => e.status === 2).length}
-            />
-          ) : null}
-          {renderTask(data)}
+          {renderTask(
+            data,
+            data.task ? (
+              <SubtaskProgress
+                total={(data.task.subtasks || []).length}
+                done={(data.task.subtasks || []).filter(e => e.status === 3).length}
+                progress={(data.task.subtasks || []).filter(e => e.status === 2).length}
+              />
+            ) : (
+              <React.Fragment />
+            )
+          )}
         </WidePage>
       </>
     );

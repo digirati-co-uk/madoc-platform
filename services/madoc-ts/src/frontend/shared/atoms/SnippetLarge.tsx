@@ -62,6 +62,7 @@ const SnippetThumbnailContainer = styled.div<{ portrait?: boolean }>`
           height: 100px;
           width: 100px;
           margin-right: 15px;
+          min-width: 100px;
         `}
 `;
 

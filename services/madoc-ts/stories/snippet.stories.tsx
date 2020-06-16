@@ -97,3 +97,34 @@ export const portraitSnippetNoThumbnail = () => {
     </StorybookPaddedBox>
   );
 };
+
+export const portraitSnippetLong = () => {
+  return (
+    <StorybookPaddedBox>
+      <SnippetLarge
+        portrait
+        label="Hospital Saturday Fund : [fold-out presentation album of T. Stevens and W.H. Grant's 14 street collection flags from between 1886 to 1897 with a 1996 congratulatory telegram from Mr. and Mrs. Eusden and their business card]."
+        subtitle="Manifest with 26 items"
+        summary="Summary of manifest if there is one"
+        thumbnail="https://dlcs.io/thumbs/wellcome/5/B28636491_0001.JP2/full/200,80/0/default.jpg"
+        link="#"
+        buttonText="view manifest"
+      />
+    </StorybookPaddedBox>
+  );
+};
+
+export const landscapeSnippetLong = () => {
+  return (
+    <StorybookPaddedBox>
+      <SnippetLarge
+        label="Hospital Saturday Fund : [fold-out presentation album of T. Stevens and W.H. Grant's 14 street collection flags from between 1886 to 1897 with a 1996 congratulatory telegram from Mr. and Mrs. Eusden and their business card]."
+        subtitle="Manifest with 26 items"
+        summary="Summary of manifest if there is one"
+        thumbnail="https://dlcs.io/thumbs/wellcome/5/B28636491_0001.JP2/full/200,80/0/default.jpg"
+        link="#"
+        buttonText="view manifest"
+      />
+    </StorybookPaddedBox>
+  );
+};

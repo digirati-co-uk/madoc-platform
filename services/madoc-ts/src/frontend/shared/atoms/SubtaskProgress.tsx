@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import React from 'react';
 
 const SubtaskProgressContainer = styled.div`
-  width: 100%;
   margin: 0.5em;
   height: 6px;
   background: #ddd;
