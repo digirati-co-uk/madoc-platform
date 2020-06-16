@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { CrowdsourcingTask } from '../../../../../types/tasks/crowdsourcing-task';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useQuery } from 'react-query';
+import { SubjectSnippet } from '../../../../shared/components/SubjectSnippet';
 
 type ProjectTasksType = {
   params: { id: number; taskId?: string };
@@ -59,6 +60,7 @@ export const ProjectTasks: UniversalComponent<ProjectTasksType> = createUniversa
       <div>
         {task.parent_task ? <Link to={`/projects/${project.id}/tasks/${task.parent_task}`}>Back</Link> : null}
         <h2>{task.name}</h2>
+        <SubjectSnippet subject={task.subject} />
         {(task.subtasks || []).map(subtask => (
           <TableRow key={subtask.id}>
             <TableRowLabel>
