@@ -104,7 +104,10 @@ async function verifyResourceInProject(
     );
 
     if (!rowCount) {
-      throw new Error(`Collection ${claim.collectionId} is not in Project ${projectId}`);
+      if (!claim.manifestId && !claim.canvasId) {
+        throw new Error(`Collection ${claim.collectionId} is not in Project ${projectId}`);
+      }
+      claim.collectionId = undefined;
     }
   }
 
