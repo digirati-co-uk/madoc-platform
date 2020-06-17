@@ -6,31 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { AdminHeader } from '../molecules/AdminHeader';
 import { WidePage } from '../../shared/atoms/WidePage';
 import { createUniversalComponent } from '../../shared/utility/create-universal-component';
-import { useData, useStaticData } from '../../shared/hooks/use-data';
-
-const StatisticLabel = styled.div`
-  color: #333;
-  font-size: 0.9em;
-`;
-
-const StatisticNumber = styled.div`
-  font-size: 3em;
-  color: #000;
-`;
-
-const Statistic = styled.div`
-  margin: 2em;
-  text-align: center;
-`;
-
-const StatisticContainer = styled.div`
-  display: flex;
-  margin: 0 auto;
-  width: auto;
-  align-items: center;
-  justify-content: center;
-  padding: 2em;
-`;
+import { useStaticData } from '../../shared/hooks/use-data';
+import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../shared/atoms/Statistics';
 
 const AdminSection = styled.div`
   width: 25%;
