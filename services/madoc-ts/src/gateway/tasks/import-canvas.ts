@@ -27,6 +27,7 @@ export interface ImportCanvasTask extends BaseTask {
     errorMessage?: string;
     isDuplicate?: boolean;
     canvasOrder?: number;
+    resourceId?: number;
   };
 }
 

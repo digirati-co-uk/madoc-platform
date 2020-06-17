@@ -10,6 +10,9 @@ import { useTranslation } from 'react-i18next';
 import { SubtaskProgress } from '../../../shared/atoms/SubtaskProgress';
 import { usePaginatedData } from '../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
+import { CanvasSnippet } from '../../../shared/components/CanvasSnippet';
+import { Link } from 'react-router-dom';
+import { SmallButton } from '../../../shared/atoms/Button';
 
 type TaskRouterType = {
   query: { page: number };
@@ -18,12 +21,23 @@ type TaskRouterType = {
   variables: { id: string; page: number };
 };
 
-function renderTask({ task }: TaskRouterType['data']) {
+function renderTask({ task }: TaskRouterType['data'], statusBar?: JSX.Element) {
   switch (task.type) {
     case 'madoc-manifest-import':
-      return <ManifestImportTask task={task as ImportManifestTask} />;
+      return <ManifestImportTask task={task as ImportManifestTask} statusBar={statusBar} />;
     case 'madoc-collection-import':
-      return <CollectionImportTask task={task as ImportManifestTask} />;
+      return <CollectionImportTask task={task as ImportManifestTask} statusBar={statusBar} />;
+    case 'madoc-canvas-import': {
+      const resourceId: number | undefined = task.state && task.state.resourceId ? task.state.resourceId : undefined;
+      if (resourceId) {
+        return (
+          <div>
+            <CanvasSnippet id={resourceId} />
+          </div>
+        );
+      }
+      break;
+    }
   }
 
   return (
@@ -56,14 +70,25 @@ export const TaskRouter: UniversalComponent<TaskRouterType> = createUniversalCom
           subtitle={data.task.description}
         />
         <WidePage>
-          {data.task ? (
-            <SubtaskProgress
-              total={(data.task.subtasks || []).length}
-              done={(data.task.subtasks || []).filter(e => e.status === 3).length}
-              progress={(data.task.subtasks || []).filter(e => e.status === 2).length}
-            />
+          {data.task.parent_task ? (
+            <div>
+              <SmallButton as={Link} to={`/tasks/${data.task.parent_task}`}>
+                Back to parent task
+              </SmallButton>
+            </div>
           ) : null}
-          {renderTask(data)}
+          {renderTask(
+            data,
+            data.task ? (
+              <SubtaskProgress
+                total={(data.task.subtasks || []).length}
+                done={(data.task.subtasks || []).filter(e => e.status === 3).length}
+                progress={(data.task.subtasks || []).filter(e => e.status === 2).length}
+              />
+            ) : (
+              <React.Fragment />
+            )
+          )}
         </WidePage>
       </>
     );
