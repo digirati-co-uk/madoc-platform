@@ -32,6 +32,7 @@ import { CaptureModelList } from './pages/crowdsourcing/capture-models/capture-m
 import { CaptureModels } from './pages/crowdsourcing/capture-models/capture-models';
 import { ViewCaptureModel } from './pages/crowdsourcing/capture-models/view-capture-model';
 import { ProjectTasks } from './pages/crowdsourcing/projects/project-tasks';
+import { ProjectOverview } from './pages/crowdsourcing/projects/project-overview';
 
 export const routes: UniversalRoute[] = [
   {
@@ -152,6 +153,11 @@ export const routes: UniversalRoute[] = [
     path: '/projects/:id',
     component: Project,
     routes: [
+      {
+        path: '/projects/:id',
+        exact: true,
+        component: ProjectOverview,
+      },
       {
         path: '/projects/:id/metadata',
         exact: true,
