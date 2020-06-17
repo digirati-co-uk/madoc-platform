@@ -14,6 +14,7 @@ import { SQL_EMPTY } from '../../utility/postgres-tags';
 export const listProjects: RouteMiddleware = async context => {
   const { id, siteId, siteUrn } = optionalUserWithScope(context, []);
 
+  const userApi = api.asUser({ siteId });
   const page = Number(context.query.page) || 1;
   const rootTaskId = context.query.root_task_id;
   const projectsPerPage = 5;
@@ -50,30 +51,8 @@ export const listProjects: RouteMiddleware = async context => {
       slug: project.slug,
       capture_model_id: project.capture_model_id,
       task_id: project.task_id,
-      statistics: {
-        '0': 0,
-        '1': 0,
-        '2': 0,
-        '3': 0,
-      },
     };
   });
-
-  for (const project of mappedProjects) {
-    project.statistics = {
-      ...project.statistics,
-      ...((await api.getTaskStats(project.task_id as string)).statuses || ({} as any)),
-    } as any;
-
-    const config = await api.getConfiguration('madoc', [`urn:madoc:project:${project.id}`, siteUrn]);
-
-    project.config =
-      config && config.config && config.config[0] && config.config[0].config_object
-        ? config.config[0].config_object
-        : {};
-
-    // project.model = (await api.asUser({ userId: id, siteId }).getCaptureModel(project.capture_model_id as any)) as any;
-  }
 
   context.response.body = {
     projects: mappedProjects as any[],
