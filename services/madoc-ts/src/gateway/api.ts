@@ -566,8 +566,10 @@ export class ApiClient {
     } as Partial<Task>);
   }
 
-  async getTaskStats(id: string) {
-    return this.request<{ statuses: { [status: string]: number } }>(`/api/tasks/${id}/stats`);
+  async getTaskStats(id: string, query?: { type?: string; root?: boolean; distinct_subjects?: boolean }) {
+    return this.request<{ statuses: { [status: string]: number }; total: number }>(
+      `/api/tasks/${id}/stats${query ? `?${stringify(query)}` : ''}`
+    );
   }
 
   // Tasks.
