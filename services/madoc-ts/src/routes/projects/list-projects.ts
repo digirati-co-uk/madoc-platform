@@ -9,15 +9,24 @@ import { mapMetadata } from '../../utility/iiif-metadata';
 import { ProjectList } from '../../types/schemas/project-list';
 import { ProjectListItem } from '../../types/schemas/project-list-item';
 import { InternationalString } from '@hyperion-framework/types';
+import { SQL_EMPTY } from '../../utility/postgres-tags';
 
 export const listProjects: RouteMiddleware = async context => {
   const { id, siteId, siteUrn } = optionalUserWithScope(context, []);
 
   const page = Number(context.query.page) || 1;
+  const rootTaskId = context.query.root_task_id;
   const projectsPerPage = 5;
 
+  const rootTaskQuery = rootTaskId ? sql`and iiif_project.task_id = ${rootTaskId}` : SQL_EMPTY;
+
   const { total } = await context.connection.one(
-    sql`select count(*) as total from iiif_project where site_id = ${siteId}`
+    sql`
+      select count(*) as total 
+      from iiif_project
+      where site_id = ${siteId}
+      ${rootTaskQuery}
+    `
   );
   const totalPages = Math.ceil(total / projectsPerPage);
 
@@ -26,7 +35,9 @@ export const listProjects: RouteMiddleware = async context => {
       sql`
         select *, collection_id as resource_id, iiif_project.id as project_id from iiif_project 
             left join iiif_resource ir on iiif_project.collection_id = ir.id
-        where site_id = ${siteId} limit ${projectsPerPage} offset ${(page - 1) * projectsPerPage}
+        where site_id = ${siteId}
+        ${rootTaskQuery}
+        limit ${projectsPerPage} offset ${(page - 1) * projectsPerPage}
       `,
       siteId
     )
