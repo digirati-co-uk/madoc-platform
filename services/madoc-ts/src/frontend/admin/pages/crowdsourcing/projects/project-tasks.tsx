@@ -11,6 +11,7 @@ import { CrowdsourcingTask } from '../../../../../types/tasks/crowdsourcing-task
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useQuery } from 'react-query';
 import { SubjectSnippet } from '../../../../shared/components/SubjectSnippet';
+import { ProjectListItem } from '../../../../../types/schemas/project-list-item';
 
 type ProjectTasksType = {
   params: { id: number; taskId?: string };
@@ -20,7 +21,7 @@ type ProjectTasksType = {
   context: { project: any };
 };
 
-const ViewCrowdsourcingTask: React.FC<{ task: CrowdsourcingTask }> = ({ task }) => {
+const ViewCrowdsourcingTask: React.FC<{ task: CrowdsourcingTask; project: ProjectListItem }> = ({ task, project }) => {
   const api = useApi();
   const { data: captureModel, refetch } = useQuery(
     ['capture-model', { id: task.parameters[0] }],
@@ -37,6 +38,7 @@ const ViewCrowdsourcingTask: React.FC<{ task: CrowdsourcingTask }> = ({ task }) 
 
   return (
     <div>
+      {task.parent_task ? <Link to={`/projects/${project.id}/tasks/${task.parent_task}`}>Back</Link> : null}
       <h3>{task.name}</h3>
       {captureModel ? <pre>{JSON.stringify(captureModel, null, 2)}</pre> : null}
     </div>
@@ -53,14 +55,18 @@ export const ProjectTasks: UniversalComponent<ProjectTasksType> = createUniversa
     }
 
     if (task.type === 'crowdsourcing-task') {
-      return <ViewCrowdsourcingTask task={task as CrowdsourcingTask} />;
+      return <ViewCrowdsourcingTask project={project} task={task as CrowdsourcingTask} />;
     }
 
     return (
       <div>
         {task.parent_task ? <Link to={`/projects/${project.id}/tasks/${task.parent_task}`}>Back</Link> : null}
-        <h2>{task.name}</h2>
-        <SubjectSnippet subject={task.subject} />
+        {task.root_task ? (
+          <>
+            <h2>{task.name}</h2>
+            <SubjectSnippet subject={task.subject} />
+          </>
+        ) : null}
         {(task.subtasks || []).map(subtask => (
           <TableRow key={subtask.id}>
             <TableRowLabel>
