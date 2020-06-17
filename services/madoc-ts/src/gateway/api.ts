@@ -233,8 +233,8 @@ export class ApiClient {
   }
 
   // Projects.
-  async getProjects(page?: number) {
-    return this.request<ProjectList>(`/api/madoc/projects?page=${page || 0}`);
+  async getProjects(page?: number, query: { root_task_id?: string } = {}) {
+    return this.request<ProjectList>(`/api/madoc/projects?${stringify({ page, ...query })}`);
   }
 
   async getProject(id: number | string) {
