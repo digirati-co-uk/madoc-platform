@@ -16,6 +16,10 @@ export const createNewProject: RouteMiddleware<{}, CreateProject> = async contex
   const userApi = api.asUser({ userId: id, siteId });
   const { label, slug, summary } = context.requestBody;
 
+  if (!slug || !slug.trim()) {
+    throw new ConflictError('Invalid slug, cannot be blank');
+  }
+
   // 0 Check if slug exists.
   const { rowCount } = await context.connection.query(
     sql`select * from iiif_project where site_id = ${siteId} and slug = ${slug}`
