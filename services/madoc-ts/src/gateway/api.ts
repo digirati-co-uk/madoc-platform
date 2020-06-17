@@ -601,7 +601,14 @@ export class ApiClient {
 
   async getTasks(
     page?: number,
-    query: { all?: boolean; all_tasks?: boolean; status?: number; subject?: string; type?: string } = {}
+    query: {
+      all?: boolean;
+      all_tasks?: boolean;
+      status?: number;
+      root_task_id?: string;
+      subject?: string;
+      type?: string;
+    } = {}
   ) {
     return this.request<{ tasks: BaseTask[]; pagination: Pagination }>(`/api/tasks?${stringify({ page, ...query })}`);
   }
