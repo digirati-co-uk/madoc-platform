@@ -40,6 +40,17 @@ const ViewCrowdsourcingTask: React.FC<{ task: CrowdsourcingTask; project: Projec
     <div>
       {task.parent_task ? <Link to={`/projects/${project.id}/tasks/${task.parent_task}`}>Back</Link> : null}
       <h3>{task.name}</h3>
+      {task.assignee ? (
+        <div>
+          Assigned to <strong>{task.assignee.name}</strong>
+        </div>
+      ) : null}
+      <div style={{ display: 'flex' }}>
+        <Status status={task.status} interactive={false} />
+        <div style={{ margin: 'auto 0' }}>
+          Task status: <em>{task.status_text}</em>
+        </div>
+      </div>
       {captureModel ? <pre>{JSON.stringify(captureModel, null, 2)}</pre> : null}
     </div>
   );
