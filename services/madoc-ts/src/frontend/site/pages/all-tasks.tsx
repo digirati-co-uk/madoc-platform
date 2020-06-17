@@ -66,7 +66,6 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
     },
     getData: async (key, vars, api) => {
       const slug = vars.projectSlug;
-      console.log(vars);
       if (slug) {
         const project = await api.getProject(slug);
 
