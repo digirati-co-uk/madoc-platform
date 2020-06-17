@@ -11,8 +11,6 @@ export const getFlatCollectionStatistics: RouteMiddleware<{ id: string }> = asyn
   const { siteId } = optionalUserWithScope(context, ['site.view']);
   const { id } = context.params;
 
-  console.log(id, siteId);
-
   const result = await context.connection.maybeOne(
     sql<CollectionStats>`
         select manifest_total as manifests, canvas_total as canvases
