@@ -28,6 +28,7 @@ import { ResourceClaim } from '../routes/projects/create-resource-claim';
 import { RevisionRequest } from '@capture-models/types';
 import { ProjectList } from '../types/schemas/project-list';
 import { ProjectListItem } from '../types/schemas/project-list-item';
+import { ProjectFull } from '../types/schemas/project-full';
 
 export class ApiClient {
   private readonly gateway: string;
@@ -238,7 +239,7 @@ export class ApiClient {
   }
 
   async getProject(id: number | string) {
-    return this.request<ProjectListItem>(`/api/madoc/projects/${id}`);
+    return this.request<ProjectFull>(`/api/madoc/projects/${id}`);
   }
 
   async getProjectMetadata(id: number) {
