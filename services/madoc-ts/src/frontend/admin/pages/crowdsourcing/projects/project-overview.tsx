@@ -1,9 +1,9 @@
-import { ProjectListItem } from '../../../../../types/schemas/project-list-item';
 import React from 'react';
 import { SubtaskProgress } from '../../../../shared/atoms/SubtaskProgress';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../../../shared/atoms/Statistics';
+import { ProjectFull } from '../../../../../types/schemas/project-full';
 
-export const ProjectOverview: React.FC<{ project: ProjectListItem }> = ({ project }) => {
+export const ProjectOverview: React.FC<{ project: ProjectFull }> = ({ project }) => {
   return (
     <div>
       <StatisticContainer>
