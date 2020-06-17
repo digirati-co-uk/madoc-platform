@@ -13,8 +13,8 @@ import { useLocationQuery } from '../../shared/hooks/use-location-query';
 
 type AllTasksType = {
   query: { page: string };
-  variables: { page: number; query: { type?: string } };
-  params: {};
+  variables: { page: number; query: { type?: string }; projectSlug?: string };
+  params: { slug?: string };
   data: { tasks: BaseTask[]; pagination: PaginationType };
 };
 
@@ -62,9 +62,22 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
   },
   {
     getKey: (params, { page = '1', ...query }) => {
-      return ['all-tasks', { page: Number(page) || 1, query }];
+      return ['all-tasks', { page: Number(page) || 1, query, projectSlug: params.slug }];
     },
-    getData: (key, vars, api) => {
+    getData: async (key, vars, api) => {
+      const slug = vars.projectSlug;
+      console.log(vars);
+      if (slug) {
+        const project = await api.getProject(slug);
+
+        return api.getTasks(vars.page, {
+          all_tasks: true,
+          type: 'crowdsourcing-task',
+          root_task_id: project.task_id,
+          ...vars.query,
+        });
+      }
+
       return api.getTasks(vars.page, { all_tasks: true, ...vars.query });
     },
   }
