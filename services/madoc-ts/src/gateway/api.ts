@@ -353,6 +353,10 @@ export class ApiClient {
     return this.request<{ projects: ProjectSnippet[] }>(`/api/madoc/iiif/collections/${id}/projects`);
   }
 
+  async getCollectionStatistics(id: number) {
+    return this.request<{ manifests: number; canvases: number }>(`/api/madoc/iiif/collections/${id}/statistics`);
+  }
+
   async createManifest(manifest: Partial<ManifestNormalized>, source?: string, taskId?: string) {
     return this.request<{ id: number }, CreateManifest>(`/api/madoc/iiif/manifests`, {
       method: 'POST',
