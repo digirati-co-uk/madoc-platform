@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": "src",
     "lib": ["dom", "es2020"],
-    "typeRoots": ["../../node_modules/@types"],
+    "typeRoots": ["../../node_modules/@types", "node_modules/@types"],
     "target": "es2018",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
@@ -27,7 +27,8 @@
   "exclude": [
     "node_modules",
     "lib/",
-    "**/*.stories.tsx"
+    "**/*.stories.tsx",
+    "__tests__/"
   ],
   "references": [
     // { "path": "../SERVICE_NAME" }
