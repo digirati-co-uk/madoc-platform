@@ -8,6 +8,8 @@ import { mapMetadataList, ParsedMetadata } from '../../../../../utility/map-meta
 import { MetadataListEditor } from '../../../molecules/MetadataListEditor';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
+import { SuccessMessage } from '../../../../shared/atoms/SuccessMessage';
+import { ErrorMessage } from '../../../../shared/atoms/ErrorMessage';
 
 type ProjectMetadataType = {
   params: { id: number };
@@ -22,25 +24,44 @@ type ProjectMetadataType = {
 export const ProjectMetadata: UniversalComponent<ProjectMetadataType> = createUniversalComponent<ProjectMetadataType>(
   () => {
     const params = useParams<{ id: string }>();
-    const history = useHistory();
     const [invalidateTime, setInvalidateTime] = useState(Date.now());
     const { data, status } = useData(ProjectMetadata, {}, { refetchInterval: false });
     const api = useApi();
+    const [success, setSuccess] = useState('');
+    const [error, setError] = useState('');
 
     useEffect(() => {
       setInvalidateTime(Date.now());
     }, [data]);
 
+    useEffect(() => {
+      if (!success) return;
+
+      const timeout = setTimeout(() => setSuccess(''), 3000);
+
+      return () => clearTimeout(timeout);
+    }, [success]);
+
     const [saveChanges] = useMutation(async ({ diff, empty }: { diff: MetadataDiff; empty: boolean }) => {
       if (empty) {
-        history.push(`/projects/${params.id}`);
+        setSuccess('Nothing changed');
         return;
       }
 
-      await api.updateProjectMetadata(Number(params.id), diff);
-      queryCache.refetchQueries(['get-project', { id: Number(params.id) }]);
+      try {
+        const resp = await api.updateProjectMetadata(Number(params.id), diff);
+        if (resp.error) {
+          setError(resp.error);
+          setSuccess('');
+          return;
+        }
+        queryCache.refetchQueries(['get-project', { id: Number(params.id) }]);
 
-      history.push(`/projects/${params.id}`);
+        setSuccess('Changed saved');
+      } catch (err) {
+        setSuccess('');
+        setError(err.message || 'Unknown error');
+      }
     });
 
     if (status === 'loading' || status === 'error' || !data) {
@@ -48,7 +69,16 @@ export const ProjectMetadata: UniversalComponent<ProjectMetadataType> = createUn
     }
 
     return (
-      <MetadataListEditor key={invalidateTime} metadata={data.metadata} template={data.template} onSave={saveChanges} />
+      <>
+        {success ? <SuccessMessage>{success}</SuccessMessage> : null}
+        {error ? <ErrorMessage>{error}</ErrorMessage> : null}
+        <MetadataListEditor
+          key={invalidateTime}
+          metadata={data.metadata}
+          template={data.template}
+          onSave={saveChanges}
+        />
+      </>
     );
   },
   {
