@@ -24,7 +24,7 @@ type ManifestListType = {
 
 export const ManifestList: UniversalComponent<ManifestListType> = createUniversalComponent<ManifestListType>(
   () => {
-    const { status, resolvedData: data, latestData } = usePaginatedData(ManifestList);
+    const { status, resolvedData: data } = usePaginatedData(ManifestList);
     const { t } = useTranslation();
 
     if (status === 'error') {
@@ -51,9 +51,9 @@ export const ManifestList: UniversalComponent<ManifestListType> = createUniversa
           <br />
           <div>
             <Pagination
-              page={latestData ? latestData.pagination.page : 1}
-              totalPages={latestData ? latestData.pagination.totalPages : 1}
-              stale={!latestData}
+              page={data ? data.pagination.page : 1}
+              totalPages={data ? data.pagination.totalPages : 1}
+              stale={!data}
             />
             <ImageGrid>
               {manifests.map((manifest, idx) => (

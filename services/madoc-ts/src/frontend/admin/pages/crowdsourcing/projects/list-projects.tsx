@@ -21,7 +21,7 @@ type ListProjectsType = {
 export const ListProjects: UniversalComponent<ListProjectsType> = createUniversalComponent<ListProjectsType>(
   () => {
     const { t } = useTranslation();
-    const { latestData, resolvedData: data, status } = usePaginatedData(ListProjects);
+    const { resolvedData: data, status } = usePaginatedData(ListProjects);
 
     if (!data || status === 'loading' || status === 'error') {
       return <div>Loading...</div>;
@@ -41,9 +41,9 @@ export const ListProjects: UniversalComponent<ListProjectsType> = createUniversa
             {t('Create project')}
           </TinyButton>
           <Pagination
-            page={latestData ? latestData.pagination.page : 1}
-            totalPages={latestData ? latestData.pagination.totalPages : 1}
-            stale={!latestData}
+            page={data ? data.pagination.page : 1}
+            totalPages={data ? data.pagination.totalPages : 1}
+            stale={!data}
           />
           {data.projects.map((project: any) => {
             return (

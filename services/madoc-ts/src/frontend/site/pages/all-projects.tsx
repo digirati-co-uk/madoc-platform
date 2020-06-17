@@ -16,16 +16,16 @@ type AllProjectsType = {
 
 export const AllProjects: UniversalComponent<AllProjectsType> = createUniversalComponent<AllProjectsType>(
   () => {
-    const { resolvedData: data, latestData } = usePaginatedData(AllProjects);
+    const { resolvedData: data } = usePaginatedData(AllProjects);
 
-    if (!latestData) {
+    if (!data) {
       return <div>loading</div>;
     }
 
     return (
       <>
         <h2>All projects</h2>
-        {latestData.projects.map(project => (
+        {data.projects.map(project => (
           <div key={project.id}>
             <Link to={`/projects/${project.slug}`}>
               <LocaleString>{project.label}</LocaleString>
@@ -33,9 +33,9 @@ export const AllProjects: UniversalComponent<AllProjectsType> = createUniversalC
           </div>
         ))}
         <Pagination
-          page={latestData ? latestData.pagination.page : 1}
-          totalPages={latestData ? latestData.pagination.totalPages : 1}
-          stale={!latestData}
+          page={data ? data.pagination.page : 1}
+          totalPages={data ? data.pagination.totalPages : 1}
+          stale={!data}
         />
       </>
     );

@@ -22,7 +22,7 @@ export type ManifestViewType = {
 export const ManifestCanvases: UniversalComponent<ManifestViewType> = createUniversalComponent<ManifestViewType>(
   () => {
     const { t } = useTranslation();
-    const { status, latestData, resolvedData: data } = usePaginatedData(ManifestCanvases);
+    const { status, resolvedData: data } = usePaginatedData(ManifestCanvases);
 
     if (status === 'error' || status === 'loading' || !data) {
       return <div>{t('Loading')}</div>;
@@ -33,9 +33,9 @@ export const ManifestCanvases: UniversalComponent<ManifestViewType> = createUniv
     return (
       <>
         <Pagination
-          page={latestData ? latestData.pagination.page : 1}
-          totalPages={latestData ? latestData.pagination.totalPages : 1}
-          stale={!latestData}
+          page={data ? data.pagination.page : 1}
+          totalPages={data ? data.pagination.totalPages : 1}
+          stale={!data}
         />
         <ImageGrid>
           {manifest.items.map((canvas, idx) => (
@@ -51,9 +51,9 @@ export const ManifestCanvases: UniversalComponent<ManifestViewType> = createUniv
         </ImageGrid>
 
         <Pagination
-          page={latestData ? latestData.pagination.page : 1}
-          totalPages={latestData ? latestData.pagination.totalPages : 1}
-          stale={!latestData}
+          page={data ? data.pagination.page : 1}
+          totalPages={data ? data.pagination.totalPages : 1}
+          stale={!data}
         />
       </>
     );

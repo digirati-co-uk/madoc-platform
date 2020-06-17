@@ -25,7 +25,7 @@ type CollectionListType = {
 
 export const CollectionList: UniversalComponent<CollectionListType> = createUniversalComponent<CollectionListType>(
   () => {
-    const { status, resolvedData: data, latestData } = usePaginatedData(CollectionList);
+    const { status, resolvedData: data } = usePaginatedData(CollectionList);
     const { t } = useTranslation();
 
     if (status === 'error') {
@@ -53,9 +53,9 @@ export const CollectionList: UniversalComponent<CollectionListType> = createUniv
           <br />
           <div>
             <Pagination
-              page={latestData ? latestData.pagination.page : 1}
-              totalPages={latestData ? latestData.pagination.totalPages : 1}
-              stale={!latestData}
+              page={data ? data.pagination.page : 1}
+              totalPages={data ? data.pagination.totalPages : 1}
+              stale={!data}
             />
           </div>
           {collections.map((collection, idx) => (
@@ -112,9 +112,9 @@ export const CollectionList: UniversalComponent<CollectionListType> = createUniv
             </div>
           ))}
           <Pagination
-            page={latestData ? latestData.pagination.page : 1}
-            totalPages={latestData ? latestData.pagination.totalPages : 1}
-            stale={!latestData}
+            page={data ? data.pagination.page : 1}
+            totalPages={data ? data.pagination.totalPages : 1}
+            stale={!data}
           />
         </WidePage>
       </>
