@@ -220,7 +220,6 @@ export const MetadataListEditor: React.FC<{
 
   return (
     <>
-      <pre>{JSON.stringify(metadataMap, null, 2)}</pre>
       {metadataKeys.map(itemId => {
         const item = metadata[itemId];
         if (Array.isArray(item)) {
