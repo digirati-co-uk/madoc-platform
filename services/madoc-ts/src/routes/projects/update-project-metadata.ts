@@ -21,6 +21,8 @@ export const updateProjectMetadata: RouteMiddleware<{ id: string }, UpdateProjec
   const id = Number(context.params.id);
   const { metadata } = context.requestBody;
 
+  const userApi = api.asUser({ siteId });
+
   // 1. get project.
   const project = await context.connection.one(getProject(id, siteId));
 
@@ -63,7 +65,7 @@ export const updateProjectMetadata: RouteMiddleware<{ id: string }, UpdateProjec
   );
 
   // 3.3 - update the task.
-  await api.updateTask(project.task_id, {
+  await userApi.updateTask(project.task_id, {
     name: label,
     description: summary,
   });

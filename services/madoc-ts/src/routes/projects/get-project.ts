@@ -7,7 +7,6 @@ import { mapMetadata } from '../../utility/iiif-metadata';
 import { api } from '../../gateway/api.server';
 import { NotFound } from '../../utility/errors/not-found';
 import { SQL_EMPTY } from '../../utility/postgres-tags';
-import { ProjectListItem } from '../../types/schemas/project-list-item';
 
 function parseProjectId(id: string) {
   const idAsNumber = Number(id);
@@ -26,6 +25,8 @@ export const getProject: RouteMiddleware<{ id: string }> = async context => {
   if (!projectId && !projectSlug) {
     throw new NotFound();
   }
+
+  const userApi = api.asUser({ siteId });
 
   const projects = await context.connection.many(
     getMetadata<{ resource_id: number; project_id: number }>(
@@ -52,15 +53,31 @@ export const getProject: RouteMiddleware<{ id: string }> = async context => {
 
   const project = mappedProjects[0];
 
-  project.statistics = {
+  const statistics = {
     '0': 0,
     '1': 0,
     '2': 0,
     '3': 0,
-    ...((await api.getTaskStats(project.task_id as string)).statuses || ({} as any)),
   } as any;
 
-  project.config = ((await api.getConfiguration('madoc', [
+  const collectionStats = await userApi.getCollectionStatistics(project.collection_id);
+  const taskStats = await userApi.getTaskStats(project.task_id, {
+    type: 'crowdsourcing-task',
+    root: true,
+    distinct_subjects: true,
+  });
+  const taskStatuses = taskStats.statuses || {};
+
+  statistics['0'] = collectionStats.canvases - taskStats.total;
+  statistics['1'] = taskStatuses['1'] || 0;
+  statistics['2'] = taskStatuses['2'] || 0;
+  statistics['3'] = taskStatuses['3'] || 0;
+
+  project.statistics = statistics;
+
+  project.content = collectionStats as any;
+
+  project.config = ((await userApi.getConfiguration('madoc', [
     `urn:madoc:project:${project.id}`,
     siteUrn,
   ])) as any).config[0].config_object;

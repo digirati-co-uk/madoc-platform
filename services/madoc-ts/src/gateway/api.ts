@@ -28,6 +28,7 @@ import { ResourceClaim } from '../routes/projects/create-resource-claim';
 import { RevisionRequest } from '@capture-models/types';
 import { ProjectList } from '../types/schemas/project-list';
 import { ProjectListItem } from '../types/schemas/project-list-item';
+import { ProjectFull } from '../types/schemas/project-full';
 
 export class ApiClient {
   private readonly gateway: string;
@@ -233,12 +234,12 @@ export class ApiClient {
   }
 
   // Projects.
-  async getProjects(page?: number) {
-    return this.request<ProjectList>(`/api/madoc/projects?page=${page || 0}`);
+  async getProjects(page?: number, query: { root_task_id?: string } = {}) {
+    return this.request<ProjectList>(`/api/madoc/projects?${stringify({ page, ...query })}`);
   }
 
   async getProject(id: number | string) {
-    return this.request<ProjectListItem>(`/api/madoc/projects/${id}`);
+    return this.request<ProjectFull>(`/api/madoc/projects/${id}`);
   }
 
   async getProjectMetadata(id: number) {
@@ -351,6 +352,10 @@ export class ApiClient {
 
   async getCollectionProjects(id: number) {
     return this.request<{ projects: ProjectSnippet[] }>(`/api/madoc/iiif/collections/${id}/projects`);
+  }
+
+  async getCollectionStatistics(id: number) {
+    return this.request<{ manifests: number; canvases: number }>(`/api/madoc/iiif/collections/${id}/statistics`);
   }
 
   async createManifest(manifest: Partial<ManifestNormalized>, source?: string, taskId?: string) {
@@ -561,8 +566,10 @@ export class ApiClient {
     } as Partial<Task>);
   }
 
-  async getTaskStats(id: string) {
-    return this.request<{ statuses: { [status: string]: number } }>(`/api/tasks/${id}/stats`);
+  async getTaskStats(id: string, query?: { type?: string; root?: boolean; distinct_subjects?: boolean }) {
+    return this.request<{ statuses: { [status: string]: number }; total: number }>(
+      `/api/tasks/${id}/stats${query ? `?${stringify(query)}` : ''}`
+    );
   }
 
   // Tasks.
@@ -601,7 +608,14 @@ export class ApiClient {
 
   async getTasks(
     page?: number,
-    query: { all?: boolean; all_tasks?: boolean; status?: number; subject?: string; type?: string } = {}
+    query: {
+      all?: boolean;
+      all_tasks?: boolean;
+      status?: number;
+      root_task_id?: string;
+      subject?: string;
+      type?: string;
+    } = {}
   ) {
     return this.request<{ tasks: BaseTask[]; pagination: Pagination }>(`/api/tasks?${stringify({ page, ...query })}`);
   }

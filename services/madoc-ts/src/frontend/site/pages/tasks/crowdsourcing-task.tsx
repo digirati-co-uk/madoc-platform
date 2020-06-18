@@ -12,9 +12,11 @@ import { Heading3 } from '../../../shared/atoms/Heading3';
 import { queryCache } from 'react-query';
 import '@capture-models/editor/lib/input-types/TextField';
 import '@capture-models/editor/lib/input-types/HTMLField';
+import { useProjectByTask } from '../../../shared/hooks/use-project-by-task';
 
 const ViewCrowdsourcingTask: React.FC<{ task: CrowdsourcingTask }> = ({ task }) => {
   const api = useApi();
+  const project = useProjectByTask(task);
 
   const { data: captureModel, refetch } = useQuery(
     ['capture-model', { id: task.parameters[0] }],
@@ -77,6 +79,14 @@ const ViewCrowdsourcingTask: React.FC<{ task: CrowdsourcingTask }> = ({ task }) 
         <Heading3>{task.name}</Heading3>
         <p>{task.description}</p>
         <Status status={task.status} text={task.status_text || ''} isOpen />
+        {project ? (
+          <div>
+            <Link to={`/projects/${project.id}`}>
+              <LocaleString as="h4">{project.label}</LocaleString>
+            </Link>
+            <LocaleString as="p">{project.summary}</LocaleString>
+          </div>
+        ) : null}
       </div>
       {resource ? <LocaleString as="h1">{resource.canvas.label}</LocaleString> : null}
       <div style={{ display: 'flex' }}>

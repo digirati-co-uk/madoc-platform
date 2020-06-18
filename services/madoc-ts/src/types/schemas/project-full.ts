@@ -1,6 +1,6 @@
 import { InternationalString } from '@hyperion-framework/types';
 
-export type ProjectListItem = {
+export type ProjectFull = {
   id: number;
   collection_id: number;
   slug: string;
@@ -8,4 +8,15 @@ export type ProjectListItem = {
   task_id: string;
   label: InternationalString;
   summary: InternationalString;
+  statistics: {
+    0: number;
+    1: number;
+    2: number;
+    3: number;
+  };
+  content: {
+    manifests: number;
+    canvases: number;
+  };
+  config: any;
 };

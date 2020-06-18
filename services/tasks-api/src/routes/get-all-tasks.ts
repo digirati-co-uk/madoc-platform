@@ -10,8 +10,10 @@ export const getAllTasks: RouteMiddleware = async context => {
   const typeFilter = context.query.type ? sql`and t.type = ${context.query.type}` : sql``;
   const subjectFilter = context.query.subject ? sql`and t.subject = ${context.query.subject}` : sql``;
   const statusFilter = context.query.status ? sql`and t.status = ${Number(context.query.status)}` : sql``;
-  const subtaskExclusion = context.query.all_tasks ? sql`` : sql`and t.parent_task is null`;
+  const subtaskExclusion =
+    context.query.all_tasks || context.query.root_task_id ? sql`` : sql`and t.parent_task is null`;
   const userExclusion = isAdmin ? sql`` : sql`and (t.creator_id = ${userId} OR t.assignee_id = ${userId})`;
+  const rootTaskFilter = context.query.root_task_id ? sql`and t.root_task = ${context.query.root_task_id}` : sql``;
 
   const page = Number(context.query.page || 1);
   const perPage = 50;
@@ -28,6 +30,7 @@ export const getAllTasks: RouteMiddleware = async context => {
         ${typeFilter}
         ${subjectFilter}
         ${statusFilter}
+        ${rootTaskFilter}
     `;
 
     const { rowCount } = await context.connection.query(query);

@@ -54,6 +54,7 @@ import { createResourceClaim } from './routes/projects/create-resource-claim';
 import { statistics } from './routes/iiif/statistics';
 import { getCanvasManifests } from './routes/iiif/canvases/get-canvas-manifests';
 import { getManifestCollections } from './routes/iiif/manifests/get-manifest-collections';
+import { getFlatCollectionStatistics } from './routes/iiif/collections/get-flat-collection-statistics';
 
 export const router = new TypedRouter({
   // Normal route
@@ -85,6 +86,11 @@ export const router = new TypedRouter({
     TypedRouter.GET,
     '/api/madoc/iiif/autocomplete/collections',
     getCollectionAutocomplete,
+  ],
+  'get-flat-collection-statistics': [
+    TypedRouter.GET,
+    '/api/madoc/iiif/collections/:id/statistics',
+    getFlatCollectionStatistics,
   ],
 
   // Manifest API.
@@ -119,7 +125,7 @@ export const router = new TypedRouter({
   'get-canvas-manifests': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/manifests', getCanvasManifests],
 
   // Import API
-  'import-manifest': [TypedRouter.POST, '/api/madoc/iiif/import/manifest' + '', importManifest],
+  'import-manifest': [TypedRouter.POST, '/api/madoc/iiif/import/manifest', importManifest],
   'import-collection': [TypedRouter.POST, '/api/madoc/iiif/import/collection', importCollection],
 
   // Stats.

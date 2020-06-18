@@ -45,13 +45,18 @@ const StatusIcon: React.FC<{ status: number }> = ({ status }) => {
   }
 };
 
-export const Status: React.FC<{ status: number; text: string; isOpen?: boolean }> = ({ status, text, isOpen = false }) => {
+export const Status: React.FC<{ status: number; text?: string; isOpen?: boolean; interactive?: boolean }> = ({
+  interactive = true,
+  status,
+  text,
+  isOpen = false,
+}) => {
   const [open, setOpen] = useState(isOpen);
 
   return (
-    <StatusWrapper open={open} title={text} onClick={() => setOpen(o => !o)}>
+    <StatusWrapper open={open} title={text} onClick={interactive ? () => setOpen(o => !o) : undefined}>
       <StatusIcon status={status} />
-      <StatusText open={open}>{text}</StatusText>
+      {text ? <StatusText open={open}>{text}</StatusText> : null}
     </StatusWrapper>
   );
 };

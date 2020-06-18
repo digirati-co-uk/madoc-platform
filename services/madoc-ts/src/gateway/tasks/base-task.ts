@@ -50,6 +50,11 @@ export type BaseTask = {
   status_text?: string;
 
   /**
+   * Root task
+   */
+  root_task?: string;
+
+  /**
    * Identifier of the tasks parent, which will appear as it's subtask.
    */
   parent_task?: string;
