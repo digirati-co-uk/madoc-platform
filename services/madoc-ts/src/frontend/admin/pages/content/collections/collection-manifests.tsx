@@ -18,23 +18,25 @@ type CollectionManifestsType = {
   variables: { id: number; page: number };
 };
 
-export const CollectionManifests: UniversalComponent<CollectionManifestsType> = createUniversalComponent<CollectionManifestsType>(
+export const CollectionManifests: UniversalComponent<CollectionManifestsType> = createUniversalComponent<
+  CollectionManifestsType
+>(
   () => {
     const { t } = useTranslation();
-    const { latestData, resolvedData, status } = usePaginatedData(CollectionManifests);
+    const { resolvedData: data, status } = usePaginatedData(CollectionManifests);
 
-    if (status !== 'success' || !resolvedData) {
+    if (status !== 'success' || !data) {
       return <div>loading...</div>;
     }
 
-    const { collection } = resolvedData;
+    const { collection } = data;
 
     return (
       <>
         <Pagination
-          page={latestData ? latestData.pagination.page : 1}
-          totalPages={latestData ? latestData.pagination.totalPages : 1}
-          stale={!latestData}
+          page={data ? data.pagination.page : 1}
+          totalPages={data ? data.pagination.totalPages : 1}
+          stale={!data}
         />
 
         <ImageGrid>
@@ -59,9 +61,9 @@ export const CollectionManifests: UniversalComponent<CollectionManifestsType> = 
         </ImageGrid>
 
         <Pagination
-          page={latestData ? latestData.pagination.page : 1}
-          totalPages={latestData ? latestData.pagination.totalPages : 1}
-          stale={!latestData}
+          page={data ? data.pagination.page : 1}
+          totalPages={data ? data.pagination.totalPages : 1}
+          stale={!data}
         />
       </>
     );
