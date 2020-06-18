@@ -23,7 +23,12 @@ export const EditManifestMetadata: UniversalComponent<EditManifestMetadataType> 
     const params = useParams<{ id: string }>();
     const history = useHistory();
     const [invalidateTime, setInvalidateTime] = useState(Date.now());
-    const { data, status } = useData(EditManifestMetadata);
+    const { data, status } = useData(EditManifestMetadata, undefined, {
+      refetchIntervalInBackground: false,
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      refetchInterval: false,
+    });
     const api = useApi();
 
     useEffect(() => {
