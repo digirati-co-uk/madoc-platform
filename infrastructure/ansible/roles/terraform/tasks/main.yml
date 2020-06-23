@@ -1,0 +1,11 @@
+---
+- name: Create infrastructure
+  terraform: 
+    project_path: "{{ project_dir }}"
+    state: present
+    lock: yes
+    force_init: true
+    backend_config:
+      region: "{{ region }}"
+      bucket: "{{ remote_bucket }}"
+      key: "{{ remote_key }}"

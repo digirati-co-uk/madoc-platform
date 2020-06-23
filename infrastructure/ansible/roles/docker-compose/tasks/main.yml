@@ -1,6 +1,4 @@
 ---
-- name: Configure Madoc
-  import_tasks: 
-    - install.yml
-    - filesys.yml
-    - compose.yml
+- import_tasks: install.yml
+- import_tasks: filesys.yml
+- import_tasks: compose.yml

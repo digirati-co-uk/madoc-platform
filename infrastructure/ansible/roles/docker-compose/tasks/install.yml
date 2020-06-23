@@ -53,9 +53,3 @@
 #   become: yes
 #   pip:
 #     name: docker-compose
-    
-# - name: Create .env file for Docker-Compose
-#     become: yes
-#     template: 
-#     src: env-file.j2
-#     dest: /etc/docker/compose/madoc/.env
