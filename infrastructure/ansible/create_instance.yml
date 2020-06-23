@@ -1,6 +1,6 @@
 ---
-- hosts: "{{instance}}"
+- hosts: "{{ instance }}"
   vars_files:
-    - vars/default.yml
+    - vars/terraform.yml
   roles:
     - terraform
