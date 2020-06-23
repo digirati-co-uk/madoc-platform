@@ -3,8 +3,10 @@
   terraform: 
     project_path: "{{ project_dir }}"
     state: present
-    lock: yes
     force_init: true
+    variables:
+      prefix: "{{ prefix }}"
+      key_pair_private_key_path: "{{ key_pair_private_key_path }}"
     backend_config:
       region: "{{ region }}"
       bucket: "{{ remote_bucket }}"

@@ -17,31 +17,6 @@ resource "aws_iam_role" "madoc" {
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy_ec2.json
 }
 
-data "aws_iam_policy_document" "madoc_abilities" {
-  statement {
-    actions = [
-      "ssm:DescribeParameters",
-      "ssm:GetParameter*",
-      "ssm:List*"
-    ]
-
-    resources = [
-      "arn:aws:ssm:${var.region}:${local.account_id}:parameter/madoc/${var.prefix}/${terraform.workspace}*",
-    ]
-  }
-}
-
-resource "aws_iam_policy" "madoc_abilities" {
-  name        = "${var.prefix}-${terraform.workspace}-madoc-abilities"
-  description = "Policy for madoc EC2 user-data (read parameterStore)"
-  policy      = data.aws_iam_policy_document.madoc_abilities.json
-}
-
-resource "aws_iam_role_policy_attachment" "basic_abilities" {
-  role       = aws_iam_role.madoc.name
-  policy_arn = aws_iam_policy.madoc_abilities.arn
-}
-
 resource "aws_iam_instance_profile" "madoc" {
   name = "${var.prefix}-${terraform.workspace}-madoc-instance"
   role = aws_iam_role.madoc.name
