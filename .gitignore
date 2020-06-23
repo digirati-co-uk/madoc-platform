@@ -16,4 +16,10 @@ var/shared-database/*
 var/certs/*
 var/jwt/*
 key.pub
-.terraform
+
+# Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*

@@ -1,0 +1,28 @@
+---
+- name: Copy docker-compose
+  synchronize:
+    src: ../files/docker-compose.yml
+    perms: "no"
+    dest: /srv/madoc/docker-compose.yml
+
+- name: Create .env file for Docker-Compose
+  become: yes
+  template: 
+    src: env-file.j2
+    dest: /srv/madoc/.env
+
+- name: Run docker-compose
+  become: yes
+  docker_compose:
+    project_name: madoc
+    project_src: /srv/madoc
+    remove_orphans: yes
+    pull: yes
+    build: no
+  register: output
+- debug:
+    var: output
+- assert:
+    that:
+      - "http_test.madoc_http_test_1.state.running"
+      - "http_test_3.madoc_http_test_3_1.state.running"

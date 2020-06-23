@@ -1,0 +1,21 @@
+---
+- name: Create madoc directory
+  become: yes
+  file:
+    path: /srv/madoc
+    state: directory
+    owner: "{{ansible_user_id}}"
+
+- name: Create mysql_data directory
+  become: yes
+  file:
+    path: /opt/data/mysql_data
+    state: directory
+    owner: "{{ ansible_user_id }}"
+
+- name: Create omeka_files directory
+  become: yes
+  file:
+    path: /opt/data/omeka_files
+    state: directory
+    mode : '777'

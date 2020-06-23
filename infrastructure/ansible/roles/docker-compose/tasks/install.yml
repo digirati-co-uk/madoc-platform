@@ -1,0 +1,61 @@
+---
+- name: Install dependencies
+  become: yes
+  apt:
+    pkg:
+      - rsync
+      - python3
+      - python3-pip
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+
+- name: Add Apt signing key for Docker Ubuntu
+  become: yes
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker Ubuntu repository
+  become: yes
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic test
+    state: present
+
+- name: Add final dependencies
+  become: yes
+  apt:
+    update_cache: true
+    pkg:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - awscli
+      - rsnapshot
+      - mysql-client-5.7
+      - python3-pip
+      - rsync
+
+- name: Download Docker-Compose
+  become: yes
+  get_url:
+    url: https://github.com/docker/compose/releases/download/1.25.4/docker-compose-Linux-x86_64
+    dest: /usr/bin/docker-compose
+    mode: '+x'
+
+# - name: Install docker python
+#   become: yes
+#   pip:
+#     name: docker
+
+# - name: Install docker-compose python
+#   become: yes
+#   pip:
+#     name: docker-compose
+    
+# - name: Create .env file for Docker-Compose
+#     become: yes
+#     template: 
+#     src: env-file.j2
+#     dest: /etc/docker/compose/madoc/.env

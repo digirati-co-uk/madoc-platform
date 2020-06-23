@@ -1,47 +1,6 @@
 ---
-- name: Install dependencies
-  become: yes
-  apt:
-    pkg:
-      - rsync
-      - python3
-      - python3-pip
-
-- name: Install docker python
-  become: yes
-  pip:
-    name: docker
-
-- name: Install docker-compose python
-  become: yes
-  pip:
-    name: docker-compose
-
-- name: Create directory
-  become: yes
-  file:
-    path: /srv/madoc
-    state: directory
-    owner: "{{ansible_user_id}}"
-
-- name: Copy docker-compose
-  synchronize:
-    src: ../files/docker-compose.yml
-    perms: "no"
-    dest: /srv/madoc/docker-compose.yml
-
-- name: Run docker-compose
-  become: yes
-  docker_compose:
-    project_name: madoc
-    project_src: /srv/madoc
-    remove_orphans: yes
-    pull: yes
-    build: no
-  register: output
-- debug:
-    var: output
-- assert:
-    that:
-      - "http_test.madoc_http_test_1.state.running"
-      - "http_test_3.madoc_http_test_3_1.state.running"
+- name: Configure Madoc
+  import_tasks: 
+    - install.yml
+    - filesys.yml
+    - compose.yml

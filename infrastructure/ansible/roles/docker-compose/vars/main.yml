@@ -1,2 +1,13 @@
 ---
 # vars file for docker-compose
+env:
+  GATEWAY_SECRET: "{{ vault_gateway_secret }}"
+  MAIN_SITE_DOMAIN: http://madoc.dlcs.digirati.io
+  MADOC_DOMAIN: http://madoc.dlcs.digirati.io
+  MYSQL_DATABASE: omeka_s
+  MYSQL_PASSWORD: "{{ vault_mysql_password }}"
+  MYSQL_PORT: 3306
+  MYSQL_USER: "{{ vault_mysql_user }}"
+  OMEKA_INTERNAL_URL: http://madoc-platform-omeka/
+  OMEKA_SMTP_PWORD: "{{ vault_omeka_smtp_pword }}"
+  OMEKA_SMTP_UNAME: "{{ vault_omeka_smtp_uname }}"
