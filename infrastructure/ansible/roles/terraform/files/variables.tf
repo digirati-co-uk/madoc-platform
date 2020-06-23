@@ -70,8 +70,3 @@ variable "prefix" {
   type        = string
   description = "Prefix to help uniquely identify resources"
 }
-
-variable key_pair_private_key_path {
-  type        = string
-  description = "Path to private key for connecting to EC2 instance"
-}

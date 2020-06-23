@@ -1,4 +1,6 @@
 ---
+- include_vars: vault.yml
+
 - name: Copy docker-compose
   synchronize:
     src: ../files/docker-compose.yml

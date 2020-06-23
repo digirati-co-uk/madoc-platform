@@ -1,0 +1,10 @@
+instance: localhost
+
+# tf-remote-state
+remote_region: eu-west-1
+remote_bucket: my-remote-state
+remote_key: terraform.tfstate
+project_dir: /repos/madoc-platform/infrastructure/ansible/roles/terraform/files
+
+# TF variables
+prefix: madoc-prefix

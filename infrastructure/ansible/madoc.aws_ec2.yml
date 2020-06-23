@@ -1,0 +1,9 @@
+# get the appropriate madoc box based on tags
+plugin: aws_ec2
+regions:
+  - eu-west-1
+filters:
+  tag:system: madoc
+keyed_groups:
+  - key: tags.prefix
+    separator: ""

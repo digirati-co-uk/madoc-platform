@@ -2,6 +2,7 @@
 - name: Install dependencies
   become: yes
   apt:
+    update_cache: true
     pkg:
       - rsync
       - python3
@@ -44,12 +45,9 @@
     dest: /usr/bin/docker-compose
     mode: '+x'
 
-# - name: Install docker python
-#   become: yes
-#   pip:
-#     name: docker
-
-# - name: Install docker-compose python
-#   become: yes
-#   pip:
-#     name: docker-compose
+- name: Install python dependencies
+  become: yes
+  pip:
+    name: 
+      - docker
+      - docker-compose
