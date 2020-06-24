@@ -33,15 +33,59 @@
           "type": "string"
         }
       }
-    }
+    },
+    "statistics": {
+      "type": "object",
+      "properties": {
+        "0": {
+          "type": "number"
+        },
+        "1": {
+          "type": "number"
+        },
+        "2": {
+          "type": "number"
+        },
+        "3": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "0",
+        "1",
+        "2",
+        "3"
+      ]
+    },
+    "content": {
+      "type": "object",
+      "properties": {
+        "manifests": {
+          "type": "number"
+        },
+        "canvases": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "canvases",
+        "manifests"
+      ]
+    },
+    "config": {}
   },
   "additionalProperties": false,
   "required": [
     "capture_model_id",
     "collection_id",
+    "config",
+    "content",
     "id",
     "label",
     "slug",
+    "statistics",
     "summary",
     "task_id"
   ],
