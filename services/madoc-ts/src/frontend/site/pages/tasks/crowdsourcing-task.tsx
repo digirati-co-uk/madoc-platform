@@ -99,10 +99,18 @@ const ViewCrowdsourcingTask: React.FC<{ task: CrowdsourcingTask }> = ({ task }) 
                   <CaptureModelEditor
                     captureModel={captureModel}
                     onSave={async (response, status) => {
+                      if (!task.id || !project) return;
+
                       if (status === 'draft') {
-                        await api.updateTask(task.id, { status: 2, status_text: 'in progress' });
+                        await api.saveResourceClaim(project.id, task.id, {
+                          status: 1,
+                          revisionId: response.revision.id,
+                        });
                       } else if (status === 'submitted') {
-                        await api.updateTask(task.id, { status: 3, status_text: 'submitted' });
+                        await api.saveResourceClaim(project.id, task.id, {
+                          status: 2,
+                          revisionId: response.revision.id,
+                        });
                       }
                       await queryCache.refetchQueries(['task', { id: task.id }]);
                     }}

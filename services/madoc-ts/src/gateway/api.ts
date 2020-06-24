@@ -283,6 +283,14 @@ export class ApiClient {
       body: claim,
     });
   }
+
+  async saveResourceClaim(projectId: string | number, taskId: string, body: { status: number; revisionId?: string }) {
+    return this.request<{ claim: CrowdsourcingTask }>(`/api/madoc/projects/${projectId}/claim/${taskId}`, {
+      method: 'POST',
+      body,
+    });
+  }
+
   async deleteResourceClaim(taskId: string) {
     throw new Error('Not yet implemented');
   }

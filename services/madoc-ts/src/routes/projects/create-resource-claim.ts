@@ -16,6 +16,7 @@ import { CrowdsourcingCanvasTask } from '../../types/tasks/crowdsourcing-canvas-
 import { api } from '../../gateway/api.server';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
 import { CrowdsourcingTask } from '../../types/tasks/crowdsourcing-task';
+import { createTask } from '../../gateway/tasks/crowdsourcing-task';
 
 export type ResourceClaim = {
   collectionId?: number;
@@ -248,8 +249,6 @@ async function getTaskFromClaim(
   parent: CrowdsourcingCollectionTask | CrowdsourcingManifestTask | CrowdsourcingCanvasTask,
   claim: ResourceClaim
 ): Promise<BaseTask | undefined> {
-  console.log(JSON.stringify(parent, null, 2));
-
   if (!parent.subtasks || parent.subtasks.length === 0) {
     return undefined;
   }
@@ -339,21 +338,9 @@ async function createUserCrowdsourcingTask(
 ): Promise<CrowdsourcingTask> {
   const userApi = api.asUser({ userId, siteId });
 
-  const structureId = null; // @todo call to config service to get structure id.
+  const structureId = undefined; // @todo call to config service to get structure id.
 
-  const task: CrowdsourcingTask = {
-    name: `User contributions to "${taskName}"`,
-    type: `crowdsourcing-task`,
-    subject,
-    assignee: {
-      id: `urn:madoc:user:${userId}`,
-      name,
-    },
-    status: 1,
-    status_text: 'accepted',
-    state: {},
-    parameters: [captureModel.id, structureId, type],
-  };
+  const task = createTask(siteId, projectId, userId, name, taskName, subject, type, captureModel, structureId);
 
   return userApi.addSubtasks(task, parentTaskId);
 }
