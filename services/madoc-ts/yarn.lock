@@ -1531,18 +1531,18 @@
     eslint-plugin-react-hooks "^2.1.2"
     typescript "^3.7.5"
 
-"@hyperion-framework/parser@^1.0.0-alpha.7":
-  version "1.0.0-alpha.7"
-  resolved "https://registry.yarnpkg.com/@hyperion-framework/parser/-/parser-1.0.0-alpha.7.tgz#66f73cfd791b4b21bb1515b457849b5f9d732305"
-  integrity sha512-WVKSLR6wZ4ErL1V/IpLh2kUaTJlAfTTsOt6bsiDgVAbN1CKgs7cMJZpUJf1niAbM3nxCM7tU4bfYIqukb119fQ==
+"@hyperion-framework/parser@^1.0.0-alpha.9":
+  version "1.0.0-alpha.9"
+  resolved "https://registry.yarnpkg.com/@hyperion-framework/parser/-/parser-1.0.0-alpha.9.tgz#422e4ebc3d9fe26807935f59923fa2e60b1bfb33"
+  integrity sha512-oWKzt6YJQ9S9W8TUF2M8/fmuqNDsJ0p26rCQxanxVntIaJr7gZisdRHfrOpGUelQnsyuLkhSYp43jRqPiySSmA==
   dependencies:
-    "@hyperion-framework/presentation-2-parser" "^1.0.0-alpha.7"
+    "@hyperion-framework/presentation-2-parser" "^1.0.0-alpha.9"
     "@hyperion-framework/types" "^1.0.0-alpha.4"
 
-"@hyperion-framework/presentation-2-parser@^1.0.0-alpha.7":
-  version "1.0.0-alpha.7"
-  resolved "https://registry.yarnpkg.com/@hyperion-framework/presentation-2-parser/-/presentation-2-parser-1.0.0-alpha.7.tgz#fbc10ae53d358b93a8ea4785c1fbe684ca78120e"
-  integrity sha512-HnCtzY74FdjdWGFLgq1v66LbpezWhUuv/Z6jrJDiDJJSY5uM1u/9hgdyypcUXIf1wJEnGGy0/bVaNhYwBJcygw==
+"@hyperion-framework/presentation-2-parser@^1.0.0-alpha.9":
+  version "1.0.0-alpha.9"
+  resolved "https://registry.yarnpkg.com/@hyperion-framework/presentation-2-parser/-/presentation-2-parser-1.0.0-alpha.9.tgz#c8d09ddacd561bea2b9cd36cd6ac2f0e900bacf8"
+  integrity sha512-1uvxSJh2yK+BSbdad4moGjVrOP1voqeoQCPqagxHmPAIBk5vq+OwPW8HQUQ4ZcBDpIhd+raVfKFKiwqEZ1V2wg==
   dependencies:
     "@atlas-viewer/iiif-image-api" "^1.1.0"
     "@hyperion-framework/presentation-2" "^1.0.0-alpha.7"
@@ -1554,26 +1554,26 @@
   dependencies:
     "@hyperion-framework/types" "^1.0.0-alpha.4"
 
-"@hyperion-framework/react-vault@1.0.0-alpha.7":
-  version "1.0.0-alpha.7"
-  resolved "https://registry.yarnpkg.com/@hyperion-framework/react-vault/-/react-vault-1.0.0-alpha.7.tgz#0802ef11ed707b2c0d23908135a0c9ac908af378"
-  integrity sha512-4sETcz42AF+S+lV/q+NQbPvKYuu++RVQhWJ//eZ8f2IcdSvAms3m74w1tHfhaqG31W1di635JEnl+7gX30/fEg==
+"@hyperion-framework/react-vault@1.0.0-alpha.9":
+  version "1.0.0-alpha.9"
+  resolved "https://registry.yarnpkg.com/@hyperion-framework/react-vault/-/react-vault-1.0.0-alpha.9.tgz#469db5e334f2735e2cc7bbae3d5675774da85ae0"
+  integrity sha512-d3kYyKU+s3UN7z67kC4zdvn6hpJYhF2ygNFXt9fM4dGBN98lrTJLJdx0Mp/8R88th+btw0BfcuatiuF6nrWOGQ==
   dependencies:
     "@atlas-viewer/iiif-image-api" "^1.1.0"
-    "@hyperion-framework/store" "^1.0.0-alpha.7"
-    "@hyperion-framework/vault" "^1.0.0-alpha.7"
+    "@hyperion-framework/store" "^1.0.0-alpha.9"
+    "@hyperion-framework/vault" "^1.0.0-alpha.9"
     react "^16.8.6"
     react-dom "^16.8.6"
     react-query "^1.5.2"
     redux "^4.0.5"
     redux-react-hook "^3.2.0"
 
-"@hyperion-framework/store@^1.0.0-alpha.7":
-  version "1.0.0-alpha.7"
-  resolved "https://registry.yarnpkg.com/@hyperion-framework/store/-/store-1.0.0-alpha.7.tgz#58c4a29ee42505b8a15fbd4d7732e76b6ecb87a3"
-  integrity sha512-ygwC478KSA9nL+ErxcnIsp8qU474zmpvmKISujKOx1iaBin7boKuE8Bc/TQoiiaazL+XTfHH59eT3v1CChMNcg==
+"@hyperion-framework/store@^1.0.0-alpha.9":
+  version "1.0.0-alpha.9"
+  resolved "https://registry.yarnpkg.com/@hyperion-framework/store/-/store-1.0.0-alpha.9.tgz#b1ad5cf0f2c31a00f02df6dcae8c139deb9de1f9"
+  integrity sha512-gGcniy4kzIuJuVKYZU8Jtls9vOEzPVyg6gF7m5anBLyBhtE8lx/DxveAjeJHDfZ/Pj2wnK6wxV6WVhMOxNb/Ag==
   dependencies:
-    "@hyperion-framework/parser" "^1.0.0-alpha.7"
+    "@hyperion-framework/parser" "^1.0.0-alpha.9"
     "@hyperion-framework/types" "^1.0.0-alpha.4"
     immer "^6.0.8"
     redux "^4.0.5"
@@ -1596,14 +1596,14 @@
   resolved "https://registry.yarnpkg.com/@hyperion-framework/types/-/types-1.0.0-alpha.0.tgz#61070c5d8b2a078f51c6c8b4ad697149f0e835e5"
   integrity sha512-rO/nYib9OLkdSM2N6r47qjAPweyObgNchWi6Zxx2mNvfdkNmeJIYqKd9hYMX5Vyh9zY5BJ89gPnibKxCfoiTLg==
 
-"@hyperion-framework/vault@1.0.0-alpha.7", "@hyperion-framework/vault@^1.0.0-alpha.7":
-  version "1.0.0-alpha.7"
-  resolved "https://registry.yarnpkg.com/@hyperion-framework/vault/-/vault-1.0.0-alpha.7.tgz#161c994ffe3db2cc24778d40f77735b9ee2d7696"
-  integrity sha512-kbSnoGzetNvSSLhCpKd9xNcLJJJDTZ3hF+cdiuJS4XM+q+lcBWMa1NBTP3c4GkqoSlBfc4XWYiq3doYIi1hexw==
+"@hyperion-framework/vault@1.0.0-alpha.9", "@hyperion-framework/vault@^1.0.0-alpha.9":
+  version "1.0.0-alpha.9"
+  resolved "https://registry.yarnpkg.com/@hyperion-framework/vault/-/vault-1.0.0-alpha.9.tgz#50895453385a267d4ebb671eb2b3afe1ced4ee76"
+  integrity sha512-sNr6WYkUdSOhmFQqwcO9bqNE6dU8PAbgb8+6Z6TtxLxnNCLwFaI2QtMPmMeALY93d7UZLINLDmDACejvCxX1qQ==
   dependencies:
     "@atlas-viewer/iiif-image-api" "^1.1.0"
-    "@hyperion-framework/parser" "^1.0.0-alpha.7"
-    "@hyperion-framework/store" "^1.0.0-alpha.7"
+    "@hyperion-framework/parser" "^1.0.0-alpha.9"
+    "@hyperion-framework/store" "^1.0.0-alpha.9"
     "@hyperion-framework/types" "^1.0.0-alpha.4"
     mitt "^1.2.0"
 
