@@ -12,21 +12,11 @@ const CanvasThumbnail: React.FC<{ canvas: CanvasNormalized; height: number }> = 
   const [thumbnail, setThumbnail] = useState<string | undefined>();
 
   useVaultEffect(vault => {
-    vault
-      .getThumbnail(
-        canvas,
-        {
-          maxWidth: 257,
-          maxHeight: 257,
-          unsafeImageService: false,
-        },
-        true
-      )
-      .then(t => {
-        if (t.best) {
-          setThumbnail(t.best.id);
-        }
-      });
+    vault.getThumbnail(canvas, {}, true).then(t => {
+      if (t.best) {
+        setThumbnail(t.best.id);
+      }
+    });
   });
 
   if (!thumbnail) {
