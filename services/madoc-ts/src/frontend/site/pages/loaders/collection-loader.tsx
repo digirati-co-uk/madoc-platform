@@ -50,7 +50,7 @@ const links = {
 export const CollectionLoader: UniversalComponent<CollectionLoaderType> = createUniversalComponent<
   CollectionLoaderType
 >(
-  ({ route }) => {
+  ({ route, ...props }) => {
     const { resolvedData: data, latestData } = usePaginatedData(
       CollectionLoader,
       {},
@@ -62,6 +62,7 @@ export const CollectionLoader: UniversalComponent<CollectionLoaderType> = create
     }
 
     return renderUniversalRoutes(route.routes, {
+      ...props,
       collection: data.collection,
       pagination: latestData ? latestData.pagination : undefined,
     });

@@ -47,7 +47,7 @@ const createLinks = (params: ManifestLoaderType['variables']) => ({
 });
 
 export const ManifestLoader: UniversalComponent<ManifestLoaderType> = createUniversalComponent<ManifestLoaderType>(
-  ({ route, collection }) => {
+  ({ route, collection, ...props }) => {
     const { latestData: data, resolvedData } = usePaginatedData(
       ManifestLoader,
       {},
@@ -61,6 +61,7 @@ export const ManifestLoader: UniversalComponent<ManifestLoaderType> = createUniv
     return (
       <>
         {renderUniversalRoutes(route.routes, {
+          ...props,
           manifest: data ? data.manifest : resolvedData.manifest,
           pagination: resolvedData ? resolvedData.pagination : undefined,
           collection,
