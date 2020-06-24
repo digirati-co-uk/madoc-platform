@@ -559,6 +559,41 @@ export class ApiClient {
     });
   }
 
+  async getCaptureModelRevision(revisionId: string) {
+    return this.request<RevisionRequest>(`/api/crowdsourcing/revision/${revisionId}`);
+  }
+
+  async approveCaptureModelRevision(revisionRequest: RevisionRequest) {
+    return this.request<RevisionRequest>(`/api/crowdsourcing/revision/${revisionRequest.revision.id}`, {
+      method: 'PUT',
+      body: {
+        ...revisionRequest,
+        revision: {
+          ...revisionRequest.revision,
+          status: 'accepted',
+          accepted: true,
+        },
+        status: 'accepted',
+      },
+    });
+  }
+
+  async reDraftCaptureModelRevision(revisionRequest: RevisionRequest) {
+    return this.request<RevisionRequest>(`/api/crowdsourcing/revision/${revisionRequest.revision.id}`, {
+      method: 'PUT',
+      body: {
+        ...revisionRequest,
+        status: 'draft',
+      },
+    });
+  }
+
+  async deleteCaptureModelRevision(revisionRequest: RevisionRequest) {
+    return this.request<void>(`/api/crowdsourcing/revision/${revisionRequest.revision.id}`, {
+      method: 'DELETE',
+    });
+  }
+
   async updateTaskStatus<Task extends BaseTask>(
     taskId: string,
     availableStatuses: any,
