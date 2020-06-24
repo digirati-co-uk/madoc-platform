@@ -18,11 +18,12 @@ export const queueEvents: RouteMiddleware = async (context, next) => {
       return;
     }
 
+    const hasSubject = typeof subject !== 'undefined';
     const queueMap: { [ev: string]: string[] } = {};
     const allEvents: string[] = [];
     for (const eventString of task.events) {
       const [queueName, event, ...sub] = eventString.split('.');
-      const ev = `${event}${subject ? `.${sub.join('.')}` : ''}`;
+      const ev = `${event}${hasSubject ? `.${sub.join('.')}` : ''}`;
       queueMap[ev] = queueMap[ev] ? queueMap[ev] : [];
       queueMap[ev].push(queueName);
       allEvents.push(ev);
@@ -31,14 +32,14 @@ export const queueEvents: RouteMiddleware = async (context, next) => {
     // @todo apply default events from configuration.
 
     // Push the event.
-    const realEvent = `${eventName}${subject ? `.${subject}` : ''}`;
+    const realEvent = `${eventName}${hasSubject ? `.${subject}` : ''}`;
     if (allEvents.indexOf(realEvent) !== -1 && queueMap[realEvent]) {
       for (const queue_id of queueMap[realEvent]) {
         context.state.queue.push({
           queue_id,
           event: {
             name: realEvent,
-            data: { subject, state, taskId: task.id, type: task.type },
+            data: { subject, state, taskId: task.id, type: task.type, context: context.state.jwt.context },
             opts: {
               lifo: eventName !== 'created',
             },

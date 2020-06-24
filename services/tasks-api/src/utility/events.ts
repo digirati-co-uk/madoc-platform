@@ -27,6 +27,7 @@ export const standaloneEvents: EventPrefix[] = [
   'created',
   'modified',
   'assigned',
+  'status',
   'subtask_created',
   'deleted',
   'subtask_status',
@@ -97,7 +98,7 @@ export function validateEvents(events: string[], queueList: string[]) {
     return undefined;
   }
   return parsed.map(([queue, prefix, value]) => {
-    return `${queue}.${prefix}${value ? `.${value}` : ''}`;
+    return `${queue}.${prefix}${typeof value !== 'undefined' ? `.${value}` : ''}`;
   });
 }
 
