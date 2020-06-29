@@ -28,6 +28,8 @@ export interface CrowdsourcingTask extends BaseTask {
    */
   status: -1 | 0 | 1 | 2 | 3 | 4;
   state: {
+    revisionId?: string;
+    reviewTask?: string;
     // Can start adding to this as we need.
   };
 }

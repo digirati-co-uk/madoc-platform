@@ -39,6 +39,11 @@ export type BaseTask = {
   description?: string;
 
   /**
+   * Modified
+   */
+  modified_at?: number;
+
+  /**
    * A number representing the status of the task. 0 - not started, 1 - accepted, 2 - in progress, 3 - done, -1 - errored, 4+ custom.
    * @default 0
    */

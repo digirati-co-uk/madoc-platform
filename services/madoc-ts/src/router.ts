@@ -55,6 +55,7 @@ import { statistics } from './routes/iiif/statistics';
 import { getCanvasManifests } from './routes/iiif/canvases/get-canvas-manifests';
 import { getManifestCollections } from './routes/iiif/manifests/get-manifest-collections';
 import { getFlatCollectionStatistics } from './routes/iiif/collections/get-flat-collection-statistics';
+import { updateResourceClaim } from './routes/projects/update-resource-claim';
 
 export const router = new TypedRouter({
   // Normal route
@@ -139,6 +140,7 @@ export const router = new TypedRouter({
   'get-project-metadata': [TypedRouter.GET, '/api/madoc/projects/:id/metadata', getProjectMetadata],
   'update-project-metadata': [TypedRouter.PUT, '/api/madoc/projects/:id/metadata', updateProjectMetadata],
   'create-project-resource-claim': [TypedRouter.POST, '/api/madoc/projects/:id/claim', createResourceClaim],
+  'update-project-resource-claim': [TypedRouter.POST, '/api/madoc/projects/:id/claim/:claimId', updateResourceClaim],
 
   // Omeka routes
   'get-login': [TypedRouter.GET, '/s/:slug/madoc/login', loginPage],

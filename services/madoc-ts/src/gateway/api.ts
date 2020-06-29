@@ -283,6 +283,14 @@ export class ApiClient {
       body: claim,
     });
   }
+
+  async saveResourceClaim(projectId: string | number, taskId: string, body: { status: number; revisionId?: string }) {
+    return this.request<{ claim: CrowdsourcingTask }>(`/api/madoc/projects/${projectId}/claim/${taskId}`, {
+      method: 'POST',
+      body,
+    });
+  }
+
   async deleteResourceClaim(taskId: string) {
     throw new Error('Not yet implemented');
   }
@@ -548,6 +556,41 @@ export class ApiClient {
     return this.request<RevisionRequest>(`/api/crowdsourcing/revision/${req.revision.id}`, {
       method: 'PUT',
       body: status ? { ...req, revision: { ...req.revision, status } } : req,
+    });
+  }
+
+  async getCaptureModelRevision(revisionId: string) {
+    return this.request<RevisionRequest>(`/api/crowdsourcing/revision/${revisionId}`);
+  }
+
+  async approveCaptureModelRevision(revisionRequest: RevisionRequest) {
+    return this.request<RevisionRequest>(`/api/crowdsourcing/revision/${revisionRequest.revision.id}`, {
+      method: 'PUT',
+      body: {
+        ...revisionRequest,
+        revision: {
+          ...revisionRequest.revision,
+          status: 'accepted',
+          accepted: true,
+        },
+        status: 'accepted',
+      },
+    });
+  }
+
+  async reDraftCaptureModelRevision(revisionRequest: RevisionRequest) {
+    return this.request<RevisionRequest>(`/api/crowdsourcing/revision/${revisionRequest.revision.id}`, {
+      method: 'PUT',
+      body: {
+        ...revisionRequest,
+        status: 'draft',
+      },
+    });
+  }
+
+  async deleteCaptureModelRevision(revisionRequest: RevisionRequest) {
+    return this.request<void>(`/api/crowdsourcing/revision/${revisionRequest.revision.id}`, {
+      method: 'DELETE',
     });
   }
 

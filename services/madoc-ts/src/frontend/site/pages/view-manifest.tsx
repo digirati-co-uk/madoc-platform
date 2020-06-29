@@ -4,14 +4,40 @@ import { CollectionFull } from '../../../types/schemas/collection-full';
 import { ManifestFull } from '../../../types/schemas/manifest-full';
 import { Link } from 'react-router-dom';
 import { Pagination } from '../../shared/components/Pagination';
+import { useApi } from '../../shared/hooks/use-api';
+import { useQuery } from 'react-query';
+import { ProjectFull } from '../../../types/schemas/project-full';
 
 export const ViewManifest: React.FC<{
-  collection: CollectionFull['collection'];
+  project?: ProjectFull;
+  collection?: CollectionFull['collection'];
   manifest: ManifestFull['manifest'];
   pagination: ManifestFull['pagination'];
-}> = ({ collection, manifest, pagination }) => {
+}> = ({ collection, manifest, pagination, project }) => {
+  const api = useApi();
+  const key = { collection_id: collection ? collection.id : undefined, manifest_id: manifest.id };
+  const { data: projectList } = useQuery(
+    ['site-collection-projects', key],
+    async () => {
+      return await api.getSiteProjects(key);
+    },
+    { refetchInterval: false, refetchOnWindowFocus: false }
+  );
+
+  // Task where:
+  // - Site id
+  // - Root id = project.task_id
+  // - subject = this urn.
+
   return (
     <>
+      {projectList && !project
+        ? projectList.projects.map((project: any) => (
+            <div key={project.id}>
+              <LocaleString>{project.label}</LocaleString>
+            </div>
+          ))
+        : null}
       {collection ? (
         <h5>
           Part of{' '}

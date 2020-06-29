@@ -18,6 +18,9 @@
           "capture_model_id": {
             "type": "string"
           },
+          "task_id": {
+            "type": "string"
+          },
           "label": {
             "type": "object",
             "additionalProperties": {
@@ -35,43 +38,17 @@
                 "type": "string"
               }
             }
-          },
-          "statistics": {
-            "type": "object",
-            "properties": {
-              "0": {
-                "type": "number"
-              },
-              "1": {
-                "type": "number"
-              },
-              "2": {
-                "type": "number"
-              },
-              "3": {
-                "type": "number"
-              }
-            },
-            "additionalProperties": false,
-            "required": [
-              "0",
-              "1",
-              "2",
-              "3"
-            ]
-          },
-          "config": {}
+          }
         },
         "additionalProperties": false,
         "required": [
           "capture_model_id",
           "collection_id",
-          "config",
           "id",
           "label",
           "slug",
-          "statistics",
-          "summary"
+          "summary",
+          "task_id"
         ]
       }
     },

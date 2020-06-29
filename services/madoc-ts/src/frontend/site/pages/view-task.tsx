@@ -5,6 +5,8 @@ import '../../shared/caputre-models/refinements';
 import { ViewCrowdsourcingTask } from './tasks/crowdsourcing-task.lazy';
 import { BrowserComponent } from '../../shared/utility/browser-component';
 import { useApi } from '../../shared/hooks/use-api';
+import { CrowdsourcingReview } from '../../../gateway/tasks/crowdsourcing-review';
+import { ViewCrowdsourcingReview } from './tasks/crowdsourcing-review';
 
 export const ViewTask: React.FC<{ task: BaseTask }> = ({ task }) => {
   const api = useApi();
@@ -31,6 +33,11 @@ export const ViewTask: React.FC<{ task: BaseTask }> = ({ task }) => {
         <ViewCrowdsourcingTask task={task as CrowdsourcingTask} />
       </BrowserComponent>
     );
+  }
+
+  // @todo check user role.
+  if (task.type === 'crowdsourcing-review') {
+    return <ViewCrowdsourcingReview task={task as CrowdsourcingReview} />;
   }
 
   return <h1>{task.name}</h1>;

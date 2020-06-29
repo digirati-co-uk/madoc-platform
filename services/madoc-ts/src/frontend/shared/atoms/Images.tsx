@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const CroppedImage = styled.div`
   background: #4e4e4e;
-  width: 160px;
+  padding: 2px;
   height: 160px;
   display: flex;
   justify-content: center;
