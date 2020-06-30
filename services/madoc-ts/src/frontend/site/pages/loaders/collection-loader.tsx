@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Pagination } from '../../../../types/schemas/_pagination';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { UniversalComponent } from '../../../types';
 import { useData, usePaginatedData } from '../../../shared/hooks/use-data';
 import { LocaleString } from '../../../shared/components/LocaleString';
+import { BreadcrumbContext, DisplayBreadcrumbs } from '../../../shared/components/Breadcrumbs';
 
 /**
  * Collection loader.
@@ -57,15 +58,21 @@ export const CollectionLoader: UniversalComponent<CollectionLoaderType> = create
       { refetchOnMount: false, refetchInterval: false, refetchOnWindowFocus: false }
     );
 
+    const ctx = useMemo(() => (data ? { id: data.collection.id, name: data.collection.label } : undefined), [data]);
+
     if (!data) {
-      return <>loading...</>;
+      return <DisplayBreadcrumbs />;
     }
 
-    return renderUniversalRoutes(route.routes, {
-      ...props,
-      collection: data.collection,
-      pagination: latestData ? latestData.pagination : undefined,
-    });
+    return (
+      <BreadcrumbContext collection={ctx}>
+        {renderUniversalRoutes(route.routes, {
+          ...props,
+          collection: data.collection,
+          pagination: latestData ? latestData.pagination : undefined,
+        })}
+      </BreadcrumbContext>
+    );
   },
   {
     getKey: (params, query) => {

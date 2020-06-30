@@ -5,6 +5,7 @@ import { useApi } from '../../shared/hooks/use-api';
 import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
 import { Pagination } from '../../shared/components/Pagination';
+import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 
 type ViewCollectionType = {
   data: any;
@@ -25,6 +26,7 @@ export const ViewCollection: React.FC<CollectionFull> = ({ collection, paginatio
 
   return (
     <>
+      <DisplayBreadcrumbs />
       <LocaleString as="h1">{collection.label}</LocaleString>
       {projectList
         ? projectList.projects.map((project: any) => (

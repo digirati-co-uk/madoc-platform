@@ -7,6 +7,7 @@ import { Pagination } from '../../shared/components/Pagination';
 import { useApi } from '../../shared/hooks/use-api';
 import { useQuery } from 'react-query';
 import { ProjectFull } from '../../../types/schemas/project-full';
+import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 
 export const ViewManifest: React.FC<{
   project?: ProjectFull;
@@ -31,21 +32,14 @@ export const ViewManifest: React.FC<{
 
   return (
     <>
+      <DisplayBreadcrumbs />
       {projectList && !project
-        ? projectList.projects.map((project: any) => (
-            <div key={project.id}>
-              <LocaleString>{project.label}</LocaleString>
+        ? projectList.projects.map((proj: any) => (
+            <div key={proj.id}>
+              <LocaleString>{proj.label}</LocaleString>
             </div>
           ))
         : null}
-      {collection ? (
-        <h5>
-          Part of{' '}
-          <Link to={`/collections/${collection.id}`}>
-            <LocaleString>{collection.label}</LocaleString>
-          </Link>
-        </h5>
-      ) : null}
       <h1>
         <LocaleString>{manifest.label}</LocaleString>
       </h1>

@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { UniversalComponent } from '../../../types';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { useStaticData } from '../../../shared/hooks/use-data';
+import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
 
 type ProjectLoaderType = {
   params: { slug: string };
@@ -16,11 +17,15 @@ export const ProjectLoader: UniversalComponent<ProjectLoaderType> = createUniver
   ({ route }) => {
     const { data } = useStaticData(ProjectLoader);
 
+    const ctx = useMemo(() => (data ? { id: data.id, name: data.label } : undefined), [data]);
+
     if (!data) {
       return <div>Loading...</div>;
     }
 
-    return <>{renderUniversalRoutes(route.routes, { project: data })}</>;
+    return (
+      <BreadcrumbContext project={ctx}>{renderUniversalRoutes(route.routes, { project: data })}</BreadcrumbContext>
+    );
   },
   {
     getKey: params => {

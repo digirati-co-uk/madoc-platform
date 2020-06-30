@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Pagination } from '../../../../types/schemas/_pagination';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { UniversalComponent } from '../../../types';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { CollectionFull } from '../../../../types/schemas/collection-full';
 import { usePaginatedData } from '../../../shared/hooks/use-data';
+import { BreadcrumbContext, DisplayBreadcrumbs } from '../../../shared/components/Breadcrumbs';
 
 type ManifestLoaderType = {
   params: { id: string; collectionId?: string; projectId?: string };
@@ -48,25 +49,27 @@ const createLinks = (params: ManifestLoaderType['variables']) => ({
 
 export const ManifestLoader: UniversalComponent<ManifestLoaderType> = createUniversalComponent<ManifestLoaderType>(
   ({ route, collection, ...props }) => {
-    const { latestData: data, resolvedData } = usePaginatedData(
+    const { resolvedData: data } = usePaginatedData(
       ManifestLoader,
       {},
       { refetchOnMount: false, refetchInterval: false, refetchOnWindowFocus: false }
     );
 
-    if (!resolvedData) {
-      return <>Loading..</>;
+    const ctx = useMemo(() => (data ? { id: data.manifest.id, name: data.manifest.label } : undefined), [data]);
+
+    if (!data) {
+      return <DisplayBreadcrumbs />;
     }
 
     return (
-      <>
+      <BreadcrumbContext manifest={ctx}>
         {renderUniversalRoutes(route.routes, {
           ...props,
-          manifest: data ? data.manifest : resolvedData.manifest,
-          pagination: resolvedData ? resolvedData.pagination : undefined,
+          manifest: data ? data.manifest : undefined,
+          pagination: data ? data.pagination : undefined,
           collection,
         })}
-      </>
+      </BreadcrumbContext>
     );
   },
   {
