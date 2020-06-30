@@ -63,9 +63,13 @@ export const CreateCollection: React.FC = () => {
           <VaultProvider>
             <PreviewCollection
               id={query.collection}
+              manifestId={query.manifest}
               disabled={isCreating}
               onImport={(collectionId, manifestIds) => {
                 importCollection({ collectionId, manifestIds });
+              }}
+              onClick={manifestId => {
+                history.push(`/import/collection?collection=${importedCollectionId}&manifest=${manifestId}`);
               }}
             />
           </VaultProvider>

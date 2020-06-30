@@ -11,13 +11,15 @@ import { PreviewManifest } from './PreviewManifest';
 
 export const PreviewCollection: React.FC<{
   id: string;
+  manifestId?: string;
   disabled?: boolean;
+  onClick?: (manifestId: string) => void;
   onImport: (collectionId: string, manifestIds: string[]) => void;
 }> = props => {
   const [collection, setCollection] = useState<CollectionNormalized | undefined>();
   const [manifests, setManifests] = useState<ManifestNormalized[]>([]);
   const { t } = useTranslation();
-  const [currentManifest, setCurrentManifest] = useState<string>();
+  const [currentManifest, setCurrentManifest] = useState<string | undefined>(props.manifestId);
   const [excludedManifests, setExcludedManifests] = useState<string[]>([]);
   const excludeEnabled = false; // @todo enable
 
@@ -45,13 +47,6 @@ export const PreviewCollection: React.FC<{
 
   return (
     <div>
-      {currentManifest ? (
-        <>
-          <PreviewManifest id={currentManifest} />
-        </>
-      ) : null}
-      <br />
-
       <Header>
         <Heading1>
           <LocaleString>{collection.label || { none: [t('Untitled collection')] }}</LocaleString>
@@ -68,6 +63,13 @@ export const PreviewCollection: React.FC<{
           {t('Import collection and {{count}} manifests', { count: manifests.length - excludedManifests.length })}
         </Button>
       </Header>
+
+      {currentManifest ? (
+        <div style={{ background: '#ddd', padding: '0.1em 1em' }}>
+          <PreviewManifest id={currentManifest} />
+        </div>
+      ) : null}
+
       <TableContainer>
         {manifests.map(manifest => {
           return (
@@ -96,7 +98,12 @@ export const PreviewCollection: React.FC<{
                 <TinyButton
                   disabled={props.disabled}
                   style={{ marginLeft: 10 }}
-                  onClick={() => setCurrentManifest(manifest.id)}
+                  onClick={() => {
+                    setCurrentManifest(manifest.id);
+                    if (props.onClick) {
+                      props.onClick(manifest.id);
+                    }
+                  }}
                 >
                   {t('preview')}
                 </TinyButton>
