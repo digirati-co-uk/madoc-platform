@@ -6,6 +6,10 @@ import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
 import { Pagination } from '../../shared/components/Pagination';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { ImageGrid, ImageGridItem } from '../../shared/atoms/ImageGrid';
+import { CroppedImage } from '../../shared/atoms/Images';
+import { SingleLineHeading5, Subheading5 } from '../../shared/atoms/Heading5';
+import { useTranslation } from 'react-i18next';
 
 type ViewCollectionType = {
   data: any;
@@ -16,12 +20,22 @@ type ViewCollectionType = {
 
 export const ViewCollection: React.FC<CollectionFull> = ({ collection, pagination }) => {
   const api = useApi();
+  const { t } = useTranslation();
   const { data: projectList } = useQuery(
     ['site-collection-projects', { id: collection.id }],
     async () => {
       return await api.getSiteProjects({ collection_id: collection.id });
     },
     { refetchInterval: false, refetchOnWindowFocus: false }
+  );
+
+  const pages = (
+    <Pagination
+      pageParam={'c'}
+      page={pagination ? pagination.page : 1}
+      totalPages={pagination ? pagination.totalPages : 1}
+      stale={!pagination}
+    />
   );
 
   return (
@@ -35,21 +49,32 @@ export const ViewCollection: React.FC<CollectionFull> = ({ collection, paginatio
             </div>
           ))
         : null}
-      <h3>Manifests</h3>
-      {collection.items.map(manifest => (
-        <div key={manifest.id}>
-          <Link to={`/collections/${collection.id}/manifests/${manifest.id}`}>
-            <LocaleString>{manifest.label}</LocaleString>
+      {pages}
+      <ImageGrid>
+        {collection.items.map((manifest, idx) => (
+          <Link
+            key={`${manifest.id}_${idx}`}
+            to={
+              manifest.type === 'manifest'
+                ? `/collections/${collection.id}/manifests/${manifest.id}`
+                : `/collections/${manifest.id}`
+            }
+          >
+            <ImageGridItem>
+              <CroppedImage>
+                {manifest.thumbnail ? <img alt={t('First image in manifest')} src={manifest.thumbnail} /> : null}
+              </CroppedImage>
+              <LocaleString as={SingleLineHeading5}>{manifest.label}</LocaleString>
+              <Subheading5>
+                {manifest.type === 'manifest'
+                  ? t('{{count}} images', { count: manifest.canvasCount })
+                  : t('{{count}} manifests', { count: manifest.canvasCount })}
+              </Subheading5>
+            </ImageGridItem>
           </Link>
-        </div>
-      ))}
-      <hr />
-      <Pagination
-        pageParam={'c'}
-        page={pagination ? pagination.page : 1}
-        totalPages={pagination ? pagination.totalPages : 1}
-        stale={!pagination}
-      />
+        ))}
+      </ImageGrid>
+      {pages}
     </>
   );
 };
