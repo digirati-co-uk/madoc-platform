@@ -58,6 +58,8 @@ export const TaskRouter: UniversalComponent<TaskRouterType> = createUniversalCom
       return <div>Loading...</div>;
     }
 
+    const hasSubtasks = data.task ? (data.task.subtasks || []).length > 0 : false;
+
     return (
       <>
         <AdminHeader
@@ -79,7 +81,7 @@ export const TaskRouter: UniversalComponent<TaskRouterType> = createUniversalCom
           ) : null}
           {renderTask(
             data,
-            data.task ? (
+            hasSubtasks ? (
               <SubtaskProgress
                 total={(data.task.subtasks || []).length}
                 done={(data.task.subtasks || []).filter(e => e.status === 3).length}
