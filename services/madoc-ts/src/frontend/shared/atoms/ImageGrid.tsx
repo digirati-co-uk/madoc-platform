@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const ImageGrid = styled.div`
   width: 100%;
@@ -10,15 +10,19 @@ export const ImageGrid = styled.div`
   }
 `;
 
-export const ImageGridItem = styled.div`
+export const ImageGridItem = styled.div<{ static?: boolean }>`
   padding: 0.5em;
   width: 190px;
   display: flex;
   flex-direction: column;
   border-radius: 3px;
   justify-content: center;
-  &:hover {
-    cursor: pointer;
-    background: #eee;
-  }
+  ${props =>
+    !props.static &&
+    css`
+      &:hover {
+        cursor: pointer;
+        background: #eee;
+      }
+    `}
 `;
