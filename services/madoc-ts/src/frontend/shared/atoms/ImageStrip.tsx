@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const ImageStripBox = styled.div`
   margin: 10px 10px 10px 0px;
   padding: 5px;
-  width: 170px;
+  width: 160px;
 
   &:hover {
     background: #eee;

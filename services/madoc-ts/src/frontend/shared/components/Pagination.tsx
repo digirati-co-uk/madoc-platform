@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { stringify } from 'query-string';
+import { TinyButton } from '../atoms/Button';
 
 export const Pagination: React.FC<{
   page: number;
@@ -18,11 +19,20 @@ export const Pagination: React.FC<{
   const q = extraQuery ? `&${stringify(extraQuery)}` : '';
 
   return (
-    <div>
+    <div style={{ margin: '2em 0' }}>
       {prevPage ? (
-        <Link to={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}` : ''}${q}`}>{t('Previous page')}</Link>
+        <TinyButton as={Link} to={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}` : ''}${q}`}>
+          {t('Previous page')}
+        </TinyButton>
       ) : null}
-      {nextPage ? <Link to={`${pathname}?${pageParam}=${page + 1}${q}`}>{t('Next page')}</Link> : null}
+      <div style={{ display: 'inline-block', margin: 10, fontSize: '0.9em' }}>
+        Page {page} of {totalPages}
+      </div>
+      {nextPage ? (
+        <TinyButton as={Link} to={`${pathname}?${pageParam}=${page + 1}${q}`}>
+          {t('Next page')}
+        </TinyButton>
+      ) : null}
     </div>
   );
 };
