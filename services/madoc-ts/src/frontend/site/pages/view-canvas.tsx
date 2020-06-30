@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { UniversalComponent } from '../../types';
 import { createUniversalComponent } from '../../shared/utility/create-universal-component';
 import { useData, useStaticData } from '../../shared/hooks/use-data';
@@ -16,6 +16,8 @@ import { useParams, useHistory } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { Button } from '../../shared/atoms/Button';
 import { CanvasFull } from '../../../types/schemas/canvas-full';
+import { BreadcrumbContext, DisplayBreadcrumbs, useBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { Debug } from '../../shared/atoms/Debug';
 
 type ViewCanvasType = {
   params: {
@@ -37,6 +39,7 @@ type ViewCanvasType = {
 const TestComponent: React.FC = () => {
   const canvas = useCanvas();
   const { data: service } = useImageService();
+  const bread = useBreadcrumbs();
   const thumbnail = useThumbnail({ maxHeight: 1000, maxWidth: 1000 }, true);
 
   if (!canvas) {
@@ -47,6 +50,7 @@ const TestComponent: React.FC = () => {
     <div>
       {/*<LocaleString defaultText="- no label -">{canvas.label}</LocaleString>*/}
       {thumbnail ? <img src={thumbnail.id} /> : null}
+      <Debug>{bread}</Debug>
     </div>
   );
 };
@@ -78,6 +82,7 @@ export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalCom
     const projects = useManifestProjects(manifestId);
     const api = useApi();
     const history = useHistory();
+    const ctx = useMemo(() => (data ? { id: data.canvas.id, name: data.canvas.label } : undefined), [data]);
 
     useVaultEffect(
       vault => {
@@ -124,7 +129,11 @@ export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalCom
     };
 
     if (!data) {
-      return <>Loading...</>;
+      return (
+        <BreadcrumbContext canvas={{ id: id as any, name: { none: ['...'] } }}>
+          <DisplayBreadcrumbs />
+        </BreadcrumbContext>
+      );
     }
 
     // Prompted to contribute - or login to contribute.
@@ -180,7 +189,8 @@ export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalCom
     // - NEW FEATURE: event when ROOT task sub task status changes OR is created.
 
     return (
-      <>
+      <BreadcrumbContext canvas={ctx}>
+        <DisplayBreadcrumbs />
         <LocaleString as="h1">{data.canvas.label}</LocaleString>
         {/*<img src={data.canvas.thumbnail} />*/}
         {canvasRef ? (
@@ -202,7 +212,7 @@ export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalCom
             })}
           </>
         ) : null}
-      </>
+      </BreadcrumbContext>
     );
   },
   {
