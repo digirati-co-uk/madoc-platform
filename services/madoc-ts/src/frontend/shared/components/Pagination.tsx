@@ -18,6 +18,10 @@ export const Pagination: React.FC<{
   const nextPage = stale || page < totalPages;
   const q = extraQuery ? `&${stringify(extraQuery)}` : '';
 
+  if (totalPages === 0) {
+    return null;
+  }
+
   return (
     <div style={{ margin: '2em 0' }}>
       {prevPage ? (
