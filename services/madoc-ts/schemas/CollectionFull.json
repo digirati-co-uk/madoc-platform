@@ -43,7 +43,6 @@
                 }
               }
             },
-            "additionalProperties": false,
             "required": [
               "label",
               "value"
@@ -72,7 +71,6 @@
               }
             }
           },
-          "additionalProperties": false,
           "required": [
             "label",
             "value"
@@ -114,7 +112,6 @@
                 "type": "number"
               }
             },
-            "additionalProperties": false,
             "required": [
               "id",
               "label",
@@ -124,7 +121,6 @@
           }
         }
       },
-      "additionalProperties": false,
       "required": [
         "id",
         "items",
@@ -145,7 +141,6 @@
           "type": "number"
         }
       },
-      "additionalProperties": false,
       "required": [
         "page",
         "totalPages",
@@ -153,7 +148,6 @@
       ]
     }
   },
-  "additionalProperties": false,
   "required": [
     "collection",
     "pagination"

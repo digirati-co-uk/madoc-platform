@@ -1,23 +1,17 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { UniversalComponent } from '../../types';
 import { createUniversalComponent } from '../../shared/utility/create-universal-component';
-import { useData, useStaticData } from '../../shared/hooks/use-data';
+import { useStaticData } from '../../shared/hooks/use-data';
 import { LocaleString } from '../../shared/components/LocaleString';
-import {
-  CanvasContext,
-  useCanvas,
-  useImageService,
-  useThumbnail,
-  useVaultEffect,
-} from '@hyperion-framework/react-vault';
+import { CanvasContext, useVaultEffect } from '@hyperion-framework/react-vault';
 import { CanvasNormalized } from '@hyperion-framework/types';
 import { useApi } from '../../shared/hooks/use-api';
 import { useParams, useHistory } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { Button } from '../../shared/atoms/Button';
 import { CanvasFull } from '../../../types/schemas/canvas-full';
-import { BreadcrumbContext, DisplayBreadcrumbs, useBreadcrumbs } from '../../shared/components/Breadcrumbs';
-import { Debug } from '../../shared/atoms/Debug';
+import { BreadcrumbContext, DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { SimpleAtlasViewer } from '../../shared/components/SimpleAtlasViewer';
 
 type ViewCanvasType = {
   params: {
@@ -34,25 +28,6 @@ type ViewCanvasType = {
     id: number;
   };
   data: CanvasFull;
-};
-
-const TestComponent: React.FC = () => {
-  const canvas = useCanvas();
-  const { data: service } = useImageService();
-  const bread = useBreadcrumbs();
-  const thumbnail = useThumbnail({ maxHeight: 1000, maxWidth: 1000 }, true);
-
-  if (!canvas) {
-    return null;
-  }
-
-  return (
-    <div>
-      {/*<LocaleString defaultText="- no label -">{canvas.label}</LocaleString>*/}
-      {thumbnail ? <img src={thumbnail.id} /> : null}
-      <Debug>{bread}</Debug>
-    </div>
-  );
 };
 
 function useManifestProjects(manifestId?: string) {
@@ -192,10 +167,9 @@ export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalCom
       <BreadcrumbContext canvas={ctx}>
         <DisplayBreadcrumbs />
         <LocaleString as="h1">{data.canvas.label}</LocaleString>
-        {/*<img src={data.canvas.thumbnail} />*/}
         {canvasRef ? (
           <CanvasContext canvas={canvasRef.id}>
-            <TestComponent />
+            <SimpleAtlasViewer />
           </CanvasContext>
         ) : null}
         {projects.data ? (

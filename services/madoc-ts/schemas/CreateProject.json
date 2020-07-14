@@ -23,7 +23,6 @@
       "type": "string"
     }
   },
-  "additionalProperties": false,
   "required": [
     "label",
     "slug",

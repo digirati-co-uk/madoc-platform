@@ -1,7 +1,11 @@
 import { readFileSync } from 'fs';
 import { createHmac } from 'crypto';
+import { JWK } from 'jose';
+import path from 'path';
 
-const pem = readFileSync('/openssl-certs/madoc.key');
+const keyPath = process.env.MADOC_KEY_PATH || '/openssl-certs/';
+
+const pem = readFileSync(path.join(keyPath, 'madoc.key'));
 
 const keys = process.env.COOKIE_KEYS || 'cookie_key_1,cookie_key_2,cookie_key_3';
 

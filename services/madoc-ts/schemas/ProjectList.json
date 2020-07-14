@@ -40,7 +40,6 @@
             }
           }
         },
-        "additionalProperties": false,
         "required": [
           "capture_model_id",
           "collection_id",
@@ -65,7 +64,6 @@
           "type": "number"
         }
       },
-      "additionalProperties": false,
       "required": [
         "page",
         "totalPages",
@@ -73,7 +71,6 @@
       ]
     }
   },
-  "additionalProperties": false,
   "required": [
     "pagination",
     "projects"

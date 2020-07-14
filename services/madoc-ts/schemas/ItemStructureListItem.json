@@ -20,7 +20,6 @@
       "type": "string"
     }
   },
-  "additionalProperties": false,
   "required": [
     "id",
     "label"

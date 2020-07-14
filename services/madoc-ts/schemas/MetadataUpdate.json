@@ -32,7 +32,6 @@
           },
           "data": {}
         },
-        "additionalProperties": false,
         "required": [
           "key",
           "language",
@@ -77,7 +76,6 @@
           },
           "data": {}
         },
-        "additionalProperties": false,
         "required": [
           "key",
           "language",
@@ -86,7 +84,6 @@
       }
     }
   },
-  "additionalProperties": false,
   "required": [
     "added",
     "modified",

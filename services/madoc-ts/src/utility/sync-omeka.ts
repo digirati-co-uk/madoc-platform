@@ -5,9 +5,10 @@ import { ExternalConfig } from '../types/external-config';
 
 export async function syncOmeka(omeka: Pool, postgres: DatabasePoolType, config: ExternalConfig) {
   // Get sites.
-  const sites = await new Promise<Array<{ id: number; title: string }>>(resolve =>
-    omeka.query(mysql`SELECT id, title FROM site`, (err, content) => resolve(content))
-  );
+  const sites =
+    (await new Promise<Array<{ id: number; title: string }>>(resolve =>
+      omeka.query(mysql`SELECT id, title FROM site`, (err, content) => resolve(content))
+    )) || [];
 
   // Helper to create default permissions for a site,
   function getDefaultPermissions(siteId: number) {

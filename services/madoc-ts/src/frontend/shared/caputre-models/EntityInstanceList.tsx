@@ -1,23 +1,8 @@
 import React from 'react';
 import { DocumentPreview, RoundedCard } from '@capture-models/editor';
-import { isEntity } from '@capture-models/helpers';
+import { getLabel } from '@capture-models/helpers';
 import { useRefinement } from '@capture-models/plugin-api';
 import { CaptureModel, EntityInstanceListRefinement } from '@capture-models/types';
-
-// @todo use helpers function.
-function getLabel(document: CaptureModel['document']) {
-  if (
-    document.labelledBy &&
-    document.properties[document.labelledBy] &&
-    document.properties[document.labelledBy].length > 0
-  ) {
-    const field = document.properties[document.labelledBy][0];
-    if (!isEntity(field) && field.value) {
-      return field.value;
-    }
-  }
-  return `Field number (type: ${document.type})`;
-}
 
 export const EntityInstanceList: React.FC<{
   entities: Array<CaptureModel['document']>;

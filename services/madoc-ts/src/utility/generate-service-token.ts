@@ -1,7 +1,10 @@
 import { JWK, JWT } from 'jose';
 import { readFileSync } from 'fs';
+import * as path from 'path';
 
-const key = JWK.asKey(readFileSync('/openssl-certs/madoc.key'));
+const keyPath = process.env.MADOC_KEY_PATH || '/openssl-certs/';
+
+const key = JWK.asKey(readFileSync(path.join(keyPath, 'madoc.key')));
 
 export type ServiceTokenRequest = {
   scope: string[];

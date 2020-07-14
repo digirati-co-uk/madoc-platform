@@ -43,7 +43,6 @@
                 }
               }
             },
-            "additionalProperties": false,
             "required": [
               "label",
               "value"
@@ -72,7 +71,6 @@
               }
             }
           },
-          "additionalProperties": false,
           "required": [
             "label",
             "value"
@@ -98,7 +96,6 @@
           "type": "number"
         }
       },
-      "additionalProperties": false,
       "required": [
         "height",
         "id",
@@ -107,7 +104,6 @@
       ]
     }
   },
-  "additionalProperties": false,
   "required": [
     "canvas"
   ],

@@ -27,7 +27,6 @@
     },
     "data": {}
   },
-  "additionalProperties": false,
   "required": [
     "key",
     "language",
