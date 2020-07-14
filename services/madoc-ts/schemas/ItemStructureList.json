@@ -25,7 +25,6 @@
             "type": "string"
           }
         },
-        "additionalProperties": false,
         "required": [
           "id",
           "label"
@@ -33,7 +32,6 @@
       }
     }
   },
-  "additionalProperties": false,
   "required": [
     "items"
   ],

@@ -11,19 +11,16 @@
               "type": "string"
             }
           },
-          "additionalProperties": false,
           "required": [
             "identifier"
           ]
         }
       },
-      "additionalProperties": false,
       "required": [
         "query"
       ]
     }
   },
-  "additionalProperties": false,
   "required": [
     "config"
   ],

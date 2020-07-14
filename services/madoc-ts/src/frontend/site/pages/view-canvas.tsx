@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { UniversalComponent } from '../../types';
 import { createUniversalComponent } from '../../shared/utility/create-universal-component';
 import { useData, useStaticData } from '../../shared/hooks/use-data';
@@ -10,7 +10,7 @@ import {
   useThumbnail,
   useVaultEffect,
 } from '@hyperion-framework/react-vault';
-import { CanvasNormalized } from '@hyperion-framework/types';
+import { CanvasNormalized, ImageService } from '@hyperion-framework/types';
 import { useApi } from '../../shared/hooks/use-api';
 import { useParams, useHistory } from 'react-router-dom';
 import { useQuery } from 'react-query';
@@ -18,6 +18,7 @@ import { Button } from '../../shared/atoms/Button';
 import { CanvasFull } from '../../../types/schemas/canvas-full';
 import { BreadcrumbContext, DisplayBreadcrumbs, useBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { Debug } from '../../shared/atoms/Debug';
+import { AtlasAuto, GetTile, getTileFromCanvas, getTileFromImageService, TileSet } from '@atlas-viewer/atlas';
 
 type ViewCanvasType = {
   params: {
@@ -36,11 +37,36 @@ type ViewCanvasType = {
   data: CanvasFull;
 };
 
+const Wunder: React.FC<{ canvas: CanvasNormalized; service: ImageService }> = ({ canvas, service }) => {
+  const [tile, setTile] = useState<GetTile>();
+
+  useEffect(() => {
+    if (service) {
+      getTileFromImageService((service as any).id, canvas.width, canvas.height).then(s => {
+        setTile(s); // only show the first image.
+      });
+    }
+  }, [service, canvas]);
+
+  if (!tile) {
+    return (
+      <worldObject height={canvas.height} width={canvas.width}>
+        <box target={{ x: 0, y: 0, width: canvas.width, height: canvas.height }} id="123" backgroundColor="#000" />
+      </worldObject>
+    );
+  }
+
+  return <TileSet tiles={tile} x={0} y={0} width={canvas.width} height={canvas.height} />;
+};
+
 const TestComponent: React.FC = () => {
   const canvas = useCanvas();
   const { data: service } = useImageService();
-  const bread = useBreadcrumbs();
-  const thumbnail = useThumbnail({ maxHeight: 1000, maxWidth: 1000 }, true);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useLayoutEffect(() => {
+    setIsLoaded(true);
+  }, []);
 
   if (!canvas) {
     return null;
@@ -48,9 +74,13 @@ const TestComponent: React.FC = () => {
 
   return (
     <div>
-      {/*<LocaleString defaultText="- no label -">{canvas.label}</LocaleString>*/}
-      {thumbnail ? <img src={thumbnail.id} /> : null}
-      <Debug>{bread}</Debug>
+      {isLoaded ? (
+        <AtlasAuto style={{ height: 600 }}>
+          <world>
+            <Wunder canvas={canvas} service={service as ImageService} />
+          </world>
+        </AtlasAuto>
+      ) : null}
     </div>
   );
 };
@@ -192,7 +222,6 @@ export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalCom
       <BreadcrumbContext canvas={ctx}>
         <DisplayBreadcrumbs />
         <LocaleString as="h1">{data.canvas.label}</LocaleString>
-        {/*<img src={data.canvas.thumbnail} />*/}
         {canvasRef ? (
           <CanvasContext canvas={canvasRef.id}>
             <TestComponent />

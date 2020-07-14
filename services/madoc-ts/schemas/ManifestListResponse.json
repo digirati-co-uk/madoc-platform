@@ -25,7 +25,6 @@
             "type": "number"
           }
         },
-        "additionalProperties": false,
         "required": [
           "id",
           "label",
@@ -46,7 +45,6 @@
           "type": "number"
         }
       },
-      "additionalProperties": false,
       "required": [
         "page",
         "totalPages",
@@ -54,7 +52,6 @@
       ]
     }
   },
-  "additionalProperties": false,
   "required": [
     "manifests",
     "pagination"

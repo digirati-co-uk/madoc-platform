@@ -50,7 +50,6 @@
           "type": "number"
         }
       },
-      "additionalProperties": false,
       "required": [
         "0",
         "1",
@@ -68,7 +67,6 @@
           "type": "number"
         }
       },
-      "additionalProperties": false,
       "required": [
         "canvases",
         "manifests"
@@ -76,7 +74,6 @@
     },
     "config": {}
   },
-  "additionalProperties": false,
   "required": [
     "capture_model_id",
     "collection_id",

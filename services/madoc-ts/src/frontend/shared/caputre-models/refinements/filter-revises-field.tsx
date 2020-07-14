@@ -1,6 +1,6 @@
-import { registerRefinement } from '@capture-models/plugin-api';
-import { FieldInstanceList } from '../FieldInstanceList';
 import React from 'react';
+import { registerRefinement } from '@capture-models/plugin-api';
+import { FieldInstanceList } from '@capture-models/editor';
 
 registerRefinement({
   type: 'field-instance-list',
@@ -23,9 +23,7 @@ registerRefinement({
       <FieldInstanceList
         fields={instance.filter(i => duplicates.indexOf(i.id) === -1)}
         property={property}
-        path={path}
         chooseField={chooseField}
-        readOnly={readOnly}
       >
         {children}
       </FieldInstanceList>

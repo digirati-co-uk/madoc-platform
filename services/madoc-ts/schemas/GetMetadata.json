@@ -4,40 +4,53 @@
     "fields": {
       "type": "array",
       "items": {
-        "additionalProperties": false,
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number"
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "language": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              },
+              "key": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "edited": {
+                "type": "boolean"
+              },
+              "auto_update": {
+                "type": "boolean"
+              },
+              "readonly": {
+                "type": "boolean"
+              },
+              "data": {}
+            },
+            "required": [
+              "key",
+              "language",
+              "value"
+            ]
           },
-          "language": {
-            "type": "string"
-          },
-          "value": {
-            "type": "string"
-          },
-          "key": {
-            "type": "string"
-          },
-          "source": {
-            "type": "string"
-          },
-          "edited": {
-            "type": "boolean"
-          },
-          "auto_update": {
-            "type": "boolean"
-          },
-          "readonly": {
-            "type": "boolean"
-          },
-          "data": {}
-        },
-        "required": [
-          "id",
-          "key",
-          "language",
-          "value"
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          }
         ]
       }
     },
@@ -48,7 +61,6 @@
       }
     }
   },
-  "additionalProperties": false,
   "required": [
     "fields"
   ],

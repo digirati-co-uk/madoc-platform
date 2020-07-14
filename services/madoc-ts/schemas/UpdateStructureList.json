@@ -8,7 +8,6 @@
       }
     }
   },
-  "additionalProperties": false,
   "required": [
     "item_ids"
   ],

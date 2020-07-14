@@ -55,6 +55,7 @@ export function useStaticData<Data = any, TKey = any, TVariables = any>(
     refetchInterval: false,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
+    refetchIntervalInBackground: false,
     ...config,
   });
 }

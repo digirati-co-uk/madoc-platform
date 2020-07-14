@@ -1,7 +1,8 @@
-import { CanvasNormalized } from '@hyperion-framework/types';
+// import { CanvasNormalized } from '@hyperion-framework/types';
 
 export type CreateCanvas = {
-  canvas: Partial<CanvasNormalized>;
+  canvas: any;
+  // canvas: Partial<CanvasNormalized>;
 
   thumbnail?: string;
 
