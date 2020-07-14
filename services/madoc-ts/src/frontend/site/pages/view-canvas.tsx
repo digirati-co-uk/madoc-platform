@@ -1,24 +1,17 @@
-import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { UniversalComponent } from '../../types';
 import { createUniversalComponent } from '../../shared/utility/create-universal-component';
-import { useData, useStaticData } from '../../shared/hooks/use-data';
+import { useStaticData } from '../../shared/hooks/use-data';
 import { LocaleString } from '../../shared/components/LocaleString';
-import {
-  CanvasContext,
-  useCanvas,
-  useImageService,
-  useThumbnail,
-  useVaultEffect,
-} from '@hyperion-framework/react-vault';
-import { CanvasNormalized, ImageService } from '@hyperion-framework/types';
+import { CanvasContext, useVaultEffect } from '@hyperion-framework/react-vault';
+import { CanvasNormalized } from '@hyperion-framework/types';
 import { useApi } from '../../shared/hooks/use-api';
 import { useParams, useHistory } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { Button } from '../../shared/atoms/Button';
 import { CanvasFull } from '../../../types/schemas/canvas-full';
-import { BreadcrumbContext, DisplayBreadcrumbs, useBreadcrumbs } from '../../shared/components/Breadcrumbs';
-import { Debug } from '../../shared/atoms/Debug';
-import { AtlasAuto, GetTile, getTileFromCanvas, getTileFromImageService, TileSet } from '@atlas-viewer/atlas';
+import { BreadcrumbContext, DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { SimpleAtlasViewer } from '../../shared/components/SimpleAtlasViewer';
 
 type ViewCanvasType = {
   params: {
@@ -35,54 +28,6 @@ type ViewCanvasType = {
     id: number;
   };
   data: CanvasFull;
-};
-
-const Wunder: React.FC<{ canvas: CanvasNormalized; service: ImageService }> = ({ canvas, service }) => {
-  const [tile, setTile] = useState<GetTile>();
-
-  useEffect(() => {
-    if (service) {
-      getTileFromImageService((service as any).id, canvas.width, canvas.height).then(s => {
-        setTile(s); // only show the first image.
-      });
-    }
-  }, [service, canvas]);
-
-  if (!tile) {
-    return (
-      <worldObject height={canvas.height} width={canvas.width}>
-        <box target={{ x: 0, y: 0, width: canvas.width, height: canvas.height }} id="123" backgroundColor="#000" />
-      </worldObject>
-    );
-  }
-
-  return <TileSet tiles={tile} x={0} y={0} width={canvas.width} height={canvas.height} />;
-};
-
-const TestComponent: React.FC = () => {
-  const canvas = useCanvas();
-  const { data: service } = useImageService();
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  useLayoutEffect(() => {
-    setIsLoaded(true);
-  }, []);
-
-  if (!canvas) {
-    return null;
-  }
-
-  return (
-    <div>
-      {isLoaded ? (
-        <AtlasAuto style={{ height: 600 }}>
-          <world>
-            <Wunder canvas={canvas} service={service as ImageService} />
-          </world>
-        </AtlasAuto>
-      ) : null}
-    </div>
-  );
 };
 
 function useManifestProjects(manifestId?: string) {
@@ -224,7 +169,7 @@ export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalCom
         <LocaleString as="h1">{data.canvas.label}</LocaleString>
         {canvasRef ? (
           <CanvasContext canvas={canvasRef.id}>
-            <TestComponent />
+            <SimpleAtlasViewer />
           </CanvasContext>
         ) : null}
         {projects.data ? (
