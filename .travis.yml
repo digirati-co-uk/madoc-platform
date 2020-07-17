@@ -21,6 +21,7 @@ install:
   - docker build -t digirati/madoc-tasks-api services/tasks-api
   - docker build -t digirati/madoc-ts services/madoc-ts
   - docker build -t digirati/madoc-certs services/certs
+  - docker build -t digirati/madoc-storage-api services/storage-api
 
   # v2 Beta tags
   - docker tag digirati/madoc-platform digirati/madoc-platform-beta
@@ -31,6 +32,7 @@ install:
   - docker tag digirati/madoc-tasks-api digirati/madoc-tasks-api-beta
   - docker tag digirati/madoc-ts digirati/madoc-ts-beta
   - docker tag digirati/madoc-certs digirati/madoc-certs-beta
+  - docker tag digirati/madoc-storage-api digirati/madoc-storage-api-beta
 
   # Add any database test fixtures to `database/sql` before madoc init-ci.
   - ./bin/madoc init-ci
@@ -84,6 +86,10 @@ deploy:
       branch: v2
   - provider: script
     script: bash ./.travis/docker-deploy.sh digirati/madoc-certs-beta
+    on:
+      branch: v2
+  - provider: script
+    script: bash ./.travis/docker-deploy.sh digirati/madoc-storage-api-beta
     on:
       branch: v2
 
