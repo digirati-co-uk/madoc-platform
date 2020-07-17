@@ -1,5 +1,6 @@
 {
   "name": "@madoc-platform/storage",
+  "license": "MIT",
   "dependencies": {
     "@slynova/flydrive": "1.0.1-alpha.0",
     "@koa/router": "^8.0.6",
@@ -32,6 +33,6 @@
   "scripts": {
     "start": "pm2 start ecosystem.config.js --watch --no-daemon",
     "watch": "tsc -p . --watch",
-    "build": "NODE_ENV=production yarn generate-schema && tsc -p . && yarn build:admin && yarn build:site"
+    "build": "NODE_ENV=production tsc -p ."
   }
 }
