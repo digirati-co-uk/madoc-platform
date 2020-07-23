@@ -10,7 +10,7 @@
         "digirati/omeka-shared": "1.0.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.2",
+        "phpunit/phpunit": "~5.7",
         "friendsofphp/php-cs-fixer": "^2.0"
     },
     "scripts": {
