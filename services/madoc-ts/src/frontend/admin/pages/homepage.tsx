@@ -11,7 +11,6 @@ import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '
 
 const AdminSection = styled.div`
   width: 25%;
-  margin: 0 20px;
 `;
 
 const AdminSectionGrid = styled.div`
