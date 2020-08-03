@@ -1,5 +1,5 @@
 import React from 'react';
-import { ButtonRow, TinyButton } from '../../../../shared/atoms/Button';
+import { ButtonRow, Button } from '../../../../shared/atoms/Button';
 import { Heading3, Subheading3 } from '../../../../shared/atoms/Heading3';
 import { ImageStrip, ImageStripBox } from '../../../../shared/atoms/ImageStrip';
 import { CroppedImage } from '../../../../shared/atoms/Images';
@@ -46,9 +46,9 @@ export const CollectionList: UniversalComponent<CollectionListType> = createUniv
           title={t('Manage collections', { count: pagination.totalResults })}
         />
         <WidePage>
-          <TinyButton as={Link} to={`/import/collection`}>
+          <Button as={Link} to={`/import/collection`}>
             {t('Import collection')}
-          </TinyButton>
+          </Button>
           <br />
           <br />
           <div>
@@ -66,12 +66,9 @@ export const CollectionList: UniversalComponent<CollectionListType> = createUniv
                 </LocaleString>
               </Heading3>
               <ButtonRow>
-                <TinyButton as={Link} to={`/collections/${collection.id}/structure`}>
+                <Button as={Link} to={`/collections/${collection.id}/structure`}>
                   {t('edit')}
-                </TinyButton>
-                <TinyButton as={Link} to={`/collections/${collection.id}/metadata`}>
-                  {t('edit metadata')}
-                </TinyButton>
+                </Button>
               </ButtonRow>
               <Subheading3>{t('{{count}} items', { count: collection.itemCount })}</Subheading3>
               {collection.items.length === 0 ? null : (

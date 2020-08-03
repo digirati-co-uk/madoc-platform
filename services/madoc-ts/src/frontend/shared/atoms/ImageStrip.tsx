@@ -26,4 +26,7 @@ export const ImageStrip = styled.div`
   ${ImageStripBox} ~ ${ImageStripBox} {
     margin-left: 10px;
   }
+  a {
+    text-decoration: none;
+  }
 `;
