@@ -116,7 +116,7 @@ export const MetadataSection: React.FC<{
           />
         );
       })}
-      <button onClick={removeAll}>Remove</button>
+      <Button onClick={removeAll}>Remove</Button>
     </div>
   );
 };
