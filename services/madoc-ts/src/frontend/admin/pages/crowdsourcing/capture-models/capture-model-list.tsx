@@ -2,7 +2,7 @@ import React from 'react';
 import { CaptureModelSnippet } from '../../../../../types/schemas/capture-model-snippet';
 import { UniversalComponent } from '../../../../types';
 import { Link, useHistory } from 'react-router-dom';
-import { SmallButton } from '../../../../shared/atoms/Button';
+import { Button } from '../../../../shared/atoms/Button';
 import { useMutation } from 'react-query';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { Card, CardContent } from '@capture-models/editor';
@@ -39,7 +39,7 @@ export const CaptureModelList: UniversalComponent<CaptureModelListType> = create
 
     return (
       <>
-        <SmallButton onClick={() => createNewModel()}>Create new model</SmallButton>
+        <Button onClick={() => createNewModel()}>Create new model</Button>
         {models.map((item: any) => {
           return (
             <Card fluid key={item.id} style={{ margin: '1em 0' }}>
