@@ -1,7 +1,17 @@
 import { registerRefinement } from '@capture-models/plugin-api';
 import { CaptureModel } from '@capture-models/types';
-import React from 'react';
-import { VerboseEntityPage } from '../VerboseEntityPage';
+import React, { useEffect } from 'react';
+import { Revisions } from '@capture-models/editor';
+
+const BasicUnNesting: React.FC<{ id: string; term: string }> = props => {
+  const push = Revisions.useStoreActions(a => a.revisionPushSubtree);
+
+  useEffect(() => {
+    push({ term: props.term, id: props.id, skip: true });
+  }, [props.id, props.term, push]);
+
+  return null;
+};
 
 registerRefinement({
   type: 'entity',
@@ -11,25 +21,14 @@ registerRefinement({
     return (
       keys.length === 1 &&
       entity.instance.properties[keys[0]].length === 1 &&
-      entity.instance.properties[keys[0]][0].type === 'entity'
+      entity.instance.properties[keys[0]][0].type === 'entity' &&
+      !entity.instance.properties[keys[0]][0].selector
     );
   },
-  refine(entity, actions, children) {
+  refine(entity) {
     const keys = Object.keys(entity.instance.properties);
     const onlyEntity = entity.instance.properties[keys[0]][0] as CaptureModel['document'];
 
-    return (
-      <VerboseEntityPage
-        staticBreadcrumbs={[...(actions.staticBreadcrumbs || []), entity.instance.label]}
-        entity={{ instance: onlyEntity, property: keys[0] }}
-        path={[...actions.path, [keys[0], onlyEntity.id]]}
-        goBack={actions.goBack}
-        readOnly={actions.readOnly}
-        hideSplash={actions.hideSplash}
-        hideCard={actions.hideCard}
-      >
-        {children}
-      </VerboseEntityPage>
-    );
+    return <BasicUnNesting term={keys[0]} id={onlyEntity.id} />;
   },
 });

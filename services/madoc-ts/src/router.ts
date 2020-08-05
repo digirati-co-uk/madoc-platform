@@ -56,6 +56,7 @@ import { getCanvasManifests } from './routes/iiif/canvases/get-canvas-manifests'
 import { getManifestCollections } from './routes/iiif/manifests/get-manifest-collections';
 import { getFlatCollectionStatistics } from './routes/iiif/collections/get-flat-collection-statistics';
 import { updateResourceClaim } from './routes/projects/update-resource-claim';
+import { getSiteManifestStructure } from './routes/site/site-manifest-structure';
 
 export const router = new TypedRouter({
   // Normal route
@@ -155,6 +156,7 @@ export const router = new TypedRouter({
   'site-collection': [TypedRouter.GET, '/s/:slug/madoc/api/collections/:id', siteCollection],
   'site-collections': [TypedRouter.GET, '/s/:slug/madoc/api/collections', siteCollections],
   'site-manifest': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id', siteManifest],
+  'site-manifest-structure': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/structure', getSiteManifestStructure],
   'site-manifests': [TypedRouter.GET, '/s/:slug/madoc/api/manifests', siteManifests],
   'site-page': [TypedRouter.GET, '/s/:slug/madoc/api/page/:pageSlug+', sitePage],
   'site-project': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug', siteProject],

@@ -12,11 +12,16 @@ export const SingleFieldInstance: React.FC<{
   const chooseSelector = Revisions.useStoreActions(a => a.chooseSelector);
   const currentSelectorId = Revisions.useStoreState(s => s.selector.currentSelectorId);
   const clearSelector = Revisions.useStoreActions(a => a.clearSelector) as any;
+  const previewData = Revisions.useStoreState(s => s.selector.selectorPreviewData);
+  const adjacent = Revisions.useStoreState(s => s.revisionAdjacentSubtreeFields);
+
   const selector = useFieldSelector(field);
 
   const [updateValue] = useDebouncedCallback(newValue => {
     updateFieldValue({ value: newValue, path });
   }, 100);
+
+  console.log('SINGLE FIELD INSTANCE.', adjacent);
 
   return (
     <FieldWrapper
@@ -27,6 +32,7 @@ export const SingleFieldInstance: React.FC<{
       chooseSelector={chooseSelector}
       clearSelector={clearSelector as any}
       currentSelectorId={currentSelectorId}
+      selectorPreview={selector ? previewData[selector.id] : undefined}
     />
   );
 };

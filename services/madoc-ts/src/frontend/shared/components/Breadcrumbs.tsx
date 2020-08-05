@@ -195,8 +195,8 @@ export const DisplayBreadcrumbs: React.FC = () => {
   return (
     <BreadcrumbList>
       {stack.map((s, n) => (
-        <>
-          <BreadcrumbItem key={s.url} active={s.url === location.pathname}>
+        <React.Fragment key={s.url}>
+          <BreadcrumbItem active={s.url === location.pathname}>
             {s.url === location.pathname ? (
               <LocaleString>{s.label}</LocaleString>
             ) : (
@@ -206,7 +206,7 @@ export const DisplayBreadcrumbs: React.FC = () => {
             )}
           </BreadcrumbItem>
           {n < stack.length - 1 ? <BreadcrumbDivider /> : null}
-        </>
+        </React.Fragment>
       ))}
     </BreadcrumbList>
   );

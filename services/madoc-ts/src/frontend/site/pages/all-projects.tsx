@@ -5,7 +5,9 @@ import { usePaginatedData } from '../../shared/hooks/use-data';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { Link } from 'react-router-dom';
 import { ProjectList } from '../../../types/schemas/project-list';
-import { Pagination } from '../../admin/molecules/Pagination';
+import { Heading3, Subheading3 } from '../../shared/atoms/Heading3';
+import { Pagination } from '../../shared/components/Pagination';
+import { Button } from '../../shared/atoms/Button';
 
 type AllProjectsType = {
   params: {};
@@ -24,17 +26,19 @@ export const AllProjects: UniversalComponent<AllProjectsType> = createUniversalC
 
     return (
       <>
-        <h2>All projects</h2>
+        <h1>All projects</h1>
         {data.projects.map(project => (
-          <div key={project.id}>
-            <Link to={`/projects/${project.slug}`}>
-              <LocaleString>{project.label}</LocaleString>
-            </Link>
+          <div key={project.id} style={{ background: '#eee', padding: 20, marginBottom: 20, paddingBottom: 40 }}>
+            <LocaleString as={Heading3}>{project.label}</LocaleString>
+            <LocaleString as={Subheading3}>{project.summary}</LocaleString>
+            <Button as={Link} to={`/projects/${project.slug}`}>
+              Go to project
+            </Button>
           </div>
         ))}
         <Pagination
-          page={data ? data.pagination.page : 1}
-          totalPages={data ? data.pagination.totalPages : 1}
+          page={data ? data.pagination.page : undefined}
+          totalPages={data ? data.pagination.totalPages : undefined}
           stale={!data}
         />
       </>

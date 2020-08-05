@@ -69,8 +69,8 @@ export const PreviewManifest: React.FC<{ id: string }> = props => {
         {canvases
           ? canvases.map(canvas => {
               return (
-                <ImageGridItem static key={canvas.id}>
-                  <CroppedImage>
+                <ImageGridItem $size="small" $static key={canvas.id}>
+                  <CroppedImage $size="small">
                     <CanvasThumbnail canvas={canvas} height={50} />
                   </CroppedImage>
                   <SingleLineHeading5>

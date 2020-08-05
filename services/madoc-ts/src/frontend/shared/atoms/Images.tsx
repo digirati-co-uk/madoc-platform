@@ -1,9 +1,28 @@
 import styled from 'styled-components';
 
-export const CroppedImage = styled.div`
-  background: #4e4e4e;
+export const CroppedImage = styled.div<{ $size?: 'small' | 'large' }>`
+  background: #000;
   padding: 2px;
-  height: 160px;
+  height: ${props => {
+    switch (props.$size) {
+      case 'small':
+        return '150px';
+      case 'large':
+        return '300px';
+      default:
+        return '242px';
+    }
+  }};
+  width: ${props => {
+    switch (props.$size) {
+      case 'small':
+        return '150px';
+      case 'large':
+        return '300px';
+      default:
+        return '240px';
+    }
+  }};
   display: flex;
   justify-content: center;
   align-items: center;

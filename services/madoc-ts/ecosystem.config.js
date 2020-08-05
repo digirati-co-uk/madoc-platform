@@ -45,7 +45,7 @@ module.exports = {
             autorestart: true,
             watch: ['lib'],
             watch_options: {
-              ignored: 'lib/frontend/admin/build/**',
+              ignored: 'frontend/admin/build/**',
             },
             max_memory_restart: '1G',
             env: {

@@ -18,8 +18,9 @@ body {
 }
 
 header {
-    max-width: 1200px;
+    max-width: 1440px;
     width: 100%;
+    padding: 0 2em;
     margin-left: auto;
     margin-right: auto;
     display: flex;
@@ -31,19 +32,27 @@ header {
 /* Logo */
 .site-details {
     align-self: flex-start;
-    color: #333;
     text-decoration: none;
-    margin: 24px 0;
+    flex: 1 1 0px;
+}
+
+.site-details a {
+    text-decoration: none;
+    letter-spacing: -2px;
+    color: #363453;
+    font-size: 1em;
 }
 
 .site-title img {
     max-width: 400px;
 }
 
-@media (max-width: 1024px) {
-    .site-details {
-        margin: 15px;
-    }
+
+#search {
+    flex: 1;
+    margin-right: 20px;
+    width: 100%;
+    max-width: 20em;
 }
 
 @media (max-width: 575px) {
@@ -52,7 +61,7 @@ header {
     }
     #search {
         margin-bottom: 15px;
-        width: 100%;
+        max-width: 100%;
     }
 }
 
@@ -63,21 +72,36 @@ header {
     font-weight: bold;
 }
 
-#search {
-    flex: 1;
-    margin-right: 20px;
+
+#search-form {
+    display: flex;
 }
+
 #search form {
     float: right;
-
+    width: 100%;
 }
 #search form input {
-    font-size: 16px;
-    padding: 5px 10px;
-    border: 2px solid #333;
-    border-bottom-width: 3px;
+    font-size: .9em;
+    padding: .5em;
+    border: 2px solid #C2C2C2;
+    border-right: none;
+    border-radius: 0;
+    width: 100%;
 }
-#search form button,
+#search form input:focus {
+    border-color: #333;
+    outline: none;
+}
+
+#search form button {
+    font-size: .9em;
+    padding: .2em 1em;
+    background: #333;
+    color: #fff;
+    border: 2px solid #333;
+}
+
 .c-form.c-form--login input[type="submit"],
 .c-form.c-form--register button[type="submit"]{
     font-size: 16px;
@@ -226,25 +250,26 @@ header {
 
 header nav {
     width: 100%;
-    padding: 10px;
-    background: #eee; /* Menu background */
+    margin-bottom: 2em;
 }
 header nav ul.navigation {
     margin: 0;
     padding: 0;
     list-style: none;
+    display: flex;
 }
 header nav ul.navigation li {
-    display: inline-block;
     font-size: 14px;
-    background: #fff;
+    background: #e9e9e9;
+    border-radius: 5px;
+    flex: 0;
+    margin-right: 0.7em;
 }
 header nav ul.navigation li a {
     text-decoration: none;
     color: #333;
-    padding: 6px 12px;
+    padding: .65em 1em;
     display: block;
-    border: 2px solid #333;
     border-bottom-width: 3px;
 }
 header nav ul.navigation li a:hover {
@@ -260,18 +285,18 @@ header nav ul.navigation li.active a {
 
 main {
     flex: 1 1 0;
-    max-width: 1200px;
+    max-width: 1440px;
+    padding: 0 2em;
     width: 100%;
     margin-left: auto;
     margin-right: auto;
-    padding: 20px;
-    background: #fff;
 }
 footer {
     background: #333;
     color: rgba(255, 255, 255, .6);
     font-weight: 300;
     padding: 40px;
+    margin-top: 2em;
 }
 
 a {
@@ -287,11 +312,10 @@ h3:hover a {
 
 footer .footer-inner {
     flex: 1 1 0;
-    max-width: 1200px;
+    padding: 0 1em;
     width: 100%;
     margin-left: auto;
     margin-right: auto;
-    padding: 0 20px;
 }
 
 

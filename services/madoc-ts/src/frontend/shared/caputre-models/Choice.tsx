@@ -1,5 +1,5 @@
 import React from 'react';
-import { BackgroundSplash, RoundedCard } from '@capture-models/editor';
+import { RoundedCard } from '@capture-models/editor';
 import { StructureType } from '@capture-models/types';
 
 export const Choice: React.FC<{
@@ -11,14 +11,12 @@ export const Choice: React.FC<{
   return (
     <>
       {showBackButton ? <button onClick={onBackButton}>back</button> : null}
-      <BackgroundSplash header={choice.label} description={choice.description}>
-        {choice.items.map((item, idx) => (
-          <RoundedCard key={idx} label={item.label} interactive onClick={() => onChoice(item.id)}>
-            {item.description}
-          </RoundedCard>
-        ))}
-        {children}
-      </BackgroundSplash>
+      {choice.items.map((item, idx) => (
+        <RoundedCard key={idx} label={item.label} interactive onClick={() => onChoice(item.id)}>
+          {item.description}
+        </RoundedCard>
+      ))}
+      {children}
     </>
   );
 };

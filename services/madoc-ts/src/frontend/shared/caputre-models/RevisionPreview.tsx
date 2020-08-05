@@ -6,14 +6,13 @@ import { useDebouncedCallback } from 'use-debounce';
 
 export const RevisionPreview: React.FC<{
   descriptionOfChange: string;
-  entity: { property: string; instance: CaptureModel['document'] };
   error?: string;
   onSave?: () => void;
   onPublish?: () => void;
   onEdit?: () => void;
   setDescriptionOfChange?: (change: string) => void;
   isSaving?: boolean;
-}> = ({ entity, onSave, onPublish, onEdit, isSaving, error, descriptionOfChange, setDescriptionOfChange }) => {
+}> = ({ onSave, onPublish, onEdit, isSaving, error, descriptionOfChange, setDescriptionOfChange }) => {
   const [label, setLabel] = useState(descriptionOfChange);
 
   const [updateValue] = useDebouncedCallback(v => {
@@ -27,7 +26,7 @@ export const RevisionPreview: React.FC<{
   }, [label, setDescriptionOfChange, updateValue]);
 
   return (
-    <VerboseEntityPage title="Summary of your submission" entity={entity} path={[]} readOnly={true}>
+    <VerboseEntityPage title="Summary of your submission" readOnly={true}>
       {error ? (
         <div>
           <p>Something went wrong while saving your submission</p>

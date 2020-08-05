@@ -1,8 +1,10 @@
 import { DocumentStore, StructureEditor, StructureStore, useFocusedStructureEditor } from '@capture-models/editor';
 import { CaptureModel } from '@capture-models/types';
 import React from 'react';
+import { useApi } from '../../../../shared/hooks/use-api';
 
 export const FullStructureEditor: React.FC = () => {
+  const api = useApi();
   const document = DocumentStore.useStoreState(state => state.document);
   const tree = StructureStore.useStoreState(state => state.tree);
   const focus = StructureStore.useStoreActions(act => act.focus);
@@ -18,6 +20,10 @@ export const FullStructureEditor: React.FC = () => {
     setProfile,
     reorderChoices,
   } = useFocusedStructureEditor();
+
+  if (api.getIsServer()) {
+    return null;
+  }
 
   return (
     <StructureEditor

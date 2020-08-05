@@ -1,14 +1,8 @@
-import {
-  BackgroundSplash,
-  CardButton,
-  FieldWrapper,
-  Revisions,
-  RoundedCard,
-  useFieldSelector,
-} from '@capture-models/editor';
+import { CardButton, FieldInstance, RoundedCard } from '@capture-models/editor';
 import { useRefinement } from '@capture-models/plugin-api';
 import { BaseField, FieldRefinement } from '@capture-models/types';
-import React, { useState } from 'react';
+import React from 'react';
+import { RevisionBreadcrumbs } from './RevisionBreadcrumbs';
 
 export const VerboseFieldPage: React.FC<{
   field: { property: string; instance: BaseField };
@@ -17,9 +11,6 @@ export const VerboseFieldPage: React.FC<{
   showNavigation?: boolean;
   readOnly?: boolean;
 }> = ({ field, path, goBack, showNavigation, readOnly }) => {
-  const [value, setValue] = useState(field.instance.value);
-  const updateFieldValue = Revisions.useStoreActions(a => a.updateFieldValue);
-  const selector = useFieldSelector(field.instance);
   const refinement = useRefinement<FieldRefinement>('field', field, {
     path,
   });
@@ -29,18 +20,12 @@ export const VerboseFieldPage: React.FC<{
   }
 
   return (
-    <BackgroundSplash header={field.instance.label}>
+    <>
+      <RevisionBreadcrumbs />
       <RoundedCard size="small">
-        <FieldWrapper field={field.instance} selector={selector} onUpdateValue={setValue} />
+        <FieldInstance field={field.instance} property={field.property} path={path} />
       </RoundedCard>
-      <CardButton
-        onClick={() => {
-          updateFieldValue({ path, value });
-          goBack();
-        }}
-      >
-        Finish and save
-      </CardButton>
-    </BackgroundSplash>
+      <CardButton onClick={goBack}>Finish and save</CardButton>
+    </>
   );
 };

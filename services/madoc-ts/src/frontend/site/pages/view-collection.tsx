@@ -32,8 +32,8 @@ export const ViewCollection: React.FC<CollectionFull> = ({ collection, paginatio
   const pages = (
     <Pagination
       pageParam={'c'}
-      page={pagination ? pagination.page : 1}
-      totalPages={pagination ? pagination.totalPages : 1}
+      page={pagination ? pagination.page : undefined}
+      totalPages={pagination ? pagination.totalPages : undefined}
       stale={!pagination}
     />
   );
@@ -42,13 +42,13 @@ export const ViewCollection: React.FC<CollectionFull> = ({ collection, paginatio
     <>
       <DisplayBreadcrumbs />
       <LocaleString as="h1">{collection.label}</LocaleString>
-      {projectList
-        ? projectList.projects.map((project: any) => (
-            <div key={project.id}>
-              <LocaleString>{project.label}</LocaleString>
-            </div>
-          ))
-        : null}
+      {/*{projectList*/}
+      {/*  ? projectList.projects.map((project: any) => (*/}
+      {/*      <div key={project.id}>*/}
+      {/*        <LocaleString>{project.label}</LocaleString>*/}
+      {/*      </div>*/}
+      {/*    ))*/}
+      {/*  : null}*/}
       {pages}
       <ImageGrid>
         {collection.items.map((manifest, idx) => (
@@ -60,8 +60,8 @@ export const ViewCollection: React.FC<CollectionFull> = ({ collection, paginatio
                 : `/collections/${manifest.id}`
             }
           >
-            <ImageGridItem>
-              <CroppedImage>
+            <ImageGridItem $size="large">
+              <CroppedImage $size="large">
                 {manifest.thumbnail ? <img alt={t('First image in manifest')} src={manifest.thumbnail} /> : null}
               </CroppedImage>
               <LocaleString as={SingleLineHeading5}>{manifest.label}</LocaleString>

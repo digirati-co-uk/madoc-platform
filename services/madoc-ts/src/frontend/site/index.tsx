@@ -17,7 +17,7 @@ const SiteApp: React.FC<SiteAppProps> = ({ api, routes }) => {
   const { i18n } = useTranslation();
   const restarting = useIsApiRestarting(api);
 
-  const viewingDirection = useMemo(() => i18n.dir(i18n.language), [i18n.language]);
+  const viewingDirection = useMemo(() => i18n.dir(i18n.language), [i18n]);
 
   return (
     <VaultProvider>

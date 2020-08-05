@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect } from 'react';
+import React from 'react';
 import { BaseTask } from '../../../gateway/tasks/base-task';
 import { CrowdsourcingTask } from '../../../types/tasks/crowdsourcing-task';
 import '../../shared/caputre-models/refinements';

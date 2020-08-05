@@ -12,15 +12,15 @@ export const RevisionNavigation: React.FC<{
   structure: CaptureModel['structure'];
   onSaveRevision: (req: RevisionRequest, status?: string) => Promise<void>;
 }> = ({ structure, onSaveRevision }) => {
-  const [currentView, { pop, push, idStack, goTo, peek }] = useNavigation(structure);
+  const [currentView, { pop, push, idStack, goTo }] = useNavigation();
   const currentRevisionId = Revisions.useStoreState(s => s.currentRevisionId);
   const revisions = Revisions.useStoreState(s => s.revisions);
   const readMode = Revisions.useStoreState(s => s.currentRevisionReadMode);
   const { user } = useCurrentUser();
   const refinement = useRefinement<ChoiceRefinement>(
     'choice-navigation',
-    { instance: currentView, property: '' },
-    { currentRevisionId, structure, peek }
+    { instance: currentView as any, property: '' },
+    { currentRevisionId, structure }
   );
 
   const currentUsersRevisions = useMemo(() => {
@@ -35,7 +35,7 @@ export const RevisionNavigation: React.FC<{
   if (refinement) {
     return refinement.refine(
       { instance: currentView, property: '' },
-      { readOnly: readMode, currentRevisionId, pop, push, idStack, peek, goTo, structure, onSaveRevision }
+      { readOnly: readMode, currentRevisionId, pop: pop as any, push, idStack, goTo, structure, onSaveRevision }
     );
   }
 
@@ -52,11 +52,11 @@ export const RevisionNavigation: React.FC<{
   }
 
   if (currentView.type === 'model') {
-    return <RevisionChoicePage goBack={pop} model={currentView} />;
+    return <RevisionChoicePage goBack={() => pop()} model={currentView} />;
   }
 
   return (
-    <Choice choice={currentView} onBackButton={pop} onChoice={push} showBackButton={idStack.length > 0}>
+    <Choice choice={currentView} onBackButton={() => pop()} onChoice={push} showBackButton={idStack.length > 0}>
       {currentUsersRevisions.length ? <SubmissionList submissions={currentUsersRevisions} /> : null}
     </Choice>
   );

@@ -1,9 +1,17 @@
 import styled from 'styled-components';
 
-export const ImageStripBox = styled.div`
-  margin: 10px 10px 10px 0px;
+export const ImageStripBox = styled.div<{ $size?: 'large' | 'small' }>`
   padding: 5px;
-  width: 160px;
+  width: ${props => {
+    switch (props.$size) {
+      case 'small':
+        return '160px';
+      case 'large':
+        return '310px';
+      default:
+        return '251px';
+    }
+  }};
 
   &:hover {
     background: #eee;

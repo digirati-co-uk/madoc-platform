@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 import { ThemeProvider } from 'styled-components';
 import { defaultTheme, Revisions } from '@capture-models/editor';
@@ -14,40 +14,48 @@ import { queryCache } from 'react-query';
 import '@capture-models/editor/lib/input-types/TextField';
 import '@capture-models/editor/lib/input-types/HTMLField';
 import { useProjectByTask } from '../../../shared/hooks/use-project-by-task';
+import { Button } from '../../../shared/atoms/Button';
+import { CaptureModelHeader } from '../../../shared/caputre-models/CaptureModelHeader';
 
 const ViewContent: React.FC<{ target: any; canvas: any }> = ({ target, canvas }) => {
-  const contentType = useContentType(
-    [...target].reverse().map((r: any) => {
-      return { ...r, type: r.type.toLowerCase() };
-    }),
-    {
-      height: 600,
-      custom: {
-        customFetcher: (mid: string) => {
-          const canvasTarget = target.find((r: any) => r.type === 'Canvas');
-          return {
-            '@context': 'http://iiif.io/api/presentation/2/context.json',
-            '@id': `${mid}`,
-            '@type': 'sc:Manifest',
-            sequences: [
-              {
-                '@id': `${mid}/s1`,
-                '@type': 'sc:Sequence',
-                canvases: [{ ...canvas.source, '@id': `${canvasTarget.id}` }],
-              },
-            ],
-          };
+  return useContentType(
+    useMemo(
+      () =>
+        [...target].reverse().map((r: any) => {
+          return { ...r, type: r.type.toLowerCase() };
+        }),
+      [target]
+    ),
+    useMemo(
+      () => ({
+        height: 600,
+        custom: {
+          customFetcher: (mid: string) => {
+            const canvasTarget = target.find((r: any) => r.type === 'Canvas');
+            return {
+              '@context': 'http://iiif.io/api/presentation/2/context.json',
+              '@id': `${mid}`,
+              '@type': 'sc:Manifest',
+              sequences: [
+                {
+                  '@id': `${mid}/s1`,
+                  '@type': 'sc:Sequence',
+                  canvases: [{ ...canvas.source, '@id': `${canvasTarget.id}` }],
+                },
+              ],
+            };
+          },
         },
-      },
-    }
+      }),
+      [canvas.source, target]
+    )
   );
-
-  return contentType;
 };
 
 const ViewCrowdsourcingTask: React.FC<{ task: CrowdsourcingTask }> = ({ task }) => {
   const api = useApi();
   const project = useProjectByTask(task);
+  const [isVertical, setIsVertical] = useState(false);
 
   const { data: captureModel } = useQuery(
     ['capture-model', { id: task.parameters[0] }],
@@ -117,17 +125,19 @@ const ViewCrowdsourcingTask: React.FC<{ task: CrowdsourcingTask }> = ({ task }) 
           </div>
         ) : null}
         {resource ? <LocaleString as="h1">{resource.canvas.label}</LocaleString> : null}
-        <div style={{ display: 'flex' }}>
-          {task.status < 3 ? (
-            <>
-              {captureModel ? (
-                <Revisions.Provider captureModel={captureModel}>
-                  <div style={{ width: '67%' }}>
+
+        {captureModel ? (
+          <Revisions.Provider captureModel={captureModel}>
+            <CaptureModelHeader />
+            <div style={{ display: 'flex', flexDirection: isVertical ? 'column' : 'row' }}>
+              {task.status < 3 ? (
+                <>
+                  <div style={{ width: isVertical ? '100%' : '67%' }}>
                     {resource && resource.canvas ? (
                       <ViewContent target={captureModel.target} canvas={resource.canvas} />
                     ) : null}
                   </div>
-                  <div style={{ width: '33%' }}>
+                  <div style={{ width: isVertical ? '100%' : '33%', padding: '1em' }}>
                     <CaptureModelEditor
                       captureModel={captureModel}
                       onSave={async (response, status) => {
@@ -148,21 +158,22 @@ const ViewCrowdsourcingTask: React.FC<{ task: CrowdsourcingTask }> = ({ task }) 
                       }}
                     />
                   </div>
-                </Revisions.Provider>
+                </>
               ) : (
-                'loading...'
+                <div>
+                  <h3>Thanks for your submission</h3> <p>Your submission will be reviewed.</p>{' '}
+                </div>
               )}
-            </>
-          ) : (
-            <div>
-              <h3>Thanks for your submission</h3> <p>Your submission will be reviewed.</p>{' '}
             </div>
-          )}
-        </div>
+          </Revisions.Provider>
+        ) : (
+          'loading...'
+        )}
+        <Button onClick={() => setIsVertical(v => !v)}>Switch layout</Button>
         <div style={{ padding: '1px 20px', margin: '20px 0', background: '#eee' }}>
           <Heading3>{task.name}</Heading3>
           <p>{task.description}</p>
-          <Status status={task.status} text={task.status_text || ''} isOpen />
+          <Status status={task.status} text={task.status_text || ''} />
           {project ? (
             <div>
               <Link to={`/projects/${project.id}`}>

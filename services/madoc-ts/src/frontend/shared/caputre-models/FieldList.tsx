@@ -30,7 +30,13 @@ export const FieldList: React.FC<{
           const singleEntity = instances[0];
           return (
             <div key={idx}>
-              <FieldHeader label={singleEntity.label || 'Untitled'} />
+              <FieldHeader
+                label={
+                  instances.length > 1 && singleEntity.pluralLabel
+                    ? singleEntity.pluralLabel
+                    : singleEntity.label || 'Untitled'
+                }
+              />
               <EntityInstanceList
                 path={path}
                 entities={instances}

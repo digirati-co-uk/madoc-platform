@@ -1,9 +1,8 @@
-import { userWithScope } from '../../../utility/user-with-scope';
+import { optionalUserWithScope } from '../../../utility/user-with-scope';
 import { sql } from 'slonik';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { ItemStructureList, ItemStructureListItem } from '../../../types/schemas/item-structure-list';
 import { mapMetadata, MetadataField } from '../../../utility/iiif-metadata';
-import { getItemStructures } from '../../../database/queries/structure-queries';
 
 /**
  * @todo when canvas exist.
@@ -11,7 +10,7 @@ import { getItemStructures } from '../../../database/queries/structure-queries';
  * @param context
  */
 export const getManifestStructure: RouteMiddleware<{ id: number }> = async context => {
-  const { siteId } = userWithScope(context, []);
+  const { siteId } = optionalUserWithScope(context, []);
 
   const manifest_id = context.params.id;
 
