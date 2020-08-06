@@ -32,23 +32,22 @@ services:
     links:
       - madoc-database
     environment:
-      - PHP_IDE_CONFIG=serverName=omeka-workspace
       - APP_ENV=${APP_ENV}
       - OMEKA__DATABASE_HOST=madoc-database
       - OMEKA__DATABASE_NAME=${MYSQL_DATABASE}
       - OMEKA__DATABASE_USER=${MYSQL_USER}
       - OMEKA__DATABASE_PASSWORD=${MYSQL_PASSWORD}
       - OMEKA__DATABASE_PORT=${MYSQL_PORT}
-      - OMEKA__MAIN_SITE_DOMAIN=${MAIN_SITE_DOMAIN}
-      - OMEKA__ELUCIDATE_URL=${ELUCIDATE_URL}
-      - OMEKA__INTERNAL_URL=${OMEKA_INTERNAL_URL}
-      - OMEKA__ANNOTATION_INDEXER=${ANNOTATION_INDEXER}
-      - OMEKA__ELUCIDATE_PUBLIC_DOMAIN=${ELUCIDATE_PUBLIC_DOMAIN}
-      - OMEKA__SEARCH_ELASTICSEARCH=search-elasticsearch:9200
-      - OMEKA__ANNOTATION_ES_INDEX=jane-annotations
-      - OMEKA__SEARCH_INDEXER=search-indexer:8000
     volumes:
-      - ./services/madoc/packages:/srv/omeka/repos:delegated
+      - ./services/madoc/packages/auto-complete:/srv/omeka/repos/auto-complete:delegated
+      - ./services/madoc/packages/default-theme:/srv/omeka/repos/default-theme:delegated
+      - ./services/madoc/packages/extract-tagged-strings:/srv/omeka/repos/extract-tagged-strings:delegated
+      - ./services/madoc/packages/google-analytics:/srv/omeka/repos/google-analytics:delegated
+      - ./services/madoc/packages/madoc-bridge:/srv/omeka/repos/madoc-bridge:delegated
+      - ./services/madoc/packages/madoc-crowdsourcing-theme:/srv/omeka/repos/madoc-crowdsourcing-theme:delegated
+      - ./services/madoc/packages/omeka-i18n-module:/srv/omeka/repos/omeka-i18n-module:delegated
+      - ./services/madoc/packages/public-user:/srv/omeka/repos/public-user:delegated
+      - ./services/madoc/packages/shared-library:/srv/omeka/repos/shared-library:delegated
       - ./services/madoc/.omeka/omeka-s/application:/srv/omeka/application:cached
       - ./var/files:/srv/omeka/files
       - ./services/madoc/config/omeka-app/application.config.php:/srv/omeka/application/config/application.config.php
@@ -65,7 +64,7 @@ services:
     build:
       context: services/madoc-ts
       dockerfile: Dockerfile.dev
-    restart: always
+    restart: on-failure
     volumes:
       - ./services/madoc-ts/lib:/home/node/app/lib:delegated
       - ./services/madoc-ts/package.json:/home/node/app/package.json:delegated
@@ -79,11 +78,11 @@ services:
       - ./var/files:/home/node/app/omeka-files
     environment:
       - DATABASE_HOST=shared-postgres
-      - DATABASE_NAME=madoc
-      - DATABASE_PORT=5432
-      - DATABASE_USER=madoc
-      - DATABASE_SCHEMA=public
-      - DATABASE_PASSWORD=madoc_password
+      - DATABASE_NAME=${POSTGRES_DATABASE}
+      - DATABASE_PORT=${POSTGRES_PORT}
+      - DATABASE_USER=${POSTGRES_MADOC_TS_USER}
+      - DATABASE_SCHEMA=${POSTGRES_MADOC_TS_SCHEMA}
+      - DATABASE_PASSWORD=${POSTGRES_MADOC_TS_PASSWORD}
       - OMEKA__DATABASE_HOST=madoc-database
       - OMEKA__DATABASE_NAME=${MYSQL_DATABASE}
       - OMEKA__DATABASE_USER=${MYSQL_USER}
@@ -104,15 +103,16 @@ services:
   tasks-api:
     build:
       context: services/tasks-api
+    restart: on-failure
     environment:
       - SERVER_PORT=3000
       - DATABASE_HOST=shared-postgres
-      - DATABASE_NAME=tasks_api
-      - DATABASE_PORT=5432
-      - DATABASE_USER=tasks_api
-      - DATABASE_SCHEMA=public
-      - DATABASE_PASSWORD=tasks_api_password
-      - QUEUE_LIST=tasks-api,madoc-ts
+      - DATABASE_NAME=${POSTGRES_DATABASE}
+      - DATABASE_PORT=${POSTGRES_PORT}
+      - DATABASE_USER=${POSTGRES_TASKS_API_USER}
+      - DATABASE_SCHEMA=${POSTGRES_TASKS_API_SCHEMA}
+      - DATABASE_PASSWORD=${POSTGRES_TASKS_API_PASSWORD}
+      - QUEUE_LIST=${TASKS_QUEUE_LIST}
       - REDIS_HOST=gateway-redis
     ports:
       - "8105:3000"
@@ -124,27 +124,39 @@ services:
 
   model-api:
     image: digirati/capture-models:v0.5.0
+    restart: on-failure
     environment:
       - SERVER_PORT=3000
       - DATABASE_HOST=shared-postgres
-      - DATABASE_NAME=model_api
-      - DATABASE_PORT=5432
-      - DATABASE_USER=model_api
-      - DATABASE_SCHEMA=public
-      - DATABASE_PASSWORD=model_api_password
+      - DATABASE_NAME=${POSTGRES_DATABASE}
+      - DATABASE_PORT=${POSTGRES_PORT}
+      - DATABASE_USER=${POSTGRES_MODELS_API_USER}
+      - DATABASE_SCHEMA=${POSTGRES_MODELS_API_SCHEMA}
+      - DATABASE_PASSWORD=${POSTGRES_MODELS_API_PASSWORD}
     ports:
       - "8106:3000"
     links:
       - shared-postgres
-    restart: "always"
 
   shared-postgres:
     build:
       context: services/shared-postgres
     environment:
-      - POSTGRES_PASSWORD=postgres_password
-      - TASKS_API_PASSWORD=tasks_api_password
-      - MODEL_API_PASSWORD=model_api_password
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_MADOC_TS_USER=${POSTGRES_MADOC_TS_USER}
+      - POSTGRES_MADOC_TS_SCHEMA=${POSTGRES_MADOC_TS_SCHEMA}
+      - POSTGRES_MADOC_TS_PASSWORD=${POSTGRES_MADOC_TS_PASSWORD}
+      - POSTGRES_TASKS_API_USER=${POSTGRES_TASKS_API_USER}
+      - POSTGRES_TASKS_API_SCHEMA=${POSTGRES_TASKS_API_SCHEMA}
+      - POSTGRES_TASKS_API_PASSWORD=${POSTGRES_TASKS_API_PASSWORD}
+      - POSTGRES_MODELS_API_USER=${POSTGRES_MODELS_API_USER}
+      - POSTGRES_MODELS_API_SCHEMA=${POSTGRES_MODELS_API_SCHEMA}
+      - POSTGRES_MODELS_API_PASSWORD=${POSTGRES_MODELS_API_PASSWORD}
+      - POSTGRES_CONFIG_SERVICE_USER=${POSTGRES_CONFIG_SERVICE_USER}
+      - POSTGRES_CONFIG_SERVICE_SCHEMA=${POSTGRES_CONFIG_SERVICE_SCHEMA}
+      - POSTGRES_CONFIG_SERVICE_PASSWORD=${POSTGRES_CONFIG_SERVICE_PASSWORD}
+
     ports:
       - "5400:5432"
     volumes:
@@ -167,7 +179,6 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_PORT=${MYSQL_PORT}
     volumes:
-#      - ./var/database/sql:/docker-entrypoint-initdb.d/
       - ./var/database/data:/var/lib/mysql/
     ports:
       - "3334:3306"
@@ -182,11 +193,12 @@ services:
       - DJANGO_DEBUG=False
       - WAITRESS=False
       - POSTGRES_HOST=shared-postgres
-      - POSTGRES_PORT=5432
-      - POSTGRES_USER=config_service
-      - POSTGRES_PASSWORD=config_service_password
-      - POSTGRES_DB=config_service
-      - DATABASE_URL=postgres://config_service:config_service_password@shared-postgres:5432/config_service
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_USER=${POSTGRES_CONFIG_SERVICE_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_CONFIG_SERVICE_PASSWORD}
+      - POSTGRES_SCHEMA=${POSTGRES_CONFIG_SERVICE_SCHEMA}
+      - POSTGRES_DB=${POSTGRES_DATABASE}
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@shared-postgres:${POSTGRES_PORT}/${POSTGRES_DATABASE}
     links:
       - shared-postgres
     volumes:

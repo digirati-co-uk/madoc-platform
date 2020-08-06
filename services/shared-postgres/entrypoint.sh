@@ -21,37 +21,66 @@ if [ "$1" = 'postgres' ]; then
 
     docker_temp_server_start
 
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-"EOSQL"
 
-SELECT 'CREATE DATABASE tasks_api'
-WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'tasks_api')\gexec
-
-DO $$
+## Model api
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
+DO \$\$
 BEGIN
-  CREATE ROLE tasks_api LOGIN PASSWORD 'tasks_api_password';
-  GRANT ALL PRIVILEGES ON DATABASE tasks_api TO tasks_api;
+  RAISE NOTICE 'adding new user $POSTGRES_MODELS_API_USER';
+  CREATE ROLE $POSTGRES_MODELS_API_USER LOGIN PASSWORD '$POSTGRES_MODELS_API_PASSWORD';
 
   EXCEPTION WHEN DUPLICATE_OBJECT THEN
-  RAISE NOTICE 'not creating role tasks_api -- it already exists';
+  RAISE NOTICE 'not creating role $POSTGRES_MODELS_API_USER -- it already exists';
 END
-$$;
+\$\$;
+
+CREATE SCHEMA IF NOT EXISTS $POSTGRES_MODELS_API_SCHEMA AUTHORIZATION $POSTGRES_MODELS_API_USER;
 EOSQL
 
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-"EOSQL"
-
-SELECT 'CREATE DATABASE model_api'
-WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'model_api')\gexec
-
-DO $$
+## Tasks API.
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
+DO \$\$
 BEGIN
-  CREATE ROLE model_api LOGIN PASSWORD 'model_api_password';
-  GRANT ALL PRIVILEGES ON DATABASE model_api TO model_api;
+  CREATE ROLE $POSTGRES_TASKS_API_USER LOGIN PASSWORD '$POSTGRES_TASKS_API_PASSWORD';
 
   EXCEPTION WHEN DUPLICATE_OBJECT THEN
-  RAISE NOTICE 'not creating role model_api -- it already exists';
+  RAISE NOTICE 'not creating role $POSTGRES_TASKS_API_USER -- it already exists';
 END
-$$;
+\$\$;
+
+CREATE SCHEMA IF NOT EXISTS $POSTGRES_TASKS_API_SCHEMA AUTHORIZATION $POSTGRES_TASKS_API_USER;
 EOSQL
+
+## Config Service Database
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
+DO \$\$
+BEGIN
+  CREATE ROLE $POSTGRES_CONFIG_SERVICE_USER LOGIN PASSWORD '$POSTGRES_CONFIG_SERVICE_PASSWORD';
+
+  EXCEPTION WHEN DUPLICATE_OBJECT THEN
+  RAISE NOTICE 'not creating role $POSTGRES_CONFIG_SERVICE_USER -- it already exists';
+END
+\$\$;
+
+CREATE SCHEMA IF NOT EXISTS $POSTGRES_CONFIG_SERVICE_SCHEMA AUTHORIZATION $POSTGRES_CONFIG_SERVICE_USER;
+EOSQL
+
+## Madoc TS database
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
+DO \$\$
+BEGIN
+  CREATE ROLE $POSTGRES_MADOC_TS_USER LOGIN PASSWORD '$POSTGRES_MADOC_TS_PASSWORD';
+
+  EXCEPTION WHEN DUPLICATE_OBJECT THEN
+  RAISE NOTICE 'not creating role $POSTGRES_MADOC_TS_USER -- it already exists';
+END
+\$\$;
+
+CREATE SCHEMA IF NOT EXISTS $POSTGRES_MADOC_TS_SCHEMA AUTHORIZATION $POSTGRES_MADOC_TS_USER;
+EOSQL
+
+
+## Extensions
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" -d model_api <<-"EOSQL"
 
@@ -59,52 +88,12 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 EOSQL
 
-# Config Service Database -- not sure if it needs the uuid-ossp extenstion 
-
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-"EOSQL"
-
-SELECT 'CREATE DATABASE config_service'
-WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'config_service')\gexec
-
-DO $$
-BEGIN
-  CREATE ROLE config_service LOGIN PASSWORD 'config_service_password';
-  GRANT ALL PRIVILEGES ON DATABASE config_service TO config_service;
-
-  EXCEPTION WHEN DUPLICATE_OBJECT THEN
-  RAISE NOTICE 'not creating role config_service -- it already exists';
-END
-$$;
-EOSQL
-
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" -d config_service <<-"EOSQL"
-
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
-EOSQL
-
-## Madoc database
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-"EOSQL"
-
-SELECT 'CREATE DATABASE madoc'
-WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'madoc')\gexec
-
-DO $$
-BEGIN
-  CREATE ROLE madoc LOGIN PASSWORD 'madoc_password';
-  GRANT ALL PRIVILEGES ON DATABASE madoc TO madoc;
-
-  EXCEPTION WHEN DUPLICATE_OBJECT THEN
-  RAISE NOTICE 'not creating role madoc -- it already exists';
-END
-$$;
-EOSQL
-
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" -d madoc <<-"EOSQL"
 
 CREATE EXTENSION IF NOT EXISTS "ltree";
 
 EOSQL
+
 
     docker_temp_server_stop
 fi
