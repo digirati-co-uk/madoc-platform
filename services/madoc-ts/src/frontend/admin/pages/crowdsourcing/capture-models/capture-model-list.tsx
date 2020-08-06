@@ -8,6 +8,9 @@ import { useApi } from '../../../../shared/hooks/use-api';
 import { Card, CardContent } from '@capture-models/editor';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
+import {AdminHeader} from "../../../molecules/AdminHeader";
+import { WidePage } from '../../../../shared/atoms/WidePage';
+import {useTranslation} from "react-i18next";
 
 type CaptureModelListType = {
   data: {
@@ -22,6 +25,7 @@ export const CaptureModelList: UniversalComponent<CaptureModelListType> = create
   CaptureModelListType
 >(
   () => {
+    const { t } = useTranslation();
     const { data, refetch } = useData(CaptureModelList);
     const api = useApi();
     const history = useHistory();
@@ -39,19 +43,28 @@ export const CaptureModelList: UniversalComponent<CaptureModelListType> = create
 
     return (
       <>
-        <Button onClick={() => createNewModel()}>Create new model</Button>
-        {models.map((item: any) => {
-          return (
-            <Card fluid key={item.id} style={{ margin: '1em 0' }}>
-              <CardContent>
-                <h3>
-                  <Link to={`/capture-models/${item.id}`}>{item.label}</Link>
-                </h3>
-                <p>Used to crowdsource {item.derivatives} items</p>
-              </CardContent>
-            </Card>
-          );
-        })}
+        <AdminHeader
+          breadcrumbs={[
+            { label: t('Site admin'), link: '/' },
+            { label: t('Capture models'), link: '/capture-models', active: true },
+          ]}
+          title="Capture models"
+        />
+        <WidePage>
+          <Button onClick={() => createNewModel()}>Create new model</Button>
+          {models.map((item: any) => {
+            return (
+              <Card fluid key={item.id} style={{ margin: '1em 0' }}>
+                <CardContent>
+                  <h3>
+                    <Link to={`/capture-models/${item.id}`}>{item.label}</Link>
+                  </h3>
+                  <p>Used to crowdsource {item.derivatives} items</p>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </WidePage>
       </>
     );
   },
