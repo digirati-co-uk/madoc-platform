@@ -78,7 +78,7 @@ services:
       - ./var/files:/home/node/app/omeka-files
     environment:
       - DATABASE_HOST=shared-postgres
-      - DATABASE_NAME=${POSTGRES_DATABASE}
+      - DATABASE_NAME=${POSTGRES_DB}
       - DATABASE_PORT=${POSTGRES_PORT}
       - DATABASE_USER=${POSTGRES_MADOC_TS_USER}
       - DATABASE_SCHEMA=${POSTGRES_MADOC_TS_SCHEMA}
@@ -107,7 +107,7 @@ services:
     environment:
       - SERVER_PORT=3000
       - DATABASE_HOST=shared-postgres
-      - DATABASE_NAME=${POSTGRES_DATABASE}
+      - DATABASE_NAME=${POSTGRES_DB}
       - DATABASE_PORT=${POSTGRES_PORT}
       - DATABASE_USER=${POSTGRES_TASKS_API_USER}
       - DATABASE_SCHEMA=${POSTGRES_TASKS_API_SCHEMA}
@@ -123,12 +123,12 @@ services:
       - ./services/tasks-api/lib:/home/node/app/lib
 
   model-api:
-    image: digirati/capture-models:v0.5.0
+    image: digirati/capture-models:next
     restart: on-failure
     environment:
       - SERVER_PORT=3000
       - DATABASE_HOST=shared-postgres
-      - DATABASE_NAME=${POSTGRES_DATABASE}
+      - DATABASE_NAME=${POSTGRES_DB}
       - DATABASE_PORT=${POSTGRES_PORT}
       - DATABASE_USER=${POSTGRES_MODELS_API_USER}
       - DATABASE_SCHEMA=${POSTGRES_MODELS_API_SCHEMA}
@@ -142,6 +142,7 @@ services:
     build:
       context: services/shared-postgres
     environment:
+      - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_MADOC_TS_USER=${POSTGRES_MADOC_TS_USER}
@@ -197,8 +198,8 @@ services:
       - POSTGRES_USER=${POSTGRES_CONFIG_SERVICE_USER}
       - POSTGRES_PASSWORD=${POSTGRES_CONFIG_SERVICE_PASSWORD}
       - POSTGRES_SCHEMA=${POSTGRES_CONFIG_SERVICE_SCHEMA}
-      - POSTGRES_DB=${POSTGRES_DATABASE}
-      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@shared-postgres:${POSTGRES_PORT}/${POSTGRES_DATABASE}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@shared-postgres:${POSTGRES_PORT}/${POSTGRES_DB}
     links:
       - shared-postgres
     volumes:
