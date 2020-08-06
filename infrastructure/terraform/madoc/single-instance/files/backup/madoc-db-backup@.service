@@ -7,6 +7,7 @@ Type=oneshot
 Nice=19
 IOSchedulingClass=idle
 ExecStart=/usr/bin/rsnapshot %I
+ExecStart=/usr/bin/rsnapshot -c /etc/rsnapshot-postgres.conf %I
 
 [Install]
 WantedBy=multi-user.target

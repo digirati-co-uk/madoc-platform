@@ -4,6 +4,16 @@ Sample configuration for creating required infrastructure for hosting Madoc and 
 
 Creates an EC2 instance with EBS volumes in a VPC with single subnet and gateway.
 
+## Limitations
+
+> Manual step required after applying Terraform
+
+On startup the user_data script [\files\bootstrap_ec2.tmpl](\files\bootstrap_ec2.tmpl) will create necessary files and set permissions. There is currently 1 exception, due to the way that keys are generated. It is neccesary to run the following command to grant necessary permissions:
+
+```
+sudo chmod 777 /etc/docker/compose/madoc/var/certs/madoc.key
+```
+
 ## Prerequisites
 
 * [Terraform](https://www.terraform.io) 0.12+.
@@ -51,11 +61,11 @@ The following files are provided, these can be altered to suit exact requirement
 
 ## Implementation Details
 
-## Backup Process
+### Backup Process
 
 There are 2 EBS volumes mounted to the EC2 instance. These are mounted as: `/opt/data/` to store working files for mysql and omeka uploads. `/mnt/backup` to stores backups. A snapshot of the drive mounted at `/mnt/backup` is taken once per day @ 03:30 (controllable by tf variables).
 
 Systemd services for backing up data are:
 
 * `madoc-backup.service` - this runs `madoc-backup.timer` to `rsync` omeka_files on the hour (+/- 5 mins) to `/mnt/backup/omeka_files/`.
-* `madoc-db-backup@.service` - this runs hourly (on the hour), daily (02:30), weekly (01:30 on Sunday), monthly (00:30 1st of month) timers to take mysql dumps to `/mnt/backup/mysql`. See `/files/rsnapshot.conf` for details.
+* `madoc-db-backup@.service` - this runs hourly (on the hour), daily (02:30), weekly (01:30 on Sunday), monthly (00:30 1st of month) timers to take db dumps to `/mnt/backup/mysql` and `/mnt/backup/postgres`. See `/files/rsnapshot.conf` and `/files/rsnapshot-postgres.conf` for details.

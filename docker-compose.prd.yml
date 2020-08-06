@@ -1,0 +1,165 @@
+version: "3"
+services:
+
+  gateway:
+    image: digirati/madoc-gateway-beta:v2
+    environment:
+      - TYK_GW_STORAGE_HOST=gateway-redis
+      - TYK_GW_SECRET=${GATEWAY_SECRET}
+      - JWT_SERVICES=tasks-api,madoc-api,configuration-api
+    ports:
+      - "80:8080"
+    links:
+      - sorting-room
+      - madoc
+      - gateway-redis
+      - tasks-api
+      - model-api
+      - madoc-ts
+      - config-service
+    volumes:
+      - ./var/certs:/openssl-certs:Z
+    depends_on:
+      - certs
+      - gateway-redis
+
+  madoc:
+    image: digirati/madoc-platform-beta:v2
+    links:
+      - madoc-database
+    environment:
+      - APP_ENV=QA
+      - OMEKA__DATABASE_HOST=madoc-database
+      - OMEKA__DATABASE_NAME=${MYSQL_DATABASE}
+      - OMEKA__DATABASE_USER=${MYSQL_USER}
+      - OMEKA__DATABASE_PASSWORD=${MYSQL_PASSWORD}
+      - OMEKA__DATABASE_PORT=${MYSQL_PORT}
+      - OMEKA__MAIN_SITE_DOMAIN=${MAIN_SITE_DOMAIN}
+      - OMEKA__INTERNAL_URL=${OMEKA_INTERNAL_URL}
+      - OMEKA__SMTP_HOST=email-smtp.eu-west-1.amazonaws.com
+      - OMEKA__SMTP_PORT=587
+      - OMEKA__SMTP_SECURITY=tls
+      - OMEKA__SMTP_USERNAME=${OMEKA_SMTP_UNAME}
+      - OMEKA__SMTP_PASSWORD=${OMEKA_SMTP_PWORD}
+    volumes:
+      - /opt/data/omeka_files:/srv/omeka/files:Z
+      - ./var/certs:/openssl-certs:Z
+
+  certs:
+    image: digirati/madoc-certs-beta:v2
+    volumes:
+      - ./var/certs:/openssl-certs:Z
+
+  madoc-ts:
+    image: digirati/madoc-ts-beta:v2
+    restart: always
+    volumes:
+      - ./var/certs:/openssl-certs:Z
+      - ./var/jwt:/home/node/app/service-jwt-responses:Z
+      - /opt/data/omeka_files:/home/node/app/omeka-files:Z
+    environment:
+      - DATABASE_HOST=shared-postgres
+      - DATABASE_NAME=madoc
+      - DATABASE_PORT=5432
+      - DATABASE_USER=madoc
+      - DATABASE_SCHEMA=public
+      - DATABASE_PASSWORD=madoc_password
+      - OMEKA__DATABASE_HOST=madoc-database
+      - OMEKA__DATABASE_NAME=${MYSQL_DATABASE}
+      - OMEKA__DATABASE_USER=${MYSQL_USER}
+      - OMEKA__DATABASE_PASSWORD=${MYSQL_PASSWORD}
+      - OMEKA__DATABASE_PORT=${MYSQL_PORT}
+      - OMEKA__URL=http://madoc
+      - REDIS_HOST=gateway-redis
+      - API_GATEWAY=http://gateway:8080
+      - OMEKA_FILE_DIRECTORY=/home/node/app/omeka-files
+      - NODE_ENV=production
+      - MIGRATE=true
+    links:
+      - shared-postgres
+      - madoc-database
+      - madoc
+    depends_on:
+      - certs
+
+  tasks-api:
+    image: digirati/madoc-tasks-api-beta:v2
+    environment:
+      - SERVER_PORT=3000
+      - DATABASE_HOST=shared-postgres
+      - DATABASE_NAME=tasks_api
+      - DATABASE_PORT=5432
+      - DATABASE_USER=tasks_api
+      - DATABASE_SCHEMA=public
+      - DATABASE_PASSWORD=tasks_api_password
+      - QUEUE_LIST=tasks-api,madoc-ts
+      - REDIS_HOST=gateway-redis
+    restart: "always"
+    links:
+      - shared-postgres
+      - gateway-redis
+
+  model-api:
+    image: digirati/capture-models:v0.4.8
+    environment:
+      - SERVER_PORT=3000
+      - DATABASE_HOST=shared-postgres
+      - DATABASE_NAME=model_api
+      - DATABASE_PORT=5432
+      - DATABASE_USER=model_api
+      - DATABASE_SCHEMA=public
+      - DATABASE_PASSWORD=model_api_password
+    restart: "always"
+    links:
+      - shared-postgres
+
+  shared-postgres:
+    image: digirati/madoc-shared-postgres-beta:v2
+    environment:
+      - POSTGRES_PASSWORD=postgres_password
+      - TASKS_API_PASSWORD=tasks_api_password
+      - MODEL_API_PASSWORD=model_api_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - /opt/data/shared_postgres_data:/var/lib/postgresql/data:Z
+
+  sorting-room:
+    image: digirati/madoc-sorting-room-beta:v2
+
+  gateway-redis:
+    image: redis:5.0-alpine
+
+  madoc-database:
+    image: digirati/madoc-platform-beta-db:v2
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_PORT=${MYSQL_PORT}
+    ports:
+      - "${MYSQL_PORT}:${MYSQL_PORT}"
+    volumes:
+      - /opt/data/mysql_data:/var/lib/mysql:Z
+
+  config-service:
+    image: digirati/madoc_config_service_django:175410fc5b7dbef4cc259686564fbedeb60c8789
+    environment:
+      - USE_DOCKER=yes
+      - IPYTHONDIR=/app/.ipython
+      - MIGRATE=True
+      - LOAD=False
+      - DJANGO_DEBUG=False
+      - WAITRESS=False
+      - POSTGRES_HOST=shared-postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=config_service
+      - POSTGRES_PASSWORD=config_service_password
+      - POSTGRES_DB=config_service
+      - DATABASE_URL=postgres://config_service:config_service_password@shared-postgres:5432/config_service
+    links:
+      - shared-postgres
+    volumes:
+      - /opt/data/configuration/schemas:/app/configurator/schemas
+      - /opt/data/configuration/defaults:/app/configurator/default_config
