@@ -11,4 +11,6 @@ if [ -f "madoc.pub" ]; then
   echo "Public key already exists, skipping..."
 else
   openssl rsa -pubout -in madoc.key -out madoc.pub
+  chmod 777 madoc.key
+  chmod 777 madoc.pub
 fi;

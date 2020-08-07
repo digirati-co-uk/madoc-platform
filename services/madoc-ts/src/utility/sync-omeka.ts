@@ -10,6 +10,12 @@ export async function syncOmeka(omeka: Pool, postgres: DatabasePoolType, config:
       omeka.query(mysql`SELECT id, title FROM site`, (err, content) => resolve(content))
     )) || [];
 
+  if (sites.length === 0) {
+    console.log('No sites in Omeka, waiting for bootstrap...');
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    return syncOmeka(omeka, postgres, config) as Promise<void>;
+  }
+
   // Helper to create default permissions for a site,
   function getDefaultPermissions(siteId: number) {
     const toAdd: Array<[number, string, string]> = [];

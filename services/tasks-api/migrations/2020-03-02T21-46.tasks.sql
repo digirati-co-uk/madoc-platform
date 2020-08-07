@@ -24,7 +24,7 @@ create table tasks
 );
 
 alter table tasks
-    owner to tasks_api;
+    owner to current_user;
 
 create unique index tasks_id_uindex
     on tasks (id);

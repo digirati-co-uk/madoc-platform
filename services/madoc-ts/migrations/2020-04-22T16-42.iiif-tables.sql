@@ -22,7 +22,7 @@ create table iiif_resource
 );
 
 alter table iiif_resource
-    owner to madoc;
+    owner to current_user;
 
 create unique index iiif_resource_source_uindex
     on iiif_resource (source);
@@ -50,7 +50,7 @@ create table iiif_metadata
 );
 
 alter table iiif_metadata
-    owner to madoc;
+    owner to current_user;
 
 create index iiif_metadata_resource_id_index
     on iiif_metadata (resource_id, site_id);
@@ -80,7 +80,7 @@ create table iiif_resource_items
 );
 
 alter table iiif_resource_items
-    owner to madoc;
+    owner to current_user;
 
 create table iiif_derived_resource
 (
@@ -102,7 +102,7 @@ create table iiif_derived_resource
 );
 
 alter table iiif_derived_resource
-    owner to madoc;
+    owner to current_user;
 
 create index iiif_derived_resource_site_id_index
     on iiif_derived_resource (site_id);
@@ -133,7 +133,7 @@ create table iiif_derived_resource_items
 );
 
 alter table iiif_derived_resource_items
-    owner to madoc;
+    owner to current_user;
 
 create index iiif_derived_resource_items_item_id_index
     on iiif_derived_resource_items (item_id);
@@ -160,7 +160,7 @@ create table iiif_project
 );
 
 alter table iiif_project
-    owner to madoc;
+    owner to current_user;
 
 create unique index iiif_project_site_id_slug_uindex
     on iiif_project (site_id, slug);

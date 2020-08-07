@@ -13,7 +13,7 @@ create table jwt_site_scopes
 );
 
 alter table jwt_site_scopes
-    owner to madoc;
+    owner to current_user;
 
 create unique index jwt_site_scopes_uindex
     on jwt_site_scopes (id);
