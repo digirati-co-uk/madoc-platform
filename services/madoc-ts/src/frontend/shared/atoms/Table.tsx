@@ -10,7 +10,7 @@ export const TableContainer = styled.div`
 
 export const TableRow = styled.div<{ warning?: boolean; interactive?: boolean }>`
   border-bottom: 1px solid #ddd;
-  padding: 4px;
+  padding: 6px;
   font-size: 0.8em;
   align-items: center;
   display: flex;

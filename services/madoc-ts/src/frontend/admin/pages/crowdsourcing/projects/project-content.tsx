@@ -36,28 +36,30 @@ export const ProjectContent: UniversalComponent<ProjectContentType> = createUniv
 
     return (
       <>
-        <HelpText>
-          {t('help.flat_collection', {
-            defaultValue: `
-              This shows all of the collections and manifests in your project. When you add a collection you will see 
-              all off the manifests inside of the collection are added to this view. When you remove a collection you 
-              will have to also manually remove any manifests you want to remove.
-          `,
-          })}
-        </HelpText>
-        <CollectionEditorStructure
-          searchCollections={true}
-          searchManifests={false}
-          enableNavigation={true}
-          hideManifests={false}
-          items={data ? data.items : undefined}
-          saveOrder={async newOrder => {
-            if (data) {
-              await api.updateCollectionStructure(data.collectionId, newOrder);
-              await refetch();
-            }
-          }}
-        />
+        <div style={{ fontSize: `1.25em;` }}>
+          <HelpText>
+            {t('help.flat_collection', {
+              defaultValue: `
+                This shows all of the collections and manifests in your project. When you add a collection you will see 
+                all off the manifests inside of the collection are added to this view. When you remove a collection you 
+                will have to also manually remove any manifests you want to remove.
+            `,
+            })}
+          </HelpText>
+          <CollectionEditorStructure
+            searchCollections={true}
+            searchManifests={false}
+            enableNavigation={true}
+            hideManifests={false}
+            items={data ? data.items : undefined}
+            saveOrder={async newOrder => {
+              if (data) {
+                await api.updateCollectionStructure(data.collectionId, newOrder);
+                await refetch();
+              }
+            }}
+          />
+        </div>
       </>
     );
   },
