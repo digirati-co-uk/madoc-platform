@@ -3,7 +3,7 @@ import { DatabasePoolType, sql } from 'slonik';
 import { mysql } from './mysql';
 import { ExternalConfig } from '../types/external-config';
 
-export async function syncOmeka(omeka: Pool, postgres: DatabasePoolType, config: ExternalConfig) {
+export async function syncOmeka(omeka: Pool, postgres: DatabasePoolType, config: ExternalConfig): Promise<void> {
   // Get sites.
   const sites =
     (await new Promise<Array<{ id: number; title: string }>>(resolve =>

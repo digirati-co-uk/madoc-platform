@@ -19,3 +19,4 @@ key.pub
 .terraform
 infrastructure/ansible/inventory.yml
 infrastructure/ansible/vars/default.yml
+var_backup
