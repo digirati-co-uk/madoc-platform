@@ -5,10 +5,10 @@ import { Revisions } from '@capture-models/editor';
 import { useMutation } from 'react-query';
 import { RevisionNavigation } from './RevisionNavigation';
 
-export const CaptureModelEditor: React.FC<{ captureModel: CaptureModel; onSave: (req: RevisionRequest, status?: string) => void }> = ({
-  captureModel,
-  onSave,
-}) => {
+export const CaptureModelEditor: React.FC<{
+  captureModel: CaptureModel;
+  onSave: (req: RevisionRequest, status?: string) => void;
+}> = ({ captureModel, onSave }) => {
   const api = useApi();
   const persistRevision = Revisions.useStoreActions(a => a.persistRevision);
 
