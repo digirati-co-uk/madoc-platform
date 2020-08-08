@@ -123,7 +123,7 @@ services:
       - ./services/tasks-api/lib:/home/node/app/lib
 
   model-api:
-    image: digirati/capture-models:v0.5.0
+    image: digirati/capture-models:v0.6.0
     restart: on-failure
     environment:
       - SERVER_PORT=3000
