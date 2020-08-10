@@ -11,6 +11,7 @@ import { useApi } from '../../../../shared/hooks/use-api';
 import { Button } from '../../../../shared/atoms/Button';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
+import { LightNavigation, LightNavigationItem } from '../../../../shared/atoms/LightNavigation';
 
 type ViewCaptureModelType = {
   params: { id: string; captureModelId: string };
@@ -44,11 +45,21 @@ export const ViewCaptureModel: UniversalComponent<ViewCaptureModelType> = create
     return (
       <>
         <ThemeProvider theme={defaultTheme}>
-          <div>
-            [ <Link to={`/capture-models/${id}`}>Home</Link> |{' '}
-            <Link to={`/capture-models/${id}/document`}>Document</Link> |{' '}
-            <Link to={`/capture-models/${id}/structure`}>Structure</Link> ]
-          </div>
+          <LightNavigation>
+            <LightNavigationItem>
+              <Link to={`/capture-models/${id}`}>Home</Link>
+            </LightNavigationItem>
+            <LightNavigationItem>
+              <Link to={`/capture-models/${id}/document`}>Document</Link>
+            </LightNavigationItem>
+            <LightNavigationItem>
+              <Link to={`/capture-models/${id}/structure`}>Structure</Link>
+            </LightNavigationItem>
+            <LightNavigationItem>
+              <Link to={`/capture-models/${id}/preview`}>Preview</Link>
+            </LightNavigationItem>
+          </LightNavigation>
+
           {newStructure || newDocument ? (
             <Button
               onClick={() =>

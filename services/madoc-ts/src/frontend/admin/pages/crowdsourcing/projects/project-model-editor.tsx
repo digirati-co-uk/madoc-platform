@@ -11,6 +11,7 @@ import { useApi } from '../../../../shared/hooks/use-api';
 import { Button } from '../../../../shared/atoms/Button';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
+import { LightNavigation, LightNavigationItem } from '../../../../shared/atoms/LightNavigation';
 
 type ProjectModelEditorType = {
   params: { id: string; captureModelId: string };
@@ -44,11 +45,20 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
     return (
       <>
         <ThemeProvider theme={defaultTheme}>
-          <div>
-            [ <Link to={`/projects/${id}/model`}>Home</Link> |{' '}
-            <Link to={`/projects/${id}/model/document`}>Document</Link> |{' '}
-            <Link to={`/projects/${id}/model/structure`}>Structure</Link> ]
-          </div>
+          <LightNavigation>
+            <LightNavigationItem>
+              <Link to={`/projects/${id}/model`}>Home</Link>
+            </LightNavigationItem>
+            <LightNavigationItem>
+              <Link to={`/projects/${id}/model/document`}>Document</Link>
+            </LightNavigationItem>
+            <LightNavigationItem>
+              <Link to={`/projects/${id}/model/structure`}>Structure</Link>
+            </LightNavigationItem>
+            <LightNavigationItem>
+              <Link to={`/projects/${id}/model/preview`}>Preview</Link>
+            </LightNavigationItem>
+          </LightNavigation>
           {newStructure || newDocument ? (
             <Button
               onClick={() =>
