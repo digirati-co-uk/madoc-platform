@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { CanvasNormalized, ImageService } from '@hyperion-framework/types';
-import { GetTile, getTileFromImageService, TileSet } from '@atlas-viewer/atlas';
+import { GetTile, getTileFromImageService, TileSet, useRuntime } from '@atlas-viewer/atlas';
 
 export const AtlasTiledImages: React.FC<{ canvas: CanvasNormalized; service: ImageService }> = ({
   canvas,
   service,
 }) => {
   const [tile, setTile] = useState<GetTile>();
+  const runtime = useRuntime();
 
   useEffect(() => {
     if (service) {
       getTileFromImageService((service as any).id, canvas.width, canvas.height).then(s => {
         setTile(s); // only show the first image.
+        // @todo change this to be when the new image is REPLACED in the frame. Maybe better done at Atlas level.
+        runtime.goHome();
       });
     }
-  }, [service, canvas]);
+  }, [runtime, service, canvas]);
 
   if (!tile) {
     return (

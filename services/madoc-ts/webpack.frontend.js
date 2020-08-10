@@ -1,10 +1,14 @@
+console.log(`Webpack frontend, env: ${process.env.NODE_ENV || 'development'}`);
+
+const { addDisplayNameTransformer } = require('ts-react-display-name');
+
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
-  devtool: 'inline-source-map',
+  devtool: process.env.NODE_ENV !== 'production' ? 'inline-source-map' : false,
   output: {
     filename: 'bundle.js',
     pathinfo: false,
-    publicPath: '/s/default/madoc/assets/admin/',
+    publicPath: `/s/default/madoc/assets/${process.env.MADOC_BUNDLE_ID}/`,
   },
   module: {
     rules: [
@@ -16,6 +20,9 @@ module.exports = {
             options: {
               transpileOnly: true,
               experimentalWatchApi: true,
+              getCustomTransformers: () => ({
+                before: [addDisplayNameTransformer()],
+              }),
             },
           },
         ],

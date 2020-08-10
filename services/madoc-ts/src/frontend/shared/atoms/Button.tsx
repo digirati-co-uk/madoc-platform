@@ -10,6 +10,10 @@ export const Button = styled.button`
   border: 2px solid #333;
   border-bottom-width: 3px;
   text-decoration: none;
+  &:link,
+  &:visited {
+    color: #fff;
+  }
   &:focus {
     outline: 2px solid #42a0db;
   }

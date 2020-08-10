@@ -183,13 +183,32 @@ export class OmekaApi {
       return sites.map(s => ({ ...s, role: 'admin' }));
     }
 
+    const userSiteSlugs: string[] = [];
+    const userSites: UserSite[] = [];
+
     try {
-      return await this.many<UserSite>(mysql`
+
+      const authedSites = await this.many<UserSite>(mysql`
         SELECT s.id, sp.role, s.slug, s.title FROM site_permission sp LEFT JOIN site s on sp.site_id = s.id WHERE user_id=${userId}
       `);
-    } catch (err) {
-      return [];
+
+      userSiteSlugs.push(...authedSites.map(s => s.slug))
+      userSites.push(...authedSites);
+    } catch (err) { }
+
+    const publicSites = await this.many<UserSite>(
+      mysql`
+        SELECT s.id, s.slug, s.title, 'viewer' as role from site s where s.is_public = 1 or s.owner_id=${userId}
+      `
+    );
+
+    for (const publicSite of publicSites) {
+      if (userSiteSlugs.indexOf(publicSite.slug) === -1) {
+        userSites.push(publicSite);
+      }
     }
+
+    return userSites;
   }
 
   async getUser(id: number) {

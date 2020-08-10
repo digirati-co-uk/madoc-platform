@@ -67,7 +67,7 @@ export function createServerRenderer(
         <SSRContext.Provider value={dataCache}>
           <I18nextProvider i18n={i18next}>
             <StaticRouter basename={basename} location={url} context={context}>
-              <RootApplication api={api} routes={routes} />
+              {<RootApplication api={api} routes={routes} />}
             </StaticRouter>
           </I18nextProvider>
         </SSRContext.Provider>
@@ -84,7 +84,7 @@ export function createServerRenderer(
 
     const styles = sheet.getStyleTags(); // <-- getting all the tags from the sheet
 
-    sheet.seal();
+    // sheet.seal();
 
     return {
       type: 'document',

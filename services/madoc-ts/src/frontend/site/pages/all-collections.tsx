@@ -6,6 +6,13 @@ import { usePaginatedData } from '../../shared/hooks/use-data';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { Link } from 'react-router-dom';
 import { Pagination } from '../../shared/components/Pagination';
+import { Heading3, Subheading3 } from '../../shared/atoms/Heading3';
+import { ImageStrip, ImageStripBox } from '../../shared/atoms/ImageStrip';
+import { CroppedImage } from '../../shared/atoms/Images';
+import { SingleLineHeading5, Subheading5 } from '../../shared/atoms/Heading5';
+import { MoreContainer, MoreDot, MoreIconContainer, MoreLabel } from '../../shared/atoms/MoreButton';
+import { useTranslation } from 'react-i18next';
+import { Heading1 } from '../../shared/atoms/Heading1';
 
 type AllCollectionsType = {
   params: { projectId?: string };
@@ -25,6 +32,7 @@ const links = {
 
 export const AllCollections: UniversalComponent<AllCollectionsType> = createUniversalComponent<AllCollectionsType>(
   () => {
+    const { t } = useTranslation();
     const { resolvedData: data, latestData } = usePaginatedData(AllCollections);
 
     if (!data) {
@@ -33,13 +41,56 @@ export const AllCollections: UniversalComponent<AllCollectionsType> = createUniv
 
     return (
       <div>
-        <h1>All collections</h1>
+        <Heading1>All collections</Heading1>
+        <Pagination
+          page={latestData ? latestData.pagination.page : 1}
+          totalPages={latestData ? latestData.pagination.totalPages : 1}
+          stale={!latestData}
+        />
         {data.collections.map(collection => {
           return (
-            <div key={collection.id}>
-              <Link to={links.collection(collection.id)}>
-                <LocaleString>{collection.label}</LocaleString>
-              </Link>
+            <div key={collection.id} style={{ marginBottom: 80 }}>
+              <Heading3>
+                <LocaleString as={Link} to={`/collections/${collection.id}`}>
+                  {collection.label}
+                </LocaleString>
+              </Heading3>
+              <Subheading3>{t('{{count}} items', { count: collection.itemCount })}</Subheading3>
+              {collection.items.length === 0 ? null : (
+                <ImageStrip>
+                  {collection.items.map((manifest: any) => (
+                    <Link to={`/collections/${collection.id}/manifests/${manifest.id}`} key={manifest.id}>
+                      <ImageStripBox $size="small">
+                        <CroppedImage $size="small">
+                          {manifest.thumbnail ? (
+                            <img alt={t('First image in manifest')} src={manifest.thumbnail} />
+                          ) : null}
+                        </CroppedImage>
+                        <LocaleString as={SingleLineHeading5}>{manifest.label}</LocaleString>
+                        <Subheading5>{t('{{count}} images', { count: manifest.canvasCount })}</Subheading5>
+                      </ImageStripBox>
+                    </Link>
+                  ))}
+                  {collection.items.length < (collection.itemCount || collection.items.length) ? (
+                    <div>
+                      <Link to={`/collections/${collection.id}`}>
+                        <MoreContainer>
+                          <MoreIconContainer>
+                            <MoreDot />
+                            <MoreDot />
+                            <MoreDot />
+                          </MoreIconContainer>
+                          <MoreLabel>
+                            {t('{{count}} more', {
+                              count: (collection.itemCount || collection.items.length) - collection.items.length,
+                            })}
+                          </MoreLabel>
+                        </MoreContainer>
+                      </Link>
+                    </div>
+                  ) : null}
+                </ImageStrip>
+              )}
             </div>
           );
         })}

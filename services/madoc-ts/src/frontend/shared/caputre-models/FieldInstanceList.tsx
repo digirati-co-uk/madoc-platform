@@ -1,7 +1,8 @@
-import { FieldHeader, FieldPreview, RoundedCard } from '@capture-models/editor';
+import { FieldHeader, FieldPreview, Revisions, RoundedCard } from '@capture-models/editor';
 import { useRefinement } from '@capture-models/plugin-api';
 import { BaseField, FieldInstanceListRefinement } from '@capture-models/types';
 import React from 'react';
+import { NewFieldButtonInstance } from './NewFieldInstanceButton';
 
 export const FieldInstanceList: React.FC<{
   fields: Array<BaseField>;
@@ -10,6 +11,9 @@ export const FieldInstanceList: React.FC<{
   path: Array<[string, string]>;
   readOnly?: boolean;
 }> = ({ fields, chooseField, property, path, readOnly }) => {
+  const { removeInstance } = Revisions.useStoreActions(a => ({
+    removeInstance: a.removeInstance,
+  }));
   const refinement = useRefinement<FieldInstanceListRefinement>(
     'field-instance-list',
     { property, instance: fields },
@@ -32,6 +36,8 @@ export const FieldInstanceList: React.FC<{
 
   const label = fields[0] ? fields[0].label : 'Untitled';
   const pluralLabel = fields[0] ? fields[0].pluralLabel || label : label;
+  const allowMultiple = fields[0] ? fields[0].allowMultiple : false;
+  const canRemove = allowMultiple && !readOnly && fields.length > 1;
 
   return (
     <div>
@@ -43,11 +49,13 @@ export const FieldInstanceList: React.FC<{
             size="small"
             interactive={true}
             onClick={() => chooseField({ instance: field, property })}
+            onRemove={canRemove ? () => removeInstance({ path: [...path, [property, field.id]] }) : undefined}
           >
             <FieldPreview field={field} />
           </RoundedCard>
         );
       })}
+      {allowMultiple ? <NewFieldButtonInstance property={property} path={path} field={fields[0]} /> : null}
     </div>
   );
 };

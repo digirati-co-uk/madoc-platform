@@ -10,12 +10,29 @@ export const RevisionTopLevel: React.FC<{
   instructions?: string;
   onSaveRevision: (req: RevisionRequest, status?: string) => Promise<void>;
 }> = ({ readOnly, instructions, onSaveRevision }) => {
-  const current = Revisions.useStoreState(s => s.currentRevision);
-  const deselectRevision = Revisions.useStoreActions(s => s.deselectRevision);
-  const createRevision = Revisions.useStoreActions(a => a.createRevision);
-  const setRevisionLabel = Revisions.useStoreActions(a => a.setRevisionLabel);
-  const [isPreviewing, setIsPreviewing] = useState(false);
-  const [isThankYou, setIsThankYou] = useState(false);
+  const {
+    setIsThankYou,
+    setIsPreviewing,
+    createRevision,
+    deselectRevision,
+    setRevisionLabel,
+  } = Revisions.useStoreActions(actions => {
+    return {
+      setIsThankYou: actions.setIsThankYou,
+      setIsPreviewing: actions.setIsPreviewing,
+      deselectRevision: actions.deselectRevision,
+      createRevision: actions.createRevision,
+      setRevisionLabel: actions.setRevisionLabel,
+    };
+  });
+  const { isThankYou, isPreviewing, current } = Revisions.useStoreState(state => {
+    return {
+      current: state.currentRevision,
+      isPreviewing: state.isPreviewing,
+      isThankYou: state.isThankYou,
+    };
+  });
+
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
   const setDescriptionOfChange = useCallback(label => setRevisionLabel({ label }), [setRevisionLabel]);
@@ -33,7 +50,6 @@ export const RevisionTopLevel: React.FC<{
         error={error}
         descriptionOfChange={current.revision.label || current.document.label || ''}
         setDescriptionOfChange={setDescriptionOfChange}
-        entity={{ property: 'root', instance: current.document }}
         onEdit={() => setIsPreviewing(false)}
         onSave={() => {
           setError('');
@@ -67,13 +83,7 @@ export const RevisionTopLevel: React.FC<{
 
   return (
     <>
-      <VerboseEntityPage
-        title={current.revision.label}
-        description={instructions}
-        entity={{ property: 'root', instance: current.document }}
-        path={[]}
-        readOnly={readOnly}
-      >
+      <VerboseEntityPage title={current.revision.label} description={instructions} readOnly={readOnly}>
         <CardButtonGroup>
           <CardButton onClick={() => deselectRevision({ revisionId: current.revision.id })}>Go back</CardButton>
           {readOnly ? (

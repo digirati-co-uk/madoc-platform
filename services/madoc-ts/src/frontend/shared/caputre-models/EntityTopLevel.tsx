@@ -1,9 +1,10 @@
 import React from 'react';
-import { BackgroundSplash, CardButton } from '@capture-models/editor';
+import { CardButton, CardButtonGroup } from '@capture-models/editor';
 import { useRefinement } from '@capture-models/plugin-api';
 import { BaseField, CaptureModel, EntityRefinement } from '@capture-models/types';
 import { FieldList } from './FieldList';
 import { VerboseSelector } from './VerboseSelector';
+import { RevisionBreadcrumbs } from './RevisionBreadcrumbs';
 
 export const EntityTopLevel: React.FC<{
   title?: string;
@@ -11,6 +12,8 @@ export const EntityTopLevel: React.FC<{
   entity: { property: string; instance: CaptureModel['document'] };
   path: Array<[string, string]>;
   goBack?: () => void;
+  goNext?: () => void;
+  goPrev?: () => void;
   showNavigation?: boolean;
   readOnly?: boolean;
   setSelectedField: (field: { property: string; instance: BaseField }) => void;
@@ -24,6 +27,8 @@ export const EntityTopLevel: React.FC<{
   entity,
   path,
   goBack,
+  goNext,
+  goPrev,
   showNavigation,
   staticBreadcrumbs,
   readOnly,
@@ -59,6 +64,7 @@ export const EntityTopLevel: React.FC<{
 
   const body = (
     <>
+      <RevisionBreadcrumbs />
       {showSelector && entity.instance.selector ? (
         <VerboseSelector
           isTopLevel={path.length === 0}
@@ -81,23 +87,21 @@ export const EntityTopLevel: React.FC<{
     return body;
   }
 
-  // @todo breadcrumbs.
   return (
-    <BackgroundSplash
-      header={title || entity.instance.label || 'New revision'}
-      description={description || entity.instance.description}
-    >
-      {/*{staticBreadcrumbs ? (*/}
-      {/*  <RoundedCard size={'small'}>*/}
-      {/*    <Breadcrumb*/}
-      {/*      icon="right angle"*/}
-      {/*      sections={staticBreadcrumbs.map((content, key) => ({ key, content, link: false }))}*/}
-      {/*    />*/}
-      {/*  </RoundedCard>*/}
-      {/*) : null}*/}
+    <>
       {body}
+      {goNext || goPrev ? (
+        <CardButtonGroup>
+          <CardButton size="small" onClick={goPrev} disabled={!goPrev}>
+            Previous {entity.instance.label}
+          </CardButton>
+          <CardButton size="small" onClick={goNext} disabled={!goNext}>
+            Next {entity.instance.label}
+          </CardButton>
+        </CardButtonGroup>
+      ) : null}
       {goBack ? <CardButton onClick={goBack}>{readOnly ? 'Go back' : 'Finish and save'}</CardButton> : null}
       {children}
-    </BackgroundSplash>
+    </>
   );
 };

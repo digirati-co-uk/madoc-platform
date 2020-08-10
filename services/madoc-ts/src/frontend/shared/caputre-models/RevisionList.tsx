@@ -75,7 +75,7 @@ export const RevisionList: React.FC<RevisionListProps> = ({
   // const mySubmitted = myRevisions.filter(rev => rev.revision.status === 'submitted');
 
   return (
-    <BackgroundSplash header={model.label} description={model.instructions ? model.instructions : model.description}>
+    <>
       {canonicalRevision.length === 0 ? <RoundedCard>Nothing submitted yet</RoundedCard> : null}
       {canonicalRevision.map((rev, idx) => (
         <SingleRevision key={idx} request={rev} unsavedIds={unsavedIds} selectRevision={selectRevision} />
@@ -88,6 +88,6 @@ export const RevisionList: React.FC<RevisionListProps> = ({
           Create new
         </CardButton>
       </CardButtonGroup>
-    </BackgroundSplash>
+    </>
   );
 };

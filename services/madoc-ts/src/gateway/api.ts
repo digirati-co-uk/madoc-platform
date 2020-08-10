@@ -86,6 +86,10 @@ export class ApiClient {
     return this.currentUser;
   }
 
+  getIsServer() {
+    return this.isServer;
+  }
+
   isAuthorised() {
     if (this.isServer) {
       return !!this.user;
@@ -706,6 +710,10 @@ export class ApiClient {
 
   async getSiteManifest(id: number, query?: import('../routes/site/site-manifest').SiteManifestQuery) {
     return this.publicRequest<ManifestFull>(`/madoc/api/manifests/${id}`, query);
+  }
+
+  async getSiteManifestStructure(id: number) {
+    return this.publicRequest<ItemStructureList>(`/madoc/api/manifests/${id}/structure`);
   }
 
   async getSiteManifests(query?: import('../routes/site/site-manifests').SiteManifestQuery) {

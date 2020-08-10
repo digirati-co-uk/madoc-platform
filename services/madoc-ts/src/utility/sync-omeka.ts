@@ -3,12 +3,18 @@ import { DatabasePoolType, sql } from 'slonik';
 import { mysql } from './mysql';
 import { ExternalConfig } from '../types/external-config';
 
-export async function syncOmeka(omeka: Pool, postgres: DatabasePoolType, config: ExternalConfig) {
+export async function syncOmeka(omeka: Pool, postgres: DatabasePoolType, config: ExternalConfig): Promise<void> {
   // Get sites.
   const sites =
     (await new Promise<Array<{ id: number; title: string }>>(resolve =>
       omeka.query(mysql`SELECT id, title FROM site`, (err, content) => resolve(content))
     )) || [];
+
+  if (sites.length === 0) {
+    console.log('No sites in Omeka, waiting for bootstrap...');
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    return syncOmeka(omeka, postgres, config) as Promise<void>;
+  }
 
   // Helper to create default permissions for a site,
   function getDefaultPermissions(siteId: number) {

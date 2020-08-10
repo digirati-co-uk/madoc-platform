@@ -8,7 +8,7 @@ export type BreadcrumbItem = {
   active?: boolean;
 };
 
-const BreadcrumbContainer = styled.div`
+export const BreadcrumbContainer = styled.div`
   background: #4e82df;
   color: #fff;
   display: flex;
@@ -16,7 +16,7 @@ const BreadcrumbContainer = styled.div`
   font-size: 0.9em;
 `;
 
-const BreadcrumbItem = styled.div<{ active?: boolean }>`
+export const BreadcrumbItem = styled.div<{ active?: boolean }>`
   a {
     text-decoration: none;
     color: rgba(255, 255, 255, 0.7);
@@ -31,7 +31,7 @@ const BreadcrumbItem = styled.div<{ active?: boolean }>`
   }
 `;
 
-const BreadcrumbSeparator = styled.div`
+export const BreadcrumbSeparator = styled.div`
   color: rgba(255, 255, 255, 0.7);
   margin: 0 0.6em;
 `;

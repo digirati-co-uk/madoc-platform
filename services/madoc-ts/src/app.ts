@@ -18,6 +18,9 @@ import * as path from 'path';
 import { createBackend } from './middleware/i18n/i18next.server';
 import { ExternalConfig } from './types/external-config';
 import { omekaSite } from './middleware/omeka-site';
+// @ts-ignore
+import k2c from 'koa2-connect';
+import cookieParser from 'cookie-parser';
 
 export async function createApp(router: TypedRouter<any, any>, config: ExternalConfig) {
   const app = new Koa();
@@ -52,6 +55,7 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
     );
   }
 
+  app.use(k2c(cookieParser(app.keys)))
   app.use(postgresConnection(pool));
   app.use(json({ pretty: process.env.NODE_ENV !== 'production' }));
   app.use(logger());

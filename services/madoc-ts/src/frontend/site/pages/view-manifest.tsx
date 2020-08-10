@@ -39,13 +39,13 @@ export const ViewManifest: React.FC<{
   return (
     <>
       <DisplayBreadcrumbs />
-      {projectList && !project
-        ? projectList.projects.map((proj: any) => (
-            <div key={proj.id}>
-              <LocaleString>{proj.label}</LocaleString>
-            </div>
-          ))
-        : null}
+      {/*{projectList && !project*/}
+      {/*  ? projectList.projects.map((proj: any) => (*/}
+      {/*      <div key={proj.id}>*/}
+      {/*        <LocaleString>{proj.label}</LocaleString>*/}
+      {/*      </div>*/}
+      {/*    ))*/}
+      {/*  : null}*/}
       <h1>
         <LocaleString>{manifest.label}</LocaleString>
       </h1>
@@ -55,7 +55,6 @@ export const ViewManifest: React.FC<{
         totalPages={pagination ? pagination.totalPages : 1}
         stale={!pagination}
       />
-      <hr />
       <div>
         <ImageGrid>
           {manifest.items.map((canvas, idx) => (
