@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { UniversalComponent } from '../../../../types';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { ManifestFull } from '../../../../../types/schemas/manifest-full';
-import { ButtonRow, TinyButton } from '../../../../shared/atoms/Button';
 import { Link, useParams } from 'react-router-dom';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';

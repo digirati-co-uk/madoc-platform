@@ -5,14 +5,18 @@ export const Button = styled.button`
   font-size: 16px;
   line-height: 22px;
   padding: 3px 10px;
-  background: #333;
+  background: #4e82df;
   color: #fff;
-  border: 2px solid #333;
+  border: 2px solid #4e82df;
   border-bottom-width: 3px;
   text-decoration: none;
   &:link,
   &:visited {
     color: #fff;
+  }
+  &:hover {
+    background: #7baaff;
+    border-color: #7baaff;
   }
   &:focus {
     outline: 2px solid #42a0db;
@@ -23,12 +27,6 @@ export const Button = styled.button`
 `;
 
 export const SmallButton = styled(Button)`
-  font-size: 14px;
-  line-height: 18px;
-  padding: 3px 10px;
-`;
-
-export const TinyButton = styled(Button)`
   font-size: 12px;
   line-height: 14px;
   padding: 2px 10px;

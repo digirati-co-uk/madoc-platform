@@ -4,7 +4,7 @@ import { ItemStructureList } from '../../../../../types/schemas/item-structure-l
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { Link, useParams } from 'react-router-dom';
-import { SmallButton, TinyButton } from '../../../../shared/atoms/Button';
+import { SmallButton } from '../../../../shared/atoms/Button';
 import { ContextHeading, Header } from '../../../../shared/atoms/Header';
 import { Subheading1 } from '../../../../shared/atoms/Heading1';
 import { ReorderTable, ReorderTableRow } from '../../../../shared/atoms/ReorderTable';
@@ -92,7 +92,7 @@ export const EditManifestStructure: UniversalComponent<EditManifestStructureType
                     </>
                   }
                 >
-                  <TinyButton onClick={() => removeItem(item.id)}>remove</TinyButton>
+                  <SmallButton onClick={() => removeItem(item.id)}>remove</SmallButton>
                 </ReorderTableRow>
               );
             })}
@@ -110,7 +110,7 @@ export const EditManifestStructure: UniversalComponent<EditManifestStructureType
                       <LocaleString>{item.label}</LocaleString> - {item.id}
                     </TableRowLabel>
                     <TableActions>
-                      <TinyButton onClick={() => addItem(item.id)}>undo</TinyButton>
+                      <SmallButton onClick={() => addItem(item.id)}>undo</SmallButton>
                     </TableActions>
                   </TableRow>
                 );

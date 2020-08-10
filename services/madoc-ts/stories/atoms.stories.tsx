@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, SmallButton, TinyButton } from '../src/frontend/shared/atoms/Button';
+import { Button, SmallButton } from '../src/frontend/shared/atoms/Button';
 import { Breadcrumbs } from '../src/frontend/shared/atoms/Breadcrumbs';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -11,9 +11,6 @@ export const buttons = () => (
     <br />
     <br />
     <SmallButton>Small button</SmallButton>
-    <br />
-    <br />
-    <TinyButton>Tiny button</TinyButton>
 
     <p>testing this works.</p>
   </div>

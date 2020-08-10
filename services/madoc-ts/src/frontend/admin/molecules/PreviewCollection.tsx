@@ -3,7 +3,7 @@ import { CollectionNormalized, ManifestNormalized } from '@hyperion-framework/ty
 import { useVaultEffect } from '@hyperion-framework/react-vault';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../shared/atoms/Table';
-import { Button, TinyButton } from '../../shared/atoms/Button';
+import { Button, SmallButton } from '../../shared/atoms/Button';
 import { Header } from '../../shared/atoms/Header';
 import { Heading1 } from '../../shared/atoms/Heading1';
 import { useTranslation } from 'react-i18next';
@@ -85,22 +85,22 @@ export const PreviewCollection: React.FC<{
               <TableActions>
                 {excludeEnabled ? (
                   excludedManifests.indexOf(manifest.id) !== -1 ? (
-                    <TinyButton
+                    <SmallButton
                       disabled={props.disabled}
                       onClick={() => setExcludedManifests(m => m.filter(id => id !== manifest.id))}
                     >
                       {t('add to import')}
-                    </TinyButton>
+                    </SmallButton>
                   ) : (
-                    <TinyButton
+                    <SmallButton
                       disabled={props.disabled}
                       onClick={() => setExcludedManifests(m => [...m, manifest.id])}
                     >
                       {t('exclude')}
-                    </TinyButton>
+                    </SmallButton>
                   )
                 ) : null}
-                <TinyButton
+                <SmallButton
                   disabled={props.disabled}
                   style={{ marginLeft: 10 }}
                   onClick={() => {
@@ -111,7 +111,7 @@ export const PreviewCollection: React.FC<{
                   }}
                 >
                   {t('preview')}
-                </TinyButton>
+                </SmallButton>
               </TableActions>
             </TableRow>
           );

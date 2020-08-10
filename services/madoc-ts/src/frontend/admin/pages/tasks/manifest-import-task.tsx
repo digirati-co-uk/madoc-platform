@@ -2,7 +2,7 @@ import { ImportManifestTask } from '../../../../gateway/tasks/import-manifest';
 import React, { useState } from 'react';
 import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../../shared/atoms/Table';
 import { Status } from '../../../shared/atoms/Status';
-import { Button, TinyButton } from '../../../shared/atoms/Button';
+import { Button, SmallButton } from '../../../shared/atoms/Button';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
@@ -46,12 +46,12 @@ export const ManifestImportTask: React.FC<{ task: ImportManifestTask; statusBar?
               <Link to={`/tasks/${subtask.id}`}>{subtask.name}</Link>
             </TableRowLabel>
             <TableActions>
-              <TinyButton
+              <SmallButton
                 onClick={() => (subtask.id ? trigger(subtask.id) : null)}
                 disabled={subtask.id ? taskStatusMap[subtask.id] : false}
               >
                 Retry
-              </TinyButton>
+              </SmallButton>
             </TableActions>
           </TableRow>
         ))}

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ButtonRow, SmallButton, TinyButton } from '../src/frontend/shared/atoms/Button';
+import { ButtonRow, SmallButton } from '../src/frontend/shared/atoms/Button';
 import { Heading3, Subheading3 } from '../src/frontend/shared/atoms/Heading3';
 import { Heading5, Subheading5, SingleLineHeading5 } from '../src/frontend/shared/atoms/Heading5';
 import { ImageStrip, ImageStripBox } from '../src/frontend/shared/atoms/ImageStrip';
@@ -52,9 +52,9 @@ export const listCollections = () => {
           </div>
         </ImageStrip>
         <ButtonRow>
-          <TinyButton>edit</TinyButton>
-          <TinyButton>add manifest</TinyButton>
-          <TinyButton>edit metadata</TinyButton>
+          <SmallButton>edit</SmallButton>
+          <SmallButton>add manifest</SmallButton>
+          <SmallButton>edit metadata</SmallButton>
         </ButtonRow>
       </div>
     </>
@@ -69,9 +69,9 @@ export const viewCollection = () => {
       <Heading1>Scottish bridges</Heading1>
       <Subheading1>18 manifests</Subheading1>
       <ButtonRow>
-        <TinyButton>edit</TinyButton>
-        <TinyButton>add manifest</TinyButton>
-        <TinyButton>edit metadata</TinyButton>
+        <SmallButton>edit</SmallButton>
+        <SmallButton>add manifest</SmallButton>
+        <SmallButton>edit metadata</SmallButton>
       </ButtonRow>
       <ImageGrid>
         {items.map((_, idx) => (
@@ -102,19 +102,19 @@ export const editCollectionStructure = () => {
 
         <ReorderTable>
           <ReorderTableRow id="1" idx={0} label="Test 1">
-            <TinyButton>remove</TinyButton>
+            <SmallButton>remove</SmallButton>
           </ReorderTableRow>
           <ReorderTableRow id="2" idx={1} label="Test 2">
-            <TinyButton>remove</TinyButton>
+            <SmallButton>remove</SmallButton>
           </ReorderTableRow>
           <ReorderTableRow id="3" idx={2} label="Test 3">
-            <TinyButton>remove</TinyButton>
+            <SmallButton>remove</SmallButton>
           </ReorderTableRow>
           <ReorderTableRow id="4" idx={3} label="Test 4">
-            <TinyButton>remove</TinyButton>
+            <SmallButton>remove</SmallButton>
           </ReorderTableRow>
           <ReorderTableRow id="5" idx={4} label="Test 5">
-            <TinyButton>remove</TinyButton>
+            <SmallButton>remove</SmallButton>
           </ReorderTableRow>
         </ReorderTable>
 
@@ -162,7 +162,7 @@ export const AddManifest: React.FC = () => {
             <TableRow key={key}>
               <TableRowLabel>{label}</TableRowLabel>
               <TableActions>
-                <TinyButton>Add to collection</TinyButton>
+                <SmallButton>Add to collection</SmallButton>
               </TableActions>
             </TableRow>
           ))}
