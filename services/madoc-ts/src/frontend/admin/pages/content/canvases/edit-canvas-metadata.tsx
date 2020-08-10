@@ -49,7 +49,9 @@ export const EditCanvasMetadata: UniversalComponent<EditCanvasMetadataType> = cr
       return <div>loading...</div>;
     }
 
-    return <MetadataListEditor key={invalidateTime} metadata={data} onSave={saveChanges} />;
+    return (
+      <MetadataListEditor key={invalidateTime} metadata={data} template={['label', 'summary']} onSave={saveChanges} />
+    );
   },
   {
     getData: async (key, vars, api) => {
