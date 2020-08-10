@@ -2,7 +2,6 @@ import React, { useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 import { ThemeProvider } from 'styled-components';
 import { defaultTheme, Revisions } from '@capture-models/editor';
-import { useContentType } from '@capture-models/plugin-api';
 import { CrowdsourcingTask } from '../../../../types/tasks/crowdsourcing-task';
 import { useApi } from '../../../shared/hooks/use-api';
 import { CaptureModelEditor } from '../../../shared/caputre-models/CaptureModelEditor';
@@ -16,43 +15,9 @@ import '@capture-models/editor/lib/input-types/HTMLField';
 import { useProjectByTask } from '../../../shared/hooks/use-project-by-task';
 import { Button } from '../../../shared/atoms/Button';
 import { CaptureModelHeader } from '../../../shared/caputre-models/CaptureModelHeader';
+import { ViewContent } from '../../../shared/components/ViewContent';
 
-const ViewContent: React.FC<{ target: any; canvas: any }> = ({ target, canvas }) => {
-  return useContentType(
-    useMemo(
-      () =>
-        [...target].reverse().map((r: any) => {
-          return { ...r, type: r.type.toLowerCase() };
-        }),
-      [target]
-    ),
-    useMemo(
-      () => ({
-        height: 600,
-        custom: {
-          customFetcher: (mid: string) => {
-            const canvasTarget = target.find((r: any) => r.type === 'Canvas');
-            return {
-              '@context': 'http://iiif.io/api/presentation/2/context.json',
-              '@id': `${mid}`,
-              '@type': 'sc:Manifest',
-              sequences: [
-                {
-                  '@id': `${mid}/s1`,
-                  '@type': 'sc:Sequence',
-                  canvases: [{ ...canvas.source, '@id': `${canvasTarget.id}` }],
-                },
-              ],
-            };
-          },
-        },
-      }),
-      [canvas.source, target]
-    )
-  );
-};
-
-const ViewCrowdsourcingTask: React.FC<{ task: CrowdsourcingTask }> = ({ task }) => {
+const ViewCrowdSourcingTask: React.FC<{ task: CrowdsourcingTask }> = ({ task }) => {
   const api = useApi();
   const project = useProjectByTask(task);
   const [isVertical, setIsVertical] = useState(false);
@@ -188,4 +153,4 @@ const ViewCrowdsourcingTask: React.FC<{ task: CrowdsourcingTask }> = ({ task }) 
   );
 };
 
-export default ViewCrowdsourcingTask;
+export default ViewCrowdSourcingTask;
