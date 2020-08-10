@@ -133,6 +133,8 @@ services:
       - POSTGRES_CONFIG_SERVICE_PASSWORD=${POSTGRES_CONFIG_SERVICE_PASSWORD}
     volumes:
       - /opt/data/shared_postgres_data:/var/lib/postgresql/data:Z
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
 
   sorting-room:
     image: digirati/madoc-sorting-room-beta:v2
