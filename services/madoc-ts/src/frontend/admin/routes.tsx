@@ -33,6 +33,7 @@ import { CaptureModels } from './pages/crowdsourcing/capture-models/capture-mode
 import { ViewCaptureModel } from './pages/crowdsourcing/capture-models/view-capture-model';
 import { ProjectTasks } from './pages/crowdsourcing/projects/project-tasks';
 import { ProjectOverview } from './pages/crowdsourcing/projects/project-overview';
+import { PreviewCaptureModel } from './pages/crowdsourcing/model-editor/preview-capture-model';
 
 export const routes: UniversalRoute[] = [
   {
@@ -187,6 +188,11 @@ export const routes: UniversalRoute[] = [
             component: FullStructureEditor,
             exact: true,
           },
+          {
+            path: '/projects/:id/model/preview',
+            component: PreviewCaptureModel,
+            exact: true,
+          },
         ],
       },
       {
@@ -239,6 +245,11 @@ export const routes: UniversalRoute[] = [
           {
             path: '/capture-models/:id/structure',
             component: FullStructureEditor,
+            exact: true,
+          },
+          {
+            path: '/capture-models/:id/preview',
+            component: PreviewCaptureModel,
             exact: true,
           },
         ],
