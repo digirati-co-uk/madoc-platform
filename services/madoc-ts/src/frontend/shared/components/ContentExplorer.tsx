@@ -1,9 +1,3 @@
-// 1. Choice between manifest / collection
-// 2. Autocomplete box
-// 3. Choose collection or manifest
-// 4. Choose canvas
-// 5. Return resource in callback (manifest + canvas)
-
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button, TinyButton } from '../atoms/Button';
 import { useAutocomplete } from '../hooks/use-autocomplete';
@@ -21,6 +15,9 @@ import { SingleLineHeading5 } from '../atoms/Heading5';
 import styled from 'styled-components';
 import { useRecent } from '../hooks/use-recent';
 import { ItemStructureListItem } from '../../../types/schemas/item-structure-list';
+import { PreviewManifest } from '../../admin/molecules/PreviewManifest';
+import { PreviewCollection } from '../../admin/molecules/PreviewCollection';
+import { useVault } from '@hyperion-framework/react-vault';
 
 const ExplorerBackground = styled.div`
   background: #eee;
@@ -80,6 +77,104 @@ export const CollectionExplorer: React.FC<{
         {page + 1 !== pages ? <TinyButton onClick={() => setPage(page + 1)}>{t('Next page')}</TinyButton> : null}
       </div>
     </>
+  );
+};
+
+export const URLContextExplorer: React.FC<{
+  renderChoice: (id: string, manifestId: string, reset: () => void) => any;
+  defaultResource?: { type: 'Collection' | 'Manifest'; id: string };
+}> = ({ renderChoice, defaultResource }) => {
+  const { t } = useTranslation();
+  const [search, setSearch] = useState('');
+  const [collectionId, setCollectionId] = useState<string | undefined>();
+  const [manifestId, setManifestId] = useState<string | undefined>();
+  const [canvasId, setCanvasId] = useState<string | undefined>();
+  const [isLoading, setIsLoading] = useState(false);
+  const vault = useVault();
+
+  useEffect(() => {
+    if (defaultResource) {
+      if (defaultResource.type === 'Collection') {
+        setCollectionId(defaultResource.id);
+      }
+      if (defaultResource.type === 'Manifest') {
+        setManifestId(defaultResource.id);
+      }
+    }
+  }, [defaultResource]);
+
+  const resetCanvas = useCallback(() => setCanvasId(undefined), []);
+
+  if (canvasId && manifestId) {
+    return renderChoice(canvasId, manifestId, resetCanvas);
+  }
+
+  if (manifestId) {
+    return (
+      <>
+        <TinyButton onClick={() => setManifestId(undefined)}>Back to search</TinyButton>
+        <PreviewManifest id={manifestId} onClick={id => setCanvasId(id)} />
+      </>
+    );
+  }
+
+  if (collectionId) {
+    return (
+      <>
+        <TinyButton onClick={() => setCollectionId(undefined)}>Back to search</TinyButton>
+        <PreviewCollection
+          id={collectionId}
+          onClick={(id, type) => {
+            if (type === 'Manifest') {
+              setManifestId(id);
+            } else {
+              setCollectionId(id);
+            }
+          }}
+          disableManifestPreview
+        />
+      </>
+    );
+  }
+
+  return (
+    <form
+      onSubmit={e => {
+        e.preventDefault();
+        if (search) {
+          setIsLoading(true);
+          vault
+            .load(search)
+            .then((resource: any) => {
+              console.log('found', resource);
+              if (resource.type === 'Collection') {
+                setCollectionId(resource.id);
+              }
+              if (resource.type === 'Manifest') {
+                setManifestId(resource.id);
+              }
+              // @todo error?
+              setIsLoading(false);
+            })
+            .catch(err => {
+              console.log(err);
+              setIsLoading(false);
+            });
+        }
+      }}
+    >
+      <InputContainer wide>
+        <InputLabel>Enter IIIF Manifest Collection URL</InputLabel>
+        <GridContainer>
+          <ExpandGrid>
+            <Input placeholder={t('Enter URL')} type="text" onChange={e => setSearch(e.currentTarget.value)} />
+          </ExpandGrid>
+          <Button type="submit" disabled={isLoading}>
+            {t('Open')}
+          </Button>
+        </GridContainer>
+      </InputContainer>
+    </form>
   );
 };
 

@@ -6,6 +6,7 @@ import { ContentExplorer } from '../../../../shared/components/ContentExplorer';
 import { ViewContent } from '../../../../shared/components/ViewContent';
 import { useQuery } from 'react-query';
 import { TinyButton } from '../../../../shared/atoms/Button';
+import { RevisionNavigation } from '../../../../shared/caputre-models/RevisionNavigation';
 
 const ViewContentFetch: React.FC<{ id: number }> = ({ id }) => {
   const api = useApi();
@@ -52,10 +53,10 @@ export const PreviewCaptureModel: React.FC = () => {
           </div>
           <div style={{ width: '33%', padding: '1em' }}>
             {api.getIsServer() ? null : (
-              <CaptureModelEditor
-                captureModel={captureModel}
-                onSave={async (response, status) => {
-                  console.log(response, status);
+              <RevisionNavigation
+                structure={captureModel.structure}
+                onSaveRevision={(rev, status) => {
+                  console.log(rev, status);
                 }}
               />
             )}

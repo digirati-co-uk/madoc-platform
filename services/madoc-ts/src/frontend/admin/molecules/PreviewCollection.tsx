@@ -13,8 +13,9 @@ export const PreviewCollection: React.FC<{
   id: string;
   manifestId?: string;
   disabled?: boolean;
-  onClick?: (manifestId: string) => void;
-  onImport: (collectionId: string, manifestIds: string[]) => void;
+  onClick?: (manifestId: string, type: string) => void;
+  onImport?: (collectionId: string, manifestIds: string[]) => void;
+  disableManifestPreview?: boolean;
 }> = props => {
   const [collection, setCollection] = useState<CollectionNormalized | undefined>();
   const [manifests, setManifests] = useState<ManifestNormalized[]>([]);
@@ -51,20 +52,24 @@ export const PreviewCollection: React.FC<{
         <Heading1>
           <LocaleString>{collection.label || { none: [t('Untitled collection')] }}</LocaleString>
         </Heading1>
-        <Button
-          disabled={excludedManifests.length === manifests.length || props.disabled}
-          onClick={() => {
-            props.onImport(
-              collection.id,
-              manifests.map(m => m.id).filter(id => excludedManifests.indexOf(id) === -1)
-            );
-          }}
-        >
-          {t('Import collection and {{count}} manifests', { count: manifests.length - excludedManifests.length })}
-        </Button>
+        {props.onImport ? (
+          <Button
+            disabled={excludedManifests.length === manifests.length || props.disabled}
+            onClick={() => {
+              if (props.onImport) {
+                props.onImport(
+                  collection.id,
+                  manifests.map(m => m.id).filter(id => excludedManifests.indexOf(id) === -1)
+                );
+              }
+            }}
+          >
+            {t('Import collection and {{count}} manifests', { count: manifests.length - excludedManifests.length })}
+          </Button>
+        ) : null}
       </Header>
 
-      {currentManifest ? (
+      {currentManifest && !props.disableManifestPreview ? (
         <div style={{ background: '#ddd', padding: '0.1em 1em' }}>
           <PreviewManifest id={currentManifest} />
         </div>
@@ -101,7 +106,7 @@ export const PreviewCollection: React.FC<{
                   onClick={() => {
                     setCurrentManifest(manifest.id);
                     if (props.onClick) {
-                      props.onClick(manifest.id);
+                      props.onClick(manifest.id, manifest.type);
                     }
                   }}
                 >
