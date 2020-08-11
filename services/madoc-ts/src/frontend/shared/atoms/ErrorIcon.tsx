@@ -1,12 +1,17 @@
 import React from 'react';
 
-export const ErrorIcon: React.FC<{ inline?: boolean, height?: number }> = ({ inline, height = 20 }) => (
+export const ErrorIcon: React.FC<{ inline?: boolean; height?: number; className?: string }> = ({
+  className,
+  inline,
+  height = 20,
+}) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     height={height}
     viewBox="0 0 24 24"
     width="24"
     style={{ verticalAlign: inline ? 'bottom' : undefined }}
+    className={className}
   >
     <path d="M0 0h24v24H0z" fill="none" />
     <path

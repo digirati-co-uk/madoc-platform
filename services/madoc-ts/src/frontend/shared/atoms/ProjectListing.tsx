@@ -34,7 +34,7 @@ const ProjectListingItem = styled.div`
 
 export const ProjectListing: React.FC<{
   projects: ProjectSnippet[];
-  onContribute: (id: string | number) => void;
+  onContribute?: (id: string | number) => void;
 }> = ({ projects, onContribute }) => {
   const { t } = useTranslation();
 
@@ -50,7 +50,7 @@ export const ProjectListing: React.FC<{
           <ProjectListingDescription>
             <LocaleString>{project.summary}</LocaleString>
           </ProjectListingDescription>
-          <Button onClick={() => onContribute(project.id)}>{t('Contribute')}</Button>
+          {onContribute ? <Button onClick={() => onContribute(project.id)}>{t('Contribute')}</Button> : null}
         </ProjectListingItem>
       ))}
     </ProjectListingContainer>

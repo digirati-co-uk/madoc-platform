@@ -1,9 +1,14 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const Heading1 = styled.h1`
+export const Heading1 = styled.h1<{ $margin?: boolean }>`
   font-size: 2em;
   font-weight: 600;
   margin-bottom: 0.2em;
+  ${props =>
+    props.$margin &&
+    css`
+      margin-bottom: 1em;
+    `}
 `;
 
 export const Subheading1 = styled.div`

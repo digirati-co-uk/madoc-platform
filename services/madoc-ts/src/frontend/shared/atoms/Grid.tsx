@@ -1,11 +1,18 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const GridContainer = styled.div`
   display: flex;
 `;
 
-export const HalfGird = styled.div`
+export const HalfGird = styled.div<{ $margin?: boolean }>`
   width: 50%;
+  ${props =>
+    props.$margin &&
+    css`
+      & ~ & {
+        margin-left: 1em;
+      }
+    `}
 `;
 
 export const ExpandGrid = styled.div`
