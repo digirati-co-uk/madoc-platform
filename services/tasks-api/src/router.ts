@@ -13,6 +13,7 @@ export const router = new TypedRouter({
   // All tasks
   'get-all-tasks': [TypedRouter.GET, '/tasks', getAllTasks],
   'create-task': [TypedRouter.POST, '/tasks', createTask, 'create-task'],
+  'get-all-statistics': [TypedRouter.GET, '/tasks/stats', getStatistics],
 
   // Single task.
   'get-single-task': [TypedRouter.GET, '/tasks/:id', getSingleTask],
