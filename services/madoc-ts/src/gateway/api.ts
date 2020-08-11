@@ -29,6 +29,7 @@ import { RevisionRequest } from '@capture-models/types';
 import { ProjectList } from '../types/schemas/project-list';
 import { ProjectListItem } from '../types/schemas/project-list-item';
 import { ProjectFull } from '../types/schemas/project-full';
+import { UserDetails } from '../types/schemas/user-details';
 
 export class ApiClient {
   private readonly gateway: string;
@@ -741,5 +742,9 @@ export class ApiClient {
 
   async getSiteProjects(query?: import('../routes/site/site-projects').SiteProjectsQuery) {
     return this.publicRequest<{ projects: any[] }>(`/madoc/api/projects`, query);
+  }
+
+  async getUserDetails() {
+    return this.publicRequest<UserDetails>(`/madoc/api/me`);
   }
 }

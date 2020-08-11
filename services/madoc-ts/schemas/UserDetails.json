@@ -1,0 +1,82 @@
+{
+  "type": "object",
+  "properties": {
+    "user": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "id",
+        "name",
+        "role"
+      ]
+    },
+    "sites": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "role",
+          "slug",
+          "title"
+        ]
+      }
+    },
+    "currentSiteId": {
+      "type": "number"
+    },
+    "statistics": {
+      "type": "object",
+      "properties": {
+        "statuses": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number"
+          }
+        },
+        "total": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "statuses",
+        "total"
+      ]
+    }
+  },
+  "required": [
+    "currentSiteId",
+    "sites",
+    "statistics",
+    "user"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
