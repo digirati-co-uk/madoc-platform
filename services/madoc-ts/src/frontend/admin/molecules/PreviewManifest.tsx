@@ -73,7 +73,11 @@ export const PreviewManifest: React.FC<{ id: string; onClick?: (id: string) => v
                   $size="small"
                   $static={!props.onClick}
                   key={canvas.id}
-                  onClick={() => props.onClick(canvas.id)}
+                  onClick={() => {
+                    if (props.onClick) {
+                      props.onClick(canvas.id);
+                    }
+                  }}
                 >
                   <CroppedImage $size="small">
                     <CanvasThumbnail canvas={canvas} height={50} />

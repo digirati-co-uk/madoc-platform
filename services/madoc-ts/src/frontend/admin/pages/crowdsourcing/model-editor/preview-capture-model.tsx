@@ -55,7 +55,7 @@ export const PreviewCaptureModel: React.FC = () => {
             {api.getIsServer() ? null : (
               <RevisionNavigation
                 structure={captureModel.structure}
-                onSaveRevision={(rev, status) => {
+                onSaveRevision={async (rev, status) => {
                   console.log(rev, status);
                 }}
               />
