@@ -44,7 +44,7 @@ services:
       - ./services/madoc/packages/extract-tagged-strings:/srv/omeka/repos/extract-tagged-strings:delegated
       - ./services/madoc/packages/google-analytics:/srv/omeka/repos/google-analytics:delegated
       - ./services/madoc/packages/madoc-bridge:/srv/omeka/repos/madoc-bridge:delegated
-      - ./services/madoc/packages/madoc-crowdsourcing-theme:/srv/omeka/repos/madoc-crowdsourcing-theme:delegated
+      - ./services/madoc/packages/madoc-crowd-sourcing-theme:/srv/omeka/repos/madoc-crowd-sourcing-theme:delegated
       - ./services/madoc/packages/omeka-i18n-module:/srv/omeka/repos/omeka-i18n-module:delegated
       - ./services/madoc/packages/public-user:/srv/omeka/repos/public-user:delegated
       - ./services/madoc/packages/shared-library:/srv/omeka/repos/shared-library:delegated
