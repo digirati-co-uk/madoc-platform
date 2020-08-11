@@ -16,3 +16,4 @@ export { ViewTopicType } from './pages/view-topic-type';
 export { ViewTopic } from './pages/view-topic';
 export { Search } from './pages/search';
 export { AllManifests } from './pages/all-manifests';
+export { UserHomepage } from './pages/user-homepage';

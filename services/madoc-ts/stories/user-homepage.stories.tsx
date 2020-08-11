@@ -4,14 +4,14 @@ import { Heading1 } from '../src/frontend/shared/atoms/Heading1';
 import { UserPermissions } from '../src/frontend/shared/components/UserPermissions';
 import { Heading3, Subheading3 } from '../src/frontend/shared/atoms/Heading3';
 import { ProjectListing } from '../src/frontend/shared/atoms/ProjectListing';
-import { Link, MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import {
   Statistic,
   StatisticContainer,
   StatisticLabel,
   StatisticNumber,
 } from '../src/frontend/shared/atoms/Statistics';
-import { SmallButton, TinyButton } from '../src/frontend/shared/atoms/Button';
+import { TinyButton } from '../src/frontend/shared/atoms/Button';
 import { TableContainer, TableRow, TableRowLabel } from '../src/frontend/shared/atoms/Table';
 import { Status } from '../src/frontend/shared/atoms/Status';
 import { GridContainer, HalfGird } from '../src/frontend/shared/atoms/Grid';
@@ -35,21 +35,6 @@ const projects = [
     slug: '123',
   },
 ];
-
-// Site users
-// - User project + details
-// - Bookmarks
-// - Projects that are running
-// Contributor
-// - Crowd Sourcing tasks
-// Reviewer
-//  - Reviews
-//  - Assign to another reviewer / admin
-// Admin
-// - IIIF Imports
-// - Quick assign
-// - Go to admin
-// - Create "to-do" task
 
 export const NormalUser: React.FC = () => {
   return (

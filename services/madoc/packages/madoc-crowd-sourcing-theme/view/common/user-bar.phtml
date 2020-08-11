@@ -22,7 +22,7 @@ $enableRegistration = $this->siteSetting('public-user-enable-registration', fals
     <?php if ($user): ?>
         <span class="madoc-user-bar__user-id">
         <?php
-        echo sprintf($this->translate('Signed in as %s'), '<a href="' . $this->url('site/publicuser-profile', [], true) . '">' . $escape($user->getName()) . '</a>');
+        echo sprintf($this->translate('Signed in as %s'), '<a href="/s/' . $site->slug() . '/madoc">' . $escape($user->getName()) . '</a>');
         ?>
     </span>
         <span class="madoc-user-bar__logout">
