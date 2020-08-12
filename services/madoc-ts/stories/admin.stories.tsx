@@ -2,6 +2,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { AdminHeader } from '../src/frontend/admin/molecules/AdminHeader';
 import * as React from 'react';
 import { WidePage } from '../src/frontend/shared/atoms/WidePage';
+import { LightNavigation, LightNavigationItem } from '../src/frontend/shared/atoms/LightNavigation';
 
 export default { title: 'Admin' };
 
@@ -33,4 +34,21 @@ export const adminHeaderWithBreadcrumbsAndMenu = () => (
       <p>Test some content on this page.</p>
     </WidePage>
   </MemoryRouter>
+);
+
+export const LightNavigationExample = () => (
+  <LightNavigation>
+    <LightNavigationItem>
+      <a>Item A</a>
+    </LightNavigationItem>
+    <LightNavigationItem $active>
+      <a>Item B</a>
+    </LightNavigationItem>
+    <LightNavigationItem>
+      <a>Item C</a>
+    </LightNavigationItem>
+    <LightNavigationItem>
+      <a>Item D</a>
+    </LightNavigationItem>
+  </LightNavigation>
 );

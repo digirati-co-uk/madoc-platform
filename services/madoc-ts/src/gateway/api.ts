@@ -29,6 +29,7 @@ import { RevisionRequest } from '@capture-models/types';
 import { ProjectList } from '../types/schemas/project-list';
 import { ProjectListItem } from '../types/schemas/project-list-item';
 import { ProjectFull } from '../types/schemas/project-full';
+import { UserDetails } from '../types/schemas/user-details';
 
 export class ApiClient {
   private readonly gateway: string;
@@ -613,9 +614,18 @@ export class ApiClient {
     } as Partial<Task>);
   }
 
-  async getTaskStats(id: string, query?: { type?: string; root?: boolean; distinct_subjects?: boolean }) {
+  async getTaskStats(
+    id: string,
+    query?: { type?: string; root?: boolean; distinct_subjects?: boolean; user_id?: string }
+  ) {
     return this.request<{ statuses: { [status: string]: number }; total: number }>(
       `/api/tasks/${id}/stats${query ? `?${stringify(query)}` : ''}`
+    );
+  }
+
+  async getAllTaskStats(query?: { type?: string; root?: boolean; distinct_subjects?: boolean; user_id?: string }) {
+    return this.request<{ statuses: { [status: string]: number }; total: number }>(
+      `/api/tasks/stats${query ? `?${stringify(query)}` : ''}`
     );
   }
 
@@ -653,18 +663,20 @@ export class ApiClient {
     });
   }
 
-  async getTasks(
+  async getTasks<TaskType extends BaseTask>(
     page?: number,
     query: {
       all?: boolean;
       all_tasks?: boolean;
-      status?: number;
+      status?: number | number[];
       root_task_id?: string;
       subject?: string;
       type?: string;
     } = {}
   ) {
-    return this.request<{ tasks: BaseTask[]; pagination: Pagination }>(`/api/tasks?${stringify({ page, ...query })}`);
+    return this.request<{ tasks: TaskType[]; pagination: Pagination }>(
+      `/api/tasks?${stringify({ page: page || 1, ...query }, { arrayFormat: 'comma' })}`
+    );
   }
 
   async acceptTask<Task extends BaseTask>(
@@ -730,5 +742,9 @@ export class ApiClient {
 
   async getSiteProjects(query?: import('../routes/site/site-projects').SiteProjectsQuery) {
     return this.publicRequest<{ projects: any[] }>(`/madoc/api/projects`, query);
+  }
+
+  async getUserDetails() {
+    return this.publicRequest<UserDetails>(`/madoc/api/me`);
   }
 }

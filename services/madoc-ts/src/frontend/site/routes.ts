@@ -192,6 +192,11 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
       exact: true,
       component: components.Search,
     },
+    {
+      path: '/',
+      exact: true,
+      component: components.UserHomepage,
+    },
   ];
 
   // hookRoutes(routes);

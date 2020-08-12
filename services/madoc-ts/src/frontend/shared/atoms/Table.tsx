@@ -33,3 +33,12 @@ export const TableActions = styled.div`
   margin-left: auto;
   white-space: nowrap;
 `;
+
+export const TableEmpty = styled.div`
+  padding: 2em;
+  font-size: 1.3em;
+  color: #444;
+  background: #eee;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+`;

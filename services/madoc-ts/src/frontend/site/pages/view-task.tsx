@@ -1,14 +1,12 @@
 import React from 'react';
-import { BaseTask } from '../../../gateway/tasks/base-task';
-import { CrowdsourcingTask } from '../../../types/tasks/crowdsourcing-task';
 import '../../shared/caputre-models/refinements';
 import { ViewCrowdsourcingTask } from './tasks/crowdsourcing-task.lazy';
 import { BrowserComponent } from '../../shared/utility/browser-component';
 import { useApi } from '../../shared/hooks/use-api';
-import { CrowdsourcingReview } from '../../../gateway/tasks/crowdsourcing-review';
 import { ViewCrowdsourcingReview } from './tasks/crowdsourcing-review';
+import { TaskContext } from './loaders/task-loader';
 
-export const ViewTask: React.FC<{ task: BaseTask }> = ({ task }) => {
+export const ViewTask: React.FC<TaskContext<any>> = ({ task, ...props }) => {
   const api = useApi();
 
   const slug = api.getSiteSlug();
@@ -30,14 +28,14 @@ export const ViewTask: React.FC<{ task: BaseTask }> = ({ task }) => {
   if (task.type === 'crowdsourcing-task') {
     return (
       <BrowserComponent fallback={<div>loading...</div>}>
-        <ViewCrowdsourcingTask task={task as CrowdsourcingTask} />
+        <ViewCrowdsourcingTask task={task} {...props} />
       </BrowserComponent>
     );
   }
 
   // @todo check user role.
   if (task.type === 'crowdsourcing-review') {
-    return <ViewCrowdsourcingReview task={task as CrowdsourcingReview} />;
+    return <ViewCrowdsourcingReview task={task} {...props} />;
   }
 
   return <h1>{task.name}</h1>;

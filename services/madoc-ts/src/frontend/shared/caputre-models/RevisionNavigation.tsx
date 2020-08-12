@@ -16,7 +16,7 @@ export const RevisionNavigation: React.FC<{
   const currentRevisionId = Revisions.useStoreState(s => s.currentRevisionId);
   const revisions = Revisions.useStoreState(s => s.revisions);
   const readMode = Revisions.useStoreState(s => s.currentRevisionReadMode);
-  const { user } = useCurrentUser();
+  const { user } = useCurrentUser(true);
   const refinement = useRefinement<ChoiceRefinement>(
     'choice-navigation',
     { instance: currentView as any, property: '' },
@@ -25,8 +25,11 @@ export const RevisionNavigation: React.FC<{
 
   const currentUsersRevisions = useMemo(() => {
     const keys = Object.keys(revisions);
+    if (!user) {
+      return [];
+    }
     return keys.map(key => revisions[key]).filter(rev => (rev.revision.authors || []).indexOf(user.id) !== -1);
-  }, [revisions, user.id]);
+  }, [revisions, user]);
 
   if (!currentView) {
     return null;

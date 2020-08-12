@@ -1,9 +1,8 @@
 import React from 'react';
-import { RoundedCard } from '@capture-models/editor';
 
 export const CaptureModelEditorHomepage: React.FC = () => {
   return (
-    <RoundedCard>
+    <div>
       <h1>Creating a capture model</h1>
       <p style={{ fontSize: '1.3em' }}>
         There are 2 main sections of a model. The first is the document. Each image you crowdsource will have a copy of
@@ -21,6 +20,6 @@ export const CaptureModelEditorHomepage: React.FC = () => {
       <p style={{ fontSize: '1.3em' }}>
         You can load some of the fixtures to see examples of various documents and structures.
       </p>
-    </RoundedCard>
+    </div>
   );
 };

@@ -10,9 +10,13 @@ export const LanguageString: React.FC<{ [key: string]: any } & { as?: string | R
 }) => {
   const { i18n } = useTranslation();
 
-  const viewingDirection = useMemo(() => i18n.dir(language), [language]);
+  const viewingDirection = useMemo(() => (i18n.dir ? i18n.dir(language) : 'ltr'), [language]);
 
   const isSame = useMemo(() => {
+    if (!i18n.services) {
+      return false;
+    }
+
     return (
       i18n.services.languageUtils.getLanguagePartFromCode(i18n.language) ===
       i18n.services.languageUtils.getLanguagePartFromCode(language)

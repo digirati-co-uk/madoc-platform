@@ -8,12 +8,12 @@ import { CanvasNormalized } from '@hyperion-framework/types';
 import { useApi } from '../../shared/hooks/use-api';
 import { useParams, useHistory } from 'react-router-dom';
 import { useQuery } from 'react-query';
-import { Button } from '../../shared/atoms/Button';
 import { CanvasFull } from '../../../types/schemas/canvas-full';
 import { BreadcrumbContext, DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { SimpleAtlasViewer } from '../../shared/components/SimpleAtlasViewer';
 import { ManifestFull } from '../../../types/schemas/manifest-full';
 import { SnippetStructure } from '../../shared/components/StructureSnippet';
+import { ProjectListing } from '../../shared/atoms/ProjectListing';
 
 type ViewCanvasType = {
   params: {
@@ -113,7 +113,7 @@ export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalCom
       [data]
     );
 
-    const onContribute = (projectId: number) => {
+    const onContribute = (projectId: number | string) => {
       if (data && data.canvas) {
         api
           .createResourceClaim(projectId, {
@@ -143,7 +143,7 @@ export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalCom
           </CanvasContext>
         ) : null}
         {structure.data && idx !== null ? (
-          <div style={{ display: 'flex', marginTop: '1em' }}>
+          <div style={{ display: 'flex', marginTop: '1em', marginBottom: '1em' }}>
             {idx > 0 ? (
               <SnippetStructure
                 label="Previous:"
@@ -166,19 +166,9 @@ export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalCom
             ) : null}
           </div>
         ) : null}
+
         {hasProjects && projects.data ? (
-          <>
-            <h3>Projects</h3>
-            {projects.data.projects.map(project => {
-              return (
-                <div key={project.id}>
-                  <LocaleString as={'h4'}>{project.label}</LocaleString>
-                  <LocaleString as={'p'}>{project.summary}</LocaleString>
-                  <Button onClick={() => onContribute(project.id)}>Contribute</Button>
-                </div>
-              );
-            })}
-          </>
+          <ProjectListing projects={projects.data.projects} onContribute={onContribute} />
         ) : null}
       </BreadcrumbContext>
     );

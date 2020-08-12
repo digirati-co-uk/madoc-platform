@@ -13,6 +13,10 @@ export const useApi = () => {
   return api;
 };
 
+export const useOptionalApi = () => {
+  return useContext(ApiContext);
+};
+
 export function useIsApiRestarting(api: ApiClient) {
   const [isDown, setIsDown] = useState(false);
 

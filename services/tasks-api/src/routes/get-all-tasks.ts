@@ -1,6 +1,37 @@
 import { RouteMiddleware } from '../types';
 import { NotFoundError, sql } from 'slonik';
 
+function getStatus(statusQuery: string) {
+  if (!statusQuery) {
+    return sql``;
+  }
+
+  if (statusQuery.indexOf(',') === -1) {
+    const singleStatus = Number(statusQuery);
+    if (Number.isNaN(singleStatus)) {
+      return sql``;
+    }
+
+    return sql`and t.status = ${singleStatus}`;
+  }
+
+  const statuses = statusQuery.split(',');
+  const parsedStatuses: number[] = [];
+  for (const status of statuses) {
+    const singleStatus = Number(status);
+    if (Number.isNaN(singleStatus)) {
+      continue;
+    }
+    parsedStatuses.push(singleStatus);
+  }
+
+  if (parsedStatuses.length === 0) {
+    return sql``;
+  }
+
+  return sql`and t.status = any (${sql.array(parsedStatuses, sql`int[]`)})`;
+}
+
 export const getAllTasks: RouteMiddleware = async context => {
   // Subject facet.
   // Type filter.
@@ -9,7 +40,7 @@ export const getAllTasks: RouteMiddleware = async context => {
   const userId = context.state.jwt.user.id;
   const typeFilter = context.query.type ? sql`and t.type = ${context.query.type}` : sql``;
   const subjectFilter = context.query.subject ? sql`and t.subject = ${context.query.subject}` : sql``;
-  const statusFilter = context.query.status ? sql`and t.status = ${Number(context.query.status)}` : sql``;
+  const statusFilter = getStatus(context.query.status);
   const subtaskExclusion =
     context.query.all_tasks || context.query.root_task_id ? sql`` : sql`and t.parent_task is null`;
   const userExclusion = isAdmin ? sql`` : sql`and (t.creator_id = ${userId} OR t.assignee_id = ${userId})`;

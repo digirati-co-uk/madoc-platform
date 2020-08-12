@@ -1,5 +1,4 @@
-import { useApi } from '../../shared/hooks/use-api';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
 import { useReorderItems } from '../hooks/use-reorder-items';
 import { ExpandGrid, GridContainer, HalfGird } from '../../shared/atoms/Grid';
@@ -11,7 +10,7 @@ import { ReorderTable, ReorderTableRow } from '../../shared/atoms/ReorderTable';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { ItemStructureListItem } from '../../../types/schemas/item-structure-list';
 import { useTranslation } from 'react-i18next';
-import { useData } from '../../shared/hooks/use-data';
+import { useAutocomplete } from '../../shared/hooks/use-autocomplete';
 
 export const CollectionEditorStructure: React.FC<{
   searchManifests?: boolean;
@@ -22,10 +21,10 @@ export const CollectionEditorStructure: React.FC<{
   saveOrder: (newOrder: number[]) => Promise<void> | void;
 }> = ({ items, saveOrder, searchCollections, hideManifests, searchManifests, enableNavigation }) => {
   const { t } = useTranslation();
-  const api = useApi();
   const [search, setSearch] = useState('');
-  const [searchResultsType, setSearchResultsType] = useState('');
-  const [searchResults, setSearchResults] = useState<undefined | Array<{ id: number; label: string }>>();
+
+  const [performSearch, searchResultsType, searchResults, resetResults] = useAutocomplete(search);
+
   const {
     unsaved,
     saving,
@@ -40,24 +39,10 @@ export const CollectionEditorStructure: React.FC<{
   } = useReorderItems({
     items,
     saveOrder: newOrder => {
-      setSearchResults(undefined);
+      resetResults();
       return saveOrder(newOrder);
     },
   });
-
-  const performSearch = (type: string) => {
-    if (type === 'manifest') {
-      api.autocompleteManifests(search).then(results => {
-        setSearchResultsType(type);
-        setSearchResults(results);
-      });
-    } else {
-      api.autocompleteCollections(search).then(results => {
-        setSearchResultsType(type);
-        setSearchResults(results);
-      });
-    }
-  };
 
   if (!items) {
     return <>{t('loading')}</>;

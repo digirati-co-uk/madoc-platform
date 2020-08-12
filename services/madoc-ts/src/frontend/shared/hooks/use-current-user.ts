@@ -1,18 +1,19 @@
-import { useApi } from './use-api';
+import { useApi, useOptionalApi } from './use-api';
 import { useMemo } from 'react';
 
 export function useCurrentUser(allowAnonymous?: false): { user: { name?: string; id: string }; scope: string[] };
-export function useCurrentUser(
-  allowAnonymous: true
-): undefined | { user?: { name?: string; id: string }; scope: string[] };
+export function useCurrentUser(allowAnonymous: true): { user?: { name?: string; id: string }; scope: string[] };
 export function useCurrentUser(allowAnonymous = false): any {
-  const api = useApi();
+  const api = useOptionalApi();
 
   return useMemo(() => {
-    const user = api.getCurrentUser();
-    if (!allowAnonymous && !user) {
-      throw new Error('User not found');
+    if (api) {
+      const user = api.getCurrentUser();
+      if (!allowAnonymous && !user) {
+        throw new Error('User not found');
+      }
+      return user || { user: undefined };
     }
-    return user;
+    return { user: undefined };
   }, [allowAnonymous, api]);
 }

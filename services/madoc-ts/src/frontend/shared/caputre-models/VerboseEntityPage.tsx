@@ -3,6 +3,7 @@ import React, { useCallback, useMemo } from 'react';
 import { EntityTopLevel } from './EntityTopLevel';
 import { VerboseFieldPage } from './VerboseFieldPage';
 import { Revisions } from '@capture-models/editor';
+import { isEntity } from '@capture-models/helpers';
 
 function isTopLevel(path: [string, string, boolean][]): boolean {
   return path.filter(p => !p[2]).length === 0;
@@ -86,21 +87,27 @@ export const VerboseEntityPage: React.FC<{
     return { next, prev };
   }, [adjacent]);
 
-  if (currentField) {
+  const field = currentField ? currentField : currentEntity && !isEntity(currentEntity) ? currentEntity : undefined;
+
+  if (field) {
     return (
       <VerboseFieldPage
-        key={currentField.id}
+        key={field.id}
         readOnly={readOnly}
-        field={{ property: fieldProperty || '', instance: currentField as BaseField }}
+        field={{ property: fieldProperty || '', instance: field as BaseField }}
         path={subtreePath as any}
         goBack={() => {
-          setSelectedField(undefined);
+          if (currentField) {
+            setSelectedField(undefined);
+          } else {
+            setSelectedEntity(undefined);
+          }
         }}
       />
     );
   }
 
-  if (!currentEntity) {
+  if (!currentEntity || !isEntity(currentEntity)) {
     throw new Error('Unknown currentEntity');
   }
 

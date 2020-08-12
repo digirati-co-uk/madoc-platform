@@ -27,7 +27,7 @@ const CanvasThumbnail: React.FC<{ canvas: CanvasNormalized; height: number }> = 
   return <img alt="thumbnail" src={thumbnail} />;
 };
 
-export const PreviewManifest: React.FC<{ id: string }> = props => {
+export const PreviewManifest: React.FC<{ id: string; onClick?: (id: string) => void }> = props => {
   const { t } = useTranslation();
   const [manifest, setManifest] = useState<ManifestNormalized | undefined>();
   const [allCanvases, setCanvases] = useState<CanvasNormalized[] | undefined>();
@@ -69,7 +69,16 @@ export const PreviewManifest: React.FC<{ id: string }> = props => {
         {canvases
           ? canvases.map(canvas => {
               return (
-                <ImageGridItem $size="small" $static key={canvas.id}>
+                <ImageGridItem
+                  $size="small"
+                  $static={!props.onClick}
+                  key={canvas.id}
+                  onClick={() => {
+                    if (props.onClick) {
+                      props.onClick(canvas.id);
+                    }
+                  }}
+                >
                   <CroppedImage $size="small">
                     <CanvasThumbnail canvas={canvas} height={50} />
                   </CroppedImage>

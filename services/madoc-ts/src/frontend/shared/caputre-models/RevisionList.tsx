@@ -29,7 +29,7 @@ export const RevisionList: React.FC<RevisionListProps> = ({
   createRevision,
   unsavedIds = [],
 }) => {
-  const user = useCurrentUser();
+  const { user } = useCurrentUser(true);
   const refinement = useRefinement<RevisionListRefinement>(
     'revision-list',
     { instance: model, property: '' },
@@ -67,7 +67,7 @@ export const RevisionList: React.FC<RevisionListProps> = ({
   // Preview (refineable) - revision.document
 
   const canonicalRevision = revisions.filter(rev => rev.source === 'canonical').filter(rev => !isEmptyRevision(rev));
-  const myRevisions = revisions.filter(rev => (rev.revision.authors || []).indexOf(user.user.id) !== -1);
+  const myRevisions = user ? revisions.filter(rev => (rev.revision.authors || []).indexOf(user.id) !== -1) : [];
   // const otherPeoplesRevisions = revisions.filter(rev => (rev.revision.authors || []).indexOf(user.user.id) === -1);
   // const myAcceptedRevisions = myRevisions.filter(rev => rev.revision.approved);
   // const otherPeoplesAcceptedRevisions = otherPeoplesRevisions.filter(rev => rev.revision.approved);
