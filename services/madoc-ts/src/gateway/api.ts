@@ -393,8 +393,10 @@ export class ApiClient {
     });
   }
 
-  async getCollectionById(id: number, page = 0) {
-    return this.request<CollectionFull>(`/api/madoc/iiif/collections/${id}${page ? `?page=${page}` : ''}`);
+  async getCollectionById(id: number, page = 0, type?: 'manifest' | 'collection') {
+    return this.request<CollectionFull>(
+      `/api/madoc/iiif/collections/${id}${page || type ? `?${stringify({ type, page })}` : ''}`
+    );
   }
 
   async getCollectionStructure(id: number) {
@@ -737,11 +739,11 @@ export class ApiClient {
   }
 
   async getSiteProject(id: string | number) {
-    return this.publicRequest<any>(`/madoc/api/projects/${id}`);
+    return this.publicRequest<ProjectFull>(`/madoc/api/projects/${id}`);
   }
 
   async getSiteProjects(query?: import('../routes/site/site-projects').SiteProjectsQuery) {
-    return this.publicRequest<{ projects: any[] }>(`/madoc/api/projects`, query);
+    return this.publicRequest<ProjectList>(`/madoc/api/projects`, query);
   }
 
   async getUserDetails() {
