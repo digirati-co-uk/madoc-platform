@@ -23,7 +23,6 @@ import { TinyButton } from '../../shared/atoms/Button';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../shared/atoms/Statistics';
 import { Heading3, Subheading3 } from '../../shared/atoms/Heading3';
 import { ProjectListing } from '../../shared/atoms/ProjectListing';
-import { useApi } from '../../shared/hooks/use-api';
 import { CrowdsourcingReview } from '../../../gateway/tasks/crowdsourcing-review';
 import { CrowdsourcingTask } from '../../../types/tasks/crowdsourcing-task';
 import { Pagination } from '../../../types/schemas/_pagination';
@@ -33,6 +32,7 @@ import { Status } from '../../shared/atoms/Status';
 import { Link } from 'react-router-dom';
 import { HrefLink } from '../../shared/utility/href-link';
 import { LightNavigation, LightNavigationItem } from '../../shared/atoms/LightNavigation';
+import { isAdmin, isContributor, isReviewer } from '../../shared/utility/user-roles';
 
 type UserHomepageType = {
   query: {};
@@ -129,66 +129,6 @@ const ContributorTasks: React.FC<{
     </>
   );
 };
-
-function isContributor({ user, sites, currentSiteId }: UserDetails) {
-  if (user.role === 'global_admin') {
-    return true;
-  }
-
-  const site = sites.find(s => s.id === currentSiteId);
-
-  if (!site) {
-    return false;
-  }
-
-  if (
-    site.role === 'admin' ||
-    site.role === 'reviewer' ||
-    site.role === 'limited_reviewer' ||
-    site.role === 'transcriber' ||
-    site.role === 'limited_transcriber'
-  ) {
-    return true;
-  }
-
-  return false;
-}
-
-function isAdmin({ user, sites, currentSiteId }: UserDetails) {
-  if (user.role === 'global_admin') {
-    return true;
-  }
-
-  const site = sites.find(s => s.id === currentSiteId);
-
-  if (!site) {
-    return false;
-  }
-
-  if (site.role === 'admin') {
-    return true;
-  }
-
-  return false;
-}
-
-function isReviewer({ user, sites, currentSiteId }: UserDetails) {
-  if (user.role === 'global_admin') {
-    return true;
-  }
-
-  const site = sites.find(s => s.id === currentSiteId);
-
-  if (!site) {
-    return false;
-  }
-
-  if (site.role === 'admin' || site.role === 'reviewer' || site.role === 'limited_reviewer') {
-    return true;
-  }
-
-  return false;
-}
 
 export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversalComponent<UserHomepageType>(
   () => {
