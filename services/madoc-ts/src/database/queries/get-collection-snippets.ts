@@ -31,11 +31,13 @@ export function getSingleCollection({
   siteId,
   page = 0,
   perPage = 24,
+  type,
 }: {
   collectionId: number;
   siteId: number;
   page?: number;
   perPage?: number;
+  type?: 'manifest' | 'collection';
 }) {
   const offset = (page - 1) * perPage;
 
@@ -69,6 +71,13 @@ export function getSingleCollection({
 
       where single_collection.site_id = ${siteId}
         and single_collection.resource_id = ${collectionId}
+      ${
+        type
+          ? type === 'collection'
+            ? sql`and resource.type = 'collection'`
+            : sql`and resource.type = 'manifest'`
+          : sql``
+      }
       order by manifest_links.item_index
       limit ${perPage}
       offset ${offset}
