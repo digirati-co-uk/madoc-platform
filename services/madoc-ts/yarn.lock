@@ -2,36 +2,10 @@
 # yarn lockfile v1
 
 
-"@atlas-viewer/atlas@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-1.0.2.tgz#1ed0be0b6fbad0a269486bbd3b9b0e411cee840a"
-  integrity sha512-FP5uSzb3z/H+iHIv69fC4wjUDiKzhDTOrLBJxo1hcB/uM4RpUZ5DaEPD6u6Uwa0AGNMreB93XpFx8mBu7MjjmQ==
-  dependencies:
-    "@atlas-viewer/dna" "^0.5.0"
-    "@atlas-viewer/iiif-image-api" "^1.2.0"
-    "@hyperion-framework/types" "1.0.0-alpha.14"
-    "@hyperion-framework/vault" "1.0.0-alpha.15"
-    "@popmotion/popcorn" "^0.4.4"
-    canvas-text-wrapper "^0.10.2"
-    framesync "^4.0.2"
-    nanoid "^3.1.9"
-    popmotion "^8.6.8"
-    react "^16.12.0"
-    react-dom "^16.12.0"
-    react-reconciler "^0.25.1"
-    react-spring "^8.0.27"
-    react-use-gesture "^7.0.15"
-    react-use-measure "^2.0.1"
-    scheduler "^0.19.1"
-    stats.js "^0.17.0"
-    style-value-types "^3.1.7"
-    typescript-memoize "^1.0.0-alpha.3"
-    use-resize-observer "^6.1.0"
-
-"@atlas-viewer/atlas@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-1.0.4.tgz#604769c486896320e61331e2669098cb7a9b1631"
-  integrity sha512-h/EjJq0zR1Ef7By93dHhKB8qdlghMUxd5jAMwU3UHTjtKBGjGPgBaZmTdRLfBaJB3S0i1Q/B0ZhHPUzi46kqwQ==
+"@atlas-viewer/atlas@^1.0.4", "@atlas-viewer/atlas@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-1.0.5.tgz#60c4ef9b60980d13cfaba99b8531fb471d0ed11a"
+  integrity sha512-5VVyvTInz8YcMl+hWy+gsPQcjZjxUG/Ec0EnKv98KP1Gf4cXXMDh5+QQFXSoEVP7f+UKyM7KK9JOZH53uEN1KA==
   dependencies:
     "@atlas-viewer/dna" "^0.5.0"
     "@atlas-viewer/iiif-image-api" "1.2.1"
@@ -4910,11 +4884,6 @@ canvas-panel-beta@2.0.0, canvas-panel-beta@2.0.2:
     react "^16.10.2"
     react-dom "^16.10.2"
 
-canvas-text-wrapper@^0.10.2:
-  version "0.10.2"
-  resolved "https://registry.yarnpkg.com/canvas-text-wrapper/-/canvas-text-wrapper-0.10.2.tgz#cf00996c131c0eac3de25cbf4a56d07d1da2b0c3"
-  integrity sha512-nFnN8q8ydtkBUWVn/dAdetpwNOkz3KtyD6jTI2HGD43ant2FQcnLugAVaGLJloyRTNK/exn7efpYy2zPV5bHiQ==
-
 capture-exit@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/capture-exit/-/capture-exit-2.0.0.tgz#fb953bfaebeb781f62898239dabb426d08a509a4"
@@ -7495,7 +7464,7 @@ framer-motion@^2.0.1:
   optionalDependencies:
     "@emotion/is-prop-valid" "^0.8.2"
 
-framesync@^4.0.0, framesync@^4.0.1, framesync@^4.0.2, framesync@^4.0.4:
+framesync@^4.0.0, framesync@^4.0.1, framesync@^4.0.4:
   version "4.0.4"
   resolved "https://registry.yarnpkg.com/framesync/-/framesync-4.0.4.tgz#79c42c0118f26821c078570db0ff81fb863516a2"
   integrity sha512-mdP0WvVHe0/qA62KG2LFUAOiWLng5GLpscRlwzBxu2VXOp6B8hNs5C5XlFigsMgrfDrr2YbqTsgdWZTc4RXRMQ==
@@ -12900,14 +12869,6 @@ react-sizeme@^2.6.7:
     shallowequal "^1.1.0"
     throttle-debounce "^2.1.0"
 
-react-spring@^8.0.27:
-  version "8.0.27"
-  resolved "https://registry.yarnpkg.com/react-spring/-/react-spring-8.0.27.tgz#97d4dee677f41e0b2adcb696f3839680a3aa356a"
-  integrity sha512-nDpWBe3ZVezukNRandTeLSPcwwTMjNVu1IDq9qA/AMiUqHuRN4BeSWvKr3eIxxg1vtiYiOLy4FqdfCP5IoP77g==
-  dependencies:
-    "@babel/runtime" "^7.3.1"
-    prop-types "^15.5.8"
-
 react-syntax-highlighter@^11.0.2:
   version "11.0.2"
   resolved "https://registry.yarnpkg.com/react-syntax-highlighter/-/react-syntax-highlighter-11.0.2.tgz#4e3f376e752b20d2f54e4c55652fd663149e4029"
@@ -12950,11 +12911,6 @@ react-transition-group@^4.3.0:
     dom-helpers "^5.0.1"
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
-
-react-use-gesture@^7.0.15:
-  version "7.0.15"
-  resolved "https://registry.yarnpkg.com/react-use-gesture/-/react-use-gesture-7.0.15.tgz#93c651e916a31cfb12d079e7fa1543d5b0511e07"
-  integrity sha512-vHQkaa7oUbSDTAcFk9huQXa7E8KPrZH91erPuOMoqZT513qvtbb/SzTQ33lHc71/kOoJkMbzOkc4uoA4sT7Ogg==
 
 react-use-measure@^2.0.1:
   version "2.0.1"
@@ -15642,13 +15598,6 @@ use-memo-one@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/use-memo-one/-/use-memo-one-1.1.1.tgz#39e6f08fe27e422a7d7b234b5f9056af313bd22c"
   integrity sha512-oFfsyun+bP7RX8X2AskHNTxu+R3QdE/RC5IefMbqptmACAA/gfol1KDD5KRzPsGMa62sWxGZw+Ui43u6x4ddoQ==
-
-use-resize-observer@^6.1.0:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/use-resize-observer/-/use-resize-observer-6.1.0.tgz#d4d267a940dbf9c326da6042f8a4bb8c89d29729"
-  integrity sha512-SiPcWHiIQ1CnHmb6PxbYtygqiZXR0U9dNkkbpX9VYnlstUwF8+QqpUTrzh13pjPwcjMVGR+QIC+nvF5ujfFNng==
-  dependencies:
-    resize-observer-polyfill "^1.5.1"
 
 use-sidecar@^1.0.1:
   version "1.0.2"
