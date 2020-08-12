@@ -17,6 +17,7 @@ import { api } from '../../gateway/api.server';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
 import { CrowdsourcingTask } from '../../types/tasks/crowdsourcing-task';
 import { createTask } from '../../gateway/tasks/crowdsourcing-task';
+import { CaptureModelSnippet } from '../../types/schemas/capture-model-snippet';
 
 export type ResourceClaim = {
   collectionId?: number;
@@ -291,7 +292,7 @@ async function upsertCaptureModelForResource(
   projectId: number,
   userId: number,
   claim: ResourceClaim
-): Promise<CaptureModel & { id: string }> {
+): Promise<(CaptureModel | CaptureModelSnippet) & { id: string }> {
   // Get top level project task.
   const { task_id, capture_model_id } = await context.connection.one(
     sql<{
@@ -301,18 +302,38 @@ async function upsertCaptureModelForResource(
   );
 
   const userApi = api.asUser({ userId, siteId });
+  const mainTarget = claim.canvasId
+    ? { type: 'Canvas', id: `urn:madoc:canvas:${claim.canvasId}` }
+    : claim.manifestId
+    ? { type: 'Manifest', id: `urn:madoc:manifest:${claim.manifestId}` }
+    : claim.collectionId
+    ? { type: 'Collection', id: `urn:madoc:collection:${claim.collectionId}` }
+    : undefined;
+
+  if (mainTarget && capture_model_id) {
+    const existingModel = await userApi.getAllCaptureModels({
+      target_type: mainTarget.type,
+      target_id: mainTarget.id,
+      derived_from: capture_model_id,
+    });
+
+    if (existingModel.length) {
+      return existingModel[0];
+    }
+  }
 
   const target = [];
-  if (claim.canvasId) {
-    target.push({ id: `urn:madoc:canvas:${claim.canvasId}`, type: 'Canvas' });
+
+  if (claim.collectionId) {
+    target.push({ id: `urn:madoc:collection:${claim.collectionId}`, type: 'Collection' });
   }
 
   if (claim.manifestId) {
     target.push({ id: `urn:madoc:manifest:${claim.manifestId}`, type: 'Manifest' });
   }
 
-  if (claim.collectionId) {
-    target.push({ id: `urn:madoc:collection:${claim.collectionId}`, type: 'Collection' });
+  if (claim.canvasId) {
+    target.push({ id: `urn:madoc:canvas:${claim.canvasId}`, type: 'Canvas' });
   }
 
   if (!target.length) {
@@ -333,7 +354,7 @@ async function createUserCrowdsourcingTask(
   taskName: string,
   subject: string,
   type: string,
-  captureModel: CaptureModel & { id: string },
+  captureModel: (CaptureModel | CaptureModelSnippet) & { id: string },
   claim: ResourceClaim
 ): Promise<CrowdsourcingTask> {
   const userApi = api.asUser({ userId, siteId });
