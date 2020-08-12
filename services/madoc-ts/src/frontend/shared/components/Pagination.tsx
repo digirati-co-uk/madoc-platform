@@ -52,7 +52,7 @@ export const Pagination: React.FC<{
 
   const prevPage = stale || page > 1;
   const nextPage = stale || page < totalPages;
-  const q = extraQuery ? `&${stringify(extraQuery)}` : '';
+  const q = extraQuery && Object.keys(extraQuery).length ? `${stringify(extraQuery)}` : '';
 
   if (totalPages === 0) {
     return null;
@@ -61,7 +61,7 @@ export const Pagination: React.FC<{
   return (
     <PaginationContainer>
       {prevPage ? (
-        <TinyButton as={Link} to={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}` : ''}${q}`}>
+        <TinyButton as={Link} to={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}`}>
           {t('Previous page')}
         </TinyButton>
       ) : null}
@@ -69,7 +69,7 @@ export const Pagination: React.FC<{
         Page {isLoading ? '...' : page} of {totalPages}
       </PaginationDisplay>
       {nextPage ? (
-        <TinyButton as={Link} to={`${pathname}?${pageParam}=${page + 1}${q}`}>
+        <TinyButton as={Link} to={`${pathname}?${pageParam}=${page + 1}${q ? `&${q}` : ''}`}>
           {t('Next page')}
         </TinyButton>
       ) : null}
