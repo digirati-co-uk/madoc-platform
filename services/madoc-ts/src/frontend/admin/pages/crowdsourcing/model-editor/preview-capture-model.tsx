@@ -1,6 +1,5 @@
 import React, { Suspense } from 'react';
 import { Revisions, useCaptureModel } from '@capture-models/editor';
-import { CaptureModelEditor } from '../../../../shared/caputre-models/CaptureModelEditor';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { ContentExplorer } from '../../../../shared/components/ContentExplorer';
 import { ViewContent } from '../../../../shared/components/ViewContent';

@@ -6,10 +6,12 @@ import { CrowdsourcingTask } from '../../../../types/tasks/crowdsourcing-task';
 import { EntityTopLevel } from '../../../shared/caputre-models/EntityTopLevel';
 import TimeAgo from 'react-timeago';
 import { RevisionRequest } from '@capture-models/types';
-import { Button } from '../../../shared/atoms/Button';
+import { Button, ButtonRow } from '../../../shared/atoms/Button';
 import { Debug } from '../../../shared/atoms/Debug';
+import { Revisions } from '@capture-models/editor';
+import { TaskContext } from '../loaders/task-loader';
 
-export const ViewCrowdsourcingReview: React.FC<{ task: CrowdsourcingReview }> = ({ task }) => {
+export const ViewCrowdsourcingReview: React.FC<TaskContext<CrowdsourcingReview>> = ({ task, refetch: refetchTask }) => {
   // A review.
   // parameters[0] is the direct task that's being reviewed.
   // We might want to make a query for:
@@ -82,7 +84,7 @@ export const ViewCrowdsourcingReview: React.FC<{ task: CrowdsourcingReview }> = 
     // 2. Update this task to be approved (the events API will update the subject.)
     await api.updateTask(task.id, { status: 3, status_text: 'Approved' });
 
-    await refetch();
+    await Promise.all([refetch(), refetchTask()]);
   });
 
   const [requestChanges] = useMutation(async (req: RevisionRequest) => {
@@ -92,7 +94,7 @@ export const ViewCrowdsourcingReview: React.FC<{ task: CrowdsourcingReview }> = 
     // Redraft it.
     await api.reDraftCaptureModelRevision(req);
 
-    await refetch();
+    await Promise.all([refetch(), refetchTask()]);
   });
 
   const [deleteRevision] = useMutation(async (req: RevisionRequest) => {
@@ -102,7 +104,7 @@ export const ViewCrowdsourcingReview: React.FC<{ task: CrowdsourcingReview }> = 
     // 2. Delete revision.
     await api.deleteCaptureModelRevision(req);
 
-    await refetch();
+    await Promise.all([refetch(), refetchTask()]);
   });
 
   return (
@@ -116,32 +118,34 @@ export const ViewCrowdsourcingReview: React.FC<{ task: CrowdsourcingReview }> = 
           <strong>This has been rejected and deleted.</strong>
         </div>
       )}
-      {data && data.revision ? (
+      {data && data.revision && data.captureModel ? (
         <>
-          <div style={{ padding: 20, margin: '20px 0', border: '2px solid #ddd' }}>
-            <EntityTopLevel
-              setSelectedField={() => null}
-              setSelectedEntity={() => null}
-              path={[]}
-              entity={{ instance: data.revision.document, property: 'root' }}
-              readOnly={true}
-              hideSplash={true}
-              hideCard={true}
-            />
-          </div>
-          {task.status !== 3 && task.status !== -1 ? (
-            <div>
-              <Button onClick={() => (data.revision ? approveRevision(data.revision) : undefined)}>Approve</Button>
-              <Button onClick={() => (data.revision ? deleteRevision(data.revision) : undefined)}>
-                Reject and delete
-              </Button>
+          <Revisions.Provider captureModel={data.captureModel}>
+            <div style={{ padding: 20, margin: '20px 0', border: '2px solid #ddd' }}>
+              <EntityTopLevel
+                setSelectedField={() => null}
+                setSelectedEntity={() => null}
+                path={[]}
+                entity={{ instance: data.revision.document, property: 'root' }}
+                readOnly={true}
+                hideSplash={true}
+                hideCard={true}
+              />
             </div>
-          ) : (
-            <>
-              {task.status === 3 ? <div>This has been approved</div> : null}
-              {task.status === -1 ? <div>This has been rejected</div> : null}
-            </>
-          )}
+            {task.status !== 3 && task.status !== -1 ? (
+              <ButtonRow>
+                <Button onClick={() => (data.revision ? approveRevision(data.revision) : undefined)}>Approve</Button>
+                <Button onClick={() => (data.revision ? deleteRevision(data.revision) : undefined)}>
+                  Reject and delete
+                </Button>
+              </ButtonRow>
+            ) : (
+              <>
+                {task.status === 3 ? <div>This has been approved</div> : null}
+                {task.status === -1 ? <div>This has been rejected</div> : null}
+              </>
+            )}
+          </Revisions.Provider>
         </>
       ) : null}
       <hr />

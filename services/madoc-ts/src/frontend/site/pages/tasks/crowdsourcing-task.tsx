@@ -2,7 +2,6 @@ import React, { useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 import { ThemeProvider } from 'styled-components';
 import { defaultTheme, Revisions } from '@capture-models/editor';
-import { CrowdsourcingTask } from '../../../../types/tasks/crowdsourcing-task';
 import { useApi } from '../../../shared/hooks/use-api';
 import { CaptureModelEditor } from '../../../shared/caputre-models/CaptureModelEditor';
 import { Link } from 'react-router-dom';
@@ -16,8 +15,10 @@ import { useProjectByTask } from '../../../shared/hooks/use-project-by-task';
 import { Button } from '../../../shared/atoms/Button';
 import { CaptureModelHeader } from '../../../shared/caputre-models/CaptureModelHeader';
 import { ViewContent } from '../../../shared/components/ViewContent';
+import { CrowdsourcingTask } from '../../../../types/tasks/crowdsourcing-task';
+import { TaskContext } from '../loaders/task-loader';
 
-const ViewCrowdSourcingTask: React.FC<{ task: CrowdsourcingTask }> = ({ task }) => {
+const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task }) => {
   const api = useApi();
   const project = useProjectByTask(task);
   const [isVertical, setIsVertical] = useState(false);

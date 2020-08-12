@@ -6,17 +6,22 @@ import { createUniversalComponent } from '../../../shared/utility/create-univers
 import { useStaticData } from '../../../shared/hooks/use-data';
 import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
 
+export type TaskContext<Task extends BaseTask> = {
+  task: Task & { id: string };
+  refetch: () => Promise<Task & { id: string }>;
+};
+
 export type TaskLoaderType = {
   params: { id: string };
   variables: { id: string };
   query: {};
   data: BaseTask & { id: string };
-  context: { task: BaseTask & { id: string } };
+  context: TaskContext<BaseTask>;
 };
 
 export const TaskLoader: UniversalComponent<TaskLoaderType> = createUniversalComponent<TaskLoaderType>(
   ({ route }) => {
-    const { data } = useStaticData(TaskLoader);
+    const { data, refetch } = useStaticData(TaskLoader);
 
     const ctx = useMemo(() => (data ? { id: data.id, name: data.name } : undefined), [data]);
 
@@ -24,7 +29,9 @@ export const TaskLoader: UniversalComponent<TaskLoaderType> = createUniversalCom
       return <>Loading...</>;
     }
 
-    return <BreadcrumbContext task={ctx}>{renderUniversalRoutes(route.routes, { task: data })}</BreadcrumbContext>;
+    return (
+      <BreadcrumbContext task={ctx}>{renderUniversalRoutes(route.routes, { task: data, refetch })}</BreadcrumbContext>
+    );
   },
   {
     getKey: params => {
