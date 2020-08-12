@@ -5,7 +5,6 @@ import { createUniversalComponent } from '../../../shared/utility/create-univers
 import { useStaticData } from '../../../shared/hooks/use-data';
 import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
 import { ProjectFull } from '../../../../types/schemas/project-full';
-import { ProjectTask } from '../../../../types/tasks/project-task';
 import { CollectionFull } from '../../../../types/schemas/collection-full';
 
 type ProjectLoaderType = {
@@ -13,7 +12,6 @@ type ProjectLoaderType = {
   query: {};
   variables: { slug: string };
   data: {
-    task: ProjectTask;
     project: ProjectFull;
     collections: CollectionFull;
     manifests: CollectionFull;
@@ -25,7 +23,7 @@ export const ProjectLoader: UniversalComponent<ProjectLoaderType> = createUniver
   ({ route }) => {
     const { data } = useStaticData(ProjectLoader);
 
-    const ctx = useMemo(() => (data ? { id: data.project.id, name: data.project.label } : undefined), [data]);
+    const ctx = useMemo(() => (data ? { id: data.project.slug, name: data.project.label } : undefined), [data]);
 
     if (!data) {
       return <div>Loading...</div>;
@@ -40,8 +38,7 @@ export const ProjectLoader: UniversalComponent<ProjectLoaderType> = createUniver
     getData: async (key, variables, api) => {
       const project = await api.getSiteProject(variables.slug);
 
-      const [task, collections, manifests] = await Promise.all([
-        await api.getTaskById<ProjectTask>(project.task_id),
+      const [collections, manifests] = await Promise.all([
         await api.getSiteCollection(project.collection_id, { type: 'collection' }),
         await api.getSiteCollection(project.collection_id, { type: 'manifest' }),
       ]);
@@ -50,7 +47,6 @@ export const ProjectLoader: UniversalComponent<ProjectLoaderType> = createUniver
         project: await api.getSiteProject(variables.slug),
         collections,
         manifests,
-        task,
       };
     },
   }
