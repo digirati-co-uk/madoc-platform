@@ -14,7 +14,6 @@ import { useTranslation } from 'react-i18next';
 import { CollectionSnippet } from '../../shared/components/CollectionSnippet';
 import { HrefLink } from '../../shared/utility/href-link';
 import { Button } from '../../shared/atoms/Button';
-import { useApi } from '../../shared/hooks/use-api';
 import { useContributorTasks } from '../../shared/hooks/use-contributor-tasks';
 import { ContributorTasks } from '../../shared/components/ContributorTasks';
 import { useReviewerTasks } from '../../shared/hooks/use-reviewer-tasks';
@@ -27,19 +26,12 @@ export const ViewProject: React.FC<{
   manifests: CollectionFull;
 }> = props => {
   const { t } = useTranslation();
-  // List of collections - just filter the main collection
-  // List of manifests - just filter the main collection
-  // Contribution statistics - copy the backend
-  // Review tasks - normal user query, need some nice presentation. - copy the homepage + filter
-  // Current users tasks - same as above. (root_task_id) - copy the homepage + filter
-  // Summary of fields from capture model.
 
   const { project, collections, manifests } = props;
   const contributorTasks = useContributorTasks({ rootTaskId: project.task_id });
   const reviewerTasks = useReviewerTasks({ rootTaskId: project.task_id });
 
   const { allowCollectionNavigation = true, allowManifestNavigation = true } = project.config;
-
   const shownCollections = collections.collection.items.slice(0, 4);
 
   return (
