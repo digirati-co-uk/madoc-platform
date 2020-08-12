@@ -504,13 +504,15 @@ export class ApiClient {
   }
 
   // Capture model API.
-  async getCaptureModel(id: string) {
-    return this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model/${id}`);
+  async getCaptureModel(id: string, query?: { published?: boolean }) {
+    return this.request<{ id: string } & CaptureModel>(
+      `/api/crowdsourcing/model/${id}${query ? `?${stringify(query)}` : ''}`
+    );
   }
 
   // Capture model API.
-  async getAllCaptureModels() {
-    return this.request<CaptureModelSnippet[]>(`/api/crowdsourcing/model`);
+  async getAllCaptureModels(query?: { target_id?: string; target_type?: string; derived_from?: string }) {
+    return this.request<CaptureModelSnippet[]>(`/api/crowdsourcing/model${query ? `?${stringify(query)}` : ''}`);
   }
 
   // Capture model API.
