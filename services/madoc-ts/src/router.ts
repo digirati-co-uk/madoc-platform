@@ -58,6 +58,7 @@ import { getFlatCollectionStatistics } from './routes/iiif/collections/get-flat-
 import { updateResourceClaim } from './routes/projects/update-resource-claim';
 import { getSiteManifestStructure } from './routes/site/site-manifest-structure';
 import { userDetails } from './routes/user/details';
+import { sitePublishedModels } from './routes/site/site-published-models';
 
 export const router = new TypedRouter({
   // Normal route
@@ -167,6 +168,7 @@ export const router = new TypedRouter({
   'site-topic': [TypedRouter.GET, '/s/:slug/madoc/api/topics/:type/:id', siteTopic],
   'site-topic-type': [TypedRouter.GET, '/s/:slug/madoc/api/topics/:type', siteTopicType],
   'site-topic-types': [TypedRouter.GET, '/s/:slug/madoc/api/topics', siteTopicTypes],
+  'site-published-models': [TypedRouter.GET, '/s/:slug/madoc/api/canvases/:id/models', sitePublishedModels],
 
   // Locale
   'get-locale': [TypedRouter.GET, '/s/:slug/madoc/api/locales/:lng/:ns', getLocale],
