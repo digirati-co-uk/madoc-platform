@@ -71,6 +71,7 @@ services:
       - ./services/madoc-ts/migrations:/home/node/app/migrations:delegated
       - ./services/madoc-ts/schemas:/home/node/app/schemas:delegated
       - ./services/madoc-ts/ecosystem.config.js:/home/node/app/ecosystem.config.js
+      - ./services/madoc-ts/config.json:/home/node/app/config.json
       - ./services/madoc-ts/service-jwts:/home/node/app/service-jwts
       - ./services/madoc-ts/translations:/home/node/app/translations
       - ./var/certs:/openssl-certs
