@@ -504,7 +504,7 @@ export class ApiClient {
   }
 
   // Capture model API.
-  async getCaptureModel(id: string, query?: { published?: boolean }) {
+  async getCaptureModel(id: string, query?: { author?: string; published?: boolean }) {
     return this.request<{ id: string } & CaptureModel>(
       `/api/crowdsourcing/model/${id}${query ? `?${stringify(query)}` : ''}`
     );
