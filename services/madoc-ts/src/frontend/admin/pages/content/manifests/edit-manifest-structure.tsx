@@ -40,9 +40,11 @@ export const EditManifestStructure: UniversalComponent<EditManifestStructureType
       itemIds,
       itemMap,
       toBeRemoved,
+      toBeAdded,
       reorderItems,
       addItem,
       removeItem,
+      addNewItem,
     } = useReorderItems({
       items: data ? data.items : undefined,
       saveOrder: async newOrder => {
@@ -75,6 +77,7 @@ export const EditManifestStructure: UniversalComponent<EditManifestStructureType
                   id={`item-${item.id}`}
                   key={`item-${item.id}`}
                   idx={key}
+                  addition={toBeAdded.indexOf(item.id) !== -1}
                   label={
                     <>
                       {showThumbs && item.thumbnail ? (
@@ -104,6 +107,9 @@ export const EditManifestStructure: UniversalComponent<EditManifestStructureType
             <TableContainer>
               {toBeRemoved.map(id => {
                 const item = itemMap[`${id}`];
+                if (!item) {
+                  return null;
+                }
                 return (
                   <TableRow key={id} warning>
                     <TableRowLabel>
@@ -115,6 +121,36 @@ export const EditManifestStructure: UniversalComponent<EditManifestStructureType
                   </TableRow>
                 );
               })}
+            </TableContainer>
+          </>
+        ) : null}
+        {data.originals && data.originals.length ? (
+          <>
+            <Heading3>Original canvases from this manifest</Heading3>
+            <TableContainer>
+              {data.originals.map(item =>
+                itemIds.indexOf(item.id) === -1 ? (
+                  <TableRow key={item.id}>
+                    <TableRowLabel>
+                      {showThumbs && item.thumbnail ? (
+                        <TableRowLabel>
+                          <InView>
+                            {({ ref, inView }) => (
+                              <div ref={ref} style={{ height: 90, width: 90 }}>
+                                {inView ? <img src={item.thumbnail} height={90} /> : null}
+                              </div>
+                            )}
+                          </InView>
+                        </TableRowLabel>
+                      ) : null}
+                      <LocaleString>{item.label}</LocaleString> - {item.id}
+                    </TableRowLabel>
+                    <TableActions>
+                      <TinyButton onClick={() => addNewItem(item)}>add</TinyButton>
+                    </TableActions>
+                  </TableRow>
+                ) : null
+              )}
             </TableContainer>
           </>
         ) : null}

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const TableContainer = styled.div`
   border: 1px solid #ddd;
@@ -8,16 +8,25 @@ export const TableContainer = styled.div`
   margin: 1em 0;
 `;
 
-export const TableRow = styled.div<{ warning?: boolean; interactive?: boolean }>`
+export const TableRow = styled.div<{ warning?: boolean; addition?: boolean; interactive?: boolean }>`
   border-bottom: 1px solid #ddd;
   padding: 6px;
   font-size: 0.8em;
   align-items: center;
   display: flex;
   width: 100%;
-  background: ${props => (props.warning ? '#ffe0d0' : '#fff')};
+  background: ${props => (props.warning ? '#ffe0d0' : props.addition ? '#b7e3c2' : '#fff')};
   &:hover {
-    background: ${props => (props.interactive ? '#eee' : '#fff')};
+    ${props =>
+      props.interactive
+        ? props.addition
+          ? css`
+              background: #6da479;
+            `
+          : css`
+              background: #eee;
+            `
+        : null};
   }
 `;
 

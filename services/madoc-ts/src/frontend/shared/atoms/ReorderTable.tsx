@@ -25,15 +25,15 @@ const TableHandle = styled(TableHandleIcon)`
   margin: 4px;
 `;
 
-export const ReorderTableRow: React.FC<{ id: string; idx: number; label: string | JSX.Element }> = ({
-  id,
-  idx,
-  label,
-  children,
-}) => (
+export const ReorderTableRow: React.FC<{
+  id: string;
+  idx: number;
+  addition?: boolean;
+  label: string | JSX.Element;
+}> = ({ id, idx, label, addition, children }) => (
   <Draggable draggableId={id} index={idx}>
     {provided => (
-      <TableRow ref={provided.innerRef} {...provided.draggableProps}>
+      <TableRow ref={provided.innerRef} addition={addition} {...provided.draggableProps}>
         <TableHandle {...provided.dragHandleProps} />
         <TableRowLabel>{label}</TableRowLabel>
         <TableActions>{children}</TableActions>

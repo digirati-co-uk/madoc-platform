@@ -9,6 +9,7 @@ export type ItemStructureListItem = {
 
 export type ItemStructureList = {
   items: ItemStructureListItem[];
+  originals?: ItemStructureListItem[];
 };
 
 export type UpdateStructureList = {

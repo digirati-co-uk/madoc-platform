@@ -40,6 +40,7 @@ export function useReorderItems({
     setUnsaved(false);
     setIsSaving(false);
     setToBeRemoved([]);
+    setAdditionalItems([]);
   });
 
   const updateIdList = (ids: any) => {
@@ -74,6 +75,10 @@ export function useReorderItems({
     setItemIds(ids => (ids.indexOf(item.id) === -1 ? [...ids, item.id] : ids));
   };
 
+  const toBeAdded = useMemo(() => {
+    return additionalItems.map(item => item.id);
+  }, [additionalItems]);
+
   useEffect(() => {
     if (unsaved) {
       // Don't update the item ids if we are in the middle of saving.
@@ -92,6 +97,8 @@ export function useReorderItems({
     itemIds,
     itemMap,
     toBeRemoved,
+    toBeAdded,
+    additionalItems,
     reorderItems,
     removeItem,
     addItem,
