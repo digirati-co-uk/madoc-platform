@@ -21,7 +21,7 @@ export const listCollections = () => {
   return (
     <>
       <h1>Manage collections</h1>
-      <TinyButton>Import collection</TinyButton>
+      <SmallButton>Import collection</SmallButton>
       <div>
         <Heading3>Some collection 1</Heading3>
         <Subheading3>18 Manifests</Subheading3>
