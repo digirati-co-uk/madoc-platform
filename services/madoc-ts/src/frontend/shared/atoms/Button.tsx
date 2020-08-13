@@ -32,6 +32,8 @@ export const SmallButton = styled(Button)`
   padding: 2px 10px;
 `;
 
+export const TinyButton = SmallButton;
+
 export const LinkButton = styled.button`
   border: none;
   outline: none;
