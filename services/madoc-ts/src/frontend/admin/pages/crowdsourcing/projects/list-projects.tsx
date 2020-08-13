@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { WidePage } from '../../../../shared/atoms/WidePage';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { useTranslation } from 'react-i18next';
-import { TinyButton } from '../../../../shared/atoms/Button';
+import { Button } from '../../../../shared/atoms/Button';
 import { useData, usePaginatedData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { ProjectList } from '../../../../../types/schemas/project-list';
@@ -37,9 +37,9 @@ export const ListProjects: UniversalComponent<ListProjectsType> = createUniversa
           title={t('Projects')}
         />
         <WidePage>
-          <TinyButton as={Link} to={`/projects/create`}>
+          <Button as={Link} to={`/projects/create`}>
             {t('Create project')}
-          </TinyButton>
+          </Button>
           <Pagination
             page={data ? data.pagination.page : 1}
             totalPages={data ? data.pagination.totalPages : 1}

@@ -17,7 +17,7 @@ export const MetadataListItem: React.FC<{
   const { t } = useTranslation();
   return (
     <div>
-      <label htmlFor={itemKey}>{t(labelKey, { context: 'metadata' })}</label>
+      <label htmlFor={itemKey} style={{marginBottom: `5px`, display: `block`}}>{t(labelKey, { context: 'metadata' })}</label>
       <MetadataEditor
         id={itemKey}
         fields={items}
@@ -116,7 +116,7 @@ export const MetadataSection: React.FC<{
           />
         );
       })}
-      <button onClick={removeAll}>Remove</button>
+      <Button onClick={removeAll}>Remove</Button>
     </div>
   );
 };

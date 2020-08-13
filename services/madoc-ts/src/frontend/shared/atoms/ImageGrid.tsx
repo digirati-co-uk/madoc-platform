@@ -8,6 +8,9 @@ export const ImageGrid = styled.div`
   & > * {
     margin: 10px;
   }
+  a {
+    text-decoration: none;
+  }
 `;
 
 export const ImageGridItem = styled.div<{ $size?: 'large' | 'small'; $static?: boolean }>`

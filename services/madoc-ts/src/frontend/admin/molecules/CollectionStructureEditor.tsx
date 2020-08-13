@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useReorderItems } from '../hooks/use-reorder-items';
 import { ExpandGrid, GridContainer, HalfGird } from '../../shared/atoms/Grid';
 import { Input, InputContainer, InputLabel } from '../../shared/atoms/Input';
-import { Button, SmallButton, TinyButton } from '../../shared/atoms/Button';
+import { Button, SmallButton } from '../../shared/atoms/Button';
 import { Heading3 } from '../../shared/atoms/Heading3';
 import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../shared/atoms/Table';
 import { ReorderTable, ReorderTableRow } from '../../shared/atoms/ReorderTable';
@@ -114,15 +114,15 @@ export const CollectionEditorStructure: React.FC<{
                     <TableRowLabel>{item.label}</TableRowLabel>
                     <TableActions>
                       {itemIds.indexOf(item.id) === -1 ? (
-                        <TinyButton
+                        <SmallButton
                           onClick={() =>
                             addNewItem({ id: item.id, type: searchResultsType, label: { none: [item.label] } })
                           }
                         >
                           {t('add')}
-                        </TinyButton>
+                        </SmallButton>
                       ) : (
-                        <TinyButton onClick={() => removeItem(item.id)}>{t('remove')}</TinyButton>
+                        <SmallButton onClick={() => removeItem(item.id)}>{t('remove')}</SmallButton>
                       )}
                     </TableActions>
                   </TableRow>
@@ -168,7 +168,7 @@ export const CollectionEditorStructure: React.FC<{
                   </>
                 }
               >
-                <TinyButton onClick={() => removeItem(item.id)}>{t('remove')}</TinyButton>
+                <SmallButton onClick={() => removeItem(item.id)}>{t('remove')}</SmallButton>
               </ReorderTableRow>
             );
           })}
@@ -189,7 +189,7 @@ export const CollectionEditorStructure: React.FC<{
                     <LocaleString>{item.label}</LocaleString> - {item.id}
                   </TableRowLabel>
                   <TableActions>
-                    <TinyButton onClick={() => addItem(item.id)}>{t('undo')}</TinyButton>
+                    <SmallButton onClick={() => addItem(item.id)}>{t('undo')}</SmallButton>
                   </TableActions>
                 </TableRow>
               );

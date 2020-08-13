@@ -5,6 +5,8 @@ import { SmallButton } from '../../../../shared/atoms/Button';
 import { Link } from 'react-router-dom';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
+import { SnippetLarge } from '../../../../shared/atoms/SnippetLarge';
+import { HrefLink } from '../../../../shared/utility/href-link';
 
 type ManifestProjectsType = {
   params: { id: string };
@@ -40,14 +42,15 @@ export const ManifestProjects = createUniversalComponent<ManifestProjectsType>(
         <p>This manifest is in the following projects.</p>
         <hr />
         {projects.map(project => (
-          <div key={project.id}>
-            <Link to={`/projects/${project.id}`}>
-              <LocaleString as="h3">{project.label}</LocaleString>
-            </Link>
-            <p>
-              <LocaleString>{project.summary}</LocaleString>
-            </p>
-          </div>
+          <SnippetLarge
+            key={project.id}
+            linkAs={HrefLink}
+            label={<LocaleString>{project.label}</LocaleString>}
+            portrait={true}
+            subtitle={<LocaleString>{project.summary}</LocaleString>}
+            link={`/projects/${project.id}`}
+            buttonText="view project"
+          />
         ))}
       </div>
     );

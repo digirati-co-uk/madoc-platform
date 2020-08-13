@@ -2,7 +2,8 @@ import { Link, useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { stringify } from 'query-string';
-import { TinyButton } from '../atoms/Button';
+import { SmallButton } from '../atoms/Button';
+
 import styled from 'styled-components';
 
 const PaginationContainer = styled.div`
@@ -61,17 +62,17 @@ export const Pagination: React.FC<{
   return (
     <PaginationContainer>
       {prevPage ? (
-        <TinyButton as={Link} to={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}`}>
+        <SmallButton as={Link} to={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}`}>
           {t('Previous page')}
-        </TinyButton>
+        </SmallButton>
       ) : null}
       <PaginationDisplay style={{ color: isLoading ? '#999' : '#333' }}>
         Page {isLoading ? '...' : page} of {totalPages}
       </PaginationDisplay>
       {nextPage ? (
-        <TinyButton as={Link} to={`${pathname}?${pageParam}=${page + 1}${q ? `&${q}` : ''}`}>
+        <SmallButton as={Link} to={`${pathname}?${pageParam}=${page + 1}${q ? `&${q}` : ''}`}>
           {t('Next page')}
-        </TinyButton>
+        </SmallButton>
       ) : null}
     </PaginationContainer>
   );

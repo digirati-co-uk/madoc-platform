@@ -221,13 +221,13 @@ export const routes: UniversalRoute[] = [
   },
   {
     path: '/capture-models',
+    component: CaptureModelList,
+    exact: true,
+  },
+  {
+    path: '/capture-models/:id',
     component: CaptureModels,
     routes: [
-      {
-        path: '/capture-models',
-        exact: true,
-        component: CaptureModelList,
-      },
       {
         path: '/capture-models/:id',
         component: ViewCaptureModel,

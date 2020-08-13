@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { UniversalComponent } from '../../../../types';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { Subheading1 } from '../../../../shared/atoms/Heading1';
-import { ButtonRow, TinyButton } from '../../../../shared/atoms/Button';
+import { ButtonRow, SmallButton } from '../../../../shared/atoms/Button';
 import { Link, useParams, useLocation } from 'react-router-dom';
 import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
 import { CanvasFull } from '../../../../../types/schemas/canvas-full';
@@ -42,9 +42,9 @@ export const CanvasView: UniversalComponent<CanvasViewType> = createUniversalCom
           ) : null}
         </Header>
         <ButtonRow>
-          <TinyButton as={Link} to={`${location.pathname}/metadata`}>
+          <SmallButton as={Link} to={`${location.pathname}/metadata`}>
             {t('edit metadata')}
-          </TinyButton>
+          </SmallButton>
         </ButtonRow>
 
         {renderUniversalRoutes(route.routes)}

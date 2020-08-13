@@ -1,6 +1,6 @@
 import React from 'react';
 import { UniversalComponent } from '../../../../types';
-import { TinyButton } from '../../../../shared/atoms/Button';
+import { Button } from '../../../../shared/atoms/Button';
 import { Link } from 'react-router-dom';
 import { Pagination } from '../../../molecules/Pagination';
 import { useTranslation } from 'react-i18next';
@@ -44,9 +44,9 @@ export const ManifestList: UniversalComponent<ManifestListType> = createUniversa
           title={t('Manage manifests', { count: pagination.totalResults })}
         />
         <WidePage>
-          <TinyButton as={Link} to={`/import/manifest`}>
+          <Button as={Link} to={`/import/manifest`}>
             {t('Import manifest')}
-          </TinyButton>
+          </Button>
           <br />
           <br />
           <div>

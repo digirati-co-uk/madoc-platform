@@ -1,4 +1,4 @@
-import { TinyButton } from './Button';
+import { SmallButton } from './Button';
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import { InputContainer, InputLabel } from './Input';
@@ -142,7 +142,7 @@ export const IntlField: React.FC<{
             </IntlInputDefault>
           ))}
           <IntlInputDefault style={{ padding: 10, justifyContent: 'center' }}>
-            <TinyButton>Add new field</TinyButton>
+            <SmallButton>Add new field</SmallButton>
           </IntlInputDefault>
         </IntlInputExtraInput>
       </IntlInputContainer>

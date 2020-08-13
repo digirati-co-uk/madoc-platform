@@ -6,7 +6,7 @@ import { LocaleString } from '../../shared/components/LocaleString';
 import { ImageGrid, ImageGridItem } from '../../shared/atoms/ImageGrid';
 import { CroppedImage } from '../../shared/atoms/Images';
 import { SingleLineHeading5 } from '../../shared/atoms/Heading5';
-import { TinyButton } from '../../shared/atoms/Button';
+import { SmallButton } from '../../shared/atoms/Button';
 import { useTranslation } from 'react-i18next';
 
 const CanvasThumbnail: React.FC<{ canvas: CanvasNormalized; height: number }> = ({ canvas, height }) => {
@@ -91,11 +91,11 @@ export const PreviewManifest: React.FC<{ id: string; onClick?: (id: string) => v
           : null}
       </ImageGrid>
       <div style={{ margin: '1em 0' }}>
-        {page !== 0 ? <TinyButton onClick={() => setPage(page - 1)}>{t('Previous page')}</TinyButton> : null}
+        {page !== 0 ? <SmallButton onClick={() => setPage(page - 1)}>{t('Previous page')}</SmallButton> : null}
         <div style={{ display: 'inline-block', margin: 10, fontSize: '0.9em' }}>
           Page {page + 1} of {pages}
         </div>
-        {page + 1 !== pages ? <TinyButton onClick={() => setPage(page + 1)}>{t('Next page')}</TinyButton> : null}
+        {page + 1 !== pages ? <SmallButton onClick={() => setPage(page + 1)}>{t('Next page')}</SmallButton> : null}
       </div>
     </div>
   );
