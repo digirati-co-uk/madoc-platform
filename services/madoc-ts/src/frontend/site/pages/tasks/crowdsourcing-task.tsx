@@ -93,40 +93,32 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task 
           <Revisions.Provider captureModel={captureModel}>
             <CaptureModelHeader />
             <div style={{ display: 'flex', flexDirection: isVertical ? 'column' : 'row' }}>
-              {task.status < 3 ? (
-                <>
-                  <div style={{ width: isVertical ? '100%' : '67%' }}>
-                    {resource && resource.canvas ? (
-                      <ViewContent target={captureModel.target as any} canvas={resource.canvas} />
-                    ) : null}
-                  </div>
-                  <div style={{ width: isVertical ? '100%' : '33%', padding: '1em' }}>
-                    <CaptureModelEditor
-                      captureModel={captureModel}
-                      onSave={async (response, status) => {
-                        if (!task.id || !project) return;
+              <div style={{ width: isVertical ? '100%' : '67%' }}>
+                {resource && resource.canvas ? (
+                  <ViewContent target={captureModel.target as any} canvas={resource.canvas} />
+                ) : null}
+              </div>
+              <div style={{ width: isVertical ? '100%' : '33%', padding: '1em' }}>
+                <CaptureModelEditor
+                  captureModel={captureModel}
+                  onSave={async (response, status) => {
+                    if (!task.id || !project) return;
 
-                        if (status === 'draft') {
-                          await api.saveResourceClaim(project.id, task.id, {
-                            status: 1,
-                            revisionId: response.revision.id,
-                          });
-                        } else if (status === 'submitted') {
-                          await api.saveResourceClaim(project.id, task.id, {
-                            status: 2,
-                            revisionId: response.revision.id,
-                          });
-                        }
-                        await queryCache.refetchQueries(['task', { id: task.id }]);
-                      }}
-                    />
-                  </div>
-                </>
-              ) : (
-                <div>
-                  <h3>Thanks for your submission</h3> <p>Your submission will be reviewed.</p>{' '}
-                </div>
-              )}
+                    if (status === 'draft') {
+                      await api.saveResourceClaim(project.id, task.id, {
+                        status: 1,
+                        revisionId: response.revision.id,
+                      });
+                    } else if (status === 'submitted') {
+                      await api.saveResourceClaim(project.id, task.id, {
+                        status: 2,
+                        revisionId: response.revision.id,
+                      });
+                    }
+                    await queryCache.refetchQueries(['task', { id: task.id }]);
+                  }}
+                />
+              </div>
             </div>
           </Revisions.Provider>
         ) : (
