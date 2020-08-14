@@ -4,7 +4,7 @@ import { ItemStructureList } from '../../../../../types/schemas/item-structure-l
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { Link, useParams } from 'react-router-dom';
-import { SmallButton } from '../../../../shared/atoms/Button';
+import { SmallButton, TinyButton } from '../../../../shared/atoms/Button';
 import { ContextHeading, Header } from '../../../../shared/atoms/Header';
 import { Subheading1 } from '../../../../shared/atoms/Heading1';
 import { ReorderTable, ReorderTableRow } from '../../../../shared/atoms/ReorderTable';
