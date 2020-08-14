@@ -44,7 +44,7 @@ export const ManifestSnippet: React.FC<{ id: number; collectionId?: number }> = 
     <SnippetLarge
       margin
       label={<LocaleString>{data.manifest.label}</LocaleString>}
-      subtitle={`Collection with ${data.pagination.totalResults} images`}
+      subtitle={`Manifest with ${data.pagination.totalResults} images`}
       summary={<LocaleString>{data.manifest.summary}</LocaleString>}
       linkAs={HrefLink}
       thumbnail={thumbnail}
