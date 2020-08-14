@@ -103,6 +103,7 @@ header {
 }
 
 .c-form.c-form--login input[type="submit"],
+.c-form.c-form--account button[type="submit"],
 .c-form.c-form--register button[type="submit"]{
     font-size: 16px;
     line-height: 22px;
