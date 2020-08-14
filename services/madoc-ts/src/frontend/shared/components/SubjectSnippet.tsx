@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { CollectionSnippet } from './CollectionSnippet';
 import { ManifestSnippet } from './ManifestSnippet';
+import { CanvasSnippet } from './CanvasSnippet';
 
 export const SubjectSnippet: React.FC<{ subject: string }> = ({ subject }) => {
   const sub = useMemo(() => {
@@ -21,6 +22,10 @@ export const SubjectSnippet: React.FC<{ subject: string }> = ({ subject }) => {
 
   if (sub.type === 'manifest') {
     return <ManifestSnippet id={sub.id} />;
+  }
+
+  if (sub.type === 'canvas') {
+    return <CanvasSnippet id={sub.id} />;
   }
 
   return null;
