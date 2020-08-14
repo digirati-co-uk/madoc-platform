@@ -14,6 +14,9 @@ import { SimpleAtlasViewer } from '../../shared/components/SimpleAtlasViewer';
 import { ManifestFull } from '../../../types/schemas/manifest-full';
 import { SnippetStructure } from '../../shared/components/StructureSnippet';
 import { ProjectListing } from '../../shared/atoms/ProjectListing';
+import { createLink } from '../../shared/utility/create-link';
+import { ManifestProjectListing } from '../../shared/components/ManifestProjectListing';
+import { ProjectFull } from '../../../types/schemas/project-full';
 
 type ViewCanvasType = {
   params: {
@@ -31,28 +34,10 @@ type ViewCanvasType = {
   };
   data: CanvasFull;
   context: {
+    project?: ProjectFull;
     manifest: ManifestFull['manifest'];
   };
 };
-
-function useManifestProjects(manifestId?: string) {
-  const api = useApi();
-
-  return useQuery(
-    ['manifest-project', { id: manifestId }],
-    async () => {
-      if (manifestId && api.isAuthorised()) {
-        return api.getManifestProjects(Number(manifestId));
-      }
-      return undefined;
-    },
-    {
-      refetchInterval: false,
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
-    }
-  );
-}
 
 function useManifestStructure(manifestId?: string) {
   const api = useApi();
@@ -79,18 +64,25 @@ function useManifestStructure(manifestId?: string) {
 }
 
 export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalComponent<ViewCanvasType>(
-  () => {
+  ({ project }) => {
     const { data } = useStaticData(ViewCanvas);
-    const { id, manifestId, collectionId } = useParams();
+    const { id, manifestId, collectionId, slug } = useParams();
     const [canvasRef, setCanvasRef] = useState<CanvasNormalized>();
-    const projects = useManifestProjects(manifestId);
     const structure = useManifestStructure(manifestId);
     const api = useApi();
     const history = useHistory();
     const ctx = useMemo(() => (data ? { id: data.canvas.id, name: data.canvas.label } : undefined), [data]);
     const idx = structure.data && id ? structure.data.ids.indexOf(Number(id)) : null;
     const tempLabel = structure.data && idx !== null ? structure.data.items[idx].label : { none: ['...'] };
-    const hasProjects = projects.data && idx !== null && projects.data.projects.length;
+
+    // This will be replace the new published capture model endpoint.
+    // const { data: model } = useQuery(['test', { id, projectId: project?.id }], () => {
+    //   return api.getAllCaptureModels({
+    //     target_id: `urn:madoc:canvas:${id}`,
+    //     target_type: 'Canvas',
+    //     derived_from: project?.capture_model_id,
+    //   });
+    // });
 
     useVaultEffect(
       vault => {
@@ -122,7 +114,12 @@ export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalCom
             canvasId: data.canvas.id,
           })
           .then(resp => {
-            history.push(`/tasks/${resp.claim.id}`);
+            history.push(
+              createLink({
+                projectId: project?.id,
+                taskId: resp.claim.id,
+              })
+            );
           });
       }
     };
@@ -137,9 +134,12 @@ export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalCom
           </BreadcrumbContext>
         )}
         <LocaleString as="h1">{data ? data.canvas.label : tempLabel}</LocaleString>
+        {project ? (
+          <ProjectListing projects={[project]} onContribute={api.isAuthorised() ? onContribute : undefined} />
+        ) : null}
         {canvasRef ? (
           <CanvasContext canvas={canvasRef.id}>
-            <SimpleAtlasViewer style={{ height: hasProjects ? '50vh' : '70vh' }} />
+            <SimpleAtlasViewer style={{ height: project ? '50vh' : '60vh' }} />
           </CanvasContext>
         ) : null}
         {structure.data && idx !== null ? (
@@ -148,9 +148,12 @@ export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalCom
               <SnippetStructure
                 label="Previous:"
                 alignment="left"
-                link={`${collectionId ? `/collections/${collectionId}` : ''}/manifests/${manifestId}/c/${
-                  structure.data.items[idx - 1].id
-                }`}
+                link={createLink({
+                  projectId: slug,
+                  collectionId,
+                  manifestId,
+                  canvasId: structure.data.items[idx - 1].id,
+                })}
                 item={structure.data.items[idx - 1]}
               />
             ) : null}
@@ -158,18 +161,19 @@ export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalCom
               <SnippetStructure
                 label="Next:"
                 alignment="right"
-                link={`${collectionId ? `/collections/${collectionId}` : ''}/manifests/${manifestId}/c/${
-                  structure.data.items[idx + 1].id
-                }`}
+                link={createLink({
+                  projectId: slug,
+                  collectionId,
+                  manifestId,
+                  canvasId: structure.data.items[idx + 1].id,
+                })}
                 item={structure.data.items[idx + 1]}
               />
             ) : null}
           </div>
         ) : null}
 
-        {hasProjects && projects.data ? (
-          <ProjectListing projects={projects.data.projects} onContribute={onContribute} />
-        ) : null}
+        {!project && manifestId ? <ManifestProjectListing manifestId={manifestId} onContribute={onContribute} /> : null}
       </BreadcrumbContext>
     );
   },

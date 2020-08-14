@@ -9,15 +9,38 @@ export const updateManifestStructure: RouteMiddleware<{ id: number }, UpdateStru
 
   const manifestId = context.params.id;
   const canvasIds = context.requestBody.item_ids;
+  const itemFilter = sql`site_id = ${siteId} and resource_id = ${manifestId}`;
 
-  await context.connection.any(sql`
-      select * from add_sub_resources(
-          ${siteId},
-          ${manifestId},
-          ${sql.array(canvasIds, SQL_INT_ARRAY)},
-          ${userUrn}
+  // Find the originals.
+  const ids = (
+    await context.connection.any(sql<{ id: number }>`
+      select item_id as id from iiif_derived_resource_items where ${itemFilter}
+    `)
+  ).map(({ id }) => id);
+
+  await context.connection.transaction(async handler => {
+    // First remove.
+    const toRemove = ids.filter(id => canvasIds.indexOf(id) === -1);
+    if (toRemove.length) {
+      const removeQuery = sql`
+        delete
+          from iiif_derived_resource_items
+          where ${itemFilter}
+            and (item_id = any (${sql.array(toRemove, SQL_INT_ARRAY)})) 
+      `;
+
+      await handler.query(removeQuery);
+    }
+
+    await handler.any(sql`
+        select * from add_sub_resources(
+            ${siteId},
+            ${manifestId},
+            ${sql.array(canvasIds, SQL_INT_ARRAY)},
+            ${userUrn}
       )
-  `);
+    `);
+  });
 
   context.response.status = 200;
 };

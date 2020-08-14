@@ -18,6 +18,8 @@ export function userWithScope(context: { state: ApplicationState }, scopes: stri
     id: context.state.jwt.user.id,
     name: context.state.jwt.user.name,
     siteId: context.state.jwt.site.id,
+    siteName: context.state.jwt.site.name,
+    scope: context.state.jwt.scope,
     siteUrn: `urn:madoc:site:${context.state.jwt.site.id}`,
     userUrn: `urn:madoc:user:${context.state.jwt.user.id}`,
   };
@@ -40,6 +42,7 @@ export function optionalUserWithScope(context: { state: ApplicationState }, scop
     return {
       siteId: context.state.jwt.site.id,
       siteUrn: `urn:madoc:site:${context.state.jwt.site.id}`,
+      siteName: `urn:madoc:site:${context.state.jwt.site.name}`,
     };
   }
 
@@ -49,5 +52,6 @@ export function optionalUserWithScope(context: { state: ApplicationState }, scop
     siteId: context.state.jwt.site.id,
     siteUrn: `urn:madoc:site:${context.state.jwt.site.id}`,
     userUrn: `urn:madoc:user:${context.state.jwt.user.id}`,
+    siteName: context.state.jwt.site.name,
   };
 }

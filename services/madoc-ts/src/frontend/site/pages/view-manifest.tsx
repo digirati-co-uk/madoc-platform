@@ -13,6 +13,7 @@ import { CroppedImage } from '../../shared/atoms/Images';
 import { Heading5 } from '../../shared/atoms/Heading5';
 import { ImageGrid } from '../../shared/atoms/ImageGrid';
 import { useTranslation } from 'react-i18next';
+import { createLink } from '../../shared/utility/create-link';
 
 export const ViewManifest: React.FC<{
   project?: ProjectFull;
@@ -23,29 +24,10 @@ export const ViewManifest: React.FC<{
   const api = useApi();
   const key = { collection_id: collection ? collection.id : undefined, manifest_id: manifest.id };
   const { t } = useTranslation();
-  const { data: projectList } = useQuery(
-    ['site-collection-projects', key],
-    async () => {
-      return await api.getSiteProjects(key);
-    },
-    { refetchInterval: false, refetchOnWindowFocus: false }
-  );
-
-  // Task where:
-  // - Site id
-  // - Root id = project.task_id
-  // - subject = this urn.
 
   return (
     <>
       <DisplayBreadcrumbs />
-      {/*{projectList && !project*/}
-      {/*  ? projectList.projects.map((proj: any) => (*/}
-      {/*      <div key={proj.id}>*/}
-      {/*        <LocaleString>{proj.label}</LocaleString>*/}
-      {/*      </div>*/}
-      {/*    ))*/}
-      {/*  : null}*/}
       <h1>
         <LocaleString>{manifest.label}</LocaleString>
       </h1>
@@ -60,11 +42,12 @@ export const ViewManifest: React.FC<{
           {manifest.items.map((canvas, idx) => (
             <Link
               key={`${canvas.id}_${idx}`}
-              to={
-                collection
-                  ? `/collections/${collection.id}/manifests/${manifest.id}/c/${canvas.id}`
-                  : `/manifests/${manifest.id}/c/${canvas.id}`
-              }
+              to={createLink({
+                projectId: project?.slug,
+                collectionId: collection?.id,
+                manifestId: manifest.id,
+                canvasId: canvas.id,
+              })}
             >
               <ImageStripBox>
                 <CroppedImage>

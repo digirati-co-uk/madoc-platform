@@ -3,6 +3,7 @@ import { parseJWT } from '../utility/parse-jwt';
 import { getToken } from '../utility/get-token';
 import { NotFound } from '../utility/errors/not-found';
 import { RouteMiddleware } from '../types/route-middleware';
+import { errors } from 'jose';
 
 export const parseJwt: RouteMiddleware<{ slug?: string }> = async (context, next) => {
   const slug = context.params ? context.params.slug : undefined;
@@ -34,7 +35,10 @@ export const parseJwt: RouteMiddleware<{ slug?: string }> = async (context, next
           context.cookies.set(cookieName, { signed: true });
         }
       } catch (e) {
-        console.log(e);
+        // Rethrow expired tokens.
+        if (e instanceof errors.JWTExpired) {
+          throw e;
+        }
       }
       return next();
     }

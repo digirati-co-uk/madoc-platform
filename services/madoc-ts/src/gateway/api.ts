@@ -393,8 +393,10 @@ export class ApiClient {
     });
   }
 
-  async getCollectionById(id: number, page = 0) {
-    return this.request<CollectionFull>(`/api/madoc/iiif/collections/${id}${page ? `?page=${page}` : ''}`);
+  async getCollectionById(id: number, page = 0, type?: 'manifest' | 'collection') {
+    return this.request<CollectionFull>(
+      `/api/madoc/iiif/collections/${id}${page || type ? `?${stringify({ type, page })}` : ''}`
+    );
   }
 
   async getCollectionStructure(id: number) {
@@ -502,13 +504,15 @@ export class ApiClient {
   }
 
   // Capture model API.
-  async getCaptureModel(id: string) {
-    return this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model/${id}`);
+  async getCaptureModel(id: string, query?: { author?: string; published?: boolean }) {
+    return this.request<{ id: string } & CaptureModel>(
+      `/api/crowdsourcing/model/${id}${query ? `?${stringify(query)}` : ''}`
+    );
   }
 
   // Capture model API.
-  async getAllCaptureModels() {
-    return this.request<CaptureModelSnippet[]>(`/api/crowdsourcing/model`);
+  async getAllCaptureModels(query?: { target_id?: string; target_type?: string; derived_from?: string }) {
+    return this.request<CaptureModelSnippet[]>(`/api/crowdsourcing/model${query ? `?${stringify(query)}` : ''}`);
   }
 
   // Capture model API.
@@ -737,11 +741,11 @@ export class ApiClient {
   }
 
   async getSiteProject(id: string | number) {
-    return this.publicRequest<any>(`/madoc/api/projects/${id}`);
+    return this.publicRequest<ProjectFull>(`/madoc/api/projects/${id}`);
   }
 
   async getSiteProjects(query?: import('../routes/site/site-projects').SiteProjectsQuery) {
-    return this.publicRequest<{ projects: any[] }>(`/madoc/api/projects`, query);
+    return this.publicRequest<ProjectList>(`/madoc/api/projects`, query);
   }
 
   async getUserDetails() {

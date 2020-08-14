@@ -5,6 +5,7 @@ import { ServerError } from '../utility/errors/server-error';
 import { SlonikError } from 'slonik';
 import { ApiError } from '../utility/errors/api-error';
 import { ConflictError } from '../utility/errors/conflict';
+import { errors } from 'jose';
 
 export const errorHandler: Middleware = async (context, next) => {
   try {
@@ -28,6 +29,9 @@ export const errorHandler: Middleware = async (context, next) => {
       context.response.status = 404;
     } else if (err instanceof ApiError) {
       context.response.status = 400;
+      context.response.body = { error: err.message };
+    } else if (err instanceof errors.JWTExpired) {
+      context.response.status = 401;
       context.response.body = { error: err.message };
     } else {
       console.log('Unhandled error');

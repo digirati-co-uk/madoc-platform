@@ -1,6 +1,7 @@
 import { RouteMiddleware } from '../../types/route-middleware';
 
 export type SiteCollectionQuery = {
+  type?: 'manifest' | 'collection';
   parent_collections?: number[];
   project_id?: string | number;
   page?: number;
@@ -10,6 +11,7 @@ export const siteCollection: RouteMiddleware<{ slug: string; id: string }> = asy
   const page = Number(context.query.page || 1) || 1;
   const { id } = context.params;
   const { siteApi } = context.state;
+  const type = context.query.type || undefined;
 
   // @todo limit based on site configuration query.
   // @todo give hints for the navigation of collections
@@ -19,7 +21,7 @@ export const siteCollection: RouteMiddleware<{ slug: string; id: string }> = asy
   //
   // Context: [projectId, ...parentCollections]
 
-  const collection = await siteApi.getCollectionById(Number(id), page);
+  const collection = await siteApi.getCollectionById(Number(id), page, type);
 
   context.response.status = 200;
   context.response.body = collection;

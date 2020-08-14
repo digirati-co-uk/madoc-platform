@@ -2,6 +2,7 @@ import { BaseTask } from './base-task';
 import { CaptureModel } from '@capture-models/types';
 import { ApiClient } from '../api';
 import * as reviewTask from './crowdsourcing-review';
+import { CaptureModelSnippet } from '../../types/schemas/capture-model-snippet';
 
 export const type = 'crowdsourcing-task';
 
@@ -61,7 +62,7 @@ export function createTask(
   taskName: string,
   subject: string,
   resourceType: string,
-  captureModel: CaptureModel & { id: string },
+  captureModel: (CaptureModel | CaptureModelSnippet) & { id: string },
   structureId?: string
 ): CrowdsourcingTask {
   return {
