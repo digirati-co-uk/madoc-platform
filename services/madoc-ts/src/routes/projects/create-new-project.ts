@@ -5,6 +5,7 @@ import { sql } from 'slonik';
 import { CreateProject } from '../../types/schemas/create-project';
 import { InternationalString } from '@hyperion-framework/types';
 import { ConflictError } from '../../utility/errors/conflict';
+import { iiifGetLabel } from '../../utility/iiif-get-label';
 
 const firstLang = (field: InternationalString) => {
   const keys = Object.keys(field);
@@ -41,7 +42,7 @@ export const createNewProject: RouteMiddleware<{}, CreateProject> = async contex
   );
 
   // 2. Create or fork capture model
-  const captureModel = await userApi.createCaptureModel('Transcribe all of the books');
+  const captureModel = await userApi.createCaptureModel(iiifGetLabel(label));
 
   // 3. Create crowdsourcing task.
   const task = await userApi.newTask({

@@ -223,7 +223,7 @@ async function ensureProjectTaskStructure(
       // Make sure canvasId task exists. Update parent.
       // parent = canvasTask;
       const task: CrowdsourcingCanvasTask = {
-        name: iiifGetLabel(canvas.label, 'Untitled canvas'),
+        name: `${parent.name} - ${iiifGetLabel(canvas.label, 'Untitled canvas')}`,
         type: 'crowdsourcing-canvas-task',
         subject: `urn:madoc:canvas:${claim.canvasId}`,
         status_text: 'accepted',
