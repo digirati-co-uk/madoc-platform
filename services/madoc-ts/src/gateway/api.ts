@@ -606,10 +606,15 @@ export class ApiClient {
     });
   }
 
-  async deleteCaptureModelRevision(revisionRequest: RevisionRequest) {
-    return this.request<void>(`/api/crowdsourcing/revision/${revisionRequest.revision.id}`, {
-      method: 'DELETE',
-    });
+  async deleteCaptureModelRevision(revisionRequest: string | RevisionRequest) {
+    return this.request<void>(
+      `/api/crowdsourcing/revision/${
+        typeof revisionRequest === 'string' ? revisionRequest : revisionRequest.revision.id
+      }`,
+      {
+        method: 'DELETE',
+      }
+    );
   }
 
   async updateTaskStatus<Task extends BaseTask>(
