@@ -18,6 +18,7 @@ import { ViewContent } from '../../../shared/components/ViewContent';
 import { CrowdsourcingTask } from '../../../../types/tasks/crowdsourcing-task';
 import { TaskContext } from '../loaders/task-loader';
 import { createLink } from '../../../shared/utility/create-link';
+import { ErrorMessage } from '../../../shared/atoms/ErrorMessage';
 
 const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task }) => {
   const api = useApi();
@@ -88,6 +89,13 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task 
           </div>
         ) : null}
         {resource ? <LocaleString as="h1">{resource.canvas.label}</LocaleString> : null}
+
+        {task.status !== 3 && task.state?.changesRequested ? (
+          <div style={{ background: 'lightblue', padding: '1em', marginBottom: '1em' }}>
+            <Heading3>The following changes were requested</Heading3>
+            <p>{task.state.changesRequested}</p>
+          </div>
+        ) : null}
 
         {captureModel ? (
           <Revisions.Provider captureModel={captureModel}>
