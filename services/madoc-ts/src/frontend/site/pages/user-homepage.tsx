@@ -221,12 +221,12 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
       if (isContributor(userDetails)) {
         response.contributorDraftTasks = await api.getTasks<CrowdsourcingTask>(0, {
           type: 'crowdsourcing-task',
-          status: [0, 1],
+          status: [0, 1, 4],
           all_tasks: true,
         });
         response.contributorReviewTasks = await api.getTasks<CrowdsourcingTask>(0, {
           type: 'crowdsourcing-task',
-          status: 2,
+          status: [2, 5],
           all_tasks: true,
         });
       }
