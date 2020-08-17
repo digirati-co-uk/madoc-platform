@@ -63,7 +63,8 @@ export function createTask(
   subject: string,
   resourceType: string,
   captureModel: (CaptureModel | CaptureModelSnippet) & { id: string },
-  structureId?: string
+  structureId?: string,
+  reviewId?: string
 ): CrowdsourcingTask {
   return {
     name: `User contributions to "${taskName}"`,
@@ -75,7 +76,9 @@ export function createTask(
     },
     status: 0,
     status_text: 'not started',
-    state: {},
+    state: {
+      reviewTask: reviewId,
+    },
     parameters: [captureModel.id, structureId || null, resourceType],
     events: [
       // When the task is marked as error (remove?)
@@ -102,9 +105,21 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           // If the task has already been reviewed, then mark the review task as having new changes.
           await api.updateTask(task.state.reviewTask, { status: 5, status_text: 'new changes' });
         } else if (task.parent_task) {
-          // If this is the first review, create the new task.
-          const response = await api.addSubtasks(reviewTask.createTask(task), task.parent_task);
-          await api.updateTask(task.id, { state: { reviewTask: response.id } });
+          // Check if review exists.
+          const existingReviews = await api.getTasks(0, {
+            parent_task_id: task.parent_task,
+            type: 'crowdsourcing-review',
+            status: [0, 1, 2, 4],
+          });
+          if (existingReviews.tasks.length === 0) {
+            // If this is the first review, create the new task.
+            const response = await api.addSubtasks(reviewTask.createTask(task), task.parent_task);
+            await api.updateTask(task.id, { state: { reviewTask: response.id } });
+          } else {
+            // We'll just use the first available review.
+            const firstExisting = existingReviews.tasks[0];
+            await api.updateTask(task.id, { state: { reviewTask: firstExisting.id } });
+          }
         }
       } catch (err) {
         console.log('error during review', err);
