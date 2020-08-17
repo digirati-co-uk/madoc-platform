@@ -18,6 +18,7 @@ import { iiifGetLabel } from '../../utility/iiif-get-label';
 import { CrowdsourcingTask } from '../../types/tasks/crowdsourcing-task';
 import { createTask } from '../../gateway/tasks/crowdsourcing-task';
 import { CaptureModelSnippet } from '../../types/schemas/capture-model-snippet';
+import { CrowdsourcingReview } from '../../gateway/tasks/crowdsourcing-review';
 
 export type ResourceClaim = {
   collectionId?: number;
@@ -344,24 +345,46 @@ async function upsertCaptureModelForResource(
   return userApi.cloneCaptureModel(capture_model_id, target);
 }
 
-async function createUserCrowdsourcingTask(
-  context: ApplicationContext,
-  siteId: number,
-  projectId: number,
-  userId: number,
-  name: string,
-  parentTaskId: string,
-  taskName: string,
-  subject: string,
-  type: string,
-  captureModel: (CaptureModel | CaptureModelSnippet) & { id: string },
-  claim: ResourceClaim
-): Promise<CrowdsourcingTask> {
+async function createUserCrowdsourcingTask({
+  context,
+  siteId,
+  projectId,
+  userId,
+  name,
+  parentTaskId,
+  taskName,
+  subject,
+  type,
+  captureModel,
+  claim,
+}: {
+  context: ApplicationContext;
+  siteId: number;
+  projectId: number;
+  userId: number;
+  name: string;
+  parentTaskId: string;
+  taskName: string;
+  subject: string;
+  type: string;
+  captureModel: (CaptureModel | CaptureModelSnippet) & { id: string };
+  claim: ResourceClaim;
+}): Promise<CrowdsourcingTask> {
   const userApi = api.asUser({ userId, siteId });
 
   const structureId = undefined; // @todo call to config service to get structure id.
 
-  const task = createTask(siteId, projectId, userId, name, taskName, subject, type, captureModel, structureId);
+  const task = createTask(
+    siteId,
+    projectId,
+    userId,
+    name,
+    taskName,
+    subject,
+    type,
+    captureModel,
+    structureId
+  );
 
   return userApi.addSubtasks(task, parentTaskId);
 }
@@ -425,19 +448,19 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
     const captureModel = await upsertCaptureModelForResource(context, siteId, projectId, id, claim);
 
     // Create the crowdsourcing task.
-    const task = await createUserCrowdsourcingTask(
+    const task = await createUserCrowdsourcingTask({
       context,
       siteId,
       projectId,
-      id,
+      userId: id,
       name,
-      parent.id,
-      parent.name,
-      `urn:madoc:canvas:${claim.canvasId}`,
-      'canvas',
+      parentTaskId: parent.id,
+      taskName: parent.name,
+      subject: `urn:madoc:canvas:${claim.canvasId}`,
+      type: 'canvas',
       captureModel,
-      claim
-    );
+      claim,
+    });
 
     // And return.
     // @todo is there more to a claim.
