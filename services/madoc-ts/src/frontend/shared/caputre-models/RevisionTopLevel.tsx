@@ -7,9 +7,10 @@ import { ThankYouPage } from './ThankYouPage';
 
 export const RevisionTopLevel: React.FC<{
   readOnly: boolean;
+  allowEdits?: boolean;
   instructions?: string;
   onSaveRevision: (req: RevisionRequest, status?: string) => Promise<void>;
-}> = ({ readOnly, instructions, onSaveRevision }) => {
+}> = ({ readOnly, instructions, onSaveRevision, allowEdits = true }) => {
   const {
     setIsThankYou,
     setIsPreviewing,
@@ -84,18 +85,20 @@ export const RevisionTopLevel: React.FC<{
   return (
     <>
       <VerboseEntityPage title={current.revision.label} description={instructions} readOnly={readOnly}>
-        <CardButtonGroup>
-          <CardButton onClick={() => deselectRevision({ revisionId: current.revision.id })}>Go back</CardButton>
-          {readOnly ? (
-            <CardButton
-              onClick={() => createRevision({ revisionId: current.revision.id, cloneMode: 'FORK_ALL_VALUES' })}
-            >
-              Suggest edit
-            </CardButton>
-          ) : (
-            <CardButton onClick={() => setIsPreviewing(true)}>Publish</CardButton>
-          )}
-        </CardButtonGroup>
+        {allowEdits ? (
+          <CardButtonGroup>
+            <CardButton onClick={() => deselectRevision({ revisionId: current.revision.id })}>Go back</CardButton>
+            {readOnly ? (
+              <CardButton
+                onClick={() => createRevision({ revisionId: current.revision.id, cloneMode: 'FORK_ALL_VALUES' })}
+              >
+                Suggest edit
+              </CardButton>
+            ) : (
+              <CardButton onClick={() => setIsPreviewing(true)}>Publish</CardButton>
+            )}
+          </CardButtonGroup>
+        ) : null}
       </VerboseEntityPage>
     </>
   );
