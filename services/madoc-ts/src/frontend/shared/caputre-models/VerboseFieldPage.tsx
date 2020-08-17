@@ -1,4 +1,4 @@
-import { CardButton, FieldInstance, RoundedCard } from '@capture-models/editor';
+import { CardButton, FieldInstance, FieldInstanceReadOnly, RoundedCard } from '@capture-models/editor';
 import { useRefinement } from '@capture-models/plugin-api';
 import { BaseField, FieldRefinement } from '@capture-models/types';
 import React from 'react';
@@ -23,9 +23,13 @@ export const VerboseFieldPage: React.FC<{
     <>
       <RevisionBreadcrumbs />
       <RoundedCard size="small">
-        <FieldInstance field={field.instance} property={field.property} path={path} />
+        {readOnly ? (
+          <FieldInstanceReadOnly fields={[field.instance]} />
+        ) : (
+          <FieldInstance field={field.instance} property={field.property} path={path} />
+        )}
       </RoundedCard>
-      <CardButton onClick={goBack}>Finish and save</CardButton>
+      <CardButton onClick={goBack}>{readOnly ? 'Go back' : 'Finish and save'}</CardButton>
     </>
   );
 };
