@@ -683,8 +683,10 @@ export class ApiClient {
       all_tasks?: boolean;
       status?: number | number[];
       root_task_id?: string;
+      parent_task_id?: string;
       subject?: string;
       type?: string;
+      detail?: boolean;
     } = {}
   ) {
     return this.request<{ tasks: TaskType[]; pagination: Pagination }>(
