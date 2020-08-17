@@ -47,6 +47,10 @@ export const SubtaskProgress: React.FC<{ total: number; done: number; progress: 
 }) => {
   const { t } = useTranslation();
 
+  if (total === 0) {
+    return null;
+  }
+
   if (total === done) {
     return (
       <AllDone>
