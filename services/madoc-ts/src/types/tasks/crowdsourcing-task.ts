@@ -31,5 +31,6 @@ export interface CrowdsourcingTask extends BaseTask {
     revisionId?: string;
     reviewTask?: string;
     // Can start adding to this as we need.
+    changesRequested?: string;
   };
 }
