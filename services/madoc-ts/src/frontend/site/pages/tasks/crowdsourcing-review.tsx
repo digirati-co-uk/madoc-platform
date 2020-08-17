@@ -10,6 +10,9 @@ import { Button, ButtonRow } from '../../../shared/atoms/Button';
 import { Debug } from '../../../shared/atoms/Debug';
 import { Revisions } from '@capture-models/editor';
 import { TaskContext } from '../loaders/task-loader';
+import { CrowdsourcingMultiReview } from './crowdsourcing-multi-review';
+import { Heading3, Subheading3 } from '../../../shared/atoms/Heading3';
+import { Heading1, Subheading1 } from '../../../shared/atoms/Heading1';
 
 export const ViewCrowdsourcingReview: React.FC<TaskContext<CrowdsourcingReview>> = ({ task, refetch: refetchTask }) => {
   // A review.
@@ -58,6 +61,7 @@ export const ViewCrowdsourcingReview: React.FC<TaskContext<CrowdsourcingReview>>
   const { data, refetch } = useQuery(['review-task', { id: task.id }], async () => {
     const subjectTaskId = task.parameters[0];
     const subjectTask = await api.getTaskById<CrowdsourcingTask>(subjectTaskId);
+
     try {
       const [captureModelId, structureId, resourceType] = subjectTask.parameters;
       const captureModel = task.status >= 0 ? await api.getCaptureModel(captureModelId) : null;
@@ -109,47 +113,26 @@ export const ViewCrowdsourcingReview: React.FC<TaskContext<CrowdsourcingReview>>
 
   return (
     <div>
-      <h3>
-        {task.name} ({task.status_text})
-      </h3>
-      {task.created_at ? <TimeAgo date={task.created_at} /> : null}
+      <Heading1>{task.name}</Heading1>
+      {task.created_at ? (
+        <Subheading1>
+          <TimeAgo date={task.created_at} />
+        </Subheading1>
+      ) : null}
+
+      <CrowdsourcingMultiReview
+        task={task}
+        refetch={async () => {
+          await refetch();
+          await refetchTask();
+        }}
+      />
+
       {task.status === -1 && (
         <div>
           <strong>This has been rejected and deleted.</strong>
         </div>
       )}
-      {data && data.revision && data.captureModel ? (
-        <>
-          <Revisions.Provider captureModel={data.captureModel}>
-            <div style={{ padding: 20, margin: '20px 0', border: '2px solid #ddd' }}>
-              <EntityTopLevel
-                setSelectedField={() => null}
-                setSelectedEntity={() => null}
-                path={[]}
-                entity={{ instance: data.revision.document, property: 'root' }}
-                readOnly={true}
-                hideSplash={true}
-                hideCard={true}
-              />
-            </div>
-            {task.status !== 3 && task.status !== -1 ? (
-              <ButtonRow>
-                <Button onClick={() => (data.revision ? approveRevision(data.revision) : undefined)}>Approve</Button>
-                <Button onClick={() => (data.revision ? deleteRevision(data.revision) : undefined)}>
-                  Reject and delete
-                </Button>
-              </ButtonRow>
-            ) : (
-              <>
-                {task.status === 3 ? <div>This has been approved</div> : null}
-                {task.status === -1 ? <div>This has been rejected</div> : null}
-              </>
-            )}
-          </Revisions.Provider>
-        </>
-      ) : null}
-      <hr />
-      <Debug>{data}</Debug>
     </div>
   );
 };

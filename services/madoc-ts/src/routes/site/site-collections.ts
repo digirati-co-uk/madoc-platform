@@ -1,7 +1,7 @@
 import { RouteMiddleware } from '../../types/route-middleware';
 
 export type SiteCollectionQuery = {
-  project_id?: number;
+  project_id?: string | number;
   page: number;
 };
 
@@ -17,7 +17,7 @@ export const siteCollections: RouteMiddleware<{ slug: string }> = async context 
   // @todo get and limit based on site configuration request.
 
   if (projectId) {
-    const project = await siteApi.getProject(Number(projectId));
+    const project = await siteApi.getProject(projectId);
     // @todo Check if project is running (or is admin)
     // If not running, then not found.
     // Get project collection id passing in page, and asking for only collections.

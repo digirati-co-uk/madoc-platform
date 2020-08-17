@@ -10,6 +10,8 @@ import { ImageGrid, ImageGridItem } from '../../shared/atoms/ImageGrid';
 import { CroppedImage } from '../../shared/atoms/Images';
 import { SingleLineHeading5, Subheading5 } from '../../shared/atoms/Heading5';
 import { useTranslation } from 'react-i18next';
+import { createLink } from '../../shared/utility/create-link';
+import { ProjectFull } from '../../../types/schemas/project-full';
 
 type ViewCollectionType = {
   data: any;
@@ -18,7 +20,11 @@ type ViewCollectionType = {
   variables: { id: number; page: number };
 };
 
-export const ViewCollection: React.FC<CollectionFull> = ({ collection, pagination }) => {
+export const ViewCollection: React.FC<CollectionFull & { project?: ProjectFull }> = ({
+  collection,
+  pagination,
+  project,
+}) => {
   const api = useApi();
   const { t } = useTranslation();
   const { data: projectList } = useQuery(
@@ -54,11 +60,18 @@ export const ViewCollection: React.FC<CollectionFull> = ({ collection, paginatio
         {collection.items.map((manifest, idx) => (
           <Link
             key={`${manifest.id}_${idx}`}
-            to={
-              manifest.type === 'manifest'
-                ? `/collections/${collection.id}/manifests/${manifest.id}`
-                : `/collections/${manifest.id}`
-            }
+            to={createLink(
+              manifest.type === 'collection'
+                ? {
+                    collectionId: manifest.id,
+                    projectId: project ? project.slug : undefined,
+                  }
+                : {
+                    manifestId: manifest.id,
+                    collectionId: collection.id,
+                    projectId: project ? project.slug : undefined,
+                  }
+            )}
           >
             <ImageGridItem $size="large">
               <CroppedImage $size="large">

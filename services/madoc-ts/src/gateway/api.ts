@@ -30,6 +30,7 @@ import { ProjectList } from '../types/schemas/project-list';
 import { ProjectListItem } from '../types/schemas/project-list-item';
 import { ProjectFull } from '../types/schemas/project-full';
 import { UserDetails } from '../types/schemas/user-details';
+import { CrowdsourcingReview } from './tasks/crowdsourcing-review';
 
 export class ApiClient {
   private readonly gateway: string;
@@ -554,6 +555,10 @@ export class ApiClient {
     });
   }
 
+  async forkCaptureModelRevision(captureModelId: string, revisionId: string) {
+    return this.request<RevisionRequest>(`/api/crowdsourcing/model/${captureModelId}/fork/${revisionId}`);
+  }
+
   async createCaptureModelRevision(req: RevisionRequest, status?: string) {
     return this.request<RevisionRequest>(`/api/crowdsourcing/model/${req.captureModelId}/revision`, {
       method: 'POST',
@@ -593,14 +598,24 @@ export class ApiClient {
       body: {
         ...revisionRequest,
         status: 'draft',
+        revision: {
+          ...revisionRequest.revision,
+          status: 'draft',
+          accepted: false,
+        },
       },
     });
   }
 
-  async deleteCaptureModelRevision(revisionRequest: RevisionRequest) {
-    return this.request<void>(`/api/crowdsourcing/revision/${revisionRequest.revision.id}`, {
-      method: 'DELETE',
-    });
+  async deleteCaptureModelRevision(revisionRequest: string | RevisionRequest) {
+    return this.request<void>(
+      `/api/crowdsourcing/revision/${
+        typeof revisionRequest === 'string' ? revisionRequest : revisionRequest.revision.id
+      }`,
+      {
+        method: 'DELETE',
+      }
+    );
   }
 
   async updateTaskStatus<Task extends BaseTask>(
@@ -674,8 +689,10 @@ export class ApiClient {
       all_tasks?: boolean;
       status?: number | number[];
       root_task_id?: string;
+      parent_task_id?: string;
       subject?: string;
       type?: string;
+      detail?: boolean;
     } = {}
   ) {
     return this.request<{ tasks: TaskType[]; pagination: Pagination }>(
@@ -710,8 +727,140 @@ export class ApiClient {
     });
   }
 
-  // Public API.
+  // Review API
+  async reviewRejectSubmission({
+    revisionRequest,
+    userTaskId,
+    statusText,
+  }: {
+    revisionRequest: RevisionRequest;
+    userTaskId: string;
+    statusText?: string;
+  }) {
+    try {
+      // Delete the revision
+      await this.deleteCaptureModelRevision(revisionRequest);
+    } catch (err) {
+      // No-op
+    }
 
+    // Mark task as rejected
+    await this.updateTask<CrowdsourcingTask>(userTaskId, {
+      status: -1,
+      status_text: statusText || 'Rejected',
+    });
+  }
+
+  async reviewRequestChanges({
+    userTaskId,
+    message,
+    revisionRequest,
+    statusText,
+  }: {
+    message: string;
+    revisionRequest: RevisionRequest;
+    userTaskId: string;
+    statusText?: string;
+  }) {
+    // Save this change to the revision.
+    await this.reDraftCaptureModelRevision(revisionRequest);
+
+    await this.updateTask<CrowdsourcingTask>(userTaskId, {
+      // Mark the task as needing changes
+      status: 4,
+      status_text: statusText || 'changed requested',
+      // Add the message to the task
+      state: {
+        changesRequested: message,
+      },
+    });
+  }
+
+  async reviewPrepareMerge({
+    reviewTaskId,
+    captureModelId,
+    revisionId,
+    toMerge,
+  }: {
+    reviewTaskId: string;
+    captureModelId: string;
+    revisionId: string;
+    toMerge: string[];
+  }) {
+    // Fork of the chosen revision is created
+    const req = await this.forkCaptureModelRevision(captureModelId, revisionId);
+    // Task is updated with forked version + chosen merges.
+    await this.updateTask<CrowdsourcingReview>(reviewTaskId, {
+      state: {
+        currentMerge: {
+          revisionId,
+          mergeId: req.revision.id,
+          toMerge,
+        },
+      },
+    });
+  }
+
+  async reviewApproveSubmission({
+    userTaskId,
+    revisionRequest,
+    statusText,
+  }: {
+    userTaskId: string;
+    revisionRequest: RevisionRequest;
+    statusText?: string;
+  }) {
+    // Revision is marked as approved
+    await this.approveCaptureModelRevision(revisionRequest);
+
+    // Mark users task as approved.
+    await this.updateTask<CrowdsourcingTask>(userTaskId, {
+      status: 3,
+      status_text: statusText || 'Approved',
+      state: {
+        changesRequested: '',
+      },
+    });
+  }
+
+  async reviewApproveAndRemoveSubmission({
+    userTaskIds,
+    revisionIdsToRemove,
+    acceptedRevision,
+    reviewTaskId,
+    statusText,
+  }: {
+    userTaskIds: string[];
+    revisionIdsToRemove: string[];
+    acceptedRevision: RevisionRequest;
+    reviewTaskId: string;
+    statusText?: string;
+  }) {
+    await Promise.all(
+      userTaskIds.map(userTaskId =>
+        // User tasks are marked as approved
+        this.updateTask<CrowdsourcingTask>(userTaskId, {
+          status: 3,
+          status_text: statusText || 'Approved',
+          state: {
+            changesRequested: '',
+          },
+        })
+      )
+    );
+    await Promise.all(
+      revisionIdsToRemove.map(
+        // Remove other revisions.
+        revision => this.deleteCaptureModelRevision(revision)
+      )
+    );
+    // The chosen revision is saved.
+    await this.approveCaptureModelRevision(acceptedRevision);
+    // Updated review task.
+    await this.updateTask(reviewTaskId, { status: 3, status_text: statusText || 'Approved' });
+  }
+
+  // Public API.
   async getSiteCanvas(id: number, query?: import('../routes/site/site-canvas').SiteCanvasQuery) {
     return this.publicRequest<CanvasFull>(`/madoc/api/canvases/${id}`, query);
   }

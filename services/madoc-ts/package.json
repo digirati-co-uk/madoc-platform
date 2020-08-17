@@ -24,9 +24,9 @@
   "dependencies": {
     "@atlas-viewer/atlas": "^1.0.5",
     "@atlas-viewer/iiif-image-api": "^1.2.0",
-    "@capture-models/editor": "^0.6.0",
-    "@capture-models/helpers": "^0.6.0",
-    "@capture-models/types": "^0.6.0",
+    "@capture-models/editor": "^0.7.7",
+    "@capture-models/helpers": "^0.7.3",
+    "@capture-models/types": "^0.7.0",
     "@hyperion-framework/react-vault": "1.0.0-alpha.15",
     "@hyperion-framework/types": "1.0.0-alpha.14",
     "@hyperion-framework/vault": "1.0.0-alpha.15",

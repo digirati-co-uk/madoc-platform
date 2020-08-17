@@ -3,7 +3,6 @@ import { useContentType } from '@capture-models/plugin-api';
 import { Target } from '@capture-models/types';
 
 export const ViewContent: React.FC<{ target: Target[]; canvas: any }> = ({ target, canvas }) => {
-  console.log('view content');
   return useContentType(
     useMemo(() => {
       const fixedType = [];
@@ -20,9 +19,6 @@ export const ViewContent: React.FC<{ target: Target[]; canvas: any }> = ({ targe
       if (canvasType) {
         fixedType.push({ type: 'Canvas', id: canvasType.id });
       }
-
-      console.log({ fixedType, target });
-
       return fixedType;
     }, [target]),
     useMemo(

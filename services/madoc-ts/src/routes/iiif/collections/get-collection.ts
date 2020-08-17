@@ -18,9 +18,9 @@ export const getCollection: RouteMiddleware<{ id: number }> = async context => {
   const totalPages = Math.ceil(total / manifestsPerPage) || 1;
   const requestedPage = Number(context.query.page) || 1;
   const page = requestedPage < totalPages ? requestedPage : totalPages;
-  const type = context.query.type || undefined;
+  const type = total === 0 ? undefined : context.query.type || undefined;
 
-  const rows = await context.connection.many(
+  const rows = await context.connection.any(
     getCollectionSnippets(
       getSingleCollection({
         collectionId,

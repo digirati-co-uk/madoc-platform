@@ -13,15 +13,12 @@ export const SingleFieldInstance: React.FC<{
   const currentSelectorId = Revisions.useStoreState(s => s.selector.currentSelectorId);
   const clearSelector = Revisions.useStoreActions(a => a.clearSelector) as any;
   const previewData = Revisions.useStoreState(s => s.selector.selectorPreviewData);
-  const adjacent = Revisions.useStoreState(s => s.revisionAdjacentSubtreeFields);
 
   const selector = useFieldSelector(field);
 
   const [updateValue] = useDebouncedCallback(newValue => {
     updateFieldValue({ value: newValue, path });
   }, 100);
-
-  console.log('SINGLE FIELD INSTANCE.', adjacent);
 
   return (
     <FieldWrapper

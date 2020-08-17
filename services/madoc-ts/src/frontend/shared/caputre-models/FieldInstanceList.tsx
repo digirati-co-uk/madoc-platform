@@ -36,7 +36,7 @@ export const FieldInstanceList: React.FC<{
 
   const label = fields[0] ? fields[0].label : 'Untitled';
   const pluralLabel = fields[0] ? fields[0].pluralLabel || label : label;
-  const allowMultiple = fields[0] ? fields[0].allowMultiple : false;
+  const allowMultiple = fields[0] && !readOnly ? fields[0].allowMultiple : false;
   const canRemove = allowMultiple && !readOnly && fields.length > 1;
 
   return (
