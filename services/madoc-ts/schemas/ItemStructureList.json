@@ -30,6 +30,36 @@
           "label"
         ]
       }
+    },
+    "originals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "type": {
+            "type": "string"
+          },
+          "label": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "thumbnail": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label"
+        ]
+      }
     }
   },
   "required": [
