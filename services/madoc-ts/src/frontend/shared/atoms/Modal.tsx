@@ -8,7 +8,7 @@ export const ModalBackground = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 9;
+  z-index: 20;
   background: rgba(0, 0, 0, 0.4);
 `;
 
@@ -18,7 +18,7 @@ export const ModalContainer = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 10;
+  z-index: 21;
   display: flex;
 `;
 
@@ -26,6 +26,7 @@ export const InnerModalContainer = styled.div`
   max-width: 600px;
   width: 100%;
   min-height: 350px;
+  height: auto;
   display: flex;
   margin: auto;
   flex-direction: column;
@@ -59,4 +60,12 @@ export const ModalBody = styled.div`
   flex: 1 1 0px;
   padding: 1em;
   overflow-y: auto;
+`;
+
+export const ModalFooter = styled.div`
+  background: #eee;
+  width: 100%;
+  color: #fff;
+  padding: 1em;
+  display: flex;
 `;
