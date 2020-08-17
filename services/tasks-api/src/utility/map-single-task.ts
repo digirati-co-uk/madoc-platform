@@ -16,10 +16,12 @@ export function mapSingleTask(singleTask: any, subtasks?: any[], fields?: string
   return {
     id: id,
     ...args,
-    creator: {
-      id: creator_id,
-      name: creator_name,
-    },
+    creator: creator_id
+      ? {
+          id: creator_id,
+          name: creator_name,
+        }
+      : null,
     assignee: assignee_id
       ? {
           id: assignee_id,
