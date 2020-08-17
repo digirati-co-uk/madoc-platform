@@ -13,12 +13,16 @@ import { SingleLineHeading5, Subheading5 } from '../../shared/atoms/Heading5';
 import { MoreContainer, MoreDot, MoreIconContainer, MoreLabel } from '../../shared/atoms/MoreButton';
 import { useTranslation } from 'react-i18next';
 import { Heading1 } from '../../shared/atoms/Heading1';
+import { ProjectFull } from '../../../types/schemas/project-full';
+import { createLink } from '../../shared/utility/create-link';
+import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 
 type AllCollectionsType = {
-  params: { projectId?: string };
+  params: { slug?: string };
   query: { page: string };
-  variables: { projectId?: number; page: number };
+  variables: { project_id?: number | string; page: number };
   data: { collections: any[]; pagination: PaginationType };
+  context: { project?: ProjectFull };
 };
 
 const links = {
@@ -31,7 +35,7 @@ const links = {
 };
 
 export const AllCollections: UniversalComponent<AllCollectionsType> = createUniversalComponent<AllCollectionsType>(
-  () => {
+  props => {
     const { t } = useTranslation();
     const { resolvedData: data, latestData } = usePaginatedData(AllCollections);
 
@@ -41,6 +45,7 @@ export const AllCollections: UniversalComponent<AllCollectionsType> = createUniv
 
     return (
       <div>
+        <DisplayBreadcrumbs />
         <Heading1>All collections</Heading1>
         <Pagination
           page={latestData ? latestData.pagination.page : 1}
@@ -51,7 +56,13 @@ export const AllCollections: UniversalComponent<AllCollectionsType> = createUniv
           return (
             <div key={collection.id} style={{ marginBottom: 80 }}>
               <Heading3>
-                <LocaleString as={Link} to={`/collections/${collection.id}`}>
+                <LocaleString
+                  as={Link}
+                  to={createLink({
+                    collectionId: collection.id,
+                    projectId: props.project?.id,
+                  })}
+                >
                   {collection.label}
                 </LocaleString>
               </Heading3>
@@ -59,7 +70,14 @@ export const AllCollections: UniversalComponent<AllCollectionsType> = createUniv
               {collection.items.length === 0 ? null : (
                 <ImageStrip>
                   {collection.items.map((manifest: any) => (
-                    <Link to={`/collections/${collection.id}/manifests/${manifest.id}`} key={manifest.id}>
+                    <Link
+                      to={createLink({
+                        collectionId: collection.id,
+                        projectId: props.project?.id,
+                        manifestId: manifest.id,
+                      })}
+                      key={manifest.id}
+                    >
                       <ImageStripBox $size="small">
                         <CroppedImage $size="small">
                           {manifest.thumbnail ? (
@@ -73,7 +91,12 @@ export const AllCollections: UniversalComponent<AllCollectionsType> = createUniv
                   ))}
                   {collection.items.length < (collection.itemCount || collection.items.length) ? (
                     <div>
-                      <Link to={`/collections/${collection.id}`}>
+                      <Link
+                        to={createLink({
+                          collectionId: collection.id,
+                          projectId: props.project?.id,
+                        })}
+                      >
                         <MoreContainer>
                           <MoreIconContainer>
                             <MoreDot />
@@ -104,7 +127,7 @@ export const AllCollections: UniversalComponent<AllCollectionsType> = createUniv
   },
   {
     getKey: (params, query) => {
-      return ['site-collections', { page: Number(query.page) || 1 }];
+      return ['site-collections', { page: Number(query.page) || 1, project_id: params.slug }];
     },
     getData: (key, variables, api) => {
       return api.getSiteCollections(variables);
