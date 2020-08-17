@@ -554,6 +554,10 @@ export class ApiClient {
     });
   }
 
+  async forkCaptureModelRevision(captureModelId: string, revisionId: string) {
+    return this.request<RevisionRequest>(`/api/crowdsourcing/model/${captureModelId}/fork/${revisionId}`);
+  }
+
   async createCaptureModelRevision(req: RevisionRequest, status?: string) {
     return this.request<RevisionRequest>(`/api/crowdsourcing/model/${req.captureModelId}/revision`, {
       method: 'POST',
