@@ -47,9 +47,10 @@ module.exports = {
             watch_options: {
               ignored: 'frontend/admin/build/**',
             },
+            node_args: '--expose-gc --inspect=0.0.0.0:9229',
             max_memory_restart: '1G',
             env: {
-              NODE_ENV: 'development',
+              NODE_ENV: 'development'
             },
             env_production: {
               NODE_ENV: 'production',
