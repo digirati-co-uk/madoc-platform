@@ -2,15 +2,20 @@ import { registerRefinement } from '@capture-models/plugin-api';
 import React from 'react';
 import { SingleFieldInstance } from '../SingleFieldInstance';
 import { NewFieldButtonInstance } from '../NewFieldInstanceButton';
+import { FieldInstanceReadOnly } from '@capture-models/editor';
 
 registerRefinement({
   name: 'Single field instance',
   type: 'field-instance-list',
   supports(subject, { readOnly }) {
-    return subject.instance.length === 1 && !readOnly;
+    return subject.instance.length === 1;
   },
   refine(subject, actions) {
     const selectedField = subject.instance[0];
+
+    if (actions.readOnly) {
+      return <FieldInstanceReadOnly fields={subject.instance} />;
+    }
 
     return (
       <>
