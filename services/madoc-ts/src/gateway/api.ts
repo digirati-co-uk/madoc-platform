@@ -593,6 +593,11 @@ export class ApiClient {
       body: {
         ...revisionRequest,
         status: 'draft',
+        revision: {
+          ...revisionRequest.revision,
+          status: 'draft',
+          accepted: false,
+        },
       },
     });
   }
