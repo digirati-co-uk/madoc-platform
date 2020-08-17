@@ -1347,15 +1347,15 @@
     screenfull "^3.3.2"
     whatwg-fetch "^3.0.0"
 
-"@capture-models/editor@^0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.6.0.tgz#eccd65656a334e4fac3baf6a3119787faeb238c7"
-  integrity sha512-Q9+J4+qbt4Ncqp2p8l90mhZKtAP2STFs5FXj1ibyIBPE8OdpE/4NJeHEUjpyFi3dK3QIfb5ieNRu7chQ4GsoWA==
+"@capture-models/editor@^0.7.7":
+  version "0.7.7"
+  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.7.7.tgz#be661fd759bba9b0214e82bbc3e6aaefb4fe1e4d"
+  integrity sha512-sBg5hvd2tvHX3M7TYZ4RmHJoJfduU+hM+QpIPavaWmY0UVxAOEEtyrN+sX6or/11bfDoKwYL/CWViB0CFNU5wQ==
   dependencies:
     "@atlas-viewer/atlas" "^1.0.4"
-    "@capture-models/helpers" "^0.6.0"
-    "@capture-models/plugin-api" "^0.6.0"
-    "@capture-models/types" "^0.6.0"
+    "@capture-models/helpers" "^0.7.3"
+    "@capture-models/plugin-api" "^0.7.3"
+    "@capture-models/types" "^0.7.0"
     "@hyperion-framework/react-vault" "^1.0.0-alpha.15"
     "@hyperion-framework/types" "^1.0.0-alpha.14"
     "@iiif/vocabulary" "1.0.18"
@@ -1383,36 +1383,37 @@
     react-router-dom "^5.1.2"
     react-rte "^0.16.1"
     react-textarea-autosize "^8.2.0"
+    react-tooltip "^4.2.8"
     react-window "^1.8.5"
     safe-buffer "^5.2.1"
     styled-components "^5.0.1"
     use-async-effect "^2.2.1"
     use-debounce "^3.3.0"
 
-"@capture-models/helpers@^0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@capture-models/helpers/-/helpers-0.6.0.tgz#8e7faf425167baddfa82a536125f594511743b90"
-  integrity sha512-s5Cb2njV41k2QjpiWoG8rHC/pAfamlQH87h5tdqxv1p313xq3W/OeXdisbBtdZgp9ZbbNHVgudWjWvmzQr38dA==
+"@capture-models/helpers@^0.7.3":
+  version "0.7.3"
+  resolved "https://registry.yarnpkg.com/@capture-models/helpers/-/helpers-0.7.3.tgz#aec634fc3a13d948d3cf70ff9259370489c9004a"
+  integrity sha512-+TWn1HGSkP0Fv0V9Z3hNUuGCFNsYgNb1tzCs3R3jVRN0aW2TCbP5Yn4knvEEyREWYRXwt+alR5DTxdSEsTt15Q==
   dependencies:
-    "@capture-models/plugin-api" "^0.6.0"
-    "@capture-models/types" "^0.6.0"
+    "@capture-models/plugin-api" "^0.7.3"
+    "@capture-models/types" "^0.7.0"
     fast-copy "^2.0.4"
     immer "^7.0.7"
     react "^16.13.1"
     uuid "^3.4.0"
 
-"@capture-models/plugin-api@^0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@capture-models/plugin-api/-/plugin-api-0.6.0.tgz#850ccc03c5b6ffed7fd1b25376eb78c1ecc7d579"
-  integrity sha512-smoqq+bgXzIrBl5lYhMJBCbbNgSoO4OTwcB54vqb6sFT9+Le9AqwD85c/c+NnOfmthW/0GPReHr6gOhewPBIFQ==
+"@capture-models/plugin-api@^0.7.3":
+  version "0.7.3"
+  resolved "https://registry.yarnpkg.com/@capture-models/plugin-api/-/plugin-api-0.7.3.tgz#cc3000eca0b5fe396553cc921732b81e16a686d1"
+  integrity sha512-gGfIxZsR2IB37Be9QeRY8Z5NBRbOB77E37GUl8DT0rt6B/f8iZpQJ6ZMJuYn4niLKOzzt47/sVakAs/Gac5ZFg==
   dependencies:
-    "@capture-models/types" "^0.6.0"
+    "@capture-models/types" "^0.7.0"
     react "^16.13.1"
 
-"@capture-models/types@^0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@capture-models/types/-/types-0.6.0.tgz#cf98c4366e8dd1be5a97e5b3313f56e8b89e06c5"
-  integrity sha512-byGOpMfnFQj+ACzgIUimqQLfCD1X+XrJ50kYJWTJpxTnjAWbV8TmsJwErcDfFlvYc4Iaw3XnUTfbmydiQJotvA==
+"@capture-models/types@^0.7.0":
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/@capture-models/types/-/types-0.7.0.tgz#c26322e39194ea008dd83ffb4ec12773c107bfa3"
+  integrity sha512-ryb06IhfrucgbQRUQ0IDNzyP6Kf/2KI3Dtj469HvLLhYEMQ2GmxWw7cMrw+39joQAfSGYVnE6brACZ+TaaJh/g==
 
 "@cnakazawa/watch@^1.0.3":
   version "1.0.4"
@@ -12901,6 +12902,14 @@ react-timeago@^4.4.0:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/react-timeago/-/react-timeago-4.4.0.tgz#4520dd9ba63551afc4d709819f52b14b9343ba2b"
   integrity sha512-Zj8RchTqZEH27LAANemzMR2RpotbP2aMd+UIajfYMZ9KW4dMcViUVKzC7YmqfiqlFfz8B0bjDw2xUBjmcxDngA==
+
+react-tooltip@^4.2.8:
+  version "4.2.8"
+  resolved "https://registry.yarnpkg.com/react-tooltip/-/react-tooltip-4.2.8.tgz#270858fee46fab73b66de316271aa94145f7446b"
+  integrity sha512-pDWa0/khTAgIfldp95tHgyuYyBhWNlfaU2LF9ubAKxpoqNe15uyf+uLlnhK/Lstb6FU8E8/SL28Wp6oEO9xw3g==
+  dependencies:
+    prop-types "^15.7.2"
+    uuid "^7.0.3"
 
 react-transition-group@^4.3.0:
   version "4.3.0"
