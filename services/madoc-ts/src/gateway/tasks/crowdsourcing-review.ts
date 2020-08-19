@@ -51,13 +51,21 @@ export interface CrowdsourcingReview extends BaseTask {
     changesRequested?: string;
     internalNotes?: string;
     baseRevisionId?: string;
-    currentMerge?: {
-      revisionId: string;
-      mergeId: string;
-      toMerge: string[];
-    };
+    currentMerge?: CrowdsourcingReviewMerge | null;
+    merges?: Array<CrowdsourcingReviewMergeComplete>;
   };
 }
+
+export type CrowdsourcingReviewMerge = {
+  revisionId: string; // Original model revision from base
+  revisionTaskId: string; // Original task id from base
+  mergeId: string; // New merge revision
+  toMerge: string[]; // Other user task ids
+};
+
+export type CrowdsourcingReviewMergeComplete = CrowdsourcingReviewMerge & {
+  status: 'MERGED' | 'DISCARDED';
+};
 
 export function createTask(task: CrowdsourcingTask): CrowdsourcingReview {
   if (!task.id) {
@@ -71,9 +79,7 @@ export function createTask(task: CrowdsourcingTask): CrowdsourcingReview {
     status: 0,
     status_text: 'not started',
     parameters: [task.id],
-    state: {
-
-    },
+    state: {},
     events: [
       'madoc-ts.created',
       // When a review is rejected.
