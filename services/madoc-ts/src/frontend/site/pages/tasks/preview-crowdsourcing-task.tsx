@@ -30,42 +30,11 @@ import { FullScreenExitIcon } from '../../../shared/icons/FullScreenExitIcon';
 import { FullScreenEnterIcon } from '../../../shared/icons/FullScreenEnterIcon';
 import { MaximiseWindow } from '../../../shared/atoms/MaximiseWindow';
 import { PreviewIcon } from '../../../shared/icons/PreviewIcon';
+import ReactTimeago from 'react-timeago';
+import { useLoadedCaptureModel } from '../../../shared/hooks/use-loaded-capture-model';
+import { WarningMessage } from '../../../shared/atoms/WarningMessage';
 
-function useLoadedCaptureModel(modelId?: string): { canvas?: CanvasFull; captureModel?: CaptureModel; target?: any } {
-  const api = useApi();
-  const { data } = useQuery(
-    ['preview-crowdsourcing-task', { id: modelId }],
-    async () => {
-      if (!modelId) {
-        return;
-      }
-      const captureModel = await api.getCaptureModel(modelId);
-      if (!captureModel.target || !captureModel.target[0]) {
-        return;
-      }
-      const target = captureModel.target.map(item => api.resolveUrn(item.id));
-      const primaryTarget = captureModel ? target.find((t: any) => t.type.toLowerCase() === 'canvas') : undefined;
-
-      if (!primaryTarget) {
-        return;
-      }
-
-      const { canvas } = await api.getSiteCanvas(primaryTarget.id);
-
-      return { canvas, target, captureModel };
-    },
-    {
-      refetchInterval: false,
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
-      refetchIntervalInBackground: false,
-    }
-  );
-
-  return data || ({} as any);
-}
-
-const RequestChanges: React.FC<{ userTaskId: string; changesRequested?: string; onRequest: () => void }> = ({
+const RequestChanges: React.FC<{ userTaskId: string; changesRequested?: null | string; onRequest: () => void }> = ({
   changesRequested,
   userTaskId,
   onRequest,
@@ -310,12 +279,104 @@ const RejectSubmission: React.FC<{ onReject: () => void; userTaskId: string }> =
   );
 };
 
+const StartMerge: React.FC<{
+  userTask: CrowdsourcingTask & { id: string };
+  allTasks: Array<CrowdsourcingTask & { id: string }>;
+  reviewTaskId: string;
+  onStartMerge: (taskId: string) => void;
+}> = ({ reviewTaskId, onStartMerge, allTasks, userTask }) => {
+  const [selected, setSelected] = useState(() => allTasks.filter(t => t.id !== userTask.id).map(t => t.id as string));
+  const [isLoading, setIsLoading] = useState(false);
+  const { currentRevision } = Revisions.useStoreState(state => {
+    return {
+      currentRevision: state.currentRevision,
+    };
+  });
+  const deselectRevision = Revisions.useStoreActions(a => a.deselectRevision);
+  const api = useApi();
+
+  const startMergeApiCall = useCallback(() => {
+    if (currentRevision) {
+      setIsLoading(true);
+      api
+        .reviewPrepareMerge({
+          reviewTaskId: reviewTaskId,
+          revision: currentRevision,
+          toMerge: selected,
+          revisionTask: userTask.id,
+        })
+        .then(req => {
+          deselectRevision({ revisionId: currentRevision.revision.id });
+          setIsLoading(false);
+          onStartMerge(req.revision.id);
+        });
+    }
+  }, [api, currentRevision, deselectRevision, onStartMerge, reviewTaskId, selected]);
+
+  return (
+    <EditorToolbarButton
+      as={ModalButton}
+      button={true}
+      autoHeight={true}
+      title="Prepare merge"
+      render={() => (
+        <div>
+          <div>Merge the following submissions into the base</div>
+          <ul>
+            {allTasks.map(task =>
+              userTask.id === task.id ? null : (
+                <li key={task.id}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={selected.indexOf(task.id) !== -1}
+                      onChange={() => {
+                        setSelected(list => {
+                          if (list.indexOf(task.id) === -1) {
+                            return [...list, task.id];
+                          }
+                          return list.filter(t => t !== task.id);
+                        });
+                      }}
+                    />
+                    {task.creator?.name || task.name}{' '}
+                    {task.modified_at ? <ReactTimeago date={task.modified_at} /> : null}
+                  </label>
+                </li>
+              )
+            )}
+          </ul>
+        </div>
+      )}
+      renderFooter={({ close }: any) => (
+        <Button
+          style={{ marginLeft: 'auto' }}
+          disabled={selected.length === 0 || isLoading}
+          onClick={() => {
+            startMergeApiCall();
+            close();
+          }}
+        >
+          Start merge
+        </Button>
+      )}
+    >
+      <EditorToolbarIcon>
+        <CallMergeIcon />
+      </EditorToolbarIcon>
+      <EditorToolbarLabel>start merge</EditorToolbarLabel>
+    </EditorToolbarButton>
+  );
+};
+
 const PreviewCrowdsourcingTask: React.FC<{
   task: CrowdsourcingTask & { id: string };
   reviewTaskId: string;
   allRevisionIds: string[];
   allTaskIds: string[];
-  goBack: (props?: { refresh?: boolean }) => void | Promise<void>;
+  lockedTasks?: string[];
+  allTasks: Array<CrowdsourcingTask>;
+  goBack: (props?: { refresh?: boolean; revisionId?: string }) => void | Promise<void>;
 }> = props => {
   const [isEditing, setIsEditing] = useState(false);
   const api = useApi();
@@ -328,10 +389,13 @@ const PreviewCrowdsourcingTask: React.FC<{
 
   const modelId = taskData?.parameters[0];
 
-  const { captureModel, canvas } = useLoadedCaptureModel(modelId);
+  const [{ captureModel, canvas }] = useLoadedCaptureModel(modelId);
+
+  const isLocked = props.lockedTasks && props.lockedTasks.indexOf(props.task.id) !== -1;
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      {isLocked ? <WarningMessage>This task is locked, there is a merge in progress</WarningMessage> : null}
       <MaximiseWindow>
         {({ toggle, isOpen }) =>
           captureModel ? (
@@ -346,26 +410,37 @@ const PreviewCrowdsourcingTask: React.FC<{
 
                 <EditorToolbarSpacer />
 
-                <EditorToolbarButton onClick={() => setIsEditing(r => !r)}>
+                <EditorToolbarButton onClick={() => setIsEditing(r => !r)} disabled={isLocked}>
                   <EditorToolbarIcon>{isEditing ? <PreviewIcon /> : <EditIcon />}</EditorToolbarIcon>
                   <EditorToolbarLabel>{isEditing ? 'preview submission' : 'edit submission'}</EditorToolbarLabel>
                 </EditorToolbarButton>
 
-                <RejectSubmission userTaskId={props.task.id} onReject={() => props.goBack({ refresh: true })} />
+                {isLocked ? null : (
+                  <>
+                    <RejectSubmission userTaskId={props.task.id} onReject={() => props.goBack({ refresh: true })} />
 
-                <RequestChanges
-                  userTaskId={props.task.id}
-                  changesRequested={props.task.state?.changesRequested}
-                  onRequest={() => props.goBack({ refresh: true })}
-                />
+                    <RequestChanges
+                      userTaskId={props.task.id}
+                      changesRequested={props.task.state?.changesRequested}
+                      onRequest={() => props.goBack({ refresh: true })}
+                    />
 
-                <ApproveSubmission
-                  userTaskId={props.task.id}
-                  allRevisionIds={props.allRevisionIds}
-                  allUserTaskIds={props.allTaskIds}
-                  onApprove={() => props.goBack({ refresh: true })}
-                  reviewTaskId={props.reviewTaskId}
-                />
+                    <StartMerge
+                      allTasks={props.allTasks as any}
+                      reviewTaskId={props.reviewTaskId}
+                      userTask={props.task}
+                      onStartMerge={(revId: string) => props.goBack({ refresh: true, revisionId: revId })}
+                    />
+
+                    <ApproveSubmission
+                      userTaskId={props.task.id}
+                      allRevisionIds={props.allRevisionIds}
+                      allUserTaskIds={props.allTaskIds}
+                      onApprove={() => props.goBack({ refresh: true })}
+                      reviewTaskId={props.reviewTaskId}
+                    />
+                  </>
+                )}
 
                 <EditorToolbarButton onClick={toggle}>
                   <EditorToolbarIcon>{isOpen ? <FullScreenExitIcon /> : <FullScreenEnterIcon />}</EditorToolbarIcon>
