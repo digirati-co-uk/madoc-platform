@@ -1,6 +1,6 @@
 import { fetchJson } from './fetch-json';
 import { BaseTask } from '../gateway/tasks/base-task';
-import { CanvasNormalized, CollectionNormalized, ManifestNormalized } from '@hyperion-framework/types';
+import { CanvasNormalized, CollectionNormalized, Manifest, ManifestNormalized } from '@hyperion-framework/types';
 import { CreateCollection } from '../types/schemas/create-collection';
 import { CollectionListResponse } from '../types/schemas/collection-list';
 import { CollectionFull } from '../types/schemas/collection-full';
@@ -372,7 +372,7 @@ export class ApiClient {
     return this.request<{ manifests: number; canvases: number }>(`/api/madoc/iiif/collections/${id}/statistics`);
   }
 
-  async createManifest(manifest: Partial<ManifestNormalized>, source?: string, taskId?: string) {
+  async createManifest(manifest: Partial<Manifest>, source?: string, taskId?: string) {
     return this.request<{ id: number }, CreateManifest>(`/api/madoc/iiif/manifests`, {
       method: 'POST',
       body: {
