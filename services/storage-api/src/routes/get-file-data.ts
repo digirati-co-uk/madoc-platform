@@ -25,6 +25,9 @@ export const getFileData: RouteMiddleware<{ bucket: string; path: string }> = as
   context.body = await storage.getStream(`${rootBucket}/${bucket}/${filePath}`);
 
   switch (extension) {
+    case '.xml':
+      context.response.set('content-type', 'text/xml');
+      break;
     case '.txt':
       context.response.set('content-type', 'text/plain');
       break;

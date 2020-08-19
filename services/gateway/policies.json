@@ -12,6 +12,10 @@
       "8": {
         "api_id": "8",
         "versions": ["Default"]
+      },
+      "9": {
+        "api_id": "9",
+        "versions": ["Default"]
       }
     },
     "org_id": "default",

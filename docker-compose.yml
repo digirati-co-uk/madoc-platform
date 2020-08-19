@@ -8,7 +8,7 @@ services:
     environment:
       - TYK_GW_STORAGE_HOST=gateway-redis
       - TYK_GW_SECRET=${GATEWAY_SECRET}
-      - JWT_SERVICES=tasks-api,madoc-api,configuration-api
+      - JWT_SERVICES=tasks-api,madoc-api,configuration-api,storage-api
     ports:
       - "8888:8080"
     links:
@@ -19,8 +19,10 @@ services:
       - model-api
       - madoc-ts
       - config-service
+      - storage-api
     volumes:
       - ./services/gateway/gateway.conf:/opt/tyk-gateway/tyk.conf
+      - ./services/gateway/policies.json:/opt/tyk-gateway/policies/policies.json
       - ./var/certs:/openssl-certs
     depends_on:
       - certs
@@ -205,3 +207,10 @@ services:
     volumes:
       - ./configuration/schemas:/app/configurator/schemas
       - ./configuration/defaults:/app/configurator/default_config
+
+  storage-api:
+    build:
+      context: services/storage-api
+    volumes:
+      - ./services/storage-api/lib:/home/node/app/lib:delegated
+      - ./var/files/storage-api:/home/node/app/files

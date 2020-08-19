@@ -38,15 +38,30 @@ export class TypedRouter<
       switch (method) {
         case TypedRouter.PUT:
           // @ts-ignore
-          this.router.put(route, path, koaBody({ multipart: true, text: true }), func);
+          this.router.put(
+            route,
+            path,
+            koaBody({ multipart: true, text: true, includeUnparsed: true, json: true }),
+            func
+          );
           break;
         case TypedRouter.POST:
           // @ts-ignore
-          this.router.post(route, path, koaBody({ multipart: true, text: true }), func);
+          this.router.post(
+            route,
+            path,
+            koaBody({ multipart: true, text: true, includeUnparsed: true, json: true }),
+            func
+          );
           break;
         case TypedRouter.PATCH:
           // @ts-ignore
-          this.router.patch(route, path, koaBody({ multipart: true, text: true }), func);
+          this.router.patch(
+            route,
+            path,
+            koaBody({ multipart: true, text: true, includeUnparsed: true, json: true }),
+            func
+          );
           break;
         case TypedRouter.GET:
           // @ts-ignore
