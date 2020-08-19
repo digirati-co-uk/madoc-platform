@@ -37,19 +37,6 @@ export type ResourceLinkRow<ExtraProperties = any> = ResourceLink<ExtraPropertie
   properties?: ExtraProperties;
 };
 
-// function parseToLinks(inputLinks: any[]): Omit<ResourceLinkRow, 'id'>[] {
-//   const links: Omit<ResourceLinkRow, 'id'>[] = [];
-//
-//   for (const link of inputLinks) {
-//     if (link.uri && link.label) {
-//
-//     }
-//   }
-//
-//
-//   return links;
-// }
-
 export function getLinks({
   site_id,
   type,
