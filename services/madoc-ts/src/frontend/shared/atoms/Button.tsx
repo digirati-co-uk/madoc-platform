@@ -23,6 +23,11 @@ export const Button = styled.button`
   }
   &:disabled {
     opacity: 0.7;
+    cursor: not-allowed;
+    &:hover {
+      background: #4e82df;
+      border-color: #4e82df;
+    }
   }
 `;
 
@@ -34,18 +39,18 @@ export const SmallButton = styled(Button)`
 
 export const TinyButton = SmallButton;
 
-export const LinkButton = styled.button`
+export const LinkButton = styled.button<{ $inherit?: boolean }>`
   border: none;
   outline: none;
   background: transparent;
   margin: 0;
   padding: 0;
   font-size: inherit;
-  color: #5071f4;
+  color: ${props => (props.$inherit ? 'inherit' : '#5071f4')};
   text-decoration: underline;
   cursor: pointer;
   &:hover {
-    color: #42a0db;
+    color: ${props => (props.$inherit ? 'inherit' : '#42a0db')};
   }
 `;
 
