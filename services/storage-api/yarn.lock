@@ -182,10 +182,10 @@
   dependencies:
     debug "^4.1.1"
 
-"@slynova/flydrive@1.0.1-alpha.0":
-  version "1.0.1-alpha.0"
-  resolved "https://registry.yarnpkg.com/@slynova/flydrive/-/flydrive-1.0.1-alpha.0.tgz#935ffd6edf32f23365df01d07291a935d11f3018"
-  integrity sha512-gxm8ivrExXMXak8ywYK4DAxSnv/z2WpQXCOExyES2PB0FJDyOp6VUmpkHpsoopanI/vH6lLTGvyGxJUTvmywAw==
+"@slynova/flydrive@1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@slynova/flydrive/-/flydrive-1.0.2.tgz#d50664a3edd6249dec3ebe488bb3f37737426b1f"
+  integrity sha512-bQ2H6L9f8vYOw3mPZH/GHP7s1vvWfYtk3qVbm15coodo077oE+4wb2M143Kai+jH31sAPxYWHI3J2O7f0b1jng==
   dependencies:
     fs-extra "^9.0.0"
     node-exceptions "^4.0.1"
