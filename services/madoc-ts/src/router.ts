@@ -60,6 +60,10 @@ import { getSiteManifestStructure } from './routes/site/site-manifest-structure'
 import { userDetails } from './routes/user/details';
 import { sitePublishedModels } from './routes/site/site-published-models';
 import { personalAccessToken } from './routes/user/personal-access-token';
+import { addLinking } from './routes/iiif/linking/add-linking';
+import { deleteLinking } from './routes/iiif/linking/delete-linking';
+import { updateLinking } from './routes/iiif/linking/update-linking';
+import { getLinking } from './routes/iiif/linking/get-linking';
 
 export const router = new TypedRouter({
   // Normal route
@@ -97,6 +101,7 @@ export const router = new TypedRouter({
     '/api/madoc/iiif/collections/:id/statistics',
     getFlatCollectionStatistics,
   ],
+  'get-collection-linking': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/linking', getLinking],
 
   // Manifest API.
   'list-manifests': [TypedRouter.GET, '/api/madoc/iiif/manifests', listManifests],
@@ -120,6 +125,7 @@ export const router = new TypedRouter({
   ],
   'get-manifest-collections': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/collections', getManifestCollections],
   'get-manifest-autocomplete': [TypedRouter.GET, '/api/madoc/iiif/autocomplete/manifests', getManifestAutocomplete],
+  'get-manifest-linking': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/linking', getLinking],
 
   // Canvas API
   'list-canvases': [TypedRouter.GET, '/api/madoc/iiif/canvases', listCanvases],
@@ -128,10 +134,16 @@ export const router = new TypedRouter({
   'get-canvas-metadata': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/metadata', getCanvasMetadata],
   'put-canvas-metadata': [TypedRouter.PUT, '/api/madoc/iiif/canvases/:id/metadata', updateMetadata, 'MetadataUpdate'],
   'get-canvas-manifests': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/manifests', getCanvasManifests],
+  'get-canvas-linking': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/linking', getLinking],
 
   // Import API
   'import-manifest': [TypedRouter.POST, '/api/madoc/iiif/import/manifest', importManifest],
   'import-collection': [TypedRouter.POST, '/api/madoc/iiif/import/collection', importCollection],
+
+  // Linking API.
+  'add-linking': [TypedRouter.POST, '/api/madoc/iiif/linking', addLinking],
+  'delete-linking': [TypedRouter.DELETE, '/api/madoc/iiif/linking/:id', deleteLinking],
+  'update-linking': [TypedRouter.PUT, '/api/madoc/iiif/linking/:id', updateLinking],
 
   // Stats.
   'get-statistics': [TypedRouter.GET, '/api/madoc/iiif/statistics', statistics],
