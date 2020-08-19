@@ -42,10 +42,10 @@ export const FieldInstanceList: React.FC<{
   return (
     <div>
       <FieldHeader label={fields.length > 1 ? pluralLabel : label} />
-      {fields.map((field, idx) => {
+      {fields.map(field => {
         return (
           <RoundedCard
-            key={idx}
+            key={field.id}
             size="small"
             interactive={true}
             onClick={() => chooseField({ instance: field, property })}

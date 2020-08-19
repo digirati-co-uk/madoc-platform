@@ -29,7 +29,7 @@ export const FieldList: React.FC<{
         if (isEntityList(instances)) {
           const singleEntity = instances[0];
           return (
-            <div key={idx}>
+            <div key={singleEntity.id}>
               <FieldHeader
                 label={
                   instances.length > 1 && singleEntity.pluralLabel
@@ -49,7 +49,7 @@ export const FieldList: React.FC<{
         }
         return (
           <FieldInstanceList
-            key={idx}
+            key={instances[0].id}
             path={path}
             fields={instances}
             property={propertyId}

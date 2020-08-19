@@ -39,10 +39,10 @@ export const EntityInstanceList: React.FC<{
 
   return (
     <>
-      {entities.map((field, idx) => {
+      {entities.map(field => {
         return (
           <RoundedCard
-            key={idx}
+            key={field.id}
             interactive={true}
             onClick={() => chooseEntity({ instance: field, property })}
             onRemove={canRemove ? () => removeInstance({ path: [...path, [property, field.id]] }) : undefined}

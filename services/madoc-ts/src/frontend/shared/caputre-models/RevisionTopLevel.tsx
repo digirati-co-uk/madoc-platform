@@ -47,6 +47,7 @@ export const RevisionTopLevel: React.FC<{
   if (isPreviewing) {
     return (
       <RevisionPreview
+        key={current.revision.id}
         isSaving={isSaving}
         error={error}
         descriptionOfChange={current.revision.label || current.document.label || ''}
@@ -84,7 +85,7 @@ export const RevisionTopLevel: React.FC<{
 
   return (
     <>
-      <VerboseEntityPage title={current.revision.label} description={instructions} readOnly={readOnly}>
+      <VerboseEntityPage key={current.revision.id} title={current.revision.label} description={instructions} readOnly={readOnly}>
         {allowEdits ? (
           <CardButtonGroup>
             <CardButton onClick={() => deselectRevision({ revisionId: current.revision.id })}>Go back</CardButton>
