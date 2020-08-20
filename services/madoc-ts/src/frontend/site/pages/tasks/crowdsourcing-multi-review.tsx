@@ -12,12 +12,8 @@ import TimeAgo from 'react-timeago';
 import { createLink } from '../../../shared/utility/create-link';
 import { useLocationQuery } from '../../../shared/hooks/use-location-query';
 import { PreviewCrowdsourcingTask } from './preview-crowdsourcing-task.lazy';
-import { ApiClient } from '../../../../gateway/api';
-import { RevisionRequest } from '@capture-models/types';
 import { MergeCrowdsourcingTask } from './merge-crowdsourcing-task.lazy';
 import { WarningMessage } from '../../../shared/atoms/WarningMessage';
-import { Button } from '@storybook/react/demo';
-import { LinkButton } from '../../../shared/atoms/Button';
 
 // Step 1 - review each and wait for completion
 // Step 2 - request any changes on individual items or remove them

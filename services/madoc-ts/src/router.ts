@@ -66,6 +66,7 @@ import { updateLinking } from './routes/iiif/linking/update-linking';
 import { getLinking } from './routes/iiif/linking/get-linking';
 import { searchManifest } from './routes/iiif/manifests/search-manifest';
 import { exportManifest } from './routes/iiif/manifests/export-manifest';
+import { assignReview } from './routes/projects/assign-review';
 
 export const router = new TypedRouter({
   // Normal route
@@ -159,6 +160,7 @@ export const router = new TypedRouter({
   'update-project-metadata': [TypedRouter.PUT, '/api/madoc/projects/:id/metadata', updateProjectMetadata],
   'create-project-resource-claim': [TypedRouter.POST, '/api/madoc/projects/:id/claim', createResourceClaim],
   'update-project-resource-claim': [TypedRouter.POST, '/api/madoc/projects/:id/claim/:claimId', updateResourceClaim],
+  'assign-review': [TypedRouter.POST, '/api/madoc/projects/:id/reviews', assignReview],
 
   // Omeka routes
   'get-login': [TypedRouter.GET, '/s/:slug/madoc/login', loginPage],
