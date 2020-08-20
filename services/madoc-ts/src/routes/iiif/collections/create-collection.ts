@@ -2,6 +2,8 @@ import { sql } from 'slonik';
 import { userWithScope } from '../../../utility/user-with-scope';
 import { CreateCollection } from '../../../types/schemas/create-collection';
 import { RouteMiddleware } from '../../../types/route-middleware';
+import { extractLinks } from '../../../utility/extract-links';
+import { addLinks } from '../../../database/queries/linking-queries';
 
 export const createCollection: RouteMiddleware<{}, CreateCollection> = async context => {
   const { siteId, userUrn } = userWithScope(context, ['site.admin']);
@@ -19,6 +21,16 @@ export const createCollection: RouteMiddleware<{}, CreateCollection> = async con
     await context.connection.query(sql`
       update iiif_derived_resource set flat = true where id = ${derived_id}
     `);
+  }
+
+  try {
+    // Links.
+    const links = addLinks(extractLinks(body.collection, 'iiif'), canonical_id, siteId);
+    if (links) {
+      await context.connection.query(links);
+    }
+  } catch (err) {
+    console.log(err);
   }
 
   context.response.body = { id: canonical_id };

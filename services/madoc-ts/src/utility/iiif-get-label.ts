@@ -1,8 +1,12 @@
 import { InternationalString } from '@hyperion-framework/types';
 
-export function iiifGetLabel(label: InternationalString | null, defaultLabel = 'Untitled') {
+export function iiifGetLabel(label: string | InternationalString | null, defaultLabel = 'Untitled') {
   if (!label) {
     return defaultLabel;
+  }
+
+  if (typeof label === 'string') {
+    return label;
   }
 
   const langs = Object.keys(label);
