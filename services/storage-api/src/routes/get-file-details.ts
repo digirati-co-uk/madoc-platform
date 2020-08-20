@@ -21,5 +21,16 @@ export const getFileDetails: RouteMiddleware = async context => {
 
   const { size, modified } = await storage.getStat(`${rootBucket}/${bucket}/${filePath}`);
 
-  context.response.body = { size, modified, public: filePath.startsWith('public/') };
+  const isPublic = filePath.startsWith('public/');
+
+  if (isPublic) {
+    context.response.body = {
+      size,
+      modified,
+      public: true,
+      public_url: `/public/storage/${rootBucket}/${bucket}/${filePath}`,
+    };
+  } else {
+    context.response.body = { size, modified, public: filePath.startsWith('public/') };
+  }
 };

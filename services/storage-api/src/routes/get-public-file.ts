@@ -5,16 +5,11 @@ import { NotFound } from '../errors/not-found';
 import path from 'path';
 
 export const getPublicFile: RouteMiddleware<{ bucket: string; path: string; rootBucket: string }> = async context => {
-
-  console.log('public get?');
-
   const storage = context.storage.disk('local');
 
   const bucket = context.params.bucket;
   const filePath = context.params.path;
   const rootBucket = context.params.rootBucket;
-
-  console.log({bucket, filePath, rootBucket});
 
   if (bucket.indexOf('..') !== -1 || filePath.indexOf('..') !== -1) {
     throw new NotFound('File not found');
