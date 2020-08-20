@@ -18,6 +18,25 @@ export type ResourceLink<ExtraProperties = any> = {
   properties?: ExtraProperties;
 };
 
+export type ResourceLinkResponse<T = { [key: string]: any }> = {
+  id: number;
+  resource_id: number;
+  property: string;
+  source?: string;
+  link: {
+    id: string;
+    label: string;
+    type?: string;
+    format?: string;
+    motivation?: string;
+  } & T;
+  file?: {
+    path: string;
+    bucket: string;
+    hash?: string;
+  };
+};
+
 export type ResourceLinkRow<ExtraProperties = any> = ResourceLink<ExtraProperties> & {
   id: number;
   uri: string;
@@ -36,6 +55,31 @@ export type ResourceLinkRow<ExtraProperties = any> = ResourceLink<ExtraPropertie
   format?: string;
   properties?: ExtraProperties;
 };
+
+export function mapLink<T = any>(inputLink: ResourceLinkRow<T>): ResourceLinkResponse<T> {
+  return {
+    id: inputLink.id,
+    resource_id: inputLink.resource_id,
+    source: inputLink.source || undefined,
+    property: inputLink.property,
+    link: {
+      id: inputLink.uri,
+      type: inputLink.type || undefined,
+      label: inputLink.label,
+      format: inputLink.format || undefined,
+      motivation: inputLink.motivation || undefined,
+      ...((inputLink.properties as any) || {}),
+    },
+    file:
+      inputLink.file_path && inputLink.file_bucket
+        ? {
+            bucket: inputLink.file_bucket,
+            hash: inputLink.file_hash,
+            path: inputLink.file_path,
+          }
+        : undefined,
+  };
+}
 
 export function getLinks({
   site_id,

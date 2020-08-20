@@ -1,5 +1,5 @@
 import { RouteMiddleware } from '../../../types/route-middleware';
-import { getLinks } from '../../../database/queries/linking-queries';
+import { getLinks, mapLink } from '../../../database/queries/linking-queries';
 import { optionalUserWithScope } from '../../../utility/user-with-scope';
 
 export const getLinking: RouteMiddleware<{ id: string }> = async context => {
@@ -22,6 +22,6 @@ export const getLinking: RouteMiddleware<{ id: string }> = async context => {
 
   // Returns some linking.
   context.response.body = {
-    linking: links,
+    linking: links.map(mapLink),
   };
 };
