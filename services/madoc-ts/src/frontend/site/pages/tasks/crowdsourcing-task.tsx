@@ -18,7 +18,6 @@ import { ViewContent } from '../../../shared/components/ViewContent';
 import { CrowdsourcingTask } from '../../../../types/tasks/crowdsourcing-task';
 import { TaskContext } from '../loaders/task-loader';
 import { createLink } from '../../../shared/utility/create-link';
-import { ErrorMessage } from '../../../shared/atoms/ErrorMessage';
 
 const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task }) => {
   const api = useApi();
