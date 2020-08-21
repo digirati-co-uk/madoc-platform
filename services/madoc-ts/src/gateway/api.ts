@@ -695,6 +695,26 @@ export class ApiClient {
     return this.request<Task & { id: string }>(`/api/tasks/${id}?${stringify({ page, all, assignee })}`);
   }
 
+  async assignUserToTask(id: string, user: { id: string; name?: string }) {
+    return this.updateTask(id, {
+      assignee: user,
+      status: 1,
+      status_text: 'accepted',
+    });
+  }
+
+  async assignUserToReview(projectId: string | number, reviewId: string) {
+    return this.request<{ user: { id: number; name: string }; reason: string }>(
+      `/api/madoc/projects/${projectId}/reviews`,
+      {
+        method: 'POST',
+        body: {
+          task_id: reviewId,
+        },
+      }
+    );
+  }
+
   async getTasksByStatus<Task extends BaseTask>(status: number) {
     return this.request<{ tasks: Task[] }>(`/api/tasks/?status=${status}`);
   }
