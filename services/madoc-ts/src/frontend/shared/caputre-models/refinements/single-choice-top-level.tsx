@@ -19,6 +19,7 @@ registerRefinement({
           currentView.type === 'model' && currentView.instructions ? currentView.instructions : currentView.description
         }
         readOnly={context.readOnly || false}
+        allowEdits={(context as any).allowEdits}
       />
     );
   },

@@ -61,7 +61,7 @@ export const ViewProject: React.FC<{
         done={project.statistics['3'] || 0}
         progress={(project.statistics['2'] || 0) + (project.statistics['1'] || 0)}
       />
-      {allowManifestNavigation ? (
+      {allowManifestNavigation && manifests.collection.items.length ? (
         <>
           <Heading3>Manifests</Heading3>
           <ImageGrid>
@@ -90,12 +90,12 @@ export const ViewProject: React.FC<{
           </ImageGrid>
         </>
       ) : null}
-      {allowCollectionNavigation ? (
+      {allowCollectionNavigation && shownCollections.length ? (
         <>
           <Heading3>Collections</Heading3>
           <ImageGrid>
             {shownCollections.map((collection, idx) => (
-              <CollectionSnippet key={idx} id={collection.id} />
+              <CollectionSnippet key={idx} id={collection.id} projectId={project.slug} />
             ))}
           </ImageGrid>
           {shownCollections.length <= collections.collection.items.length ? (

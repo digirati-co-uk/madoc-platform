@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { CrowdsourcingReviewMerge } from '../../../../gateway/tasks/crowdsourcing-review';
 import { useApi } from '../../../shared/hooks/use-api';
-import { useMutation, useQuery } from 'react-query';
+import { useQuery } from 'react-query';
 import { CrowdsourcingTask } from '../../../../types/tasks/crowdsourcing-task';
 import { useLoadedCaptureModel } from '../../../shared/hooks/use-loaded-capture-model';
 import { ThemeProvider } from 'styled-components';
@@ -24,156 +24,13 @@ import { ModalButton } from '../../../shared/components/Modal';
 import { Button, LinkButton } from '../../../shared/atoms/Button';
 import { ArrowForwardIcon } from '../../../shared/icons/ArrowForwardIcon';
 import { CompareIcon } from '../../../shared/icons/CompareIcon';
-import { DeleteForeverIcon } from '../../../shared/icons/DeleteForeverIcon';
-import { GradingIcon } from '../../../shared/icons/GradingIcon';
 import { WarningMessage } from '../../../shared/atoms/WarningMessage';
 import { TableContainer, TableRow, TableRowLabel } from '../../../shared/atoms/Table';
 import TimeAgo from 'react-timeago';
 import { Heading3 } from '../../../shared/atoms/Heading3';
-
-const SaveChanges: React.FC<{ mergeId: string; onSave: () => Promise<void> | void }> = ({ mergeId, onSave }) => {
-  const api = useApi();
-  const store = Revisions.useStore();
-  const [isSaved, setIsSaved] = useState(false);
-
-  const [saveRevision, { status: savingStatus }] = useMutation(async () => {
-    const state = store.getState();
-    const revisionRequest = state.revisions[mergeId];
-    if (revisionRequest) {
-      await api.reviewMergeSave(revisionRequest);
-      await onSave();
-    }
-  }, {});
-
-  useEffect(() => {
-    if (savingStatus === 'success') {
-      setIsSaved(true);
-      setTimeout(() => {
-        setIsSaved(false);
-      }, 2000);
-    }
-  }, [savingStatus]);
-
-  return (
-    <EditorToolbarButton onClick={() => saveRevision()} disabled={savingStatus === 'loading'}>
-      <EditorToolbarIcon>
-        <CompareIcon />
-      </EditorToolbarIcon>
-      <EditorToolbarLabel>{isSaved ? 'Saved!' : 'Save changes'}</EditorToolbarLabel>
-    </EditorToolbarButton>
-  );
-};
-
-const DiscardMerge: React.FC<{ merge: CrowdsourcingReviewMerge; reviewTaskId: string; onDiscard: () => void }> = ({
-  merge,
-  reviewTaskId,
-  onDiscard,
-}) => {
-  const api = useApi();
-  const store = Revisions.useStore();
-  const [discardMerge, { status }] = useMutation(async () => {
-    const state = store.getState();
-    const revisionRequest = state.revisions[merge.mergeId];
-    await api.reviewMergeDiscard({
-      merge,
-      revision: revisionRequest,
-      reviewTaskId,
-    });
-    onDiscard();
-  });
-
-  return (
-    <EditorToolbarButton
-      as={ModalButton}
-      button={true}
-      autoHeight={true}
-      title="Discard merge"
-      render={() => (
-        <div>
-          <strong>Are you sure you want to delete this revision?</strong>
-          <ul>
-            <li>This will not remove the original base revision you started from</li>
-            <li>Any changes you have made will be removed</li>
-          </ul>
-        </div>
-      )}
-      renderFooter={({ close }: any) => (
-        <Button
-          style={{ marginLeft: 'auto' }}
-          disabled={status === 'loading'}
-          onClick={() => {
-            discardMerge().then(() => {
-              close();
-            });
-          }}
-        >
-          Discard changes
-        </Button>
-      )}
-    >
-      <EditorToolbarIcon>
-        <DeleteForeverIcon />
-      </EditorToolbarIcon>
-      <EditorToolbarLabel>Discard merge</EditorToolbarLabel>
-    </EditorToolbarButton>
-  );
-};
-
-const PublishMerge: React.FC<{
-  merge: CrowdsourcingReviewMerge;
-  toMergeRevisionIds: string[];
-  toMergeTaskIds: string[];
-  reviewTaskId: string;
-  onPublish: () => void;
-}> = ({ merge, reviewTaskId, toMergeTaskIds, toMergeRevisionIds, onPublish }) => {
-  const api = useApi();
-  const store = Revisions.useStore();
-  const [publishMerge, { status }] = useMutation(async () => {
-    const state = store.getState();
-    const revisionRequest = state.revisions[merge.mergeId];
-    await api.reviewMergeApprove({
-      revision: revisionRequest,
-      reviewTaskId,
-      toMergeRevisionIds,
-      toMergeTaskIds,
-      merge,
-    });
-    onPublish();
-  });
-
-  return (
-    <EditorToolbarButton
-      as={ModalButton}
-      button={true}
-      autoHeight={true}
-      title="Approve submission"
-      render={() => (
-        <div>
-          <ul>
-            <li>All of the revisions in the merge will be marked as approved</li>
-            <li>The new merged revision will be published</li>
-          </ul>
-        </div>
-      )}
-      renderFooter={({ close }: any) => (
-        <Button
-          disabled={status === 'loading'}
-          style={{ marginLeft: 'auto' }}
-          onClick={() => {
-            publishMerge().then(() => close());
-          }}
-        >
-          Approve
-        </Button>
-      )}
-    >
-      <EditorToolbarIcon>
-        <GradingIcon />
-      </EditorToolbarIcon>
-      <EditorToolbarLabel>Publish merge</EditorToolbarLabel>
-    </EditorToolbarButton>
-  );
-};
+import { SaveMergeChanges } from './actions/save-merge-changes';
+import { DiscardMerge } from './actions/discard-merge';
+import { PublishMerge } from './actions/publish-merge';
 
 const MergeCrowdsourcingTask: React.FC<{
   merge: CrowdsourcingReviewMerge;
@@ -342,20 +199,13 @@ const MergeCrowdsourcingTask: React.FC<{
 
                 <EditorToolbarSpacer />
 
-                <SaveChanges
+                <SaveMergeChanges
                   mergeId={merge.mergeId}
                   onSave={async () => {
                     await refetch({ force: true });
                     await refetchModel({ force: true });
                   }}
                 />
-
-                <EditorToolbarButton>
-                  <EditorToolbarIcon>
-                    <CompareIcon />
-                  </EditorToolbarIcon>
-                  <EditorToolbarLabel>Diff view</EditorToolbarLabel>
-                </EditorToolbarButton>
 
                 <DiscardMerge
                   merge={merge}
@@ -394,6 +244,7 @@ const MergeCrowdsourcingTask: React.FC<{
                     </WarningMessage>
                   ) : null}
                   <RevisionTopLevel
+                    allowNavigation={false}
                     allowEdits={false}
                     onSaveRevision={async rev => {
                       console.log(rev);

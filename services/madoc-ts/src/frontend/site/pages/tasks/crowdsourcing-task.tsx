@@ -18,11 +18,32 @@ import { ViewContent } from '../../../shared/components/ViewContent';
 import { CrowdsourcingTask } from '../../../../types/tasks/crowdsourcing-task';
 import { TaskContext } from '../loaders/task-loader';
 import { createLink } from '../../../shared/utility/create-link';
+import {
+  EditorToolbarButton,
+  EditorToolbarContainer,
+  EditorToolbarIcon,
+  EditorToolbarLabel,
+  EditorToolbarSpacer,
+  EditorToolbarTitle,
+} from '../../../shared/atoms/EditorToolbar';
+import { ArrowBackIcon } from '../../../shared/icons/ArrowBackIcon';
+import { HrefLink } from '../../../shared/utility/href-link';
+import { PreviewIcon } from '../../../shared/icons/PreviewIcon';
+import { EditIcon } from '../../../shared/icons/EditIcon';
+import { MaximiseWindow } from '../../../shared/atoms/MaximiseWindow';
+import { FullScreenExitIcon } from '../../../shared/icons/FullScreenExitIcon';
+import { FullScreenEnterIcon } from '../../../shared/icons/FullScreenEnterIcon';
+import { WarningMessage } from '../../../shared/atoms/WarningMessage';
+import { ErrorMessage } from '../../../shared/atoms/ErrorMessage';
 
 const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task }) => {
   const api = useApi();
   const project = useProjectByTask(task);
   const [isVertical, setIsVertical] = useState(false);
+
+  const isComplete = task.status === 3;
+  const isSubmitted = task.status === 2;
+  const wasRejected = task.status === -1;
 
   const { data: captureModel } = useQuery(
     ['capture-model', { id: task.parameters[0] }],
@@ -96,55 +117,87 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task 
           </div>
         ) : null}
 
-        {captureModel ? (
-          <Revisions.Provider captureModel={captureModel}>
-            <CaptureModelHeader />
-            <div style={{ display: 'flex', flexDirection: isVertical ? 'column' : 'row' }}>
-              <div style={{ width: isVertical ? '100%' : '67%' }}>
-                {resource && resource.canvas ? (
-                  <ViewContent target={captureModel.target as any} canvas={resource.canvas} />
-                ) : null}
-              </div>
-              <div style={{ width: isVertical ? '100%' : '33%', padding: '1em' }}>
-                <CaptureModelEditor
-                  captureModel={captureModel}
-                  onSave={async (response, status) => {
-                    if (!task.id || !project) return;
+        {isComplete ? (
+          <WarningMessage>
+            This task is complete, you can make another contribution from the{' '}
+            {backLink ? <Link to={backLink}>Image page</Link> : 'Image page'}
+          </WarningMessage>
+        ) : null}
 
-                    if (status === 'draft') {
-                      await api.saveResourceClaim(project.id, task.id, {
-                        status: 1,
-                        revisionId: response.revision.id,
-                      });
-                    } else if (status === 'submitted') {
-                      await api.saveResourceClaim(project.id, task.id, {
-                        status: 2,
-                        revisionId: response.revision.id,
-                      });
-                    }
-                    await queryCache.refetchQueries(['task', { id: task.id }]);
-                  }}
-                />
-              </div>
-            </div>
-          </Revisions.Provider>
-        ) : (
-          'loading...'
-        )}
-        <Button onClick={() => setIsVertical(v => !v)}>Switch layout</Button>
-        <div style={{ padding: '1px 20px', margin: '20px 0', background: '#eee' }}>
-          <Heading3>{task.name}</Heading3>
-          <p>{task.description}</p>
-          <Status status={task.status} text={task.status_text || ''} />
-          {project ? (
-            <div>
-              <Link to={`/projects/${project.id}`}>
-                <LocaleString as="h4">{project.label}</LocaleString>
-              </Link>
-              <LocaleString as="p">{project.summary}</LocaleString>
-            </div>
-          ) : null}
-        </div>
+        {wasRejected ? (
+          <ErrorMessage>
+            This contribution was rejected , you can make another contribution from the{' '}
+            {backLink ? <Link to={backLink}>Image page</Link> : 'Image page'}
+          </ErrorMessage>
+        ) : null}
+
+        {isSubmitted ? <WarningMessage>Your submissions is in review.</WarningMessage> : null}
+
+        <MaximiseWindow>
+          {({ toggle, isOpen }) =>
+            captureModel ? (
+              <Revisions.Provider captureModel={captureModel}>
+                <EditorToolbarContainer>
+                  <EditorToolbarButton as={HrefLink} href={backLink}>
+                    <EditorToolbarIcon>
+                      <ArrowBackIcon />
+                    </EditorToolbarIcon>
+                  </EditorToolbarButton>
+                  <EditorToolbarTitle>
+                    <CaptureModelHeader />
+                  </EditorToolbarTitle>
+                  <EditorToolbarSpacer />
+
+                  <EditorToolbarButton onClick={() => setIsVertical(r => !r)}>
+                    <EditorToolbarIcon>
+                      <PreviewIcon />
+                    </EditorToolbarIcon>
+                    <EditorToolbarLabel>Switch layout</EditorToolbarLabel>
+                  </EditorToolbarButton>
+                  <EditorToolbarButton onClick={toggle}>
+                    <EditorToolbarIcon>{isOpen ? <FullScreenExitIcon /> : <FullScreenEnterIcon />}</EditorToolbarIcon>
+                  </EditorToolbarButton>
+                </EditorToolbarContainer>
+                <div style={{ display: 'flex', flexDirection: isVertical ? 'column' : 'row' }}>
+                  <div style={{ width: isVertical ? '100%' : '67%' }}>
+                    {resource && resource.canvas ? (
+                      <ViewContent
+                        key={`${isVertical ? 'y' : 'n'}${isOpen ? 'y' : 'n'}`}
+                        target={captureModel.target as any}
+                        canvas={resource.canvas}
+                      />
+                    ) : null}
+                  </div>
+                  <div style={{ width: isVertical ? '100%' : '33%', padding: '1em' }}>
+                    <CaptureModelEditor
+                      readOnly={isComplete || wasRejected || isSubmitted}
+                      allowEdits={!isComplete && !wasRejected && !isSubmitted}
+                      captureModel={captureModel}
+                      onSave={async (response, status) => {
+                        if (!task.id || !project) return;
+
+                        if (status === 'draft') {
+                          await api.saveResourceClaim(project.id, task.id, {
+                            status: 1,
+                            revisionId: response.revision.id,
+                          });
+                        } else if (status === 'submitted') {
+                          await api.saveResourceClaim(project.id, task.id, {
+                            status: 2,
+                            revisionId: response.revision.id,
+                          });
+                        }
+                        await queryCache.refetchQueries(['task', { id: task.id }]);
+                      }}
+                    />
+                  </div>
+                </div>
+              </Revisions.Provider>
+            ) : (
+              'loading...'
+            )
+          }
+        </MaximiseWindow>
       </div>
     </ThemeProvider>
   );

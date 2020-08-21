@@ -85,7 +85,8 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
   }
 
   const waiting = data.tasks.filter(t => t.status <= 1 || t.status === 4);
-  const ready = data.tasks.filter(t => t.status > 1 && t.status !== 4);
+  const ready = data.tasks.filter(t => t.status > 1 && t.status !== 4 && t.state.reviewTask === reviewTask.id);
+  const otherReviews = data.tasks.filter(t => t.state.reviewTask !== reviewTask.id);
   const allRevisionIds = ready.map(task => task.state.revisionId as string);
   const allTaskIds = ready.map(task => task.id as string);
 
@@ -144,7 +145,7 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
                     <strong>{task.assignee?.name}</strong>
                   </TableRowLabel>
                   <TableRowLabel>
-                    {task.status > 0 ? (
+                    {task.status > 0 && task.state.reviewTask === reviewTask.id ? (
                       <Link to={createLink({ projectId: slug, taskId: reviewTask.id, query: { preview: task.id } })}>
                         {task.name}
                       </Link>
@@ -177,7 +178,42 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
                     <strong>{task.assignee?.name}</strong>
                   </TableRowLabel>
                   <TableRowLabel>
-                    <Link to={createLink({ projectId: slug, taskId: reviewTask.id, query: { preview: task.id } })}>
+                    {task.state.reviewTask === reviewTask.id ? (
+                      <Link to={createLink({ projectId: slug, taskId: reviewTask.id, query: { preview: task.id } })}>
+                        {task.name}
+                      </Link>
+                    ) : (
+                      task.name
+                    )}
+                  </TableRowLabel>
+                  {task.modified_at ? (
+                    <TableRowLabel>
+                      <TimeAgo date={task.modified_at} />
+                    </TableRowLabel>
+                  ) : null}
+                </TableRow>
+              ))
+            ) : (
+              <TableEmpty>None ready</TableEmpty>
+            )}
+          </TableContainer>
+        </HalfGird>
+      </GridContainer>
+      <GridContainer>
+        <HalfGird>
+          <Subheading3>Previously reviewed</Subheading3>
+          <TableContainer>
+            {otherReviews.length ? (
+              otherReviews.map(task => (
+                <TableRow key={task.id}>
+                  <TableRowLabel>
+                    <Status status={task.status} text={task.status_text} />
+                  </TableRowLabel>
+                  <TableRowLabel>
+                    <strong>{task.assignee?.name}</strong>
+                  </TableRowLabel>
+                  <TableRowLabel>
+                    <Link to={createLink({ projectId: slug, taskId: task.state.reviewTask })}>
                       {task.name}
                     </Link>
                   </TableRowLabel>
