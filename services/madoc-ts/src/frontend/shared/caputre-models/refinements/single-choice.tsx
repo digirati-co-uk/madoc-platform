@@ -20,7 +20,7 @@ const SingleChoice: React.FC<any> = ({ navigation, actions }) => {
   }, [actions, currentView.id]);
 
   if (currentView.type === 'model') {
-    return <RevisionChoicePage model={currentView} />;
+    return <RevisionChoicePage model={currentView} allowEdits={actions.allowEdits} />;
   }
 
   return <Choice choice={currentView} onChoice={push} showBackButton={false} onBackButton={pop} />;
@@ -33,6 +33,6 @@ registerRefinement({
     return !currentRevisionId && structure.type === 'choice' && structure.items.length === 1;
   },
   refine(navigation, actions) {
-    return <SingleChoice navigation={navigation} acionts={actions} />;
+    return <SingleChoice navigation={navigation} actions={actions} />;
   },
 });

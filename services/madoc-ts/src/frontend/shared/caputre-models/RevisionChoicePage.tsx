@@ -3,10 +3,12 @@ import { RevisionList } from './RevisionList';
 import { StructureType } from '@capture-models/types';
 import React from 'react';
 
-export const RevisionChoicePage: React.FC<{ model: StructureType<'model'>; goBack?: () => void }> = ({
-  model,
-  goBack,
-}) => {
+export const RevisionChoicePage: React.FC<{
+  model: StructureType<'model'>;
+  goBack?: () => void;
+  allowEdits?: boolean;
+  readOnly?: boolean;
+}> = ({ model, goBack, allowEdits, readOnly }) => {
   const revisions = useChoiceRevisions(model.id);
   const selectRevision = Revisions.useStoreActions(a => a.selectRevision);
   const createRevision = Revisions.useStoreActions(a => a.createRevision);
@@ -20,6 +22,7 @@ export const RevisionChoicePage: React.FC<{ model: StructureType<'model'>; goBac
       selectRevision={selectRevision}
       createRevision={createRevision}
       unsavedIds={unsavedIds}
+      allowEdits={allowEdits}
     />
   );
 };

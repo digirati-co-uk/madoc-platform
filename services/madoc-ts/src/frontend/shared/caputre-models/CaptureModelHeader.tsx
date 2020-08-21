@@ -2,11 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Revisions } from '@capture-models/editor';
 
-const HeaderBackground = styled.div`
-  background: #333;
-  padding: 1em;
-  color: #fff;
-`;
+const HeaderBackground = styled.div``;
 
 export const CaptureModelHeader: React.FC = () => {
   const currentRevision = Revisions.useStoreState(s => s.currentRevision);

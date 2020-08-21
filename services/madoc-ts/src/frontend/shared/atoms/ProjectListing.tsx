@@ -6,12 +6,12 @@ import { useTranslation } from 'react-i18next';
 import { HrefLink } from '../utility/href-link';
 import { ProjectSnippet } from '../../../types/schemas/project-snippet';
 
-const ProjectListingContainer = styled.div`
+export const ProjectListingContainer = styled.div`
   display: flex;
   flex-direction: column;
 `;
 
-const ProjectListingTitle = styled.div`
+export const ProjectListingTitle = styled.div`
   font-size: 1.2em;
   margin-bottom: 0.5em;
   a {
@@ -19,12 +19,12 @@ const ProjectListingTitle = styled.div`
   }
 `;
 
-const ProjectListingDescription = styled.div`
+export const ProjectListingDescription = styled.div`
   font-size: 0.85em;
   margin-bottom: 1em;
 `;
 
-const ProjectListingItem = styled.div`
+export const ProjectListingItem = styled.div`
   background: #eee;
   padding: 1em;
   & ~ & {
