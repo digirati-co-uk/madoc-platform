@@ -64,6 +64,8 @@ import { addLinking } from './routes/iiif/linking/add-linking';
 import { deleteLinking } from './routes/iiif/linking/delete-linking';
 import { updateLinking } from './routes/iiif/linking/update-linking';
 import { getLinking } from './routes/iiif/linking/get-linking';
+import { searchManifest } from './routes/iiif/manifests/search-manifest';
+import { exportManifest } from './routes/iiif/manifests/export-manifest';
 
 export const router = new TypedRouter({
   // Normal route
@@ -182,6 +184,9 @@ export const router = new TypedRouter({
   'site-topic-type': [TypedRouter.GET, '/s/:slug/madoc/api/topics/:type', siteTopicType],
   'site-topic-types': [TypedRouter.GET, '/s/:slug/madoc/api/topics', siteTopicTypes],
   'site-published-models': [TypedRouter.GET, '/s/:slug/madoc/api/canvases/:id/models', sitePublishedModels],
+  // To be worked into API calling methods
+  'manifest-search': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/search/1.0', searchManifest],
+  'manifest-export': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/export/source', exportManifest],
 
   // PAT
   'personal-access-token': [TypedRouter.POST, '/api/madoc/access-token', personalAccessToken],

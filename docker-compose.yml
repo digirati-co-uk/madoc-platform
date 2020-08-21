@@ -93,6 +93,7 @@ services:
       - OMEKA__URL=http://madoc
       - REDIS_HOST=gateway-redis
       - API_GATEWAY=http://gateway:8080
+      - GATEWAY_HOST=${GATEWAY_HOST}
       - OMEKA_FILE_DIRECTORY=/home/node/app/omeka-files
       - MIGRATE=true
     ports:

@@ -31,6 +31,8 @@ import { ProjectListItem } from '../types/schemas/project-list-item';
 import { ProjectFull } from '../types/schemas/project-full';
 import { UserDetails } from '../types/schemas/user-details';
 import { CrowdsourcingReview } from './tasks/crowdsourcing-review';
+import { ModelSearch } from '../types/schemas/search';
+
 
 export class ApiClient {
   private readonly gateway: string;
@@ -522,6 +524,27 @@ export class ApiClient {
       method: 'PUT',
       body: captureModel,
     });
+  }
+
+  async searchPublishedModelFields(
+    target: { canvas?: string; manifest?: string; collection?: string },
+    query: string,
+    filters: {
+      field_type?: string;
+      selector_type?: string;
+      parent_property?: string;
+      capture_model_id?: string;
+    }
+  ) {
+    const queryString = {
+      ...target,
+      q: query,
+      ...filters,
+    };
+
+    return this.request<{
+      results: ModelSearch[];
+    }>(`/api/crowdsourcing/search/published?${stringify(queryString)}`);
   }
 
   async createCaptureModel(label: string) {
