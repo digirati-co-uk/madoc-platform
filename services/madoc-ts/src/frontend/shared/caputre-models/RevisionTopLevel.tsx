@@ -8,9 +8,10 @@ import { ThankYouPage } from './ThankYouPage';
 export const RevisionTopLevel: React.FC<{
   readOnly: boolean;
   allowEdits?: boolean;
+  allowNavigation?: boolean;
   instructions?: string;
   onSaveRevision: (req: RevisionRequest, status?: string) => Promise<void>;
-}> = ({ readOnly, instructions, onSaveRevision, allowEdits = true }) => {
+}> = ({ readOnly, instructions, onSaveRevision, allowEdits = true, allowNavigation = true }) => {
   const {
     setIsThankYou,
     setIsPreviewing,
@@ -85,7 +86,12 @@ export const RevisionTopLevel: React.FC<{
 
   return (
     <>
-      <VerboseEntityPage key={current.revision.id} title={current.revision.label} description={instructions} readOnly={readOnly}>
+      <VerboseEntityPage
+        key={current.revision.id}
+        title={current.revision.label}
+        description={instructions}
+        readOnly={readOnly}
+      >
         {allowEdits ? (
           <CardButtonGroup>
             <CardButton onClick={() => deselectRevision({ revisionId: current.revision.id })}>Go back</CardButton>
@@ -99,6 +105,8 @@ export const RevisionTopLevel: React.FC<{
               <CardButton onClick={() => setIsPreviewing(true)}>Publish</CardButton>
             )}
           </CardButtonGroup>
+        ) : allowNavigation ? (
+          <CardButton onClick={() => deselectRevision({ revisionId: current.revision.id })}>Go back</CardButton>
         ) : null}
       </VerboseEntityPage>
     </>

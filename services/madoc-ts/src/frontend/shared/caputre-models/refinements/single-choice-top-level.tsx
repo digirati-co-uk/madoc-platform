@@ -11,6 +11,7 @@ registerRefinement({
   },
   refine(subject, context) {
     const currentView = (subject.instance as StructureType<'choice'>).items[0];
+    console.log({ context })
     return (
       <RevisionTopLevel
         onSaveRevision={context.onSaveRevision}

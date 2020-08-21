@@ -8,7 +8,9 @@ import { RevisionNavigation } from './RevisionNavigation';
 export const CaptureModelEditor: React.FC<{
   captureModel: CaptureModel;
   onSave: (req: RevisionRequest, status?: string) => void;
-}> = ({ captureModel, onSave }) => {
+  readOnly?: boolean;
+  allowEdits?: boolean;
+}> = ({ captureModel, readOnly, allowEdits, onSave }) => {
   const api = useApi();
   const persistRevision = Revisions.useStoreActions(a => a.persistRevision);
 
@@ -30,6 +32,8 @@ export const CaptureModelEditor: React.FC<{
   return (
     <RevisionNavigation
       structure={captureModel.structure}
+      readOnly={readOnly}
+      allowEdits={allowEdits}
       onSaveRevision={(rev, status) => {
         return persistRevision({
           createRevision: (req, s) => {

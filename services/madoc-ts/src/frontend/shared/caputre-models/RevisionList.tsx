@@ -19,6 +19,8 @@ export type RevisionListProps = {
     readMode?: boolean;
     modelMapping?: { [key: string]: string };
   }) => void;
+  allowEdits?: boolean;
+  readonly?: boolean;
 };
 
 export const RevisionList: React.FC<RevisionListProps> = ({
@@ -28,6 +30,8 @@ export const RevisionList: React.FC<RevisionListProps> = ({
   selectRevision,
   createRevision,
   unsavedIds = [],
+  allowEdits = true,
+  readonly,
 }) => {
   const { user } = useCurrentUser(true);
   const refinement = useRefinement<RevisionListRefinement>(
@@ -39,15 +43,14 @@ export const RevisionList: React.FC<RevisionListProps> = ({
   );
 
   if (refinement) {
-    return refinement.refine(
-      { instance: model, property: '' },
-      {
-        revisions,
-        selectRevision,
-        createRevision,
-        goBack,
-      }
-    );
+    return refinement.refine({ instance: model, property: '' }, {
+      revisions,
+      selectRevision,
+      createRevision,
+      goBack,
+      allowEdits,
+      readonly,
+    } as any);
   }
 
   // SECTIONS
@@ -84,9 +87,11 @@ export const RevisionList: React.FC<RevisionListProps> = ({
       {model.instructions ? <RoundedCard>{model.instructions}</RoundedCard> : null}
       <CardButtonGroup>
         {goBack ? <CardButton onClick={goBack}>Back to choices</CardButton> : null}
-        <CardButton onClick={() => createRevision({ revisionId: model.id, cloneMode: 'FORK_INSTANCE' })}>
-          Create new
-        </CardButton>
+        {allowEdits ? (
+          <CardButton onClick={() => createRevision({ revisionId: model.id, cloneMode: 'FORK_INSTANCE' })}>
+            Create new
+          </CardButton>
+        ) : null}
       </CardButtonGroup>
     </>
   );

@@ -11,7 +11,9 @@ import { useCurrentUser } from '../hooks/use-current-user';
 export const RevisionNavigation: React.FC<{
   structure: CaptureModel['structure'];
   onSaveRevision: (req: RevisionRequest, status?: string) => Promise<void>;
-}> = ({ structure, onSaveRevision }) => {
+  readOnly?: boolean;
+  allowEdits?: boolean;
+}> = ({ structure, readOnly, allowEdits, onSaveRevision }) => {
   const [currentView, { pop, push, idStack, goTo }] = useNavigation();
   const currentRevisionId = Revisions.useStoreState(s => s.currentRevisionId);
   const revisions = Revisions.useStoreState(s => s.revisions);
@@ -36,10 +38,17 @@ export const RevisionNavigation: React.FC<{
   }
 
   if (refinement) {
-    return refinement.refine(
-      { instance: currentView, property: '' },
-      { readOnly: readMode, currentRevisionId, pop: pop as any, push, idStack, goTo, structure, onSaveRevision }
-    );
+    return refinement.refine({ instance: currentView, property: '' }, {
+      readOnly: readOnly || readMode,
+      currentRevisionId,
+      pop: pop as any,
+      push,
+      idStack,
+      goTo,
+      structure,
+      onSaveRevision,
+      allowEdits,
+    } as any);
   }
 
   if (currentRevisionId) {
@@ -49,7 +58,8 @@ export const RevisionNavigation: React.FC<{
         instructions={
           currentView.type === 'model' && currentView.instructions ? currentView.instructions : currentView.description
         }
-        readOnly={readMode}
+        allowEdits={allowEdits}
+        readOnly={readOnly || readMode}
       />
     );
   }
