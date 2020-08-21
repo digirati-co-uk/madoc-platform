@@ -80,68 +80,27 @@ export function createTask(task: CrowdsourcingTask): CrowdsourcingReview {
     status_text: 'not started',
     parameters: [task.id],
     state: {},
-    events: [
-      'madoc-ts.created',
-      // When a review is rejected.
-      'madoc-ts.status.-1',
-      // When a review is approved.
-      'madoc-ts.status.3',
-      // When a review requests changes
-      'madoc-ts.status.4',
-      // When a review requests changes
-      'madoc-ts.status.5',
-    ],
+    events: ['madoc-ts.created'],
   };
 }
 
 export const jobHandler = async (name: string, taskId: string, api: ApiClient) => {
   // If you throw an exception here, the crowdsourcing task will be marked as rejected. Need to be careful.
   switch (name) {
-    case 'created':
-      // @todo what is the strategy for assigning to a reviewer:
-      //    - Check if reviewer is assigned to parent task?
-      //    - Check if "random" site setting assigned
-      //    - Check if project has default reviewer
-      //    - Fallback to admin?
-      console.log('Review task was created, find a user to assign it to.');
-      break;
-    case 'status.-1': {
+    case 'created': {
+      // When review task is created, assign to correct user.
       const task = await api.getTaskById<CrowdsourcingReview>(taskId);
-      const subjectTaskId = task.parameters[0];
-      const subTask = await api.getTaskById(subjectTaskId);
-      if (subTask.status !== -1) {
-        await api.updateTask(subjectTaskId, { status: -1, status_text: task.status_text });
+      if (task.root_task) {
+        const projects = await api.getProjects(0, { root_task_id: task.root_task });
+        if (projects.projects.length) {
+          const project = projects.projects[0];
+          if (project) {
+            const { user } = await api.assignUserToReview(project.id, task.id);
+
+          }
+        }
       }
       break;
     }
-    case 'status.3': {
-      const task = await api.getTaskById<CrowdsourcingReview>(taskId);
-      const subjectTaskId = task.parameters[0];
-      const subTask = await api.getTaskById(subjectTaskId);
-      if (subTask.status !== 3) {
-        await api.updateTask(subjectTaskId, { status: 3, status_text: 'accepted' });
-      }
-      break;
-    }
-    case 'status.4': {
-      // @todo sync up the change request into state.
-      const task = await api.getTaskById<CrowdsourcingReview>(taskId);
-      const subjectTaskId = task.parameters[0];
-      const subTask = await api.getTaskById<CrowdsourcingTask>(subjectTaskId);
-      if (subTask.status !== 4) {
-        await api.updateTask(subjectTaskId, {
-          status: 4,
-          status_text: 'changes requested',
-          state: {
-            changesRequested: task.state.changesRequested,
-          },
-        });
-      }
-      break;
-    }
-    case 'status.5':
-      // on status moved to 5, move the target task to 5 (requested changes submitted by user)
-      console.log('changes from user accepted.', taskId, name);
-      break;
   }
 };
