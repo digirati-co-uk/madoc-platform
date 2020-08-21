@@ -259,6 +259,9 @@ async function getTaskFromClaim(
     return (parent.subtasks || []).find(
       task =>
         task.subject === `urn:madoc:canvas:${claim.canvasId}` &&
+        task.type === 'crowdsourcing-task' &&
+        task.status !== 3 &&
+        task.status !== -1 &&
         task.assignee &&
         task.assignee.id === `urn:madoc:user:${userId}`
     );
@@ -268,6 +271,9 @@ async function getTaskFromClaim(
     return (parent.subtasks || []).find(
       task =>
         task.subject === `urn:madoc:manifest:${claim.canvasId}` &&
+        task.type === 'crowdsourcing-task' &&
+        task.status !== 3 &&
+        task.status !== -1 &&
         task.assignee &&
         task.assignee.id === `urn:madoc:user:${userId}`
     );
@@ -277,6 +283,9 @@ async function getTaskFromClaim(
     return (parent.subtasks || []).find(
       task =>
         task.subject === `urn:madoc:collection:${claim.collectionId}` &&
+        task.type === 'crowdsourcing-task' &&
+        task.status !== 3 &&
+        task.status !== -1 &&
         task.assignee &&
         task.assignee.id === `urn:madoc:user:${userId}`
     );
@@ -374,17 +383,7 @@ async function createUserCrowdsourcingTask({
 
   const structureId = undefined; // @todo call to config service to get structure id.
 
-  const task = createTask(
-    siteId,
-    projectId,
-    userId,
-    name,
-    taskName,
-    subject,
-    type,
-    captureModel,
-    structureId
-  );
+  const task = createTask(siteId, projectId, userId, name, taskName, subject, type, captureModel, structureId);
 
   return userApi.addSubtasks(task, parentTaskId);
 }

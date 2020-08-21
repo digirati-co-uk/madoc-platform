@@ -3,18 +3,13 @@
 import { RouteMiddleware } from '../../types/route-middleware';
 import { sql } from 'slonik';
 import { optionalUserWithScope } from '../../utility/user-with-scope';
-import { api } from '../../gateway/api.server';
 import { getMetadata } from '../../utility/iiif-database-helpers';
 import { mapMetadata } from '../../utility/iiif-metadata';
 import { ProjectList } from '../../types/schemas/project-list';
-import { ProjectListItem } from '../../types/schemas/project-list-item';
-import { InternationalString } from '@hyperion-framework/types';
 import { SQL_EMPTY } from '../../utility/postgres-tags';
 
 export const listProjects: RouteMiddleware = async context => {
-  const { id, siteId, siteUrn } = optionalUserWithScope(context, []);
-
-  const userApi = api.asUser({ siteId });
+  const { siteId } = optionalUserWithScope(context, []);
   const page = Number(context.query.page) || 1;
   const rootTaskId = context.query.root_task_id;
   const projectsPerPage = 5;
