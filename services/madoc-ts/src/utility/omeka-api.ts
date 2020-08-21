@@ -177,6 +177,32 @@ export class OmekaApi {
     return site.label;
   }
 
+  async getUserById(id: number, siteId: number) {
+    return this.one<{ id: number; name: string }>(mysql`
+        select u.id, u.name from user u
+          left join site_permission sp on u.id = sp.user_id
+          where sp.site_id = ${siteId} and u.id = ${id}
+    `);
+  }
+
+  async getSiteCreator(siteId: number) {
+    return this.one<{ id: number; name: string }>(
+      mysql`select u.id, u.name from user u left join site s on u.id = s.owner_id where s.id = ${siteId}`
+    );
+  }
+
+  async getUsersByRoles(siteId: number, roles: string[], includeAdmins = true) {
+    // IN ${roles}
+
+    const adminQuery = includeAdmins ? raw(` or sp.role = "admin"`) : mysql``;
+
+    return await this.many<{ id: number; name: string }>(mysql`
+      select u.id, u.name from user u
+          left join site_permission sp on u.id = sp.user_id
+          where sp.site_id = ${siteId} and (sp.role IN (${roles})${adminQuery})
+    `);
+  }
+
   async getUserSites(userId: number, role: string): Promise<UserSite[]> {
     if (role && role === 'global_admin') {
       const sites = await this.many<UserSite>(mysql`SELECT s.id, s.slug, s.title FROM site s`);
@@ -187,14 +213,15 @@ export class OmekaApi {
     const userSites: UserSite[] = [];
 
     try {
-
       const authedSites = await this.many<UserSite>(mysql`
         SELECT s.id, sp.role, s.slug, s.title FROM site_permission sp LEFT JOIN site s on sp.site_id = s.id WHERE user_id=${userId}
       `);
 
-      userSiteSlugs.push(...authedSites.map(s => s.slug))
+      userSiteSlugs.push(...authedSites.map(s => s.slug));
       userSites.push(...authedSites);
-    } catch (err) { }
+    } catch (err) {
+      // no-op
+    }
 
     const publicSites = await this.many<UserSite>(
       mysql`
