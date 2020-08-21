@@ -6,6 +6,7 @@ import { ViewContent } from '../../../../shared/components/ViewContent';
 import { useQuery } from 'react-query';
 import { TinyButton } from '../../../../shared/atoms/Button';
 import { RevisionNavigation } from '../../../../shared/caputre-models/RevisionNavigation';
+import '../../../../shared/caputre-models/refinements';
 
 const ViewContentFetch: React.FC<{ id: number }> = ({ id }) => {
   const api = useApi();
