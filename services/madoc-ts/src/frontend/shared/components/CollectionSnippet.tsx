@@ -4,14 +4,15 @@ import { useQuery } from 'react-query';
 import { SnippetLarge } from '../atoms/SnippetLarge';
 import { LocaleString } from './LocaleString';
 import { HrefLink } from '../utility/href-link';
+import { createLink } from '../utility/create-link';
 
-export const CollectionSnippet: React.FC<{ id: number }> = props => {
+export const CollectionSnippet: React.FC<{ id: number; projectId?: string | number }> = props => {
   const api = useApi();
 
   const { data, failureCount } = useQuery(
     ['collection', { id: props.id }],
     () => {
-      return api.getCollectionById(props.id);
+      return api.getSiteCollection(props.id);
     },
     {
       refetchInterval: false,
@@ -35,7 +36,7 @@ export const CollectionSnippet: React.FC<{ id: number }> = props => {
         summary={'...'}
         linkAs={HrefLink}
         buttonText="view collection"
-        link={`/collections/${props.id}`}
+        link={createLink({ collectionId: props.id, projectId: props.projectId })}
       />
     );
   }
@@ -55,7 +56,7 @@ export const CollectionSnippet: React.FC<{ id: number }> = props => {
       linkAs={HrefLink}
       thumbnail={thumbnail}
       buttonText="view collection"
-      link={`/collections/${props.id}`}
+      link={createLink({ collectionId: props.id, projectId: props.projectId })}
     />
   );
 };
