@@ -6,17 +6,27 @@ import { LocaleString } from '../../shared/components/LocaleString';
 import { CanvasContext, useVaultEffect } from '@hyperion-framework/react-vault';
 import { CanvasNormalized } from '@hyperion-framework/types';
 import { useApi } from '../../shared/hooks/use-api';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useHistory, Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { CanvasFull } from '../../../types/schemas/canvas-full';
 import { BreadcrumbContext, DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { SimpleAtlasViewer } from '../../shared/components/SimpleAtlasViewer';
 import { ManifestFull } from '../../../types/schemas/manifest-full';
 import { SnippetStructure } from '../../shared/components/StructureSnippet';
-import { ProjectListing } from '../../shared/atoms/ProjectListing';
+import {
+  ProjectListing,
+  ProjectListingDescription,
+  ProjectListingItem,
+  ProjectListingTitle,
+} from '../../shared/atoms/ProjectListing';
 import { createLink } from '../../shared/utility/create-link';
 import { ManifestProjectListing } from '../../shared/components/ManifestProjectListing';
 import { ProjectFull } from '../../../types/schemas/project-full';
+import { Heading3 } from '../../shared/atoms/Heading3';
+import { HrefLink } from '../../shared/utility/href-link';
+import { TableContainer, TableEmpty, TableRow, TableRowLabel } from '../../shared/atoms/Table';
+import { Status } from '../../shared/atoms/Status';
+import { Button } from '../../shared/atoms/Button';
 
 type ViewCanvasType = {
   params: {
@@ -63,26 +73,120 @@ function useManifestStructure(manifestId?: string) {
   );
 }
 
+const ContinueSubmission: React.FC<{
+  project: ProjectFull;
+  canvasId: number;
+  onContribute?: (projectId: string | number) => void;
+}> = ({ project, onContribute, canvasId }) => {
+  const api = useApi();
+  const { user } = api.getCurrentUser() || {};
+
+  const { data: model } = useQuery(['canvas-tasks', { id: canvasId, projectId: project?.id }], async () => {
+    if (!project) {
+      return;
+    }
+    return await api.getTasks(0, {
+      root_task_id: project?.task_id,
+      subject: `urn:madoc:canvas:${canvasId}`,
+      detail: true,
+    });
+  });
+
+  const continueSubmission = useMemo(
+    () =>
+      model
+        ? model.tasks.find(task => {
+            return user && task.assignee?.id === user.id && task.type === 'crowdsourcing-task';
+          })
+        : null,
+    [model, user]
+  );
+
+  const reviews = useMemo(
+    () =>
+      model
+        ? model.tasks.filter(task => task.type === 'crowdsourcing-review' && (task.status === 2 || task.status === 1))
+        : null,
+    [model]
+  );
+
+  const reviewComponent =
+    reviews && reviews.length ? (
+      <div>
+        <Heading3>Reviews</Heading3>
+        <TableContainer>
+          {reviews.map(task => (
+            <TableRow key={task.id}>
+              <TableRowLabel>
+                <Status status={task.status as any} text={task.status_text} />
+              </TableRowLabel>
+              <TableRowLabel>
+                <Link to={`/tasks/${task.id}`}>{task.name}</Link>
+              </TableRowLabel>
+            </TableRow>
+          ))}
+        </TableContainer>
+      </div>
+    ) : null;
+
+  if (continueSubmission) {
+    return (
+      <div>
+        <ProjectListingItem key={project.id}>
+          <ProjectListingTitle>
+            <HrefLink href={`/projects/${project.id}`}>
+              <LocaleString>{project.label}</LocaleString>
+            </HrefLink>
+          </ProjectListingTitle>
+          <ProjectListingDescription>
+            <LocaleString>{project.summary}</LocaleString>
+          </ProjectListingDescription>
+          <Button as={HrefLink} href={createLink({ projectId: project.id, taskId: continueSubmission.id })} style={{ display: 'inline-block' }}>
+            Continue submission
+          </Button>
+        </ProjectListingItem>
+        {reviewComponent}
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <ProjectListing projects={[project]} onContribute={api.isAuthorised() ? onContribute : undefined} />
+      {reviewComponent}
+    </>
+  );
+};
+
 export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalComponent<ViewCanvasType>(
   ({ project }) => {
     const { data } = useStaticData(ViewCanvas);
     const { id, manifestId, collectionId, slug } = useParams();
     const [canvasRef, setCanvasRef] = useState<CanvasNormalized>();
     const structure = useManifestStructure(manifestId);
-    const api = useApi();
     const history = useHistory();
+
+    const api = useApi();
     const ctx = useMemo(() => (data ? { id: data.canvas.id, name: data.canvas.label } : undefined), [data]);
     const idx = structure.data && id ? structure.data.ids.indexOf(Number(id)) : null;
     const tempLabel = structure.data && idx !== null ? structure.data.items[idx].label : { none: ['...'] };
 
-    // This will be replace the new published capture model endpoint.
-    // const { data: model } = useQuery(['test', { id, projectId: project?.id }], () => {
-    //   return api.getAllCaptureModels({
-    //     target_id: `urn:madoc:canvas:${id}`,
-    //     target_type: 'Canvas',
-    //     derived_from: project?.capture_model_id,
-    //   });
-    // });
+    const onContribute = (projectId: number | string) => {
+      api
+        .createResourceClaim(projectId, {
+          collectionId: collectionId ? Number(collectionId) : undefined,
+          manifestId: manifestId ? Number(manifestId) : undefined,
+          canvasId: Number(id),
+        })
+        .then(resp => {
+          history.push(
+            createLink({
+              projectId: project?.id,
+              taskId: resp.claim.id,
+            })
+          );
+        });
+    };
 
     useVaultEffect(
       vault => {
@@ -105,25 +209,6 @@ export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalCom
       [data]
     );
 
-    const onContribute = (projectId: number | string) => {
-      if (data && data.canvas) {
-        api
-          .createResourceClaim(projectId, {
-            collectionId: collectionId ? Number(collectionId) : undefined,
-            manifestId: manifestId ? Number(manifestId) : undefined,
-            canvasId: data.canvas.id,
-          })
-          .then(resp => {
-            history.push(
-              createLink({
-                projectId: project?.id,
-                taskId: resp.claim.id,
-              })
-            );
-          });
-      }
-    };
-
     return (
       <BreadcrumbContext canvas={ctx}>
         {data ? (
@@ -134,8 +219,8 @@ export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalCom
           </BreadcrumbContext>
         )}
         <LocaleString as="h1">{data ? data.canvas.label : tempLabel}</LocaleString>
-        {project ? (
-          <ProjectListing projects={[project]} onContribute={api.isAuthorised() ? onContribute : undefined} />
+        {project && !api.getIsServer() ? (
+          <ContinueSubmission onContribute={onContribute} canvasId={Number(id)} project={project} />
         ) : null}
         {canvasRef ? (
           <CanvasContext canvas={canvasRef.id}>
