@@ -93,6 +93,7 @@ services:
       - OMEKA__URL=http://madoc
       - REDIS_HOST=gateway-redis
       - API_GATEWAY=http://gateway:8080
+      - GATEWAY_HOST=${GATEWAY_HOST}
       - OMEKA_FILE_DIRECTORY=/home/node/app/omeka-files
       - MIGRATE=true
     ports:
@@ -126,7 +127,7 @@ services:
       - ./services/tasks-api/lib:/home/node/app/lib
 
   model-api:
-    image: digirati/capture-models:v0.7.8
+    image: digirati/capture-models:v0.7.13
     environment:
       - SERVER_PORT=3000
       - DATABASE_HOST=shared-postgres
