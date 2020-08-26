@@ -41,7 +41,7 @@ export class TypedRouter<
           this.router.put(
             route,
             path,
-            koaBody({ multipart: true, text: true, includeUnparsed: true, json: true }),
+            koaBody({ multipart: true, text: true, includeUnparsed: true, json: true, jsonLimit: '5mb', formLimit: '5mb', textLimit: '5mb' }),
             func
           );
           break;
