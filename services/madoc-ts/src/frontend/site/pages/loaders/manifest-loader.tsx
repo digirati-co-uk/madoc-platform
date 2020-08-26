@@ -10,8 +10,14 @@ import { ManifestFull } from '../../../../types/schemas/manifest-full';
 
 type ManifestLoaderType = {
   params: { id: string; collectionId?: string; slug?: string };
-  query: { m: string };
-  variables: { id: number; collectionId?: number[]; projectId?: string | number; page: number };
+  query: { m: string; filter: string };
+  variables: {
+    id: number;
+    collectionId?: number[];
+    projectId?: string | number;
+    page: number;
+    filter: string | undefined;
+  };
   data: ManifestFull;
   context: { collection: CollectionFull['collection'] };
 };
@@ -82,12 +88,12 @@ export const ManifestLoader: UniversalComponent<ManifestLoaderType> = createUniv
           id: Number(params.id),
           page: Number(query.m) || 0,
           projectId: params.slug,
-          // collectionId: params.collectionId,
+          filter: query.filter,
         },
       ];
     },
     getData: (key, vars, api) => {
-      return api.getSiteManifest(vars.id, { page: vars.page, project_id: vars.projectId });
+      return api.getSiteManifest(vars.id, { page: vars.page, project_id: vars.projectId, hide_status: vars.filter });
     },
   }
 );

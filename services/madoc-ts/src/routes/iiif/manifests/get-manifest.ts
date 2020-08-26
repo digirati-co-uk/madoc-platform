@@ -13,8 +13,11 @@ export const getManifest: RouteMiddleware<{ id: string }> = async context => {
   const manifestId = Number(context.params.id);
 
   const canvasesPerPage = 28;
+  const excludeCanvases = context.query.excluded;
+  const excluded = excludeCanvases ? excludeCanvases.split(',') : undefined;
   const { total = 0 } = (await context.connection.maybeOne(getResourceCount(manifestId, siteId))) || { total: 0 };
-  const totalPages = Math.ceil(total / canvasesPerPage) || 1;
+  const adjustedTotal = excluded ? total - excluded.length : total;
+  const totalPages = Math.ceil(adjustedTotal / canvasesPerPage) || 1;
   const requestedPage = Number(context.query.page) || 1;
   const page = requestedPage < totalPages ? requestedPage : totalPages;
 
@@ -25,6 +28,7 @@ export const getManifest: RouteMiddleware<{ id: string }> = async context => {
         siteId: Number(siteId),
         perPage: canvasesPerPage,
         page,
+        excludeCanvases: excluded,
       }),
       {
         siteId: Number(siteId),
@@ -36,7 +40,10 @@ export const getManifest: RouteMiddleware<{ id: string }> = async context => {
 
   const table = mapManifestSnippets(rows);
 
-  const manifest = table.manifests[`${manifestId}`];
+  const manifest = table.manifests[`${manifestId}`] || {
+    id: manifestId,
+    label: { '@none': ['Untitled manifest'] },
+  };
   const canvasIds = table.manifest_to_canvas[`${manifestId}`] || [];
   manifest.items = canvasIds.map((id: number) => table.canvases[id]);
 
@@ -44,7 +51,7 @@ export const getManifest: RouteMiddleware<{ id: string }> = async context => {
     manifest,
     pagination: {
       page,
-      totalResults: total,
+      totalResults: adjustedTotal,
       totalPages,
     },
   } as ManifestFull;

@@ -425,9 +425,9 @@ export class ApiClient {
     });
   }
 
-  async getCollectionById(id: number, page = 0, type?: 'manifest' | 'collection') {
+  async getCollectionById(id: number, page = 0, type?: 'manifest' | 'collection', excluded?: number[]) {
     return this.request<CollectionFull>(
-      `/api/madoc/iiif/collections/${id}${page || type ? `?${stringify({ type, page })}` : ''}`
+      `/api/madoc/iiif/collections/${id}${page || type || excluded ? `?${stringify({ type, page, excluded })}` : ''}`
     );
   }
 
@@ -457,8 +457,9 @@ export class ApiClient {
     });
   }
 
-  async getManifestById(id: number, page = 0) {
-    return this.request<ManifestFull>(`/api/madoc/iiif/manifests/${id}${page ? `?page=${page}` : ''}`);
+  async getManifestById(id: number, page = 0, excluded?: number[]) {
+    const query = page || excluded ? `?${stringify({ page, excluded }, { arrayFormat: 'comma' })}` : '';
+    return this.request<ManifestFull>(`/api/madoc/iiif/manifests/${id}${query}`);
   }
 
   async getManifestCollections(id: number, query?: { project_id?: number }) {
@@ -710,7 +711,7 @@ export class ApiClient {
     );
   }
 
-  async getTaskSubjects(id: string, subjects: string[], query: { type?: string } = {}) {
+  async getTaskSubjects(id: string, subjects?: string[], query: { type?: string;  } = {}) {
     return this.request<{ input: string[]; subjects: Array<{ subject: string; status: number }> }>(
       `/api/tasks/${id}/subjects?${stringify({ ...query, subjects }, { arrayFormat: 'comma' })}`
     );

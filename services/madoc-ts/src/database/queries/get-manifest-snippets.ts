@@ -1,5 +1,6 @@
 import { sql, SqlSqlTokenType } from 'slonik';
 import { metadataReducer } from '../../utility/iiif-metadata';
+import { SQL_EMPTY, SQL_INT_ARRAY } from '../../utility/postgres-tags';
 
 type ManifestAggregate = SqlSqlTokenType<{
   manifest_id: number;
@@ -13,13 +14,20 @@ export function getSingleManifest({
   siteId,
   perPage,
   page,
+  excludeCanvases,
 }: {
   manifestId: number;
   siteId: number;
   perPage: number;
   page: number;
+  excludeCanvases?: string[];
 }): ManifestAggregate {
   const offset = (page - 1) * perPage;
+
+  const canvasExclusion = excludeCanvases
+    ? sql`and canvas_links.item_id = any(${sql.array(excludeCanvases, SQL_INT_ARRAY)}) is false`
+    : SQL_EMPTY;
+
   return sql<{
     manifest_id: number;
     canvas_id: number;
@@ -36,7 +44,7 @@ export function getSingleManifest({
              manifest.task_id                           as task_id,
              manifest.task_complete                     as task_complete
       from iiif_derived_resource manifest
-            left join iiif_derived_resource_items canvas_links on manifest.resource_id = canvas_links.resource_id and canvas_links.site_id = ${siteId}
+            left join iiif_derived_resource_items canvas_links on manifest.resource_id = canvas_links.resource_id and canvas_links.site_id = ${siteId} ${canvasExclusion}
             left join iiif_resource canvas_resources on canvas_links.item_id = canvas_resources.id
             left join site_counts manifest_count
                          on manifest_count.resource_id = ${manifestId}
