@@ -1,6 +1,6 @@
 import { fetchJson } from './fetch-json';
 import { BaseTask } from '../gateway/tasks/base-task';
-import { CanvasNormalized, CollectionNormalized, Manifest, ManifestNormalized } from '@hyperion-framework/types';
+import { CanvasNormalized, CollectionNormalized, Manifest } from '@hyperion-framework/types';
 import { CreateCollection } from '../types/schemas/create-collection';
 import { CollectionListResponse } from '../types/schemas/collection-list';
 import { CollectionFull } from '../types/schemas/collection-full';
@@ -35,6 +35,7 @@ import {
   CrowdsourcingReviewMerge,
   CrowdsourcingReviewMergeComplete,
 } from './tasks/crowdsourcing-review';
+import { CrowdsourcingCanvasTask } from '../types/tasks/crowdsourcing-canvas-task';
 
 export class ApiClient {
   private readonly gateway: string;
@@ -263,6 +264,18 @@ export class ApiClient {
     }>(`/api/madoc/projects/${id}/structure`);
   }
 
+  async getProjectModel(projectId: string | number, subject: string) {
+    return this.request<{
+      subject: string;
+      resource: { id: number; type: string };
+      baseModel: string;
+      model: null | {
+        label: string;
+        id: string;
+      };
+    }>(`/api/madoc/projects/${projectId}/models/${subject}`);
+  }
+
   async getProjectsByResource(resourceId: number, context: string[]) {
     throw new Error('Not yet implemented');
   }
@@ -289,6 +302,13 @@ export class ApiClient {
 
   async createResourceClaim(projectId: string | number, claim: ResourceClaim) {
     return this.request<{ claim: CrowdsourcingTask }>(`/api/madoc/projects/${projectId}/claim`, {
+      method: 'POST',
+      body: claim,
+    });
+  }
+
+  async prepareResourceClaim(projectId: string | number, claim: ResourceClaim) {
+    return this.request<{ claim: CrowdsourcingTask }>(`/api/madoc/projects/${projectId}/prepare-claim`, {
       method: 'POST',
       body: claim,
     });
@@ -690,9 +710,10 @@ export class ApiClient {
     status?: number,
     type?: string,
     page?: number,
-    assignee?: boolean
+    assignee?: boolean,
+    detail?: boolean
   ) {
-    return this.request<Task & { id: string }>(`/api/tasks/${id}?${stringify({ page, all, assignee })}`);
+    return this.request<Task & { id: string }>(`/api/tasks/${id}?${stringify({ page, all, assignee, detail })}`);
   }
 
   async assignUserToTask(id: string, user: { id: string; name?: string }) {
@@ -1058,6 +1079,16 @@ export class ApiClient {
 
   async getSiteProjects(query?: import('../routes/site/site-projects').SiteProjectsQuery) {
     return this.publicRequest<ProjectList>(`/madoc/api/projects`, query);
+  }
+
+  async getSiteProjectCanvasModel(projectId: string | number, canvasId: number) {
+    return this.publicRequest<ProjectList>(`/madoc/api/projects/${projectId}/canvas-models/${canvasId}`);
+  }
+
+  async getSiteProjectCanvasTasks(projectId: string | number, canvasId: number) {
+    return this.publicRequest<{ canvasTask?: CrowdsourcingCanvasTask; userTasks?: CrowdsourcingTask[] }>(
+      `/madoc/api/projects/${projectId}/canvas-tasks/${canvasId}`
+    );
   }
 
   async getUserDetails() {
