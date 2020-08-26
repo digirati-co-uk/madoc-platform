@@ -8,6 +8,7 @@ import { createTask } from './routes/create-task';
 import { acceptTask } from './routes/accept-task';
 import { postEvent } from './routes/event';
 import { getStatistics } from './routes/get-statistics';
+import { getSubjectStatistics } from './routes/get-subject-statistics';
 
 export const router = new TypedRouter({
   // All tasks
@@ -21,6 +22,7 @@ export const router = new TypedRouter({
   'update-single-task': [TypedRouter.PATCH, '/tasks/:id', updateSingleTask, 'update-task'],
   'delete-task': [TypedRouter.DELETE, '/tasks/:id', deleteTask],
   'create-subtask': [TypedRouter.POST, '/tasks/:id/subtasks', createSubtask, 'create-sub-task'],
+  'get-task-subjects': [TypedRouter.GET, '/tasks/:id/subjects', getSubjectStatistics],
   'accept-task': [TypedRouter.POST, '/tasks/:id/accept', acceptTask],
   'post-task-event': [TypedRouter.POST, '/tasks/:id/dispatch/:event', postEvent],
 });

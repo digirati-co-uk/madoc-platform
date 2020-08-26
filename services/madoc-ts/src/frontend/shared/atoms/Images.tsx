@@ -20,7 +20,7 @@ export const CroppedImage = styled.div<{ $size?: 'small' | 'large' }>`
       case 'large':
         return '300px';
       default:
-        return '240px';
+        return '241px';
     }
   }};
   display: flex;

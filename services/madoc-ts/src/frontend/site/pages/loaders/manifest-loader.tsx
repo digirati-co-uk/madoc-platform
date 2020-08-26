@@ -6,12 +6,13 @@ import { createUniversalComponent } from '../../../shared/utility/create-univers
 import { CollectionFull } from '../../../../types/schemas/collection-full';
 import { usePaginatedData } from '../../../shared/hooks/use-data';
 import { BreadcrumbContext, DisplayBreadcrumbs } from '../../../shared/components/Breadcrumbs';
+import { ManifestFull } from '../../../../types/schemas/manifest-full';
 
 type ManifestLoaderType = {
-  params: { id: string; collectionId?: string; projectId?: string };
+  params: { id: string; collectionId?: string; slug?: string };
   query: { m: string };
   variables: { id: number; collectionId?: number[]; projectId?: string | number; page: number };
-  data: { manifest: any; pagination: Pagination };
+  data: ManifestFull;
   context: { collection: CollectionFull['collection'] };
 };
 
@@ -68,6 +69,7 @@ export const ManifestLoader: UniversalComponent<ManifestLoaderType> = createUniv
           manifest: data ? data.manifest : undefined,
           pagination: data ? data.pagination : undefined,
           collection,
+          manifestSubjects: data ? data.subjects : undefined,
         })}
       </BreadcrumbContext>
     );
@@ -79,7 +81,7 @@ export const ManifestLoader: UniversalComponent<ManifestLoaderType> = createUniv
         {
           id: Number(params.id),
           page: Number(query.m) || 0,
-          projectId: params.projectId,
+          projectId: params.slug,
           // collectionId: params.collectionId,
         },
       ];

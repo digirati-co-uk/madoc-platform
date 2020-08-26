@@ -264,6 +264,13 @@ export class ApiClient {
     }>(`/api/madoc/projects/${id}/structure`);
   }
 
+  async getProjectTask(id: string | number) {
+    return this.request<{
+      id: string;
+      task_id: string;
+    }>(`/api/madoc/projects/${id}/task`);
+  }
+
   async getProjectModel(projectId: string | number, subject: string) {
     return this.request<{
       subject: string;
@@ -703,7 +710,32 @@ export class ApiClient {
     );
   }
 
-  // Tasks.
+  async getTaskSubjects(id: string, subjects: string[], query: { type?: string } = {}) {
+    return this.request<{ input: string[]; subjects: Array<{ subject: string; status: number }> }>(
+      `/api/tasks/${id}/subjects?${stringify({ ...query, subjects }, { arrayFormat: 'comma' })}`
+    );
+  }
+
+  async getTask<Task extends BaseTask>(
+    id: string,
+    query?: {
+      all?: boolean;
+      status?: number;
+      type?: string;
+      page?: number;
+      assignee?: boolean;
+      detail?: boolean;
+      subjects: string[];
+    }
+  ) {
+    return this.request<Task & { id: string }>(
+      `/api/tasks/${id}${query ? `?${stringify(query, { arrayFormat: 'bracket' })}` : ``}`
+    );
+  }
+
+  /**
+   * @deprecated use getTask instead.
+   */
   async getTaskById<Task extends BaseTask>(
     id: string,
     all = true,

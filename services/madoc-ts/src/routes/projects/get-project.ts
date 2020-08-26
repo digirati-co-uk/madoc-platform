@@ -7,15 +7,7 @@ import { mapMetadata } from '../../utility/iiif-metadata';
 import { api } from '../../gateway/api.server';
 import { NotFound } from '../../utility/errors/not-found';
 import { SQL_EMPTY } from '../../utility/postgres-tags';
-
-function parseProjectId(id: string) {
-  const idAsNumber = Number(id);
-  if (Number.isNaN(idAsNumber)) {
-    return { projectId: undefined, projectSlug: id };
-  }
-
-  return { projectId: idAsNumber, projectSlug: undefined };
-}
+import { parseProjectId } from '../../utility/parse-project-id';
 
 export const getProject: RouteMiddleware<{ id: string }> = async context => {
   const { id, siteId, siteUrn } = optionalUserWithScope(context, []);
