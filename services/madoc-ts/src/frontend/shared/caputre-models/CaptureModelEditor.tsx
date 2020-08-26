@@ -1,9 +1,7 @@
 import React from 'react';
 import { CaptureModel, RevisionRequest } from '@capture-models/types';
-import { useApi } from '../hooks/use-api';
-import { Revisions } from '@capture-models/editor';
-import { useMutation } from 'react-query';
 import { RevisionNavigation } from './RevisionNavigation';
+import { useViewerSaving } from '../hooks/use-viewer-saving';
 
 export const CaptureModelEditor: React.FC<{
   captureModel: CaptureModel;
@@ -11,41 +9,14 @@ export const CaptureModelEditor: React.FC<{
   readOnly?: boolean;
   allowEdits?: boolean;
 }> = ({ captureModel, readOnly, allowEdits, onSave }) => {
-  const api = useApi();
-  const persistRevision = Revisions.useStoreActions(a => a.persistRevision);
-
-  const [createRevision] = useMutation(
-    async ({ req, status }: { req: RevisionRequest; status?: string }): Promise<RevisionRequest> => {
-      const response = await api.createCaptureModelRevision(req, status);
-      onSave(response, status);
-      return response;
-    }
-  );
-  const [updateRevision] = useMutation(
-    async ({ req, status }: { req: RevisionRequest; status?: string }): Promise<RevisionRequest> => {
-      const response = await api.updateCaptureModelRevision(req, status);
-      onSave(response, status);
-      return response;
-    }
-  );
+  const updateFunction = useViewerSaving(onSave);
 
   return (
     <RevisionNavigation
       structure={captureModel.structure}
       readOnly={readOnly}
       allowEdits={allowEdits}
-      onSaveRevision={(rev, status) => {
-        return persistRevision({
-          createRevision: (req, s) => {
-            return createRevision({ req, status: s });
-          },
-          updateRevision: (req, s) => {
-            return updateRevision({ req, status: s });
-          },
-          revisionId: rev.revision.id,
-          status,
-        });
-      }}
+      onSaveRevision={updateFunction}
     />
   );
 };
