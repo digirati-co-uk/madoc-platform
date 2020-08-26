@@ -1,6 +1,6 @@
 import { sql, SqlSqlTokenType } from 'slonik';
 import { metadataReducer } from '../../utility/iiif-metadata';
-import { SQL_EMPTY } from '../../utility/postgres-tags';
+import { SQL_EMPTY, SQL_INT_ARRAY } from '../../utility/postgres-tags';
 
 export type CollectionSnippetsRow = {
   collection_id: number;
@@ -32,14 +32,20 @@ export function getSingleCollection({
   page = 0,
   perPage = 24,
   type,
+  excludeManifests,
 }: {
   collectionId: number;
   siteId: number;
   page?: number;
   perPage?: number;
   type?: 'manifest' | 'collection';
+  excludeManifests?: number[];
 }) {
   const offset = (page - 1) * perPage;
+
+  const manifestExclusion = excludeManifests
+    ? sql`and manifest_links.item_id = any(${sql.array(excludeManifests, SQL_INT_ARRAY)}) is false`
+    : SQL_EMPTY;
 
   return sql<{
     collection_id: number;
@@ -62,6 +68,7 @@ export function getSingleCollection({
                left join iiif_derived_resource_items manifest_links 
                         on  manifest_links.site_id = ${siteId}
                         and manifest_links.resource_id = single_collection.resource_id
+                        ${manifestExclusion}
                 left join iiif_resource resource
                         on resource.id = manifest_links.item_id
                left join site_counts canvas_count

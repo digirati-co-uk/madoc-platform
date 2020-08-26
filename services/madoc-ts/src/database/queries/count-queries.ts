@@ -1,5 +1,5 @@
 import { sql } from 'slonik';
-import { SQL_INT_ARRAY } from '../../utility/postgres-tags';
+import { SQL_EMPTY, SQL_INT_ARRAY } from '../../utility/postgres-tags';
 
 export function getResourceCount(resourceId: number | number[], siteId: number) {
   if (Array.isArray(resourceId)) {

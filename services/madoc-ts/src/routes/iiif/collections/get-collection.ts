@@ -14,11 +14,14 @@ export const getCollection: RouteMiddleware<{ id: number }> = async context => {
   const collectionId = Number(context.params.id);
 
   const manifestsPerPage = 24;
+  const excludeManifests = context.query.excluded;
+  const excluded = excludeManifests ? excludeManifests.split(',') : undefined;
   const { total = 0 } = (await context.connection.maybeOne(getResourceCount(collectionId, siteId))) || { total: 0 };
-  const totalPages = Math.ceil(total / manifestsPerPage) || 1;
+  const adjustedTotal = excluded ? total - excluded.length : total;
+  const totalPages = Math.ceil(adjustedTotal / manifestsPerPage) || 1;
   const requestedPage = Number(context.query.page) || 1;
   const page = requestedPage < totalPages ? requestedPage : totalPages;
-  const type = total === 0 ? undefined : context.query.type || undefined;
+  const type = adjustedTotal === 0 ? undefined : context.query.type || undefined;
 
   const rows = await context.connection.any(
     getCollectionSnippets(
@@ -28,6 +31,7 @@ export const getCollection: RouteMiddleware<{ id: number }> = async context => {
         perPage: manifestsPerPage,
         page,
         type,
+        excludeManifests: excluded,
       }),
       {
         siteId: Number(siteId),
@@ -52,7 +56,7 @@ export const getCollection: RouteMiddleware<{ id: number }> = async context => {
     collection,
     pagination: {
       page,
-      totalResults: total,
+      totalResults: adjustedTotal,
       totalPages,
     },
   } as CollectionFull;
