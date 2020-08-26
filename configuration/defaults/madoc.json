@@ -1,6 +1,10 @@
 {
+  "allowCollectionNavigation": true,
   "allowManifestNavigation": true,
   "allowCanvasNavigation": true,
   "claimGranularity": "canvas",
-  "maxContributionsPerResource": false
+  "maxContributionsPerResource": false,
+  "randomlyAssignReviewer": false,
+  "manuallyAssignedReviewer": null,
+  "adminsAreReviewers": true
 }

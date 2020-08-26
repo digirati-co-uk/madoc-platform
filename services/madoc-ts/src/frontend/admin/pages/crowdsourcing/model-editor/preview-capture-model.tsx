@@ -6,6 +6,8 @@ import { ViewContent } from '../../../../shared/components/ViewContent';
 import { useQuery } from 'react-query';
 import { TinyButton } from '../../../../shared/atoms/Button';
 import { RevisionNavigation } from '../../../../shared/caputre-models/RevisionNavigation';
+import '../../../../shared/caputre-models/refinements';
+import { CaptureModel } from '@capture-models/types';
 
 const ViewContentFetch: React.FC<{ id: number }> = ({ id }) => {
   const api = useApi();
@@ -28,14 +30,18 @@ const ViewContentFetch: React.FC<{ id: number }> = ({ id }) => {
   );
 };
 
-export const PreviewCaptureModel: React.FC = () => {
+export const PreviewCaptureModel: React.FC<{
+  structure: CaptureModel['structure'];
+  document: CaptureModel['document'];
+  revisionNumber: number;
+}> = ({ document, structure, revisionNumber }) => {
   const captureModel = useCaptureModel();
   const api = useApi();
 
   return (
     <>
       <h3>Preview</h3>
-      <Revisions.Provider captureModel={captureModel}>
+      <Revisions.Provider key={revisionNumber} captureModel={{ ...captureModel, structure, document }}>
         <div style={{ display: 'flex', flexDirection: 'row' }}>
           <div style={{ width: '67%' }}>
             <ContentExplorer

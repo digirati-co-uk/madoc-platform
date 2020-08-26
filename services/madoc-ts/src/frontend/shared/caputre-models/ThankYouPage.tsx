@@ -1,5 +1,5 @@
 import React from 'react';
-import { BackgroundSplash, CardButton, RoundedCard } from '@capture-models/editor';
+import { CardButton, RoundedCard } from '@capture-models/editor';
 
 export const ThankYouPage: React.FC<{ onContinue: () => void }> = ({ onContinue }) => {
   return (

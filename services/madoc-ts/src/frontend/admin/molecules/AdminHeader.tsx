@@ -17,7 +17,7 @@ const AdminTabRow = styled.ul`
   padding: 0;
 `;
 
-const AdminTabItem = styled.li<{ active?: boolean }>`
+const AdminTabItem = styled.li<{ $active?: boolean }>`
   padding: 0.9em 1.5em;
   margin: 0 0.1em;
   font-size: 0.85em;
@@ -28,7 +28,7 @@ const AdminTabItem = styled.li<{ active?: boolean }>`
     background: #4e82df;
   }
   ${props =>
-    props.active &&
+    props.$active &&
     css`
       background: #fff;
       color: #000;
@@ -57,7 +57,7 @@ export const AdminHeader: React.FC<{
             {menu.map((item, n) => (
               <AdminTabItem
                 key={item.link}
-                active={pathname === item.link || (pathname.indexOf(item.link) !== -1 && n > 0)}
+                $active={pathname === item.link || (pathname.indexOf(item.link) !== -1 && n > 0)}
                 as={Link}
                 to={item.link}
               >

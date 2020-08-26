@@ -48,24 +48,39 @@ export interface CrowdsourcingTask extends BaseTask {
    */
   status: -1 | 0 | 1 | 2 | 3 | 4;
   state: {
-    // Can start adding to this as we need.
+    revisionId?: string;
     reviewTask?: string;
-    changesRequested?: string;
+    // Can start adding to this as we need.
+    changesRequested?: string | null;
+    mergeId?: string;
   };
 }
 
-export function createTask(
-  siteId: number,
-  projectId: number,
-  userId: number,
-  name: string,
-  taskName: string,
-  subject: string,
-  resourceType: string,
-  captureModel: (CaptureModel | CaptureModelSnippet) & { id: string },
-  structureId?: string,
-  reviewId?: string
-): CrowdsourcingTask {
+export function createTask({
+  siteId,
+  projectId,
+  userId,
+  name,
+  taskName,
+  subject,
+  resourceType,
+  captureModel,
+  structureId,
+  reviewId,
+  revisionId,
+}: {
+  siteId: number;
+  projectId: number;
+  userId: number;
+  name: string;
+  taskName: string;
+  subject: string;
+  resourceType: string;
+  captureModel: (CaptureModel | CaptureModelSnippet) & { id: string };
+  structureId?: string;
+  reviewId?: string;
+  revisionId?: string;
+}): CrowdsourcingTask {
   return {
     name: `User contributions to "${taskName}"`,
     type,
@@ -78,6 +93,7 @@ export function createTask(
     status_text: 'not started',
     state: {
       reviewTask: reviewId,
+      revisionId,
     },
     parameters: [captureModel.id, structureId || null, resourceType],
     events: [
@@ -118,7 +134,15 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           } else {
             // We'll just use the first available review.
             const firstExisting = existingReviews.tasks[0];
-            await api.updateTask(task.id, { state: { reviewTask: firstExisting.id } });
+            const id = firstExisting.id;
+            if (id) {
+              await api.updateTask(task.id, { state: { reviewTask: firstExisting.id } });
+
+              // And then we update the review status.
+              if (firstExisting.status === 1) {
+                await api.updateTask(firstExisting.id, { status: 2, status_text: 'New submission' });
+              }
+            }
           }
         }
       } catch (err) {
@@ -126,9 +150,28 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       }
       break;
     }
-    case 'status.3':
+    case 'status.3': {
       // When a task is marked as done, do we need to update any other tasks? Are there any outstanding review tasks we need to close?
       console.log('task marked as done', taskId, name);
+      // Load parent id.
+      const task = await api.getTaskById(taskId);
+      if (task.parent_task) {
+        const parent = await api.getTaskById(task.parent_task, true);
+        const workingReviews = (parent.subtasks || []).filter(review => {
+          return review.type === 'crowdsourcing-review' && review.status !== 3;
+        });
+        const remaining = (parent.subtasks || []).find(subTask => {
+          // Remaining tasks that are not rejected or complete.
+          return subTask.type === 'crowdsourcing-task' && subTask.status !== -1 && subTask.status !== 3;
+        });
+        if (!remaining) {
+          // Mark review task as complete.
+          await Promise.all(
+            workingReviews.map(review => api.updateTask(review.id, { status: 3, status_text: 'All reviews completed' }))
+          );
+        }
+      }
       break;
+    }
   }
 };

@@ -22,6 +22,7 @@ export const SingleFieldInstance: React.FC<{
 
   return (
     <FieldWrapper
+      key={field.id}
       hideHeader={hideHeader}
       field={field}
       selector={selector}

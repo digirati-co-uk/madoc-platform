@@ -108,6 +108,9 @@ export const LocaleString: React.FC<{
 
     const candidateText = language ? children[language] : undefined;
     if (candidateText) {
+      if (typeof candidateText === 'string') {
+        return candidateText;
+      }
       return candidateText.join('');
     }
 

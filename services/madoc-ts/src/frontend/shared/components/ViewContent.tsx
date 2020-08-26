@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useContentType } from '@capture-models/plugin-api';
 import { Target } from '@capture-models/types';
+import '@capture-models/editor/lib/content-types/Atlas';
 
 export const ViewContent: React.FC<{ target: Target[]; canvas: any }> = ({ target, canvas }) => {
   return useContentType(

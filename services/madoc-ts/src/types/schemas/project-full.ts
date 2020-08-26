@@ -1,4 +1,5 @@
 import { InternationalString } from '@hyperion-framework/types';
+import { ProjectConfiguration } from './project-configuration';
 
 export type ProjectFull = {
   id: number;
@@ -18,5 +19,5 @@ export type ProjectFull = {
     manifests: number;
     canvases: number;
   };
-  config: any;
+  config: Partial<ProjectConfiguration>;
 };

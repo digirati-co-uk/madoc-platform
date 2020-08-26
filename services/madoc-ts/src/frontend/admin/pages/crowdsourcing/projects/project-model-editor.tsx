@@ -8,7 +8,6 @@ import { ThemeProvider } from 'styled-components';
 import { CaptureModel } from '@capture-models/types';
 import { useMutation } from 'react-query';
 import { useApi } from '../../../../shared/hooks/use-api';
-import { Button } from '../../../../shared/atoms/Button';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { LightNavigation, LightNavigationItem } from '../../../../shared/atoms/LightNavigation';
@@ -28,14 +27,17 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
     const { data, status } = useData(ProjectModelEditor, {}, { refetchInterval: false });
     const [newStructure, setNewStructure] = useState<CaptureModel['structure'] | undefined>();
     const [newDocument, setNewDocument] = useState<CaptureModel['document'] | undefined>();
+    const [revisionNumber, setRevisionNumber] = useState(0);
     const api = useApi();
 
-    const [updateModel] = useMutation(async (model: CaptureModel) => {
+    const [updateModel, updateModelStatus] = useMutation(async (model: CaptureModel) => {
       if (model.id) {
-        await api.updateCaptureModel(model.id, model);
+        const newModel = await api.updateCaptureModel(model.id, model);
+
+        setNewStructure(newModel.structure);
+        setNewDocument(newModel.document);
+        setRevisionNumber(n => n + 1);
       }
-      setNewStructure(undefined);
-      setNewDocument(undefined);
     }, {});
 
     if (!data || status !== 'success') {
@@ -58,34 +60,39 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
             <LightNavigationItem>
               <Link to={`/projects/${id}/model/preview`}>Preview</Link>
             </LightNavigationItem>
+
+            <div style={{ marginLeft: 'auto' }}>
+              {updateModelStatus.status === 'loading' ? 'Saving...' : 'Changed saved.'}
+            </div>
           </LightNavigation>
-          {newStructure || newDocument ? (
-            <Button
-              onClick={() =>
-                updateModel({
-                  ...data,
-                  structure: newStructure ? newStructure : data.structure,
-                  document: newDocument ? newDocument : data.document,
-                })
-              }
-            >
-              Save changes
-            </Button>
-          ) : null}
           <EditorContext
             onStructureChange={structure => {
               if (structure !== newStructure) {
                 setNewStructure(structure);
+                updateModel({
+                  ...data,
+                  structure,
+                  document: newDocument ? newDocument : data.document,
+                });
               }
             }}
             onDocumentChange={doc => {
               if (doc !== newDocument) {
                 setNewDocument(doc);
+                updateModel({
+                  ...data,
+                  structure: newStructure ? newStructure : data.structure,
+                  document: doc,
+                });
               }
             }}
             captureModel={data}
           >
-            {renderUniversalRoutes(route.routes)}
+            {renderUniversalRoutes(route.routes, {
+              structure: newStructure ? newStructure : data.structure,
+              document: newDocument ? newDocument : data.document,
+              revisionNumber,
+            })}
           </EditorContext>
         </ThemeProvider>
       </>

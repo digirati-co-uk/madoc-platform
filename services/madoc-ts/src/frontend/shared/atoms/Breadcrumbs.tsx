@@ -45,12 +45,12 @@ export const Breadcrumbs: React.FC<{ items: BreadcrumbItem[] }> = ({ items }) =>
     <BreadcrumbContainer>
       {items.map((item, n) => {
         return (
-          <>
+          <React.Fragment key={item.link}>
             {n !== 0 ? <BreadcrumbSeparator>{`/`}</BreadcrumbSeparator> : null}
             <BreadcrumbItem key={item.link} active={item.active}>
               <Link to={item.link}>{item.label}</Link>
             </BreadcrumbItem>
-          </>
+          </React.Fragment>
         );
       })}
     </BreadcrumbContainer>

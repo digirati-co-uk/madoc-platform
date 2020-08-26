@@ -142,7 +142,7 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
 
     return (
       <div>
-        <Heading1>Welcome back Stephen</Heading1>
+        <Heading1>Welcome back {userDetails.user.name}</Heading1>
         <Subheading1>Quick navigation</Subheading1>
 
         <LightNavigation>
@@ -213,7 +213,7 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
       if (isReviewer(userDetails)) {
         response.reviewerTasks = await api.getTasks<CrowdsourcingReview>(0, {
           type: 'crowdsourcing-review',
-          status: [0, 1, 2],
+          status: [0, 1, 2, 5],
           all_tasks: true,
         });
       }

@@ -1,6 +1,6 @@
 import { fetchJson } from './fetch-json';
 import { BaseTask } from '../gateway/tasks/base-task';
-import { CanvasNormalized, CollectionNormalized, Manifest, ManifestNormalized } from '@hyperion-framework/types';
+import { CanvasNormalized, CollectionNormalized, Manifest } from '@hyperion-framework/types';
 import { CreateCollection } from '../types/schemas/create-collection';
 import { CollectionListResponse } from '../types/schemas/collection-list';
 import { CollectionFull } from '../types/schemas/collection-full';
@@ -27,12 +27,15 @@ import { CrowdsourcingTask } from '../types/tasks/crowdsourcing-task';
 import { ResourceClaim } from '../routes/projects/create-resource-claim';
 import { RevisionRequest } from '@capture-models/types';
 import { ProjectList } from '../types/schemas/project-list';
-import { ProjectListItem } from '../types/schemas/project-list-item';
 import { ProjectFull } from '../types/schemas/project-full';
 import { UserDetails } from '../types/schemas/user-details';
-import { CrowdsourcingReview } from './tasks/crowdsourcing-review';
 import { ModelSearch } from '../types/schemas/search';
-
+import {
+  CrowdsourcingReview,
+  CrowdsourcingReviewMerge,
+  CrowdsourcingReviewMergeComplete,
+} from './tasks/crowdsourcing-review';
+import { CrowdsourcingCanvasTask } from '../types/tasks/crowdsourcing-canvas-task';
 
 export class ApiClient {
   private readonly gateway: string;
@@ -261,6 +264,18 @@ export class ApiClient {
     }>(`/api/madoc/projects/${id}/structure`);
   }
 
+  async getProjectModel(projectId: string | number, subject: string) {
+    return this.request<{
+      subject: string;
+      resource: { id: number; type: string };
+      baseModel: string;
+      model: null | {
+        label: string;
+        id: string;
+      };
+    }>(`/api/madoc/projects/${projectId}/models/${subject}`);
+  }
+
   async getProjectsByResource(resourceId: number, context: string[]) {
     throw new Error('Not yet implemented');
   }
@@ -287,6 +302,13 @@ export class ApiClient {
 
   async createResourceClaim(projectId: string | number, claim: ResourceClaim) {
     return this.request<{ claim: CrowdsourcingTask }>(`/api/madoc/projects/${projectId}/claim`, {
+      method: 'POST',
+      body: claim,
+    });
+  }
+
+  async prepareResourceClaim(projectId: string | number, claim: ResourceClaim) {
+    return this.request<{ claim: CrowdsourcingTask }>(`/api/madoc/projects/${projectId}/prepare-claim`, {
       method: 'POST',
       body: claim,
     });
@@ -578,8 +600,18 @@ export class ApiClient {
     });
   }
 
-  async forkCaptureModelRevision(captureModelId: string, revisionId: string) {
-    return this.request<RevisionRequest>(`/api/crowdsourcing/model/${captureModelId}/fork/${revisionId}`);
+  async forkCaptureModelRevision(
+    captureModelId: string,
+    revisionId: string,
+    query?: { clone_mode?: 'EDIT_ALL_VALUES' | 'FORK_ALL_VALUES' | 'FORK_TEMPLATE' | 'FORK_INSTANCE' }
+  ) {
+    return this.request<RevisionRequest>(
+      `/api/crowdsourcing/model/${captureModelId}/fork/${revisionId}${query ? `?${stringify(query)}` : ''}`
+    );
+  }
+
+  async cloneCaptureModelRevision(captureModelId: string, revisionId: string) {
+    return this.request<RevisionRequest>(`/api/crowdsourcing/model/${captureModelId}/clone/${revisionId}`);
   }
 
   async createCaptureModelRevision(req: RevisionRequest, status?: string) {
@@ -678,9 +710,30 @@ export class ApiClient {
     status?: number,
     type?: string,
     page?: number,
-    assignee?: boolean
+    assignee?: boolean,
+    detail?: boolean
   ) {
-    return this.request<Task & { id: string }>(`/api/tasks/${id}?${stringify({ page, all, assignee })}`);
+    return this.request<Task & { id: string }>(`/api/tasks/${id}?${stringify({ page, all, assignee, detail })}`);
+  }
+
+  async assignUserToTask(id: string, user: { id: string; name?: string }) {
+    return this.updateTask(id, {
+      assignee: user,
+      status: 1,
+      status_text: 'accepted',
+    });
+  }
+
+  async assignUserToReview(projectId: string | number, reviewId: string) {
+    return this.request<{ user: { id: number; name: string }; reason: string }>(
+      `/api/madoc/projects/${projectId}/reviews`,
+      {
+        method: 'POST',
+        body: {
+          task_id: reviewId,
+        },
+      }
+    );
   }
 
   async getTasksByStatus<Task extends BaseTask>(status: number) {
@@ -801,27 +854,36 @@ export class ApiClient {
 
   async reviewPrepareMerge({
     reviewTaskId,
-    captureModelId,
-    revisionId,
+    revision,
     toMerge,
+    revisionTask,
   }: {
     reviewTaskId: string;
-    captureModelId: string;
-    revisionId: string;
+    revision: RevisionRequest;
     toMerge: string[];
+    revisionTask: string;
   }) {
-    // Fork of the chosen revision is created
-    const req = await this.forkCaptureModelRevision(captureModelId, revisionId);
+    if (!revision.captureModelId) {
+      throw new Error('Invalid capture model');
+    }
+    // Fork of the chosen revision is created - this is not saved, only a GET request.
+    const req = await this.cloneCaptureModelRevision(revision.captureModelId, revision.revision.id);
+
+    await this.createCaptureModelRevision(req, 'draft');
+
     // Task is updated with forked version + chosen merges.
     await this.updateTask<CrowdsourcingReview>(reviewTaskId, {
       state: {
         currentMerge: {
-          revisionId,
+          revisionId: revision.revision.id,
+          revisionTaskId: revisionTask,
           mergeId: req.revision.id,
           toMerge,
         },
       },
     });
+
+    return req;
   }
 
   async reviewApproveSubmission({
@@ -883,6 +945,105 @@ export class ApiClient {
     await this.updateTask(reviewTaskId, { status: 3, status_text: statusText || 'Approved' });
   }
 
+  async reviewMergeSave(req: RevisionRequest) {
+    // Save capture model revision as normal - no other changes.
+    return this.updateCaptureModelRevision(req);
+  }
+
+  async reviewMergeDiscard({
+    revision,
+    reviewTaskId,
+    merge,
+  }: {
+    revision: RevisionRequest | string;
+    reviewTaskId: string;
+    merge: CrowdsourcingReviewMerge;
+  }) {
+    try {
+      // Remove the capture model revision.
+      await this.deleteCaptureModelRevision(revision);
+    } catch (e) {
+      // This may fail if it is already deleted.
+    }
+
+    // Update the task state with a record of the discarded merge.
+    const fullTask = await this.getTaskById<CrowdsourcingReview>(reviewTaskId);
+    const existingMerges: CrowdsourcingReviewMergeComplete[] = fullTask.state?.merges || [];
+    const merges: CrowdsourcingReviewMergeComplete[] = [
+      ...existingMerges.filter(m => m.mergeId !== merge.mergeId),
+      {
+        ...merge,
+        status: 'DISCARDED',
+      },
+    ];
+
+    // Revert task state to pre-merge completely.
+    await this.updateTask<CrowdsourcingReview>(reviewTaskId, {
+      state: {
+        currentMerge: null,
+        merges,
+      },
+    });
+  }
+  async reviewMergeApprove({
+    revision,
+    reviewTaskId,
+    toMergeRevisionIds,
+    toMergeTaskIds,
+    merge,
+  }: {
+    revision: RevisionRequest;
+    merge: CrowdsourcingReviewMerge;
+    reviewTaskId: string;
+    toMergeTaskIds: string[];
+    toMergeRevisionIds: string[];
+  }) {
+    // Save capture model revision as ACCEPTED
+    await this.updateCaptureModelRevision(revision, 'accepted');
+
+    // Update task state to cancel merge and store in "previousMerges" state.
+    const fullTask = await this.getTaskById<CrowdsourcingReview>(reviewTaskId);
+
+    const existingMerges: CrowdsourcingReviewMergeComplete[] = fullTask.state?.merges || [];
+    const merges: CrowdsourcingReviewMergeComplete[] = [
+      ...existingMerges.filter(m => m.mergeId !== merge.mergeId),
+      {
+        ...merge,
+        status: 'MERGED',
+      },
+    ];
+
+    await this.updateTask<CrowdsourcingReview>(reviewTaskId, {
+      state: {
+        currentMerge: null,
+        merges,
+      },
+    });
+
+    for (const delId of toMergeRevisionIds) {
+      try {
+        await this.deleteCaptureModelRevision(delId);
+      } catch (err) {
+        // May already be deleted.
+      }
+    }
+    // Mark tasks as accepted.
+    await Promise.all(
+      toMergeTaskIds.map(taskId =>
+        this.updateTask<CrowdsourcingTask>(taskId, {
+          status_text: 'accepted',
+          status: 3,
+          state: {
+            changesRequested: null,
+            mergeId: merge.mergeId,
+          },
+        })
+      )
+    ).catch(err => {
+      console.log(err);
+    });
+  }
+
   // Public API.
   async getSiteCanvas(id: number, query?: import('../routes/site/site-canvas').SiteCanvasQuery) {
     return this.publicRequest<CanvasFull>(`/madoc/api/canvases/${id}`, query);
@@ -918,6 +1079,16 @@ export class ApiClient {
 
   async getSiteProjects(query?: import('../routes/site/site-projects').SiteProjectsQuery) {
     return this.publicRequest<ProjectList>(`/madoc/api/projects`, query);
+  }
+
+  async getSiteProjectCanvasModel(projectId: string | number, canvasId: number) {
+    return this.publicRequest<ProjectList>(`/madoc/api/projects/${projectId}/canvas-models/${canvasId}`);
+  }
+
+  async getSiteProjectCanvasTasks(projectId: string | number, canvasId: number) {
+    return this.publicRequest<{ canvasTask?: CrowdsourcingCanvasTask; userTasks?: CrowdsourcingTask[] }>(
+      `/madoc/api/projects/${projectId}/canvas-tasks/${canvasId}`
+    );
   }
 
   async getUserDetails() {

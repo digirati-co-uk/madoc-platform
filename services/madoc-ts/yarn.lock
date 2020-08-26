@@ -1211,6 +1211,13 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
+"@babel/runtime@^7.10.5":
+  version "7.11.2"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.11.2.tgz#f549c13c754cc40b87644b9fa9f09a6a95fe0736"
+  integrity sha512-TeWkU52so0mPtDcaCTxNBI/IHiz0pZgr8VEFqXFtZWpYD08ZB6FaSwVAS8MKRQAP3bYKiVjwysOJgMFY28o6Tw==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
 "@babel/runtime@^7.2.0", "@babel/runtime@^7.4.5":
   version "7.9.6"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.9.6.tgz#a9102eb5cadedf3f31d08a9ecf294af7827ea29f"
@@ -1347,15 +1354,15 @@
     screenfull "^3.3.2"
     whatwg-fetch "^3.0.0"
 
-"@capture-models/editor@^0.7.7":
-  version "0.7.7"
-  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.7.7.tgz#be661fd759bba9b0214e82bbc3e6aaefb4fe1e4d"
-  integrity sha512-sBg5hvd2tvHX3M7TYZ4RmHJoJfduU+hM+QpIPavaWmY0UVxAOEEtyrN+sX6or/11bfDoKwYL/CWViB0CFNU5wQ==
+"@capture-models/editor@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.8.0.tgz#8d55013b2904c8d00f9f055096e39645d5cae379"
+  integrity sha512-L9To6E0WH8BrygPscix+VoHJLs0FKcJhHcimrGnSMfbKgaScyV9J0vU1LTQlNah4uSCEako31512Lf94GNtlNw==
   dependencies:
     "@atlas-viewer/atlas" "^1.0.4"
-    "@capture-models/helpers" "^0.7.3"
-    "@capture-models/plugin-api" "^0.7.3"
-    "@capture-models/types" "^0.7.0"
+    "@capture-models/helpers" "^0.8.0"
+    "@capture-models/plugin-api" "^0.8.0"
+    "@capture-models/types" "^0.8.0"
     "@hyperion-framework/react-vault" "^1.0.0-alpha.15"
     "@hyperion-framework/types" "^1.0.0-alpha.14"
     "@iiif/vocabulary" "1.0.18"
@@ -1385,35 +1392,36 @@
     react-textarea-autosize "^8.2.0"
     react-tooltip "^4.2.8"
     react-window "^1.8.5"
+    redux-batched-subscribe "^0.1.6"
     safe-buffer "^5.2.1"
     styled-components "^5.0.1"
     use-async-effect "^2.2.1"
     use-debounce "^3.3.0"
 
-"@capture-models/helpers@^0.7.3":
-  version "0.7.3"
-  resolved "https://registry.yarnpkg.com/@capture-models/helpers/-/helpers-0.7.3.tgz#aec634fc3a13d948d3cf70ff9259370489c9004a"
-  integrity sha512-+TWn1HGSkP0Fv0V9Z3hNUuGCFNsYgNb1tzCs3R3jVRN0aW2TCbP5Yn4knvEEyREWYRXwt+alR5DTxdSEsTt15Q==
+"@capture-models/helpers@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@capture-models/helpers/-/helpers-0.8.0.tgz#cad594c78259125000c6be633e21c624192baeb6"
+  integrity sha512-Jtu+RS18cjGhy2hL7y8vdo85kIeZg4bdhR4/AnZbW3sR/Ng7UsiMVWkeqFaB6FZgZTsIp4Qr7YxRimczK0Mklg==
   dependencies:
-    "@capture-models/plugin-api" "^0.7.3"
-    "@capture-models/types" "^0.7.0"
+    "@capture-models/plugin-api" "^0.8.0"
+    "@capture-models/types" "^0.8.0"
     fast-copy "^2.0.4"
     immer "^7.0.7"
     react "^16.13.1"
     uuid "^3.4.0"
 
-"@capture-models/plugin-api@^0.7.3":
-  version "0.7.3"
-  resolved "https://registry.yarnpkg.com/@capture-models/plugin-api/-/plugin-api-0.7.3.tgz#cc3000eca0b5fe396553cc921732b81e16a686d1"
-  integrity sha512-gGfIxZsR2IB37Be9QeRY8Z5NBRbOB77E37GUl8DT0rt6B/f8iZpQJ6ZMJuYn4niLKOzzt47/sVakAs/Gac5ZFg==
+"@capture-models/plugin-api@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@capture-models/plugin-api/-/plugin-api-0.8.0.tgz#e88561f2c64fef2d28039e2224199a4313c2f18a"
+  integrity sha512-8xEvjuYPWPWUyKsuqy/KD86S+5qVLpVX4fq/DD6SOGV7Ngu1l+x6XuBCmJgLJH0VAvOtotq5lTK66BeJ4sCCTQ==
   dependencies:
-    "@capture-models/types" "^0.7.0"
+    "@capture-models/types" "^0.8.0"
     react "^16.13.1"
 
-"@capture-models/types@^0.7.0":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@capture-models/types/-/types-0.7.0.tgz#c26322e39194ea008dd83ffb4ec12773c107bfa3"
-  integrity sha512-ryb06IhfrucgbQRUQ0IDNzyP6Kf/2KI3Dtj469HvLLhYEMQ2GmxWw7cMrw+39joQAfSGYVnE6brACZ+TaaJh/g==
+"@capture-models/types@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@capture-models/types/-/types-0.8.0.tgz#e6449ddc34b3f414fb2eab23c45ce39d012f66e2"
+  integrity sha512-he++EMfRTfHZnOTp1gLUbapp+jYD6RQnc4AP4pcC8k5oS+NAD/40cap/Av8LznKVCygFhS+fRdO2qwm3RKEXOQ==
 
 "@cnakazawa/watch@^1.0.3":
   version "1.0.4"
@@ -12649,6 +12657,13 @@ react-element-to-jsx-string@^14.1.0:
     "@base2/pretty-print-object" "1.0.0"
     is-plain-object "3.0.0"
 
+react-error-boundary@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-2.3.1.tgz#bd6c8a9777224b6a1153c5f63e1ac86bf039f657"
+  integrity sha512-w1i++MM5GV6WTnM3MtLdw9CNXxqydkZwbwNDT9GBFBaWs0sp21z27DGIevb3fism1T+LGfdWgTFlhaq7G1pIMA==
+  dependencies:
+    "@babel/runtime" "^7.10.5"
+
 react-error-overlay@^6.0.3:
   version "6.0.7"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.7.tgz#1dcfb459ab671d53f660a991513cb2f0a0553108"
@@ -13132,6 +13147,11 @@ redis-parser@^3.0.0:
   integrity sha1-tm2CjNyv5rS4pCin3vTGvKwxyLQ=
   dependencies:
     redis-errors "^1.0.0"
+
+redux-batched-subscribe@^0.1.6:
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/redux-batched-subscribe/-/redux-batched-subscribe-0.1.6.tgz#de928602708df7198b4d0c98c7119df993780d59"
+  integrity sha1-3pKGAnCN9xmLTQyYxxGd+ZN4DVk=
 
 redux-react-hook@^3.2.0:
   version "3.4.0"
