@@ -3,7 +3,7 @@ import { api } from '../../gateway/api.server';
 import { userWithScope } from '../../utility/user-with-scope';
 import { NotFound } from '../../utility/errors/not-found';
 
-const statusToClaimMap = {
+export const statusToClaimMap = {
   [-1]: ' Rejected',
   [0]: 'Not started',
   [1]: 'In progress',
