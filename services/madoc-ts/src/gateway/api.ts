@@ -703,7 +703,12 @@ export class ApiClient {
     );
   }
 
-  // Tasks.
+  async getTaskSubjects(id: string, subjects: string[], query: { type?: string } = {}) {
+    return this.request<{ input: string[]; subjects: Array<{ subject: string; status: number }> }>(
+      `/api/tasks/${id}/subjects?${stringify({ ...query, subjects }, { arrayFormat: 'comma' })}`
+    );
+  }
+
   async getTask<Task extends BaseTask>(
     id: string,
     query?: {
