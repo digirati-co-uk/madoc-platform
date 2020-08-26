@@ -8,9 +8,9 @@ export const CroppedImage = styled.div<{ $size?: 'small' | 'large' }>`
       case 'small':
         return '150px';
       case 'large':
-        return '300px';
+        return '294px';
       default:
-        return '242px';
+        return '241px';
     }
   }};
   width: ${props => {
@@ -18,7 +18,7 @@ export const CroppedImage = styled.div<{ $size?: 'small' | 'large' }>`
       case 'small':
         return '150px';
       case 'large':
-        return '300px';
+        return '294px';
       default:
         return '241px';
     }
