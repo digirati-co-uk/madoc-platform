@@ -50,7 +50,7 @@ export const ViewManifest: React.FC<{
       <h1>
         <LocaleString>{manifest.label}</LocaleString>
       </h1>
-      {showDoneButton ? (
+      {showDoneButton || filter ? (
         <Button
           as={HrefLink}
           href={createLink({
@@ -60,7 +60,7 @@ export const ViewManifest: React.FC<{
             query: { filter: filter ? undefined : 3, page },
           })}
         >
-          Hide completed
+          {filter ? 'Show completed' : 'Hide completed'}
         </Button>
       ) : null}
       <Pagination

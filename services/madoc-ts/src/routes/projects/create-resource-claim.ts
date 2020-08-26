@@ -12,7 +12,7 @@ import { RequestError } from '../../utility/errors/request-error';
 import { sql } from 'slonik';
 import { CrowdsourcingCollectionTask } from '../../types/tasks/crowdsourcing-collection-task';
 import { CrowdsourcingManifestTask } from '../../types/tasks/crowdsourcing-manifest-task';
-import { CrowdsourcingCanvasTask } from '../../types/tasks/crowdsourcing-canvas-task';
+import { CrowdsourcingCanvasTask } from '../../gateway/tasks/crowdsourcing-canvas-task';
 import { api } from '../../gateway/api.server';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
 import { CrowdsourcingTask } from '../../types/tasks/crowdsourcing-task';
@@ -20,6 +20,7 @@ import { createTask } from '../../gateway/tasks/crowdsourcing-task';
 import { CaptureModelSnippet } from '../../types/schemas/capture-model-snippet';
 import { CrowdsourcingReview } from '../../gateway/tasks/crowdsourcing-review';
 import { statusToClaimMap } from './update-resource-claim';
+import { ProjectConfiguration } from '../../types/schemas/project-configuration';
 
 export type ResourceClaim = {
   collectionId?: number;
@@ -163,24 +164,40 @@ async function ensureProjectTaskStructure(
     throw new RequestError('Invalid project');
   }
 
-  // Fetch task.
-  // let parent = projectTask;
+  // Fetch configuration.
+  const configQuery: string[] = [
+    claim.canvasId ? `urn:madoc:canvas:${claim.canvasId}` : undefined,
+    claim.manifestId ? `urn:madoc:manifest:${claim.manifestId}` : undefined,
+    claim.collectionId ? `urn:madoc:collection:${claim.collectionId}` : undefined,
+    `urn:madoc:project:${projectId}`,
+    `urn:madoc:site:${siteId}`,
+  ].filter(e => e !== undefined) as any;
+
+  const { config } = await userApi.getConfiguration<ProjectConfiguration>('madoc', configQuery);
+  const firstConfig: Partial<ProjectConfiguration> = config && config[0] ? config[0].config_object : {};
+  const maxContributors =
+    firstConfig.maxContributionsPerResource || firstConfig.maxContributionsPerResource === 0
+      ? firstConfig.maxContributionsPerResource
+      : undefined;
+  const approvalsRequired = firstConfig.revisionApprovalsRequired || 1;
 
   if (claim.collectionId) {
-    // 1. Search by subect + root.
+    // 1. Search by subject + root.
     const foundCollectionTask = (parent.subtasks || []).find(
       (task: any) => task.subject === `urn:madoc:collection:${claim.collectionId}`
     );
 
     if (!foundCollectionTask) {
-      const { collection } = await userApi.getCollectionById(claim.collectionId);
+      const { collection, pagination } = await userApi.getCollectionById(claim.collectionId);
 
       const task: CrowdsourcingCollectionTask = {
         name: iiifGetLabel(collection.label, 'Untitled collection'),
         type: 'crowdsourcing-collection-task',
         subject: `urn:madoc:collection:${claim.collectionId}`,
         parameters: [],
-        state: {},
+        state: {
+          totalResources: pagination.totalResults,
+        },
         status_text: 'accepted',
         status: 1,
       };
@@ -197,17 +214,19 @@ async function ensureProjectTaskStructure(
     );
 
     if (!foundManifestTask) {
-      const { manifest } = await userApi.getManifestById(claim.manifestId);
+      const { manifest, pagination } = await userApi.getManifestById(claim.manifestId);
 
-      // Make sure manifestId task exists. Update parent.
-      // parent = manifestTask;
       const task: CrowdsourcingManifestTask = {
         name: iiifGetLabel(manifest.label, 'Untitled manifest'),
         type: 'crowdsourcing-manifest-task',
         subject: `urn:madoc:manifest:${claim.manifestId}`,
         status_text: 'accepted',
         status: 1,
-        state: {},
+        state: {
+          maxContributors,
+          totalResources: pagination.totalResults,
+          approvalsRequired,
+        },
         parameters: [],
       };
 
@@ -232,7 +251,10 @@ async function ensureProjectTaskStructure(
         subject: `urn:madoc:canvas:${claim.canvasId}`,
         status_text: 'accepted',
         status: 1,
-        state: {},
+        state: {
+          maxContributors,
+          approvalsRequired,
+        },
         parameters: [],
       };
 

@@ -8,6 +8,7 @@ import { api } from '../../gateway/api.server';
 import { NotFound } from '../../utility/errors/not-found';
 import { SQL_EMPTY } from '../../utility/postgres-tags';
 import { parseProjectId } from '../../utility/parse-project-id';
+import { ProjectConfiguration } from '../../types/schemas/project-configuration';
 
 export const getProject: RouteMiddleware<{ id: string }> = async context => {
   const { id, siteId, siteUrn } = optionalUserWithScope(context, []);
@@ -69,7 +70,7 @@ export const getProject: RouteMiddleware<{ id: string }> = async context => {
 
   project.content = collectionStats as any;
 
-  project.config = ((await userApi.getConfiguration('madoc', [
+  project.config = ((await userApi.getConfiguration<ProjectConfiguration>('madoc', [
     `urn:madoc:project:${project.id}`,
     siteUrn,
   ])) as any).config[0].config_object;
