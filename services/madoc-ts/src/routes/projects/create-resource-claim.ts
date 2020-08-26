@@ -18,9 +18,9 @@ import { iiifGetLabel } from '../../utility/iiif-get-label';
 import { CrowdsourcingTask } from '../../types/tasks/crowdsourcing-task';
 import { createTask } from '../../gateway/tasks/crowdsourcing-task';
 import { CaptureModelSnippet } from '../../types/schemas/capture-model-snippet';
-import { CrowdsourcingReview } from '../../gateway/tasks/crowdsourcing-review';
 import { statusToClaimMap } from './update-resource-claim';
 import { ProjectConfiguration } from '../../types/schemas/project-configuration';
+import * as crowdsourcingCanvasTask from '../../gateway/tasks/crowdsourcing-canvas-task';
 
 export type ResourceClaim = {
   collectionId?: number;
@@ -245,18 +245,13 @@ async function ensureProjectTaskStructure(
 
       // Make sure canvasId task exists. Update parent.
       // parent = canvasTask;
-      const task: CrowdsourcingCanvasTask = {
-        name: `${parent.name} - ${iiifGetLabel(canvas.label, 'Untitled canvas')}`,
-        type: 'crowdsourcing-canvas-task',
-        subject: `urn:madoc:canvas:${claim.canvasId}`,
-        status_text: 'accepted',
-        status: 1,
-        state: {
-          maxContributors,
-          approvalsRequired,
-        },
-        parameters: [],
-      };
+      const task = crowdsourcingCanvasTask.createTask({
+        canvasId: claim.canvasId,
+        approvalsRequired,
+        maxContributors,
+        parentTaskName: parent.name,
+        label: iiifGetLabel(canvas.label, 'Untitled canvas'),
+      });
 
       parent = await userApi.addSubtasks<BaseTask & { id: string }>(task, parent.id);
     } else {

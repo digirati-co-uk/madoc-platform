@@ -17,5 +17,9 @@ export type CollectionFull = {
       canvasCount?: number;
     }>;
   };
+  subjects?: Array<{
+    subject: string;
+    status: number;
+  }>;
   pagination: Pagination;
 };

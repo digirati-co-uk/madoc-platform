@@ -77,8 +77,6 @@ export const siteManifest: RouteMiddleware<{ slug: string; id: string }> = async
 
   manifest.subjects = filteredSubjects;
 
-  (manifest as any).test = filteredCanvases;
-
   // And finally respond.
   context.response.status = 200;
   context.response.body = manifest;
