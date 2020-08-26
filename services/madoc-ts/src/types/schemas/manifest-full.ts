@@ -15,5 +15,9 @@ export type ManifestFull = {
       thumbnail: null | string;
     }>;
   };
+  subjects?: Array<{
+    subject: string;
+    status: number;
+  }>;
   pagination: Pagination;
 };
