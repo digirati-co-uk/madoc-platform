@@ -20,15 +20,18 @@ import { CaptureModelEditor } from '../caputre-models/CaptureModelEditor';
 import { MaximiseWindow } from '../atoms/MaximiseWindow';
 import { RevisionRequest } from '@capture-models/types';
 import '../caputre-models/refinements';
+import { RevisionEditor } from './revision-editor';
 
 export const CaptureModelViewer: React.FC<{
   modelId: string;
   backLink?: string;
   revisionId?: string;
+  readOnly?: boolean;
+  allowEdits?: boolean;
   onSave: (response: RevisionRequest, status: string | undefined) => Promise<void>;
-}> = ({ backLink, revisionId, modelId, onSave }) => {
+}> = ({ backLink, revisionId, modelId, allowEdits = true, onSave, readOnly }) => {
   const [isVertical, setIsVertical] = useState(false);
-  const [{ captureModel, canvas, target }, status, refetch] = useLoadedCaptureModel(modelId);
+  const [{ captureModel, canvas }] = useLoadedCaptureModel(modelId);
 
   return (
     <React.Suspense fallback={<div>loading...</div>}>
@@ -70,7 +73,11 @@ export const CaptureModelViewer: React.FC<{
                   ) : null}
                 </div>
                 <div style={{ width: isVertical ? '100%' : '33%', padding: '1em' }}>
-                  <CaptureModelEditor captureModel={captureModel} onSave={onSave} />
+                  {revisionId ? (
+                    <RevisionEditor allowEdits={allowEdits} readOnly={!!readOnly} onSave={onSave} />
+                  ) : (
+                    <CaptureModelEditor captureModel={captureModel} onSave={onSave} />
+                  )}
                 </div>
               </div>
             </Revisions.Provider>

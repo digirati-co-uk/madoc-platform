@@ -13,11 +13,7 @@ import { BreadcrumbContext, DisplayBreadcrumbs } from '../../shared/components/B
 import { SimpleAtlasViewer } from '../../shared/components/SimpleAtlasViewer';
 import { ManifestFull } from '../../../types/schemas/manifest-full';
 import { SnippetStructure } from '../../shared/components/StructureSnippet';
-import {
-  ProjectListingDescription,
-  ProjectListingItem,
-  ProjectListingTitle,
-} from '../../shared/atoms/ProjectListing';
+import { ProjectListingDescription, ProjectListingItem, ProjectListingTitle } from '../../shared/atoms/ProjectListing';
 import { createLink } from '../../shared/utility/create-link';
 import { ManifestProjectListing } from '../../shared/components/ManifestProjectListing';
 import { ProjectFull } from '../../../types/schemas/project-full';
