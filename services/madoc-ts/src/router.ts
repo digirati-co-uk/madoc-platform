@@ -70,6 +70,7 @@ import { assignReview } from './routes/projects/assign-review';
 import { getProjectModel } from './routes/projects/get-project-model';
 import { siteCanvasModels } from './routes/site/site-canvas-models';
 import { siteCanvasTasks } from './routes/site/site-canvas-tasks';
+import { getProjectTask } from './routes/projects/get-project-task';
 
 export const router = new TypedRouter({
   // Normal route
@@ -170,6 +171,7 @@ export const router = new TypedRouter({
   'update-project-resource-claim': [TypedRouter.POST, '/api/madoc/projects/:id/claim/:claimId', updateResourceClaim],
   'assign-review': [TypedRouter.POST, '/api/madoc/projects/:id/reviews', assignReview],
   'get-project-model': [TypedRouter.GET, '/api/madoc/projects/:id/models/:subject', getProjectModel],
+  'get-project-task': [TypedRouter.GET, '/api/madoc/projects/:id/task', getProjectTask],
 
   // Omeka routes
   'get-login': [TypedRouter.GET, '/s/:slug/madoc/login', loginPage],

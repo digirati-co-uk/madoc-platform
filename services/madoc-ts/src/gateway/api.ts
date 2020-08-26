@@ -264,6 +264,13 @@ export class ApiClient {
     }>(`/api/madoc/projects/${id}/structure`);
   }
 
+  async getProjectTask(id: string | number) {
+    return this.request<{
+      id: string;
+      task_id: string;
+    }>(`/api/madoc/projects/${id}/task`);
+  }
+
   async getProjectModel(projectId: string | number, subject: string) {
     return this.request<{
       subject: string;
