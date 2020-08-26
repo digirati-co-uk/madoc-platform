@@ -19,11 +19,14 @@ import { CrowdsourcingTask } from '../../types/tasks/crowdsourcing-task';
 import { createTask } from '../../gateway/tasks/crowdsourcing-task';
 import { CaptureModelSnippet } from '../../types/schemas/capture-model-snippet';
 import { CrowdsourcingReview } from '../../gateway/tasks/crowdsourcing-review';
+import { statusToClaimMap } from './update-resource-claim';
 
 export type ResourceClaim = {
   collectionId?: number;
   manifestId?: number;
   canvasId?: number;
+  revisionId?: string;
+  status?: 1 | 2;
 };
 
 // @todo turn this into IIIF endpoint.
@@ -152,7 +155,7 @@ async function ensureProjectTaskStructure(
     }>`select task_id, collection_id from iiif_project where site_id = ${siteId} and id = ${projectId}`
   );
 
-  const rootTask = await userApi.getTaskById(task_id, true, 0, undefined, undefined, true);
+  const rootTask = await userApi.getTaskById(task_id, true, 0, undefined, undefined, true, true);
 
   let parent = rootTask;
 
@@ -184,7 +187,7 @@ async function ensureProjectTaskStructure(
 
       parent = await userApi.addSubtasks<BaseTask & { id: string }>(task, parent.id);
     } else {
-      parent = await userApi.getTaskById(foundCollectionTask.id, true, 0, undefined, undefined, true);
+      parent = await userApi.getTaskById(foundCollectionTask.id, true, 0, undefined, undefined, true, true);
     }
   }
 
@@ -210,7 +213,7 @@ async function ensureProjectTaskStructure(
 
       parent = await userApi.addSubtasks<BaseTask & { id: string }>(task, parent.id);
     } else {
-      parent = await userApi.getTaskById(foundManifestTask.id, true, 0, undefined, undefined, true);
+      parent = await userApi.getTaskById(foundManifestTask.id, true, 0, undefined, undefined, true, true);
     }
   }
   if (claim.canvasId) {
@@ -235,7 +238,7 @@ async function ensureProjectTaskStructure(
 
       parent = await userApi.addSubtasks<BaseTask & { id: string }>(task, parent.id);
     } else {
-      parent = await userApi.getTaskById(foundCanvasTask.id, true, 0, undefined, undefined, true);
+      parent = await userApi.getTaskById(foundCanvasTask.id, true, 0, undefined, undefined, true, true);
     }
   }
 
@@ -262,6 +265,7 @@ async function getTaskFromClaim(
         task.type === 'crowdsourcing-task' &&
         task.status !== 3 &&
         task.status !== -1 &&
+        (claim.revisionId ? task.state.revisionId === claim.revisionId : true) &&
         task.assignee &&
         task.assignee.id === `urn:madoc:user:${userId}`
     );
@@ -274,6 +278,7 @@ async function getTaskFromClaim(
         task.type === 'crowdsourcing-task' &&
         task.status !== 3 &&
         task.status !== -1 &&
+        (claim.revisionId ? task.state.revisionId === claim.revisionId : true) &&
         task.assignee &&
         task.assignee.id === `urn:madoc:user:${userId}`
     );
@@ -286,6 +291,7 @@ async function getTaskFromClaim(
         task.type === 'crowdsourcing-task' &&
         task.status !== 3 &&
         task.status !== -1 &&
+        (claim.revisionId ? task.state.revisionId === claim.revisionId : true) &&
         task.assignee &&
         task.assignee.id === `urn:madoc:user:${userId}`
     );
@@ -302,7 +308,7 @@ async function upsertCaptureModelForResource(
   projectId: number,
   userId: number,
   claim: ResourceClaim
-): Promise<(CaptureModel | CaptureModelSnippet) & { id: string }> {
+): Promise<CaptureModel & { id: string }> {
   // Get top level project task.
   const { task_id, capture_model_id } = await context.connection.one(
     sql<{
@@ -328,7 +334,7 @@ async function upsertCaptureModelForResource(
     });
 
     if (existingModel.length) {
-      return existingModel[0];
+      return await userApi.getCaptureModel(existingModel[0].id);
     }
   }
 
@@ -383,7 +389,18 @@ async function createUserCrowdsourcingTask({
 
   const structureId = undefined; // @todo call to config service to get structure id.
 
-  const task = createTask(siteId, projectId, userId, name, taskName, subject, type, captureModel, structureId);
+  const task = createTask({
+    siteId,
+    projectId,
+    userId,
+    name,
+    taskName,
+    subject,
+    resourceType: type,
+    captureModel,
+    structureId,
+    revisionId: claim.revisionId, // @todo ensure user is assigned to this revision?
+  });
 
   return userApi.addSubtasks(task, parentTaskId);
 }
@@ -415,6 +432,35 @@ async function getCanonicalClaim(
   return resourceClaim;
 }
 
+export const prepareResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim> = async context => {
+  const { id, siteId, siteUrn } = userWithScope(context, ['models.contribute']);
+  // Get the params.
+  const projectId = Number(context.params.id);
+  const claim = await getCanonicalClaim(context.requestBody, siteId, projectId, id);
+
+  const isInProject = await verifyResourceInProject(context, siteId, projectId, id, claim);
+
+  if (!isInProject) {
+    throw new NotFound();
+  }
+
+  // Make sure our fancy structure exists.
+  const parent = await ensureProjectTaskStructure(context, siteId, projectId, id, claim);
+
+  // Check for existing claim
+  const existingClaim = await getTaskFromClaim(context, siteUrn, projectId, id, parent, claim);
+
+  const model = await upsertCaptureModelForResource(context, siteId, projectId, id, claim);
+
+  context.response.body = {
+    model: {
+      id: model.id,
+      label: model.structure.label,
+    },
+    claim: existingClaim,
+  };
+};
+
 export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim> = async context => {
   const { id, name, siteId, siteUrn } = userWithScope(context, ['models.contribute']);
   // Get the params.
@@ -435,11 +481,22 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
   const existingClaim = await getTaskFromClaim(context, siteUrn, projectId, id, parent, claim);
 
   if (existingClaim) {
-    // @todo is there more to a claim.
-    context.response.body = {
-      claim: await userApi.getTaskById(existingClaim.id as string, true, 0, undefined, undefined, true),
-    };
-    return;
+    if (!(existingClaim.state.revisionId && claim.revisionId && existingClaim.state.revisionId !== claim.revisionId)) {
+      if (typeof claim.status !== 'undefined' && claim.status !== existingClaim.status) {
+        context.response.body = {
+          claim: await userApi.updateTask(existingClaim.id, {
+            status: claim.status,
+            status_text: statusToClaimMap[claim.status as any] || 'in progress',
+          }),
+        };
+        return;
+      }
+
+      context.response.body = {
+        claim: await userApi.getTaskById(existingClaim.id as string, true, 0, undefined, undefined, true),
+      };
+      return;
+    }
   }
 
   if (claim.canvasId) {
@@ -461,8 +518,15 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
       claim,
     });
 
-    // And return.
-    // @todo is there more to a claim.
+    if (typeof claim.status !== 'undefined' && claim.status !== task.status) {
+      context.response.body = {
+        claim: await userApi.updateTask(task.id, {
+          status: claim.status,
+          status_text: statusToClaimMap[claim.status as any] || 'in progress',
+        }),
+      };
+      return;
+    }
     context.response.body = { claim: task };
     return;
   }
