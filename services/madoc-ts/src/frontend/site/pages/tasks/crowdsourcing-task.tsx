@@ -29,7 +29,6 @@ import {
 import { ArrowBackIcon } from '../../../shared/icons/ArrowBackIcon';
 import { HrefLink } from '../../../shared/utility/href-link';
 import { PreviewIcon } from '../../../shared/icons/PreviewIcon';
-import { EditIcon } from '../../../shared/icons/EditIcon';
 import { MaximiseWindow } from '../../../shared/atoms/MaximiseWindow';
 import { FullScreenExitIcon } from '../../../shared/icons/FullScreenExitIcon';
 import { FullScreenEnterIcon } from '../../../shared/icons/FullScreenEnterIcon';
