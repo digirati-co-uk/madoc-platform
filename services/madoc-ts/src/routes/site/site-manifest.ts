@@ -11,6 +11,7 @@ export const siteManifest: RouteMiddleware<{ slug: string; id: string }> = async
   const page = Number(context.query.page || 1) || 1;
   const { id } = context.params;
   const { siteApi } = context.state;
+  const projectId = context.query.project_id;
 
   // @todo limit based on site configuration query.
   // @todo give hints for the navigation of collections
@@ -21,7 +22,22 @@ export const siteManifest: RouteMiddleware<{ slug: string; id: string }> = async
   //
   // Context: [projectId, ...parentCollectionIds, collectionId]
 
-  const manifest = await siteApi.getManifestById(Number(id), page);
+  const [manifest, project] = await Promise.all([
+    siteApi.getManifestById(Number(id), page),
+    projectId ? siteApi.getProjectTask(projectId) : undefined,
+  ]);
+
+  const canvasIds = manifest.manifest.items.map(item => item.id);
+
+  if (project) {
+    const response = await siteApi.getTaskSubjects(
+      project.task_id,
+      canvasIds.map(canvasId => `urn:madoc:canvas:${canvasId}`),
+      { type: 'crowdsourcing-canvas-task' }
+    );
+
+    manifest.subjects = response.subjects;
+  }
 
   context.response.status = 200;
   context.response.body = manifest;
