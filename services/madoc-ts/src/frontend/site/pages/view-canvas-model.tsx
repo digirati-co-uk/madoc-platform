@@ -105,22 +105,28 @@ export const ViewCanvasModel: UniversalComponent<ViewCanvasModelType> = createUn
       }
     });
 
+    const backLink = createLink({
+      canvasId: id,
+      projectId: slug,
+      manifestId,
+      collectionId,
+    });
+
     return (
       <div>
         {!api.getIsServer() && id && data && !data.model?.model && data.canvas.canvas && (
-          <PreModelViewer canvas={data.canvas.canvas} onContribute={project ? prepareContribution : undefined} />
+          <PreModelViewer
+            backLink={backLink}
+            canvas={data.canvas.canvas}
+            onContribute={project ? prepareContribution : undefined}
+          />
         )}
         {!api.getIsServer() && data && id && project && data.model && data.model.model ? (
           <>
             <CaptureModelViewer
               revisionId={revision}
               modelId={data.model.model.id}
-              backLink={createLink({
-                canvasId: id,
-                projectId: slug,
-                manifestId,
-                collectionId,
-              })}
+              backLink={backLink}
               onSave={async (response: RevisionRequest, respStatus: string | undefined) => {
                 if (respStatus === 'draft') {
                   // Create user task and mark as in progress.
