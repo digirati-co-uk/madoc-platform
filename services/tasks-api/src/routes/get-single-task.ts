@@ -12,5 +12,6 @@ export const getSingleTask: RouteMiddleware<{ id: string }> = async context => {
     page: Number(context.query.page || 1),
     all: Boolean(context.query.all),
     subtaskFields: assignee ? ['assignee'] : [],
+    subjects: context.query.subjects,
   });
 };

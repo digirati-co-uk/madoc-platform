@@ -704,6 +704,26 @@ export class ApiClient {
   }
 
   // Tasks.
+  async getTask<Task extends BaseTask>(
+    id: string,
+    query?: {
+      all?: boolean;
+      status?: number;
+      type?: string;
+      page?: number;
+      assignee?: boolean;
+      detail?: boolean;
+      subjects: string[];
+    }
+  ) {
+    return this.request<Task & { id: string }>(
+      `/api/tasks/${id}${query ? `?${stringify(query, { arrayFormat: 'bracket' })}` : ``}`
+    );
+  }
+
+  /**
+   * @deprecated use getTask instead.
+   */
   async getTaskById<Task extends BaseTask>(
     id: string,
     all = true,

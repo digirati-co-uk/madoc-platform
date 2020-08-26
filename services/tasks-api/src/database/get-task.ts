@@ -13,6 +13,7 @@ export async function getTask(
     perPage = 20,
     all,
     subtaskFields = [],
+    subjects,
   }: {
     id: string;
     scope: string[];
@@ -23,6 +24,7 @@ export async function getTask(
     perPage?: number;
     all?: boolean;
     subtaskFields?: string[];
+    subjects?: string[];
   }
 ) {
   const isAdmin = scope.indexOf('tasks.admin') !== -1;
@@ -32,13 +34,15 @@ export async function getTask(
   const offset = (page - 1) * perPage;
   const subtaskPagination = all ? sql`` : sql`limit ${perPage} offset ${offset}`;
   const statusQuery = typeof status !== 'undefined' ? sql`and t.status = ${status}` : sql``;
+  const subjectsQuery =
+    typeof subjects !== 'undefined' ? sql`and t.subject = any (${sql.array(subjects, 'text')})` : sql``;
 
   const fullTaskList = sql`
       select *
       from tasks t
       where t.context ?& ${sql.array(context, 'text')}
         ${userCheck}
-        and (t.id = ${id} or (t.parent_task = ${id} ${statusQuery})) order by t.created_at
+        and (t.id = ${id} or (t.parent_task = ${id} ${statusQuery} ${subjectsQuery})) order by t.created_at
     `;
 
   const { rowCount } = await connection.query(fullTaskList);
