@@ -17,3 +17,4 @@ export { ViewTopic } from './pages/view-topic';
 export { Search } from './pages/search';
 export { AllManifests } from './pages/all-manifests';
 export { UserHomepage } from './pages/user-homepage';
+export { ViewCanvasModel } from './pages/view-canvas-model';

@@ -14,7 +14,6 @@ import { SimpleAtlasViewer } from '../../shared/components/SimpleAtlasViewer';
 import { ManifestFull } from '../../../types/schemas/manifest-full';
 import { SnippetStructure } from '../../shared/components/StructureSnippet';
 import {
-  ProjectListing,
   ProjectListingDescription,
   ProjectListingItem,
   ProjectListingTitle,
@@ -24,7 +23,7 @@ import { ManifestProjectListing } from '../../shared/components/ManifestProjectL
 import { ProjectFull } from '../../../types/schemas/project-full';
 import { Heading3 } from '../../shared/atoms/Heading3';
 import { HrefLink } from '../../shared/utility/href-link';
-import { TableContainer, TableEmpty, TableRow, TableRowLabel } from '../../shared/atoms/Table';
+import { TableContainer, TableRow, TableRowLabel } from '../../shared/atoms/Table';
 import { Status } from '../../shared/atoms/Status';
 import { Button } from '../../shared/atoms/Button';
 
@@ -76,8 +75,10 @@ function useManifestStructure(manifestId?: string) {
 const ContinueSubmission: React.FC<{
   project: ProjectFull;
   canvasId: number;
+  manifestId?: number;
+  collectionId?: number;
   onContribute?: (projectId: string | number) => void;
-}> = ({ project, onContribute, canvasId }) => {
+}> = ({ project, onContribute, canvasId, manifestId, collectionId }) => {
   const api = useApi();
   const { user } = api.getCurrentUser() || {};
 
@@ -92,15 +93,22 @@ const ContinueSubmission: React.FC<{
     });
   });
 
-  const continueSubmission = useMemo(
-    () =>
-      model
-        ? model.tasks.find(task => {
-            return user && task.assignee?.id === user.id && task.type === 'crowdsourcing-task';
-          })
-        : null,
-    [model, user]
-  );
+  const [continueSubmission, continueCount] = useMemo(() => {
+    let totalReady = 0;
+    const allModels = model
+      ? model.tasks.filter(task => {
+          if (user && task.assignee?.id === user.id && task.type === 'crowdsourcing-task') {
+            if (task.status !== -1 && task.status !== 3) {
+              totalReady++;
+            }
+            return true;
+          }
+          return false;
+        })
+      : null;
+
+    return [allModels, totalReady] as const;
+  }, [model, user]);
 
   const reviews = useMemo(
     () =>
@@ -129,7 +137,7 @@ const ContinueSubmission: React.FC<{
       </div>
     ) : null;
 
-  if (continueSubmission) {
+  if (continueSubmission?.length) {
     return (
       <div>
         <ProjectListingItem key={project.id}>
@@ -141,8 +149,15 @@ const ContinueSubmission: React.FC<{
           <ProjectListingDescription>
             <LocaleString>{project.summary}</LocaleString>
           </ProjectListingDescription>
-          <Button as={HrefLink} href={createLink({ projectId: project.id, taskId: continueSubmission.id })} style={{ display: 'inline-block' }}>
-            Continue submission
+          {!continueCount ? (
+            <ProjectListingDescription>You have already completed this item</ProjectListingDescription>
+          ) : null}
+          <Button
+            as={HrefLink}
+            href={createLink({ projectId: project.slug, manifestId, canvasId, collectionId, subRoute: 'model' })}
+            style={{ display: 'inline-block' }}
+          >
+            {continueCount ? `Continue submission (${continueCount})` : 'Add new submission'}
           </Button>
         </ProjectListingItem>
         {reviewComponent}
@@ -151,10 +166,28 @@ const ContinueSubmission: React.FC<{
   }
 
   return (
-    <>
-      <ProjectListing projects={[project]} onContribute={api.isAuthorised() ? onContribute : undefined} />
+    <div>
+      <ProjectListingItem key={project.id}>
+        <ProjectListingTitle>
+          <HrefLink href={`/projects/${project.id}`}>
+            <LocaleString>{project.label}</LocaleString>
+          </HrefLink>
+        </ProjectListingTitle>
+        <ProjectListingDescription>
+          <LocaleString>{project.summary}</LocaleString>
+        </ProjectListingDescription>
+        {user ? (
+          <Button
+            as={HrefLink}
+            href={createLink({ projectId: project.slug, manifestId, canvasId, collectionId, subRoute: 'model' })}
+            style={{ display: 'inline-block' }}
+          >
+            Contribute
+          </Button>
+        ) : null}
+      </ProjectListingItem>
       {reviewComponent}
-    </>
+    </div>
   );
 };
 
@@ -220,7 +253,13 @@ export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalCom
         )}
         <LocaleString as="h1">{data ? data.canvas.label : tempLabel}</LocaleString>
         {project && !api.getIsServer() ? (
-          <ContinueSubmission onContribute={onContribute} canvasId={Number(id)} project={project} />
+          <ContinueSubmission
+            onContribute={onContribute}
+            canvasId={Number(id)}
+            manifestId={manifestId ? Number(manifestId) : undefined}
+            collectionId={collectionId ? Number(collectionId) : undefined}
+            project={project}
+          />
         ) : null}
         {canvasRef ? (
           <CanvasContext canvas={canvasRef.id}>

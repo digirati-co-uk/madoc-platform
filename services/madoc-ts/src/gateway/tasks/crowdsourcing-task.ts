@@ -48,24 +48,39 @@ export interface CrowdsourcingTask extends BaseTask {
    */
   status: -1 | 0 | 1 | 2 | 3 | 4;
   state: {
-    // Can start adding to this as we need.
+    revisionId?: string;
     reviewTask?: string;
-    changesRequested?: string;
+    // Can start adding to this as we need.
+    changesRequested?: string | null;
+    mergeId?: string;
   };
 }
 
-export function createTask(
-  siteId: number,
-  projectId: number,
-  userId: number,
-  name: string,
-  taskName: string,
-  subject: string,
-  resourceType: string,
-  captureModel: (CaptureModel | CaptureModelSnippet) & { id: string },
-  structureId?: string,
-  reviewId?: string
-): CrowdsourcingTask {
+export function createTask({
+  siteId,
+  projectId,
+  userId,
+  name,
+  taskName,
+  subject,
+  resourceType,
+  captureModel,
+  structureId,
+  reviewId,
+  revisionId,
+}: {
+  siteId: number;
+  projectId: number;
+  userId: number;
+  name: string;
+  taskName: string;
+  subject: string;
+  resourceType: string;
+  captureModel: (CaptureModel | CaptureModelSnippet) & { id: string };
+  structureId?: string;
+  reviewId?: string;
+  revisionId?: string;
+}): CrowdsourcingTask {
   return {
     name: `User contributions to "${taskName}"`,
     type,
@@ -78,6 +93,7 @@ export function createTask(
     status_text: 'not started',
     state: {
       reviewTask: reviewId,
+      revisionId,
     },
     parameters: [captureModel.id, structureId || null, resourceType],
     events: [

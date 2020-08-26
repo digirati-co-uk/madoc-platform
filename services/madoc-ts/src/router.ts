@@ -50,7 +50,7 @@ import { siteSearch } from './routes/site/site-search';
 import { siteTopic } from './routes/site/site-topic';
 import { siteTopicType } from './routes/site/site-topic-type';
 import { siteTopicTypes } from './routes/site/site-topic-types';
-import { createResourceClaim } from './routes/projects/create-resource-claim';
+import { createResourceClaim, prepareResourceClaim } from './routes/projects/create-resource-claim';
 import { statistics } from './routes/iiif/statistics';
 import { getCanvasManifests } from './routes/iiif/canvases/get-canvas-manifests';
 import { getManifestCollections } from './routes/iiif/manifests/get-manifest-collections';
@@ -67,6 +67,9 @@ import { getLinking } from './routes/iiif/linking/get-linking';
 import { searchManifest } from './routes/iiif/manifests/search-manifest';
 import { exportManifest } from './routes/iiif/manifests/export-manifest';
 import { assignReview } from './routes/projects/assign-review';
+import { getProjectModel } from './routes/projects/get-project-model';
+import { siteCanvasModels } from './routes/site/site-canvas-models';
+import { siteCanvasTasks } from './routes/site/site-canvas-tasks';
 
 export const router = new TypedRouter({
   // Normal route
@@ -159,8 +162,14 @@ export const router = new TypedRouter({
   'get-project-metadata': [TypedRouter.GET, '/api/madoc/projects/:id/metadata', getProjectMetadata],
   'update-project-metadata': [TypedRouter.PUT, '/api/madoc/projects/:id/metadata', updateProjectMetadata],
   'create-project-resource-claim': [TypedRouter.POST, '/api/madoc/projects/:id/claim', createResourceClaim],
+  'create-project-resource-prepare-claim': [
+    TypedRouter.POST,
+    '/api/madoc/projects/:id/prepare-claim',
+    prepareResourceClaim,
+  ],
   'update-project-resource-claim': [TypedRouter.POST, '/api/madoc/projects/:id/claim/:claimId', updateResourceClaim],
   'assign-review': [TypedRouter.POST, '/api/madoc/projects/:id/reviews', assignReview],
+  'get-project-model': [TypedRouter.GET, '/api/madoc/projects/:id/models/:subject', getProjectModel],
 
   // Omeka routes
   'get-login': [TypedRouter.GET, '/s/:slug/madoc/login', loginPage],
@@ -186,6 +195,16 @@ export const router = new TypedRouter({
   'site-topic-type': [TypedRouter.GET, '/s/:slug/madoc/api/topics/:type', siteTopicType],
   'site-topic-types': [TypedRouter.GET, '/s/:slug/madoc/api/topics', siteTopicTypes],
   'site-published-models': [TypedRouter.GET, '/s/:slug/madoc/api/canvases/:id/models', sitePublishedModels],
+  'site-canvas-models': [
+    TypedRouter.GET,
+    '/s/:slug/madoc/api/projects/:projectSlug/canvas-models/:canvasId',
+    siteCanvasModels,
+  ],
+  'site-canvas-tasks': [
+    TypedRouter.GET,
+    '/s/:slug/madoc/api/projects/:projectSlug/canvas-tasks/:canvasId',
+    siteCanvasTasks,
+  ],
   // To be worked into API calling methods
   'manifest-search': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/search/1.0', searchManifest],
   'manifest-export': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/export/source', exportManifest],
