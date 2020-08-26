@@ -4,7 +4,10 @@ export type ProjectConfiguration = {
   allowCanvasNavigation: boolean;
   claimGranularity: 'canvas' | 'manifest';
   maxContributionsPerResource: false | number;
+  revisionApprovalsRequired: number;
+  allowSubmissionsWhenCanvasComplete: boolean;
   randomlyAssignReviewer: boolean;
-  manuallyAssignedReviewer?: number;
+  manuallyAssignedReviewer?: number | null;
   adminsAreReviewers: boolean;
+  hideCompletedResources: boolean;
 };
