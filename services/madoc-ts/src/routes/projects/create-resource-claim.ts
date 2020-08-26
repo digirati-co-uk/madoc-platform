@@ -11,7 +11,7 @@ import { ApplicationContext } from '../../types/application-context';
 import { RequestError } from '../../utility/errors/request-error';
 import { sql } from 'slonik';
 import { CrowdsourcingCollectionTask } from '../../types/tasks/crowdsourcing-collection-task';
-import { CrowdsourcingManifestTask } from '../../types/tasks/crowdsourcing-manifest-task';
+import { CrowdsourcingManifestTask } from '../../gateway/tasks/crowdsourcing-manifest-task';
 import { CrowdsourcingCanvasTask } from '../../gateway/tasks/crowdsourcing-canvas-task';
 import { api } from '../../gateway/api.server';
 import { iiifGetLabel } from '../../utility/iiif-get-label';

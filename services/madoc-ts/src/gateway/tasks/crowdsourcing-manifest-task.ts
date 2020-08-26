@@ -1,6 +1,6 @@
-import { BaseTask } from '../../gateway/tasks/base-task';
-import { CrowdsourcingCanvasTask } from '../../gateway/tasks/crowdsourcing-canvas-task';
-import { CrowdsourcingTask } from './crowdsourcing-task';
+import { BaseTask } from './base-task';
+import { CrowdsourcingCanvasTask } from './crowdsourcing-canvas-task';
+import { CrowdsourcingTask } from '../../types/tasks/crowdsourcing-task';
 
 /**
  * This task is used to structure the crowdsourcing project subtasks.
