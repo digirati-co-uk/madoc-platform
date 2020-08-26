@@ -7,6 +7,7 @@ import * as review from '../gateway/tasks/crowdsourcing-review';
 import { api } from '../gateway/api.server';
 import * as tasks from '../gateway/tasks/task-helpers';
 import * as crowdsourcingCanvas from '../gateway/tasks/crowdsourcing-canvas-task';
+import * as crowdsourcingManifest from '../gateway/tasks/crowdsourcing-manifest-task';
 
 const configOptions: WorkerOptions = {
   connection: {
@@ -73,6 +74,10 @@ const worker = new Worker(
           });
         case crowdsourcingCanvas.type:
           return await crowdsourcingCanvas.jobHandler(job.name, job.data.taskId, contextualApi).catch(err => {
+            throw err;
+          });
+        case crowdsourcingManifest.type:
+          return await crowdsourcingManifest.jobHandler(job.name, job.data.taskId, contextualApi).catch(err => {
             throw err;
           });
       }

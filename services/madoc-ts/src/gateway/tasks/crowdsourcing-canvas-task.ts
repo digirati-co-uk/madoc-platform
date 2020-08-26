@@ -1,6 +1,5 @@
 import { BaseTask } from './base-task';
 import { ApiClient } from '../api';
-import { CrowdsourcingTask } from './crowdsourcing-task';
 import { parseUrn } from '../../utility/parse-urn';
 
 export const type = 'crowdsourcing-canvas-task';
@@ -70,7 +69,7 @@ export function createTask({
 export const jobHandler = async (name: string, taskId: string, api: ApiClient) => {
   switch (name) {
     case 'status.3': {
-      const task = await api.getTaskById<CrowdsourcingTask>(taskId);
+      const task = await api.getTaskById<CrowdsourcingCanvasTask>(taskId);
       if (!task.parent_task) return;
 
       const parent = await api.getTaskById(task.parent_task, true, undefined, undefined, undefined, true);

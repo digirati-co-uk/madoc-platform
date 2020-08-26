@@ -21,6 +21,7 @@ import { CaptureModelSnippet } from '../../types/schemas/capture-model-snippet';
 import { statusToClaimMap } from './update-resource-claim';
 import { ProjectConfiguration } from '../../types/schemas/project-configuration';
 import * as crowdsourcingCanvasTask from '../../gateway/tasks/crowdsourcing-canvas-task';
+import * as crowdsourcingManifestTask from '../../gateway/tasks/crowdsourcing-manifest-task';
 
 export type ResourceClaim = {
   collectionId?: number;
@@ -195,9 +196,7 @@ async function ensureProjectTaskStructure(
         type: 'crowdsourcing-collection-task',
         subject: `urn:madoc:collection:${claim.collectionId}`,
         parameters: [],
-        state: {
-          totalResources: pagination.totalResults,
-        },
+        state: {},
         status_text: 'accepted',
         status: 1,
       };
@@ -214,21 +213,15 @@ async function ensureProjectTaskStructure(
     );
 
     if (!foundManifestTask) {
-      const { manifest, pagination } = await userApi.getManifestById(claim.manifestId);
+      const { manifest } = await userApi.getManifestById(claim.manifestId);
 
-      const task: CrowdsourcingManifestTask = {
-        name: iiifGetLabel(manifest.label, 'Untitled manifest'),
-        type: 'crowdsourcing-manifest-task',
-        subject: `urn:madoc:manifest:${claim.manifestId}`,
-        status_text: 'accepted',
-        status: 1,
-        state: {
-          maxContributors,
-          totalResources: pagination.totalResults,
-          approvalsRequired,
-        },
-        parameters: [],
-      };
+
+      const task = crowdsourcingManifestTask.createTask({
+        label: iiifGetLabel(manifest.label, 'Untitled manifest'),
+        maxContributors,
+        approvalsRequired,
+        manifestId: claim.manifestId,
+      });
 
       parent = await userApi.addSubtasks<BaseTask & { id: string }>(task, parent.id);
     } else {
