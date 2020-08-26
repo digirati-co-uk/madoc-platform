@@ -42,7 +42,16 @@ export const RevisionTopLevel: React.FC<{
   if (!current) return null;
 
   if (isThankYou) {
-    return <ThankYouPage onContinue={() => deselectRevision({ revisionId: current.revision.id })} />;
+    return (
+      <ThankYouPage
+        onContinue={() => {
+          if (allowNavigation) {
+            deselectRevision({ revisionId: current.revision.id });
+          }
+          setIsThankYou(false);
+        }}
+      />
+    );
   }
 
   if (isPreviewing) {
