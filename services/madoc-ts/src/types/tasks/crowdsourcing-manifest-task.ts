@@ -1,5 +1,5 @@
 import { BaseTask } from '../../gateway/tasks/base-task';
-import { CrowdsourcingCanvasTask } from './crowdsourcing-canvas-task';
+import { CrowdsourcingCanvasTask } from '../../gateway/tasks/crowdsourcing-canvas-task';
 import { CrowdsourcingTask } from './crowdsourcing-task';
 
 /**
@@ -30,5 +30,8 @@ export interface CrowdsourcingManifestTask extends BaseTask {
   status: -1 | 0 | 1 | 2 | 3;
   state: {
     // Can start adding to this as we need.
+    maxContributors?: number;
+    approvalsRequired?: number;
+    totalResources?: number;
   };
 }
