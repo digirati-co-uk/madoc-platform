@@ -38,9 +38,22 @@ export const ProjectLoader: UniversalComponent<ProjectLoaderType> = createUniver
     getData: async (key, variables, api) => {
       const project = await api.getSiteProject(variables.slug);
 
+      const hide = project.config.hideCompletedResources;
+
       const [collections, manifests] = await Promise.all([
         await api.getSiteCollection(project.collection_id, { type: 'collection' }),
-        await api.getSiteCollection(project.collection_id, { type: 'manifest' }),
+        await api.getSiteCollection(
+          project.collection_id,
+          hide
+            ? {
+                type: 'manifest',
+                project_id: variables.slug,
+                hide_status: '2,3',
+              }
+            : {
+                type: 'manifest',
+              }
+        ),
       ]);
 
       return {
