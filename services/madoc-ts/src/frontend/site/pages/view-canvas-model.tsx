@@ -19,6 +19,7 @@ import { RevisionRequest } from '@capture-models/types';
 import { WarningMessage } from '../../shared/atoms/WarningMessage';
 import { CrowdsourcingCanvasTask } from '../../../gateway/tasks/crowdsourcing-canvas-task';
 import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
+import { HrefLink } from '../../shared/utility/href-link';
 
 type ViewCanvasModelType = {
   params: {
@@ -38,6 +39,7 @@ type ViewCanvasModelType = {
     canvas: CanvasFull;
     canvasTask?: CrowdsourcingCanvasTask;
     userTasks?: CrowdsourcingTask[];
+    canUserSubmit: boolean;
     model?: {
       model: {
         id: string;
@@ -126,10 +128,20 @@ export const ViewCanvasModel: UniversalComponent<ViewCanvasModelType> = createUn
       collectionId,
     });
 
+    if (!data?.canUserSubmit) {
+      return (
+        <div>
+          <h1>Maximum number of contributors reached</h1>
+          <HrefLink href={backLink}>Go back to resource</HrefLink>
+        </div>
+      );
+    }
+
     if (completedAndHide) {
       return (
         <div>
           <h1>This image is complete</h1>
+          <HrefLink href={backLink}>Go back to resource</HrefLink>
         </div>
       );
     }
@@ -193,6 +205,7 @@ export const ViewCanvasModel: UniversalComponent<ViewCanvasModelType> = createUn
         canvas: await api.getSiteCanvas(vars.id),
         canvasTask: tasks.canvasTask,
         userTasks: tasks.userTasks,
+        canUserSubmit: !!tasks.canUserSubmit,
         model: vars.slug && api.isAuthorised() ? await api.getSiteProjectCanvasModel(vars.slug, vars.id) : undefined,
       } as any;
     },

@@ -1122,9 +1122,13 @@ export class ApiClient {
   }
 
   async getSiteProjectCanvasTasks(projectId: string | number, canvasId: number) {
-    return this.publicRequest<{ canvasTask?: CrowdsourcingCanvasTask; userTasks?: CrowdsourcingTask[] }>(
-      `/madoc/api/projects/${projectId}/canvas-tasks/${canvasId}`
-    );
+    return this.publicRequest<{
+      canvasTask?: CrowdsourcingCanvasTask;
+      userTasks?: CrowdsourcingTask[];
+      canUserSubmit?: boolean;
+      totalContributors?: number;
+      maxContributors?: number;
+    }>(`/madoc/api/projects/${projectId}/canvas-tasks/${canvasId}`);
   }
 
   async getUserDetails() {

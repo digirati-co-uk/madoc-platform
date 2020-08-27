@@ -45,6 +45,7 @@ type ViewCanvasType = {
     canvas: CanvasFull['canvas'];
     canvasTask?: CrowdsourcingCanvasTask;
     userTasks?: Array<CrowdsourcingTask | CrowdsourcingReview>;
+    canUserSubmit: boolean;
   };
   context: {
     project?: ProjectFull;
@@ -82,10 +83,11 @@ const ContinueSubmission: React.FC<{
   manifestId?: number;
   collectionId?: number;
   isComplete?: boolean;
+  isMax?: boolean;
   isLoading?: boolean;
   userTasks?: Array<CrowdsourcingTask | CrowdsourcingReview>;
   onContribute?: (projectId: string | number) => void;
-}> = ({ project, onContribute, isLoading, canvasId, isComplete, userTasks, manifestId, collectionId }) => {
+}> = ({ project, onContribute, isLoading, isMax, canvasId, isComplete, userTasks, manifestId, collectionId }) => {
   const api = useApi();
   const { user } = api.getIsServer() ? { user: undefined } : api.getCurrentUser() || {};
 
@@ -133,7 +135,7 @@ const ContinueSubmission: React.FC<{
       </div>
     ) : null;
 
-  if (isComplete) {
+  if (isComplete || isMax) {
     return (
       <div>
         <ProjectListingItem key={project.id}>
@@ -147,7 +149,9 @@ const ContinueSubmission: React.FC<{
           </ProjectListingDescription>
         </ProjectListingItem>
         {reviewComponent}
-        <SuccessMessage>This page is complete</SuccessMessage>
+        <SuccessMessage>
+          {isComplete ? 'This page is complete' : 'The maximum number of contributions has been reached'}
+        </SuccessMessage>
       </div>
     );
   }
@@ -282,6 +286,7 @@ export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalCom
             isLoading={!data}
             userTasks={data?.userTasks}
             isComplete={completedAndHide}
+            isMax={!data?.canUserSubmit}
             manifestId={manifestId ? Number(manifestId) : undefined}
             collectionId={collectionId ? Number(collectionId) : undefined}
             project={project}
@@ -341,6 +346,7 @@ export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalCom
         canvas: response.canvas,
         canvasTask: tasks.canvasTask,
         userTasks: tasks.userTasks,
+        canUserSubmit: !!tasks.canUserSubmit,
       };
     },
   }

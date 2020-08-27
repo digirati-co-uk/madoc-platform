@@ -17,11 +17,33 @@ export const siteCanvasTasks: RouteMiddleware<{
     detail: true,
   });
 
+  const contributors: string[] = [];
+  for (const task of tasks) {
+    if (
+      task.type === 'crowdsourcing-task' &&
+      task.status !== -1 &&
+      task.status !== 0 &&
+      task.assignee &&
+      contributors.indexOf(task.assignee.id) === -1
+    ) {
+      contributors.push(task.assignee.id);
+    }
+  }
+
+  const maxContributors = project.config.maxContributionsPerResource;
   const canvasTask = tasks.find(task => task.type === 'crowdsourcing-canvas-task');
   const userTasks = user ? tasks.filter(task => task.assignee && task.assignee.id === `urn:madoc:user:${user}`) : [];
 
+  const canUserSubmit = !maxContributors || userTasks.length || maxContributors > contributors.length;
+
   context.response.status = 200;
-  context.response.body = { canvasTask, userTasks };
+  context.response.body = {
+    canvasTask,
+    userTasks,
+    totalContributors: contributors.length,
+    maxContributors: project.config.maxContributionsPerResource,
+    canUserSubmit: !!canUserSubmit,
+  };
 
   return;
 };
