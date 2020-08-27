@@ -1,9 +1,12 @@
 import { Mirador } from '../../shared/viewers/mirador.lazy';
 import { useApi } from '../../shared/hooks/use-api';
 import React from 'react';
+import { ManifestFull } from '../../../types/schemas/manifest-full';
 
-export const ViewManifestMirador: React.FC = () => {
+export const ViewManifestMirador: React.FC<{ manifest: ManifestFull['manifest'] }> = ({ manifest }) => {
   const api = useApi();
+
+  const slug = api.getSiteSlug();
 
   if (api.getIsServer()) {
     return null;
@@ -21,7 +24,7 @@ export const ViewManifestMirador: React.FC = () => {
                 allowClose: false,
                 allowMaximize: false,
                 sideBarOpenByDefault: true,
-                manifestId: '/s/default/madoc/api/manifests/2/export/source',
+                manifestId: `/s/${slug}/madoc/api/manifests/${manifest.id}/export/source`,
               },
             ],
             workspaceControlPanel: {
@@ -36,8 +39,7 @@ export const ViewManifestMirador: React.FC = () => {
                   dark: '#ffffff',
                   main: '#ffffff',
                   light: '#fffff',
-                }
-
+                },
               },
             },
           }}

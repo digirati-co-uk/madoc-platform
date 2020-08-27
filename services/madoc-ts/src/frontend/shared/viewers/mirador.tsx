@@ -5,7 +5,6 @@ import deepmerge from 'deepmerge';
 import HotApp from 'mirador/dist/cjs/src/components/App';
 import createStore from 'mirador/dist/cjs/src/state/createStore';
 import { importConfig } from 'mirador/dist/cjs/src/state/actions/config';
-import { maximizeWindow } from 'mirador/dist/cjs/src/state/actions';
 import {
   filterValidPlugins,
   getConfigFromPlugins,
