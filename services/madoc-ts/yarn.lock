@@ -1362,10 +1362,10 @@
     screenfull "^3.3.2"
     whatwg-fetch "^3.0.0"
 
-"@capture-models/editor@^0.8.0":
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.8.0.tgz#8d55013b2904c8d00f9f055096e39645d5cae379"
-  integrity sha512-L9To6E0WH8BrygPscix+VoHJLs0FKcJhHcimrGnSMfbKgaScyV9J0vU1LTQlNah4uSCEako31512Lf94GNtlNw==
+"@capture-models/editor@^0.8.1":
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.8.1.tgz#cbb789388bd9f8faf5dc793a5161c100a4033902"
+  integrity sha512-Lv3BqxNmNLTSkUFraqZxI/qhOpFkfx0DKaZTt8iLlAurnson0s1r2b1fwbYjlWyUWz63MxCunWpP3SdFSt8KYA==
   dependencies:
     "@atlas-viewer/atlas" "^1.0.4"
     "@capture-models/helpers" "^0.8.0"
