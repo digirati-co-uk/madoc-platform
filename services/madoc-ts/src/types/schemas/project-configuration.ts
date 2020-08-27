@@ -11,4 +11,6 @@ export type ProjectConfiguration = {
   adminsAreReviewers: boolean;
   hideCompletedResources: boolean;
   contributionWarningTime: false | number;
+  randomlyAssignCanvas?: boolean;
+  priorityRandomness?: boolean;
 };

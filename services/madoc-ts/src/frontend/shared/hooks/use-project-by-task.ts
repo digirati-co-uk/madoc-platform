@@ -2,8 +2,9 @@ import { useApi } from './use-api';
 import { useQuery } from 'react-query';
 import { BaseTask } from '../../../gateway/tasks/base-task';
 import { ProjectListItem } from '../../../types/schemas/project-list-item';
+import { ProjectFull } from '../../../types/schemas/project-full';
 
-export function useProjectByTask(task: BaseTask): ProjectListItem | undefined {
+export function useProjectByTask(task: BaseTask): ProjectFull | undefined {
   const api = useApi();
 
   const { data } = useQuery(
@@ -19,7 +20,7 @@ export function useProjectByTask(task: BaseTask): ProjectListItem | undefined {
         return undefined;
       }
 
-      return projects.projects[0];
+      return await api.getProject(projects.projects[0].id);
     },
     {
       refetchInterval: false,

@@ -52,8 +52,11 @@ export const siteManifest: RouteMiddleware<{ slug: string; id: string }> = async
   // We have to load the project first.
   const project = await siteApi.getProjectTask(projectId);
 
+  const structures = await siteApi.getManifestStructure(Number(id));
+  const subjects = structures.items.map(item => `urn:madoc:canvas:${item.id}`);
+
   // And then load ALL of the statuses.
-  const taskSubjects = await siteApi.getTaskSubjects(project.task_id, undefined, { type: 'crowdsourcing-canvas-task' });
+  const taskSubjects = await siteApi.getTaskSubjects(project.task_id, subjects, { type: 'crowdsourcing-canvas-task' });
 
   const filteredCanvases: number[] = [];
   const filteredSubjects: typeof taskSubjects.subjects = [];

@@ -23,6 +23,7 @@ export const router = new TypedRouter({
   'delete-task': [TypedRouter.DELETE, '/tasks/:id', deleteTask],
   'create-subtask': [TypedRouter.POST, '/tasks/:id/subtasks', createSubtask, 'create-sub-task'],
   'get-task-subjects': [TypedRouter.GET, '/tasks/:id/subjects', getSubjectStatistics],
+  'post-task-subjects': [TypedRouter.POST, '/tasks/:id/subjects', getSubjectStatistics],
   'accept-task': [TypedRouter.POST, '/tasks/:id/accept', acceptTask],
   'post-task-event': [TypedRouter.POST, '/tasks/:id/dispatch/:event', postEvent],
 });

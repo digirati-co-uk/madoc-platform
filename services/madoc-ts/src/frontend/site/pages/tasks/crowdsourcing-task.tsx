@@ -74,7 +74,7 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task 
   );
 
   const backLink = useMemo(() => {
-    if (!target) {
+    if (!target || !project || project.config.allowCanvasNavigation === false) {
       return;
     }
     const collection = target.find(item => item && item.type === 'collection');

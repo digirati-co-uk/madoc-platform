@@ -714,9 +714,37 @@ export class ApiClient {
     );
   }
 
-  async getTaskSubjects(id: string, subjects?: string[], query: { type?: string } = {}) {
-    return this.request<{ input: string[]; subjects: Array<{ subject: string; status: number }> }>(
-      `/api/tasks/${id}/subjects?${stringify({ ...query, subjects }, { arrayFormat: 'comma' })}`
+  async randomlyAssignedCanvas(
+    projectId: string | number,
+    manifestId: number,
+    { type = 'canvas', collectionId }: { collectionId?: number; type?: string } = {}
+  ) {
+    return this.request<{ remainingTasks: number; canvas: ItemStructureListItem; claim: CrowdsourcingTask }>(
+      `/api/madoc/projects/${projectId}/random`,
+      {
+        method: 'POST',
+        body: {
+          collectionId,
+          manifestId,
+          type,
+        },
+      }
+    );
+  }
+
+  async getTaskSubjects(
+    id: string,
+    subjects?: string[],
+    query: { type?: string; assignee?: boolean; assigned_to?: string } = {}
+  ) {
+    return this.request<{ subjects: Array<{ subject: string; status: number; assignee_id?: string }> }>(
+      `/api/tasks/${id}/subjects?${stringify(query)}`,
+      {
+        method: 'POST',
+        body: {
+          subjects,
+        },
+      }
     );
   }
 
