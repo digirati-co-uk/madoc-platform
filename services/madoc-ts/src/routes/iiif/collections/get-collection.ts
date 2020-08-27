@@ -1,4 +1,3 @@
-import { sql } from 'slonik';
 import { optionalUserWithScope } from '../../../utility/user-with-scope';
 import { CollectionFull } from '../../../types/schemas/collection-full';
 import { RouteMiddleware } from '../../../types/route-middleware';
@@ -15,7 +14,11 @@ export const getCollection: RouteMiddleware<{ id: number }> = async context => {
 
   const manifestsPerPage = 24;
   const excludeManifests = context.query.excluded;
-  const excluded = excludeManifests ? excludeManifests.split(',') : undefined;
+  const excluded = Array.isArray(excludeManifests)
+    ? excludeManifests
+    : excludeManifests
+    ? excludeManifests.split(',')
+    : undefined;
   const { total = 0 } = (await context.connection.maybeOne(getResourceCount(collectionId, siteId))) || { total: 0 };
   const adjustedTotal = excluded ? total - excluded.length : total;
   const totalPages = Math.ceil(adjustedTotal / manifestsPerPage) || 1;

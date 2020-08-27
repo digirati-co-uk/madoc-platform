@@ -14,7 +14,11 @@ export const getManifest: RouteMiddleware<{ id: string }> = async context => {
 
   const canvasesPerPage = 28;
   const excludeCanvases = context.query.excluded;
-  const excluded = excludeCanvases ? excludeCanvases.split(',') : undefined;
+  const excluded = Array.isArray(excludeCanvases)
+    ? excludeCanvases
+    : excludeCanvases
+    ? excludeCanvases.split(',')
+    : undefined;
   const { total = 0 } = (await context.connection.maybeOne(getResourceCount(manifestId, siteId))) || { total: 0 };
   const adjustedTotal = excluded ? total - excluded.length : total;
   const totalPages = Math.ceil(adjustedTotal / canvasesPerPage) || 1;
