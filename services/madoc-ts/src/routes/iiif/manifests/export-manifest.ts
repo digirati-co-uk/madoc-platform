@@ -31,23 +31,7 @@ export const exportManifest: RouteMiddleware<{ id: string; slug: string }> = asy
     '@id': `${gatewayHost}/s/${siteSlug}/madoc/api/manifests/${manifestId}/search/1.0`,
     profile: 'http://iiif.io/api/search/0/search',
     label: 'Search within',
-    service: {
-      '@id': 'https://wellcomelibrary.org/annoservices/autocomplete/b18035723',
-      profile: 'http://iiif.io/api/search/0/autocomplete',
-      label: 'Get suggested words in this manifest',
-    },
   });
-  // rawManifest.service.push({
-  //   '@context': 'http://iiif.io/api/search/0/context.json',
-  //   '@id': 'https://wellcomelibrary.org/annoservices/search/b18035723',
-  //   profile: 'http://iiif.io/api/search/0/search',
-  //   label: 'Search within this manifest',
-  //   service: {
-  //     '@id': 'https://wellcomelibrary.org/annoservices/autocomplete/b18035723',
-  //     profile: 'http://iiif.io/api/search/0/autocomplete',
-  //     label: 'Get suggested words in this manifest',
-  //   },
-  // });
 
   context.response.body = rawManifest;
 };

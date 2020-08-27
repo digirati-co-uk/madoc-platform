@@ -24,7 +24,7 @@ endif;
 <?php echo $this->htmlElement('body'); ?>
 <?php echo $this->userBar(); ?>
 <?php /** @var $site \Omeka\Api\Representation\SiteRepresentation */ ?>
-<header>
+<header class="site-header">
     <div class="site-details">
         <?php if ($this->themeSetting('logo')): ?>
             <a href="<?php echo $site->url(); ?>" class="site-title"><img

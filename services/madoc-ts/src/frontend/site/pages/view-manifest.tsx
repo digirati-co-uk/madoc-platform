@@ -22,6 +22,7 @@ import { LockIcon } from '../../shared/atoms/LockIcon';
 import { useApi } from '../../shared/hooks/use-api';
 import { useMutation } from 'react-query';
 import { ErrorMessage } from '../../shared/atoms/ErrorMessage';
+import { Heading1, Subheading1 } from '../../shared/atoms/Heading1';
 
 export const ViewManifest: React.FC<{
   project?: ProjectFull;
@@ -68,9 +69,20 @@ export const ViewManifest: React.FC<{
   return (
     <>
       <DisplayBreadcrumbs />
-      <h1>
+      <Heading1>
         <LocaleString>{manifest.label}</LocaleString>
-      </h1>
+      </Heading1>
+      <Subheading1
+        as={HrefLink}
+        href={createLink({
+          collectionId: collection?.id,
+          projectId: project?.id,
+          manifestId: manifest.id,
+          subRoute: 'mirador',
+        })}
+      >
+        Open in mirador
+      </Subheading1>
       {showDoneButton || filter ? (
         <Button
           as={HrefLink}
