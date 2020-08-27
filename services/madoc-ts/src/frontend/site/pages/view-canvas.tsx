@@ -22,6 +22,10 @@ import { HrefLink } from '../../shared/utility/href-link';
 import { TableContainer, TableRow, TableRowLabel } from '../../shared/atoms/Table';
 import { Status } from '../../shared/atoms/Status';
 import { Button } from '../../shared/atoms/Button';
+import { CrowdsourcingCanvasTask } from '../../../gateway/tasks/crowdsourcing-canvas-task';
+import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
+import { CrowdsourcingReview } from '../../../gateway/tasks/crowdsourcing-review';
+import { SuccessMessage } from '../../shared/atoms/SuccessMessage';
 
 type ViewCanvasType = {
   params: {
@@ -37,7 +41,11 @@ type ViewCanvasType = {
     manifestId?: number;
     id: number;
   };
-  data: CanvasFull;
+  data: {
+    canvas: CanvasFull['canvas'];
+    canvasTask?: CrowdsourcingCanvasTask;
+    userTasks?: Array<CrowdsourcingTask | CrowdsourcingReview>;
+  };
   context: {
     project?: ProjectFull;
     manifest: ManifestFull['manifest'];
@@ -73,26 +81,18 @@ const ContinueSubmission: React.FC<{
   canvasId: number;
   manifestId?: number;
   collectionId?: number;
+  isComplete?: boolean;
+  isLoading?: boolean;
+  userTasks?: Array<CrowdsourcingTask | CrowdsourcingReview>;
   onContribute?: (projectId: string | number) => void;
-}> = ({ project, onContribute, canvasId, manifestId, collectionId }) => {
+}> = ({ project, onContribute, isLoading, canvasId, isComplete, userTasks, manifestId, collectionId }) => {
   const api = useApi();
-  const { user } = api.getCurrentUser() || {};
-
-  const { data: model } = useQuery(['canvas-tasks', { id: canvasId, projectId: project?.id }], async () => {
-    if (!project) {
-      return;
-    }
-    return await api.getTasks(0, {
-      root_task_id: project?.task_id,
-      subject: `urn:madoc:canvas:${canvasId}`,
-      detail: true,
-    });
-  });
+  const { user } = api.getIsServer() ? { user: undefined } : api.getCurrentUser() || {};
 
   const [continueSubmission, continueCount] = useMemo(() => {
     let totalReady = 0;
-    const allModels = model
-      ? model.tasks.filter(task => {
+    const allModels = userTasks
+      ? userTasks.filter(task => {
           if (user && task.assignee?.id === user.id && task.type === 'crowdsourcing-task') {
             if (task.status !== -1 && task.status !== 3) {
               totalReady++;
@@ -104,14 +104,14 @@ const ContinueSubmission: React.FC<{
       : null;
 
     return [allModels, totalReady] as const;
-  }, [model, user]);
+  }, [userTasks, user]);
 
   const reviews = useMemo(
     () =>
-      model
-        ? model.tasks.filter(task => task.type === 'crowdsourcing-review' && (task.status === 2 || task.status === 1))
+      userTasks
+        ? userTasks.filter(task => task.type === 'crowdsourcing-review' && (task.status === 2 || task.status === 1))
         : null,
-    [model]
+    [userTasks]
   );
 
   const reviewComponent =
@@ -132,6 +132,25 @@ const ContinueSubmission: React.FC<{
         </TableContainer>
       </div>
     ) : null;
+
+  if (isComplete) {
+    return (
+      <div>
+        <ProjectListingItem key={project.id}>
+          <ProjectListingTitle>
+            <HrefLink href={`/projects/${project.id}`}>
+              <LocaleString>{project.label}</LocaleString>
+            </HrefLink>
+          </ProjectListingTitle>
+          <ProjectListingDescription>
+            <LocaleString>{project.summary}</LocaleString>
+          </ProjectListingDescription>
+        </ProjectListingItem>
+        {reviewComponent}
+        <SuccessMessage>This page is complete</SuccessMessage>
+      </div>
+    );
+  }
 
   if (continueSubmission?.length) {
     return (
@@ -172,15 +191,21 @@ const ContinueSubmission: React.FC<{
         <ProjectListingDescription>
           <LocaleString>{project.summary}</LocaleString>
         </ProjectListingDescription>
-        {user ? (
-          <Button
-            as={HrefLink}
-            href={createLink({ projectId: project.slug, manifestId, canvasId, collectionId, subRoute: 'model' })}
-            style={{ display: 'inline-block' }}
-          >
-            Contribute
+        {!isLoading ? (
+          user ? (
+            <Button
+              as={HrefLink}
+              href={createLink({ projectId: project.slug, manifestId, canvasId, collectionId, subRoute: 'model' })}
+              style={{ display: 'inline-block' }}
+            >
+              Contribute
+            </Button>
+          ) : null
+        ) : (
+          <Button disabled style={{ minWidth: 100 }}>
+            ...
           </Button>
-        ) : null}
+        )}
       </ProjectListingItem>
       {reviewComponent}
     </div>
@@ -199,6 +224,8 @@ export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalCom
     const ctx = useMemo(() => (data ? { id: data.canvas.id, name: data.canvas.label } : undefined), [data]);
     const idx = structure.data && id ? structure.data.ids.indexOf(Number(id)) : null;
     const tempLabel = structure.data && idx !== null ? structure.data.items[idx].label : { none: ['...'] };
+    const completedAndHide =
+      project?.config.allowSubmissionsWhenCanvasComplete === false && data?.canvasTask?.status === 3;
 
     const onContribute = (projectId: number | string) => {
       api
@@ -219,7 +246,7 @@ export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalCom
 
     useVaultEffect(
       vault => {
-        if (data && data.canvas) {
+        if (data && data.canvas && data.canvas.source) {
           vault
             .load(
               data.canvas.source.id || data.canvas.source['@id'],
@@ -248,10 +275,13 @@ export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalCom
           </BreadcrumbContext>
         )}
         <LocaleString as="h1">{data ? data.canvas.label : tempLabel}</LocaleString>
-        {project && !api.getIsServer() ? (
+        {project ? (
           <ContinueSubmission
             onContribute={onContribute}
             canvasId={Number(id)}
+            isLoading={!data}
+            userTasks={data?.userTasks}
+            isComplete={completedAndHide}
             manifestId={manifestId ? Number(manifestId) : undefined}
             collectionId={collectionId ? Number(collectionId) : undefined}
             project={project}
@@ -299,10 +329,19 @@ export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalCom
   },
   {
     getKey: params => {
-      return ['site-canvas', { id: Number(params.id) }] as any;
+      return ['site-canvas', { id: Number(params.id), slug: params.slug }] as any;
     },
     getData: async (key, vars, api) => {
-      return api.getSiteCanvas(vars.id);
+      const [response, tasks] = await Promise.all([
+        await api.getSiteCanvas(vars.id),
+        vars.slug ? await api.getSiteProjectCanvasTasks(vars.slug, vars.id) : {},
+      ]);
+
+      return {
+        canvas: response.canvas,
+        canvasTask: tasks.canvasTask,
+        userTasks: tasks.userTasks,
+      };
     },
   }
 );

@@ -4,7 +4,7 @@
   "allowCanvasNavigation": true,
   "claimGranularity": "canvas",
   "maxContributionsPerResource": false,
-  "allowSubmissionsWhenCanvasComplete": true,
+  "allowSubmissionsWhenCanvasComplete": false,
   "randomlyAssignReviewer": false,
   "manuallyAssignedReviewer": null,
   "adminsAreReviewers": true,
