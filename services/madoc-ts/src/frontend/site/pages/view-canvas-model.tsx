@@ -16,6 +16,10 @@ import { TableContainer, TableEmpty, TableRow, TableRowLabel } from '../../share
 import { Status } from '../../shared/atoms/Status';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { RevisionRequest } from '@capture-models/types';
+import { WarningMessage } from '../../shared/atoms/WarningMessage';
+import { CrowdsourcingCanvasTask } from '../../../gateway/tasks/crowdsourcing-canvas-task';
+import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
+import { HrefLink } from '../../shared/utility/href-link';
 
 type ViewCanvasModelType = {
   params: {
@@ -33,6 +37,9 @@ type ViewCanvasModelType = {
   };
   data: {
     canvas: CanvasFull;
+    canvasTask?: CrowdsourcingCanvasTask;
+    userTasks?: CrowdsourcingTask[];
+    canUserSubmit: boolean;
     model?: {
       model: {
         id: string;
@@ -46,39 +53,44 @@ type ViewCanvasModelType = {
 };
 
 const SubmissionDetails: React.FC<{
-  project: ProjectFull;
-  canvasId: string;
-  manifestId?: string;
-  collectionId?: string;
-}> = ({ canvasId, project, collectionId, manifestId }) => {
-  const api = useApi();
-
-  const { data: model } = useQuery(['canvas-tasks', { id: canvasId, projectId: project?.id }], async () => {
-    if (!project) {
-      return;
-    }
-    return await api.getSiteProjectCanvasTasks(project.id, Number(canvasId));
-  });
-
-  if (!model) {
-    return null;
-  }
-
+  canvasTask: CrowdsourcingCanvasTask;
+  userTasks?: CrowdsourcingTask[];
+}> = ({ canvasTask, userTasks }) => {
   // @todo use the canvas task to show a status on this page.
   // @todo use the published model to show annotations to end users.
 
+  const date = new Date().getTime();
+  const found = userTasks
+    ? userTasks.find(task => {
+        if (!task.state.warningTime || !task.modified_at) return;
+        return date - task.modified_at > task.state.warningTime && task.status === 1;
+      })
+    : undefined;
+
   return (
     <>
-      {/*<div>{model.canvasTask ? <div>{model.canvasTask.status_text}</div> : null}</div>*/}
-      {model.userTasks && model.userTasks.length ? (
+      {found ? (
+        <WarningMessage>
+          {userTasks?.length ? 'Your contribution may expire' : 'Some of your contributions may expire'}
+        </WarningMessage>
+      ) : null}
+      {userTasks && userTasks.length ? (
         <TableContainer>
-          {model.userTasks.map(task => (
+          {userTasks.map(task => (
             <TableRow key={task.id}>
               <TableRowLabel>
                 <Status status={task.status} text={task.status_text} />
               </TableRowLabel>
               <TableRowLabel>{task.name}</TableRowLabel>
               <TableRowLabel>{task.state.changesRequested}</TableRowLabel>
+              <TableRowLabel>{task.state.changesRequested}</TableRowLabel>
+              <TableRowLabel>
+                <strong>
+                  {task.modified_at && task.state.warningTime && date - task.modified_at > task.state.warningTime
+                    ? 'expires soon'
+                    : null}
+                </strong>
+              </TableRowLabel>
             </TableRow>
           ))}
         </TableContainer>
@@ -105,22 +117,52 @@ export const ViewCanvasModel: UniversalComponent<ViewCanvasModelType> = createUn
       }
     });
 
+    const completedAndHide =
+      project?.config.allowSubmissionsWhenCanvasComplete === false && data?.canvasTask?.status === 3;
+
+    const backLink = createLink({
+      canvasId: id,
+      projectId: slug,
+      manifestId,
+      collectionId,
+    });
+
+    if (!data?.canUserSubmit) {
+      return (
+        <div>
+          <h1>Maximum number of contributors reached</h1>
+          <HrefLink href={backLink}>Go back to resource</HrefLink>
+        </div>
+      );
+    }
+
+    if (completedAndHide) {
+      return (
+        <div>
+          <h1>This image is complete</h1>
+          <HrefLink href={backLink}>Go back to resource</HrefLink>
+        </div>
+      );
+    }
+
     return (
       <div>
+        {project && data?.canvasTask ? (
+          <SubmissionDetails canvasTask={data?.canvasTask} userTasks={data?.userTasks} />
+        ) : null}
         {!api.getIsServer() && id && data && !data.model?.model && data.canvas.canvas && (
-          <PreModelViewer canvas={data.canvas.canvas} onContribute={project ? prepareContribution : undefined} />
+          <PreModelViewer
+            backLink={backLink}
+            canvas={data.canvas.canvas}
+            onContribute={project ? prepareContribution : undefined}
+          />
         )}
         {!api.getIsServer() && data && id && project && data.model && data.model.model ? (
           <>
             <CaptureModelViewer
               revisionId={revision}
               modelId={data.model.model.id}
-              backLink={createLink({
-                canvasId: id,
-                projectId: slug,
-                manifestId,
-                collectionId,
-              })}
+              backLink={backLink}
               onSave={async (response: RevisionRequest, respStatus: string | undefined) => {
                 if (respStatus === 'draft') {
                   // Create user task and mark as in progress.
@@ -147,9 +189,6 @@ export const ViewCanvasModel: UniversalComponent<ViewCanvasModelType> = createUn
             />
           </>
         ) : null}
-        {project && id ? (
-          <SubmissionDetails project={project} canvasId={id} manifestId={manifestId} collectionId={collectionId} />
-        ) : null}
       </div>
     );
   },
@@ -158,8 +197,12 @@ export const ViewCanvasModel: UniversalComponent<ViewCanvasModelType> = createUn
       return ['site-canvas', { id: Number(params.id), slug: params.slug }] as any;
     },
     getData: async (key, vars, api) => {
+      const tasks = vars.slug ? await api.getSiteProjectCanvasTasks(vars.slug, vars.id) : {};
       return {
         canvas: await api.getSiteCanvas(vars.id),
+        canvasTask: tasks.canvasTask,
+        userTasks: tasks.userTasks,
+        canUserSubmit: !!tasks.canUserSubmit,
         model: vars.slug && api.isAuthorised() ? await api.getSiteProjectCanvasModel(vars.slug, vars.id) : undefined,
       } as any;
     },

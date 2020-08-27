@@ -33,5 +33,6 @@ export interface CrowdsourcingTask extends BaseTask {
     // Can start adding to this as we need.
     changesRequested?: string | null;
     mergeId?: string;
+    warningTime?: number;
   };
 }

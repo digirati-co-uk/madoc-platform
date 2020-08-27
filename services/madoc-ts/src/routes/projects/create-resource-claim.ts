@@ -11,15 +11,17 @@ import { ApplicationContext } from '../../types/application-context';
 import { RequestError } from '../../utility/errors/request-error';
 import { sql } from 'slonik';
 import { CrowdsourcingCollectionTask } from '../../types/tasks/crowdsourcing-collection-task';
-import { CrowdsourcingManifestTask } from '../../types/tasks/crowdsourcing-manifest-task';
-import { CrowdsourcingCanvasTask } from '../../types/tasks/crowdsourcing-canvas-task';
+import { CrowdsourcingManifestTask } from '../../gateway/tasks/crowdsourcing-manifest-task';
+import { CrowdsourcingCanvasTask } from '../../gateway/tasks/crowdsourcing-canvas-task';
 import { api } from '../../gateway/api.server';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
 import { CrowdsourcingTask } from '../../types/tasks/crowdsourcing-task';
 import { createTask } from '../../gateway/tasks/crowdsourcing-task';
 import { CaptureModelSnippet } from '../../types/schemas/capture-model-snippet';
-import { CrowdsourcingReview } from '../../gateway/tasks/crowdsourcing-review';
 import { statusToClaimMap } from './update-resource-claim';
+import { ProjectConfiguration } from '../../types/schemas/project-configuration';
+import * as crowdsourcingCanvasTask from '../../gateway/tasks/crowdsourcing-canvas-task';
+import * as crowdsourcingManifestTask from '../../gateway/tasks/crowdsourcing-manifest-task';
 
 export type ResourceClaim = {
   collectionId?: number;
@@ -163,17 +165,32 @@ async function ensureProjectTaskStructure(
     throw new RequestError('Invalid project');
   }
 
-  // Fetch task.
-  // let parent = projectTask;
+  // Fetch configuration.
+  const configQuery: string[] = [
+    claim.canvasId ? `urn:madoc:canvas:${claim.canvasId}` : undefined,
+    claim.manifestId ? `urn:madoc:manifest:${claim.manifestId}` : undefined,
+    claim.collectionId ? `urn:madoc:collection:${claim.collectionId}` : undefined,
+    `urn:madoc:project:${projectId}`,
+    `urn:madoc:site:${siteId}`,
+  ].filter(e => e !== undefined) as any;
+
+  const { config } = await userApi.getConfiguration<ProjectConfiguration>('madoc', configQuery);
+  const firstConfig: Partial<ProjectConfiguration> = config && config[0] ? config[0].config_object : {};
+  const maxContributors =
+    firstConfig.maxContributionsPerResource || firstConfig.maxContributionsPerResource === 0
+      ? firstConfig.maxContributionsPerResource
+      : undefined;
+  const approvalsRequired = firstConfig.revisionApprovalsRequired || 1;
+  const warningTime = firstConfig.contributionWarningTime || undefined;
 
   if (claim.collectionId) {
-    // 1. Search by subect + root.
+    // 1. Search by subject + root.
     const foundCollectionTask = (parent.subtasks || []).find(
       (task: any) => task.subject === `urn:madoc:collection:${claim.collectionId}`
     );
 
     if (!foundCollectionTask) {
-      const { collection } = await userApi.getCollectionById(claim.collectionId);
+      const { collection, pagination } = await userApi.getCollectionById(claim.collectionId);
 
       const task: CrowdsourcingCollectionTask = {
         name: iiifGetLabel(collection.label, 'Untitled collection'),
@@ -199,17 +216,13 @@ async function ensureProjectTaskStructure(
     if (!foundManifestTask) {
       const { manifest } = await userApi.getManifestById(claim.manifestId);
 
-      // Make sure manifestId task exists. Update parent.
-      // parent = manifestTask;
-      const task: CrowdsourcingManifestTask = {
-        name: iiifGetLabel(manifest.label, 'Untitled manifest'),
-        type: 'crowdsourcing-manifest-task',
-        subject: `urn:madoc:manifest:${claim.manifestId}`,
-        status_text: 'accepted',
-        status: 1,
-        state: {},
-        parameters: [],
-      };
+      const task = crowdsourcingManifestTask.createTask({
+        label: iiifGetLabel(manifest.label, 'Untitled manifest'),
+        maxContributors,
+        warningTime,
+        approvalsRequired,
+        manifestId: claim.manifestId,
+      });
 
       parent = await userApi.addSubtasks<BaseTask & { id: string }>(task, parent.id);
     } else {
@@ -226,15 +239,14 @@ async function ensureProjectTaskStructure(
 
       // Make sure canvasId task exists. Update parent.
       // parent = canvasTask;
-      const task: CrowdsourcingCanvasTask = {
-        name: `${parent.name} - ${iiifGetLabel(canvas.label, 'Untitled canvas')}`,
-        type: 'crowdsourcing-canvas-task',
-        subject: `urn:madoc:canvas:${claim.canvasId}`,
-        status_text: 'accepted',
-        status: 1,
-        state: {},
-        parameters: [],
-      };
+      const task = crowdsourcingCanvasTask.createTask({
+        canvasId: claim.canvasId,
+        approvalsRequired,
+        maxContributors,
+        warningTime,
+        parentTaskName: parent.name,
+        label: iiifGetLabel(canvas.label, 'Untitled canvas'),
+      });
 
       parent = await userApi.addSubtasks<BaseTask & { id: string }>(task, parent.id);
     } else {
@@ -372,6 +384,7 @@ async function createUserCrowdsourcingTask({
   type,
   captureModel,
   claim,
+  warningTime,
 }: {
   context: ApplicationContext;
   siteId: number;
@@ -384,6 +397,7 @@ async function createUserCrowdsourcingTask({
   type: string;
   captureModel: (CaptureModel | CaptureModelSnippet) & { id: string };
   claim: ResourceClaim;
+  warningTime?: number;
 }): Promise<CrowdsourcingTask> {
   const userApi = api.asUser({ userId, siteId });
 
@@ -400,6 +414,7 @@ async function createUserCrowdsourcingTask({
     captureModel,
     structureId,
     revisionId: claim.revisionId, // @todo ensure user is assigned to this revision?
+    warningTime,
   });
 
   return userApi.addSubtasks(task, parentTaskId);
@@ -512,6 +527,7 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
       name,
       parentTaskId: parent.id,
       taskName: parent.name,
+      warningTime: parent.type === 'crowdsourcing-canvas-task' ? parent.state.warningTime : undefined,
       subject: `urn:madoc:canvas:${claim.canvasId}`,
       type: 'canvas',
       captureModel,

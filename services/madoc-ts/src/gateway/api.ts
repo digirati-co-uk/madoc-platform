@@ -35,7 +35,8 @@ import {
   CrowdsourcingReviewMerge,
   CrowdsourcingReviewMergeComplete,
 } from './tasks/crowdsourcing-review';
-import { CrowdsourcingCanvasTask } from '../types/tasks/crowdsourcing-canvas-task';
+import { CrowdsourcingCanvasTask } from './tasks/crowdsourcing-canvas-task';
+import { ConfigResponse } from '../types/schemas/config-response';
 
 export class ApiClient {
   private readonly gateway: string;
@@ -362,7 +363,9 @@ export class ApiClient {
   }
 
   async getConfiguration<T = any>(service: string, context: string[]) {
-    return this.request<T>(`/api/configurator/query?${stringify({ context, service }, { arrayFormat: 'none' })}`);
+    return this.request<ConfigResponse<T>>(
+      `/api/configurator/query?${stringify({ context, service }, { arrayFormat: 'none' })}`
+    );
   }
 
   // IIIF.
@@ -711,7 +714,7 @@ export class ApiClient {
     );
   }
 
-  async getTaskSubjects(id: string, subjects?: string[], query: { type?: string;  } = {}) {
+  async getTaskSubjects(id: string, subjects?: string[], query: { type?: string } = {}) {
     return this.request<{ input: string[]; subjects: Array<{ subject: string; status: number }> }>(
       `/api/tasks/${id}/subjects?${stringify({ ...query, subjects }, { arrayFormat: 'comma' })}`
     );
@@ -1119,9 +1122,13 @@ export class ApiClient {
   }
 
   async getSiteProjectCanvasTasks(projectId: string | number, canvasId: number) {
-    return this.publicRequest<{ canvasTask?: CrowdsourcingCanvasTask; userTasks?: CrowdsourcingTask[] }>(
-      `/madoc/api/projects/${projectId}/canvas-tasks/${canvasId}`
-    );
+    return this.publicRequest<{
+      canvasTask?: CrowdsourcingCanvasTask;
+      userTasks?: CrowdsourcingTask[];
+      canUserSubmit?: boolean;
+      totalContributors?: number;
+      maxContributors?: number;
+    }>(`/madoc/api/projects/${projectId}/canvas-tasks/${canvasId}`);
   }
 
   async getUserDetails() {

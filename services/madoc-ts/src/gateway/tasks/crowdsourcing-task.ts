@@ -3,6 +3,7 @@ import { CaptureModel } from '@capture-models/types';
 import { ApiClient } from '../api';
 import * as reviewTask from './crowdsourcing-review';
 import { CaptureModelSnippet } from '../../types/schemas/capture-model-snippet';
+import { CrowdsourcingCanvasTask } from './crowdsourcing-canvas-task';
 
 export const type = 'crowdsourcing-task';
 
@@ -53,6 +54,7 @@ export interface CrowdsourcingTask extends BaseTask {
     // Can start adding to this as we need.
     changesRequested?: string | null;
     mergeId?: string;
+    warningTime?: number;
   };
 }
 
@@ -68,6 +70,7 @@ export function createTask({
   structureId,
   reviewId,
   revisionId,
+  warningTime,
 }: {
   siteId: number;
   projectId: number;
@@ -80,6 +83,7 @@ export function createTask({
   structureId?: string;
   reviewId?: string;
   revisionId?: string;
+  warningTime?: number;
 }): CrowdsourcingTask {
   return {
     name: `User contributions to "${taskName}"`,
@@ -94,6 +98,7 @@ export function createTask({
     state: {
       reviewTask: reviewId,
       revisionId,
+      warningTime
     },
     parameters: [captureModel.id, structureId || null, resourceType],
     events: [
@@ -144,6 +149,14 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
               }
             }
           }
+
+          const parent = await api.getTaskById<CrowdsourcingCanvasTask>(task.parent_task);
+          if (parent.status !== 3 && parent.status !== 2) {
+            await api.updateTask(parent.id, {
+              status: 2,
+              status_text: `In progress`,
+            });
+          }
         }
       } catch (err) {
         console.log('error during review', err);
@@ -152,11 +165,17 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
     }
     case 'status.3': {
       // When a task is marked as done, do we need to update any other tasks? Are there any outstanding review tasks we need to close?
-      console.log('task marked as done', taskId, name);
       // Load parent id.
       const task = await api.getTaskById(taskId);
       if (task.parent_task) {
-        const parent = await api.getTaskById(task.parent_task, true);
+        const parent = await api.getTaskById<CrowdsourcingCanvasTask>(
+          task.parent_task,
+          true,
+          undefined,
+          undefined,
+          undefined,
+          true
+        );
         const workingReviews = (parent.subtasks || []).filter(review => {
           return review.type === 'crowdsourcing-review' && review.status !== 3;
         });
@@ -169,6 +188,30 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           await Promise.all(
             workingReviews.map(review => api.updateTask(review.id, { status: 3, status_text: 'All reviews completed' }))
           );
+        }
+        const approvalsRequired = parent.state.approvalsRequired || 1;
+        if (approvalsRequired) {
+          const assignees: string[] = [];
+          for (const subtask of parent.subtasks || []) {
+            if (subtask.type !== 'crowdsourcing-task') continue;
+            if (subtask.assignee && assignees.indexOf(subtask.assignee.id) === -1) {
+              assignees.push(subtask.assignee.id);
+            }
+            if (assignees.length >= approvalsRequired) {
+              await api.updateTask(parent.id, {
+                status: 3,
+                status_text: `Complete`,
+              });
+              break;
+            }
+          }
+        }
+
+        if (parent.status !== 3 && parent.status !== 2) {
+          await api.updateTask(parent.id, {
+            status: 2,
+            status_text: `In progress`,
+          });
         }
       }
       break;

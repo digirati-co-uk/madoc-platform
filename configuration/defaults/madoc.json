@@ -4,7 +4,11 @@
   "allowCanvasNavigation": true,
   "claimGranularity": "canvas",
   "maxContributionsPerResource": false,
+  "allowSubmissionsWhenCanvasComplete": false,
   "randomlyAssignReviewer": false,
   "manuallyAssignedReviewer": null,
-  "adminsAreReviewers": true
+  "adminsAreReviewers": true,
+  "hideCompletedResources": false,
+  "revisionApprovalsRequired": 1,
+  "contributionWarningTime": false
 }
