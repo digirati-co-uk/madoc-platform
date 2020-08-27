@@ -60,6 +60,11 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
           component: components.ViewManifest,
         },
         {
+          path: '/manifests/:id/mirador',
+          exact: true,
+          component: components.ViewManifestMirador,
+        },
+        {
           path: '/manifests/:manifestId/c/:id',
           exact: true,
           component: components.ViewCanvas,
