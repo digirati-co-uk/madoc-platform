@@ -35,6 +35,7 @@ export interface CrowdsourcingManifestTask extends BaseTask {
     // Can start adding to this as we need.
     maxContributors?: number;
     approvalsRequired?: number;
+    warningTime?: number;
   };
 }
 
@@ -43,11 +44,13 @@ export function createTask({
   manifestId,
   maxContributors,
   approvalsRequired,
+  warningTime,
 }: {
   label: string;
   manifestId: number;
   maxContributors?: number;
   approvalsRequired?: number;
+  warningTime?: number;
 }): CrowdsourcingManifestTask {
   return {
     name: label,
@@ -58,6 +61,7 @@ export function createTask({
     state: {
       maxContributors,
       approvalsRequired,
+      warningTime,
     },
     parameters: [],
     events: [

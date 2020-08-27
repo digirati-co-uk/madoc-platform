@@ -181,6 +181,7 @@ async function ensureProjectTaskStructure(
       ? firstConfig.maxContributionsPerResource
       : undefined;
   const approvalsRequired = firstConfig.revisionApprovalsRequired || 1;
+  const warningTime = firstConfig.contributionWarningTime || undefined;
 
   if (claim.collectionId) {
     // 1. Search by subject + root.
@@ -215,10 +216,10 @@ async function ensureProjectTaskStructure(
     if (!foundManifestTask) {
       const { manifest } = await userApi.getManifestById(claim.manifestId);
 
-
       const task = crowdsourcingManifestTask.createTask({
         label: iiifGetLabel(manifest.label, 'Untitled manifest'),
         maxContributors,
+        warningTime,
         approvalsRequired,
         manifestId: claim.manifestId,
       });
@@ -242,6 +243,7 @@ async function ensureProjectTaskStructure(
         canvasId: claim.canvasId,
         approvalsRequired,
         maxContributors,
+        warningTime,
         parentTaskName: parent.name,
         label: iiifGetLabel(canvas.label, 'Untitled canvas'),
       });
@@ -382,6 +384,7 @@ async function createUserCrowdsourcingTask({
   type,
   captureModel,
   claim,
+  warningTime,
 }: {
   context: ApplicationContext;
   siteId: number;
@@ -394,6 +397,7 @@ async function createUserCrowdsourcingTask({
   type: string;
   captureModel: (CaptureModel | CaptureModelSnippet) & { id: string };
   claim: ResourceClaim;
+  warningTime?: number;
 }): Promise<CrowdsourcingTask> {
   const userApi = api.asUser({ userId, siteId });
 
@@ -410,6 +414,7 @@ async function createUserCrowdsourcingTask({
     captureModel,
     structureId,
     revisionId: claim.revisionId, // @todo ensure user is assigned to this revision?
+    warningTime,
   });
 
   return userApi.addSubtasks(task, parentTaskId);
@@ -522,6 +527,7 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
       name,
       parentTaskId: parent.id,
       taskName: parent.name,
+      warningTime: parent.type === 'crowdsourcing-canvas-task' ? parent.state.warningTime : undefined,
       subject: `urn:madoc:canvas:${claim.canvasId}`,
       type: 'canvas',
       captureModel,

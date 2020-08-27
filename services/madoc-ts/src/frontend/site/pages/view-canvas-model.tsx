@@ -16,6 +16,7 @@ import { TableContainer, TableEmpty, TableRow, TableRowLabel } from '../../share
 import { Status } from '../../shared/atoms/Status';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { RevisionRequest } from '@capture-models/types';
+import { WarningMessage } from '../../shared/atoms/WarningMessage';
 
 type ViewCanvasModelType = {
   params: {
@@ -67,8 +68,21 @@ const SubmissionDetails: React.FC<{
   // @todo use the canvas task to show a status on this page.
   // @todo use the published model to show annotations to end users.
 
+  const date = new Date().getTime();
+  const found = model.userTasks
+    ? model.userTasks.find(task => {
+        if (!task.state.warningTime || !task.modified_at) return;
+        return date - task.modified_at > task.state.warningTime && task.status === 1;
+      })
+    : undefined;
+
   return (
     <>
+      {found ? (
+        <WarningMessage>
+          {model.userTasks?.length ? 'Your contribution may expire' : 'Some of your contributions may expire'}
+        </WarningMessage>
+      ) : null}
       {/*<div>{model.canvasTask ? <div>{model.canvasTask.status_text}</div> : null}</div>*/}
       {model.userTasks && model.userTasks.length ? (
         <TableContainer>
@@ -79,6 +93,14 @@ const SubmissionDetails: React.FC<{
               </TableRowLabel>
               <TableRowLabel>{task.name}</TableRowLabel>
               <TableRowLabel>{task.state.changesRequested}</TableRowLabel>
+              <TableRowLabel>{task.state.changesRequested}</TableRowLabel>
+              <TableRowLabel>
+                <strong>
+                  {task.modified_at && task.state.warningTime && date - task.modified_at > task.state.warningTime
+                    ? 'expires soon'
+                    : null}
+                </strong>
+              </TableRowLabel>
             </TableRow>
           ))}
         </TableContainer>
@@ -114,6 +136,9 @@ export const ViewCanvasModel: UniversalComponent<ViewCanvasModelType> = createUn
 
     return (
       <div>
+        {project && id ? (
+          <SubmissionDetails project={project} canvasId={id} manifestId={manifestId} collectionId={collectionId} />
+        ) : null}
         {!api.getIsServer() && id && data && !data.model?.model && data.canvas.canvas && (
           <PreModelViewer
             backLink={backLink}
@@ -152,9 +177,6 @@ export const ViewCanvasModel: UniversalComponent<ViewCanvasModelType> = createUn
               }}
             />
           </>
-        ) : null}
-        {project && id ? (
-          <SubmissionDetails project={project} canvasId={id} manifestId={manifestId} collectionId={collectionId} />
         ) : null}
       </div>
     );

@@ -10,4 +10,5 @@ export type ProjectConfiguration = {
   manuallyAssignedReviewer?: number | null;
   adminsAreReviewers: boolean;
   hideCompletedResources: boolean;
+  contributionWarningTime: false | number;
 };

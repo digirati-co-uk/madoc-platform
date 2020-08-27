@@ -54,6 +54,7 @@ export interface CrowdsourcingTask extends BaseTask {
     // Can start adding to this as we need.
     changesRequested?: string | null;
     mergeId?: string;
+    warningTime?: number;
   };
 }
 
@@ -69,6 +70,7 @@ export function createTask({
   structureId,
   reviewId,
   revisionId,
+  warningTime,
 }: {
   siteId: number;
   projectId: number;
@@ -81,6 +83,7 @@ export function createTask({
   structureId?: string;
   reviewId?: string;
   revisionId?: string;
+  warningTime?: number;
 }): CrowdsourcingTask {
   return {
     name: `User contributions to "${taskName}"`,
@@ -95,6 +98,7 @@ export function createTask({
     state: {
       reviewTask: reviewId,
       revisionId,
+      warningTime
     },
     parameters: [captureModel.id, structureId || null, resourceType],
     events: [

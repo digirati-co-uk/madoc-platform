@@ -21,9 +21,18 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task 
   const api = useApi();
   const project = useProjectByTask(task);
 
+  const date = new Date().getTime();
+
   const isComplete = task.status === 3;
   const isSubmitted = task.status === 2;
   const wasRejected = task.status === -1;
+  const mayExpire =
+    !isComplete &&
+    !wasRejected &&
+    !isSubmitted &&
+    task.modified_at &&
+    task.state.warningTime &&
+    date - task.modified_at > task.state.warningTime;
 
   const { data: captureModel } = useQuery(
     ['capture-model', { id: task.parameters[0] }],
@@ -95,6 +104,7 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task 
             <p>{task.state.changesRequested}</p>
           </div>
         ) : null}
+        {mayExpire ? <WarningMessage>Your contribution may expire soon</WarningMessage> : null}
         {isComplete ? (
           <WarningMessage>
             This task is complete, you can make another contribution from the{' '}

@@ -28,6 +28,7 @@ export interface CrowdsourcingCanvasTask extends BaseTask {
     // Can start adding to this as we need.
     maxContributors?: number;
     approvalsRequired?: number;
+    warningTime?: number;
   };
 }
 
@@ -37,12 +38,14 @@ export function createTask({
   canvasId,
   maxContributors,
   approvalsRequired,
+  warningTime,
 }: {
   parentTaskName: string;
   label: string;
   canvasId: number;
   maxContributors?: number;
   approvalsRequired?: number;
+  warningTime?: number;
 }): CrowdsourcingCanvasTask {
   return {
     name: `${parentTaskName} - ${label}`,
@@ -53,6 +56,7 @@ export function createTask({
     state: {
       maxContributors,
       approvalsRequired,
+      warningTime,
     },
     parameters: [],
     events: [

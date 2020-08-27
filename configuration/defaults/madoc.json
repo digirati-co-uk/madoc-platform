@@ -9,5 +9,6 @@
   "manuallyAssignedReviewer": null,
   "adminsAreReviewers": true,
   "hideCompletedResources": false,
-  "revisionApprovalsRequired": 1
+  "revisionApprovalsRequired": 1,
+  "contributionWarningTime": false
 }
