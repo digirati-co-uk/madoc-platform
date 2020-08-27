@@ -74,7 +74,6 @@ const SubmissionDetails: React.FC<{
           {userTasks?.length ? 'Your contribution may expire' : 'Some of your contributions may expire'}
         </WarningMessage>
       ) : null}
-      {/*<div>{model.canvasTask ? <div>{model.canvasTask.status_text}</div> : null}</div>*/}
       {userTasks && userTasks.length ? (
         <TableContainer>
           {userTasks.map(task => (
@@ -148,8 +147,6 @@ export const ViewCanvasModel: UniversalComponent<ViewCanvasModelType> = createUn
 
     return (
       <div>
-        <pre>{JSON.stringify(project?.config, null, 2)}</pre>
-
         {project && data?.canvasTask ? (
           <SubmissionDetails canvasTask={data?.canvasTask} userTasks={data?.userTasks} />
         ) : null}
