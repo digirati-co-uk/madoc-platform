@@ -7,7 +7,10 @@ export type ModelSearch = {
   property?: string;
   capture_model_id: string;
   parent_property: string;
+  parent_label: string;
   selector?: any;
   selector_type?: string;
+  parent_selector?: any;
+  parent_selector_type?: string;
   context: string[];
 };

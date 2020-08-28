@@ -60,6 +60,7 @@ export const searchManifest: RouteMiddleware<{ id: number }> = async context => 
     '@id': `${gatewayHost}${context.path}`,
     '@type': 'sc:AnnotationList',
     resources: response.results.map(result => {
+      const selector = result.selector ? result.selector : result.parent_selector;
       return {
         '@id': `${gatewayHost}${context.path}/resources/${result.id}`,
         '@type': 'oa:Annotation',
@@ -68,9 +69,8 @@ export const searchManifest: RouteMiddleware<{ id: number }> = async context => 
           '@type': 'cnt:ContentAsText',
           chars: result.value,
         },
-        on: result.selector
-          ? `${sourceMap[result.canvas]}#xywh=${~~result.selector.x},${~~result.selector.y},${~~result.selector
-              .width},${~~result.selector.height}`
+        on: selector
+          ? `${sourceMap[result.canvas]}#xywh=${~~selector.x},${~~selector.y},${~~selector.width},${~~selector.height}`
           : sourceMap[result.canvas],
       };
     }),
