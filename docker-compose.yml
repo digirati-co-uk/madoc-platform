@@ -20,6 +20,7 @@ services:
       - madoc-ts
       - config-service
       - storage-api
+      - okra
     volumes:
       - ./services/gateway/gateway.conf:/opt/tyk-gateway/tyk.conf
       - ./services/gateway/policies.json:/opt/tyk-gateway/policies/policies.json
@@ -215,3 +216,6 @@ services:
     volumes:
       - ./services/storage-api/lib:/home/node/app/lib:delegated
       - ./var/files/storage-api:/home/node/app/files
+
+  okra:
+    image: digirati/okra:d50b75c
