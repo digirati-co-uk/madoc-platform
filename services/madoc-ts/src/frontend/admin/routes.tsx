@@ -34,6 +34,7 @@ import { ViewCaptureModel } from './pages/crowdsourcing/capture-models/view-capt
 import { ProjectTasks } from './pages/crowdsourcing/projects/project-tasks';
 import { ProjectOverview } from './pages/crowdsourcing/projects/project-overview';
 import { PreviewCaptureModel } from './pages/crowdsourcing/model-editor/preview-capture-model';
+import { EditManifestLinking } from './pages/content/manifests/edit-manifest-linking';
 
 export const routes: UniversalRoute[] = [
   {
@@ -100,6 +101,11 @@ export const routes: UniversalRoute[] = [
         path: '/manifests/:id/structure',
         exact: true,
         component: EditManifestStructure,
+      },
+      {
+        path: '/manifests/:id/linking',
+        exact: true,
+        component: EditManifestLinking,
       },
       {
         path: '/manifests/:manifestId/canvases/:id',

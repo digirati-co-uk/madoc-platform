@@ -37,6 +37,7 @@ import {
 } from './tasks/crowdsourcing-review';
 import { CrowdsourcingCanvasTask } from './tasks/crowdsourcing-canvas-task';
 import { ConfigResponse } from '../types/schemas/config-response';
+import { ResourceLinkResponse } from '../database/queries/linking-queries';
 
 export class ApiClient {
   private readonly gateway: string;
@@ -379,6 +380,10 @@ export class ApiClient {
 
   async getManifestProjects(id: number) {
     return this.request<{ projects: ProjectSnippet[] }>(`/api/madoc/iiif/manifests/${id}/projects`);
+  }
+
+  async getManifestLinking(id: number) {
+    return this.request<{ linking: ResourceLinkResponse[] }>(`/api/madoc/iiif/manifests/${id}/linking`);
   }
 
   async createCollection(collection: Partial<CollectionNormalized>, taskId?: string, flat?: boolean) {

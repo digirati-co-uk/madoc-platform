@@ -45,6 +45,7 @@ export const ManifestView: UniversalComponent<ManifestViewType> = createUniversa
             { label: t('canvases'), link: `/manifests/${id}` },
             { label: t('edit metadata'), link: `/manifests/${id}/metadata` },
             { label: t('edit structure'), link: `/manifests/${id}/structure` },
+            { label: t('edit linking'), link: `/manifests/${id}/linking` },
             { label: t('projects'), link: `/manifests/${id}/projects` },
           ]}
         />
