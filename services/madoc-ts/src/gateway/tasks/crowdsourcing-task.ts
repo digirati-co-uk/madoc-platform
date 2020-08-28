@@ -98,7 +98,7 @@ export function createTask({
     state: {
       reviewTask: reviewId,
       revisionId,
-      warningTime
+      warningTime,
     },
     parameters: [captureModel.id, structureId || null, resourceType],
     events: [
@@ -116,9 +116,23 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
   // If you throw an exception here, the crowdsourcing task will be marked as rejected. Need to be careful.
 
   switch (name) {
-    case 'status.-1':
-      // When a task is abandoned, we should remove or update the review task.
+    case 'status.-1': {
+      try {
+        // When a task is abandoned, we should remove or update the review task.
+        const task = await api.getTaskById<CrowdsourcingTask>(taskId);
+        const revision = task.state.revisionId;
+        if (revision) {
+          const revisionRequest = await api.getCaptureModelRevision(revision);
+          if (revisionRequest) {
+            await api.deleteCaptureModelRevision(revisionRequest);
+          }
+        }
+      } catch (err) {
+        // likely error if no revision exists.
+      }
+
       break;
+    }
     case 'status.2': {
       try {
         const task = await api.getTaskById<CrowdsourcingTask>(taskId);

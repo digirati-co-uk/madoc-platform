@@ -8,11 +8,10 @@ import { useData } from '../../shared/hooks/use-data';
 import { CaptureModelViewer } from '../../shared/viewers/caputre-model-viewer';
 import { useApi } from '../../shared/hooks/use-api';
 import { PreModelViewer } from '../../shared/viewers/pre-model-viewer';
-import { useMutation, useQuery } from 'react-query';
-import { Link, useParams } from 'react-router-dom';
+import { useMutation } from 'react-query';
+import { useParams, useHistory } from 'react-router-dom';
 import { createLink } from '../../shared/utility/create-link';
-import { ProjectSnippet } from '../../../types/schemas/project-snippet';
-import { TableContainer, TableEmpty, TableRow, TableRowLabel } from '../../shared/atoms/Table';
+import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../shared/atoms/Table';
 import { Status } from '../../shared/atoms/Status';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { RevisionRequest } from '@capture-models/types';
@@ -20,6 +19,7 @@ import { WarningMessage } from '../../shared/atoms/WarningMessage';
 import { CrowdsourcingCanvasTask } from '../../../gateway/tasks/crowdsourcing-canvas-task';
 import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
 import { HrefLink } from '../../shared/utility/href-link';
+import { SmallButton } from '../../shared/atoms/Button';
 
 type ViewCanvasModelType = {
   params: {
@@ -55,17 +55,31 @@ type ViewCanvasModelType = {
 const SubmissionDetails: React.FC<{
   canvasTask: CrowdsourcingCanvasTask;
   userTasks?: CrowdsourcingTask[];
-}> = ({ canvasTask, userTasks }) => {
+  refresh: () => Promise<void>;
+  backLink: string;
+}> = ({ canvasTask, backLink, userTasks, refresh }) => {
   // @todo use the canvas task to show a status on this page.
   // @todo use the published model to show annotations to end users.
-
+  const api = useApi();
   const date = new Date().getTime();
+  const history = useHistory();
   const found = userTasks
     ? userTasks.find(task => {
         if (!task.state.warningTime || !task.modified_at) return;
         return date - task.modified_at > task.state.warningTime && task.status === 1;
       })
     : undefined;
+
+  const [abandonTask, abandonResponse] = useMutation(async (task: CrowdsourcingTask) => {
+    if (task.status !== 3 && task.status !== 2 && task.status !== -1) {
+      await api.updateTask(task.id, {
+        status: -1,
+        status_text: 'Abandoned',
+      });
+      await refresh();
+      history.push(backLink);
+    }
+  });
 
   return (
     <>
@@ -91,6 +105,13 @@ const SubmissionDetails: React.FC<{
                     : null}
                 </strong>
               </TableRowLabel>
+              <TableActions>
+                {task.status !== 3 && task.status !== 2 && task.status !== -1 && task.type === 'crowdsourcing-task' ? (
+                  <SmallButton disabled={abandonResponse.status === 'loading'} onClick={() => abandonTask(task)}>
+                    Abandon
+                  </SmallButton>
+                ) : null}
+              </TableActions>
             </TableRow>
           ))}
         </TableContainer>
@@ -148,7 +169,12 @@ export const ViewCanvasModel: UniversalComponent<ViewCanvasModelType> = createUn
     return (
       <div>
         {project && data?.canvasTask ? (
-          <SubmissionDetails canvasTask={data?.canvasTask} userTasks={data?.userTasks} />
+          <SubmissionDetails
+            backLink={backLink}
+            canvasTask={data?.canvasTask}
+            userTasks={data?.userTasks}
+            refresh={refetch as any}
+          />
         ) : null}
         {!api.getIsServer() && id && data && !data.model?.model && data.canvas.canvas && (
           <PreModelViewer
@@ -185,6 +211,8 @@ export const ViewCanvasModel: UniversalComponent<ViewCanvasModelType> = createUn
                     status: 2,
                   });
                 }
+
+                await refetch();
               }}
             />
           </>

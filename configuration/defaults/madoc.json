@@ -2,6 +2,8 @@
   "allowCollectionNavigation": true,
   "allowManifestNavigation": true,
   "allowCanvasNavigation": true,
+  "randomlyAssignCanvas": false,
+  "priorityRandomness": true,
   "claimGranularity": "canvas",
   "maxContributionsPerResource": false,
   "allowSubmissionsWhenCanvasComplete": false,

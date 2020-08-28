@@ -71,6 +71,7 @@ import { getProjectModel } from './routes/projects/get-project-model';
 import { siteCanvasModels } from './routes/site/site-canvas-models';
 import { siteCanvasTasks } from './routes/site/site-canvas-tasks';
 import { getProjectTask } from './routes/projects/get-project-task';
+import { assignRandomResource } from './routes/projects/assign-random-resource';
 
 export const router = new TypedRouter({
   // Normal route
@@ -172,6 +173,7 @@ export const router = new TypedRouter({
   'assign-review': [TypedRouter.POST, '/api/madoc/projects/:id/reviews', assignReview],
   'get-project-model': [TypedRouter.GET, '/api/madoc/projects/:id/models/:subject', getProjectModel],
   'get-project-task': [TypedRouter.GET, '/api/madoc/projects/:id/task', getProjectTask],
+  'assign-random-resource': [TypedRouter.POST, '/api/madoc/projects/:id/random', assignRandomResource],
 
   // Omeka routes
   'get-login': [TypedRouter.GET, '/s/:slug/madoc/login', loginPage],
