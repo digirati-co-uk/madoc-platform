@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@atlas-viewer/atlas@^1.0.4", "@atlas-viewer/atlas@^1.1.0":
+"@atlas-viewer/atlas@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-1.1.0.tgz#c40dc0d6b33b3fd3b11368f1ad3024429e803563"
   integrity sha512-NkTAeQTmVgN6fr63t/hznS8PQ1RNCloZo2Zx1xoJ59h058tMHNuF8yWu74+O1WuKu6CePq9M6/fiU/hW1EtIEg==
@@ -1362,13 +1362,13 @@
     screenfull "^3.3.2"
     whatwg-fetch "^3.0.0"
 
-"@capture-models/editor@^0.8.3":
-  version "0.8.3"
-  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.8.3.tgz#5c86e83b064d559277a395a13b45dc1bf056e612"
-  integrity sha512-4+V3no0eVZTnSyQERNM39FnPVnfqTgyaaK1o1GXp7FDewJqynWSwdSD9ja1oGkBapAkxnz4l9NVBM07m3H5NRg==
+"@capture-models/editor@^0.8.4":
+  version "0.8.4"
+  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.8.4.tgz#36f8f329c8bdf83bb52aa2ba543908250531c9fa"
+  integrity sha512-wn/CjFl2v/sLr4SjlGExtljE8PztwmFT2yTSphXoYdQ32txlaImkq6ykpYTmueosiQATqbanuZAz9dq5ZaWH4Q==
   dependencies:
-    "@atlas-viewer/atlas" "^1.0.4"
-    "@capture-models/helpers" "^0.8.2"
+    "@atlas-viewer/atlas" "^1.1.0"
+    "@capture-models/helpers" "^0.8.4"
     "@capture-models/plugin-api" "^0.8.0"
     "@capture-models/types" "^0.8.0"
     "@hyperion-framework/react-vault" "^1.0.0-alpha.15"
@@ -1406,10 +1406,10 @@
     use-async-effect "^2.2.1"
     use-debounce "^3.3.0"
 
-"@capture-models/helpers@^0.8.2":
-  version "0.8.2"
-  resolved "https://registry.yarnpkg.com/@capture-models/helpers/-/helpers-0.8.2.tgz#eb95025a5a49e40ceb46251b26a3271e1d80f293"
-  integrity sha512-PnNG7PBKnA2ac8yfpXB5BYB9ZqDBhdt+efMejqYpCD+H497294Ya7hdV9DKZ5Jn4XVGljCfLok88S3KtUX1lQQ==
+"@capture-models/helpers@^0.8.4":
+  version "0.8.4"
+  resolved "https://registry.yarnpkg.com/@capture-models/helpers/-/helpers-0.8.4.tgz#be90cb94268310016a75be66adb1c9edab054dd4"
+  integrity sha512-YimIZxtArHQCPrJayCPveYw22r2w0gcVD+S3wDvICUecqRmV4Yg6JOCQqD9yfIF3rBy5FTgsNNKvB5YQECTcrw==
   dependencies:
     "@capture-models/plugin-api" "^0.8.0"
     "@capture-models/types" "^0.8.0"
