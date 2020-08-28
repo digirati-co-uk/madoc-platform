@@ -35,6 +35,13 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.ts', '.tsx'],
+    alias: {
+      '@atlas-viewer/atlas': require.resolve('@atlas-viewer/atlas'),
+      '@capture-models/editor': ['@capture-models/editor/lib', '@capture-models/editor'],
+      https: false,
+      http: false,
+      '@blueprintjs/core': false,
+    },
   },
   externals: {
     react: 'React',
