@@ -89,51 +89,80 @@ export function getLinks({
   source,
   property,
   propertyMatch,
+  parent_resource_id,
 }: {
   site_id: number;
   type?: string;
   resource_id?: number;
+  parent_resource_id?: number;
   source?: string;
   format?: string;
   property?: string;
   propertyMatch?: any;
 }) {
-  const queries = [sql`site_id = ${site_id}`];
+  const queries = [sql`il.site_id = ${site_id}`];
 
   if (type) {
-    queries.push(sql`type = ${type}::text`);
+    queries.push(sql`il.type = ${type}::text`);
   }
 
   if (source) {
-    queries.push(sql`source = ${source}::text`);
+    queries.push(sql`il.source = ${source}::text`);
   }
 
   if (format) {
-    queries.push(sql`format = ${format}::text`);
+    queries.push(sql`il.format = ${format}::text`);
   }
 
   if (property) {
-    queries.push(sql`property = ${property}::text`);
+    queries.push(sql`il.property = ${property}::text`);
   }
 
   if (propertyMatch && Object.keys(propertyMatch).length) {
-    queries.push(sql`properties <@ ${sql.json(propertyMatch)}::jsonb`);
+    queries.push(sql`il.properties <@ ${sql.json(propertyMatch)}::jsonb`);
   }
 
   if (resource_id) {
-    queries.push(sql`resource_id = ${resource_id}`);
+    queries.push(sql`il.resource_id = ${resource_id}`);
+  }
+
+  if (parent_resource_id) {
+    queries.push(sql`idri.resource_id = ${parent_resource_id}`);
+    queries.push(sql`idri.site_id = ${site_id}`);
+
+    return sql<ResourceLinkRow>`
+        select idri.item_id as reosurce_id, il.* from iiif_linking il left join iiif_derived_resource_items idri on il.resource_id = idri.item_id
+        where ${sql.join(queries, SQL_AND)};
+    `;
   }
 
   return sql<ResourceLinkRow>`
-    select * from iiif_linking where ${sql.join(queries, SQL_AND)}
+    select * from iiif_linking il where ${sql.join(queries, SQL_AND)}
   `;
+}
+
+export function applyProperties(resourceLink: ResourceLink) {
+  const { file_path, file_bucket, file_hash, ...restProperties } = resourceLink.properties;
+
+  if (file_path && file_bucket) {
+    resourceLink.file_path = file_path;
+    resourceLink.file_bucket = file_bucket;
+  }
+
+  if (file_hash) {
+    resourceLink.file_hash = file_hash;
+  }
+
+  resourceLink.properties = restProperties;
+
+  return resourceLink;
 }
 
 export function addLinks(added: ResourceLink[], resource_id: number, site_id: number | null) {
   if (added.length === 0) {
     return;
   }
-  const values = added.map(
+  const values = added.map(applyProperties).map(
     item =>
       sql`(${sql.join(
         [
