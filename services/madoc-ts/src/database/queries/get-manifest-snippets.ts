@@ -104,17 +104,68 @@ export function getManifestSnippets(
   `;
 }
 
+export function getCanvasFilter(filterId: string): SqlSqlTokenType<{ resource_id: number }> | undefined {
+  switch (filterId) {
+    case 'ocr_hocr':
+      return sql`
+        select resource_id
+        from iiif_linking
+        where property = 'seeAlso'
+          and format = 'text/xml'
+          and type = 'Text'
+          and properties ->> 'profile' = 'http://www.loc.gov/standards/alto/v3/alto.xsd'
+      `;
+    default:
+      return undefined;
+  }
+}
+
 export function getManifestList({
   siteId,
   page,
   manifestCount,
   parentId,
+  canvasSubQuery,
 }: {
   siteId: number;
   page: number;
   manifestCount: number;
   parentId?: number;
+  canvasSubQuery?: SqlSqlTokenType<{ resource_id: number }>;
 }) {
+  if (canvasSubQuery) {
+    const parentJoin = parentId
+      ? sql`left join iiif_derived_resource_items midr
+                 on midr.item_id = ir.resource_id`
+      : SQL_EMPTY;
+
+    const parentWhere = parentId
+      ? sql`
+        and midr.resource_id = ${parentId}
+        and midr.site_id = ${siteId}
+      `
+      : SQL_EMPTY;
+
+    return sql<{ resource_id: number; thumbnail: string; canvas_total: number }>`
+        with canvases (resource_id) as (${canvasSubQuery}),
+             site_counts as (select * from iiif_derived_resource_item_counts where site_id = ${siteId})
+        select 
+           ir.resource_id, 
+           manifest_thumbnail(1, ir.resource_id) as thumbnail,
+           canvas_count.item_total as canvas_total
+        from canvases 
+            left join iiif_derived_resource_items ir on item_id = canvases.resource_id and site_id = ${siteId}
+            left join iiif_resource i on ir.resource_id = i.id
+            left join site_counts canvas_count
+                   on canvas_count.resource_id = i.id
+            ${parentJoin}
+        where i.type = 'manifest'
+        ${parentWhere}
+        group by ir.resource_id, i.type, canvas_count.item_total
+        limit ${manifestCount} offset ${(page - 1) * manifestCount}
+    `;
+  }
+
   if (parentId) {
     return sql<{ resource_id: number; thumbnail: string; canvas_total: number }>`
       with site_counts as (select * from iiif_derived_resource_item_counts where site_id = ${siteId})
