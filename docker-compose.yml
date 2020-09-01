@@ -128,7 +128,7 @@ services:
       - ./services/tasks-api/lib:/home/node/app/lib
 
   model-api:
-    image: digirati/capture-models:v0.8.3
+    image: digirati/capture-models:v0.9.0
     environment:
       - SERVER_PORT=3000
       - DATABASE_HOST=shared-postgres
