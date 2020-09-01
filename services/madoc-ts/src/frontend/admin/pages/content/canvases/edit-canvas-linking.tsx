@@ -1,23 +1,22 @@
-import React from 'react';
+import * as React from 'react';
 import { UniversalComponent } from '../../../../types';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { ResourceLinkResponse } from '../../../../../database/queries/linking-queries';
 import { useData } from '../../../../shared/hooks/use-data';
 import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../../../shared/atoms/Table';
-import { SmallButton } from '../../../../shared/atoms/Button';
 
-type EditManifestLinkingType = {
+type EditCanvasLinking = {
   query: {};
   params: { id: string };
   data: { linking: ResourceLinkResponse[] };
   variables: { id: number };
 };
 
-export const EditManifestLinking: UniversalComponent<EditManifestLinkingType> = createUniversalComponent<
-  EditManifestLinkingType
+export const EditCanvasLinking: UniversalComponent<EditCanvasLinking> = createUniversalComponent<
+  EditCanvasLinking
 >(
   props => {
-    const { data } = useData(EditManifestLinking);
+    const { data } = useData(EditCanvasLinking);
 
     return (
       <>
@@ -42,10 +41,10 @@ export const EditManifestLinking: UniversalComponent<EditManifestLinkingType> = 
   },
   {
     getKey(params) {
-      return ['manifest-linking', { id: Number(params.id) }];
+      return ['canvas-linking', { id: Number(params.id) }];
     },
     getData(key, vars, api) {
-      return api.getManifestLinking(vars.id);
+      return api.getCanvasLinking(vars.id);
     },
   }
 );
