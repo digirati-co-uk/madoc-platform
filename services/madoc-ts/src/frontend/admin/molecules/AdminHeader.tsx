@@ -38,20 +38,49 @@ const AdminTabItem = styled.li<{ $active?: boolean }>`
     `}
 `;
 
+const AdminHeaderThumbnail = styled.div`
+  padding: 1em 0;
+  max-height: 150px;
+  img {
+    height: 100%;
+    max-height: 100%;
+    width: auto;
+  }
+`;
+
+const AdminHeaderGrid = styled.div`
+  display: flex;
+`;
+
+const TitleContainer = styled.div`
+  flex: 1 1 0px;
+  margin-right: auto;
+`;
+
 export const AdminHeader: React.FC<{
   title: any;
   subtitle?: string;
   breadcrumbs?: BreadcrumbItem[];
   menu?: BreadcrumbItem[];
-}> = ({ title, subtitle, breadcrumbs, menu }) => {
+  thumbnail?: string;
+}> = ({ title, subtitle, breadcrumbs, menu, thumbnail }) => {
   const { pathname } = useLocation();
 
   return (
     <AdminHeaderBackground>
       {breadcrumbs ? <Breadcrumbs items={breadcrumbs} /> : null}
       <WidePage>
-        <AdminPageTitle subtitle={!!subtitle}>{title}</AdminPageTitle>
-        {subtitle ? <AdminPageSubtitle>{subtitle}</AdminPageSubtitle> : null}
+        <AdminHeaderGrid style={{ display: 'flex' }}>
+          {thumbnail ? (
+            <AdminHeaderThumbnail>
+              <img src={thumbnail} />
+            </AdminHeaderThumbnail>
+          ) : null}
+          <TitleContainer>
+            <AdminPageTitle subtitle={!!subtitle}>{title}</AdminPageTitle>
+            {subtitle ? <AdminPageSubtitle>{subtitle}</AdminPageSubtitle> : null}
+          </TitleContainer>
+        </AdminHeaderGrid>
         {menu ? (
           <AdminTabRow>
             {menu.map((item, n) => (
