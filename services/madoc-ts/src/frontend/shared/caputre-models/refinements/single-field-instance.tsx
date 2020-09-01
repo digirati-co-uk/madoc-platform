@@ -23,7 +23,7 @@ registerRefinement({
           path={[...actions.path, [subject.property, selectedField.id]]}
           field={subject.instance[0]}
         />
-        {selectedField.allowMultiple ? (
+        {selectedField.allowMultiple && !(actions as any).immutableEntity ? (
           <NewFieldButtonInstance property={subject.property} path={actions.path} field={selectedField} />
         ) : null}
       </>

@@ -22,7 +22,7 @@ registerRefinement({
       keys.length === 1 &&
       entity.instance.properties[keys[0]].length === 1 &&
       entity.instance.properties[keys[0]][0].type === 'entity' &&
-      !entity.instance.properties[keys[0]][0].selector
+      (entity.instance.immutable || !entity.instance.properties[keys[0]][0].selector)
     );
   },
   refine(entity) {

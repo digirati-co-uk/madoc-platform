@@ -1,8 +1,8 @@
 import React from 'react';
-import { CardButton, CardButtonGroup } from '@capture-models/editor';
 import { useRefinement } from '@capture-models/plugin-api';
 import { BaseField, CaptureModel, EntityRefinement } from '@capture-models/types';
 import { FieldList } from './FieldList';
+import { RevisionActions } from './RevisionActions';
 import { VerboseSelector } from './VerboseSelector';
 import { RevisionBreadcrumbs } from './RevisionBreadcrumbs';
 
@@ -11,9 +11,6 @@ export const EntityTopLevel: React.FC<{
   description?: string;
   entity: { property: string; instance: CaptureModel['document'] };
   path: Array<[string, string]>;
-  goBack?: () => void;
-  goNext?: () => void;
-  goPrev?: () => void;
   showNavigation?: boolean;
   readOnly?: boolean;
   setSelectedField: (field: { property: string; instance: BaseField }) => void;
@@ -21,14 +18,11 @@ export const EntityTopLevel: React.FC<{
   staticBreadcrumbs?: string[];
   hideSplash?: boolean;
   hideCard?: boolean;
+  allowEdits?: boolean;
+  allowNavigation?: boolean;
 }> = ({
-  title,
-  description,
   entity,
   path,
-  goBack,
-  goNext,
-  goPrev,
   showNavigation,
   staticBreadcrumbs,
   readOnly,
@@ -36,6 +30,8 @@ export const EntityTopLevel: React.FC<{
   setSelectedField,
   hideSplash,
   hideCard,
+  allowNavigation,
+  allowEdits,
   children,
 }) => {
   const refinement = useRefinement<EntityRefinement>('entity', entity, {
@@ -48,7 +44,6 @@ export const EntityTopLevel: React.FC<{
     return refinement.refine(
       entity,
       {
-        goBack,
         path,
         showNavigation,
         staticBreadcrumbs,
@@ -65,7 +60,7 @@ export const EntityTopLevel: React.FC<{
   const body = (
     <>
       <RevisionBreadcrumbs />
-      {showSelector && entity.instance.selector ? (
+      {showSelector && entity.instance.selector && !entity.instance.immutable ? (
         <VerboseSelector
           isTopLevel={path.length === 0}
           readOnly={readOnly || path.length === 0}
@@ -90,17 +85,7 @@ export const EntityTopLevel: React.FC<{
   return (
     <>
       {body}
-      {goNext || goPrev ? (
-        <CardButtonGroup>
-          <CardButton size="small" onClick={goPrev} disabled={!goPrev}>
-            Previous {entity.instance.label}
-          </CardButton>
-          <CardButton size="small" onClick={goNext} disabled={!goNext}>
-            Next {entity.instance.label}
-          </CardButton>
-        </CardButtonGroup>
-      ) : null}
-      {goBack ? <CardButton onClick={goBack}>{readOnly ? 'Go back' : 'Finish and save'}</CardButton> : null}
+      <RevisionActions readOnly={readOnly} allowNavigation={allowNavigation} allowEdits={allowEdits} />
       {children}
     </>
   );

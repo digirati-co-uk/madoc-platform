@@ -49,6 +49,7 @@ export const FieldList: React.FC<{
         }
         return (
           <FieldInstanceList
+            immutableEntity={entity.instance.immutable}
             key={instances[0].id}
             path={path}
             fields={instances}

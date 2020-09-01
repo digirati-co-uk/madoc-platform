@@ -1,5 +1,6 @@
 import './basic-unnesting';
 import './filter-revises-field';
+import './filter-revises-entity';
 import './hide-empty-structure-revisions';
 import './inline-field-instance';
 import './no-model-fields';

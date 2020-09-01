@@ -1,5 +1,5 @@
 import { BaseField, CaptureModel } from '@capture-models/types';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { EntityTopLevel } from './EntityTopLevel';
 import { VerboseFieldPage } from './VerboseFieldPage';
 import { Revisions } from '@capture-models/editor';
@@ -17,9 +17,9 @@ export const VerboseEntityPage: React.FC<{
   staticBreadcrumbs?: string[];
   hideSplash?: boolean;
   hideCard?: boolean;
-}> = ({ readOnly, children, ...props }) => {
-  const adjacent = Revisions.useStoreState(s => s.revisionAdjacentSubtreeFields);
-
+  allowEdits?: boolean;
+  allowNavigation?: boolean;
+}> = ({ readOnly, children, allowEdits, allowNavigation, ...props }) => {
   const { currentEntity, currentField, subtreePath, fieldProperty } = Revisions.useStoreState(s => {
     return {
       currentEntity: s.revisionSubtree,
@@ -38,7 +38,6 @@ export const VerboseEntityPage: React.FC<{
       deselectField: a.revisionDeselectField,
     };
   });
-  const setPath = Revisions.useStoreActions(a => a.revisionSetSubtree);
 
   const isTop = isTopLevel(subtreePath);
 
@@ -66,27 +65,6 @@ export const VerboseEntityPage: React.FC<{
     [popSubtree, pushSubtree]
   );
 
-  const navigation = useMemo(() => {
-    const current = adjacent.currentId;
-    let prev;
-    let next;
-    if (current) {
-      let breakNext = false;
-      for (const field of adjacent.fields) {
-        if (breakNext) {
-          next = field;
-          break;
-        }
-        if ((field as any).id === current) {
-          breakNext = true;
-          continue;
-        }
-        prev = field;
-      }
-    }
-    return { next, prev };
-  }, [adjacent]);
-
   const field = currentField ? currentField : currentEntity && !isEntity(currentEntity) ? currentEntity : undefined;
 
   if (field) {
@@ -94,15 +72,10 @@ export const VerboseEntityPage: React.FC<{
       <VerboseFieldPage
         key={field.id}
         readOnly={readOnly}
+        allowEdits={allowEdits}
+        allowNavigation={allowNavigation}
         field={{ property: fieldProperty || '', instance: field as BaseField }}
         path={subtreePath as any}
-        goBack={() => {
-          if (currentField) {
-            setSelectedField(undefined);
-          } else {
-            setSelectedEntity(undefined);
-          }
-        }}
       />
     );
   }
@@ -118,28 +91,9 @@ export const VerboseEntityPage: React.FC<{
       setSelectedEntity={setSelectedEntity}
       path={subtreePath as any}
       readOnly={readOnly}
+      allowEdits={allowEdits}
+      allowNavigation={allowNavigation}
       entity={{ property: '', instance: currentEntity }}
-      goBack={
-        isTop
-          ? undefined
-          : () => {
-              setSelectedEntity(undefined);
-            }
-      }
-      goNext={
-        navigation && navigation.next
-          ? () => {
-              setPath([...subtreePath.slice(0, -1), [subtreePath.slice(-1)[0][0], (navigation as any).next.id, false]]);
-            }
-          : undefined
-      }
-      goPrev={
-        navigation && navigation.prev
-          ? () => {
-              setPath([...subtreePath.slice(0, -1), [subtreePath.slice(-1)[0][0], (navigation as any).prev.id, false]]);
-            }
-          : undefined
-      }
       {...props}
     >
       {isTop ? children : null}
