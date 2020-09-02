@@ -1,3 +1,6 @@
+import { CaptureModelExtension } from '../extensions/capture-models/extension';
+import { Paragraphs } from '../extensions/capture-models/Paragraphs/paragraphs.extension';
+import { ExtensionManager } from '../extensions/extension-manager';
 import { fetchJson } from './fetch-json';
 import { BaseTask } from '../gateway/tasks/base-task';
 import { CanvasNormalized, CollectionNormalized, Manifest } from '@hyperion-framework/types';
@@ -50,6 +53,7 @@ export class ApiClient {
   private errorRecoveryHandlers: Array<() => void> = [];
   private isDown = false;
   private currentUser?: { scope: string[]; user: { id: string; name?: string } };
+  private captureModelExtensions: ExtensionManager<CaptureModelExtension>;
 
   constructor(options: {
     gateway: string;
@@ -57,6 +61,7 @@ export class ApiClient {
     jwt?: string;
     asUser?: { userId?: number; siteId?: number };
     customerFetcher?: typeof fetchJson;
+    customCaptureModelExtensions?: (api: ApiClient) => Array<CaptureModelExtension>;
   }) {
     this.gateway = options.gateway;
     this.jwt = options.jwt;
@@ -64,6 +69,9 @@ export class ApiClient {
     this.isServer = !(globalThis as any).window;
     this.fetcher = options.customerFetcher || fetchJson;
     this.publicSiteSlug = options.publicSiteSlug;
+    this.captureModelExtensions = new ExtensionManager(
+      options.customCaptureModelExtensions ? options.customCaptureModelExtensions(this) : [new Paragraphs(this)]
+    );
   }
 
   getCurrentUser() {
@@ -374,8 +382,8 @@ export class ApiClient {
     return this.request<CollectionListResponse>(`/api/madoc/iiif/collections?${stringify({ page, parent })}`);
   }
 
-  async getManifests(page = 0, parent?: number) {
-    return this.request<ManifestListResponse>(`/api/madoc/iiif/manifests?${stringify({ page, parent })}`);
+  async getManifests(page = 0, { parent, filter }: { parent?: number; filter?: string } = {}) {
+    return this.request<ManifestListResponse>(`/api/madoc/iiif/manifests?${stringify({ page, parent, filter })}`);
   }
 
   async getManifestProjects(id: number) {
@@ -384,6 +392,24 @@ export class ApiClient {
 
   async getManifestLinking(id: number) {
     return this.request<{ linking: ResourceLinkResponse[] }>(`/api/madoc/iiif/manifests/${id}/linking`);
+  }
+
+  async getManifestCanvasLinking(
+    id: number,
+    query: { source?: string; format?: string; type?: string; property?: string; resource_id?: number } = {}
+  ) {
+    return this.request<{ linking: ResourceLinkResponse[] }>(
+      `/api/madoc/iiif/manifests/${id}/canvas-linking${query ? `?${stringify(query)}` : ``}`
+    );
+  }
+
+  async convertAltoToCaptureModel(alto: string) {
+    return this.request<any>(`/api/okra/convert/mets-alto`, {
+      method: 'POST',
+      body: {
+        ocr_data: alto,
+      },
+    });
   }
 
   async createCollection(collection: Partial<CollectionNormalized>, taskId?: string, flat?: boolean) {
@@ -495,6 +521,9 @@ export class ApiClient {
   async getCanvasMetadata(id: number) {
     return this.request<GetMetadata>(`/api/madoc/iiif/canvases/${id}/metadata`);
   }
+  async getCanvasLinking(id: number) {
+    return this.request<{ linking: ResourceLinkResponse[] }>(`/api/madoc/iiif/canvases/${id}/linking`);
+  }
 
   async updateCollectionMetadata(id: number, request: MetadataUpdate) {
     return this.request<void>(`/api/madoc/iiif/collections/${id}/metadata`, {
@@ -534,6 +563,15 @@ export class ApiClient {
       },
     });
   }
+  async importManifestOcr(id: number, label: string) {
+    return this.request<ImportManifestTask>(`/api/madoc/iiif/import/manifest-ocr`, {
+      method: 'POST',
+      body: {
+        manifestId: id,
+        label,
+      },
+    });
+  }
   async getCanvasById(id: number) {
     return this.request<CanvasFull>(`/api/madoc/iiif/canvases/${id}`);
   }
@@ -542,6 +580,19 @@ export class ApiClient {
     return this.request<{ manifests: number[] }>(
       `/api/madoc/iiif/canvases/${id}/manifests${query ? `?${stringify(query)}` : ''}`
     );
+  }
+
+  async addLinkToResource(link: {
+    link: ResourceLinkResponse['link'];
+    property: string;
+    source?: string;
+    label?: string;
+    resource_id: string;
+  }) {
+    return this.request<ResourceLinkResponse>(`/api/madoc/iiif/linking`, {
+      method: 'POST',
+      body: link,
+    });
   }
 
   // Capture model API.
@@ -596,6 +647,15 @@ export class ApiClient {
     });
   }
 
+  parseModelTarget(inputTarget: CaptureModel['target']) {
+    const target = (inputTarget || []).map(t => this.resolveUrn(t.id));
+    const collection = target.find(item => item && item.type.toLowerCase() === 'collection');
+    const manifest = target.find(item => item && item.type.toLowerCase() === 'manifest');
+    const canvas = target.find(item => item && item.type.toLowerCase() === 'canvas');
+
+    return { collection, manifest, canvas };
+  }
+
   resolveUrn(urn: string) {
     const regex = /^urn:madoc:([A-Za-z]+):([\d]+)$/g;
     const match = regex.exec(urn);
@@ -608,12 +668,15 @@ export class ApiClient {
   }
 
   async cloneCaptureModel(id: string, target: Array<{ id: string; type: string }>) {
-    return this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model/${id}/clone`, {
-      method: 'POST',
-      body: {
-        target,
-      },
-    });
+    return this.captureModelExtensions.dispatch<{ id: string } & CaptureModel, 'onCloneCaptureModel'>(
+      'onCloneCaptureModel',
+      await this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model/${id}/clone`, {
+        method: 'POST',
+        body: {
+          target,
+        },
+      })
+    );
   }
 
   async forkCaptureModelRevision(
@@ -870,6 +933,54 @@ export class ApiClient {
       method: 'POST',
       body: tasks,
     });
+  }
+
+  // Storage API.
+
+  async saveStorageJson(bucket: string, fileName: string, json: any, isPublic = false) {
+    return this.request<{
+      success: boolean;
+      stats: {
+        modified: string;
+        size: number;
+      };
+    }>(
+      isPublic
+        ? `/api/storage/data/${bucket}/public/${fileName.endsWith('.json') ? fileName : `${fileName}.json`}`
+        : `/api/storage/data/${bucket}/${fileName.endsWith('.json') ? fileName : `${fileName}.json`}`,
+      {
+        method: 'POST',
+        body: json,
+      }
+    );
+  }
+
+  async getStorageJsonDetails(bucket: string, fileName: string, isPublic = false) {
+    return this.request<
+      | {
+          size: number;
+          modified: string;
+          public: true;
+          public_url: string;
+        }
+      | {
+          size: number;
+          modified: string;
+          public: false;
+        }
+    >(
+      isPublic
+        ? `/api/storage/details/${bucket}/public/${fileName.endsWith('.json') ? fileName : `${fileName}.json`}`
+        : `/api/storage/details/${bucket}/${fileName.endsWith('.json') ? fileName : `${fileName}.json`}`
+    );
+  }
+
+  async getStorageJsonData<T = any>(bucket: string, fileName: string, isPublic = false) {
+    return this.request<T>(
+      isPublic
+        ? `/api/storage/data/${bucket}/public/${fileName.endsWith('.json') ? fileName : `${fileName}.json`}`
+        : `/api/storage/data/${bucket}/${fileName.endsWith('.json') ? fileName : `${fileName}.json`}`
+    );
   }
 
   // Review API
