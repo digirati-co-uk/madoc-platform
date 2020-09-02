@@ -8,6 +8,8 @@ import { api } from '../gateway/api.server';
 import * as tasks from '../gateway/tasks/task-helpers';
 import * as crowdsourcingCanvas from '../gateway/tasks/crowdsourcing-canvas-task';
 import * as crowdsourcingManifest from '../gateway/tasks/crowdsourcing-manifest-task';
+import * as processManifestOcr from '../gateway/tasks/process-manifest-ocr';
+import * as processCanvasOcr from '../gateway/tasks/process-canvas-ocr';
 
 const configOptions: WorkerOptions = {
   connection: {
@@ -78,6 +80,14 @@ const worker = new Worker(
           });
         case crowdsourcingManifest.type:
           return await crowdsourcingManifest.jobHandler(job.name, job.data.taskId, contextualApi).catch(err => {
+            throw err;
+          });
+        case processManifestOcr.type:
+          return await processManifestOcr.jobHandler(job.name, job.data.taskId, contextualApi).catch(err => {
+            throw err;
+          });
+        case processCanvasOcr.type:
+          return await processCanvasOcr.jobHandler(job.name, job.data.taskId, contextualApi).catch(err => {
             throw err;
           });
       }
