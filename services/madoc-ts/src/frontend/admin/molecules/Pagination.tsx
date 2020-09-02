@@ -14,6 +14,10 @@ export const Pagination: React.FC<{ page: number; totalPages: number; stale: boo
   const prevPage = stale || page > 1;
   const nextPage = stale || page < totalPages;
 
+  if (totalPages === 0 && page === 1) {
+    return null;
+  }
+
   return (
     <div style={{ margin: '2em 0' }}>
       {prevPage ? (
