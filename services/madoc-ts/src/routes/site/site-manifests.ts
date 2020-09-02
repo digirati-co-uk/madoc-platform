@@ -21,7 +21,7 @@ export const siteManifests: RouteMiddleware<{ slug: string }> = async context =>
     // Get project collection id passing in page, and asking for only collections.
     // return collection id.
     context.response.status = 200;
-    context.response.body = await siteApi.getManifests(page, project.collection_id);
+    context.response.body = await siteApi.getManifests(page, { parent: project.collection_id });
 
     return;
   }

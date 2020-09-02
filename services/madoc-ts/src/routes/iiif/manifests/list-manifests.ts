@@ -4,8 +4,8 @@ import { getMetadata } from '../../../utility/iiif-database-helpers';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { ManifestListResponse } from '../../../types/schemas/manifest-list';
 import { InternationalString } from '@hyperion-framework/types';
-import { countResources } from '../../../database/queries/resource-queries';
-import { getManifestList } from '../../../database/queries/get-manifest-snippets';
+import { countResources, countSubQuery } from '../../../database/queries/resource-queries';
+import { getCanvasFilter, getManifestList } from '../../../database/queries/get-manifest-snippets';
 
 type ManifestSnippetRow = {
   resource_id: number;
@@ -24,7 +24,10 @@ export const listManifests: RouteMiddleware = async context => {
 
   const manifestCount = 24;
   const pageQuery = Number(context.query.page) || 1;
-  const { total = 0 } = await context.connection.one<{ total: number }>(countResources('manifest', siteId, parent));
+  const canvasSubQuery = getCanvasFilter(context.query.filter);
+  const { total = 0 } = await context.connection.one<{ total: number }>(
+    canvasSubQuery ? countSubQuery(canvasSubQuery) : countResources('manifest', siteId, parent)
+  );
   const totalPages = Math.ceil(total / manifestCount);
   const page = (pageQuery > totalPages ? totalPages : pageQuery) || 1;
 
@@ -35,6 +38,7 @@ export const listManifests: RouteMiddleware = async context => {
         parentId: parent,
         manifestCount,
         page,
+        canvasSubQuery,
       }),
       siteId,
       ['label']

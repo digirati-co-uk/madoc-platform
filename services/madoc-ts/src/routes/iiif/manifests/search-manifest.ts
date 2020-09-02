@@ -9,9 +9,19 @@ export const searchManifest: RouteMiddleware<{ id: number }> = async context => 
 
   const manifestUrn = `urn:madoc:manifest:${context.params.id}`;
 
-  const { q, field_type, selector_type, parent_property, capture_model_id, source_id } = context.request.query;
+  const {
+    q,
+    canvas_id,
+    field_type,
+    selector_type,
+    parent_property,
+    capture_model_id,
+    source_id,
+  } = context.request.query;
 
-  if (!q) {
+  const canvasUrn = canvas_id ? `urn:madoc:canvas:${canvas_id}` : undefined;
+
+  if (!q && !canvas_id) {
     context.response.body = {
       '@context': 'http://iiif.io/api/presentation/3/context.json',
       '@id': `${gatewayHost}${context.path}`,
@@ -21,15 +31,17 @@ export const searchManifest: RouteMiddleware<{ id: number }> = async context => 
     return;
   }
 
-  const response = await siteApi.searchPublishedModelFields({ manifest: manifestUrn }, q, {
-    field_type,
-    selector_type,
-    capture_model_id,
-    parent_property,
-  });
+  const response = await siteApi.searchPublishedModelFields(
+    canvasUrn ? { canvas: canvasUrn } : { manifest: manifestUrn },
+    q,
+    {
+      field_type,
+      selector_type,
+      capture_model_id,
+      parent_property,
+    }
+  );
 
-  // 0. Filter out all of the empty selectors? maybe.
-  // 1. Get list of all of the canvas ids.
   const canvasIds: string[] = [];
 
   for (const result of response.results) {
@@ -48,32 +60,35 @@ export const searchManifest: RouteMiddleware<{ id: number }> = async context => 
     sourceMap[`urn:madoc:canvas:${source.id}`] = source.source;
   }
 
-  // 2. Make query to madoc db for all of the data we need about the canvas
-  // 3. Build up annotation list
-  // 4. Possible autocomplete and stemming on field type
-  // 5. Possible hits integration.
-
   context.set('Access-Control-Allow-Origin', '*');
 
   const searchResponse: SearchServiceSearchResponse = {
     '@context': 'http://iiif.io/api/presentation/3/context.json',
     '@id': `${gatewayHost}${context.path}`,
     '@type': 'sc:AnnotationList',
-    resources: response.results.map(result => {
-      const selector = result.selector ? result.selector : result.parent_selector;
-      return {
-        '@id': `${gatewayHost}${context.path}/resources/${result.id}`,
-        '@type': 'oa:Annotation',
-        motivation: 'sc:painting',
-        resource: {
-          '@type': 'cnt:ContentAsText',
-          chars: result.value,
-        },
-        on: selector
-          ? `${sourceMap[result.canvas]}#xywh=${~~selector.x},${~~selector.y},${~~selector.width},${~~selector.height}`
-          : sourceMap[result.canvas],
-      };
-    }),
+    resources: response.results
+      .map(result => {
+        const selector = result.selector ? result.selector : result.parent_selector;
+        if (!selector || !result.value) {
+          return false as any;
+        }
+        return {
+          '@id': `${gatewayHost}${context.path}/resources/${result.id}`,
+          '@type': 'oa:Annotation',
+          motivation: 'sc:painting',
+          resource: {
+            '@type': 'cnt:ContentAsText',
+            chars: result.value,
+          },
+          'madoc:id': result.canvas,
+          on: selector
+            ? `${
+                sourceMap[result.canvas]
+              }#xywh=${~~selector.x},${~~selector.y},${~~selector.width},${~~selector.height}`
+            : sourceMap[result.canvas],
+        };
+      })
+      .filter(e => e),
   };
 
   context.response.body = searchResponse;
