@@ -1,0 +1,58 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "canvas": {
+      "type": "string"
+    },
+    "manifest": {
+      "type": "string"
+    },
+    "field_type": {
+      "type": "string"
+    },
+    "value": {
+      "type": "string"
+    },
+    "property": {
+      "type": "string"
+    },
+    "capture_model_id": {
+      "type": "string"
+    },
+    "parent_property": {
+      "type": "string"
+    },
+    "parent_label": {
+      "type": "string"
+    },
+    "selector": {},
+    "selector_type": {
+      "type": "string"
+    },
+    "parent_selector": {},
+    "parent_selector_type": {
+      "type": "string"
+    },
+    "context": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "canvas",
+    "capture_model_id",
+    "context",
+    "field_type",
+    "id",
+    "manifest",
+    "parent_label",
+    "parent_property",
+    "value"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

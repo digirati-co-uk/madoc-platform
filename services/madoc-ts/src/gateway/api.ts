@@ -1,5 +1,5 @@
 import { CaptureModelExtension } from '../extensions/capture-models/extension';
-import { Paragraphs } from '../extensions/capture-models/Paragraphs/paragraphs.extension';
+import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.extension';
 import { ExtensionManager } from '../extensions/extension-manager';
 import { fetchJson } from './fetch-json';
 import { BaseTask } from '../gateway/tasks/base-task';

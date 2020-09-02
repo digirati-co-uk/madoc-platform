@@ -1,0 +1,74 @@
+{
+  "type": "object",
+  "properties": {
+    "query": {
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "type": "string"
+        },
+        "context": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "service": {
+          "type": "string"
+        },
+        "scope_key": {
+          "type": "string"
+        },
+        "at_time": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "at_time",
+        "context",
+        "identifier",
+        "scope_key",
+        "service"
+      ]
+    },
+    "config": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "scope_key": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "config_object": {
+            "$ref": "#/definitions/T"
+          }
+        },
+        "required": [
+          "config_object",
+          "id",
+          "scope",
+          "scope_key"
+        ]
+      }
+    }
+  },
+  "required": [
+    "config",
+    "query"
+  ],
+  "definitions": {
+    "T": {
+      "type": "object"
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
