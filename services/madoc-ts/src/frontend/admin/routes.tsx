@@ -34,6 +34,10 @@ import { ViewCaptureModel } from './pages/crowdsourcing/capture-models/view-capt
 import { ProjectTasks } from './pages/crowdsourcing/projects/project-tasks';
 import { ProjectOverview } from './pages/crowdsourcing/projects/project-overview';
 import { PreviewCaptureModel } from './pages/crowdsourcing/model-editor/preview-capture-model';
+import { EditManifestLinking } from './pages/content/manifests/edit-manifest-linking';
+import { EditCanvasLinking } from './pages/content/canvases/edit-canvas-linking';
+import { OcrPage } from './pages/enrichment/ocr';
+import { OcrManifest } from './pages/enrichment/ocr/ocr-manifest';
 
 export const routes: UniversalRoute[] = [
   {
@@ -83,6 +87,27 @@ export const routes: UniversalRoute[] = [
     component: ManifestList,
   },
   {
+    path: '/manifests/:manifestId/canvases/:id',
+    component: CanvasView,
+    routes: [
+      {
+        path: '/manifests/:manifestId/canvases/:id',
+        exact: true,
+        component: CanvasDetails,
+      },
+      {
+        path: '/manifests/:manifestId/canvases/:id/metadata',
+        exact: true,
+        component: EditCanvasMetadata,
+      },
+      {
+        path: '/manifests/:manifestId/canvases/:id/linking',
+        exact: true,
+        component: EditCanvasLinking,
+      },
+    ],
+  },
+  {
     path: '/manifests/:id',
     component: ManifestView,
     routes: [
@@ -102,20 +127,9 @@ export const routes: UniversalRoute[] = [
         component: EditManifestStructure,
       },
       {
-        path: '/manifests/:manifestId/canvases/:id',
-        component: CanvasView,
-        routes: [
-          {
-            path: '/manifests/:manifestId/canvases/:id',
-            exact: true,
-            component: CanvasDetails,
-          },
-          {
-            path: '/manifests/:manifestId/canvases/:id/metadata',
-            exact: true,
-            component: EditCanvasMetadata,
-          },
-        ],
+        path: '/manifests/:id/linking',
+        exact: true,
+        component: EditManifestLinking,
       },
       {
         path: '/manifests/:id/projects',
@@ -137,6 +151,11 @@ export const routes: UniversalRoute[] = [
         path: '/canvases/:id/metadata',
         exact: true,
         component: EditCanvasMetadata,
+      },
+      {
+        path: '/canvases/:id/linking',
+        exact: true,
+        component: EditCanvasLinking,
       },
     ],
   },
@@ -260,5 +279,15 @@ export const routes: UniversalRoute[] = [
     path: '/tasks/:id',
     exact: true,
     component: TaskRouter,
+  },
+  {
+    path: '/enrichment/ocr',
+    exact: true,
+    component: OcrPage,
+  },
+  {
+    path: '/enrichment/ocr/manifest/:id',
+    exact: true,
+    component: OcrManifest,
   },
 ];

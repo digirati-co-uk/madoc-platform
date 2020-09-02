@@ -20,6 +20,7 @@ services:
       - madoc-ts
       - config-service
       - storage-api
+      - okra
     volumes:
       - ./services/gateway/gateway.conf:/opt/tyk-gateway/tyk.conf
       - ./services/gateway/policies.json:/opt/tyk-gateway/policies/policies.json
@@ -127,7 +128,7 @@ services:
       - ./services/tasks-api/lib:/home/node/app/lib
 
   model-api:
-    image: digirati/capture-models:v0.8.2
+    image: digirati/capture-models:v0.9.0
     environment:
       - SERVER_PORT=3000
       - DATABASE_HOST=shared-postgres
@@ -215,3 +216,6 @@ services:
     volumes:
       - ./services/storage-api/lib:/home/node/app/lib:delegated
       - ./var/files/storage-api:/home/node/app/files
+
+  okra:
+    image: digirati/okra:bfd1290

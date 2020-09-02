@@ -23,19 +23,15 @@ export const ManifestView: UniversalComponent<ManifestViewType> = createUniversa
     const { id } = useParams<{ id: string }>();
     const { resolvedData, status } = usePaginatedData(ManifestView);
 
-    if (status !== 'success' || !resolvedData) {
-      return <div>loading...</div>;
-    }
+    const { manifest, pagination } = resolvedData || {};
 
-    const { manifest, pagination } = resolvedData;
-
-    const title = <LocaleString>{manifest.label}</LocaleString>;
+    const title = manifest ? <LocaleString>{manifest.label}</LocaleString> : '...';
 
     return (
       <>
         <AdminHeader
           title={title}
-          subtitle={t('{{count}} canvases', { count: pagination.totalResults })}
+          subtitle={t('{{count}} canvases', { count: pagination ? pagination.totalResults : 0 })}
           breadcrumbs={[
             { label: 'Site admin', link: '/' },
             { label: 'Manifests', link: '/manifests' },
@@ -45,6 +41,7 @@ export const ManifestView: UniversalComponent<ManifestViewType> = createUniversa
             { label: t('canvases'), link: `/manifests/${id}` },
             { label: t('edit metadata'), link: `/manifests/${id}/metadata` },
             { label: t('edit structure'), link: `/manifests/${id}/structure` },
+            { label: t('edit linking'), link: `/manifests/${id}/linking` },
             { label: t('projects'), link: `/manifests/${id}/projects` },
           ]}
         />

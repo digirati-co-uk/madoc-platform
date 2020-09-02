@@ -1,4 +1,4 @@
-import { CardButton, CardButtonGroup, Revisions } from '@capture-models/editor';
+import { Revisions } from '@capture-models/editor';
 import { RevisionRequest } from '@capture-models/types';
 import React, { useCallback, useState } from 'react';
 import { VerboseEntityPage } from './VerboseEntityPage';
@@ -12,13 +12,7 @@ export const RevisionTopLevel: React.FC<{
   instructions?: string;
   onSaveRevision: (req: RevisionRequest, status?: string) => Promise<void>;
 }> = ({ readOnly, instructions, onSaveRevision, allowEdits = true, allowNavigation = true }) => {
-  const {
-    setIsThankYou,
-    setIsPreviewing,
-    createRevision,
-    deselectRevision,
-    setRevisionLabel,
-  } = Revisions.useStoreActions(actions => {
+  const { setIsThankYou, setIsPreviewing, deselectRevision, setRevisionLabel } = Revisions.useStoreActions(actions => {
     return {
       setIsThankYou: actions.setIsThankYou,
       setIsPreviewing: actions.setIsPreviewing,
@@ -100,24 +94,9 @@ export const RevisionTopLevel: React.FC<{
         title={current.revision.label}
         description={instructions}
         readOnly={readOnly}
-      >
-        {allowEdits ? (
-          <CardButtonGroup>
-            <CardButton onClick={() => deselectRevision({ revisionId: current.revision.id })}>Go back</CardButton>
-            {readOnly ? (
-              <CardButton
-                onClick={() => createRevision({ revisionId: current.revision.id, cloneMode: 'FORK_ALL_VALUES' })}
-              >
-                Suggest edit
-              </CardButton>
-            ) : (
-              <CardButton onClick={() => setIsPreviewing(true)}>Publish</CardButton>
-            )}
-          </CardButtonGroup>
-        ) : allowNavigation ? (
-          <CardButton onClick={() => deselectRevision({ revisionId: current.revision.id })}>Go back</CardButton>
-        ) : null}
-      </VerboseEntityPage>
+        allowEdits={allowEdits}
+        allowNavigation={allowNavigation}
+      />
     </>
   );
 };

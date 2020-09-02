@@ -125,7 +125,7 @@ const Homepage: UniversalComponent<HomepageType> = createUniversalComponent<Home
                   <span>Search indexing</span>
                 </li>
                 <li>
-                  <span>OCR</span>
+                  <Link to={`/enrichment/ocr`}>OCR</Link>
                 </li>
               </MenuList>
             </AdminSection>

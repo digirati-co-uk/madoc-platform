@@ -121,6 +121,24 @@
         "thumbnail"
       ]
     },
+    "subjects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "subject": {
+            "type": "string"
+          },
+          "status": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "status",
+          "subject"
+        ]
+      }
+    },
     "pagination": {
       "type": "object",
       "properties": {

@@ -6,6 +6,7 @@ import { ApiContext, useIsApiRestarting } from '../shared/hooks/use-api';
 import { ErrorMessage } from '../shared/atoms/ErrorMessage';
 import { UniversalRoute } from '../types';
 import { VaultProvider } from '@hyperion-framework/react-vault';
+import '../shared/caputre-models/plugins';
 
 export type SiteAppProps = {
   jwt?: string;

@@ -35,6 +35,12 @@ case "${commandToRun}" in
          docker-compose up -d "$@"
     ;;
 
+    refresh-gateway)
+      docker-compose stop gateway
+      docker-compose rm -f gateway
+      docker-compose up --no-deps --no-recreate -d gateway
+    ;;
+
     start)
          docker-compose build --parallel
          docker-compose up -d "$@"

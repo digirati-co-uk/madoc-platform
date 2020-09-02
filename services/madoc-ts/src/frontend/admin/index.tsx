@@ -5,6 +5,7 @@ import { renderUniversalRoutes } from '../shared/utility/server-utils';
 import { ApiContext, useIsApiRestarting } from '../shared/hooks/use-api';
 import { ErrorMessage } from '../shared/atoms/ErrorMessage';
 import { UniversalRoute } from '../types';
+import '../shared/caputre-models/plugins';
 
 export type AdminAppProps = {
   jwt?: string;

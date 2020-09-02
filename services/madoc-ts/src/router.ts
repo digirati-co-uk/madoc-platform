@@ -1,7 +1,8 @@
+import { getParentLinking } from './routes/iiif/linking/get-parent-linking';
 import { TypedRouter } from './utility/typed-router';
 import { ping } from './routes/ping';
 import { madocNotFound } from './routes/madoc-not-found';
-import { importCollection, importManifest } from './routes/iiif-import/import';
+import { importCollection, importManifest, importManifestOcr } from './routes/iiif-import/import';
 import { loginPage } from './routes/user/login';
 import { getSiteScopes, saveSiteScopes } from './routes/admin/site-scopes';
 import { logout } from './routes/user/logout';
@@ -110,6 +111,11 @@ export const router = new TypedRouter({
     getFlatCollectionStatistics,
   ],
   'get-collection-linking': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/linking', getLinking],
+  'get-collection-member-linking': [
+    TypedRouter.GET,
+    '/api/madoc/iiif/collections/:id/member-linking',
+    getParentLinking,
+  ],
 
   // Manifest API.
   'list-manifests': [TypedRouter.GET, '/api/madoc/iiif/manifests', listManifests],
@@ -134,6 +140,7 @@ export const router = new TypedRouter({
   'get-manifest-collections': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/collections', getManifestCollections],
   'get-manifest-autocomplete': [TypedRouter.GET, '/api/madoc/iiif/autocomplete/manifests', getManifestAutocomplete],
   'get-manifest-linking': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/linking', getLinking],
+  'get-manifest-canvas-linking': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/canvas-linking', getParentLinking],
 
   // Canvas API
   'list-canvases': [TypedRouter.GET, '/api/madoc/iiif/canvases', listCanvases],
@@ -146,6 +153,7 @@ export const router = new TypedRouter({
 
   // Import API
   'import-manifest': [TypedRouter.POST, '/api/madoc/iiif/import/manifest', importManifest],
+  'import-manifest-ocr': [TypedRouter.POST, '/api/madoc/iiif/import/manifest-ocr', importManifestOcr],
   'import-collection': [TypedRouter.POST, '/api/madoc/iiif/import/collection', importCollection],
 
   // Linking API.

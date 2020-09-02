@@ -10,28 +10,24 @@ export const FieldInstanceList: React.FC<{
   chooseField: (field: { property: string; instance: BaseField }) => void;
   path: Array<[string, string]>;
   readOnly?: boolean;
-}> = ({ fields, chooseField, property, path, readOnly }) => {
+  immutableEntity?: boolean;
+}> = ({ fields, chooseField, property, path, readOnly, immutableEntity }) => {
   const { removeInstance } = Revisions.useStoreActions(a => ({
     removeInstance: a.removeInstance,
   }));
-  const refinement = useRefinement<FieldInstanceListRefinement>(
-    'field-instance-list',
-    { property, instance: fields },
-    {
-      path,
-      readOnly,
-    }
-  );
+  const refinement = useRefinement<FieldInstanceListRefinement>('field-instance-list', { property, instance: fields }, {
+    path,
+    readOnly,
+    immutableEntity,
+  } as any);
 
   if (refinement) {
-    return refinement.refine(
-      { property, instance: fields },
-      {
-        path,
-        chooseField,
-        readOnly,
-      }
-    );
+    return refinement.refine({ property, instance: fields }, {
+      path,
+      chooseField,
+      readOnly,
+      immutableEntity,
+    } as any);
   }
 
   const label = fields[0] ? fields[0].label : 'Untitled';
@@ -55,7 +51,9 @@ export const FieldInstanceList: React.FC<{
           </RoundedCard>
         );
       })}
-      {allowMultiple ? <NewFieldButtonInstance property={property} path={path} field={fields[0]} /> : null}
+      {allowMultiple && !immutableEntity ? (
+        <NewFieldButtonInstance property={property} path={path} field={fields[0]} />
+      ) : null}
     </div>
   );
 };

@@ -20,6 +20,7 @@
 import { api } from '../../gateway/api.server';
 import * as manifest from '../../gateway/tasks/import-manifest';
 import * as collection from '../../gateway/tasks/import-collection';
+import * as manifestOcr from '../../gateway/tasks/process-manifest-ocr';
 import { RouteMiddleware } from '../../types/route-middleware';
 
 export const importManifest: RouteMiddleware<{}, { manifest: string }> = async (context, next) => {
@@ -43,6 +44,20 @@ export const importCollection: RouteMiddleware<{}, { collection: string }> = asy
   const collectionId = context.requestBody.collection;
   context.response.body = await api.newTask(
     collection.createTask(collectionId, context.state.jwt.user.id, context.state.jwt.site.id),
+    undefined,
+    context.state.jwt.token
+  );
+};
+
+export const importManifestOcr: RouteMiddleware<{}, { manifestId: number; label: string }> = async context => {
+  if (!context.state.jwt || !context.state.jwt.user.id) {
+    context.response.status = 404;
+    return;
+  }
+  const manifestId = context.requestBody.manifestId;
+  const label = context.requestBody.label;
+  context.response.body = await api.newTask(
+    manifestOcr.createTask(manifestId, label, context.state.jwt.user.id, context.state.jwt.site.id),
     undefined,
     context.state.jwt.token
   );
