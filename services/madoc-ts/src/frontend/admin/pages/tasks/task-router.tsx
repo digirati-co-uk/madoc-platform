@@ -1,6 +1,9 @@
 import { BaseTask } from '../../../../gateway/tasks/base-task';
+import { Status } from '../../../shared/atoms/Status';
+import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../../shared/atoms/Table';
 import { UniversalComponent } from '../../../types';
 import React from 'react';
+import { GenericTask } from './generic-task';
 import { ManifestImportTask } from './manifest-import-task';
 import { ImportManifestTask } from '../../../../gateway/tasks/import-manifest';
 import { CollectionImportTask } from './collection-import-task';
@@ -38,11 +41,25 @@ function renderTask({ task }: TaskRouterType['data'], statusBar?: JSX.Element) {
       }
       break;
     }
+    default:
+      return <GenericTask task={task} statusBar={statusBar} />;
   }
 
   return (
     <div>
       {task.name} ({task.status_text})
+      <TableContainer>
+        {(task.subtasks || []).map(subtask => (
+          <TableRow key={subtask.id} interactive>
+            <TableRowLabel>
+              <Status status={subtask.status || 0} text={subtask.status_text || 'unknown'} />
+            </TableRowLabel>
+            <TableRowLabel>
+              <Link to={`/tasks/${subtask.id}`}>{subtask.name}</Link>
+            </TableRowLabel>
+          </TableRow>
+        ))}
+      </TableContainer>
     </div>
   );
 }
