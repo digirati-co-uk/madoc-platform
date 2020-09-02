@@ -280,4 +280,14 @@ export const routes: UniversalRoute[] = [
     exact: true,
     component: TaskRouter,
   },
+  {
+    path: '/enrichment/ocr',
+    exact: true,
+    component: OcrPage,
+  },
+  {
+    path: '/enrichment/ocr/manifest/:id',
+    exact: true,
+    component: OcrManifest,
+  },
 ];
