@@ -7,7 +7,7 @@ export const useApi = () => {
   const api = useContext(ApiContext);
 
   if (!api) {
-    throw new Error();
+    // throw new Error();
   }
 
   return api;

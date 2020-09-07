@@ -1,7 +1,9 @@
 import styled, { css } from 'styled-components';
 
-export const GridContainer = styled.div`
+export const GridContainer = styled.div<{ $justify?: string }>`
   display: flex;
+  justify-content: ${props => props.$justify};
+  align-items: center;
 `;
 
 export const HalfGird = styled.div<{ $margin?: boolean }>`

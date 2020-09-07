@@ -377,6 +377,15 @@ export class ApiClient {
     );
   }
 
+  /// Search
+
+  async search(searchTerm: string) {
+    console.log('You searched for: ', searchTerm);
+    return [];
+    // Search might return a list of manifests or might be list of canvases?
+    return this.request<ManifestListResponse>(`/PLACEHOLDER_API_ENDPOINT/seach?${searchTerm}`);
+  }
+
   // IIIF.
   async getCollections(page = 0, parent?: number) {
     return this.request<CollectionListResponse>(`/api/madoc/iiif/collections?${stringify({ page, parent })}`);

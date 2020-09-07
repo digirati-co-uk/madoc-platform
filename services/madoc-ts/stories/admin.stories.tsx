@@ -36,6 +36,32 @@ export const adminHeaderWithBreadcrumbsAndMenu = () => (
   </MemoryRouter>
 );
 
+export const adminHeaderWithBreadcrumbsAndMenuAndSearch = () => (
+  <MemoryRouter>
+    <AdminHeader
+      title="My awesome project"
+      breadcrumbs={[
+        { label: 'site dashboard', link: '#' },
+        { label: 'projects', link: '#' },
+        { label: 'My project', link: '#', active: true },
+      ]}
+      menu={[
+        { label: 'Overview', link: '#' },
+        { label: 'Basic details', link: '#' },
+        { label: 'Capture model', link: '#', active: true },
+        { label: 'Content', link: '#' },
+        { label: 'Access control', link: '#' },
+        { label: 'Export', link: '#' },
+      ]}
+      search={true}
+      searchFunction={val => [{ something: val }]}
+    />
+    <WidePage>
+      <p>Test some content on this page.</p>
+    </WidePage>
+  </MemoryRouter>
+);
+
 export const LightNavigationExample = () => (
   <LightNavigation>
     <LightNavigationItem>
