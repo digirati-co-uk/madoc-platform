@@ -40,6 +40,10 @@ const ResultText = styled.div`
   text-decoration: none;
 `;
 
+const DropdownContainer = styled.div`
+  width: 40%;
+`;
+
 const SearchItem: React.FC<{ result: SearchResult }> = ({ result }) => {
   return (
     <ResultContainer>
@@ -72,7 +76,9 @@ export const SearchResults: React.FC<{
     <SearchBox large={true} onSearch={searchFunction} placeholder="Keywords" />
     <SearchHint>Keyword search for title or person</SearchHint>
     <GridContainer $justify="flex-end">
-      <Dropdown options={options} placeholder="Sort By" onChange={val => sortByFunction(val)} />
+      <DropdownContainer>
+        <Dropdown options={options} placeholder="Sort By" onChange={val => sortByFunction(val)} />
+      </DropdownContainer>
     </GridContainer>
     {`${searchResults.length} Results`}
     <GridColumn>
