@@ -6,8 +6,8 @@ import { SearchResults } from '../src/frontend/shared/components/SearchResults';
 import * as React from 'react';
 import { text } from '@storybook/addon-knobs';
 import { WidePage } from '../src/frontend/shared/atoms/WidePage';
-import { GridContainer } from '../src/frontend/shared/atoms/Grid';
 import { v4 } from 'uuid';
+import styled from 'styled-components';
 
 export default { title: 'Search' };
 
@@ -50,6 +50,22 @@ const dummyResults = [
   },
 ];
 
+const options = [
+  { value: 'Option1', text: 'Option 1' },
+  { value: 'Option2', text: 'Option 2' },
+  { value: 'Option3', text: 'Option 3' },
+];
+
+const facets = [
+  { name: 'First Facet', options: options },
+  { name: 'Second Facet', options: options },
+  { name: 'Third Facet', options: options },
+];
+
+const SearchContainer = styled.div`
+  display: flex;
+`;
+
 export const HeaderWithBreadcrumbsAndMenuAndSearch = () => (
   <MemoryRouter>
     <Header
@@ -70,8 +86,11 @@ export const HeaderWithBreadcrumbsAndMenuAndSearch = () => (
       }}
     />
     <WidePage>
-      <GridContainer $justify="space-between">
-        <SearchFacets />
+      <SearchContainer>
+        <SearchFacets
+          facets={facets}
+          facetChange={(val, facet) => alert('you changed Facet ' + facet + ' to the value ' + val)}
+        />
         <SearchResults
           searchFunction={val => {
             alert('you searched for:  ' + val);
@@ -81,7 +100,7 @@ export const HeaderWithBreadcrumbsAndMenuAndSearch = () => (
             alert('you sorted by:  ' + val);
           }}
         />
-      </GridContainer>
+      </SearchContainer>
     </WidePage>
   </MemoryRouter>
 );

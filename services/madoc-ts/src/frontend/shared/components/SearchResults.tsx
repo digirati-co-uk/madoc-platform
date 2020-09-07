@@ -9,7 +9,7 @@ import { GridColumn, Dropdown } from '@capture-models/editor';
 import { Link } from 'react-router-dom';
 
 const ResultsContainer = styled.div`
-  min-width: 80vw;
+  min-width: 70vw;
 `;
 
 const ResultsHeader = styled.h2`
@@ -42,6 +42,7 @@ const ResultText = styled.div`
 
 const DropdownContainer = styled.div`
   width: 40%;
+  margin-right: 20px;
 `;
 
 const SearchItem: React.FC<{ result: SearchResult }> = ({ result }) => {

@@ -24,3 +24,13 @@ export type SearchResult = {
   description: string;
   link: string;
 };
+
+type FacetOption = {
+  value: string;
+  text: string;
+};
+// This also needs to be refined
+export type SearchFacet = {
+  name: string;
+  options: Array<FacetOption>;
+};
