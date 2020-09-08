@@ -51,4 +51,3 @@ export const SearchBox: React.FC<{
     </form>
   );
 };
-
