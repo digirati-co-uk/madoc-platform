@@ -7,7 +7,13 @@ import { AdminHeader } from '../molecules/AdminHeader';
 import { WidePage } from '../../shared/atoms/WidePage';
 import { createUniversalComponent } from '../../shared/utility/create-universal-component';
 import { useStaticData } from '../../shared/hooks/use-data';
-import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../shared/atoms/Statistics';
+import {
+  Statistic,
+  StatisticContainer,
+  StatisticLabel,
+  StatisticLink,
+  StatisticNumber
+} from '../../shared/atoms/Statistics';
 
 const AdminSection = styled.div`
   width: 25%;
@@ -49,6 +55,11 @@ const Homepage: UniversalComponent<HomepageType> = createUniversalComponent<Home
   () => {
     const { data: stats } = useStaticData(Homepage);
     const { t } = useTranslation();
+    const linkStyle = {
+      width: "100%",
+      display: "block",
+
+    };
 
     return (
       <div>
@@ -56,22 +67,13 @@ const Homepage: UniversalComponent<HomepageType> = createUniversalComponent<Home
         <WidePage>
           {stats ? (
             <StatisticContainer>
-              <Statistic>
-                <StatisticNumber>{stats.collections}</StatisticNumber>
-                <StatisticLabel>Collections</StatisticLabel>
-              </Statistic>
-              <Statistic>
-                <StatisticNumber>{stats.manifests}</StatisticNumber>
-                <StatisticLabel>Manifests</StatisticLabel>
-              </Statistic>
+              <StatisticLink to="/collections" number={stats.collections} label="Collections" />
+              <StatisticLink to="/manifests" number={stats.manifests} label="Manifests" />
               <Statistic>
                 <StatisticNumber>{stats.canvases}</StatisticNumber>
                 <StatisticLabel>Canvases</StatisticLabel>
               </Statistic>
-              <Statistic>
-                <StatisticNumber>{stats.projects}</StatisticNumber>
-                <StatisticLabel>Projects</StatisticLabel>
-              </Statistic>
+              <StatisticLink to="/projects" number={stats.projects} label="Projects" />
             </StatisticContainer>
           ) : null}
           <AdminSectionGrid>
