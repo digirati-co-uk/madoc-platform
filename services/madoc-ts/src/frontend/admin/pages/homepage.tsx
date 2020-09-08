@@ -55,11 +55,6 @@ const Homepage: UniversalComponent<HomepageType> = createUniversalComponent<Home
   () => {
     const { data: stats } = useStaticData(Homepage);
     const { t } = useTranslation();
-    const linkStyle = {
-      width: "100%",
-      display: "block",
-
-    };
 
     return (
       <div>
