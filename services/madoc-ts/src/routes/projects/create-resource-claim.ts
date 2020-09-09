@@ -189,7 +189,7 @@ async function ensureProjectTaskStructure(
     );
 
     if (!foundCollectionTask) {
-      const { collection, pagination } = await userApi.getCollectionById(claim.collectionId);
+      const { collection } = await userApi.getCollectionById(claim.collectionId);
 
       const task: CrowdsourcingCollectionTask = {
         name: iiifGetLabel(collection.label, 'Untitled collection'),
@@ -325,7 +325,7 @@ async function upsertCaptureModelForResource(
   claim: ResourceClaim
 ): Promise<CaptureModel & { id: string }> {
   // Get top level project task.
-  const { task_id, capture_model_id } = await context.connection.one(
+  const { capture_model_id } = await context.connection.one(
     sql<{
       task_id: string;
       capture_model_id: string;
@@ -376,7 +376,6 @@ async function upsertCaptureModelForResource(
 }
 
 async function createUserCrowdsourcingTask({
-  context,
   siteId,
   projectId,
   userId,
@@ -400,7 +399,7 @@ async function createUserCrowdsourcingTask({
   subject: string;
   parentSubject?: string;
   type: string;
-  captureModel: (CaptureModel | CaptureModelSnippet) & { id: string };
+  captureModel?: (CaptureModel | CaptureModelSnippet) & { id: string };
   claim: ResourceClaim;
   warningTime?: number;
 }): Promise<CrowdsourcingTask> {
@@ -409,7 +408,6 @@ async function createUserCrowdsourcingTask({
   const structureId = undefined; // @todo call to config service to get structure id.
 
   const task = createTask({
-    siteId,
     projectId,
     userId,
     name,

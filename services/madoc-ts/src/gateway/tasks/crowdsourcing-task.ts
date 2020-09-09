@@ -20,7 +20,7 @@ export const status = [
   // ...
 ] as const;
 
-type CaptureModelId = string;
+type CaptureModelId = string | null;
 type StructureId = string | null;
 type SubjectType = string;
 
@@ -59,7 +59,6 @@ export interface CrowdsourcingTask extends BaseTask {
 }
 
 export function createTask({
-  siteId,
   projectId,
   userId,
   name,
@@ -73,7 +72,6 @@ export function createTask({
   revisionId,
   warningTime,
 }: {
-  siteId: number;
   projectId: number;
   userId: number;
   name: string;
@@ -81,7 +79,7 @@ export function createTask({
   subject: string;
   parentSubject?: string;
   resourceType: string;
-  captureModel: (CaptureModel | CaptureModelSnippet) & { id: string };
+  captureModel?: (CaptureModel | CaptureModelSnippet) & { id: string };
   structureId?: string;
   reviewId?: string;
   revisionId?: string;
@@ -103,7 +101,8 @@ export function createTask({
       revisionId,
       warningTime,
     },
-    parameters: [captureModel.id, structureId || null, resourceType],
+    context: projectId ? [`urn:madoc:project:${projectId}`] : undefined,
+    parameters: [captureModel ? captureModel.id : null, structureId || null, resourceType],
     events: [
       // When the task is marked as error (remove?)
       'madoc-ts.status.-1',
