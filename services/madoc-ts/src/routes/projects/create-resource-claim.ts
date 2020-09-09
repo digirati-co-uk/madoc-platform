@@ -37,7 +37,7 @@ async function verifyResourceInProject(
   projectId: number,
   userId: number,
   claim: ResourceClaim
-): Promise<boolean> {
+): Promise<void> {
   // @todo support canvases on their own.
   if (claim.canvasId && !claim.manifestId) {
     throw new RequestError('Cannot claim a canvas that is not inside a manifest');
@@ -117,9 +117,6 @@ async function verifyResourceInProject(
       claim.collectionId = undefined;
     }
   }
-
-  // Ensure they can.
-  return true;
 }
 
 function buildContextFromClaim(siteUrn: string, projectId: number, claim: ResourceClaim) {
@@ -457,11 +454,10 @@ export const prepareResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim
   const projectId = Number(context.params.id);
   const claim = await getCanonicalClaim(context.requestBody, siteId, projectId, id);
 
-  const isInProject = await verifyResourceInProject(context, siteId, projectId, id, claim);
+  await verifyResourceInProject(context, siteId, projectId, id, claim);
 
-  if (!isInProject) {
-    throw new NotFound();
-  }
+  // Get project configuration.
+  const config = await userApi.getProjectConfiguration(projectId, siteUrn);
 
   // Make sure our fancy structure exists.
   const parent = await ensureProjectTaskStructure(context, siteId, projectId, id, claim);
@@ -487,11 +483,10 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
   const claim = await getCanonicalClaim(context.requestBody, siteId, projectId, id);
   const userApi = api.asUser({ userId: id, siteId });
 
-  const isInProject = await verifyResourceInProject(context, siteId, projectId, id, claim);
+  await verifyResourceInProject(context, siteId, projectId, id, claim);
 
-  if (!isInProject) {
-    throw new NotFound();
-  }
+  // Get project configuration.
+  const config = await userApi.getProjectConfiguration(projectId, siteUrn);
 
   // Make sure our fancy structure exists.
   const parent = await ensureProjectTaskStructure(context, siteId, projectId, id, claim);
