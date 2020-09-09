@@ -10,7 +10,7 @@ import { queryCache } from 'react-query';
 import '@capture-models/editor/lib/input-types/TextField';
 import '@capture-models/editor/lib/input-types/HTMLField';
 import { useProjectByTask } from '../../../shared/hooks/use-project-by-task';
-import { CrowdsourcingTask } from '../../../../types/tasks/crowdsourcing-task';
+import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
 import { TaskContext } from '../loaders/task-loader';
 import { createLink } from '../../../shared/utility/create-link';
 import { WarningMessage } from '../../../shared/atoms/WarningMessage';

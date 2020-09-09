@@ -1,3 +1,4 @@
+import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
 import { UniversalComponent } from '../../../../types';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import React from 'react';
@@ -7,7 +8,6 @@ import { TableRow, TableRowLabel } from '../../../../shared/atoms/Table';
 import { Status } from '../../../../shared/atoms/Status';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { CrowdsourcingTask } from '../../../../../types/tasks/crowdsourcing-task';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useQuery } from 'react-query';
 import { SubjectSnippet } from '../../../../shared/components/SubjectSnippet';

@@ -1,6 +1,6 @@
 import { BaseTask } from './base-task';
 import { CrowdsourcingCanvasTask } from './crowdsourcing-canvas-task';
-import { CrowdsourcingTask } from '../../types/tasks/crowdsourcing-task';
+import { CrowdsourcingTask } from './crowdsourcing-task';
 import { ApiClient } from '../api';
 import { parseUrn } from '../../utility/parse-urn';
 

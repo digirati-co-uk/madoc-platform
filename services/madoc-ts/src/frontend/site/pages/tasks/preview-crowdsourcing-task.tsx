@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CrowdsourcingTask } from '../../../../types/tasks/crowdsourcing-task';
+import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
 import { useQuery } from 'react-query';
 import { useApi } from '../../../shared/hooks/use-api';
 import { ThemeProvider } from 'styled-components';

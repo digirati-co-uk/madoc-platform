@@ -15,8 +15,7 @@ import { CrowdsourcingManifestTask } from '../../gateway/tasks/crowdsourcing-man
 import { CrowdsourcingCanvasTask } from '../../gateway/tasks/crowdsourcing-canvas-task';
 import { api } from '../../gateway/api.server';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
-import { CrowdsourcingTask } from '../../types/tasks/crowdsourcing-task';
-import { createTask } from '../../gateway/tasks/crowdsourcing-task';
+import { createTask, CrowdsourcingTask } from '../../gateway/tasks/crowdsourcing-task';
 import { CaptureModelSnippet } from '../../types/schemas/capture-model-snippet';
 import { statusToClaimMap } from './update-resource-claim';
 import { ProjectConfiguration } from '../../types/schemas/project-configuration';

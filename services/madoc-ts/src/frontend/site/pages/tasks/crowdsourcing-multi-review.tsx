@@ -6,7 +6,7 @@ import { Heading3, Subheading3 } from '../../../shared/atoms/Heading3';
 import { TableContainer, TableEmpty, TableRow, TableRowLabel } from '../../../shared/atoms/Table';
 import { Status } from '../../../shared/atoms/Status';
 import { Link, useParams, useHistory } from 'react-router-dom';
-import { CrowdsourcingTask } from '../../../../types/tasks/crowdsourcing-task';
+import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
 import { GridContainer, HalfGird } from '../../../shared/atoms/Grid';
 import TimeAgo from 'react-timeago';
 import { createLink } from '../../../shared/utility/create-link';

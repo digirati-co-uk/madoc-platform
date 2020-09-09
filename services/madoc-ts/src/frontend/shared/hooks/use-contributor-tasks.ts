@@ -2,7 +2,7 @@ import { useUserDetails } from './use-user-details';
 import { useQuery } from 'react-query';
 import { isContributor } from '../utility/user-roles';
 import { useApi } from './use-api';
-import { CrowdsourcingTask } from '../../../types/tasks/crowdsourcing-task';
+import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
 
 export function useContributorTasks(options: { rootTaskId?: string } = {}) {
   const details = useUserDetails();
