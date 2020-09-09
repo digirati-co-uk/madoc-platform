@@ -40,9 +40,16 @@ const ResultText = styled.div`
   text-decoration: none;
 `;
 
+const ResultTitle = styled.div`
+  text-decoration: none;
+  color: #2962ff;
+  font-size: 1.25rem;
+  padding-bottom: 0.625rem;
+`;
+
 const DropdownContainer = styled.div`
   width: 40%;
-  margin-right: 20px;
+  margin-right: 1.25rem;
 `;
 
 const SearchItem: React.FC<{ result: SearchResult }> = ({ result }) => {
@@ -52,7 +59,7 @@ const SearchItem: React.FC<{ result: SearchResult }> = ({ result }) => {
         <GridContainer>
           <img src={result.thumbnail}></img>
           <GridColumn>
-            <ResultText>{result.title}</ResultText>
+            <ResultTitle>{result.title}</ResultTitle>
             <ResultText>{result.description}</ResultText>
           </GridColumn>
         </GridContainer>
@@ -61,6 +68,7 @@ const SearchItem: React.FC<{ result: SearchResult }> = ({ result }) => {
   );
 };
 
+// Will these be props
 const options = [
   { value: 'Option1', text: 'Option 1' },
   { value: 'Option2', text: 'Option 2' },
