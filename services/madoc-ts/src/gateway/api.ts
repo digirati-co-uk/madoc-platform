@@ -803,20 +803,22 @@ export class ApiClient {
   async getTaskSubjects(
     id: string,
     subjects?: string[],
-    query: { type?: string; assignee?: boolean; assigned_to?: string } = {}
+    query: { type?: string; assignee?: boolean; assigned_to?: string } = {},
+    parentTask = false
   ) {
     return this.request<{ subjects: Array<{ subject: string; status: number; assignee_id?: string }> }>(
       `/api/tasks/${id}/subjects?${stringify(query)}`,
       {
         method: 'POST',
         body: {
+          parentTask,
           subjects,
         },
       }
     );
   }
 
-  async getTask<Task extends BaseTask>(
+  async getTask<Task extends BaseTask = BaseTask>(
     id: string,
     query?: {
       all?: boolean;
@@ -825,7 +827,7 @@ export class ApiClient {
       page?: number;
       assignee?: boolean;
       detail?: boolean;
-      subjects: string[];
+      subjects?: string[];
     }
   ) {
     return this.request<Task & { id: string }>(
