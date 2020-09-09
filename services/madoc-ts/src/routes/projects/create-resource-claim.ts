@@ -383,6 +383,7 @@ async function createUserCrowdsourcingTask({
   parentTaskId,
   taskName,
   subject,
+  parentSubject,
   type,
   captureModel,
   claim,
@@ -396,6 +397,7 @@ async function createUserCrowdsourcingTask({
   parentTaskId: string;
   taskName: string;
   subject: string;
+  parentSubject?: string;
   type: string;
   captureModel: (CaptureModel | CaptureModelSnippet) & { id: string };
   claim: ResourceClaim;
@@ -412,6 +414,7 @@ async function createUserCrowdsourcingTask({
     name,
     taskName,
     subject,
+    parentSubject,
     resourceType: type,
     captureModel,
     structureId,
@@ -531,6 +534,7 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
       taskName: parent.name,
       warningTime: parent.type === 'crowdsourcing-canvas-task' ? parent.state.warningTime : undefined,
       subject: `urn:madoc:canvas:${claim.canvasId}`,
+      parentSubject: claim.manifestId ? `urn:madoc:manifest:${claim.manifestId}` : undefined,
       type: 'canvas',
       captureModel,
       claim,

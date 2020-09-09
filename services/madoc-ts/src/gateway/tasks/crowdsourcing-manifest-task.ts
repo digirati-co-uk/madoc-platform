@@ -42,6 +42,7 @@ export interface CrowdsourcingManifestTask extends BaseTask {
 export function createTask({
   label,
   manifestId,
+  collectionId,
   maxContributors,
   approvalsRequired,
   warningTime,
@@ -49,6 +50,7 @@ export function createTask({
 }: {
   label: string;
   manifestId: number;
+  collectionId: number;
   maxContributors?: number;
   approvalsRequired?: number;
   warningTime?: number;
@@ -58,6 +60,7 @@ export function createTask({
     name: label,
     type: 'crowdsourcing-manifest-task',
     subject: `urn:madoc:manifest:${manifestId}`,
+    parent_subject: collectionId ? `urn:madoc:collection:${collectionId}` : undefined,
     status_text: 'accepted',
     status: 1,
     state: {
@@ -73,7 +76,7 @@ export function createTask({
       //     Mark the parent task as complete once all resources are also marked as complete.
       'madoc-ts.status.3',
     ],
-    context: projectId ? [`urn:madoc:projects:${projectId}`] : undefined,
+    context: projectId ? [`urn:madoc:project:${projectId}`] : undefined,
   };
 }
 

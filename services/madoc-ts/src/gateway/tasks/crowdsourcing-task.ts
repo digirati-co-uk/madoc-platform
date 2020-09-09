@@ -65,6 +65,7 @@ export function createTask({
   name,
   taskName,
   subject,
+  parentSubject,
   resourceType,
   captureModel,
   structureId,
@@ -78,6 +79,7 @@ export function createTask({
   name: string;
   taskName: string;
   subject: string;
+  parentSubject?: string;
   resourceType: string;
   captureModel: (CaptureModel | CaptureModelSnippet) & { id: string };
   structureId?: string;
@@ -89,6 +91,7 @@ export function createTask({
     name: `User contributions to "${taskName}"`,
     type,
     subject,
+    parent_subject: parentSubject,
     assignee: {
       id: `urn:madoc:user:${userId}`,
       name,
