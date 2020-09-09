@@ -10,7 +10,7 @@ import { NotFound } from '../../utility/errors/not-found';
 import { ApplicationContext } from '../../types/application-context';
 import { RequestError } from '../../utility/errors/request-error';
 import { sql } from 'slonik';
-import { CrowdsourcingCollectionTask } from '../../types/tasks/crowdsourcing-collection-task';
+import { CrowdsourcingCollectionTask } from '../../gateway/tasks/crowdsourcing-collection-task';
 import { CrowdsourcingManifestTask } from '../../gateway/tasks/crowdsourcing-manifest-task';
 import { CrowdsourcingCanvasTask } from '../../gateway/tasks/crowdsourcing-canvas-task';
 import { api } from '../../gateway/api.server';

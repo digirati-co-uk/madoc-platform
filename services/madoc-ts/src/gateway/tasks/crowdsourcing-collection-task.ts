@@ -1,5 +1,5 @@
-import { BaseTask } from '../../gateway/tasks/base-task';
-import { CrowdsourcingManifestTask } from '../../gateway/tasks/crowdsourcing-manifest-task';
+import { BaseTask } from './base-task';
+import { CrowdsourcingManifestTask } from './crowdsourcing-manifest-task';
 
 /**
  * This task is used to structure the crowdsourcing project subtasks.
