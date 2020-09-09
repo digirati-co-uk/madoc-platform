@@ -222,6 +222,7 @@ async function ensureProjectTaskStructure(
         warningTime,
         approvalsRequired,
         manifestId: claim.manifestId,
+        collectionId: claim.collectionId,
         projectId,
       });
 

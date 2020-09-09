@@ -50,7 +50,7 @@ export function createTask({
 }: {
   label: string;
   manifestId: number;
-  collectionId: number;
+  collectionId?: number;
   maxContributors?: number;
   approvalsRequired?: number;
   warningTime?: number;
