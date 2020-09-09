@@ -26,7 +26,10 @@ const ViewCrowdsourcingTask: React.FC<{ task: CrowdsourcingTask; project: Projec
   const { data: captureModel, refetch } = useQuery(
     ['capture-model', { id: task.parameters[0] }],
     async () => {
-      return api.getCaptureModel(task.parameters[0]);
+      const modelId = task.parameters[0];
+      if (modelId) {
+        return api.getCaptureModel(modelId);
+      }
     },
     {
       refetchInterval: false,
@@ -66,7 +69,22 @@ export const ProjectTasks: UniversalComponent<ProjectTasksType> = createUniversa
     }
 
     if (task.type === 'crowdsourcing-task') {
-      return <ViewCrowdsourcingTask project={project} task={task as CrowdsourcingTask} />;
+      return (
+        <>
+          <ViewCrowdsourcingTask project={project} task={task as CrowdsourcingTask} />
+          {(task.subtasks || []).map(subtask => (
+            <TableRow key={subtask.id}>
+              <TableRowLabel>
+                <Status status={subtask.status || 0} text={t(subtask.status_text || 'unknown')} />
+              </TableRowLabel>
+              <TableRowLabel>{subtask.type}</TableRowLabel>
+              <TableRowLabel>
+                <Link to={`/projects/${project.id}/tasks/${subtask.id}`}>{subtask.name}</Link>
+              </TableRowLabel>
+            </TableRow>
+          ))}
+        </>
+      );
     }
 
     return (
