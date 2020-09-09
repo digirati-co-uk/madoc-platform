@@ -25,9 +25,11 @@ export const listManifests: RouteMiddleware = async context => {
   const manifestCount = 24;
   const pageQuery = Number(context.query.page) || 1;
   const canvasSubQuery = getCanvasFilter(context.query.filter);
-  const { total = 0 } = await context.connection.one<{ total: number }>(
-    canvasSubQuery ? countSubQuery(canvasSubQuery) : countResources('manifest', siteId, parent)
-  );
+  const { total = 0 } = (
+    await context.connection.any<{ total: number }>(
+      canvasSubQuery ? countSubQuery(canvasSubQuery) : countResources('manifest', siteId, parent)
+    )
+  )[0];
   const totalPages = Math.ceil(total / manifestCount);
   const page = (pageQuery > totalPages ? totalPages : pageQuery) || 1;
 
