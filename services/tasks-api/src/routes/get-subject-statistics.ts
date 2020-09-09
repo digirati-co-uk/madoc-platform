@@ -5,6 +5,7 @@ export const getSubjectStatistics: RouteMiddleware<{ id: string }> = async ctx =
   const body = ctx.request.body;
   // Given a list of subjects
   const subjects = body && body.subjects ? body.subjects : ctx.query.subjects;
+  const parentTask = body && body.parentTask ? body.parentTask : ctx.query.parent_task;
   const subjectsArray = Array.isArray(subjects) ? subjects : subjects.split(',');
   // And a task id (root or parent)
   const taskId = ctx.params.id;
@@ -24,7 +25,7 @@ export const getSubjectStatistics: RouteMiddleware<{ id: string }> = async ctx =
   const results = await ctx.connection.any(sql`
     select t.subject, t.status ${assigneeFields} from tasks t 
         ${parentJoin}
-        where  t.root_task = ${taskId} 
+        where  ${parentTask ? sql`t.parent_task = ${taskId}` : sql`t.root_task = ${taskId}`} 
         ${subjectQuery}
         ${typeQuery}
         ${parentQuery}
