@@ -199,6 +199,7 @@ async function ensureProjectTaskStructure(
         state: {},
         status_text: 'accepted',
         status: 1,
+        context: [`urn:madoc:project:${projectId}`],
       };
 
       parent = await userApi.addSubtasks<BaseTask & { id: string }>(task, parent.id);
@@ -221,6 +222,7 @@ async function ensureProjectTaskStructure(
         warningTime,
         approvalsRequired,
         manifestId: claim.manifestId,
+        projectId,
       });
 
       parent = await userApi.addSubtasks<BaseTask & { id: string }>(task, parent.id);
@@ -245,6 +247,7 @@ async function ensureProjectTaskStructure(
         warningTime,
         parentTaskName: parent.name,
         label: iiifGetLabel(canvas.label, 'Untitled canvas'),
+        projectId,
       });
 
       parent = await userApi.addSubtasks<BaseTask & { id: string }>(task, parent.id);

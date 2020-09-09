@@ -80,6 +80,11 @@ export type BaseTask = {
   events?: string[];
 
   /**
+   * Optional extended context
+   */
+  context?: string[];
+
+  /**
    * The user who is assigned to this task.
    */
   assignee?: {

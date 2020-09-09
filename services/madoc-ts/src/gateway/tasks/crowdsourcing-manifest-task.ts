@@ -45,12 +45,14 @@ export function createTask({
   maxContributors,
   approvalsRequired,
   warningTime,
+  projectId,
 }: {
   label: string;
   manifestId: number;
   maxContributors?: number;
   approvalsRequired?: number;
   warningTime?: number;
+  projectId?: number;
 }): CrowdsourcingManifestTask {
   return {
     name: label,
@@ -71,6 +73,7 @@ export function createTask({
       //     Mark the parent task as complete once all resources are also marked as complete.
       'madoc-ts.status.3',
     ],
+    context: projectId ? [`urn:madoc:projects:${projectId}`] : undefined,
   };
 }
 
