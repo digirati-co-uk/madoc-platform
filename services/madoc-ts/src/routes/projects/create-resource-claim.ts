@@ -295,20 +295,27 @@ async function ensureProjectTaskStructure(
   ] as const;
 }
 
-async function getTaskFromClaim(
-  context: ApplicationContext,
-  siteUrn: string,
-  projectId: number,
-  userId: number,
-  parent: CrowdsourcingCollectionTask | CrowdsourcingManifestTask | CrowdsourcingCanvasTask,
-  claim: ResourceClaim
-): Promise<BaseTask | undefined> {
+async function getTaskFromClaim({
+  userId,
+  parent,
+  claim,
+}: {
+  userId: number;
+  parent: CrowdsourcingCollectionTask | CrowdsourcingManifestTask | CrowdsourcingCanvasTask;
+  claim: ResourceClaim;
+}): Promise<[BaseTask | undefined, BaseTask | undefined, BaseTask | undefined]> {
+  const returnClaims: [BaseTask | undefined, BaseTask | undefined, BaseTask | undefined] = [
+    undefined,
+    undefined,
+    undefined,
+  ];
+
   if (!parent.subtasks || parent.subtasks.length === 0) {
-    return undefined;
+    return returnClaims;
   }
 
   if (claim.canvasId) {
-    return (parent.subtasks || []).find(
+    returnClaims[0] = (parent.subtasks || []).find(
       task =>
         task.subject === `urn:madoc:canvas:${claim.canvasId}` &&
         task.type === 'crowdsourcing-task' &&
@@ -321,9 +328,9 @@ async function getTaskFromClaim(
   }
 
   if (claim.manifestId) {
-    return (parent.subtasks || []).find(
+    returnClaims[1] = (parent.subtasks || []).find(
       task =>
-        task.subject === `urn:madoc:manifest:${claim.canvasId}` &&
+        task.subject === `urn:madoc:manifest:${claim.manifestId}` &&
         task.type === 'crowdsourcing-task' &&
         task.status !== 3 &&
         task.status !== -1 &&
@@ -334,7 +341,7 @@ async function getTaskFromClaim(
   }
 
   if (claim.collectionId) {
-    return (parent.subtasks || []).find(
+    returnClaims[2] = (parent.subtasks || []).find(
       task =>
         task.subject === `urn:madoc:collection:${claim.collectionId}` &&
         task.type === 'crowdsourcing-task' &&
@@ -348,7 +355,7 @@ async function getTaskFromClaim(
 
   // Check the parent task for an item with matching id assigned to user.
 
-  return undefined;
+  return returnClaims;
 }
 
 async function upsertCaptureModelForResource(
@@ -490,6 +497,8 @@ async function getCanonicalClaim(
 
 export const prepareResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim> = async context => {
   const { id, siteId, siteUrn } = userWithScope(context, ['models.contribute']);
+  const userApi = api.asUser({ userId: id, siteId });
+
   // Get the params.
   const projectId = Number(context.params.id);
   const claim = await getCanonicalClaim(context.requestBody, siteId, projectId, id);
@@ -503,7 +512,7 @@ export const prepareResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim
   const [parent, userManifestTask] = await ensureProjectTaskStructure(context, siteId, projectId, id, claim, config);
 
   // Check for existing claim
-  const existingClaim = await getTaskFromClaim(context, siteUrn, projectId, id, parent, claim);
+  const [existingClaim, manifestClaim] = await getTaskFromClaim({ userId: id, parent, claim });
 
   const model = await upsertCaptureModelForResource(context, siteId, projectId, id, claim);
 
@@ -512,7 +521,7 @@ export const prepareResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim
       id: model.id,
       label: model.structure.label,
     },
-    claim: existingClaim,
+    claim: existingClaim || manifestClaim,
   };
 };
 
@@ -532,13 +541,13 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
   const [parent, userManifestTask] = await ensureProjectTaskStructure(context, siteId, projectId, id, claim, config);
 
   // Check for existing claim
-  const existingClaim = await getTaskFromClaim(context, siteUrn, projectId, id, parent, claim);
+  const [canvasClaim, manifestClaim] = await getTaskFromClaim({ userId: id, parent, claim });
 
-  if (existingClaim) {
-    if (!(existingClaim.state.revisionId && claim.revisionId && existingClaim.state.revisionId !== claim.revisionId)) {
-      if (typeof claim.status !== 'undefined' && claim.status !== existingClaim.status) {
+  if (canvasClaim) {
+    if (!(canvasClaim.state.revisionId && claim.revisionId && canvasClaim.state.revisionId !== claim.revisionId)) {
+      if (typeof claim.status !== 'undefined' && claim.status !== canvasClaim.status) {
         context.response.body = {
-          claim: await userApi.updateTask(existingClaim.id, {
+          claim: await userApi.updateTask(canvasClaim.id, {
             status: claim.status,
             status_text: statusToClaimMap[claim.status as any] || 'in progress',
           }),
@@ -547,12 +556,22 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
       }
 
       context.response.body = {
-        claim: await userApi.getTaskById(existingClaim.id as string, true, 0, undefined, undefined, true),
+        claim: await userApi.getTaskById(canvasClaim.id as string, true, 0, undefined, undefined, true),
       };
       return;
     }
   }
 
+  // Can't claim a canvas is you've already claimed the manifest.
+  // @todo how does this interact when saving a capture model task.
+  if (manifestClaim) {
+    context.response.body = {
+      claim: await userApi.getTaskById(manifestClaim.id as string, true, 0, undefined, undefined, true),
+    };
+    return;
+  }
+
+  // @todo if there is a manifest manifestClaim, it becomes the parent task.
   if (claim.canvasId) {
     // Make sure a capture model exists and retrieve it.
     const captureModel = await upsertCaptureModelForResource(context, siteId, projectId, id, claim);
@@ -572,6 +591,7 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
       type: 'canvas',
       captureModel,
       claim,
+      userManifestTask,
     });
 
     if (typeof claim.status !== 'undefined' && claim.status !== task.status) {
@@ -588,9 +608,24 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
   }
 
   if (claim.manifestId) {
-    // This will need to create a manifest crowdsourcing task
-    // and then one for every canvas under that.
-    throw new Error('Claiming whole manifest not yet supported');
+    const task = await createUserCrowdsourcingTask({
+      context,
+      siteId,
+      projectId,
+      userId: id,
+      name,
+      parentTaskId: parent.id,
+      taskName: parent.name,
+      warningTime: parent.type === 'crowdsourcing-manifest-task' ? parent.state.warningTime : undefined,
+      subject: `urn:madoc:manifest:${claim.manifestId}`,
+      parentSubject: claim.collectionId ? `urn:madoc:collection:${claim.collectionId}` : undefined,
+      type: 'manifest',
+      claim,
+    });
+
+    context.response.body = { claim: task };
+
+    return;
   }
 
   if (claim.collectionId) {
