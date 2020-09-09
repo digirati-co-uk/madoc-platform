@@ -2,9 +2,10 @@ import { MemoryRouter } from 'react-router-dom';
 import { Header } from '../src/frontend/shared/components/Header';
 import { SearchFacets } from '../src/frontend/shared/components/SearchFacets';
 import { SearchResults } from '../src/frontend/shared/components/SearchResults';
+import { PaginationNumbered } from '../src/frontend/shared/components/Pagination';
 
 import * as React from 'react';
-import { text } from '@storybook/addon-knobs';
+import { text, number } from '@storybook/addon-knobs';
 import { WidePage } from '../src/frontend/shared/atoms/WidePage';
 import { v4 } from 'uuid';
 import styled from 'styled-components';
@@ -101,6 +102,7 @@ export const HeaderWithBreadcrumbsAndMenuAndSearch = () => (
           }}
         />
       </SearchContainer>
+      <PaginationNumbered page={number('Page Number', 2)} totalPages={number('Total Pages', 2)} stale={false} />
     </WidePage>
   </MemoryRouter>
 );
