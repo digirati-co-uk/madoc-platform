@@ -56,6 +56,11 @@ export type CreateTask = {
   events?: string[];
 
   /**
+   * Additional context for this task
+   */
+  context?: string[];
+
+  /**
    * The user who is assigned to this task.
    */
   assignee?: {
