@@ -26,7 +26,7 @@ import { ProjectSnippet } from '../types/schemas/project-snippet';
 import { CaptureModelSnippet } from '../types/schemas/capture-model-snippet';
 import { ApiError } from '../utility/errors/api-error';
 import { Pagination } from '../types/schemas/_pagination';
-import { CrowdsourcingTask } from '../types/tasks/crowdsourcing-task';
+import { CrowdsourcingTask } from './tasks/crowdsourcing-task';
 import { ResourceClaim } from '../routes/projects/create-resource-claim';
 import { RevisionRequest } from '@capture-models/types';
 import { ProjectList } from '../types/schemas/project-list';
