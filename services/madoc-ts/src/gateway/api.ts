@@ -1,6 +1,7 @@
 import { CaptureModelExtension } from '../extensions/capture-models/extension';
 import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.extension';
 import { ExtensionManager } from '../extensions/extension-manager';
+import { ProjectConfiguration } from '../types/schemas/project-configuration';
 import { fetchJson } from './fetch-json';
 import { BaseTask } from '../gateway/tasks/base-task';
 import { CanvasNormalized, CollectionNormalized, Manifest } from '@hyperion-framework/types';
@@ -375,6 +376,17 @@ export class ApiClient {
     return this.request<ConfigResponse<T>>(
       `/api/configurator/query?${stringify({ context, service }, { arrayFormat: 'none' })}`
     );
+  }
+
+  async getProjectConfiguration(projectId: number, siteUrn: string): Promise<Partial<ProjectConfiguration>> {
+    const projectConfig = await this.getConfiguration<ProjectConfiguration>('madoc', [
+      `urn:madoc:project:${projectId}`,
+      siteUrn,
+    ]);
+
+    return projectConfig.config && projectConfig.config[0] && projectConfig.config[0].config_object
+      ? projectConfig.config[0].config_object
+      : {};
   }
 
   // IIIF.
