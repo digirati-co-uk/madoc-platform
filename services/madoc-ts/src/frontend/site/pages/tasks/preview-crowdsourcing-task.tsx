@@ -45,7 +45,7 @@ const PreviewCrowdsourcingTask: React.FC<{
     return await api.getTaskById<CrowdsourcingTask>(props.task.id);
   });
 
-  const modelId = taskData?.parameters[0];
+  const modelId = taskData?.parameters[0] || undefined;
 
   const [{ captureModel, canvas }] = useLoadedCaptureModel(modelId);
 
