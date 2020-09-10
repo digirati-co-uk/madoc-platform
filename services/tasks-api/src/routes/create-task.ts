@@ -20,11 +20,15 @@ export const createTask: RouteMiddleware<{}, CreateTask> = async (context, next)
   }
 
   const id = v4();
+  const taskContext = context.state.jwt.context;
+  if (task.context) {
+    taskContext.push(...task.context);
+  }
   const insertedTask = await insertTask(context.connection, {
     id,
     task,
     user: context.state.jwt.user,
-    context: context.state.jwt.context,
+    context: taskContext,
   });
 
   // Task events

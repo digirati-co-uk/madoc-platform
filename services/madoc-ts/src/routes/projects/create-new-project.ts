@@ -1,3 +1,4 @@
+import { CrowdsourcingProjectTask } from '../../gateway/tasks/crowdsourcing-project-task';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { api } from '../../gateway/api.server';
 import { userWithScope } from '../../utility/user-with-scope';
@@ -45,7 +46,7 @@ export const createNewProject: RouteMiddleware<{}, CreateProject> = async contex
   const captureModel = await userApi.createCaptureModel(iiifGetLabel(label));
 
   // 3. Create crowdsourcing task.
-  const task = await userApi.newTask({
+  const task = await userApi.newTask<CrowdsourcingProjectTask>({
     name: firstLang(label),
     subject: `urn:madoc:collection:${collection.id}`,
     parameters: [captureModel.id],

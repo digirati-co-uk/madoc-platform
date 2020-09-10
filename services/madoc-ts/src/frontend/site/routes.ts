@@ -38,13 +38,19 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
             },
             {
               path: '/collections/:collectionId/manifests/:manifestId/c/:id',
-              exact: true,
-              component: components.ViewCanvas,
-            },
-            {
-              path: '/collections/:collectionId/manifests/:manifestId/c/:id/model',
-              exact: true,
-              component: components.ViewCanvasModel,
+              component: components.CanvasLoader,
+              routes: [
+                {
+                  path: '/collections/:collectionId/manifests/:manifestId/c/:id',
+                  exact: true,
+                  component: components.ViewCanvas,
+                },
+                {
+                  path: '/collections/:collectionId/manifests/:manifestId/c/:id/model',
+                  exact: true,
+                  component: components.ViewCanvasModel,
+                },
+              ],
             },
           ],
         },
@@ -71,13 +77,19 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
         },
         {
           path: '/manifests/:manifestId/c/:id',
-          exact: true,
-          component: components.ViewCanvas,
-        },
-        {
-          path: '/manifests/:manifestId/c/:id/model',
-          exact: true,
-          component: components.ViewCanvasModel,
+          component: components.CanvasLoader,
+          routes: [
+            {
+              path: '/manifests/:manifestId/c/:id',
+              exact: true,
+              component: components.ViewCanvas,
+            },
+            {
+              path: '/manifests/:manifestId/c/:id/model',
+              exact: true,
+              component: components.ViewCanvasModel,
+            },
+          ],
         },
       ],
     },
@@ -125,13 +137,19 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
                 },
                 {
                   path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/c/:id',
-                  exact: true,
-                  component: components.ViewCanvas,
-                },
-                {
-                  path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/c/:id/model',
-                  exact: true,
-                  component: components.ViewCanvasModel,
+                  component: components.CanvasLoader,
+                  routes: [
+                    {
+                      path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/c/:id',
+                      exact: true,
+                      component: components.ViewCanvas,
+                    },
+                    {
+                      path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/c/:id/model',
+                      exact: true,
+                      component: components.ViewCanvasModel,
+                    },
+                  ],
                 },
               ],
             },
@@ -158,13 +176,19 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
             },
             {
               path: '/projects/:slug/manifests/:manifestId/c/:id',
-              exact: true,
-              component: components.ViewCanvas,
-            },
-            {
-              path: '/projects/:slug/manifests/:manifestId/c/:id/model',
-              exact: true,
-              component: components.ViewCanvasModel,
+              component: components.CanvasLoader,
+              routes: [
+                {
+                  path: '/projects/:slug/manifests/:manifestId/c/:id',
+                  exact: true,
+                  component: components.ViewCanvas,
+                },
+                {
+                  path: '/projects/:slug/manifests/:manifestId/c/:id/model',
+                  exact: true,
+                  component: components.ViewCanvasModel,
+                },
+              ],
             },
           ],
         },

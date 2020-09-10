@@ -1,6 +1,7 @@
 import { CaptureModelExtension } from '../extensions/capture-models/extension';
 import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.extension';
 import { ExtensionManager } from '../extensions/extension-manager';
+import { ProjectConfiguration } from '../types/schemas/project-configuration';
 import { fetchJson } from './fetch-json';
 import { BaseTask } from '../gateway/tasks/base-task';
 import { CanvasNormalized, CollectionNormalized, Manifest } from '@hyperion-framework/types';
@@ -11,6 +12,7 @@ import { CreateManifest } from '../types/schemas/create-manifest';
 import { ItemStructureList, ItemStructureListItem, UpdateStructureList } from '../types/schemas/item-structure-list';
 import { CreateCanvas } from '../types/schemas/create-canvas';
 import { ManifestListResponse } from '../types/schemas/manifest-list';
+import { CrowdsourcingManifestTask } from './tasks/crowdsourcing-manifest-task';
 import { ImportManifestTask } from './tasks/import-manifest';
 import { ImportCollectionTask } from './tasks/import-collection';
 import { ManifestFull } from '../types/schemas/manifest-full';
@@ -26,7 +28,7 @@ import { ProjectSnippet } from '../types/schemas/project-snippet';
 import { CaptureModelSnippet } from '../types/schemas/capture-model-snippet';
 import { ApiError } from '../utility/errors/api-error';
 import { Pagination } from '../types/schemas/_pagination';
-import { CrowdsourcingTask } from '../types/tasks/crowdsourcing-task';
+import { CrowdsourcingTask } from './tasks/crowdsourcing-task';
 import { ResourceClaim } from '../routes/projects/create-resource-claim';
 import { RevisionRequest } from '@capture-models/types';
 import { ProjectList } from '../types/schemas/project-list';
@@ -375,6 +377,17 @@ export class ApiClient {
     return this.request<ConfigResponse<T>>(
       `/api/configurator/query?${stringify({ context, service }, { arrayFormat: 'none' })}`
     );
+  }
+
+  async getProjectConfiguration(projectId: number, siteUrn: string): Promise<Partial<ProjectConfiguration>> {
+    const projectConfig = await this.getConfiguration<ProjectConfiguration>('madoc', [
+      `urn:madoc:project:${projectId}`,
+      siteUrn,
+    ]);
+
+    return projectConfig.config && projectConfig.config[0] && projectConfig.config[0].config_object
+      ? projectConfig.config[0].config_object
+      : {};
   }
 
   // IIIF.
@@ -803,20 +816,22 @@ export class ApiClient {
   async getTaskSubjects(
     id: string,
     subjects?: string[],
-    query: { type?: string; assignee?: boolean; assigned_to?: string } = {}
+    query: { type?: string; assignee?: boolean; assigned_to?: string } = {},
+    parentTask = false
   ) {
     return this.request<{ subjects: Array<{ subject: string; status: number; assignee_id?: string }> }>(
       `/api/tasks/${id}/subjects?${stringify(query)}`,
       {
         method: 'POST',
         body: {
+          parentTask,
           subjects,
         },
       }
     );
   }
 
-  async getTask<Task extends BaseTask>(
+  async getTask<Task extends BaseTask = BaseTask>(
     id: string,
     query?: {
       all?: boolean;
@@ -825,7 +840,7 @@ export class ApiClient {
       page?: number;
       assignee?: boolean;
       detail?: boolean;
-      subjects: string[];
+      subjects?: string[];
     }
   ) {
     return this.request<Task & { id: string }>(
@@ -898,6 +913,7 @@ export class ApiClient {
       status?: number | number[];
       root_task_id?: string;
       parent_task_id?: string;
+      subject_parent?: string;
       subject?: string;
       type?: string;
       detail?: boolean;
@@ -1262,17 +1278,28 @@ export class ApiClient {
   }
 
   async getSiteProjectCanvasModel(projectId: string | number, canvasId: number) {
-    return this.publicRequest<ProjectList>(`/madoc/api/projects/${projectId}/canvas-models/${canvasId}`);
+    return this.publicRequest<{ model: CaptureModel }>(`/madoc/api/projects/${projectId}/canvas-models/${canvasId}`);
   }
 
   async getSiteProjectCanvasTasks(projectId: string | number, canvasId: number) {
     return this.publicRequest<{
       canvasTask?: CrowdsourcingCanvasTask;
+      manifestTask?: CrowdsourcingManifestTask;
       userTasks?: CrowdsourcingTask[];
       canUserSubmit?: boolean;
       totalContributors?: number;
       maxContributors?: number;
     }>(`/madoc/api/projects/${projectId}/canvas-tasks/${canvasId}`);
+  }
+
+  async getSiteProjectManifestTasks(projectId: string | number, manifestId: number) {
+    return this.publicRequest<{
+      manifestTask?: CrowdsourcingTask | CrowdsourcingManifestTask;
+      userTasks?: CrowdsourcingTask[];
+      canUserSubmit?: boolean;
+      totalContributors?: number;
+      maxContributors?: number;
+    }>(`/madoc/api/projects/${projectId}/manifest-tasks/${manifestId}`);
   }
 
   async getUserDetails() {

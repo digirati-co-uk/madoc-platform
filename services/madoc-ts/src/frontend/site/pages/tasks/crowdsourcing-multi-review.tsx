@@ -1,16 +1,33 @@
 import React, { Suspense, useCallback, useMemo } from 'react';
 import { useQuery } from 'react-query';
+import { CrowdsourcingCanvasTask } from '../../../../gateway/tasks/crowdsourcing-canvas-task';
 import { CrowdsourcingReview } from '../../../../gateway/tasks/crowdsourcing-review';
+import { BreadcrumbContainer, Breadcrumbs } from '../../../shared/atoms/Breadcrumbs';
+import { Heading1, Subheading1 } from '../../../shared/atoms/Heading1';
+import {
+  KanbanAssignee,
+  KanbanBoard,
+  KanbanBoardContainer,
+  KanbanCard,
+  KanbanCardButton,
+  KanbanCardInner,
+  KanbanCol,
+  KanbanColTitle,
+  KanbanLabel,
+  KanbanType,
+  KanbanEmpty,
+  KanbanCardTextButton,
+} from '../../../shared/atoms/Kanban';
 import { useApi } from '../../../shared/hooks/use-api';
 import { Heading3, Subheading3 } from '../../../shared/atoms/Heading3';
-import { TableContainer, TableEmpty, TableRow, TableRowLabel } from '../../../shared/atoms/Table';
-import { Status } from '../../../shared/atoms/Status';
 import { Link, useParams, useHistory } from 'react-router-dom';
-import { CrowdsourcingTask } from '../../../../types/tasks/crowdsourcing-task';
-import { GridContainer, HalfGird } from '../../../shared/atoms/Grid';
+import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
 import TimeAgo from 'react-timeago';
 import { createLink } from '../../../shared/utility/create-link';
 import { useLocationQuery } from '../../../shared/hooks/use-location-query';
+import { HrefLink } from '../../../shared/utility/href-link';
+import { CrowdsourcingCanvas } from './crowdsourcing-canvas';
+import { CrowdsourcingManifestReview } from './crowdsourcing-manifest-review';
 import { PreviewCrowdsourcingTask } from './preview-crowdsourcing-task.lazy';
 import { MergeCrowdsourcingTask } from './merge-crowdsourcing-task.lazy';
 import { WarningMessage } from '../../../shared/atoms/WarningMessage';
@@ -32,15 +49,39 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
   const { slug } = useParams();
   const history = useHistory();
   const { preview } = useLocationQuery();
-  const { data, refetch: refetchTask } = useQuery(['multi-review-tasks', { id: reviewTask.id }], async () => {
-    return await api.getTasks<CrowdsourcingTask>(0, {
-      all: true,
-      // status: [-1, 0, 1, 2, 3, 4],
-      parent_task_id: reviewTask.parent_task,
-      type: 'crowdsourcing-task',
-      detail: true,
-    });
+  const { data, refetch: refetchTask } = useQuery(
+    ['multi-review-tasks', { id: reviewTask.id }],
+    async () => {
+      return await api.getTasks<CrowdsourcingTask>(0, {
+        all: true,
+        // status: [-1, 0, 1, 2, 3, 4],
+        parent_task_id: reviewTask.parent_task,
+        type: 'crowdsourcing-task',
+        detail: true,
+      });
+    },
+    {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchIntervalInBackground: false,
+    }
+  );
+  const { data: backTask } = useQuery(['back-task', { subject: reviewTask.subject_parent }], async () => {
+    if (reviewTask.subject_parent) {
+      const { tasks: allBackTasks } = await api.getTasks<CrowdsourcingReview>(0, {
+        all: true,
+        type: 'crowdsourcing-review',
+        subject: reviewTask.subject_parent,
+        status: [0, 1, 2, 4],
+        root_task_id: reviewTask.root_task,
+      });
+
+      if (allBackTasks.length) {
+        return allBackTasks[0];
+      }
+    }
   });
+
   const lockedTasks = useMemo(
     () =>
       reviewTask.state.currentMerge
@@ -50,6 +91,35 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
   );
   const previewTask = data ? data.tasks.find(t => t.id === preview) : undefined;
 
+  const header = backTask ? (
+    <>
+      <Breadcrumbs
+        type="site"
+        items={[
+          backTask ? { label: backTask.name, link: createLink({ projectId: slug, taskId: backTask.id }) } : undefined,
+          {
+            label: reviewTask.name,
+            link: createLink({ projectId: slug, taskId: reviewTask.id }),
+            active: !!previewTask,
+          },
+          previewTask
+            ? {
+                label: previewTask.name,
+                link: createLink({ projectId: slug, taskId: reviewTask.id, query: { preview: previewTask.id } }),
+                active: true,
+              }
+            : undefined,
+        ]}
+      />
+      <Heading3>{reviewTask.name}</Heading3>
+      {reviewTask.created_at ? (
+        <Subheading3>
+          <TimeAgo date={reviewTask.created_at} />
+        </Subheading3>
+      ) : null}
+    </>
+  ) : null;
+
   const refreshAll = useCallback(() => {
     return Promise.all(
       [refetchTask({ force: true }), refetch ? refetch() : null].filter(r => r !== null) as Promise<void>[]
@@ -57,65 +127,82 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
   }, [refetch, refetchTask]);
 
   if (!data) {
-    return <div>Loading...</div>;
+    return (
+      <>
+        {header}
+        <div>Loading...</div>
+      </>
+    );
   }
 
+  // @todo ????
   if (reviewTask.state.baseRevisionId) {
     return <div>Base revision chosen</div>;
   }
 
   if (reviewTask.state.currentMerge && reviewTask.state.currentMerge.mergeId === preview) {
     return (
-      <Suspense fallback={<div>Loading...</div>}>
-        <MergeCrowdsourcingTask
-          merge={reviewTask.state.currentMerge}
-          goBack={async opt => {
-            if (opt?.refresh) {
-              await refreshAll();
-            }
-            const rev = opt?.revisionId;
-            history.push(
-              createLink({ projectId: slug, taskId: reviewTask.id, query: rev ? { preview: rev } : undefined })
-            );
-          }}
-          reviewTaskId={reviewTask.id as string}
-        />
-      </Suspense>
+      <>
+        {header}
+        <Suspense fallback={<div>Loading...</div>}>
+          <MergeCrowdsourcingTask
+            merge={reviewTask.state.currentMerge}
+            goBack={async opt => {
+              if (opt?.refresh) {
+                await refreshAll();
+              }
+              const rev = opt?.revisionId;
+              history.push(
+                createLink({ projectId: slug, taskId: reviewTask.id, query: rev ? { preview: rev } : undefined })
+              );
+            }}
+            reviewTaskId={reviewTask.id as string}
+          />
+        </Suspense>
+      </>
     );
   }
 
   const waiting = data.tasks.filter(t => t.status <= 1 || t.status === 4);
-  const ready = data.tasks.filter(t => t.status > 1 && t.status !== 4 && t.state.reviewTask === reviewTask.id);
-  const otherReviews = data.tasks.filter(t => t.state.reviewTask !== reviewTask.id);
+  const ready = data.tasks.filter(
+    t => t.status > 1 && t.status !== 4 && t.status !== 3 && t.state.reviewTask === reviewTask.id
+  );
+  const complete = data.tasks.filter(t => t.status === 3 && t.state.reviewTask === reviewTask.id);
+  // These are other reviews adjacent.
+  // const otherReviews = data.tasks.filter(t => t.state.reviewTask !== reviewTask.id);
   const allRevisionIds = ready.map(task => task.state.revisionId as string);
   const allTaskIds = ready.map(task => task.id as string);
 
   if (previewTask) {
     return (
-      <Suspense fallback={<div>Loading...</div>}>
-        <PreviewCrowdsourcingTask
-          allTaskIds={allTaskIds}
-          lockedTasks={lockedTasks}
-          allRevisionIds={allRevisionIds}
-          allTasks={ready}
-          task={previewTask as any}
-          goBack={async opt => {
-            if (opt?.refresh && refetch) {
-              await refreshAll();
-            }
-            const rev = opt?.revisionId;
-            history.push(
-              createLink({ projectId: slug, taskId: reviewTask.id, query: rev ? { preview: rev } : undefined })
-            );
-          }}
-          reviewTaskId={reviewTask.id as string}
-        />
-      </Suspense>
+      <>
+        {header}
+        <Suspense fallback={<div>Loading...</div>}>
+          <PreviewCrowdsourcingTask
+            allTaskIds={allTaskIds}
+            lockedTasks={lockedTasks}
+            allRevisionIds={allRevisionIds}
+            allTasks={ready}
+            task={previewTask as any}
+            goBack={async opt => {
+              if (opt?.refresh && refetch) {
+                await refreshAll();
+              }
+              const rev = opt?.revisionId;
+              history.push(
+                createLink({ projectId: slug, taskId: reviewTask.id, query: rev ? { preview: rev } : undefined })
+              );
+            }}
+            reviewTaskId={reviewTask.id as string}
+          />
+        </Suspense>
+      </>
     );
   }
 
   return (
     <div>
+      {header}
       {reviewTask.state.currentMerge ? (
         <WarningMessage>
           There is a merge in progress{' '}
@@ -130,106 +217,89 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
           </Link>
         </WarningMessage>
       ) : null}
-      <Heading3>This review covers the following contributions</Heading3>
-      <GridContainer>
-        <HalfGird $margin>
-          <Subheading3>Waiting for contributor</Subheading3>
-          <TableContainer>
+
+      <Heading3 $margin>This review covers the following contributions</Heading3>
+
+      <KanbanBoard>
+        <KanbanBoardContainer>
+          <KanbanCol>
+            <KanbanColTitle>Waiting for contributor</KanbanColTitle>
             {waiting.length ? (
               waiting.map(task => (
-                <TableRow key={task.id}>
-                  <TableRowLabel>
-                    <Status status={task.status} text={task.status_text} />
-                  </TableRowLabel>
-                  <TableRowLabel>
-                    <strong>{task.assignee?.name}</strong>
-                  </TableRowLabel>
-                  <TableRowLabel>
-                    {task.status > 0 && task.state.reviewTask === reviewTask.id ? (
-                      <Link to={createLink({ projectId: slug, taskId: reviewTask.id, query: { preview: task.id } })}>
-                        {task.name}
-                      </Link>
-                    ) : (
-                      task.name
-                    )}
-                  </TableRowLabel>
-                  {task.modified_at ? (
-                    <TableRowLabel>
-                      <TimeAgo date={task.modified_at} />
-                    </TableRowLabel>
-                  ) : null}
-                </TableRow>
+                <KanbanCard key={task.id}>
+                  <KanbanCardInner>
+                    <KanbanLabel>{task.name}</KanbanLabel>
+                    {task.modified_at ? (
+                      <KanbanType>
+                        <TimeAgo date={task.modified_at} />
+                      </KanbanType>
+                    ) : null}
+                  </KanbanCardInner>
+                  {task.assignee && task.assignee.name ? <KanbanAssignee>{task.assignee.name}</KanbanAssignee> : null}
+                </KanbanCard>
               ))
             ) : (
-              <TableEmpty>None waiting</TableEmpty>
+              <KanbanEmpty>None waiting</KanbanEmpty>
             )}
-          </TableContainer>
-        </HalfGird>
-        <HalfGird $margin>
-          <Subheading3>Ready to review</Subheading3>
-          <TableContainer>
+          </KanbanCol>
+          <KanbanCol>
+            <KanbanColTitle>Ready for review</KanbanColTitle>
             {ready.length ? (
               ready.map(task => (
-                <TableRow key={task.id}>
-                  <TableRowLabel>
-                    <Status status={task.status} text={task.status_text} />
-                  </TableRowLabel>
-                  <TableRowLabel>
-                    <strong>{task.assignee?.name}</strong>
-                  </TableRowLabel>
-                  <TableRowLabel>
-                    {task.state.reviewTask === reviewTask.id ? (
-                      <Link to={createLink({ projectId: slug, taskId: reviewTask.id, query: { preview: task.id } })}>
-                        {task.name}
-                      </Link>
-                    ) : (
-                      task.name
-                    )}
-                  </TableRowLabel>
-                  {task.modified_at ? (
-                    <TableRowLabel>
-                      <TimeAgo date={task.modified_at} />
-                    </TableRowLabel>
+                <KanbanCard key={task.id}>
+                  <KanbanCardInner>
+                    <KanbanLabel>{task.name}</KanbanLabel>
+                    {task.modified_at ? (
+                      <KanbanType>
+                        <TimeAgo date={task.modified_at} />
+                      </KanbanType>
+                    ) : null}
+                  </KanbanCardInner>
+                  {task.assignee && task.assignee.name ? <KanbanAssignee>{task.assignee.name}</KanbanAssignee> : null}
+                  {task.status > 0 && task.state.reviewTask === reviewTask.id ? (
+                    <KanbanCardButton
+                      as={HrefLink}
+                      href={createLink({ projectId: slug, taskId: reviewTask.id, query: { preview: task.id } })}
+                    >
+                      Review contribution
+                    </KanbanCardButton>
                   ) : null}
-                </TableRow>
+                </KanbanCard>
               ))
             ) : (
-              <TableEmpty>None ready</TableEmpty>
+              <KanbanEmpty>None ready</KanbanEmpty>
             )}
-          </TableContainer>
-        </HalfGird>
-      </GridContainer>
-      <GridContainer>
-        <HalfGird>
-          <Subheading3>Previously reviewed</Subheading3>
-          <TableContainer>
-            {otherReviews.length ? (
-              otherReviews.map(task => (
-                <TableRow key={task.id}>
-                  <TableRowLabel>
-                    <Status status={task.status} text={task.status_text} />
-                  </TableRowLabel>
-                  <TableRowLabel>
-                    <strong>{task.assignee?.name}</strong>
-                  </TableRowLabel>
-                  <TableRowLabel>
-                    <Link to={createLink({ projectId: slug, taskId: task.state.reviewTask })}>
-                      {task.name}
-                    </Link>
-                  </TableRowLabel>
-                  {task.modified_at ? (
-                    <TableRowLabel>
-                      <TimeAgo date={task.modified_at} />
-                    </TableRowLabel>
+          </KanbanCol>
+          <KanbanCol>
+            <KanbanColTitle>Completed reviews</KanbanColTitle>
+            {complete.length ? (
+              complete.map(task => (
+                <KanbanCard key={task.id}>
+                  <KanbanCardInner>
+                    <KanbanLabel>{task.name}</KanbanLabel>
+                    {task.modified_at ? (
+                      <KanbanType>
+                        <TimeAgo date={task.modified_at} />
+                      </KanbanType>
+                    ) : null}
+                  </KanbanCardInner>
+                  {task.assignee && task.assignee.name ? <KanbanAssignee>{task.assignee.name}</KanbanAssignee> : null}
+                  {task.status > 0 && task.state.reviewTask === reviewTask.id ? (
+                    <KanbanCardTextButton
+                      as={HrefLink}
+                      href={createLink({ projectId: slug, taskId: reviewTask.id, query: { preview: task.id } })}
+                    >
+                      View contribution
+                    </KanbanCardTextButton>
                   ) : null}
-                </TableRow>
+                </KanbanCard>
               ))
             ) : (
-              <TableEmpty>None ready</TableEmpty>
+              <KanbanEmpty>None complete</KanbanEmpty>
             )}
-          </TableContainer>
-        </HalfGird>
-      </GridContainer>
+          </KanbanCol>
+        </KanbanBoardContainer>
+      </KanbanBoard>
     </div>
   );
 };

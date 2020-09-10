@@ -15,6 +15,11 @@ export type CreateTask = {
   subject: string;
 
   /**
+   * The subject of the task (e.g. a resource or a service)
+   */
+  subject_parent?: string;
+
+  /**
    * An optional description of the task.
    */
   description?: string;
@@ -54,6 +59,11 @@ export type CreateTask = {
    * Events that will be dispatched for this task.
    */
   events?: string[];
+
+  /**
+   * Additional context for this task
+   */
+  context?: string[];
 
   /**
    * The user who is assigned to this task.

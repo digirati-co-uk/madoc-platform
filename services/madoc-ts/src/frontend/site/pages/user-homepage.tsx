@@ -24,7 +24,7 @@ import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '
 import { Heading3, Subheading3 } from '../../shared/atoms/Heading3';
 import { ProjectListing } from '../../shared/atoms/ProjectListing';
 import { CrowdsourcingReview } from '../../../gateway/tasks/crowdsourcing-review';
-import { CrowdsourcingTask } from '../../../types/tasks/crowdsourcing-task';
+import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
 import { Pagination } from '../../../types/schemas/_pagination';
 import { GridContainer, HalfGird } from '../../shared/atoms/Grid';
 import { TableContainer, TableEmpty, TableRow, TableRowLabel } from '../../shared/atoms/Table';

@@ -10,14 +10,15 @@ import { queryCache } from 'react-query';
 import '@capture-models/editor/lib/input-types/TextField';
 import '@capture-models/editor/lib/input-types/HTMLField';
 import { useProjectByTask } from '../../../shared/hooks/use-project-by-task';
-import { CrowdsourcingTask } from '../../../../types/tasks/crowdsourcing-task';
+import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
 import { TaskContext } from '../loaders/task-loader';
 import { createLink } from '../../../shared/utility/create-link';
 import { WarningMessage } from '../../../shared/atoms/WarningMessage';
 import { ErrorMessage } from '../../../shared/atoms/ErrorMessage';
 import { CaptureModelViewer } from '../../../shared/viewers/caputre-model-viewer';
+import { CrowdsourcingTaskManifest } from './crowdsourcing-task-manifest';
 
-const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task }) => {
+const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task, parentTask }) => {
   const api = useApi();
   const project = useProjectByTask(task);
 
@@ -37,7 +38,10 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task 
   const { data: captureModel } = useQuery(
     ['capture-model', { id: task.parameters[0] }],
     async () => {
-      return api.getCaptureModel(task.parameters[0]);
+      const modelId = task.parameters[0];
+      if (modelId) {
+        return api.getCaptureModel(modelId);
+      }
     },
     {
       refetchInterval: false,
@@ -89,6 +93,19 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task 
     });
   }, [project, target]);
 
+  const modelId = task.parameters[0];
+  const isCanvas = parentTask ? parentTask.parameters[2] === 'canvas' : task.parameters[2] === 'canvas';
+
+  if (!isCanvas) {
+    return (
+      <CrowdsourcingTaskManifest
+        task={parentTask ? parentTask : task}
+        subtask={parentTask ? task : undefined}
+        projectId={project?.slug}
+      />
+    );
+  }
+
   return (
     <ThemeProvider theme={defaultTheme}>
       <div>
@@ -118,26 +135,28 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task 
           </ErrorMessage>
         ) : null}
         {isSubmitted ? <WarningMessage>Your submissions is in review.</WarningMessage> : null}
-        <CaptureModelViewer
-          modelId={task.parameters[0]}
-          revisionId={task.state.revisionId}
-          onSave={async (response, status) => {
-            if (!task.id || !project) return;
+        {resource && captureModel && modelId ? (
+          <CaptureModelViewer
+            modelId={modelId}
+            revisionId={task.state.revisionId}
+            onSave={async (response, status) => {
+              if (!task.id || !project) return;
 
-            if (status === 'draft') {
-              await api.saveResourceClaim(project.id, task.id, {
-                status: 1,
-                revisionId: response.revision.id,
-              });
-            } else if (status === 'submitted') {
-              await api.saveResourceClaim(project.id, task.id, {
-                status: 2,
-                revisionId: response.revision.id,
-              });
-            }
-            await queryCache.refetchQueries(['task', { id: task.id }]);
-          }}
-        />
+              if (status === 'draft') {
+                await api.saveResourceClaim(project.id, task.id, {
+                  status: 1,
+                  revisionId: response.revision.id,
+                });
+              } else if (status === 'submitted') {
+                await api.saveResourceClaim(project.id, task.id, {
+                  status: 2,
+                  revisionId: response.revision.id,
+                });
+              }
+              await queryCache.refetchQueries(['task', { id: task.id }]);
+            }}
+          />
+        ) : null}
       </div>
     </ThemeProvider>
   );

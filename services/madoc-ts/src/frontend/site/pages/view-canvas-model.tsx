@@ -1,6 +1,12 @@
+import { CrowdsourcingManifestTask } from '../../../gateway/tasks/crowdsourcing-manifest-task';
 import { CanvasFull } from '../../../types/schemas/canvas-full';
 import { ProjectFull } from '../../../types/schemas/project-full';
 import { ManifestFull } from '../../../types/schemas/manifest-full';
+import { Heading3 } from '../../shared/atoms/Heading3';
+import { LockIcon } from '../../shared/atoms/LockIcon';
+import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { CanvasNavigation } from '../../shared/components/CanvasNavigation';
+import { LocaleString } from '../../shared/components/LocaleString';
 import { UniversalComponent } from '../../types';
 import { createUniversalComponent } from '../../shared/utility/create-universal-component';
 import React from 'react';
@@ -20,6 +26,9 @@ import { CrowdsourcingCanvasTask } from '../../../gateway/tasks/crowdsourcing-ca
 import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
 import { HrefLink } from '../../shared/utility/href-link';
 import { SmallButton } from '../../shared/atoms/Button';
+import { CanvasLoaderType } from './loaders/canvas-loader';
+
+type ViewCanvasModelProps = CanvasLoaderType['data'] & CanvasLoaderType['context'];
 
 type ViewCanvasModelType = {
   params: {
@@ -38,6 +47,7 @@ type ViewCanvasModelType = {
   data: {
     canvas: CanvasFull;
     canvasTask?: CrowdsourcingCanvasTask;
+    manifestTask?: CrowdsourcingTask | CrowdsourcingManifestTask;
     userTasks?: CrowdsourcingTask[];
     canUserSubmit: boolean;
     model?: {
@@ -120,74 +130,108 @@ const SubmissionDetails: React.FC<{
   );
 };
 
-export const ViewCanvasModel: UniversalComponent<ViewCanvasModelType> = createUniversalComponent<ViewCanvasModelType>(
-  ({ project }) => {
-    const { data, refetch } = useData(ViewCanvasModel);
-    const api = useApi();
-    const { slug, collectionId, manifestId, id } = useParams();
-    const { revision } = useLocationQuery();
+export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({
+  project,
+  refetch,
+  canvas,
+  manifest,
+  canUserSubmit,
+  manifestTask,
+  userTasks,
+  canvasTask,
+  model,
+  manifestUserTasks,
+}) => {
+  const api = useApi();
+  const { slug, collectionId, manifestId, id } = useParams<{
+    id: string;
+    manifestId?: string;
+    collectionId?: string;
+    slug?: string;
+  }>();
+  const { revision } = useLocationQuery();
+  const preventCanvasNavigation = project && project.config.allowCanvasNavigation === false;
+  const user = api.getIsServer() ? undefined : api.getCurrentUser();
+  const bypassCanvasNavigation = user
+    ? user.scope.indexOf('site.admin') !== -1 || user.scope.indexOf('models.revision') !== -1
+    : manifestUserTasks && manifestUserTasks.length > 0;
 
-    const [prepareContribution] = useMutation(async () => {
-      if (project && id) {
-        await api.prepareResourceClaim(project.id, {
-          canvasId: Number(id),
-          manifestId: manifestId ? Number(manifestId) : undefined,
-          collectionId: collectionId ? Number(collectionId) : undefined,
-        });
-        await refetch();
-      }
-    });
-
-    const completedAndHide =
-      project?.config.allowSubmissionsWhenCanvasComplete === false && data?.canvasTask?.status === 3;
-
-    const backLink = createLink({
-      canvasId: id,
-      projectId: slug,
-      manifestId,
-      collectionId,
-    });
-
-    if (!data?.canUserSubmit) {
-      return (
-        <div>
-          <h1>Maximum number of contributors reached</h1>
-          <HrefLink href={backLink}>Go back to resource</HrefLink>
-        </div>
-      );
+  const [prepareContribution] = useMutation(async () => {
+    if (project && id) {
+      await api.prepareResourceClaim(project.id, {
+        canvasId: Number(id),
+        manifestId: manifestId ? Number(manifestId) : undefined,
+        collectionId: collectionId ? Number(collectionId) : undefined,
+      });
+      await refetch();
     }
+  });
 
-    if (completedAndHide) {
-      return (
-        <div>
-          <h1>This image is complete</h1>
-          <HrefLink href={backLink}>Go back to resource</HrefLink>
-        </div>
-      );
-    }
+  const completedAndHide = project?.config.allowSubmissionsWhenCanvasComplete === false && canvasTask?.status === 3;
 
+  const backLink = createLink({
+    canvasId: id,
+    projectId: slug,
+    manifestId,
+    collectionId,
+  });
+
+  if (!canUserSubmit) {
     return (
       <div>
-        {project && data?.canvasTask ? (
-          <SubmissionDetails
-            backLink={backLink}
-            canvasTask={data?.canvasTask}
-            userTasks={data?.userTasks}
-            refresh={refetch as any}
-          />
+        <DisplayBreadcrumbs />
+        <h1>Maximum number of contributors reached</h1>
+        <HrefLink href={backLink}>Go back to resource</HrefLink>
+      </div>
+    );
+  }
+
+  if (completedAndHide) {
+    return (
+      <div>
+        <DisplayBreadcrumbs />
+        <h1>This image is complete</h1>
+        <HrefLink href={backLink}>Go back to resource</HrefLink>
+      </div>
+    );
+  }
+
+  console.log({model});
+
+  return (
+    <div>
+      <DisplayBreadcrumbs />
+      <LocaleString as="h1">{canvas.label}</LocaleString>
+      {project && canvasTask ? (
+        <SubmissionDetails
+          backLink={backLink}
+          canvasTask={canvasTask}
+          userTasks={userTasks as any[]}
+          refresh={refetch as any}
+        />
+      ) : null}
+
+      <>
+        {preventCanvasNavigation && !manifestUserTasks?.length ? (
+          <div
+            style={{ textAlign: 'center', padding: '2em', marginTop: '1em', marginBottom: '1em', background: '#eee' }}
+          >
+            <LockIcon style={{ fontSize: '3em' }} />
+            <Heading3>This canvas is not available to browse</Heading3>
+          </div>
         ) : null}
-        {!api.getIsServer() && id && data && !data.model?.model && data.canvas.canvas && (
+        {!api.getIsServer() && id && !model && canvas && (!preventCanvasNavigation || bypassCanvasNavigation) ? (
           <PreModelViewer
             backLink={backLink}
-            canvas={data.canvas.canvas}
+            canvas={canvas}
             onContribute={project ? prepareContribution : undefined}
           />
-        )}
-        {!api.getIsServer() && data && id && project && data.model && data.model.model ? (
+        ) : null}
+        {!api.getIsServer() && id && project && model && (!preventCanvasNavigation || bypassCanvasNavigation) ? (
           <>
             <CaptureModelViewer
               revisionId={revision}
-              modelId={data.model.model.id}
+              modelId={model.id as string}
               backLink={backLink}
               onSave={async (response: RevisionRequest, respStatus: string | undefined) => {
                 if (respStatus === 'draft') {
@@ -217,22 +261,16 @@ export const ViewCanvasModel: UniversalComponent<ViewCanvasModelType> = createUn
             />
           </>
         ) : null}
-      </div>
-    );
-  },
-  {
-    getKey: params => {
-      return ['site-canvas', { id: Number(params.id), slug: params.slug }] as any;
-    },
-    getData: async (key, vars, api) => {
-      const tasks = vars.slug ? await api.getSiteProjectCanvasTasks(vars.slug, vars.id) : {};
-      return {
-        canvas: await api.getSiteCanvas(vars.id),
-        canvasTask: tasks.canvasTask,
-        userTasks: tasks.userTasks,
-        canUserSubmit: !!tasks.canUserSubmit,
-        model: vars.slug && api.isAuthorised() ? await api.getSiteProjectCanvasModel(vars.slug, vars.id) : undefined,
-      } as any;
-    },
-  }
-);
+      </>
+      {preventCanvasNavigation && !bypassCanvasNavigation ? null : (
+        <CanvasNavigation
+          subRoute="model"
+          manifestId={manifestId}
+          canvasId={id}
+          collectionId={collectionId}
+          projectId={project?.slug}
+        />
+      )}
+    </div>
+  );
+};

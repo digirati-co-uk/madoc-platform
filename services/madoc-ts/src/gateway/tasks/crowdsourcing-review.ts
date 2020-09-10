@@ -19,6 +19,7 @@ export const status = [
 ] as const;
 
 type TaskSubject = string;
+type ResourceType = string;
 
 /**
  * This is the task that gets assigned directly to a user and represents
@@ -31,7 +32,7 @@ export interface CrowdsourcingReview extends BaseTask {
    * Parameters:
    * - Capture model ID
    */
-  parameters: [TaskSubject];
+  parameters: [TaskSubject, ResourceType];
 
   /**
    * Status:
@@ -76,9 +77,10 @@ export function createTask(task: CrowdsourcingTask): CrowdsourcingReview {
     name: `Review of "${task.name}"`,
     type,
     subject: task.subject,
+    subject_parent: task.subject_parent,
     status: 0,
     status_text: 'not started',
-    parameters: [task.id],
+    parameters: [task.id, task.parameters[2]],
     state: {},
     events: ['madoc-ts.created'],
   };

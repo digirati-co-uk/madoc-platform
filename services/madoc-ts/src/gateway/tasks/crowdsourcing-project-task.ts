@@ -1,6 +1,6 @@
-import { BaseTask } from '../../gateway/tasks/base-task';
+import { BaseTask } from './base-task';
 
-export interface ProjectTask extends BaseTask {
+export interface CrowdsourcingProjectTask extends BaseTask {
   type: 'crowdsourcing-project';
   /**
    * Parameters:
