@@ -9,7 +9,7 @@ import { GridColumn, Dropdown } from '@capture-models/editor';
 import { Link } from 'react-router-dom';
 
 const ResultsContainer = styled.div`
-  min-width: 70vw;
+  flex: 1 1 0px;
 `;
 
 const ResultsHeader = styled.h2`

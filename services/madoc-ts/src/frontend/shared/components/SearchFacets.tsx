@@ -7,7 +7,7 @@ import { SearchFacet } from '../../../types/schemas/search';
 const FacetsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  min-width: 200px;
   margin-right: 1rem;
 `;
 
