@@ -17,7 +17,7 @@ export type CreateTask = {
   /**
    * The subject of the task (e.g. a resource or a service)
    */
-  parent_subject?: string;
+  subject_parent?: string;
 
   /**
    * An optional description of the task.

@@ -41,7 +41,7 @@ export const getAllTasks: RouteMiddleware = async context => {
   const userId = context.state.jwt.user.id;
   const typeFilter = context.query.type ? sql`and t.type = ${context.query.type}` : sql``;
   const subjectFilter = context.query.subject ? sql`and t.subject = ${context.query.subject}` : sql``;
-  const parentSubjectFilter = context.query.subject
+  const parentSubjectFilter = context.query.subject_parent
     ? sql`and t.subject_parent = ${context.query.subject_parent}`
     : sql``;
   const statusFilter = getStatus(context.query.status);
@@ -61,7 +61,7 @@ export const getAllTasks: RouteMiddleware = async context => {
   const taskPagination = sql`limit ${perPage} offset ${offset}`;
   const detail = !!context.query.detail;
   const detailedFields = detail
-    ? sql`, t.assignee_name, t.parameters, t.assignee_id, t.parent_task, t.modified_at, t.state`
+    ? sql`, t.assignee_name, t.parameters, t.assignee_id, t.subject, t.parent_task, t.modified_at, t.state`
     : sql``;
 
   try {
