@@ -6,6 +6,7 @@ export type SiteManifestQuery = {
   collection_id?: number;
   parent_collection_ids?: number[];
   project_id?: string | number;
+  parent_task?: string;
   hide_status?: string;
 };
 
@@ -14,6 +15,7 @@ export const siteManifest: RouteMiddleware<{ slug: string; id: string }> = async
   const { id } = context.params;
   const { siteApi } = context.state;
   const projectId = context.query.project_id;
+  const parentTaskId = context.query.parent_task;
   const hideStatus: string[] | undefined = context.query.hide_status ? context.query.hide_status.split(',') : undefined;
 
   // @todo limit based on site configuration query.
@@ -26,19 +28,21 @@ export const siteManifest: RouteMiddleware<{ slug: string; id: string }> = async
   // Context: [projectId, ...parentCollectionIds, collectionId]
 
   // This is the optimised path.
-  if (!projectId || !hideStatus) {
+  if ((!projectId && !parentTaskId) || !hideStatus) {
     const [manifest, project] = await Promise.all([
       siteApi.getManifestById(Number(id), page),
-      projectId ? siteApi.getProjectTask(projectId) : undefined,
+      projectId && !parentTaskId ? siteApi.getProjectTask(projectId) : undefined,
     ]);
 
     const canvasIds = manifest.manifest.items.map(item => item.id);
+    const taskId = project ? project.task_id : parentTaskId;
 
-    if (project) {
+    if (taskId) {
       const response = await siteApi.getTaskSubjects(
-        project.task_id,
+        taskId,
         canvasIds.map(canvasId => `urn:madoc:canvas:${canvasId}`),
-        { type: 'crowdsourcing-canvas-task' }
+        { type: 'crowdsourcing-canvas-task' },
+        !!parentTaskId
       );
 
       manifest.subjects = response.subjects;
@@ -50,13 +54,13 @@ export const siteManifest: RouteMiddleware<{ slug: string; id: string }> = async
   }
 
   // We have to load the project first.
-  const project = await siteApi.getProjectTask(projectId);
+  const taskId = parentTaskId ? parentTaskId : (await siteApi.getProjectTask(projectId)).task_id;
 
   const structures = await siteApi.getManifestStructure(Number(id));
   const subjects = structures.items.map(item => `urn:madoc:canvas:${item.id}`);
 
   // And then load ALL of the statuses.
-  const taskSubjects = await siteApi.getTaskSubjects(project.task_id, subjects, { type: 'crowdsourcing-canvas-task' });
+  const taskSubjects = await siteApi.getTaskSubjects(taskId, subjects, { type: 'crowdsourcing-canvas-task' });
 
   const filteredCanvases: number[] = [];
   const filteredSubjects: typeof taskSubjects.subjects = [];
