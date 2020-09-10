@@ -1,0 +1,31 @@
+{
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "value"
+        ]
+      }
+    }
+  },
+  "required": [
+    "name",
+    "options"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
