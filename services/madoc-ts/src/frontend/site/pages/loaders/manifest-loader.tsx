@@ -1,4 +1,8 @@
 import React, { useMemo } from 'react';
+import { CrowdsourcingCanvasTask } from '../../../../gateway/tasks/crowdsourcing-canvas-task';
+import { CrowdsourcingManifestTask } from '../../../../gateway/tasks/crowdsourcing-manifest-task';
+import { CrowdsourcingReview } from '../../../../gateway/tasks/crowdsourcing-review';
+import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
 import { Pagination } from '../../../../types/schemas/_pagination';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { UniversalComponent } from '../../../types';
@@ -18,45 +22,17 @@ type ManifestLoaderType = {
     page: number;
     filter: string | undefined;
   };
-  data: ManifestFull;
+  data: ManifestFull & {
+    manifestTask?: CrowdsourcingManifestTask | CrowdsourcingTask;
+    userTasks?: Array<CrowdsourcingTask | CrowdsourcingReview>;
+    canUserSubmit: boolean;
+  };
   context: { collection: CollectionFull['collection'] };
 };
 
-const createLinks = (params: ManifestLoaderType['variables']) => ({
-  collection(collectionId?: number) {
-    if (!collectionId) {
-      return null;
-    }
-    if (params.projectId) {
-      return `/projects/${params.projectId}/collections/${collectionId}`;
-    }
-    return `/collections/${collectionId}`;
-  },
-  manifest(manifestId: number) {
-    if (params.projectId && params.collectionId) {
-      return `/projects/${params.projectId}/collections/${params.collectionId.join(',')}/manifests/${manifestId}`;
-    }
-    if (params.collectionId) {
-      return `/collections/${params.collectionId.join(',')}/manifests/${manifestId}`;
-    }
-    return `/manifests/${manifestId}`;
-  },
-  canvas(canvasId: number) {
-    if (params.projectId && params.collectionId) {
-      return `/projects/${params.projectId}/collections/${params.collectionId.join(',')}/manifests/${
-        params.id
-      }/c/${canvasId}`;
-    }
-    if (params.collectionId) {
-      return `/collections/${params.collectionId.join(',')}/manifests/${params.id}/c/${canvasId}`;
-    }
-    return `/manifests/${params.id}/c/${canvasId}`;
-  },
-});
-
 export const ManifestLoader: UniversalComponent<ManifestLoaderType> = createUniversalComponent<ManifestLoaderType>(
   ({ route, collection, ...props }) => {
-    const { resolvedData: data } = usePaginatedData(
+    const { resolvedData: data, refetch } = usePaginatedData(
       ManifestLoader,
       {},
       { refetchOnMount: false, refetchInterval: false, refetchOnWindowFocus: false }
@@ -76,6 +52,10 @@ export const ManifestLoader: UniversalComponent<ManifestLoaderType> = createUniv
           pagination: data ? data.pagination : undefined,
           collection,
           manifestSubjects: data ? data.subjects : undefined,
+          manifestTask: data.manifestTask,
+          manifestUserTasks: data.userTasks,
+          canUserSubmit: data.canUserSubmit,
+          refetch,
         })}
       </BreadcrumbContext>
     );
@@ -92,8 +72,20 @@ export const ManifestLoader: UniversalComponent<ManifestLoaderType> = createUniv
         },
       ];
     },
-    getData: (key, vars, api) => {
-      return api.getSiteManifest(vars.id, { page: vars.page, project_id: vars.projectId, hide_status: vars.filter });
+    getData: async (key, vars, api) => {
+      const [response, tasks] = await Promise.all([
+        api.getSiteManifest(vars.id, { page: vars.page, project_id: vars.projectId, hide_status: vars.filter }),
+        vars.projectId ? api.getSiteProjectManifestTasks(vars.projectId, vars.id) : {},
+      ]);
+
+      return {
+        manifest: response.manifest,
+        pagination: response.pagination,
+        subjects: response.subjects,
+        manifestTask: tasks.manifestTask,
+        userTasks: tasks.userTasks,
+        canUserSubmit: !!tasks.canUserSubmit,
+      };
     },
   }
 );
