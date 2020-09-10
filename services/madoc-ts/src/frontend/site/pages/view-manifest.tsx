@@ -1,8 +1,14 @@
 import React, { useMemo } from 'react';
+import { CrowdsourcingManifestTask } from '../../../gateway/tasks/crowdsourcing-manifest-task';
+import { CrowdsourcingReview } from '../../../gateway/tasks/crowdsourcing-review';
+import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
+import { InfoMessage } from '../../shared/atoms/InfoMessage';
+import { SuccessMessage } from '../../shared/atoms/SuccessMessage';
+import { WarningMessage } from '../../shared/atoms/WarningMessage';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { CollectionFull } from '../../../types/schemas/collection-full';
 import { ManifestFull } from '../../../types/schemas/manifest-full';
-import { Link } from 'react-router-dom';
+import { Link, useHistory, useParams } from 'react-router-dom';
 import { Pagination } from '../../shared/components/Pagination';
 import { ProjectFull } from '../../../types/schemas/project-full';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
@@ -24,19 +30,73 @@ import { useMutation } from 'react-query';
 import { ErrorMessage } from '../../shared/atoms/ErrorMessage';
 import { Heading1, Subheading1 } from '../../shared/atoms/Heading1';
 
+const ManifestUserTasks: React.FC<{
+  tasks: Array<CrowdsourcingTask | CrowdsourcingManifestTask>;
+  onSubmit: (id: string) => void;
+}> = ({ tasks, onSubmit }) => {
+  const inProgress = tasks.filter(task => task.status !== -1 && task.status !== 3);
+  const doneTasks = tasks.filter(task => task.status === 3);
+  const inReview = tasks.filter(task => task.status === 2);
+
+  if (inReview.length) {
+    return <WarningMessage>This manifest is currently in review</WarningMessage>;
+  }
+
+  if (inProgress.length) {
+    const inProgressTask = inProgress[0];
+
+    return (
+      <InfoMessage>
+        You are currently working on this manifest{' '}
+        <Button onClick={() => onSubmit(inProgressTask.id as string)} style={{ marginLeft: 10 }}>
+          Submit for review
+        </Button>
+      </InfoMessage>
+    );
+  }
+
+  if (doneTasks.length) {
+    return <SuccessMessage>You have already completed this manifest</SuccessMessage>;
+  }
+
+  return null;
+};
+
 export const ViewManifest: React.FC<{
   project?: ProjectFull;
   collection?: CollectionFull['collection'];
   manifest: ManifestFull['manifest'];
   pagination: ManifestFull['pagination'];
   manifestSubjects: ManifestFull['subjects'];
-}> = ({ collection, manifest, pagination, project, manifestSubjects }) => {
+  manifestTask?: CrowdsourcingManifestTask | CrowdsourcingTask;
+  manifestUserTasks?: Array<CrowdsourcingTask | CrowdsourcingReview>;
+  canUserSubmit: boolean;
+  refetch: () => Promise<any>;
+}> = ({
+  collection,
+  manifest,
+  pagination,
+  project,
+  manifestTask,
+  manifestUserTasks,
+  canUserSubmit,
+  manifestSubjects,
+  refetch,
+}) => {
   const { t } = useTranslation();
   const { filter, page } = useLocationQuery();
+  const { id } = useParams();
   const api = useApi();
+  const history = useHistory();
   const user = api.getIsServer() ? undefined : api.getCurrentUser();
-  const bypassCanvasNavigation =
-    user?.scope.indexOf('site.admin') !== -1 || user?.scope.indexOf('models.revision') !== -1;
+  const userCanSubmit = user
+    ? user.scope.indexOf('site.admin') !== -1 || user.scope.indexOf('models.contribute') !== -1
+    : false;
+  const bypassCanvasNavigation = user
+    ? user.scope.indexOf('site.admin') !== -1 || user.scope.indexOf('models.revision') !== -1
+    : false;
+
+  const claimManifest = project?.config.claimGranularity === 'manifest';
 
   const [subjectMap, showDoneButton] = useMemo(() => {
     if (!manifestSubjects) return [];
@@ -63,7 +123,36 @@ export const ViewManifest: React.FC<{
     }
   });
 
-  const preventCanvasNavigation = project && project.config.allowCanvasNavigation === false;
+  const [onContribute, { status: contributeStatus }] = useMutation(async (projectId: number | string) => {
+    if (manifest) {
+      return api
+        .createResourceClaim(projectId, {
+          collectionId: collection ? Number(collection.id) : undefined,
+          manifestId: Number(manifest.id),
+        })
+        .then(resp => {
+          history.push(
+            createLink({
+              projectId: project?.id,
+              taskId: resp.claim.id,
+            })
+          );
+        });
+    }
+  });
+
+  const [onSubmitForReview, { status: reviewStatus }] = useMutation(async (tid: string) => {
+    await api.updateTask(tid, {
+      status: 2,
+      status_text: 'in review',
+    });
+    await refetch();
+  });
+
+  const preventCanvasNavigation =
+    project &&
+    project.config.allowCanvasNavigation === false &&
+    (manifestUserTasks ? manifestUserTasks.length === 0 : true);
   const randomlyAssignCanvas = project && project.config.randomlyAssignCanvas;
 
   return (
@@ -72,17 +161,22 @@ export const ViewManifest: React.FC<{
       <Heading1>
         <LocaleString>{manifest.label}</LocaleString>
       </Heading1>
-      <Subheading1
-        as={HrefLink}
-        href={createLink({
-          collectionId: collection?.id,
-          projectId: project?.id,
-          manifestId: manifest.id,
-          subRoute: 'mirador',
-        })}
-      >
-        Open in mirador
-      </Subheading1>
+      {manifestUserTasks && manifestUserTasks.length ? (
+        <ManifestUserTasks onSubmit={onSubmitForReview} tasks={manifestUserTasks as any} />
+      ) : null}
+      {!preventCanvasNavigation || bypassCanvasNavigation ? (
+        <Subheading1
+          as={HrefLink}
+          href={createLink({
+            collectionId: collection?.id,
+            projectId: project?.id,
+            manifestId: manifest.id,
+            subRoute: 'mirador',
+          })}
+        >
+          Open in mirador
+        </Subheading1>
+      ) : null}
       {showDoneButton || filter ? (
         <Button
           as={HrefLink}
@@ -101,7 +195,15 @@ export const ViewManifest: React.FC<{
           <div style={{ textAlign: 'center', padding: '2em', background: '#eee' }}>
             <LockIcon style={{ fontSize: '3em' }} />
             <Heading3>This manifest is not available to browse</Heading3>
-            {randomlyAssignCanvas ? (
+            {claimManifest && userCanSubmit && project ? (
+              <>
+                <Subheading3>Click below if you want to claim this manifest to contribute to.</Subheading3>
+                <Button disabled={contributeStatus === 'loading'} onClick={() => onContribute(project.id)}>
+                  Claim manifest
+                </Button>
+              </>
+            ) : null}
+            {randomlyAssignCanvas && userCanSubmit ? (
               <>
                 <Subheading3>Click below if you want to contribute to a random image.</Subheading3>
                 {!randomCanvas.data ? (
@@ -131,7 +233,7 @@ export const ViewManifest: React.FC<{
             ) : null}
           </div>
         ) : null}
-        {preventCanvasNavigation && !bypassCanvasNavigation ? null : (
+        {!preventCanvasNavigation || bypassCanvasNavigation ? (
           <>
             <Pagination
               pageParam={'m'}
@@ -162,7 +264,7 @@ export const ViewManifest: React.FC<{
               ))}
             </ImageGrid>
           </>
-        )}
+        ) : null}
       </div>
     </>
   );

@@ -1,57 +1,28 @@
 import React, { useMemo, useState } from 'react';
-import { UniversalComponent } from '../../types';
-import { createUniversalComponent } from '../../shared/utility/create-universal-component';
-import { useStaticData } from '../../shared/hooks/use-data';
+import { LockIcon } from '../../shared/atoms/LockIcon';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { CanvasContext, useVaultEffect } from '@hyperion-framework/react-vault';
 import { CanvasNormalized } from '@hyperion-framework/types';
 import { useApi } from '../../shared/hooks/use-api';
 import { useParams, useHistory, Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
-import { CanvasFull } from '../../../types/schemas/canvas-full';
-import { BreadcrumbContext, DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { SimpleAtlasViewer } from '../../shared/components/SimpleAtlasViewer';
-import { ManifestFull } from '../../../types/schemas/manifest-full';
 import { SnippetStructure } from '../../shared/components/StructureSnippet';
 import { ProjectListingDescription, ProjectListingItem, ProjectListingTitle } from '../../shared/atoms/ProjectListing';
 import { createLink } from '../../shared/utility/create-link';
-import { ManifestProjectListing } from '../../shared/components/ManifestProjectListing';
 import { ProjectFull } from '../../../types/schemas/project-full';
 import { Heading3 } from '../../shared/atoms/Heading3';
 import { HrefLink } from '../../shared/utility/href-link';
 import { TableContainer, TableRow, TableRowLabel } from '../../shared/atoms/Table';
 import { Status } from '../../shared/atoms/Status';
 import { Button } from '../../shared/atoms/Button';
-import { CrowdsourcingCanvasTask } from '../../../gateway/tasks/crowdsourcing-canvas-task';
 import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
 import { CrowdsourcingReview } from '../../../gateway/tasks/crowdsourcing-review';
 import { SuccessMessage } from '../../shared/atoms/SuccessMessage';
+import { CanvasLoaderType } from './loaders/canvas-loader';
 
-type ViewCanvasType = {
-  params: {
-    slug?: string; // project
-    collectionId?: string;
-    manifestId?: string;
-    id: string;
-  };
-  query: {};
-  variables: {
-    slug?: string;
-    collectionId?: number;
-    manifestId?: number;
-    id: number;
-  };
-  data: {
-    canvas: CanvasFull['canvas'];
-    canvasTask?: CrowdsourcingCanvasTask;
-    userTasks?: Array<CrowdsourcingTask | CrowdsourcingReview>;
-    canUserSubmit: boolean;
-  };
-  context: {
-    project?: ProjectFull;
-    manifest: ManifestFull['manifest'];
-  };
-};
+type ViewCanvasProps = CanvasLoaderType['data'] & CanvasLoaderType['context'];
 
 function useManifestStructure(manifestId?: string) {
   const api = useApi();
@@ -77,36 +48,52 @@ function useManifestStructure(manifestId?: string) {
   );
 }
 
-const ContinueSubmission: React.FC<{
+export const ContinueSubmission: React.FC<{
   project: ProjectFull;
-  canvasId: number;
+  canvasId?: number;
   manifestId?: number;
   collectionId?: number;
   isComplete?: boolean;
   isMax?: boolean;
   isLoading?: boolean;
+  canClaimCanvas?: boolean;
   userTasks?: Array<CrowdsourcingTask | CrowdsourcingReview>;
+  manifestUserTasks?: Array<CrowdsourcingTask | CrowdsourcingReview>;
   onContribute?: (projectId: string | number) => void;
-}> = ({ project, onContribute, isLoading, isMax, canvasId, isComplete, userTasks, manifestId, collectionId }) => {
+}> = ({
+  project,
+  onContribute,
+  isLoading,
+  isMax,
+  canvasId,
+  isComplete,
+  manifestUserTasks,
+  userTasks,
+  manifestId,
+  collectionId,
+  canClaimCanvas,
+}) => {
   const api = useApi();
   const { user } = api.getIsServer() ? { user: undefined } : api.getCurrentUser() || {};
 
   const [continueSubmission, continueCount] = useMemo(() => {
     let totalReady = 0;
-    const allModels = userTasks
-      ? userTasks.filter(task => {
-          if (user && task.assignee?.id === user.id && task.type === 'crowdsourcing-task') {
-            if (task.status !== -1 && task.status !== 3) {
-              totalReady++;
+    const tasks = userTasks && userTasks.length ? userTasks : manifestUserTasks;
+    const allModels =
+      tasks && tasks.length
+        ? tasks.filter(task => {
+            if (user && task.assignee?.id === user.id && task.type === 'crowdsourcing-task') {
+              if (task.status !== -1 && task.status !== 3) {
+                totalReady++;
+              }
+              return true;
             }
-            return true;
-          }
-          return false;
-        })
-      : null;
+            return false;
+          })
+        : null;
 
     return [allModels, totalReady] as const;
-  }, [userTasks, user]);
+  }, [userTasks, manifestUserTasks, user]);
 
   const reviews = useMemo(
     () =>
@@ -196,7 +183,7 @@ const ContinueSubmission: React.FC<{
           <LocaleString>{project.summary}</LocaleString>
         </ProjectListingDescription>
         {!isLoading ? (
-          user ? (
+          user && canClaimCanvas ? (
             <Button
               as={HrefLink}
               href={createLink({ projectId: project.slug, manifestId, canvasId, collectionId, subRoute: 'model' })}
@@ -205,149 +192,140 @@ const ContinueSubmission: React.FC<{
               Contribute
             </Button>
           ) : null
-        ) : (
+        ) : canClaimCanvas ? (
           <Button disabled style={{ minWidth: 100 }}>
             ...
           </Button>
-        )}
+        ) : null}
       </ProjectListingItem>
       {reviewComponent}
     </div>
   );
 };
 
-export const ViewCanvas: UniversalComponent<ViewCanvasType> = createUniversalComponent<ViewCanvasType>(
-  ({ project }) => {
-    const { data } = useStaticData(ViewCanvas);
-    const { id, manifestId, collectionId, slug } = useParams();
-    const [canvasRef, setCanvasRef] = useState<CanvasNormalized>();
-    const structure = useManifestStructure(manifestId);
-    const history = useHistory();
+export const ViewCanvas: React.FC<ViewCanvasProps> = ({
+  project,
+  manifestUserTasks,
+  canvasTask,
+  userTasks,
+  canUserSubmit,
+  canvas,
+}) => {
+  const { id, manifestId, collectionId, slug } = useParams();
+  const [canvasRef, setCanvasRef] = useState<CanvasNormalized>();
+  const structure = useManifestStructure(manifestId);
+  const history = useHistory();
 
-    const api = useApi();
-    const ctx = useMemo(() => (data ? { id: data.canvas.id, name: data.canvas.label } : undefined), [data]);
-    const idx = structure.data && id ? structure.data.ids.indexOf(Number(id)) : null;
-    const tempLabel = structure.data && idx !== null ? structure.data.items[idx].label : { none: ['...'] };
-    const completedAndHide =
-      project?.config.allowSubmissionsWhenCanvasComplete === false && data?.canvasTask?.status === 3;
+  const canClaimCanvas = project?.config.claimGranularity ? project?.config.claimGranularity === 'canvas' : true;
+  const api = useApi();
+  const idx = structure.data && id ? structure.data.ids.indexOf(Number(id)) : null;
+  const completedAndHide = project?.config.allowSubmissionsWhenCanvasComplete === false && canvasTask?.status === 3;
+  const user = api.getIsServer() ? undefined : api.getCurrentUser();
+  const bypassCanvasNavigation = user
+    ? user.scope.indexOf('site.admin') !== -1 || user.scope.indexOf('models.revision') !== -1
+    : manifestUserTasks && manifestUserTasks.length > 0;
+  const preventCanvasNavigation = project && project.config.allowCanvasNavigation === false;
 
-    const onContribute = (projectId: number | string) => {
-      api
-        .createResourceClaim(projectId, {
-          collectionId: collectionId ? Number(collectionId) : undefined,
-          manifestId: manifestId ? Number(manifestId) : undefined,
-          canvasId: Number(id),
-        })
-        .then(resp => {
-          history.push(
-            createLink({
-              projectId: project?.id,
-              taskId: resp.claim.id,
-            })
-          );
-        });
-    };
+  const onContribute = (projectId: number | string) => {
+    api
+      .createResourceClaim(projectId, {
+        collectionId: collectionId ? Number(collectionId) : undefined,
+        manifestId: manifestId ? Number(manifestId) : undefined,
+        canvasId: Number(id),
+      })
+      .then(resp => {
+        history.push(
+          createLink({
+            projectId: project?.id,
+            taskId: resp.claim.id,
+          })
+        );
+      });
+  };
 
-    useVaultEffect(
-      vault => {
-        if (data && data.canvas && data.canvas.source) {
-          vault
-            .load(
-              data.canvas.source.id || data.canvas.source['@id'],
-              data.canvas.source['@id']
-                ? {
-                    '@context': 'http://iiif.io/api/presentation/2/context.json',
-                    ...data.canvas.source,
-                  }
-                : data.canvas.source
-            )
-            .then(c => {
-              setCanvasRef(c as any);
-            });
-        }
-      },
-      [data]
-    );
-
-    return (
-      <BreadcrumbContext canvas={ctx}>
-        {data ? (
-          <DisplayBreadcrumbs />
-        ) : (
-          <BreadcrumbContext canvas={{ id: id as any, name: tempLabel }}>
-            <DisplayBreadcrumbs />
-          </BreadcrumbContext>
-        )}
-        <LocaleString as="h1">{data ? data.canvas.label : tempLabel}</LocaleString>
-        {project ? (
-          <ContinueSubmission
-            onContribute={onContribute}
-            canvasId={Number(id)}
-            isLoading={!data}
-            userTasks={data?.userTasks}
-            isComplete={completedAndHide}
-            isMax={data ? !data.canUserSubmit : false}
-            manifestId={manifestId ? Number(manifestId) : undefined}
-            collectionId={collectionId ? Number(collectionId) : undefined}
-            project={project}
-          />
-        ) : null}
-        {canvasRef ? (
-          <CanvasContext canvas={canvasRef.id}>
-            <SimpleAtlasViewer style={{ height: project ? '50vh' : '60vh' }} />
-          </CanvasContext>
-        ) : null}
-        {structure.data && idx !== null ? (
-          <div style={{ display: 'flex', marginTop: '1em', marginBottom: '1em' }}>
-            {idx > 0 ? (
-              <SnippetStructure
-                label="Previous:"
-                alignment="left"
-                link={createLink({
-                  projectId: slug,
-                  collectionId,
-                  manifestId,
-                  canvasId: structure.data.items[idx - 1].id,
-                })}
-                item={structure.data.items[idx - 1]}
-              />
-            ) : null}
-            {idx < structure.data.items.length - 1 ? (
-              <SnippetStructure
-                label="Next:"
-                alignment="right"
-                link={createLink({
-                  projectId: slug,
-                  collectionId,
-                  manifestId,
-                  canvasId: structure.data.items[idx + 1].id,
-                })}
-                item={structure.data.items[idx + 1]}
-              />
-            ) : null}
-          </div>
-        ) : null}
-
-        {!project && manifestId ? <ManifestProjectListing manifestId={manifestId} onContribute={onContribute} /> : null}
-      </BreadcrumbContext>
-    );
-  },
-  {
-    getKey: params => {
-      return ['site-canvas', { id: Number(params.id), slug: params.slug }] as any;
+  useVaultEffect(
+    vault => {
+      if (canvas && canvas.source) {
+        vault
+          .load(
+            canvas.source.id || canvas.source['@id'],
+            canvas.source['@id']
+              ? {
+                  '@context': 'http://iiif.io/api/presentation/2/context.json',
+                  ...canvas.source,
+                }
+              : canvas.source
+          )
+          .then(c => {
+            setCanvasRef(c as any);
+          });
+      }
     },
-    getData: async (key, vars, api) => {
-      const [response, tasks] = await Promise.all([
-        await api.getSiteCanvas(vars.id),
-        vars.slug ? await api.getSiteProjectCanvasTasks(vars.slug, vars.id) : {},
-      ]);
+    [canvas]
+  );
 
-      return {
-        canvas: response.canvas,
-        canvasTask: tasks.canvasTask,
-        userTasks: tasks.userTasks,
-        canUserSubmit: !!tasks.canUserSubmit,
-      };
-    },
-  }
-);
+  console.log({ manifestUserTasks });
+
+  return (
+    <>
+      <DisplayBreadcrumbs />
+      <LocaleString as="h1">{canvas.label}</LocaleString>
+      {project ? (
+        <ContinueSubmission
+          canClaimCanvas={canClaimCanvas}
+          onContribute={onContribute}
+          canvasId={Number(id)}
+          isLoading={false}
+          manifestUserTasks={manifestUserTasks}
+          userTasks={userTasks}
+          isComplete={completedAndHide}
+          isMax={!canUserSubmit}
+          manifestId={manifestId ? Number(manifestId) : undefined}
+          collectionId={collectionId ? Number(collectionId) : undefined}
+          project={project}
+        />
+      ) : null}
+      {preventCanvasNavigation && !manifestUserTasks?.length ? (
+        <div style={{ textAlign: 'center', padding: '2em', marginTop: '1em', marginBottom: '1em', background: '#eee' }}>
+          <LockIcon style={{ fontSize: '3em' }} />
+          <Heading3>This canvas is not available to browse</Heading3>
+        </div>
+      ) : null}
+      {canvasRef && (!preventCanvasNavigation || bypassCanvasNavigation) ? (
+        <CanvasContext canvas={canvasRef.id}>
+          <SimpleAtlasViewer style={{ height: project ? '50vh' : '60vh' }} />
+        </CanvasContext>
+      ) : null}
+      {(!preventCanvasNavigation || bypassCanvasNavigation) && structure.data && idx !== null ? (
+        <div style={{ display: 'flex', marginTop: '1em', marginBottom: '1em' }}>
+          {idx > 0 ? (
+            <SnippetStructure
+              label="Previous:"
+              alignment="left"
+              link={createLink({
+                projectId: slug,
+                collectionId,
+                manifestId,
+                canvasId: structure.data.items[idx - 1].id,
+              })}
+              item={structure.data.items[idx - 1]}
+            />
+          ) : null}
+          {idx < structure.data.items.length - 1 ? (
+            <SnippetStructure
+              label="Next:"
+              alignment="right"
+              link={createLink({
+                projectId: slug,
+                collectionId,
+                manifestId,
+                canvasId: structure.data.items[idx + 1].id,
+              })}
+              item={structure.data.items[idx + 1]}
+            />
+          ) : null}
+        </div>
+      ) : null}
+    </>
+  );
+};
