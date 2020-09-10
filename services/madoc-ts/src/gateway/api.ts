@@ -12,6 +12,7 @@ import { CreateManifest } from '../types/schemas/create-manifest';
 import { ItemStructureList, ItemStructureListItem, UpdateStructureList } from '../types/schemas/item-structure-list';
 import { CreateCanvas } from '../types/schemas/create-canvas';
 import { ManifestListResponse } from '../types/schemas/manifest-list';
+import { CrowdsourcingManifestTask } from './tasks/crowdsourcing-manifest-task';
 import { ImportManifestTask } from './tasks/import-manifest';
 import { ImportCollectionTask } from './tasks/import-collection';
 import { ManifestFull } from '../types/schemas/manifest-full';
@@ -912,6 +913,7 @@ export class ApiClient {
       status?: number | number[];
       root_task_id?: string;
       parent_task_id?: string;
+      subject_parent?: string;
       subject?: string;
       type?: string;
       detail?: boolean;
@@ -1276,17 +1278,28 @@ export class ApiClient {
   }
 
   async getSiteProjectCanvasModel(projectId: string | number, canvasId: number) {
-    return this.publicRequest<ProjectList>(`/madoc/api/projects/${projectId}/canvas-models/${canvasId}`);
+    return this.publicRequest<{ model: CaptureModel }>(`/madoc/api/projects/${projectId}/canvas-models/${canvasId}`);
   }
 
   async getSiteProjectCanvasTasks(projectId: string | number, canvasId: number) {
     return this.publicRequest<{
       canvasTask?: CrowdsourcingCanvasTask;
+      manifestTask?: CrowdsourcingManifestTask;
       userTasks?: CrowdsourcingTask[];
       canUserSubmit?: boolean;
       totalContributors?: number;
       maxContributors?: number;
     }>(`/madoc/api/projects/${projectId}/canvas-tasks/${canvasId}`);
+  }
+
+  async getSiteProjectManifestTasks(projectId: string | number, manifestId: number) {
+    return this.publicRequest<{
+      manifestTask?: CrowdsourcingTask | CrowdsourcingManifestTask;
+      userTasks?: CrowdsourcingTask[];
+      canUserSubmit?: boolean;
+      totalContributors?: number;
+      maxContributors?: number;
+    }>(`/madoc/api/projects/${projectId}/manifest-tasks/${manifestId}`);
   }
 
   async getUserDetails() {
