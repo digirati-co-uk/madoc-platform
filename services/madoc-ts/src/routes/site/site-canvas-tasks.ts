@@ -34,11 +34,14 @@ export const siteCanvasTasks: RouteMiddleware<{
   const canvasTask = tasks.find(task => task.type === 'crowdsourcing-canvas-task');
   const userTasks = user ? tasks.filter(task => task.assignee && task.assignee.id === `urn:madoc:user:${user}`) : [];
 
+  const manifestTask = canvasTask && canvasTask.parent_task ? await siteApi.getTask(canvasTask.parent_task) : undefined;
+
   const canUserSubmit = !maxContributors || userTasks.length || maxContributors > contributors.length;
 
   context.response.status = 200;
   context.response.body = {
     canvasTask,
+    manifestTask,
     userTasks,
     totalContributors: contributors.length,
     maxContributors: project.config.maxContributionsPerResource,
