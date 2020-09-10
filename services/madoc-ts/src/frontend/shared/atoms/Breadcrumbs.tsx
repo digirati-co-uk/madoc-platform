@@ -1,6 +1,8 @@
 import styled, { css } from 'styled-components';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { BreadcrumbDivider, BreadcrumbList, BreadcrumbItem as SiteBreadcrumbItem } from '../components/Breadcrumbs';
+import { LocaleString } from '../components/LocaleString';
 
 export type BreadcrumbItem = {
   label: string | any;
@@ -36,9 +38,29 @@ export const BreadcrumbSeparator = styled.div`
   margin: 0 0.6em;
 `;
 
-export const Breadcrumbs: React.FC<{ items: BreadcrumbItem[] }> = ({ items }) => {
+export const Breadcrumbs: React.FC<{ items: Array<BreadcrumbItem | undefined>; type?: 'site' }> = ({
+  items: rawItems,
+  type,
+}) => {
+  const items: BreadcrumbItem[] = useMemo(() => rawItems.filter(r => r) as BreadcrumbItem[], [rawItems]);
+
   if (items.length === 0) {
     return null;
+  }
+
+  if (type === 'site') {
+    return (
+      <BreadcrumbList>
+        {items.map((s, n) => (
+          <React.Fragment key={s.link}>
+            <SiteBreadcrumbItem active={s.active}>
+              {s.active ? s.label : <Link to={s.link}>{s.label}</Link>}
+            </SiteBreadcrumbItem>
+            {n < items.length - 1 ? <BreadcrumbDivider /> : null}
+          </React.Fragment>
+        ))}
+      </BreadcrumbList>
+    );
   }
 
   return (
