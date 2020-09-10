@@ -15,6 +15,17 @@ export const HalfGird = styled.div<{ $margin?: boolean }>`
     `}
 `;
 
+export const ThirdGrid = styled.div<{ $margin?: boolean }>`
+  width: 33.333333%;
+  ${props =>
+    props.$margin &&
+    css`
+      & ~ & {
+        margin-left: 1em;
+      }
+    `}
+`;
+
 export const ExpandGrid = styled.div`
   flex: 1 1 0px;
 `;
