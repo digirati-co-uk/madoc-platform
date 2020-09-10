@@ -18,20 +18,21 @@ import { FullScreenEnterIcon } from '../icons/FullScreenEnterIcon';
 import { ViewContent } from '../components/ViewContent';
 import { CaptureModelEditor } from '../caputre-models/CaptureModelEditor';
 import { MaximiseWindow } from '../atoms/MaximiseWindow';
-import { RevisionRequest } from '@capture-models/types';
+import { CaptureModel, RevisionRequest } from '@capture-models/types';
 import '../caputre-models/refinements';
 import { RevisionEditor } from './revision-editor';
 
 export const CaptureModelViewer: React.FC<{
   modelId: string;
+  initialModel?: CaptureModel;
   backLink?: string;
   revisionId?: string;
   readOnly?: boolean;
   allowEdits?: boolean;
   onSave: (response: RevisionRequest, status: string | undefined) => Promise<void>;
-}> = ({ backLink, revisionId, modelId, allowEdits = true, onSave, readOnly }) => {
+}> = ({ backLink, revisionId, modelId, allowEdits = true, initialModel, onSave, readOnly }) => {
   const [isVertical, setIsVertical] = useState(false);
-  const [{ captureModel, canvas }] = useLoadedCaptureModel(modelId);
+  const [{ captureModel, canvas }] = useLoadedCaptureModel(modelId, initialModel);
 
   return (
     <React.Suspense fallback={<div>loading...</div>}>
@@ -66,7 +67,7 @@ export const CaptureModelViewer: React.FC<{
                 <div style={{ width: isVertical ? '100%' : '67%' }}>
                   {canvas ? (
                     <ViewContent
-                      key={`${isVertical ? 'y' : 'n'}${isOpen ? 'y' : 'n'}`}
+                      key={`${captureModel.id}${isVertical ? 'y' : 'n'}${isOpen ? 'y' : 'n'}`}
                       target={captureModel.target as any}
                       canvas={canvas}
                     />

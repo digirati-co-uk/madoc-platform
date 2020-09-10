@@ -3,7 +3,7 @@ import { CaptureModel } from '@capture-models/types';
 import { useApi } from './use-api';
 import { useQuery } from 'react-query';
 
-export function useLoadedCaptureModel(modelId?: string) {
+export function useLoadedCaptureModel(modelId?: string, initialModel?: CaptureModel) {
   const api = useApi();
   const { data, status, refetch } = useQuery(
     ['model-preview', { id: modelId }],
@@ -11,7 +11,7 @@ export function useLoadedCaptureModel(modelId?: string) {
       if (!modelId) {
         throw new Error('No model');
       }
-      const captureModel = await api.getCaptureModel(modelId);
+      const captureModel = initialModel ? initialModel : await api.getCaptureModel(modelId);
       if (!captureModel.target || !captureModel.target[0]) {
         throw new Error('No target');
       }
