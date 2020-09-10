@@ -1,6 +1,7 @@
 import { BaseTask } from './base-task';
 import { CaptureModel } from '@capture-models/types';
 import { ApiClient } from '../api';
+import { CrowdsourcingManifestTask } from './crowdsourcing-manifest-task';
 import * as reviewTask from './crowdsourcing-review';
 import { CaptureModelSnippet } from '../../types/schemas/capture-model-snippet';
 import { CrowdsourcingCanvasTask } from './crowdsourcing-canvas-task';
@@ -55,6 +56,7 @@ export interface CrowdsourcingTask extends BaseTask {
     changesRequested?: string | null;
     mergeId?: string;
     warningTime?: number;
+    userManifestTask?: string | null;
   };
 }
 
@@ -71,6 +73,7 @@ export function createTask({
   reviewId,
   revisionId,
   warningTime,
+  userManifestTask,
 }: {
   projectId: number;
   userId: number;
@@ -83,13 +86,14 @@ export function createTask({
   structureId?: string;
   reviewId?: string;
   revisionId?: string;
+  userManifestTask?: string;
   warningTime?: number;
 }): CrowdsourcingTask {
   return {
     name: `User contributions to "${taskName}"`,
     type,
     subject,
-    parent_subject: parentSubject,
+    subject_parent: parentSubject,
     assignee: {
       id: `urn:madoc:user:${userId}`,
       name,
@@ -100,6 +104,7 @@ export function createTask({
       reviewTask: reviewId,
       revisionId,
       warningTime,
+      userManifestTask,
     },
     context: projectId ? [`urn:madoc:project:${projectId}`] : undefined,
     parameters: [captureModel ? captureModel.id : null, structureId || null, resourceType],
@@ -121,7 +126,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
     case 'status.-1': {
       try {
         // When a task is abandoned, we should remove or update the review task.
-        const task = await api.getTaskById<CrowdsourcingTask>(taskId);
+        const task = await api.getTask<CrowdsourcingTask>(taskId);
         const revision = task.state.revisionId;
         if (revision) {
           const revisionRequest = await api.getCaptureModelRevision(revision);
@@ -137,7 +142,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
     }
     case 'status.2': {
       try {
-        const task = await api.getTaskById<CrowdsourcingTask>(taskId);
+        const task = await api.getTask<CrowdsourcingTask>(taskId);
         if (task.state && task.state.reviewTask) {
           // If the task has already been reviewed, then mark the review task as having new changes.
           await api.updateTask(task.state.reviewTask, { status: 5, status_text: 'new changes' });
@@ -166,7 +171,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
             }
           }
 
-          const parent = await api.getTaskById<CrowdsourcingCanvasTask>(task.parent_task);
+          const parent = await api.getTask<CrowdsourcingCanvasTask>(task.parent_task);
           if (parent.status !== 3 && parent.status !== 2) {
             await api.updateTask(parent.id, {
               status: 2,
@@ -182,16 +187,13 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
     case 'status.3': {
       // When a task is marked as done, do we need to update any other tasks? Are there any outstanding review tasks we need to close?
       // Load parent id.
-      const task = await api.getTaskById(taskId);
+      const task = await api.getTask(taskId);
       if (task.parent_task) {
-        const parent = await api.getTaskById<CrowdsourcingCanvasTask>(
-          task.parent_task,
-          true,
-          undefined,
-          undefined,
-          undefined,
-          true
-        );
+        const parent = await api.getTask<CrowdsourcingCanvasTask | CrowdsourcingManifestTask>(task.parent_task, {
+          detail: true,
+          all: true,
+          assignee: true,
+        });
         const workingReviews = (parent.subtasks || []).filter(review => {
           return review.type === 'crowdsourcing-review' && review.status !== 3;
         });
@@ -205,20 +207,22 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
             workingReviews.map(review => api.updateTask(review.id, { status: 3, status_text: 'All reviews completed' }))
           );
         }
-        const approvalsRequired = parent.state.approvalsRequired || 1;
-        if (approvalsRequired) {
-          const assignees: string[] = [];
-          for (const subtask of parent.subtasks || []) {
-            if (subtask.type !== 'crowdsourcing-task') continue;
-            if (subtask.assignee && assignees.indexOf(subtask.assignee.id) === -1) {
-              assignees.push(subtask.assignee.id);
-            }
-            if (assignees.length >= approvalsRequired) {
-              await api.updateTask(parent.id, {
-                status: 3,
-                status_text: `Complete`,
-              });
-              break;
+        if (parent.type === 'crowdsourcing-canvas-task' || parent.type === 'crowdsourcing-manifest-task') {
+          const approvalsRequired = parent.state.approvalsRequired || 1;
+          if (approvalsRequired) {
+            const assignees: string[] = [];
+            for (const subtask of parent.subtasks || []) {
+              if (subtask.type !== 'crowdsourcing-task') continue;
+              if (subtask.assignee && assignees.indexOf(subtask.assignee.id) === -1) {
+                assignees.push(subtask.assignee.id);
+              }
+              if (assignees.length >= approvalsRequired) {
+                await api.updateTask(parent.id, {
+                  status: 3,
+                  status_text: `Complete`,
+                });
+                break;
+              }
             }
           }
         }

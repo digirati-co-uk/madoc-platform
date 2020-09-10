@@ -60,7 +60,7 @@ export function createTask({
     name: label,
     type: 'crowdsourcing-manifest-task',
     subject: `urn:madoc:manifest:${manifestId}`,
-    parent_subject: collectionId ? `urn:madoc:collection:${collectionId}` : undefined,
+    subject_parent: collectionId ? `urn:madoc:collection:${collectionId}` : undefined,
     status_text: 'accepted',
     status: 1,
     state: {

@@ -55,7 +55,7 @@ export function createTask({
     name: `${parentTaskName} - ${label}`,
     type: 'crowdsourcing-canvas-task',
     subject: `urn:madoc:canvas:${canvasId}`,
-    parent_subject: manifestId ? `urn:madoc:manifest:${manifestId}` : undefined,
+    subject_parent: manifestId ? `urn:madoc:manifest:${manifestId}` : undefined,
     status_text: 'accepted',
     status: 1,
     state: {
