@@ -2,6 +2,7 @@ export { UniversalRoute } from '../types';
 export { AllCollections } from './pages/all-collections';
 export { CollectionLoader } from './pages/loaders/collection-loader';
 export { ManifestLoader } from './pages/loaders/manifest-loader';
+export { CanvasLoader } from './pages/loaders/canvas-loader';
 export { ViewCollection } from './pages/view-collection';
 export { ViewManifest } from './pages/view-manifest';
 export { ViewCanvas } from './pages/view-canvas';
