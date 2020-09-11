@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { CrowdsourcingTask } from '../../../../../types/tasks/crowdsourcing-task';
+import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
 import { Revisions } from '@capture-models/editor';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { EditorToolbarButton, EditorToolbarIcon, EditorToolbarLabel } from '../../../../shared/atoms/EditorToolbar';

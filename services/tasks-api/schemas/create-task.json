@@ -24,6 +24,13 @@
             ],
             "type": "object"
         },
+        "context": {
+            "description": "Additional context for this task",
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
         "description": {
             "description": "An optional description of the task.",
             "type": "string"
@@ -66,6 +73,10 @@
             "type": "string"
         },
         "subject": {
+            "description": "The subject of the task (e.g. a resource or a service)",
+            "type": "string"
+        },
+        "subject_parent": {
             "description": "The subject of the task (e.g. a resource or a service)",
             "type": "string"
         },

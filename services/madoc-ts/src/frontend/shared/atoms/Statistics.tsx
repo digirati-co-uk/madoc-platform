@@ -1,4 +1,6 @@
 import styled, { css } from 'styled-components';
+import React from "react";
+import {Link} from "react-router-dom";
 
 export const StatisticLabel = styled.div`
   font-size: 0.9em;
@@ -27,6 +29,23 @@ export const Statistic = styled.div<{ $interactive?: boolean }>`
       }
     `}
 `;
+
+export const StatisticLink: React.FC<any> = ({ to, number, label }) => {
+    const linkStyle = {
+      display: "block",
+      padding: "1.25em 2em",
+      textDecoration: "none",
+      color: "unset"
+    };
+    return (
+      <Statistic style={{padding: "0"}}>
+        <Link to={to} style={linkStyle}>
+          <StatisticNumber>{number}</StatisticNumber>
+          <StatisticLabel>{label}</StatisticLabel>
+        </Link>
+      </Statistic>
+    );
+};
 
 export const StatisticContainer = styled.div`
   display: flex;

@@ -6,16 +6,17 @@ import { createUniversalComponent } from '../../../shared/utility/create-univers
 import { useStaticData } from '../../../shared/hooks/use-data';
 import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
 
-export type TaskContext<Task extends BaseTask> = {
+export type TaskContext<Task extends BaseTask, ParentTask = Task> = {
   task: Task & { id: string };
-  refetch: () => Promise<Task & { id: string }>;
+  parentTask?: ParentTask & { id: string };
+  refetch: () => Promise<{ task: Task & { id: string }; parentTask?: ParentTask & { id: string } }>;
 };
 
 export type TaskLoaderType = {
-  params: { id: string };
-  variables: { id: string };
+  params: { id: string; parentId?: string };
+  variables: { id: string; parentId?: string };
   query: {};
-  data: BaseTask & { id: string };
+  data: { task: BaseTask & { id: string }; parentTask?: BaseTask & { id: string } };
   context: TaskContext<BaseTask>;
 };
 
@@ -23,22 +24,29 @@ export const TaskLoader: UniversalComponent<TaskLoaderType> = createUniversalCom
   ({ route }) => {
     const { data, refetch } = useStaticData(TaskLoader);
 
-    const ctx = useMemo(() => (data ? { id: data.id, name: data.name } : undefined), [data]);
+    const ctx = useMemo(() => (data ? { id: data.task.id, name: data.task.name } : undefined), [data]);
 
     if (!data) {
       return <>Loading...</>;
     }
 
     return (
-      <BreadcrumbContext task={ctx}>{renderUniversalRoutes(route.routes, { task: data, refetch })}</BreadcrumbContext>
+      <BreadcrumbContext task={ctx}>
+        {renderUniversalRoutes(route.routes, { task: data.task, parentTask: data.parentTask, refetch })}
+      </BreadcrumbContext>
     );
   },
   {
     getKey: params => {
-      return ['task', { id: params.id }];
+      return ['task', { id: params.id, parentId: params.parentId }];
     },
-    getData: (key, vars, api) => {
-      return api.getTaskById(vars.id, true);
+    getData: async (key, vars, api) => {
+      const [task, parentTask] = await Promise.all([
+        api.getTask(vars.id, { all: true }),
+        vars.parentId ? api.getTask(vars.parentId) : undefined,
+      ]);
+
+      return { task, parentTask };
     },
   }
 );

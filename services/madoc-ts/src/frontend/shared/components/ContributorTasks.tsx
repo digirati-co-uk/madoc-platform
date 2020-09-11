@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { TinyButton } from '../atoms/Button';
 import { HrefLink } from '../utility/href-link';
 import { Pagination } from '../../../types/schemas/_pagination';
-import { CrowdsourcingTask } from '../../../types/tasks/crowdsourcing-task';
+import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
 import { stringify } from 'query-string';
 
 export const ContributorTasks: React.FC<{

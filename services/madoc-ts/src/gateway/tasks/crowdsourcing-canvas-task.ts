@@ -36,21 +36,26 @@ export function createTask({
   label,
   parentTaskName,
   canvasId,
+  manifestId,
   maxContributors,
   approvalsRequired,
   warningTime,
+  projectId,
 }: {
   parentTaskName: string;
   label: string;
   canvasId: number;
+  manifestId?: number;
   maxContributors?: number;
   approvalsRequired?: number;
   warningTime?: number;
+  projectId?: number;
 }): CrowdsourcingCanvasTask {
   return {
     name: `${parentTaskName} - ${label}`,
     type: 'crowdsourcing-canvas-task',
     subject: `urn:madoc:canvas:${canvasId}`,
+    subject_parent: manifestId ? `urn:madoc:manifest:${manifestId}` : undefined,
     status_text: 'accepted',
     status: 1,
     state: {
@@ -67,6 +72,7 @@ export function createTask({
       //     Mark the parent task as complete once all resources are also marked as complete.
       'madoc-ts.status.3',
     ],
+    context: projectId ? [`urn:madoc:project:${projectId}`] : undefined,
   };
 }
 

@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { CrowdsourcingReviewMerge } from '../../../../gateway/tasks/crowdsourcing-review';
 import { useApi } from '../../../shared/hooks/use-api';
 import { useQuery } from 'react-query';
-import { CrowdsourcingTask } from '../../../../types/tasks/crowdsourcing-task';
+import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
 import { useLoadedCaptureModel } from '../../../shared/hooks/use-loaded-capture-model';
 import { ThemeProvider } from 'styled-components';
 import { defaultTheme, Revisions } from '@capture-models/editor';
