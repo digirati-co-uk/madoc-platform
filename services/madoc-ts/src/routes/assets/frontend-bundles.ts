@@ -26,7 +26,7 @@ export const frontendBundles: RouteMiddleware<{
   );
 
   if (existsSync(bundle)) {
-    await send(context, bundle, { root: '/' });
+    await send(context, bundle, { root: '/', maxAge: 3600000, immutable: true, gzip: true });
     return;
   }
 

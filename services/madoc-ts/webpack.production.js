@@ -1,7 +1,3 @@
-console.log(`Webpack frontend, env: ${process.env.NODE_ENV || 'development'}`);
-
-const { addDisplayNameTransformer } = require('ts-react-display-name');
-
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
   devtool: process.env.NODE_ENV !== 'production' ? 'inline-source-map' : false,
@@ -21,9 +17,28 @@ module.exports = {
               configFile: 'tsconfig.frontend.json',
               transpileOnly: true,
               experimentalWatchApi: true,
-              getCustomTransformers: () => ({
-                before: [addDisplayNameTransformer()],
-              }),
+            },
+          },
+        ],
+      },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              plugins: ['babel-plugin-styled-components'],
+              presets: [
+                'react',
+                [
+                  'es2015',
+                  {
+                    modules: false,
+                  },
+                ],
+                'es2016',
+              ],
             },
           },
         ],

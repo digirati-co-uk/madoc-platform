@@ -86,6 +86,21 @@ export function createServerRenderer(
 
     // sheet.seal();
 
+    if (process.env.NODE_ENV === 'production') {
+      return {
+        type: 'document',
+        html: `
+    ${styles}
+    <div id="react-component">${markup}</div>
+    <script crossorigin src="https://unpkg.com/whatwg-fetch@3.0.0/dist/fetch.umd.js"></script>
+    <script crossorigin src="https://unpkg.com/react@16.13.1/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16.13.1/umd/react-dom.production.min.js"></script>
+    <script type="application/json" id="react-data">${JSON.stringify({ basename })}</script>
+    ${routeData}
+  `,
+      };
+    }
+
     return {
       type: 'document',
       html: `

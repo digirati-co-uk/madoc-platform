@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "baseUrl": "src",
+    "lib": ["dom", "es2020"],
+    "typeRoots": ["../../node_modules/@types", "node_modules/@types"],
+    "target": "es2018",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "module": "es2015",
+    "declaration": true,
+    "moduleResolution": "node",
+    "outDir": "./lib",
+    "noEmitOnError": false,
+    "strict": true,
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "jsx": "react",
+    "resolveJsonModule": true,
+    "noImplicitAny": true,
+    "downlevelIteration": true,
+    "noUnusedLocals": false,
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      // "PACKAGE_NAME": ["../SERVICE_NAME"]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "lib/",
+    "**/*.stories.tsx",
+    "__tests__/"
+  ],
+  "references": [
+    // { "path": "../SERVICE_NAME" }
+  ]
+}
