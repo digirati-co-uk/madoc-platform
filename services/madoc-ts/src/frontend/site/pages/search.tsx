@@ -62,6 +62,7 @@ function useQuery() {
 
 export const Search: React.FC = () => {
   const [results, setResults] = useState([] as any);
+  const [totalPages, setTotalPages] = useState();
   const query = useQuery();
   const page = query.get('page');
 
@@ -69,6 +70,7 @@ export const Search: React.FC = () => {
 
   useEffect(() => {
     setResults(dummyResults.results);
+    setTotalPages(dummyResults.count);
   }, []);
 
   return (
@@ -88,7 +90,7 @@ export const Search: React.FC = () => {
           }}
         />
       </SearchContainer>
-      <PaginationNumbered page={page ? parseInt(page) : 1} totalPages={3} stale={false} />
+      <PaginationNumbered page={page ? parseInt(page) : 1} totalPages={totalPages} stale={false} />
     </>
   );
 };

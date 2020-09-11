@@ -59,13 +59,11 @@ const SearchItem: React.FC<{ result: SearchResult }> = ({ result }) => {
     fetch(result.resource_id)
       .then(response => response.json())
       .then(response => {
-        console.log(response);
         setTitle(response.label);
       })
       .catch(error => console.log(error));
   }, []);
 
-  console.log(title);
   return (
     <ResultContainer>
       <Link to={result.url} style={{ textDecoration: 'none' }}>
@@ -73,7 +71,15 @@ const SearchItem: React.FC<{ result: SearchResult }> = ({ result }) => {
           <img src={result.thumbnail}></img>
           <GridColumn>
             <ResultTitle>{title}</ResultTitle>
-            <ResultText>{result.snippet}</ResultText>
+            <ResultText
+              dangerouslySetInnerHTML={{
+                __html: `
+					<p>
+						${result.snippet}
+					</p>
+				`,
+              }}
+            />
           </GridColumn>
         </GridContainer>
       </Link>
