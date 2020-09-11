@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { SearchResult } from '../../../types/schemas/search';
@@ -53,14 +53,27 @@ const DropdownContainer = styled.div`
 `;
 
 const SearchItem: React.FC<{ result: SearchResult }> = ({ result }) => {
+  const [title, setTitle] = useState('');
+
+  useEffect(() => {
+    fetch(result.resource_id)
+      .then(response => response.json())
+      .then(response => {
+        console.log(response);
+        setTitle(response.label);
+      })
+      .catch(error => console.log(error));
+  }, []);
+
+  console.log(title);
   return (
     <ResultContainer>
-      <Link to={result.link} style={{ textDecoration: 'none' }}>
+      <Link to={result.url} style={{ textDecoration: 'none' }}>
         <GridContainer>
           <img src={result.thumbnail}></img>
           <GridColumn>
-            <ResultTitle>{result.title}</ResultTitle>
-            <ResultText>{result.description}</ResultText>
+            <ResultTitle>{title}</ResultTitle>
+            <ResultText>{result.snippet}</ResultText>
           </GridColumn>
         </GridContainer>
       </Link>

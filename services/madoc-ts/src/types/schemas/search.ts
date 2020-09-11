@@ -20,9 +20,10 @@ export type SearchResult = {
   id: string;
   title: string;
   thumbnail: string;
+  resource_id: string;
   type: string;
-  description: string;
-  link: string;
+  snippet: string;
+  url: string;
 };
 
 type FacetOption = {
