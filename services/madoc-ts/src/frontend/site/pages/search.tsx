@@ -8,8 +8,7 @@ import styled from 'styled-components';
 // to be removed
 import { v4 } from 'uuid';
 
-// CHANGE AS THIS IS WHAT YOU WANT TO CHANGE
-
+// These to come from the API
 const dummyResults = [
   {
     id: v4(),
