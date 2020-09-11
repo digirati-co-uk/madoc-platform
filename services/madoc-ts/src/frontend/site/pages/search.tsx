@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { SearchFacets } from '../../shared/components/SearchFacets';
 import { SearchResults } from '../../shared/components/SearchResults';
 import { PaginationNumbered } from '../../shared/components/Pagination';
-import { useLocation } from 'react-router-dom';
-// const queryString = require('query-string');
+import { useLocation, useHistory } from 'react-router-dom';
 
 import { useApi } from '../../shared/hooks/use-api';
 
@@ -62,13 +61,17 @@ function useQuery() {
 
 export const Search: React.FC = () => {
   const [results, setResults] = useState([] as any);
-  const [totalPages, setTotalPages] = useState();
+  const [searchQuery, setSearchQuery] = useState<string | null>('');
+  const [totalPages, setTotalPages] = useState<number | undefined>(1);
   const query = useQuery();
   const page = query.get('page');
-
+  const search = query.get('search');
+  const history = useHistory();
+  const location = useLocation();
   const api = useApi();
 
   useEffect(() => {
+    setSearchQuery(search);
     setResults(dummyResults.results);
     setTotalPages(dummyResults.count);
   }, []);
@@ -82,7 +85,7 @@ export const Search: React.FC = () => {
         /> */}
         <SearchResults
           searchFunction={val => {
-            alert('you searched for:  ' + val);
+            history.push(`${location.pathname}?term=${val}`);
           }}
           searchResults={results}
           sortByFunction={val => {
