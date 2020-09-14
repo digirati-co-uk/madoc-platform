@@ -41,6 +41,36 @@ case "${commandToRun}" in
       docker-compose up --no-deps --no-recreate -d gateway
     ;;
 
+    e2e)
+      rm -rf ./var/test-environment
+      docker-compose -f docker-compose.yml -f docker-compose.test.yml -p test-madoc --env-file ./.env-test rm -f -v -s
+      docker-compose -f docker-compose.yml -f docker-compose.test.yml -p test-madoc --env-file ./.env-test up -d
+      MAX_TRIES=30
+      SECONDS_BETWEEN_CHECKS=5
+      while [[ ${MAX_TRIES} -gt 0 ]]
+      do
+        STATUS=$(curl -sS "http://localhost:8988/" --output /dev/null --write-out '%{http_code}' 2>&1)
+        if [[ ${STATUS} -eq 200 ]]; then
+          break;
+        else
+          echo "Waiting for services to start..."
+          MAX_TRIES=$((MAX_TRIES - 1))
+        fi
+        sleep ${SECONDS_BETWEEN_CHECKS};
+      done
+      docker-compose -f docker-compose.yml -f docker-compose.test.yml -p test-madoc --env-file ./.env-test run e2e && RET_CODE=$? || RET_CODE=$?
+      docker-compose -f docker-compose.yml -f docker-compose.test.yml -p test-madoc --env-file ./.env-test down
+      exit $RET_CODE;
+    ;;
+
+    test-instance)
+      docker-compose -f docker-compose.yml -f docker-compose.test.yml -p test-madoc --env-file ./.env-test up
+    ;;
+
+    test-compose)
+      docker-compose -f docker-compose.yml -f docker-compose.test.yml -p test-madoc --env-file ./.env-test "$@"
+    ;;
+
     start)
          docker-compose build --parallel
          docker-compose up -d "$@"

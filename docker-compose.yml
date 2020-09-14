@@ -10,7 +10,7 @@ services:
       - TYK_GW_SECRET=${GATEWAY_SECRET}
       - JWT_SERVICES=tasks-api,madoc-api,configuration-api,storage-api
     ports:
-      - "8888:8080"
+      - "${PORTS_GATEWAY:-8888}:8080"
     links:
       - sorting-room
       - madoc
@@ -98,7 +98,7 @@ services:
       - OMEKA_FILE_DIRECTORY=/home/node/app/omeka-files
       - MIGRATE=true
     ports:
-      - "127.0.0.1:9230:9230"
+      - "127.0.0.1:${PORTS_MADOC_TS_DEBUGGER:-9230}:9230"
     links:
       - shared-postgres
       - madoc-database
@@ -119,8 +119,6 @@ services:
       - DATABASE_PASSWORD=${POSTGRES_TASKS_API_PASSWORD}
       - QUEUE_LIST=${TASKS_QUEUE_LIST}
       - REDIS_HOST=gateway-redis
-    ports:
-      - "8105:3000"
     links:
       - shared-postgres
       - gateway-redis
@@ -138,8 +136,6 @@ services:
       - DATABASE_USER=${POSTGRES_MODELS_API_USER}
       - DATABASE_SCHEMA=${POSTGRES_MODELS_API_SCHEMA}
       - DATABASE_PASSWORD=${POSTGRES_MODELS_API_PASSWORD}
-    ports:
-      - "8106:3000"
     links:
       - shared-postgres
 
@@ -164,7 +160,7 @@ services:
       - POSTGRES_CONFIG_SERVICE_PASSWORD=${POSTGRES_CONFIG_SERVICE_PASSWORD}
 
     ports:
-      - "5400:5432"
+      - "${PORTS_SHARED_POSTGRES:-5400}:5432"
     volumes:
       - ./var/shared-database:/var/lib/postgresql/data
 
@@ -187,7 +183,7 @@ services:
     volumes:
       - ./var/database/data:/var/lib/mysql/
     ports:
-      - "3334:3306"
+      - "${PORTS_MYSQL_DATABASE:-3334}:3306"
 
   config-service:
     image: digirati/madoc_config_service_django:175410fc5b7dbef4cc259686564fbedeb60c8789
