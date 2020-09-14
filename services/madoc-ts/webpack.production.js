@@ -58,9 +58,6 @@ module.exports = {
     alias: {
       '@atlas-viewer/atlas': require.resolve('@atlas-viewer/atlas'),
       '@capture-models/editor': ['@capture-models/editor/lib', '@capture-models/editor'],
-      '@babel/runtime': '@babel/runtime',
-      '@babel/runtime/helpers': '@babel/runtime/helpers',
-      '@babel/runtime/helpers/esm': '@babel/runtime/helpers',
       https: false,
       http: false,
       '@blueprintjs/core': false,
