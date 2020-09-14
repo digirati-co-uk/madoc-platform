@@ -14,8 +14,8 @@
     "generate-migration": "node migrate.js create",
     "generate-schema": "node generate-schemas.js",
     "build:stats": "NODE_ENV=production MADOC_BUNDLE_ID=site webpack --config webpack.production.js src/frontend/site/client.ts --output-path lib/frontend/site/build --progress --json --profile > stats.json",
-    "build:admin": "MADOC_BUNDLE_ID=admin webpack --config webpack.frontend.js src/frontend/admin/client.tsx --output-path lib/frontend/admin/build",
-    "build:site": "MADOC_BUNDLE_ID=site webpack --config webpack.frontend.js src/frontend/site/client.ts --output-path lib/frontend/site/build",
+    "build:admin": "MADOC_BUNDLE_ID=admin webpack --config webpack.production.js src/frontend/admin/client.tsx --output-path lib/frontend/admin/build",
+    "build:site": "MADOC_BUNDLE_ID=site webpack --config webpack.production.js src/frontend/site/client.ts --output-path lib/frontend/site/build",
     "link:model-editor": "yarn link \"@capture-models/editor\"",
     "unlink:model-editor": "yarn unlink \"@capture-models/editor\" && yarn install --force"
   },
