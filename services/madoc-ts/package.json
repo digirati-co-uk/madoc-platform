@@ -24,7 +24,6 @@
     "canvas-panel-beta": "2.0.2",
     "@iiif/vocabulary": "1.0.17",
     "immutable": "3.8.2",
-    "@babel/runtime": "7.11.2",
     "react-i18next": "11.7.2",
     "scheduler": "0.19.1",
     "styled-components": "5.1.1"
