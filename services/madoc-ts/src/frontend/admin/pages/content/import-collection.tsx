@@ -45,7 +45,12 @@ export const ImportCollection: UniversalComponent<{}> = () => {
   return (
     <div>
       <h1>Create collection</h1>
-      <input type="text" value={collectionUrl} onChange={e => setCollectionUrl(e.currentTarget.value)} />
+      <input
+        type="text"
+        name="collection_url"
+        value={collectionUrl}
+        onChange={e => setCollectionUrl(e.currentTarget.value)}
+      />
       <button onClick={() => setCollectionId(collectionUrl)}>Choose</button>
       <VaultProvider>{collectionId ? <PreviewCollection id={collectionId} /> : null}</VaultProvider>
     </div>

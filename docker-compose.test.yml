@@ -1,0 +1,65 @@
+version: "3"
+services:
+  # Internal services
+
+  gateway:
+    ports:
+      - "8988:8080"
+    volumes:
+      - ./var/test-environment/certs:/openssl-certs
+
+  madoc:
+    environment:
+      - APP_ENV=TEST
+    volumes:
+      - ./var/test-environment/files:/srv/omeka/files
+      - ./var/test-environment/certs:/openssl-certs
+
+  certs:
+    build:
+      context: services/certs
+    volumes:
+      - ./var/test-environment/certs:/openssl-certs
+
+  madoc-ts:
+    build:
+      context: services/madoc-ts
+      dockerfile: Dockerfile
+    volumes:
+      - ./var/test-environment/certs:/openssl-certs
+      - ./var/test-environment/jwt:/home/node/app/service-jwt-responses
+      - ./var/test-environment/files:/home/node/app/omeka-files
+
+  tasks-api: {}
+
+  model-api: {}
+
+  config-service: {}
+
+  shared-postgres:
+    volumes:
+      - ./var/test-environment/shared-database:/var/lib/postgresql/data
+
+  madoc-database:
+    volumes:
+      - ./var/test-environment/database/data:/var/lib/mysql/
+
+  storage-api:
+    volumes:
+      - ./services/storage-api/lib:/home/node/app/lib:delegated
+      - ./var/test-environment/files/storage-api:/home/node/app/files
+
+  e2e:
+    image: cypress
+    build: ./e2e
+    container_name: cypress
+    depends_on:
+      - gateway
+    environment:
+      - CYPRESS_baseUrl=http://gateway:8080
+    command: npx cypress run --port=8989
+    volumes:
+      - ./e2e/cypress:/app/cypress
+      - ./e2e/cypress.json:/app/cypress.json
+    ports:
+      - "8989:8989"

@@ -1,20 +1,11 @@
 import React from 'react';
-import { useApi } from '../hooks/use-api';
-import { useQuery } from 'react-query';
 import { SnippetLarge } from '../atoms/SnippetLarge';
+import { useApiManifest } from '../hooks/use-api-manifest';
 import { LocaleString } from './LocaleString';
 import { HrefLink } from '../utility/href-link';
 
 export const ManifestSnippet: React.FC<{ id: number; collectionId?: number }> = props => {
-  const api = useApi();
-
-  const { data } = useQuery(
-    ['manifest', { id: props.id }],
-    () => {
-      return api.getManifestById(props.id);
-    },
-    { refetchInterval: false, refetchOnWindowFocus: false, refetchOnMount: false, refetchIntervalInBackground: false }
-  );
+  const { data } = useApiManifest(props.id);
 
   const link = props.collectionId
     ? `/collections/${props.collectionId}/manifests/${props.id}`

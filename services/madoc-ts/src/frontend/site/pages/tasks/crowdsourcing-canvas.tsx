@@ -1,11 +1,9 @@
 import React from 'react';
-import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
 import { CrowdsourcingCanvasTask } from '../../../../gateway/tasks/crowdsourcing-canvas-task';
-import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
 import { Status } from '../../../shared/atoms/Status';
 import { TableContainer, TableEmpty, TableRow, TableRowLabel } from '../../../shared/atoms/Table';
-import { useApi } from '../../../shared/hooks/use-api';
+import { useApiTask } from '../../../shared/hooks/use-api-task';
 import { createLink } from '../../../shared/utility/create-link';
 
 export const CrowdsourcingCanvas: React.FC<{ task: CrowdsourcingCanvasTask; reviewId: string; projectId: string }> = ({
@@ -13,12 +11,7 @@ export const CrowdsourcingCanvas: React.FC<{ task: CrowdsourcingCanvasTask; revi
   reviewId,
   projectId,
 }) => {
-  const api = useApi();
-  const { data: parentTask } = useQuery(['task', { id: task.parent_task }], async () => {
-    if (task.parent_task) {
-      return api.getTask<CrowdsourcingTask>(task.parent_task);
-    }
-  });
+  const { data: parentTask } = useApiTask(task.parent_task);
 
   const allTasks = task.subtasks ? task.subtasks : undefined;
   const reviews = allTasks ? allTasks.filter(t => t.type === 'crowdsourcing-review') : undefined;

@@ -1,11 +1,10 @@
 import React, { useMemo } from 'react';
-import { Pagination } from '../../../../types/schemas/_pagination';
+import { ApiArgs } from '../../../shared/hooks/use-api-query';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { UniversalComponent } from '../../../types';
-import { useData, usePaginatedData } from '../../../shared/hooks/use-data';
-import { LocaleString } from '../../../shared/components/LocaleString';
-import { BreadcrumbContext, DisplayBreadcrumbs } from '../../../shared/components/Breadcrumbs';
+import { usePaginatedData } from '../../../shared/hooks/use-data';
+import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
 import { CollectionFull } from '../../../../types/schemas/collection-full';
 
 /**
@@ -30,13 +29,7 @@ import { CollectionFull } from '../../../../types/schemas/collection-full';
 type CollectionLoaderType = {
   params: { id: string; slug?: string; manifest?: string; canvas?: string };
   query: { c: string; filter?: string };
-  variables: {
-    id: number;
-    parentCollectionIds: number[];
-    filter?: string;
-    projectId?: string | number;
-    page: number;
-  };
+  variables: ApiArgs<'getSiteCollection'>;
   data: CollectionFull;
 };
 
@@ -44,23 +37,17 @@ export const CollectionLoader: UniversalComponent<CollectionLoaderType> = create
   CollectionLoaderType
 >(
   ({ route, ...props }) => {
-    const { resolvedData: data, latestData } = usePaginatedData(
-      CollectionLoader,
-      {},
-      { refetchOnMount: false, refetchInterval: false, refetchOnWindowFocus: false }
-    );
+    const { resolvedData: data, latestData } = usePaginatedData(CollectionLoader, [], {
+      cacheTime: 3600,
+    });
 
     const ctx = useMemo(() => (data ? { id: data.collection.id, name: data.collection.label } : undefined), [data]);
-
-    if (!data) {
-      return <DisplayBreadcrumbs />;
-    }
 
     return (
       <BreadcrumbContext collection={ctx}>
         {renderUniversalRoutes(route.routes, {
           ...props,
-          collection: data.collection,
+          collection: data?.collection,
           pagination: latestData ? latestData.pagination : undefined,
           collectionSubjects: data ? data.subjects : undefined,
         })}
@@ -72,18 +59,20 @@ export const CollectionLoader: UniversalComponent<CollectionLoaderType> = create
       const [collectionId, ...parentCollectionIds] = params.id.split(',');
 
       return [
-        'public-collection',
-        {
-          id: Number(collectionId),
-          page: Number(query.c) || 0,
-          parentCollectionIds: parentCollectionIds.map(n => Number(n)),
-          projectId: params.slug,
-          filter: query.filter,
-        },
+        'getSiteCollection',
+        [
+          Number(collectionId),
+          {
+            page: Number(query.c) || 1,
+            parent_collections: parentCollectionIds.map(n => Number(n)),
+            project_id: params.slug,
+            hide_status: query.filter,
+          },
+        ],
       ];
     },
     getData: (key, vars, api) => {
-      return api.getSiteCollection(vars.id, { page: vars.page, project_id: vars.projectId, hide_status: vars.filter });
+      return api.getSiteCollection(...vars);
     },
   }
 );

@@ -917,6 +917,7 @@ export class ApiClient {
       subject?: string;
       type?: string;
       detail?: boolean;
+      per_page?: number;
     } = {}
   ) {
     return this.request<{ tasks: TaskType[]; pagination: Pagination }>(
@@ -1278,7 +1279,7 @@ export class ApiClient {
   }
 
   async getSiteProjectCanvasModel(projectId: string | number, canvasId: number) {
-    return this.publicRequest<{ model: CaptureModel }>(`/madoc/api/projects/${projectId}/canvas-models/${canvasId}`);
+    return this.publicRequest<{ model?: CaptureModel }>(`/madoc/api/projects/${projectId}/canvas-models/${canvasId}`);
   }
 
   async getSiteProjectCanvasTasks(projectId: string | number, canvasId: number) {

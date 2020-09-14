@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useMutation, queryCache } from 'react-query';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { UniversalComponent } from '../../../../types';
 import { MetadataDiff } from '../../../molecules/MetadataEditor';
 import { useApi } from '../../../../shared/hooks/use-api';
@@ -55,7 +55,7 @@ export const ProjectMetadata: UniversalComponent<ProjectMetadataType> = createUn
           setSuccess('');
           return;
         }
-        queryCache.refetchQueries(['get-project', { id: Number(params.id) }]);
+        await queryCache.invalidateQueries(['get-project', { id: Number(params.id) }]);
 
         setSuccess('Changed saved');
       } catch (err) {

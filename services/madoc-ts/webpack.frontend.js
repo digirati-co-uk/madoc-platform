@@ -18,6 +18,7 @@ module.exports = {
           {
             loader: require.resolve('ts-loader'),
             options: {
+              configFile: 'tsconfig.frontend.json',
               transpileOnly: true,
               experimentalWatchApi: true,
               getCustomTransformers: () => ({

@@ -8,14 +8,17 @@ export const siteCanvasTasks: RouteMiddleware<{
   const user = context.state.jwt ? context.state.jwt.user.id : undefined;
   const projectSlug = context.params.projectSlug;
   const canvasId = context.params.canvasId;
-  const { siteApi } = context.state;
+  const { siteApi, site } = context.state;
 
-  const project = await siteApi.getProject(projectSlug);
-  const { tasks } = await siteApi.getTasks(0, {
-    root_task_id: project?.task_id,
-    subject: `urn:madoc:canvas:${canvasId}`,
-    detail: true,
-  });
+  const project = await siteApi.getProjectTask(projectSlug);
+  const [config, { tasks }] = await Promise.all([
+    siteApi.getProjectConfiguration(project.id as any, `urn:madoc:site:${site.id}`),
+    siteApi.getTasks(0, {
+      root_task_id: project?.task_id,
+      subject: `urn:madoc:canvas:${canvasId}`,
+      detail: true,
+    }),
+  ]);
 
   const contributors: string[] = [];
   for (const task of tasks) {
@@ -30,7 +33,7 @@ export const siteCanvasTasks: RouteMiddleware<{
     }
   }
 
-  const maxContributors = project.config.maxContributionsPerResource;
+  const maxContributors = config.maxContributionsPerResource;
   const canvasTask = tasks.find(task => task.type === 'crowdsourcing-canvas-task');
   const userTasks = user ? tasks.filter(task => task.assignee && task.assignee.id === `urn:madoc:user:${user}`) : [];
 
@@ -44,7 +47,7 @@ export const siteCanvasTasks: RouteMiddleware<{
     manifestTask,
     userTasks,
     totalContributors: contributors.length,
-    maxContributors: project.config.maxContributionsPerResource,
+    maxContributors: config.maxContributionsPerResource,
     canUserSubmit: !!canUserSubmit,
   };
 

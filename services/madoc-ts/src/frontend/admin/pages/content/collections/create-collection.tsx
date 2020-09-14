@@ -97,7 +97,7 @@ export const CreateCollection: React.FC = () => {
               </Subheading3>
               <InputContainer>
                 <InputLabel>Collection URL</InputLabel>
-                <Input type="text" onChange={e => setImportedCollectionId(e.currentTarget.value)} />
+                <Input type="text" name="collection_url" onChange={e => setImportedCollectionId(e.currentTarget.value)} />
               </InputContainer>
               <SmallButton
                 disabled={isCreating}

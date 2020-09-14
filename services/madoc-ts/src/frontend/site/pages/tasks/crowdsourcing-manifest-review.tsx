@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePaginatedQuery, useQuery } from 'react-query';
+import { usePaginatedQuery } from 'react-query';
 import { Link, useParams } from 'react-router-dom';
 import { CrowdsourcingReview } from '../../../../gateway/tasks/crowdsourcing-review';
 import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
@@ -14,6 +14,7 @@ import { ImageStripBox } from '../../../shared/atoms/ImageStrip';
 import { LocaleString } from '../../../shared/components/LocaleString';
 import { Pagination } from '../../../shared/components/Pagination';
 import { useApi } from '../../../shared/hooks/use-api';
+import { useApiTaskSearch } from '../../../shared/hooks/use-api-task-search';
 import { useLocationQuery } from '../../../shared/hooks/use-location-query';
 import { createLink } from '../../../shared/utility/create-link';
 
@@ -31,15 +32,14 @@ export const CrowdsourcingManifestReview: React.FC<{
       return api.getSiteManifest(id, { parent_task: task.parent_task, page });
     }
   });
-  const { data: parentTask } = useQuery(['task', { id: task.parent_task }], async () => {
-    return api.getTasks<CrowdsourcingReview>(0, {
-      all: true,
-      subject_parent: task.subject,
-      type: 'crowdsourcing-review',
-      root_task_id: task.root_task,
-      detail: true,
-    });
+  const { data: parentTask } = useApiTaskSearch<CrowdsourcingReview>({
+    all: true,
+    subject_parent: task.subject,
+    type: 'crowdsourcing-review',
+    root_task_id: task.root_task,
+    detail: true,
   });
+
   const { t } = useTranslation();
 
   const manifest = resolvedData?.manifest;
