@@ -1,8 +1,10 @@
 import React, { ComponentType, PropsWithChildren, Suspense, useMemo } from 'react';
-import { useIsServer } from '../components/SSRContext';
+import { useApi } from '../hooks/use-api';
 
 export const BrowserComponent: React.FC<{ fallback: any }> = ({ fallback, children }) => {
-  const isServer = useIsServer();
+  const api = useApi();
+
+  const isServer = api.getIsServer();
 
   if (isServer) {
     return fallback;

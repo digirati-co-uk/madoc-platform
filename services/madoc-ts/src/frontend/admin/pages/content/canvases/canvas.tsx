@@ -2,19 +2,15 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { UniversalComponent } from '../../../../types';
 import { LocaleString } from '../../../../shared/components/LocaleString';
-import { Subheading1 } from '../../../../shared/atoms/Heading1';
-import { ButtonRow, SmallButton } from '../../../../shared/atoms/Button';
-import { Link, useParams, useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
 import { CanvasFull } from '../../../../../types/schemas/canvas-full';
-import { ContextHeading, Header } from '../../../../shared/atoms/Header';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
+import { useApiManifest } from '../../../../shared/hooks/use-api-manifest';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { WidePage } from '../../../../shared/atoms/WidePage';
 import { ManifestFull } from '../../../../../types/schemas/manifest-full';
-import { useQuery } from 'react-query';
-import { useApi } from '../../../../shared/hooks/use-api';
 
 type CanvasViewType = {
   data: CanvasFull;
@@ -29,14 +25,8 @@ export const CanvasView: UniversalComponent<CanvasViewType> = createUniversalCom
     const { t } = useTranslation();
     const params = useParams<{ id: string; manifestId?: string }>();
     const { id, manifestId } = params;
-    const location = useLocation();
-    const api = useApi();
-
-    const { data, status } = useData(CanvasView);
-
-    const { data: manifestResponse } = useQuery(['admin-manifest', { id: manifestId }], async () => {
-      return manifestId ? api.getManifestById(Number(manifestId)) : undefined;
-    });
+    const { data } = useData(CanvasView);
+    const { data: manifestResponse } = useApiManifest(manifestId);
 
     const { canvas } = data || {};
     const title = canvas ? canvas.label ? <LocaleString>{canvas.label}</LocaleString> : 'Untitled' : '...';

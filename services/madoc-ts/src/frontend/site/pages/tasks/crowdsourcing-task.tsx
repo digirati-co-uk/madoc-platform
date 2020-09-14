@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { useQuery } from 'react-query';
 import { ThemeProvider } from 'styled-components';
 import { defaultTheme } from '@capture-models/editor';
 import { useApi } from '../../../shared/hooks/use-api';
@@ -9,6 +8,8 @@ import { Heading3 } from '../../../shared/atoms/Heading3';
 import { queryCache } from 'react-query';
 import '@capture-models/editor/lib/input-types/TextField';
 import '@capture-models/editor/lib/input-types/HTMLField';
+import { useApiCanvas } from '../../../shared/hooks/use-api-canvas';
+import { useApiCaptureModel } from '../../../shared/hooks/use-api-capture-model';
 import { useProjectByTask } from '../../../shared/hooks/use-project-by-task';
 import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
 import { TaskContext } from '../loaders/task-loader';
@@ -35,21 +36,7 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task,
     task.state.warningTime &&
     date - task.modified_at > task.state.warningTime;
 
-  const { data: captureModel } = useQuery(
-    ['capture-model', { id: task.parameters[0] }],
-    async () => {
-      const modelId = task.parameters[0];
-      if (modelId) {
-        return api.getCaptureModel(modelId);
-      }
-    },
-    {
-      refetchInterval: false,
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
-      refetchIntervalInBackground: false,
-    }
-  );
+  const { data: captureModel } = useApiCaptureModel(task.parameters[0]);
 
   const target = useMemo(() => {
     if (captureModel && captureModel.target && captureModel.target[0]) {
@@ -58,24 +45,12 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task,
     return [];
   }, [api, captureModel]);
 
-  const { data: resource } = useQuery(
-    ['cs-canvas', target],
-    async () => {
-      const primaryTarget = captureModel ? target.find((t: any) => t.type.toLowerCase() === 'canvas') : undefined;
-
-      if (!primaryTarget) {
-        return;
-      }
-
-      return api.getSiteCanvas(primaryTarget.id);
-    },
-    {
-      refetchInterval: false,
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
-      refetchIntervalInBackground: false,
-    }
+  const primaryTarget = useMemo(
+    () => (captureModel ? target.find((t: any) => t.type.toLowerCase() === 'canvas') : undefined),
+    [captureModel, target]
   );
+
+  const { data: resource } = useApiCanvas(primaryTarget?.id);
 
   const backLink = useMemo(() => {
     if (!target || !project || project.config.allowCanvasNavigation === false) {
@@ -153,7 +128,7 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task,
                   revisionId: response.revision.id,
                 });
               }
-              await queryCache.refetchQueries(['task', { id: task.id }]);
+              await queryCache.invalidateQueries(['task', { id: task.id }]);
             }}
           />
         ) : null}

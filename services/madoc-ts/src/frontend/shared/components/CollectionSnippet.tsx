@@ -1,27 +1,12 @@
 import React from 'react';
-import { useApi } from '../hooks/use-api';
-import { useQuery } from 'react-query';
 import { SnippetLarge } from '../atoms/SnippetLarge';
+import { useApiCollection } from '../hooks/use-api-collection';
 import { LocaleString } from './LocaleString';
 import { HrefLink } from '../utility/href-link';
 import { createLink } from '../utility/create-link';
 
 export const CollectionSnippet: React.FC<{ id: number; projectId?: string | number }> = props => {
-  const api = useApi();
-
-  const { data, failureCount } = useQuery(
-    ['collection', { id: props.id }],
-    () => {
-      return api.getSiteCollection(props.id);
-    },
-    {
-      refetchInterval: false,
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
-      refetchIntervalInBackground: false,
-      retry: false,
-    }
-  );
+  const { data, failureCount } = useApiCollection(props.id);
 
   if (failureCount) {
     return null;

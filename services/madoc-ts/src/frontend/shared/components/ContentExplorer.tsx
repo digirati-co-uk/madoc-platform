@@ -6,8 +6,7 @@ import { ExpandGrid, GridContainer } from '../atoms/Grid';
 import { useTranslation } from 'react-i18next';
 import { Heading3 } from '../atoms/Heading3';
 import { TableActions, TableContainer, TableRow, TableRowLabel } from '../atoms/Table';
-import { useQuery } from 'react-query';
-import { useApi } from '../hooks/use-api';
+import { CollectionExplorer } from './CollectionExplorer';
 import { LocaleString } from './LocaleString';
 import { ImageGrid, ImageGridItem } from '../atoms/ImageGrid';
 import { CroppedImage } from '../atoms/Images';
@@ -23,62 +22,6 @@ const ExplorerBackground = styled.div`
   background: #eee;
   padding: 1em;
 `;
-
-export const CollectionExplorer: React.FC<{
-  id: number;
-  type: string;
-  onChoose: (id: number, item: ItemStructureListItem) => void;
-}> = ({ id, type, onChoose }) => {
-  const { t } = useTranslation();
-  const api = useApi();
-  const { data, status } = useQuery(['preview-structure', id], () => {
-    if (type === 'collection') {
-      return api.getCollectionStructure(id);
-    }
-    return api.getManifestStructure(id);
-  });
-  const [page, setPage] = useState(0);
-  const pages = data ? Math.ceil(data.items.length / 24) : 0;
-  const items = data ? data.items.slice(page * 24, page * 24 + 24) : [];
-
-  useEffect(() => {
-    setPage(0);
-  }, [id]);
-
-  if (!data || status !== 'success') {
-    return <div>Loading</div>;
-  }
-
-  return (
-    <>
-      <ImageGrid>
-        {items
-          ? items.map(canvas => {
-              return (
-                <ImageGridItem $size="small" key={canvas.id} onClick={() => onChoose(canvas.id, canvas)}>
-                  {canvas.thumbnail ? (
-                    <CroppedImage $size="small">
-                      <img src={canvas.thumbnail} />
-                    </CroppedImage>
-                  ) : null}
-                  <SingleLineHeading5>
-                    <LocaleString>{canvas.label || { none: ['Untitled'] }}</LocaleString>
-                  </SingleLineHeading5>
-                </ImageGridItem>
-              );
-            })
-          : null}
-      </ImageGrid>
-      <div style={{ margin: '1em 0' }}>
-        {page !== 0 ? <TinyButton onClick={() => setPage(page - 1)}>{t('Previous page')}</TinyButton> : null}
-        <div style={{ display: 'inline-block', margin: 10, fontSize: '0.9em' }}>
-          Page {page + 1} of {pages}
-        </div>
-        {page + 1 !== pages ? <TinyButton onClick={() => setPage(page + 1)}>{t('Next page')}</TinyButton> : null}
-      </div>
-    </>
-  );
-};
 
 export const URLContextExplorer: React.FC<{
   renderChoice: (id: string, manifestId: string, reset: () => void) => any;
@@ -178,7 +121,6 @@ export const URLContextExplorer: React.FC<{
   );
 };
 
-// @todo 5 most recent choices in local storage.
 export const ContentExplorer: React.FC<{ renderChoice: (id: number, reset: () => void) => any }> = ({
   renderChoice,
 }) => {

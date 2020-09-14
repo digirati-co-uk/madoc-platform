@@ -10364,6 +10364,11 @@ koa-compose@^4.1.0:
   resolved "https://registry.yarnpkg.com/koa-compose/-/koa-compose-4.1.0.tgz#507306b9371901db41121c812e923d0d67d3e877"
   integrity sha512-8ODW8TrDuMYvXRwra/Kh7/rJo9BtOfPc6qO8eAfC80CnCvSjSl0bkRM24X6/XBBEyj0v1nRUQ1LyOy3dbqOWXw==
 
+koa-conditional-get@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/koa-conditional-get/-/koa-conditional-get-3.0.0.tgz#552cb64a217dfb907e90b7c34f42009e441c4b8e"
+  integrity sha512-VKyPS7SuNH26TjTV2IRz+oh0HV/jc2lYAo51PTQTkj0XFn8ebNZW9riczmrW7ZVBFSnls1Z88DPUYKnvVymruA==
+
 koa-convert@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/koa-convert/-/koa-convert-1.2.0.tgz#da40875df49de0539098d1700b50820cebcd21d0"
@@ -10810,6 +10815,14 @@ markdown-to-jsx@^6.9.1, markdown-to-jsx@^6.9.3:
   dependencies:
     prop-types "^15.6.2"
     unquote "^1.1.0"
+
+match-sorter@^4.1.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/match-sorter/-/match-sorter-4.2.0.tgz#70c4e7443dacf5fa2503bc5afc189024092e9d27"
+  integrity sha512-oEvLn8R+a30YZ9l5XdCTkYQuLsOs8frxEqQTAuxoqkQx/qV5pQpx/NqAWvJ5xbYecqfXoF/ZevaIS1+NkbRymg==
+  dependencies:
+    "@babel/runtime" "^7.10.5"
+    remove-accents "0.4.2"
 
 material-colors@^1.2.1:
   version "1.2.6"
@@ -13550,13 +13563,12 @@ react-popper@^1.3.7:
     typed-styles "^0.0.7"
     warning "^4.0.2"
 
-react-query@^1.2.9:
-  version "1.2.9"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-1.2.9.tgz#a1804224e6e3c51b018f73355b6904662e10e3c7"
-  integrity sha512-f4o9USEuWNIfQblWjWHXUvTTTRvvoEVKv++ZDLTSKGFzicxeEXSmQtEzIeT9l7z4VptJ6nQB8ypga6aTrKqYYw==
+react-query-devtools@^2.4.7:
+  version "2.4.7"
+  resolved "https://registry.yarnpkg.com/react-query-devtools/-/react-query-devtools-2.4.7.tgz#afc34d18d3e37be5c73fa143da8db803ae74cc4c"
+  integrity sha512-rjGTtiIvku8wHL2yQiItkFFAeI1bCfPuLrh9V2LzJN+vz7pFA/XDbF0ksBFZnUS/sv0sSNZtmudhrpcGmZDWEg==
   dependencies:
-    "@scarf/scarf" "^1.0.0"
-    ts-toolbelt "^6.4.2"
+    match-sorter "^4.1.0"
 
 react-query@^1.5.2:
   version "1.5.5"
@@ -13565,6 +13577,11 @@ react-query@^1.5.2:
   dependencies:
     "@scarf/scarf" "^1.0.0"
     ts-toolbelt "^6.4.2"
+
+react-query@^2.16.0:
+  version "2.16.0"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-2.16.0.tgz#21771d020fdaeedd60e55c7df27b7339f93db4ce"
+  integrity sha512-P70M+BzpHXG4quyAHQOkL0DDMvXFCWoRJpw+6L+gfufIisNodYfuo0K0m9/Bw3Xmg5IvJLFdDSKdFjA/y/omeQ==
 
 react-reconciler@^0.25.1:
   version "0.25.1"
@@ -14159,6 +14176,11 @@ remark-squeeze-paragraphs@4.0.0:
   integrity sha512-8qRqmL9F4nuLPIgl92XUuxI3pFxize+F1H0e/W3llTk0UsjJaj01+RrirkMw7P21RKe4X6goQhYRSvNWX+70Rw==
   dependencies:
     mdast-squeeze-paragraphs "^4.0.0"
+
+remove-accents@0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/remove-accents/-/remove-accents-0.4.2.tgz#0a43d3aaae1e80db919e07ae254b285d9e1c7bb5"
+  integrity sha1-CkPTqq4egNuRngeuJUsoXZ4ce7U=
 
 remove-trailing-separator@^1.0.1:
   version "1.1.0"

@@ -13,22 +13,9 @@ export const frontendBundles: RouteMiddleware<{
     return;
   }
 
-  const bundle = path.resolve(
-    __dirname,
-    '..',
-    '..',
-    '..',
-    'lib',
-    'frontend',
-    context.params.bundleId,
-    'build',
-    context.params.bundleName || 'bundle.js'
-  );
+  const root = path.resolve(__dirname, '..', '..', '..', 'lib', 'frontend');
 
-  if (existsSync(bundle)) {
-    await send(context, bundle, { root: '/', maxAge: 3600000, immutable: true, gzip: true });
-    return;
-  }
+  const bundle = path.join(context.params.bundleId, 'build', context.params.bundleName || 'bundle.js');
 
-  context.status = 404;
+  await send(context, bundle, { root });
 };

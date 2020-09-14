@@ -8,10 +8,12 @@ import { CanvasFull } from '../../../../types/schemas/canvas-full';
 import { ManifestFull } from '../../../../types/schemas/manifest-full';
 import { ProjectFull } from '../../../../types/schemas/project-full';
 import { BreadcrumbContext, DisplayBreadcrumbs } from '../../../shared/components/Breadcrumbs';
-import { useStaticData } from '../../../shared/hooks/use-data';
+import { ApiArgs, apiHooks } from '../../../shared/hooks/use-api-query';
+import { useData, useStaticData } from '../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { UniversalComponent } from '../../../types';
+import { useParams } from 'react-router-dom';
 
 export type CanvasLoaderType = {
   params: {
@@ -21,71 +23,56 @@ export type CanvasLoaderType = {
     id: string;
   };
   query: {};
-  variables: {
-    slug?: string;
-    collectionId?: number;
-    manifestId?: number;
-    id: number;
-  };
-  data: {
-    canvas: CanvasFull['canvas'];
-    canvasTask?: CrowdsourcingCanvasTask;
-    manifestTask?: CrowdsourcingManifestTask;
-    userTasks?: Array<CrowdsourcingTask | CrowdsourcingReview>;
-    canUserSubmit: boolean;
-    model?: CaptureModel;
-  };
+  variables: ApiArgs<'getSiteCanvas'>;
+  data: CanvasFull;
   context: {
     project?: ProjectFull;
     manifest: ManifestFull['manifest'];
     manifestUserTasks?: Array<CrowdsourcingTask | CrowdsourcingReview>;
+    canvasTask?: CrowdsourcingCanvasTask;
+    manifestTask?: CrowdsourcingManifestTask;
+    userTasks?: Array<CrowdsourcingTask | CrowdsourcingReview>;
+    canUserSubmit: boolean;
     refetch: () => Promise<any>;
+    refetchManifestTasks: () => Promise<any>;
+    refetchCanvasTasks: () => Promise<any>;
+    refetchManifest: () => Promise<any>;
+    isLoadingTasks: boolean;
   };
 };
 
 export const CanvasLoader: UniversalComponent<CanvasLoaderType> = createUniversalComponent<CanvasLoaderType>(
   ({ route, ...props }) => {
-    const { data, refetch } = useStaticData(CanvasLoader);
+    const { id, slug } = useParams<{ id: string; slug?: string }>();
+    const { data, refetch } = useData(CanvasLoader, []);
     const ctx = useMemo(() => (data ? { id: data.canvas.id, name: data.canvas.label } : undefined), [data]);
 
-    if (!data) {
-      return <DisplayBreadcrumbs />;
-    }
+    const { data: tasks, isLoading: isLoadingTasks, refetch: refetchCanvasTasks } = apiHooks.getSiteProjectCanvasTasks(() => (slug ? [slug, Number(id)] : undefined));
+    const { data: model } = apiHooks.getSiteProjectCanvasModel(() => (slug ? [slug, Number(id)] : undefined));
 
     return (
       <BreadcrumbContext canvas={ctx}>
         {renderUniversalRoutes(route.routes, {
           ...props,
-          canvas: data ? data.canvas : undefined,
-          canvasTask: data ? data.canvasTask : undefined,
-          manifestTask: data ? data.manifestTask : undefined,
-          userTasks: data ? data.userTasks : undefined,
-          model: data ? data.model : undefined,
-          canUserSubmit: data.canUserSubmit,
+          isLoadingTasks,
+          canvas: data?.canvas,
+          canvasTask: tasks?.canvasTask,
+          userTasks: tasks?.userTasks,
+          canUserSubmit: !!tasks?.canUserSubmit,
+          manifestTask: tasks?.manifestTask,
+          model: model?.model,
           refetch,
+          refetchCanvasTasks,
         })}
       </BreadcrumbContext>
     );
   },
   {
     getKey: params => {
-      return ['site-canvas', { id: Number(params.id), slug: params.slug }] as any;
+      return ['getSiteCanvas', [Number(params.id)]];
     },
     getData: async (key, vars, api) => {
-      const [response, tasks, model] = await Promise.all([
-        await api.getSiteCanvas(vars.id),
-        vars.slug ? await api.getSiteProjectCanvasTasks(vars.slug, vars.id) : {},
-        vars.slug ? await api.getSiteProjectCanvasModel(vars.slug, vars.id) : undefined,
-      ]);
-
-      return {
-        canvas: response.canvas,
-        canvasTask: tasks.canvasTask,
-        userTasks: tasks.userTasks,
-        canUserSubmit: !!tasks.canUserSubmit,
-        manifestTask: tasks.manifestTask,
-        model: model ? model.model : undefined,
-      };
+      return api.getSiteCanvas(vars[0]);
     },
   }
 );

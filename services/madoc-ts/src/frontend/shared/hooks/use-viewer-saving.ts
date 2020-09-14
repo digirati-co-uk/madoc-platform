@@ -26,11 +26,19 @@ export function useViewerSaving(onSave: (req: RevisionRequest, status: string | 
   return useCallback(
     (revisionRequest: RevisionRequest, status: string | undefined) => {
       return persistRevision({
-        createRevision: (req, s) => {
-          return createRevision({ req, status: s });
+        createRevision: async (req, s) => {
+          const create = await createRevision({ req, status: s });
+          if (!create) {
+            throw new Error('Could not create revision');
+          }
+          return create;
         },
-        updateRevision: (req, s) => {
-          return updateRevision({ req, status: s });
+        updateRevision: async (req, s) => {
+          const update = await updateRevision({ req, status: s });
+          if (!update) {
+            throw new Error('Could not update revision');
+          }
+          return update;
         },
         revisionId: revisionRequest.revision.id,
         status,

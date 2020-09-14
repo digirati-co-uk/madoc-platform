@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { CrowdsourcingManifestTask } from '../../../gateway/tasks/crowdsourcing-manifest-task';
 import { CrowdsourcingReview } from '../../../gateway/tasks/crowdsourcing-review';
 import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
@@ -8,7 +8,7 @@ import { WarningMessage } from '../../shared/atoms/WarningMessage';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { CollectionFull } from '../../../types/schemas/collection-full';
 import { ManifestFull } from '../../../types/schemas/manifest-full';
-import { Link, useHistory, useParams } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { Pagination } from '../../shared/components/Pagination';
 import { ProjectFull } from '../../../types/schemas/project-full';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
@@ -17,8 +17,8 @@ import { CroppedImage } from '../../shared/atoms/Images';
 import { Heading5 } from '../../shared/atoms/Heading5';
 import { ImageGrid } from '../../shared/atoms/ImageGrid';
 import { useTranslation } from 'react-i18next';
+import { useSubjectMap } from '../../shared/hooks/use-subject-map';
 import { createLink } from '../../shared/utility/create-link';
-import { parseUrn } from '../../../utility/parse-urn';
 import { CanvasStatus } from '../../shared/atoms/CanvasStatus';
 import { Button } from '../../shared/atoms/Button';
 import { HrefLink } from '../../shared/utility/href-link';
@@ -65,27 +65,16 @@ const ManifestUserTasks: React.FC<{
 export const ViewManifest: React.FC<{
   project?: ProjectFull;
   collection?: CollectionFull['collection'];
-  manifest: ManifestFull['manifest'];
-  pagination: ManifestFull['pagination'];
-  manifestSubjects: ManifestFull['subjects'];
+  manifest?: ManifestFull['manifest'];
+  pagination?: ManifestFull['pagination'];
+  manifestSubjects?: ManifestFull['subjects'];
   manifestTask?: CrowdsourcingManifestTask | CrowdsourcingTask;
   manifestUserTasks?: Array<CrowdsourcingTask | CrowdsourcingReview>;
-  canUserSubmit: boolean;
+  canUserSubmit?: boolean;
   refetch: () => Promise<any>;
-}> = ({
-  collection,
-  manifest,
-  pagination,
-  project,
-  manifestTask,
-  manifestUserTasks,
-  canUserSubmit,
-  manifestSubjects,
-  refetch,
-}) => {
+}> = ({ collection, manifest, pagination, project, manifestUserTasks, manifestSubjects, refetch }) => {
   const { t } = useTranslation();
   const { filter, page } = useLocationQuery();
-  const { id } = useParams();
   const api = useApi();
   const history = useHistory();
   const user = api.getIsServer() ? undefined : api.getCurrentUser();
@@ -98,24 +87,10 @@ export const ViewManifest: React.FC<{
 
   const claimManifest = project?.config.claimGranularity === 'manifest';
 
-  const [subjectMap, showDoneButton] = useMemo(() => {
-    if (!manifestSubjects) return [];
-    const mapping: { [id: number]: number } = {};
-    let showDone = false;
-    for (const { subject, status } of manifestSubjects) {
-      if (!showDone && status === 3) {
-        showDone = true;
-      }
-      const parsed = parseUrn(subject);
-      if (parsed) {
-        mapping[parsed.id] = status;
-      }
-    }
-    return [mapping, showDone] as const;
-  }, [manifestSubjects]);
+  const [subjectMap, showDoneButton] = useSubjectMap(manifestSubjects);
 
   const [getRandomCanvas, randomCanvas] = useMutation(async () => {
-    if (project) {
+    if (project && manifest) {
       return await api.randomlyAssignedCanvas(project.id, manifest.id, {
         type: 'canvas',
         collectionId: collection?.id,
@@ -141,7 +116,7 @@ export const ViewManifest: React.FC<{
     }
   });
 
-  const [onSubmitForReview, { status: reviewStatus }] = useMutation(async (tid: string) => {
+  const [onSubmitForReview] = useMutation(async (tid: string) => {
     await api.updateTask(tid, {
       status: 2,
       status_text: 'in review',
@@ -154,6 +129,10 @@ export const ViewManifest: React.FC<{
     project.config.allowCanvasNavigation === false &&
     (manifestUserTasks ? manifestUserTasks.length === 0 : true);
   const randomlyAssignCanvas = project && project.config.randomlyAssignCanvas;
+
+  if (!manifest) {
+    return <DisplayBreadcrumbs />;
+  }
 
   return (
     <>

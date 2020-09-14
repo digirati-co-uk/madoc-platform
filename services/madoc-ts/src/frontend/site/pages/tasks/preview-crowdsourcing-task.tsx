@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
-import { useQuery } from 'react-query';
-import { useApi } from '../../../shared/hooks/use-api';
 import { ThemeProvider } from 'styled-components';
 import { defaultTheme, Revisions } from '@capture-models/editor';
 import { ViewContent } from '../../../shared/components/ViewContent';
@@ -14,6 +12,7 @@ import {
   EditorToolbarSpacer,
   EditorToolbarTitle,
 } from '../../../shared/atoms/EditorToolbar';
+import { useApiTask } from '../../../shared/hooks/use-api-task';
 import { ArrowBackIcon } from '../../../shared/icons/ArrowBackIcon';
 import { EditIcon } from '../../../shared/icons/EditIcon';
 import { FullScreenExitIcon } from '../../../shared/icons/FullScreenExitIcon';
@@ -37,13 +36,7 @@ const PreviewCrowdsourcingTask: React.FC<{
   goBack: (props?: { refresh?: boolean; revisionId?: string }) => void | Promise<void>;
 }> = props => {
   const [isEditing, setIsEditing] = useState(false);
-  const api = useApi();
-  const { data: taskData } = useQuery(['task', { id: props.task.id }], async () => {
-    if (!props.task.id) {
-      return;
-    }
-    return await api.getTaskById<CrowdsourcingTask>(props.task.id);
-  });
+  const { data: taskData } = useApiTask<CrowdsourcingTask>(props.task.id);
 
   const modelId = taskData?.parameters[0] || undefined;
 

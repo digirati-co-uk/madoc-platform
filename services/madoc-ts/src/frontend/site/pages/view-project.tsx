@@ -20,19 +20,23 @@ import { useReviewerTasks } from '../../shared/hooks/use-reviewer-tasks';
 import { ReviewerTasks } from '../../shared/components/ReviewerTasks';
 
 // @todo create universal component and load up the main collection.
-export const ViewProject: React.FC<{
+export const ViewProject: React.FC<Partial<{
   project: ProjectFull;
   collections: CollectionFull;
   manifests: CollectionFull;
-}> = props => {
+}>> = props => {
   const { t } = useTranslation();
 
   const { project, collections, manifests } = props;
-  const contributorTasks = useContributorTasks({ rootTaskId: project.task_id });
-  const reviewerTasks = useReviewerTasks({ rootTaskId: project.task_id });
+  const contributorTasks = useContributorTasks({ rootTaskId: project?.task_id }, !!project);
+  const reviewerTasks = useReviewerTasks({ rootTaskId: project?.task_id }, !!project);
+
+  if (!project) {
+    return null;
+  }
 
   const { allowCollectionNavigation = true, allowManifestNavigation = true } = project.config;
-  const shownCollections = collections.collection.items.slice(0, 4);
+  const shownCollections = collections ? collections.collection.items.slice(0, 4) : [];
 
   return (
     <>
@@ -61,7 +65,7 @@ export const ViewProject: React.FC<{
         done={project.statistics['3'] || 0}
         progress={(project.statistics['2'] || 0) + (project.statistics['1'] || 0)}
       />
-      {allowManifestNavigation && manifests.collection.items.length ? (
+      {allowManifestNavigation && manifests && manifests.collection.items.length ? (
         <>
           <Heading3>Manifests</Heading3>
           <ImageGrid>
@@ -90,7 +94,7 @@ export const ViewProject: React.FC<{
           </ImageGrid>
         </>
       ) : null}
-      {allowCollectionNavigation && shownCollections.length ? (
+      {allowCollectionNavigation && shownCollections.length && collections ? (
         <>
           <Heading3>Collections</Heading3>
           <ImageGrid>

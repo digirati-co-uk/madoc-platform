@@ -1,9 +1,6 @@
 import React, { Suspense, useCallback, useMemo } from 'react';
-import { useQuery } from 'react-query';
-import { CrowdsourcingCanvasTask } from '../../../../gateway/tasks/crowdsourcing-canvas-task';
 import { CrowdsourcingReview } from '../../../../gateway/tasks/crowdsourcing-review';
-import { BreadcrumbContainer, Breadcrumbs } from '../../../shared/atoms/Breadcrumbs';
-import { Heading1, Subheading1 } from '../../../shared/atoms/Heading1';
+import { Breadcrumbs } from '../../../shared/atoms/Breadcrumbs';
 import {
   KanbanAssignee,
   KanbanBoard,
@@ -18,69 +15,46 @@ import {
   KanbanEmpty,
   KanbanCardTextButton,
 } from '../../../shared/atoms/Kanban';
-import { useApi } from '../../../shared/hooks/use-api';
 import { Heading3, Subheading3 } from '../../../shared/atoms/Heading3';
 import { Link, useParams, useHistory } from 'react-router-dom';
 import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
 import TimeAgo from 'react-timeago';
+import { useApiTaskSearch } from '../../../shared/hooks/use-api-task-search';
 import { createLink } from '../../../shared/utility/create-link';
 import { useLocationQuery } from '../../../shared/hooks/use-location-query';
 import { HrefLink } from '../../../shared/utility/href-link';
-import { CrowdsourcingCanvas } from './crowdsourcing-canvas';
-import { CrowdsourcingManifestReview } from './crowdsourcing-manifest-review';
 import { PreviewCrowdsourcingTask } from './preview-crowdsourcing-task.lazy';
 import { MergeCrowdsourcingTask } from './merge-crowdsourcing-task.lazy';
 import { WarningMessage } from '../../../shared/atoms/WarningMessage';
-
-// Step 1 - review each and wait for completion
-// Step 2 - request any changes on individual items or remove them
-//   - List of tasks + actions
-//   - Preview tasks capture model in read-only mode
-// Step 3 - select a base revision to start from
-// Step 4 - built up the revision using the other as reference - with quick copy from other fields
-//   - Merging editor
-// Step 5 - Save everything up and set all of the relevant tasks
 
 export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; refetch?: () => Promise<void> }> = ({
   task: reviewTask,
   refetch,
 }) => {
-  const api = useApi();
   const { slug } = useParams();
   const history = useHistory();
   const { preview } = useLocationQuery();
-  const { data, refetch: refetchTask } = useQuery(
-    ['multi-review-tasks', { id: reviewTask.id }],
-    async () => {
-      return await api.getTasks<CrowdsourcingTask>(0, {
-        all: true,
-        // status: [-1, 0, 1, 2, 3, 4],
-        parent_task_id: reviewTask.parent_task,
-        type: 'crowdsourcing-task',
-        detail: true,
-      });
+
+  const { data, refetch: refetchTask } = useApiTaskSearch<CrowdsourcingTask>({
+    all: true,
+    parent_task_id: reviewTask.parent_task,
+    type: 'crowdsourcing-task',
+    detail: true,
+  });
+
+  const backTasks = useApiTaskSearch<CrowdsourcingReview>(
+    {
+      all: true,
+      type: 'crowdsourcing-review',
+      subject: reviewTask.subject_parent,
+      status: [0, 1, 2, 4],
+      root_task_id: reviewTask.root_task,
     },
     {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchIntervalInBackground: false,
+      enabled: !!reviewTask.subject_parent,
     }
   );
-  const { data: backTask } = useQuery(['back-task', { subject: reviewTask.subject_parent }], async () => {
-    if (reviewTask.subject_parent) {
-      const { tasks: allBackTasks } = await api.getTasks<CrowdsourcingReview>(0, {
-        all: true,
-        type: 'crowdsourcing-review',
-        subject: reviewTask.subject_parent,
-        status: [0, 1, 2, 4],
-        root_task_id: reviewTask.root_task,
-      });
-
-      if (allBackTasks.length) {
-        return allBackTasks[0];
-      }
-    }
-  });
+  const backTask = backTasks.data ? backTasks.data.tasks[0] : undefined;
 
   const lockedTasks = useMemo(
     () =>
@@ -100,7 +74,7 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
           {
             label: reviewTask.name,
             link: createLink({ projectId: slug, taskId: reviewTask.id }),
-            active: !!previewTask,
+            active: !previewTask,
           },
           previewTask
             ? {
@@ -121,9 +95,7 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
   ) : null;
 
   const refreshAll = useCallback(() => {
-    return Promise.all(
-      [refetchTask({ force: true }), refetch ? refetch() : null].filter(r => r !== null) as Promise<void>[]
-    );
+    return Promise.all([refetchTask(), refetch ? refetch() : null].filter(r => r !== null) as Promise<void>[]);
   }, [refetch, refetchTask]);
 
   if (!data) {

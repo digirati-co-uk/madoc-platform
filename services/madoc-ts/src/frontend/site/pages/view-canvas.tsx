@@ -1,14 +1,13 @@
 import React, { useMemo, useState } from 'react';
 import { LockIcon } from '../../shared/atoms/LockIcon';
+import { CanvasNavigation } from '../../shared/components/CanvasNavigation';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { CanvasContext, useVaultEffect } from '@hyperion-framework/react-vault';
 import { CanvasNormalized } from '@hyperion-framework/types';
 import { useApi } from '../../shared/hooks/use-api';
 import { useParams, useHistory, Link } from 'react-router-dom';
-import { useQuery } from 'react-query';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { SimpleAtlasViewer } from '../../shared/components/SimpleAtlasViewer';
-import { SnippetStructure } from '../../shared/components/StructureSnippet';
 import { ProjectListingDescription, ProjectListingItem, ProjectListingTitle } from '../../shared/atoms/ProjectListing';
 import { createLink } from '../../shared/utility/create-link';
 import { ProjectFull } from '../../../types/schemas/project-full';
@@ -22,31 +21,7 @@ import { CrowdsourcingReview } from '../../../gateway/tasks/crowdsourcing-review
 import { SuccessMessage } from '../../shared/atoms/SuccessMessage';
 import { CanvasLoaderType } from './loaders/canvas-loader';
 
-type ViewCanvasProps = CanvasLoaderType['data'] & CanvasLoaderType['context'];
-
-function useManifestStructure(manifestId?: string) {
-  const api = useApi();
-
-  return useQuery(
-    ['manifest-structure', { id: manifestId }],
-    async () => {
-      if (manifestId) {
-        const structure = await api.getSiteManifestStructure(Number(manifestId));
-
-        return {
-          ids: structure.items.map(item => item.id),
-          items: structure.items,
-        };
-      }
-      return undefined;
-    },
-    {
-      refetchInterval: false,
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
-    }
-  );
-}
+type ViewCanvasProps = Partial<CanvasLoaderType['data'] & CanvasLoaderType['context']>;
 
 export const ContinueSubmission: React.FC<{
   project: ProjectFull;
@@ -136,9 +111,11 @@ export const ContinueSubmission: React.FC<{
           </ProjectListingDescription>
         </ProjectListingItem>
         {reviewComponent}
-        <SuccessMessage>
-          {isComplete ? 'This page is complete' : 'The maximum number of contributions has been reached'}
-        </SuccessMessage>
+        {isLoading ? null : (
+          <SuccessMessage>
+            {isComplete ? 'This page is complete' : 'The maximum number of contributions has been reached'}
+          </SuccessMessage>
+        )}
       </div>
     );
   }
@@ -210,21 +187,20 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
   userTasks,
   canUserSubmit,
   canvas,
+  isLoadingTasks,
 }) => {
-  const { id, manifestId, collectionId, slug } = useParams();
+  const { id, manifestId, collectionId } = useParams<{ id: string; manifestId?: string; collectionId?: string }>();
   const [canvasRef, setCanvasRef] = useState<CanvasNormalized>();
-  const structure = useManifestStructure(manifestId);
   const history = useHistory();
 
   const canClaimCanvas = project?.config.claimGranularity ? project?.config.claimGranularity === 'canvas' : true;
   const api = useApi();
-  const idx = structure.data && id ? structure.data.ids.indexOf(Number(id)) : null;
   const completedAndHide = project?.config.allowSubmissionsWhenCanvasComplete === false && canvasTask?.status === 3;
   const user = api.getIsServer() ? undefined : api.getCurrentUser();
   const bypassCanvasNavigation = user
     ? user.scope.indexOf('site.admin') !== -1 || user.scope.indexOf('models.revision') !== -1
     : manifestUserTasks && manifestUserTasks.length > 0;
-  const preventCanvasNavigation = project && project.config.allowCanvasNavigation === false;
+  const preventCanvasNavigation = project ? project.config.allowCanvasNavigation === false : false;
 
   const onContribute = (projectId: number | string) => {
     api
@@ -264,18 +240,16 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
     [canvas]
   );
 
-  console.log({ manifestUserTasks });
-
   return (
     <>
       <DisplayBreadcrumbs />
-      <LocaleString as="h1">{canvas.label}</LocaleString>
+      <LocaleString as="h1">{canvas ? canvas.label : { en: ['...'] }}</LocaleString>
       {project ? (
         <ContinueSubmission
           canClaimCanvas={canClaimCanvas}
           onContribute={onContribute}
           canvasId={Number(id)}
-          isLoading={false}
+          isLoading={isLoadingTasks}
           manifestUserTasks={manifestUserTasks}
           userTasks={userTasks}
           isComplete={completedAndHide}
@@ -296,36 +270,9 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
           <SimpleAtlasViewer style={{ height: project ? '50vh' : '60vh' }} />
         </CanvasContext>
       ) : null}
-      {(!preventCanvasNavigation || bypassCanvasNavigation) && structure.data && idx !== null ? (
-        <div style={{ display: 'flex', marginTop: '1em', marginBottom: '1em' }}>
-          {idx > 0 ? (
-            <SnippetStructure
-              label="Previous:"
-              alignment="left"
-              link={createLink({
-                projectId: slug,
-                collectionId,
-                manifestId,
-                canvasId: structure.data.items[idx - 1].id,
-              })}
-              item={structure.data.items[idx - 1]}
-            />
-          ) : null}
-          {idx < structure.data.items.length - 1 ? (
-            <SnippetStructure
-              label="Next:"
-              alignment="right"
-              link={createLink({
-                projectId: slug,
-                collectionId,
-                manifestId,
-                canvasId: structure.data.items[idx + 1].id,
-              })}
-              item={structure.data.items[idx + 1]}
-            />
-          ) : null}
-        </div>
-      ) : null}
+      {preventCanvasNavigation && !bypassCanvasNavigation ? null : (
+        <CanvasNavigation manifestId={manifestId} canvasId={id} collectionId={collectionId} projectId={project?.slug} />
+      )}
     </>
   );
 };

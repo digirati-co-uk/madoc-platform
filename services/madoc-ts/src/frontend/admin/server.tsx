@@ -8,9 +8,10 @@ import React from 'react';
 React.useLayoutEffect = React.useEffect;
 
 import AdminApp from './index';
+import { queryConfig } from './query-config';
 import { routes } from './routes';
 import { createServerRenderer } from '../shared/utility/create-server-renderer';
 
 const apiGateway = process.env.API_GATEWAY as string;
 
-export const render = createServerRenderer(AdminApp, routes, apiGateway);
+export const render = createServerRenderer(AdminApp, routes, apiGateway, queryConfig);
