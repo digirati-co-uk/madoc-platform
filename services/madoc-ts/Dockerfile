@@ -10,6 +10,7 @@ RUN yarn install
 COPY ./src /home/node/app/src
 COPY ./schemas /home/node/app/schemas
 COPY ./webpack.frontend.js /home/node/app/webpack.frontend.js
+COPY ./webpack.production.js /home/node/app/webpack.production.js
 COPY ./tsconfig.json /home/node/app/tsconfig.json
 COPY ./tsconfig.frontend.json /home/node/app/tsconfig.frontend.json
 COPY ./generate-schemas.js /home/node/app/generate-schemas.js
