@@ -398,6 +398,8 @@ export class ApiClient {
     console.log('You tried to get page number: ', pageQuery);
 
     return [];
+
+    // Facet Types these are just one at a time for now, may switch to a post query with the json if a list!
     return this.request<ManifestListResponse>(
       `/PLACEHOLDER_API_ENDPOINT/seach/fulltext?${searchTerm}` +
         `${facetType ? `&=facet_type=${facetType}` : ``}` +
