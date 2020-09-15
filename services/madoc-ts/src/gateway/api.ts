@@ -43,6 +43,7 @@ import {
 import { CrowdsourcingCanvasTask } from './tasks/crowdsourcing-canvas-task';
 import { ConfigResponse } from '../types/schemas/config-response';
 import { ResourceLinkResponse } from '../database/queries/linking-queries';
+import { string } from 'prop-types';
 
 export class ApiClient {
   private readonly gateway: string;
@@ -392,12 +393,16 @@ export class ApiClient {
 
   /// Search
 
-  async search(searchTerm: string, pageQuery?: number) {
+  async search(searchTerm: string, pageQuery?: number, facetType?: string, facetValue?: string) {
     console.log('You searched for: ', searchTerm);
     console.log('You tried to get page number: ', pageQuery);
 
     return [];
-    return this.request<ManifestListResponse>(`/PLACEHOLDER_API_ENDPOINT/seach/fulltext?${searchTerm}`);
+    return this.request<ManifestListResponse>(
+      `/PLACEHOLDER_API_ENDPOINT/seach/fulltext?${searchTerm}` +
+        `${facetType ? `&=facet_type=${facetType}` : ``}` +
+        `${facetValue ? `&=facet_subtype=${facetValue}` : ``}`
+    );
   }
 
   // IIIF.
