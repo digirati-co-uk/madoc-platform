@@ -34,7 +34,7 @@ import { RevisionRequest } from '@capture-models/types';
 import { ProjectList } from '../types/schemas/project-list';
 import { ProjectFull } from '../types/schemas/project-full';
 import { UserDetails } from '../types/schemas/user-details';
-import { ModelSearch } from '../types/schemas/search';
+import { ModelSearch, SearchResponse } from '../types/schemas/search';
 import {
   CrowdsourcingReview,
   CrowdsourcingReviewMerge,
@@ -206,7 +206,6 @@ export class ApiClient {
       }
       this.isDown = false;
     }
-
     return response.data;
   }
 
@@ -227,6 +226,7 @@ export class ApiClient {
       jwt?: string;
     } = {}
   ) {
+    console.log(endpoint);
     if (!this.publicSiteSlug) {
       throw new Error('Site slug not found');
     }
@@ -394,16 +394,12 @@ export class ApiClient {
   /// Search
 
   async search(searchTerm: string, pageQuery?: number, facetType?: string, facetValue?: string) {
-    console.log('You searched for: ', searchTerm);
-    console.log('You tried to get page number: ', pageQuery);
-
-    return [];
-
     // Facet Types these are just one at a time for now, may switch to a post query with the json if a list!
-    return this.request<ManifestListResponse>(
-      `/PLACEHOLDER_API_ENDPOINT/seach/fulltext?${searchTerm}` +
-        `${facetType ? `&=facet_type=${facetType}` : ``}` +
-        `${facetValue ? `&=facet_subtype=${facetValue}` : ``}`
+    return this.request<SearchResponse>(
+      `http://localhost:8000/search/?fulltext=${searchTerm}` +
+        `${pageQuery ? `&page=${pageQuery}` : ``}` +
+        `${facetType ? `&facet_type=${facetType}` : ``}` +
+        `${facetValue ? `&facet_subtype=${facetValue}` : ``}`
     );
   }
 

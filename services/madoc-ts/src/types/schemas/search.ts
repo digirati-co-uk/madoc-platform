@@ -20,14 +20,25 @@ export type ModelSearch = {
 
 // This needs to be refined
 export type SearchResult = {
-  id: string;
-  label: any;
-  madoc_thumbnail: string;
-  hits: any;
-  resource_id: string;
-  type: string;
-  snippet: string;
   url: string;
+  resource_id: string;
+  resource_type: string;
+  madoc_thumbnail: string;
+  id: string;
+  label: InternationalString;
+  context: Array<{
+    url: string;
+    id: string;
+    type: string;
+  }>;
+  hits: Array<{
+    type: string;
+    subtype: string;
+    snippet: string;
+    language: string;
+    rank: number;
+    original_content: string;
+  }>;
 };
 
 type FacetOption = {
@@ -41,27 +52,7 @@ export type SearchFacet = {
 };
 
 export type SearchResponse = {
-  results: Array<{
-    url: string;
-    resource_id: string;
-    resource_type: string;
-    madoc_thumbnail: string;
-    id: string;
-    label: InternationalString;
-    context: Array<{
-      url: string;
-      id: string;
-      type: string;
-    }>;
-    hits: Array<{
-      type: string;
-      subtype: string;
-      snippet: string;
-      language: string;
-      rank: number;
-      original_content: string;
-    }>;
-  }>;
+  results: Array<SearchResult>;
   pagination: Pagination;
   facets: any;
 };

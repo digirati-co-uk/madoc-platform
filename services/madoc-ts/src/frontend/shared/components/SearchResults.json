@@ -1,1088 +1,1118 @@
 {
-    "pagination": {
-        "page": 1,
-        "totalPages": 1,
-        "totalResults": 24
+  "pagination": {
+    "page": 2,
+    "totalPages": 9,
+    "totalResults": 213
+  },
+  "results": [
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000001006/",
+      "resource_id": "urn:madoc:manifest:0000001006",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000001006/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000001006/manifest.json",
+      "label": {
+        "en": [
+          "Rector Universitatis Lipsiensis ad Solemnia Funeralia Domino Marco Manckeschio, Corona Transylvano, S. Theologiae Studioso eruditione ac moribus eximio, hora I. pomeridiana, hodierno die X. Novembr. Anni M DC XCII. exsolvenda, Proceres Ac Cives Academicos invitat"
+        ]
+      },
+      "context": [
+        {
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000001006/",
+          "id": "urn:madoc:manifest:0000001006",
+          "type": "Manifest"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
+        }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "label': '<b>Rector</b> Universitatis Lipsiensis ad Solemnia Funeralia Domino Marco Manckeschio, Corona Transylvano, S. Theologiae Studioso eruditione ac moribus eximio, hora I. pomeridiana, hodierno die X. Novembr. Anni M DC XCII. exsolvenda, Proceres Ac Cives Academicos invitat",
+          "language": "en",
+          "rank": 1.0,
+          "original_content": "{'label': 'Rector Universitatis Lipsiensis ad Solemnia Funeralia Domino Marco Manckeschio, Corona Transylvano, S. Theologiae Studioso eruditione ac moribus eximio, hora I. pomeridiana, hodierno die X. Novembr. Anni M DC XCII. exsolvenda, Proceres Ac Cives Academicos invitat'}"
+        }
+      ]
     },
-    "results": [
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000008797/",
+      "resource_id": "urn:madoc:manifest:0000008797",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000008797/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000008797/manifest.json",
+      "label": {
+        "en": [
+          "Id, ... maxumo cum damno Rerum fuarum, Gorlicium, in Gymnasii Gorlicensis Acroatorio Majori, inter lacrymas pariterq[ue] & gratias inter ac preces, Oratione publica memorandum, H. E. Orationem de ingenti vehementissimoq[ue] Incendio, qvod Anno prædicto prædictaqve & Die ac Hora Gorlicio contigit meliorem Urbis partem una cum splendidissima D. Petri & Pauli Æde celeriter absumens, à se In Memoriam Rei, Anno M DC XCII. Die XIX. Martii, ... triplici adhibitô Argumentô habendam, publicat, Bonosqve ac Doctos omnes ad benevolè audiendum, observantuer, officiosè, humaniter invitat Christianus Funccius, Rector"
+        ]
+      },
+      "context": [
         {
-            "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000013213/",
-            "resource_id": "urn:madoc:manifest:0000013213",
-            "resource_type": "Manifest",
-            "madoc_thumbnail": "http://madoc.foo/thumbnail/0000013213/fake.jpg",
-            "id": "https://iiif.ub.uni-leipzig.de/0000013213/manifest.json",
-            "label": {
-                "en": [
-                    "Sieben Predigten/ Vom Ewigen Leben der Kinder Gottes"
-                ]
-            },
-            "context": [
-                {
-                    "url": "http://localhost:8000/contexts/urnmadocsite2/",
-                    "id": "urn:madoc:site:2",
-                    "type": "Site"
-                },
-                {
-                    "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
-                    "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
-                    "type": "Collection"
-                }
-            ],
-            "hits": [
-                {
-                    "type": "descriptive",
-                    "subtype": "label",
-                    "snippet": "label': 'Sieben Predigten/ Vom Ewigen Leben der Kinder <b>Gottes</b>",
-                    "language": "en",
-                    "rank": 1.0,
-                    "original_content": "{'label': 'Sieben Predigten/ Vom Ewigen Leben der Kinder Gottes'}"
-                }
-            ]
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000008797/",
+          "id": "urn:madoc:manifest:0000008797",
+          "type": "Manifest"
         },
         {
-            "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000000730/",
-            "resource_id": "urn:madoc:manifest:0000000730",
-            "resource_type": "Manifest",
-            "madoc_thumbnail": "http://madoc.foo/thumbnail/0000000730/fake.jpg",
-            "id": "https://iiif.ub.uni-leipzig.de/0000000730/manifest.json",
-            "label": {
-                "en": [
-                    "Herrlicher Wechsel, den Gott mit jungen gerechten Menschen helt ..."
-                ]
-            },
-            "context": [
-                {
-                    "url": "http://localhost:8000/contexts/urnmadocsite2/",
-                    "id": "urn:madoc:site:2",
-                    "type": "Site"
-                },
-                {
-                    "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
-                    "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
-                    "type": "Collection"
-                }
-            ],
-            "hits": [
-                {
-                    "type": "descriptive",
-                    "subtype": "label",
-                    "snippet": "label': 'Herrlicher Wechsel, den <b>Gott</b> mit jungen gerechten Menschen helt",
-                    "language": "en",
-                    "rank": 1.0,
-                    "original_content": "{'label': 'Herrlicher Wechsel, den Gott mit jungen gerechten Menschen helt ...'}"
-                }
-            ]
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
         },
         {
-            "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000000984/",
-            "resource_id": "urn:madoc:manifest:0000000984",
-            "resource_type": "Manifest",
-            "madoc_thumbnail": "http://madoc.foo/thumbnail/0000000984/fake.jpg",
-            "id": "https://iiif.ub.uni-leipzig.de/0000000984/manifest.json",
-            "label": {
-                "en": [
-                    "Frommer Christen in Noth vnd Todt Vest Vertrauen zu ihrem Gott ..."
-                ]
-            },
-            "context": [
-                {
-                    "url": "http://localhost:8000/contexts/urnmadocsite2/",
-                    "id": "urn:madoc:site:2",
-                    "type": "Site"
-                },
-                {
-                    "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
-                    "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
-                    "type": "Collection"
-                }
-            ],
-            "hits": [
-                {
-                    "type": "descriptive",
-                    "subtype": "label",
-                    "snippet": "label': 'Frommer Christen in Noth vnd Todt Vest Vertrauen zu ihrem <b>Gott</b>",
-                    "language": "en",
-                    "rank": 1.0,
-                    "original_content": "{'label': 'Frommer Christen in Noth vnd Todt Vest Vertrauen zu ihrem Gott ...'}"
-                }
-            ]
-        },
-        {
-            "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000006002/",
-            "resource_id": "urn:madoc:manifest:0000006002",
-            "resource_type": "Manifest",
-            "madoc_thumbnail": "http://madoc.foo/thumbnail/0000006002/fake.jpg",
-            "id": "https://iiif.ub.uni-leipzig.de/0000006002/manifest.json",
-            "label": {
-                "en": [
-                    "Zweyerley Ursachen, warum Gott die Seinigen manchmal durch einen frühzeitigen Tod hinwegnehme ... als der weyland ... Herr Georg Sigmund Donauer ... nach dessen ... selig genommenen Abschied ... zu Erde bestattet wurde ..."
-                ]
-            },
-            "context": [
-                {
-                    "url": "http://localhost:8000/contexts/urnmadocsite2/",
-                    "id": "urn:madoc:site:2",
-                    "type": "Site"
-                },
-                {
-                    "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
-                    "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
-                    "type": "Collection"
-                }
-            ],
-            "hits": [
-                {
-                    "type": "descriptive",
-                    "subtype": "label",
-                    "snippet": "label': 'Zweyerley Ursachen, warum <b>Gott</b> die Seinigen manchmal durch einen frühzeitigen Tod hinwegnehme ... als der weyland ... Herr Georg Sigmund Donauer ... nach dessen ... selig genommenen Abschied ... zu Erde bestattet wurde",
-                    "language": "en",
-                    "rank": 1.0,
-                    "original_content": "{'label': 'Zweyerley Ursachen, warum Gott die Seinigen manchmal durch einen frühzeitigen Tod hinwegnehme ... als der weyland ... Herr Georg Sigmund Donauer ... nach dessen ... selig genommenen Abschied ... zu Erde bestattet wurde ...'}"
-                }
-            ]
-        },
-        {
-            "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000010542/",
-            "resource_id": "urn:madoc:manifest:0000010542",
-            "resource_type": "Manifest",
-            "madoc_thumbnail": "http://madoc.foo/thumbnail/0000010542/fake.jpg",
-            "id": "https://iiif.ub.uni-leipzig.de/0000010542/manifest.json",
-            "label": {
-                "en": [
-                    "Warheits Vortrab oder Vorschmack Dem heiligen ... Gott ... zu Ehren"
-                ]
-            },
-            "context": [
-                {
-                    "url": "http://localhost:8000/contexts/urnmadocsite2/",
-                    "id": "urn:madoc:site:2",
-                    "type": "Site"
-                },
-                {
-                    "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
-                    "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
-                    "type": "Collection"
-                }
-            ],
-            "hits": [
-                {
-                    "type": "descriptive",
-                    "subtype": "label",
-                    "snippet": "label': 'Warheits Vortrab oder Vorschmack Dem heiligen ... <b>Gott</b> ... zu Ehren",
-                    "language": "en",
-                    "rank": 1.0,
-                    "original_content": "{'label': 'Warheits Vortrab oder Vorschmack Dem heiligen ... Gott ... zu Ehren'}"
-                }
-            ]
-        },
-        {
-            "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000000292/",
-            "resource_id": "urn:madoc:manifest:0000000292",
-            "resource_type": "Manifest",
-            "madoc_thumbnail": "http://madoc.foo/thumbnail/0000000292/fake.jpg",
-            "id": "https://iiif.ub.uni-leipzig.de/0000000292/manifest.json",
-            "label": {
-                "en": [
-                    "Edles Kleinodt und Trost der Kinder Gottes ... Zu Christlichem EhrenGedächtniß Der weiland ... Frawen Catharinae, Gebornen Zedlitzen, Des ... Herren Christoff Georg  vom Bergk, ... Gemahlin"
-                ]
-            },
-            "context": [
-                {
-                    "url": "http://localhost:8000/contexts/urnmadocsite2/",
-                    "id": "urn:madoc:site:2",
-                    "type": "Site"
-                },
-                {
-                    "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
-                    "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
-                    "type": "Collection"
-                }
-            ],
-            "hits": [
-                {
-                    "type": "descriptive",
-                    "subtype": "label",
-                    "snippet": "label': 'Edles Kleinodt und Trost der Kinder <b>Gottes</b> ... Zu Christlichem EhrenGedächtniß Der weiland ... Frawen Catharinae, Gebornen Zedlitzen, Des ... Herren Christoff Georg  vom Bergk, ... Gemahlin",
-                    "language": "en",
-                    "rank": 1.0,
-                    "original_content": "{'label': 'Edles Kleinodt und Trost der Kinder Gottes ... Zu Christlichem EhrenGedächtniß Der weiland ... Frawen Catharinae, Gebornen Zedlitzen, Des ... Herren Christoff Georg  vom Bergk, ... Gemahlin'}"
-                }
-            ]
-        },
-        {
-            "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000000143/",
-            "resource_id": "urn:madoc:manifest:0000000143",
-            "resource_type": "Manifest",
-            "madoc_thumbnail": "http://madoc.foo/thumbnail/0000000143/fake.jpg",
-            "id": "https://iiif.ub.uni-leipzig.de/0000000143/manifest.json",
-            "label": {
-                "en": [
-                    "Piorum Confidentia. Trost und Freudigkeit der wahren Kinder Gottes im Leben und Sterben,"
-                ]
-            },
-            "context": [
-                {
-                    "url": "http://localhost:8000/contexts/urnmadocsite2/",
-                    "id": "urn:madoc:site:2",
-                    "type": "Site"
-                },
-                {
-                    "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
-                    "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
-                    "type": "Collection"
-                }
-            ],
-            "hits": [
-                {
-                    "type": "descriptive",
-                    "subtype": "label",
-                    "snippet": "label': 'Piorum Confidentia. Trost und Freudigkeit der wahren Kinder <b>Gottes</b> im Leben und Sterben",
-                    "language": "en",
-                    "rank": 1.0,
-                    "original_content": "{'label': 'Piorum Confidentia. Trost und Freudigkeit der wahren Kinder Gottes im Leben und Sterben,'}"
-                }
-            ]
-        },
-        {
-            "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000013055/",
-            "resource_id": "urn:madoc:manifest:0000013055",
-            "resource_type": "Manifest",
-            "madoc_thumbnail": "http://madoc.foo/thumbnail/0000013055/fake.jpg",
-            "id": "https://iiif.ub.uni-leipzig.de/0000013055/manifest.json",
-            "label": {
-                "en": [
-                    "Das holdselige und liebreiche Mutter-Hertz Gottes"
-                ]
-            },
-            "context": [
-                {
-                    "url": "http://localhost:8000/contexts/urnmadocsite2/",
-                    "id": "urn:madoc:site:2",
-                    "type": "Site"
-                },
-                {
-                    "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
-                    "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
-                    "type": "Collection"
-                }
-            ],
-            "hits": [
-                {
-                    "type": "descriptive",
-                    "subtype": "label",
-                    "snippet": "label': 'Das holdselige und liebreiche Mutter-Hertz <b>Gottes</b>",
-                    "language": "en",
-                    "rank": 1.0,
-                    "original_content": "{'label': 'Das holdselige und liebreiche Mutter-Hertz Gottes'}"
-                }
-            ]
-        },
-        {
-            "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000010885/",
-            "resource_id": "urn:madoc:manifest:0000010885",
-            "resource_type": "Manifest",
-            "madoc_thumbnail": "http://madoc.foo/thumbnail/0000010885/fake.jpg",
-            "id": "https://iiif.ub.uni-leipzig.de/0000010885/manifest.json",
-            "label": {
-                "en": [
-                    "Von Gottes Gnaden Wir Johann George der Ander/ Hertzog zu Sachsen/ Jülich/ Cleve und Berg/ ... thun kund/ ... daß Wir ... angeregte Ordnung (so uns unterm Signato Leipzig den 11. dieses Monats in Originali mit vorgetragen und in vidimirter Abschrifft bey Vnsrer Cantzley behalten worden/ und lautet wie nachfolget;) bestätiget haben: ... dasz dero in Anno 1661. publicierten Tauff-Ordnung zu wider in unterschiednen Excessen continuiret ..."
-                ]
-            },
-            "context": [
-                {
-                    "url": "http://localhost:8000/contexts/urnmadocsite2/",
-                    "id": "urn:madoc:site:2",
-                    "type": "Site"
-                },
-                {
-                    "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
-                    "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
-                    "type": "Collection"
-                }
-            ],
-            "hits": [
-                {
-                    "type": "descriptive",
-                    "subtype": "label",
-                    "snippet": "label': 'Von <b>Gottes</b> Gnaden Wir Johann George der Ander/ Hertzog zu Sachsen/ Jülich/ Cleve und Berg/ ... thun kund/ ... daß Wir ... angeregte Ordnung (so uns unterm Signato Leipzig den 11. dieses Monats in Originali mit vorgetragen und in vidimirter Abschrifft bey Vnsrer Cantzley behalten worden/ und lautet wie nachfolget;) bestätiget haben",
-                    "language": "en",
-                    "rank": 1.0,
-                    "original_content": "{'label': 'Von Gottes Gnaden Wir Johann George der Ander/ Hertzog zu Sachsen/ Jülich/ Cleve und Berg/ ... thun kund/ ... daß Wir ... angeregte Ordnung (so uns unterm Signato Leipzig den 11. dieses Monats in Originali mit vorgetragen und in vidimirter Abschrifft bey Vnsrer Cantzley behalten worden/ und lautet wie nachfolget;) bestätiget haben: ... dasz dero in Anno 1661. publicierten Tauff-Ordnung zu wider in unterschiednen Excessen continuiret ...'}"
-                }
-            ]
-        },
-        {
-            "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000006474/",
-            "resource_id": "urn:madoc:manifest:0000006474",
-            "resource_type": "Manifest",
-            "madoc_thumbnail": "http://madoc.foo/thumbnail/0000006474/fake.jpg",
-            "id": "https://iiif.ub.uni-leipzig.de/0000006474/manifest.json",
-            "label": {
-                "en": [
-                    "Vmbständiger Bericht von dem wunderbahren Hailbrunnen, So zu Hornhaussen, bey Halberstatt im Frühling dieses 1646. jars auß vnergründlicher Krafft vnd Gnade Gottes entsprungen: Ferner auch durch desselben Allmacht sich eben so seltzam vermehret"
-                ]
-            },
-            "context": [
-                {
-                    "url": "http://localhost:8000/contexts/urnmadocsite2/",
-                    "id": "urn:madoc:site:2",
-                    "type": "Site"
-                },
-                {
-                    "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
-                    "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
-                    "type": "Collection"
-                }
-            ],
-            "hits": [
-                {
-                    "type": "descriptive",
-                    "subtype": "label",
-                    "snippet": "label': 'Vmbständiger Bericht von dem wunderbahren Hailbrunnen, So zu Hornhaussen, bey Halberstatt im Frühling dieses 1646. jars auß vnergründlicher Krafft vnd Gnade <b>Gottes</b> entsprungen: Ferner auch durch desselben Allmacht sich eben so seltzam vermehret",
-                    "language": "en",
-                    "rank": 1.0,
-                    "original_content": "{'label': 'Vmbständiger Bericht von dem wunderbahren Hailbrunnen, So zu Hornhaussen, bey Halberstatt im Frühling dieses 1646. jars auß vnergründlicher Krafft vnd Gnade Gottes entsprungen: Ferner auch durch desselben Allmacht sich eben so seltzam vermehret'}"
-                }
-            ]
-        },
-        {
-            "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000010882/",
-            "resource_id": "urn:madoc:manifest:0000010882",
-            "resource_type": "Manifest",
-            "madoc_thumbnail": "http://madoc.foo/thumbnail/0000010882/fake.jpg",
-            "id": "https://iiif.ub.uni-leipzig.de/0000010882/manifest.json",
-            "label": {
-                "en": [
-                    "Von Gottes Gnaden/ Wir Johann Georg der Dritte/ Hertzog zu Sachsen, Jülich ... Fügen allen und ieden unsern Unterthanen ... hiermit zu wissen"
-                ]
-            },
-            "context": [
-                {
-                    "url": "http://localhost:8000/contexts/urnmadocsite2/",
-                    "id": "urn:madoc:site:2",
-                    "type": "Site"
-                },
-                {
-                    "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
-                    "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
-                    "type": "Collection"
-                }
-            ],
-            "hits": [
-                {
-                    "type": "descriptive",
-                    "subtype": "label",
-                    "snippet": "label': 'Von <b>Gottes</b> Gnaden/ Wir Johann Georg der Dritte/ Hertzog zu Sachsen, Jülich ... Fügen allen und ieden unsern Unterthanen ... hiermit zu wissen",
-                    "language": "en",
-                    "rank": 1.0,
-                    "original_content": "{'label': 'Von Gottes Gnaden/ Wir Johann Georg der Dritte/ Hertzog zu Sachsen, Jülich ... Fügen allen und ieden unsern Unterthanen ... hiermit zu wissen'}"
-                }
-            ]
-        },
-        {
-            "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000012895/",
-            "resource_id": "urn:madoc:manifest:0000012895",
-            "resource_type": "Manifest",
-            "madoc_thumbnail": "http://madoc.foo/thumbnail/0000012895/fake.jpg",
-            "id": "https://iiif.ub.uni-leipzig.de/0000012895/manifest.json",
-            "label": {
-                "en": [
-                    "Absolutum Decretum. Das ist: Blosser Rathschlus Gottes, Aus welchem Er den grösten Theil der Menschen ohne Ansehung des Unglaubens und der Sünde zur ewigen Verdamnis verstossen, die Andern aber ohne Ansehung des Glaubens an Christum zum ewigen Leben erwählet; nach der Lehre des Dordrechtischen Synodi"
-                ]
-            },
-            "context": [
-                {
-                    "url": "http://localhost:8000/contexts/urnmadocsite2/",
-                    "id": "urn:madoc:site:2",
-                    "type": "Site"
-                },
-                {
-                    "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
-                    "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
-                    "type": "Collection"
-                }
-            ],
-            "hits": [
-                {
-                    "type": "descriptive",
-                    "subtype": "label",
-                    "snippet": "label': 'Absolutum Decretum. Das ist: Blosser Rathschlus <b>Gottes</b>, Aus welchem Er den grösten Theil der Menschen ohne Ansehung des Unglaubens und der Sünde zur ewigen Verdamnis verstossen, die Andern aber ohne Ansehung des Glaubens an Christum zum ewigen Leben erwählet; nach der Lehre des Dordrechtischen Synodi",
-                    "language": "en",
-                    "rank": 1.0,
-                    "original_content": "{'label': 'Absolutum Decretum. Das ist: Blosser Rathschlus Gottes, Aus welchem Er den grösten Theil der Menschen ohne Ansehung des Unglaubens und der Sünde zur ewigen Verdamnis verstossen, die Andern aber ohne Ansehung des Glaubens an Christum zum ewigen Leben erwählet; nach der Lehre des Dordrechtischen Synodi'}"
-                }
-            ]
-        },
-        {
-            "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000008790/",
-            "resource_id": "urn:madoc:manifest:0000008790",
-            "resource_type": "Manifest",
-            "madoc_thumbnail": "http://madoc.foo/thumbnail/0000008790/fake.jpg",
-            "id": "https://iiif.ub.uni-leipzig.de/0000008790/manifest.json",
-            "label": {
-                "en": [
-                    "Gott Der Herr unter Sonn und Schild/ aus bißher genossener Herzlicher Erleuchtung und Kräfftiger Beschützung betrachtet"
-                ]
-            },
-            "context": [
-                {
-                    "url": "http://localhost:8000/contexts/urnmadocsite2/",
-                    "id": "urn:madoc:site:2",
-                    "type": "Site"
-                },
-                {
-                    "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
-                    "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
-                    "type": "Collection"
-                }
-            ],
-            "hits": [
-                {
-                    "type": "descriptive",
-                    "subtype": "label",
-                    "snippet": "label': '<b>Gott</b> Der Herr unter Sonn und Schild/ aus bißher genossener Herzlicher Erleuchtung und Kräfftiger Beschützung betrachtet",
-                    "language": "en",
-                    "rank": 1.0,
-                    "original_content": "{'label': 'Gott Der Herr unter Sonn und Schild/ aus bißher genossener Herzlicher Erleuchtung und Kräfftiger Beschützung betrachtet'}"
-                }
-            ]
-        },
-        {
-            "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000008541/",
-            "resource_id": "urn:madoc:manifest:0000008541",
-            "resource_type": "Manifest",
-            "madoc_thumbnail": "http://madoc.foo/thumbnail/0000008541/fake.jpg",
-            "id": "https://iiif.ub.uni-leipzig.de/0000008541/manifest.json",
-            "label": {
-                "en": [
-                    "Unser von Gottes Gnaden, Friderich Wilhelms, Marggraffens zu Brandenburg, ... Chur-Fürsten ... Ordnung und Constitution, wie es mit den Verloebnissen, Hochzeiten, Kindelbieren, Begraebnissen und andern Gelagen der Bawers-Leute ... der Alten-Marck und Priegnitz, auch Mittel-Marck, wie ingleichen der Graffschafft Ruppin gehalten worden sol"
-                ]
-            },
-            "context": [
-                {
-                    "url": "http://localhost:8000/contexts/urnmadocsite2/",
-                    "id": "urn:madoc:site:2",
-                    "type": "Site"
-                },
-                {
-                    "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
-                    "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
-                    "type": "Collection"
-                }
-            ],
-            "hits": [
-                {
-                    "type": "descriptive",
-                    "subtype": "label",
-                    "snippet": "label': 'Unser von <b>Gottes</b> Gnaden, Friderich Wilhelms, Marggraffens zu Brandenburg, ... Chur-Fürsten ... Ordnung und Constitution, wie es mit den Verloebnissen, Hochzeiten, Kindelbieren, Begraebnissen und andern Gelagen der Bawers-Leute ... der Alten-Marck und Priegnitz, auch Mittel-Marck, wie ingleichen der Graffschafft Ruppin gehalten worden",
-                    "language": "en",
-                    "rank": 1.0,
-                    "original_content": "{'label': 'Unser von Gottes Gnaden, Friderich Wilhelms, Marggraffens zu Brandenburg, ... Chur-Fürsten ... Ordnung und Constitution, wie es mit den Verloebnissen, Hochzeiten, Kindelbieren, Begraebnissen und andern Gelagen der Bawers-Leute ... der Alten-Marck und Priegnitz, auch Mittel-Marck, wie ingleichen der Graffschafft Ruppin gehalten worden sol'}"
-                }
-            ]
-        },
-        {
-            "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000013047/",
-            "resource_id": "urn:madoc:manifest:0000013047",
-            "resource_type": "Manifest",
-            "madoc_thumbnail": "http://madoc.foo/thumbnail/0000013047/fake.jpg",
-            "id": "https://iiif.ub.uni-leipzig.de/0000013047/manifest.json",
-            "label": {
-                "en": [
-                    "Semper Vivum, Stetblühende Blume einer gläubigen Seele, In Gottes Garten gesetzt, und bey Christlicher Volckreicher Leichenbestattung Des ... Herrn Jacobi von Ryssel, Bürgers, Handelsmanns, und Krahmers zu Leipzig."
-                ]
-            },
-            "context": [
-                {
-                    "url": "http://localhost:8000/contexts/urnmadocsite2/",
-                    "id": "urn:madoc:site:2",
-                    "type": "Site"
-                },
-                {
-                    "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
-                    "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
-                    "type": "Collection"
-                }
-            ],
-            "hits": [
-                {
-                    "type": "descriptive",
-                    "subtype": "label",
-                    "snippet": "label': 'Semper Vivum, Stetblühende Blume einer gläubigen Seele, In <b>Gottes</b> Garten gesetzt, und bey Christlicher Volckreicher Leichenbestattung Des ... Herrn Jacobi von Ryssel, Bürgers, Handelsmanns, und Krahmers zu Leipzig",
-                    "language": "en",
-                    "rank": 1.0,
-                    "original_content": "{'label': 'Semper Vivum, Stetblühende Blume einer gläubigen Seele, In Gottes Garten gesetzt, und bey Christlicher Volckreicher Leichenbestattung Des ... Herrn Jacobi von Ryssel, Bürgers, Handelsmanns, und Krahmers zu Leipzig.'}"
-                }
-            ]
-        },
-        {
-            "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000010686/",
-            "resource_id": "urn:madoc:manifest:0000010686",
-            "resource_type": "Manifest",
-            "madoc_thumbnail": "http://madoc.foo/thumbnail/0000010686/fake.jpg",
-            "id": "https://iiif.ub.uni-leipzig.de/0000010686/manifest.json",
-            "label": {
-                "en": [
-                    "Deß alten Gottes alte Vater-Trew ..."
-                ]
-            },
-            "context": [
-                {
-                    "url": "http://localhost:8000/contexts/urnmadocsite2/",
-                    "id": "urn:madoc:site:2",
-                    "type": "Site"
-                },
-                {
-                    "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
-                    "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
-                    "type": "Collection"
-                }
-            ],
-            "hits": [
-                {
-                    "type": "descriptive",
-                    "subtype": "label",
-                    "snippet": "label': 'Deß alten <b>Gottes</b> alte Vater-Trew",
-                    "language": "en",
-                    "rank": 1.0,
-                    "original_content": "{'label': 'Deß alten Gottes alte Vater-Trew ...'}"
-                }
-            ]
-        },
-        {
-            "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000008597/",
-            "resource_id": "urn:madoc:manifest:0000008597",
-            "resource_type": "Manifest",
-            "madoc_thumbnail": "http://madoc.foo/thumbnail/0000008597/fake.jpg",
-            "id": "https://iiif.ub.uni-leipzig.de/0000008597/manifest.json",
-            "label": {
-                "en": [
-                    "Der von Gott eingesetzte Chur-Sächsische Salomon aus dem 1. Buch der Chron. cap. XXX.23.24 zu allerunterthänigsten Ehren Dem Durchlauchtigsten Fürsten und Herren Herrn Johann Georg dem Dritten/Herzogen zu Sachsen..."
-                ]
-            },
-            "context": [
-                {
-                    "url": "http://localhost:8000/contexts/urnmadocsite2/",
-                    "id": "urn:madoc:site:2",
-                    "type": "Site"
-                },
-                {
-                    "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
-                    "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
-                    "type": "Collection"
-                }
-            ],
-            "hits": [
-                {
-                    "type": "descriptive",
-                    "subtype": "label",
-                    "snippet": "label': 'Der von <b>Gott</b> eingesetzte Chur-Sächsische Salomon aus dem 1. Buch der Chron. cap. XXX.23.24 zu allerunterthänigsten Ehren Dem Durchlauchtigsten Fürsten und Herren Herrn Johann Georg dem Dritten/Herzogen zu Sachsen",
-                    "language": "en",
-                    "rank": 1.0,
-                    "original_content": "{'label': 'Der von Gott eingesetzte Chur-Sächsische Salomon aus dem 1. Buch der Chron. cap. XXX.23.24 zu allerunterthänigsten Ehren Dem Durchlauchtigsten Fürsten und Herren Herrn Johann Georg dem Dritten/Herzogen zu Sachsen...'}"
-                }
-            ]
-        },
-        {
-            "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000000230/",
-            "resource_id": "urn:madoc:manifest:0000000230",
-            "resource_type": "Manifest",
-            "madoc_thumbnail": "http://madoc.foo/thumbnail/0000000230/fake.jpg",
-            "id": "https://iiif.ub.uni-leipzig.de/0000000230/manifest.json",
-            "label": {
-                "en": [
-                    "Cimelium Gemmis Illuminatum Oder Das Güldne Kleinod Gottes"
-                ]
-            },
-            "context": [
-                {
-                    "url": "http://localhost:8000/contexts/urnmadocsite2/",
-                    "id": "urn:madoc:site:2",
-                    "type": "Site"
-                },
-                {
-                    "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
-                    "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
-                    "type": "Collection"
-                }
-            ],
-            "hits": [
-                {
-                    "type": "descriptive",
-                    "subtype": "label",
-                    "snippet": "label': 'Cimelium Gemmis Illuminatum Oder Das Güldne Kleinod <b>Gottes</b>",
-                    "language": "en",
-                    "rank": 1.0,
-                    "original_content": "{'label': 'Cimelium Gemmis Illuminatum Oder Das Güldne Kleinod Gottes'}"
-                }
-            ]
-        },
-        {
-            "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000013242/",
-            "resource_id": "urn:madoc:manifest:0000013242",
-            "resource_type": "Manifest",
-            "madoc_thumbnail": "http://madoc.foo/thumbnail/0000013242/fake.jpg",
-            "id": "https://iiif.ub.uni-leipzig.de/0000013242/manifest.json",
-            "label": {
-                "en": [
-                    "Schul-Latein oder Schul-Pflicht Aller rechtgläubigen Kinder Gottes Bey Christlicher und ansehnlichser Leichbestattung Des ... Herrn M. Georgii Leuschners/ Alten wohlverdienten Rectoris bey der Schulen zu Colditz"
-                ]
-            },
-            "context": [
-                {
-                    "url": "http://localhost:8000/contexts/urnmadocsite2/",
-                    "id": "urn:madoc:site:2",
-                    "type": "Site"
-                },
-                {
-                    "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
-                    "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
-                    "type": "Collection"
-                }
-            ],
-            "hits": [
-                {
-                    "type": "descriptive",
-                    "subtype": "label",
-                    "snippet": "label': 'Schul-Latein oder Schul-Pflicht Aller rechtgläubigen Kinder <b>Gottes</b> Bey Christlicher und ansehnlichser Leichbestattung Des ... Herrn M. Georgii Leuschners/ Alten wohlverdienten Rectoris bey der Schulen zu Colditz",
-                    "language": "en",
-                    "rank": 1.0,
-                    "original_content": "{'label': 'Schul-Latein oder Schul-Pflicht Aller rechtgläubigen Kinder Gottes Bey Christlicher und ansehnlichser Leichbestattung Des ... Herrn M. Georgii Leuschners/ Alten wohlverdienten Rectoris bey der Schulen zu Colditz'}"
-                }
-            ]
-        },
-        {
-            "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000010883/",
-            "resource_id": "urn:madoc:manifest:0000010883",
-            "resource_type": "Manifest",
-            "madoc_thumbnail": "http://madoc.foo/thumbnail/0000010883/fake.jpg",
-            "id": "https://iiif.ub.uni-leipzig.de/0000010883/manifest.json",
-            "label": {
-                "en": [
-                    "Von Gottes Gnaden/ Wir/ Johann Georg der Dritte/ Hertzog zu Sachsen/ Jülich ... Fügen hiermit iedermänniglich zu wissen, Welcher gestalt Uns eine getreue Landschafft bey ihrer jüngsten Versamlung alhier, nach Inhalt des erfolgten Abschiedes unter andern auch den doppelten Fleisch-Pfennig von Banck- und einfachen von Hauß-Schlachten ..."
-                ]
-            },
-            "context": [
-                {
-                    "url": "http://localhost:8000/contexts/urnmadocsite2/",
-                    "id": "urn:madoc:site:2",
-                    "type": "Site"
-                },
-                {
-                    "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
-                    "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
-                    "type": "Collection"
-                }
-            ],
-            "hits": [
-                {
-                    "type": "descriptive",
-                    "subtype": "label",
-                    "snippet": "label': 'Von <b>Gottes</b> Gnaden/ Wir/ Johann Georg der Dritte/ Hertzog zu Sachsen/ Jülich ... Fügen hiermit iedermänniglich zu wissen, Welcher gestalt Uns eine getreue Landschafft bey ihrer jüngsten Versamlung alhier, nach Inhalt des erfolgten Abschiedes unter andern auch den doppelten Fleisch-Pfennig von Banck- und einfachen von Hauß-Schlachten",
-                    "language": "en",
-                    "rank": 1.0,
-                    "original_content": "{'label': 'Von Gottes Gnaden/ Wir/ Johann Georg der Dritte/ Hertzog zu Sachsen/ Jülich ... Fügen hiermit iedermänniglich zu wissen, Welcher gestalt Uns eine getreue Landschafft bey ihrer jüngsten Versamlung alhier, nach Inhalt des erfolgten Abschiedes unter andern auch den doppelten Fleisch-Pfennig von Banck- und einfachen von Hauß-Schlachten ...'}"
-                }
-            ]
-        },
-        {
-            "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000012588/",
-            "resource_id": "urn:madoc:manifest:0000012588",
-            "resource_type": "Manifest",
-            "madoc_thumbnail": "http://madoc.foo/thumbnail/0000012588/fake.jpg",
-            "id": "https://iiif.ub.uni-leipzig.de/0000012588/manifest.json",
-            "label": {
-                "en": [
-                    "Eine kurtze, einfältige, aber doch in Gottes Wort gegründete Leich-Predigt"
-                ]
-            },
-            "context": [
-                {
-                    "url": "http://localhost:8000/contexts/urnmadocsite2/",
-                    "id": "urn:madoc:site:2",
-                    "type": "Site"
-                },
-                {
-                    "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
-                    "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
-                    "type": "Collection"
-                }
-            ],
-            "hits": [
-                {
-                    "type": "descriptive",
-                    "subtype": "label",
-                    "snippet": "label': 'Eine kurtze, einfältige, aber doch in <b>Gottes</b> Wort gegründete Leich-Predigt",
-                    "language": "en",
-                    "rank": 1.0,
-                    "original_content": "{'label': 'Eine kurtze, einfältige, aber doch in Gottes Wort gegründete Leich-Predigt'}"
-                }
-            ]
-        },
-        {
-            "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000006011/",
-            "resource_id": "urn:madoc:manifest:0000006011",
-            "resource_type": "Manifest",
-            "madoc_thumbnail": "http://madoc.foo/thumbnail/0000006011/fake.jpg",
-            "id": "https://iiif.ub.uni-leipzig.de/0000006011/manifest.json",
-            "label": {
-                "en": [
-                    "Politica Coelestis, Die Himmlische Politic der heiligen Bürger und Haußgenossen Gottes"
-                ]
-            },
-            "context": [
-                {
-                    "url": "http://localhost:8000/contexts/urnmadocsite2/",
-                    "id": "urn:madoc:site:2",
-                    "type": "Site"
-                },
-                {
-                    "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
-                    "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
-                    "type": "Collection"
-                }
-            ],
-            "hits": [
-                {
-                    "type": "descriptive",
-                    "subtype": "label",
-                    "snippet": "label': 'Politica Coelestis, Die Himmlische Politic der heiligen Bürger und Haußgenossen <b>Gottes</b>",
-                    "language": "en",
-                    "rank": 1.0,
-                    "original_content": "{'label': 'Politica Coelestis, Die Himmlische Politic der heiligen Bürger und Haußgenossen Gottes'}"
-                }
-            ]
-        },
-        {
-            "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000012532/",
-            "resource_id": "urn:madoc:manifest:0000012532",
-            "resource_type": "Manifest",
-            "madoc_thumbnail": "http://madoc.foo/thumbnail/0000012532/fake.jpg",
-            "id": "https://iiif.ub.uni-leipzig.de/0000012532/manifest.json",
-            "label": {
-                "en": [
-                    "Das holdselige und liebreiche Mutter-Hertze Gottes."
-                ]
-            },
-            "context": [
-                {
-                    "url": "http://localhost:8000/contexts/urnmadocsite2/",
-                    "id": "urn:madoc:site:2",
-                    "type": "Site"
-                },
-                {
-                    "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
-                    "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
-                    "type": "Collection"
-                }
-            ],
-            "hits": [
-                {
-                    "type": "descriptive",
-                    "subtype": "label",
-                    "snippet": "label': 'Das holdselige und liebreiche Mutter-Hertze <b>Gottes</b>",
-                    "language": "en",
-                    "rank": 1.0,
-                    "original_content": "{'label': 'Das holdselige und liebreiche Mutter-Hertze Gottes.'}"
-                }
-            ]
-        },
-        {
-            "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000008965/",
-            "resource_id": "urn:madoc:manifest:0000008965",
-            "resource_type": "Manifest",
-            "madoc_thumbnail": "http://madoc.foo/thumbnail/0000008965/fake.jpg",
-            "id": "https://iiif.ub.uni-leipzig.de/0000008965/manifest.json",
-            "label": {
-                "en": [
-                    "Von Gottes Gnaden/ Wir/ Friedrich August/ König in Pohlen ... Hertzog zu Sachsen ... deß Heil. Röm. Reichs Ertz-Marschall und ChurFürst ... Thun hiermit kund und bekennen: Nachdem Wir durch Göttliche Schickung schon längsthin Uns entschlossen/ zu dem Schooß der allgemeinen Römisch-Catholischen Kirchen ... zu treten..."
-                ]
-            },
-            "context": [
-                {
-                    "url": "http://localhost:8000/contexts/urnmadocsite2/",
-                    "id": "urn:madoc:site:2",
-                    "type": "Site"
-                },
-                {
-                    "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
-                    "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
-                    "type": "Collection"
-                }
-            ],
-            "hits": [
-                {
-                    "type": "descriptive",
-                    "subtype": "label",
-                    "snippet": "label': 'Von <b>Gottes</b> Gnaden/ Wir/ Friedrich August/ König in Pohlen ... Hertzog zu Sachsen ... deß Heil. Röm. Reichs Ertz-Marschall und ChurFürst ... Thun hiermit kund und bekennen: Nachdem Wir durch Göttliche Schickung schon längsthin Uns entschlossen/ zu dem Schooß der allgemeinen Römisch-Catholischen Kirchen ... zu treten",
-                    "language": "en",
-                    "rank": 1.0,
-                    "original_content": "{'label': 'Von Gottes Gnaden/ Wir/ Friedrich August/ König in Pohlen ... Hertzog zu Sachsen ... deß Heil. Röm. Reichs Ertz-Marschall und ChurFürst ... Thun hiermit kund und bekennen: Nachdem Wir durch Göttliche Schickung schon längsthin Uns entschlossen/ zu dem Schooß der allgemeinen Römisch-Catholischen Kirchen ... zu treten...'}"
-                }
-            ]
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
         }
-    ],
-    "facets": {
-        "metadata": {
-            "author": {
-                "": 2,
-                "Hyller, Martin": 2,
-                "Johann Georg III., Sachsen": 2,
-                "Betke, Erdmann": 1,
-                "Crusius, Johann Caspar": 1,
-                "Dietsch, Johann Georg": 1,
-                "Drabitius, Abraham": 1,
-                "Ernst, Wolfgang Philipp": 1,
-                "Friedrich August I., Sachsen": 1,
-                "Friedrich Wilhelm, Brandenburg": 1,
-                "Hülsemann, Johann": 1,
-                "Johann Georg II., Sachsen": 1,
-                "Lang, Matthias Sebastian": 1,
-                "Lehmann, Matthäus": 1,
-                "Müller, Johann": 1,
-                "Müller, Melchior": 1,
-                "Pollio, Lucas": 1,
-                "Rodatzi, Christoph [PNDNR:121445828] [GNDNR:121445828]": 1,
-                "Roth, Johann": 1,
-                "Schimmer, Georg": 1,
-                "Wendt, Johann Adam [PNDNR:131426605] [GNDNR:131426605]": 1
-            },
-            "call number": {
-                "01A-2015-16854": 1,
-                "01A-2016-2358": 1,
-                "01E-2018-109": 1,
-                "01E-2018-110": 1,
-                "69-8-5882/1": 1,
-                "A 6574/11": 1,
-                "Fam.1029-df/16": 1,
-                "Fam.1029-df/5": 1,
-                "Fam.306/26": 1,
-                "Fam.31/9": 1,
-                "Fam.536:18": 1,
-                "Fam.614": 1,
-                "Fam.650:138": 1,
-                "Fam.650:52": 1,
-                "Hist.Sax.1105-b/4": 1,
-                "Jus.terr.105-bv/2": 1,
-                "Ms.0307-II,Bl.528-529": 1,
-                "Ms.0307-II,Bl.71-72": 1,
-                "Pred.1250/4": 1,
-                "Pred.1257": 1,
-                "Pred.1257-b": 1,
-                "Pred.1788": 1,
-                "Vit.236-bd/1": 1,
-                "Vit.N.1226": 1
-            },
-            "collection": {
-                "VD17": 33,
-                "Drucke des 17. Jahrhunderts": 15
-            },
-            "comment": {
-                "Ex. unvollständig, endet auf S. 80 mit Kustode \"Jahr\"": 1,
-                "Ex. unvollständig, Titelbl., Widmung, \"Zuschrift\" u. S. IX - XII vorhanden": 1,
-                "unvollständig": 1,
-                "unvollst., enth. nur Personalia": 1
-            },
-            "date of publication": {
-                "1682": 3,
-                "1652": 2,
-                "1669": 2,
-                "1681": 2,
-                "1607": 1,
-                "1627": 1,
-                "1637": 1,
-                "1638": 1,
-                "1646": 1,
-                "1649": 1,
-                "1655": 1,
-                "1657": 1,
-                "1663": 1,
-                "1672": 1,
-                "1673": 1,
-                "1678": 1,
-                "1684": 1,
-                "1695": 1,
-                "1697": 1
-            },
-            "kitodo": {
-                "10326": 1,
-                "10360": 1,
-                "10778": 1,
-                "10806": 1,
-                "10954": 1,
-                "10956": 1,
-                "1172": 1,
-                "1289": 1,
-                "12980": 1,
-                "13079": 1,
-                "13080": 1,
-                "13163": 1,
-                "13233": 1,
-                "13303": 1,
-                "13409": 1,
-                "14059": 1,
-                "296": 1,
-                "421": 1,
-                "471": 1,
-                "8530": 1,
-                "8542": 1,
-                "8693": 1,
-                "8841": 1,
-                "9949": 1
-            },
-            "manifest type": {
-                "monograph": 24
-            },
-            "owner": {
-                "Leipzig University Library": 24
-            },
-            "physical description": {
-                "1 ungezähltes Blatt": 2,
-                "4 ungezählte Seiten": 2,
-                "": 1,
-                "[11] Bl.": 1,
-                "12 S.": 1,
-                "1 Blatt": 1,
-                "1 ungezähltes Blatt Bildtafel, 14 ungezählte Seiten, 224 Seiten": 1,
-                "[20] Bl.": 1,
-                "[26] Bl.": 1,
-                "26 ungezählte Seiten, 469 Seiten": 1,
-                "27 S.": 1,
-                "[30] Bl.": 1,
-                "383, das heißt 369 Seiten, 11 ungezählte Seiten": 1,
-                "44 S., [17] Bl.": 1,
-                "[4] Bl., XII S.": 1,
-                "52 ungezählte Seiten": 1,
-                "[56] Bl., 597 S., [13] Bl.": 1,
-                "56 S.": 1,
-                "[5] Bl.": 1,
-                "[6] Bl.": 1,
-                "80 S.?": 1,
-                "[9] Bl.": 1
-            },
-            "place of publication": {
-                "Dreßden": 4,
-                "Hamburg": 2,
-                "Regenspurg": 2,
-                "[S.l.]": 2,
-                "Berlin": 1,
-                "[Erscheinungsort nicht ermittelbar]": 1,
-                "Franckfurt": 1,
-                "Freibergk": 1,
-                "Gedruckt zu Chemnitz": 1,
-                "Gedruckt zu Leipzig": 1,
-                "Gorlitz": 1,
-                "Groß Glogaw": 1,
-                "Leipzig": 1,
-                "NeuStadt Brandenburg": 1,
-                "Onoltzbach": 1,
-                "Ratzeburg": 1,
-                "Rostock": 1,
-                "Wittenberg": 1
-            },
-            "publisher": {
-                "": 3,
-                "[Verlag nicht ermittelbar]": 3,
-                "Bey Johann Gabriel Gütnern": 1,
-                "Cantzley": 1,
-                "Dalnsteiner": 1,
-                "Funck": 1,
-                "Gedruckt bei Michael Pfeiffern": 1,
-                "Gedruckt bey Christoph Zippers Erben": 1,
-                "Gernemann": 1,
-                "Hoffmann": 1,
-                "Jn Georg Müllers Verlag": 1,
-                "Johann Hornung": 1,
-                "Keyl": 1,
-                "Nauman": 1,
-                "Nissen": 1,
-                "Ritzsch": 1,
-                "Seyffert": 1,
-                "Typis Beervvaldin": 1,
-                "Völcker": 1,
-                "Wilcken": 1
-            },
-            "related": {
-                "{'en': ['Attribution']}": 48
-            },
-            "source ppn (swb)": {
-                "029628393": 1,
-                "033195927": 1,
-                "040244288": 1,
-                "041205685": 1,
-                "047390468": 1,
-                "050064843": 1,
-                "050483161": 1,
-                "056409109": 1,
-                "058785590": 1,
-                "05926585X": 1,
-                "066103460": 1,
-                "068522460": 1,
-                "252665252": 1,
-                "353967122": 1,
-                "353976555": 1,
-                "360624103": 1,
-                "455543712": 1,
-                "488652618": 1,
-                "488653193": 1,
-                "488654823": 1,
-                "488659140": 1,
-                "495831131": 1,
-                "497007932": 1,
-                "501100431": 1
-            },
-            "urn": {
-                "urn:nbn:de:bsz:15-0008-100024": 1,
-                "urn:nbn:de:bsz:15-0008-100527": 1,
-                "urn:nbn:de:bsz:15-0008-108098": 1,
-                "urn:nbn:de:bsz:15-0008-108553": 1,
-                "urn:nbn:de:bsz:15-0008-108875": 1,
-                "urn:nbn:de:bsz:15-0008-176983": 1,
-                "urn:nbn:de:bsz:15-0008-177102": 1,
-                "urn:nbn:de:bsz:15-0008-179374": 1,
-                "urn:nbn:de:bsz:15-0008-180445": 1,
-                "urn:nbn:de:bsz:15-0008-191809": 1,
-                "urn:nbn:de:bsz:15-0008-195576": 1,
-                "urn:nbn:de:bsz:15-0008-200491": 1,
-                "urn:nbn:de:bsz:15-0008-204667": 1,
-                "urn:nbn:de:bsz:15-0008-204941": 1,
-                "urn:nbn:de:bsz:15-0008-206430": 1,
-                "urn:nbn:de:bsz:15-0008-206458": 1,
-                "urn:nbn:de:bsz:15-0008-220442": 1,
-                "urn:nbn:de:bsz:15-0008-227121": 1,
-                "urn:nbn:de:bsz:15-0008-227139": 1,
-                "urn:nbn:de:bsz:15-0008-227966": 1,
-                "urn:nbn:de:bsz:15-0008-228663": 1,
-                "urn:nbn:de:bsz:15-0008-229362": 1,
-                "urn:nbn:de:bsz:15-0008-230428": 1,
-                "urn:nbn:de:bsz:15-0008-237819": 1
-            },
-            "vd17": {
-                "VD17 115:738712B": 1,
-                "VD17 15:731290F": 1,
-                "VD17 15:731614F": 1,
-                "VD17 15:734997L": 1,
-                "VD17 15:735105X": 1,
-                "VD17 15:735826F": 1,
-                "VD17 15:736059K": 1,
-                "VD17 15:736132Y": 1,
-                "VD17 15:736393F": 1,
-                "VD17 15:736877A": 1,
-                "VD17 15:737230T": 1,
-                "VD17 15:738279S": 1,
-                "VD17 15:738323U": 1,
-                "VD17 15:738546R": 1,
-                "VD17 15:738779U": 1,
-                "VD17 15:742421M": 1,
-                "VD17 15:742614P": 1,
-                "VD17 15:743067R": 1,
-                "VD17 15:743592Z": 1,
-                "VD17 15:743648T": 1,
-                "VD17 15:743649A": 1,
-                "VD17 15:743694V": 1,
-                "VD17 15:743927P": 1,
-                "VD17 15:744689F": 1
-            }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "XCII. Die XIX. Martii, ... triplici adhibitô Argumentô habendam, publicat, Bonosqve ac Doctos omnes ad benevolè audiendum, observantuer, officiosè, humaniter invitat Christianus Funccius, <b>Rector</b>",
+          "language": "en",
+          "rank": 1.0,
+          "original_content": "{'label': 'Id, ... maxumo cum damno Rerum fuarum, Gorlicium, in Gymnasii Gorlicensis Acroatorio Majori, inter lacrymas pariterq[ue] & gratias inter ac preces, Oratione publica memorandum, H. E. Orationem de ingenti vehementissimoq[ue] Incendio, qvod Anno prædicto prædictaqve & Die ac Hora Gorlicio contigit meliorem Urbis partem una cum splendidissima D. Petri & Pauli Æde celeriter absumens, à se In Memoriam Rei, Anno M DC XCII. Die XIX. Martii, ... triplici adhibitô Argumentô habendam, publicat, Bonosqve ac Doctos omnes ad benevolè audiendum, observantuer, officiosè, humaniter invitat Christianus Funccius, Rector'}"
         }
+      ]
+    },
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000000544/",
+      "resource_id": "urn:madoc:manifest:0000000544",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000000544/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000000544/manifest.json",
+      "label": {
+        "en": [
+          "Filii dei hominis ex homine nati, natalitia, typis jam olim adumbrata ... Rector Academiae Lipsiensis indicit proceribus ejusdem ac civibus universis"
+        ]
+      },
+      "context": [
+        {
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000000544/",
+          "id": "urn:madoc:manifest:0000000544",
+          "type": "Manifest"
+        },
+        {
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
+        }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "label': 'Filii dei hominis ex homine nati, natalitia, typis jam olim adumbrata ... <b>Rector</b> Academiae Lipsiensis indicit proceribus ejusdem ac civibus universis",
+          "language": "en",
+          "rank": 1.0,
+          "original_content": "{'label': 'Filii dei hominis ex homine nati, natalitia, typis jam olim adumbrata ... Rector Academiae Lipsiensis indicit proceribus ejusdem ac civibus universis'}"
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000000706/",
+      "resource_id": "urn:madoc:manifest:0000000706",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000000706/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000000706/manifest.json",
+      "label": {
+        "en": [
+          "Rector Academiae Lipsiensis Ad Auctum Exeqvialem, Qvo Virgo ... Anna Dorothea Viri ... Valentini Alberti, SS. Theol. D. & PP. extraordinarii, ... Filia Desideratissima post horam III. solenniter efferetur, decenter prolixeqve concelebrandum Proceres Civesqve Academicos peramanter invitat"
+        ]
+      },
+      "context": [
+        {
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000000706/",
+          "id": "urn:madoc:manifest:0000000706",
+          "type": "Manifest"
+        },
+        {
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
+        }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "label': '<b>Rector</b> Academiae Lipsiensis Ad Auctum Exeqvialem, Qvo Virgo ... Anna Dorothea Viri ... Valentini Alberti, SS. Theol. D. & PP. extraordinarii, ... Filia Desideratissima post horam III. solenniter efferetur, decenter prolixeqve concelebrandum Proceres Civesqve Academicos peramanter invitat",
+          "language": "en",
+          "rank": 1.0,
+          "original_content": "{'label': 'Rector Academiae Lipsiensis Ad Auctum Exeqvialem, Qvo Virgo ... Anna Dorothea Viri ... Valentini Alberti, SS. Theol. D. & PP. extraordinarii, ... Filia Desideratissima post horam III. solenniter efferetur, decenter prolixeqve concelebrandum Proceres Civesqve Academicos peramanter invitat'}"
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000000767/",
+      "resource_id": "urn:madoc:manifest:0000000767",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000000767/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000000767/manifest.json",
+      "label": {
+        "en": [
+          "Rector Academiae Lipsiensis Ad Foeminam Clarissimam ac Pientissimam Mariam Elisabetham, natam Bönigkiam, Viri qvondam Nobilissimi, Amplissimi & Experientissimi Dn. Christiani Hoeltzelii, Medicinae Doctoris ac Practici famigerabilis relictam Viduam, qvae hodie post horam I. intra urbem humabitur, supremis honoribus proseqvendam Cives Suos invitat"
+        ]
+      },
+      "context": [
+        {
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000000767/",
+          "id": "urn:madoc:manifest:0000000767",
+          "type": "Manifest"
+        },
+        {
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
+        }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "label': '<b>Rector</b> Academiae Lipsiensis Ad Foeminam Clarissimam ac Pientissimam Mariam Elisabetham, natam Bönigkiam, Viri qvondam Nobilissimi, Amplissimi & Experientissimi Dn. Christiani Hoeltzelii, Medicinae Doctoris ac Practici famigerabilis relictam Viduam, qvae hodie post horam I. intra urbem humabitur, supremis honoribus proseqvendam Cives Suos invitat",
+          "language": "en",
+          "rank": 1.0,
+          "original_content": "{'label': 'Rector Academiae Lipsiensis Ad Foeminam Clarissimam ac Pientissimam Mariam Elisabetham, natam Bönigkiam, Viri qvondam Nobilissimi, Amplissimi & Experientissimi Dn. Christiani Hoeltzelii, Medicinae Doctoris ac Practici famigerabilis relictam Viduam, qvae hodie post horam I. intra urbem humabitur, supremis honoribus proseqvendam Cives Suos invitat'}"
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000000858/",
+      "resource_id": "urn:madoc:manifest:0000000858",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000000858/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000000858/manifest.json",
+      "label": {
+        "en": [
+          "Rector Academiae Lipsiensis Funus Matronae ... Annae Magdalenae Natae Hofmanniae, Viri  ... Isaaci Ölhafii, Haereditarii in Ober- und Nieder-Schölnbach, Relictae Viduae, Post horam III. efferndum solenniter, freqventerqve deducendum, Proceribus Civibusq[ue] Academicis indicit"
+        ]
+      },
+      "context": [
+        {
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000000858/",
+          "id": "urn:madoc:manifest:0000000858",
+          "type": "Manifest"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
+        }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "label': '<b>Rector</b> Academiae Lipsiensis Funus Matronae ... Annae Magdalenae Natae Hofmanniae, Viri  ... Isaaci Ölhafii, Haereditarii in Ober- und Nieder-Schölnbach, Relictae Viduae, Post horam III. efferndum solenniter, freqventerqve deducendum, Proceribus Civibusq[ue] Academicis indicit",
+          "language": "en",
+          "rank": 1.0,
+          "original_content": "{'label': 'Rector Academiae Lipsiensis Funus Matronae ... Annae Magdalenae Natae Hofmanniae, Viri  ... Isaaci Ölhafii, Haereditarii in Ober- und Nieder-Schölnbach, Relictae Viduae, Post horam III. efferndum solenniter, freqventerqve deducendum, Proceribus Civibusq[ue] Academicis indicit'}"
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000000975/",
+      "resource_id": "urn:madoc:manifest:0000000975",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000000975/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000000975/manifest.json",
+      "label": {
+        "en": [
+          "Rector Academiae Lipsiensis Parentalia Rectoris Quondam Magnifici ... Gothofredi Schilteri, Landshuta Silesii, Philos. & J. U. Doct. Prof. Publ. Celeberrimi, & Collegii B. Virg. Collegiati gravissimi, In ipsa eheu! pupura extincti D. XXII. solennissime celebranda Utriusque Reipublicae Proceribus intimat"
+        ]
+      },
+      "context": [
+        {
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000000975/",
+          "id": "urn:madoc:manifest:0000000975",
+          "type": "Manifest"
+        },
+        {
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
+        }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "label': '<b>Rector</b> Academiae Lipsiensis Parentalia Rectoris Quondam Magnifici ... Gothofredi Schilteri, Landshuta Silesii, Philos. & J. U. Doct. Prof. Publ. Celeberrimi, & Collegii B. Virg. Collegiati gravissimi, In ipsa eheu! pupura extincti D. XXII. solennissime celebranda Utriusque Reipublicae Proceribus intimat",
+          "language": "en",
+          "rank": 1.0,
+          "original_content": "{'label': 'Rector Academiae Lipsiensis Parentalia Rectoris Quondam Magnifici ... Gothofredi Schilteri, Landshuta Silesii, Philos. & J. U. Doct. Prof. Publ. Celeberrimi, & Collegii B. Virg. Collegiati gravissimi, In ipsa eheu! pupura extincti D. XXII. solennissime celebranda Utriusque Reipublicae Proceribus intimat'}"
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000000542/",
+      "resource_id": "urn:madoc:manifest:0000000542",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000000542/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000000542/manifest.json",
+      "label": {
+        "en": [
+          "Natalitia Pentecostalia,typis jam olim adumbrata hodiequein templo paulino oratione celebranda solemni Rector Academiae Lipsiensis indicit proceribus ejusdem ac civibus universis"
+        ]
+      },
+      "context": [
+        {
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000000542/",
+          "id": "urn:madoc:manifest:0000000542",
+          "type": "Manifest"
+        }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "label': 'Natalitia Pentecostalia,typis jam olim adumbrata hodiequein templo paulino oratione celebranda solemni <b>Rector</b> Academiae Lipsiensis indicit proceribus ejusdem ac civibus universis",
+          "language": "en",
+          "rank": 1.0,
+          "original_content": "{'label': 'Natalitia Pentecostalia,typis jam olim adumbrata hodiequein templo paulino oratione celebranda solemni Rector Academiae Lipsiensis indicit proceribus ejusdem ac civibus universis'}"
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000004389/",
+      "resource_id": "urn:madoc:manifest:0000004389",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000004389/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000004389/manifest.json",
+      "label": {
+        "en": [
+          "Deo Sapientiae Et Bonarum Artium Autori Optimo Conservatori Maximo Et Memoriae Honoris In Philosophia Summi Iuvenum Optimorum Doctissimorumque Numero XXV. Sacrum Rectore ... Godofredo Welschio, Phil. & Med. D. Fac. Med. Seniore, Pathol. P.P. Celeberr. Mai. Princ. Colleg. Collegiato, Acad. Decemv. & Reip. Patriae Physico undiquaq[ue] Dignissimo, Procancellario ... Friderico Rappolto, SS. Theol. Licentiato, Poes. P.P. Famigeratissimo, Mai. Princip. Colleg. Collegiato & h.t. Praeposito, Paedag. ad. D. Nicol. Rectore undiquaq[ue] Meritissimo, Decano ... M. Valentino Alberti, Log. & Metaph. P.P. Celeberrimo, Colleg. Mariani Collegiato Dignissimo"
+        ]
+      },
+      "context": [
+        {
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000004389/",
+          "id": "urn:madoc:manifest:0000004389",
+          "type": "Manifest"
+        },
+        {
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
+        }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "label': 'Deo Sapientiae Et Bonarum Artium Autori Optimo Conservatori Maximo Et Memoriae Honoris In Philosophia Summi Iuvenum Optimorum Doctissimorumque Numero XXV. Sacrum <b>Rectore</b> ... Godofredo Welschio, Phil. & Med. D. Fac. Med. Seniore, Pathol. P.P. Celeberr. Mai. Princ. Colleg. Collegiato, Acad. Decemv. & Reip. Patriae Physico undiquaq[ue] Dignissimo, Procancellario ... Friderico Rappolto ... Theol. Licentiato, Poes. P.P. Famigeratissimo, Mai. Princip. Colleg. Collegiato & h.t. Praeposito, Paedag. ad. D. Nicol. <b>Rectore</b> undiquaq[ue] Meritissimo, Decano ... M. Valentino Alberti, Log. & Metaph. P.P. Celeberrimo, Colleg. Mariani Collegiato Dignissimo",
+          "language": "en",
+          "rank": 2.0,
+          "original_content": "{'label': 'Deo Sapientiae Et Bonarum Artium Autori Optimo Conservatori Maximo Et Memoriae Honoris In Philosophia Summi Iuvenum Optimorum Doctissimorumque Numero XXV. Sacrum Rectore ... Godofredo Welschio, Phil. & Med. D. Fac. Med. Seniore, Pathol. P.P. Celeberr. Mai. Princ. Colleg. Collegiato, Acad. Decemv. & Reip. Patriae Physico undiquaq[ue] Dignissimo, Procancellario ... Friderico Rappolto, SS. Theol. Licentiato, Poes. P.P. Famigeratissimo, Mai. Princip. Colleg. Collegiato & h.t. Praeposito, Paedag. ad. D. Nicol. Rectore undiquaq[ue] Meritissimo, Decano ... M. Valentino Alberti, Log. & Metaph. P.P. Celeberrimo, Colleg. Mariani Collegiato Dignissimo'}"
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000001008/",
+      "resource_id": "urn:madoc:manifest:0000001008",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000001008/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000001008/manifest.json",
+      "label": {
+        "en": [
+          "Rector Universitatis Lipsiensis Ad Exequias Probissimae Matronae, Dominae Christinae natae Berlichiae, Domini Georgi Moebii, SS. Theologiae D. & Professoris Publici apud nos Primarii, & Facultatis Theologicae Senioris, ... Christi bene meriti Conjugis desideratissimae hodie post Sacra pomeridiana instituendas Cives Academicos peramanter invitat"
+        ]
+      },
+      "context": [
+        {
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000001008/",
+          "id": "urn:madoc:manifest:0000001008",
+          "type": "Manifest"
+        },
+        {
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
+        }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "label': '<b>Rector</b> Universitatis Lipsiensis Ad Exequias Probissimae Matronae, Dominae Christinae natae Berlichiae, Domini Georgi Moebii, SS. Theologiae D. & Professoris Publici apud nos Primarii, & Facultatis Theologicae Senioris, ... Christi bene meriti Conjugis desideratissimae hodie post Sacra pomeridiana instituendas Cives Academicos peramanter invitat",
+          "language": "en",
+          "rank": 1.0,
+          "original_content": "{'label': 'Rector Universitatis Lipsiensis Ad Exequias Probissimae Matronae, Dominae Christinae natae Berlichiae, Domini Georgi Moebii, SS. Theologiae D. & Professoris Publici apud nos Primarii, & Facultatis Theologicae Senioris, ... Christi bene meriti Conjugis desideratissimae hodie post Sacra pomeridiana instituendas Cives Academicos peramanter invitat'}"
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000001031/",
+      "resource_id": "urn:madoc:manifest:0000001031",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000001031/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000001031/manifest.json",
+      "label": {
+        "en": [
+          "Rector Universitatis Lipsiensis Exequias Dn. Jacobi Meyeri, Senaroris In Hac Civitate Prudentia Et Fide Eximii, Post hodiernam Horam III. pomeridianam frequentandas Civibus suis indicit"
+        ]
+      },
+      "context": [
+        {
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000001031/",
+          "id": "urn:madoc:manifest:0000001031",
+          "type": "Manifest"
+        },
+        {
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
+        }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "label': '<b>Rector</b> Universitatis Lipsiensis Exequias Dn. Jacobi Meyeri, Senaroris In Hac Civitate Prudentia Et Fide Eximii, Post hodiernam Horam III. pomeridianam frequentandas Civibus suis indicit",
+          "language": "en",
+          "rank": 1.0,
+          "original_content": "{'label': 'Rector Universitatis Lipsiensis Exequias Dn. Jacobi Meyeri, Senaroris In Hac Civitate Prudentia Et Fide Eximii, Post hodiernam Horam III. pomeridianam frequentandas Civibus suis indicit'}"
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000000823/",
+      "resource_id": "urn:madoc:manifest:0000000823",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000000823/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000000823/manifest.json",
+      "label": {
+        "en": [
+          "Rector Academiae Lipsiensis Ad Justa Funebria ... Mariae Magdalenae, Natae Anckelmanniae ... Heinrici Schmidii a Schmidefeld, Haereditarii in Stötteritz Relictae Viduae Frequentibus exequiis post horam I. persolvenda Proceres Civesq[ue] ... invitat"
+        ]
+      },
+      "context": [
+        {
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000000823/",
+          "id": "urn:madoc:manifest:0000000823",
+          "type": "Manifest"
+        }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "label': '<b>Rector</b> Academiae Lipsiensis Ad Justa Funebria ... Mariae Magdalenae, Natae Anckelmanniae ... Heinrici Schmidii a Schmidefeld, Haereditarii in Stötteritz Relictae Viduae Frequentibus exequiis post horam I. persolvenda Proceres Civesq[ue] ... invitat",
+          "language": "en",
+          "rank": 1.0,
+          "original_content": "{'label': 'Rector Academiae Lipsiensis Ad Justa Funebria ... Mariae Magdalenae, Natae Anckelmanniae ... Heinrici Schmidii a Schmidefeld, Haereditarii in Stötteritz Relictae Viduae Frequentibus exequiis post horam I. persolvenda Proceres Civesq[ue] ... invitat'}"
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000000841/",
+      "resource_id": "urn:madoc:manifest:0000000841",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000000841/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000000841/manifest.json",
+      "label": {
+        "en": [
+          "Rector Academiae Lipsiensis Ad Funus Viri ... Joh. Caspari Pflaumii, Philos. & J.U. Doctoris famigerabilis, Curiae Supremae Electoralis ac Ducalis, quae hic est, Advocati Ordinarii, Judicii Provincialis in Lusatia inferiore Assessoris, Minoris Principum Collegii Collegiati, & Praetoris in Curia oppidana Senioris ... Frequenti officio post horam I. qua ad Dormitorium Paulinum deducetur, prosequendum Proceres Civesq[ue] Academicos, honorem cuique suum praefatus, invitat"
+        ]
+      },
+      "context": [
+        {
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000000841/",
+          "id": "urn:madoc:manifest:0000000841",
+          "type": "Manifest"
+        }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "label': '<b>Rector</b> Academiae Lipsiensis Ad Funus Viri ... Joh. Caspari Pflaumii, Philos. & J.U. Doctoris famigerabilis, Curiae Supremae Electoralis ac Ducalis, quae hic est, Advocati Ordinarii, Judicii Provincialis in Lusatia inferiore Assessoris, Minoris Principum Collegii Collegiati, & Praetoris in Curia oppidana Senioris ... Frequenti officio post horam I. qua ad Dormitorium Paulinum deducetur, prosequendum",
+          "language": "en",
+          "rank": 1.0,
+          "original_content": "{'label': 'Rector Academiae Lipsiensis Ad Funus Viri ... Joh. Caspari Pflaumii, Philos. & J.U. Doctoris famigerabilis, Curiae Supremae Electoralis ac Ducalis, quae hic est, Advocati Ordinarii, Judicii Provincialis in Lusatia inferiore Assessoris, Minoris Principum Collegii Collegiati, & Praetoris in Curia oppidana Senioris ... Frequenti officio post horam I. qua ad Dormitorium Paulinum deducetur, prosequendum Proceres Civesq[ue] Academicos, honorem cuique suum praefatus, invitat'}"
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000000790/",
+      "resource_id": "urn:madoc:manifest:0000000790",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000000790/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000000790/manifest.json",
+      "label": {
+        "en": [
+          "Rector Academiae Lipsiensis Ad Exeqvias Foeminae ...  Sabinae, natae Ritschiae Viri ... Jacobi Gerdesii J. U. Candidati Ucoris desideratissimae Spissocomitatu hora III. cohonestandas Proceres Civesqve Academicos Officiose ac peramanter invitat"
+        ]
+      },
+      "context": [
+        {
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000000790/",
+          "id": "urn:madoc:manifest:0000000790",
+          "type": "Manifest"
+        }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "label': '<b>Rector</b> Academiae Lipsiensis Ad Exeqvias Foeminae ...  Sabinae, natae Ritschiae Viri ... Jacobi Gerdesii J. U. Candidati Ucoris desideratissimae Spissocomitatu hora III. cohonestandas Proceres Civesqve Academicos Officiose ac peramanter invitat",
+          "language": "en",
+          "rank": 1.0,
+          "original_content": "{'label': 'Rector Academiae Lipsiensis Ad Exeqvias Foeminae ...  Sabinae, natae Ritschiae Viri ... Jacobi Gerdesii J. U. Candidati Ucoris desideratissimae Spissocomitatu hora III. cohonestandas Proceres Civesqve Academicos Officiose ac peramanter invitat'}"
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000013238/",
+      "resource_id": "urn:madoc:manifest:0000013238",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000013238/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000013238/manifest.json",
+      "label": {
+        "en": [
+          "Rector Academiae Lipsiensis ad exequias Viri Amplißimi, Nobilißimi & Experientißimi Dn. Christiani Langii Phil. & Med. Doctoris, Fac. Medicae Senioris, Pathologices Prof. Publ. celeberrimi, Collegii Principum majoris Collegiati, Academiae Decemviri dignissimi & Practici felicissimi, post auditam III. pomer. Cives Academicos invitat"
+        ]
+      },
+      "context": [
+        {
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000013238/",
+          "id": "urn:madoc:manifest:0000013238",
+          "type": "Manifest"
+        },
+        {
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
+        }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "label': '<b>Rector</b> Academiae Lipsiensis ad exequias Viri Amplißimi, Nobilißimi & Experientißimi Dn. Christiani Langii Phil. & Med. Doctoris, Fac. Medicae Senioris, Pathologices Prof. Publ. celeberrimi, Collegii Principum majoris Collegiati, Academiae Decemviri dignissimi & Practici felicissimi, post auditam III. pomer. Cives Academicos invitat",
+          "language": "en",
+          "rank": 1.0,
+          "original_content": "{'label': 'Rector Academiae Lipsiensis ad exequias Viri Amplißimi, Nobilißimi & Experientißimi Dn. Christiani Langii Phil. & Med. Doctoris, Fac. Medicae Senioris, Pathologices Prof. Publ. celeberrimi, Collegii Principum majoris Collegiati, Academiae Decemviri dignissimi & Practici felicissimi, post auditam III. pomer. Cives Academicos invitat'}"
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000000530/",
+      "resource_id": "urn:madoc:manifest:0000000530",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000000530/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000000530/manifest.json",
+      "label": {
+        "en": ["Rector Academiae Lipsensis ad Paschalia Salvatoris Solennia Cives Invitat Academicos"]
+      },
+      "context": [
+        {
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000000530/",
+          "id": "urn:madoc:manifest:0000000530",
+          "type": "Manifest"
+        },
+        {
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
+        }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "label': '<b>Rector</b> Academiae Lipsensis ad Paschalia Salvatoris Solennia Cives Invitat Academicos",
+          "language": "en",
+          "rank": 1.0,
+          "original_content": "{'label': 'Rector Academiae Lipsensis ad Paschalia Salvatoris Solennia Cives Invitat Academicos'}"
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000000777/",
+      "resource_id": "urn:madoc:manifest:0000000777",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000000777/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000000777/manifest.json",
+      "label": {
+        "en": [
+          "Rector Universitatis Lipsiensis, Ad Exequias Nobilissimae Foeminae, Dominae Mariae Margarethae, natae Planckiae, Domini D. Augusti Benedicti Carpzovii, Pandectarum Professoris Publici, in Dicasterio Provinciali Supremo, in Consistorio Ecclesiastico, in Facultate Juridica Assessoris, & Canonici Naumburgensis, Conjugis Charissimae, Hodie III. Julii MDCXCVIII. post sacra vespertina frequenti comitatu deducendas, Cives Suos invitat"
+        ]
+      },
+      "context": [
+        {
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000000777/",
+          "id": "urn:madoc:manifest:0000000777",
+          "type": "Manifest"
+        }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "label': '<b>Rector</b> Universitatis Lipsiensis, Ad Exequias Nobilissimae Foeminae, Dominae Mariae Margarethae, natae Planckiae, Domini D. Augusti Benedicti Carpzovii, Pandectarum Professoris Publici, in Dicasterio Provinciali Supremo, in Consistorio Ecclesiastico, in Facultate Juridica Assessoris, & Canonici Naumburgensis, Conjugis Charissimae, Hodie III. Julii MDCXCVIII. post sacra vespertina frequenti comitatu deducendas, Cives Suos invitat",
+          "language": "en",
+          "rank": 1.0,
+          "original_content": "{'label': 'Rector Universitatis Lipsiensis, Ad Exequias Nobilissimae Foeminae, Dominae Mariae Margarethae, natae Planckiae, Domini D. Augusti Benedicti Carpzovii, Pandectarum Professoris Publici, in Dicasterio Provinciali Supremo, in Consistorio Ecclesiastico, in Facultate Juridica Assessoris, & Canonici Naumburgensis, Conjugis Charissimae, Hodie III. Julii MDCXCVIII. post sacra vespertina frequenti comitatu deducendas, Cives Suos invitat'}"
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000000815/",
+      "resource_id": "urn:madoc:manifest:0000000815",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000000815/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000000815/manifest.json",
+      "label": {
+        "en": [
+          "Rector Academiae Lipsiensis ad Exuvias Viri Eximii Clarissimiqve Dn. Christiani Jaegerdoerfferi, J. U. Candidati dignissimi, honesto funere post horam I. efferndas Proceres Civesqve Academicos adesse jubet"
+        ]
+      },
+      "context": [
+        {
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000000815/",
+          "id": "urn:madoc:manifest:0000000815",
+          "type": "Manifest"
+        },
+        {
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
+        }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "label': '<b>Rector</b> Academiae Lipsiensis ad Exuvias Viri Eximii Clarissimiqve Dn. Christiani Jaegerdoerfferi, J. U. Candidati dignissimi, honesto funere post horam I. efferndas Proceres Civesqve Academicos adesse jubet",
+          "language": "en",
+          "rank": 1.0,
+          "original_content": "{'label': 'Rector Academiae Lipsiensis ad Exuvias Viri Eximii Clarissimiqve Dn. Christiani Jaegerdoerfferi, J. U. Candidati dignissimi, honesto funere post horam I. efferndas Proceres Civesqve Academicos adesse jubet'}"
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000000297/",
+      "resource_id": "urn:madoc:manifest:0000000297",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000000297/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000000297/manifest.json",
+      "label": {
+        "en": ["Rector Academiae Lipsiensis Trahndorfianae Uxoris Nobilissimae Funus indicit"]
+      },
+      "context": [
+        {
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000000297/",
+          "id": "urn:madoc:manifest:0000000297",
+          "type": "Manifest"
+        },
+        {
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
+        }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "label': '<b>Rector</b> Academiae Lipsiensis Trahndorfianae Uxoris Nobilissimae Funus indicit",
+          "language": "en",
+          "rank": 1.0,
+          "original_content": "{'label': 'Rector Academiae Lipsiensis Trahndorfianae Uxoris Nobilissimae Funus indicit'}"
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000000811/",
+      "resource_id": "urn:madoc:manifest:0000000811",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000000811/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000000811/manifest.json",
+      "label": {
+        "en": [
+          "Rector Academiae Lipsiensis Ad Exeqvias Viri Praenobilis atq[ue] Consultissimi Dn. Johannis Lohsii, Inclytae Reipublicae Lipsiensis a Libellis rationum, Hodiè post horam III. cumulatissimè freqventandas, Proceres Civesq[ue] Academicos officiose ac peramanter invitat"
+        ]
+      },
+      "context": [
+        {
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000000811/",
+          "id": "urn:madoc:manifest:0000000811",
+          "type": "Manifest"
+        }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "label': '<b>Rector</b> Academiae Lipsiensis Ad Exeqvias Viri Praenobilis atq[ue] Consultissimi Dn. Johannis Lohsii, Inclytae Reipublicae Lipsiensis a Libellis rationum, Hodiè post horam III. cumulatissimè freqventandas, Proceres Civesq[ue] Academicos officiose ac peramanter invitat",
+          "language": "en",
+          "rank": 1.0,
+          "original_content": "{'label': 'Rector Academiae Lipsiensis Ad Exeqvias Viri Praenobilis atq[ue] Consultissimi Dn. Johannis Lohsii, Inclytae Reipublicae Lipsiensis a Libellis rationum, Hodiè post horam III. cumulatissimè freqventandas, Proceres Civesq[ue] Academicos officiose ac peramanter invitat'}"
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000008988/",
+      "resource_id": "urn:madoc:manifest:0000008988",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000008988/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000008988/manifest.json",
+      "label": {
+        "en": ["Rector et consilium perpetuum in academia Lipsiensi ..."]
+      },
+      "context": [
+        {
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000008988/",
+          "id": "urn:madoc:manifest:0000008988",
+          "type": "Manifest"
+        },
+        {
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
+        }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "label': '<b>Rector</b> et consilium perpetuum in academia Lipsiensi",
+          "language": "en",
+          "rank": 1.0,
+          "original_content": "{'label': 'Rector et consilium perpetuum in academia Lipsiensi ...'}"
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000000506/",
+      "resource_id": "urn:madoc:manifest:0000000506",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000000506/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000000506/manifest.json",
+      "label": {
+        "en": [
+          "Ad audiendum mysterium resurrectionis dominicae, quod soli crediderunt et sperarunt Christiani ... invitat Rector Academiae Lipsiensis proceres ac cives ejusdem"
+        ]
+      },
+      "context": [
+        {
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000000506/",
+          "id": "urn:madoc:manifest:0000000506",
+          "type": "Manifest"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
+        }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "label': 'Ad audiendum mysterium resurrectionis dominicae, quod soli crediderunt et sperarunt Christiani ... invitat <b>Rector</b> Academiae Lipsiensis proceres ac cives ejusdem",
+          "language": "en",
+          "rank": 1.0,
+          "original_content": "{'label': 'Ad audiendum mysterium resurrectionis dominicae, quod soli crediderunt et sperarunt Christiani ... invitat Rector Academiae Lipsiensis proceres ac cives ejusdem'}"
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000001039/",
+      "resource_id": "urn:madoc:manifest:0000001039",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000001039/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000001039/manifest.json",
+      "label": {
+        "en": [
+          "Rector Universitatis Lipsiensis Funus Nobilisimae Matronae, Mariae Felicitatis, natae Hermanniae, Dn. Johannis Grossii, Senatoris Et Aedilis In Hac Urbe Meritissimi, Uxoris Viduae, Hodie XVI. Aprilis MDCIC. hora III.ad Sepulturam efferendum Civibus suis indicit"
+        ]
+      },
+      "context": [
+        {
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000001039/",
+          "id": "urn:madoc:manifest:0000001039",
+          "type": "Manifest"
+        },
+        {
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
+        }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "label': '<b>Rector</b> Universitatis Lipsiensis Funus Nobilisimae Matronae, Mariae Felicitatis, natae Hermanniae, Dn. Johannis Grossii, Senatoris Et Aedilis In Hac Urbe Meritissimi, Uxoris Viduae, Hodie XVI. Aprilis MDCIC. hora III.ad Sepulturam efferendum Civibus suis indicit",
+          "language": "en",
+          "rank": 1.0,
+          "original_content": "{'label': 'Rector Universitatis Lipsiensis Funus Nobilisimae Matronae, Mariae Felicitatis, natae Hermanniae, Dn. Johannis Grossii, Senatoris Et Aedilis In Hac Urbe Meritissimi, Uxoris Viduae, Hodie XVI. Aprilis MDCIC. hora III.ad Sepulturam efferendum Civibus suis indicit'}"
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000000859/",
+      "resource_id": "urn:madoc:manifest:0000000859",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000000859/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000000859/manifest.json",
+      "label": {
+        "en": [
+          "Rector Academiae Lipsiensis Funus Probae Matronae Susannae, Natae Weberiae, Domini Joh. Christiani Hippii, Philosophiae & Medicinae Doctoris, & Facultatis Medicae Assessoris, Viduae Hodie XX. Februar. M DC XCVIII. Finitis Sacris pomeridianis, usitatis ceremoniis efferendum Intimat"
+        ]
+      },
+      "context": [
+        {
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000000859/",
+          "id": "urn:madoc:manifest:0000000859",
+          "type": "Manifest"
+        },
+        {
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
+        }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "label': '<b>Rector</b> Academiae Lipsiensis Funus Probae Matronae Susannae, Natae Weberiae, Domini Joh. Christiani Hippii, Philosophiae & Medicinae Doctoris, & Facultatis Medicae Assessoris, Viduae Hodie XX. Februar. M DC XCVIII. Finitis Sacris pomeridianis, usitatis ceremoniis efferendum Intimat",
+          "language": "en",
+          "rank": 1.0,
+          "original_content": "{'label': 'Rector Academiae Lipsiensis Funus Probae Matronae Susannae, Natae Weberiae, Domini Joh. Christiani Hippii, Philosophiae & Medicinae Doctoris, & Facultatis Medicae Assessoris, Viduae Hodie XX. Februar. M DC XCVIII. Finitis Sacris pomeridianis, usitatis ceremoniis efferendum Intimat'}"
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:8000/iiif/urn:madoc:manifest:0000000820/",
+      "resource_id": "urn:madoc:manifest:0000000820",
+      "resource_type": "Manifest",
+      "madoc_thumbnail": "http://madoc.foo/thumbnail/0000000820/fake.jpg",
+      "id": "https://iiif.ub.uni-leipzig.de/0000000820/manifest.json",
+      "label": {
+        "en": [
+          "Rector Academiae Lipsiensis ad Officium humanitatis ultimum. Foeminae prosapiae ac virtutum splendore non minus, quam aetate florentissimae  Christinae Sophiae natae Oheimiae, Viri ... Joh. Wilhelmi Pauli, Philos. & Medicinae Doctoris, hujusque Practici famigerabilis, Conjugi hactenus dilectissimae, nunc desideratissimae, Post horam III. cumulatissime praestandum Proceres Civesqve Academicos diligenter adhortatur"
+        ]
+      },
+      "context": [
+        {
+          "url": "http://localhost:8000/contexts/httpsiiifubuni-leipzigdestaticcollectionsdrucke17c/",
+          "id": "https://iiif.ub.uni-leipzig.de/static/collections/Drucke17/collection.json",
+          "type": "Collection"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocsite2/",
+          "id": "urn:madoc:site:2",
+          "type": "Site"
+        },
+        {
+          "url": "http://localhost:8000/contexts/urnmadocmanifest0000000820/",
+          "id": "urn:madoc:manifest:0000000820",
+          "type": "Manifest"
+        }
+      ],
+      "hits": [
+        {
+          "type": "descriptive",
+          "subtype": "label",
+          "snippet": "label': '<b>Rector</b> Academiae Lipsiensis ad Officium humanitatis ultimum. Foeminae prosapiae ac virtutum splendore non minus, quam aetate florentissimae  Christinae Sophiae natae Oheimiae, Viri ... Joh. Wilhelmi Pauli, Philos. & Medicinae Doctoris, hujusque Practici famigerabilis, Conjugi hactenus dilectissimae, nunc desideratissimae, Post horam III. cumulatissime praestandum Proceres Civesqve Academicos diligenter adhortatur",
+          "language": "en",
+          "rank": 1.0,
+          "original_content": "{'label': 'Rector Academiae Lipsiensis ad Officium humanitatis ultimum. Foeminae prosapiae ac virtutum splendore non minus, quam aetate florentissimae  Christinae Sophiae natae Oheimiae, Viri ... Joh. Wilhelmi Pauli, Philos. & Medicinae Doctoris, hujusque Practici famigerabilis, Conjugi hactenus dilectissimae, nunc desideratissimae, Post horam III. cumulatissime praestandum Proceres Civesqve Academicos diligenter adhortatur'}"
+        }
+      ]
     }
+  ],
+  "facets": {
+    "metadata": {
+      "author": {
+        "": 171,
+        "Henrici, Daniel": 7,
+        "Carpzov, Johann Benedict": 5,
+        "Feller, Joachim": 4,
+        "Kromayer, Hieronymus": 4,
+        "Pfautz, Christoph": 3,
+        "Alberti, Valentin": 2,
+        "Ernesti, Johann Heinrich": 2,
+        "Ittig, Thomas": 2,
+        "Carpzov, Samuel Benedikt": 1
+      },
+      "call number": {
+        "01E-2014-55": 1,
+        "Fam.265/10": 1,
+        "Fam.265/100": 1,
+        "Fam.265/102": 1,
+        "Fam.265/103": 1,
+        "Fam.265/104": 1,
+        "Fam.265/105": 1,
+        "Fam.265/106": 1,
+        "Fam.265/112": 1,
+        "Fam.265/114": 1
+      },
+      "collection": {
+        "VD17": 420,
+        "Drucke des 17. Jahrhunderts": 5
+      },
+      "comment": {
+        "Ex. beschädigt": 1
+      },
+      "date of publication": {
+        "1680": 17,
+        "1682": 16,
+        "1681": 13,
+        "1685": 10,
+        "1691": 10,
+        "1692": 10,
+        "1694": 9,
+        "1695": 9,
+        "1678": 8,
+        "1684": 8
+      },
+      "kitodo": {
+        "10371": 1,
+        "10516": 1,
+        "10814": 1,
+        "11130": 1,
+        "14054": 1,
+        "3267": 1,
+        "3268": 1,
+        "3270": 1,
+        "3277": 1,
+        "3278": 1
+      },
+      "manifest type": {
+        "monograph": 213
+      },
+      "owner": {
+        "Leipzig University Library": 213
+      },
+      "physical description": {
+        "[2] Bl.": 176,
+        "[6] Bl.": 9,
+        "[4] Bl.": 6,
+        "4 ungezählte Seiten": 4,
+        "[12] Bl.": 2,
+        "[1] Bl.": 2,
+        "1 Blatt": 2,
+        "[20] Bl.": 2,
+        "[22] Bl.": 2,
+        "[11] Bl.": 1
+      },
+      "place of publication": {
+        "[Lipsiae]": 106,
+        "Lipsiae": 78,
+        "[Leipzig]": 10,
+        "[S.l.]": 7,
+        "Lipsiæ": 5,
+        "Gorlicii": 1,
+        "Jenae": 1,
+        "Leucopetræ": 1,
+        "Lippiæ [!]": 1,
+        "Lips.": 1
+      },
+      "publisher": {
+        "": 36,
+        "Georgius": 20,
+        "Wittigau": 13,
+        "Fleischerus": 10,
+        "Scholvinus": 10,
+        "Krügerus": 9,
+        "Georg": 6,
+        "Krüger": 6,
+        "Fleischer": 5,
+        "Güntherus": 5
+      },
+      "related": {
+        "{'en': ['Attribution']}": 426
+      },
+      "source ppn (swb)": {
+        "022413952": 1,
+        "027152863": 1,
+        "049629018": 1,
+        "055719538": 1,
+        "055724892": 1,
+        "055726070": 1,
+        "055737692": 1,
+        "055746748": 1,
+        "055747612": 1,
+        "055750931": 1
+      },
+      "urn": {
+        "urn:nbn:de:bsz:15-0008-100335": 1,
+        "urn:nbn:de:bsz:15-0008-100519": 1,
+        "urn:nbn:de:bsz:15-0008-102185": 1,
+        "urn:nbn:de:bsz:15-0008-102207": 1,
+        "urn:nbn:de:bsz:15-0008-102840": 1,
+        "urn:nbn:de:bsz:15-0008-102852": 1,
+        "urn:nbn:de:bsz:15-0008-102861": 1,
+        "urn:nbn:de:bsz:15-0008-102873": 1,
+        "urn:nbn:de:bsz:15-0008-102880": 1,
+        "urn:nbn:de:bsz:15-0008-102907": 1
+      },
+      "vd17": {
+        "VD17 1:045757R": 1,
+        "VD17 125:006458Y": 1,
+        "VD17 125:014009W": 1,
+        "VD17 125:022751A": 1,
+        "VD17 125:024313B": 1,
+        "VD17 125:025808Q": 1,
+        "VD17 125:028447Z": 1,
+        "VD17 125:031457D": 1,
+        "VD17 125:031476K": 1,
+        "VD17 125:031482L": 1
+      }
+    }
+  }
 }

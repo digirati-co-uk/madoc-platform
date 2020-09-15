@@ -2,19 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { SearchFacets } from '../../shared/components/SearchFacets';
 import { SearchResults } from '../../shared/components/SearchResults';
 import { PaginationNumbered } from '../../shared/components/Pagination';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import { useApi } from '../../shared/hooks/use-api';
 
 import styled from 'styled-components';
 
 import searchResults from '../../shared/components/SearchResults.json';
+import { SearchResponse } from '../../../types/schemas/search';
 
-const options = [
-  { value: 'Option1', text: 'Option 1' },
-  { value: 'Option2', text: 'Option 2' },
-  { value: 'Option3', text: 'Option 3' },
-];
+// const options = [
+//   { value: 'Option1', text: 'Option 1' },
+//   { value: 'Option2', text: 'Option 2' },
+//   { value: 'Option3', text: 'Option 3' },
+// ];
 
 const SearchContainer = styled.div`
   display: flex;
@@ -26,22 +27,39 @@ function useQuery() {
 
 export const Search: React.FC = () => {
   const [results, setResults] = useState([] as any);
-  const [searchQuery, setSearchQuery] = useState<string | null>('');
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [page, setPage] = useState<number>(1);
+  const [response, setResponse] = useState<SearchResponse | null | void>(null);
   const [totalPages, setTotalPages] = useState<number | undefined>(1);
-  const query = useQuery();
-  const search = query.get('search');
   const location = useLocation();
   const api = useApi();
 
-  useEffect(() => {
-    setSearchQuery(search);
-    setResults(searchResults.results);
-    setTotalPages(searchResults.pagination.totalResults);
-    setPage(searchResults.pagination.page);
-  }, []);
+  const query = useQuery();
 
-  useEffect(() => {}, [location]);
+  useEffect(() => {
+    if (response) {
+      setResults(response.results);
+      setTotalPages(response.pagination.totalResults);
+      setPage(response.pagination.page);
+    } else {
+      // leave in the dummy data until we integrate
+      setResults(searchResults.results);
+      setTotalPages(searchResults.pagination.totalResults);
+      setPage(searchResults.pagination.page);
+    }
+  }, [response]);
+
+  useEffect(() => {
+    const pageNum = query.get('page');
+    const searchPage = pageNum ? parseInt(pageNum) : 1;
+
+    async function fetchData() {
+      const res = await api.search(searchQuery, searchPage);
+      setResponse(res);
+    }
+
+    fetchData();
+  }, [searchQuery, location]);
 
   return (
     <>
@@ -52,7 +70,7 @@ export const Search: React.FC = () => {
         /> */}
         <SearchResults
           searchFunction={val => {
-            api.search(val);
+            setSearchQuery(val);
           }}
           searchResults={results}
           sortByFunction={val => {

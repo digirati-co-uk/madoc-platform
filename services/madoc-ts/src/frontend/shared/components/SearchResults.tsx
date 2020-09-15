@@ -99,9 +99,9 @@ export const SearchResults: React.FC<{
     <SearchBox large={true} onSearch={searchFunction} placeholder="Keywords" />
     <SearchHint>Keyword search for title or person</SearchHint>
     <GridContainer $justify="flex-end">
-      <DropdownContainer>
+      {/* <DropdownContainer>
         <Dropdown options={options} placeholder="Sort By" onChange={val => sortByFunction(val)} />
-      </DropdownContainer>
+      </DropdownContainer> */}
     </GridContainer>
     {`${searchResults.length} Results`}
     <GridColumn>
