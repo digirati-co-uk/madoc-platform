@@ -63,18 +63,22 @@ const SearchItem: React.FC<{ result: SearchResult }> = ({ result }) => {
           <img src={result.madoc_thumbnail}></img>
           <GridColumn>
             <ResultTitle>{result.label.en}</ResultTitle>
-            {result.hits.map((found: any) => (
-              <ResultText
-                key={found.snippet}
-                dangerouslySetInnerHTML={{
-                  __html: `
+            {result.hits.map((found: any) => {
+              return found.snippet ? (
+                <ResultText
+                  key={found.snippet}
+                  dangerouslySetInnerHTML={{
+                    __html: `
 					<p>
 						${found.snippet}
 					</p>
 				`,
-                }}
-              />
-            ))}
+                  }}
+                />
+              ) : (
+                <></>
+              );
+            })}
           </GridColumn>
         </GridContainer>
       </a>
@@ -93,7 +97,8 @@ export const SearchResults: React.FC<{
   searchFunction: (val: string) => void;
   searchResults: Array<SearchResult>;
   sortByFunction: (val?: string) => void;
-}> = ({ searchFunction, searchResults = [], sortByFunction }) => (
+  totalResults: number;
+}> = ({ searchFunction, searchResults = [], sortByFunction, totalResults }) => (
   <ResultsContainer>
     <ResultsHeader>Search Results</ResultsHeader>
     <SearchBox large={true} onSearch={searchFunction} placeholder="Keywords" />
@@ -103,10 +108,10 @@ export const SearchResults: React.FC<{
         <Dropdown options={options} placeholder="Sort By" onChange={val => sortByFunction(val)} />
       </DropdownContainer> */}
     </GridContainer>
-    {`${searchResults.length} Results`}
+    {`${totalResults} Results`}
     <GridColumn>
       {searchResults.map((result: SearchResult, index: number) => {
-        return <SearchItem result={result} key={index} />;
+        return result ? <SearchItem result={result} key={index} /> : <></>;
       })}
     </GridColumn>
   </ResultsContainer>

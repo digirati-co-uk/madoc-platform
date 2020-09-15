@@ -8,7 +8,6 @@ import { useApi } from '../../shared/hooks/use-api';
 
 import styled from 'styled-components';
 
-import searchResults from '../../shared/components/SearchResults.json';
 import { SearchResponse } from '../../../types/schemas/search';
 
 // const options = [
@@ -29,6 +28,7 @@ export const Search: React.FC = () => {
   const [results, setResults] = useState([] as any);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [page, setPage] = useState<number>(1);
+  const [totalResults, setTotalResults] = useState<number>(0);
   const [response, setResponse] = useState<SearchResponse | null | void>(null);
   const [totalPages, setTotalPages] = useState<number | undefined>(1);
   const location = useLocation();
@@ -39,13 +39,9 @@ export const Search: React.FC = () => {
   useEffect(() => {
     if (response) {
       setResults(response.results);
-      setTotalPages(response.pagination.totalResults);
+      setTotalPages(response.pagination.totalPages);
+      setTotalResults(response.pagination.totalResults);
       setPage(response.pagination.page);
-    } else {
-      // leave in the dummy data until we integrate
-      setResults(searchResults.results);
-      setTotalPages(searchResults.pagination.totalResults);
-      setPage(searchResults.pagination.page);
     }
   }, [response]);
 
@@ -72,6 +68,7 @@ export const Search: React.FC = () => {
           searchFunction={val => {
             setSearchQuery(val);
           }}
+          totalResults={totalResults}
           searchResults={results}
           sortByFunction={val => {
             alert('you sorted by:  ' + val);
