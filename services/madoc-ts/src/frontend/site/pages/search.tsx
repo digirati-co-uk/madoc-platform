@@ -16,12 +16,6 @@ const options = [
   { value: 'Option3', text: 'Option 3' },
 ];
 
-// const facets = [
-//   { name: 'First Facet', options: options },
-//   { name: 'Second Facet', options: options },
-//   { name: 'Third Facet', options: options },
-// ];
-
 const SearchContainer = styled.div`
   display: flex;
 `;
