@@ -56,10 +56,6 @@ const DropdownContainer = styled.div`
 `;
 
 const SearchItem: React.FC<{ result: SearchResult }> = ({ result }) => {
-  useEffect(() => {
-    console.log(result);
-  }, []);
-
   return (
     <ResultContainer>
       <a href={result.url} style={{ textDecoration: 'none' }}>

@@ -16,11 +16,11 @@ const options = [
   { value: 'Option3', text: 'Option 3' },
 ];
 
-const facets = [
-  { name: 'First Facet', options: options },
-  { name: 'Second Facet', options: options },
-  { name: 'Third Facet', options: options },
-];
+// const facets = [
+//   { name: 'First Facet', options: options },
+//   { name: 'Second Facet', options: options },
+//   { name: 'Third Facet', options: options },
+// ];
 
 const SearchContainer = styled.div`
   display: flex;
@@ -37,7 +37,6 @@ export const Search: React.FC = () => {
   const [totalPages, setTotalPages] = useState<number | undefined>(1);
   const query = useQuery();
   const search = query.get('search');
-  const history = useHistory();
   const location = useLocation();
   const api = useApi();
 
@@ -48,6 +47,8 @@ export const Search: React.FC = () => {
     setPage(searchResults.pagination.page);
   }, []);
 
+  useEffect(() => {}, [location]);
+
   return (
     <>
       <SearchContainer>
@@ -57,7 +58,7 @@ export const Search: React.FC = () => {
         /> */}
         <SearchResults
           searchFunction={val => {
-            history.push(`${location.pathname}?term=${val}`);
+            api.search(val);
           }}
           searchResults={results}
           sortByFunction={val => {

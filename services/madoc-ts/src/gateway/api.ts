@@ -392,11 +392,12 @@ export class ApiClient {
 
   /// Search
 
-  async search(searchTerm: string) {
+  async search(searchTerm: string, pageQuery?: number) {
     console.log('You searched for: ', searchTerm);
+    console.log('You tried to get page number: ', pageQuery);
+
     return [];
-    // Search might return a list of manifests or might be list of canvases?
-    return this.request<ManifestListResponse>(`/PLACEHOLDER_API_ENDPOINT/seach?${searchTerm}`);
+    return this.request<ManifestListResponse>(`/PLACEHOLDER_API_ENDPOINT/seach/fulltext?${searchTerm}`);
   }
 
   // IIIF.
