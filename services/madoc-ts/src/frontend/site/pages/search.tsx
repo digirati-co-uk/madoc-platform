@@ -8,6 +8,8 @@ import { useApi } from '../../shared/hooks/use-api';
 
 import styled from 'styled-components';
 
+import searchResults from '../../shared/components/SearchResults.json';
+
 const options = [
   { value: 'Option1', text: 'Option 1' },
   { value: 'Option2', text: 'Option 2' },
@@ -20,37 +22,6 @@ const facets = [
   { name: 'Third Facet', options: options },
 ];
 
-const dummyResults = {
-  count: 1,
-  next: null,
-  previous: null,
-  results: [
-    {
-      url: 'http://localhost:8000/indexables/1/',
-      resource_id: 'https://wellcomelibrary.org/iiif/b18031900-18/manifest',
-      content_id: 'https://wellcomelibrary.org/iiif/b18031900-18/contentAsText/0',
-      original_content: 'Rhubarb rhubarb blah is a purple sticky fruit.',
-      indexable: 'Rhubarb rhubarb blah is a purple sticky fruit.',
-      search_vector: "'blah':3A 'fruit':8A 'purpl':6A 'rhubarb':1A,2A 'sticki':7A",
-      type: 'other_content',
-      language_iso629_2: 'eng',
-      language_iso629_1: 'en',
-      language_display: 'english',
-      language_pg: 'english',
-      rank: 1.0,
-      snippet: 'Rhubarb rhubarb blah is a purple sticky <b>fruit</b>',
-      facets: {
-        type: {
-          other_content: 1,
-        },
-        language_display: {
-          english: 1,
-        },
-      },
-    },
-  ],
-};
-
 const SearchContainer = styled.div`
   display: flex;
 `;
@@ -62,9 +33,9 @@ function useQuery() {
 export const Search: React.FC = () => {
   const [results, setResults] = useState([] as any);
   const [searchQuery, setSearchQuery] = useState<string | null>('');
+  const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number | undefined>(1);
   const query = useQuery();
-  const page = query.get('page');
   const search = query.get('search');
   const history = useHistory();
   const location = useLocation();
@@ -72,15 +43,16 @@ export const Search: React.FC = () => {
 
   useEffect(() => {
     setSearchQuery(search);
-    setResults(dummyResults.results);
-    setTotalPages(dummyResults.count);
+    setResults(searchResults.results);
+    setTotalPages(searchResults.pagination.totalResults);
+    setPage(searchResults.pagination.page);
   }, []);
 
   return (
     <>
       <SearchContainer>
         {/* <SearchFacets
-          facets={facets}
+          facets={searchResults.facets}
           facetChange={(val, facet) => alert('you changed Facet ' + facet + ' to the value ' + val)}
         /> */}
         <SearchResults
@@ -93,7 +65,7 @@ export const Search: React.FC = () => {
           }}
         />
       </SearchContainer>
-      <PaginationNumbered page={page ? parseInt(page) : 1} totalPages={totalPages} stale={false} />
+      <PaginationNumbered page={page} totalPages={totalPages} stale={false} />
     </>
   );
 };

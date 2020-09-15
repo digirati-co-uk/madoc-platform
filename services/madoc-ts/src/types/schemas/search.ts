@@ -18,8 +18,9 @@ export type ModelSearch = {
 // This needs to be refined
 export type SearchResult = {
   id: string;
-  title: string;
-  thumbnail: string;
+  label: any;
+  madoc_thumbnail: string;
+  hits: any;
   resource_id: string;
   type: string;
   snippet: string;

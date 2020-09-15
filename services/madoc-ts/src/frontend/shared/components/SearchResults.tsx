@@ -38,6 +38,9 @@ const ResultContainer = styled.li`
 
 const ResultText = styled.div`
   text-decoration: none;
+  & b {
+    font-weight: normal;
+  }
 `;
 
 const ResultTitle = styled.div`
@@ -53,36 +56,32 @@ const DropdownContainer = styled.div`
 `;
 
 const SearchItem: React.FC<{ result: SearchResult }> = ({ result }) => {
-  const [title, setTitle] = useState('');
-
   useEffect(() => {
-    fetch(result.resource_id)
-      .then(response => response.json())
-      .then(response => {
-        setTitle(response.label);
-      })
-      .catch(error => console.log(error));
+    console.log(result);
   }, []);
 
   return (
     <ResultContainer>
-      <Link to={result.url} style={{ textDecoration: 'none' }}>
+      <a href={result.url} style={{ textDecoration: 'none' }}>
         <GridContainer>
-          <img src={result.thumbnail}></img>
+          <img src={result.madoc_thumbnail}></img>
           <GridColumn>
-            <ResultTitle>{title}</ResultTitle>
-            <ResultText
-              dangerouslySetInnerHTML={{
-                __html: `
+            <ResultTitle>{result.label.en}</ResultTitle>
+            {result.hits.map((found: any) => (
+              <ResultText
+                key={found.snippet}
+                dangerouslySetInnerHTML={{
+                  __html: `
 					<p>
-						${result.snippet}
+						${found.snippet}
 					</p>
 				`,
-              }}
-            />
+                }}
+              />
+            ))}
           </GridColumn>
         </GridContainer>
-      </Link>
+      </a>
     </ResultContainer>
   );
 };
