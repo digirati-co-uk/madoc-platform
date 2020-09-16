@@ -46,16 +46,20 @@ export const Search: React.FC = () => {
   }, [response]);
 
   useEffect(() => {
-    const pageNum = query.get('page');
-    const searchPage = pageNum ? parseInt(pageNum) : 1;
+    const preSearch = query.get('fulltext');
 
-    async function fetchData() {
-      const res = await api.search(searchQuery, searchPage);
+    async function fetchData(value: string) {
+      const res = await api.search(value);
       setResponse(res);
     }
 
-    fetchData();
-  }, [searchQuery, location]);
+    //if the search param comes from the php search box!
+
+    if (preSearch) {
+      setSearchQuery(preSearch);
+      fetchData(preSearch);
+    }
+  }, []);
 
   return (
     <>
