@@ -221,6 +221,7 @@ services:
   search:
     image: digirati/madoc-search:latest
     environment:
+      - BROWSABLE=False
       - USE_DOCKER=yes
       - IPYTHONDIR=/app/.ipython
       - MIGRATE=True

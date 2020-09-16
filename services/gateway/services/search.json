@@ -21,7 +21,7 @@
   },
   "proxy": {
     "listen_path": "/api/search",
-    "target_url": "http://search:8000/",
+    "target_url": "http://search:8000/api/search",
     "strip_listen_path": true
   },
   "do_not_track": true
