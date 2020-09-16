@@ -26,8 +26,9 @@ export const SearchBox: React.FC<{
   onSearch: (val: string) => void;
   placeholder?: string;
   large?: boolean;
-}> = ({ onSearch, placeholder = 'Search', large = false }) => {
-  const [searchValue, setSearchValue] = useState('');
+  value?: string;
+}> = ({ onSearch, placeholder = 'Search', large = false, value = '' }) => {
+  const [searchValue, setSearchValue] = useState(value);
   return (
     <form
       style={{ marginRight: '20px' }}

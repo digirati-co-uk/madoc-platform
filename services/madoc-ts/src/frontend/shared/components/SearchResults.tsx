@@ -97,10 +97,11 @@ export const SearchResults: React.FC<{
   searchResults: Array<SearchResult>;
   sortByFunction: (val?: string) => void;
   totalResults: number;
-}> = ({ searchFunction, searchResults = [], sortByFunction, totalResults }) => (
+  value?: string;
+}> = ({ searchFunction, searchResults = [], sortByFunction, totalResults, value }) => (
   <ResultsContainer>
     <ResultsHeader>Search Results</ResultsHeader>
-    <SearchBox large={true} onSearch={searchFunction} placeholder="Keywords" />
+    <SearchBox large={true} onSearch={searchFunction} placeholder="Keywords" value={value} />
     <SearchHint>Keyword search for title or person</SearchHint>
     <GridContainer $justify="flex-end">
       {/* <DropdownContainer>
