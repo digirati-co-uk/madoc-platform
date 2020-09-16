@@ -6,11 +6,10 @@ import {
 } from '../../../database/queries/get-manifest-snippets';
 import { api } from '../../../gateway/api.server';
 import { RouteMiddleware } from '../../../types/route-middleware';
-import { ApiError } from '../../../utility/errors/api-error';
 import { optionalUserWithScope } from '../../../utility/user-with-scope';
 
 export const indexManifest: RouteMiddleware<{ id: string }> = async context => {
-  const { id, siteId, siteUrn } = optionalUserWithScope(context, []);
+  const { siteId, siteUrn } = optionalUserWithScope(context, []);
   const userApi = api.asUser({ siteId });
   const manifestId = Number(context.params.id);
 
@@ -65,8 +64,6 @@ export const indexManifest: RouteMiddleware<{ id: string }> = async context => {
       },
     ],
   };
-
-  console.log(JSON.stringify(searchPayload, null, 2));
 
   try {
     await userApi.searchIngest(searchPayload);
