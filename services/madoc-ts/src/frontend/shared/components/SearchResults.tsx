@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 import { SearchResult } from '../../../types/schemas/search';
@@ -6,7 +6,6 @@ import { SearchResult } from '../../../types/schemas/search';
 import { SearchBox } from '../atoms/SearchBox';
 import { GridContainer } from '../atoms/Grid';
 import { GridColumn, Dropdown } from '@capture-models/editor';
-import { Link } from 'react-router-dom';
 
 const ResultsContainer = styled.div`
   flex: 1 1 0px;
