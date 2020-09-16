@@ -2,6 +2,7 @@ import { CaptureModelExtension } from '../extensions/capture-models/extension';
 import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.extension';
 import { ExtensionManager } from '../extensions/extension-manager';
 import { ProjectConfiguration } from '../types/schemas/project-configuration';
+import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/search';
 import { fetchJson } from './fetch-json';
 import { BaseTask } from '../gateway/tasks/base-task';
 import { CanvasNormalized, CollectionNormalized, Manifest } from '@hyperion-framework/types';
@@ -198,7 +199,7 @@ export class ApiClient {
         }
       }
 
-      throw new ApiError(response.data.error);
+      throw new ApiError(response.data.error, response.debugResponse);
     } else if (this.isDown) {
       for (const rec of this.errorRecoveryHandlers) {
         rec();
@@ -1238,6 +1239,21 @@ export class ApiClient {
       )
     ).catch(err => {
       console.log(err);
+    });
+  }
+
+  // Search API
+  async searchQuery(query: SearchQuery, page = 1) {
+    return this.request<SearchResponse>(`/api/search/search?${stringify({ page })}`, {
+      method: 'POST',
+      body: query,
+    });
+  }
+
+  async searchIngest(resource: SearchIngestRequest) {
+    return this.request(`/api/search/iiif`, {
+      method: 'POST',
+      body: resource,
     });
   }
 
