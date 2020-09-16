@@ -37,7 +37,7 @@ export const Search: React.FC = () => {
   const query = useQuery();
 
   useEffect(() => {
-    if (response) {
+    if (response && response.pagination) {
       setResults(response.results);
       setTotalPages(response.pagination.totalPages);
       setTotalResults(response.pagination.totalResults);
