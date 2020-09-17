@@ -392,7 +392,7 @@ export class ApiClient {
 
   /// Search
 
-  async search(searchTerm: string, pageQuery?: number, facetType?: string, facetValue?: string) {
+  async search(searchTerm: string, pageQuery? = 1, facetType?: string, facetValue?: string) {
     // Facet Types these are just one at a time for now, may switch to a post query with the json if a list!
     if (!searchTerm)
       return {
