@@ -18,7 +18,7 @@ export type SearchResult = {
   label: InternationalString;
 
   /** List of contexts for the resource */
-  context: Array<{
+  contexts: Array<{
     type: string;
     id: string;
   }>;
