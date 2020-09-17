@@ -395,18 +395,9 @@ export class ApiClient {
   /// Search
 
   async search(searchTerm: string, pageQuery?: number, facetType?: string, facetValue?: string) {
-    // TEMPORARY USE LOCALLY
-    const response = await fetch(
-      `http://localhost:8000/api/search/search?fulltext=${searchTerm}` +
-        `${pageQuery ? `&page=${pageQuery}` : ``}` +
-        `${facetType ? `&facet_type=${facetType}` : ``}` +
-        `${facetValue ? `&facet_subtype=${facetValue}` : ``}`
-    );
-    const data = await response.json();
-    return data;
     // Facet Types these are just one at a time for now, may switch to a post query with the json if a list!
-    return this.request<SearchResponse>(
-      `http://localhost:8000/search/?fulltext=${searchTerm}` +
+    return await this.request<SearchResponse>(
+      `/api/search/search?fulltext=${searchTerm}` +
         `${pageQuery ? `&page=${pageQuery}` : ``}` +
         `${facetType ? `&facet_type=${facetType}` : ``}` +
         `${facetValue ? `&facet_subtype=${facetValue}` : ``}`
