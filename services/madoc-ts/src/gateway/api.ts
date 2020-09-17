@@ -44,7 +44,6 @@ import {
 import { CrowdsourcingCanvasTask } from './tasks/crowdsourcing-canvas-task';
 import { ConfigResponse } from '../types/schemas/config-response';
 import { ResourceLinkResponse } from '../database/queries/linking-queries';
-import { string } from 'prop-types';
 
 export class ApiClient {
   private readonly gateway: string;
