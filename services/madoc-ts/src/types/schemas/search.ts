@@ -1,6 +1,3 @@
-import { Pagination } from './_pagination';
-import { InternationalString } from '@hyperion-framework/types';
-
 export type ModelSearch = {
   id: string;
   canvas: string;
@@ -18,29 +15,6 @@ export type ModelSearch = {
   context: string[];
 };
 
-// This needs to be refined
-export type SearchResult = {
-  url: string;
-  resource_id: string;
-  resource_type: string;
-  madoc_thumbnail: string;
-  id: string;
-  label: InternationalString;
-  context: Array<{
-    url: string;
-    id: string;
-    type: string;
-  }>;
-  hits: Array<{
-    type: string;
-    subtype: string;
-    snippet: string;
-    language: string;
-    rank: number;
-    original_content: string;
-  }>;
-};
-
 type FacetOption = {
   value: string;
   text: string;
@@ -49,10 +23,4 @@ type FacetOption = {
 export type SearchFacet = {
   name: string;
   options: Array<FacetOption>;
-};
-
-export type SearchResponse = {
-  results: Array<SearchResult>;
-  pagination: Pagination;
-  facets: any;
 };
