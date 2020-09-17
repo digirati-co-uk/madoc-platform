@@ -77,6 +77,7 @@ export function getManifestSnippets(
   return sql<ManifestSnippetsRow>`
       select
            manifest_aggregate.manifest_id as manifest_id,
+           manifest_thumbnail(${siteId}, manifest_aggregate.manifest_id) as thumbnail,
            (manifest_aggregate.canvas_id = metadata.resource_id) as is_canvas,
            manifest_aggregate.canvas_thumbnail as canvas_thumbnail,
            manifest_aggregate.canvas_id as canvas_id,

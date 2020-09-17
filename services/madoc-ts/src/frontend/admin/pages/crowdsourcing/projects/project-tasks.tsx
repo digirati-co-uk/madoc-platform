@@ -8,10 +8,8 @@ import { TableRow, TableRowLabel } from '../../../../shared/atoms/Table';
 import { Status } from '../../../../shared/atoms/Status';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useApi } from '../../../../shared/hooks/use-api';
-import { useQuery } from 'react-query';
 import { SubjectSnippet } from '../../../../shared/components/SubjectSnippet';
-import { ProjectListItem } from '../../../../../types/schemas/project-list-item';
+import { ViewCrowdsourcingTask } from '../../../molecules/ViewCrowdsourcingTask';
 
 type ProjectTasksType = {
   params: { id: number; taskId?: string };
@@ -19,44 +17,6 @@ type ProjectTasksType = {
   variables: { id: number; taskId?: string; page: number; project?: any };
   data: BaseTask;
   context: { project: any };
-};
-
-const ViewCrowdsourcingTask: React.FC<{ task: CrowdsourcingTask; project: ProjectListItem }> = ({ task, project }) => {
-  const api = useApi();
-  const { data: captureModel, refetch } = useQuery(
-    ['capture-model', { id: task.parameters[0] }],
-    async () => {
-      const modelId = task.parameters[0];
-      if (modelId) {
-        return api.getCaptureModel(modelId);
-      }
-    },
-    {
-      refetchInterval: false,
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
-      refetchIntervalInBackground: false,
-    }
-  );
-
-  return (
-    <div>
-      {task.parent_task ? <Link to={`/projects/${project.id}/tasks/${task.parent_task}`}>Back</Link> : null}
-      <h3>{task.name}</h3>
-      {task.assignee ? (
-        <div>
-          Assigned to <strong>{task.assignee.name}</strong>
-        </div>
-      ) : null}
-      <div style={{ display: 'flex' }}>
-        <Status status={task.status} interactive={false} />
-        <div style={{ margin: 'auto 0' }}>
-          Task status: <em>{task.status_text}</em>
-        </div>
-      </div>
-      {captureModel ? <pre>{JSON.stringify(captureModel, null, 2)}</pre> : null}
-    </div>
-  );
 };
 
 export const ProjectTasks: UniversalComponent<ProjectTasksType> = createUniversalComponent<ProjectTasksType>(

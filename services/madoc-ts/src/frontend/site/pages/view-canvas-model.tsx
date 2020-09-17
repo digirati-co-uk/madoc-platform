@@ -1,16 +1,10 @@
-import { CrowdsourcingManifestTask } from '../../../gateway/tasks/crowdsourcing-manifest-task';
-import { CanvasFull } from '../../../types/schemas/canvas-full';
-import { ProjectFull } from '../../../types/schemas/project-full';
-import { ManifestFull } from '../../../types/schemas/manifest-full';
 import { Heading3 } from '../../shared/atoms/Heading3';
 import { LockIcon } from '../../shared/atoms/LockIcon';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { CanvasNavigation } from '../../shared/components/CanvasNavigation';
 import { LocaleString } from '../../shared/components/LocaleString';
-import { UniversalComponent } from '../../types';
-import { createUniversalComponent } from '../../shared/utility/create-universal-component';
+import { apiHooks } from '../../shared/hooks/use-api-query';
 import React from 'react';
-import { useData } from '../../shared/hooks/use-data';
 import { CaptureModelViewer } from '../../shared/viewers/caputre-model-viewer';
 import { useApi } from '../../shared/hooks/use-api';
 import { PreModelViewer } from '../../shared/viewers/pre-model-viewer';
@@ -28,39 +22,7 @@ import { HrefLink } from '../../shared/utility/href-link';
 import { SmallButton } from '../../shared/atoms/Button';
 import { CanvasLoaderType } from './loaders/canvas-loader';
 
-type ViewCanvasModelProps = CanvasLoaderType['data'] & CanvasLoaderType['context'];
-
-type ViewCanvasModelType = {
-  params: {
-    slug?: string; // project
-    collectionId?: string;
-    manifestId?: string;
-    id: string;
-  };
-  query: {};
-  variables: {
-    slug?: string;
-    collectionId?: number;
-    manifestId?: number;
-    id: number;
-  };
-  data: {
-    canvas: CanvasFull;
-    canvasTask?: CrowdsourcingCanvasTask;
-    manifestTask?: CrowdsourcingTask | CrowdsourcingManifestTask;
-    userTasks?: CrowdsourcingTask[];
-    canUserSubmit: boolean;
-    model?: {
-      model: {
-        id: string;
-      } | null;
-    };
-  };
-  context: {
-    project?: ProjectFull;
-    manifest: ManifestFull['manifest'];
-  };
-};
+type ViewCanvasModelProps = Partial<CanvasLoaderType['data'] & CanvasLoaderType['context']>;
 
 const SubmissionDetails: React.FC<{
   canvasTask: CrowdsourcingCanvasTask;
@@ -132,15 +94,15 @@ const SubmissionDetails: React.FC<{
 
 export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({
   project,
-  refetch,
   canvas,
-  manifest,
+  refetchManifestTasks,
+  refetchCanvasTasks,
+  refetchManifest,
   canUserSubmit,
-  manifestTask,
   userTasks,
   canvasTask,
-  model,
   manifestUserTasks,
+  isLoadingTasks,
 }) => {
   const api = useApi();
   const { slug, collectionId, manifestId, id } = useParams<{
@@ -149,6 +111,13 @@ export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({
     collectionId?: string;
     slug?: string;
   }>();
+  const { data: projectModel, refetch } = apiHooks.getSiteProjectCanvasModel(
+    () => (slug ? [slug, Number(id)] : undefined),
+    {
+      refetchOnMount: true,
+    }
+  );
+  const model = projectModel && projectModel.model ? projectModel.model : undefined;
   const { revision } = useLocationQuery();
   const preventCanvasNavigation = project && project.config.allowCanvasNavigation === false;
   const user = api.getIsServer() ? undefined : api.getCurrentUser();
@@ -163,7 +132,18 @@ export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({
         manifestId: manifestId ? Number(manifestId) : undefined,
         collectionId: collectionId ? Number(collectionId) : undefined,
       });
+
       await refetch();
+
+      if (refetchManifestTasks) {
+        await refetchManifestTasks();
+      }
+      if (refetchCanvasTasks) {
+        await refetchCanvasTasks();
+      }
+      if (refetchManifest) {
+        await refetchManifest();
+      }
     }
   });
 
@@ -176,7 +156,7 @@ export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({
     collectionId,
   });
 
-  if (!canUserSubmit) {
+  if (!canUserSubmit && !isLoadingTasks) {
     return (
       <div>
         <DisplayBreadcrumbs />
@@ -196,12 +176,10 @@ export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({
     );
   }
 
-  console.log({model});
-
   return (
     <div>
       <DisplayBreadcrumbs />
-      <LocaleString as="h1">{canvas.label}</LocaleString>
+      <LocaleString as="h1">{canvas ? canvas.label : { none: ['...'] }}</LocaleString>
       {project && canvasTask ? (
         <SubmissionDetails
           backLink={backLink}
@@ -257,6 +235,16 @@ export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({
                 }
 
                 await refetch();
+
+                if (refetchManifestTasks) {
+                  await refetchManifestTasks();
+                }
+                if (refetchCanvasTasks) {
+                  await refetchCanvasTasks();
+                }
+                if (refetchManifest) {
+                  await refetchManifest();
+                }
               }}
             />
           </>

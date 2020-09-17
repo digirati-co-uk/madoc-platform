@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePaginatedQuery } from 'react-query';
 import { Link } from 'react-router-dom';
@@ -13,15 +13,16 @@ import { LocaleString } from '../../../shared/components/LocaleString';
 import { Pagination } from '../../../shared/components/Pagination';
 import { useApi } from '../../../shared/hooks/use-api';
 import { useLocationQuery } from '../../../shared/hooks/use-location-query';
+import { useSubjectMap } from '../../../shared/hooks/use-subject-map';
 import { createLink } from '../../../shared/utility/create-link';
 
 export const CrowdsourcingTaskManifest: React.FC<{
   task: CrowdsourcingTask;
   subtask?: CrowdsourcingTask;
   projectId?: string;
-}> = ({ task, subtask, projectId }) => {
+}> = ({ task, projectId }) => {
   // Load manifest.
-  const { id, type } = parseUrn(task.subject) || {};
+  const { id } = parseUrn(task.subject) || {};
   const { page = 1 } = useLocationQuery();
   const api = useApi();
   const { resolvedData } = usePaginatedQuery(['site-manifest', { id, page }], async () => {
@@ -34,21 +35,7 @@ export const CrowdsourcingTaskManifest: React.FC<{
   const manifest = resolvedData?.manifest;
   const pagination = resolvedData?.pagination;
   const manifestSubjects = resolvedData?.subjects;
-  const [subjectMap, showDoneButton] = useMemo(() => {
-    if (!manifestSubjects) return [];
-    const mapping: { [id: number]: number } = {};
-    let showDone = false;
-    for (const { subject, status } of manifestSubjects) {
-      if (!showDone && status === 3) {
-        showDone = true;
-      }
-      const parsed = parseUrn(subject);
-      if (parsed) {
-        mapping[parsed.id] = status;
-      }
-    }
-    return [mapping, showDone] as const;
-  }, [manifestSubjects]);
+  const [subjectMap] = useSubjectMap(manifestSubjects);
 
   return (
     <div>

@@ -16,7 +16,6 @@ export class ExtensionManager<T extends BaseExtension> {
   async dispatch<Type extends MethodArgs<T[R]>, R extends keyof T>(name: R, arg: Type) {
     let ret = arg;
     for (const extension of this.extensions) {
-      console.log('Dispatch => ', (extension[name] as any));
       ret = await (extension[name] as any).call(extension, arg);
     }
     return ret;

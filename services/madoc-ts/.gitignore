@@ -2,3 +2,4 @@ node_modules
 lib
 *.log
 storybook-static
+stats.json

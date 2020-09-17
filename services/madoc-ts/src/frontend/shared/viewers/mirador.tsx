@@ -11,11 +11,11 @@ import {
   getReducersFromPlugins,
   getSagasFromPlugins,
 } from 'mirador/dist/cjs/src/extend/pluginPreprocessing';
-import { miratorImageToolsPlugin } from 'mirador-image-tools';
+import { miradorImageToolsPlugin } from 'mirador-image-tools';
 
 const Mirador: React.FC<{ config: any; viewerConfig: any; maximised?: string }> = ({
   config = {},
-  viewerConfig = miratorImageToolsPlugin,
+  viewerConfig = miradorImageToolsPlugin,
 }) => {
   const plugins = useMemo(() => filterValidPlugins(viewerConfig.plugins || []), [viewerConfig.plugins]);
   const store = useMemo(

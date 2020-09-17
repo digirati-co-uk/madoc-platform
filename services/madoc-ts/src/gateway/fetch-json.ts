@@ -14,7 +14,7 @@ export async function fetchJson<Return>(
     jwt?: string;
     asUser?: { userId?: number; siteId?: number };
   }
-): Promise<{ error: true; data: { error: string }; status: number } | { error: false; data: Return; status: number }> {
+): Promise<{ error: true; data: { error: string }; status: number; debugResponse?: any } | { error: false; data: Return; status: number }> {
   const headers: any = {
     Accept: 'application/json',
   };
@@ -78,5 +78,6 @@ export async function fetchJson<Return>(
     error: true,
     status: resp.status,
     data: { error: 'Unknown error' },
+    debugResponse: resp,
   };
 }

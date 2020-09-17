@@ -27,10 +27,9 @@ export function useLoadedCaptureModel(modelId?: string, initialModel?: CaptureMo
       return { canvas, target, captureModel };
     },
     {
-      refetchInterval: false,
-      refetchOnWindowFocus: false,
+      cacheTime: 0,
+      staleTime: 0,
       refetchOnMount: true,
-      refetchIntervalInBackground: false,
     }
   );
 

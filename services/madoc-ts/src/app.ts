@@ -1,6 +1,8 @@
 import Koa from 'koa';
 import json from 'koa-json';
 import logger from 'koa-logger';
+// @ts-ignore
+import conditional from 'koa-conditional-get';
 import Ajv from 'ajv';
 import { errorHandler } from './middleware/error-handler';
 import { TypedRouter } from './utility/typed-router';
@@ -55,10 +57,11 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
     );
   }
 
-  app.use(k2c(cookieParser(app.keys)))
+  app.use(k2c(cookieParser(app.keys)));
   app.use(postgresConnection(pool));
   app.use(json({ pretty: process.env.NODE_ENV !== 'production' }));
   app.use(logger());
+  app.use(conditional());
 
   app.use(errorHandler);
   app.use(omekaPage);

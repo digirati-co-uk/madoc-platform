@@ -2,6 +2,7 @@ import { CaptureModelExtension } from '../extensions/capture-models/extension';
 import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.extension';
 import { ExtensionManager } from '../extensions/extension-manager';
 import { ProjectConfiguration } from '../types/schemas/project-configuration';
+import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/search';
 import { fetchJson } from './fetch-json';
 import { BaseTask } from '../gateway/tasks/base-task';
 import { CanvasNormalized, CollectionNormalized, Manifest } from '@hyperion-framework/types';
@@ -199,7 +200,7 @@ export class ApiClient {
         }
       }
 
-      throw new ApiError(response.data.error);
+      throw new ApiError(response.data.error, response.debugResponse);
     } else if (this.isDown) {
       for (const rec of this.errorRecoveryHandlers) {
         rec();
@@ -939,6 +940,7 @@ export class ApiClient {
       subject?: string;
       type?: string;
       detail?: boolean;
+      per_page?: number;
     } = {}
   ) {
     return this.request<{ tasks: TaskType[]; pagination: Pagination }>(
@@ -1262,6 +1264,21 @@ export class ApiClient {
     });
   }
 
+  // Search API
+  async searchQuery(query: SearchQuery, page = 1) {
+    return this.request<SearchResponse>(`/api/search/search?${stringify({ page })}`, {
+      method: 'POST',
+      body: query,
+    });
+  }
+
+  async searchIngest(resource: SearchIngestRequest) {
+    return this.request(`/api/search/iiif`, {
+      method: 'POST',
+      body: resource,
+    });
+  }
+
   // Public API.
   async getSiteCanvas(id: number, query?: import('../routes/site/site-canvas').SiteCanvasQuery) {
     return this.publicRequest<CanvasFull>(`/madoc/api/canvases/${id}`, query);
@@ -1300,7 +1317,7 @@ export class ApiClient {
   }
 
   async getSiteProjectCanvasModel(projectId: string | number, canvasId: number) {
-    return this.publicRequest<{ model: CaptureModel }>(`/madoc/api/projects/${projectId}/canvas-models/${canvasId}`);
+    return this.publicRequest<{ model?: CaptureModel }>(`/madoc/api/projects/${projectId}/canvas-models/${canvasId}`);
   }
 
   async getSiteProjectCanvasTasks(projectId: string | number, canvasId: number) {

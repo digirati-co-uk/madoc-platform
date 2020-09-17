@@ -22,7 +22,14 @@ export type TaskLoaderType = {
 
 export const TaskLoader: UniversalComponent<TaskLoaderType> = createUniversalComponent<TaskLoaderType>(
   ({ route }) => {
-    const { data, refetch } = useStaticData(TaskLoader);
+    const { data, refetch } = useStaticData(
+      TaskLoader,
+      {},
+      {
+        cacheTime: 0,
+        staleTime: 0,
+      }
+    );
 
     const ctx = useMemo(() => (data ? { id: data.task.id, name: data.task.name } : undefined), [data]);
 

@@ -56,7 +56,8 @@ export const getAllTasks: RouteMiddleware = async context => {
     : sql``;
 
   const page = Number(context.query.page || 1);
-  const perPage = 50;
+  const userPerPage = context.query.per_page ? Number(context.query.per_page) : 50;
+  const perPage = userPerPage < 50 ? userPerPage : 50;
   const offset = (page - 1) * perPage;
   const taskPagination = sql`limit ${perPage} offset ${offset}`;
   const detail = !!context.query.detail;

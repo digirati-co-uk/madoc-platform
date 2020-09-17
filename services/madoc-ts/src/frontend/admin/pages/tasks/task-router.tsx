@@ -2,7 +2,7 @@ import { BaseTask } from '../../../../gateway/tasks/base-task';
 import { Status } from '../../../shared/atoms/Status';
 import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../../shared/atoms/Table';
 import { UniversalComponent } from '../../../types';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { GenericTask } from './generic-task';
 import { ManifestImportTask } from './manifest-import-task';
 import { ImportManifestTask } from '../../../../gateway/tasks/import-manifest';
@@ -67,9 +67,27 @@ function renderTask({ task }: TaskRouterType['data'], statusBar?: JSX.Element) {
 export const TaskRouter: UniversalComponent<TaskRouterType> = createUniversalComponent<TaskRouterType>(
   () => {
     const { t } = useTranslation();
+    const [isDone, setIsDone] = useState(false);
     const { resolvedData: data, status } = usePaginatedData(TaskRouter, undefined, {
-      refetchInterval: 3000,
+      refetchInterval: isDone ? undefined : 3000,
+      refetchOnWindowFocus: false,
     });
+
+    useEffect(() => {
+      if (data && data.task.subtasks) {
+        if (data.task.status === 3) {
+          setIsDone(true);
+        }
+        if (data.task.subtasks.length === 0 && data.task.status !== 1) {
+          setIsDone(true);
+        } else if (
+          data.task.status !== 1 &&
+          (data.task.subtasks || []).filter(e => e.status === 3).length === data.task.subtasks.length
+        ) {
+          setIsDone(true);
+        }
+      }
+    }, [data]);
 
     if (status !== 'success' || !data) {
       return <div>Loading...</div>;

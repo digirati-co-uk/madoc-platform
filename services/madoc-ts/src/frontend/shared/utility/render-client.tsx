@@ -1,16 +1,25 @@
 import cookies from 'browser-cookies';
-import { queryCache } from 'react-query';
+import { ReactQueryCacheProvider, ReactQueryConfig, ReactQueryConfigProvider } from 'react-query';
+import { Hydrate } from 'react-query/hydration';
 import { createBackend } from '../../../middleware/i18n/i18next.client';
 import { render } from 'react-dom';
-import { SSRContext } from '../components/SSRContext';
 import { I18nextProvider } from 'react-i18next';
 import { BrowserRouter } from 'react-router-dom';
 import { api } from '../../../gateway/api.browser';
 import React from 'react';
 import { UniversalRoute } from '../../types';
+import { queryConfig } from './query-config';
+import { ReactQueryDevtools } from 'react-query-devtools';
 
-export function renderClient(Component: React.FC<any>, routes: UniversalRoute[], requireJwt = true) {
+export function renderClient(
+  Component: React.FC<any>,
+  routes: UniversalRoute[],
+  requireJwt = true,
+  extraConfig: ReactQueryConfig = {}
+) {
   const component = document.getElementById('react-component');
+  const dehydratedStateEl = document.getElementById('react-query-cache');
+  const dehydratedState = dehydratedStateEl ? JSON.parse(dehydratedStateEl.innerText) : {};
 
   const [, slug] = window.location.pathname.match(/s\/([^/]*)/) as string[];
   const jwt = cookies.get(`madoc/${slug}`) || undefined;
@@ -21,27 +30,23 @@ export function renderClient(Component: React.FC<any>, routes: UniversalRoute[],
   }
 
   if (component && (jwt || !requireJwt)) {
-    const reactQueryData = document.getElementById('react-query-data');
-    if (reactQueryData) {
-      const map = JSON.parse(reactQueryData.innerText);
-      const values: any = Object.values(map);
-      for (const { key, data } of values) {
-        queryCache.setQueryData(key, data);
-      }
-    }
-
     createBackend(slug, jwt).then(([t, i18n]) => {
       const propScript = document.getElementById('react-data');
-      const { basename, ...props }: any = propScript ? JSON.parse(propScript.innerText) : { tasks: [] };
+      const { basename }: any = propScript ? JSON.parse(propScript.innerText) : {};
 
       render(
-        <SSRContext.Provider value={undefined}>
-          <I18nextProvider i18n={i18n}>
-            <BrowserRouter basename={basename}>
-              <Component jwt={jwt} api={api} routes={routes} />
-            </BrowserRouter>
-          </I18nextProvider>
-        </SSRContext.Provider>,
+        <ReactQueryConfigProvider config={{ ...queryConfig, ...extraConfig }}>
+          <ReactQueryCacheProvider>
+            <Hydrate state={dehydratedState}>
+              <I18nextProvider i18n={i18n}>
+                <BrowserRouter basename={basename}>
+                  <Component jwt={jwt} api={api} routes={routes} />
+                  {process.env.NODE_ENV === 'development' ? <ReactQueryDevtools /> : null}
+                </BrowserRouter>
+              </I18nextProvider>
+            </Hydrate>
+          </ReactQueryCacheProvider>
+        </ReactQueryConfigProvider>,
         component
       );
     });

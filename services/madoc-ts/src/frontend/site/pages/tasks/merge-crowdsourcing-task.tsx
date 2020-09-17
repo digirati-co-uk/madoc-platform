@@ -202,8 +202,7 @@ const MergeCrowdsourcingTask: React.FC<{
                 <SaveMergeChanges
                   mergeId={merge.mergeId}
                   onSave={async () => {
-                    await refetch({ force: true });
-                    await refetchModel({ force: true });
+                    await Promise.all([refetch(), refetchModel()]);
                   }}
                 />
 
