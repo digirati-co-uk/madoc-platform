@@ -1,4 +1,5 @@
 import { getParentLinking } from './routes/iiif/linking/get-parent-linking';
+import { indexManifest } from './routes/iiif/manifests/index-manifest';
 import { siteManifestTasks } from './routes/site/site-manifest-tasks';
 import { TypedRouter } from './utility/typed-router';
 import { ping } from './routes/ping';
@@ -142,6 +143,7 @@ export const router = new TypedRouter({
   'get-manifest-autocomplete': [TypedRouter.GET, '/api/madoc/iiif/autocomplete/manifests', getManifestAutocomplete],
   'get-manifest-linking': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/linking', getLinking],
   'get-manifest-canvas-linking': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/canvas-linking', getParentLinking],
+  'search-index-manifest': [TypedRouter.POST, '/api/madoc/iiif/manifests/:id/index', indexManifest],
 
   // Canvas API
   'list-canvases': [TypedRouter.GET, '/api/madoc/iiif/canvases', listCanvases],

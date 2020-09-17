@@ -21,6 +21,7 @@ services:
       - config-service
       - storage-api
       - okra
+      - search
     volumes:
       - ./services/gateway/gateway.conf:/opt/tyk-gateway/tyk.conf
       - ./services/gateway/policies.json:/opt/tyk-gateway/policies/policies.json
@@ -158,6 +159,9 @@ services:
       - POSTGRES_CONFIG_SERVICE_USER=${POSTGRES_CONFIG_SERVICE_USER}
       - POSTGRES_CONFIG_SERVICE_SCHEMA=${POSTGRES_CONFIG_SERVICE_SCHEMA}
       - POSTGRES_CONFIG_SERVICE_PASSWORD=${POSTGRES_CONFIG_SERVICE_PASSWORD}
+      - POSTGRES_SEARCH_API_USER=${POSTGRES_SEARCH_API_USER}
+      - POSTGRES_SEARCH_API_SCHEMA=${POSTGRES_SEARCH_API_SCHEMA}
+      - POSTGRES_SEARCH_API_PASSWORD=${POSTGRES_SEARCH_API_PASSWORD}
 
     ports:
       - "${PORTS_SHARED_POSTGRES:-5400}:5432"
@@ -213,6 +217,26 @@ services:
     volumes:
       - ./services/storage-api/lib:/home/node/app/lib:delegated
       - ./var/files/storage-api:/home/node/app/files
+
+  search:
+    image: digirati/madoc-search:latest
+    environment:
+      - BROWSABLE=False
+      - USE_DOCKER=yes
+      - IPYTHONDIR=/app/.ipython
+      - MIGRATE=True
+      - LOAD=False
+      - DJANGO_DEBUG=False
+      - WAITRESS=False
+      - POSTGRES_HOST=shared-postgres
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_USER=${POSTGRES_SEARCH_API_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_SEARCH_API_PASSWORD}
+      - POSTGRES_SCHEMA=${POSTGRES_SEARCH_API_SCHEMA}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@shared-postgres:${POSTGRES_PORT}/${POSTGRES_DB}
+    links:
+      - shared-postgres
 
   okra:
     image: digirati/okra:19bf503
