@@ -397,7 +397,7 @@ export class ApiClient {
   async search(searchTerm: string, pageQuery?: number, facetType?: string, facetValue?: string) {
     // TEMPORARY USE LOCALLY
     const response = await fetch(
-      `http://localhost:8000/search/?fulltext=${searchTerm}` +
+      `http://localhost:8000/api/search/search?fulltext=${searchTerm}` +
         `${pageQuery ? `&page=${pageQuery}` : ``}` +
         `${facetType ? `&facet_type=${facetType}` : ``}` +
         `${facetValue ? `&facet_subtype=${facetValue}` : ``}`

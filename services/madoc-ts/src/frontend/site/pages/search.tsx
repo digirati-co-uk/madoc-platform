@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { SearchFacets } from '../../shared/components/SearchFacets';
 import { SearchResults } from '../../shared/components/SearchResults';
 import { PaginationNumbered } from '../../shared/components/Pagination';
-import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useLocationQuery } from '../../shared/hooks/use-location-query';
 
 import { createUniversalComponent } from '../../shared/utility/create-universal-component';
 import { UniversalComponent } from '../../../frontend/types';
 
-import { useApi } from '../../shared/hooks/use-api';
-import { useData } from '../../shared/hooks/use-data';
+import { useHistory, useLocation } from 'react-router-dom';
+import { usePaginatedData } from '../../shared/hooks/use-data';
 
 import styled from 'styled-components';
 
@@ -25,52 +25,20 @@ const SearchContainer = styled.div`
   display: flex;
 `;
 
-function useQuery() {
-  return new URLSearchParams(useLocation().search);
-}
-
 type SearchListType = {
   data: SearchResponse;
   params: {};
-  query: { page: number; searchTerm: string };
-  variables: { page: number; searchTerm: string };
+  query: { page: number; fulltext: string };
+  variables: { page: number; fulltext: string };
 };
 
 export const Search: UniversalComponent<SearchListType> = createUniversalComponent<SearchListType>(
   () => {
-    const { status } = useData(Search);
+    const { status, data } = usePaginatedData(Search);
     const { t } = useTranslation();
-    const location = useLocation();
-    const api = useApi();
-    const query = useQuery();
-    const preSearch = query.get('fulltext');
-
-    const [results, setResults] = useState([] as any);
-    const [searchQuery, setSearchQuery] = useState<string>(preSearch ? preSearch : '');
-    const [page, setPage] = useState<number>(1);
-    const [totalResults, setTotalResults] = useState<number>(0);
-    const [response, setResponse] = useState<SearchResponse | null | void>(null);
-    const [totalPages, setTotalPages] = useState<number | undefined>(1);
-
-    useEffect(() => {
-      if (response && response.pagination) {
-        setResults(response.results);
-        setTotalPages(response.pagination.totalPages);
-        setTotalResults(response.pagination.totalResults);
-        setPage(response.pagination.page);
-      }
-    }, [response]);
-
-    useEffect(() => {
-      const pageNum = query.get('page');
-      const searchPage = pageNum ? parseInt(pageNum) : 1;
-      async function fetchData() {
-        const res = await api.search(searchQuery, searchPage);
-        setResponse(res);
-      }
-      // we don't want to search on an empty string, will just return everything;
-      if (searchQuery) fetchData();
-    }, [searchQuery, location]);
+    const { fulltext } = useLocationQuery();
+    const history = useHistory();
+    const { pathname } = useLocation();
 
     return status === 'loading' ? (
       <div>{t('Loading')}</div>
@@ -83,23 +51,31 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
         /> */}
           <SearchResults
             searchFunction={val => {
-              setSearchQuery(val);
+              history.push(`${pathname}?fulltext=${val}`);
             }}
-            value={preSearch ? preSearch : ''}
-            totalResults={totalResults}
-            searchResults={results}
+            value={fulltext}
+            totalResults={data && data.pagination ? data.pagination.totalResults : 0}
+            searchResults={data ? data.results : []}
             sortByFunction={val => {
               alert('you sorted by:  ' + val);
             }}
           />
         </SearchContainer>
-        <PaginationNumbered page={page} totalPages={totalPages} stale={false} />
+        <PaginationNumbered
+          page={data && data.pagination ? data.pagination.page : 1}
+          totalPages={data && data.pagination ? data.pagination.totalPages : 1}
+          stale={false}
+          extraQuery={{ fulltext }}
+        />
       </>
     );
   },
   {
+    getKey(params: {}, query: { page: number; fulltext: string }) {
+      return ['response', { page: Number(query.page), fulltext: query.fulltext }];
+    },
     getData: async (key, vars, api) => {
-      return await api.search(vars.searchTerm, vars.page);
+      return await api.search(vars.fulltext, vars.page);
     },
   }
 );
