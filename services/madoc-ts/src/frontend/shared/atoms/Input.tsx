@@ -21,6 +21,21 @@ export const Input = styled.input`
   }
 `;
 
+export const InputBorderless = styled.input`
+  background: #fff;
+  border: none;
+  padding: 0.5em;
+  font-size: 0.9em;
+  line-height: 1.3em;
+  width: 100%;
+  box-shadow: none;
+  border: none;
+  &:focus {
+    border-color: #333;
+    outline: none;
+  }
+`;
+
 export const InputContainer = styled.div<{ wide?: boolean }>`
   display: flex;
   flex-direction: column;

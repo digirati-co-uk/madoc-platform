@@ -4,6 +4,9 @@ import styled, { css } from 'styled-components';
 import { BreadcrumbItem, Breadcrumbs } from '../../shared/atoms/Breadcrumbs';
 import { Link, useLocation } from 'react-router-dom';
 import { WidePage } from '../../shared/atoms/WidePage';
+import { SearchBox } from '../../shared/atoms/SearchBox';
+import { GridContainer } from '../../shared/atoms/Grid';
+import { useApi } from '../../shared/hooks/use-api';
 
 const AdminHeaderBackground = styled.div`
   background: #333;
@@ -63,9 +66,10 @@ export const AdminHeader: React.FC<{
   breadcrumbs?: BreadcrumbItem[];
   menu?: BreadcrumbItem[];
   thumbnail?: string;
-}> = ({ title, subtitle, breadcrumbs, menu, thumbnail }) => {
+  search?: boolean;
+  searchFunction?: (val: string) => [{}];
+}> = ({ title, subtitle, breadcrumbs, menu, thumbnail, search = false, searchFunction }) => {
   const { pathname } = useLocation();
-
   return (
     <AdminHeaderBackground>
       {breadcrumbs ? <Breadcrumbs items={breadcrumbs} /> : null}
@@ -82,18 +86,21 @@ export const AdminHeader: React.FC<{
           </TitleContainer>
         </AdminHeaderGrid>
         {menu ? (
-          <AdminTabRow>
-            {menu.map((item, n) => (
-              <AdminTabItem
-                key={item.link}
-                $active={pathname === item.link || (pathname.indexOf(item.link) !== -1 && n > 0)}
-                as={Link}
-                to={item.link}
-              >
-                {item.label}
-              </AdminTabItem>
-            ))}
-          </AdminTabRow>
+          <GridContainer $justify={'space-between'}>
+            <AdminTabRow>
+              {menu.map((item, n) => (
+                <AdminTabItem
+                  key={item.link}
+                  $active={pathname === item.link || (pathname.indexOf(item.link) !== -1 && n > 0)}
+                  as={Link}
+                  to={item.link}
+                >
+                  {item.label}
+                </AdminTabItem>
+              ))}
+            </AdminTabRow>
+            {search && searchFunction ? <SearchBox onSearch={val => searchFunction(val)} /> : null}
+          </GridContainer>
         ) : null}
       </WidePage>
     </AdminHeaderBackground>

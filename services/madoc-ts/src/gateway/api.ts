@@ -206,7 +206,6 @@ export class ApiClient {
       }
       this.isDown = false;
     }
-
     return response.data;
   }
 
@@ -389,6 +388,15 @@ export class ApiClient {
     return projectConfig.config && projectConfig.config[0] && projectConfig.config[0].config_object
       ? projectConfig.config[0].config_object
       : {};
+  }
+
+  /// Search
+
+  async search(searchTerm: string, pageQuery?: number, facetType?: string, facetValue?: string) {
+    // Facet Types these are just one at a time for now, may switch to a post query with the json if a list!
+    return await this.request<SearchResponse>(
+      `/api/search/search?${stringify({ fulltext: searchTerm, page: pageQuery, facetType, facetValue })}`
+    );
   }
 
   // IIIF.

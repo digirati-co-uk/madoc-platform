@@ -14,3 +14,13 @@ export type ModelSearch = {
   parent_selector_type?: string;
   context: string[];
 };
+
+type FacetOption = {
+  value: string;
+  text: string;
+};
+// This also needs to be refined
+export type SearchFacet = {
+  name: string;
+  options: Array<FacetOption>;
+};

@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Button, SmallButton } from '../src/frontend/shared/atoms/Button';
 import { Breadcrumbs } from '../src/frontend/shared/atoms/Breadcrumbs';
 import { MemoryRouter } from 'react-router-dom';
+import { SearchBox } from '../src/frontend/shared/atoms/SearchBox';
+import { Dropdown } from '@capture-models/editor';
 
 export default { title: 'Atoms' };
 
@@ -27,3 +29,12 @@ export const breadcrumbs = () => (
     />
   </MemoryRouter>
 );
+
+export const searchBox = () => <SearchBox large={true} onSearch={val => alert('you searched for ' + val)} />;
+
+const options = [
+  { value: 'Option1', text: 'Option 1' },
+  { value: 'Option2', text: 'Option 2' },
+  { value: 'Option3', text: 'Option 3' },
+];
+export const dropDown = () => <Dropdown options={options} onChange={val => console.log(val)} placeholder="Select" />;
