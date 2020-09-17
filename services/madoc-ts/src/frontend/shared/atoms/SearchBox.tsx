@@ -15,6 +15,7 @@ const SearchContainer = styled.div`
   font-size: 0.9em;
   line-height: 1.3em;
   width: 100%;
+  max-width: 700px;
   box-shadow: none;
   &:focus {
     border-color: #333;
@@ -42,7 +43,7 @@ export const SearchBox: React.FC<{
           type="text"
           id={!large ? 'search' : `searchLarge`}
           value={searchValue}
-          onChange={e => setSearchValue(e.target.value)}
+          onChange={(e: any) => setSearchValue(e.target.value)}
           placeholder={placeholder}
         />
         <LinkButton>

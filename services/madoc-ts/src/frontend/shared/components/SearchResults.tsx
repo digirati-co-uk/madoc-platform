@@ -1,11 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
-
 import { SearchResult } from '../../../types/search';
-
+import { parseUrn } from '../../../utility/parse-urn';
+import { CroppedImage } from '../atoms/Images';
+import { ImageStripBox } from '../atoms/ImageStrip';
 import { SearchBox } from '../atoms/SearchBox';
 import { GridContainer } from '../atoms/Grid';
-import { GridColumn, Dropdown } from '@capture-models/editor';
+import { createLink } from '../utility/create-link';
+import { HrefLink } from '../utility/href-link';
+import { LocaleString } from './LocaleString';
 
 const ResultsContainer = styled.div`
   flex: 1 1 0px;
@@ -17,10 +20,10 @@ const ResultsHeader = styled.h2`
   margin: 0;
 `;
 
-const SearchHint = styled.span`
-  font-size: 0.75rem;
-  padding-left: 1rem;
-  color: #000000 50%;
+const SearchHint = styled.div`
+  font-size: 0.85rem;
+  color: #000000;
+  margin: .5em 0;
   text-decoration: rgba(0, 0, 0, 0.5);
   padding-bottom: 0.875rem;
 `;
@@ -35,11 +38,9 @@ const ResultContainer = styled.li`
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
 `;
 
-const ResultText = styled.div`
+const ResultText = styled.span`
   text-decoration: none;
-  & b {
-    font-weight: normal;
-  }
+  line-height: 1.3em;
 `;
 
 const ResultTitle = styled.div`
@@ -49,48 +50,60 @@ const ResultTitle = styled.div`
   padding-bottom: 0.625rem;
 `;
 
-const DropdownContainer = styled.div`
-  width: 40%;
-  margin-right: 1.25rem;
+const TotalResults = styled.div`
+  margin: 1em 0;
+  color: #666;
 `;
 
-const SearchItem: React.FC<{ result: SearchResult }> = ({ result }) => {
+function sanitizeLabel(str: string) {
+  return str.replace(/^.*': '/, '');
+}
+
+const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small' }> = ({ result, size }) => {
+  const things = result.contexts.map(value => {
+    return parseUrn(value.id);
+  });
+
+  const collectionId = things.find(thing => thing?.type === 'collection')?.id;
+  const manifestId = things.find(thing => thing?.type === 'manifest')?.id;
+  const canvasId = things.find(thing => thing?.type === 'canvas')?.id;
+
   return (
     <ResultContainer>
-      <a href={result.url} style={{ textDecoration: 'none' }}>
+      <HrefLink
+        href={createLink({
+          manifestId,
+          canvasId,
+          collectionId,
+        })}
+        style={{ textDecoration: 'none' }}
+      >
         <GridContainer>
-          <img src={result.madoc_thumbnail}></img>
-          <GridColumn>
-            <ResultTitle>{result.label.en}</ResultTitle>
-            {result.hits.map((found: any) => {
+          <ImageStripBox $size={size}>
+            <CroppedImage $size={size}>
+              <img src={result.madoc_thumbnail} />
+            </CroppedImage>
+          </ImageStripBox>
+          <div style={{ alignSelf: 'flex-start', marginLeft: '1em' }}>
+            <LocaleString as={ResultTitle}>{result.label}</LocaleString>
+            {result.hits.map(found => {
               return found.snippet ? (
-                <ResultText
-                  key={found.snippet}
-                  dangerouslySetInnerHTML={{
-                    __html: `
-					<p>
-						${found.snippet}
-					</p>
-				`,
-                  }}
-                />
-              ) : (
-                <></>
-              );
+                <div style={{ paddingBottom: '.8em' }}>
+                  <ResultText
+                    key={found.snippet}
+                    dangerouslySetInnerHTML={{
+                      __html: sanitizeLabel(found.snippet),
+                    }}
+                  />
+                </div>
+              ) : null;
             })}
-          </GridColumn>
+          </div>
         </GridContainer>
-      </a>
+      </HrefLink>
     </ResultContainer>
   );
 };
-
-// Will these be props
-const options = [
-  { value: 'Option1', text: 'Option 1' },
-  { value: 'Option2', text: 'Option 2' },
-  { value: 'Option3', text: 'Option 3' },
-];
 
 export const SearchResults: React.FC<{
   searchFunction: (val: string) => void;
@@ -108,11 +121,11 @@ export const SearchResults: React.FC<{
         <Dropdown options={options} placeholder="Sort By" onChange={val => sortByFunction(val)} />
       </DropdownContainer> */}
     </GridContainer>
-    {`${totalResults} Results`}
-    <GridColumn>
+    <TotalResults>{`${totalResults} Results`}</TotalResults>
+    <div>
       {searchResults.map((result: SearchResult, index: number) => {
-        return result ? <SearchItem result={result} key={index} /> : <></>;
+        return result ? <SearchItem result={result} key={index} /> : null;
       })}
-    </GridColumn>
+    </div>
   </ResultsContainer>
 );

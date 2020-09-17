@@ -1,3 +1,4 @@
+import { api } from '../../gateway/api.server';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { MetadataUpdate } from '../../types/schemas/metadata-update';
 import { userWithScope } from '../../utility/user-with-scope';
@@ -28,6 +29,11 @@ export const updateMetadata: RouteMiddleware<{ id: number }, MetadataUpdate> = a
       await connection.query(removedQuery);
     }
   });
+
+  if (context.request.originalUrl.indexOf('iiif/manifests') !== -1) {
+    const userApi = api.asUser({ siteId });
+    userApi.indexManifest(resourceId);
+  }
 
   context.response.status = 200;
 };

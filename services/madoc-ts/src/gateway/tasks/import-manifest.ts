@@ -1,3 +1,4 @@
+import { api } from '../api.server';
 import { BaseTask } from './base-task';
 import * as importCanvas from './import-canvas';
 import * as tasks from './task-helpers';
@@ -215,6 +216,10 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         // Update canvases.
         await api.asUser({ userId, siteId }).updateManifestStructure(task.state.resourceId, canvasIds);
       }
+
+      // Search ingest.
+      const userApi = api.asUser({ siteId });
+      userApi.indexManifest(task.state.resourceId);
 
       // Update task.
       await api.updateTask(taskId, changeStatus('done'));

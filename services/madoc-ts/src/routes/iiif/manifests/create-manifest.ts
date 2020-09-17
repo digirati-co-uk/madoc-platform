@@ -1,4 +1,5 @@
 import { sql } from 'slonik';
+import { api } from '../../../gateway/api.server';
 import { userWithScope } from '../../../utility/user-with-scope';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { CreateManifest } from '../../../types/schemas/create-manifest';
