@@ -226,7 +226,6 @@ export class ApiClient {
       jwt?: string;
     } = {}
   ) {
-    console.log(endpoint);
     if (!this.publicSiteSlug) {
       throw new Error('Site slug not found');
     }
