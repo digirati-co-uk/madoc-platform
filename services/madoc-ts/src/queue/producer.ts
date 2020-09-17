@@ -92,6 +92,7 @@ const worker = new Worker(
           });
       }
     } catch (e) {
+      console.log(e);
       if (job.data.taskId) {
         await contextualApi.updateTask(
           job.data.taskId,
