@@ -1,32 +1,96 @@
 {
   "type": "object",
   "properties": {
+    "url": {
+      "type": "string"
+    },
+    "resource_id": {
+      "type": "string"
+    },
+    "resource_type": {
+      "type": "string"
+    },
+    "madoc_thumbnail": {
+      "type": "string"
+    },
     "id": {
       "type": "string"
     },
-    "title": {
-      "type": "string"
+    "label": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
     },
-    "thumbnail": {
-      "type": "string"
+    "context": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "url"
+        ]
+      }
     },
-    "type": {
-      "type": "string"
-    },
-    "description": {
-      "type": "string"
-    },
-    "link": {
-      "type": "string"
+    "hits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "subtype": {
+            "type": "string"
+          },
+          "snippet": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          },
+          "rank": {
+            "type": "number"
+          },
+          "original_content": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "language",
+          "original_content",
+          "rank",
+          "snippet",
+          "subtype",
+          "type"
+        ]
+      }
     }
   },
   "required": [
-    "description",
+    "context",
+    "hits",
     "id",
-    "link",
-    "thumbnail",
-    "title",
-    "type"
+    "label",
+    "madoc_thumbnail",
+    "resource_id",
+    "resource_type",
+    "url"
   ],
   "$schema": "http://json-schema.org/draft-07/schema#"
 }

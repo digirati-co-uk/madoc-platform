@@ -35,7 +35,7 @@ import { RevisionRequest } from '@capture-models/types';
 import { ProjectList } from '../types/schemas/project-list';
 import { ProjectFull } from '../types/schemas/project-full';
 import { UserDetails } from '../types/schemas/user-details';
-import { ModelSearch, SearchResponse } from '../types/schemas/search';
+import { ModelSearch } from '../types/schemas/search';
 import {
   CrowdsourcingReview,
   CrowdsourcingReviewMerge,
