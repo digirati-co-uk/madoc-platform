@@ -13,7 +13,7 @@ import { usePaginatedData } from '../../shared/hooks/use-data';
 
 import styled from 'styled-components';
 
-import { SearchResponse } from '../../../types/schemas/search';
+import { SearchResponse } from '../../../types/search';
 
 // const options = [
 //   { value: 'Option1', text: 'Option 1' },
