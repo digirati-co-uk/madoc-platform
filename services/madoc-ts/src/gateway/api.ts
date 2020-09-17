@@ -397,10 +397,7 @@ export class ApiClient {
   async search(searchTerm: string, pageQuery?: number, facetType?: string, facetValue?: string) {
     // Facet Types these are just one at a time for now, may switch to a post query with the json if a list!
     return await this.request<SearchResponse>(
-      `/api/search/search?fulltext=${searchTerm}` +
-        `${pageQuery ? `&page=${pageQuery}` : ``}` +
-        `${facetType ? `&facet_type=${facetType}` : ``}` +
-        `${facetValue ? `&facet_subtype=${facetValue}` : ``}`
+      `/api/search/search?${stringify({ fulltext: searchTerm, pageQuery, facetType, facetValue })}`
     );
   }
 
