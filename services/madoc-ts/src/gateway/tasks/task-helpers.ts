@@ -1,3 +1,10 @@
+import {
+  FixedSizeImage,
+  FixedSizeImageService,
+  ImageCandidate,
+  UnknownSizeImage,
+  VariableSizeImage,
+} from '@atlas-viewer/iiif-image-api';
 import { BaseTask } from './base-task';
 import mkdirp from 'mkdirp';
 import { existsSync, readFile, writeFileSync } from 'fs';
@@ -111,7 +118,10 @@ export function writeCanvasToDisk(idHash: string, content: any, canvasOrder: num
   return fileLocation;
 }
 
-export async function getThumbnail(vault: Vault, canvas: any) {
+export async function getThumbnail(
+  vault: Vault,
+  canvas: any
+): Promise<null | undefined | FixedSizeImage | FixedSizeImageService | VariableSizeImage | UnknownSizeImage> {
   const sizes = [256, 512, 768, 1024];
 
   for (const size of sizes) {
@@ -171,7 +181,8 @@ export function getCanvasFromManifest(manifest: any, canvasId: string) {
       for (const seq of manifest.sequences) {
         if (seq.canvases) {
           for (const canvas of seq.canvases) {
-            if ((canvas.id && canvas.id === canvasId) || (canvas['@id'] && canvas['@id'] === canvasId)) {
+            const id = canvas.id ? canvas.id : canvas['@id'] ? canvas['@id'] : undefined;
+            if (id && decodeURI(id) === decodeURI(canvasId)) {
               return canvas;
             }
           }
