@@ -1,5 +1,5 @@
+import { stringify } from 'query-string';
 import React from 'react';
-import { SearchFacets } from '../../shared/components/SearchFacets';
 import { SearchResults } from '../../shared/components/SearchResults';
 import { PaginationNumbered } from '../../shared/components/Pagination';
 import { useTranslation } from 'react-i18next';
@@ -26,7 +26,7 @@ const SearchContainer = styled.div`
 `;
 
 type SearchListType = {
-  data: SearchResponse;
+  data: SearchResponse | undefined;
   params: {};
   query: { page: number; fulltext: string };
   variables: { page: number; fulltext: string };
@@ -36,7 +36,7 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
   () => {
     const { status, data } = usePaginatedData(Search);
     const { t } = useTranslation();
-    const { fulltext } = useLocationQuery();
+    const { page, fulltext } = useLocationQuery();
     const history = useHistory();
     const { pathname } = useLocation();
 
@@ -45,19 +45,15 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
     ) : (
       <>
         <SearchContainer>
-          {/* <SearchFacets
-          facets={searchResults.facets}
-          facetChange={(val, facet) => alert('you changed Facet ' + facet + ' to the value ' + val)}
-        /> */}
           <SearchResults
             searchFunction={val => {
-              history.push(`${pathname}?fulltext=${val}`);
+              history.push(`${pathname}?${stringify({ fulltext: val, page })}`);
             }}
             value={fulltext}
             totalResults={data && data.pagination ? data.pagination.totalResults : 0}
             searchResults={data ? data.results : []}
             sortByFunction={val => {
-              alert('you sorted by:  ' + val);
+              // alert('you sorted by:  ' + val);
             }}
           />
         </SearchContainer>
@@ -72,10 +68,19 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
   },
   {
     getKey(params: {}, query: { page: number; fulltext: string }) {
-      return ['response', { page: Number(query.page), fulltext: query.fulltext }];
+      return ['response', { page: query.page ? Number(query.page) : 1, fulltext: query.fulltext }];
     },
     getData: async (key, vars, api) => {
-      return await api.search(vars.fulltext, vars.page);
+      if (!vars.fulltext) {
+        return undefined;
+      }
+
+      return await api.searchQuery(
+        {
+          fulltext: vars.fulltext,
+        },
+        vars.page
+      );
     },
   }
 );

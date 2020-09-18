@@ -1275,6 +1275,12 @@ export class ApiClient {
     });
   }
 
+  async indexManifest(id: number) {
+    return this.request(`/api/madoc/iiif/manifests/${id}/index`, {
+      method: 'POST',
+    });
+  }
+
   // Public API.
   async getSiteCanvas(id: number, query?: import('../routes/site/site-canvas').SiteCanvasQuery) {
     return this.publicRequest<CanvasFull>(`/madoc/api/canvases/${id}`, query);
