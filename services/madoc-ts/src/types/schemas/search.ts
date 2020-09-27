@@ -20,7 +20,4 @@ type FacetOption = {
   text: string;
 };
 // This also needs to be refined
-export type SearchFacet = {
-  name: string;
-  options: Array<FacetOption>;
-};
+export type SearchFacet = any;

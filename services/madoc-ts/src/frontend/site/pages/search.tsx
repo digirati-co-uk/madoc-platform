@@ -1,6 +1,8 @@
 import { stringify } from 'query-string';
 import React from 'react';
 import { SearchResults } from '../../shared/components/SearchResults';
+import { SearchFacets } from '../../shared/components/SearchFacets';
+
 import { PaginationNumbered } from '../../shared/components/Pagination';
 import { useTranslation } from 'react-i18next';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
@@ -45,6 +47,10 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
     ) : (
       <>
         <SearchContainer>
+          <SearchFacets
+            facets={data && data.facets && data.facets.metadata ? Object.entries(data.facets.metadata) : []}
+            facetChange={() => {}}
+          />
           <SearchResults
             searchFunction={val => {
               history.push(`${pathname}?${stringify({ fulltext: val, page })}`);
