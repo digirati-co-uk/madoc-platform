@@ -325,6 +325,15 @@ export class ApiClient {
     });
   }
 
+  async updateProjectStatus(id: number, status: number) {
+    return this.request<any>(`/api/madoc/projects/${id}/status`, {
+      method: 'PUT',
+      body: {
+        status,
+      },
+    });
+  }
+
   async createResourceClaim(projectId: string | number, claim: ResourceClaim) {
     return this.request<{ claim: CrowdsourcingTask }>(`/api/madoc/projects/${projectId}/claim`, {
       method: 'POST',

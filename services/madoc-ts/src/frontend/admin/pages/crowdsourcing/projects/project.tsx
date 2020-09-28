@@ -1,3 +1,4 @@
+import { ProjectStatus } from '../../../../shared/atoms/ProjectStatus';
 import { UniversalComponent } from '../../../../types';
 import React from 'react';
 import { LocaleString } from '../../../../shared/components/LocaleString';
@@ -18,7 +19,7 @@ type ProjectType = {
 export const Project: UniversalComponent<ProjectType> = createUniversalComponent<ProjectType>(
   ({ route }) => {
     const { t } = useTranslation();
-    const { data, status } = useData(Project);
+    const { data, status, refetch } = useData(Project);
 
     if (!data || status === 'loading' || status === 'error') {
       return <div>loading...</div>;
@@ -42,7 +43,8 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
           title={<LocaleString>{data.label}</LocaleString>}
         />
         <WidePage>
-          {renderUniversalRoutes(route.routes, { captureModelId: data.capture_model_id, project: data })}
+          {data ? <ProjectStatus status={data.status} /> : null}
+          {renderUniversalRoutes(route.routes, { captureModelId: data.capture_model_id, project: data, refetch })}
         </WidePage>
       </>
     );
