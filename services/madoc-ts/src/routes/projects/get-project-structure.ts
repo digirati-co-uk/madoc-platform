@@ -9,7 +9,10 @@ export const getProjectStructure: RouteMiddleware<{ id: string }> = async contex
   const { siteId } = userWithScope(context, []);
   const projectId = Number(context.params.id);
 
-  const { collection_id } = await context.connection.one(getProjectCollectionId(projectId, siteId));
+  const scope = context.state.jwt?.scope || [];
+  const onlyPublished = scope.indexOf('site.admin') === -1;
+
+  const { collection_id } = await context.connection.one(getProjectCollectionId(projectId, siteId, onlyPublished));
 
   const rows = await context.connection.any(getItemStructures(collection_id, siteId));
 

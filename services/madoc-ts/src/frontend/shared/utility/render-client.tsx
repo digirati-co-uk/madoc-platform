@@ -8,6 +8,8 @@ import { BrowserRouter } from 'react-router-dom';
 import { api } from '../../../gateway/api.browser';
 import React from 'react';
 import { UniversalRoute } from '../../types';
+import { NotFoundPage } from '../components/NotFoundPage';
+import { ErrorBoundary } from './error-boundary';
 import { queryConfig } from './query-config';
 import { ReactQueryDevtools } from 'react-query-devtools';
 
@@ -40,8 +42,10 @@ export function renderClient(
             <Hydrate state={dehydratedState}>
               <I18nextProvider i18n={i18n}>
                 <BrowserRouter basename={basename}>
-                  <Component jwt={jwt} api={api} routes={routes} />
-                  {process.env.NODE_ENV === 'development' ? <ReactQueryDevtools /> : null}
+                  <ErrorBoundary onError={() => <NotFoundPage />}>
+                    <Component jwt={jwt} api={api} routes={routes} />
+                    {process.env.NODE_ENV === 'development' ? <ReactQueryDevtools /> : null}
+                  </ErrorBoundary>
                 </BrowserRouter>
               </I18nextProvider>
             </Hydrate>

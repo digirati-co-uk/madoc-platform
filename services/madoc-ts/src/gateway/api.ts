@@ -3,6 +3,7 @@ import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.e
 import { ExtensionManager } from '../extensions/extension-manager';
 import { ProjectConfiguration } from '../types/schemas/project-configuration';
 import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/search';
+import { NotFound } from '../utility/errors/not-found';
 import { fetchJson } from './fetch-json';
 import { BaseTask } from '../gateway/tasks/base-task';
 import { CanvasNormalized, CollectionNormalized, Manifest } from '@hyperion-framework/types';
@@ -164,6 +165,11 @@ export class ApiClient {
     });
 
     if (response.error) {
+
+      if (response.status === 404) {
+        throw new NotFound();
+      }
+
       if (response.data.error === 'There was a problem proxying the request') {
         this.isDown = true;
         for (const err of this.errorHandlers) {
@@ -257,12 +263,12 @@ export class ApiClient {
   }
 
   // Projects.
-  async getProjects(page?: number, query: { root_task_id?: string } = {}) {
+  async getProjects(page?: number, query: { root_task_id?: string; published?: boolean } = {}) {
     return this.request<ProjectList>(`/api/madoc/projects?${stringify({ page, ...query })}`);
   }
 
-  async getProject(id: number | string) {
-    return this.request<ProjectFull>(`/api/madoc/projects/${id}`);
+  async getProject(id: number | string, query?: { published?: boolean }) {
+    return this.request<ProjectFull>(`/api/madoc/projects/${id}${query ? `?${stringify(query)}` : ''}`);
   }
 
   async getProjectMetadata(id: number) {
@@ -418,8 +424,10 @@ export class ApiClient {
     return this.request<ManifestListResponse>(`/api/madoc/iiif/manifests?${stringify({ page, parent, filter })}`);
   }
 
-  async getManifestProjects(id: number) {
-    return this.request<{ projects: ProjectSnippet[] }>(`/api/madoc/iiif/manifests/${id}/projects`);
+  async getManifestProjects(id: number, query?: { published?: boolean }) {
+    return this.request<{ projects: ProjectSnippet[] }>(
+      `/api/madoc/iiif/manifests/${id}/projects${query ? `?${stringify(query)}` : ''}`
+    );
   }
 
   async getManifestLinking(id: number) {
@@ -461,8 +469,10 @@ export class ApiClient {
     });
   }
 
-  async getCollectionProjects(id: number) {
-    return this.request<{ projects: ProjectSnippet[] }>(`/api/madoc/iiif/collections/${id}/projects`);
+  async getCollectionProjects(id: number, query?: { published?: boolean }) {
+    return this.request<{ projects: ProjectSnippet[] }>(
+      `/api/madoc/iiif/collections/${id}/projects${query ? `?${stringify(query)}` : ''}`
+    );
   }
 
   async getCollectionStatistics(id: number) {

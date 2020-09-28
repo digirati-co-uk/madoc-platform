@@ -25,7 +25,7 @@ export function useData<Data = any, TKey = any, TVariables = any>(
       }
       return undefined as any;
     },
-    config
+    { ...(config || {}), useErrorBoundary: true }
   );
 }
 
@@ -64,6 +64,6 @@ export function usePaginatedData<Data = any, TKey = any, TVariables = any>(
       }
       return undefined as any;
     },
-    config
+    { ...(config || {}), useErrorBoundary: true }
   );
 }

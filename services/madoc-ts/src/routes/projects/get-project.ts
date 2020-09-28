@@ -1,5 +1,6 @@
 // Returns a single project.
 import { RouteMiddleware } from '../../types/route-middleware';
+import { castBool } from '../../utility/cast-bool';
 import { optionalUserWithScope } from '../../utility/user-with-scope';
 import { getMetadata } from '../../utility/iiif-database-helpers';
 import { sql } from 'slonik';
@@ -15,7 +16,7 @@ export const getProject: RouteMiddleware<{ id: string }> = async context => {
   const scope = context.state.jwt?.scope || [];
 
   const { projectSlug, projectId } = parseProjectId(context.params.id);
-  const onlyPublished = scope.indexOf('site.admin') !== -1 ? Boolean(context.request.query.published) : true;
+  const onlyPublished = scope.indexOf('site.admin') !== -1 ? castBool(context.request.query.published) : true;
 
   if (!projectId && !projectSlug) {
     throw new NotFound();

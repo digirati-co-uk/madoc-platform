@@ -2,6 +2,7 @@
 //  - Statistics from the task service.
 import { RouteMiddleware } from '../../types/route-middleware';
 import { sql } from 'slonik';
+import { castBool } from '../../utility/cast-bool';
 import { optionalUserWithScope } from '../../utility/user-with-scope';
 import { getMetadata } from '../../utility/iiif-database-helpers';
 import { mapMetadata } from '../../utility/iiif-metadata';
@@ -14,7 +15,7 @@ export const listProjects: RouteMiddleware = async context => {
 
   const page = Number(context.query.page) || 1;
   const rootTaskId = context.query.root_task_id;
-  const onlyPublished = scope.indexOf('site.admin') !== -1 ? Boolean(context.request.query.published) : true;
+  const onlyPublished = scope.indexOf('site.admin') !== -1 ? castBool(context.request.query.published) : true;
   const projectsPerPage = 5;
 
   const rootTaskQuery = rootTaskId ? sql`and iiif_project.task_id = ${rootTaskId}` : SQL_EMPTY;

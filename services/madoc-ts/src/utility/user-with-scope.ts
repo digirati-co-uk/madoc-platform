@@ -43,6 +43,7 @@ export function optionalUserWithScope(context: { state: ApplicationState }, scop
       siteId: context.state.jwt.site.id,
       siteUrn: `urn:madoc:site:${context.state.jwt.site.id}`,
       siteName: `urn:madoc:site:${context.state.jwt.site.name}`,
+      service: true,
     };
   }
 
@@ -53,5 +54,6 @@ export function optionalUserWithScope(context: { state: ApplicationState }, scop
     siteUrn: `urn:madoc:site:${context.state.jwt.site.id}`,
     userUrn: `urn:madoc:user:${context.state.jwt.user.id}`,
     siteName: context.state.jwt.site.name,
+    service: false,
   };
 }

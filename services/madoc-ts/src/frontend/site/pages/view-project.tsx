@@ -19,7 +19,6 @@ import { ContributorTasks } from '../../shared/components/ContributorTasks';
 import { useReviewerTasks } from '../../shared/hooks/use-reviewer-tasks';
 import { ReviewerTasks } from '../../shared/components/ReviewerTasks';
 
-// @todo create universal component and load up the main collection.
 export const ViewProject: React.FC<Partial<{
   project: ProjectFull;
   collections: CollectionFull;

@@ -1,8 +1,5 @@
 import React, { useMemo } from 'react';
-import { useQuery } from 'react-query';
-import { QueryResult } from 'react-query/types/core/types';
-import { ApiClient } from '../../../../gateway/api';
-import { useApi } from '../../../shared/hooks/use-api';
+import { NotFoundPage } from '../../../shared/components/NotFoundPage';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { UniversalComponent } from '../../../types';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
@@ -22,7 +19,7 @@ type ProjectLoaderType = {
 
 export const ProjectLoader: UniversalComponent<ProjectLoaderType> = createUniversalComponent<ProjectLoaderType>(
   ({ route }) => {
-    const { data: project } = useStaticData(ProjectLoader);
+    const { data: project, isError } = useStaticData(ProjectLoader);
     const { slug } = useParams();
     const { isExact } = useRouteMatch();
 
@@ -50,6 +47,10 @@ export const ProjectLoader: UniversalComponent<ProjectLoaderType> = createUniver
     );
 
     const ctx = useMemo(() => (project ? { id: project.slug, name: project.label } : undefined), [project]);
+
+    if (isError) {
+      return <NotFoundPage />;
+    }
 
     return (
       <BreadcrumbContext project={ctx}>

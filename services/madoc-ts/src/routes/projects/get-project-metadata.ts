@@ -8,7 +8,10 @@ export const getProjectMetadata: RouteMiddleware<{ id: string }> = async context
   const { siteId } = userWithScope(context, []);
   const projectId = Number(context.params.id);
 
-  const { collection_id } = await context.connection.one(getProjectCollectionId(projectId, siteId));
+  const scope = context.state.jwt?.scope || [];
+  const onlyPublished = scope.indexOf('site.admin') === -1;
+
+  const { collection_id } = await context.connection.one(getProjectCollectionId(projectId, siteId, onlyPublished));
 
   const collection = await context.connection.many(getDerivedMetadata(collection_id, 'collection', siteId));
 
