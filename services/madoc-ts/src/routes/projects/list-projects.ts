@@ -53,6 +53,7 @@ export const listProjects: RouteMiddleware = async context => {
       slug: project.slug,
       capture_model_id: project.capture_model_id,
       task_id: project.task_id,
+      status: project.status,
     };
   });
 
