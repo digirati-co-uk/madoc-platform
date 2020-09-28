@@ -10,11 +10,15 @@ import { SQL_EMPTY } from '../../utility/postgres-tags';
 
 export const listProjects: RouteMiddleware = async context => {
   const { siteId } = optionalUserWithScope(context, []);
+  const scope = context.state.jwt?.scope || [];
+
   const page = Number(context.query.page) || 1;
   const rootTaskId = context.query.root_task_id;
+  const onlyPublished = scope.indexOf('site.admin') !== -1 ? Boolean(context.request.query.published) : true;
   const projectsPerPage = 5;
 
   const rootTaskQuery = rootTaskId ? sql`and iiif_project.task_id = ${rootTaskId}` : SQL_EMPTY;
+  const publishedQuery = onlyPublished ? sql`and (iiif_project.status = 1 or iiif_project.status = 2)` : SQL_EMPTY;
 
   const { total } = await context.connection.one(
     sql`
@@ -22,6 +26,7 @@ export const listProjects: RouteMiddleware = async context => {
       from iiif_project
       where site_id = ${siteId}
       ${rootTaskQuery}
+      ${publishedQuery}
     `
   );
   const totalPages = Math.ceil(total / projectsPerPage);
@@ -33,6 +38,7 @@ export const listProjects: RouteMiddleware = async context => {
             left join iiif_resource ir on iiif_project.collection_id = ir.id
         where site_id = ${siteId}
         ${rootTaskQuery}
+        ${publishedQuery}
         limit ${projectsPerPage} offset ${(page - 1) * projectsPerPage}
       `,
       siteId
