@@ -265,6 +265,7 @@ header.site-header nav ul.navigation li {
     border-radius: 5px;
     flex: 0;
     margin-right: 0.7em;
+    white-space: nowrap;
 }
 header.site-header nav ul.navigation li a {
     text-decoration: none;
