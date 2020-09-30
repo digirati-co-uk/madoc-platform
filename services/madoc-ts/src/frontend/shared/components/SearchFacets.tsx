@@ -4,7 +4,6 @@ import styled from 'styled-components';
 // import { Dropdown } from '@capture-models/editor';
 import { SearchFacet } from '../../../types/schemas/search';
 import { DownArrowIcon } from '../icons/DownArrowIcon';
-import { SmallButton } from '../atoms/Button';
 
 const FacetsContainer = styled.div`
   display: flex;
@@ -18,7 +17,7 @@ const FacetLabel = styled.label`
   color: #000000;
   text-decoration: rgb(0, 0, 0);
   letter-spacing: 1px;
-  text-transform: uppercase;
+  text-transform: capitalize;
 `;
 
 const FacetType = styled.div`
@@ -38,12 +37,6 @@ const FacetTitle = styled.div`
   text-decoration: rgb(0, 0, 0);
   letter-spacing: 1px;
   text-transform: uppercase;
-`;
-
-const TargetArea = styled.button`
-  padding: 5px;
-  border: none;
-  background: none;
 `;
 
 const FacetExpandable: React.FC<{
