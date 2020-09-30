@@ -83,6 +83,43 @@ export const SmallRoundedButton = styled(RoundedButton)`
   padding: 2px 10px;
 `;
 
+export const MediumRoundedButton = styled.a`
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 22px;
+  background: #ffffff;
+  color: #007bff;
+  border: 1px solid #dee2e6;
+  text-decoration: none;
+  padding: 10px;
+
+  &:link,
+  &:visited {
+    color: #007bff;
+  }
+  &:hover {
+    background: #ffffff;
+    border-color: #dee2e6;
+  }
+  &:focus {
+    outline: 1px solid #dee2e6;
+  }
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    &:hover {
+      background: #4e82df;
+      border-color: #dee2e6;
+    }
+  }
+  &:last-of-type {
+    border-radius: 0px 4px 4px 0px;
+  }
+  &:first-of-type {
+    border-radius: 4px 0px 0px 4px;
+  }
+`;
+
 export const TinyButton = SmallButton;
 
 export const LinkButton = styled.button<{ $inherit?: boolean }>`

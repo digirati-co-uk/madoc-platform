@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { stringify } from 'query-string';
-import { SmallButton, SmallRoundedButton } from '../atoms/Button';
+import { SmallButton, SmallRoundedButton, MediumRoundedButton } from '../atoms/Button';
 
 import styled from 'styled-components';
 
@@ -69,17 +69,21 @@ export const Pagination: React.FC<{
   return (
     <PaginationContainer>
       {prevPage ? (
-        <SmallButton as={Link} to={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}`}>
+        <MediumRoundedButton
+          as={Link}
+          to={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}`}
+          style={{ backgroundColor: 'pink' }}
+        >
           {t('Previous page')}
-        </SmallButton>
+        </MediumRoundedButton>
       ) : null}
       <PaginationDisplay style={{ color: isLoading ? '#999' : '#333' }}>
         Page {isLoading ? '...' : page} of {totalPages}
       </PaginationDisplay>
       {nextPage ? (
-        <SmallButton as={Link} to={`${pathname}?${pageParam}=${page + 1}${q ? `&${q}` : ''}`}>
+        <MediumRoundedButton as={Link} to={`${pathname}?${pageParam}=${page + 1}${q ? `&${q}` : ''}`}>
           {t('Next page')}
-        </SmallButton>
+        </MediumRoundedButton>
       ) : null}
     </PaginationContainer>
   );

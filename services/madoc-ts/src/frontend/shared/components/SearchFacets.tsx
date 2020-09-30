@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 // import { Dropdown } from '@capture-models/editor';
 import { SearchFacet } from '../../../types/schemas/search';
+import { DownArrowIcon } from '../icons/DownArrowIcon';
+import { SmallButton } from '../atoms/Button';
 
 const FacetsContainer = styled.div`
   display: flex;
@@ -25,7 +27,9 @@ const FacetType = styled.div`
   text-decoration: rgb(0, 0, 0);
   letter-spacing: 1px;
   text-transform: uppercase;
-  padding: 1rem 0.5rem;
+  padding: 1rem 0rem;
+  display: flex;
+  justify-content: space-between;
 `;
 
 const FacetTitle = styled.div`
@@ -35,6 +39,39 @@ const FacetTitle = styled.div`
   letter-spacing: 1px;
   text-transform: uppercase;
 `;
+
+const TargetArea = styled.button`
+  padding: 5px;
+  border: none;
+  background: none;
+`;
+
+const FacetExpandable: React.FC<{
+  name: string;
+  facetChange: (val: string | undefined, name: string) => void;
+  values: Array<any>;
+}> = ({ name, facetChange, values }) => {
+  const [open, setOpen] = useState(true);
+
+  return (
+    <>
+      <FacetType onClick={() => setOpen(!open)}>
+        {name}
+        <DownArrowIcon style={!open ? { transform: 'rotate(180deg)' } : {}} />
+      </FacetType>
+      {open
+        ? values.map(option => {
+            return (
+              <FacetLabel htmlFor="" key={option.value}>
+                <input type="checkbox" value={option.value} onChange={val => facetChange(name, val.target.value)} />
+                {option.value}
+              </FacetLabel>
+            );
+          })
+        : null}
+    </>
+  );
+};
 
 export const SearchFacets: React.FC<{
   facets: Array<SearchFacet>;
@@ -46,15 +83,14 @@ export const SearchFacets: React.FC<{
       {facets.map((facet, idx) => {
         return (
           <>
-            <FacetType>{facet[0]}</FacetType>
-            {Object.entries(facet[1]).map(option => {
-              return (
-                <FacetLabel htmlFor="" key={option[0]}>
-                  <input type="checkbox" value={option[0]} onChange={val => facetChange(facet[0], val.target.value)} />
-                  {option[0]}
-                </FacetLabel>
-              );
-            })}
+            <FacetExpandable
+              name={facet[0]}
+              facetChange={facetChange}
+              values={Object.entries(facet[1]).map(option => {
+                return { value: option[0] };
+              })}
+            />
+            {}
           </>
         );
       })}

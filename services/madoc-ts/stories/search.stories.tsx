@@ -13,8 +13,8 @@ export default { title: 'Search' };
 
 const dummyResults = {
   pagination: {
-    page: 1,
-    totalPages: 1,
+    page: 2,
+    totalPages: 15,
     totalResults: 5,
   },
   results: [
