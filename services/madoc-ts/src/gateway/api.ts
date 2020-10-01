@@ -402,7 +402,7 @@ export class ApiClient {
           totalResults: 0,
           totalPages: 1,
         },
-        facets: {},
+        facets: [],
       };
     return await this.request<SearchResponse>(
       `/api/search/search?${stringify({ fulltext: searchTerm, page: pageQuery, facetType, facetValue })}`
