@@ -1,5 +1,5 @@
 import { stringify } from 'query-string';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SearchResults } from '../../shared/components/SearchResults';
 import { SearchFacets } from '../../shared/components/SearchFacets';
 
@@ -60,6 +60,11 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
       }
     };
 
+    useEffect(() => {
+      history.push(`${pathname}?${stringify({ fulltext, page, facets })}`);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [facets]);
+
     return status === 'loading' ? (
       <div>{t('Loading')}</div>
     ) : (
@@ -92,7 +97,10 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
   },
   {
     getKey(params: {}, query: { page: number; fulltext: string; facets?: SearchFacet[] }) {
-      return ['response', { page: query.page ? Number(query.page) : 1, fulltext: query.fulltext }];
+      return [
+        'response',
+        { page: query.page ? Number(query.page) : 1, fulltext: query.fulltext, facets: query.facets },
+      ];
     },
     getData: async (key, vars, api) => {
       if (!vars.fulltext) {
