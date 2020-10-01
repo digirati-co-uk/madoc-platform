@@ -1262,7 +1262,6 @@ export class ApiClient {
 
   // Search API
   async searchQuery(query: SearchQuery, page = 1) {
-    // TEMP TO GET WORKING LOCALLY
     let data;
     if (query.facets && JSON.parse(query.facets)) {
       try {
