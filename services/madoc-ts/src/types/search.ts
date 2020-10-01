@@ -86,7 +86,7 @@ export type SearchQuery = {
   iiif_identifiers?: string[];
 
   /** List of values of facets to search for */
-  facets?: SearchFacet[];
+  facets?: string;
 };
 
 /**
@@ -96,6 +96,7 @@ export type SearchFacet = {
   type: string;
   subtype: string;
   value: string;
+  applied?: boolean;
 };
 
 /** Post body for ingesting content into search */

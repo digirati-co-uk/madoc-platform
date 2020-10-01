@@ -56,7 +56,12 @@ const FacetExpandable: React.FC<{
         ? values.map(option => {
             return (
               <FacetLabel htmlFor="" key={option.value}>
-                <input type="checkbox" value={option.value} onChange={val => facetChange(name, val.target.value)} />
+                <input
+                  type="checkbox"
+                  value={option.value}
+                  onChange={val => facetChange(name, val.target.value)}
+                  defaultChecked={option.applied}
+                />
                 {option.value}
               </FacetLabel>
             );
@@ -67,24 +72,21 @@ const FacetExpandable: React.FC<{
 };
 
 export const SearchFacets: React.FC<{
-  facets: Array<any>;
+  facets: SearchFacet[];
   facetChange: (name: string, val: string) => void;
-  appliedFacet: SearchFacet[];
-}> = ({ facets, facetChange, appliedFacet }) => {
+}> = ({ facets, facetChange }) => {
+  const groups = [...new Set(facets.map(facet => facet.subtype))];
   return (
     <FacetsContainer>
       <FacetTitle>filter by</FacetTitle>
-      {facets.map((facet, idx) => {
+      {groups.map(groupType => {
         return (
           <>
             <FacetExpandable
-              name={facet[0]}
+              name={groupType}
               facetChange={facetChange}
-              values={Object.entries(facet[1]).map(option => {
-                return { value: option[0] };
-              })}
+              values={facets.filter(facet => facet.subtype === groupType)}
             />
-            {}
           </>
         );
       })}
