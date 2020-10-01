@@ -1,5 +1,5 @@
 import { stringify } from 'query-string';
-import React from 'react';
+import React, { useState } from 'react';
 import { SearchResults } from '../../shared/components/SearchResults';
 import { SearchFacets } from '../../shared/components/SearchFacets';
 
@@ -15,7 +15,7 @@ import { usePaginatedData } from '../../shared/hooks/use-data';
 
 import styled from 'styled-components';
 
-import { SearchResponse } from '../../../types/search';
+import { SearchResponse, SearchFacet } from '../../../types/search';
 
 // const options = [
 //   { value: 'Option1', text: 'Option 1' },
@@ -31,7 +31,7 @@ type SearchListType = {
   data: SearchResponse | undefined;
   params: {};
   query: { page: number; fulltext: string };
-  variables: { page: number; fulltext: string };
+  variables: { page: number; fulltext: string; facets?: SearchFacet[] };
 };
 
 export const Search: UniversalComponent<SearchListType> = createUniversalComponent<SearchListType>(
@@ -41,6 +41,24 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
     const { page, fulltext } = useLocationQuery();
     const history = useHistory();
     const { pathname } = useLocation();
+    const [facets, setFacets] = useState(Array);
+
+    const manageFacet = (facetType: string, facetValue: string) => {
+      const facet = {
+        type: 'metadata',
+        subtype: facetType,
+        value: facetValue,
+      };
+
+      if (!facets.find((fac: any) => fac.value === facet.value)) {
+        const newFacets = [...facets];
+        newFacets.push(facet);
+        setFacets(newFacets);
+      } else if (facets.find((fac: any) => fac.value === facet.value)) {
+        const newFacets = facets.filter((fac: any) => fac.value === facet.value && fac.facetType === facet.subtype);
+        setFacets(newFacets);
+      }
+    };
 
     return status === 'loading' ? (
       <div>{t('Loading')}</div>
@@ -49,11 +67,11 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
         <SearchContainer>
           <SearchFacets
             facets={data && data.facets && data.facets.metadata ? Object.entries(data.facets.metadata) : []}
-            facetChange={() => {}}
+            facetChange={(facetType, facetValue) => manageFacet(facetType, facetValue)}
           />
           <SearchResults
             searchFunction={val => {
-              history.push(`${pathname}?${stringify({ fulltext: val, page })}`);
+              history.push(`${pathname}?${stringify({ fulltext: val, page, facets })}`);
             }}
             value={fulltext}
             totalResults={data && data.pagination ? data.pagination.totalResults : 0}
@@ -73,7 +91,7 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
     );
   },
   {
-    getKey(params: {}, query: { page: number; fulltext: string }) {
+    getKey(params: {}, query: { page: number; fulltext: string; facets?: SearchFacet[] }) {
       return ['response', { page: query.page ? Number(query.page) : 1, fulltext: query.fulltext }];
     },
     getData: async (key, vars, api) => {
@@ -84,6 +102,7 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
       return await api.searchQuery(
         {
           fulltext: vars.fulltext,
+          facets: vars.facets,
         },
         vars.page
       );

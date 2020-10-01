@@ -394,19 +394,28 @@ export class ApiClient {
 
   async search(searchTerm: string, pageQuery = 1, facetType?: string, facetValue?: string) {
     // Facet Types these are just one at a time for now, may switch to a post query with the json if a list!
-    if (!searchTerm)
-      return {
-        results: [],
-        pagination: {
-          page: 1,
-          totalResults: 0,
-          totalPages: 1,
-        },
-        facets: {},
-      };
+    // if (!searchTerm)
+    //   return {
+    //     results: [],
+    //     pagination: {
+    //       page: 1,
+    //       totalResults: 0,
+    //       totalPages: 1,
+    //     },
+    //     facets: {},
+    //   };
+
     return await this.request<SearchResponse>(
-      `/api/search/search?${stringify({ fulltext: searchTerm, page: pageQuery, facetType, facetValue })}`
+      `http://localhost:8000/api/search/search?${stringify({
+        fulltext: searchTerm,
+        page: pageQuery,
+        facetType,
+        facetValue,
+      })}`
     );
+    // return await this.request<SearchResponse>(
+    //   `/api/search/search?${stringify({ fulltext: searchTerm, page: pageQuery, facetType, facetValue })}`
+    // );
   }
 
   // IIIF.
@@ -1262,10 +1271,26 @@ export class ApiClient {
 
   // Search API
   async searchQuery(query: SearchQuery, page = 1) {
-    return this.request<SearchResponse>(`/api/search/search?${stringify({ page })}`, {
-      method: 'POST',
-      body: query,
-    });
+    console.log(JSON.stringify(query));
+    const response = await fetch(
+      `http://localhost:8000/api/search/search?${stringify({
+        page: page,
+      })}`,
+      {
+        method: 'post',
+        body: JSON.stringify(query),
+        headers: {
+          Accept: 'application/json, text/plain',
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+      }
+    );
+    const data = await response.json();
+    return data;
+    // return this.request<SearchResponse>(`/api/search/search?${stringify({ page })}`, {
+    //   method: 'POST',
+    //   body: query,
+    // });
   }
 
   async searchIngest(resource: SearchIngestRequest) {

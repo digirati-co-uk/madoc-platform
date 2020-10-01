@@ -41,7 +41,7 @@ const FacetTitle = styled.div`
 
 const FacetExpandable: React.FC<{
   name: string;
-  facetChange: (val: string | undefined, name: string) => void;
+  facetChange: (val: string, name: string) => void;
   values: Array<any>;
 }> = ({ name, facetChange, values }) => {
   const [open, setOpen] = useState(true);
@@ -68,7 +68,7 @@ const FacetExpandable: React.FC<{
 
 export const SearchFacets: React.FC<{
   facets: Array<SearchFacet>;
-  facetChange: (val: string | undefined, name: string) => void;
+  facetChange: (name: string, val: string) => void;
 }> = ({ facets, facetChange }) => {
   return (
     <FacetsContainer>
