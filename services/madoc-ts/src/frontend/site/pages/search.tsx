@@ -61,7 +61,10 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
     };
 
     useEffect(() => {
-      history.push(`${pathname}?${stringify({ fulltext, page, facets })}`);
+      const jsonFacets = JSON.stringify(facets);
+      if (facets.length > 1) {
+        history.push(`${pathname}?${stringify({ fulltext, page })}&facets=${jsonFacets}`);
+      }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [facets]);
 
@@ -72,11 +75,12 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
         <SearchContainer>
           <SearchFacets
             facets={data && data.facets && data.facets.metadata ? Object.entries(data.facets.metadata) : []}
+            appliedFacets={facets}
             facetChange={(facetType, facetValue) => manageFacet(facetType, facetValue)}
           />
           <SearchResults
             searchFunction={val => {
-              history.push(`${pathname}?${stringify({ fulltext: val, page, facets })}`);
+              history.push(`${pathname}?${stringify({ fulltext: val, page })}`);
             }}
             value={fulltext}
             totalResults={data && data.pagination ? data.pagination.totalResults : 0}

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 
 // import { Dropdown } from '@capture-models/editor';
-import { SearchFacet } from '../../../types/schemas/search';
 import { DownArrowIcon } from '../icons/DownArrowIcon';
+import { SearchFacet } from '../../../types/search';
 
 const FacetsContainer = styled.div`
   display: flex;
@@ -67,9 +67,10 @@ const FacetExpandable: React.FC<{
 };
 
 export const SearchFacets: React.FC<{
-  facets: Array<SearchFacet>;
+  facets: Array<any>;
   facetChange: (name: string, val: string) => void;
-}> = ({ facets, facetChange }) => {
+  appliedFacet: SearchFacet[];
+}> = ({ facets, facetChange, appliedFacet }) => {
   return (
     <FacetsContainer>
       <FacetTitle>filter by</FacetTitle>

@@ -1262,7 +1262,6 @@ export class ApiClient {
 
   // Search API
   async searchQuery(query: SearchQuery, page = 1) {
-    console.log(JSON.stringify(query));
     // TEMP TO GET WORKING LOCALLY
     const response = await fetch(
       `http://localhost:8000/api/search/search?${stringify({
@@ -1270,7 +1269,7 @@ export class ApiClient {
       })}`,
       {
         method: 'post',
-        body: JSON.stringify(query),
+        body: JSON.stringify({ fulltext: query.fulltext, facets: JSON.parse(query.facets) }),
         headers: {
           Accept: 'application/json, text/plain',
           'Content-Type': 'application/json;charset=UTF-8',
@@ -1279,10 +1278,11 @@ export class ApiClient {
     );
     const data = await response.json();
     return data;
-    // return this.request<SearchResponse>(`/api/search/search?${stringify({ page })}`, {
-    //   method: 'POST',
-    //   body: query,
-    // });
+
+    return this.request<SearchResponse>(`/api/search/search?${stringify({ page })}`, {
+      method: 'POST',
+      body: JSON.stringify({ fulltext: query.fulltext, facets: JSON.parse(query.facets) }),
+    });
   }
 
   async searchIngest(resource: SearchIngestRequest) {
