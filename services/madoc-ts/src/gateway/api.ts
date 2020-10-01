@@ -1253,6 +1253,7 @@ export class ApiClient {
   // Search API
   async searchQuery(query: SearchQuery, page = 1) {
     console.log(JSON.stringify(query));
+    // TEMP TO GET WORKING LOCALLY
     const response = await fetch(
       `http://localhost:8000/api/search/search?${stringify({
         page: page,
