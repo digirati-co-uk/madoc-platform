@@ -313,7 +313,7 @@ const dummyResults = {
   },
 };
 
-const options = [
+const sortByOptions = [
   { value: 'Option1', text: 'Option 1' },
   { value: 'Option2', text: 'Option 2' },
   { value: 'Option3', text: 'Option 3' },
@@ -322,6 +322,21 @@ const options = [
 const SearchContainer = styled.div`
   display: flex;
 `;
+
+const mapFacets = facets => {
+  const options = [];
+  for (const [key, value] of Object.entries(facets)) {
+    const subtype = key;
+    for (const [k] of Object.entries(value)) {
+      options.push({
+        type: 'metadata',
+        subtype: subtype,
+        value: k,
+      });
+    }
+  }
+  return options;
+};
 
 export const HeaderWithBreadcrumbsAndMenuAndSearch = () => (
   <MemoryRouter>
@@ -345,7 +360,7 @@ export const HeaderWithBreadcrumbsAndMenuAndSearch = () => (
     <WidePage>
       <SearchContainer>
         <SearchFacets
-          facets={Object.entries(dummyResults.facets.metadata)}
+          facets={mapFacets(dummyResults.facets.metadata)}
           facetChange={(facet, val) => alert('you changed Facet ' + facet + ' to the value ' + val)}
         />
         <SearchResults
