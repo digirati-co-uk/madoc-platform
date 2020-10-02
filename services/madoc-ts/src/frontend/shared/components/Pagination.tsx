@@ -69,21 +69,21 @@ export const Pagination: React.FC<{
   return (
     <PaginationContainer>
       {prevPage ? (
-        <MediumRoundedButton
+        <SmallRoundedButton
           as={Link}
           to={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}`}
           style={{ backgroundColor: 'pink' }}
         >
           {t('Previous page')}
-        </MediumRoundedButton>
+        </SmallRoundedButton>
       ) : null}
       <PaginationDisplay style={{ color: isLoading ? '#999' : '#333' }}>
         Page {isLoading ? '...' : page} of {totalPages}
       </PaginationDisplay>
       {nextPage ? (
-        <MediumRoundedButton as={Link} to={`${pathname}?${pageParam}=${page + 1}${q ? `&${q}` : ''}`}>
+        <SmallRoundedButton as={Link} to={`${pathname}?${pageParam}=${page + 1}${q ? `&${q}` : ''}`}>
           {t('Next page')}
-        </MediumRoundedButton>
+        </SmallRoundedButton>
       ) : null}
     </PaginationContainer>
   );
@@ -131,27 +131,27 @@ export const PaginationNumbered: React.FC<{
   return (
     <PaginationContainerNumbered>
       {prevPage ? (
-        <SmallRoundedButton as={Link} to={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}`}>
+        <MediumRoundedButton as={Link} to={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}`}>
           {t('Previous')}
-        </SmallRoundedButton>
+        </MediumRoundedButton>
       ) : null}
       {prevPage ? (
-        <SmallRoundedButton as={Link} to={`${pathname}${page >= 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}`}>
+        <MediumRoundedButton as={Link} to={`${pathname}${page >= 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}`}>
           {page >= 2 ? `${page - 1}` : ``}
-        </SmallRoundedButton>
+        </MediumRoundedButton>
       ) : null}
-      <SmallRoundedButton as={Link} to={`${pathname}${page ? `?${pageParam}=${page}&` : q ? '?' : ''}${q}`}>
+      <MediumRoundedButton as={Link} to={`${pathname}${page ? `?${pageParam}=${page}&` : q ? '?' : ''}${q}`}>
         {page}
-      </SmallRoundedButton>
+      </MediumRoundedButton>
       {nextPage ? (
-        <SmallRoundedButton as={Link} to={`${pathname}?${pageParam}=${page + 1}${q ? `&${q}` : ''}`}>
+        <MediumRoundedButton as={Link} to={`${pathname}?${pageParam}=${page + 1}${q ? `&${q}` : ''}`}>
           {`${page + 1}`}
-        </SmallRoundedButton>
+        </MediumRoundedButton>
       ) : null}
       {nextPage ? (
-        <SmallRoundedButton as={Link} to={`${pathname}?${pageParam}=${page + 1}${q ? `&${q}` : ''}`}>
+        <MediumRoundedButton as={Link} to={`${pathname}?${pageParam}=${page + 1}${q ? `&${q}` : ''}`}>
           {t('Next')}
-        </SmallRoundedButton>
+        </MediumRoundedButton>
       ) : null}
     </PaginationContainerNumbered>
   );
