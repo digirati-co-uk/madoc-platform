@@ -940,6 +940,7 @@ export class ApiClient {
       subject?: string;
       type?: string;
       detail?: boolean;
+      assignee?: string;
       per_page?: number;
     } = {}
   ) {

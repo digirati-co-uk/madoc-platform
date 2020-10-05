@@ -217,6 +217,7 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
           type: 'crowdsourcing-review',
           status: [0, 1, 2, 5],
           all_tasks: true,
+          assignee: `urn:madoc:user:${userDetails.user.id}`,
           per_page: 10,
         });
       }
@@ -227,11 +228,13 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
           status: [0, 1, 4],
           all_tasks: true,
           per_page: 10,
+          assignee: `urn:madoc:user:${userDetails.user.id}`,
         });
         response.contributorReviewTasks = await api.getTasks<CrowdsourcingTask>(0, {
           type: 'crowdsourcing-task',
           status: [2, 5],
           all_tasks: true,
+          assignee: `urn:madoc:user:${userDetails.user.id}`,
           per_page: 10,
         });
       }

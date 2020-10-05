@@ -9,3 +9,9 @@ export function parseUrn(urn: string) {
 
   return undefined;
 }
+
+export function extractIdFromUrn(urn: string) {
+  const parsed = parseUrn(urn);
+
+  return parsed?.id;
+}

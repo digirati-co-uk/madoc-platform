@@ -49,7 +49,16 @@ export const getAllTasks: RouteMiddleware = async context => {
     context.query.all_tasks || context.query.root_task_id || context.query.parent_task_id
       ? sql``
       : sql`and t.parent_task is null`;
-  const userExclusion = isAdmin ? sql`` : sql`and (t.creator_id = ${userId} OR t.assignee_id = ${userId})`;
+  const assigneeId = context.query.assignee;
+  const userExclusion = isAdmin
+    ? assigneeId
+      ? // Admin assignee.
+        sql`and (t.assignee_id = ${assigneeId})`
+      : sql``
+    : assigneeId
+    ? // Normal user assignee.
+      sql`and (t.assignee_id = ${userId})`
+    : sql`and (t.creator_id = ${userId} OR t.assignee_id = ${userId})`;
   const rootTaskFilter = context.query.root_task_id ? sql`and t.root_task = ${context.query.root_task_id}` : sql``;
   const parentTaskFilter = context.query.parent_task_id
     ? sql`and t.parent_task = ${context.query.parent_task_id}`

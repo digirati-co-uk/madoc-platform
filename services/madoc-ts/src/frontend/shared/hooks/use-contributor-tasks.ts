@@ -25,6 +25,7 @@ export function useContributorTasks(options: { rootTaskId?: string } = {}, enabl
           status: [0, 1],
           all_tasks: true,
           root_task_id: options.rootTaskId,
+          assignee: `urn:madoc:user:${details.user.id}`,
           per_page: 10,
         }),
         reviews: await api.getTasks<CrowdsourcingTask>(0, {
@@ -32,6 +33,7 @@ export function useContributorTasks(options: { rootTaskId?: string } = {}, enabl
           status: 2,
           all_tasks: true,
           root_task_id: options.rootTaskId,
+          assignee: `urn:madoc:user:${details.user.id}`,
           per_page: 10,
         }),
       };

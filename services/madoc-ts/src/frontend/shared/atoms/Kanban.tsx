@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import * as React from 'react';
 import styled, { css } from 'styled-components';
+import { HrefLink } from '../utility/href-link';
 import { Button } from './Button';
 
 export const KanbanBoard = styled.div`
@@ -89,6 +90,7 @@ export const KanbanAvatarContainer = styled.button`
   &:focus {
     border-color: #4e82df;
   }
+  text-decoration: none;
 `;
 
 export const KanbanAvatar = styled.div`
@@ -134,11 +136,11 @@ function pastelColour(input: string) {
   return [`rgb(${red}, ${green}, ${blue})`, color];
 }
 
-export const KanbanAssignee: React.FC<{ children: string }> = ({ children }) => {
+export const KanbanAssignee: React.FC<{ children: string; href?: string }> = ({ href, children }) => {
   const [background, color] = useMemo(() => pastelColour(children), [children]);
 
   return (
-    <KanbanAvatarContainer>
+    <KanbanAvatarContainer as={href ? HrefLink : undefined} href={href}>
       <KanbanAvatar style={{ background, color }}>{children[0].toUpperCase()}</KanbanAvatar>
       <KanbanAssigneeName>{children}</KanbanAssigneeName>
     </KanbanAvatarContainer>
@@ -165,7 +167,7 @@ export const KanbanCardButton = styled(Button)`
 export const KanbanCardTextButton = styled.button`
   text-align: center;
   display: block;
-  padding: .75em;
+  padding: 0.75em;
   font-size: 0.8em;
   width: 100%;
   cursor: pointer;
