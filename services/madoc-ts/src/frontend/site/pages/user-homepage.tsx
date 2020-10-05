@@ -192,6 +192,11 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
           <>
             <Heading3 $margin>Active projects</Heading3>
             <ProjectListing projects={data.projects} showLink />
+            <div style={{ marginTop: 20 }}>
+              <TinyButton as={HrefLink} href={`/projects`}>
+                Browse all projects
+              </TinyButton>
+            </div>
           </>
         ) : null}
       </div>

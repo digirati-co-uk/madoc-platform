@@ -12,7 +12,7 @@ import {
   StatisticContainer,
   StatisticLabel,
   StatisticLink,
-  StatisticNumber
+  StatisticNumber,
 } from '../../shared/atoms/Statistics';
 
 const AdminSection = styled.div`
