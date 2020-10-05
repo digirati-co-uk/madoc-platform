@@ -1,4 +1,5 @@
 before(() => {
+  cy.task('db:omeka:reset');
   Cypress.Cookies.defaults({
     preserve: (cookie) => {
       return true;

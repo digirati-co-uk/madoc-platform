@@ -64,11 +64,29 @@ case "${commandToRun}" in
     ;;
 
     test-instance)
-      docker-compose -f docker-compose.yml -f docker-compose.test.yml -p test-madoc --env-file ./.env-test up
+      docker-compose -f docker-compose.yml -f docker-compose.test.yml -p test-madoc --env-file ./.env-test up "$@"
     ;;
 
     test-compose)
       docker-compose -f docker-compose.yml -f docker-compose.test.yml -p test-madoc --env-file ./.env-test "$@"
+    ;;
+
+    test-instance-dump-omeka)
+      if [[ -z "$1" ]]; then
+        echo -e "You must pass in a table to export"
+      fi;
+      docker-compose -f docker-compose.yml -f docker-compose.test.yml -p test-madoc --env-file ./.env-test exec madoc-database env MYSQL_PWD=Password123 /usr/bin/mysqldump -u omeka_s omeka_s $1 --skip-comments --no-tablespaces > ./e2e/test-fixtures/omeka/$1.sql
+    ;;
+
+    test-instance-dump-postgres)
+      if [[ -z "$1" ]]; then
+        echo -e "You must pass in a schema to export"
+      fi;
+      if [[ -z "$2" ]]; then
+        echo -e "You must pass in a table to export"
+      fi;
+      docker-compose -f docker-compose.yml -f docker-compose.test.yml -p test-madoc --env-file ./.env-test exec shared-postgres \
+       pg_dump -n $1 -t $1.$2 -U postgres postgres > ./e2e/test-fixtures/postgres/$1-$2.sql
     ;;
 
     start)

@@ -6,27 +6,27 @@ services:
     ports:
       - "8988:8080"
     volumes:
-      - ./var/test-environment/certs:/openssl-certs
+      - ./e2e/test-fixtures/certs:/openssl-certs
 
   madoc:
     environment:
       - APP_ENV=TEST
     volumes:
       - ./var/test-environment/files:/srv/omeka/files
-      - ./var/test-environment/certs:/openssl-certs
+      - ./e2e/test-fixtures/certs:/openssl-certs
 
   certs:
     build:
       context: services/certs
     volumes:
-      - ./var/test-environment/certs:/openssl-certs
+      - ./e2e/test-fixtures/certs:/openssl-certs
 
   madoc-ts:
     build:
       context: services/madoc-ts
       dockerfile: Dockerfile
     volumes:
-      - ./var/test-environment/certs:/openssl-certs
+      - ./e2e/test-fixtures/certs:/openssl-certs
       - ./var/test-environment/jwt:/home/node/app/service-jwt-responses
       - ./var/test-environment/files:/home/node/app/omeka-files
 
@@ -42,6 +42,9 @@ services:
 
   madoc-database:
     volumes:
+      - ./e2e/test-fixtures/omeka/user.sql:/docker-entrypoint-initdb.d/99-user.sql
+      - ./e2e/test-fixtures/omeka/site_permission.sql:/docker-entrypoint-initdb.d/99-site_permission.sql
+      - ./e2e/utility/reset-database.sh:/opt/tools/reset-database.sh
       - ./var/test-environment/database/data:/var/lib/mysql/
 
   storage-api:
