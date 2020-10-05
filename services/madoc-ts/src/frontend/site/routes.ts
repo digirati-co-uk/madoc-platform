@@ -237,6 +237,11 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
       ],
     },
     {
+      path: '/users/:id',
+      exact: true,
+      component: components.ViewUser,
+    },
+    {
       path: '/topics',
       exact: true,
       component: components.AllTopicTypes,

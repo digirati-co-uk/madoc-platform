@@ -8,3 +8,5 @@ export type User = {
   role: string;
   is_active: number;
 };
+
+export type SingleUser = { id: number; name: string; email: string; role: string };
