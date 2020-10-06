@@ -24,6 +24,7 @@ export function useReviewerTasks(options: { rootTaskId?: string } = {}, enabled 
         status: [0, 1, 2],
         all_tasks: true,
         root_task_id: options.rootTaskId,
+        assignee: `urn:madoc:user:${details.user.id}`,
         per_page: 10,
       });
     },

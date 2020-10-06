@@ -1,6 +1,7 @@
 import { CaptureModelExtension } from '../extensions/capture-models/extension';
 import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.extension';
 import { ExtensionManager } from '../extensions/extension-manager';
+import { SingleUser } from '../types/omeka/User';
 import { ProjectConfiguration } from '../types/schemas/project-configuration';
 import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/search';
 import { NotFound } from '../utility/errors/not-found';
@@ -646,6 +647,11 @@ export class ApiClient {
     });
   }
 
+  // User API
+  async getUser(id: number) {
+    return this.request<{ user: SingleUser }>(`/api/madoc/users/${id}`);
+  }
+
   // Capture model API.
   async getCaptureModel(id: string, query?: { author?: string; published?: boolean }) {
     return this.request<{ id: string } & CaptureModel>(
@@ -653,12 +659,10 @@ export class ApiClient {
     );
   }
 
-  // Capture model API.
   async getAllCaptureModels(query?: { target_id?: string; target_type?: string; derived_from?: string }) {
     return this.request<CaptureModelSnippet[]>(`/api/crowdsourcing/model${query ? `?${stringify(query)}` : ''}`);
   }
 
-  // Capture model API.
   async updateCaptureModel(id: string, captureModel: CaptureModel) {
     return this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model/${id}`, {
       method: 'PUT',
@@ -955,6 +959,7 @@ export class ApiClient {
       subject?: string;
       type?: string;
       detail?: boolean;
+      assignee?: string;
       per_page?: number;
     } = {}
   ) {

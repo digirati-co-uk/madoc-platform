@@ -1,5 +1,6 @@
 import React, { Suspense, useCallback, useMemo } from 'react';
 import { CrowdsourcingReview } from '../../../../gateway/tasks/crowdsourcing-review';
+import { extractIdFromUrn } from '../../../../utility/parse-urn';
 import { Breadcrumbs } from '../../../shared/atoms/Breadcrumbs';
 import {
   KanbanAssignee,
@@ -207,7 +208,11 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
                       </KanbanType>
                     ) : null}
                   </KanbanCardInner>
-                  {task.assignee && task.assignee.name ? <KanbanAssignee>{task.assignee.name}</KanbanAssignee> : null}
+                  {task.assignee && task.assignee.name ? (
+                    <KanbanAssignee href={`/users/${extractIdFromUrn(task.assignee.id)}`}>
+                      {task.assignee.name}
+                    </KanbanAssignee>
+                  ) : null}
                 </KanbanCard>
               ))
             ) : (
@@ -227,7 +232,11 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
                       </KanbanType>
                     ) : null}
                   </KanbanCardInner>
-                  {task.assignee && task.assignee.name ? <KanbanAssignee>{task.assignee.name}</KanbanAssignee> : null}
+                  {task.assignee && task.assignee.name ? (
+                    <KanbanAssignee href={`/users/${extractIdFromUrn(task.assignee.id)}`}>
+                      {task.assignee.name}
+                    </KanbanAssignee>
+                  ) : null}
                   {task.status > 0 && task.state.reviewTask === reviewTask.id ? (
                     <KanbanCardButton
                       as={HrefLink}
@@ -255,7 +264,11 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
                       </KanbanType>
                     ) : null}
                   </KanbanCardInner>
-                  {task.assignee && task.assignee.name ? <KanbanAssignee>{task.assignee.name}</KanbanAssignee> : null}
+                  {task.assignee && task.assignee.name ? (
+                    <KanbanAssignee href={`/users/${extractIdFromUrn(task.assignee.id)}`}>
+                      {task.assignee.name}
+                    </KanbanAssignee>
+                  ) : null}
                   {task.status > 0 && task.state.reviewTask === reviewTask.id ? (
                     <KanbanCardTextButton
                       as={HrefLink}

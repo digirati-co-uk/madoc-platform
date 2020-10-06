@@ -2,6 +2,7 @@ import { getParentLinking } from './routes/iiif/linking/get-parent-linking';
 import { indexManifest } from './routes/iiif/manifests/index-manifest';
 import { updateProjectStatus } from './routes/projects/update-project-status';
 import { siteManifestTasks } from './routes/site/site-manifest-tasks';
+import { getUser } from './routes/user/get-user';
 import { TypedRouter } from './utility/typed-router';
 import { ping } from './routes/ping';
 import { madocNotFound } from './routes/madoc-not-found';
@@ -82,6 +83,9 @@ export const router = new TypedRouter({
   'get-ping': [TypedRouter.GET, '/api/madoc', ping],
   'get-scopes': [TypedRouter.GET, '/api/madoc/site/:siteId/permissions', getSiteScopes],
   'update-scopes': [TypedRouter.POST, '/api/madoc/site/:siteId/permissions', saveSiteScopes],
+
+  // User API.
+  'get-user': [TypedRouter.GET, '/api/madoc/users/:id', getUser],
 
   // Collection API.
   'list-collections': [TypedRouter.GET, '/api/madoc/iiif/collections', listCollections],

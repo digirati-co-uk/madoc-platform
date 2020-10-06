@@ -20,3 +20,4 @@ export { AllManifests } from './pages/all-manifests';
 export { UserHomepage } from './pages/user-homepage';
 export { ViewCanvasModel } from './pages/view-canvas-model';
 export { ViewManifestMirador } from './pages/view-manifest-mirador';
+export { ViewUser } from './pages/view-user';
