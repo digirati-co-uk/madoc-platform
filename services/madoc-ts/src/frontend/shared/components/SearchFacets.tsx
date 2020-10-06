@@ -18,6 +18,7 @@ const FacetLabel = styled.label`
   text-decoration: rgb(0, 0, 0);
   letter-spacing: 1px;
   text-transform: capitalize;
+  max-width: 10rem;
 `;
 
 const FacetType = styled.div`
