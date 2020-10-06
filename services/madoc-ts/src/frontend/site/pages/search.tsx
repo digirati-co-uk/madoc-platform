@@ -38,10 +38,24 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
   () => {
     const { status, data } = usePaginatedData(Search);
     const { t } = useTranslation();
-    const { page, fulltext } = useLocationQuery();
+    const { page, fulltext, facets } = useLocationQuery();
     const history = useHistory();
     const { pathname } = useLocation();
-    const [facets, setFacets] = useState(Array);
+
+    const initaliseAppliedFacets = () => {
+      if (facets && facets !== 'undefined') {
+        return JSON.parse(facets).map((facet: any) => {
+          return {
+            ...facet,
+            applied: true,
+          };
+        });
+      } else {
+        return [];
+      }
+    };
+
+    const [appliedFacets, setAppliedFacets] = useState(initaliseAppliedFacets());
     const [facetOptions, setFacetOptions] = useState<SearchFacet[]>([]);
 
     const manageFacet = (facetType: string, facetValue: string) => {
@@ -51,13 +65,15 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
         value: facetValue,
       };
 
-      if (!facets.find((fac: any) => fac.value === facet.value)) {
-        const newFacets = [...facets];
-        newFacets.push(facet);
-        setFacets(newFacets);
-      } else if (facets.find((fac: any) => fac.value === facet.value)) {
-        const newFacets = facets.filter((fac: any) => fac.value === facet.value && fac.facetType === facet.subtype);
-        setFacets(newFacets);
+      if (!appliedFacets.find((fac: any) => fac.value === facet.value)) {
+        const newappliedFacets = [...appliedFacets];
+        newappliedFacets.push(facet);
+        setAppliedFacets(newappliedFacets);
+      } else if (appliedFacets.find((fac: any) => fac.value === facet.value)) {
+        const newappliedFacets = appliedFacets.filter(
+          (fac: any) => fac.value === facet.value && fac.facetType === facet.subtype
+        );
+        setAppliedFacets(newappliedFacets);
       }
     };
 
@@ -71,7 +87,9 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
               type: 'metadata',
               subtype: subtype,
               value: k,
-              applied: facets.find((option: any) => option.subtype === subtype && option.value === k) ? true : false,
+              applied: appliedFacets.find((option: any) => option.subtype === subtype && option.value === k)
+                ? true
+                : false,
             });
           }
         }
@@ -80,19 +98,20 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
     };
 
     useEffect(() => {
-      const jsonFacets = JSON.stringify(facets);
-      if (facets.length >= 1) {
+      mapFacets();
+
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [data, appliedFacets]);
+
+    useEffect(() => {
+      const jsonFacets = JSON.stringify(appliedFacets);
+      if (appliedFacets && appliedFacets.length >= 1) {
         history.push(`${pathname}?${stringify({ fulltext, page })}&facets=${jsonFacets}`);
       } else {
         history.push(`${pathname}?${stringify({ fulltext, page })}`);
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [facets]);
-
-    useEffect(() => {
-      mapFacets();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [data, facets]);
+    }, [data, appliedFacets]);
 
     return status === 'loading' ? (
       <div>{t('Loading')}</div>
@@ -105,7 +124,7 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
           />
           <SearchResults
             searchFunction={val => {
-              history.push(`${pathname}?${stringify({ fulltext: val, page })}&facets=${JSON.stringify(facets)}`);
+              history.push(`${pathname}?${stringify({ fulltext: val, page })}&facets=${JSON.stringify(appliedFacets)}`);
             }}
             value={fulltext}
             totalResults={data && data.pagination ? data.pagination.totalResults : 0}
