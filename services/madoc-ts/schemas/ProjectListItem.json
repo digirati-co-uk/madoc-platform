@@ -33,6 +33,9 @@
           "type": "string"
         }
       }
+    },
+    "status": {
+      "type": "number"
     }
   },
   "required": [
@@ -41,6 +44,7 @@
     "id",
     "label",
     "slug",
+    "status",
     "summary",
     "task_id"
   ],

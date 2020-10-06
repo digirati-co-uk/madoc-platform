@@ -34,6 +34,9 @@
         }
       }
     },
+    "status": {
+      "type": "number"
+    },
     "statistics": {
       "type": "object",
       "properties": {
@@ -85,6 +88,7 @@
     "label",
     "slug",
     "statistics",
+    "status",
     "summary",
     "task_id"
   ],
