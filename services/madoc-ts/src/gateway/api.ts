@@ -1306,7 +1306,7 @@ export class ApiClient {
         // data = await response.json();
         data = this.request<SearchResponse>(`/api/search/search?${stringify({ page })}`, {
           method: 'POST',
-          body: JSON.stringify({ fulltext: query.fulltext, facets: JSON.parse(query.facets) }),
+          body: { fulltext: query.fulltext, facets: JSON.parse(query.facets) },
         });
       } catch (err) {
         //
@@ -1329,7 +1329,7 @@ export class ApiClient {
       // data = await response.json();
       data = this.request<SearchResponse>(`/api/search/search?${stringify({ page })}`, {
         method: 'POST',
-        body: JSON.stringify({ fulltext: query.fulltext }),
+        body: { fulltext: query.fulltext },
       });
     }
     return data;
