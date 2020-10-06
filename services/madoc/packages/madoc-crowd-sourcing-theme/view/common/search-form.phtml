@@ -1,0 +1,8 @@
+<?php
+$searchValue = $this->escapeHtml($this->params()->fromQuery('fulltext', ''));
+?>
+
+<form action="<?php echo $this->escapeHtml($this->url('site', [], true)); ?>/madoc/search" id="search-form">
+    <input type="text" name="fulltext" value="<?php echo $searchValue; ?>" placeholder="<?php echo $this->translate('Search'); ?>">
+    <button type="submit"><?php echo $this->translate('Search'); ?></button>
+</form>
