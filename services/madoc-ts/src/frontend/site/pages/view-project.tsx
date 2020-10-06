@@ -1,4 +1,5 @@
 import React from 'react';
+import { ProjectContainer, ProjectStatus } from '../../shared/atoms/ProjectStatus';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { ProjectFull } from '../../../types/schemas/project-full';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../shared/atoms/Statistics';
@@ -19,7 +20,6 @@ import { ContributorTasks } from '../../shared/components/ContributorTasks';
 import { useReviewerTasks } from '../../shared/hooks/use-reviewer-tasks';
 import { ReviewerTasks } from '../../shared/components/ReviewerTasks';
 
-// @todo create universal component and load up the main collection.
 export const ViewProject: React.FC<Partial<{
   project: ProjectFull;
   collections: CollectionFull;
@@ -42,6 +42,7 @@ export const ViewProject: React.FC<Partial<{
     <>
       <LocaleString as={'h1'}>{project.label}</LocaleString>
       <LocaleString as={Subheading1}>{project.summary}</LocaleString>
+      <ProjectStatus status={project.status} />
       <StatisticContainer>
         <Statistic>
           <StatisticNumber>{project.statistics['0'] || 0}</StatisticNumber>

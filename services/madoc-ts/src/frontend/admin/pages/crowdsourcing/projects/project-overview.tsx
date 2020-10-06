@@ -1,9 +1,22 @@
 import React from 'react';
+import { useMutation } from 'react-query';
+import { Button, ButtonRow } from '../../../../shared/atoms/Button';
 import { SubtaskProgress } from '../../../../shared/atoms/SubtaskProgress';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../../../shared/atoms/Statistics';
 import { ProjectFull } from '../../../../../types/schemas/project-full';
+import { useApi } from '../../../../shared/hooks/use-api';
 
-export const ProjectOverview: React.FC<{ project: ProjectFull }> = ({ project }) => {
+export const ProjectOverview: React.FC<{ project: ProjectFull; refetch: () => Promise<void> }> = ({
+  project,
+  refetch,
+}) => {
+  const api = useApi();
+
+  const [updateStatus, { isLoading }] = useMutation(async (newStatus: number) => {
+    await api.updateProjectStatus(project.id, newStatus);
+    await refetch();
+  });
+
   return (
     <div>
       <StatisticContainer>
@@ -29,6 +42,21 @@ export const ProjectOverview: React.FC<{ project: ProjectFull }> = ({ project })
         done={project.statistics['3'] || 0}
         progress={(project.statistics['2'] || 0) + (project.statistics['1'] || 0)}
       />
+
+      <ButtonRow>
+        <Button disabled={isLoading || project.status === 0} onClick={() => updateStatus(0)}>
+          Pause project
+        </Button>
+        <Button disabled={isLoading || project.status === 1} onClick={() => updateStatus(1)}>
+          Resume project
+        </Button>
+        <Button disabled={isLoading || project.status === 2} onClick={() => updateStatus(2)}>
+          Mark as complete
+        </Button>
+        <Button disabled={isLoading || project.status === 3} onClick={() => updateStatus(3)}>
+          Archive project
+        </Button>
+      </ButtonRow>
     </div>
   );
 };

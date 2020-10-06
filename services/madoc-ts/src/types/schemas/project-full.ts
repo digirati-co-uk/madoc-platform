@@ -9,6 +9,7 @@ export type ProjectFull = {
   task_id: string;
   label: InternationalString;
   summary: InternationalString;
+  status: number;
   statistics: {
     0: number;
     1: number;

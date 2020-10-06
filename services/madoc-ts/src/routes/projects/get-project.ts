@@ -1,5 +1,6 @@
 // Returns a single project.
 import { RouteMiddleware } from '../../types/route-middleware';
+import { castBool } from '../../utility/cast-bool';
 import { optionalUserWithScope } from '../../utility/user-with-scope';
 import { getMetadata } from '../../utility/iiif-database-helpers';
 import { sql } from 'slonik';
@@ -12,8 +13,10 @@ import { ProjectConfiguration } from '../../types/schemas/project-configuration'
 
 export const getProject: RouteMiddleware<{ id: string }> = async context => {
   const { id, siteId, siteUrn } = optionalUserWithScope(context, []);
+  const scope = context.state.jwt?.scope || [];
 
   const { projectSlug, projectId } = parseProjectId(context.params.id);
+  const onlyPublished = scope.indexOf('site.admin') !== -1 ? castBool(context.request.query.published) : true;
 
   if (!projectId && !projectSlug) {
     throw new NotFound();
@@ -29,6 +32,7 @@ export const getProject: RouteMiddleware<{ id: string }> = async context => {
         where site_id = ${siteId} 
           ${projectId ? sql`and iiif_project.id = ${projectId}` : SQL_EMPTY}
           ${projectSlug ? sql`and iiif_project.slug = ${projectSlug}` : SQL_EMPTY}
+          ${onlyPublished ? sql`and (iiif_project.status = 1 or iiif_project.status = 2)` : SQL_EMPTY}
       `,
       siteId
     )
@@ -41,6 +45,7 @@ export const getProject: RouteMiddleware<{ id: string }> = async context => {
       capture_model_id: project.capture_model_id,
       collection_id: project.id,
       task_id: project.task_id,
+      status: project.status,
     };
   });
 

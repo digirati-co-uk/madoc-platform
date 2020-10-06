@@ -8,4 +8,5 @@ export type ProjectListItem = {
   task_id: string;
   label: InternationalString;
   summary: InternationalString;
+  status: number;
 };

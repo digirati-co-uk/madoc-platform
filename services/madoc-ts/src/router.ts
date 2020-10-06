@@ -1,5 +1,6 @@
 import { getParentLinking } from './routes/iiif/linking/get-parent-linking';
 import { indexManifest } from './routes/iiif/manifests/index-manifest';
+import { updateProjectStatus } from './routes/projects/update-project-status';
 import { siteManifestTasks } from './routes/site/site-manifest-tasks';
 import { TypedRouter } from './utility/typed-router';
 import { ping } from './routes/ping';
@@ -174,6 +175,7 @@ export const router = new TypedRouter({
   'get-project-structure': [TypedRouter.GET, '/api/madoc/projects/:id/structure', getProjectStructure],
   'get-project-metadata': [TypedRouter.GET, '/api/madoc/projects/:id/metadata', getProjectMetadata],
   'update-project-metadata': [TypedRouter.PUT, '/api/madoc/projects/:id/metadata', updateProjectMetadata],
+  'update-project-status': [TypedRouter.PUT, '/api/madoc/projects/:id/status', updateProjectStatus],
   'create-project-resource-claim': [TypedRouter.POST, '/api/madoc/projects/:id/claim', createResourceClaim],
   'create-project-resource-prepare-claim': [
     TypedRouter.POST,

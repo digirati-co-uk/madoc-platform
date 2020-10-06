@@ -1,4 +1,5 @@
 import { sql } from 'slonik';
+import { SQL_EMPTY } from '../../utility/postgres-tags';
 
 export function createProjectQuery(
   taskId: string,
@@ -47,8 +48,14 @@ export function getProject(project_id: number, site_id: number) {
   `;
 }
 
-export function getProjectCollectionId(projectId: number, siteId: number) {
+export function getProjectCollectionId(projectId: number, siteId: number, onlyPublished = false) {
   return sql<{
     collection_id: number;
-  }>`select collection_id from iiif_project where site_id = ${siteId} and id = ${projectId}`;
+  }>`
+    select collection_id 
+    from iiif_project 
+    where site_id = ${siteId} 
+      and id = ${projectId}
+      ${onlyPublished ? sql`and (iiif_project.status = 1 or iiif_project.status = 2)` : SQL_EMPTY}
+    `;
 }

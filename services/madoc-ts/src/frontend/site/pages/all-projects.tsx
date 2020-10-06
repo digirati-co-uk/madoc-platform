@@ -1,4 +1,5 @@
 import React from 'react';
+import { ProjectStatus, ProjectContainer } from '../../shared/atoms/ProjectStatus';
 import { UniversalComponent } from '../../types';
 import { createUniversalComponent } from '../../shared/utility/create-universal-component';
 import { usePaginatedData } from '../../shared/hooks/use-data';
@@ -28,13 +29,14 @@ export const AllProjects: UniversalComponent<AllProjectsType> = createUniversalC
       <>
         <h1>All projects</h1>
         {data.projects.map(project => (
-          <div key={project.id} style={{ background: '#eee', padding: 20, marginBottom: 20, paddingBottom: 40 }}>
+          <ProjectContainer $status={project.status} key={project.id}>
             <LocaleString as={Heading3}>{project.label}</LocaleString>
             <LocaleString as={Subheading3}>{project.summary}</LocaleString>
             <Button as={Link} to={`/projects/${project.slug}`}>
               Go to project
             </Button>
-          </div>
+            <ProjectStatus status={project.status} />
+          </ProjectContainer>
         ))}
         <Pagination
           page={data ? data.pagination.page : undefined}
