@@ -23,7 +23,7 @@ const ResultsHeader = styled.h2`
 const SearchHint = styled.div`
   font-size: 0.85rem;
   color: #000000;
-  margin: .5em 0;
+  margin: 0.5em 0;
   text-decoration: rgba(0, 0, 0, 0.5);
   padding-bottom: 0.875rem;
 `;
@@ -115,7 +115,7 @@ export const SearchResults: React.FC<{
   <ResultsContainer>
     <ResultsHeader>Search Results</ResultsHeader>
     <SearchBox large={true} onSearch={searchFunction} placeholder="Keywords" value={value} />
-    <SearchHint>Keyword search for title or person</SearchHint>
+    <SearchHint>Keyword search</SearchHint>
     <GridContainer $justify="flex-end">
       {/* <DropdownContainer>
         <Dropdown options={options} placeholder="Sort By" onChange={val => sortByFunction(val)} />
