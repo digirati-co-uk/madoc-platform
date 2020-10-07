@@ -40,17 +40,25 @@ export const updateMetadata: RouteMiddleware<{ id: number }, MetadataUpdate> = a
 
     const contexts = await api.getManifestProjects(resourceId);
 
-    console.log(contexts);
-
-    const resource = {
-      id: resourceId.toString(),
-      thumbnail: manifest.manifest.thumbnail || '',
-      // how do I map here to the right shape for the resource
-      resource: { ...manifest.manifest, type: resourceId.toString(), id: resourceId.toString() },
-      contexts: { contexts },
+    const searchPayload = {
+      id: `urn:madoc:manifest:${resourceId}`,
+      type: 'Manifest',
+      resource: {
+        ...manifest,
+        id: `http://madoc.dev/urn:madoc:manifest:${resourceId}`,
+        type: 'Manifest',
+        label: (manifest && manifest.manifest && manifest.manifest.label) || '',
+        items: (manifest && manifest.manifest && manifest.manifest.items) || [],
+      },
+      thumbnail: (manifest && manifest.manifest && manifest.manifest.thumbnail) || '',
+      contexts: contexts,
     };
 
-    userApi.searchReIngest(resource);
+    try {
+      await userApi.searchIngest(searchPayload);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   context.response.status = 200;
