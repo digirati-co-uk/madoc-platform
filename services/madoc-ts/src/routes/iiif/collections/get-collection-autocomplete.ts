@@ -1,7 +1,9 @@
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { sql } from 'slonik';
+import { userWithScope } from '../../../utility/user-with-scope';
 
 export const getCollectionAutocomplete: RouteMiddleware = async context => {
+  const { siteId } = userWithScope(context, ['site.admin']);
   const { q } = context.query;
 
   if (!q) {
@@ -18,7 +20,7 @@ export const getCollectionAutocomplete: RouteMiddleware = async context => {
     where iiif_derived_resource.resource_type = 'collection'
       and im.resource_id is not null
       and flat = false
-      and iiif_derived_resource.site_id = 1 limit 10;
+      and iiif_derived_resource.site_id = ${siteId} limit 10;
   `;
 
   context.response.body = await context.connection.any<{ id: number; label: string }>(query);
