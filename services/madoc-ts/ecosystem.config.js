@@ -9,7 +9,7 @@ module.exports = {
             instances: 1,
             autorestart: true,
             watch: false,
-            max_memory_restart: '1G',
+            max_memory_restart: '2G',
             env_production: {
               NODE_ENV: 'production',
             },
@@ -20,7 +20,7 @@ module.exports = {
             instances: 2,
             autorestart: true,
             watch: false,
-            max_memory_restart: '1G',
+            max_memory_restart: '2G',
             env_production: {
               NODE_ENV: 'production',
             },
@@ -31,7 +31,7 @@ module.exports = {
             instances: 1,
             autorestart: true,
             watch: false,
-            max_memory_restart: '1G',
+            max_memory_restart: '2G',
             env_production: {
               NODE_ENV: 'production',
             },
@@ -48,7 +48,7 @@ module.exports = {
               ignored: 'frontend/admin/build/**',
             },
             node_args: '--expose-gc --inspect=0.0.0.0:9229',
-            max_memory_restart: '1G',
+            max_memory_restart: '2G',
             env: {
               NODE_ENV: 'development'
             },
@@ -61,7 +61,7 @@ module.exports = {
             script: 'lib/queue/producer.js',
             instances: 1,
             autorestart: true,
-            max_memory_restart: '1G',
+            max_memory_restart: '2G',
             watch: ['lib/queue/producer.js'],
           },
           {
