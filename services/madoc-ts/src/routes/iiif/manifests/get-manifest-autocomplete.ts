@@ -15,7 +15,7 @@ export const getManifestAutocomplete: RouteMiddleware = async context => {
     select distinct im.resource_id as id, im.value as label
     from iiif_derived_resource
              left join iiif_metadata im
-                       on iiif_derived_resource.resource_id = im.resource_id and im.site_id = 1 and im.key = 'label'
+                       on iiif_derived_resource.resource_id = im.resource_id and im.site_id = ${siteId} and im.key = 'label'
                            and im.value ilike '%' || ${q} || '%'
     where iiif_derived_resource.resource_type = 'manifest'
       and im.resource_id is not null
