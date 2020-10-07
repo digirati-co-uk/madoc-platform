@@ -43,21 +43,6 @@ export const EditManifestMetadata: UniversalComponent<EditManifestMetadataType> 
 
       await api.updateManifestMetadata(Number(params.id), diff);
 
-      const manifest = await api.getManifestById(Number(params.id));
-
-      const contexts = await api.getManifestProjects(Number(params.id));
-      console.log(contexts);
-      const resource = {
-        id: params.id,
-        thumbnail: manifest.manifest.thumbnail || '',
-        // how do I map here to the right shape for the resource
-        resource: { ...manifest.manifest, type: 'Manifest', id: params.id },
-        contexts: { contexts },
-      };
-
-      // // Reingest the search index
-      await api.searchReIngest(resource);
-
       history.push(`/manifests/${params.id}`);
     });
 

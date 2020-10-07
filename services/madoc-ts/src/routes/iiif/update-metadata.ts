@@ -8,6 +8,8 @@ import {
   updateDerivedMetadata,
 } from '../../database/queries/metadata-queries';
 
+// EDIT IN THIS FILE
+
 export const updateMetadata: RouteMiddleware<{ id: number }, MetadataUpdate> = async context => {
   const { siteId } = userWithScope(context, ['site.admin']);
   const resourceId = context.params.id;
@@ -32,7 +34,23 @@ export const updateMetadata: RouteMiddleware<{ id: number }, MetadataUpdate> = a
 
   if (context.request.originalUrl.indexOf('iiif/manifests') !== -1) {
     const userApi = api.asUser({ siteId });
-    userApi.indexManifest(resourceId);
+    await userApi.indexManifest(resourceId);
+
+    const manifest = await api.getManifestById(resourceId);
+
+    const contexts = await api.getManifestProjects(resourceId);
+
+    console.log(contexts);
+
+    const resource = {
+      id: resourceId.toString(),
+      thumbnail: manifest.manifest.thumbnail || '',
+      // how do I map here to the right shape for the resource
+      resource: { ...manifest.manifest, type: resourceId.toString(), id: resourceId.toString() },
+      contexts: { contexts },
+    };
+
+    userApi.searchReIngest(resource);
   }
 
   context.response.status = 200;
