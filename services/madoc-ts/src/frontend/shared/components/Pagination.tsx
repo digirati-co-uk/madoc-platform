@@ -103,6 +103,10 @@ export const PaginationNumbered: React.FC<{
   const { t } = useTranslation();
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [page]);
+
+  useEffect(() => {
     if (typeof propsPage !== 'undefined') {
       setIsLoading(false);
       setStalePage(propsPage);
