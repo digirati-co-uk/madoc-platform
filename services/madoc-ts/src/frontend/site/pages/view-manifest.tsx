@@ -221,7 +221,7 @@ export const ViewManifest: React.FC<{
               stale={!pagination}
               extraQuery={{ filter }}
             />
-            <MediumRoundedButton as={Link} to={`/search?context=${manifest.id}`}>
+            <MediumRoundedButton as={Link} to={`/search?madoc_id=urn:madoc:manifest:${manifest.id}`}>
               Search this manifest
             </MediumRoundedButton>
             <ImageGrid>
