@@ -124,7 +124,7 @@ export const SearchResults: React.FC<{
     <TotalResults>{`${totalResults} Results`}</TotalResults>
     <div>
       {searchResults.map((result: SearchResult, index: number) => {
-        return result ? <SearchItem result={result} key={index} /> : null;
+        return result ? <SearchItem result={result} key={index} size="small" /> : null;
       })}
     </div>
   </ResultsContainer>
