@@ -31,14 +31,14 @@ type SearchListType = {
   data: SearchResponse | undefined;
   params: {};
   query: { page: number; fulltext: string };
-  variables: { page: number; fulltext: string; facets?: string };
+  variables: { page: number; fulltext: string; facets?: string; madoc_id?: string };
 };
 
 export const Search: UniversalComponent<SearchListType> = createUniversalComponent<SearchListType>(
   () => {
     const { status, data } = usePaginatedData(Search);
     const { t } = useTranslation();
-    const { page, fulltext, facets } = useLocationQuery();
+    const { page, fulltext, facets, madoc_id } = useLocationQuery();
     const history = useHistory();
     const { pathname } = useLocation();
 
@@ -106,12 +106,22 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
     useEffect(() => {
       const jsonFacets = JSON.stringify(appliedFacets);
       if (appliedFacets && appliedFacets.length >= 1) {
-        history.push(`${pathname}?${stringify({ fulltext, page })}&facets=${jsonFacets}`);
+        history.push(`${pathname}?${stringify({ fulltext, page, madoc_id })}&facets=${jsonFacets}`);
       } else {
-        history.push(`${pathname}?${stringify({ fulltext, page })}`);
+        history.push(`${pathname}?${stringify({ fulltext, page, madoc_id })}`);
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [data, appliedFacets]);
+    }, [data]);
+
+    useEffect(() => {
+      const jsonFacets = JSON.stringify(appliedFacets);
+      if (appliedFacets && appliedFacets.length >= 1) {
+        history.push(`${pathname}?${stringify({ fulltext, page: 1, madoc_id })}&facets=${jsonFacets}`);
+      } else {
+        history.push(`${pathname}?${stringify({ fulltext, page: 1, madoc_id })}`);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [appliedFacets]);
 
     return status === 'loading' ? (
       <div>{t('Loading')}</div>
@@ -124,7 +134,9 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
           />
           <SearchResults
             searchFunction={val => {
-              history.push(`${pathname}?${stringify({ fulltext: val, page })}&facets=${JSON.stringify(appliedFacets)}`);
+              history.push(
+                `${pathname}?${stringify({ fulltext: val, page, madoc_id })}&facets=${JSON.stringify(appliedFacets)}`
+              );
             }}
             value={fulltext}
             totalResults={data && data.pagination ? data.pagination.totalResults : 0}
@@ -144,7 +156,7 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
     );
   },
   {
-    getKey(params: {}, query: { page: number; fulltext: string; facets?: string }) {
+    getKey(params: {}, query: { page: number; fulltext: string; facets?: string; madoc_id?: string }) {
       return [
         'response',
         { page: query.page ? Number(query.page) : 1, fulltext: query.fulltext, facets: query.facets },
@@ -160,7 +172,8 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
           fulltext: vars.fulltext,
           facets: vars.facets,
         },
-        vars.page
+        vars.page,
+        vars.madoc_id
       );
     },
   }
