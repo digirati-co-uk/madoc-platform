@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import { sql } from 'slonik';
 import { api } from '../../gateway/api.server';
 import { Site } from '../../types/omeka/Site';
@@ -5,17 +6,14 @@ import { SitePermission } from '../../types/omeka/SitePermission';
 import { SiteSetting } from '../../types/omeka/SiteSetting';
 import { User } from '../../types/omeka/User';
 import { RouteMiddleware } from '../../types/route-middleware';
-import AdmZip from 'adm-zip';
 import { mysql } from '../../utility/mysql';
 import { userWithScope } from '../../utility/user-with-scope';
 
 export const exportSite: RouteMiddleware = async context => {
   // @todo add option to reset passwords to testable default. Tests should assume a standard password.
   const { siteId } = userWithScope(context, ['site.admin']);
-  // const zip = new AdmZip();
 
   // - Grab Omeka tables as JSON
-
   //    - Get the site
   const site = new Promise<Site>(resolve =>
     context.mysql.query(mysql`select * from site where site.id = ${siteId}`, (err, data) => {
@@ -24,7 +22,7 @@ export const exportSite: RouteMiddleware = async context => {
   );
 
   //    - All users that are part of the site
-  const users = new Promise<User[]>(resolve =>
+  const users = await new Promise<User[]>(resolve =>
     context.mysql.query(
       mysql`
         select user.* from user left join site_permission sp on user.id = sp.user_id where sp.site_id = ${siteId}
@@ -34,6 +32,10 @@ export const exportSite: RouteMiddleware = async context => {
       }
     )
   );
+
+  for (const user of users) {
+    user.password_hash = '$2y$10$EAaqhorjdNKLea6OwZLNZeQA0zqyMlJfLuaGNSWIxT9nI3wL33rV2'; // Testpass123_ (for testing)
+  }
 
   //    - Site permissions
   const sitePermissions = new Promise<SitePermission[]>(resolve =>
@@ -86,7 +88,9 @@ export const exportSite: RouteMiddleware = async context => {
   const siteApi = api.asUser({ siteId });
 
   // - Grab tasks tables (where site = blah)
+  const blacklistTypes = ['madoc-manifest-import', 'madoc-canvas-import', 'madoc-collection-import'];
   const tasks = await siteApi.request(`/api/tasks/export-all`);
+  const tasksToSave = (tasks as any).tasks.filter((t: any) => blacklistTypes.indexOf(t.type) === -1);
 
   // - Grab capture models (get from projects)
   // @todo optimise this into a single operation in the model service.
@@ -100,13 +104,22 @@ export const exportSite: RouteMiddleware = async context => {
     derivedModelSnippets.map(ids => Promise.all(ids.map(snippet => siteApi.getCaptureModel(snippet.id))))
   );
 
-  //    - Export as static JSON - using list from projects
   // - Grab static files (storage api + manifests? how?)
   //    - Storage API folder for site
   //    - List of local source files from db - save to relative path
 
-  // Download zip.
-  // context.response.body = zip.toBuffer();
+  const loadedIIIIFResource = await iiifResources;
+
+  // Files to be saved.
+  // - Manifests
+  const resources = loadedIIIIFResource.map(resource => {
+    if (resource.local_source) {
+      return JSON.parse(fs.readFileSync(resource.local_source).toString());
+    }
+    return resource.local_source;
+  });
+
+  // - Canvas OCR
 
   context.response.body = {
     omeka: {
@@ -115,7 +128,10 @@ export const exportSite: RouteMiddleware = async context => {
       sitePermissions: await sitePermissions,
       siteSettings: await siteSettings,
     },
-    tasks: await tasks,
+    files: {
+      resources,
+    },
+    tasks: { tasks: tasksToSave },
     captureModelIds,
     derivedModels: await derivedModels,
     models: await models,

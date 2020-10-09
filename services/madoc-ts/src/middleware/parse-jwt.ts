@@ -22,7 +22,7 @@ export const parseJwt: RouteMiddleware<{ slug?: string }> = async (context, next
   // Only from the context of the Madoc site /s/{slug}/madoc
   if (slug) {
     const cookieName = context.externalConfig.cookieName || 'madoc';
-    const cookie = context.cookies.get(`${cookieName}/${slug}`, { signed: true });
+    const cookie = context.cookies.get(`${cookieName}/${slug}`, { signed: process.env.NODE_ENV !== 'test' });
 
     if (cookie) {
       try {

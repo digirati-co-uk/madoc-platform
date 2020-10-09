@@ -14,9 +14,9 @@ export function isContributor({ user, sites, currentSiteId }: UserDetails) {
   return (
     site.role === 'admin' ||
     site.role === 'reviewer' ||
-    site.role === 'limited_reviewer' ||
+    site.role === 'limited-reviewer' ||
     site.role === 'transcriber' ||
-    site.role === 'limited_transcriber'
+    site.role === 'limited-transcriber'
   );
 }
 
@@ -45,5 +45,5 @@ export function isReviewer({ user, sites, currentSiteId }: UserDetails) {
     return false;
   }
 
-  return site.role === 'admin' || site.role === 'reviewer' || site.role === 'limited_reviewer';
+  return site.role === 'admin' || site.role === 'reviewer' || site.role === 'limited-reviewer';
 }

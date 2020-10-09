@@ -1,5 +1,6 @@
 import { UniversalRoute } from '../types';
 import { CollectionView } from './pages/content/collections/collection';
+import { ExportSite } from './pages/export/export-site';
 import { Homepage } from './pages/homepage';
 import { CollectionList } from './pages/content/collections/collection-list';
 import { EditCollectionStructure } from './pages/content/collections/edit-collection-structure';
@@ -289,5 +290,11 @@ export const routes: UniversalRoute[] = [
     path: '/enrichment/ocr/manifest/:id',
     exact: true,
     component: OcrManifest,
+  },
+  // Export
+  {
+    path: '/export/site',
+    exact: true,
+    component: ExportSite,
   },
 ];

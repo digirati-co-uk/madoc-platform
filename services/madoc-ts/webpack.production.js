@@ -1,3 +1,8 @@
+const createStyledComponentsTransformer = require('typescript-plugin-styled-components').default;
+const styledComponentsTransformer = createStyledComponentsTransformer({
+  displayName: true,
+});
+
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
   devtool: process.env.NODE_ENV !== 'production' ? 'inline-source-map' : false,
@@ -17,6 +22,9 @@ module.exports = {
               configFile: 'tsconfig.frontend.json',
               transpileOnly: true,
               experimentalWatchApi: true,
+              getCustomTransformers: () => ({
+                before: [styledComponentsTransformer],
+              }),
             },
           },
         ],

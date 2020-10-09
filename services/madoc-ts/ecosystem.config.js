@@ -50,7 +50,7 @@ module.exports = {
             node_args: '--expose-gc --inspect=0.0.0.0:9229',
             max_memory_restart: '2G',
             env: {
-              NODE_ENV: 'development'
+              NODE_ENV: process.env.NODE_ENV,
             },
             env_production: {
               NODE_ENV: 'production',

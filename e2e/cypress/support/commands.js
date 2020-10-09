@@ -23,3 +23,53 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+const LOCAL_STATE = {
+  CURRENT_FIXTURE: null,
+};
+
+Cypress.Commands.add('loadSite', (fixtureName, clean = false) => {
+  cy.fixture(`madoc-test-fixtures/${fixtureName}/export.json`).as('site-fixture');
+  cy.get('@site-fixture').then((fixture) => {
+    if (LOCAL_STATE.CURRENT_FIXTURE !== fixture || clean) {
+      cy.task('site:fixture', fixture);
+    }
+  });
+});
+
+Cypress.Commands.add('preserveCookies', () => {
+  Cypress.Cookies.defaults({
+    preserve: (cookie) => {
+      return true;
+    },
+  });
+});
+
+Cypress.Commands.add('apiRequest', (userName, request, cb) => {
+  return cy.get('@site-fixture').then((fixture) => {
+    const user = fixture.omeka.users.find((u) => u.name === userName);
+    if (!user) {
+      throw new Error(`User ${userName} not found
+
+Available users: 
+${fixture.omeka.users.map((u) => `    - ${u.name}`).join('\n')}
+      `);
+    }
+    const role = fixture.omeka.sitePermissions.find((p) => {
+      return p.site_id === fixture.omeka.site.id && p.user_id === user.id;
+    });
+    // your cypress commands here
+    cy.task('site:login', {
+      user,
+      site: fixture.omeka.site,
+      role: role.role,
+    }).then((token) => {
+      return cy.request({
+        auth: {
+          bearer: token,
+        },
+        ...request,
+      });
+    });
+  });
+});

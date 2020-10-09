@@ -4,7 +4,7 @@ export type User = {
   name: string;
   created: Date;
   modified?: Date;
-  password_hash?: string;
+  password_hash?: string | null;
   role: string;
   is_active: number;
 };

@@ -1,4 +1,5 @@
 import { exportTasks } from './routes/export-tasks';
+import { importTasks } from './routes/import-tasks';
 import { TypedRouter } from './utility/typed-router';
 import { getSingleTask } from './routes/get-single-task';
 import { updateSingleTask } from './routes/update-single-task';
@@ -17,6 +18,7 @@ export const router = new TypedRouter({
   'create-task': [TypedRouter.POST, '/tasks', createTask, 'create-task'],
   'get-all-statistics': [TypedRouter.GET, '/tasks/stats', getStatistics],
   'export-tasks': [TypedRouter.GET, '/tasks/export-all', exportTasks],
+  'import-tasks': [TypedRouter.POST, '/tasks/import', importTasks],
 
   // Single task.
   'get-single-task': [TypedRouter.GET, '/tasks/:id', getSingleTask],

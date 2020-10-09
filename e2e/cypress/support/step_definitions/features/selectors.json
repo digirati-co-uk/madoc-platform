@@ -1,0 +1,18 @@
+{
+  "Header": {
+    "default": ".site-details",
+    "Title": ".title"
+  },
+  "Page navigation": {
+    "default": "#react-component ul[role=\"navigation\"]",
+    "Nav item": "a"
+  },
+  "Page": {
+    "default": "#react-component",
+    "Heading 1": "[class^=\"Heading1-\"]",
+    "Heading 2": "[class^=\"Heading2-\"]"
+  },
+  "Admin page title": ".AdminPageTitle",
+  "Project container": ".ProjectContainer",
+  "Project status container": ".ProjectStatusContainer"
+}

@@ -166,7 +166,6 @@ export class ApiClient {
     });
 
     if (response.error) {
-
       if (response.status === 404) {
         throw new NotFound();
       }
@@ -699,6 +698,19 @@ export class ApiClient {
         structure: createChoice({ label }),
         document: createDocument(),
       },
+    });
+  }
+
+  async importCaptureModel(model: CaptureModel) {
+    return this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model`, {
+      method: 'POST',
+      body: model,
+    });
+  }
+
+  async deleteCaptureModel(id: string) {
+    return this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model/${id}`, {
+      method: 'DELETE',
     });
   }
 

@@ -16322,6 +16322,11 @@ typescript-memoize@^1.0.0-alpha.3:
   dependencies:
     core-js "2.4.1"
 
+typescript-plugin-styled-components@^1.4.4:
+  version "1.4.4"
+  resolved "https://registry.yarnpkg.com/typescript-plugin-styled-components/-/typescript-plugin-styled-components-1.4.4.tgz#fff26d516ff213dffe1a5627fe76f23ae3ee6ada"
+  integrity sha512-w5S5lSpzRFM+61KNNpGtlF46DuTJTyzfWM4g6ic9m189ILEoU3sgoTNHNS2MxQhXsGtQZwAlINKG+Dwy0euwUg==
+
 typescript-tuple@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/typescript-tuple/-/typescript-tuple-2.2.1.tgz#7d9813fb4b355f69ac55032e0363e8bb0f04dad2"

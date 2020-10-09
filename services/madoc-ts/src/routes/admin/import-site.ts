@@ -1,18 +1,25 @@
-import { escape } from 'mysql';
+import { CaptureModel } from '@capture-models/types';
+import { sql } from 'slonik';
+import { api } from '../../gateway/api.server';
 import { SitePermission } from '../../types/omeka/SitePermission';
 import { SiteSetting } from '../../types/omeka/SiteSetting';
 import { User } from '../../types/omeka/User';
 import { RouteMiddleware } from '../../types/route-middleware';
+import { NotFound } from '../../utility/errors/not-found';
 import { raw, mysql } from '../../utility/mysql';
+import { inserts, upsert } from '../../utility/slonik-helpers';
+import { userWithScope } from '../../utility/user-with-scope';
 
 export const importSite: RouteMiddleware = async context => {
   // This is ONLY for test environments for now.
-  // if (process.env.NODE_ENV !== 'test') {
-  //   throw new NotFound();
-  // }
+  if (process.env.NODE_ENV !== 'test') {
+    throw new NotFound();
+  }
+
+  const { siteId } = userWithScope(context, ['site.admin']);
+  const siteApi = api.asUser({ siteId });
 
   const data = context.request.body;
-
   // For tests:
   // - Drop all tasks where context matches site.
   // - Drop all capture models where context matches site.
@@ -107,9 +114,9 @@ export const importSite: RouteMiddleware = async context => {
 
   // 1. Omeka
   // 1.1 Upsert users
-  await runSql(mysql`
-    delete from user where id IN (${raw(data.omeka.users.map((user: User) => escape(user.id)).join(','))})
-  `);
+  // await runSql(mysql`
+  //   delete from user where id IN (${raw(data.omeka.users.map((user: User) => escape(user.id)).join(','))})
+  // `);
   await runSql(mysql`
     insert into user (id, email, name, created, modified, password_hash, role, is_active) VALUES
     ${raw(
@@ -128,34 +135,235 @@ export const importSite: RouteMiddleware = async context => {
         })
         .join(',')
     )}
+    on duplicate key update 
+      email=VALUES(email), 
+      name=VALUES(name), 
+      created=VALUES(created), 
+      modified=VALUES(modified), 
+      password_hash=VALUES(password_hash), 
+      role=VALUES(role), 
+      is_active=VALUES(is_active)
   `);
 
   // IIIF resources + derivatives
-  // Tasks
-  // Capture models.
-  // Projects.
+
+  //Tasks - write custom import in task service.
+  if (data.tasks && data.tasks.tasks && data.tasks.tasks.length) {
+    await siteApi.request(`/api/tasks/import?clear_context=true`, {
+      body: data.tasks,
+      method: 'POST',
+    });
+  }
+
+  // // Capture models - slow and steady.
+  if (data.models && data.models.length) {
+    if (data.derivedModels && data.derivedModels.length) {
+      // Import derived models.
+      await Promise.all(
+        data.derivedModels.map((models: CaptureModel[]) => {
+          return Promise.all(
+            models.map(async (model: CaptureModel) => {
+              if (model.id) {
+                const originalModel = await siteApi.getCaptureModel(model.id);
+                const revisions = originalModel.revisions || [];
+                for (const revision of revisions) {
+                  try {
+                    await siteApi.deleteCaptureModelRevision(revision.id);
+                  } catch (err) {
+                    // could already have been deleted.
+                  }
+                }
+                try {
+                  await siteApi.deleteCaptureModel(model.id);
+                } catch (err) {
+                  // Might have already been deleted.
+                }
+              }
+            })
+          );
+        })
+      );
+    }
+    // Import base models.
+    await Promise.all(
+      data.models.map(async (model: CaptureModel) => {
+        if (model.id) {
+          const revisions = model.revisions || [];
+          for (const revision of revisions) {
+            try {
+              await siteApi.deleteCaptureModelRevision(revision.id);
+            } catch (err) {
+              // could already have been deleted.
+            }
+          }
+          try {
+            await siteApi.deleteCaptureModel(model.id);
+          } catch (err) {
+            // Might have already been deleted.
+          }
+          try {
+            await siteApi.importCaptureModel(model);
+          } catch (err) {
+            // @todo Can fail... need to keep an eye on this.
+          }
+        }
+      })
+    );
+    if (data.derivedModels && data.derivedModels.length) {
+      // Import derived models.
+      await Promise.all(
+        data.derivedModels.map((models: CaptureModel[]) => {
+          return Promise.all(
+            models.map(async (model: CaptureModel) => {
+              if (model.id) {
+                try {
+                  await siteApi.importCaptureModel(model);
+                } catch (err) {
+                  // Might have already been deleted.
+                }
+              }
+            })
+          );
+        })
+      );
+    }
+  }
+
+  // Projects - Postgres import
+  if (data.iiifResources && data.iiifResources.length) {
+    await context.connection.query(sql`
+        insert into iiif_resource (id, type, source, local_source, rights, viewing_direction, nav_date, height, width,
+                                   duration, default_thumbnail) values
+            ${inserts(
+              data.iiifResources.map((resource: any) => {
+                return sql`${sql.join(
+                  [
+                    resource.id,
+                    resource.type,
+                    resource.source,
+                    resource.local_source,
+                    resource.rights,
+                    resource.viewing_direction,
+                    resource.nav_date,
+                    resource.height,
+                    resource.width,
+                    resource.duration,
+                    resource.default_thumbnail,
+                  ],
+                  sql`,`
+                )}`;
+              })
+            )}
+             on conflict do nothing;
+    `);
+  }
+
+  if (data.iiifMetadata && data.iiifMetadata.length) {
+    await context.connection.query(
+      upsert(
+        'iiif_metadata',
+        ['id'],
+        data.iiifMetadata,
+        [
+          'id',
+          'key',
+          'value',
+          'language',
+          'source',
+          'resource_id',
+          'site_id',
+          'readonly',
+          'edited',
+          'auto_update',
+          'data',
+        ],
+        {
+          jsonKeys: ['data'],
+        }
+      )
+    );
+  }
+
+  if (data.iiifLinking && data.iiifLinking.length) {
+    await context.connection.query(
+      upsert(
+        'iiif_linking',
+        ['id'],
+        data.iiifLinking,
+        [
+          'id',
+          'uri',
+          'label',
+          'property',
+          'source',
+          'file_path',
+          'file_bucket',
+          'motivation',
+          'format',
+          'properties',
+          'modified_at',
+          'created_at',
+          'site_id',
+          'resource_id',
+          'type',
+        ],
+        {
+          jsonKeys: ['properties'],
+          dateKeys: ['created_at', 'modified_at'],
+        }
+      )
+    );
+  }
+
+  if (data.iiifDerivedResources && data.iiifDerivedResources.length) {
+    await context.connection.query(
+      upsert(
+        'iiif_derived_resource',
+        ['id'],
+        data.iiifDerivedResources,
+        [
+          'id',
+          'site_id',
+          'resource_type',
+          'resource_id',
+          'created_at',
+          'created_by',
+          'slug',
+          'task_id',
+          'task_complete',
+          'flat',
+        ],
+        {
+          jsonKeys: ['properties'],
+          dateKeys: ['created_at', 'modified_at'],
+        }
+      )
+    );
+    // @todo could do this for more upserts.
+    await context.connection.query(
+      sql`delete from iiif_derived_resource where site_id = ${siteId} and not (id = any (${sql.array(
+        data.iiifDerivedResources.map((item: any) => item.id),
+        sql`int[]`
+      )}))`
+    );
+  }
+  if (data.iiifDerivedResourceItems && data.iiifDerivedResourceItems.length) {
+    await context.connection.query(
+      upsert('iiif_derived_resource_items', ['resource_id', 'item_id', 'site_id'], data.iiifDerivedResourceItems, [
+        'resource_id',
+        'item_id',
+        'item_index',
+        'site_id',
+      ])
+    );
+    // @todo delete extras: where resource_id::text || item_id::text || site_id::text = '1372011'
+  }
 
   // Files
   // - Storage API
   // - Manifests / Canvases
+  // Search
+  // - Full search ingest.
 
-  // Things to import:
-  // {
-  //   omeka: {
-  //     site: await site,
-  //       users: await users,
-  //       sitePermissions: await sitePermissions,
-  //       siteSettings: await siteSettings,
-  //   },
-  //   tasks: await tasks,
-  //   captureModelIds,
-  //   derivedModels: await derivedModels,
-  //   models: await models,
-  //   projects,
-  //   iiifResources: await iiifResources,
-  //   iiifMetadata: await iiifMetadata,
-  //   iiifLinking: await iiifLinking,
-  //   iiifDerivedResourceItems: await iiifDerivedResourceItems,
-  //   iiifDerivedResources: await iiifDerivedResources,
-  // }
+  context.response.status = 200;
 };

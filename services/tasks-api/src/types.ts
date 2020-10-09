@@ -49,3 +49,27 @@ export type RouteMiddleware<Params = any, Body = any> = Koa.Middleware<
       requestBody: Body;
     }
 >;
+
+export type DatabaseTaskType = {
+  id: string;
+  name: string;
+  description: string;
+  type: string;
+  subject: string;
+  status: number;
+  status_text: string;
+  state: any;
+  created_at: number;
+  parent_task: string;
+  parameters: any[];
+  creator_id: string;
+  creator_name: string;
+  assignee_id: string;
+  assignee_is_service: boolean;
+  assignee_name: string;
+  context: any[];
+  events: string[];
+  modified_at: number;
+  root_task: string;
+  subject_parent: string;
+};

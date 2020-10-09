@@ -25,6 +25,8 @@ services:
     build:
       context: services/madoc-ts
       dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=test
     volumes:
       - ./e2e/test-fixtures/certs:/openssl-certs
       - ./var/test-environment/jwt:/home/node/app/service-jwt-responses
@@ -51,18 +53,3 @@ services:
     volumes:
       - ./services/storage-api/lib:/home/node/app/lib:delegated
       - ./var/test-environment/files/storage-api:/home/node/app/files
-
-  e2e:
-    image: cypress
-    build: ./e2e
-    container_name: cypress
-    depends_on:
-      - gateway
-    environment:
-      - CYPRESS_baseUrl=http://gateway:8080
-    command: npx cypress run --port=8989
-    volumes:
-      - ./e2e/cypress:/app/cypress
-      - ./e2e/cypress.json:/app/cypress.json
-    ports:
-      - "8989:8989"
