@@ -135,8 +135,6 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
   () => {
     const { data } = useStaticData(UserHomepage);
 
-    console.log(data);
-
     if (!data) {
       return <div>Loading...</div>;
     }

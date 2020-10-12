@@ -9,10 +9,6 @@ export const adminFrontend: RouteMiddleware = context => {
     userWithScope(context, ['site.admin']);
   } catch (e) {
     if (e instanceof NotFound) {
-      console.log('');
-      console.log('==>', e.message);
-      console.log(context.request);
-      console.log('');
       context.response.status = 301;
       context.response.redirect(`/s/${context.params.slug}`);
       return;

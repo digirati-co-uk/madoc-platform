@@ -21,4 +21,4 @@ key.pub
 infrastructure/ansible/inventory.yml
 infrastructure/ansible/vars/default.yml
 var_backup
-e2e/fixtures/madoc-test-fixtures
+e2e/cypress/fixtures/madoc-test-fixtures
