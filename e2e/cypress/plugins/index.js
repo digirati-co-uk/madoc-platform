@@ -95,6 +95,7 @@ module.exports = (on, config) => {
       if (resp.ok) {
         return true;
       }
+
       // Post file to site.
       throw new Error(`Importing fixture failed`);
     },

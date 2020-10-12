@@ -38,6 +38,38 @@ export const importSite: RouteMiddleware = async context => {
   };
 
   if (data.omeka) {
+    // 1. Omeka
+    // 1.1 Upsert users
+    // await runSql(mysql`
+    //   delete from user where id IN (${raw(data.omeka.users.map((user: User) => escape(user.id)).join(','))})
+    // `);
+    await runSql(mysql`
+    insert into user (id, email, name, created, modified, password_hash, role, is_active) VALUES
+    ${raw(
+      data.omeka.users
+        .map((user: User) => {
+          return mysql`(
+            ${user.id},
+            ${user.email},
+            ${user.name},
+            ${new Date(user.created)},
+            ${user.modified ? new Date(user.modified) : user.modified},
+            ${user.password_hash},
+            ${user.role},
+            ${user.is_active}
+          )`;
+        })
+        .join(',')
+    )}
+    on duplicate key update 
+      email=VALUES(email), 
+      name=VALUES(name), 
+      created=VALUES(created), 
+      modified=VALUES(modified), 
+      password_hash=VALUES(password_hash), 
+      role=VALUES(role), 
+      is_active=VALUES(is_active)
+  `);
     // 1.2 Upsert Omeka site.
     // First delete the site - which should cascade.
     if (data.omeka.site) {
@@ -112,39 +144,6 @@ export const importSite: RouteMiddleware = async context => {
     }
   }
 
-  // 1. Omeka
-  // 1.1 Upsert users
-  // await runSql(mysql`
-  //   delete from user where id IN (${raw(data.omeka.users.map((user: User) => escape(user.id)).join(','))})
-  // `);
-  await runSql(mysql`
-    insert into user (id, email, name, created, modified, password_hash, role, is_active) VALUES
-    ${raw(
-      data.omeka.users
-        .map((user: User) => {
-          return mysql`(
-            ${user.id},
-            ${user.email},
-            ${user.name},
-            ${new Date(user.created)},
-            ${user.modified ? new Date(user.modified) : user.modified},
-            ${user.password_hash},
-            ${user.role},
-            ${user.is_active}
-          )`;
-        })
-        .join(',')
-    )}
-    on duplicate key update 
-      email=VALUES(email), 
-      name=VALUES(name), 
-      created=VALUES(created), 
-      modified=VALUES(modified), 
-      password_hash=VALUES(password_hash), 
-      role=VALUES(role), 
-      is_active=VALUES(is_active)
-  `);
-
   // IIIF resources + derivatives
 
   //Tasks - write custom import in task service.
@@ -164,19 +163,23 @@ export const importSite: RouteMiddleware = async context => {
           return Promise.all(
             models.map(async (model: CaptureModel) => {
               if (model.id) {
-                const originalModel = await siteApi.getCaptureModel(model.id);
-                const revisions = originalModel.revisions || [];
-                for (const revision of revisions) {
-                  try {
-                    await siteApi.deleteCaptureModelRevision(revision.id);
-                  } catch (err) {
-                    // could already have been deleted.
-                  }
-                }
                 try {
-                  await siteApi.deleteCaptureModel(model.id);
+                  const originalModel = await siteApi.getCaptureModel(model.id);
+                  const revisions = originalModel.revisions || [];
+                  for (const revision of revisions) {
+                    try {
+                      await siteApi.deleteCaptureModelRevision(revision.id);
+                    } catch (err) {
+                      // could already have been deleted.
+                    }
+                  }
+                  try {
+                    await siteApi.deleteCaptureModel(model.id);
+                  } catch (err) {
+                    // Might have already been deleted.
+                  }
                 } catch (err) {
-                  // Might have already been deleted.
+                  // nothing/
                 }
               }
             })
@@ -359,9 +362,22 @@ export const importSite: RouteMiddleware = async context => {
     // @todo delete extras: where resource_id::text || item_id::text || site_id::text = '1372011'
   }
 
+  if (data.projects) {
+    await context.connection.query(
+      upsert('iiif_project', ['id'], data.projects, [
+        'id',
+        'task_id',
+        'collection_id',
+        'slug',
+        'site_id',
+        'capture_model_id',
+        'status',
+      ])
+    );
+  }
+
   // Files
   // - Storage API
-  // - Manifests / Canvases
   // Search
   // - Full search ingest.
 
