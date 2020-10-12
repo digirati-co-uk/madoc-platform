@@ -58,7 +58,7 @@ export const getAllTasks: RouteMiddleware = async context => {
     : assigneeId
     ? // Normal user assignee.
       sql`and (t.assignee_id = ${userId})`
-    : sql`and (t.creator_id = ${userId} OR t.assignee_id = ${userId})`;
+    : sql`and (t.creator_id = ${userId} OR t.assignee_id = ${userId} OR ${userId} = ANY (t.delegated_owners) OR dt.assignee_id = ${userId})`;
   const rootTaskFilter = context.query.root_task_id ? sql`and t.root_task = ${context.query.root_task_id}` : sql``;
   const parentTaskFilter = context.query.parent_task_id
     ? sql`and t.parent_task = ${context.query.parent_task_id}`
@@ -78,7 +78,8 @@ export const getAllTasks: RouteMiddleware = async context => {
     const query = sql`
       SELECT t.id, t.name, t.status, t.status_text, t.type ${detailedFields}
       FROM tasks t 
-      WHERE context ?& ${sql.array(context.state.jwt.context, 'text')}
+      LEFT JOIN tasks dt on t.delegated_task = dt.id
+      WHERE t.context ?& ${sql.array(context.state.jwt.context, 'text')}
         ${subtaskExclusion}
         ${userExclusion}
         ${typeFilter}

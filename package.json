@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "restart:capture-models": "bin/madoc test-compose up -d --no-deps --build model-api"
+    "restart:capture-models": "bin/madoc test-compose up -d --no-deps --build model-api",
+    "restart:tasks": "bin/madoc test-compose up -d --no-deps --build tasks-api"
   },
   "devDependencies": {
     "cypress-intellij-reporter": "^0.0.4"

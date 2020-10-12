@@ -46,6 +46,10 @@ module.exports = {
             watch: ['lib'],
             watch_options: {
               ignored: 'frontend/admin/build/**',
+              awaitWriteFinish: {
+                stabilityThreshold: 2000,
+                pollInterval: 100,
+              },
             },
             node_args: '--expose-gc --inspect=0.0.0.0:9229',
             max_memory_restart: '2G',
@@ -63,6 +67,13 @@ module.exports = {
             autorestart: true,
             max_memory_restart: '2G',
             watch: ['lib/queue/producer.js'],
+            watch_options: {
+              ignored: 'frontend/admin/build/**',
+              awaitWriteFinish: {
+                stabilityThreshold: 2000,
+                pollInterval: 100,
+              },
+            },
           },
           {
             name: 'scheduler',
@@ -70,6 +81,13 @@ module.exports = {
             instances: 1,
             autorestart: true,
             watch: ['lib/queue/scheduler.js'],
+            watch_options: {
+              ignored: 'frontend/admin/build/**',
+              awaitWriteFinish: {
+                stabilityThreshold: 2000,
+                pollInterval: 100,
+              },
+            },
           },
         ],
 };

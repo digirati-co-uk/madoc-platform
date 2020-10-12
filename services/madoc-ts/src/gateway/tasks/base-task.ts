@@ -107,4 +107,8 @@ export type BaseTask = {
      */
     name?: string;
   };
+  /**
+   * Delegated task
+   */
+  delegated_task?: string;
 };

@@ -42,6 +42,8 @@ export const importTasks: RouteMiddleware = async context => {
           .replace('Z', ''),
         task.root_task || null,
         task.subject_parent || null,
+        task.delegated_owners ? sql.array(task.delegated_owners, 'text') : null,
+        task.delegated_task || null,
       ],
       sql`,`
     );
@@ -63,7 +65,7 @@ export const importTasks: RouteMiddleware = async context => {
     sql`
         insert into tasks (id, name, description, type, subject, status, status_text, state, created_at, parent_task,
                            parameters, creator_id, creator_name, assignee_id, assignee_is_service, assignee_name,
-                           context, events, modified_at, root_task, subject_parent)
+                           context, events, modified_at, root_task, subject_parent, delegated_owners, delegated_task)
         values ${inserts(tasks.map(insertTask))}
         on conflict (id) do update
             set name=excluded.name,
@@ -85,7 +87,9 @@ export const importTasks: RouteMiddleware = async context => {
                 events=excluded.events,
                 modified_at=excluded.modified_at,
                 root_task=excluded.root_task,
-                subject_parent=excluded.subject_parent;
+                subject_parent=excluded.subject_parent,
+                delegated_owners=excluded.delegated_owners,
+                delegated_task=excluded.delegated_task;
     `
   );
 

@@ -29,7 +29,9 @@ export async function getTask(
 ) {
   const isAdmin = scope.indexOf('tasks.admin') !== -1;
   const userId = user.id;
-  const userCheck = isAdmin ? sql`` : sql`AND (t.creator_id = ${userId} OR t.assignee_id = ${userId})`;
+  const userCheck = isAdmin
+    ? sql``
+    : sql`AND (t.creator_id = ${userId} OR t.assignee_id = ${userId} OR ${userId} = ANY (t.delegated_owners) OR dt.assignee_id = ${userId})`;
 
   const offset = (page - 1) * perPage;
   const subtaskPagination = all ? sql`` : sql`limit ${perPage} offset ${offset}`;
@@ -38,8 +40,9 @@ export async function getTask(
     typeof subjects !== 'undefined' ? sql`and t.subject = any (${sql.array(subjects, 'text')})` : sql``;
 
   const fullTaskList = sql`
-      select *
+      select t.*
       from tasks t
+      left join tasks dt on t.delegated_task = dt.id
       where t.context ?& ${sql.array(context, 'text')}
         ${userCheck}
         and (t.id = ${id} or (t.parent_task = ${id} ${statusQuery} ${subjectsQuery})) order by t.created_at
@@ -53,7 +56,7 @@ export async function getTask(
         with task_list as (${fullTaskList})
         select *
         from task_list
-        where id = ${id}
+        where task_list.id = ${id}
         union
         ( 
             select *

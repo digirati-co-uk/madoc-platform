@@ -49,7 +49,8 @@ export const ContinueSubmission: React.FC<{
   canClaimCanvas,
 }) => {
   const api = useApi();
-  const { user } = api.getIsServer() ? { user: undefined } : api.getCurrentUser() || {};
+  const { user, scope = [] } = api.getIsServer() ? { user: undefined } : api.getCurrentUser() || {};
+  const canContribute = scope.indexOf('site.admin') !== -1 || scope.indexOf('models.contribute') !== -1;
 
   const [continueSubmission, continueCount] = useMemo(() => {
     let totalReady = 0;
@@ -160,7 +161,7 @@ export const ContinueSubmission: React.FC<{
           <LocaleString>{project.summary}</LocaleString>
         </ProjectListingDescription>
         {!isLoading ? (
-          user && canClaimCanvas ? (
+          user && canContribute && canClaimCanvas ? (
             <Button
               as={HrefLink}
               href={createLink({ projectId: project.slug, manifestId, canvasId, collectionId, subRoute: 'model' })}

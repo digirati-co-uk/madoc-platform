@@ -13,6 +13,16 @@
     "Heading 2": "[class^=\"Heading2-\"]"
   },
   "Admin page title": ".AdminPageTitle",
-  "Project container": ".ProjectContainer",
-  "Project status container": ".ProjectStatusContainer"
+  "Project container": {
+    "default": ".ProjectContainer",
+    "Button": "Button"
+  },
+  "ProjectListingItem": {
+    "default": ".ProjectListingItem",
+    "Button": ".Button"
+  },
+  "Project status container": ".ProjectStatusContainer",
+  "Image Grid Item": ".ImageGridItem",
+  "Button": ".Button",
+  "Heading 3": ".Heading3"
 }

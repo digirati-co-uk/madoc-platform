@@ -72,4 +72,6 @@ export type DatabaseTaskType = {
   modified_at: number;
   root_task: string;
   subject_parent: string;
+  delegated_owners: string[] | null;
+  delegated_task: string;
 };

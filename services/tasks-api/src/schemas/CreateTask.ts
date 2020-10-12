@@ -83,4 +83,14 @@ export type CreateTask = {
      */
     name?: string;
   };
+
+  /**
+   * Delegated users who have access
+   */
+  delegated_owners?: string[];
+
+  /**
+   * Delegated task (acts as owner)
+   */
+  delegated_task?: string;
 };

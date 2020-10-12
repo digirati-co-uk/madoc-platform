@@ -24,6 +24,12 @@ Given('I am using the {string} site template', (fixtureName) => {
   cy.loadSite(fixtureName);
 });
 
+When('I view task with id {string}', (taskId) => {
+  cy.get('@site-fixture').then((fixture) => {
+    cy.visit(`/s/${fixture.omeka.site.slug}/madoc/tasks/${taskId}`);
+  });
+});
+
 Given('I have logged in as {string} on site {string}', (userName) => {
   cy.get('@site-fixture').then((fixture) => {
     cy.preserveCookies();

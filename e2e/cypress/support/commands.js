@@ -26,13 +26,20 @@
 
 const LOCAL_STATE = {
   CURRENT_FIXTURE: null,
+  timeout: null,
 };
 
 Cypress.Commands.add('loadSite', (fixtureName, clean = false) => {
   cy.fixture(`madoc-test-fixtures/${fixtureName}/export.json`).as('site-fixture');
   cy.get('@site-fixture').then((fixture) => {
-    if (LOCAL_STATE.CURRENT_FIXTURE !== fixture || clean) {
+    const validFixture = LOCAL_STATE.CURRENT_FIXTURE && LOCAL_STATE.CURRENT_FIXTURE === fixtureName;
+    if (!validFixture || clean) {
       cy.task('site:fixture', fixture);
+      LOCAL_STATE.CURRENT_FIXTURE = fixtureName;
+      // Clear the fixture cache after 5 seconds.
+      LOCAL_STATE.timeout = setTimeout(() => {
+        LOCAL_STATE.CURRENT_FIXTURE = undefined;
+      }, 10000);
     }
   });
 });
