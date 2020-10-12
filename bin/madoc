@@ -42,6 +42,15 @@ case "${commandToRun}" in
     ;;
 
     e2e)
+      FIXTURE_DIRECTORY='./e2e/cypress/fixtures/madoc-test-fixtures';
+      if [ -d "$FIXTURE_DIRECTORY" ]; then
+          echo "$FIXTURE_DIRECTORY exists, skipping clone."
+      else
+          (cd ./e2e/cypress/fixtures/;
+            git clone https://github.com/digirati-co-uk/madoc-test-fixtures.git
+          )
+          echo "$FIXTURE_DIRECTORY does not exist."
+      fi
       rm -rf ./var/test-environment
       docker-compose -f docker-compose.yml -f docker-compose.test.yml -f docker-compose.e2e.yml -p test-madoc --env-file ./.env-test rm -f -v -s
       docker-compose -f docker-compose.yml -f docker-compose.test.yml -p test-madoc --env-file ./.env-test up -d

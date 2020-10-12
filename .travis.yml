@@ -35,19 +35,20 @@ install:
   - docker tag digirati/madoc-storage-api digirati/madoc-storage-api-beta
 
   # Add any database test fixtures to `database/sql` before madoc init-ci.
-  - ./bin/madoc init-ci
+  #  - ./bin/madoc init-ci
 
 before_script:
-  - ./bin/madoc ci-start
-  - ./.travis/wait-for-omeka.sh
+#  - ./bin/madoc ci-start
+#  - ./.travis/wait-for-omeka.sh
 
 script:
-  - .travis/test-script.sh
+  - bin/madoc e2e
+#  - .travis/test-script.sh
 # Travis build does not have PHP at this stage.
 #  - .travis/check-translations.sh
 
 after_script:
-  - ./bin/madoc ci-stop
+#  - ./bin/madoc ci-stop
 
 cache:
   bundler: true
