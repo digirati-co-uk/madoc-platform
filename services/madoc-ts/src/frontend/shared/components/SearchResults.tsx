@@ -60,7 +60,7 @@ function sanitizeLabel(str: string) {
 }
 
 const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small' }> = ({ result, size }) => {
-  const things = result.contexts.map(value => {
+  const things = ((result && result.contexts) || []).map(value => {
     return parseUrn(value.id);
   });
 
