@@ -1,6 +1,5 @@
 import { getParentLinking } from './routes/iiif/linking/get-parent-linking';
 import { indexManifest } from './routes/iiif/manifests/index-manifest';
-import { reindexManifest } from './routes/iiif/manifests/reindex-manifest';
 import { updateProjectStatus } from './routes/projects/update-project-status';
 import { siteManifestTasks } from './routes/site/site-manifest-tasks';
 import { getUser } from './routes/user/get-user';
