@@ -30,6 +30,7 @@ import { listCanvases } from './routes/iiif/canvases/list-canvases';
 import { createCanvas } from './routes/iiif/canvases/create-canvas';
 import { getCanvas } from './routes/iiif/canvases/get-canvas';
 import { getCanvasMetadata } from './routes/iiif/canvases/get-canvas-metadata';
+import { indexCanvas } from './routes/iiif/canvases/index-canvas';
 import { updateManifestStructure } from './routes/iiif/manifests/update-manifest-structure';
 import { getManifestStructure } from './routes/iiif/manifests/get-manifest-structure';
 import { getLocale } from './routes/locales';
@@ -162,6 +163,7 @@ export const router = new TypedRouter({
   'put-canvas-metadata': [TypedRouter.PUT, '/api/madoc/iiif/canvases/:id/metadata', updateMetadata, 'MetadataUpdate'],
   'get-canvas-manifests': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/manifests', getCanvasManifests],
   'get-canvas-linking': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/linking', getLinking],
+  'search-index-canvas': [TypedRouter.POST, '/api/madoc/iiif/canvases/:id/index', indexCanvas],
 
   // Import API
   'import-manifest': [TypedRouter.POST, '/api/madoc/iiif/import/manifest', importManifest],
