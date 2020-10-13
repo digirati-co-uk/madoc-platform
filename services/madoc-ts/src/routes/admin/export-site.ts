@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as path from 'path';
 import { sql } from 'slonik';
 import { api } from '../../gateway/api.server';
 import { Site } from '../../types/omeka/Site';
@@ -8,6 +9,8 @@ import { User } from '../../types/omeka/User';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { mysql } from '../../utility/mysql';
 import { userWithScope } from '../../utility/user-with-scope';
+
+export const fileDirectory = process.env.OMEKA_FILE_DIRECTORY || '/home/node/app/omeka-files';
 
 export const exportSite: RouteMiddleware = async context => {
   // @todo add option to reset passwords to testable default. Tests should assume a standard password.
@@ -113,10 +116,17 @@ export const exportSite: RouteMiddleware = async context => {
   // Files to be saved.
   // - Manifests
   const resources = loadedIIIIFResource.map(resource => {
-    if (resource.local_source) {
-      return JSON.parse(fs.readFileSync(resource.local_source).toString());
+    try {
+      if (resource.local_source) {
+        const data = JSON.parse(fs.readFileSync(resource.local_source).toString());
+        return {
+          data,
+          source: path.relative(fileDirectory, resource.local_source as string),
+        };
+      }
+    } catch (err) {
+      // no-op
     }
-    return resource.local_source;
   });
 
   // - Canvas OCR

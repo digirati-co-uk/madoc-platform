@@ -1,6 +1,10 @@
 import { CaptureModel } from '@capture-models/types';
+import * as fs from 'fs';
+import mkdirp from 'mkdirp';
+import * as path from 'path';
 import { sql } from 'slonik';
 import { api } from '../../gateway/api.server';
+import { fileDirectory } from '../../gateway/tasks/task-helpers';
 import { SitePermission } from '../../types/omeka/SitePermission';
 import { SiteSetting } from '../../types/omeka/SiteSetting';
 import { User } from '../../types/omeka/User';
@@ -374,6 +378,19 @@ export const importSite: RouteMiddleware = async context => {
         'status',
       ])
     );
+  }
+
+  if (data.files && data.files.resources) {
+    const resources: Array<{ data: any; source: string }> = data.files.resources;
+    for (const resource of resources) {
+      if (resource) {
+        const filePath = path.join(fileDirectory, resource.source);
+        if (!fs.existsSync(filePath)) {
+          mkdirp.sync(`${path.dirname(filePath)}`);
+          fs.writeFileSync(filePath, JSON.stringify(resource.data));
+        }
+      }
+    }
   }
 
   // Files
