@@ -103,6 +103,10 @@ export const PaginationNumbered: React.FC<{
   const { t } = useTranslation();
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [page]);
+
+  useEffect(() => {
     if (typeof propsPage !== 'undefined') {
       setIsLoading(false);
       setStalePage(propsPage);
@@ -140,7 +144,11 @@ export const PaginationNumbered: React.FC<{
           {page >= 2 ? `${page - 1}` : ``}
         </MediumRoundedButton>
       ) : null}
-      <MediumRoundedButton as={Link} to={`${pathname}${page ? `?${pageParam}=${page}&` : q ? '?' : ''}${q}`}>
+      <MediumRoundedButton
+        style={{ background: '#e9e9e9' }}
+        as={Link}
+        to={`${pathname}${page ? `?${pageParam}=${page}&` : q ? '?' : ''}${q}`}
+      >
         {page}
       </MediumRoundedButton>
       {nextPage ? (

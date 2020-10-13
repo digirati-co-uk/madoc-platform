@@ -166,7 +166,6 @@ export class ApiClient {
     });
 
     if (response.error) {
-
       if (response.status === 404) {
         throw new NotFound();
       }
@@ -1285,7 +1284,7 @@ export class ApiClient {
   }
 
   // Search API
-  async searchQuery(query: SearchQuery, page = 1) {
+  async searchQuery(query: SearchQuery, page = 1, madoc_id?: string) {
     let data;
     if (query.facets && JSON.parse(query.facets)) {
       try {
@@ -1304,7 +1303,7 @@ export class ApiClient {
         //   }
         // );
         // data = await response.json();
-        data = this.request<SearchResponse>(`/api/search/search?${stringify({ page })}`, {
+        data = this.request<SearchResponse>(`/api/search/search?${stringify({ page, madoc_id })}`, {
           method: 'POST',
           body: { fulltext: query.fulltext, facets: JSON.parse(query.facets) },
         });
@@ -1327,7 +1326,7 @@ export class ApiClient {
       //   }
       // );
       // data = await response.json();
-      data = this.request<SearchResponse>(`/api/search/search?${stringify({ page })}`, {
+      data = this.request<SearchResponse>(`/api/search/search?${stringify({ page, madoc_id })}`, {
         method: 'POST',
         body: { fulltext: query.fulltext },
       });

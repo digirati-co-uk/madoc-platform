@@ -20,7 +20,7 @@ import { useTranslation } from 'react-i18next';
 import { useSubjectMap } from '../../shared/hooks/use-subject-map';
 import { createLink } from '../../shared/utility/create-link';
 import { CanvasStatus } from '../../shared/atoms/CanvasStatus';
-import { Button } from '../../shared/atoms/Button';
+import { Button, MediumRoundedButton } from '../../shared/atoms/Button';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { Heading3, Subheading3 } from '../../shared/atoms/Heading3';
@@ -221,6 +221,9 @@ export const ViewManifest: React.FC<{
               stale={!pagination}
               extraQuery={{ filter }}
             />
+            <MediumRoundedButton as={Link} to={`/search?madoc_id=urn:madoc:manifest:${manifest.id}`}>
+              Search this manifest
+            </MediumRoundedButton>
             <ImageGrid>
               {manifest.items.map((canvas, idx) => (
                 <Link

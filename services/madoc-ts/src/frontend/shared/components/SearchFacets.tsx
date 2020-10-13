@@ -51,7 +51,7 @@ const FacetExpandable: React.FC<{
     <>
       <FacetType onClick={() => setOpen(!open)}>
         {name}
-        <DownArrowIcon style={!open ? { transform: 'rotate(180deg)' } : {}} />
+        <DownArrowIcon style={open ? { transform: 'rotate(180deg)' } : {}} />
       </FacetType>
       {open
         ? values.map(option => {

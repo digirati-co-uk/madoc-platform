@@ -87,6 +87,9 @@ export type SearchQuery = {
 
   /** List of values of facets to search for */
   facets?: string;
+
+  /** single madoc id to search within  */
+  madoc_id?: string;
 };
 
 /**
