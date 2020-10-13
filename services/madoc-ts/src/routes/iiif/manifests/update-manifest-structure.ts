@@ -27,7 +27,7 @@ export const updateManifestStructure: RouteMiddleware<{ id: number }, UpdateStru
         delete
           from iiif_derived_resource_items
           where ${itemFilter}
-            and (item_id = any (${sql.array(toRemove, SQL_INT_ARRAY)})) 
+            and (item_id = any (${sql.array(toRemove, SQL_INT_ARRAY)}))
       `;
 
       await handler.query(removeQuery);
@@ -42,9 +42,12 @@ export const updateManifestStructure: RouteMiddleware<{ id: number }, UpdateStru
       )
     `);
   });
-
-  const userApi = api.asUser({ siteId });
-  userApi.indexManifest(manifestId);
+  try {
+    const userApi = api.asUser({ siteId });
+    userApi.indexManifest(manifestId);
+  } catch (e) {
+    console.log(e);
+  }
 
   context.response.status = 200;
 };

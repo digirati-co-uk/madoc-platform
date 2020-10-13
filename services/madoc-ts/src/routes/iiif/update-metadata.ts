@@ -31,8 +31,12 @@ export const updateMetadata: RouteMiddleware<{ id: number }, MetadataUpdate> = a
   });
 
   if (context.request.originalUrl.indexOf('iiif/manifests') !== -1) {
-    const userApi = api.asUser({ siteId });
-    userApi.indexManifest(resourceId);
+    try {
+      const userApi = api.asUser({ siteId });
+      userApi.indexManifest(resourceId);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   context.response.status = 200;
