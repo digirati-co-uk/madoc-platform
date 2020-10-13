@@ -150,7 +150,6 @@ export const router = new TypedRouter({
   'get-manifest-linking': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/linking', getLinking],
   'get-manifest-canvas-linking': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/canvas-linking', getParentLinking],
   'search-index-manifest': [TypedRouter.POST, '/api/madoc/iiif/manifests/:id/index', indexManifest],
-  'search-reindex-manifest': [TypedRouter.POST, 'api/madoc/iiif/manifests/:id/reindex', reindexManifest],
 
   // Canvas API
   'list-canvases': [TypedRouter.GET, '/api/madoc/iiif/canvases', listCanvases],

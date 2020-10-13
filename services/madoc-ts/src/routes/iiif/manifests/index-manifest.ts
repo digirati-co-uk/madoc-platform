@@ -67,6 +67,12 @@ export const indexManifest: RouteMiddleware<{ id: string }> = async context => {
 
   try {
     await userApi.searchIngest(searchPayload);
+    const alreadyIndexed = (await api.getIndexedManifestById(`urn:madoc:manifest:${manifestId}`)).results.length > 0;
+    if (alreadyIndexed) {
+      await userApi.searchReIngest(searchPayload);
+    } else {
+      await userApi.searchIngest(searchPayload);
+    }
   } catch (e) {
     console.log(e);
   }

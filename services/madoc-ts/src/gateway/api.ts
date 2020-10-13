@@ -1354,9 +1354,9 @@ export class ApiClient {
     });
   }
 
-  async reindexManifest(id: number) {
-    return this.request(`/api/madoc/iiif/manifests/${id}/reindex`, {
-      method: 'POST',
+  async getIndexedManifestById(madoc_id: string) {
+    return this.request<SearchResponse>(`/api/search/search?${stringify({ madoc_id })}`, {
+      method: 'GET',
     });
   }
 
