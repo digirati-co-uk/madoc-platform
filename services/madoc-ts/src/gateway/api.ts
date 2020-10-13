@@ -1333,7 +1333,7 @@ export class ApiClient {
     }
     return data;
   }
-
+  // can be used for both canvases and manifests
   async searchIngest(resource: SearchIngestRequest) {
     return this.request(`/api/search/iiif`, {
       method: 'POST',
@@ -1355,6 +1355,18 @@ export class ApiClient {
   }
 
   async getIndexedManifestById(madoc_id: string) {
+    return this.request<SearchResponse>(`/api/search/search?${stringify({ madoc_id })}`, {
+      method: 'GET',
+    });
+  }
+
+  async indexCanvas(id: number) {
+    return this.request(`/api/madoc/iiif/canvases/${id}/index`, {
+      method: 'POST',
+    });
+  }
+
+  async getIndexedCanvasById(madoc_id: string) {
     return this.request<SearchResponse>(`/api/search/search?${stringify({ madoc_id })}`, {
       method: 'GET',
     });
