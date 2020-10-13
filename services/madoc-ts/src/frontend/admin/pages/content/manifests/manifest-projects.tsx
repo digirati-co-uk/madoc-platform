@@ -58,7 +58,6 @@ export const ManifestProjects = createUniversalComponent<ManifestProjectsType>(
   },
   {
     getKey: params => {
-      console.log(params);
       return ['manifest-project', { id: Number(params.id) }];
     },
     getData: async (key, { id }, api) => {

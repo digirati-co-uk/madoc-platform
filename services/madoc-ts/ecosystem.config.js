@@ -9,7 +9,7 @@ module.exports = {
             instances: 1,
             autorestart: true,
             watch: false,
-            max_memory_restart: '1G',
+            max_memory_restart: '2G',
             env_production: {
               NODE_ENV: 'production',
             },
@@ -20,7 +20,7 @@ module.exports = {
             instances: 2,
             autorestart: true,
             watch: false,
-            max_memory_restart: '1G',
+            max_memory_restart: '2G',
             env_production: {
               NODE_ENV: 'production',
             },
@@ -31,7 +31,7 @@ module.exports = {
             instances: 1,
             autorestart: true,
             watch: false,
-            max_memory_restart: '1G',
+            max_memory_restart: '2G',
             env_production: {
               NODE_ENV: 'production',
             },
@@ -46,11 +46,15 @@ module.exports = {
             watch: ['lib'],
             watch_options: {
               ignored: 'frontend/admin/build/**',
+              awaitWriteFinish: {
+                stabilityThreshold: 2000,
+                pollInterval: 100,
+              },
             },
             node_args: '--expose-gc --inspect=0.0.0.0:9229',
-            max_memory_restart: '1G',
+            max_memory_restart: '2G',
             env: {
-              NODE_ENV: 'development'
+              NODE_ENV: process.env.NODE_ENV,
             },
             env_production: {
               NODE_ENV: 'production',
@@ -61,8 +65,15 @@ module.exports = {
             script: 'lib/queue/producer.js',
             instances: 1,
             autorestart: true,
-            max_memory_restart: '1G',
+            max_memory_restart: '2G',
             watch: ['lib/queue/producer.js'],
+            watch_options: {
+              ignored: 'frontend/admin/build/**',
+              awaitWriteFinish: {
+                stabilityThreshold: 2000,
+                pollInterval: 100,
+              },
+            },
           },
           {
             name: 'scheduler',
@@ -70,6 +81,13 @@ module.exports = {
             instances: 1,
             autorestart: true,
             watch: ['lib/queue/scheduler.js'],
+            watch_options: {
+              ignored: 'frontend/admin/build/**',
+              awaitWriteFinish: {
+                stabilityThreshold: 2000,
+                pollInterval: 100,
+              },
+            },
           },
         ],
 };

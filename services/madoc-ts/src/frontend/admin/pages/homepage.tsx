@@ -141,6 +141,9 @@ const Homepage: UniversalComponent<HomepageType> = createUniversalComponent<Home
                 <li>
                   <span>Configure Atlas</span>
                 </li>
+                <li>
+                  <Link to={`/export/site`}>Export site</Link>
+                </li>
               </MenuList>
             </AdminSection>
           </AdminSectionGrid>

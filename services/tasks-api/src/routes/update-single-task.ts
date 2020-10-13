@@ -13,20 +13,22 @@ export const updateSingleTask: RouteMiddleware<{ id: string }> = async context =
   const canOnlyProgress = !isAdmin && context.state.jwt.scope.indexOf('tasks.progress') !== -1;
   const taskChanges: UpdateTask = context.requestBody;
 
-  const { assignee_id, creator_id, events, type } = await context.connection.one<{
+  const { assignee_id, creator_id, delegated_assignee, events, type } = await context.connection.one<{
     assignee_id: string;
     creator_id: string;
+    delegated_assignee?: string;
     events?: string[];
     type: string;
   }>(sql`
-      SELECT t.assignee_id, t.creator_id, t.events, t.type 
+      SELECT t.assignee_id, t.creator_id, t.events, t.type, dt.assignee_id as delegated_assignee
       FROM tasks t 
-      WHERE id = ${id} 
-        AND context ?& ${sql.array(context.state.jwt.context, 'text')}
+      left join tasks dt on t.delegated_task = dt.id
+      WHERE t.id = ${id} 
+        AND t.context ?& ${sql.array(context.state.jwt.context, 'text')}
     `);
 
   const taskWithId = { id, type, events };
-  if (canOnlyProgress && (creator_id !== userId || assignee_id !== userId)) {
+  if (canOnlyProgress && (creator_id !== userId || assignee_id !== userId || delegated_assignee !== userId)) {
     // Only apply status change.
     const updateRows = [];
     if (typeof taskChanges.status !== 'undefined') {
@@ -62,11 +64,19 @@ export const updateSingleTask: RouteMiddleware<{ id: string }> = async context =
     return;
   }
 
-  if (!isAdmin && (creator_id !== userId || assignee_id !== userId)) {
+  if (!isAdmin && creator_id !== userId && assignee_id !== userId && delegated_assignee !== userId) {
     throw new NotFound(); // Maybe access denied?
   }
 
   const updateRows = [];
+
+  if (taskChanges.delegated_owners) {
+    updateRows.push(sql`delegated_owners = ${sql.array(taskChanges.delegated_owners, 'text')}`);
+  }
+
+  if (taskChanges.delegated_task) {
+    updateRows.push(sql`delegated_task = ${taskChanges.delegated_task}`);
+  }
 
   if (taskChanges.assignee) {
     updateRows.push(sql`assignee_id = ${taskChanges.assignee.id}`);

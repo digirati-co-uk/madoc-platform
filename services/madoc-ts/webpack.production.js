@@ -1,3 +1,8 @@
+const createStyledComponentsTransformer = require('typescript-plugin-styled-components').default;
+const styledComponentsTransformer = createStyledComponentsTransformer({
+  displayName: true,
+});
+
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
   devtool: process.env.NODE_ENV !== 'production' ? 'inline-source-map' : false,
@@ -17,12 +22,15 @@ module.exports = {
               configFile: 'tsconfig.frontend.json',
               transpileOnly: true,
               experimentalWatchApi: true,
+              getCustomTransformers: () => ({
+                before: [styledComponentsTransformer],
+              }),
             },
           },
         ],
       },
       {
-        test: /\.js$/,
+        test: /\.(js)$/,
         exclude: /node_modules/,
         use: [
           {
@@ -34,14 +42,18 @@ module.exports = {
                 ['@babel/plugin-proposal-decorators', { legacy: true }],
               ],
               presets: [
-                'react',
                 [
-                  'es2015',
+                  '@babel/preset-env',
                   {
-                    modules: false,
+                    targets: {
+                      edge: '17',
+                      firefox: '60',
+                      chrome: '67',
+                      safari: '11.1',
+                    },
+                    useBuiltIns: 'usage',
                   },
                 ],
-                'es2016',
               ],
             },
           },

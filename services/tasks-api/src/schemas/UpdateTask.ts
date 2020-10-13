@@ -42,4 +42,14 @@ export type UpdateTask = {
      */
     name?: string;
   };
+
+  /**
+   * Delegated users who have access
+   */
+  delegated_owners?: string[];
+
+  /**
+   * Delegated task
+   */
+  delegated_task?: string;
 };

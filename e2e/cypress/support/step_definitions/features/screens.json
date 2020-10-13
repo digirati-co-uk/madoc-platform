@@ -1,0 +1,9 @@
+{
+  "Home page": "/s/default",
+  "Login page": "/s/default/madoc/login",
+  "User dashboard": "/s/default/madoc",
+  "Admin dashboard": "/s/default/madoc/admin",
+  "Site projects": "/s/default/madoc/projects",
+  "Project with model": "/s/default/madoc/projects/project-with-model",
+  "A canvas": "/s/default/madoc/projects/project-with-model/manifests/2/c/8"
+}

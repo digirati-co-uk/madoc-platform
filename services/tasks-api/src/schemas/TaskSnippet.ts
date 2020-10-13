@@ -1,4 +1,3 @@
-
 export type TaskSnippet = {
   id: string;
   name: string;
@@ -6,4 +5,3 @@ export type TaskSnippet = {
   subtasks: number;
   type: string;
 };
-

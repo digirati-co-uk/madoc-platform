@@ -1,0 +1,17 @@
+version: "3"
+services:
+  # Internal services
+  e2e:
+    image: cypress
+    build: ./e2e
+    container_name: cypress
+    depends_on:
+      - gateway
+    environment:
+      - CYPRESS_baseUrl=http://gateway:8080
+    command: npx cypress run --port=8989
+    volumes:
+      - ./e2e/cypress:/app/cypress
+      - ./e2e/cypress.json:/app/cypress.json
+    ports:
+      - "8989:8989"

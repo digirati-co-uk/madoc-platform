@@ -1,5 +1,11 @@
 console.log(`Webpack frontend, env: ${process.env.NODE_ENV || 'development'}`);
 
+const createStyledComponentsTransformer = require('typescript-plugin-styled-components').default;
+const styledComponentsTransformer = createStyledComponentsTransformer({
+  displayName: true,
+  minify: false,
+  ssr: false,
+});
 const { addDisplayNameTransformer } = require('ts-react-display-name');
 
 module.exports = {
@@ -22,7 +28,7 @@ module.exports = {
               transpileOnly: true,
               experimentalWatchApi: true,
               getCustomTransformers: () => ({
-                before: [addDisplayNameTransformer()],
+                before: [addDisplayNameTransformer(), styledComponentsTransformer],
               }),
             },
           },

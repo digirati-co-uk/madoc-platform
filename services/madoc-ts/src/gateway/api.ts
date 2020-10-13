@@ -701,6 +701,19 @@ export class ApiClient {
     });
   }
 
+  async importCaptureModel(model: CaptureModel) {
+    return this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model`, {
+      method: 'POST',
+      body: model,
+    });
+  }
+
+  async deleteCaptureModel(id: string) {
+    return this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
   parseModelTarget(inputTarget: CaptureModel['target']) {
     const target = (inputTarget || []).map(t => this.resolveUrn(t.id));
     const collection = target.find(item => item && item.type.toLowerCase() === 'collection');

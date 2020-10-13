@@ -31,6 +31,17 @@
             },
             "type": "array"
         },
+        "delegated_owners": {
+            "description": "Delegated users who have access",
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "delegated_task": {
+            "description": "Delegated task (acts as owner)",
+            "type": "string"
+        },
         "description": {
             "description": "An optional description of the task.",
             "type": "string"

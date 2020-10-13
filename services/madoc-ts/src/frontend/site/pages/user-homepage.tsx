@@ -44,6 +44,7 @@ type UserHomepageType = {
     contributorDraftTasks?: { tasks: CrowdsourcingTask[]; pagination: Pagination };
     contributorReviewTasks?: { tasks: CrowdsourcingTask[]; pagination: Pagination };
     isSiteAdmin: boolean;
+    isSiteContributor: boolean;
     projects: any[];
   };
   variables: {};
@@ -134,29 +135,29 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
   () => {
     const { data } = useStaticData(UserHomepage);
 
-    console.log(data);
-
     if (!data) {
       return <div>Loading...</div>;
     }
 
-    const { userDetails, isSiteAdmin } = data;
+    const { userDetails, isSiteAdmin, isSiteContributor } = data;
 
     return (
       <div>
         <Heading1>Welcome back {userDetails.user.name}</Heading1>
         <Subheading1>Quick navigation</Subheading1>
 
-        <LightNavigation>
+        <LightNavigation role="navigation">
           <LightNavigationItem>
             <HrefLink href={'/projects'}>Projects</HrefLink>
           </LightNavigationItem>
           <LightNavigationItem>
             <HrefLink href={'/collections'}>Collections</HrefLink>
           </LightNavigationItem>
-          <LightNavigationItem>
-            <HrefLink href={'/tasks'}>All tasks</HrefLink>
-          </LightNavigationItem>
+          {isSiteContributor ? (
+            <LightNavigationItem>
+              <HrefLink href={'/tasks'}>All tasks</HrefLink>
+            </LightNavigationItem>
+          ) : null}
           <LightNavigationItem>
             <a href={'./profile'}>Manage account</a>
           </LightNavigationItem>
@@ -211,9 +212,11 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
       const response: Partial<UserHomepageType['data']> = {
         userDetails,
         isSiteAdmin: false,
+        isSiteContributor: false,
       };
 
       response.isSiteAdmin = isAdmin(userDetails);
+      response.isSiteContributor = isContributor(userDetails);
 
       const projects = api.getSiteProjects();
 

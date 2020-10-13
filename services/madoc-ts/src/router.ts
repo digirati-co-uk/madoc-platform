@@ -1,3 +1,5 @@
+import { exportSite } from './routes/admin/export-site';
+import { importSite } from './routes/admin/import-site';
 import { getParentLinking } from './routes/iiif/linking/get-parent-linking';
 import { indexManifest } from './routes/iiif/manifests/index-manifest';
 import { updateProjectStatus } from './routes/projects/update-project-status';
@@ -83,6 +85,8 @@ export const router = new TypedRouter({
   'get-ping': [TypedRouter.GET, '/api/madoc', ping],
   'get-scopes': [TypedRouter.GET, '/api/madoc/site/:siteId/permissions', getSiteScopes],
   'update-scopes': [TypedRouter.POST, '/api/madoc/site/:siteId/permissions', saveSiteScopes],
+  'export-site': [TypedRouter.POST, '/api/madoc/site/:siteId/export', exportSite],
+  'import-site': [TypedRouter.POST, '/api/madoc/site/:siteId/import', importSite],
 
   // User API.
   'get-user': [TypedRouter.GET, '/api/madoc/users/:id', getUser],

@@ -16,7 +16,7 @@ export const ProjectStatusContainer = styled.div<{ $status?: number }>`
   background: ${props => (typeof props.$status !== 'undefined' ? projectStatusColors[props.$status] : false) || '#eee'};
   padding: 0.5em;
   color: #4f4f4f;
-  margin-top: 1em;
+  margin: 1em 0;
 `;
 
 export const ProjectStatus: React.FC<{ status?: number }> = ({ status }) => {

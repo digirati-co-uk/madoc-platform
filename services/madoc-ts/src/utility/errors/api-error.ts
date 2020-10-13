@@ -3,7 +3,7 @@ export class ApiError extends Error {
     super(message);
     this.response = response;
 
-    if (response.debugResponse && response.debugResponse.json) {
+    if (response && response.debugResponse && response.debugResponse.json) {
       this.jsonError = response.debugResponse.json();
     }
   }
