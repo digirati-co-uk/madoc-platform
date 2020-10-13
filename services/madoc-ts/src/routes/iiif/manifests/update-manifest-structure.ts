@@ -3,6 +3,7 @@ import { RouteMiddleware } from '../../../types/route-middleware';
 import { UpdateStructureList } from '../../../types/schemas/item-structure-list';
 import { SQL_INT_ARRAY } from '../../../utility/postgres-tags';
 import { userWithScope } from '../../../utility/user-with-scope';
+import { api } from '../../../gateway/api.server';
 
 export const updateManifestStructure: RouteMiddleware<{ id: number }, UpdateStructureList> = async context => {
   const { siteId, userUrn } = userWithScope(context, ['site.admin']);
@@ -26,7 +27,7 @@ export const updateManifestStructure: RouteMiddleware<{ id: number }, UpdateStru
         delete
           from iiif_derived_resource_items
           where ${itemFilter}
-            and (item_id = any (${sql.array(toRemove, SQL_INT_ARRAY)})) 
+            and (item_id = any (${sql.array(toRemove, SQL_INT_ARRAY)}))
       `;
 
       await handler.query(removeQuery);
@@ -41,6 +42,12 @@ export const updateManifestStructure: RouteMiddleware<{ id: number }, UpdateStru
       )
     `);
   });
+  try {
+    const userApi = api.asUser({ siteId });
+    userApi.indexManifest(manifestId);
+  } catch (e) {
+    console.log(e);
+  }
 
   context.response.status = 200;
 };

@@ -1341,9 +1341,22 @@ export class ApiClient {
     });
   }
 
+  async searchReIngest(resource: SearchIngestRequest) {
+    return this.request(`/api/search/iiif`, {
+      method: 'PUT',
+      body: resource,
+    });
+  }
+
   async indexManifest(id: number) {
     return this.request(`/api/madoc/iiif/manifests/${id}/index`, {
       method: 'POST',
+    });
+  }
+
+  async getIndexedManifestById(madoc_id: string) {
+    return this.request<SearchResponse>(`/api/search/search?${stringify({ madoc_id })}`, {
+      method: 'GET',
     });
   }
 
