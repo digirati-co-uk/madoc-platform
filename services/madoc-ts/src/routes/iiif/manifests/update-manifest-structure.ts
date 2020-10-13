@@ -3,6 +3,7 @@ import { RouteMiddleware } from '../../../types/route-middleware';
 import { UpdateStructureList } from '../../../types/schemas/item-structure-list';
 import { SQL_INT_ARRAY } from '../../../utility/postgres-tags';
 import { userWithScope } from '../../../utility/user-with-scope';
+import { api } from '../../../gateway/api.server';
 
 export const updateManifestStructure: RouteMiddleware<{ id: number }, UpdateStructureList> = async context => {
   const { siteId, userUrn } = userWithScope(context, ['site.admin']);
@@ -41,6 +42,9 @@ export const updateManifestStructure: RouteMiddleware<{ id: number }, UpdateStru
       )
     `);
   });
+
+  const userApi = api.asUser({ siteId });
+  userApi.indexManifest(manifestId);
 
   context.response.status = 200;
 };
