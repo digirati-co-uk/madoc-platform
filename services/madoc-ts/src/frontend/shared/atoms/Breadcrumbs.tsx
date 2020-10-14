@@ -11,8 +11,8 @@ export type BreadcrumbItem = {
 };
 
 export const BreadcrumbContainer = styled.div<{ background?: string; color?: string; padding?: string }>`
-  background: ${props => (props.background ? props.background : `#4e82df`)};
-  color: ${props => (props.color ? props.color : `#4e82df`)};
+  background: ${props => (props.background ? props.background : `#2D70F9`)};
+  color: ${props => (props.color ? props.color : `#2D70F9`)};
   display: flex;
   padding: ${props => (props.padding ? props.padding : `0.5em 1.2em`)};
   font-size: 0.9em;

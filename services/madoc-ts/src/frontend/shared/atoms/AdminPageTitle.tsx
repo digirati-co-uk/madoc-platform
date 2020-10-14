@@ -5,8 +5,9 @@ export const AdminPageTitle = styled.h1<{ subtitle?: boolean }>`
   color: #fff;
   font-size: 1.8em;
   padding: 1.3em 0;
+  font-weight: normal;
   margin: 0;
-  background: #333;
+  background: #25416b;
   ${props =>
     props.subtitle &&
     css`

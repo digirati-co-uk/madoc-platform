@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { InputBorderless } from './Input';
 import { LinkButton } from './Button';
 import { SearchIcon } from './SearchIcon';
 
-const SearchContainer = styled.div`
+const SearchContainer = styled.div<{ $isFocus?: boolean; $isAdmin?: boolean }>`
+  padding: 0.2em 0.4em;
+  margin: 0 0.2em;
+  font-size: 0.85em;
   border-radius: 5px;
-  margin-right: 20px;
   display: flex;
-  background: #fff;
   border: 1px solid #370b0b;
-  padding: 0.5em;
-  font-size: 0.9em;
   line-height: 1.3em;
   width: 100%;
   max-width: 700px;
@@ -21,14 +20,41 @@ const SearchContainer = styled.div`
     border-color: #333;
     outline: none;
   }
+
+  ${props =>
+    props.$isAdmin &&
+    css`
+      color: #fff;
+      background: #5d80ae;
+
+      ${InputBorderless} {
+        color: #fff;
+
+        &:focus {
+          color: #000;
+        }
+
+        &::placeholder {
+          color: rgba(255, 255, 255, 0.5);
+        }
+      }
+    `}
+
+  ${props =>
+    props.$isFocus &&
+    css`
+      background: #fff;
+    `}
 `;
 
 export const SearchBox: React.FC<{
+  isAdmin?: boolean;
   onSearch: (val: string) => void;
   placeholder?: string;
   large?: boolean;
   value?: string;
-}> = ({ onSearch, placeholder = 'Search', large = false, value = '' }) => {
+}> = ({ isAdmin, onSearch, placeholder = 'Search', large = false, value = '' }) => {
+  const [isFocus, setIsFocus] = useState(false);
   const [searchValue, setSearchValue] = useState(value);
   return (
     <form
@@ -38,8 +64,10 @@ export const SearchBox: React.FC<{
         onSearch(searchValue);
       }}
     >
-      <SearchContainer>
+      <SearchContainer $isFocus={isFocus} $isAdmin={isAdmin}>
         <InputBorderless
+          onFocus={() => setIsFocus(true)}
+          onBlur={() => setIsFocus(false)}
           type="text"
           id={!large ? 'search' : `searchLarge`}
           value={searchValue}
