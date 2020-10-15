@@ -12,11 +12,15 @@
 
 
 {% if results.total > 0 and results.total <= 1 %}
-    <p>Found {{ results.total }} note</p>
+    <p>
+        {{ translate('Found %d note') | format(results.total) }}
+    </p>
 {%  elseif results.total > 1 %}
-    <p>Found {{ results.total }} note(s)</p>
+    <p>
+        {{ translate('Found %d notes') | format(results.total) }}
+    </p>
 {% else %}
-    <p>No notes found</p>
+    <p>{{ translate('No notes found') }}</p>
 {% endif %}
 
 

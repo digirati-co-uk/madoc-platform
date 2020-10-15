@@ -1,4 +1,6 @@
-<h2 class="h2">{{ tanslate('Activity for') }} {{ userDetails.name }}</h2>
+<h2 class="h2">
+    {{ tanslate('Activity for %s') | format(userDetails.name) }}
+</h2>
 
 {% if annotationsSortable.groupByCanvas().orderByLabel().get() %}
     <div class="c-dig-grid">
@@ -17,17 +19,17 @@
                 {% for annotation in annotationsSortable.onlyCanvas(canvas.canvasSource.omekaUri).get() %}
                     <div class="c-dig-grid">
                         <div class="c-dig-grid__col--2">
-                            {# @todo timeAgo to be added #}
                             {{ annotation.timeAgo }}
                         </div>
                         <div class="c-dig-grid__col--10">
                             {# @todo motiviation to be added #}
                             {% if(annotation.label or canvas.label) %}
-                                Added a <strong>{{ annotation.motivation }}</strong> annotation to
+                                {{ translate('Added a %s annotation to') | format(annotation.motivation) }}
                                 <a href="{{ canvas.canvasSource.omekaUri }}">
                                     {{ annotation.label ?? canvas.label }}
                                 </a>
                             {% else %}
+                                {{ translate('Added a %s annotation') | format(annotation.motivation) }}
                                 Added a <strong>{{ annotation.motivation }}</strong>
                                 annotation
                             {% endif %}

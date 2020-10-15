@@ -5,12 +5,12 @@
     <br />
     {% if (canvasRepresentation.media() | length < 0) %}
         <form method="post" action="{{ url('iiif-storage-admin/canvas-admin/ingest-thumbnail', {}, true) }}">
-            <button type="submit">Ingest thumbnail</button>
+            <button type="submit">{{ translate('Ingest thumbnail') }}</button>
         </form>
     {% else %}
         <img src="{{ canvas.getThumbnail() }}" />
         <form method="post" action="{{ url('iiif-storage-admin/canvas-admin/ingest-thumbnail', {}, true) }}">
-            <button type="submit">Re-Ingest thumbnail</button>
+            <button type="submit">{{ translate('Re-Ingest thumbnail') }}</button>
         </form>
     {% endif %}
 </div>

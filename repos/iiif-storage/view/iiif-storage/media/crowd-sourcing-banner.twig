@@ -5,9 +5,9 @@
     <div class="c-masthead__main">
         {% if title or text %}
         <div class="c-masthead__intro">
-            <h1 class="c-masthead__title">{{ title | raw }}</h1>
+            <h1 class="c-masthead__title">{{ translate(title) | raw }}</h1>
             <p class="c-masthead__description">
-                {{ text | raw }}
+                {{ translate(text) | raw }}
             </p>
         </div>
         {% else %}
@@ -17,14 +17,14 @@
     <div class="c-masthead__footer">
         <div class="c-masthead__panel">
             <div class="c-panel">
-                <h2 class="c-panel__title">{{ subtitle | raw }}</h2>
+                <h2 class="c-panel__title">{{ translate(subtitle) | raw }}</h2>
                 <div class="c-panel__content">
-                    {{ subtext | raw }}
+                    {{ translate(subtext) | raw }}
                 </div>
                 <div class="c-panel__foot">
                     <a href="{{ collectionId ? router.collection(collectionId) : router.collections() }}"
                        class="c-button c-button--primary">
-                        {{ buttonText ? buttonText : 'Get started' }}
+                        {{ buttonText ? translate(buttonText) : translate('Get started') }}
                     </a>
                 </div>
             </div>
@@ -33,13 +33,13 @@
             <div class="c-statistics c-statistics--center">
                 {% if stats.images %}
                 <dl class="c-statistic c-statistic--xl">
-                    <dt>Images annotated</dt>
+                    <dt>{{ translate('Images annotated') }}</dt>
                     <dd>{{ stat.images }}</dd>
                 </dl>
                 {% endif %}
                 {% if stats.annotations %}
                 <dl class="c-statistic c-statistic--xl">
-                    <dt>Annotations</dt>
+                    <dt>{{ translate('Annotations') }}</dt>
                     <dd>{{ stats.annotations }}</dd>
                 </dl>
                 {% endif %}

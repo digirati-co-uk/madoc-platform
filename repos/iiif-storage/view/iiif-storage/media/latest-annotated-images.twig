@@ -1,7 +1,7 @@
 {% do headLink().prependStylesheet(assetUrl('css/iiif-storage.css', 'IIIFStorage')) %}
 
 <h3>
-    {{ title ? title : 'Latest annotated images' }}
+    {{ title ? title : translate('Latest annotated images') }}
 </h3>
 <div class="iiif-view-manifest-list">
     {% for item in canvases %}
@@ -12,7 +12,7 @@
                 {% include 'iiif-storage/partials/canvas-thumbnail.twig' %}
             </div>
             <div class="iiif-view-manifest-list__canvas-label">
-                {{ image.getLabel() }} annotated by <strong>{{ item.user.name }}</strong>
+                {{ translate('%s annotated by %s') | format(item.getLabel(), item.user.name) }}
             </div>
         </div>
     {% endfor %}
