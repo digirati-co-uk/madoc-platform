@@ -117,7 +117,7 @@ class CaptureModelController extends AbstractPsr7ActionController
         if ($site) {
             $file = __DIR__ . '/../../../../translations/s/' . $site->slug() . '/annotation-studio.json';
             if (file_exists($file)) {
-                $json = file_get_contents(__DIR__ . '/../../../../translations/s/' . $site->slug() . '/annotation-studio.json');
+                $json = file_get_contents($file);
                 if ($json) {
                     return new JsonResponse(
                         json_decode($json),
