@@ -26,6 +26,13 @@ $annotationStudioRoutes = [
                     'defaults' => ['action' => 'captureModel'],
                 ],
             ],
+            'translation' => [
+                'type' => 'segment',
+                'options' => [
+                    'route' => '/translations.json',
+                    'defaults' => ['action' => 'translation'],
+                ],
+            ],
         ],
     ],
 ];

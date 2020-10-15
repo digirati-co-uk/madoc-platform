@@ -80,6 +80,23 @@ class Router
         );
     }
 
+    public function remoteTranslations()
+    {
+        $options = [
+            'locale' => null,
+        ];
+
+        if ($this->siteId) {
+            $options['site-slug'] = $this->siteId;
+        }
+
+        return $this->url->create(
+            $this->getRoute('translation', true),
+            $options,
+            $this->getOptions()
+        );
+    }
+
     public function getOptions($moreOptions = [])
     {
         $options = [
