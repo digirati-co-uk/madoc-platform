@@ -5,11 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.6...master)
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.7...master)
 
 ### Added
 
+- Various missing Translations 48769b3
+
 ### Fixed
+
+- Fixed Navigation translations with incorrect resource name
 
 ## [1.2.7](https://github.com/digirati-co-uk/madoc-platform/compare/v1.2.6...v1.2.7) - 2020-05-26
 
