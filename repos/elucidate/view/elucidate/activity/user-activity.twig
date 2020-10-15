@@ -24,14 +24,12 @@
                         <div class="c-dig-grid__col--10">
                             {# @todo motiviation to be added #}
                             {% if(annotation.label or canvas.label) %}
-                                {{ translate('Added a %s annotation to') | format(annotation.motivation) }}
+                                {{ translate('Added an annotation (%s) to') | format(annotation.motivation) }}
                                 <a href="{{ canvas.canvasSource.omekaUri }}">
                                     {{ annotation.label ?? canvas.label }}
                                 </a>
                             {% else %}
-                                {{ translate('Added a %s annotation') | format(annotation.motivation) }}
-                                Added a <strong>{{ annotation.motivation }}</strong>
-                                annotation
+                                {{ translate('Added an annotation (%s)') | format(annotation.motivation) }}
                             {% endif %}
                         </div>
                     </div>
