@@ -112,6 +112,45 @@ class CaptureModelController extends AbstractPsr7ActionController
         );
     }
 
+    public function translationAction() {
+        $site = $this->currentSite();
+        if ($site) {
+            $file = __DIR__ . '/../../../../translations/s/' . $site->slug() . '/annotation-studio.json';
+            if (is_file($file)) {
+                $json = file_get_contents($file);
+                if ($json) {
+                    return new JsonResponse(
+                        json_decode($json),
+                        200,
+                        static::DEFAULT_HEADERS
+                    );
+                }
+            }
+        }
+
+        return new JsonResponse(
+            [],
+            200,
+            static::DEFAULT_HEADERS
+        );
+    }
+
+    public function preprocessTranslation($translation) {
+        if (is_array($translation)) {
+            $return = [];
+            foreach ($translation as $lang => $list) {
+                $return[$lang] = [];
+                if (is_array($list)) {
+                    foreach ($list as $key => $value) {
+                        $return[$lang][str_replace('/./', '\.', $key)] = $value;
+                    }
+                }
+            }
+            return $return;
+        }
+        return $translation;
+    }
+
     public function setSiteId()
     {
         $site = $this->currentSite();

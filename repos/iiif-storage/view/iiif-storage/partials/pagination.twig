@@ -2,16 +2,16 @@
 {% if prevPage or nextPage %}
     <nav class="canvas-navigation">
         <div>
-            Page {{ page }} of {{ totalPages }}
+            {{ translate('Page %d of %d') | format(page, totalPages) }}
         </div>
         {% if (prevPage) %}
             <a class="canvas-navigation__previous" href="{{ prevPage }}">
-                <span class="fa fa-long-arrow-left" aria-hidden="true"></span> Previous page
+                <span class="fa fa-long-arrow-left" aria-hidden="true"></span> {{ translate('Previous page') }}
             </a>
         {% endif %}
         {% if (nextPage) %}
             <a class="canvas-navigation__next" href="{{ nextPage }}">
-                Next page <span class="fa fa-long-arrow-right" aria-hidden="true"></span>
+                {{ translate('Next page') }} <span class="fa fa-long-arrow-right" aria-hidden="true"></span>
             </a>
         {% endif %}
     </nav>

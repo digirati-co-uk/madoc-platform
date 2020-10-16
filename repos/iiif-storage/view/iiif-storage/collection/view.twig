@@ -28,7 +28,7 @@
                     </a>
                 </h3>
                 <div class="iiif-storage-manifest-snippet__thumbnail-count">
-                    {{ manifest.getThumbnails() |length }} images
+                    {{ translate('%d images') | format(manifest.getThumbnails() |length) }}
                 </div>
                 <div class="iiif-storage-manifest-snippet__thumbnail-list">
                     {% for canvas in manifest.getCanvases()[:6] %}

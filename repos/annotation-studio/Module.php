@@ -84,6 +84,19 @@ class Module extends AbstractModule
         );
     }
 
+    private function getRemoteTranslations() {
+        $currentSite = $this->getCurrentSite();
+
+        /** @var Router $router */
+        $router = $this->getServiceLocator()->get(Router::class);
+
+        if ($currentSite) {
+            $router->setSiteId($currentSite->slug());
+        }
+
+        return $router->remoteTranslations();
+    }
+
     private function getCaptureModelUrl($type, $id = null)
     {
 
@@ -244,6 +257,7 @@ class Module extends AbstractModule
                 ->withViewer($useOsd ? 'OpenSeadragonViewer' : 'StaticImageViewer')
                 ->atVersion($version)
                 ->withLocale($localeHelper->getLocale())
+                ->withRemoteTranslations($this->getRemoteTranslations())
                 ->build();
 
             if ($debug) {
@@ -282,6 +296,7 @@ class Module extends AbstractModule
                     ->withViewer($useOsd ? 'OpenSeadragonViewer' : 'StaticImageViewer')
                     ->atVersion($version)
                     ->withLocale($localeHelper->getLocale())
+                    ->withRemoteTranslations($this->getRemoteTranslations())
                     ->build();
             } else {
                 $annotationStudio = AnnotationStudioFactory::forManifestPage($manifest->getManifest(), $annotationStudio)
@@ -290,6 +305,7 @@ class Module extends AbstractModule
                     ->withResourceEditor($this->getCaptureModelUrl('resource'))
                     ->atVersion($viewModel)
                     ->withLocale($localeHelper->getLocale())
+                    ->withRemoteTranslations($this->getRemoteTranslations())
                     ->build();
             }
 

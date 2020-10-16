@@ -1,11 +1,11 @@
 {% do headLink().prependStylesheet(assetUrl('css/iiif-storage.css', 'IIIFStorage')) %}
 
-<h3>{{ title ? title : 'Top contributors' }}</h3>
+<h3>{{ title ? title : translate('Top contributors') }}</h3>
 <ul class="c-contributors">
     {% for user in users %}
         <li>
             <span class="c-contributors__icon fa-li fa fa-user-o " aria-hidden="true"></span>
-            <strong>{{ user.name }}</strong> – {{ user.contributions }} annotations
+            <strong>{{ user.name }}</strong> – {{ user.contributions }} {{ translate('annotations') }}
         </li>
     {% endfor %}
 </ul>

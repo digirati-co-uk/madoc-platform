@@ -49,7 +49,7 @@ class ContextualTranslator implements TranslatorInterface
      */
     public function translate($message, $textDomain = 'default', $locale = null)
     {
-        if (null !== $this->context) {
+        if (null !== $this->context && null !== $this->resource) {
             $id = TranslatableResourceIdentifier::forResource($this->resource, $this->id)->setProject($this->context);
             $domain = (string) $id;
         }

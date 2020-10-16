@@ -21,12 +21,14 @@ class CorePlugin implements Component
         Manifest $manifest = null,
         string $elucidateServer = null,
         string $target = null,
-        string $locale = null
+        string $locale = null,
+        string $remoteTranslations = null
     ) {
         $this->attributes['manifest'] = $manifest->getId();
         $this->attributes['canvas'] = $canvas ? $canvas->getId() : null;
         $this->attributes['elucidate-server'] = $elucidateServer;
         $this->attributes['target'] = $target ? $target : ($canvas ? 'canvas' : 'manifest');
+        $this->attributes['external-locale-config'] = $remoteTranslations;
         if ($locale) {
             $this->attributes['locale'] = $locale;
         }

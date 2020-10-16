@@ -21,6 +21,7 @@ class AnnotationStudioFactory
     private $canvas;
     private $isLocked;
     private $locale = 'en';
+    private $remoteTranslations;
 
     public function __construct(
         AnnotationStudio $instance,
@@ -168,6 +169,12 @@ class AnnotationStudioFactory
         return $this;
     }
 
+    public function withRemoteTranslations(string $url) {
+        $this->remoteTranslations = $url;
+
+        return $this;
+    }
+
     public function build(): AnnotationStudio
     {
         $this->instance->addComponent(
@@ -177,7 +184,8 @@ class AnnotationStudioFactory
                 $this->manifest,
                 $this->elucidateServer ?? '',
                 null,
-                $this->locale
+                $this->locale,
+                $this->remoteTranslations
             )
         );
 
