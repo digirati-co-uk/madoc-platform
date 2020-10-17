@@ -43,6 +43,7 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
     thumbnail: canvas.default_thumbnail,
     contexts: [
       { id: siteUrn, type: 'Site' },
+      // Should this be contexts or manifests here? Do canvases have site contexts too?
       ...manifestsWithin.map(({ resource_id }) => {
         return { id: `urn:madoc:manifests:${resource_id}`, type: 'Manifests' };
       }),
