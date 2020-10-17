@@ -39,5 +39,14 @@ export const updateMetadata: RouteMiddleware<{ id: number }, MetadataUpdate> = a
     }
   }
 
+  if (context.request.originalUrl.indexOf('iiif/canvases') !== -1) {
+    try {
+      const userApi = api.asUser({ siteId });
+      userApi.indexCanvas(resourceId);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   context.response.status = 200;
 };
