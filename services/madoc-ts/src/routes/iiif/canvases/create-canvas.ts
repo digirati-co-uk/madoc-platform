@@ -4,6 +4,7 @@ import { RouteMiddleware } from '../../../types/route-middleware';
 import { CreateCanvas } from '../../../types/schemas/create-canvas';
 import { addLinks } from '../../../database/queries/linking-queries';
 import { extractLinks } from '../../../utility/extract-links';
+import { api } from '../../../gateway/api.server';
 
 // @todo return full canvas.
 export const createCanvas: RouteMiddleware<{}, CreateCanvas> = async context => {
@@ -26,6 +27,14 @@ export const createCanvas: RouteMiddleware<{}, CreateCanvas> = async context => 
     }
   } catch (err) {
     console.log(err);
+  }
+
+  // search index
+  try {
+    const userApi = api.asUser({ siteId });
+    userApi.indexCanvas(canonical_id);
+  } catch (e) {
+    console.log(e);
   }
 
   context.response.body = { id: canonical_id };
