@@ -372,6 +372,7 @@ export const HeaderWithBreadcrumbsAndMenuAndSearch = () => (
           sortByFunction={val => {
             alert('you sorted by:  ' + val);
           }}
+          sortByOptions={sortByOptions}
         />
       </SearchContainer>
       <PaginationNumbered

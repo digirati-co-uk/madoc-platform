@@ -17,11 +17,12 @@ import styled from 'styled-components';
 
 import { SearchResponse, SearchFacet } from '../../../types/search';
 
-// const options = [
-//   { value: 'Option1', text: 'Option 1' },
-//   { value: 'Option2', text: 'Option 2' },
-//   { value: 'Option3', text: 'Option 3' },
-// ];
+// These to come from the API? Do we have a fixed list?
+const sortByOptions = [
+  { value: 'Option1', text: 'Option 1' },
+  { value: 'Option2', text: 'Option 2' },
+  { value: 'Option3', text: 'Option 3' },
+];
 
 const SearchContainer = styled.div`
   display: flex;
@@ -41,6 +42,7 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
     const { page, fulltext, facets, madoc_id } = useLocationQuery();
     const history = useHistory();
     const { pathname } = useLocation();
+    const [sortBy, setSortBy] = useState<string | undefined>();
 
     const initaliseAppliedFacets = () => {
       if (facets && facets !== 'undefined') {
@@ -142,8 +144,10 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
             totalResults={data && data.pagination ? data.pagination.totalResults : 0}
             searchResults={data ? data.results : []}
             sortByFunction={val => {
-              // alert('you sorted by:  ' + val);
+              setSortBy(val);
             }}
+            sortBy={sortBy}
+            sortByOptions={sortByOptions}
           />
         </SearchContainer>
         <PaginationNumbered

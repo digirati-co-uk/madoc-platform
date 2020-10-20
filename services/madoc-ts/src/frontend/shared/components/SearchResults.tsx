@@ -9,6 +9,7 @@ import { GridContainer } from '../atoms/Grid';
 import { createLink } from '../utility/create-link';
 import { HrefLink } from '../utility/href-link';
 import { LocaleString } from './LocaleString';
+import { DropdownOption, Dropdown } from '@capture-models/editor';
 
 const ResultsContainer = styled.div`
   flex: 1 1 0px;
@@ -53,6 +54,12 @@ const ResultTitle = styled.div`
 const TotalResults = styled.div`
   margin: 1em 0;
   color: #666;
+`;
+
+const DropdownContainer = styled.div`
+  &:first-child {
+    min-width: 16rem;
+  }
 `;
 
 function sanitizeLabel(str: string) {
@@ -111,15 +118,22 @@ export const SearchResults: React.FC<{
   sortByFunction: (val?: string) => void;
   totalResults: number;
   value?: string;
-}> = ({ searchFunction, searchResults = [], sortByFunction, totalResults, value }) => (
+  sortBy: string | undefined;
+  sortByOptions: Array<DropdownOption>;
+}> = ({ searchFunction, searchResults = [], sortByFunction, totalResults, value, sortByOptions, sortBy }) => (
   <ResultsContainer>
     <ResultsHeader>Search Results</ResultsHeader>
     <SearchBox large={true} onSearch={searchFunction} placeholder="Keywords" value={value} />
     <SearchHint>Keyword search</SearchHint>
     <GridContainer $justify="flex-end">
-      {/* <DropdownContainer>
-        <Dropdown options={options} placeholder="Sort By" onChange={val => sortByFunction(val)} />
-      </DropdownContainer> */}
+      <DropdownContainer id="THISONE">
+        <Dropdown
+          options={sortByOptions}
+          placeholder="Sort By"
+          onChange={(val: string | undefined) => sortByFunction(val)}
+          value={sortBy}
+        />
+      </DropdownContainer>
     </GridContainer>
     <TotalResults>{`${totalResults} Results`}</TotalResults>
     <div>
