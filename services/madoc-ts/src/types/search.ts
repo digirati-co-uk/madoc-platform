@@ -90,6 +90,9 @@ export type SearchQuery = {
 
   /** single madoc id to search within  */
   madoc_id?: string;
+
+  /** ordering parameter  */
+  ordering?: string;
 };
 
 /**

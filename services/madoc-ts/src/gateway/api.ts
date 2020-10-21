@@ -1301,47 +1301,17 @@ export class ApiClient {
     let data;
     if (query.facets && JSON.parse(query.facets)) {
       try {
-        // uncomment for if testing against local version
-        // const response = await fetch(
-        //   `http://localhost:8000/api/search/search?${stringify({
-        //     page: page,
-        //   })}`,
-        //   {
-        //     method: 'post',
-        //     body: JSON.stringify({ fulltext: query.fulltext, facets: JSON.parse(query.facets) }),
-        //     headers: {
-        //       Accept: 'application/json, text/plain',
-        //       'Content-Type': 'application/json;charset=UTF-8',
-        //     },
-        //   }
-        // );
-        // data = await response.json();
         data = this.request<SearchResponse>(`/api/search/search?${stringify({ page, madoc_id })}`, {
           method: 'POST',
-          body: { fulltext: query.fulltext, facets: JSON.parse(query.facets) },
+          body: { fulltext: query.fulltext, facets: JSON.parse(query.facets), ordering: query.ordering },
         });
       } catch (err) {
         //
       }
     } else {
-      // uncomment for if testing against local version
-      // const response = await fetch(
-      //   `http://localhost:8000/api/search/search?${stringify({
-      //     page: page,
-      //   })}`,
-      //   {
-      //     method: 'post',
-      //     body: JSON.stringify({ fulltext: query.fulltext }),
-      //     headers: {
-      //       Accept: 'application/json, text/plain',
-      //       'Content-Type': 'application/json;charset=UTF-8',
-      //     },
-      //   }
-      // );
-      // data = await response.json();
       data = this.request<SearchResponse>(`/api/search/search?${stringify({ page, madoc_id })}`, {
         method: 'POST',
-        body: { fulltext: query.fulltext },
+        body: { fulltext: query.fulltext, ordering: query.ordering },
       });
     }
     return data;

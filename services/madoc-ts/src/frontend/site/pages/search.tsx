@@ -17,11 +17,10 @@ import styled from 'styled-components';
 
 import { SearchResponse, SearchFacet } from '../../../types/search';
 
-// These to come from the API? Do we have a fixed list?
 const sortByOptions = [
-  { value: 'Option1', text: 'Option 1' },
-  { value: 'Option2', text: 'Option 2' },
-  { value: 'Option3', text: 'Option 3' },
+  { value: 'relevance', text: 'Relevance' },
+  { value: 'label', text: 'A-Z' },
+  { value: '-label', text: 'Z-A' },
 ];
 
 const SearchContainer = styled.div`
@@ -32,17 +31,17 @@ type SearchListType = {
   data: SearchResponse | undefined;
   params: {};
   query: { page: number; fulltext: string };
-  variables: { page: number; fulltext: string; facets?: string; madoc_id?: string };
+  variables: { page: number; fulltext: string; facets?: string; madoc_id?: string; ordering?: string };
 };
 
 export const Search: UniversalComponent<SearchListType> = createUniversalComponent<SearchListType>(
   () => {
     const { status, data } = usePaginatedData(Search);
     const { t } = useTranslation();
-    const { page, fulltext, facets, madoc_id } = useLocationQuery();
+    const { page, fulltext, facets, madoc_id, ordering } = useLocationQuery();
     const history = useHistory();
     const { pathname } = useLocation();
-    const [sortBy, setSortBy] = useState<string | undefined>();
+    const [sortBy, setSortBy] = useState<string | undefined>(ordering ? ordering : '');
 
     const initaliseAppliedFacets = () => {
       if (facets && facets !== 'undefined') {
@@ -108,9 +107,9 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
     useEffect(() => {
       const jsonFacets = JSON.stringify(appliedFacets);
       if (appliedFacets && appliedFacets.length >= 1) {
-        history.push(`${pathname}?${stringify({ fulltext, page, madoc_id })}&facets=${jsonFacets}`);
+        history.push(`${pathname}?${stringify({ fulltext, page, madoc_id, sortBy })}&facets=${jsonFacets}`);
       } else {
-        history.push(`${pathname}?${stringify({ fulltext, page, madoc_id })}`);
+        history.push(`${pathname}?${stringify({ fulltext, page, madoc_id, sortBy })}`);
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data]);
@@ -118,12 +117,12 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
     useEffect(() => {
       const jsonFacets = JSON.stringify(appliedFacets);
       if (appliedFacets && appliedFacets.length >= 1) {
-        history.push(`${pathname}?${stringify({ fulltext, page: 1, madoc_id })}&facets=${jsonFacets}`);
+        history.push(`${pathname}?${stringify({ fulltext, page: 1, madoc_id, sortBy })}&facets=${jsonFacets}`);
       } else {
-        history.push(`${pathname}?${stringify({ fulltext, page: 1, madoc_id })}`);
+        history.push(`${pathname}?${stringify({ fulltext, page: 1, madoc_id, sortBy })}`);
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [appliedFacets]);
+    }, [appliedFacets, sortBy]);
 
     return status === 'loading' ? (
       <div>{t('Loading')}</div>
@@ -137,7 +136,9 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
           <SearchResults
             searchFunction={val => {
               history.push(
-                `${pathname}?${stringify({ fulltext: val, page, madoc_id })}&facets=${JSON.stringify(appliedFacets)}`
+                `${pathname}?${stringify({ fulltext: val, page, madoc_id, sortBy })}&facets=${JSON.stringify(
+                  appliedFacets
+                )}`
               );
             }}
             value={fulltext}
@@ -160,10 +161,18 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
     );
   },
   {
-    getKey(params: {}, query: { page: number; fulltext: string; facets?: string; madoc_id?: string }) {
+    getKey(
+      params: {},
+      query: { page: number; fulltext: string; facets?: string; madoc_id?: string; ordering?: string }
+    ) {
       return [
         'response',
-        { page: query.page ? Number(query.page) : 1, fulltext: query.fulltext, facets: query.facets },
+        {
+          page: query.page ? Number(query.page) : 1,
+          fulltext: query.fulltext,
+          facets: query.facets,
+          ordering: query.ordering,
+        },
       ];
     },
     getData: async (key, vars, api) => {
@@ -175,6 +184,7 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
         {
           fulltext: vars.fulltext,
           facets: vars.facets,
+          ordering: vars.ordering,
         },
         vars.page,
         vars.madoc_id
