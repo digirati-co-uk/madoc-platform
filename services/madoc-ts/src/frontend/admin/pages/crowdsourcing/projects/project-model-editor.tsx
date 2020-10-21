@@ -62,7 +62,7 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
             </LightNavigationItem>
 
             <div style={{ marginLeft: 'auto' }}>
-              {updateModelStatus.status === 'loading' ? 'Saving...' : 'Changed saved.'}
+              {updateModelStatus.status === 'loading' ? 'Saving...' : 'Changes saved.'}
             </div>
           </LightNavigation>
           <EditorContext

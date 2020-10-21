@@ -57,7 +57,7 @@ export const ProjectMetadata: UniversalComponent<ProjectMetadataType> = createUn
         }
         await queryCache.invalidateQueries(['get-project', { id: Number(params.id) }]);
 
-        setSuccess('Changed saved');
+        setSuccess('Changes saved');
       } catch (err) {
         setSuccess('');
         setError(err.message || 'Unknown error');
