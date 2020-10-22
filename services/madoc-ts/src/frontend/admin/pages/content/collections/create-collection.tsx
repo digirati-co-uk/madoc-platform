@@ -35,7 +35,7 @@ export const CreateCollection: React.FC = () => {
 
     const response = await api.createCollection(collection);
 
-    history.push(`/collections/${response.id}`);
+    history.push(`/collections/${response.id}/structure`);
   });
 
   const [importCollection] = useMutation(
@@ -97,7 +97,11 @@ export const CreateCollection: React.FC = () => {
               </Subheading3>
               <InputContainer>
                 <InputLabel>Collection URL</InputLabel>
-                <Input type="text" name="collection_url" onChange={e => setImportedCollectionId(e.currentTarget.value)} />
+                <Input
+                  type="text"
+                  name="collection_url"
+                  onChange={e => setImportedCollectionId(e.currentTarget.value)}
+                />
               </InputContainer>
               <SmallButton
                 disabled={isCreating}
