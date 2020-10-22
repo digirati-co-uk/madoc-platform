@@ -47,7 +47,7 @@ export const CollectionList: UniversalComponent<CollectionListType> = createUniv
         />
         <WidePage>
           <Button as={Link} to={`/import/collection`}>
-            {t('Import collection')}
+            {t('Add new collection')}
           </Button>
           <br />
           <br />
