@@ -4,6 +4,13 @@ import { useReorderItems } from '../hooks/use-reorder-items';
 import { ExpandGrid, GridContainer, HalfGird } from '../../shared/atoms/Grid';
 import { Input, InputContainer, InputLabel } from '../../shared/atoms/Input';
 import { Button, SmallButton } from '../../shared/atoms/Button';
+import {
+  ModalBackground,
+  ModalContainer,
+  InnerModalContainer,
+  ModalCloseIcon,
+  ModalBody,
+} from '../../shared/atoms/Modal';
 import { Heading3 } from '../../shared/atoms/Heading3';
 import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../shared/atoms/Table';
 import { ReorderTable, ReorderTableRow } from '../../shared/atoms/ReorderTable';
@@ -22,6 +29,8 @@ export const CollectionEditorStructure: React.FC<{
 }> = ({ items, saveOrder, searchCollections, hideManifests, searchManifests, enableNavigation }) => {
   const { t } = useTranslation();
   const [search, setSearch] = useState('');
+  const [currentItem, setCurrentItem] = useState<number>();
+  const [showDeleteWarning, setShowDeleteWarning] = useState(false);
 
   const [performSearch, searchResultsType, searchResults, resetResults] = useAutocomplete(search);
 
@@ -48,8 +57,43 @@ export const CollectionEditorStructure: React.FC<{
     return <>{t('loading')}</>;
   }
 
+  const renderModal = (itemID: any) => {
+    setCurrentItem(itemID);
+    setShowDeleteWarning(true);
+  };
+
   return (
     <>
+      {showDeleteWarning ? (
+        <>
+          <ModalBackground />
+          <ModalContainer>
+            <InnerModalContainer>
+              <ModalBody>
+                <ModalCloseIcon onClick={() => setShowDeleteWarning(false)} />
+                <p>Are you sure you would like to delete the last of this type?</p>
+                <SmallButton
+                  onClick={() => {
+                    if (currentItem) removeItem(currentItem);
+                    setShowDeleteWarning(false);
+                  }}
+                >
+                  {t('remove')}
+                </SmallButton>
+                <SmallButton
+                  onClick={() => {
+                    setShowDeleteWarning(false);
+                  }}
+                >
+                  {t('cancel')}
+                </SmallButton>
+              </ModalBody>
+            </InnerModalContainer>
+          </ModalContainer>
+        </>
+      ) : (
+        <></>
+      )}
       {searchCollections || searchManifests ? (
         <GridContainer>
           {searchManifests ? (
@@ -122,7 +166,7 @@ export const CollectionEditorStructure: React.FC<{
                           {t('add')}
                         </SmallButton>
                       ) : (
-                        <SmallButton onClick={() => removeItem(item.id)}>{t('remove')}</SmallButton>
+                        <SmallButton>{t('remove')}</SmallButton>
                       )}
                     </TableActions>
                   </TableRow>
@@ -168,7 +212,15 @@ export const CollectionEditorStructure: React.FC<{
                   </>
                 }
               >
-                <SmallButton onClick={() => removeItem(item.id)}>{t('remove')}</SmallButton>
+                <SmallButton
+                  onClick={
+                    itemIds.filter(i => itemMap[i].type === item.type).length === 1
+                      ? () => renderModal(item.id)
+                      : () => removeItem(item.id)
+                  }
+                >
+                  {t('remove')}
+                </SmallButton>
               </ReorderTableRow>
             );
           })}
