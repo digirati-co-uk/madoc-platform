@@ -547,6 +547,12 @@ export class ApiClient {
     return this.request<ManifestFull>(`/api/madoc/iiif/manifests/${id}${query}`);
   }
 
+  async deleteManifest(id: number): Promise<void> {
+    return this.request(`/api/madoc/iiif/manifests/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
   async getManifestCollections(id: number, query?: { project_id?: number }) {
     return this.request<{ collections: number[] }>(
       `/api/madoc/iiif/manifests/${id}/collections${query ? `?${stringify(query)}` : ''}`

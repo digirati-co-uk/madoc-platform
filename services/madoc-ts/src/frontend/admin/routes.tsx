@@ -15,6 +15,7 @@ import { CanvasView } from './pages/content/canvases/canvas';
 import { CanvasDetails } from './pages/content/canvases/canvas-details';
 import { EditCanvasMetadata } from './pages/content/canvases/edit-canvas-metadata';
 import { ManifestView } from './pages/content/manifests/manifest';
+import { DeleteManifest } from './pages/content/manifests/delete-manifest';
 import { NewProjectPage } from './pages/crowdsourcing/projects/new-project';
 import { ListProjects } from './pages/crowdsourcing/projects/list-projects';
 import { Project } from './pages/crowdsourcing/projects/project';
@@ -136,6 +137,11 @@ export const routes: UniversalRoute[] = [
         path: '/manifests/:id/projects',
         exact: true,
         component: ManifestProjects,
+      },
+      {
+        path: '/manifests/:id/delete',
+        exact: true,
+        component: DeleteManifest,
       },
     ],
   },
