@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { UniversalComponent } from '../../../../types';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { ManifestFull } from '../../../../../types/schemas/manifest-full';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
 import { WidePage } from '../../../../shared/atoms/WidePage';
@@ -44,6 +44,7 @@ export const ManifestView: UniversalComponent<ManifestViewType> = createUniversa
             { label: t('edit linking'), link: `/manifests/${id}/linking` },
             { label: t('projects'), link: `/manifests/${id}/projects` },
             { label: t('delete'), link: `/manifests/${id}/delete` },
+            { label: t('search index'), link: `/manifests/${id}/search` },
           ]}
         />
         <WidePage>{renderUniversalRoutes(route.routes)}</WidePage>
