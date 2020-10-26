@@ -1,5 +1,6 @@
 import { exportSite } from './routes/admin/export-site';
 import { importSite } from './routes/admin/import-site';
+import { batchIndex } from './routes/iiif/batch-index';
 import { getParentLinking } from './routes/iiif/linking/get-parent-linking';
 import { indexManifest } from './routes/iiif/manifests/index-manifest';
 import { updateProjectStatus } from './routes/projects/update-project-status';
@@ -177,6 +178,7 @@ export const router = new TypedRouter({
 
   // Stats.
   'get-statistics': [TypedRouter.GET, '/api/madoc/iiif/statistics', statistics],
+  'post-batch-index': [TypedRouter.POST, '/api/madoc/iiif/batch-index', batchIndex],
 
   // Projects
   'create-project': [TypedRouter.POST, '/api/madoc/projects', createNewProject],
