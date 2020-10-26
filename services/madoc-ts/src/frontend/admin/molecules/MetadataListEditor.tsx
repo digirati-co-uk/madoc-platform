@@ -17,7 +17,9 @@ export const MetadataListItem: React.FC<{
   const { t } = useTranslation();
   return (
     <div>
-      <label htmlFor={itemKey} style={{marginBottom: `5px`, display: `block`}}>{t(labelKey, { context: 'metadata' })}</label>
+      <label htmlFor={itemKey} style={{ marginBottom: `5px`, display: `block` }}>
+        {t(labelKey, { context: 'metadata' })}
+      </label>
       <MetadataEditor
         id={itemKey}
         fields={items}
@@ -220,11 +222,21 @@ export const MetadataListEditor: React.FC<{
 
   return (
     <>
+      {!metadata.metadata ? (
+        <MetadataSectionEditor
+          availableLanguages={availableLanguages}
+          item={[]}
+          itemId={'metadata'}
+          onSaveField={onSaveField}
+        />
+      ) : null}
+
       {metadataKeys.map(itemId => {
         const item = metadata[itemId];
         if (Array.isArray(item)) {
           return (
             <MetadataSectionEditor
+              key={itemId}
               availableLanguages={availableLanguages}
               item={item}
               itemId={itemId}
@@ -243,6 +255,7 @@ export const MetadataListEditor: React.FC<{
           />
         );
       })}
+
       {templateKeys.map(templateKey => (
         <MetadataListItem
           key={templateKey}
