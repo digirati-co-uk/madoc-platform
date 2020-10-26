@@ -66,15 +66,11 @@ export const indexManifest: RouteMiddleware<{ id: string }> = async context => {
   };
 
   try {
+    await api.searchGetIIIF(`urn:madoc:manifest:${manifestId}`);
+
+    await userApi.searchReIngest(searchPayload);
+  } catch (err) {
     await userApi.searchIngest(searchPayload);
-    const alreadyIndexed = (await api.getIndexedManifestById(`urn:madoc:manifest:${manifestId}`)).results.length > 0;
-    if (alreadyIndexed) {
-      await userApi.searchReIngest(searchPayload);
-    } else {
-      await userApi.searchIngest(searchPayload);
-    }
-  } catch (e) {
-    console.log(e);
   }
 
   context.response.body = table.manifests[`${manifestId}`];
