@@ -46,6 +46,7 @@ import {
 import { CrowdsourcingCanvasTask } from './tasks/crowdsourcing-canvas-task';
 import { ConfigResponse } from '../types/schemas/config-response';
 import { ResourceLinkResponse } from '../database/queries/linking-queries';
+import { createTask as createSearchIndexTask, SearchIndexTask } from './tasks/search-index-task';
 
 export class ApiClient {
   private readonly gateway: string;
@@ -1371,16 +1372,21 @@ export class ApiClient {
   }
 
   async searchReIngest(resource: SearchIngestRequest) {
-    return this.request(`/api/search/iiif`, {
+    return this.request(`/api/search/iiif/${resource.id}`, {
       method: 'PUT',
       body: resource,
     });
   }
 
+  // Search index api
   async indexManifest(id: number) {
-    return this.request(`/api/madoc/iiif/manifests/${id}/index`, {
-      method: 'POST',
-    });
+    try {
+      return this.request(`/api/madoc/iiif/manifests/${id}/index`, {
+        method: 'POST',
+      });
+    } catch (err) {
+      // no-op this will fail silently.
+    }
   }
 
   async getIndexedManifestById(madoc_id: string) {
@@ -1389,15 +1395,68 @@ export class ApiClient {
     });
   }
 
+  async searchListIndexables() {
+    return this.request(`/api/search/indexables`);
+  }
+
+  async searchGetIndexable(id: number) {
+    return this.request(`/api/search/indexables/${id}`);
+  }
+
+  async searchListModels() {
+    return this.request(`/api/search/models`);
+  }
+
+  async searchGetModel(id: number) {
+    return this.request(`/api/search/models/${id}`);
+  }
+
+  async searchListIIIF() {
+    return this.request(`/api/search/iiif`);
+  }
+
+  async searchGetIIIF(id: string) {
+    try {
+      return this.request(`/api/search/iiif/${id}`);
+    } catch (err) {
+      return undefined;
+    }
+  }
+
+  async searchListContexts() {
+    return this.request(`/api/search/contexts`);
+  }
+
+  async searchGetContext(id: string) {
+    return this.request(`/api/search/contexts/${id}`);
+  }
+
   async indexCanvas(id: number) {
-    return this.request(`/api/madoc/iiif/canvases/${id}/index`, {
-      method: 'POST',
-    });
+    try {
+      await this.request(`/api/madoc/iiif/canvases/${id}/index`, {
+        method: 'POST',
+      });
+    } catch (err) {
+      // no-op this will fail silently.
+    }
   }
 
   async getIndexedCanvasById(madoc_id: string) {
     return this.request<SearchResponse>(`/api/search/search?${stringify({ madoc_id })}`, {
       method: 'GET',
+    });
+  }
+
+  async batchIndexResources(
+    resources: Array<{ id: number; type: string }>,
+    config: { indexAllResources?: boolean; recursive?: boolean; resourceStack?: number[] } = {}
+  ) {
+    return this.request(`/api/madoc/iiif/batch-index`, {
+      method: 'POST',
+      body: {
+        resources,
+        config,
+      },
     });
   }
 
