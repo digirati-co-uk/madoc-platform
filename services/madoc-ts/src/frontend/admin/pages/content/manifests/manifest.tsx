@@ -43,6 +43,7 @@ export const ManifestView: UniversalComponent<ManifestViewType> = createUniversa
             { label: t('edit structure'), link: `/manifests/${id}/structure` },
             { label: t('edit linking'), link: `/manifests/${id}/linking` },
             { label: t('projects'), link: `/manifests/${id}/projects` },
+            { label: t('delete'), link: `/manifests/${id}/delete` },
           ]}
         />
         <WidePage>{renderUniversalRoutes(route.routes)}</WidePage>
