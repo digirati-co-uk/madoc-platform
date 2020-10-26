@@ -100,7 +100,7 @@ export const importTasks: RouteMiddleware = async context => {
         'text'
       )} and not (id = any (${sql.array(
         tasks.map(task => task.id),
-        'uuid'
+        'uuid' as any
       )}))`
     );
   }
