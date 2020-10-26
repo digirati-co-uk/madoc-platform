@@ -205,6 +205,10 @@ export class ApiClient {
         }
       }
 
+      if (response.status === 204) {
+        return undefined as any;
+      }
+
       throw new ApiError(response.data.error, response.debugResponse);
     } else if (this.isDown) {
       for (const rec of this.errorRecoveryHandlers) {
