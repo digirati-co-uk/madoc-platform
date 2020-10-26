@@ -124,10 +124,6 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         throw new Error('Could not create canvas');
       }
 
-      // Search ingest.
-      const userApi = api.asUser({ siteId });
-      if (task.state.resourceId) userApi.indexCanvas(task.state.resourceId);
-
       await api.updateTask(
         taskId,
         changeStatus('done', {

@@ -1,4 +1,3 @@
-import { api } from '../api.server';
 import { BaseTask } from './base-task';
 import * as importCanvas from './import-canvas';
 import * as tasks from './task-helpers';
@@ -8,8 +7,6 @@ import { ImportCanvasTask } from './import-canvas';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
 import { ApiClient } from '../api';
 import { ContentResource } from '@hyperion-framework/types';
-import { InternationalString } from '@hyperion-framework/types/iiif/descriptive';
-import { Reference } from '@hyperion-framework/types/reference';
 
 export const type = 'madoc-manifest-import';
 
@@ -219,7 +216,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
 
       // Search ingest.
       const userApi = api.asUser({ siteId });
-      userApi.indexManifest(task.state.resourceId);
+      await userApi.batchIndexResources([{ type: 'manifest', id: task.state.resourceId }], { recursive: true });
 
       // Update task.
       await api.updateTask(taskId, changeStatus('done'));
