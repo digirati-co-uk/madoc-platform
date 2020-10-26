@@ -74,20 +74,6 @@ export const CreateManifest: React.FC = () => {
         ) : (
           <GridContainer>
             <HalfGird>
-              <Heading3>{t('Create new')}</Heading3>
-              <Subheading3>{t('Add a new empty manifest and start adding IIIF manifests to it.')}</Subheading3>
-              <MetadataEditor
-                disabled={isCreating}
-                fields={manifestToAdd.label}
-                onSave={ret => setManifestToAdd({ label: ret.toInternationalString() })}
-                metadataKey="label"
-                availableLanguages={['en', 'es', 'fr', 'de']}
-              />
-              <SmallButton disabled={manifestToAdd && isCreating} onClick={() => createManifest(manifestToAdd)}>
-                Create manifest
-              </SmallButton>
-            </HalfGird>
-            <HalfGird>
               <Heading3>Import existing</Heading3>
               <Subheading3>Import a manifest using a URL pointing to an existing IIIF manifest.</Subheading3>
               <InputContainer>
