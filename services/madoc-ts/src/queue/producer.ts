@@ -10,6 +10,7 @@ import * as crowdsourcingCanvas from '../gateway/tasks/crowdsourcing-canvas-task
 import * as crowdsourcingManifest from '../gateway/tasks/crowdsourcing-manifest-task';
 import * as processManifestOcr from '../gateway/tasks/process-manifest-ocr';
 import * as processCanvasOcr from '../gateway/tasks/process-canvas-ocr';
+import * as searchIndex from '../gateway/tasks/search-index-task';
 
 const configOptions: WorkerOptions = {
   connection: {
@@ -88,6 +89,10 @@ const worker = new Worker(
           });
         case processCanvasOcr.type:
           return await processCanvasOcr.jobHandler(job.name, job.data.taskId, contextualApi).catch(err => {
+            throw err;
+          });
+        case searchIndex.type:
+          return await searchIndex.jobHandler(job.name, job.data.taskId, contextualApi).catch(err => {
             throw err;
           });
       }
