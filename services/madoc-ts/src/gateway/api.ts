@@ -859,6 +859,12 @@ export class ApiClient {
     );
   }
 
+  async deleteTask(id: string) {
+    await this.request(`/api/tasks/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
   async randomlyAssignedCanvas(
     projectId: string | number,
     manifestId: number,
