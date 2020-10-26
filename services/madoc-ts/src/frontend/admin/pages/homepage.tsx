@@ -98,9 +98,9 @@ const Homepage: UniversalComponent<HomepageType> = createUniversalComponent<Home
                 <li>
                   <Link to="/projects">{t('Manage projects')}</Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link to="/capture-models">{t('Manage capture models')}</Link>
-                </li>
+                </li> */}
                 <li>
                   <span>Reviews</span>
                 </li>

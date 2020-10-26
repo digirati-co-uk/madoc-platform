@@ -112,8 +112,8 @@ class AdminInvitationsController extends AbstractPsr7ActionController
             $success = false;
         } else if (!$this->settings->getInviteOnlyStatus() && $site->isPublic()) {
             $message->addWarning(
-                'Warning, your site is not configured to only allow registrations for invited users ' .
-                'you can change this setting under "Settings" on the left navigation under your site.'
+                'Warning, your site is not configured to only allow registrations for invited users. ' .
+                'You can change this setting under "Settings" on the left navigation under your site.'
             );
             $success = false;
         } else if (!$defaultSiteId && $site->isPublic() === false) {
