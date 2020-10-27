@@ -86,9 +86,9 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small' }> =
           </ImageStripBox>
           <div style={{ alignSelf: 'flex-start', marginLeft: '1em' }}>
             <LocaleString as={ResultTitle}>{result.label}</LocaleString>
-            {result.hits.map(found => {
+            {result.hits.map((found, i) => {
               return found.snippet ? (
-                <div style={{ paddingBottom: '.8em' }}>
+                <div key={i} style={{ paddingBottom: '.8em' }}>
                   <ResultText
                     key={found.snippet}
                     dangerouslySetInnerHTML={{
@@ -124,7 +124,7 @@ export const SearchResults: React.FC<{
     <TotalResults>{`${totalResults} Results`}</TotalResults>
     <div>
       {searchResults.map((result: SearchResult, index: number) => {
-        return result ? <SearchItem result={result} key={index} size="small" /> : null;
+        return result ? <SearchItem result={result} key={`${index}__${result.resource_id}`} size="small" /> : null;
       })}
     </div>
   </ResultsContainer>

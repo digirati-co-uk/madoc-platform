@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-
-// import { Dropdown } from '@capture-models/editor';
 import { DownArrowIcon } from '../icons/DownArrowIcon';
 import { SearchFacet } from '../../../types/search';
 import { Button, ButtonRow } from '../atoms/Button';
@@ -28,7 +26,7 @@ const FacetType = styled.div`
   text-decoration: rgb(0, 0, 0);
   letter-spacing: 1px;
   text-transform: uppercase;
-  padding: 1rem 0rem;
+  padding: 1rem 0;
   display: flex;
   justify-content: space-between;
 `;
@@ -57,11 +55,14 @@ const FacetExpandable: React.FC<{
       {open
         ? values.map(option => {
             return (
-              <FacetLabel htmlFor="" key={option.value}>
+              <FacetLabel htmlFor={`facet__${name}__${option.value}`} key={`facet__${name}__${option.value}`}>
                 <input
+                  id={`facet__${name}__${option.value}`}
                   type="checkbox"
                   value={option.value}
-                  onChange={val => facetChange(name, val.target.value)}
+                  onChange={val => {
+                    facetChange(name, option.applied ? (undefined as any) : val.target.value);
+                  }}
                   defaultChecked={option.applied}
                 />
                 {option.value}
@@ -90,13 +91,12 @@ export const SearchFacets: React.FC<{
 
       {groups.map(groupType => {
         return (
-          <>
-            <FacetExpandable
-              name={groupType}
-              facetChange={facetChange}
-              values={facets.filter(facet => facet.subtype === groupType)}
-            />
-          </>
+          <FacetExpandable
+            key={groupType}
+            name={groupType}
+            facetChange={facetChange}
+            values={facets.filter(facet => facet.subtype === groupType)}
+          />
         );
       })}
     </FacetsContainer>
