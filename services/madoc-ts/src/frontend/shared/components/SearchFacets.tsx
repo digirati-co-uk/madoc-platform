@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-
-// import { Dropdown } from '@capture-models/editor';
 import { DownArrowIcon } from '../icons/DownArrowIcon';
 import { SearchFacet } from '../../../types/search';
+import { Button, ButtonRow } from '../atoms/Button';
 
 const FacetsContainer = styled.div`
   display: flex;
@@ -27,7 +26,7 @@ const FacetType = styled.div`
   text-decoration: rgb(0, 0, 0);
   letter-spacing: 1px;
   text-transform: uppercase;
-  padding: 1rem 0rem;
+  padding: 1rem 0;
   display: flex;
   justify-content: space-between;
 `;
@@ -56,11 +55,15 @@ const FacetExpandable: React.FC<{
       {open
         ? values.map(option => {
             return (
-              <FacetLabel htmlFor="" key={option.value}>
+              <FacetLabel htmlFor={`facet__${name}__${option.value}`} key={`facet__${name}__${option.value}`}>
                 <input
+                  key={`facet__${name}__${option.value}__${option.applied}`}
+                  id={`facet__${name}__${option.value}`}
                   type="checkbox"
                   value={option.value}
-                  onChange={val => facetChange(name, val.target.value)}
+                  onChange={val => {
+                    facetChange(name, val.target.value);
+                  }}
                   defaultChecked={option.applied}
                 />
                 {option.value}
@@ -75,20 +78,26 @@ const FacetExpandable: React.FC<{
 export const SearchFacets: React.FC<{
   facets: SearchFacet[];
   facetChange: (name: string, val: string) => void;
-}> = ({ facets, facetChange }) => {
+  applyFilters: () => void;
+  clearFilters: () => void;
+}> = ({ facets, facetChange, applyFilters, clearFilters }) => {
   const groups = [...new Set(facets.map(facet => facet.subtype))];
   return (
     <FacetsContainer>
       <FacetTitle>filter by</FacetTitle>
+      <ButtonRow>
+        <Button onClick={() => applyFilters()}>Apply Filters</Button>
+        <Button onClick={() => clearFilters()}>Clear Filters</Button>
+      </ButtonRow>
+
       {groups.map(groupType => {
         return (
-          <>
-            <FacetExpandable
-              name={groupType}
-              facetChange={facetChange}
-              values={facets.filter(facet => facet.subtype === groupType)}
-            />
-          </>
+          <FacetExpandable
+            key={groupType}
+            name={groupType}
+            facetChange={facetChange}
+            values={facets.filter(facet => facet.subtype === groupType)}
+          />
         );
       })}
     </FacetsContainer>
