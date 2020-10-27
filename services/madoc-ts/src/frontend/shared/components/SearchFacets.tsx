@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { DownArrowIcon } from '../icons/DownArrowIcon';
 import { SearchFacet } from '../../../types/search';
@@ -57,11 +57,12 @@ const FacetExpandable: React.FC<{
             return (
               <FacetLabel htmlFor={`facet__${name}__${option.value}`} key={`facet__${name}__${option.value}`}>
                 <input
+                  key={`facet__${name}__${option.value}__${option.applied}`}
                   id={`facet__${name}__${option.value}`}
                   type="checkbox"
                   value={option.value}
                   onChange={val => {
-                    facetChange(name, option.applied ? (undefined as any) : val.target.value);
+                    facetChange(name, val.target.value);
                   }}
                   defaultChecked={option.applied}
                 />

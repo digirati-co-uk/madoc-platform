@@ -1,5 +1,5 @@
 import { stringify } from 'query-string';
-import React, { useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useHistory, useLocation } from 'react-router-dom';
 import { SearchResults } from '../../shared/components/SearchResults';
@@ -69,9 +69,13 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
     const history = useHistory();
     const { pathname } = useLocation();
     const { searchResponse, facets } = data || {};
+    const [appliedFacets, setAppliedFacets] = useState<any>();
 
-    const facetOptions = useMemo(() => {
+    const [facetOptions, setFacetOptions] = useState<any[]>([]);
+
+    useEffect(() => {
       const options = [];
+
       if (searchResponse && searchResponse.facets && searchResponse.facets.metadata) {
         for (const [key, value] of Object.entries(searchResponse.facets.metadata)) {
           const subtype = key;
@@ -80,57 +84,50 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
               type: 'metadata',
               subtype: subtype,
               value: k,
-              applied: facets && facets[subtype] && facets[subtype].indexOf(k) !== -1,
+              applied: appliedFacets && appliedFacets[subtype] && appliedFacets[subtype].indexOf(k) !== -1,
             });
           }
         }
       }
-
-      return options;
-    }, [facets, searchResponse]);
+      setFacetOptions(options);
+    }, [facets, searchResponse, appliedFacets]);
 
     const clearFacets = () => {
+      setAppliedFacets({});
+      history.push(`${pathname}?${stringify({ fulltext, page: 1, madoc_id })}`);
+    };
+
+    useEffect(() => {
+      clearFacets();
+    }, [fulltext]);
+
+    const applyFacets = () => {
       history.push(
         `${pathname}?${stringify({
           fulltext,
           page: 1,
           madoc_id,
+          facets: JSON.stringify(appliedFacets),
         })}`
       );
     };
 
     const applyFacet = (type: string, value: string) => {
       if (data) {
-        const newFacets = { ...(facets || {}) };
+        const newFacets = { ...(appliedFacets || {}) };
 
         if (!newFacets[type]) {
           newFacets[type] = [];
         }
-        newFacets[type].push(value);
+        if (!newFacets[type].includes(value)) {
+          newFacets[type].push(value);
+        } else {
+          newFacets[type] = newFacets[type].filter((val: string) => {
+            return val !== value;
+          });
+        }
 
-        history.push(
-          `${pathname}?${stringify({
-            fulltext,
-            page: 1,
-            madoc_id,
-            facets: JSON.stringify(newFacets),
-          })}`
-        );
-      }
-    };
-
-    const applyFacets = () => {
-      if (data) {
-        const newFacets = { ...(facets || {}) };
-
-        history.push(
-          `${pathname}?${stringify({
-            fulltext,
-            page: 1,
-            madoc_id,
-            facets: JSON.stringify(newFacets),
-          })}`
-        );
+        setAppliedFacets(newFacets);
       }
     };
 
@@ -141,9 +138,9 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
         <SearchContainer>
           <SearchFacets
             facets={facetOptions}
+            facetChange={(facetType, facetValue) => applyFacet(facetType, facetValue)}
             applyFilters={applyFacets}
             clearFilters={clearFacets}
-            facetChange={(facetType, facetValue) => applyFacet(facetType, facetValue)}
           />
           <SearchResults
             searchFunction={val => {
