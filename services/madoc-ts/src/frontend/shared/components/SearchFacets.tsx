@@ -4,6 +4,7 @@ import styled from 'styled-components';
 // import { Dropdown } from '@capture-models/editor';
 import { DownArrowIcon } from '../icons/DownArrowIcon';
 import { SearchFacet } from '../../../types/search';
+import { Button, ButtonRow } from '../atoms/Button';
 
 const FacetsContainer = styled.div`
   display: flex;
@@ -75,11 +76,18 @@ const FacetExpandable: React.FC<{
 export const SearchFacets: React.FC<{
   facets: SearchFacet[];
   facetChange: (name: string, val: string) => void;
-}> = ({ facets, facetChange }) => {
+  applyFilters: () => void;
+  clearFilters: () => void;
+}> = ({ facets, facetChange, applyFilters, clearFilters }) => {
   const groups = [...new Set(facets.map(facet => facet.subtype))];
   return (
     <FacetsContainer>
       <FacetTitle>filter by</FacetTitle>
+      <ButtonRow>
+        <Button onClick={() => applyFilters()}>Apply Filters</Button>
+        <Button onClick={() => clearFilters()}>Clear Filters</Button>
+      </ButtonRow>
+
       {groups.map(groupType => {
         return (
           <>

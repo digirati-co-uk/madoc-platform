@@ -17,6 +17,7 @@ import styled from 'styled-components';
 
 import { SearchResponse, SearchFacet } from '../../../types/search';
 
+// This is on pause until we get a drive from users
 // const options = [
 //   { value: 'Option1', text: 'Option 1' },
 //   { value: 'Option2', text: 'Option 2' },
@@ -113,15 +114,19 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data]);
 
-    useEffect(() => {
+    const applyFacets = () => {
       const jsonFacets = JSON.stringify(appliedFacets);
       if (appliedFacets && appliedFacets.length >= 1) {
         history.push(`${pathname}?${stringify({ fulltext, page: 1, madoc_id })}&facets=${jsonFacets}`);
       } else {
         history.push(`${pathname}?${stringify({ fulltext, page: 1, madoc_id })}`);
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [appliedFacets]);
+    };
+
+    const clearFacets = () => {
+      setAppliedFacets([]);
+      history.push(`${pathname}?${stringify({ fulltext, page: 1, madoc_id })}`);
+    };
 
     return status === 'loading' ? (
       <div>{t('Loading')}</div>
@@ -131,6 +136,8 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
           <SearchFacets
             facets={facetOptions}
             facetChange={(facetType, facetValue) => manageFacet(facetType, facetValue)}
+            applyFilters={applyFacets}
+            clearFilters={clearFacets}
           />
           <SearchResults
             searchFunction={val => {
