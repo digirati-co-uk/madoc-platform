@@ -89,8 +89,6 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
       return options;
     }, [facets, searchResponse]);
 
-    console.log({ facets, facetOptions });
-
     const applyFacet = (type: string, value: string) => {
       if (data) {
         const newFacets = { ...(facets || {}) };
