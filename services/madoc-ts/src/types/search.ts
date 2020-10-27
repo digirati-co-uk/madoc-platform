@@ -105,6 +105,7 @@ export type SearchFacet = {
 /** Post body for ingesting content into search */
 export type SearchIngestRequest = {
   id: string;
+  type: string;
   thumbnail: string;
   resource: Manifest | Canvas | Collection; // Raw IIIF resource if available.
   contexts: Array<{

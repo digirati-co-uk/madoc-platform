@@ -1,5 +1,6 @@
 import { exportSite } from './routes/admin/export-site';
 import { importSite } from './routes/admin/import-site';
+import { batchIndex } from './routes/iiif/batch-index';
 import { getParentLinking } from './routes/iiif/linking/get-parent-linking';
 import { indexManifest } from './routes/iiif/manifests/index-manifest';
 import { updateProjectStatus } from './routes/projects/update-project-status';
@@ -30,6 +31,7 @@ import { listCanvases } from './routes/iiif/canvases/list-canvases';
 import { createCanvas } from './routes/iiif/canvases/create-canvas';
 import { getCanvas } from './routes/iiif/canvases/get-canvas';
 import { getCanvasMetadata } from './routes/iiif/canvases/get-canvas-metadata';
+import { indexCanvas } from './routes/iiif/canvases/index-canvas';
 import { updateManifestStructure } from './routes/iiif/manifests/update-manifest-structure';
 import { getManifestStructure } from './routes/iiif/manifests/get-manifest-structure';
 import { getLocale } from './routes/locales';
@@ -162,6 +164,7 @@ export const router = new TypedRouter({
   'put-canvas-metadata': [TypedRouter.PUT, '/api/madoc/iiif/canvases/:id/metadata', updateMetadata, 'MetadataUpdate'],
   'get-canvas-manifests': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/manifests', getCanvasManifests],
   'get-canvas-linking': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/linking', getLinking],
+  'search-index-canvas': [TypedRouter.POST, '/api/madoc/iiif/canvases/:id/index', indexCanvas],
 
   // Import API
   'import-manifest': [TypedRouter.POST, '/api/madoc/iiif/import/manifest', importManifest],
@@ -175,6 +178,7 @@ export const router = new TypedRouter({
 
   // Stats.
   'get-statistics': [TypedRouter.GET, '/api/madoc/iiif/statistics', statistics],
+  'post-batch-index': [TypedRouter.POST, '/api/madoc/iiif/batch-index', batchIndex],
 
   // Projects
   'create-project': [TypedRouter.POST, '/api/madoc/projects', createNewProject],

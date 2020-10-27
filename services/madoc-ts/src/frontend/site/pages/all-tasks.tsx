@@ -20,7 +20,7 @@ type AllTasksType = {
 
 export const AllTasks: UniversalComponent<AllTasksType> = createUniversalComponent<AllTasksType>(
   () => {
-    const { page: _, ...query } = useLocationQuery();
+    const { page, ...query } = useLocationQuery();
     const { resolvedData: data, latestData } = usePaginatedData(AllTasks);
     const { t } = useTranslation();
 
@@ -33,8 +33,8 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
         <h1>All tasks</h1>
         <Pagination
           extraQuery={query}
-          page={latestData ? latestData.pagination.page : 1}
-          totalPages={latestData ? latestData.pagination.totalPages : 1}
+          page={Number(page) || 1}
+          totalPages={data ? data.pagination.totalPages : 1}
           stale={!latestData}
         />
         <hr />
@@ -53,8 +53,8 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
 
         <Pagination
           extraQuery={query}
-          page={latestData ? latestData.pagination.page : 1}
-          totalPages={latestData ? latestData.pagination.totalPages : 1}
+          page={Number(page) || 1}
+          totalPages={data ? data.pagination.totalPages : 1}
           stale={!latestData}
         />
       </>

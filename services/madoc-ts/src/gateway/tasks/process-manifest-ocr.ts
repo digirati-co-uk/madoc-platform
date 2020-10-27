@@ -24,7 +24,7 @@ export interface ProcessManifestOcr extends BaseTask {
   state: {};
 }
 
-export function createTask(manifestId: number, label: string,  userId: number, siteId: number): ProcessManifestOcr {
+export function createTask(manifestId: number, label: string, userId: number, siteId: number): ProcessManifestOcr {
   return {
     type: 'madoc-ocr-manifest',
     name: 'Importing manifest',

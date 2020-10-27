@@ -73,6 +73,10 @@ export const CanvasView: UniversalComponent<CanvasViewType> = createUniversalCom
               label: t('edit linking'),
               link: manifestId ? `/manifests/${manifestId}/canvases/${id}/linking` : `/canvases/${id}/linking`,
             },
+            {
+              label: t('search index'),
+              link: manifestId ? `/manifests/${manifestId}/canvases/${id}/search` : `/canvases/${id}/search`,
+            },
           ]}
         />
         <WidePage>{renderUniversalRoutes(route.routes, { canvas, manifest: manifestResponse?.manifest })}</WidePage>

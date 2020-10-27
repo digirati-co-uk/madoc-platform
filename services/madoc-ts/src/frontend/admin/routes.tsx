@@ -1,4 +1,5 @@
 import { UniversalRoute } from '../types';
+import { CanvasSearchIndex } from './pages/content/canvases/canvas-search-index';
 import { CollectionView } from './pages/content/collections/collection';
 import { ExportSite } from './pages/export/export-site';
 import { Homepage } from './pages/homepage';
@@ -39,6 +40,7 @@ import { PreviewCaptureModel } from './pages/crowdsourcing/model-editor/preview-
 import { EditManifestLinking } from './pages/content/manifests/edit-manifest-linking';
 import { EditCanvasLinking } from './pages/content/canvases/edit-canvas-linking';
 import { OcrPage } from './pages/enrichment/ocr';
+import { ManifestSearchIndex } from './pages/content/manifests/manifest-search-index';
 import { OcrManifest } from './pages/enrichment/ocr/ocr-manifest';
 
 export const routes: UniversalRoute[] = [
@@ -107,6 +109,11 @@ export const routes: UniversalRoute[] = [
         exact: true,
         component: EditCanvasLinking,
       },
+      {
+        path: '/manifests/:manifestId/canvases/:id/search',
+        exact: true,
+        component: CanvasSearchIndex,
+      },
     ],
   },
   {
@@ -143,6 +150,11 @@ export const routes: UniversalRoute[] = [
         exact: true,
         component: DeleteManifest,
       },
+      {
+        path: '/manifests/:id/search',
+        exact: true,
+        component: ManifestSearchIndex,
+      },
     ],
   },
   {
@@ -163,6 +175,11 @@ export const routes: UniversalRoute[] = [
         path: '/canvases/:id/linking',
         exact: true,
         component: EditCanvasLinking,
+      },
+      {
+        path: '/canvases/:id/search',
+        exact: true,
+        component: CanvasSearchIndex,
       },
     ],
   },

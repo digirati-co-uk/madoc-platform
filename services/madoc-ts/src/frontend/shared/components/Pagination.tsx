@@ -69,11 +69,7 @@ export const Pagination: React.FC<{
   return (
     <PaginationContainer>
       {prevPage ? (
-        <SmallRoundedButton
-          as={Link}
-          to={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}`}
-          style={{ backgroundColor: 'pink' }}
-        >
+        <SmallRoundedButton as={Link} to={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}`}>
           {t('Previous page')}
         </SmallRoundedButton>
       ) : null}

@@ -64,9 +64,9 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small' }> =
     return parseUrn(value.id);
   });
 
-  const collectionId = things.find(thing => thing?.type === 'collection')?.id;
-  const manifestId = things.find(thing => thing?.type === 'manifest')?.id;
-  const canvasId = things.find(thing => thing?.type === 'canvas')?.id;
+  const collectionId = things.find(thing => thing?.type.toLowerCase() === 'collection')?.id;
+  const manifestId = things.find(thing => thing?.type.toLowerCase() === 'manifest')?.id;
+  const canvasId = things.find(thing => thing?.type.toLowerCase() === 'canvas')?.id;
 
   return (
     <ResultContainer>

@@ -22,11 +22,18 @@ export const PreviewCollection: React.FC<{
   const { t } = useTranslation();
   const [currentManifest, setCurrentManifest] = useState<string | undefined>(props.manifestId);
   const [excludedManifests, setExcludedManifests] = useState<string[]>([]);
+  const [error, setError] = useState<string>('');
+
   const excludeEnabled = false; // @todo enable
 
   useVaultEffect(
     vault => {
       vault.loadCollection(props.id).then(col => {
+        if (col?.type !== 'Collection') {
+          setError('Invalid collection');
+          return;
+        }
+
         if (col) {
           setCollection(col);
           setManifests(
@@ -41,6 +48,10 @@ export const PreviewCollection: React.FC<{
     },
     [props.id]
   );
+
+  if (error) {
+    return <div>{t('Invalid collection')}</div>;
+  }
 
   if (!collection) {
     return <div>{t('loading')}</div>;
