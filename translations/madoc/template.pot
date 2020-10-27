@@ -16,6 +16,9 @@ msgstr ""
 msgid "No annotations currently"
 msgstr ""
 
+msgid "Email address"
+msgstr ""
+
 msgid "wants to use your Omeka account"
 msgstr ""
 
@@ -64,6 +67,21 @@ msgstr ""
 msgid "Back to item"
 msgstr ""
 
+msgid "Activity for %s"
+msgstr ""
+
+msgid "Added an editable annotation (draft)"
+msgstr ""
+
+msgid "Added a %s annotation"
+msgstr ""
+
+msgid "Added an annotation (%s) to"
+msgstr ""
+
+msgid "Added an annotation (%s)"
+msgstr ""
+
 msgid "Join the conversation"
 msgstr ""
 
@@ -79,6 +97,15 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
+msgid "Found %d note"
+msgstr ""
+
+msgid "Found %d notes"
+msgstr ""
+
+msgid "No notes found"
+msgstr ""
+
 msgid "There are no linked resources for this item."
 msgstr ""
 
@@ -89,6 +116,9 @@ msgid "Import A Capture Model from Json or Yaml"
 msgstr ""
 
 msgid "Next"
+msgstr ""
+
+msgid "export"
 msgstr ""
 
 msgid "Processing"
@@ -110,6 +140,12 @@ msgid "Sorry, there was a problem saving your bookmark, please contact your site
 msgstr ""
 
 msgid "Go back to page"
+msgstr ""
+
+msgid "Images annotated"
+msgstr ""
+
+msgid "Annotations"
 msgstr ""
 
 msgid "Synchronizing"
@@ -175,7 +211,22 @@ msgstr ""
 msgid "Global translations"
 msgstr ""
 
+msgid "%d images"
+msgstr ""
+
 msgid "view all images"
+msgstr ""
+
+msgid "All Collections"
+msgstr ""
+
+msgid "Ingest thumbnail"
+msgstr ""
+
+msgid "Re-Ingest thumbnail"
+msgstr ""
+
+msgid "Interact with this document"
 msgstr ""
 
 msgid "Previous Image"
@@ -197,6 +248,15 @@ msgid "Editing not started"
 msgstr ""
 
 msgid "Changes to this page"
+msgstr ""
+
+msgid "Page %d of %d"
+msgstr ""
+
+msgid "Previous page"
+msgstr ""
+
+msgid "Next page"
 msgstr ""
 
 msgid "Scroll carousel left"
@@ -239,6 +299,18 @@ msgid "This page has been marked as completed.<br/>\n                        You
 msgstr ""
 
 msgid "Marking this page as complete helps us to understand the progress of annotations."
+msgstr ""
+
+msgid "%s annotated by %s"
+msgstr ""
+
+msgid "Top contributors"
+msgstr ""
+
+msgid "annotations"
+msgstr ""
+
+msgid "Get started"
 msgstr ""
 
 msgid "View all images"
