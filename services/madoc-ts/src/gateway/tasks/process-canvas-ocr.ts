@@ -17,7 +17,7 @@ export const status = [
 
 export interface ProcessManifestOcr extends BaseTask {
   type: 'canvas-ocr-manifest';
-  parameters: [number, number, number, string, 'alto'];
+  parameters: [number, number, number, string, 'alto' | 'hocr'];
   status: -1 | 0 | 1 | 2 | 3;
   state: {
     link_id?: number;
@@ -30,7 +30,7 @@ export function createTask(
   siteId: number,
   userId: number,
   link: string,
-  ocrType: 'alto'
+  ocrType: 'alto' | 'hocr'
 ): ProcessManifestOcr {
   return {
     type: 'canvas-ocr-manifest',
@@ -42,6 +42,36 @@ export function createTask(
     status: 0,
     status_text: status[0],
     parameters: [canvasId, siteId, userId, link, ocrType],
+  };
+}
+
+function createLinkedResource({
+  url,
+  canvasId,
+  source,
+  file,
+  bucket = `canvas-ocr`,
+}: {
+  url: string;
+  canvasId: string;
+  source: string;
+  file: string;
+  bucket?: string;
+}) {
+  return {
+    link: {
+      id: url,
+      format: 'application/json',
+      type: 'CaptureModelDocument',
+      label: 'OCR Capture model data',
+      profile: 'http://madoc.io/profiles/capture-model-fields/paragraphs',
+      file_path: file,
+      file_bucket: bucket,
+    },
+    resource_id: canvasId as any,
+    property: 'seeAlso',
+    source,
+    label: 'OCR Capture model data',
   };
 }
 
@@ -77,6 +107,47 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
 
       try {
         switch (ocrType) {
+          case 'hocr': {
+            // 4. Load external hOCR
+            const data = await fetch(link).then(r => r.text());
+
+            // 5. Call out to OKRA
+            const converted = await userApi.convertHOCRToCaptureModel(data);
+
+            // 6. Save to storage api
+            await userApi.saveStorageJson(`canvas-ocr`, `${canvasId}/hocr`, converted, true);
+            const details = await userApi.getStorageJsonDetails(`canvas-ocr`, `${canvasId}/hocr`, true);
+
+            if (!details.public) {
+              await api.updateTask(task.id, {
+                status: -1,
+                status_text: 'Error saving JSON',
+              });
+              return;
+            }
+
+            // 7. Save link to linking properties for canvas
+            const addedLink = await userApi.addLinkToResource(
+              createLinkedResource({
+                canvasId: canvasId as any,
+                url: details.public_url,
+                source: link,
+                bucket: 'canvas-ocr',
+                file: `public/${canvasId}/hocr.json`,
+              })
+            );
+
+            // 8. Mark task as done.
+            await api.updateTask(task.id, {
+              status: 3,
+              status_text: 'Imported',
+              state: {
+                link_id: addedLink.id,
+              },
+            });
+
+            break;
+          }
           case 'alto': {
             // 4. Load external XML
             const data = await fetch(link).then(r => r.text());
@@ -97,21 +168,15 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
             }
 
             // 7. Save link to linking properties for canvas
-            const addedLink = await userApi.addLinkToResource({
-              link: {
-                id: details.public_url,
-                format: 'application/json',
-                type: 'CaptureModelDocument',
-                label: 'OCR Capture model data',
-                profile: 'http://madoc.io/profiles/capture-model-fields/paragraphs',
-                file_path: `public/${canvasId}/mets-alto.json`,
-                file_bucket: `canvas-ocr`,
-              },
-              resource_id: canvasId as any,
-              property: 'seeAlso',
-              source: link,
-              label: 'OCR Capture model data',
-            });
+            const addedLink = await userApi.addLinkToResource(
+              createLinkedResource({
+                canvasId: canvasId as any,
+                url: details.public_url,
+                source: link,
+                bucket: 'canvas-ocr',
+                file: `public/${canvasId}/mets-alto.json`,
+              })
+            );
 
             // 8. Mark task as done.
             await api.updateTask(task.id, {

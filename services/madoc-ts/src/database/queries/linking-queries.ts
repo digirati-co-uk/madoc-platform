@@ -142,7 +142,7 @@ export function getLinks({
 }
 
 export function applyProperties(resourceLink: ResourceLink) {
-  const { file_path, file_bucket, file_hash, ...restProperties } = resourceLink.properties;
+  const { file_path, file_bucket, file_hash, ...restProperties } = resourceLink.properties || {};
 
   if (file_path && file_bucket) {
     resourceLink.file_path = file_path;

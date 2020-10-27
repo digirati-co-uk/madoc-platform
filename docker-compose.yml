@@ -239,4 +239,4 @@ services:
       - shared-postgres
 
   okra:
-    image: digirati/okra:19bf503
+    image: digirati/okra:c052061

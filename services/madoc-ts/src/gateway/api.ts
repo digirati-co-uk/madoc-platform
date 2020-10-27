@@ -466,6 +466,15 @@ export class ApiClient {
     });
   }
 
+  async convertHOCRToCaptureModel(hocr: string) {
+    return this.request<any>(`/api/okra/convert/hocr`, {
+      method: 'POST',
+      body: {
+        ocr_data: hocr,
+      },
+    });
+  }
+
   async createCollection(collection: Partial<CollectionNormalized>, taskId?: string, flat?: boolean) {
     return this.request<{ id: number }, CreateCollection>(`/api/madoc/iiif/collections`, {
       body: {

@@ -58,11 +58,13 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       const spendIds = [];
       const subTasks: BaseTask[] = [];
       for (const link of links.linking) {
+        if (spendIds.indexOf(link.resource_id) !== -1) {
+          continue;
+        }
         if (
-          spendIds.indexOf(link.resource_id) === -1 &&
-          link.link.format === 'text/xml' &&
-          (link.link.profile === 'http://www.loc.gov/standards/alto/v3/alto.xsd' ||
-            link.link.profile === 'http://www.loc.gov/standards/alto/v4/alto.xsd')
+          (link.link.format === 'text/xml' || link.link.format === 'application/xml+alto') &&
+          link.link.profile &&
+          link.link.profile.startsWith('http://www.loc.gov/standards/alto/')
         ) {
           // Make sure we don't add it twice.
           spendIds.push(link.resource_id);
@@ -75,6 +77,28 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
               userId,
               link.link.id,
               'alto'
+            )
+          );
+        }
+
+        if (
+          link.link.format === 'text/vnd.hocr+html' &&
+          link.link.profile &&
+          (link.link.profile.startsWith('http://kba.cloud/hocr-spec') ||
+            link.link.profile.startsWith('http://kba.github.io/hocr-spec/') ||
+            link.link.profile === 'https://github.com/kba/hocr-spec/blob/master/hocr-spec.md')
+        ) {
+          // Make sure we don't add it twice.
+          spendIds.push(link.resource_id);
+          // Create task.
+          subTasks.push(
+            processCanvasOcr.createTask(
+              link.resource_id,
+              `hOCR import for canvas ID: ${link.resource_id}`,
+              siteId,
+              userId,
+              link.link.id,
+              'hocr'
             )
           );
         }

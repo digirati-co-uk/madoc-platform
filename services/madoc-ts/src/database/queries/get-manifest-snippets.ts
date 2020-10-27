@@ -107,14 +107,30 @@ export function getManifestSnippets(
 
 export function getCanvasFilter(filterId: string): SqlSqlTokenType<{ resource_id: number }> | undefined {
   switch (filterId) {
+    case 'ocr_alto':
+      return sql`
+        select resource_id
+        from iiif_linking
+        where property = 'seeAlso'
+          and (format = 'text/xml' or format = 'application/xml+alto')
+          and type = 'Text'
+          and (
+              properties ->> 'profile' = 'http://www.loc.gov/standards/alto/v3/alto.xsd' or
+              properties ->> 'profile' = 'http://www.loc.gov/standards/alto/v4/alto.xsd'
+          )
+      `;
     case 'ocr_hocr':
       return sql`
         select resource_id
         from iiif_linking
         where property = 'seeAlso'
-          and format = 'text/xml'
+          and format = 'text/vnd.hocr+html'
           and type = 'Text'
-          and properties ->> 'profile' = 'http://www.loc.gov/standards/alto/v3/alto.xsd'
+          and (
+            properties ->> 'profile' ilike 'http://kba.cloud/hocr-spec%' or 
+            properties ->> 'profile' ilike 'http://kba.github.io/hocr-spec/%' or 
+            properties ->> 'profile' = 'https://github.com/kba/hocr-spec/blob/master/hocr-spec.md' 
+          )
       `;
     default:
       return undefined;
