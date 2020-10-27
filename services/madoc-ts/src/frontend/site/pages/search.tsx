@@ -89,14 +89,23 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
       return options;
     }, [facets, searchResponse]);
 
+    console.log({ facets, facetOptions });
+
     const applyFacet = (type: string, value: string) => {
       if (data) {
+        const newFacets = { ...(facets || {}) };
+
+        if (!newFacets[type]) {
+          newFacets[type] = [];
+        }
+        newFacets[type].push(value);
+
         history.push(
           `${pathname}?${stringify({
             fulltext,
             page: 1,
             madoc_id,
-            facets: JSON.stringify({ ...(facets || {}), [type]: value }),
+            facets: JSON.stringify(newFacets),
           })}`
         );
       }
