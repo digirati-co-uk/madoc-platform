@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { useSubjectMap } from '../../shared/hooks/use-subject-map';
 import { createLink } from '../../shared/utility/create-link';
 import { ProjectFull } from '../../../types/schemas/project-full';
-import { Button } from '../../shared/atoms/Button';
+import { Button, MediumRoundedButton } from '../../shared/atoms/Button';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { CanvasStatus } from '../../shared/atoms/CanvasStatus';
@@ -58,6 +58,10 @@ export const ViewCollection: React.FC<Partial<
         </Button>
       ) : null}
       {pages}
+      <MediumRoundedButton as={Link} to={`/search?madoc_id=urn:madoc:collection:${collection.id}`}>
+        Search this collection
+      </MediumRoundedButton>
+      <br />
       <ImageGrid>
         {collection.items.map((manifest, idx) => (
           <Link
