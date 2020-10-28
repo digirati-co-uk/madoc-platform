@@ -18,13 +18,11 @@ export const EditCanvasLinking: UniversalComponent<EditCanvasLinking> = createUn
     const { data, refetch } = useData(EditCanvasLinking);
 
     return (
-      <>
-        <TableContainer style={{ background: '#EEEEEE' }}>
-          {data?.linking.map(item => {
-            return <LinkingProperty key={item.link.id} link={item} refetch={refetch} />;
-          })}
-        </TableContainer>
-      </>
+      <TableContainer style={{ background: '#EEEEEE' }}>
+        {data?.linking.map(item => {
+          return <LinkingProperty key={item.link.id} link={item} refetch={refetch} />;
+        })}
+      </TableContainer>
     );
   },
   {

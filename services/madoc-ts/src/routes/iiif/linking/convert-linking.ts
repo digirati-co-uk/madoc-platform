@@ -32,7 +32,7 @@ export const convertLinking: RouteMiddleware<{ id: string }> = async context => 
     return;
   }
 
-  if (link.type !== 'Text' || !link.uri || !link.resource_id) {
+  if ((link.type !== 'Text' && link.type !== 'Dataset') || !link.uri || !link.resource_id) {
     throw new RequestError('Unsupported link type');
   }
 
