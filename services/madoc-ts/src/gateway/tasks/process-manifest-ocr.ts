@@ -75,7 +75,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
               `Alto import for canvas ID: ${link.resource_id}`,
               siteId,
               userId,
-              link.link.id,
+              link.file ? api.resolveUrl(link.link.id) : link.link.id,
               'alto'
             )
           );
@@ -97,7 +97,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
               `hOCR import for canvas ID: ${link.resource_id}`,
               siteId,
               userId,
-              link.link.id,
+              link.file ? api.resolveUrl(link.link.id) : link.link.id,
               'hocr'
             )
           );

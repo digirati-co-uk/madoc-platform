@@ -3,7 +3,8 @@ import { UniversalComponent } from '../../../../types';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { ResourceLinkResponse } from '../../../../../database/queries/linking-queries';
 import { useData } from '../../../../shared/hooks/use-data';
-import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../../../shared/atoms/Table';
+import { TableContainer } from '../../../../shared/atoms/Table';
+import { LinkingProperty } from '../../../../shared/atoms/LinkingProperty';
 
 type EditCanvasLinking = {
   query: {};
@@ -12,28 +13,15 @@ type EditCanvasLinking = {
   variables: { id: number };
 };
 
-export const EditCanvasLinking: UniversalComponent<EditCanvasLinking> = createUniversalComponent<
-  EditCanvasLinking
->(
+export const EditCanvasLinking: UniversalComponent<EditCanvasLinking> = createUniversalComponent<EditCanvasLinking>(
   props => {
-    const { data } = useData(EditCanvasLinking);
+    const { data, refetch } = useData(EditCanvasLinking);
 
     return (
       <>
-        <TableContainer>
-          {data?.linking.map((item, key) => {
-            return (
-              <TableRow key={key}>
-                <TableRowLabel>
-                  <strong>{item.link.type}</strong>
-                </TableRowLabel>
-                <TableRowLabel>
-                  <a href={item.link.id} target="_top">
-                    {item.link.id}
-                  </a>
-                </TableRowLabel>
-              </TableRow>
-            );
+        <TableContainer style={{ background: '#EEEEEE' }}>
+          {data?.linking.map(item => {
+            return <LinkingProperty key={item.link.id} link={item} refetch={refetch} />;
           })}
         </TableContainer>
       </>
