@@ -80,6 +80,10 @@ export class ApiClient {
     );
   }
 
+  resolveUrl(pathName: string) {
+    return `${this.gateway}/${pathName}`;
+  }
+
   getCurrentUser() {
     if (this.isServer) {
       throw new Error('Can only be called from the browser.');
@@ -146,11 +150,15 @@ export class ApiClient {
       body,
       jwt = this.jwt,
       publicRequest = false,
+      xml = false,
+      returnText = false,
     }: {
       method?: 'GET' | 'PUT' | 'POST' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD';
       body?: Body;
       jwt?: string;
       publicRequest?: boolean;
+      xml?: boolean;
+      returnText?: boolean;
     } = {}
   ): Promise<Return> {
     if (!publicRequest && !jwt) {
@@ -164,6 +172,8 @@ export class ApiClient {
       body,
       jwt: jwt,
       asUser: this.user,
+      xml,
+      returnText,
     });
 
     if (response.error) {
@@ -1034,6 +1044,43 @@ export class ApiClient {
   }
 
   // Storage API.
+
+  async saveStorageXml(bucket: string, fileName: string, xml: string, isPublic = false) {
+    return this.request<{
+      success: boolean;
+      stats: {
+        modified: string;
+        size: number;
+      };
+    }>(
+      isPublic
+        ? `/api/storage/data/${bucket}/public/${fileName.endsWith('.xml') ? fileName : `${fileName}.xml`}`
+        : `/api/storage/data/${bucket}/${fileName.endsWith('.xml') ? fileName : `${fileName}.xml`}`,
+      {
+        method: 'POST',
+        body: xml,
+        xml: true,
+      }
+    );
+  }
+
+  async convertLinkingProperty(id: number) {
+    return this.request<any>(`/api/madoc/iiif/linking/${id}/convert`, {
+      method: 'POST',
+    });
+  }
+
+  async getStorageXmlData<T = any>(bucket: string, fileName: string, isPublic = false) {
+    return this.request<T>(
+      isPublic
+        ? `/api/storage/data/${bucket}/public/${fileName.endsWith('.xml') ? fileName : `${fileName}.xml`}`
+        : `/api/storage/data/${bucket}/${fileName.endsWith('.xml') ? fileName : `${fileName}.xml`}`,
+      {
+        xml: true,
+        returnText: true,
+      }
+    );
+  }
 
   async saveStorageJson(bucket: string, fileName: string, json: any, isPublic = false) {
     return this.request<{
