@@ -8,9 +8,11 @@ export function createLink(opt: {
   taskId?: string;
   query?: any;
   subRoute?: string;
+  admin?: boolean;
 }) {
   const subRoute = opt.subRoute ? `/${opt.subRoute}` : '';
   const suffix = `${subRoute}${opt.query && Object.keys(opt.query).length ? `?${stringify(opt.query)}` : ''}`;
+  const canvasSubroute = opt.admin ? 'canvases' : 'c';
 
   // Tasks.
   if (opt.taskId) {
@@ -38,7 +40,7 @@ export function createLink(opt: {
       return `/canvases/${opt.canvasId}${suffix}`;
     }
 
-    path.push(`/c/${opt.canvasId}`);
+    path.push(`/${canvasSubroute}/${opt.canvasId}`);
 
     return `${path.join('')}${suffix}`;
   }

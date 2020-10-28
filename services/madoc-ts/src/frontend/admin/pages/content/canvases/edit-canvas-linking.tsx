@@ -5,22 +5,32 @@ import { ResourceLinkResponse } from '../../../../../database/queries/linking-qu
 import { useData } from '../../../../shared/hooks/use-data';
 import { TableContainer } from '../../../../shared/atoms/Table';
 import { LinkingProperty } from '../../../../shared/atoms/LinkingProperty';
+import { useParams } from 'react-router-dom';
 
 type EditCanvasLinking = {
   query: {};
   params: { id: string };
   data: { linking: ResourceLinkResponse[] };
   variables: { id: number };
+  context: { manifestId?: number };
 };
 
 export const EditCanvasLinking: UniversalComponent<EditCanvasLinking> = createUniversalComponent<EditCanvasLinking>(
-  props => {
+  () => {
+    const { id, manifestId } = useParams();
     const { data, refetch } = useData(EditCanvasLinking);
 
     return (
       <TableContainer style={{ background: '#EEEEEE' }}>
         {data?.linking.map(item => {
-          return <LinkingProperty key={item.link.id} link={item} refetch={refetch} />;
+          return (
+            <LinkingProperty
+              linkProps={{ canvasId: id, manifestId }}
+              key={item.link.id}
+              link={item}
+              refetch={refetch}
+            />
+          );
         })}
       </TableContainer>
     );

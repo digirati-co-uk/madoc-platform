@@ -606,6 +606,10 @@ export class ApiClient {
     return this.request<{ linking: ResourceLinkResponse[] }>(`/api/madoc/iiif/canvases/${id}/linking`);
   }
 
+  async getLinkingProperty(id: number) {
+    return this.request<ResourceLinkResponse>(`/api/madoc/`)
+  }
+
   async updateCollectionMetadata(id: number, request: MetadataUpdate) {
     return this.request<void>(`/api/madoc/iiif/collections/${id}/metadata`, {
       method: 'PUT',

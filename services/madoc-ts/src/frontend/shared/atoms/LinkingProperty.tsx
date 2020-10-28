@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import { ResourceLinkResponse } from '../../../database/queries/linking-queries';
 import { LinkingPropertyEditor } from '../components/LinkingPropertyEditor';
 import { useApi } from '../hooks/use-api';
+import { createLink } from '../utility/create-link';
+import { Link } from 'react-router-dom';
 
 const LinkingContainer = styled.div`
   display: flex;
@@ -107,6 +109,7 @@ function CloudIcon(props: React.SVGProps<SVGSVGElement>) {
 export const LinkingProperty: React.FC<{
   link: ResourceLinkResponse;
   refetch?: () => any;
+  linkProps?: any;
 }> = props => {
   const [isEditing, setIsEditing] = useState(false);
   const api = useApi();
@@ -123,7 +126,21 @@ export const LinkingProperty: React.FC<{
         {props.link.file ? <CloudIcon /> : <ExternalLink />}
       </LinkingIcon>
       <LinkingInnerContainer>
-        <LinkingLabel>{props.link.link.label}</LinkingLabel>
+        <LinkingLabel>
+          {props.linkProps ? (
+            <Link
+              to={createLink({
+                ...props.linkProps,
+                subRoute: `linking/${props.link.id}`,
+                admin: true,
+              })}
+            >
+              {props.link.link.label}
+            </Link>
+          ) : (
+            props.link.link.label
+          )}
+        </LinkingLabel>
         <LinkingMetadata>
           {props.link.link.type} - {props.link.link.format}
         </LinkingMetadata>

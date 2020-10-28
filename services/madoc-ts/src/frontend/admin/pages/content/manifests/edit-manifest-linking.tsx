@@ -5,6 +5,7 @@ import { createUniversalComponent } from '../../../../shared/utility/create-univ
 import { ResourceLinkResponse } from '../../../../../database/queries/linking-queries';
 import { useData } from '../../../../shared/hooks/use-data';
 import { TableContainer } from '../../../../shared/atoms/Table';
+import { useParams } from 'react-router-dom';
 
 type EditManifestLinkingType = {
   query: {};
@@ -17,12 +18,13 @@ export const EditManifestLinking: UniversalComponent<EditManifestLinkingType> = 
   EditManifestLinkingType
 >(
   props => {
+    const { id } = useParams();
     const { data, refetch } = useData(EditManifestLinking);
 
     return (
       <TableContainer style={{ background: '#EEEEEE' }}>
         {data?.linking.map(item => {
-          return <LinkingProperty key={item.link.id} link={item} refetch={refetch} />;
+          return <LinkingProperty linkProps={{ manifestId: id }} key={item.link.id} link={item} refetch={refetch} />;
         })}
       </TableContainer>
     );
