@@ -27,6 +27,7 @@ module.exports = {
           {
             loader: 'awesome-typescript-loader',
             options: {
+              configFileName: 'tsconfig.frontend.json',
               silent: true,
               useBabel: true,
               useCache: true,
@@ -48,7 +49,7 @@ module.exports = {
             loader: 'babel-loader',
             options: {
               babelrc: false,
-              presets: ['@babel/preset-env', '@babel/preset-react'],
+              presets: [['@babel/preset-env', { targets: 'defaults' }], '@babel/preset-react'],
             },
           },
         ],

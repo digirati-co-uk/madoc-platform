@@ -4,8 +4,12 @@ module.exports = {
   components: {
     categories: [
       {
-        name: 'Test',
-        include: ['src/uxpin-merge/Button/Button.tsx'],
+        name: 'Atoms',
+        include: [
+          'src/uxpin-merge/01-atoms/Button/Button.tsx',
+          'src/uxpin-merge/01-atoms/Breadcrumbs/Breadcrumbs.tsx',
+          'src/uxpin-merge/01-atoms/CanvasStatus/CanvasStatus.tsx',
+        ],
       },
       //   {
       //     name: 'General',
