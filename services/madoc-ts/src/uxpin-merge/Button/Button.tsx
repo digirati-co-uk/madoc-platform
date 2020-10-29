@@ -1,16 +1,15 @@
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import { Button as AtomButton } from '../../frontend/shared/atoms/Button';
 
-export type Props = {
-  label: string;
-  test?: string;
-};
+export type Props = ComponentProps<typeof AtomButton>;
+
+
 
 /**
  * @uxpincomponent
  */
-function Button({ label, test = 'something' }: Props) {
-  return <AtomButton>{label}</AtomButton>;
+function Button(props: Props) {
+  return <AtomButton {...props} />;
 }
 
 export default Button;
