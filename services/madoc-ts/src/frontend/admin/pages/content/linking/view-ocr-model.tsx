@@ -48,7 +48,7 @@ export const ViewOCRModel: React.FC<{ canvasId: number; link: ResourceLinkRespon
       <h3>Preview</h3>
       <Revisions.Provider captureModel={captureModel}>
         <div style={{ display: 'flex', flexDirection: 'row' }}>
-          <div style={{ width: '67%' }}>
+          <div style={{ width: '50%' }}>
             {api.getIsServer() ? null : (
               <Suspense fallback={<>Loading</>}>
                 <div>
@@ -58,7 +58,7 @@ export const ViewOCRModel: React.FC<{ canvasId: number; link: ResourceLinkRespon
               </Suspense>
             )}
           </div>
-          <div style={{ width: '33%', padding: '1em' }}>
+          <div style={{ width: '50%', padding: '1em' }}>
             {api.getIsServer() ? null : (
               <RevisionNavigation
                 readOnly={true}

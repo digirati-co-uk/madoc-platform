@@ -49,5 +49,14 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
     await userApi.searchIngest(searchPayload);
   }
 
+
+  // Ingesting Capture models.
+  // 1. Load all capture models for this canvas on this site.
+  // 2. Load all linking properties to find capture model partials
+  // 3. For each of the models, check if any of capture models have been used
+  // 4. Remove overridden model partials
+  // 5. Index remaining Capture models
+  // 6. Index any remaining capture model partials
+
   context.response.body = canvas;
 };
