@@ -3,3 +3,5 @@ lib
 *.log
 storybook-static
 stats.json
+.uxpin-merge
+.cache
