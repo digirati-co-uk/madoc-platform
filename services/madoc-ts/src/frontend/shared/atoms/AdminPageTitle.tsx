@@ -24,3 +24,5 @@ export const AdminPageSubtitle = styled.div`
   color: rgba(255, 255, 255, 0.7);
   padding-bottom: 2em;
 `;
+
+export default AdminPageTitle;
