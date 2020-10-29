@@ -1,5 +1,8 @@
 import styled, { css } from 'styled-components';
 
+/**
+ * @uxpincomponent
+ */
 export const AdminPageTitle = styled.h1<{ subtitle?: boolean }>`
   display: block;
   color: #fff;
@@ -14,6 +17,9 @@ export const AdminPageTitle = styled.h1<{ subtitle?: boolean }>`
     `}
 `;
 
+/**
+ * @uxpincomponent
+ */
 export const AdminPageSubtitle = styled.div`
   color: rgba(255, 255, 255, 0.7);
   padding-bottom: 2em;
