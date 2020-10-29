@@ -1,9 +1,11 @@
 import React, { ComponentProps } from 'react';
 import { Button as AtomButton } from '../../frontend/shared/atoms/Button';
 
-export type Props = ComponentProps<typeof AtomButton>;
-
-
+export type Props = {
+  children: string;
+  /** @default false */
+  subtitle?: boolean;
+};
 
 /**
  * @uxpincomponent
