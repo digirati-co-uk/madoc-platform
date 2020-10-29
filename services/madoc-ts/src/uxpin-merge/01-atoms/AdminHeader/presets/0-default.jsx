@@ -4,15 +4,8 @@ import AdminHeader from '../AdminHeader';
 export default (
   <AdminHeader
     title="My awesome project"
-    breadcrumbs={`site dashboard
-projects
-My project`}
-    menu={`Overview
-Basic details
-Capture model
-Content
-Access control
-Export`}
+    breadcrumbs={`site dashboard\nprojects\nMy project`}
+    menu={`Overview\nBasic details\nCapture model\nContent\nAccess control\nExport`}
     activeItem={'Overview'}
   />
 );
