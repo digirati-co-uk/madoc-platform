@@ -8,6 +8,7 @@ module.exports = {
           'src/uxpin-merge/01-atoms/Breadcrumbs/Breadcrumbs.tsx',
           'src/uxpin-merge/01-atoms/CanvasStatus/CanvasStatus.tsx',
           'src/uxpin-merge/01-atoms/AdminHeader/AdminHeader.tsx',
+          'src/uxpin-merge/01-atoms/Mirador/Mirador.tsx',
         ],
       },
     ],

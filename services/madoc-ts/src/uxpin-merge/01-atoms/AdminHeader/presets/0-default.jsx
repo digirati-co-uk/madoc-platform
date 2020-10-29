@@ -8,13 +8,11 @@ export default (
     breadcrumbs={`site dashboard
 projects
 My project`}
-    menu={
-`Overview
+    menu={`Overview
 Basic details
 Capture model
 Content
 Access control
-Export`
-    }
+Export`}
   />
 );
