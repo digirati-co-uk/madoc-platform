@@ -91,7 +91,7 @@ export const AdminHeader: React.FC<{
               {menu.map((item, n) => (
                 <AdminTabItem
                   key={item.link}
-                  $active={pathname === item.link || (pathname.indexOf(item.link) !== -1 && n > 0)}
+                  $active={item.active || pathname === item.link || (pathname.indexOf(item.link) !== -1 && n > 0)}
                   as={Link}
                   to={item.link}
                 >

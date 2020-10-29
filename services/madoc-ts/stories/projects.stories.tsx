@@ -14,6 +14,7 @@ const projects: ProjectList['projects'] = [
     collection_id: 123,
     task_id: '1231231231',
     slug: '123',
+    status: 1,
   },
   {
     id: 1236,
@@ -23,6 +24,7 @@ const projects: ProjectList['projects'] = [
     collection_id: 123,
     task_id: '1231231231',
     slug: '123',
+    status: 1,
   },
 ];
 
