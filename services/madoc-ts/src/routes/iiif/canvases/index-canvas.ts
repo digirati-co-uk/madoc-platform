@@ -1,6 +1,5 @@
 import { traverseDocument } from '@capture-models/helpers';
-import { CaptureModel } from '@capture-models/types';
-import { BaseField } from '@capture-models/types/src/field-types';
+import { BaseField } from '@capture-models/types';
 import {
   isParagraphEntity,
   ParagraphEntity,
@@ -60,8 +59,6 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
   } catch (err) {
     await userApi.searchIngest(searchPayload);
   }
-
-  console.log('Searching capture models');
 
   // 1. Load all capture models for this canvas on this site.
   const models = await userApi.getAllCaptureModels({
@@ -134,6 +131,7 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
     };
     try {
       const resp = await userApi.indexCaptureModel(modelId, `urn:madoc:canvas:${canvasId}`, resource);
+      console.log(resp);
     } catch (err) {
       console.log(err);
     }

@@ -1,6 +1,5 @@
 import { traverseDocument, traverseStructure } from '@capture-models/helpers';
-import { BaseField, CaptureModel } from '@capture-models/types';
-import { NestedModelFields } from '@capture-models/types/src/capture-model';
+import { BaseField, CaptureModel, NestedModelFields } from '@capture-models/types';
 import { ApiClient } from '../../../gateway/api';
 import { CaptureModelExtension } from '../extension';
 import { PARAGRAPHS_PROFILE, preprocessCaptureModel } from './Paragraphs.helpers';
@@ -71,6 +70,8 @@ export class Paragraphs implements CaptureModelExtension {
       ? await this.api.getStorageJsonData(matchingCaptureModel.file.bucket, matchingCaptureModel.file.path)
       : await fetch(matchingCaptureModel.link.id).then(r => r.json());
 
+    console.log({ data });
+
     //   4.2 - Make wrapper document and traverse the fields, minting new IDs
     const documentWrapper = preprocessCaptureModel(data);
 
@@ -100,6 +101,7 @@ export class Paragraphs implements CaptureModelExtension {
     });
 
     try {
+      console.log('UPDATING CAPTURE MODEL');
       // 6. Save the model and return it.
       return await this.api.updateCaptureModel(captureModel.id, captureModel);
       ///  6.1 - Any errors - add to the placeholder field in the future
