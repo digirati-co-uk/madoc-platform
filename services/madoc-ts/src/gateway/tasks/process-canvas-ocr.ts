@@ -1,3 +1,4 @@
+import { PARAGRAPHS_PROFILE } from '../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
 import { BaseTask } from './base-task';
 import * as tasks from './task-helpers';
 import { ApiClient } from '../api';
@@ -64,7 +65,7 @@ function createLinkedResource({
       format: 'application/json',
       type: 'CaptureModelDocument',
       label: 'OCR Capture model data',
-      profile: 'http://madoc.io/profiles/capture-model-fields/paragraphs',
+      profile: PARAGRAPHS_PROFILE,
       file_path: file,
       file_bucket: bucket,
     },

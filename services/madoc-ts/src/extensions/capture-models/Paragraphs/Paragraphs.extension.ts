@@ -3,7 +3,7 @@ import { BaseField, CaptureModel } from '@capture-models/types';
 import { NestedModelFields } from '@capture-models/types/src/capture-model';
 import { ApiClient } from '../../../gateway/api';
 import { CaptureModelExtension } from '../extension';
-import { preprocessCaptureModel } from './Paragraphs.helpers';
+import { PARAGRAPHS_PROFILE, preprocessCaptureModel } from './Paragraphs.helpers';
 
 /**
  * Paragraphs extension
@@ -73,6 +73,11 @@ export class Paragraphs implements CaptureModelExtension {
 
     //   4.2 - Make wrapper document and traverse the fields, minting new IDs
     const documentWrapper = preprocessCaptureModel(data);
+
+    // 4.3 - add profile
+    documentWrapper.paragraph.forEach((paragraph: CaptureModel['document'] | BaseField) => {
+      paragraph.profile = PARAGRAPHS_PROFILE;
+    });
 
     //   4.4 - Replace field on model with new field
     state.parent.properties[state.key] = documentWrapper.paragraph;

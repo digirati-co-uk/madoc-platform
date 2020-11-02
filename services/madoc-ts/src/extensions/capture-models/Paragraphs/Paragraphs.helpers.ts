@@ -1,5 +1,7 @@
-import { generateId, traverseDocument } from '@capture-models/helpers';
-import { CaptureModel } from '@capture-models/types';
+import { generateId, isEntity, isEntityList, traverseDocument } from '@capture-models/helpers';
+import { BaseField, BaseSelector, CaptureModel } from '@capture-models/types';
+
+export const PARAGRAPHS_PROFILE = 'http://madoc.io/profiles/capture-model-fields/paragraphs';
 
 export function preprocessCaptureModel(data: CaptureModel['document']['properties']) {
   const documentWrapper: CaptureModel['document'] = {
@@ -35,4 +37,34 @@ export function preprocessCaptureModel(data: CaptureModel['document']['propertie
   });
 
   return documentWrapper.properties;
+}
+
+export type ParagraphEntity = CaptureModel['document'] & {
+  profile: typeof PARAGRAPHS_PROFILE;
+  selector: BaseSelector;
+  properties: {
+    paragraph: Array<
+      CaptureModel['document'] & {
+        selector: BaseSelector;
+        properties: {
+          lines: Array<
+            CaptureModel['document'] & {
+              selector: BaseSelector;
+              properties: {
+                text: Array<BaseField>;
+              };
+            }
+          >;
+        };
+      }
+    >;
+  };
+};
+
+export function isParagraphEntity(entity: BaseField | CaptureModel['document']): entity is ParagraphEntity {
+  if (!isEntity(entity)) {
+    return false;
+  }
+
+  return entity.profile === PARAGRAPHS_PROFILE;
 }

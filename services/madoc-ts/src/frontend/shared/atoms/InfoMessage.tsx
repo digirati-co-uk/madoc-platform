@@ -5,4 +5,7 @@ export const InfoMessage = styled.div`
   color: #fff;
   width: 100%;
   padding: 0.5em;
+  a {
+    color: #fff;
+  }
 `;

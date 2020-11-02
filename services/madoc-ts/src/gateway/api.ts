@@ -1,3 +1,4 @@
+import { BaseField } from '@capture-models/types/src/field-types';
 import { CaptureModelExtension } from '../extensions/capture-models/extension';
 import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.extension';
 import { ExtensionManager } from '../extensions/extension-manager';
@@ -46,7 +47,6 @@ import {
 import { CrowdsourcingCanvasTask } from './tasks/crowdsourcing-canvas-task';
 import { ConfigResponse } from '../types/schemas/config-response';
 import { ResourceLinkResponse } from '../database/queries/linking-queries';
-import { createTask as createSearchIndexTask, SearchIndexTask } from './tasks/search-index-task';
 
 export class ApiClient {
   private readonly gateway: string;
@@ -439,6 +439,10 @@ export class ApiClient {
     );
   }
 
+  async getSearchQuery(query: SearchQuery, page = 1, madoc_id?: string) {
+    return this.searchQuery(query, page, madoc_id);
+  }
+
   // IIIF.
   async getCollections(page = 0, parent?: number) {
     return this.request<CollectionListResponse>(`/api/madoc/iiif/collections?${stringify({ page, parent })}`);
@@ -607,7 +611,7 @@ export class ApiClient {
   }
 
   async getLinkingProperty(id: number) {
-    return this.request<ResourceLinkResponse>(`/api/madoc/`)
+    return this.request<ResourceLinkResponse>(`/api/madoc/`);
   }
 
   async updateCollectionMetadata(id: number, request: MetadataUpdate) {
@@ -692,7 +696,12 @@ export class ApiClient {
     );
   }
 
-  async getAllCaptureModels(query?: { target_id?: string; target_type?: string; derived_from?: string }) {
+  async getAllCaptureModels(query?: {
+    target_id?: string;
+    target_type?: string;
+    derived_from?: string;
+    all_derivatives?: boolean;
+  }) {
     return this.request<CaptureModelSnippet[]>(`/api/crowdsourcing/model${query ? `?${stringify(query)}` : ''}`);
   }
 
@@ -1395,6 +1404,27 @@ export class ApiClient {
     });
   }
 
+  async indexCaptureModel(
+    id: string,
+    contentId: string,
+    resource: CaptureModel | { [term: string]: Array<BaseField> | Array<Document> }
+  ) {
+    const modelPayload: {
+      resource_id: string;
+      content_id: string;
+      resource: CaptureModel | { [term: string]: Array<BaseField> | Array<Document> };
+    } = {
+      resource_id: contentId,
+      content_id: id,
+      resource: resource,
+    };
+
+    return this.request<any>(`/api/search/model`, {
+      method: 'POST',
+      body: modelPayload,
+    });
+  }
+
   // Search index api
   async indexManifest(id: number) {
     try {
@@ -1420,12 +1450,12 @@ export class ApiClient {
     return this.request(`/api/search/indexables/${id}`);
   }
 
-  async searchListModels() {
-    return this.request(`/api/search/models`);
+  async searchListModels(query?: { iiif__madoc_id?: string }) {
+    return this.request(`/api/search/model?${query ? stringify(query) : ''}`);
   }
 
   async searchGetModel(id: number) {
-    return this.request(`/api/search/models/${id}`);
+    return this.request(`/api/search/model/${id}`);
   }
 
   async searchListIIIF() {

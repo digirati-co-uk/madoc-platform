@@ -59,7 +59,11 @@ function sanitizeLabel(str: string) {
   return str.replace(/^.*': '/, '');
 }
 
-const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small' }> = ({ result, size }) => {
+const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; search: string }> = ({
+  result,
+  size,
+  search,
+}) => {
   const things = ((result && result.contexts) || []).map(value => {
     return parseUrn(value.id);
   });
@@ -67,6 +71,7 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small' }> =
   const collectionId = things.find(thing => thing?.type.toLowerCase() === 'collection')?.id;
   const manifestId = things.find(thing => thing?.type.toLowerCase() === 'manifest')?.id;
   const canvasId = things.find(thing => thing?.type.toLowerCase() === 'canvas')?.id;
+  const searchText = result.hits[0] && result.hits[0].bounding_boxes ? search : undefined;
 
   return (
     <ResultContainer>
@@ -75,6 +80,7 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small' }> =
           manifestId,
           canvasId,
           collectionId,
+          query: { searchText },
         })}
         style={{ textDecoration: 'none' }}
       >
@@ -124,7 +130,9 @@ export const SearchResults: React.FC<{
     <TotalResults>{`${totalResults} Results`}</TotalResults>
     <div>
       {searchResults.map((result: SearchResult, index: number) => {
-        return result ? <SearchItem result={result} key={`${index}__${result.resource_id}`} size="small" /> : null;
+        return result ? (
+          <SearchItem result={result} key={`${index}__${result.resource_id}`} search={value} size="small" />
+        ) : null;
       })}
     </div>
   </ResultsContainer>

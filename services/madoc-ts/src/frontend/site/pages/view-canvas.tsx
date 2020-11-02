@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { InfoMessage } from '../../shared/atoms/InfoMessage';
 import { LockIcon } from '../../shared/atoms/LockIcon';
 import { CanvasNavigation } from '../../shared/components/CanvasNavigation';
 import { LocaleString } from '../../shared/components/LocaleString';
@@ -9,6 +10,7 @@ import { useParams, useHistory, Link } from 'react-router-dom';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { SimpleAtlasViewer } from '../../shared/components/SimpleAtlasViewer';
 import { ProjectListingDescription, ProjectListingItem, ProjectListingTitle } from '../../shared/atoms/ProjectListing';
+import { useCanvasSearch } from '../../shared/hooks/use-canvas-search';
 import { createLink } from '../../shared/utility/create-link';
 import { ProjectFull } from '../../../types/schemas/project-full';
 import { Heading3 } from '../../shared/atoms/Heading3';
@@ -193,6 +195,7 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
   const { id, manifestId, collectionId } = useParams<{ id: string; manifestId?: string; collectionId?: string }>();
   const [canvasRef, setCanvasRef] = useState<CanvasNormalized>();
   const history = useHistory();
+  const [searchText, highlightedRegions] = useCanvasSearch(id);
 
   const canClaimCanvas = project?.config.claimGranularity ? project?.config.claimGranularity === 'canvas' : true;
   const api = useApi();
@@ -260,6 +263,14 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
           project={project}
         />
       ) : null}
+      {highlightedRegions && highlightedRegions.bounding_boxes ? (
+        <InfoMessage>
+          {highlightedRegions.bounding_boxes.length} Search results for <strong>{searchText}</strong>{' '}
+          <Link to={createLink({ canvasId: id, manifestId, projectId: project?.slug, collectionId })}>
+            Clear search
+          </Link>
+        </InfoMessage>
+      ) : null}
       {preventCanvasNavigation && !manifestUserTasks?.length ? (
         <div style={{ textAlign: 'center', padding: '2em', marginTop: '1em', marginBottom: '1em', background: '#eee' }}>
           <LockIcon style={{ fontSize: '3em' }} />
@@ -268,11 +279,20 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
       ) : null}
       {canvasRef && (!preventCanvasNavigation || bypassCanvasNavigation) ? (
         <CanvasContext canvas={canvasRef.id}>
-          <SimpleAtlasViewer style={{ height: project ? '50vh' : '60vh' }} />
+          <SimpleAtlasViewer
+            style={{ height: project ? '50vh' : '60vh' }}
+            highlightedRegions={highlightedRegions ? highlightedRegions.bounding_boxes : undefined}
+          />
         </CanvasContext>
       ) : null}
       {preventCanvasNavigation && !bypassCanvasNavigation ? null : (
-        <CanvasNavigation manifestId={manifestId} canvasId={id} collectionId={collectionId} projectId={project?.slug} />
+        <CanvasNavigation
+          manifestId={manifestId}
+          canvasId={id}
+          collectionId={collectionId}
+          projectId={project?.slug}
+          query={searchText ? { searchText } : undefined}
+        />
       )}
     </>
   );
