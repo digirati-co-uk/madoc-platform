@@ -59,7 +59,7 @@ function sanitizeLabel(str: string) {
   return str.replace(/^.*': '/, '');
 }
 
-const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; search: string }> = ({
+const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; search?: string }> = ({
   result,
   size,
   search,
