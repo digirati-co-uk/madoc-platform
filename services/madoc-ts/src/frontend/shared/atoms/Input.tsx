@@ -22,7 +22,7 @@ export const Input = styled.input`
 `;
 
 export const InputBorderless = styled.input`
-  background: #fff;
+  background: transparent;
   border: none;
   padding: 0.5em;
   font-size: 0.9em;

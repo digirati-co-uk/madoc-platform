@@ -6,10 +6,9 @@ import { Link, useLocation } from 'react-router-dom';
 import { WidePage } from '../../shared/atoms/WidePage';
 import { SearchBox } from '../../shared/atoms/SearchBox';
 import { GridContainer } from '../../shared/atoms/Grid';
-import { useApi } from '../../shared/hooks/use-api';
 
 const AdminHeaderBackground = styled.div`
-  background: #333;
+  background: #25416b;
   margin-bottom: 1em;
 `;
 
@@ -22,13 +21,15 @@ const AdminTabRow = styled.ul`
 
 const AdminTabItem = styled.li<{ $active?: boolean }>`
   padding: 0.9em 1.5em;
-  margin: 0 0.1em;
+  margin: 0 0.2em;
   font-size: 0.85em;
   color: #fff;
+  background: #5d80ae;
   text-decoration: none;
   &:hover {
-    background: rgba(255, 255, 255, 0.2);
-    background: #4e82df;
+    //background: rgba(255, 255, 255, 0.2);
+    background: #dcebfe;
+    color: #000;
   }
   ${props =>
     props.$active &&
@@ -99,7 +100,7 @@ export const AdminHeader: React.FC<{
                 </AdminTabItem>
               ))}
             </AdminTabRow>
-            {search && searchFunction ? <SearchBox onSearch={val => searchFunction(val)} /> : null}
+            {search && searchFunction ? <SearchBox isAdmin={true} onSearch={val => searchFunction(val)} /> : null}
           </GridContainer>
         ) : null}
       </WidePage>
