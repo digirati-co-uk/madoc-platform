@@ -69,7 +69,7 @@ export const ManifestList: UniversalComponent<ManifestListType> = createUniversa
               }}
             >
               <InputContainer wide>
-                <InputLabel>{t('Add existing manifest')}</InputLabel>
+                <InputLabel>{t('Search for manifest')}</InputLabel>
                 <GridContainer>
                   <ExpandGrid>
                     <Input
