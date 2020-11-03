@@ -3,40 +3,36 @@ import { UniversalComponent } from '../../../../types';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { ResourceLinkResponse } from '../../../../../database/queries/linking-queries';
 import { useData } from '../../../../shared/hooks/use-data';
-import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../../../shared/atoms/Table';
+import { TableContainer } from '../../../../shared/atoms/Table';
+import { LinkingProperty } from '../../../../shared/atoms/LinkingProperty';
+import { useParams } from 'react-router-dom';
 
 type EditCanvasLinking = {
   query: {};
   params: { id: string };
   data: { linking: ResourceLinkResponse[] };
   variables: { id: number };
+  context: { manifestId?: number };
 };
 
-export const EditCanvasLinking: UniversalComponent<EditCanvasLinking> = createUniversalComponent<
-  EditCanvasLinking
->(
-  props => {
-    const { data } = useData(EditCanvasLinking);
+export const EditCanvasLinking: UniversalComponent<EditCanvasLinking> = createUniversalComponent<EditCanvasLinking>(
+  () => {
+    const { id, manifestId } = useParams();
+    const { data, refetch } = useData(EditCanvasLinking);
 
     return (
-      <>
-        <TableContainer>
-          {data?.linking.map((item, key) => {
-            return (
-              <TableRow key={key}>
-                <TableRowLabel>
-                  <strong>{item.link.type}</strong>
-                </TableRowLabel>
-                <TableRowLabel>
-                  <a href={item.link.id} target="_top">
-                    {item.link.id}
-                  </a>
-                </TableRowLabel>
-              </TableRow>
-            );
-          })}
-        </TableContainer>
-      </>
+      <TableContainer style={{ background: '#EEEEEE' }}>
+        {data?.linking.map(item => {
+          return (
+            <LinkingProperty
+              linkProps={{ canvasId: id, manifestId }}
+              key={item.link.id}
+              link={item}
+              refetch={refetch}
+            />
+          );
+        })}
+      </TableContainer>
     );
   },
   {

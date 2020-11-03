@@ -1,8 +1,8 @@
-import { generateId, traverseDocument, traverseStructure } from '@capture-models/helpers';
-import { BaseField, CaptureModel } from '@capture-models/types';
-import { NestedModelFields } from '@capture-models/types/src/capture-model';
+import { traverseDocument, traverseStructure } from '@capture-models/helpers';
+import { BaseField, CaptureModel, NestedModelFields } from '@capture-models/types';
 import { ApiClient } from '../../../gateway/api';
 import { CaptureModelExtension } from '../extension';
+import { PARAGRAPHS_PROFILE, preprocessCaptureModel } from './Paragraphs.helpers';
 
 /**
  * Paragraphs extension
@@ -70,41 +70,18 @@ export class Paragraphs implements CaptureModelExtension {
       ? await this.api.getStorageJsonData(matchingCaptureModel.file.bucket, matchingCaptureModel.file.path)
       : await fetch(matchingCaptureModel.link.id).then(r => r.json());
 
+    console.log({ data });
+
     //   4.2 - Make wrapper document and traverse the fields, minting new IDs
-    const documentWrapper: CaptureModel['document'] = {
-      id: '',
-      type: 'entity',
-      properties: data,
-      label: 'Document wrapper',
-    };
-    traverseDocument(documentWrapper, {
-      visitEntity(entity) {
-        entity.id = generateId();
-      },
-      visitField(field) {
-        field.id = generateId();
-      },
-      visitSelector(selector) {
-        selector.id = generateId();
-        if (selector.state) {
-          if (typeof selector.state.x === 'string') {
-            selector.state.x = Number(selector.state.x);
-          }
-          if (typeof selector.state.y === 'string') {
-            selector.state.y = Number(selector.state.y);
-          }
-          if (typeof selector.state.width === 'string') {
-            selector.state.width = Number(selector.state.width);
-          }
-          if (typeof selector.state.height === 'string') {
-            selector.state.height = Number(selector.state.height);
-          }
-        }
-      },
+    const documentWrapper = preprocessCaptureModel(data);
+
+    // 4.3 - add profile
+    documentWrapper.paragraph.forEach((paragraph: CaptureModel['document'] | BaseField) => {
+      paragraph.profile = PARAGRAPHS_PROFILE;
     });
 
     //   4.4 - Replace field on model with new field
-    state.parent.properties[state.key] = documentWrapper.properties.paragraph;
+    state.parent.properties[state.key] = documentWrapper.paragraph;
 
     // 5. Update the structure with the paragraph structure.
     //   5.1 - Extract path to all fields from document
@@ -124,6 +101,7 @@ export class Paragraphs implements CaptureModelExtension {
     });
 
     try {
+      console.log('UPDATING CAPTURE MODEL');
       // 6. Save the model and return it.
       return await this.api.updateCaptureModel(captureModel.id, captureModel);
       ///  6.1 - Any errors - add to the placeholder field in the future

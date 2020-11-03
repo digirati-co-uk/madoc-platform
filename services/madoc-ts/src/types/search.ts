@@ -43,6 +43,8 @@ export type SearchHit = {
   language: string;
   /* Number to show rank of search result */
   rank: number;
+  /** Bounding boxes */
+  bounding_boxes?: Array<[number, number, number, number]>;
 };
 
 /**

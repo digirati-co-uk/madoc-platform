@@ -8,13 +8,20 @@ export async function fetchJson<Return>(
     body,
     jwt,
     asUser,
+    xml,
+    returnText,
   }: {
     method?: 'GET' | 'PUT' | 'POST' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD';
     body?: any;
     jwt?: string;
     asUser?: { userId?: number; siteId?: number };
+    xml?: boolean;
+    returnText?: boolean;
   }
-): Promise<{ error: true; data: { error: string }; status: number; debugResponse?: any } | { error: false; data: Return; status: number }> {
+): Promise<
+  | { error: true; data: { error: string }; status: number; debugResponse?: any }
+  | { error: false; data: Return; status: number }
+> {
   const headers: any = {
     Accept: 'application/json',
   };
@@ -23,7 +30,9 @@ export async function fetchJson<Return>(
     headers.Authorization = `Bearer ${jwt}`;
   }
 
-  if (body) {
+  if (xml && body) {
+    headers['Content-Type'] = 'text/xml';
+  } else if (body) {
     headers['Content-Type'] = 'application/json';
   }
 
@@ -39,12 +48,20 @@ export async function fetchJson<Return>(
   const resp = await fetch(`${apiGateway}${endpoint}`, {
     headers,
     method,
-    body: body ? JSON.stringify(body) : undefined,
+    body: body ? (xml ? body : JSON.stringify(body)) : undefined,
     credentials: 'omit',
   });
 
   if (resp.ok) {
     try {
+      if (returnText) {
+        return {
+          error: false,
+          status: resp.status,
+          data: (await resp.text()) as any,
+        };
+      }
+
       return {
         error: false,
         status: resp.status,

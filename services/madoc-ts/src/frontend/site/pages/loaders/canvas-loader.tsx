@@ -10,6 +10,7 @@ import { ProjectFull } from '../../../../types/schemas/project-full';
 import { BreadcrumbContext, DisplayBreadcrumbs } from '../../../shared/components/Breadcrumbs';
 import { ApiArgs, apiHooks } from '../../../shared/hooks/use-api-query';
 import { useData, useStaticData } from '../../../shared/hooks/use-data';
+import { useLocationQuery } from '../../../shared/hooks/use-location-query';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { UniversalComponent } from '../../../types';
@@ -47,7 +48,11 @@ export const CanvasLoader: UniversalComponent<CanvasLoaderType> = createUniversa
     const { data, refetch } = useData(CanvasLoader, []);
     const ctx = useMemo(() => (data ? { id: data.canvas.id, name: data.canvas.label } : undefined), [data]);
 
-    const { data: tasks, isLoading: isLoadingTasks, refetch: refetchCanvasTasks } = apiHooks.getSiteProjectCanvasTasks(() => (slug ? [slug, Number(id)] : undefined));
+    const {
+      data: tasks,
+      isLoading: isLoadingTasks,
+      refetch: refetchCanvasTasks,
+    } = apiHooks.getSiteProjectCanvasTasks(() => (slug ? [slug, Number(id)] : undefined));
     const { data: model } = apiHooks.getSiteProjectCanvasModel(() => (slug ? [slug, Number(id)] : undefined));
 
     return (

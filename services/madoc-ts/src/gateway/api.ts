@@ -1,3 +1,5 @@
+import { BaseField, CaptureModel, RevisionRequest } from '@capture-models/types';
+import { createChoice, createDocument, generateId } from '@capture-models/helpers';
 import { CaptureModelExtension } from '../extensions/capture-models/extension';
 import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.extension';
 import { ExtensionManager } from '../extensions/extension-manager';
@@ -6,7 +8,7 @@ import { ProjectConfiguration } from '../types/schemas/project-configuration';
 import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/search';
 import { NotFound } from '../utility/errors/not-found';
 import { fetchJson } from './fetch-json';
-import { BaseTask } from '../gateway/tasks/base-task';
+import { BaseTask } from './tasks/base-task';
 import { CanvasNormalized, CollectionNormalized, Manifest } from '@hyperion-framework/types';
 import { CreateCollection } from '../types/schemas/create-collection';
 import { CollectionListResponse } from '../types/schemas/collection-list';
@@ -22,9 +24,6 @@ import { ManifestFull } from '../types/schemas/manifest-full';
 import { GetMetadata } from '../types/schemas/get-metadata';
 import { MetadataUpdate } from '../types/schemas/metadata-update';
 import { CanvasFull } from '../types/schemas/canvas-full';
-import { CaptureModel } from '@capture-models/types';
-import { createChoice, createDocument } from '@capture-models/helpers';
-import { generateId } from '@capture-models/helpers';
 import { stringify } from 'query-string';
 import { CreateProject } from '../types/schemas/create-project';
 import { ProjectSnippet } from '../types/schemas/project-snippet';
@@ -33,7 +32,6 @@ import { ApiError } from '../utility/errors/api-error';
 import { Pagination } from '../types/schemas/_pagination';
 import { CrowdsourcingTask } from './tasks/crowdsourcing-task';
 import { ResourceClaim } from '../routes/projects/create-resource-claim';
-import { RevisionRequest } from '@capture-models/types';
 import { ProjectList } from '../types/schemas/project-list';
 import { ProjectFull } from '../types/schemas/project-full';
 import { UserDetails } from '../types/schemas/user-details';
@@ -46,7 +44,6 @@ import {
 import { CrowdsourcingCanvasTask } from './tasks/crowdsourcing-canvas-task';
 import { ConfigResponse } from '../types/schemas/config-response';
 import { ResourceLinkResponse } from '../database/queries/linking-queries';
-import { createTask as createSearchIndexTask, SearchIndexTask } from './tasks/search-index-task';
 
 export class ApiClient {
   private readonly gateway: string;
@@ -78,6 +75,10 @@ export class ApiClient {
     this.captureModelExtensions = new ExtensionManager(
       options.customCaptureModelExtensions ? options.customCaptureModelExtensions(this) : [new Paragraphs(this)]
     );
+  }
+
+  resolveUrl(pathName: string) {
+    return `${this.gateway}/${pathName}`;
   }
 
   getCurrentUser() {
@@ -146,11 +147,15 @@ export class ApiClient {
       body,
       jwt = this.jwt,
       publicRequest = false,
+      xml = false,
+      returnText = false,
     }: {
       method?: 'GET' | 'PUT' | 'POST' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD';
       body?: Body;
       jwt?: string;
       publicRequest?: boolean;
+      xml?: boolean;
+      returnText?: boolean;
     } = {}
   ): Promise<Return> {
     if (!publicRequest && !jwt) {
@@ -164,6 +169,8 @@ export class ApiClient {
       body,
       jwt: jwt,
       asUser: this.user,
+      xml,
+      returnText,
     });
 
     if (response.error) {
@@ -429,6 +436,10 @@ export class ApiClient {
     );
   }
 
+  async getSearchQuery(query: SearchQuery, page = 1, madoc_id?: string) {
+    return this.searchQuery(query, page, madoc_id);
+  }
+
   // IIIF.
   async getCollections(page = 0, parent?: number) {
     return this.request<CollectionListResponse>(`/api/madoc/iiif/collections?${stringify({ page, parent })}`);
@@ -462,6 +473,15 @@ export class ApiClient {
       method: 'POST',
       body: {
         ocr_data: alto,
+      },
+    });
+  }
+
+  async convertHOCRToCaptureModel(hocr: string) {
+    return this.request<any>(`/api/okra/convert/hocr`, {
+      method: 'POST',
+      body: {
+        ocr_data: hocr,
       },
     });
   }
@@ -587,6 +607,10 @@ export class ApiClient {
     return this.request<{ linking: ResourceLinkResponse[] }>(`/api/madoc/iiif/canvases/${id}/linking`);
   }
 
+  async getLinkingProperty(id: number) {
+    return this.request<ResourceLinkResponse>(`/api/madoc/`);
+  }
+
   async updateCollectionMetadata(id: number, request: MetadataUpdate) {
     return this.request<void>(`/api/madoc/iiif/collections/${id}/metadata`, {
       method: 'PUT',
@@ -669,7 +693,12 @@ export class ApiClient {
     );
   }
 
-  async getAllCaptureModels(query?: { target_id?: string; target_type?: string; derived_from?: string }) {
+  async getAllCaptureModels(query?: {
+    target_id?: string;
+    target_type?: string;
+    derived_from?: string;
+    all_derivatives?: boolean;
+  }) {
     return this.request<CaptureModelSnippet[]>(`/api/crowdsourcing/model${query ? `?${stringify(query)}` : ''}`);
   }
 
@@ -1026,6 +1055,43 @@ export class ApiClient {
 
   // Storage API.
 
+  async saveStorageXml(bucket: string, fileName: string, xml: string, isPublic = false) {
+    return this.request<{
+      success: boolean;
+      stats: {
+        modified: string;
+        size: number;
+      };
+    }>(
+      isPublic
+        ? `/api/storage/data/${bucket}/public/${fileName.endsWith('.xml') ? fileName : `${fileName}.xml`}`
+        : `/api/storage/data/${bucket}/${fileName.endsWith('.xml') ? fileName : `${fileName}.xml`}`,
+      {
+        method: 'POST',
+        body: xml,
+        xml: true,
+      }
+    );
+  }
+
+  async convertLinkingProperty(id: number) {
+    return this.request<any>(`/api/madoc/iiif/linking/${id}/convert`, {
+      method: 'POST',
+    });
+  }
+
+  async getStorageXmlData<T = any>(bucket: string, fileName: string, isPublic = false) {
+    return this.request<T>(
+      isPublic
+        ? `/api/storage/data/${bucket}/public/${fileName.endsWith('.xml') ? fileName : `${fileName}.xml`}`
+        : `/api/storage/data/${bucket}/${fileName.endsWith('.xml') ? fileName : `${fileName}.xml`}`,
+      {
+        xml: true,
+        returnText: true,
+      }
+    );
+  }
+
   async saveStorageJson(bucket: string, fileName: string, json: any, isPublic = false) {
     return this.request<{
       success: boolean;
@@ -1335,6 +1401,27 @@ export class ApiClient {
     });
   }
 
+  async indexCaptureModel(
+    id: string,
+    contentId: string,
+    resource: CaptureModel | { [term: string]: Array<BaseField> | Array<Document> }
+  ) {
+    const modelPayload: {
+      resource_id: string;
+      content_id: string;
+      resource: CaptureModel | { [term: string]: Array<BaseField> | Array<Document> };
+    } = {
+      resource_id: contentId,
+      content_id: id,
+      resource: resource,
+    };
+
+    return this.request<any>(`/api/search/model`, {
+      method: 'POST',
+      body: modelPayload,
+    });
+  }
+
   // Search index api
   async indexManifest(id: number) {
     try {
@@ -1360,12 +1447,12 @@ export class ApiClient {
     return this.request(`/api/search/indexables/${id}`);
   }
 
-  async searchListModels() {
-    return this.request(`/api/search/models`);
+  async searchListModels(query?: { iiif__madoc_id?: string }) {
+    return this.request(`/api/search/model?${query ? stringify(query) : ''}`);
   }
 
   async searchGetModel(id: number) {
-    return this.request(`/api/search/models/${id}`);
+    return this.request(`/api/search/model/${id}`);
   }
 
   async searchListIIIF() {

@@ -47,7 +47,21 @@ export const CanvasSearchIndex = createUniversalComponent<CanvasSearchIndexType>
           Reindex canvas
         </Button>
         <hr />
-        <pre>{JSON.stringify(data, null, 2)}</pre>
+        <pre>{JSON.stringify(data.canvas, null, 2)}</pre>
+        <h4>Indexable</h4>
+        {data
+          ? data.models.results.map((result: any, key: number) => {
+              return (
+                <div key={key}>
+                  <h4>
+                    {result.type} ({result.subtype})
+                  </h4>
+                  {result.indexable}
+                  <pre>{JSON.stringify(result, null, 2)}</pre>
+                </div>
+              );
+            })
+          : null}
       </div>
     );
   },
@@ -56,7 +70,10 @@ export const CanvasSearchIndex = createUniversalComponent<CanvasSearchIndexType>
       return ['canvas-search-index', { id: Number(params.id) }];
     },
     getData: async (key, { id }, api) => {
-      return api.searchGetIIIF(`urn:madoc:canvas:${id}`);
+      return {
+        canvas: await api.searchGetIIIF(`urn:madoc:canvas:${id}`),
+        models: await api.searchListModels({ iiif__madoc_id: `urn:madoc:canvas:${id}` }),
+      };
     },
   }
 );

@@ -1,10 +1,11 @@
 import React from 'react';
+import { LinkingProperty } from '../../../../shared/atoms/LinkingProperty';
 import { UniversalComponent } from '../../../../types';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { ResourceLinkResponse } from '../../../../../database/queries/linking-queries';
 import { useData } from '../../../../shared/hooks/use-data';
-import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../../../shared/atoms/Table';
-import { SmallButton } from '../../../../shared/atoms/Button';
+import { TableContainer } from '../../../../shared/atoms/Table';
+import { useParams } from 'react-router-dom';
 
 type EditManifestLinkingType = {
   query: {};
@@ -17,27 +18,15 @@ export const EditManifestLinking: UniversalComponent<EditManifestLinkingType> = 
   EditManifestLinkingType
 >(
   props => {
-    const { data } = useData(EditManifestLinking);
+    const { id } = useParams();
+    const { data, refetch } = useData(EditManifestLinking);
 
     return (
-      <>
-        <TableContainer>
-          {data?.linking.map((item, key) => {
-            return (
-              <TableRow key={key}>
-                <TableRowLabel>
-                  <strong>{item.link.type}</strong>
-                </TableRowLabel>
-                <TableRowLabel>
-                  <a href={item.link.id} target="_top">
-                    {item.link.id}
-                  </a>
-                </TableRowLabel>
-              </TableRow>
-            );
-          })}
-        </TableContainer>
-      </>
+      <TableContainer style={{ background: '#EEEEEE' }}>
+        {data?.linking.map(item => {
+          return <LinkingProperty linkProps={{ manifestId: id }} key={item.link.id} link={item} refetch={refetch} />;
+        })}
+      </TableContainer>
     );
   },
   {

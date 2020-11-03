@@ -128,7 +128,7 @@ services:
       - ./services/tasks-api/schemas:/home/node/app/schemas
 
   model-api:
-    image: digirati/capture-models:v0.9.1
+    image: digirati/capture-models:v0.10.0
     environment:
       - SERVER_PORT=3000
       - DATABASE_HOST=shared-postgres
@@ -226,7 +226,8 @@ services:
       - IPYTHONDIR=/app/.ipython
       - MIGRATE=True
       - LOAD=False
-      - DJANGO_DEBUG=False
+      - DEBUG=True
+      - DJANGO_DEBUG=True
       - WAITRESS=False
       - POSTGRES_HOST=shared-postgres
       - POSTGRES_PORT=${POSTGRES_PORT}
@@ -237,6 +238,8 @@ services:
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@shared-postgres:${POSTGRES_PORT}/${POSTGRES_DB}
     links:
       - shared-postgres
+    volumes:
+      - ./services/search/search_service:/app:delegated
 
   okra:
-    image: digirati/okra:19bf503
+    image: digirati/okra:c052061

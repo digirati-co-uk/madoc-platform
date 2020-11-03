@@ -142,7 +142,7 @@ export function getLinks({
 }
 
 export function applyProperties(resourceLink: ResourceLink) {
-  const { file_path, file_bucket, file_hash, ...restProperties } = resourceLink.properties;
+  const { file_path, file_bucket, file_hash, ...restProperties } = resourceLink.properties || {};
 
   if (file_path && file_bucket) {
     resourceLink.file_path = file_path;
@@ -225,7 +225,11 @@ export function updateLinks(links: ResourceLinkRow[], resource_id: number, site_
           item.file_hash || null,
           item.motivation || null,
           item.format || null,
-          item.properties || null,
+          item.properties
+            ? typeof item.properties === 'string'
+              ? item.properties
+              : JSON.stringify(item.properties)
+            : null,
         ],
         SQL_COMMA
       )})`

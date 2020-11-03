@@ -70,6 +70,7 @@ type GetApiMethods = keyof Pick<
   | 'getSiteProjectCanvasTasks'
   | 'getSiteProjectManifestTasks'
   | 'getUserDetails'
+  | 'searchQuery'
 >;
 
 const keys = Object.getOwnPropertyNames(ApiClient.prototype);
@@ -81,7 +82,7 @@ export const apiHooks: {
   ) => QueryResult<MethodReturn<ApiClient[Key]>>;
 } = {} as any;
 for (const key of keys) {
-  if (key.startsWith('get')) {
+  if (key.startsWith('get') || key === 'searchQuery') {
     (apiHooks as any)[key] = (args: any, config: any) => {
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const hookedApi = useApi();
@@ -98,4 +99,3 @@ for (const key of keys) {
     };
   }
 }
-
