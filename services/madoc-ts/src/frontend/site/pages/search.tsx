@@ -135,6 +135,12 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
       <div>{t('Loading')}</div>
     ) : (
       <>
+        <PaginationNumbered
+          page={searchResponse && searchResponse.pagination ? searchResponse.pagination.page : 1}
+          totalPages={searchResponse && searchResponse.pagination ? searchResponse.pagination.totalPages : 1}
+          stale={false}
+          extraQuery={{ fulltext, madoc_id, facets: facets ? JSON.stringify(facets) : undefined }}
+        />
         <SearchContainer>
           <SearchFacets
             facets={facetOptions}
