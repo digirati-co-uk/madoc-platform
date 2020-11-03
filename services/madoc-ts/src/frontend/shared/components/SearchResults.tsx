@@ -72,6 +72,7 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; sea
   const manifestId = things.find(thing => thing?.type.toLowerCase() === 'manifest')?.id;
   const canvasId = things.find(thing => thing?.type.toLowerCase() === 'canvas')?.id;
   const searchText = result.hits[0] && result.hits[0].bounding_boxes ? search : undefined;
+  const snippet = result.hits && result.hits[0] && result.hits[0].snippet ? result.hits[0].snippet : undefined;
 
   return (
     <ResultContainer>
@@ -92,18 +93,16 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; sea
           </ImageStripBox>
           <div style={{ alignSelf: 'flex-start', marginLeft: '1em' }}>
             <LocaleString as={ResultTitle}>{result.label}</LocaleString>
-            {result.hits.map((found, i) => {
-              return found.snippet ? (
-                <div key={i} style={{ paddingBottom: '.8em' }}>
-                  <ResultText
-                    key={found.snippet}
-                    dangerouslySetInnerHTML={{
-                      __html: sanitizeLabel(found.snippet),
-                    }}
-                  />
-                </div>
-              ) : null;
-            })}
+            {snippet ? (
+              <div style={{ paddingBottom: '.8em' }}>
+                <ResultText
+                  key={snippet}
+                  dangerouslySetInnerHTML={{
+                    __html: sanitizeLabel(snippet),
+                  }}
+                />
+              </div>
+            ) : null}
           </div>
         </GridContainer>
       </HrefLink>
