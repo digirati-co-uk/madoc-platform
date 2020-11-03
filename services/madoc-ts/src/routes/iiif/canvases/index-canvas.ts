@@ -75,7 +75,7 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
   let modelId: string | undefined = undefined;
 
   for (const modelRef of models) {
-    const fullModel = await userApi.getCaptureModel(modelRef.id);
+    const fullModel = await userApi.getCaptureModel(modelRef.id, { published: true });
     traverseDocument(fullModel.document, {
       beforeVisitEntity(entity) {
         if (isParagraphEntity(entity)) {
