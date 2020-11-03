@@ -1,6 +1,7 @@
 import { MemoryRouter } from 'react-router-dom';
 import { AdminHeader } from '../src/frontend/admin/molecules/AdminHeader';
 import * as React from 'react';
+import { GlobalHeader } from '../src/frontend/shared/atoms/GlobalHeader';
 import { WidePage } from '../src/frontend/shared/atoms/WidePage';
 import { LightNavigation, LightNavigationItem } from '../src/frontend/shared/atoms/LightNavigation';
 
@@ -8,12 +9,32 @@ export default { title: 'Admin' };
 
 export const adminHeader = () => (
   <MemoryRouter>
+    <GlobalHeader
+      title={'Default site'}
+      username={'Some user'}
+      links={[
+        { label: 'Dashboard', link: '#' },
+        { label: 'View site', link: '#' },
+        { label: 'Account', link: '#' },
+        { label: 'Logout', link: '#' },
+      ]}
+    />
     <AdminHeader title="My awesome project" />
   </MemoryRouter>
 );
 
 export const adminHeaderWithBreadcrumbsAndMenu = () => (
   <MemoryRouter>
+    <GlobalHeader
+      title={'Default site'}
+      username={'Some user'}
+      links={[
+        { label: 'Dashboard', link: '#' },
+        { label: 'View site', link: '#' },
+        { label: 'Account', link: '#' },
+        { label: 'Logout', link: '#' },
+      ]}
+    />
     <AdminHeader
       title="My awesome project"
       breadcrumbs={[
@@ -38,6 +59,16 @@ export const adminHeaderWithBreadcrumbsAndMenu = () => (
 
 export const adminHeaderWithBreadcrumbsAndMenuAndSearch = () => (
   <MemoryRouter>
+    <GlobalHeader
+      title={'Default site'}
+      username={'Some user'}
+      links={[
+        { label: 'Dashboard', link: '#' },
+        { label: 'View site', link: '#' },
+        { label: 'Account', link: '#' },
+        { label: 'Logout', link: '#' },
+      ]}
+    />
     <AdminHeader
       title="My awesome project"
       breadcrumbs={[

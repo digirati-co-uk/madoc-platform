@@ -14956,6 +14956,11 @@ re-resizable@6.3.2:
   dependencies:
     fast-memoize "^2.5.1"
 
+react-accessible-dropdown-menu-hook@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/react-accessible-dropdown-menu-hook/-/react-accessible-dropdown-menu-hook-2.1.1.tgz#59711cd10d086663ee2561fc515519d9fe9e8b00"
+  integrity sha512-teIiGKMTvv8juQ1gNiDzB+3Ut9NzQz/Mvdsu4Cy/TaG6kaKDWEdT+Gj07vPd80INP3YtHU69f+rOYUCje9JgkA==
+
 react-aria-live@^2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/react-aria-live/-/react-aria-live-2.0.5.tgz#333480cb898d6963421bd86fe3cbd0ce54e37f08"
