@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 
 export const EditorToolbarContainer = styled.div`
-  background: #333;
+  background: #fff;
   display: flex;
   overflow: hidden;
   align-items: center;
@@ -15,33 +15,34 @@ export const EditorToolbarButton = styled.button<{ $rightBorder?: boolean }>`
   height: 100%;
   cursor: pointer;
   text-decoration: none;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(43, 43, 43, 0.8);
   background: transparent;
   border-radius: 0;
   border: none;
   font-size: 1em;
   &:hover {
-    background: #555;
-    color: rgba(255, 255, 255, 1);
+    background: #f9f9f9;
+    color: rgba(0, 0, 0, 1);
   }
   &:focus {
     outline: none;
-    background: #555;
+    color: #fff;
+    background: #3766f2;
   }
   &:disabled {
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(0, 0, 0, 0.3);
     cursor: not-allowed;
     &:hover {
       background: transparent;
     }
   }
   & ~ & {
-    border-left: 1px solid #666;
+    border-left: 1px solid #eee;
   }
   ${props =>
     props.$rightBorder &&
     css`
-      border-right: 1px solid #666;
+      border-right: 1px solid #eee;
     `}
 `;
 
@@ -66,7 +67,7 @@ export const EditorToolbarIcon = styled.div`
 
 export const EditorToolbarTitle = styled.div`
   font-size: 1.15em;
-  color: #fff;
+  color: #333;
   margin-left: 0.5em;
 `;
 
