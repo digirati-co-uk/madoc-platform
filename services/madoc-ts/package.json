@@ -10,6 +10,9 @@
     "storybook": "start-storybook -p 6500",
     "watch": "tsc -p --watch",
     "test": "jest",
+    "uxpin": "uxpin-merge --disable-tunneling",
+    "uxpin-server": "uxpin-merge server",
+    "uxpin-push": "uxpin-merge push",
     "build": "NODE_ENV=production yarn generate-schema && tsc -p . && yarn build:admin && yarn build:site",
     "generate-migration": "node migrate.js create",
     "generate-schema": "node generate-schemas.js",
@@ -138,7 +141,9 @@
     "@babel/preset-env": "^7.11.5",
     "@babel/plugin-proposal-decorators": "^7.10.5",
     "@babel/core": "^7.11.6",
+    "@uxpin/merge-cli": "^2.7.0",
     "babel-loader": "^8.1.0",
+    "babel-core": "^6.26.3",
     "babel-plugin-transform-typescript-metadata": "^0.3.1",
     "babel-plugin-styled-components": "^1.11.1",
     "bundle-duplicates-plugin": "^0.0.1",
@@ -160,7 +165,8 @@
     "typescript-json-schema": "^0.42.0",
     "typescript-plugin-styled-components": "^1.4.4",
     "unused-webpack-plugin": "^2.4.0",
-    "webpack-cli": "^3.3.11"
+    "webpack-cli": "^3.3.11",
+    "awesome-typescript-loader": "^5.2.1"
   },
   "jest": {
     "preset": "ts-jest",
