@@ -69,11 +69,11 @@ export const ManifestList: UniversalComponent<ManifestListType> = createUniversa
               }}
             >
               <InputContainer wide>
-                <InputLabel>{t('Search for manifest')}</InputLabel>
+                <InputLabel>{t('Search manifests')}</InputLabel>
                 <GridContainer>
                   <ExpandGrid>
                     <Input
-                      placeholder={t('Search for manifest')}
+                      placeholder={t('Enter keyword')}
                       type="text"
                       onChange={e => setSearch(e.currentTarget.value)}
                     />
