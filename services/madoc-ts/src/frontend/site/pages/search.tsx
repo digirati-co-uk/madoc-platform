@@ -200,9 +200,9 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
         {
           fulltext: vars.fulltext,
           facets: stringifyFacets({ ...vars.facets }) as any,
+          contexts: vars.madoc_id ? [vars.madoc_id] : undefined,
         },
-        vars.page,
-        vars.madoc_id
+        vars.page
       );
 
       return {
