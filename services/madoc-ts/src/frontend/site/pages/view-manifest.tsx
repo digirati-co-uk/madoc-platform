@@ -29,6 +29,7 @@ import { useApi } from '../../shared/hooks/use-api';
 import { useMutation } from 'react-query';
 import { ErrorMessage } from '../../shared/atoms/ErrorMessage';
 import { Heading1, Subheading1 } from '../../shared/atoms/Heading1';
+import { MetaDataDisplay } from '../../shared/components/MetaDataDisplay';
 
 const ManifestUserTasks: React.FC<{
   tasks: Array<CrowdsourcingTask | CrowdsourcingManifestTask>;
@@ -224,27 +225,33 @@ export const ViewManifest: React.FC<{
             <MediumRoundedButton as={Link} to={`/search?madoc_id=urn:madoc:manifest:${manifest.id}`}>
               Search this manifest
             </MediumRoundedButton>
-            <ImageGrid>
-              {manifest.items.map((canvas, idx) => (
-                <Link
-                  key={`${canvas.id}_${idx}`}
-                  to={createLink({
-                    projectId: project?.slug,
-                    collectionId: collection?.id,
-                    manifestId: manifest.id,
-                    canvasId: canvas.id,
-                  })}
-                >
-                  <ImageStripBox>
-                    <CroppedImage>
-                      {canvas.thumbnail ? <img alt={t('First image in manifest')} src={canvas.thumbnail} /> : null}
-                    </CroppedImage>
-                    {manifestSubjects && subjectMap ? <CanvasStatus status={subjectMap[canvas.id]} /> : null}
-                    <LocaleString as={Heading5}>{canvas.label}</LocaleString>
-                  </ImageStripBox>
-                </Link>
-              ))}
-            </ImageGrid>
+            <div style={{ display: 'flex' }}>
+              <ImageGrid>
+                {manifest.items.map((canvas, idx) => (
+                  <Link
+                    key={`${canvas.id}_${idx}`}
+                    to={createLink({
+                      projectId: project?.slug,
+                      collectionId: collection?.id,
+                      manifestId: manifest.id,
+                      canvasId: canvas.id,
+                    })}
+                  >
+                    <ImageStripBox>
+                      <CroppedImage>
+                        {canvas.thumbnail ? <img alt={t('First image in manifest')} src={canvas.thumbnail} /> : null}
+                      </CroppedImage>
+                      {manifestSubjects && subjectMap ? <CanvasStatus status={subjectMap[canvas.id]} /> : null}
+                      <LocaleString as={Heading5}>{canvas.label}</LocaleString>
+                    </ImageStripBox>
+                  </Link>
+                ))}
+              </ImageGrid>
+              <MetaDataDisplay
+                style={{ width: '40%', backgroundColor: '#ebebeb' }}
+                metadata={manifest.metadata}
+              ></MetaDataDisplay>
+            </div>
           </>
         ) : null}
       </div>

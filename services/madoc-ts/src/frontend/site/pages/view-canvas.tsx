@@ -1,7 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { InfoMessage } from '../../shared/atoms/InfoMessage';
 import { LockIcon } from '../../shared/atoms/LockIcon';
+import { GridIcon } from '../../shared/icons/GridIcon';
 import { CanvasNavigation } from '../../shared/components/CanvasNavigation';
+import { CanvasNavigationMinimalist } from '../../shared/components/CanvasNavigationMinimalist';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { CanvasContext, useVaultEffect } from '@hyperion-framework/react-vault';
 import { CanvasNormalized } from '@hyperion-framework/types';
@@ -9,6 +11,7 @@ import { useApi } from '../../shared/hooks/use-api';
 import { useParams, useHistory, Link } from 'react-router-dom';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { SimpleAtlasViewer } from '../../shared/components/SimpleAtlasViewer';
+import { MetaDataDisplay } from '../../shared/components/MetaDataDisplay';
 import { ProjectListingDescription, ProjectListingItem, ProjectListingTitle } from '../../shared/atoms/ProjectListing';
 import { useCanvasSearch } from '../../shared/hooks/use-canvas-search';
 import { createLink } from '../../shared/utility/create-link';
@@ -22,8 +25,29 @@ import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
 import { CrowdsourcingReview } from '../../../gateway/tasks/crowdsourcing-review';
 import { SuccessMessage } from '../../shared/atoms/SuccessMessage';
 import { CanvasLoaderType } from './loaders/canvas-loader';
+import { TabPanel } from '../../shared/components/TabPanel';
+import styled from 'styled-components';
 
 type ViewCanvasProps = Partial<CanvasLoaderType['data'] & CanvasLoaderType['context']>;
+
+const BrowseAll = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 40%;
+  margin-left: 1rem;
+  a {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    color: #343a40;
+  }
+  svg {
+    background-color: #ebebeb;
+    padding: 0.5rem;
+    margin-right: 1rem;
+  }
+`;
 
 export const ContinueSubmission: React.FC<{
   project: ProjectFull;
@@ -199,6 +223,8 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
 
   const canClaimCanvas = project?.config.claimGranularity ? project?.config.claimGranularity === 'canvas' : true;
   const api = useApi();
+  const [manifest, setManifest] = useState({});
+  const [collectionName, setCollectionName] = useState({ en: ['Collection'] });
   const completedAndHide = project?.config.allowSubmissionsWhenCanvasComplete === false && canvasTask?.status === 3;
   const user = api.getIsServer() ? undefined : api.getCurrentUser();
   const bypassCanvasNavigation = user
@@ -223,6 +249,21 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
       });
   };
 
+  useEffect(() => {
+    if (manifestId) {
+      (async () => {
+        const { manifest } = await api.getManifestById(Number(manifestId));
+        setManifest(manifest);
+      })();
+    }
+    if (collectionId) {
+      (async () => {
+        const { collection } = await api.getCollectionById(Number(collectionId));
+        setCollectionName(collection?.label);
+      })();
+    }
+  }, [manifestId, collectionId]);
+
   useVaultEffect(
     vault => {
       if (canvas && canvas.source) {
@@ -244,56 +285,114 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
     [canvas]
   );
 
+  const [selectedPanel, setSelectedPanel] = useState(0);
+
   return (
     <>
       <DisplayBreadcrumbs />
-      <LocaleString as="h1">{canvas ? canvas.label : { en: ['...'] }}</LocaleString>
       {project ? (
-        <ContinueSubmission
-          canClaimCanvas={canClaimCanvas}
-          onContribute={onContribute}
-          canvasId={Number(id)}
-          isLoading={isLoadingTasks}
-          manifestUserTasks={manifestUserTasks}
-          userTasks={userTasks}
-          isComplete={completedAndHide}
-          isMax={!canUserSubmit}
-          manifestId={manifestId ? Number(manifestId) : undefined}
-          collectionId={collectionId ? Number(collectionId) : undefined}
-          project={project}
-        />
-      ) : null}
-      {highlightedRegions && highlightedRegions.bounding_boxes ? (
-        <InfoMessage>
-          {highlightedRegions.bounding_boxes.length} Search results for <strong>{searchText}</strong>{' '}
-          <Link to={createLink({ canvasId: id, manifestId, projectId: project?.slug, collectionId })}>
-            Clear search
-          </Link>
-        </InfoMessage>
-      ) : null}
-      {preventCanvasNavigation && !manifestUserTasks?.length ? (
-        <div style={{ textAlign: 'center', padding: '2em', marginTop: '1em', marginBottom: '1em', background: '#eee' }}>
-          <LockIcon style={{ fontSize: '3em' }} />
-          <Heading3>This canvas is not available to browse</Heading3>
-        </div>
-      ) : null}
-      {canvasRef && (!preventCanvasNavigation || bypassCanvasNavigation) ? (
-        <CanvasContext canvas={canvasRef.id}>
-          <SimpleAtlasViewer
-            style={{ height: project ? '50vh' : '60vh' }}
-            highlightedRegions={highlightedRegions ? highlightedRegions.bounding_boxes : undefined}
+        <>
+          <LocaleString as="h1">{canvas ? canvas.label : { en: ['...'] }}</LocaleString>
+          <ContinueSubmission
+            canClaimCanvas={canClaimCanvas}
+            onContribute={onContribute}
+            canvasId={Number(id)}
+            isLoading={isLoadingTasks}
+            manifestUserTasks={manifestUserTasks}
+            userTasks={userTasks}
+            isComplete={completedAndHide}
+            isMax={!canUserSubmit}
+            manifestId={manifestId ? Number(manifestId) : undefined}
+            collectionId={collectionId ? Number(collectionId) : undefined}
+            project={project}
           />
-        </CanvasContext>
-      ) : null}
-      {preventCanvasNavigation && !bypassCanvasNavigation ? null : (
-        <CanvasNavigation
-          manifestId={manifestId}
-          canvasId={id}
-          collectionId={collectionId}
-          projectId={project?.slug}
-          query={searchText ? { searchText } : undefined}
-        />
+          {highlightedRegions && highlightedRegions.bounding_boxes ? (
+            <InfoMessage>
+              {highlightedRegions.bounding_boxes.length} Search results for <strong>{searchText}</strong>{' '}
+              <Link to={createLink({ canvasId: id, manifestId, projectId: project?.slug, collectionId })}>
+                Clear search
+              </Link>
+            </InfoMessage>
+          ) : null}
+          {preventCanvasNavigation && !manifestUserTasks?.length ? (
+            <div
+              style={{ textAlign: 'center', padding: '2em', marginTop: '1em', marginBottom: '1em', background: '#eee' }}
+            >
+              <LockIcon style={{ fontSize: '3em' }} />
+              <Heading3>This canvas is not available to browse</Heading3>
+            </div>
+          ) : null}
+          {canvasRef && (!preventCanvasNavigation || bypassCanvasNavigation) ? (
+            <CanvasContext canvas={canvasRef.id}>
+              <SimpleAtlasViewer
+                style={{ height: project ? '50vh' : '60vh' }}
+                highlightedRegions={highlightedRegions ? highlightedRegions.bounding_boxes : undefined}
+              />
+            </CanvasContext>
+          ) : null}
+          {preventCanvasNavigation && !bypassCanvasNavigation ? null : (
+            <CanvasNavigation
+              manifestId={manifestId}
+              canvasId={id}
+              collectionId={collectionId}
+              projectId={project?.slug}
+              query={searchText ? { searchText } : undefined}
+            />
+          )}
+        </>
+      ) : (
+        <>
+          <div style={{ fontSize: '32px', color: '#212529', textDecoration: 'rgb(33, 37, 41)', lineHeight: '29px', paddingTop: '3rem' }}>
+            <HrefLink href={createLink({ collectionId: collectionId })}>
+              <LocaleString>{collectionName}</LocaleString>
+            </HrefLink>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <LocaleString style={{ width: '60vw', fontSize: '24px', color: '#212529' }}>
+              {manifest ? manifest?.label : { en: ['...'] }}
+            </LocaleString>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '40%' }}>
+              <BrowseAll>
+                <HrefLink href={createLink({ manifestId: manifestId })}>
+                  <GridIcon style={{ width: '24px', height: '24px' }} />
+                  Browse all
+                </HrefLink>
+              </BrowseAll>
+              {preventCanvasNavigation && !bypassCanvasNavigation ? null : (
+                <CanvasNavigationMinimalist
+                  manifestId={manifestId}
+                  canvasId={id}
+                  collectionId={collectionId}
+                  projectId={project?.slug}
+                  query={searchText ? { searchText } : undefined}
+                />
+              )}
+            </div>
+          </div>
+
+          {canvasRef && (!preventCanvasNavigation || bypassCanvasNavigation) ? (
+            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+              <CanvasContext canvas={canvasRef.id}>
+                <SimpleAtlasViewer
+                  style={{ height: '60vh', width: '60vw' }}
+                  highlightedRegions={highlightedRegions ? highlightedRegions.bounding_boxes : undefined}
+                />
+              </CanvasContext>
+              <TabPanel
+                style={{ height: '60vh', width: '40%' }}
+                menu={[
+                  { label: 'TRANSCRIPTION', component: <div></div> },
+                  { label: 'METADATA', component: <MetaDataDisplay metadata={canvas?.metadata || []} /> },
+                ]}
+                switchPanel={(idx: number) => setSelectedPanel(idx)}
+                selected={selectedPanel}
+              />
+            </div>
+          ) : null}
+        </>
       )}
+
+      <MetaDataDisplay metadata={manifest?.metadata || []} />
     </>
   );
 };
