@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 type StandardButtonProps = {
   $size?: 'large' | 'medium' | 'small';
@@ -38,6 +38,7 @@ const getPadding = (props: StandardButtonProps) => {
 export const StandardButton = styled.button<{
   $size?: 'large' | 'medium' | 'small';
   $variation?: 'primary' | 'secondary' | 'tertiary';
+  $stretched?: boolean;
 }>`
   cursor: pointer;
   font-size: ${getFontSize};
@@ -48,6 +49,11 @@ export const StandardButton = styled.button<{
   color: ${props => (props.$variation === 'primary' ? primaryText : secondaryText)};
   border: 1px solid ${props => (props.$variation !== 'tertiary' ? primary : 'transparent')};
   text-decoration: none;
+  ${props =>
+    props.$stretched &&
+    css`
+      width: 100%;
+    `}
   &:active {
     box-shadow: inset 0 2px 8px 0 rgba(78, 130, 223, 0.6);
   }

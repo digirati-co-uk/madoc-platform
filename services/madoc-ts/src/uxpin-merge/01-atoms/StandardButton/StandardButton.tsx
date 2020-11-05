@@ -10,6 +10,10 @@ export type Props = {
    * @default 'primary'
    */
   variation: 'primary' | 'secondary' | 'tertiary';
+  /**
+   * @default true
+   */
+  stretched: boolean;
   /** The content to display inside the button */
   children?: string;
   /** Callback when clicked */
@@ -21,8 +25,8 @@ export type Props = {
 /**
  * @uxpincomponent
  */
-function StandardButton({ size, variation, ...props }: Props) {
-  return <OriginalStandardButton $size={size} $variation={variation} {...props} />;
+function StandardButton({ size, variation, stretched = true, ...props }: Props) {
+  return <OriginalStandardButton $stretched={stretched} $size={size} $variation={variation} {...props} />;
 }
 
 export default StandardButton;
