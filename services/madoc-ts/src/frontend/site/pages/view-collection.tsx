@@ -76,7 +76,7 @@ export const ViewCollection: React.FC<Partial<
                     manifestId: manifest.id,
                     collectionId: collection.id,
                     // TODO: WORK OUT HOW TO MAP THIS THROUGH WITH COLLECTIONFULL
-                    canvasId: manifest.firstCanvasId,
+                    // canvasId: manifest.firstCanvasId,
                     projectId: project ? project.slug : undefined,
                   }
             )}
