@@ -24,9 +24,6 @@ create table iiif_linking
             on delete cascade
 );
 
-alter table iiif_linking
-    owner to madoc_ts;
-
 create unique index iiif_linking_uri_resource_id_uindex
     on iiif_linking (uri, resource_id);
 
