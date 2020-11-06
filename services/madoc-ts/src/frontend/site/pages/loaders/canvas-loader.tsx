@@ -9,12 +9,12 @@ import { ManifestFull } from '../../../../types/schemas/manifest-full';
 import { ProjectFull } from '../../../../types/schemas/project-full';
 import { BreadcrumbContext, DisplayBreadcrumbs } from '../../../shared/components/Breadcrumbs';
 import { ApiArgs, apiHooks } from '../../../shared/hooks/use-api-query';
-import { useData, useStaticData } from '../../../shared/hooks/use-data';
-import { useLocationQuery } from '../../../shared/hooks/use-location-query';
+import { useData } from '../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { UniversalComponent } from '../../../types';
 import { useParams } from 'react-router-dom';
+import { ManifestLoaderType } from './manifest-loader';
 
 export type CanvasLoaderType = {
   params: {
@@ -26,7 +26,7 @@ export type CanvasLoaderType = {
   query: {};
   variables: ApiArgs<'getSiteCanvas'>;
   data: CanvasFull;
-  context: {
+  context: Partial<ManifestLoaderType['context']> & {
     project?: ProjectFull;
     manifest: ManifestFull['manifest'];
     manifestUserTasks?: Array<CrowdsourcingTask | CrowdsourcingReview>;

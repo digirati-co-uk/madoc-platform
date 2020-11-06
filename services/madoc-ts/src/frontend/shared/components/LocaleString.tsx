@@ -119,9 +119,14 @@ export const LocaleString: React.FC<{
 
   if (language) {
     return (
-      <LanguageString {...props} as={Component} language={language}>
-        {text}
-      </LanguageString>
+      <LanguageString
+        {...props}
+        as={Component}
+        language={language}
+        dangerouslySetInnerHTML={{
+          __html: text,
+        }}
+      />
     );
   }
 
@@ -129,5 +134,12 @@ export const LocaleString: React.FC<{
     return <Component {...props}>{text}</Component>;
   }
 
-  return <span {...props}>{text}</span>;
+  return (
+    <span
+      {...props}
+      dangerouslySetInnerHTML={{
+        __html: text,
+      }}
+    />
+  );
 };

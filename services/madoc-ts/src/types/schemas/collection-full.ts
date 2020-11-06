@@ -15,6 +15,7 @@ export type CollectionFull = {
       label: InternationalString;
       thumbnail: null | string;
       canvasCount?: number;
+      firstCanvasId?: number;
     }>;
   };
   subjects?: Array<{

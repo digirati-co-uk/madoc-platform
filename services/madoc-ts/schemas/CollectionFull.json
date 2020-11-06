@@ -110,6 +110,9 @@
               },
               "canvasCount": {
                 "type": "number"
+              },
+              "firstCanvasId": {
+                "type": "number"
               }
             },
             "required": [
