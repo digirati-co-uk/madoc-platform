@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { Pagination } from '../../../../types/schemas/_pagination';
 import { ApiArgs, apiHooks } from '../../../shared/hooks/use-api-query';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { UniversalComponent } from '../../../types';
@@ -8,13 +9,17 @@ import { usePaginatedData } from '../../../shared/hooks/use-data';
 import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
 import { ManifestFull } from '../../../../types/schemas/manifest-full';
 import { useParams } from 'react-router-dom';
+import { CollectionLoaderType } from './collection-loader';
 
-type ManifestLoaderType = {
+export type ManifestLoaderType = {
   params: { id: string; collectionId?: string; slug?: string };
   query: { m: string; filter: string };
   variables: ApiArgs<'getSiteManifest'>;
   data: ManifestFull;
-  context: { collection: CollectionFull['collection'] };
+  context: Partial<CollectionLoaderType['context']> & {
+    collection: CollectionFull['collection'];
+    pagination: Pagination;
+  };
 };
 
 export const ManifestLoader: UniversalComponent<ManifestLoaderType> = createUniversalComponent<ManifestLoaderType>(

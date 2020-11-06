@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { Pagination } from '../../../../types/schemas/_pagination';
 import { ApiArgs } from '../../../shared/hooks/use-api-query';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
@@ -26,11 +27,15 @@ import { CollectionFull } from '../../../../types/schemas/collection-full';
  * Possibly:
  * - links - a helper for generating links
  */
-type CollectionLoaderType = {
+export type CollectionLoaderType = {
   params: { id: string; slug?: string; manifest?: string; canvas?: string };
   query: { c: string; filter?: string };
   variables: ApiArgs<'getSiteCollection'>;
   data: CollectionFull;
+  context: {
+    collection: CollectionFull;
+    pagination: Pagination;
+  };
 };
 
 export const CollectionLoader: UniversalComponent<CollectionLoaderType> = createUniversalComponent<
