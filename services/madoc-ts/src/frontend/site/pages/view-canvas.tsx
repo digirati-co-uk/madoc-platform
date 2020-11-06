@@ -219,6 +219,8 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
   canUserSubmit,
   canvas,
   isLoadingTasks,
+  manifest,
+  collection
 }) => {
   const { id, manifestId, collectionId } = useParams<{ id: string; manifestId?: string; collectionId?: string }>();
   const [canvasRef, setCanvasRef] = useState<CanvasNormalized>();
@@ -227,8 +229,6 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
 
   const canClaimCanvas = project?.config.claimGranularity ? project?.config.claimGranularity === 'canvas' : true;
   const api = useApi();
-  const [manifest, setManifest] = useState<ManifestFull | undefined>();
-  const [collectionName, setCollectionName] = useState<InternationalString>();
   const completedAndHide = project?.config.allowSubmissionsWhenCanvasComplete === false && canvasTask?.status === 3;
   const user = api.getIsServer() ? undefined : api.getCurrentUser();
   const bypassCanvasNavigation = user
@@ -252,21 +252,6 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
         );
       });
   };
-
-  useEffect(() => {
-    if (manifestId) {
-      (async () => {
-        const manifest = await api.getManifestById(Number(manifestId));
-        if (manifest) setManifest(manifest);
-      })();
-    }
-    if (collectionId) {
-      (async () => {
-        const { collection } = await api.getCollectionById(Number(collectionId));
-        setCollectionName(collection?.label);
-      })();
-    }
-  }, [manifestId, collectionId]);
 
   useVaultEffect(
     vault => {
@@ -356,12 +341,12 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
             }}
           >
             <HrefLink href={createLink({ collectionId: collectionId })}>
-              <LocaleString>{collectionName}</LocaleString>
+              <LocaleString>{collection?.label}</LocaleString>
             </HrefLink>
           </div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <div style={{ width: '60vw', fontSize: '24px', color: '#212529' }}>
-              <LocaleString>{manifest ? manifest.manifest.label : { en: ['...'] }}</LocaleString>
+              <LocaleString>{manifest ? manifest.label : { en: ['...'] }}</LocaleString>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '40%' }}>
               <BrowseAll>
@@ -383,9 +368,7 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
           {highlightedRegions && highlightedRegions.bounding_boxes ? (
             <InfoMessage>
               {highlightedRegions.bounding_boxes.length} Search results for <strong>{searchText}</strong>{' '}
-              <Link to={createLink({ canvasId: id, manifestId, collectionId })}>
-                Clear search
-              </Link>
+              <Link to={createLink({ canvasId: id, manifestId, collectionId })}>Clear search</Link>
             </InfoMessage>
           ) : null}
           {canvasRef && (!preventCanvasNavigation || bypassCanvasNavigation) ? (
@@ -410,7 +393,7 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
         </>
       )}
 
-      <MetaDataDisplay metadata={(manifest && manifest.manifest.metadata) || []} />
+      <MetaDataDisplay metadata={(manifest && manifest.metadata) || []} />
     </>
   );
 };
