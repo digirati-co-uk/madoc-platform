@@ -92,6 +92,7 @@
     "object-assign": "^4.1.1",
     "query-string": "^6.12.1",
     "react": "^16.13.1",
+    "react-accessible-dropdown-menu-hook": "^2.1.1",
     "react-beautiful-dnd": "^13.0.0",
     "react-dom": "^16.13.1",
     "react-error-boundary": "^2.3.1",

@@ -34,7 +34,7 @@ export const InnerModalContainer = styled.div`
 `;
 
 export const ModalHeader = styled.div`
-  background: #000;
+  background: #3766f2;
   width: 100%;
   color: #fff;
   padding: 1em;
