@@ -19,6 +19,7 @@ const MetaDataKey = styled.p`
   display: flex;
   align-items: center;
   min-width: 8rem;
+  font-weight: bold;
 `;
 
 const MetaDataValue = styled.p`
@@ -44,7 +45,6 @@ export const MetaDataDisplay: React.FC<{
           <MetadataContainer>
             <MetaDataKey>
               <LocaleString>{metadata.label}</LocaleString>
-              {' : '}
             </MetaDataKey>
             <MetaDataValue>
               <LocaleString>{metadata.value}</LocaleString>
