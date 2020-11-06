@@ -27,9 +27,10 @@ import { SuccessMessage } from '../../shared/atoms/SuccessMessage';
 import { CanvasLoaderType } from './loaders/canvas-loader';
 import { TabPanel } from '../../shared/components/TabPanel';
 import { InternationalString } from '@hyperion-framework/types';
+import { ManifestFull } from '../../../types/schemas/manifest-full';
+
 
 import styled from 'styled-components';
-import { ManifestFull } from 'types/schemas/manifest-full';
 
 type ViewCanvasProps = Partial<CanvasLoaderType['data'] & CanvasLoaderType['context']>;
 
