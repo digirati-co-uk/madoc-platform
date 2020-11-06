@@ -383,7 +383,7 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
           {highlightedRegions && highlightedRegions.bounding_boxes ? (
             <InfoMessage>
               {highlightedRegions.bounding_boxes.length} Search results for <strong>{searchText}</strong>{' '}
-              <Link to={createLink({ canvasId: id, manifestId, projectId: project.slug, collectionId })}>
+              <Link to={createLink({ canvasId: id, manifestId, collectionId })}>
                 Clear search
               </Link>
             </InfoMessage>
