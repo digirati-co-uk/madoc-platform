@@ -380,7 +380,14 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
               )}
             </div>
           </div>
-
+          {highlightedRegions && highlightedRegions.bounding_boxes ? (
+            <InfoMessage>
+              {highlightedRegions.bounding_boxes.length} Search results for <strong>{searchText}</strong>{' '}
+              <Link to={createLink({ canvasId: id, manifestId, projectId: project.slug, collectionId })}>
+                Clear search
+              </Link>
+            </InfoMessage>
+          ) : null}
           {canvasRef && (!preventCanvasNavigation || bypassCanvasNavigation) ? (
             <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
               <CanvasContext canvas={canvasRef.id}>
@@ -403,7 +410,7 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
         </>
       )}
 
-      <MetaDataDisplay metadata={manifest && manifest.manifest.metadata || []} />
+      <MetaDataDisplay metadata={(manifest && manifest.manifest.metadata) || []} />
     </>
   );
 };
