@@ -26,7 +26,10 @@ import { CrowdsourcingReview } from '../../../gateway/tasks/crowdsourcing-review
 import { SuccessMessage } from '../../shared/atoms/SuccessMessage';
 import { CanvasLoaderType } from './loaders/canvas-loader';
 import { TabPanel } from '../../shared/components/TabPanel';
+import { InternationalString } from '@hyperion-framework/types';
+
 import styled from 'styled-components';
+import { ManifestFull } from 'types/schemas/manifest-full';
 
 type ViewCanvasProps = Partial<CanvasLoaderType['data'] & CanvasLoaderType['context']>;
 
@@ -44,7 +47,7 @@ const BrowseAll = styled.div`
   }
   svg {
     background-color: #ebebeb;
-    padding: 0.5rem;
+    padding: 0.05rem;
     margin-right: 1rem;
   }
 `;
@@ -223,8 +226,8 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
 
   const canClaimCanvas = project?.config.claimGranularity ? project?.config.claimGranularity === 'canvas' : true;
   const api = useApi();
-  const [manifest, setManifest] = useState({});
-  const [collectionName, setCollectionName] = useState({ en: ['Collection'] });
+  const [manifest, setManifest] = useState<ManifestFull | undefined>();
+  const [collectionName, setCollectionName] = useState<InternationalString>();
   const completedAndHide = project?.config.allowSubmissionsWhenCanvasComplete === false && canvasTask?.status === 3;
   const user = api.getIsServer() ? undefined : api.getCurrentUser();
   const bypassCanvasNavigation = user
@@ -252,8 +255,8 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
   useEffect(() => {
     if (manifestId) {
       (async () => {
-        const { manifest } = await api.getManifestById(Number(manifestId));
-        setManifest(manifest);
+        const manifest = await api.getManifestById(Number(manifestId));
+        if (manifest) setManifest(manifest);
       })();
     }
     if (collectionId) {
@@ -309,7 +312,7 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
           {highlightedRegions && highlightedRegions.bounding_boxes ? (
             <InfoMessage>
               {highlightedRegions.bounding_boxes.length} Search results for <strong>{searchText}</strong>{' '}
-              <Link to={createLink({ canvasId: id, manifestId, projectId: project?.slug, collectionId })}>
+              <Link to={createLink({ canvasId: id, manifestId, projectId: project.slug, collectionId })}>
                 Clear search
               </Link>
             </InfoMessage>
@@ -342,15 +345,23 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
         </>
       ) : (
         <>
-          <div style={{ fontSize: '32px', color: '#212529', textDecoration: 'rgb(33, 37, 41)', lineHeight: '29px', paddingTop: '3rem' }}>
+          <div
+            style={{
+              fontSize: '32px',
+              color: '#212529',
+              textDecoration: 'none',
+              lineHeight: '29px',
+              paddingTop: '3rem',
+            }}
+          >
             <HrefLink href={createLink({ collectionId: collectionId })}>
               <LocaleString>{collectionName}</LocaleString>
             </HrefLink>
           </div>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <LocaleString style={{ width: '60vw', fontSize: '24px', color: '#212529' }}>
-              {manifest ? manifest?.label : { en: ['...'] }}
-            </LocaleString>
+            <div style={{ width: '60vw', fontSize: '24px', color: '#212529' }}>
+              <LocaleString>{manifest ? manifest.manifest.label : { en: ['...'] }}</LocaleString>
+            </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '40%' }}>
               <BrowseAll>
                 <HrefLink href={createLink({ manifestId: manifestId })}>
@@ -363,7 +374,6 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
                   manifestId={manifestId}
                   canvasId={id}
                   collectionId={collectionId}
-                  projectId={project?.slug}
                   query={searchText ? { searchText } : undefined}
                 />
               )}
@@ -392,7 +402,7 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
         </>
       )}
 
-      <MetaDataDisplay metadata={manifest?.metadata || []} />
+      <MetaDataDisplay metadata={manifest && manifest.manifest.metadata || []} />
     </>
   );
 };
