@@ -45,10 +45,10 @@ export const MetaDataDisplay: React.FC<{
             return (
               <MetadataContainer key={idx}>
                 <MetaDataKey>
-                  <LocaleString>{metadataItem.label}</LocaleString>
+                  <LocaleString enableDangerouslySetInnerHTML>{metadataItem.label}</LocaleString>
                 </MetaDataKey>
                 <MetaDataValue>
-                  <LocaleString>{metadataItem.value}</LocaleString>
+                  <LocaleString enableDangerouslySetInnerHTML>{metadataItem.value}</LocaleString>
                 </MetaDataValue>
               </MetadataContainer>
             );

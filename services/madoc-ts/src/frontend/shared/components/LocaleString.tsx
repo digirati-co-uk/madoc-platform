@@ -98,8 +98,9 @@ export const LocaleString: React.FC<{
   as?: string | React.FC<any>;
   defaultText?: string;
   to?: string;
+  enableDangerouslySetInnerHTML?: boolean;
   children: InternationalString | null | undefined;
-}> = ({ as: Component, defaultText, children, ...props }) => {
+}> = ({ as: Component, defaultText, enableDangerouslySetInnerHTML, children, ...props }) => {
   const language = useClosestLanguage(() => Object.keys(children || {}), [children]);
   const text = useMemo(() => {
     if (!children) {
@@ -123,10 +124,16 @@ export const LocaleString: React.FC<{
         {...props}
         as={Component}
         language={language}
-        dangerouslySetInnerHTML={{
-          __html: text,
-        }}
-      />
+        dangerouslySetInnerHTML={
+          enableDangerouslySetInnerHTML
+            ? {
+                __html: text,
+              }
+            : undefined
+        }
+      >
+        {enableDangerouslySetInnerHTML ? undefined : text}
+      </LanguageString>
     );
   }
 
@@ -137,9 +144,15 @@ export const LocaleString: React.FC<{
   return (
     <span
       {...props}
-      dangerouslySetInnerHTML={{
-        __html: text,
-      }}
-    />
+      dangerouslySetInnerHTML={
+        enableDangerouslySetInnerHTML
+          ? {
+              __html: text,
+            }
+          : undefined
+      }
+    >
+      {enableDangerouslySetInnerHTML ? undefined : text}
+    </span>
   );
 };
