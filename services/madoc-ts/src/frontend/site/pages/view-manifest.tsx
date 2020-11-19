@@ -249,8 +249,8 @@ export const ViewManifest: React.FC<{
               </ImageGrid>
               <MetaDataDisplay
                 style={{ width: '40%', backgroundColor: '#ebebeb' }}
-                metadata={manifest.metadata}
-              ></MetaDataDisplay>
+                metadata={manifest.metadata || []}
+              />
             </div>
           </>
         ) : null}

@@ -29,7 +29,6 @@ import { TabPanel } from '../../shared/components/TabPanel';
 import { InternationalString } from '@hyperion-framework/types';
 import { ManifestFull } from '../../../types/schemas/manifest-full';
 
-
 import styled from 'styled-components';
 
 type ViewCanvasProps = Partial<CanvasLoaderType['data'] & CanvasLoaderType['context']>;
@@ -220,7 +219,7 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
   canvas,
   isLoadingTasks,
   manifest,
-  collection
+  collection,
 }) => {
   const { id, manifestId, collectionId } = useParams<{ id: string; manifestId?: string; collectionId?: string }>();
   const [canvasRef, setCanvasRef] = useState<CanvasNormalized>();
@@ -379,15 +378,18 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
                   highlightedRegions={highlightedRegions ? highlightedRegions.bounding_boxes : undefined}
                 />
               </CanvasContext>
-              <TabPanel
-                style={{ height: '60vh', width: '40%' }}
-                menu={[
-                  { label: 'TRANSCRIPTION', component: <div></div> },
-                  { label: 'METADATA', component: <MetaDataDisplay metadata={canvas?.metadata || []} /> },
-                ]}
-                switchPanel={(idx: number) => setSelectedPanel(idx)}
-                selected={selectedPanel}
-              />
+              {canvas && canvas.metadata ? (
+                <TabPanel
+                  style={{ height: '60vh', width: '40%' }}
+                  menu={[
+                    // Removed transcription for now.
+                    // { label: 'TRANSCRIPTION', component: <div /> },
+                    { label: 'METADATA', component: <MetaDataDisplay metadata={canvas.metadata} /> },
+                  ]}
+                  switchPanel={(idx: number) => setSelectedPanel(idx)}
+                  selected={selectedPanel}
+                />
+              ) : null}
             </div>
           ) : null}
         </>

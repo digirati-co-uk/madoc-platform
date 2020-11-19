@@ -1,3 +1,4 @@
+import { InternationalString } from '@hyperion-framework/types';
 import React from 'react';
 import styled from 'styled-components';
 import { LocaleString } from './LocaleString';
@@ -31,27 +32,28 @@ const MetaDataValue = styled.p`
 const MetadataContainer = styled.div`
   display: flex;
   align-items: center;
-`
+`;
 
 export const MetaDataDisplay: React.FC<{
-  metadata: any,
-  style?: any,
+  metadata: Array<{ label: InternationalString; value: InternationalString }>;
+  style?: any;
 }> = ({ metadata, style }) => {
   return (
-    <MetadataDisplayContainer style={style} >
-      {metadata.length < 1 ? 'No metadata to display' :
-      metadata.map((metadata: any) => {
-        return (
-          <MetadataContainer>
-            <MetaDataKey>
-              <LocaleString>{metadata.label}</LocaleString>
-            </MetaDataKey>
-            <MetaDataValue>
-              <LocaleString>{metadata.value}</LocaleString>
-            </MetaDataValue>
-          </MetadataContainer>
-        );
-      })}
+    <MetadataDisplayContainer style={style}>
+      {metadata && metadata.length
+        ? metadata.map((metadataItem, idx: number) => {
+            return (
+              <MetadataContainer key={idx}>
+                <MetaDataKey>
+                  <LocaleString>{metadataItem.label}</LocaleString>
+                </MetaDataKey>
+                <MetaDataValue>
+                  <LocaleString>{metadataItem.value}</LocaleString>
+                </MetaDataValue>
+              </MetadataContainer>
+            );
+          })
+        : 'No metadata to display'}
     </MetadataDisplayContainer>
   );
 };
