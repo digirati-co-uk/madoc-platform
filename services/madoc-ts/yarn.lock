@@ -2250,10 +2250,10 @@
     screenfull "^3.3.2"
     whatwg-fetch "^3.0.0"
 
-"@capture-models/editor@^0.10.0":
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.10.0.tgz#fe038b3a1205b39a46c2eaa58af546f45b367166"
-  integrity sha512-H6XMtEsbMb7fmbEZvuntilKHvtf9D4QnYBnAbko4L9mRiSlHxutfsdp8QQcVi+nwsd8DakgTpQ7bNFVIncGDkw==
+"@capture-models/editor@^0.10.1":
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.10.1.tgz#ff2bdfe70e9151d2f594631a6a48f2acd3e4a0a9"
+  integrity sha512-gf2AHWNawTWa3c0oU3l5aoktD6VPzmWD2SujCl3nyi6Rg3aR+G1RaSDl1gytylbIXunrbzFxnR/PBqVF/oOGBw==
   dependencies:
     "@atlas-viewer/atlas" "^1.1.0"
     "@capture-models/helpers" "^0.10.0"
@@ -7086,6 +7086,11 @@ core-js@2.4.1:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.4.1.tgz#4de911e667b0eae9124e34254b53aea6fc618d3e"
   integrity sha1-TekR5mew6ukSTjQlS1OupvxhjT4=
+
+core-js@3:
+  version "3.8.0"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.8.0.tgz#0fc2d4941cadf80538b030648bb64d230b4da0ce"
+  integrity sha512-W2VYNB0nwQQE7tKS7HzXd7r2y/y2SVJl4ga6oH/dnaLFzM0o2lB2P3zCkWj5Wc/zyMYjtgd5Hmhk0ObkQFZOIA==
 
 core-js@^1.0.0:
   version "1.2.7"
