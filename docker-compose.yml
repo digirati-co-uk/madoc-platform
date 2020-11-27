@@ -242,4 +242,4 @@ services:
       - ./services/search/search_service:/app:delegated
 
   okra:
-    image: digirati/okra:c052061
+    image: digirati/okra:10c474a
