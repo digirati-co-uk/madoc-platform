@@ -1,11 +1,17 @@
 import { boolean } from '@storybook/addon-knobs';
 import { useState } from 'react';
 import * as React from 'react';
+import styled from 'styled-components';
 import { GlobalHeader } from '../src/frontend/shared/atoms/GlobalHeader';
 import { Heading1 } from '../src/frontend/shared/atoms/Heading1';
 import { Heading3 } from '../src/frontend/shared/atoms/Heading3';
 import { DashboardTabs, DashboardTab } from '../src/frontend/shared/components/DashboardTabs';
-import { StorybookPaddedBox } from './utils';
+
+export const StorybookPaddedBox = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1em;
+`;
 
 export default { title: 'User dashboard' };
 

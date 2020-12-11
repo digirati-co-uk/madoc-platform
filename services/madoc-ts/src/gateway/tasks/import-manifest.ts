@@ -215,7 +215,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       }
 
       // Search ingest.
-      const userApi = api.asUser({ siteId });
+      const userApi = api.asUser({ siteId, userId });
       await userApi.batchIndexResources([{ type: 'manifest', id: task.state.resourceId }], { recursive: true });
 
       // Update task.

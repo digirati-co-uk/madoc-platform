@@ -15,7 +15,12 @@ import { TinyButton } from '../src/frontend/shared/atoms/Button';
 import { TableContainer, TableRow, TableRowLabel } from '../src/frontend/shared/atoms/Table';
 import { Status } from '../src/frontend/shared/atoms/Status';
 import { GridContainer, HalfGird } from '../src/frontend/shared/atoms/Grid';
-import { StorybookPaddedBox } from './utils';
+
+export const StorybookPaddedBox = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1em;
+`;
 
 export default { title: 'User homepage' };
 
