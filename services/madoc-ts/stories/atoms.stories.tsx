@@ -1,13 +1,19 @@
 import * as React from 'react';
+import styled from 'styled-components';
 import { Button, SmallButton } from '../src/frontend/shared/atoms/Button';
 import { Breadcrumbs } from '../src/frontend/shared/atoms/Breadcrumbs';
 import { MemoryRouter } from 'react-router-dom';
 import { SearchBox } from '../src/frontend/shared/atoms/SearchBox';
 import { Dropdown } from '@capture-models/editor';
 import { StandardButton } from '../src/frontend/shared/atoms/StandardButton';
-import { StorybookPaddedBox } from './utils';
 
 export default { title: 'Atoms' };
+
+const StorybookPaddedBox = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1em;
+`;
 
 export const buttons = () => (
   <div>
