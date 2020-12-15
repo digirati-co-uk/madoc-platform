@@ -37,13 +37,14 @@ class CompletionController extends AbstractActionController
     {
         $resourceClasses = explode(',', $this->params()->fromQuery('class', []));
         $term = $this->params()->fromQuery('q');
+        $language = $this->params()->fromHeader('X-Annotation-Studio-Locale', 'en')->getFieldValue();
 
         if ($term === null) {
             return $this->errorMessage('No search term provided'); // @translate
         }
 
         try {
-            $completions = $this->completionService->getSuggestions($term, ...$resourceClasses);
+            $completions = $this->completionService->getSuggestions($term, $language, ...$resourceClasses);
         } catch (Exception $e) {
             return $this->errorMessage($e->getMessage());
         }
