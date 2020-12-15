@@ -49,7 +49,7 @@ final class FastResourceCompletionContributor implements CompletionContributor
         }
     }
 
-    public function doCompletion(string $term, string... $resourceClasses): PromiseInterface
+    public function doCompletion(string $term, string $language, string... $resourceClasses): PromiseInterface
     {
         $request = $this->httpClient->requestAsync('GET', static::FAST_URI, [
             'query' => [

@@ -23,20 +23,21 @@ final class WikiDataResourceCompletionContributor implements CompletionContribut
         $this->httpClient = $httpClient;
     }
 
-    public function doCompletion(string $term, string... $resourceClasses): PromiseInterface
+    public function doCompletion(string $term, string $language, string... $resourceClasses): PromiseInterface
     {
         $request = $this->httpClient->requestAsync('GET', static::WIKIDATA_URI, [
             'query' => [
                 'search' => $term,
                 'limit' => '5',
                 'action' => 'wbsearchentities',
-                'language' => 'en',
+                'language' => $language ? $language : 'en',
                 'format' => 'json'
             ]
         ]);
 
         return $request->then(function (ResponseInterface $response) {
             $content = json_decode((string)$response->getBody(), true);
+
             $term = $content['searchinfo']['search'];
 
             if (json_last_error() !== JSON_ERROR_NONE) {
@@ -47,16 +48,18 @@ final class WikiDataResourceCompletionContributor implements CompletionContribut
                 $content['search'],
 
                 function (array $record) {
-                    return $record['repository'] === 'local';
+                    return $record['repository'] === 'wikidata';
                 }
             );
 
             $authoritativeRecords = $this->sortWikiDataResults($authoritativeRecords, $term);
-            
+
             return array_map(
                 function (array $result) {
+                    $label = isset($result['match']) && isset($result['match']['text']) ? $result['match']['text'] : $result['label'];
+
                     $uri = $result['concepturi'];
-                    $text = $result['label'] . ' - ' . $result['description'];
+                    $text = $label . ' - ' . $result['description'];
                     $tag = $result['id'];
 
                     return new CompletionItem($uri, $text, $tag);

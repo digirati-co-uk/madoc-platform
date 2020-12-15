@@ -24,7 +24,7 @@ final class OmekaItemCompletionContributor implements CompletionContributor
         $this->api = $api;
     }
 
-    public function doCompletion(string $term, string... $resourceClasses): PromiseInterface
+    public function doCompletion(string $term, string $language, string... $resourceClasses): PromiseInterface
     {
         return Promises\task(function () use ($term, $resourceClasses) {
             $searchResult = $this->api->search('items', [

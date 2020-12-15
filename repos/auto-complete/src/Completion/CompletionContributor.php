@@ -15,11 +15,12 @@ interface CompletionContributor
      * {@code resourceClasses}.
      *
      * @param string $term
-     * @param string[] ...$resourceClasses
+     * @param string $language
+     * @param string ...$resourceClasses
      *
      * @return PromiseInterface
      */
-    public function doCompletion(string $term, string... $resourceClasses): PromiseInterface;
+    public function doCompletion(string $term, string $language, string... $resourceClasses): PromiseInterface;
 
     /**
      * Check if this {@link CompletionContributor} advertises completion results for the given {@code resourceClass}.
