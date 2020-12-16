@@ -60,7 +60,7 @@ export const SimpleAtlasViewer: React.FC<{
                               // no-op
                             }}
                             onClick={() => {
-                              console.log('clicked?');
+                              // no-op
                             }}
                           />
                         </React.Fragment>
