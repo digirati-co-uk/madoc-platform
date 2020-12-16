@@ -29,7 +29,7 @@ import { Pagination } from '../../../types/schemas/_pagination';
 import { GridContainer, HalfGird } from '../../shared/atoms/Grid';
 import { TableContainer, TableEmpty, TableRow, TableRowLabel } from '../../shared/atoms/Table';
 import { Status } from '../../shared/atoms/Status';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { HrefLink } from '../../shared/utility/href-link';
 import { LightNavigation, LightNavigationItem } from '../../shared/atoms/LightNavigation';
 import { isAdmin, isContributor, isReviewer } from '../../shared/utility/user-roles';
@@ -133,7 +133,11 @@ const ContributorTasks: React.FC<{
 
 export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversalComponent<UserHomepageType>(
   () => {
-    const { data } = useStaticData(UserHomepage);
+    const { data, error } = useStaticData(UserHomepage, {}, { retry: false });
+
+    if (error) {
+      return <a href="/login">Please login</a>;
+    }
 
     if (!data) {
       return <div>Loading...</div>;
