@@ -69,12 +69,7 @@ export const ApproveSubmission: React.FC<{
         <div>
           <ul>
             <li>
-              <strong>Approve</strong> - The submission will be approved and all other submission will remain
-            </li>
-            <li>
-              <strong>Approve and remove remaining</strong> - The submission will be approved and all other submission
-              will be removed. The users who created all of the submissions will see their submission approved. This can
-              be good if merging multiple revisions.
+              The submission will be approved and all other submission will remain.
             </li>
           </ul>
         </div>
@@ -88,14 +83,6 @@ export const ApproveSubmission: React.FC<{
             }}
           >
             Approve
-          </Button>
-          <Button
-            onClick={() => {
-              approveAndRemoveApiCall();
-              close();
-            }}
-          >
-            Approve and remove remaining
           </Button>
         </ButtonRow>
       )}

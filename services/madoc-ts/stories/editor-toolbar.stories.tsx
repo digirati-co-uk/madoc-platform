@@ -159,17 +159,12 @@ export const ReviewEditor = () => {
                       <li>
                         <strong>Approve</strong> - The submission will be approved and all other submission will remain
                       </li>
-                      <li>
-                        <strong>Approve and remove remaining</strong> - The submission will be approved and all other
-                        submission will be removed.
-                      </li>
                     </ul>
                   </div>
                 )}
                 renderFooter={({ close }) => (
                   <ButtonRow style={{ margin: '0 0 0 auto' }}>
                     <Button onClick={close}>Approve</Button>
-                    <Button onClick={close}>Approve and remove remaining</Button>
                   </ButtonRow>
                 )}
               >

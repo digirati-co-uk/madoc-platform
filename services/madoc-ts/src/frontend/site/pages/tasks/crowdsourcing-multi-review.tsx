@@ -32,7 +32,7 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
   task: reviewTask,
   refetch,
 }) => {
-  const { slug } = useParams();
+  const { slug } = useParams<{ slug: string }>();
   const history = useHistory();
   const { preview } = useLocationQuery();
 
