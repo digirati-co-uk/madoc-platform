@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import { ImageService } from '@hyperion-framework/types';
-import { AtlasAuto, HTMLPortal, RegionHighlight, Runtime } from '@atlas-viewer/atlas';
+import { AtlasAuto, RegionHighlight, Runtime } from '@atlas-viewer/atlas';
 import { useCanvas, useImageService } from '@hyperion-framework/react-vault';
 import { Button, ButtonRow } from '../atoms/Button';
 import { AtlasTiledImages } from './AtlasTiledImages';
