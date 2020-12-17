@@ -37,7 +37,8 @@ class CompletionController extends AbstractActionController
     {
         $resourceClasses = explode(',', $this->params()->fromQuery('class', []));
         $term = $this->params()->fromQuery('q');
-        $language = $this->params()->fromHeader('X-Annotation-Studio-Locale', 'en')->getFieldValue();
+        $headerLanguage = $this->params()->fromHeader('X-Annotation-Studio-Locale', 'en');
+        $language = is_string($headerLanguage) ? $headerLanguage : $headerLanguage->getFieldValue();
 
         if ($term === null) {
             return $this->errorMessage('No search term provided'); // @translate
