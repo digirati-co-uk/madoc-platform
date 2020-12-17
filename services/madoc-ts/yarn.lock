@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@atlas-viewer/atlas@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-1.1.0.tgz#c40dc0d6b33b3fd3b11368f1ad3024429e803563"
-  integrity sha512-NkTAeQTmVgN6fr63t/hznS8PQ1RNCloZo2Zx1xoJ59h058tMHNuF8yWu74+O1WuKu6CePq9M6/fiU/hW1EtIEg==
+"@atlas-viewer/atlas@^1.1.0", "@atlas-viewer/atlas@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-1.2.0.tgz#4562d4d16b9d381d88e6225bcf0d77b3705a91b7"
+  integrity sha512-Mmdth4hfCoi+Q5rxgovYDYouZS8f8SLcv0bvwjsSwEOYTbyxU3QK5tPDDDHG1jQPOSnZ5Dv/3Y35AbmOT7DGbA==
   dependencies:
     "@atlas-viewer/dna" "^0.5.0"
     "@atlas-viewer/iiif-image-api" "1.2.1"
