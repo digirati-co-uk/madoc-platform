@@ -6,6 +6,7 @@ import { ExtensionManager } from '../extensions/extension-manager';
 import { SingleUser } from '../types/omeka/User';
 import { ProjectConfiguration } from '../types/schemas/project-configuration';
 import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/search';
+import { SearchIndexable } from '../utility/capture-model-to-indexables';
 import { NotFound } from '../utility/errors/not-found';
 import { fetchJson } from './fetch-json';
 import { BaseTask } from './tasks/base-task';
@@ -1473,6 +1474,13 @@ export class ApiClient {
 
   async searchGetContext(id: string) {
     return this.request(`/api/search/contexts/${id}`);
+  }
+
+  async indexRawSearchIndexable(indexable: SearchIndexable) {
+    return this.request(`/api/search/indexables`, {
+      method: 'POST',
+      body: indexable,
+    });
   }
 
   async indexCanvas(id: number) {

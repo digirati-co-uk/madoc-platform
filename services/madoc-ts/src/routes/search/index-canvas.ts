@@ -4,12 +4,13 @@ import {
   isParagraphEntity,
   ParagraphEntity,
   PARAGRAPHS_PROFILE,
-} from '../../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
-import { api } from '../../../gateway/api.server';
-import { RouteMiddleware } from '../../../types/route-middleware';
-import { SearchIngestRequest } from '../../../types/search';
-import { optionalUserWithScope } from '../../../utility/user-with-scope';
-import { getParentResources } from '../../../database/queries/resource-queries';
+} from '../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
+import { api } from '../../gateway/api.server';
+import { RouteMiddleware } from '../../types/route-middleware';
+import { SearchIngestRequest } from '../../types/search';
+import { captureModelToIndexables, SearchIndexable } from '../../utility/capture-model-to-indexables';
+import { optionalUserWithScope } from '../../utility/user-with-scope';
+import { getParentResources } from '../../database/queries/resource-queries';
 
 export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
   const { siteId, siteUrn } = optionalUserWithScope(context, []);
@@ -73,9 +74,14 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
   // 3. For each of the models, check if any of capture models have been used
   const paragraphs: Array<ParagraphEntity> = []; // We are only checking the FIRST model.
   let modelId: string | undefined = undefined;
+  const fullModels = [];
 
   for (const modelRef of models) {
     const fullModel = await userApi.getCaptureModel(modelRef.id, { published: true });
+    // Push for indexing.
+    fullModels.push(fullModel);
+
+    // Check if we need to load paragraphs from linked properties.
     traverseDocument(fullModel.document, {
       beforeVisitEntity(entity) {
         if (isParagraphEntity(entity)) {
@@ -123,21 +129,46 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
     }
   }
 
-  // 5. Index remaining Capture models
+  // 5. Index remaining Capture models - ONLY When we don't have paragraphs.
   if (paragraphs.length !== 0 && modelId) {
     // We have models!
     const resource: { [term: string]: Array<BaseField> | Array<Document> } = {
       paragraph: paragraphs as any,
     };
     try {
-      const resp = await userApi.indexCaptureModel(modelId, `urn:madoc:canvas:${canvasId}`, resource);
-      console.log(resp);
+      await userApi.indexCaptureModel(modelId, `urn:madoc:canvas:${canvasId}`, resource);
     } catch (err) {
       console.log(err);
     }
   }
 
+  // 5. Index remaining Capture models
+  if (models.length) {
+    const indexables: SearchIndexable[] = [];
+    for (const model of fullModels) {
+      try {
+        // Delete paragraph field if it exists, it should already be indexed.
+        delete model.document.properties.paragraph;
+        // And then push the rest of the indexables.
+        indexables.push(...captureModelToIndexables(`urn:madoc:canvas:${canvasId}`, model.document));
+      } catch (err) {
+        // No-op.
+      }
+    }
+
+    if (indexables.length) {
+      for (const indexable of indexables) {
+        try {
+          await userApi.indexRawSearchIndexable(indexable);
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    }
+  }
+
   // 6. Index any remaining capture model partials
+  // @todo - this is not yet used.
 
   context.response.body = canvas;
 };

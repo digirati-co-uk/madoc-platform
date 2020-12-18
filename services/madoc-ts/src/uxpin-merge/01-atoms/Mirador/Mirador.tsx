@@ -24,7 +24,7 @@ function Mirador(props: Props) {
     <ErrorBoundary
       fallback={
         <div style={{ padding: 20, height: props.height || 500, minWidth: 500, background: '#444' }}>
-          Mirador cannot be viewed in the UXPin editor
+          Mirador cannot be viewed currently
         </div>
       }
     >
