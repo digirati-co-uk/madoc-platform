@@ -1,3 +1,4 @@
+import { parseUrn } from '../../utility/parse-urn';
 import { BaseTask } from './base-task';
 import { CaptureModel } from '@capture-models/types';
 import { ApiClient } from '../api';
@@ -238,6 +239,25 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           });
         }
       }
+
+      // Reindex resource after annotating is complete.
+      try {
+        const parsed = parseUrn(task.subject);
+        if (parsed) {
+          switch (parsed.type) {
+            case 'canvas':
+              await api.indexCanvas(parsed.id);
+              break;
+            case 'manifest':
+              await api.indexManifest(parsed.id);
+              break;
+          }
+        }
+      } catch (err) {
+        // Non-fatal error here.
+        console.log('error while re-indexing', err);
+      }
+
       break;
     }
   }
