@@ -3,10 +3,10 @@ import {
   getManifestSnippets,
   getSingleManifest,
   mapManifestSnippets,
-} from '../../../database/queries/get-manifest-snippets';
-import { api } from '../../../gateway/api.server';
-import { RouteMiddleware } from '../../../types/route-middleware';
-import { optionalUserWithScope } from '../../../utility/user-with-scope';
+} from '../../database/queries/get-manifest-snippets';
+import { api } from '../../gateway/api.server';
+import { RouteMiddleware } from '../../types/route-middleware';
+import { optionalUserWithScope } from '../../utility/user-with-scope';
 
 export const indexManifest: RouteMiddleware<{ id: string }> = async context => {
   const { siteId, siteUrn } = optionalUserWithScope(context, []);
