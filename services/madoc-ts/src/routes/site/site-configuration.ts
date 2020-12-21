@@ -32,8 +32,6 @@ export const siteConfiguration: RouteMiddleware<{ slug: string }> = async contex
     return;
   }
 
-  console.dir(configResponse, { depth: null });
-
   context.response.body = configResponse.config[0].config_object;
   context.response.status = 200;
 };
