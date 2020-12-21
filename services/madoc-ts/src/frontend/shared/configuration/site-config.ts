@@ -13,9 +13,21 @@ export const siteConfigurationModel = {
     type: 'checkbox-field',
     inlineLabel: 'Allow manifest navigation',
   },
-  allowCanvasNavigation: 'checkbox-field',
-  randomlyAssignCanvas: 'checkbox-field',
-  priorityRandomness: 'checkbox-field',
+  allowCanvasNavigation: {
+    label: 'Canvas navigation',
+    inlineLabel: 'Allow canvas navigation',
+    type: 'checkbox-field',
+  },
+  randomlyAssignCanvas: {
+    type: 'checkbox-field',
+    label: 'Assigning a canvas',
+    inlineLabel: 'Randomly assign canvas to user',
+  },
+  priorityRandomness: {
+    label: 'Strategy for assigning canvases',
+    type: 'checkbox-field',
+    inlineLabel: 'Prioritise canvases sequentially',
+  },
   claimGranularity: {
     label: 'Claim granularity',
     description: 'When a user claims something to work on, should they receive a single image or the whole manifest',
@@ -25,12 +37,42 @@ export const siteConfigurationModel = {
       { value: 'manifest', text: 'Manifest' },
     ],
   },
-  maxContributionsPerResource: 'text-field',
-  allowSubmissionsWhenCanvasComplete: 'checkbox-field',
-  randomlyAssignReviewer: 'checkbox-field',
-  manuallyAssignedReviewer: 'text-field',
-  adminsAreReviewers: 'checkbox-field',
-  hideCompletedResources: 'checkbox-field',
-  revisionApprovalsRequired: 'text-field',
-  contributionWarningTime: 'text-field',
+  maxContributionsPerResource: {
+    label: 'Max contributors per resource',
+    type: 'text-field',
+  },
+  allowSubmissionsWhenCanvasComplete: {
+    label: 'After a canvas has been marked as complete',
+    type: 'checkbox-field',
+    inlineLabel: 'Allow further submissions',
+  },
+  randomlyAssignReviewer: {
+    label: 'When assigning a reviewer',
+    type: 'checkbox-field',
+    inlineLabel: 'Randomly assign a reviewer',
+  },
+  manuallyAssignedReviewer: {
+    label: 'Custom reviewer (numeric id)',
+    type: 'text-field',
+  },
+  adminsAreReviewers: {
+    label: 'When assigning a reviewer',
+    type: 'checkbox-field',
+    inlineLabel: 'Admins count as reviewers',
+  },
+  hideCompletedResources: {
+    label: 'Once a resource (canvas or manifest) is compelte',
+    type: 'checkbox-field',
+    inlineLabel: 'Hide it from the resource page in the project',
+  },
+  revisionApprovalsRequired: {
+    label: 'Submission approvals required',
+    type: 'text-field',
+  },
+  contributionWarningTime: {
+    label: 'Contribution warning time',
+    description:
+      'If a contribution takes longer than this time (in seconds) then they will receive a message to let them know',
+    type: 'text-field',
+  },
 };
