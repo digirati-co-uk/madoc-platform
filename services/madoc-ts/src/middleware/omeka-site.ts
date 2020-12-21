@@ -11,7 +11,7 @@ export const omekaSite: RouteMiddleware = async (context, next) => {
       throw new NotFound();
     }
     context.state.site = site;
-    context.state.siteApi = api.asUser({ siteId: site.id, userId: userId });
+    context.state.siteApi = api.asUser({ siteId: site.id, userId: userId }, { siteSlug: context.params.slug });
   }
   await next();
 };

@@ -82,7 +82,7 @@ const Homepage: UniversalComponent<HomepageType> = createUniversalComponent<Home
                   <Link to="/manifests">{t('Manage manifests')}</Link>
                 </li>
                 <li>
-                  <span>Content configuration</span>
+                  <Link to="/configure/site">{t('Site configuration')}</Link>
                 </li>
                 <li>
                   <span>Customise site pages</span>
