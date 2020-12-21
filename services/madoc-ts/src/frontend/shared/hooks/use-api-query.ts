@@ -71,6 +71,7 @@ type GetApiMethods = keyof Pick<
   | 'getSiteProjectManifestTasks'
   | 'getUserDetails'
   | 'searchQuery'
+  | 'getSiteConfiguration'
 >;
 
 const keys = Object.getOwnPropertyNames(ApiClient.prototype);

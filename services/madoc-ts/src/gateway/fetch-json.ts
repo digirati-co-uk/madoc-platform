@@ -10,6 +10,8 @@ export async function fetchJson<Return>(
     asUser,
     xml,
     returnText,
+    headers: additionalHeaders = {},
+    raw,
   }: {
     method?: 'GET' | 'PUT' | 'POST' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD';
     body?: any;
@@ -17,6 +19,8 @@ export async function fetchJson<Return>(
     asUser?: { userId?: number; siteId?: number };
     xml?: boolean;
     returnText?: boolean;
+    headers?: any;
+    raw?: boolean;
   }
 ): Promise<
   | { error: true; data: { error: string }; status: number; debugResponse?: any }
@@ -24,6 +28,7 @@ export async function fetchJson<Return>(
 > {
   const headers: any = {
     Accept: 'application/json',
+    ...additionalHeaders,
   };
 
   if (jwt) {
@@ -54,6 +59,13 @@ export async function fetchJson<Return>(
 
   if (resp.ok) {
     try {
+      if (raw) {
+        return {
+          error: false,
+          status: resp.status,
+          data: resp as any,
+        };
+      }
       if (returnText) {
         return {
           error: false,
