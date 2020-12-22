@@ -2,7 +2,7 @@ import Koa from 'koa';
 import json from 'koa-json';
 import logger from 'koa-logger';
 // @ts-ignore
-import conditional from 'koa-conditional-get';
+//import conditional from 'koa-conditional-get';
 import Ajv from 'ajv';
 import { errorHandler } from './middleware/error-handler';
 import { TypedRouter } from './utility/typed-router';
@@ -19,7 +19,6 @@ import { readdirSync, readFileSync } from 'fs';
 import * as path from 'path';
 import { createBackend } from './middleware/i18n/i18next.server';
 import { ExternalConfig } from './types/external-config';
-import { omekaSite } from './middleware/omeka-site';
 // @ts-ignore
 import k2c from 'koa2-connect';
 import cookieParser from 'cookie-parser';
@@ -61,7 +60,8 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   app.use(postgresConnection(pool));
   app.use(json({ pretty: process.env.NODE_ENV !== 'production' }));
   app.use(logger());
-  app.use(conditional());
+  // Disabled for now, causing issues logging in.
+  // app.use(conditional());
 
   app.use(errorHandler);
   app.use(omekaPage);
