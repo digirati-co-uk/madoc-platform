@@ -20,7 +20,7 @@ type ProjectLoaderType = {
 export const ProjectLoader: UniversalComponent<ProjectLoaderType> = createUniversalComponent<ProjectLoaderType>(
   ({ route }) => {
     const { data: project, isError } = useStaticData(ProjectLoader);
-    const { slug } = useParams();
+    const { slug } = useParams<{ slug: string }>();
     const { isExact } = useRouteMatch();
 
     const hide = project?.config.hideCompletedResources;
