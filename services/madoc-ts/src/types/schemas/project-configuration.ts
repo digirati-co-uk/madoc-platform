@@ -13,4 +13,5 @@ export type ProjectConfiguration = {
   contributionWarningTime: false | number;
   randomlyAssignCanvas?: boolean;
   priorityRandomness?: boolean;
+  skipAutomaticOCRImport?: boolean;
 };

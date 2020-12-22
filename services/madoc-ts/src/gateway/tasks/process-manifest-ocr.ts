@@ -27,7 +27,7 @@ export interface ProcessManifestOcr extends BaseTask {
 export function createTask(manifestId: number, label: string, userId: number, siteId: number): ProcessManifestOcr {
   return {
     type: 'madoc-ocr-manifest',
-    name: 'Importing manifest',
+    name: 'Manifest OCR processing',
     description: `Processing existing OCR for manifest ${label}`,
     subject: `urn:madoc:manifest:${manifestId}`,
     state: {},

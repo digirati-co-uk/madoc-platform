@@ -24,7 +24,7 @@ export type ManifestLoaderType = {
 
 export const ManifestLoader: UniversalComponent<ManifestLoaderType> = createUniversalComponent<ManifestLoaderType>(
   ({ route, collection, ...props }) => {
-    const { id, slug } = useParams();
+    const { id, slug } = useParams<{ id: string; slug: string }>();
     const { resolvedData: data, refetch: refetchManifest } = usePaginatedData(ManifestLoader, [], {
       cacheTime: 3600,
     });

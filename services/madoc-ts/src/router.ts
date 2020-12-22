@@ -1,5 +1,6 @@
 import { exportSite } from './routes/admin/export-site';
 import { importSite } from './routes/admin/import-site';
+import { getSiteDetails } from './routes/admin/site-details';
 import { updateSiteConfiguration } from './routes/admin/update-site-configuration';
 import { batchIndex } from './routes/search/batch-index';
 import { siteConfiguration } from './routes/site/site-configuration';
@@ -93,6 +94,7 @@ export const router = new TypedRouter({
   'export-site': [TypedRouter.POST, '/api/madoc/site/:siteId/export', exportSite],
   'import-site': [TypedRouter.POST, '/api/madoc/site/:siteId/import', importSite],
   'update-site-configuration': [TypedRouter.POST, '/api/madoc/configuration', updateSiteConfiguration],
+  'site-details': [TypedRouter.GET, '/api/madoc/site/:siteId/details', getSiteDetails],
 
   // User API.
   'get-user': [TypedRouter.GET, '/api/madoc/users/:id', getUser],

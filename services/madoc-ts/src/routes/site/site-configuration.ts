@@ -10,6 +10,8 @@ export const siteConfiguration: RouteMiddleware<{ slug: string }> = async contex
   const collectionId = context.query.collection_id as string | undefined;
   const { site, siteApi } = context.state;
 
+  const staticConfiguration = context.externalConfig.defaultSiteConfiguration;
+
   if (site.is_public) {
     // @todo Try serving cached response.
   }
@@ -32,6 +34,6 @@ export const siteConfiguration: RouteMiddleware<{ slug: string }> = async contex
     return;
   }
 
-  context.response.body = configResponse.config[0].config_object;
+  context.response.body = { ...staticConfiguration, ...configResponse.config[0].config_object };
   context.response.status = 200;
 };

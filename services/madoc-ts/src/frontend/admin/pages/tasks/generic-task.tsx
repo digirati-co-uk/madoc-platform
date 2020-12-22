@@ -1,15 +1,15 @@
+import ReactTimeago from 'react-timeago';
 import { BaseTask } from '../../../../gateway/tasks/base-task';
 import React, { useState } from 'react';
-import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../../shared/atoms/Table';
-import { Status } from '../../../shared/atoms/Status';
-import { SmallButton } from '../../../shared/atoms/Button';
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { useApi } from '../../../shared/hooks/use-api';
+import { SortedTaskList } from '../../molecules/SortedTaskList';
 
-export const GenericTask: React.FC<{ task: BaseTask; statusBar?: JSX.Element }> = ({ task, statusBar }) => {
-  const { t } = useTranslation();
+export const GenericTask: React.FC<{ task: BaseTask; statusBar?: JSX.Element; snippet?: JSX.Element }> = ({
+  task,
+  statusBar,
+  snippet,
+}) => {
   const api = useApi();
   const [taskStatusMap, setTaskStatusMap] = useState<any>({});
 
@@ -27,27 +27,11 @@ export const GenericTask: React.FC<{ task: BaseTask; statusBar?: JSX.Element }> 
   return (
     <div>
       <h1>{task.name}</h1>
+      {snippet}
+      {task.description ? <p>{task.description}</p> : null}
+      <p>{task.created_at ? <ReactTimeago date={task.created_at} /> : null}</p>
       {statusBar}
-      <TableContainer>
-        {(task.subtasks || []).map(subtask => (
-          <TableRow key={subtask.id}>
-            <TableRowLabel>
-              <Status status={subtask.status || 0} text={t(subtask.status_text || 'unknown')} />
-            </TableRowLabel>
-            <TableRowLabel>
-              <Link to={`/tasks/${subtask.id}`}>{subtask.name}</Link>
-            </TableRowLabel>
-            <TableActions>
-              <SmallButton
-                onClick={() => (subtask.id ? trigger(subtask.id) : null)}
-                disabled={subtask.id ? taskStatusMap[subtask.id] : false}
-              >
-                Retry
-              </SmallButton>
-            </TableActions>
-          </TableRow>
-        ))}
-      </TableContainer>
+      <SortedTaskList tasks={task.subtasks || []} trigger={trigger} taskStatusMap={taskStatusMap} />
     </div>
   );
 };

@@ -75,4 +75,9 @@ export const siteConfigurationModel = {
       'If a contribution takes longer than this time (in seconds) then they will receive a message to let them know',
     type: 'text-field',
   },
+  skipAutomaticOCRImport: {
+    label: 'OCR import',
+    type: 'checkbox-field',
+    inlineLabel: 'Skip automatically processing OCR during IIIF manifest import',
+  },
 };
