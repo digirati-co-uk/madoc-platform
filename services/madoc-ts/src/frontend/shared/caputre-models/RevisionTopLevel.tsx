@@ -9,9 +9,19 @@ export const RevisionTopLevel: React.FC<{
   readOnly: boolean;
   allowEdits?: boolean;
   allowNavigation?: boolean;
+  skipThankYou?: boolean;
+  skipPreview?: boolean;
   instructions?: string;
   onSaveRevision: (req: RevisionRequest, status?: string) => Promise<void>;
-}> = ({ readOnly, instructions, onSaveRevision, allowEdits = true, allowNavigation = true }) => {
+}> = ({
+  readOnly,
+  instructions,
+  onSaveRevision,
+  skipThankYou,
+  skipPreview,
+  allowEdits = true,
+  allowNavigation = true,
+}) => {
   const { setIsThankYou, setIsPreviewing, deselectRevision, setRevisionLabel } = Revisions.useStoreActions(actions => {
     return {
       setIsThankYou: actions.setIsThankYou,
@@ -76,7 +86,11 @@ export const RevisionTopLevel: React.FC<{
           onSaveRevision(current, 'submitted')
             .then(() => {
               setIsSaving(false);
-              setIsThankYou(true);
+              if (skipThankYou) {
+                deselectRevision({ revisionId: current.revision.id });
+              } else {
+                setIsThankYou(true);
+              }
             })
             .catch(() => {
               setIsSaving(false);

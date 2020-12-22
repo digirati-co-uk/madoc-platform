@@ -2,6 +2,7 @@ import { UniversalRoute } from '../types';
 import { CanvasSearchIndex } from './pages/content/canvases/canvas-search-index';
 import { CollectionView } from './pages/content/collections/collection';
 import { ViewCanvasLinking } from './pages/content/linking/view-linking';
+import { SiteConfiguration } from './pages/content/site-configuration';
 import { ExportSite } from './pages/export/export-site';
 import { Homepage } from './pages/homepage';
 import { CollectionList } from './pages/content/collections/collection-list';
@@ -330,5 +331,11 @@ export const routes: UniversalRoute[] = [
     path: '/export/site',
     exact: true,
     component: ExportSite,
+  },
+  // Config
+  {
+    path: '/configure/site',
+    exact: true,
+    component: SiteConfiguration,
   },
 ];

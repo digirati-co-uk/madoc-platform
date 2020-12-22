@@ -150,6 +150,8 @@ export class ApiClient {
       publicRequest = false,
       xml = false,
       returnText = false,
+      headers = {},
+      raw = false,
     }: {
       method?: 'GET' | 'PUT' | 'POST' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD';
       body?: Body;
@@ -157,6 +159,8 @@ export class ApiClient {
       publicRequest?: boolean;
       xml?: boolean;
       returnText?: boolean;
+      headers?: any;
+      raw?: boolean;
     } = {}
   ): Promise<Return> {
     if (!publicRequest && !jwt) {
@@ -172,6 +176,8 @@ export class ApiClient {
       asUser: this.user,
       xml,
       returnText,
+      headers,
+      raw,
     });
 
     if (response.error) {
@@ -259,13 +265,13 @@ export class ApiClient {
     });
   }
 
-  asUser(user: { userId?: number; siteId?: number }): ApiClient {
+  asUser(user: { userId?: number; siteId?: number }, options?: { siteSlug?: string }): ApiClient {
     return new ApiClient({
       gateway: this.gateway,
       jwt: this.jwt,
       asUser: user,
       customerFetcher: this.fetcher,
-      publicSiteSlug: this.publicSiteSlug,
+      publicSiteSlug: options && options.siteSlug ? options.siteSlug : this.publicSiteSlug,
     });
   }
 
@@ -394,10 +400,29 @@ export class ApiClient {
 
   // Config service.
   async addConfiguration(service: string, context: string[], value: any) {
-    return { endpoint: `/api/configurator/?${stringify({ context }, { arrayFormat: 'none' })}`, value };
-    return this.request<any>(`/api/configurator/?${stringify({ context, service }, { arrayFormat: 'none' })}`, {
+    return this.request<any>(`/api/configurator/`, {
       method: 'POST',
+      body: {
+        service: service,
+        config_context: context,
+        config_data: value,
+      },
+    });
+  }
+
+  async replaceConfiguration(id: string, eTag: string, value: any) {
+    return this.request<any>(`/api/configurator/${id}/`, {
+      method: 'PUT',
       body: value,
+      headers: {
+        'If-Match': eTag,
+      },
+    });
+  }
+
+  async getSingleConfigurationRaw(id: string) {
+    return this.request<Response>(`/api/configurator/${id}/`, {
+      raw: true,
     });
   }
 
@@ -416,6 +441,13 @@ export class ApiClient {
     return projectConfig.config && projectConfig.config[0] && projectConfig.config[0].config_object
       ? projectConfig.config[0].config_object
       : {};
+  }
+
+  async saveSiteConfiguration(config: any) {
+    return this.request(`/api/madoc/configuration`, {
+      method: 'POST',
+      body: config,
+    });
   }
 
   /// Search
@@ -1551,6 +1583,10 @@ export class ApiClient {
 
   async getSiteProjectCanvasModel(projectId: string | number, canvasId: number) {
     return this.publicRequest<{ model?: CaptureModel }>(`/madoc/api/projects/${projectId}/canvas-models/${canvasId}`);
+  }
+
+  async getSiteConfiguration() {
+    return this.publicRequest<ProjectConfiguration>(`/madoc/api/configuration`);
   }
 
   async getSiteProjectCanvasTasks(projectId: string | number, canvasId: number) {

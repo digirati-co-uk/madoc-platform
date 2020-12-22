@@ -1,6 +1,8 @@
 import { exportSite } from './routes/admin/export-site';
 import { importSite } from './routes/admin/import-site';
+import { updateSiteConfiguration } from './routes/admin/update-site-configuration';
 import { batchIndex } from './routes/search/batch-index';
+import { siteConfiguration } from './routes/site/site-configuration';
 import { convertLinking } from './routes/iiif/linking/convert-linking';
 import { getParentLinking } from './routes/iiif/linking/get-parent-linking';
 import { indexManifest } from './routes/search/index-manifest';
@@ -90,6 +92,7 @@ export const router = new TypedRouter({
   'update-scopes': [TypedRouter.POST, '/api/madoc/site/:siteId/permissions', saveSiteScopes],
   'export-site': [TypedRouter.POST, '/api/madoc/site/:siteId/export', exportSite],
   'import-site': [TypedRouter.POST, '/api/madoc/site/:siteId/import', importSite],
+  'update-site-configuration': [TypedRouter.POST, '/api/madoc/configuration', updateSiteConfiguration],
 
   // User API.
   'get-user': [TypedRouter.GET, '/api/madoc/users/:id', getUser],
@@ -241,6 +244,8 @@ export const router = new TypedRouter({
     '/s/:slug/madoc/api/projects/:projectSlug/canvas-tasks/:canvasId',
     siteCanvasTasks,
   ],
+  'site-configuration': [TypedRouter.GET, '/s/:slug/madoc/api/configuration', siteConfiguration],
+
   // To be worked into API calling methods
   'manifest-search': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/search/1.0', searchManifest],
   'manifest-export': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/export/source', exportManifest],
