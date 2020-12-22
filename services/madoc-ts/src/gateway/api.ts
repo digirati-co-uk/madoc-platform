@@ -3,6 +3,7 @@ import { createChoice, createDocument, generateId } from '@capture-models/helper
 import { CaptureModelExtension } from '../extensions/capture-models/extension';
 import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.extension';
 import { ExtensionManager } from '../extensions/extension-manager';
+import { Site } from '../types/omeka/Site';
 import { SingleUser } from '../types/omeka/User';
 import { ProjectConfiguration } from '../types/schemas/project-configuration';
 import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/search';
@@ -1410,6 +1411,10 @@ export class ApiClient {
     ).catch(err => {
       console.log(err);
     });
+  }
+
+  async getSiteDetails(siteId: number) {
+    return this.request<Site>(`/api/madoc/site/${siteId}/details`);
   }
 
   // Search API
