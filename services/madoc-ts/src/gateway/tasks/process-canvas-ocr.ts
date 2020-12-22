@@ -35,8 +35,8 @@ export function createTask(
 ): ProcessManifestOcr {
   return {
     type: 'canvas-ocr-manifest',
-    name: 'Importing manifest',
-    description: `Processing existing OCR for manifest ${label}`,
+    name: `Canvas OCR ${label} (${canvasId})`,
+    description: `Processing existing OCR for canvas ${label}`,
     subject: `urn:madoc:canvas:${canvasId}`,
     state: {},
     events: ['madoc-ts.created'],
@@ -187,6 +187,9 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
                 link_id: addedLink.id,
               },
             });
+
+            // Queue for re-index after adding the OCR.
+            await api.indexCanvas(canvasId);
 
             break;
           }
