@@ -22,6 +22,7 @@ function parseEtag(etag?: string) {
 
 export const updateSiteConfiguration: RouteMiddleware<{}, Partial<ProjectConfiguration>> = async context => {
   const { id, siteId } = userWithScope(context, ['site.admin']);
+  const staticConfiguration = context.externalConfig.defaultSiteConfiguration;
 
   const site = await new Promise<Site>(resolve =>
     context.mysql.query(mysql`select * from site where site.id = ${siteId}`, (err, data) => {
@@ -45,7 +46,7 @@ export const updateSiteConfiguration: RouteMiddleware<{}, Partial<ProjectConfigu
 
   const oldConfiguration = rawConfigurationObject.config[0];
 
-  const newConfiguration = { ...oldConfiguration.config_object, ...configurationRequest };
+  const newConfiguration = { ...staticConfiguration, ...oldConfiguration.config_object, ...configurationRequest };
 
   if (oldConfiguration.id) {
     const rawConfiguration = await userApi.getSingleConfigurationRaw(oldConfiguration.id);
