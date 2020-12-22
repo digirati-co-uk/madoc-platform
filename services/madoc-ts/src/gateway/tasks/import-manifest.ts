@@ -1,5 +1,7 @@
 import { BaseTask } from './base-task';
 import * as importCanvas from './import-canvas';
+import * as manifestOcr from './process-manifest-ocr';
+import { createTask as createSearchIndexTask } from './search-index-task';
 import * as tasks from './task-helpers';
 import { Vault } from '@hyperion-framework/vault';
 import fetch from 'node-fetch';
@@ -215,11 +217,39 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       }
 
       // Search ingest.
-      const userApi = api.asUser({ siteId, userId });
-      await userApi.batchIndexResources([{ type: 'manifest', id: task.state.resourceId }], { recursive: true });
+      const site = siteId ? await api.asUser({ userId, siteId }).getSiteDetails(siteId) : undefined;
+      const userApi = api.asUser(
+        { siteId, userId },
+        {
+          siteSlug: site ? site.slug : undefined,
+        }
+      );
+
+      if (siteId) {
+        // Also available through the API:
+        // await userApi.batchIndexResources([{ type: 'manifest', id: task.state.resourceId }], { recursive: true });
+        await userApi.newTask(
+          createSearchIndexTask([{ type: 'manifest', id: task.state.resourceId }], siteId, { recursive: true }),
+          taskId
+        );
+      }
 
       // Update task.
       await api.updateTask(taskId, changeStatus('done'));
+
+      // Queue up OCR extraction.
+      try {
+        const config = await userApi.getSiteConfiguration();
+        if (!config.skipAutomaticOCRImport) {
+          await userApi.newTask(
+            manifestOcr.createTask(task.state.resourceId, `${task.state.resourceId}`, userId, siteId as number),
+            taskId
+          );
+        }
+      } catch (err) {
+        // no-op.
+        console.log(err);
+      }
       break;
     }
   }
