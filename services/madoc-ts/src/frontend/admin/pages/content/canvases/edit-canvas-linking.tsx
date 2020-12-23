@@ -17,7 +17,7 @@ type EditCanvasLinking = {
 
 export const EditCanvasLinking: UniversalComponent<EditCanvasLinking> = createUniversalComponent<EditCanvasLinking>(
   () => {
-    const { id, manifestId } = useParams();
+    const { id, manifestId } = useParams<{ id: string; manifestId: string }>();
     const { data, refetch } = useData(EditCanvasLinking);
 
     return (
