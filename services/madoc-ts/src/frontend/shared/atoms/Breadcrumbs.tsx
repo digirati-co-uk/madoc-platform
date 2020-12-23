@@ -22,6 +22,11 @@ export const BreadcrumbItem = styled.div<{ active?: boolean; color?: string; $ac
   a {
     text-decoration: none;
     color: ${props => (props.color ? props.color : `rgba(255, 255, 255, 0.7)`)};
+    max-width: 200px;
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
     &:hover {
       color: ${props => (props.color ? 'black' : `rgba(255, 255, 255, 1)`)};
     }
@@ -75,7 +80,7 @@ export const Breadcrumbs: React.FC<{
           <React.Fragment key={item.link}>
             {n !== 0 ? <BreadcrumbSeparator color={color}>{`/`}</BreadcrumbSeparator> : null}
             <BreadcrumbItem key={item.link} active={item.active} color={color} $activeColor={$activeColor}>
-              <Link to={item.link}>{item.label}</Link>
+              <Link to={item.link} title={item.label}>{item.label}</Link>
             </BreadcrumbItem>
           </React.Fragment>
         );

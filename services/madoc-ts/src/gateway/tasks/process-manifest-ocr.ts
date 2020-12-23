@@ -45,7 +45,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
   switch (name) {
     case 'created': {
       // The task at hand.
-      const task = await api.getTask<ProcessManifestOcr>(taskId);
+      const task = await api.acceptTask<ProcessManifestOcr>(taskId);
 
       const [manifestId, siteId, userId] = task.parameters;
       const userApi = api.asUser({ siteId, userId });
@@ -140,7 +140,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
 
       break;
     }
-    case `subtask_type_status.madoc-ocr-canvas.${tasks.STATUS.DONE}`: {
+    case `subtask_type_status.canvas-ocr-manifest.${tasks.STATUS.DONE}`: {
       // When they're all done, mark this task as done - I think that's all?
       await api.updateTask(taskId, {
         status: 3,
