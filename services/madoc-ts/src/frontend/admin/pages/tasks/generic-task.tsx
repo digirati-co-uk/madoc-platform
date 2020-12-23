@@ -2,6 +2,7 @@ import ReactTimeago from 'react-timeago';
 import { BaseTask } from '../../../../gateway/tasks/base-task';
 import React, { useState } from 'react';
 import { useMutation } from 'react-query';
+import { ErrorMessage } from '../../../shared/atoms/ErrorMessage';
 import { useApi } from '../../../shared/hooks/use-api';
 import { SortedTaskList } from '../../molecules/SortedTaskList';
 
@@ -27,6 +28,11 @@ export const GenericTask: React.FC<{ task: BaseTask; statusBar?: JSX.Element; sn
   return (
     <div>
       <h1>{task.name}</h1>
+      {task.state.error ? (
+        <ErrorMessage>
+          <pre>{task.state.error}</pre>
+        </ErrorMessage>
+      ) : null}
       {snippet}
       {task.description ? <p>{task.description}</p> : null}
       <p>{task.created_at ? <ReactTimeago date={task.created_at} /> : null}</p>
