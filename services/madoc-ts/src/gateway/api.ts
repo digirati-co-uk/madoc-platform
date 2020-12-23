@@ -1,7 +1,10 @@
 import { BaseField, CaptureModel, RevisionRequest } from '@capture-models/types';
 import { createChoice, createDocument, generateId } from '@capture-models/helpers';
+import { DynamicDataSourcesExtension } from '../extensions/capture-models/DynamicDataSources/DynamicDataSources.extension';
+import { DynamicData } from '../extensions/capture-models/DynamicDataSources/types';
 import { CaptureModelExtension } from '../extensions/capture-models/extension';
 import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.extension';
+import { plainTextSource } from '../extensions/capture-models/DynamicDataSources/sources/Plaintext.source';
 import { ExtensionManager } from '../extensions/extension-manager';
 import { Site } from '../types/omeka/Site';
 import { SingleUser } from '../types/omeka/User';
@@ -59,6 +62,7 @@ export class ApiClient {
   private isDown = false;
   private currentUser?: { scope: string[]; user: { id: string; name?: string } };
   private captureModelExtensions: ExtensionManager<CaptureModelExtension>;
+  private captureModelDataSources: DynamicData[];
 
   constructor(options: {
     gateway: string;
@@ -74,8 +78,16 @@ export class ApiClient {
     this.isServer = !(globalThis as any).window;
     this.fetcher = options.customerFetcher || fetchJson;
     this.publicSiteSlug = options.publicSiteSlug;
+    this.captureModelDataSources = [plainTextSource];
     this.captureModelExtensions = new ExtensionManager(
-      options.customCaptureModelExtensions ? options.customCaptureModelExtensions(this) : [new Paragraphs(this)]
+      options.customCaptureModelExtensions
+        ? options.customCaptureModelExtensions(this)
+        : [
+            // Allows for OCR to be detected and added to models
+            new Paragraphs(this),
+            // Allows for dynamic values to be applied to models
+            new DynamicDataSourcesExtension(this, this.captureModelDataSources),
+          ]
     );
   }
 
@@ -277,6 +289,10 @@ export class ApiClient {
       customerFetcher: this.fetcher,
       publicSiteSlug: options && options.siteSlug ? options.siteSlug : this.publicSiteSlug,
     });
+  }
+
+  getCaptureModelDataSources() {
+    return this.captureModelDataSources;
   }
 
   async getStatistics() {
