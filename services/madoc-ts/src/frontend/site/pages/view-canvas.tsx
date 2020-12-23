@@ -220,6 +220,7 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
   isLoadingTasks,
   manifest,
   collection,
+  plaintext,
 }) => {
   const { id, manifestId, collectionId } = useParams<{ id: string; manifestId?: string; collectionId?: string }>();
   const [canvasRef, setCanvasRef] = useState<CanvasNormalized>();
@@ -396,6 +397,13 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({
       )}
 
       <MetaDataDisplay metadata={(manifest && manifest.metadata) || []} />
+
+      {plaintext ? (
+        <>
+          <h4>Transcription</h4>
+          <pre>{plaintext}</pre>
+        </>
+      ) : null}
     </>
   );
 };

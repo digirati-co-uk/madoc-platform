@@ -39,6 +39,7 @@ export type CanvasLoaderType = {
     refetchCanvasTasks: () => Promise<any>;
     refetchManifest: () => Promise<any>;
     isLoadingTasks: boolean;
+    plaintext?: string;
   };
 };
 
@@ -61,6 +62,7 @@ export const CanvasLoader: UniversalComponent<CanvasLoaderType> = createUniversa
           ...props,
           isLoadingTasks,
           canvas: data?.canvas,
+          plaintext: data?.plaintext,
           canvasTask: tasks?.canvasTask,
           userTasks: tasks?.userTasks,
           canUserSubmit: !!tasks?.canUserSubmit,
@@ -77,7 +79,7 @@ export const CanvasLoader: UniversalComponent<CanvasLoaderType> = createUniversa
       return ['getSiteCanvas', [Number(params.id)]];
     },
     getData: async (key, vars, api) => {
-      return api.getSiteCanvas(vars[0]);
+      return api.getSiteCanvas(vars[0], { plaintext: true });
     },
   }
 );
