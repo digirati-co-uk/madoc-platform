@@ -2,6 +2,7 @@ import { exportSite } from './routes/admin/export-site';
 import { importSite } from './routes/admin/import-site';
 import { getSiteDetails } from './routes/admin/site-details';
 import { updateSiteConfiguration } from './routes/admin/update-site-configuration';
+import { getCanvasPlaintext } from './routes/iiif/canvases/get-canvas-plaintext';
 import { batchIndex } from './routes/search/batch-index';
 import { siteConfiguration } from './routes/site/site-configuration';
 import { convertLinking } from './routes/iiif/linking/convert-linking';
@@ -172,6 +173,7 @@ export const router = new TypedRouter({
   'get-canvas-linking': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/linking', getLinking],
   'search-index-canvas': [TypedRouter.POST, '/api/madoc/iiif/canvases/:id/index', indexCanvas],
   'convert-linking-property': [TypedRouter.POST, '/api/madoc/iiif/linking/:id/convert', convertLinking],
+  'get-canvas-plaintext': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/plaintext', getCanvasPlaintext],
 
   // Import API
   'import-manifest': [TypedRouter.POST, '/api/madoc/iiif/import/manifest', importManifest],

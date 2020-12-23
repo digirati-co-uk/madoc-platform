@@ -92,6 +92,9 @@ export class ApiClient {
   }
 
   resolveUrl(pathName: string) {
+    if (pathName.startsWith('/')) {
+      return `${this.gateway}${pathName}`;
+    }
     return `${this.gateway}/${pathName}`;
   }
 
@@ -656,8 +659,13 @@ export class ApiClient {
   async getCanvasMetadata(id: number) {
     return this.request<GetMetadata>(`/api/madoc/iiif/canvases/${id}/metadata`);
   }
+
   async getCanvasLinking(id: number) {
     return this.request<{ linking: ResourceLinkResponse[] }>(`/api/madoc/iiif/canvases/${id}/linking`);
+  }
+
+  async getCanvasPlaintext(id: number) {
+    return this.request<{ found: boolean; transcription: string }>(`/api/madoc/iiif/canvases/${id}/plaintext`);
   }
 
   async getLinkingProperty(id: number) {
