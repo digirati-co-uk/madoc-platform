@@ -198,7 +198,17 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         }
       } catch (err) {
         console.log(err);
-        await api.updateTask(task.id, { status: -1, status_text: `Could not load external OCR` });
+        await api.updateTask(task.id, {
+          status: -1,
+          status_text: `Could not load external OCR`,
+          state: { error: `${err}` },
+        });
+        if (task.parent_task) {
+          await api.updateTask(task.parent_task, {
+            status: -1,
+            status_text: `Could not load some OCR materials`,
+          });
+        }
         return;
       }
 
