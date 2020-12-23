@@ -45,7 +45,7 @@ import {
 } from './tasks/crowdsourcing-review';
 import { CrowdsourcingCanvasTask } from './tasks/crowdsourcing-canvas-task';
 import { ConfigResponse } from '../types/schemas/config-response';
-import { ResourceLinkResponse } from '../database/queries/linking-queries';
+import { ResourceLinkResponse, ResourceLinkRow } from '../database/queries/linking-queries';
 
 export class ApiClient {
   private readonly gateway: string;
@@ -150,6 +150,7 @@ export class ApiClient {
       jwt = this.jwt,
       publicRequest = false,
       xml = false,
+      plaintext = false,
       returnText = false,
       headers = {},
       raw = false,
@@ -159,6 +160,7 @@ export class ApiClient {
       jwt?: string;
       publicRequest?: boolean;
       xml?: boolean;
+      plaintext?: boolean;
       returnText?: boolean;
       headers?: any;
       raw?: boolean;
@@ -176,6 +178,7 @@ export class ApiClient {
       jwt: jwt,
       asUser: this.user,
       xml,
+      plaintext,
       returnText,
       headers,
       raw,
@@ -1108,8 +1111,29 @@ export class ApiClient {
     );
   }
 
+  async saveStoragePlainText(bucket: string, fileName: string, text: string, isPublic = false) {
+    return this.request<{
+      success: boolean;
+      stats: {
+        modified: string;
+        size: number;
+      };
+    }>(
+      isPublic
+        ? `/api/storage/data/${bucket}/public/${fileName.endsWith('.txt') ? fileName : `${fileName}.txt`}`
+        : `/api/storage/data/${bucket}/${fileName.endsWith('.txt') ? fileName : `${fileName}.txt`}`,
+      {
+        method: 'POST',
+        body: text,
+        plaintext: true,
+      }
+    );
+  }
+
   async convertLinkingProperty(id: number) {
-    return this.request<any>(`/api/madoc/iiif/linking/${id}/convert`, {
+    return this.request<{
+      link: ResourceLinkRow;
+    }>(`/api/madoc/iiif/linking/${id}/convert`, {
       method: 'POST',
     });
   }
