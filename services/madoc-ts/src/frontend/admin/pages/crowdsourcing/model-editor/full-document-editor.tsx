@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   DocumentEditor,
   DocumentStore,
@@ -23,6 +23,9 @@ export const FullDocumentEditor: React.FC = () => {
   }));
   const actions = DocumentStore.useStoreActions(a => a);
   const removeStructureField = StructureStore.useStoreActions(a => a.removeField);
+  const sourceTypes = useMemo(() => {
+    return api.getCaptureModelDataSources().map(source => source.definition);
+  }, [api]);
 
   return (
     <div style={{ display: 'flex', fontSize: 14 }}>
@@ -49,6 +52,7 @@ export const FullDocumentEditor: React.FC = () => {
         {state.selectedField ? (
           <div>
             <FieldEditor
+              sourceTypes={sourceTypes}
               key={state.selectedField}
               term={state.selectedField}
               field={state.subtree.properties[state.selectedField][0] as BaseField}

@@ -2250,15 +2250,15 @@
     screenfull "^3.3.2"
     whatwg-fetch "^3.0.0"
 
-"@capture-models/editor@^0.11.0":
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.11.0.tgz#b452d30fabf261b6f495178cd00d9728dd27c767"
-  integrity sha512-2Fxl186wpQ33aek+EPvUCxCcpUfp9CcnjT7B3vVVAuaUZEQm3lfX84tXVQjpD2iLC6s8xHbbhSg6RORWcnfEDg==
+"@capture-models/editor@^0.11.1":
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.11.1.tgz#45262acf39bdf159c187367d42b439c292a0bd7a"
+  integrity sha512-5Qe+lJnOwBu3UVFL833OZjzSlbJnX8MDnc02bowKEVNdb6x8MIcMdBTNV0zFeJ6tQxHS8rAXDpsNXEVwCloHQA==
   dependencies:
     "@atlas-viewer/atlas" "^1.1.0"
-    "@capture-models/helpers" "^0.11.0"
-    "@capture-models/plugin-api" "^0.11.0"
-    "@capture-models/types" "^0.11.0"
+    "@capture-models/helpers" "^0.11.1"
+    "@capture-models/plugin-api" "^0.11.1"
+    "@capture-models/types" "^0.11.1"
     "@hyperion-framework/react-vault" "^1.0.0-alpha.15"
     "@hyperion-framework/types" "^1.0.0-alpha.14"
     "@iiif/vocabulary" "1.0.18"
@@ -2294,30 +2294,30 @@
     use-async-effect "^2.2.1"
     use-debounce "^3.3.0"
 
-"@capture-models/helpers@^0.11.0":
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/@capture-models/helpers/-/helpers-0.11.0.tgz#1250f2a7678cdd417d3713597cdf476d34dd9d0f"
-  integrity sha512-RrqAgS8E5l3CtsmHk0upKzJzDWBBjafxGFsN3Df4mQcVtJs2Wgqul0iEnRMOnMKEBu22R/KarblahMLdsynfVw==
+"@capture-models/helpers@^0.11.1":
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/@capture-models/helpers/-/helpers-0.11.1.tgz#cf6f7eafa693d4ae8845d3b87e2adee44f66ddf1"
+  integrity sha512-ovLJwHuDcIY0YRdy9g68AxbgUzua+zpAXEoDeLA1FL49mRgP1t91R+1uthLn1ORGKixeCFJ62fRYq2fDA9UksQ==
   dependencies:
-    "@capture-models/plugin-api" "^0.11.0"
-    "@capture-models/types" "^0.11.0"
+    "@capture-models/plugin-api" "^0.11.1"
+    "@capture-models/types" "^0.11.1"
     fast-copy "^2.0.4"
     immer "^7.0.7"
     react "^16.13.1"
     uuid "^3.4.0"
 
-"@capture-models/plugin-api@^0.11.0":
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/@capture-models/plugin-api/-/plugin-api-0.11.0.tgz#b2da52280b0a1faa4cdce004094baff47f9d320a"
-  integrity sha512-4+Z1aFAPa0bh6KMoU2k4ilWBA1b/zrDB81LjV+NR8Hwt7DpwLFzgVH96lU2/mV2ifrrtjr2EQGRkt9t4wy/flA==
+"@capture-models/plugin-api@^0.11.1":
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/@capture-models/plugin-api/-/plugin-api-0.11.1.tgz#047877eff33bdcc852132d211e6d1e43082c8138"
+  integrity sha512-KAnB7dXH8vfJM0BU7+oQ9CYB2xWvOE3/o5KA37tWMBnCxJxCaFY2Sh0SuIMXZs0rM26whue8h0NMLoAIFRrfvA==
   dependencies:
-    "@capture-models/types" "^0.11.0"
+    "@capture-models/types" "^0.11.1"
     react "^16.13.1"
 
-"@capture-models/types@^0.11.0":
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/@capture-models/types/-/types-0.11.0.tgz#303c687adedcfad6d099f01e4094b94366d859c9"
-  integrity sha512-PIivR8ywAaPd8DEpP/+s0fGw6uQcWSx9612PS8w7bwxVrBu/qXbDgQB67FFnTFydQbunNkXPAdvQmfpfiVZ7KQ==
+"@capture-models/types@^0.11.1":
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/@capture-models/types/-/types-0.11.1.tgz#586901dbee31e164f1826597365a0fe746325e47"
+  integrity sha512-1ifMOJCX29LjR0TRIlmOG+qcZS7MgTMKkO3BpWgLwfflUF5dkFLFFtBjtAfwwCrvO+Jx1lN66wHCg/3RceEmfA==
 
 "@cnakazawa/watch@^1.0.3":
   version "1.0.4"

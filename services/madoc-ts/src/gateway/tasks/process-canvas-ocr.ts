@@ -18,10 +18,11 @@ export const status = [
 
 export interface ProcessManifestOcr extends BaseTask {
   type: 'canvas-ocr-manifest';
-  parameters: [number, number, number, string, 'alto' | 'hocr'];
+  parameters: [number, number, number, string, 'alto' | 'hocr' | 'plain-text'];
   status: -1 | 0 | 1 | 2 | 3;
   state: {
     link_id?: number;
+    error?: string;
   };
 }
 
@@ -31,7 +32,7 @@ export function createTask(
   siteId: number,
   userId: number,
   link: string,
-  ocrType: 'alto' | 'hocr'
+  ocrType: 'alto' | 'hocr' | 'plain-text'
 ): ProcessManifestOcr {
   return {
     type: 'canvas-ocr-manifest',
@@ -193,12 +194,43 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
 
             break;
           }
+          case 'plain-text': {
+            // Is it an ID.
+            const linkId = Number(link);
+
+            if (!linkId || Number.isNaN(linkId)) {
+              throw new Error('OCR link is not a valid identifier for plain text resource');
+            }
+
+            // Load the text.
+            const addedLink = await userApi.convertLinkingProperty(linkId);
+
+            await api.updateTask(task.id, {
+              status: 3,
+              status_text: 'Imported',
+              state: {
+                link_id: addedLink.link.id,
+              },
+            });
+
+            break;
+          }
           default:
             throw Error();
         }
       } catch (err) {
         console.log(err);
-        await api.updateTask(task.id, { status: -1, status_text: `Could not load external OCR` });
+        await api.updateTask(task.id, {
+          status: -1,
+          status_text: `Could not load external OCR`,
+          state: { error: `${err}` },
+        });
+        if (task.parent_task) {
+          await api.updateTask(task.parent_task, {
+            status: -1,
+            status_text: `Could not load some OCR materials`,
+          });
+        }
         return;
       }
 

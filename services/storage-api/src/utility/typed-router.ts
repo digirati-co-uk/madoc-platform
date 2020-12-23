@@ -41,7 +41,15 @@ export class TypedRouter<
           this.router.put(
             route,
             path,
-            koaBody({ multipart: true, text: true, includeUnparsed: true, json: true, jsonLimit: '5mb', formLimit: '5mb', textLimit: '5mb' }),
+            koaBody({
+              multipart: true,
+              text: true,
+              includeUnparsed: true,
+              json: true,
+              jsonLimit: '5mb',
+              formLimit: '5mb',
+              textLimit: '5mb',
+            }),
             func
           );
           break;
@@ -50,7 +58,15 @@ export class TypedRouter<
           this.router.post(
             route,
             path,
-            koaBody({ multipart: true, text: true, includeUnparsed: true, json: true, jsonLimit: '5mb', formLimit: '5mb', textLimit: '5mb' }),
+            koaBody({
+              multipart: true,
+              text: true,
+              includeUnparsed: true,
+              json: true,
+              jsonLimit: '5mb',
+              formLimit: '5mb',
+              textLimit: '5mb',
+            }),
             func
           );
           break;
@@ -59,7 +75,15 @@ export class TypedRouter<
           this.router.patch(
             route,
             path,
-            koaBody({ multipart: true, text: true, includeUnparsed: true, json: true, jsonLimit: '5mb', formLimit: '5mb', textLimit: '5mb' }),
+            koaBody({
+              multipart: true,
+              text: true,
+              includeUnparsed: true,
+              json: true,
+              jsonLimit: '5mb',
+              formLimit: '5mb',
+              textLimit: '5mb',
+            }),
             func
           );
           break;

@@ -68,6 +68,27 @@ export const convertLinking: RouteMiddleware<{ id: string }> = async context => 
   const mediaType = contentType.parse(mediaTypeHeader);
 
   switch (mediaType.type) {
+    // Plain text
+    case 'text/plain': {
+      // Grab XML
+      const text = await externalResourceResponse.text();
+      // Save XML.
+      await userApi.saveStoragePlainText(
+        'saved-linking',
+        `${link.resource_id}/${linkHash(link.uri)}.txt`,
+        text || ' ',
+        true
+      );
+      // Update link.
+      const newFetchedLink = await updateConvertedLink('saved-linking', 'txt');
+
+      context.response.body = {
+        link: newFetchedLink,
+      };
+      return;
+    }
+
+    // Various XML formats
     case 'text/xml':
     case 'application/xml+alto':
     case 'application/xml': {
@@ -83,6 +104,8 @@ export const convertLinking: RouteMiddleware<{ id: string }> = async context => 
       };
       return;
     }
+
+    // Various JSON formats.
     case 'application/json':
     case 'text/json':
     case 'application/ld+json': {

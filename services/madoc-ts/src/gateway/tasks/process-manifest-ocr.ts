@@ -45,7 +45,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
   switch (name) {
     case 'created': {
       // The task at hand.
-      const task = await api.getTask<ProcessManifestOcr>(taskId);
+      const task = await api.acceptTask<ProcessManifestOcr>(taskId);
 
       const [manifestId, siteId, userId] = task.parameters;
       const userApi = api.asUser({ siteId, userId });
@@ -61,6 +61,8 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         if (spendIds.indexOf(link.resource_id) !== -1) {
           continue;
         }
+
+        // META+ALTO detection.
         if (
           (link.link.format === 'text/xml' || link.link.format === 'application/xml+alto') &&
           link.link.profile &&
@@ -79,8 +81,10 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
               'alto'
             )
           );
+          continue;
         }
 
+        // hOCR detection
         if (
           link.link.format === 'text/vnd.hocr+html' &&
           link.link.profile &&
@@ -101,6 +105,26 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
               'hocr'
             )
           );
+          continue;
+        }
+
+        // Plain text detection
+        if (link.link.format === 'text/plain') {
+          // Be sure not to add it twice.
+          spendIds.push(link.resource_id);
+          // Create task if the linked file is not already stored.
+          if (!link.file) {
+            subTasks.push(
+              processCanvasOcr.createTask(
+                link.resource_id,
+                `Plain text import for Canvas ID: ${link.resource_id}`,
+                siteId,
+                userId,
+                `${link.id}`, // We pass the identifier here instead of the link
+                'plain-text'
+              )
+            );
+          }
         }
       }
 
@@ -116,7 +140,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
 
       break;
     }
-    case `subtask_type_status.madoc-ocr-canvas.${tasks.STATUS.DONE}`: {
+    case `subtask_type_status.canvas-ocr-manifest.${tasks.STATUS.DONE}`: {
       // When they're all done, mark this task as done - I think that's all?
       await api.updateTask(taskId, {
         status: 3,

@@ -7,7 +7,7 @@ import { Button } from '../../../../shared/atoms/Button';
 import { NotStartedIcon } from '../../../../shared/atoms/NotStartedIcon';
 import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../../../shared/atoms/Table';
 import { TickIcon } from '../../../../shared/atoms/TickIcon';
-import { WidePage } from '../../../../shared/atoms/WidePage';
+import { WarningMessage } from '../../../../shared/atoms/WarningMessage';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useData } from '../../../../shared/hooks/use-data';
@@ -16,7 +16,6 @@ import { createUniversalComponent } from '../../../../shared/utility/create-univ
 import { HrefLink } from '../../../../shared/utility/href-link';
 import { UniversalComponent } from '../../../../types';
 import React, { useMemo } from 'react';
-import { AdminHeader } from '../../../molecules/AdminHeader';
 
 type OcrManifestType = {
   data: {
@@ -52,69 +51,68 @@ export const OcrManifest: UniversalComponent<OcrManifestType> = createUniversalC
       return map;
     }, [data]);
 
+    const isEmpty = Object.keys(canvasLinkingMap).length === 0;
+
     return (
       <>
-        <AdminHeader
-          breadcrumbs={[
-            { label: 'Site admin', link: '/' },
-            { label: 'OCR', link: `/enrichment/ocr` },
-            {
-              label: <LocaleString>{data?.manifest.manifest.label || { none: ['...'] }}</LocaleString>,
-              link: `/enrichment/ocr/${data?.manifest.manifest.id}`,
-            },
-          ]}
-          title="Prepare your manifest for OCR corrections"
-        />
-        <WidePage>
-          <h1>Prepare your manifest for OCR corrections</h1>
-          {queueManifestQuery.data ? (
-            <div>
-              OCR is importing
-              <Button as={HrefLink} href={createLink({ taskId: queueManifestQuery.data.id })}>
-                View progress
-              </Button>
-            </div>
-          ) : (
-            <Button disabled={queueManifestQuery.status === 'loading'} onClick={() => queueManifest()}>
-              Import OCR
+        <h1>Prepare your manifest for OCR corrections</h1>
+        {isEmpty ? (
+          <WarningMessage>No OCR data found</WarningMessage>
+        ) : queueManifestQuery.data ? (
+          <div>
+            OCR is importing
+            <Button as={HrefLink} href={createLink({ taskId: queueManifestQuery.data.id })}>
+              View progress
             </Button>
-          )}
-          <TableContainer>
-            {data?.manifestStructure.items.map(item => {
-              return (
-                <TableRow>
-                  <TableRowLabel>
-                    {canvasLinkingMap[item.id] &&
-                    canvasLinkingMap[item.id].find(m => m.link && m.link.type === 'CaptureModelDocument') ? (
-                      <TickIcon />
-                    ) : (
-                      <NotStartedIcon accepted />
-                    )}
-                  </TableRowLabel>
-                  <TableRowLabel>
-                    <LocaleString>{item.label}</LocaleString>
-                  </TableRowLabel>
-                  <TableActions>
-                    {canvasLinkingMap[item.id] ? (
-                      canvasLinkingMap[item.id].map(link => {
-                        if (
-                          link.link.profile === 'http://www.loc.gov/standards/alto/v3/alto.xsd' ||
-                          link.link.profile === 'http://www.loc.gov/standards/alto/v4/alto.xsd'
-                        ) {
-                          return <div>ALTO</div>;
-                        }
+          </div>
+        ) : (
+          <Button disabled={queueManifestQuery.status === 'loading'} onClick={() => queueManifest()}>
+            Import OCR
+          </Button>
+        )}
+        <TableContainer>
+          {data?.manifestStructure.items.map(item => {
+            return (
+              <TableRow>
+                <TableRowLabel>
+                  {canvasLinkingMap[item.id] &&
+                  canvasLinkingMap[item.id].find(
+                    m => m.link && (m.link.type === 'CaptureModelDocument' || m.link.format === 'text/plain')
+                  ) ? (
+                    <TickIcon />
+                  ) : canvasLinkingMap[item.id] ? (
+                    <NotStartedIcon accepted />
+                  ) : (
+                    <NotStartedIcon />
+                  )}
+                </TableRowLabel>
+                <TableRowLabel>
+                  <LocaleString>{item.label}</LocaleString>
+                </TableRowLabel>
+                <TableActions>
+                  {canvasLinkingMap[item.id] ? (
+                    canvasLinkingMap[item.id].map(link => {
+                      if (
+                        link.link.profile === 'http://www.loc.gov/standards/alto/v3/alto.xsd' ||
+                        link.link.profile === 'http://www.loc.gov/standards/alto/v4/alto.xsd'
+                      ) {
+                        return <div>ALTO</div>;
+                      }
 
-                        return <div key={link.id}>{link.link.profile}</div>;
-                      })
-                    ) : (
-                      <div>No OCR Data found</div>
-                    )}
-                  </TableActions>
-                </TableRow>
-              );
-            })}
-          </TableContainer>
-        </WidePage>
+                      if (link.link.format === 'text/plain') {
+                        return <div>Plaintext</div>;
+                      }
+
+                      return <div key={link.id}>{link.link.profile}</div>;
+                    })
+                  ) : (
+                    <div>No OCR Data found</div>
+                  )}
+                </TableActions>
+              </TableRow>
+            );
+          })}
+        </TableContainer>
       </>
     );
   },

@@ -3,6 +3,7 @@ import { CanvasSearchIndex } from './pages/content/canvases/canvas-search-index'
 import { CollectionView } from './pages/content/collections/collection';
 import { ViewCanvasLinking } from './pages/content/linking/view-linking';
 import { SiteConfiguration } from './pages/content/site-configuration';
+import { OcrListPage } from './pages/enrichment/ocr/ocr-list';
 import { ExportSite } from './pages/export/export-site';
 import { Homepage } from './pages/homepage';
 import { CollectionList } from './pages/content/collections/collection-list';
@@ -162,6 +163,11 @@ export const routes: UniversalRoute[] = [
         exact: true,
         component: ManifestSearchIndex,
       },
+      {
+        path: '/manifests/:id/ocr',
+        exact: true,
+        component: OcrManifest,
+      },
     ],
   },
   {
@@ -318,14 +324,21 @@ export const routes: UniversalRoute[] = [
   },
   {
     path: '/enrichment/ocr',
-    exact: true,
     component: OcrPage,
+    routes: [
+      {
+        path: '/enrichment/ocr',
+        exact: true,
+        component: OcrListPage,
+      },
+      {
+        path: '/enrichment/ocr/manifest/:id',
+        exact: true,
+        component: OcrManifest,
+      },
+    ],
   },
-  {
-    path: '/enrichment/ocr/manifest/:id',
-    exact: true,
-    component: OcrManifest,
-  },
+
   // Export
   {
     path: '/export/site',

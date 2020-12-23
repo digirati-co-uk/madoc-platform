@@ -1,7 +1,10 @@
 import { BaseField, CaptureModel, RevisionRequest } from '@capture-models/types';
 import { createChoice, createDocument, generateId } from '@capture-models/helpers';
+import { DynamicDataSourcesExtension } from '../extensions/capture-models/DynamicDataSources/DynamicDataSources.extension';
+import { DynamicData } from '../extensions/capture-models/DynamicDataSources/types';
 import { CaptureModelExtension } from '../extensions/capture-models/extension';
 import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.extension';
+import { plainTextSource } from '../extensions/capture-models/DynamicDataSources/sources/Plaintext.source';
 import { ExtensionManager } from '../extensions/extension-manager';
 import { Site } from '../types/omeka/Site';
 import { SingleUser } from '../types/omeka/User';
@@ -45,7 +48,7 @@ import {
 } from './tasks/crowdsourcing-review';
 import { CrowdsourcingCanvasTask } from './tasks/crowdsourcing-canvas-task';
 import { ConfigResponse } from '../types/schemas/config-response';
-import { ResourceLinkResponse } from '../database/queries/linking-queries';
+import { ResourceLinkResponse, ResourceLinkRow } from '../database/queries/linking-queries';
 
 export class ApiClient {
   private readonly gateway: string;
@@ -59,6 +62,7 @@ export class ApiClient {
   private isDown = false;
   private currentUser?: { scope: string[]; user: { id: string; name?: string } };
   private captureModelExtensions: ExtensionManager<CaptureModelExtension>;
+  private captureModelDataSources: DynamicData[];
 
   constructor(options: {
     gateway: string;
@@ -74,8 +78,16 @@ export class ApiClient {
     this.isServer = !(globalThis as any).window;
     this.fetcher = options.customerFetcher || fetchJson;
     this.publicSiteSlug = options.publicSiteSlug;
+    this.captureModelDataSources = [plainTextSource];
     this.captureModelExtensions = new ExtensionManager(
-      options.customCaptureModelExtensions ? options.customCaptureModelExtensions(this) : [new Paragraphs(this)]
+      options.customCaptureModelExtensions
+        ? options.customCaptureModelExtensions(this)
+        : [
+            // Allows for OCR to be detected and added to models
+            new Paragraphs(this),
+            // Allows for dynamic values to be applied to models
+            new DynamicDataSourcesExtension(this, this.captureModelDataSources),
+          ]
     );
   }
 
@@ -150,6 +162,7 @@ export class ApiClient {
       jwt = this.jwt,
       publicRequest = false,
       xml = false,
+      plaintext = false,
       returnText = false,
       headers = {},
       raw = false,
@@ -159,6 +172,7 @@ export class ApiClient {
       jwt?: string;
       publicRequest?: boolean;
       xml?: boolean;
+      plaintext?: boolean;
       returnText?: boolean;
       headers?: any;
       raw?: boolean;
@@ -176,6 +190,7 @@ export class ApiClient {
       jwt: jwt,
       asUser: this.user,
       xml,
+      plaintext,
       returnText,
       headers,
       raw,
@@ -274,6 +289,10 @@ export class ApiClient {
       customerFetcher: this.fetcher,
       publicSiteSlug: options && options.siteSlug ? options.siteSlug : this.publicSiteSlug,
     });
+  }
+
+  getCaptureModelDataSources() {
+    return this.captureModelDataSources;
   }
 
   async getStatistics() {
@@ -1108,8 +1127,29 @@ export class ApiClient {
     );
   }
 
+  async saveStoragePlainText(bucket: string, fileName: string, text: string, isPublic = false) {
+    return this.request<{
+      success: boolean;
+      stats: {
+        modified: string;
+        size: number;
+      };
+    }>(
+      isPublic
+        ? `/api/storage/data/${bucket}/public/${fileName.endsWith('.txt') ? fileName : `${fileName}.txt`}`
+        : `/api/storage/data/${bucket}/${fileName.endsWith('.txt') ? fileName : `${fileName}.txt`}`,
+      {
+        method: 'POST',
+        body: text,
+        plaintext: true,
+      }
+    );
+  }
+
   async convertLinkingProperty(id: number) {
-    return this.request<any>(`/api/madoc/iiif/linking/${id}/convert`, {
+    return this.request<{
+      link: ResourceLinkRow;
+    }>(`/api/madoc/iiif/linking/${id}/convert`, {
       method: 'POST',
     });
   }
