@@ -7,6 +7,7 @@ import { SmallButton } from '../../shared/atoms/Button';
 import { Status } from '../../shared/atoms/Status';
 import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../shared/atoms/Table';
 import { taskTypeToLabel } from '../../shared/utility/task-type-to-label';
+import { CollapsibleTaskList } from './CollapsibleTaskList';
 
 export const SortedTaskList: React.FC<{ tasks: BaseTask[]; trigger: (id: string) => void; taskStatusMap: any }> = ({
   tasks,
@@ -44,26 +45,7 @@ export const SortedTaskList: React.FC<{ tasks: BaseTask[]; trigger: (id: string)
         return (
           <div key={sortedType}>
             <h4>{t(taskTypeToLabel(sortedType))}</h4>
-            <TableContainer>
-              {sortedSubtasks[sortedType].map((subtask: BaseTask) => (
-                <TableRow key={subtask.id}>
-                  <TableRowLabel>
-                    <Status status={subtask.status || 0} text={t(subtask.status_text || 'unknown')} />
-                  </TableRowLabel>
-                  <TableRowLabel>
-                    <Link to={`/tasks/${subtask.id}`}>{subtask.name}</Link>
-                  </TableRowLabel>
-                  <TableActions>
-                    <SmallButton
-                      onClick={() => (subtask.id ? trigger(subtask.id) : null)}
-                      disabled={subtask.id ? taskStatusMap[subtask.id] : false}
-                    >
-                      Retry
-                    </SmallButton>
-                  </TableActions>
-                </TableRow>
-              ))}
-            </TableContainer>
+            <CollapsibleTaskList tasks={sortedSubtasks[sortedType]} trigger={trigger} taskStatusMap={taskStatusMap} />
           </div>
         );
       })}
