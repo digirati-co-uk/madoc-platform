@@ -23,7 +23,6 @@ import { RevisionTopLevel } from '../../../shared/caputre-models/RevisionTopLeve
 import { ModalButton } from '../../../shared/components/Modal';
 import { Button, LinkButton } from '../../../shared/atoms/Button';
 import { ArrowForwardIcon } from '../../../shared/icons/ArrowForwardIcon';
-import { CompareIcon } from '../../../shared/icons/CompareIcon';
 import { WarningMessage } from '../../../shared/atoms/WarningMessage';
 import { TableContainer, TableRow, TableRowLabel } from '../../../shared/atoms/Table';
 import TimeAgo from 'react-timeago';
