@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { WidePage } from '../../../../shared/atoms/WidePage';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
-import {useParams} from "react-router-dom";
+import { useParams } from 'react-router-dom';
 
 export const CaptureModels = createUniversalComponent(({ route }) => {
   const { t } = useTranslation();

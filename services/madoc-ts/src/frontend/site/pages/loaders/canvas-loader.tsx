@@ -1,4 +1,3 @@
-import { CaptureModel } from '@capture-models/types';
 import React, { useMemo } from 'react';
 import { CrowdsourcingCanvasTask } from '../../../../gateway/tasks/crowdsourcing-canvas-task';
 import { CrowdsourcingManifestTask } from '../../../../gateway/tasks/crowdsourcing-manifest-task';
@@ -7,7 +6,7 @@ import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task'
 import { CanvasFull } from '../../../../types/schemas/canvas-full';
 import { ManifestFull } from '../../../../types/schemas/manifest-full';
 import { ProjectFull } from '../../../../types/schemas/project-full';
-import { BreadcrumbContext, DisplayBreadcrumbs } from '../../../shared/components/Breadcrumbs';
+import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
 import { ApiArgs, apiHooks } from '../../../shared/hooks/use-api-query';
 import { useData } from '../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
