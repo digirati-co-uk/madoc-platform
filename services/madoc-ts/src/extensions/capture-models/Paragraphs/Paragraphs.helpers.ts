@@ -40,7 +40,6 @@ export function preprocessCaptureModel(data: CaptureModel['document']['propertie
 }
 
 export type ParagraphEntity = CaptureModel['document'] & {
-  profile: typeof PARAGRAPHS_PROFILE;
   selector: BaseSelector;
   properties: {
     paragraph: Array<
@@ -60,6 +59,22 @@ export type ParagraphEntity = CaptureModel['document'] & {
     >;
   };
 };
+
+export function paragraphsToPlaintext(input: ParagraphEntity['properties']['paragraph']) {
+  const paragraphs = [];
+  for (const paragraph of input) {
+    const lines = [];
+    for (const line of paragraph.properties.lines) {
+      const texts = [];
+      for (const text of line.properties.text) {
+        texts.push(text.value);
+      }
+      lines.push(texts.join(' '));
+    }
+    paragraphs.push(lines.join('\n'));
+  }
+  return paragraphs.join('\n\n');
+}
 
 export function isParagraphEntity(entity: BaseField | CaptureModel['document']): entity is ParagraphEntity {
   if (!isEntity(entity)) {

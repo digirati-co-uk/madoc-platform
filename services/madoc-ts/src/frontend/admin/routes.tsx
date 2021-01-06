@@ -1,4 +1,5 @@
 import { UniversalRoute } from '../types';
+import { CanvasPlaintext } from './pages/content/canvases/canvas-plaintext';
 import { CanvasSearchIndex } from './pages/content/canvases/canvas-search-index';
 import { CollectionView } from './pages/content/collections/collection';
 import { ViewCanvasLinking } from './pages/content/linking/view-linking';
@@ -122,6 +123,11 @@ export const routes: UniversalRoute[] = [
         exact: true,
         component: CanvasSearchIndex,
       },
+      {
+        path: '/manifests/:manifestId/canvases/:id/plaintext',
+        exact: true,
+        component: CanvasPlaintext,
+      },
     ],
   },
   {
@@ -198,6 +204,11 @@ export const routes: UniversalRoute[] = [
         path: '/canvases/:id/search',
         exact: true,
         component: CanvasSearchIndex,
+      },
+      {
+        path: '/canvases/:id/plaintext',
+        exact: true,
+        component: CanvasPlaintext,
       },
     ],
   },

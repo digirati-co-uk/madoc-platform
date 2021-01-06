@@ -13,4 +13,5 @@ export type CanvasFull = {
     source?: any;
     duration?: number;
   };
+  plaintext?: string;
 };

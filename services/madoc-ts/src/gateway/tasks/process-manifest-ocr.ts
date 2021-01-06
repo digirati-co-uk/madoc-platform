@@ -1,3 +1,5 @@
+import { ResourceLinkResponse } from '../../database/queries/linking-queries';
+import { isLinkHocr, isLinkMetsAlto, isLinkPlaintext } from '../../utility/linking-property-types';
 import { BaseTask } from './base-task';
 import * as importCanvas from './import-canvas';
 import * as tasks from './task-helpers';
@@ -63,11 +65,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         }
 
         // META+ALTO detection.
-        if (
-          (link.link.format === 'text/xml' || link.link.format === 'application/xml+alto') &&
-          link.link.profile &&
-          link.link.profile.startsWith('http://www.loc.gov/standards/alto/')
-        ) {
+        if (isLinkMetsAlto(link)) {
           // Make sure we don't add it twice.
           spendIds.push(link.resource_id);
           // Create task.
@@ -85,13 +83,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         }
 
         // hOCR detection
-        if (
-          link.link.format === 'text/vnd.hocr+html' &&
-          link.link.profile &&
-          (link.link.profile.startsWith('http://kba.cloud/hocr-spec') ||
-            link.link.profile.startsWith('http://kba.github.io/hocr-spec/') ||
-            link.link.profile === 'https://github.com/kba/hocr-spec/blob/master/hocr-spec.md')
-        ) {
+        if (isLinkHocr(link)) {
           // Make sure we don't add it twice.
           spendIds.push(link.resource_id);
           // Create task.
@@ -109,7 +101,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         }
 
         // Plain text detection
-        if (link.link.format === 'text/plain') {
+        if (isLinkPlaintext(link)) {
           // Be sure not to add it twice.
           spendIds.push(link.resource_id);
           // Create task if the linked file is not already stored.

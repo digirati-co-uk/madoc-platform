@@ -9,8 +9,9 @@ export const CanvasNavigation: React.FC<{
   projectId?: string | number;
   collectionId?: string | number;
   subRoute?: string;
+  admin?: boolean;
   query?: any;
-}> = ({ canvasId: id, manifestId, projectId, collectionId, subRoute, query }) => {
+}> = ({ canvasId: id, manifestId, projectId, collectionId, subRoute, admin, query }) => {
   const structure = useManifestStructure(manifestId);
 
   const idx = structure.data ? structure.data.ids.indexOf(Number(id)) : -1;
@@ -47,6 +48,7 @@ export const CanvasNavigation: React.FC<{
             canvasId: structure.data.items[idx + 1].id,
             subRoute,
             query,
+            admin,
           })}
           item={structure.data.items[idx + 1]}
         />

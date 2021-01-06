@@ -1,8 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { CanvasNavigation } from '../../../../shared/components/CanvasNavigation';
 import { UniversalComponent } from '../../../../types';
 import { LocaleString } from '../../../../shared/components/LocaleString';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams, useRouteMatch } from 'react-router-dom';
 import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
 import { CanvasFull } from '../../../../../types/schemas/canvas-full';
 import { useData } from '../../../../shared/hooks/use-data';
@@ -24,6 +25,9 @@ export const CanvasView: UniversalComponent<CanvasViewType> = createUniversalCom
   ({ route }) => {
     const { t } = useTranslation();
     const params = useParams<{ id: string; manifestId?: string }>();
+    const match = useRouteMatch();
+    const { pathname } = useLocation();
+    const subRoute = pathname.slice(match.url.length + 1);
     const { id, manifestId } = params;
     const { data } = useData(CanvasView);
     const { data: manifestResponse } = useApiManifest(manifestId);
@@ -77,9 +81,16 @@ export const CanvasView: UniversalComponent<CanvasViewType> = createUniversalCom
               label: t('search index'),
               link: manifestId ? `/manifests/${manifestId}/canvases/${id}/search` : `/canvases/${id}/search`,
             },
+            {
+              label: t('transcription'),
+              link: manifestId ? `/manifests/${manifestId}/canvases/${id}/plaintext` : `/canvases/${id}/plaintext`,
+            },
           ]}
         />
-        <WidePage>{renderUniversalRoutes(route.routes, { canvas, manifest: manifestResponse?.manifest })}</WidePage>
+        <WidePage>
+          {renderUniversalRoutes(route.routes, { canvas, manifest: manifestResponse?.manifest })}
+          <CanvasNavigation manifestId={manifestId} canvasId={id} admin subRoute={subRoute} />
+        </WidePage>
       </>
     );
   },
