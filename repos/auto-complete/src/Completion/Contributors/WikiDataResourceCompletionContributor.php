@@ -31,6 +31,7 @@ final class WikiDataResourceCompletionContributor implements CompletionContribut
                 'limit' => '5',
                 'action' => 'wbsearchentities',
                 'language' => $language ? $language : 'en',
+                'uselang' => $language ? $language : 'en',
                 'format' => 'json'
             ]
         ]);
