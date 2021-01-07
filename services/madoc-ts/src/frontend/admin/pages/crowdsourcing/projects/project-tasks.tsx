@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { SubjectSnippet } from '../../../../shared/components/SubjectSnippet';
 import { ViewCrowdsourcingTask } from '../../../molecules/ViewCrowdsourcingTask';
+import { ViewCrowdsourcingCanvasTask } from '../../tasks/crowdsourcing-canvas-task';
 
 type ProjectTasksType = {
   params: { id: number; taskId?: string };
@@ -26,6 +27,10 @@ export const ProjectTasks: UniversalComponent<ProjectTasksType> = createUniversa
 
     if (!task) {
       return <>Loading...</>;
+    }
+
+    if (task.type === 'crowdsourcing-canvas-task') {
+      return <ViewCrowdsourcingCanvasTask projectId={project.id} task={task as any} />;
     }
 
     if (task.type === 'crowdsourcing-task') {

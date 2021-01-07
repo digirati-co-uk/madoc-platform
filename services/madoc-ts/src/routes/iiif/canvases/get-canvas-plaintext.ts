@@ -79,7 +79,10 @@ export const getCanvasPlaintext: RouteMiddleware<{ id: string }> = async context
           const resolvedParagraphs = api.resolveUrl(linkingProperty.link.id);
           const transcription = await fetch(resolvedParagraphs)
             .then(r => r.json())
-            .then(r => paragraphsToPlaintext(r.paragraph));
+            .then(
+              // unknown why this might be different at this point.
+              r => paragraphsToPlaintext(r.paragraph || r.paragraphs)
+            );
 
           if (transcription) {
             state.found = true;

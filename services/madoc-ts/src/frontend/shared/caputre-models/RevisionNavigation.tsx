@@ -12,8 +12,9 @@ export const RevisionNavigation: React.FC<{
   structure: CaptureModel['structure'];
   onSaveRevision: (req: RevisionRequest, status?: string) => Promise<void>;
   readOnly?: boolean;
+  allUsers?: boolean;
   allowEdits?: boolean;
-}> = ({ structure, readOnly, allowEdits, onSaveRevision }) => {
+}> = ({ allUsers = false, structure, readOnly, allowEdits, onSaveRevision }) => {
   const [currentView, { pop, push, idStack, goTo }] = useNavigation();
   const currentRevisionId = Revisions.useStoreState(s => s.currentRevisionId);
   const revisions = Revisions.useStoreState(s => s.revisions);
@@ -29,6 +30,9 @@ export const RevisionNavigation: React.FC<{
     const keys = Object.keys(revisions);
     if (!user) {
       return [];
+    }
+    if (allUsers) {
+      return keys.map(key => revisions[key]);
     }
     return keys.map(key => revisions[key]).filter(rev => (rev.revision.authors || []).indexOf(user.id) !== -1);
   }, [revisions, user]);

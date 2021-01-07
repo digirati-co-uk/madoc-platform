@@ -120,6 +120,10 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
         ? await userApi.getStorageJsonData(foundLinking.file.bucket, foundLinking.file.path)
         : await fetch(foundLinking.link.id).then(r => r.json());
 
+      if (data.paragraphs && data.paragraph.length) {
+        data.paragraph = data.paragraphs;
+        delete data.paragraphs;
+      }
       if (data && data.paragraph && data.paragraph.length) {
         modelId = `urn:madoc:file:${foundLinking.id}`;
         data.paragraph.forEach((paragraph: any) => {

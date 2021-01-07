@@ -3,7 +3,11 @@ import { useContentType } from '@capture-models/plugin-api';
 import { Target } from '@capture-models/types';
 import '@capture-models/editor/lib/content-types/Atlas';
 
-export const ViewContent: React.FC<{ target: Target[]; canvas: any }> = ({ target, canvas }) => {
+export const ViewContent: React.FC<{ target: Target[]; canvas: any; height?: number }> = ({
+  target,
+  canvas,
+  height = 600,
+}) => {
   return useContentType(
     useMemo(() => {
       const fixedType = [];
@@ -24,7 +28,7 @@ export const ViewContent: React.FC<{ target: Target[]; canvas: any }> = ({ targe
     }, [target]),
     useMemo(
       () => ({
-        height: 600,
+        height,
         custom: {
           customFetcher: (mid: string) => {
             const canvasTarget: any = target.find((r: any) => r.type === 'Canvas');

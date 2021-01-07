@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@atlas-viewer/atlas@^1.2.0", "@atlas-viewer/atlas@^1.3.1":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-1.2.0.tgz#4562d4d16b9d381d88e6225bcf0d77b3705a91b7"
-  integrity sha512-Mmdth4hfCoi+Q5rxgovYDYouZS8f8SLcv0bvwjsSwEOYTbyxU3QK5tPDDDHG1jQPOSnZ5Dv/3Y35AbmOT7DGbA==
+"@atlas-viewer/atlas@^1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-1.3.1.tgz#2b58d06811d4a4b1dc04b5f0fc32505e8dc96d40"
+  integrity sha512-a1cZmbz15elA/1fxilxHuLCCGNzmbTxdLjR7bZ/h8R5H+4MvXox9PRObxeXusZuQEo8PEzbrUncncJmRKecrbQ==
   dependencies:
     "@atlas-viewer/dna" "^0.5.0"
     "@atlas-viewer/iiif-image-api" "1.2.1"
@@ -2249,6 +2249,7 @@
     react-measure "^2.0.2"
     screenfull "^3.3.2"
     whatwg-fetch "^3.0.0"
+
 
 "@capture-models/editor@^0.11.4":
   version "0.11.4"

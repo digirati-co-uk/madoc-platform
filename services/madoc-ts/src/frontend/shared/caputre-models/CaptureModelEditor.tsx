@@ -7,14 +7,16 @@ export const CaptureModelEditor: React.FC<{
   captureModel: CaptureModel;
   onSave: (req: RevisionRequest, status?: string) => void;
   readOnly?: boolean;
+  allUsers?: boolean;
   allowEdits?: boolean;
-}> = ({ captureModel, readOnly, allowEdits, onSave }) => {
+}> = ({ captureModel, readOnly, allowEdits, allUsers, onSave }) => {
   const updateFunction = useViewerSaving(onSave);
 
   return (
     <RevisionNavigation
       structure={captureModel.structure}
       readOnly={readOnly}
+      allUsers={allUsers}
       allowEdits={allowEdits}
       onSaveRevision={updateFunction}
     />
