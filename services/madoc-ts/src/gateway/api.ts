@@ -1642,6 +1642,17 @@ export class ApiClient {
     return this.publicRequest<ProjectConfiguration>(`/madoc/api/configuration`);
   }
 
+  async getSiteSearchQuery(query: SearchQuery, page = 1, madoc_id?: string) {
+    return this.publicRequest<SearchResponse>(
+      `/madoc/api/search`,
+      { page, madoc_id },
+      {
+        method: 'POST',
+        body: query,
+      }
+    );
+  }
+
   async getSiteProjectCanvasTasks(projectId: string | number, canvasId: number) {
     return this.publicRequest<{
       canvasTask?: CrowdsourcingCanvasTask;
