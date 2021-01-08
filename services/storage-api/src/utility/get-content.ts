@@ -4,7 +4,7 @@ import * as fs from 'fs';
 const unparsed = Symbol.for('unparsedBody');
 
 export function getContent(context: Context) {
-  const image = context.request.files ? context.request.files.image : undefined;
+  const image = (context.request.files ? context.request.files.image : undefined) as any;
 
   if (image) {
     return fs.readFileSync(image.path);
