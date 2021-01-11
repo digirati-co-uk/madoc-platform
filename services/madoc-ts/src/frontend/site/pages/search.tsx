@@ -196,7 +196,7 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
         };
       }
 
-      const searchResponse = await api.searchQuery(
+      const searchResponse = await api.getSiteSearchQuery(
         {
           fulltext: vars.fulltext,
           facets: stringifyFacets({ ...vars.facets }) as any,

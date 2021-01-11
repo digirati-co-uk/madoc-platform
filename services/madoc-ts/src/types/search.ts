@@ -82,6 +82,9 @@ export type SearchQuery = {
   /** List of contexts to search within */
   contexts?: string[];
 
+  /** List of required contexts to search within */
+  contexts_all?: string[];
+
   /** Unknown list of madoc identifiers to search within? */
   madoc_identifiers?: string[];
   /** Unknown list of identifiers to search within? */
