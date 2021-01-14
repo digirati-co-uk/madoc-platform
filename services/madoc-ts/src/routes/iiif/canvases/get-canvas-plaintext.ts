@@ -6,10 +6,10 @@ import {
 import { api } from '../../../gateway/api.server';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { isLinkCaptureModelParagraphs, isLinkPlaintext } from '../../../utility/linking-property-types';
-import { userWithScope } from '../../../utility/user-with-scope';
+import { optionalUserWithScope, userWithScope } from '../../../utility/user-with-scope';
 
 export const getCanvasPlaintext: RouteMiddleware<{ id: string }> = async context => {
-  const { siteId } = userWithScope(context, []);
+  const { siteId } = optionalUserWithScope(context, []);
   const siteApi = api.asUser({ siteId });
 
   // Get all capture models.
