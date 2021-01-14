@@ -7,6 +7,5 @@ export const deleteManifest: RouteMiddleware<{ id: number }> = async context => 
 
   await context.connection.any(deleteResource(context.params.id, 'manifest', siteId));
 
-
   context.response.status = 200;
 };
