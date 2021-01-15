@@ -4,7 +4,11 @@ import { generateServiceToken } from './generate-service-token';
 import { verifySignedToken } from './verify-signed-token';
 
 function getContents(dest: string) {
-  return JSON.parse(readFileSync(dest).toString('utf-8'));
+  try {
+    return JSON.parse(readFileSync(dest).toString('utf-8'));
+  } catch (err) {
+    return undefined;
+  }
 }
 
 export async function syncJwtRequests() {
