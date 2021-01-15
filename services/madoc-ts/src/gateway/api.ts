@@ -58,6 +58,7 @@ export class ApiClient {
   private readonly publicSiteSlug?: string;
   private errorHandlers: Array<() => void> = [];
   private jwt?: string;
+  private jwtFunction?: () => string;
   private errorRecoveryHandlers: Array<() => void> = [];
   private isDown = false;
   private currentUser?: { scope: string[]; user: { id: string; name?: string } };
@@ -67,13 +68,14 @@ export class ApiClient {
   constructor(options: {
     gateway: string;
     publicSiteSlug?: string;
-    jwt?: string;
+    jwt?: string | (() => string);
     asUser?: { userId?: number; siteId?: number };
     customerFetcher?: typeof fetchJson;
     customCaptureModelExtensions?: (api: ApiClient) => Array<CaptureModelExtension>;
   }) {
     this.gateway = options.gateway;
-    this.jwt = options.jwt;
+    this.jwtFunction = typeof options.jwt === 'string' ? undefined : options.jwt;
+    this.jwt = typeof options.jwt === 'string' ? options.jwt : undefined;
     this.user = options.asUser;
     this.isServer = !(globalThis as any).window;
     this.fetcher = options.customerFetcher || fetchJson;
@@ -91,6 +93,14 @@ export class ApiClient {
     );
   }
 
+  getJwt() {
+    if (!this.jwt && this.jwtFunction) {
+      this.jwt = this.jwtFunction();
+    }
+
+    return this.jwt;
+  }
+
   resolveUrl(pathName: string) {
     if (pathName.startsWith('/')) {
       return `${this.gateway}${pathName}`;
@@ -102,12 +112,15 @@ export class ApiClient {
     if (this.isServer) {
       throw new Error('Can only be called from the browser.');
     }
-    if (!this.isAuthorised() || !this.jwt) {
+
+    const jwt = this.getJwt();
+
+    if (!this.isAuthorised() || !jwt) {
       return;
     }
 
     if (!this.currentUser) {
-      const [, base64Payload] = this.jwt.split('.');
+      const [, base64Payload] = jwt.split('.');
 
       if (!base64Payload) {
         return;
@@ -136,7 +149,7 @@ export class ApiClient {
       return !!this.user;
     }
 
-    return !!this.jwt;
+    return !!this.getJwt();
   }
 
   onError(func: () => void) {
@@ -162,7 +175,7 @@ export class ApiClient {
     {
       method = 'GET',
       body,
-      jwt = this.jwt,
+      jwt = this.getJwt(),
       publicRequest = false,
       xml = false,
       plaintext = false,
@@ -263,7 +276,7 @@ export class ApiClient {
     {
       method = 'GET',
       body,
-      jwt = this.jwt,
+      jwt = this.getJwt(),
     }: {
       method?: 'GET' | 'PUT' | 'POST' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD';
       body?: Body;
@@ -287,7 +300,7 @@ export class ApiClient {
   asUser(user: { userId?: number; siteId?: number }, options?: { siteSlug?: string }): ApiClient {
     return new ApiClient({
       gateway: this.gateway,
-      jwt: this.jwt,
+      jwt: this.getJwt(),
       asUser: user,
       customerFetcher: this.fetcher,
       publicSiteSlug: options && options.siteSlug ? options.siteSlug : this.publicSiteSlug,
