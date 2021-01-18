@@ -124,6 +124,7 @@ export const LocaleString: React.FC<{
         {...props}
         as={Component}
         language={language}
+        title={text}
         dangerouslySetInnerHTML={
           enableDangerouslySetInnerHTML
             ? {
