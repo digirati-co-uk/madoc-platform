@@ -1,4 +1,6 @@
-// These cannot be made into JSON schemas.import { CreateNormalPageRequest, SiteSlot } from './schemas/site-page';
+// These cannot be made into JSON schemas.
+
+import { CreateNormalPageRequest, SiteSlot } from './schemas/site-page';
 
 export type SitePage = CreateNormalPageRequest & {
   id: number;
