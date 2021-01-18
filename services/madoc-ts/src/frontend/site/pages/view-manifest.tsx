@@ -247,10 +247,9 @@ export const ViewManifest: React.FC<{
                   </Link>
                 ))}
               </ImageGrid>
-              <MetaDataDisplay
-                style={{ width: '40%', backgroundColor: '#ebebeb' }}
-                metadata={manifest.metadata || []}
-              />
+              <div style={{ width: '40%', padding: '1em' }}>
+                <MetaDataDisplay metadata={manifest.metadata || []} variation="list" bordered />
+              </div>
             </div>
           </>
         ) : null}
