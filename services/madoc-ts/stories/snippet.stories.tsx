@@ -1,3 +1,4 @@
+import { boolean, select } from '@storybook/addon-knobs';
 import * as React from 'react';
 import { SnippetLarge } from '../src/frontend/shared/atoms/SnippetLarge';
 import styled from 'styled-components';
@@ -9,6 +10,12 @@ const StorybookPaddedBox = styled.div`
 `;
 
 export const landscapeSnippet = () => {
+  const lightBackground = boolean('Light background', false);
+  const flat = boolean('Flat container', false);
+  const size = select('Size', ['sm', 'md', 'lg'], 'sm');
+  const center = boolean('Center', false);
+  const buttonRole = select('Button role', ['button', 'link'], 'button');
+
   return (
     <StorybookPaddedBox>
       <SnippetLarge
@@ -18,12 +25,23 @@ export const landscapeSnippet = () => {
         link="#"
         thumbnail="https://deriv.nls.uk/dcn4/7443/74438561.4.jpg"
         buttonText="view manifest"
+        lightBackground={lightBackground}
+        flat={flat}
+        size={size}
+        center={center}
+        buttonRole={buttonRole}
       />
     </StorybookPaddedBox>
   );
 };
 
 export const portraitSnippet = () => {
+  const lightBackground = boolean('Light background', false);
+  const flat = boolean('Flat container', false);
+  const size = select('Size', ['sm', 'md', 'lg'], 'sm');
+  const center = boolean('Center', false);
+  const buttonRole = select('Button role', ['button', 'link'], 'button');
+
   return (
     <StorybookPaddedBox>
       <SnippetLarge
@@ -34,11 +52,53 @@ export const portraitSnippet = () => {
         link="#"
         thumbnail="https://deriv.nls.uk/dcn4/7443/74438561.4.jpg"
         buttonText="view manifest"
+        lightBackground={lightBackground}
+        flat={flat}
+        size={size}
+        center={center}
+        buttonRole={buttonRole}
       />
     </StorybookPaddedBox>
   );
 };
+
+export const interactiveSnippet = () => {
+  const lightBackground = boolean('Light background', false);
+  const flat = boolean('Flat container', true);
+  const size = select('Size', ['sm', 'md', 'lg'], 'sm');
+  const center = boolean('Center', false);
+  const buttonRole = select('Button role', ['button', 'link'], 'button');
+
+  return (
+    <StorybookPaddedBox>
+      <a href="#" style={{ textDecoration: 'none' }}>
+        <SnippetLarge
+          portrait
+          label="Manifest name"
+          subtitle="Manifest with 26 items"
+          summary="Summary of manifest if there is one"
+          link="#"
+          thumbnail="https://deriv.nls.uk/dcn4/7443/74438561.4.jpg"
+          buttonText="view manifest"
+          lightBackground={lightBackground}
+          flat={flat}
+          size={size}
+          center={center}
+          buttonRole={buttonRole}
+          interactive
+        />
+      </a>
+    </StorybookPaddedBox>
+  );
+};
+
 export const landscapeSnippetLargeThumbnail = () => {
+  const lightBackground = boolean('Light background', false);
+  const flat = boolean('Flat container', false);
+  const size = select('Size', ['sm', 'md', 'lg'], 'sm');
+  const center = boolean('Center', false);
+  const buttonRole = select('Button role', ['button', 'link'], 'button');
+
   return (
     <StorybookPaddedBox>
       <SnippetLarge
@@ -48,12 +108,23 @@ export const landscapeSnippetLargeThumbnail = () => {
         link="#"
         thumbnail="https://deriv.nls.uk/dcn4/7441/74411378.4.jpg"
         buttonText="view manifest"
+        lightBackground={lightBackground}
+        flat={flat}
+        size={size}
+        center={center}
+        buttonRole={buttonRole}
       />
     </StorybookPaddedBox>
   );
 };
 
 export const portraitSnippetLargeThumbnail = () => {
+  const lightBackground = boolean('Light background', false);
+  const flat = boolean('Flat container', false);
+  const size = select('Size', ['sm', 'md', 'lg'], 'sm');
+  const center = boolean('Center', false);
+  const buttonRole = select('Button role', ['button', 'link'], 'button');
+
   return (
     <StorybookPaddedBox>
       <SnippetLarge
@@ -64,12 +135,23 @@ export const portraitSnippetLargeThumbnail = () => {
         link="#"
         thumbnail="https://deriv.nls.uk/dcn4/7441/74411378.4.jpg"
         buttonText="view manifest"
+        lightBackground={lightBackground}
+        flat={flat}
+        size={size}
+        center={center}
+        buttonRole={buttonRole}
       />
     </StorybookPaddedBox>
   );
 };
 
 export const landscapeSnippetNoThumbnail = () => {
+  const lightBackground = boolean('Light background', false);
+  const flat = boolean('Flat container', false);
+  const size = select('Size', ['sm', 'md', 'lg'], 'sm');
+  const center = boolean('Center', false);
+  const buttonRole = select('Button role', ['button', 'link'], 'button');
+
   return (
     <StorybookPaddedBox>
       <SnippetLarge
@@ -78,12 +160,23 @@ export const landscapeSnippetNoThumbnail = () => {
         summary="Summary of manifest if there is one"
         link="#"
         buttonText="view manifest"
+        lightBackground={lightBackground}
+        flat={flat}
+        size={size}
+        center={center}
+        buttonRole={buttonRole}
       />
     </StorybookPaddedBox>
   );
 };
 
 export const portraitSnippetNoThumbnail = () => {
+  const lightBackground = boolean('Light background', false);
+  const flat = boolean('Flat container', false);
+  const size = select('Size', ['sm', 'md', 'lg'], 'sm');
+  const center = boolean('Center', false);
+  const buttonRole = select('Button role', ['button', 'link'], 'button');
+
   return (
     <StorybookPaddedBox>
       <SnippetLarge
@@ -93,12 +186,23 @@ export const portraitSnippetNoThumbnail = () => {
         summary="Summary of manifest if there is one"
         link="#"
         buttonText="view manifest"
+        lightBackground={lightBackground}
+        flat={flat}
+        size={size}
+        center={center}
+        buttonRole={buttonRole}
       />
     </StorybookPaddedBox>
   );
 };
 
 export const portraitSnippetLong = () => {
+  const lightBackground = boolean('Light background', false);
+  const flat = boolean('Flat container', false);
+  const size = select('Size', ['sm', 'md', 'lg'], 'sm');
+  const center = boolean('Center', false);
+  const buttonRole = select('Button role', ['button', 'link'], 'button');
+
   return (
     <StorybookPaddedBox>
       <SnippetLarge
@@ -109,12 +213,23 @@ export const portraitSnippetLong = () => {
         thumbnail="https://dlcs.io/thumbs/wellcome/5/B28636491_0001.JP2/full/200,80/0/default.jpg"
         link="#"
         buttonText="view manifest"
+        lightBackground={lightBackground}
+        flat={flat}
+        size={size}
+        center={center}
+        buttonRole={buttonRole}
       />
     </StorybookPaddedBox>
   );
 };
 
 export const landscapeSnippetLong = () => {
+  const lightBackground = boolean('Light background', false);
+  const flat = boolean('Flat container', false);
+  const size = select('Size', ['sm', 'md', 'lg'], 'sm');
+  const center = boolean('Center', false);
+  const buttonRole = select('Button role', ['button', 'link'], 'button');
+
   return (
     <StorybookPaddedBox>
       <SnippetLarge
@@ -124,6 +239,11 @@ export const landscapeSnippetLong = () => {
         thumbnail="https://dlcs.io/thumbs/wellcome/5/B28636491_0001.JP2/full/200,80/0/default.jpg"
         link="#"
         buttonText="view manifest"
+        lightBackground={lightBackground}
+        flat={flat}
+        size={size}
+        center={center}
+        buttonRole={buttonRole}
       />
     </StorybookPaddedBox>
   );

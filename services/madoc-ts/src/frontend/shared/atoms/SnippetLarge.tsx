@@ -10,95 +10,40 @@ export type SnippetLargeProps = {
   link: string;
   buttonText: string;
   linkAs?: any;
+  flat?: boolean;
   margin?: boolean;
+  lightBackground?: boolean;
+  size?: 'lg' | 'md' | 'sm';
+  center?: boolean;
+  buttonRole?: 'button' | 'link';
+  containThumbnail?: boolean;
+  smallLabel?: boolean;
+  fluid?: boolean;
+  interactive?: boolean;
 };
 
-const SnippetContainer = styled.div<{ portrait?: boolean; margin?: boolean }>`
-  box-sizing: border-box;
-  background: #ffffff;
-  border: 1px solid #b9b9b9;
-  box-shadow: 0 7px 15px 0 rgba(0, 0, 0, 0.09);
-  border-radius: 4px;
-  padding: 15px;
-  display: flex;
-  ${props =>
-    props.portrait
-      ? css`
-          max-width: 200px;
-          flex-direction: column;
-        `
-      : css`
-          min-height: 130px;
-          max-width: 400px;
-          flex-direction: row;
-        `};
-  ${props =>
-    props.margin &&
-    css`
-      margin-bottom: 1em;
-    `};
-`;
+const sizeMap = {
+  lg: '1.5em',
+  md: '1.25em',
+  sm: '1em',
+};
 
-const SnippetMetadata = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const SnippetThumbnailContainer = styled.div<{ portrait?: boolean }>`
-  background: #000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-
-  ${props =>
-    props.portrait
-      ? css`
-          height: 170px;
-          width: 170px;
-          margin-bottom: 15px;
-        `
-      : css`
-          height: 100px;
-          width: 100px;
-          margin-right: 15px;
-          min-width: 100px;
-        `}
-`;
-
-const SnippetThumbnail = styled.img`
-  display: inline-block;
-  object-fit: contain;
-  flex-shrink: 0;
-  width: 100%;
-  height: 100%;
-`;
-
-const SnippetLabel = styled.div`
-  font-size: 1em;
-`;
-
-const SnippetSubtitle = styled.div`
-  font-size: 0.8em;
-  color: #777;
-  margin-bottom: 0.8em;
-`;
-
-const SnippetSummary = styled.div`
-  font-size: 0.8em;
-  margin-bottom: 0.8em;
-`;
-
-const SnippetButton = styled.a<{ role?: string }>`
+const SnippetButton = styled.a<{ role?: string; center?: boolean }>`
   margin-top: auto;
+  ${props =>
+    props.center &&
+    css`
+      margin-left: auto;
+    `}
   margin-right: auto;
   display: inline-block;
   width: auto;
   justify-self: flex-end;
   padding: 0.4em 0;
-  font-size: 0.8em;
+  font-size: 0.8rem;
   text-decoration: none;
   color: #3773db;
+
   ${props =>
     props.role === 'button' &&
     css`
@@ -111,19 +56,168 @@ const SnippetButton = styled.a<{ role?: string }>`
     `}
 `;
 
+const SnippetContainer = styled.div<{
+  portrait?: boolean;
+  margin?: boolean;
+  flat?: boolean;
+  size?: 'lg' | 'md' | 'sm';
+  center?: boolean;
+  interactive?: boolean;
+}>`
+  box-sizing: border-box;
+  background: #ffffff;
+  font-size: ${props => (props.size ? sizeMap[props.size] : sizeMap.sm)};
+  
+  ${props =>
+    props.interactive &&
+    css`
+      cursor: pointer;
+      &:hover {
+        background: #edf0fe;
+        ${SnippetButton} {
+          &[role='button'] {
+            background: #fff;
+          }
+        }
+      }
+    `}
+  
+  ${props =>
+    props.center &&
+    css`
+      align-items: center;
+      text-align: center;
+    `}
+  ${props =>
+    !props.flat &&
+    css`
+      border: 1px solid #e7e7e7;
+      box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.09);
+    `}
+  border-radius: 4px;
+  padding: 1rem;
+  display: flex;
+  ${props =>
+    props.portrait
+      ? css`
+          //max-width: 13em;
+          flex-direction: column;
+        `
+      : css`
+          min-height: 8em;
+          max-width: 26em;
+          flex-direction: row;
+        `};
+  ${props =>
+    props.margin &&
+    css`
+      margin-bottom: 1rem;
+    `};
+`;
+
+const SnippetMetadata = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0px;
+  text-decoration: none;
+`;
+
+const SnippetUnconstrainedContainer = styled.div<{ portrait?: boolean; fluid?: boolean }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  ${props =>
+    props.fluid &&
+    css`
+      width: 100%;
+    `}
+
+  ${props =>
+    props.portrait
+      ? css`
+          margin-bottom: 1rem;
+        `
+      : css`
+          margin-right: 1rem;
+        `}
+`;
+
+const SnippetThumbnailContainer = styled(SnippetUnconstrainedContainer)<{
+  portrait?: boolean;
+  lightBackground?: boolean;
+}>`
+  background: ${props => (props.lightBackground ? '#EEEEEE' : '#000')};
+
+  ${props =>
+    props.portrait
+      ? css`
+          height: 11em;
+          width: 11em;
+          margin-bottom: 1rem;
+        `
+      : css`
+          height: 6em;
+          width: 6em;
+          margin-right: 1rem;
+          min-width: 6em;
+        `}
+`;
+
+const SnippetThumbnail = styled.img`
+  display: inline-block;
+  object-fit: contain;
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+`;
+
+const SnippetLabel = styled.div<{ small?: boolean }>`
+  font-size: ${props => (props.small ? '1rem' : '1em')};
+  text-decoration: none;
+`;
+
+const SnippetSubtitle = styled.div`
+  font-size: 0.8rem;
+  color: #777;
+  margin-bottom: 0.8em;
+  text-decoration: none;
+`;
+
+const SnippetSummary = styled.div`
+  font-size: 0.8rem;
+  margin-bottom: 0.8em;
+  text-decoration: none;
+`;
+
 export const SnippetLarge: React.FC<SnippetLargeProps> = props => {
+  const buttonRole = props.buttonRole ? props.buttonRole : props.portrait ? 'link' : 'button';
+  const containThumbnail = props.containThumbnail !== false;
   return (
-    <SnippetContainer margin={props.margin} portrait={props.portrait}>
+    <SnippetContainer
+      margin={props.margin}
+      portrait={props.portrait}
+      flat={props.flat}
+      size={props.size}
+      center={props.center}
+      interactive={props.interactive}
+    >
       {props.thumbnail ? (
-        <SnippetThumbnailContainer portrait={props.portrait}>
-          <SnippetThumbnail src={props.thumbnail} />
-        </SnippetThumbnailContainer>
+        containThumbnail ? (
+          <SnippetThumbnailContainer portrait={props.portrait} lightBackground={props.lightBackground}>
+            <SnippetThumbnail src={props.thumbnail} />
+          </SnippetThumbnailContainer>
+        ) : (
+          <SnippetUnconstrainedContainer fluid={props.fluid} portrait={props.portrait}>
+            <SnippetThumbnail src={props.thumbnail} />
+          </SnippetUnconstrainedContainer>
+        )
       ) : null}
       <SnippetMetadata>
-        <SnippetLabel>{props.label}</SnippetLabel>
+        <SnippetLabel small={props.smallLabel}>{props.label}</SnippetLabel>
         <SnippetSubtitle>{props.subtitle}</SnippetSubtitle>
         {!props.portrait ? <SnippetSummary>{props.summary}</SnippetSummary> : null}
-        <SnippetButton as={props.linkAs} role={props.portrait ? 'link' : 'button'} href={props.link}>
+        <SnippetButton as={props.linkAs} role={buttonRole} href={props.link} center={props.center}>
           {props.buttonText}
         </SnippetButton>
       </SnippetMetadata>
