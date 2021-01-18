@@ -1,4 +1,5 @@
 import { Revisions, RoundedCard } from '@capture-models/editor';
+import { CaptureModel } from '@capture-models/types';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRevisionFromDocument } from '../../../shared/utility/create-revision-from-document';
 import { WidePage } from '../../../shared/atoms/WidePage';
@@ -17,7 +18,11 @@ function postProcessConfiguration(config: any) {
   return config;
 }
 
-export const ViewDocument: React.FC<{ onSave: (revision: any) => void }> = ({ onSave }) => {
+export const ViewDocument: React.FC<{
+  onSave?: (revision: any) => void;
+  onChange?: (revision: CaptureModel['document']) => void;
+  allowEdits?: boolean;
+}> = ({ onSave, onChange, allowEdits = true }) => {
   const api = useApi();
 
   const isPreviewing = Revisions.useStoreState(s => s.isPreviewing);
@@ -25,7 +30,13 @@ export const ViewDocument: React.FC<{ onSave: (revision: any) => void }> = ({ on
   const setIsPreviewing = Revisions.useStoreActions(a => a.setIsPreviewing);
 
   useEffect(() => {
-    if (isPreviewing) {
+    if (onChange && revision) {
+      onChange(revision.document);
+    }
+  }, [onChange, revision]);
+
+  useEffect(() => {
+    if (isPreviewing && onSave) {
       onSave(revision ? postProcessConfiguration(serialiseCaptureModel(revision.document)) : null);
       setIsPreviewing(false);
     }
@@ -43,7 +54,7 @@ export const ViewDocument: React.FC<{ onSave: (revision: any) => void }> = ({ on
           }}
           skipThankYou={true}
           instructions={''}
-          allowEdits={true}
+          allowEdits={allowEdits}
           allowNavigation={false}
           readOnly={false}
         />
