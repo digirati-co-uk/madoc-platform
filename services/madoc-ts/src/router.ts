@@ -2,6 +2,20 @@ import { exportSite } from './routes/admin/export-site';
 import { importSite } from './routes/admin/import-site';
 import { getSiteDetails } from './routes/admin/site-details';
 import { updateSiteConfiguration } from './routes/admin/update-site-configuration';
+import { createBlock } from './routes/content/create-block';
+import { createPage } from './routes/content/create-page';
+import { createSlot } from './routes/content/create-slot';
+import { deleteBlock } from './routes/content/delete-block';
+import { deletePage } from './routes/content/delete-page';
+import { deleteSlot } from './routes/content/delete-slot';
+import { getBlock } from './routes/content/get-block';
+import { getPage } from './routes/content/get-page';
+import { getPageNavigation } from './routes/content/get-page-navigation';
+import { getSlot } from './routes/content/get-slot';
+import { updateBlock } from './routes/content/update-block';
+import { updatePage } from './routes/content/update-page';
+import { updateSlot } from './routes/content/update-slot';
+import { updateSlotStructure } from './routes/content/update-slot-structure';
 import { getCanvasPlaintext } from './routes/iiif/canvases/get-canvas-plaintext';
 import { batchIndex } from './routes/search/batch-index';
 import { siteConfiguration } from './routes/site/site-configuration';
@@ -208,6 +222,27 @@ export const router = new TypedRouter({
   'get-project-model': [TypedRouter.GET, '/api/madoc/projects/:id/models/:subject', getProjectModel],
   'get-project-task': [TypedRouter.GET, '/api/madoc/projects/:id/task', getProjectTask],
   'assign-random-resource': [TypedRouter.POST, '/api/madoc/projects/:id/random', assignRandomResource],
+
+  // Pages
+  'create-page': [TypedRouter.POST, '/api/madoc/pages', createPage],
+  'get-page': [TypedRouter.GET, '/api/madoc/pages/root/:paths*', getPage],
+  'delete-page': [TypedRouter.DELETE, '/api/madoc/pages/root/:paths*', deletePage],
+  'update-page': [TypedRouter.PUT, '/api/madoc/pages/root/:paths*', updatePage],
+  'get-page-navigation': [TypedRouter.GET, '/api/madoc/pages/navigation/:paths*', getPageNavigation],
+
+  // Slots
+  'create-slot': [TypedRouter.POST, '/api/madoc/slots', createSlot],
+  'get-slot': [TypedRouter.GET, '/api/madoc/slots/:slotId', getSlot],
+  'delete-slot': [TypedRouter.DELETE, '/api/madoc/slots/:slotId', deleteSlot],
+  'create-slot-block': [TypedRouter.POST, '/api/madoc/slots/:slotId/blocks', createBlock],
+  'update-slot-structure': [TypedRouter.PUT, '/api/madoc/slots/:slotId/structure', updateSlotStructure],
+  'update-slot': [TypedRouter.PUT, '/api/madoc/slots/:slotId', updateSlot],
+
+  // Blocks
+  'create-block': [TypedRouter.POST, '/api/madoc/blocks', createBlock],
+  'get-block': [TypedRouter.GET, '/api/madoc/blocks/:blockId', getBlock],
+  'delete-block': [TypedRouter.DELETE, '/api/madoc/blocks/:blockId', deleteBlock],
+  'update-block': [TypedRouter.PUT, '/api/madoc/blocks/:blockId', updateBlock],
 
   // Omeka routes
   'get-login': [TypedRouter.GET, '/s/:slug/madoc/login', loginPage],
