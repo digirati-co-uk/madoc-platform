@@ -1,18 +1,5 @@
 import { InternationalString } from '@hyperion-framework/types/iiif/descriptive';
 
-export type SitePage = CreateNormalPageRequest & {
-  id: number;
-  previousPaths?: string[];
-  created: number;
-  modified: number;
-  author: { id: string; name: string };
-  slug?: string;
-  subpages?: SitePage[];
-  slots: {
-    [name: string]: SiteSlot;
-  };
-};
-
 export type EditorialContext = {
   project?: number;
   collection?: number;

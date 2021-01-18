@@ -1,0 +1,42 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "number"
+    },
+    "name": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "static_data": {},
+    "lazy": {
+      "type": "boolean"
+    },
+    "site_id": {
+      "type": "number"
+    },
+    "i18n_languages": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "i18n_sort_key": {
+      "type": "string"
+    },
+    "i18n_fallback": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "lazy",
+    "name",
+    "site_id",
+    "static_data",
+    "type"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

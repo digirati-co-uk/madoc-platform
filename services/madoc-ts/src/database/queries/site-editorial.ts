@@ -7,12 +7,12 @@ import {
   SiteBlock,
   SiteBlockRequest,
   SiteBlockRow,
-  SitePage,
   SitePageRow,
   SiteSlot,
   SiteSlotRow,
   SlotFilterConfig,
 } from '../../types/schemas/site-page';
+import { SitePage } from '../../types/site-pages-recursive';
 import { SQL_INT_ARRAY } from '../../utility/postgres-tags';
 
 // -- Combo

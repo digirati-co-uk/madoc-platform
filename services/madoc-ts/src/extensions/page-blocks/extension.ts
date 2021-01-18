@@ -8,9 +8,9 @@ import {
   EditorialContext,
   SiteBlock,
   SiteBlockRequest,
-  SitePage,
   SiteSlot,
 } from '../../types/schemas/site-page';
+import { SitePage } from '../../types/site-pages-recursive';
 import { BaseExtension } from '../extension-manager';
 
 export type PageBlockDefinition<

@@ -162,6 +162,9 @@
         },
         "priorityRandomness": {
           "type": "boolean"
+        },
+        "skipAutomaticOCRImport": {
+          "type": "boolean"
         }
       }
     }

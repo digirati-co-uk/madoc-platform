@@ -1,0 +1,137 @@
+{
+  "type": "object",
+  "properties": {
+    "slotId": {
+      "type": "string"
+    },
+    "label": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "layout": {
+      "type": "string"
+    },
+    "filters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "object",
+          "properties": {
+            "none": {
+              "type": "boolean"
+            },
+            "all": {
+              "type": "boolean"
+            },
+            "exact": {
+              "type": "number"
+            },
+            "whitelist": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "blacklist": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "collection": {
+          "type": "object",
+          "properties": {
+            "none": {
+              "type": "boolean"
+            },
+            "all": {
+              "type": "boolean"
+            },
+            "exact": {
+              "type": "number"
+            },
+            "whitelist": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "blacklist": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "manifest": {
+          "type": "object",
+          "properties": {
+            "none": {
+              "type": "boolean"
+            },
+            "all": {
+              "type": "boolean"
+            },
+            "exact": {
+              "type": "number"
+            },
+            "whitelist": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "blacklist": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "canvas": {
+          "type": "object",
+          "properties": {
+            "none": {
+              "type": "boolean"
+            },
+            "all": {
+              "type": "boolean"
+            },
+            "exact": {
+              "type": "number"
+            },
+            "whitelist": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "blacklist": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      }
+    },
+    "pageId": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "layout",
+    "slotId"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

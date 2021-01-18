@@ -1,0 +1,80 @@
+{
+  "type": "object",
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "title": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "navigationTitle": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "description": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "layout": {
+      "type": "string"
+    },
+    "parentPage": {
+      "type": "number"
+    },
+    "engine": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "options": {}
+      },
+      "required": [
+        "options",
+        "type"
+      ]
+    },
+    "navigationOptions": {
+      "type": "object",
+      "properties": {
+        "hide": {
+          "type": "boolean"
+        },
+        "root": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "hide",
+        "root"
+      ]
+    },
+    "searchable": {
+      "type": "boolean"
+    },
+    "slug": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "path",
+    "title"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

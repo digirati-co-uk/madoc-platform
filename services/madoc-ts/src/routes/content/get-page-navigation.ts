@@ -1,7 +1,7 @@
 import { sql } from 'slonik';
 import { mapPage } from '../../database/queries/site-editorial';
 import { RouteMiddleware } from '../../types/route-middleware';
-import { SitePage } from '../../types/schemas/site-page';
+import { SitePage } from '../../types/site-pages-recursive';
 import { userWithScope } from '../../utility/user-with-scope';
 
 function getPageNavigationQuery(siteId: number, pagePath?: string) {
