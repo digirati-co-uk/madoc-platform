@@ -14,13 +14,15 @@ import { createPortal } from 'react-dom';
 export const ModalButton: React.FC<{
   title: string;
   button?: boolean;
+  as?: any;
   onClose?: () => void;
   render: (opts: { close: () => void }) => JSX.Element;
   renderFooter?: (opts: { close: () => void }) => JSX.Element;
   className?: string;
   autoHeight?: boolean;
+  modalSize?: 'lg' | 'md' | 'sm';
   disabled?: boolean;
-}> = ({ className, disabled, button, title, render, renderFooter, onClose, autoHeight, children }) => {
+}> = ({ as, className, disabled, button, title, render, renderFooter, onClose, modalSize, autoHeight, children }) => {
   const portalEl = useRef<HTMLElement>();
   const [ready, setIsReady] = useState(false);
   const containerRef = useRef<any>();
@@ -43,7 +45,7 @@ export const ModalButton: React.FC<{
     }
   };
 
-  const Component = button ? 'button' : 'span';
+  const Component = as ? as : button ? 'button' : 'span';
 
   return (
     <>
@@ -57,10 +59,10 @@ export const ModalButton: React.FC<{
                   if (e.target !== containerRef.current) {
                     return;
                   }
-                  setIsReady(false);
+                  closeModal();
                 }}
               >
-                <InnerModalContainer>
+                <InnerModalContainer size={modalSize}>
                   <ModalHeader>
                     <ModalHeaderTitle>{title}</ModalHeaderTitle>
                     <ModalCloseIcon onClick={closeModal} />
