@@ -50,7 +50,40 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
                   exact: true,
                   component: components.ViewCanvasModel,
                 },
+                {
+                  path: '/:pagePath+',
+                  exact: false,
+                  component: components.PageLoader,
+                  routes: [
+                    {
+                      path: '/:pagePath+',
+                      component: components.ViewPage,
+                    },
+                  ],
+                },
               ],
+            },
+            {
+              path: '/:pagePath+',
+              exact: false,
+              component: components.PageLoader,
+              routes: [
+                {
+                  path: '/:pagePath+',
+                  component: components.ViewPage,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          path: '/:pagePath+',
+          exact: false,
+          component: components.PageLoader,
+          routes: [
+            {
+              path: '/:pagePath+',
+              component: components.ViewPage,
             },
           ],
         },
@@ -88,6 +121,28 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
               path: '/manifests/:manifestId/c/:id/model',
               exact: true,
               component: components.ViewCanvasModel,
+            },
+            {
+              path: '/:pagePath+',
+              exact: false,
+              component: components.PageLoader,
+              routes: [
+                {
+                  path: '/:pagePath+',
+                  component: components.ViewPage,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          path: '/:pagePath+',
+          exact: false,
+          component: components.PageLoader,
+          routes: [
+            {
+              path: '/:pagePath+',
+              component: components.ViewPage,
             },
           ],
         },
@@ -149,7 +204,40 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
                       exact: true,
                       component: components.ViewCanvasModel,
                     },
+                    {
+                      path: '/:pagePath+',
+                      exact: false,
+                      component: components.PageLoader,
+                      routes: [
+                        {
+                          path: '/:pagePath+',
+                          component: components.ViewPage,
+                        },
+                      ],
+                    },
                   ],
+                },
+                {
+                  path: '/:pagePath+',
+                  exact: false,
+                  component: components.PageLoader,
+                  routes: [
+                    {
+                      path: '/:pagePath+',
+                      component: components.ViewPage,
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              path: '/:pagePath+',
+              exact: false,
+              component: components.PageLoader,
+              routes: [
+                {
+                  path: '/:pagePath+',
+                  component: components.ViewPage,
                 },
               ],
             },
@@ -188,6 +276,28 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
                   exact: true,
                   component: components.ViewCanvasModel,
                 },
+                {
+                  path: '/:pagePath+',
+                  exact: false,
+                  component: components.PageLoader,
+                  routes: [
+                    {
+                      path: '/:pagePath+',
+                      component: components.ViewPage,
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              path: '/:pagePath+',
+              exact: false,
+              component: components.PageLoader,
+              routes: [
+                {
+                  path: '/:pagePath+',
+                  component: components.ViewPage,
+                },
               ],
             },
           ],
@@ -210,6 +320,17 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
               path: '/projects/:slug/tasks/:parentId/subtasks/:id',
               exact: true,
               component: components.ViewTask,
+            },
+          ],
+        },
+        {
+          path: '/:pagePath+',
+          exact: false,
+          component: components.PageLoader,
+          routes: [
+            {
+              path: '/:pagePath+',
+              component: components.ViewPage,
             },
           ],
         },
@@ -265,6 +386,17 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
       path: '/',
       exact: true,
       component: components.UserHomepage,
+    },
+    {
+      path: '/:pagePath+',
+      exact: false,
+      component: components.PageLoader,
+      routes: [
+        {
+          path: '/:pagePath+',
+          component: components.ViewPage,
+        },
+      ],
     },
   ];
 

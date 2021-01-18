@@ -6,6 +6,8 @@ import { CaptureModelExtension } from '../extensions/capture-models/extension';
 import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.extension';
 import { plainTextSource } from '../extensions/capture-models/DynamicDataSources/sources/Plaintext.source';
 import { ExtensionManager } from '../extensions/extension-manager';
+import { defaultPageBlockDefinitions } from '../extensions/page-blocks/default-definitions';
+import { PageBlockExtension } from '../extensions/page-blocks/extension';
 import { Site } from '../types/omeka/Site';
 import { SingleUser } from '../types/omeka/User';
 import { ProjectConfiguration } from '../types/schemas/project-configuration';
@@ -64,6 +66,8 @@ export class ApiClient {
   private currentUser?: { scope: string[]; user: { id: string; name?: string } };
   private captureModelExtensions: ExtensionManager<CaptureModelExtension>;
   private captureModelDataSources: DynamicData[];
+  // Public.
+  pageBlocks: PageBlockExtension;
 
   constructor(options: {
     gateway: string;
@@ -80,6 +84,7 @@ export class ApiClient {
     this.isServer = !(globalThis as any).window;
     this.fetcher = options.customerFetcher || fetchJson;
     this.publicSiteSlug = options.publicSiteSlug;
+    this.pageBlocks = new PageBlockExtension(this, defaultPageBlockDefinitions);
     this.captureModelDataSources = [plainTextSource];
     this.captureModelExtensions = new ExtensionManager(
       options.customCaptureModelExtensions
