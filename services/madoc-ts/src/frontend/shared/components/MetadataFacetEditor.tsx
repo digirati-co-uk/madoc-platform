@@ -315,7 +315,7 @@ const EditSingleValue: React.FC<{
   const [dropValueState, dropValue] = useDrop({
     accept: 'facet-value',
     canDrop: item => {
-      return keys.indexOf(item.parentLabel) !== -1 && values.indexOf(item.value) === -1;
+      return keys.indexOf(`metadata.${item.parentLabel}`) !== -1 && values.indexOf(item.value) === -1;
     },
     drop: (item: any) => {
       editFacetValue({
