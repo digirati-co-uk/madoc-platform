@@ -6,6 +6,7 @@ import { getSiteDetails } from './routes/admin/site-details';
 import { updateSiteConfiguration } from './routes/admin/update-site-configuration';
 import { getCanvasPlaintext } from './routes/iiif/canvases/get-canvas-plaintext';
 import { batchIndex } from './routes/search/batch-index';
+import { getFacetConfiguration, updateFacetConfiguration } from './routes/search/facet-configuration';
 import { siteConfiguration } from './routes/site/site-configuration';
 import { convertLinking } from './routes/iiif/linking/convert-linking';
 import { getParentLinking } from './routes/iiif/linking/get-parent-linking';
@@ -97,6 +98,11 @@ export const router = new TypedRouter({
   'export-site': [TypedRouter.POST, '/api/madoc/site/:siteId/export', exportSite],
   'import-site': [TypedRouter.POST, '/api/madoc/site/:siteId/import', importSite],
   'update-site-configuration': [TypedRouter.POST, '/api/madoc/configuration', updateSiteConfiguration],
+  'update-search-facet-configuration': [
+    TypedRouter.POST,
+    '/api/madoc/configuration/search-facets',
+    updateFacetConfiguration,
+  ],
   'site-details': [TypedRouter.GET, '/api/madoc/site/:siteId/details', getSiteDetails],
 
   // User API.
@@ -253,6 +259,11 @@ export const router = new TypedRouter({
     siteCanvasTasks,
   ],
   'site-configuration': [TypedRouter.GET, '/s/:slug/madoc/api/configuration', siteConfiguration],
+  'site-facet-configuration': [
+    TypedRouter.GET,
+    '/s/:slug/madoc/api/configuration/search-facets',
+    getFacetConfiguration,
+  ],
 
   // To be worked into API calling methods
   'manifest-search': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/search/1.0', searchManifest],
