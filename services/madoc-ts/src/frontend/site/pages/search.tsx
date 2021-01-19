@@ -6,6 +6,7 @@ import { SearchResults } from '../../shared/components/SearchResults';
 import { SearchFacets } from '../../shared/components/SearchFacets';
 import { PaginationNumbered } from '../../shared/components/Pagination';
 import { useTranslation } from 'react-i18next';
+import { apiHooks } from '../../shared/hooks/use-api-query';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { createUniversalComponent } from '../../shared/utility/create-universal-component';
 import { UniversalComponent } from '../../types';
@@ -63,6 +64,7 @@ export const stringifyFacets = (facets: { [key: string]: string[] }): SearchFace
 
 export const Search: UniversalComponent<SearchListType> = createUniversalComponent<SearchListType>(
   () => {
+    const searchFacetConfig = apiHooks.getSiteSearchFacetConfiguration(() => []);
     const { status, data } = usePaginatedData(Search);
     const { t } = useTranslation();
     const { page, fulltext, madoc_id } = useLocationQuery();
@@ -131,7 +133,7 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
       }
     };
 
-    return status === 'loading' ? (
+    return status === 'loading' || searchFacetConfig.isFetching ? (
       <div>{t('Loading')}</div>
     ) : (
       <>
@@ -143,6 +145,7 @@ export const Search: UniversalComponent<SearchListType> = createUniversalCompone
         />
         <SearchContainer>
           <SearchFacets
+            facetConfiguration={searchFacetConfig.data?.facets || []}
             facets={facetOptions}
             facetChange={(facetType, facetValue) => applyFacet(facetType, facetValue)}
             applyFilters={applyFacets}

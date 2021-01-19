@@ -6,6 +6,7 @@ import { CaptureModelExtension } from '../extensions/capture-models/extension';
 import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.extension';
 import { plainTextSource } from '../extensions/capture-models/DynamicDataSources/sources/Plaintext.source';
 import { ExtensionManager } from '../extensions/extension-manager';
+import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
 import { Site } from '../types/omeka/Site';
 import { SingleUser } from '../types/omeka/User';
 import { ProjectConfiguration } from '../types/schemas/project-configuration';
@@ -311,6 +312,17 @@ export class ApiClient {
     return this.captureModelDataSources;
   }
 
+  async getMetadataKeys() {
+    return this.request<{ metadata: Array<{ label: string; language: string; total_items: number }> }>(
+      `/api/madoc/iiif/metadata-keys`
+    );
+  }
+  async getMetadataValues(label: string) {
+    return this.request<{ values: Array<{ value: string; label: string; language: string; total_items: number }> }>(
+      `/api/madoc/iiif/metadata-values?label=${label}`
+    );
+  }
+
   async getStatistics() {
     return this.request<{ collections: number; manifests: number; canvases: number; projects: number }>(
       `/api/madoc/iiif/statistics`
@@ -479,10 +491,17 @@ export class ApiClient {
       : {};
   }
 
-  async saveSiteConfiguration(config: any) {
-    return this.request(`/api/madoc/configuration`, {
+  async saveSiteConfiguration(config: ProjectConfiguration) {
+    return this.request<ProjectConfiguration>(`/api/madoc/configuration`, {
       method: 'POST',
       body: config,
+    });
+  }
+
+  async saveFacetConfiguration(facets: FacetConfig[]) {
+    return this.request<{ facets: FacetConfig[] }>(`/api/madoc/configuration/search-facets`, {
+      method: 'POST',
+      body: { facets },
     });
   }
 
@@ -1653,6 +1672,10 @@ export class ApiClient {
 
   async getSiteConfiguration() {
     return this.publicRequest<ProjectConfiguration>(`/madoc/api/configuration`);
+  }
+
+  async getSiteSearchFacetConfiguration() {
+    return this.publicRequest<{ facets: FacetConfig[] }>(`/madoc/api/configuration/search-facets`);
   }
 
   async getSiteSearchQuery(query: SearchQuery, page = 1, madoc_id?: string) {

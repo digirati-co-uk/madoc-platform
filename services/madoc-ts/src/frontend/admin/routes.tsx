@@ -5,6 +5,7 @@ import { CollectionView } from './pages/content/collections/collection';
 import { ViewCanvasLinking } from './pages/content/linking/view-linking';
 import { SiteConfiguration } from './pages/content/site-configuration';
 import { OcrListPage } from './pages/enrichment/ocr/ocr-list';
+import { SearchIndexingPage } from './pages/enrichment/search-indexing';
 import { ExportSite } from './pages/export/export-site';
 import { Homepage } from './pages/homepage';
 import { CollectionList } from './pages/content/collections/collection-list';
@@ -348,6 +349,11 @@ export const routes: UniversalRoute[] = [
         component: OcrManifest,
       },
     ],
+  },
+  {
+    path: '/enrichment/search-indexing',
+    component: SearchIndexingPage,
+    exact: true,
   },
 
   // Export

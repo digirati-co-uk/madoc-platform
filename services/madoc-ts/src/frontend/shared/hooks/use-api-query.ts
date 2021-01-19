@@ -72,6 +72,9 @@ type GetApiMethods = keyof Pick<
   | 'getUserDetails'
   | 'searchQuery'
   | 'getSiteConfiguration'
+  | 'getMetadataKeys'
+  | 'getMetadataValues'
+  | 'getSiteSearchFacetConfiguration'
 >;
 
 const keys = Object.getOwnPropertyNames(ApiClient.prototype);

@@ -119,7 +119,7 @@ const Homepage: UniversalComponent<HomepageType> = createUniversalComponent<Home
                   <span>Import segmentation</span>
                 </li>
                 <li>
-                  <span>Search indexing</span>
+                  <Link to="/enrichment/search-indexing">{t('Search indexing')}</Link>
                 </li>
                 <li>
                   <Link to={`/enrichment/ocr`}>OCR</Link>
