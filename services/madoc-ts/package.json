@@ -1,5 +1,5 @@
 {
-  "name": "node-postgres-template",
+  "name": "madoc-ts",
   "version": "1.0.0",
   "main": "lib/index.js",
   "license": "MIT",
@@ -110,6 +110,7 @@
     "react-timeago": "^4.4.0",
     "sharp": "^0.25.2",
     "slonik": "^22.4.3",
+    "sourcemapped-stacktrace": "^1.1.11",
     "style-loader": "^1.2.1",
     "styled-components": "^5.1.1",
     "ts-loader": "^7.0.2",

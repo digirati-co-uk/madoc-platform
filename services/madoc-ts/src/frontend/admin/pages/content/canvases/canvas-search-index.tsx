@@ -15,7 +15,7 @@ type CanvasSearchIndexType = {
 
 export const CanvasSearchIndex = createUniversalComponent<CanvasSearchIndexType>(
   () => {
-    const { data, isError, refetch } = useData(CanvasSearchIndex, {}, { retry: 0 });
+    const { data, isError, isFetching, refetch } = useData(CanvasSearchIndex, {}, { retry: 0 });
     const { id } = useParams<{ id: string }>();
 
     const api = useApi();
@@ -35,7 +35,7 @@ export const CanvasSearchIndex = createUniversalComponent<CanvasSearchIndexType>
       );
     }
 
-    if (!data) {
+    if (!data || isFetching) {
       return <div>loading...</div>;
     }
 
