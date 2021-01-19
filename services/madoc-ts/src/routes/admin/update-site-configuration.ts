@@ -4,21 +4,8 @@ import { RouteMiddleware } from '../../types/route-middleware';
 import { ProjectConfiguration } from '../../types/schemas/project-configuration';
 import { NotFound } from '../../utility/errors/not-found';
 import { mysql } from '../../utility/mysql';
+import { parseEtag } from '../../utility/parse-etag';
 import { userWithScope } from '../../utility/user-with-scope';
-
-function parseEtag(etag?: string) {
-  if (!etag) {
-    return undefined;
-  }
-
-  const match = etag.match(/[Ww]?\/?"(.*)"/);
-
-  if (match) {
-    return match[1];
-  }
-
-  return undefined;
-}
 
 export const updateSiteConfiguration: RouteMiddleware<{}, Partial<ProjectConfiguration>> = async context => {
   const { id, siteId } = userWithScope(context, ['site.admin']);
