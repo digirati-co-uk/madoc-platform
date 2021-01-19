@@ -311,6 +311,17 @@ export class ApiClient {
     return this.captureModelDataSources;
   }
 
+  async getMetadataKeys() {
+    return this.request<{ metadata: Array<{ label: string; language: string; total_items: number }> }>(
+      `/api/madoc/iiif/metadata-keys`
+    );
+  }
+  async getMetadataValues(label: string) {
+    return this.request<{ values: Array<{ value: string; label: string; language: string; total_items: number }> }>(
+      `/api/madoc/iiif/metadata-values?label=${label}`
+    );
+  }
+
   async getStatistics() {
     return this.request<{ collections: number; manifests: number; canvases: number; projects: number }>(
       `/api/madoc/iiif/statistics`

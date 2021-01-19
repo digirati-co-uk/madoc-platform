@@ -1,4 +1,6 @@
 import { exportSite } from './routes/admin/export-site';
+import { getMetadataKeys } from './routes/admin/get-metadata-keys';
+import { getMetadataValues } from './routes/admin/get-metadata-values';
 import { importSite } from './routes/admin/import-site';
 import { getSiteDetails } from './routes/admin/site-details';
 import { updateSiteConfiguration } from './routes/admin/update-site-configuration';
@@ -188,6 +190,8 @@ export const router = new TypedRouter({
   // Stats.
   'get-statistics': [TypedRouter.GET, '/api/madoc/iiif/statistics', statistics],
   'post-batch-index': [TypedRouter.POST, '/api/madoc/iiif/batch-index', batchIndex],
+  'get-metadata-keys': [TypedRouter.GET, '/api/madoc/iiif/metadata-keys', getMetadataKeys],
+  'get-metadata-values': [TypedRouter.GET, '/api/madoc/iiif/metadata-values', getMetadataValues],
 
   // Projects
   'create-project': [TypedRouter.POST, '/api/madoc/projects', createNewProject],
