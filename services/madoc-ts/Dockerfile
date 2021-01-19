@@ -32,7 +32,7 @@ FROM node:12
 
 WORKDIR /home/node/app
 
-RUN npm install -g pm2
+RUN npm install -g pm2@4.5.1
 
 COPY --from=build /home/node/app/package.json /home/node/app/package.json
 COPY --from=build /home/node/app/yarn.lock /home/node/app/yarn.lock
