@@ -33,6 +33,7 @@ export type MetadataEditorProps = {
     items: MetadataDefinition[];
     toInternationalString: () => InternationalString;
   }) => void;
+  fluid?: boolean;
 };
 
 type MetadataEditorState = {
@@ -218,9 +219,9 @@ const LanguageItem = styled.li`
   }
 `;
 
-const MetadataEditorContainer = styled.div<{ enabled?: boolean }>`
+const MetadataEditorContainer = styled.div<{ enabled?: boolean; fluid?: boolean }>`
   width: 100%;
-  max-width: 450px;
+  max-width: ${props => (props.fluid ? '100%' : '450px')};
   ${props =>
     typeof props.enabled !== 'undefined' && !props.enabled
       ? css`
@@ -269,6 +270,7 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
   availableLanguages,
   onSave,
   disabled,
+  fluid,
 }) => {
   const { t } = useTranslation();
   const [isFocused, setIsFocused] = useState(false);
@@ -390,7 +392,7 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
   }
 
   return (
-    <MetadataEditorContainer enabled={!disabled}>
+    <MetadataEditorContainer enabled={!disabled} fluid={fluid}>
       <IntlInputContainer focused={isFocused}>
         <IntlInputDefault>
           <IntlInput
