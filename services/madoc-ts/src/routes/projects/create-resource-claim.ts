@@ -498,9 +498,10 @@ async function getCanonicalClaim(
 export const prepareResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim> = async context => {
   const { id, siteId, siteUrn } = userWithScope(context, ['models.contribute']);
   const userApi = api.asUser({ userId: id, siteId });
+  const project = await userApi.getProject(context.params.id);
 
   // Get the params.
-  const projectId = Number(context.params.id);
+  const projectId = project.id;
   const claim = await getCanonicalClaim(context.requestBody, siteId, projectId, id);
 
   await verifyResourceInProject(context, siteId, projectId, id, claim);
@@ -527,10 +528,13 @@ export const prepareResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim
 
 export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim> = async context => {
   const { id, name, siteId, siteUrn } = userWithScope(context, ['models.contribute']);
-  // Get the params.
-  const projectId = Number(context.params.id);
-  const claim = await getCanonicalClaim(context.requestBody, siteId, projectId, id);
+
   const userApi = api.asUser({ userId: id, siteId });
+  const project = await userApi.getProject(context.params.id);
+
+  // Get the params.
+  const projectId = project.id;
+  const claim = await getCanonicalClaim(context.requestBody, siteId, projectId, id);
 
   await verifyResourceInProject(context, siteId, projectId, id, claim);
 

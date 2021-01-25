@@ -1,7 +1,6 @@
 import { RouteMiddleware } from '../../types/route-middleware';
 import { optionalUserWithScope } from '../../utility/user-with-scope';
 import { parseProjectId } from '../../utility/parse-project-id';
-import { getMetadata } from '../../utility/iiif-database-helpers';
 import { sql } from 'slonik';
 import { SQL_EMPTY } from '../../utility/postgres-tags';
 

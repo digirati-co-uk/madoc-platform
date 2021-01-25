@@ -14,6 +14,7 @@ import { ProjectConfiguration } from '../../types/schemas/project-configuration'
 export const getProject: RouteMiddleware<{ id: string }> = async context => {
   const { id, siteId, siteUrn } = optionalUserWithScope(context, []);
   const scope = context.state.jwt?.scope || [];
+  const staticConfiguration = context.externalConfig.defaultSiteConfiguration;
 
   const { projectSlug, projectId } = parseProjectId(context.params.id);
   const onlyPublished = scope.indexOf('site.admin') !== -1 ? castBool(context.request.query.published) : true;
@@ -75,12 +76,16 @@ export const getProject: RouteMiddleware<{ id: string }> = async context => {
 
   project.content = collectionStats as any;
 
-  project.config = ((await userApi.getConfiguration<ProjectConfiguration>('madoc', [
+  const projectConfiguration = await userApi.getConfiguration<ProjectConfiguration>('madoc', [
     `urn:madoc:project:${project.id}`,
     siteUrn,
-  ])) as any).config[0].config_object;
+  ]);
 
-  //  project.model = (await api.asUser({ userId: id, siteId }).getCaptureModel(project.capture_model_id as any)) as any;
+  if (projectConfiguration.config && projectConfiguration.config[0] && projectConfiguration.config[0].config_object) {
+    (project as any).config = { ...staticConfiguration, ...projectConfiguration.config[0].config_object };
+  } else {
+    (project as any).config = staticConfiguration;
+  }
 
   context.response.body = project;
 };

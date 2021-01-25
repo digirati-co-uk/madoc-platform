@@ -1,4 +1,6 @@
 import { RouteMiddleware } from '../../types/route-middleware';
+import { NotFound } from '../../utility/errors/not-found';
+import { parseProjectId } from '../../utility/parse-project-id';
 import { parseUrn } from '../../utility/parse-urn';
 import { sql } from 'slonik';
 import { SQL_EMPTY } from '../../utility/postgres-tags';
@@ -13,7 +15,11 @@ export const getProjectModel: RouteMiddleware<{ id: string; subject: string }> =
   const scope = context.state.jwt?.scope || [];
   const onlyPublished = scope.indexOf('site.admin') === -1;
 
-  const isNumber = context.params.id === `${Number(context.params.id)}`;
+  const { projectId, projectSlug } = parseProjectId(context.params.id);
+
+  if (!projectId && !projectSlug) {
+    throw new NotFound();
+  }
 
   const project = await context.connection.one(
     sql<{
@@ -21,7 +27,9 @@ export const getProjectModel: RouteMiddleware<{ id: string; subject: string }> =
     }>`
       select capture_model_id 
       from iiif_project 
-      where ${isNumber ? sql`id = ${Number(context.params.id)}` : sql`slug = ${context.params.id}`} 
+      where
+        ${projectId ? sql`id = ${projectId}` : SQL_EMPTY}
+        ${projectSlug ? sql`slug = ${projectSlug}` : SQL_EMPTY}
         and site_id = ${siteId}
        ${onlyPublished ? sql`and (iiif_project.status = 1 or iiif_project.status = 2)` : SQL_EMPTY}
     `
