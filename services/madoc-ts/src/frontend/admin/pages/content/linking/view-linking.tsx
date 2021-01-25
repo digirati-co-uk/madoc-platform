@@ -19,7 +19,7 @@ type ViewCanvasLinking = {
 export const ViewCanvasLinking: UniversalComponent<ViewCanvasLinking> = createUniversalComponent<ViewCanvasLinking>(
   () => {
     const { data, refetch } = useStaticData(ViewCanvasLinking);
-    const { id: canvasId, linkId } = useParams();
+    const { id: canvasId, linkId } = useParams<{ id: string; linkId: string }>();
 
     const link = useMemo(() => {
       if (data) {

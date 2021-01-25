@@ -25,7 +25,7 @@ export const CrowdsourcingManifestReview: React.FC<{
   // Load manifest.
   const { id } = parseUrn(task.subject) || {};
   const { page = 1 } = useLocationQuery();
-  const { slug } = useParams();
+  const { slug } = useParams<{ slug: string }>();
   const api = useApi();
   const { resolvedData } = usePaginatedQuery(['site-manifest', { id, page }], async () => {
     if (id) {

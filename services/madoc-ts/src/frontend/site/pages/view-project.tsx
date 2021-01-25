@@ -1,5 +1,5 @@
 import React from 'react';
-import { ProjectContainer, ProjectStatus } from '../../shared/atoms/ProjectStatus';
+import { ProjectStatus } from '../../shared/atoms/ProjectStatus';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { ProjectFull } from '../../../types/schemas/project-full';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../shared/atoms/Statistics';
@@ -66,6 +66,21 @@ export const ViewProject: React.FC<Partial<{
         done={project.statistics['3'] || 0}
         progress={(project.statistics['2'] || 0) + (project.statistics['1'] || 0)}
       />
+      {allowCollectionNavigation && shownCollections.length && collections ? (
+        <>
+          <Heading3>Collections</Heading3>
+          <ImageGrid>
+            {shownCollections.map((collection, idx) => (
+              <CollectionSnippet key={idx} id={collection.id} projectId={project.slug} />
+            ))}
+          </ImageGrid>
+          {shownCollections.length <= collections.collection.items.length ? (
+            <Button as={HrefLink} href={`/projects/${project.slug}/collections`}>
+              See all collections
+            </Button>
+          ) : null}
+        </>
+      ) : null}
       {allowManifestNavigation && manifests && manifests.collection.items.length ? (
         <>
           <Heading3>Manifests</Heading3>
@@ -93,21 +108,6 @@ export const ViewProject: React.FC<Partial<{
               </Link>
             ))}
           </ImageGrid>
-        </>
-      ) : null}
-      {allowCollectionNavigation && shownCollections.length && collections ? (
-        <>
-          <Heading3>Collections</Heading3>
-          <ImageGrid>
-            {shownCollections.map((collection, idx) => (
-              <CollectionSnippet key={idx} id={collection.id} projectId={project.slug} />
-            ))}
-          </ImageGrid>
-          {shownCollections.length <= collections.collection.items.length ? (
-            <Button as={HrefLink} href={`/projects/${project.slug}/collections`}>
-              See all collections
-            </Button>
-          ) : null}
         </>
       ) : null}
       {reviewerTasks ? (

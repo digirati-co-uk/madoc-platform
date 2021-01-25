@@ -52,6 +52,33 @@ Cypress.Commands.add('preserveCookies', () => {
   });
 });
 
+Cypress.Commands.add('siteLogin', (userName) => {
+  cy.get('@site-fixture').then((fixture) => {
+    const user = fixture.omeka.users.find((u) => u.name === userName);
+    if (!user) {
+      throw new Error(`User ${userName} not found
+
+Available users: 
+${fixture.omeka.users.map((u) => `    - ${u.name}`).join('\n')}
+      `);
+    }
+    const role = fixture.omeka.sitePermissions.find((p) => {
+      return p.site_id === fixture.omeka.site.id && p.user_id === user.id;
+    });
+    // your cypress commands here
+    return cy
+      .task('site:login', {
+        user,
+        site: fixture.omeka.site,
+        role: role.role,
+      })
+      .then((token) => {
+        cy.setCookie('madoc/' + fixture.omeka.site.slug, token);
+        cy.visit('/s/' + fixture.omeka.site.slug);
+      });
+  });
+});
+
 Cypress.Commands.add('apiRequest', (userName, request, cb) => {
   return cy.get('@site-fixture').then((fixture) => {
     const user = fixture.omeka.users.find((u) => u.name === userName);

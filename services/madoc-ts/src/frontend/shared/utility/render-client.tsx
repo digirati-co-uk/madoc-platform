@@ -57,6 +57,8 @@ export function renderClient(
         </ReactQueryConfigProvider>,
         component
       );
+
+      component.classList.add('react-loaded');
     });
   }
 }

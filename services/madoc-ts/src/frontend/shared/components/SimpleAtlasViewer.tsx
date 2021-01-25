@@ -41,7 +41,7 @@ export const SimpleAtlasViewer: React.FC<{
   }
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative', width: '100%' }}>
       {isLoaded ? (
         <>
           <AtlasAuto style={style} onCreated={rt => (runtime.current = rt.runtime)}>

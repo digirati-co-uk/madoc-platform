@@ -2,7 +2,7 @@ import React from 'react';
 import { ViewContent } from '../../shared/components/ViewContent';
 import { useApiCanvas } from '../../shared/hooks/use-api-canvas';
 
-export const ViewContentFetch: React.FC<{ id: number }> = ({ id }) => {
+export const ViewContentFetch: React.FC<{ id: number; height?: number }> = ({ id, height }) => {
   const { data } = useApiCanvas(id);
 
   if (!data) {
@@ -11,6 +11,7 @@ export const ViewContentFetch: React.FC<{ id: number }> = ({ id }) => {
 
   return (
     <ViewContent
+      height={height}
       target={[
         { type: 'Canvas', id: 'http://canvas/' + data.canvas.id },
         { type: 'Manifest', id: 'http://manifest/top' },

@@ -3,17 +3,29 @@ import { CaptureModel } from '@capture-models/types';
 import { useApi } from './use-api';
 import { useQuery } from 'react-query';
 
-export function useLoadedCaptureModel(modelId?: string, initialModel?: CaptureModel) {
+export function useLoadedCaptureModel(modelId?: string, initialModel?: CaptureModel, canvasId?: number) {
   const api = useApi();
   const { data, status, refetch } = useQuery(
-    ['model-preview', { id: modelId }],
+    ['model-preview', { id: modelId, canvasId, modelId: initialModel?.id }],
     async () => {
       if (!modelId) {
         throw new Error('No model');
       }
       const captureModel = initialModel ? initialModel : await api.getCaptureModel(modelId);
-      if (!captureModel.target || !captureModel.target[0]) {
+      if ((!captureModel.target || !captureModel.target[0]) && !canvasId) {
         throw new Error('No target');
+      }
+      if (!captureModel.target) {
+        if (!canvasId) {
+          throw new Error('No target');
+        }
+        const { canvas } = await api.getSiteCanvas(canvasId);
+
+        return {
+          canvas,
+          target: undefined,
+          captureModel,
+        };
       }
       const target = captureModel.target.map(item => api.resolveUrn(item.id));
       const primaryTarget = captureModel ? target.find((t: any) => t.type.toLowerCase() === 'canvas') : undefined;

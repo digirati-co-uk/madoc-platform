@@ -7,7 +7,7 @@ export function useCurrentUser(allowAnonymous = false): any {
   const api = useOptionalApi();
 
   return useMemo(() => {
-    if (api) {
+    if (api && !api.getIsServer()) {
       const user = api.getCurrentUser();
       if (!allowAnonymous && !user) {
         throw new Error('User not found');

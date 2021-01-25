@@ -6,16 +6,23 @@ export function createLink(opt: {
   manifestId?: string | number;
   canvasId?: string | number;
   taskId?: string;
+  parentTaskId?: string;
   query?: any;
   subRoute?: string;
   admin?: boolean;
 }) {
   const subRoute = opt.subRoute ? `/${opt.subRoute}` : '';
   const suffix = `${subRoute}${opt.query && Object.keys(opt.query).length ? `?${stringify(opt.query)}` : ''}`;
-  const canvasSubroute = opt.admin ? 'canvases' : 'c';
+  const canvasSubRoute = opt.admin ? 'canvases' : 'c';
 
   // Tasks.
   if (opt.taskId) {
+    if (opt.parentTaskId) {
+      if (opt.projectId) {
+        return `/projects/${opt.projectId}/tasks/${opt.parentTaskId}/subtasks/${opt.taskId}${suffix}`;
+      }
+      return `/tasks/${opt.parentTaskId}/subtasks/${opt.taskId}${suffix}`;
+    }
     if (opt.projectId) {
       return `/projects/${opt.projectId}/tasks/${opt.taskId}${suffix}`;
     }
@@ -40,7 +47,7 @@ export function createLink(opt: {
       return `/canvases/${opt.canvasId}${suffix}`;
     }
 
-    path.push(`/${canvasSubroute}/${opt.canvasId}`);
+    path.push(`/${canvasSubRoute}/${opt.canvasId}`);
 
     return `${path.join('')}${suffix}`;
   }

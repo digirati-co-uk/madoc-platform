@@ -12,6 +12,8 @@ module.exports = {
         '@typescript-eslint/no-var-requires': 0,
         '@typescript-eslint/camelcase': 0,
         'require-yield': 0,
+        'jest/expect-expect': 0,
+        'jest/valid-expect-in-promise': 0,
     },
     settings: {
         "react": {

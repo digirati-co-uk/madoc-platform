@@ -12,7 +12,7 @@ import { useParams } from 'react-router-dom';
 import { CollectionLoaderType } from './collection-loader';
 
 export type ManifestLoaderType = {
-  params: { id: string; collectionId?: string; slug?: string };
+  params: { manifestId: string; collectionId?: string; slug?: string };
   query: { m: string; filter: string };
   variables: ApiArgs<'getSiteManifest'>;
   data: ManifestFull;
@@ -24,7 +24,7 @@ export type ManifestLoaderType = {
 
 export const ManifestLoader: UniversalComponent<ManifestLoaderType> = createUniversalComponent<ManifestLoaderType>(
   ({ route, collection, ...props }) => {
-    const { id, slug } = useParams<{ id: string; slug: string }>();
+    const { manifestId: id, slug } = useParams<{ manifestId: string; slug: string }>();
     const { resolvedData: data, refetch: refetchManifest } = usePaginatedData(ManifestLoader, [], {
       cacheTime: 3600,
     });
@@ -60,7 +60,7 @@ export const ManifestLoader: UniversalComponent<ManifestLoaderType> = createUniv
       return [
         'getSiteManifest',
         [
-          Number(params.id),
+          Number(params.manifestId),
           {
             page: Number(query.m) || 0,
             project_id: params.slug,

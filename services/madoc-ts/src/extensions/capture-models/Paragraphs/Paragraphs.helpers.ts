@@ -12,6 +12,10 @@ export function preprocessCaptureModel(data: CaptureModel['document']['propertie
   };
   traverseDocument(documentWrapper, {
     visitEntity(entity) {
+      if (entity.properties.paragraphs) {
+        entity.properties.paragraph = entity.properties.paragraphs;
+        delete entity.properties.paragraphs;
+      }
       entity.id = generateId();
     },
     visitField(field) {
@@ -61,6 +65,9 @@ export type ParagraphEntity = CaptureModel['document'] & {
 };
 
 export function paragraphsToPlaintext(input: ParagraphEntity['properties']['paragraph']) {
+  if (!input) {
+    return '';
+  }
   const paragraphs = [];
   for (const paragraph of input) {
     const lines = [];

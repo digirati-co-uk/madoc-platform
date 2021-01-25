@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useContentType } from '@capture-models/plugin-api';
 
-export const ViewExternalContent: React.FC<{ target: any }> = ({ target }) => {
+export const ViewExternalContent: React.FC<{ target: any; height?: number }> = ({ target, height = 600 }) => {
   return useContentType(
     useMemo(
       () =>
@@ -12,7 +12,7 @@ export const ViewExternalContent: React.FC<{ target: any }> = ({ target }) => {
     ),
     useMemo(
       () => ({
-        height: 600,
+        height,
       }),
       [target]
     )

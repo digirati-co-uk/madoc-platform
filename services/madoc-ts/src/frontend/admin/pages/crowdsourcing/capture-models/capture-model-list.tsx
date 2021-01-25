@@ -8,9 +8,9 @@ import { useApi } from '../../../../shared/hooks/use-api';
 import { Card, CardContent } from '@capture-models/editor';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
-import {AdminHeader} from "../../../molecules/AdminHeader";
+import { AdminHeader } from '../../../molecules/AdminHeader';
 import { WidePage } from '../../../../shared/atoms/WidePage';
-import {useTranslation} from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 type CaptureModelListType = {
   data: {

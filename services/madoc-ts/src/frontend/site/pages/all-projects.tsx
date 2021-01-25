@@ -1,57 +1,37 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ProjectStatus, ProjectContainer } from '../../shared/atoms/ProjectStatus';
-import { UniversalComponent } from '../../types';
-import { createUniversalComponent } from '../../shared/utility/create-universal-component';
-import { usePaginatedData } from '../../shared/hooks/use-data';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { Link } from 'react-router-dom';
-import { ProjectList } from '../../../types/schemas/project-list';
 import { Heading3, Subheading3 } from '../../shared/atoms/Heading3';
 import { Pagination } from '../../shared/components/Pagination';
 import { Button } from '../../shared/atoms/Button';
+import { useProjectList } from '../hooks/use-project-list';
+import { useRelativeLinks } from '../hooks/use-relative-links';
 
-type AllProjectsType = {
-  params: {};
-  variables: { page: number };
-  query: { page: string };
-  data: ProjectList;
+export const AllProjects: React.FC = () => {
+  const { t } = useTranslation();
+  const createLink = useRelativeLinks();
+  const { resolvedData: data } = useProjectList();
+
+  return (
+    <>
+      <h1>{t('All projects')}</h1>
+      {data?.projects.map(project => (
+        <ProjectContainer $status={project.status} key={project.id}>
+          <LocaleString as={Heading3}>{project.label}</LocaleString>
+          <LocaleString as={Subheading3}>{project.summary}</LocaleString>
+          <Button as={Link} to={createLink({ projectId: project.slug })}>
+            {t('Go to project')}
+          </Button>
+          <ProjectStatus status={project.status} />
+        </ProjectContainer>
+      ))}
+      <Pagination
+        page={data ? data.pagination.page : undefined}
+        totalPages={data ? data.pagination.totalPages : undefined}
+        stale={!data}
+      />
+    </>
+  );
 };
-
-export const AllProjects: UniversalComponent<AllProjectsType> = createUniversalComponent<AllProjectsType>(
-  () => {
-    const { resolvedData: data } = usePaginatedData(AllProjects);
-
-    if (!data) {
-      return <div>loading</div>;
-    }
-
-    return (
-      <>
-        <h1>All projects</h1>
-        {data.projects.map(project => (
-          <ProjectContainer $status={project.status} key={project.id}>
-            <LocaleString as={Heading3}>{project.label}</LocaleString>
-            <LocaleString as={Subheading3}>{project.summary}</LocaleString>
-            <Button as={Link} to={`/projects/${project.slug}`}>
-              Go to project
-            </Button>
-            <ProjectStatus status={project.status} />
-          </ProjectContainer>
-        ))}
-        <Pagination
-          page={data ? data.pagination.page : undefined}
-          totalPages={data ? data.pagination.totalPages : undefined}
-          stale={!data}
-        />
-      </>
-    );
-  },
-  {
-    getKey: (params, query) => {
-      return ['site-projects', { page: Number(query.page) || 1 }];
-    },
-    getData: (key, variables, api) => {
-      return api.getSiteProjects({ page: variables.page }) as any;
-    },
-  }
-);

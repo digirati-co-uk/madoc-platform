@@ -57,7 +57,7 @@ export const ModalButton: React.FC<{
                   if (e.target !== containerRef.current) {
                     return;
                   }
-                  setIsReady(false);
+                  closeModal();
                 }}
               >
                 <InnerModalContainer>

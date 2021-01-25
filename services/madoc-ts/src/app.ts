@@ -1,8 +1,6 @@
 import Koa from 'koa';
 import json from 'koa-json';
 import logger from 'koa-logger';
-// @ts-ignore
-//import conditional from 'koa-conditional-get';
 import Ajv from 'ajv';
 import { errorHandler } from './middleware/error-handler';
 import { TypedRouter } from './utility/typed-router';
@@ -34,6 +32,29 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   }
 
   await syncOmeka(mysqlPool, pool, config);
+
+  if (process.env.NODE_ENV === 'development' && process.env.watch === 'false') {
+    const webpack = require('webpack');
+    const webpackConfig = require('../webpack.config');
+    const compiler = webpack(webpackConfig);
+
+    app.use(
+      k2c(
+        require('webpack-dev-middleware')(compiler, {
+          publicPath: webpackConfig.output.publicPath,
+          stats: false,
+        })
+      )
+    );
+
+    app.use(
+      k2c(
+        require('webpack-hot-middleware')(compiler, {
+          path: '/s/default/madoc/__webpack_hmr',
+        })
+      )
+    );
+  }
 
   // Generate cookie keys.
   app.keys = generateKeys();

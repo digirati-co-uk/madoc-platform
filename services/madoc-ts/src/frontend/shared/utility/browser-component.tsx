@@ -1,4 +1,4 @@
-import React, { ComponentType, PropsWithChildren, Suspense, useMemo } from 'react';
+import React, { ComponentType, PropsWithChildren, Suspense, useEffect, useMemo } from 'react';
 import { useApi } from '../hooks/use-api';
 
 export const BrowserComponent: React.FC<{ fallback: any }> = ({ fallback, children }) => {

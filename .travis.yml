@@ -15,7 +15,6 @@ install:
   - travis_retry docker-compose pull
   - docker build -t digirati/madoc-platform services/madoc
   - docker build -t digirati/madoc-platform-db services/madoc-database
-  - docker build -t digirati/madoc-sorting-room services/sorting-room
   - docker build -t digirati/madoc-gateway services/gateway
   - docker build -t digirati/madoc-shared-postgres services/shared-postgres
   - docker build -t digirati/madoc-tasks-api services/tasks-api
@@ -26,7 +25,6 @@ install:
   # v2 Beta tags
   - docker tag digirati/madoc-platform digirati/madoc-platform-beta
   - docker tag digirati/madoc-platform-db digirati/madoc-platform-beta-db
-  - docker tag digirati/madoc-sorting-room digirati/madoc-sorting-room-beta
   - docker tag digirati/madoc-gateway digirati/madoc-gateway-beta
   - docker tag digirati/madoc-shared-postgres digirati/madoc-shared-postgres-beta
   - docker tag digirati/madoc-tasks-api digirati/madoc-tasks-api-beta
@@ -62,10 +60,6 @@ deploy:
       branch: v2
   - provider: script
     script: bash ./.travis/docker-deploy.sh digirati/madoc-platform-beta-db
-    on:
-      branch: v2
-  - provider: script
-    script: bash ./.travis/docker-deploy.sh digirati/madoc-sorting-room-beta
     on:
       branch: v2
   - provider: script

@@ -13,7 +13,7 @@ export type TaskContext<Task extends BaseTask, ParentTask = Task> = {
 };
 
 export type TaskLoaderType = {
-  params: { id: string; parentId?: string };
+  params: { taskId: string; parentTaskId?: string };
   variables: { id: string; parentId?: string };
   query: {};
   data: { task: BaseTask & { id: string }; parentTask?: BaseTask & { id: string } };
@@ -45,7 +45,7 @@ export const TaskLoader: UniversalComponent<TaskLoaderType> = createUniversalCom
   },
   {
     getKey: params => {
-      return ['task', { id: params.id, parentId: params.parentId }];
+      return ['task', { id: params.taskId, parentId: params.parentTaskId }];
     },
     getData: async (key, vars, api) => {
       const [task, parentTask] = await Promise.all([
