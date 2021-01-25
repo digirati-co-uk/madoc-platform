@@ -20,7 +20,7 @@ export type CanvasLoaderType = {
     slug?: string; // project
     collectionId?: string;
     manifestId?: string;
-    id: string;
+    canvasId: string;
   };
   query: {};
   variables: ApiArgs<'getSiteCanvas'>;
@@ -44,7 +44,7 @@ export type CanvasLoaderType = {
 
 export const CanvasLoader: UniversalComponent<CanvasLoaderType> = createUniversalComponent<CanvasLoaderType>(
   ({ route, ...props }) => {
-    const { id, slug } = useParams<{ id: string; slug?: string }>();
+    const { canvasId: id, slug } = useParams<{ canvasId: string; slug?: string }>();
     const { data, refetch } = useData(CanvasLoader, []);
     const ctx = useMemo(() => (data ? { id: data.canvas.id, name: data.canvas.label } : undefined), [data]);
 
@@ -75,7 +75,7 @@ export const CanvasLoader: UniversalComponent<CanvasLoaderType> = createUniversa
   },
   {
     getKey: params => {
-      return ['getSiteCanvas', [Number(params.id)]];
+      return ['getSiteCanvas', [Number(params.canvasId)]];
     },
     getData: async (key, vars, api) => {
       return api.getSiteCanvas(vars[0], { plaintext: true });
