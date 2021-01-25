@@ -1,3 +1,5 @@
+import { Heading3, Subheading3 } from '../../../../shared/atoms/Heading3';
+import { ProjectContainer, ProjectStatus } from '../../../../shared/atoms/ProjectStatus';
 import { UniversalComponent } from '../../../../types';
 import React from 'react';
 import { LocaleString } from '../../../../shared/components/LocaleString';
@@ -40,25 +42,24 @@ export const ListProjects: UniversalComponent<ListProjectsType> = createUniversa
           <Button as={Link} to={`/projects/create`}>
             {t('Create project')}
           </Button>
+
+          <hr />
+
+          {data?.projects.map(project => (
+            <ProjectContainer $status={project.status} key={project.id}>
+              <LocaleString as={Heading3}>{project.label}</LocaleString>
+              <LocaleString as={Subheading3}>{project.summary}</LocaleString>
+              <Button as={Link} to={`/projects/${project.id}`}>
+                {t('Go to project')}
+              </Button>
+              <ProjectStatus status={project.status} />
+            </ProjectContainer>
+          ))}
           <Pagination
             page={data ? data.pagination.page : 1}
             totalPages={data ? data.pagination.totalPages : 1}
             stale={!data}
           />
-          {data.projects.map((project: any) => {
-            return (
-              <div key={project.id}>
-                <h3>
-                  <LocaleString as={Link} to={`/projects/${project.id}`}>
-                    {project.label}
-                  </LocaleString>
-                </h3>
-                <p>
-                  <LocaleString>{project.summary}</LocaleString>
-                </p>
-              </div>
-            );
-          })}
         </WidePage>
       </>
     );
