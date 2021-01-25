@@ -9,6 +9,7 @@ import { useLoadedCaptureModel } from '../../shared/hooks/use-loaded-capture-mod
 import { useCanvasModel } from '../hooks/use-canvas-model';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useRouteContext } from '../hooks/use-route-context';
+import { useSiteConfiguration } from './SiteConfigurationContext';
 
 export const CanvasSimpleEditor: React.FC<{ revision: string }> = ({ revision }) => {
   const { t } = useTranslation();
@@ -17,7 +18,8 @@ export const CanvasSimpleEditor: React.FC<{ revision: string }> = ({ revision })
   const [{ captureModel }] = useLoadedCaptureModel(projectModel?.model?.id, undefined, canvasId);
   const { updateClaim } = useCanvasUserTasks();
   const user = useCurrentUser(true);
-  const isVertical = false;
+  const config = useSiteConfiguration();
+  const isVertical = config.project.defaultEditorOrientation === 'vertical';
   const api = useApi();
 
   const canContribute =

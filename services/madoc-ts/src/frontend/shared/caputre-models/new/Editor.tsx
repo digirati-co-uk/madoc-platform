@@ -2,6 +2,7 @@ import { Revisions } from '@capture-models/editor';
 import { CaptureModel, RevisionRequest } from '@capture-models/types';
 import React, { useMemo, useState } from 'react';
 import { CanvasFull } from '../../../../types/schemas/canvas-full';
+import { useSiteConfiguration } from '../../../site/features/SiteConfigurationContext';
 import { ViewContent } from '../../components/ViewContent';
 import { useApi } from '../../hooks/use-api';
 import { RevisionEditor } from '../../viewers/revision-editor';
@@ -66,7 +67,8 @@ export const Editor: React.FC<EditorProps> = ({
   content,
 }) => {
   const api = useApi();
-  const [isVertical, setIsVertical] = useState(false);
+  const config = useSiteConfiguration();
+  const [isVertical, setIsVertical] = useState(config.project.defaultEditorOrientation === 'vertical');
   const contentToUse = content ? content : captureModel.target ? { target: captureModel.target } : {};
 
   const slotConfig = useMemo(() => ({ allowEditing: allowEditingRevision }), [allowEditingRevision]);

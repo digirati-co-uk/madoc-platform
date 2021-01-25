@@ -80,4 +80,14 @@ export const siteConfigurationModel = {
     type: 'checkbox-field',
     inlineLabel: 'Skip automatically processing OCR during IIIF manifest import',
   },
+  defaultEditorOrientation: {
+    label: 'Default editor orientation',
+    description:
+      'When a user makes a contribution they will see the form either to the right of (horizontal) or below the image (vertical). The user can still change this if they want.',
+    type: 'dropdown-field',
+    options: [
+      { value: 'vertical', text: 'Vertical (to the right)' },
+      { value: 'horizontal', text: 'Horizontal (under) ' },
+    ],
+  },
 };
