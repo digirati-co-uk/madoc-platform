@@ -86,8 +86,8 @@ export const siteConfigurationModel = {
       'When a user makes a contribution they will see the form either to the right of (horizontal) or below the image (vertical). The user can still change this if they want.',
     type: 'dropdown-field',
     options: [
-      { value: 'vertical', text: 'Vertical (to the right)' },
-      { value: 'horizontal', text: 'Horizontal (under) ' },
+      { value: 'vertical', text: 'Vertical (under)' },
+      { value: 'horizontal', text: 'Horizontal (to the right) ' },
     ],
   },
 };

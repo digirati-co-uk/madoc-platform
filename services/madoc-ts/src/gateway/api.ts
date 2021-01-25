@@ -491,8 +491,8 @@ export class ApiClient {
       : {};
   }
 
-  async saveSiteConfiguration(config: ProjectConfiguration) {
-    return this.request<ProjectConfiguration>(`/api/madoc/configuration`, {
+  async saveSiteConfiguration(config: ProjectConfiguration, query?: { project_id?: number; collection_id?: number }) {
+    return this.request<ProjectConfiguration>(`/api/madoc/configuration${query ? `?${stringify(query)}` : ''}`, {
       method: 'POST',
       body: config,
     });
@@ -1677,8 +1677,8 @@ export class ApiClient {
     return this.publicRequest<{ model?: CaptureModel }>(`/madoc/api/projects/${projectId}/canvas-models/${canvasId}`);
   }
 
-  async getSiteConfiguration() {
-    return this.publicRequest<ProjectConfiguration>(`/madoc/api/configuration`);
+  async getSiteConfiguration(query?: import('../routes/site/site-configuration').SiteConfigurationQuery) {
+    return this.publicRequest<ProjectConfiguration>(`/madoc/api/configuration`, query);
   }
 
   async getSiteSearchFacetConfiguration() {

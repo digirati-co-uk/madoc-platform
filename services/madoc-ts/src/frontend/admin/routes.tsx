@@ -5,6 +5,7 @@ import { CollectionView } from './pages/content/collections/collection';
 import { ViewCanvasLinking } from './pages/content/linking/view-linking';
 import { MetadataConfigurationPage } from './pages/content/metadata-configuration';
 import { SiteConfiguration } from './pages/content/site-configuration';
+import { ProjectConfiguration } from './pages/crowdsourcing/projects/project-configuration';
 import { OcrListPage } from './pages/enrichment/ocr/ocr-list';
 import { SearchIndexingPage } from './pages/enrichment/search-indexing';
 import { ExportSite } from './pages/export/export-site';
@@ -242,6 +243,11 @@ export const routes: UniversalRoute[] = [
         path: '/projects/:id/content',
         exact: true,
         component: ProjectContent,
+      },
+      {
+        path: '/projects/:id/configuration',
+        exact: true,
+        component: ProjectConfiguration,
       },
       {
         path: '/projects/:id/model',

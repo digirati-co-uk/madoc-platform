@@ -1,14 +1,19 @@
+import { getProject } from '../../database/queries/project-queries';
 import { RouteMiddleware } from '../../types/route-middleware';
+import { parseProjectId } from '../../utility/parse-project-id';
 
 export type SiteConfigurationQuery = {
   project_id?: string | number;
-  page: number;
+  collection_id?: number;
 };
 
 export const siteConfiguration: RouteMiddleware<{ slug: string }> = async context => {
-  const projectId = context.query.project_id as string | undefined;
-  const collectionId = context.query.collection_id as string | undefined;
+  const collectionId = context.query.collection_id;
   const { site, siteApi } = context.state;
+
+  const parsedId = context.query.project_id ? parseProjectId(context.query.project_id) : null;
+  const project = parsedId ? await context.connection.one(getProject(parsedId, site.id)) : null;
+  const projectId = project ? project.id : null;
 
   const staticConfiguration = context.externalConfig.defaultSiteConfiguration;
 
@@ -30,7 +35,8 @@ export const siteConfiguration: RouteMiddleware<{ slug: string }> = async contex
 
   if (!configResponse || !configResponse.config || !configResponse.config[0]) {
     // @todo should we load the default configuration?
-    context.response.status = 404;
+    context.response.body = staticConfiguration;
+    context.response.status = 200;
     return;
   }
 

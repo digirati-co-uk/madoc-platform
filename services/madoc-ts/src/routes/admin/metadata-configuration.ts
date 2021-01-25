@@ -1,3 +1,4 @@
+import { getProject } from '../../database/queries/project-queries';
 import { FacetConfig } from '../../frontend/shared/components/MetadataFacetEditor';
 import { api } from '../../gateway/api.server';
 import { Site } from '../../types/omeka/Site';
@@ -5,12 +6,16 @@ import { RouteMiddleware } from '../../types/route-middleware';
 import { NotFound } from '../../utility/errors/not-found';
 import { mysql } from '../../utility/mysql';
 import { parseEtag } from '../../utility/parse-etag';
+import { parseProjectId } from '../../utility/parse-project-id';
 import { userWithScope } from '../../utility/user-with-scope';
 
 export const getMetadataConfiguration: RouteMiddleware = async context => {
-  const projectId = context.query.project_id as string | undefined;
   const collectionId = context.query.collection_id as string | undefined;
   const { site, siteApi } = context.state;
+
+  const parsedId = context.query.project_id ? parseProjectId(context.query.project_id) : null;
+  const project = parsedId ? await context.connection.one(getProject(parsedId, site.id)) : null;
+  const projectId = project ? project.id : null;
 
   const defaultConfiguration = { facets: [] };
 
