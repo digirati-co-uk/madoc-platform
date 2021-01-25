@@ -4,21 +4,27 @@ import { useMutation } from 'react-query';
 import { RevisionRequest } from '@capture-models/types';
 import { useCallback } from 'react';
 
-export function useViewerSaving(onSave: (req: RevisionRequest, status: string | undefined) => Promise<void> | void) {
+export function useViewerSaving(
+  afterSave?: (req: RevisionRequest, status: string | undefined) => Promise<void> | void
+) {
   const api = useApi();
   const persistRevision = Revisions.useStoreActions(a => a.persistRevision);
 
   const [createRevision] = useMutation(
     async ({ req, status }: { req: RevisionRequest; status?: string }): Promise<RevisionRequest> => {
       const response = await api.createCaptureModelRevision(req, status);
-      await onSave(response, status);
+      if (afterSave) {
+        await afterSave(response, status);
+      }
       return response;
     }
   );
   const [updateRevision] = useMutation(
     async ({ req, status }: { req: RevisionRequest; status?: string }): Promise<RevisionRequest> => {
       const response = await api.updateCaptureModelRevision(req, status);
-      await onSave(response, status);
+      if (afterSave) {
+        await afterSave(response, status);
+      }
       return response;
     }
   );

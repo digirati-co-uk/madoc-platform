@@ -1,41 +1,29 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { CollectionFull } from '../../../types/schemas/collection-full';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { Link } from 'react-router-dom';
-import { Pagination } from '../../shared/components/Pagination';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { ImageGrid, ImageGridItem } from '../../shared/atoms/ImageGrid';
 import { CroppedImage } from '../../shared/atoms/Images';
 import { SingleLineHeading5, Subheading5 } from '../../shared/atoms/Heading5';
 import { useTranslation } from 'react-i18next';
 import { useSubjectMap } from '../../shared/hooks/use-subject-map';
-import { createLink } from '../../shared/utility/create-link';
 import { ProjectFull } from '../../../types/schemas/project-full';
-import { Button, MediumRoundedButton } from '../../shared/atoms/Button';
-import { HrefLink } from '../../shared/utility/href-link';
-import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { CanvasStatus } from '../../shared/atoms/CanvasStatus';
+import { CollectionFilterOptions } from '../features/CollectionFilterOptions';
+import { CollectionItemPagination } from '../features/CollectionItemPagination';
+import { useRelativeLinks } from '../hooks/use-relative-links';
 
 export const ViewCollection: React.FC<Partial<
   CollectionFull & {
     project?: ProjectFull;
     collectionSubjects: CollectionFull['subjects'];
   }
->> = ({ collection, pagination, project, collectionSubjects }) => {
+>> = ({ collection, collectionSubjects }) => {
   const { t } = useTranslation();
-  const { filter, page } = useLocationQuery();
+  const createLink = useRelativeLinks();
 
-  const [subjectMap, showDoneButton] = useSubjectMap(collectionSubjects);
-
-  const pages = (
-    <Pagination
-      pageParam={'c'}
-      page={pagination ? pagination.page : undefined}
-      totalPages={pagination ? pagination.totalPages : undefined}
-      stale={!pagination}
-      extraQuery={{ filter }}
-    />
-  );
+  const [subjectMap] = useSubjectMap(collectionSubjects);
 
   if (!collection) {
     return <DisplayBreadcrumbs />;
@@ -44,24 +32,13 @@ export const ViewCollection: React.FC<Partial<
   return (
     <>
       <DisplayBreadcrumbs />
+
       <LocaleString as="h1">{collection.label}</LocaleString>
-      {showDoneButton || filter ? (
-        <Button
-          as={HrefLink}
-          href={createLink({
-            projectId: project?.slug,
-            collectionId: collection.id,
-            query: { filter: filter ? undefined : 3, page },
-          })}
-        >
-          {filter ? 'Show completed' : 'Hide completed'}
-        </Button>
-      ) : null}
-      {pages}
-      <MediumRoundedButton as={Link} to={`/search?madoc_id=urn:madoc:collection:${collection.id}`}>
-        Search this collection
-      </MediumRoundedButton>
-      <br />
+
+      <CollectionFilterOptions />
+
+      <CollectionItemPagination />
+
       <ImageGrid>
         {collection.items.map((manifest, idx) => (
           <Link
@@ -70,14 +47,9 @@ export const ViewCollection: React.FC<Partial<
               manifest.type === 'collection'
                 ? {
                     collectionId: manifest.id,
-                    projectId: project ? project.slug : undefined,
                   }
                 : {
                     manifestId: manifest.id,
-                    collectionId: collection.id,
-                    // TODO: WORK OUT HOW TO MAP THIS THROUGH WITH COLLECTIONFULL
-                    // canvasId: manifest.firstCanvasId,
-                    projectId: project ? project.slug : undefined,
                   }
             )}
           >
@@ -97,7 +69,8 @@ export const ViewCollection: React.FC<Partial<
           </Link>
         ))}
       </ImageGrid>
-      {pages}
+
+      <CollectionItemPagination />
     </>
   );
 };

@@ -1,7 +1,6 @@
 import { CardButton, CardButtonGroup, Revisions } from '@capture-models/editor';
 import { isEntity } from '@capture-models/helpers';
-import { BaseField, CaptureModel } from '@capture-models/types';
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 function isTopLevel(path: [string, string, boolean][]): boolean {
   return path.filter(p => !p[2]).length === 0;

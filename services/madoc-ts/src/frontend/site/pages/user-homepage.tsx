@@ -1,38 +1,18 @@
-// Site users
-// - User project + details
-// - Bookmarks
-// - Projects that are running
-// Contributor
-// - Crowd Sourcing tasks
-// Reviewer
-//  - Reviews
-//  - Assign to another reviewer / admin
-// Admin
-// - IIIF Imports
-// - Quick assign
-// - Go to admin
-// - Create "to-do" task
-
 import { UniversalComponent } from '../../types';
 import { createUniversalComponent } from '../../shared/utility/create-universal-component';
 import { useStaticData } from '../../shared/hooks/use-data';
 import React from 'react';
 import { UserDetails } from '../../../types/schemas/user-details';
-import { Heading1, Subheading1 } from '../../shared/atoms/Heading1';
-import { TinyButton } from '../../shared/atoms/Button';
-import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../shared/atoms/Statistics';
-import { Heading3, Subheading3 } from '../../shared/atoms/Heading3';
-import { ProjectListing } from '../../shared/atoms/ProjectListing';
 import { CrowdsourcingReview } from '../../../gateway/tasks/crowdsourcing-review';
 import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
 import { Pagination } from '../../../types/schemas/_pagination';
-import { GridContainer, HalfGird } from '../../shared/atoms/Grid';
-import { TableContainer, TableEmpty, TableRow, TableRowLabel } from '../../shared/atoms/Table';
-import { Status } from '../../shared/atoms/Status';
-import { Link, Redirect } from 'react-router-dom';
-import { HrefLink } from '../../shared/utility/href-link';
-import { LightNavigation, LightNavigationItem } from '../../shared/atoms/LightNavigation';
 import { isAdmin, isContributor, isReviewer } from '../../shared/utility/user-roles';
+import { ContributorTasks } from '../features/ContributorTasks';
+import { DashboardNavigation } from '../features/DashboardNavigation';
+import { ReviewerTasks } from '../features/ReviewerTasks';
+import { UserGreeting } from '../features/UserGreeting';
+import { UserProjects } from '../features/UserProjects';
+import { UserStatistics } from '../features/UserStatistics';
 
 type UserHomepageType = {
   query: {};
@@ -50,87 +30,6 @@ type UserHomepageType = {
   variables: {};
 };
 
-const ReviewerTasks: React.FC<{ reviews: UserHomepageType['data']['reviewerTasks'] }> = ({ reviews }) => {
-  return (
-    <>
-      <Heading3>Reviews</Heading3>
-      <TableContainer>
-        {reviews && reviews.tasks.length ? (
-          reviews.tasks.map(task => (
-            <TableRow key={task.id}>
-              <TableRowLabel>
-                <Status status={task.status} text={task.status_text} />
-              </TableRowLabel>
-              <TableRowLabel>
-                <Link to={`/tasks/${task.id}`}>{task.name}</Link>
-              </TableRowLabel>
-            </TableRow>
-          ))
-        ) : (
-          <TableEmpty>No reviews</TableEmpty>
-        )}
-      </TableContainer>
-      <TinyButton as={HrefLink} href={`/tasks?type=crowdsourcing-review`}>
-        Browse all reviews
-      </TinyButton>
-    </>
-  );
-};
-
-const ContributorTasks: React.FC<{
-  drafts: UserHomepageType['data']['contributorDraftTasks'];
-  reviews: UserHomepageType['data']['contributorReviewTasks'];
-}> = ({ drafts, reviews }) => {
-  return (
-    <>
-      <Heading3>Your contributions</Heading3>
-      <GridContainer>
-        <HalfGird $margin>
-          <Subheading3>Contributions in progress</Subheading3>
-          <TableContainer>
-            {drafts && drafts.tasks.length ? (
-              drafts.tasks.map(task => (
-                <TableRow key={task.id}>
-                  <TableRowLabel>
-                    <Status status={task.status} text={task.status_text} />
-                  </TableRowLabel>
-                  <TableRowLabel>
-                    <Link to={`/tasks/${task.id}`}>{task.name}</Link>
-                  </TableRowLabel>
-                </TableRow>
-              ))
-            ) : (
-              <TableEmpty>No contributions yet</TableEmpty>
-            )}
-          </TableContainer>
-        </HalfGird>
-        <HalfGird $margin>
-          <Subheading3>Contributions in review</Subheading3>
-          <TableContainer>
-            {reviews && reviews.tasks.length ? (
-              reviews.tasks.map(task => (
-                <TableRow key={task.id}>
-                  <TableRowLabel>
-                    <Status status={task.status} text={task.status_text} />
-                  </TableRowLabel>
-                  <TableRowLabel>
-                    <Link to={`/tasks/${task.id}`}>{task.name}</Link>
-                  </TableRowLabel>
-                </TableRow>
-              ))
-            ) : (
-              <TableEmpty>No contributions in review</TableEmpty>
-            )}
-          </TableContainer>
-        </HalfGird>
-      </GridContainer>
-      <TinyButton as={HrefLink} href={`/tasks?type=crowdsourcing-task`}>
-        Browse all contributions
-      </TinyButton>
-    </>
-  );
-};
-
 export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversalComponent<UserHomepageType>(
   () => {
     const { data, error } = useStaticData(UserHomepage, {}, { retry: false });
@@ -140,70 +39,23 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
     }
 
     if (!data) {
+      // We want to load here.
       return <div>Loading...</div>;
     }
 
-    const { userDetails, isSiteAdmin, isSiteContributor } = data;
-
     return (
       <div>
-        <Heading1>Welcome back {userDetails.user.name}</Heading1>
-        <Subheading1>Quick navigation</Subheading1>
+        <UserGreeting />
 
-        <LightNavigation role="navigation">
-          <LightNavigationItem>
-            <HrefLink href={'/projects'}>Projects</HrefLink>
-          </LightNavigationItem>
-          <LightNavigationItem>
-            <HrefLink href={'/collections'}>Collections</HrefLink>
-          </LightNavigationItem>
-          {isSiteContributor ? (
-            <LightNavigationItem>
-              <HrefLink href={'/tasks'}>All tasks</HrefLink>
-            </LightNavigationItem>
-          ) : null}
-          <LightNavigationItem>
-            <a href={'./profile'}>Manage account</a>
-          </LightNavigationItem>
-          {isSiteAdmin ? (
-            <LightNavigationItem>
-              <a href={`./madoc/admin`}>Admin</a>
-            </LightNavigationItem>
-          ) : null}
-        </LightNavigation>
+        <DashboardNavigation />
 
-        <div>
-          <StatisticContainer>
-            <Statistic>
-              <StatisticNumber>{0}</StatisticNumber>
-              <StatisticLabel>Bookmarks</StatisticLabel>
-            </Statistic>
-            <Statistic>
-              <StatisticNumber>{userDetails.statistics.statuses['3'] || 0}</StatisticNumber>
-              <StatisticLabel>Accepted contributions</StatisticLabel>
-            </Statistic>
-            <Statistic>
-              <StatisticNumber>{userDetails.statistics.total}</StatisticNumber>
-              <StatisticLabel>Total contributions</StatisticLabel>
-            </Statistic>
-          </StatisticContainer>
-        </div>
+        <UserStatistics />
 
-        {isReviewer(userDetails) ? <ReviewerTasks reviews={data.reviewerTasks} /> : null}
-        {isContributor(userDetails) ? (
-          <ContributorTasks drafts={data.contributorDraftTasks} reviews={data.contributorReviewTasks} />
-        ) : null}
-        {data.projects.length ? (
-          <>
-            <Heading3 $margin>Active projects</Heading3>
-            <ProjectListing projects={data.projects} showLink />
-            <div style={{ marginTop: 20 }}>
-              <TinyButton as={HrefLink} href={`/projects`}>
-                Browse all projects
-              </TinyButton>
-            </div>
-          </>
-        ) : null}
+        <ReviewerTasks />
+
+        <ContributorTasks />
+
+        <UserProjects />
       </div>
     );
   },
