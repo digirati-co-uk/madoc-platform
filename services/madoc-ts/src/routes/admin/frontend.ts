@@ -9,7 +9,7 @@ export const adminFrontend: RouteMiddleware = context => {
     userWithScope(context, ['site.admin']);
   } catch (e) {
     if (e instanceof NotFound) {
-      context.response.status = 301;
+      context.response.status = 307;
       context.response.redirect(`/s/${context.params.slug}`);
       return;
     }
@@ -26,7 +26,7 @@ export const adminFrontend: RouteMiddleware = context => {
 
     if (result.type === 'redirect') {
       if (result.to) {
-        context.response.status = result.status || 301;
+        context.response.status = result.status || 307;
         context.response.redirect(result.to);
       } else {
         context.response.status = 404;
@@ -56,7 +56,7 @@ export const siteFrontend: RouteMiddleware = context => {
 
     if (result.type === 'redirect') {
       if (result.to) {
-        context.response.status = result.status || 301;
+        context.response.status = result.status || 307;
         context.response.redirect(result.to);
       } else {
         context.response.status = 404;
