@@ -2,6 +2,7 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import { SmallButton } from './Button';
 import { CloseIcon } from './CloseIcon';
+import { InputLabel } from './Input';
 
 export const MetadataCardListContainer = styled.div<{ isOver?: boolean; canDrop?: boolean }>`
   display: flex;
@@ -115,6 +116,11 @@ export const MetadataListItemCollapse = styled.div`
   &:hover {
     background: #eee;
   }
+`;
+
+export const MetadataInputLabel = styled(InputLabel)`
+  margin: 0.5em 0;
+  display: block;
 `;
 
 export const MetadataEmbeddedList = styled.div<{ canDrop?: boolean }>`

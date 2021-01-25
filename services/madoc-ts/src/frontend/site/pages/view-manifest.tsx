@@ -20,8 +20,8 @@ import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { Heading3 } from '../../shared/atoms/Heading3';
 import { LockIcon } from '../../shared/atoms/LockIcon';
 import { Heading1 } from '../../shared/atoms/Heading1';
-import { MetaDataDisplay } from '../../shared/components/MetaDataDisplay';
 import { ManifestActions } from '../features/ManifestActions';
+import { ManifestMetadata } from '../features/ManifestMetadata';
 import { ManifestUserTasks } from '../features/ManifestUserTasks';
 import { usePreventCanvasNavigation } from '../features/PreventUsersNavigatingCanvases';
 import { RandomlyAssignCanvas } from '../features/RandomlyAssignCanvas';
@@ -97,7 +97,8 @@ export const ViewManifest: React.FC<{
                 </Link>
               ))}
             </ImageGrid>
-            <MetaDataDisplay style={{ width: '40%', backgroundColor: '#ebebeb' }} metadata={manifest.metadata || []} />
+
+            <ManifestMetadata compact />
           </div>
         </>
       ) : null}

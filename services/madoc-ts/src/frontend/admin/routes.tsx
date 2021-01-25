@@ -3,6 +3,7 @@ import { CanvasPlaintext } from './pages/content/canvases/canvas-plaintext';
 import { CanvasSearchIndex } from './pages/content/canvases/canvas-search-index';
 import { CollectionView } from './pages/content/collections/collection';
 import { ViewCanvasLinking } from './pages/content/linking/view-linking';
+import { MetadataConfigurationPage } from './pages/content/metadata-configuration';
 import { SiteConfiguration } from './pages/content/site-configuration';
 import { OcrListPage } from './pages/enrichment/ocr/ocr-list';
 import { SearchIndexingPage } from './pages/enrichment/search-indexing';
@@ -367,5 +368,10 @@ export const routes: UniversalRoute[] = [
     path: '/configure/site',
     exact: true,
     component: SiteConfiguration,
+  },
+  {
+    path: '/configure/site/metadata',
+    exact: true,
+    component: MetadataConfigurationPage,
   },
 ];

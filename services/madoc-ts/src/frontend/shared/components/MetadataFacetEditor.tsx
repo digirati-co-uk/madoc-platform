@@ -7,7 +7,6 @@ import styled from 'styled-components';
 import { MetadataEditor } from '../../admin/molecules/MetadataEditor';
 import { Button } from '../atoms/Button';
 import { CloseIcon } from '../atoms/CloseIcon';
-import { InputLabel } from '../atoms/Input';
 import {
   FacetEditActions,
   FacetEditBack,
@@ -17,6 +16,7 @@ import {
   MetadataCardItem,
   MetadataCardLabel,
   MetadataCardListContainer,
+  MetadataInputLabel,
   MetadataCardRemove,
   MetadataCardRemoveLabel,
   MetadataCardSubtext,
@@ -61,10 +61,12 @@ const MetadataSingleValue: React.FC<{ parentLabel: string; value: string; total_
   );
 };
 
-const MetadataSingleFacet: React.FC<{ label: string; total_items: number; language?: string }> = ({
-  label,
-  language,
-}) => {
+const MetadataSingleFacet: React.FC<{
+  label: string;
+  total_items: number;
+  language?: string;
+  expandable?: boolean;
+}> = ({ label, language, expandable = true }) => {
   const [isOpen, setIsOpen] = useState(false);
   const childElements = apiHooks.getMetadataValues(() => [label], {
     enabled: isOpen,
@@ -83,7 +85,9 @@ const MetadataSingleFacet: React.FC<{ label: string; total_items: number; langua
           <TableHandleIcon />
         </MetadataListItemIcon>
         <MetadataListItemLabel>{label}</MetadataListItemLabel>
-        <MetadataListItemCollapse onClick={() => setIsOpen(o => !o)}>{isOpen ? '–' : '+'}</MetadataListItemCollapse>
+        {expandable ? (
+          <MetadataListItemCollapse onClick={() => setIsOpen(o => !o)}>{isOpen ? '–' : '+'}</MetadataListItemCollapse>
+        ) : null}
       </MetadataListItemContainer>
       {childElements.data && isOpen ? (
         <MetadataListItemChildren>
@@ -347,7 +351,7 @@ const EditSingleValue: React.FC<{
                 remove
               </FacetEditRemove>
             </FacetEditActions>
-            <InputLabel htmlFor="title">Title</InputLabel>
+            <MetadataInputLabel htmlFor="title">Title</MetadataInputLabel>
             <MetadataEditor
               fluid
               id="title"
@@ -361,9 +365,9 @@ const EditSingleValue: React.FC<{
               metadataKey="label"
               availableLanguages={['en', 'es', 'fr', 'de']}
             />
-            <InputLabel htmlFor="included-fields">
+            <MetadataInputLabel htmlFor="included-fields">
               When searching for this, search the above fields with all of these values
-            </InputLabel>
+            </MetadataInputLabel>
             <MetadataEmbeddedList id="included-fields" ref={dropValue} canDrop={dropValueState.canDrop}>
               {(values || []).map(key => {
                 return (
@@ -423,6 +427,7 @@ const EditSingleFacet: React.FC<{
   editFacetValue: (id: string, value: FacetConfigValue) => void;
   removeFacetValue: (id: string, value: FacetConfigValue) => void;
   reorderFacetValues: (id: string, source: number, dest: number) => void;
+  allowSavingValues?: boolean;
 }> = ({
   facet,
   onBack,
@@ -433,6 +438,7 @@ const EditSingleFacet: React.FC<{
   createNewFacetValueObject,
   addFacetValue,
   reorderFacetValues,
+  allowSavingValues,
 }) => {
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) {
@@ -484,7 +490,7 @@ const EditSingleFacet: React.FC<{
           remove
         </FacetEditRemove>
       </FacetEditActions>
-      <InputLabel htmlFor="title">Title</InputLabel>
+      <MetadataInputLabel htmlFor="title">Title</MetadataInputLabel>
       <MetadataEditor
         fluid
         id="title"
@@ -498,7 +504,7 @@ const EditSingleFacet: React.FC<{
         metadataKey="label"
         availableLanguages={['en', 'es', 'fr', 'de']}
       />
-      <InputLabel htmlFor="included-fields">This facet will combine the following fields</InputLabel>
+      <MetadataInputLabel htmlFor="included-fields">This will combine the following fields</MetadataInputLabel>
       <MetadataEmbeddedList id="included-fields" ref={dropFields} canDrop={dropFieldsState.canDrop}>
         {facet.keys.map(key => {
           const visualKey = key.startsWith('metadata.') ? key.slice('metadata.'.length) : key;
@@ -520,33 +526,41 @@ const EditSingleFacet: React.FC<{
             </MetadataCardItem>
           );
         })}
-        <MetadataDropzone>drop facet from the right list</MetadataDropzone>
+        <MetadataDropzone>drop item from the right list</MetadataDropzone>
       </MetadataEmbeddedList>
-      <InputLabel htmlFor="included-values">The facet list will only contain the following values</InputLabel>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="droppable">
-          {provided => (
-            <div {...provided.droppableProps} ref={provided.innerRef}>
-              <MetadataEmbeddedList id="included-values" ref={dropValue} canDrop={dropValueState.canDrop}>
-                {(facet.values || []).map((value, idx) => {
-                  return (
-                    <EditSingleValue
-                      key={value.id}
-                      index={idx}
-                      keys={facet.keys}
-                      removeFacetValue={(v: FacetConfigValue) => removeFacetValue(facet.id, v)}
-                      editFacetValue={(v: FacetConfigValue) => editFacetValue(facet.id, v)}
-                      value={value}
-                    />
-                  );
-                })}
-                {!facet.values ? <MetadataEmptyState>Showing all values</MetadataEmptyState> : null}
-                {provided.placeholder}
-              </MetadataEmbeddedList>
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
+      {allowSavingValues ? (
+        <>
+          <MetadataInputLabel htmlFor="included-values">
+            The facet list will only contain the following values
+          </MetadataInputLabel>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="droppable">
+              {provided => (
+                <div {...provided.droppableProps} ref={provided.innerRef}>
+                  <MetadataEmbeddedList id="included-values" ref={dropValue} canDrop={dropValueState.canDrop}>
+                    {(facet.values || []).map((value, idx) => {
+                      return (
+                        <EditSingleValue
+                          key={value.id}
+                          index={idx}
+                          keys={facet.keys}
+                          removeFacetValue={(v: FacetConfigValue) => removeFacetValue(facet.id, v)}
+                          editFacetValue={(v: FacetConfigValue) => editFacetValue(facet.id, v)}
+                          value={value}
+                        />
+                      );
+                    })}
+                    {!facet.values || facet.values.length === 0 ? (
+                      <MetadataEmptyState>Showing all values</MetadataEmptyState>
+                    ) : null}
+                    {provided.placeholder}
+                  </MetadataEmbeddedList>
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+        </>
+      ) : null}
     </FacetEditContainer>
   );
 };
@@ -554,6 +568,7 @@ const EditSingleFacet: React.FC<{
 const MetadataConfigEditor: React.FC<{
   facets: FacetConfig[];
   onSave: (facets: FacetConfig[]) => void | Promise<void>;
+  allowSavingValues?: boolean;
 }> = props => {
   const [
     facets,
@@ -656,6 +671,7 @@ const MetadataConfigEditor: React.FC<{
           editFacetValue={editFacetValue}
           removeFacetValue={removeFacetValue}
           reorderFacetValues={reorderFacetValues}
+          allowSavingValues={props.allowSavingValues}
         />
       </>
     );
@@ -691,6 +707,11 @@ const MetadataConfigEditor: React.FC<{
                   </Draggable>
                 ))}
                 {provided.placeholder}
+                {facets.length === 0 ? (
+                  <MetadataDropzone>
+                    nothing added yet, drop value from right list. All values will be shown
+                  </MetadataDropzone>
+                ) : null}
               </MetadataCardListContainer>
             </div>
           )}
@@ -703,7 +724,8 @@ const MetadataConfigEditor: React.FC<{
 export const MetadataFacetEditor: React.FC<{
   onSave: (facets: FacetConfig[]) => void | Promise<void>;
   facets: FacetConfig[];
-}> = ({ facets, onSave }) => {
+  allowSavingValues?: boolean;
+}> = ({ facets, onSave, allowSavingValues = true }) => {
   const api = useApi();
   const keys = apiHooks.getMetadataKeys(() => []);
 
@@ -714,12 +736,14 @@ export const MetadataFacetEditor: React.FC<{
   return (
     <Container>
       <EditorColumn>
-        <MetadataConfigEditor facets={facets} onSave={onSave} />
+        <MetadataConfigEditor facets={facets} onSave={onSave} allowSavingValues={allowSavingValues} />
       </EditorColumn>
       <MetadataColumn>
         <MetadataListContainer>
           {keys.data
-            ? keys.data.metadata.map((metadata, idx) => <MetadataSingleFacet key={idx} {...metadata} />)
+            ? keys.data.metadata.map((metadata, idx) => (
+                <MetadataSingleFacet key={idx} expandable={allowSavingValues} {...metadata} />
+              ))
             : null}
         </MetadataListContainer>
       </MetadataColumn>

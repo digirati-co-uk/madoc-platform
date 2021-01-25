@@ -505,6 +505,13 @@ export class ApiClient {
     });
   }
 
+  async saveMetadataConfiguration(metadata: FacetConfig[]) {
+    return this.request<{ metadata: FacetConfig[] }>(`/api/madoc/configuration/metadata`, {
+      method: 'POST',
+      body: { metadata },
+    });
+  }
+
   /// Search
 
   async search(searchTerm: string, pageQuery = 1, facetType?: string, facetValue?: string) {
@@ -1676,6 +1683,10 @@ export class ApiClient {
 
   async getSiteSearchFacetConfiguration() {
     return this.publicRequest<{ facets: FacetConfig[] }>(`/madoc/api/configuration/search-facets`);
+  }
+
+  async getSiteMetadataConfiguration(query?: { project_id?: string; collection_id?: number }) {
+    return this.publicRequest<{ metadata: FacetConfig[] }>(`/madoc/api/configuration/metadata`, query);
   }
 
   async getSiteSearchQuery(query: SearchQuery, page = 1, madoc_id?: string) {
