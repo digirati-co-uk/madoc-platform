@@ -1,12 +1,15 @@
 import { Revisions } from '@capture-models/editor';
 import { CaptureModel, RevisionRequest } from '@capture-models/types';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { CanvasFull } from '../../../../types/schemas/canvas-full';
 import { ViewContent } from '../../components/ViewContent';
 import { useApi } from '../../hooks/use-api';
 import { RevisionEditor } from '../../viewers/revision-editor';
 import { CaptureModelEditor } from '../CaptureModelEditor';
+import { EditorSlots } from './components/EditorSlots';
+import { RevisionProviderWithFeatures } from './components/RevisionProviderWithFeatures';
 import { EditorContentViewer } from './EditorContent';
+import { RightPanel } from './RightPanel';
 
 export type EditorProps = {
   // Capture model itself
@@ -66,6 +69,8 @@ export const Editor: React.FC<EditorProps> = ({
   const [isVertical, setIsVertical] = useState(false);
   const contentToUse = content ? content : captureModel.target ? { target: captureModel.target } : {};
 
+  const slotConfig = useMemo(() => ({ allowEditing: allowEditingRevision }), [allowEditingRevision]);
+
   const onSave = () => {
     // No-op;
   };
@@ -76,27 +81,21 @@ export const Editor: React.FC<EditorProps> = ({
 
   return (
     <React.Suspense fallback={<div>loading...</div>}>
-      <Revisions.Provider captureModel={captureModel} revision={revisionId}>
+      <RevisionProviderWithFeatures
+        captureModel={captureModel}
+        revision={revisionId}
+        slotConfig={{ editor: slotConfig }}
+      >
         <h2>Editor</h2>
         <div style={{ display: 'flex', flexDirection: isVertical ? 'column' : 'row' }}>
           <div style={{ width: isVertical ? '100%' : '67%' }}>
             <EditorContentViewer {...contentToUse} />
           </div>
           <div style={{ width: isVertical ? '100%' : '33%', padding: '1em' }}>
-            {revisionId ? (
-              <RevisionEditor allowEdits={!!allowEditingRevision} readOnly={!!readOnly} onSave={onSave} />
-            ) : (
-              <CaptureModelEditor
-                allowEdits={true}
-                readOnly={false}
-                captureModel={captureModel}
-                onSave={onSave}
-                allUsers={true}
-              />
-            )}
+            <RightPanel />
           </div>
         </div>
-      </Revisions.Provider>
+      </RevisionProviderWithFeatures>
     </React.Suspense>
   );
 };

@@ -55,6 +55,10 @@ export const EditorContentViewer: React.FC<EditorContentVariations> = ({
     );
   }
 
+  if (canvas && target) {
+    return <ViewContent target={target as any} canvas={canvas} height={height} />;
+  }
+
   if (canvasUri && manifestUri) {
     return (
       <ViewExternalContent
@@ -66,12 +70,12 @@ export const EditorContentViewer: React.FC<EditorContentVariations> = ({
     );
   }
 
-  if (canvas && target) {
-    return <ViewContent target={target as any} canvas={canvas} height={height} />;
-  }
-
   if (canvasId) {
-    return <ViewContentFetch id={Number(canvasId)} height={height} />;
+    return (
+      <Suspense fallback={<>Loading</>}>
+        <ViewContentFetch id={Number(canvasId)} height={height} />
+      </Suspense>
+    );
   }
 
   if (target) {
