@@ -14,13 +14,13 @@ const webpackPreprocessor = require('@cypress/webpack-preprocessor');
 const watch = require('@cypress/watch-preprocessor');
 const pickle = require('picklejs/cypress/plugin');
 const fetch = require('node-fetch');
-const madocConfig = require('../../test-fixtures/madoc-ts-config.json');
+const madocConfig = require('../test-fixtures/madoc-ts-config.json');
 
 const Docker = require('dockerode');
 
 const docker = new Docker();
 
-const key = JWK.asKey(readFileSync(path.join(__dirname, '../../test-fixtures/certs/madoc.key')));
+const key = JWK.asKey(readFileSync(path.join(__dirname, '../test-fixtures/certs/madoc.key')));
 
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)

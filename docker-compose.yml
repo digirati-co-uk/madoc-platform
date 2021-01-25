@@ -103,6 +103,7 @@ services:
     ports:
       - "127.0.0.1:${PORTS_MADOC_TS_DEBUGGER:-9230}:9230"
       - "127.0.0.1:${PORTS_MADOC_TS_WEBPACK:-40493}:40493"
+    restart: on-failure
     links:
       - shared-postgres
       - madoc-database
@@ -123,6 +124,7 @@ services:
       - DATABASE_PASSWORD=${POSTGRES_TASKS_API_PASSWORD}
       - QUEUE_LIST=${TASKS_QUEUE_LIST}
       - REDIS_HOST=gateway-redis
+    restart: on-failure
     links:
       - shared-postgres
       - gateway-redis
@@ -189,6 +191,7 @@ services:
       - MYSQL_PORT=${MYSQL_PORT}
     volumes:
       - ./var/database/data:/var/lib/mysql/
+    restart: always
     ports:
       - "${PORTS_MYSQL_DATABASE:-3334}:3306"
 

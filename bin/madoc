@@ -52,8 +52,13 @@ case "${commandToRun}" in
           echo "$FIXTURE_DIRECTORY does not exist."
       fi
       rm -rf ./var/test-environment
+      mkdir -p ./var/test-environment
+      chmod 777 ./var/test-environment
       docker-compose -f docker-compose.yml -f docker-compose.test.yml -f docker-compose.e2e.yml -p test-madoc --env-file ./.env-test rm -f -v -s
       docker-compose -f docker-compose.yml -f docker-compose.test.yml -p test-madoc --env-file ./.env-test up -d
+    ;;
+
+    e2e-run)
       MAX_TRIES=30
       SECONDS_BETWEEN_CHECKS=5
       while [[ ${MAX_TRIES} -gt 0 ]]
@@ -68,8 +73,11 @@ case "${commandToRun}" in
         sleep ${SECONDS_BETWEEN_CHECKS};
       done
       docker-compose -f docker-compose.yml -f docker-compose.test.yml -f docker-compose.e2e.yml -p test-madoc --env-file ./.env-test run e2e && RET_CODE=$? || RET_CODE=$?
-      docker-compose -f docker-compose.yml -f docker-compose.test.yml -f docker-compose.e2e.yml -p test-madoc --env-file ./.env-test down
       exit $RET_CODE;
+    ;;
+
+    e2e-stop)
+      docker-compose -f docker-compose.yml -f docker-compose.test.yml -f docker-compose.e2e.yml -p test-madoc --env-file ./.env-test down
     ;;
 
     test-instance)
