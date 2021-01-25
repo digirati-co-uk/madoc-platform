@@ -67,9 +67,13 @@ export const updateFacetConfiguration: RouteMiddleware = async context => {
 
   const oldConfiguration = rawConfigurationObject.config[0];
 
-  const newConfiguration = { ...staticConfiguration, ...oldConfiguration.config_object, ...configurationRequest };
+  const newConfiguration = {
+    ...staticConfiguration,
+    ...(oldConfiguration ? oldConfiguration.config_object : {}),
+    ...configurationRequest,
+  };
 
-  if (oldConfiguration.id) {
+  if (oldConfiguration && oldConfiguration.id) {
     const rawConfiguration = await userApi.getSingleConfigurationRaw(oldConfiguration.id);
     const etagHeader = rawConfiguration.headers.get('etag');
     const etag = etagHeader ? parseEtag(etagHeader.toString()) : undefined;
