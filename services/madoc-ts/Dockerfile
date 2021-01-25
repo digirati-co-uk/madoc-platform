@@ -9,8 +9,7 @@ RUN yarn install
 
 COPY ./src /home/node/app/src
 COPY ./schemas /home/node/app/schemas
-COPY ./webpack.frontend.js /home/node/app/webpack.frontend.js
-COPY ./webpack.production.js /home/node/app/webpack.production.js
+COPY ./webpack.config.js /home/node/app/webpack.config.js
 COPY ./tsconfig.json /home/node/app/tsconfig.json
 COPY ./tsconfig.frontend.json /home/node/app/tsconfig.frontend.json
 COPY ./generate-schemas.js /home/node/app/generate-schemas.js
@@ -39,8 +38,7 @@ COPY --from=build /home/node/app/yarn.lock /home/node/app/yarn.lock
 COPY --from=modules /home/node/app/node_modules /home/node/app/node_modules
 COPY --from=build /home/node/app/lib /home/node/app/lib
 COPY ./schemas /home/node/app/schemas
-COPY ./webpack.frontend.js /home/node/app/webpack.frontend.js
-COPY ./webpack.production.js /home/node/app/webpack.production.js
+COPY ./webpack.config.js /home/node/app/webpack.config.js
 COPY ./ecosystem.config.js /home/node/app/ecosystem.config.js
 
 ENV SERVER_PORT=3000

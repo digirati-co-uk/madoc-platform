@@ -71,6 +71,10 @@ export class TypedRouter<
     return this.router.url(name, params, options);
   }
 
+  getRouter() {
+    return this.router;
+  }
+
   routes() {
     return this.router.routes();
   }

@@ -70,10 +70,12 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - ./services/madoc-ts/lib:/home/node/app/lib:delegated
+      - ./services/madoc-ts/src:/home/node/app/src:delegated
       - ./services/madoc-ts/package.json:/home/node/app/package.json:delegated
       - ./services/madoc-ts/migrations:/home/node/app/migrations:delegated
       - ./services/madoc-ts/schemas:/home/node/app/schemas:delegated
       - ./services/madoc-ts/ecosystem.config.js:/home/node/app/ecosystem.config.js
+      - ./services/madoc-ts/webpack.config.js:/home/node/app/webpack.config.js
       - ./services/madoc-ts/config.json:/home/node/app/config.json
       - ./services/madoc-ts/service-jwts:/home/node/app/service-jwts
       - ./services/madoc-ts/translations:/home/node/app/translations
@@ -100,6 +102,7 @@ services:
       - MIGRATE=true
     ports:
       - "127.0.0.1:${PORTS_MADOC_TS_DEBUGGER:-9230}:9230"
+      - "127.0.0.1:${PORTS_MADOC_TS_WEBPACK:-40493}:40493"
     links:
       - shared-postgres
       - madoc-database
