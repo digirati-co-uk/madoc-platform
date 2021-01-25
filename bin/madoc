@@ -54,7 +54,7 @@ case "${commandToRun}" in
       rm -rf ./var/test-environment
       mkdir -p ./var/test-environment
       chmod 777 ./var/test-environment
-      docker-compose -f docker-compose.yml -f docker-compose.test.yml -f docker-compose.e2e.yml -p test-madoc --env-file ./.env-test rm -f -v -s
+      docker-compose -f docker-compose.yml -f docker-compose.test.yml -f docker-compose.e2e.yml -p test-madoc --env-file ./.env-test rm -f -v
       docker-compose -f docker-compose.yml -f docker-compose.test.yml -p test-madoc --env-file ./.env-test up -d
     ;;
 
