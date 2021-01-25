@@ -102,6 +102,9 @@
         "label",
         "width"
       ]
+    },
+    "plaintext": {
+      "type": "string"
     }
   },
   "required": [
