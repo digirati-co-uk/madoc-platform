@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { InternationalString } from '@hyperion-framework/types';
+import { ErrorMessage } from '../../../../shared/atoms/ErrorMessage';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useHistory } from 'react-router-dom';
 import { useMutation } from 'react-query';
@@ -30,6 +31,7 @@ export const CreateManifest: React.FC = () => {
   const history = useHistory();
   const query = useLocationQuery<{ manifest?: string }>();
   const [importedManifestId, setImportedManifestId] = useState<string | undefined>(query.manifest);
+  const [error, setError] = useState('');
 
   const [createManifest] = useMutation(async (manifest: CreateManifestType['manifest']) => {
     setIsCreating(true);
@@ -61,15 +63,28 @@ export const CreateManifest: React.FC = () => {
       <WidePage>
         {urlManifest ? (
           <div>
-            <Button disabled={isCreating} onClick={() => importManifest(urlManifest)}>
+            <Button disabled={isCreating || !!error} onClick={() => importManifest(urlManifest)}>
               {t('Import manifest')}
             </Button>
             <hr />
-            <div style={{ background: '#eee', borderRadius: 5, padding: '1em' }}>
-              <VaultProvider>
-                <PreviewManifest id={urlManifest} />
-              </VaultProvider>
-            </div>
+            {error ? (
+              <ErrorMessage>{error}</ErrorMessage>
+            ) : (
+              <div style={{ background: '#eee', borderRadius: 5, padding: '1em' }}>
+                <VaultProvider>
+                  <PreviewManifest
+                    id={urlManifest}
+                    setInvalid={isInvalid => {
+                      if (isInvalid) {
+                        setError('Invalid manifest');
+                      } else {
+                        setError('');
+                      }
+                    }}
+                  />
+                </VaultProvider>
+              </div>
+            )}
           </div>
         ) : (
           <GridContainer>

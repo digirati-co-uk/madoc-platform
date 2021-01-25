@@ -16,7 +16,7 @@ export const listProjects: RouteMiddleware = async context => {
   const page = Number(context.query.page) || 1;
   const rootTaskId = context.query.root_task_id;
   const onlyPublished = scope.indexOf('site.admin') !== -1 ? castBool(context.request.query.published) : true;
-  const projectsPerPage = 5;
+  const projectsPerPage = 10;
 
   const rootTaskQuery = rootTaskId ? sql`and iiif_project.task_id = ${rootTaskId}` : SQL_EMPTY;
   const publishedQuery = onlyPublished ? sql`and (iiif_project.status = 1 or iiif_project.status = 2)` : SQL_EMPTY;
