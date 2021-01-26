@@ -3,7 +3,7 @@
     "baseUrl": "./cypress",
     "target": "es5",
     "lib": ["es5", "dom"],
-    "types": ["node", "cypress", "cypress-react-selector", "./cypress/types.d.ts"],
+    "types": ["node", "cypress", "cypress-react-selector", "cypress-wait-until", "./cypress/types.d.ts"],
     "jsx": "react",
     "module": "esnext",
     "esModuleInterop": true,

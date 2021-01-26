@@ -2,6 +2,7 @@
 // in most of the cases, simple <reference types="cypress" /> will do.
 /// <reference types="cypress" />
 /// <reference types="cypress-react-selector" />
+/// <reference types="cypress-wait-until" />
 
 declare namespace Cypress {
   // add custom Cypress command to the interface Chainable<Subject>
