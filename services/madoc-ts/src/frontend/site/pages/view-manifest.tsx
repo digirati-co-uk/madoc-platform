@@ -20,12 +20,14 @@ import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { Heading3 } from '../../shared/atoms/Heading3';
 import { LockIcon } from '../../shared/atoms/LockIcon';
 import { Heading1 } from '../../shared/atoms/Heading1';
-import { MetaDataDisplay } from '../../shared/components/MetaDataDisplay';
 import { ManifestActions } from '../features/ManifestActions';
+import { ManifestMetadata } from '../features/ManifestMetadata';
 import { ManifestUserTasks } from '../features/ManifestUserTasks';
 import { usePreventCanvasNavigation } from '../features/PreventUsersNavigatingCanvases';
 import { RandomlyAssignCanvas } from '../features/RandomlyAssignCanvas';
+import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useRelativeLinks } from '../hooks/use-relative-links';
+import { Redirect } from 'react-router-dom';
 
 export const ViewManifest: React.FC<{
   project?: ProjectFull;
@@ -40,13 +42,18 @@ export const ViewManifest: React.FC<{
 }> = ({ manifest, pagination, manifestSubjects }) => {
   const { t } = useTranslation();
   const createLink = useRelativeLinks();
-  const { filter } = useLocationQuery();
+  const { filter, listing } = useLocationQuery();
   const { showWarning, showNavigationContent } = usePreventCanvasNavigation();
+  const config = useSiteConfiguration();
 
   const [subjectMap] = useSubjectMap(manifestSubjects);
 
   if (!manifest) {
     return <DisplayBreadcrumbs />;
+  }
+
+  if (!listing && config.project.skipManifestListingPage && manifest.items.length) {
+    return <Redirect to={createLink({ canvasId: manifest.items[0].id })} />;
   }
 
   return (
@@ -76,7 +83,7 @@ export const ViewManifest: React.FC<{
             page={pagination ? pagination.page : 1}
             totalPages={pagination ? pagination.totalPages : 1}
             stale={!pagination}
-            extraQuery={{ filter }}
+            extraQuery={{ filter, listing }}
           />
           <div style={{ display: 'flex' }}>
             <ImageGrid>
@@ -97,7 +104,8 @@ export const ViewManifest: React.FC<{
                 </Link>
               ))}
             </ImageGrid>
-            <MetaDataDisplay style={{ width: '40%', backgroundColor: '#ebebeb' }} metadata={manifest.metadata || []} />
+
+            <ManifestMetadata compact />
           </div>
         </>
       ) : null}

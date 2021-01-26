@@ -2,6 +2,7 @@ import { exportSite } from './routes/admin/export-site';
 import { getMetadataKeys } from './routes/admin/get-metadata-keys';
 import { getMetadataValues } from './routes/admin/get-metadata-values';
 import { importSite } from './routes/admin/import-site';
+import { getMetadataConfiguration, updateMetadataConfiguration } from './routes/admin/metadata-configuration';
 import { getSiteDetails } from './routes/admin/site-details';
 import { updateSiteConfiguration } from './routes/admin/update-site-configuration';
 import { getCanvasPlaintext } from './routes/iiif/canvases/get-canvas-plaintext';
@@ -103,6 +104,7 @@ export const router = new TypedRouter({
     '/api/madoc/configuration/search-facets',
     updateFacetConfiguration,
   ],
+  'update-metadata-configuration': [TypedRouter.POST, '/api/madoc/configuration/metadata', updateMetadataConfiguration],
   'site-details': [TypedRouter.GET, '/api/madoc/site/:siteId/details', getSiteDetails],
 
   // User API.
@@ -263,6 +265,11 @@ export const router = new TypedRouter({
     TypedRouter.GET,
     '/s/:slug/madoc/api/configuration/search-facets',
     getFacetConfiguration,
+  ],
+  'site-metadata-configuration': [
+    TypedRouter.GET,
+    '/s/:slug/madoc/api/configuration/metadata',
+    getMetadataConfiguration,
   ],
 
   // To be worked into API calling methods

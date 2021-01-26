@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
 import { EditorContentViewer } from '../caputre-models/new/EditorContent';
 import { AutoSelectingRevision } from '../caputre-models/new/features/AutoSelectingRevision';
 import { useLoadedCaptureModel } from '../hooks/use-loaded-capture-model';
@@ -34,7 +35,8 @@ export const CaptureModelViewer: React.FC<{
   allowEdits?: boolean;
   onSave: (response: RevisionRequest, status: string | undefined) => Promise<void>;
 }> = ({ backLink, revisionId, modelId, allowEdits = true, overrideCanvasId, initialModel, onSave, readOnly }) => {
-  const [isVertical, setIsVertical] = useState(false);
+  const config = useSiteConfiguration();
+  const [isVertical, setIsVertical] = useState(config.project.defaultEditorOrientation === 'vertical');
   const [{ captureModel, canvas, target }] = useLoadedCaptureModel(modelId, initialModel, overrideCanvasId);
 
   return (

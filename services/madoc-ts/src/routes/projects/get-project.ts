@@ -77,8 +77,8 @@ export const getProject: RouteMiddleware<{ id: string }> = async context => {
   project.content = collectionStats as any;
 
   const projectConfiguration = await userApi.getConfiguration<ProjectConfiguration>('madoc', [
-    `urn:madoc:project:${project.id}`,
     siteUrn,
+    `urn:madoc:project:${project.id}`,
   ]);
 
   if (projectConfiguration.config && projectConfiguration.config[0] && projectConfiguration.config[0].config_object) {

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { CanvasNormalized, ManifestNormalized } from '@hyperion-framework/types';
 import { useVaultEffect } from '@hyperion-framework/react-vault';
+import { ErrorMessage } from '../../shared/atoms/ErrorMessage';
 import { Heading3 } from '../../shared/atoms/Heading3';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { ImageGrid, ImageGridItem } from '../../shared/atoms/ImageGrid';
@@ -27,22 +28,38 @@ const CanvasThumbnail: React.FC<{ canvas: CanvasNormalized; height: number }> = 
   return <img alt="thumbnail" src={thumbnail} />;
 };
 
-export const PreviewManifest: React.FC<{ id: string; onClick?: (id: string) => void }> = props => {
+export const PreviewManifest: React.FC<{
+  id: string;
+  onClick?: (id: string) => void;
+  setInvalid?: (invalid: boolean) => void;
+}> = props => {
   const { t } = useTranslation();
   const [manifest, setManifest] = useState<ManifestNormalized | undefined>();
   const [allCanvases, setCanvases] = useState<CanvasNormalized[] | undefined>();
 
+  const [error, setError] = useState('');
   const [page, setPage] = useState(0);
   const pages = allCanvases ? Math.ceil(allCanvases.length / 24) : 0;
   const canvases = allCanvases ? allCanvases.slice(page * 24, page * 24 + 24) : [];
 
   useEffect(() => {
     setPage(0);
+    setError('');
+    if (props.setInvalid) {
+      props.setInvalid(false);
+    }
   }, [props.id]);
 
   useVaultEffect(
     vault => {
       vault.loadManifest(props.id).then(man => {
+        if (man?.type !== 'Manifest') {
+          setError('Invalid manifest');
+          if (props.setInvalid) {
+            props.setInvalid(true);
+          }
+        }
+
         setManifest(man);
         if (man) {
           setCanvases(
@@ -58,6 +75,10 @@ export const PreviewManifest: React.FC<{ id: string; onClick?: (id: string) => v
 
   if (!manifest) {
     return <div>loading...</div>;
+  }
+
+  if (error) {
+    return <ErrorMessage>{error}</ErrorMessage>;
   }
 
   return (

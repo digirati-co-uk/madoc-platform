@@ -4,6 +4,7 @@ import { EditShorthandCaptureModel } from '../../../shared/caputre-models/Editor
 import { WidePage } from '../../../shared/atoms/WidePage';
 import { useApi } from '../../../shared/hooks/use-api';
 import { apiHooks } from '../../../shared/hooks/use-api-query';
+import { HrefLink } from '../../../shared/utility/href-link';
 import { AdminHeader } from '../../molecules/AdminHeader';
 import { siteConfigurationModel } from '../../../shared/configuration/site-config';
 
@@ -52,6 +53,11 @@ export const SiteConfiguration: React.FC = () => {
               >
                 Change the configuration for the site - this will be overridden by configuration on a project.
               </RoundedCard>
+              <HrefLink href={`/configure/site/metadata`}>
+                <RoundedCard label="Edit metadata configuration" interactive>
+                  Change which metadata is visible on the site and in what order. Combine properties.
+                </RoundedCard>
+              </HrefLink>
             </>
           )}
         </div>

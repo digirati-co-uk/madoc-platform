@@ -1,7 +1,8 @@
 import { InternationalString } from '@hyperion-framework/types';
-import React from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { LocaleString } from './LocaleString';
+import { FacetConfig } from './MetadataFacetEditor';
 
 const MetadataDisplayContainer = styled.div`
   display: flex;
@@ -35,9 +36,57 @@ const MetadataContainer = styled.div`
 `;
 
 export const MetaDataDisplay: React.FC<{
-  metadata: Array<{ label: InternationalString; value: InternationalString }>;
+  config?: FacetConfig[];
+  metadata?: Array<{ label: InternationalString; value: InternationalString }>;
   style?: any;
-}> = ({ metadata, style }) => {
+}> = ({ config, metadata = [], style }) => {
+  const metadataKeyMap = useMemo(() => {
+    const flatKeys = (config || []).reduce((state, i) => {
+      return [...state, ...i.keys];
+    }, [] as string[]);
+
+    const map: { [key: string]: Array<{ label: InternationalString; value: InternationalString }> } = {};
+    for (const item of metadata) {
+      const labels = item.label ? Object.values(item.label) : [];
+      for (const label of labels) {
+        if (label && label.length && flatKeys.indexOf(`metadata.${label[0]}`) !== -1) {
+          const key = `metadata.${label[0]}`;
+          map[key] = map[key] ? map[key] : [];
+          map[key].push(item);
+          break;
+        }
+      }
+    }
+    return map;
+  }, [config, metadata]);
+
+  if (config && config.length) {
+    return (
+      <MetadataDisplayContainer style={style}>
+        {config.map((configItem, idx: number) => {
+          return (
+            <MetadataContainer key={idx}>
+              <MetaDataKey>
+                <LocaleString enableDangerouslySetInnerHTML>{configItem.label}</LocaleString>
+              </MetaDataKey>
+              <MetaDataValue>
+                {configItem.keys.map(key => {
+                  return (metadataKeyMap[key] || []).map(item => {
+                    return (
+                      <div key={idx + '__' + key}>
+                        <LocaleString enableDangerouslySetInnerHTML>{item.value}</LocaleString>
+                      </div>
+                    );
+                  });
+                })}
+              </MetaDataValue>
+            </MetadataContainer>
+          );
+        })}
+      </MetadataDisplayContainer>
+    );
+  }
+
   return (
     <MetadataDisplayContainer style={style}>
       {metadata && metadata.length

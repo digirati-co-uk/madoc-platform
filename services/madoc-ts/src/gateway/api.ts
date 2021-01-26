@@ -491,8 +491,8 @@ export class ApiClient {
       : {};
   }
 
-  async saveSiteConfiguration(config: ProjectConfiguration) {
-    return this.request<ProjectConfiguration>(`/api/madoc/configuration`, {
+  async saveSiteConfiguration(config: ProjectConfiguration, query?: { project_id?: number; collection_id?: number }) {
+    return this.request<ProjectConfiguration>(`/api/madoc/configuration${query ? `?${stringify(query)}` : ''}`, {
       method: 'POST',
       body: config,
     });
@@ -502,6 +502,13 @@ export class ApiClient {
     return this.request<{ facets: FacetConfig[] }>(`/api/madoc/configuration/search-facets`, {
       method: 'POST',
       body: { facets },
+    });
+  }
+
+  async saveMetadataConfiguration(metadata: FacetConfig[]) {
+    return this.request<{ metadata: FacetConfig[] }>(`/api/madoc/configuration/metadata`, {
+      method: 'POST',
+      body: { metadata },
     });
   }
 
@@ -1670,12 +1677,16 @@ export class ApiClient {
     return this.publicRequest<{ model?: CaptureModel }>(`/madoc/api/projects/${projectId}/canvas-models/${canvasId}`);
   }
 
-  async getSiteConfiguration() {
-    return this.publicRequest<ProjectConfiguration>(`/madoc/api/configuration`);
+  async getSiteConfiguration(query?: import('../routes/site/site-configuration').SiteConfigurationQuery) {
+    return this.publicRequest<ProjectConfiguration>(`/madoc/api/configuration`, query);
   }
 
   async getSiteSearchFacetConfiguration() {
     return this.publicRequest<{ facets: FacetConfig[] }>(`/madoc/api/configuration/search-facets`);
+  }
+
+  async getSiteMetadataConfiguration(query?: { project_id?: string; collection_id?: number }) {
+    return this.publicRequest<{ metadata: FacetConfig[] }>(`/madoc/api/configuration/metadata`, query);
   }
 
   async getSiteSearchQuery(query: SearchQuery, page = 1, madoc_id?: string) {

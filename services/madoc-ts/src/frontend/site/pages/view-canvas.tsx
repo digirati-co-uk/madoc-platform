@@ -11,6 +11,7 @@ import { CanvasImageViewer } from '../features/CanvasImageViewer';
 import { CanvasManifestNavigation } from '../features/CanvasManifestNavigation';
 import { CanvasPlaintext } from '../features/CanvasPlaintext';
 import { ContinueCanvasSubmission } from '../features/ContinueCanvasSubmission';
+import { ManifestMetadata } from '../features/ManifestMetadata';
 import { ManifestUserTasks } from '../features/ManifestUserTasks';
 import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
 import { useRelativeLinks } from '../hooks/use-relative-links';
@@ -81,7 +82,7 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({ project, canvas, manifes
             query={searchText ? { searchText } : undefined}
           />
 
-          <MetaDataDisplay metadata={(manifest && manifest.metadata) || []} />
+          <ManifestMetadata />
 
           <CanvasPlaintext />
         </>
