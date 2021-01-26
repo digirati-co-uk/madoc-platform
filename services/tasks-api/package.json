@@ -10,6 +10,9 @@
     "generate-create-task-schema": "typescript-json-schema ./src/schemas/CreateTask.ts CreateTask -o ./schemas/create-task.json --required --noExtraProps",
     "generate-update-task-schema": "typescript-json-schema ./src/schemas/UpdateTask.ts UpdateTask -o ./schemas/update-task.json --required --noExtraProps"
   },
+  "resolutions": {
+    "slonik-sql-tag-raw": "1.0.2"
+  },
   "dependencies": {
     "@koa/router": "^8.0.6",
     "@slonik/migrator": "^0.2.0",
