@@ -29,7 +29,7 @@ const Mirador: React.FC<{ config: any; viewerConfig: any; maximised?: string }> 
 
   return (
     <Provider store={store}>
-      <HotApp plugins={plugins} />
+      <HotApp plugins={plugins} dndManager={false} />
     </Provider>
   );
 };

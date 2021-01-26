@@ -88,6 +88,7 @@ module.exports = {
     alias: {
       '@atlas-viewer/atlas': require.resolve('@atlas-viewer/atlas'),
       '@capture-models/editor': '@capture-models/editor/lib',
+      'react-dnd': require.resolve('react-dnd'),
       // https: false,
       // http: false,
       // '@blueprintjs/core': false,

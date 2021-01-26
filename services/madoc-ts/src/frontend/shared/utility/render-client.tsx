@@ -1,6 +1,9 @@
 import cookies from 'browser-cookies';
 import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+// @ts-ignore
+import MultiBackend from 'react-dnd-multi-backend';
+// @ts-ignore
+import HTML5toTouch from 'react-dnd-multi-backend/dist/cjs/HTML5toTouch';
 import { ReactQueryCacheProvider, ReactQueryConfig, ReactQueryConfigProvider } from 'react-query';
 import { Hydrate } from 'react-query/hydration';
 import { createBackend } from '../../../middleware/i18n/i18next.client';
@@ -44,7 +47,7 @@ export function renderClient(
             <Hydrate state={dehydratedState}>
               <I18nextProvider i18n={i18n}>
                 <BrowserRouter basename={basename}>
-                  <DndProvider backend={HTML5Backend}>
+                  <DndProvider backend={MultiBackend} options={HTML5toTouch}>
                     <ErrorBoundary onError={error => <ErrorPage error={error} />}>
                       <Component jwt={jwt} api={api} routes={routes} />
                       {process.env.NODE_ENV === 'development' ? <ReactQueryDevtools /> : null}
