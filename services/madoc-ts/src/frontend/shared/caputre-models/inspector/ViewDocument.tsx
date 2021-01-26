@@ -49,8 +49,17 @@ const DocumentEntityLabel = styled.div`
   font-size: 15px;
 `;
 
+const isEmptyFieldList = (fields: BaseField[]) => {
+  for (const field of fields) {
+    if (field.value) {
+      return false;
+    }
+  }
+  return true;
+};
+
 const renderFieldList = (fields: BaseField[]) => {
-  if (!fields) {
+  if (!fields || isEmptyFieldList(fields)) {
     return null;
   }
 
@@ -58,14 +67,16 @@ const renderFieldList = (fields: BaseField[]) => {
 
   return (
     <div>
-      {fields.map(field => (
-        <div key={field.id}>
-          {/*<div>Id: {field.id}</div>*/}
-          {/*<div>Revision: {field.revision}</div>*/}
-          {/*<div>Revises: {field.revises}</div>*/}
-          <FieldPreview key={field.id} field={field} />
-        </div>
-      ))}
+      {fields.map(field =>
+        field.value ? (
+          <div key={field.id}>
+            {/*<div>Id: {field.id}</div>*/}
+            {/*<div>Revision: {field.revision}</div>*/}
+            {/*<div>Revises: {field.revises}</div>*/}
+            <FieldPreview key={field.id} field={field} />
+          </div>
+        ) : null
+      )}
     </div>
   );
 };
@@ -97,15 +108,19 @@ const renderEntityList = (entities: CaptureModel['document'][]) => {
 const renderProperty = (fields: BaseField[] | CaptureModel['document'][]) => {
   const label = fields[0].label;
   const description = fields[0].description;
+  const renderedProperties = isEntityList(fields) ? renderEntityList(fields) : renderFieldList(fields);
+
+  if (!renderedProperties) {
+    return null;
+  }
+
   return (
     <DocumentSection>
       <DocumentHeading>
         <DocumentLabel>{label}</DocumentLabel>
         {description ? <DocumentDescription>{description}</DocumentDescription> : null}
       </DocumentHeading>
-      <DocumentValueWrapper>
-        {isEntityList(fields) ? renderEntityList(fields) : renderFieldList(fields)}
-      </DocumentValueWrapper>
+      <DocumentValueWrapper>{renderedProperties}</DocumentValueWrapper>
     </DocumentSection>
   );
 };

@@ -49,6 +49,10 @@ const FacetExpandable: React.FC<{
 }> = ({ name, facetChange, values }) => {
   const [open, setOpen] = useState(true);
 
+  if (values.length === 0) {
+    return null;
+  }
+
   return (
     <>
       <FacetType onClick={() => setOpen(!open)}>
