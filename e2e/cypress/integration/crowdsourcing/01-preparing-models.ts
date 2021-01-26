@@ -15,7 +15,9 @@ it('Models should show message when preparing for a transcriber', () => {
   cy.waitForReact(1000, '.react-loaded');
   cy.react('InfoMessage').should('contain', 'Preparing this image');
   // Its now loaded.
-  cy.react('InfoMessage').should('not.exist');
+  cy.waitUntil(() => {
+    return Cypress.$('[data-cy="info-message"]').length === 0;
+  });
   // And it should automatically select the form.
   cy.react('TextField', { props: { label: 'description' } }).type('An example value');
   cy.react('Button').contains('Submit').click();
@@ -38,7 +40,9 @@ it('Models should not show message when preparing for viewer', () => {
   cy.siteLogin('Viewer');
   cy.visit('/s/default/madoc/projects/project-with-model/manifests/2/c/9/model');
   cy.waitForReact(1000, '.react-loaded');
-  cy.react('InfoMessage').should('not.exist');
+  cy.waitUntil(() => {
+    return Cypress.$('[data-cy="info-message"]').length === 0;
+  });
 });
 
 it('Models should still render with a choice', () => {
