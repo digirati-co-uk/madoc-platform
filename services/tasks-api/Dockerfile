@@ -3,6 +3,7 @@ FROM node:12 as build
 WORKDIR /home/node/app
 
 ADD ./package.json /home/node/app/package.json
+ADD ./yarn.lock /home/node/app/yarn.lock
 
 RUN yarn install --no-interactive --frozen-lockfile
 
