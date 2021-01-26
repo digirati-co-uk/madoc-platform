@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { InfoMessage } from '../../shared/atoms/InfoMessage';
 import { LockIcon } from '../../shared/atoms/LockIcon';
+import { ViewDocument } from '../../shared/caputre-models/inspector/ViewDocument';
 import { CanvasNavigation } from '../../shared/components/CanvasNavigation';
-import { useParams, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { MetaDataDisplay } from '../../shared/components/MetaDataDisplay';
+import { apiHooks } from '../../shared/hooks/use-api-query';
 import { useCanvasSearch } from '../../shared/hooks/use-canvas-search';
 import { Heading3 } from '../../shared/atoms/Heading3';
 import { CanvasImageViewer } from '../features/CanvasImageViewer';
@@ -15,21 +17,23 @@ import { ManifestMetadata } from '../features/ManifestMetadata';
 import { ManifestUserTasks } from '../features/ManifestUserTasks';
 import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
 import { useRelativeLinks } from '../hooks/use-relative-links';
+import { useRouteContext } from '../hooks/use-route-context';
 import { CanvasLoaderType } from './loaders/canvas-loader';
 import { TabPanel } from '../../shared/components/TabPanel';
 
 type ViewCanvasProps = Partial<CanvasLoaderType['data'] & CanvasLoaderType['context']>;
 
 export const ViewCanvas: React.FC<ViewCanvasProps> = ({ project, canvas, manifest, plaintext }) => {
-  const { canvasId: id, manifestId, collectionId } = useParams<{
-    canvasId: string;
-    manifestId?: string;
-    collectionId?: string;
-  }>();
+  const { projectId, manifestId, collectionId, canvasId } = useRouteContext<{ canvasId: number }>();
   const { showCanvasNavigation, showWarning } = useCanvasNavigation();
-  const [searchText, highlightedRegions] = useCanvasSearch(id);
+  const [searchText, highlightedRegions] = useCanvasSearch(canvasId);
   const createLink = useRelativeLinks();
   const [selectedPanel, setSelectedPanel] = useState(0);
+
+  const { data } = apiHooks.getSiteCanvasPublishedModels(() => [
+    canvasId,
+    { project_id: projectId, selectors: true, format: 'capture-model-with-pages' },
+  ]);
 
   return (
     <>
@@ -58,7 +62,7 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({ project, canvas, manifes
           ) : null}
 
           <div style={{ display: 'flex', width: '100%' }}>
-            <CanvasImageViewer />
+            <CanvasImageViewer annotationPages={data?.pages} />
 
             {canvas && canvas.metadata ? (
               <TabPanel
@@ -76,7 +80,7 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({ project, canvas, manifes
 
           <CanvasNavigation
             manifestId={manifestId}
-            canvasId={id}
+            canvasId={canvasId}
             collectionId={collectionId}
             projectId={project?.slug}
             query={searchText ? { searchText } : undefined}
@@ -85,6 +89,10 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({ project, canvas, manifes
           <ManifestMetadata />
 
           <CanvasPlaintext />
+
+          {data && data.models
+            ? data.models.map((model: any) => <ViewDocument key={model.id} document={model.document} />)
+            : null}
         </>
       ) : null}
     </>

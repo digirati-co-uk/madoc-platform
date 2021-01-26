@@ -64,22 +64,28 @@ export const MetaDataDisplay: React.FC<{
     return (
       <MetadataDisplayContainer style={style}>
         {config.map((configItem, idx: number) => {
+          const values: any[] = [];
+
+          for (const key of configItem.keys) {
+            for (const item of metadataKeyMap[key] || []) {
+              values.push(
+                <div key={idx + '__' + key}>
+                  <LocaleString enableDangerouslySetInnerHTML>{item.value}</LocaleString>
+                </div>
+              );
+            }
+          }
+
+          if (values.length === 0) {
+            return null;
+          }
+
           return (
             <MetadataContainer key={idx}>
               <MetaDataKey>
                 <LocaleString enableDangerouslySetInnerHTML>{configItem.label}</LocaleString>
               </MetaDataKey>
-              <MetaDataValue>
-                {configItem.keys.map(key => {
-                  return (metadataKeyMap[key] || []).map(item => {
-                    return (
-                      <div key={idx + '__' + key}>
-                        <LocaleString enableDangerouslySetInnerHTML>{item.value}</LocaleString>
-                      </div>
-                    );
-                  });
-                })}
-              </MetaDataValue>
+              <MetaDataValue>{values}</MetaDataValue>
             </MetadataContainer>
           );
         })}

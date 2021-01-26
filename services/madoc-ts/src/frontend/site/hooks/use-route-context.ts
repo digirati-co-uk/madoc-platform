@@ -1,7 +1,16 @@
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-export function useRouteContext() {
+type RouteContext = {
+  collectionId?: number;
+  manifestId?: number;
+  canvasId?: number;
+  projectId?: string;
+  taskId?: string;
+  parentTaskId?: string;
+};
+
+export function useRouteContext<T extends RouteContext = RouteContext>(): RouteContext & T {
   const { canvasId, slug, manifestId, collectionId, parentTaskId, taskId } = useParams<{
     collectionId?: string;
     manifestId?: string;
@@ -20,5 +29,5 @@ export function useRouteContext() {
       parentTaskId,
       canvasId: canvasId ? Number(canvasId) : undefined,
     };
-  }, [canvasId, collectionId, manifestId, parentTaskId, slug, taskId]);
+  }, [canvasId, collectionId, manifestId, parentTaskId, slug, taskId]) as any;
 }
