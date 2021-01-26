@@ -49,7 +49,7 @@ export const CanvasManifestNavigation: React.FC<{ subRoute?: string }> = ({ subR
       </div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '40%' }}>
         <BrowseAll>
-          <HrefLink href={createLink({ manifestId: manifestId, canvasId: undefined })}>
+          <HrefLink href={createLink({ manifestId: manifestId, canvasId: undefined, query: { listing: true } })}>
             <GridIcon style={{ width: '24px', height: '24px' }} />
             Browse all
           </HrefLink>

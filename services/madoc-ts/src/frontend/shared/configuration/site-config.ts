@@ -90,4 +90,9 @@ export const siteConfigurationModel = {
       { value: 'horizontal', text: 'Horizontal (to the right) ' },
     ],
   },
+  skipManifestListingPage: {
+    label: 'Manifest display options',
+    type: 'checkbox-field',
+    inlineLabel: 'Skip showing list of manifest thumbnails',
+  },
 };

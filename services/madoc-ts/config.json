@@ -17,7 +17,8 @@
     "revisionApprovalsRequired": 20,
     "contributionWarningTime": false,
     "skipAutomaticOCRImport": false,
-    "defaultEditorOrientation": "horizontal"
+    "defaultEditorOrientation": "horizontal",
+    "skipManifestListingPage": false
   },
   "permissions": {
     "admin": [

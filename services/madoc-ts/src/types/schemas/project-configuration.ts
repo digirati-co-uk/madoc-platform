@@ -15,4 +15,5 @@ export type ProjectConfiguration = {
   priorityRandomness?: boolean;
   skipAutomaticOCRImport?: boolean;
   defaultEditorOrientation: 'vertical' | 'horizontal';
+  skipManifestListingPage?: boolean;
 };

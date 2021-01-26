@@ -25,7 +25,9 @@ import { ManifestMetadata } from '../features/ManifestMetadata';
 import { ManifestUserTasks } from '../features/ManifestUserTasks';
 import { usePreventCanvasNavigation } from '../features/PreventUsersNavigatingCanvases';
 import { RandomlyAssignCanvas } from '../features/RandomlyAssignCanvas';
+import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useRelativeLinks } from '../hooks/use-relative-links';
+import { Redirect } from 'react-router-dom';
 
 export const ViewManifest: React.FC<{
   project?: ProjectFull;
@@ -40,13 +42,18 @@ export const ViewManifest: React.FC<{
 }> = ({ manifest, pagination, manifestSubjects }) => {
   const { t } = useTranslation();
   const createLink = useRelativeLinks();
-  const { filter } = useLocationQuery();
+  const { filter, listing } = useLocationQuery();
   const { showWarning, showNavigationContent } = usePreventCanvasNavigation();
+  const config = useSiteConfiguration();
 
   const [subjectMap] = useSubjectMap(manifestSubjects);
 
   if (!manifest) {
     return <DisplayBreadcrumbs />;
+  }
+
+  if (!listing && config.project.skipManifestListingPage && manifest.items.length) {
+    return <Redirect to={createLink({ canvasId: manifest.items[0].id })} />;
   }
 
   return (
@@ -76,7 +83,7 @@ export const ViewManifest: React.FC<{
             page={pagination ? pagination.page : 1}
             totalPages={pagination ? pagination.totalPages : 1}
             stale={!pagination}
-            extraQuery={{ filter }}
+            extraQuery={{ filter, listing }}
           />
           <div style={{ display: 'flex' }}>
             <ImageGrid>
