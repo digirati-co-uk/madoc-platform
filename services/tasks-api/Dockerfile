@@ -4,7 +4,7 @@ WORKDIR /home/node/app
 
 ADD ./package.json /home/node/app/package.json
 
-RUN yarn install
+RUN yarn install --no-interactive --frozen-lockfile
 
 COPY ./src /home/node/app/src
 COPY ./schemas /home/node/app/schemas
