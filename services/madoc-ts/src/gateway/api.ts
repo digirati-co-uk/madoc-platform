@@ -1689,6 +1689,13 @@ export class ApiClient {
     return this.publicRequest<{ metadata: FacetConfig[] }>(`/madoc/api/configuration/metadata`, query);
   }
 
+  async getSiteCanvasPublishedModels(
+    canvasId: number,
+    query?: import('../routes/site/site-published-models').SitePublishedModelsQuery
+  ) {
+    return this.publicRequest<any>(`/madoc/api/canvases/${canvasId}/models`, query);
+  }
+
   async getSiteSearchQuery(query: SearchQuery, page = 1, madoc_id?: string) {
     return this.publicRequest<SearchResponse>(
       `/madoc/api/search`,

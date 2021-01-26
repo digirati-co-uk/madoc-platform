@@ -76,6 +76,7 @@ type GetApiMethods = keyof Pick<
   | 'getMetadataValues'
   | 'getSiteSearchFacetConfiguration'
   | 'getSiteMetadataConfiguration'
+  | 'getSiteCanvasPublishedModels'
 >;
 
 const keys = Object.getOwnPropertyNames(ApiClient.prototype);

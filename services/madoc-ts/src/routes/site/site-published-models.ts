@@ -1,17 +1,36 @@
 import { serialiseCaptureModel, traverseDocument } from '@capture-models/helpers';
 import { BaseField } from '@capture-models/types';
 import { sql } from 'slonik';
+import { getProject } from '../../database/queries/project-queries';
 import { RouteMiddleware } from '../../types/route-middleware';
+import { CaptureModelSnippet } from '../../types/schemas/capture-model-snippet';
+import { castBool } from '../../utility/cast-bool';
 import {
   captureModelFieldToOpenAnnotation,
   captureModelFieldToW3CAnnotation,
 } from '../../utility/model-annotation-helpers';
+import { parseProjectId } from '../../utility/parse-project-id';
 
 const gatewayHost = process.env.GATEWAY_HOST || 'http://localhost:8888';
 
+export type SitePublishedModelsQuery = {
+  format?:
+    | 'capture-model'
+    | 'capture-model-with-pages'
+    | 'open-annotation'
+    | 'w3c-annotation'
+    | 'json'
+    | 'w3c-annotation-pages';
+  project_id?: string | number;
+  model_id?: string;
+  selectors?: boolean;
+  derived_from?: string;
+};
+
 export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> = async context => {
-  const { siteApi } = context.state;
-  const { derived_from, format, selectors } = context.query;
+  const { site, siteApi } = context.state;
+  const { derived_from, format, model_id } = context.query as SitePublishedModelsQuery;
+  const selectors = castBool(context.query.selectors);
 
   // Formats:
   // - Models (default)
@@ -19,16 +38,44 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
   // - JSON
   // - Open Annotation
 
-  const models = await siteApi.getAllCaptureModels({
-    target_id: `urn:madoc:canvas:${context.params.id}`,
-    target_type: 'Canvas',
-    derived_from,
-    all_derivatives: true,
-  });
+  const parsedId = context.query.project_id ? parseProjectId(context.query.project_id) : null;
+  const project = parsedId ? await context.connection.one(getProject(parsedId, site.id)) : null;
+  const derivedFrom = project ? project.capture_model_id : derived_from;
+
+  const models =
+    model_id && format !== 'w3c-annotation-pages'
+      ? [{ id: model_id, derivatives: 0, label: '' }]
+      : await siteApi.getAllCaptureModels({
+          target_id: `urn:madoc:canvas:${context.params.id}`,
+          target_type: 'Canvas',
+          derived_from: derivedFrom,
+          all_derivatives: true,
+        });
 
   const resp = await context.connection.one(sql<{ id: number; source: string }>`
     select id, source from iiif_resource where id = ${Number(context.params.id)}
   `);
+
+  const annotationPages = [];
+
+  if (format === 'w3c-annotation-pages' || format === 'capture-model-with-pages') {
+    annotationPages.push(
+      ...models.map(model => {
+        return {
+          id: `${gatewayHost}${context.path}?format=w3c-annotation&model_id=${model.id}`,
+          label: model.label,
+          type: 'AnnotationPage',
+        };
+      })
+    );
+
+    if (format === 'w3c-annotation-pages') {
+      context.response.body = {
+        pages: annotationPages,
+      };
+      return;
+    }
+  }
 
   const ms = [];
 
@@ -45,10 +92,12 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
 
   switch (format) {
     case 'capture-model':
+    case 'capture-model-with-pages':
     default: {
       // Just return the models as they are.
       context.response.body = {
         models: await Promise.all(ms),
+        pages: annotationPages.length ? annotationPages : undefined,
       };
       break;
     }
@@ -59,7 +108,8 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
       // - Text + selector
       // - Dataset = selector
       const annotations: any[] = [];
-      for await (const singleModel of ms) {
+      const resolveModels = await Promise.all(ms);
+      for await (const singleModel of resolveModels) {
         traverseDocument(singleModel.document, {
           beforeVisitEntity(entity, key, parent) {
             if (parent && parent.temp && parent.temp.EXTRACTED) {
@@ -107,7 +157,7 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
             }
 
             const canAddAnnotation = selectors ? !!(field.selector && field.selector.state) : true;
-            if (canAddAnnotation) {
+            if (canAddAnnotation && field.value) {
               annotations.push(
                 format === 'open-annotation'
                   ? captureModelFieldToOpenAnnotation(field.id, field.value, field.selector, defaultOptions)
@@ -129,6 +179,7 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
         // W3C annotation page.
         context.response.body = {
           id: `${gatewayHost}${context.path}?format=w3c-annotation`,
+          label: resolveModels.length === 1 ? resolveModels[0].document.label : null,
           type: 'AnnotationPage',
           items: annotations,
         };
