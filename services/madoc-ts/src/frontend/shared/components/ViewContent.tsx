@@ -7,6 +7,7 @@ export const ViewContent: React.FC<{ target: Target[]; canvas: any; height?: num
   target,
   canvas,
   height = 600,
+  children,
 }) => {
   return useContentType(
     useMemo(() => {
@@ -48,6 +49,7 @@ export const ViewContent: React.FC<{ target: Target[]; canvas: any; height?: num
         },
       }),
       [canvas.source, target]
-    )
+    ),
+    children as any
   );
 };

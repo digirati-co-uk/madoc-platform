@@ -1,5 +1,6 @@
 import React from 'react';
 import { ProjectStatus } from '../../shared/atoms/ProjectStatus';
+import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { ProjectFull } from '../../../types/schemas/project-full';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../shared/atoms/Statistics';
@@ -40,6 +41,8 @@ export const ViewProject: React.FC<Partial<{
 
   return (
     <>
+      <DisplayBreadcrumbs />
+
       <LocaleString as={'h1'}>{project.label}</LocaleString>
       <LocaleString as={Subheading1}>{project.summary}</LocaleString>
       <ProjectStatus status={project.status} />
