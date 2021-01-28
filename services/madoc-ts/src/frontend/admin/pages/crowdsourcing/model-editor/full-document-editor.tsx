@@ -46,6 +46,17 @@ export const FullDocumentEditor: React.FC = () => {
           subtreePath={state.subtreePath}
           addField={actions.addField}
           setSelector={actions.setSelector}
+          onDelete={
+            state.subtreePath.length !== 0
+              ? () => {
+                  const term = state.subtreePath.pop();
+                  if (term) {
+                    actions.popSubtree({ count: 1 });
+                    actions.removeField(term);
+                  }
+                }
+              : undefined
+          }
         />
       </div>
       <div style={{ width: '60%', margin: 20 }}>

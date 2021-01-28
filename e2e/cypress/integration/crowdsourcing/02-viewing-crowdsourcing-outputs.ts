@@ -42,7 +42,7 @@ it('should be able to see the outputs of simple textual annotations', () => {
   cy.react('DocumentValueWrapper').contains('An example value');
 });
 
-it.only('should be able to see the outputs of annotations with selectors', () => {
+it('should be able to see the outputs of annotations with selectors', () => {
   // 1. Transcriber makes annotation
   cy.siteLogin('Transcriber');
   cy.visit('/s/default/madoc/projects/project-with-choice/manifests/2/c/13/model');
@@ -54,11 +54,11 @@ it.only('should be able to see the outputs of annotations with selectors', () =>
   cy.react('TextField', { props: { label: 'Field B' } }).type('An example value with selector');
   cy.react('FieldInstance', { props: { property: 'field-b' } })
     .get('div')
-    .contains('Edit Selector')
+    .contains('Define region')
     .click();
 
   // Fill in the selected region
-  cy.get('button').contains('choose region').click();
+  cy.get('button').contains('define region').click();
 
   cy.react('Atlas')
     .get('canvas')

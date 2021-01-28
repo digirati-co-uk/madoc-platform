@@ -113,7 +113,7 @@ Feature: Basic user permissions
     Then I should see "Site admin" in the "Admin page title"
 
     When I open the "Site projects" page
-    Then I should see 5 "Project containers"
+    Then I should see 6 "Project containers"
     And I should see 1 "Project status container" containing "This project is published"
     And I should see 1 "Project status container" containing "This project is paused, only you can see it"
     And I should see 1 "Project status container" containing "This project is archived, only you can see it"

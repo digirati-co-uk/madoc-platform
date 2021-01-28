@@ -99,6 +99,11 @@ export const DisplayBreadcrumbs: React.FC = () => {
     // Projects can only be in one place.
     if (breads.project) {
       flatList.push({
+        label: { none: ['Projects'] },
+        url: `/projects`,
+      });
+
+      flatList.push({
         label: breads.project.name,
         url: `/projects/${breads.project.id}`,
       });
@@ -113,6 +118,10 @@ export const DisplayBreadcrumbs: React.FC = () => {
           url: `/projects/${breads.project.id}/collections/${breads.collection.id}`,
         });
       } else {
+        flatList.push({
+          label: { none: ['Collections'] },
+          url: `/collections`,
+        });
         // 2. On it's own
         flatList.push({
           label: breads.collection.name,
@@ -144,6 +153,10 @@ export const DisplayBreadcrumbs: React.FC = () => {
           url: `/collections/${breads.collection.id}/manifests/${breads.manifest.id}`,
         });
       } else {
+        flatList.push({
+          label: { none: ['Manifests'] },
+          url: `/manifests`,
+        });
         // 4. On its own.
         flatList.push({
           label: breads.manifest.name,
