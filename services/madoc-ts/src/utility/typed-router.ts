@@ -1,7 +1,7 @@
 import Router from '@koa/router';
 import koaBody from 'koa-body';
 import { requestBody } from '../middleware/request-body';
-import {parseJwt} from '../middleware/parse-jwt';
+import { parseJwt } from '../middleware/parse-jwt';
 import { RouteMiddleware } from '../types/route-middleware';
 import { omekaSite } from '../middleware/omeka-site';
 

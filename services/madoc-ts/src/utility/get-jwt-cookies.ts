@@ -2,8 +2,18 @@ import { sql } from 'slonik';
 import { createSignedToken } from './create-signed-token';
 import { AuthenticatedUser } from '../types/authenticated-user';
 import { ApplicationContext } from '../types/application-context';
+import { syncOmeka } from './sync-omeka';
 
-export async function getJwtCookies(context: ApplicationContext, user: AuthenticatedUser, siteId?: number) {
+export async function getJwtCookies(
+  context: ApplicationContext,
+  user: AuthenticatedUser,
+  siteId?: number,
+  retry = false
+): Promise<{
+  lastToken?: string;
+  cookiesToAdd: Array<{ name: string; value: string; options: any }>;
+  siteIds?: string[];
+}> {
   const cookiesToAdd: Array<{ name: string; value: string; options: any }> = [];
   let lastToken;
   let siteToken;
@@ -16,6 +26,14 @@ export async function getJwtCookies(context: ApplicationContext, user: Authentic
     const scopesForJWT = await context.connection.any<{ scope: string }>(
       sql`SELECT scope FROM jwt_site_scopes WHERE site_id=${site.id} AND role=${site.role}`
     );
+
+    if (scopesForJWT.length === 0 && !retry) {
+      console.log('Syncing omeka...');
+      // Are the scopes right?
+      await syncOmeka(context.mysql, context.connection, context.externalConfig);
+
+      return getJwtCookies(context, user, siteId, true);
+    }
 
     const domain = `/s/${site.slug}`;
     const token = createSignedToken({

@@ -1,15 +1,19 @@
 import { NotFound } from './errors/not-found';
 import { ApplicationState } from '../types/application-state';
 
-export function userWithScope(context: { state: ApplicationState }, scopes: string[]) {
+export function userWithScope(context: { state: ApplicationState; cookies: any }, scopes: string[]) {
   if (!context.state.jwt || !context.state.jwt.user.id) {
     throw new NotFound('No id');
+  }
+
+  if (context.state.jwt.scope.length === 0) {
+    throw new NotFound(`Invalid token`);
   }
 
   if (context.state.jwt.scope.indexOf('site.admin') === -1) {
     for (const scope of scopes) {
       if (context.state.jwt.scope.indexOf(scope) === -1) {
-        throw new NotFound('Scope');
+        throw new NotFound(`Scope ${scope} required.`);
       }
     }
   }
