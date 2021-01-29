@@ -286,9 +286,9 @@ export const router = new TypedRouter({
   // 'get-page': [TypedRouter.GET, '/s/:slug/madoc/page/:pageSlug+', sitePage],
 
   // Frontend
-  'admin-frontend': [TypedRouter.GET, '/s/:slug/madoc/admin*', adminFrontend],
-  'site-frontend': [TypedRouter.GET, '/s/:slug/madoc*', siteFrontend],
+  'admin-frontend': [TypedRouter.GET, '/s/:slug/madoc/admin(.*)', adminFrontend],
+  'site-frontend': [TypedRouter.GET, '/s/:slug/madoc(.*)', siteFrontend],
 
   // Make sure this is last.
-  'omeka-404': [TypedRouter.GET, '/s/:slug/madoc*', madocNotFound],
+  'omeka-404': [TypedRouter.GET, '/s/:slug/madoc(.*)', madocNotFound],
 });

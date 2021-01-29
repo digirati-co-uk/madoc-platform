@@ -25,7 +25,7 @@ export const DefaultManagePropertyList: EditorRenderingConfig['ManagePropertyLis
     <>
       {children}
       <NewInstanceContainer>
-        <TinyButton onClick={() => (type === 'entity' ? createNewEntity : createNewField)}>Add {label}</TinyButton>
+        <TinyButton onClick={type === 'entity' ? createNewEntity : createNewField}>Add {label}</TinyButton>
       </NewInstanceContainer>
     </>
   );

@@ -10,6 +10,27 @@ export const DefaultBreadcrumbs: EditorRenderingConfig['Breadcrumbs'] = () => {
     return null;
   }
 
+  if (breads.length === 1) {
+    const s = breads[0];
+    return (
+      <BreadcrumbList style={{ marginBottom: '1em' }}>
+        <BreadcrumbItem>
+          <a
+            onClick={() => {
+              if (fieldSelected) {
+                revisionDeselectField();
+              } else {
+                revisionPopTo({ id: s.id });
+              }
+            }}
+          >
+            Back
+          </a>
+        </BreadcrumbItem>
+      </BreadcrumbList>
+    );
+  }
+
   return (
     <BreadcrumbList style={{ marginBottom: '1em' }}>
       {breads.map((s, n) => (

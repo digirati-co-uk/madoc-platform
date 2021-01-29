@@ -11,7 +11,7 @@ export const CanvasImageViewer: React.FC<{ annotationPages?: AnnotationPage[] }>
   const { canvasId } = useRouteContext();
   const [canvasRef, setCanvasRef] = useState<CanvasNormalized>();
   const { data: canvasResponse } = useData(CanvasLoader);
-  const [highlightedRegions] = useCanvasSearch(canvasId);
+  const [, highlightedRegions] = useCanvasSearch(canvasId);
   // const {} = use
   const canvas = canvasResponse?.canvas;
 
