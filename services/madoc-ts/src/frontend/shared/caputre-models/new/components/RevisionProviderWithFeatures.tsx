@@ -1,6 +1,7 @@
 import { Revisions } from '@capture-models/editor';
 import React from 'react';
 import { AutoSelectingRevision } from '../features/AutoSelectingRevision';
+import { CorrectingRevisionSubtree } from '../features/CorrectingRevisionSubtree';
 import { EditorConfig, EditorRenderingConfig, EditorSlots } from './EditorSlots';
 
 export const RevisionProviderWithFeatures: React.FC<{
@@ -28,6 +29,7 @@ export const RevisionProviderWithFeatures: React.FC<{
       initialRevision={initialRevision}
     >
       {autoSelectingRevision ? <AutoSelectingRevision /> : null}
+      <CorrectingRevisionSubtree />
       <EditorSlots.Provider config={editor} components={components}>
         {children}
       </EditorSlots.Provider>
