@@ -27,7 +27,7 @@ Feature: Basic user permissions
     Then I should be redirected to the "Home page"
 
     When I open the "Site projects" page
-    Then I should see 3 "Project containers"
+    Then I should see 4 "Project containers"
     And I should see 1 "Project status container" containing "This project is published"
 
   Scenario: Reviewer should only navigation relevant to my role
@@ -44,7 +44,7 @@ Feature: Basic user permissions
     Then I should be redirected to the "Home page"
 
     When I open the "Site projects" page
-    Then I should see 3 "Project containers"
+    Then I should see 4 "Project containers"
     And I should see 1 "Project status container" containing "This project is published"
 
   Scenario: Limited reviewer should only navigation relevant to my role
@@ -61,7 +61,7 @@ Feature: Basic user permissions
     Then I should be redirected to the "Home page"
 
     When I open the "Site projects" page
-    Then I should see 3 "Project containers"
+    Then I should see 4 "Project containers"
     And I should see 1 "Project status container" containing "This project is published"
 
   Scenario: Transcriber should only navigation relevant to my role
@@ -78,7 +78,7 @@ Feature: Basic user permissions
     Then I should be redirected to the "Home page"
 
     When I open the "Site projects" page
-    Then I should see 3 "Project containers"
+    Then I should see 4 "Project containers"
     And I should see 1 "Project status container" containing "This project is published"
 
   Scenario: Limited Transcriber should only navigation relevant to my role
@@ -95,7 +95,7 @@ Feature: Basic user permissions
     Then I should be redirected to the "Home page"
 
     When I open the "Site projects" page
-    Then I should see 3 "Project containers"
+    Then I should see 4 "Project containers"
     And I should see 1 "Project status container" containing "This project is published"
 
   Scenario: Administrator should only navigation relevant to my role
@@ -113,7 +113,7 @@ Feature: Basic user permissions
     Then I should see "Site admin" in the "Admin page title"
 
     When I open the "Site projects" page
-    Then I should see 5 "Project containers"
+    Then I should see 6 "Project containers"
     And I should see 1 "Project status container" containing "This project is published"
     And I should see 1 "Project status container" containing "This project is paused, only you can see it"
     And I should see 1 "Project status container" containing "This project is archived, only you can see it"

@@ -68,15 +68,14 @@ export const ApproveSubmission: React.FC<{
       render={() => (
         <div>
           <ul>
-            <li>
-              The submission will be approved and all other submission will remain.
-            </li>
+            <li>The submission will be approved and all other submission will remain.</li>
           </ul>
         </div>
       )}
       renderFooter={({ close }: any) => (
         <ButtonRow style={{ margin: '0 0 0 auto' }}>
           <Button
+            data-cy="approve-submission"
             onClick={() => {
               approveApiCall();
               close();

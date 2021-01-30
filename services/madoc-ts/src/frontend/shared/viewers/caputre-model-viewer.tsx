@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
+import { EditorContentViewer } from '../caputre-models/new/EditorContent';
+import { AutoSelectingRevision } from '../caputre-models/new/features/AutoSelectingRevision';
 import { useLoadedCaptureModel } from '../hooks/use-loaded-capture-model';
 import { Revisions } from '@capture-models/editor';
 import {
@@ -28,11 +31,13 @@ export const CaptureModelViewer: React.FC<{
   backLink?: string;
   revisionId?: string;
   readOnly?: boolean;
+  overrideCanvasId?: number;
   allowEdits?: boolean;
   onSave: (response: RevisionRequest, status: string | undefined) => Promise<void>;
-}> = ({ backLink, revisionId, modelId, allowEdits = true, initialModel, onSave, readOnly }) => {
-  const [isVertical, setIsVertical] = useState(false);
-  const [{ captureModel, canvas }] = useLoadedCaptureModel(modelId, initialModel);
+}> = ({ backLink, revisionId, modelId, allowEdits = true, overrideCanvasId, initialModel, onSave, readOnly }) => {
+  const config = useSiteConfiguration();
+  const [isVertical, setIsVertical] = useState(config.project.defaultEditorOrientation === 'vertical');
+  const [{ captureModel, canvas, target }] = useLoadedCaptureModel(modelId, initialModel, overrideCanvasId);
 
   return (
     <React.Suspense fallback={<div>loading...</div>}>
@@ -40,6 +45,9 @@ export const CaptureModelViewer: React.FC<{
         {({ toggle, isOpen }) =>
           captureModel ? (
             <Revisions.Provider captureModel={captureModel} revision={revisionId}>
+              {/* Features of the provider. */}
+              <AutoSelectingRevision />
+
               <EditorToolbarContainer>
                 {backLink ? (
                   <EditorToolbarButton as={HrefLink} href={backLink}>
@@ -66,10 +74,11 @@ export const CaptureModelViewer: React.FC<{
               <div style={{ display: 'flex', flexDirection: isVertical ? 'column' : 'row' }}>
                 <div style={{ width: isVertical ? '100%' : '67%' }}>
                   {canvas ? (
-                    <ViewContent
+                    <EditorContentViewer
                       key={`${captureModel.id}${isVertical ? 'y' : 'n'}${isOpen ? 'y' : 'n'}`}
-                      target={captureModel.target as any}
+                      canvasId={overrideCanvasId}
                       canvas={canvas}
+                      target={captureModel.target}
                     />
                   ) : null}
                 </div>

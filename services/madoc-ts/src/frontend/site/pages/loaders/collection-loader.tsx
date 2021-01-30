@@ -28,7 +28,7 @@ import { CollectionFull } from '../../../../types/schemas/collection-full';
  * - links - a helper for generating links
  */
 export type CollectionLoaderType = {
-  params: { id: string; slug?: string; manifest?: string; canvas?: string };
+  params: { collectionId: string; slug?: string; manifest?: string; canvas?: string };
   query: { c: string; filter?: string };
   variables: ApiArgs<'getSiteCollection'>;
   data: CollectionFull;
@@ -61,7 +61,7 @@ export const CollectionLoader: UniversalComponent<CollectionLoaderType> = create
   },
   {
     getKey: (params, query) => {
-      const [collectionId, ...parentCollectionIds] = params.id.split(',');
+      const [collectionId, ...parentCollectionIds] = params.collectionId.split(',');
 
       return [
         'getSiteCollection',

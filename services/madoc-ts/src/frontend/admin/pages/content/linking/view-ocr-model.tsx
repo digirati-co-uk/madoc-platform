@@ -1,5 +1,4 @@
 import { Revisions } from '@capture-models/editor';
-import { createDocument, generateId } from '@capture-models/helpers';
 import { CaptureModel } from '@capture-models/types';
 import * as React from 'react';
 import { Suspense, useMemo } from 'react';
@@ -7,6 +6,7 @@ import { useQuery } from 'react-query';
 import { ResourceLinkResponse } from '../../../../../database/queries/linking-queries';
 import { preprocessCaptureModel } from '../../../../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
 import { RevisionNavigation } from '../../../../shared/caputre-models/RevisionNavigation';
+import { documentFragmentWrapper } from '../../../../shared/caputre-models/utility/document-fragment-wrapper';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { ViewContentFetch } from '../../../molecules/ViewContentFetch';
 
@@ -21,25 +21,12 @@ export const ViewOCRModel: React.FC<{ canvasId: number; link: ResourceLinkRespon
     }
   });
 
-  const captureModel: CaptureModel = useMemo(
-    () => ({
-      id: generateId(),
-      structure: {
-        id: generateId(),
-        label: 'Test',
-        type: 'model',
-        fields: [['paragraph', [['lines', ['text']]]]],
-      },
-      document: createDocument({
-        properties: preprocessCaptureModel(captureModelField),
-      }),
-    }),
+  const captureModel: CaptureModel | undefined = useMemo(
+    () => (captureModelField ? documentFragmentWrapper(preprocessCaptureModel(captureModelField)) : undefined),
     [captureModelField]
   );
 
-  console.log({ captureModelField });
-
-  if (!captureModelField) {
+  if (!captureModelField || !captureModel) {
     return null;
   }
 

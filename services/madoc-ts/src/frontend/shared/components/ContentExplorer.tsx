@@ -121,8 +121,9 @@ export const URLContextExplorer: React.FC<{
   );
 };
 
-export const ContentExplorer: React.FC<{ renderChoice: (id: number, reset: () => void) => any }> = ({
+export const ContentExplorer: React.FC<{ canvasId?: number; renderChoice: (id: number, reset: () => void) => any }> = ({
   renderChoice,
+  canvasId: defaultCanvasId,
 }) => {
   const [recent, addNewRecent] = useRecent<ItemStructureListItem>('content-explorer');
   const { t } = useTranslation();
@@ -132,9 +133,13 @@ export const ContentExplorer: React.FC<{ renderChoice: (id: number, reset: () =>
 
   const [collectionId, setCollectionId] = useState<number | undefined>();
   const [manifestId, setManifestId] = useState<number | undefined>();
-  const [canvasId, setCanvasId] = useState<number | undefined>();
+  const [canvasId, setCanvasId] = useState<number | undefined>(defaultCanvasId);
 
   const resetCanvas = useCallback(() => setCanvasId(undefined), []);
+
+  useEffect(() => {
+    setCanvasId(defaultCanvasId);
+  }, [defaultCanvasId]);
 
   if (canvasId) {
     return renderChoice(canvasId, resetCanvas);

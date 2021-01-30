@@ -37,6 +37,7 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
             { label: t('Overview'), link: `/projects/${data.id}` },
             { label: t('Details'), link: `/projects/${data.id}/metadata` },
             { label: t('Content'), link: `/projects/${data.id}/content` },
+            { label: t('Configuration'), link: `/projects/${data.id}/configuration` },
             { label: t('Model'), link: `/projects/${data.id}/model` },
             { label: t('Crowdsourcing'), link: `/projects/${data.id}/tasks` },
           ]}

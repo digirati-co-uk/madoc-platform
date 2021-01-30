@@ -14,4 +14,6 @@ export type ProjectConfiguration = {
   randomlyAssignCanvas?: boolean;
   priorityRandomness?: boolean;
   skipAutomaticOCRImport?: boolean;
+  defaultEditorOrientation: 'vertical' | 'horizontal';
+  skipManifestListingPage?: boolean;
 };

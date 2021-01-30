@@ -16,7 +16,9 @@
     "hideCompletedResources": false,
     "revisionApprovalsRequired": 20,
     "contributionWarningTime": false,
-    "skipAutomaticOCRImport": false
+    "skipAutomaticOCRImport": false,
+    "defaultEditorOrientation": "horizontal",
+    "skipManifestListingPage": false
   },
   "permissions": {
     "admin": [

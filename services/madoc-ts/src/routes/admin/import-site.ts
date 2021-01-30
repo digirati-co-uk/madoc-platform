@@ -9,6 +9,7 @@ import { SitePermission } from '../../types/omeka/SitePermission';
 import { SiteSetting } from '../../types/omeka/SiteSetting';
 import { User } from '../../types/omeka/User';
 import { RouteMiddleware } from '../../types/route-middleware';
+import { CaptureModelSnippet } from '../../types/schemas/capture-model-snippet';
 import { NotFound } from '../../utility/errors/not-found';
 import { raw, mysql } from '../../utility/mysql';
 import { inserts, upsert } from '../../utility/slonik-helpers';
@@ -161,11 +162,30 @@ export const importSite: RouteMiddleware = async context => {
   // // Capture models - slow and steady.
   if (data.models && data.models.length) {
     if (data.derivedModels && data.derivedModels.length) {
+      const derivedModelsToDelete: Array<CaptureModel | CaptureModelSnippet>[] = [...data.derivedModels];
+
+      // Remove all existing derived models.
+      try {
+        await Promise.all(
+          data.models.map(async (model: CaptureModel) => {
+            try {
+              const id = model.id;
+              const derived = await siteApi.getAllCaptureModels({ all_derivatives: true, derived_from: id });
+              derivedModelsToDelete.push(derived);
+            } catch (e) {
+              // could already have been deleted.
+            }
+          })
+        );
+      } catch (e) {
+        // ..
+      }
+
       // Import derived models.
       await Promise.all(
-        data.derivedModels.map((models: CaptureModel[]) => {
+        derivedModelsToDelete.map(models => {
           return Promise.all(
-            models.map(async (model: CaptureModel) => {
+            models.map(async model => {
               if (model.id) {
                 try {
                   const originalModel = await siteApi.getCaptureModel(model.id);
@@ -183,7 +203,7 @@ export const importSite: RouteMiddleware = async context => {
                     // Might have already been deleted.
                   }
                 } catch (err) {
-                  // nothing/
+                  /// ...
                 }
               }
             })
@@ -320,6 +340,12 @@ export const importSite: RouteMiddleware = async context => {
         }
       )
     );
+    await context.connection.query(
+      sql`delete from iiif_linking where site_id = ${siteId} and not (id = any (${sql.array(
+        data.iiifLinking.map((item: any) => item.id),
+        sql`int[]`
+      )}))`
+    );
   }
 
   if (data.iiifDerivedResources && data.iiifDerivedResources.length) {
@@ -366,7 +392,7 @@ export const importSite: RouteMiddleware = async context => {
     // @todo delete extras: where resource_id::text || item_id::text || site_id::text = '1372011'
   }
 
-  if (data.projects) {
+  if (data.projects && data.projects.length) {
     await context.connection.query(
       upsert('iiif_project', ['id'], data.projects, [
         'id',
@@ -389,6 +415,17 @@ export const importSite: RouteMiddleware = async context => {
           mkdirp.sync(`${path.dirname(filePath)}`);
           fs.writeFileSync(filePath, JSON.stringify(resource.data));
         }
+      }
+    }
+  }
+
+  if (data.files && data.files.linkingStorage) {
+    const resources: Array<{ data: any; bucket: string; path: string }> = data.files.linkingStorage;
+    for (const resource of resources) {
+      try {
+        await siteApi.getStorageJsonDetails(resource.bucket, resource.path);
+      } catch (e) {
+        await siteApi.saveStorageJson(resource.bucket, resource.path, resource.data);
       }
     }
   }

@@ -24,7 +24,7 @@ export const ReviewerTasks: React.FC<{
               <TableRowLabel>
                 <Status status={task.status} text={task.status_text} />
               </TableRowLabel>
-              <TableRowLabel>
+              <TableRowLabel data-cy="task-name">
                 <Link to={`${projectId ? `/projects/${projectId}` : ''}/tasks/${task.id}`}>{task.name}</Link>
               </TableRowLabel>
             </TableRow>

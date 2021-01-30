@@ -101,7 +101,8 @@ export const IntlField: React.FC<{
   primaryLang?: string;
   onUpdate?: (values: MetadataItem[]) => void;
   onAddValue?: () => void;
-}> = ({ values, primaryLang = 'en' }) => {
+  fluid?: boolean;
+}> = ({ values, fluid, primaryLang = 'en' }) => {
   // First primary language option – or first in list
   // Other items
 
@@ -127,7 +128,7 @@ export const IntlField: React.FC<{
   }
 
   return (
-    <InputContainer>
+    <InputContainer fluid={fluid}>
       <InputLabel>Label</InputLabel>
       <IntlInputContainer>
         <IntlInputDefault>

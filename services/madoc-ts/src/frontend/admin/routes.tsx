@@ -3,8 +3,11 @@ import { CanvasPlaintext } from './pages/content/canvases/canvas-plaintext';
 import { CanvasSearchIndex } from './pages/content/canvases/canvas-search-index';
 import { CollectionView } from './pages/content/collections/collection';
 import { ViewCanvasLinking } from './pages/content/linking/view-linking';
+import { MetadataConfigurationPage } from './pages/content/metadata-configuration';
 import { SiteConfiguration } from './pages/content/site-configuration';
+import { ProjectConfiguration } from './pages/crowdsourcing/projects/project-configuration';
 import { OcrListPage } from './pages/enrichment/ocr/ocr-list';
+import { SearchIndexingPage } from './pages/enrichment/search-indexing';
 import { ExportSite } from './pages/export/export-site';
 import { Homepage } from './pages/homepage';
 import { CollectionList } from './pages/content/collections/collection-list';
@@ -242,6 +245,11 @@ export const routes: UniversalRoute[] = [
         component: ProjectContent,
       },
       {
+        path: '/projects/:id/configuration',
+        exact: true,
+        component: ProjectConfiguration,
+      },
+      {
         path: '/projects/:id/model',
         component: ProjectModelEditor,
         routes: [
@@ -349,6 +357,11 @@ export const routes: UniversalRoute[] = [
       },
     ],
   },
+  {
+    path: '/enrichment/search-indexing',
+    component: SearchIndexingPage,
+    exact: true,
+  },
 
   // Export
   {
@@ -361,5 +374,10 @@ export const routes: UniversalRoute[] = [
     path: '/configure/site',
     exact: true,
     component: SiteConfiguration,
+  },
+  {
+    path: '/configure/site/metadata',
+    exact: true,
+    component: MetadataConfigurationPage,
   },
 ];

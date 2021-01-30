@@ -1,7 +1,9 @@
-import { InternationalString } from '@hyperion-framework/types';
-import React from 'react';
+import React, { useMemo } from 'react';
 import styled, { css } from 'styled-components';
+import { InternationalString } from '@hyperion-framework/types';
+
 import { LocaleString } from './LocaleString';
+import { FacetConfig } from './MetadataFacetEditor';
 
 const MetadataDisplayContainer = styled.table<{ $variation?: 'list' | 'table'; $size?: 'lg' | 'md' | 'sm' }>`
   font-size: ${props =>
@@ -120,12 +122,71 @@ const MetadataContainer = styled.tr<{ $variation?: 'list' | 'table' }>`
 `;
 
 export const MetaDataDisplay: React.FC<{
-  metadata: Array<{ label: InternationalString; value: InternationalString }>;
+  config?: FacetConfig[];
+  metadata?: Array<{ label: InternationalString; value: InternationalString }>;
   variation?: 'table' | 'list';
   labelStyle?: 'muted' | 'bold' | 'caps' | 'small-caps';
   labelWidth?: number;
   bordered?: boolean;
-}> = ({ metadata, variation = 'table', labelWidth = 16, bordered, labelStyle }) => {
+}> = ({ metadata = [], config, variation = 'table', labelWidth = 16, bordered, labelStyle }) => {
+  const metadataKeyMap = useMemo(() => {
+    const flatKeys = (config || []).reduce((state, i) => {
+      return [...state, ...i.keys];
+    }, [] as string[]);
+
+    const map: { [key: string]: Array<{ label: InternationalString; value: InternationalString }> } = {};
+    for (const item of metadata) {
+      const labels = item.label ? Object.values(item.label) : [];
+      for (const label of labels) {
+        if (label && label.length && flatKeys.indexOf(`metadata.${label[0]}`) !== -1) {
+          const key = `metadata.${label[0]}`;
+          map[key] = map[key] ? map[key] : [];
+          map[key].push(item);
+          break;
+        }
+      }
+    }
+    return map;
+  }, [config, metadata]);
+
+  if (config && config.length) {
+    return (
+      <MetadataDisplayContainer $variation={variation}>
+        {config.map((configItem, idx: number) => {
+          const values: any[] = [];
+
+          for (const key of configItem.keys) {
+            for (const item of metadataKeyMap[key] || []) {
+              values.push(
+                <div key={idx + '__' + key}>
+                  <LocaleString enableDangerouslySetInnerHTML>{item.value}</LocaleString>
+                </div>
+              );
+            }
+          }
+
+          if (values.length === 0) {
+            return null;
+          }
+
+          return (
+            <MetadataContainer key={idx} $variation={variation}>
+              <MetaDataKey
+                $labelStyle={labelStyle}
+                $variation={variation}
+                $labelWidth={labelWidth}
+                $bordered={bordered}
+              >
+                <LocaleString enableDangerouslySetInnerHTML>{configItem.label}</LocaleString>
+              </MetaDataKey>
+              <MetaDataValue $variation={variation}>{values}</MetaDataValue>
+            </MetadataContainer>
+          );
+        })}
+      </MetadataDisplayContainer>
+    );
+  }
+
   return (
     <MetadataDisplayContainer $variation={variation}>
       {metadata && metadata.length

@@ -1,12 +1,12 @@
+import { CollectionListLoader } from '../../site/pages/loaders/collection-list-loader';
 import { RouteComponents } from '../../site/routes';
 import React from 'react';
 import { usePaginatedData } from '../../shared/hooks/use-data';
-import { AllCollections } from '../../site/pages/all-collections';
 import { Link } from 'react-router-dom';
 import { LocaleString } from '../../shared/components/LocaleString';
 
 export const ListCollectionsReplacement: RouteComponents['AllCollections'] = () => {
-  const { resolvedData: data, latestData } = usePaginatedData(AllCollections);
+  const { resolvedData: data } = usePaginatedData(CollectionListLoader);
 
   if (!data) {
     return <div>loading...</div>;

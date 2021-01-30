@@ -1,7 +1,15 @@
 {
   "baseUrl": "http://localhost:8988",
   "reporter": "junit",
+  "experimentalStudio": true,
   "reporterOptions": {
     "mochaFile": "cypress/results/output.xml"
+  },
+  "viewportWidth": 1550,
+  "viewportHeight": 900,
+  "env": {
+    "cypress-react-selector": {
+      "root": ".react-loaded"
+    }
   }
 }

@@ -195,7 +195,7 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
 
       <KanbanBoard>
         <KanbanBoardContainer>
-          <KanbanCol>
+          <KanbanCol data-cy="kanban-waiting-for-contributor">
             <KanbanColTitle>Waiting for contributor</KanbanColTitle>
             {waiting.length ? (
               waiting.map(task => (
@@ -219,7 +219,7 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
               <KanbanEmpty>None waiting</KanbanEmpty>
             )}
           </KanbanCol>
-          <KanbanCol>
+          <KanbanCol data-cy="kanban-ready-for-review">
             <KanbanColTitle>Ready for review</KanbanColTitle>
             {ready.length ? (
               ready.map(task => (
@@ -251,7 +251,7 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
               <KanbanEmpty>None ready</KanbanEmpty>
             )}
           </KanbanCol>
-          <KanbanCol>
+          <KanbanCol data-cy="kanban-completed-reviews">
             <KanbanColTitle>Completed reviews</KanbanColTitle>
             {complete.length ? (
               complete.map(task => (

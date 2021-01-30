@@ -8,6 +8,7 @@ import { plainTextSource } from '../extensions/capture-models/DynamicDataSources
 import { ExtensionManager } from '../extensions/extension-manager';
 import { defaultPageBlockDefinitions } from '../extensions/page-blocks/default-definitions';
 import { PageBlockExtension } from '../extensions/page-blocks/extension';
+import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
 import { Site } from '../types/omeka/Site';
 import { SingleUser } from '../types/omeka/User';
 import { ProjectConfiguration } from '../types/schemas/project-configuration';
@@ -316,6 +317,17 @@ export class ApiClient {
     return this.captureModelDataSources;
   }
 
+  async getMetadataKeys() {
+    return this.request<{ metadata: Array<{ label: string; language: string; total_items: number }> }>(
+      `/api/madoc/iiif/metadata-keys`
+    );
+  }
+  async getMetadataValues(label: string) {
+    return this.request<{ values: Array<{ value: string; label: string; language: string; total_items: number }> }>(
+      `/api/madoc/iiif/metadata-values?label=${label}`
+    );
+  }
+
   async getStatistics() {
     return this.request<{ collections: number; manifests: number; canvases: number; projects: number }>(
       `/api/madoc/iiif/statistics`
@@ -484,10 +496,24 @@ export class ApiClient {
       : {};
   }
 
-  async saveSiteConfiguration(config: any) {
-    return this.request(`/api/madoc/configuration`, {
+  async saveSiteConfiguration(config: ProjectConfiguration, query?: { project_id?: number; collection_id?: number }) {
+    return this.request<ProjectConfiguration>(`/api/madoc/configuration${query ? `?${stringify(query)}` : ''}`, {
       method: 'POST',
       body: config,
+    });
+  }
+
+  async saveFacetConfiguration(facets: FacetConfig[]) {
+    return this.request<{ facets: FacetConfig[] }>(`/api/madoc/configuration/search-facets`, {
+      method: 'POST',
+      body: { facets },
+    });
+  }
+
+  async saveMetadataConfiguration(metadata: FacetConfig[]) {
+    return this.request<{ metadata: FacetConfig[] }>(`/api/madoc/configuration/metadata`, {
+      method: 'POST',
+      body: { metadata },
     });
   }
 
@@ -1656,8 +1682,23 @@ export class ApiClient {
     return this.publicRequest<{ model?: CaptureModel }>(`/madoc/api/projects/${projectId}/canvas-models/${canvasId}`);
   }
 
-  async getSiteConfiguration() {
-    return this.publicRequest<ProjectConfiguration>(`/madoc/api/configuration`);
+  async getSiteConfiguration(query?: import('../routes/site/site-configuration').SiteConfigurationQuery) {
+    return this.publicRequest<ProjectConfiguration>(`/madoc/api/configuration`, query);
+  }
+
+  async getSiteSearchFacetConfiguration() {
+    return this.publicRequest<{ facets: FacetConfig[] }>(`/madoc/api/configuration/search-facets`);
+  }
+
+  async getSiteMetadataConfiguration(query?: { project_id?: string; collection_id?: number }) {
+    return this.publicRequest<{ metadata: FacetConfig[] }>(`/madoc/api/configuration/metadata`, query);
+  }
+
+  async getSiteCanvasPublishedModels(
+    canvasId: number,
+    query?: import('../routes/site/site-published-models').SitePublishedModelsQuery
+  ) {
+    return this.publicRequest<any>(`/madoc/api/canvases/${canvasId}/models`, query);
   }
 
   async getSiteSearchQuery(query: SearchQuery, page = 1, madoc_id?: string) {

@@ -1,27 +1,17 @@
+import { getProject } from '../../database/queries/project-queries';
 import { api } from '../../gateway/api.server';
 import { Site } from '../../types/omeka/Site';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { ProjectConfiguration } from '../../types/schemas/project-configuration';
 import { NotFound } from '../../utility/errors/not-found';
 import { mysql } from '../../utility/mysql';
+import { parseEtag } from '../../utility/parse-etag';
+import { parseProjectId } from '../../utility/parse-project-id';
 import { userWithScope } from '../../utility/user-with-scope';
-
-function parseEtag(etag?: string) {
-  if (!etag) {
-    return undefined;
-  }
-
-  const match = etag.match(/[Ww]?\/?"(.*)"/);
-
-  if (match) {
-    return match[1];
-  }
-
-  return undefined;
-}
 
 export const updateSiteConfiguration: RouteMiddleware<{}, Partial<ProjectConfiguration>> = async context => {
   const { id, siteId } = userWithScope(context, ['site.admin']);
+  const collectionId = context.query.collection_id as string | undefined;
   const staticConfiguration = context.externalConfig.defaultSiteConfiguration;
 
   const site = await new Promise<Site>(resolve =>
@@ -30,8 +20,23 @@ export const updateSiteConfiguration: RouteMiddleware<{}, Partial<ProjectConfigu
     })
   );
 
+  const parsedId = context.query.project_id ? parseProjectId(context.query.project_id) : null;
+  const project = parsedId ? await context.connection.maybeOne(getProject(parsedId, site.id)) : null;
+  const projectId = project ? project.id : null;
+
   if (!site || !site.slug) {
     throw new NotFound('Site not found');
+  }
+
+  const configRequest: string[] = [`urn:madoc:site:${site.id}`];
+
+  if (projectId) {
+    // @todo possibly resolve project ID from slug?
+    configRequest.push(`urn:madoc:project:${projectId}`);
+  }
+
+  if (collectionId) {
+    configRequest.push(`urn:madoc:collection:${collectionId}`);
   }
 
   const userApi = api.asUser({ userId: id, siteId }, { siteSlug: site.slug });
@@ -40,15 +45,22 @@ export const updateSiteConfiguration: RouteMiddleware<{}, Partial<ProjectConfigu
   const configurationRequest = context.requestBody;
 
   //  - Make query to the config service
-  const rawConfigurationObject = await userApi.getConfiguration<ProjectConfiguration>('madoc', [
-    `urn:madoc:site:${siteId}`,
-  ]);
+  const rawConfigurationObject = await userApi.getConfiguration<ProjectConfiguration>('madoc', configRequest);
 
   const oldConfiguration = rawConfigurationObject.config[0];
 
-  const newConfiguration = { ...staticConfiguration, ...oldConfiguration.config_object, ...configurationRequest };
+  const newConfiguration = {
+    ...staticConfiguration,
+    ...(oldConfiguration ? oldConfiguration.config_object : {}),
+    ...configurationRequest,
+  };
 
-  if (oldConfiguration.id) {
+  // Is it the same context?
+  const isEqual =
+    oldConfiguration.scope.length === configRequest.length &&
+    oldConfiguration.scope.every(val => configRequest.includes(val));
+
+  if (isEqual && oldConfiguration && oldConfiguration.id) {
     const rawConfiguration = await userApi.getSingleConfigurationRaw(oldConfiguration.id);
     const etagHeader = rawConfiguration.headers.get('etag');
     const etag = etagHeader ? parseEtag(etagHeader.toString()) : undefined;
@@ -60,7 +72,7 @@ export const updateSiteConfiguration: RouteMiddleware<{}, Partial<ProjectConfigu
   } else {
     try {
       //  - If it does not exist, then POST the new configuration.
-      await userApi.addConfiguration('madoc', [`urn:madoc:site:${siteId}`], newConfiguration);
+      await userApi.addConfiguration('madoc', configRequest, newConfiguration);
     } catch (err) {
       console.log('Could not save config', err);
     }

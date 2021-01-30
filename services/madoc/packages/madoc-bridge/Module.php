@@ -10,11 +10,15 @@ use MiladRahimi\Jwt\Cryptography\Algorithms\Rsa\RS256Verifier;
 use MiladRahimi\Jwt\Cryptography\Keys\RsaPublicKey;
 use Omeka\Api\Manager;
 use Omeka\Api\Representation\UserRepresentation;
+use Omeka\Api\Adapter\SiteAdapter;
+use Omeka\Entity\Site;
 use Omeka\Module\AbstractModule;
 use Omeka\Permissions\Acl;
 use Psr\Container\ContainerInterface;
 use Zend\Authentication\AuthenticationService;
+use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
+use Zend\EventManager\SharedEventManagerInterface;
 use Zend\Http\Response;
 use Zend\Mvc\MvcEvent;
 use MiladRahimi\Jwt\Parser;
@@ -93,6 +97,28 @@ class Module extends AbstractModule
                 TemplateController::class
             ]
         );
+    }
+
+    public function attachListeners(SharedEventManagerInterface $sharedEventManager)
+    {
+        $sharedEventManager->attach(
+            SiteAdapter::class,
+            'api.create.pre',
+            [$this, 'beforeSiteCreated'],
+            -1000
+        );
+    }
+
+    public function beforeSiteCreated(Event $event) {
+        /** @var Request $request */
+        $request = $event->getParam('request');
+        // Create wrapper object
+        $content = $request->getContent();
+
+        $content['o:theme'] = 'madoc-crowd-sourcing-theme';
+
+        // Export and add our mutated object.
+        $request->setContent($content);
     }
 
     public function setCookies(MvcEvent $event) {

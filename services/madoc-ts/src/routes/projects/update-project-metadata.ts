@@ -1,6 +1,7 @@
 // Updates metadata on underlying collection inside the project.
 import { RouteMiddleware } from '../../types/route-middleware';
 import { sql } from 'slonik';
+import { parseProjectId } from '../../utility/parse-project-id';
 import { userWithScope } from '../../utility/user-with-scope';
 import {
   addDerivedMetadata,
@@ -18,13 +19,13 @@ type UpdateProject = {
 export const updateProjectMetadata: RouteMiddleware<{ id: string }, UpdateProject> = async context => {
   // Also update the task label and summary?
   const { siteId } = userWithScope(context, ['site.admin']);
-  const id = Number(context.params.id);
+  const { projectId, projectSlug } = parseProjectId(context.params.id);
   const { metadata } = context.requestBody;
 
   const userApi = api.asUser({ siteId });
 
   // 1. get project.
-  const project = await context.connection.one(getProject(id, siteId));
+  const project = await context.connection.one(getProject({ projectId, projectSlug }, siteId));
 
   // 2. Update collection.
   const { added, modified, removed } = metadata;

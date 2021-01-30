@@ -9,13 +9,13 @@ const program = TJS.getProgramFromFiles(files, {
   skipLibCheck: true,
 });
 
-const generator = TJS.buildGenerator(program, {});
+const generator = TJS.buildGenerator(program, { required: true, noExtraProps: false });
 
 const symbols = generator.getMainFileSymbols(program, files);
 
 for (const typeName of symbols) {
   console.log('starting... ', typeName);
-  const schema = TJS.generateSchema(program, typeName, { required: true, noExtraProps: false });
+  const schema = generator.getSchemaForSymbol(typeName, false);
   if (schema) {
     writeFileSync(join(resolve(__dirname, 'schemas'), `${typeName}.json`), JSON.stringify(schema, null, 2));
   }

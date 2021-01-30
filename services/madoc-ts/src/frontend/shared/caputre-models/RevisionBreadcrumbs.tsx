@@ -63,9 +63,7 @@ export const RevisionBreadcrumbs: React.FC = () => {
           <BreadcrumbItem>
             <a
               onClick={() => {
-                console.log('DESELECT', { fieldSelected, breads: breads.length });
                 if (fieldSelected && n === breads.length - 1) {
-                  console.log('REVISION DESELECT FIELD');
                   revisionDeselectField();
                 } else {
                   revisionPopTo({ id: s.id });

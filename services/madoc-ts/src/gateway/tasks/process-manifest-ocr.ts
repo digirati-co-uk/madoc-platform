@@ -35,7 +35,7 @@ export function createTask(manifestId: number, label: string, userId: number, si
     state: {},
     events: [
       'madoc-ts.created',
-      `madoc-ts.subtask_type_status.madoc-ocr-canvas.${importCanvas.status.indexOf('done')}`,
+      `madoc-ts.subtask_type_status.${processCanvasOcr.type}.${importCanvas.status.indexOf('done')}`,
     ],
     status: 0,
     status_text: status[0],
@@ -132,7 +132,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
 
       break;
     }
-    case `subtask_type_status.canvas-ocr-manifest.${tasks.STATUS.DONE}`: {
+    case `subtask_type_status.${processCanvasOcr.type}.${tasks.STATUS.DONE}`: {
       // When they're all done, mark this task as done - I think that's all?
       await api.updateTask(taskId, {
         status: 3,

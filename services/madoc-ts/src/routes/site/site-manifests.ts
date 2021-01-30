@@ -15,7 +15,7 @@ export const siteManifests: RouteMiddleware<{ slug: string }> = async context =>
   }
 
   if (projectId) {
-    const project = await siteApi.getProject(Number(projectId));
+    const project = await siteApi.getProject(projectId);
     // @todo Check if project is running (or is admin)
     // If not running, then not found.
     // Get project collection id passing in page, and asking for only collections.

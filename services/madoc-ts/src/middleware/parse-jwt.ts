@@ -27,9 +27,10 @@ export const parseJwt: RouteMiddleware<{ slug?: string }> = async (context, next
     if (cookie) {
       try {
         const token = verifySignedToken(cookie);
-        if (token) {
+        const parsedToken = token ? parseJWT(token) : undefined;
+        if (parsedToken && parsedToken.scope.length) {
           // Set the internal state to the JWT.
-          context.state.jwt = parseJWT(token);
+          context.state.jwt = parsedToken;
         } else {
           // Otherwise UN-set the cookie.
           context.cookies.set(cookieName, { signed: true });

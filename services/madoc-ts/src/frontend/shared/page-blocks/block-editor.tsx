@@ -1,13 +1,15 @@
 import { defaultTheme, Revisions } from '@capture-models/editor';
 import { captureModelShorthand, hydrateCompressedModel, serialiseCaptureModel } from '@capture-models/helpers';
-import { CaptureModel } from '@capture-models/types';
+import { CaptureModel, RevisionRequest } from '@capture-models/types';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { ThemeProvider } from 'styled-components';
 import { PageBlockDefinition } from '../../../extensions/page-blocks/extension';
 import { EditorialContext, SiteBlock, SiteBlockRequest } from '../../../types/schemas/site-page';
-import { ViewDocument } from '../../admin/pages/content/site-configuration';
 import { Button, ButtonRow, TinyButton } from '../atoms/Button';
+import { EditorSlots } from '../caputre-models/new/components/EditorSlots';
+import { RevisionProviderWithFeatures } from '../caputre-models/new/components/RevisionProviderWithFeatures';
+import { ViewDocument } from '../caputre-models/ViewDocument';
 import { ModalButton } from '../components/Modal';
 import { useApi } from '../hooks/use-api';
 import { createRevisionFromDocument } from '../utility/create-revision-from-document';
@@ -169,6 +171,19 @@ export function useBlockModel(block: SiteBlock | SiteBlockRequest, advanced?: bo
   }, [value, definition, defaultFields]);
 }
 
+const OnChangeDocument: React.FC<{ onChange: (revision: CaptureModel['document']) => void }> = ({ onChange }) => {
+  const currentRevision = Revisions.useStoreState(s => s.currentRevision);
+  const document = currentRevision?.document;
+
+  useEffect(() => {
+    if (document) {
+      onChange(document);
+    }
+  }, [onChange, document, currentRevision]);
+
+  return null;
+};
+
 export const useBlockEditor = (
   block: SiteBlock | SiteBlockRequest,
   onChange?: (block: SiteBlock | SiteBlockRequest) => void,
@@ -229,17 +244,21 @@ export const useBlockEditor = (
         },
       }}
     >
-      <Revisions.Provider captureModel={revision.model} initialRevision={revision.revisionId}>
-        <ViewDocument
-          allowEdits={false}
+      <RevisionProviderWithFeatures
+        captureModel={revision.model}
+        initialRevision={revision.revisionId}
+        slotConfig={{ editor: { allowEditing: true } }}
+      >
+        <OnChangeDocument
           onChange={newRevision => {
-            latestRevision.current = newRevision;
             if (onChange) {
+              latestRevision.current = newRevision;
               onChange(modelToBlock(newRevision, block, advanced));
             }
           }}
         />
-      </Revisions.Provider>
+        <EditorSlots.TopLevelEditor />
+      </RevisionProviderWithFeatures>
     </ThemeProvider>
   ) : null;
 

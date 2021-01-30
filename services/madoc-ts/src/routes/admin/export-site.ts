@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { sql } from 'slonik';
+import { ResourceLinkRow } from '../../database/queries/linking-queries';
 import { api } from '../../gateway/api.server';
 import { Site } from '../../types/omeka/Site';
 import { SitePermission } from '../../types/omeka/SitePermission';
@@ -76,7 +77,9 @@ export const exportSite: RouteMiddleware = async context => {
   );
 
   //    - IIIF linking
-  const iiifLinking = context.connection.any(sql`select * from iiif_linking where site_id = ${siteId}`);
+  const iiifLinking = context.connection.any<ResourceLinkRow>(
+    sql`select * from iiif_linking where site_id = ${siteId}`
+  );
 
   //    - IIIF metadata
   const iiifMetadata = context.connection.any(sql`select * from iiif_metadata where site_id = ${siteId}`);
@@ -91,7 +94,14 @@ export const exportSite: RouteMiddleware = async context => {
   const siteApi = api.asUser({ siteId });
 
   // - Grab tasks tables (where site = blah)
-  const blacklistTypes = ['madoc-manifest-import', 'madoc-canvas-import', 'madoc-collection-import'];
+  const blacklistTypes = [
+    'madoc-manifest-import',
+    'madoc-canvas-import',
+    'madoc-collection-import',
+    'search-index-task',
+    'madoc-ocr-manifest',
+    'canvas-ocr-manifest',
+  ];
   const tasks = await siteApi.request(`/api/tasks/export-all`);
   const tasksToSave = (tasks as any).tasks.filter((t: any) => blacklistTypes.indexOf(t.type) === -1);
 
@@ -129,6 +139,20 @@ export const exportSite: RouteMiddleware = async context => {
     }
   });
 
+  const loadedLinking = await iiifLinking;
+  const linkingStorage = [];
+  for (const linkingProperty of loadedLinking) {
+    // White-list this as we go.
+    if (linkingProperty.file_bucket && linkingProperty.file_path && linkingProperty.format === 'application/json') {
+      linkingStorage.push({
+        data: await siteApi.getStorageJsonData(linkingProperty.file_bucket, linkingProperty.file_path),
+        bucket: linkingProperty.file_bucket,
+        path: linkingProperty.file_path,
+        format: 'json',
+      });
+    }
+  }
+
   // - Canvas OCR
 
   context.response.body = {
@@ -140,6 +164,7 @@ export const exportSite: RouteMiddleware = async context => {
     },
     files: {
       resources,
+      linkingStorage,
     },
     tasks: { tasks: tasksToSave },
     captureModelIds,

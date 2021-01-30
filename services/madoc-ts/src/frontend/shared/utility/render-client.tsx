@@ -1,4 +1,9 @@
 import cookies from 'browser-cookies';
+import { DndProvider } from 'react-dnd';
+// @ts-ignore
+import MultiBackend from 'react-dnd-multi-backend';
+// @ts-ignore
+import HTML5toTouch from 'react-dnd-multi-backend/dist/cjs/HTML5toTouch';
 import { ReactQueryCacheProvider, ReactQueryConfig, ReactQueryConfigProvider } from 'react-query';
 import { Hydrate } from 'react-query/hydration';
 import { createBackend } from '../../../middleware/i18n/i18next.client';
@@ -8,7 +13,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { api } from '../../../gateway/api.browser';
 import React from 'react';
 import { UniversalRoute } from '../../types';
-import { NotFoundPage } from '../components/NotFoundPage';
+import { ErrorPage } from '../components/NotFoundPage';
 import { ErrorBoundary } from './error-boundary';
 import { queryConfig } from './query-config';
 import { ReactQueryDevtools } from 'react-query-devtools';
@@ -42,10 +47,12 @@ export function renderClient(
             <Hydrate state={dehydratedState}>
               <I18nextProvider i18n={i18n}>
                 <BrowserRouter basename={basename}>
-                  <ErrorBoundary onError={() => <NotFoundPage />}>
-                    <Component jwt={jwt} api={api} routes={routes} />
-                    {process.env.NODE_ENV === 'development' ? <ReactQueryDevtools /> : null}
-                  </ErrorBoundary>
+                  <DndProvider backend={MultiBackend} options={HTML5toTouch}>
+                    <ErrorBoundary onError={error => <ErrorPage error={error} />}>
+                      <Component jwt={jwt} api={api} routes={routes} />
+                      {process.env.NODE_ENV === 'development' ? <ReactQueryDevtools /> : null}
+                    </ErrorBoundary>
+                  </DndProvider>
                 </BrowserRouter>
               </I18nextProvider>
             </Hydrate>
@@ -53,6 +60,8 @@ export function renderClient(
         </ReactQueryConfigProvider>,
         component
       );
+
+      component.classList.add('react-loaded');
     });
   }
 }

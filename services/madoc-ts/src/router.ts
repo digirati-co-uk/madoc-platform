@@ -1,5 +1,8 @@
 import { exportSite } from './routes/admin/export-site';
+import { getMetadataKeys } from './routes/admin/get-metadata-keys';
+import { getMetadataValues } from './routes/admin/get-metadata-values';
 import { importSite } from './routes/admin/import-site';
+import { getMetadataConfiguration, updateMetadataConfiguration } from './routes/admin/metadata-configuration';
 import { getSiteDetails } from './routes/admin/site-details';
 import { updateSiteConfiguration } from './routes/admin/update-site-configuration';
 import { createBlock } from './routes/content/create-block';
@@ -18,6 +21,7 @@ import { updateSlot } from './routes/content/update-slot';
 import { updateSlotStructure } from './routes/content/update-slot-structure';
 import { getCanvasPlaintext } from './routes/iiif/canvases/get-canvas-plaintext';
 import { batchIndex } from './routes/search/batch-index';
+import { getFacetConfiguration, updateFacetConfiguration } from './routes/search/facet-configuration';
 import { siteConfiguration } from './routes/site/site-configuration';
 import { convertLinking } from './routes/iiif/linking/convert-linking';
 import { getParentLinking } from './routes/iiif/linking/get-parent-linking';
@@ -109,6 +113,12 @@ export const router = new TypedRouter({
   'export-site': [TypedRouter.POST, '/api/madoc/site/:siteId/export', exportSite],
   'import-site': [TypedRouter.POST, '/api/madoc/site/:siteId/import', importSite],
   'update-site-configuration': [TypedRouter.POST, '/api/madoc/configuration', updateSiteConfiguration],
+  'update-search-facet-configuration': [
+    TypedRouter.POST,
+    '/api/madoc/configuration/search-facets',
+    updateFacetConfiguration,
+  ],
+  'update-metadata-configuration': [TypedRouter.POST, '/api/madoc/configuration/metadata', updateMetadataConfiguration],
   'site-details': [TypedRouter.GET, '/api/madoc/site/:siteId/details', getSiteDetails],
 
   // User API.
@@ -202,6 +212,8 @@ export const router = new TypedRouter({
   // Stats.
   'get-statistics': [TypedRouter.GET, '/api/madoc/iiif/statistics', statistics],
   'post-batch-index': [TypedRouter.POST, '/api/madoc/iiif/batch-index', batchIndex],
+  'get-metadata-keys': [TypedRouter.GET, '/api/madoc/iiif/metadata-keys', getMetadataKeys],
+  'get-metadata-values': [TypedRouter.GET, '/api/madoc/iiif/metadata-values', getMetadataValues],
 
   // Projects
   'create-project': [TypedRouter.POST, '/api/madoc/projects', createNewProject],
@@ -249,8 +261,8 @@ export const router = new TypedRouter({
   'post-login': [TypedRouter.POST, '/s/:slug/madoc/login', loginPage],
   'get-logout': [TypedRouter.GET, '/s/:slug/madoc/logout', logout],
   'refresh-login': [TypedRouter.POST, '/s/:slug/madoc/auth/refresh', refreshToken],
-  'assets-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleId/bundle.js', frontendBundles],
-  'assets-sub-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleId/:bundleName', frontendBundles],
+  'assets-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleId.bundle.js', frontendBundles],
+  'assets-sub-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleName', frontendBundles],
   'get-user-details': [TypedRouter.GET, '/s/:slug/madoc/api/me', userDetails],
 
   // New Site routes.
@@ -284,6 +296,16 @@ export const router = new TypedRouter({
     siteCanvasTasks,
   ],
   'site-configuration': [TypedRouter.GET, '/s/:slug/madoc/api/configuration', siteConfiguration],
+  'site-facet-configuration': [
+    TypedRouter.GET,
+    '/s/:slug/madoc/api/configuration/search-facets',
+    getFacetConfiguration,
+  ],
+  'site-metadata-configuration': [
+    TypedRouter.GET,
+    '/s/:slug/madoc/api/configuration/metadata',
+    getMetadataConfiguration,
+  ],
 
   // To be worked into API calling methods
   'manifest-search': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/search/1.0', searchManifest],
@@ -299,9 +321,9 @@ export const router = new TypedRouter({
   // 'get-page': [TypedRouter.GET, '/s/:slug/madoc/page/:pageSlug+', sitePage],
 
   // Frontend
-  'admin-frontend': [TypedRouter.GET, '/s/:slug/madoc/admin*', adminFrontend],
-  'site-frontend': [TypedRouter.GET, '/s/:slug/madoc*', siteFrontend],
+  'admin-frontend': [TypedRouter.GET, '/s/:slug/madoc/admin(.*)', adminFrontend],
+  'site-frontend': [TypedRouter.GET, '/s/:slug/madoc(.*)', siteFrontend],
 
   // Make sure this is last.
-  'omeka-404': [TypedRouter.GET, '/s/:slug/madoc*', madocNotFound],
+  'omeka-404': [TypedRouter.GET, '/s/:slug/madoc(.*)', madocNotFound],
 });

@@ -23,6 +23,10 @@ export const logout: RouteMiddleware<{ slug: string }> = async context => {
     }
   }
 
+  if (context.query.redirect && !context.query.redirect.startsWith('/')) {
+    context.query.redirect = '';
+  }
+
   // Redirect to Omeka.
   context.response.redirect(
     `/s/${context.params.slug}/logout${context.query.redirect ? `?redirect=${context.query.redirect}` : ''}`

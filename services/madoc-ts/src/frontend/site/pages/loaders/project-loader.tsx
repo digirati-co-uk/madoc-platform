@@ -8,6 +8,7 @@ import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
 import { ProjectFull } from '../../../../types/schemas/project-full';
 import { useParams, useRouteMatch } from 'react-router-dom';
 import { apiHooks } from '../../../shared/hooks/use-api-query';
+import { ConfigProvider } from '../../features/SiteConfigurationContext';
 
 type ProjectLoaderType = {
   params: { slug: string };
@@ -53,13 +54,15 @@ export const ProjectLoader: UniversalComponent<ProjectLoaderType> = createUniver
     }
 
     return (
-      <BreadcrumbContext project={ctx}>
-        {renderUniversalRoutes(route.routes, {
-          project,
-          collections,
-          manifests,
-        })}
-      </BreadcrumbContext>
+      <ConfigProvider project={project?.config}>
+        <BreadcrumbContext project={ctx}>
+          {renderUniversalRoutes(route.routes, {
+            project,
+            collections,
+            manifests,
+          })}
+        </BreadcrumbContext>
+      </ConfigProvider>
     );
   },
   {

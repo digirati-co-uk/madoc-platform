@@ -36,10 +36,10 @@ export const InputBorderless = styled.input`
   }
 `;
 
-export const InputContainer = styled.div<{ wide?: boolean }>`
+export const InputContainer = styled.div<{ wide?: boolean; fluid?: boolean }>`
   display: flex;
   flex-direction: column;
-  max-width: ${props => (props.wide ? '550px' : '360px')};
+  max-width: ${props => (props.fluid ? '100%' : props.wide ? '550px' : '360px')};
   margin: 0.5em 0;
 `;
 

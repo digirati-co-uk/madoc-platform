@@ -27,7 +27,7 @@ export function parseJWT(token: TokenReturn, asUser?: { userId?: number; siteId?
         : Number(token.payload.iss.split('urn:madoc:site:')[1]),
       name: token.payload.iss_name,
     },
-    scope: token.payload.scope.split(' '),
+    scope: token.payload.scope.split(' ').filter(e => e),
     context: [token.payload.iss],
   };
 }

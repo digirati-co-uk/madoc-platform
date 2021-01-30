@@ -2,7 +2,7 @@ FROM node:12
 
 WORKDIR /home/node/app
 
-RUN npm install -g pm2 ts-node
+RUN npm install -g pm2@4.5.1 ts-node
 
 COPY ./package.json /home/node/app/package.json
 COPY ./yarn.lock /home/node/app/yarn.lock
@@ -17,8 +17,7 @@ COPY ./tsconfig.json /home/node/app/tsconfig.json
 COPY ./tsconfig.frontend.json /home/node/app/tsconfig.frontend.json
 COPY ./migrations /home/node/app/migrations
 COPY ./config.json /home/node/app/config.json
-COPY ./webpack.frontend.js /home/node/app/webpack.frontend.js
-COPY ./webpack.production.js /home/node/app/webpack.production.js
+COPY ./webpack.config.js /home/node/app/webpack.config.js
 COPY ./generate-schemas.js /home/node/app/generate-schemas.js
 COPY ./translations /home/node/app/translations
 COPY ./schemas /home/node/app/schemas

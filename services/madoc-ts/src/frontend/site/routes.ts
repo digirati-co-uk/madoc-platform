@@ -10,43 +10,50 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
   const routes = [
     {
       path: '/collections',
-      component: components.AllCollections,
       exact: true,
+      component: components.CollectionListLoader,
+      routes: [
+        {
+          path: '/collections',
+          component: components.AllCollections,
+          exact: true,
+        },
+      ],
     },
     {
-      path: '/collections/:id',
+      path: '/collections/:collectionId',
       component: components.CollectionLoader,
       routes: [
         {
-          path: '/collections/:id',
+          path: '/collections/:collectionId',
           exact: true,
           component: components.ViewCollection,
         },
         {
-          path: '/collections/:collectionId/manifests/:id',
+          path: '/collections/:collectionId/manifests/:manifestId',
           component: components.ManifestLoader,
           routes: [
             {
-              path: '/collections/:collectionId/manifests/:id',
+              path: '/collections/:collectionId/manifests/:manifestId',
               exact: true,
               component: components.ViewManifest,
             },
             {
-              path: '/collections/:collectionId/manifests/:id/mirador',
+              path: '/collections/:collectionId/manifests/:manifestId/mirador',
               exact: true,
               component: components.ViewManifestMirador,
             },
             {
-              path: '/collections/:collectionId/manifests/:manifestId/c/:id',
+              path: '/collections/:collectionId/manifests/:manifestId/c/:canvasId',
               component: components.CanvasLoader,
               routes: [
                 {
-                  path: '/collections/:collectionId/manifests/:manifestId/c/:id',
+                  path: '/collections/:collectionId/manifests/:manifestId/c/:canvasId',
                   exact: true,
                   component: components.ViewCanvas,
                 },
                 {
-                  path: '/collections/:collectionId/manifests/:manifestId/c/:id/model',
+                  path: '/collections/:collectionId/manifests/:manifestId/c/:canvasId/model',
                   exact: true,
                   component: components.ViewCanvasModel,
                 },
@@ -91,34 +98,41 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
     },
     {
       path: '/manifests',
-      component: components.AllManifests,
+      component: components.ManifestListLoader,
       exact: true,
+      routes: [
+        {
+          path: '/manifests',
+          component: components.AllManifests,
+          exact: true,
+        },
+      ],
     },
     {
-      path: '/manifests/:id',
+      path: '/manifests/:manifestId',
       component: components.ManifestLoader,
       routes: [
         {
-          path: '/manifests/:id',
+          path: '/manifests/:manifestId',
           exact: true,
           component: components.ViewManifest,
         },
         {
-          path: '/manifests/:id/mirador',
+          path: '/manifests/:manifestId/mirador',
           exact: true,
           component: components.ViewManifestMirador,
         },
         {
-          path: '/manifests/:manifestId/c/:id',
+          path: '/manifests/:manifestId/c/:canvasId',
           component: components.CanvasLoader,
           routes: [
             {
-              path: '/manifests/:manifestId/c/:id',
+              path: '/manifests/:manifestId/c/:canvasId',
               exact: true,
               component: components.ViewCanvas,
             },
             {
-              path: '/manifests/:manifestId/c/:id/model',
+              path: '/manifests/:manifestId/c/:canvasId/model',
               exact: true,
               component: components.ViewCanvasModel,
             },
@@ -150,8 +164,15 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
     },
     {
       path: '/projects',
-      component: components.AllProjects,
+      component: components.ProjectListLoader,
       exact: true,
+      routes: [
+        {
+          path: '/projects',
+          component: components.AllProjects,
+          exact: true,
+        },
+      ],
     },
     {
       path: '/projects/:slug',
@@ -165,42 +186,49 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
         {
           path: '/projects/:slug/collections',
           exact: true,
-          component: components.AllCollections,
+          component: components.CollectionListLoader,
+          routes: [
+            {
+              path: '/projects/:slug/collections',
+              exact: true,
+              component: components.AllCollections,
+            },
+          ],
         },
         {
-          path: '/projects/:slug/collections/:id',
+          path: '/projects/:slug/collections/:collectionId',
           component: components.CollectionLoader,
           routes: [
             {
-              path: '/projects/:slug/collections/:id',
+              path: '/projects/:slug/collections/:collectionId',
               exact: true,
               component: components.ViewCollection,
             },
             {
-              path: '/projects/:slug/collections/:collectionId/manifests/:id',
+              path: '/projects/:slug/collections/:collectionId/manifests/:manifestId',
               component: components.ManifestLoader,
               routes: [
                 {
-                  path: '/projects/:slug/collections/:collectionId/manifests/:id',
+                  path: '/projects/:slug/collections/:collectionId/manifests/:manifestId',
                   exact: true,
                   component: components.ViewManifest,
                 },
                 {
-                  path: '/projects/:slug/collections/:collectionId/manifests/:id/mirador',
+                  path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/mirador',
                   exact: true,
                   component: components.ViewManifestMirador,
                 },
                 {
-                  path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/c/:id',
+                  path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/c/:canvasId',
                   component: components.CanvasLoader,
                   routes: [
                     {
-                      path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/c/:id',
+                      path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/c/:canvasId',
                       exact: true,
                       component: components.ViewCanvas,
                     },
                     {
-                      path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/c/:id/model',
+                      path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/c/:canvasId/model',
                       exact: true,
                       component: components.ViewCanvasModel,
                     },
@@ -245,34 +273,41 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
         },
         {
           path: '/projects/:slug/manifests',
-          component: components.AllManifests,
+          component: components.ManifestListLoader,
           exact: true,
+          routes: [
+            {
+              path: '/projects/:slug/manifests',
+              component: components.AllManifests,
+              exact: true,
+            },
+          ],
         },
         {
-          path: '/projects/:slug/manifests/:id',
+          path: '/projects/:slug/manifests/:manifestId',
           component: components.ManifestLoader,
           routes: [
             {
-              path: '/projects/:slug/manifests/:id',
+              path: '/projects/:slug/manifests/:manifestId',
               exact: true,
               component: components.ViewManifest,
             },
             {
-              path: '/projects/:slug/manifests/:id/mirador',
+              path: '/projects/:slug/manifests/:manifestId/mirador',
               exact: true,
               component: components.ViewManifestMirador,
             },
             {
-              path: '/projects/:slug/manifests/:manifestId/c/:id',
+              path: '/projects/:slug/manifests/:manifestId/c/:canvasId',
               component: components.CanvasLoader,
               routes: [
                 {
-                  path: '/projects/:slug/manifests/:manifestId/c/:id',
+                  path: '/projects/:slug/manifests/:manifestId/c/:canvasId',
                   exact: true,
                   component: components.ViewCanvas,
                 },
                 {
-                  path: '/projects/:slug/manifests/:manifestId/c/:id/model',
+                  path: '/projects/:slug/manifests/:manifestId/c/:canvasId/model',
                   exact: true,
                   component: components.ViewCanvasModel,
                 },
@@ -308,16 +343,16 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
           component: components.AllTasks,
         },
         {
-          path: '/projects/:slug/tasks/:id',
+          path: '/projects/:slug/tasks/:taskId',
           component: components.TaskLoader,
           routes: [
             {
-              path: '/projects/:slug/tasks/:id',
+              path: '/projects/:slug/tasks/:taskId',
               exact: true,
               component: components.ViewTask,
             },
             {
-              path: '/projects/:slug/tasks/:parentId/subtasks/:id',
+              path: '/projects/:slug/tasks/:parentTaskId/subtasks/:taskId',
               exact: true,
               component: components.ViewTask,
             },
@@ -342,16 +377,16 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
       component: components.AllTasks,
     },
     {
-      path: '/tasks/:id',
+      path: '/tasks/:taskId',
       component: components.TaskLoader,
       routes: [
         {
-          path: '/tasks/:id',
+          path: '/tasks/:taskId',
           exact: true,
           component: components.ViewTask,
         },
         {
-          path: '/tasks/:parentId/subtasks/:id',
+          path: '/tasks/:parentTaskId/subtasks/:taskId',
           exact: true,
           component: components.ViewTask,
         },
@@ -361,21 +396,6 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
       path: '/users/:id',
       exact: true,
       component: components.ViewUser,
-    },
-    {
-      path: '/topics',
-      exact: true,
-      component: components.AllTopicTypes,
-    },
-    {
-      path: '/topics/:type',
-      exact: true,
-      component: components.ViewTopicType,
-    },
-    {
-      path: '/topics/:type/:topic',
-      exact: true,
-      component: components.ViewTopic,
     },
     {
       path: '/search',
@@ -402,5 +422,12 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
 
   // hookRoutes(routes);
 
-  return routes;
+  return [
+    {
+      path: '/',
+      exact: false,
+      routes: routes,
+      component: components.RootLoader,
+    },
+  ];
 }

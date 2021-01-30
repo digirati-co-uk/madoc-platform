@@ -10,7 +10,7 @@ export const AtlasTiledImages: React.FC<{ canvas: CanvasNormalized; service: Ima
   const runtime = useRuntime();
 
   useEffect(() => {
-    if (service) {
+    if (service && runtime) {
       getTileFromImageService((service as any).id, canvas.width, canvas.height).then(s => {
         setTile(s); // only show the first image.
         // @todo change this to be when the new image is REPLACED in the frame. Maybe better done at Atlas level.
