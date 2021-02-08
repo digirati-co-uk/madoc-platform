@@ -1,6 +1,7 @@
 import { InternationalString } from '@hyperion-framework/types';
 import React, { useMemo, useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { LocaleString } from './LocaleString';
 import styled, { css } from 'styled-components';
 
@@ -94,7 +95,7 @@ export const BreadcrumbContext: React.FC<BreadcrumbContextType> = ({
   return <BreadcrumbReactContext.Provider value={ctx}>{children}</BreadcrumbReactContext.Provider>;
 };
 
-export const DisplayBreadcrumbs: React.FC = () => {
+export const DisplayBreadcrumbs: React.FC<{ label?: string }> = () => {
   const breads = useBreadcrumbs();
   const location = useLocation();
 
@@ -236,3 +237,14 @@ export const DisplayBreadcrumbs: React.FC = () => {
     </BreadcrumbList>
   );
 };
+
+blockEditorFor(DisplayBreadcrumbs, {
+  type: 'default.DisplayBreadcrumbs',
+  label: 'Display breadcrumbs',
+  anyContext: ['collection', 'manifest', 'canvas', 'project'],
+  editor: {
+    label: {
+      type: 'text-field',
+    },
+  },
+});

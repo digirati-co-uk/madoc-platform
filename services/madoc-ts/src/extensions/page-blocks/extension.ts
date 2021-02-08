@@ -12,6 +12,7 @@ import {
 } from '../../types/schemas/site-page';
 import { SitePage } from '../../types/site-pages-recursive';
 import { BaseExtension } from '../extension-manager';
+import { reactBlockEmitter } from './block-editor-react';
 
 export type PageBlockDefinition<
   Data extends any,
@@ -25,6 +26,7 @@ export type PageBlockDefinition<
   model: CaptureModel['document'];
   defaultData: Data;
   requiredContext?: RequiredContext[];
+  anyContext?: RequiredContext[];
   render: (data: Data, context: EditorialContext, api: ApiClient) => Return;
 };
 
@@ -51,6 +53,10 @@ export class PageBlockExtension implements BaseExtension {
     for (const definition of definitions) {
       this.definitionMap[definition.type] = definition;
     }
+
+    reactBlockEmitter.on('block', block => {
+      this.definitionMap[block.type] = block;
+    });
   }
 
   createBlankBlock(type: string): SiteBlockRequest {
@@ -73,19 +79,29 @@ export class PageBlockExtension implements BaseExtension {
   }
 
   getDefinitions(context: EditorialContext = {}) {
+    // Configuration blocks.
     const definitions = Object.values(this.definitionMap);
+
     const currentCtxKeys = Object.keys(context).filter((key: any) => {
       return !!(context as any)[key];
     });
 
     return definitions.filter(definition => {
-      if (!definition.requiredContext) {
+      if (!definition.requiredContext && !definition.anyContext) {
         return true;
       }
-      for (const ctx of definition.requiredContext) {
-        console.log(ctx, currentCtxKeys);
-        if (currentCtxKeys.indexOf(ctx) === -1) {
-          return false;
+      if (definition.requiredContext) {
+        for (const ctx of definition.requiredContext) {
+          if (currentCtxKeys.indexOf(ctx) === -1) {
+            return false;
+          }
+        }
+      }
+      if (definition.anyContext) {
+        for (const ctx of definition.anyContext) {
+          if (currentCtxKeys.indexOf(ctx) !== -1) {
+            return true;
+          }
         }
       }
       return true;

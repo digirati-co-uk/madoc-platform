@@ -104,8 +104,9 @@ export const ViewManifest: React.FC<{
                 </Link>
               ))}
             </ImageGrid>
-
-            <ManifestMetadata compact />
+            <div style={{ width: 320 }}>
+              <ManifestMetadata compact />
+            </div>
           </div>
         </>
       ) : null}

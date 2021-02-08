@@ -1,7 +1,7 @@
 import { InternationalString } from '@hyperion-framework/types/iiif/descriptive';
 
 export type EditorialContext = {
-  project?: number;
+  project?: string;
   collection?: number;
   manifest?: number;
   canvas?: number;
@@ -49,6 +49,7 @@ export type CreateSlotRequest = {
     canvas?: SlotFilterConfig;
   };
   pageId?: number;
+  blocks?: SiteBlockRequest[];
 };
 
 export type SitePageRow = {
