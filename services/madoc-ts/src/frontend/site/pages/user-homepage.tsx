@@ -1,3 +1,8 @@
+import { useTranslation } from 'react-i18next';
+import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
+import { DashboardTab, DashboardTabs } from '../../shared/components/DashboardTabs';
+import { HrefLink } from '../../shared/utility/href-link';
+import { renderUniversalRoutes } from '../../shared/utility/server-utils';
 import { UniversalComponent } from '../../types';
 import { createUniversalComponent } from '../../shared/utility/create-universal-component';
 import { useStaticData } from '../../shared/hooks/use-data';
@@ -13,6 +18,8 @@ import { ReviewerTasks } from '../features/ReviewerTasks';
 import { UserGreeting } from '../features/UserGreeting';
 import { UserProjects } from '../features/UserProjects';
 import { UserStatistics } from '../features/UserStatistics';
+import { useRelativeLinks } from '../hooks/use-relative-links';
+import { useUserHomepage } from '../hooks/use-user-homepage';
 
 type UserHomepageType = {
   query: {};
@@ -31,8 +38,11 @@ type UserHomepageType = {
 };
 
 export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversalComponent<UserHomepageType>(
-  () => {
+  ({ route }) => {
     const { data, error } = useStaticData(UserHomepage, {}, { retry: false });
+    const location = useLocation();
+
+    const showReviews = data && isReviewer(data.userDetails);
 
     if (error) {
       return <a href="/login">Please login</a>;
@@ -47,15 +57,21 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
       <div>
         <UserGreeting />
 
-        <DashboardNavigation />
+        <DashboardTabs>
+          <DashboardTab $active={location.pathname === '/'}>
+            <HrefLink href="/">Overview</HrefLink>
+          </DashboardTab>
+          <DashboardTab $active={location.pathname === '/dashboard/contributions'}>
+            <HrefLink href="/dashboard/contributions">Contributions</HrefLink>
+          </DashboardTab>
+          {showReviews && (
+            <DashboardTab $active={location.pathname === '/dashboard/reviews'}>
+              <HrefLink href="/dashboard/reviews">Reviews</HrefLink>
+            </DashboardTab>
+          )}
+        </DashboardTabs>
 
-        <UserStatistics />
-
-        <ReviewerTasks />
-
-        <ContributorTasks />
-
-        <UserProjects />
+        {renderUniversalRoutes(route.routes)}
       </div>
     );
   },
