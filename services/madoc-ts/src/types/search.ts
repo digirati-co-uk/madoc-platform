@@ -91,7 +91,32 @@ export type SearchQuery = {
   iiif_identifiers?: string[];
 
   /** List of values of facets to search for */
-  facets?: string;
+  facets?: Array<
+    | {
+        type: string;
+        subtype: string;
+        value: string;
+      }
+    | {
+        type: string;
+        subtype: string;
+        value?: string;
+        field_lookup?: string;
+        indexable_int?: number;
+        indexable_float?: number;
+        indexable_date_range_start?: string;
+        indexable_date_range_end?: string;
+      }
+    // Unknown if this is supported.
+    | {
+        type: string;
+        subtype: string;
+        value: number;
+        operator: 'exact' | 'lt' | 'gt' | 'lte' | 'gte';
+      }
+  >;
+
+  raw?: { [field: string]: string };
 
   /** single madoc id to search within  */
   madoc_id?: string;

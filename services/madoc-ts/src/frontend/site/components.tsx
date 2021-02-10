@@ -13,7 +13,7 @@ export { ViewProject } from './pages/view-project';
 export { AllTasks } from './pages/all-tasks';
 export { ViewTask } from './pages/view-task';
 export { TaskLoader } from './pages/loaders/task-loader';
-export { Search } from './pages/search';
+export { Search } from './pages/search-2';
 export { AllManifests } from './pages/all-manifests';
 export { ManifestListLoader } from './pages/loaders/manifest-list-loader';
 export { UserHomepage } from './pages/user-homepage';
