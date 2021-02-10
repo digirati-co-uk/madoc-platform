@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { SearchResult } from '../../../types/search';
 import { parseUrn } from '../../../utility/parse-urn';
+import { useRouteContext } from '../../site/hooks/use-route-context';
 import { CroppedImage } from '../atoms/Images';
 import { ImageStripBox } from '../atoms/ImageStrip';
 import { GridContainer } from '../atoms/Grid';
@@ -66,8 +67,11 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; sea
   const things = ((result && result.contexts) || []).map(value => {
     return parseUrn(value.id);
   });
-
-  const collectionId = things.find(thing => thing?.type.toLowerCase() === 'collection')?.id;
+  const routeContext = useRouteContext();
+  const projectId = routeContext.projectId;
+  const collectionId = routeContext.collectionId
+    ? routeContext.collectionId
+    : things.find(thing => thing?.type.toLowerCase() === 'collection')?.id;
   const manifestId = things.find(thing => thing?.type.toLowerCase() === 'manifest')?.id;
   const canvasId = things.find(thing => thing?.type.toLowerCase() === 'canvas')?.id;
   const searchText = result.hits[0] && result.hits[0].bounding_boxes ? search : undefined;
@@ -77,6 +81,7 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; sea
     <ResultContainer>
       <HrefLink
         href={createLink({
+          projectId,
           manifestId,
           canvasId,
           collectionId,

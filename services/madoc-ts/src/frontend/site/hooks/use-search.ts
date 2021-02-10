@@ -2,6 +2,7 @@ import { InternationalString } from '@hyperion-framework/types/iiif/descriptive'
 import { useMemo } from 'react';
 import { FacetConfig } from '../../shared/components/MetadataFacetEditor';
 import { apiHooks, paginatedApiHooks } from '../../shared/hooks/use-api-query';
+import { useRouteContext } from './use-route-context';
 import { useSearchQuery } from './use-search-query';
 
 function normalizeDotKey(key: string) {
@@ -9,6 +10,7 @@ function normalizeDotKey(key: string) {
 }
 
 export function useSearch() {
+  const { projectId, collectionId, manifestId } = useRouteContext();
   const { fulltext, appliedFacets, page } = useSearchQuery();
   const searchFacetConfig = apiHooks.getSiteSearchFacetConfiguration(() => []);
 
@@ -37,6 +39,9 @@ export function useSearch() {
   const searchResponse = paginatedApiHooks.getSiteSearchQuery(
     () => [
       {
+        projectId,
+        collectionId,
+        manifestId,
         fulltext: fulltext,
         facet_fields: facetsToRequest.length ? facetsToRequest : undefined,
         //  @todo stringify facets.
@@ -45,6 +50,7 @@ export function useSearch() {
           subtype: facet.k,
           value: facet.v,
         })),
+        facet_on_manifests: true,
         number_of_facets: searchFacetConfig.data?.facets.length ? 100 : undefined,
         //facets_: [{ type: 'metadata', subtype: 'title', value: 'Wunder der Vererbung' }],
         // contexts: query.madoc_id ? [query.madoc_id] : undefined,
@@ -52,7 +58,9 @@ export function useSearch() {
       page,
     ],
     {
-      enabled: !searchFacetConfig.isLoading && (!!facetsToRequest.length || !!fulltext),
+      enabled:
+        !searchFacetConfig.isLoading &&
+        (!!facetsToRequest.length || !!fulltext || collectionId || manifestId || projectId),
     }
   );
 

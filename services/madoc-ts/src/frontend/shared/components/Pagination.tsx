@@ -39,7 +39,7 @@ export const Pagination: React.FC<{
   stale,
   totalPages: propsTotalPages,
   pageParam = 'page',
-  extraQuery: { page: _, ...extraQuery },
+  extraQuery: { page: _, ...extraQuery } = {},
 }) => {
   const [page, setStalePage] = useState(propsPage);
   const [totalPages, setStaleTotalPages] = useState(propsTotalPages);
@@ -76,11 +76,11 @@ export const Pagination: React.FC<{
   return (
     <PaginationContainer>
       <SmallRoundedButton
-        disabled={!prevPage}
+        disabled={!prevPage || isLoading}
         as={HrefLink}
         href={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}`}
       >
-        {t('Previous page')}
+        {isLoading ? t('loading...') : t('Previous page')}
       </SmallRoundedButton>
       <PaginationDisplay style={{ color: isLoading ? '#999' : '#666' }}>
         Page {isLoading ? '...' : page} of {totalPages}
@@ -88,10 +88,10 @@ export const Pagination: React.FC<{
 
       <SmallRoundedButton
         as={HrefLink}
-        disabled={!nextPage}
+        disabled={!nextPage || isLoading}
         href={`${pathname}?${pageParam}=${page + 1}${q ? `&${q}` : ''}`}
       >
-        {t('Next page')}
+        {isLoading ? t('loading...') : t('Next page')}
       </SmallRoundedButton>
     </PaginationContainer>
   );

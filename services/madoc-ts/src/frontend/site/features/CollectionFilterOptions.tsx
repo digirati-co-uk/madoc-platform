@@ -34,7 +34,7 @@ export const CollectionFilterOptions: React.FC = () => {
           {filter ? t('Show completed') : t('Hide completed')}
         </Button>
       ) : null}
-      <Button as={Link} to={`/search?madoc_id=urn:madoc:collection:${collection.id}`}>
+      <Button as={Link} to={createLink({ subRoute: 'search' })}>
         {t('Search this collection')}
       </Button>
     </ButtonRow>

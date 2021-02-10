@@ -42,7 +42,7 @@ export const ManifestActions: React.FC = () => {
         </Button>
       ) : null}
 
-      <Button as={Link} to={`/search?madoc_id=urn:madoc:manifest:${manifestId}`}>
+      <Button as={Link} to={createLink({ subRoute: 'search' })}>
         {t('Search this manifest')}
       </Button>
     </ButtonRow>

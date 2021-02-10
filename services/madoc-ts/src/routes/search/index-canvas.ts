@@ -1,5 +1,6 @@
 import { traverseDocument } from '@capture-models/helpers';
 import { BaseField } from '@capture-models/types';
+import { sql } from 'slonik';
 import {
   isParagraphEntity,
   ParagraphEntity,
@@ -24,6 +25,29 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
       : `http://madoc.dev/urn:madoc:canvas:${canvasId}`;
 
   const manifestsWithin = await context.connection.any(getParentResources(canvasId as any, siteId));
+  const projectsWithin = manifestsWithin.length
+    ? await context.connection.any<{ id: number }>(
+        sql`select ip.id from iiif_derived_resource_items cols
+        left join iiif_derived_resource ir on ir.resource_id = cols.resource_id
+        left join iiif_project ip on ip.collection_id = ir.resource_id
+        where item_id = ANY (${sql.array(
+          manifestsWithin.map(r => r.resource_id),
+          sql`int[]`
+        )}) and cols.site_id = ${Number(siteId)} and ir.flat = true`
+      )
+    : [];
+
+  const collectionsWithin = manifestsWithin.length
+    ? await context.connection.any<{ resource_id: number }>(
+        sql`select cols.resource_id from iiif_derived_resource_items cols
+        left join iiif_derived_resource ir on ir.resource_id = cols.resource_id
+        where item_id = ANY (${sql.array(
+          manifestsWithin.map(r => r.resource_id),
+          sql`int[]`
+        )}) and cols.site_id = ${Number(siteId)} and ir.flat = false`
+      )
+    : [];
+
   const searchPayload: SearchIngestRequest = {
     id: `urn:madoc:canvas:${canvasId}`,
     type: 'Canvas',
@@ -42,6 +66,12 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
     thumbnail: canvas.thumbnail as string,
     contexts: [
       { id: siteUrn, type: 'Site' },
+      ...projectsWithin.map(({ id }) => {
+        return { id: `urn:madoc:project:${id}`, type: 'Project' };
+      }),
+      ...collectionsWithin.map(({ resource_id }) => {
+        return { id: `urn:madoc:collection:${resource_id}`, type: 'Collection' };
+      }),
       // Should this be contexts or manifests here? Do canvases have site contexts too?
       ...manifestsWithin.map(({ resource_id }) => {
         return { id: `urn:madoc:manifest:${resource_id}`, type: 'Manifest' };
