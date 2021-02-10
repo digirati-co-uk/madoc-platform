@@ -16,7 +16,7 @@ import { TableContainer, TableRow, TableRowLabel } from '../src/frontend/shared/
 import { Status } from '../src/frontend/shared/atoms/Status';
 import { GridContainer, HalfGird } from '../src/frontend/shared/atoms/Grid';
 
-export const StorybookPaddedBox = styled.div`
+const StorybookPaddedBox = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 1em;

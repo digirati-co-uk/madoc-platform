@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
+import * as React from 'react';
 import { TabPanel } from '../src/frontend/shared/components/TabPanel';
 
 export default { title: 'Tab Panel' };
 
-export const tabPanel = () => {
-  const [selected, setSelected] = useState(0);
+export const Tab_Panel = () => {
+  const [selected, setSelected] = React.useState(0);
   return (
     <TabPanel
       menu={[
@@ -15,6 +15,4 @@ export const tabPanel = () => {
       selected={selected}
     />
   );
-  }
-
-
+};
