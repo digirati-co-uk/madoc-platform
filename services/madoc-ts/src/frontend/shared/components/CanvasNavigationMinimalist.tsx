@@ -14,7 +14,7 @@ const PaginationButton = styled.button`
   margin: 0.5rem;
 `;
 
-const PaginationContainer = styled.div`
+export const PaginationContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -60,7 +60,7 @@ export const CanvasNavigationMinimalist: React.FC<{
   }
 
   return (
-    <PaginationContainer style={{ display: 'flex'}}>
+    <PaginationContainer style={{ display: 'flex' }}>
       {idx > 0 ? (
         <NavigationButton
           alignment="left"
@@ -75,7 +75,7 @@ export const CanvasNavigationMinimalist: React.FC<{
           item={structure.data.items[idx - 1]}
         />
       ) : null}
-      {<p>{`${idx + 1} of ${structure.data.items.length  > 1 ? structure.data.items.length + 1 : 1}`}</p>}
+      {<p>{`${idx + 1} of ${structure.data.items.length > 1 ? structure.data.items.length + 1 : 1}`}</p>}
       {idx < structure.data.items.length - 1 ? (
         <NavigationButton
           alignment="right"
