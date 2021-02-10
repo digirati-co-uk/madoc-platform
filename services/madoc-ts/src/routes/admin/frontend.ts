@@ -22,6 +22,14 @@ export const adminFrontend: RouteMiddleware = context => {
       jwt: token,
       basename: `/s/${context.params.slug}/madoc/admin`,
       i18next: context.i18next.cloneInstance({ initImmediate: false }),
+      site: context.omeka.getSiteIdBySlug(context.params.slug),
+      user:
+        context.state.jwt && context.state.jwt.user && context.state.jwt.user.id
+          ? {
+              name: context.state.jwt.user.name,
+              id: context.state.jwt.user.id,
+            }
+          : undefined,
     });
 
     if (result.type === 'redirect') {
@@ -44,7 +52,8 @@ export const adminFrontend: RouteMiddleware = context => {
 
 export const siteFrontend: RouteMiddleware = context => {
   const bundle = context.routes.url('assets-bundles', { slug: context.params.slug, bundleId: 'site' });
-  context.omekaMinimal = false;
+  context.omekaMinimal = true;
+
   context.omekaPage = async token => {
     const result = await renderSite({
       url: context.req.url || '',
@@ -52,6 +61,14 @@ export const siteFrontend: RouteMiddleware = context => {
       basename: `/s/${context.params.slug}/madoc`,
       i18next: context.i18next.cloneInstance({ initImmediate: false }),
       siteSlug: context.params.slug,
+      site: context.omeka.getSiteIdBySlug(context.params.slug),
+      user:
+        context.state.jwt && context.state.jwt.user && context.state.jwt.user.id
+          ? {
+              name: context.state.jwt.user.name,
+              id: context.state.jwt.user.id,
+            }
+          : undefined,
     });
 
     if (result.type === 'redirect') {

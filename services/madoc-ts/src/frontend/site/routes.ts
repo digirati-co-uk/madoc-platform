@@ -317,11 +317,11 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
       component: components.Search,
     },
     {
-      path: '/',
+      path: '/dashboard',
       component: components.UserHomepage,
       routes: [
         {
-          path: '/',
+          path: '/dashboard',
           exact: true,
           component: components.UserDashboard,
         },
@@ -336,11 +336,16 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
           component: components.UserReviews,
         },
         {
-          path: '/',
+          path: '/dashboard',
           // Fallback here.
           component: components.UserDashboard,
         },
       ],
+    },
+    {
+      path: '/',
+      // Fallback here.
+      component: components.Homepage,
     },
   ];
 

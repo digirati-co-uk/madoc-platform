@@ -19,6 +19,7 @@ import { UserGreeting } from '../features/UserGreeting';
 import { UserProjects } from '../features/UserProjects';
 import { UserStatistics } from '../features/UserStatistics';
 import { useRelativeLinks } from '../hooks/use-relative-links';
+import { useSite } from '../../shared/hooks/use-site';
 import { useUserHomepage } from '../hooks/use-user-homepage';
 
 type UserHomepageType = {
@@ -41,8 +42,10 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
   ({ route }) => {
     const { data, error } = useStaticData(UserHomepage, {}, { retry: false });
     const location = useLocation();
+    const { slug } = useSite();
 
     const showReviews = data && isReviewer(data.userDetails);
+    const showAdmin = data && isAdmin(data.userDetails);
 
     if (error) {
       return <a href="/login">Please login</a>;
@@ -58,8 +61,8 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
         <UserGreeting />
 
         <DashboardTabs>
-          <DashboardTab $active={location.pathname === '/'}>
-            <HrefLink href="/">Overview</HrefLink>
+          <DashboardTab $active={location.pathname === '/dashboard'}>
+            <HrefLink href="/dashboard">Overview</HrefLink>
           </DashboardTab>
           <DashboardTab $active={location.pathname === '/dashboard/contributions'}>
             <HrefLink href="/dashboard/contributions">Contributions</HrefLink>
@@ -67,6 +70,14 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
           {showReviews && (
             <DashboardTab $active={location.pathname === '/dashboard/reviews'}>
               <HrefLink href="/dashboard/reviews">Reviews</HrefLink>
+            </DashboardTab>
+          )}
+          <DashboardTab>
+            <a href={`/s/${slug}/profile`}>Manage account</a>
+          </DashboardTab>
+          {showAdmin && (
+            <DashboardTab>
+              <a href={`/s/${slug}/madoc/admin`}>Admin</a>
             </DashboardTab>
           )}
         </DashboardTabs>

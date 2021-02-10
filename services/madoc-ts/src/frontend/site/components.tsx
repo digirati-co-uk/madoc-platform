@@ -25,3 +25,4 @@ export { ProjectListLoader } from './pages/loaders/project-list-loader';
 export { UserDashboard } from './pages/dashboard/dashboard';
 export { UserContributions } from './pages/dashboard/user-contributions';
 export { UserReviews } from './pages/dashboard/user-reviews';
+export { Homepage } from './pages/homepage';

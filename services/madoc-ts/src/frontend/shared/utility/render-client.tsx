@@ -26,7 +26,9 @@ export function renderClient(
 ) {
   const component = document.getElementById('react-component');
   const dehydratedStateEl = document.getElementById('react-query-cache');
+  const dehydratedSiteEl = document.getElementById('react-omeka');
   const dehydratedState = dehydratedStateEl ? JSON.parse(dehydratedStateEl.innerText) : {};
+  const dehydratedSite = dehydratedSiteEl ? JSON.parse(dehydratedSiteEl.innerText) : {};
 
   const [, slug] = window.location.pathname.match(/s\/([^/]*)/) as string[];
   const jwt = cookies.get(`madoc/${slug}`) || undefined;
@@ -49,7 +51,14 @@ export function renderClient(
                 <BrowserRouter basename={basename}>
                   <DndProvider backend={MultiBackend} options={HTML5toTouch}>
                     <ErrorBoundary onError={error => <ErrorPage error={error} />}>
-                      <Component jwt={jwt} api={api} routes={routes} />
+                      <Component
+                        jwt={jwt}
+                        api={api}
+                        routes={routes}
+                        siteSlug={slug}
+                        site={dehydratedSite.site}
+                        user={dehydratedSite.user}
+                      />
                       {process.env.NODE_ENV === 'development' ? <ReactQueryDevtools /> : null}
                     </ErrorBoundary>
                   </DndProvider>

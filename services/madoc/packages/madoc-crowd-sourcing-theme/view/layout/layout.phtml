@@ -27,14 +27,14 @@ endif;
 <header class="site-header">
     <div class="site-details">
         <?php if ($this->themeSetting('logo')): ?>
-            <a href="<?php echo $site->url(); ?>" class="site-title"><img
+            <a href="<?php echo $site->url(); ?>/madoc" class="site-title"><img
                         src="<?php echo $this->themeSettingAssetUrl('logo'); ?>"
                         title="<?php echo $this->translate('Logo') ?>"></a>
             <?php if ($this->themeSetting('show_title_and_logo')): ?>
                 <p class="site-name"><?php echo $site->title(); ?></p>
             <?php endif; ?>
         <?php else: ?>
-            <a href="<?php echo $site->url(); ?>" class="site-title"><?php echo $this->pageTitle($site->title()); ?></a>
+            <a href="<?php echo $site->url(); ?>/madoc" class="site-title"><?php echo $this->pageTitle($site->title()); ?></a>
         <?php endif; ?>
     </div>
     <div id="search">
@@ -57,16 +57,6 @@ endif;
 <main id="content" role="main">
     <?php print $this->content; ?>
 </main>
-<footer>
-
-    <div class="footer-inner">
-        <?php if ($footerContent = $this->themeSetting('footer')): ?>
-            <?php echo $footerContent; ?>
-        <?php else: ?>
-            <?php echo $this->translate('Powered by Madoc Platform running on Omeka S'); ?>
-        <?php endif; ?>
-    </div>
-</footer>
 <?php echo $this->headScript(); ?>
 </body>
 </html>

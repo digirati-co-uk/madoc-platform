@@ -23,14 +23,7 @@ if ($activePage):
 
 <?php $this->trigger('view.show.before'); ?>
 <div class="blocks">
-    <?php $content = trim($this->content); ?>
-    <?php if (!$content): ?>
-        <a href="/admin/site/s/<?php print $site->slug(); ?>/page/<?php print $page->slug(); ?>" style="display: block;text-align: center">
-            <img src="<?php echo $this->assetUrl('hello-madoc.svg'); ?>" alt="<?php print $this->translate('Login and add some content'); ?>" />
-        </a>
-    <?php else: ?>
-        <?php echo $content; ?>
-    <?php endif; ?>
+  <a href="/s/<?php print $site->slug(); ?>/madoc">Proceed to madoc</a>
 </div>
 <?php $this->trigger('view.show.after'); ?>
 <?php if ($showPagePagination): ?>
