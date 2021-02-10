@@ -35,6 +35,7 @@ import {
 import { useApi } from '../hooks/use-api';
 import { apiHooks } from '../hooks/use-api-query';
 import { useDrag, useDrop } from 'react-dnd';
+import { Spinner } from '../icons/Spinner';
 import { LocaleString } from './LocaleString';
 
 const MetadataSingleValue: React.FC<{ parentLabel: string; value: string; total_items: number; language?: string }> = ({
@@ -86,7 +87,9 @@ const MetadataSingleFacet: React.FC<{
         </MetadataListItemIcon>
         <MetadataListItemLabel>{label}</MetadataListItemLabel>
         {expandable ? (
-          <MetadataListItemCollapse onClick={() => setIsOpen(o => !o)}>{isOpen ? '–' : '+'}</MetadataListItemCollapse>
+          <MetadataListItemCollapse onClick={() => setIsOpen(o => !o)}>
+            {childElements.isLoading ? <Spinner stroke="#000" /> : isOpen ? '-' : '+'}
+          </MetadataListItemCollapse>
         ) : null}
       </MetadataListItemContainer>
       {childElements.data && isOpen ? (
@@ -119,6 +122,7 @@ type FacetConfigValue = {
   id: string;
   label: InternationalString;
   values: string[];
+  key: string;
 };
 
 export type FacetConfig = {
@@ -281,11 +285,17 @@ const useFacetConfigState = (initialState: FacetConfig[]) => {
         label: { [labelLang || 'en']: [label] },
       };
     };
-    const createNewFacetValueObject = (label: string, values: string[], labelLang?: string): FacetConfigValue => {
+    const createNewFacetValueObject = (
+      label: string,
+      values: string[],
+      labelLang: string,
+      parentLabel: string
+    ): FacetConfigValue => {
       return {
         id: generateId(),
         values: values,
         label: { [labelLang || 'en']: [label] },
+        key: parentLabel,
       };
     };
 
@@ -423,7 +433,12 @@ const EditSingleFacet: React.FC<{
 
   // Facet value management
   addFacetValue: (id: string, value: FacetConfigValue) => void;
-  createNewFacetValueObject: (label: string, values: string[], labelLang?: string) => FacetConfigValue;
+  createNewFacetValueObject: (
+    label: string,
+    values: string[],
+    labelLang: string,
+    parentLabel: string
+  ) => FacetConfigValue;
   editFacetValue: (id: string, value: FacetConfigValue) => void;
   removeFacetValue: (id: string, value: FacetConfigValue) => void;
   reorderFacetValues: (id: string, source: number, dest: number) => void;
@@ -472,7 +487,10 @@ const EditSingleFacet: React.FC<{
     },
     drop: (item: any, monitor) => {
       if (monitor.isOver({ shallow: true })) {
-        addFacetValue(facet.id, createNewFacetValueObject(item.value, [item.value], item.language));
+        addFacetValue(
+          facet.id,
+          createNewFacetValueObject(item.value, [item.value], item.language, `metadata.${item.parentLabel}`)
+        );
       }
     },
     collect: monitor => ({

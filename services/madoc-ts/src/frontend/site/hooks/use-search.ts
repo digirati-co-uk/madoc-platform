@@ -4,6 +4,10 @@ import { FacetConfig } from '../../shared/components/MetadataFacetEditor';
 import { apiHooks, paginatedApiHooks } from '../../shared/hooks/use-api-query';
 import { useSearchQuery } from './use-search-query';
 
+function normalizeDotKey(key: string) {
+  return key.startsWith('metadata.') ? key.slice('metadata.'.length).toLowerCase() : key.toLowerCase();
+}
+
 export function useSearch() {
   const { fulltext, appliedFacets, page } = useSearchQuery();
   const searchFacetConfig = apiHooks.getSiteSearchFacetConfiguration(() => []);
@@ -19,9 +23,7 @@ export function useSearch() {
       idMap[facet.id] = { config: facet, keys: [] };
       if (facet.keys) {
         for (const key of facet.keys) {
-          const keyToAdd = key.startsWith('metadata.')
-            ? key.slice('metadata.'.length).toLowerCase()
-            : key.toLowerCase();
+          const keyToAdd = normalizeDotKey(key);
           idMap[facet.id].keys.push(keyToAdd);
           if (returnList.indexOf(keyToAdd) === -1) {
             returnList.push(keyToAdd);
@@ -116,7 +118,8 @@ export function useSearch() {
       label: InternationalString;
       items: Array<{
         key: string;
-        value: string;
+        label: InternationalString;
+        values: string[];
         count: number;
       }>;
     }> = [];
@@ -128,7 +131,8 @@ export function useSearch() {
         label: InternationalString;
         items: Array<{
           key: string;
-          value: string;
+          label: InternationalString;
+          values: string[];
           count: number;
         }>;
       } = {
@@ -136,10 +140,36 @@ export function useSearch() {
         label: fieldsToMap.config.label,
         items: [],
       };
-      for (const field of fieldsToMap.keys) {
-        const searchResultFacetValues = mappedSearchResponseMetadata[field];
-        if (searchResultFacetValues) {
-          displayItem.items.push(...searchResultFacetValues);
+
+      if (fieldsToMap.config.values && fieldsToMap.config.values.length) {
+        for (const value of fieldsToMap.config.values) {
+          const key = fieldsToMap.keys[0];
+          const mappedCount = (mappedSearchResponseMetadata[key] || []).reduce((count: number, next) => {
+            if (next.key === key && value.values.indexOf(next.value) !== -1) {
+              return count + next.count;
+            }
+            return count;
+          }, 0);
+          displayItem.items.push({
+            values: value.values,
+            key: normalizeDotKey(fieldsToMap.keys[0]),
+            count: mappedCount,
+            label: value.label,
+          });
+        }
+      } else {
+        for (const field of fieldsToMap.keys) {
+          const searchResultFacetValues = mappedSearchResponseMetadata[field];
+          if (searchResultFacetValues) {
+            displayItem.items.push(
+              ...searchResultFacetValues.map(fieldValue => ({
+                label: { none: [fieldValue.value] },
+                key: fieldValue.key,
+                values: [fieldValue.value],
+                count: fieldValue.count,
+              }))
+            );
+          }
         }
       }
       // @todo fieldsToMap.config.value

@@ -7,14 +7,14 @@ export function useSearchFacets() {
   const [toRemoveFacetQueue, setToRemoveFacetQueue] = useState<Array<FacetQueryValue>>([]);
 
   // Helpers
-  const isFacetSelected = (type: string, value: string): 0 | 1 | 2 => {
-    const removeQueue = toRemoveFacetQueue.find(facet => facet.k === type && facet.v === value);
+  const isFacetSelected = (type: string, values: string[]): 0 | 1 | 2 => {
+    const removeQueue = toRemoveFacetQueue.find(facet => facet.k === type && values.indexOf(facet.v) !== -1);
     if (removeQueue) {
       return 0;
     }
 
-    const found = appliedFacets.find(facet => facet.k === type && facet.v === value);
-    const foundQueue = appliedFacetQueue.find(facet => facet.k === type && facet.v === value);
+    const found = appliedFacets.find(facet => facet.k === type && values.indexOf(facet.v) !== -1);
+    const foundQueue = appliedFacetQueue.find(facet => facet.k === type && values.indexOf(facet.v) !== -1);
 
     if (found) {
       return 1;
@@ -28,26 +28,27 @@ export function useSearchFacets() {
   };
 
   // Actions
-  const applyFacet = (key: string, value: string) => {
-    if (isFacetSelected(key, value)) {
+  const applyFacet = (key: string, values: string[]) => {
+    if (isFacetSelected(key, values)) {
       return;
     }
-    setQuery(fulltext, [...appliedFacets, { k: key, v: value }], page);
+
+    setQuery(fulltext, [...appliedFacets, ...values.map(value => ({ k: key, v: value }))], page);
   };
 
-  const clearSingleFacet = (key: string, value: string) => {
+  const clearSingleFacet = (key: string, values: string[]) => {
     setQuery(
       fulltext,
-      appliedFacets.filter(facet => !(facet.k === key && facet.v === value)),
+      appliedFacets.filter(facet => !(facet.k === key && values.indexOf(facet.v) !== -1)),
       page
     );
   };
 
-  const clearAllFacets = (key?: string) => {
+  const clearAllFacets = (key?: string[]) => {
     if (key) {
       setQuery(
         fulltext,
-        appliedFacets.filter(facet => facet.k !== key),
+        appliedFacets.filter(facet => key.indexOf(facet.k) !== -1),
         page
       );
     } else {
@@ -58,29 +59,29 @@ export function useSearchFacets() {
     setAppliedFacetQueue([]);
   };
 
-  const queueSingleFacet = (key: string, value: string) => {
+  const queueSingleFacet = (key: string, values: string[]) => {
     setToRemoveFacetQueue(queue => {
-      return queue.filter(facet => !(facet.k === key && facet.v === value));
+      return queue.filter(facet => !(facet.k === key && values.indexOf(facet.v) !== -1));
     });
     setAppliedFacetQueue(queue => {
-      const found = queue.find(facet => facet.k === key && facet.v === value);
-      if (found) {
+      const found = queue.filter(facet => facet.k === key && values.indexOf(facet.v) !== -1);
+      if (found.length) {
         return queue;
       }
-      return [...queue, { k: key, v: value }];
+      return [...queue, ...values.map(value => ({ k: key, v: value }))];
     });
   };
 
-  const dequeueSingleFacet = (key: string, value: string) => {
+  const dequeueSingleFacet = (key: string, values: string[]) => {
     setToRemoveFacetQueue(queue => {
-      const found = queue.find(facet => facet.k === key && facet.v === value);
-      if (found) {
+      const found = queue.filter(facet => facet.k === key && values.indexOf(facet.v) !== -1);
+      if (found.length) {
         return queue;
       }
-      return [...queue, { k: key, v: value }];
+      return [...queue, ...values.map(value => ({ k: key, v: value }))];
     });
     setAppliedFacetQueue(queue => {
-      return queue.filter(facet => !(facet.k === key && facet.v === value));
+      return queue.filter(facet => !(facet.k === key && values.indexOf(facet.v) !== -1));
     });
   };
 

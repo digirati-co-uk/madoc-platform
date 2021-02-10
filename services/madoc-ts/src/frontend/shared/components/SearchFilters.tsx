@@ -10,6 +10,8 @@ export const SearchFilterCheckbox = styled.div`
   background: #eee;
 `;
 
+export const SearchFilterTitle = styled.h3``;
+
 export const SearchFilterLabel = styled.label`
   flex: 1 1 0px;
   overflow-x: hidden;

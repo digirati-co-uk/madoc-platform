@@ -10,6 +10,7 @@ import {
   SearchFilterLabel,
   SearchFilterSection,
   SearchFilterSectionTitle,
+  SearchFilterTitle,
   SearchFilterToggle,
 } from '../../shared/components/SearchFilters';
 import { SearchResults } from '../../shared/components/SearchResults';
@@ -36,7 +37,7 @@ export const Search: React.FC = () => {
   return (
     <div style={{ display: 'flex' }}>
       <SearchFilterContainer style={{ width: 300 }}>
-        <h1>Search</h1>
+        <SearchFilterTitle>Refine search</SearchFilterTitle>
         <ButtonRow>
           <TinyButton disabled={!inQueue} onClick={() => applyAllFacets()}>
             Apply
@@ -56,10 +57,10 @@ export const Search: React.FC = () => {
               </SearchFilterSectionTitle>
               <SearchFilterItemList>
                 {facet.items.map(item => {
-                  const isSelected = isFacetSelected(item.key, item.value);
-                  const itemHash = `item__${facet.id}::${item.key}::${item.value}`;
+                  const isSelected = isFacetSelected(item.key, item.values);
+                  const itemHash = `item__${facet.id}::${item.key}::${item.values}`;
                   return (
-                    <SearchFilterItem key={item.value} $selected={!!isSelected}>
+                    <SearchFilterItem key={item.values.join(',')} $selected={!!isSelected}>
                       <SearchFilterCheckbox>
                         <input
                           type="checkbox"
@@ -67,21 +68,21 @@ export const Search: React.FC = () => {
                           checked={isSelected !== 0}
                           onChange={e =>
                             e.target.checked
-                              ? queueSingleFacet(item.key, item.value)
-                              : dequeueSingleFacet(item.key, item.value)
+                              ? queueSingleFacet(item.key, item.values)
+                              : dequeueSingleFacet(item.key, item.values)
                           }
                         />
                       </SearchFilterCheckbox>
-                      <SearchFilterLabel htmlFor={itemHash} title={item.value}>
-                        {item.value}
+                      <SearchFilterLabel htmlFor={itemHash}>
+                        <LocaleString>{item.label}</LocaleString>
                       </SearchFilterLabel>
                       <SearchFilterItemCount>{item.count}</SearchFilterItemCount>
                       {isSelected === 1 ? (
-                        <SearchFilterToggle onClick={() => clearSingleFacet(item.key, item.value)}>
+                        <SearchFilterToggle onClick={() => clearSingleFacet(item.key, item.values)}>
                           x
                         </SearchFilterToggle>
                       ) : (
-                        <SearchFilterToggle onClick={() => applyFacet(item.key, item.value)}>+</SearchFilterToggle>
+                        <SearchFilterToggle onClick={() => applyFacet(item.key, item.values)}>+</SearchFilterToggle>
                       )}
                     </SearchFilterItem>
                   );
