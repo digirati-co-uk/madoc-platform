@@ -4,7 +4,6 @@ import { SearchResult } from '../../../types/search';
 import { parseUrn } from '../../../utility/parse-urn';
 import { CroppedImage } from '../atoms/Images';
 import { ImageStripBox } from '../atoms/ImageStrip';
-import { SearchBox } from '../atoms/SearchBox';
 import { GridContainer } from '../atoms/Grid';
 import { createLink } from '../utility/create-link';
 import { HrefLink } from '../utility/href-link';
