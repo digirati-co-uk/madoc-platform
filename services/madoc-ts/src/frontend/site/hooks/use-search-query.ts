@@ -29,12 +29,22 @@ export function useSearchQuery() {
     [history, pathname]
   );
 
+  const rawQuery = useMemo(
+    () => ({
+      fulltext: fulltext,
+      facets: appliedFacets.length ? JSON.stringify(appliedFacets) : undefined,
+      page: page && page > 1 ? page : undefined,
+    }),
+    [appliedFacets, fulltext, page]
+  );
+
   return useMemo(() => {
     return {
+      rawQuery,
       page,
       fulltext,
       appliedFacets,
       setQuery,
     };
-  }, [appliedFacets, fulltext, setQuery]);
+  }, [rawQuery, appliedFacets, fulltext, setQuery]);
 }

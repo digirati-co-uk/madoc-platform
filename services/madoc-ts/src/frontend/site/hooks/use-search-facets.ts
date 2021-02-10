@@ -33,7 +33,7 @@ export function useSearchFacets() {
       return;
     }
 
-    setQuery(fulltext, [...appliedFacets, ...values.map(value => ({ k: key, v: value }))], page);
+    setQuery(fulltext, [...appliedFacets, ...values.map(value => ({ k: key, v: value }))], 1);
   };
 
   const clearSingleFacet = (key: string, values: string[]) => {
@@ -99,7 +99,7 @@ export function useSearchFacets() {
   };
 
   const setFullTextQuery = (newFullText: string) => {
-    setQuery(newFullText, appliedFacets, page);
+    setQuery(newFullText, appliedFacets, 1);
   };
 
   return {

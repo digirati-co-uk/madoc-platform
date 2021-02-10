@@ -5,6 +5,7 @@ import { stringify } from 'query-string';
 import { SmallButton, SmallRoundedButton, MediumRoundedButton } from '../atoms/Button';
 
 import styled from 'styled-components';
+import { HrefLink } from '../utility/href-link';
 
 const PaginationContainer = styled.div`
   margin: 2em 0;
@@ -33,7 +34,13 @@ export const Pagination: React.FC<{
   stale: boolean;
   pageParam?: string;
   extraQuery?: any;
-}> = ({ page: propsPage, stale, totalPages: propsTotalPages, pageParam = 'page', extraQuery }) => {
+}> = ({
+  page: propsPage,
+  stale,
+  totalPages: propsTotalPages,
+  pageParam = 'page',
+  extraQuery: { page: _, ...extraQuery },
+}) => {
   const [page, setStalePage] = useState(propsPage);
   const [totalPages, setStaleTotalPages] = useState(propsTotalPages);
   const [isLoading, setIsLoading] = useState(false);
@@ -68,19 +75,24 @@ export const Pagination: React.FC<{
 
   return (
     <PaginationContainer>
-      {prevPage ? (
-        <SmallRoundedButton as={Link} to={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}`}>
-          {t('Previous page')}
-        </SmallRoundedButton>
-      ) : null}
-      <PaginationDisplay style={{ color: isLoading ? '#999' : '#333' }}>
+      <SmallRoundedButton
+        disabled={!prevPage}
+        as={HrefLink}
+        href={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}`}
+      >
+        {t('Previous page')}
+      </SmallRoundedButton>
+      <PaginationDisplay style={{ color: isLoading ? '#999' : '#666' }}>
         Page {isLoading ? '...' : page} of {totalPages}
       </PaginationDisplay>
-      {nextPage ? (
-        <SmallRoundedButton as={Link} to={`${pathname}?${pageParam}=${page + 1}${q ? `&${q}` : ''}`}>
-          {t('Next page')}
-        </SmallRoundedButton>
-      ) : null}
+
+      <SmallRoundedButton
+        as={HrefLink}
+        disabled={!nextPage}
+        href={`${pathname}?${pageParam}=${page + 1}${q ? `&${q}` : ''}`}
+      >
+        {t('Next page')}
+      </SmallRoundedButton>
     </PaginationContainer>
   );
 };

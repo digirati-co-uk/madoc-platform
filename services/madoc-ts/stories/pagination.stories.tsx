@@ -6,7 +6,6 @@ import * as MoleculesPagination from '../src/frontend/admin/molecules/Pagination
 import { NavigationButton, PaginationContainer } from '../src/frontend/shared/components/CanvasNavigationMinimalist';
 import { PaginationNumbered } from '../src/frontend/shared/components/Pagination';
 import * as SharedPagination from '../src/frontend/shared/components/Pagination';
-import { createLink } from '../src/frontend/shared/utility/create-link';
 
 export default { title: 'Pagination variations' };
 

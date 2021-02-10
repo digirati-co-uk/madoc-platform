@@ -1,217 +1,121 @@
-import { stringify } from 'query-string';
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { useHistory, useLocation } from 'react-router-dom';
-import { SearchResults } from '../../shared/components/SearchResults';
-import { SearchFacets } from '../../shared/components/SearchFacets';
-import { PaginationNumbered } from '../../shared/components/Pagination';
-import { useTranslation } from 'react-i18next';
-import { apiHooks } from '../../shared/hooks/use-api-query';
-import { useLocationQuery } from '../../shared/hooks/use-location-query';
-import { createUniversalComponent } from '../../shared/utility/create-universal-component';
-import { UniversalComponent } from '../../types';
-import { usePaginatedData } from '../../shared/hooks/use-data';
-import { SearchResponse, SearchFacet } from '../../../types/search';
+import React from 'react';
+import { SearchBox } from '../../shared/atoms/SearchBox';
+import { LocaleString } from '../../shared/components/LocaleString';
+import { Pagination } from '../../shared/components/Pagination';
+import {
+  SearchFilterCheckbox,
+  SearchFilterContainer,
+  SearchFilterItem,
+  SearchFilterItemCount,
+  SearchFilterItemList,
+  SearchFilterLabel,
+  SearchFilterSection,
+  SearchFilterSectionTitle,
+  SearchFilterTitle,
+  SearchFilterToggle,
+} from '../../shared/components/SearchFilters';
+import { SearchHint, ResultsHeader, SearchResults, TotalResults } from '../../shared/components/SearchResults';
+import { Spinner } from '../../shared/icons/Spinner';
+import { useSearch } from '../hooks/use-search';
+import { useSearchFacets } from '../hooks/use-search-facets';
+import { useSearchQuery } from '../hooks/use-search-query';
+import { ButtonRow, TinyButton } from '../../shared/atoms/Button';
 
-const SearchContainer = styled.div`
-  display: flex;
-`;
+export const Search: React.FC = () => {
+  const [{ latestData: searchResponse, resolvedData, isFetchingMore, isLoading }, displayFacets] = useSearch();
+  const { rawQuery, page, fulltext, appliedFacets } = useSearchQuery();
+  const {
+    inQueue,
+    applyFacet,
+    clearSingleFacet,
+    queueSingleFacet,
+    dequeueSingleFacet,
+    isFacetSelected,
+    applyAllFacets,
+    clearAllFacets,
+    setFullTextQuery,
+  } = useSearchFacets();
 
-type SearchListType = {
-  data: {
-    searchResponse: SearchResponse | undefined;
-    facets:
-      | {
-          [key: string]: string[];
-        }
-      | undefined;
-  };
-  params: {};
-  query: { page: number; fulltext: string };
-  variables: { page: number; fulltext: string; facets?: { [key: string]: string[] }; madoc_id?: string };
-};
-
-export const parseFacets = (facetStr: string | undefined): { [key: string]: string[] } | undefined => {
-  if (!facetStr) {
-    return undefined;
-  }
-
-  try {
-    return (JSON.parse(facetStr) as any) as any;
-  } catch (err) {
-    return undefined;
-  }
-};
-
-export const stringifyFacets = (facets: { [key: string]: string[] }): SearchFacet[] => {
-  const options = [];
-  if (facets) {
-    const facetKeys = Object.keys(facets);
-
-    for (const facetKey of facetKeys) {
-      const facetArray = Array.isArray(facets[facetKey]) ? facets[facetKey] : [facets[facetKey]];
-      for (const facetValue of facetArray as string[]) {
-        options.push({
-          type: 'metadata',
-          subtype: facetKey,
-          value: facetValue,
-        });
-      }
-    }
-  }
-  return options;
-};
-
-export const Search: UniversalComponent<SearchListType> = createUniversalComponent<SearchListType>(
-  () => {
-    const searchFacetConfig = apiHooks.getSiteSearchFacetConfiguration(() => []);
-    const { status, data } = usePaginatedData(Search);
-    const { t } = useTranslation();
-    const { page, fulltext, madoc_id } = useLocationQuery();
-    const history = useHistory();
-    const { pathname } = useLocation();
-    const { searchResponse, facets } = data || {};
-    const [appliedFacets, setAppliedFacets] = useState<any>();
-
-    const [facetOptions, setFacetOptions] = useState<any[]>([]);
-
-    useEffect(() => {
-      const options = [];
-
-      if (searchResponse && searchResponse.facets && searchResponse.facets.metadata) {
-        for (const [key, value] of Object.entries(searchResponse.facets.metadata)) {
-          const subtype = key;
-          for (const [k] of Object.entries(value as any)) {
-            options.push({
-              type: 'metadata',
-              subtype: subtype,
-              value: k,
-              applied: appliedFacets && appliedFacets[subtype] && appliedFacets[subtype].indexOf(k) !== -1,
-            });
+  return (
+    <div style={{ display: 'flex' }}>
+      <SearchFilterContainer style={{ width: 300 }}>
+        <SearchFilterTitle>Refine search</SearchFilterTitle>
+        <ButtonRow>
+          <TinyButton disabled={!inQueue} onClick={() => applyAllFacets()}>
+            Apply
+          </TinyButton>
+          <TinyButton disabled={!appliedFacets.length} onClick={() => clearAllFacets()}>
+            Clear
+          </TinyButton>
+        </ButtonRow>
+        {displayFacets.map(facet => {
+          if (facet.items.length === 0) {
+            return null;
           }
-        }
-      }
-      setFacetOptions(options);
-    }, [facets, searchResponse, appliedFacets]);
-
-    const clearFacets = () => {
-      setAppliedFacets({});
-      history.push(`${pathname}?${stringify({ fulltext, page: 1, madoc_id })}`);
-    };
-
-    useEffect(() => {
-      clearFacets();
-    }, [fulltext]);
-
-    const applyFacets = () => {
-      history.push(
-        `${pathname}?${stringify({
-          fulltext,
-          page: 1,
-          madoc_id,
-          facets: JSON.stringify(appliedFacets),
-        })}`
-      );
-    };
-
-    const applyFacet = (type: string, value: string) => {
-      if (data) {
-        const newFacets = { ...(appliedFacets || {}) };
-
-        if (!newFacets[type]) {
-          newFacets[type] = [];
-        }
-        if (!newFacets[type].includes(value)) {
-          newFacets[type].push(value);
-        } else {
-          newFacets[type] = newFacets[type].filter((val: string) => {
-            return val !== value;
-          });
-        }
-
-        setAppliedFacets(newFacets);
-      }
-    };
-
-    return status === 'loading' || searchFacetConfig.isFetching ? (
-      <div>{t('Loading')}</div>
-    ) : (
-      <>
-        <PaginationNumbered
-          page={searchResponse && searchResponse.pagination ? searchResponse.pagination.page : 1}
-          totalPages={searchResponse && searchResponse.pagination ? searchResponse.pagination.totalPages : 1}
-          stale={false}
-          extraQuery={{ fulltext, madoc_id, facets: facets ? JSON.stringify(facets) : undefined }}
+          return (
+            <SearchFilterSection key={facet.id}>
+              <SearchFilterSectionTitle>
+                <LocaleString>{facet.label}</LocaleString>
+              </SearchFilterSectionTitle>
+              <SearchFilterItemList>
+                {facet.items.map(item => {
+                  const isSelected = isFacetSelected(item.key, item.values);
+                  const itemHash = `item__${facet.id}::${item.key}::${item.values}`;
+                  return (
+                    <SearchFilterItem key={item.values.join(',')} $selected={!!isSelected}>
+                      <SearchFilterCheckbox>
+                        <input
+                          type="checkbox"
+                          id={itemHash}
+                          checked={isSelected !== 0}
+                          onChange={e =>
+                            e.target.checked
+                              ? queueSingleFacet(item.key, item.values)
+                              : dequeueSingleFacet(item.key, item.values)
+                          }
+                        />
+                      </SearchFilterCheckbox>
+                      <SearchFilterLabel htmlFor={itemHash}>
+                        <LocaleString>{item.label}</LocaleString>
+                      </SearchFilterLabel>
+                      <SearchFilterItemCount>{item.count}</SearchFilterItemCount>
+                      {isSelected !== 0 ? (
+                        <SearchFilterToggle onClick={() => clearSingleFacet(item.key, item.values)}>
+                          x
+                        </SearchFilterToggle>
+                      ) : (
+                        <SearchFilterToggle onClick={() => applyFacet(item.key, item.values)}>+</SearchFilterToggle>
+                      )}
+                    </SearchFilterItem>
+                  );
+                })}
+              </SearchFilterItemList>
+            </SearchFilterSection>
+          );
+        })}
+      </SearchFilterContainer>
+      <div style={{ flex: '1 1 0px' }}>
+        <ResultsHeader>Search Results</ResultsHeader>
+        <SearchBox large={true} onSearch={setFullTextQuery} placeholder="Keywords" value={fulltext} />
+        <SearchHint>Keyword search</SearchHint>
+        <TotalResults>
+          Found {searchResponse && searchResponse.pagination ? searchResponse.pagination.totalResults : 0} Results
+        </TotalResults>
+        <Pagination
+          page={page}
+          totalPages={resolvedData && resolvedData.pagination ? resolvedData.pagination.totalPages : 0}
+          stale={!!isFetchingMore}
+          extraQuery={rawQuery}
         />
-        <SearchContainer>
-          <SearchFacets
-            facetConfiguration={searchFacetConfig.data?.facets || []}
-            facets={facetOptions}
-            facetChange={(facetType, facetValue) => applyFacet(facetType, facetValue)}
-            applyFilters={applyFacets}
-            clearFilters={clearFacets}
-          />
-          <SearchResults
-            searchFunction={val => {
-              history.push(
-                `${pathname}?${stringify({
-                  fulltext: val,
-                  page,
-                  madoc_id,
-                  facets: facets ? JSON.stringify(facets) : undefined,
-                })}`
-              );
-            }}
-            value={fulltext}
-            totalResults={searchResponse && searchResponse.pagination ? searchResponse.pagination.totalResults : 0}
-            searchResults={searchResponse ? searchResponse.results : []}
-            sortByFunction={() => {
-              // alert('you sorted by:  ' + val);
-            }}
-          />
-        </SearchContainer>
-        <PaginationNumbered
-          page={searchResponse && searchResponse.pagination ? searchResponse.pagination.page : 1}
-          totalPages={searchResponse && searchResponse.pagination ? searchResponse.pagination.totalPages : 1}
-          stale={false}
-          extraQuery={{ fulltext, madoc_id, facets: facets ? JSON.stringify(facets) : undefined }}
+        {isLoading && <Spinner fill="#000" />}
+        <SearchResults value={fulltext} searchResults={searchResponse ? searchResponse.results : []} />
+        <Pagination
+          page={page}
+          totalPages={resolvedData && resolvedData.pagination ? resolvedData.pagination.totalPages : 0}
+          stale={!!isFetchingMore}
+          extraQuery={rawQuery}
         />
-      </>
-    );
-  },
-  {
-    getKey(params: {}, query: { page: number; fulltext: string; facets?: string; madoc_id?: string }) {
-      return [
-        'site-search',
-        {
-          page: query.page ? Number(query.page) : 1,
-          fulltext: query.fulltext,
-          facets: parseFacets(query.facets),
-          madoc_id: query.madoc_id,
-        },
-      ];
-    },
-    getData: async (key, vars, api) => {
-      if (!vars.fulltext && !vars.madoc_id && !vars.facets) {
-        return {
-          searchResponse: undefined,
-          facets: vars.facets,
-        };
-      }
-
-      const searchResponse = await api.getSiteSearchQuery(
-        {
-          fulltext: vars.fulltext,
-          facets: stringifyFacets({ ...vars.facets }) as any,
-          contexts: vars.madoc_id ? [vars.madoc_id] : undefined,
-        },
-        vars.page
-      );
-
-      return {
-        searchResponse,
-        facets: vars.facets,
-      };
-    },
-  }
-);
+      </div>
+    </div>
+  );
+};

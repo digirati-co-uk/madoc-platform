@@ -19,13 +19,15 @@ export const Pagination: React.FC<{ page: number; totalPages: number; stale: boo
   }
 
   return (
-    <div style={{ margin: '2em 0' }}>
+    <div style={{ margin: '2em 0', width: '100%', display: 'flex' }}>
       {prevPage ? (
         <SmallButton as={Link} to={`${pathname}${page > 2 ? `?page=${page - 1}` : ''}`}>
           {t('Previous page')}
         </SmallButton>
       ) : null}
-      <div style={{ display: 'inline-block', margin: 10, fontSize: '0.9em' }}>
+      <div
+        style={{ display: 'inline-block', margin: '0 10px', textAlign: 'center', fontSize: '0.9em', flex: '1 1 0px' }}
+      >
         Page {page} of {totalPages}
       </div>
       {nextPage ? (

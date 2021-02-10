@@ -14,13 +14,13 @@ const ResultsContainer = styled.div`
   flex: 1 1 0px;
 `;
 
-const ResultsHeader = styled.h2`
+export const ResultsHeader = styled.h2`
   font-size: 2.125rem;
   padding-bottom: 0.9375rem;
   margin: 0;
 `;
 
-const SearchHint = styled.div`
+export const SearchHint = styled.div`
   font-size: 0.85rem;
   color: #000000;
   margin: 0.5em 0;
@@ -50,7 +50,7 @@ const ResultTitle = styled.div`
   padding-bottom: 0.625rem;
 `;
 
-const TotalResults = styled.div`
+export const TotalResults = styled.div`
   margin: 1em 0;
   color: #666;
 `;
@@ -111,28 +111,14 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; sea
 };
 
 export const SearchResults: React.FC<{
-  searchFunction: (val: string) => void;
   searchResults: Array<SearchResult>;
-  sortByFunction: (val?: string) => void;
-  totalResults: number;
   value?: string;
-}> = ({ searchFunction, searchResults = [], sortByFunction, totalResults, value }) => (
+}> = ({ searchResults = [], value }) => (
   <ResultsContainer>
-    <ResultsHeader>Search Results</ResultsHeader>
-    <SearchBox large={true} onSearch={searchFunction} placeholder="Keywords" value={value} />
-    <SearchHint>Keyword search</SearchHint>
-    <GridContainer $justify="flex-end">
-      {/* <DropdownContainer>
-        <Dropdown options={options} placeholder="Sort By" onChange={val => sortByFunction(val)} />
-      </DropdownContainer> */}
-    </GridContainer>
-    <TotalResults>{`${totalResults} Results`}</TotalResults>
-    <div>
-      {searchResults.map((result: SearchResult, index: number) => {
-        return result ? (
-          <SearchItem result={result} key={`${index}__${result.resource_id}`} search={value} size="small" />
-        ) : null;
-      })}
-    </div>
+    {searchResults.map((result: SearchResult, index: number) => {
+      return result ? (
+        <SearchItem result={result} key={`${index}__${result.resource_id}`} search={value} size="small" />
+      ) : null;
+    })}
   </ResultsContainer>
 );
