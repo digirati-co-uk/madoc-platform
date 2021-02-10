@@ -20,6 +20,7 @@ import { useContributorTasks } from '../../shared/hooks/use-contributor-tasks';
 import { ContributorTasks } from '../../shared/components/ContributorTasks';
 import { useReviewerTasks } from '../../shared/hooks/use-reviewer-tasks';
 import { ReviewerTasks } from '../../shared/components/ReviewerTasks';
+import { useRelativeLinks } from '../hooks/use-relative-links';
 
 export const ViewProject: React.FC<Partial<{
   project: ProjectFull;
@@ -45,6 +46,9 @@ export const ViewProject: React.FC<Partial<{
 
       <LocaleString as={'h1'}>{project.label}</LocaleString>
       <LocaleString as={Subheading1}>{project.summary}</LocaleString>
+      <Button as={Link} to={`/projects/${project.slug}/search`}>
+        {t('Search this project')}
+      </Button>
       <ProjectStatus status={project.status} />
       <StatisticContainer>
         <Statistic>

@@ -2,9 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { SearchResult } from '../../../types/search';
 import { parseUrn } from '../../../utility/parse-urn';
+import { useRouteContext } from '../../site/hooks/use-route-context';
 import { CroppedImage } from '../atoms/Images';
 import { ImageStripBox } from '../atoms/ImageStrip';
-import { SearchBox } from '../atoms/SearchBox';
 import { GridContainer } from '../atoms/Grid';
 import { createLink } from '../utility/create-link';
 import { HrefLink } from '../utility/href-link';
@@ -14,13 +14,13 @@ const ResultsContainer = styled.div`
   flex: 1 1 0px;
 `;
 
-const ResultsHeader = styled.h2`
+export const ResultsHeader = styled.h2`
   font-size: 2.125rem;
   padding-bottom: 0.9375rem;
   margin: 0;
 `;
 
-const SearchHint = styled.div`
+export const SearchHint = styled.div`
   font-size: 0.85rem;
   color: #000000;
   margin: 0.5em 0;
@@ -50,7 +50,7 @@ const ResultTitle = styled.div`
   padding-bottom: 0.625rem;
 `;
 
-const TotalResults = styled.div`
+export const TotalResults = styled.div`
   margin: 1em 0;
   color: #666;
 `;
@@ -67,8 +67,11 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; sea
   const things = ((result && result.contexts) || []).map(value => {
     return parseUrn(value.id);
   });
-
-  const collectionId = things.find(thing => thing?.type.toLowerCase() === 'collection')?.id;
+  const routeContext = useRouteContext();
+  const projectId = routeContext.projectId;
+  const collectionId = routeContext.collectionId
+    ? routeContext.collectionId
+    : things.find(thing => thing?.type.toLowerCase() === 'collection')?.id;
   const manifestId = things.find(thing => thing?.type.toLowerCase() === 'manifest')?.id;
   const canvasId = things.find(thing => thing?.type.toLowerCase() === 'canvas')?.id;
   const searchText = result.hits[0] && result.hits[0].bounding_boxes ? search : undefined;
@@ -78,6 +81,7 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; sea
     <ResultContainer>
       <HrefLink
         href={createLink({
+          projectId,
           manifestId,
           canvasId,
           collectionId,
@@ -111,28 +115,14 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; sea
 };
 
 export const SearchResults: React.FC<{
-  searchFunction: (val: string) => void;
   searchResults: Array<SearchResult>;
-  sortByFunction: (val?: string) => void;
-  totalResults: number;
   value?: string;
-}> = ({ searchFunction, searchResults = [], sortByFunction, totalResults, value }) => (
+}> = ({ searchResults = [], value }) => (
   <ResultsContainer>
-    <ResultsHeader>Search Results</ResultsHeader>
-    <SearchBox large={true} onSearch={searchFunction} placeholder="Keywords" value={value} />
-    <SearchHint>Keyword search</SearchHint>
-    <GridContainer $justify="flex-end">
-      {/* <DropdownContainer>
-        <Dropdown options={options} placeholder="Sort By" onChange={val => sortByFunction(val)} />
-      </DropdownContainer> */}
-    </GridContainer>
-    <TotalResults>{`${totalResults} Results`}</TotalResults>
-    <div>
-      {searchResults.map((result: SearchResult, index: number) => {
-        return result ? (
-          <SearchItem result={result} key={`${index}__${result.resource_id}`} search={value} size="small" />
-        ) : null;
-      })}
-    </div>
+    {searchResults.map((result: SearchResult, index: number) => {
+      return result ? (
+        <SearchItem result={result} key={`${index}__${result.resource_id}`} search={value} size="small" />
+      ) : null;
+    })}
   </ResultsContainer>
 );

@@ -42,6 +42,13 @@ export const indexManifest: RouteMiddleware<{ id: string }> = async context => {
         where item_id = ${manifestId} and cols.site_id = ${Number(siteId)} and ir.flat = false`
   );
 
+  const projectsWithin = await context.connection.any<{ id: number }>(
+    sql`select ip.id from iiif_derived_resource_items cols
+        left join iiif_derived_resource ir on ir.resource_id = cols.resource_id
+        left join iiif_project ip on ip.collection_id = ir.resource_id
+        where item_id = ${manifestId} and cols.site_id = ${Number(siteId)} and ir.flat = true`
+  );
+
   const manifest = table.manifests[`${manifestId}`];
 
   const searchPayload = {
@@ -55,6 +62,9 @@ export const indexManifest: RouteMiddleware<{ id: string }> = async context => {
     thumbnail: manifest.thumbnail,
     contexts: [
       { id: siteUrn, type: 'Site' },
+      ...projectsWithin.map(({ id }) => {
+        return { id: `urn:madoc:project:${id}`, type: 'Project' };
+      }),
       ...collectionsWithin.map(({ resource_id }) => {
         return { id: `urn:madoc:collection:${resource_id}`, type: 'Collection' };
       }),
@@ -68,10 +78,8 @@ export const indexManifest: RouteMiddleware<{ id: string }> = async context => {
   try {
     await api.searchGetIIIF(`urn:madoc:manifest:${manifestId}`);
 
-    await userApi.searchReIngest(searchPayload);
+    context.response.body = await userApi.searchReIngest(searchPayload);
   } catch (err) {
-    await userApi.searchIngest(searchPayload);
+    context.response.body = await userApi.searchIngest(searchPayload);
   }
-
-  context.response.body = table.manifests[`${manifestId}`];
 };

@@ -30,6 +30,11 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
           component: components.ViewCollection,
         },
         {
+          path: '/collections/:collectionId/search',
+          exact: true,
+          component: components.Search,
+        },
+        {
           path: '/collections/:collectionId/manifests/:manifestId',
           component: components.ManifestLoader,
           routes: [
@@ -37,6 +42,11 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
               path: '/collections/:collectionId/manifests/:manifestId',
               exact: true,
               component: components.ViewManifest,
+            },
+            {
+              path: '/collections/:collectionId/manifests/:manifestId/search',
+              exact: true,
+              component: components.Search,
             },
             {
               path: '/collections/:collectionId/manifests/:manifestId/mirador',
@@ -85,6 +95,11 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
           component: components.ViewManifest,
         },
         {
+          path: '/manifests/:manifestId/search',
+          exact: true,
+          component: components.Search,
+        },
+        {
           path: '/manifests/:manifestId/mirador',
           exact: true,
           component: components.ViewManifestMirador,
@@ -129,6 +144,11 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
           component: components.ViewProject,
         },
         {
+          path: '/projects/:slug/search',
+          exact: true,
+          component: components.Search,
+        },
+        {
           path: '/projects/:slug/collections',
           exact: true,
           component: components.CollectionListLoader,
@@ -150,6 +170,11 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
               component: components.ViewCollection,
             },
             {
+              path: '/projects/:slug/collections/:collectionId/search',
+              exact: true,
+              component: components.Search,
+            },
+            {
               path: '/projects/:slug/collections/:collectionId/manifests/:manifestId',
               component: components.ManifestLoader,
               routes: [
@@ -157,6 +182,11 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
                   path: '/projects/:slug/collections/:collectionId/manifests/:manifestId',
                   exact: true,
                   component: components.ViewManifest,
+                },
+                {
+                  path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/search',
+                  exact: true,
+                  component: components.Search,
                 },
                 {
                   path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/mirador',
@@ -203,6 +233,11 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
               path: '/projects/:slug/manifests/:manifestId',
               exact: true,
               component: components.ViewManifest,
+            },
+            {
+              path: '/projects/:slug/manifests/:manifestId/search',
+              exact: true,
+              component: components.Search,
             },
             {
               path: '/projects/:slug/manifests/:manifestId/mirador',

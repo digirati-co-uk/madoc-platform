@@ -89,7 +89,7 @@ export const BreadcrumbContext: React.FC<BreadcrumbContextType> = ({
   return <BreadcrumbReactContext.Provider value={ctx}>{children}</BreadcrumbReactContext.Provider>;
 };
 
-export const DisplayBreadcrumbs: React.FC = () => {
+export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ currentPage }) => {
   const breads = useBreadcrumbs();
   const location = useLocation();
 
@@ -198,8 +198,15 @@ export const DisplayBreadcrumbs: React.FC = () => {
       }
     }
 
+    if (currentPage) {
+      flatList.push({
+        label: { none: [currentPage] },
+        url: location.pathname,
+      });
+    }
+
     return flatList;
-  }, [breads]);
+  }, [breads.canvas, breads.collection, breads.manifest, breads.project, currentPage, location.pathname]);
 
   if (stack.length === 0) {
     return <React.Fragment />;
