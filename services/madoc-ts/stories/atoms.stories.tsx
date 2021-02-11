@@ -6,6 +6,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { SearchBox } from '../src/frontend/shared/atoms/SearchBox';
 import { Dropdown } from '@capture-models/editor';
 import { StandardButton } from '../src/frontend/shared/atoms/StandardButton';
+import { SiteProvider } from '../src/frontend/shared/hooks/use-site';
 
 export default { title: 'Atoms' };
 
@@ -28,13 +29,15 @@ export const buttons = () => (
 
 export const breadcrumbs = () => (
   <MemoryRouter>
-    <Breadcrumbs
-      items={[
-        { label: 'site dashboard', link: '#' },
-        { label: 'projects', link: '#' },
-        { label: 'My project', link: '#', active: true },
-      ]}
-    />
+    <SiteProvider value={{ site: { slug: '#', id: 1 } }}>
+      <Breadcrumbs
+        items={[
+          { label: 'site dashboard', link: '#' },
+          { label: 'projects', link: '#' },
+          { label: 'My project', link: '#', active: true },
+        ]}
+      />
+    </SiteProvider>
   </MemoryRouter>
 );
 

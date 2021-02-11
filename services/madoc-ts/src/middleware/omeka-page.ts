@@ -45,12 +45,12 @@ export const omekaPage: RouteMiddleware<{ slug: string }> = async (context, next
     if (context.omekaPage) {
       // Return the response wrapped in Omeka.
       context.response.body = `
-        ${header}
+        ${context.omekaMinimal ? '' : header}
         ${(context.omekaMessages || []).map(
           ({ type, message }) => `<ul class="messages messages--body"><li class="${type}">${message}</li></ul>`
         )}
         ${context.omekaPage}
-        ${footer}
+        ${context.omekaMinimal ? '' : footer}
       `;
     }
   }

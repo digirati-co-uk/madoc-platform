@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSite } from '../../shared/hooks/use-site';
 import { UniversalComponent } from '../../types';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
@@ -55,6 +56,7 @@ const Homepage: UniversalComponent<HomepageType> = createUniversalComponent<Home
   () => {
     const { data: stats } = useStaticData(Homepage);
     const { t } = useTranslation();
+    const site = useSite();
 
     return (
       <div>
@@ -75,6 +77,9 @@ const Homepage: UniversalComponent<HomepageType> = createUniversalComponent<Home
             <AdminSection>
               <MenuTitle>Content</MenuTitle>
               <MenuList>
+                <li>
+                  <a href={`/admin/site/s/${site.slug}/show/`}>{t('Omeka admin')}</a>
+                </li>
                 <li>
                   <Link to="/collections">{t('Manage collections')}</Link>
                 </li>
