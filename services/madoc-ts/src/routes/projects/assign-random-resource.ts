@@ -1,5 +1,6 @@
 import { RouteMiddleware } from '../../types/route-middleware';
 import { api } from '../../gateway/api.server';
+import { NotFound } from '../../utility/errors/not-found';
 import { parseUrn } from '../../utility/parse-urn';
 import { userWithScope } from '../../utility/user-with-scope';
 import { RequestError } from '../../utility/errors/request-error';
@@ -13,13 +14,17 @@ export const assignRandomResource: RouteMiddleware<
     type: 'canvas' | 'manifest';
   }
 > = async context => {
-  const { id, siteId, userUrn } = userWithScope(context, ['models.contribute']);
+  const { id, siteId, userUrn, scope } = userWithScope(context, []);
   const projectId = context.params.id;
   const { collectionId, manifestId: requestManifestId, type, claim = true } = context.requestBody;
 
   const userApi = api.asUser({ siteId, userId: id });
   const project = await userApi.getProject(projectId);
   const priorityRandom = project.config.priorityRandomness || false;
+
+  if (claim && scope.indexOf('models.contribute') === -1) {
+    throw new NotFound();
+  }
 
   // Getting a random manifest id.
   async function getRandomManifest() {

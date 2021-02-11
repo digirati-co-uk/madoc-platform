@@ -9,6 +9,8 @@ export const Button = styled.button`
   color: #fff;
   border: 2px solid #4e82df;
   text-decoration: none;
+  display: inline-block;
+  vertical-align: top;
   &:active {
     box-shadow: inset 0 2px 8px 0 rgba(78, 130, 223, 0.6);
   }
