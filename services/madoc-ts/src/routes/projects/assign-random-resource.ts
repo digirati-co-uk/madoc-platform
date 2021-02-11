@@ -8,19 +8,23 @@ export const assignRandomResource: RouteMiddleware<
   {
     collectionId: string;
     manifestId: string;
+    claim: boolean;
     type: 'canvas' | 'manifest';
   }
 > = async context => {
   const { id, siteId, userUrn } = optionalUserWithScope(context, []);
   const projectId = context.params.id;
-  const { collectionId, manifestId, type } = context.requestBody;
+  const { collectionId, manifestId: requestManifestId, type, claim = true } = context.requestBody;
 
   const userApi = api.asUser({ siteId });
   const project = await userApi.getProject(projectId);
 
-  if (!project.config.randomlyAssignCanvas || !manifestId || type !== 'canvas') {
+  if (!requestManifestId || type !== 'canvas') {
     throw new RequestError('Not enabled');
   }
+
+  // @todo If there is no manifest, randomly select manifest.
+  const manifestId = requestManifestId;
 
   const priorityRandom = project.config.priorityRandomness || false;
 
@@ -81,11 +85,17 @@ export const assignRandomResource: RouteMiddleware<
 
   const siteApi = api.asUser({ userId: id, siteId });
 
-  const resourceClaim = await siteApi.createResourceClaim(project.id, {
-    collectionId: collectionId ? Number(collectionId) : undefined,
-    manifestId: manifestId ? Number(manifestId) : undefined,
-    canvasId: canvas.id,
-  });
+  const resourceClaim = claim
+    ? await siteApi.createResourceClaim(project.id, {
+        collectionId: collectionId ? Number(collectionId) : undefined,
+        manifestId: manifestId ? Number(manifestId) : undefined,
+        canvasId: canvas.id,
+      })
+    : null;
 
-  context.response.body = { canvas, claim: resourceClaim.claim, remainingTasks: availableCanvases.length };
+  context.response.body = {
+    canvas,
+    claim: resourceClaim ? resourceClaim.claim : null,
+    remainingTasks: availableCanvases.length,
+  };
 };

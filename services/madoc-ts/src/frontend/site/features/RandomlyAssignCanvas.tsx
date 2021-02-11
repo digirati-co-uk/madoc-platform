@@ -13,6 +13,23 @@ import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
 import { usePreventCanvasNavigation } from './PreventUsersNavigatingCanvases';
 
+export function useGetRandomCanvas() {
+  const { projectId, manifestId, collectionId } = useRouteContext();
+  const api = useApi();
+  const [getRandomCanvas, randomCanvas] = useMutation(async () => {
+    if (projectId && manifestId) {
+      return await api.randomlyAssignedCanvas(projectId, manifestId, {
+        type: 'canvas',
+        collectionId,
+      });
+    }
+  });
+
+  const isRandomAvailable = projectId && manifestId;
+
+  return [getRandomCanvas, randomCanvas, isRandomAvailable] as const;
+}
+
 export function useAssignRandomCanvas() {
   const createLink = useRelativeLinks();
   const { refetch } = useManifestUserTasks();

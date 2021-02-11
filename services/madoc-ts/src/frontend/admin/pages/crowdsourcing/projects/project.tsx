@@ -1,4 +1,5 @@
 import { ProjectStatus } from '../../../../shared/atoms/ProjectStatus';
+import { useSite } from '../../../../shared/hooks/use-site';
 import { UniversalComponent } from '../../../../types';
 import React from 'react';
 import { LocaleString } from '../../../../shared/components/LocaleString';
@@ -20,6 +21,7 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
   ({ route }) => {
     const { t } = useTranslation();
     const { data, status, refetch } = useData(Project);
+    const { slug } = useSite();
 
     if (!data || status === 'loading' || status === 'error') {
       return <div>loading...</div>;
@@ -42,6 +44,11 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
             { label: t('Crowdsourcing'), link: `/projects/${data.id}/tasks` },
           ]}
           title={<LocaleString>{data.label}</LocaleString>}
+          subtitle={
+            <>
+              <a href={`/s/${slug}/madoc/projects/${data.slug}`}>{t('Go to project on site')}</a>
+            </>
+          }
         />
         <WidePage>
           {data ? <ProjectStatus status={data.status} /> : null}
