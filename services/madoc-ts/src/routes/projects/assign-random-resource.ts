@@ -1,6 +1,7 @@
 import { RouteMiddleware } from '../../types/route-middleware';
 import { api } from '../../gateway/api.server';
-import { optionalUserWithScope } from '../../utility/user-with-scope';
+import { parseUrn } from '../../utility/parse-urn';
+import { userWithScope } from '../../utility/user-with-scope';
 import { RequestError } from '../../utility/errors/request-error';
 
 export const assignRandomResource: RouteMiddleware<
@@ -12,21 +13,95 @@ export const assignRandomResource: RouteMiddleware<
     type: 'canvas' | 'manifest';
   }
 > = async context => {
-  const { id, siteId, userUrn } = optionalUserWithScope(context, []);
+  const { id, siteId, userUrn } = userWithScope(context, ['models.contribute']);
   const projectId = context.params.id;
   const { collectionId, manifestId: requestManifestId, type, claim = true } = context.requestBody;
 
-  const userApi = api.asUser({ siteId });
+  const userApi = api.asUser({ siteId, userId: id });
   const project = await userApi.getProject(projectId);
+  const priorityRandom = project.config.priorityRandomness || false;
 
-  if (!requestManifestId || type !== 'canvas') {
-    throw new RequestError('Not enabled');
+  // Getting a random manifest id.
+  async function getRandomManifest() {
+    // Get project.
+    // Get all manifests in a project from flat collection.
+    // Request all crowdsourcing-manifest-task from the project
+    // Make sure its not complete, return.
+    const currentManifests = await userApi.getTasks(0, {
+      type: 'crowdsourcing-manifest-task',
+      root_task_id: project.task_id,
+      subject_parent: collectionId ? `urn:madoc:collection:${collectionId}` : undefined,
+      all: true,
+      detail: true,
+    });
+
+    // Filter to find the completed manifests.
+    const completedManifests: number[] = currentManifests.tasks
+      .map(task => {
+        const parsed = parseUrn(task.subject);
+        if (!parsed) {
+          // Invalid task.
+          return undefined;
+        }
+        if (parsed.type.toLowerCase() === 'manifest' && task.status === 3) {
+          return parsed.id;
+        }
+        return undefined;
+      })
+      .filter(e => e) as number[];
+
+    // Construct query to get manifests in a project.
+    const projectStructure = await userApi.getCollectionStructure(project.collection_id);
+
+    if (collectionId) {
+      const found = projectStructure.items.find(item => item.id === Number(collectionId));
+      if (!found) {
+        throw new RequestError('Collection is not in project');
+      }
+    }
+
+    const collectionStructure = collectionId
+      ? await userApi.getCollectionStructure(Number(collectionId))
+      : projectStructure;
+
+    // Valid manifests.
+    const validManifests = collectionStructure.items.filter(item => {
+      return item.type === 'manifest' && completedManifests.indexOf(item.id) === -1;
+    });
+
+    if (validManifests.length === 0) {
+      return [undefined, 0] as const;
+    }
+
+    const toChooseFrom = priorityRandom ? validManifests.slice(0, 5) : validManifests;
+    const key = Math.floor(toChooseFrom.length * Math.random());
+
+    const randomManifest = validManifests[key] || validManifests[0];
+
+    return [randomManifest?.id || undefined, validManifests.length] as const;
   }
 
-  // @todo If there is no manifest, randomly select manifest.
-  const manifestId = requestManifestId;
+  const [manifestId, availableManifests] = requestManifestId ? [requestManifestId, 0] : await getRandomManifest();
 
-  const priorityRandom = project.config.priorityRandomness || false;
+  if (!manifestId) {
+    context.response.body = { remainingTasks: 0 };
+    return;
+  }
+
+  if (!requestManifestId && type === 'manifest' && !claim) {
+    context.response.body = {
+      manifest: manifestId,
+      claim: null,
+      remainingTasks: availableManifests,
+    };
+    return;
+  }
+
+  if (type !== 'canvas') {
+    // What's no enabled yet?
+    // type="manifest" && claim=true - automatically claim a random manifest.
+    throw new RequestError('Not enabled');
+  }
 
   // Get manifest task
   // Get all canvases tasks under it.
@@ -75,7 +150,7 @@ export const assignRandomResource: RouteMiddleware<
 
   const toChooseFrom = priorityRandom ? availableCanvases.slice(0, 10) : availableCanvases;
 
-  const key = Math.round(toChooseFrom.length * Math.random());
+  const key = Math.floor(toChooseFrom.length * Math.random());
 
   const canvas = toChooseFrom[key];
 
@@ -95,6 +170,7 @@ export const assignRandomResource: RouteMiddleware<
 
   context.response.body = {
     canvas,
+    manifest: manifestId,
     claim: resourceClaim ? resourceClaim.claim : null,
     remainingTasks: availableCanvases.length,
   };
