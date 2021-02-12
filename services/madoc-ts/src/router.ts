@@ -43,7 +43,7 @@ import { getCanvasMetadata } from './routes/iiif/canvases/get-canvas-metadata';
 import { indexCanvas } from './routes/search/index-canvas';
 import { updateManifestStructure } from './routes/iiif/manifests/update-manifest-structure';
 import { getManifestStructure } from './routes/iiif/manifests/get-manifest-structure';
-import { getLocale } from './routes/locales';
+import { getLocale, saveMissingLocale } from './routes/locales';
 import { updateMetadata } from './routes/iiif/update-metadata';
 import { getManifestAutocomplete } from './routes/iiif/manifests/get-manifest-autocomplete';
 import { getCollectionAutocomplete } from './routes/iiif/collections/get-collection-autocomplete';
@@ -281,6 +281,7 @@ export const router = new TypedRouter({
 
   // Locale
   'get-locale': [TypedRouter.GET, '/s/:slug/madoc/api/locales/:lng/:ns', getLocale],
+  'add-missing-locale': [TypedRouter.POST, '/s/:slug/madoc/api/locales/:lng/:ns', saveMissingLocale],
 
   // Test omeka pages.
   // 'get-page': [TypedRouter.GET, '/s/:slug/madoc/page/:pageSlug+', sitePage],

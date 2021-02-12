@@ -9,6 +9,7 @@ export async function createBackend(slug: string, jwt?: string) {
     lng: 'en',
     ns: 'madoc',
     defaultNS: 'madoc',
+    saveMissing: true,
     backend: {
       backends: [
         process.env.NODE_ENV === 'production' ? LocalStorageBackend : null, // primary
