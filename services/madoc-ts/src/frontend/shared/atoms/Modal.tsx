@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import * as React from 'react';
 import { CloseIcon } from './CloseIcon';
 
 export const ModalBackground = styled.div`
@@ -22,8 +21,20 @@ export const ModalContainer = styled.div`
   display: flex;
 `;
 
-export const InnerModalContainer = styled.div`
-  max-width: 600px;
+const sizes = {
+  sm: {
+    maxWidth: '600px',
+  },
+  md: {
+    maxWidth: '800px',
+  },
+  lg: {
+    maxWidth: '1000px',
+  },
+};
+
+export const InnerModalContainer = styled.div<{ size?: keyof typeof sizes }>`
+  max-width: ${props => sizes[props.size || 'sm'].maxWidth};
   width: 100%;
   min-height: 350px;
   height: auto;
@@ -31,6 +42,9 @@ export const InnerModalContainer = styled.div`
   margin: auto;
   flex-direction: column;
   max-height: 80vh;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 4px 0 20px 0 rgba(0, 0, 0, 0.5);
 `;
 
 export const ModalHeader = styled.div`
@@ -57,9 +71,9 @@ export const ModalCloseIcon = styled(CloseIcon)`
 
 export const ModalBody = styled.div`
   background: #fff;
-  flex: 1 1 0px;
   padding: 1em;
   overflow-y: auto;
+  min-height: 300px;
 `;
 
 export const ModalFooter = styled.div`
