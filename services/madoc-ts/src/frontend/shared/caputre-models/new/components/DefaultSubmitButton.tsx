@@ -35,6 +35,8 @@ export const DefaultSubmitButton: React.FC<{ afterSave?: (req: RevisionRequest) 
   return (
     <div style={{ textAlign: 'center' }}>
       <ModalButton
+        autoHeight
+        modalSize="lg"
         title={t('Submit for review')}
         render={() => {
           return isSuccess ? <EditorSlots.PostSubmission /> : <EditorSlots.PreviewSubmission />;

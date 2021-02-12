@@ -95,7 +95,7 @@ export function useInlineProperties(
     {
       type,
       propertyList,
-      showTitle: type !== 'field' || !Slots.configuration.allowEditing,
+      showTitle: type !== 'field' || propertyList.length > 1 || !Slots.configuration.allowEditing,
       isEmpty: propertyList.length === 0,
       renderEntityList,
       renderFieldList,

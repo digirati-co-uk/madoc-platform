@@ -14,11 +14,12 @@ export const DefaultSingleEntity: EditorRenderingConfig['SingleEntity'] = () => 
       <RoundedCard size="small" interactive={false}>
         <Slots.AdjacentNavigation>
           <Slots.InlineSelector />
-          {mapProperties(entity, ({ label, property, canInlineField }) => {
+          {mapProperties(entity, ({ label, description, property, canInlineField }) => {
             return (
               <Slots.InlineProperties
                 property={property}
                 label={label}
+                description={description}
                 canInlineField={canInlineField}
                 disableRemoving
               />
