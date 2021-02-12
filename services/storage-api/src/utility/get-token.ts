@@ -2,9 +2,9 @@ import { Context } from 'koa';
 import { resolveAuthorizationHeader } from './resolve-authorization-header';
 
 export function getToken(context: Context): string | null {
-  const authHeader: string = resolveAuthorizationHeader(context);
+  const authHeader: string = resolveAuthorizationHeader(context) as any;
   if (authHeader) {
-    return authHeader;
+    return authHeader as any;
   }
 
   if (context.query && context.query.token) {
@@ -19,7 +19,7 @@ export function getToken(context: Context): string | null {
 
   const cookie = context.cookies ? context.cookies.get('token') : undefined;
   if (cookie) {
-    return cookie;
+    return cookie as any;
   }
 
   return null;
