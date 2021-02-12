@@ -1,5 +1,4 @@
 import { BaseField, CaptureModel, RevisionRequest } from '@capture-models/types';
-import { boolean } from '@storybook/addon-knobs';
 import React, { useContext, useMemo } from 'react';
 import { useCurrentEntity } from '../hooks/use-current-entity';
 import { DefaultAdjacentNavigation } from './DefaultAdjacentNavigation';
@@ -32,6 +31,7 @@ export type EditorRenderingConfig = {
     property: string;
     canInlineField?: boolean;
     label?: string;
+    description?: string;
     disableRemoving?: boolean;
   }>;
   InlineField: React.FC<{
@@ -59,11 +59,19 @@ export type EditorRenderingConfig = {
 
 export type EditorConfig = {
   allowEditing: boolean;
+  selectEntityWhenCreating: boolean;
+  selectFieldWhenCreating: boolean;
+};
+
+const defaultEditorConfig: EditorConfig = {
+  allowEditing: false,
+  selectEntityWhenCreating: true,
+  selectFieldWhenCreating: true,
 };
 
 const Context = React.createContext<EditorRenderingConfig>({
   configuration: {
-    allowEditing: false,
+    ...defaultEditorConfig,
   },
   TopLevelEditor: DefaultTopLevelEditor,
   InlineField: DefaultInlineField,

@@ -64,7 +64,7 @@ const TitleContainer = styled.div`
 
 export const AdminHeader: React.FC<{
   title: any;
-  subtitle?: string;
+  subtitle?: any;
   breadcrumbs?: BreadcrumbItem[];
   menu?: BreadcrumbItem[];
   thumbnail?: string;

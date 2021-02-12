@@ -1,7 +1,7 @@
 import { DocumentPreview, RoundedCard } from '@capture-models/editor';
-import { getLabel } from '@capture-models/helpers';
 import React from 'react';
-import { EditorRenderingConfig } from './EditorSlots';
+import { getEntityLabel } from '../../utility/get-entity-label';
+import { EditorRenderingConfig, useSlotContext } from './EditorSlots';
 
 export const DefaultInlineEntity: EditorRenderingConfig['InlineEntity'] = ({
   entity,
@@ -9,6 +9,7 @@ export const DefaultInlineEntity: EditorRenderingConfig['InlineEntity'] = ({
   onRemove,
   canRemove,
 }) => {
+  const { configuration } = useSlotContext();
   return (
     <RoundedCard
       size="small"
@@ -17,7 +18,12 @@ export const DefaultInlineEntity: EditorRenderingConfig['InlineEntity'] = ({
       onClick={chooseEntity}
       onRemove={canRemove ? onRemove : undefined}
     >
-      <DocumentPreview entity={entity}>{getLabel(entity)}</DocumentPreview>
+      <DocumentPreview entity={entity}>
+        {getEntityLabel(
+          entity,
+          <span style={{ color: '#999' }}>No value {configuration.allowEditing ? '(click to edit)' : null}</span>
+        )}
+      </DocumentPreview>
     </RoundedCard>
   );
 };

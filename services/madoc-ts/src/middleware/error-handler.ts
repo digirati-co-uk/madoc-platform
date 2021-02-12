@@ -31,6 +31,7 @@ export const errorHandler: Middleware = async (context, next) => {
       context.response.status = 400;
       context.response.body = { error: err.message };
     } else if (err instanceof errors.JWTExpired) {
+      // @todo refresh token?
       context.response.status = 401;
       context.response.body = { error: err.message };
     } else {

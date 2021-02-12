@@ -75,8 +75,8 @@ export const StandardButton = styled.button<{
     opacity: 0.7;
     cursor: not-allowed;
     &:hover {
-      background: #4e82df;
-      border-color: #4e82df;
+      background: #4265e9;
+      border-color: #4265e9;
     }
   }
 `;

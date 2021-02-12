@@ -1043,20 +1043,44 @@ export class ApiClient {
 
   async randomlyAssignedCanvas(
     projectId: string | number,
-    manifestId: number,
-    { type = 'canvas', collectionId }: { collectionId?: number; type?: string } = {}
+    {
+      manifestId,
+      collectionId,
+      claim = true,
+    }: { collectionId?: number; manifestId?: number; type?: string; claim?: boolean } = {}
   ) {
-    return this.request<{ remainingTasks: number; canvas: ItemStructureListItem; claim: CrowdsourcingTask }>(
-      `/api/madoc/projects/${projectId}/random`,
-      {
-        method: 'POST',
-        body: {
-          collectionId,
-          manifestId,
-          type,
-        },
-      }
-    );
+    return this.request<{
+      remainingTasks: number;
+      canvas: ItemStructureListItem;
+      manifest: number;
+      claim: CrowdsourcingTask;
+    }>(`/api/madoc/projects/${projectId}/random`, {
+      method: 'POST',
+      body: {
+        collectionId,
+        manifestId,
+        type: 'canvas',
+        claim,
+      },
+    });
+  }
+
+  async randomlyAssignedManifest(
+    projectId: string | number,
+    { collectionId }: { collectionId?: number; type?: string } = {}
+  ) {
+    return this.request<{
+      remainingTasks: number;
+      manifest: number;
+      claim: CrowdsourcingTask;
+    }>(`/api/madoc/projects/${projectId}/random`, {
+      method: 'POST',
+      body: {
+        collectionId,
+        type: 'manifest',
+        claim: false,
+      },
+    });
   }
 
   async getTaskSubjects(

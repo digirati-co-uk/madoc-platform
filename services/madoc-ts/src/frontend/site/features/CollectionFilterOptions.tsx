@@ -1,13 +1,15 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { Button, ButtonRow, MediumRoundedButton } from '../../shared/atoms/Button';
+import { Button, ButtonRow } from '../../shared/atoms/Button';
 import { usePaginatedData } from '../../shared/hooks/use-data';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { useSubjectMap } from '../../shared/hooks/use-subject-map';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { CollectionLoader } from '../pages/loaders/collection-loader';
+import { GoToRandomCanvas } from './GoToRandomCanvas';
+import { GoToRandomManifest } from './GoToRandomManifest';
 
 export const CollectionFilterOptions: React.FC = () => {
   const { t } = useTranslation();
@@ -19,8 +21,6 @@ export const CollectionFilterOptions: React.FC = () => {
   if (!data) {
     return null;
   }
-
-  const collection = data.collection;
 
   return (
     <ButtonRow>
@@ -37,6 +37,9 @@ export const CollectionFilterOptions: React.FC = () => {
       <Button as={Link} to={createLink({ subRoute: 'search' })}>
         {t('Search this collection')}
       </Button>
+      <GoToRandomCanvas label={{ none: [t('Start contributing')] }} navigateToModel />
+      <GoToRandomManifest />
+      <GoToRandomCanvas />
     </ButtonRow>
   );
 };

@@ -88,7 +88,7 @@ export const KanbanAvatarContainer = styled.button`
     cursor: pointer;
   }
   &:focus {
-    border-color: #4e82df;
+    border-color: #4265e9;
   }
   text-decoration: none;
 `;

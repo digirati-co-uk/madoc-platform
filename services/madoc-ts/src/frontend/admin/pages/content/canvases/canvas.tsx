@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CanvasNavigation } from '../../../../shared/components/CanvasNavigation';
+import { useSite } from '../../../../shared/hooks/use-site';
 import { UniversalComponent } from '../../../../types';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { useLocation, useParams, useRouteMatch } from 'react-router-dom';
@@ -30,6 +31,7 @@ export const CanvasView: UniversalComponent<CanvasViewType> = createUniversalCom
     const subRoute = pathname.slice(match.url.length + 1);
     const { id, manifestId } = params;
     const { data } = useData(CanvasView);
+    const site = useSite();
     const { data: manifestResponse } = useApiManifest(manifestId);
 
     const { canvas } = data || {};
@@ -49,7 +51,7 @@ export const CanvasView: UniversalComponent<CanvasViewType> = createUniversalCom
         <AdminHeader
           title={title}
           thumbnail={canvas?.thumbnail}
-          subtitle={t('{{count}} canvases')}
+          subtitle={<a href={`/s/${site.slug}/madoc/manifests/${manifestId}/c/${id}`}>{t('View on site')}</a>}
           breadcrumbs={
             manifestId
               ? [

@@ -1,6 +1,9 @@
 import { Context } from 'koa';
 
-export function resolveAuthorizationHeader(ctx: Context, { passthrough = false }: { passthrough?: boolean } = {}) {
+export function resolveAuthorizationHeader(
+  ctx: Context,
+  { passthrough = false }: { passthrough?: boolean } = {}
+): string | undefined {
   if (!ctx.header || !ctx.header.authorization) {
     return;
   }
@@ -12,7 +15,7 @@ export function resolveAuthorizationHeader(ctx: Context, { passthrough = false }
     const credentials = parts[1];
 
     if (/^Bearer$/i.test(scheme)) {
-      return credentials;
+      return credentials as any;
     }
   }
   if (!passthrough) {
