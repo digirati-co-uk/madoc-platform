@@ -130,7 +130,7 @@
   "edit structure": "edit structure",
   "exclude": "exclude",
   "expires soon": "expires soon",
-  "help.flat_collection": "\n                This shows all of the collections and manifests in your project. When you add a collection you will see \n                all off the manifests inside of the collection are added to this view. When you remove a collection you \n                will have to also manually remove any manifests you want to remove.\n            ",
+  "help.flat_collection": "This shows all of the collections and manifests in your project. When you add a collection you will see all off the manifests inside of the collection are added to this view. When you remove a collection you will have to also manually remove any manifests you want to remove.",
   "label": "label",
   "loading": "loading",
   "manifests": "manifests",
