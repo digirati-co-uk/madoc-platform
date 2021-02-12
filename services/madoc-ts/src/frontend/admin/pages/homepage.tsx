@@ -81,13 +81,16 @@ const Homepage: UniversalComponent<HomepageType> = createUniversalComponent<Home
                   <a href={`/admin/site/s/${site.slug}/show/`}>{t('Omeka admin')}</a>
                 </li>
                 <li>
-                  <Link to="/collections">{t('Manage collections')}</Link>
+                  <Link to="/collections">{t('Manage collections', { count: 2 })}</Link>
                 </li>
                 <li>
-                  <Link to="/manifests">{t('Manage manifests')}</Link>
+                  <Link to="/manifests">{t('Manage manifests', { count: 2 })}</Link>
                 </li>
                 <li>
                   <Link to="/configure/site">{t('Site configuration')}</Link>
+                </li>
+                <li>
+                  <Link to="/i18n">{t('Localisation')}</Link>
                 </li>
                 <li>
                   <span>Customise site pages</span>
@@ -101,7 +104,7 @@ const Homepage: UniversalComponent<HomepageType> = createUniversalComponent<Home
               <MenuTitle>Crowdsourcing</MenuTitle>
               <MenuList>
                 <li>
-                  <Link to="/projects">{t('Manage projects')}</Link>
+                  <Link to="/projects">{t('Manage projects', { count: 2 })}</Link>
                 </li>
                 {/* <li>
                   <Link to="/capture-models">{t('Manage capture models')}</Link>

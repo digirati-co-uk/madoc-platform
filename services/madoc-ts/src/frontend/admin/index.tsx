@@ -45,7 +45,7 @@ export type AdminAppProps = {
 };
 
 const AdminApp: React.FC<AdminAppProps> = ({ api, routes, site, user }) => {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const restarting = useIsApiRestarting(api);
   const viewingDirection = useMemo(() => i18n.dir(i18n.language), [i18n.language]);
 
@@ -54,8 +54,7 @@ const AdminApp: React.FC<AdminAppProps> = ({ api, routes, site, user }) => {
       <SiteProvider value={useMemo(() => ({ site, user }), [site, user])}>
         <GlobalStyles />
         <UserBar site={site} user={user} admin />
-        {restarting ? <ErrorMessage>Lost connection to server, retrying... </ErrorMessage> : null}
-
+        {restarting ? <ErrorMessage>{t('Lost connection to server, retrying...')}</ErrorMessage> : null}
         <AdminLayoutContainer>
           <AdminLayoutMenu>
             <AdminSidebar />

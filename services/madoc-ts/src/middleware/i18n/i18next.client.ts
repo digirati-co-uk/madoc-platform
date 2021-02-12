@@ -10,7 +10,10 @@ export async function createBackend(slug: string, jwt?: string) {
     ns: 'madoc',
     defaultNS: 'madoc',
     saveMissing: true,
+    keySeparator: false,
     backend: {
+      allowMultiLoading: false,
+      crossDomain: false,
       backends: [
         process.env.NODE_ENV === 'production' ? LocalStorageBackend : null, // primary
         HTTP, // fallback

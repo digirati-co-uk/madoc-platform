@@ -38,7 +38,7 @@ export const ProjectContent: UniversalComponent<ProjectContentType> = createUniv
       <>
         <div style={{ fontSize: `1.25em` }}>
           <HelpText>
-            {t('help.flat_collection', {
+            {t('help__flat_collection', {
               defaultValue: `
                 This shows all of the collections and manifests in your project. When you add a collection you will see 
                 all off the manifests inside of the collection are added to this view. When you remove a collection you 
