@@ -28,10 +28,23 @@ export const saveMissingLocale: RouteMiddleware<{ lng: string; ns: string }> = a
   }
 
   if (context.state.jwt && context.state.jwt.scope.indexOf('site.admin') !== -1) {
-    const bundle = path.resolve(__dirname, '..', '..', 'translations', context.params.lng, `${context.params.ns}.json`);
-    if (existsSync(bundle)) {
-      const bundleJson = JSON.parse(readFileSync(bundle).toString('utf-8'));
-      writeFileSync(bundle, JSON.stringify(bundleJson, null, 2));
+    try {
+      const bundle = path.resolve(
+        __dirname,
+        '..',
+        '..',
+        'translations',
+        context.params.lng,
+        `${context.params.ns}.json`
+      );
+      if (existsSync(bundle)) {
+        const bundleJson = JSON.parse(readFileSync(bundle).toString('utf-8'));
+        const newBundle = { ...bundleJson, ...context.requestBody };
+        writeFileSync(bundle, JSON.stringify(newBundle, Object.keys(newBundle).sort(), 2));
+      }
+    } catch (e) {
+      console.log(e);
+      // fail silently.
     }
   }
 
