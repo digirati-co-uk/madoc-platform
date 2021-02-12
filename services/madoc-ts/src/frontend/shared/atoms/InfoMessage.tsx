@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const InfoMessage = styled.div.attrs(() => ({ 'data-cy': 'info-message' }))`
-  background: #60b5e2;
+  background: #4265e9;
   color: #fff;
   width: 100%;
   padding: 0.5em;

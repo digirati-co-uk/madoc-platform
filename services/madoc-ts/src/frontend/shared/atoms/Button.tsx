@@ -5,9 +5,9 @@ export const Button = styled.button`
   font-size: 16px;
   line-height: 22px;
   padding: 3px 10px;
-  background: #4e82df;
+  background: #4265e9;
   color: #fff;
-  border: 2px solid #4e82df;
+  border: 2px solid #4265e9;
   text-decoration: none;
   display: inline-block;
   vertical-align: top;
@@ -30,8 +30,8 @@ export const Button = styled.button`
     opacity: 0.7;
     cursor: not-allowed;
     &:hover {
-      background: #4e82df;
-      border-color: #4e82df;
+      background: #4265e9;
+      border-color: #4265e9;
     }
   }
 `;
@@ -103,7 +103,7 @@ export const MediumRoundedButton = styled.a`
     opacity: 0.7;
     cursor: not-allowed;
     &:hover {
-      background: #4e82df;
+      background: #4265e9;
       border-color: #dee2e6;
     }
   }
