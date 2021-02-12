@@ -1,6 +1,7 @@
 import { InternationalString } from '@hyperion-framework/types';
 import React, { useMemo, useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useCurrentAdminPages } from '../../site/hooks/use-current-admin-pages';
 import { LocaleString } from './LocaleString';
 import styled, { css } from 'styled-components';
 
@@ -35,6 +36,26 @@ export const BreadcrumbItem = styled.div<{ active?: boolean }>`
         color: rgba(0, 0, 0, 1);
       `}
   }
+`;
+
+export const BreadcrumbAdmin = styled.div`
+  margin-left: auto;
+  display: flex;
+  background: #eee;
+  border-radius: 3px;
+  ${BreadcrumbItem} {
+    margin-left: 0.5em;
+    font-size: 0.75em;
+    padding: 0.4em 0.8em;
+  }
+`;
+
+const ViewInAdmin = styled.div`
+  background: #2b4068;
+  border-radius: 3px;
+  padding: 0.4em 0.8em;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.75em;
 `;
 
 const DividerIcon: React.FC<{ className?: string }> = ({ className }) => (
@@ -92,6 +113,7 @@ export const BreadcrumbContext: React.FC<BreadcrumbContextType> = ({
 export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ currentPage }) => {
   const breads = useBreadcrumbs();
   const location = useLocation();
+  const adminLinks = useCurrentAdminPages();
 
   const stack = useMemo(() => {
     const flatList = [];
@@ -228,6 +250,18 @@ export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ current
           {n < stack.length - 1 ? <BreadcrumbDivider /> : null}
         </React.Fragment>
       ))}
+      {adminLinks.length ? (
+        <BreadcrumbAdmin>
+          <ViewInAdmin>View in Admin</ViewInAdmin>
+          {adminLinks.map(link => {
+            return (
+              <BreadcrumbItem key={link.link}>
+                <a href={link.link}>{link.label}</a>
+              </BreadcrumbItem>
+            );
+          })}
+        </BreadcrumbAdmin>
+      ) : null}
     </BreadcrumbList>
   );
 };
