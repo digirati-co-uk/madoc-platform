@@ -82,12 +82,12 @@ export const SimpleAtlasViewer: React.FC<{
   }
 
   return (
-    <div style={{ display: 'flex', width: '100%' }}>
-      {isAnnotationOpen && annotationPages?.length ? (
+    <div style={{ display: 'flex', width: '100%', minWidth: 0, overflow: 'hidden' }}>
+      {isAnnotationOpen ? (
         <div style={{ minWidth: 300, width: 300, padding: 10 }}>
           {currentAnnotationPage ? (
             <div>
-              {annotationPages.length > 1 ? (
+              {annotationPages && annotationPages.length > 1 ? (
                 <TinyButton
                   onClick={() => {
                     setCurrentAnnotationPage(undefined);
@@ -120,7 +120,8 @@ export const SimpleAtlasViewer: React.FC<{
             </div>
           ) : (
             <div>
-              {annotationPages.map(page => {
+              {annotationPages && annotationPages.length ? <h4>Projects</h4> : null}
+              {annotationPages?.map(page => {
                 return (
                   <MetadataCardItem
                     key={page.id}
@@ -134,17 +135,17 @@ export const SimpleAtlasViewer: React.FC<{
                     </MetadataCard>
                   </MetadataCardItem>
                 );
-              })}
+              }) || null}
             </div>
           )}
         </div>
       ) : null}
-      <div style={{ position: 'relative', flex: '1 1 0px' }}>
+      <div style={{ position: 'relative', flex: '1 1 0px', minWidth: 0, overflow: 'hidden' }}>
         {isLoaded ? (
           <>
             <AtlasAuto style={style} onCreated={rt => (runtime.current = rt.runtime)}>
               <world>
-                <AtlasTiledImages canvas={canvas} service={service as ImageService} />
+                <AtlasTiledImages key={canvas.id} canvas={canvas} service={service as ImageService} />
                 <worldObject height={canvas.height} width={canvas.width}>
                   {highlightedRegions
                     ? highlightedRegions.map(([x, y, width, height], key) => {
