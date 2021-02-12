@@ -8,7 +8,13 @@ export function getToken(context: Context): string | null {
   }
 
   if (context.query && context.query.token) {
-    return context.query.token;
+    const token = context.query.token;
+
+    if (Array.isArray(token)) {
+      return token[0] as any;
+    }
+
+    return token as any;
   }
 
   const cookie = context.cookies ? context.cookies.get('token') : undefined;
