@@ -5,6 +5,7 @@ import { ServerStyleSheet } from 'styled-components';
 import { ApiClient } from '../../../gateway/api';
 import { StaticRouterContext } from 'react-router';
 import { parse } from 'query-string';
+import { PublicSite } from '../../../utility/omeka-api';
 import { queryConfig } from './query-config';
 import { matchUniversalRoutes } from './server-utils';
 import { renderToString } from 'react-dom/server';
@@ -14,7 +15,12 @@ import React from 'react';
 import { UniversalRoute } from '../../types';
 
 export function createServerRenderer(
-  RootApplication: React.FC<{ api: ApiClient; routes: UniversalRoute[] }>,
+  RootApplication: React.FC<{
+    api: ApiClient;
+    routes: UniversalRoute[];
+    site: PublicSite;
+    user?: { name: string; id: number };
+  }>,
   routes: UniversalRoute[],
   apiGateway: string,
   extraConfig: Partial<ReactQueryConfig> = {}
@@ -25,12 +31,16 @@ export function createServerRenderer(
     jwt,
     i18next,
     siteSlug,
+    site,
+    user,
   }: {
     url: string;
     basename: string;
     jwt: string;
     i18next: i18n;
     siteSlug?: string;
+    site?: Promise<PublicSite | undefined>;
+    user?: { name: string; id: number };
   }) {
     const prefetchCache = makeQueryCache();
     const sheet = new ServerStyleSheet(); // <-- creating out stylesheet
@@ -55,8 +65,10 @@ export function createServerRenderer(
       }
     }
     await Promise.all(requests);
+    const omekaSite = await site;
     const dehydratedState = dehydrate(prefetchCache);
     const routeData = `
+      <script type="application/json" id="react-omeka">${JSON.stringify({ site: omekaSite, user })}</script>
       <script type="application/json" id="react-query-cache">${JSON.stringify(dehydratedState)}</script>
     `;
 
@@ -74,7 +86,7 @@ export function createServerRenderer(
             <Hydrate state={dehydratedState}>
               <I18nextProvider i18n={i18next}>
                 <StaticRouter basename={basename} location={url} context={context}>
-                  {<RootApplication api={api} routes={routes} />}
+                  {<RootApplication api={api} routes={routes} site={omekaSite as any} user={user} />}
                 </StaticRouter>
               </I18nextProvider>
             </Hydrate>

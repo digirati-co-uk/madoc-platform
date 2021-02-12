@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heading1 } from '../../shared/atoms/Heading1';
+import { Heading2 } from '../../shared/atoms/Heading2';
 import { useUserHomepage } from '../hooks/use-user-homepage';
 
 export const UserGreeting: React.FC = () => {
@@ -9,5 +9,5 @@ export const UserGreeting: React.FC = () => {
     return null;
   }
 
-  return <Heading1>Welcome back {data.userDetails.user.name}</Heading1>;
+  return <Heading2 $margin>Welcome back {data.userDetails.user.name}</Heading2>;
 };

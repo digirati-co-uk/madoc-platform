@@ -61,12 +61,12 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({ project, canvas, manifes
             </InfoMessage>
           ) : null}
 
-          <div style={{ display: 'flex', width: '100%' }}>
+          <div style={{ display: 'flex', width: '100%', overflow: 'hidden' }}>
             <CanvasImageViewer annotationPages={data?.pages} />
 
             {canvas && canvas.metadata ? (
               <TabPanel
-                style={{ height: '60vh', width: '40%' }}
+                style={{ height: '60vh', width: 300, minWidth: 300 }}
                 menu={[
                   // Removed transcription for now.
                   // { label: 'TRANSCRIPTION', component: <div /> },

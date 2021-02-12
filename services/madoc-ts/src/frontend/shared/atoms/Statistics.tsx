@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
-import React from "react";
-import {Link} from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 export const StatisticLabel = styled.div`
   font-size: 0.9em;
@@ -16,7 +16,7 @@ export const Statistic = styled.div<{ $interactive?: boolean }>`
   border-radius: 5px;
   background: #fff;
   text-align: center;
-  border: 2px solid ${props => (props.$interactive ? '#4e82df' : '#CCC')};
+  border: 2px solid ${props => (props.$interactive ? '#4265e9' : '#CCC')};
   padding: 1.25em 2em;
   color: #333;
 
@@ -24,27 +24,28 @@ export const Statistic = styled.div<{ $interactive?: boolean }>`
     props.$interactive &&
     css`
       &:hover {
-        background-color: #4e82df;
+        background-color: #4265e9;
         color: #fff;
       }
     `}
 `;
 
+const linkStyle = {
+  display: 'block',
+  padding: '1.25em 2em',
+  textDecoration: 'none',
+  color: 'unset',
+};
+
 export const StatisticLink: React.FC<any> = ({ to, number, label }) => {
-    const linkStyle = {
-      display: "block",
-      padding: "1.25em 2em",
-      textDecoration: "none",
-      color: "unset"
-    };
-    return (
-      <Statistic style={{padding: "0"}}>
-        <Link to={to} style={linkStyle}>
-          <StatisticNumber>{number}</StatisticNumber>
-          <StatisticLabel>{label}</StatisticLabel>
-        </Link>
-      </Statistic>
-    );
+  return (
+    <Statistic style={{ padding: '0' }}>
+      <Link to={to} style={linkStyle}>
+        <StatisticNumber>{number}</StatisticNumber>
+        <StatisticLabel>{label}</StatisticLabel>
+      </Link>
+    </Statistic>
+  );
 };
 
 export const StatisticContainer = styled.div`

@@ -87,7 +87,7 @@ const renderEntityList = (entities: CaptureModel['document'][]) => {
       {entities.map(entity => {
         const flatInnerProperties = Object.entries(entity.properties);
         return (
-          <div>
+          <div key={entity.id}>
             <div style={{ display: 'flex', marginBottom: 10 }}>
               <div style={{ padding: '3px 16px' }}>{'v'}</div>
               <DocumentEntityLabel>Some label</DocumentEntityLabel>

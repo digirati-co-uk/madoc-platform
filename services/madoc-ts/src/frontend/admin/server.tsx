@@ -14,4 +14,4 @@ import { createServerRenderer } from '../shared/utility/create-server-renderer';
 
 const apiGateway = process.env.API_GATEWAY as string;
 
-export const render = createServerRenderer(AdminApp, routes, apiGateway, queryConfig);
+export const render = createServerRenderer(AdminApp as any, routes, apiGateway, queryConfig);

@@ -1,4 +1,4 @@
-import { QueryConfig, QueryResult, useQuery } from 'react-query';
+import { PaginatedQueryResult, QueryConfig, QueryResult, usePaginatedQuery, useQuery } from 'react-query';
 import { ApiClient } from '../../../gateway/api';
 import { useApi } from './use-api';
 
@@ -77,6 +77,7 @@ type GetApiMethods = keyof Pick<
   | 'getSiteSearchFacetConfiguration'
   | 'getSiteMetadataConfiguration'
   | 'getSiteCanvasPublishedModels'
+  | 'getSiteSearchQuery'
 >;
 
 const keys = Object.getOwnPropertyNames(ApiClient.prototype);
@@ -96,6 +97,31 @@ for (const key of keys) {
 
       // eslint-disable-next-line react-hooks/rules-of-hooks
       return useQuery(
+        [key, argsToUse],
+        () => {
+          return (hookedApi as any)[key](...argsToUse);
+        },
+        { enabled: typeof argsToUse !== 'undefined', ...(config || {}) }
+      );
+    };
+  }
+}
+
+export const paginatedApiHooks: {
+  [Key in GetApiMethods]: (
+    creator: () => undefined | MethodArgs<ApiClient[Key]>,
+    config?: QueryConfig<MethodReturn<ApiClient[Key]>>
+  ) => PaginatedQueryResult<MethodReturn<ApiClient[Key]>>;
+} = {} as any;
+for (const key of keys) {
+  if (key.startsWith('get') || key === 'searchQuery') {
+    (paginatedApiHooks as any)[key] = (args: any, config: any) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const hookedApi = useApi();
+      const argsToUse = args();
+
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      return usePaginatedQuery(
         [key, argsToUse],
         () => {
           return (hookedApi as any)[key](...argsToUse);

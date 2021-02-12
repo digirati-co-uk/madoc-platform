@@ -7,15 +7,14 @@ import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { useSubjectMap } from '../../shared/hooks/use-subject-map';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useRelativeLinks } from '../hooks/use-relative-links';
-import { useRouteContext } from '../hooks/use-route-context';
 import { ManifestLoader } from '../pages/loaders/manifest-loader';
+import { GoToRandomCanvas } from './GoToRandomCanvas';
 
 export const ManifestActions: React.FC = () => {
   const { resolvedData: data } = usePaginatedData(ManifestLoader, [], {
     cacheTime: 3600,
   });
   const { t } = useTranslation();
-  const { manifestId } = useRouteContext();
   const { filter, page } = useLocationQuery();
   const createLink = useRelativeLinks();
   const [, showDoneButton] = useSubjectMap(data?.subjects);
@@ -42,9 +41,11 @@ export const ManifestActions: React.FC = () => {
         </Button>
       ) : null}
 
-      <Button as={Link} to={`/search?madoc_id=urn:madoc:manifest:${manifestId}`}>
+      <Button as={Link} to={createLink({ subRoute: 'search' })}>
         {t('Search this manifest')}
       </Button>
+      <GoToRandomCanvas label={{ none: [t('Start contributing')] }} navigateToModel />
+      <GoToRandomCanvas />
     </ButtonRow>
   );
 };

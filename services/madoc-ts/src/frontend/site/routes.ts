@@ -30,6 +30,11 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
           component: components.ViewCollection,
         },
         {
+          path: '/collections/:collectionId/search',
+          exact: true,
+          component: components.Search,
+        },
+        {
           path: '/collections/:collectionId/manifests/:manifestId',
           component: components.ManifestLoader,
           routes: [
@@ -37,6 +42,11 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
               path: '/collections/:collectionId/manifests/:manifestId',
               exact: true,
               component: components.ViewManifest,
+            },
+            {
+              path: '/collections/:collectionId/manifests/:manifestId/search',
+              exact: true,
+              component: components.Search,
             },
             {
               path: '/collections/:collectionId/manifests/:manifestId/mirador',
@@ -118,6 +128,11 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
           component: components.ViewManifest,
         },
         {
+          path: '/manifests/:manifestId/search',
+          exact: true,
+          component: components.Search,
+        },
+        {
           path: '/manifests/:manifestId/mirador',
           exact: true,
           component: components.ViewManifestMirador,
@@ -184,6 +199,11 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
           component: components.ViewProject,
         },
         {
+          path: '/projects/:slug/search',
+          exact: true,
+          component: components.Search,
+        },
+        {
           path: '/projects/:slug/collections',
           exact: true,
           component: components.CollectionListLoader,
@@ -205,6 +225,11 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
               component: components.ViewCollection,
             },
             {
+              path: '/projects/:slug/collections/:collectionId/search',
+              exact: true,
+              component: components.Search,
+            },
+            {
               path: '/projects/:slug/collections/:collectionId/manifests/:manifestId',
               component: components.ManifestLoader,
               routes: [
@@ -212,6 +237,11 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
                   path: '/projects/:slug/collections/:collectionId/manifests/:manifestId',
                   exact: true,
                   component: components.ViewManifest,
+                },
+                {
+                  path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/search',
+                  exact: true,
+                  component: components.Search,
                 },
                 {
                   path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/mirador',
@@ -291,6 +321,11 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
               path: '/projects/:slug/manifests/:manifestId',
               exact: true,
               component: components.ViewManifest,
+            },
+            {
+              path: '/projects/:slug/manifests/:manifestId/search',
+              exact: true,
+              component: components.Search,
             },
             {
               path: '/projects/:slug/manifests/:manifestId/mirador',
@@ -403,9 +438,35 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
       component: components.Search,
     },
     {
-      path: '/',
-      exact: true,
+      path: '/dashboard',
       component: components.UserHomepage,
+      routes: [
+        {
+          path: '/dashboard',
+          exact: true,
+          component: components.UserDashboard,
+        },
+        {
+          path: '/dashboard/contributions',
+          exact: true,
+          component: components.UserContributions,
+        },
+        {
+          path: '/dashboard/reviews',
+          exact: true,
+          component: components.UserReviews,
+        },
+        {
+          path: '/dashboard',
+          // Fallback here.
+          component: components.UserDashboard,
+        },
+      ],
+    },
+    {
+      path: '/',
+      // Fallback here.
+      component: components.Homepage,
     },
     {
       path: '/:pagePath+',

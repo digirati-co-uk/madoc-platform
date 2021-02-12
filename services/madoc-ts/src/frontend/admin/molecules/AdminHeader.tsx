@@ -6,6 +6,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { WidePage } from '../../shared/atoms/WidePage';
 import { SearchBox } from '../../shared/atoms/SearchBox';
 import { GridContainer } from '../../shared/atoms/Grid';
+import { useSite } from '../../shared/hooks/use-site';
 
 const AdminHeaderBackground = styled.div`
   background: #25416b;
@@ -63,7 +64,7 @@ const TitleContainer = styled.div`
 
 export const AdminHeader: React.FC<{
   title: any;
-  subtitle?: string;
+  subtitle?: any;
   breadcrumbs?: BreadcrumbItem[];
   menu?: BreadcrumbItem[];
   thumbnail?: string;

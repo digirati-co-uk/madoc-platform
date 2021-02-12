@@ -7,7 +7,7 @@ import { Heading1 } from '../src/frontend/shared/atoms/Heading1';
 import { Heading3 } from '../src/frontend/shared/atoms/Heading3';
 import { DashboardTabs, DashboardTab } from '../src/frontend/shared/components/DashboardTabs';
 
-export const StorybookPaddedBox = styled.div`
+const StorybookPaddedBox = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 1em;

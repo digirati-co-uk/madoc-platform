@@ -3,6 +3,7 @@ import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { BreadcrumbDivider, BreadcrumbList, BreadcrumbItem as SiteBreadcrumbItem } from '../components/Breadcrumbs';
 import { LocaleString } from '../components/LocaleString';
+import { useSite } from '../hooks/use-site';
 
 export type BreadcrumbItem = {
   label: string | any;
@@ -53,6 +54,7 @@ export const Breadcrumbs: React.FC<{
   padding?: string;
 }> = ({ items: rawItems, type, background, color, $activeColor, padding }) => {
   const items: BreadcrumbItem[] = useMemo(() => rawItems.filter(r => r) as BreadcrumbItem[], [rawItems]);
+  const site = useSite();
 
   if (items.length === 0) {
     return null;
@@ -75,12 +77,20 @@ export const Breadcrumbs: React.FC<{
 
   return (
     <BreadcrumbContainer background={background} color={color} padding={padding}>
+      <BreadcrumbItem active>
+        <a style={{ color: '#fff' }} href={`/s/${site.slug}/madoc`}>
+          Back to site
+        </a>
+      </BreadcrumbItem>
+      <BreadcrumbSeparator color={color}>{`/`}</BreadcrumbSeparator>
       {items.map((item, n) => {
         return (
           <React.Fragment key={item.link}>
             {n !== 0 ? <BreadcrumbSeparator color={color}>{`/`}</BreadcrumbSeparator> : null}
             <BreadcrumbItem key={item.link} active={item.active} color={color} $activeColor={$activeColor}>
-              <Link to={item.link} title={item.label}>{item.label}</Link>
+              <Link to={item.link} title={item.label}>
+                {item.label}
+              </Link>
             </BreadcrumbItem>
           </React.Fragment>
         );

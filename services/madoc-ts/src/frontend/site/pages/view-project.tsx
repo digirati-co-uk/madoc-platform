@@ -15,11 +15,13 @@ import { Heading3 } from '../../shared/atoms/Heading3';
 import { useTranslation } from 'react-i18next';
 import { CollectionSnippet } from '../../shared/components/CollectionSnippet';
 import { HrefLink } from '../../shared/utility/href-link';
-import { Button } from '../../shared/atoms/Button';
+import { Button, ButtonRow } from '../../shared/atoms/Button';
 import { useContributorTasks } from '../../shared/hooks/use-contributor-tasks';
 import { ContributorTasks } from '../../shared/components/ContributorTasks';
 import { useReviewerTasks } from '../../shared/hooks/use-reviewer-tasks';
 import { ReviewerTasks } from '../../shared/components/ReviewerTasks';
+import { GoToRandomCanvas } from '../features/GoToRandomCanvas';
+import { GoToRandomManifest } from '../features/GoToRandomManifest';
 
 export const ViewProject: React.FC<Partial<{
   project: ProjectFull;
@@ -45,6 +47,15 @@ export const ViewProject: React.FC<Partial<{
 
       <LocaleString as={'h1'}>{project.label}</LocaleString>
       <LocaleString as={Subheading1}>{project.summary}</LocaleString>
+
+      <ButtonRow>
+        <GoToRandomCanvas label={{ none: [t('Start contributing')] }} navigateToModel />
+        <Button as={Link} to={`/projects/${project.slug}/search`}>
+          {t('Search this project')}
+        </Button>
+        <GoToRandomManifest />
+        <GoToRandomCanvas />
+      </ButtonRow>
       <ProjectStatus status={project.status} />
       <StatisticContainer>
         <Statistic>

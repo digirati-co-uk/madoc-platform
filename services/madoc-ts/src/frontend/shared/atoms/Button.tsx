@@ -1,14 +1,16 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const Button = styled.button`
   cursor: pointer;
   font-size: 16px;
   line-height: 22px;
   padding: 3px 10px;
-  background: #4e82df;
+  background: #4265e9;
   color: #fff;
-  border: 2px solid #4e82df;
+  border: 2px solid #4265e9;
   text-decoration: none;
+  display: inline-block;
+  vertical-align: top;
   &:active {
     box-shadow: inset 0 2px 8px 0 rgba(78, 130, 223, 0.6);
   }
@@ -28,13 +30,13 @@ export const Button = styled.button`
     opacity: 0.7;
     cursor: not-allowed;
     &:hover {
-      background: #4e82df;
-      border-color: #4e82df;
+      background: #4265e9;
+      border-color: #4265e9;
     }
   }
 `;
 
-export const RoundedButton = styled.a`
+export const RoundedButton = styled.a<{ disabled?: boolean }>`
   cursor: pointer;
   font-size: 16px;
   line-height: 22px;
@@ -43,6 +45,7 @@ export const RoundedButton = styled.a`
   color: #007bff;
   border: 1px solid #dee2e6;
   text-decoration: none;
+  border-radius: 4px;
 
   &:link,
   &:visited {
@@ -55,20 +58,12 @@ export const RoundedButton = styled.a`
   &:focus {
     outline: 1px solid #dee2e6;
   }
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-    &:hover {
-      background: #4e82df;
-      border-color: #dee2e6;
-    }
-  }
-  &:last-of-type {
-    border-radius: 0px 4px 4px 0px;
-  }
-  &:first-of-type {
-    border-radius: 4px 0px 0px 4px;
-  }
+  ${props =>
+    props.disabled &&
+    css`
+      opacity: 0.7;
+      pointer-events: none;
+    `}
 `;
 
 export const SmallButton = styled(Button)`
@@ -108,7 +103,7 @@ export const MediumRoundedButton = styled.a`
     opacity: 0.7;
     cursor: not-allowed;
     &:hover {
-      background: #4e82df;
+      background: #4265e9;
       border-color: #dee2e6;
     }
   }

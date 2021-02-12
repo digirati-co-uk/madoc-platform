@@ -1,10 +1,13 @@
+import { Revisions } from '@capture-models/editor';
 import React from 'react';
-import { EditorSlots } from './EditorSlots';
+import { ViewDocument } from '../../inspector/ViewDocument';
 
 export const DefaultPreviewSubmission: React.FC = () => {
-  return (
-    <EditorSlots.Provider config={{ allowEditing: false }}>
-      <EditorSlots.TopLevelEditor />
-    </EditorSlots.Provider>
-  );
+  const currentRevision = Revisions.useStoreState(state => state.currentRevision);
+
+  if (!currentRevision || !currentRevision.document) {
+    return null;
+  }
+
+  return <ViewDocument document={currentRevision.document} />;
 };

@@ -124,7 +124,7 @@ export const LocaleString: React.FC<{
         {...props}
         as={Component}
         language={language}
-        title={text}
+        title={enableDangerouslySetInnerHTML ? undefined : text}
         dangerouslySetInnerHTML={
           enableDangerouslySetInnerHTML
             ? {
@@ -145,6 +145,7 @@ export const LocaleString: React.FC<{
   return (
     <span
       {...props}
+      title={enableDangerouslySetInnerHTML ? undefined : text}
       dangerouslySetInnerHTML={
         enableDangerouslySetInnerHTML
           ? {

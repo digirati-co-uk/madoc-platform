@@ -52,6 +52,7 @@ import {
 import { CrowdsourcingCanvasTask } from './tasks/crowdsourcing-canvas-task';
 import { ConfigResponse } from '../types/schemas/config-response';
 import { ResourceLinkResponse, ResourceLinkRow } from '../database/queries/linking-queries';
+import { SearchIndexTask } from './tasks/search-index-task';
 
 export class ApiClient {
   private readonly gateway: string;
@@ -174,6 +175,51 @@ export class ApiClient {
     return () => {
       this.errorRecoveryHandlers = this.errorRecoveryHandlers.filter(e => e !== func);
     };
+  }
+
+  async wrapTask<After, Task extends BaseTask = BaseTask>(
+    target: Promise<Task>,
+    after: (task: Task) => Promise<After>,
+    { interval = 1000, progress }: { interval?: number; progress?: (remaining: number) => void } = {}
+  ): Promise<After> {
+    const task = await target;
+    const taskId = task?.id;
+
+    if (!taskId) {
+      throw new Error('Invalid task');
+    }
+
+    return new Promise((resolve, reject) => {
+      let intervalId = 0;
+      let loading = false;
+
+      const tryReturn = () => {
+        if (loading) {
+          return;
+        }
+        loading = true;
+        this.getTask(taskId, { all: true }).then(latestTask => {
+          loading = false;
+          if (latestTask.status === 3) {
+            clearInterval(intervalId);
+            resolve(after(latestTask as any));
+            return;
+          }
+          if (latestTask.status === -1) {
+            clearInterval(intervalId);
+            reject(latestTask);
+          }
+
+          if (progress) {
+            const remaining = latestTask.subtasks?.filter(t => t.status !== 3).length || 0;
+
+            progress(remaining);
+          }
+        });
+      };
+
+      intervalId = setInterval(tryReturn, interval);
+    });
   }
 
   async request<Return, Body = any>(
@@ -1002,20 +1048,44 @@ export class ApiClient {
 
   async randomlyAssignedCanvas(
     projectId: string | number,
-    manifestId: number,
-    { type = 'canvas', collectionId }: { collectionId?: number; type?: string } = {}
+    {
+      manifestId,
+      collectionId,
+      claim = true,
+    }: { collectionId?: number; manifestId?: number; type?: string; claim?: boolean } = {}
   ) {
-    return this.request<{ remainingTasks: number; canvas: ItemStructureListItem; claim: CrowdsourcingTask }>(
-      `/api/madoc/projects/${projectId}/random`,
-      {
-        method: 'POST',
-        body: {
-          collectionId,
-          manifestId,
-          type,
-        },
-      }
-    );
+    return this.request<{
+      remainingTasks: number;
+      canvas: ItemStructureListItem;
+      manifest: number;
+      claim: CrowdsourcingTask;
+    }>(`/api/madoc/projects/${projectId}/random`, {
+      method: 'POST',
+      body: {
+        collectionId,
+        manifestId,
+        type: 'canvas',
+        claim,
+      },
+    });
+  }
+
+  async randomlyAssignedManifest(
+    projectId: string | number,
+    { collectionId }: { collectionId?: number; type?: string } = {}
+  ) {
+    return this.request<{
+      remainingTasks: number;
+      manifest: number;
+      claim: CrowdsourcingTask;
+    }>(`/api/madoc/projects/${projectId}/random`, {
+      method: 'POST',
+      body: {
+        collectionId,
+        type: 'manifest',
+        claim: false,
+      },
+    });
   }
 
   async getTaskSubjects(
@@ -1518,14 +1588,14 @@ export class ApiClient {
   }
   // can be used for both canvases and manifests
   async searchIngest(resource: SearchIngestRequest) {
-    return this.request(`/api/search/iiif`, {
+    return this.request<SearchIndexTask>(`/api/search/iiif`, {
       method: 'POST',
       body: resource,
     });
   }
 
   async searchReIngest(resource: SearchIngestRequest) {
-    return this.request(`/api/search/iiif/${resource.id}`, {
+    return this.request<SearchIndexTask>(`/api/search/iiif/${resource.id}`, {
       method: 'PUT',
       body: resource,
     });
@@ -1555,11 +1625,12 @@ export class ApiClient {
   // Search index api
   async indexManifest(id: number) {
     try {
-      return this.request(`/api/madoc/iiif/manifests/${id}/index`, {
+      return this.request<SearchIndexTask>(`/api/madoc/iiif/manifests/${id}/index`, {
         method: 'POST',
       });
     } catch (err) {
       // no-op this will fail silently.
+      return undefined;
     }
   }
 
@@ -1614,7 +1685,7 @@ export class ApiClient {
 
   async indexCanvas(id: number) {
     try {
-      await this.request(`/api/madoc/iiif/canvases/${id}/index`, {
+      await this.request<SearchIndexTask>(`/api/madoc/iiif/canvases/${id}/index`, {
         method: 'POST',
       });
     } catch (err) {
@@ -1632,7 +1703,7 @@ export class ApiClient {
     resources: Array<{ id: number; type: string }>,
     config: { indexAllResources?: boolean; recursive?: boolean; resourceStack?: number[] } = {}
   ) {
-    return this.request(`/api/madoc/iiif/batch-index`, {
+    return this.request<BaseTask>(`/api/madoc/iiif/batch-index`, {
       method: 'POST',
       body: {
         resources,

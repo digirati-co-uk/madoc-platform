@@ -5,6 +5,7 @@ import { useSlotContext } from './EditorSlots';
 
 export const DefaultInlineProperties: React.FC<{
   label?: string;
+  description?: string;
   property: string;
   canInlineField?: boolean;
   disableRemoving?: boolean;
@@ -21,7 +22,7 @@ export const DefaultInlineProperties: React.FC<{
 
   return (
     <>
-      {props.label && showTitle ? <FieldHeader label={props.label} /> : null}
+      {props.label && showTitle ? <FieldHeader label={props.label} description={props.description} /> : null}
       <Slots.ManagePropertyList property={props.property} type={type}>
         {renderProperties()}
       </Slots.ManagePropertyList>
