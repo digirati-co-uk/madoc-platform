@@ -38,7 +38,8 @@ export const parseJwt: RouteMiddleware<{ slug?: string }> = async (context, next
       } catch (e) {
         // Rethrow expired tokens.
         if (e instanceof errors.JWTExpired) {
-          throw e;
+          // @todo refresh?
+          // throw e;
         }
       }
       return next();
