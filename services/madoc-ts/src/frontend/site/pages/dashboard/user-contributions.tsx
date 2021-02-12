@@ -1,10 +1,11 @@
 import React from 'react';
 import { ContributorTasks } from '../../features/ContributorTasks';
-import { ReviewerTasks } from '../../features/ReviewerTasks';
+import { UserStatistics } from '../../features/UserStatistics';
 
 export const UserContributions: React.FC = () => {
   return (
     <>
+      <UserStatistics />
       <ContributorTasks />
     </>
   );
