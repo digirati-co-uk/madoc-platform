@@ -44,6 +44,7 @@ export const adminFrontend: RouteMiddleware = context => {
     }
 
     return `
+      <!doctype html>
       ${result.html}
       <script type="application/javascript" src="${bundle}"></script>
     `;
@@ -83,6 +84,7 @@ export const siteFrontend: RouteMiddleware = context => {
     }
 
     return `
+      <!doctype html>
       ${result.html}
       <script type="application/javascript" src="${bundle}"></script>
     `;

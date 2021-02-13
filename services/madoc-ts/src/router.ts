@@ -15,6 +15,7 @@ import { getBlock } from './routes/content/get-block';
 import { getPage } from './routes/content/get-page';
 import { getPageNavigation } from './routes/content/get-page-navigation';
 import { getSlot } from './routes/content/get-slot';
+import { getAllPages } from './routes/content/list-pages';
 import { updateBlock } from './routes/content/update-block';
 import { updatePage } from './routes/content/update-page';
 import { updateSlot } from './routes/content/update-slot';
@@ -241,6 +242,7 @@ export const router = new TypedRouter({
   'delete-page': [TypedRouter.DELETE, '/api/madoc/pages/root/:paths*', deletePage],
   'update-page': [TypedRouter.PUT, '/api/madoc/pages/root/:paths*', updatePage],
   'get-page-navigation': [TypedRouter.GET, '/api/madoc/pages/navigation/:paths*', getPageNavigation],
+  'get-all-pages': [TypedRouter.GET, '/api/madoc/pages', getAllPages],
 
   // Slots
   'create-slot': [TypedRouter.POST, '/api/madoc/slots', createSlot],

@@ -291,9 +291,5 @@ blockEditorFor(DisplayBreadcrumbs, {
   type: 'default.DisplayBreadcrumbs',
   label: 'Display breadcrumbs',
   anyContext: ['collection', 'manifest', 'canvas', 'project'],
-  editor: {
-    label: {
-      type: 'text-field',
-    },
-  },
+  editor: {},
 });

@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 
 export const Heading1 = styled.h1<{ $margin?: boolean }>`
   font-size: 2em;
@@ -10,6 +11,17 @@ export const Heading1 = styled.h1<{ $margin?: boolean }>`
       margin-bottom: 1em;
     `}
 `;
+
+blockEditorFor(Heading1, {
+  type: 'heading-1',
+  label: 'Heading 1',
+  editor: {
+    children: 'text-field',
+  },
+  defaultProps: {
+    children: 'Example header',
+  },
+});
 
 export const Subheading1 = styled.div`
   font-size: 1em;

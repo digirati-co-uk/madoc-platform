@@ -2,6 +2,7 @@ import { captureModelShorthand } from '@capture-models/helpers';
 import React, { useCallback } from 'react';
 import { extractBlockDefinitions } from '../../../extensions/page-blocks/block-editor-react';
 import { CreateSlotRequest } from '../../../types/schemas/site-page';
+import { RenderBlankSlot } from './render-blank-slot';
 import { RenderSlot } from './render-slot';
 import { useSlots } from './slot-context';
 
@@ -28,42 +29,43 @@ export const Slot: React.FC<{ name: string }> = props => {
   // - Create a slot from the default, by creating all of the blocks.
   // -
 
-  if (!slot) {
-    const blockDefinitions = extractBlockDefinitions(props.children);
-
-    const newSlot: CreateSlotRequest = {
-      slotId: props.name,
-      label: { none: ['A slot'] },
-      layout: 'stack',
-      filters: {
-        // @todo default filter using data provided by slot.
-      },
-      blocks: blockDefinitions.map(definition => {
-        return {
-          name: '',
-          type: definition.type,
-          static_data: { ...definition.defaultData },
-          lazy: false,
-        };
-      }),
-    };
-
-    return (
-      <div style={{ border: '3px solid red' }}>
-        <RenderSlot
-          slot={newSlot}
-          context={context}
-          editable={true}
-          onUpdateSlot={() => {
-            console.log('slot updated!');
-          }}
-        />
-      </div>
-    );
-  }
   // if (!slot) {
-  //   return <>{props.children}</>;
+  //   const blockDefinitions = extractBlockDefinitions(props.children);
+  //
+  //   const newSlot: CreateSlotRequest = {
+  //     slotId: props.name,
+  //     label: { none: ['A slot'] },
+  //     layout: 'stack',
+  //     filters: {
+  //       // @todo default filter using data provided by slot.
+  //     },
+  //     blocks: blockDefinitions.map(definition => {
+  //       return {
+  //         name: '',
+  //         type: definition.type,
+  //         static_data: { ...definition.defaultData },
+  //         lazy: false,
+  //       };
+  //     }),
+  //   };
+  //
+  //   return (
+  //     <div style={{ border: '3px solid red' }}>
+  //       <RenderSlot
+  //         slot={newSlot}
+  //         context={context}
+  //         editable={true}
+  //         onUpdateSlot={() => {
+  //           console.log('slot updated!');
+  //         }}
+  //       />
+  //     </div>
+  //   );
   // }
+
+  if (!slot) {
+    return <RenderBlankSlot name={props.name}>{props.children}</RenderBlankSlot>;
+  }
 
   return <RenderSlot slot={slot} context={context} editable={editable} onUpdateSlot={updateSlot} />;
 };

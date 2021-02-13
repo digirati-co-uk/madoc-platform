@@ -137,16 +137,15 @@ export function useBlockModel(block: SiteBlock | SiteBlockRequest, advanced?: bo
     return captureModelShorthand(defaultProps);
   }, [t, advanced]);
 
-  const value = useMemo(
-    () => ({
+  const value = useMemo(() => {
+    return {
       RESERVED__name: block.name,
       RESERVED__i18n__languages: block.i18n?.languages || ['none'],
       RESERVED__i18n__sortKey: block.i18n?.sortKey || '',
       RESERVED__i18n__fallback: block.i18n?.fallback || false,
       ...block.static_data,
-    }),
-    [block.i18n, block.name, block.static_data]
-  );
+    };
+  }, [block.i18n, block.name, block.static_data]);
 
   return useMemo(() => {
     if (!value) {

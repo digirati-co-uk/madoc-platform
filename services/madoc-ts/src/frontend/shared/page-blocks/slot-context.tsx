@@ -1,6 +1,5 @@
 import React, { useContext, useMemo } from 'react';
-import { EditorialContext, SiteSlot } from '../../../types/schemas/site-page';
-import { useBreads } from '../caputre-models/RevisionBreadcrumbs';
+import { CreateSlotRequest, EditorialContext, SiteSlot } from '../../../types/schemas/site-page';
 
 type ReactContextType = {
   context: EditorialContext;
@@ -9,6 +8,8 @@ type ReactContextType = {
   };
   editable?: boolean;
   onUpdateSlot: (slotId: number) => void;
+  onCreateSlot: (slotReq: CreateSlotRequest) => void;
+  beforeCreateSlot: (slotReq: CreateSlotRequest) => void;
 };
 
 const SlotReactContext = React.createContext<ReactContextType>({
@@ -17,6 +18,12 @@ const SlotReactContext = React.createContext<ReactContextType>({
   editable: false,
   onUpdateSlot: () => {
     // no-op.
+  },
+  onCreateSlot: () => {
+    // no-op
+  },
+  beforeCreateSlot: () => {
+    // no-op
   },
 });
 
@@ -31,6 +38,8 @@ type SlotProviderProps = {
   slots?: { [slotName: string]: SiteSlot };
   editable?: boolean;
   onUpdateSlot?: (slotId: number) => void;
+  onCreateSlot?: (slotReq: CreateSlotRequest) => void | Promise<void>;
+  beforeCreateSlot?: (slotReq: CreateSlotRequest) => void;
 };
 
 export const SlotProvider: React.FC<SlotProviderProps> = props => {
@@ -49,6 +58,18 @@ export const SlotProvider: React.FC<SlotProviderProps> = props => {
           props.onUpdateSlot(slotId);
         }
         existing.onUpdateSlot(slotId);
+      },
+      beforeCreateSlot: (slot: CreateSlotRequest) => {
+        if (props.beforeCreateSlot) {
+          props.beforeCreateSlot(slot);
+        }
+        existing.beforeCreateSlot(slot);
+      },
+      onCreateSlot: async (slot: CreateSlotRequest) => {
+        if (props.onCreateSlot) {
+          await props.onCreateSlot(slot);
+        }
+        existing.onCreateSlot(slot);
       },
     };
   }, [existing, props, newSlots]);

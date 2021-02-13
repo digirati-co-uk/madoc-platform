@@ -5,9 +5,24 @@ export type EditorialContext = {
   collection?: number;
   manifest?: number;
   canvas?: number;
+  page?: number;
 };
 
-export type SiteSlot = CreateSlotRequest & { id: number; specificity: number; blocks: SiteBlock[] };
+export type SiteSlot = {
+  id: number;
+  specificity: number;
+  slotId: string;
+  label?: InternationalString;
+  layout: string;
+  filters?: {
+    project?: SlotFilterConfig;
+    collection?: SlotFilterConfig;
+    manifest?: SlotFilterConfig;
+    canvas?: SlotFilterConfig;
+  };
+  pageId?: number;
+  blocks: SiteBlock[];
+};
 
 export type SiteBlock = SiteBlockRequest & { id: number; order?: number };
 
@@ -127,6 +142,7 @@ export type SiteBlockRequest = {
   type: string;
   static_data: any;
   lazy: boolean;
+  order?: number;
   i18n?: {
     languages: string[];
     sortKey?: string;

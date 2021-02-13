@@ -287,6 +287,9 @@ function isPageQuery(input: any): input is PageJoinedColumns {
 function isSlotQuery(input: any): input is SlotJoinedProperties {
   return !!input.slot__id;
 }
+function isBlockQuery(input: any): input is BlockJoinedProperties {
+  return !!input.block__id;
+}
 
 export type PageSlotReducer<P extends number = any, S extends number = any, B extends number = any> = {
   pages: {
@@ -408,6 +411,7 @@ export function pageSlotReducer<
     | (PageJoinedColumns & SlotJoinedProperties & BlockJoinedProperties)
     | (SlotJoinedProperties & BlockJoinedProperties)
     | BlockJoinedProperties
+    | PageJoinedColumns
 >(results: Array<T>) {
   const page: PageSlotReducer = {
     pages: {},
@@ -433,7 +437,7 @@ export function pageSlotReducer<
       }
     }
 
-    if (result.block__id && !page.blocks[result.block__id]) {
+    if (isBlockQuery(result) && !page.blocks[result.block__id]) {
       page.blocks[result.block__id] = mapBlock(result, 'block__');
 
       if (isSlotQuery(result)) {

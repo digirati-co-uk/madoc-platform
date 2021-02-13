@@ -10,9 +10,10 @@ export class BaseRepository {
 
 export const Transaction = (target: BaseRepository, propertyKey: string, descriptor: PropertyDescriptor) => {
   const originalMethod = descriptor.value;
+  const targetConnection = target.connection;
 
   descriptor.value = function(...args: any[]) {
-    return target.connection.transaction(connection => {
+    return targetConnection.transaction(connection => {
       const newRepo = new PageBlocksRepository(connection);
       return originalMethod.apply(newRepo, args);
     });

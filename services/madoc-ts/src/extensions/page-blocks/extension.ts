@@ -175,14 +175,14 @@ export class PageBlockExtension implements BaseExtension {
   }
 
   async createPage(page: CreateNormalPageRequest) {
-    return this.api.request<SiteBlock>(`/api/madoc/pages/root/${page.path}`, {
+    return this.api.request<SitePage>(`/api/madoc/pages`, {
       body: page,
       method: 'POST',
     });
   }
 
   async createSlot(slot: CreateSlotRequest) {
-    return this.api.request<SiteBlock>(`/api/madoc/slots`, {
+    return this.api.request<SiteSlot>(`/api/madoc/slots`, {
       body: slot,
       method: 'POST',
     });

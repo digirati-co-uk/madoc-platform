@@ -8,7 +8,7 @@ export const createPage: RouteMiddleware<{}, CreateNormalPageRequest> = async co
   const body = context.requestBody;
 
   try {
-    context.response.body = context.pageBlocks.createPage(body, siteId, { id, name });
+    context.response.body = await context.pageBlocks.createPage(body, siteId, { id, name });
     context.response.status = 201;
   } catch (err) {
     throw new RequestError('Request error, make sure slug is unique');

@@ -465,7 +465,7 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
     },
     {
       path: '/',
-      // Fallback here.
+      exact: true,
       component: components.Homepage,
     },
     {

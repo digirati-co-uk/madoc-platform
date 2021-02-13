@@ -12,6 +12,7 @@ export function blockEditorFor<Props>(
   model: {
     label: string;
     type: string;
+    defaultProps?: Partial<Props>;
     editor: {
       [T in keyof Props]?: string | ({ type: string } & Partial<BaseField>);
     };
@@ -26,7 +27,7 @@ export function blockEditorFor<Props>(
     render: function PageBlock(props) {
       return React.createElement(Component, props);
     },
-    defaultData: {},
+    defaultData: model.defaultProps || {},
     renderType: 'react',
     requiredContext: model.requiredContext,
     anyContext: model.anyContext,
@@ -40,8 +41,26 @@ export function blockEditorFor<Props>(
 }
 
 export function extractBlockDefinitions(components: any): PageBlockDefinition<any, any, any, any>[] {
-  return React.Children.map(components, c => {
+  if (!components) {
+    return [];
+  }
+
+  return React.Children.map(components, singleComponent => {
+    const props = singleComponent.props || {};
+
     // @ts-ignore
-    return c && c.type && (c.type[Symbol.for('slot-model')] as PageBlockDefinition<any, any, any, any>);
+    const definition =
+      singleComponent &&
+      singleComponent.type &&
+      (singleComponent.type[Symbol.for('slot-model')] as PageBlockDefinition<any, any, any, any>);
+    if (definition) {
+      return {
+        ...definition,
+        defaultData: {
+          ...(definition.defaultData || {}),
+          ...(props || {}),
+        },
+      };
+    }
   }).filter((e: any) => e);
 }

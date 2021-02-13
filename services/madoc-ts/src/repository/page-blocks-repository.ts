@@ -23,7 +23,6 @@ import { NotFound } from '../utility/errors/not-found';
 import { BaseRepository, Transaction } from './base-repository';
 
 export class PageBlocksRepository extends BaseRepository {
-  @Transaction
   async createBlock(blockReq: SiteBlockRequest, siteId: number, slotId?: number): Promise<SiteBlock> {
     const block = await this.connection.one(addBlock(blockReq, siteId));
 
@@ -40,7 +39,6 @@ export class PageBlocksRepository extends BaseRepository {
     return mapBlock(block);
   }
 
-  @Transaction
   async createSlot(slotReq: CreateSlotRequest, siteId: number): Promise<SiteSlot> {
     const slot = await this.connection.one(addSlot(slotReq, siteId));
 
@@ -110,6 +108,35 @@ export class PageBlocksRepository extends BaseRepository {
 
     const table = pageSlotReducer(results);
     return table.blocks[blockId];
+  }
+
+  async getAllPages(siteId: number): Promise<SitePage[]> {
+    const results = await this.connection.any(sql<PageJoinedColumns>`
+      select
+          -- Page properties
+          sp.id as page__id,
+          sp.path as page__path,
+          sp.title as page__title,
+          sp.navigation_title as page__navigation_title,
+          sp.description as page__description,
+          sp.author_id as page__author_id,
+          sp.author_name as page__author_name,
+          sp.layout as page__layout,
+          sp.parent_page as page__parent_page,
+          sp.page_engine as page__page_engine,
+          sp.page_options as page__page_options,
+          sp.is_navigation_root as page__is_navigation_root,
+          sp.hide_from_navigation as page__hide_from_navigation,
+          sp.include_in_search as page__include_in_search
+      
+      from site_pages sp
+
+      where sp.site_id = ${siteId}
+    `);
+
+    const page = pageSlotReducer(results);
+
+    return Object.values(page.pages);
   }
 
   async getPageByPath(pathToFind: string, siteId: number): Promise<SitePage> {

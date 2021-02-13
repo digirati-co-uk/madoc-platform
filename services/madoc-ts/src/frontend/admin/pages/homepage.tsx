@@ -52,7 +52,7 @@ type HomepageType = {
   data: { collections: number; manifests: number; canvases: number; projects: number };
 };
 
-const Homepage: UniversalComponent<HomepageType> = createUniversalComponent<HomepageType>(
+export const Homepage: UniversalComponent<HomepageType> = createUniversalComponent<HomepageType>(
   () => {
     const { data: stats } = useStaticData(Homepage);
     const { t } = useTranslation();
@@ -90,7 +90,7 @@ const Homepage: UniversalComponent<HomepageType> = createUniversalComponent<Home
                   <Link to="/configure/site">{t('Site configuration')}</Link>
                 </li>
                 <li>
-                  <span>Customise site pages</span>
+                  <Link to="/page-blocks">{t('Customise site pages')}</Link>
                 </li>
                 <li>
                   <span>Blog posts</span>
@@ -163,5 +163,3 @@ const Homepage: UniversalComponent<HomepageType> = createUniversalComponent<Home
     },
   }
 );
-
-export { Homepage };
