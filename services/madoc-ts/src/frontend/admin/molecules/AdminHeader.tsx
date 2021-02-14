@@ -6,10 +6,9 @@ import { Link, useLocation } from 'react-router-dom';
 import { WidePage } from '../../shared/atoms/WidePage';
 import { SearchBox } from '../../shared/atoms/SearchBox';
 import { GridContainer } from '../../shared/atoms/Grid';
-import { useSite } from '../../shared/hooks/use-site';
 
 const AdminHeaderBackground = styled.div`
-  background: #25416b;
+  background: #24386b;
   margin-bottom: 1em;
 `;
 
@@ -25,7 +24,7 @@ const AdminTabItem = styled.li<{ $active?: boolean }>`
   margin: 0 0.2em;
   font-size: 0.85em;
   color: #fff;
-  background: #5d80ae;
+  background: #435da0;
   text-decoration: none;
   &:hover {
     //background: rgba(255, 255, 255, 0.2);
