@@ -5,6 +5,7 @@ import { CollectionView } from './pages/content/collections/collection';
 import { ViewCanvasLinking } from './pages/content/linking/view-linking';
 import { MetadataConfigurationPage } from './pages/content/metadata-configuration';
 import { CreateNewPage } from './pages/content/page-blocks/create-new-page';
+import { ListPages } from './pages/content/page-blocks/list-pages';
 import { PageBlocks } from './pages/content/page-blocks/page-blocks';
 import { SiteConfiguration } from './pages/content/site-configuration';
 import { ProjectConfiguration } from './pages/crowdsourcing/projects/project-configuration';
@@ -386,6 +387,11 @@ export const routes: UniversalRoute[] = [
     path: '/page-blocks',
     component: PageBlocks,
     routes: [
+      {
+        path: '/page-blocks',
+        exact: true,
+        component: ListPages,
+      },
       {
         path: '/page-blocks/new-page',
         exact: true,

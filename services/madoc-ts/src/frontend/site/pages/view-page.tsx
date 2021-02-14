@@ -6,6 +6,7 @@ import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { Slot } from '../../shared/page-blocks/slot';
 import { SlotProvider } from '../../shared/page-blocks/slot-context';
+import { PageEditorBar } from '../features/PageEditorBar';
 
 type ViewPageProps = {
   page: SitePage;
@@ -32,6 +33,7 @@ export const ViewPage: React.FC<ViewPageProps> = ({ page, navigation, refetch })
       }}
     >
       <div>
+        <PageEditorBar />
         <DisplayBreadcrumbs />
         <h1>
           <LocaleString>{title}</LocaleString>

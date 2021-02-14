@@ -152,6 +152,10 @@ export class PageBlockExtension implements BaseExtension {
     return null;
   }
 
+  getAllPages() {
+    return this.api.request<{ pages: SitePage[] }>(`/api/madoc/pages`);
+  }
+
   async getPageNavigation(pagePath: string) {
     const slug = pagePath && pagePath !== '/' ? `/${pagePath}` : '';
     return this.api.request<{ navigation: SitePage[] }>(`/api/madoc/pages/navigation${slug}`);
