@@ -191,8 +191,10 @@ export const AdminMenuItemLabel = styled.div`
 
 export const AdminLayoutContainer = styled.div`
   width: 100%;
-  height: 100vh;
+  max-height: calc(100vh - 36px);
+  height: calc(100vh - 36px);
   display: flex;
+  overflow: hidden;
 `;
 
 export const AdminLayoutMenu = styled.div`
@@ -203,4 +205,5 @@ export const AdminLayoutMenu = styled.div`
 export const AdminLayoutMain = styled.div`
   min-width: 0;
   flex: 1 1 0px;
+  overflow-y: auto;
 `;
