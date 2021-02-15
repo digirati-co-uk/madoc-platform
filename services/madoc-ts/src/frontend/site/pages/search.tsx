@@ -82,7 +82,8 @@ export const Search: React.FC = () => {
                         <SearchFilterLabel htmlFor={itemHash}>
                           <LocaleString>{item.label}</LocaleString>
                         </SearchFilterLabel>
-                        <SearchFilterItemCount>{item.count}</SearchFilterItemCount>
+                        {/* @todo better way to communicate that the count is for manifests only */}
+                        {/*<SearchFilterItemCount>{item.count}</SearchFilterItemCount>*/}
                         {isSelected !== 0 ? (
                           <SearchFilterToggle onClick={() => clearSingleFacet(item.key, item.values)}>
                             x
