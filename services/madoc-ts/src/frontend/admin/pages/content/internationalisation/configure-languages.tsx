@@ -18,7 +18,7 @@ export const ConfigureLanguages: React.FC = () => {
       />
       <WidePage>
         <div>Configure languages. {JSON.stringify(i18n.languages, null, 2)}</div>
-        {locale.all.map(item => {
+        {locale.all.map((item: any) => {
           return (
             <div key={item.tag}>
               {item.name} - {item.location}/{item.local} ({item.tag})

@@ -63,7 +63,7 @@ export const AdminSidebar: React.FC = () => {
             <AdminMenuItemIcon>
               <ManageCollectionsIcon />
             </AdminMenuItemIcon>
-            <AdminMenuItemLabel>{t('Manage collections')}</AdminMenuItemLabel>
+            <AdminMenuItemLabel>{t('Manage collections', { count: 2 })}</AdminMenuItemLabel>
           </AdminMenuItem>
 
           <AdminMenuSubItemContainer $open={isManageCollections}>
@@ -78,7 +78,7 @@ export const AdminSidebar: React.FC = () => {
             <AdminMenuItemIcon>
               <ManageManifestsIcon />
             </AdminMenuItemIcon>
-            <AdminMenuItemLabel>{t('Manage manifests')}</AdminMenuItemLabel>
+            <AdminMenuItemLabel>{t('Manage manifests', { count: 2 })}</AdminMenuItemLabel>
           </AdminMenuItem>
 
           <AdminMenuSubItemContainer>
@@ -96,7 +96,7 @@ export const AdminSidebar: React.FC = () => {
             <AdminMenuItemIcon>
               <ProjectsIcon />
             </AdminMenuItemIcon>
-            <AdminMenuItemLabel>{t('Projects')}</AdminMenuItemLabel>
+            <AdminMenuItemLabel>{t('Projects', { count: 2 })}</AdminMenuItemLabel>
           </AdminMenuItem>
         </AdminMenuItemContainer>
 

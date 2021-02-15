@@ -98,7 +98,7 @@ export function SiteConfigurationIcon(props: React.SVGProps<SVGSVGElement>) {
 // Sidebar
 export const AdminSidebarContainer = styled.div`
   background: #4b67e1;
-  padding: 1.5em;
+  padding: 0.8em;
   color: #fff;
   height: 100%;
 `;
@@ -107,7 +107,7 @@ export const AdminSidebarContainer = styled.div`
 export const SiteSwitcherContainer = styled.div`
   background: #6087f1;
   border-radius: 5px;
-  padding: 1em;
+  padding: 0.8em;
   font-size: 0.85em;
   margin-bottom: 2em;
 `;
@@ -198,8 +198,8 @@ export const AdminLayoutContainer = styled.div`
 `;
 
 export const AdminLayoutMenu = styled.div`
-  width: 300px;
-  min-width: 320px;
+  width: 280px;
+  min-width: 280px;
 `;
 
 export const AdminLayoutMain = styled.div`
