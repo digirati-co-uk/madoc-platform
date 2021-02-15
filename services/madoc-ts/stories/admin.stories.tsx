@@ -1,9 +1,32 @@
+import { useState } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { AdminHeader } from '../src/frontend/admin/molecules/AdminHeader';
 import * as React from 'react';
 import { GlobalHeader } from '../src/frontend/shared/atoms/GlobalHeader';
 import { WidePage } from '../src/frontend/shared/atoms/WidePage';
 import { LightNavigation, LightNavigationItem } from '../src/frontend/shared/atoms/LightNavigation';
+import {
+  AdminLayoutContainer,
+  AdminLayoutMain,
+  AdminLayoutMenu,
+  AdminMenuContainer,
+  AdminMenuItem,
+  AdminMenuItemContainer,
+  AdminMenuItemIcon,
+  AdminMenuItemLabel,
+  AdminMenuSubItem,
+  AdminMenuSubItemContainer,
+  AdminSearchIcon,
+  AdminSidebarContainer,
+  DashboardIcon,
+  ManageCollectionsIcon,
+  ManageManifestsIcon,
+  ProjectsIcon,
+  SiteConfigurationIcon,
+  SiteSwitcherBackButton,
+  SiteSwitcherContainer,
+  SiteSwitcherSiteName,
+} from '../src/frontend/shared/components/AdminMenu';
 import { SiteProvider } from '../src/frontend/shared/hooks/use-site';
 
 export default { title: 'Admin' };
@@ -24,19 +47,9 @@ export const adminHeader = () => (
   </MemoryRouter>
 );
 
-export const adminHeaderWithBreadcrumbsAndMenu = () => (
+export const AdminHeaderWithBreadcrumbsAndMenu = () => (
   <MemoryRouter>
     <SiteProvider value={{ site: { slug: '#', id: 1 } }}>
-      <GlobalHeader
-        title={'Default site'}
-        username={'Some user'}
-        links={[
-          { label: 'Dashboard', link: '#' },
-          { label: 'View site', link: '#' },
-          { label: 'Account', link: '#' },
-          { label: 'Logout', link: '#' },
-        ]}
-      />
       <AdminHeader
         title="My awesome project"
         breadcrumbs={[
@@ -60,7 +73,7 @@ export const adminHeaderWithBreadcrumbsAndMenu = () => (
   </MemoryRouter>
 );
 
-export const adminHeaderWithBreadcrumbsAndMenuAndSearch = () => (
+export const AdminHeaderWithBreadcrumbsAndMenuAndSearch = () => (
   <MemoryRouter>
     <SiteProvider value={{ site: { slug: '#', id: 1 } }}>
       <GlobalHeader
@@ -114,3 +127,103 @@ export const LightNavigationExample = () => (
     </LightNavigationItem>
   </LightNavigation>
 );
+
+export const Admin_Menu = () => {
+  const [selected, setSelected] = useState(1);
+
+  return (
+    <MemoryRouter>
+      <SiteProvider value={{ site: { slug: '#', id: 1 } as any }}>
+        <GlobalHeader
+          title={'Default site'}
+          username={'Some user'}
+          links={[
+            { label: 'Dashboard', link: '#' },
+            { label: 'View site', link: '#' },
+            { label: 'Account', link: '#' },
+            { label: 'Logout', link: '#' },
+          ]}
+        />
+
+        <AdminLayoutContainer>
+          <AdminLayoutMenu style={{ width: 320, height: '100vh' }}>
+            <AdminSidebarContainer>
+              <SiteSwitcherContainer>
+                <SiteSwitcherSiteName>My madoc site</SiteSwitcherSiteName>
+                <SiteSwitcherBackButton>Back to site</SiteSwitcherBackButton>
+              </SiteSwitcherContainer>
+
+              <AdminMenuContainer>
+                <AdminMenuItemContainer>
+                  <AdminMenuItem $active={selected === 0} onClick={() => setSelected(0)}>
+                    <AdminMenuItemIcon>
+                      <DashboardIcon />
+                    </AdminMenuItemIcon>
+                    <AdminMenuItemLabel>Admin dashboard</AdminMenuItemLabel>
+                  </AdminMenuItem>
+                </AdminMenuItemContainer>
+
+                <AdminMenuItemContainer>
+                  <AdminMenuItem $active={selected === 1} onClick={() => setSelected(1)}>
+                    <AdminMenuItemIcon>
+                      <ManageCollectionsIcon />
+                    </AdminMenuItemIcon>
+                    <AdminMenuItemLabel>Manage collections</AdminMenuItemLabel>
+                  </AdminMenuItem>
+
+                  <AdminMenuSubItemContainer $open={selected === 1}>
+                    <AdminMenuSubItem>Add new collection</AdminMenuSubItem>
+                  </AdminMenuSubItemContainer>
+                </AdminMenuItemContainer>
+
+                <AdminMenuItemContainer>
+                  <AdminMenuItem $active={selected === 2} onClick={() => setSelected(2)}>
+                    <AdminMenuItemIcon>
+                      <ManageManifestsIcon />
+                    </AdminMenuItemIcon>
+                    <AdminMenuItemLabel>Manage manifests</AdminMenuItemLabel>
+                  </AdminMenuItem>
+
+                  <AdminMenuSubItemContainer $open={selected === 2}>
+                    <AdminMenuSubItem>Add new manifest</AdminMenuSubItem>
+                    <AdminMenuSubItem>View manifests with OCR</AdminMenuSubItem>
+                  </AdminMenuSubItemContainer>
+                </AdminMenuItemContainer>
+
+                <AdminMenuItemContainer>
+                  <AdminMenuItem $active={selected === 4} onClick={() => setSelected(4)}>
+                    <AdminMenuItemIcon>
+                      <ProjectsIcon />
+                    </AdminMenuItemIcon>
+                    <AdminMenuItemLabel>Projects</AdminMenuItemLabel>
+                  </AdminMenuItem>
+                </AdminMenuItemContainer>
+
+                <AdminMenuItemContainer>
+                  <AdminMenuItem $active={selected === 5} onClick={() => setSelected(5)}>
+                    <AdminMenuItemIcon>
+                      <AdminSearchIcon />
+                    </AdminMenuItemIcon>
+                    <AdminMenuItemLabel>Search indexing</AdminMenuItemLabel>
+                  </AdminMenuItem>
+                </AdminMenuItemContainer>
+
+                <AdminMenuItemContainer>
+                  <AdminMenuItem href="#" $active={selected === 6} onClick={() => setSelected(6)}>
+                    <AdminMenuItemIcon>
+                      <SiteConfigurationIcon />
+                    </AdminMenuItemIcon>
+                    <AdminMenuItemLabel>Site configuration</AdminMenuItemLabel>
+                  </AdminMenuItem>
+                </AdminMenuItemContainer>
+              </AdminMenuContainer>
+            </AdminSidebarContainer>
+          </AdminLayoutMenu>
+          <AdminLayoutMain>
+            <AdminHeaderWithBreadcrumbsAndMenu />
+          </AdminLayoutMain>
+        </AdminLayoutContainer>
+      </SiteProvider>
+    </MemoryRouter>
+  );
+};
