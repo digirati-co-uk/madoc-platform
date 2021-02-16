@@ -1,17 +1,11 @@
-import React, { useMemo, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import styled from 'styled-components';
+import React, { useMemo } from 'react';
 import { ApiClient } from '../../gateway/api';
 import { useTranslation } from 'react-i18next';
 import { PublicSite } from '../../utility/omeka-api';
-import { GlobalStyles } from '../shared/atoms/GlobalStyles';
-import { LightNavigation, LightNavigationItem } from '../shared/atoms/LightNavigation';
 import { SiteContainer } from '../shared/atoms/SiteContainer';
 import { UserBar } from '../shared/components/UserBar';
-import { HrefLink } from '../shared/utility/href-link';
 import { renderUniversalRoutes } from '../shared/utility/server-utils';
-import { ApiContext, useIsApiRestarting } from '../shared/hooks/use-api';
-import { ErrorMessage } from '../shared/atoms/ErrorMessage';
+import { ApiContext } from '../shared/hooks/use-api';
 import { UniversalRoute } from '../types';
 import { VaultProvider } from '@hyperion-framework/react-vault';
 import '../shared/caputre-models/plugins';
@@ -26,16 +20,25 @@ export type SiteAppProps = {
   siteSlug?: string;
   user?: { name: string; id: number };
   site: PublicSite;
+  supportedLocales: string[];
+  defaultLocale: string;
 };
 
-const SiteApp: React.FC<SiteAppProps> = ({ api, site, user, routes }) => {
+const SiteApp: React.FC<SiteAppProps> = ({ api, site, user, supportedLocales, defaultLocale, routes }) => {
   const { i18n } = useTranslation();
 
   const viewingDirection = useMemo(() => i18n.dir(i18n.language), [i18n]);
 
   return (
     <VaultProvider>
-      <SiteProvider value={useMemo(() => ({ site, user }), [user, site])}>
+      <SiteProvider
+        value={useMemo(() => ({ site, user, supportedLocales, defaultLocale }), [
+          site,
+          user,
+          supportedLocales,
+          defaultLocale,
+        ])}
+      >
         <ApiContext.Provider value={api}>
           <UserBar site={site} user={user} />
           <GlobalSiteHeader />

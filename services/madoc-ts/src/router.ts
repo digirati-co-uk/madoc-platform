@@ -2,6 +2,7 @@ import { exportSite } from './routes/admin/export-site';
 import { getMetadataKeys } from './routes/admin/get-metadata-keys';
 import { getMetadataValues } from './routes/admin/get-metadata-values';
 import { importSite } from './routes/admin/import-site';
+import { getLocalisation, listLocalisations, updateLocalisation } from './routes/admin/localisation';
 import { getMetadataConfiguration, updateMetadataConfiguration } from './routes/admin/metadata-configuration';
 import { getSiteDetails } from './routes/admin/site-details';
 import { updateSiteConfiguration } from './routes/admin/update-site-configuration';
@@ -109,6 +110,11 @@ export const router = new TypedRouter({
 
   // User API.
   'get-user': [TypedRouter.GET, '/api/madoc/users/:id', getUser],
+
+  // Localisation
+  'i18n-list-locales': [TypedRouter.GET, '/api/madoc/locales', listLocalisations],
+  'i18n-get-locale': [TypedRouter.GET, '/api/madoc/locales/:code', getLocalisation],
+  'i18n-update-locale': [TypedRouter.POST, '/api/madoc/locales/:code', updateLocalisation],
 
   // Collection API.
   'list-collections': [TypedRouter.GET, '/api/madoc/iiif/collections', listCollections],

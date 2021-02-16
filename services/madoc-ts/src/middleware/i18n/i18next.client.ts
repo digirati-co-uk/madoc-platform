@@ -3,12 +3,13 @@ import Backend from 'i18next-chained-backend';
 import LocalStorageBackend from 'i18next-localstorage-backend'; // primary use cache
 import HTTP from 'i18next-http-backend';
 
-export async function createBackend(slug: string, jwt?: string) {
+export async function createBackend(slug: string, jwt?: string, languages?: string[], defaultLocale?: string) {
   const t = await i18next.use(Backend).init({
     fallbackLng: 'en',
-    lng: 'en',
+    lng: defaultLocale,
     ns: 'madoc',
     defaultNS: 'madoc',
+    supportedLngs: languages,
     saveMissing: true,
     keySeparator: false,
     backend: {

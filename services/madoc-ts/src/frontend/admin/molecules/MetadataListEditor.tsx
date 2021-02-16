@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useDefaultLocale, useSupportedLocales } from '../../shared/hooks/use-site';
 import { MetadataDiff, MetadataEditor, MetadataEditorProps } from './MetadataEditor';
 import { useMutation } from 'react-query';
 import { Button } from '../../shared/atoms/Button';
@@ -13,7 +14,8 @@ export const MetadataListItem: React.FC<{
   items: MetadataDefinition[];
   onSaveField: MetadataEditorProps['onSave'];
   availableLanguages: string[];
-}> = ({ labelKey, itemKey, items, onSaveField, availableLanguages }) => {
+  defaultLocale?: string;
+}> = ({ labelKey, itemKey, items, onSaveField, availableLanguages, defaultLocale }) => {
   const { t } = useTranslation();
   return (
     <div>
@@ -26,6 +28,7 @@ export const MetadataListItem: React.FC<{
         metadataKey={itemKey}
         onSave={onSaveField}
         availableLanguages={availableLanguages}
+        defaultLocale={defaultLocale}
       />
     </div>
   );
@@ -37,7 +40,8 @@ export const MetadataSection: React.FC<{
   metadata: ParsedMetadata;
   onSaveField: MetadataEditorProps['onSave'];
   availableLanguages: string[];
-}> = ({ sectionKey, sectionIndex, metadata, onSaveField, availableLanguages }) => {
+  defaultLocale?: string;
+}> = ({ sectionKey, sectionIndex, metadata, onSaveField, availableLanguages, defaultLocale }) => {
   const keys = Object.keys(metadata);
   const [isRemoved, setIsRemoved] = useState(false);
 
@@ -115,6 +119,7 @@ export const MetadataSection: React.FC<{
             itemKey={itemKey}
             onSaveField={onSaveField}
             availableLanguages={availableLanguages}
+            defaultLocale={defaultLocale}
           />
         );
       })}
@@ -128,7 +133,8 @@ export const MetadataSectionEditor: React.FC<{
   item: ParsedMetadata[];
   onSaveField: MetadataEditorProps['onSave'];
   availableLanguages: string[];
-}> = ({ itemId, item, onSaveField, availableLanguages }) => {
+  defaultLocale?: string;
+}> = ({ itemId, item, onSaveField, availableLanguages, defaultLocale }) => {
   const [newSections, setNewSections] = useState<ParsedMetadata[]>([]);
 
   const addNewSection = () => {
@@ -153,6 +159,7 @@ export const MetadataSectionEditor: React.FC<{
             sectionKey={itemId}
             onSaveField={onSaveField}
             availableLanguages={availableLanguages}
+            defaultLocale={defaultLocale}
           />
         );
       })}
@@ -165,6 +172,7 @@ export const MetadataSectionEditor: React.FC<{
             sectionKey={itemId}
             onSaveField={onSaveField}
             availableLanguages={availableLanguages}
+            defaultLocale={defaultLocale}
           />
         );
       })}
@@ -180,7 +188,8 @@ export const MetadataListEditor: React.FC<{
 }> = ({ metadata, onSave, template = [] }) => {
   // Props
   const metadataKeys = Object.keys(metadata).sort((a, b) => template.indexOf(a) - template.indexOf(b));
-  const availableLanguages = ['en', 'es', 'fr'];
+  const availableLanguages = useSupportedLocales();
+  const defaultLocale = useDefaultLocale();
   const templateKeys = template.filter(key => metadataKeys.indexOf(key) === -1);
 
   // State.
@@ -228,6 +237,7 @@ export const MetadataListEditor: React.FC<{
           item={[]}
           itemId={'metadata'}
           onSaveField={onSaveField}
+          defaultLocale={defaultLocale}
         />
       ) : null}
 
@@ -238,6 +248,7 @@ export const MetadataListEditor: React.FC<{
             <MetadataSectionEditor
               key={itemId}
               availableLanguages={availableLanguages}
+              defaultLocale={defaultLocale}
               item={item}
               itemId={itemId}
               onSaveField={onSaveField}
@@ -252,6 +263,7 @@ export const MetadataListEditor: React.FC<{
             items={item.items}
             onSaveField={onSaveField}
             availableLanguages={availableLanguages}
+            defaultLocale={defaultLocale}
           />
         );
       })}
@@ -264,6 +276,7 @@ export const MetadataListEditor: React.FC<{
           items={[]}
           onSaveField={onSaveField}
           availableLanguages={availableLanguages}
+          defaultLocale={defaultLocale}
         />
       ))}
       <Button onClick={() => saveChanges()}>Save changes</Button>

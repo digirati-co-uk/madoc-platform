@@ -23,6 +23,7 @@ export type MetadataEditorProps = {
   fields: InternationalString | MetadataDefinition[];
   metadataKey: string;
   availableLanguages: string[];
+  defaultLocale?: string;
   allowCustomLanguage?: boolean;
   label?: string;
   disabled?: boolean;
@@ -268,6 +269,7 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
   fields,
   metadataKey,
   availableLanguages,
+  defaultLocale,
   onSave,
   disabled,
   fluid,
@@ -300,7 +302,7 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
       payload: {
         id: `new-${new Date().getTime()}-${fieldKeys.length}`,
         key: metadataKey,
-        language: availableLanguages[0],
+        language: defaultLocale || availableLanguages[0],
         value: '',
         select,
       },

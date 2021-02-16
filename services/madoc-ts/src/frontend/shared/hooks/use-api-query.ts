@@ -78,6 +78,8 @@ type GetApiMethods = keyof Pick<
   | 'getSiteMetadataConfiguration'
   | 'getSiteCanvasPublishedModels'
   | 'getSiteSearchQuery'
+  | 'getSiteLocales'
+  | 'getSiteLocale'
 >;
 
 const keys = Object.getOwnPropertyNames(ApiClient.prototype);
