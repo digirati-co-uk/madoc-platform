@@ -10,14 +10,14 @@ export async function createBackend(slug: string, jwt?: string, languages?: stri
     .use(LanguageDetector)
     .init({
       fallbackLng: 'en',
-      lng: defaultLocale,
+      // lng: defaultLocale,
       ns: 'madoc',
       defaultNS: 'madoc',
       supportedLngs: languages,
       saveMissing: true,
       keySeparator: false,
       detection: {
-        order: ['querystring', 'cookie', 'localStorage', 'sessionStorage', 'navigator', 'htmlTag'],
+        order: [/*'querystring', 'cookie', */ 'localStorage', 'sessionStorage', 'navigator', 'htmlTag'],
         lookupQuerystring: 'lng',
         lookupCookie: 'i18next',
         lookupLocalStorage: 'i18nextLng',

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSupportedLocales } from '../hooks/use-site';
+import Cookies from 'js-cookie';
 
 export const LanguageSwitcher: React.FC = () => {
   const supported = useSupportedLocales();
@@ -18,6 +19,8 @@ export const LanguageSwitcher: React.FC = () => {
             key={lng}
             style={{ padding: '0.3em', fontWeight: i18n.language === lng ? 'bold' : undefined }}
             onClick={() => {
+              localStorage.setItem('i18nextLng', lng);
+              Cookies.set('i18next', lng);
               i18n.changeLanguage(lng);
             }}
           >
