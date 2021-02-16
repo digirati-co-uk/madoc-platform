@@ -45,7 +45,7 @@ export const RenderBlankSlot: React.FC<{ name: string }> = ({ name: slotId, chil
   if (!children) {
     return (
       <div>
-        CUSTOMISE SLOT <Button onClick={() => createSlot()}>Customise</Button>
+        Empty slot <Button onClick={() => createSlot()}>Customise</Button>
       </div>
     );
   }

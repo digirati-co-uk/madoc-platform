@@ -42,8 +42,8 @@ export const PageEditorBar: React.FC = () => {
 
   return (
     <div>
-      Page editor bar!
-      <pre>{JSON.stringify(page.data, null, 2)}</pre>
+      {/*Page editor bar!*/}
+      {/*<pre>{JSON.stringify(page.data, null, 2)}</pre>*/}
     </div>
   );
 };
