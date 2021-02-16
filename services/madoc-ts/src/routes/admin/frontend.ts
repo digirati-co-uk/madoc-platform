@@ -28,6 +28,7 @@ export const adminFrontend: RouteMiddleware = context => {
           ? {
               name: context.state.jwt.user.name,
               id: context.state.jwt.user.id,
+              scope: context.state.jwt.scope,
             }
           : undefined,
     });
@@ -54,12 +55,14 @@ export const siteFrontend: RouteMiddleware = context => {
   const bundle = context.routes.url('assets-bundles', { slug: context.params.slug, bundleId: 'site' });
   context.omekaMinimal = true;
 
+  const lng = context.cookies.get('i18next');
+
   context.omekaPage = async token => {
     const result = await renderSite({
       url: context.req.url || '',
       jwt: token,
       basename: `/s/${context.params.slug}/madoc`,
-      i18next: context.i18next.cloneInstance({ initImmediate: false }),
+      i18next: context.i18next.cloneInstance({ initImmediate: false, lng }),
       siteSlug: context.params.slug,
       site: context.omeka.getSiteIdBySlug(context.params.slug),
       user:
@@ -67,6 +70,7 @@ export const siteFrontend: RouteMiddleware = context => {
           ? {
               name: context.state.jwt.user.name,
               id: context.state.jwt.user.id,
+              scope: context.state.jwt.scope,
             }
           : undefined,
     });

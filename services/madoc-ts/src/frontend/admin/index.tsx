@@ -40,22 +40,30 @@ export type AdminAppProps = {
   jwt?: string;
   api: ApiClient;
   routes: UniversalRoute[];
-  user: { name: string; id: number };
+  user: { name: string; id: number; scope: string[] };
   site: PublicSite;
+  supportedLocales: string[];
+  defaultLocale: string;
 };
 
-const AdminApp: React.FC<AdminAppProps> = ({ api, routes, site, user }) => {
-  const { i18n } = useTranslation();
+const AdminApp: React.FC<AdminAppProps> = ({ api, routes, site, user, supportedLocales, defaultLocale }) => {
+  const { i18n, t } = useTranslation();
   const restarting = useIsApiRestarting(api);
   const viewingDirection = useMemo(() => i18n.dir(i18n.language), [i18n.language]);
 
   return (
     <div lang={i18n.language} dir={viewingDirection}>
-      <SiteProvider value={useMemo(() => ({ site, user }), [site, user])}>
+      <SiteProvider
+        value={useMemo(() => ({ site, user, supportedLocales, defaultLocale }), [
+          site,
+          user,
+          supportedLocales,
+          defaultLocale,
+        ])}
+      >
         <GlobalStyles />
         <UserBar site={site} user={user} admin />
-        {restarting ? <ErrorMessage>Lost connection to server, retrying... </ErrorMessage> : null}
-
+        {restarting ? <ErrorMessage>{t('Lost connection to server, retrying...')}</ErrorMessage> : null}
         <AdminLayoutContainer>
           <AdminLayoutMenu>
             <AdminSidebar />

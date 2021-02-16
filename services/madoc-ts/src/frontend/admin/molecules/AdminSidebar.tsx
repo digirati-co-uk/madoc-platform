@@ -12,6 +12,7 @@ import {
   AdminSearchIcon,
   AdminSidebarContainer,
   DashboardIcon,
+  InternationalisationIcon,
   ManageCollectionsIcon,
   ManageManifestsIcon,
   ProjectsIcon,
@@ -38,6 +39,7 @@ export const AdminSidebar: React.FC = () => {
   const isProjects = location.pathname.startsWith('/projects');
   const isSearchIndexing = location.pathname.startsWith('/enrichment/search-indexing');
   const isSiteConfiguration = location.pathname.startsWith('/configure');
+  const isLocalisation = location.pathname.startsWith('/i18n');
 
   return (
     <AdminSidebarContainer>
@@ -63,7 +65,7 @@ export const AdminSidebar: React.FC = () => {
             <AdminMenuItemIcon>
               <ManageCollectionsIcon />
             </AdminMenuItemIcon>
-            <AdminMenuItemLabel>{t('Manage collections')}</AdminMenuItemLabel>
+            <AdminMenuItemLabel>{t('Manage collections', { count: 2 })}</AdminMenuItemLabel>
           </AdminMenuItem>
 
           <AdminMenuSubItemContainer $open={isManageCollections}>
@@ -78,7 +80,7 @@ export const AdminSidebar: React.FC = () => {
             <AdminMenuItemIcon>
               <ManageManifestsIcon />
             </AdminMenuItemIcon>
-            <AdminMenuItemLabel>{t('Manage manifests')}</AdminMenuItemLabel>
+            <AdminMenuItemLabel>{t('Manage manifests', { count: 2 })}</AdminMenuItemLabel>
           </AdminMenuItem>
 
           <AdminMenuSubItemContainer>
@@ -96,7 +98,7 @@ export const AdminSidebar: React.FC = () => {
             <AdminMenuItemIcon>
               <ProjectsIcon />
             </AdminMenuItemIcon>
-            <AdminMenuItemLabel>{t('Projects')}</AdminMenuItemLabel>
+            <AdminMenuItemLabel>{t('Projects', { count: 2 })}</AdminMenuItemLabel>
           </AdminMenuItem>
         </AdminMenuItemContainer>
 
@@ -106,6 +108,15 @@ export const AdminSidebar: React.FC = () => {
               <AdminSearchIcon />
             </AdminMenuItemIcon>
             <AdminMenuItemLabel>{t('Search indexing')}</AdminMenuItemLabel>
+          </AdminMenuItem>
+        </AdminMenuItemContainer>
+
+        <AdminMenuItemContainer>
+          <AdminMenuItem as={HrefLink} href="/i18n" $active={isLocalisation}>
+            <AdminMenuItemIcon>
+              <InternationalisationIcon />
+            </AdminMenuItemIcon>
+            <AdminMenuItemLabel>{t('Localisation')}</AdminMenuItemLabel>
           </AdminMenuItem>
         </AdminMenuItemContainer>
 

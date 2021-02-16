@@ -19,7 +19,9 @@ export function createServerRenderer(
     api: ApiClient;
     routes: UniversalRoute[];
     site: PublicSite;
-    user?: { name: string; id: number };
+    user?: { name: string; id: number; scope: string[] };
+    supportedLocales: string[];
+    defaultLocale: string;
   }>,
   routes: UniversalRoute[],
   apiGateway: string,
@@ -40,7 +42,7 @@ export function createServerRenderer(
     i18next: i18n;
     siteSlug?: string;
     site?: Promise<PublicSite | undefined>;
-    user?: { name: string; id: number };
+    user?: { name: string; id: number; scope: string[] };
   }) {
     const prefetchCache = makeQueryCache();
     const sheet = new ServerStyleSheet(); // <-- creating out stylesheet
@@ -64,11 +66,18 @@ export function createServerRenderer(
         );
       }
     }
+    const locales = api.getSiteLocales();
     await Promise.all(requests);
+    const loadedLocales = await locales;
     const omekaSite = await site;
     const dehydratedState = dehydrate(prefetchCache);
     const routeData = `
-      <script type="application/json" id="react-omeka">${JSON.stringify({ site: omekaSite, user })}</script>
+      <script type="application/json" id="react-omeka">${JSON.stringify({
+        site: omekaSite,
+        user,
+        locales: loadedLocales.localisations,
+        defaultLocale: loadedLocales.defaultLanguage || 'en',
+      })}</script>
       <script type="application/json" id="react-query-cache">${JSON.stringify(dehydratedState)}</script>
     `;
 
@@ -86,7 +95,14 @@ export function createServerRenderer(
             <Hydrate state={dehydratedState}>
               <I18nextProvider i18n={i18next}>
                 <StaticRouter basename={basename} location={url} context={context}>
-                  {<RootApplication api={api} routes={routes} site={omekaSite as any} user={user} />}
+                  <RootApplication
+                    api={api}
+                    routes={routes}
+                    site={omekaSite as any}
+                    user={user}
+                    defaultLocale={loadedLocales.defaultLanguage || 'en'}
+                    supportedLocales={loadedLocales.localisations.map(ln => ln.code)}
+                  />
                 </StaticRouter>
               </I18nextProvider>
             </Hydrate>

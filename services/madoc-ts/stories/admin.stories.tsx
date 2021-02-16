@@ -130,6 +130,7 @@ export const LightNavigationExample = () => (
 
 export const Admin_Menu = () => {
   const [selected, setSelected] = useState(1);
+  const [menu, changeMenu] = useState(false);
 
   return (
     <MemoryRouter>
@@ -146,7 +147,7 @@ export const Admin_Menu = () => {
         />
 
         <AdminLayoutContainer>
-          <AdminLayoutMenu style={{ width: 320, height: '100vh' }}>
+          <AdminLayoutMenu $collapsed={menu}>
             <AdminSidebarContainer>
               <SiteSwitcherContainer>
                 <SiteSwitcherSiteName>My madoc site</SiteSwitcherSiteName>
@@ -214,6 +215,15 @@ export const Admin_Menu = () => {
                       <SiteConfigurationIcon />
                     </AdminMenuItemIcon>
                     <AdminMenuItemLabel>Site configuration</AdminMenuItemLabel>
+                  </AdminMenuItem>
+                </AdminMenuItemContainer>
+
+                <AdminMenuItemContainer>
+                  <AdminMenuItem onClick={() => changeMenu(e => !e)}>
+                    <AdminMenuItemIcon>
+                      <SiteConfigurationIcon />
+                    </AdminMenuItemIcon>
+                    <AdminMenuItemLabel>Toggle menu</AdminMenuItemLabel>
                   </AdminMenuItem>
                 </AdminMenuItemContainer>
               </AdminMenuContainer>

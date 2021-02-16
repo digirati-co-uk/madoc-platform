@@ -12,6 +12,7 @@ import { I18nextProvider } from 'react-i18next';
 import { BrowserRouter } from 'react-router-dom';
 import { api } from '../../../gateway/api.browser';
 import React from 'react';
+import { ListLocalisationsResponse } from '../../../routes/admin/localisation';
 import { UniversalRoute } from '../../types';
 import { ErrorPage } from '../components/NotFoundPage';
 import { ErrorBoundary } from './error-boundary';
@@ -38,8 +39,12 @@ export function renderClient(
     window.location.href = `/s/${slug}/madoc/login?redirect=${loc}`;
   }
 
+  const localisations = dehydratedSite.locales as ListLocalisationsResponse['localisations'];
+  const supportedLocales = localisations.map(local => local.code);
+  const defaultLocale = dehydratedSite.defaultLocale || 'en';
+
   if (component && (jwt || !requireJwt)) {
-    createBackend(slug, jwt).then(([t, i18n]) => {
+    createBackend(slug, jwt, supportedLocales, defaultLocale).then(([t, i18n]) => {
       const propScript = document.getElementById('react-data');
       const { basename }: any = propScript ? JSON.parse(propScript.innerText) : {};
 
@@ -58,6 +63,8 @@ export function renderClient(
                         siteSlug={slug}
                         site={dehydratedSite.site}
                         user={dehydratedSite.user}
+                        supportedLocales={supportedLocales}
+                        defaultLocale={defaultLocale}
                       />
                       {process.env.NODE_ENV === 'development' ? <ReactQueryDevtools /> : null}
                     </ErrorBoundary>

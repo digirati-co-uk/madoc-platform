@@ -35,6 +35,7 @@ import {
 import { useApi } from '../hooks/use-api';
 import { apiHooks } from '../hooks/use-api-query';
 import { useDrag, useDrop } from 'react-dnd';
+import { useDefaultLocale, useSupportedLocales } from '../hooks/use-site';
 import { Spinner } from '../icons/Spinner';
 import { LocaleString } from './LocaleString';
 
@@ -323,6 +324,8 @@ const EditSingleValue: React.FC<{
   editFacetValue: (value: FacetConfigValue) => void;
   removeFacetValue: (value: FacetConfigValue) => void;
 }> = ({ index, keys, value, removeFacetValue, editFacetValue }) => {
+  const defaultLocale = useDefaultLocale();
+  const availableLanguages = useSupportedLocales();
   const [isOpen, setIsOpen] = useState(false);
   const { id, label, values } = value;
 
@@ -373,7 +376,8 @@ const EditSingleValue: React.FC<{
                 });
               }}
               metadataKey="label"
-              availableLanguages={['en', 'es', 'fr', 'de']}
+              availableLanguages={availableLanguages}
+              defaultLocale={defaultLocale}
             />
             <MetadataInputLabel htmlFor="included-fields">
               When searching for this, search the above fields with all of these values
@@ -455,6 +459,9 @@ const EditSingleFacet: React.FC<{
   reorderFacetValues,
   allowSavingValues,
 }) => {
+  const defaultLocale = useDefaultLocale();
+  const availableLanguages = useSupportedLocales();
+
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) {
       return;
@@ -520,7 +527,8 @@ const EditSingleFacet: React.FC<{
           });
         }}
         metadataKey="label"
-        availableLanguages={['en', 'es', 'fr', 'de']}
+        defaultLocale={defaultLocale}
+        availableLanguages={availableLanguages}
       />
       <MetadataInputLabel htmlFor="included-fields">This will combine the following fields</MetadataInputLabel>
       <MetadataEmbeddedList id="included-fields" ref={dropFields} canDrop={dropFieldsState.canDrop}>

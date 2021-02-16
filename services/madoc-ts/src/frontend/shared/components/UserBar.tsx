@@ -1,7 +1,12 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { PublicSite } from '../../../utility/omeka-api';
+import { LanguageSwitcher } from '../atoms/LanguageSwitcher';
+import { useStaticData } from '../hooks/use-data';
+import { useUser } from '../hooks/use-site';
 import { HrefLink } from '../utility/href-link';
+import { isAdmin } from '../utility/user-roles';
 
 const UserBarContainer = styled.div`
   position: absolute;
@@ -54,16 +59,21 @@ const UserBarLogout = styled.span`
   }
 `;
 
-export const UserBar: React.FC<{ site: PublicSite; user?: { name: string; id: number }; admin?: boolean }> = ({
-  user,
-  site,
-  admin,
-}) => {
+export const UserBar: React.FC<{
+  site: PublicSite;
+  user?: { name: string; id: number; scope: string[] };
+  admin?: boolean;
+}> = ({ user, site, admin }) => {
+  const { t } = useTranslation();
+
+  const showAdmin = user && user.scope.indexOf('site.admin') !== -1;
+
   return (
     <>
       <UserBarContainer>
-        <UserBarAdminButton href={`/s/${site.slug}/madoc/admin`}>Site admin</UserBarAdminButton>
+        {showAdmin && <UserBarAdminButton href={`/s/${site.slug}/madoc/admin`}>{t('Site admin')}</UserBarAdminButton>}
         <UserBarExpander />
+        <LanguageSwitcher />
         {user ? (
           <>
             <UserBarUserDetails>

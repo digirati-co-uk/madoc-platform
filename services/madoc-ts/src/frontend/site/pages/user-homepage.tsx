@@ -45,7 +45,6 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
     const { slug } = useSite();
 
     const showReviews = data && isReviewer(data.userDetails);
-    const showAdmin = data && isAdmin(data.userDetails);
 
     if (error) {
       return <a href="/login">Please login</a>;
@@ -75,11 +74,6 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
           <DashboardTab>
             <a href={`/s/${slug}/profile`}>Manage account</a>
           </DashboardTab>
-          {showAdmin && (
-            <DashboardTab>
-              <a href={`/s/${slug}/madoc/admin`}>Admin</a>
-            </DashboardTab>
-          )}
         </DashboardTabs>
 
         {renderUniversalRoutes(route.routes)}

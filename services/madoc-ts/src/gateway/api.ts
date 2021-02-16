@@ -7,6 +7,7 @@ import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.e
 import { plainTextSource } from '../extensions/capture-models/DynamicDataSources/sources/Plaintext.source';
 import { ExtensionManager } from '../extensions/extension-manager';
 import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
+import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
 import { Site } from '../types/omeka/Site';
 import { SingleUser } from '../types/omeka/User';
 import { ProjectConfiguration } from '../types/schemas/project-configuration';
@@ -490,6 +491,21 @@ export class ApiClient {
 
   async deleteProject(projectId: number) {
     throw new Error('Not yet implemented');
+  }
+
+  // Locale.
+  async getSiteLocales() {
+    return this.request<ListLocalisationsResponse>(`/api/madoc/locales`);
+  }
+  async getSiteLocale(code: string, withTemplate?: boolean) {
+    return this.request<GetLocalisationResponse>(`/api/madoc/locales/${code}${withTemplate ? `?show_empty=true` : ''}`);
+  }
+
+  async updateSiteLocale(code: string, json: any) {
+    return this.request<GetLocalisationResponse>(`/api/madoc/locales/${code}`, {
+      method: 'POST',
+      body: json,
+    });
   }
 
   // Config service.
