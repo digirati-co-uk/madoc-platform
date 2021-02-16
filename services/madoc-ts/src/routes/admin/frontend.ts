@@ -28,6 +28,7 @@ export const adminFrontend: RouteMiddleware = context => {
           ? {
               name: context.state.jwt.user.name,
               id: context.state.jwt.user.id,
+              scope: context.state.jwt.scope,
             }
           : undefined,
     });
@@ -67,6 +68,7 @@ export const siteFrontend: RouteMiddleware = context => {
           ? {
               name: context.state.jwt.user.name,
               id: context.state.jwt.user.id,
+              scope: context.state.jwt.scope,
             }
           : undefined,
     });

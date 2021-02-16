@@ -40,7 +40,7 @@ export type AdminAppProps = {
   jwt?: string;
   api: ApiClient;
   routes: UniversalRoute[];
-  user: { name: string; id: number };
+  user: { name: string; id: number; scope: string[] };
   site: PublicSite;
   supportedLocales: string[];
   defaultLocale: string;

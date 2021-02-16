@@ -4,7 +4,7 @@ import { PublicSite } from '../../../utility/omeka-api';
 const SiteReactContext = React.createContext<
   | {
       site: PublicSite;
-      user?: { id: number; name: string };
+      user?: { id: number; name: string; scope: string[] };
       supportedLocales: string[];
       defaultLocale: string;
     }

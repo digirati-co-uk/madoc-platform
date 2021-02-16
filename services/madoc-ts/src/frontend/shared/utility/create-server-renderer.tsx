@@ -19,7 +19,7 @@ export function createServerRenderer(
     api: ApiClient;
     routes: UniversalRoute[];
     site: PublicSite;
-    user?: { name: string; id: number };
+    user?: { name: string; id: number; scope: string[] };
     supportedLocales: string[];
     defaultLocale: string;
   }>,
@@ -42,7 +42,7 @@ export function createServerRenderer(
     i18next: i18n;
     siteSlug?: string;
     site?: Promise<PublicSite | undefined>;
-    user?: { name: string; id: number };
+    user?: { name: string; id: number; scope: string[] };
   }) {
     const prefetchCache = makeQueryCache();
     const sheet = new ServerStyleSheet(); // <-- creating out stylesheet

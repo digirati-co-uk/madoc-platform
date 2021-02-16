@@ -51,7 +51,7 @@ export const loginPage: RouteMiddleware<{ slug: string }, { email: string; passw
           sites,
         };
 
-        context.redirect(`/s/${context.params.slug}`);
+        context.redirect(`/s/${context.params.slug}/madoc`);
         return;
       } else {
         context.omekaMessages.push({ type: 'error', message: 'Your email or password is invalid' });

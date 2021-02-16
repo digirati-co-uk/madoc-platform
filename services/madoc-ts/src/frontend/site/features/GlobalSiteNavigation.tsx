@@ -16,9 +16,6 @@ export const GlobalSiteNavigation: React.FC = () => {
       <LightNavigationItem $active={history.location.pathname === '/collections'}>
         <HrefLink href="/collections">Collections</HrefLink>
       </LightNavigationItem>
-      <LightNavigationItem $active={history.location.pathname === '/manifests'}>
-        <HrefLink href="/manifests">Manifests</HrefLink>
-      </LightNavigationItem>
       {user ? (
         <LightNavigationItem $active={history.location.pathname.startsWith('/dashboard')}>
           <HrefLink href="/dashboard">User dashboard</HrefLink>

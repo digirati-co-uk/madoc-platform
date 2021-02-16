@@ -18,7 +18,7 @@ export type SiteAppProps = {
   api: ApiClient;
   routes: UniversalRoute[];
   siteSlug?: string;
-  user?: { name: string; id: number };
+  user?: { name: string; id: number; scope: string[] };
   site: PublicSite;
   supportedLocales: string[];
   defaultLocale: string;
