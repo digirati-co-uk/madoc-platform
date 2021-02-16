@@ -66,7 +66,7 @@ export const TranslationInput: React.FC<{ id: string; label: any; value: string;
     <TranslationInputContainer $focus={isFocus}>
       <TranslationInputLabel htmlFor={id}>{label}</TranslationInputLabel>
       <TranslationInputField>
-        <Input ref={ref as any} value={value} onChange={onChange} id={id} />
+        <Input ref={ref as any} value={value} onChange={e => onChange(e.target.value)} id={id} />
       </TranslationInputField>
     </TranslationInputContainer>
   );
