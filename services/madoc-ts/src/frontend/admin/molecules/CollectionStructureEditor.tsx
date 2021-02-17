@@ -1,15 +1,18 @@
+import { ConfirmButton } from '@capture-models/editor';
 import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
+import { ModalButton } from '../../shared/components/Modal';
 import { useReorderItems } from '../hooks/use-reorder-items';
 import { ExpandGrid, GridContainer, HalfGird } from '../../shared/atoms/Grid';
 import { Input, InputContainer, InputLabel } from '../../shared/atoms/Input';
-import { Button, SmallButton } from '../../shared/atoms/Button';
+import { Button, ButtonRow, SmallButton } from '../../shared/atoms/Button';
 import {
   ModalBackground,
   ModalContainer,
   InnerModalContainer,
   ModalCloseIcon,
   ModalBody,
+  ModalFooter,
 } from '../../shared/atoms/Modal';
 import { Heading3 } from '../../shared/atoms/Heading3';
 import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../shared/atoms/Table';
@@ -29,8 +32,6 @@ export const CollectionEditorStructure: React.FC<{
 }> = ({ items, saveOrder, searchCollections, hideManifests, searchManifests, enableNavigation }) => {
   const { t } = useTranslation();
   const [search, setSearch] = useState('');
-  const [currentItem, setCurrentItem] = useState<number>();
-  const [showDeleteWarning, setShowDeleteWarning] = useState(false);
 
   const [performSearch, searchResultsType, searchResults, resetResults] = useAutocomplete(search);
 
@@ -57,43 +58,8 @@ export const CollectionEditorStructure: React.FC<{
     return <>{t('loading')}</>;
   }
 
-  const renderModal = (itemID: any) => {
-    setCurrentItem(itemID);
-    setShowDeleteWarning(true);
-  };
-
   return (
     <>
-      {showDeleteWarning ? (
-        <>
-          <ModalBackground />
-          <ModalContainer>
-            <InnerModalContainer>
-              <ModalBody>
-                <ModalCloseIcon onClick={() => setShowDeleteWarning(false)} />
-                <p>Are you sure you would like to delete the last of this type?</p>
-                <SmallButton
-                  onClick={() => {
-                    if (currentItem) removeItem(currentItem);
-                    setShowDeleteWarning(false);
-                  }}
-                >
-                  {t('remove')}
-                </SmallButton>
-                <SmallButton
-                  onClick={() => {
-                    setShowDeleteWarning(false);
-                  }}
-                >
-                  {t('cancel')}
-                </SmallButton>
-              </ModalBody>
-            </InnerModalContainer>
-          </ModalContainer>
-        </>
-      ) : (
-        <></>
-      )}
       {searchCollections || searchManifests ? (
         <GridContainer>
           {searchManifests ? (
@@ -212,15 +178,38 @@ export const CollectionEditorStructure: React.FC<{
                   </>
                 }
               >
-                <SmallButton
-                  onClick={
-                    itemIds.filter(i => itemMap[i].type === item.type).length === 1
-                      ? () => renderModal(item.id)
-                      : () => removeItem(item.id)
-                  }
-                >
-                  {t('remove')}
-                </SmallButton>
+                {itemIds.filter(i => itemMap[i].type === item.type).length === 1 ? (
+                  <ModalButton
+                    title="Remove last manifest"
+                    as={SmallButton}
+                    render={() => <p>Are you sure you want to remove the last item in this collection</p>}
+                    renderFooter={({ close }) => {
+                      return (
+                        <ButtonRow style={{ margin: '0 0 0 auto' }}>
+                          <Button
+                            onClick={() => {
+                              close();
+                            }}
+                          >
+                            {t('cancel')}
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              removeItem(item.id);
+                              close();
+                            }}
+                          >
+                            {t('remove')}
+                          </Button>
+                        </ButtonRow>
+                      );
+                    }}
+                  >
+                    Remove
+                  </ModalButton>
+                ) : (
+                  <SmallButton onClick={() => removeItem(item.id)}>{t('remove')}</SmallButton>
+                )}
               </ReorderTableRow>
             );
           })}
