@@ -91,7 +91,13 @@ export const UserBar: React.FC<{
   return (
     <>
       <UserBarContainer>
-        {showAdmin && <UserBarAdminButton href={`/s/${site.slug}/madoc/admin`}>{t('Site admin')}</UserBarAdminButton>}
+        {showAdmin && admin ? (
+          <UserBarAdminButton as={HrefLink} href={`/`}>
+            {t('Site admin')}
+          </UserBarAdminButton>
+        ) : (
+          <UserBarAdminButton href={`/s/${site.slug}/madoc/admin`}>{t('Site admin')}</UserBarAdminButton>
+        )}
         <UserBarExpander />
         <LanguageSwitcher />
 
@@ -99,19 +105,45 @@ export const UserBar: React.FC<{
           <GlobalHeaderMenuContainer>
             <GlobalHeaderMenuLabel {...buttonProps}>{user.name}</GlobalHeaderMenuLabel>
             <GlobalHeaderMenuList $visible={isOpen} role="menu">
-              <GlobalHeaderMenuItem as={HrefLink} href={`/dashboard`} {...itemProps[0]}>
-                {t('Dashboard')}
-              </GlobalHeaderMenuItem>
-              <GlobalHeaderMenuItem as={HrefLink} href={`/`} {...itemProps[1]}>
-                {t('View site')}
-              </GlobalHeaderMenuItem>
+              {admin ? (
+                <>
+                  <GlobalHeaderMenuItem href={`/s/${site.slug}/madoc/dashboard`} {...itemProps[0]}>
+                    {t('Dashboard')}
+                  </GlobalHeaderMenuItem>
+                  <GlobalHeaderMenuItem href={`/s/${site.slug}/madoc`} {...itemProps[1]}>
+                    {t('View site')}
+                  </GlobalHeaderMenuItem>
 
-              <GlobalHeaderMenuItem href={`/s/${site.slug}/profile`} {...itemProps[2]}>
-                {t('Account')}
-              </GlobalHeaderMenuItem>
-              <GlobalHeaderMenuItem href={`/s/${site.slug}/madoc/logout?${stringify({ redirect })}`} {...itemProps[3]}>
-                {t('Logout')}
-              </GlobalHeaderMenuItem>
+                  <GlobalHeaderMenuItem href={`/s/${site.slug}/profile`} {...itemProps[2]}>
+                    {t('Account')}
+                  </GlobalHeaderMenuItem>
+                  <GlobalHeaderMenuItem
+                    href={`/s/${site.slug}/madoc/logout?${stringify({ redirect })}`}
+                    {...itemProps[3]}
+                  >
+                    {t('Logout')}
+                  </GlobalHeaderMenuItem>
+                </>
+              ) : (
+                <>
+                  <GlobalHeaderMenuItem as={HrefLink} href={`/dashboard`} {...itemProps[0]}>
+                    {t('Dashboard')}
+                  </GlobalHeaderMenuItem>
+                  <GlobalHeaderMenuItem as={HrefLink} href={`/`} {...itemProps[1]}>
+                    {t('View site')}
+                  </GlobalHeaderMenuItem>
+
+                  <GlobalHeaderMenuItem href={`/s/${site.slug}/profile`} {...itemProps[2]}>
+                    {t('Account')}
+                  </GlobalHeaderMenuItem>
+                  <GlobalHeaderMenuItem
+                    href={`/s/${site.slug}/madoc/logout?${stringify({ redirect })}`}
+                    {...itemProps[3]}
+                  >
+                    {t('Logout')}
+                  </GlobalHeaderMenuItem>
+                </>
+              )}
             </GlobalHeaderMenuList>
           </GlobalHeaderMenuContainer>
         ) : (

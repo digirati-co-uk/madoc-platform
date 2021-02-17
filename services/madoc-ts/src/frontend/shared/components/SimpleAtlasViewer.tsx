@@ -84,9 +84,9 @@ export const SimpleAtlasViewer: React.FC<{
   }
 
   return (
-    <div style={{ display: 'flex', width: '100%', minWidth: 0, overflow: 'hidden' }}>
+    <div style={{ display: 'flex', width: '100%', minWidth: 0, overflow: 'hidden', ...style }}>
       {isAnnotationOpen ? (
-        <div style={{ minWidth: 300, width: 300, padding: 10 }}>
+        <div style={{ minWidth: 300, width: 300, padding: 10, overflowY: 'auto' }}>
           {currentAnnotationPage ? (
             <div>
               {annotationPages && annotationPages.length > 1 ? (
