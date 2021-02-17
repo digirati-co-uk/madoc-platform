@@ -218,5 +218,12 @@
   "atlas__zoom_out": "-",
   "atlas__annotations": "Annotations",
   "atlas__switch-layout": "Switch layout",
-  "Welcome back {{user}}": "Welcome back {{user}}"
+  "Welcome back {{user}}": "Welcome back {{user}}",
+  "Back to resource": "Back to resource",
+  "The following changes were requested": "The following changes were requested",
+  "Your contribution may expire soon": "Your contribution may expire soon",
+  "This task is complete, you can make another contribution from the": "This task is complete, you can make another contribution from the",
+  "This contribution was rejected , you can make another contribution from the": "This contribution was rejected , you can make another contribution from the",
+  "Image page": "Image page",
+  "Your submission is in review": "Your submission is in review"
 }

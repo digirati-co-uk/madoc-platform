@@ -61,7 +61,7 @@ export const siteConfigurationModel = {
     inlineLabel: 'Admins count as reviewers',
   },
   hideCompletedResources: {
-    label: 'Once a resource (canvas or manifest) is compelte',
+    label: 'Once a resource (canvas or manifest) is complete',
     type: 'checkbox-field',
     inlineLabel: 'Hide it from the resource page in the project',
   },
