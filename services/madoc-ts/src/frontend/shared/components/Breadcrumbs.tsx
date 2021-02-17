@@ -1,9 +1,11 @@
 import { InternationalString } from '@hyperion-framework/types';
 import React, { useMemo, useContext } from 'react';
+import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { useCurrentAdminPages } from '../../site/hooks/use-current-admin-pages';
-import { LocaleString } from './LocaleString';
+import { useSite } from '../hooks/use-site';
+import { LocaleString, useLocaleString } from './LocaleString';
 import styled, { css } from 'styled-components';
 
 type BreadcrumbContextType = {
@@ -112,6 +114,7 @@ export const BreadcrumbContext: React.FC<BreadcrumbContextType> = ({
 };
 
 export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ currentPage }) => {
+  const site = useSite();
   const breads = useBreadcrumbs();
   const location = useLocation();
   const adminLinks = useCurrentAdminPages();
@@ -231,6 +234,8 @@ export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ current
 
     return flatList;
   }, [breads.canvas, breads.collection, breads.manifest, breads.project, currentPage, location.pathname]);
+  const activePage = stack.find(s => s.url === location.pathname);
+  const [pageTitle] = useLocaleString(activePage?.label);
 
   if (stack.length === 0) {
     return <React.Fragment />;
@@ -238,6 +243,13 @@ export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ current
 
   return (
     <BreadcrumbList>
+      {pageTitle ? (
+        <Helmet>
+          <title>
+            {site.title} - {pageTitle}
+          </title>
+        </Helmet>
+      ) : null}
       {stack.map((s, n) => (
         <React.Fragment key={s.url}>
           <BreadcrumbItem active={s.url === location.pathname}>

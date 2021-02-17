@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { InfoMessage } from '../../shared/atoms/InfoMessage';
 import { LockIcon } from '../../shared/atoms/LockIcon';
 import { ViewDocument } from '../../shared/caputre-models/inspector/ViewDocument';
@@ -28,6 +29,7 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({ project, canvas, manifes
   const { showCanvasNavigation, showWarning } = useCanvasNavigation();
   const [searchText, highlightedRegions] = useCanvasSearch(canvasId);
   const createLink = useRelativeLinks();
+  const { t } = useTranslation();
   const [selectedPanel, setSelectedPanel] = useState(0);
 
   const { data } = apiHooks.getSiteCanvasPublishedModels(() => [
@@ -48,7 +50,7 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({ project, canvas, manifes
       {showWarning ? (
         <div style={{ textAlign: 'center', padding: '2em', marginTop: '1em', marginBottom: '1em', background: '#eee' }}>
           <LockIcon style={{ fontSize: '3em' }} />
-          <Heading3>This canvas is not available to browse</Heading3>
+          <Heading3>{t('This canvas is not available to browse')}</Heading3>
         </div>
       ) : null}
 
@@ -56,8 +58,8 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({ project, canvas, manifes
         <>
           {highlightedRegions && highlightedRegions.bounding_boxes ? (
             <InfoMessage>
-              {highlightedRegions.bounding_boxes.length} Search results for <strong>{searchText}</strong>{' '}
-              <Link to={createLink()}>Clear search</Link>
+              {highlightedRegions.bounding_boxes.length} {t('Search results for {{searchText}}', { searchText })}{' '}
+              <Link to={createLink()}>{t('Clear search')}</Link>
             </InfoMessage>
           ) : null}
 
@@ -69,8 +71,8 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({ project, canvas, manifes
                 style={{ height: '60vh', width: 300, minWidth: 300 }}
                 menu={[
                   // Removed transcription for now.
-                  // { label: 'TRANSCRIPTION', component: <div /> },
-                  { label: 'METADATA', component: <MetaDataDisplay metadata={canvas.metadata} /> },
+                  // { label: t('Transcription'), component: <CanvasPlaintext /> },
+                  { label: t('Metadata'), component: <MetaDataDisplay metadata={canvas.metadata} /> },
                 ]}
                 switchPanel={(idx: number) => setSelectedPanel(idx)}
                 selected={selectedPanel}

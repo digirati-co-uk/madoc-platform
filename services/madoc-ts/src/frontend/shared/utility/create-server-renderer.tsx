@@ -14,6 +14,7 @@ import { I18nextProvider } from 'react-i18next';
 import { StaticRouter } from 'react-router-dom';
 import React from 'react';
 import { UniversalRoute } from '../../types';
+import { Helmet } from 'react-helmet';
 
 export function createServerRenderer(
   RootApplication: React.FC<{
@@ -113,6 +114,7 @@ export function createServerRenderer(
         </ReactQueryConfigProvider>
       )
     );
+    const helmet = Helmet.renderStatic();
 
     if (context.url) {
       return {
@@ -129,29 +131,48 @@ export function createServerRenderer(
     if (process.env.NODE_ENV === 'production') {
       return {
         type: 'document',
-        html: `
-    ${styles}
-    <div id="react-component">${markup}</div>
-    <script crossorigin src="https://unpkg.com/whatwg-fetch@3.0.0/dist/fetch.umd.js"></script>
-    <script crossorigin src="https://unpkg.com/react@16.13.1/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@16.13.1/umd/react-dom.production.min.js"></script>
-    <script type="application/json" id="react-data">${JSON.stringify({ basename })}</script>
-    ${routeData}
-  `,
+        html: `<!doctype html>
+<html ${helmet.htmlAttributes.toString()}>
+    <head>
+        ${helmet.title.toString()}
+        ${helmet.meta.toString()}
+        ${helmet.link.toString()}
+        ${styles}
+    </head>
+    <body ${helmet.bodyAttributes.toString()}>
+        <div id="react-component">${markup}</div>
+        
+        
+        <script crossorigin src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.0.0/dist/fetch.umd.js"></script>
+        <script crossorigin src="https://cdn.jsdelivr.net/npm/react@16.13.1/umd/react.production.min.js"></script>
+        <script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@16.13.1/umd/react-dom.production.min.js"></script>
+        <script type="application/json" id="react-data">${JSON.stringify({ basename })}</script>
+        ${routeData}
+    </body>
+</html>`,
       };
     }
 
     return {
       type: 'document',
-      html: `
-    ${styles}
-    <div id="react-component">${markup}</div>
-    <script crossorigin src="https://unpkg.com/whatwg-fetch@3.0.0/dist/fetch.umd.js"></script>
-    <script crossorigin src="https://unpkg.com/react@16.13.1/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@16.13.1/umd/react-dom.development.js"></script>
-    <script type="application/json" id="react-data">${JSON.stringify({ basename })}</script>
-    ${routeData}
-  `,
+      html: `<!doctype html>
+<html ${helmet.htmlAttributes.toString()}>
+    <head>
+        ${helmet.title.toString()}
+        ${helmet.meta.toString()}
+        ${helmet.link.toString()}
+        ${styles}
+    </head>
+    <body ${helmet.bodyAttributes.toString()}>
+        <div id="react-component">${markup}</div>
+
+        <script crossorigin src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.0.0/dist/fetch.umd.js"></script>
+        <script crossorigin src="https://cdn.jsdelivr.net/npm/react@16.13.1/umd/react.development.js"></script>
+        <script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@16.13.1/umd/react-dom.development.js"></script>
+        <script type="application/json" id="react-data">${JSON.stringify({ basename })}</script>
+        ${routeData}
+    </body>
+</html>`,
     };
   };
 }

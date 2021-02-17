@@ -232,5 +232,10 @@
   "Logout": "Logout",
   "Filter images": "Filter images",
   "In progress": "In progress",
-  "Completed": "Completed"
+  "Completed": "Completed",
+  "This canvas is not available to browse": "This canvas is not available to browse",
+  "Search results for {{searchText}}": "Search results for {{searchText}}",
+  "Clear search": "Clear search",
+  "Metadata": "Metadata",
+  "Transcription": "Transcription"
 }

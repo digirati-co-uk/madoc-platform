@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { Helmet } from 'react-helmet';
 import { ApiClient } from '../../gateway/api';
 import { useTranslation } from 'react-i18next';
 import { PublicSite } from '../../utility/omeka-api';
@@ -40,6 +41,9 @@ const SiteApp: React.FC<SiteAppProps> = ({ api, site, user, supportedLocales, de
         ])}
       >
         <ApiContext.Provider value={api}>
+          <Helmet>
+            <title>{site.title}</title>
+          </Helmet>
           <UserBar site={site} user={user} />
           <GlobalSiteHeader />
           <SiteContainer lang={i18n.language} dir={viewingDirection}>

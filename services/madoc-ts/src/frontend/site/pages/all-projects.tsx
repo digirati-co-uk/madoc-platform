@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Heading1 } from '../../shared/atoms/Heading1';
 import { ProjectStatus, ProjectContainer } from '../../shared/atoms/ProjectStatus';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { Link } from 'react-router-dom';
@@ -16,7 +17,7 @@ export const AllProjects: React.FC = () => {
 
   return (
     <>
-      <h1>{t('All projects')}</h1>
+      <Heading1>{t('All projects')}</Heading1>
       {data?.projects.map(project => (
         <ProjectContainer $status={project.status} key={project.id}>
           <LocaleString as={Heading3}>{project.label}</LocaleString>
