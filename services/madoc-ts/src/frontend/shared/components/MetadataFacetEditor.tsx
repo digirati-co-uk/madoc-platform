@@ -3,6 +3,7 @@ import { InternationalString } from '@hyperion-framework/types';
 import produce from 'immer';
 import React, { useEffect, useMemo, useReducer, useState } from 'react';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { MetadataEditor } from '../../admin/molecules/MetadataEditor';
 import { Button } from '../atoms/Button';
@@ -324,6 +325,7 @@ const EditSingleValue: React.FC<{
   editFacetValue: (value: FacetConfigValue) => void;
   removeFacetValue: (value: FacetConfigValue) => void;
 }> = ({ index, keys, value, removeFacetValue, editFacetValue }) => {
+  const { t } = useTranslation();
   const defaultLocale = useDefaultLocale();
   const availableLanguages = useSupportedLocales();
   const [isOpen, setIsOpen] = useState(false);
@@ -357,14 +359,14 @@ const EditSingleValue: React.FC<{
                   setIsOpen(false);
                 }}
               >
-                Back
+                {t('Back')}
               </FacetEditBack>
               <FacetEditRemove onClick={() => removeFacetValue(value)}>
                 <CloseIcon />
-                remove
+                {t('remove')}
               </FacetEditRemove>
             </FacetEditActions>
-            <MetadataInputLabel htmlFor="title">Title</MetadataInputLabel>
+            <MetadataInputLabel htmlFor="title">{t('Title')}</MetadataInputLabel>
             <MetadataEditor
               fluid
               id="title"
@@ -380,7 +382,9 @@ const EditSingleValue: React.FC<{
               defaultLocale={defaultLocale}
             />
             <MetadataInputLabel htmlFor="included-fields">
-              When searching for this, search the above fields with all of these values
+              {t('help__metadata_facet_editor', {
+                defaultValue: 'When searching for this, search the above fields with all of these values',
+              })}
             </MetadataInputLabel>
             <MetadataEmbeddedList id="included-fields" ref={dropValue} canDrop={dropValueState.canDrop}>
               {(values || []).map(key => {
@@ -402,7 +406,9 @@ const EditSingleValue: React.FC<{
                   </MetadataCardItem>
                 );
               })}
-              <MetadataDropzone>drop value from right list</MetadataDropzone>
+              <MetadataDropzone>
+                {t('help__metadata_facet_editor_dropzone', { defaultValue: 'drop value from right list' })}
+              </MetadataDropzone>
             </MetadataEmbeddedList>
           </FacetEditContainer>
         )}
@@ -418,10 +424,12 @@ const EditSingleValue: React.FC<{
             <MetadataCardLabel>
               <LocaleString>{label}</LocaleString>
             </MetadataCardLabel>
-            <MetadataCardSubtext>click to customise</MetadataCardSubtext>
+            <MetadataCardSubtext>
+              {t('help__metadata_facet_editor_click_customise', { defaultValue: 'click to customise' })}
+            </MetadataCardSubtext>
           </MetadataCard>
           <MetadataCardRemove onClick={() => removeFacetValue(value)}>
-            <CloseIcon /> <MetadataCardRemoveLabel>remove</MetadataCardRemoveLabel>
+            <CloseIcon /> <MetadataCardRemoveLabel>{t('remove')}</MetadataCardRemoveLabel>
           </MetadataCardRemove>
         </MetadataCardItem>
       )}
@@ -459,6 +467,7 @@ const EditSingleFacet: React.FC<{
   reorderFacetValues,
   allowSavingValues,
 }) => {
+  const { t } = useTranslation();
   const defaultLocale = useDefaultLocale();
   const availableLanguages = useSupportedLocales();
 
@@ -509,13 +518,13 @@ const EditSingleFacet: React.FC<{
   return (
     <FacetEditContainer>
       <FacetEditActions>
-        <FacetEditBack onClick={onBack}>Back</FacetEditBack>
+        <FacetEditBack onClick={onBack}>{t('Back')}</FacetEditBack>
         <FacetEditRemove onClick={() => onRemove(facet)}>
           <CloseIcon />
-          remove
+          {t('remove')}
         </FacetEditRemove>
       </FacetEditActions>
-      <MetadataInputLabel htmlFor="title">Title</MetadataInputLabel>
+      <MetadataInputLabel htmlFor="title">{t('Title')}</MetadataInputLabel>
       <MetadataEditor
         fluid
         id="title"
@@ -530,7 +539,9 @@ const EditSingleFacet: React.FC<{
         defaultLocale={defaultLocale}
         availableLanguages={availableLanguages}
       />
-      <MetadataInputLabel htmlFor="included-fields">This will combine the following fields</MetadataInputLabel>
+      <MetadataInputLabel htmlFor="included-fields">
+        {t('help__metadata_facet_editor__combine', { defaultValue: 'This will combine the following fields' })}
+      </MetadataInputLabel>
       <MetadataEmbeddedList id="included-fields" ref={dropFields} canDrop={dropFieldsState.canDrop}>
         {facet.keys.map(key => {
           const visualKey = key.startsWith('metadata.') ? key.slice('metadata.'.length) : key;
@@ -547,17 +558,21 @@ const EditSingleFacet: React.FC<{
                   });
                 }}
               >
-                <CloseIcon /> <MetadataCardRemoveLabel>remove</MetadataCardRemoveLabel>
+                <CloseIcon /> <MetadataCardRemoveLabel>{t('remove')}</MetadataCardRemoveLabel>
               </MetadataCardRemove>
             </MetadataCardItem>
           );
         })}
-        <MetadataDropzone>drop item from the right list</MetadataDropzone>
+        <MetadataDropzone>
+          {t('help__metadata_facet_editor_dropzone', { defaultValue: 'drop value from right list' })}
+        </MetadataDropzone>
       </MetadataEmbeddedList>
       {allowSavingValues ? (
         <>
           <MetadataInputLabel htmlFor="included-values">
-            The facet list will only contain the following values
+            {t('help__metadata_facet_editor_included_values', {
+              defaultValue: 'The facet list will only contain the following values',
+            })}
           </MetadataInputLabel>
           <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="droppable">
@@ -577,7 +592,9 @@ const EditSingleFacet: React.FC<{
                       );
                     })}
                     {!facet.values || facet.values.length === 0 ? (
-                      <MetadataEmptyState>Showing all values</MetadataEmptyState>
+                      <MetadataEmptyState>
+                        {t('help__metadata_facet_editor__empty_values', { defaultValue: 'Showing all values' })}
+                      </MetadataEmptyState>
                     ) : null}
                     {provided.placeholder}
                   </MetadataEmbeddedList>
@@ -611,6 +628,7 @@ const MetadataConfigEditor: React.FC<{
       reorderFacetValues,
     },
   ] = useFacetConfigState(props.facets);
+  const { t } = useTranslation();
 
   const [isSaving, setIsSaving] = useState(false);
   const [willShowSavedMessage, setWillShowSavedMessage] = useState(false);
@@ -671,7 +689,7 @@ const MetadataConfigEditor: React.FC<{
           });
         }}
       >
-        {showSavedMessage ? 'Changed saved!' : 'Save changes'}
+        {showSavedMessage ? t('Changes saved') : t('Save changes')}
       </Button>
     </div>
   );
@@ -723,10 +741,12 @@ const MetadataConfigEditor: React.FC<{
                           <MetadataCardLabel>
                             <LocaleString>{facet.label}</LocaleString>
                           </MetadataCardLabel>
-                          <MetadataCardSubtext>click to customise</MetadataCardSubtext>
+                          <MetadataCardSubtext>
+                            {t('help__metadata_facet_editor_click_customise', { defaultValue: 'click to customise' })}
+                          </MetadataCardSubtext>
                         </MetadataCard>
                         <MetadataCardRemove onClick={() => removeFacet(facet)}>
-                          <CloseIcon /> <MetadataCardRemoveLabel>remove</MetadataCardRemoveLabel>
+                          <CloseIcon /> <MetadataCardRemoveLabel>{t('remove')}</MetadataCardRemoveLabel>
                         </MetadataCardRemove>
                       </MetadataCardItem>
                     )}
@@ -735,7 +755,9 @@ const MetadataConfigEditor: React.FC<{
                 {provided.placeholder}
                 {facets.length === 0 ? (
                   <MetadataDropzone>
-                    nothing added yet, drop value from right list. All values will be shown
+                    {t('help__metadata_facet_editor__empty_facets', {
+                      defaultValue: 'nothing added yet, drop value from right list. All values will be shown',
+                    })}
                   </MetadataDropzone>
                 ) : null}
               </MetadataCardListContainer>

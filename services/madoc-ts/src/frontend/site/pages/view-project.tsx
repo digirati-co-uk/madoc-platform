@@ -29,7 +29,6 @@ export const ViewProject: React.FC<Partial<{
   manifests: CollectionFull;
 }>> = props => {
   const { t } = useTranslation();
-
   const { project, collections, manifests } = props;
   const contributorTasks = useContributorTasks({ rootTaskId: project?.task_id }, !!project);
   const reviewerTasks = useReviewerTasks({ rootTaskId: project?.task_id }, !!project);
@@ -60,19 +59,19 @@ export const ViewProject: React.FC<Partial<{
       <StatisticContainer>
         <Statistic>
           <StatisticNumber>{project.statistics['0'] || 0}</StatisticNumber>
-          <StatisticLabel>Not started</StatisticLabel>
+          <StatisticLabel>{t('Not started')}</StatisticLabel>
         </Statistic>
         <Statistic>
           <StatisticNumber>{project.statistics['1'] || 0}</StatisticNumber>
-          <StatisticLabel>In progress</StatisticLabel>
+          <StatisticLabel>{t('In progress')}</StatisticLabel>
         </Statistic>
         <Statistic>
           <StatisticNumber>{project.statistics['2'] || 0}</StatisticNumber>
-          <StatisticLabel>In review</StatisticLabel>
+          <StatisticLabel>{t('In review')}</StatisticLabel>
         </Statistic>
         <Statistic>
           <StatisticNumber>{project.statistics['3'] || 0}</StatisticNumber>
-          <StatisticLabel>Completed</StatisticLabel>
+          <StatisticLabel>{t('Completed')}</StatisticLabel>
         </Statistic>
       </StatisticContainer>
       <SubtaskProgress
@@ -82,7 +81,7 @@ export const ViewProject: React.FC<Partial<{
       />
       {allowCollectionNavigation && shownCollections.length && collections ? (
         <>
-          <Heading3>Collections</Heading3>
+          <Heading3>{t('Collections')}</Heading3>
           <ImageGrid>
             {shownCollections.map((collection, idx) => (
               <CollectionSnippet key={idx} id={collection.id} projectId={project.slug} />
@@ -90,14 +89,14 @@ export const ViewProject: React.FC<Partial<{
           </ImageGrid>
           {shownCollections.length <= collections.collection.items.length ? (
             <Button as={HrefLink} href={`/projects/${project.slug}/collections`}>
-              See all collections
+              {t('See all collections')}
             </Button>
           ) : null}
         </>
       ) : null}
       {allowManifestNavigation && manifests && manifests.collection.items.length ? (
         <>
-          <Heading3>Manifests</Heading3>
+          <Heading3>{t('Manifests')}</Heading3>
           <ImageGrid>
             {manifests.collection.items.map((manifest, idx) => (
               <Link

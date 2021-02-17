@@ -1,4 +1,7 @@
+import fetch from 'node-fetch';
 import { RouteMiddleware } from '../../types/route-middleware';
+
+const omekaUrl = process.env.OMEKA__URL as string;
 
 export const logout: RouteMiddleware<{ slug: string }> = async context => {
   const jwt = context.state.jwt;
@@ -27,8 +30,14 @@ export const logout: RouteMiddleware<{ slug: string }> = async context => {
     context.query.redirect = '';
   }
 
+  // Automatic logout of Omeka:
+  await fetch(`${omekaUrl}/logout`, {
+    headers: {
+      Cookie: context.req.headers.cookie ? context.req.headers.cookie.toString() : '',
+      // Authorization: context.state.jwt ? `Bearer ${context.state.jwt.token}` : '',
+    },
+  });
+
   // Redirect to Omeka.
-  context.response.redirect(
-    `/s/${context.params.slug}/logout${context.query.redirect ? `?redirect=${context.query.redirect}` : ''}`
-  );
+  context.response.redirect(context.query.redirect || `/s/${context.params.slug}/madoc`);
 };

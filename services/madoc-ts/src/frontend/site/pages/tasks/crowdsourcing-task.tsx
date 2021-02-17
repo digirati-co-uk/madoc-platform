@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ThemeProvider } from 'styled-components';
 import { defaultTheme } from '@capture-models/editor';
 import { useApi } from '../../../shared/hooks/use-api';
@@ -22,6 +23,7 @@ import { CrowdsourcingTaskManifest } from './crowdsourcing-task-manifest';
 const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task, parentTask }) => {
   const api = useApi();
   const project = useProjectByTask(task);
+  const { t } = useTranslation();
 
   const date = new Date().getTime();
 
@@ -86,30 +88,30 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task,
       <div>
         {backLink ? (
           <div>
-            <Link to={backLink}>Back to resource</Link>
+            <Link to={backLink}>{t('Back to resource')}</Link>
           </div>
         ) : null}
         {resource ? <LocaleString as="h1">{resource.canvas.label}</LocaleString> : null}
         {task.status !== 3 && task.state?.changesRequested ? (
           <div style={{ background: 'lightblue', padding: '1em', marginBottom: '1em' }}>
-            <Heading3>The following changes were requested</Heading3>
+            <Heading3>{t('The following changes were requested')}</Heading3>
             <p>{task.state.changesRequested}</p>
           </div>
         ) : null}
-        {mayExpire ? <WarningMessage>Your contribution may expire soon</WarningMessage> : null}
+        {mayExpire ? <WarningMessage>{t('Your contribution may expire soon')}</WarningMessage> : null}
         {isComplete ? (
           <WarningMessage>
-            This task is complete, you can make another contribution from the{' '}
-            {backLink ? <Link to={backLink}>Image page</Link> : 'Image page'}
+            {t('This task is complete, you can make another contribution from the')}{' '}
+            {backLink ? <Link to={backLink}>{t('Image page')}</Link> : t('Image page')}
           </WarningMessage>
         ) : null}
         {wasRejected ? (
           <ErrorMessage>
-            This contribution was rejected , you can make another contribution from the{' '}
-            {backLink ? <Link to={backLink}>Image page</Link> : 'Image page'}
+            {t('This contribution was rejected , you can make another contribution from the')}{' '}
+            {backLink ? <Link to={backLink}>{t('Image page')}</Link> : t('Image page')}
           </ErrorMessage>
         ) : null}
-        {isSubmitted ? <WarningMessage>Your submissions is in review.</WarningMessage> : null}
+        {isSubmitted ? <WarningMessage>{t('Your submission is in review')}</WarningMessage> : null}
         {resource && captureModel && modelId ? (
           <CaptureModelViewer
             modelId={modelId}

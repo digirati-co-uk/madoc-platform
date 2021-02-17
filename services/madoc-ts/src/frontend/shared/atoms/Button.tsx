@@ -36,6 +36,15 @@ export const Button = styled.button`
   }
 `;
 
+export const ButtonIcon = styled.span`
+  svg {
+    fill: #fff;
+    font-size: 1.1em;
+    transform: translate(0px, 3px);
+    margin-right: 0.5em;
+  }
+`;
+
 export const RoundedButton = styled.a<{ disabled?: boolean }>`
   cursor: pointer;
   font-size: 16px;

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
+import { Redirect, useLocation } from 'react-router-dom';
 import { DashboardTab, DashboardTabs } from '../../shared/components/DashboardTabs';
 import { HrefLink } from '../../shared/utility/href-link';
 import { renderUniversalRoutes } from '../../shared/utility/server-utils';
@@ -12,15 +12,7 @@ import { CrowdsourcingReview } from '../../../gateway/tasks/crowdsourcing-review
 import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
 import { Pagination } from '../../../types/schemas/_pagination';
 import { isAdmin, isContributor, isReviewer } from '../../shared/utility/user-roles';
-import { ContributorTasks } from '../features/ContributorTasks';
-import { DashboardNavigation } from '../features/DashboardNavigation';
-import { ReviewerTasks } from '../features/ReviewerTasks';
 import { UserGreeting } from '../features/UserGreeting';
-import { UserProjects } from '../features/UserProjects';
-import { UserStatistics } from '../features/UserStatistics';
-import { useRelativeLinks } from '../hooks/use-relative-links';
-import { useSite } from '../../shared/hooks/use-site';
-import { useUserHomepage } from '../hooks/use-user-homepage';
 
 type UserHomepageType = {
   query: {};
@@ -42,17 +34,17 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
   ({ route }) => {
     const { data, error } = useStaticData(UserHomepage, {}, { retry: false });
     const location = useLocation();
-    const { slug } = useSite();
+    const { t } = useTranslation();
 
     const showReviews = data && isReviewer(data.userDetails);
 
     if (error) {
-      return <a href="/login">Please login</a>;
+      return <Redirect to={'/'} />;
     }
 
     if (!data) {
       // We want to load here.
-      return <div>Loading...</div>;
+      return <div>{t('Loading...')}</div>;
     }
 
     return (
@@ -61,19 +53,16 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
 
         <DashboardTabs>
           <DashboardTab $active={location.pathname === '/dashboard'}>
-            <HrefLink href="/dashboard">Overview</HrefLink>
+            <HrefLink href="/dashboard">{t('Overview')}</HrefLink>
           </DashboardTab>
           <DashboardTab $active={location.pathname === '/dashboard/contributions'}>
-            <HrefLink href="/dashboard/contributions">Contributions</HrefLink>
+            <HrefLink href="/dashboard/contributions">{t('Contributions')}</HrefLink>
           </DashboardTab>
           {showReviews && (
             <DashboardTab $active={location.pathname === '/dashboard/reviews'}>
-              <HrefLink href="/dashboard/reviews">Reviews</HrefLink>
+              <HrefLink href="/dashboard/reviews">{t('Reviews')}</HrefLink>
             </DashboardTab>
           )}
-          <DashboardTab>
-            <a href={`/s/${slug}/profile`}>Manage account</a>
-          </DashboardTab>
         </DashboardTabs>
 
         {renderUniversalRoutes(route.routes)}

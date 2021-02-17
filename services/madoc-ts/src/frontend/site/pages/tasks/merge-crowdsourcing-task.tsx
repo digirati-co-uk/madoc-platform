@@ -126,8 +126,6 @@ const MergeCrowdsourcingTask: React.FC<{
                   </EditorToolbarIcon>
                 </EditorToolbarButton>
 
-                <EditorToolbarTitle>Test reviewer</EditorToolbarTitle>
-
                 <EditorToolbarSpacer />
 
                 <EditorToolbarButton onClick={previousRevision} disabled={currentRevision === merge.mergeId}>

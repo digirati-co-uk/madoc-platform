@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from 'react-query';
 import { ResourceLinkResponse } from '../../../database/queries/linking-queries';
 import { Button } from '../atoms/Button';
@@ -10,6 +11,7 @@ export const LinkingPropertyEditor: React.FC<{
 }> = props => {
   const api = useApi();
   const [value, setValue] = useState('');
+  const { t } = useTranslation();
 
   const [saveFile, { isLoading, error, isSuccess }] = useMutation(async () => {
     if (!props.link.file) {
@@ -46,14 +48,14 @@ export const LinkingPropertyEditor: React.FC<{
         {remoteData ? (
           <textarea style={{ width: '100%' }} rows={20} value={value} onChange={e => setValue(e.currentTarget.value)} />
         ) : null}
-        {error ? 'Invalid JSON, please try again' : null}
-        {isSuccess ? 'Changed saved!' : null} <Button onClick={props.close}>Close</Button>
+        {error ? t('Invalid JSON, please try again') : null}
+        {isSuccess ? t('Changes saved') : null} <Button onClick={props.close}>{t('Close')}</Button>
         <Button style={{ marginLeft: 10 }} onClick={() => saveFile()} disabled={isLoading}>
-          Save changes
+          {t('Save changes')}
         </Button>
       </div>
     );
   }
 
-  return <div>External link</div>;
+  return <div>{t('help__unknown_linking_property', { defaultValue: 'External value' })}</div>;
 };

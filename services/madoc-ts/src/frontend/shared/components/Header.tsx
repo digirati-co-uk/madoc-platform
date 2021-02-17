@@ -75,7 +75,7 @@ export const Header: React.FC<{
       <HeaderGrid style={{ display: 'flex' }}>
         {thumbnail ? (
           <HeaderThumbnail>
-            <img src={thumbnail} />
+            <img alt="thumbnail" src={thumbnail} />
           </HeaderThumbnail>
         ) : null}
         <TitleContainer>

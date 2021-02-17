@@ -5,6 +5,7 @@ import { ServerStyleSheet } from 'styled-components';
 import { ApiClient } from '../../../gateway/api';
 import { StaticRouterContext } from 'react-router';
 import { parse } from 'query-string';
+import { api } from '../../../gateway/api.server';
 import { PublicSite } from '../../../utility/omeka-api';
 import { queryConfig } from './query-config';
 import { matchUniversalRoutes } from './server-utils';
@@ -46,7 +47,7 @@ export function createServerRenderer(
   }) {
     const prefetchCache = makeQueryCache();
     const sheet = new ServerStyleSheet(); // <-- creating out stylesheet
-    const api = new ApiClient({
+    const userApi = new ApiClient({
       gateway: apiGateway,
       jwt,
       publicSiteSlug: siteSlug,
@@ -61,14 +62,16 @@ export function createServerRenderer(
       if (route.component.getKey && route.component.getData) {
         requests.push(
           prefetchCache.prefetchQuery(route.component.getKey(match.params, queryString), (key, vars) =>
-            route.component.getData ? route.component.getData(key, vars, api) : (undefined as any)
+            route.component.getData ? route.component.getData(key, vars, userApi) : (undefined as any)
           )
         );
       }
     }
-    const locales = api.getSiteLocales();
+
+    // @todo this is causing issues loading on every page.
+    // const locales = api.getSiteLocales();
+    const loadedLocales = { localisations: [] as any[], defaultLanguage: 'en' };
     await Promise.all(requests);
-    const loadedLocales = await locales;
     const omekaSite = await site;
     const dehydratedState = dehydrate(prefetchCache);
     const routeData = `
