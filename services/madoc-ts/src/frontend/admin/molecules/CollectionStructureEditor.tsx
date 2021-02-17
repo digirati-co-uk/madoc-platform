@@ -182,7 +182,7 @@ export const CollectionEditorStructure: React.FC<{
                   <ModalButton
                     title="Remove last manifest"
                     as={SmallButton}
-                    render={() => <p>Are you sure you want to remove the last item in this collection</p>}
+                    render={() => <p>Are you sure you want to remove the last item in this collection?</p>}
                     renderFooter={({ close }) => {
                       return (
                         <ButtonRow style={{ margin: '0 0 0 auto' }}>
