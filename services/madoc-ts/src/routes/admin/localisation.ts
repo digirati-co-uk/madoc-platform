@@ -35,8 +35,8 @@ export type ListLocalisationsResponse = {
 };
 
 export const listLocalisations: RouteMiddleware = async context => {
-  const { id, siteId } = userWithScope(context, ['site.admin']);
-  const userApi = api.asUser({ userId: id, siteId });
+  const { id, siteId } = optionalUserWithScope(context, []);
+  const userApi = context.state.siteApi || api.asUser({ userId: id, siteId });
 
   // 1. Configuration localisations (storage API links in storage server)
   const configResponse = await userApi.getConfiguration<LocalisationSiteConfig>('madoc-i18n', [
@@ -101,8 +101,8 @@ function filterEmptyContent(obj: any) {
 }
 
 export const getLocalisation: RouteMiddleware<{ code: string }> = async context => {
-  const { id, siteId } = optionalUserWithScope(context, ['site.admin']);
-  const userApi = api.asUser({ userId: id, siteId });
+  const { id, siteId } = optionalUserWithScope(context, []);
+  const userApi = context.state.siteApi || api.asUser({ userId: id, siteId });
   const showEmpty = castBool(context.query.show_empty);
 
   // Language code

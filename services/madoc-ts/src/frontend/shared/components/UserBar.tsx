@@ -1,9 +1,12 @@
+import { stringify } from 'query-string';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { PublicSite } from '../../../utility/omeka-api';
 import { LanguageSwitcher } from '../atoms/LanguageSwitcher';
 import { useStaticData } from '../hooks/use-data';
+import { useLocationQuery } from '../hooks/use-location-query';
 import { useUser } from '../hooks/use-site';
 import { HrefLink } from '../utility/href-link';
 import { isAdmin } from '../utility/user-roles';
@@ -65,7 +68,11 @@ export const UserBar: React.FC<{
   admin?: boolean;
 }> = ({ user, site, admin }) => {
   const { t } = useTranslation();
-
+  const { location } = useHistory();
+  const query = useLocationQuery();
+  const redirect = admin
+    ? `/s/${site.slug}/madoc`
+    : `/s/${site.slug}/madoc/${location.pathname}${query ? `?${stringify(query)}` : ''}`;
   const showAdmin = user && user.scope.indexOf('site.admin') !== -1;
 
   return (
@@ -85,12 +92,12 @@ export const UserBar: React.FC<{
               )}
             </UserBarUserDetails>
             <UserBarLogout>
-              <a href={`/s/${site.slug}/madoc/logout`}>Logout</a>
+              <a href={`/s/${site.slug}/madoc/logout?${stringify({ redirect })}`}>Logout</a>
             </UserBarLogout>
           </>
         ) : (
           <UserBarLogout>
-            <a href={`/s/${site.slug}/madoc/login`}>Log in</a>
+            <a href={`/s/${site.slug}/madoc/login?${stringify({ redirect })}`}>Log in</a>
           </UserBarLogout>
         )}
       </UserBarContainer>

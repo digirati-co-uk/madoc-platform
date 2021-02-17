@@ -262,6 +262,8 @@ export class ApiClient {
 
     if (response.error) {
       if (response.status === 404) {
+        console.log(endpoint, method);
+        console.log(response);
         throw new NotFound();
       }
 
@@ -495,10 +497,12 @@ export class ApiClient {
 
   // Locale.
   async getSiteLocales() {
-    return this.request<ListLocalisationsResponse>(`/api/madoc/locales`);
+    return this.publicRequest<ListLocalisationsResponse>(`/madoc/api/locales`);
   }
   async getSiteLocale(code: string, withTemplate?: boolean) {
-    return this.request<GetLocalisationResponse>(`/api/madoc/locales/${code}${withTemplate ? `?show_empty=true` : ''}`);
+    return this.publicRequest<GetLocalisationResponse>(
+      `/madoc/api/locales/${code}${withTemplate ? `?show_empty=true` : ''}`
+    );
   }
 
   async updateSiteLocale(code: string, json: any) {

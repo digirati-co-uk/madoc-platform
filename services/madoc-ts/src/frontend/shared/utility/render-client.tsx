@@ -35,7 +35,7 @@ export function renderClient(
   const jwt = cookies.get(`madoc/${slug}`) || undefined;
 
   if (!jwt && requireJwt) {
-    const loc = window.location.href;
+    const loc = window.location.pathname;
     window.location.href = `/s/${slug}/madoc/login?redirect=${loc}`;
   }
 

@@ -277,6 +277,8 @@ export const router = new TypedRouter({
     '/s/:slug/madoc/api/configuration/metadata',
     getMetadataConfiguration,
   ],
+  'site-list-locales': [TypedRouter.GET, '/s/:slug/madoc/api/locales', listLocalisations],
+  'site-get-locale': [TypedRouter.GET, '/s/:slug/madoc/api/locales/:code', getLocalisation],
 
   // To be worked into API calling methods
   'manifest-search': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/search/1.0', searchManifest],
