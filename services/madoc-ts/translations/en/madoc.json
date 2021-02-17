@@ -229,5 +229,8 @@
   "Dashboard": "Dashboard",
   "View site": "View site",
   "Account": "Account",
-  "Logout": "Logout"
+  "Logout": "Logout",
+  "Filter images": "Filter images",
+  "In progress": "In progress",
+  "Completed": "Completed"
 }
