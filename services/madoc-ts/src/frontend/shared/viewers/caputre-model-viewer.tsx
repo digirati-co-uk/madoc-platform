@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
 import { EditorContentViewer } from '../caputre-models/new/EditorContent';
 import { AutoSelectingRevision } from '../caputre-models/new/features/AutoSelectingRevision';
@@ -35,6 +36,7 @@ export const CaptureModelViewer: React.FC<{
   allowEdits?: boolean;
   onSave: (response: RevisionRequest, status: string | undefined) => Promise<void>;
 }> = ({ backLink, revisionId, modelId, allowEdits = true, overrideCanvasId, initialModel, onSave, readOnly }) => {
+  const { t } = useTranslation();
   const config = useSiteConfiguration();
   const [isVertical, setIsVertical] = useState(config.project.defaultEditorOrientation === 'vertical');
   const [{ captureModel, canvas, target }] = useLoadedCaptureModel(modelId, initialModel, overrideCanvasId);
@@ -65,7 +67,9 @@ export const CaptureModelViewer: React.FC<{
                   <EditorToolbarIcon>
                     <PreviewIcon />
                   </EditorToolbarIcon>
-                  <EditorToolbarLabel>Switch layout</EditorToolbarLabel>
+                  <EditorToolbarLabel>
+                    {t('atlas__switch-layout', { defaultValue: 'Switch layout' })}
+                  </EditorToolbarLabel>
                 </EditorToolbarButton>
                 <EditorToolbarButton onClick={toggle}>
                   <EditorToolbarIcon>{isOpen ? <FullScreenExitIcon /> : <FullScreenEnterIcon />}</EditorToolbarIcon>
@@ -92,7 +96,7 @@ export const CaptureModelViewer: React.FC<{
               </div>
             </Revisions.Provider>
           ) : (
-            'loading...'
+            t('loading')
           )
         }
       </MaximiseWindow>

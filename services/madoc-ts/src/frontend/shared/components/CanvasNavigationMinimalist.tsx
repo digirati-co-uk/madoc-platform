@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useManifestStructure } from '../hooks/use-manifest-structure';
 import { createLink } from '../utility/create-link';
 import styled, { css } from 'styled-components';
@@ -7,17 +8,25 @@ import { DownArrowIcon } from '../icons/DownArrowIcon';
 import { HrefLink } from '../utility/href-link';
 
 const PaginationButton = styled.button`
-  padding: 0.5rem;
+  padding: 0.2rem;
   border: 1px solid #6c757d;
-  border-radius: 4px;
+  border-radius: 3px;
   background-color: white;
   margin: 0.5rem;
+  &:hover {
+    background-color: #eee;
+  }
 `;
 
 export const PaginationContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+`;
+
+export const PaginationText = styled.div`
+  white-space: nowrap;
+  font-size: 0.85em;
 `;
 
 export const NavigationButton: React.FC<{
@@ -52,6 +61,7 @@ export const CanvasNavigationMinimalist: React.FC<{
   query?: any;
 }> = ({ canvasId: id, manifestId, projectId, collectionId, subRoute, query }) => {
   const structure = useManifestStructure(manifestId);
+  const { t } = useTranslation();
 
   const idx = structure.data ? structure.data.ids.indexOf(Number(id)) : -1;
 
@@ -75,7 +85,14 @@ export const CanvasNavigationMinimalist: React.FC<{
           item={structure.data.items[idx - 1]}
         />
       ) : null}
-      {<p>{`${idx + 1} of ${structure.data.items.length > 1 ? structure.data.items.length + 1 : 1}`}</p>}
+      {
+        <PaginationText>
+          {t('Page {{page}} of {{count}}', {
+            page: idx + 1,
+            count: structure.data.items.length > 1 ? structure.data.items.length + 1 : 1,
+          })}
+        </PaginationText>
+      }
       {idx < structure.data.items.length - 1 ? (
         <NavigationButton
           alignment="right"

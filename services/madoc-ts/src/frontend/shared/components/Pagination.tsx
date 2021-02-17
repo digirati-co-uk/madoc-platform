@@ -83,7 +83,7 @@ export const Pagination: React.FC<{
         {isLoading ? t('loading...') : t('Previous page')}
       </SmallRoundedButton>
       <PaginationDisplay style={{ color: isLoading ? '#999' : '#666' }}>
-        Page {isLoading ? '...' : page} of {totalPages}
+        {t('Page {{page}} of {{count}}', { page, count: totalPages })}
       </PaginationDisplay>
 
       <SmallRoundedButton
@@ -144,7 +144,7 @@ export const PaginationNumbered: React.FC<{
     <PaginationContainerNumbered>
       {prevPage ? (
         <MediumRoundedButton as={Link} to={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}`}>
-          {t('Previous')}
+          {t('Previous page')}
         </MediumRoundedButton>
       ) : null}
       {prevPage ? (
@@ -166,7 +166,7 @@ export const PaginationNumbered: React.FC<{
       ) : null}
       {nextPage ? (
         <MediumRoundedButton as={Link} to={`${pathname}?${pageParam}=${page + 1}${q ? `&${q}` : ''}`}>
-          {t('Next')}
+          {t('Next page')}
         </MediumRoundedButton>
       ) : null}
     </PaginationContainerNumbered>

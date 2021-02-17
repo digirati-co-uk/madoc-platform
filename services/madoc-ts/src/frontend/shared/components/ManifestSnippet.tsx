@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { SnippetLarge } from '../atoms/SnippetLarge';
 import { useApiManifest } from '../hooks/use-api-manifest';
 import { LocaleString } from './LocaleString';
@@ -6,6 +7,7 @@ import { HrefLink } from '../utility/href-link';
 
 export const ManifestSnippet: React.FC<{ id: number; collectionId?: number }> = props => {
   const { data } = useApiManifest(props.id);
+  const { t } = useTranslation();
 
   const link = props.collectionId
     ? `/collections/${props.collectionId}/manifests/${props.id}`
@@ -16,10 +18,10 @@ export const ManifestSnippet: React.FC<{ id: number; collectionId?: number }> = 
       <SnippetLarge
         margin
         label={'...'}
-        subtitle={`Manifest`}
+        subtitle={t(`Manifest`)}
         summary={'...'}
         linkAs={HrefLink}
-        buttonText="view manifest"
+        buttonText={t('view manifest')}
         link={link}
       />
     );
@@ -35,11 +37,11 @@ export const ManifestSnippet: React.FC<{ id: number; collectionId?: number }> = 
     <SnippetLarge
       margin
       label={<LocaleString>{data.manifest.label}</LocaleString>}
-      subtitle={`Manifest with ${data.pagination.totalResults} images`}
+      subtitle={t('Manifest with {{count}} images', { count: data.pagination.totalResults })}
       summary={<LocaleString>{data.manifest.summary}</LocaleString>}
       linkAs={HrefLink}
       thumbnail={thumbnail}
-      buttonText="view manifest"
+      buttonText={t('view manifest')}
       link={link}
     />
   );

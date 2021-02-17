@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from "react-i18next";
 import { Heading3 } from '../atoms/Heading3';
 import { TableContainer, TableEmpty, TableRow, TableRowLabel } from '../atoms/Table';
 import { Status } from '../atoms/Status';
@@ -14,9 +15,10 @@ export const ReviewerTasks: React.FC<{
   rootTaskId?: string;
   reviews: { tasks: CrowdsourcingReview[]; pagination: Pagination };
 }> = ({ reviews, rootTaskId, projectId }) => {
+  const { t } = useTranslation();
   return (
     <>
-      <Heading3>Reviews</Heading3>
+      <Heading3>{t('Reviews')}</Heading3>
       <TableContainer>
         {reviews && reviews.tasks.length ? (
           reviews.tasks.map(task => (
@@ -30,14 +32,14 @@ export const ReviewerTasks: React.FC<{
             </TableRow>
           ))
         ) : (
-          <TableEmpty>No reviews</TableEmpty>
+          <TableEmpty>{t('No reviews')}</TableEmpty>
         )}
       </TableContainer>
       <TinyButton
         as={HrefLink}
         href={`/tasks?${stringify({ type: 'crowdsourcing-review', root_task_id: rootTaskId })}`}
       >
-        Browse all reviews
+        {t('Browse all reviews')}
       </TinyButton>
     </>
   );

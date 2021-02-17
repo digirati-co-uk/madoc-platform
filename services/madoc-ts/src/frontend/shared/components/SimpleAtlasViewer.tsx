@@ -2,6 +2,7 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { AnnotationPage, ImageService } from '@hyperion-framework/types';
 import { AtlasAuto, RegionHighlight, Runtime } from '@atlas-viewer/atlas';
 import { useCanvas, useImageService } from '@hyperion-framework/react-vault';
+import { useTranslation } from 'react-i18next';
 import { Button, ButtonRow, TinyButton } from '../atoms/Button';
 import { MetadataCard, MetadataCardItem, MetadataCardLabel } from '../atoms/MetadataConfiguration';
 import { useAnnotationPage } from '../hooks/use-annotation-page';
@@ -13,6 +14,7 @@ export const SimpleAtlasViewer: React.FC<{
   highlightedRegions?: Array<[number, number, number, number]>;
   annotationPages?: AnnotationPage[];
 }> = ({ style = { height: 600 }, highlightedRegions, annotationPages }) => {
+  const { t } = useTranslation();
   const canvas = useCanvas();
   const runtime = useRef<Runtime>();
   const { data: service } = useImageService();
@@ -193,11 +195,13 @@ export const SimpleAtlasViewer: React.FC<{
               </world>
             </AtlasAuto>
             <ButtonRow style={{ position: 'absolute', top: 0, left: 10, zIndex: 20 }}>
-              <Button onClick={goHome}>Home</Button>
-              <Button onClick={zoomOut}>-</Button>
-              <Button onClick={zoomIn}>+</Button>
+              <Button onClick={goHome}>{t('atlas__zoom_home', { defaultValue: 'Home' })}</Button>
+              <Button onClick={zoomOut}>{t('atlas__zoom_out', { defaultValue: '-' })}</Button>
+              <Button onClick={zoomIn}>{t('atlas__zoom_in', { defaultValue: '+' })}</Button>
               {annotationPages?.length ? (
-                <Button onClick={() => setIsAnnotationOpen(s => !s)}>Annotations</Button>
+                <Button onClick={() => setIsAnnotationOpen(s => !s)}>
+                  {t('atlas__annotations', { defaultValue: 'Annotations' })}
+                </Button>
               ) : null}
             </ButtonRow>
           </>

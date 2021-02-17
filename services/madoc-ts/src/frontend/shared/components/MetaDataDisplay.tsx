@@ -1,5 +1,6 @@
 import { InternationalString } from '@hyperion-framework/types';
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { LocaleString } from './LocaleString';
 import { FacetConfig } from './MetadataFacetEditor';
@@ -40,6 +41,7 @@ export const MetaDataDisplay: React.FC<{
   metadata?: Array<{ label: InternationalString; value: InternationalString }>;
   style?: any;
 }> = ({ config, metadata = [], style }) => {
+  const { t } = useTranslation();
   const metadataKeyMap = useMemo(() => {
     const flatKeys = (config || []).reduce((state, i) => {
       return [...state, ...i.keys];
@@ -108,7 +110,7 @@ export const MetaDataDisplay: React.FC<{
               </MetadataContainer>
             );
           })
-        : 'No metadata to display'}
+        : t('No metadata to display')}
     </MetadataDisplayContainer>
   );
 };

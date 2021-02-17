@@ -12,5 +12,6 @@
   "adminsAreReviewers": true,
   "hideCompletedResources": false,
   "revisionApprovalsRequired": 20,
-  "contributionWarningTime": false
+  "contributionWarningTime": false,
+  "Contributions": "Contributions"
 }

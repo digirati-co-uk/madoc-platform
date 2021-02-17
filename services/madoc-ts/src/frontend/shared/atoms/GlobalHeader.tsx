@@ -32,7 +32,7 @@ export const GlobalHeaderMenuItem = styled.a`
   }
 `;
 
-const GlobalHeaderMenuLabel = styled.button`
+export const GlobalHeaderMenuLabel = styled.button`
   background: none;
   border: none;
   color: rgba(255, 255, 255, 0.8);
@@ -46,7 +46,7 @@ const GlobalHeaderMenuLabel = styled.button`
   }
 `;
 
-const GlobalHeaderMenuList = styled.div<{ $visible?: boolean }>`
+export const GlobalHeaderMenuList = styled.div<{ $visible?: boolean }>`
   position: absolute;
   background: #2f3338;
   display: none;

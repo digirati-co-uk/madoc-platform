@@ -1,5 +1,6 @@
 import { InternationalString } from '@hyperion-framework/types';
 import React, { useMemo, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { useCurrentAdminPages } from '../../site/hooks/use-current-admin-pages';
 import { LocaleString } from './LocaleString';
@@ -114,6 +115,7 @@ export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ current
   const breads = useBreadcrumbs();
   const location = useLocation();
   const adminLinks = useCurrentAdminPages();
+  const { t } = useTranslation();
 
   const stack = useMemo(() => {
     const flatList = [];
@@ -121,7 +123,7 @@ export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ current
     // Projects can only be in one place.
     if (breads.project) {
       flatList.push({
-        label: { none: ['Projects'] },
+        label: { none: [t('breadcrumbs__Projects', { defaultValue: 'Projects' })] },
         url: `/projects`,
       });
 
@@ -141,7 +143,7 @@ export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ current
         });
       } else {
         flatList.push({
-          label: { none: ['Collections'] },
+          label: { none: [t('breadcrumbs__Collections', { defaultValue: 'Collections' })] },
           url: `/collections`,
         });
         // 2. On it's own
@@ -176,7 +178,7 @@ export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ current
         });
       } else {
         flatList.push({
-          label: { none: ['Manifests'] },
+          label: { none: [t('breadcrumbs__Manifests', { defaultValue: 'Manifests' })] },
           url: `/manifests`,
         });
         // 4. On its own.
@@ -252,7 +254,7 @@ export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ current
       ))}
       {adminLinks.length ? (
         <BreadcrumbAdmin>
-          <ViewInAdmin>View in Admin</ViewInAdmin>
+          <ViewInAdmin>{t('View in Admin')}</ViewInAdmin>
           {adminLinks.map(link => {
             return (
               <BreadcrumbItem key={link.link}>

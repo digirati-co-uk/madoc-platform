@@ -107,7 +107,7 @@ export const URLContextExplorer: React.FC<{
       }}
     >
       <InputContainer wide>
-        <InputLabel>Enter IIIF Manifest Collection URL</InputLabel>
+        <InputLabel>{t('Enter IIIF Manifest Collection URL')}</InputLabel>
         <GridContainer>
           <ExpandGrid>
             <Input placeholder={t('Enter URL')} type="text" onChange={e => setSearch(e.currentTarget.value)} />
@@ -183,11 +183,11 @@ export const ContentExplorer: React.FC<{ canvasId?: number; renderChoice: (id: n
     return (
       <ExplorerBackground>
         <h3>Choose type of content</h3>
-        <Button onClick={() => setContentType('collection')}>Collection</Button> |{' '}
-        <Button onClick={() => setContentType('manifest')}>Manifest</Button>
+        <Button onClick={() => setContentType('collection')}>{t('Collection')}</Button> |{' '}
+        <Button onClick={() => setContentType('manifest')}>{t('Manifest')}</Button>
         {recent.length ? (
           <>
-            <h4>Recent items</h4>
+            <h4>{t('Recent items')}</h4>
 
             <ImageGrid>
               {recent.map(item => {
@@ -213,7 +213,7 @@ export const ContentExplorer: React.FC<{ canvasId?: number; renderChoice: (id: n
                       </CroppedImage>
                     ) : null}
                     <SingleLineHeading5>
-                      <LocaleString>{item.label || { none: ['Untitled'] }}</LocaleString>
+                      <LocaleString>{item.label || { none: [t('Untitled')] }}</LocaleString>
                     </SingleLineHeading5>
                   </ImageGridItem>
                 );

@@ -30,7 +30,7 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
 
     return (
       <>
-        <h1>All tasks</h1>
+        <h1>{t('All tasks')}</h1>
         <Pagination
           extraQuery={query}
           page={Number(page) || 1}

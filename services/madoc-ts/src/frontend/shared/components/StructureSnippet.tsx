@@ -33,7 +33,7 @@ export const SnippetStructure: React.FC<{
             <img alt="image thumbnail" src={props.item.thumbnail} />
           </CroppedImage>
         ) : null}
-        {props.label} <LocaleString>{props.item.label}</LocaleString>
+        {props.label ? props.label : <LocaleString>{props.item.label}</LocaleString>}
       </HrefLink>
     </SnippetStructureContainer>
   );
