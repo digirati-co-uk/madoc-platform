@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { CloseIcon } from '../../../atoms/CloseIcon';
 import { useManagePropertyList } from '../hooks/use-manage-property-list';
@@ -56,6 +57,7 @@ export const DefaultManagePropertyList: EditorRenderingConfig['ManagePropertyLis
     createNewField,
     removeItem,
   } = useManagePropertyList(property);
+  const { t } = useTranslation();
 
   if (!allowMultiple || (!canRemove && !canAdd)) {
     return <>{children}</>;
@@ -80,7 +82,7 @@ export const DefaultManagePropertyList: EditorRenderingConfig['ManagePropertyLis
       {canAdd ? (
         <NewInstanceContainer>
           <AddNewInstance onClick={type === 'entity' ? createNewEntity : createNewField}>
-            + Add another {label}
+            {t('Add another {{label}}', { label })}
           </AddNewInstance>
         </NewInstanceContainer>
       ) : null}
