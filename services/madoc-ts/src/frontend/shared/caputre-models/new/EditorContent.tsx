@@ -1,5 +1,7 @@
+import { AtlasContextType } from '@atlas-viewer/atlas';
 import { CaptureModel } from '@capture-models/types';
 import React, { Suspense } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CanvasFull } from '../../../../types/schemas/canvas-full';
 import { parseUrn } from '../../../../utility/parse-urn';
 import { ViewContentFetch } from '../../../admin/molecules/ViewContentFetch';
@@ -21,6 +23,7 @@ export type EditorContentVariations = {
   canvasUri?: string;
   manifestUri?: string;
   height?: number;
+  onCreated?: (runtime: AtlasContextType) => void;
 };
 
 export const EditorContentViewer: React.FC<EditorContentVariations> = ({
@@ -33,7 +36,11 @@ export const EditorContentViewer: React.FC<EditorContentVariations> = ({
   manifestUri,
   target,
   height,
+  children,
+  onCreated,
 }) => {
+  const { t } = useTranslation();
+
   if (explorer) {
     return (
       <ContentExplorer
@@ -41,11 +48,11 @@ export const EditorContentViewer: React.FC<EditorContentVariations> = ({
         renderChoice={(cid, reset) => (
           <Suspense fallback={<>Loading</>}>
             <>
-              <ViewContentFetch height={height} id={cid} />
+              <ViewContentFetch height={height} id={cid} onCreated={onCreated} />
               {explorerReset ? (
                 <>
                   <br />
-                  <TinyButton onClick={reset}>Select different image</TinyButton>
+                  <TinyButton onClick={reset}>{t('Select different image')}</TinyButton>
                 </>
               ) : null}
             </>
@@ -56,35 +63,44 @@ export const EditorContentViewer: React.FC<EditorContentVariations> = ({
   }
 
   if (canvas && target) {
-    return <ViewContent target={target as any} canvas={canvas} height={height} />;
+    return <ViewContent target={target as any} canvas={canvas} height={height} onCreated={onCreated} />;
   }
 
   if (canvasUri && manifestUri) {
     return (
       <ViewExternalContent
+        onCreated={onCreated}
         target={[
           { type: 'Canvas', id: canvasUri },
           { type: 'Manifest', id: manifestUri },
         ]}
-      />
+      >
+        {children}
+      </ViewExternalContent>
     );
   }
 
   if (canvasId) {
     return (
-      <Suspense fallback={<>Loading</>}>
-        <ViewContentFetch id={Number(canvasId)} height={height} />
+      <Suspense fallback={<>{t('loading')}</>}>
+        <ViewContentFetch id={Number(canvasId)} height={height} onCreated={onCreated}>
+          {children}
+        </ViewContentFetch>
       </Suspense>
     );
   }
 
   if (target) {
-    const canvasTarget = target.find(t => t.type.toLowerCase() === 'canvas');
+    const canvasTarget = target.find(r => r.type.toLowerCase() === 'canvas');
     const canvasTargetUrn = canvasTarget ? parseUrn(canvasTarget.id) : undefined;
     if (canvasTargetUrn) {
-      return <ViewContentFetch id={Number(canvasTargetUrn.id)} height={height} />;
+      return (
+        <ViewContentFetch id={Number(canvasTargetUrn.id)} height={height} onCreated={onCreated}>
+          {children}
+        </ViewContentFetch>
+      );
     }
   }
 
-  return <div>Nothing to render</div>;
+  return null;
 };

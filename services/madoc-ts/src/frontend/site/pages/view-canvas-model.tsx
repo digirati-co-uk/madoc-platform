@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Heading3 } from '../../shared/atoms/Heading3';
 import { LockIcon } from '../../shared/atoms/LockIcon';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
@@ -20,12 +21,13 @@ import { CanvasLoaderType } from './loaders/canvas-loader';
 
 type ViewCanvasModelProps = Partial<CanvasLoaderType['data'] & CanvasLoaderType['context']>;
 
-export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({ canvas, refetchManifestTasks, refetchManifest }) => {
+export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({ canvas }) => {
   const createLink = useRelativeLinks();
   const { projectId, canvasId, manifestId, collectionId } = useRouteContext();
   const { showCanvasNavigation, showWarning } = useCanvasNavigation();
   const { canUserSubmit, isLoading: isLoadingTasks, completedAndHide } = useCanvasUserTasks();
   const { revision } = useLocationQuery();
+  const { t } = useTranslation();
   const user = useCurrentUser(true);
 
   const canContribute =
@@ -48,8 +50,8 @@ export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({ canvas, refetc
     return (
       <div>
         <DisplayBreadcrumbs />
-        <h1>Maximum number of contributors reached</h1>
-        <HrefLink href={backLink}>Go back to resource</HrefLink>
+        <h1>{t('Maximum number of contributors reached')}</h1>
+        <HrefLink href={backLink}>{t('Go back to resource')}</HrefLink>
       </div>
     );
   }
@@ -58,8 +60,8 @@ export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({ canvas, refetc
     return (
       <div>
         <DisplayBreadcrumbs />
-        <h1>This image is complete</h1>
-        <HrefLink href={backLink}>Go back to resource</HrefLink>
+        <h1>{t('This image is complete')}</h1>
+        <HrefLink href={backLink}>{t('Go back to resource')}</HrefLink>
       </div>
     );
   }
@@ -81,7 +83,7 @@ export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({ canvas, refetc
       {showWarning ? (
         <div style={{ textAlign: 'center', padding: '2em', marginTop: '1em', marginBottom: '1em', background: '#eee' }}>
           <LockIcon style={{ fontSize: '3em' }} />
-          <Heading3>This canvas is not available to browse</Heading3>
+          <Heading3>{t('This canvas is not available to browse')}</Heading3>
         </div>
       ) : null}
 
