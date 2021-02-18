@@ -7,6 +7,7 @@ import styled, { css } from 'styled-components';
 import { Button, ButtonIcon } from '../../shared/atoms/Button';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { FilterIcon } from '../../shared/icons/FilterIcon';
+import { useRouteContext } from '../hooks/use-route-context';
 
 const ItemFilterContainer = styled.div`
   position: relative;
@@ -48,6 +49,7 @@ export const ManifestItemFilter: React.FC = () => {
   const { filter, m: page, listing } = useLocationQuery();
   const { location, push } = useHistory();
   const { t } = useTranslation();
+  const { projectId } = useRouteContext();
 
   const numericFilters = filter
     ? (`${filter}`
@@ -78,6 +80,10 @@ export const ManifestItemFilter: React.FC = () => {
       );
     }
   };
+
+  if (!projectId) {
+    return null;
+  }
 
   return (
     <ItemFilterContainer style={{ marginLeft: '.5em' }}>

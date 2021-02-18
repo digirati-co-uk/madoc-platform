@@ -214,6 +214,10 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
                 normalisedValueLists: true,
               });
 
+              if (!serialised) {
+                return { id: m.id };
+              }
+
               serialised.id = m.id;
 
               return serialised;
