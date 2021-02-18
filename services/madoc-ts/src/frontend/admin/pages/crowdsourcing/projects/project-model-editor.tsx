@@ -1,9 +1,11 @@
 import { useTranslation } from 'react-i18next';
+import { DashboardTab, DashboardTabs } from '../../../../shared/components/DashboardTabs';
+import { HrefLink } from '../../../../shared/utility/href-link';
 import { UniversalComponent } from '../../../../types';
 import { EditorContext } from '@capture-models/editor';
 import React, { useState } from 'react';
 import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useHistory, useParams } from 'react-router-dom';
 import { defaultTheme } from '@capture-models/editor';
 import { ThemeProvider } from 'styled-components';
 import { CaptureModel } from '@capture-models/types';
@@ -30,6 +32,7 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
     const { data, status } = useData(ProjectModelEditor, {}, { refetchInterval: false });
     const [newStructure, setNewStructure] = useState<CaptureModel['structure'] | undefined>();
     const [newDocument, setNewDocument] = useState<CaptureModel['document'] | undefined>();
+    const { location } = useHistory();
     const [revisionNumber, setRevisionNumber] = useState(0);
     const api = useApi();
 
@@ -50,24 +53,27 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
     return (
       <>
         <ThemeProvider theme={defaultTheme}>
-          <LightNavigation>
-            <LightNavigationItem>
+          <DashboardTabs>
+            <DashboardTab $active={location.pathname === `/projects/${id}/model`}>
               <Link to={`/projects/${id}/model`}>{t('Home')}</Link>
-            </LightNavigationItem>
-            <LightNavigationItem>
+            </DashboardTab>
+
+            <DashboardTab $active={location.pathname === `/projects/${id}/model/document`}>
               <Link to={`/projects/${id}/model/document`}>{t('Document')}</Link>
-            </LightNavigationItem>
-            <LightNavigationItem>
+            </DashboardTab>
+
+            <DashboardTab $active={location.pathname === `/projects/${id}/model/structure`}>
               <Link to={`/projects/${id}/model/structure`}>{t('Structure')}</Link>
-            </LightNavigationItem>
-            <LightNavigationItem>
+            </DashboardTab>
+
+            <DashboardTab $active={location.pathname === `/projects/${id}/model/preview`}>
               <Link to={`/projects/${id}/model/preview`}>{t('Preview')}</Link>
-            </LightNavigationItem>
+            </DashboardTab>
 
             <div style={{ marginLeft: 'auto' }}>
               {updateModelStatus.status === 'loading' ? t('Saving') : t('Changes saved')}
             </div>
-          </LightNavigation>
+          </DashboardTabs>
           <EditorContext
             onStructureChange={structure => {
               if (structure !== newStructure) {

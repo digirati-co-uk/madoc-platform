@@ -1,8 +1,10 @@
 {
   "Abandon": "Abandon",
   "Abandoned": "Abandoned",
+  "Accepted contributions": "Accepted contributions",
   "Account": "Account",
   "Active projects": "Active projects",
+  "Add another {{label}}": "Add another {{label}}",
   "Add existing collection": "Add existing collection",
   "Add existing manifest": "Add existing manifest",
   "Add new": "Add new",
@@ -20,6 +22,8 @@
   "Back": "Back",
   "Back to resource": "Back to resource",
   "Back to site": "Back to site",
+  "Bookmarks": "Bookmarks",
+  "Browse all": "Browse all",
   "Browse all contributions": "Browse all contributions",
   "Browse all projects": "Browse all projects",
   "Browse all reviews": "Browse all reviews",
@@ -125,6 +129,7 @@
   "Preview": "Preview",
   "Preview ": "Preview ",
   "Previous page": "Previous page",
+  "Project": "Project",
   "Projects": "Projects",
   "Recent items": "Recent items",
   "Retry": "Retry",
@@ -171,6 +176,7 @@
   "This task is complete, you can make another contribution from the": "This task is complete, you can make another contribution from the",
   "Title": "Title",
   "To be removed": "To be removed",
+  "Total contributions": "Total contributions",
   "Transcription": "Transcription",
   "Unable to save your submission": "Unable to save your submission",
   "Untitled": "Untitled",
@@ -245,8 +251,5 @@
   "{{count}} manifests": "{{count}} manifest",
   "{{count}} manifests_plural": "{{count}} manifests",
   "{{count}} more": "{{count}} more",
-  "{{count}} more_plural": "{{count}} more",
-  "Project": "Project",
-  "Browse all": "Browse all",
-  "Add another {{label}}": "Add another {{label}}"
+  "{{count}} more_plural": "{{count}} more"
 }
