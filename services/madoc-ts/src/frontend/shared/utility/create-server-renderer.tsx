@@ -6,6 +6,7 @@ import { ApiClient } from '../../../gateway/api';
 import { StaticRouterContext } from 'react-router';
 import { parse } from 'query-string';
 import { api } from '../../../gateway/api.server';
+import { ListLocalisationsResponse } from '../../../routes/admin/localisation';
 import { PublicSite } from '../../../utility/omeka-api';
 import { queryConfig } from './query-config';
 import { matchUniversalRoutes } from './server-utils';
@@ -15,6 +16,7 @@ import { StaticRouter } from 'react-router-dom';
 import React from 'react';
 import { UniversalRoute } from '../../types';
 import { Helmet } from 'react-helmet';
+import localeCodes from 'locale-codes';
 
 export function createServerRenderer(
   RootApplication: React.FC<{
@@ -22,7 +24,7 @@ export function createServerRenderer(
     routes: UniversalRoute[];
     site: PublicSite;
     user?: { name: string; id: number; scope: string[] };
-    supportedLocales: string[];
+    supportedLocales: Array<{ label: string; code: string }>;
     defaultLocale: string;
   }>,
   routes: UniversalRoute[],
@@ -36,6 +38,7 @@ export function createServerRenderer(
     i18next,
     siteSlug,
     site,
+    siteLocales,
     user,
   }: {
     url: string;
@@ -43,8 +46,9 @@ export function createServerRenderer(
     jwt: string;
     i18next: i18n;
     siteSlug?: string;
-    site?: Promise<PublicSite | undefined>;
+    site?: PublicSite | Promise<PublicSite | undefined>;
     user?: { name: string; id: number; scope: string[] };
+    siteLocales: ListLocalisationsResponse;
   }) {
     const prefetchCache = makeQueryCache();
     const sheet = new ServerStyleSheet(); // <-- creating out stylesheet
@@ -69,18 +73,20 @@ export function createServerRenderer(
       }
     }
 
-    // @todo this is causing issues loading on every page.
-    // const locales = api.getSiteLocales();
-    const loadedLocales = { localisations: [] as any[], defaultLanguage: 'en' };
     await Promise.all(requests);
     const omekaSite = await site;
     const dehydratedState = dehydrate(prefetchCache);
+    const supportedLocales = siteLocales.localisations.map(ln => {
+      const label = localeCodes.getByTag(ln.code).name;
+      return { label: label, code: ln.code };
+    });
+
     const routeData = `
       <script type="application/json" id="react-omeka">${JSON.stringify({
         site: omekaSite,
         user,
-        locales: loadedLocales.localisations,
-        defaultLocale: loadedLocales.defaultLanguage || 'en',
+        locales: supportedLocales,
+        defaultLocale: siteLocales.defaultLanguage || 'en',
       })}</script>
       <script type="application/json" id="react-query-cache">${JSON.stringify(dehydratedState)}</script>
     `;
@@ -104,8 +110,8 @@ export function createServerRenderer(
                     routes={routes}
                     site={omekaSite as any}
                     user={user}
-                    defaultLocale={loadedLocales.defaultLanguage || 'en'}
-                    supportedLocales={loadedLocales.localisations.map(ln => ln.code)}
+                    defaultLocale={siteLocales.defaultLanguage || 'en'}
+                    supportedLocales={supportedLocales}
                   />
                 </StaticRouter>
               </I18nextProvider>

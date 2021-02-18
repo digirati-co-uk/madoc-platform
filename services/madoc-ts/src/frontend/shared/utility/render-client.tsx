@@ -39,7 +39,7 @@ export function renderClient(
     window.location.href = `/s/${slug}/madoc/login?redirect=${loc}`;
   }
 
-  const localisations = dehydratedSite.locales as ListLocalisationsResponse['localisations'];
+  const localisations = dehydratedSite.locales as Array<{ label: string; code: string }>;
   const supportedLocales = localisations.map(local => local.code);
   const defaultLocale = dehydratedSite.defaultLocale || 'en';
 
@@ -63,7 +63,7 @@ export function renderClient(
                         siteSlug={slug}
                         site={dehydratedSite.site}
                         user={dehydratedSite.user}
-                        supportedLocales={supportedLocales}
+                        supportedLocales={localisations}
                         defaultLocale={defaultLocale}
                       />
                       {process.env.NODE_ENV === 'development' ? <ReactQueryDevtools /> : null}

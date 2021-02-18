@@ -21,7 +21,7 @@ export type SiteAppProps = {
   siteSlug?: string;
   user?: { name: string; id: number; scope: string[] };
   site: PublicSite;
-  supportedLocales: string[];
+  supportedLocales: Array<{ label: string; code: string }>;
   defaultLocale: string;
 };
 

@@ -5,7 +5,7 @@ const SiteReactContext = React.createContext<
   | {
       site: PublicSite;
       user?: { id: number; name: string; scope: string[] };
-      supportedLocales: string[];
+      supportedLocales: Array<{ code: string; label: string }>;
       defaultLocale: string;
     }
   | undefined
@@ -23,10 +23,16 @@ export const useUser = () => {
   return details?.user;
 };
 
+export const useDetailedSupportLocales = () => {
+  const details = useContext(SiteReactContext);
+
+  return details?.supportedLocales || [{ label: 'English', code: 'en' }];
+};
+
 export const useSupportedLocales = () => {
   const details = useContext(SiteReactContext);
 
-  return details?.supportedLocales || ['en'];
+  return details?.supportedLocales.map(r => r.code) || ['en'];
 };
 
 export const useDefaultLocale = () => {

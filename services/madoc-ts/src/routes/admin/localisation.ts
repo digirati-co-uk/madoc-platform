@@ -90,7 +90,7 @@ function loadLocaleTemplate() {
   return emptyJson;
 }
 
-function filterEmptyContent(obj: any) {
+export function filterEmptyContent(obj: any) {
   const nonEmpty: any = {};
   for (const key of Object.keys(obj)) {
     if (obj[key]) {

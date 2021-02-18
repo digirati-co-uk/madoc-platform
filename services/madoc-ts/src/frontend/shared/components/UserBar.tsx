@@ -77,8 +77,7 @@ export const UserBar: React.FC<{
   const { t } = useTranslation();
   const { location } = useHistory();
   const query = useLocationQuery();
-  const links: any[] = [];
-  const { buttonProps, itemProps, isOpen, setIsOpen } = useDropdownMenu(links.length);
+  const { buttonProps, itemProps, isOpen, setIsOpen } = useDropdownMenu(4);
   const redirect = admin
     ? `/s/${site.slug}/madoc`
     : `/s/${site.slug}/madoc/${location.pathname}${query ? `?${stringify(query)}` : ''}`;
