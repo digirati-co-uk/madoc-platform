@@ -606,8 +606,10 @@ export class ApiClient {
     return this.request<CollectionListResponse>(`/api/madoc/iiif/collections?${stringify({ page, parent })}`);
   }
 
-  async getManifests(page = 0, { parent, filter }: { parent?: number; filter?: string } = {}) {
-    return this.request<ManifestListResponse>(`/api/madoc/iiif/manifests?${stringify({ page, parent, filter })}`);
+  async getManifests(page = 0, { parent, filter, query }: { parent?: number; filter?: string; query?: string } = {}) {
+    return this.request<ManifestListResponse>(
+      `/api/madoc/iiif/manifests?${stringify({ page, parent, filter, query })}`
+    );
   }
 
   async getManifestProjects(id: number, query?: { published?: boolean }) {

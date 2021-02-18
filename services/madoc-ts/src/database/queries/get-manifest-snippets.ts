@@ -143,12 +143,14 @@ export function getManifestList({
   manifestCount,
   parentId,
   canvasSubQuery,
+  labelQuery,
 }: {
   siteId: number;
   page: number;
   manifestCount: number;
   parentId?: number;
   canvasSubQuery?: SqlSqlTokenType<{ resource_id: number }>;
+  labelQuery?: string;
 }) {
   if (canvasSubQuery) {
     const parentJoin = parentId
@@ -196,6 +198,23 @@ export function getManifestList({
         and manifests.site_id = ${siteId}
         and midr.resource_id = ${parentId}
         and midr.site_id = ${siteId}
+      limit ${manifestCount} offset ${(page - 1) * manifestCount}
+  `;
+  }
+
+  if (labelQuery) {
+    return sql<{ resource_id: number; thumbnail: string; canvas_total: number }>`
+    with site_counts as (select * from iiif_derived_resource_item_counts where site_id = ${siteId})
+    select manifests.resource_id as resource_id, manifest_thumbnail(${siteId}, manifests.resource_id) as thumbnail, canvas_count.item_total as canvas_total
+    from iiif_derived_resource manifests
+    left join site_counts canvas_count
+         on canvas_count.resource_id = manifests.resource_id
+    left join iiif_metadata im
+         on manifests.resource_id = im.resource_id and im.site_id = ${siteId} and im.key = 'label'
+             and im.value ilike '%' || ${labelQuery} || '%'
+    where manifests.resource_type = 'manifest' 
+      and manifests.site_id = ${siteId}
+      and im.resource_id is not null
       limit ${manifestCount} offset ${(page - 1) * manifestCount}
   `;
   }
