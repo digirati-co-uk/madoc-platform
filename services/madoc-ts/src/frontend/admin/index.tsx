@@ -1,33 +1,10 @@
 import React, { useMemo } from 'react';
-import { useHistory } from 'react-router-dom';
 import { ApiClient } from '../../gateway/api';
 import { useTranslation } from 'react-i18next';
 import { PublicSite } from '../../utility/omeka-api';
 import { GlobalStyles } from '../shared/atoms/GlobalStyles';
-import {
-  AdminLayoutContainer,
-  AdminLayoutMain,
-  AdminLayoutMenu,
-  AdminMenuContainer,
-  AdminMenuItem,
-  AdminMenuItemContainer,
-  AdminMenuItemIcon,
-  AdminMenuItemLabel,
-  AdminMenuSubItem,
-  AdminMenuSubItemContainer,
-  AdminSearchIcon,
-  AdminSidebarContainer,
-  DashboardIcon,
-  ManageCollectionsIcon,
-  ManageManifestsIcon,
-  ProjectsIcon,
-  SiteConfigurationIcon,
-  SiteSwitcherBackButton,
-  SiteSwitcherContainer,
-  SiteSwitcherSiteName,
-} from '../shared/components/AdminMenu';
+import { AdminLayoutContainer, AdminLayoutMain, AdminLayoutMenu } from '../shared/components/AdminMenu';
 import { UserBar } from '../shared/components/UserBar';
-import { HrefLink } from '../shared/utility/href-link';
 import { renderUniversalRoutes } from '../shared/utility/server-utils';
 import { ApiContext, useIsApiRestarting } from '../shared/hooks/use-api';
 import { ErrorMessage } from '../shared/atoms/ErrorMessage';
@@ -42,7 +19,7 @@ export type AdminAppProps = {
   routes: UniversalRoute[];
   user: { name: string; id: number; scope: string[] };
   site: PublicSite;
-  supportedLocales: string[];
+  supportedLocales: Array<{ label: string; code: string }>;
   defaultLocale: string;
 };
 

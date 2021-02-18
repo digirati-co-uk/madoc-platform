@@ -1,5 +1,6 @@
 import { RouteMiddleware } from '../types/route-middleware';
 import { api } from '../gateway/api.server';
+import { cachedApiHelper } from '../utility/cached-api-helper';
 import { NotFound } from '../utility/errors/not-found';
 
 export const omekaSite: RouteMiddleware = async (context, next) => {
@@ -12,6 +13,7 @@ export const omekaSite: RouteMiddleware = async (context, next) => {
     }
     context.state.site = site;
     context.state.siteApi = api.asUser({ siteId: site.id, userId: userId }, { siteSlug: context.params.slug });
+    context.state.cachedApi = cachedApiHelper(context.state.siteApi, site.id);
   }
   await next();
 };

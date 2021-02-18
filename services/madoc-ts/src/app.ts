@@ -23,9 +23,9 @@ import cookieParser from 'cookie-parser';
 
 export async function createApp(router: TypedRouter<any, any>, config: ExternalConfig) {
   const app = new Koa();
-  const i18nextPromise = createBackend();
   const pool = createPostgresPool();
   const mysqlPool = createMysqlPool();
+  const i18nextPromise = createBackend();
 
   if (process.env.NODE_ENV === 'production' || process.env.MIGRATE) {
     await migrate();

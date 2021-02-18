@@ -1,33 +1,46 @@
 import React from 'react';
+import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import { useTranslation } from 'react-i18next';
-import { useSupportedLocales } from '../hooks/use-site';
+import { useDetailedSupportLocales } from '../hooks/use-site';
 import Cookies from 'js-cookie';
+import {
+  GlobalHeaderMenuContainer,
+  GlobalHeaderMenuItem,
+  GlobalHeaderMenuLabel,
+  GlobalHeaderMenuList,
+} from './GlobalHeader';
 
 export const LanguageSwitcher: React.FC = () => {
-  const supported = useSupportedLocales();
+  const supported = useDetailedSupportLocales();
   const { i18n } = useTranslation();
+  const { buttonProps, itemProps, isOpen, setIsOpen } = useDropdownMenu(supported.length);
 
   if (supported.length === 1) {
     return null;
   }
 
   return (
-    <div style={{ display: 'flex', color: '#fff' }}>
-      {supported.map(lng => {
-        return (
-          <div
-            key={lng}
-            style={{ padding: '0.3em', fontWeight: i18n.language === lng ? 'bold' : undefined }}
-            onClick={() => {
-              localStorage.setItem('i18nextLng', lng);
-              Cookies.set('i18next', lng);
-              i18n.changeLanguage(lng);
-            }}
-          >
-            {lng}
-          </div>
-        );
-      })}
-    </div>
+    <GlobalHeaderMenuContainer>
+      <GlobalHeaderMenuLabel {...buttonProps}>{i18n.language}</GlobalHeaderMenuLabel>
+      <GlobalHeaderMenuList $visible={isOpen} role="menu">
+        {supported.map((lng, key) => {
+          return (
+            <GlobalHeaderMenuItem
+              key={lng.code}
+              style={{ fontWeight: lng.code === i18n.language ? 'bold' : undefined }}
+              onClick={() => {
+                localStorage.setItem('i18nextLng', lng.code);
+                Cookies.set('i18next', lng.code);
+                i18n.changeLanguage(lng.code);
+                setIsOpen(false);
+              }}
+              {...itemProps[key]}
+            >
+              {lng.label}
+            </GlobalHeaderMenuItem>
+          );
+        })}
+      </GlobalHeaderMenuList>
+    </GlobalHeaderMenuContainer>
   );
 };

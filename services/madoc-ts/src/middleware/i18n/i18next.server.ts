@@ -1,9 +1,8 @@
 import i18next from 'i18next';
-// @ts-ignore
-import Backend from 'i18next-fs-backend';
 import * as path from 'path';
 // @ts-ignore
 import KoaI18nextDetector from 'koa-i18next-detector';
+import { LanguageCache } from '../../utility/language-cache';
 
 // File structure
 // /locales/{language}/{ns}.json
@@ -12,16 +11,18 @@ const localFolder = path.resolve(__dirname, '..', '..', 'translations');
 
 const lngDetector = new KoaI18nextDetector();
 
-export async function createBackend() {
+export async function createBackend(lng?: string, siteId?: number) {
   const t = await i18next
     .use(lngDetector)
-    .use(Backend)
+    // .use(Backend)
+    .use(LanguageCache)
     .init({
       fallbackLng: 'en',
-      lng: 'en',
+      lng: lng || 'en',
       backend: {
         loadPath: path.join(localFolder, '{{lng}}/{{ns}}.json'),
         addPath: path.join(localFolder, '{{lng}}/{{ns}}.missing.json'),
+        siteUrn: siteId ? `urn:madoc:site:${siteId}` : undefined,
       },
       ns: 'madoc',
       defaultNS: 'madoc',
