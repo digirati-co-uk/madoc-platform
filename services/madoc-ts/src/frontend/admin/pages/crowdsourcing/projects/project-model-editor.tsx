@@ -1,8 +1,11 @@
+import { useTranslation } from 'react-i18next';
+import { DashboardTab, DashboardTabs } from '../../../../shared/components/DashboardTabs';
+import { HrefLink } from '../../../../shared/utility/href-link';
 import { UniversalComponent } from '../../../../types';
 import { EditorContext } from '@capture-models/editor';
 import React, { useState } from 'react';
 import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useHistory, useParams } from 'react-router-dom';
 import { defaultTheme } from '@capture-models/editor';
 import { ThemeProvider } from 'styled-components';
 import { CaptureModel } from '@capture-models/types';
@@ -11,6 +14,7 @@ import { useApi } from '../../../../shared/hooks/use-api';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { LightNavigation, LightNavigationItem } from '../../../../shared/atoms/LightNavigation';
+import { AutoStructure } from '../model-editor/auto-structure';
 
 type ProjectModelEditorType = {
   params: { id: string; captureModelId: string };
@@ -23,10 +27,12 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
   ProjectModelEditorType
 >(
   ({ route }) => {
+    const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
     const { data, status } = useData(ProjectModelEditor, {}, { refetchInterval: false });
     const [newStructure, setNewStructure] = useState<CaptureModel['structure'] | undefined>();
     const [newDocument, setNewDocument] = useState<CaptureModel['document'] | undefined>();
+    const { location } = useHistory();
     const [revisionNumber, setRevisionNumber] = useState(0);
     const api = useApi();
 
@@ -41,30 +47,33 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
     }, {});
 
     if (!data || status !== 'success') {
-      return <div>Loading...</div>;
+      return <div>{t('loading')}</div>;
     }
 
     return (
       <>
         <ThemeProvider theme={defaultTheme}>
-          <LightNavigation>
-            <LightNavigationItem>
-              <Link to={`/projects/${id}/model`}>Home</Link>
-            </LightNavigationItem>
-            <LightNavigationItem>
-              <Link to={`/projects/${id}/model/document`}>Document</Link>
-            </LightNavigationItem>
-            <LightNavigationItem>
-              <Link to={`/projects/${id}/model/structure`}>Structure</Link>
-            </LightNavigationItem>
-            <LightNavigationItem>
-              <Link to={`/projects/${id}/model/preview`}>Preview</Link>
-            </LightNavigationItem>
+          <DashboardTabs>
+            <DashboardTab $active={location.pathname === `/projects/${id}/model`}>
+              <Link to={`/projects/${id}/model`}>{t('Home')}</Link>
+            </DashboardTab>
+
+            <DashboardTab $active={location.pathname === `/projects/${id}/model/document`}>
+              <Link to={`/projects/${id}/model/document`}>{t('Document')}</Link>
+            </DashboardTab>
+
+            <DashboardTab $active={location.pathname === `/projects/${id}/model/structure`}>
+              <Link to={`/projects/${id}/model/structure`}>{t('Structure')}</Link>
+            </DashboardTab>
+
+            <DashboardTab $active={location.pathname === `/projects/${id}/model/preview`}>
+              <Link to={`/projects/${id}/model/preview`}>{t('Preview')}</Link>
+            </DashboardTab>
 
             <div style={{ marginLeft: 'auto' }}>
-              {updateModelStatus.status === 'loading' ? 'Saving...' : 'Changes saved.'}
+              {updateModelStatus.status === 'loading' ? t('Saving') : t('Changes saved')}
             </div>
-          </LightNavigation>
+          </DashboardTabs>
           <EditorContext
             onStructureChange={structure => {
               if (structure !== newStructure) {
@@ -88,11 +97,14 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
             }}
             captureModel={data}
           >
-            {renderUniversalRoutes(route.routes, {
-              structure: newStructure ? newStructure : data.structure,
-              document: newDocument ? newDocument : data.document,
-              revisionNumber,
-            })}
+            <>
+              <AutoStructure />
+              {renderUniversalRoutes(route.routes, {
+                structure: newStructure ? newStructure : data.structure,
+                document: newDocument ? newDocument : data.document,
+                revisionNumber,
+              })}
+            </>
           </EditorContext>
         </ThemeProvider>
       </>

@@ -126,7 +126,7 @@ export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ current
     // Projects can only be in one place.
     if (breads.project) {
       flatList.push({
-        label: { none: [t('breadcrumbs__Projects', { defaultValue: 'Projects' })] },
+        label: { none: [t('breadcrumbs__Projects', { defaultValue: t('Projects') })] },
         url: `/projects`,
       });
 
@@ -146,7 +146,7 @@ export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ current
         });
       } else {
         flatList.push({
-          label: { none: [t('breadcrumbs__Collections', { defaultValue: 'Collections' })] },
+          label: { none: [t('breadcrumbs__Collections', { defaultValue: t('Collections') })] },
           url: `/collections`,
         });
         // 2. On it's own
@@ -181,7 +181,7 @@ export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ current
         });
       } else {
         flatList.push({
-          label: { none: [t('breadcrumbs__Manifests', { defaultValue: 'Manifests' })] },
+          label: { none: [t('breadcrumbs__Manifests', { defaultValue: t('Manifests') })] },
           url: `/manifests`,
         });
         // 4. On its own.

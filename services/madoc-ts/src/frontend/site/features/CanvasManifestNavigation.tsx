@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { CanvasNavigationMinimalist } from '../../shared/components/CanvasNavigationMinimalist';
 import { LocaleString } from '../../shared/components/LocaleString';
@@ -33,6 +34,7 @@ const BrowseAll = styled.div`
 export const CanvasManifestNavigation: React.FC<{ subRoute?: string }> = ({ subRoute }) => {
   const { manifestId, collectionId, canvasId, projectId } = useRouteContext();
   const createLink = useRelativeLinks();
+  const { t } = useTranslation();
   const [searchText] = useCanvasSearch(canvasId);
   const { data: manifestResponse } = useData(ManifestLoader);
   const { showCanvasNavigation } = useCanvasNavigation();
@@ -51,7 +53,7 @@ export const CanvasManifestNavigation: React.FC<{ subRoute?: string }> = ({ subR
         <BrowseAll>
           <HrefLink href={createLink({ manifestId: manifestId, canvasId: undefined, query: { listing: true } })}>
             <GridIcon style={{ width: '24px', height: '24px' }} />
-            Browse all
+            {t('Browse all')}
           </HrefLink>
         </BrowseAll>
         {showCanvasNavigation ? (

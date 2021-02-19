@@ -903,8 +903,18 @@ export class ApiClient {
       method: 'POST',
       body: {
         id: generateId(),
-        structure: createChoice({ label }),
-        document: createDocument(),
+        structure: createChoice({
+          label,
+          items: [
+            {
+              id: generateId(),
+              type: 'model',
+              label: 'Default',
+              fields: [],
+            },
+          ],
+        }),
+        document: createDocument({ label }),
       },
     });
   }

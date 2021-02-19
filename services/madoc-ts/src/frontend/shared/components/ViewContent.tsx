@@ -1,14 +1,15 @@
+import { AtlasContextType } from '@atlas-viewer/atlas';
 import React, { useMemo } from 'react';
 import { useContentType } from '@capture-models/plugin-api';
 import { Target } from '@capture-models/types';
 import '@capture-models/editor/lib/content-types/Atlas';
 
-export const ViewContent: React.FC<{ target: Target[]; canvas: any; height?: number }> = ({
-  target,
-  canvas,
-  height = 600,
-  children,
-}) => {
+export const ViewContent: React.FC<{
+  target: Target[];
+  canvas: any;
+  height?: number;
+  onCreated?: (runtime: AtlasContextType) => void;
+}> = ({ target, canvas, height = 600, onCreated, children }) => {
   return useContentType(
     useMemo(() => {
       const fixedType = [];
@@ -31,6 +32,7 @@ export const ViewContent: React.FC<{ target: Target[]; canvas: any; height?: num
       () => ({
         height,
         custom: {
+          onCreateAtlas: onCreated,
           customFetcher: (mid: string) => {
             const canvasTarget: any = target.find((r: any) => r.type === 'Canvas');
             return {
