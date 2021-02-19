@@ -7,12 +7,12 @@ const PanelHeader = styled.div<{ $active?: boolean }>`
   font-size: 14px;
   padding: 1rem;
   color: #000000;
-    ${props =>
-      props.$active &&
-      css`
-        color: #6200ee;
-        border-bottom: 2px solid #6200ee;
-      `};
+  ${props =>
+    props.$active &&
+    css`
+      color: #6200ee;
+      border-bottom: 2px solid #6200ee;
+    `};
 `;
 
 const TabPanelOptions = styled.div`
@@ -27,18 +27,18 @@ const TabPanelContainer = styled.div`
   background-color: #f8f9fa;
 `;
 
-export const TabPanel: React.FC<{ menu: any; switchPanel: (idx: number) => void; selected: number, style?: any }> = ({
+export const TabPanel: React.FC<{ menu: any; switchPanel: (idx: number) => void; selected: number; style?: any }> = ({
   menu,
   switchPanel,
   selected,
-  style
+  style,
 }) => {
   return (
     <TabPanelContainer style={style}>
       <TabPanelOptions>
         {menu.map((item: any, idx: number) => {
           return (
-            <PanelHeader $active={idx === selected} onClick={() => switchPanel(idx)}>
+            <PanelHeader key={idx} $active={idx === selected} onClick={() => switchPanel(idx)}>
               {item.label}
             </PanelHeader>
           );

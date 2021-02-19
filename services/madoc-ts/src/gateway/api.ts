@@ -9,6 +9,7 @@ import { ExtensionManager } from '../extensions/extension-manager';
 import { defaultPageBlockDefinitions } from '../extensions/page-blocks/default-definitions';
 import { PageBlockExtension } from '../extensions/page-blocks/extension';
 import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
+import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
 import { Site } from '../types/omeka/Site';
 import { SingleUser } from '../types/omeka/User';
 import { ProjectConfiguration } from '../types/schemas/project-configuration';
@@ -266,6 +267,8 @@ export class ApiClient {
 
     if (response.error) {
       if (response.status === 404) {
+        console.log(endpoint, method);
+        console.log(response);
         throw new NotFound();
       }
 
@@ -497,6 +500,23 @@ export class ApiClient {
     throw new Error('Not yet implemented');
   }
 
+  // Locale.
+  async getSiteLocales() {
+    return this.publicRequest<ListLocalisationsResponse>(`/madoc/api/locales`);
+  }
+  async getSiteLocale(code: string, withTemplate?: boolean) {
+    return this.publicRequest<GetLocalisationResponse>(
+      `/madoc/api/locales/${code}${withTemplate ? `?show_empty=true` : ''}`
+    );
+  }
+
+  async updateSiteLocale(code: string, json: any) {
+    return this.request<GetLocalisationResponse>(`/api/madoc/locales/${code}`, {
+      method: 'POST',
+      body: json,
+    });
+  }
+
   // Config service.
   async addConfiguration(service: string, context: string[], value: any) {
     return this.request<any>(`/api/configurator/`, {
@@ -587,12 +607,24 @@ export class ApiClient {
   }
 
   // IIIF.
-  async getCollections(page = 0, parent?: number) {
-    return this.request<CollectionListResponse>(`/api/madoc/iiif/collections?${stringify({ page, parent })}`);
+  async getCollections(page = 0, parent?: number, onlyPublished?: boolean) {
+    return this.request<CollectionListResponse>(
+      `/api/madoc/iiif/collections?${stringify({ page, parent, published: onlyPublished })}`
+    );
   }
 
-  async getManifests(page = 0, { parent, filter }: { parent?: number; filter?: string } = {}) {
-    return this.request<ManifestListResponse>(`/api/madoc/iiif/manifests?${stringify({ page, parent, filter })}`);
+  async getManifests(
+    page = 0,
+    {
+      parent,
+      filter,
+      query,
+      onlyPublished,
+    }: { parent?: number; filter?: string; query?: string; onlyPublished?: boolean } = {}
+  ) {
+    return this.request<ManifestListResponse>(
+      `/api/madoc/iiif/manifests?${stringify({ page, parent, filter, query, published: onlyPublished })}`
+    );
   }
 
   async getManifestProjects(id: number, query?: { published?: boolean }) {
@@ -776,6 +808,24 @@ export class ApiClient {
     });
   }
 
+  async publishManifest(id: number, isPublished = true) {
+    return this.request<void>(`/api/madoc/iiif/manifests/${id}/publish`, {
+      method: 'POST',
+      body: {
+        isPublished,
+      },
+    });
+  }
+
+  async publishCollection(id: number, isPublished = true) {
+    return this.request<void>(`/api/madoc/iiif/collections/${id}/publish`, {
+      method: 'POST',
+      body: {
+        isPublished,
+      },
+    });
+  }
+
   async updateCanvasMetadata(id: number, request: MetadataUpdate) {
     return this.request<void>(`/api/madoc/iiif/canvases/${id}/metadata`, {
       method: 'PUT',
@@ -886,8 +936,18 @@ export class ApiClient {
       method: 'POST',
       body: {
         id: generateId(),
-        structure: createChoice({ label }),
-        document: createDocument(),
+        structure: createChoice({
+          label,
+          items: [
+            {
+              id: generateId(),
+              type: 'model',
+              label: 'Default',
+              fields: [],
+            },
+          ],
+        }),
+        document: createDocument({ label }),
       },
     });
   }

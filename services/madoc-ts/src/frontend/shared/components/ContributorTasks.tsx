@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from "react-i18next";
 import { Heading3, Subheading3 } from '../atoms/Heading3';
 import { GridContainer, HalfGird } from '../atoms/Grid';
 import { TableContainer, TableEmpty, TableRow, TableRowLabel } from '../atoms/Table';
@@ -16,12 +17,13 @@ export const ContributorTasks: React.FC<{
   drafts: { tasks: CrowdsourcingTask[]; pagination: Pagination };
   reviews: { tasks: CrowdsourcingTask[]; pagination: Pagination };
 }> = ({ drafts, reviews, projectId, rootTaskId }) => {
+  const { t } = useTranslation();
   return (
     <>
-      <Heading3>Your contributions</Heading3>
+      <Heading3>{t('Your contributions')}</Heading3>
       <GridContainer>
         <HalfGird $margin>
-          <Subheading3>Contributions in progress</Subheading3>
+          <Subheading3>{t('Contributions in progress')}</Subheading3>
           <TableContainer>
             {drafts && drafts.tasks.length ? (
               drafts.tasks.map(task => (
@@ -35,12 +37,12 @@ export const ContributorTasks: React.FC<{
                 </TableRow>
               ))
             ) : (
-              <TableEmpty>No contributions yet</TableEmpty>
+              <TableEmpty>{t('No contributions yet')}</TableEmpty>
             )}
           </TableContainer>
         </HalfGird>
         <HalfGird $margin>
-          <Subheading3>Contributions in review</Subheading3>
+          <Subheading3>{t('Contributions in review')}</Subheading3>
           <TableContainer>
             {reviews && reviews.tasks.length ? (
               reviews.tasks.map(task => (
@@ -54,13 +56,13 @@ export const ContributorTasks: React.FC<{
                 </TableRow>
               ))
             ) : (
-              <TableEmpty>No contributions in review</TableEmpty>
+              <TableEmpty>{t('No contributions in review')}</TableEmpty>
             )}
           </TableContainer>
         </HalfGird>
       </GridContainer>
       <TinyButton as={HrefLink} href={`/tasks?${stringify({ type: 'crowdsourcing-task', root_task_id: rootTaskId })}`}>
-        Browse all contributions
+        {t('Browse all contributions')}
       </TinyButton>
     </>
   );

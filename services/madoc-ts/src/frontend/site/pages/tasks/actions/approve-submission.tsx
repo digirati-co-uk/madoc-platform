@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { Revisions } from '@capture-models/editor';
+import { useTranslation } from 'react-i18next';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { EditorToolbarButton, EditorToolbarIcon, EditorToolbarLabel } from '../../../../shared/atoms/EditorToolbar';
 import { ModalButton } from '../../../../shared/components/Modal';
@@ -20,6 +21,7 @@ export const ApproveSubmission: React.FC<{
   });
   const [loading, setIsLoading] = useState(false);
   const api = useApi();
+  const { t } = useTranslation();
   const revisionIdsToRemove = allRevisionIds.filter(id => id && id !== acceptedRevision?.revision.id);
   const userTaskIdsToRemove = allUserTaskIds.filter(id => id && id !== userTaskId);
   const approveAndRemoveApiCall = useCallback(() => {
@@ -62,13 +64,14 @@ export const ApproveSubmission: React.FC<{
     <EditorToolbarButton
       as={ModalButton}
       button={true}
+      modalSize="sm"
       disabled={loading}
       autoHeight={true}
-      title="Approve submission"
+      title={t('Approve submission') || ''}
       render={() => (
         <div>
           <ul>
-            <li>The submission will be approved and all other submission will remain.</li>
+            <li>{t('The submission will be approved and all other submission will remain.')}</li>
           </ul>
         </div>
       )}
@@ -81,7 +84,7 @@ export const ApproveSubmission: React.FC<{
               close();
             }}
           >
-            Approve
+            {t('Approve submission')}
           </Button>
         </ButtonRow>
       )}
@@ -89,7 +92,7 @@ export const ApproveSubmission: React.FC<{
       <EditorToolbarIcon>
         <GradingIcon />
       </EditorToolbarIcon>
-      <EditorToolbarLabel>approve</EditorToolbarLabel>
+      <EditorToolbarLabel>{t('Approve submission')}</EditorToolbarLabel>
     </EditorToolbarButton>
   );
 };

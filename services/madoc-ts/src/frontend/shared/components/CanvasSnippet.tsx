@@ -1,10 +1,12 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { SnippetLarge } from '../atoms/SnippetLarge';
 import { useApiCanvas } from '../hooks/use-api-canvas';
 import { LocaleString } from './LocaleString';
 import { HrefLink } from '../utility/href-link';
 
 export const CanvasSnippet: React.FC<{ id: number; manifestId?: number; collectionId?: number }> = props => {
+  const { t } = useTranslation();
   const { data } = useApiCanvas(props.id);
 
   const link =
@@ -19,10 +21,10 @@ export const CanvasSnippet: React.FC<{ id: number; manifestId?: number; collecti
       <SnippetLarge
         margin
         label={'...'}
-        subtitle={`Canvas`}
+        subtitle={t(`Canvas`)}
         summary={'...'}
         linkAs={HrefLink}
-        buttonText="view canvas"
+        buttonText={t('view canvas')}
         link={link}
       />
     );
@@ -34,11 +36,11 @@ export const CanvasSnippet: React.FC<{ id: number; manifestId?: number; collecti
     <SnippetLarge
       margin
       label={<LocaleString>{data.canvas.label}</LocaleString>}
-      subtitle={`Canvas`}
+      subtitle={t(`Canvas`)}
       summary={<LocaleString>{data.canvas.summary}</LocaleString>}
       linkAs={HrefLink}
       thumbnail={thumbnail}
-      buttonText="view canvas"
+      buttonText={t('view canvas')}
       link={link}
     />
   );

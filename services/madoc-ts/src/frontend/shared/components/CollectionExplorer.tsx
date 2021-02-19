@@ -40,7 +40,7 @@ export const CollectionExplorer: React.FC<{
                     </CroppedImage>
                   ) : null}
                   <SingleLineHeading5>
-                    <LocaleString>{canvas.label || { none: ['Untitled'] }}</LocaleString>
+                    <LocaleString>{canvas.label || { none: [t('Untitled canvas')] }}</LocaleString>
                   </SingleLineHeading5>
                 </ImageGridItem>
               );
@@ -50,7 +50,7 @@ export const CollectionExplorer: React.FC<{
       <div style={{ margin: '1em 0' }}>
         {page !== 0 ? <TinyButton onClick={() => setPage(page - 1)}>{t('Previous page')}</TinyButton> : null}
         <div style={{ display: 'inline-block', margin: 10, fontSize: '0.9em' }}>
-          Page {page + 1} of {pages}
+          {t('Page {{page}} of {{count}}', { page: page + 1, count: pages })}
         </div>
         {page + 1 !== pages ? <TinyButton onClick={() => setPage(page + 1)}>{t('Next page')}</TinyButton> : null}
       </div>

@@ -1,9 +1,12 @@
 import { InternationalString } from '@hyperion-framework/types';
 import React, { useMemo, useContext } from 'react';
+import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { useCurrentAdminPages } from '../../site/hooks/use-current-admin-pages';
-import { LocaleString } from './LocaleString';
+import { useSite } from '../hooks/use-site';
+import { LocaleString, useLocaleString } from './LocaleString';
 import styled, { css } from 'styled-components';
 
 type BreadcrumbContextType = {
@@ -117,9 +120,11 @@ export const BreadcrumbContext: React.FC<BreadcrumbContextType> = ({
 };
 
 export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ currentPage }) => {
+  const site = useSite();
   const breads = useBreadcrumbs();
   const location = useLocation();
   const adminLinks = useCurrentAdminPages();
+  const { t } = useTranslation();
 
   const stack = useMemo(() => {
     const flatList = [];
@@ -127,7 +132,7 @@ export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ current
     // Projects can only be in one place.
     if (breads.project) {
       flatList.push({
-        label: { none: ['Projects'] },
+        label: { none: [t('breadcrumbs__Projects', { defaultValue: t('Projects') })] },
         url: `/projects`,
       });
 
@@ -147,7 +152,7 @@ export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ current
         });
       } else {
         flatList.push({
-          label: { none: ['Collections'] },
+          label: { none: [t('breadcrumbs__Collections', { defaultValue: t('Collections') })] },
           url: `/collections`,
         });
         // 2. On it's own
@@ -182,7 +187,7 @@ export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ current
         });
       } else {
         flatList.push({
-          label: { none: ['Manifests'] },
+          label: { none: [t('breadcrumbs__Manifests', { defaultValue: t('Manifests') })] },
           url: `/manifests`,
         });
         // 4. On its own.
@@ -249,7 +254,10 @@ export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ current
     breads.subpage,
     currentPage,
     location.pathname,
+    t,
   ]);
+  const activePage = stack.find(s => s.url === location.pathname);
+  const [pageTitle] = useLocaleString(activePage?.label);
 
   if (stack.length === 0) {
     return <React.Fragment />;
@@ -257,6 +265,13 @@ export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ current
 
   return (
     <BreadcrumbList>
+      {pageTitle ? (
+        <Helmet>
+          <title>
+            {site.title} - {pageTitle}
+          </title>
+        </Helmet>
+      ) : null}
       {stack.map((s, n) => (
         <React.Fragment key={s.url}>
           <BreadcrumbItem active={s.url === location.pathname}>
@@ -273,7 +288,7 @@ export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ current
       ))}
       {adminLinks.length ? (
         <BreadcrumbAdmin>
-          <ViewInAdmin>View in Admin</ViewInAdmin>
+          <ViewInAdmin>{t('View in Admin')}</ViewInAdmin>
           {adminLinks.map(link => {
             return (
               <BreadcrumbItem key={link.link}>

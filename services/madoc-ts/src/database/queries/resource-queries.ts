@@ -1,11 +1,25 @@
-import { sql, SqlSqlTokenType, SqlTokenType } from 'slonik';
+import { sql, SqlSqlTokenType } from 'slonik';
 import { SQL_EMPTY } from '../../utility/postgres-tags';
 
 export function countSubQuery(query: SqlSqlTokenType<{ resource_id: number }>) {
   return sql`with t (resource_id) as (${query}) select COUNT(*) from t left join iiif_derived_resource_items ri on t.resource_id = ri.item_id group by ri.resource_id`;
 }
 
-export function countResources(resource_type: string, site_id: number, parent_id?: number, showFlat = false) {
+export function countResources({
+  labelQuery,
+  parent_id,
+  resource_type,
+  site_id,
+  showFlat,
+  onlyPublished,
+}: {
+  resource_type: string;
+  site_id: number;
+  parent_id?: number;
+  showFlat?: boolean;
+  onlyPublished?: boolean;
+  labelQuery?: string;
+}) {
   if (parent_id) {
     return sql<{ total: number }>`
     select count(*) as total
@@ -15,7 +29,23 @@ export function countResources(resource_type: string, site_id: number, parent_id
       where cidr.resource_type = ${resource_type} 
       and cidr.site_id = ${site_id}
       ${showFlat ? SQL_EMPTY : sql`and cidr.flat = false`}
+      ${onlyPublished ? SQL_EMPTY : sql`and cidr.published = true`}
       and cidri.resource_id = ${parent_id}
+  `;
+  }
+
+  if (labelQuery) {
+    return sql<{ total: number }>`
+    select count(*) as total
+      from iiif_derived_resource
+      left join iiif_metadata im
+         on iiif_derived_resource.resource_id = im.resource_id and im.site_id = ${site_id} and im.key = 'label'
+             and im.value ilike '%' || ${labelQuery} || '%'
+      where resource_type = ${resource_type} 
+      and im.resource_id is not null
+      and iiif_derived_resource.site_id = ${site_id}
+      ${showFlat ? SQL_EMPTY : sql`and flat = false`}
+      ${onlyPublished ? SQL_EMPTY : sql`and published = true`}
   `;
   }
 
@@ -25,6 +55,7 @@ export function countResources(resource_type: string, site_id: number, parent_id
       where resource_type = ${resource_type} 
       and site_id = ${site_id}
       ${showFlat ? SQL_EMPTY : sql`and flat = false`}
+      ${onlyPublished ? SQL_EMPTY : sql`and published = true`}
   `;
 }
 

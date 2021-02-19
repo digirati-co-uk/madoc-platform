@@ -1,7 +1,12 @@
+import { AtlasContextType } from '@atlas-viewer/atlas';
 import React, { useMemo } from 'react';
 import { useContentType } from '@capture-models/plugin-api';
 
-export const ViewExternalContent: React.FC<{ target: any; height?: number }> = ({ target, height = 600 }) => {
+export const ViewExternalContent: React.FC<{
+  target: any;
+  height?: number;
+  onCreated?: (runtime: AtlasContextType) => void;
+}> = ({ target, children, onCreated, height = 600 }) => {
   return useContentType(
     useMemo(
       () =>
@@ -13,8 +18,12 @@ export const ViewExternalContent: React.FC<{ target: any; height?: number }> = (
     useMemo(
       () => ({
         height,
+        children,
+        custom: {
+          onCreateAtlas: onCreated,
+        },
       }),
-      [target]
+      [onCreated, children, height]
     )
   );
 };

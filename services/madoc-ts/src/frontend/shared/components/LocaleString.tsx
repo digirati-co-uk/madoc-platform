@@ -94,6 +94,31 @@ export const useClosestLanguage = (getLanguages: () => string[], deps: any[] = [
   }, [i18nLanguages, i18nLanguage, ...deps]);
 };
 
+export function useLocaleString(inputText: InternationalString | string | null | undefined, defaultText?: string) {
+  const language = useClosestLanguage(() => Object.keys(inputText || {}), [inputText]);
+  return [
+    useMemo(() => {
+      if (!inputText) {
+        return defaultText || '';
+      }
+      if (typeof inputText === 'string') {
+        return inputText;
+      }
+
+      const candidateText = language ? inputText[language] : undefined;
+      if (candidateText) {
+        if (typeof candidateText === 'string') {
+          return candidateText;
+        }
+        return candidateText.join('');
+      }
+
+      return '';
+    }, [language, defaultText, inputText]),
+    language,
+  ] as const;
+}
+
 export const LocaleString: React.FC<{
   as?: string | React.FC<any>;
   defaultText?: string;
@@ -101,22 +126,7 @@ export const LocaleString: React.FC<{
   enableDangerouslySetInnerHTML?: boolean;
   children: InternationalString | null | undefined;
 }> = ({ as: Component, defaultText, enableDangerouslySetInnerHTML, children, ...props }) => {
-  const language = useClosestLanguage(() => Object.keys(children || {}), [children]);
-  const text = useMemo(() => {
-    if (!children) {
-      return defaultText || '';
-    }
-
-    const candidateText = language ? children[language] : undefined;
-    if (candidateText) {
-      if (typeof candidateText === 'string') {
-        return candidateText;
-      }
-      return candidateText.join('');
-    }
-
-    return '';
-  }, [language, defaultText, children]);
+  const [text, language] = useLocaleString(children, defaultText);
 
   if (language) {
     return (

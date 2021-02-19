@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { GridContainer, HalfGird } from '../../../../shared/atoms/Grid';
 import { Heading3, Subheading3 } from '../../../../shared/atoms/Heading3';
+import { useDefaultLocale, useSupportedLocales } from "../../../../shared/hooks/use-site";
 import { MetadataEditor } from '../../../molecules/MetadataEditor';
 import { SmallButton } from '../../../../shared/atoms/Button';
 import { Input, InputContainer, InputLabel } from '../../../../shared/atoms/Input';
@@ -28,6 +29,9 @@ export const CreateCollection: React.FC = () => {
   const api = useApi();
   const history = useHistory();
   const query = useLocationQuery<{ collection?: string; manifest?: string }>();
+  const defaultLocale = useDefaultLocale();
+  const supportedLocales = useSupportedLocales();
+
   const [importedCollectionId, setImportedCollectionId] = useState<string | undefined>(query.collection);
 
   const [createCollection] = useMutation(async (collection: CreateCollectionType['collection']) => {
@@ -83,7 +87,8 @@ export const CreateCollection: React.FC = () => {
                 fields={collectionToAdd.label}
                 onSave={ret => setCollectionToAdd({ label: ret.toInternationalString() })}
                 metadataKey="label"
-                availableLanguages={['en', 'es', 'fr', 'de']}
+                defaultLocale={defaultLocale}
+                availableLanguages={supportedLocales}
               />
               <SmallButton disabled={collectionToAdd && isCreating} onClick={() => createCollection(collectionToAdd)}>
                 Create collection

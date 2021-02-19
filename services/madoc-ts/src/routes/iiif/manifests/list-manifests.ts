@@ -1,3 +1,4 @@
+import { castBool } from '../../../utility/cast-bool';
 import { optionalUserWithScope } from '../../../utility/user-with-scope';
 import { mapMetadata } from '../../../utility/iiif-metadata';
 import { getMetadata } from '../../../utility/iiif-database-helpers';
@@ -16,6 +17,7 @@ type ManifestSnippetRow = {
   source: string;
   thumbnail?: string;
   canvas_total: number;
+  published?: boolean;
 };
 
 export const listManifests: RouteMiddleware = async context => {
@@ -24,11 +26,22 @@ export const listManifests: RouteMiddleware = async context => {
 
   const manifestCount = 24;
   const pageQuery = Number(context.query.page) || 1;
+  const labelQuery = context.query.query;
   const canvasSubQuery = getCanvasFilter(context.query.filter);
+  const onlyPublished = castBool(context.query.published);
   const { total = 0 } =
     (
       await context.connection.any<{ total: number }>(
-        canvasSubQuery ? countSubQuery(canvasSubQuery) : countResources('manifest', siteId, parent)
+        canvasSubQuery
+          ? countSubQuery(canvasSubQuery)
+          : countResources({
+              parent_id: parent,
+              site_id: siteId,
+              resource_type: 'manifest',
+              showFlat: false,
+              onlyPublished,
+              labelQuery,
+            })
       )
     )[0] || {};
   const totalPages = Math.ceil(total / manifestCount);
@@ -42,6 +55,8 @@ export const listManifests: RouteMiddleware = async context => {
         manifestCount,
         page,
         canvasSubQuery,
+        labelQuery,
+        onlyPublished,
       }),
       siteId,
       ['label']
@@ -52,6 +67,7 @@ export const listManifests: RouteMiddleware = async context => {
     id: row.resource_id,
     thumbnail: row.thumbnail,
     canvasCount: row.canvas_total || 0,
+    published: row.published,
   }));
 
   context.response.body = {

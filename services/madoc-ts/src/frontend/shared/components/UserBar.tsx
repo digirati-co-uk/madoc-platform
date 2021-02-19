@@ -1,7 +1,22 @@
-import React from 'react';
+import { stringify } from 'query-string';
+import React, { useEffect } from 'react';
+import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
+import { useTranslation } from 'react-i18next';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { PublicSite } from '../../../utility/omeka-api';
+import {
+  GlobalHeaderMenuContainer,
+  GlobalHeaderMenuItem,
+  GlobalHeaderMenuLabel,
+  GlobalHeaderMenuList,
+} from '../atoms/GlobalHeader';
+import { LanguageSwitcher } from '../atoms/LanguageSwitcher';
+import { useStaticData } from '../hooks/use-data';
+import { useLocationQuery } from '../hooks/use-location-query';
+import { useUser } from '../hooks/use-site';
 import { HrefLink } from '../utility/href-link';
+import { isAdmin } from '../utility/user-roles';
 
 const UserBarContainer = styled.div`
   position: absolute;
@@ -54,33 +69,85 @@ const UserBarLogout = styled.span`
   }
 `;
 
-export const UserBar: React.FC<{ site: PublicSite; user?: { name: string; id: number }; admin?: boolean }> = ({
-  user,
-  site,
-  admin,
-}) => {
+export const UserBar: React.FC<{
+  site: PublicSite;
+  user?: { name: string; id: number; scope: string[] };
+  admin?: boolean;
+}> = ({ user, site, admin }) => {
+  const { t } = useTranslation();
+  const { location } = useHistory();
+  const query = useLocationQuery();
+  const { buttonProps, itemProps, isOpen, setIsOpen } = useDropdownMenu(4);
+  const redirect = admin
+    ? `/s/${site.slug}/madoc`
+    : `/s/${site.slug}/madoc/${location.pathname}${query ? `?${stringify(query)}` : ''}`;
+  const showAdmin = user && user.scope.indexOf('site.admin') !== -1;
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location, setIsOpen]);
+
   return (
     <>
       <UserBarContainer>
-        <UserBarAdminButton href={`/s/${site.slug}/madoc/admin`}>Site admin</UserBarAdminButton>
+        {showAdmin && admin ? (
+          <UserBarAdminButton as={HrefLink} href={`/`}>
+            {t('Site admin')}
+          </UserBarAdminButton>
+        ) : (
+          <UserBarAdminButton href={`/s/${site.slug}/madoc/admin`}>{t('Site admin')}</UserBarAdminButton>
+        )}
         <UserBarExpander />
+        <LanguageSwitcher />
+
         {user ? (
-          <>
-            <UserBarUserDetails>
-              Signed in as{' '}
+          <GlobalHeaderMenuContainer>
+            <GlobalHeaderMenuLabel {...buttonProps}>{user.name}</GlobalHeaderMenuLabel>
+            <GlobalHeaderMenuList $visible={isOpen} role="menu">
               {admin ? (
-                <a href={`/s/${site.slug}/madoc/dashboard`}>{user.name}</a>
+                <>
+                  <GlobalHeaderMenuItem href={`/s/${site.slug}/madoc/dashboard`} {...itemProps[0]}>
+                    {t('Dashboard')}
+                  </GlobalHeaderMenuItem>
+                  <GlobalHeaderMenuItem href={`/s/${site.slug}/madoc`} {...itemProps[1]}>
+                    {t('View site')}
+                  </GlobalHeaderMenuItem>
+
+                  <GlobalHeaderMenuItem href={`/s/${site.slug}/profile`} {...itemProps[2]}>
+                    {t('Account')}
+                  </GlobalHeaderMenuItem>
+                  <GlobalHeaderMenuItem
+                    href={`/s/${site.slug}/madoc/logout?${stringify({ redirect })}`}
+                    {...itemProps[3]}
+                  >
+                    {t('Logout')}
+                  </GlobalHeaderMenuItem>
+                </>
               ) : (
-                <HrefLink href="/dashboard">{user.name}</HrefLink>
+                <>
+                  <GlobalHeaderMenuItem as={HrefLink} href={`/dashboard`} {...itemProps[0]}>
+                    {t('Dashboard')}
+                  </GlobalHeaderMenuItem>
+                  <GlobalHeaderMenuItem as={HrefLink} href={`/`} {...itemProps[1]}>
+                    {t('View site')}
+                  </GlobalHeaderMenuItem>
+
+                  <GlobalHeaderMenuItem href={`/s/${site.slug}/profile`} {...itemProps[2]}>
+                    {t('Account')}
+                  </GlobalHeaderMenuItem>
+                  <GlobalHeaderMenuItem
+                    href={`/s/${site.slug}/madoc/logout?${stringify({ redirect })}`}
+                    {...itemProps[3]}
+                  >
+                    {t('Logout')}
+                  </GlobalHeaderMenuItem>
+                </>
               )}
-            </UserBarUserDetails>
-            <UserBarLogout>
-              <a href={`/s/${site.slug}/madoc/logout`}>Logout</a>
-            </UserBarLogout>
-          </>
+            </GlobalHeaderMenuList>
+          </GlobalHeaderMenuContainer>
         ) : (
           <UserBarLogout>
-            <a href={`/s/${site.slug}/madoc/login`}>Log in</a>
+            <a href={`/s/${site.slug}/madoc/login?${stringify({ redirect })}`}>{t('Log in')}</a>
           </UserBarLogout>
         )}
       </UserBarContainer>

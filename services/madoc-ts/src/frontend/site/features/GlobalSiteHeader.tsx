@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { ErrorMessage } from '../../shared/atoms/ErrorMessage';
 import { GlobalStyles } from '../../shared/atoms/GlobalStyles';
+import { LanguageSwitcher } from '../../shared/atoms/LanguageSwitcher';
 import { useApi, useIsApiRestarting } from '../../shared/hooks/use-api';
 import { useSite } from '../../shared/hooks/use-site';
 import { HrefLink } from '../../shared/utility/href-link';

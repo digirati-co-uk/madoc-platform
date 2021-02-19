@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { InternationalString } from '@hyperion-framework/types';
+import { useDefaultLocale, useSupportedLocales } from '../../../../shared/hooks/use-site';
 import { MetadataEditor } from '../../../molecules/MetadataEditor';
 import { useMutation } from 'react-query';
 import { CreateProject } from '../../../../../types/schemas/create-project';
@@ -20,6 +21,8 @@ export const NewProjectPage: React.FC = () => {
   const [slug, setSlug] = useState('');
   const [error, setError] = useState('');
   const history = useHistory();
+  const defaultLocale = useDefaultLocale();
+  const availableLanguages = useSupportedLocales();
 
   const [saveProject, { status }] = useMutation(async (data: CreateProject) => {
     setError('');
@@ -50,7 +53,7 @@ export const NewProjectPage: React.FC = () => {
             id={'label'}
             fields={label}
             onSave={output => setLabel(output.toInternationalString())}
-            availableLanguages={['en', 'fr', 'es']}
+            availableLanguages={availableLanguages}
             metadataKey={'label'}
           />
         </InputContainer>
@@ -61,8 +64,9 @@ export const NewProjectPage: React.FC = () => {
             id={'summary'}
             fields={summary}
             onSave={output => setSummary(output.toInternationalString())}
-            availableLanguages={['en', 'fr', 'es']}
+            availableLanguages={availableLanguages}
             metadataKey={'summary'}
+            defaultLocale={defaultLocale}
           />
         </InputContainer>
 

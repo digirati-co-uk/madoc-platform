@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { SnippetLarge } from '../atoms/SnippetLarge';
 import { useApiCollection } from '../hooks/use-api-collection';
 import { LocaleString } from './LocaleString';
@@ -7,6 +8,7 @@ import { createLink } from '../utility/create-link';
 
 export const CollectionSnippet: React.FC<{ id: number; projectId?: string | number }> = props => {
   const { data, failureCount } = useApiCollection(props.id);
+  const { t } = useTranslation();
 
   if (failureCount) {
     return null;
@@ -17,10 +19,10 @@ export const CollectionSnippet: React.FC<{ id: number; projectId?: string | numb
       <SnippetLarge
         margin
         label={'...'}
-        subtitle={`Collection`}
+        subtitle={t('Collection')}
         summary={'...'}
         linkAs={HrefLink}
-        buttonText="view collection"
+        buttonText={t('view collection')}
         link={createLink({ collectionId: props.id, projectId: props.projectId })}
       />
     );
@@ -36,11 +38,11 @@ export const CollectionSnippet: React.FC<{ id: number; projectId?: string | numb
     <SnippetLarge
       margin
       label={<LocaleString>{data.collection.label}</LocaleString>}
-      subtitle={`Collection with ${data.pagination.totalResults} manifests`}
+      subtitle={t('Collection with {{count}} manifests', { count: data.pagination.totalResults })}
       summary={<LocaleString>{data.collection.summary}</LocaleString>}
       linkAs={HrefLink}
       thumbnail={thumbnail}
-      buttonText="view collection"
+      buttonText={t('view collection')}
       link={createLink({ collectionId: props.id, projectId: props.projectId })}
     />
   );

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { Link } from 'react-router-dom';
 import { Heading3, Subheading3 } from '../../shared/atoms/Heading3';

@@ -2,6 +2,7 @@ import { exportSite } from './routes/admin/export-site';
 import { getMetadataKeys } from './routes/admin/get-metadata-keys';
 import { getMetadataValues } from './routes/admin/get-metadata-values';
 import { importSite } from './routes/admin/import-site';
+import { getLocalisation, listLocalisations, updateLocalisation } from './routes/admin/localisation';
 import { getMetadataConfiguration, updateMetadataConfiguration } from './routes/admin/metadata-configuration';
 import { getSiteDetails } from './routes/admin/site-details';
 import { updateSiteConfiguration } from './routes/admin/update-site-configuration';
@@ -21,6 +22,8 @@ import { updatePage } from './routes/content/update-page';
 import { updateSlot } from './routes/content/update-slot';
 import { updateSlotStructure } from './routes/content/update-slot-structure';
 import { getCanvasPlaintext } from './routes/iiif/canvases/get-canvas-plaintext';
+import { publishCollection } from './routes/iiif/collections/publish-collection';
+import { publishManifest } from './routes/iiif/manifests/publish-manifest';
 import { batchIndex } from './routes/search/batch-index';
 import { getFacetConfiguration, updateFacetConfiguration } from './routes/search/facet-configuration';
 import { siteConfiguration } from './routes/site/site-configuration';
@@ -58,7 +61,7 @@ import { getCanvasMetadata } from './routes/iiif/canvases/get-canvas-metadata';
 import { indexCanvas } from './routes/search/index-canvas';
 import { updateManifestStructure } from './routes/iiif/manifests/update-manifest-structure';
 import { getManifestStructure } from './routes/iiif/manifests/get-manifest-structure';
-import { getLocale } from './routes/locales';
+import { getLocale, saveMissingLocale } from './routes/locales';
 import { updateMetadata } from './routes/iiif/update-metadata';
 import { getManifestAutocomplete } from './routes/iiif/manifests/get-manifest-autocomplete';
 import { getCollectionAutocomplete } from './routes/iiif/collections/get-collection-autocomplete';
@@ -125,11 +128,17 @@ export const router = new TypedRouter({
   // User API.
   'get-user': [TypedRouter.GET, '/api/madoc/users/:id', getUser],
 
+  // Localisation
+  'i18n-list-locales': [TypedRouter.GET, '/api/madoc/locales', listLocalisations],
+  'i18n-get-locale': [TypedRouter.GET, '/api/madoc/locales/:code', getLocalisation],
+  'i18n-update-locale': [TypedRouter.POST, '/api/madoc/locales/:code', updateLocalisation],
+
   // Collection API.
   'list-collections': [TypedRouter.GET, '/api/madoc/iiif/collections', listCollections],
   'get-collection': [TypedRouter.GET, '/api/madoc/iiif/collections/:id', getCollection],
   'create-collection': [TypedRouter.POST, '/api/madoc/iiif/collections', createCollection, 'CreateCollection'],
   'delete-collection': [TypedRouter.DELETE, '/api/madoc/iiif/collections/:id', deleteCollection],
+  'publish-collection': [TypedRouter.POST, '/api/madoc/iiif/collections/:id/publish', publishCollection],
   'get-collection-metadata': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/metadata', getCollectionMetadata],
   'get-collection-structure': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/structure', getCollectionStructure],
   'get-collection-projects': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/projects', getCollectionProjects],
@@ -167,6 +176,7 @@ export const router = new TypedRouter({
   'get-manifest': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id', getManifest],
   'create-manifest': [TypedRouter.POST, '/api/madoc/iiif/manifests', createManifest, 'CreateManifest'],
   'delete-manifest': [TypedRouter.DELETE, '/api/madoc/iiif/manifests/:id', deleteManifest],
+  'publish-manifest': [TypedRouter.POST, '/api/madoc/iiif/manifests/:id/publish', publishManifest],
   'get-manifest-metadata': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/metadata', getManifestMetadata],
   'get-manifest-structure': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/structure', getManifestStructure],
   'get-manifest-projects': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/projects', getManifestProjects],
@@ -308,6 +318,8 @@ export const router = new TypedRouter({
     '/s/:slug/madoc/api/configuration/metadata',
     getMetadataConfiguration,
   ],
+  'site-list-locales': [TypedRouter.GET, '/s/:slug/madoc/api/locales', listLocalisations],
+  'site-get-locale': [TypedRouter.GET, '/s/:slug/madoc/api/locales/:code', getLocalisation],
 
   // To be worked into API calling methods
   'manifest-search': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/search/1.0', searchManifest],
@@ -318,6 +330,7 @@ export const router = new TypedRouter({
 
   // Locale
   'get-locale': [TypedRouter.GET, '/s/:slug/madoc/api/locales/:lng/:ns', getLocale],
+  'add-missing-locale': [TypedRouter.POST, '/s/:slug/madoc/api/locales/:lng/:ns', saveMissingLocale],
 
   // Test omeka pages.
   // 'get-page': [TypedRouter.GET, '/s/:slug/madoc/page/:pageSlug+', sitePage],

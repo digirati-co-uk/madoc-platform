@@ -1,12 +1,14 @@
+import { stringify } from 'query-string';
 import { Link, useLocation } from 'react-router-dom';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SmallButton } from '../../shared/atoms/Button';
 
-export const Pagination: React.FC<{ page: number; totalPages: number; stale: boolean }> = ({
+export const Pagination: React.FC<{ page: number; totalPages: number; stale: boolean; extraQuery?: any }> = ({
   page,
   stale,
   totalPages,
+  extraQuery,
 }) => {
   const { pathname } = useLocation();
   const { t } = useTranslation();
@@ -21,7 +23,16 @@ export const Pagination: React.FC<{ page: number; totalPages: number; stale: boo
   return (
     <div style={{ margin: '2em 0', width: '100%', display: 'flex' }}>
       {prevPage ? (
-        <SmallButton as={Link} to={`${pathname}${page > 2 ? `?page=${page - 1}` : ''}`}>
+        <SmallButton
+          as={Link}
+          to={`${pathname}${
+            page > 2
+              ? `?${stringify({ ...extraQuery, page: page - 1 })}`
+              : extraQuery
+              ? `?${stringify({ ...extraQuery })}`
+              : ''
+          }`}
+        >
           {t('Previous page')}
         </SmallButton>
       ) : null}
@@ -31,7 +42,7 @@ export const Pagination: React.FC<{ page: number; totalPages: number; stale: boo
         Page {page} of {totalPages}
       </div>
       {nextPage ? (
-        <SmallButton as={Link} to={`${pathname}?page=${page + 1}`}>
+        <SmallButton as={Link} to={`${pathname}?${stringify({ ...extraQuery, page: page + 1 })}`}>
           {t('Next page')}
         </SmallButton>
       ) : null}

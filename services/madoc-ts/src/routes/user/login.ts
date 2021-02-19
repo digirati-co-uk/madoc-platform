@@ -4,6 +4,10 @@ import { RouteMiddleware } from '../../types/route-middleware';
 const omekaUrl = process.env.OMEKA__URL as string;
 
 export const loginPage: RouteMiddleware<{ slug: string }, { email: string; password: string }> = async context => {
+  if (context.query.redirect && !context.query.redirect.startsWith('/')) {
+    context.query.redirect = '';
+  }
+
   // Check omeka.
   if (context.req.headers.cookie) {
     const response = await fetch(`${omekaUrl}/s/${context.params.slug}/_template`, {
@@ -24,14 +28,14 @@ export const loginPage: RouteMiddleware<{ slug: string }, { email: string; passw
           id: user.id,
           sites,
         };
-        context.response.redirect(context.query.redirect || `/s/${context.params.slug}`);
+        context.response.redirect(context.query.redirect || `/s/${context.params.slug}/madoc`);
         return;
       }
     }
   }
 
   if (context.state.jwt) {
-    context.response.redirect(`/s/${context.params.slug}`);
+    context.response.redirect(`/s/${context.params.slug}/madoc`);
     return;
   }
 
@@ -51,7 +55,7 @@ export const loginPage: RouteMiddleware<{ slug: string }, { email: string; passw
           sites,
         };
 
-        context.redirect(`/s/${context.params.slug}`);
+        context.response.redirect(context.query.redirect || `/s/${context.params.slug}/madoc`);
         return;
       } else {
         context.omekaMessages.push({ type: 'error', message: 'Your email or password is invalid' });
@@ -65,9 +69,13 @@ export const loginPage: RouteMiddleware<{ slug: string }, { email: string; passw
   context.omekaPage = `
     <div class="c-form c-form--login">
       <h1 class="c-form__heading">Login</h1>
-      <form method="post" name="loginform" id="loginform" action="${context.routes.url('post-login', {
-        slug: context.params.slug,
-      })}">
+      <form method="post" name="loginform" id="loginform" action="${context.routes.url(
+        'post-login',
+        {
+          slug: context.params.slug,
+        },
+        { query: { redirect: context.query.redirect } }
+      )}">
         <div class="field required">
           <div class="field-meta">
             <label for="email">Email</label>

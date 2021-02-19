@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { UniversalComponent } from '../../../../types';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { CollectionFull } from '../../../../../types/schemas/collection-full';
+import { PublishCollection } from '../../../features/publish-collection';
 import { Pagination } from '../../../molecules/Pagination';
 import { ImageGrid, ImageGridItem } from '../../../../shared/atoms/ImageGrid';
 import { CroppedImage } from '../../../../shared/atoms/Images';
@@ -33,6 +34,7 @@ export const CollectionManifests: UniversalComponent<CollectionManifestsType> = 
 
     return (
       <>
+        <PublishCollection />
         <Pagination
           page={data ? data.pagination.page : 1}
           totalPages={data ? data.pagination.totalPages : 1}

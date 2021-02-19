@@ -2,6 +2,8 @@ import { UniversalRoute } from '../types';
 import { CanvasPlaintext } from './pages/content/canvases/canvas-plaintext';
 import { CanvasSearchIndex } from './pages/content/canvases/canvas-search-index';
 import { CollectionView } from './pages/content/collections/collection';
+import { ConfigureLanguages } from './pages/content/internationalisation/configure-languages';
+import { EditTranslation } from './pages/content/internationalisation/edit-translation';
 import { ViewCanvasLinking } from './pages/content/linking/view-linking';
 import { MetadataConfigurationPage } from './pages/content/metadata-configuration';
 import { CreateNewPage } from './pages/content/page-blocks/create-new-page';
@@ -398,5 +400,15 @@ export const routes: UniversalRoute[] = [
         component: CreateNewPage,
       },
     ],
+  },
+  {
+    path: '/i18n',
+    exact: true,
+    component: ConfigureLanguages,
+  },
+  {
+    path: '/i18n/edit/:code',
+    exact: true,
+    component: EditTranslation,
   },
 ];

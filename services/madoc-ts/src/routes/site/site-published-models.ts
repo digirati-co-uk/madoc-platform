@@ -2,6 +2,7 @@ import { serialiseCaptureModel, traverseDocument } from '@capture-models/helpers
 import { BaseField } from '@capture-models/types';
 import { sql } from 'slonik';
 import { getProject } from '../../database/queries/project-queries';
+import { PARAGRAPHS_PROFILE } from '../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { CaptureModelSnippet } from '../../types/schemas/capture-model-snippet';
 import { castBool } from '../../utility/cast-bool';
@@ -112,6 +113,11 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
       for await (const singleModel of resolveModels) {
         traverseDocument(singleModel.document, {
           beforeVisitEntity(entity, key, parent) {
+            if (entity.profile === PARAGRAPHS_PROFILE || (parent && parent.temp && parent.temp.PARAGRAPHS)) {
+              entity.temp = entity.temp ? entity.temp : {};
+              entity.temp.PARAGRAPHS = true;
+            }
+
             if (parent && parent.temp && parent.temp.EXTRACTED) {
               return;
             }
@@ -125,12 +131,26 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
                 : entity.properties[Object.keys(entity.properties)[0]];
               // Try to get the value of the labelledby
               if (labelProp && labelProp[0] && labelProp[0].type !== 'entity' && (labelProp[0] as BaseField).value) {
-                const labelValue = (labelProp[0] as BaseField).value;
-                annotations.push(
-                  format === 'open-annotation'
-                    ? captureModelFieldToOpenAnnotation(entity.id, labelValue, entity.selector, defaultOptions)
-                    : captureModelFieldToW3CAnnotation(entity.id, labelValue, entity.selector, defaultOptions)
-                );
+                if (entity.temp && entity.temp.PARAGRAPHS) {
+                  // We have a paragraphs item.
+                  const labelValue = (labelProp as BaseField[])
+                    .map(field => {
+                      return field.value;
+                    })
+                    .join(' ');
+                  annotations.push(
+                    format === 'open-annotation'
+                      ? captureModelFieldToOpenAnnotation(entity.id, labelValue, entity.selector, defaultOptions)
+                      : captureModelFieldToW3CAnnotation(entity.id, labelValue, entity.selector, defaultOptions)
+                  );
+                } else {
+                  const labelValue = (labelProp[0] as BaseField).value;
+                  annotations.push(
+                    format === 'open-annotation'
+                      ? captureModelFieldToOpenAnnotation(entity.id, labelValue, entity.selector, defaultOptions)
+                      : captureModelFieldToW3CAnnotation(entity.id, labelValue, entity.selector, defaultOptions)
+                  );
+                }
                 entity.temp = entity.temp ? entity.temp : {};
                 entity.temp.EXTRACTED = true;
               }
@@ -213,6 +233,10 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
                 addSelectors: true,
                 normalisedValueLists: true,
               });
+
+              if (!serialised) {
+                return { id: m.id };
+              }
 
               serialised.id = m.id;
 

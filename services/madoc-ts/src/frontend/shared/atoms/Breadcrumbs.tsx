@@ -2,7 +2,6 @@ import styled, { css } from 'styled-components';
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { BreadcrumbDivider, BreadcrumbList, BreadcrumbItem as SiteBreadcrumbItem } from '../components/Breadcrumbs';
-import { LocaleString } from '../components/LocaleString';
 import { useSite } from '../hooks/use-site';
 
 export type BreadcrumbItem = {
@@ -12,8 +11,8 @@ export type BreadcrumbItem = {
 };
 
 export const BreadcrumbContainer = styled.div<{ background?: string; color?: string; padding?: string }>`
-  background: ${props => (props.background ? props.background : `#2D70F9`)};
-  color: ${props => (props.color ? props.color : `#2D70F9`)};
+  background: ${props => (props.background ? props.background : `#485C9B`)};
+  color: ${props => (props.color ? props.color : `#fff`)};
   display: flex;
   padding: ${props => (props.padding ? props.padding : `0.5em 1.2em`)};
   font-size: 0.9em;

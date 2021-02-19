@@ -54,6 +54,7 @@ export function getSingleCollection({
     manifest_canvas_count: number;
     collection_manifest_count: number;
     manifest_thumbnail: string;
+    published: boolean;
   }>`
       with site_counts as (select * from iiif_derived_resource_item_counts where site_id = ${siteId})
       select ${collectionId}::int                                  as collection_id,
@@ -62,7 +63,8 @@ export function getSingleCollection({
              manifest_count.item_total                             as collection_manifest_count,
              resource.type                                         as resource_type,
              resource.id                                           as resource_id,
-             manifest_thumbnail(${siteId}, manifest_links.item_id) as manifest_thumbnail
+             manifest_thumbnail(${siteId}, manifest_links.item_id) as manifest_thumbnail,
+             single_collection.published                           as published
       
       from iiif_derived_resource single_collection
                left join iiif_derived_resource_items manifest_links 
@@ -97,35 +99,39 @@ function selectCollections({
   parentCollectionId,
   hideFlat = true,
   siteId,
+  onlyPublished,
 }: {
   siteId: number;
   page?: number;
   perPage?: number;
   hideFlat?: boolean;
   parentCollectionId?: number;
+  onlyPublished?: boolean;
 }) {
   const offset = (page - 1) * perPage;
 
   if (parentCollectionId) {
     return sql`
-      select cidr.resource_id as collection_id
+      select cidr.resource_id as collection_id, cidr.published as published
       from iiif_derived_resource cidr
-      left join iiif_derived_resource_items cidri on cidr.id = cidri.item_id
+      left join iiif_derived_resource_items cidri on cidr.resource_id = cidri.item_id
       where resource_type = 'collection'  
         and cidr.site_id = ${siteId}
         and cidri.site_id = ${siteId}
         ${hideFlat ? sql`and cidr.flat = false` : SQL_EMPTY}
+        ${onlyPublished ? sql`and cidr.published = true` : SQL_EMPTY}
         and cidri.resource_id = ${parentCollectionId} 
       limit ${perPage} offset ${offset}
     `;
   }
 
   return sql`
-    select cidr.resource_id as collection_id
+    select cidr.resource_id as collection_id, cidr.published as published
     from iiif_derived_resource cidr
     where resource_type = 'collection'  
       and cidr.site_id = ${siteId}
       ${hideFlat ? sql`and cidr.flat = false` : SQL_EMPTY}
+      ${onlyPublished ? sql`and cidr.published = true` : SQL_EMPTY}
     limit ${perPage} offset ${offset}
   `;
 }
@@ -135,11 +141,13 @@ export function getCollectionList({
   page = 0,
   perPage = 24,
   parentCollectionId,
+  onlyPublished,
 }: {
   siteId: number;
   page?: number;
   perPage?: number;
   parentCollectionId?: number;
+  onlyPublished?: boolean;
 }) {
   return sql<{
     collection_id: number;
@@ -155,8 +163,15 @@ export function getCollectionList({
             manifest_links.type as resource_type,
             canvas_count.item_total                       as manifest_canvas_count,
             manifest_count.item_total                     as collection_manifest_count,
-            manifest_thumbnail(${siteId}, manifest_links.item_id) as manifest_thumbnail
-     from (${selectCollections({ parentCollectionId, siteId, perPage, page })}) collection(collection_id)
+            manifest_thumbnail(${siteId}, manifest_links.item_id) as manifest_thumbnail,
+            collection.published                          as published
+     from (${selectCollections({
+       parentCollectionId,
+       siteId,
+       perPage,
+       page,
+       onlyPublished,
+     })}) collection(collection_id, published)
               left join (select im.item_id, im.resource_id, ir.type
                          from iiif_derived_resource_items im
                             left join iiif_resource ir on im.item_id = ir.id
@@ -183,6 +198,7 @@ export function getCollectionSnippets(
             collections_aggregation.manifest_canvas_count as canvas_count,
             collections_aggregation.collection_manifest_count as manifest_count,
             collections_aggregation.resource_type as resource_type,
+            collections_aggregation.published as published,
             metadata.id as metadata_id,
             metadata.key,
             metadata.value,

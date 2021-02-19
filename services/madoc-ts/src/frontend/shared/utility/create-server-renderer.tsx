@@ -5,6 +5,8 @@ import { ServerStyleSheet } from 'styled-components';
 import { ApiClient } from '../../../gateway/api';
 import { StaticRouterContext } from 'react-router';
 import { parse } from 'query-string';
+import { api } from '../../../gateway/api.server';
+import { ListLocalisationsResponse } from '../../../routes/admin/localisation';
 import { PublicSite } from '../../../utility/omeka-api';
 import { queryConfig } from './query-config';
 import { matchUniversalRoutes } from './server-utils';
@@ -13,13 +15,17 @@ import { I18nextProvider } from 'react-i18next';
 import { StaticRouter } from 'react-router-dom';
 import React from 'react';
 import { UniversalRoute } from '../../types';
+import { Helmet } from 'react-helmet';
+import localeCodes from 'locale-codes';
 
 export function createServerRenderer(
   RootApplication: React.FC<{
     api: ApiClient;
     routes: UniversalRoute[];
     site: PublicSite;
-    user?: { name: string; id: number };
+    user?: { name: string; id: number; scope: string[] };
+    supportedLocales: Array<{ label: string; code: string }>;
+    defaultLocale: string;
   }>,
   routes: UniversalRoute[],
   apiGateway: string,
@@ -32,6 +38,7 @@ export function createServerRenderer(
     i18next,
     siteSlug,
     site,
+    siteLocales,
     user,
   }: {
     url: string;
@@ -39,12 +46,13 @@ export function createServerRenderer(
     jwt: string;
     i18next: i18n;
     siteSlug?: string;
-    site?: Promise<PublicSite | undefined>;
-    user?: { name: string; id: number };
+    site?: PublicSite | Promise<PublicSite | undefined>;
+    user?: { name: string; id: number; scope: string[] };
+    siteLocales: ListLocalisationsResponse;
   }) {
     const prefetchCache = makeQueryCache();
     const sheet = new ServerStyleSheet(); // <-- creating out stylesheet
-    const api = new ApiClient({
+    const userApi = new ApiClient({
       gateway: apiGateway,
       jwt,
       publicSiteSlug: siteSlug,
@@ -59,16 +67,27 @@ export function createServerRenderer(
       if (route.component.getKey && route.component.getData) {
         requests.push(
           prefetchCache.prefetchQuery(route.component.getKey(match.params, queryString), (key, vars) =>
-            route.component.getData ? route.component.getData(key, vars, api) : (undefined as any)
+            route.component.getData ? route.component.getData(key, vars, userApi) : (undefined as any)
           )
         );
       }
     }
+
     await Promise.all(requests);
     const omekaSite = await site;
     const dehydratedState = dehydrate(prefetchCache);
+    const supportedLocales = siteLocales.localisations.map(ln => {
+      const label = localeCodes.getByTag(ln.code).name;
+      return { label: label, code: ln.code };
+    });
+
     const routeData = `
-      <script type="application/json" id="react-omeka">${JSON.stringify({ site: omekaSite, user })}</script>
+      <script type="application/json" id="react-omeka">${JSON.stringify({
+        site: omekaSite,
+        user,
+        locales: supportedLocales,
+        defaultLocale: siteLocales.defaultLanguage || 'en',
+      })}</script>
       <script type="application/json" id="react-query-cache">${JSON.stringify(dehydratedState)}</script>
     `;
 
@@ -86,7 +105,14 @@ export function createServerRenderer(
             <Hydrate state={dehydratedState}>
               <I18nextProvider i18n={i18next}>
                 <StaticRouter basename={basename} location={url} context={context}>
-                  {<RootApplication api={api} routes={routes} site={omekaSite as any} user={user} />}
+                  <RootApplication
+                    api={api}
+                    routes={routes}
+                    site={omekaSite as any}
+                    user={user}
+                    defaultLocale={siteLocales.defaultLanguage || 'en'}
+                    supportedLocales={supportedLocales}
+                  />
                 </StaticRouter>
               </I18nextProvider>
             </Hydrate>
@@ -94,6 +120,7 @@ export function createServerRenderer(
         </ReactQueryConfigProvider>
       )
     );
+    const helmet = Helmet.renderStatic();
 
     if (context.url) {
       return {
@@ -110,29 +137,48 @@ export function createServerRenderer(
     if (process.env.NODE_ENV === 'production') {
       return {
         type: 'document',
-        html: `
-    ${styles}
-    <div id="react-component">${markup}</div>
-    <script crossorigin src="https://unpkg.com/whatwg-fetch@3.0.0/dist/fetch.umd.js"></script>
-    <script crossorigin src="https://unpkg.com/react@16.13.1/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@16.13.1/umd/react-dom.production.min.js"></script>
-    <script type="application/json" id="react-data">${JSON.stringify({ basename })}</script>
-    ${routeData}
-  `,
+        html: `<!doctype html>
+<html ${helmet.htmlAttributes.toString()}>
+    <head>
+        ${helmet.title.toString()}
+        ${helmet.meta.toString()}
+        ${helmet.link.toString()}
+        ${styles}
+    </head>
+    <body ${helmet.bodyAttributes.toString()}>
+        <div id="react-component">${markup}</div>
+        
+        
+        <script crossorigin src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.0.0/dist/fetch.umd.js"></script>
+        <script crossorigin src="https://cdn.jsdelivr.net/npm/react@16.13.1/umd/react.production.min.js"></script>
+        <script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@16.13.1/umd/react-dom.production.min.js"></script>
+        <script type="application/json" id="react-data">${JSON.stringify({ basename })}</script>
+        ${routeData}
+    </body>
+</html>`,
       };
     }
 
     return {
       type: 'document',
-      html: `
-    ${styles}
-    <div id="react-component">${markup}</div>
-    <script crossorigin src="https://unpkg.com/whatwg-fetch@3.0.0/dist/fetch.umd.js"></script>
-    <script crossorigin src="https://unpkg.com/react@16.13.1/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@16.13.1/umd/react-dom.development.js"></script>
-    <script type="application/json" id="react-data">${JSON.stringify({ basename })}</script>
-    ${routeData}
-  `,
+      html: `<!doctype html>
+<html ${helmet.htmlAttributes.toString()}>
+    <head>
+        ${helmet.title.toString()}
+        ${helmet.meta.toString()}
+        ${helmet.link.toString()}
+        ${styles}
+    </head>
+    <body ${helmet.bodyAttributes.toString()}>
+        <div id="react-component">${markup}</div>
+
+        <script crossorigin src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.0.0/dist/fetch.umd.js"></script>
+        <script crossorigin src="https://cdn.jsdelivr.net/npm/react@16.13.1/umd/react.development.js"></script>
+        <script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@16.13.1/umd/react-dom.development.js"></script>
+        <script type="application/json" id="react-data">${JSON.stringify({ basename })}</script>
+        ${routeData}
+    </body>
+</html>`,
     };
   };
 }
