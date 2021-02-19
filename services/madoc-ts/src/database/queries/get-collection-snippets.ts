@@ -110,7 +110,7 @@ function selectCollections({
     return sql`
       select cidr.resource_id as collection_id
       from iiif_derived_resource cidr
-      left join iiif_derived_resource_items cidri on cidr.id = cidri.item_id
+      left join iiif_derived_resource_items cidri on cidr.resource_id = cidri.item_id
       where resource_type = 'collection'  
         and cidr.site_id = ${siteId}
         and cidri.site_id = ${siteId}
