@@ -225,8 +225,11 @@ export function getManifestList({
     from iiif_derived_resource manifests
     left join site_counts canvas_count
          on canvas_count.resource_id = manifests.resource_id
+    left join iiif_metadata im
+         on manifests.resource_id = im.resource_id and im.site_id = ${siteId} and im.key = 'label'
     where manifests.resource_type = 'manifest' 
       and manifests.site_id = ${siteId}
+      and im.resource_id is not null
       limit ${manifestCount} offset ${(page - 1) * manifestCount}
   `;
 }
