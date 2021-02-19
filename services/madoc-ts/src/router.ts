@@ -7,6 +7,8 @@ import { getMetadataConfiguration, updateMetadataConfiguration } from './routes/
 import { getSiteDetails } from './routes/admin/site-details';
 import { updateSiteConfiguration } from './routes/admin/update-site-configuration';
 import { getCanvasPlaintext } from './routes/iiif/canvases/get-canvas-plaintext';
+import { publishCollection } from './routes/iiif/collections/publish-collection';
+import { publishManifest } from './routes/iiif/manifests/publish-manifest';
 import { batchIndex } from './routes/search/batch-index';
 import { getFacetConfiguration, updateFacetConfiguration } from './routes/search/facet-configuration';
 import { siteConfiguration } from './routes/site/site-configuration';
@@ -121,6 +123,7 @@ export const router = new TypedRouter({
   'get-collection': [TypedRouter.GET, '/api/madoc/iiif/collections/:id', getCollection],
   'create-collection': [TypedRouter.POST, '/api/madoc/iiif/collections', createCollection, 'CreateCollection'],
   'delete-collection': [TypedRouter.DELETE, '/api/madoc/iiif/collections/:id', deleteCollection],
+  'publish-collection': [TypedRouter.POST, '/api/madoc/iiif/collections/:id/publish', publishCollection],
   'get-collection-metadata': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/metadata', getCollectionMetadata],
   'get-collection-structure': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/structure', getCollectionStructure],
   'get-collection-projects': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/projects', getCollectionProjects],
@@ -158,6 +161,7 @@ export const router = new TypedRouter({
   'get-manifest': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id', getManifest],
   'create-manifest': [TypedRouter.POST, '/api/madoc/iiif/manifests', createManifest, 'CreateManifest'],
   'delete-manifest': [TypedRouter.DELETE, '/api/madoc/iiif/manifests/:id', deleteManifest],
+  'publish-manifest': [TypedRouter.POST, '/api/madoc/iiif/manifests/:id/publish', publishManifest],
   'get-manifest-metadata': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/metadata', getManifestMetadata],
   'get-manifest-structure': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/structure', getManifestStructure],
   'get-manifest-projects': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/projects', getManifestProjects],

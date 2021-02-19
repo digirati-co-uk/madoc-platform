@@ -23,12 +23,12 @@ export const siteCollections: RouteMiddleware<{ slug: string }> = async context 
     // Get project collection id passing in page, and asking for only collections.
     // return collection id.
     context.response.status = 200;
-    context.response.body = await siteApi.getCollections(page, project.collection_id);
+    context.response.body = await siteApi.getCollections(page, project.collection_id, true);
 
     return;
   }
 
   // Get all collections from a site, passing in page.
   context.response.status = 200;
-  context.response.body = await siteApi.getCollections(page);
+  context.response.body = await siteApi.getCollections(page, undefined, true);
 };

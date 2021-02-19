@@ -9,6 +9,7 @@ export type CollectionFull = {
     metadata?: Array<MetadataItem>;
     requiredStatement?: MetadataItem;
     summary?: InternationalString;
+    published?: boolean;
     items: Array<{
       id: number;
       type: string;

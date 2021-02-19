@@ -1,9 +1,13 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useMutation } from 'react-query';
+import { Button } from '../../../../shared/atoms/Button';
+import { useApi } from '../../../../shared/hooks/use-api';
 import { UniversalComponent } from '../../../../types';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { ManifestFull } from '../../../../../types/schemas/manifest-full';
 import { useParams } from 'react-router-dom';
+import { PublishManifest } from '../../../features/publish-manifest';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
 import { WidePage } from '../../../../shared/atoms/WidePage';
@@ -21,8 +25,7 @@ export const ManifestView: UniversalComponent<ManifestViewType> = createUniversa
   ({ route }) => {
     const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
-    const { resolvedData, status } = usePaginatedData(ManifestView);
-
+    const { resolvedData } = usePaginatedData(ManifestView);
     const { manifest, pagination } = resolvedData || {};
 
     const title = manifest ? <LocaleString>{manifest.label}</LocaleString> : '...';
