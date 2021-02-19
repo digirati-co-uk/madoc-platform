@@ -602,13 +602,23 @@ export class ApiClient {
   }
 
   // IIIF.
-  async getCollections(page = 0, parent?: number) {
-    return this.request<CollectionListResponse>(`/api/madoc/iiif/collections?${stringify({ page, parent })}`);
+  async getCollections(page = 0, parent?: number, onlyPublished?: boolean) {
+    return this.request<CollectionListResponse>(
+      `/api/madoc/iiif/collections?${stringify({ page, parent, published: onlyPublished })}`
+    );
   }
 
-  async getManifests(page = 0, { parent, filter, query }: { parent?: number; filter?: string; query?: string } = {}) {
+  async getManifests(
+    page = 0,
+    {
+      parent,
+      filter,
+      query,
+      onlyPublished,
+    }: { parent?: number; filter?: string; query?: string; onlyPublished?: boolean } = {}
+  ) {
     return this.request<ManifestListResponse>(
-      `/api/madoc/iiif/manifests?${stringify({ page, parent, filter, query })}`
+      `/api/madoc/iiif/manifests?${stringify({ page, parent, filter, query, published: onlyPublished })}`
     );
   }
 
@@ -790,6 +800,24 @@ export class ApiClient {
     return this.request<void>(`/api/madoc/iiif/manifests/${id}/metadata`, {
       method: 'PUT',
       body: request,
+    });
+  }
+
+  async publishManifest(id: number, isPublished = true) {
+    return this.request<void>(`/api/madoc/iiif/manifests/${id}/publish`, {
+      method: 'POST',
+      body: {
+        isPublished,
+      },
+    });
+  }
+
+  async publishCollection(id: number, isPublished = true) {
+    return this.request<void>(`/api/madoc/iiif/collections/${id}/publish`, {
+      method: 'POST',
+      body: {
+        isPublished,
+      },
     });
   }
 

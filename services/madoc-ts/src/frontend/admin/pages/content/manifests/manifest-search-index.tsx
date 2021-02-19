@@ -5,6 +5,7 @@ import { useApi } from '../../../../shared/hooks/use-api';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { useParams } from 'react-router-dom';
+import { useIndexResource } from '../../../hooks/use-index-resource';
 import { EditManifestStructure } from './edit-manifest-structure';
 
 type ManifestSearchIndexType = {
@@ -19,24 +20,9 @@ export const ManifestSearchIndex = createUniversalComponent<ManifestSearchIndexT
     const { data, isError, refetch } = useData(ManifestSearchIndex, {}, { retry: 0 });
     const { data: structure } = useData(EditManifestStructure);
     const { id } = useParams<{ id: string }>();
-    const [percent, setPercent] = useState(0);
     const totalCanvases = structure?.items.length || 0;
-
-    const api = useApi();
-    const [indexContext, { isLoading }] = useMutation(async () => {
-      await api.wrapTask(
-        api.batchIndexResources([{ id: Number(id), type: 'manifest' }], { recursive: true }),
-        async () => {
-          await refetch();
-        },
-        {
-          progress: remaining => {
-            if (totalCanvases) {
-              setPercent(Math.floor(((totalCanvases - remaining) / totalCanvases) * 100));
-            }
-          },
-        }
-      );
+    const [indexContext, { isLoading, percent }] = useIndexResource(Number(id), 'manifest', totalCanvases, async () => {
+      await refetch();
     });
 
     if (isError) {

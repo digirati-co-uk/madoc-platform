@@ -3,6 +3,7 @@ import { ManifestFull } from '../../../../../types/schemas/manifest-full';
 import { UniversalComponent } from '../../../../types';
 import { useTranslation } from 'react-i18next';
 import { LocaleString } from '../../../../shared/components/LocaleString';
+import { PublishManifest } from '../../../features/publish-manifest';
 import { Pagination } from '../../../molecules/Pagination';
 import { ImageStripBox } from '../../../../shared/atoms/ImageStrip';
 import { CroppedImage } from '../../../../shared/atoms/Images';
@@ -32,6 +33,7 @@ export const ManifestCanvases: UniversalComponent<ManifestViewType> = createUniv
 
     return (
       <>
+        <PublishManifest />
         <Pagination
           page={data ? data.pagination.page : 1}
           totalPages={data ? data.pagination.totalPages : 1}

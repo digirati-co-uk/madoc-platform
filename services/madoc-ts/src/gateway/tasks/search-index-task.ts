@@ -141,6 +141,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       const [resources] = task.parameters;
 
       if (resources.length !== 1) {
+        await api.updateTask(taskId, { status: 3 });
         break;
       }
 

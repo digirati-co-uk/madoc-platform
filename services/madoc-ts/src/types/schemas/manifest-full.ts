@@ -9,6 +9,7 @@ export type ManifestFull = {
     metadata?: Array<MetadataItem>;
     requiredStatement?: MetadataItem;
     summary?: InternationalString;
+    published?: boolean;
     items: Array<{
       id: number;
       label: InternationalString;

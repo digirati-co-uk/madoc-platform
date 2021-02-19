@@ -1,4 +1,4 @@
-import { sql } from 'slonik';
+import { castBool } from '../../../utility/cast-bool';
 import { optionalUserWithScope } from '../../../utility/user-with-scope';
 import { CollectionListResponse } from '../../../types/schemas/collection-list';
 import { RouteMiddleware } from '../../../types/route-middleware';
@@ -7,7 +7,6 @@ import {
   getCollectionSnippets,
   mapCollectionSnippets,
 } from '../../../database/queries/get-collection-snippets';
-import { SQL_INT_ARRAY } from '../../../utility/postgres-tags';
 import { countResources } from '../../../database/queries/resource-queries';
 import { getResourceCount } from '../../../database/queries/count-queries';
 
@@ -17,7 +16,15 @@ export const listCollections: RouteMiddleware<{ page: number }> = async context 
 
   const collectionCount = 5;
   const page = Number(context.query.page) || 1;
-  const { total = 0 } = await context.connection.one(countResources('collection', siteId, parent));
+  const onlyPublished = castBool(context.query.published);
+  const { total = 0 } = await context.connection.one(
+    countResources({
+      resource_type: 'collection',
+      site_id: siteId,
+      parent_id: parent,
+      onlyPublished,
+    })
+  );
   const totalPages = Math.ceil(total / collectionCount);
 
   const rows = await context.connection.any(
@@ -27,6 +34,7 @@ export const listCollections: RouteMiddleware<{ page: number }> = async context 
         perPage: collectionCount,
         page,
         parentCollectionId: parent,
+        onlyPublished,
       }),
       {
         siteId: Number(siteId),

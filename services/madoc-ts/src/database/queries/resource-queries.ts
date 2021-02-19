@@ -5,13 +5,21 @@ export function countSubQuery(query: SqlSqlTokenType<{ resource_id: number }>) {
   return sql`with t (resource_id) as (${query}) select COUNT(*) from t left join iiif_derived_resource_items ri on t.resource_id = ri.item_id group by ri.resource_id`;
 }
 
-export function countResources(
-  resource_type: string,
-  site_id: number,
-  parent_id?: number,
-  showFlat = false,
-  labelQuery?: string
-) {
+export function countResources({
+  labelQuery,
+  parent_id,
+  resource_type,
+  site_id,
+  showFlat,
+  onlyPublished,
+}: {
+  resource_type: string;
+  site_id: number;
+  parent_id?: number;
+  showFlat?: boolean;
+  onlyPublished?: boolean;
+  labelQuery?: string;
+}) {
   if (parent_id) {
     return sql<{ total: number }>`
     select count(*) as total
@@ -21,6 +29,7 @@ export function countResources(
       where cidr.resource_type = ${resource_type} 
       and cidr.site_id = ${site_id}
       ${showFlat ? SQL_EMPTY : sql`and cidr.flat = false`}
+      ${onlyPublished ? SQL_EMPTY : sql`and cidr.published = true`}
       and cidri.resource_id = ${parent_id}
   `;
   }
@@ -36,6 +45,7 @@ export function countResources(
       and im.resource_id is not null
       and iiif_derived_resource.site_id = ${site_id}
       ${showFlat ? SQL_EMPTY : sql`and flat = false`}
+      ${onlyPublished ? SQL_EMPTY : sql`and published = true`}
   `;
   }
 
@@ -45,6 +55,7 @@ export function countResources(
       where resource_type = ${resource_type} 
       and site_id = ${site_id}
       ${showFlat ? SQL_EMPTY : sql`and flat = false`}
+      ${onlyPublished ? SQL_EMPTY : sql`and published = true`}
   `;
 }
 
