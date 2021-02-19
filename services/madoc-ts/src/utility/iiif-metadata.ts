@@ -93,7 +93,7 @@ export function mapMetadata<
   },
   M extends MetadataField = MetadataField,
   Base extends any = any
->(fields: M[], createRow?: (field: M) => Base): (Base & T)[] {
+>(fields: readonly M[], createRow?: (field: M) => Base): (Base & T)[] {
   const order: number[] = [];
   for (const fid of fields) {
     if (order.indexOf(fid.resource_id) === -1) {

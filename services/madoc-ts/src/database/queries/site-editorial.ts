@@ -412,7 +412,7 @@ export function pageSlotReducer<
     | (SlotJoinedProperties & BlockJoinedProperties)
     | BlockJoinedProperties
     | PageJoinedColumns
->(results: Array<T>) {
+>(results: ReadonlyArray<T>) {
   const page: PageSlotReducer = {
     pages: {},
     slots: {},

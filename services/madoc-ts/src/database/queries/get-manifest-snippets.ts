@@ -1,8 +1,8 @@
-import { sql, SqlSqlTokenType } from 'slonik';
+import { sql, TaggedTemplateLiteralInvocationType } from 'slonik';
 import { metadataReducer } from '../../utility/iiif-metadata';
 import { SQL_EMPTY, SQL_INT_ARRAY } from '../../utility/postgres-tags';
 
-type ManifestAggregate = SqlSqlTokenType<{
+type ManifestAggregate = TaggedTemplateLiteralInvocationType<{
   manifest_id: number;
   canvas_id: number;
   canvas_count: number;
@@ -108,7 +108,9 @@ export function getManifestSnippets(
   `;
 }
 
-export function getCanvasFilter(filterId: string): SqlSqlTokenType<{ resource_id: number }> | undefined {
+export function getCanvasFilter(
+  filterId: string
+): TaggedTemplateLiteralInvocationType<{ resource_id: number }> | undefined {
   switch (filterId) {
     case 'ocr_alto':
       return sql`
@@ -154,7 +156,7 @@ export function getManifestList({
   manifestCount: number;
   parentId?: number;
   onlyPublished?: boolean;
-  canvasSubQuery?: SqlSqlTokenType<{ resource_id: number }>;
+  canvasSubQuery?: TaggedTemplateLiteralInvocationType<{ resource_id: number }>;
   labelQuery?: string;
 }) {
   if (canvasSubQuery) {
@@ -242,7 +244,7 @@ export function getManifestList({
   `;
 }
 
-export function mapManifestSnippets(rows: ManifestSnippetsRow[]) {
+export function mapManifestSnippets(rows: readonly ManifestSnippetsRow[]) {
   return rows.reduce(
     (state, row) => {
       if (state.metadata_ids.indexOf(row.metadata_id) !== -1) {

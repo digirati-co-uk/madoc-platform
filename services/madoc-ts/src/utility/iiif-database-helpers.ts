@@ -1,4 +1,4 @@
-import { sql, SqlSqlTokenType } from 'slonik';
+import { sql, TaggedTemplateLiteralInvocationType } from 'slonik';
 
 export type GetMetadataRow = {
   resource_id: number;
@@ -9,7 +9,11 @@ export type GetMetadataRow = {
   source: string;
 };
 
-export const getMetadata = <T, R = any>(query: SqlSqlTokenType<T>, sid: number, keys?: string[]) => sql<R>`
+export const getMetadata = <T, R = any>(
+  query: TaggedTemplateLiteralInvocationType<T>,
+  sid: number,
+  keys?: string[]
+) => sql<R>`
       select ifd.*,
              im.key,
              im.value,
