@@ -60,9 +60,14 @@ export const ContinueCanvasSubmission: React.FC = () => {
             <LocaleString>{project.summary}</LocaleString>
           </ProjectListingDescription>
           {!continueCount ? (
-            <ProjectListingDescription>You have already completed this item</ProjectListingDescription>
+            <ProjectListingDescription>{t('You have already completed this item')}</ProjectListingDescription>
           ) : null}
-          <Button as={HrefLink} href={createLink({ canvasId, subRoute: 'model' })} style={{ display: 'inline-block' }}>
+          <Button
+            $primary
+            as={HrefLink}
+            href={createLink({ canvasId, subRoute: 'model' })}
+            style={{ display: 'inline-block' }}
+          >
             {continueCount ? t('Continue submission ({{count}})', { count: continueCount }) : t('Add new submission')}
           </Button>
         </ProjectListingItem>
@@ -87,6 +92,7 @@ export const ContinueCanvasSubmission: React.FC = () => {
         {!isLoading ? (
           canContribute && canClaimCanvas ? (
             <Button
+              $primary
               as={HrefLink}
               href={createLink({ canvasId, subRoute: 'model' })}
               style={{ display: 'inline-block' }}

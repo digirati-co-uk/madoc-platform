@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useHistory } from 'react-router-dom';
 import { ApiClient } from '../../gateway/api';
 import { useTranslation } from 'react-i18next';
 import { PublicSite } from '../../utility/omeka-api';

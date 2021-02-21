@@ -22,7 +22,7 @@ export const AllProjects: React.FC = () => {
         <ProjectContainer $status={project.status} key={project.id}>
           <LocaleString as={Heading3}>{project.label}</LocaleString>
           <LocaleString as={Subheading3}>{project.summary}</LocaleString>
-          <Button as={Link} to={createLink({ projectId: project.slug })}>
+          <Button $primary as={Link} to={createLink({ projectId: project.slug })}>
             {t('Go to project')}
           </Button>
           <ProjectStatus status={project.status} />

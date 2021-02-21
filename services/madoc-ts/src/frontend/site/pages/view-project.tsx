@@ -48,7 +48,7 @@ export const ViewProject: React.FC<Partial<{
       <LocaleString as={Subheading1}>{project.summary}</LocaleString>
 
       <ButtonRow>
-        <GoToRandomCanvas label={{ none: [t('Start contributing')] }} navigateToModel />
+        <GoToRandomCanvas $primary label={{ none: [t('Start contributing')] }} navigateToModel />
         <Button as={Link} to={`/projects/${project.slug}/search`}>
           {t('Search this project')}
         </Button>

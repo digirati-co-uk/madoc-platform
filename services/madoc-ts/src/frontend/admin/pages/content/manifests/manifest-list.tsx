@@ -74,7 +74,7 @@ export const ManifestList: UniversalComponent<ManifestListType> = createUniversa
                       onChange={e => setSearch(e.currentTarget.value)}
                     />
                   </ExpandGrid>
-                  <Button style={{ padding: '0.34em 1em' }} type="submit">
+                  <Button $primary $inlineInput type="submit">
                     {t('Search')}
                   </Button>
                 </GridContainer>

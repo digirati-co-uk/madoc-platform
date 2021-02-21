@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import {
   AdminMenuContainer,
   AdminMenuItem,
@@ -26,20 +26,33 @@ import { HrefLink } from '../../shared/utility/href-link';
 
 export const AdminSidebar: React.FC = () => {
   const site = useSite();
-  const { location } = useHistory();
+  const location = useLocation();
   const { t } = useTranslation();
 
-  const isDashboard = location.pathname === '/';
-  const isManageCollections =
-    location.pathname.startsWith('/collections') || location.pathname.startsWith('/import/collection');
-  const isManageManifests =
-    location.pathname.startsWith('/manifests') ||
-    location.pathname.startsWith('/import/manifest') ||
-    location.pathname.startsWith('/enrichment/ocr');
-  const isProjects = location.pathname.startsWith('/projects');
-  const isSearchIndexing = location.pathname.startsWith('/enrichment/search-indexing');
-  const isSiteConfiguration = location.pathname.startsWith('/configure');
-  const isLocalisation = location.pathname.startsWith('/i18n');
+  const pathname = location.pathname;
+
+  const {
+    isSiteConfiguration,
+    isSearchIndexing,
+    isProjects,
+    isManageCollections,
+    isDashboard,
+    isManageManifests,
+    isLocalisation,
+  } = useMemo(() => {
+    return {
+      isDashboard: pathname === '/',
+      isManageCollections: pathname.startsWith('/collections') || pathname.startsWith('/import/collection'),
+      isManageManifests:
+        pathname.startsWith('/manifests') ||
+        pathname.startsWith('/import/manifest') ||
+        pathname.startsWith('/enrichment/ocr'),
+      isProjects: pathname.startsWith('/projects'),
+      isSearchIndexing: pathname.startsWith('/enrichment/search-indexing'),
+      isSiteConfiguration: pathname.startsWith('/configure'),
+      isLocalisation: pathname.startsWith('/i18n'),
+    };
+  }, [pathname]);
 
   return (
     <AdminSidebarContainer>

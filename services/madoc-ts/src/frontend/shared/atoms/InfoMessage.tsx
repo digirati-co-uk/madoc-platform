@@ -14,5 +14,6 @@ export const InfoMessage = styled.div.attrs(() => ({ 'data-cy': 'info-message' }
   ${Button} {
     background: #1136b8;
     border-color: #1136b8;
+    color: #fff;
   }
 `;

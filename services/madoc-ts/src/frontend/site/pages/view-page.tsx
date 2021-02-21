@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { SitePage } from '../../../types/site-pages-recursive';
 import { Heading1 } from '../../shared/atoms/Heading1';
@@ -17,11 +17,12 @@ type ViewPageProps = {
 export const ViewPage: React.FC<ViewPageProps> = ({ page, navigation, refetch }) => {
   // Page properties.
   const title = page.title;
+  const [isEditing, setIsEditing] = useState(false);
 
   return (
     <SlotProvider
       pagePath={page.path}
-      editable={true}
+      editable={isEditing}
       slots={page.slots}
       slug={page.path}
       context={{ page: page.id }}
@@ -33,7 +34,7 @@ export const ViewPage: React.FC<ViewPageProps> = ({ page, navigation, refetch })
       }}
     >
       <div>
-        <PageEditorBar />
+        <PageEditorBar isEditing={isEditing} onEdit={() => setIsEditing(e => !e)} />
         <DisplayBreadcrumbs />
         <h1>
           <LocaleString>{title}</LocaleString>

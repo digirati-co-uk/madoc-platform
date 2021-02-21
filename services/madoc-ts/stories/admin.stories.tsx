@@ -1,8 +1,27 @@
 import { useState } from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import styled from 'styled-components';
 import { AdminHeader } from '../src/frontend/admin/molecules/AdminHeader';
 import * as React from 'react';
+import { Button, ButtonRow } from '../src/frontend/shared/atoms/Button';
+import { EmptySlotActions, EmptySlotContainer, EmptySlotLabel } from '../src/frontend/shared/atoms/EmptySlot';
 import { GlobalHeader } from '../src/frontend/shared/atoms/GlobalHeader';
+import {
+  PageEditorActions,
+  PageEditorButton,
+  PageEditorContainer,
+  PageEditorDescription,
+  PageEditorTitle,
+} from '../src/frontend/shared/atoms/PageEditor';
+import {
+  SlotEditorButton,
+  SlotEditorContainer,
+  SlotEditorLabel,
+  SlotEditorLabelReadOnly,
+  SlotEditorReadOnly,
+  SlotEditorWhy,
+  SlotOutlineContainer,
+} from '../src/frontend/shared/atoms/SlotEditor';
 import { WidePage } from '../src/frontend/shared/atoms/WidePage';
 import { LightNavigation, LightNavigationItem } from '../src/frontend/shared/atoms/LightNavigation';
 import {
@@ -27,6 +46,7 @@ import {
   SiteSwitcherContainer,
   SiteSwitcherSiteName,
 } from '../src/frontend/shared/components/AdminMenu';
+import { ModalButton } from '../src/frontend/shared/components/Modal';
 import { SiteProvider } from '../src/frontend/shared/hooks/use-site';
 
 export default { title: 'Admin' };
@@ -46,6 +66,85 @@ export const adminHeader = () => (
     <AdminHeader title="My awesome project" />
   </MemoryRouter>
 );
+
+export const AdminPageBuilding = () => {
+  return (
+    <MemoryRouter>
+      <GlobalHeader
+        title={'Default site'}
+        username={'Some user'}
+        links={[
+          { label: 'Dashboard', link: '#' },
+          { label: 'View site', link: '#' },
+          { label: 'Account', link: '#' },
+          { label: 'Logout', link: '#' },
+        ]}
+      />
+      <WidePage>
+        <PageEditorContainer>
+          <PageEditorTitle>My great page</PageEditorTitle>
+          <PageEditorDescription>It has a description that is not very long yet.</PageEditorDescription>
+          <PageEditorDescription>
+            Parent page: <a href="#">My first page</a>
+          </PageEditorDescription>
+          <PageEditorActions>
+            <PageEditorButton>Add subpage</PageEditorButton>
+            <PageEditorButton>Edit page</PageEditorButton>
+            <PageEditorButton>Change layout</PageEditorButton>
+            <PageEditorButton>Navigation options</PageEditorButton>
+            <ModalButton
+              as={PageEditorButton}
+              title="Are you sure you want to delete this page?"
+              render={() => <div>Cannot be removed</div>}
+              footerAlignRight
+              renderFooter={({ close }) => {
+                return (
+                  <ButtonRow $noMargin>
+                    <PageEditorButton onClick={close}>Cancel</PageEditorButton>
+                    <Button onClick={close}>Remove</Button>
+                  </ButtonRow>
+                );
+              }}
+            >
+              Delete page
+            </ModalButton>
+          </PageEditorActions>
+        </PageEditorContainer>
+
+        <EmptySlotContainer>
+          <EmptySlotLabel>Empty slot</EmptySlotLabel>
+          <EmptySlotActions>
+            <PageEditorButton>Add content</PageEditorButton>
+            <PageEditorButton>Reuse existing slot</PageEditorButton>
+          </EmptySlotActions>
+        </EmptySlotContainer>
+
+        <SlotEditorReadOnly>
+          <SlotEditorLabelReadOnly>Footer</SlotEditorLabelReadOnly>
+          <SlotEditorButton>Customise</SlotEditorButton>
+        </SlotEditorReadOnly>
+        <SlotOutlineContainer>
+          <div>Some content here...</div>
+        </SlotOutlineContainer>
+
+        <SlotEditorContainer>
+          <SlotEditorLabel>Header</SlotEditorLabel>
+          <SlotEditorButton>Edit blocks</SlotEditorButton>
+          <SlotEditorButton>Add block</SlotEditorButton>
+          <SlotEditorButton>Change layout</SlotEditorButton>
+          <ModalButton as={SlotEditorButton} title="Advanced options" render={() => <div>Advanced</div>}>
+            Advanced options
+          </ModalButton>
+          <SlotEditorButton>Reset slot</SlotEditorButton>
+          <SlotEditorWhy>Why am I seeing this slot?</SlotEditorWhy>
+        </SlotEditorContainer>
+        <SlotOutlineContainer>
+          <div>Some content here...</div>
+        </SlotOutlineContainer>
+      </WidePage>
+    </MemoryRouter>
+  );
+};
 
 export const AdminHeaderWithBreadcrumbsAndMenu = () => (
   <MemoryRouter>

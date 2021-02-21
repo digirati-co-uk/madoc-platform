@@ -53,7 +53,7 @@ export const ProjectListing: React.FC<{
           </ProjectListingDescription>
           {onContribute ? <Button onClick={() => onContribute(project.id)}>{t('Contribute')}</Button> : null}
           {showLink ? (
-            <Button as={HrefLink} href={`/projects/${project.id}`}>
+            <Button $primary as={HrefLink} href={`/projects/${project.id}`}>
               {t('Go to project')}
             </Button>
           ) : null}

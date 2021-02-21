@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { ComponentPropsWithRef, forwardRef, PropsWithRef } from 'react';
 import { Helmet } from 'react-helmet';
 import styled, { css } from 'styled-components';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
@@ -15,11 +15,14 @@ export const _Heading1 = styled.h1<{ $margin?: boolean }>`
     `}
 `;
 
-export const Heading1: typeof _Heading1 = forwardRef(function Heading1(props: any, ref) {
+export const Heading1: React.FC<ComponentPropsWithRef<typeof _Heading1>> = forwardRef(function Heading1(
+  props: any,
+  ref
+) {
   const site = useSite();
   return (
     <>
-      {typeof props.children === 'string' ? (
+      {typeof props.children === 'string' && site ? (
         <Helmet>
           <title>
             {site.title} - {props.children}
@@ -44,7 +47,7 @@ blockEditorFor(Heading1, {
 
 export const Subheading1 = styled.div`
   font-size: 1em;
-  color: #999;
+  opacity: 0.8;
   margin-bottom: 1em;
   & a {
     color: #5071f4;

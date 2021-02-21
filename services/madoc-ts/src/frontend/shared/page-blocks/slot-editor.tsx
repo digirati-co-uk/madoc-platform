@@ -11,6 +11,16 @@ import { BlockCreator } from './block-creator';
 import { ExplainSlot } from './explain-slot';
 import { RenderBlock } from './render-block';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import {
+  SlotEditorLabelReadOnly,
+  SlotEditorContainer,
+  SlotEditorButton,
+  SlotEditorLabel,
+  SlotEditorReadOnly,
+  SlotEditorWhy,
+  SlotOutlineContainer,
+} from '../atoms/SlotEditor';
+import { EmptySlotActions, EmptySlotContainer, EmptySlotLabel } from '../atoms/EmptySlot';
 
 type SlotEditorProps = {
   slot: SiteSlot;
@@ -147,20 +157,18 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
   };
 
   return (
-    <SlotEditorWrapper isEditing={isEditing}>
-      <SlotLabelRow>
-        <SlotLabel>
-          Slot: <LocaleString as="strong">{props.slot.label}</LocaleString>
-        </SlotLabel>
-        <TinyButton
+    <>
+      <SlotEditorContainer>
+        <SlotEditorLabel>{props.slot.label || props.slot.slotId}</SlotEditorLabel>
+        <SlotEditorButton
           onClick={() => {
             setIsEditing(e => !e);
           }}
         >
           {isEditing ? 'Finish editing' : 'Edit blocks'}
-        </TinyButton>
+        </SlotEditorButton>
         <ModalButton
-          as={TinyButton}
+          as={SlotEditorButton}
           title="Add block"
           modalSize={'md'}
           render={({ close }) => (
@@ -176,66 +184,77 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
         >
           Add block
         </ModalButton>
+
+        {/* @todo */}
+        <SlotEditorButton>Change layout</SlotEditorButton>
+        <ModalButton as={SlotEditorButton} title="Advanced options" render={() => <div>Advanced</div>}>
+          Advanced options
+        </ModalButton>
+        <SlotEditorButton>Reset slot</SlotEditorButton>
+        {/* @todo */}
+
         <ModalButton
-          as={TinyButton}
+          as={SlotEditorWhy}
           title="Why am I seeing this slot?"
           modalSize={'md'}
           render={({ close }) => <ExplainSlot context={props.context} slot={props.slot} />}
         >
           Why am I seeing this slot?
         </ModalButton>
-      </SlotLabelRow>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="droppable">
-          {provided => (
-            <SlotLayout {...provided.droppableProps} ref={provided.innerRef}>
-              {orderedBlocks.map((block, idx) => {
-                if (isEditing) {
-                  return (
-                    <Draggable key={block.id} draggableId={`${block.id}`} index={idx}>
-                      {providedInner => (
-                        <EditingBlock key={block.id} ref={providedInner.innerRef} {...providedInner.draggableProps}>
-                          <EditingBlockActions>
-                            <TableHandle {...providedInner.dragHandleProps} />
-                          </EditingBlockActions>
-                          <EditingBlockContainer>
-                            <SlotLayout>
-                              <RenderBlock
-                                key={block.id}
-                                block={block}
-                                context={props.context}
-                                editable={true}
-                                showWarning={true}
-                              />
-                            </SlotLayout>
-                          </EditingBlockContainer>
-                          <EditingBlockActions>
-                            <TinyButton onClick={() => removeBlock(block.id)}>Remove</TinyButton>
-                          </EditingBlockActions>
-                        </EditingBlock>
-                      )}
-                    </Draggable>
-                  );
-                }
+      </SlotEditorContainer>
+      <SlotOutlineContainer>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="droppable">
+            {provided => (
+              <SlotLayout {...provided.droppableProps} ref={provided.innerRef}>
+                {orderedBlocks.map((block, idx) => {
+                  if (isEditing) {
+                    return (
+                      <Draggable key={block.id} draggableId={`${block.id}`} index={idx}>
+                        {providedInner => (
+                          <EditingBlock key={block.id} ref={providedInner.innerRef} {...providedInner.draggableProps}>
+                            <EditingBlockActions>
+                              <TableHandle {...providedInner.dragHandleProps} />
+                            </EditingBlockActions>
+                            <EditingBlockContainer>
+                              <SlotLayout>
+                                <RenderBlock
+                                  key={block.id}
+                                  block={block}
+                                  context={props.context}
+                                  editable={true}
+                                  showWarning={true}
+                                />
+                              </SlotLayout>
+                            </EditingBlockContainer>
+                            <EditingBlockActions>
+                              <TinyButton onClick={() => removeBlock(block.id)}>Remove</TinyButton>
+                            </EditingBlockActions>
+                          </EditingBlock>
+                        )}
+                      </Draggable>
+                    );
+                  }
 
-                return (
-                  <RenderBlock
-                    key={block.id}
-                    block={block}
-                    context={props.context}
-                    onUpdateBlock={() => {
-                      if (props.onUpdateSlot) {
-                        props.onUpdateSlot();
-                      }
-                    }}
-                  />
-                );
-              })}
-              {provided.placeholder}
-            </SlotLayout>
-          )}
-        </Droppable>
-      </DragDropContext>
-    </SlotEditorWrapper>
+                  return (
+                    <RenderBlock
+                      key={block.id}
+                      block={block}
+                      context={props.context}
+                      onUpdateBlock={() => {
+                        if (props.onUpdateSlot) {
+                          props.onUpdateSlot();
+                        }
+                      }}
+                    />
+                  );
+                })}
+                {provided.placeholder}
+              </SlotLayout>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </SlotOutlineContainer>
+    </>
   );
 };

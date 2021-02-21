@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { CloseIcon } from './CloseIcon';
 
 export const ModalBackground = styled.div`
@@ -76,10 +76,15 @@ export const ModalBody = styled.div`
   min-height: 300px;
 `;
 
-export const ModalFooter = styled.div`
+export const ModalFooter = styled.div<{ $footerAlignRight?: boolean }>`
   background: #eee;
   width: 100%;
   color: #fff;
   padding: 1em;
   display: flex;
+  ${props =>
+    props.$footerAlignRight &&
+    css`
+      flex-direction: row-reverse;
+    `}
 `;
