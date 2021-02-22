@@ -72,7 +72,9 @@ export const PageLoader: UniversalComponent<PageLoaderType> = createUniversalCom
           editable={user?.scope.indexOf('site.admin') !== -1}
           slots={data.page.slots}
           pagePath={data.page.path}
-          onUpdateSlot={() => refetch()}
+          onUpdateSlot={async () => {
+            await refetch();
+          }}
           context={context}
         >
           {renderUniversalRoutes(route.routes, { page: data.page, navigation: data.navigation, refetch })}
