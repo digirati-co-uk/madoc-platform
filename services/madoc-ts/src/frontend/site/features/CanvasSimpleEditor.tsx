@@ -1,5 +1,5 @@
 import { Runtime } from '@atlas-viewer/atlas';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ButtonRow } from '../../shared/atoms/Button';
 import { EditorSlots } from '../../shared/caputre-models/new/components/EditorSlots';

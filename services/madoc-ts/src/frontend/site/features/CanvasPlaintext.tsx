@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Button, ButtonRow } from '../../shared/atoms/Button';
@@ -39,9 +39,15 @@ export const CanvasPlaintext: React.FC<{ onSwitch?: () => void; switchLabel?: st
   onSwitch,
   switchLabel,
 }) => {
-  const { data } = useData(CanvasLoader);
+  const { data, isLoading } = useData(CanvasLoader);
   const { t } = useTranslation();
   const [fontMultiplier, setFontMultiplier] = useState(1);
+
+  useEffect(() => {
+    if (!isLoading && data && !data.plaintext && onSwitch) {
+      onSwitch();
+    }
+  }, [data, isLoading, onSwitch]);
 
   if (!data || !data.plaintext) {
     return null;
