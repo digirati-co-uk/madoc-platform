@@ -38,6 +38,7 @@ create table site_slots
     slot_id text not null,
     slot_label json,
     slot_layout text,
+    slot_props json,
 
     -- Filter projects
     filter_project_none boolean default true,

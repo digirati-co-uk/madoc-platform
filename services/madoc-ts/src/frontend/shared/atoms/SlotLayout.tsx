@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Surface, SurfaceProps } from './Surface';
 
 const StackSlotLayout = styled.div`
   display: flex;
@@ -12,12 +13,24 @@ const FlexSlotLayout = styled.div`
 `;
 
 export const SlotLayout = React.forwardRef(function SlotLayout(
-  { children, layout }: { layout?: 'none' | 'stack' | 'flex' | string; children: any },
+  {
+    children,
+    surfaceProps = {},
+    layout,
+  }: { layout?: 'none' | 'stack' | 'flex' | string; surfaceProps?: SurfaceProps; children: any },
   ref
 ) {
   if (layout === 'flex') {
-    return <FlexSlotLayout ref={ref as any}>{children}</FlexSlotLayout>;
+    return (
+      <Surface {...surfaceProps}>
+        <FlexSlotLayout ref={ref as any}>{children}</FlexSlotLayout>
+      </Surface>
+    );
   }
 
-  return <StackSlotLayout ref={ref as any}>{children}</StackSlotLayout>;
+  return (
+    <Surface {...surfaceProps}>
+      <StackSlotLayout ref={ref as any}>{children}</StackSlotLayout>
+    </Surface>
+  );
 });

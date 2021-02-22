@@ -7,7 +7,7 @@ import { CollectionLoader } from '../pages/loaders/collection-loader';
 
 export const CollectionTitle: React.FC = () => {
   const { collectionId } = useRouteContext();
-  const { data } = useStaticData(CollectionLoader, undefined, { enabled: !!collectionId });
+  const { data } = useStaticData(CollectionLoader, [collectionId], { enabled: !!collectionId });
   const collection = data?.collection;
 
   if (!collection) {

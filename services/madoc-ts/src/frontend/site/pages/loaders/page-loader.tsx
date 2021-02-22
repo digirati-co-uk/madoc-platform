@@ -1,3 +1,4 @@
+import { InternationalString } from '@hyperion-framework/types/iiif/descriptive';
 import React, { useMemo } from 'react';
 import { EditorialContext } from '../../../../types/schemas/site-page';
 import { SitePage } from '../../../../types/site-pages-recursive';
@@ -20,7 +21,19 @@ export type PageLoaderType = {
   params: { pagePath: string };
   variables: { pagePath: string };
   query: {};
-  data: { page: SitePage; navigation?: SitePage[] };
+  data: {
+    page: SitePage;
+    navigation?: SitePage[];
+    root?: {
+      id: number;
+      title: InternationalString;
+      parent_page?: number;
+      is_navigation_root: true;
+      depth: number;
+      path: string;
+      findPath: string[];
+    };
+  };
   context: any;
 };
 
@@ -77,7 +90,12 @@ export const PageLoader: UniversalComponent<PageLoaderType> = createUniversalCom
           }}
           context={context}
         >
-          {renderUniversalRoutes(route.routes, { page: data.page, navigation: data.navigation, refetch })}
+          {renderUniversalRoutes(route.routes, {
+            page: data.page,
+            navigation: data.navigation,
+            root: data.root,
+            refetch,
+          })}
         </SlotProvider>
       </BreadcrumbContext>
     );
@@ -87,9 +105,7 @@ export const PageLoader: UniversalComponent<PageLoaderType> = createUniversalCom
       return ['site-page', { pagePath: params.pagePath }];
     },
     getData: async (key, vars, api) => {
-      const page = await api.pageBlocks.getPage(vars.pagePath);
-      const navigation = await api.pageBlocks.getPageNavigation(vars.pagePath);
-      return { page, navigation: navigation.navigation };
+      return await api.pageBlocks.getPage(vars.pagePath);
     },
   }
 );

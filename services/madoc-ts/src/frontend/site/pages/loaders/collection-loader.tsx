@@ -61,7 +61,7 @@ export const CollectionLoader: UniversalComponent<CollectionLoaderType> = create
   },
   {
     getKey: (params, query) => {
-      const [collectionId, ...parentCollectionIds] = params.collectionId.split(',');
+      const [collectionId, ...parentCollectionIds] = (params.collectionId || '').split(',');
 
       return [
         'getSiteCollection',

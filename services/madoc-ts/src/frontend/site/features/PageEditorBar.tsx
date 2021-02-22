@@ -1,5 +1,5 @@
-import React from 'react';
-import { Button, ButtonRow } from '../../shared/atoms/Button';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
   PageEditorActions,
   PageEditorButton,
@@ -7,16 +7,24 @@ import {
   PageEditorDescription,
   PageEditorTitle,
 } from '../../shared/atoms/PageEditor';
+import { SuccessMessage } from '../../shared/atoms/SuccessMessage';
 import { LocaleString } from '../../shared/components/LocaleString';
-import { ModalButton } from '../../shared/components/Modal';
 import { useStaticData } from '../../shared/hooks/use-data';
+import { HrefLink } from '../../shared/utility/href-link';
 import { PageLoader } from '../pages/loaders/page-loader';
+import { AddSubpageButton } from './AddSubpageButton';
+import { DeletePageButton } from './DeletePageButton';
+import { EditPageLayoutButton } from './EditPageLayoutButton';
+import { EditPageMetadataButton } from './EditPageMetadataButton';
 
 export const PageEditorBar: React.FC<{
   isEditing: boolean;
   onEdit: () => void;
 }> = ({ isEditing, onEdit }) => {
-  const { data } = useStaticData(PageLoader);
+  const { data, refetch } = useStaticData(PageLoader);
+  const page = data?.page;
+  const [message, setMessage] = useState<any>();
+  const history = useHistory();
 
   // Data
   // - The page name + description
@@ -27,8 +35,6 @@ export const PageEditorBar: React.FC<{
   // - Parent page
   //
   // Actions
-  // - Add sub-page
-  // - Remove page
   // - Edit metadata
   // - Edit navigation options
   // - Choose layout
@@ -53,41 +59,44 @@ export const PageEditorBar: React.FC<{
   // - Delete page
   // - Delete slot
 
-  if (!data) {
+  if (!page) {
     return null;
   }
 
-  const page = data.page;
-
   return (
     <div>
-      {/*Page editor bar!*/}
-      {/*<pre>{JSON.stringify(page.data, null, 2)}</pre>*/}
+      {message ? <SuccessMessage>{message}</SuccessMessage> : null}
+
       <PageEditorContainer>
         <LocaleString as={PageEditorTitle}>{page.title}</LocaleString>
         <LocaleString as={PageEditorDescription}>{page.description}</LocaleString>
         {page.parentPage ? <PageEditorDescription>Parent page: {page.parentPage}</PageEditorDescription> : null}
         <PageEditorActions>
-          <PageEditorButton>Add subpage</PageEditorButton>
-          <PageEditorButton onClick={onEdit}>{isEditing ? 'Finish editing' : 'Edit page'}</PageEditorButton>
-          <PageEditorButton>Change layout</PageEditorButton>
-          <PageEditorButton>Navigation options</PageEditorButton>
-          <ModalButton
-            as={PageEditorButton}
-            title="Are you sure you want to delete this page?"
-            render={() => <div>Cannot be removed</div>}
-            footerAlignRight
-            renderFooter={({ close }) => {
-              return (
-                <ButtonRow $noMargin>
-                  <PageEditorButton onClick={close}>Cancel</PageEditorButton>
-                  <Button onClick={close}>Remove</Button>
-                </ButtonRow>
+          <AddSubpageButton
+            onCreate={newPage => {
+              refetch();
+              setMessage(
+                <div>
+                  Created page, <HrefLink href={newPage.path}>Go to page</HrefLink>
+                </div>
               );
             }}
-          >
-            Delete page
-          </ModalButton>
+          />
+          <PageEditorButton onClick={onEdit}>{isEditing ? 'Finish editing' : 'Edit page'}</PageEditorButton>
+          <EditPageMetadataButton
+            onUpdate={newPage => {
+              console.log({ newPage });
+              if (newPage.path !== page.path) {
+                console.log('path changed?');
+                history.replace(newPage.path);
+              } else {
+                refetch();
+              }
+            }}
+          />
+          <EditPageLayoutButton onUpdate={() => refetch()} />
+          <PageEditorButton>Navigation options</PageEditorButton>
+          <DeletePageButton />
         </PageEditorActions>
       </PageEditorContainer>
     </div>

@@ -8,6 +8,7 @@ import { LanguageSwitcher } from '../../shared/atoms/LanguageSwitcher';
 import { useApi, useIsApiRestarting } from '../../shared/hooks/use-api';
 import { useSite } from '../../shared/hooks/use-site';
 import { HrefLink } from '../../shared/utility/href-link';
+import { useSiteConfiguration } from './SiteConfigurationContext';
 
 const SiteHeader = styled.div`
   max-width: 1440px;

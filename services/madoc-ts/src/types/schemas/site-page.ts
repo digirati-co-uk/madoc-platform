@@ -14,6 +14,7 @@ export type SiteSlot = {
   slotId: string;
   label?: InternationalString;
   layout: string;
+  props?: any;
   filters?: {
     project?: SlotFilterConfig;
     collection?: SlotFilterConfig;
@@ -40,6 +41,7 @@ export type CreateNormalPageRequest = {
   navigationOptions?: {
     hide: boolean;
     root: boolean;
+    order: number;
   };
   searchable?: boolean;
   slug?: string;
@@ -57,6 +59,7 @@ export type CreateSlotRequest = {
   slotId: string;
   label?: InternationalString;
   layout: string;
+  props?: any;
   filters?: {
     project?: SlotFilterConfig;
     collection?: SlotFilterConfig;
@@ -85,6 +88,7 @@ export type SitePageRow = {
   is_post: boolean;
   slug?: string;
   is_navigation_root: boolean;
+  navigation_order: number;
   hide_from_navigation: boolean;
   include_in_search: boolean;
 };
@@ -92,6 +96,7 @@ export type SitePageRow = {
 export type SiteSlotRow = {
   id: number;
   slot_label?: InternationalString;
+  slot_props?: any;
   slot_layout: string;
   specificity: number;
   site_id: number;

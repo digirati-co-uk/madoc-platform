@@ -38,11 +38,14 @@ blockEditorFor(Heading1, {
   type: 'heading-1',
   label: 'Heading 1',
   editor: {
-    children: { label: 'Text content', type: 'text-field' },
+    text: { label: 'Text content', type: 'text-field' },
   },
   defaultProps: {
-    children: 'Example header',
+    text: 'Example header',
   },
+  mapToProps: props => ({
+    children: <>{props.text}</>,
+  }),
 });
 
 export const Subheading1 = styled.div`

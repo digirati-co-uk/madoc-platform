@@ -33,7 +33,7 @@ export const PageEditorButton = styled.button`
   font-size: 0.8em;
   border: none;
 
-  & ~ & {
+  & ~ * {
     margin-left: 0.5em;
   }
 

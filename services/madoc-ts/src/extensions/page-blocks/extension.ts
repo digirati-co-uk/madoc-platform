@@ -1,5 +1,6 @@
 import { CaptureModel } from '@capture-models/types';
-import React from 'react';
+import { InternationalString } from '@hyperion-framework/types/iiif/descriptive';
+import React, { JSXElementConstructor } from 'react';
 import ReactDOM from 'react-dom';
 import { ApiClient } from '../../gateway/api';
 import {
@@ -14,6 +15,13 @@ import { SitePage } from '../../types/site-pages-recursive';
 import { BaseExtension } from '../extension-manager';
 import { reactBlockEmitter } from './block-editor-react';
 
+export type PageBlockEditor = JSXElementConstructor<{
+  block: SiteBlock;
+  onChange: (block: SiteBlock) => void;
+  onSave: (block: SiteBlock) => void;
+  preview: any;
+}>;
+
 export type PageBlockDefinition<
   Data extends any,
   Type extends string,
@@ -27,6 +35,8 @@ export type PageBlockDefinition<
   defaultData: Data;
   requiredContext?: RequiredContext[];
   anyContext?: RequiredContext[];
+  internal?: boolean;
+  customEditor?: PageBlockEditor;
   render: (data: Data, context: EditorialContext, api: ApiClient) => Return;
 };
 
@@ -87,6 +97,9 @@ export class PageBlockExtension implements BaseExtension {
     });
 
     return definitions.filter(definition => {
+      // if (definition.internal) {
+      //   return false;
+      // }
       if (!definition.requiredContext && !definition.anyContext) {
         return true;
       }
@@ -162,7 +175,19 @@ export class PageBlockExtension implements BaseExtension {
   }
 
   async getPage(pagePath: string) {
-    return this.api.request<SitePage>(`/api/madoc/pages/root/${pagePath}`);
+    return this.api.request<{
+      page: SitePage;
+      navigation: SitePage[];
+      root?: {
+        id: number;
+        title: InternationalString;
+        parent_page?: number;
+        is_navigation_root: true;
+        depth: number;
+        path: string;
+        findPath: string[];
+      };
+    }>(`/api/madoc/pages/root/${pagePath}`);
   }
 
   async getSlot(slotId: number) {
@@ -199,8 +224,8 @@ export class PageBlockExtension implements BaseExtension {
     });
   }
 
-  async updatePage(pagePath: number, page: CreateNormalPageRequest) {
-    return this.api.request<SitePage>(`/api/madoc/pages/root/${pagePath}`, {
+  async updatePage(pagePath: string, page: CreateNormalPageRequest) {
+    return this.api.request<{ page: SitePage }>(`/api/madoc/pages/root/${pagePath}`, {
       body: page,
       method: 'PUT',
     });
@@ -229,6 +254,12 @@ export class PageBlockExtension implements BaseExtension {
 
   async deleteSlot(slotId: number) {
     return this.api.request(`/api/madoc/slots/${slotId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async deletePage(pagePath: string) {
+    return this.api.request(`/api/madoc/pages/root/${pagePath}`, {
       method: 'DELETE',
     });
   }

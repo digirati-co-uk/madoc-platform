@@ -97,7 +97,8 @@ export function addPage(page: CreateNormalPageRequest, siteId: number, user: { i
         parent_page, 
         page_engine, 
         page_options, 
-        is_navigation_root, 
+        is_navigation_root,
+        navigation_order,
         hide_from_navigation, 
         include_in_search, 
         site_id
@@ -113,6 +114,7 @@ export function addPage(page: CreateNormalPageRequest, siteId: number, user: { i
         ${page.engine ? page.engine.type : null},
         ${page.engine ? sql.json(page.engine.options) : null},
         ${page.navigationOptions ? page.navigationOptions.root : false},
+        ${page.navigationOptions ? page.navigationOptions.order : 0},
         ${page.navigationOptions ? page.navigationOptions.hide : false},
         ${page.searchable || false},
         ${siteId}
@@ -225,6 +227,7 @@ export type PageJoinedColumns = {
   page__is_post: boolean;
   page__slug?: string;
   page__is_navigation_root: boolean;
+  page__navigation_order: number;
   page__hide_from_navigation: boolean;
   page__include_in_search: boolean;
 };
@@ -237,6 +240,7 @@ export type SlotJoinedProperties = {
   slot__slot_layout: string;
   slot__specificity: number;
   slot__site_id: number;
+  slot__slot_props?: any;
 
   // Filter projects
   slot__filter_project_none: boolean;
@@ -338,6 +342,7 @@ export function mapSlot(slot: any, prefix = ''): SiteSlot {
     label: slot[prefix + 'slot_label'],
     layout: slot[prefix + 'slot_layout'],
     specificity: slot[prefix + 'specificity'],
+    props: slot[prefix + 'slot_props'],
     blocks: [],
     filters: {
       project: {
@@ -399,6 +404,7 @@ export function mapPage(page: any, prefix = ''): SitePage {
     navigationOptions: {
       hide: page[prefix + 'hide_from_navigation'],
       root: page[prefix + 'is_navigation_root'],
+      order: page[prefix + 'navigation_order'],
     },
     parentPage: page[prefix + 'parent_page'],
     layout: page[prefix + 'layout'],
@@ -536,6 +542,7 @@ export function editSlot(id: number, slot: CreateSlotRequest, siteId: number) {
 
       slot_label=${slot.label ? sql.json(slot.label) : null},
       slot_layout=${slot.layout},
+      slot_props=${sql.json(slot.props || {})},
 
       filter_project_none=${project.none}, 
       filter_project_all=${project.all}, 
@@ -621,7 +628,8 @@ export function editPage(id: number, page: CreateNormalPageRequest, siteId: numb
       page_engine=${page.engine ? page.engine.type : null}, 
       page_options=${page.engine ? sql.json(page.engine.options) : null}, 
       is_navigation_root=${page.navigationOptions ? page.navigationOptions.root : false}, 
-      hide_from_navigation=${page.navigationOptions ? page.navigationOptions.hide : false}, 
+      hide_from_navigation=${page.navigationOptions ? page.navigationOptions.hide : false},
+      navigation_order=${page.navigationOptions ? page.navigationOptions.order : 0}, 
       include_in_search=${page.searchable || false},
       modified = CURRENT_TIMESTAMP
     where id = ${id} and site_id = ${siteId} returning *

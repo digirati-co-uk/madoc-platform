@@ -34,14 +34,16 @@ export const useGoogleFonts = (
   const swap = `&display=${options.display}`;
 
   useEffect(() => {
-    const link = document.createElement('link');
-    link.href = `https://fonts.googleapis.com/css?family=${fontsUri + swap}`;
-    link.rel = 'stylesheet';
+    if (fonts && fonts.length) {
+      const link = document.createElement('link');
+      link.href = `https://fonts.googleapis.com/css?family=${fontsUri + swap}`;
+      link.rel = 'stylesheet';
 
-    document.head.appendChild(link);
+      document.head.appendChild(link);
 
-    return () => {
-      document.head.removeChild(link);
-    };
+      return () => {
+        document.head.removeChild(link);
+      };
+    }
   }, [fonts, fontsUri, swap]);
 };

@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useMutation } from 'react-query';
 import styled, { css } from 'styled-components';
 import { EditorialContext, SiteBlock, SiteSlot } from '../../../types/schemas/site-page';
 import { Button, ButtonRow, TinyButton } from '../atoms/Button';
+import { SurfaceProps } from '../atoms/Surface';
 import { ModalButton } from '../components/Modal';
 import { useApi } from '../hooks/use-api';
 import { TableHandleIcon } from '../icons/TableHandleIcon';
@@ -18,6 +19,7 @@ import {
   SlotOutlineContainer,
 } from '../atoms/SlotEditor';
 import { SlotLayout } from '../atoms/SlotLayout';
+import { SurfaceEditor } from './surface-editor';
 
 type SlotEditorProps = {
   slot: SiteSlot;
@@ -28,13 +30,14 @@ type SlotEditorProps = {
   onUpdateBlock?: (blockId: number) => void | Promise<void>;
   onResetSlot?: () => void;
   defaultContents?: any;
+  surfaceProps?: SurfaceProps;
 };
 
 const EditingBlockContainer = styled.div`
   flex: 1 1 0px;
   border-bottom: 1px solid #ccc;
   padding-left: 10px;
-  background: #fff;
+  background: inherit;
 `;
 
 const EditingBlock = styled.div`
@@ -68,6 +71,7 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
   const [isEditing, setIsEditing] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [blockOrder, setBlockOrder] = useState(() => props.blocks.map(block => block.id));
+  const slotSurface = useRef<SurfaceProps>(props.slot?.props?.surface || {});
 
   useEffect(() => {
     setBlockOrder(props.blocks.map(block => block.id));
@@ -87,6 +91,13 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
 
   const [removeSlot] = useMutation(async () => {
     await api.pageBlocks.deleteSlot(props.slot.id);
+    if (props.onUpdateSlot) {
+      props.onUpdateSlot();
+    }
+  });
+
+  const [updateSlot] = useMutation(async (slot: SiteSlot) => {
+    await api.pageBlocks.updateSlot(slot.id, slot);
     if (props.onUpdateSlot) {
       props.onUpdateSlot();
     }
@@ -131,7 +142,11 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
           <SlotEditorButton onClick={() => setIsResetting(false)}>Cancel</SlotEditorButton>
           <SlotEditorButton onClick={() => removeSlot()}>Confirm reset</SlotEditorButton>
         </SlotEditorContainer>
-        <SlotOutlineContainer>{props.defaultContents}</SlotOutlineContainer>
+        <SlotOutlineContainer>
+          <SlotLayout layout={props.layout} surfaceProps={props.surfaceProps}>
+            {props.defaultContents}
+          </SlotLayout>
+        </SlotOutlineContainer>
       </div>
     );
   }
@@ -165,6 +180,63 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
           Add block
         </ModalButton>
 
+        <ModalButton
+          as={SlotEditorButton}
+          title="Edit surface"
+          modalSize="lg"
+          render={() => {
+            return (
+              <SurfaceEditor
+                surfaceContent={
+                  <div>
+                    {orderedBlocks.map(block => {
+                      return (
+                        <RenderBlock
+                          key={block.id}
+                          block={block}
+                          context={props.context}
+                          editable={false}
+                          showWarning={true}
+                          onUpdateBlock={props.onUpdateBlock}
+                        />
+                      );
+                    })}
+                  </div>
+                }
+                surfaceProps={slotSurface.current}
+                onChange={newData => {
+                  slotSurface.current = newData;
+                }}
+              />
+            );
+          }}
+          footerAlignRight
+          renderFooter={({ close }) => {
+            return (
+              <ButtonRow $noMargin>
+                <Button
+                  $primary
+                  onClick={() => {
+                    updateSlot({
+                      ...props.slot,
+                      props: {
+                        ...(props.slot.props || {}),
+                        surface: slotSurface.current,
+                      },
+                    }).then(() => {
+                      close();
+                    });
+                  }}
+                >
+                  Save
+                </Button>
+              </ButtonRow>
+            );
+          }}
+        >
+          Edit surface
+        </ModalButton>
+
         {/* @todo */}
         <SlotEditorButton>Change layout</SlotEditorButton>
         <ModalButton as={SlotEditorButton} title="Advanced options" render={() => <div>Advanced</div>}>
@@ -189,7 +261,12 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
           <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="droppable" direction={props.layout === 'flex' ? 'horizontal' : 'vertical'}>
               {provided => (
-                <SlotLayout layout={props.layout} {...provided.droppableProps} ref={provided.innerRef}>
+                <SlotLayout
+                  layout={props.layout}
+                  surfaceProps={props.surfaceProps}
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                >
                   {orderedBlocks.map((block, idx) => {
                     if (isEditing) {
                       return (

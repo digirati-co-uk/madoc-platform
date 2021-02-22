@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { PublicSite } from '../../../utility/omeka-api';
+import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
 import {
   GlobalHeaderMenuContainer,
   GlobalHeaderMenuItem,
@@ -82,6 +83,7 @@ export const UserBar: React.FC<{
     ? `/s/${site.slug}/madoc`
     : `/s/${site.slug}/madoc/${location.pathname}${query ? `?${stringify(query)}` : ''}`;
   const showAdmin = user && user.scope.indexOf('site.admin') !== -1;
+  const { editMode, setEditMode } = useSiteConfiguration();
 
   useEffect(() => {
     setIsOpen(false);
@@ -98,6 +100,13 @@ export const UserBar: React.FC<{
           <UserBarAdminButton href={`/s/${site.slug}/madoc/admin`}>{t('Site admin')}</UserBarAdminButton>
         )}
         <UserBarExpander />
+        {showAdmin && !admin ? (
+          <GlobalHeaderMenuContainer>
+            <GlobalHeaderMenuLabel onClick={() => setEditMode(!editMode)}>
+              {editMode ? 'Exit edit mode' : 'Edit mode'}
+            </GlobalHeaderMenuLabel>
+          </GlobalHeaderMenuContainer>
+        ) : null}
         <LanguageSwitcher />
 
         {user ? (

@@ -1,3 +1,4 @@
+import { InternationalString } from '@hyperion-framework/types/iiif/descriptive';
 import { sql } from 'slonik';
 import * as editorial from '../database/queries/site-editorial';
 import {
@@ -126,6 +127,7 @@ export class PageBlocksRepository extends BaseRepository {
           sp.page_engine as page__page_engine,
           sp.page_options as page__page_options,
           sp.is_navigation_root as page__is_navigation_root,
+          sp.navigation_order as page__navigation_order,
           sp.hide_from_navigation as page__hide_from_navigation,
           sp.include_in_search as page__include_in_search
       
@@ -137,6 +139,91 @@ export class PageBlocksRepository extends BaseRepository {
     const page = pageSlotReducer(results);
 
     return Object.values(page.pages);
+  }
+
+  getPageNavigationQuery(siteId: number, pagePath?: string) {
+    const trimmedPagePath = pagePath?.startsWith('/') ? pagePath : `/${pagePath}`;
+    const parentPage = pagePath ? sql`parent.path = ${trimmedPagePath}` : sql`page.parent_page is null`;
+
+    return sql`
+    select
+      -- Main page
+      page.id as page__id,
+      page.path as page__path,
+      page.title as page__title,
+      page.navigation_title as page__navigation_title,
+      page.parent_page as page__parent_page,
+      -- Child page
+      csp.id as child__id,
+      csp.path as child__path,
+      csp.title as child__title,
+      csp.navigation_title as child__navigation_title,
+      csp.parent_page as child__parent_page
+    from site_pages page
+             left join site_pages csp on csp.parent_page = page.id and csp.hide_from_navigation = false and csp.site_id = 1
+             left join site_pages parent on parent.id = page.parent_page and parent.site_id = 1
+    where ${parentPage}
+      and page.hide_from_navigation = false
+      and page.site_id = 1
+  `;
+  }
+
+  async getPageNavigation(paths: string | undefined, siteId: number) {
+    const result = await this.connection.any(this.getPageNavigationQuery(siteId, paths));
+
+    const pages = result.map(page => mapPage(page as any, 'page__'));
+    const childPages = result.map(page => mapPage(page as any, 'child__' as any));
+
+    const pageMap: { [id: number]: SitePage } = {};
+    for (const page of pages) {
+      pageMap[page.id] = page;
+    }
+
+    for (const child of childPages) {
+      const parentPage = child.parentPage ? pageMap[child.parentPage] : undefined;
+      if (parentPage) {
+        parentPage.subpages = parentPage.subpages ? parentPage.subpages : [];
+        (parentPage.subpages as any[]).push(child);
+      }
+    }
+
+    return Object.values(pageMap);
+  }
+
+  async getNavigationRoot(pathToFind: string, siteId: number) {
+    return await this.connection.maybeOne(sql<{
+      id: number;
+      title: InternationalString;
+      parent_page?: number;
+      is_navigation_root: true;
+      depth: number;
+      path: string;
+      findPath: string[];
+    }>`
+      WITH RECURSIVE find_nav_root(id, title, parent_page, is_navigation_root, path, depth, findPath, cycle) AS (
+          SELECT sp.id, sp.title, sp.parent_page, sp.is_navigation_root, sp.path, 0, array [sp.path], false
+          FROM site_pages sp
+          where sp.path = ${pathToFind} and sp.site_id = ${siteId}
+          UNION ALL
+          SELECT spi.id,
+                 spi.title,
+                 spi.parent_page,
+                 spi.is_navigation_root,
+                 spi.path,
+                 sp.depth + 1,
+                 sp.findPath || spi.path,
+                 spi.path = ANY (sp.findPath)
+          FROM site_pages spi,
+               find_nav_root sp
+          WHERE sp.parent_page = spi.id and spi.site_id = ${siteId}
+            AND NOT cycle
+      )
+      SELECT *
+      FROM find_nav_root
+      where is_navigation_root = true
+      order by depth
+      limit 1
+    `);
   }
 
   async getPageByPath(pathToFind: string, siteId: number): Promise<SitePage> {
@@ -155,6 +242,7 @@ export class PageBlocksRepository extends BaseRepository {
           sp.page_engine as page__page_engine,
           sp.page_options as page__page_options,
           sp.is_navigation_root as page__is_navigation_root,
+          sp.navigation_order as page__navigation_order,
           sp.hide_from_navigation as page__hide_from_navigation,
           sp.include_in_search as page__include_in_search,
   
@@ -163,6 +251,7 @@ export class PageBlocksRepository extends BaseRepository {
           ss.slot_id as slot__slot_id,
           ss.slot_label as slot__slot_label, 
           ss.slot_layout as slot__slot_layout, 
+          ss.slot_props as slot__slot_props,
           ss.specificity as slot__specificity, 
           ss.site_id as slot__site_id, 
           ss.filter_project_none as slot__filter_project_none, 

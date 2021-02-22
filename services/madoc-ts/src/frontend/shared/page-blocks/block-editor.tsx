@@ -1,10 +1,12 @@
 import { defaultTheme, Revisions } from '@capture-models/editor';
 import { captureModelShorthand, hydrateCompressedModel, serialiseCaptureModel } from '@capture-models/helpers';
 import { CaptureModel, RevisionRequest } from '@capture-models/types';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useMutation } from 'react-query';
 import styled, { ThemeProvider } from 'styled-components';
-import { PageBlockDefinition } from '../../../extensions/page-blocks/extension';
+import { PageBlockDefinition, PageBlockEditor } from '../../../extensions/page-blocks/extension';
+import { Site } from '../../../types/omeka/Site';
 import { EditorialContext, SiteBlock, SiteBlockRequest } from '../../../types/schemas/site-page';
 import { Button, ButtonRow, TinyButton } from '../atoms/Button';
 import { EditorSlots } from '../caputre-models/new/components/EditorSlots';
@@ -79,8 +81,6 @@ export function modelToBlock(
     newBlock.i18n.fallback = true;
   }
 
-  console.log('newBlock', newBlock);
-
   return newBlock;
 }
 
@@ -145,6 +145,7 @@ export function useBlockModel(block: SiteBlock | SiteBlockRequest, advanced?: bo
       RESERVED__i18n__languages: block.i18n?.languages || ['none'],
       RESERVED__i18n__sortKey: block.i18n?.sortKey || '',
       RESERVED__i18n__fallback: block.i18n?.fallback || false,
+      ...(definition.defaultData || {}),
       ...block.static_data,
     };
   }, [block.i18n, block.name, block.static_data]);
@@ -318,15 +319,73 @@ const BlockEditorForm: React.FC<{
   );
 };
 
+function useBlockDetails(block: SiteBlock | SiteBlockRequest) {
+  const api = useApi();
+
+  const customEditor = useMemo(() => {
+    const definition = api.pageBlocks.definitionMap[block.type];
+    if (definition.customEditor) {
+      return definition.customEditor;
+    }
+  }, [api.pageBlocks.definitionMap, block.type]);
+
+  return { CustomEditor: customEditor };
+}
+
+function CustomEditorWrapper({
+  editor: CustomEditor,
+  block,
+  onUpdateBlock,
+  children,
+}: PropsWithChildren<{
+  editor: PageBlockEditor;
+  block: SiteBlockRequest | SiteBlock;
+  onUpdateBlock?: (id: number) => void;
+}>) {
+  const api = useApi();
+  const [onSave] = useMutation(async (newBlock: SiteBlock | SiteBlockRequest) => {
+    const id = (newBlock as SiteBlock).id;
+
+    const savedBlock = id ? await api.pageBlocks.updateBlock(id, newBlock) : await api.pageBlocks.createBlock(newBlock);
+
+    if (onUpdateBlock) {
+      onUpdateBlock(savedBlock.id);
+    }
+  });
+
+  return (
+    <CustomEditor
+      onChange={blk => {
+        console.log('changed', blk);
+      }}
+      block={block as SiteBlock}
+      onSave={blk => {
+        onSave(blk);
+      }}
+      preview={children}
+    />
+  );
+}
+
 export const BlockEditor: React.FC<{
   block: SiteBlock;
   context?: EditorialContext;
   onUpdateBlock?: (id: number) => void;
 }> = ({ block, context, children, onUpdateBlock }) => {
+  const { CustomEditor } = useBlockDetails(block);
+  console.log({ CustomEditor });
   return (
     <BlockWrapper>
-      <BlockEditorForm block={block} context={context} onUpdateBlock={onUpdateBlock} />
-      {children}
+      {CustomEditor ? (
+        <CustomEditorWrapper editor={CustomEditor} block={block} onUpdateBlock={onUpdateBlock}>
+          {children}
+        </CustomEditorWrapper>
+      ) : (
+        <>
+          <BlockEditorForm block={block} context={context} onUpdateBlock={onUpdateBlock} />
+          {children}
+        </>
+      )}
     </BlockWrapper>
   );
 };

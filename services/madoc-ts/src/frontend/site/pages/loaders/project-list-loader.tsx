@@ -1,3 +1,4 @@
+import { JSXElementConstructor } from 'react';
 import { ProjectList } from '../../../../types/schemas/project-list';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
