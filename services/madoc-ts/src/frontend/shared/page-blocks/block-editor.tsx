@@ -79,6 +79,8 @@ export function modelToBlock(
     newBlock.i18n.fallback = true;
   }
 
+  console.log('newBlock', newBlock);
+
   return newBlock;
 }
 
@@ -250,8 +252,8 @@ export const useBlockEditor = (
       >
         <OnChangeDocument
           onChange={newRevision => {
+            latestRevision.current = newRevision;
             if (onChange) {
-              latestRevision.current = newRevision;
               onChange(modelToBlock(newRevision, block, advanced));
             }
           }}

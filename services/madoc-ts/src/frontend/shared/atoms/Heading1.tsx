@@ -1,4 +1,4 @@
-import React, { ComponentPropsWithRef, forwardRef, PropsWithRef } from 'react';
+import React, { ComponentPropsWithRef, forwardRef } from 'react';
 import { Helmet } from 'react-helmet';
 import styled, { css } from 'styled-components';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';

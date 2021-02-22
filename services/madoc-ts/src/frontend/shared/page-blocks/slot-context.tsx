@@ -9,6 +9,7 @@ type ReactContextType = {
   editable?: boolean;
   onUpdateSlot: (slotId: number) => void;
   onCreateSlot: (slotReq: CreateSlotRequest) => void;
+  onUpdateBlock: (blockId: number) => void | Promise<void>;
   beforeCreateSlot: (slotReq: CreateSlotRequest) => void;
 };
 
@@ -25,6 +26,9 @@ const SlotReactContext = React.createContext<ReactContextType>({
   beforeCreateSlot: () => {
     // no-op
   },
+  onUpdateBlock: () => {
+    // no-op
+  },
 });
 
 export const useSlots = () => {
@@ -37,8 +41,9 @@ type SlotProviderProps = {
   context?: EditorialContext;
   slots?: { [slotName: string]: SiteSlot };
   editable?: boolean;
-  onUpdateSlot?: (slotId: number) => void;
+  onUpdateSlot?: (slotId: number) => void | Promise<void>;
   onCreateSlot?: (slotReq: CreateSlotRequest) => void | Promise<void>;
+  onUpdateBlock?: (blockId: number) => void | Promise<void>;
   beforeCreateSlot?: (slotReq: CreateSlotRequest) => void;
 };
 
@@ -53,23 +58,29 @@ export const SlotProvider: React.FC<SlotProviderProps> = props => {
       context: { ...existing.context, ...props.context },
       slots: { ...existing.slots, ...(props.slots || {}), ...newSlots }, // Possibly merge the slots based on the priority thing.
       editable: typeof props.editable !== 'undefined' ? props.editable : existing.editable,
-      onUpdateSlot: (slotId: number) => {
+      onUpdateSlot: async (slotId: number) => {
         if (props.onUpdateSlot) {
-          props.onUpdateSlot(slotId);
+          await props.onUpdateSlot(slotId);
         }
-        existing.onUpdateSlot(slotId);
+        return existing.onUpdateSlot(slotId);
       },
-      beforeCreateSlot: (slot: CreateSlotRequest) => {
+      beforeCreateSlot: async (slot: CreateSlotRequest) => {
         if (props.beforeCreateSlot) {
-          props.beforeCreateSlot(slot);
+          await props.beforeCreateSlot(slot);
         }
-        existing.beforeCreateSlot(slot);
+        return existing.beforeCreateSlot(slot);
       },
       onCreateSlot: async (slot: CreateSlotRequest) => {
         if (props.onCreateSlot) {
           await props.onCreateSlot(slot);
         }
-        existing.onCreateSlot(slot);
+        return existing.onCreateSlot(slot);
+      },
+      onUpdateBlock: async (blockId: number) => {
+        if (props.onUpdateBlock) {
+          await props.onUpdateBlock(blockId);
+        }
+        return existing.onUpdateBlock(blockId);
       },
     };
   }, [existing, props, newSlots]);

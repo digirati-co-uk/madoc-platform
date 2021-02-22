@@ -32,6 +32,12 @@ export const ViewPage: React.FC<ViewPageProps> = ({ page, navigation, refetch })
       onCreateSlot={async () => {
         await refetch();
       }}
+      onUpdateSlot={async () => {
+        await refetch();
+      }}
+      onUpdateBlock={async () => {
+        await refetch();
+      }}
     >
       <div>
         <PageEditorBar isEditing={isEditing} onEdit={() => setIsEditing(e => !e)} />

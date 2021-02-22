@@ -19,6 +19,8 @@ export const RootLoader: UniversalComponent<RootLoaderType> = createUniversalCom
       cacheTime: 24 * 60 * 60,
     });
 
+    console.log(data);
+
     return <ConfigProvider project={data ? data.project : {}}>{renderUniversalRoutes(route.routes)}</ConfigProvider>;
   },
   {
@@ -27,9 +29,11 @@ export const RootLoader: UniversalComponent<RootLoaderType> = createUniversalCom
     },
     getData: async (key, vars, api) => {
       const project = api.getSiteConfiguration();
+      const navigation = api.pageBlocks.getPageNavigation();
 
       return {
         project: await project,
+        navigation: await navigation,
       };
     },
   }

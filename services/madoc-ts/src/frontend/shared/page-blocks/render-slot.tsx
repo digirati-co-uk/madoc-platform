@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { EditorialContext, SiteSlot } from '../../../types/schemas/site-page';
+import { SlotLayout } from '../atoms/SlotLayout';
 import { RenderBlock } from './render-block';
 import { SlotEditor } from './slot-editor';
 
@@ -8,6 +9,8 @@ export type RenderSlotProps = {
   context?: EditorialContext;
   editable?: boolean;
   onUpdateSlot?: () => void;
+  onUpdateBlock?: (blockId: number) => void | Promise<void>;
+  defaultContents?: any;
 };
 
 export const RenderSlot: React.FC<RenderSlotProps> = props => {
@@ -30,22 +33,17 @@ export const RenderSlot: React.FC<RenderSlotProps> = props => {
         blocks={orderedBlocks}
         context={props.context}
         onUpdateSlot={props.onUpdateSlot}
+        onUpdateBlock={props.onUpdateBlock}
+        defaultContents={props.defaultContents}
       />
     );
   }
 
-  switch (layout) {
-    // @todo more layouts.
-    case 'stack':
-    case 'none':
-    default: {
-      return (
-        <>
-          {orderedBlocks.map(block => {
-            return <RenderBlock key={block.id} block={block} context={props.context} />;
-          })}
-        </>
-      );
-    }
-  }
+  return (
+    <SlotLayout layout={layout}>
+      {orderedBlocks.map(block => {
+        return <RenderBlock key={block.id} block={block} context={props.context} />;
+      })}
+    </SlotLayout>
+  );
 };

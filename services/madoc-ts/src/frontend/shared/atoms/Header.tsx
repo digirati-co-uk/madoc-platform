@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Heading1 } from './Heading1';
+import { _Heading1 } from './Heading1';
 
 export const Header = styled.div`
   margin-top: 0.5em;
@@ -8,7 +8,7 @@ export const Header = styled.div`
 
 export const ContextHeading = styled.div`
   font-size: 12px;
-  & ~ ${Heading1} {
+  & ~ ${_Heading1} {
     margin-top: 0.3em;
   }
 `;

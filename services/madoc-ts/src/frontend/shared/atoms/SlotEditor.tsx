@@ -49,4 +49,6 @@ export const SlotEditorWhy = styled.div`
 export const SlotOutlineContainer = styled.div`
   outline: 1px solid rgba(33, 47, 79, 0.3);
   outline-offset: -1px;
+  clear: both;
+  padding: 0.1px;
 `;

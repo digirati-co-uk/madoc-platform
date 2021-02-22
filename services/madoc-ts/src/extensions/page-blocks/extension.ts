@@ -156,7 +156,7 @@ export class PageBlockExtension implements BaseExtension {
     return this.api.request<{ pages: SitePage[] }>(`/api/madoc/pages`);
   }
 
-  async getPageNavigation(pagePath: string) {
+  async getPageNavigation(pagePath = '/') {
     const slug = pagePath && pagePath !== '/' ? `/${pagePath}` : '';
     return this.api.request<{ navigation: SitePage[] }>(`/api/madoc/pages/navigation${slug}`);
   }
@@ -224,6 +224,12 @@ export class PageBlockExtension implements BaseExtension {
     return this.api.request<SiteBlock>(`/api/madoc/blocks/${blockId}`, {
       body: block,
       method: 'PUT',
+    });
+  }
+
+  async deleteSlot(slotId: number) {
+    return this.api.request(`/api/madoc/slots/${slotId}`, {
+      method: 'DELETE',
     });
   }
 }
