@@ -15079,15 +15079,10 @@ postcss@^7.0.0, postcss@^7.0.14, postcss@^7.0.26, postcss@^7.0.27, postcss@^7.0.
     source-map "^0.6.1"
     supports-color "^6.1.0"
 
-postgres-array@^2.0.0, postgres-array@~2.0.0:
+postgres-array@2.0.0, postgres-array@^2.0.0, postgres-array@^3.0.1, postgres-array@~2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/postgres-array/-/postgres-array-2.0.0.tgz#48f8fce054fbc69671999329b8834b772652d82e"
   integrity sha512-VpZrUqU5A69eQyW2c5CA1jtLecCsN2U/bD6VilrFDWq5+5UIEVO7nazS3TEcHf1zuPYO/sqGvUvW62g86RXZuA==
-
-postgres-array@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/postgres-array/-/postgres-array-3.0.1.tgz#cfe3ddb0f54b7854dd2104beafecfebd16a7f093"
-  integrity sha512-h7i53Dw2Yq3a1uuZ6lbVFAkvMMwssJ8jkzeAg0XaZm1XIFF/t/s+tockdqbWTymyEm07dVenOQbFisEi+kj8uA==
 
 postgres-bytea@~1.0.0:
   version "1.0.0"

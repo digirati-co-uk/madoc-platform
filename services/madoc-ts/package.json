@@ -30,7 +30,8 @@
     "react-i18next": "11.7.2",
     "scheduler": "0.19.1",
     "styled-components": "5.1.1",
-    "slonik-sql-tag-raw": "1.0.2"
+    "slonik-sql-tag-raw": "1.0.2",
+    "postgres-array": "2.0.0"
   },
   "dependencies": {
     "@atlas-viewer/atlas": "1.4.1",
