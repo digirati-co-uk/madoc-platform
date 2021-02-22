@@ -15079,10 +15079,15 @@ postcss@^7.0.0, postcss@^7.0.14, postcss@^7.0.26, postcss@^7.0.27, postcss@^7.0.
     source-map "^0.6.1"
     supports-color "^6.1.0"
 
-postgres-array@2.0.0, postgres-array@^2.0.0, postgres-array@^3.0.1, postgres-array@~2.0.0:
+postgres-array@^2.0.0, postgres-array@~2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/postgres-array/-/postgres-array-2.0.0.tgz#48f8fce054fbc69671999329b8834b772652d82e"
   integrity sha512-VpZrUqU5A69eQyW2c5CA1jtLecCsN2U/bD6VilrFDWq5+5UIEVO7nazS3TEcHf1zuPYO/sqGvUvW62g86RXZuA==
+
+postgres-array@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/postgres-array/-/postgres-array-3.0.1.tgz#cfe3ddb0f54b7854dd2104beafecfebd16a7f093"
+  integrity sha512-h7i53Dw2Yq3a1uuZ6lbVFAkvMMwssJ8jkzeAg0XaZm1XIFF/t/s+tockdqbWTymyEm07dVenOQbFisEi+kj8uA==
 
 postgres-bytea@~1.0.0:
   version "1.0.0"
@@ -15101,10 +15106,22 @@ postgres-date@~1.0.4:
   resolved "https://registry.yarnpkg.com/postgres-date/-/postgres-date-1.0.7.tgz#51bc086006005e5061c591cee727f2531bf641a8"
   integrity sha512-suDmjLVQg78nMK2UZ454hAG+OAW+HQPZ6n++TNDUX+L0+uUlLywnoxJKDou51Zm+zTCjrCl0Nq6J9C5hP9vK/Q==
 
-postgres-interval@2.1.0, postgres-interval@^1.1.0, postgres-interval@^2.1.0, postgres-interval@^3.0.0:
+postgres-interval@^1.1.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/postgres-interval/-/postgres-interval-1.2.0.tgz#b460c82cb1587507788819a06aa0fffdb3544695"
+  integrity sha512-9ZhXKM/rw350N1ovuWHbGxnGh/SNJ4cnxHiM0rxE4VN41wsg8P8zWn9hv/buK00RP4WvlOyr/RBDiptyxVbkZQ==
+  dependencies:
+    xtend "^4.0.0"
+
+postgres-interval@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/postgres-interval/-/postgres-interval-2.1.0.tgz#6ba9dffa13edf7863984adef041e757f12edc264"
   integrity sha512-LM7OHNmCxmFZkxCran7gu2S2sm1FxXrUCcasE3PkuIQS0pm0xGk4iTfEzrDghFSSRkAtNDbLuYevvKrjhAHZBQ==
+
+postgres-interval@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/postgres-interval/-/postgres-interval-3.0.0.tgz#baf7a8b3ebab19b7f38f07566c7aab0962f0c86a"
+  integrity sha512-BSNDnbyZCXSxgA+1f5UU2GmwhoI0aU5yMxRGO8CdFEcY2BQF9xm/7MqKnYoM1nJDk8nONNWDk9WeSmePFhQdlw==
 
 prebuild-install@^5.3.4:
   version "5.3.6"
