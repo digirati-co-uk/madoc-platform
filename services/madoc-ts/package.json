@@ -17,7 +17,7 @@
     "generate-migration": "node migrate.js create",
     "generate-schema": "node generate-schemas.js",
     "build:stats": "NODE_ENV=production webpack --progress --json --profile > stats.json",
-    "build:frontend": "webpack",
+    "build:frontend": "NODE_ENV=production webpack",
     "link:model-editor": "yarn link \"@capture-models/editor\"",
     "unlink:model-editor": "yarn unlink \"@capture-models/editor\" && yarn install --force"
   },
@@ -30,7 +30,17 @@
     "react-i18next": "11.7.2",
     "scheduler": "0.19.1",
     "styled-components": "5.1.1",
-    "slonik-sql-tag-raw": "1.0.2"
+    "slonik-sql-tag-raw": "1.0.2",
+    "@atlas-viewer/iiif-image-api": "1.2.1",
+    "@babel/runtime": "7.12.18",
+    "@hyperion-framework/parser": "1.0.0-alpha.24",
+    "@hyperion-framework/presentation-2-parser": "1.0.0-alpha.24",
+    "@hyperion-framework/react-vault": "1.0.0-alpha.24",
+    "@hyperion-framework/store": "1.0.0-alpha.24",
+    "@hyperion-framework/vault": "1.0.0-alpha.24",
+    "deepmerge": "4.2.2",
+    "dnd-multi-backend": "6.0.0",
+    "html-entities": "1.4.0"
   },
   "dependencies": {
     "@atlas-viewer/atlas": "1.4.1",
@@ -121,6 +131,7 @@
     "sourcemapped-stacktrace": "^1.1.11",
     "style-loader": "^1.2.1",
     "styled-components": "^5.1.1",
+    "slugify": "^1.4.7",
     "ts-loader": "^7.0.2",
     "typesafe-actions": "^5.1.0",
     "uuid": "^7.0.1",

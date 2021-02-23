@@ -2,7 +2,7 @@
   "type": "object",
   "properties": {
     "project": {
-      "type": "number"
+      "type": "string"
     },
     "collection": {
       "type": "number"
@@ -11,6 +11,9 @@
       "type": "number"
     },
     "canvas": {
+      "type": "number"
+    },
+    "page": {
       "type": "number"
     }
   },

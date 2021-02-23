@@ -13,6 +13,9 @@
         "lazy": {
           "type": "boolean"
         },
+        "order": {
+          "type": "number"
+        },
         "i18n": {
           "type": "object",
           "properties": {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { InternationalString } from '@hyperion-framework/types';
 import { useDefaultLocale, useSupportedLocales } from '../../../../shared/hooks/use-site';
 import { MetadataEditor } from '../../../molecules/MetadataEditor';
@@ -12,6 +12,7 @@ import { AdminHeader } from '../../../molecules/AdminHeader';
 import { WidePage } from '../../../../shared/atoms/WidePage';
 import { useTranslation } from 'react-i18next';
 import { ErrorMessage } from '../../../../shared/atoms/ErrorMessage';
+import slugify from 'slugify';
 
 export const NewProjectPage: React.FC = () => {
   const api = useApi();
@@ -19,6 +20,7 @@ export const NewProjectPage: React.FC = () => {
   const [label, setLabel] = useState<InternationalString>({ en: [''] });
   const [summary, setSummary] = useState<InternationalString>({ en: [''] });
   const [slug, setSlug] = useState('');
+  const [autoSlug, setAutoSlug] = useState(true);
   const [error, setError] = useState('');
   const history = useHistory();
   const defaultLocale = useDefaultLocale();
@@ -34,6 +36,14 @@ export const NewProjectPage: React.FC = () => {
       setError(err.message);
     }
   });
+
+  useEffect(() => {
+    const textLabel = Object.values(label)[0]?.join('') || '';
+
+    if (autoSlug) {
+      setSlug(slugify(textLabel, { lower: true }));
+    }
+  }, [autoSlug, label]);
 
   return (
     <>
@@ -71,8 +81,14 @@ export const NewProjectPage: React.FC = () => {
         </InputContainer>
 
         <InputContainer>
-          <InputLabel htmlFor="summary">Slug</InputLabel>
-          <Input type="text" value={slug} onChange={e => setSlug(e.currentTarget.value)} id={'summary'} />
+          <InputLabel htmlFor="slug">Slug</InputLabel>
+          <Input
+            type="text"
+            value={slug}
+            onFocus={() => setAutoSlug(false)}
+            onChange={e => setSlug(e.currentTarget.value)}
+            id={'slug'}
+          />
         </InputContainer>
 
         <Button disabled={status === 'loading'} onClick={() => saveProject({ label, summary, slug })}>

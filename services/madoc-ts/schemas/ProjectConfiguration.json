@@ -69,6 +69,16 @@
     },
     "skipAutomaticOCRImport": {
       "type": "boolean"
+    },
+    "defaultEditorOrientation": {
+      "enum": [
+        "horizontal",
+        "vertical"
+      ],
+      "type": "string"
+    },
+    "skipManifestListingPage": {
+      "type": "boolean"
     }
   },
   "required": [
@@ -79,6 +89,7 @@
     "allowSubmissionsWhenCanvasComplete",
     "claimGranularity",
     "contributionWarningTime",
+    "defaultEditorOrientation",
     "hideCompletedResources",
     "maxContributionsPerResource",
     "randomlyAssignReviewer",
