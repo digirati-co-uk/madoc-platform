@@ -249,6 +249,7 @@ const MetadataField: React.FC<{
       <IntlInputDefault>
         <CloseIcon disabled={!removable} title={t('remove')} onClick={onRemove} />
         <IntlInput
+          autoComplete="off"
           type="text"
           value={value}
           onFocus={() => setIsFocused(true)}
@@ -398,6 +399,7 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
       <IntlInputContainer focused={isFocused}>
         <IntlInputDefault>
           <IntlInput
+            autoComplete="off"
             type="text"
             onBlur={() => {
               setIsFocused(false);

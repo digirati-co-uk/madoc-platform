@@ -71,6 +71,9 @@
     "is_navigation_root": {
       "type": "boolean"
     },
+    "navigation_order": {
+      "type": "number"
+    },
     "hide_from_navigation": {
       "type": "boolean"
     },
@@ -88,6 +91,7 @@
     "is_navigation_root",
     "is_post",
     "modified",
+    "navigation_order",
     "parent_page",
     "path",
     "title"

@@ -85,6 +85,9 @@
             }
           }
         },
+        "published": {
+          "type": "boolean"
+        },
         "items": {
           "type": "array",
           "items": {

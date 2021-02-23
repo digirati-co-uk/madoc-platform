@@ -1,13 +1,32 @@
 import { DocumentStore, StructureStore } from '@capture-models/editor';
-import { traverseDocument } from '@capture-models/helpers';
+import { generateId, traverseDocument } from '@capture-models/helpers';
 import React, { useEffect, useMemo } from 'react';
 
 export const AutoStructure: React.FC = () => {
   const newDocument = DocumentStore.useStoreState(s => s.document);
   const structure = StructureStore.useStoreState(s => s.structure);
   const setModelFields = StructureStore.useStoreActions(a => a.setModelFields);
+  const addStructureToChoice = StructureStore.useStoreActions(a => a.addStructureToChoice);
+
+  useEffect(() => {
+    if (structure && structure.type === 'choice' && structure.items.length === 0) {
+      addStructureToChoice({
+        index: [],
+        structure: {
+          label: 'Default',
+          description: '',
+          id: generateId(),
+          type: 'model',
+          fields: [],
+        },
+      });
+    }
+  }, [addStructureToChoice, structure]);
 
   const automaticStructure = useMemo(() => {
+    if (!structure) {
+      return false;
+    }
     if (structure.type !== 'choice') {
       return false;
     }
@@ -17,6 +36,10 @@ export const AutoStructure: React.FC = () => {
     }
 
     const onlyModel = structure.items[0];
+
+    if (!onlyModel) {
+      return false;
+    }
 
     if (onlyModel.type !== 'model') {
       return false;
