@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
+import { useSlots } from '../../shared/page-blocks/slot-context';
 
 type RouteContext = {
   collectionId?: number;
@@ -11,6 +12,7 @@ type RouteContext = {
 };
 
 export function useRouteContext<T extends RouteContext = RouteContext>(): RouteContext & T {
+  const { context } = useSlots();
   const { canvasId, slug, manifestId, collectionId, parentTaskId, taskId } = useParams<{
     collectionId?: string;
     manifestId?: string;
@@ -22,12 +24,12 @@ export function useRouteContext<T extends RouteContext = RouteContext>(): RouteC
 
   return useMemo(() => {
     return {
-      collectionId: collectionId ? Number(collectionId) : undefined,
-      manifestId: manifestId ? Number(manifestId) : undefined,
-      projectId: slug,
+      collectionId: collectionId ? Number(collectionId) : context.collection,
+      manifestId: manifestId ? Number(manifestId) : context.manifest,
+      projectId: slug || context.project,
       taskId: taskId,
       parentTaskId,
-      canvasId: canvasId ? Number(canvasId) : undefined,
+      canvasId: canvasId ? Number(canvasId) : context.canvas,
     };
-  }, [canvasId, collectionId, manifestId, parentTaskId, slug, taskId]) as any;
+  }, [context, canvasId, collectionId, manifestId, parentTaskId, slug, taskId]) as any;
 }

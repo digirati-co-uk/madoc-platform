@@ -1,9 +1,10 @@
+import { boolean, number, select } from '@storybook/addon-knobs';
 import * as React from 'react';
 import { MetaDataDisplay } from '../src/frontend/shared/components/MetaDataDisplay';
 
 export default { title: 'metadata Display' };
 
-const metaData = [
+const exampleMetadata = [
   {
     label: {
       none: ['Identifier'],
@@ -108,8 +109,41 @@ const metaData = [
       none: ['The British Library'],
     },
   },
+  {
+    label: {
+      none: ['A much longer label that will be trimmed'],
+    },
+    value: {
+      none: ['The British Library'],
+    },
+  },
 ];
 
-export const metaDataDisplay = () => {
-  return <MetaDataDisplay metadata={metaData} />;
+export const Metadata_Display = () => {
+  const variation = select('Style variation', ['table', 'list'], 'table');
+  const labelStyle = select('Label style', ['bold', 'muted', 'caps', 'small-caps'], 'bold');
+  const labelWidth = number('Label width', 16);
+  const bordered = boolean('Bordered', false);
+
+  return (
+    <MetaDataDisplay
+      metadata={exampleMetadata}
+      variation={variation}
+      labelStyle={labelStyle}
+      labelWidth={labelWidth}
+      bordered={bordered}
+    />
+  );
+};
+
+export const UniversalViewerStyle = () => {
+  return <MetaDataDisplay metadata={exampleMetadata} variation={'list'} labelStyle={'bold'} bordered={true} />;
+};
+
+export const InlineMuted = () => {
+  return <MetaDataDisplay metadata={exampleMetadata} variation={'table'} labelStyle={'muted'} />;
+};
+
+export const SmallCaps = () => {
+  return <MetaDataDisplay metadata={exampleMetadata} variation={'list'} labelStyle={'small-caps'} />;
 };

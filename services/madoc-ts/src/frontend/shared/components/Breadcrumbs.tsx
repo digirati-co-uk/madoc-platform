@@ -3,6 +3,7 @@ import React, { useMemo, useContext } from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { useCurrentAdminPages } from '../../site/hooks/use-current-admin-pages';
 import { useSite } from '../hooks/use-site';
 import { LocaleString, useLocaleString } from './LocaleString';
@@ -14,6 +15,7 @@ type BreadcrumbContextType = {
   manifest?: { name: InternationalString; id: number };
   canvas?: { name: InternationalString; id: number };
   task?: { name: string; id: string };
+  subpage?: { name: InternationalString; path: string };
 };
 
 export const BreadcrumbList = styled.div`
@@ -88,6 +90,7 @@ export const BreadcrumbContext: React.FC<BreadcrumbContextType> = ({
   collection,
   canvas,
   task,
+  subpage,
 }) => {
   const parentCtx = useBreadcrumbs();
   const ctx = useMemo(() => {
@@ -107,8 +110,11 @@ export const BreadcrumbContext: React.FC<BreadcrumbContextType> = ({
     if (task) {
       newCtx.task = task;
     }
+    if (subpage) {
+      newCtx.subpage = subpage;
+    }
     return newCtx;
-  }, [parentCtx, manifest, project, collection, canvas, task]);
+  }, [parentCtx, manifest, project, collection, canvas, task, subpage]);
 
   return <BreadcrumbReactContext.Provider value={ctx}>{children}</BreadcrumbReactContext.Provider>;
 };
@@ -225,6 +231,13 @@ export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ current
       }
     }
 
+    if (breads.subpage) {
+      flatList.push({
+        label: breads.subpage.name,
+        url: breads.subpage.path,
+      });
+    }
+
     if (currentPage) {
       flatList.push({
         label: { none: [currentPage] },
@@ -233,7 +246,16 @@ export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ current
     }
 
     return flatList;
-  }, [breads.canvas, breads.collection, breads.manifest, breads.project, currentPage, location.pathname]);
+  }, [
+    breads.canvas,
+    breads.collection,
+    breads.manifest,
+    breads.project,
+    breads.subpage,
+    currentPage,
+    location.pathname,
+    t,
+  ]);
   const activePage = stack.find(s => s.url === location.pathname);
   const [pageTitle] = useLocaleString(activePage?.label);
 
@@ -279,3 +301,10 @@ export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ current
     </BreadcrumbList>
   );
 };
+
+blockEditorFor(DisplayBreadcrumbs, {
+  type: 'default.DisplayBreadcrumbs',
+  label: 'Display breadcrumbs',
+  anyContext: ['collection', 'manifest', 'canvas', 'project'],
+  editor: {},
+});

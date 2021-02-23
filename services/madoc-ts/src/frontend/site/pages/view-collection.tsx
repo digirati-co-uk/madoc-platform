@@ -10,8 +10,10 @@ import { useTranslation } from 'react-i18next';
 import { useSubjectMap } from '../../shared/hooks/use-subject-map';
 import { ProjectFull } from '../../../types/schemas/project-full';
 import { CanvasStatus } from '../../shared/atoms/CanvasStatus';
+import { Slot } from '../../shared/page-blocks/slot';
 import { CollectionFilterOptions } from '../features/CollectionFilterOptions';
 import { CollectionItemPagination } from '../features/CollectionItemPagination';
+import { CollectionTitle } from '../features/CollectionTitle';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 
 export const ViewCollection: React.FC<Partial<
@@ -31,11 +33,13 @@ export const ViewCollection: React.FC<Partial<
 
   return (
     <>
-      <DisplayBreadcrumbs />
+      <Slot name="collection-header">
+        <DisplayBreadcrumbs />
 
-      <LocaleString as="h1">{collection.label}</LocaleString>
+        <CollectionTitle />
 
-      <CollectionFilterOptions />
+        <CollectionFilterOptions />
+      </Slot>
 
       <CollectionItemPagination />
 

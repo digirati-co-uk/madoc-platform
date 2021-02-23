@@ -31,7 +31,7 @@ export const ManifestMetadata: React.FC<{ compact?: boolean }> = ({ compact }) =
 
   return (
     <MetaDataDisplay
-      style={compact ? { width: '40%', backgroundColor: '#ebebeb' } : undefined}
+      variation={compact ? 'list' : 'table'}
       config={metadataConfig?.metadata}
       metadata={metadata || []}
     />

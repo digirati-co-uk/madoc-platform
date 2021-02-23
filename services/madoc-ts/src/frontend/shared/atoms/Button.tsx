@@ -1,41 +1,5 @@
 import styled, { css } from 'styled-components';
 
-export const Button = styled.button`
-  cursor: pointer;
-  font-size: 16px;
-  line-height: 22px;
-  padding: 3px 10px;
-  background: #4265e9;
-  color: #fff;
-  border: 2px solid #4265e9;
-  text-decoration: none;
-  display: inline-block;
-  vertical-align: top;
-  &:active {
-    box-shadow: inset 0 2px 8px 0 rgba(78, 130, 223, 0.6);
-  }
-  &:link,
-  &:visited {
-    color: #fff;
-  }
-  &:hover {
-    background: #7baaff;
-    border-color: #7baaff;
-  }
-  &:focus {
-    outline: none;
-    background: #7baaff;
-  }
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-    &:hover {
-      background: #4265e9;
-      border-color: #4265e9;
-    }
-  }
-`;
-
 export const ButtonIcon = styled.span`
   svg {
     fill: #fff;
@@ -43,6 +7,100 @@ export const ButtonIcon = styled.span`
     transform: translate(0px, 3px);
     margin-right: 0.5em;
   }
+`;
+
+export const Button = styled.button<{ $primary?: boolean; $inlineInput?: boolean }>`
+  cursor: pointer;
+  padding: 0.5em 1em;
+  font-size: 0.85em;
+  border-radius: 3px;
+  background: #fff;
+  color: #3579f6;
+  border: 1px solid #4265e9;
+  text-decoration: none;
+  display: inline-block;
+  vertical-align: top;
+  transition: color 0.1s, background-color 0.1s, border-color 0.1s;
+
+  &:active {
+    box-shadow: inset 0 2px 8px 0 rgba(39, 75, 155, 0.8);
+  }
+
+  &:link,
+  &:visited {
+    color: #3579f6;
+  }
+
+  &:hover {
+    background: #4265e9;
+    border-color: #4265e9;
+    color: #fff;
+  }
+
+  &:focus {
+    outline: none;
+    color: #fff;
+    background: #4265e9;
+    border-color: #4265e9;
+  }
+
+  &:focus:hover {
+    border-color: #4265e9;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+
+    &:hover {
+      color: #4265e9;
+      background: #fff;
+      border-color: #4265e9;
+    }
+  }
+
+  ${ButtonIcon} svg {
+    fill: #4265e9;
+  }
+  &:hover ${ButtonIcon} svg,
+  &:focus ${ButtonIcon} svg {
+    fill: #fff;
+  }
+
+  ${props =>
+    props.$primary &&
+    css`
+      background: #4265e9;
+      color: #fff;
+      border: 2px solid #4265e9;
+      &:active {
+        box-shadow: inset 0 2px 8px 0 rgba(39, 75, 155, 0.8);
+      }
+      &:link,
+      &:visited {
+        color: #fff;
+      }
+      &:hover {
+        background: #5371e9;
+        border-color: #5371e9;
+      }
+      &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+
+        &:hover {
+          background: #4265e9;
+          border-color: #4265e9;
+        }
+      }
+    `}
+
+  ${props =>
+    props.$inlineInput &&
+    css`
+      height: 2.7em;
+      border-radius: 0 3px 3px 0;
+    `}
 `;
 
 export const RoundedButton = styled.a<{ disabled?: boolean }>`
@@ -76,9 +134,8 @@ export const RoundedButton = styled.a<{ disabled?: boolean }>`
 `;
 
 export const SmallButton = styled(Button)`
-  font-size: 12px;
-  line-height: 14px;
-  padding: 2px 10px;
+  padding: 0.25em 0.75em;
+  font-size: 0.8em;
 `;
 
 export const SmallRoundedButton = styled(RoundedButton)`
@@ -141,9 +198,14 @@ export const LinkButton = styled.button<{ $inherit?: boolean }>`
   }
 `;
 
-export const ButtonRow = styled.div`
-  margin: 1em 0;
-  ${Button} ~ ${Button} {
-    margin-left: .5em;
+export const ButtonRow = styled.div<{ $noMargin?: boolean }>`
+  ${props =>
+    props.$noMargin
+      ? ''
+      : css`
+          margin: 1em 0;
+        `}
+  & > * ~ * {
+    margin-left: 0.5em;
   }
 `;

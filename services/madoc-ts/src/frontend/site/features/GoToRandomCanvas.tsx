@@ -9,10 +9,11 @@ import { useGetRandomCanvas } from '../hooks/use-get-random-canvas';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
 
-export const GoToRandomCanvas: React.FC<{ label?: InternationalString; navigateToModel?: boolean }> = ({
-  label,
-  navigateToModel,
-}) => {
+export const GoToRandomCanvas: React.FC<{
+  label?: InternationalString;
+  navigateToModel?: boolean;
+  $primary?: boolean;
+}> = ({ $primary, label, navigateToModel }) => {
   const { projectId } = useRouteContext();
   const { t } = useTranslation();
   const history = useHistory();
@@ -27,6 +28,7 @@ export const GoToRandomCanvas: React.FC<{ label?: InternationalString; navigateT
 
   return (
     <Button
+      $primary={$primary}
       disabled={error}
       onClick={() => {
         getRandomCanvas().then(resp => {

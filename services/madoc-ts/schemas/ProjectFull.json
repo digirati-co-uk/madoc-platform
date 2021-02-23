@@ -92,5 +92,82 @@
     "summary",
     "task_id"
   ],
+  "definitions": {
+    "Partial<ProjectConfiguration>": {
+      "description": "Make all properties in T optional",
+      "type": "object",
+      "properties": {
+        "allowCollectionNavigation": {
+          "type": "boolean"
+        },
+        "allowManifestNavigation": {
+          "type": "boolean"
+        },
+        "allowCanvasNavigation": {
+          "type": "boolean"
+        },
+        "claimGranularity": {
+          "enum": [
+            "canvas",
+            "manifest"
+          ],
+          "type": "string"
+        },
+        "maxContributionsPerResource": {
+          "anyOf": [
+            {
+              "enum": [
+                false
+              ],
+              "type": "boolean"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "revisionApprovalsRequired": {
+          "type": "number"
+        },
+        "allowSubmissionsWhenCanvasComplete": {
+          "type": "boolean"
+        },
+        "randomlyAssignReviewer": {
+          "type": "boolean"
+        },
+        "manuallyAssignedReviewer": {
+          "type": "number"
+        },
+        "adminsAreReviewers": {
+          "type": "boolean"
+        },
+        "hideCompletedResources": {
+          "type": "boolean"
+        },
+        "contributionWarningTime": {
+          "anyOf": [
+            {
+              "enum": [
+                false
+              ],
+              "type": "boolean"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "randomlyAssignCanvas": {
+          "type": "boolean"
+        },
+        "priorityRandomness": {
+          "type": "boolean"
+        },
+        "skipAutomaticOCRImport": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
   "$schema": "http://json-schema.org/draft-07/schema#"
 }

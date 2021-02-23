@@ -80,7 +80,9 @@ export const CollectionEditorStructure: React.FC<{
                         onChange={e => setSearch(e.currentTarget.value)}
                       />
                     </ExpandGrid>
-                    <Button type="submit">{t('Search')}</Button>
+                    <Button $primary type="submit" $inlineInput>
+                      {t('Search')}
+                    </Button>
                   </GridContainer>
                 </InputContainer>
               </form>
@@ -104,7 +106,9 @@ export const CollectionEditorStructure: React.FC<{
                         onChange={e => setSearch(e.currentTarget.value)}
                       />
                     </ExpandGrid>
-                    <Button type="submit">{t('Search')}</Button>
+                    <Button $primary type="submit" $inlineInput>
+                      {t('Search')}
+                    </Button>
                   </GridContainer>
                 </InputContainer>
               </form>

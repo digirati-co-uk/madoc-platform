@@ -1,7 +1,7 @@
-import React, { forwardRef } from 'react';
+import React, { ComponentPropsWithRef, forwardRef } from 'react';
 import { Helmet } from 'react-helmet';
-import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { useSite } from '../hooks/use-site';
 
 export const _Heading1 = styled.h1<{ $margin?: boolean }>`
@@ -15,11 +15,14 @@ export const _Heading1 = styled.h1<{ $margin?: boolean }>`
     `}
 `;
 
-export const Heading1: typeof _Heading1 = forwardRef(function Heading1(props: any, ref) {
+export const Heading1: React.FC<ComponentPropsWithRef<typeof _Heading1>> = forwardRef(function Heading1(
+  props: any,
+  ref
+) {
   const site = useSite();
   return (
     <>
-      {typeof props.children === 'string' ? (
+      {typeof props.children === 'string' && site ? (
         <Helmet>
           <title>
             {site.title} - {props.children}
@@ -31,9 +34,23 @@ export const Heading1: typeof _Heading1 = forwardRef(function Heading1(props: an
   );
 }) as any;
 
+blockEditorFor(Heading1, {
+  type: 'heading-1',
+  label: 'Heading 1',
+  editor: {
+    text: { label: 'Text content', type: 'text-field' },
+  },
+  defaultProps: {
+    text: 'Example header',
+  },
+  mapToProps: props => ({
+    children: <>{props.text}</>,
+  }),
+});
+
 export const Subheading1 = styled.div`
   font-size: 1em;
-  color: #999;
+  opacity: 0.8;
   margin-bottom: 1em;
   & a {
     color: #5071f4;

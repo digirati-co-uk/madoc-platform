@@ -1,0 +1,96 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "number"
+    },
+    "path": {
+      "type": "string"
+    },
+    "previous_paths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "title": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "navigation_title": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "description": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "created": {
+      "type": "number"
+    },
+    "modified": {
+      "type": "number"
+    },
+    "author_id": {
+      "type": "string"
+    },
+    "author_name": {
+      "type": "string"
+    },
+    "layout": {
+      "type": "string"
+    },
+    "parent_page": {
+      "type": "number"
+    },
+    "page_engine": {
+      "type": "string"
+    },
+    "page_options": {},
+    "is_post": {
+      "type": "boolean"
+    },
+    "slug": {
+      "type": "string"
+    },
+    "is_navigation_root": {
+      "type": "boolean"
+    },
+    "hide_from_navigation": {
+      "type": "boolean"
+    },
+    "include_in_search": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "author_id",
+    "author_name",
+    "created",
+    "hide_from_navigation",
+    "id",
+    "include_in_search",
+    "is_navigation_root",
+    "is_post",
+    "modified",
+    "parent_page",
+    "path",
+    "title"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

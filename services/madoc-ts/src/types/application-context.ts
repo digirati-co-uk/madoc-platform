@@ -1,4 +1,5 @@
 import { i18n } from 'i18next';
+import { PageBlocksRepository } from '../repository/page-blocks-repository';
 import { ExternalConfig } from './external-config';
 import { router } from '../router';
 import { Pool } from 'mysql';
@@ -12,6 +13,7 @@ export interface ApplicationContext {
   routes: typeof router;
   mysql: Pool;
   connection: DatabasePoolConnectionType;
+  pageBlocks: PageBlocksRepository;
   omeka: OmekaApi;
   ajv: Ajv;
   omekaPage?: string | ((token: string) => Promise<string | undefined>) | ((token: string) => undefined | string);

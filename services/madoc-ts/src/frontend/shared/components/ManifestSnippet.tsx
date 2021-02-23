@@ -5,7 +5,20 @@ import { useApiManifest } from '../hooks/use-api-manifest';
 import { LocaleString } from './LocaleString';
 import { HrefLink } from '../utility/href-link';
 
-export const ManifestSnippet: React.FC<{ id: number; collectionId?: number }> = props => {
+export const ManifestSnippet: React.FC<{
+  id: number;
+  collectionId?: number;
+  flat?: boolean;
+  margin?: boolean;
+  lightBackground?: boolean;
+  size?: 'lg' | 'md' | 'sm';
+  center?: boolean;
+  buttonRole?: 'button' | 'link';
+  containThumbnail?: boolean;
+  smallLabel?: boolean;
+  fluid?: boolean;
+  interactive?: boolean;
+}> = props => {
   const { data } = useApiManifest(props.id);
   const { t } = useTranslation();
 
@@ -23,6 +36,15 @@ export const ManifestSnippet: React.FC<{ id: number; collectionId?: number }> = 
         linkAs={HrefLink}
         buttonText={t('view manifest')}
         link={link}
+        center={props.center}
+        buttonRole={props.buttonRole}
+        containThumbnail={props.containThumbnail}
+        flat={props.flat}
+        fluid={props.fluid}
+        interactive={props.interactive}
+        lightBackground={props.lightBackground}
+        size={props.size}
+        smallLabel={props.smallLabel}
       />
     );
   }
@@ -43,6 +65,15 @@ export const ManifestSnippet: React.FC<{ id: number; collectionId?: number }> = 
       thumbnail={thumbnail}
       buttonText={t('view manifest')}
       link={link}
+      center={props.center}
+      buttonRole={props.buttonRole}
+      containThumbnail={props.containThumbnail}
+      flat={props.flat}
+      fluid={props.fluid}
+      interactive={props.interactive}
+      lightBackground={props.lightBackground}
+      size={props.size}
+      smallLabel={props.smallLabel}
     />
   );
 };

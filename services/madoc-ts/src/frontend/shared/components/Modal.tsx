@@ -20,9 +20,23 @@ export const ModalButton: React.FC<{
   renderFooter?: (opts: { close: () => void }) => JSX.Element;
   className?: string;
   autoHeight?: boolean;
+  footerAlignRight?: boolean;
   modalSize?: 'lg' | 'md' | 'sm';
   disabled?: boolean;
-}> = ({ as, className, disabled, button, title, render, renderFooter, onClose, modalSize, autoHeight, children }) => {
+}> = ({
+  as,
+  className,
+  disabled,
+  button,
+  title,
+  render,
+  renderFooter,
+  onClose,
+  modalSize,
+  autoHeight,
+  footerAlignRight,
+  children,
+}) => {
   const portalEl = useRef<HTMLElement>();
   const [ready, setIsReady] = useState(false);
   const containerRef = useRef<any>();
@@ -68,7 +82,11 @@ export const ModalButton: React.FC<{
                     <ModalCloseIcon onClick={closeModal} />
                   </ModalHeader>
                   <ModalBody>{render({ close: closeModal })}</ModalBody>
-                  {renderFooter ? <ModalFooter>{renderFooter({ close: closeModal })}</ModalFooter> : null}
+                  {renderFooter ? (
+                    <ModalFooter $footerAlignRight={footerAlignRight}>
+                      {renderFooter({ close: closeModal })}
+                    </ModalFooter>
+                  ) : null}
                 </InnerModalContainer>
               </ModalContainer>
             </>,

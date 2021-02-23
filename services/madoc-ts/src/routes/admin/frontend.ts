@@ -54,6 +54,7 @@ export const adminFrontend: RouteMiddleware = async context => {
     }
 
     return `
+      <!doctype html>
       ${result.html}
       <script type="application/javascript" src="${bundle}"></script>
     `;
@@ -110,6 +111,7 @@ export const siteFrontend: RouteMiddleware = async context => {
     }
 
     return `
+      <!doctype html>
       ${result.html}
       <script type="application/javascript" src="${bundle}"></script>
     `;

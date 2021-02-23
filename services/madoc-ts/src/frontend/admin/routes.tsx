@@ -6,6 +6,9 @@ import { ConfigureLanguages } from './pages/content/internationalisation/configu
 import { EditTranslation } from './pages/content/internationalisation/edit-translation';
 import { ViewCanvasLinking } from './pages/content/linking/view-linking';
 import { MetadataConfigurationPage } from './pages/content/metadata-configuration';
+import { CreateNewPage } from './pages/content/page-blocks/create-new-page';
+import { ListPages } from './pages/content/page-blocks/list-pages';
+import { PageBlocks } from './pages/content/page-blocks/page-blocks';
 import { SiteConfiguration } from './pages/content/site-configuration';
 import { ProjectConfiguration } from './pages/crowdsourcing/projects/project-configuration';
 import { OcrListPage } from './pages/enrichment/ocr/ocr-list';
@@ -381,6 +384,22 @@ export const routes: UniversalRoute[] = [
     path: '/configure/site/metadata',
     exact: true,
     component: MetadataConfigurationPage,
+  },
+  {
+    path: '/page-blocks',
+    component: PageBlocks,
+    routes: [
+      {
+        path: '/page-blocks',
+        exact: true,
+        component: ListPages,
+      },
+      {
+        path: '/page-blocks/new-page',
+        exact: true,
+        component: CreateNewPage,
+      },
+    ],
   },
   {
     path: '/i18n',

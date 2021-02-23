@@ -36,7 +36,7 @@ export const ProjectContent: UniversalComponent<ProjectContentType> = createUniv
 
     return (
       <>
-        <div style={{ fontSize: `1.25em` }}>
+        <div>
           <HelpText>
             {t('help__flat_collection', {
               defaultValue: `

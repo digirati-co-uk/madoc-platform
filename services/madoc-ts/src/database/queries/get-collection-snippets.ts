@@ -1,4 +1,4 @@
-import { sql, SqlSqlTokenType } from 'slonik';
+import { sql, TaggedTemplateLiteralInvocationType } from 'slonik';
 import { metadataReducer } from '../../utility/iiif-metadata';
 import { SQL_EMPTY, SQL_INT_ARRAY } from '../../utility/postgres-tags';
 
@@ -17,7 +17,7 @@ export type CollectionSnippetsRow = {
   canvas_count?: number;
 };
 
-type CollectionAggregate = SqlSqlTokenType<{
+type CollectionAggregate = TaggedTemplateLiteralInvocationType<{
   collection_id: number;
   manifest_id: number;
   resource_type: string;
@@ -227,7 +227,7 @@ export function getCollectionSnippets(
     `;
 }
 
-export function mapCollectionSnippets(rows: CollectionSnippetsRow[]) {
+export function mapCollectionSnippets(rows: readonly CollectionSnippetsRow[]) {
   return rows.reduce(
     (state, row) => {
       let { collections, manifests } = state;

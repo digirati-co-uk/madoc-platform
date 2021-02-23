@@ -1,46 +1,134 @@
-import { InternationalString } from '@hyperion-framework/types';
 import React, { useMemo } from 'react';
+import styled, { css } from 'styled-components';
+import { InternationalString } from '@hyperion-framework/types';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 import { LocaleString } from './LocaleString';
 import { FacetConfig } from './MetadataFacetEditor';
 
-const MetadataDisplayContainer = styled.div`
-  display: flex;
-  flex-direction: column;
+const MetadataDisplayContainer = styled.table<{ $variation?: 'list' | 'table'; $size?: 'lg' | 'md' | 'sm' }>`
+  font-size: ${props =>
+    ({
+      lg: '1em',
+      md: '0.8em',
+      sm: '0.65em',
+    }[props.$size || 'md'])};
+
+  border-spacing: 0;
   max-width: 100%;
-  max-height: 80%;
+  width: 100%;
   flex-wrap: wrap;
-  padding: 1rem;
-  overflow: auto;
+  padding: 1em;
+  overflow: hidden;
 `;
 
-const MetaDataKey = styled.p`
-  font-size: 12px;
+const MetaDataKey = styled.td<{
+  $variation?: 'list' | 'table';
+  $labelStyle?: 'muted' | 'bold' | 'caps' | 'small-caps';
+  $labelWidth?: number;
+  $bordered?: boolean;
+}>`
+  ${props =>
+    ({
+      table: css`
+        max-width: 12em;
+        margin-right: 1em;
+        padding: 0.7em;
+        min-width: ${() => `${props.$labelWidth || 16}em`};
+
+        ${() =>
+          props.$bordered &&
+          css`
+            border-right: 1px solid #eee;
+          `}
+      `,
+      list: css`
+        display: block;
+        margin-bottom: 0.5em;
+        padding-bottom: 0.25em;
+        ${() =>
+          props.$bordered &&
+          css`
+            border-bottom: 1px solid #eee;
+          `}
+      `,
+    }[props.$variation || 'table'])}
+
+  ${props =>
+    ({
+      muted: css`
+        color: #999;
+        font-size: 1em;
+      `,
+      bold: css`
+        color: #000000;
+        font-weight: bold;
+        font-size: 1em;
+      `,
+      caps: css`
+        text-transform: uppercase;
+        color: #999;
+        font-size: 1em;
+      `,
+      'small-caps': css`
+        font-size: 0.85em;
+        text-transform: uppercase;
+        font-weight: bold;
+      `,
+    }[props.$labelStyle || 'bold'])}
+
+
+  text-decoration: none;
+  align-items: center;
+  & span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+  }
+`;
+
+const MetaDataValue = styled.td<{ $variation?: 'list' | 'table' }>`
+  ${props =>
+    ({
+      table: css`
+        padding: 0.7em 1em;
+      `,
+      list: css`
+        display: block;
+        padding: 0;
+        margin-bottom: 1em;
+      `,
+    }[props.$variation || 'table'])}
+
+  font-size: 1em;
   color: #000000;
   text-decoration: rgb(0, 0, 0);
-  display: flex;
-  align-items: center;
-  min-width: 8rem;
-  font-weight: bold;
+  word-break: break-word;
+
+  a {
+    color: #4070d9;
+  }
 `;
 
-const MetaDataValue = styled.p`
-  font-size: 12px;
-  color: #000000;
-  text-decoration: rgb(0, 0, 0);
-`;
-
-const MetadataContainer = styled.div`
-  display: flex;
-  align-items: center;
+const MetadataContainer = styled.tr<{ $variation?: 'list' | 'table' }>`
+  ${props =>
+    ({
+      table: css``,
+      list: css`
+        display: block;
+        margin-bottom: 1.5em;
+      `,
+    }[props.$variation || 'table'])}
 `;
 
 export const MetaDataDisplay: React.FC<{
   config?: FacetConfig[];
   metadata?: Array<{ label: InternationalString; value: InternationalString }>;
-  style?: any;
-}> = ({ config, metadata = [], style }) => {
+  variation?: 'table' | 'list';
+  labelStyle?: 'muted' | 'bold' | 'caps' | 'small-caps';
+  labelWidth?: number;
+  bordered?: boolean;
+}> = ({ metadata = [], config, variation = 'table', labelWidth = 16, bordered, labelStyle }) => {
   const { t } = useTranslation();
   const metadataKeyMap = useMemo(() => {
     const flatKeys = (config || []).reduce((state, i) => {
@@ -64,7 +152,7 @@ export const MetaDataDisplay: React.FC<{
 
   if (config && config.length) {
     return (
-      <MetadataDisplayContainer style={style}>
+      <MetadataDisplayContainer $variation={variation}>
         {config.map((configItem, idx: number) => {
           const values: any[] = [];
 
@@ -83,11 +171,16 @@ export const MetaDataDisplay: React.FC<{
           }
 
           return (
-            <MetadataContainer key={idx}>
-              <MetaDataKey>
+            <MetadataContainer key={idx} $variation={variation}>
+              <MetaDataKey
+                $labelStyle={labelStyle}
+                $variation={variation}
+                $labelWidth={labelWidth}
+                $bordered={bordered}
+              >
                 <LocaleString enableDangerouslySetInnerHTML>{configItem.label}</LocaleString>
               </MetaDataKey>
-              <MetaDataValue>{values}</MetaDataValue>
+              <MetaDataValue $variation={variation}>{values}</MetaDataValue>
             </MetadataContainer>
           );
         })}
@@ -96,15 +189,20 @@ export const MetaDataDisplay: React.FC<{
   }
 
   return (
-    <MetadataDisplayContainer style={style}>
+    <MetadataDisplayContainer $variation={variation}>
       {metadata && metadata.length
         ? metadata.map((metadataItem, idx: number) => {
             return (
-              <MetadataContainer key={idx}>
-                <MetaDataKey>
+              <MetadataContainer key={idx} $variation={variation}>
+                <MetaDataKey
+                  $labelStyle={labelStyle}
+                  $variation={variation}
+                  $labelWidth={labelWidth}
+                  $bordered={bordered}
+                >
                   <LocaleString enableDangerouslySetInnerHTML>{metadataItem.label}</LocaleString>
                 </MetaDataKey>
-                <MetaDataValue>
+                <MetaDataValue $variation={variation}>
                   <LocaleString enableDangerouslySetInnerHTML>{metadataItem.value}</LocaleString>
                 </MetaDataValue>
               </MetadataContainer>

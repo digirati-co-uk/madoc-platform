@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { Button, ButtonRow } from '../../shared/atoms/Button';
 import { usePaginatedData } from '../../shared/hooks/use-data';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
@@ -43,3 +44,10 @@ export const CollectionFilterOptions: React.FC = () => {
     </ButtonRow>
   );
 };
+
+blockEditorFor(CollectionFilterOptions, {
+  requiredContext: ['collection'],
+  editor: {},
+  label: 'Collection filter options',
+  type: 'default.CollectionFilterOptions',
+});

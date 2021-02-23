@@ -1,7 +1,7 @@
-import { sql, SqlSqlTokenType } from 'slonik';
+import { sql, TaggedTemplateLiteralInvocationType } from 'slonik';
 import { SQL_EMPTY } from '../../utility/postgres-tags';
 
-export function countSubQuery(query: SqlSqlTokenType<{ resource_id: number }>) {
+export function countSubQuery(query: TaggedTemplateLiteralInvocationType<{ resource_id: number }>) {
   return sql`with t (resource_id) as (${query}) select COUNT(*) from t left join iiif_derived_resource_items ri on t.resource_id = ri.item_id group by ri.resource_id`;
 }
 

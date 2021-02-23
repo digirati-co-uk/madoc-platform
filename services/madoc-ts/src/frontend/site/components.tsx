@@ -20,6 +20,8 @@ export { UserHomepage } from './pages/user-homepage';
 export { ViewCanvasModel } from './pages/view-canvas-model';
 export { ViewManifestMirador } from './pages/view-manifest-mirador';
 export { ViewUser } from './pages/view-user';
+export { ViewPage } from './pages/view-page';
+export { PageLoader } from './pages/loaders/page-loader';
 export { RootLoader } from './pages/loaders/root-loader';
 export { ProjectListLoader } from './pages/loaders/project-list-loader';
 export { UserDashboard } from './pages/dashboard/dashboard';

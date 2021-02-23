@@ -1,0 +1,129 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "number"
+    },
+    "slot_label": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "slot_layout": {
+      "type": "string"
+    },
+    "specificity": {
+      "type": "number"
+    },
+    "site_id": {
+      "type": "number"
+    },
+    "filter_project_none": {
+      "type": "boolean"
+    },
+    "filter_project_all": {
+      "type": "boolean"
+    },
+    "filter_project_exact": {
+      "type": "number"
+    },
+    "filter_project_whitelist": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "filter_project_blacklist": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "filter_collection_none": {
+      "type": "boolean"
+    },
+    "filter_collection_all": {
+      "type": "boolean"
+    },
+    "filter_collection_exact": {
+      "type": "number"
+    },
+    "filter_collection_whitelist": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "filter_collection_blacklist": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "filter_manifest_none": {
+      "type": "boolean"
+    },
+    "filter_manifest_all": {
+      "type": "boolean"
+    },
+    "filter_manifest_exact": {
+      "type": "number"
+    },
+    "filter_manifest_whitelist": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "filter_manifest_blacklist": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "filter_canvas_none": {
+      "type": "boolean"
+    },
+    "filter_canvas_all": {
+      "type": "boolean"
+    },
+    "filter_canvas_exact": {
+      "type": "number"
+    },
+    "filter_canvas_whitelist": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "filter_canvas_blacklist": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    }
+  },
+  "required": [
+    "filter_canvas_all",
+    "filter_canvas_exact",
+    "filter_canvas_none",
+    "filter_collection_all",
+    "filter_collection_exact",
+    "filter_collection_none",
+    "filter_manifest_all",
+    "filter_manifest_exact",
+    "filter_manifest_none",
+    "filter_project_all",
+    "filter_project_exact",
+    "filter_project_none",
+    "id",
+    "site_id",
+    "slot_layout",
+    "specificity"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

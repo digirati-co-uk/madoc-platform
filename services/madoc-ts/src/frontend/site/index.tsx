@@ -26,10 +26,6 @@ export type SiteAppProps = {
 };
 
 const SiteApp: React.FC<SiteAppProps> = ({ api, site, user, supportedLocales, defaultLocale, routes }) => {
-  const { i18n } = useTranslation();
-
-  const viewingDirection = useMemo(() => i18n.dir(i18n.language), [i18n]);
-
   return (
     <VaultProvider>
       <SiteProvider
@@ -40,17 +36,7 @@ const SiteApp: React.FC<SiteAppProps> = ({ api, site, user, supportedLocales, de
           defaultLocale,
         ])}
       >
-        <ApiContext.Provider value={api}>
-          <Helmet>
-            <title>{site.title}</title>
-          </Helmet>
-          <UserBar site={site} user={user} />
-          <GlobalSiteHeader />
-          <SiteContainer lang={i18n.language} dir={viewingDirection}>
-            <GlobalSiteNavigation />
-            {renderUniversalRoutes(routes)}
-          </SiteContainer>
-        </ApiContext.Provider>
+        <ApiContext.Provider value={api}>{renderUniversalRoutes(routes)}</ApiContext.Provider>
       </SiteProvider>
     </VaultProvider>
   );

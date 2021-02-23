@@ -1,0 +1,27 @@
+{
+  "type": "object",
+  "properties": {
+    "none": {
+      "type": "boolean"
+    },
+    "all": {
+      "type": "boolean"
+    },
+    "exact": {
+      "type": "number"
+    },
+    "whitelist": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "blacklist": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

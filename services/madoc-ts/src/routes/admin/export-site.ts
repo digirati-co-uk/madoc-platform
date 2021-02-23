@@ -127,7 +127,7 @@ export const exportSite: RouteMiddleware = async context => {
   // - Manifests
   const resources = loadedIIIIFResource.map(resource => {
     try {
-      if (resource.local_source) {
+      if (resource.local_source && typeof resource.local_source === 'string') {
         const data = JSON.parse(fs.readFileSync(resource.local_source).toString());
         return {
           data,

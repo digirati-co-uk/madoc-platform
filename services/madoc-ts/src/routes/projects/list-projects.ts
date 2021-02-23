@@ -22,7 +22,7 @@ export const listProjects: RouteMiddleware = async context => {
   const publishedQuery = onlyPublished ? sql`and (iiif_project.status = 1 or iiif_project.status = 2)` : SQL_EMPTY;
 
   const { total } = await context.connection.one(
-    sql`
+    sql<{ total: number }>`
       select count(*) as total 
       from iiif_project
       where site_id = ${siteId}
