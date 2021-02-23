@@ -24,6 +24,7 @@ create table site_pages
     page_options json,
     is_post boolean,
     slug text not null default '',
+    navigation_order integer default 0 not null,
     is_navigation_root boolean default false,
     hide_from_navigation boolean default false,
     include_in_search boolean default false,
