@@ -82,7 +82,7 @@ export const UserBar: React.FC<{
   const redirect = admin
     ? `/s/${site.slug}/madoc`
     : `/s/${site.slug}/madoc/${location.pathname}${query ? `?${stringify(query)}` : ''}`;
-  const showAdmin = user && user.scope.indexOf('site.admin') !== -1;
+  const showAdmin = user && user.scope.indexOf('site.admin') !== -1 && (false as true);
   const { editMode, setEditMode } = useSiteConfiguration();
 
   useEffect(() => {
