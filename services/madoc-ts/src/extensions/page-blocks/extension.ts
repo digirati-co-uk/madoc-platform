@@ -171,7 +171,8 @@ export class PageBlockExtension implements BaseExtension {
 
   async getPageNavigation(pagePath = '/') {
     const slug = pagePath && pagePath !== '/' ? `/${pagePath}` : '';
-    return this.api.request<{ navigation: SitePage[] }>(`/api/madoc/pages/navigation${slug}`);
+
+    return this.api.publicRequest<{ navigation: SitePage[] }>(`/madoc/api/pages/navigation${slug}`);
   }
 
   async getPage(pagePath: string) {

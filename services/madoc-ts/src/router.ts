@@ -14,7 +14,7 @@ import { deletePage } from './routes/content/delete-page';
 import { deleteSlot } from './routes/content/delete-slot';
 import { getBlock } from './routes/content/get-block';
 import { getPage } from './routes/content/get-page';
-import { getPageNavigation } from './routes/content/get-page-navigation';
+import { sitePageNavigation } from './routes/site/site-page-navigation';
 import { getSlot } from './routes/content/get-slot';
 import { getAllPages } from './routes/content/list-pages';
 import { updateBlock } from './routes/content/update-block';
@@ -251,7 +251,6 @@ export const router = new TypedRouter({
   'get-page': [TypedRouter.GET, '/api/madoc/pages/root/:paths*', getPage],
   'delete-page': [TypedRouter.DELETE, '/api/madoc/pages/root/:paths*', deletePage],
   'update-page': [TypedRouter.PUT, '/api/madoc/pages/root/:paths*', updatePage],
-  'get-page-navigation': [TypedRouter.GET, '/api/madoc/pages/navigation/:paths*', getPageNavigation],
   'get-all-pages': [TypedRouter.GET, '/api/madoc/pages', getAllPages],
 
   // Slots
@@ -308,6 +307,7 @@ export const router = new TypedRouter({
     siteCanvasTasks,
   ],
   'site-configuration': [TypedRouter.GET, '/s/:slug/madoc/api/configuration', siteConfiguration],
+  'site-page-navigation': [TypedRouter.GET, '/s/:slug/madoc/api/pages/navigation/:paths*', sitePageNavigation],
   'site-facet-configuration': [
     TypedRouter.GET,
     '/s/:slug/madoc/api/configuration/search-facets',
