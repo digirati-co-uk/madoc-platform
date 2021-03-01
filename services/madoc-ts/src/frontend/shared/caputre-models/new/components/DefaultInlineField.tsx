@@ -3,6 +3,8 @@ import { BaseField } from '@capture-models/types';
 import React, { useCallback, useState } from 'react';
 import { FieldPreview, Revisions, RoundedCard } from '@capture-models/editor';
 import { useDebouncedCallback } from 'use-debounce';
+import { InlineProgressIcon } from '../../../atoms/ProgressIcon';
+import { useFieldDetails } from '../hooks/use-field-details';
 import { EditorRenderingConfig } from './EditorSlots';
 
 export const DefaultInlineField: EditorRenderingConfig['InlineField'] = ({
@@ -14,14 +16,16 @@ export const DefaultInlineField: EditorRenderingConfig['InlineField'] = ({
   canRemove,
   onRemove,
 }) => {
+  const { isModified } = useFieldDetails(field);
+
   return (
     <RoundedCard
-      key={field.id}
       size="small"
       interactive={!!chooseField}
       onClick={chooseField}
       onRemove={canRemove ? onRemove : undefined}
     >
+      {isModified && <InlineProgressIcon />}
       {readonly ? (
         <InlineReadonlyValue field={field} />
       ) : (
