@@ -24,9 +24,9 @@ export function useInlineProperties(
   const renderEntityList = () => {
     const documents = propertyList as Array<CaptureModel['document']>;
 
-    return documents.map(doc => (
+    return documents.map((doc, n) => (
       <Slots.InlineEntity
-        key={doc.id}
+        key={n}
         entity={doc}
         property={property}
         canRemove={canRemove}
@@ -43,9 +43,9 @@ export function useInlineProperties(
   const renderFieldList = () => {
     const fields = propertyList as Array<BaseField>;
 
-    return fields.map(field => (
+    return fields.map((field, n) => (
       <Slots.InlineField
-        key={field.id}
+        key={n}
         path={path as any}
         field={field}
         property={property}
@@ -65,9 +65,9 @@ export function useInlineProperties(
     const fields = propertyList as Array<BaseField>;
 
     if (!Slots.configuration.allowEditing) {
-      return fields.map(field => (
+      return fields.map((field, n) => (
         <Slots.InlineField
-          key={field.id}
+          key={n}
           path={path as any}
           field={field}
           property={property}
@@ -78,13 +78,7 @@ export function useInlineProperties(
     }
 
     return fields.map((field, idx) => (
-      <FieldInstance
-        key={field.id}
-        field={field}
-        property={property}
-        path={[...path, [property, field.id]] as any}
-        hideHeader={idx !== 0}
-      />
+      <FieldInstance key={idx} field={field} property={property} path={path as any} hideHeader={idx !== 0} />
     ));
   };
 
