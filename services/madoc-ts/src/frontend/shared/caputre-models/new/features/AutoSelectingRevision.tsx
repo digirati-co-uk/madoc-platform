@@ -21,13 +21,13 @@ export const AutoSelectingRevision: React.FC = () => {
 
   useEffect(() => {
     if (skipToStructureRevision) {
-      createRevision({ revisionId: skipToStructureRevision, cloneMode: 'FORK_INSTANCE' });
+      createRevision({ revisionId: skipToStructureRevision, cloneMode: 'EDIT_ALL_VALUES' });
     }
   }, [createRevision, skipToStructureRevision]);
 
   useEffect(() => {
-    if (currentView && currentView.type === 'model') {
-      createRevision({ revisionId: currentView.id, cloneMode: 'FORK_INSTANCE' });
+    if (currentView && currentView.type === 'model' && !skipToStructureRevision && !currentRevisionId) {
+      createRevision({ revisionId: currentView.id, cloneMode: 'EDIT_ALL_VALUES' });
     }
     if (
       currentView &&
@@ -37,7 +37,7 @@ export const AutoSelectingRevision: React.FC = () => {
     ) {
       push(currentView.items[0].id);
     }
-  }, [createRevision, currentView, push]);
+  }, [createRevision, currentRevisionId, currentView, push, skipToStructureRevision]);
 
   return null;
 };
