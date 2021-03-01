@@ -19,7 +19,9 @@
     "build:stats": "NODE_ENV=production webpack --progress --json --profile > stats.json",
     "build:frontend": "NODE_ENV=production webpack",
     "link:model-editor": "yarn link \"@capture-models/editor\"",
-    "unlink:model-editor": "yarn unlink \"@capture-models/editor\" && yarn install --force"
+    "unlink:model-editor": "yarn unlink \"@capture-models/editor\" && yarn install --force",
+    "link:model-helpers": "yarn link \"@capture-models/helpers\"",
+    "unlink:model-helpers": "yarn unlink \"@capture-models/helpers\" && yarn install --force"
   },
   "browserslist": "> 0.25%, not dead",
   "resolutions": {
@@ -45,9 +47,9 @@
   "dependencies": {
     "@atlas-viewer/atlas": "1.4.1",
     "@atlas-viewer/iiif-image-api": "^1.2.1",
-    "@capture-models/editor": "^0.12.0",
-    "@capture-models/helpers": "^0.12.0",
-    "@capture-models/types": "^0.12.0",
+    "@capture-models/editor": "^0.13.1",
+    "@capture-models/helpers": "^0.13.1",
+    "@capture-models/types": "^0.13.0",
     "@hyperion-framework/presentation-2": "^1.0.0-alpha.14",
     "@hyperion-framework/react-vault": "1.0.0-alpha.24",
     "@hyperion-framework/types": "1.0.0-alpha.14",
