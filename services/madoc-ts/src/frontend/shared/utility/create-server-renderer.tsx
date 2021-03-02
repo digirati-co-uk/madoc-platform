@@ -1,7 +1,8 @@
 import { i18n } from 'i18next';
 import { makeQueryCache, ReactQueryCacheProvider, ReactQueryConfig, ReactQueryConfigProvider } from 'react-query';
 import { dehydrate, Hydrate } from 'react-query/hydration';
-import { ServerStyleSheet } from 'styled-components';
+import { ServerStyleSheet, ThemeProvider } from 'styled-components';
+import { defaultTheme } from '@capture-models/editor';
 import { ApiClient } from '../../../gateway/api';
 import { StaticRouterContext } from 'react-router';
 import { parse } from 'query-string';
@@ -105,14 +106,16 @@ export function createServerRenderer(
             <Hydrate state={dehydratedState}>
               <I18nextProvider i18n={i18next}>
                 <StaticRouter basename={basename} location={url} context={context}>
-                  <RootApplication
-                    api={api}
-                    routes={routes}
-                    site={omekaSite as any}
-                    user={user}
-                    defaultLocale={siteLocales.defaultLanguage || 'en'}
-                    supportedLocales={supportedLocales}
-                  />
+                  <ThemeProvider theme={defaultTheme}>
+                    <RootApplication
+                      api={api}
+                      routes={routes}
+                      site={omekaSite as any}
+                      user={user}
+                      defaultLocale={siteLocales.defaultLanguage || 'en'}
+                      supportedLocales={supportedLocales}
+                    />
+                  </ThemeProvider>
                 </StaticRouter>
               </I18nextProvider>
             </Hydrate>
