@@ -8,16 +8,16 @@ export const DefaultTopLevelEditor: EditorRenderingConfig['TopLevelEditor'] = ()
   const [currentView] = useNavigation();
 
   if (currentView && currentView.type === 'choice') {
-    return <EditorSlots.Choice />;
+    return <EditorSlots.Choice key={state.currentRevisionId || undefined} />;
   }
 
   if (!currentView || currentView.type === 'model') {
     if (state.revisionSubtreeField && !isEntity(state.revisionSubtreeField)) {
-      return <EditorSlots.ViewField />;
+      return <EditorSlots.ViewField key={state.currentRevisionId || undefined} />;
     }
 
     if (state.revisionSubtree && isEntity(state.revisionSubtree)) {
-      return <EditorSlots.ViewEntity />;
+      return <EditorSlots.ViewEntity key={state.currentRevisionId || undefined} />;
     }
   }
 

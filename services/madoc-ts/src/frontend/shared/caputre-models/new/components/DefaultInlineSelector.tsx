@@ -7,7 +7,7 @@ export const DefaultInlineSelector: EditorRenderingConfig['InlineSelector'] = ()
   const [entity, { isTop }] = useCurrentEntity();
   const { configuration } = useSlotContext();
 
-  if (!entity.selector || entity.immutable) {
+  if (!entity.selector) {
     return null;
   }
 

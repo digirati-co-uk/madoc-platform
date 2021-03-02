@@ -6,13 +6,14 @@ import MultiBackend from 'react-dnd-multi-backend';
 import HTML5toTouch from 'react-dnd-multi-backend/dist/cjs/HTML5toTouch';
 import { ReactQueryCacheProvider, ReactQueryConfig, ReactQueryConfigProvider } from 'react-query';
 import { Hydrate } from 'react-query/hydration';
+import { ThemeProvider } from 'styled-components';
+import { defaultTheme } from '@capture-models/editor';
 import { createBackend } from '../../../middleware/i18n/i18next.client';
 import { render } from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
 import { BrowserRouter } from 'react-router-dom';
 import { api } from '../../../gateway/api.browser';
 import React from 'react';
-import { ListLocalisationsResponse } from '../../../routes/admin/localisation';
 import { UniversalRoute } from '../../types';
 import { ErrorPage } from '../components/NotFoundPage';
 import { ErrorBoundary } from './error-boundary';
@@ -55,19 +56,21 @@ export function renderClient(
               <I18nextProvider i18n={i18n}>
                 <BrowserRouter basename={basename}>
                   <DndProvider backend={MultiBackend} options={HTML5toTouch}>
-                    <ErrorBoundary onError={error => <ErrorPage error={error} />}>
-                      <Component
-                        jwt={jwt}
-                        api={api}
-                        routes={routes}
-                        siteSlug={slug}
-                        site={dehydratedSite.site}
-                        user={dehydratedSite.user}
-                        supportedLocales={localisations}
-                        defaultLocale={defaultLocale}
-                      />
-                      {process.env.NODE_ENV === 'development' ? <ReactQueryDevtools /> : null}
-                    </ErrorBoundary>
+                    <ThemeProvider theme={defaultTheme}>
+                      <ErrorBoundary onError={error => <ErrorPage error={error} />}>
+                        <Component
+                          jwt={jwt}
+                          api={api}
+                          routes={routes}
+                          siteSlug={slug}
+                          site={dehydratedSite.site}
+                          user={dehydratedSite.user}
+                          supportedLocales={localisations}
+                          defaultLocale={defaultLocale}
+                        />
+                        {process.env.NODE_ENV === 'development' ? <ReactQueryDevtools /> : null}
+                      </ErrorBoundary>
+                    </ThemeProvider>
                   </DndProvider>
                 </BrowserRouter>
               </I18nextProvider>
