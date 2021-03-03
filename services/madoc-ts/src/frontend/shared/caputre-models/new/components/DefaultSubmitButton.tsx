@@ -3,7 +3,7 @@ import { RevisionRequest } from '@capture-models/types';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { Button } from '../../../atoms/Button';
+import { Button, ButtonRow } from '../../../atoms/Button';
 import { ModalButton } from '../../../components/Modal';
 import { useViewerSaving } from '../../../hooks/use-viewer-saving';
 import { EditorSlots } from './EditorSlots';
@@ -14,14 +14,15 @@ export const DefaultSubmitButton: React.FC<{ afterSave?: (req: RevisionRequest) 
   const deselectRevision = Revisions.useStoreActions(a => a.deselectRevision);
   const updateFunction = useViewerSaving(afterSave);
   const [, { pop }] = useNavigation();
-  const [saveRevision, { isLoading, isSuccess, reset }] = useMutation(async () => {
+
+  const [saveRevision, { isLoading, isSuccess, reset }] = useMutation(async (status: string) => {
     if (!currentRevision) {
       throw new Error(t('Unable to save your submission'));
     }
 
     try {
       // Change this to "draft" to save for later.
-      await updateFunction(currentRevision, 'submitted');
+      await updateFunction(currentRevision, status);
     } catch (e) {
       console.error(e);
       throw new Error(t('Unable to save your submission'));
@@ -34,43 +35,58 @@ export const DefaultSubmitButton: React.FC<{ afterSave?: (req: RevisionRequest) 
 
   return (
     <div style={{ textAlign: 'center' }}>
-      <ModalButton
-        autoHeight
-        modalSize="lg"
-        title={t('Submit for review')}
-        render={() => {
-          return isSuccess ? <EditorSlots.PostSubmission /> : <EditorSlots.PreviewSubmission />;
-        }}
-        onClose={() => {
-          if (currentRevision) {
-            if (isSuccess) {
-              // Deselect revision.
-              deselectRevision({ revisionId: currentRevision.revision.id });
-              pop();
-              reset();
+      <ButtonRow $noMargin>
+        <ModalButton
+          autoHeight
+          modalSize="lg"
+          title={t('Submit for review')}
+          render={() => {
+            return isSuccess ? <EditorSlots.PostSubmission /> : <EditorSlots.PreviewSubmission />;
+          }}
+          onClose={() => {
+            if (currentRevision) {
+              if (isSuccess) {
+                // Deselect revision.
+                deselectRevision({ revisionId: currentRevision.revision.id });
+                pop();
+                reset();
+              }
             }
-          }
-        }}
-        renderFooter={({ close }) => {
-          return isSuccess ? (
-            <Button data-cy="close-add-another" onClick={close}>
-              {t('Close and add another')}
-            </Button>
-          ) : (
-            <Button
-              data-cy="publish-button"
-              disabled={isLoading}
-              onClick={() => {
-                saveRevision();
-              }}
-            >
-              {isLoading ? t('Saving...') : t('Submit')}
-            </Button>
-          );
-        }}
-      >
-        <Button>{t('Submit')}</Button>
-      </ModalButton>
+          }}
+          footerAlignRight
+          renderFooter={({ close }) => {
+            return isSuccess ? (
+              <Button data-cy="close-add-another" onClick={close}>
+                {t('Close and add another')}
+              </Button>
+            ) : (
+              <ButtonRow $noMargin>
+                <Button
+                  onClick={() => {
+                    saveRevision('draft').then(() => {
+                      close();
+                    });
+                  }}
+                >
+                  {isLoading ? t('Saving...') : t('Save for later')}
+                </Button>
+                <Button
+                  data-cy="publish-button"
+                  disabled={isLoading}
+                  $primary
+                  onClick={() => {
+                    saveRevision('submitted');
+                  }}
+                >
+                  {isLoading ? t('Saving...') : t('Submit')}
+                </Button>
+              </ButtonRow>
+            );
+          }}
+        >
+          <Button $primary>{t('Submit')}</Button>
+        </ModalButton>
+      </ButtonRow>
     </div>
   );
 };
