@@ -97,8 +97,12 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         if (projects.projects.length) {
           const project = projects.projects[0];
           if (project) {
-            const { user } = await api.assignUserToReview(project.id, task.id);
-
+            try {
+              await api.assignUserToReview(project.id, task.id);
+            } catch (e) {
+              // Only possible when the project is broken (collection removed)
+              console.log(e);
+            }
           }
         }
       }
