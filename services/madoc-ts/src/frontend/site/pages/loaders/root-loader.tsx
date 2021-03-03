@@ -39,9 +39,8 @@ export const RootLoader: UniversalComponent<RootLoaderType> = createUniversalCom
           <title>{site.title}</title>
         </Helmet>
         <UserBar site={site} user={user} />
-        <GlobalSiteHeader />
+        <GlobalSiteHeader menu={<GlobalSiteNavigation />} />
         <SiteContainer lang={i18n.language} dir={viewingDirection}>
-          <GlobalSiteNavigation />
           {renderUniversalRoutes(route.routes)}
         </SiteContainer>
       </ConfigProvider>

@@ -26,6 +26,9 @@ const SiteDetails = styled.div`
   align-self: flex-start;
   text-decoration: none;
   flex: 1 1 0px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
 `;
 
 const SiteTitle = styled.a`
@@ -33,6 +36,7 @@ const SiteTitle = styled.a`
   letter-spacing: -2px;
   color: #363453;
   font-size: 1em;
+  margin-right: 2em;
 `;
 
 const GlobalSearchContainer = styled.div`
@@ -69,7 +73,9 @@ const GlobalSearchButton = styled.button`
   border: 2px solid #333;
 `;
 
-export const GlobalSiteHeader: React.FC = () => {
+const SiteMenuContainer = styled.div``;
+
+export const GlobalSiteHeader: React.FC<{ menu?: any }> = ({ menu }) => {
   const site = useSite();
   const api = useApi();
   const restarting = useIsApiRestarting(api);
@@ -88,6 +94,7 @@ export const GlobalSiteHeader: React.FC = () => {
               <span className="title">{site.title}</span>
             </h1>
           </SiteTitle>
+          <SiteMenuContainer>{menu}</SiteMenuContainer>
         </SiteDetails>
         <GlobalSearchContainer>
           <GlobalSearchForm

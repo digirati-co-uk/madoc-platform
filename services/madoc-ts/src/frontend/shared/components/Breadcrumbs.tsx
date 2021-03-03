@@ -26,6 +26,9 @@ export const BreadcrumbList = styled.div`
 
 export const BreadcrumbItem = styled.div<{ active?: boolean }>`
   font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   &,
   a {
     cursor: pointer;
@@ -59,6 +62,9 @@ const ViewInAdmin = styled.div`
   background: #2b4068;
   border-radius: 3px;
   padding: 0.4em 0.8em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   color: rgba(255, 255, 255, 0.9);
   font-size: 0.75em;
 `;
