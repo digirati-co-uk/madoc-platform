@@ -11,9 +11,9 @@ declare module '@capture-models/types' {
 }
 
 const specification: FieldSpecification<ParagraphsProps> = {
-  label: 'Paragraphs',
+  label: 'Edit OCR data',
   type: 'madoc-paragraphs',
-  description: 'Dynamic paragraphs',
+  description: 'Dynamic paragraphs generated from OCR',
   Component: Paragraphs,
   defaultValue: '',
   allowMultiple: true,
