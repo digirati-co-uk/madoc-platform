@@ -176,7 +176,7 @@ export class PageBlockExtension implements BaseExtension {
   }
 
   async getPage(pagePath: string) {
-    return this.api.request<{
+    return this.api.publicRequest<{
       page: SitePage;
       navigation: SitePage[];
       root?: {
@@ -188,7 +188,7 @@ export class PageBlockExtension implements BaseExtension {
         path: string;
         findPath: string[];
       };
-    }>(`/api/madoc/pages/root/${pagePath}`);
+    }>(`/madoc/api/page/root/${pagePath}`);
   }
 
   async getSlot(slotId: number) {
