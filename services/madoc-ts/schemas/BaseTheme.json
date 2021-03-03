@@ -1,96 +1,16 @@
 {
-  "type": "object",
-  "properties": {
-    "id": {
-      "type": "number"
+  "allOf": [
+    {
+      "$ref": "#/definitions/{header:\"default\"|\"dark\"|\"midnight\";accent:\"default\";siteContainer:\"default\"|\"light\"|\"dark\";footer:\"light\"|\"dark\";}"
     },
-    "collection_id": {
-      "type": "number"
-    },
-    "slug": {
-      "type": "string"
-    },
-    "capture_model_id": {
-      "type": "string"
-    },
-    "task_id": {
-      "type": "string"
-    },
-    "label": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "array",
-        "items": {
-          "type": "string"
-        }
-      }
-    },
-    "summary": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "array",
-        "items": {
-          "type": "string"
-        }
-      }
-    },
-    "status": {
-      "type": "number"
-    },
-    "statistics": {
+    {
       "type": "object",
       "properties": {
-        "0": {
-          "type": "number"
-        },
-        "1": {
-          "type": "number"
-        },
-        "2": {
-          "type": "number"
-        },
-        "3": {
-          "type": "number"
+        "custom": {
+          "$ref": "#/definitions/{header?:Pick<Partial<ThemeVariation<{headerBackground:string;globalBackground:string;menuHoverBackground:string;headerText:string;searchBorder:string;searchBorderFocusColor:string;size:number;},\"default\"|\"dark\"|\"midnight\">>,\"headerBackground\"|\"size\"|\"globalBackground\"|\"menuHoverBackground\"|\"headerText\"|\"searchBorder\"|\"searchBorderFocusColor\">;accent?:Pick<Partial<ThemeVariation<{primary:string;secondary:string;},\"default\">>,\"primary\"|\"secondary\">;siteContainer?:Pick<Partial<ThemeVariation<{containerBackground:string;background:string;},\"default\"|\"light\"|\"dark\">>,\"background\"|\"containerBackground\">;footer?:Pick<Partial<ThemeVariation<{background:string;containerBackground:string;color:string;},\"light\"|\"dark\">>,\"color\"|\"background\"|\"containerBackground\">;}"
         }
-      },
-      "required": [
-        "0",
-        "1",
-        "2",
-        "3"
-      ]
-    },
-    "content": {
-      "type": "object",
-      "properties": {
-        "manifests": {
-          "type": "number"
-        },
-        "canvases": {
-          "type": "number"
-        }
-      },
-      "required": [
-        "canvases",
-        "manifests"
-      ]
-    },
-    "config": {
-      "$ref": "#/definitions/Partial<ProjectConfiguration>"
+      }
     }
-  },
-  "required": [
-    "capture_model_id",
-    "collection_id",
-    "config",
-    "content",
-    "id",
-    "label",
-    "slug",
-    "statistics",
-    "status",
-    "summary",
-    "task_id"
   ],
   "definitions": {
     "T": {
@@ -221,91 +141,6 @@
         },
         "containerBackground": {
           "type": "string"
-        }
-      }
-    },
-    "Partial<ProjectConfiguration>": {
-      "description": "Make all properties in T optional",
-      "type": "object",
-      "properties": {
-        "allowCollectionNavigation": {
-          "type": "boolean"
-        },
-        "allowManifestNavigation": {
-          "type": "boolean"
-        },
-        "allowCanvasNavigation": {
-          "type": "boolean"
-        },
-        "claimGranularity": {
-          "enum": [
-            "canvas",
-            "manifest"
-          ],
-          "type": "string"
-        },
-        "maxContributionsPerResource": {
-          "anyOf": [
-            {
-              "enum": [
-                false
-              ],
-              "type": "boolean"
-            },
-            {
-              "type": "number"
-            }
-          ]
-        },
-        "revisionApprovalsRequired": {
-          "type": "number"
-        },
-        "allowSubmissionsWhenCanvasComplete": {
-          "type": "boolean"
-        },
-        "randomlyAssignReviewer": {
-          "type": "boolean"
-        },
-        "manuallyAssignedReviewer": {
-          "type": "number"
-        },
-        "adminsAreReviewers": {
-          "type": "boolean"
-        },
-        "hideCompletedResources": {
-          "type": "boolean"
-        },
-        "contributionWarningTime": {
-          "anyOf": [
-            {
-              "enum": [
-                false
-              ],
-              "type": "boolean"
-            },
-            {
-              "type": "number"
-            }
-          ]
-        },
-        "randomlyAssignCanvas": {
-          "type": "boolean"
-        },
-        "priorityRandomness": {
-          "type": "boolean"
-        },
-        "skipAutomaticOCRImport": {
-          "type": "boolean"
-        },
-        "defaultEditorOrientation": {
-          "enum": [
-            "horizontal",
-            "vertical"
-          ],
-          "type": "string"
-        },
-        "skipManifestListingPage": {
-          "type": "boolean"
         }
       }
     }

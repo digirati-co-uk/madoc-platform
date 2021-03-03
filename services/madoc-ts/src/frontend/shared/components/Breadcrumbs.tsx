@@ -20,7 +20,7 @@ type BreadcrumbContextType = {
 
 export const BreadcrumbList = styled.div`
   display: flex;
-  margin: 0.5em 0;
+  padding: 0.5em 0;
   font-size: 0.9em;
 `;
 

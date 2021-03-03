@@ -34,9 +34,9 @@ export const FullStructureEditor: React.FC = () => {
       setInstructions={setInstructions}
       onAddChoice={addStructureToChoice}
       onAddModel={addStructureToChoice}
-      pushFocus={focus.pushFocus}
-      popFocus={focus.popFocus}
-      setFocus={focus.setFocus}
+      pushFocus={focus.pushFocus as any}
+      popFocus={focus.popFocus as any}
+      setFocus={focus.setFocus as any}
       onRemove={removeStructureFromChoice}
       currentPath={currentPath}
       setModelFields={setModelFields}

@@ -13,9 +13,12 @@ const generator = TJS.buildGenerator(program, { required: true, noExtraProps: fa
 
 const symbols = generator.getMainFileSymbols(program, files);
 
+const includeRefs = ['BaseTheme', 'ConfigResponse', 'ProjectFull'];
+
 for (const typeName of symbols) {
   console.log('starting... ', typeName);
-  const schema = generator.getSchemaForSymbol(typeName, false);
+
+  const schema = generator.getSchemaForSymbol(typeName, includeRefs.indexOf(typeName) !== -1);
   if (schema) {
     writeFileSync(join(resolve(__dirname, 'schemas'), `${typeName}.json`), JSON.stringify(schema, null, 2));
   }
