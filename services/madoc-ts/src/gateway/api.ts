@@ -294,9 +294,12 @@ export class ApiClient {
             asUser: this.user,
           });
 
-          if (newTokenResponse.error) {
-            window.location.href = `/s/${slug}/madoc/login`;
-            return {} as any;
+          if (newTokenResponse.error || !newTokenResponse.data.token) {
+            window.location.href = `/s/${slug}/madoc/login?redirect=${encodeURI(
+              window.location.pathname + window.location.search
+            )}`;
+
+            throw new ApiError('Unknown error', response.debugResponse);
           }
 
           this.jwt = newTokenResponse.data.token;
