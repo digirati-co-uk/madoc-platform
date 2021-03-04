@@ -12,7 +12,7 @@ import { themeVariable } from '../../themes/helpers/themeVariable';
 const headerBackground = themeVariable('header', 'headerBackground', {
   default: '#fff',
   dark: '#444',
-  midnight: 'rgba(255, 255, 255, .4)',
+  midnight: '#000',
 });
 
 const globalBackground = themeVariable('header', 'globalBackground', {

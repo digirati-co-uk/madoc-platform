@@ -12,14 +12,3 @@ export type HeaderTheme = ThemeVariation<
   },
   'default' | 'midnight' | 'dark'
 >;
-
-type GetType<Var extends ThemeVariation<any, any>, T extends string> = Var extends ThemeVariation<
-  {
-    [key in T]: infer R;
-  },
-  any
->
-  ? R
-  : never;
-
-type Test = GetType<HeaderTheme, 'headerBackground'>;
