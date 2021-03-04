@@ -1,4 +1,4 @@
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle } from 'styled-components';
 
 export const GlobalStyles = createGlobalStyle`
   html, body {
@@ -22,5 +22,11 @@ export const GlobalStyles = createGlobalStyle`
 
   a {
     color: #333;
+  }
+  
+  #react-component {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
 `;

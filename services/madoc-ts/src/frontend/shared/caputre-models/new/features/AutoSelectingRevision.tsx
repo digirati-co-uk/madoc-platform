@@ -1,11 +1,16 @@
 import { Revisions, useNavigation } from '@capture-models/editor';
 import React, { useEffect, useMemo } from 'react';
+import { useRevisionList } from '../hooks/use-revision-list';
 
 export const AutoSelectingRevision: React.FC = () => {
   const currentRevisionId = Revisions.useStoreState(s => s.currentRevisionId);
   const structure = Revisions.useStoreState(s => s.structure);
   const createRevision = Revisions.useStoreActions(a => a.createRevision);
+  const selectRevision = Revisions.useStoreActions(a => a.selectRevision);
   const [currentView, { push }] = useNavigation();
+  const revisionList = useRevisionList();
+
+  const lastWorkedOn = revisionList.myUnpublished.length ? revisionList.myUnpublished[0] : undefined;
 
   const skipToStructureRevision = useMemo(() => {
     if (
@@ -21,13 +26,21 @@ export const AutoSelectingRevision: React.FC = () => {
 
   useEffect(() => {
     if (skipToStructureRevision) {
-      createRevision({ revisionId: skipToStructureRevision, cloneMode: 'EDIT_ALL_VALUES' });
+      if (lastWorkedOn) {
+        selectRevision({ revisionId: lastWorkedOn.revision.id });
+      } else {
+        createRevision({ revisionId: skipToStructureRevision, cloneMode: 'EDIT_ALL_VALUES' });
+      }
     }
-  }, [createRevision, skipToStructureRevision]);
+  }, [createRevision, lastWorkedOn, selectRevision, skipToStructureRevision]);
 
   useEffect(() => {
     if (currentView && currentView.type === 'model' && !skipToStructureRevision && !currentRevisionId) {
-      createRevision({ revisionId: currentView.id, cloneMode: 'EDIT_ALL_VALUES' });
+      if (lastWorkedOn) {
+        selectRevision({ revisionId: lastWorkedOn.revision.id });
+      } else {
+        createRevision({ revisionId: currentView.id, cloneMode: 'EDIT_ALL_VALUES' });
+      }
     }
     if (
       currentView &&
@@ -37,7 +50,7 @@ export const AutoSelectingRevision: React.FC = () => {
     ) {
       push(currentView.items[0].id);
     }
-  }, [createRevision, currentRevisionId, currentView, push, skipToStructureRevision]);
+  }, [createRevision, currentRevisionId, currentView, lastWorkedOn, push, selectRevision, skipToStructureRevision]);
 
   return null;
 };

@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 import { DashboardTab, DashboardTabs } from '../../../../shared/components/DashboardTabs';
-import { HrefLink } from '../../../../shared/utility/href-link';
 import { UniversalComponent } from '../../../../types';
 import { EditorContext } from '@capture-models/editor';
 import React, { useState } from 'react';
@@ -13,7 +12,6 @@ import { useMutation } from 'react-query';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
-import { LightNavigation, LightNavigationItem } from '../../../../shared/atoms/LightNavigation';
 import { AutoStructure } from '../model-editor/auto-structure';
 
 type ProjectModelEditorType = {

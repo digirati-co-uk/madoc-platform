@@ -32,6 +32,7 @@ import { getParentLinking } from './routes/iiif/linking/get-parent-linking';
 import { indexManifest } from './routes/search/index-manifest';
 import { updateProjectStatus } from './routes/projects/update-project-status';
 import { siteManifestTasks } from './routes/site/site-manifest-tasks';
+import { sitePages } from './routes/site/site-pages';
 import { getUser } from './routes/user/get-user';
 import { TypedRouter } from './utility/typed-router';
 import { ping } from './routes/ping';
@@ -288,7 +289,7 @@ export const router = new TypedRouter({
     '/s/:slug/madoc/api/projects/:projectSlug/manifest-tasks/:manifestId',
     siteManifestTasks,
   ],
-  'site-page': [TypedRouter.GET, '/s/:slug/madoc/api/page/:pageSlug+', sitePage],
+  'site-page': [TypedRouter.GET, '/s/:slug/madoc/api/page/root/:paths*', sitePages],
   'site-project': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug', siteProject],
   'site-projects': [TypedRouter.GET, '/s/:slug/madoc/api/projects', siteProjects],
   'site-search': [TypedRouter.POST, '/s/:slug/madoc/api/search', siteSearch],

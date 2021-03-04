@@ -1,13 +1,14 @@
 import React, { useMemo } from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { SiteContainer } from '../../../shared/atoms/SiteContainer';
+import { SiteContainer, SiteContainerBackground } from '../../../shared/atoms/SiteContainer';
 import { UserBar } from '../../../shared/components/UserBar';
 import { useSite, useUser } from '../../../shared/hooks/use-site';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { UniversalComponent } from '../../../types';
 import { useStaticData } from '../../../shared/hooks/use-data';
+import { GlobalFooter } from '../../features/GlobalFooter';
 import { GlobalSiteHeader } from '../../features/GlobalSiteHeader';
 import { GlobalSiteNavigation } from '../../features/GlobalSiteNavigation';
 import { ConfigProvider, SiteConfigurationContext } from '../../features/SiteConfigurationContext';
@@ -39,11 +40,13 @@ export const RootLoader: UniversalComponent<RootLoaderType> = createUniversalCom
           <title>{site.title}</title>
         </Helmet>
         <UserBar site={site} user={user} />
-        <GlobalSiteHeader />
-        <SiteContainer lang={i18n.language} dir={viewingDirection}>
-          <GlobalSiteNavigation />
-          {renderUniversalRoutes(route.routes)}
-        </SiteContainer>
+        <GlobalSiteHeader menu={<GlobalSiteNavigation />} />
+        <SiteContainerBackground>
+          <SiteContainer lang={i18n.language} dir={viewingDirection}>
+            {renderUniversalRoutes(route.routes)}
+          </SiteContainer>
+        </SiteContainerBackground>
+        <GlobalFooter />
       </ConfigProvider>
     );
   },

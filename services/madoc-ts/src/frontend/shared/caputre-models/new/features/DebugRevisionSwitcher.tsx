@@ -26,7 +26,7 @@ export const DebugRevisionSwitcher: React.FC<{ contributors: CaptureModel['contr
 
           return (
             <li key={id}>
-              {(rev.revision.authors || []).map(auth => {
+              {(rev.revision.authors || []).map((auth: any) => {
                 return contributors[auth].name;
               })}
               {rev.revision.approved ? null : (
