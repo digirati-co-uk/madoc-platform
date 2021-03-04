@@ -1257,6 +1257,7 @@ export class ApiClient {
       detail?: boolean;
       assignee?: string;
       per_page?: number;
+      sort_by?: 'newest';
     } = {}
   ) {
     return this.request<{ tasks: TaskType[]; pagination: Pagination }>(

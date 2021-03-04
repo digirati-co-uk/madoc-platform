@@ -199,6 +199,11 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
           component: components.ViewProject,
         },
         {
+          path: '/projects/:slug/task-overview',
+          exact: true,
+          component: components.ViewProjectTasks,
+        },
+        {
           path: '/projects/:slug/search',
           exact: true,
           component: components.Search,

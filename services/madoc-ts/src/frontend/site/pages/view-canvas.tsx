@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { castBool } from '../../../utility/cast-bool';
 import { InfoMessage } from '../../shared/atoms/InfoMessage';
 import { LockIcon } from '../../shared/atoms/LockIcon';
 import { ViewDocument } from '../../shared/caputre-models/inspector/ViewDocument';
@@ -10,12 +11,14 @@ import { MetaDataDisplay } from '../../shared/components/MetaDataDisplay';
 import { apiHooks } from '../../shared/hooks/use-api-query';
 import { useCanvasSearch } from '../../shared/hooks/use-canvas-search';
 import { Heading3 } from '../../shared/atoms/Heading3';
+import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { CanvasImageViewer } from '../features/CanvasImageViewer';
 import { CanvasManifestNavigation } from '../features/CanvasManifestNavigation';
 import { CanvasPlaintext } from '../features/CanvasPlaintext';
 import { ContinueCanvasSubmission } from '../features/ContinueCanvasSubmission';
 import { ManifestMetadata } from '../features/ManifestMetadata';
 import { ManifestUserTasks } from '../features/ManifestUserTasks';
+import { RedirectToNextCanvas } from '../features/RedirectToNextCanvas';
 import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
@@ -31,11 +34,17 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({ project, canvas, manifes
   const createLink = useRelativeLinks();
   const { t } = useTranslation();
   const [selectedPanel, setSelectedPanel] = useState(0);
+  const { goToNext } = useLocationQuery<any>();
+  const shouldGoToNext = castBool(goToNext);
 
   const { data } = apiHooks.getSiteCanvasPublishedModels(() => [
     canvasId,
     { project_id: projectId, selectors: true, format: 'capture-model-with-pages' },
   ]);
+
+  if (shouldGoToNext) {
+    return <RedirectToNextCanvas />;
+  }
 
   return (
     <>

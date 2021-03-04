@@ -16,4 +16,7 @@ export type ProjectConfiguration = {
   skipAutomaticOCRImport?: boolean;
   defaultEditorOrientation: 'vertical' | 'horizontal';
   skipManifestListingPage?: boolean;
+  hideStatistics?: boolean;
+  hideProjectCollectionNavigation?: boolean;
+  hideProjectManifestNavigation?: boolean;
 };

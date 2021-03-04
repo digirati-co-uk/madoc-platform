@@ -95,4 +95,19 @@ export const siteConfigurationModel = {
     type: 'checkbox-field',
     inlineLabel: 'Skip showing list of manifest thumbnails',
   },
+  hideStatistics: {
+    label: 'Hide statistics on projects page',
+    type: 'checkbox-field',
+    inlineLabel: 'Hide statistics',
+  },
+  hideProjectCollectionNavigation: {
+    label: 'Hide collection list from project homepage',
+    type: 'checkbox-field',
+    inlineLabel: 'Hide collections on project',
+  },
+  hideProjectManifestNavigation: {
+    label: 'Hide manifest list from project homepage',
+    type: 'checkbox-field',
+    inlineLabel: 'Hide manifests on project',
+  },
 };
