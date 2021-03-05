@@ -22,6 +22,7 @@ export async function createApp(router: TypedRouter<any, any>) {
       },
     },
   });
+  app.context.localDisk = path.resolve(__dirname, '../files');
 
   app.use(errorHandler);
   app.use(json({ pretty: process.env.NODE_ENV !== 'production' }));

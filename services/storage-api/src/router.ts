@@ -1,3 +1,4 @@
+import { getLevel0File } from './routes/iiif/level-0';
 import { TypedRouter } from './utility/typed-router';
 import { IndexPage } from './routes/index';
 import { getFileData } from './routes/get-file-data';
@@ -18,5 +19,6 @@ export const router = new TypedRouter({
   'get-bucket': [TypedRouter.GET, '/api/storage/details/:bucket', getBucket],
   'create-bucket-file': [TypedRouter.POST, '/api/storage/data/:bucket/:path+', createBucketFile],
   'get-bucket-files': [TypedRouter.GET, '/api/storage/list/:bucket', getBucketFiles],
+  'get-iiif-public-file': [TypedRouter.GET, '/public/storage/iiif/0/:rootBucket/:bucket/:path+', getLevel0File],
   'get-public-file': [TypedRouter.GET, '/public/storage/:rootBucket/:bucket/:path+', getPublicFile],
 });

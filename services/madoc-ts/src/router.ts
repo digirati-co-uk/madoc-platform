@@ -75,7 +75,6 @@ import { updateProjectMetadata } from './routes/projects/update-project-metadata
 import { getProjectStructure } from './routes/projects/get-project-structure';
 import { getCollectionProjects } from './routes/iiif/collections/get-collection-projects';
 import { getManifestProjects } from './routes/iiif/manifests/get-manifest-projects';
-import { sitePage } from './routes/site/site-page';
 import { siteCollections } from './routes/site/site-collections';
 import { siteCollection } from './routes/site/site-collection';
 import { siteCanvas } from './routes/site/site-canvas';

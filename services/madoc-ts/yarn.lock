@@ -13915,6 +13915,11 @@ node-releases@^1.1.29, node-releases@^1.1.53, node-releases@^1.1.61:
   resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-1.1.70.tgz#66e0ed0273aa65666d7fe78febe7634875426a08"
   integrity sha512-Slf2s69+2/uAD79pVVQo8uSiC34+g8GWY8UH2Qtqv34ZfhYrxpYpfzs9Js9d6O0mbDmALuxaTlplnBTnSELcrw==
 
+node-stream-zip@^1.13.2:
+  version "1.13.2"
+  resolved "https://registry.yarnpkg.com/node-stream-zip/-/node-stream-zip-1.13.2.tgz#2fce9d001fa7fda943a906eff239eb83fda124ba"
+  integrity sha512-159NUO3quDIRVSVOQiQ/0VG8NFrGvVyUa+MUUleiOys3NLtrGtNkodqYYTRHU/kiXu/ygHZcNy/tZ4NUCcDUmQ==
+
 noop-logger@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/noop-logger/-/noop-logger-0.1.1.tgz#94a2b1633c4f1317553007d8966fd0e841b6a4c2"
