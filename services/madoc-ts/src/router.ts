@@ -14,7 +14,6 @@ import { deletePage } from './routes/content/delete-page';
 import { deleteSlot } from './routes/content/delete-slot';
 import { getBlock } from './routes/content/get-block';
 import { getPage } from './routes/content/get-page';
-import { imageTest } from './routes/iiif/image/test';
 import { sitePageNavigation } from './routes/site/site-page-navigation';
 import { getSlot } from './routes/content/get-slot';
 import { getAllPages } from './routes/content/list-pages';
@@ -76,7 +75,6 @@ import { updateProjectMetadata } from './routes/projects/update-project-metadata
 import { getProjectStructure } from './routes/projects/get-project-structure';
 import { getCollectionProjects } from './routes/iiif/collections/get-collection-projects';
 import { getManifestProjects } from './routes/iiif/manifests/get-manifest-projects';
-import { sitePage } from './routes/site/site-page';
 import { siteCollections } from './routes/site/site-collections';
 import { siteCollection } from './routes/site/site-collection';
 import { siteCanvas } from './routes/site/site-canvas';
