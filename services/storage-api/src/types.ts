@@ -27,6 +27,7 @@ export interface ApplicationState {
 export interface ApplicationContext {
   routes: typeof router;
   storage: StorageManager;
+  localDisk: string;
 }
 
 export type RouteMiddleware<Params = any, Body = any> = Koa.Middleware<

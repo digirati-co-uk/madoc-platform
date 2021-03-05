@@ -14,6 +14,7 @@ import { deletePage } from './routes/content/delete-page';
 import { deleteSlot } from './routes/content/delete-slot';
 import { getBlock } from './routes/content/get-block';
 import { getPage } from './routes/content/get-page';
+import { imageTest } from './routes/iiif/image/test';
 import { sitePageNavigation } from './routes/site/site-page-navigation';
 import { getSlot } from './routes/content/get-slot';
 import { getAllPages } from './routes/content/list-pages';

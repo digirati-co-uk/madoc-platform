@@ -218,6 +218,8 @@ services:
   storage-api:
     build:
       context: services/storage-api
+    environment:
+      - GATEWAY_HOST=${GATEWAY_HOST}
     volumes:
       - ./services/storage-api/lib:/home/node/app/lib:delegated
       - ./var/files/storage-api:/home/node/app/files
