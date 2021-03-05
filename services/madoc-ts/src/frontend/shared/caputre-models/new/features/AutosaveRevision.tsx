@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { useApi } from '../../../hooks/use-api';
 
-export const AutosaveRevision: React.FC<{ minutes: number }> = ({ minutes = 2 }) => {
+export const AutosaveRevision: React.FC<{ minutes?: number }> = ({ minutes = 2 }) => {
   const currentRevisionId = Revisions.useStoreState(s => s.currentRevisionId);
   const currentRevision = Revisions.useStoreState(s => s.currentRevision);
   const currentDoc = currentRevision?.document.properties;
