@@ -18,7 +18,10 @@
     "contributionWarningTime": false,
     "skipAutomaticOCRImport": false,
     "defaultEditorOrientation": "horizontal",
-    "skipManifestListingPage": false
+    "skipManifestListingPage": false,
+    "hideStatistics": false,
+    "hideProjectCollectionNavigation": false,
+    "hideProjectManifestNavigation": false
   },
   "permissions": {
     "admin": [

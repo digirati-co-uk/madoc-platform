@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useUserDetails } from './use-user-details';
 import { useQuery } from 'react-query';
 import { isContributor } from '../utility/user-roles';
@@ -8,8 +9,8 @@ export function useContributorTasks(options: { rootTaskId?: string } = {}, enabl
   const details = useUserDetails();
   const api = useApi();
 
-  const { data } = useQuery(
-    ['contributor-tasks', details?.user.id],
+  const { data, clear } = useQuery(
+    ['contributor-tasks', { user: details?.user.id, rootTaskId: options.rootTaskId }],
     async () => {
       if (!details || !details.user) {
         return undefined;
@@ -26,20 +27,28 @@ export function useContributorTasks(options: { rootTaskId?: string } = {}, enabl
           all_tasks: true,
           root_task_id: options.rootTaskId,
           assignee: `urn:madoc:user:${details.user.id}`,
+          detail: true,
           per_page: 10,
+          sort_by: 'newest',
         }),
         reviews: await api.getTasks<CrowdsourcingTask>(0, {
           type: 'crowdsourcing-task',
           status: 2,
           all_tasks: true,
           root_task_id: options.rootTaskId,
+          detail: true,
           assignee: `urn:madoc:user:${details.user.id}`,
           per_page: 10,
+          sort_by: 'newest',
         }),
       };
     },
-    { enabled }
+    { enabled, refetchOnMount: 'always' }
   );
+
+  // useEffect(() => {
+  //   clear();
+  // }, [clear, options.rootTaskId]);
 
   return data;
 }

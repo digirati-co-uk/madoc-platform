@@ -1,20 +1,28 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { SnippetLarge } from '../atoms/SnippetLarge';
+import { useRelativeLinks } from '../../site/hooks/use-relative-links';
+import { SnippetLarge, SnippetLargeProps } from '../atoms/SnippetLarge';
 import { useApiCanvas } from '../hooks/use-api-canvas';
 import { LocaleString } from './LocaleString';
 import { HrefLink } from '../utility/href-link';
 
-export const CanvasSnippet: React.FC<{ id: number; manifestId?: number; collectionId?: number }> = props => {
+export const CanvasSnippet: React.FC<{
+  id: number;
+  manifestId?: number;
+  collectionId?: number;
+  model?: boolean;
+  buttonText?: any;
+} & Partial<SnippetLargeProps>> = ({ id, manifestId, collectionId, model, buttonText, ...props }) => {
   const { t } = useTranslation();
-  const { data } = useApiCanvas(props.id);
+  const { data } = useApiCanvas(id);
+  const createLink = useRelativeLinks();
 
-  const link =
-    props.collectionId && props.manifestId
-      ? `/collections/${props.collectionId}/manifests/${props.manifestId}/${props.id}`
-      : props.manifestId
-      ? `/manifests/${props.manifestId}/${props.id}`
-      : `/canvases/${props.id}`;
+  const link = createLink({
+    canvasId: id,
+    manifestId: manifestId,
+    collectionId: collectionId,
+    subRoute: model ? 'model' : undefined,
+  });
 
   if (!data) {
     return (
@@ -24,8 +32,9 @@ export const CanvasSnippet: React.FC<{ id: number; manifestId?: number; collecti
         subtitle={t(`Canvas`)}
         summary={'...'}
         linkAs={HrefLink}
-        buttonText={t('view canvas')}
+        buttonText={buttonText || t('view canvas')}
         link={link}
+        {...props}
       />
     );
   }
@@ -40,8 +49,9 @@ export const CanvasSnippet: React.FC<{ id: number; manifestId?: number; collecti
       summary={<LocaleString>{data.canvas.summary}</LocaleString>}
       linkAs={HrefLink}
       thumbnail={thumbnail}
-      buttonText={t('view canvas')}
+      buttonText={buttonText || t('view canvas')}
       link={link}
+      {...props}
     />
   );
 };

@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useQuery } from 'react-query';
 import { CrowdsourcingCanvasTask } from '../../../../gateway/tasks/crowdsourcing-canvas-task';
 import { CrowdsourcingManifestTask } from '../../../../gateway/tasks/crowdsourcing-manifest-task';
 import { CrowdsourcingReview } from '../../../../gateway/tasks/crowdsourcing-review';
@@ -6,9 +7,11 @@ import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task'
 import { CanvasFull } from '../../../../types/schemas/canvas-full';
 import { ManifestFull } from '../../../../types/schemas/manifest-full';
 import { ProjectFull } from '../../../../types/schemas/project-full';
+import { castBool } from '../../../../utility/cast-bool';
 import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
 import { ApiArgs, apiHooks } from '../../../shared/hooks/use-api-query';
 import { useData } from '../../../shared/hooks/use-data';
+import { useLocationQuery } from '../../../shared/hooks/use-location-query';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { UniversalComponent } from '../../../types';

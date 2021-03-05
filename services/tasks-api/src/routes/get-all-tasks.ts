@@ -41,6 +41,7 @@ export const getAllTasks: RouteMiddleware = async context => {
   const userId = context.state.jwt.user.id;
   const typeFilter = context.query.type ? sql`and t.type = ${context.query.type}` : sql``;
   const subjectFilter = context.query.subject ? sql`and t.subject = ${context.query.subject}` : sql``;
+  const sortByNewest = context.query.sortBy ? context.query.sort_by === 'newest' : false;
   const parentSubjectFilter = context.query.subject_parent
     ? sql`and t.subject_parent = ${context.query.subject_parent}`
     : sql``;
@@ -71,8 +72,9 @@ export const getAllTasks: RouteMiddleware = async context => {
   const taskPagination = sql`limit ${perPage} offset ${offset}`;
   const detail = !!context.query.detail;
   const detailedFields = detail
-    ? sql`, t.assignee_name, t.parameters, t.assignee_id, t.subject, t.parent_task, t.modified_at, t.state`
+    ? sql`, t.assignee_name, t.parameters, t.assignee_id, t.subject, t.subject_parent, t.parent_task, t.modified_at, t.state`
     : sql``;
+  const orderBy = sortByNewest ? sql`order by t.modified_at asc` : sql`order by t.modified_at desc`;
 
   try {
     const query = sql`
@@ -88,7 +90,7 @@ export const getAllTasks: RouteMiddleware = async context => {
         ${statusFilter}
         ${rootTaskFilter}
         ${parentTaskFilter}
-        order by t.modified_at desc
+        ${orderBy}
     `;
 
     const { rowCount } = await context.connection.query(query);

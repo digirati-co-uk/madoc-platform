@@ -78,7 +78,7 @@ export function createLink(opt: {
   }
 
   if (opt.projectId) {
-    return `/projects/${opt.projectId}`;
+    return `/projects/${opt.projectId}${suffix}`;
   }
 
   return '';

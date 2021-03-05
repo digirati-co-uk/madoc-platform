@@ -1,4 +1,6 @@
 import { useTranslation } from 'react-i18next';
+import { Redirect } from 'react-router-dom';
+import { castBool } from '../../../utility/cast-bool';
 import { Heading3 } from '../../shared/atoms/Heading3';
 import { LockIcon } from '../../shared/atoms/LockIcon';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
@@ -12,12 +14,12 @@ import { CanvasManifestNavigation } from '../features/CanvasManifestNavigation';
 import { CanvasSimpleEditor } from '../features/CanvasSimpleEditor';
 import { CanvasTaskWarningMessage } from '../features/CanvasTaskWarningMessage';
 import { PrepareCaptureModel } from '../features/PrepareCaptureModel';
-import { ReviewerSubmissionOverview } from '../features/ReviewerSubmissionOverview';
 import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
 import { CanvasLoaderType } from './loaders/canvas-loader';
+import { RedirectToNextCanvas } from '../features/RedirectToNextCanvas';
 
 type ViewCanvasModelProps = Partial<CanvasLoaderType['data'] & CanvasLoaderType['context']>;
 
@@ -29,6 +31,8 @@ export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({ canvas }) => {
   const { revision } = useLocationQuery();
   const { t } = useTranslation();
   const user = useCurrentUser(true);
+  const { goToNext } = useLocationQuery<any>();
+  const shouldGoToNext = castBool(goToNext);
 
   const canContribute =
     user &&
@@ -44,6 +48,10 @@ export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({ canvas }) => {
 
   if (!canvasId) {
     return null;
+  }
+
+  if (shouldGoToNext) {
+    return <RedirectToNextCanvas subRoute="model" />;
   }
 
   if (!canUserSubmit && !isLoadingTasks) {
@@ -77,8 +85,6 @@ export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({ canvas }) => {
       {showCanvasNavigation && canContribute ? <PrepareCaptureModel /> : null}
 
       <CanvasTaskWarningMessage />
-
-      <ReviewerSubmissionOverview />
 
       {showWarning ? (
         <div style={{ textAlign: 'center', padding: '2em', marginTop: '1em', marginBottom: '1em', background: '#eee' }}>

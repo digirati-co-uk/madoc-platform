@@ -5,7 +5,7 @@ import { LocaleString } from '../../shared/components/LocaleString';
 import { ProjectFull } from '../../../types/schemas/project-full';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../shared/atoms/Statistics';
 import { SubtaskProgress } from '../../shared/atoms/SubtaskProgress';
-import { Subheading1 } from '../../shared/atoms/Heading1';
+import { Heading1, Subheading1 } from '../../shared/atoms/Heading1';
 import { CollectionFull } from '../../../types/schemas/collection-full';
 import { ImageGrid, ImageGridItem } from '../../shared/atoms/ImageGrid';
 import { Link } from 'react-router-dom';
@@ -22,6 +22,7 @@ import { useReviewerTasks } from '../../shared/hooks/use-reviewer-tasks';
 import { ReviewerTasks } from '../../shared/components/ReviewerTasks';
 import { GoToRandomCanvas } from '../features/GoToRandomCanvas';
 import { GoToRandomManifest } from '../features/GoToRandomManifest';
+import { ProjectContributionButton } from '../features/ProjectContributionButton';
 
 export const ViewProject: React.FC<Partial<{
   project: ProjectFull;
@@ -30,21 +31,27 @@ export const ViewProject: React.FC<Partial<{
 }>> = props => {
   const { t } = useTranslation();
   const { project, collections, manifests } = props;
-  const contributorTasks = useContributorTasks({ rootTaskId: project?.task_id }, !!project);
-  const reviewerTasks = useReviewerTasks({ rootTaskId: project?.task_id }, !!project);
 
   if (!project) {
     return null;
   }
 
-  const { allowCollectionNavigation = true, allowManifestNavigation = true } = project.config;
+  const {
+    allowCollectionNavigation = true,
+    allowManifestNavigation = true,
+    hideStatistics = false,
+    hideProjectCollectionNavigation = false,
+    hideProjectManifestNavigation = false,
+  } = project.config;
   const shownCollections = collections ? collections.collection.items.slice(0, 4) : [];
 
   return (
     <>
       <DisplayBreadcrumbs />
 
-      <LocaleString as={'h1'}>{project.label}</LocaleString>
+      <ProjectStatus status={project.status} />
+
+      <LocaleString as={Heading1}>{project.label}</LocaleString>
       <LocaleString as={Subheading1}>{project.summary}</LocaleString>
 
       <ButtonRow>
@@ -55,31 +62,39 @@ export const ViewProject: React.FC<Partial<{
         <GoToRandomManifest />
         <GoToRandomCanvas />
       </ButtonRow>
-      <ProjectStatus status={project.status} />
-      <StatisticContainer>
-        <Statistic>
-          <StatisticNumber>{project.statistics['0'] || 0}</StatisticNumber>
-          <StatisticLabel>{t('Not started')}</StatisticLabel>
-        </Statistic>
-        <Statistic>
-          <StatisticNumber>{project.statistics['1'] || 0}</StatisticNumber>
-          <StatisticLabel>{t('In progress')}</StatisticLabel>
-        </Statistic>
-        <Statistic>
-          <StatisticNumber>{project.statistics['2'] || 0}</StatisticNumber>
-          <StatisticLabel>{t('In review')}</StatisticLabel>
-        </Statistic>
-        <Statistic>
-          <StatisticNumber>{project.statistics['3'] || 0}</StatisticNumber>
-          <StatisticLabel>{t('Completed')}</StatisticLabel>
-        </Statistic>
-      </StatisticContainer>
-      <SubtaskProgress
-        total={project.statistics['0'] + project.statistics['1'] + project.statistics['2'] + project.statistics['3']}
-        done={project.statistics['3'] || 0}
-        progress={(project.statistics['2'] || 0) + (project.statistics['1'] || 0)}
-      />
-      {allowCollectionNavigation && shownCollections.length && collections ? (
+
+      <ProjectContributionButton />
+
+      {hideStatistics ? null : (
+        <>
+          <StatisticContainer>
+            <Statistic>
+              <StatisticNumber>{project.statistics['0'] || 0}</StatisticNumber>
+              <StatisticLabel>{t('Not started')}</StatisticLabel>
+            </Statistic>
+            <Statistic>
+              <StatisticNumber>{project.statistics['1'] || 0}</StatisticNumber>
+              <StatisticLabel>{t('In progress')}</StatisticLabel>
+            </Statistic>
+            <Statistic>
+              <StatisticNumber>{project.statistics['2'] || 0}</StatisticNumber>
+              <StatisticLabel>{t('In review')}</StatisticLabel>
+            </Statistic>
+            <Statistic>
+              <StatisticNumber>{project.statistics['3'] || 0}</StatisticNumber>
+              <StatisticLabel>{t('Completed')}</StatisticLabel>
+            </Statistic>
+          </StatisticContainer>
+          <SubtaskProgress
+            total={
+              project.statistics['0'] + project.statistics['1'] + project.statistics['2'] + project.statistics['3']
+            }
+            done={project.statistics['3'] || 0}
+            progress={(project.statistics['2'] || 0) + (project.statistics['1'] || 0)}
+          />
+        </>
+      )}
+      {allowCollectionNavigation && !hideProjectCollectionNavigation && shownCollections.length && collections ? (
         <>
           <Heading3>{t('Collections')}</Heading3>
           <ImageGrid>
@@ -94,7 +109,7 @@ export const ViewProject: React.FC<Partial<{
           ) : null}
         </>
       ) : null}
-      {allowManifestNavigation && manifests && manifests.collection.items.length ? (
+      {allowManifestNavigation && !hideProjectManifestNavigation && manifests && manifests.collection.items.length ? (
         <>
           <Heading3>{t('Manifests')}</Heading3>
           <ImageGrid>
@@ -122,17 +137,6 @@ export const ViewProject: React.FC<Partial<{
             ))}
           </ImageGrid>
         </>
-      ) : null}
-      {reviewerTasks ? (
-        <ReviewerTasks reviews={reviewerTasks} projectId={project.slug} rootTaskId={project.task_id} />
-      ) : null}
-      {contributorTasks ? (
-        <ContributorTasks
-          drafts={contributorTasks.drafts}
-          reviews={contributorTasks.reviews}
-          projectId={project.slug}
-          rootTaskId={project.task_id}
-        />
       ) : null}
     </>
   );
