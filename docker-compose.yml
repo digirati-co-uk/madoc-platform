@@ -12,7 +12,6 @@ services:
     ports:
       - "${PORTS_GATEWAY:-8888}:8080"
     links:
-      - sorting-room
       - madoc
       - gateway-redis
       - tasks-api
@@ -171,10 +170,6 @@ services:
       - "${PORTS_SHARED_POSTGRES:-5400}:5432"
     volumes:
       - ./var/shared-database:/var/lib/postgresql/data
-
-  sorting-room:
-    build:
-      context: services/sorting-room
 
   gateway-redis:
     image: redis:5-alpine
