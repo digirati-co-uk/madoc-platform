@@ -126,4 +126,14 @@ export const siteConfigurationModel: {
       { value: 'raw', text: 'Raw' },
     ],
   },
+  hideManifestMetadataOnCanvas: {
+    label: 'Hide manifest metadata on canvas page',
+    type: 'checkbox-field',
+    inlineLabel: 'Hide manifest metadata',
+  },
+  hideCanvasThumbnailNavigation: {
+    label: 'Hide manifest thumbnail navigation on canvas page',
+    type: 'checkbox-field',
+    inlineLabel: 'Hide manifest thumbnail navigation',
+  },
 };

@@ -22,7 +22,9 @@
     "hideStatistics": false,
     "hideProjectCollectionNavigation": false,
     "hideProjectManifestNavigation": false,
-    "searchStrategy": "websearch"
+    "searchStrategy": "websearch",
+    "hideManifestMetadataOnCanvas": false,
+    "hideCanvasThumbnailNavigation": false
   },
   "permissions": {
     "admin": [

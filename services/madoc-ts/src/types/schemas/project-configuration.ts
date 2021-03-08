@@ -20,4 +20,6 @@ export type ProjectConfiguration = {
   hideProjectCollectionNavigation?: boolean;
   hideProjectManifestNavigation?: boolean;
   searchStrategy?: 'string';
+  hideManifestMetadataOnCanvas?: boolean;
+  hideCanvasThumbnailNavigation?: boolean;
 };
