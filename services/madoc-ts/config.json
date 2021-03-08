@@ -21,7 +21,8 @@
     "skipManifestListingPage": false,
     "hideStatistics": false,
     "hideProjectCollectionNavigation": false,
-    "hideProjectManifestNavigation": false
+    "hideProjectManifestNavigation": false,
+    "searchStrategy": "websearch"
   },
   "permissions": {
     "admin": [

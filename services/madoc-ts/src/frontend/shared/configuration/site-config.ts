@@ -1,4 +1,9 @@
-export const siteConfigurationModel = {
+import { BaseField } from '@capture-models/types';
+import { ProjectConfiguration } from '../../../types/schemas/project-configuration';
+
+export const siteConfigurationModel: {
+  [key in keyof ProjectConfiguration]: string | (Partial<BaseField> & any);
+} = {
   allowCollectionNavigation: {
     label: 'Collection navigation',
     description:
@@ -109,5 +114,16 @@ export const siteConfigurationModel = {
     label: 'Hide manifest list from project homepage',
     type: 'checkbox-field',
     inlineLabel: 'Hide manifests on project',
+  },
+  searchStrategy: {
+    label: 'Search strategy',
+    description: 'This is the type of search to use in constructing the query.',
+    type: 'dropdown-field',
+    options: [
+      { value: 'websearch', text: 'Web search' },
+      { value: 'phrase', text: 'Phrase' },
+      { value: 'plain', text: 'Plain' },
+      { value: 'raw', text: 'Raw' },
+    ],
   },
 };
