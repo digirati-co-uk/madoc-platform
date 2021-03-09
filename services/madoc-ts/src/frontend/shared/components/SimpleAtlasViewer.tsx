@@ -9,11 +9,14 @@ import { useAnnotationPage } from '../hooks/use-annotation-page';
 import { Spinner } from '../icons/Spinner';
 import { AtlasTiledImages } from './AtlasTiledImages';
 
-export const SimpleAtlasViewer: React.FC<{
-  style?: React.CSSProperties;
-  highlightedRegions?: Array<[number, number, number, number]>;
-  annotationPages?: AnnotationPage[];
-}> = ({ style = { height: 600 }, highlightedRegions, annotationPages }) => {
+export const SimpleAtlasViewer = React.forwardRef<
+  any,
+  {
+    style?: React.CSSProperties;
+    highlightedRegions?: Array<[number, number, number, number]>;
+    annotationPages?: AnnotationPage[];
+  }
+>(({ style = { height: 600 }, highlightedRegions, annotationPages }, ref) => {
   const { t } = useTranslation();
   const canvas = useCanvas();
   const runtime = useRef<Runtime>();
@@ -84,7 +87,7 @@ export const SimpleAtlasViewer: React.FC<{
   }
 
   return (
-    <div style={{ display: 'flex', width: '100%', minWidth: 0, overflow: 'hidden', ...style }}>
+    <div ref={ref} style={{ display: 'flex', width: '100%', minWidth: 0, overflow: 'hidden', ...style }}>
       {isAnnotationOpen ? (
         <div style={{ minWidth: 300, width: 300, padding: 10, overflowY: 'auto' }}>
           {currentAnnotationPage ? (
@@ -209,4 +212,4 @@ export const SimpleAtlasViewer: React.FC<{
       </div>
     </div>
   );
-};
+});

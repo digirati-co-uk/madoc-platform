@@ -12,6 +12,9 @@ module.exports = {
         '@typescript-eslint/no-var-requires': 0,
         '@typescript-eslint/camelcase': 0,
         'require-yield': 0,
+        "react-hooks/exhaustive-deps": ["warn", {
+            "additionalHooks": "(useEventHandler)"
+        }]
     },
     settings: {
         "react": {
