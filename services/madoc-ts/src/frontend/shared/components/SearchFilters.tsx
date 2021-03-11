@@ -52,8 +52,13 @@ export const SearchFilterToggle = styled.button`
   border: none;
   color: #000;
   cursor: pointer;
+  border-radius: 3px;
   &:hover {
     background: #ccc;
+  }
+
+  svg {
+    transform: translateY(2px);
   }
 `;
 

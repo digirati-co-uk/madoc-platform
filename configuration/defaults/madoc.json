@@ -13,5 +13,5 @@
   "hideCompletedResources": false,
   "revisionApprovalsRequired": 20,
   "contributionWarningTime": false,
-  "Contributions": "Contributions"
+  "hideManifestMetadataOnCanvas": false
 }

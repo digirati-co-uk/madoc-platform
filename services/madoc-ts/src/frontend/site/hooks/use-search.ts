@@ -2,6 +2,7 @@ import { InternationalString } from '@hyperion-framework/types/iiif/descriptive'
 import { useMemo } from 'react';
 import { FacetConfig } from '../../shared/components/MetadataFacetEditor';
 import { apiHooks, paginatedApiHooks } from '../../shared/hooks/use-api-query';
+import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useRouteContext } from './use-route-context';
 import { useSearchQuery } from './use-search-query';
 
@@ -12,6 +13,9 @@ function normalizeDotKey(key: string) {
 export function useSearch() {
   const { projectId, collectionId, manifestId } = useRouteContext();
   const { fulltext, appliedFacets, page } = useSearchQuery();
+  const {
+    project: { searchStrategy },
+  } = useSiteConfiguration();
   const searchFacetConfig = apiHooks.getSiteSearchFacetConfiguration(() => []);
 
   const [facetsToRequest, facetDisplayOrder, facetIdMap] = useMemo(() => {
@@ -51,6 +55,7 @@ export function useSearch() {
           value: facet.v,
         })),
         facet_on_manifests: true,
+        search_type: searchStrategy as any,
         number_of_facets: searchFacetConfig.data?.facets.length ? 100 : undefined,
         //facets_: [{ type: 'metadata', subtype: 'title', value: 'Wunder der Vererbung' }],
         // contexts: query.madoc_id ? [query.madoc_id] : undefined,

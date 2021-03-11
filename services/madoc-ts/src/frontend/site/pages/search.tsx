@@ -1,4 +1,6 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { CloseIcon } from '../../shared/atoms/CloseIcon';
 import { SearchBox } from '../../shared/atoms/SearchBox';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { LocaleString } from '../../shared/components/LocaleString';
@@ -7,7 +9,6 @@ import {
   SearchFilterCheckbox,
   SearchFilterContainer,
   SearchFilterItem,
-  SearchFilterItemCount,
   SearchFilterItemList,
   SearchFilterLabel,
   SearchFilterSection,
@@ -16,6 +17,7 @@ import {
   SearchFilterToggle,
 } from '../../shared/components/SearchFilters';
 import { SearchResults, TotalResults } from '../../shared/components/SearchResults';
+import { AddIcon } from '../../shared/icons/AddIcon';
 import { Spinner } from '../../shared/icons/Spinner';
 import { useSearch } from '../hooks/use-search';
 import { useSearchFacets } from '../hooks/use-search-facets';
@@ -23,6 +25,7 @@ import { useSearchQuery } from '../hooks/use-search-query';
 import { ButtonRow, TinyButton } from '../../shared/atoms/Button';
 
 export const Search: React.FC = () => {
+  const { t } = useTranslation();
   const [{ resolvedData: searchResponse, latestData, isFetching, isLoading }, displayFacets] = useSearch();
   const { rawQuery, page, fulltext, appliedFacets } = useSearchQuery();
   const {
@@ -42,14 +45,14 @@ export const Search: React.FC = () => {
       <DisplayBreadcrumbs currentPage="Search" />
       <div style={{ display: 'flex' }}>
         <SearchFilterContainer style={{ width: 300 }}>
-          <SearchFilterTitle>Refine search</SearchFilterTitle>
+          <SearchFilterTitle>{t('Refine search')}</SearchFilterTitle>
           <SearchBox onSearch={setFullTextQuery} placeholder="Keywords" value={fulltext} />
           <ButtonRow>
             <TinyButton disabled={!inQueue} onClick={() => applyAllFacets()}>
-              Apply
+              {t('Apply')}
             </TinyButton>
             <TinyButton disabled={!appliedFacets.length} onClick={() => clearAllFacets()}>
-              Clear
+              {t('Clear')}
             </TinyButton>
           </ButtonRow>
           {displayFacets.map(facet => {
@@ -86,10 +89,12 @@ export const Search: React.FC = () => {
                         {/*<SearchFilterItemCount>{item.count}</SearchFilterItemCount>*/}
                         {isSelected !== 0 ? (
                           <SearchFilterToggle onClick={() => clearSingleFacet(item.key, item.values)}>
-                            x
+                            <CloseIcon $solid width={12} height={12} />
                           </SearchFilterToggle>
                         ) : (
-                          <SearchFilterToggle onClick={() => applyFacet(item.key, item.values)}>+</SearchFilterToggle>
+                          <SearchFilterToggle onClick={() => applyFacet(item.key, item.values)}>
+                            <AddIcon height={12} width={12} />
+                          </SearchFilterToggle>
                         )}
                       </SearchFilterItem>
                     );
@@ -101,7 +106,9 @@ export const Search: React.FC = () => {
         </SearchFilterContainer>
         <div style={{ flex: '1 1 0px' }}>
           <TotalResults>
-            Found {searchResponse && searchResponse.pagination ? searchResponse.pagination.totalResults : 0} Results
+            {t('Found {{count}} results', {
+              count: searchResponse && searchResponse.pagination ? searchResponse.pagination.totalResults : 0,
+            })}
           </TotalResults>
           <Pagination
             page={page}

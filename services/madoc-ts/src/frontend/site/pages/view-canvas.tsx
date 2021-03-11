@@ -19,6 +19,7 @@ import { ContinueCanvasSubmission } from '../features/ContinueCanvasSubmission';
 import { ManifestMetadata } from '../features/ManifestMetadata';
 import { ManifestUserTasks } from '../features/ManifestUserTasks';
 import { RedirectToNextCanvas } from '../features/RedirectToNextCanvas';
+import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
@@ -36,6 +37,9 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({ project, canvas, manifes
   const [selectedPanel, setSelectedPanel] = useState(0);
   const { goToNext } = useLocationQuery<any>();
   const shouldGoToNext = castBool(goToNext);
+  const {
+    project: { hideManifestMetadataOnCanvas = false, hideCanvasThumbnailNavigation = false },
+  } = useSiteConfiguration();
 
   const { data } = apiHooks.getSiteCanvasPublishedModels(() => [
     canvasId,
@@ -89,15 +93,17 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({ project, canvas, manifes
             ) : null}
           </div>
 
-          <CanvasNavigation
-            manifestId={manifestId}
-            canvasId={canvasId}
-            collectionId={collectionId}
-            projectId={project?.slug}
-            query={searchText ? { searchText } : undefined}
-          />
+          {hideCanvasThumbnailNavigation ? null : (
+            <CanvasNavigation
+              manifestId={manifestId}
+              canvasId={canvasId}
+              collectionId={collectionId}
+              projectId={project?.slug}
+              query={searchText ? { searchText } : undefined}
+            />
+          )}
 
-          <ManifestMetadata />
+          {hideManifestMetadataOnCanvas ? null : <ManifestMetadata />}
 
           <CanvasPlaintext />
 

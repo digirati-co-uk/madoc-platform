@@ -74,7 +74,7 @@ export type SearchQuery = {
   search_language?: string;
 
   /** Unknown search type */
-  search_type?: 'websearch';
+  search_type?: 'phrase' | 'raw' | 'plain' | 'websearch';
 
   /** List of metadata fields to return facets for */
   facet_fields?: string[]; // @todo this is only filtering metadata at the moment.

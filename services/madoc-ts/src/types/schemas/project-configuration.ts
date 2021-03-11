@@ -19,4 +19,7 @@ export type ProjectConfiguration = {
   hideStatistics?: boolean;
   hideProjectCollectionNavigation?: boolean;
   hideProjectManifestNavigation?: boolean;
+  searchStrategy?: 'string';
+  hideManifestMetadataOnCanvas?: boolean;
+  hideCanvasThumbnailNavigation?: boolean;
 };
