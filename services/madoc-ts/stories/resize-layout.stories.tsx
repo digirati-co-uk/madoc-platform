@@ -1,4 +1,3 @@
-import { text } from '@storybook/addon-knobs';
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import { useResizeLayout } from '../src/frontend/shared/hooks/use-resize-layout';

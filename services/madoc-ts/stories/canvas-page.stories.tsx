@@ -1,15 +1,49 @@
 import { CanvasContext, VaultProvider } from '@hyperion-framework/react-vault';
 import { text } from '@storybook/addon-knobs';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import * as React from 'react';
-import styled, { css } from 'styled-components';
-import { TinyButton } from '../src/frontend/shared/atoms/Button';
+import {
+  KanbanAssignee,
+  KanbanBoard,
+  KanbanBoardContainer,
+  KanbanCard,
+  KanbanCardButton,
+  KanbanCardInner,
+  KanbanCardTextButton,
+  KanbanCol,
+  KanbanColTitle,
+  KanbanLabel,
+  KanbanType,
+} from '../src/frontend/shared/atoms/Kanban';
+import {
+  LayoutContainer,
+  LayoutContent,
+  LayoutHandle,
+  LayoutSidebar,
+  LayoutSidebarMenu,
+  NavIconContainer,
+  OuterLayoutContainer,
+} from '../src/frontend/shared/atoms/LayoutContainer';
+import {
+  TaskItem,
+  TaskItemAuthor,
+  TaskItemDescription,
+  TaskItemImageContainer,
+  TaskItemMetadata,
+  TaskItemTagContainer,
+  TaskItemTagStatus,
+  TaskItemTagType,
+  TaskListContainer,
+} from '../src/frontend/shared/atoms/TaskList';
 import { URLContextExplorer } from '../src/frontend/shared/components/ContentExplorer';
 import { MetaDataDisplay } from '../src/frontend/shared/components/MetaDataDisplay';
 import { SimpleAtlasViewer } from '../src/frontend/shared/components/SimpleAtlasViewer';
-import { ViewExternalContent } from '../src/frontend/shared/components/ViewExternalContent';
 import { useResizeLayout } from '../src/frontend/shared/hooks/use-resize-layout';
 import ReactTooltip from 'react-tooltip';
+import { AnnotationsIcon } from '../src/frontend/shared/icons/AnnotationsIcon';
+import { InfoIcon } from '../src/frontend/shared/icons/InfoIcon';
+import { ModelDocumentIcon } from '../src/frontend/shared/icons/ModelDocumentIcon';
+import { TranscriptionIcon } from '../src/frontend/shared/icons/TranscriptionIcon';
 
 export default { title: 'Canvas page' };
 
@@ -128,133 +162,6 @@ const exampleMetadata = [
   },
 ];
 
-const OuterLayoutContainer = styled.div`
-  display: flex;
-  width: 100%;
-  max-width: 100%;
-  flex-direction: row;
-  background: #ffffff;
-  border: 1px solid #bcbcbc;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.17);
-  height: 100%;
-  overflow: hidden;
-  max-height: 100%;
-  flex: 1 1 0px;
-  min-height: 0;
-  min-width: 0;
-`;
-
-const NavIconContainer = styled.div<{ $active?: boolean }>`
-  &:hover {
-    background: #eee;
-  }
-  border-radius: 3px;
-  padding: 0.5em;
-  margin: 0.25em;
-  width: 2.5em;
-  height: 2.5em;
-  cursor: pointer;
-
-  svg {
-    fill: #666;
-    width: 1.4em;
-    height: 1.4em;
-  }
-
-  ${props =>
-    props.$active &&
-    css`
-      background: #4a64e1;
-      svg {
-        fill: #fff;
-      }
-      &:hover {
-        background: #4a64e1;
-      }
-    `}
-`;
-
-const LayoutContainer = styled.div`
-  display: flex;
-  width: 100%;
-  max-width: 100%;
-`;
-
-const LayoutContent = styled.div`
-  background: #fff;
-  flex: 1 1 0px;
-  min-width: 0;
-`;
-
-const LayoutSidebarMenu = styled.div`
-  background: #ffffff;
-  border-right: 1px solid #bcbcbc;
-`;
-
-const LayoutSidebar = styled.div`
-  background: #ffffff;
-  border-right: 1px solid #bcbcbc;
-  overflow: auto;
-`;
-
-const LayoutHandle = styled.div<{ $isDragging?: boolean }>`
-  width: 6px;
-  background: #eee;
-  height: 100%;
-  user-select: none;
-  cursor: col-resize;
-  &:hover,
-  &:active {
-    background: #ddd;
-  }
-
-  ${props =>
-    props.$isDragging &&
-    css`
-      &,
-      &:active,
-      &:hover {
-        background-color: blue;
-      }
-    `}
-`;
-
-function InfoIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 24 24" width="1em" {...props}>
-      <path d="M0 0h24v24H0z" fill="none" />
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
-    </svg>
-  );
-}
-
-function AnnotationsIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 24 24" width="1em" {...props}>
-      <path d="M0 0h24v24H0z" fill="none" />
-      <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8 14H6v-2h2v2zm0-3H6V9h2v2zm0-3H6V6h2v2zm7 6h-5v-2h5v2zm3-3h-8V9h8v2zm0-3h-8V6h8v2z" />
-    </svg>
-  );
-}
-
-function TranscriptionIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 24 24" width="1em" {...props}>
-      <path d="M0 0h24v24H0z" fill="none" />
-      <path d="M14 17H4v2h10v-2zm6-8H4v2h16V9zM4 15h16v-2H4v2zM4 5v2h16V5H4z" />
-    </svg>
-  );
-}
-
-function ModelDocumentIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 24 24" width="1em" {...props}>
-      <path d="M0 0h24v24H0z" fill="none" />
-      <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
-    </svg>
-  );
-}
-
 export const Main_Page = () => {
   const [isOpen, setIsOpen] = useState(true);
   const { widthB, widthA, refs } = useResizeLayout('storybook-canvas-page6', {
@@ -317,5 +224,242 @@ export const Main_Page = () => {
         <ReactTooltip place="right" type="dark" effect="solid" />
       </div>
     </VaultProvider>
+  );
+};
+
+export const Task_Layout: React.FC = () => {
+  const [selectedIdx, setSelectedIdx] = useState(4);
+  const [isOpen, setIsOpen] = useState(true);
+  const { widthB, widthA, refs } = useResizeLayout('storybook-canvas-page6', {
+    left: true,
+    widthB: '280px',
+    maxWidthPx: 450,
+    minWidthPx: 240,
+    onDragEnd: () => {
+      setIsOpen(true);
+    },
+  });
+  return (
+    <div style={{ padding: '1em', height: '100vh' }}>
+      <OuterLayoutContainer>
+        <LayoutContainer ref={refs.container}>
+          {isOpen && (
+            <LayoutSidebar ref={refs.resizableDiv} style={{ width: widthB }}>
+              <TaskListContainer>
+                {new Array(50).fill(0).map((_, n) => {
+                  return (
+                    <TaskItem key={n} $selected={n === selectedIdx} onClick={() => setSelectedIdx(n)}>
+                      <TaskItemImageContainer>
+                        <img
+                          src={
+                            n % 2
+                              ? 'https://view.nls.uk/iiif/7443/74438564.5/full/256,/0/default.jpg'
+                              : 'https://view.nls.uk/iiif/7443/74438562.5/full/256,/0/default.jpg'
+                          }
+                          alt="any"
+                        />
+                      </TaskItemImageContainer>
+                      <TaskItemMetadata>
+                        <TaskItemAuthor>Stephen</TaskItemAuthor>
+                        <TaskItemDescription>
+                          Scottish bridges with very long description thing that will{' '}
+                        </TaskItemDescription>
+                        <TaskItemTagContainer>
+                          <TaskItemTagType>Review</TaskItemTagType>
+                          <TaskItemTagStatus>In progress</TaskItemTagStatus>
+                        </TaskItemTagContainer>
+                      </TaskItemMetadata>
+                    </TaskItem>
+                  );
+                })}
+              </TaskListContainer>
+            </LayoutSidebar>
+          )}
+          <LayoutHandle ref={refs.resizer} onClick={() => setIsOpen(o => !o)} />
+          <LayoutContent $padding>
+            <KanbanBoard>
+              <KanbanBoardContainer>
+                <KanbanCol>
+                  <KanbanColTitle>Waiting for contributor</KanbanColTitle>
+                  <KanbanCard>
+                    <KanbanCardInner>
+                      <KanbanLabel>{`Contributions to "Some manifest"`}</KanbanLabel>
+                      <KanbanType>Crowdsourcing task</KanbanType>
+                    </KanbanCardInner>
+                    <KanbanAssignee>
+                      {Math.random()
+                        .toString(36)
+                        .substr(2, 15)}
+                    </KanbanAssignee>
+                  </KanbanCard>
+                  <KanbanCard>
+                    <KanbanCardInner>
+                      <KanbanLabel>{`Contributions to "Some manifest"`}</KanbanLabel>
+                      <KanbanType>Crowdsourcing task</KanbanType>
+                    </KanbanCardInner>
+                    <KanbanAssignee>
+                      {Math.random()
+                        .toString(36)
+                        .substr(2, 15)}
+                    </KanbanAssignee>
+                  </KanbanCard>
+                  <KanbanCard>
+                    <KanbanCardInner>
+                      <KanbanLabel>{`Contributions to "Some manifest"`}</KanbanLabel>
+                      <KanbanType>Crowdsourcing task</KanbanType>
+                    </KanbanCardInner>
+                    <KanbanAssignee>
+                      {Math.random()
+                        .toString(36)
+                        .substr(2, 15)}
+                    </KanbanAssignee>
+                  </KanbanCard>
+                  <KanbanCard>
+                    <KanbanCardInner>
+                      <KanbanLabel>{`Contributions to "Some manifest"`}</KanbanLabel>
+                      <KanbanType>Crowdsourcing task</KanbanType>
+                    </KanbanCardInner>
+                    <KanbanAssignee>
+                      {Math.random()
+                        .toString(36)
+                        .substr(2, 15)}
+                    </KanbanAssignee>
+                  </KanbanCard>
+                  <KanbanCard>
+                    <KanbanCardInner>
+                      <KanbanLabel>{`Contributions to "Some manifest"`}</KanbanLabel>
+                      <KanbanType>Crowdsourcing task</KanbanType>
+                    </KanbanCardInner>
+                    <KanbanAssignee>
+                      {Math.random()
+                        .toString(36)
+                        .substr(2, 15)}
+                    </KanbanAssignee>
+                  </KanbanCard>
+                  <KanbanCard>
+                    <KanbanCardInner>
+                      <KanbanLabel>{`Contributions to "Some manifest"`}</KanbanLabel>
+                      <KanbanType>Crowdsourcing task</KanbanType>
+                    </KanbanCardInner>
+                    <KanbanAssignee>
+                      {Math.random()
+                        .toString(36)
+                        .substr(2, 15)}
+                    </KanbanAssignee>
+                  </KanbanCard>
+                  <KanbanCard>
+                    <KanbanCardInner>
+                      <KanbanLabel>{`Contributions to "Some manifest"`}</KanbanLabel>
+                      <KanbanType>Crowdsourcing task</KanbanType>
+                    </KanbanCardInner>
+                    <KanbanAssignee>
+                      {Math.random()
+                        .toString(36)
+                        .substr(2, 15)}
+                    </KanbanAssignee>
+                  </KanbanCard>
+                  <KanbanCard>
+                    <KanbanCardInner>
+                      <KanbanLabel>{`Contributions to "Some manifest"`}</KanbanLabel>
+                      <KanbanType>Crowdsourcing task</KanbanType>
+                    </KanbanCardInner>
+                    <KanbanAssignee>
+                      {Math.random()
+                        .toString(36)
+                        .substr(2, 15)}
+                    </KanbanAssignee>
+                  </KanbanCard>
+                  <KanbanCard>
+                    <KanbanCardInner>
+                      <KanbanLabel>{`Contributions to "Some manifest"`}</KanbanLabel>
+                      <KanbanType>Crowdsourcing task</KanbanType>
+                    </KanbanCardInner>
+                    <KanbanAssignee>
+                      {Math.random()
+                        .toString(36)
+                        .substr(2, 15)}
+                    </KanbanAssignee>
+                  </KanbanCard>
+                  <KanbanCard>
+                    <KanbanCardInner>
+                      <KanbanLabel>{`Contributions to "Some manifest"`}</KanbanLabel>
+                      <KanbanType>Crowdsourcing task</KanbanType>
+                    </KanbanCardInner>
+                    <KanbanAssignee>
+                      {Math.random()
+                        .toString(36)
+                        .substr(2, 15)}
+                    </KanbanAssignee>
+                  </KanbanCard>
+                  <KanbanCard>
+                    <KanbanCardInner>
+                      <KanbanLabel>{`Contributions to "Some manifest"`}</KanbanLabel>
+                      <KanbanType>Crowdsourcing task</KanbanType>
+                    </KanbanCardInner>
+                    <KanbanAssignee>
+                      {Math.random()
+                        .toString(36)
+                        .substr(2, 15)}
+                    </KanbanAssignee>
+                  </KanbanCard>
+                </KanbanCol>
+                <KanbanCol>
+                  <KanbanColTitle>Waiting for contributor</KanbanColTitle>
+                  <KanbanCard>
+                    <KanbanCardInner>
+                      <KanbanLabel>{`Contributions to "Some manifest"`}</KanbanLabel>
+                      <KanbanType>Crowdsourcing task</KanbanType>
+                    </KanbanCardInner>
+                    <KanbanAssignee>
+                      {Math.random()
+                        .toString(36)
+                        .substr(2, 15)}
+                    </KanbanAssignee>
+                    <KanbanCardButton>view contribution</KanbanCardButton>
+                  </KanbanCard>
+                  <KanbanCard>
+                    <KanbanCardInner>
+                      <KanbanLabel>{`Contributions to "Some manifest"`}</KanbanLabel>
+                      <KanbanType>Crowdsourcing task</KanbanType>
+                    </KanbanCardInner>
+                    <KanbanAssignee>
+                      {Math.random()
+                        .toString(36)
+                        .substr(2, 15)}
+                    </KanbanAssignee>
+                    <KanbanCardTextButton>view contribution</KanbanCardTextButton>
+                  </KanbanCard>
+                </KanbanCol>
+                <KanbanCol>
+                  <KanbanColTitle>Completed reviews</KanbanColTitle>
+                  <KanbanCard $disabled>
+                    <KanbanCardInner>
+                      <KanbanLabel>{`Contributions to "Some manifest"`}</KanbanLabel>
+                      <KanbanType>Crowdsourcing task</KanbanType>
+                    </KanbanCardInner>
+                    <KanbanAssignee>
+                      {Math.random()
+                        .toString(36)
+                        .substr(2, 15)}
+                    </KanbanAssignee>
+                  </KanbanCard>
+                  <KanbanCard $disabled>
+                    <KanbanCardInner>
+                      <KanbanLabel>{`Contributions to "Some manifest"`}</KanbanLabel>
+                      <KanbanType>Crowdsourcing task</KanbanType>
+                    </KanbanCardInner>
+                    <KanbanAssignee>
+                      {Math.random()
+                        .toString(36)
+                        .substr(2, 15)}
+                    </KanbanAssignee>
+                  </KanbanCard>
+                </KanbanCol>
+              </KanbanBoardContainer>
+            </KanbanBoard>
+          </LayoutContent>
+        </LayoutContainer>
+      </OuterLayoutContainer>
+    </div>
   );
 };
