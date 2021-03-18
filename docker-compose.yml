@@ -129,6 +129,7 @@ services:
     volumes:
       - ./services/tasks-api/lib:/home/node/app/lib
       - ./services/tasks-api/schemas:/home/node/app/schemas
+      - ./services/tasks-api/migrations:/home/node/app/migrations
 
   model-api:
     image: digirati/capture-models:v0.13.1
