@@ -1,5 +1,6 @@
 import { exportTasks } from './routes/export-tasks';
 import { importTasks } from './routes/import-tasks';
+import { updateMetadata } from './routes/update-metadata';
 import { TypedRouter } from './utility/typed-router';
 import { getSingleTask } from './routes/get-single-task';
 import { updateSingleTask } from './routes/update-single-task';
@@ -24,6 +25,7 @@ export const router = new TypedRouter({
   'get-single-task': [TypedRouter.GET, '/tasks/:id', getSingleTask],
   'get-task-statistics': [TypedRouter.GET, '/tasks/:id/stats', getStatistics],
   'update-single-task': [TypedRouter.PATCH, '/tasks/:id', updateSingleTask, 'update-task'],
+  'update-task-metadata': [TypedRouter.PATCH, '/tasks/:id/metadata', updateMetadata],
   'delete-task': [TypedRouter.DELETE, '/tasks/:id', deleteTask],
   'create-subtask': [TypedRouter.POST, '/tasks/:id/subtasks', createSubtask, 'create-sub-task'],
   'get-task-subjects': [TypedRouter.GET, '/tasks/:id/subjects', getSubjectStatistics],

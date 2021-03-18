@@ -26,6 +26,7 @@ export function insertTask(
        context,
        events,
        root_task,
+       metadata,
        delegated_owners,
        delegated_task
     ) VALUES (
@@ -48,6 +49,7 @@ export function insertTask(
       ${JSON.stringify(context)},
       ${task.events ? sql.array(task.events, 'text') : null},
       ${task.root_task || null},
+      ${JSON.stringify(task.metadata) || '{}'},
       ${task.delegated_owners ? sql.array(task.delegated_owners, 'text') : null},
       ${task.delegated_task || null}
     ) RETURNING  *`
