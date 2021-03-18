@@ -8,6 +8,7 @@ import { plainTextSource } from '../extensions/capture-models/DynamicDataSources
 import { ExtensionManager } from '../extensions/extension-manager';
 import { defaultPageBlockDefinitions } from '../extensions/page-blocks/default-definitions';
 import { PageBlockExtension } from '../extensions/page-blocks/extension';
+import { TaskExtension } from '../extensions/tasks/extension';
 import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
 import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
 import { Site } from '../types/omeka/Site';
@@ -71,6 +72,7 @@ export class ApiClient {
   private captureModelDataSources: DynamicData[];
   // Public.
   pageBlocks: PageBlockExtension;
+  tasks: TaskExtension;
 
   constructor(options: {
     gateway: string;
@@ -88,6 +90,7 @@ export class ApiClient {
     this.fetcher = options.customerFetcher || fetchJson;
     this.publicSiteSlug = options.publicSiteSlug;
     this.pageBlocks = new PageBlockExtension(this, defaultPageBlockDefinitions);
+    this.tasks = new TaskExtension(this);
     this.captureModelDataSources = [plainTextSource];
     this.captureModelExtensions = new ExtensionManager(
       options.customCaptureModelExtensions
