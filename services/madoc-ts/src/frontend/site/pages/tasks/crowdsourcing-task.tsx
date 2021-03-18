@@ -1,77 +1,40 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ThemeProvider } from 'styled-components';
 import { defaultTheme } from '@capture-models/editor';
-import { useApi } from '../../../shared/hooks/use-api';
 import { Link } from 'react-router-dom';
+import { Button } from '../../../shared/atoms/Button';
+import { EditorSlots } from '../../../shared/caputre-models/new/components/EditorSlots';
+import { RevisionProviderWithFeatures } from '../../../shared/caputre-models/new/components/RevisionProviderWithFeatures';
+import { SimpleSaveButton } from '../../../shared/caputre-models/new/components/SimpleSaveButton';
 import { LocaleString } from '../../../shared/components/LocaleString';
 import { Heading3 } from '../../../shared/atoms/Heading3';
-import { queryCache } from 'react-query';
 import '@capture-models/editor/lib/input-types/TextField';
 import '@capture-models/editor/lib/input-types/HTMLField';
-import { useApiCanvas } from '../../../shared/hooks/use-api-canvas';
-import { useApiCaptureModel } from '../../../shared/hooks/use-api-capture-model';
-import { useProjectByTask } from '../../../shared/hooks/use-project-by-task';
 import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
+import { HrefLink } from '../../../shared/utility/href-link';
+import { useCrowdsourcingTaskDetails } from '../../hooks/use-crowdsourcing-task-details';
 import { TaskContext } from '../loaders/task-loader';
-import { createLink } from '../../../shared/utility/create-link';
 import { WarningMessage } from '../../../shared/atoms/WarningMessage';
 import { ErrorMessage } from '../../../shared/atoms/ErrorMessage';
-import { CaptureModelViewer } from '../../../shared/viewers/caputre-model-viewer';
 import { CrowdsourcingTaskManifest } from './crowdsourcing-task-manifest';
 
 const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task, parentTask }) => {
-  const api = useApi();
-  const project = useProjectByTask(task);
   const { t } = useTranslation();
-
-  const date = new Date().getTime();
-
-  const isComplete = task.status === 3;
-  const isSubmitted = task.status === 2;
-  const wasRejected = task.status === -1;
-  const mayExpire =
-    !isComplete &&
-    !wasRejected &&
-    !isSubmitted &&
-    task.modified_at &&
-    task.state.warningTime &&
-    date - task.modified_at > task.state.warningTime;
-
-  const { data: captureModel } = useApiCaptureModel(task.parameters[0]);
-
-  const target = useMemo(() => {
-    if (captureModel && captureModel.target && captureModel.target[0]) {
-      return captureModel.target.map(item => api.resolveUrn(item.id));
-    }
-    return [];
-  }, [api, captureModel]);
-
-  const primaryTarget = useMemo(
-    () => (captureModel ? target.find((t: any) => t.type.toLowerCase() === 'canvas') : undefined),
-    [captureModel, target]
-  );
-
-  const { data: resource } = useApiCanvas(primaryTarget?.id);
-
-  const backLink = useMemo(() => {
-    if (!target || !project || project.config.allowCanvasNavigation === false) {
-      return;
-    }
-    const collection = target.find(item => item && item.type === 'collection');
-    const manifest = target.find(item => item && item.type === 'manifest');
-    const canvas = target.find(item => item && item.type === 'canvas');
-
-    return createLink({
-      projectId: project?.id,
-      canvasId: canvas?.id,
-      manifestId: manifest?.id,
-      collectionId: collection?.id,
-    });
-  }, [project, target]);
-
-  const modelId = task.parameters[0];
-  const isCanvas = parentTask ? parentTask.parameters[2] === 'canvas' : task.parameters[2] === 'canvas';
+  const {
+    isCanvas,
+    project,
+    backLink,
+    subject,
+    mayExpire,
+    isComplete,
+    isSubmitted,
+    modelId,
+    captureModel,
+    revisionId,
+    wasRejected,
+    changesRequested,
+  } = useCrowdsourcingTaskDetails(task, parentTask);
 
   if (!isCanvas) {
     return (
@@ -91,11 +54,11 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task,
             <Link to={backLink}>{t('Back to resource')}</Link>
           </div>
         ) : null}
-        {resource ? <LocaleString as="h1">{resource.canvas.label}</LocaleString> : null}
-        {task.status !== 3 && task.state?.changesRequested ? (
+        {subject ? <LocaleString as="h1">{subject.label}</LocaleString> : null}
+        {changesRequested ? (
           <div style={{ background: 'lightblue', padding: '1em', marginBottom: '1em' }}>
             <Heading3>{t('The following changes were requested')}</Heading3>
-            <p>{task.state.changesRequested}</p>
+            <p>{changesRequested}</p>
           </div>
         ) : null}
         {mayExpire ? <WarningMessage>{t('Your contribution may expire soon')}</WarningMessage> : null}
@@ -112,27 +75,26 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task,
           </ErrorMessage>
         ) : null}
         {isSubmitted ? <WarningMessage>{t('Your submission is in review')}</WarningMessage> : null}
-        {resource && captureModel && modelId ? (
-          <CaptureModelViewer
-            modelId={modelId}
-            revisionId={task.state.revisionId}
-            onSave={async (response, status) => {
-              if (!task.id || !project) return;
 
-              if (status === 'draft') {
-                await api.saveResourceClaim(project.id, task.id, {
-                  status: 1,
-                  revisionId: response.revision.id,
-                });
-              } else if (status === 'submitted') {
-                await api.saveResourceClaim(project.id, task.id, {
-                  status: 2,
-                  revisionId: response.revision.id,
-                });
-              }
-              await queryCache.invalidateQueries(['task', { id: task.id }]);
+        {captureModel && modelId ? (
+          <RevisionProviderWithFeatures
+            revision={revisionId}
+            captureModel={captureModel}
+            slotConfig={{
+              editor: { allowEditing: false },
+              components: { SubmitButton: SimpleSaveButton },
             }}
-          />
+          >
+            <EditorSlots.TopLevelEditor />
+          </RevisionProviderWithFeatures>
+        ) : null}
+
+        {!isSubmitted && !isComplete && backLink ? (
+          <div>
+            <Button $primary as={HrefLink} href={backLink}>
+              {t('Edit submission')}
+            </Button>
+          </div>
         ) : null}
       </div>
     </ThemeProvider>

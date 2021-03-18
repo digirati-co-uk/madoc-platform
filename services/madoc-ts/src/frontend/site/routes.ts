@@ -379,22 +379,28 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
         },
         {
           path: '/projects/:slug/tasks',
-          exact: true,
           component: components.AllTasks,
+          exact: true,
         },
         {
           path: '/projects/:slug/tasks/:taskId',
-          component: components.TaskLoader,
+          component: components.AllTasks,
           routes: [
             {
               path: '/projects/:slug/tasks/:taskId',
-              exact: true,
-              component: components.ViewTask,
-            },
-            {
-              path: '/projects/:slug/tasks/:parentTaskId/subtasks/:taskId',
-              exact: true,
-              component: components.ViewTask,
+              component: components.TaskLoader,
+              routes: [
+                {
+                  path: '/projects/:slug/tasks/:taskId',
+                  exact: true,
+                  component: components.ViewTask,
+                },
+                {
+                  path: '/projects/:slug/tasks/:parentTaskId/subtasks/:taskId',
+                  exact: true,
+                  component: components.ViewTask,
+                },
+              ],
             },
           ],
         },
@@ -413,22 +419,28 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
     },
     {
       path: '/tasks',
-      exact: true,
       component: components.AllTasks,
+      exact: true,
     },
     {
       path: '/tasks/:taskId',
-      component: components.TaskLoader,
+      component: components.AllTasks,
       routes: [
         {
           path: '/tasks/:taskId',
-          exact: true,
-          component: components.ViewTask,
-        },
-        {
-          path: '/tasks/:parentTaskId/subtasks/:taskId',
-          exact: true,
-          component: components.ViewTask,
+          component: components.TaskLoader,
+          routes: [
+            {
+              path: '/tasks/:taskId',
+              exact: true,
+              component: components.ViewTask,
+            },
+            {
+              path: '/tasks/:parentTaskId/subtasks/:taskId',
+              exact: true,
+              component: components.ViewTask,
+            },
+          ],
         },
       ],
     },
