@@ -26,7 +26,7 @@ export type SearchResult = {
   /**
    * List of hits.
    */
-  hits: Array<SearchHit>;
+  hits: null | Array<SearchHit>;
 };
 
 /**
