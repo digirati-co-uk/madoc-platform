@@ -7,7 +7,7 @@ import styled from 'styled-components';
 const DocumentLabel = styled.div`
   font-size: 13px;
   font-weight: bold;
-  color: #4676d6;
+  color: #333;
 `;
 
 const DocumentDescription = styled.div`
@@ -29,24 +29,26 @@ const DocumentSection = styled.div`
   margin-bottom: 20px;
 `;
 
-const DocumentCollapse = styled.div``;
+const DocumentCollapse = styled.div`
+  background: #fff;
+  padding: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+`;
 
 const DocumentEntityList = styled.div`
   border-left: 1px solid #ddd;
-  margin-left: 20px;
-  padding-left: 20px;
-  &:hover {
-    background: #eee;
-  }
-  &:hover &:hover {
-    background: #ddd;
-  }
+  padding: 10px;
+  background: #e9effc;
 `;
 
 const DocumentEntityLabel = styled.div`
   color: #111;
   font-weight: bold;
   font-size: 15px;
+`;
+
+const FieldPreviewWrapper = styled.div`
+  white-space: pre;
 `;
 
 const isEmptyFieldList = (fields: BaseField[]) => {
@@ -66,18 +68,9 @@ const renderFieldList = (fields: BaseField[]) => {
   // @todo filter revisions, but this time add the revisions to the fields
 
   return (
-    <div>
-      {fields.map(field =>
-        field.value ? (
-          <div key={field.id}>
-            {/*<div>Id: {field.id}</div>*/}
-            {/*<div>Revision: {field.revision}</div>*/}
-            {/*<div>Revises: {field.revises}</div>*/}
-            <FieldPreview key={field.id} field={field} />
-          </div>
-        ) : null
-      )}
-    </div>
+    <FieldPreviewWrapper>
+      {fields.map(field => (field.value ? <FieldPreview key={field.id} field={field} /> : null))}
+    </FieldPreviewWrapper>
   );
 };
 
@@ -88,10 +81,10 @@ const renderEntityList = (entities: CaptureModel['document'][]) => {
         const flatInnerProperties = Object.entries(entity.properties);
         return (
           <div key={entity.id}>
-            <div style={{ display: 'flex', marginBottom: 10 }}>
-              <div style={{ padding: '3px 16px' }}>{'v'}</div>
-              <DocumentEntityLabel>Some label</DocumentEntityLabel>
-            </div>
+            {/*<div style={{ display: 'flex', marginBottom: 10 }}>*/}
+            {/*  <div style={{ padding: '3px 16px' }}>{'v'}</div>*/}
+            {/*  <DocumentEntityLabel>Some label</DocumentEntityLabel>*/}
+            {/*</div>*/}
             <DocumentEntityList>
               {flatInnerProperties.map(([key, field]) => {
                 // eslint-disable-next-line
