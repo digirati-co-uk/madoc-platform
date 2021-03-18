@@ -31,7 +31,7 @@ export const TaskLoader: UniversalComponent<TaskLoaderType> = createUniversalCom
       }
     );
 
-    const ctx = useMemo(() => (data ? { id: data.task.id, name: data.task.name } : undefined), [data]);
+    const ctx = useMemo(() => (data && data.task ? { id: data.task.id, name: data.task.name } : undefined), [data]);
 
     if (!data) {
       return <>Loading...</>;
