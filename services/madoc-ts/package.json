@@ -128,6 +128,7 @@
     "react-router-dom": "^5.1.2",
     "react-stack-grid": "^0.7.1",
     "react-timeago": "^4.4.0",
+    "react-tooltip": "^4.2.15",
     "rich-markdown-editor": "^11.3.1",
     "sharp": "^0.25.2",
     "slonik": "^23.5.5",

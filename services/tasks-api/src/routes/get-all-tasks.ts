@@ -78,7 +78,7 @@ export const getAllTasks: RouteMiddleware = async context => {
 
   try {
     const query = sql`
-      SELECT t.id, t.name, t.status, t.status_text, t.type ${detailedFields}
+      SELECT t.id, t.name, t.status, t.status_text, t.metadata, t.type ${detailedFields}
       FROM tasks t 
       LEFT JOIN tasks dt on t.delegated_task = dt.id
       WHERE t.context ?& ${sql.array(context.state.jwt.context, 'text')}

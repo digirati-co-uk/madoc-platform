@@ -23,8 +23,7 @@ export const KanbanCol = styled.div`
   display: flex;
   flex-direction: column;
   margin-right: 1em;
-  min-width: 350px;
-  max-width: 350px;
+  width: 33.3333%;
   border: 1px solid #e5e5e5;
   border-radius: 4px;
   background-color: #eee;
@@ -42,6 +41,7 @@ export const KanbanColTitle = styled.div`
   position: sticky;
   background: #e5e5e5;
   top: 0px;
+  min-height: 2.3rem;
 `;
 
 export const KanbanCard = styled.div<{ $disabled?: boolean }>`

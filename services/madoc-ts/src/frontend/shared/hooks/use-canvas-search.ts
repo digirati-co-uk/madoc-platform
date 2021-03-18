@@ -10,7 +10,13 @@ export function useCanvasSearch(id?: number | string, queryParam = 'searchText')
 
   return [
     searchText,
-    search && search.results && search.results.length && search.results[0].hits[0]
+    search &&
+    search.results &&
+    search.results.length &&
+    search.results[0] &&
+    search.results[0].hits &&
+    search.results[0].hits.length &&
+    search.results[0].hits[0]
       ? search.results[0].hits[0]
       : undefined,
   ];

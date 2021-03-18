@@ -25,6 +25,11 @@ export type UpdateTask = {
   state?: any;
 
   /**
+   * Any metadata on the task.
+   */
+  metadata?: any;
+
+  /**
    * The user who is assigned to this task.
    */
   assignee?: {

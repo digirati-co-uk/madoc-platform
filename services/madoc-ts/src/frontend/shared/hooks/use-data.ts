@@ -1,6 +1,15 @@
 import { useMemo } from 'react';
+import { InfiniteQueryConfig } from 'react-query/types/core/types';
 import { QueryComponent } from '../../types';
-import { PaginatedQueryResult, QueryConfig, QueryResult, usePaginatedQuery, useQuery } from 'react-query';
+import {
+  InfiniteQueryResult,
+  PaginatedQueryResult,
+  QueryConfig,
+  QueryResult,
+  useInfiniteQuery,
+  usePaginatedQuery,
+  useQuery,
+} from 'react-query';
 import { useSlots } from '../page-blocks/slot-context';
 import { useApi } from './use-api';
 import { useParams } from 'react-router-dom';
@@ -90,4 +99,36 @@ export function usePaginatedData<Data = any, TKey = any, TVariables = any>(
     },
     { ...(config || {}), useErrorBoundary: true }
   );
+}
+
+export function useInfiniteData<Data = any, TKey = any, TVariables = any>(
+  component: QueryComponent<Data, TKey, TVariables>,
+  vars: Partial<TVariables> = {},
+  config?: InfiniteQueryConfig<Data>
+): InfiniteQueryResult<Data> {
+  const api = useApi();
+  const params = useParams();
+  const query = useLocationQuery();
+
+  const [key, initialVars = {}] = component.getKey ? component.getKey(params, query) || [] : [];
+
+  const newVars = Array.isArray(initialVars) ? initialVars : { ...initialVars, ...vars };
+
+  const potentialReturn = useInfiniteQuery(
+    [key, newVars] as any,
+    (queryKey: any, queryVars: any, extraVars: any) => {
+      const combinedVars: any = { ...(queryVars || {}), ...(extraVars || {}) };
+      if (component.getData) {
+        return component.getData(queryKey, combinedVars, api);
+      }
+      return undefined as any;
+    },
+    { ...(config || {}), useErrorBoundary: true }
+  );
+
+  if (potentialReturn.data && !Array.isArray(potentialReturn.data)) {
+    potentialReturn.data = [potentialReturn.data as any];
+  }
+
+  return potentialReturn;
 }

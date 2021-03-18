@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { Button, ButtonIcon, ButtonRow } from '../../shared/atoms/Button';
 import { CanvasNavigationMinimalist } from '../../shared/components/CanvasNavigationMinimalist';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { useCanvasSearch } from '../../shared/hooks/use-canvas-search';
@@ -11,13 +12,13 @@ import { ManifestLoader } from '../components';
 import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
+import { CanvasTaskProgress } from './CanvasTaskProgress';
 
 const BrowseAll = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 40%;
-  margin-left: 1rem;
+  margin: 0 1rem;
   a {
     display: flex;
     align-items: center;
@@ -46,16 +47,24 @@ export const CanvasManifestNavigation: React.FC<{ subRoute?: string }> = ({ subR
 
   return (
     <div style={{ display: 'flex', alignItems: 'center' }}>
-      <div style={{ width: '60vw', fontSize: '24px', color: '#212529' }}>
+      <div style={{ flex: '1 1 0px', fontSize: '24px', color: '#212529' }}>
         <LocaleString>{manifest ? manifest.label : { en: ['...'] }}</LocaleString>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '40%' }}>
-        <BrowseAll>
-          <HrefLink href={createLink({ manifestId: manifestId, canvasId: undefined, query: { listing: true } })}>
-            <GridIcon style={{ width: '24px', height: '24px' }} />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <ButtonRow>
+          <CanvasTaskProgress />
+
+          <Button
+            as={HrefLink}
+            href={createLink({ manifestId: manifestId, canvasId: undefined, query: { listing: true } })}
+          >
+            <ButtonIcon>
+              <GridIcon />
+            </ButtonIcon>
             {t('Browse all')}
-          </HrefLink>
-        </BrowseAll>
+          </Button>
+        </ButtonRow>
+
         {showCanvasNavigation ? (
           <CanvasNavigationMinimalist
             manifestId={manifestId}

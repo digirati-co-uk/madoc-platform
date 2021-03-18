@@ -56,6 +56,11 @@ export type CreateTask = {
   state?: any;
 
   /**
+   * Custom metadata.
+   */
+  metadata?: any;
+
+  /**
    * Events that will be dispatched for this task.
    */
   events?: string[];

@@ -33,6 +33,7 @@ import { indexManifest } from './routes/search/index-manifest';
 import { updateProjectStatus } from './routes/projects/update-project-status';
 import { siteManifestTasks } from './routes/site/site-manifest-tasks';
 import { sitePages } from './routes/site/site-pages';
+import { siteTaskMetadata } from './routes/site/site-task-metadata';
 import { getUser } from './routes/user/get-user';
 import { TypedRouter } from './utility/typed-router';
 import { ping } from './routes/ping';
@@ -318,6 +319,7 @@ export const router = new TypedRouter({
     '/s/:slug/madoc/api/configuration/metadata',
     getMetadataConfiguration,
   ],
+  'site-task-metadata': [TypedRouter.GET, '/s/:slug/madoc/api/task-metadata/:taskId', siteTaskMetadata],
   'site-list-locales': [TypedRouter.GET, '/s/:slug/madoc/api/locales', listLocalisations],
   'site-get-locale': [TypedRouter.GET, '/s/:slug/madoc/api/locales/:code', getLocalisation],
 

@@ -34,7 +34,7 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
 }) => {
   const { slug } = useParams<{ slug: string }>();
   const history = useHistory();
-  const { preview } = useLocationQuery();
+  const { preview, ...query } = useLocationQuery();
 
   const { data, refetch: refetchTask } = useApiTaskSearch<CrowdsourcingTask>({
     all: true,
@@ -71,16 +71,22 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
       <Breadcrumbs
         type="site"
         items={[
-          backTask ? { label: backTask.name, link: createLink({ projectId: slug, taskId: backTask.id }) } : undefined,
+          backTask
+            ? { label: backTask.name, link: createLink({ projectId: slug, taskId: backTask.id, query }) }
+            : undefined,
           {
             label: reviewTask.name,
-            link: createLink({ projectId: slug, taskId: reviewTask.id }),
+            link: createLink({ projectId: slug, taskId: reviewTask.id, query }),
             active: !previewTask,
           },
           previewTask
             ? {
                 label: previewTask.name,
-                link: createLink({ projectId: slug, taskId: reviewTask.id, query: { preview: previewTask.id } }),
+                link: createLink({
+                  projectId: slug,
+                  taskId: reviewTask.id,
+                  query: { preview: previewTask.id, ...query },
+                }),
                 active: true,
               }
             : undefined,
@@ -126,7 +132,7 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
               }
               const rev = opt?.revisionId;
               history.push(
-                createLink({ projectId: slug, taskId: reviewTask.id, query: rev ? { preview: rev } : undefined })
+                createLink({ projectId: slug, taskId: reviewTask.id, query: rev ? { preview: rev, ...query } : query })
               );
             }}
             reviewTaskId={reviewTask.id as string}
@@ -163,7 +169,7 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
               }
               const rev = opt?.revisionId;
               history.push(
-                createLink({ projectId: slug, taskId: reviewTask.id, query: rev ? { preview: rev } : undefined })
+                createLink({ projectId: slug, taskId: reviewTask.id, query: rev ? { preview: rev, ...query } : query })
               );
             }}
             reviewTaskId={reviewTask.id as string}
@@ -183,7 +189,7 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
             to={createLink({
               projectId: slug,
               taskId: reviewTask.id,
-              query: { preview: reviewTask.state.currentMerge.mergeId },
+              query: { preview: reviewTask.state.currentMerge.mergeId, ...query },
             })}
           >
             Go to merge
@@ -240,7 +246,11 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
                   {task.status > 0 && task.state.reviewTask === reviewTask.id ? (
                     <KanbanCardButton
                       as={HrefLink}
-                      href={createLink({ projectId: slug, taskId: reviewTask.id, query: { preview: task.id } })}
+                      href={createLink({
+                        projectId: slug,
+                        taskId: reviewTask.id,
+                        query: { preview: task.id, ...query },
+                      })}
                     >
                       Review contribution
                     </KanbanCardButton>
@@ -272,7 +282,11 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
                   {task.status > 0 && task.state.reviewTask === reviewTask.id ? (
                     <KanbanCardTextButton
                       as={HrefLink}
-                      href={createLink({ projectId: slug, taskId: reviewTask.id, query: { preview: task.id } })}
+                      href={createLink({
+                        projectId: slug,
+                        taskId: reviewTask.id,
+                        query: { preview: task.id, ...query },
+                      })}
                     >
                       View contribution
                     </KanbanCardTextButton>

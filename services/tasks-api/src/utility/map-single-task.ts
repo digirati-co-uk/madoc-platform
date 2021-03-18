@@ -10,6 +10,7 @@ export function mapSingleTask(singleTask: any, subtasks?: any[], fields?: string
     assignee_is_service,
     creator_name,
     events,
+    metadata,
     ...args
   } = singleTask;
 
@@ -31,6 +32,7 @@ export function mapSingleTask(singleTask: any, subtasks?: any[], fields?: string
       : null,
     parent_task: parent_task,
     events: events,
+    metadata: metadata,
     subtasks: subtasks
       ? subtasks.map(task => {
           const subtask: any = {
@@ -41,6 +43,7 @@ export function mapSingleTask(singleTask: any, subtasks?: any[], fields?: string
             subject: task.subject,
             status_text: task.status_text,
             state: task.state,
+            metadata: task.metadata,
           };
 
           if (fields) {

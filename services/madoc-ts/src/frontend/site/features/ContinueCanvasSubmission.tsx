@@ -10,13 +10,12 @@ import { useContinueSubmission } from '../hooks/use-continue-submission';
 import { useProject } from '../hooks/use-project';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
-import { CanvasReviewList } from './CanvasReviewList';
 
 export const ContinueCanvasSubmission: React.FC = () => {
   const { t } = useTranslation();
   const { projectId, canvasId } = useRouteContext();
   const { completedAndHide, canClaimCanvas, canUserSubmit, isLoading, canContribute } = useCanvasUserTasks();
-  const [continueSubmission, continueCount] = useContinueSubmission();
+  const { tasks: continueSubmission, inProgress: continueCount } = useContinueSubmission();
   const createLink = useRelativeLinks();
   const { data: project } = useProject();
 
@@ -35,9 +34,9 @@ export const ContinueCanvasSubmission: React.FC = () => {
           </ProjectListingTitle>
           <ProjectListingDescription>
             <LocaleString>{project.summary}</LocaleString>
+            <div style={{ height: '2.38em' }} />
           </ProjectListingDescription>
         </ProjectListingItem>
-        <CanvasReviewList />
         {isLoading ? null : (
           <SuccessMessage>
             {completedAndHide ? t('This page is complete') : t('The maximum number of contributions has been reached')}
@@ -48,6 +47,8 @@ export const ContinueCanvasSubmission: React.FC = () => {
   }
 
   if (project && continueSubmission?.length) {
+    const revision = continueSubmission[0].state.revisionId;
+
     return (
       <div>
         <ProjectListingItem key={project.id}>
@@ -60,18 +61,23 @@ export const ContinueCanvasSubmission: React.FC = () => {
             <LocaleString>{project.summary}</LocaleString>
           </ProjectListingDescription>
           {!continueCount ? (
-            <ProjectListingDescription>{t('You have already completed this item')}</ProjectListingDescription>
+            <ProjectListingDescription>
+              <strong>{t('You have already completed this item')}</strong>
+            </ProjectListingDescription>
           ) : null}
           <Button
             $primary
             as={HrefLink}
-            href={createLink({ canvasId, subRoute: 'model' })}
+            href={createLink({
+              canvasId,
+              subRoute: 'model',
+              query: { revision: continueCount ? revision : undefined },
+            })}
             style={{ display: 'inline-block' }}
           >
             {continueCount ? t('Continue submission ({{count}})', { count: continueCount }) : t('Add new submission')}
           </Button>
         </ProjectListingItem>
-        <CanvasReviewList />
       </div>
     );
   }
@@ -99,14 +105,17 @@ export const ContinueCanvasSubmission: React.FC = () => {
             >
               {t('Contribute')}
             </Button>
-          ) : null
+          ) : (
+            <div style={{ height: '2.38em' }} />
+          )
         ) : canClaimCanvas ? (
           <Button disabled style={{ minWidth: 100 }}>
             {t('...')}
           </Button>
-        ) : null}
+        ) : (
+          <div style={{ height: '2.38em' }} />
+        )}
       </ProjectListingItem>
-      <CanvasReviewList />
     </div>
   );
 };

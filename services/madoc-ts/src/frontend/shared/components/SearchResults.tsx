@@ -74,7 +74,7 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; sea
     : things.find(thing => thing?.type.toLowerCase() === 'collection')?.id;
   const manifestId = things.find(thing => thing?.type.toLowerCase() === 'manifest')?.id;
   const canvasId = things.find(thing => thing?.type.toLowerCase() === 'canvas')?.id;
-  const searchText = result.hits[0] && result.hits[0].bounding_boxes ? search : undefined;
+  const searchText = result.hits && result.hits[0] && result.hits[0].bounding_boxes ? search : undefined;
   const snippet = result.hits && result.hits[0] && result.hits[0].snippet ? result.hits[0].snippet : undefined;
 
   return (

@@ -105,6 +105,9 @@ export const updateSingleTask: RouteMiddleware<{ id: string }> = async context =
   if (typeof taskChanges.state !== 'undefined') {
     updateRows.push(sql`state = state || ${JSON.stringify(taskChanges.state)}`);
   }
+  if (typeof taskChanges.metadata !== 'undefined') {
+    updateRows.push(sql`metadata = metadata || ${JSON.stringify(taskChanges.metadata)}`);
+  }
   if (typeof taskChanges.status !== 'undefined') {
     updateRows.push(sql`status = ${taskChanges.status}`);
     context.state.dispatch(taskWithId, 'status', taskChanges.status, { status_text: taskChanges.status_text });

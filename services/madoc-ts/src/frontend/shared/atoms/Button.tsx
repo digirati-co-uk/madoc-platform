@@ -1,18 +1,25 @@
 import styled, { css } from 'styled-components';
 
 export const ButtonIcon = styled.span`
+  transform: translate(-8px, -4px);
+  height: 1em;
+  width: 1.6em;
+  position: relative;
+  display: inline-block;
   svg {
+    position: absolute;
+    left: 0;
+    top: 0;
     fill: #fff;
-    font-size: 1.1em;
-    transform: translate(0px, 3px);
-    margin-right: 0.5em;
+    height: 24px;
+    width: 24px;
   }
 `;
 
 export const Button = styled.button<{ $primary?: boolean; $inlineInput?: boolean }>`
   cursor: pointer;
-  padding: 0.5em 1em;
-  font-size: 0.85em;
+  padding: 0.4em 1em;
+  font-size: 0.9em;
   border-radius: 3px;
   background: #fff;
   color: #3579f6;
@@ -21,6 +28,7 @@ export const Button = styled.button<{ $primary?: boolean; $inlineInput?: boolean
   display: inline-block;
   vertical-align: top;
   transition: color 0.1s, background-color 0.1s, border-color 0.1s;
+  white-space: nowrap;
 
   &:active {
     box-shadow: inset 0 2px 8px 0 rgba(39, 75, 155, 0.8);
@@ -91,6 +99,7 @@ export const Button = styled.button<{ $primary?: boolean; $inlineInput?: boolean
         &:hover {
           background: #4265e9;
           border-color: #4265e9;
+          color: #fff;
         }
       }
     `}

@@ -80,6 +80,11 @@ export type BaseTask = {
   state?: any;
 
   /**
+   * Custom metadata, can change during the tasks lifecycle.
+   */
+  metadata?: any;
+
+  /**
    * Events that will be dispatched for this task.
    */
   events?: string[];

@@ -11,6 +11,10 @@ export const ViewTask: React.FC<TaskContext<any>> = ({ task, ...props }) => {
 
   const slug = api.getSiteSlug();
 
+  if (!task) {
+    return null;
+  }
+
   if (
     task.type === 'madoc-manifest-import' ||
     task.type === 'madoc-collection-import' ||
