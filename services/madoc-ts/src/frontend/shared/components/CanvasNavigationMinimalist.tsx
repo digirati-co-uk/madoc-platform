@@ -8,7 +8,7 @@ import { DownArrowIcon } from '../icons/DownArrowIcon';
 import { HrefLink } from '../utility/href-link';
 
 const PaginationButton = styled.button`
-  padding: 0.2rem;
+  padding: 0.1rem;
   border: 1px solid #6c757d;
   border-radius: 3px;
   background-color: white;
