@@ -1,4 +1,4 @@
-name: Tasks API build
+name: Storage API build
 
 on:
   pull_request:
