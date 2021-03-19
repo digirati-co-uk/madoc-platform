@@ -1,12 +1,10 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import { AnnotationPage, ImageService } from '@hyperion-framework/types';
 import { AtlasAuto, RegionHighlight, Runtime } from '@atlas-viewer/atlas';
 import { useCanvas, useImageService } from '@hyperion-framework/react-vault';
 import { useTranslation } from 'react-i18next';
-import { Button, ButtonRow, TinyButton } from '../atoms/Button';
-import { MetadataCard, MetadataCardItem, MetadataCardLabel } from '../atoms/MetadataConfiguration';
-import { useAnnotationPage } from '../hooks/use-annotation-page';
-import { Spinner } from '../icons/Spinner';
+import { Button, ButtonRow } from '../atoms/Button';
+import { useHighlightedRegions } from '../hooks/use-highlighted-regions';
 import { AtlasTiledImages } from './AtlasTiledImages';
 
 export const SimpleAtlasViewer = React.forwardRef<
@@ -16,23 +14,14 @@ export const SimpleAtlasViewer = React.forwardRef<
     highlightedRegions?: Array<[number, number, number, number]>;
     annotationPages?: AnnotationPage[];
   }
->(({ style = { height: 600 }, highlightedRegions, annotationPages }, ref) => {
+>(({ style = { height: 600 }, highlightedRegions }, ref) => {
   const { t } = useTranslation();
   const canvas = useCanvas();
   const runtime = useRef<Runtime>();
   const { data: service } = useImageService();
   const [isLoaded, setIsLoaded] = useState(false);
-  const [isAnnotationOpen, setIsAnnotationOpen] = useState(false);
-  const [currentAnnotationPage, setCurrentAnnotationPage] = useState<string | undefined>(undefined);
-  const [chosenLabel, setChosenLabel] = useState<any>('');
 
-  const {
-    setHighlightedAnnotation,
-    highlightedAnnotation,
-    annotationRegions,
-    isLoading: isAnnotationPageLoading,
-    annotationPage,
-  } = useAnnotationPage(isAnnotationOpen ? currentAnnotationPage : undefined);
+  const { highlighted, regions, setHighlightStatus, isActive } = useHighlightedRegions();
 
   const goHome = () => {
     if (runtime.current) {
@@ -52,32 +41,6 @@ export const SimpleAtlasViewer = React.forwardRef<
     }
   };
 
-  useEffect(() => {
-    setHighlightedAnnotation(undefined);
-    setCurrentAnnotationPage(undefined);
-  }, [canvas, setHighlightedAnnotation]);
-
-  useEffect(() => {
-    if (chosenLabel && !currentAnnotationPage && annotationPages) {
-      const found = annotationPages.find(page => (page.label as any) === chosenLabel);
-      if (found) {
-        setCurrentAnnotationPage(found.id);
-      }
-    }
-  }, [annotationPages, chosenLabel, currentAnnotationPage]);
-
-  useEffect(() => {
-    if (annotationPages && annotationPages.length === 1) {
-      setCurrentAnnotationPage(annotationPages[0].id);
-    }
-  }, [canvas, annotationPages]);
-
-  useLayoutEffect(() => {
-    if (runtime.current) {
-      runtime.current.world.recalculateWorldSize();
-    }
-  }, [isAnnotationOpen]);
-
   useLayoutEffect(() => {
     setIsLoaded(true);
   }, []);
@@ -87,129 +50,64 @@ export const SimpleAtlasViewer = React.forwardRef<
   }
 
   return (
-    <div ref={ref} style={{ display: 'flex', width: '100%', minWidth: 0, overflow: 'hidden', ...style }}>
-      {isAnnotationOpen ? (
-        <div style={{ minWidth: 300, width: 300, padding: 10, overflowY: 'auto' }}>
-          {currentAnnotationPage ? (
-            <div>
-              {annotationPages && annotationPages.length > 1 ? (
-                <TinyButton
-                  onClick={() => {
-                    setCurrentAnnotationPage(undefined);
-                    setChosenLabel('');
-                  }}
-                >
-                  back
-                </TinyButton>
-              ) : null}
-              {isAnnotationPageLoading ? <Spinner /> : null}
-              {!annotationPage || annotationPage.items.length === 0 ? <p>No annotations yet</p> : null}
-              {((annotationPage && annotationPage.items) || []).map((item: any) => {
-                // Unsupported annotation.
-                if (!item || !item.body || !item.body.value) {
-                  return null;
-                }
-
-                return (
-                  <MetadataCardItem
-                    key={item.id}
-                    onMouseOver={() => setHighlightedAnnotation(item.id)}
-                    onMouseOut={() => setHighlightedAnnotation(itemId => (itemId === item.id ? undefined : itemId))}
-                  >
-                    <MetadataCard interactive={item.target.indexOf('xywh') !== -1}>
-                      <MetadataCardLabel>{item.body.value}</MetadataCardLabel>
-                    </MetadataCard>
-                  </MetadataCardItem>
-                );
-              })}
-            </div>
-          ) : (
-            <div>
-              {annotationPages && annotationPages.length ? <h4>Projects</h4> : null}
-              {annotationPages?.map(page => {
-                return (
-                  <MetadataCardItem
-                    key={page.id}
-                    onClick={() => {
-                      setCurrentAnnotationPage(page.id);
-                      setChosenLabel(page.label);
-                    }}
-                  >
-                    <MetadataCard interactive>
-                      <MetadataCardLabel>{page.label || 'Untitled page'}</MetadataCardLabel>
-                    </MetadataCard>
-                  </MetadataCardItem>
-                );
-              }) || null}
-            </div>
-          )}
-        </div>
+    <div ref={ref} style={{ position: 'relative', flex: '1 1 0px', minWidth: 0, overflow: 'hidden', ...style }}>
+      {isLoaded ? (
+        <>
+          <AtlasAuto style={style} onCreated={rt => (runtime.current = rt.runtime)}>
+            <world>
+              <AtlasTiledImages key={canvas.id} canvas={canvas} service={service as ImageService} />
+              <worldObject height={canvas.height} width={canvas.width}>
+                {highlightedRegions
+                  ? highlightedRegions.map(([x, y, width, height], key) => {
+                      return (
+                        <React.Fragment key={key}>
+                          <RegionHighlight
+                            region={{ id: key, x, y, width, height }}
+                            isEditing={false}
+                            background={'rgba(2,219,255, .5)'}
+                            onSave={() => {
+                              // no-op
+                            }}
+                            onClick={() => {
+                              // no-op
+                            }}
+                          />
+                        </React.Fragment>
+                      );
+                    })
+                  : null}
+                {isActive && regions
+                  ? regions.map((region, key) => {
+                      const { x, y, width, height } = region.target;
+                      return (
+                        <React.Fragment key={key}>
+                          <RegionHighlight
+                            region={{ id: region.id, x, y, width, height }}
+                            isEditing={false}
+                            background={
+                              highlighted.indexOf(region.id) !== -1 ? 'rgba(2,219,255, .5)' : 'rgba(2,219,255, .2)'
+                            }
+                            onSave={() => {
+                              // no-op
+                            }}
+                            onClick={() => {
+                              setHighlightStatus(region.id, true);
+                            }}
+                          />
+                        </React.Fragment>
+                      );
+                    })
+                  : null}
+              </worldObject>
+            </world>
+          </AtlasAuto>
+          <ButtonRow style={{ position: 'absolute', top: 0, left: 10, zIndex: 20 }}>
+            <Button onClick={goHome}>{t('atlas__zoom_home', { defaultValue: 'Home' })}</Button>
+            <Button onClick={zoomOut}>{t('atlas__zoom_out', { defaultValue: '-' })}</Button>
+            <Button onClick={zoomIn}>{t('atlas__zoom_in', { defaultValue: '+' })}</Button>
+          </ButtonRow>
+        </>
       ) : null}
-      <div style={{ position: 'relative', flex: '1 1 0px', minWidth: 0, overflow: 'hidden' }}>
-        {isLoaded ? (
-          <>
-            <AtlasAuto style={style} onCreated={rt => (runtime.current = rt.runtime)}>
-              <world>
-                <AtlasTiledImages key={canvas.id} canvas={canvas} service={service as ImageService} />
-                <worldObject height={canvas.height} width={canvas.width}>
-                  {highlightedRegions
-                    ? highlightedRegions.map(([x, y, width, height], key) => {
-                        return (
-                          <React.Fragment key={key}>
-                            <RegionHighlight
-                              region={{ id: key, x, y, width, height }}
-                              isEditing={false}
-                              background={'rgba(2,219,255, .5)'}
-                              onSave={() => {
-                                // no-op
-                              }}
-                              onClick={() => {
-                                // no-op
-                              }}
-                            />
-                          </React.Fragment>
-                        );
-                      })
-                    : null}
-                  {annotationRegions
-                    ? annotationRegions.map((region, key) => {
-                        const { x, y, width, height } = region.target;
-                        return (
-                          <React.Fragment key={key}>
-                            <RegionHighlight
-                              region={{ id: region.id, x, y, width, height }}
-                              isEditing={false}
-                              background={
-                                region.id === highlightedAnnotation ? 'rgba(2,219,255, .5)' : 'rgba(2,219,255, .2)'
-                              }
-                              onSave={() => {
-                                // no-op
-                              }}
-                              onClick={() => {
-                                // no-op
-                                setHighlightedAnnotation(region.id);
-                              }}
-                            />
-                          </React.Fragment>
-                        );
-                      })
-                    : null}
-                </worldObject>
-              </world>
-            </AtlasAuto>
-            <ButtonRow style={{ position: 'absolute', top: 0, left: 10, zIndex: 20 }}>
-              <Button onClick={goHome}>{t('atlas__zoom_home', { defaultValue: 'Home' })}</Button>
-              <Button onClick={zoomOut}>{t('atlas__zoom_out', { defaultValue: '-' })}</Button>
-              <Button onClick={zoomIn}>{t('atlas__zoom_in', { defaultValue: '+' })}</Button>
-              {annotationPages?.length ? (
-                <Button onClick={() => setIsAnnotationOpen(s => !s)}>
-                  {t('atlas__annotations', { defaultValue: 'Annotations' })}
-                </Button>
-              ) : null}
-            </ButtonRow>
-          </>
-        ) : null}
-      </div>
     </div>
   );
 });

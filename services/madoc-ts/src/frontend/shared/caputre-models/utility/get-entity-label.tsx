@@ -7,22 +7,34 @@ export function getEntityLabel(document: CaptureModel['document'], defaultLabel?
     document.properties[document.labelledBy] &&
     document.properties[document.labelledBy].length > 0
   ) {
-    const field = document.properties[document.labelledBy][0];
-    if (!isEntity(field)) {
-      if (field.value) {
-        return field.value;
+    const fields = document.properties[document.labelledBy];
+    const parts: string[] = [];
+    for (const field of fields) {
+      if (!isEntity(field)) {
+        if (field.value) {
+          parts.push(field.value);
+        }
+      } else {
+        parts.push(getEntityLabel(field, defaultLabel));
       }
-    } else {
-      return getEntityLabel(field, defaultLabel);
     }
+    return parts.join(' ');
   }
 
   const props = Object.keys(document.properties);
 
   for (const prop of props) {
-    const item = document.properties[prop];
-    if (item[0] && !isEntity(item[0]) && typeof item[0].value === 'string' && item[0].value) {
-      return item[0].value;
+    const items = document.properties[prop];
+    if (items) {
+      for (const item of items) {
+        const parts: string[] = [];
+        if (item && !isEntity(item) && typeof item.value === 'string' && item.value) {
+          parts.push(item.value);
+        } else if (isEntity(item)) {
+          parts.push(getEntityLabel(item));
+        }
+        return parts.join(' ');
+      }
     }
   }
 
