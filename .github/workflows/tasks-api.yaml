@@ -51,12 +51,5 @@ jobs:
       - working-directory: services/tasks-api
         run: yarn install --frozen-lockfile --non-interactive
 
-      - uses: actions/cache@v1
-        with:
-          path: services/tasks-api/.cache
-          key: typescript-cache
-          restore-keys: |
-            typescript-cache
-
       - working-directory: services/tasks-api
         run: yarn run build
