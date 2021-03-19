@@ -24,7 +24,7 @@
     "koa-json": "^2.0.2",
     "koa-logger": "^3.2.1",
     "slonik": "^22.4.3",
-    "uuid": "^7.0.1"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@fesk/eslint-config-standard": "1.4.0-pr.b6dc2fa3",
