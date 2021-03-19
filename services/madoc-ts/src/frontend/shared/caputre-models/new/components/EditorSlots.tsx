@@ -24,7 +24,7 @@ export type EditorRenderingConfig = {
   TopLevelEditor: React.FC;
   Breadcrumbs: React.FC;
   SingleEntity: React.FC<{ showTitle?: boolean }>;
-  SingleField: React.FC<{ showTitle?: boolean }>;
+  SingleField: React.FC;
   AdjacentNavigation: React.FC;
   ManagePropertyList: React.FC<{ property: string; type: 'field' | 'entity' }>; // Fallbacks passed in
   InlineProperties: React.FC<{
@@ -150,10 +150,10 @@ const ViewEntity: React.FC<{ showTitle?: boolean }> = props => {
   return <Slots.SingleEntity showTitle={props.showTitle}>{props.children}</Slots.SingleEntity>;
 };
 
-const ViewField: React.FC<{ showTitle?: boolean }> = props => {
+const ViewField: React.FC = props => {
   const Slots = useSlotContext();
 
-  return <Slots.SingleField showTitle={props.showTitle}>{props.children}</Slots.SingleField>;
+  return <Slots.SingleField>{props.children}</Slots.SingleField>;
 };
 
 const TopLevelEditor: React.FC = props => {

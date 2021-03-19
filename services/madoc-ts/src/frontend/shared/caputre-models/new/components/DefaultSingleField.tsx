@@ -8,7 +8,7 @@ import { EditorRenderingConfig, useSlotContext } from './EditorSlots';
 /**
  * Previously Verbose field. This is used when viewing a single field on a page.
  */
-export const DefaultSingleField: EditorRenderingConfig['SingleField'] = ({ showTitle = true }) => {
+export const DefaultSingleField: EditorRenderingConfig['SingleField'] = () => {
   const Slots = useSlotContext();
   const [field, { property, path }] = useCurrentField();
   const { isModified } = useFieldDetails(field);
@@ -21,7 +21,6 @@ export const DefaultSingleField: EditorRenderingConfig['SingleField'] = ({ showT
     <>
       <Slots.Breadcrumbs />
       <RoundedCard size="small" interactive={false}>
-        {field.label && showTitle ? <FieldHeader label={field.label} description={field.description} /> : null}
         {isModified && <InlineProgressIcon />}
         <FieldInstance field={field} property={property} path={path as any} />
       </RoundedCard>
