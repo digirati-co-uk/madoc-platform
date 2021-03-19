@@ -1,0 +1,50 @@
+name: Madoc TS build
+
+on:
+  pull_request:
+    paths:
+      - "services/madoc-ts/src/**"
+      - "services/madoc-ts/migrations/**"
+      - "services/madoc-ts/__tests__/**"
+      - "services/madoc-ts/translations/**"
+      - "services/madoc-ts/schemas/**"
+      - "services/madoc-ts/package.json"
+      - "services/madoc-ts/yarn.lock"
+      - "services/madoc-ts/Dockerfile"
+      - "services/madoc-ts/ecosystem.config.js"
+      - "services/madoc-ts/webpack.config.js"
+      - "services/madoc-ts/tsconfig.json"
+  push:
+    paths:
+      - "services/madoc-ts/src/**"
+      - "services/madoc-ts/migrations/**"
+      - "services/madoc-ts/__tests__/**"
+      - "services/madoc-ts/translations/**"
+      - "services/madoc-ts/schemas/**"
+      - "services/madoc-ts/package.json"
+      - "services/madoc-ts/yarn.lock"
+      - "services/madoc-ts/Dockerfile"
+      - "services/madoc-ts/ecosystem.config.js"
+      - "services/madoc-ts/webpack.config.js"
+      - "services/madoc-ts/tsconfig.json"
+
+jobs:
+  madoc-ts-build:
+    runs-on: ubuntu-latest
+
+    name: Node 12 build
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - working-directory: services/madoc-ts
+        run: yarn install --frozen-lockfile --non-interactive
+
+      - working-directory: services/madoc-ts
+        run: yarn run build
+
+      - working-directory: services/madoc-ts
+        run: yarn run test
