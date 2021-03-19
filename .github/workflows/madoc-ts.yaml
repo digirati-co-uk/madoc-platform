@@ -33,7 +33,7 @@ jobs:
   madoc-ts-build:
     runs-on: ubuntu-latest
 
-    name: Node 12 build
+    name: Node build
     steps:
       - uses: actions/checkout@v2
       - name: Setup node
