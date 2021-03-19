@@ -1,6 +1,7 @@
 import { isEntityList } from '@capture-models/helpers';
 import { BaseField, CaptureModel } from '@capture-models/types';
 import React from 'react';
+import { canInlineProperty } from './can-inline-property';
 
 export function mapProperties(
   entity: CaptureModel['document'],
@@ -21,7 +22,7 @@ export function mapProperties(
     const singleEntity = instances[0];
     const label =
       instances.length > 1 && singleEntity.pluralLabel ? singleEntity.pluralLabel : singleEntity.label || 'Untitled';
-    const canInlineField = !isEntityList(instances) && (instances.length === 1 || !singleEntity.selector);
+    const canInlineField = !isEntityList(instances) && (canInlineProperty(instances) || !singleEntity.selector);
     const description = singleEntity.description;
     const profile = singleEntity.profile;
     const dataSources = singleEntity.dataSources;

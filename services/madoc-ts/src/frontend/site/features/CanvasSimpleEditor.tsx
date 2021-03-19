@@ -70,8 +70,24 @@ export const CanvasSimpleEditor: React.FC<{ revision: string }> = ({ revision })
       captureModel={captureModel}
       slotConfig={{ editor: { allowEditing: true } }}
     >
-      <div style={{ display: 'flex', flexDirection: isVertical ? 'column' : 'row' }}>
-        <div style={{ width: isVertical ? '100%' : '67%', position: 'relative' }}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: isVertical ? 'column' : 'row',
+          width: '100%',
+          maxHeight: '100%',
+          height: '100%',
+        }}
+      >
+        <div
+          style={{
+            width: isVertical ? '100%' : 'auto',
+            flex: '1 1 0px',
+            height: '100%',
+            minWidth: 0,
+            position: 'relative',
+          }}
+        >
           <div style={{ display: isPlaintext ? 'none' : undefined }}>
             <EditorContentViewer
               canvasId={canvasId}
@@ -99,9 +115,17 @@ export const CanvasSimpleEditor: React.FC<{ revision: string }> = ({ revision })
           </div>
         </div>
         {canContribute && captureModel ? (
-          <div style={{ width: isVertical ? '100%' : '33%', padding: '1em' }}>
-            {/* @todo navigation and other model features, like suggesting an edit if something already exists. */}
-            <EditorSlots.TopLevelEditor />
+          <div
+            style={{
+              width: isVertical ? '100%' : '420px',
+              maxHeight: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <div style={{ overflowY: 'auto', padding: '1em', fontSize: '13px' }}>
+              <EditorSlots.TopLevelEditor />
+            </div>
 
             <EditorSlots.SubmitButton afterSave={updateClaim} />
           </div>

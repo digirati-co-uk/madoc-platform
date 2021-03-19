@@ -17,7 +17,12 @@ export const DefaultTopLevelEditor: EditorRenderingConfig['TopLevelEditor'] = ()
     }
 
     if (state.revisionSubtree && isEntity(state.revisionSubtree)) {
-      return <EditorSlots.ViewEntity key={state.currentRevisionId || undefined} />;
+      return (
+        <EditorSlots.ViewEntity
+          key={state.currentRevisionId || undefined}
+          showTitle={state.revisionSubtreePath.length > 0}
+        />
+      );
     }
   }
 

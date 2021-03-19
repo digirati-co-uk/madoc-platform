@@ -34,8 +34,8 @@ export const DefaultSubmitButton: React.FC<{ afterSave?: (req: RevisionRequest) 
   }
 
   return (
-    <div style={{ textAlign: 'center' }}>
-      <ButtonRow $noMargin>
+    <div style={{ textAlign: 'right' }}>
+      <ButtonRow>
         <ModalButton
           autoHeight
           modalSize="lg"

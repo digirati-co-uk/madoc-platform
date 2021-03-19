@@ -11,6 +11,7 @@ import { castBool } from '../../../../utility/cast-bool';
 import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
 import { ApiArgs, apiHooks } from '../../../shared/hooks/use-api-query';
 import { useData } from '../../../shared/hooks/use-data';
+import { HighlightedRegionProvider } from '../../../shared/hooks/use-highlighted-regions';
 import { useLocationQuery } from '../../../shared/hooks/use-location-query';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
@@ -60,19 +61,21 @@ export const CanvasLoader: UniversalComponent<CanvasLoaderType> = createUniversa
 
     return (
       <BreadcrumbContext canvas={ctx}>
-        {renderUniversalRoutes(route.routes, {
-          ...props,
-          isLoadingTasks,
-          canvas: data?.canvas,
-          plaintext: data?.plaintext,
-          canvasTask: tasks?.canvasTask,
-          userTasks: tasks?.userTasks,
-          canUserSubmit: !!tasks?.canUserSubmit,
-          manifestTask: tasks?.manifestTask,
-          model: model?.model,
-          refetch,
-          refetchCanvasTasks,
-        })}
+        <HighlightedRegionProvider>
+          {renderUniversalRoutes(route.routes, {
+            ...props,
+            isLoadingTasks,
+            canvas: data?.canvas,
+            plaintext: data?.plaintext,
+            canvasTask: tasks?.canvasTask,
+            userTasks: tasks?.userTasks,
+            canUserSubmit: !!tasks?.canUserSubmit,
+            manifestTask: tasks?.manifestTask,
+            model: model?.model,
+            refetch,
+            refetchCanvasTasks,
+          })}
+        </HighlightedRegionProvider>
       </BreadcrumbContext>
     );
   },

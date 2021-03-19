@@ -2224,7 +2224,7 @@
     core-js-pure "^3.0.0"
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@7.12.18", "@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.5", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.13", "@babel/runtime@^7.12.5", "@babel/runtime@^7.2.0", "@babel/runtime@^7.3.1", "@babel/runtime@^7.4.4", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.3", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.3", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
+"@babel/runtime@7.12.18", "@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.5", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.0", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.13", "@babel/runtime@^7.12.5", "@babel/runtime@^7.2.0", "@babel/runtime@^7.3.1", "@babel/runtime@^7.4.4", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.3", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.3", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
   version "7.12.18"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.12.18.tgz#af137bd7e7d9705a412b3caaf991fe6aaa97831b"
   integrity sha512-BogPQ7ciE6SYAUPtlm9tWbgI9+2AgqSam6QivMgXgAT+fKbgppaj4ZX15MHeLC1PVF5sNk70huBu20XxWOs8Cg==
@@ -2491,10 +2491,10 @@
     screenfull "^3.3.2"
     whatwg-fetch "^3.0.0"
 
-"@capture-models/editor@^0.13.3":
-  version "0.13.3"
-  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.13.3.tgz#cc274063cd07566575773979288a5ec9648c4d54"
-  integrity sha512-BY3Ak4Wx9OjQlkzl5uqpEc2A4xS/+ycEpjteNPX9LtpFVbdeFGlAOEXh7sIPNLVNWmzVzOCk5BXg6CZ+EZHFnA==
+"@capture-models/editor@^0.13.5":
+  version "0.13.5"
+  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.13.5.tgz#a31642c4233384256f699dd6c6c3c6f8931a550c"
+  integrity sha512-7I7kOh1fnAXSgUsS+8DmrZeF+cIQOsNk+xFQkAIizcPCcJ/bQJnnI2MUQbl/cJ7eAUV//YN3Yh4f1+LIKJaf3A==
   dependencies:
     "@atlas-viewer/atlas" "^1.4.2"
     "@capture-models/helpers" "^0.13.1"
@@ -2514,6 +2514,7 @@
     easy-peasy "^3.4.0-beta.1"
     fast-copy "^2.0.4"
     formik "^2.0.6"
+    i18next "^19.9.1"
     immer "^7.0.7"
     immutable "^3.8.2"
     manifesto.js "4.1.0"
@@ -2523,7 +2524,8 @@
     react-beautiful-dnd "^13.0.0"
     react-dom "^16.13.1"
     react-draggable "^4.2.0"
-    react-functional-select "^2.3.5"
+    react-functional-select "^3.1.1"
+    react-i18next "^11.8.9"
     react-router-dom "^5.1.2"
     react-rte "^0.16.1"
     react-textarea-autosize "^8.2.0"
@@ -10716,6 +10718,13 @@ i18next@^19.5.0, i18next@^19.7.0:
   dependencies:
     "@babel/runtime" "^7.10.1"
 
+i18next@^19.9.1:
+  version "19.9.2"
+  resolved "https://registry.yarnpkg.com/i18next/-/i18next-19.9.2.tgz#ea5a124416e3c5ab85fddca2c8e3c3669a8da397"
+  integrity sha512-0i6cuo6ER6usEOtKajUUDj92zlG+KArFia0857xxiEHAQcUwh/RtOQocui1LPJwunSYT574Pk64aNva1kwtxZg==
+  dependencies:
+    "@babel/runtime" "^7.12.0"
+
 icomcom-react@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/icomcom-react/-/icomcom-react-1.0.1.tgz#6c513655bc576621930e31d19ddb718c3b7439f4"
@@ -16037,12 +16046,10 @@ react-full-screen@^0.2.4:
     "@types/react" "*"
     fscreen "^1.0.1"
 
-react-functional-select@^2.3.5:
-  version "2.9.5"
-  resolved "https://registry.yarnpkg.com/react-functional-select/-/react-functional-select-2.9.5.tgz#0cf4f3f9d57e93ffd4617d12558e0ade67e70be7"
-  integrity sha512-krCIdriZPTrwv2kmDgXAhDv7BaNW72EOxjhncR/9rZGDYufqUrkIeo9/W0mfKtn22NKNRHu9hKExA240sdL2LQ==
-  dependencies:
-    "@babel/runtime" "^7.12.5"
+react-functional-select@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/react-functional-select/-/react-functional-select-3.1.1.tgz#1da518d2af5963851d8f587914eb9e709672b09e"
+  integrity sha512-bNVG3AQlViw9ZD9FhngRbHxY2eudvQro7Ww7kXJyZ3bJ/4UI4Sth2IqmhA3FhvFA2wqLHNzXJC1H3KSrng7DZw==
 
 react-helmet-async@^1.0.2:
   version "1.0.7"
@@ -16072,7 +16079,7 @@ react-hotkeys@2.0.0:
   dependencies:
     prop-types "^15.6.1"
 
-react-i18next@11.7.2, react-i18next@^11.7.0:
+react-i18next@11.7.2, react-i18next@^11.7.0, react-i18next@^11.8.9:
   version "11.7.2"
   resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-11.7.2.tgz#b3cb94ad3b85c25e3d4802a141139d65238b976f"
   integrity sha512-Djj3K3hh5Tecla2CI9rLO3TZBYGMFrGilm0JY4cLofAQONCi5TK6nVmUPKoB59n1ZffgjfgJt6zlbE9aGF6Q0Q==

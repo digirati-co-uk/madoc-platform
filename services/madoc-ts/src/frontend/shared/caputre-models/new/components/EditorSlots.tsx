@@ -23,7 +23,7 @@ export type EditorRenderingConfig = {
   // Driven by hooks
   TopLevelEditor: React.FC;
   Breadcrumbs: React.FC;
-  SingleEntity: React.FC;
+  SingleEntity: React.FC<{ showTitle?: boolean }>;
   SingleField: React.FC;
   AdjacentNavigation: React.FC;
   ManagePropertyList: React.FC<{ property: string; type: 'field' | 'entity' }>; // Fallbacks passed in
@@ -144,10 +144,10 @@ const AdjacentNavigation: React.FC = props => {
   return <Slots.AdjacentNavigation>{props.children}</Slots.AdjacentNavigation>;
 };
 
-const ViewEntity: React.FC = props => {
+const ViewEntity: React.FC<{ showTitle?: boolean }> = props => {
   const Slots = useSlotContext();
 
-  return <Slots.SingleEntity>{props.children}</Slots.SingleEntity>;
+  return <Slots.SingleEntity showTitle={props.showTitle}>{props.children}</Slots.SingleEntity>;
 };
 
 const ViewField: React.FC = props => {

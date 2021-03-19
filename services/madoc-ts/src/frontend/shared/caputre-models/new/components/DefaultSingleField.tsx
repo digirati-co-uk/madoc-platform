@@ -1,4 +1,4 @@
-import { FieldInstance, RoundedCard } from '@capture-models/editor';
+import { FieldHeader, FieldInstance, RoundedCard } from '@capture-models/editor';
 import React from 'react';
 import { InlineProgressIcon } from '../../../atoms/ProgressIcon';
 import { useCurrentField } from '../hooks/use-current-field';

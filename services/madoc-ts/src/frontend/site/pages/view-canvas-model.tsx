@@ -14,6 +14,7 @@ import { CanvasManifestNavigation } from '../features/CanvasManifestNavigation';
 import { CanvasModelUserStatus } from '../features/CanvasModelUserStatus';
 import { CanvasSimpleEditor } from '../features/CanvasSimpleEditor';
 import { CanvasTaskWarningMessage } from '../features/CanvasTaskWarningMessage';
+import { CanvasViewer } from '../features/CanvasViewer';
 import { PrepareCaptureModel } from '../features/PrepareCaptureModel';
 import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
@@ -63,9 +64,9 @@ export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({ canvas }) => {
 
         {showCanvasNavigation ? (
           <>
-            <div style={{ display: 'flex', width: '100%', overflow: 'hidden' }}>
+            <CanvasViewer>
               <CanvasImageViewer />
-            </div>
+            </CanvasViewer>
             <CanvasNavigation
               subRoute="model"
               manifestId={manifestId}
@@ -100,7 +101,11 @@ export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({ canvas }) => {
         </div>
       ) : null}
 
-      {showCanvasNavigation ? <CanvasSimpleEditor revision={revision} /> : null}
+      {showCanvasNavigation ? (
+        <CanvasViewer>
+          <CanvasSimpleEditor revision={revision} />
+        </CanvasViewer>
+      ) : null}
 
       {showCanvasNavigation ? (
         <CanvasNavigation

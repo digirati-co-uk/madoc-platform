@@ -21,13 +21,21 @@ export function useAnnotationPage(pageId?: string) {
       return [];
     }
 
-    const regions: Array<{ id: string; target: { x: number; y: number; width: number; height: number } }> = [];
+    const regions: Array<{
+      id: string;
+      label: string;
+      target: { x: number; y: number; width: number; height: number };
+    }> = [];
 
     for (const annotation of annotationPage.items) {
       const parsed = parseSelectorTarget(annotation.target);
+      if (!annotation || !annotation.body || !annotation.body.value) {
+        continue;
+      }
       if (typeof parsed !== 'string') {
         regions.push({
           id: annotation.id,
+          label: annotation.body.value,
           target: parsed,
         });
       }

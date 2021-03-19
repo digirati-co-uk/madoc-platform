@@ -33,6 +33,7 @@ const DocumentCollapse = styled.div`
   background: #fff;
   padding: 10px;
   border: 1px solid rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
 `;
 
 const DocumentEntityList = styled.div`
