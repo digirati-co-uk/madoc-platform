@@ -153,45 +153,24 @@ export const MetaDataDisplay: React.FC<{
   if (config && config.length) {
     return (
       <MetadataDisplayContainer $variation={variation}>
-        {config.map((configItem, idx: number) => {
-          const values: any[] = [];
+        <tbody>
+          {config.map((configItem, idx: number) => {
+            const values: any[] = [];
 
-          for (const key of configItem.keys) {
-            for (const item of metadataKeyMap[key] || []) {
-              values.push(
-                <div key={idx + '__' + key}>
-                  <LocaleString enableDangerouslySetInnerHTML>{item.value}</LocaleString>
-                </div>
-              );
+            for (const key of configItem.keys) {
+              for (const item of metadataKeyMap[key] || []) {
+                values.push(
+                  <div key={idx + '__' + key}>
+                    <LocaleString enableDangerouslySetInnerHTML>{item.value}</LocaleString>
+                  </div>
+                );
+              }
             }
-          }
 
-          if (values.length === 0) {
-            return null;
-          }
+            if (values.length === 0) {
+              return null;
+            }
 
-          return (
-            <MetadataContainer key={idx} $variation={variation}>
-              <MetaDataKey
-                $labelStyle={labelStyle}
-                $variation={variation}
-                $labelWidth={labelWidth}
-                $bordered={bordered}
-              >
-                <LocaleString enableDangerouslySetInnerHTML>{configItem.label}</LocaleString>
-              </MetaDataKey>
-              <MetaDataValue $variation={variation}>{values}</MetaDataValue>
-            </MetadataContainer>
-          );
-        })}
-      </MetadataDisplayContainer>
-    );
-  }
-
-  return (
-    <MetadataDisplayContainer $variation={variation}>
-      {metadata && metadata.length
-        ? metadata.map((metadataItem, idx: number) => {
             return (
               <MetadataContainer key={idx} $variation={variation}>
                 <MetaDataKey
@@ -200,15 +179,40 @@ export const MetaDataDisplay: React.FC<{
                   $labelWidth={labelWidth}
                   $bordered={bordered}
                 >
-                  <LocaleString enableDangerouslySetInnerHTML>{metadataItem.label}</LocaleString>
+                  <LocaleString enableDangerouslySetInnerHTML>{configItem.label}</LocaleString>
                 </MetaDataKey>
-                <MetaDataValue $variation={variation}>
-                  <LocaleString enableDangerouslySetInnerHTML>{metadataItem.value}</LocaleString>
-                </MetaDataValue>
+                <MetaDataValue $variation={variation}>{values}</MetaDataValue>
               </MetadataContainer>
             );
-          })
-        : t('No metadata to display')}
+          })}
+        </tbody>
+      </MetadataDisplayContainer>
+    );
+  }
+
+  return (
+    <MetadataDisplayContainer $variation={variation}>
+      <tbody>
+        {metadata && metadata.length
+          ? metadata.map((metadataItem, idx: number) => {
+              return (
+                <MetadataContainer key={idx} $variation={variation}>
+                  <MetaDataKey
+                    $labelStyle={labelStyle}
+                    $variation={variation}
+                    $labelWidth={labelWidth}
+                    $bordered={bordered}
+                  >
+                    <LocaleString enableDangerouslySetInnerHTML>{metadataItem.label}</LocaleString>
+                  </MetaDataKey>
+                  <MetaDataValue $variation={variation}>
+                    <LocaleString enableDangerouslySetInnerHTML>{metadataItem.value}</LocaleString>
+                  </MetaDataValue>
+                </MetadataContainer>
+              );
+            })
+          : t('No metadata to display')}
+      </tbody>
     </MetadataDisplayContainer>
   );
 };
