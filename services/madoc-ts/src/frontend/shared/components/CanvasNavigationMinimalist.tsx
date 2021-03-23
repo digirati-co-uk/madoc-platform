@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useManifestStructure } from '../hooks/use-manifest-structure';
 import { createLink } from '../utility/create-link';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { ItemStructureListItem } from '../../../types/schemas/item-structure-list';
 import { DownArrowIcon } from '../icons/DownArrowIcon';
 import { HrefLink } from '../utility/href-link';

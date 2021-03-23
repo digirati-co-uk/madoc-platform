@@ -73,6 +73,7 @@ export const LayoutSidebar = styled.div`
   background: #ffffff;
   border-right: 1px solid #bcbcbc;
   overflow: auto;
+  position: relative;
 `;
 
 export const LayoutHandle = styled.div<{ $isDragging?: boolean }>`
