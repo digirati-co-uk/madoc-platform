@@ -27,6 +27,7 @@ export const PaginationContainer = styled.div`
 export const PaginationText = styled.div`
   white-space: nowrap;
   font-size: 0.85em;
+  margin: 0 0.5em;
 `;
 
 export const NavigationButton: React.FC<{

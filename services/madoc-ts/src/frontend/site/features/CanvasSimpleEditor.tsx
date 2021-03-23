@@ -2,6 +2,7 @@ import { Runtime } from '@atlas-viewer/atlas';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ButtonRow } from '../../shared/atoms/Button';
+import { MetadataEmptyState } from '../../shared/atoms/MetadataConfiguration';
 import { EditorSlots } from '../../shared/caputre-models/new/components/EditorSlots';
 import { RevisionProviderWithFeatures } from '../../shared/caputre-models/new/components/RevisionProviderWithFeatures';
 import { EditorContentViewer } from '../../shared/caputre-models/new/EditorContent';
@@ -114,25 +115,27 @@ export const CanvasSimpleEditor: React.FC<{ revision: string }> = ({ revision })
             />
           </div>
         </div>
-        {canContribute && captureModel ? (
-          <div
-            style={{
-              width: isVertical ? '100%' : '420px',
-              maxHeight: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            <div style={{ overflowY: 'auto', padding: '1em', fontSize: '13px' }}>
-              <EditorSlots.TopLevelEditor />
-            </div>
 
-            <EditorSlots.SubmitButton afterSave={updateClaim} />
-          </div>
-        ) : (
-          // @todo prompt to login.
-          t('Loading your model')
-        )}
+        <div
+          style={{
+            width: isVertical ? '100%' : '420px',
+            maxHeight: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          {canContribute && captureModel ? (
+            <>
+              <div style={{ overflowY: 'auto', padding: '1em', fontSize: '13px' }}>
+                <EditorSlots.TopLevelEditor />
+              </div>
+
+              <EditorSlots.SubmitButton afterSave={updateClaim} />
+            </>
+          ) : (
+            <MetadataEmptyState>{t('Loading your model')}</MetadataEmptyState>
+          )}
+        </div>
       </div>
     </RevisionProviderWithFeatures>
   );
