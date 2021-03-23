@@ -33,16 +33,16 @@ export const siteConfigurationModel: {
     type: 'checkbox-field',
     inlineLabel: 'Prioritise canvases sequentially',
   },
-  // Disabled.
-  // claimGranularity: {
-  //   label: 'Claim granularity',
-  //   description: 'When a user claims something to work on, should they receive a single image or the whole manifest',
-  //   type: 'dropdown-field',
-  //   options: [
-  //     { value: 'canvas', text: 'Canvas' },
-  //     { value: 'manifest', text: 'Manifest' },
-  //   ],
-  // },
+  claimGranularity: {
+    label: 'Claim granularity',
+    description: 'When a user claims something to work on, should they receive a single image or the whole manifest',
+    type: 'dropdown-field',
+    options: [
+      { value: 'canvas', text: 'Canvas' },
+      // Disabled option.
+      // { value: 'manifest', text: 'Manifest' },
+    ],
+  },
   maxContributionsPerResource: {
     label: 'Max contributors per resource',
     type: 'text-field',
