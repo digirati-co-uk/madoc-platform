@@ -1,5 +1,5 @@
 import { FieldPreview } from '@capture-models/editor';
-import { isEntityList } from '@capture-models/helpers';
+import { filterRevises, isEntityList } from '@capture-models/helpers';
 import { BaseField, CaptureModel } from '@capture-models/types';
 import React from 'react';
 import styled from 'styled-components';
@@ -101,8 +101,11 @@ const renderEntityList = (entities: CaptureModel['document'][]) => {
 
 const renderProperty = (fields: BaseField[] | CaptureModel['document'][]) => {
   const label = fields[0].label;
+  const filteredFields = filterRevises(fields);
   const description = fields[0].description;
-  const renderedProperties = isEntityList(fields) ? renderEntityList(fields) : renderFieldList(fields);
+  const renderedProperties = isEntityList(filteredFields)
+    ? renderEntityList(filteredFields)
+    : renderFieldList(filteredFields as any);
 
   if (!renderedProperties) {
     return null;
