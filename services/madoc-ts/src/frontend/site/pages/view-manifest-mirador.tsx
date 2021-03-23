@@ -1,24 +1,18 @@
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
-import { useData } from '../../shared/hooks/use-data';
 import { Mirador } from '../../shared/viewers/mirador.lazy';
 import { useApi } from '../../shared/hooks/use-api';
 import React from 'react';
-import { ManifestFull } from '../../../types/schemas/manifest-full';
-import { CollectionFull } from '../../../types/schemas/collection-full';
-import { ProjectFull } from '../../../types/schemas/project-full';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { useRouteContext } from '../hooks/use-route-context';
 
 export const ViewManifestMirador: React.FC = () => {
   const { manifestId } = useRouteContext();
-  const ctx = useRouteContext();
 
   const api = useApi();
   const slug = api.getSiteSlug();
 
   if (api.getIsServer() || !manifestId) {
-    console.log(ctx);
-    return <>NO MIRADOR?</>;
+    return null;
   }
 
   return (

@@ -350,5 +350,15 @@
   "{{count}} manifests": "{{count}} manifest",
   "{{count}} manifests_plural": "{{count}} manifests",
   "{{count}} more": "{{count}} more",
-  "{{count}} more_plural": "{{count}} more"
+  "{{count}} more_plural": "{{count}} more",
+  "Back to main revision": "Back to main revision",
+  "Revisions being merged": "Revisions being merged",
+  "This is read-only": "This is read-only",
+  "switch to the main revision": "switch to the main revision",
+  "to make changes": "to make changes",
+  "Change revision": "Change revision",
+  "This merge may be corrupted": {
+    " Would you like to remove it?": "This merge may be corrupted. Would you like to remove it?"
+  },
+  "Discard merge": "Discard merge"
 }

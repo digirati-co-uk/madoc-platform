@@ -85,9 +85,7 @@ export const PageEditorBar: React.FC<{
           <PageEditorButton onClick={onEdit}>{isEditing ? 'Finish editing' : 'Edit page'}</PageEditorButton>
           <EditPageMetadataButton
             onUpdate={newPage => {
-              console.log({ newPage });
               if (newPage.path !== page.path) {
-                console.log('path changed?');
                 history.replace(newPage.path);
               } else {
                 refetch();
