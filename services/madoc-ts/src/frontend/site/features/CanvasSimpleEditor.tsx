@@ -3,6 +3,7 @@ import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ButtonRow } from '../../shared/atoms/Button';
 import { MetadataEmptyState } from '../../shared/atoms/MetadataConfiguration';
+import { BackToChoicesButton } from '../../shared/caputre-models/new/components/BackToChoicesButton';
 import { EditorSlots } from '../../shared/caputre-models/new/components/EditorSlots';
 import { RevisionProviderWithFeatures } from '../../shared/caputre-models/new/components/RevisionProviderWithFeatures';
 import { EditorContentViewer } from '../../shared/caputre-models/new/EditorContent';
@@ -103,6 +104,8 @@ export const CanvasSimpleEditor: React.FC<{ revision: string }> = ({ revision })
         >
           {canContribute && captureModel ? (
             <>
+              <BackToChoicesButton />
+
               <div style={{ overflowY: 'auto', padding: '1em', fontSize: '13px' }}>
                 <EditorSlots.TopLevelEditor />
               </div>
