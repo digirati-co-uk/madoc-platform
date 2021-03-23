@@ -2,7 +2,9 @@ import { FieldPreview } from '@capture-models/editor';
 import { filterRevises, isEntityList } from '@capture-models/helpers';
 import { BaseField, CaptureModel } from '@capture-models/types';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { MetadataEmptyState } from '../../atoms/MetadataConfiguration';
 
 const DocumentLabel = styled.div`
   font-size: 13px;
@@ -123,6 +125,7 @@ const renderProperty = (fields: BaseField[] | CaptureModel['document'][]) => {
 };
 
 export const ViewDocument: React.FC<{ document: CaptureModel['document'] }> = ({ document }) => {
+  const { t } = useTranslation();
   // ✅ Label (plural label / labelled by)
   // ✅ Description
   // -  Profile
@@ -147,6 +150,10 @@ export const ViewDocument: React.FC<{ document: CaptureModel['document'] }> = ({
   //  - Shows it in a list
 
   const flatProperties = Object.entries(document.properties);
+
+  if (flatProperties.length === 0) {
+    return <MetadataEmptyState style={{ marginTop: 100 }}>{t('No document yet')}</MetadataEmptyState>;
+  }
 
   return (
     <div style={{ padding: 20 }}>
