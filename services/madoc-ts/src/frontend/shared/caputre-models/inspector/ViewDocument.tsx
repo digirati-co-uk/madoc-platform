@@ -49,7 +49,7 @@ const DocumentEntityLabel = styled.div`
 `;
 
 const FieldPreviewWrapper = styled.div`
-  white-space: pre;
+  white-space: pre-wrap;
 `;
 
 const isEmptyFieldList = (fields: BaseField[]) => {

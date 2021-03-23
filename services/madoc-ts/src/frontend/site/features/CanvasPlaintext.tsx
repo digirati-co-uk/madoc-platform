@@ -37,7 +37,7 @@ export const CanvasPlaintext: React.FC<{ onSwitch?: () => void; switchLabel?: st
 }) => {
   const { data, isLoading } = useData(CanvasLoader);
   const { t } = useTranslation();
-  const [fontMultiplier, setFontMultiplier] = useLocalStorage('text-zoom', 0.7);
+  const [fontMultiplier, setFontMultiplier] = useLocalStorage('text-zoom', 0.9);
 
   useEffect(() => {
     if (!isLoading && data && !data.plaintext && onSwitch) {
@@ -53,7 +53,7 @@ export const CanvasPlaintext: React.FC<{ onSwitch?: () => void; switchLabel?: st
     <PlaintextContainer>
       <PlaintextActions>
         <ButtonRow $noMargin>
-          <Button onClick={() => setFontMultiplier(0.7)}>
+          <Button onClick={() => setFontMultiplier(0.9)}>
             {t('atlas__zoom_home_text', { defaultValue: 'Reset' })}
           </Button>
           <Button disabled={fontMultiplier < 0.3} onClick={() => setFontMultiplier(m => m * 0.9)}>
