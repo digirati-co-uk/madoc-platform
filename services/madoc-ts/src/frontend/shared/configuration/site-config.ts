@@ -39,7 +39,8 @@ export const siteConfigurationModel: {
     type: 'dropdown-field',
     options: [
       { value: 'canvas', text: 'Canvas' },
-      { value: 'manifest', text: 'Manifest' },
+      // Disabled option.
+      // { value: 'manifest', text: 'Manifest' },
     ],
   },
   maxContributionsPerResource: {

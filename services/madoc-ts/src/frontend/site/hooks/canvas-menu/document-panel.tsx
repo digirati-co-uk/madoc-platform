@@ -23,7 +23,7 @@ export function useDocumentPanel(): CanvasMenuHook {
         data.models.length ? (
           data.models.map((model: any) => <ViewDocument key={model.id} document={model.document} />)
         ) : (
-          <MetadataEmptyState style={{ marginTop: 100 }}>No model</MetadataEmptyState>
+          <MetadataEmptyState style={{ marginTop: 100 }}>{t('No document yet')}</MetadataEmptyState>
         )
       ) : null}
     </>

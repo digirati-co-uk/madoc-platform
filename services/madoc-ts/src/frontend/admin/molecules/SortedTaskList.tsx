@@ -1,11 +1,7 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { BaseTask } from '../../../gateway/tasks/base-task';
 import { ImportCanvasTask } from '../../../gateway/tasks/import-canvas';
-import { SmallButton } from '../../shared/atoms/Button';
-import { Status } from '../../shared/atoms/Status';
-import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../shared/atoms/Table';
 import { taskTypeToLabel } from '../../shared/utility/task-type-to-label';
 import { CollapsibleTaskList } from './CollapsibleTaskList';
 

@@ -19,7 +19,7 @@ export function useMetadataMenu(): CanvasMenuHook {
 
   const content = (
     <>
-      {canvas && canvas.metadata ? <MetaDataDisplay metadata={canvas.metadata} /> : null}
+      {canvas && canvas.metadata ? <MetaDataDisplay variation="list" metadata={canvas.metadata} /> : null}
       {hideManifestMetadataOnCanvas ? null : <ManifestMetadata compact />}
     </>
   );

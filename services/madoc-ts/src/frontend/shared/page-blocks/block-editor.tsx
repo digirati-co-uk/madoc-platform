@@ -1,17 +1,15 @@
 import { defaultTheme, Revisions } from '@capture-models/editor';
 import { captureModelShorthand, hydrateCompressedModel, serialiseCaptureModel } from '@capture-models/helpers';
-import { CaptureModel, RevisionRequest } from '@capture-models/types';
-import React, { PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { CaptureModel } from '@capture-models/types';
+import React, { PropsWithChildren, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import styled, { ThemeProvider } from 'styled-components';
 import { PageBlockDefinition, PageBlockEditor } from '../../../extensions/page-blocks/extension';
-import { Site } from '../../../types/omeka/Site';
 import { EditorialContext, SiteBlock, SiteBlockRequest } from '../../../types/schemas/site-page';
 import { Button, ButtonRow, TinyButton } from '../atoms/Button';
 import { EditorSlots } from '../caputre-models/new/components/EditorSlots';
 import { RevisionProviderWithFeatures } from '../caputre-models/new/components/RevisionProviderWithFeatures';
-import { ViewDocument } from '../caputre-models/ViewDocument';
 import { ModalButton } from '../components/Modal';
 import { useApi } from '../hooks/use-api';
 import { createRevisionFromDocument } from '../utility/create-revision-from-document';
@@ -373,7 +371,7 @@ export const BlockEditor: React.FC<{
   onUpdateBlock?: (id: number) => void;
 }> = ({ block, context, children, onUpdateBlock }) => {
   const { CustomEditor } = useBlockDetails(block);
-  console.log({ CustomEditor });
+
   return (
     <BlockWrapper>
       {CustomEditor ? (

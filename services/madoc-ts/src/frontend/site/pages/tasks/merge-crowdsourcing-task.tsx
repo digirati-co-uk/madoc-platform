@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CrowdsourcingReviewMerge } from '../../../../gateway/tasks/crowdsourcing-review';
 import { useApi } from '../../../shared/hooks/use-api';
 import { useQuery } from 'react-query';
@@ -13,7 +14,6 @@ import {
   EditorToolbarIcon,
   EditorToolbarLabel,
   EditorToolbarSpacer,
-  EditorToolbarTitle,
 } from '../../../shared/atoms/EditorToolbar';
 import { ArrowBackIcon } from '../../../shared/icons/ArrowBackIcon';
 import { FullScreenExitIcon } from '../../../shared/icons/FullScreenExitIcon';
@@ -38,6 +38,7 @@ const MergeCrowdsourcingTask: React.FC<{
 }> = ({ merge, reviewTaskId, goBack }) => {
   // Load mergeRevision to get the capture model id.
   const api = useApi();
+  const { t } = useTranslation();
   const [currentRevision, setCurrentRevision] = useState(merge.mergeId);
   const { data: mergeRevision, status, refetch } = useQuery(
     ['model-revision', { id: merge.mergeId }],
@@ -99,7 +100,7 @@ const MergeCrowdsourcingTask: React.FC<{
   if (status === 'error') {
     return (
       <div>
-        This merge may be corrupted. Would you like to remove it?{' '}
+        {t('This merge may be corrupted. Would you like to remove it?')}{' '}
         <Button
           onClick={() => {
             api.reviewMergeDiscard({ merge, reviewTaskId: reviewTaskId, revision: merge.mergeId }).then(() => {
@@ -107,7 +108,7 @@ const MergeCrowdsourcingTask: React.FC<{
             });
           }}
         >
-          Discard merge
+          {t('Discard merge')}
         </Button>
       </div>
     );
@@ -146,10 +147,10 @@ const MergeCrowdsourcingTask: React.FC<{
                           close();
                         }}
                       >
-                        Back to main revision
+                        {t('Back to main revision')}
                       </Button>
 
-                      <Heading3>Revisions being merged</Heading3>
+                      <Heading3>{t('Revisions being merged')}</Heading3>
 
                       <TableContainer>
                         {mergeTasks
@@ -182,7 +183,7 @@ const MergeCrowdsourcingTask: React.FC<{
                     </div>
                   )}
                 >
-                  <EditorToolbarLabel>Change revision</EditorToolbarLabel>
+                  <EditorToolbarLabel>{t('Change revision')}</EditorToolbarLabel>
                 </EditorToolbarButton>
                 <EditorToolbarButton
                   $rightBorder
@@ -232,18 +233,18 @@ const MergeCrowdsourcingTask: React.FC<{
                 <div style={{ width: '33%', padding: '1em' }}>
                   {merge.mergeId !== currentRevision ? (
                     <WarningMessage style={{ marginBottom: '1em' }}>
-                      This is read-only,{' '}
+                      {t('This is read-only')},{' '}
                       <LinkButton $inherit onClick={() => setCurrentRevision(merge.mergeId)}>
-                        switch to the main revision
+                        {t('switch to the main revision')}
                       </LinkButton>{' '}
-                      to make changes
+                      {t('to make changes')}
                     </WarningMessage>
                   ) : null}
                   <RevisionTopLevel
                     allowNavigation={false}
                     allowEdits={false}
                     onSaveRevision={async rev => {
-                      console.log(rev);
+                      // no-op
                     }}
                     readOnly={merge.mergeId !== currentRevision}
                   />
@@ -251,7 +252,7 @@ const MergeCrowdsourcingTask: React.FC<{
               </div>
             </Revisions.Provider>
           ) : (
-            'loading...'
+            t('loading')
           )
         }
       </MaximiseWindow>

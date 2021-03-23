@@ -30,10 +30,9 @@ export const CanvasHighlightedRegions: React.FC = () => {
     }
   }, [annotationPages, setCurrentCollection, setRegionCollections, t]);
 
-  const { annotationRegions, annotationPage } = useAnnotationPage(currentCollection);
+  const { annotationRegions } = useAnnotationPage(currentCollection);
 
   useEffect(() => {
-    console.log('annotation regions?', { annotationRegions, annotationPage });
     setRegions(annotationRegions);
   }, [annotationRegions, setRegions]);
 

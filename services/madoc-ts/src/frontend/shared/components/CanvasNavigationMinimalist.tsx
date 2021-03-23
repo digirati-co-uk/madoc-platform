@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useManifestStructure } from '../hooks/use-manifest-structure';
 import { createLink } from '../utility/create-link';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { ItemStructureListItem } from '../../../types/schemas/item-structure-list';
 import { DownArrowIcon } from '../icons/DownArrowIcon';
 import { HrefLink } from '../utility/href-link';
@@ -27,6 +27,7 @@ export const PaginationContainer = styled.div`
 export const PaginationText = styled.div`
   white-space: nowrap;
   font-size: 0.85em;
+  margin: 0 0.5em;
 `;
 
 export const NavigationButton: React.FC<{

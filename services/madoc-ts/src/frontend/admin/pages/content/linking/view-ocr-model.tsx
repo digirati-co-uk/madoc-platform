@@ -52,7 +52,7 @@ export const ViewOCRModel: React.FC<{ canvasId: number; link: ResourceLinkRespon
                 allowEdits={false}
                 structure={captureModel.structure}
                 onSaveRevision={async (rev, status) => {
-                  console.log(rev, status);
+                  // no-op
                 }}
               />
             )}

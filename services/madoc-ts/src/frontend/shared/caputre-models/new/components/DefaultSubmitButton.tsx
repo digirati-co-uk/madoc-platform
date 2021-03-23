@@ -49,8 +49,8 @@ export const DefaultSubmitButton: React.FC<{ afterSave?: (req: RevisionRequest) 
                 // Deselect revision.
                 deselectRevision({ revisionId: currentRevision.revision.id });
                 pop();
-                reset();
               }
+              reset();
             }
           }}
           footerAlignRight

@@ -56,11 +56,11 @@ export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({ canvas }) => {
 
         <CanvasManifestNavigation subRoute="model" />
 
-        <LocaleString as="h1">{canvas ? canvas.label : { none: ['...'] }}</LocaleString>
-
-        <InfoMessage>
-          {completedAndHide ? t('This image is complete') : t('Maximum number of contributors reached')}
-        </InfoMessage>
+        {projectId && (
+          <InfoMessage>
+            {completedAndHide ? t('This image is complete') : t('Maximum number of contributors reached')}
+          </InfoMessage>
+        )}
 
         {showCanvasNavigation ? (
           <>

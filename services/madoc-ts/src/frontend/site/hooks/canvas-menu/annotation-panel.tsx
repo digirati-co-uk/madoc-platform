@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { ButtonRow, SmallButton } from '../../../shared/atoms/Button';
 import {
@@ -16,6 +17,7 @@ const AnnotationContainer = styled.div`
 `;
 
 export function useAnnotationPanel(active: boolean): CanvasMenuHook {
+  const { t } = useTranslation();
   const {
     currentCollection,
     regionCollections,
@@ -32,7 +34,7 @@ export function useAnnotationPanel(active: boolean): CanvasMenuHook {
   const content = !currentCollection ? (
     <AnnotationContainer>
       {regionCollections.length === 0 ? (
-        <MetadataEmptyState style={{ marginTop: 100 }}>No annotations</MetadataEmptyState>
+        <MetadataEmptyState style={{ marginTop: 100 }}>{t('No annotations')}</MetadataEmptyState>
       ) : null}
       {regionCollections.map(col => {
         return (
@@ -47,11 +49,11 @@ export function useAnnotationPanel(active: boolean): CanvasMenuHook {
   ) : (
     <AnnotationContainer>
       <ButtonRow>
-        {regions.length === 0 ? (
-          <MetadataEmptyState style={{ marginTop: 100 }}>No annotations</MetadataEmptyState>
-        ) : null}
         {regions.length !== 0 || regionCollections.length > 1 ? (
-          <SmallButton onClick={() => setCurrentCollection(undefined)}>Back to list</SmallButton>
+          <SmallButton onClick={() => setCurrentCollection(undefined)}>{t('Back to list')}</SmallButton>
+        ) : null}
+        {regions.length === 0 ? (
+          <MetadataEmptyState style={{ marginTop: 100 }}>{t('No annotations')}</MetadataEmptyState>
         ) : null}
       </ButtonRow>
 

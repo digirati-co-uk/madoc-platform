@@ -43,7 +43,7 @@ export class SubjectResolver implements Resolver<'subject', SubjectSnippet> {
     }
 
     const subject = metadata.subject;
-    const parsed = parseUrn(task.subject);
+    const parsed = task.subject ? parseUrn(task.subject) : null;
 
     if (!parsed || ['canvas', 'manifest', 'collection'].indexOf(parsed.type) === -1) {
       return true; // Nothing to get.

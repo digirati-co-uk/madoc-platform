@@ -39,7 +39,7 @@ export const PreviewCaptureModel: React.FC<{
               <RevisionNavigation
                 structure={captureModel.structure}
                 onSaveRevision={async (rev, status) => {
-                  console.log(rev, status);
+                  // no-op
                 }}
               />
             )}

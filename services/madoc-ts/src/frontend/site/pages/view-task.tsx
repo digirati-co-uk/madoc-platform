@@ -1,5 +1,9 @@
 import React from 'react';
 import '../../shared/caputre-models/refinements';
+import { SubjectSnippet } from '../../../extensions/tasks/resolvers/subject-resolver';
+import { createLink } from '../../shared/utility/create-link';
+import { HrefLink } from '../../shared/utility/href-link';
+import { useTaskMetadata } from '../hooks/use-task-metadata';
 import { ViewCrowdsourcingTask } from './tasks/crowdsourcing-task.lazy';
 import { BrowserComponent } from '../../shared/utility/browser-component';
 import { useApi } from '../../shared/hooks/use-api';
@@ -10,6 +14,7 @@ export const ViewTask: React.FC<TaskContext<any>> = ({ task, ...props }) => {
   const api = useApi();
 
   const slug = api.getSiteSlug();
+  const { subject } = useTaskMetadata<{ subject?: SubjectSnippet }>(task);
 
   if (!task) {
     return null;
@@ -40,6 +45,18 @@ export const ViewTask: React.FC<TaskContext<any>> = ({ task, ...props }) => {
   // @todo check user role.
   if (task.type === 'crowdsourcing-review') {
     return <ViewCrowdsourcingReview task={task} {...props} />;
+  }
+
+  if (subject) {
+    return (
+      <>
+        <h1>{task.name}</h1>
+        {subject.thumbnail ? <img src={subject.thumbnail} alt="thumbnail" /> : null}
+        {subject.type === 'manifest' ? (
+          <HrefLink href={createLink({ manifestId: subject.id })}>View manifest</HrefLink>
+        ) : null}
+      </>
+    );
   }
 
   return <h1>{task.name}</h1>;

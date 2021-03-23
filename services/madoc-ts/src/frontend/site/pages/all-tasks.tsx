@@ -10,6 +10,7 @@ import {
   OuterLayoutContainer,
 } from '../../shared/atoms/LayoutContainer';
 import { TaskListContainer } from '../../shared/atoms/TaskList';
+import { useLocalStorage } from '../../shared/hooks/use-local-storage';
 import { useResizeLayout } from '../../shared/hooks/use-resize-layout';
 import { useUser } from '../../shared/hooks/use-site';
 import { renderUniversalRoutes } from '../../shared/utility/server-utils';
@@ -34,7 +35,7 @@ type AllTasksType = {
 
 export const AllTasks: UniversalComponent<AllTasksType> = createUniversalComponent<AllTasksType>(
   ({ route }) => {
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useLocalStorage('all-tasks-open', true);
     const { widthB, refs } = useResizeLayout('all-tasks', {
       left: true,
       widthB: '280px',

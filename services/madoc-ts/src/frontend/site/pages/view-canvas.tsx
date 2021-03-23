@@ -67,7 +67,6 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({ project, canvas, manifes
         </>
       ) : null}
 
-      <ReactTooltip place="right" type="dark" effect="solid" />
       {hideManifestMetadataOnCanvas ? null : <ManifestMetadata />}
       {hideCanvasThumbnailNavigation ? null : (
         <CanvasNavigation
