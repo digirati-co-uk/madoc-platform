@@ -51,6 +51,9 @@ export const CanvasViewer: React.FC = ({ children }) => {
                 } else {
                   setIsOpen(true);
                   setOpenPanel(menuItem.id as any);
+                  if (refs.resizableDiv.current) {
+                    refs.resizableDiv.current.scrollTop = 0;
+                  }
                 }
               }}
             >
