@@ -35,6 +35,7 @@ import { siteManifestTasks } from './routes/site/site-manifest-tasks';
 import { sitePages } from './routes/site/site-pages';
 import { siteTaskMetadata } from './routes/site/site-task-metadata';
 import { getUser } from './routes/user/get-user';
+import { userAutocomplete } from './routes/user/user-autocomplete';
 import { TypedRouter } from './utility/typed-router';
 import { ping } from './routes/ping';
 import { madocNotFound } from './routes/madoc-not-found';
@@ -128,6 +129,7 @@ export const router = new TypedRouter({
 
   // User API.
   'get-user': [TypedRouter.GET, '/api/madoc/users/:id', getUser],
+  'get-user-autocomplete': [TypedRouter.GET, '/api/madoc/users', userAutocomplete],
 
   // Localisation
   'i18n-list-locales': [TypedRouter.GET, '/api/madoc/locales', listLocalisations],

@@ -1204,6 +1204,18 @@ export class ApiClient {
     return this.request<Task & { id: string }>(`/api/tasks/${id}?${stringify({ page, all, assignee, detail })}`);
   }
 
+  async userAutocomplete(q: string) {
+    return this.request<{
+      users: Array<{
+        id: number;
+        name: string;
+        role?: string;
+      }>;
+    }>(`/api/madoc/users?q=${q}`, {
+      method: 'GET',
+    });
+  }
+
   async assignUserToTask(id: string, user: { id: string; name?: string }) {
     return this.updateTask(id, {
       assignee: user,
