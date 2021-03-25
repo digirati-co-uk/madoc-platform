@@ -24,6 +24,14 @@ describe('document to default structure', () => {
         "revisionApprovalsRequired",
         "contributionWarningTime",
         "skipAutomaticOCRImport",
+        "defaultEditorOrientation",
+        "skipManifestListingPage",
+        "hideStatistics",
+        "hideProjectCollectionNavigation",
+        "hideProjectManifestNavigation",
+        "searchStrategy",
+        "hideManifestMetadataOnCanvas",
+        "hideCanvasThumbnailNavigation",
       ]
     `);
   });
