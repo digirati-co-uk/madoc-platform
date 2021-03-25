@@ -78,7 +78,7 @@ export class ApiClient {
     gateway: string;
     publicSiteSlug?: string;
     jwt?: string | (() => string);
-    asUser?: { userId?: number; siteId?: number };
+    asUser?: { userId?: number; siteId?: number; userName?: string };
     customerFetcher?: typeof fetchJson;
     customCaptureModelExtensions?: (api: ApiClient) => Array<CaptureModelExtension>;
   }) {
@@ -358,7 +358,7 @@ export class ApiClient {
     });
   }
 
-  asUser(user: { userId?: number; siteId?: number }, options?: { siteSlug?: string }): ApiClient {
+  asUser(user: { userId?: number; siteId?: number; userName?: string }, options?: { siteSlug?: string }): ApiClient {
     return new ApiClient({
       gateway: this.gateway,
       jwt: this.getJwt(),

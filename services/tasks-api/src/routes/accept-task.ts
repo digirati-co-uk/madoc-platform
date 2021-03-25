@@ -11,7 +11,7 @@ export const acceptTask: RouteMiddleware<{ id: string }, { omitSubtasks: boolean
   const { omitSubtasks } = context.requestBody || {};
 
   const scopedQuery =
-    scope.indexOf('tasks.admin') === -1
+    scope.indexOf('tasks.admin') !== -1 || scope.indexOf('tasks.create') !== -1
       ? sql`AND (creator_id = ${userId} OR assignee_id = ${userId}) AND context ?& ${sql.array(userCtx, 'text')}`
       : sql`AND context ?& ${sql.array(userCtx, 'text')}`;
 

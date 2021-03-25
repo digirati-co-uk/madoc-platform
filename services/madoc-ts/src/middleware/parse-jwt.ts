@@ -16,8 +16,22 @@ export const parseJwt: RouteMiddleware<{ slug?: string }> = async (context, next
           siteId: context.request.headers['x-madoc-site-id']
             ? Number(context.request.headers['x-madoc-site-id'])
             : undefined,
+          userName: context.request.headers['x-madoc-user-name']
+            ? context.request.headers['x-madoc-user-name']
+            : undefined,
         }
       : undefined;
+
+  if (asUser && asUser.userId && asUser.siteId && !asUser.userName) {
+    try {
+      const user = await context.omeka.getUserById(asUser.userId, asUser.siteId);
+      if (user) {
+        asUser.userName = user.name;
+      }
+    } catch (err) {
+      // no-op
+    }
+  }
 
   // Only from the context of the Madoc site /s/{slug}/madoc
   if (slug) {

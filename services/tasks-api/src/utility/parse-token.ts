@@ -2,7 +2,7 @@ import { ApplicationState, Scopes } from '../types';
 
 export function parseToken(
   rawToken: string,
-  asUser?: { userId?: number; siteId?: number }
+  asUser?: { userId?: number; siteId?: number; userName?: string }
 ): ApplicationState['jwt'] | undefined {
   const [, base64Payload] = rawToken.split('.');
 
@@ -23,6 +23,7 @@ export function parseToken(
     const context = [];
 
     const userId = isService && asUser ? `urn:madoc:user:${asUser.userId}` : token.sub;
+    const userName = isService && asUser && asUser.userName ? asUser.userName : token.name;
 
     if (isService && asUser && asUser.siteId) {
       context.push(`urn:madoc:site:${asUser.siteId}`); // @todo remove in madoc in favour of fully resolved ids.
@@ -35,7 +36,7 @@ export function parseToken(
       scope: token.scope.split(' '),
       user: {
         id: userId,
-        name: token.name,
+        name: userName,
       },
     } as {
       context: string[];
