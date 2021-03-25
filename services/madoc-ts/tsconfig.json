@@ -28,6 +28,7 @@
   "exclude": [
     "node_modules",
     "lib/",
+    "test-utility/",
     "**/*.stories.tsx",
     "__tests__/"
   ],
