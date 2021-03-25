@@ -1,23 +1,15 @@
-name: Madoc TS Docker (v2)
+name: Certs Docker (v2)
 
 on:
   push:
     branches: [v2]
     paths:
-      - "services/madoc-ts/src/**"
-      - "services/madoc-ts/migrations/**"
-      - "services/madoc-ts/translations/**"
-      - "services/madoc-ts/schemas/**"
-      - "services/madoc-ts/package.json"
-      - "services/madoc-ts/yarn.lock"
-      - "services/madoc-ts/Dockerfile"
-      - "services/madoc-ts/ecosystem.config.js"
-      - "services/madoc-ts/webpack.config.js"
-      - "services/madoc-ts/tsconfig.json"
+      - "services/certs/Dockerfile"
+      - "services/certs/generate.sh"
 
 jobs:
 
-  madoc-ts-docker:
+  certs-docker:
     runs-on: ubuntu-latest
 
     steps:
@@ -48,12 +40,12 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           builder: ${{ steps.buildx.outputs.name }}
-          context: services/madoc-ts
+          context: services/certs
           push: true
           tags: |
-            ghcr.io/digirati-co-uk/madoc-ts:${{ env.normalized_branch_name }}
-            ghcr.io/digirati-co-uk/madoc-ts:${{ github.sha }}
-            ghcr.io/digirati-co-uk/madoc-ts:latest
+            ghcr.io/digirati-co-uk/madoc-certs:${{ env.normalized_branch_name }}
+            ghcr.io/digirati-co-uk/madoc-certs:${{ github.sha }}
+            ghcr.io/digirati-co-uk/madoc-certs:latest
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
