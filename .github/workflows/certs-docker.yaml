@@ -43,7 +43,6 @@ jobs:
           context: services/certs
           push: true
           tags: |
-            ghcr.io/digirati-co-uk/madoc-certs:${{ env.normalized_branch_name }}
             ghcr.io/digirati-co-uk/madoc-certs:${{ github.sha }}
             ghcr.io/digirati-co-uk/madoc-certs:latest
 

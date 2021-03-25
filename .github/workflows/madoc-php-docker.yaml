@@ -44,7 +44,6 @@ jobs:
           context: services/madoc
           push: true
           tags: |
-            ghcr.io/digirati-co-uk/madoc-omeka:${{ env.normalized_branch_name }}
             ghcr.io/digirati-co-uk/madoc-omeka:${{ github.sha }}
             ghcr.io/digirati-co-uk/madoc-omeka:latest
 

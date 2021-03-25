@@ -46,7 +46,6 @@ jobs:
           context: services/gateway
           push: true
           tags: |
-            ghcr.io/digirati-co-uk/madoc-api-gateway:${{ env.normalized_branch_name }}
             ghcr.io/digirati-co-uk/madoc-api-gateway:${{ github.sha }}
             ghcr.io/digirati-co-uk/madoc-api-gateway:latest
 

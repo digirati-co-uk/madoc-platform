@@ -45,7 +45,6 @@ jobs:
           context: services/madoc-database
           push: true
           tags: |
-            ghcr.io/digirati-co-uk/madoc-mysql:${{ env.normalized_branch_name }}
             ghcr.io/digirati-co-uk/madoc-mysql:${{ github.sha }}
             ghcr.io/digirati-co-uk/madoc-mysql:latest
 

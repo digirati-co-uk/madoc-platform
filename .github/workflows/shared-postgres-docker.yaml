@@ -43,7 +43,6 @@ jobs:
           context: services/shared-postgres
           push: true
           tags: |
-            ghcr.io/digirati-co-uk/madoc-shared-postgres:${{ env.normalized_branch_name }}
             ghcr.io/digirati-co-uk/madoc-shared-postgres:${{ github.sha }}
             ghcr.io/digirati-co-uk/madoc-shared-postgres:latest
 

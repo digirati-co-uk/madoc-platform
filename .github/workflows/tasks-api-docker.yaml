@@ -49,7 +49,6 @@ jobs:
           context: services/tasks-api
           push: true
           tags: |
-            ghcr.io/digirati-co-uk/tasks-api:${{ env.normalized_branch_name }}
             ghcr.io/digirati-co-uk/tasks-api:${{ github.sha }}
             ghcr.io/digirati-co-uk/tasks-api:latest
 

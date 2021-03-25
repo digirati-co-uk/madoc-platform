@@ -51,7 +51,6 @@ jobs:
           context: services/madoc-ts
           push: true
           tags: |
-            ghcr.io/digirati-co-uk/madoc-ts:${{ env.normalized_branch_name }}
             ghcr.io/digirati-co-uk/madoc-ts:${{ github.sha }}
             ghcr.io/digirati-co-uk/madoc-ts:latest
 

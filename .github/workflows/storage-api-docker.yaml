@@ -47,7 +47,6 @@ jobs:
           context: services/storage-api
           push: true
           tags: |
-            ghcr.io/digirati-co-uk/storage-api:${{ env.normalized_branch_name }}
             ghcr.io/digirati-co-uk/storage-api:${{ github.sha }}
             ghcr.io/digirati-co-uk/storage-api:latest
 
