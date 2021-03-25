@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BaseTask } from '../../../gateway/tasks/base-task';
 import { Button, ButtonRow } from '../../shared/atoms/Button';
@@ -18,7 +18,7 @@ import { UniversalComponent } from '../../types';
 import { createUniversalComponent } from '../../shared/utility/create-universal-component';
 import { useInfiniteData } from '../../shared/hooks/use-data';
 import { Pagination as PaginationType } from '../../../types/schemas/_pagination';
-import { useHistory, useParams } from 'react-router-dom';
+import { Redirect, useHistory, useParams } from 'react-router-dom';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { TaskFilterStatuses } from '../features/TaskFilterStatuses';
 import { TaskFilterType } from '../features/TaskFilterType';
@@ -92,6 +92,10 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
       ],
     };
 
+    if (!user) {
+      return <Redirect to="/" />;
+    }
+
     return (
       <>
         <ButtonRow>
@@ -154,6 +158,7 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
           type: 'crowdsourcing-task',
           root_task_id: project.task_id,
           per_page: 20,
+          detail: true,
           ...vars.query,
         });
       }

@@ -12,6 +12,7 @@ import { ManifestLoader } from '../components';
 import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
+import { AssignCanvasToUser } from './AssignCanvasToUser';
 import { CanvasTaskProgress } from './CanvasTaskProgress';
 
 const BrowseAll = styled.div`
@@ -52,6 +53,8 @@ export const CanvasManifestNavigation: React.FC<{ subRoute?: string }> = ({ subR
       </div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <ButtonRow>
+          <AssignCanvasToUser />
+
           <CanvasTaskProgress />
 
           <Button
