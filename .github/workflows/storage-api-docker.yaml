@@ -4,6 +4,7 @@ on:
   push:
     branches: [v2]
     paths:
+      - ".github/workflows/storage-api-docker.yaml"
       - "services/storage-api/src/**"
       - "services/storage-api/Dockerfile"
       - "services/storage-api/package.json"

@@ -4,6 +4,7 @@ on:
   push:
     branches: [v2]
     paths:
+      - ".github/workflows/shared-postgres-docker.yaml"
       - "services/shared-database/Dockerfile"
       - "services/shared-database/entrypoint.sh"
 

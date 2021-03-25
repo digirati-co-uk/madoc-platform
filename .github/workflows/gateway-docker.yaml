@@ -4,6 +4,7 @@ on:
   push:
     branches: [v2]
     paths:
+      - ".github/workflows/gateway-docker.yaml"
       - "services/gateway/Dockerfile"
       - "services/gateway/entrypoint.sh"
       - "services/gateway/gateway.conf"

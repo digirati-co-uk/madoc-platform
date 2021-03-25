@@ -4,6 +4,7 @@ on:
   push:
     branches: [v2]
     paths:
+      - ".github/workflows/madoc-php-docker.yaml"
       - "services/madoc/config/**"
       - "services/madoc/packages/**"
       - "services/madoc/Dockerfile"

@@ -3,6 +3,7 @@ name: Storage API build
 on:
   pull_request:
     paths:
+      - ".github/workflows/storage-api.yaml"
       - "services/storage-api/src/**"
       - "services/storage-api/migrations/**"
       - "services/storage-api/__tests__/**"
@@ -15,6 +16,7 @@ on:
   push:
     branches: [v2]
     paths:
+      - ".github/workflows/storage-api.yaml"
       - "services/storage-api/src/**"
       - "services/storage-api/migrations/**"
       - "services/storage-api/__tests__/**"

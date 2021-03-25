@@ -3,6 +3,7 @@ name: Tasks API build
 on:
   pull_request:
     paths:
+      - ".github/workflows/tasks-api.yaml"
       - "services/tasks-api/src/**"
       - "services/tasks-api/migrations/**"
       - "services/tasks-api/__tests__/**"
@@ -15,6 +16,7 @@ on:
   push:
     branches: [v2]
     paths:
+      - ".github/workflows/tasks-api.yaml"
       - "services/tasks-api/src/**"
       - "services/tasks-api/migrations/**"
       - "services/tasks-api/__tests__/**"

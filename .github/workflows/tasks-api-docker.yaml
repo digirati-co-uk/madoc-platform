@@ -4,6 +4,7 @@ on:
   push:
     branches: [v2]
     paths:
+      - ".github/workflows/tasks-api-docker.yaml"
       - "services/tasks-api/migrations/**"
       - "services/tasks-api/schemas/**"
       - "services/tasks-api/src/**"

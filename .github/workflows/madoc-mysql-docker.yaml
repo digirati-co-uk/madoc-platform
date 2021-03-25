@@ -4,6 +4,7 @@ on:
   push:
     branches: [v2]
     paths:
+      - ".github/workflows/madoc-mysql-docker.yaml"
       - "services/madoc-database/config/**"
       - "services/madoc-database/madoc-sql/**"
       - "services/madoc-database/sql/**"

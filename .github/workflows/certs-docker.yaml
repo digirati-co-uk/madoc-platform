@@ -4,6 +4,7 @@ on:
   push:
     branches: [v2]
     paths:
+      - ".github/workflows/certs-docker.yaml"
       - "services/certs/Dockerfile"
       - "services/certs/generate.sh"
 

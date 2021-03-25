@@ -17,6 +17,7 @@ on:
   push:
     branches: [v2]
     paths:
+      - ".github/workflows/madoc-ts.yaml"
       - "services/madoc-ts/src/**"
       - "services/madoc-ts/migrations/**"
       - "services/madoc-ts/__tests__/**"
