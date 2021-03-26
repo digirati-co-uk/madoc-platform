@@ -38,6 +38,7 @@ export const getAllTasks: RouteMiddleware = async context => {
   // Type filter.
   // Include sub-tasks filter.
   const isAdmin = context.state.jwt.scope.indexOf('tasks.admin') !== -1;
+  const canCreate = context.state.jwt.scope.indexOf('tasks.create') !== -1;
   const userId = context.state.jwt.user.id;
   const typeFilter = context.query.type ? sql`and t.type = ${context.query.type}` : sql``;
   const subjectFilter = context.query.subject ? sql`and t.subject = ${context.query.subject}` : sql``;
@@ -51,15 +52,16 @@ export const getAllTasks: RouteMiddleware = async context => {
       ? sql``
       : sql`and t.parent_task is null`;
   const assigneeId = context.query.assignee;
-  const userExclusion = isAdmin
-    ? assigneeId
-      ? // Admin assignee.
-        sql`and (t.assignee_id = ${assigneeId})`
-      : sql``
-    : assigneeId
-    ? // Normal user assignee.
-      sql`and (t.assignee_id = ${userId})`
-    : sql`and (t.creator_id = ${userId} OR t.assignee_id = ${userId} OR ${userId} = ANY (t.delegated_owners) OR dt.assignee_id = ${userId})`;
+  const userExclusion =
+    isAdmin || canCreate
+      ? assigneeId
+        ? // Admin assignee.
+          sql`and (t.assignee_id = ${assigneeId})`
+        : sql``
+      : assigneeId
+      ? // Normal user assignee.
+        sql`and (t.assignee_id = ${userId})`
+      : sql`and (t.creator_id = ${userId} OR t.assignee_id = ${userId} OR ${userId} = ANY (t.delegated_owners) OR dt.assignee_id = ${userId})`;
   const rootTaskFilter = context.query.root_task_id ? sql`and t.root_task = ${context.query.root_task_id}` : sql``;
   const parentTaskFilter = context.query.parent_task_id
     ? sql`and t.parent_task = ${context.query.parent_task_id}`

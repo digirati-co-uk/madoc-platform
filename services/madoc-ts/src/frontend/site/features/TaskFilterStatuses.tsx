@@ -1,9 +1,8 @@
-import { stringify } from 'query-string';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
 import { ItemFilter } from '../../shared/components/ItemFilter';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
+import { useGoToQuery } from '../hooks/use-go-to-query';
 
 export const TaskFilterStatuses: React.FC<{ statuses: Array<{ label: any; value: number }> }> = ({
   statuses: allStatuses,
@@ -11,29 +10,25 @@ export const TaskFilterStatuses: React.FC<{ statuses: Array<{ label: any; value:
   const { t } = useTranslation();
   const { page, ...query } = useLocationQuery();
   const statuses = query.status ? query.status.split(',').map(Number) : [];
-  const { location, push } = useHistory();
+  const goToQuery = useGoToQuery();
+
+  const realLabel = statuses.length === 1 ? allStatuses.find(ty => ty.value && ty.value === statuses[0])?.label : '';
 
   return (
     <ItemFilter
-      label={t('Filter by status')}
+      label={realLabel || t('Filter by status')}
       closeOnChange
       items={allStatuses.map(status => ({
         id: status.value,
         onChange: selected => {
           if (selected) {
-            push(
-              `${location.pathname}?${stringify(
-                { ...query, status: [...statuses, status.value] },
-                { arrayFormat: 'comma' }
-              )}`
-            );
+            goToQuery({
+              status: [...statuses, status.value],
+            });
           } else {
-            push(
-              `${location.pathname}?${stringify(
-                { ...query, status: statuses.filter((e: any) => e !== status.value) },
-                { arrayFormat: 'comma' }
-              )}`
-            );
+            goToQuery({
+              status: statuses.filter((e: any) => e !== status.value),
+            });
           }
         },
         label: status.label,

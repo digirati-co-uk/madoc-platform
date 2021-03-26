@@ -19,6 +19,9 @@ export const parseJwt: RouteMiddleware = async (context, next) => {
           userId: context.request.headers['x-madoc-user-id']
             ? Number(context.request.headers['x-madoc-user-id'])
             : undefined,
+          userName: context.request.headers['x-madoc-user-name']
+            ? context.request.headers['x-madoc-user-name']
+            : undefined,
         }
       : undefined;
 

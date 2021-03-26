@@ -13,9 +13,11 @@ export const getStatistics: RouteMiddleware<{ id?: string }> = async context => 
   const whereContext = sql`context ?& ${sql.array(context.state.jwt.context, 'text')}`;
   const counter = context.query.distinct_subjects ? sql`count(distinct subject)` : sql`count(*)`;
   const fullWhere = sql.join([whereRoot, whereType, whereUser, whereContext].filter(Boolean) as any[], sql` and `);
+  const isAdmin = context.state.jwt.scope.indexOf('tasks.admin') !== -1;
+  const canCreate = context.state.jwt.scope.indexOf('tasks.create') !== -1;
 
   // Permissions.
-  if (context.state.jwt.scope.indexOf('tasks.admin') === -1) {
+  if (!isAdmin && !canCreate) {
     if (!id && !whereUser) {
       throw new NotFound();
     }

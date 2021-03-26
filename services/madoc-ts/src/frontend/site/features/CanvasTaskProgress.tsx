@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
@@ -22,7 +22,10 @@ export const CanvasTaskProgress: React.FC = () => {
   const { canvasId } = useRouteContext();
   const api = useApi();
   const user = useUser();
-  const isAdmin = user && user.scope && user.scope.indexOf('site.admin') !== -1;
+  const isAdmin =
+    user && user.scope && (user.scope.indexOf('site.admin') !== -1 || user.scope.indexOf('tasks.admin') !== -1);
+  const canProgress = user && user.scope && user.scope.indexOf('tasks.progress') !== -1;
+
   const { slug } = useParams<{ slug?: string }>();
   const { data: projectTasks, refetch } = apiHooks.getSiteProjectCanvasTasks(
     () => (slug && canvasId ? [slug, canvasId] : undefined),
@@ -72,10 +75,18 @@ export const CanvasTaskProgress: React.FC = () => {
     }
   });
 
-  if (!slug || !isAdmin) {
+  if (!slug || (!isAdmin && !canProgress)) {
     return null;
   }
 
+  const assignedUsers = useMemo(() => {
+    if (!projectTasks || !projectTasks.userTasks) {
+      return [];
+    }
+    for (const task of projectTasks.userTasks) {
+      console.log(task.assignee);
+    }
+  }, [projectTasks]);
   return (
     <ItemFilterContainer style={{ marginLeft: '.5em' }}>
       <Button {...buttonProps}>
@@ -97,7 +108,7 @@ export const CanvasTaskProgress: React.FC = () => {
                   {t('Mark as complete')}
                 </Button>
               </ButtonRow>
-              {canvasTask?.state.approvalsRequired && (
+              {isAdmin && canvasTask?.state.approvalsRequired && (
                 <div>
                   <InputContainer>
                     <InputLabel htmlFor="approvals">

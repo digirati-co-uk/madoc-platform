@@ -6,7 +6,6 @@ import { RouteMiddleware } from '../../types/route-middleware';
 import { BaseTask } from '../../gateway/tasks/base-task';
 import { CaptureModel } from '@capture-models/types';
 import { userWithScope } from '../../utility/user-with-scope';
-import { NotFound } from '../../utility/errors/not-found';
 import { ApplicationContext } from '../../types/application-context';
 import { RequestError } from '../../utility/errors/request-error';
 import { sql } from 'slonik';
@@ -28,7 +27,8 @@ export type ResourceClaim = {
   manifestId?: number;
   canvasId?: number;
   revisionId?: string;
-  status?: 1 | 2;
+  status?: 0 | 1 | 2;
+  userId?: number;
 };
 
 // @todo turn this into IIIF endpoint.
@@ -36,7 +36,6 @@ async function verifyResourceInProject(
   context: ApplicationContext,
   siteId: number,
   projectId: number,
-  userId: number,
   claim: ResourceClaim
 ): Promise<void> {
   // @todo support canvases on their own.
@@ -310,6 +309,8 @@ async function getTaskFromClaim({
     undefined,
   ];
 
+  const assigneeId = claim.userId || userId;
+
   if (!parent.subtasks || parent.subtasks.length === 0) {
     return returnClaims;
   }
@@ -321,9 +322,9 @@ async function getTaskFromClaim({
         task.type === 'crowdsourcing-task' &&
         task.status !== 3 &&
         task.status !== -1 &&
-        (claim.revisionId ? task.state.revisionId === claim.revisionId : true) &&
+        (claim.revisionId && task.state.revisionId ? task.state.revisionId === claim.revisionId : true) &&
         task.assignee &&
-        task.assignee.id === `urn:madoc:user:${userId}`
+        task.assignee.id === `urn:madoc:user:${assigneeId}`
     );
   }
 
@@ -334,9 +335,9 @@ async function getTaskFromClaim({
         task.type === 'crowdsourcing-task' &&
         task.status !== 3 &&
         task.status !== -1 &&
-        (claim.revisionId ? task.state.revisionId === claim.revisionId : true) &&
+        (claim.revisionId && task.state.revisionId ? task.state.revisionId === claim.revisionId : true) &&
         task.assignee &&
-        task.assignee.id === `urn:madoc:user:${userId}`
+        task.assignee.id === `urn:madoc:user:${assigneeId}`
     );
   }
 
@@ -347,9 +348,9 @@ async function getTaskFromClaim({
         task.type === 'crowdsourcing-task' &&
         task.status !== 3 &&
         task.status !== -1 &&
-        (claim.revisionId ? task.state.revisionId === claim.revisionId : true) &&
+        (claim.revisionId && task.state.revisionId ? task.state.revisionId === claim.revisionId : true) &&
         task.assignee &&
-        task.assignee.id === `urn:madoc:user:${userId}`
+        task.assignee.id === `urn:madoc:user:${assigneeId}`
     );
   }
 
@@ -420,6 +421,7 @@ async function createUserCrowdsourcingTask({
   siteId,
   projectId,
   userId,
+  assigneeId,
   name,
   parentTaskId,
   taskName,
@@ -430,11 +432,13 @@ async function createUserCrowdsourcingTask({
   claim,
   warningTime,
   userManifestTask,
+  context,
 }: {
   context: ApplicationContext;
   siteId: number;
   projectId: number;
   userId: number;
+  assigneeId: number;
   name: string;
   parentTaskId: string;
   taskName: string;
@@ -446,14 +450,16 @@ async function createUserCrowdsourcingTask({
   warningTime?: number;
   userManifestTask?: CrowdsourcingTask;
 }): Promise<CrowdsourcingTask> {
-  const userApi = api.asUser({ userId, siteId });
+  const user = await context.omeka.getUserById(userId, siteId);
+  const assignee = await context.omeka.getUserById(assigneeId, siteId);
+  const userApi = api.asUser({ userId, siteId, userName: user.name });
 
   const structureId = undefined; // @todo call to config service to get structure id.
 
   const task = crowdsourcingTask.createTask({
     projectId,
-    userId,
-    name,
+    userId: assignee.id,
+    name: assignee.name,
     taskName,
     subject,
     parentSubject,
@@ -492,6 +498,10 @@ async function getCanonicalClaim(
     }
   }
 
+  if (!resourceClaim.userId) {
+    resourceClaim.userId = userId;
+  }
+
   return resourceClaim;
 }
 
@@ -504,7 +514,7 @@ export const prepareResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim
   const projectId = project.id;
   const claim = await getCanonicalClaim(context.requestBody, siteId, projectId, id);
 
-  await verifyResourceInProject(context, siteId, projectId, id, claim);
+  await verifyResourceInProject(context, siteId, projectId, claim);
 
   // Get project configuration.
   const config = await userApi.getProjectConfiguration(projectId, siteUrn);
@@ -527,27 +537,54 @@ export const prepareResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim
 };
 
 export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim> = async context => {
-  const { id, name, siteId, siteUrn } = userWithScope(context, ['models.contribute']);
+  const { id: userId, name, siteId, siteUrn, scope } = userWithScope(context, ['models.contribute']);
+  const isAdmin = context.state.jwt?.scope.indexOf('site.admin') !== -1;
+  const isTaskAdmin = isAdmin || context.state.jwt?.scope.indexOf('tasks.admin') !== -1;
+  const canCreate = isTaskAdmin || context.state.jwt?.scope.indexOf('tasks.create') !== -1;
 
-  const userApi = api.asUser({ userId: id, siteId });
+  if (context.requestBody.userId && !canCreate && context.requestBody.userId !== userId) {
+    throw new Error('Cannot create user on behalf of another');
+  }
+
+  const userApi = api.asUser({ userId: userId, siteId });
   const project = await userApi.getProject(context.params.id);
 
   // Get the params.
   const projectId = project.id;
-  const claim = await getCanonicalClaim(context.requestBody, siteId, projectId, id);
+  const claim = await getCanonicalClaim(context.requestBody, siteId, projectId, userId);
 
-  await verifyResourceInProject(context, siteId, projectId, id, claim);
+  await verifyResourceInProject(context, siteId, projectId, claim);
 
   // Get project configuration.
   const config = await userApi.getProjectConfiguration(projectId, siteUrn);
 
   // Make sure our fancy structure exists.
-  const [parent, userManifestTask] = await ensureProjectTaskStructure(context, siteId, projectId, id, claim, config);
+  const [parent, userManifestTask] = await ensureProjectTaskStructure(
+    context,
+    siteId,
+    projectId,
+    userId,
+    claim,
+    config
+  );
 
   // Check for existing claim
-  const [canvasClaim, manifestClaim] = await getTaskFromClaim({ userId: id, parent, claim });
+  const [canvasClaim, manifestClaim] = await getTaskFromClaim({ userId: userId, parent, claim });
 
   if (canvasClaim) {
+    if (!canvasClaim.state.revisionId && claim.revisionId) {
+      context.response.body = {
+        claim: await userApi.updateTask(canvasClaim.id, {
+          state: {
+            revisionId: claim.revisionId,
+          },
+          status: claim.status,
+          status_text: statusToClaimMap[claim.status as any] || 'in progress',
+        }),
+      };
+      return;
+    }
+
     if (!(canvasClaim.state.revisionId && claim.revisionId && canvasClaim.state.revisionId !== claim.revisionId)) {
       if (typeof claim.status !== 'undefined' && claim.status !== canvasClaim.status) {
         context.response.body = {
@@ -578,14 +615,15 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
   // @todo if there is a manifest manifestClaim, it becomes the parent task.
   if (claim.canvasId) {
     // Make sure a capture model exists and retrieve it.
-    const captureModel = await upsertCaptureModelForResource(context, siteId, projectId, id, claim);
+    const captureModel = await upsertCaptureModelForResource(context, siteId, projectId, userId, claim);
 
     // Create the crowdsourcing task.
     const task = await createUserCrowdsourcingTask({
       context,
       siteId,
       projectId,
-      userId: id,
+      userId: userId,
+      assigneeId: claim.userId || userId,
       name,
       parentTaskId: parent.id,
       taskName: parent.name,
@@ -616,7 +654,8 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
       context,
       siteId,
       projectId,
-      userId: id,
+      userId: userId,
+      assigneeId: claim.userId || userId,
       name,
       parentTaskId: parent.id,
       taskName: parent.name,

@@ -35,22 +35,30 @@ export function useCrowdsourcingTaskDetails(task: CrowdsourcingTask & { id: stri
     return [];
   }, [api, captureModel]);
 
-  const backLink = useMemo(() => {
+  const { editLink, backLink } = useMemo(() => {
     if (!target || !project || project.config.allowCanvasNavigation === false) {
-      return;
+      return {};
     }
     const collection = target.find(item => item && item.type === 'collection');
     const manifest = target.find(item => item && item.type === 'manifest');
     const canvas = target.find(item => item && item.type === 'canvas');
 
-    return createLink({
-      projectId: project?.id,
-      canvasId: canvas?.id,
-      manifestId: manifest?.id,
-      collectionId: collection?.id,
-      subRoute: canvas ? 'model' : undefined,
-      query: revisionId ? { revision: revisionId } : undefined,
-    });
+    return {
+      editLink: createLink({
+        projectId: project?.id,
+        canvasId: canvas?.id,
+        manifestId: manifest?.id,
+        collectionId: collection?.id,
+        subRoute: canvas ? 'model' : undefined,
+        query: revisionId ? { revision: revisionId } : undefined,
+      }),
+      backLink: createLink({
+        projectId: project?.id,
+        canvasId: canvas?.id,
+        manifestId: manifest?.id,
+        collectionId: collection?.id,
+      }),
+    };
   }, [revisionId, project, target]);
 
   const modelId = task.parameters[0];
@@ -68,6 +76,7 @@ export function useCrowdsourcingTaskDetails(task: CrowdsourcingTask & { id: stri
     wasRejected,
     mayExpire,
     backLink,
+    editLink,
     target,
     captureModel,
     subject,

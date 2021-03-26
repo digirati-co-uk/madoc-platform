@@ -34,7 +34,7 @@ export function isAdmin({ user, sites, currentSiteId }: UserDetails) {
   return site.role === 'admin';
 }
 
-export function isReviewer({ user, sites, currentSiteId }: UserDetails) {
+export function isReviewer({ user, sites, currentSiteId }: UserDetails, excludeLimited = false) {
   if (user.role === 'global_admin') {
     return true;
   }
@@ -45,5 +45,5 @@ export function isReviewer({ user, sites, currentSiteId }: UserDetails) {
     return false;
   }
 
-  return site.role === 'admin' || site.role === 'reviewer' || site.role === 'limited-reviewer';
+  return site.role === 'admin' || site.role === 'reviewer' || (!excludeLimited && site.role === 'limited-reviewer');
 }

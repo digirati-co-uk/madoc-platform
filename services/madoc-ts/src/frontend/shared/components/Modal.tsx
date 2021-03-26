@@ -16,7 +16,7 @@ export const ModalButton: React.FC<{
   button?: boolean;
   as?: any;
   onClose?: () => void;
-  render: (opts: { close: () => void }) => JSX.Element;
+  render: (opts: { close: () => void }) => JSX.Element | null;
   renderFooter?: (opts: { close: () => void }) => JSX.Element;
   className?: string;
   autoHeight?: boolean;

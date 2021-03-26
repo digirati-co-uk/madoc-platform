@@ -11,7 +11,6 @@ import { useCurrentUser } from '../../shared/hooks/use-current-user';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { CanvasImageViewer } from '../features/CanvasImageViewer';
 import { CanvasManifestNavigation } from '../features/CanvasManifestNavigation';
-import { CanvasModelUserStatus } from '../features/CanvasModelUserStatus';
 import { CanvasSimpleEditor } from '../features/CanvasSimpleEditor';
 import { CanvasTaskWarningMessage } from '../features/CanvasTaskWarningMessage';
 import { CanvasViewer } from '../features/CanvasViewer';
@@ -87,8 +86,6 @@ export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({ canvas }) => {
       <CanvasManifestNavigation subRoute="model" />
 
       <LocaleString as="h1">{canvas ? canvas.label : { none: ['...'] }}</LocaleString>
-
-      <CanvasModelUserStatus />
 
       {showCanvasNavigation && canContribute ? <PrepareCaptureModel /> : null}
 

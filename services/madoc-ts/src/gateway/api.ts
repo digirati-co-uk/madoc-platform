@@ -78,7 +78,7 @@ export class ApiClient {
     gateway: string;
     publicSiteSlug?: string;
     jwt?: string | (() => string);
-    asUser?: { userId?: number; siteId?: number };
+    asUser?: { userId?: number; siteId?: number; userName?: string };
     customerFetcher?: typeof fetchJson;
     customCaptureModelExtensions?: (api: ApiClient) => Array<CaptureModelExtension>;
   }) {
@@ -358,7 +358,7 @@ export class ApiClient {
     });
   }
 
-  asUser(user: { userId?: number; siteId?: number }, options?: { siteSlug?: string }): ApiClient {
+  asUser(user: { userId?: number; siteId?: number; userName?: string }, options?: { siteSlug?: string }): ApiClient {
     return new ApiClient({
       gateway: this.gateway,
       jwt: this.getJwt(),
@@ -1202,6 +1202,18 @@ export class ApiClient {
     detail?: boolean
   ) {
     return this.request<Task & { id: string }>(`/api/tasks/${id}?${stringify({ page, all, assignee, detail })}`);
+  }
+
+  async userAutocomplete(q: string) {
+    return this.request<{
+      users: Array<{
+        id: number;
+        name: string;
+        role?: string;
+      }>;
+    }>(`/api/madoc/users?q=${q}`, {
+      method: 'GET',
+    });
   }
 
   async assignUserToTask(id: string, user: { id: string; name?: string }) {

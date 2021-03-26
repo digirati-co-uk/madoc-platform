@@ -1,5 +1,6 @@
 import React from 'react';
 import { BaseTask } from '../../../gateway/tasks/base-task';
+import { extractIdFromUrn } from '../../../utility/parse-urn';
 import {
   TaskItem,
   TaskItemAuthor,
@@ -11,6 +12,7 @@ import {
   TaskItemTagType,
 } from '../../shared/atoms/TaskList';
 import { LocaleString } from '../../shared/components/LocaleString';
+import { HrefLink } from '../../shared/utility/href-link';
 import { useTaskMetadata } from '../hooks/use-task-metadata';
 
 export const TaskListItem: React.FC<{ task: BaseTask; onClick: () => void; selected?: boolean }> = ({
@@ -39,6 +41,11 @@ export const TaskListItem: React.FC<{ task: BaseTask; onClick: () => void; selec
             ) : (
               <LocaleString>{metadata.subject.label}</LocaleString>
             )
+          ) : null}
+          {task.assignee && !task.assignee.is_service ? (
+            <div>
+              <HrefLink href={`/users/${extractIdFromUrn(task.assignee.id)}`}>{task.assignee.name}</HrefLink>
+            </div>
           ) : null}
         </TaskItemDescription>
         <TaskItemTagContainer>

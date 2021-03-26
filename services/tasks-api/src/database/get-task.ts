@@ -1,4 +1,5 @@
 import { DatabasePoolConnectionType, sql } from 'slonik';
+import { NotFound } from '../errors/not-found';
 import { mapSingleTask } from '../utility/map-single-task';
 
 export async function getTask(
@@ -28,8 +29,9 @@ export async function getTask(
   }
 ) {
   const isAdmin = scope.indexOf('tasks.admin') !== -1;
+  const canCreate = isAdmin || scope.indexOf('tasks.create') !== -1;
   const userId = user.id;
-  const userCheck = isAdmin
+  const userCheck = canCreate
     ? sql``
     : sql`AND (t.creator_id = ${userId} OR t.assignee_id = ${userId} OR ${userId} = ANY (t.delegated_owners) OR dt.assignee_id = ${userId})`;
 
@@ -69,6 +71,10 @@ export async function getTask(
 
   const actualTask = taskList.find(t => t.id === id);
   const subtasks = taskList.filter(t => t.id !== id);
+
+  if (!actualTask) {
+    throw new NotFound();
+  }
 
   const task = mapSingleTask(actualTask, subtasks, subtaskFields);
 

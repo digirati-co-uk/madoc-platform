@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BaseTask } from '../../../gateway/tasks/base-task';
 import { Button, ButtonRow } from '../../shared/atoms/Button';
@@ -10,6 +10,7 @@ import {
   OuterLayoutContainer,
 } from '../../shared/atoms/LayoutContainer';
 import { TaskListContainer } from '../../shared/atoms/TaskList';
+import { SubjectSnippet } from '../../shared/components/SubjectSnippet';
 import { useLocalStorage } from '../../shared/hooks/use-local-storage';
 import { useResizeLayout } from '../../shared/hooks/use-resize-layout';
 import { useUser } from '../../shared/hooks/use-site';
@@ -18,11 +19,12 @@ import { UniversalComponent } from '../../types';
 import { createUniversalComponent } from '../../shared/utility/create-universal-component';
 import { useInfiniteData } from '../../shared/hooks/use-data';
 import { Pagination as PaginationType } from '../../../types/schemas/_pagination';
-import { useHistory, useParams } from 'react-router-dom';
+import { Redirect, useHistory, useParams } from 'react-router-dom';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { TaskFilterStatuses } from '../features/TaskFilterStatuses';
 import { TaskFilterType } from '../features/TaskFilterType';
 import { TaskListItem } from '../features/TaskListItem';
+import { useGoToQuery } from '../hooks/use-go-to-query';
 import { useInfiniteAction } from '../hooks/use-infinite-action';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 
@@ -69,6 +71,7 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
     const createLink = useRelativeLinks();
     const { t } = useTranslation();
     const { push } = useHistory();
+    const goToQuery = useGoToQuery();
 
     // Different statuses by type.
     const statuses: any = {
@@ -92,9 +95,16 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
       ],
     };
 
+    if (!user) {
+      return <Redirect to="/" />;
+    }
+
     return (
       <>
         <ButtonRow>
+          {query.subject ? (
+            <Button onClick={() => goToQuery({ subject: undefined })}>{t('Clear image filter')}</Button>
+          ) : null}
           <TaskFilterStatuses statuses={query.type && statuses[query.type] ? statuses[query.type] : statuses.default} />
           <TaskFilterType
             types={[
@@ -154,6 +164,7 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
           type: 'crowdsourcing-task',
           root_task_id: project.task_id,
           per_page: 20,
+          detail: true,
           ...vars.query,
         });
       }
