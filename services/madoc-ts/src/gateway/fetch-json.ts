@@ -17,7 +17,7 @@ export async function fetchJson<Return>(
     method?: 'GET' | 'PUT' | 'POST' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD';
     body?: any;
     jwt?: string;
-    asUser?: { userId?: number; siteId?: number };
+    asUser?: { userId?: number; siteId?: number; userName?: string };
     xml?: boolean;
     plaintext?: boolean;
     returnText?: boolean;
@@ -51,6 +51,9 @@ export async function fetchJson<Return>(
     }
     if (asUser.siteId) {
       headers['x-madoc-site-id'] = `${asUser.siteId}`;
+    }
+    if (asUser.userName) {
+      headers['x-madoc-user-name'] = `${asUser.userName}`;
     }
   }
 
