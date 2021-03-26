@@ -25,6 +25,7 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task,
     isCanvas,
     project,
     backLink,
+    editLink,
     subject,
     mayExpire,
     isComplete,
@@ -85,13 +86,13 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task,
               components: { SubmitButton: SimpleSaveButton },
             }}
           >
-            <EditorSlots.TopLevelEditor />
+            <EditorSlots.PreviewSubmission />
           </RevisionProviderWithFeatures>
         ) : null}
 
-        {!isSubmitted && !isComplete && backLink ? (
+        {!isSubmitted && !isComplete && editLink ? (
           <div>
-            <Button $primary as={HrefLink} href={backLink}>
+            <Button $primary as={HrefLink} href={editLink}>
               {t('Edit submission')}
             </Button>
           </div>

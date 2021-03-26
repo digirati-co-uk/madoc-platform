@@ -10,6 +10,7 @@ import {
   OuterLayoutContainer,
 } from '../../shared/atoms/LayoutContainer';
 import { TaskListContainer } from '../../shared/atoms/TaskList';
+import { SubjectSnippet } from '../../shared/components/SubjectSnippet';
 import { useLocalStorage } from '../../shared/hooks/use-local-storage';
 import { useResizeLayout } from '../../shared/hooks/use-resize-layout';
 import { useUser } from '../../shared/hooks/use-site';
@@ -23,6 +24,7 @@ import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { TaskFilterStatuses } from '../features/TaskFilterStatuses';
 import { TaskFilterType } from '../features/TaskFilterType';
 import { TaskListItem } from '../features/TaskListItem';
+import { useGoToQuery } from '../hooks/use-go-to-query';
 import { useInfiniteAction } from '../hooks/use-infinite-action';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 
@@ -69,6 +71,7 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
     const createLink = useRelativeLinks();
     const { t } = useTranslation();
     const { push } = useHistory();
+    const goToQuery = useGoToQuery();
 
     // Different statuses by type.
     const statuses: any = {
@@ -99,6 +102,9 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
     return (
       <>
         <ButtonRow>
+          {query.subject ? (
+            <Button onClick={() => goToQuery({ subject: undefined })}>{t('Clear image filter')}</Button>
+          ) : null}
           <TaskFilterStatuses statuses={query.type && statuses[query.type] ? statuses[query.type] : statuses.default} />
           <TaskFilterType
             types={[

@@ -32,33 +32,11 @@ export const ViewCrowdsourcingReview: React.FC<TaskContext<CrowdsourcingReview>>
     : null;
 
   const backButton = link ? (
-    <>
-      {subject ? (
-        <SnippetLarge
-          label={
-            subject.parent ? (
-              <LocaleString>{subject.parent.label}</LocaleString>
-            ) : (
-              <LocaleString>{subject.label}</LocaleString>
-            )
-          }
-          linkAs={HrefLink}
-          link={link}
-          subtitle={subject.parent ? <LocaleString>{subject.label}</LocaleString> : undefined}
-          thumbnail={subject.thumbnail || undefined}
-          flat
-          size="sm"
-          smallLabel
-          buttonText="Back to resource"
-        />
-      ) : (
-        <ButtonRow>
-          <Button as={HrefLink} href={link}>
-            {t('Back to resource')}
-          </Button>
-        </ButtonRow>
-      )}
-    </>
+    <ButtonRow>
+      <Button as={HrefLink} href={link}>
+        {t('Back to resource')}
+      </Button>
+    </ButtonRow>
   ) : null;
 
   if (reviewType === 'manifest') {

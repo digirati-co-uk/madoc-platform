@@ -11,10 +11,12 @@ export const TaskFilterType: React.FC<{ types: Array<{ label: any; value: string
   const types = query.type ? query.type.split(',') : [''];
   const { location, push } = useHistory();
 
+  const realLabel = types.length === 1 ? allTypes.find(ty => ty.value && ty.value === types[0])?.label : '';
+
   return (
     <ItemFilter
       type="radio"
-      label={t('Filter by type')}
+      label={realLabel || t('Filter by type')}
       closeOnChange
       items={allTypes.map(type => ({
         id: type.value,

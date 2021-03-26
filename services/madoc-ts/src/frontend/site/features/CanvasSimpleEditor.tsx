@@ -6,13 +6,16 @@ import { MetadataEmptyState } from '../../shared/atoms/MetadataConfiguration';
 import { BackToChoicesButton } from '../../shared/caputre-models/new/components/BackToChoicesButton';
 import { EditorSlots } from '../../shared/caputre-models/new/components/EditorSlots';
 import { RevisionProviderWithFeatures } from '../../shared/caputre-models/new/components/RevisionProviderWithFeatures';
+import { SimpleSaveButton } from '../../shared/caputre-models/new/components/SimpleSaveButton';
 import { EditorContentViewer } from '../../shared/caputre-models/new/EditorContent';
 import { useApi } from '../../shared/hooks/use-api';
 import { useCurrentUser } from '../../shared/hooks/use-current-user';
 import { useLoadedCaptureModel } from '../../shared/hooks/use-loaded-capture-model';
+import { isEditingAnotherUsersRevision } from '../../shared/utility/is-editing-another-users-revision';
 import { useCanvasModel } from '../hooks/use-canvas-model';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useRouteContext } from '../hooks/use-route-context';
+import { CanvasModelUserStatus } from './CanvasModelUserStatus';
 import { useSiteConfiguration } from './SiteConfigurationContext';
 
 export const CanvasSimpleEditor: React.FC<{ revision: string }> = ({ revision }) => {
@@ -26,6 +29,8 @@ export const CanvasSimpleEditor: React.FC<{ revision: string }> = ({ revision })
   const isVertical = config.project.defaultEditorOrientation === 'vertical';
   const api = useApi();
   const runtime = useRef<Runtime>();
+
+  const isEditing = isEditingAnotherUsersRevision(captureModel, revision, user.user);
 
   const goHome = () => {
     if (runtime.current) {
@@ -58,9 +63,13 @@ export const CanvasSimpleEditor: React.FC<{ revision: string }> = ({ revision })
 
   return (
     <RevisionProviderWithFeatures
+      key={revision}
       revision={revision}
       captureModel={captureModel}
-      slotConfig={{ editor: { allowEditing: true } }}
+      slotConfig={{
+        editor: { allowEditing: true },
+        components: { SubmitButton: isEditing ? SimpleSaveButton : undefined },
+      }}
     >
       <div
         style={{
@@ -102,6 +111,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string }> = ({ revision })
             flexDirection: 'column',
           }}
         >
+          <CanvasModelUserStatus isEditing={isEditing} />
           {canContribute && captureModel ? (
             <>
               <BackToChoicesButton />
@@ -110,7 +120,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string }> = ({ revision })
                 <EditorSlots.TopLevelEditor />
               </div>
 
-              <EditorSlots.SubmitButton afterSave={updateClaim} />
+              <EditorSlots.SubmitButton afterSave={isEditing ? undefined : updateClaim} />
             </>
           ) : (
             <MetadataEmptyState>{t('Loading your model')}</MetadataEmptyState>

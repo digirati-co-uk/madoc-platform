@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 
 export const ButtonIcon = styled.span`
   transform: translate(-8px, -4px);
-  height: 1em;
+  height: 0.85em;
   width: 1.6em;
   position: relative;
   display: inline-block;
@@ -20,6 +20,7 @@ export const Button = styled.button<{ $primary?: boolean; $inlineInput?: boolean
   cursor: pointer;
   padding: 0.4em 1em;
   font-size: 0.9em;
+  line-height: 1.18em;
   border-radius: 3px;
   background: #fff;
   color: #3579f6;

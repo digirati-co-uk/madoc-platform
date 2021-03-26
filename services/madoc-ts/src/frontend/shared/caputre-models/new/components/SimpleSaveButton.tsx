@@ -32,7 +32,7 @@ export const SimpleSaveButton: React.FC<{ afterSave?: (req: RevisionRequest) => 
   return (
     <div style={{ textAlign: 'center' }}>
       <ButtonRow $noMargin>
-        <Button $primary disabled={isLoading} onClick={() => saveRevision('submitted')}>
+        <Button $primary disabled={isLoading} onClick={() => saveRevision(currentRevision.revision.status)}>
           {isLoading ? t('Saving...') : t('Save')}
         </Button>
       </ButtonRow>

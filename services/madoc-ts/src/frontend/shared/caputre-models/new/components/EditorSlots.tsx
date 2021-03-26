@@ -101,12 +101,23 @@ const Provider: React.FC<{ config?: Partial<EditorConfig>; components?: Partial<
   const defaultConfig = useSlotContext();
 
   const newConfig = useMemo(() => {
+    const filteredComponents: any = {
+      configuration: {},
+    };
+    if (components) {
+      for (const component of Object.keys(components)) {
+        if ((components as any)[component]) {
+          filteredComponents[component] = (components as any)[component];
+        }
+      }
+    }
+
     return {
       ...defaultConfig,
-      ...components,
+      ...filteredComponents,
       configuration: {
         ...defaultConfig.configuration,
-        ...components.configuration,
+        ...filteredComponents.configuration,
         ...config,
       },
     };
