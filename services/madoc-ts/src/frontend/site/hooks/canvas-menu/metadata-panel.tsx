@@ -11,16 +11,13 @@ import { CanvasMenuHook } from './types';
 
 export function useMetadataMenu(): CanvasMenuHook {
   const { data } = useData(CanvasLoader, []);
-  const {
-    project: { hideManifestMetadataOnCanvas = false },
-  } = useSiteConfiguration();
   const { t } = useTranslation();
   const canvas = data?.canvas;
 
   const content = (
     <>
       {canvas && canvas.metadata ? <MetaDataDisplay variation="list" metadata={canvas.metadata} /> : null}
-      {hideManifestMetadataOnCanvas ? null : <ManifestMetadata compact />}
+      <ManifestMetadata compact />
     </>
   );
 
