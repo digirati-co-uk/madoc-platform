@@ -1,11 +1,9 @@
-import { boolean } from '@storybook/addon-knobs';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { MetaDataDisplay } from '../../../shared/components/MetaDataDisplay';
 import { useData } from '../../../shared/hooks/use-data';
 import { InfoIcon } from '../../../shared/icons/InfoIcon';
 import { ManifestMetadata } from '../../features/ManifestMetadata';
-import { useSiteConfiguration } from '../../features/SiteConfigurationContext';
 import { CanvasLoader } from '../../pages/loaders/canvas-loader';
 import { CanvasMenuHook } from './types';
 
