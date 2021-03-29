@@ -9,6 +9,7 @@ import {
   SearchFilterCheckbox,
   SearchFilterContainer,
   SearchFilterItem,
+  SearchFilterItemCount,
   SearchFilterItemList,
   SearchFilterLabel,
   SearchFilterSection,
@@ -19,6 +20,7 @@ import {
 import { SearchResults, TotalResults } from '../../shared/components/SearchResults';
 import { AddIcon } from '../../shared/icons/AddIcon';
 import { Spinner } from '../../shared/icons/Spinner';
+import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useSearch } from '../hooks/use-search';
 import { useSearchFacets } from '../hooks/use-search-facets';
 import { useSearchQuery } from '../hooks/use-search-query';
@@ -28,6 +30,9 @@ export const Search: React.FC = () => {
   const { t } = useTranslation();
   const [{ resolvedData: searchResponse, latestData, isFetching, isLoading }, displayFacets] = useSearch();
   const { rawQuery, page, fulltext, appliedFacets } = useSearchQuery();
+  const {
+    project: { showSearchFacetCount },
+  } = useSiteConfiguration();
   const {
     inQueue,
     applyFacet,
@@ -85,8 +90,11 @@ export const Search: React.FC = () => {
                         <SearchFilterLabel htmlFor={itemHash}>
                           <LocaleString>{item.label}</LocaleString>
                         </SearchFilterLabel>
-                        {/* @todo better way to communicate that the count is for manifests only */}
-                        {/*<SearchFilterItemCount>{item.count}</SearchFilterItemCount>*/}
+                        {showSearchFacetCount ? (
+                          <SearchFilterItemCount>
+                            {t('{{count}} manifests', { count: item.count })}
+                          </SearchFilterItemCount>
+                        ) : null}
                         {isSelected !== 0 ? (
                           <SearchFilterToggle onClick={() => clearSingleFacet(item.key, item.values)}>
                             <CloseIcon $solid width={12} height={12} />

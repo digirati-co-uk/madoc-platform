@@ -22,4 +22,5 @@ export type ProjectConfiguration = {
   searchStrategy?: 'string';
   hideManifestMetadataOnCanvas?: boolean;
   hideCanvasThumbnailNavigation?: boolean;
+  showSearchFacetCount?: boolean;
 };

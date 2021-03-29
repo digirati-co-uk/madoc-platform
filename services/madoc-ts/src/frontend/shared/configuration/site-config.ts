@@ -137,4 +137,9 @@ export const siteConfigurationModel: {
     type: 'checkbox-field',
     inlineLabel: 'Hide manifest thumbnail navigation',
   },
+  showSearchFacetCount: {
+    label: 'Show search facet count',
+    type: 'checkbox-field',
+    inlineLabel: 'Show number of matches manifests in search facets',
+  },
 };

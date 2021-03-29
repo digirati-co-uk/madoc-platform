@@ -5,6 +5,7 @@ import { Button } from '../../shared/atoms/Button';
 import { ErrorMessage } from '../../shared/atoms/ErrorMessage';
 import { AutocompleteUser, UserAutocomplete } from '../../shared/components/UserAutocomplete';
 import { apiHooks } from '../../shared/hooks/use-api-query';
+import { useRouteContext } from '../hooks/use-route-context';
 
 type AssignCanvasToUserProps = {
   taskId: string;
@@ -15,6 +16,7 @@ type AssignCanvasToUserProps = {
 
 export const AssignTaskToUser: React.FC<AssignCanvasToUserProps> = props => {
   const { t } = useTranslation();
+  const { projectId } = useRouteContext();
   const { data: task } = apiHooks.getTask(() => [props.taskId, { all: true, detail: true, assignee: true }]);
   const [selectedUser, setSelectedUser] = useState<AutocompleteUser | undefined>();
   const [selectedError, setSelectedError] = useState('');
@@ -60,7 +62,7 @@ export const AssignTaskToUser: React.FC<AssignCanvasToUserProps> = props => {
     }
   };
 
-  if (!task) {
+  if (!task || !projectId) {
     return null;
   }
 

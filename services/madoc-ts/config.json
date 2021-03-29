@@ -24,7 +24,8 @@
     "hideProjectManifestNavigation": false,
     "searchStrategy": "websearch",
     "hideManifestMetadataOnCanvas": false,
-    "hideCanvasThumbnailNavigation": false
+    "hideCanvasThumbnailNavigation": false,
+    "showSearchFacetCount": false
   },
   "permissions": {
     "admin": [
