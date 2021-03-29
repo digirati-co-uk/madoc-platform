@@ -40,7 +40,7 @@ export const AssignCanvasToUser: React.FC = () => {
     }
   });
 
-  if (!details || !details.user || !isReviewer(details, true)) {
+  if (!details || !details.user || !isReviewer(details, true) || !projectId) {
     return null;
   }
 
