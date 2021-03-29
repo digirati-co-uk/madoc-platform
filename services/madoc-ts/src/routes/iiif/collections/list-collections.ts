@@ -16,7 +16,7 @@ export const listCollections: RouteMiddleware<{ page: number }> = async context 
 
   const collectionCount = 5;
   const page = Number(context.query.page) || 1;
-  const onlyPublished = castBool(context.query.published);
+  const onlyPublished = context.query.published ? castBool(context.query.published) : true;
   const { total = 0 } = await context.connection.one(
     countResources({
       resource_type: 'collection',

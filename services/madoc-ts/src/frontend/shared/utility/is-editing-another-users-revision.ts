@@ -10,7 +10,7 @@ export function isEditingAnotherUsersRevision(captureModel?: CaptureModel, revis
     return false;
   }
 
-  const userUrn = `urn:madoc:user:${user.id}`;
+  const userUrn = typeof user.id === 'string' ? user.id : `urn:madoc:user:${user.id}`;
 
   return revision.authors.indexOf(userUrn) === -1;
 }

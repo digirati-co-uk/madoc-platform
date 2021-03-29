@@ -28,7 +28,7 @@ export const listManifests: RouteMiddleware = async context => {
   const pageQuery = Number(context.query.page) || 1;
   const labelQuery = context.query.query;
   const canvasSubQuery = getCanvasFilter(context.query.filter);
-  const onlyPublished = castBool(context.query.published);
+  const onlyPublished = context.query.published ? castBool(context.query.published) : true;
   const { total = 0 } =
     (
       await context.connection.any<{ total: number }>(

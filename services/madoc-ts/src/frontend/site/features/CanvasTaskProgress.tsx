@@ -79,14 +79,6 @@ export const CanvasTaskProgress: React.FC = () => {
     return null;
   }
 
-  const assignedUsers = useMemo(() => {
-    if (!projectTasks || !projectTasks.userTasks) {
-      return [];
-    }
-    for (const task of projectTasks.userTasks) {
-      console.log(task.assignee);
-    }
-  }, [projectTasks]);
   return (
     <ItemFilterContainer style={{ marginLeft: '.5em' }}>
       <Button {...buttonProps}>

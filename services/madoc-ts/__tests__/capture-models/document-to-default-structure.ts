@@ -32,6 +32,7 @@ describe('document to default structure', () => {
         "searchStrategy",
         "hideManifestMetadataOnCanvas",
         "hideCanvasThumbnailNavigation",
+        "showSearchFacetCount",
       ]
     `);
   });

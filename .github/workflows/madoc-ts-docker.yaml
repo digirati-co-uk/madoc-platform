@@ -9,6 +9,7 @@ on:
       - "services/madoc-ts/migrations/**"
       - "services/madoc-ts/translations/**"
       - "services/madoc-ts/schemas/**"
+      - "services/madoc-ts/themes/**"
       - "services/madoc-ts/package.json"
       - "services/madoc-ts/yarn.lock"
       - "services/madoc-ts/Dockerfile"

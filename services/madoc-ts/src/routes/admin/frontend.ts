@@ -3,7 +3,6 @@ import { render as renderSite } from '../../frontend/site/server';
 import { createBackend } from '../../middleware/i18n/i18next.server';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { NotFound } from '../../utility/errors/not-found';
-import { LanguageCache } from '../../utility/language-cache';
 import { userWithScope } from '../../utility/user-with-scope';
 
 export const adminFrontend: RouteMiddleware = async context => {

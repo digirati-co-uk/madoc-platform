@@ -21,6 +21,7 @@ COPY ./webpack.config.js /home/node/app/webpack.config.js
 COPY ./generate-schemas.js /home/node/app/generate-schemas.js
 COPY ./translations /home/node/app/translations
 COPY ./schemas /home/node/app/schemas
+COPY ./themes /home/node/app/themes
 
 ENV SERVER_PORT=3000
 ENV DATABASE_HOST=localhost
