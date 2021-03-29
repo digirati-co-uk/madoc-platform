@@ -13,6 +13,7 @@ COPY ./webpack.config.js /home/node/app/webpack.config.js
 COPY ./tsconfig.json /home/node/app/tsconfig.json
 COPY ./tsconfig.frontend.json /home/node/app/tsconfig.frontend.json
 COPY ./generate-schemas.js /home/node/app/generate-schemas.js
+ADD ./themes /home/node/app/themes
 
 ENV NODE_ENV=production
 
@@ -40,6 +41,7 @@ COPY --from=build /home/node/app/lib /home/node/app/lib
 COPY ./schemas /home/node/app/schemas
 COPY ./webpack.config.js /home/node/app/webpack.config.js
 COPY ./ecosystem.config.js /home/node/app/ecosystem.config.js
+COPY ./themes /home/node/app/themes
 
 ENV SERVER_PORT=3000
 ENV DATABASE_HOST=localhost

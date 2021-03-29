@@ -4386,6 +4386,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/mustache@^4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@types/mustache/-/mustache-4.1.1.tgz#fcfa2db0cee6261e66f2437dc2fe71e26c7856b4"
+  integrity sha512-Sm0NWeLhS2QL7NNGsXvO+Fgp7e3JLHCO6RS3RCnfjAnkw6Y1bsji/AGfISdQZDIR/AeOyzkrxRk9jBkl55zdJw==
+
 "@types/mysql@^2.15.9":
   version "2.15.9"
   resolved "https://registry.yarnpkg.com/@types/mysql/-/mysql-2.15.9.tgz#2fd4aaa5db9bada88c9d36caab22008214b84653"
@@ -13669,6 +13674,11 @@ mumath@^3.3.4:
   integrity sha1-SNSg8P2MrU57Mglu6JsWGmPTC78=
   dependencies:
     almost-equal "^1.1.0"
+
+mustache@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/mustache/-/mustache-4.2.0.tgz#e5892324d60a12ec9c2a73359edca52972bf6f64"
+  integrity sha512-71ippSywq5Yb7/tVYyGbkBggbU8H3u5Rz56fH60jGFgr8uHwxs+aSKeqmluIVzM0m0kB7xQjKS6qPfd0b2ZoqQ==
 
 mute-stream@0.0.7:
   version "0.0.7"
