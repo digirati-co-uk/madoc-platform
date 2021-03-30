@@ -27,10 +27,5 @@ GROUP BY ir.resource_id, ir.site_id;
 drop index iiif_derived_resource_items_full_index;
 drop index iiif_derived_resource_items_full_iid;
 
--- Drop trigger
-drop trigger if exists refresh_item_counts_trigger ON iiif_derived_resource_items;
-drop trigger if exists refresh_flat_collection_item_counts_trigger ON iiif_derived_resource_items;
-
 -- Drop function
-drop function if exists refresh_iiif_derived_resource_item_counts;
-drop function if exists refresh_iiif_derived_flat_collection_counts;
+drop function if exists refresh_item_counts;

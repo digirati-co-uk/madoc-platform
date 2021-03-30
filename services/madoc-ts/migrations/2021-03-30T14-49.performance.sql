@@ -13,9 +13,8 @@ group by (resource_id, site_id);
 
 -- Create indexes on new counts view
 create index iiif_derived_resource_item_counts_site_id ON iiif_derived_resource_item_counts (site_id);
-create index iiif_derived_resource_item_counts_site_resource_id ON iiif_derived_resource_item_counts (resource_id, site_id);
 create index iiif_derived_resource_item_counts_resource_id ON iiif_derived_resource_item_counts (resource_id);
-
+create unique index iiif_derived_resource_item_counts_unique ON iiif_derived_resource_item_counts (resource_id, site_id);
 
 -- Recreate second view
 CREATE materialized view iiif_derived_flat_collection_counts (canvas_total, manifest_total, flat_collection_id, site_id) as
@@ -32,44 +31,21 @@ WHERE manifest.resource_type = 'manifest'::text
   AND ir.flat = true
 GROUP BY ir.resource_id, ir.site_id;
 
+create unique index iiif_derived_flat_collection_counts_unique ON iiif_derived_flat_collection_counts (flat_collection_id, site_id);
+
 -- Function to refresh view
-CREATE OR REPLACE FUNCTION refresh_iiif_derived_resource_item_counts(
+CREATE OR REPLACE FUNCTION refresh_item_counts(
 )
-    RETURNS TRIGGER
+    RETURNS BOOLEAN
     LANGUAGE plpgsql
 AS
 $$
 BEGIN
     REFRESH MATERIALIZED VIEW CONCURRENTLY iiif_derived_resource_item_counts;
-    RETURN NULL;
-END
-$$;
-
-CREATE OR REPLACE FUNCTION refresh_iiif_derived_flat_collection_counts(
-)
-    RETURNS TRIGGER
-    LANGUAGE plpgsql
-AS
-$$
-BEGIN
     REFRESH MATERIALIZED VIEW CONCURRENTLY iiif_derived_flat_collection_counts;
-    RETURN NULL;
+    RETURN true;
 END
 $$;
-
--- Add trigger to refresh
-CREATE TRIGGER refresh_item_counts_trigger
-    AFTER INSERT OR UPDATE OR DELETE OR TRUNCATE
-    ON iiif_derived_resource_items
-    FOR EACH STATEMENT
-EXECUTE PROCEDURE refresh_iiif_derived_resource_item_counts();
-
-CREATE TRIGGER refresh_flat_collection_item_counts_trigger
-    AFTER INSERT OR UPDATE OR DELETE OR TRUNCATE
-    ON iiif_derived_resource_items
-    FOR EACH STATEMENT
-EXECUTE PROCEDURE refresh_iiif_derived_flat_collection_counts();
-
 
 -- Add more indexes on items
 create index iiif_derived_resource_items_full_index
