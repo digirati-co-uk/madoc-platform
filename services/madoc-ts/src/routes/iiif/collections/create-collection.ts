@@ -41,6 +41,8 @@ export const createCollection: RouteMiddleware<{}, CreateCollection> = async con
     console.log(err);
   }
 
+  await context.connection.query(sql`select refresh_item_counts()`);
+
   context.response.body = { id: canonical_id };
   context.response.status = 201;
 };

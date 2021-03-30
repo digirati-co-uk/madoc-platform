@@ -79,5 +79,7 @@ export const updateCollectionStructure: RouteMiddleware<{ id: number }, UpdateSt
 
   await context.connection.query(updateQuery);
 
+  await context.connection.query(sql`select refresh_item_counts()`);
+
   context.response.status = 200;
 };

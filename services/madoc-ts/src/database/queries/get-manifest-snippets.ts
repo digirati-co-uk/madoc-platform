@@ -37,7 +37,6 @@ export function getSingleManifest({
     task_id?: string;
     task_complete?: boolean;
   }>`
-    with site_counts as (select * from iiif_derived_resource_item_counts where site_id = ${siteId})
       select ${manifestId}::int                         as manifest_id,
              canvas_links.item_id                       as canvas_id,
              manifest_count.item_total                  as canvas_count,
@@ -48,8 +47,8 @@ export function getSingleManifest({
       from iiif_derived_resource manifest
             left join iiif_derived_resource_items canvas_links on manifest.resource_id = canvas_links.resource_id and canvas_links.site_id = ${siteId} ${canvasExclusion}
             left join iiif_resource canvas_resources on canvas_links.item_id = canvas_resources.id
-            left join site_counts manifest_count
-                         on manifest_count.resource_id = ${manifestId}
+            left join iiif_derived_resource_item_counts manifest_count
+                         on manifest_count.resource_id = ${manifestId} and manifest_count.site_id = ${siteId}
       where manifest.resource_id = ${manifestId}
         and manifest.site_id = ${siteId}
       order by canvas_links.item_index
@@ -173,17 +172,16 @@ export function getManifestList({
       : SQL_EMPTY;
 
     return sql<{ resource_id: number; thumbnail: string; canvas_total: number }>`
-        with canvases (resource_id) as (${canvasSubQuery}),
-             site_counts as (select * from iiif_derived_resource_item_counts where site_id = ${siteId})
+        with canvases (resource_id) as (${canvasSubQuery})
         select 
            ir.resource_id, 
            manifest_thumbnail(1, ir.resource_id) as thumbnail,
            canvas_count.item_total as canvas_total
         from canvases 
-            left join iiif_derived_resource_items ir on item_id = canvases.resource_id and site_id = ${siteId}
+            left join iiif_derived_resource_items ir on item_id = canvases.resource_id and ir.site_id = ${siteId}
             left join iiif_resource i on ir.resource_id = i.id
-            left join site_counts canvas_count
-                   on canvas_count.resource_id = i.id
+            left join iiif_derived_resource_item_counts canvas_count
+                   on canvas_count.resource_id = i.id and canvas_count.site_id = ${siteId}
             ${parentJoin}
         where i.type = 'manifest'
         ${parentWhere}
@@ -194,13 +192,12 @@ export function getManifestList({
 
   if (parentId) {
     return sql<{ resource_id: number; thumbnail: string; canvas_total: number }>`
-      with site_counts as (select * from iiif_derived_resource_item_counts where site_id = ${siteId})
       select manifests.resource_id as resource_id, manifest_thumbnail(${siteId}, manifests.resource_id) as thumbnail, canvas_count.item_total as canvas_total, manifests.published as published
       from iiif_derived_resource manifests
       left join iiif_derived_resource_items midr 
           on midr.item_id = manifests.resource_id
-      left join site_counts canvas_count
-           on canvas_count.resource_id = manifests.resource_id
+      left join iiif_derived_resource_item_counts canvas_count
+           on canvas_count.resource_id = manifests.resource_id and canvas_count.site_id = ${siteId}
       where manifests.resource_type = 'manifest' 
         and manifests.site_id = ${siteId}
         ${onlyPublished ? sql`and manifests.published = true` : SQL_EMPTY}
@@ -212,11 +209,10 @@ export function getManifestList({
 
   if (labelQuery) {
     return sql<{ resource_id: number; thumbnail: string; canvas_total: number }>`
-    with site_counts as (select * from iiif_derived_resource_item_counts where site_id = ${siteId})
     select manifests.resource_id as resource_id, manifest_thumbnail(${siteId}, manifests.resource_id) as thumbnail, canvas_count.item_total as canvas_total, manifests.published as published
     from iiif_derived_resource manifests
-    left join site_counts canvas_count
-         on canvas_count.resource_id = manifests.resource_id
+    left join iiif_derived_resource_item_counts canvas_count
+         on canvas_count.resource_id = manifests.resource_id and canvas_count.site_id = ${siteId}
     left join iiif_metadata im
          on manifests.resource_id = im.resource_id and im.site_id = ${siteId} and im.key = 'label'
              and im.value ilike '%' || ${labelQuery} || '%'
@@ -229,11 +225,10 @@ export function getManifestList({
   }
 
   return sql<{ resource_id: number; thumbnail: string; canvas_total: number }>`
-    with site_counts as (select * from iiif_derived_resource_item_counts where site_id = ${siteId})
     select manifests.resource_id as resource_id, manifest_thumbnail(${siteId}, manifests.resource_id) as thumbnail, canvas_count.item_total as canvas_total, manifests.published as published
     from iiif_derived_resource manifests
-    left join site_counts canvas_count
-         on canvas_count.resource_id = manifests.resource_id
+    left join iiif_derived_resource_item_counts canvas_count
+         on canvas_count.resource_id = manifests.resource_id and canvas_count.site_id = ${siteId}
     left join iiif_metadata im
          on manifests.resource_id = im.resource_id and im.site_id = ${siteId} and im.key = 'label'
     where manifests.resource_type = 'manifest' 

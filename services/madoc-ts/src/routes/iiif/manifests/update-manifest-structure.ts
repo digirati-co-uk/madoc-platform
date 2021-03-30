@@ -49,5 +49,7 @@ export const updateManifestStructure: RouteMiddleware<{ id: number }, UpdateStru
     console.log(e);
   }
 
+  await context.connection.query(sql`select refresh_item_counts()`);
+
   context.response.status = 200;
 };
