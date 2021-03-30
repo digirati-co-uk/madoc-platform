@@ -48,7 +48,7 @@ export function getSingleManifest({
             left join iiif_derived_resource_items canvas_links on manifest.resource_id = canvas_links.resource_id and canvas_links.site_id = ${siteId} ${canvasExclusion}
             left join iiif_resource canvas_resources on canvas_links.item_id = canvas_resources.id
             left join iiif_derived_resource_item_counts manifest_count
-                         on manifest_count.resource_id = ${manifestId} and site_id = ${siteId}
+                         on manifest_count.resource_id = ${manifestId} and manifest_count.site_id = ${siteId}
       where manifest.resource_id = ${manifestId}
         and manifest.site_id = ${siteId}
       order by canvas_links.item_index
@@ -178,7 +178,7 @@ export function getManifestList({
            manifest_thumbnail(1, ir.resource_id) as thumbnail,
            canvas_count.item_total as canvas_total
         from canvases 
-            left join iiif_derived_resource_items ir on item_id = canvases.resource_id and site_id = ${siteId}
+            left join iiif_derived_resource_items ir on item_id = canvases.resource_id and ir.site_id = ${siteId}
             left join iiif_resource i on ir.resource_id = i.id
             left join iiif_derived_resource_item_counts canvas_count
                    on canvas_count.resource_id = i.id and canvas_count.site_id = ${siteId}
