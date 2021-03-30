@@ -56,7 +56,6 @@ export function getSingleCollection({
     manifest_thumbnail: string;
     published: boolean;
   }>`
-      with site_counts as (select * from iiif_derived_resource_item_counts where site_id = ${siteId})
       select ${collectionId}::int                                  as collection_id,
              manifest_links.item_id                                as manifest_id,
              canvas_count.item_total                               as manifest_canvas_count,
@@ -73,10 +72,10 @@ export function getSingleCollection({
                         ${manifestExclusion}
                 left join iiif_resource resource
                         on resource.id = manifest_links.item_id
-               left join site_counts canvas_count
-                         on canvas_count.resource_id = manifest_links.item_id
-               left join site_counts manifest_count
-                         on manifest_count.resource_id = ${collectionId}
+               left join iiif_derived_resource_item_counts canvas_count
+                         on canvas_count.resource_id = manifest_links.item_id and canvas_count.site_id = ${siteId}
+               left join iiif_derived_resource_item_counts manifest_count
+                         on manifest_count.resource_id = ${collectionId} and manifest_count.site_id = ${siteId}
 
       where single_collection.site_id = ${siteId}
         and single_collection.resource_id = ${collectionId}
@@ -157,7 +156,6 @@ export function getCollectionList({
     collection_manifest_count: number;
     manifest_thumbnail: string;
   }>`
-    with site_counts as (select * from iiif_derived_resource_item_counts where site_id = ${siteId})
     select collection_id as collection_id,
             manifest_links.item_id as manifest_id,
             manifest_links.type as resource_type,
@@ -178,10 +176,10 @@ export function getCollectionList({
                          where item_index <= 6
                            and type = 'manifest'
                            and site_id = ${siteId}) manifest_links on resource_id = collection_id
-              left join site_counts canvas_count
-                        on canvas_count.resource_id = manifest_links.item_id
-              left join site_counts manifest_count
-                        on manifest_count.resource_id = collection_id
+              left join iiif_derived_resource_item_counts canvas_count
+                        on canvas_count.resource_id = manifest_links.item_id and canvas_count.site_id = ${siteId}
+              left join iiif_derived_resource_item_counts manifest_count
+                        on manifest_count.resource_id = collection_id and manifest_count.site_id = ${siteId}
     `;
 }
 
