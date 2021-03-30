@@ -35,6 +35,7 @@ import { Project } from './pages/crowdsourcing/projects/project';
 import { ProjectModelEditor } from './pages/crowdsourcing/projects/project-model-editor';
 import { CreateCollection } from './pages/content/collections/create-collection';
 import { CreateManifest } from './pages/content/manifests/create-manifest';
+import { SystemStatus } from './pages/system/system-status';
 import { TaskRouter } from './pages/tasks/task-router';
 import { ProjectContent } from './pages/crowdsourcing/projects/project-content';
 import { ProjectMetadata } from './pages/crowdsourcing/projects/project-metadata';
@@ -410,5 +411,10 @@ export const routes: UniversalRoute[] = [
     path: '/i18n/edit/:code',
     exact: true,
     component: EditTranslation,
+  },
+  {
+    path: '/system/status',
+    exact: true,
+    component: SystemStatus,
   },
 ];
