@@ -13,7 +13,7 @@ import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
 import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
 import { Site } from '../types/omeka/Site';
 import { SingleUser } from '../types/omeka/User';
-import { Pm2Status } from "../types/pm2";
+import { Pm2Status } from '../types/pm2';
 import { ProjectConfiguration } from '../types/schemas/project-configuration';
 import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/search';
 import { SearchIndexable } from '../utility/capture-model-to-indexables';
@@ -1682,6 +1682,12 @@ export class ApiClient {
     return this.request<SearchIndexTask>(`/api/search/iiif/${resource.id}`, {
       method: 'PUT',
       body: resource,
+    });
+  }
+
+  async fullSearchIndex() {
+    return this.request<BaseTask>(`/api/madoc/iiif/reindex`, {
+      method: 'POST',
     });
   }
 

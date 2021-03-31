@@ -15,6 +15,7 @@ import { deletePage } from './routes/content/delete-page';
 import { deleteSlot } from './routes/content/delete-slot';
 import { getBlock } from './routes/content/get-block';
 import { getPage } from './routes/content/get-page';
+import { fullReindex } from './routes/search/full-reindex';
 import { sitePageNavigation } from './routes/site/site-page-navigation';
 import { getSlot } from './routes/content/get-slot';
 import { getAllPages } from './routes/content/list-pages';
@@ -228,6 +229,7 @@ export const router = new TypedRouter({
   // Stats.
   'get-statistics': [TypedRouter.GET, '/api/madoc/iiif/statistics', statistics],
   'post-batch-index': [TypedRouter.POST, '/api/madoc/iiif/batch-index', batchIndex],
+  'post-full-index': [TypedRouter.POST, '/api/madoc/iiif/reindex', fullReindex],
   'get-metadata-keys': [TypedRouter.GET, '/api/madoc/iiif/metadata-keys', getMetadataKeys],
   'get-metadata-values': [TypedRouter.GET, '/api/madoc/iiif/metadata-values', getMetadataValues],
 
