@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CloseIcon } from '../../shared/atoms/CloseIcon';
+import { LoadingBlock } from '../../shared/atoms/LoadingBlock';
 import { SearchBox } from '../../shared/atoms/SearchBox';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { LocaleString } from '../../shared/components/LocaleString';
@@ -28,7 +29,7 @@ import { ButtonRow, TinyButton } from '../../shared/atoms/Button';
 
 export const Search: React.FC = () => {
   const { t } = useTranslation();
-  const [{ resolvedData: searchResponse, latestData, isFetching, isLoading }, displayFacets] = useSearch();
+  const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch();
   const { rawQuery, page, fulltext, appliedFacets } = useSearchQuery();
   const {
     project: { showSearchFacetCount },
@@ -113,23 +114,30 @@ export const Search: React.FC = () => {
           })}
         </SearchFilterContainer>
         <div style={{ flex: '1 1 0px' }}>
-          <TotalResults>
-            {t('Found {{count}} results', {
-              count: searchResponse && searchResponse.pagination ? searchResponse.pagination.totalResults : 0,
-            })}
-          </TotalResults>
+          {isLoading && !searchResponse ? (
+            <LoadingBlock />
+          ) : (
+            <TotalResults>
+              {t('Found {{count}} results', {
+                count: searchResponse && searchResponse.pagination ? searchResponse.pagination.totalResults : 0,
+              })}
+            </TotalResults>
+          )}
           <Pagination
             page={page}
             totalPages={latestData && latestData.pagination ? latestData.pagination.totalPages : undefined}
-            stale={isFetching}
+            stale={isLoading}
             extraQuery={rawQuery}
           />
-          {isLoading && <Spinner fill="#000" />}
-          <SearchResults value={fulltext} searchResults={searchResponse ? searchResponse.results : []} />
+          <SearchResults
+            isFetching={isLoading}
+            value={fulltext}
+            searchResults={searchResponse ? searchResponse.results : []}
+          />
           <Pagination
             page={page}
             totalPages={latestData && latestData.pagination ? latestData.pagination.totalPages : undefined}
-            stale={isFetching}
+            stale={isLoading}
             extraQuery={rawQuery}
           />
         </div>

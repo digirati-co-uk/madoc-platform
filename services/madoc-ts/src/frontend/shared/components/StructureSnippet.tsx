@@ -22,6 +22,7 @@ const SnippetStructureContainer = styled.div<{ $alignment?: 'left' | 'right' }>`
 export const SnippetStructure: React.FC<{
   label?: string;
   link: string;
+  hideLabel?: boolean;
   alignment?: 'left' | 'right';
   item: ItemStructureListItem;
 }> = props => {
@@ -33,7 +34,7 @@ export const SnippetStructure: React.FC<{
             <img alt="image thumbnail" src={props.item.thumbnail} />
           </CroppedImage>
         ) : null}
-        {props.label ? props.label : <LocaleString>{props.item.label}</LocaleString>}
+        {props.hideLabel ? null : <>{props.label ? props.label : <LocaleString>{props.item.label}</LocaleString>}</>}
       </HrefLink>
     </SnippetStructureContainer>
   );

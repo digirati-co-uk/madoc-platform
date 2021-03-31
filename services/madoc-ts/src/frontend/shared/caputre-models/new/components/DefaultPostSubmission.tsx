@@ -9,7 +9,7 @@ import { HrefLink } from '../../../utility/href-link';
 
 export const DefaultPostSubmission: React.FC<{ subRoute?: string }> = () => {
   const { t } = useTranslation();
-  const { manifestId, canvasId } = useRouteContext();
+  const { manifestId, canvasId, projectId } = useRouteContext();
   const structure = useManifestStructure(manifestId);
   const createLink = useRelativeLinks();
 
@@ -22,21 +22,36 @@ export const DefaultPostSubmission: React.FC<{ subRoute?: string }> = () => {
   const next = idx < structure.data.items.length - 1 ? structure.data.items[idx + 1] : null;
 
   if (!next) {
-    return <div>{t('Thanks for you submission.')}</div>;
+    return <div>{t('Thanks for you submission')}</div>;
   }
 
   return (
     <div>
-      <SnippetStructure
-        item={next}
-        link={createLink({
-          canvasId: next.id,
-          subRoute: 'model',
-        })}
-      />
-      <Button data-cy="go-to-next-image" as={HrefLink} href={createLink({ canvasId: next.id, subRoute: 'model' })}>
-        {t('Go to next image')}
-      </Button>
+      <div style={{ display: 'flex' }}>
+        <div style={{ flex: '1 1 0px' }}>
+          <h3>{t('Contribution submitted')}</h3>
+          <p>{t('Keep working on this image or move onto next image')}</p>
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          <SnippetStructure
+            hideLabel
+            item={next}
+            link={createLink({
+              canvasId: next.id,
+              subRoute: 'model',
+            })}
+          />
+          <br />
+          <Button
+            data-cy="go-to-next-image"
+            $primary
+            as={HrefLink}
+            href={createLink({ canvasId: next.id, subRoute: 'model' })}
+          >
+            {t('Next image')}
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };

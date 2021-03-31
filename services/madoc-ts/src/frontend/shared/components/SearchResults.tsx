@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { SearchResult } from '../../../types/search';
 import { parseUrn } from '../../../utility/parse-urn';
 import { useRouteContext } from '../../site/hooks/use-route-context';
@@ -10,8 +10,15 @@ import { createLink } from '../utility/create-link';
 import { HrefLink } from '../utility/href-link';
 import { LocaleString } from './LocaleString';
 
-const ResultsContainer = styled.div`
+const ResultsContainer = styled.div<{ $isFetching?: boolean }>`
   flex: 1 1 0px;
+  transition: opacity 0.2s;
+
+  ${props =>
+    props.$isFetching &&
+    css`
+      opacity: 0.4;
+    `}
 `;
 
 export const ResultsHeader = styled.h2`
@@ -117,8 +124,9 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; sea
 export const SearchResults: React.FC<{
   searchResults: Array<SearchResult>;
   value?: string;
-}> = ({ searchResults = [], value }) => (
-  <ResultsContainer>
+  isFetching?: boolean;
+}> = ({ isFetching, searchResults = [], value }) => (
+  <ResultsContainer $isFetching={isFetching}>
     {searchResults.map((result: SearchResult, index: number) => {
       return result ? (
         <SearchItem result={result} key={`${index}__${result.resource_id}`} search={value} size="small" />

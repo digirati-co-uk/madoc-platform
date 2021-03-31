@@ -3,6 +3,7 @@ import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import { useTranslation } from 'react-i18next';
 import { useDetailedSupportLocales } from '../hooks/use-site';
 import Cookies from 'js-cookie';
+import { ArrowDownIcon } from '../icons/ArrowDownIcon';
 import {
   GlobalHeaderMenuContainer,
   GlobalHeaderMenuItem,
@@ -19,9 +20,13 @@ export const LanguageSwitcher: React.FC = () => {
     return null;
   }
 
+  const languageLabel = supported.find(lng => lng.code === i18n.language)?.label || i18n.language;
+
   return (
     <GlobalHeaderMenuContainer>
-      <GlobalHeaderMenuLabel {...buttonProps}>{i18n.language}</GlobalHeaderMenuLabel>
+      <GlobalHeaderMenuLabel {...buttonProps}>
+        {languageLabel} <ArrowDownIcon style={{ fill: '#fff', fontSize: '1em', transform: 'translateY(2px)' }} />
+      </GlobalHeaderMenuLabel>
       <GlobalHeaderMenuList $visible={isOpen} role="menu">
         {supported.map((lng, key) => {
           return (
