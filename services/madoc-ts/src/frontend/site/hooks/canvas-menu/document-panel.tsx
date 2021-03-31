@@ -9,22 +9,37 @@ import { CanvasMenuHook } from './types';
 
 export function useDocumentPanel(): CanvasMenuHook {
   const { projectId, canvasId } = useRouteContext();
-  const { data } = apiHooks.getSiteCanvasPublishedModels(() =>
-    canvasId && projectId
-      ? [canvasId, { project_id: projectId, selectors: true, format: 'capture-model-with-pages' }]
-      : undefined
+  const { data, isLoading } = apiHooks.getSiteCanvasPublishedModels(() =>
+    canvasId ? [canvasId, { project_id: projectId, selectors: true, format: 'capture-model-with-pages' }] : undefined
   );
   const { t } = useTranslation();
   const canvas = data?.canvas;
 
+  const validModels =
+    data && data.models
+      ? data.models.filter((model: any) => {
+          const flatProperties = Object.entries(model.document.properties);
+          return flatProperties.length > 0;
+        })
+      : [];
+
   const content = (
     <>
-      {data && data.models ? (
-        data.models.length ? (
-          data.models.map((model: any) => <ViewDocument key={model.id} document={model.document} />)
+      {data && validModels ? (
+        validModels.length ? (
+          data.models.map((model: any) => {
+            const flatProperties = Object.entries(model.document.properties);
+            if (flatProperties.length === 0) {
+              return null;
+            }
+
+            return <ViewDocument key={model.id} document={model.document} />;
+          })
         ) : (
           <MetadataEmptyState style={{ marginTop: 100 }}>{t('No document yet')}</MetadataEmptyState>
         )
+      ) : !isLoading ? (
+        <MetadataEmptyState style={{ marginTop: 100 }}>{t('No document yet')}</MetadataEmptyState>
       ) : null}
     </>
   );
