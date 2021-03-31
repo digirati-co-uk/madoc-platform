@@ -192,5 +192,5 @@ export function useSearch() {
     return displayList;
   }, [facetDisplayOrder, facetIdMap, searchResponse.resolvedData]);
 
-  return [searchResponse, displayFacets] as const;
+  return [searchResponse, displayFacets, searchFacetConfig.isLoading || searchResponse.isLoading] as const;
 }

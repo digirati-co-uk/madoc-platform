@@ -13,9 +13,10 @@ import { render } from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
 import { BrowserRouter } from 'react-router-dom';
 import { api } from '../../../gateway/api.browser';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { UniversalRoute } from '../../types';
 import { ErrorPage } from '../components/NotFoundPage';
+import { Spinner } from '../icons/Spinner';
 import { ErrorBoundary } from './error-boundary';
 import { queryConfig } from './query-config';
 import { ReactQueryDevtools } from 'react-query-devtools';
@@ -50,7 +51,16 @@ export function renderClient(
       const { basename }: any = propScript ? JSON.parse(propScript.innerText) : {};
 
       render(
-        <ReactQueryConfigProvider config={{ ...queryConfig, ...extraConfig }}>
+        <ReactQueryConfigProvider
+          config={{
+            ...queryConfig,
+            ...extraConfig,
+            queries: {
+              ...(queryConfig.queries || {}),
+              ...(extraConfig.queries || {}),
+            },
+          }}
+        >
           <ReactQueryCacheProvider>
             <Hydrate state={dehydratedState}>
               <I18nextProvider i18n={i18n}>
@@ -58,16 +68,18 @@ export function renderClient(
                   <DndProvider backend={MultiBackend} options={HTML5toTouch}>
                     <ThemeProvider theme={defaultTheme}>
                       <ErrorBoundary onError={error => <ErrorPage error={error} />}>
-                        <Component
-                          jwt={jwt}
-                          api={api}
-                          routes={routes}
-                          siteSlug={slug}
-                          site={dehydratedSite.site}
-                          user={dehydratedSite.user}
-                          supportedLocales={localisations}
-                          defaultLocale={defaultLocale}
-                        />
+                        <Suspense fallback={<Spinner />} unstable_avoidThisFallback={true}>
+                          <Component
+                            jwt={jwt}
+                            api={api}
+                            routes={routes}
+                            siteSlug={slug}
+                            site={dehydratedSite.site}
+                            user={dehydratedSite.user}
+                            supportedLocales={localisations}
+                            defaultLocale={defaultLocale}
+                          />
+                        </Suspense>
                         {process.env.NODE_ENV === 'development' ? <ReactQueryDevtools /> : null}
                       </ErrorBoundary>
                     </ThemeProvider>
