@@ -3,13 +3,16 @@ import { RevisionRequest } from '@capture-models/types';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
+import { useRouteContext } from '../../../../site/hooks/use-route-context';
 import { Button, ButtonRow } from '../../../atoms/Button';
 import { ModalButton } from '../../../components/Modal';
 import { useViewerSaving } from '../../../hooks/use-viewer-saving';
+import { HrefLink } from '../../../utility/href-link';
 import { EditorSlots } from './EditorSlots';
 
 export const DefaultSubmitButton: React.FC<{ afterSave?: (req: RevisionRequest) => void }> = ({ afterSave }) => {
   const { t } = useTranslation();
+  const { projectId } = useRouteContext();
   const currentRevision = Revisions.useStoreState(s => s.currentRevision);
   const deselectRevision = Revisions.useStoreActions(a => a.deselectRevision);
   const updateFunction = useViewerSaving(afterSave);
@@ -56,9 +59,18 @@ export const DefaultSubmitButton: React.FC<{ afterSave?: (req: RevisionRequest) 
           footerAlignRight
           renderFooter={({ close }) => {
             return isSuccess ? (
-              <Button data-cy="close-add-another" onClick={close}>
-                {t('Close and keep working')}
-              </Button>
+              <>
+                <ButtonRow $noMargin>
+                  {projectId ? (
+                    <Button data-cy="back-to-project" as={HrefLink} href={`/projects/${projectId}`}>
+                      {t('Back to project')}
+                    </Button>
+                  ) : null}
+                  <Button data-cy="close-add-another" onClick={close}>
+                    {t('Close and keep working')}
+                  </Button>
+                </ButtonRow>
+              </>
             ) : (
               <ButtonRow $noMargin>
                 <Button

@@ -9,7 +9,7 @@ import { HrefLink } from '../../../utility/href-link';
 
 export const DefaultPostSubmission: React.FC<{ subRoute?: string }> = () => {
   const { t } = useTranslation();
-  const { manifestId, canvasId } = useRouteContext();
+  const { manifestId, canvasId, projectId } = useRouteContext();
   const structure = useManifestStructure(manifestId);
   const createLink = useRelativeLinks();
 
