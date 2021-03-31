@@ -16,6 +16,7 @@ import { LanguageSwitcher } from '../atoms/LanguageSwitcher';
 import { useStaticData } from '../hooks/use-data';
 import { useLocationQuery } from '../hooks/use-location-query';
 import { useUser } from '../hooks/use-site';
+import { ArrowDownIcon } from '../icons/ArrowDownIcon';
 import { HrefLink } from '../utility/href-link';
 import { isAdmin } from '../utility/user-roles';
 
@@ -107,11 +108,14 @@ export const UserBar: React.FC<{
             </GlobalHeaderMenuLabel>
           </GlobalHeaderMenuContainer>
         ) : null}
+
         <LanguageSwitcher />
 
         {user ? (
           <GlobalHeaderMenuContainer>
-            <GlobalHeaderMenuLabel {...buttonProps}>{user.name}</GlobalHeaderMenuLabel>
+            <GlobalHeaderMenuLabel {...buttonProps}>
+              {user.name} <ArrowDownIcon style={{ fill: '#fff', fontSize: '1em', transform: 'translateY(2px)' }} />
+            </GlobalHeaderMenuLabel>
             <GlobalHeaderMenuList $visible={isOpen} role="menu">
               {admin ? (
                 <>
