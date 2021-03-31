@@ -15,6 +15,7 @@ import { CanvasSimpleEditor } from '../features/CanvasSimpleEditor';
 import { CanvasTaskWarningMessage } from '../features/CanvasTaskWarningMessage';
 import { CanvasViewer } from '../features/CanvasViewer';
 import { PrepareCaptureModel } from '../features/PrepareCaptureModel';
+import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useRouteContext } from '../hooks/use-route-context';
@@ -32,6 +33,9 @@ export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({ canvas }) => {
   const user = useCurrentUser(true);
   const { goToNext } = useLocationQuery<any>();
   const shouldGoToNext = castBool(goToNext);
+  const {
+    project: { hideCanvasThumbnailNavigation = false },
+  } = useSiteConfiguration();
 
   const canContribute =
     user &&
@@ -66,13 +70,15 @@ export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({ canvas }) => {
             <CanvasViewer>
               <CanvasImageViewer />
             </CanvasViewer>
-            <CanvasNavigation
-              subRoute="model"
-              manifestId={manifestId}
-              canvasId={canvasId}
-              collectionId={collectionId}
-              projectId={projectId}
-            />
+            {hideCanvasThumbnailNavigation ? null : (
+              <CanvasNavigation
+                subRoute="model"
+                manifestId={manifestId}
+                canvasId={canvasId}
+                collectionId={collectionId}
+                projectId={projectId}
+              />
+            )}
           </>
         ) : null}
       </div>
