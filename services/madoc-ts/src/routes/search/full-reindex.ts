@@ -20,7 +20,7 @@ export const fullReindex: RouteMiddleware = async context => {
 
   const task = await userApi.newTask({
     type: 'full-reindex',
-    status: 3,
+    status: 2,
     name: 'Full search reindex',
     subject: `urn:madoc:site:${siteId}`,
   });
