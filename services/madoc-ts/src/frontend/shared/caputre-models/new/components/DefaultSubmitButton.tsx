@@ -38,7 +38,7 @@ export const DefaultSubmitButton: React.FC<{ afterSave?: (req: RevisionRequest) 
       <ButtonRow>
         <ModalButton
           autoHeight
-          modalSize="lg"
+          modalSize={isSuccess ? 'sm' : 'lg'}
           title={t('Submit for review')}
           render={() => {
             return isSuccess ? <EditorSlots.PostSubmission /> : <EditorSlots.PreviewSubmission />;
@@ -57,7 +57,7 @@ export const DefaultSubmitButton: React.FC<{ afterSave?: (req: RevisionRequest) 
           renderFooter={({ close }) => {
             return isSuccess ? (
               <Button data-cy="close-add-another" onClick={close}>
-                {t('Close and add another')}
+                {t('Close and keep working')}
               </Button>
             ) : (
               <ButtonRow $noMargin>

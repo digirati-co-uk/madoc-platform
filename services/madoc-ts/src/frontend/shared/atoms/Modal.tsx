@@ -73,7 +73,7 @@ export const ModalBody = styled.div`
   background: #fff;
   padding: 1em;
   overflow-y: auto;
-  min-height: 300px;
+  min-height: 230px;
 `;
 
 export const ModalFooter = styled.div<{ $footerAlignRight?: boolean }>`
