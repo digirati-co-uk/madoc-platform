@@ -16,7 +16,7 @@ export const listCollections: RouteMiddleware<{ page: number }> = async context 
 
   const collectionCount = 5;
   const page = Number(context.query.page) || 1;
-  const onlyPublished = context.query.published ? castBool(context.query.published) : true;
+  const onlyPublished = context.query.published ? castBool(context.query.published) : false;
   const { total = 0 } = await context.connection.one(
     countResources({
       resource_type: 'collection',
@@ -43,6 +43,8 @@ export const listCollections: RouteMiddleware<{ page: number }> = async context 
       }
     )
   );
+
+  console.log({ total, rows, onlyPublished, query: context.query });
 
   const table = mapCollectionSnippets(rows);
 
