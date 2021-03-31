@@ -29,7 +29,7 @@ export function countResources({
       where cidr.resource_type = ${resource_type} 
       and cidr.site_id = ${site_id}
       ${showFlat ? SQL_EMPTY : sql`and cidr.flat = false`}
-      ${onlyPublished ? SQL_EMPTY : sql`and cidr.published = true`}
+      ${onlyPublished ? sql`and cidr.published = true` : SQL_EMPTY}
       and cidri.resource_id = ${parent_id}
   `;
   }
@@ -45,7 +45,7 @@ export function countResources({
       and im.resource_id is not null
       and iiif_derived_resource.site_id = ${site_id}
       ${showFlat ? SQL_EMPTY : sql`and flat = false`}
-      ${onlyPublished ? SQL_EMPTY : sql`and published = true`}
+      ${onlyPublished ? sql`and published = true` : SQL_EMPTY}
   `;
   }
 
@@ -55,7 +55,7 @@ export function countResources({
       where resource_type = ${resource_type} 
       and site_id = ${site_id}
       ${showFlat ? SQL_EMPTY : sql`and flat = false`}
-      ${onlyPublished ? SQL_EMPTY : sql`and published = true`}
+      ${onlyPublished ? sql`and published = true` : SQL_EMPTY}
   `;
 }
 
