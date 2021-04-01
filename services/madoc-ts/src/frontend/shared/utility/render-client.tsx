@@ -78,6 +78,7 @@ export function renderClient(
                             user={dehydratedSite.user}
                             supportedLocales={localisations}
                             defaultLocale={defaultLocale}
+                            navigationOptions={dehydratedSite.navigationOptions}
                           />
                         </Suspense>
                         {process.env.NODE_ENV === 'development' ? <ReactQueryDevtools /> : null}

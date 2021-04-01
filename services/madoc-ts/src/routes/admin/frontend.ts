@@ -1,3 +1,4 @@
+import { sql } from 'slonik';
 import { render as renderAdmin } from '../../frontend/admin/server';
 import { render as renderSite } from '../../frontend/site/server';
 import { createBackend } from '../../middleware/i18n/i18next.server';
@@ -74,6 +75,13 @@ export const siteFrontend: RouteMiddleware = async context => {
   const { cachedApi, site } = context.state;
   const siteLocales = await cachedApi(`locales`, 3000, api => api.getSiteLocales());
 
+  const collectionsEnabled = await context.connection.maybeOne(
+    sql`select id from iiif_derived_resource where resource_type = 'collection' and flat = false and site_id = ${site.id} limit 1`
+  );
+  const projectsEnabled = await context.connection.maybeOne(
+    sql`select id from iiif_project where status = 1 and site_id = ${site.id} limit 1`
+  );
+
   if (!site) {
     throw new NotFound();
   }
@@ -96,6 +104,10 @@ export const siteFrontend: RouteMiddleware = async context => {
               scope: context.state.jwt.scope,
             }
           : undefined,
+      navigationOptions: {
+        enableCollections: !!collectionsEnabled,
+        enableProjects: !!projectsEnabled,
+      },
     });
 
     if (result.type === 'redirect') {

@@ -7,6 +7,10 @@ const SiteReactContext = React.createContext<
       user?: { id: number; name: string; scope: string[] };
       supportedLocales: Array<{ code: string; label: string }>;
       defaultLocale: string;
+      navigationOptions: {
+        enableProjects?: boolean;
+        enableCollections?: boolean;
+      };
     }
   | undefined
 >(undefined);
@@ -21,6 +25,17 @@ export const useUser = () => {
   const details = useContext(SiteReactContext);
 
   return details?.user;
+};
+
+export const useNavigationOptions = () => {
+  const details = useContext(SiteReactContext);
+
+  return (
+    details?.navigationOptions || {
+      enableProjects: true,
+      enableCollections: true,
+    }
+  );
 };
 
 export const useDetailedSupportLocales = () => {
