@@ -4,4 +4,5 @@ export type CanvasMenuHook = {
   isLoaded: boolean;
   icon: JSX.Element;
   content: JSX.Element;
+  isHidden?: boolean;
 };
