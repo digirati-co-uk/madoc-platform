@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { BaseTask } from '../../../gateway/tasks/base-task';
 import { parseUrn } from '../../../utility/parse-urn';
 import { Button, SmallButton } from '../../shared/atoms/Button';
 import { GridContainer, ThirdGrid } from '../../shared/atoms/Grid';
@@ -13,6 +14,25 @@ import { useRelativeLinks } from '../hooks/use-relative-links';
 const PrimaryButtonLink: React.FC<any> = props => {
   return <Button as={HrefLink} $primary {...props} />;
 };
+
+function firstNTasksWithUniqueSubjects(tasks: BaseTask[], count: number) {
+  const toReturn: BaseTask[] = [];
+  const subjects: string[] = [];
+  for (const task of tasks) {
+    if (subjects.indexOf(task.subject) !== -1) {
+      continue;
+    }
+
+    subjects.push(task.subject);
+    toReturn.push(task);
+
+    if (toReturn.length === count) {
+      return toReturn;
+    }
+  }
+
+  return toReturn;
+}
 
 export const ProjectContributionButton: React.FC = () => {
   const { t } = useTranslation();
@@ -28,7 +48,7 @@ export const ProjectContributionButton: React.FC = () => {
   }
 
   if (currentTasks && currentTasks.length) {
-    const firstThree = currentTasks.slice(0, 3);
+    const firstThree = firstNTasksWithUniqueSubjects(currentTasks, 3);
     return (
       <>
         <Heading3 $margin>{t('Continue where you left off')}</Heading3>
@@ -59,7 +79,7 @@ export const ProjectContributionButton: React.FC = () => {
   }
 
   if (tasksInReview && tasksInReview.length) {
-    const firstThree = tasksInReview.slice(0, 3);
+    const firstThree = firstNTasksWithUniqueSubjects(tasksInReview, 3);
 
     return (
       <>
