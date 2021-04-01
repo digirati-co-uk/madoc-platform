@@ -33,6 +33,7 @@ describe('document to default structure', () => {
         "hideManifestMetadataOnCanvas",
         "hideCanvasThumbnailNavigation",
         "showSearchFacetCount",
+        "miradorCanvasPage",
       ]
     `);
   });
