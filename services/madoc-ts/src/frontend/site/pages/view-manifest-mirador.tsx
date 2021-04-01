@@ -1,15 +1,52 @@
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { Mirador } from '../../shared/viewers/mirador.lazy';
 import { useApi } from '../../shared/hooks/use-api';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { useRouteContext } from '../hooks/use-route-context';
 
-export const ViewManifestMirador: React.FC = () => {
+export const ViewManifestMirador: React.FC<{
+  canvasUrl?: string;
+  hideNavigation?: boolean;
+  onChangeCanvas?: (manifest: string, canvas: string) => void;
+  onChangeManifest?: (manifest: string) => void;
+}> = ({ canvasUrl, hideNavigation, onChangeCanvas, onChangeManifest }) => {
   const { manifestId } = useRouteContext();
 
   const api = useApi();
   const slug = api.getSiteSlug();
+
+  const config = useMemo(() => {
+    return {
+      id: 'demo',
+      windows: [
+        {
+          id: 'window-1',
+          imageToolsEnabled: true,
+          allowClose: false,
+          allowMaximize: false,
+          sideBarOpenByDefault: true,
+          manifestId: `/s/${slug}/madoc/api/manifests/${manifestId}/export/source`,
+          canvasId: canvasUrl,
+        },
+      ],
+      workspaceControlPanel: {
+        enabled: false,
+      },
+      theme: {
+        palette: {
+          primary: {
+            main: '#333',
+          },
+          shades: {
+            dark: '#ffffff',
+            main: '#ffffff',
+            light: '#fffff',
+          },
+        },
+      },
+    };
+  }, [manifestId, slug]);
 
   if (api.getIsServer() || !manifestId) {
     return null;
@@ -19,35 +56,13 @@ export const ViewManifestMirador: React.FC = () => {
     <div>
       <DisplayBreadcrumbs />
       <div style={{ position: 'relative', height: '80vh' }}>
+        {hideNavigation ? <style>{`.mirador-osd-navigation { display: none }`}</style> : null}
         <React.Suspense fallback={<div>loading...</div>}>
           <Mirador
-            config={{
-              id: 'demo',
-              windows: [
-                {
-                  imageToolsEnabled: true,
-                  allowClose: false,
-                  allowMaximize: false,
-                  sideBarOpenByDefault: true,
-                  manifestId: `/s/${slug}/madoc/api/manifests/${manifestId}/export/source`,
-                },
-              ],
-              workspaceControlPanel: {
-                enabled: false,
-              },
-              theme: {
-                palette: {
-                  primary: {
-                    main: '#333',
-                  },
-                  shades: {
-                    dark: '#ffffff',
-                    main: '#ffffff',
-                    light: '#fffff',
-                  },
-                },
-              },
-            }}
+            canvasId={canvasUrl}
+            onChangeCanvas={onChangeCanvas}
+            onChangeManifest={onChangeManifest}
+            config={config}
             viewerConfig={{}}
           />
         </React.Suspense>

@@ -142,4 +142,9 @@ export const siteConfigurationModel: {
     type: 'checkbox-field',
     inlineLabel: 'Show number of matches manifests in search facets',
   },
+  miradorCanvasPage: {
+    label: 'Use Mirador on canvas page',
+    type: 'checkbox-field',
+    inlineLabel: 'Use Mirador in place of the default viewer',
+  },
 };

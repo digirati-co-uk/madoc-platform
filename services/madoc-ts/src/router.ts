@@ -15,7 +15,9 @@ import { deletePage } from './routes/content/delete-page';
 import { deleteSlot } from './routes/content/delete-slot';
 import { getBlock } from './routes/content/get-block';
 import { getPage } from './routes/content/get-page';
+import { getCanvasReference } from './routes/iiif/canvases/get-canvas-reference';
 import { fullReindex } from './routes/search/full-reindex';
+import { siteCanvasSource } from './routes/site/site-canvas-reference';
 import { sitePageNavigation } from './routes/site/site-page-navigation';
 import { getSlot } from './routes/content/get-slot';
 import { getAllPages } from './routes/content/list-pages';
@@ -215,6 +217,7 @@ export const router = new TypedRouter({
   'search-index-canvas': [TypedRouter.POST, '/api/madoc/iiif/canvases/:id/index', indexCanvas],
   'convert-linking-property': [TypedRouter.POST, '/api/madoc/iiif/linking/:id/convert', convertLinking],
   'get-canvas-plaintext': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/plaintext', getCanvasPlaintext],
+  'get-canvas-source': [TypedRouter.GET, '/api/madoc/iiif/canvas-source', getCanvasReference],
 
   // Import API
   'import-manifest': [TypedRouter.POST, '/api/madoc/iiif/import/manifest', importManifest],
@@ -308,6 +311,7 @@ export const router = new TypedRouter({
     '/s/:slug/madoc/api/projects/:projectSlug/canvas-models/:canvasId',
     siteCanvasModels,
   ],
+  'site-canvas-source': [TypedRouter.GET, '/s/:slug/madoc/api/canvas-source', siteCanvasSource],
   'site-canvas-tasks': [
     TypedRouter.GET,
     '/s/:slug/madoc/api/projects/:projectSlug/canvas-tasks/:canvasId',

@@ -25,7 +25,8 @@
     "searchStrategy": "websearch",
     "hideManifestMetadataOnCanvas": false,
     "hideCanvasThumbnailNavigation": false,
-    "showSearchFacetCount": false
+    "showSearchFacetCount": false,
+    "miradorCanvasPage": false
   },
   "permissions": {
     "admin": [

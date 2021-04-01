@@ -874,6 +874,10 @@ export class ApiClient {
     return this.request<CanvasFull>(`/api/madoc/iiif/canvases/${id}`);
   }
 
+  async getCanvasSource(source: string) {
+    return this.request<{ id: number }>(`/api/madoc/iiif/canvas-source?source_id=${source}`);
+  }
+
   async getCanvasManifests(id: number, query?: { project_id?: number }) {
     return this.request<{ manifests: number[] }>(
       `/api/madoc/iiif/canvases/${id}/manifests${query ? `?${stringify(query)}` : ''}`
@@ -1805,6 +1809,12 @@ export class ApiClient {
   // Public API.
   async getSiteCanvas(id: number, query?: import('../routes/site/site-canvas').SiteCanvasQuery) {
     return this.publicRequest<CanvasFull>(`/madoc/api/canvases/${id}`, query);
+  }
+
+  async getSiteCanvasSource(source: string) {
+    return this.publicRequest<{ id: number }>(`/madoc/api/canvas-source`, {
+      source_id: source,
+    });
   }
 
   async getSiteCollection(id: number, query?: import('../routes/site/site-collection').SiteCollectionQuery) {
