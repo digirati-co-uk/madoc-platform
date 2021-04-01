@@ -11,6 +11,7 @@ import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { CanvasHighlightedRegions } from '../features/CanvasHighlightedRegions';
 import { CanvasImageViewer } from '../features/CanvasImageViewer';
 import { CanvasManifestNavigation } from '../features/CanvasManifestNavigation';
+import { CanvasMiradorViewer } from '../features/CanvasMiradorViewer';
 import { CanvasViewer } from '../features/CanvasViewer';
 import { ContinueCanvasSubmission } from '../features/ContinueCanvasSubmission';
 import { ManifestMetadata } from '../features/ManifestMetadata';
@@ -21,6 +22,7 @@ import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
 import { CanvasLoaderType } from './loaders/canvas-loader';
+import { ViewManifestMirador } from './view-manifest-mirador';
 
 type ViewCanvasProps = Partial<CanvasLoaderType['data'] & CanvasLoaderType['context']>;
 
@@ -33,7 +35,7 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({ project, canvas, manifes
   const { goToNext } = useLocationQuery<any>();
   const shouldGoToNext = castBool(goToNext);
   const {
-    project: { hideManifestMetadataOnCanvas = false, hideCanvasThumbnailNavigation = false },
+    project: { hideManifestMetadataOnCanvas = false, hideCanvasThumbnailNavigation = false, miradorCanvasPage = false },
   } = useSiteConfiguration();
 
   if (shouldGoToNext) {
@@ -61,9 +63,13 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({ project, canvas, manifes
             </InfoMessage>
           ) : null}
 
-          <CanvasViewer>
-            <CanvasImageViewer />
-          </CanvasViewer>
+          {miradorCanvasPage ? (
+            <CanvasMiradorViewer />
+          ) : (
+            <CanvasViewer>
+              <CanvasImageViewer />
+            </CanvasViewer>
+          )}
         </>
       ) : null}
 

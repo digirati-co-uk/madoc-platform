@@ -91,7 +91,7 @@ export function createTask({
   warningTime?: number;
 }): CrowdsourcingTask {
   return {
-    name: `User contributions to "${taskName}"`,
+    name: `${name || 'User'}: submission ${taskName}`,
     type,
     subject,
     subject_parent: parentSubject,
@@ -100,7 +100,7 @@ export function createTask({
       name,
     },
     status: 0,
-    status_text: 'not started',
+    status_text: revisionId || reviewId ? 'not started' : 'assigned',
     state: {
       reviewTask: reviewId,
       revisionId,

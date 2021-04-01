@@ -1,3 +1,4 @@
+import { CaptureModel } from '@capture-models/types';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { MetadataEmptyState } from '../../../shared/atoms/MetadataConfiguration';
@@ -27,13 +28,19 @@ export function useDocumentPanel(): CanvasMenuHook {
     <>
       {data && validModels ? (
         validModels.length ? (
-          data.models.map((model: any) => {
+          data.models.map((model: CaptureModel) => {
+            const incompleteRevisions = (model.revisions || [])
+              .filter(rev => {
+                return !rev.approved;
+              })
+              .map(rev => rev.id);
+
             const flatProperties = Object.entries(model.document.properties);
             if (flatProperties.length === 0) {
               return null;
             }
 
-            return <ViewDocument key={model.id} document={model.document} />;
+            return <ViewDocument key={model.id} document={model.document} filterRevisions={incompleteRevisions} />;
           })
         ) : (
           <MetadataEmptyState style={{ marginTop: 100 }}>{t('No document yet')}</MetadataEmptyState>

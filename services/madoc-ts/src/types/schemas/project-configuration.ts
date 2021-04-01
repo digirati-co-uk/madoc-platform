@@ -23,4 +23,5 @@ export type ProjectConfiguration = {
   hideManifestMetadataOnCanvas?: boolean;
   hideCanvasThumbnailNavigation?: boolean;
   showSearchFacetCount?: boolean;
+  miradorCanvasPage?: boolean;
 };

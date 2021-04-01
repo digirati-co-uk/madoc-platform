@@ -74,7 +74,7 @@ export const getAllTasks: RouteMiddleware = async context => {
   const taskPagination = sql`limit ${perPage} offset ${offset}`;
   const detail = !!context.query.detail;
   const detailedFields = detail
-    ? sql`, t.assignee_name, t.parameters, t.assignee_id, t.subject, t.subject_parent, t.parent_task, t.modified_at, t.state`
+    ? sql`, t.assignee_name, t.parameters, t.assignee_id, t.subject, t.subject_parent, t.root_task, t.parent_task, t.modified_at, t.state`
     : sql``;
   const orderBy = sortByNewest ? sql`order by t.modified_at asc` : sql`order by t.modified_at desc`;
 

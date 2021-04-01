@@ -13,6 +13,7 @@ export function useContinueSubmission() {
   return useMemo(() => {
     let inProgress = 0;
     let completed = 0;
+    let assigned = 0;
     const tasks = config.project.claimGranularity === 'canvas' ? canvasTasks?.userTasks : manifestTasks.inProgress;
 
     const allModels =
@@ -20,7 +21,11 @@ export function useContinueSubmission() {
         ? tasks.filter(task => {
             if (user && task.assignee?.id === `urn:madoc:user:${user.id}` && task.type === 'crowdsourcing-task') {
               if (task.status !== -1 && task.status !== 3 && task.status !== 2) {
-                inProgress++;
+                if (task.status_text === 'assigned') {
+                  assigned++;
+                } else {
+                  inProgress++;
+                }
               }
               if (task.status === 3) {
                 completed++;
@@ -34,6 +39,7 @@ export function useContinueSubmission() {
     return {
       tasks: allModels,
       inProgress,
+      assigned,
       completed,
       loaded: !!tasks,
     };
