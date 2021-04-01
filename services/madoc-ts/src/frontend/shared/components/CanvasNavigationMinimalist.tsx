@@ -90,7 +90,7 @@ export const CanvasNavigationMinimalist: React.FC<{
         <PaginationText>
           {t('Page {{page}} of {{count}}', {
             page: idx + 1,
-            count: structure.data.items.length > 1 ? structure.data.items.length + 1 : 1,
+            count: structure.data.items.length > 1 ? structure.data.items.length : 1,
           })}
         </PaginationText>
       }
