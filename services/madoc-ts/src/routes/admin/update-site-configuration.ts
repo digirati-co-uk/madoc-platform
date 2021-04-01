@@ -57,6 +57,8 @@ export const updateSiteConfiguration: RouteMiddleware<{}, Partial<ProjectConfigu
 
   // Is it the same context?
   const isEqual =
+    oldConfiguration &&
+    oldConfiguration.scope &&
     oldConfiguration.scope.length === configRequest.length &&
     oldConfiguration.scope.every(val => configRequest.includes(val));
 
