@@ -12,7 +12,7 @@ import { useRouteContext } from '../hooks/use-route-context';
 export const CanvasModelUserStatus: React.FC<{ isEditing?: boolean }> = ({ isEditing }) => {
   const { t } = useTranslation();
   const { projectId, canvasId } = useRouteContext();
-  const { inProgress, completed, loaded } = useContinueSubmission();
+  const { inProgress, completed, assigned, loaded } = useContinueSubmission();
   const relativeLink = useRelativeLinks();
 
   if (!loaded || !canvasId || !projectId) {
@@ -28,6 +28,10 @@ export const CanvasModelUserStatus: React.FC<{ isEditing?: boolean }> = ({ isEdi
         </Button>
       </InfoMessage>
     );
+  }
+
+  if (assigned) {
+    return <InfoMessage>{t('You have been assigned this image')}</InfoMessage>;
   }
 
   if (inProgress) {
