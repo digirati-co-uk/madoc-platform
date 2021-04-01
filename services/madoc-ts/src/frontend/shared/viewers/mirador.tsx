@@ -16,13 +16,15 @@ import { miradorImageToolsPlugin } from 'mirador-image-tools';
 
 const Mirador: React.FC<{
   config: any;
-  viewerConfig: any;
+  viewerConfig?: any;
   maximised?: string;
   canvasId?: string;
   onChangeCanvas?: (manifest: string, canvas: string) => void;
   onChangeManifest?: (manifest: string) => void;
-}> = ({ config = {}, viewerConfig = miradorImageToolsPlugin, onChangeCanvas, onChangeManifest, canvasId }) => {
-  const plugins = useMemo(() => filterValidPlugins(viewerConfig.plugins || []), [viewerConfig.plugins]);
+}> = ({ config = {}, viewerConfig = {}, onChangeCanvas, onChangeManifest, canvasId }) => {
+  const plugins = useMemo(() => {
+    return filterValidPlugins([...(viewerConfig.plugins || []), miradorImageToolsPlugin]);
+  }, [viewerConfig.plugins]);
   const store = useMemo(
     () => viewerConfig.store || createStore(getReducersFromPlugins(plugins), getSagasFromPlugins(plugins)),
     [plugins, viewerConfig.store]

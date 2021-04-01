@@ -57,7 +57,6 @@ function Mirador(props: Props) {
               },
             },
           }}
-          viewerConfig={{}}
         />
       </div>
     </ErrorBoundary>
