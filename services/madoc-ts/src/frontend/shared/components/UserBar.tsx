@@ -93,13 +93,15 @@ export const UserBar: React.FC<{
   return (
     <>
       <UserBarContainer>
-        {showAdmin && admin ? (
-          <UserBarAdminButton as={HrefLink} href={`/`}>
-            {t('Site admin')}
-          </UserBarAdminButton>
-        ) : (
-          <UserBarAdminButton href={`/s/${site.slug}/madoc/admin`}>{t('Site admin')}</UserBarAdminButton>
-        )}
+        {showAdmin ? (
+          admin ? (
+            <UserBarAdminButton as={HrefLink} href={`/`}>
+              {t('Site admin')}
+            </UserBarAdminButton>
+          ) : (
+            <UserBarAdminButton href={`/s/${site.slug}/madoc/admin`}>{t('Site admin')}</UserBarAdminButton>
+          )
+        ) : null}
         <UserBarExpander />
         {showAdmin && !admin ? (
           <GlobalHeaderMenuContainer>
