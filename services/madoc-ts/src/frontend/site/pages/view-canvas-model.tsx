@@ -66,20 +66,19 @@ export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({ canvas }) => {
         )}
 
         {showCanvasNavigation ? (
-          <>
-            <CanvasViewer>
-              <CanvasImageViewer />
-            </CanvasViewer>
-            {hideCanvasThumbnailNavigation ? null : (
-              <CanvasNavigation
-                subRoute="model"
-                manifestId={manifestId}
-                canvasId={canvasId}
-                collectionId={collectionId}
-                projectId={projectId}
-              />
-            )}
-          </>
+          <CanvasViewer>
+            <CanvasImageViewer />
+          </CanvasViewer>
+        ) : null}
+
+        {!hideCanvasThumbnailNavigation && showCanvasNavigation ? (
+          <CanvasNavigation
+            subRoute="model"
+            manifestId={manifestId}
+            canvasId={canvasId}
+            collectionId={collectionId}
+            projectId={projectId}
+          />
         ) : null}
       </div>
     );
@@ -110,7 +109,7 @@ export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({ canvas }) => {
         </CanvasViewer>
       ) : null}
 
-      {showCanvasNavigation ? (
+      {!hideCanvasThumbnailNavigation && showCanvasNavigation ? (
         <CanvasNavigation
           subRoute="model"
           manifestId={manifestId}
