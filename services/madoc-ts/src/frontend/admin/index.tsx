@@ -32,12 +32,16 @@ const AdminApp: React.FC<AdminAppProps> = ({ api, routes, site, user, supportedL
   return (
     <div lang={i18n.language} dir={viewingDirection}>
       <SiteProvider
-        value={useMemo(() => ({ site, user, supportedLocales, defaultLocale }), [
-          site,
-          user,
-          supportedLocales,
-          defaultLocale,
-        ])}
+        value={useMemo(
+          () => ({
+            site,
+            user,
+            supportedLocales,
+            defaultLocale,
+            navigationOptions: { enableProjects: true, enableCollections: true },
+          }),
+          [site, user, supportedLocales, defaultLocale]
+        )}
       >
         <GlobalStyles />
         <UserBar site={site} user={user} admin />
