@@ -13,15 +13,21 @@ export const DefaultTopLevelEditor: EditorRenderingConfig['TopLevelEditor'] = ()
 
   if (!currentView || currentView.type === 'model') {
     if (state.revisionSubtreeField && !isEntity(state.revisionSubtreeField)) {
-      return <EditorSlots.ViewField key={state.currentRevisionId || undefined} />;
+      return (
+        <EditorSlots.EditorWrapper>
+          <EditorSlots.ViewField key={state.currentRevisionId || undefined} />
+        </EditorSlots.EditorWrapper>
+      );
     }
 
     if (state.revisionSubtree && isEntity(state.revisionSubtree)) {
       return (
-        <EditorSlots.ViewEntity
-          key={state.currentRevisionId || undefined}
-          showTitle={state.revisionSubtreePath.length > 0}
-        />
+        <EditorSlots.EditorWrapper>
+          <EditorSlots.ViewEntity
+            key={state.currentRevisionId || undefined}
+            showTitle={state.revisionSubtreePath.length > 0}
+          />
+        </EditorSlots.EditorWrapper>
       );
     }
   }
