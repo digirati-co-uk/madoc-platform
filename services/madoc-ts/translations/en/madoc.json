@@ -380,5 +380,6 @@
   "{{count}} manifests": "{{count}} manifest",
   "{{count}} manifests_plural": "{{count}} manifests",
   "{{count}} more": "{{count}} more",
-  "{{count}} more_plural": "{{count}} more"
+  "{{count}} more_plural": "{{count}} more",
+  "You have been assigned this image": "You have been assigned this image"
 }
