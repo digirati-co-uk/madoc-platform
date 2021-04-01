@@ -45,16 +45,19 @@ export const CanvasViewer: React.FC = ({ children }) => {
             return (
               <NavIconContainer
                 key={menuItem.id}
-                $active={menuItem.id === openPanel && isOpen}
+                $active={!menuItem.isHidden && menuItem.id === openPanel && isOpen}
                 data-tip={menuItem.label}
+                $disabled={menuItem.isHidden}
                 onClick={() => {
-                  if (isOpen && menuItem.id === openPanel) {
-                    setIsOpen(false);
-                  } else {
-                    setIsOpen(true);
-                    setOpenPanel(menuItem.id as any);
-                    if (refs.resizableDiv.current) {
-                      refs.resizableDiv.current.scrollTop = 0;
+                  if (!menuItem.isHidden) {
+                    if (isOpen && menuItem.id === openPanel) {
+                      setIsOpen(false);
+                    } else {
+                      setIsOpen(true);
+                      setOpenPanel(menuItem.id as any);
+                      if (refs.resizableDiv.current) {
+                        refs.resizableDiv.current.scrollTop = 0;
+                      }
                     }
                   }
                 }}
@@ -65,7 +68,7 @@ export const CanvasViewer: React.FC = ({ children }) => {
           })}
         </LayoutSidebarMenu>
         <LayoutContainer ref={refs.container as any}>
-          {currentMenuItem && isOpen ? (
+          {currentMenuItem && isOpen && !currentMenuItem.isHidden ? (
             <LayoutSidebar ref={refs.resizableDiv as any} style={{ width: widthB }}>
               {currentMenuItem.content}
             </LayoutSidebar>

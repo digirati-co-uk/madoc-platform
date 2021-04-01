@@ -16,7 +16,7 @@ export const OuterLayoutContainer = styled.div`
   min-width: 0;
 `;
 
-export const NavIconContainer = styled.div<{ $active?: boolean }>`
+export const NavIconContainer = styled.div<{ $active?: boolean; $disabled?: boolean }>`
   &:hover {
     background: #eee;
   }
@@ -42,6 +42,19 @@ export const NavIconContainer = styled.div<{ $active?: boolean }>`
       }
       &:hover {
         background: #4a64e1;
+      }
+    `}
+
+  ${props =>
+    props.$disabled &&
+    css`
+      background: transparent;
+      cursor: not-allowed;
+      svg {
+        fill: #ccc;
+      }
+      &:hover {
+        background: transparent;
       }
     `}
 `;

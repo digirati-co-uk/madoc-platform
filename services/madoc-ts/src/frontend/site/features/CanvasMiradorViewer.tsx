@@ -33,5 +33,5 @@ export const CanvasMiradorViewer: React.FC<{ annotationPages?: AnnotationPage[] 
     return null;
   }
 
-  return <ViewManifestMirador canvasUrl={canvasUrl} onChangeCanvas={onChangeCanvas} />;
+  return <ViewManifestMirador hideBreadcrumbs canvasUrl={canvasUrl} onChangeCanvas={onChangeCanvas} />;
 };

@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import { InternationalString } from '@hyperion-framework/types';
 import { useTranslation } from 'react-i18next';
+import { MetadataEmptyState } from '../atoms/MetadataConfiguration';
 import { LocaleString } from './LocaleString';
 import { FacetConfig } from './MetadataFacetEditor';
 
@@ -128,7 +129,8 @@ export const MetaDataDisplay: React.FC<{
   labelStyle?: 'muted' | 'bold' | 'caps' | 'small-caps';
   labelWidth?: number;
   bordered?: boolean;
-}> = ({ metadata = [], config, variation = 'table', labelWidth = 16, bordered, labelStyle }) => {
+  showEmptyMessage?: boolean;
+}> = ({ metadata = [], config, variation = 'table', labelWidth = 16, bordered, labelStyle, showEmptyMessage }) => {
   const { t } = useTranslation();
   const metadataKeyMap = useMemo(() => {
     const flatKeys = (config || []).reduce((state, i) => {
@@ -149,6 +151,12 @@ export const MetaDataDisplay: React.FC<{
     }
     return map;
   }, [config, metadata]);
+
+  const isEmpty = Object.keys(metadataKeyMap).length === 0;
+
+  if (isEmpty && showEmptyMessage) {
+    return <MetadataEmptyState style={{ marginTop: 100 }}>{t('No manifest metadata')}</MetadataEmptyState>;
+  }
 
   if (config && config.length) {
     return (

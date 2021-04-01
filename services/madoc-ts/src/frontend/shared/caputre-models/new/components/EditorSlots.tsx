@@ -4,6 +4,7 @@ import { useCurrentEntity } from '../hooks/use-current-entity';
 import { DefaultAdjacentNavigation } from './DefaultAdjacentNavigation';
 import { DefaultBreadcrumbs } from './DefaultBreadcrumbs';
 import { DefaultChoice } from './DefaultChoice';
+import { DefaultEditorWrapper } from './DefaultEditorWrapper';
 import { DefaultInlineEntity } from './DefaultInlineEntity';
 import { DefaultInlineField } from './DefaultInlineField';
 import { DefaultInlineProperties } from './DefaultInlineProperties';
@@ -27,6 +28,7 @@ export type EditorRenderingConfig = {
   SingleField: React.FC;
   AdjacentNavigation: React.FC;
   ManagePropertyList: React.FC<{ property: string; type: 'field' | 'entity' }>; // Fallbacks passed in
+  EditorWrapper: React.FC;
   InlineProperties: React.FC<{
     property: string;
     canInlineField?: boolean;
@@ -87,6 +89,7 @@ const Context = React.createContext<EditorRenderingConfig>({
   SubmitButton: DefaultSubmitButton,
   PreviewSubmission: DefaultPreviewSubmission,
   PostSubmission: DefaultPostSubmission,
+  EditorWrapper: DefaultEditorWrapper,
 });
 
 export function useSlotContext() {
@@ -193,6 +196,12 @@ const PreviewSubmission: React.FC = props => {
   return <Slots.PreviewSubmission>{props.children}</Slots.PreviewSubmission>;
 };
 
+const EditorWrapper: React.FC = props => {
+  const Slots = useSlotContext();
+
+  return <Slots.EditorWrapper>{props.children}</Slots.EditorWrapper>;
+};
+
 const PostSubmission: React.FC = props => {
   const Slots = useSlotContext();
 
@@ -212,4 +221,5 @@ export const EditorSlots = {
   SubmitButton,
   PreviewSubmission,
   PostSubmission,
+  EditorWrapper,
 };

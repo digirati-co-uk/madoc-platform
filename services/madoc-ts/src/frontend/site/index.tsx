@@ -20,19 +20,38 @@ export type SiteAppProps = {
   site: PublicSite;
   supportedLocales: Array<{ label: string; code: string }>;
   defaultLocale: string;
+  navigationOptions?: {
+    enableProjects: boolean;
+    enableCollections: boolean;
+  };
 };
 
-const SiteApp: React.FC<SiteAppProps> = ({ api, site, user, supportedLocales, defaultLocale, routes }) => {
+const SiteApp: React.FC<SiteAppProps> = ({
+  api,
+  site,
+  user,
+  supportedLocales,
+  defaultLocale,
+  routes,
+  navigationOptions = {
+    enableProjects: true,
+    enableCollections: true,
+  },
+}) => {
   return (
     <ThemeProvider theme={defaultTheme}>
       <VaultProvider>
         <SiteProvider
-          value={useMemo(() => ({ site, user, supportedLocales, defaultLocale }), [
-            site,
-            user,
-            supportedLocales,
-            defaultLocale,
-          ])}
+          value={useMemo(
+            () => ({
+              site,
+              user,
+              supportedLocales,
+              defaultLocale,
+              navigationOptions,
+            }),
+            [site, user, supportedLocales, defaultLocale, navigationOptions]
+          )}
         >
           <ApiContext.Provider value={api}>{renderUniversalRoutes(routes)}</ApiContext.Provider>
         </SiteProvider>

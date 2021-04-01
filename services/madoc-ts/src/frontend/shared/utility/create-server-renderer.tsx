@@ -27,6 +27,7 @@ export function createServerRenderer(
     user?: { name: string; id: number; scope: string[] };
     supportedLocales: Array<{ label: string; code: string }>;
     defaultLocale: string;
+    navigationOptions?: any;
   }>,
   routes: UniversalRoute[],
   apiGateway: string,
@@ -41,6 +42,7 @@ export function createServerRenderer(
     site,
     siteLocales,
     user,
+    navigationOptions,
   }: {
     url: string;
     basename: string;
@@ -50,6 +52,10 @@ export function createServerRenderer(
     site?: PublicSite | Promise<PublicSite | undefined>;
     user?: { name: string; id: number; scope: string[] };
     siteLocales: ListLocalisationsResponse;
+    navigationOptions?: {
+      enableProjects: boolean;
+      enableCollections: boolean;
+    };
   }) {
     const prefetchCache = makeQueryCache();
     const sheet = new ServerStyleSheet(); // <-- creating out stylesheet
@@ -88,6 +94,7 @@ export function createServerRenderer(
         user,
         locales: supportedLocales,
         defaultLocale: siteLocales.defaultLanguage || 'en',
+        navigationOptions: navigationOptions,
       })}</script>
       <script type="application/json" id="react-query-cache">${JSON.stringify(dehydratedState)}</script>
     `;
@@ -114,6 +121,7 @@ export function createServerRenderer(
                       user={user}
                       defaultLocale={siteLocales.defaultLanguage || 'en'}
                       supportedLocales={supportedLocales}
+                      navigationOptions={navigationOptions}
                     />
                   </ThemeProvider>
                 </StaticRouter>

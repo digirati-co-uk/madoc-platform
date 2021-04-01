@@ -21,7 +21,9 @@ export const BackToChoicesButton: React.FC = () => {
       <ButtonRow $noMargin style={{ padding: '0.5em' }}>
         <Button
           onClick={() => {
-            pop();
+            for (let i = 0; i < idStack.length; i++) {
+              pop();
+            }
             deselectRevision({ revisionId: currentRevisionId });
           }}
         >

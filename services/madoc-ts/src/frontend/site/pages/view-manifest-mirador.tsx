@@ -8,9 +8,10 @@ import { useRouteContext } from '../hooks/use-route-context';
 export const ViewManifestMirador: React.FC<{
   canvasUrl?: string;
   hideNavigation?: boolean;
+  hideBreadcrumbs?: boolean;
   onChangeCanvas?: (manifest: string, canvas: string) => void;
   onChangeManifest?: (manifest: string) => void;
-}> = ({ canvasUrl, hideNavigation, onChangeCanvas, onChangeManifest }) => {
+}> = ({ canvasUrl, hideNavigation, hideBreadcrumbs, onChangeCanvas, onChangeManifest }) => {
   const { manifestId } = useRouteContext();
 
   const api = useApi();
@@ -23,6 +24,7 @@ export const ViewManifestMirador: React.FC<{
         {
           id: 'window-1',
           imageToolsEnabled: true,
+          imageToolsOpen: false,
           allowClose: false,
           allowMaximize: false,
           sideBarOpenByDefault: true,
@@ -54,7 +56,7 @@ export const ViewManifestMirador: React.FC<{
 
   return (
     <div>
-      <DisplayBreadcrumbs />
+      {hideBreadcrumbs ? null : <DisplayBreadcrumbs />}
       <div style={{ position: 'relative', height: '80vh' }}>
         {hideNavigation ? <style>{`.mirador-osd-navigation { display: none }`}</style> : null}
         <React.Suspense fallback={<div>loading...</div>}>
