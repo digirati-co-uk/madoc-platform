@@ -1,7 +1,8 @@
 import { FieldPreview } from '@capture-models/editor';
-import { filterRevises, isEntityList } from '@capture-models/helpers';
+import { filterRevises, isEntityList, traverseDocument } from '@capture-models/helpers';
 import { BaseField, CaptureModel } from '@capture-models/types';
-import React from 'react';
+import deepmerge from 'deepmerge';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { MetadataEmptyState } from '../../atoms/MetadataConfiguration';
@@ -68,16 +69,18 @@ const renderFieldList = (fields: BaseField[]) => {
     return null;
   }
 
+  const filteredFields = filterRevises(fields) as BaseField[];
+
   // @todo filter revisions, but this time add the revisions to the fields
 
   return (
     <FieldPreviewWrapper>
-      {fields.map(field => (field.value ? <FieldPreview key={field.id} field={field} /> : null))}
+      {filteredFields.map(field => (field.value ? <FieldPreview key={field.id} field={field} /> : null))}
     </FieldPreviewWrapper>
   );
 };
 
-const renderEntityList = (entities: CaptureModel['document'][]) => {
+const renderEntityList = (entities: CaptureModel['document'][], filterRevisions: string[] = []) => {
   return (
     <>
       {entities.map(entity => {
@@ -91,7 +94,11 @@ const renderEntityList = (entities: CaptureModel['document'][]) => {
             <DocumentEntityList>
               {flatInnerProperties.map(([key, field]) => {
                 // eslint-disable-next-line
-              return <DocumentCollapse key={key}>{renderProperty(field)}</DocumentCollapse>;
+                const rendered = renderProperty(field, filterRevisions);
+                if (!rendered) {
+                  return null;
+                }
+                return <DocumentCollapse key={key}>{rendered}</DocumentCollapse>;
               })}
             </DocumentEntityList>
           </div>
@@ -101,12 +108,14 @@ const renderEntityList = (entities: CaptureModel['document'][]) => {
   );
 };
 
-const renderProperty = (fields: BaseField[] | CaptureModel['document'][]) => {
+const renderProperty = (fields: BaseField[] | CaptureModel['document'][], filterRevisions: string[] = []) => {
   const label = fields[0].label;
-  const filteredFields = filterRevises(fields);
+  const filteredFields = filterRevises(fields).filter(f => {
+    return !f.revision || filterRevisions.indexOf(f.revision) === -1;
+  });
   const description = fields[0].description;
   const renderedProperties = isEntityList(filteredFields)
-    ? renderEntityList(filteredFields)
+    ? renderEntityList(filteredFields, filterRevisions)
     : renderFieldList(filteredFields as any);
 
   if (!renderedProperties) {
@@ -124,7 +133,10 @@ const renderProperty = (fields: BaseField[] | CaptureModel['document'][]) => {
   );
 };
 
-export const ViewDocument: React.FC<{ document: CaptureModel['document'] }> = ({ document }) => {
+export const ViewDocument: React.FC<{ document: CaptureModel['document']; filterRevisions?: string[] }> = ({
+  document,
+  filterRevisions = [],
+}) => {
   const { t } = useTranslation();
   // ✅ Label (plural label / labelled by)
   // ✅ Description
@@ -155,13 +167,21 @@ export const ViewDocument: React.FC<{ document: CaptureModel['document'] }> = ({
     return <MetadataEmptyState style={{ marginTop: 100 }}>{t('No document yet')}</MetadataEmptyState>;
   }
 
+  const rendered = flatProperties
+    .map(([key, field]) => {
+      return renderProperty(field, filterRevisions);
+    })
+    .filter(r => r !== null);
+
+  if (rendered.length === 0) {
+    return <MetadataEmptyState style={{ marginTop: 100 }}>{t('No document yet')}</MetadataEmptyState>;
+  }
+
   return (
     <div style={{ padding: 20 }}>
       <h3>{document.label}</h3>
       <p>{document.description}</p>
-      {flatProperties.map(([key, field]) => {
-        return <React.Fragment key={key}>{renderProperty(field)}</React.Fragment>;
-      })}
+      {rendered}
     </div>
   );
 };
