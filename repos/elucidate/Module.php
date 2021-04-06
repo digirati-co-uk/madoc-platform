@@ -22,6 +22,7 @@ use ElucidateModule\Subscriber\FlaggingNotificationSubscriber;
 use ElucidateModule\Subscriber\FlaggingSubscriber;
 use ElucidateModule\Subscriber\TaggingSubscriber;
 use ElucidateModule\Subscriber\TranscriptionSubscriber;
+use ElucidateModule\Subscriber\UserBookmarksSubscriber;
 use ElucidateModule\View\CanvasView;
 use ElucidateModule\View\ManifestView;
 use Omeka\Module\AbstractModule;
@@ -100,6 +101,7 @@ class Module extends AbstractModule
                 $serviceContainer->get(CreatedTimestampSubscriber::class),
                 $serviceContainer->get(FlaggingNotificationSubscriber::class),
                 $serviceContainer->get(AnnotationModerationSubscriber::class),
+                $serviceContainer->get(UserBookmarksSubscriber::class),
             ];
 
             foreach ($subscribers as $subscriber) {

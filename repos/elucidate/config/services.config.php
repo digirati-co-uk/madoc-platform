@@ -16,6 +16,7 @@ use ElucidateModule\Domain\Topics\TopicType;
 use ElucidateModule\Domain\Topics\TopicTypeRepository;
 use ElucidateModule\Domain\ViewEventSubscriber;
 use ElucidateModule\Mapping\OmekaItemMapper;
+use ElucidateModule\Service\SearchClient;
 use ElucidateModule\Service\TacsiClient;
 use ElucidateModule\Site\BlockLayout\LatestAnnotations;
 use ElucidateModule\Subscriber\AnnotationModerationSubscriber;
@@ -28,6 +29,7 @@ use ElucidateModule\Subscriber\FlaggingNotificationSubscriber;
 use ElucidateModule\Subscriber\FlaggingSubscriber;
 use ElucidateModule\Subscriber\TaggingSubscriber;
 use ElucidateModule\Subscriber\TranscriptionSubscriber;
+use ElucidateModule\Subscriber\UserBookmarksSubscriber;
 use ElucidateModule\View\CanvasView;
 use ElucidateModule\View\ManifestView;
 use GuzzleHttp\HandlerStack;
@@ -55,6 +57,13 @@ return [
             EventDispatcher::class => EventDispatcherFactory::class,
 
             // Everything else.
+            SearchClient::class => function (ContainerInterface $c) {
+                return new SearchClient(
+                    getenv('OMEKA__SEARCH_SERVICE'),
+                    $c->get('Omeka\Connection'),
+                    $c->get(UrlHelper::class)
+                );
+            },
             ElucidateAnnotationMapper::class => function (ContainerInterface $c) {
                 return new ElucidateAnnotationMapper(
                     $c->get('Omeka\ApiManager'),
@@ -80,6 +89,11 @@ return [
             },
             ElucidateModuleConfiguration::class => function ($c) {
                 return new ElucidateModuleConfiguration($c->get('Config'));
+            },
+            UserBookmarksSubscriber::class => function (ContainerInterface $c) {
+                return new UserBookmarksSubscriber(
+                    $c->get(SearchClient::class)
+                );
             },
             ViewEventSubscriber::class => function () {
                 return new ViewEventSubscriber();

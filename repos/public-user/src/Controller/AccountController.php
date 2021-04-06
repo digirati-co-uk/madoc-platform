@@ -7,6 +7,8 @@ use Doctrine\ORM\EntityManager;
 use Omeka\Settings\Settings;
 use PublicUser\Stats\AnnotationStatisticsService;
 use PublicUser\Stats\BookmarksService;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Omeka\Form\UserForm;
@@ -26,17 +28,23 @@ class AccountController extends AbstractActionController
      * @var Settings
      */
     private $settings;
+    /**
+     * @var EventDispatcher
+     */
+    private $eventDispatcher;
 
     public function __construct(
         EntityManager $entityManager,
         AnnotationStatisticsService $statistics,
         BookmarksService $bookmarks,
-        Settings $settings
+        Settings $settings,
+        EventDispatcher $eventDispatcher
     ) {
         $this->entityManager = $entityManager;
         $this->statistics = $statistics;
         $this->bookmarks = $bookmarks;
         $this->settings = $settings;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function profileAction()
@@ -48,9 +56,7 @@ class AccountController extends AbstractActionController
         }
 
         $uid = $user->getId();
-
-        // @todo this will not work until the query is join from Items
-//        $bookmarks = $this->bookmarks->getBookmarks($uid);
+        $bookmarks = $this->bookmarks->getBookmarks($uid);
         $stats = $this->statistics->getUserStats($uid);
 
         $view = new ViewModel();
@@ -150,7 +156,13 @@ class AccountController extends AbstractActionController
 
         $view->setVariable('form', $form);
         $view->setVariable('user', $user);
+        $view->setVariable('messages', $this->messenger()->get());
+        $view->setVariable('canvases', $bookmarks);
         $view->setVariable('statistics', $statistics);
+
+        $this->eventDispatcher->dispatch('user.profile', new GenericEvent($view, [
+            'user' => $user,
+        ]));
 
         return $view;
     }

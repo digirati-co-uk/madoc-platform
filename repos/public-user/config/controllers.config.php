@@ -42,7 +42,8 @@ return [
                     $c->get('Omeka\EntityManager'),
                     $c->get(AnnotationStatisticsService::class),
                     $c->get(BookmarksService::class),
-                    $c->Get('Omeka\Settings')
+                    $c->Get('Omeka\Settings'),
+                    $c->get(EventDispatcher::class)
                 );
             },
             UserProfileController::class => function (ContainerInterface $c) {

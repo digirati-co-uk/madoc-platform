@@ -22,6 +22,7 @@ services:
       - OMEKA__SEARCH_ELASTICSEARCH=search-elasticsearch:9200
       - OMEKA__ANNOTATION_ES_INDEX=jane-annotations
       - OMEKA__SEARCH_INDEXER=search-indexer:8000
+      - OMEKA__SEARCH_SERVICE=search-founda:8000
     ports:
       - "8888:80"
     volumes:
@@ -79,7 +80,7 @@ services:
       - 9204:9201
 
   search-founda:
-    image: digirati/jane-founda:d0e7610dc15073e85fce20ee42215e192b16907b
+    image: digirati/jane-founda:bcdab7a2c77388f5be5995a0e3fbbc8c13aa67fc
     environment:
       - WORKERS=2
       - search_annotation_index=jane-annotations
@@ -93,7 +94,7 @@ services:
 
   search-indexer:
     container_name: search-indexer
-    image: digirati/madoc-indexer:c26e42ad8b8e721d20d254e5214679498868518d
+    image: digirati/madoc-indexer:6d29685681be404861aa745a39ec3b21a5fb13c2
     environment:
       - WORKERS=2
       - search_annotation_index=jane-annotations

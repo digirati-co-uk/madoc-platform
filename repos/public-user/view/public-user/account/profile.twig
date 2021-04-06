@@ -2,41 +2,191 @@
 {% set theForm = form.prepare() %}
 {% set sectionNavs = {'user-information': translate('User information'), 'change-password': translate('Password')} %}
 
-
-
-{{ pageTitle(translate('Edit User: {user}')|replace({'{user}': user.getName()})) | raw }}
-{{ trigger('view.edit.before') }}
-{{ form().openTag(form) | raw }}
-    {{ sectionNav(sectionNavs, 'view.edit.section_nav' ) }}
-
-    {{ trigger('view.edit.form.before', {'form': form }) }}
-
-{% if statistics %}
-    <div class="c-collection__statistics">
-        <div class="c-statistics">
-            {% for statistic in statistics %}
-                <dl class="c-statistic c-statistic--sm">
-                    <dt>{{ statistic.label }}</dt>
-                    <dd>{{ statistic.value }}</dd>
-                </dl>
+{% if(messages) %}
+    <div class="c-alerts c-alerts--secondary">
+        <ul class="c-alerts__list">
+            {% for messageList in messages %}
+                {% for message in messageList %}
+                    <li>{{ message }}</li>
+                {% endfor %}
             {% endfor %}
-        </div>
+        </ul>
     </div>
 {% endif %}
 
-<fieldset id="user-information" class="section active">
-    {{ formCollection(form.get('user-information'), false) }}
-</fieldset>
-<fieldset id="change-password" class="section">
-    {{ formCollection(form.get('change-password'), false) }}
-</fieldset>
 
+{{ trigger('view.edit.before') }}
+{{ form().openTag(form) | raw }}
 
-{{ trigger('view.edit.form.after', {'form': form }) }}
-<div id="page-actions">
-    <button type="submit">{{ translate('Save') }}</button>
+{{ '<form method="POST" name="userForm" id="userForm">' | raw }}
+<div class="c-dig-grid c-form">
+    <div class="c-dig-grid__col--12">
+        <h1>{{ pageTitle(translate('My account')) | raw }}</h1>
+    </div>
+    <div class="c-dig-grid__col--6">
+        {{ trigger('view.edit.form.before', {'form': form }) }}
+        <fieldset id="user-information" class="section active">
+            <legend class="h3">{{ translate('User information') }}</legend>
+            <p>
+                {{ translate('Change your basic information here, you can follow the link to update your full profile.') }}
+                <a href="{{ url('site/publicuser-profile-info', {}, true) }}">Edit full profile</a>
+            </p>
+            {{ formCollection(form.get('user-information'), false) }}
+        </fieldset>
+        <div id="page-actions">
+            <button type="submit" class="c-button c-button--primary">{{ translate('Save details') }}</button>
+        </div>
+    </div>
+    <div class="c-dig-grid__col--6">
+        <fieldset id="change-password" class="section">
+            <legend class="h3">{{ translate('Change password') }}</legend>
+            <p>{{ translate('If you would like to change your password please enter a new password here, otherwise leave blank.') }}</p>
+            {{ formCollection(form.get('change-password'), false) }}
+        </fieldset>
+
+        {{ trigger('view.edit.form.after', {'form': form }) }}
+        <div id="page-actions">
+            <button type="submit" class="c-button c-button--primary">{{ translate('Save new password') }}</button>
+        </div>
+    </div>
 </div>
+<div class="c-dig-grid c-form">
+    <div class="c-dig-grid__col--12  c-dig-grid__col--last">
 
-{{ formElement(form.get('csrf')) }}
+        {% if(statistics) %}
+            <h2>Your statistics</h2>
+
+            <div class="c-collection__statistics">
+                <div class="c-statistics">
+                    {% for statistic in statistics %}
+                        <dl class="c-statistic c-statistic--sm">
+                            <dt>{{ statistic.label }}</dt>
+                            <dd>{{ statistic.value }}</dd>
+                        </dl>
+                    {% endfor %}
+                </div>
+            </div>
+
+        {% endif %}
+
+    </div>
+</div>
 {{ form().closeTag()| raw }}
-{{ trigger('view.edit.after') }}
+    {{ trigger('view.edit.after') }}
+
+    {% if manifest.getCanvases() %}
+        <div class="c-divider"></div>
+        <h2 class="h2">Your annotated images</h2>
+        <div class="c-statistics  ">
+            <dl class="c-statistic c-statistic--sm ">
+                <dt>Images</dt>
+                <dd>78</dd>
+            </dl>
+        </div>
+        <div class="c-dig-grid ">
+            {% for canvas in manifest.getCanvases() %}
+                <div class="c-dig-grid__col--3">
+                    <div class="c-thumbnail c-thumbnail--sm">
+                        {% if(canvas.omekaId) %}
+                            <a href="{{ url('site/iiif-view-canvas-view', { 'site-slug': slug, manifest: manifest.omekaId, canvas: canvas.omekaId }) }}"
+                               class="c-image__src">
+                                <img src="{{ canvas.smallThumbnail }}" alt="{{ canvas.thumbnailAlt }}" height="400"/>
+                            </a>
+                        {% else %}
+                            <div class="c-image__src">
+                                <img src="{{ canvas.smallThumbnail }}" alt="{{ canvas.thumbnailAlt }}" height="400"/>
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% if(canvas.omekaId) %}
+                        <a href="{{ url('site/iiif-view-canvas-view', { 'site-slug': slug, manifest: manifest.omekaId, canvas: canvas.omekaId }) }}"
+                        >
+                            {{ canvas.label }}
+                        </a>
+                    {% else %}
+                        <div>
+                            {{ canvas.label }}
+                        </div>
+                    {% endif %}
+                    <p class="muted">
+                        {# TO BE ADDED BY ELUCIDATE #}
+                        {% if(manifest.totalViews) %}
+                            ,{{ manifest.totalViews }} views
+                        {% endif %}
+
+                        {% if(canvas.showStatistics) %}
+                            {% if(annotationTotal) %}
+                                ,{{ canvas.annotationTotal }} comments
+                            {% endif %}
+                        {% endif %}
+                    </p>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if collection.getManifests() %}
+        <div class="c-divider"></div>
+        <h2 class="h2">Your collections</h2>
+        <div class="c-dig-grid c-dig-grid--md">
+            {% for userCollection in collection.getManifests() %}
+                <div class="c-dig-grid__col--6">
+                    <div class="c-thumbnail c-thumbnail--sm">
+                        <a href="{{ url('site/iiif-view-manifest-view', { 'site-slug': slug, manifest: userCollection.omekaId }) }}">
+                            {% for thumbnail in userCollection.getThumbnails()[:1] %}
+                                <img src="{{ thumbnail }}" height="400"/>
+                            {% endfor %}
+                        </a>
+                    </div>
+                    <p>
+                        <a href="{{ url('site/iiif-view-manifest-view', { 'site-slug': slug, manifest: userCollection.omekaId }) }}">
+                            {{ userCollection.getLabel() }}
+                        </a> by
+                        <a href="view_profile.html">{{ userCollection.getUser() }}</a> {# <span class="muted">added {{ userCollection.created()|time_elapsed_string }}</span> #}
+                    </p>
+                    <p class="muted">
+                        {{ userCollection.getThumbnails() |length }} images
+
+                        {# TO BE ADDED BY ELUCIDATE #}
+                        {% if(userCollection.totalViews) %}
+                            ,{{ userCollection.totalViews }} views
+                        {% endif %}
+
+                        {# TO BE ADDED BY ELUCIDATE #}
+                        {% if(userCollection.totalDiscussions) %}
+                            ,{{ userCollection.totalDiscussions }} discussions
+                        {% endif %}
+                    </p>
+                </div>
+
+            {% endfor %}
+
+
+        </div>
+    {% endif %}
+
+{% if(userBookmarks) %}
+    <h3>Your bookmarks</h3>
+    <section class="c-main__tiles c-grid-flex">
+        {% for result in userBookmarks.searchResults %}
+            <div class="c-grid-flex__thirds">
+                <div class="c-image">
+                    <div class="c-image__container">
+                        <a class="c-image__src" href="/s/ida/iiif/manifest/{{ result.omekaId }}">
+                            <img src="{{ result.thumbnail }}"/>
+                        </a>
+                    </div>
+                    <div class="c-image__label">
+                        <a href="/s/ida/iiif/manifest/{{ result.omekaId }}">{{ result.label }}</a>
+                        {% if result.canvases %}
+                            <br/>
+                            <span style="background: #E08A70; padding: 3px; color: #fff; display: inline-block">{{ result.canvases }} bookmarked page{% if result.canvases|length > 1 %}s{% endif %}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </section>
+{% else %}
+    <h4>No bookmarks</h4>
+{% endif %}
