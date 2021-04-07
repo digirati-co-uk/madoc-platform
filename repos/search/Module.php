@@ -67,6 +67,25 @@ class Module extends AbstractModule implements ConfigProviderInterface
                     $mainSiteUri = new Uri($mainSite);
 
                     if (!$annotation['generator'] || !$annotationIndexer) {
+                        $annotationId = $annotation['id'];
+                        $annotationUri = new Uri($annotationId);
+                        if ($annotationUri->getHost() === $mainSiteUri->getHost() && $internalAnnotationServer) {
+                            $annotationUri->setHost($internalAnnotationServerUri->getHost());
+                            $annotationUri->setPort($internalAnnotationServerUri->getPort());
+                            $annotationUri->setScheme($internalAnnotationServerUri->getScheme());
+                        }
+
+                        $url = new Uri($annotationIndexer);
+                        $url->setPath('/index-annotation');
+                        $url->setQuery([
+                            'annotation' => $annotationUri->toString(),
+                        ]);
+                        try {
+                            $client = new Client();
+                            $client->get($url->toString());
+                        } catch (\Throwable $e) {
+                            error_log($e->getMessage());
+                        }
                         return;
                     }
 
