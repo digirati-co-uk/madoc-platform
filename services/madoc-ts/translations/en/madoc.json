@@ -189,6 +189,7 @@
   "No contributions yet": "No contributions yet",
   "No document yet": "No document yet",
   "No items to process": "No items to process",
+  "No manifest metadata": "No manifest metadata",
   "No menu": "No menu",
   "No metadata to display": "No metadata to display",
   "No options": "No options",
@@ -300,6 +301,7 @@
   "You are editing another users submission": "You are editing another users submission",
   "You have already completed this item": "You have already completed this item",
   "You have already completed this manifest": "You have already completed this manifest",
+  "You have been assigned this image": "You have been assigned this image",
   "You have previously started working on this image": "You have previously started working on this image",
   "Your contribution may expire": "Your contribution may expire",
   "Your contribution may expire soon": "Your contribution may expire soon",
@@ -380,6 +382,5 @@
   "{{count}} manifests": "{{count}} manifest",
   "{{count}} manifests_plural": "{{count}} manifests",
   "{{count}} more": "{{count}} more",
-  "{{count}} more_plural": "{{count}} more",
-  "You have been assigned this image": "You have been assigned this image"
+  "{{count}} more_plural": "{{count}} more"
 }

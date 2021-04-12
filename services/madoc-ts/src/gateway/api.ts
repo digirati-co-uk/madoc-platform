@@ -1659,7 +1659,9 @@ export class ApiClient {
         })
       )
     ).catch(err => {
-      console.log(err);
+      if (err && (!err.status || err.status !== 404)) {
+        console.log(err);
+      }
     });
   }
 
