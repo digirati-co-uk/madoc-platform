@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { UniversalComponent } from '../../../types';
 import { useState } from 'react';
 import React from 'react';
@@ -39,6 +40,7 @@ const PreviewCollection: React.FC<{ id: string }> = props => {
 };
 
 export const ImportCollection: UniversalComponent<{}> = () => {
+  const { t } = useTranslation();
   const [collectionUrl, setCollectionUrl] = useState('');
   const [collectionId, setCollectionId] = useState('');
 
@@ -51,7 +53,7 @@ export const ImportCollection: UniversalComponent<{}> = () => {
         value={collectionUrl}
         onChange={e => setCollectionUrl(e.currentTarget.value)}
       />
-      <button onClick={() => setCollectionId(collectionUrl)}>Choose</button>
+      <button onClick={() => setCollectionId(collectionUrl)}>{t('Choose')}</button>
       <VaultProvider>{collectionId ? <PreviewCollection id={collectionId} /> : null}</VaultProvider>
     </div>
   );

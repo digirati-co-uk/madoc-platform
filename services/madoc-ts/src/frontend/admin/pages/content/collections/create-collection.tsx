@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { GridContainer, HalfGird } from '../../../../shared/atoms/Grid';
 import { Heading3, Subheading3 } from '../../../../shared/atoms/Heading3';
-import { useDefaultLocale, useSupportedLocales } from "../../../../shared/hooks/use-site";
+import { useDefaultLocale, useSupportedLocales } from '../../../../shared/hooks/use-site';
+import { isLanguageStringEmpty } from '../../../../shared/utility/is-language-string-empty';
 import { MetadataEditor } from '../../../molecules/MetadataEditor';
 import { SmallButton } from '../../../../shared/atoms/Button';
 import { Input, InputContainer, InputLabel } from '../../../../shared/atoms/Input';
@@ -24,7 +25,7 @@ export const CreateCollection: React.FC = () => {
   } = useTranslation();
   const [isCreating, setIsCreating] = useState(false);
   const [collectionToAdd, setCollectionToAdd] = useState<{ label: InternationalString }>({
-    label: { [language || 'none']: [''] },
+    label: { [language || 'none']: ['Untitled collection'] },
   });
   const api = useApi();
   const history = useHistory();
@@ -80,8 +81,8 @@ export const CreateCollection: React.FC = () => {
         ) : (
           <GridContainer>
             <HalfGird>
-              <Heading3>Create new</Heading3>
-              <Subheading3>Add a new empty collection and start adding IIIF manifests to it.</Subheading3>
+              <Heading3>{t('Create new collection')}</Heading3>
+              <Subheading3>{t('Add a new empty collection and start adding IIIF manifests to it')}</Subheading3>
               <MetadataEditor
                 disabled={isCreating}
                 fields={collectionToAdd.label}
@@ -90,8 +91,11 @@ export const CreateCollection: React.FC = () => {
                 defaultLocale={defaultLocale}
                 availableLanguages={supportedLocales}
               />
-              <SmallButton disabled={collectionToAdd && isCreating} onClick={() => createCollection(collectionToAdd)}>
-                Create collection
+              <SmallButton
+                disabled={isLanguageStringEmpty(collectionToAdd.label) || isCreating}
+                onClick={() => createCollection(collectionToAdd)}
+              >
+                {t('Create collection')}
               </SmallButton>
             </HalfGird>
             <HalfGird>
