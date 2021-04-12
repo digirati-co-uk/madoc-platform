@@ -767,7 +767,7 @@ export class ApiClient {
     });
   }
 
-  async getManifestCollections(id: number, query?: { project_id?: number }) {
+  async getManifestCollections(id: number, query?: { project_id?: number, flat?: boolean }) {
     return this.request<{ collections: number[] }>(
       `/api/madoc/iiif/manifests/${id}/collections${query ? `?${stringify(query)}` : ''}`
     );

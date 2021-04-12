@@ -5,6 +5,7 @@ import { CollectionView } from './pages/content/collections/collection';
 import { ConfigureLanguages } from './pages/content/internationalisation/configure-languages';
 import { EditTranslation } from './pages/content/internationalisation/edit-translation';
 import { ViewCanvasLinking } from './pages/content/linking/view-linking';
+import { ManifestCollections } from './pages/content/manifests/manifest-collections';
 import { MetadataConfigurationPage } from './pages/content/metadata-configuration';
 import { CreateNewPage } from './pages/content/page-blocks/create-new-page';
 import { ListPages } from './pages/content/page-blocks/list-pages';
@@ -167,6 +168,11 @@ export const routes: UniversalRoute[] = [
         path: '/manifests/:id/projects',
         exact: true,
         component: ManifestProjects,
+      },
+      {
+        path: '/manifests/:id/collections',
+        exact: true,
+        component: ManifestCollections,
       },
       {
         path: '/manifests/:id/delete',
