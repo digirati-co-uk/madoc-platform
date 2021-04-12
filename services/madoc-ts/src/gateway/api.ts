@@ -781,12 +781,16 @@ export class ApiClient {
     return this.request<GetMetadata>(`/api/madoc/iiif/manifests/${id}/metadata`);
   }
 
-  async autocompleteManifests(q: string) {
-    return this.request<Array<{ id: number; label: string }>>(`/api/madoc/iiif/autocomplete/manifests?q=${q}`);
+  async autocompleteManifests(q: string, project_id?: string) {
+    return this.request<Array<{ id: number; label: string }>>(
+      `/api/madoc/iiif/autocomplete/manifests?${stringify({ q, project_id })}`
+    );
   }
 
-  async autocompleteCollections(q: string) {
-    return this.request<Array<{ id: number; label: string }>>(`/api/madoc/iiif/autocomplete/collections?q=${q}`);
+  async autocompleteCollections(q: string, project_id?: string) {
+    return this.request<Array<{ id: number; label: string }>>(
+      `/api/madoc/iiif/autocomplete/collections?${stringify({ q, project_id })}`
+    );
   }
 
   async getCanvasMetadata(id: number) {

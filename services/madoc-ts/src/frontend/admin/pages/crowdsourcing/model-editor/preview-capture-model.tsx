@@ -1,5 +1,6 @@
 import React, { Suspense } from 'react';
 import { Revisions, useCaptureModel } from '@capture-models/editor';
+import { useParams } from 'react-router-dom';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { ContentExplorer } from '../../../../shared/components/ContentExplorer';
 import { TinyButton } from '../../../../shared/atoms/Button';
@@ -13,6 +14,7 @@ export const PreviewCaptureModel: React.FC<{
   document: CaptureModel['document'];
   revisionNumber: number;
 }> = ({ document, structure, revisionNumber }) => {
+  const { id } = useParams<{ id: string }>();
   const captureModel = useCaptureModel();
   const api = useApi();
 
@@ -23,6 +25,7 @@ export const PreviewCaptureModel: React.FC<{
         <div style={{ display: 'flex', flexDirection: 'row' }}>
           <div style={{ width: '67%' }}>
             <ContentExplorer
+              projectId={id}
               renderChoice={(canvasId, reset) => (
                 <Suspense fallback={<>Loading</>}>
                   <div>

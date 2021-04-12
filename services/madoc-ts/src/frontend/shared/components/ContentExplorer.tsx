@@ -121,7 +121,8 @@ export const URLContextExplorer: React.FC<{
   );
 };
 
-export const ContentExplorer: React.FC<{ canvasId?: number; renderChoice: (id: number, reset: () => void) => any }> = ({
+export const ContentExplorer: React.FC<{ canvasId?: number; projectId?: string, renderChoice: (id: number, reset: () => void) => any }> = ({
+  projectId,
   renderChoice,
   canvasId: defaultCanvasId,
 }) => {
@@ -129,7 +130,7 @@ export const ContentExplorer: React.FC<{ canvasId?: number; renderChoice: (id: n
   const { t } = useTranslation();
   const [contentType, setContentType] = useState<'collection' | 'manifest' | undefined>();
   const [search, setSearch] = useState<string>('');
-  const [performSearch, type, searchResults] = useAutocomplete(search);
+  const [performSearch, type, searchResults] = useAutocomplete(search, projectId);
 
   const [collectionId, setCollectionId] = useState<number | undefined>();
   const [manifestId, setManifestId] = useState<number | undefined>();
