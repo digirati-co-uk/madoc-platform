@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { BaseTask } from '../../../gateway/tasks/base-task';
 import { extractIdFromUrn } from '../../../utility/parse-urn';
 import {
@@ -11,7 +12,7 @@ import {
   TaskItemTagStatus,
   TaskItemTagType,
 } from '../../shared/atoms/TaskList';
-import { LocaleString } from '../../shared/components/LocaleString';
+import { LocaleString, useCreateLocaleString } from '../../shared/components/LocaleString';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useTaskMetadata } from '../hooks/use-task-metadata';
 
@@ -20,13 +21,18 @@ export const TaskListItem: React.FC<{ task: BaseTask; onClick: () => void; selec
   onClick,
   selected,
 }) => {
+  const { t } = useTranslation();
+  const createLocaleString = useCreateLocaleString();
   const metadata = useTaskMetadata(task);
 
   return (
     <TaskItem onClick={onClick} $selected={selected}>
       <TaskItemImageContainer>
         {metadata && metadata.subject && metadata.subject.thumbnail ? (
-          <img src={metadata.subject.thumbnail} alt="any" />
+          <img
+            src={metadata.subject.thumbnail}
+            alt={createLocaleString(metadata.subject.label, t('Canvas thumbnail'))}
+          />
         ) : null}
       </TaskItemImageContainer>
       <TaskItemMetadata>

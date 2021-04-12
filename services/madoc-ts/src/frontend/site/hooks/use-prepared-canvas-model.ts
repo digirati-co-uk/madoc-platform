@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useCanvasModel } from './use-canvas-model';
+import { useManifestTask } from './use-manifest-task';
 import { usePrepareContribution } from './use-prepare-contribution';
 import { useRouteContext } from './use-route-context';
 
@@ -7,14 +8,15 @@ export function usePreparedCanvasModel() {
   const { canvasId } = useRouteContext();
   const [hasPrepared, setHasPrepared] = useState(false);
   const modelResponse = useCanvasModel();
+  const { isManifestComplete, isFetched: manifestTaskFetched } = useManifestTask();
 
   const [prepare, { isLoading }] = usePrepareContribution();
 
   const model = modelResponse.data?.model;
-  const isFetched = modelResponse.isFetched;
+  const isFetched = modelResponse.isFetched && manifestTaskFetched;
   const preparationFailed = hasPrepared && !model;
   const isPreparing = isLoading;
-  const shouldAutoPrepare = true; // config.
+  const shouldAutoPrepare = !isManifestComplete && true; // config.
 
   useEffect(() => {
     if (canvasId) {

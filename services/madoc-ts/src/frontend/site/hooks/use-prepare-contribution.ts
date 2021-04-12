@@ -9,7 +9,6 @@ import { useRouteContext } from './use-route-context';
 
 export function usePrepareContribution() {
   const { projectId, manifestId, collectionId, canvasId } = useRouteContext();
-
   const { refetch: refetchCanvas } = useData(CanvasLoader, undefined, { enabled: !!canvasId });
   const { refetch: refetchManifest } = useData(ManifestLoader, undefined, { enabled: !!manifestId });
   const { refetch: refetchManifestTasks } = useManifestUserTasks();

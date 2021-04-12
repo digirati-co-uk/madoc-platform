@@ -1,4 +1,3 @@
-import { ConfirmButton } from '@capture-models/editor';
 import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
 import { ModalButton } from '../../shared/components/Modal';
@@ -6,14 +5,6 @@ import { useReorderItems } from '../hooks/use-reorder-items';
 import { ExpandGrid, GridContainer, HalfGird } from '../../shared/atoms/Grid';
 import { Input, InputContainer, InputLabel } from '../../shared/atoms/Input';
 import { Button, ButtonRow, SmallButton } from '../../shared/atoms/Button';
-import {
-  ModalBackground,
-  ModalContainer,
-  InnerModalContainer,
-  ModalCloseIcon,
-  ModalBody,
-  ModalFooter,
-} from '../../shared/atoms/Modal';
 import { Heading3 } from '../../shared/atoms/Heading3';
 import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../shared/atoms/Table';
 import { ReorderTable, ReorderTableRow } from '../../shared/atoms/ReorderTable';
@@ -23,17 +14,18 @@ import { useTranslation } from 'react-i18next';
 import { useAutocomplete } from '../../shared/hooks/use-autocomplete';
 
 export const CollectionEditorStructure: React.FC<{
+  blacklistIds?: number[];
   searchManifests?: boolean;
   searchCollections?: boolean;
   hideManifests?: boolean;
   enableNavigation?: boolean;
   items?: ItemStructureListItem[];
   saveOrder: (newOrder: number[]) => Promise<void> | void;
-}> = ({ items, saveOrder, searchCollections, hideManifests, searchManifests, enableNavigation }) => {
+}> = ({ items, saveOrder, searchCollections, blacklistIds, hideManifests, searchManifests, enableNavigation }) => {
   const { t } = useTranslation();
   const [search, setSearch] = useState('');
 
-  const [performSearch, searchResultsType, searchResults, resetResults] = useAutocomplete(search);
+  const [performSearch, searchResultsType, searchResults, resetResults] = useAutocomplete(search, { blacklistIds });
 
   const {
     unsaved,

@@ -80,6 +80,7 @@ export function useCanvasUserTasks() {
       isLoading,
       reviews,
       userTasks,
+      isManifestComplete: canvasTask?.isManifestComplete,
       completedAndHide,
       canClaimCanvas,
       canUserSubmit,

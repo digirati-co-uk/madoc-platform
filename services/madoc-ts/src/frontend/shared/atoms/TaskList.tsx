@@ -70,8 +70,14 @@ export const TaskItemTagType = styled(TaskItemTag)`
   background: #9e62ce;
   color: #fff;
 `;
+
 export const TaskItemTagStatus = styled(TaskItemTag)`
   //background: gray;
+`;
+
+export const TaskItemTagSuccess = styled(TaskItemTag)`
+  background: #337c34;
+  color: #fff;
 `;
 
 export const TaskItemTagContainer = styled.div`

@@ -39,7 +39,12 @@ export const siteCanvasTasks: RouteMiddleware<{
 
   const manifestTask = canvasTask && canvasTask.parent_task ? await siteApi.getTask(canvasTask.parent_task) : undefined;
 
-  const canUserSubmit = !maxContributors || userTasks.length || maxContributors > contributors.length;
+  const canUserSubmit =
+    (!maxContributors || userTasks.length || maxContributors > contributors.length) &&
+    canvasTask?.status !== 3 &&
+    manifestTask?.status !== 3;
+
+  const isManifestComplete = manifestTask?.status === 3;
 
   context.response.status = 200;
   context.response.body = {
@@ -48,6 +53,7 @@ export const siteCanvasTasks: RouteMiddleware<{
     userTasks,
     totalContributors: contributors.length,
     maxContributors: config.maxContributionsPerResource,
+    isManifestComplete,
     canUserSubmit: !!canUserSubmit,
   };
 

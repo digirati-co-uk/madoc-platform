@@ -767,7 +767,7 @@ export class ApiClient {
     });
   }
 
-  async getManifestCollections(id: number, query?: { project_id?: number }) {
+  async getManifestCollections(id: number, query?: { project_id?: number, flat?: boolean }) {
     return this.request<{ collections: number[] }>(
       `/api/madoc/iiif/manifests/${id}/collections${query ? `?${stringify(query)}` : ''}`
     );
@@ -781,12 +781,19 @@ export class ApiClient {
     return this.request<GetMetadata>(`/api/madoc/iiif/manifests/${id}/metadata`);
   }
 
-  async autocompleteManifests(q: string) {
-    return this.request<Array<{ id: number; label: string }>>(`/api/madoc/iiif/autocomplete/manifests?q=${q}`);
+  async autocompleteManifests(q: string, project_id?: string, blacklist_ids?: number[]) {
+    return this.request<Array<{ id: number; label: string }>>(
+      `/api/madoc/iiif/autocomplete/manifests?${stringify({ q, project_id, blacklist_ids }, { arrayFormat: 'comma' })}`
+    );
   }
 
-  async autocompleteCollections(q: string) {
-    return this.request<Array<{ id: number; label: string }>>(`/api/madoc/iiif/autocomplete/collections?q=${q}`);
+  async autocompleteCollections(q: string, project_id?: string, blacklist_ids?: number[]) {
+    return this.request<Array<{ id: number; label: string }>>(
+      `/api/madoc/iiif/autocomplete/collections?${stringify(
+        { q, project_id, blacklist_ids },
+        { arrayFormat: 'comma' }
+      )}`
+    );
   }
 
   async getCanvasMetadata(id: number) {
@@ -1659,7 +1666,9 @@ export class ApiClient {
         })
       )
     ).catch(err => {
-      console.log(err);
+      if (err && (!err.status || err.status !== 404)) {
+        console.log(err);
+      }
     });
   }
 
@@ -1891,6 +1900,7 @@ export class ApiClient {
       canUserSubmit?: boolean;
       totalContributors?: number;
       maxContributors?: number;
+      isManifestComplete?: boolean;
     }>(`/madoc/api/projects/${projectId}/canvas-tasks/${canvasId}`);
   }
 

@@ -59,79 +59,90 @@ export function createTask(
 export const jobHandler = async (name: string, taskId: string, api: ApiClient) => {
   switch (name) {
     case 'created': {
-      const task = await api.acceptTask<SearchIndexTask>(taskId);
-      const [resources, options = {}, siteId] = task.parameters;
-      const { indexAllResources = false, recursive = true, resourceStack = [] } = options;
-      const siteApi = api.asUser({ siteId });
+      try {
+        const task = await api.acceptTask<SearchIndexTask>(taskId);
+        const [resources, options = {}, siteId] = task.parameters;
+        const { indexAllResources = false, recursive = true, resourceStack = [] } = options;
+        const siteApi = api.asUser({ siteId });
 
-      if (resources.length === 0) {
-        // Invalid.
-        // @todo indexAllResources might be set.
-        break;
-      }
-
-      if (resources.length > 1) {
-        // Create sub-task for each
-        const subtasks: SearchIndexTask[] = [];
-        for (const item of resources) {
-          subtasks.push(createTask([item], siteId, options));
+        if (resources.length === 0) {
+          // Invalid.
+          // @todo indexAllResources might be set.
+          break;
         }
 
-        await api.addSubtasks(subtasks, taskId);
-
-        break;
-      }
-
-      const resource = resources[0];
-
-      switch (resource.type) {
-        case 'manifest': {
-          //   - Ingest manifest.
-          await api.indexManifest(resource.id);
-
-          //   - Create task for each canvas as sub tasks.
-          const manifestStructure = await siteApi.getManifestStructure(resource.id);
-
-          if (recursive) {
-            const subtasks: SearchIndexTask[] = [];
-            for (const item of manifestStructure.items) {
-              subtasks.push(createTask([{ id: item.id, type: 'canvas' }], siteId, options));
-            }
-
-            if (subtasks.length) {
-              await api.addSubtasks(subtasks, taskId);
-              break;
-            }
+        if (resources.length > 1) {
+          // Create sub-task for each
+          const subtasks: SearchIndexTask[] = [];
+          for (const item of resources) {
+            subtasks.push(createTask([item], siteId, options));
           }
 
-          // Mark as done if no subtasks.
-          await api.updateTask(taskId, { status: 3 });
+          await api.addSubtasks(subtasks, taskId);
 
           break;
         }
 
-        case 'canvas': {
-          //  - Ingest canvas.
-          await siteApi.indexCanvas(resource.id);
+        const resource = resources[0];
 
-          // @todo check for OCR + capture models?
+        switch (resource.type) {
+          case 'manifest': {
+            try {
+              //   - Ingest manifest.
+              await api.indexManifest(resource.id);
 
-          //  - Mark as done.
-          await api.updateTask(taskId, { status: 3 });
+              //   - Create task for each canvas as sub tasks.
+              const manifestStructure = await siteApi.getManifestStructure(resource.id);
 
-          break;
+              if (recursive) {
+                const subtasks: SearchIndexTask[] = [];
+                for (const item of manifestStructure.items) {
+                  subtasks.push(createTask([{ id: item.id, type: 'canvas' }], siteId, options));
+                }
+
+                if (subtasks.length) {
+                  await api.addSubtasks(subtasks, taskId);
+                  break;
+                }
+              }
+
+              // Mark as done if no subtasks.
+              await api.updateTask(taskId, { status: 3 });
+            } catch (e) {
+              // ignore error.
+            }
+
+            break;
+          }
+
+          case 'canvas': {
+            try {
+              //  - Ingest canvas.
+              await siteApi.indexCanvas(resource.id);
+
+              // @todo check for OCR + capture models?
+
+              //  - Mark as done.
+              await api.updateTask(taskId, { status: 3 });
+            } catch (e) {
+              // Ignore errors.
+            }
+
+            break;
+          }
+
+          case 'collection': {
+            // @todo ingest collection.
+            //  - Make sure collection isn't in resourceStack
+            //  - Ingest collection.
+            //  - Create task for each manifest.
+            //  - Add each collection id to the resourceStack
+            break;
+          }
         }
-
-        case 'collection': {
-          // @todo ingest collection.
-          //  - Make sure collection isn't in resourceStack
-          //  - Ingest collection.
-          //  - Create task for each manifest.
-          //  - Add each collection id to the resourceStack
-          break;
-        }
+      } catch (err) {
+        // no-op
       }
-
       break;
     }
 

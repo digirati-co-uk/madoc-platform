@@ -11,7 +11,7 @@ import { Heading5 } from '../../../shared/atoms/Heading5';
 import { ImageGrid } from '../../../shared/atoms/ImageGrid';
 import { CroppedImage } from '../../../shared/atoms/Images';
 import { ImageStripBox } from '../../../shared/atoms/ImageStrip';
-import { LocaleString } from '../../../shared/components/LocaleString';
+import { LocaleString, useCreateLocaleString } from '../../../shared/components/LocaleString';
 import { Pagination } from '../../../shared/components/Pagination';
 import { useApi } from '../../../shared/hooks/use-api';
 import { useApiTaskSearch } from '../../../shared/hooks/use-api-task-search';
@@ -27,6 +27,7 @@ export const CrowdsourcingManifestReview: React.FC<{
   const { page = 1 } = useLocationQuery();
   const { slug } = useParams<{ slug: string }>();
   const api = useApi();
+  const createLocaleString = useCreateLocaleString();
   const { resolvedData } = usePaginatedQuery(['site-manifest', { id, page }], async () => {
     if (id) {
       return api.getSiteManifest(id, { parent_task: task.parent_task, page });
@@ -41,7 +42,6 @@ export const CrowdsourcingManifestReview: React.FC<{
   });
 
   const { t } = useTranslation();
-
   const manifest = resolvedData?.manifest;
   const pagination = resolvedData?.pagination;
   const manifestSubjects = resolvedData?.subjects;
@@ -95,7 +95,9 @@ export const CrowdsourcingManifestReview: React.FC<{
                 >
                   <ImageStripBox key={idx}>
                     <CroppedImage>
-                      {canvas.thumbnail ? <img alt={t('First image in manifest')} src={canvas.thumbnail} /> : null}
+                      {canvas.thumbnail ? (
+                        <img alt={createLocaleString(canvas.label, t('Canvas thumbnail'))} src={canvas.thumbnail} />
+                      ) : null}
                     </CroppedImage>
                     <CanvasStatus status={canvasReviewTask.status} />
                     <LocaleString as={Heading5}>{canvas.label}</LocaleString>
@@ -104,7 +106,9 @@ export const CrowdsourcingManifestReview: React.FC<{
               ) : (
                 <ImageStripBox key={idx} style={{ opacity: 0.5 }}>
                   <CroppedImage>
-                    {canvas.thumbnail ? <img alt={t('First image in manifest')} src={canvas.thumbnail} /> : null}
+                    {canvas.thumbnail ? (
+                      <img alt={createLocaleString(canvas.label, t('Canvas thumbnail'))} src={canvas.thumbnail} />
+                    ) : null}
                   </CroppedImage>
                   <CanvasStatus status={0} />
                   <LocaleString as={Heading5}>{canvas.label}</LocaleString>

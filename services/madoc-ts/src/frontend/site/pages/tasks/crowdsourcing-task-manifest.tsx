@@ -9,7 +9,7 @@ import { Heading5 } from '../../../shared/atoms/Heading5';
 import { ImageGrid } from '../../../shared/atoms/ImageGrid';
 import { CroppedImage } from '../../../shared/atoms/Images';
 import { ImageStripBox } from '../../../shared/atoms/ImageStrip';
-import { LocaleString } from '../../../shared/components/LocaleString';
+import { LocaleString, useCreateLocaleString } from '../../../shared/components/LocaleString';
 import { Pagination } from '../../../shared/components/Pagination';
 import { useApi } from '../../../shared/hooks/use-api';
 import { useLocationQuery } from '../../../shared/hooks/use-location-query';
@@ -31,6 +31,7 @@ export const CrowdsourcingTaskManifest: React.FC<{
     }
   });
   const { t } = useTranslation();
+  const createLocaleString = useCreateLocaleString();
 
   const manifest = resolvedData?.manifest;
   const pagination = resolvedData?.pagination;
@@ -60,7 +61,9 @@ export const CrowdsourcingTaskManifest: React.FC<{
               >
                 <ImageStripBox key={idx}>
                   <CroppedImage>
-                    {canvas.thumbnail ? <img alt={t('First image in manifest')} src={canvas.thumbnail} /> : null}
+                    {canvas.thumbnail ? (
+                      <img alt={createLocaleString(canvas.label, t('Canvas thumbnail'))} src={canvas.thumbnail} />
+                    ) : null}
                   </CroppedImage>
                   {manifestSubjects && subjectMap ? <CanvasStatus status={subjectMap[canvas.id]} /> : null}
                   <LocaleString as={Heading5}>{canvas.label}</LocaleString>

@@ -17,6 +17,7 @@ export const siteManifestTasks: RouteMiddleware<{
       root_task_id: project?.task_id,
       subject: `urn:madoc:manifest:${manifestId}`,
       detail: true,
+      all: true,
     }),
   ]);
 
@@ -33,11 +34,33 @@ export const siteManifestTasks: RouteMiddleware<{
     }
   }
 
+  if (!config.claimGranularity || config.claimGranularity === 'canvas') {
+    const canvasTasks = await siteApi.getTasks(0, {
+      all: true,
+      root_task_id: project?.task_id,
+      subject_parent: `urn:madoc:manifest:${manifestId}`,
+      detail: true,
+    });
+
+    for (const task of canvasTasks.tasks) {
+      if (
+        task.type === 'crowdsourcing-task' &&
+        task.status !== -1 &&
+        task.status !== 0 &&
+        task.assignee &&
+        contributors.indexOf(task.assignee.id) === -1
+      ) {
+        contributors.push(task.assignee.id);
+      }
+    }
+  }
+
   const maxContributors = config.maxContributionsPerResource;
-  const manifestTask = tasks.find(task => task.type === 'crowdsourcing-canvas-task');
+  const manifestTask = tasks.find(task => task.type === 'crowdsourcing-manifest-task');
   const userTasks = user ? tasks.filter(task => task.assignee && task.assignee.id === `urn:madoc:user:${user}`) : [];
 
-  const canUserSubmit = !maxContributors || userTasks.length || maxContributors > contributors.length;
+  const canUserSubmit =
+    (!maxContributors || userTasks.length || maxContributors > contributors.length) && manifestTask?.status !== 3;
 
   context.response.status = 200;
   context.response.body = {

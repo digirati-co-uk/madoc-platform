@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '../../shared/atoms/Button';
 import { ErrorMessage } from '../../shared/atoms/ErrorMessage';
 import { Heading3, Subheading3 } from '../../shared/atoms/Heading3';
-import { LocaleString } from '../../shared/components/LocaleString';
+import { LocaleString, useCreateLocaleString } from '../../shared/components/LocaleString';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useAssignRandomCanvas } from '../hooks/use-assign-random-canvas';
 import { useRelativeLinks } from '../hooks/use-relative-links';
@@ -16,6 +16,7 @@ export const RandomlyAssignCanvas: React.FC = () => {
   const createLink = useRelativeLinks();
   const { claimManifest, userCanSubmit, randomlyAssignCanvas } = usePreventCanvasNavigation();
   const { onContribute, getRandomCanvas, contributeStatus, randomCanvas } = useAssignRandomCanvas();
+  const createLocaleString = useCreateLocaleString();
 
   if (claimManifest && userCanSubmit && projectId) {
     return (
@@ -43,7 +44,10 @@ export const RandomlyAssignCanvas: React.FC = () => {
             ) : (
               <>
                 <div>
-                  <img src={randomCanvas.data.canvas.thumbnail} alt="thumbnail" />
+                  <img
+                    src={randomCanvas.data.canvas.thumbnail}
+                    alt={createLocaleString(randomCanvas.data.canvas.label, t('Untitled canvas'))}
+                  />
                 </div>
                 <Heading3 $margin>
                   <LocaleString>{randomCanvas.data.canvas.label}</LocaleString>

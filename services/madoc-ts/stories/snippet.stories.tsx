@@ -14,6 +14,7 @@ export const landscapeSnippet = () => {
   const flat = boolean('Flat container', false);
   const size = select('Size', ['sm', 'md', 'lg'], 'sm');
   const center = boolean('Center', false);
+  const stackedThumbnail = boolean('Stacked thumbnail', true);
   const buttonRole = select('Button role', ['button', 'link'], 'button');
 
   return (
@@ -24,6 +25,7 @@ export const landscapeSnippet = () => {
         summary="Summary of manifest if there is one"
         link="#"
         thumbnail="https://deriv.nls.uk/dcn4/7443/74438561.4.jpg"
+        stackedThumbnail={stackedThumbnail}
         buttonText="view manifest"
         lightBackground={lightBackground}
         flat={flat}
@@ -97,6 +99,7 @@ export const landscapeSnippetLargeThumbnail = () => {
   const flat = boolean('Flat container', false);
   const size = select('Size', ['sm', 'md', 'lg'], 'sm');
   const center = boolean('Center', false);
+  const stackedThumbnail = boolean('Stacked thumbnail', true);
   const buttonRole = select('Button role', ['button', 'link'], 'button');
 
   return (
@@ -109,6 +112,7 @@ export const landscapeSnippetLargeThumbnail = () => {
         thumbnail="https://deriv.nls.uk/dcn4/7441/74411378.4.jpg"
         buttonText="view manifest"
         lightBackground={lightBackground}
+        stackedThumbnail={stackedThumbnail}
         flat={flat}
         size={size}
         center={center}
@@ -202,6 +206,7 @@ export const portraitSnippetLong = () => {
   const size = select('Size', ['sm', 'md', 'lg'], 'sm');
   const center = boolean('Center', false);
   const buttonRole = select('Button role', ['button', 'link'], 'button');
+  const stackedThumbnail = boolean('Stacked thumbnail', true);
 
   return (
     <StorybookPaddedBox>
@@ -213,6 +218,7 @@ export const portraitSnippetLong = () => {
         thumbnail="https://dlcs.io/thumbs/wellcome/5/B28636491_0001.JP2/full/200,80/0/default.jpg"
         link="#"
         buttonText="view manifest"
+        stackedThumbnail={stackedThumbnail}
         lightBackground={lightBackground}
         flat={flat}
         size={size}

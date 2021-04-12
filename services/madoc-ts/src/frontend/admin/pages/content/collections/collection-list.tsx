@@ -8,7 +8,7 @@ import { MoreContainer, MoreDot, MoreIconContainer, MoreLabel } from '../../../.
 import { useTranslation } from 'react-i18next';
 import { UniversalComponent } from '../../../../types';
 import { Pagination } from '../../../molecules/Pagination';
-import { LocaleString } from '../../../../shared/components/LocaleString';
+import { LocaleString, useCreateLocaleString } from '../../../../shared/components/LocaleString';
 import { CollectionListResponse } from '../../../../../types/schemas/collection-list';
 import { Link } from 'react-router-dom';
 import { AdminHeader } from '../../../molecules/AdminHeader';
@@ -27,6 +27,7 @@ export const CollectionList: UniversalComponent<CollectionListType> = createUniv
   () => {
     const { status, resolvedData: data } = usePaginatedData(CollectionList);
     const { t } = useTranslation();
+    const createLocaleString = useCreateLocaleString();
 
     if (status === 'error') {
       return <div>{t('Loading')}</div>;
@@ -78,7 +79,10 @@ export const CollectionList: UniversalComponent<CollectionListType> = createUniv
                       <ImageStripBox>
                         <CroppedImage>
                           {manifest.thumbnail ? (
-                            <img alt={t('First image in manifest')} src={manifest.thumbnail} />
+                            <img
+                              alt={createLocaleString(manifest.label, t('Untitled Manifest'))}
+                              src={manifest.thumbnail}
+                            />
                           ) : null}
                         </CroppedImage>
                         <LocaleString as={SingleLineHeading5}>{manifest.label}</LocaleString>

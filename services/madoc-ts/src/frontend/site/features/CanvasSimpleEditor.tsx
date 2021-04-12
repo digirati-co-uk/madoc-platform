@@ -18,7 +18,7 @@ import { useRouteContext } from '../hooks/use-route-context';
 import { CanvasModelUserStatus } from './CanvasModelUserStatus';
 import { useSiteConfiguration } from './SiteConfigurationContext';
 
-export const CanvasSimpleEditor: React.FC<{ revision: string }> = ({ revision }) => {
+export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boolean }> = ({ revision }) => {
   const { t } = useTranslation();
   const { projectId, canvasId } = useRouteContext();
   const { data: projectModel } = useCanvasModel();

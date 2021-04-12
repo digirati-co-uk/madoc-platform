@@ -169,7 +169,7 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
         });
       }
 
-      return api.getTasks(vars.page, { all_tasks: true, ...vars.query });
+      return api.getTasks(vars.page, { all_tasks: true, detail: true, per_page: 20, ...vars.query });
     },
   }
 );

@@ -1,4 +1,5 @@
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
+import { EmptyState } from '../../../../shared/atoms/EmptyState';
 import { UniversalComponent } from '../../../../types';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import React from 'react';
@@ -24,6 +25,8 @@ export const ProjectTasks: UniversalComponent<ProjectTasksType> = createUniversa
   ({ project }) => {
     const { t } = useTranslation();
     const { data: task } = useData(ProjectTasks);
+
+    console.log(task);
 
     if (!task) {
       return <>Loading...</>;
@@ -61,6 +64,7 @@ export const ProjectTasks: UniversalComponent<ProjectTasksType> = createUniversa
             <SubjectSnippet subject={task.subject} />
           </>
         ) : null}
+        {task.subtasks?.length === 0 ? <EmptyState>{t('Nothing contributed yet')}</EmptyState> : null}
         {(task.subtasks || []).map(subtask => (
           <TableRow key={subtask.id}>
             <TableRowLabel>

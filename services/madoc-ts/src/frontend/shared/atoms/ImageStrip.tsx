@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 export const ImageStripBox = styled.div<{ $size?: 'large' | 'small' }>`
+  flex-shrink: 0;
   padding: 5px;
   width: ${props => {
     switch (props.$size) {

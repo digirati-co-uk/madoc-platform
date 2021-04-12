@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { ItemStructureListItem } from '../../../types/schemas/item-structure-list';
 import React from 'react';
 import { HrefLink } from '../utility/href-link';
@@ -26,12 +27,13 @@ export const SnippetStructure: React.FC<{
   alignment?: 'left' | 'right';
   item: ItemStructureListItem;
 }> = props => {
+  const { t } = useTranslation();
   return (
     <SnippetStructureContainer $alignment={props.alignment}>
       <HrefLink href={props.link}>
         {props.item ? (
           <CroppedImage $size="small">
-            <img alt="image thumbnail" src={props.item.thumbnail} />
+            <img alt={props.label ? props.label : t('Image thumbnail')} src={props.item.thumbnail} />
           </CroppedImage>
         ) : null}
         {props.hideLabel ? null : <>{props.label ? props.label : <LocaleString>{props.item.label}</LocaleString>}</>}

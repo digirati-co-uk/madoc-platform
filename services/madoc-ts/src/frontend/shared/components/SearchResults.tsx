@@ -6,6 +6,7 @@ import { useRouteContext } from '../../site/hooks/use-route-context';
 import { CroppedImage } from '../atoms/Images';
 import { ImageStripBox } from '../atoms/ImageStrip';
 import { GridContainer } from '../atoms/Grid';
+import { SnippetThumbnail, SnippetThumbnailContainer } from '../atoms/SnippetLarge';
 import { createLink } from '../utility/create-link';
 import { HrefLink } from '../utility/href-link';
 import { LocaleString } from './LocaleString';
@@ -83,6 +84,7 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; sea
   const canvasId = things.find(thing => thing?.type.toLowerCase() === 'canvas')?.id;
   const searchText = result.hits && result.hits[0] && result.hits[0].bounding_boxes ? search : undefined;
   const snippet = result.hits && result.hits[0] && result.hits[0].snippet ? result.hits[0].snippet : undefined;
+  const isManifest = result.resource_type === 'Manifest';
 
   return (
     <ResultContainer>
@@ -98,9 +100,15 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; sea
       >
         <GridContainer>
           <ImageStripBox $size={size}>
-            <CroppedImage $size={size}>
-              <img src={result.madoc_thumbnail} />
-            </CroppedImage>
+            {isManifest ? (
+              <SnippetThumbnailContainer stackedThumbnail={isManifest} portrait fluid>
+                <SnippetThumbnail src={result.madoc_thumbnail} />
+              </SnippetThumbnailContainer>
+            ) : (
+              <CroppedImage $size={size}>
+                <img src={result.madoc_thumbnail} />
+              </CroppedImage>
+            )}
           </ImageStripBox>
           <div style={{ alignSelf: 'flex-start', marginLeft: '1em' }}>
             <LocaleString as={ResultTitle}>{result.label}</LocaleString>

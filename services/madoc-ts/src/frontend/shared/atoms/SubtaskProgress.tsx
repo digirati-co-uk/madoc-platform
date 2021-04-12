@@ -2,24 +2,27 @@ import styled from 'styled-components';
 import React from 'react';
 import { TickIcon } from './TickIcon';
 import { useTranslation } from 'react-i18next';
+import ReactTooltip from 'react-tooltip';
 
 const SubtaskProgressContainer = styled.div`
   margin: 0.5em;
-  height: 6px;
+  height: 1em;
   background: #ddd;
-  border-radius: 3px;
+  border-radius: 0.5em;
   display: flex;
   overflow: hidden;
 `;
 
 const SubtaskProgressBar = styled.div`
   background: #feb240;
-  height: 6px;
+  height: 1em;
+  cursor: pointer;
 `;
 
 const SubtaskProgressDoneBar = styled.div`
   background: #33a94b;
-  height: 6px;
+  height: 1em;
+  cursor: pointer;
 `;
 
 const AllDone = styled.div`
@@ -62,8 +65,15 @@ export const SubtaskProgress: React.FC<{ total: number; done: number; progress: 
 
   return (
     <SubtaskProgressContainer>
-      <SubtaskProgressDoneBar style={{ width: `${(done / total) * 100}%` }} />
-      <SubtaskProgressBar style={{ width: `${(progress / total) * 100}%` }} />
+      <SubtaskProgressDoneBar
+        data-tip={`${((done / total) * 100).toFixed(2)}% done`}
+        style={{ width: `${(done / total) * 100}%` }}
+      />
+      <SubtaskProgressBar
+        data-tip={`${((progress / total) * 100).toFixed(2)}% in progress`}
+        style={{ width: `${(progress / total) * 100}%` }}
+      />
+      <ReactTooltip place="bottom" type="dark" effect="solid" />
     </SubtaskProgressContainer>
   );
 };

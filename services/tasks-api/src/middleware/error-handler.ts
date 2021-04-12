@@ -2,7 +2,7 @@ import { Middleware } from 'koa';
 import { NotFound } from '../errors/not-found';
 import { RequestError } from '../errors/request-error';
 import { ServerError } from '../errors/server-error';
-import { SlonikError } from 'slonik';
+import { NotFoundError, SlonikError } from 'slonik';
 
 export const errorHandler: Middleware = async (context, next) => {
   try {
@@ -17,6 +17,8 @@ export const errorHandler: Middleware = async (context, next) => {
       if (err.message) {
         context.response.body = { error: err.message };
       }
+      context.response.status = 404;
+    } else if (err instanceof NotFoundError) {
       context.response.status = 404;
     } else if (err instanceof SlonikError) {
       console.log(err);

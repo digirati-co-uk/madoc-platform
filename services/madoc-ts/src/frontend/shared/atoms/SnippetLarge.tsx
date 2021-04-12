@@ -18,6 +18,7 @@ export type SnippetLargeProps = {
   center?: boolean;
   buttonRole?: 'button' | 'link';
   containThumbnail?: boolean;
+  stackedThumbnail?: boolean;
   smallLabel?: boolean;
   fluid?: boolean;
   interactive?: boolean;
@@ -145,14 +146,76 @@ const SnippetUnconstrainedContainer = styled.div<{ portrait?: boolean; fluid?: b
         `}
 `;
 
-const SnippetThumbnailContainer = styled(SnippetUnconstrainedContainer)<{
+export const SnippetThumbnailContainer = styled(SnippetUnconstrainedContainer)<{
+  fluid?: boolean;
   portrait?: boolean;
   lightBackground?: boolean;
+  stackedThumbnail?: boolean;
 }>`
   background: ${props => (props.lightBackground ? '#EEEEEE' : '#000')};
 
+  img {
+    z-index: 3;
+  }
+
   ${props =>
-    props.portrait
+    props.stackedThumbnail
+      ? css`
+          position: relative;
+          padding: 0.4em;
+          background-color: transparent;
+
+          img {
+            border: 2px solid #fff;
+            box-shadow: 0px 2px 5px 0 rgba(0, 0, 0, 0.2);
+            background: ${() => (props.lightBackground ? '#EEEEEE' : '#000')};
+          }
+
+          &:after {
+            content: '';
+            background: #999;
+            position: absolute;
+            border: 2px solid #fff;
+            box-shadow: 0px 2px 5px 0 rgba(0, 0, 0, 0.2);
+            top: 0.4em;
+            bottom: 0.4em;
+            left: 0.4em;
+            right: 0.4em;
+            transform: rotate(4deg);
+            z-index: 2;
+          }
+          &:before {
+            content: '';
+            background: #666;
+            position: absolute;
+            border: 2px solid #fff;
+            box-shadow: 0px 2px 5px 0 rgba(0, 0, 0, 0.2);
+            top: 0.4em;
+            bottom: 0.4em;
+            left: 0.4em;
+            right: 0.4em;
+            transform: rotate(-3deg);
+            z-index: 2;
+          }
+
+          ${() =>
+            props.fluid
+              ? ''
+              : props.portrait
+              ? css`
+                  margin-bottom: 1rem;
+                  max-height: 11em;
+                  max-width: 11em;
+                `
+              : css`
+                  max-height: 6em;
+                  max-width: 6em;
+                  margin-right: 1rem;
+                `}
+        `
+      : props.fluid
+      ? ''
+      : props.portrait
       ? css`
           height: 11em;
           width: 11em;
@@ -166,7 +229,7 @@ const SnippetThumbnailContainer = styled(SnippetUnconstrainedContainer)<{
         `}
 `;
 
-const SnippetThumbnail = styled.img`
+export const SnippetThumbnail = styled.img`
   display: inline-block;
   object-fit: contain;
   flex-shrink: 0;
@@ -206,7 +269,11 @@ export const SnippetLarge: React.FC<SnippetLargeProps> = props => {
     >
       {props.thumbnail ? (
         containThumbnail ? (
-          <SnippetThumbnailContainer portrait={props.portrait} lightBackground={props.lightBackground}>
+          <SnippetThumbnailContainer
+            portrait={props.portrait}
+            lightBackground={props.lightBackground}
+            stackedThumbnail={props.stackedThumbnail}
+          >
             <SnippetThumbnail src={props.thumbnail} />
           </SnippetThumbnailContainer>
         ) : (

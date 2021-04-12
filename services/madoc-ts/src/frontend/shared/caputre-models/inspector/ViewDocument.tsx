@@ -1,11 +1,10 @@
 import { FieldPreview } from '@capture-models/editor';
-import { filterRevises, isEntityList, traverseDocument } from '@capture-models/helpers';
+import { filterRevises, isEntityList } from '@capture-models/helpers';
 import { BaseField, CaptureModel } from '@capture-models/types';
-import deepmerge from 'deepmerge';
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { MetadataEmptyState } from '../../atoms/MetadataConfiguration';
+import { EmptyState } from '../../atoms/EmptyState';
 
 const DocumentLabel = styled.div`
   font-size: 13px;
@@ -164,7 +163,7 @@ export const ViewDocument: React.FC<{ document: CaptureModel['document']; filter
   const flatProperties = Object.entries(document.properties);
 
   if (flatProperties.length === 0) {
-    return <MetadataEmptyState style={{ marginTop: 100 }}>{t('No document yet')}</MetadataEmptyState>;
+    return <EmptyState>{t('No document yet')}</EmptyState>;
   }
 
   const rendered = flatProperties
@@ -174,7 +173,7 @@ export const ViewDocument: React.FC<{ document: CaptureModel['document']; filter
     .filter(r => r !== null);
 
   if (rendered.length === 0) {
-    return <MetadataEmptyState style={{ marginTop: 100 }}>{t('No document yet')}</MetadataEmptyState>;
+    return <EmptyState>{t('No document yet')}</EmptyState>;
   }
 
   return (

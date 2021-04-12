@@ -1,5 +1,8 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { EmptyState } from '../../../../shared/atoms/EmptyState';
 import { LinkingProperty } from '../../../../shared/atoms/LinkingProperty';
+import { Spinner } from '../../../../shared/icons/Spinner';
 import { UniversalComponent } from '../../../../types';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { ResourceLinkResponse } from '../../../../../database/queries/linking-queries';
@@ -18,8 +21,17 @@ export const EditManifestLinking: UniversalComponent<EditManifestLinkingType> = 
   EditManifestLinkingType
 >(
   props => {
-    const { id } = useParams();
-    const { data, refetch } = useData(EditManifestLinking);
+    const { t } = useTranslation();
+    const { id } = useParams<{ id: string }>();
+    const { data, refetch, isFetching } = useData(EditManifestLinking);
+
+    if (isFetching) {
+      return <Spinner />;
+    }
+
+    if (data && data.linking.length === 0) {
+      return <EmptyState>{t('No linking properties')}</EmptyState>;
+    }
 
     return (
       <TableContainer style={{ background: '#EEEEEE' }}>

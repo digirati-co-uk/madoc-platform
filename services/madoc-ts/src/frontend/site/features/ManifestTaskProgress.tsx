@@ -1,53 +1,43 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { useParams } from 'react-router-dom';
 import { Button, ButtonIcon, ButtonRow } from '../../shared/atoms/Button';
 import { GridContainer, HalfGird } from '../../shared/atoms/Grid';
 import { Input, InputContainer, InputLabel } from '../../shared/atoms/Input';
 import { WhiteTickIcon } from '../../shared/atoms/TickIcon';
 import { ItemFilterContainer, ItemFilterPopupContainer } from '../../shared/components/ItemFilter';
 import { useApi } from '../../shared/hooks/use-api';
-import { apiHooks } from '../../shared/hooks/use-api-query';
 import { useUser } from '../../shared/hooks/use-site';
 import { InfoIcon } from '../../shared/icons/InfoIcon';
 import { createLink } from '../../shared/utility/create-link';
 import { HrefLink } from '../../shared/utility/href-link';
+import { useManifestTask } from '../hooks/use-manifest-task';
 import { useRouteContext } from '../hooks/use-route-context';
 
-export const CanvasTaskProgress: React.FC = () => {
+export const ManifestTaskProgress: React.FC = () => {
   const { t } = useTranslation();
   const { buttonProps, isOpen } = useDropdownMenu(1);
-  const { canvasId } = useRouteContext();
+  const { projectId, manifestId } = useRouteContext();
   const api = useApi();
   const user = useUser();
   const isAdmin =
     user && user.scope && (user.scope.indexOf('site.admin') !== -1 || user.scope.indexOf('tasks.admin') !== -1);
   const canProgress = user && user.scope && user.scope.indexOf('tasks.progress') !== -1;
 
-  const { slug } = useParams<{ slug?: string }>();
-  const { data: projectTasks, refetch } = apiHooks.getSiteProjectCanvasTasks(
-    () => (slug && canvasId ? [slug, canvasId] : undefined),
-    {
-      refetchOnMount: true,
-    }
-  );
-
-  const canvasTask = projectTasks?.canvasTask;
-  const isManifestComplete = projectTasks?.isManifestComplete;
+  const { manifestTask, totalContributors, refetch } = useManifestTask();
 
   const [requiredApprovals, setRequiredApprovals] = useState(0);
 
   useEffect(() => {
-    if (canvasTask) {
-      setRequiredApprovals(canvasTask.state.approvalsRequired || 0);
+    if (manifestTask) {
+      setRequiredApprovals(manifestTask.state.approvalsRequired || 0);
     }
-  }, [canvasTask]);
+  }, [manifestTask]);
 
   const [markAsComplete, markAsCompleteStatus] = useMutation(async () => {
-    if (canvasTask) {
-      await api.updateTask(canvasTask.id, {
+    if (manifestTask) {
+      await api.updateTask(manifestTask.id, {
         status: 3,
         status_text: 'completed',
       });
@@ -56,8 +46,8 @@ export const CanvasTaskProgress: React.FC = () => {
   });
 
   const [markAsIncomplete, markAsIncompleteStatus] = useMutation(async () => {
-    if (canvasTask) {
-      await api.updateTask(canvasTask.id, {
+    if (manifestTask) {
+      await api.updateTask(manifestTask.id, {
         status: 2,
         status_text: 'in progress',
       });
@@ -66,8 +56,8 @@ export const CanvasTaskProgress: React.FC = () => {
   });
 
   const [updateRequiredApprovals, updateRequiredApprovalsStatus] = useMutation(async () => {
-    if (canvasTask) {
-      await api.updateTask(canvasTask.id, {
+    if (manifestTask) {
+      await api.updateTask(manifestTask.id, {
         state: {
           approvalsRequired: requiredApprovals,
         },
@@ -76,7 +66,7 @@ export const CanvasTaskProgress: React.FC = () => {
     }
   });
 
-  if (!slug || (!isAdmin && !canProgress)) {
+  if (!projectId || (!isAdmin && !canProgress)) {
     return null;
   }
 
@@ -90,9 +80,9 @@ export const CanvasTaskProgress: React.FC = () => {
       </Button>
       <ItemFilterPopupContainer $visible={isOpen} role="menu">
         <div style={{ width: 400, padding: '1em' }}>
-          {canvasTask?.status === 2 ? (
+          {manifestTask?.status === 2 ? (
             <div>
-              {t('Current status')}: <strong>{canvasTask.status_text}</strong>
+              {t('Current status')}: <strong>{manifestTask.status_text}</strong>
               <ButtonRow>
                 <Button onClick={() => markAsComplete()} disabled={markAsCompleteStatus.isLoading}>
                   <ButtonIcon>
@@ -101,11 +91,11 @@ export const CanvasTaskProgress: React.FC = () => {
                   {t('Mark as complete')}
                 </Button>
               </ButtonRow>
-              {isAdmin && canvasTask?.state.approvalsRequired && (
+              {isAdmin && manifestTask?.state.approvalsRequired && (
                 <div>
                   <InputContainer>
                     <InputLabel htmlFor="approvals">
-                      {t('Approvals required')} ({canvasTask.state.approvalsRequired})
+                      {t('Approvals required')} ({manifestTask.state.approvalsRequired})
                     </InputLabel>
                     <GridContainer>
                       <HalfGird $margin>
@@ -125,7 +115,7 @@ export const CanvasTaskProgress: React.FC = () => {
                         <Button
                           $primary
                           disabled={
-                            canvasTask.state.approvalsRequired === requiredApprovals ||
+                            manifestTask.state.approvalsRequired === requiredApprovals ||
                             updateRequiredApprovalsStatus.isLoading
                           }
                           onClick={() => updateRequiredApprovals()}
@@ -139,10 +129,9 @@ export const CanvasTaskProgress: React.FC = () => {
               )}
             </div>
           ) : null}
-          {isManifestComplete ? <div>{t('Manifest has been marked as complete')}</div> : null}
-          {canvasTask?.status === 3 ? (
+          {manifestTask?.status === 3 ? (
             <div>
-              {t('Current status')}: <strong>{canvasTask.status_text}</strong>
+              {t('Current status')}: <strong>{manifestTask.status_text}</strong>
               <ButtonRow>
                 <Button onClick={() => markAsIncomplete()} disabled={markAsIncompleteStatus.isLoading}>
                   {t('Mark as incomplete')}
@@ -150,10 +139,10 @@ export const CanvasTaskProgress: React.FC = () => {
               </ButtonRow>
             </div>
           ) : null}
-          {!canvasTask || canvasTask.status <= 1 ? (
+          {!manifestTask || manifestTask.status <= 1 ? (
             <div>
-              {t('Current status')}: <strong>{canvasTask ? canvasTask.status_text : 'Not started'}</strong>
-              {canvasTask ? (
+              {t('Current status')}: <strong>{manifestTask ? manifestTask.status_text : 'Not started'}</strong>
+              {manifestTask ? (
                 <ButtonRow>
                   <Button onClick={() => markAsComplete()} disabled={markAsCompleteStatus.isLoading}>
                     <ButtonIcon>
@@ -165,16 +154,16 @@ export const CanvasTaskProgress: React.FC = () => {
               ) : null}
             </div>
           ) : null}
-          {projectTasks?.totalContributors ? (
+          {typeof totalContributors !== 'undefined' ? (
             <div>
-              {t('Total contributors')}: <strong>{projectTasks.totalContributors}</strong>
+              {t('Total contributors')}: <strong>{totalContributors}</strong>
               <ButtonRow>
                 <Button
                   as={HrefLink}
                   href={createLink({
-                    projectId: slug,
+                    projectId,
                     subRoute: 'tasks',
-                    query: { subject: `urn:madoc:canvas:${canvasId}` },
+                    query: { subject_parent: `urn:madoc:manifest:${manifestId}` },
                   })}
                 >
                   {t('See contributions')}

@@ -25,6 +25,7 @@ export const EditCollectionStructure: UniversalComponent<EditCollectionStructure
 
     return (
       <CollectionEditorStructure
+        blacklistIds={data?.items.map(item => item.id)}
         searchCollections={true}
         searchManifests={true}
         items={data ? data.items : undefined}

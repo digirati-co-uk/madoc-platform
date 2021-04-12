@@ -68,27 +68,33 @@ export function deleteResource(resource_id: number, resource_type: string, site_
   `;
 }
 
-export function getParentResources(resourceId: string, siteId: number, projectId?: string) {
+export function getParentResources(resourceId: string, siteId: number, projectId?: string, flat?: boolean) {
   if (projectId) {
     return sql<{ resource_id: number }>`
         select parent_resources.resource_id
         from iiif_derived_resource_items parent_resources
         left join iiif_derived_resource_items projectLinks on
             parent_resources.resource_id = projectLinks.item_id
+       left join iiif_derived_resource res on
+            parent_resources.resource_id = res.resource_id
         left join iiif_project project on
             project.collection_id = projectLinks.resource_id
         where parent_resources.item_id = ${resourceId}
         and projectLinks.site_id = ${siteId}
         and parent_resources.site_id = ${siteId}
+        ${typeof flat === 'undefined' ? SQL_EMPTY : sql`and res.flat = ${flat}`}
         and project.site_id = ${siteId}
         and project.id = ${projectId}
     `;
   }
 
   return sql<{ resource_id: number; item_id: number }>`
-      select resource_id, item_id 
-      from iiif_derived_resource_items 
-      where item_id = ${resourceId} 
-        and site_id = ${siteId} 
+      select parent_resources.resource_id, parent_resources.item_id 
+      from iiif_derived_resource_items parent_resources
+       left join iiif_derived_resource res on
+          parent_resources.resource_id = res.resource_id
+      where parent_resources.item_id = ${resourceId}
+        ${typeof flat === 'undefined' ? SQL_EMPTY : sql`and res.flat = ${flat}`}
+        and parent_resources.site_id = ${siteId} 
   `;
 }

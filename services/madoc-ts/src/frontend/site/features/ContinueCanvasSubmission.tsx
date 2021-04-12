@@ -1,12 +1,14 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../shared/atoms/Button';
+import { InfoMessage } from '../../shared/atoms/InfoMessage';
 import { ProjectListingDescription, ProjectListingItem, ProjectListingTitle } from '../../shared/atoms/ProjectListing';
 import { SuccessMessage } from '../../shared/atoms/SuccessMessage';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useContinueSubmission } from '../hooks/use-continue-submission';
+import { useManifestTask } from '../hooks/use-manifest-task';
 import { useProject } from '../hooks/use-project';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
@@ -15,6 +17,7 @@ export const ContinueCanvasSubmission: React.FC = () => {
   const { t } = useTranslation();
   const { projectId, canvasId } = useRouteContext();
   const { completedAndHide, canClaimCanvas, canUserSubmit, isLoading, canContribute } = useCanvasUserTasks();
+  const { isManifestComplete } = useManifestTask();
   const { tasks: continueSubmission, inProgress: continueCount } = useContinueSubmission();
   const createLink = useRelativeLinks();
   const { data: project } = useProject();
@@ -23,7 +26,7 @@ export const ContinueCanvasSubmission: React.FC = () => {
     return null;
   }
 
-  if (project && (completedAndHide || !canUserSubmit)) {
+  if (project && (completedAndHide || !canUserSubmit || isManifestComplete)) {
     return (
       <div>
         <ProjectListingItem key={project.id}>
@@ -38,9 +41,13 @@ export const ContinueCanvasSubmission: React.FC = () => {
           </ProjectListingDescription>
         </ProjectListingItem>
         {isLoading ? null : (
-          <SuccessMessage>
-            {completedAndHide ? t('This page is complete') : t('The maximum number of contributions has been reached')}
-          </SuccessMessage>
+          <InfoMessage>
+            {isManifestComplete
+              ? t('This manifest is complete')
+              : completedAndHide
+              ? t('This page is complete')
+              : t('The maximum number of contributions has been reached')}
+          </InfoMessage>
         )}
       </div>
     );

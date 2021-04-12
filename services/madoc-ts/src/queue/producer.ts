@@ -97,14 +97,22 @@ const worker = new Worker(
           });
       }
     } catch (e) {
+      if (e && e.status && e.status === 404) {
+        return;
+      }
+
       console.log(e);
       if (job.data.taskId) {
-        await contextualApi.updateTask(
-          job.data.taskId,
-          tasks.changeStatus([], 'error', {
-            state: { error: e.toString() },
-          })
-        );
+        try {
+          await contextualApi.updateTask(
+            job.data.taskId,
+            tasks.changeStatus([], 'error', {
+              state: { error: e.toString() },
+            })
+          );
+        } catch (err) {
+          // no-op
+        }
       }
       throw e;
     }
