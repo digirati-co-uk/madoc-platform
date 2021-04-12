@@ -1,11 +1,14 @@
 import { useMutation } from 'react-query';
 import { ResourceLinkResponse } from '../../../../../database/queries/linking-queries';
+import { PARAGRAPHS_PROFILE } from '../../../../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
 import { ItemStructureList } from '../../../../../types/schemas/item-structure-list';
 import { ManifestFull } from '../../../../../types/schemas/manifest-full';
 import { iiifGetLabel } from '../../../../../utility/iiif-get-label';
 import { Button } from '../../../../shared/atoms/Button';
+import { InfoMessage } from '../../../../shared/atoms/InfoMessage';
 import { NotStartedIcon } from '../../../../shared/atoms/NotStartedIcon';
 import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../../../shared/atoms/Table';
+import { TaskItemTag, TaskItemTagSuccess } from '../../../../shared/atoms/TaskList';
 import { TickIcon } from '../../../../shared/atoms/TickIcon';
 import { WarningMessage } from '../../../../shared/atoms/WarningMessage';
 import { LocaleString } from '../../../../shared/components/LocaleString';
@@ -59,12 +62,16 @@ export const OcrManifest: UniversalComponent<OcrManifestType> = createUniversalC
         {isEmpty ? (
           <WarningMessage>No OCR data found</WarningMessage>
         ) : queueManifestQuery.data ? (
-          <div>
+          <InfoMessage>
             OCR is importing
-            <Button as={HrefLink} href={createLink({ taskId: queueManifestQuery.data.id })}>
+            <Button
+              as={HrefLink}
+              href={createLink({ taskId: queueManifestQuery.data.id })}
+              style={{ marginLeft: '10px' }}
+            >
               View progress
             </Button>
-          </div>
+          </InfoMessage>
         ) : (
           <Button disabled={queueManifestQuery.status === 'loading'} onClick={() => queueManifest()}>
             Import OCR
@@ -96,17 +103,21 @@ export const OcrManifest: UniversalComponent<OcrManifestType> = createUniversalC
                         link.link.profile === 'http://www.loc.gov/standards/alto/v3/alto.xsd' ||
                         link.link.profile === 'http://www.loc.gov/standards/alto/v4/alto.xsd'
                       ) {
-                        return <div>ALTO</div>;
+                        return <TaskItemTag>ALTO</TaskItemTag>;
                       }
 
                       if (link.link.format === 'text/plain') {
-                        return <div>Plaintext</div>;
+                        return <TaskItemTag>Plaintext</TaskItemTag>;
                       }
 
-                      return <div key={link.id}>{link.link.profile}</div>;
+                      if (link.link.profile === PARAGRAPHS_PROFILE) {
+                        return <TaskItemTagSuccess>Imported OCR</TaskItemTagSuccess>;
+                      }
+
+                      return <TaskItemTag key={link.id}>{link.link.profile}</TaskItemTag>;
                     })
                   ) : (
-                    <div>No OCR Data found</div>
+                    <TaskItemTag>No OCR Data found</TaskItemTag>
                   )}
                 </TableActions>
               </TableRow>

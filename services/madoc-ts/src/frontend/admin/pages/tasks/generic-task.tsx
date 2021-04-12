@@ -2,8 +2,13 @@ import ReactTimeago from 'react-timeago';
 import { BaseTask } from '../../../../gateway/tasks/base-task';
 import React, { useState } from 'react';
 import { useMutation } from 'react-query';
+import { Button, ButtonRow } from '../../../shared/atoms/Button';
 import { ErrorMessage } from '../../../shared/atoms/ErrorMessage';
+import { LocaleString } from '../../../shared/components/LocaleString';
 import { useApi } from '../../../shared/hooks/use-api';
+import { createLink } from '../../../shared/utility/create-link';
+import { HrefLink } from '../../../shared/utility/href-link';
+import { useTaskMetadata } from '../../../site/hooks/use-task-metadata';
 import { SortedTaskList } from '../../molecules/SortedTaskList';
 
 export const GenericTask: React.FC<{ task: BaseTask; statusBar?: JSX.Element; snippet?: JSX.Element }> = ({
@@ -13,6 +18,7 @@ export const GenericTask: React.FC<{ task: BaseTask; statusBar?: JSX.Element; sn
 }) => {
   const api = useApi();
   const [taskStatusMap, setTaskStatusMap] = useState<any>({});
+  const { subject } = useTaskMetadata(task);
 
   const [trigger] = useMutation(async (taskId: string) => {
     setTaskStatusMap((m: any) => {
@@ -28,6 +34,22 @@ export const GenericTask: React.FC<{ task: BaseTask; statusBar?: JSX.Element; sn
   return (
     <div>
       <h1>{task.name}</h1>
+      {subject ? <LocaleString as="h3">{subject.label}</LocaleString> : null}
+      {subject && subject.thumbnail ? <img src={subject.thumbnail} alt="thumbnail" /> : null}
+      {subject && subject.type === 'manifest' ? (
+        <ButtonRow>
+          <Button
+            as={HrefLink}
+            href={createLink({
+              manifestId: subject.id,
+              subRoute: task.type === 'madoc-ocr-manifest' ? 'ocr' : undefined,
+              admin: true,
+            })}
+          >
+            View manifest
+          </Button>
+        </ButtonRow>
+      ) : null}
       {task.state.error ? (
         <ErrorMessage>
           <pre>{task.state.error}</pre>

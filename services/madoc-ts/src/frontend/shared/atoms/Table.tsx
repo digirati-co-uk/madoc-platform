@@ -38,6 +38,7 @@ export const TableRowLabel = styled.div`
 `;
 
 export const TableActions = styled.div`
+  display: flex;
   justify-self: flex-end;
   margin-left: auto;
   white-space: nowrap;
