@@ -99,13 +99,14 @@ export const CreateCollection: React.FC = () => {
               </SmallButton>
             </HalfGird>
             <HalfGird>
-              <Heading3>Import existing</Heading3>
+              <Heading3>{t('Import existing collection')}</Heading3>
               <Subheading3>
-                Import a collection using a URL pointing to an existing IIIF collection. You can choose which manifests
-                should be included.
+                {t(
+                  'Import a collection using a URL pointing to an existing IIIF collection. You can choose which manifests should be included.'
+                )}
               </Subheading3>
               <InputContainer>
-                <InputLabel>Collection URL</InputLabel>
+                <InputLabel>{t('Collection URL')}</InputLabel>
                 <Input
                   type="text"
                   name="collection_url"
@@ -113,12 +114,12 @@ export const CreateCollection: React.FC = () => {
                 />
               </InputContainer>
               <SmallButton
-                disabled={isCreating}
+                disabled={isCreating || !importedCollectionId}
                 onClick={() => {
                   history.push(`/import/collection?collection=${importedCollectionId}`);
                 }}
               >
-                Import
+                {t('Import collection')}
               </SmallButton>
             </HalfGird>
           </GridContainer>
