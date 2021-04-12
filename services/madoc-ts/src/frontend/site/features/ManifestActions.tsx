@@ -6,6 +6,7 @@ import { HrefLink } from '../../shared/utility/href-link';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { GoToRandomCanvas } from './GoToRandomCanvas';
 import { ManifestItemFilter } from './ManifestItemFilter';
+import { ManifestTaskProgress } from './ManifestTaskProgress';
 
 export const ManifestActions: React.FC = () => {
   const { t } = useTranslation();
@@ -28,6 +29,7 @@ export const ManifestActions: React.FC = () => {
       <GoToRandomCanvas label={{ none: [t('Start contributing')] }} navigateToModel />
       <GoToRandomCanvas />
       <ManifestItemFilter />
+      <ManifestTaskProgress />
     </ButtonRow>
   );
 };

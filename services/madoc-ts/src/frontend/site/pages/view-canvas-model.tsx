@@ -18,6 +18,7 @@ import { PrepareCaptureModel } from '../features/PrepareCaptureModel';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
+import { useManifestTask } from '../hooks/use-manifest-task';
 import { useRouteContext } from '../hooks/use-route-context';
 import { CanvasLoaderType } from './loaders/canvas-loader';
 import { RedirectToNextCanvas } from '../features/RedirectToNextCanvas';
@@ -27,6 +28,7 @@ type ViewCanvasModelProps = Partial<CanvasLoaderType['data'] & CanvasLoaderType[
 export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({ canvas }) => {
   const { projectId, canvasId, manifestId, collectionId } = useRouteContext();
   const { showCanvasNavigation, showWarning } = useCanvasNavigation();
+  const { isManifestComplete } = useManifestTask();
   const { canUserSubmit, isLoading: isLoadingTasks, completedAndHide } = useCanvasUserTasks();
   const { revision } = useLocationQuery();
   const { t } = useTranslation();
@@ -52,7 +54,7 @@ export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({ canvas }) => {
     return <RedirectToNextCanvas subRoute="model" />;
   }
 
-  if ((!canUserSubmit && !isLoadingTasks) || completedAndHide) {
+  if ((!canUserSubmit && !isLoadingTasks) || completedAndHide || isManifestComplete) {
     return (
       <div>
         <DisplayBreadcrumbs />
@@ -61,7 +63,11 @@ export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({ canvas }) => {
 
         {projectId && (
           <InfoMessage>
-            {completedAndHide ? t('This image is complete') : t('Maximum number of contributors reached')}
+            {isManifestComplete
+              ? t('This manifest is complete')
+              : completedAndHide
+              ? t('This image is complete')
+              : t('Maximum number of contributors reached')}
           </InfoMessage>
         )}
 

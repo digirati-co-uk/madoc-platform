@@ -2,6 +2,8 @@ import React from 'react';
 import { CrowdsourcingManifestTask } from '../../../gateway/tasks/crowdsourcing-manifest-task';
 import { CrowdsourcingReview } from '../../../gateway/tasks/crowdsourcing-review';
 import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
+import { InfoMessage } from '../../shared/atoms/InfoMessage';
+import { SuccessMessage } from '../../shared/atoms/SuccessMessage';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { CollectionFull } from '../../../types/schemas/collection-full';
 import { ManifestFull } from '../../../types/schemas/manifest-full';
@@ -26,6 +28,7 @@ import { ManifestUserTasks } from '../features/ManifestUserTasks';
 import { usePreventCanvasNavigation } from '../features/PreventUsersNavigatingCanvases';
 import { RandomlyAssignCanvas } from '../features/RandomlyAssignCanvas';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
+import { useManifestTask } from '../hooks/use-manifest-task';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { Redirect } from 'react-router-dom';
 
@@ -45,6 +48,7 @@ export const ViewManifest: React.FC<{
   const { filter, listing } = useLocationQuery();
   const { showWarning, showNavigationContent } = usePreventCanvasNavigation();
   const config = useSiteConfiguration();
+  const { isManifestComplete } = useManifestTask();
 
   const [subjectMap] = useSubjectMap(manifestSubjects);
 
@@ -63,6 +67,8 @@ export const ViewManifest: React.FC<{
       <Heading1>
         <LocaleString>{manifest.label}</LocaleString>
       </Heading1>
+
+      {isManifestComplete ? <InfoMessage>{t('This manifest is complete')}</InfoMessage> : null}
 
       <ManifestUserTasks />
 

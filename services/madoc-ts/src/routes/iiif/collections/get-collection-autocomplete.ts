@@ -1,9 +1,9 @@
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { sql } from 'slonik';
-import { userWithScope } from '../../../utility/user-with-scope';
+import { optionalUserWithScope } from '../../../utility/user-with-scope';
 
 export const getCollectionAutocomplete: RouteMiddleware = async context => {
-  const { siteId } = userWithScope(context, ['site.admin']);
+  const { siteId } = optionalUserWithScope(context, ['site.admin']);
   const { q } = context.query;
 
   if (!q) {

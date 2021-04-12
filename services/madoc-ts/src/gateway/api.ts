@@ -1893,6 +1893,7 @@ export class ApiClient {
       canUserSubmit?: boolean;
       totalContributors?: number;
       maxContributors?: number;
+      isManifestComplete?: boolean;
     }>(`/madoc/api/projects/${projectId}/canvas-tasks/${canvasId}`);
   }
 
