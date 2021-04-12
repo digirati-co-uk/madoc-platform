@@ -8,7 +8,7 @@ import { Pagination } from '../../../molecules/Pagination';
 import { useTranslation } from 'react-i18next';
 import { ImageStripBox } from '../../../../shared/atoms/ImageStrip';
 import { CroppedImage } from '../../../../shared/atoms/Images';
-import { LocaleString } from '../../../../shared/components/LocaleString';
+import { LocaleString, useCreateLocaleString } from '../../../../shared/components/LocaleString';
 import { SingleLineHeading5, Subheading5 } from '../../../../shared/atoms/Heading5';
 import { ImageGrid } from '../../../../shared/atoms/ImageGrid';
 import { ExpandGrid, GridContainer, HalfGird } from '../../../../shared/atoms/Grid';
@@ -33,6 +33,7 @@ export const ManifestList: UniversalComponent<ManifestListType> = createUniversa
     const { push, location } = useHistory();
     const { query } = useLocationQuery();
     const [search, setSearch] = useState(query);
+    const createLocaleString = useCreateLocaleString();
 
     if (status === 'error') {
       return <div>{t('Loading')}</div>;
@@ -93,7 +94,12 @@ export const ManifestList: UniversalComponent<ManifestListType> = createUniversa
                 <Link to={`/manifests/${manifest.id}`} key={`${manifest.id}_${idx}`}>
                   <ImageStripBox>
                     <CroppedImage>
-                      {manifest.thumbnail ? <img alt={t('First image in manifest')} src={manifest.thumbnail} /> : null}
+                      {manifest.thumbnail ? (
+                        <img
+                          alt={createLocaleString(manifest.label, t('Untitled Manifest'))}
+                          src={manifest.thumbnail}
+                        />
+                      ) : null}
                     </CroppedImage>
                     <LocaleString as={SingleLineHeading5}>{manifest.label}</LocaleString>
                     <Subheading5>{t('{{count}} images', { count: manifest.canvasCount })}</Subheading5>

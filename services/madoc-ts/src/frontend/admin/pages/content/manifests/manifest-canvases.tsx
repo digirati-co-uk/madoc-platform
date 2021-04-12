@@ -2,7 +2,7 @@ import React from 'react';
 import { ManifestFull } from '../../../../../types/schemas/manifest-full';
 import { UniversalComponent } from '../../../../types';
 import { useTranslation } from 'react-i18next';
-import { LocaleString } from '../../../../shared/components/LocaleString';
+import { LocaleString, useCreateLocaleString } from '../../../../shared/components/LocaleString';
 import { PublishManifest } from '../../../features/publish-manifest';
 import { Pagination } from '../../../molecules/Pagination';
 import { ImageStripBox } from '../../../../shared/atoms/ImageStrip';
@@ -24,6 +24,7 @@ export const ManifestCanvases: UniversalComponent<ManifestViewType> = createUniv
   () => {
     const { t } = useTranslation();
     const { status, resolvedData: data } = usePaginatedData(ManifestCanvases);
+    const createLocaleString = useCreateLocaleString();
 
     if (status === 'error' || status === 'loading' || !data) {
       return <div>{t('Loading')}</div>;
@@ -44,7 +45,9 @@ export const ManifestCanvases: UniversalComponent<ManifestViewType> = createUniv
             <Link key={`${canvas.id}_${idx}`} to={`/manifests/${manifest.id}/canvases/${canvas.id}`}>
               <ImageStripBox>
                 <CroppedImage>
-                  {canvas.thumbnail ? <img alt={t('First image in manifest')} src={canvas.thumbnail} /> : null}
+                  {canvas.thumbnail ? (
+                    <img alt={createLocaleString(manifest.label, t('Untitled Manifest'))} src={canvas.thumbnail} />
+                  ) : null}
                 </CroppedImage>
                 <LocaleString as={Heading5}>{canvas.label}</LocaleString>
               </ImageStripBox>

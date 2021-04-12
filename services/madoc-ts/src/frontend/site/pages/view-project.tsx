@@ -1,7 +1,7 @@
 import React from 'react';
 import { ProjectStatus } from '../../shared/atoms/ProjectStatus';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
-import { LocaleString } from '../../shared/components/LocaleString';
+import { LocaleString, useCreateLocaleString } from '../../shared/components/LocaleString';
 import { ProjectFull } from '../../../types/schemas/project-full';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../shared/atoms/Statistics';
 import { SubtaskProgress } from '../../shared/atoms/SubtaskProgress';
@@ -16,10 +16,6 @@ import { useTranslation } from 'react-i18next';
 import { CollectionSnippet } from '../../shared/components/CollectionSnippet';
 import { HrefLink } from '../../shared/utility/href-link';
 import { Button, ButtonRow } from '../../shared/atoms/Button';
-import { useContributorTasks } from '../../shared/hooks/use-contributor-tasks';
-import { ContributorTasks } from '../../shared/components/ContributorTasks';
-import { useReviewerTasks } from '../../shared/hooks/use-reviewer-tasks';
-import { ReviewerTasks } from '../../shared/components/ReviewerTasks';
 import { GoToRandomCanvas } from '../features/GoToRandomCanvas';
 import { GoToRandomManifest } from '../features/GoToRandomManifest';
 import { ProjectContributionButton } from '../features/ProjectContributionButton';
@@ -30,6 +26,7 @@ export const ViewProject: React.FC<Partial<{
   manifests: CollectionFull;
 }>> = props => {
   const { t } = useTranslation();
+  const createLocaleString = useCreateLocaleString();
   const { project, collections, manifests } = props;
 
   if (!project) {
@@ -124,7 +121,9 @@ export const ViewProject: React.FC<Partial<{
               >
                 <ImageGridItem $size="large">
                   <CroppedImage $size="large">
-                    {manifest.thumbnail ? <img alt={t('First image in manifest')} src={manifest.thumbnail} /> : null}
+                    {manifest.thumbnail ? (
+                      <img alt={createLocaleString(manifest.label, t('Untitled manifest'))} src={manifest.thumbnail} />
+                    ) : null}
                   </CroppedImage>
                   <LocaleString as={SingleLineHeading5}>{manifest.label}</LocaleString>
                   <Subheading5>

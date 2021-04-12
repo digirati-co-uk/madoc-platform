@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { UniversalComponent } from '../../../../types';
-import { LocaleString } from '../../../../shared/components/LocaleString';
+import { LocaleString, useCreateLocaleString } from '../../../../shared/components/LocaleString';
 import { CollectionFull } from '../../../../../types/schemas/collection-full';
 import { PublishCollection } from '../../../features/publish-collection';
 import { Pagination } from '../../../molecules/Pagination';
@@ -25,6 +25,7 @@ export const CollectionManifests: UniversalComponent<CollectionManifestsType> = 
   () => {
     const { t } = useTranslation();
     const { resolvedData: data, status } = usePaginatedData(CollectionManifests);
+    const createLocaleString = useCreateLocaleString();
 
     if (status !== 'success' || !data) {
       return <div>loading...</div>;
@@ -49,7 +50,9 @@ export const CollectionManifests: UniversalComponent<CollectionManifestsType> = 
             >
               <ImageGridItem>
                 <CroppedImage>
-                  {manifest.thumbnail ? <img alt={t('First image in manifest')} src={manifest.thumbnail} /> : null}
+                  {manifest.thumbnail ? (
+                    <img alt={createLocaleString(manifest.label, t('Untitled Manifest'))} src={manifest.thumbnail} />
+                  ) : null}
                 </CroppedImage>
                 <LocaleString as={SingleLineHeading5}>{manifest.label}</LocaleString>
                 <Subheading5>

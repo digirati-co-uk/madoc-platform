@@ -1,6 +1,8 @@
 import React from 'react';
 import '../../shared/caputre-models/refinements';
+import { useTranslation } from 'react-i18next';
 import { SubjectSnippet } from '../../../extensions/tasks/resolvers/subject-resolver';
+import { useCreateLocaleString } from '../../shared/components/LocaleString';
 import { createLink } from '../../shared/utility/create-link';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useTaskMetadata } from '../hooks/use-task-metadata';
@@ -11,8 +13,9 @@ import { ViewCrowdsourcingReview } from './tasks/crowdsourcing-review';
 import { TaskContext } from './loaders/task-loader';
 
 export const ViewTask: React.FC<TaskContext<any>> = ({ task, ...props }) => {
+  const { t } = useTranslation();
   const api = useApi();
-
+  const createLocaleString = useCreateLocaleString();
   const slug = api.getSiteSlug();
   const { subject } = useTaskMetadata<{ subject?: SubjectSnippet }>(task);
 
@@ -29,14 +32,14 @@ export const ViewTask: React.FC<TaskContext<any>> = ({ task, ...props }) => {
       <div>
         <h3>{task.name}</h3>
         <p>{task.description}</p>
-        <a href={`/s/${slug}/madoc/admin/tasks/${task.id}`}>View on admin dashboard</a>
+        <a href={`/s/${slug}/madoc/admin/tasks/${task.id}`}>{t('View on admin dashboard')}</a>
       </div>
     );
   }
 
   if (task.type === 'crowdsourcing-task') {
     return (
-      <BrowserComponent fallback={<div>loading...</div>}>
+      <BrowserComponent fallback={<div>{t('loading')}</div>}>
         <ViewCrowdsourcingTask task={task} {...props} />
       </BrowserComponent>
     );
@@ -51,9 +54,11 @@ export const ViewTask: React.FC<TaskContext<any>> = ({ task, ...props }) => {
     return (
       <>
         <h1>{task.name}</h1>
-        {subject.thumbnail ? <img src={subject.thumbnail} alt="thumbnail" /> : null}
+        {subject.thumbnail ? (
+          <img src={subject.thumbnail} alt={createLocaleString(subject.label, 'Thumbnail')} />
+        ) : null}
         {subject.type === 'manifest' ? (
-          <HrefLink href={createLink({ manifestId: subject.id })}>View manifest</HrefLink>
+          <HrefLink href={createLink({ manifestId: subject.id })}>{t('View manifest')}</HrefLink>
         ) : null}
       </>
     );

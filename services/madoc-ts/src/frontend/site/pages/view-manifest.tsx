@@ -4,7 +4,7 @@ import { CrowdsourcingReview } from '../../../gateway/tasks/crowdsourcing-review
 import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
 import { InfoMessage } from '../../shared/atoms/InfoMessage';
 import { SuccessMessage } from '../../shared/atoms/SuccessMessage';
-import { LocaleString } from '../../shared/components/LocaleString';
+import { LocaleString, useCreateLocaleString } from '../../shared/components/LocaleString';
 import { CollectionFull } from '../../../types/schemas/collection-full';
 import { ManifestFull } from '../../../types/schemas/manifest-full';
 import { Link } from 'react-router-dom';
@@ -49,6 +49,7 @@ export const ViewManifest: React.FC<{
   const { showWarning, showNavigationContent } = usePreventCanvasNavigation();
   const config = useSiteConfiguration();
   const { isManifestComplete } = useManifestTask();
+  const createLocaleString = useCreateLocaleString();
 
   const [subjectMap] = useSubjectMap(manifestSubjects);
 
@@ -102,7 +103,9 @@ export const ViewManifest: React.FC<{
                 >
                   <ImageStripBox>
                     <CroppedImage>
-                      {canvas.thumbnail ? <img alt={t('First image in manifest')} src={canvas.thumbnail} /> : null}
+                      {canvas.thumbnail ? (
+                        <img alt={createLocaleString(canvas.label, t('Canvas thumbnail'))} src={canvas.thumbnail} />
+                      ) : null}
                     </CroppedImage>
                     {manifestSubjects && subjectMap ? <CanvasStatus status={subjectMap[canvas.id]} /> : null}
                     <LocaleString as={Heading5}>{canvas.label}</LocaleString>

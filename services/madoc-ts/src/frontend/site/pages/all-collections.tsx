@@ -1,6 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { LocaleString } from '../../shared/components/LocaleString';
+import { LocaleString, useCreateLocaleString } from '../../shared/components/LocaleString';
 import { Link } from 'react-router-dom';
 import { Heading3, Subheading3 } from '../../shared/atoms/Heading3';
 import { ImageStrip, ImageStripBox } from '../../shared/atoms/ImageStrip';
@@ -18,6 +18,7 @@ export const AllCollections: React.FC = () => {
   const { resolvedData: data } = useCollectionList();
   const { t } = useTranslation();
   const createLink = useRelativeLinks();
+  const createLocaleString = useCreateLocaleString();
 
   return (
     <>
@@ -51,7 +52,10 @@ export const AllCollections: React.FC = () => {
                     <ImageStripBox $size="small">
                       <CroppedImage $size="small">
                         {manifest.thumbnail ? (
-                          <img alt={t('First image in manifest')} src={manifest.thumbnail} />
+                          <img
+                            alt={createLocaleString(manifest.label, t('Manifest thumbnail'))}
+                            src={manifest.thumbnail}
+                          />
                         ) : null}
                       </CroppedImage>
                       <LocaleString as={SingleLineHeading5}>{manifest.label}</LocaleString>

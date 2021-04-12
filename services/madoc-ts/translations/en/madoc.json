@@ -298,6 +298,7 @@
   "Unable to save your submission": "Unable to save your submission",
   "Unpublish": "Unpublish",
   "Untitled": "Untitled",
+  "Untitled Manifest": "Untitled Manifest",
   "Untitled collection": "Untitled collection",
   "Update": "Update",
   "Update required approvals": "Update required approvals",
@@ -396,5 +397,10 @@
   "{{count}} manifests": "{{count}} manifest",
   "{{count}} manifests_plural": "{{count}} manifests",
   "{{count}} more": "{{count}} more",
-  "{{count}} more_plural": "{{count}} more"
+  "{{count}} more_plural": "{{count}} more",
+  "Image thumbnail": "Image thumbnail",
+  "Canvas thumbnail": "Canvas thumbnail",
+  "Manifest thumbnail": "Manifest thumbnail",
+  "Untitled manifest": "Untitled manifest",
+  "View manifest": "View manifest"
 }

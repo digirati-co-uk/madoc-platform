@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useMutation } from 'react-query';
 import { Button, ButtonRow } from '../../../shared/atoms/Button';
 import { ErrorMessage } from '../../../shared/atoms/ErrorMessage';
-import { LocaleString } from '../../../shared/components/LocaleString';
+import { LocaleString, useCreateLocaleString } from '../../../shared/components/LocaleString';
 import { useApi } from '../../../shared/hooks/use-api';
 import { createLink } from '../../../shared/utility/create-link';
 import { HrefLink } from '../../../shared/utility/href-link';
@@ -17,6 +17,7 @@ export const GenericTask: React.FC<{ task: BaseTask; statusBar?: JSX.Element; sn
   snippet,
 }) => {
   const api = useApi();
+  const createLocaleString = useCreateLocaleString();
   const [taskStatusMap, setTaskStatusMap] = useState<any>({});
   const { subject } = useTaskMetadata(task);
 
@@ -35,7 +36,9 @@ export const GenericTask: React.FC<{ task: BaseTask; statusBar?: JSX.Element; sn
     <div>
       <h1>{task.name}</h1>
       {subject ? <LocaleString as="h3">{subject.label}</LocaleString> : null}
-      {subject && subject.thumbnail ? <img src={subject.thumbnail} alt="thumbnail" /> : null}
+      {subject && subject.thumbnail ? (
+        <img src={subject.thumbnail} alt={createLocaleString(subject.label, 'thumbnail')} />
+      ) : null}
       {subject && subject.type === 'manifest' ? (
         <ButtonRow>
           <Button

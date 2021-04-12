@@ -1,6 +1,6 @@
 import React from 'react';
 import { CollectionFull } from '../../../types/schemas/collection-full';
-import { LocaleString } from '../../shared/components/LocaleString';
+import { LocaleString, useCreateLocaleString } from '../../shared/components/LocaleString';
 import { Link } from 'react-router-dom';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { ImageGrid, ImageGridItem } from '../../shared/atoms/ImageGrid';
@@ -24,6 +24,7 @@ export const ViewCollection: React.FC<Partial<
 >> = ({ collection, collectionSubjects }) => {
   const { t } = useTranslation();
   const createLink = useRelativeLinks();
+  const createLocaleString = useCreateLocaleString();
 
   const [subjectMap] = useSubjectMap(collectionSubjects);
 
@@ -59,7 +60,9 @@ export const ViewCollection: React.FC<Partial<
           >
             <ImageGridItem $size="large">
               <CroppedImage $size="large">
-                {manifest.thumbnail ? <img alt={t('First image in manifest')} src={manifest.thumbnail} /> : null}
+                {manifest.thumbnail ? (
+                  <img alt={createLocaleString(manifest.label, t('Untitled manifest'))} src={manifest.thumbnail} />
+                ) : null}
               </CroppedImage>
               {collectionSubjects && subjectMap ? <CanvasStatus status={subjectMap[manifest.id]} /> : null}
 
