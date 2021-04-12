@@ -130,7 +130,7 @@ export const ContentExplorer: React.FC<{ canvasId?: number; projectId?: string, 
   const { t } = useTranslation();
   const [contentType, setContentType] = useState<'collection' | 'manifest' | undefined>();
   const [search, setSearch] = useState<string>('');
-  const [performSearch, type, searchResults] = useAutocomplete(search, projectId);
+  const [performSearch, type, searchResults] = useAutocomplete(search, { project: projectId });
 
   const [collectionId, setCollectionId] = useState<number | undefined>();
   const [manifestId, setManifestId] = useState<number | undefined>();

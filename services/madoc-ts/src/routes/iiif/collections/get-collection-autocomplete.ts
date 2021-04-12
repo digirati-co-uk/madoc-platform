@@ -1,13 +1,18 @@
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { sql } from 'slonik';
 import { parseProjectId } from '../../../utility/parse-project-id';
-import { SQL_EMPTY } from '../../../utility/postgres-tags';
+import { SQL_EMPTY, SQL_INT_ARRAY } from '../../../utility/postgres-tags';
 import { optionalUserWithScope } from '../../../utility/user-with-scope';
 
 export const getCollectionAutocomplete: RouteMiddleware = async context => {
   const { siteId } = optionalUserWithScope(context, ['site.admin']);
-  const { q, project_id } = context.query;
+  const { q, project_id, blacklist_ids } = context.query;
   const { projectId, projectSlug } = parseProjectId(project_id);
+
+  const blackListIds = (blacklist_ids || '')
+    .split(',')
+    .map((blacklistId: string) => Number(blacklistId))
+    .filter((blacklistId: number) => !Number.isNaN(blacklistId));
 
   if (!q) {
     context.response.body = [];
@@ -31,6 +36,7 @@ export const getCollectionAutocomplete: RouteMiddleware = async context => {
       and flat = false
       ${projectId ? sql`and ip.id = ${projectId}` : SQL_EMPTY}
       ${projectSlug ? sql`and ip.slug = ${projectSlug}` : SQL_EMPTY}
+      and iiif_derived_resource.id = any(${sql.array(blackListIds, SQL_INT_ARRAY)}) is false
       and iiif_derived_resource.site_id = ${siteId} limit 10;
   `;
 

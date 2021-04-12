@@ -47,6 +47,7 @@ export const ProjectContent: UniversalComponent<ProjectContentType> = createUniv
             })}
           </HelpText>
           <CollectionEditorStructure
+            blacklistIds={data?.items.map(item => item.id)}
             searchCollections={true}
             searchManifests={true}
             enableNavigation={true}
