@@ -1,4 +1,7 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { EmptyState } from '../../../../shared/atoms/EmptyState';
+import { Spinner } from '../../../../shared/icons/Spinner';
 import { UniversalComponent } from '../../../../types';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { ResourceLinkResponse } from '../../../../../database/queries/linking-queries';
@@ -17,8 +20,17 @@ type EditCanvasLinking = {
 
 export const EditCanvasLinking: UniversalComponent<EditCanvasLinking> = createUniversalComponent<EditCanvasLinking>(
   () => {
+    const { t } = useTranslation();
     const { id, manifestId } = useParams<{ id: string; manifestId: string }>();
-    const { data, refetch } = useData(EditCanvasLinking);
+    const { data, refetch, isFetching } = useData(EditCanvasLinking);
+
+    if (isFetching) {
+      return <Spinner />;
+    }
+
+    if (data && data.linking.length === 0) {
+      return <EmptyState>{t('No linking properties')}</EmptyState>;
+    }
 
     return (
       <TableContainer style={{ background: '#EEEEEE' }}>

@@ -1,5 +1,8 @@
 import { useMemo } from 'react';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { EmptyState } from '../../../../shared/atoms/EmptyState';
+import { Spinner } from '../../../../shared/icons/Spinner';
 import { UniversalComponent } from '../../../../types';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { ResourceLinkResponse } from '../../../../../database/queries/linking-queries';
@@ -18,7 +21,8 @@ type ViewCanvasLinking = {
 
 export const ViewCanvasLinking: UniversalComponent<ViewCanvasLinking> = createUniversalComponent<ViewCanvasLinking>(
   () => {
-    const { data, refetch } = useStaticData(ViewCanvasLinking);
+    const { t } = useTranslation();
+    const { data, refetch, isFetching } = useStaticData(ViewCanvasLinking);
     const { id: canvasId, linkId } = useParams<{ id: string; linkId: string }>();
 
     const link = useMemo(() => {
@@ -40,6 +44,14 @@ export const ViewCanvasLinking: UniversalComponent<ViewCanvasLinking> = createUn
           return null;
       }
     };
+
+    if (isFetching) {
+      return <Spinner />;
+    }
+
+    if (data && data.linking.length === 0) {
+      return <EmptyState>{t('No linking properties')}</EmptyState>;
+    }
 
     return (
       <TableContainer style={{ background: '#EEEEEE' }}>
