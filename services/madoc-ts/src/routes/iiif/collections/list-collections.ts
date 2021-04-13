@@ -44,8 +44,6 @@ export const listCollections: RouteMiddleware<{ page: number }> = async context 
     )
   );
 
-  console.log({ total, rows, onlyPublished, query: context.query });
-
   const table = mapCollectionSnippets(rows);
 
   const collectionsIds = Object.keys(table.collections).map(t => Number(t));
