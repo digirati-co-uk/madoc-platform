@@ -7,7 +7,7 @@ export type SnippetLargeProps = {
   portrait?: boolean;
   subtitle?: string | JSX.Element;
   summary?: string | JSX.Element;
-  thumbnail?: string;
+  thumbnail?: string | null;
   link: string;
   buttonText: string;
   linkAs?: any;

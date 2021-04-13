@@ -2,12 +2,11 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../shared/atoms/Statistics';
 import { SubtaskProgress } from '../../shared/atoms/SubtaskProgress';
-import { useStaticData } from '../../shared/hooks/use-data';
-import { ProjectLoader } from '../pages/loaders/project-loader';
+import { useProject } from '../hooks/use-project';
 import { useSiteConfiguration } from './SiteConfigurationContext';
 
 export const ProjectStatistics: React.FC = () => {
-  const { data: project } = useStaticData(ProjectLoader);
+  const { data: project } = useProject();
   const { t } = useTranslation();
   const {
     project: { hideStatistics },

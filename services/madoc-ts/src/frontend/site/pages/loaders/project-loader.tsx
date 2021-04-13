@@ -6,8 +6,6 @@ import { createUniversalComponent } from '../../../shared/utility/create-univers
 import { useStaticData } from '../../../shared/hooks/use-data';
 import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
 import { ProjectFull } from '../../../../types/schemas/project-full';
-import { useParams, useRouteMatch } from 'react-router-dom';
-import { apiHooks } from '../../../shared/hooks/use-api-query';
 import { ConfigProvider } from '../../features/SiteConfigurationContext';
 
 type ProjectLoaderType = {
@@ -21,31 +19,6 @@ type ProjectLoaderType = {
 export const ProjectLoader: UniversalComponent<ProjectLoaderType> = createUniversalComponent<ProjectLoaderType>(
   ({ route }) => {
     const { data: project, isError } = useStaticData(ProjectLoader);
-    const { slug } = useParams<{ slug: string }>();
-    const { isExact } = useRouteMatch();
-
-    const hide = project?.config.hideCompletedResources;
-
-    const { data: collections } = apiHooks.getSiteCollection(() =>
-      project && isExact ? [project.collection_id, { type: 'collection' }] : undefined
-    );
-
-    const { data: manifests } = apiHooks.getSiteCollection(() =>
-      project && isExact
-        ? [
-            project.collection_id,
-            hide
-              ? {
-                  type: 'manifest',
-                  project_id: slug,
-                  hide_status: '2,3',
-                }
-              : {
-                  type: 'manifest',
-                },
-          ]
-        : undefined
-    );
 
     const ctx = useMemo(() => (project ? { id: project.slug, name: project.label } : undefined), [project]);
 
@@ -58,8 +31,6 @@ export const ProjectLoader: UniversalComponent<ProjectLoaderType> = createUniver
         <BreadcrumbContext project={ctx}>
           {renderUniversalRoutes(route.routes, {
             project,
-            collections,
-            manifests,
           })}
         </BreadcrumbContext>
       </ConfigProvider>

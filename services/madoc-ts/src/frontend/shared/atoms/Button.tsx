@@ -1,4 +1,6 @@
+import React from 'react';
 import styled, { css } from 'styled-components';
+import { HrefLink } from '../utility/href-link';
 
 export const ButtonIcon = styled.span`
   transform: translate(-8px, -4px);
@@ -219,3 +221,7 @@ export const ButtonRow = styled.div<{ $noMargin?: boolean }>`
     margin-left: 0.5em;
   }
 `;
+
+export const PrimaryButtonLink: React.FC<any> = props => {
+  return <Button as={HrefLink} $primary {...props} />;
+};

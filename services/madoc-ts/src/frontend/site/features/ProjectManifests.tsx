@@ -7,8 +7,7 @@ import { ImageGrid, ImageGridItem } from '../../shared/atoms/ImageGrid';
 import { CroppedImage } from '../../shared/atoms/Images';
 import { LocaleString, useCreateLocaleString } from '../../shared/components/LocaleString';
 import { apiHooks } from '../../shared/hooks/use-api-query';
-import { useStaticData } from '../../shared/hooks/use-data';
-import { ProjectLoader } from '../pages/loaders/project-loader';
+import { useProject } from '../hooks/use-project';
 import { useSiteConfiguration } from './SiteConfigurationContext';
 
 export const ProjectManifests: React.FC = () => {
@@ -16,7 +15,7 @@ export const ProjectManifests: React.FC = () => {
   const {
     project: { allowManifestNavigation, hideProjectManifestNavigation, hideCompletedResources },
   } = useSiteConfiguration();
-  const { data: project } = useStaticData(ProjectLoader);
+  const { data: project } = useProject();
   const { isExact } = useRouteMatch();
   const createLocaleString = useCreateLocaleString();
   const { data: manifests } = apiHooks.getSiteCollection(() =>

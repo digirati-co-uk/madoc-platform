@@ -6,13 +6,12 @@ import { Heading3 } from '../../shared/atoms/Heading3';
 import { ImageGrid } from '../../shared/atoms/ImageGrid';
 import { CollectionSnippet } from '../../shared/components/CollectionSnippet';
 import { apiHooks } from '../../shared/hooks/use-api-query';
-import { useStaticData } from '../../shared/hooks/use-data';
 import { HrefLink } from '../../shared/utility/href-link';
-import { ProjectLoader } from '../pages/loaders/project-loader';
+import { useProject } from '../hooks/use-project';
 import { useSiteConfiguration } from './SiteConfigurationContext';
 
 export const ProjectCollections: React.FC = () => {
-  const { data: project } = useStaticData(ProjectLoader);
+  const { data: project } = useProject();
   const { isExact } = useRouteMatch();
   const { t } = useTranslation();
   const {
