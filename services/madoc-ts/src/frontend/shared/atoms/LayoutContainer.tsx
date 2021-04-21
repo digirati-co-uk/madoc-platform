@@ -26,6 +26,7 @@ export const NavIconContainer = styled.div<{ $active?: boolean; $disabled?: bool
   width: 2.5em;
   height: 2.5em;
   cursor: pointer;
+  position: relative;
 
   svg {
     fill: #666;
@@ -57,6 +58,19 @@ export const NavIconContainer = styled.div<{ $active?: boolean; $disabled?: bool
         background: transparent;
       }
     `}
+`;
+
+export const NavIconNotifcation = styled.div`
+  background: #dd3c3c;
+  padding: 0.3em;
+  position: absolute;
+  top: -0.6em;
+  border-radius: 5px;
+  font-size: 0.7em;
+  right: -0.6em;
+  min-width: 1.4em;
+  text-align: center;
+  color: #fff;
 `;
 
 export const LayoutContainer = styled.div`

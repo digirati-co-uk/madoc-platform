@@ -3,9 +3,9 @@ import styled, { css } from 'styled-components';
 import { HrefLink } from '../utility/href-link';
 
 export const ButtonIcon = styled.span`
-  transform: translate(-8px, -4px);
+  transform: translate(-8px, -6px);
   height: 0.85em;
-  width: 1.6em;
+  width: 1.5em;
   position: relative;
   display: inline-block;
   svg {
@@ -18,7 +18,7 @@ export const ButtonIcon = styled.span`
   }
 `;
 
-export const Button = styled.button<{ $primary?: boolean; $inlineInput?: boolean }>`
+export const Button = styled.button<{ $primary?: boolean; $success?: boolean; $inlineInput?: boolean }>`
   cursor: pointer;
   padding: 0.4em 1em;
   font-size: 0.9em;
@@ -83,7 +83,7 @@ export const Button = styled.button<{ $primary?: boolean; $inlineInput?: boolean
     css`
       background: #4265e9;
       color: #fff;
-      border: 2px solid #4265e9;
+      border: 1px solid #4265e9;
       &:active {
         box-shadow: inset 0 2px 8px 0 rgba(39, 75, 155, 0.8);
       }
@@ -102,6 +102,39 @@ export const Button = styled.button<{ $primary?: boolean; $inlineInput?: boolean
         &:hover {
           background: #4265e9;
           border-color: #4265e9;
+          color: #fff;
+        }
+      }
+    `}
+
+  ${props =>
+    props.$success &&
+    css`
+      background: #4dac22;
+      color: #fff;
+      border: 1px solid #4dac22;
+
+      &:active {
+        box-shadow: inset 0 2px 8px 0 rgb(56, 155, 39);
+      }
+
+      &:link,
+      &:visited {
+        color: #fff;
+      }
+
+      &:hover {
+        background: #4dac22;
+        border-color: #4dac22;
+      }
+
+      &:disabled {
+        opacity: 0.9;
+        cursor: not-allowed;
+
+        &:hover {
+          background: #4dac22;
+          border-color: #4dac22;
           color: #fff;
         }
       }
@@ -220,6 +253,43 @@ export const ButtonRow = styled.div<{ $noMargin?: boolean }>`
   & > * ~ * {
     margin-left: 0.5em;
   }
+`;
+
+export const RightButtonIconBox = styled.span<{ $checked?: boolean }>`
+  transform: translate(0, 1px);
+  height: 1em;
+  width: 1em;
+  position: relative;
+  display: inline-block;
+  border: 1px solid #ccc;
+  margin-left: 0.5em;
+
+  ${Button}:focus &,
+  ${Button}:hover & {
+    border-color: rgba(255, 255, 255, 0.5);
+    svg {
+      fill: #fff;
+    }
+  }
+
+  svg {
+    display: none;
+    transform: translate(-4px, -8px);
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 24px;
+    width: 24px;
+    fill: #5071f4;
+  }
+  
+  ${props =>
+    props.$checked &&
+    css`
+      svg {
+        display: block;
+      }
+    `}
 `;
 
 export const PrimaryButtonLink: React.FC<any> = props => {
