@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { TinyButton } from '../../shared/atoms/Button';
+import { ButtonRow, TinyButton } from '../../shared/atoms/Button';
 import { Heading3 } from '../../shared/atoms/Heading3';
 import { Status } from '../../shared/atoms/Status';
 import { TableContainer, TableEmpty, TableRow, TableRowLabel } from '../../shared/atoms/Table';
@@ -24,6 +24,11 @@ export const ReviewerTasks: React.FC = () => {
   return (
     <>
       <Heading3>{t('Reviews')}</Heading3>
+      <ButtonRow>
+        <TinyButton as={HrefLink} href={`/tasks?type=crowdsourcing-review`}>
+          {t('Browse all reviews')}
+        </TinyButton>
+      </ButtonRow>
       <TableContainer>
         {reviews && reviews.tasks.length ? (
           reviews.tasks.map(task => (
@@ -40,9 +45,6 @@ export const ReviewerTasks: React.FC = () => {
           <TableEmpty>{t('No reviews')}</TableEmpty>
         )}
       </TableContainer>
-      <TinyButton as={HrefLink} href={`/tasks?type=crowdsourcing-review`}>
-        {t('Browse all reviews')}
-      </TinyButton>
     </>
   );
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
+import { Button, ButtonRow } from '../../shared/atoms/Button';
 import { LocaleString, useCreateLocaleString } from '../../shared/components/LocaleString';
 import { Link } from 'react-router-dom';
 import { Heading3, Subheading3 } from '../../shared/atoms/Heading3';
@@ -10,6 +10,7 @@ import { MoreContainer, MoreDot, MoreIconContainer, MoreLabel } from '../../shar
 import { useTranslation } from 'react-i18next';
 import { Heading1 } from '../../shared/atoms/Heading1';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { HrefLink } from '../../shared/utility/href-link';
 import { CollectionPagination } from '../features/CollectionPagination';
 import { useCollectionList } from '../hooks/use-collection-list';
 import { useRelativeLinks } from '../hooks/use-relative-links';
@@ -87,6 +88,16 @@ export const AllCollections: React.FC = () => {
                 ) : null}
               </ImageStrip>
             )}
+            <ButtonRow>
+              <Button
+                as={HrefLink}
+                href={createLink({
+                  collectionId: collection.id,
+                })}
+              >
+                {t('view collection')}
+              </Button>
+            </ButtonRow>
           </div>
         );
       })}
