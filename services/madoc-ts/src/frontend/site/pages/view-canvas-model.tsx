@@ -5,7 +5,6 @@ import { InfoMessage } from '../../shared/atoms/InfoMessage';
 import { LockIcon } from '../../shared/atoms/LockIcon';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { CanvasNavigation } from '../../shared/components/CanvasNavigation';
-import { LocaleString } from '../../shared/components/LocaleString';
 import React from 'react';
 import { useCurrentUser } from '../../shared/hooks/use-current-user';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
@@ -20,12 +19,9 @@ import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useManifestTask } from '../hooks/use-manifest-task';
 import { useRouteContext } from '../hooks/use-route-context';
-import { CanvasLoaderType } from './loaders/canvas-loader';
 import { RedirectToNextCanvas } from '../features/RedirectToNextCanvas';
 
-type ViewCanvasModelProps = Partial<CanvasLoaderType['data'] & CanvasLoaderType['context']>;
-
-export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({ canvas }) => {
+export const ViewCanvasModel: React.FC = () => {
   const { projectId, canvasId, manifestId, collectionId } = useRouteContext();
   const { showCanvasNavigation, showWarning } = useCanvasNavigation();
   const { isManifestComplete } = useManifestTask();
@@ -96,8 +92,6 @@ export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({ canvas }) => {
 
       <CanvasManifestNavigation subRoute="model" />
 
-      <LocaleString as="h1">{canvas ? canvas.label : { none: ['...'] }}</LocaleString>
-
       {showCanvasNavigation && canContribute ? <PrepareCaptureModel /> : null}
 
       <CanvasTaskWarningMessage />
@@ -109,11 +103,7 @@ export const ViewCanvasModel: React.FC<ViewCanvasModelProps> = ({ canvas }) => {
         </div>
       ) : null}
 
-      {showCanvasNavigation ? (
-        <CanvasViewer>
-          <CanvasSimpleEditor revision={revision} />
-        </CanvasViewer>
-      ) : null}
+      {showCanvasNavigation ? <CanvasSimpleEditor revision={revision} /> : null}
 
       {!hideCanvasThumbnailNavigation && showCanvasNavigation ? (
         <CanvasNavigation

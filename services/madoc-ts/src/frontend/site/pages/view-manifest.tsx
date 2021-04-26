@@ -24,10 +24,12 @@ import { LockIcon } from '../../shared/atoms/LockIcon';
 import { Heading1 } from '../../shared/atoms/Heading1';
 import { ManifestActions } from '../features/ManifestActions';
 import { ManifestMetadata } from '../features/ManifestMetadata';
-import { ManifestUserTasks } from '../features/ManifestUserTasks';
+import { ManifestUserNotification } from '../features/ManifestUserNotification';
 import { usePreventCanvasNavigation } from '../features/PreventUsersNavigatingCanvases';
 import { RandomlyAssignCanvas } from '../features/RandomlyAssignCanvas';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
+import { useContributionMode } from '../hooks/use-contribution-mode';
+import { useManifestPageConfiguration } from '../hooks/use-manifest-page-configuration';
 import { useManifestTask } from '../hooks/use-manifest-task';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { Redirect } from 'react-router-dom';
@@ -48,8 +50,12 @@ export const ViewManifest: React.FC<{
   const { filter, listing } = useLocationQuery();
   const { showWarning, showNavigationContent } = usePreventCanvasNavigation();
   const config = useSiteConfiguration();
-  const { isManifestComplete } = useManifestTask();
   const createLocaleString = useCreateLocaleString();
+  const mode = useContributionMode();
+  const manifestOptions = useManifestPageConfiguration();
+  const { userManifestTask, canClaimManifest } = useManifestTask();
+
+  const directToModelPage = (!!userManifestTask || canClaimManifest) && manifestOptions?.directModelPage;
 
   const [subjectMap] = useSubjectMap(manifestSubjects);
 
@@ -69,9 +75,7 @@ export const ViewManifest: React.FC<{
         <LocaleString>{manifest.label}</LocaleString>
       </Heading1>
 
-      {isManifestComplete ? <InfoMessage>{t('This manifest is complete')}</InfoMessage> : null}
-
-      <ManifestUserTasks />
+      <ManifestUserNotification />
 
       {showNavigationContent ? <ManifestActions /> : null}
 
@@ -99,6 +103,7 @@ export const ViewManifest: React.FC<{
                   key={`${canvas.id}_${idx}`}
                   to={createLink({
                     canvasId: canvas.id,
+                    subRoute: directToModelPage ? 'model' : undefined,
                   })}
                 >
                   <ImageStripBox>
@@ -107,7 +112,9 @@ export const ViewManifest: React.FC<{
                         <img alt={createLocaleString(canvas.label, t('Canvas thumbnail'))} src={canvas.thumbnail} />
                       ) : null}
                     </CroppedImage>
-                    {manifestSubjects && subjectMap ? <CanvasStatus status={subjectMap[canvas.id]} /> : null}
+                    {manifestSubjects && subjectMap ? (
+                      <CanvasStatus userTask={mode === 'transcription'} status={subjectMap[canvas.id]} />
+                    ) : null}
                     <LocaleString as={Heading5}>{canvas.label}</LocaleString>
                   </ImageStripBox>
                 </Link>

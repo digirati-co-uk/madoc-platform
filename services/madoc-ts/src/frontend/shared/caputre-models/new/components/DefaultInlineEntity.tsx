@@ -1,7 +1,7 @@
 import { DocumentPreview, RoundedCard } from '@capture-models/editor';
 import React from 'react';
-import { InlineProgressIcon } from '../../../atoms/ProgressIcon';
 import { getEntityLabel } from '../../utility/get-entity-label';
+import { ModifiedStatus } from '../features/ModifiedStatus';
 import { useEntityDetails } from '../hooks/use-entity-details';
 import { EditorRenderingConfig, useSlotContext } from './EditorSlots';
 
@@ -21,7 +21,7 @@ export const DefaultInlineEntity: EditorRenderingConfig['InlineEntity'] = ({
       onClick={chooseEntity}
       onRemove={canRemove ? onRemove : undefined}
     >
-      {isModified && <InlineProgressIcon />}
+      {isModified && <ModifiedStatus />}
       <DocumentPreview entity={entity}>
         {getEntityLabel(
           entity,

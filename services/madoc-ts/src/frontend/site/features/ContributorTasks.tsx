@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { BaseTask } from '../../../gateway/tasks/base-task';
 import { ProjectFull } from '../../../types/schemas/project-full';
 import { parseUrn } from '../../../utility/parse-urn';
-import { TinyButton } from '../../shared/atoms/Button';
+import { ButtonRow, TinyButton } from '../../shared/atoms/Button';
 import { GridContainer, HalfGird } from '../../shared/atoms/Grid';
 import { Heading3, Subheading3 } from '../../shared/atoms/Heading3';
 import { Status } from '../../shared/atoms/Status';
@@ -81,6 +81,11 @@ export const ContributorTasks: React.FC = () => {
   return (
     <>
       <Heading3>{t('Your contributions')}</Heading3>
+      <ButtonRow>
+        <TinyButton as={HrefLink} href={`/tasks?type=crowdsourcing-task`} $primary>
+          {t('Browse all contributions')}
+        </TinyButton>
+      </ButtonRow>
       <GridContainer>
         <HalfGird $margin>
           <Subheading3>{t('Contributions in progress')}</Subheading3>
@@ -123,9 +128,6 @@ export const ContributorTasks: React.FC = () => {
           </TableContainer>
         </HalfGird>
       </GridContainer>
-      <TinyButton as={HrefLink} href={`/tasks?type=crowdsourcing-task`}>
-        {t('Browse all contributions')}
-      </TinyButton>
     </>
   );
 };

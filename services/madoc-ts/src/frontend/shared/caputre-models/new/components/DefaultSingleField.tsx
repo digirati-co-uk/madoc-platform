@@ -1,6 +1,6 @@
-import { FieldHeader, FieldInstance, RoundedCard } from '@capture-models/editor';
 import React from 'react';
-import { InlineProgressIcon } from '../../../atoms/ProgressIcon';
+import { FieldInstance, RoundedCard } from '@capture-models/editor';
+import { ModifiedStatus } from '../features/ModifiedStatus';
 import { useCurrentField } from '../hooks/use-current-field';
 import { useFieldDetails } from '../hooks/use-field-details';
 import { EditorRenderingConfig, useSlotContext } from './EditorSlots';
@@ -21,7 +21,7 @@ export const DefaultSingleField: EditorRenderingConfig['SingleField'] = () => {
     <>
       <Slots.Breadcrumbs />
       <RoundedCard size="small" interactive={false}>
-        {isModified && <InlineProgressIcon />}
+        {isModified && <ModifiedStatus />}
         <FieldInstance field={field} property={property} path={path as any} />
       </RoundedCard>
     </>

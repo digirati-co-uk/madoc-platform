@@ -29,5 +29,6 @@ export interface CrowdsourcingCollectionTask extends BaseTask {
   status: -1 | 0 | 1 | 2 | 3;
   state: {
     // Can start adding to this as we need.
+    maxContributors?: number;
   };
 }

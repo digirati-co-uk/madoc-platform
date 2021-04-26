@@ -24,7 +24,7 @@ export const CanvasTaskProgress: React.FC = () => {
   const user = useUser();
   const isAdmin =
     user && user.scope && (user.scope.indexOf('site.admin') !== -1 || user.scope.indexOf('tasks.admin') !== -1);
-  const canProgress = user && user.scope && user.scope.indexOf('tasks.progress') !== -1;
+  const canProgress = user && user.scope && user.scope.indexOf('tasks.create') !== -1;
 
   const { slug } = useParams<{ slug?: string }>();
   const { data: projectTasks, refetch } = apiHooks.getSiteProjectCanvasTasks(

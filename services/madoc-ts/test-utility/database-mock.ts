@@ -1,4 +1,9 @@
 import { SqlSqlTokenType } from 'slonik/src/types';
+import { MockTaggedWrapper } from './utils';
+
+function normalizeSql(str: string) {
+  return str.replace(/\s\s+/g, ' ').trim();
+}
 
 export class DatabaseMock {
   mockStack: {
@@ -14,7 +19,12 @@ export class DatabaseMock {
     }
   }
 
-  mockQuery(sqlText: string, response: any, assertParams?: (params: any) => void) {
+  mockQuery<Response = any, Params = any>(
+    sqlTextInput: string | MockTaggedWrapper<Response, Params>,
+    response: Response,
+    assertParams?: (params: Params) => void
+  ) {
+    const sqlText = normalizeSql(sqlTextInput);
     this.mockStack[sqlText] = this.mockStack[sqlText] ? this.mockStack[sqlText] : [];
     this.mockStack[sqlText].push({ response, assertParams });
   }
@@ -26,12 +36,12 @@ export class DatabaseMock {
   }
 
   handleQuery = (sqlTag: SqlSqlTokenType) => {
-    const sqlText = sqlTag.sql;
+    const sqlText = normalizeSql(sqlTag.sql);
     if (!this.mockStack[sqlText] || !this.mockStack[sqlText].length) {
       throw new Error(`No mock available.
 Mock this sql using the following:
 
-    db.mockQuery(\`${sqlText}\`, {  });
+    db.mockQuery(\`${sqlTag.sql}\`, {  });
   
       `);
     }
@@ -52,5 +62,24 @@ Mock this sql using the following:
       size += stackItem.length;
     }
     return size;
+  }
+
+  assertEmpty() {
+    const keys = Object.keys(this.mockStack);
+    const remaining = [];
+    for (const key of keys) {
+      const stackItem = this.mockStack[key];
+      if (stackItem.length) {
+        remaining.push(key);
+      }
+    }
+
+    if (remaining.length) {
+      throw new Error(`
+The following queries were not used:
+
+${remaining.join('\n\n')}
+      `);
+    }
   }
 }

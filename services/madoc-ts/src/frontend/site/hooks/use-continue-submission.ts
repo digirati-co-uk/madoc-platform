@@ -14,7 +14,10 @@ export function useContinueSubmission() {
     let inProgress = 0;
     let completed = 0;
     let assigned = 0;
-    const tasks = config.project.claimGranularity === 'canvas' ? canvasTasks?.userTasks : manifestTasks.inProgress;
+    const tasks =
+      config.project.claimGranularity === 'canvas' || config.project.contributionMode === 'transcription'
+        ? canvasTasks?.userTasks
+        : manifestTasks.inProgress;
 
     const allModels =
       tasks && tasks.length

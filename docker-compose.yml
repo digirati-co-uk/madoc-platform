@@ -132,7 +132,7 @@ services:
       - ./services/tasks-api/migrations:/home/node/app/migrations
 
   model-api:
-    image: digirati/capture-models:v0.13.1
+    image: digirati/capture-models:v0.13.6
     environment:
       - SERVER_PORT=3000
       - DATABASE_HOST=shared-postgres

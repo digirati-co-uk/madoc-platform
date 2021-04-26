@@ -1,4 +1,7 @@
+import { CrowdsourcingManifestTask } from '../../gateway/tasks/crowdsourcing-manifest-task';
+import { CrowdsourcingTask } from '../../gateway/tasks/crowdsourcing-task';
 import { RouteMiddleware } from '../../types/route-middleware';
+import { canUserClaimCanvas, canUserClaimManifest, findUserManifestTask } from '../../utility/claim-utilities';
 
 export const siteCanvasTasks: RouteMiddleware<{
   slug: string;
@@ -37,22 +40,37 @@ export const siteCanvasTasks: RouteMiddleware<{
   const canvasTask = tasks.find(task => task.type === 'crowdsourcing-canvas-task');
   const userTasks = user ? tasks.filter(task => task.assignee && task.assignee.id === `urn:madoc:user:${user}`) : [];
 
-  const manifestTask = canvasTask && canvasTask.parent_task ? await siteApi.getTask(canvasTask.parent_task) : undefined;
+  const manifestTask =
+    canvasTask && canvasTask.parent_task
+      ? await siteApi.getTask(canvasTask.parent_task, { detail: true, assignee: true })
+      : undefined;
+
+  const canClaimManifest = user
+    ? manifestTask
+      ? canUserClaimManifest({ task: manifestTask as CrowdsourcingManifestTask, config })
+      : true
+    : false;
+
+  const userManifestTask =
+    manifestTask && user ? findUserManifestTask(manifestTask?.subject, user, manifestTask) : undefined;
+
+  const isManifestComplete = manifestTask?.status === 3 || userManifestTask?.status === 3;
 
   const canUserSubmit =
-    (!maxContributors || userTasks.length || maxContributors > contributors.length) &&
-    canvasTask?.status !== 3 &&
-    manifestTask?.status !== 3;
-
-  const isManifestComplete = manifestTask?.status === 3;
+    (userManifestTask && userManifestTask.status !== 3) ||
+    ((!maxContributors || userTasks.length || maxContributors > contributors.length) &&
+      canvasTask?.status !== 3 &&
+      manifestTask?.status !== 3);
 
   context.response.status = 200;
   context.response.body = {
     canvasTask,
     manifestTask,
+    userManifestTask,
     userTasks,
     totalContributors: contributors.length,
     maxContributors: config.maxContributionsPerResource,
+    canClaimManifest,
     isManifestComplete,
     canUserSubmit: !!canUserSubmit,
   };

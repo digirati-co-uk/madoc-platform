@@ -1,5 +1,6 @@
 import { RouteMiddleware } from '../types';
 import { NotFoundError, sql } from 'slonik';
+import { date } from '../utility/date';
 import { mapSingleTask } from '../utility/map-single-task';
 
 function getStatus(statusQuery: string) {
@@ -78,6 +79,30 @@ export const getAllTasks: RouteMiddleware = async context => {
     : sql``;
   const orderBy = sortByNewest ? sql`order by t.modified_at asc` : sql`order by t.modified_at desc`;
 
+  // Modified search
+  const modifiedStartFilter = context.query.modified_date_start
+    ? sql`and t.modified_at > ${date(new Date(context.query.modified_date_start))}`
+    : sql``;
+  const modifiedEndFilter = context.query.modified_date_end
+    ? sql`and t.modified_at <= ${date(new Date(context.query.modified_date_end))}`
+    : sql``;
+
+  const modifiedInterval = context.query.modified_date_interval
+    ? sql`and t.modified_at > (now() - ${context.query.modified_date_interval}::interval)`
+    : sql``;
+
+  // Created search
+  const createdStartFilter = context.query.created_date_start
+    ? sql`and t.created_at > ${date(new Date(context.query.created_date_start))}`
+    : sql``;
+  const createdEndFilter = context.query.created_date_end
+    ? sql`and t.created_at <= ${date(new Date(context.query.created_date_end))}`
+    : sql``;
+
+  const createdInterval = context.query.created_date_interval
+    ? sql`and t.created_at > (now() - ${context.query.created_date_interval}::interval)`
+    : sql``;
+
   try {
     const query = sql`
       SELECT t.id, t.name, t.status, t.status_text, t.metadata, t.type ${detailedFields}
@@ -92,6 +117,12 @@ export const getAllTasks: RouteMiddleware = async context => {
         ${statusFilter}
         ${rootTaskFilter}
         ${parentTaskFilter}
+        ${modifiedStartFilter}
+        ${modifiedEndFilter}
+        ${modifiedInterval}
+        ${createdStartFilter}
+        ${createdEndFilter}
+        ${createdInterval}
         ${orderBy}
     `;
 

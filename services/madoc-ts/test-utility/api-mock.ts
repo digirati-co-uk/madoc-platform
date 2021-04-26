@@ -1,4 +1,7 @@
 import { Response } from 'cross-fetch';
+import { LocalisationSiteConfig } from '../src/routes/admin/localisation';
+import { ConfigResponse } from '../src/types/schemas/config-response';
+import { ProjectFull } from '../src/types/schemas/project-full';
 
 export type ApiMockEndpoint = {
   response: any;
@@ -10,6 +13,7 @@ export class ApiMock {
     [url: string]: {
       GET: Array<ApiMockEndpoint>;
       POST: Array<ApiMockEndpoint>;
+      PATCH: Array<ApiMockEndpoint>;
     };
   } = {};
 
@@ -59,15 +63,58 @@ Mock this route using the following:
     });
   }
 
-  mockRoute(method: 'GET' | 'POST', url: string, response: any, bodyAssertion?: (body: any) => void) {
+  mockRoute(method: 'GET' | 'POST' | 'PATCH', url: string, response: any, bodyAssertion?: (body: any) => void) {
     const fullUrl = `https://mock${url}`;
     this.mockStacks[fullUrl] = this.mockStacks[fullUrl]
       ? this.mockStacks[fullUrl]
       : {
           GET: [],
           POST: [],
+          PATCH: [],
         };
 
     this.mockStacks[fullUrl][method].push({ response, bodyAssertion });
+  }
+
+  mockConfigRequest(projectId: number, config: Partial<ProjectFull['config']>) {
+    const wrapper: ConfigResponse<ProjectFull['config']> = {
+      config: [
+        {
+          id: '123',
+          config_object: config,
+          scope: [],
+          scope_key: '',
+        },
+      ],
+      query: {
+        context: [],
+        service: 'madoc',
+      } as any,
+    };
+    this.mockRoute(
+      'GET',
+      `/api/configurator/query?context=urn%3Amadoc%3Asite%3A1&context=urn%3Amadoc%3Aproject%3A${projectId}&service=madoc`,
+      wrapper
+    );
+  }
+
+  assertEmpty() {
+    const remaining = [];
+    for (const stackKey of Object.keys(this.mockStacks)) {
+      const stack = this.mockStacks[stackKey];
+      for (const method of Object.keys(stack)) {
+        if ((stack as any)[method].length) {
+          remaining.push(`${method} ${stackKey.slice('https://mock'.length)}`);
+        }
+      }
+    }
+
+    if (remaining.length) {
+      throw new Error(`
+Some Fixtures were unused:
+   ${remaining.join('\n   ')}
+    
+    `);
+    }
   }
 }

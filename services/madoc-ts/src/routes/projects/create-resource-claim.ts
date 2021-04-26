@@ -5,6 +5,7 @@
 import { RouteMiddleware } from '../../types/route-middleware';
 import { BaseTask } from '../../gateway/tasks/base-task';
 import { CaptureModel } from '@capture-models/types';
+import { canUserClaimCanvas, canUserClaimManifest, findUserManifestTask } from "../../utility/claim-utilities";
 import { userWithScope } from '../../utility/user-with-scope';
 import { ApplicationContext } from '../../types/application-context';
 import { RequestError } from '../../utility/errors/request-error';
@@ -119,24 +120,6 @@ async function verifyResourceInProject(
   }
 }
 
-function buildContextFromClaim(siteUrn: string, projectId: number, claim: ResourceClaim) {
-  const context = [siteUrn, `urn:madoc:project:${projectId}`];
-
-  if (claim.collectionId) {
-    context.push(`urn:madoc:collection:${claim.collectionId}`);
-  }
-
-  if (claim.manifestId) {
-    context.push(`urn:madoc:manifest:${claim.manifestId}`);
-  }
-
-  if (claim.canvasId) {
-    context.push(`urn:madoc:canvas:${claim.canvasId}`);
-  }
-
-  return context;
-}
-
 async function ensureProjectTaskStructure(
   context: ApplicationContext,
   siteId: number,
@@ -162,15 +145,6 @@ async function ensureProjectTaskStructure(
   if (!rootTask) {
     throw new RequestError('Invalid project');
   }
-
-  // Fetch configuration.
-  const configQuery: string[] = [
-    claim.canvasId ? `urn:madoc:canvas:${claim.canvasId}` : undefined,
-    claim.manifestId ? `urn:madoc:manifest:${claim.manifestId}` : undefined,
-    claim.collectionId ? `urn:madoc:collection:${claim.collectionId}` : undefined,
-    `urn:madoc:project:${projectId}`,
-    `urn:madoc:site:${siteId}`,
-  ].filter(e => e !== undefined) as any;
 
   const maxContributors =
     config.maxContributionsPerResource || config.maxContributionsPerResource === 0
@@ -231,40 +205,37 @@ async function ensureProjectTaskStructure(
   }
 
   if (claim.canvasId) {
+    const foundCanvasTask = (parent.subtasks || []).find(
+      (task: any) => task.subject === `urn:madoc:canvas:${claim.canvasId}`
+    );
+
     if (claimGranularity === 'manifest') {
       if (!claim.manifestId) {
         throw new RequestError('Cannot claim a canvas on its own in this project');
       }
       // Check for user manifest task in parent first, otherwise error THEN add the task.
-      const foundUserManifestTask = parent.subtasks
-        ? parent.subtasks.find(task => {
-            return (
-              task.type === 'crowdsourcing-task' &&
-              task.subject === `urn:madoc:manifest:${claim.manifestId}` &&
-              task.assignee &&
-              task.assignee.id === `urn:madoc:user:${userId}`
-            );
-          })
-        : undefined;
+      const foundUserManifestTask = findUserManifestTask(claim.manifestId, userId, parent);
 
-      if (!foundUserManifestTask) {
-        throw new RequestError('You must claim a manifest to claim a canvas on it');
-      }
+      // @todo this is flawed. A user cannot claim a manifest if the structure does not exist yet.
+      //   And they ARE preparing a contribution to a manifest, which implies claiming. The issue is with
+      //   the found canvas - this should be the USERS canvas submissions is found
+      // if (!foundUserManifestTask && foundCanvasTask && preventContributionAfterManifestUnassign) {
+      //   throw new RequestError('You must claim a manifest to continue working on this canvas');
+      // }
+
       // We no longer re-parent.
-      userManifestTask = await userApi.getTaskById<CrowdsourcingTask>(
-        foundUserManifestTask.id,
-        true,
-        0,
-        undefined,
-        undefined,
-        true,
-        true
-      );
+      userManifestTask = foundUserManifestTask
+        ? await userApi.getTaskById<CrowdsourcingTask>(
+            foundUserManifestTask.id,
+            true,
+            0,
+            undefined,
+            undefined,
+            true,
+            true
+          )
+        : undefined;
     }
-
-    const foundCanvasTask = (parent.subtasks || []).find(
-      (task: any) => task.subject === `urn:madoc:canvas:${claim.canvasId}`
-    );
 
     if (!foundCanvasTask) {
       const { canvas } = await userApi.getCanvasById(claim.canvasId);
@@ -519,11 +490,33 @@ export const prepareResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim
   // Get project configuration.
   const config = await userApi.getProjectConfiguration(projectId, siteUrn);
 
+  console.log('\n\n========');
+  console.log(config);
+  console.log('\n\n========\n\n');
+  console.log(project.config);
+  console.log('\n\n========\n\n');
+
   // Make sure our fancy structure exists.
-  const [parent, userManifestTask] = await ensureProjectTaskStructure(context, siteId, projectId, id, claim, config);
+  const [parent, manifestUserTask] = await ensureProjectTaskStructure(context, siteId, projectId, id, claim, config);
 
   // Check for existing claim
   const [existingClaim, manifestClaim] = await getTaskFromClaim({ userId: id, parent, claim });
+
+  if (
+    !existingClaim &&
+    (config.claimGranularity !== 'manifest' || !manifestUserTask) &&
+    !canUserClaimCanvas({
+      config,
+      parentTask: parent,
+      userId: id,
+    })
+  ) {
+    console.log('reason', {
+      noManifest: !manifestUserTask,
+    });
+
+    throw new Error('Maximum number of contributors reached');
+  }
 
   const model = await upsertCaptureModelForResource(context, siteId, projectId, id, claim);
 
@@ -585,8 +578,26 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
       return;
     }
 
-    if (!(canvasClaim.state.revisionId && claim.revisionId && canvasClaim.state.revisionId !== claim.revisionId)) {
+    // @todo this should ALWAYS be false.
+    const revisionDontMatch =
+      canvasClaim.state.revisionId && claim.revisionId && canvasClaim.state.revisionId !== claim.revisionId;
+    const revisionExistsAndMatch = !revisionDontMatch;
+
+    if (config.modelPageOptions?.preventMultipleUserSubmissionsPerResource && revisionDontMatch) {
+      // @todo this is a backup, canvasClaim should never match if the revisions dont match.
+      throw new Error('Can only submit one revision per resource');
+    }
+
+    if (revisionExistsAndMatch) {
       if (typeof claim.status !== 'undefined' && claim.status !== canvasClaim.status) {
+        if (
+          config.modelPageOptions?.preventContributionAfterSubmission &&
+          canvasClaim.status === 2 &&
+          (claim.status === 0 || claim.status === 1)
+        ) {
+          throw new Error('Cannot update task in review');
+        }
+
         context.response.body = {
           claim: await userApi.updateTask(canvasClaim.id, {
             status: claim.status,
@@ -612,8 +623,20 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
     return;
   }
 
-  // @todo if there is a manifest manifestClaim, it becomes the parent task.
   if (claim.canvasId) {
+    if (
+      (config.claimGranularity !== 'manifest' || !userManifestTask) &&
+      !canUserClaimCanvas({
+        config,
+        parentTask: parent,
+        manifestClaim,
+        userId,
+        revisionId: claim.revisionId,
+      })
+    ) {
+      throw new Error('Maximum number of contributors reached');
+    }
+
     // Make sure a capture model exists and retrieve it.
     const captureModel = await upsertCaptureModelForResource(context, siteId, projectId, userId, claim);
 
@@ -636,6 +659,13 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
       userManifestTask,
     });
 
+    if (userManifestTask && userManifestTask.status === 0) {
+      await userApi.updateTask(userManifestTask.id, {
+        status: 1,
+        status_text: statusToClaimMap[claim.status as any] || 'in progress',
+      });
+    }
+
     if (typeof claim.status !== 'undefined' && claim.status !== task.status) {
       context.response.body = {
         claim: await userApi.updateTask(task.id, {
@@ -650,6 +680,15 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
   }
 
   if (claim.manifestId) {
+    if (
+      !canUserClaimManifest({
+        task: parent as any,
+        config,
+      })
+    ) {
+      throw new Error('Maximum number of contributors reached');
+    }
+
     const task = await createUserCrowdsourcingTask({
       context,
       siteId,

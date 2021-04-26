@@ -13,31 +13,13 @@ import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
 import { AssignCanvasToUser } from './AssignCanvasToUser';
+import { CanvasManifestPagination } from './CanvasManifestPagination';
 import { CanvasTaskProgress } from './CanvasTaskProgress';
 
-const BrowseAll = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 0 1rem;
-  a {
-    display: flex;
-    align-items: center;
-    font-size: 16px;
-    color: #343a40;
-  }
-  svg {
-    background-color: #ebebeb;
-    padding: 0.05rem;
-    margin-right: 1rem;
-  }
-`;
-
 export const CanvasManifestNavigation: React.FC<{ subRoute?: string }> = ({ subRoute }) => {
-  const { manifestId, collectionId, canvasId, projectId } = useRouteContext();
+  const { manifestId, canvasId } = useRouteContext();
   const createLink = useRelativeLinks();
   const { t } = useTranslation();
-  const [searchText] = useCanvasSearch(canvasId);
   const { data: manifestResponse } = useData(ManifestLoader);
   const { showCanvasNavigation } = useCanvasNavigation();
   const manifest = manifestResponse?.manifest;
@@ -68,16 +50,7 @@ export const CanvasManifestNavigation: React.FC<{ subRoute?: string }> = ({ subR
           </Button>
         </ButtonRow>
 
-        {showCanvasNavigation ? (
-          <CanvasNavigationMinimalist
-            manifestId={manifestId}
-            canvasId={canvasId}
-            projectId={projectId}
-            collectionId={collectionId}
-            query={searchText ? { searchText } : undefined}
-            subRoute={subRoute}
-          />
-        ) : null}
+        {showCanvasNavigation ? <CanvasManifestPagination subRoute={subRoute} /> : null}
       </div>
     </div>
   );

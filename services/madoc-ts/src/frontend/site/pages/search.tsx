@@ -20,7 +20,6 @@ import {
 } from '../../shared/components/SearchFilters';
 import { SearchResults, TotalResults } from '../../shared/components/SearchResults';
 import { AddIcon } from '../../shared/icons/AddIcon';
-import { Spinner } from '../../shared/icons/Spinner';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useSearch } from '../hooks/use-search';
 import { useSearchFacets } from '../hooks/use-search-facets';

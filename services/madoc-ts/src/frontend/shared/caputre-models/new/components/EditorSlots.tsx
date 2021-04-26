@@ -1,5 +1,6 @@
 import { BaseField, CaptureModel, RevisionRequest } from '@capture-models/types';
 import React, { useContext, useMemo } from 'react';
+import { useSlots } from '../../../page-blocks/slot-context';
 import { useCurrentEntity } from '../hooks/use-current-entity';
 import { DefaultAdjacentNavigation } from './DefaultAdjacentNavigation';
 import { DefaultBreadcrumbs } from './DefaultBreadcrumbs';
@@ -63,12 +64,14 @@ export type EditorConfig = {
   allowEditing: boolean;
   selectEntityWhenCreating: boolean;
   selectFieldWhenCreating: boolean;
+  deselectRevisionAfterSaving: boolean;
 };
 
 const defaultEditorConfig: EditorConfig = {
   allowEditing: false,
   selectEntityWhenCreating: true,
   selectFieldWhenCreating: true,
+  deselectRevisionAfterSaving: false,
 };
 
 const Context = React.createContext<EditorRenderingConfig>({
@@ -94,6 +97,12 @@ const Context = React.createContext<EditorRenderingConfig>({
 
 export function useSlotContext() {
   return useContext(Context);
+}
+
+export function useSlotConfiguration() {
+  const slots = useSlotContext();
+
+  return slots.configuration;
 }
 
 const Provider: React.FC<{ config?: Partial<EditorConfig>; components?: Partial<EditorRenderingConfig> }> = ({

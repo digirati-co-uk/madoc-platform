@@ -1,38 +1,14 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { BaseTask } from '../../../gateway/tasks/base-task';
-import { parseUrn } from '../../../utility/parse-urn';
-import { Button, SmallButton } from '../../shared/atoms/Button';
+import { SmallButton } from '../../shared/atoms/Button';
 import { GridContainer, ThirdGrid } from '../../shared/atoms/Grid';
 import { Heading3 } from '../../shared/atoms/Heading3';
-import { SubjectSnippet } from '../../shared/components/SubjectSnippet';
+import { ContinueTaskDisplay } from '../../shared/components/ContinueTaskDisplay';
 import { useContributorTasks } from '../../shared/hooks/use-contributor-tasks';
+import { firstNTasksWithUniqueSubjects } from '../../shared/utility/first-n-tasks-with-unique-subjects';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useProject } from '../hooks/use-project';
 import { useRelativeLinks } from '../hooks/use-relative-links';
-
-const PrimaryButtonLink: React.FC<any> = props => {
-  return <Button as={HrefLink} $primary {...props} />;
-};
-
-function firstNTasksWithUniqueSubjects(tasks: BaseTask[], count: number) {
-  const toReturn: BaseTask[] = [];
-  const subjects: string[] = [];
-  for (const task of tasks) {
-    if (subjects.indexOf(task.subject) !== -1) {
-      continue;
-    }
-
-    subjects.push(task.subject);
-    toReturn.push(task);
-
-    if (toReturn.length === count) {
-      return toReturn;
-    }
-  }
-
-  return toReturn;
-}
 
 export const ProjectContributionButton: React.FC = () => {
   const { t } = useTranslation();
@@ -47,77 +23,46 @@ export const ProjectContributionButton: React.FC = () => {
     return null;
   }
 
+  const taskComponents = [];
+
   if (currentTasks && currentTasks.length) {
     const firstThree = firstNTasksWithUniqueSubjects(currentTasks, 3);
-    return (
-      <>
-        <Heading3 $margin>{t('Continue where you left off')}</Heading3>
-        <GridContainer>
-          {firstThree.map((currentTask, key) => (
-            <ThirdGrid key={currentTask.id}>
-              <SubjectSnippet
-                subject={currentTask.subject}
-                subjectParent={currentTask.subject_parent}
-                model
-                buttonText={t('Continue contribution')}
-                size="sm"
-                center
-                lightBackground
-                linkAs={PrimaryButtonLink}
-              />
-            </ThirdGrid>
-          ))}
-        </GridContainer>
-        <SmallButton
-          as={HrefLink}
-          href={createLink({ projectId: project.id, subRoute: 'tasks', query: { type: 'crowdsourcing-task' } })}
-        >
-          {t('View all contributions')}
-        </SmallButton>
-      </>
-    );
+
+    for (const task of firstThree) {
+      taskComponents.push(
+        <ThirdGrid key={task.id}>
+          <ContinueTaskDisplay task={task} />
+        </ThirdGrid>
+      );
+    }
   }
 
-  if (tasksInReview && tasksInReview.length) {
-    const firstThree = firstNTasksWithUniqueSubjects(tasksInReview, 3);
+  if (tasksInReview && tasksInReview.length && taskComponents.length < 3) {
+    const firstThree = firstNTasksWithUniqueSubjects(tasksInReview, 3 - taskComponents.length);
 
-    return (
-      <>
-        <Heading3 $margin>{t('Continue where you left off')}</Heading3>
-        <GridContainer>
-          {firstThree.map((currentTask, key) => {
-            const parsed = parseUrn(currentTask.subject);
-
-            if (!parsed || parsed.type !== 'canvas') {
-              return null;
-            }
-
-            return (
-              <ThirdGrid key={currentTask.id}>
-                <SubjectSnippet
-                  subject={currentTask.subject}
-                  subjectParent={currentTask.subject_parent}
-                  model
-                  buttonText={t('Contribute to the next image')}
-                  size="sm"
-                  center
-                  lightBackground
-                  linkAs={PrimaryButtonLink}
-                  query={{ goToNext: true }}
-                />
-              </ThirdGrid>
-            );
-          })}
-        </GridContainer>
-        <SmallButton
-          as={HrefLink}
-          href={createLink({ projectId: project.id, subRoute: 'tasks', query: { type: 'crowdsourcing-task' } })}
-        >
-          {t('View all contributions')}
-        </SmallButton>
-      </>
-    );
+    for (const task of firstThree) {
+      taskComponents.push(
+        <ThirdGrid key={task.id}>
+          <ContinueTaskDisplay task={task} next />
+        </ThirdGrid>
+      );
+    }
   }
 
-  return null;
+  if (taskComponents.length === 0) {
+    return null;
+  }
+
+  return (
+    <>
+      <Heading3 $margin>{t('Continue where you left off')}</Heading3>
+      <GridContainer>{taskComponents}</GridContainer>
+      <SmallButton
+        as={HrefLink}
+        href={createLink({ projectId: project.id, subRoute: 'tasks', query: { type: 'crowdsourcing-task' } })}
+      >
+        {t('View all contributions')}
+      </SmallButton>
+    </>
+  );
 };

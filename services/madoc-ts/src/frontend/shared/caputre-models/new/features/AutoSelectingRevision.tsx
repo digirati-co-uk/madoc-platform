@@ -8,7 +8,7 @@ export const AutoSelectingRevision: React.FC = () => {
   const createRevision = Revisions.useStoreActions(a => a.createRevision);
   const selectRevision = Revisions.useStoreActions(a => a.selectRevision);
   const [currentView, { push }] = useNavigation();
-  const revisionList = useRevisionList();
+  const revisionList = useRevisionList({ filterCurrentView: false });
 
   const lastWorkedOn = revisionList.myUnpublished.length ? revisionList.myUnpublished[0] : undefined;
 

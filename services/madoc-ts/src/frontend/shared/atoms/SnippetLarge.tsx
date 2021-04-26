@@ -7,7 +7,7 @@ export type SnippetLargeProps = {
   portrait?: boolean;
   subtitle?: string | JSX.Element;
   summary?: string | JSX.Element;
-  thumbnail?: string;
+  thumbnail?: string | null;
   link: string;
   buttonText: string;
   linkAs?: any;
@@ -64,7 +64,7 @@ const SnippetContainer = styled.div<{
   margin?: boolean;
   flat?: boolean;
   size?: 'lg' | 'md' | 'sm';
-  center?: boolean;
+  $center?: boolean;
   interactive?: boolean;
 }>`
   box-sizing: border-box;
@@ -86,7 +86,7 @@ const SnippetContainer = styled.div<{
     `}
   
   ${props =>
-    props.center &&
+    props.$center &&
     css`
       align-items: center;
       text-align: center;
@@ -264,7 +264,7 @@ export const SnippetLarge: React.FC<SnippetLargeProps> = props => {
       portrait={props.portrait}
       flat={props.flat}
       size={props.size}
-      center={props.center}
+      $center={props.center}
       interactive={props.interactive}
     >
       {props.thumbnail ? (

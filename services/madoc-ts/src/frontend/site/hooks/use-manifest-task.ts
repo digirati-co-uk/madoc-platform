@@ -18,9 +18,12 @@ export function useManifestTask() {
   return {
     isFetched,
     manifestTask,
+    userManifestTasks: projectTasks?.userTasks || [],
     isManifestComplete,
     totalContributors: projectTasks?.totalContributors,
     canUserSubmit: projectTasks?.canUserSubmit,
+    canClaimManifest: projectTasks?.canClaimManifest,
+    userManifestTask: projectTasks?.userManifestTask,
     refetch,
   };
 }

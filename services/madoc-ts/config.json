@@ -26,7 +26,29 @@
     "hideManifestMetadataOnCanvas": false,
     "hideCanvasThumbnailNavigation": false,
     "showSearchFacetCount": false,
-    "miradorCanvasPage": false
+    "miradorCanvasPage": false,
+    "contributionMode": "annotation",
+    "modelPageOptions": {
+      "fixedTranscriptionBar": false,
+      "preventContributionAfterRejection": false,
+      "preventContributionAfterSubmission": false,
+      "preventMultipleUserSubmissionsPerResource": false,
+      "preventContributionAfterManifestUnassign": false
+    },
+    "projectPageOptions": {
+      "hideStartContributing": false,
+      "hideSearchButton": false,
+      "hideRandomManifest": false,
+      "hideRandomCanvas": false
+    },
+    "manifestPageOptions": {
+      "hideStartContributing": false,
+      "hideOpenInMirador": false,
+      "hideSearchButton": false,
+      "hideRandomCanvas": false,
+      "hideFilterImages": false,
+      "directModelPage": false
+    }
   },
   "permissions": {
     "admin": [

@@ -564,8 +564,8 @@ export class ApiClient {
 
   async getProjectConfiguration(projectId: number, siteUrn: string): Promise<Partial<ProjectConfiguration>> {
     const projectConfig = await this.getConfiguration<ProjectConfiguration>('madoc', [
-      `urn:madoc:project:${projectId}`,
       siteUrn,
+      `urn:madoc:project:${projectId}`,
     ]);
 
     return projectConfig.config && projectConfig.config[0] && projectConfig.config[0].config_object
@@ -767,7 +767,7 @@ export class ApiClient {
     });
   }
 
-  async getManifestCollections(id: number, query?: { project_id?: number, flat?: boolean }) {
+  async getManifestCollections(id: number, query?: { project_id?: number; flat?: boolean }) {
     return this.request<{ collections: number[] }>(
       `/api/madoc/iiif/manifests/${id}/collections${query ? `?${stringify(query)}` : ''}`
     );
@@ -1107,6 +1107,12 @@ export class ApiClient {
     } as Partial<Task>);
   }
 
+  async deleteSubtasks(id: string) {
+    await this.request(`/api/tasks/${id}/subtasks`, {
+      method: 'DELETE',
+    });
+  }
+
   async getTaskStats(
     id: string,
     query?: { type?: string; root?: boolean; distinct_subjects?: boolean; user_id?: string }
@@ -1289,6 +1295,12 @@ export class ApiClient {
       assignee?: string;
       per_page?: number;
       sort_by?: 'newest';
+      modified_date_start?: Date;
+      modified_date_end?: Date;
+      modified_date_interval?: string;
+      created_date_start?: Date;
+      created_date_end?: Date;
+      created_date_interval?: string;
     } = {}
   ) {
     return this.request<{ tasks: TaskType[]; pagination: Pagination }>(
@@ -1907,6 +1919,8 @@ export class ApiClient {
   async getSiteProjectManifestTasks(projectId: string | number, manifestId: number) {
     return this.publicRequest<{
       manifestTask?: CrowdsourcingTask | CrowdsourcingManifestTask;
+      userManifestTask?: CrowdsourcingTask;
+      canClaimManifest?: boolean;
       userTasks?: CrowdsourcingTask[];
       canUserSubmit?: boolean;
       totalContributors?: number;

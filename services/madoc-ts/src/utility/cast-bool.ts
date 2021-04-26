@@ -1,5 +1,3 @@
-import { bool } from 'sharp';
-
 export function castBool(str?: string): boolean {
   if (!str) {
     return false;

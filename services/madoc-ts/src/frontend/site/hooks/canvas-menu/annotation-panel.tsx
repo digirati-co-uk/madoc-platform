@@ -75,7 +75,7 @@ export function useAnnotationPanel(active: boolean): CanvasMenuHook {
 
   return {
     id: 'annotations',
-    label: 'Annotations',
+    label: t('Annotations'),
     icon: <AnnotationsIcon />,
     isLoaded: true,
     content,

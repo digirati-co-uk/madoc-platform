@@ -40,7 +40,7 @@ export const siteConfigurationModel: {
     options: [
       { value: 'canvas', text: 'Canvas' },
       // Disabled option.
-      // { value: 'manifest', text: 'Manifest' },
+      { value: 'manifest', text: 'Manifest' },
     ],
   },
   maxContributionsPerResource: {
@@ -146,5 +146,95 @@ export const siteConfigurationModel: {
     label: 'Use Mirador on canvas page',
     type: 'checkbox-field',
     inlineLabel: 'Use Mirador in place of the default viewer',
+  },
+  contributionMode: {
+    label: 'Contribution mode',
+    description: 'This changes many aspects of how contributions work. (default = annotation)',
+    type: 'dropdown-field',
+    options: [
+      { value: 'annotation', text: 'Annotation mode (default)' },
+      { value: 'transcription', text: 'Transcription mode' },
+    ],
+  },
+  modelPageOptions: {
+    label: 'Contribution page',
+    description: 'View options for the contributions page',
+    type: 'checkbox-list-field',
+    options: [
+      {
+        label: 'Fixed transcription bar',
+        value: 'fixedTranscriptionBar',
+      },
+      {
+        label: 'Prevent contribution after rejection',
+        value: 'preventContributionAfterRejection',
+      },
+      {
+        label: 'Prevent contribution after submission',
+        value: 'preventContributionAfterSubmission',
+      },
+      {
+        label: 'Only one submission per user, per resource',
+        value: 'preventMultipleUserSubmissionsPerResource',
+      },
+      {
+        label: 'Prevent submissions after expiry (existing canvases)',
+        value: 'preventContributionAfterManifestUnassign',
+      },
+    ],
+  },
+  projectPageOptions: {
+    label: 'Project landing page',
+    description: 'View options for the project landing page',
+    type: 'checkbox-list-field',
+    options: [
+      {
+        label: 'Hide contributing button',
+        value: 'hideStartContributing',
+      },
+      {
+        label: 'Hide search button',
+        value: 'hideSearchButton',
+      },
+      {
+        label: 'Hide go to random manifest',
+        value: 'hideRandomManifest',
+      },
+      {
+        label: 'Hide go to random canvas',
+        value: 'hideRandomCanvas',
+      },
+    ],
+  },
+  manifestPageOptions: {
+    label: 'Manifest page',
+    description: 'View options for the manifest landing page',
+    type: 'checkbox-list-field',
+    options: [
+      {
+        label: 'Hide start contributing button',
+        value: 'hideStartContributing',
+      },
+      {
+        label: 'Hide open in mirador button',
+        value: 'hideOpenInMirador',
+      },
+      {
+        label: 'Hide search button',
+        value: 'hideSearchButton',
+      },
+      {
+        label: 'Hide go to random canvas button',
+        value: 'hideRandomCanvas',
+      },
+      {
+        label: 'Hide image filtering',
+        value: 'hideFilterImages',
+      },
+      {
+        label: 'Navigate directly to model page from manifest',
+        value: 'directModelPage',
+      },
+    ],
   },
 };

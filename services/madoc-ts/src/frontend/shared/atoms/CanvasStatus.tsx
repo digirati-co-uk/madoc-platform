@@ -13,26 +13,28 @@ export const CanvasStatusItem = styled.div<{ $status: number }>`
       case 1:
         return css`
           background: #5b82d8;
-          width: 5%;
+          width: 10%;
         `;
       case 2:
         return css`
-          background: #a57d65;
-          width: 50%;
+          background: #bf7b47;
+          width: 65%;
         `;
       case 3:
         return css`
-          background: #7fab76;
+          background: #6da961;
           width: 100%;
         `;
     }
   }}
 `;
 
-export const CanvasStatus: React.FC<{ status: number }> = ({ status }) => {
+export const CanvasStatus: React.FC<{ status: number; userTask?: boolean }> = ({ status, userTask }) => {
+  const realStatus = userTask && (status === 2 || status === 1) ? status + 1 : status;
+
   return (
     <CanvasStatusBackground>
-      <CanvasStatusItem $status={status} />
+      <CanvasStatusItem $status={realStatus} />
     </CanvasStatusBackground>
   );
 };
