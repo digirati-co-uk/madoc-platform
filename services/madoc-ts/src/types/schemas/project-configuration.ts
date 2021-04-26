@@ -24,4 +24,26 @@ export type ProjectConfiguration = {
   hideCanvasThumbnailNavigation?: boolean;
   showSearchFacetCount?: boolean;
   miradorCanvasPage?: boolean;
+  contributionMode?: 'transcription' | 'annotation';
+  modelPageOptions?: {
+    fixedTranscriptionBar?: boolean;
+    preventContributionAfterRejection?: boolean;
+    preventContributionAfterSubmission?: boolean;
+    preventMultipleUserSubmissionsPerResource?: boolean;
+    preventContributionAfterManifestUnassign?: boolean;
+  };
+  projectPageOptions?: {
+    hideStartContributing?: boolean;
+    hideSearchButton?: boolean;
+    hideRandomManifest?: boolean;
+    hideRandomCanvas?: boolean;
+  };
+  manifestPageOptions?: {
+    hideStartContributing?: boolean;
+    hideOpenInMirador?: boolean;
+    hideSearchButton?: boolean;
+    hideRandomCanvas?: boolean;
+    hideFilterImages?: boolean;
+    directModelPage?: boolean;
+  };
 };

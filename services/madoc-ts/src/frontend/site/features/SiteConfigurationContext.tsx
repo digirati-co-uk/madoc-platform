@@ -27,11 +27,6 @@ export const ConfigProvider: React.FC<{ project?: Partial<ProjectConfiguration>;
   const ctx = useSiteConfiguration();
   const [editMode, setEditMode] = useState(false);
 
-  // Disabled claim granularity.
-  if (props.project && props.project.claimGranularity && props.project.claimGranularity !== 'canvas') {
-    props.project.claimGranularity = 'canvas';
-  }
-
   const newContext: SiteConfigurationContext = useMemo(() => {
     return {
       project: {
