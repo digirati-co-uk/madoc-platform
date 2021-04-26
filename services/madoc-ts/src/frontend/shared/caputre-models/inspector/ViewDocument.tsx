@@ -1,15 +1,25 @@
 import { FieldPreview } from '@capture-models/editor';
-import { filterRevises, isEntityList } from '@capture-models/helpers';
+import { filterRevises, isEntity, isEntityList } from '@capture-models/helpers';
 import { BaseField, CaptureModel } from '@capture-models/types';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { EmptyState } from '../../atoms/EmptyState';
+import { DownArrowIcon } from '../../icons/DownArrowIcon';
+import { getEntityLabel } from '../utility/get-entity-label';
+import { isEmptyFieldList } from '../utility/is-field-list-empty';
 
 const DocumentLabel = styled.div`
+  position: relative;
   font-size: 13px;
   font-weight: bold;
   color: #333;
+`;
+
+const DocumentLabelIcon = styled.div`
+  position: absolute;
+  right: 2px;
+  top: 2px;
 `;
 
 const DocumentDescription = styled.div`
@@ -17,8 +27,13 @@ const DocumentDescription = styled.div`
   color: #999;
 `;
 
-const DocumentHeading = styled.div`
-  margin-bottom: 0.5em;
+const DocumentHeading = styled.div<{ $interactive?: boolean }>`
+  margin-bottom: 5px;
+  ${props =>
+    props.$interactive &&
+    css`
+      cursor: pointer;
+    `}
 `;
 
 const DocumentValueWrapper = styled.div`
@@ -26,42 +41,36 @@ const DocumentValueWrapper = styled.div`
 `;
 
 const DocumentSection = styled.div`
-  border-bottom: 1px solid #eee;
-  padding-bottom: 20px;
-  margin-bottom: 20px;
+  //border-bottom: 1px solid #eee;
+  //padding-bottom: 5px;
+  margin-bottom: 5px;
+  background: #fff;
 `;
 
 const DocumentCollapse = styled.div`
   background: #fff;
   padding: 10px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
   overflow-y: auto;
 `;
 
 const DocumentEntityList = styled.div`
   border-left: 1px solid #ddd;
-  padding: 10px;
+  padding: 4px 3px;
   background: #e9effc;
+  overflow-y: auto;
 `;
 
 const DocumentEntityLabel = styled.div`
   color: #111;
   font-weight: bold;
   font-size: 15px;
+  position: relative;
+  padding: 5px 10px;
 `;
 
 const FieldPreviewWrapper = styled.div`
   white-space: pre-wrap;
 `;
-
-const isEmptyFieldList = (fields: BaseField[]) => {
-  for (const field of fields) {
-    if (field.value) {
-      return false;
-    }
-  }
-  return true;
-};
 
 const renderFieldList = (fields: BaseField[]) => {
   if (!fields || isEmptyFieldList(fields)) {
@@ -79,42 +88,116 @@ const renderFieldList = (fields: BaseField[]) => {
   );
 };
 
-const renderEntityList = (entities: CaptureModel['document'][], filterRevisions: string[] = []) => {
+const renderEntityList = (
+  entities: CaptureModel['document'][],
+  {
+    filterRevisions = [],
+    highlightRevisionChanges,
+    collapsedEntity,
+  }: { filterRevisions: string[]; highlightRevisionChanges?: string; collapsedEntity?: boolean }
+) => {
+  const toRender = entities
+    .map(entity => {
+      const flatInnerProperties = Object.entries(entity.properties);
+
+      const renderedProps = flatInnerProperties
+        .map(([key, field]) => {
+          // eslint-disable-next-line @typescript-eslint/no-use-before-define
+          const rendered = renderProperty(field, {
+            key,
+            filterRevisions,
+            highlightRevisionChanges,
+            collapsed: collapsedEntity,
+          });
+          if (!rendered) {
+            return null;
+          }
+          return <DocumentCollapse key={key}>{rendered}</DocumentCollapse>;
+        })
+        .filter(e => e !== null);
+
+      if (renderedProps.length === 0) {
+        return null;
+      }
+
+      return (
+        <ViewEntity key={entity.id} entity={entity}>
+          {renderedProps}
+        </ViewEntity>
+      );
+    })
+    .filter(e => e !== null);
+
+  if (toRender.length === 0) {
+    return null;
+  }
+
+  return <DocumentEntityList>{toRender}</DocumentEntityList>;
+};
+
+const ViewEntity: React.FC<{ collapsed?: boolean; entity: CaptureModel['document']; interactive?: boolean }> = ({
+  entity,
+  collapsed,
+  children,
+  interactive = true,
+}) => {
+  const [isCollapsed, setIsCollapsed] = useState(collapsed);
+
+  // @todo make better.
+  const label = getEntityLabel(entity);
+
   return (
-    <>
-      {entities.map(entity => {
-        const flatInnerProperties = Object.entries(entity.properties);
-        return (
-          <div key={entity.id}>
-            {/*<div style={{ display: 'flex', marginBottom: 10 }}>*/}
-            {/*  <div style={{ padding: '3px 16px' }}>{'v'}</div>*/}
-            {/*  <DocumentEntityLabel>Some label</DocumentEntityLabel>*/}
-            {/*</div>*/}
-            <DocumentEntityList>
-              {flatInnerProperties.map(([key, field]) => {
-                // eslint-disable-next-line
-                const rendered = renderProperty(field, filterRevisions);
-                if (!rendered) {
-                  return null;
+    <DocumentSection>
+      <DocumentHeading $interactive={interactive} onClick={() => (interactive ? setIsCollapsed(i => !i) : undefined)}>
+        <DocumentEntityLabel>
+          {label}
+          {interactive ? (
+            <DocumentLabelIcon>
+              <DownArrowIcon
+                style={
+                  isCollapsed
+                    ? { transform: 'rotate(180deg)', fill: '#6c757d', width: '22px', height: '23px' }
+                    : { transform: 'rotate(0deg)', fill: '#6c757d', width: '22px', height: '23px' }
                 }
-                return <DocumentCollapse key={key}>{rendered}</DocumentCollapse>;
-              })}
-            </DocumentEntityList>
-          </div>
-        );
-      })}
-    </>
+              />
+            </DocumentLabelIcon>
+          ) : null}
+        </DocumentEntityLabel>
+      </DocumentHeading>
+      {/* This is where the shortened label goes, and where the collapse UI goes. Should be collapsed by default. */}
+      {/* This is where the entity selector will go, if it exists. */}
+      {isCollapsed ? null : children}
+    </DocumentSection>
   );
 };
 
-const renderProperty = (fields: BaseField[] | CaptureModel['document'][], filterRevisions: string[] = []) => {
-  const label = fields[0].label;
+const renderProperty = (
+  fields: BaseField[] | CaptureModel['document'][],
+  {
+    key,
+    filterRevisions = [],
+    collapsed,
+    collapsedEntity,
+    highlightRevisionChanges,
+  }: {
+    key: any;
+    filterRevisions?: string[];
+    highlightRevisionChanges?: string;
+    collapsed?: boolean;
+    collapsedEntity?: boolean;
+  }
+) => {
+  const label = fields.length > 1 && fields[0].pluralLabel ? fields[0].pluralLabel : fields[0].label;
   const filteredFields = filterRevises(fields).filter(f => {
+    if (highlightRevisionChanges) {
+      return f.type === 'entity' || (f.revision && f.revision === highlightRevisionChanges);
+    }
+
     return !f.revision || filterRevisions.indexOf(f.revision) === -1;
   });
   const description = fields[0].description;
   const renderedProperties = isEntityList(filteredFields)
-    ? renderEntityList(filteredFields, filterRevisions)
+    ? renderEntityList(filteredFields, { filterRevisions, highlightRevisionChanges, collapsedEntity })
     : renderFieldList(filteredFields as any);
 
   if (!renderedProperties) {
@@ -122,20 +205,63 @@ const renderProperty = (fields: BaseField[] | CaptureModel['document'][], filter
   }
 
   return (
+    <ViewProperty
+      key={key}
+      label={label}
+      description={description}
+      collapsed={collapsed}
+      interactive={isEntityList(filteredFields)}
+    >
+      {renderedProperties}
+    </ViewProperty>
+  );
+};
+
+export const ViewProperty: React.FC<{
+  collapsed?: boolean;
+  interactive?: boolean;
+  label: string;
+  description?: string;
+  fallback?: any;
+}> = ({ label, description, interactive, collapsed, fallback, children }) => {
+  const [isCollapsed, setIsCollapsed] = useState(collapsed);
+
+  return (
     <DocumentSection>
-      <DocumentHeading>
-        <DocumentLabel>{label}</DocumentLabel>
-        {description ? <DocumentDescription>{description}</DocumentDescription> : null}
+      <DocumentHeading $interactive={interactive} onClick={() => (interactive ? setIsCollapsed(i => !i) : undefined)}>
+        <DocumentLabel>
+          {label}
+          {interactive ? (
+            <DocumentLabelIcon>
+              <DownArrowIcon
+                style={
+                  isCollapsed
+                    ? { transform: 'rotate(180deg)', fill: '#6c757d', width: '22px', height: '23px' }
+                    : { transform: 'rotate(0deg)', fill: '#6c757d', width: '22px', height: '23px' }
+                }
+              />
+            </DocumentLabelIcon>
+          ) : null}
+        </DocumentLabel>
+        {isCollapsed && fallback ? (
+          <DocumentDescription>{fallback}</DocumentDescription>
+        ) : description ? (
+          <DocumentDescription>{description}</DocumentDescription>
+        ) : null}
       </DocumentHeading>
-      <DocumentValueWrapper>{renderedProperties}</DocumentValueWrapper>
+      {!isCollapsed ? <DocumentValueWrapper>{children}</DocumentValueWrapper> : null}
     </DocumentSection>
   );
 };
 
-export const ViewDocument: React.FC<{ document: CaptureModel['document']; filterRevisions?: string[] }> = ({
-  document,
-  filterRevisions = [],
-}) => {
+export const ViewDocument: React.FC<{
+  document: CaptureModel['document'];
+  filterRevisions?: string[];
+  hideTitle?: boolean;
+  padding?: boolean;
+  collapsed?: boolean;
+  highlightRevisionChanges?: string;
+}> = ({ document, filterRevisions = [], hideTitle, padding = true, highlightRevisionChanges, collapsed }) => {
   const { t } = useTranslation();
   // ✅ Label (plural label / labelled by)
   // ✅ Description
@@ -167,8 +293,8 @@ export const ViewDocument: React.FC<{ document: CaptureModel['document']; filter
   }
 
   const rendered = flatProperties
-    .map(([key, field]) => {
-      return renderProperty(field, filterRevisions);
+    .map(([, field], key) => {
+      return renderProperty(field, { key: key, filterRevisions, highlightRevisionChanges });
     })
     .filter(r => r !== null);
 
@@ -177,9 +303,9 @@ export const ViewDocument: React.FC<{ document: CaptureModel['document']; filter
   }
 
   return (
-    <div style={{ padding: 20 }}>
-      <h3>{document.label}</h3>
-      <p>{document.description}</p>
+    <div style={{ padding: padding ? 20 : 0 }}>
+      {!hideTitle ? <h3>{document.label}</h3> : null}
+      {!hideTitle ? <p>{document.description}</p> : null}
       {rendered}
     </div>
   );

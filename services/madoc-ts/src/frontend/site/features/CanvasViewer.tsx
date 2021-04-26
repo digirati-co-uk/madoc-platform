@@ -7,6 +7,7 @@ import {
   LayoutSidebar,
   LayoutSidebarMenu,
   NavIconContainer,
+  NavIconNotifcation,
   OuterLayoutContainer,
 } from '../../shared/atoms/LayoutContainer';
 import { useLocalStorage } from '../../shared/hooks/use-local-storage';
@@ -14,6 +15,7 @@ import { useResizeLayout } from '../../shared/hooks/use-resize-layout';
 import { useAnnotationPanel } from '../hooks/canvas-menu/annotation-panel';
 import { useDocumentPanel } from '../hooks/canvas-menu/document-panel';
 import { useMetadataMenu } from '../hooks/canvas-menu/metadata-panel';
+import { useRevisionPanel } from '../hooks/canvas-menu/revision-panel';
 import { useTranscriptionMenu } from '../hooks/canvas-menu/transcription-panel';
 
 export const CanvasViewer: React.FC = ({ children }) => {
@@ -24,6 +26,7 @@ export const CanvasViewer: React.FC = ({ children }) => {
     useAnnotationPanel(openPanel === 'annotations' && isOpen),
     useTranscriptionMenu(),
     useDocumentPanel(),
+    useRevisionPanel(),
   ];
   const currentMenuItem = menuItems.find(e => e.id === openPanel);
 
@@ -39,17 +42,20 @@ export const CanvasViewer: React.FC = ({ children }) => {
 
   return (
     <>
-      <OuterLayoutContainer style={{ height: '60vh' }}>
+      <OuterLayoutContainer style={{ height: '70vh' }}>
         <LayoutSidebarMenu>
           {menuItems.map(menuItem => {
+            if (menuItem.isHidden) {
+              return null;
+            }
             return (
               <NavIconContainer
                 key={menuItem.id}
-                $active={!menuItem.isHidden && menuItem.id === openPanel && isOpen}
+                $active={!menuItem.isDisabled && menuItem.id === openPanel && isOpen}
                 data-tip={menuItem.label}
-                $disabled={menuItem.isHidden}
+                $disabled={menuItem.isDisabled}
                 onClick={() => {
-                  if (!menuItem.isHidden) {
+                  if (!menuItem.isDisabled) {
                     if (isOpen && menuItem.id === openPanel) {
                       setIsOpen(false);
                     } else {
@@ -62,13 +68,16 @@ export const CanvasViewer: React.FC = ({ children }) => {
                   }
                 }}
               >
+                {menuItem.notifications && !(isOpen && menuItem.id === openPanel) ? (
+                  <NavIconNotifcation>{menuItem.notifications}</NavIconNotifcation>
+                ) : null}
                 {menuItem.icon}
               </NavIconContainer>
             );
           })}
         </LayoutSidebarMenu>
         <LayoutContainer ref={refs.container as any}>
-          {currentMenuItem && isOpen && !currentMenuItem.isHidden ? (
+          {currentMenuItem && isOpen && !currentMenuItem.isDisabled && !currentMenuItem.isHidden ? (
             <LayoutSidebar ref={refs.resizableDiv as any} style={{ width: widthB }}>
               {currentMenuItem.content}
             </LayoutSidebar>

@@ -2,6 +2,7 @@ import React from 'react';
 import { FieldHeader } from '@capture-models/editor';
 import { ProgressIcon } from '../../../atoms/ProgressIcon';
 import { getEntityLabel } from '../../utility/get-entity-label';
+import { ModifiedStatus } from '../features/ModifiedStatus';
 import { useCurrentEntity } from '../hooks/use-current-entity';
 import { useEntityDetails } from '../hooks/use-entity-details';
 import { mapProperties } from '../utility/map-properties';
@@ -20,7 +21,7 @@ export const DefaultSingleEntity: EditorRenderingConfig['SingleEntity'] = ({ sho
 
       {entityLabel && showTitle ? <FieldHeader label={entityLabel} description={entity.description} /> : null}
       <Slots.AdjacentNavigation>
-        {isModified && <ProgressIcon />}
+        {isModified && <ModifiedStatus />}
         <Slots.InlineSelector />
         {mapProperties(entity, ({ label, description, property, canInlineField }) => {
           return (

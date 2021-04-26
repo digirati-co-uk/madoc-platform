@@ -28,7 +28,7 @@ export function useMetadataMenu(): CanvasMenuHook {
     label: t('Metadata'),
     icon: <InfoIcon />,
     isLoaded: !!canvas,
-    isHidden: canvas && manifestData && !canvas.metadata && !manifestData.manifest.metadata,
+    isDisabled: canvas && manifestData && !canvas.metadata && !manifestData.manifest.metadata,
     content,
   };
 }
