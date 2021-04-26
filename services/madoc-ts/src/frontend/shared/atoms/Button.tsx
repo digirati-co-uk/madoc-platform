@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { HrefLink } from '../utility/href-link';
 
 export const ButtonIcon = styled.span`
-  transform: translate(-8px, -6px);
+  transform: translate(-8px, -4px);
   height: 0.85em;
   width: 1.5em;
   position: relative;
@@ -29,6 +29,7 @@ export const Button = styled.button<{ $primary?: boolean; $success?: boolean; $i
   border: 1px solid #4265e9;
   text-decoration: none;
   display: inline-block;
+  letter-spacing: 0.25px;
   vertical-align: top;
   transition: color 0.1s, background-color 0.1s, border-color 0.1s;
   white-space: nowrap;
@@ -270,6 +271,10 @@ export const RightButtonIconBox = styled.span<{ $checked?: boolean }>`
     svg {
       fill: #fff;
     }
+  }
+
+  ${Button}:disabled {
+    pointer-events: none;
   }
 
   svg {
