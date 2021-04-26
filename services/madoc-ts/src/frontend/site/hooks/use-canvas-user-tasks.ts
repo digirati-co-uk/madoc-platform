@@ -73,6 +73,7 @@ export function useCanvasUserTasks() {
       user && (config.project.claimGranularity ? config.project.claimGranularity === 'canvas' : true);
     const canUserSubmit = user && !!canvasTask?.canUserSubmit;
     const canContribute = user && (scope.indexOf('site.admin') !== -1 || scope.indexOf('models.contribute') !== -1);
+    const allTasksDone = userTasks ? !!userTasks?.find(t => t.status === 0 || t.status === 1) : false;
 
     return {
       user,
@@ -81,6 +82,7 @@ export function useCanvasUserTasks() {
       reviews,
       userTasks,
       isManifestComplete: canvasTask?.isManifestComplete,
+      allTasksDone,
       completedAndHide,
       canClaimCanvas,
       canUserSubmit,
