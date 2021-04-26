@@ -1,4 +1,6 @@
+import { CrowdsourcingManifestTask } from '../../gateway/tasks/crowdsourcing-manifest-task';
 import { RouteMiddleware } from '../../types/route-middleware';
+import { canUserClaimManifest, findUserManifestTask } from '../../utility/claim-utilities';
 
 export const siteManifestTasks: RouteMiddleware<{
   slug: string;
@@ -21,16 +23,17 @@ export const siteManifestTasks: RouteMiddleware<{
     }),
   ]);
 
+  const manifestContributors: string[] = [];
   const contributors: string[] = [];
   for (const task of tasks) {
     if (
       task.type === 'crowdsourcing-task' &&
       task.status !== -1 &&
-      task.status !== 0 &&
       task.assignee &&
       contributors.indexOf(task.assignee.id) === -1
     ) {
       contributors.push(task.assignee.id);
+      manifestContributors.push(task.assignee.id);
     }
   }
 
@@ -55,20 +58,38 @@ export const siteManifestTasks: RouteMiddleware<{
     }
   }
 
-  const maxContributors = config.maxContributionsPerResource;
-  const manifestTask = tasks.find(task => task.type === 'crowdsourcing-manifest-task');
+  const manifestTaskSimple = tasks.find(task => task.type === 'crowdsourcing-manifest-task');
+  const manifestTask =
+    manifestTaskSimple && manifestTaskSimple.id
+      ? await siteApi.getTask(manifestTaskSimple.id, { assignee: true })
+      : undefined;
+  const maxContributors = manifestTask?.state.maxContributors || config.maxContributionsPerResource;
   const userTasks = user ? tasks.filter(task => task.assignee && task.assignee.id === `urn:madoc:user:${user}`) : [];
+
+  const canClaimManifest = user
+    ? manifestTask
+      ? canUserClaimManifest({ task: manifestTask as CrowdsourcingManifestTask, config })
+      : true
+    : false;
+
+  const userManifestTask =
+    manifestTask && user ? findUserManifestTask(manifestTask?.subject, user, manifestTask) : undefined;
+
+  const isManifestComplete = manifestTask?.status === 3 || userManifestTask?.status === 3;
 
   const canUserSubmit =
     (!maxContributors || userTasks.length || maxContributors > contributors.length) && manifestTask?.status !== 3;
 
   context.response.status = 200;
   context.response.body = {
+    canClaimManifest,
+    userManifestTask,
+    isManifestComplete,
     manifestTask,
     userTasks,
     totalContributors: contributors.length,
     maxContributors: config.maxContributionsPerResource,
-    canUserSubmit: !!canUserSubmit,
+    canUserSubmit: canUserSubmit,
   };
 
   return;

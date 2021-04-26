@@ -6,7 +6,7 @@ import {
 import { api } from '../../../gateway/api.server';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { isLinkCaptureModelParagraphs, isLinkPlaintext } from '../../../utility/linking-property-types';
-import { optionalUserWithScope, userWithScope } from '../../../utility/user-with-scope';
+import { optionalUserWithScope } from '../../../utility/user-with-scope';
 
 export const getCanvasPlaintext: RouteMiddleware<{ id: string }> = async context => {
   const { siteId } = optionalUserWithScope(context, []);

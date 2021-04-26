@@ -34,6 +34,10 @@ describe('document to default structure', () => {
         "hideCanvasThumbnailNavigation",
         "showSearchFacetCount",
         "miradorCanvasPage",
+        "contributionMode",
+        "modelPageOptions",
+        "projectPageOptions",
+        "manifestPageOptions",
       ]
     `);
   });

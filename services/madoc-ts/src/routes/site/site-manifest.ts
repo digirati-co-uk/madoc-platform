@@ -14,6 +14,7 @@ export const siteManifest: RouteMiddleware<{ slug: string; id: string }> = async
   const page = Number(context.query.page || 1) || 1;
   const { id } = context.params;
   const { siteApi } = context.state;
+  const userId = context.state.jwt?.user.id;
   const projectId = context.query.project_id;
   const parentTaskId = context.query.parent_task;
   const hideStatus: string[] | undefined = context.query.hide_status ? context.query.hide_status.split(',') : undefined;
@@ -41,7 +42,14 @@ export const siteManifest: RouteMiddleware<{ slug: string; id: string }> = async
       const response = await siteApi.getTaskSubjects(
         taskId,
         canvasIds.map(canvasId => `urn:madoc:canvas:${canvasId}`),
-        { type: 'crowdsourcing-canvas-task' },
+        userId
+          ? {
+              type: 'crowdsourcing-task',
+              assigned_to: `urn:madoc:user:${userId}`,
+            }
+          : {
+              type: 'crowdsourcing-canvas-task',
+            },
         !!parentTaskId
       );
 
@@ -60,7 +68,20 @@ export const siteManifest: RouteMiddleware<{ slug: string; id: string }> = async
   const subjects = structures.items.map(item => `urn:madoc:canvas:${item.id}`);
 
   // And then load ALL of the statuses.
-  const taskSubjects = await siteApi.getTaskSubjects(taskId, subjects, { type: 'crowdsourcing-canvas-task' });
+  const taskSubjects = await siteApi.getTaskSubjects(
+    taskId,
+    subjects,
+    userId
+      ? {
+          type: 'crowdsourcing-task',
+          assigned_to: `urn:madoc:user:${userId}`,
+        }
+      : {
+          type: 'crowdsourcing-canvas-task',
+        }
+  );
+
+  console.log(taskSubjects);
 
   const filteredCanvases: number[] = [];
   const filteredSubjects: typeof taskSubjects.subjects = [];

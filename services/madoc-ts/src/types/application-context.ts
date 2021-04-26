@@ -1,5 +1,6 @@
 import { i18n } from 'i18next';
 import { PageBlocksRepository } from '../repository/page-blocks-repository';
+import { CronJobs } from '../utility/cron-jobs';
 import { ExternalConfig } from './external-config';
 import { router } from '../router';
 import { Pool } from 'mysql';
@@ -15,6 +16,7 @@ export interface ApplicationContext {
   connection: DatabasePoolConnectionType;
   pageBlocks: PageBlocksRepository;
   omeka: OmekaApi;
+  cron: CronJobs;
   ajv: Ajv;
   omekaPage?: string | ((token: string) => Promise<string | undefined>) | ((token: string) => undefined | string);
   omekaMessages: Array<{ type: 'success' | 'error'; message: string }>;
