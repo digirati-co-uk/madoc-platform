@@ -4,6 +4,7 @@ import { parseUrn } from '../../../../utility/parse-urn';
 import { Inspector } from '../../../shared/caputre-models/inspector/Inspector';
 import { Editor, EditorProps } from '../../../shared/caputre-models/new/Editor';
 import { apiHooks } from '../../../shared/hooks/use-api-query';
+import { GenericTask } from './generic-task';
 
 export const ViewCrowdsourcingCanvasTask: React.FC<{ projectId: string | number; task: CrowdsourcingCanvasTask }> = ({
   task,
@@ -96,6 +97,7 @@ export const ViewCrowdsourcingCanvasTask: React.FC<{ projectId: string | number;
 
   return (
     <div>
+      <GenericTask task={task} />
       <button onClick={() => setContentConfiguration(t => (t + 1) % contentConfigurations.length)}>
         Change content loading
       </button>
