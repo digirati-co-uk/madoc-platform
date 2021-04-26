@@ -2,7 +2,9 @@ import Koa from 'koa';
 import json from 'koa-json';
 import logger from 'koa-logger';
 import Ajv from 'ajv';
+import { checkExpiredManifests } from './cron/check-expired-manifests';
 import { errorHandler } from './middleware/error-handler';
+import { CronJobs } from './utility/cron-jobs';
 import { TypedRouter } from './utility/typed-router';
 import { createPostgresPool } from './database/create-postgres-pool';
 import { postgresConnection } from './middleware/postgres-connection';
@@ -20,6 +22,7 @@ import { ExternalConfig } from './types/external-config';
 // @ts-ignore
 import k2c from 'koa2-connect';
 import cookieParser from 'cookie-parser';
+import schedule from 'node-schedule';
 
 export async function createApp(router: TypedRouter<any, any>, config: ExternalConfig) {
   const app = new Koa();
@@ -27,13 +30,19 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   const mysqlPool = createMysqlPool();
   const i18nextPromise = createBackend();
 
-  if (process.env.NODE_ENV === 'production' || process.env.MIGRATE) {
-    await migrate();
+  if (process.env.NODE_APP_INSTANCE === '0') {
+    if (process.env.NODE_ENV === 'production' || process.env.MIGRATE) {
+      await migrate();
+    }
+
+    await syncOmeka(mysqlPool, pool, config);
   }
 
-  await syncOmeka(mysqlPool, pool, config);
-
-  if (process.env.NODE_ENV === 'development' && process.env.watch === 'false') {
+  if (
+    process.env.NODE_ENV === 'development' &&
+    process.env.watch === 'false' &&
+    process.env.NODE_APP_INSTANCE === '0'
+  ) {
     const webpack = require('webpack');
     const webpackConfig = require('../webpack.config');
     const compiler = webpack(webpackConfig);
@@ -62,6 +71,7 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   app.context.externalConfig = config;
   app.context.routes = router;
   app.context.mysql = mysqlPool;
+  app.context.cron = new CronJobs();
 
   // Set i18next
   const [, i18next] = await i18nextPromise;
@@ -91,9 +101,24 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   app.use(omekaApi);
   app.use(router.routes()).use(router.allowedMethods());
 
+  // Cron jobs.
+  if (process.env.NODE_APP_INSTANCE === '0') {
+    (app.context.cron as CronJobs).addJob(
+      schedule.scheduleJob('*/1 * * * *', async function(fireDate) {
+        await pool.connect(async connection => {
+          await checkExpiredManifests({ ...app.context, connection } as any, fireDate);
+        });
+      })
+    );
+  }
+
   process.on('SIGINT', async () => {
     console.log('closing database connections...');
     await Promise.all([pool.end(), new Promise(resolve => mysqlPool.end(resolve))]);
+
+    console.log('cancelling cron jobs...');
+    app.context.cron.cancelAllJobs();
+
     console.log('done');
     process.exit(0);
   });
