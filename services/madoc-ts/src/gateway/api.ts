@@ -564,8 +564,8 @@ export class ApiClient {
 
   async getProjectConfiguration(projectId: number, siteUrn: string): Promise<Partial<ProjectConfiguration>> {
     const projectConfig = await this.getConfiguration<ProjectConfiguration>('madoc', [
-      `urn:madoc:project:${projectId}`,
       siteUrn,
+      `urn:madoc:project:${projectId}`,
     ]);
 
     return projectConfig.config && projectConfig.config[0] && projectConfig.config[0].config_object
