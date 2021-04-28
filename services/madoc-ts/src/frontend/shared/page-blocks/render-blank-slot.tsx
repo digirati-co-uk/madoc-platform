@@ -1,22 +1,116 @@
 import React from 'react';
 import { useMutation } from 'react-query';
 import { extractBlockDefinitions } from '../../../extensions/page-blocks/block-editor-react';
-import { CreateSlotRequest } from '../../../types/schemas/site-page';
-import { Button } from '../atoms/Button';
+import { CreateSlotRequest, EditorialContext } from '../../../types/schemas/site-page';
+import { useProject } from '../../site/hooks/use-project';
+import { Button, ButtonRow } from '../atoms/Button';
+import { EmptyState } from '../atoms/EmptyState';
 import { useApi } from '../hooks/use-api';
 import { useSlots } from './slot-context';
 
+function exactFromContext(context: EditorialContext, projectId?: number): CreateSlotRequest['filters'] {
+  return {
+    collection: context.collection
+      ? {
+          exact: context.collection,
+        }
+      : {
+          none: true,
+        },
+    manifest: context.manifest
+      ? {
+          exact: context.manifest,
+        }
+      : {
+          none: true,
+        },
+    canvas: context.canvas
+      ? {
+          exact: context.canvas,
+        }
+      : {
+          none: true,
+        },
+    project: projectId
+      ? {
+          exact: projectId,
+        }
+      : {
+          none: true,
+        },
+  };
+}
+
+function allOfTypeFromContext(ctx: EditorialContext, projectId?: number): CreateSlotRequest['filters'] {
+  const exact = exactFromContext(ctx, projectId);
+
+  if (ctx.canvas) {
+    return {
+      ...exact,
+      canvas: { all: true },
+    };
+  }
+  if (ctx.manifest) {
+    return {
+      ...exact,
+      manifest: { all: true },
+    };
+  }
+  if (ctx.collection) {
+    return {
+      ...exact,
+      collection: { all: true },
+    };
+  }
+
+  if (ctx.project) {
+    return {
+      ...exact,
+      project: { all: true },
+    };
+  }
+
+  return exact;
+}
+
 export const RenderBlankSlot: React.FC<{ name: string }> = ({ name: slotId, children }) => {
-  const { slots, context, editable, onUpdateSlot, beforeCreateSlot, onCreateSlot } = useSlots();
+  const { context, editable, isPage, beforeCreateSlot, onCreateSlot } = useSlots();
   const api = useApi();
   const blockDefinitions = extractBlockDefinitions(children);
-  const [createSlot, { isLoading }] = useMutation(async () => {
-    const slotRequest: CreateSlotRequest = {
-      slotId,
-      layout: 'none',
-    };
+  const { data: project } = useProject();
 
-    beforeCreateSlot(slotRequest);
+  const [createSlot, { isLoading }] = useMutation(async (type: string) => {
+    // Customise for this page only.
+    // if id for type, set it to exact
+    // otherwise set to none.
+
+    // Customise for all pages of this type.
+    // Advanced [ .. ]
+
+    const slotRequest: CreateSlotRequest = isPage
+      ? {
+          slotId,
+          layout: 'none',
+        }
+      : type === 'exact'
+      ? {
+          slotId,
+          layout: 'none',
+          filters: exactFromContext(context, project?.id),
+        }
+      : type === 'all'
+      ? {
+          slotId,
+          layout: 'none',
+          filters: allOfTypeFromContext(context, project?.id),
+        }
+      : {
+          // Default?
+          slotId,
+          layout: 'none',
+        };
+
+    await beforeCreateSlot(slotRequest);
 
     slotRequest.blocks = blockDefinitions.map(definition => {
       return {
@@ -45,7 +139,17 @@ export const RenderBlankSlot: React.FC<{ name: string }> = ({ name: slotId, chil
   if (!children) {
     return (
       <div>
-        Empty slot <Button onClick={() => createSlot()}>Customise</Button>
+        <EmptyState $box>Empty slot</EmptyState>
+        {isPage ? (
+          <ButtonRow>
+            <Button onClick={() => createSlot()}>Customise</Button>
+          </ButtonRow>
+        ) : (
+          <ButtonRow>
+            <Button onClick={() => createSlot('exact')}>Customise only on this page</Button>
+            <Button onClick={() => createSlot('all')}>Customise on all of this type in this context</Button>
+          </ButtonRow>
+        )}
       </div>
     );
   }
@@ -53,7 +157,16 @@ export const RenderBlankSlot: React.FC<{ name: string }> = ({ name: slotId, chil
   return (
     <div>
       {children}
-      <Button onClick={() => createSlot()}>Customise</Button>
+      {isPage ? (
+        <ButtonRow>
+          <Button onClick={() => createSlot()}>Customise</Button>
+        </ButtonRow>
+      ) : (
+        <ButtonRow>
+          <Button onClick={() => createSlot('exact')}>Customise only on this page</Button>
+          <Button onClick={() => createSlot('all')}>Customise on all of this type in this context</Button>
+        </ButtonRow>
+      )}
     </div>
   );
 };

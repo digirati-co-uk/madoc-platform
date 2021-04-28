@@ -121,6 +121,15 @@ export class PageBlockExtension implements BaseExtension {
     });
   }
 
+  requestSlots(params: EditorialContext) {
+    return this.api.publicRequest<any>(`/madoc/api/slots`, {
+      project: params.project,
+      collection: params.collection,
+      manifest: params.manifest,
+      canvas: params.canvas,
+    });
+  }
+
   renderBlockToReact(block: SiteBlock | SiteBlockRequest, context: EditorialContext): JSX.Element | null {
     // @todo check required context.
     const definition = this.definitionMap[block.type];
@@ -175,10 +184,10 @@ export class PageBlockExtension implements BaseExtension {
     return this.api.publicRequest<{ navigation: SitePage[] }>(`/madoc/api/pages/navigation${slug}`);
   }
 
-  async getPage(pagePath: string) {
+  async getPage(pagePath: string, isStatic?: boolean) {
     return this.api.publicRequest<{
-      page: SitePage;
-      navigation: SitePage[];
+      page?: SitePage;
+      navigation?: SitePage[];
       root?: {
         id: number;
         title: InternationalString;
@@ -188,7 +197,7 @@ export class PageBlockExtension implements BaseExtension {
         path: string;
         findPath: string[];
       };
-    }>(`/madoc/api/page/root/${pagePath}`);
+    }>(`/madoc/api/page/${isStatic ? 'static/' : ''}root/${pagePath}`);
   }
 
   async getSlot(slotId: number) {

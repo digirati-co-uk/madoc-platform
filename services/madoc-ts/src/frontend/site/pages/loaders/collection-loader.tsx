@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react';
+import { useRouteMatch } from 'react-router-dom';
 import { Pagination } from '../../../../types/schemas/_pagination';
 import { ApiArgs } from '../../../shared/hooks/use-api-query';
+import { AutoSlotLoader } from '../../../shared/page-blocks/auto-slot-loader';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { UniversalComponent } from '../../../types';
@@ -49,14 +51,16 @@ export const CollectionLoader: UniversalComponent<CollectionLoaderType> = create
     const ctx = useMemo(() => (data ? { id: data.collection.id, name: data.collection.label } : undefined), [data]);
 
     return (
-      <BreadcrumbContext collection={ctx}>
-        {renderUniversalRoutes(route.routes, {
-          ...props,
-          collection: data?.collection,
-          pagination: latestData ? latestData.pagination : undefined,
-          collectionSubjects: data ? data.subjects : undefined,
-        })}
-      </BreadcrumbContext>
+      <AutoSlotLoader>
+        <BreadcrumbContext collection={ctx}>
+          {renderUniversalRoutes(route.routes, {
+            ...props,
+            collection: data?.collection,
+            pagination: latestData ? latestData.pagination : undefined,
+            collectionSubjects: data ? data.subjects : undefined,
+          })}
+        </BreadcrumbContext>
+      </AutoSlotLoader>
     );
   },
   {

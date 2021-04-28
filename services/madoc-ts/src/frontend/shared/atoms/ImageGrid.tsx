@@ -4,7 +4,7 @@ export const ImageGrid = styled.div`
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  margin: 1em -10px;
+  justify-content: space-evenly;
   & > * {
     margin: 10px;
   }

@@ -1,6 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { useProject } from '../../site/hooks/use-project';
 
 export const projectStatusColors = [
   // Paused
@@ -20,8 +22,16 @@ export const ProjectStatusContainer = styled.div<{ $status?: number }>`
   margin: 1em 0;
 `;
 
-export const ProjectStatus: React.FC<{ status?: number }> = ({ status }) => {
+export const ProjectStatus: React.FC<{ status?: number }> = ({ status: customStatus }) => {
+  const { data: project } = useProject();
   const { t } = useTranslation();
+
+  if (!project && typeof customStatus === 'undefined') {
+    return null;
+  }
+
+  const status = project ? project.status : customStatus;
+
   return (
     <>
       {status === 0 ? (
@@ -42,6 +52,14 @@ export const ProjectStatus: React.FC<{ status?: number }> = ({ status }) => {
     </>
   );
 };
+
+blockEditorFor(ProjectStatus, {
+  type: 'default.ProjectStatus',
+  label: 'Project status',
+  anyContext: ['project'],
+  requiredContext: ['project'],
+  editor: {},
+});
 
 export const ProjectContainer = styled.div<{ $status?: number }>`
   background: #eee;

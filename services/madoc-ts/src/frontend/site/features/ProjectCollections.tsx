@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouteMatch } from 'react-router-dom';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { Button } from '../../shared/atoms/Button';
 import { Heading3 } from '../../shared/atoms/Heading3';
 import { ImageGrid } from '../../shared/atoms/ImageGrid';
@@ -45,3 +46,11 @@ export const ProjectCollections: React.FC = () => {
     </>
   );
 };
+
+blockEditorFor(ProjectCollections, {
+  type: 'default.ProjectCollections',
+  label: 'Project collections',
+  anyContext: ['project'],
+  requiredContext: ['project'],
+  editor: {},
+});

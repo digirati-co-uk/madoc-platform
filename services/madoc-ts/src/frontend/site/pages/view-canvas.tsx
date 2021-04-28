@@ -14,7 +14,6 @@ import { CanvasMiradorViewer } from '../features/CanvasMiradorViewer';
 import { CanvasViewer } from '../features/CanvasViewer';
 import { ContinueCanvasSubmission } from '../features/ContinueCanvasSubmission';
 import { ManifestMetadata } from '../features/ManifestMetadata';
-import { ManifestUserNotification } from '../features/ManifestUserNotification';
 import { RedirectToNextCanvas } from '../features/RedirectToNextCanvas';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useCanvasNavigation } from '../hooks/use-canvas-navigation';

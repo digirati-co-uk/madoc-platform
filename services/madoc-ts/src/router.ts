@@ -14,7 +14,8 @@ import { deleteBlock } from './routes/content/delete-block';
 import { deletePage } from './routes/content/delete-page';
 import { deleteSlot } from './routes/content/delete-slot';
 import { getBlock } from './routes/content/get-block';
-import { getPage } from './routes/content/get-page';
+import { getPage, getStaticPage } from './routes/content/get-page';
+import { resolveSlots } from './routes/content/resolve-slots';
 import { getCanvasReference } from './routes/iiif/canvases/get-canvas-reference';
 import { fullReindex } from './routes/search/full-reindex';
 import { siteCanvasSource } from './routes/site/site-canvas-reference';
@@ -259,6 +260,7 @@ export const router = new TypedRouter({
   // Pages
   'create-page': [TypedRouter.POST, '/api/madoc/pages', createPage],
   'get-page': [TypedRouter.GET, '/api/madoc/pages/root/:paths*', getPage],
+  'get-static-page': [TypedRouter.GET, '/api/madoc/pages/static/root/:paths*', getStaticPage],
   'delete-page': [TypedRouter.DELETE, '/api/madoc/pages/root/:paths*', deletePage],
   'update-page': [TypedRouter.PUT, '/api/madoc/pages/root/:paths*', updatePage],
   'get-all-pages': [TypedRouter.GET, '/api/madoc/pages', getAllPages],
@@ -299,6 +301,8 @@ export const router = new TypedRouter({
     siteManifestTasks,
   ],
   'site-page': [TypedRouter.GET, '/s/:slug/madoc/api/page/root/:paths*', sitePages],
+  'site-static-page': [TypedRouter.GET, '/s/:slug/madoc/api/page/static/root/:paths*', getStaticPage],
+  'site-resolve-slot': [TypedRouter.GET, '/s/:slug/madoc/api/slots', resolveSlots],
   'site-project': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug', siteProject],
   'site-projects': [TypedRouter.GET, '/s/:slug/madoc/api/projects', siteProjects],
   'site-search': [TypedRouter.POST, '/s/:slug/madoc/api/search', siteSearch],
