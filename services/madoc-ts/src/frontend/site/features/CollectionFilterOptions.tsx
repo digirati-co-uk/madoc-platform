@@ -25,6 +25,7 @@ export const CollectionFilterOptions: React.FC = () => {
 
   return (
     <ButtonRow>
+      <GoToRandomCanvas $primary label={{ none: [t('Start contributing')] }} navigateToModel />
       {showDoneButton || filter ? (
         <Button
           as={HrefLink}
@@ -38,7 +39,6 @@ export const CollectionFilterOptions: React.FC = () => {
       <Button as={Link} to={createLink({ subRoute: 'search' })}>
         {t('Search this collection')}
       </Button>
-      <GoToRandomCanvas $primary label={{ none: [t('Start contributing')] }} navigateToModel />
       <GoToRandomManifest />
       <GoToRandomCanvas />
     </ButtonRow>

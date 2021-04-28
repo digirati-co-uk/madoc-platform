@@ -18,6 +18,9 @@ export const ManifestActions: React.FC = () => {
 
   return (
     <ButtonRow>
+      {!options.hideStartContributing && !isManifestComplete && (userManifestTask || canClaimManifest) ? (
+        <GoToRandomCanvas $primary label={{ none: [t('Start contributing')] }} navigateToModel />
+      ) : null}
       {!options.hideOpenInMirador ? (
         <Button
           as={HrefLink}
@@ -33,9 +36,6 @@ export const ManifestActions: React.FC = () => {
         <Button as={Link} to={createLink({ subRoute: 'search' })}>
           {t('Search this manifest')}
         </Button>
-      ) : null}
-      {!options.hideStartContributing && !isManifestComplete && (userManifestTask || canClaimManifest) ? (
-        <GoToRandomCanvas $primary label={{ none: [t('Start contributing')] }} navigateToModel />
       ) : null}
       {!options.hideRandomCanvas ? <GoToRandomCanvas /> : null}
       {!options.hideFilterImages ? <ManifestItemFilter /> : null}
