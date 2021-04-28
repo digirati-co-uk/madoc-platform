@@ -212,6 +212,7 @@ export const Main_Page = () => {
                   <React.Suspense fallback={<>Loading</>}>
                     <CanvasContext canvas={canvasId}>
                       <SimpleAtlasViewer
+                        unstable_webglRenderer
                         style={{ height: '100%', minWidth: 0, width: '100%', overflow: 'hidden', minHeight: 0 }}
                       />
                     </CanvasContext>

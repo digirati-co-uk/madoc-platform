@@ -77,6 +77,7 @@ export const LayoutContainer = styled.div`
   display: flex;
   width: 100%;
   max-width: 100%;
+  min-width: 0;
 `;
 
 export const LayoutContent = styled.div<{ $padding?: boolean }>`
