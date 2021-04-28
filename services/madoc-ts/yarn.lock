@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@atlas-viewer/atlas@1.4.1", "@atlas-viewer/atlas@^1.4.2":
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-1.4.1.tgz#2337486cc55f905213838eec7983c0454245d6ce"
-  integrity sha512-sDpAEI16Ju164U2fxoINsbwKEv/OTpDPbP0U23ZUQrKg8t2nwhfRcItveqR9pvyQQqk5xoymmbGBm48XwT2C/w==
+"@atlas-viewer/atlas@1.5.1", "@atlas-viewer/atlas@^1.5.1":
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-1.5.1.tgz#b75c4ffc973a15b7b781f9328e52397ce26b802c"
+  integrity sha512-nqVvEhUT6CrNU4DZNhv/g1FFmdsKT3ebmRZKVWq82bG7QZjV7anGD3hz2I4LAoNlwfPZFZ61tUuMG7UHSddi+A==
   dependencies:
     "@atlas-viewer/dna" "^0.5.0"
     "@atlas-viewer/iiif-image-api" "1.2.1"
@@ -14,7 +14,7 @@
     "@popmotion/popcorn" "^0.4.4"
     nanoid "^3.1.9"
     normalize-wheel "^1.0.1"
-    popmotion "^8.6.8"
+    popmotion "^8.7.6"
     react "^16.12.0"
     react-dom "^16.12.0"
     react-reconciler "^0.25.1"
@@ -2491,12 +2491,12 @@
     screenfull "^3.3.2"
     whatwg-fetch "^3.0.0"
 
-"@capture-models/editor@^0.13.7":
-  version "0.13.7"
-  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.13.7.tgz#9a8957f88caf9fd7df57c10ccef7b458cee1384b"
-  integrity sha512-3KfsqUbdss0ogZS759YrgztvVI+ja69gMKnoi/lt8gaLy37+16Er9ROAIlA9NJa4s0PGOecu9Jm4veRqdVOvMA==
+"@capture-models/editor@^0.13.8":
+  version "0.13.8"
+  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.13.8.tgz#e0e8c50aff60b2cd6afff06e2c509b46798f4709"
+  integrity sha512-7QjSxZt86L+rS/ZxDhyFmY+YHYyivpUM4ccXlFSUxYLC40NF8jFyxsGtGJT9YdD4zRYZnCgnF3Ty7v3PN1siHw==
   dependencies:
-    "@atlas-viewer/atlas" "^1.4.2"
+    "@atlas-viewer/atlas" "^1.5.1"
     "@capture-models/helpers" "^0.13.6"
     "@capture-models/plugin-api" "^0.13.0"
     "@capture-models/types" "^0.13.0"
@@ -15002,7 +15002,7 @@ popmotion@9.0.0-beta-8:
     style-value-types "^3.1.6"
     tslib "^1.10.0"
 
-popmotion@^8.6.8:
+popmotion@^8.7.6:
   version "8.7.6"
   resolved "https://registry.yarnpkg.com/popmotion/-/popmotion-8.7.6.tgz#0f6aa461bdcbcdbf24cb70afb054e91cb39eccb3"
   integrity sha512-gzU0mRAik8FIEOP4Nk5yqYptJIvHLoq/IRU+rANmKjDZ7tynAivYQ9cIJAxVaoS9h0zfXvN0cFBAg93ncmHHkA==
