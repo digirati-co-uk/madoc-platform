@@ -2,6 +2,7 @@ import { UniversalRoute } from '../types';
 import { CanvasPlaintext } from './pages/content/canvases/canvas-plaintext';
 import { CanvasSearchIndex } from './pages/content/canvases/canvas-search-index';
 import { CollectionView } from './pages/content/collections/collection';
+import { CollectionSearchIndex } from './pages/content/collections/collection-search-index';
 import { ConfigureLanguages } from './pages/content/internationalisation/configure-languages';
 import { EditTranslation } from './pages/content/internationalisation/edit-translation';
 import { ViewCanvasLinking } from './pages/content/linking/view-linking';
@@ -12,6 +13,7 @@ import { ListPages } from './pages/content/page-blocks/list-pages';
 import { PageBlocks } from './pages/content/page-blocks/page-blocks';
 import { SiteConfiguration } from './pages/content/site-configuration';
 import { ProjectConfiguration } from './pages/crowdsourcing/projects/project-configuration';
+import { ProjectSearchIndex } from './pages/crowdsourcing/projects/project-search-index';
 import { OcrListPage } from './pages/enrichment/ocr/ocr-list';
 import { SearchIndexingPage } from './pages/enrichment/search-indexing';
 import { ExportSite } from './pages/export/export-site';
@@ -96,6 +98,11 @@ export const routes: UniversalRoute[] = [
         path: '/collections/:id/projects',
         exact: true,
         component: CollectionProjects,
+      },
+      {
+        path: '/collections/:id/search',
+        exact: true,
+        component: CollectionSearchIndex,
       },
     ],
   },
@@ -286,6 +293,11 @@ export const routes: UniversalRoute[] = [
             exact: true,
           },
         ],
+      },
+      {
+        path: '/projects/:id/search',
+        component: ProjectSearchIndex,
+        exact: true,
       },
       {
         path: '/projects/:id/tasks',

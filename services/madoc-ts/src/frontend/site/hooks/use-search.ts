@@ -14,7 +14,7 @@ export function useSearch() {
   const { projectId, collectionId, manifestId } = useRouteContext();
   const { fulltext, appliedFacets, page } = useSearchQuery();
   const {
-    project: { searchStrategy },
+    project: { searchStrategy, claimGranularity },
   } = useSiteConfiguration();
   const searchFacetConfig = apiHooks.getSiteSearchFacetConfiguration(() => []);
 
@@ -57,6 +57,7 @@ export function useSearch() {
         facet_on_manifests: true,
         search_type: searchStrategy as any,
         number_of_facets: searchFacetConfig.data?.facets.length ? 100 : undefined,
+        iiif_type: claimGranularity === 'manifest' ? 'Manifest' : undefined,
         //facets_: [{ type: 'metadata', subtype: 'title', value: 'Wunder der Vererbung' }],
         // contexts: query.madoc_id ? [query.madoc_id] : undefined,
       },

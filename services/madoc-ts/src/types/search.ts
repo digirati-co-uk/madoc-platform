@@ -82,6 +82,9 @@ export type SearchQuery = {
   /** List of contexts to search within */
   contexts?: string[];
 
+  /** Does not exist, but patched */
+  iiif_type?: string;
+
   /** List of required contexts to search within */
   contexts_all?: string[];
 

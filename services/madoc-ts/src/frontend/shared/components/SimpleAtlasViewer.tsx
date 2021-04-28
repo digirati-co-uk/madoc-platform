@@ -5,6 +5,7 @@ import { useCanvas, useImageService } from '@hyperion-framework/react-vault';
 import { useTranslation } from 'react-i18next';
 import { Button, ButtonRow } from '../atoms/Button';
 import { useHighlightedRegions } from '../hooks/use-highlighted-regions';
+import { webglSupport } from '../utility/webgl-support';
 import { AtlasTiledImages } from './AtlasTiledImages';
 
 export const SimpleAtlasViewer = React.forwardRef<
@@ -13,8 +14,9 @@ export const SimpleAtlasViewer = React.forwardRef<
     style?: React.CSSProperties;
     highlightedRegions?: Array<[number, number, number, number]>;
     annotationPages?: AnnotationPage[];
+    unstable_webglRenderer?: boolean;
   }
->(({ style = { height: 600 }, highlightedRegions }, ref) => {
+>(function SimpleAtlasViewer({ style = { height: 600 }, highlightedRegions, unstable_webglRenderer }, ref) {
   const { t } = useTranslation();
   const canvas = useCanvas();
   const runtime = useRef<Runtime>();
@@ -53,7 +55,11 @@ export const SimpleAtlasViewer = React.forwardRef<
     <div ref={ref} style={{ position: 'relative', flex: '1 1 0px', minWidth: 0, overflow: 'hidden', ...style }}>
       {isLoaded ? (
         <>
-          <AtlasAuto style={style} onCreated={rt => (runtime.current = rt.runtime)}>
+          <AtlasAuto
+            style={style}
+            onCreated={rt => (runtime.current = rt.runtime)}
+            unstable_webglRenderer={webglSupport() && unstable_webglRenderer}
+          >
             <world>
               <AtlasTiledImages key={canvas.id} canvas={canvas} service={service as ImageService} />
               <worldObject height={canvas.height} width={canvas.width}>

@@ -47,6 +47,7 @@ export const CollectionView: UniversalComponent<CollectionViewType> = createUniv
             { label: t('edit metadata'), link: `/collections/${id}/metadata` },
             { label: t('edit structure'), link: `/collections/${id}/structure` },
             { label: t('projects'), link: `/collections/${id}/projects` },
+            { label: t('search index'), link: `/collections/${id}/search` },
             { label: t('delete'), link: `/collections/${id}/delete` },
           ]}
           title={title}

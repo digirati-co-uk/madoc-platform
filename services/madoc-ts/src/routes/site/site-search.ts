@@ -44,5 +44,12 @@ export const siteSearch: RouteMiddleware<
 
   searchQuery.contexts_all.push(`urn:madoc:site:${site.id}`);
 
+  if (searchQuery.iiif_type) {
+    searchQuery.raw = {
+      indexables__iiif__type__exact: searchQuery.iiif_type,
+    };
+    delete searchQuery.iiif_type;
+  }
+
   context.response.body = await siteApi.searchQuery(searchQuery, page, madoc_id);
 };

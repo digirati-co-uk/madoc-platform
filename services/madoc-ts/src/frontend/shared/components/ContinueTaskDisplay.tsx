@@ -34,11 +34,11 @@ export function ContinueTaskDisplay({ task, next }: { task: BaseTask; next?: boo
     <SnippetLarge
       size="sm"
       thumbnail={subject.thumbnail}
-      subtitle={subject.parent ? createLocalString(subject.parent.label) : subject.type}
+      subtitle={subject.parent ? createLocalString(subject.label) : subject.type}
       center
       margin
       lightBackground
-      label={createLocalString(subject.label)}
+      label={subject.parent ? createLocalString(subject.parent.label) : createLocalString(subject.label)}
       link={link}
       linkAs={PrimaryButtonLink}
       query={next ? { goToNext: true } : undefined}

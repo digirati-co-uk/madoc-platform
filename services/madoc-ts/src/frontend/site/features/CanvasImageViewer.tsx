@@ -43,6 +43,7 @@ export const CanvasImageViewer: React.FC<{ annotationPages?: AnnotationPage[] }>
   return (
     <CanvasContext canvas={canvasRef.id}>
       <SimpleAtlasViewer
+        unstable_webglRenderer
         style={{ height: '70vh', width: '100%' }}
         annotationPages={annotationPages}
         highlightedRegions={highlightedRegions ? highlightedRegions.bounding_boxes : undefined}

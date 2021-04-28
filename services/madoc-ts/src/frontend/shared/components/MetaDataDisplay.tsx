@@ -141,7 +141,7 @@ export const MetaDataDisplay: React.FC<{
     for (const item of metadata) {
       const labels = item && item.label ? Object.values(item.label) : [];
       for (const label of labels) {
-        if (label && label.length && flatKeys.indexOf(`metadata.${label[0]}`) !== -1) {
+        if (label && label.length && (flatKeys.indexOf(`metadata.${label[0]}`) !== -1 || flatKeys.length === 0)) {
           const key = `metadata.${label[0]}`;
           map[key] = map[key] ? map[key] : [];
           map[key].push(item);

@@ -42,7 +42,7 @@ const CanvasViewer: React.FC<{ canvas: CanvasFull['canvas'] }> = ({ canvas }) =>
     <>
       {canvasRef ? (
         <CanvasContext canvas={canvasRef.id}>
-          <SimpleAtlasViewer style={{ height: '70vh' }} />
+          <SimpleAtlasViewer style={{ height: '70vh' }} unstable_webglRenderer />
         </CanvasContext>
       ) : null}
     </>
