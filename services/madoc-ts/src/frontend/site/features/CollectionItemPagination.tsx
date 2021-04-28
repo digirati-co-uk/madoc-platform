@@ -1,11 +1,11 @@
 import React from 'react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { Pagination } from '../../shared/components/Pagination';
-import { usePaginatedData } from '../../shared/hooks/use-data';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
-import { CollectionLoader } from '../pages/loaders/collection-loader';
+import { usePaginatedCollection } from '../hooks/use-paginated-collection';
 
 export const CollectionItemPagination = () => {
-  const { data } = usePaginatedData(CollectionLoader);
+  const { data } = usePaginatedCollection();
   const { filter } = useLocationQuery();
   const pagination = data ? data.pagination : undefined;
 
@@ -19,3 +19,11 @@ export const CollectionItemPagination = () => {
     />
   );
 };
+
+blockEditorFor(CollectionItemPagination, {
+  type: 'default.CollectionItemPagination',
+  label: 'Collection pagination',
+  anyContext: ['collection'],
+  requiredContext: ['collection'],
+  editor: {},
+});

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useRouteMatch } from 'react-router-dom';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { Heading3 } from '../../shared/atoms/Heading3';
 import { SingleLineHeading5, Subheading5 } from '../../shared/atoms/Heading5';
 import { ImageGrid, ImageGridItem } from '../../shared/atoms/ImageGrid';
@@ -77,3 +78,11 @@ export const ProjectManifests: React.FC = () => {
     </>
   );
 };
+
+blockEditorFor(ProjectManifests, {
+  type: 'default.ProjectManifests',
+  label: 'Project manifests',
+  anyContext: ['project'],
+  requiredContext: ['project'],
+  editor: {},
+});

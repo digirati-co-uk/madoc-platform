@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../shared/atoms/Statistics';
 import { SubtaskProgress } from '../../shared/atoms/SubtaskProgress';
 import { useProject } from '../hooks/use-project';
@@ -44,3 +45,11 @@ export const ProjectStatistics: React.FC = () => {
     </>
   );
 };
+
+blockEditorFor(ProjectStatistics, {
+  type: 'default.ProjectStatistics',
+  label: 'Project statistics',
+  anyContext: ['project'],
+  requiredContext: ['project'],
+  editor: {},
+});

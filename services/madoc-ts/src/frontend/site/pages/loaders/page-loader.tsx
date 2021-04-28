@@ -18,11 +18,11 @@ export type PageContext = {
 };
 
 export type PageLoaderType = {
-  params: { pagePath: string };
-  variables: { pagePath: string };
+  params: { pagePath?: string };
+  variables: { pagePath: string; isStatic?: boolean };
   query: {};
   data: {
-    page: SitePage;
+    page?: SitePage;
     navigation?: SitePage[];
     root?: {
       id: number;
@@ -39,7 +39,7 @@ export type PageLoaderType = {
 
 export const PageLoader: UniversalComponent<PageLoaderType> = createUniversalComponent<PageLoaderType>(
   ({ route, ...props }) => {
-    const { data, refetch, isError } = useStaticData(
+    const { data, refetch, isLoading, isError } = useStaticData(
       PageLoader,
       {},
       {
@@ -71,29 +71,31 @@ export const PageLoader: UniversalComponent<PageLoaderType> = createUniversalCom
       return partialContext;
     }, [props.canvas, props.collection, props.manifest, props.project]);
 
-    if (isError) {
-      return <h1>Page not found</h1>;
-    }
-
-    if (!data) {
+    if (isLoading) {
       return <>Loading...</>;
     }
 
+    if (!data) {
+      return <h1>Not found</h1>;
+    }
+
+    const page = data?.page;
+
     return (
-      <BreadcrumbContext subpage={{ path: data.page.path, name: data.page.title }}>
+      <BreadcrumbContext subpage={page ? { path: page?.path, name: page?.title } : undefined}>
         <SlotProvider
           editable={user?.scope.indexOf('site.admin') !== -1}
-          slots={data.page.slots}
-          pagePath={data.page.path}
+          slots={page?.slots}
+          pagePath={page?.path}
           onUpdateSlot={async () => {
             await refetch();
           }}
           context={context}
         >
           {renderUniversalRoutes(route.routes, {
-            page: data.page,
-            navigation: data.navigation,
-            root: data.root,
+            page: page,
+            navigation: data?.navigation,
+            root: data?.root,
             refetch,
           })}
         </SlotProvider>
@@ -101,11 +103,18 @@ export const PageLoader: UniversalComponent<PageLoaderType> = createUniversalCom
     );
   },
   {
-    getKey: params => {
-      return ['site-page', { pagePath: params.pagePath }];
+    getKey: (params, _, pathname) => {
+      if (params.pagePath) {
+        return ['site-page', { pagePath: params.pagePath }];
+      }
+
+      return [
+        'static-site-page',
+        { pagePath: pathname.startsWith('/') ? pathname.slice(1) : pathname, isStatic: true },
+      ];
     },
     getData: async (key, vars, api) => {
-      return await api.pageBlocks.getPage(vars.pagePath);
+      return await api.pageBlocks.getPage(vars.pagePath, vars.isStatic);
     },
   }
 );

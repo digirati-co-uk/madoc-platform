@@ -7,10 +7,11 @@ export function createUniversalComponent<
   GetData = (
     key: string,
     vars: Definition['variables'],
-    api: ApiClient
+    api: ApiClient,
+    pathname: string
   ) => Promise<Definition['data']> | Definition['data'],
   Ret = [string, Definition['variables']],
-  GetKey = (params: Definition['params'], query: Definition['query']) => Ret
+  GetKey = (params: Definition['params'], query: Definition['query'], pathname: string) => Ret
 >(
   Component: React.FC<{ route: UniversalRoute } & Definition['context']>,
   options: {

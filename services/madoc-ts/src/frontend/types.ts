@@ -17,11 +17,20 @@ export type UniversalComponent<
     context?: any;
   }
 > = React.FC<{ route?: UniversalRoute }> & {
-  getData?: (key: string, vars: Definition['variables'], api: ApiClient) => Promise<Definition['data']>;
-  getKey?: (params: Definition['params'], query: Definition['query']) => [string, Definition['variables']];
+  getData?: (
+    key: string,
+    vars: Definition['variables'],
+    api: ApiClient,
+    pathname: string
+  ) => Promise<Definition['data']>;
+  getKey?: (
+    params: Definition['params'],
+    query: Definition['query'],
+    pathname: string
+  ) => [string, Definition['variables']];
 };
 
 export type QueryComponent<Data = any, TKey = any, TVariables = any, Params = any, Query = any> = React.FC<any> & {
-  getKey?: (params: Params, query: Query) => [TKey, TVariables];
-  getData?: (key: TKey, vars: TVariables, api: ApiClient) => Promise<Data>;
+  getKey?: (params: Params, query: Query, pathname: string) => [TKey, TVariables];
+  getData?: (key: TKey, vars: TVariables, api: ApiClient, pathname: string) => Promise<Data>;
 };

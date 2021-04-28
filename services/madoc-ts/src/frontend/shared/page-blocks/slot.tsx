@@ -1,7 +1,4 @@
-import { captureModelShorthand } from '@capture-models/helpers';
 import React, { useCallback } from 'react';
-import { extractBlockDefinitions } from '../../../extensions/page-blocks/block-editor-react';
-import { CreateSlotRequest } from '../../../types/schemas/site-page';
 import { RenderBlankSlot } from './render-blank-slot';
 import { RenderSlot } from './render-slot';
 import { useSlots } from './slot-context';

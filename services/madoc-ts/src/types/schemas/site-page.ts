@@ -8,6 +8,18 @@ export type EditorialContext = {
   page?: number;
 };
 
+export type ServerEditorialContext = {
+  project?: number;
+  collection?: number;
+  manifest?: number;
+  canvas?: number;
+  page?: number;
+};
+
+export type SlotResponse = {
+  slots: SiteSlot[];
+};
+
 export type SiteSlot = {
   id: number;
   specificity: number;

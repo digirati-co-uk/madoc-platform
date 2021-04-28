@@ -2,7 +2,6 @@ import { InternationalString } from '@hyperion-framework/types/iiif/descriptive'
 import React, { useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { SitePage } from '../../../types/site-pages-recursive';
-import { Heading1 } from '../../shared/atoms/Heading1';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { Slot } from '../../shared/page-blocks/slot';
@@ -40,6 +39,7 @@ export const ViewPage: React.FC<ViewPageProps> = ({ page, navigation, root, refe
 
   return (
     <SlotProvider
+      isPage={true}
       pagePath={page.path}
       editable={isEditing}
       slots={page.slots}
@@ -112,10 +112,7 @@ export const ViewPage: React.FC<ViewPageProps> = ({ page, navigation, root, refe
             </div>
           ) : null}
           <div style={{ flex: '1 1 0px' }}>
-            <Slot name="test-3">
-              <Heading1>Example heading</Heading1>
-              <Heading1>Example heading 2</Heading1>
-            </Slot>
+            <Slot name="page-body" />
           </div>
         </div>
       </div>

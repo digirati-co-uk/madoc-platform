@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { NotFoundPage } from '../../../shared/components/NotFoundPage';
+import { AutoSlotLoader } from '../../../shared/page-blocks/auto-slot-loader';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { UniversalComponent } from '../../../types';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
@@ -27,13 +28,15 @@ export const ProjectLoader: UniversalComponent<ProjectLoaderType> = createUniver
     }
 
     return (
-      <ConfigProvider project={project?.config}>
-        <BreadcrumbContext project={ctx}>
-          {renderUniversalRoutes(route.routes, {
-            project,
-          })}
-        </BreadcrumbContext>
-      </ConfigProvider>
+      <AutoSlotLoader>
+        <ConfigProvider project={project?.config}>
+          <BreadcrumbContext project={ctx}>
+            {renderUniversalRoutes(route.routes, {
+              project,
+            })}
+          </BreadcrumbContext>
+        </ConfigProvider>
+      </AutoSlotLoader>
     );
   },
   {

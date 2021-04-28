@@ -5,6 +5,7 @@ import {
   addBlock,
   addSlot,
   BlockJoinedProperties,
+  getContextualSlots,
   mapBlock,
   mapPage,
   mapSlot,
@@ -15,16 +16,18 @@ import {
 import {
   CreateNormalPageRequest,
   CreateSlotRequest,
+  EditorialContext,
+  ServerEditorialContext,
   SiteBlock,
   SiteBlockRequest,
   SiteSlot,
 } from '../types/schemas/site-page';
 import { SitePage } from '../types/site-pages-recursive';
 import { NotFound } from '../utility/errors/not-found';
-import { BaseRepository, Transaction } from './base-repository';
+import { BaseRepository } from './base-repository';
 
 export class PageBlocksRepository extends BaseRepository {
-  async createBlock(blockReq: SiteBlockRequest, siteId: number, slotId?: number): Promise<SiteBlock> {
+  async createBlock(blockReq: SiteBlockRequest, siteId: number, slotId?: number, order?: number): Promise<SiteBlock> {
     const block = await this.connection.one(addBlock(blockReq, siteId));
 
     if (slotId) {
@@ -33,7 +36,7 @@ export class PageBlocksRepository extends BaseRepository {
       );
 
       await this.connection.query(sql`
-        insert into site_slot_blocks (slot_id, block_id) VALUES (${slot.id}, ${block.id})
+        insert into site_slot_blocks (slot_id, block_id, display_order) VALUES (${slot.id}, ${block.id}, ${order || 0})
       `);
     }
 
@@ -59,7 +62,7 @@ export class PageBlocksRepository extends BaseRepository {
       const blocks = [];
 
       for (const block of slotReq.blocks) {
-        blocks.push(this.createBlock(block, siteId, slot.id));
+        blocks.push(this.createBlock(block, siteId, slot.id, slotReq.blocks.indexOf(block)));
       }
 
       mappedSlot.blocks = await Promise.all(blocks);
@@ -224,6 +227,37 @@ export class PageBlocksRepository extends BaseRepository {
       order by depth
       limit 1
     `);
+  }
+
+  async getSlotsByContext(ctx: ServerEditorialContext, siteId: number) {
+    const query = getContextualSlots(ctx, siteId);
+
+    const results = await this.connection.any(query);
+
+    const page = pageSlotReducer(results);
+
+    const slotIds = Object.keys(page.slots);
+
+    const slotMap: { [name: string]: SiteSlot } = {};
+    for (const slotId of slotIds || []) {
+      const slot = page.slots[slotId];
+      if (!slot) continue;
+
+      const currentlyMapped = slotMap[slot.slotId];
+      if (!currentlyMapped || currentlyMapped.specificity <= slot.specificity) {
+        // Edge case when specificity matches.
+        if (currentlyMapped && currentlyMapped.specificity === slot.specificity && currentlyMapped.id > slot.id) {
+          continue;
+        }
+
+        slotMap[slot.slotId] = slot;
+        slotMap[slot.slotId].blocks = (page.slot_to_blocks[slotMap[slot.slotId].id] || []).map(
+          blockId => page.blocks[blockId]
+        );
+      }
+    }
+
+    return slotMap;
   }
 
   async getPageByPath(pathToFind: string, siteId: number): Promise<SitePage> {

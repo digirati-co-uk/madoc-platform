@@ -14,7 +14,7 @@ import {
 } from 'react-query';
 import { useSlots } from '../page-blocks/slot-context';
 import { useApi } from './use-api';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { useLocationQuery } from './use-location-query';
 
 export function usePrefetchData<Data = any, TKey = any, TVariables = any>(
@@ -24,6 +24,7 @@ export function usePrefetchData<Data = any, TKey = any, TVariables = any>(
   const routeParams = useParams();
   const { context } = useSlots();
   const query = useLocationQuery();
+  const { pathname } = useLocation();
   const cache = useQueryCache();
   const params = useMemo(() => {
     const paramsToReturn: any = { ...routeParams };
@@ -54,12 +55,12 @@ export function usePrefetchData<Data = any, TKey = any, TVariables = any>(
       return;
     }
 
-    const [key, initialVars = {}] = component.getKey ? component.getKey(params, query) || [] : [];
+    const [key, initialVars = {}] = component.getKey ? component.getKey(params, query, pathname) || [] : [];
 
     const newVars = Array.isArray(initialVars) ? vars || initialVars : { ...initialVars, ...vars };
 
     await cache.prefetchQuery([key, newVars] as any, (queryKey: any, queryVars: any) => {
-      return getData(queryKey, queryVars, api);
+      return getData(queryKey, queryVars, api, pathname);
     });
   }
 
@@ -75,6 +76,8 @@ export function useData<Data = any, TKey = any, TVariables = any>(
   const routeParams = useParams();
   const { context } = useSlots();
   const query = useLocationQuery();
+  const { pathname } = useLocation();
+
   const params = useMemo(() => {
     const paramsToReturn: any = { ...routeParams };
 
@@ -97,7 +100,7 @@ export function useData<Data = any, TKey = any, TVariables = any>(
     return paramsToReturn;
   }, [context, routeParams]);
 
-  const [key, initialVars = {}] = component.getKey ? component.getKey(params, query) || [] : [];
+  const [key, initialVars = {}] = component.getKey ? component.getKey(params, query, pathname) || [] : [];
 
   const newVars = Array.isArray(initialVars) ? initialVars : { ...initialVars, ...vars };
 
@@ -105,7 +108,7 @@ export function useData<Data = any, TKey = any, TVariables = any>(
     [key, newVars] as any,
     (queryKey: any, queryVars: any) => {
       if (component.getData) {
-        return component.getData(queryKey, queryVars, api);
+        return component.getData(queryKey, queryVars, api, pathname);
       }
       return undefined as any;
     },
@@ -135,8 +138,9 @@ export function usePaginatedData<Data = any, TKey = any, TVariables = any>(
   const api = useApi();
   const params = useParams();
   const query = useLocationQuery();
+  const { pathname } = useLocation();
 
-  const [key, initialVars = {}] = component.getKey ? component.getKey(params, query) || [] : [];
+  const [key, initialVars = {}] = component.getKey ? component.getKey(params, query, pathname) || [] : [];
 
   const newVars = Array.isArray(initialVars) ? initialVars : { ...initialVars, ...vars };
 
@@ -144,7 +148,7 @@ export function usePaginatedData<Data = any, TKey = any, TVariables = any>(
     [key, newVars] as any,
     (queryKey: any, queryVars: any) => {
       if (component.getData) {
-        return component.getData(queryKey, queryVars, api);
+        return component.getData(queryKey, queryVars, api, pathname);
       }
       return undefined as any;
     },
@@ -160,8 +164,9 @@ export function useInfiniteData<Data = any, TKey = any, TVariables = any>(
   const api = useApi();
   const params = useParams();
   const query = useLocationQuery();
+  const { pathname } = useLocation();
 
-  const [key, initialVars = {}] = component.getKey ? component.getKey(params, query) || [] : [];
+  const [key, initialVars = {}] = component.getKey ? component.getKey(params, query, pathname) || [] : [];
 
   const newVars = Array.isArray(initialVars) ? initialVars : { ...initialVars, ...vars };
 
@@ -170,7 +175,7 @@ export function useInfiniteData<Data = any, TKey = any, TVariables = any>(
     (queryKey: any, queryVars: any, extraVars: any) => {
       const combinedVars: any = { ...(queryVars || {}), ...(extraVars || {}) };
       if (component.getData) {
-        return component.getData(queryKey, combinedVars, api);
+        return component.getData(queryKey, combinedVars, api, pathname);
       }
       return undefined as any;
     },

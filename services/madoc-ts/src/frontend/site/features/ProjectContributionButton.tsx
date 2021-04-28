@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { SmallButton } from '../../shared/atoms/Button';
 import { GridContainer, ThirdGrid } from '../../shared/atoms/Grid';
 import { Heading3 } from '../../shared/atoms/Heading3';
@@ -66,3 +67,11 @@ export const ProjectContributionButton: React.FC = () => {
     </>
   );
 };
+
+blockEditorFor(ProjectContributionButton, {
+  type: 'default.ProjectContributionButton',
+  label: 'Continue where you left off',
+  anyContext: ['project'],
+  requiredContext: ['project'],
+  editor: {},
+});

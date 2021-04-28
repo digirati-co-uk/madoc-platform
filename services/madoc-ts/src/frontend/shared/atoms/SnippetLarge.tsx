@@ -31,10 +31,10 @@ const sizeMap = {
   sm: '1em',
 };
 
-const SnippetButton = styled.a<{ role?: string; center?: boolean }>`
+const SnippetButton = styled.a<{ role?: string; $center?: boolean }>`
   margin-top: auto;
   ${props =>
-    props.center &&
+    props.$center &&
     css`
       margin-left: auto;
     `}
@@ -290,7 +290,7 @@ export const SnippetLarge: React.FC<SnippetLargeProps> = props => {
           as={props.linkAs}
           role={buttonRole}
           href={props.query ? `${props.link}?${stringify(props.query)}` : props.link}
-          center={props.center}
+          $center={props.center}
         >
           {props.buttonText}
         </SnippetButton>

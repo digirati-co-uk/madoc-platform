@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { Button } from '../../../frontend/shared/atoms/Button';
 import { ModalFooter } from '../../../frontend/shared/atoms/Modal';
 import { PageBlockEditor, ReactPageBlockDefinition } from '../extension';
+import { StaticMarkdownBlock } from './static-markdown-block';
 
 const MarkdownEditorWrapper = styled.div`
   padding: 0.6em 0.6em 0.6em 2em;
@@ -66,21 +67,7 @@ const definition: ReactPageBlockDefinition<{ markdown: string }> = {
   },
   render: data => {
     // @todo.
-    return (
-      <Editor
-        defaultValue={data.markdown}
-        readOnly
-        readOnlyWriteCheckboxes
-        onChange={() => void 0}
-        theme={
-          {
-            ...theme,
-            background: 'transparent',
-            text: 'inherit',
-          } as any
-        }
-      />
-    );
+    return <StaticMarkdownBlock markdown={data.markdown || ''} />;
   },
   customEditor: MarkdownEditor,
 };

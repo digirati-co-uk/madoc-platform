@@ -6,6 +6,7 @@ type ReactContextType = {
   slots: {
     [slotName: string]: SiteSlot;
   };
+  isPage?: boolean;
   editable?: boolean;
   onUpdateSlot: (slotId: number) => void;
   onCreateSlot: (slotReq: CreateSlotRequest) => void;
@@ -17,6 +18,7 @@ const SlotReactContext = React.createContext<ReactContextType>({
   context: {},
   slots: {},
   editable: false,
+  isPage: false,
   onUpdateSlot: () => {
     // no-op.
   },
@@ -39,12 +41,13 @@ type SlotProviderProps = {
   pagePath?: string;
   slug?: string;
   context?: EditorialContext;
+  isPage?: boolean;
   slots?: { [slotName: string]: SiteSlot };
   editable?: boolean;
   onUpdateSlot?: (slotId: number) => void | Promise<void>;
   onCreateSlot?: (slotReq: CreateSlotRequest) => void | Promise<void>;
   onUpdateBlock?: (blockId: number) => void | Promise<void>;
-  beforeCreateSlot?: (slotReq: CreateSlotRequest) => void;
+  beforeCreateSlot?: (slotReq: CreateSlotRequest) => void | Promise<void>;
 };
 
 export const SlotProvider: React.FC<SlotProviderProps> = props => {
@@ -55,6 +58,7 @@ export const SlotProvider: React.FC<SlotProviderProps> = props => {
 
   const newContext = useMemo(() => {
     return {
+      isPage: existing.isPage ? props.isPage : props.isPage,
       context: { ...existing.context, ...props.context },
       slots: { ...existing.slots, ...(props.slots || {}), ...newSlots }, // Possibly merge the slots based on the priority thing.
       editable: typeof props.editable !== 'undefined' ? props.editable : existing.editable,

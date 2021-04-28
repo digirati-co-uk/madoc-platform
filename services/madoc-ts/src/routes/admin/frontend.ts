@@ -1,9 +1,12 @@
 import { sql } from 'slonik';
+import { getProject } from '../../database/queries/project-queries';
 import { render as renderAdmin } from '../../frontend/admin/server';
 import { render as renderSite } from '../../frontend/site/server';
 import { createBackend } from '../../middleware/i18n/i18next.server';
 import { RouteMiddleware } from '../../types/route-middleware';
+import { EditorialContext } from '../../types/schemas/site-page';
 import { NotFound } from '../../utility/errors/not-found';
+import { parseProjectId } from '../../utility/parse-project-id';
 import { userWithScope } from '../../utility/user-with-scope';
 
 export const adminFrontend: RouteMiddleware = async context => {
@@ -96,6 +99,20 @@ export const siteFrontend: RouteMiddleware = async context => {
       siteSlug: site.slug,
       site: site,
       siteLocales,
+      getSlots: async (ctx: EditorialContext) => {
+        const parsedId = context.query.project ? parseProjectId(context.query.project) : undefined;
+        const project = parsedId ? await context.connection.one(getProject(parsedId, site.id)) : undefined;
+
+        return await context.pageBlocks.getSlotsByContext(
+          {
+            collection: ctx.collection,
+            manifest: ctx.manifest,
+            canvas: ctx.canvas,
+            project: project ? project.id : undefined,
+          },
+          site.id
+        );
+      },
       user:
         context.state.jwt && context.state.jwt.user && context.state.jwt.user.id
           ? {

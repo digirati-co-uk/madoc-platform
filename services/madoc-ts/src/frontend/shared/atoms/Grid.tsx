@@ -31,3 +31,7 @@ export const ThirdGrid = styled.div<{ $margin?: boolean }>`
 export const ExpandGrid = styled.div`
   flex: 1 1 0px;
 `;
+
+export const GridSidebar = styled.div`
+  max-width: 300px;
+`;

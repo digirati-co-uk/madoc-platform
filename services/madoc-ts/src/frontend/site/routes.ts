@@ -483,7 +483,14 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
     {
       path: '/',
       exact: true,
-      component: components.Homepage,
+      component: components.PageLoader,
+      routes: [
+        {
+          path: '/',
+          exact: true,
+          component: components.Homepage,
+        },
+      ],
     },
     {
       path: '/:pagePath+',

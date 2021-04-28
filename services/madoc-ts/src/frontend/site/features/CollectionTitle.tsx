@@ -1,13 +1,10 @@
 import React from 'react';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { LocaleString } from '../../shared/components/LocaleString';
-import { useStaticData } from '../../shared/hooks/use-data';
-import { useRouteContext } from '../hooks/use-route-context';
-import { CollectionLoader } from '../pages/loaders/collection-loader';
+import { usePaginatedCollection } from '../hooks/use-paginated-collection';
 
 export const CollectionTitle: React.FC = () => {
-  const { collectionId } = useRouteContext();
-  const { data } = useStaticData(CollectionLoader, [collectionId], { enabled: !!collectionId });
+  const { data } = usePaginatedCollection();
   const collection = data?.collection;
 
   if (!collection) {

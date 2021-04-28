@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSlots } from '../../shared/page-blocks/slot-context';
 
-type RouteContext = {
+export type RouteContext = {
   collectionId?: number;
   manifestId?: number;
   canvasId?: number;
