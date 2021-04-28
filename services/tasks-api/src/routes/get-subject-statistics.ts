@@ -6,7 +6,7 @@ export const getSubjectStatistics: RouteMiddleware<{ id: string }> = async ctx =
   // Given a list of subjects
   const subjects = body && body.subjects ? body.subjects : ctx.query.subjects;
   const parentTask = body && body.parentTask ? body.parentTask : ctx.query.parent_task;
-  const subjectsArray = Array.isArray(subjects) ? subjects : subjects.split(',');
+  const subjectsArray = Array.isArray(subjects) ? subjects : subjects ? subjects.split(',') : [];
   // And a task id (root or parent)
   const taskId = ctx.params.id;
   const context = ctx.state.jwt.context;
