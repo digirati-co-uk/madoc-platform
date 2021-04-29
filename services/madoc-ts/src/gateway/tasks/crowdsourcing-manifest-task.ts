@@ -61,8 +61,8 @@ export function createTask({
     type: 'crowdsourcing-manifest-task',
     subject: `urn:madoc:manifest:${manifestId}`,
     subject_parent: collectionId ? `urn:madoc:collection:${collectionId}` : undefined,
-    status_text: 'accepted',
-    status: 1,
+    status_text: 'not started',
+    status: 0,
     state: {
       maxContributors,
       approvalsRequired,
@@ -74,14 +74,68 @@ export function createTask({
       //   Description:
       //     When a manifest task is complete, load the parent task. Check how many adjacent manifests are complete versus
       //     Mark the parent task as complete once all resources are also marked as complete.
+      'madoc-ts.subtask_created',
       'madoc-ts.status.3',
     ],
     context: projectId ? [`urn:madoc:project:${projectId}`] : undefined,
   };
 }
 
-export const jobHandler = async (name: string, taskId: string, api: ApiClient) => {
+export const syncManifestTaskStatus = async (task: CrowdsourcingManifestTask, api: ApiClient) => {
+  // We need to check if this is the maximum.
+  const maximum = task.state.maxContributors ? Number(task.state.maxContributors) : undefined;
+  const validTasks = task.subtasks?.filter(t => {
+    return t.type === 'crowdsourcing-task' && t.status !== -1;
+  });
+
+  if (task.type !== 'crowdsourcing-manifest-task') {
+    return;
+  }
+
+  if (maximum && validTasks && task.status !== 3 && task.status !== -1) {
+    // We need to sync the tasks status.
+    // Move to in progress (i.e. max contributors) when we are at or over the required.
+    if (maximum <= validTasks.length && task.status !== 2) {
+      // We are over the amount.
+      await api.updateTask(task.id, {
+        status: 2,
+        status_text: 'max contributors',
+      });
+    }
+
+    // Make sure we are in accepting
+    if (maximum > validTasks.length && task.status !== 1) {
+      // We are over the amount.
+      await api.updateTask(task.id, {
+        status: 1,
+        status_text: 'accepting contributions',
+      });
+    }
+  }
+};
+
+export const jobHandler = async (name: string, taskId: string, api: ApiClient, data: any) => {
   switch (name) {
+    case 'subtask_created': {
+      // Subtasks of a manifest task can be either:
+      // - Crowdsourcing task
+      // - Crowdsourcing manifest task.
+      const subtaskId = data?.state?.subtaskId;
+      if (!subtaskId) {
+        break;
+      }
+
+      const [task, subtask] = await Promise.all<BaseTask>([
+        api.getTask(taskId, { all: true, detail: true, type: 'crowdsourcing-task' }),
+        api.getTask(subtaskId),
+      ]);
+
+      if (subtask.type === 'crowdsourcing-task') {
+        await syncManifestTaskStatus(task as any, api);
+      }
+
+      break;
+    }
     case 'status.3': {
       const task = await api.getTaskById<CrowdsourcingManifestTask>(taskId);
       if (!task.parent_task) return;

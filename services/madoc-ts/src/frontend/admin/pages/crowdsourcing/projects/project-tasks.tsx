@@ -64,6 +64,7 @@ export const ProjectTasks: UniversalComponent<ProjectTasksType> = createUniversa
             <SubjectSnippet subject={task.subject} />
           </>
         ) : null}
+        {Object.keys(task.state).length ? <pre>{JSON.stringify(task.state, null, 2)}</pre> : null}
         {task.subtasks?.length === 0 ? <EmptyState>{t('Nothing contributed yet')}</EmptyState> : null}
         {(task.subtasks || []).map(subtask => (
           <TableRow key={subtask.id}>

@@ -80,7 +80,7 @@ const worker = new Worker(
             throw err;
           });
         case crowdsourcingManifest.type:
-          return await crowdsourcingManifest.jobHandler(job.name, job.data.taskId, contextualApi).catch(err => {
+          return await crowdsourcingManifest.jobHandler(job.name, job.data.taskId, contextualApi, job.data).catch(err => {
             throw err;
           });
         case processManifestOcr.type:

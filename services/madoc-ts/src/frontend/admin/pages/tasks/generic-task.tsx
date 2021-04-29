@@ -58,6 +58,7 @@ export const GenericTask: React.FC<{ task: BaseTask; statusBar?: JSX.Element; sn
           <pre>{task.state.error}</pre>
         </ErrorMessage>
       ) : null}
+      {Object.keys(task.state).length ? <pre>{JSON.stringify(task.state, null, 2)}</pre> : null}
       {snippet}
       {task.description ? <p>{task.description}</p> : null}
       <p>{task.created_at ? <ReactTimeago date={task.created_at} /> : null}</p>

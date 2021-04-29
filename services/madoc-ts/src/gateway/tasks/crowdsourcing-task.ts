@@ -2,7 +2,7 @@ import { parseUrn } from '../../utility/parse-urn';
 import { BaseTask } from './base-task';
 import { CaptureModel } from '@capture-models/types';
 import { ApiClient } from '../api';
-import { CrowdsourcingManifestTask } from './crowdsourcing-manifest-task';
+import { CrowdsourcingManifestTask, syncManifestTaskStatus } from './crowdsourcing-manifest-task';
 import * as reviewTask from './crowdsourcing-review';
 import { CaptureModelSnippet } from '../../types/schemas/capture-model-snippet';
 import { CrowdsourcingCanvasTask } from './crowdsourcing-canvas-task';
@@ -134,6 +134,14 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           const revisionRequest = await api.getCaptureModelRevision(revision);
           if (revisionRequest) {
             await api.deleteCaptureModelRevision(revisionRequest);
+          }
+        }
+
+        if (task.parent_task) {
+          const parent = await api.getTask(task.parent_task, { detail: true, type: 'crowdsourcing-task' });
+          if (parent.type === 'crowdsourcing-manifest-task') {
+            // We have just rejected a manifest task.
+            await syncManifestTaskStatus(parent as any, api);
           }
         }
       } catch (err) {

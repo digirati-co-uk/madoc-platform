@@ -29,12 +29,10 @@ export const CanvasStatusItem = styled.div<{ $status: number }>`
   }}
 `;
 
-export const CanvasStatus: React.FC<{ status: number; userTask?: boolean }> = ({ status, userTask }) => {
-  const realStatus = userTask && (status === 2 || status === 1) ? status + 1 : status;
-
+export const CanvasStatus: React.FC<{ status: number }> = ({ status }) => {
   return (
     <CanvasStatusBackground>
-      <CanvasStatusItem $status={realStatus} />
+      <CanvasStatusItem $status={status} />
     </CanvasStatusBackground>
   );
 };
