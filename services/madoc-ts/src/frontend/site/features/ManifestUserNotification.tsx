@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { Button } from '../../shared/atoms/Button';
+import { ErrorMessage } from '../../shared/atoms/ErrorMessage';
 import { InfoMessage } from '../../shared/atoms/InfoMessage';
 import { SuccessMessage } from '../../shared/atoms/SuccessMessage';
 import { WarningMessage } from '../../shared/atoms/WarningMessage';
@@ -32,6 +33,21 @@ export const ManifestUserNotification: React.FC = () => {
 
   if (!projectId || !manifestId || !isFetched) {
     return null;
+  }
+
+  const hasExpired = config.project.claimGranularity === 'manifest' && userManifestTask?.status === -1;
+  const canReclaim = config.project.claimGranularity === 'manifest' && hasExpired && canClaimManifest;
+
+  if (canReclaim) {
+    return (
+      <WarningMessage>
+        {t('Your claim on this manifest has expired, but you can continue where you left off')}
+      </WarningMessage>
+    );
+  }
+
+  if (hasExpired && !canReclaim) {
+    return <ErrorMessage>{t('Your claim on this manifest has expired')}</ErrorMessage>;
   }
 
   if (isManifestComplete) {

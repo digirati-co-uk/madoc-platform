@@ -24,6 +24,7 @@ export function useManifestTask() {
     canUserSubmit: projectTasks?.canUserSubmit,
     canClaimManifest: projectTasks?.canClaimManifest,
     userManifestTask: projectTasks?.userManifestTask,
+    userManifestStats: projectTasks?.userManifestStats,
     refetch,
   };
 }

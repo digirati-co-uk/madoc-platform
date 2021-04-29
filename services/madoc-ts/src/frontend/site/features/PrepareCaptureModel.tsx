@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { ErrorMessage } from '../../shared/atoms/ErrorMessage';
 import { InfoMessage } from '../../shared/atoms/InfoMessage';
 import { Spinner } from '../../shared/icons/Spinner';
 import { usePreparedCanvasModel } from '../hooks/use-prepared-canvas-model';
@@ -14,8 +15,12 @@ import { usePreparedCanvasModel } from '../hooks/use-prepared-canvas-model';
  * If the user is assigned this task, it will always be auto-prepared.
  */
 export const PrepareCaptureModel: React.FC = () => {
-  const { isPreparing } = usePreparedCanvasModel();
+  const { isPreparing, hasExpired } = usePreparedCanvasModel();
   const { t } = useTranslation();
+
+  if (hasExpired) {
+    return <ErrorMessage>{t('Unable to claim this resource')}</ErrorMessage>;
+  }
 
   if (isPreparing) {
     return (

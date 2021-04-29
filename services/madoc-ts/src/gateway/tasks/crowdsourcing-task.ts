@@ -1,3 +1,4 @@
+import { findUseManifestTaskFromList } from '../../utility/claim-utilities';
 import { parseUrn } from '../../utility/parse-urn';
 import { BaseTask } from './base-task';
 import { CaptureModel } from '@capture-models/types';
@@ -153,6 +154,80 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
     case 'status.2': {
       try {
         const task = await api.getTask<CrowdsourcingTask>(taskId);
+
+        if (task.root_task && task.subject_parent && task.assignee) {
+          const projects = await api.getProjects(0, { root_task_id: task.root_task });
+          if (projects.projects.length) {
+            const project = projects.projects[0] ? await api.getProject(projects.projects[0].id) : undefined;
+            if (project) {
+              // We have the ful project here.
+              const manifestClaims = project.config.claimGranularity === 'manifest';
+              if (manifestClaims) {
+                const manifestTasks = await api.getTasks(0, {
+                  subject: task.subject_parent,
+                  root_task_id: task.root_task,
+                  detail: true,
+                });
+                const realManifestTask = manifestTasks.tasks.find(
+                  t => t.status !== -1 && t.type === 'crowdsourcing-manifest-task'
+                );
+                if (realManifestTask && realManifestTask.id) {
+                  // We have a real task.
+                  const parsedManifest = parseUrn(realManifestTask.subject);
+                  if (parsedManifest) {
+                    const manifestStructure = await api.getManifestStructure(parsedManifest.id);
+                    const subjects = manifestStructure.items.map(item => `urn:madoc:canvas:${item.id}`);
+                    const statuses = await api.getTaskSubjects(task.root_task, subjects, {
+                      type: 'crowdsourcing-task',
+                      assigned_to: task.assignee.id,
+                    });
+
+                    const ids = statuses.subjects.map(s => s.subject).filter(s => s.startsWith('urn:madoc:canvas:'));
+                    const found = manifestStructure.items.find(item => {
+                      return ids.indexOf(`urn:madoc:canvas:${item.id}`) === -1;
+                    });
+                    if (!found) {
+                      // The manifest task is done!
+                      const userManifestTask = await api.getTasks(0, {
+                        parent_task_id: realManifestTask.id,
+                        type: 'crowdsourcing-task',
+                        subject: realManifestTask.subject,
+                        detail: true,
+                      });
+                      console.log(userManifestTask);
+                      const foundManifestTask = findUseManifestTaskFromList(
+                        parsedManifest.id,
+                        task.assignee.id,
+                        userManifestTask.tasks
+                      );
+                      if (foundManifestTask) {
+                        await api.updateTask(foundManifestTask.id, {
+                          status: 3,
+                          status_text: 'in review',
+                        });
+                      } else {
+                        console.log('not found manifest task');
+                      }
+                    } else {
+                      console.log('not found manifest iiif');
+                    }
+                  } else {
+                    console.log('parsed manifest not found');
+                  }
+                } else {
+                  console.log('real manifest task not found');
+                }
+              } else {
+                console.log('manifest claim not valid');
+              }
+            } else {
+              console.log('project not found');
+            }
+          } else {
+            console.log('project not found');
+          }
+        }
+
         if (task.state && task.state.reviewTask) {
           // If the task has already been reviewed, then mark the review task as having new changes.
           await api.updateTask(task.state.reviewTask, { status: 5, status_text: 'new changes' });

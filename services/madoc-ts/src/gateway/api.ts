@@ -1925,6 +1925,7 @@ export class ApiClient {
       canUserSubmit?: boolean;
       totalContributors?: number;
       maxContributors?: number;
+      userManifestStats?: { done: number; progress: number };
     }>(`/madoc/api/projects/${projectId}/manifest-tasks/${manifestId}`);
   }
 

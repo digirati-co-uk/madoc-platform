@@ -13,6 +13,7 @@ export function usePreparedCanvasModel() {
   const { canvasId } = useRouteContext();
   const [hasPrepared, setHasPrepared] = useState(false);
   const [hasPreparedManifest, setHasPreparedManifest] = useState(false);
+  const [hasExpired, setHasExpired] = useState(false);
   const modelResponse = useCanvasModel();
   const { isManifestComplete, isFetched: manifestTaskFetched } = useManifestTask();
   const [prepare, { isLoading }] = usePrepareContribution();
@@ -25,14 +26,10 @@ export function usePreparedCanvasModel() {
   const isPreparing = isLoading;
   const shouldAutoPrepare = !isManifestComplete && !manifestClaim.isClaimRequired; // @todo config.
 
-  // @todo This logic needs to change slightly.
-  //   - Does the user have a manifest claim?
-  //   - Is the user required to have a manifest claim?
-  //   - Make claim if not and required.
-  //   - Prevent other claim
+  console.log(shouldAutoPrepare, { isManifestComplete, isClaimRequired: manifestClaim.isClaimRequired });
 
   useEffect(() => {
-    if (manifestClaim.shouldAutoClaim && !hasPreparedManifest) {
+    if (manifestClaim.shouldAutoClaim && !hasPreparedManifest && !hasExpired) {
       manifestClaim
         .claim()
         .then(() => {
@@ -40,10 +37,13 @@ export function usePreparedCanvasModel() {
           setHasPreparedManifest(true);
         })
         .catch(() => {
+          setHasExpired(true);
           setHasPreparedManifest(true); // @todo handle this error in a better way.
         });
     }
   }, [
+    hasExpired,
+    hasPreparedManifest,
     manifestClaim,
     manifestClaim.isClaimLoading,
     manifestClaim.isClaimRequired,
@@ -70,6 +70,7 @@ export function usePreparedCanvasModel() {
   return {
     ...modelResponse,
     preparationFailed,
+    hasExpired: manifestClaim.didError,
     hasPrepared,
     isPreparing,
   };

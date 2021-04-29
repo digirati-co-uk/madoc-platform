@@ -21,22 +21,26 @@ export const ProjectManifests: React.FC = () => {
   const { data: project } = useProject();
   const { isExact } = useRouteMatch();
   const createLocaleString = useCreateLocaleString();
-  const { data: manifests } = apiHooks.getSiteCollection(() =>
-    project && isExact
-      ? [
-          project.collection_id,
-          hideCompletedResources
-            ? {
-                type: 'manifest',
-                project_id: project.slug,
-                hide_status: '3',
-              }
-            : {
-                type: 'manifest',
-                project_id: project.slug,
-              },
-        ]
-      : undefined
+  const { data: manifests } = apiHooks.getSiteCollection(
+    () =>
+      project && isExact
+        ? [
+            project.collection_id,
+            hideCompletedResources
+              ? {
+                  type: 'manifest',
+                  project_id: project.slug,
+                  hide_status: '3',
+                }
+              : {
+                  type: 'manifest',
+                  project_id: project.slug,
+                },
+          ]
+        : undefined,
+    {
+      refetchOnMount: true,
+    }
   );
 
   const subjects = manifests?.subjects;

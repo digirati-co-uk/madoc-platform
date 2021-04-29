@@ -1,15 +1,19 @@
 import React from 'react';
 import { WorkflowBar } from '../../shared/components/WorkflowBar';
+import { useManifestStructure } from '../../shared/hooks/use-manifest-structure';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useManifestTask } from '../hooks/use-manifest-task';
 import { useModelPageConfiguration } from '../hooks/use-model-page-configuration';
+import { useRouteContext } from '../hooks/use-route-context';
 import { useSubmitAllClaims } from '../hooks/use-submit-all-claims';
 
 export const TranscriberModeWorkflowBar: React.FC = () => {
   const { fixedTranscriptionBar } = useModelPageConfiguration();
-  const { isManifestComplete } = useManifestTask();
+  const { isManifestComplete, userManifestStats } = useManifestTask();
   const { userTasks, canUserSubmit } = useCanvasUserTasks();
   const { submitAllClaims, isSubmitting, canSubmit: canSubmitClaims } = useSubmitAllClaims();
+  const { manifestId } = useRouteContext();
+  const { data: structure } = useManifestStructure(manifestId);
 
   // In transcriber mode, all tasks should have the same status.
   const firstUserTask = userTasks ? userTasks[0] : undefined;
@@ -52,9 +56,9 @@ export const TranscriberModeWorkflowBar: React.FC = () => {
       }}
       expires={new Date()}
       statistics={{
-        done: 0,
-        total: 0,
-        progress: 0,
+        done: userManifestStats?.done || 0,
+        total: structure?.items.length || 0,
+        progress: userManifestStats?.progress || 0,
       }}
     />
   );

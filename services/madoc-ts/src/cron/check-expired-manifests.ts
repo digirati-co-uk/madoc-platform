@@ -8,7 +8,6 @@ export async function checkExpiredManifests(context: ApplicationContext, fireDat
   console.log('checking expired manifests', { fireDate, previousFireDate });
 
   // 1. Loop through each project
-
   const runningProjects = await context.connection.any(sql<{
     id: number;
     task_id: string;
@@ -21,8 +20,11 @@ export async function checkExpiredManifests(context: ApplicationContext, fireDat
     select id, task_id, collection_id, slug, site_id, capture_model_id, status from iiif_project where (iiif_project.status = 1 or iiif_project.status = 2)
   `);
 
-  const expiryTime = 24 * 60 * 60 * 1000; // 1 day for now..
-  const yesterday = new Date(Date.now() - expiryTime);
+  const shortExpiryTime = 10 * 60 * 1000; // 10 minutes
+  const shortTermExpiry = new Date(Date.now() - shortExpiryTime);
+
+  const longExpiryTime = 24 * 60 * 60 * 1000; // 1 day for now..
+  const longTermExpiry = new Date(Date.now() - longExpiryTime);
 
   for (const project of runningProjects) {
     const localApi = api.asUser({ siteId: project.site_id });
@@ -33,13 +35,34 @@ export async function checkExpiredManifests(context: ApplicationContext, fireDat
       type: 'crowdsourcing-task',
       status: [0, 1],
       all: true,
+      detail: true,
       root_task_id: project.task_id,
-      created_date_end: yesterday, // exclude recent entries - this is what will be configurable.
     });
 
     // 1. Check if they are targeting a manifest.
-    // 2. Check if they are assigned.
-    // 3. Delete the claims! (if status 1, also check created to see if it's expired)
+    const manifestTasks = tasks.tasks.filter(task => {
+      return task.subject && task.subject.startsWith('urn:madoc:manifest');
+    });
+
+    for (const manifestTask of manifestTasks) {
+      if (manifestTask.modified_at) {
+        const modified = new Date(manifestTask.modified_at);
+        if (manifestTask.status === 0 && modified.getTime() < shortTermExpiry.getTime()) {
+          console.log('expire short term', manifestTask.subject);
+          await localApi.updateTask(manifestTask.id, {
+            status: -1,
+            status_text: 'expired',
+          });
+        }
+        if (manifestTask.status === 1 && modified.getTime() < longTermExpiry.getTime()) {
+          console.log('expire long term', manifestTask.subject);
+          await localApi.updateTask(manifestTask.id, {
+            status: -1,
+            status_text: 'expired',
+          });
+        }
+      }
+    }
   }
 
   // Set the previous date.

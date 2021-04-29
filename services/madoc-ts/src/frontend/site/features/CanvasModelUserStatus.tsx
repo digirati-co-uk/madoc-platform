@@ -6,12 +6,16 @@ import { SuccessMessage } from '../../shared/atoms/SuccessMessage';
 import { createLink } from '../../shared/utility/create-link';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useContinueSubmission } from '../hooks/use-continue-submission';
+import { useContributionMode } from '../hooks/use-contribution-mode';
+import { useProjectPageConfiguration } from '../hooks/use-project-page-configuration';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
+import { useSiteConfiguration } from './SiteConfigurationContext';
 
 export const CanvasModelUserStatus: React.FC<{ isEditing?: boolean }> = ({ isEditing }) => {
   const { t } = useTranslation();
   const { projectId, canvasId } = useRouteContext();
+  const mode = useContributionMode();
   const { inProgress, completed, assigned, loaded } = useContinueSubmission();
   const relativeLink = useRelativeLinks();
 
@@ -35,6 +39,9 @@ export const CanvasModelUserStatus: React.FC<{ isEditing?: boolean }> = ({ isEdi
   }
 
   if (inProgress) {
+    if (mode === 'transcription') {
+      return <InfoMessage>{t('You have unsubmitted contributions')}</InfoMessage>;
+    }
     return <InfoMessage>{t('You have previously started working on this image')}</InfoMessage>;
   }
 

@@ -130,10 +130,12 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
                   <ButtonIcon>
                     <TickIcon />
                   </ButtonIcon>
-                  <strong>Task is complete!</strong>
+                  <strong>{t('Task is complete!')}</strong>
                 </EmptyState>
                 <EmptyState>
-                  Thank you for your submission. You can view your contribution in the left sidebar.
+                  {t(
+                    'Thank you for your submission. You can view your contribution in the left sidebar. You can continue working on another canvas'
+                  )}
                 </EmptyState>
               </>
             ) : canContribute && captureModel ? (

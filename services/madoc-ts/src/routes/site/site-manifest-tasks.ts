@@ -37,14 +37,19 @@ export const siteManifestTasks: RouteMiddleware<{
     }
   }
 
-  if (!config.claimGranularity || config.claimGranularity === 'canvas') {
-    const canvasTasks = await siteApi.getTasks(0, {
-      all: true,
-      root_task_id: project?.task_id,
-      subject_parent: `urn:madoc:manifest:${manifestId}`,
-      detail: true,
-    });
+  const canvasTasks = await siteApi.getTasks(0, {
+    all: true,
+    root_task_id: project?.task_id,
+    subject_parent: `urn:madoc:manifest:${manifestId}`,
+    detail: true,
+  });
 
+  const userManifestStats = {
+    done: 0,
+    progress: 0,
+  };
+
+  if (!config.claimGranularity || config.claimGranularity === 'canvas') {
     for (const task of canvasTasks.tasks) {
       if (
         task.type === 'crowdsourcing-task' &&
@@ -54,6 +59,21 @@ export const siteManifestTasks: RouteMiddleware<{
         contributors.indexOf(task.assignee.id) === -1
       ) {
         contributors.push(task.assignee.id);
+      }
+    }
+  } else {
+    const uniqueSub = [];
+    for (const task of canvasTasks.tasks) {
+      if (task.assignee && task.assignee.id === `urn:madoc:user:${user}`) {
+        if (uniqueSub.indexOf(task.subject) === -1) {
+          if (task.status === 2 || task.status === 3) {
+            userManifestStats.done++;
+          } else {
+            userManifestStats.progress++;
+          }
+
+          uniqueSub.push(task.subject);
+        }
       }
     }
   }
@@ -90,6 +110,7 @@ export const siteManifestTasks: RouteMiddleware<{
     totalContributors: contributors.length,
     maxContributors: config.maxContributionsPerResource,
     canUserSubmit: canUserSubmit,
+    userManifestStats,
   };
 
   return;
