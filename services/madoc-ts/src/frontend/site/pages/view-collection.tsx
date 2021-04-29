@@ -6,6 +6,7 @@ import { CollectionItemPagination } from '../features/CollectionItemPagination';
 import { CollectionPaginatedItems } from '../features/CollectionPaginatedItems';
 import { CollectionTitle } from '../features/CollectionTitle';
 import { usePaginatedCollection } from '../hooks/use-paginated-collection';
+import { CollectionMetadata } from '../features/CollectionMetadata';
 
 export const ViewCollection: React.FC = () => {
   const { isLoading } = usePaginatedCollection();
@@ -28,9 +29,12 @@ export const ViewCollection: React.FC = () => {
 
       <Slot name="collection-pagination">
         <CollectionItemPagination />
-
-        <CollectionPaginatedItems />
-
+        <div style={{ display: 'flex' }}>
+          <CollectionPaginatedItems />
+          <div style={{ maxWidth: 290 }}>
+            <CollectionMetadata compact />
+          </div>
+        </div>
         <CollectionItemPagination />
       </Slot>
 
