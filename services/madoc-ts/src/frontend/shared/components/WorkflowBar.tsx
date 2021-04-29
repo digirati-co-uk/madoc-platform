@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
-import { CanvasManifestPagination } from '../../site/features/CanvasManifestPagination';
 import { Button, ButtonIcon, ButtonRow, RightButtonIconBox } from '../atoms/Button';
 import { ErrorMessage } from '../atoms/ErrorMessage';
 import { GridContainer } from '../atoms/Grid';

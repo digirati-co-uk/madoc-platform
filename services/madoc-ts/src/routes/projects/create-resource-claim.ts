@@ -225,17 +225,18 @@ async function ensureProjectTaskStructure(
       // }
 
       // We no longer re-parent.
-      userManifestTask = foundUserManifestTask
-        ? await userApi.getTaskById<CrowdsourcingTask>(
-            foundUserManifestTask.id,
-            true,
-            0,
-            undefined,
-            undefined,
-            true,
-            true
-          )
-        : undefined;
+      userManifestTask =
+        foundUserManifestTask && foundUserManifestTask.id
+          ? await userApi.getTaskById<CrowdsourcingTask>(
+              foundUserManifestTask.id,
+              true,
+              0,
+              undefined,
+              undefined,
+              true,
+              true
+            )
+          : undefined;
     }
 
     if (!foundCanvasTask) {
