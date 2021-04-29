@@ -40,8 +40,6 @@ export function canUserClaimManifest(options: { task: CrowdsourcingManifestTask;
   // Has to be less than the stated maximum
   const subtasks = (options.task.subtasks || []).filter(manifestTaskCountsAsContribution);
 
-  console.log('can user submit: ', maxContributors, subtasks.length);
-
   return subtasks.length < maxContributors;
 }
 
