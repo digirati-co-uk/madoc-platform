@@ -28,7 +28,6 @@ import { ManifestUserNotification } from '../features/ManifestUserNotification';
 import { usePreventCanvasNavigation } from '../features/PreventUsersNavigatingCanvases';
 import { RandomlyAssignCanvas } from '../features/RandomlyAssignCanvas';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
-import { useContributionMode } from '../hooks/use-contribution-mode';
 import { useManifestPageConfiguration } from '../hooks/use-manifest-page-configuration';
 import { useManifestTask } from '../hooks/use-manifest-task';
 import { useRelativeLinks } from '../hooks/use-relative-links';
@@ -51,7 +50,6 @@ export const ViewManifest: React.FC<{
   const { showWarning, showNavigationContent } = usePreventCanvasNavigation();
   const config = useSiteConfiguration();
   const createLocaleString = useCreateLocaleString();
-  const mode = useContributionMode();
   const manifestOptions = useManifestPageConfiguration();
   const { userManifestTask, canClaimManifest } = useManifestTask();
 
@@ -112,9 +110,7 @@ export const ViewManifest: React.FC<{
                         <img alt={createLocaleString(canvas.label, t('Canvas thumbnail'))} src={canvas.thumbnail} />
                       ) : null}
                     </CroppedImage>
-                    {manifestSubjects && subjectMap ? (
-                      <CanvasStatus userTask={mode === 'transcription'} status={subjectMap[canvas.id]} />
-                    ) : null}
+                    {manifestSubjects && subjectMap ? <CanvasStatus status={subjectMap[canvas.id]} /> : null}
                     <LocaleString as={Heading5}>{canvas.label}</LocaleString>
                   </ImageStripBox>
                 </Link>

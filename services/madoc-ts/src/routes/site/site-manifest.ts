@@ -10,6 +10,31 @@ export type SiteManifestQuery = {
   hide_status?: string;
 };
 
+function mapUserSubjects(subjects: Array<{ subject: string; status: number }>) {
+  return subjects.map(subject => {
+    if (subject.status === 0 || subject.status === 1) {
+      // In progress
+      return {
+        subject: subject.subject,
+        status: 2,
+      };
+    }
+
+    if (subject.status === 2 || subject.status === 3) {
+      return {
+        subject: subject.subject,
+        status: 3,
+      };
+    }
+
+    // Everything else is not started.
+    return {
+      subject: subject.subject,
+      status: 0,
+    };
+  });
+}
+
 export const siteManifest: RouteMiddleware<{ slug: string; id: string }> = async context => {
   const page = Number(context.query.page || 1) || 1;
   const { id } = context.params;
@@ -53,7 +78,7 @@ export const siteManifest: RouteMiddleware<{ slug: string; id: string }> = async
         !!parentTaskId
       );
 
-      manifest.subjects = response.subjects;
+      manifest.subjects = userId ? mapUserSubjects(response.subjects) : response.subjects;
     }
 
     context.response.status = 200;
@@ -81,12 +106,11 @@ export const siteManifest: RouteMiddleware<{ slug: string; id: string }> = async
         }
   );
 
-  console.log(taskSubjects);
-
+  const allSubjects = userId ? mapUserSubjects(taskSubjects.subjects) : taskSubjects.subjects;
   const filteredCanvases: number[] = [];
   const filteredSubjects: typeof taskSubjects.subjects = [];
 
-  for (const subject of taskSubjects.subjects) {
+  for (const subject of allSubjects) {
     const parsedUrn = parseUrn(subject.subject);
     // Skip invalid, if any.
     if (!parsedUrn) continue;

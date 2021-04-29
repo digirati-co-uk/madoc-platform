@@ -5,7 +5,7 @@
 import { RouteMiddleware } from '../../types/route-middleware';
 import { BaseTask } from '../../gateway/tasks/base-task';
 import { CaptureModel } from '@capture-models/types';
-import { canUserClaimCanvas, canUserClaimManifest, findUserManifestTask } from "../../utility/claim-utilities";
+import { canUserClaimCanvas, canUserClaimManifest, findUserManifestTask } from '../../utility/claim-utilities';
 import { userWithScope } from '../../utility/user-with-scope';
 import { ApplicationContext } from '../../types/application-context';
 import { RequestError } from '../../utility/errors/request-error';
@@ -490,12 +490,6 @@ export const prepareResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim
   // Get project configuration.
   const config = await userApi.getProjectConfiguration(projectId, siteUrn);
 
-  console.log('\n\n========');
-  console.log(config);
-  console.log('\n\n========\n\n');
-  console.log(project.config);
-  console.log('\n\n========\n\n');
-
   // Make sure our fancy structure exists.
   const [parent, manifestUserTask] = await ensureProjectTaskStructure(context, siteId, projectId, id, claim, config);
 
@@ -511,10 +505,6 @@ export const prepareResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim
       userId: id,
     })
   ) {
-    console.log('reason', {
-      noManifest: !manifestUserTask,
-    });
-
     throw new Error('Maximum number of contributors reached');
   }
 

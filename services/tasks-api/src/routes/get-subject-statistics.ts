@@ -15,7 +15,8 @@ export const getSubjectStatistics: RouteMiddleware<{ id: string }> = async ctx =
   const assignee = ctx.query.assignee && ctx.query.assignee === 'true';
   const assigned_to = ctx.query.assigned_to;
 
-  const subjectQuery = subjectsArray ? sql`and t.subject = any (${sql.array(subjectsArray, 'text')})` : sql``;
+  const subjectQuery =
+    subjectsArray && subjectsArray.length ? sql`and t.subject = any (${sql.array(subjectsArray, 'text')})` : sql``;
   const typeQuery = type ? sql`and t.type = ${type}` : sql``;
   const parentJoin = parentSubject ? sql`left outer join tasks pt on t.parent_task = pt.id` : sql``;
   const parentQuery = parentSubject ? sql`and pt.subject = ${parentSubject}` : sql``;
