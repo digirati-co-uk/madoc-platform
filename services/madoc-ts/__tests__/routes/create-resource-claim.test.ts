@@ -144,24 +144,25 @@ describe('Create resource claim', () => {
       },
       body => {
         expect(body).toMatchInlineSnapshot(`
-                  Object {
-                    "context": Array [
-                      "urn:madoc:project:1",
-                    ],
-                    "events": Array [
-                      "madoc-ts.status.3",
-                    ],
-                    "name": "Test manifest 1",
-                    "parameters": Array [],
-                    "state": Object {
-                      "approvalsRequired": 1,
-                    },
-                    "status": 1,
-                    "status_text": "accepted",
-                    "subject": "urn:madoc:manifest:2001",
-                    "type": "crowdsourcing-manifest-task",
-                  }
-              `);
+          Object {
+            "context": Array [
+              "urn:madoc:project:1",
+            ],
+            "events": Array [
+              "madoc-ts.subtask_created",
+              "madoc-ts.status.3",
+            ],
+            "name": "Test manifest 1",
+            "parameters": Array [],
+            "state": Object {
+              "approvalsRequired": 1,
+            },
+            "status": 0,
+            "status_text": "not started",
+            "subject": "urn:madoc:manifest:2001",
+            "type": "crowdsourcing-manifest-task",
+          }
+        `);
       }
     );
 
@@ -647,24 +648,25 @@ describe('Create resource claim', () => {
       },
       body => {
         expect(body).toMatchInlineSnapshot(`
-                  Object {
-                    "context": Array [
-                      "urn:madoc:project:1",
-                    ],
-                    "events": Array [
-                      "madoc-ts.status.3",
-                    ],
-                    "name": "Test manifest 1",
-                    "parameters": Array [],
-                    "state": Object {
-                      "approvalsRequired": 1,
-                    },
-                    "status": 1,
-                    "status_text": "accepted",
-                    "subject": "urn:madoc:manifest:2001",
-                    "type": "crowdsourcing-manifest-task",
-                  }
-              `);
+          Object {
+            "context": Array [
+              "urn:madoc:project:1",
+            ],
+            "events": Array [
+              "madoc-ts.subtask_created",
+              "madoc-ts.status.3",
+            ],
+            "name": "Test manifest 1",
+            "parameters": Array [],
+            "state": Object {
+              "approvalsRequired": 1,
+            },
+            "status": 0,
+            "status_text": "not started",
+            "subject": "urn:madoc:manifest:2001",
+            "type": "crowdsourcing-manifest-task",
+          }
+        `);
       }
     );
 
