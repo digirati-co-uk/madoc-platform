@@ -16,7 +16,6 @@ import {
 import {
   CreateNormalPageRequest,
   CreateSlotRequest,
-  EditorialContext,
   ServerEditorialContext,
   SiteBlock,
   SiteBlockRequest,
@@ -31,13 +30,15 @@ export class PageBlocksRepository extends BaseRepository {
     const block = await this.connection.one(addBlock(blockReq, siteId));
 
     if (slotId) {
-      const slot = await this.connection.one(
-        sql`select id from site_block where site_id = ${siteId} and id = ${slotId}`
+      const slot = await this.connection.maybeOne(
+        sql`select id from site_slots where site_id = ${siteId} and id = ${slotId}`
       );
-
-      await this.connection.query(sql`
-        insert into site_slot_blocks (slot_id, block_id, display_order) VALUES (${slot.id}, ${block.id}, ${order || 0})
-      `);
+      if (slot) {
+        await this.connection.query(sql`
+            insert into site_slot_blocks (slot_id, block_id, display_order)
+            VALUES (${slot.id}, ${block.id}, ${order || 0})
+        `);
+      }
     }
 
     return mapBlock(block);
