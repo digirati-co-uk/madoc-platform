@@ -11,6 +11,13 @@ export const Heading3 = styled.h3<{ $margin?: boolean }>`
     css`
       margin-bottom: 1em;
     `}
+    
+  & > a {
+    transition: color 0.3s;
+    &:hover {
+      color: #3579f6;
+    }
+  }
 `;
 
 export const Subheading3 = styled.div`
