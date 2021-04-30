@@ -2491,10 +2491,10 @@
     screenfull "^3.3.2"
     whatwg-fetch "^3.0.0"
 
-"@capture-models/editor@^0.13.8":
-  version "0.13.8"
-  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.13.8.tgz#e0e8c50aff60b2cd6afff06e2c509b46798f4709"
-  integrity sha512-7QjSxZt86L+rS/ZxDhyFmY+YHYyivpUM4ccXlFSUxYLC40NF8jFyxsGtGJT9YdD4zRYZnCgnF3Ty7v3PN1siHw==
+"@capture-models/editor@^0.13.9":
+  version "0.13.9"
+  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.13.9.tgz#2ec72442b742621b334b22ca6c1057ed688a75ac"
+  integrity sha512-NbJRIMFTY+iznrsV1X21qk4WpYdpvm0EtTxd8ms3AADy1fgoxcit8hyjVfdAZWxkuyrWrwNw3escYCofSPKJsA==
   dependencies:
     "@atlas-viewer/atlas" "^1.5.1"
     "@capture-models/helpers" "^0.13.6"

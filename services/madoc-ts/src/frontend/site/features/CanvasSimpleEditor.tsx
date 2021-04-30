@@ -1,15 +1,15 @@
 import { Runtime } from '@atlas-viewer/atlas';
-import React, { useRef } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ButtonIcon, ButtonRow } from '../../shared/atoms/Button';
 import { EmptyState } from '../../shared/atoms/EmptyState';
-import { MetadataEmptyState } from '../../shared/atoms/MetadataConfiguration';
 import { TickIcon } from '../../shared/atoms/TickIcon';
 import { BackToChoicesButton } from '../../shared/caputre-models/new/components/BackToChoicesButton';
 import { EditorSlots } from '../../shared/caputre-models/new/components/EditorSlots';
 import { RevisionProviderWithFeatures } from '../../shared/caputre-models/new/components/RevisionProviderWithFeatures';
 import { SimpleSaveButton } from '../../shared/caputre-models/new/components/SimpleSaveButton';
 import { EditorContentViewer } from '../../shared/caputre-models/new/EditorContent';
+import { CanvasVaultContext } from '../../shared/components/CanvasVaultContext';
 import { useApi } from '../../shared/hooks/use-api';
 import { useCurrentUser } from '../../shared/hooks/use-current-user';
 import { useLoadedCaptureModel } from '../../shared/hooks/use-loaded-capture-model';
@@ -35,15 +35,20 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
   const isVertical = config.project.defaultEditorOrientation === 'vertical';
   const api = useApi();
   const runtime = useRef<Runtime>();
+  const gridRef = useRef<any>();
+  const [height, setHeight] = useState(600);
+
+  useLayoutEffect(() => {
+    if (gridRef.current) {
+      const bounds = gridRef.current.getBoundingClientRect();
+      if (bounds.height) {
+        setHeight(bounds.height);
+      }
+    }
+  }, []);
 
   const allowMultiple = !config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource;
   const preventFurtherSubmission = !allowMultiple && allTasksDone;
-
-  console.log({
-    allowMultiple,
-    allTasksDone,
-    preventFurtherSubmission,
-  });
 
   const isEditing = isEditingAnotherUsersRevision(captureModel, revision, user.user);
 
@@ -77,91 +82,95 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
   }
 
   return (
-    <RevisionProviderWithFeatures
-      key={revision}
-      revision={revision}
-      captureModel={captureModel}
-      slotConfig={{
-        editor: { allowEditing: !preventFurtherSubmission, deselectRevisionAfterSaving: true },
-        components: { SubmitButton: isEditing || mode === 'transcription' ? SimpleSaveButton : undefined },
-      }}
-    >
-      <TranscriberModeWorkflowBar />
+    <CanvasVaultContext>
+      <RevisionProviderWithFeatures
+        key={revision}
+        revision={revision}
+        captureModel={captureModel}
+        slotConfig={{
+          editor: { allowEditing: !preventFurtherSubmission, deselectRevisionAfterSaving: true },
+          components: { SubmitButton: isEditing || mode === 'transcription' ? SimpleSaveButton : undefined },
+        }}
+      >
+        <TranscriberModeWorkflowBar />
 
-      <CanvasViewer>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: isVertical ? 'column' : 'row',
-            width: '100%',
-            maxHeight: '100%',
-            height: '100%',
-          }}
-        >
+        <CanvasViewer>
           <div
+            ref={gridRef}
             style={{
-              width: isVertical ? '100%' : 'auto',
-              flex: '1 1 0px',
-              height: '100%',
-              minWidth: 0,
-              position: 'relative',
-            }}
-          >
-            <EditorContentViewer
-              canvasId={canvasId}
-              onCreated={rt => {
-                return (runtime.current = rt.runtime);
-              }}
-            />
-
-            <ButtonRow style={{ position: 'absolute', top: 0, left: 10, zIndex: 20 }}>
-              <Button onClick={goHome}>{t('atlas__zoom_home', { defaultValue: 'Home' })}</Button>
-              <Button onClick={zoomOut}>{t('atlas__zoom_out', { defaultValue: '-' })}</Button>
-              <Button onClick={zoomIn}>{t('atlas__zoom_in', { defaultValue: '+' })}</Button>
-            </ButtonRow>
-          </div>
-
-          <div
-            style={{
-              width: isVertical ? '100%' : '420px',
-              maxHeight: '100%',
               display: 'flex',
-              flexDirection: 'column',
+              flexDirection: isVertical ? 'column' : 'row',
+              width: '100%',
+              maxHeight: '100%',
+              height: '100%',
             }}
           >
-            <CanvasModelUserStatus isEditing={isEditing} />
-            {preventFurtherSubmission ? (
-              <>
-                <EmptyState style={{ fontSize: '1.25em' }} $box>
-                  <ButtonIcon>
-                    <TickIcon />
-                  </ButtonIcon>
-                  <strong>{t('Task is complete!')}</strong>
-                </EmptyState>
-                <EmptyState>
-                  {markedAsUnusable
-                    ? t('You have marked this as unusable')
-                    : t(
-                        'Thank you for your submission. You can view your contribution in the left sidebar. You can continue working on another canvas'
-                      )}
-                </EmptyState>
-              </>
-            ) : canContribute && captureModel ? (
-              <>
-                <BackToChoicesButton />
+            <div
+              style={{
+                width: isVertical ? '100%' : 'auto',
+                flex: '1 1 0px',
+                height: '100%',
+                minWidth: 0,
+                position: 'relative',
+              }}
+            >
+              <EditorContentViewer
+                height={height}
+                canvasId={canvasId}
+                onCreated={rt => {
+                  return ((runtime as any).current = rt.runtime);
+                }}
+              />
 
-                <div style={{ overflowY: 'auto', padding: '1em', fontSize: '13px' }}>
-                  <EditorSlots.TopLevelEditor />
-                </div>
+              <ButtonRow style={{ position: 'absolute', top: 0, left: 10, zIndex: 20 }}>
+                <Button onClick={goHome}>{t('atlas__zoom_home', { defaultValue: 'Home' })}</Button>
+                <Button onClick={zoomOut}>{t('atlas__zoom_out', { defaultValue: '-' })}</Button>
+                <Button onClick={zoomIn}>{t('atlas__zoom_in', { defaultValue: '+' })}</Button>
+              </ButtonRow>
+            </div>
 
-                <EditorSlots.SubmitButton afterSave={isEditing ? undefined : updateClaim} />
-              </>
-            ) : (
-              <EmptyState>{t('Loading your model')}</EmptyState>
-            )}
+            <div
+              style={{
+                width: isVertical ? '100%' : '420px',
+                maxHeight: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
+              <CanvasModelUserStatus isEditing={isEditing} />
+              {preventFurtherSubmission ? (
+                <>
+                  <EmptyState style={{ fontSize: '1.25em' }} $box>
+                    <ButtonIcon>
+                      <TickIcon />
+                    </ButtonIcon>
+                    <strong>{t('Task is complete!')}</strong>
+                  </EmptyState>
+                  <EmptyState>
+                    {markedAsUnusable
+                      ? t('You have marked this as unusable')
+                      : t(
+                          'Thank you for your submission. You can view your contribution in the left sidebar. You can continue working on another canvas'
+                        )}
+                  </EmptyState>
+                </>
+              ) : canContribute && captureModel ? (
+                <>
+                  <BackToChoicesButton />
+
+                  <div style={{ overflowY: 'auto', padding: '1em 1em 0 1em', fontSize: '13px' }}>
+                    <EditorSlots.TopLevelEditor />
+                  </div>
+
+                  <EditorSlots.SubmitButton afterSave={isEditing ? undefined : updateClaim} />
+                </>
+              ) : (
+                <EmptyState>{t('Loading your model')}</EmptyState>
+              )}
+            </div>
           </div>
-        </div>
-      </CanvasViewer>
-    </RevisionProviderWithFeatures>
+        </CanvasViewer>
+      </RevisionProviderWithFeatures>
+    </CanvasVaultContext>
   );
 };

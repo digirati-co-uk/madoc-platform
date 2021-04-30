@@ -7,6 +7,7 @@ import { LockIcon } from '../../shared/atoms/LockIcon';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { CanvasNavigation } from '../../shared/components/CanvasNavigation';
 import React, { useEffect, useState } from 'react';
+import { CanvasVaultContext } from '../../shared/components/CanvasVaultContext';
 import { ModalButton } from '../../shared/components/Modal';
 import { useCurrentUser } from '../../shared/hooks/use-current-user';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
@@ -118,9 +119,11 @@ export const ViewCanvasModel: React.FC = () => {
         )}
 
         {showCanvasNavigation ? (
-          <CanvasViewer>
-            <CanvasImageViewer />
-          </CanvasViewer>
+          <CanvasVaultContext>
+            <CanvasViewer>
+              <CanvasImageViewer />
+            </CanvasViewer>
+          </CanvasVaultContext>
         ) : null}
 
         {!hideCanvasThumbnailNavigation && showCanvasNavigation ? (

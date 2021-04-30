@@ -45,7 +45,7 @@ export const SimpleSaveButton: React.FC<{ afterSave?: (req: RevisionRequest) => 
   }
 
   return (
-    <div style={{ textAlign: 'center' }}>
+    <div style={{ padding: '0.5em 1em' }}>
       <ButtonRow $noMargin>
         <Button $primary disabled={isLoading} onClick={() => saveRevision(currentRevision.revision.status)}>
           {isLoading ? t('Saving...') : isUnsaved ? t('Save') : t('Save changes')}

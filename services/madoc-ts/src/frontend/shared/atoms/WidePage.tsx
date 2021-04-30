@@ -1,9 +1,10 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
+import { maxWidth } from '../../site/variables/global';
 import { ErrorBoundary } from '../utility/error-boundary';
 
 export const WidePageWrapper = styled.div<{ $noPadding?: boolean }>`
-  max-width: 1440px;
+  max-width: ${maxWidth};
   margin: 0 auto;
   padding: 0 20px;
 

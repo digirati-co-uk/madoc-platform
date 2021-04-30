@@ -1,10 +1,14 @@
 import { FieldPreview } from '@capture-models/editor';
 import { filterRevises, isEntity, isEntityList } from '@capture-models/helpers';
-import { BaseField, CaptureModel } from '@capture-models/types';
-import React, { useState } from 'react';
+import { BaseField, BaseSelector, CaptureModel } from '@capture-models/types';
+import { useCanvas, useImageService } from '@hyperion-framework/react-vault';
+import { ImageService } from '@hyperion-framework/types';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 import { EmptyState } from '../../atoms/EmptyState';
+import { CroppedImage } from '../../atoms/Images';
+import { useCroppedRegion } from '../../hooks/use-cropped-region';
 import { DownArrowIcon } from '../../icons/DownArrowIcon';
 import { getEntityLabel } from '../utility/get-entity-label';
 import { isEmptyFieldList } from '../utility/is-field-list-empty';
@@ -83,7 +87,18 @@ const renderFieldList = (fields: BaseField[]) => {
 
   return (
     <FieldPreviewWrapper>
-      {filteredFields.map(field => (field.value ? <FieldPreview key={field.id} field={field} /> : null))}
+      {filteredFields.map(field => {
+        if (field.value && field.selector) {
+          return (
+            <React.Fragment key={field.id}>
+              <SelectorPreview selector={field.selector} />
+              <FieldPreview field={field} />
+            </React.Fragment>
+          );
+        }
+
+        return field.value ? <FieldPreview key={field.id} field={field} /> : null;
+      })}
     </FieldPreviewWrapper>
   );
 };
@@ -166,7 +181,12 @@ const ViewEntity: React.FC<{ collapsed?: boolean; entity: CaptureModel['document
       </DocumentHeading>
       {/* This is where the shortened label goes, and where the collapse UI goes. Should be collapsed by default. */}
       {/* This is where the entity selector will go, if it exists. */}
-      {isCollapsed ? null : children}
+      {isCollapsed ? null : (
+        <>
+          {entity.selector ? <SelectorPreview selector={entity.selector} /> : null}
+          {children}
+        </>
+      )}
     </DocumentSection>
   );
 };
@@ -251,6 +271,31 @@ export const ViewProperty: React.FC<{
       </DocumentHeading>
       {!isCollapsed ? <DocumentValueWrapper>{children}</DocumentValueWrapper> : null}
     </DocumentSection>
+  );
+};
+
+export const SelectorPreview: React.FC<{ selector?: BaseSelector }> = ({ selector }) => {
+  const { data: service } = useImageService() as { data?: ImageService };
+  const croppedRegion = useCroppedRegion();
+  const [image, setImage] = useState('');
+
+  useEffect(() => {
+    if (selector && service && selector.state) {
+      const cropped = croppedRegion(selector.state);
+      if (cropped) {
+        setImage(cropped);
+      }
+    }
+  }, [croppedRegion, selector, service]);
+
+  if (!image) {
+    return null;
+  }
+
+  return (
+    <CroppedImage $size="small" style={{ margin: '.5em' }}>
+      <img src={image} alt="cropped region of image" width={100} />
+    </CroppedImage>
   );
 };
 
