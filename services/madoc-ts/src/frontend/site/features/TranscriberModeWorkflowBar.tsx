@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useMutation } from 'react-query';
 import { WorkflowBar } from '../../shared/components/WorkflowBar';
+import { useApi } from '../../shared/hooks/use-api';
 import { useManifestStructure } from '../../shared/hooks/use-manifest-structure';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useManifestTask } from '../hooks/use-manifest-task';
@@ -8,11 +10,12 @@ import { useRouteContext } from '../hooks/use-route-context';
 import { useSubmitAllClaims } from '../hooks/use-submit-all-claims';
 
 export const TranscriberModeWorkflowBar: React.FC = () => {
+  const api = useApi();
   const { fixedTranscriptionBar } = useModelPageConfiguration();
   const { isManifestComplete, userManifestStats } = useManifestTask();
-  const { userTasks, canUserSubmit } = useCanvasUserTasks();
+  const { userTasks, canUserSubmit, markedAsUnusable, refetch } = useCanvasUserTasks();
   const { submitAllClaims, isSubmitting, canSubmit: canSubmitClaims } = useSubmitAllClaims();
-  const { manifestId } = useRouteContext();
+  const { projectId, canvasId, manifestId } = useRouteContext();
   const { data: structure } = useManifestStructure(manifestId);
 
   // In transcriber mode, all tasks should have the same status.
@@ -20,17 +23,46 @@ export const TranscriberModeWorkflowBar: React.FC = () => {
 
   const willExpireSoon = false;
   const isComplete = isManifestComplete;
-  const isSubmitted = firstUserTask?.status === 2 || firstUserTask?.status === 3;
   const canSubmit = !!canUserSubmit && canSubmitClaims;
-  const isUnusable = firstUserTask?.status === 4;
+  const [isUnusable, setIsUsable] = useState(false);
+  const isSubmitted = firstUserTask?.status === 2 && !isUnusable;
+
+  useEffect(() => {
+    setIsUsable(markedAsUnusable);
+  }, [markedAsUnusable]);
+
+  // const isUnusable = firstUserTask?.status === 4;
   const hasExpired = false;
-  const isLoading = isSubmitting;
+  const [markUnusable, markUnusableStatus] = useMutation(async (newValue: boolean) => {
+    if (projectId && canvasId) {
+      setIsUsable(newValue || false);
+
+      if (newValue) {
+        await api.createResourceClaim(projectId, {
+          manifestId,
+          canvasId,
+          status: 2 as any,
+        });
+      } else {
+        await api.createResourceClaim(projectId, {
+          manifestId,
+          canvasId,
+          status: 1 as any,
+        });
+      }
+
+      await refetch();
+    }
+  });
+
+  const isLoading = isSubmitting || markUnusableStatus.isLoading;
 
   return (
     <WorkflowBar
       fixed={fixedTranscriptionBar}
       actions={{
-        onUnusable() {
+        async onUnusable(newValue) {
+          await markUnusable(newValue || false);
           // Mark current canvas task as complete, with state unusable=true
           // Set states to loading until mutation is complete.
           // Refresh task

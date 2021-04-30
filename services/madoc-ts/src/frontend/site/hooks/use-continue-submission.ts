@@ -30,7 +30,7 @@ export function useContinueSubmission() {
                   inProgress++;
                 }
               }
-              if (task.status === 3) {
+              if (task.status === 3 && task.state && task.state.revisionId) {
                 completed++;
               }
               return true;

@@ -585,7 +585,8 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
         if (
           config.modelPageOptions?.preventContributionAfterSubmission &&
           canvasClaim.status === 2 &&
-          (claim.status === 0 || claim.status === 1)
+          (claim.status === 0 || claim.status === 1) &&
+          canvasClaim.state.revisionId
         ) {
           throw new Error('Cannot update task in review');
         }
