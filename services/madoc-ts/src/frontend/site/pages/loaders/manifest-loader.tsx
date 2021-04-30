@@ -9,6 +9,7 @@ import { usePaginatedData } from '../../../shared/hooks/use-data';
 import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
 import { ManifestFull } from '../../../../types/schemas/manifest-full';
 import { useParams } from 'react-router-dom';
+import { useRouteContext } from '../../hooks/use-route-context';
 import { CollectionLoaderType } from './collection-loader';
 
 export type ManifestLoaderType = {
@@ -24,9 +25,10 @@ export type ManifestLoaderType = {
 
 export const ManifestLoader: UniversalComponent<ManifestLoaderType> = createUniversalComponent<ManifestLoaderType>(
   ({ route, collection, ...props }) => {
+    const { projectId } = useRouteContext();
     const { manifestId: id, slug } = useParams<{ manifestId: string; slug: string }>();
     const { resolvedData: data, refetch: refetchManifest } = usePaginatedData(ManifestLoader, [], {
-      cacheTime: 3600,
+      cacheTime: projectId ? 0 : 3600,
     });
 
     const { data: projectTasks, refetch: refetchManifestTasks } = apiHooks.getSiteProjectManifestTasks(

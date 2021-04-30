@@ -17,7 +17,7 @@ export type WorkflowBarProps = {
   fixed?: boolean;
   actions: {
     onTooDifficult: () => void;
-    onUnusable: () => void;
+    onUnusable: (isUsable?: boolean) => void;
     onSubmit: () => void;
   };
   states: {
@@ -158,7 +158,7 @@ export const WorkflowBar: React.FC<WorkflowBarProps> = ({ actions = {}, states =
               >
                 <Button disabled={!canClickTooDifficult}>Too difficult</Button>
               </ModalButton>
-              <Button onClick={onUnusable} disabled={!canClickUnusable}>
+              <Button onClick={() => (onUnusable ? onUnusable(!isUnusable) : void 0)} disabled={!canClickUnusable}>
                 {t('Unusable')}
                 <RightButtonIconBox $checked={isUnusable}>
                   <WhiteTickIcon />

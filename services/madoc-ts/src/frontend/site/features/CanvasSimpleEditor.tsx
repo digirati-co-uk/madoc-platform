@@ -28,7 +28,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
   const { projectId, canvasId } = useRouteContext();
   const { data: projectModel } = useCanvasModel();
   const [{ captureModel }] = useLoadedCaptureModel(projectModel?.model?.id, undefined, canvasId);
-  const { updateClaim, userTasks } = useCanvasUserTasks();
+  const { updateClaim, allTasksDone, markedAsUnusable } = useCanvasUserTasks();
   const user = useCurrentUser(true);
   const config = useSiteConfiguration();
   const mode = useContributionMode();
@@ -37,7 +37,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
   const runtime = useRef<Runtime>();
 
   const allowMultiple = !config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource;
-  const preventFurtherSubmission = !allowMultiple && !!userTasks?.find(task => task.status === 2 || task.status === 3);
+  const preventFurtherSubmission = !allowMultiple && allTasksDone;
 
   const isEditing = isEditingAnotherUsersRevision(captureModel, revision, user.user);
 
@@ -133,9 +133,11 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
                   <strong>{t('Task is complete!')}</strong>
                 </EmptyState>
                 <EmptyState>
-                  {t(
-                    'Thank you for your submission. You can view your contribution in the left sidebar. You can continue working on another canvas'
-                  )}
+                  {markedAsUnusable
+                    ? t('You have marked this as unusable')
+                    : t(
+                        'Thank you for your submission. You can view your contribution in the left sidebar. You can continue working on another canvas'
+                      )}
                 </EmptyState>
               </>
             ) : canContribute && captureModel ? (

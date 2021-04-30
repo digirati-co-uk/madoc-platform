@@ -68,12 +68,20 @@ export function useCanvasUserTasks() {
       : [];
 
     const userTasks = canvasTask ? canvasTask.userTasks : undefined;
+    const userContributions = (userTasks || []).filter(task => task.type === 'crowdsourcing-task');
     const completedAndHide = !config.project.allowSubmissionsWhenCanvasComplete && canvasTask?.canvasTask?.status === 3;
     const canClaimCanvas =
       user && (config.project.claimGranularity ? config.project.claimGranularity === 'canvas' : true);
     const canUserSubmit = user && !!canvasTask?.canUserSubmit;
     const canContribute = user && (scope.indexOf('site.admin') !== -1 || scope.indexOf('models.contribute') !== -1);
-    const allTasksDone = userTasks ? !!userTasks?.find(t => t.status === 0 || t.status === 1) : false;
+    const allTasksDone = userContributions.length
+      ? !userContributions.find(t => t.status === 0 || t.status === 1)
+      : false;
+    const markedAsUnusable =
+      allTasksDone &&
+      (userContributions.length
+        ? !!userContributions.find(t => (t.status === 2 || t.status === 3) && !t.state.revisionId)
+        : false);
 
     return {
       user,
@@ -81,6 +89,7 @@ export function useCanvasUserTasks() {
       isLoading,
       reviews,
       userTasks,
+      markedAsUnusable,
       isManifestComplete: canvasTask?.isManifestComplete,
       allTasksDone,
       completedAndHide,
