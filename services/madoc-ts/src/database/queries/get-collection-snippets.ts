@@ -185,7 +185,7 @@ export function getCollectionList({
 
 export function getCollectionSnippets(
   collectionQuery: CollectionAggregate,
-  { fields, siteId, allCollectionFields }: { fields: string[]; siteId: number; allCollectionFields: boolean }
+  { fields, siteId, allCollectionFields }: { fields?: string[]; siteId: number; allCollectionFields: boolean }
 ) {
   return sql<CollectionSnippetsRow>`   
         select

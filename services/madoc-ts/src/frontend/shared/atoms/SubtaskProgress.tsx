@@ -43,10 +43,11 @@ const WhiteTick = styled(TickIcon)`
   }
 `;
 
-export const SubtaskProgress: React.FC<{ total: number; done: number; progress: number }> = ({
+export const SubtaskProgress: React.FC<{ total: number; done: number; progress: number; tooltip?: boolean }> = ({
   total,
   progress,
   done,
+  tooltip = true,
 }) => {
   const { t } = useTranslation();
 
@@ -73,7 +74,7 @@ export const SubtaskProgress: React.FC<{ total: number; done: number; progress: 
         data-tip={`${((progress / total) * 100).toFixed(2)}% in progress`}
         style={{ width: `${(progress / total) * 100}%` }}
       />
-      <ReactTooltip place="bottom" type="dark" effect="solid" />
+      {tooltip ? <ReactTooltip place="bottom" type="dark" effect="solid" /> : null}
     </SubtaskProgressContainer>
   );
 };

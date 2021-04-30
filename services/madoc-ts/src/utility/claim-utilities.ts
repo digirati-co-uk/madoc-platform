@@ -40,22 +40,44 @@ export function canUserClaimManifest(options: { task: CrowdsourcingManifestTask;
   // Has to be less than the stated maximum
   const subtasks = (options.task.subtasks || []).filter(manifestTaskCountsAsContribution);
 
-  console.log('can user submit: ', maxContributors, subtasks.length);
-
   return subtasks.length < maxContributors;
 }
 
+export function findUseManifestTaskFromList(manifestId: number | string, userId: number | string, tasks: BaseTask[]) {
+  if (tasks.length === 0) {
+    return undefined;
+  }
+
+  const foundActive = tasks.find(task => {
+    return (
+      task.type === 'crowdsourcing-task' &&
+      task.subject === (typeof manifestId === 'string' ? manifestId : `urn:madoc:manifest:${manifestId}`) &&
+      task.assignee &&
+      task.assignee.id === (typeof userId === 'string' ? userId : `urn:madoc:user:${userId}`) &&
+      task.status !== -1
+    );
+  });
+
+  if (foundActive) {
+    return foundActive;
+  }
+
+  return tasks.find(task => {
+    return (
+      task.type === 'crowdsourcing-task' &&
+      task.subject === (typeof manifestId === 'string' ? manifestId : `urn:madoc:manifest:${manifestId}`) &&
+      task.assignee &&
+      task.assignee.id === (typeof userId === 'string' ? userId : `urn:madoc:user:${userId}`)
+    );
+  });
+}
+
 export function findUserManifestTask(manifestId: number | string, userId: number, parent?: BaseTask) {
-  return parent?.subtasks
-    ? parent.subtasks.find(task => {
-        return (
-          task.type === 'crowdsourcing-task' &&
-          task.subject === (typeof manifestId === 'string' ? manifestId : `urn:madoc:manifest:${manifestId}`) &&
-          task.assignee &&
-          task.assignee.id === `urn:madoc:user:${userId}`
-        );
-      })
-    : undefined;
+  if (!parent || !parent.subtasks) {
+    return undefined;
+  }
+
+  return findUseManifestTaskFromList(manifestId, userId, parent.subtasks);
 }
 
 export function canUserClaimCanvas(options: {

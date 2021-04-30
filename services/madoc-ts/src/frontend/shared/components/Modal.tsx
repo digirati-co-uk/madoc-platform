@@ -23,6 +23,7 @@ export const ModalButton: React.FC<{
   footerAlignRight?: boolean;
   modalSize?: 'lg' | 'md' | 'sm';
   disabled?: boolean;
+  openByDefault?: boolean;
 }> = ({
   as,
   className,
@@ -36,6 +37,7 @@ export const ModalButton: React.FC<{
   autoHeight,
   footerAlignRight,
   children,
+  openByDefault = false,
 }) => {
   const portalEl = useRef<HTMLElement>();
   const [ready, setIsReady] = useState(false);
@@ -45,6 +47,10 @@ export const ModalButton: React.FC<{
     const element = document.createElement('div');
     document.body.appendChild(element);
     portalEl.current = element;
+
+    if (openByDefault) {
+      setIsReady(true);
+    }
 
     return () => {
       portalEl.current = undefined;

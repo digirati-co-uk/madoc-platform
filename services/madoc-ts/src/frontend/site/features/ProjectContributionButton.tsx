@@ -10,11 +10,15 @@ import { firstNTasksWithUniqueSubjects } from '../../shared/utility/first-n-task
 import { HrefLink } from '../../shared/utility/href-link';
 import { useProject } from '../hooks/use-project';
 import { useRelativeLinks } from '../hooks/use-relative-links';
+import { useSiteConfiguration } from './SiteConfigurationContext';
 
 export const ProjectContributionButton: React.FC = () => {
   const { t } = useTranslation();
   const { data: project } = useProject();
   const createLink = useRelativeLinks();
+  const {
+    project: { contributionMode },
+  } = useSiteConfiguration();
   const contributorTasks = useContributorTasks({ rootTaskId: project?.task_id }, !!project);
 
   const currentTasks = contributorTasks?.drafts.tasks;
@@ -38,7 +42,7 @@ export const ProjectContributionButton: React.FC = () => {
     }
   }
 
-  if (tasksInReview && tasksInReview.length && taskComponents.length < 3) {
+  if (contributionMode !== 'transcription' && tasksInReview && tasksInReview.length && taskComponents.length < 3) {
     const firstThree = firstNTasksWithUniqueSubjects(tasksInReview, 3 - taskComponents.length);
 
     for (const task of firstThree) {

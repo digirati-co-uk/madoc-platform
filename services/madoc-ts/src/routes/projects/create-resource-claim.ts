@@ -154,31 +154,32 @@ async function ensureProjectTaskStructure(
   const warningTime = config.contributionWarningTime || undefined;
   const claimGranularity = config.claimGranularity || 'canvas';
 
-  if (claim.collectionId) {
-    // 1. Search by subject + root.
-    const foundCollectionTask = (parent.subtasks || []).find(
-      (task: any) => task.subject === `urn:madoc:collection:${claim.collectionId}`
-    );
-
-    if (!foundCollectionTask) {
-      const { collection } = await userApi.getCollectionById(claim.collectionId);
-
-      const task: CrowdsourcingCollectionTask = {
-        name: iiifGetLabel(collection.label, 'Untitled collection'),
-        type: 'crowdsourcing-collection-task',
-        subject: `urn:madoc:collection:${claim.collectionId}`,
-        parameters: [],
-        state: {},
-        status_text: 'accepted',
-        status: 1,
-        context: [`urn:madoc:project:${projectId}`],
-      };
-
-      parent = await userApi.addSubtasks<BaseTask & { id: string }>(task, parent.id);
-    } else {
-      parent = await userApi.getTaskById(foundCollectionTask.id, true, 0, undefined, undefined, true, true);
-    }
-  }
+  // Disabled collection crowdsourcing tasks for now.
+  // if (claim.collectionId) {
+  //   // 1. Search by subject + root.
+  //   const foundCollectionTask = (parent.subtasks || []).find(
+  //     (task: any) => task.subject === `urn:madoc:collection:${claim.collectionId}`
+  //   );
+  //
+  //   if (!foundCollectionTask) {
+  //     const { collection } = await userApi.getCollectionById(claim.collectionId);
+  //
+  //     const task: CrowdsourcingCollectionTask = {
+  //       name: iiifGetLabel(collection.label, 'Untitled collection'),
+  //       type: 'crowdsourcing-collection-task',
+  //       subject: `urn:madoc:collection:${claim.collectionId}`,
+  //       parameters: [],
+  //       state: {},
+  //       status_text: 'accepted',
+  //       status: 1,
+  //       context: [`urn:madoc:project:${projectId}`],
+  //     };
+  //
+  //     parent = await userApi.addSubtasks<BaseTask & { id: string }>(task, parent.id);
+  //   } else {
+  //     parent = await userApi.getTaskById(foundCollectionTask.id, true, 0, undefined, undefined, true, true);
+  //   }
+  // }
 
   if (claim.manifestId) {
     const foundManifestTask = (parent.subtasks || []).find(
@@ -224,17 +225,18 @@ async function ensureProjectTaskStructure(
       // }
 
       // We no longer re-parent.
-      userManifestTask = foundUserManifestTask
-        ? await userApi.getTaskById<CrowdsourcingTask>(
-            foundUserManifestTask.id,
-            true,
-            0,
-            undefined,
-            undefined,
-            true,
-            true
-          )
-        : undefined;
+      userManifestTask =
+        foundUserManifestTask && foundUserManifestTask.id
+          ? await userApi.getTaskById<CrowdsourcingTask>(
+              foundUserManifestTask.id,
+              true,
+              0,
+              undefined,
+              undefined,
+              true,
+              true
+            )
+          : undefined;
     }
 
     if (!foundCanvasTask) {

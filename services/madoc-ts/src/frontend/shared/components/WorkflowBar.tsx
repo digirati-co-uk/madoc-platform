@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
-import { CanvasManifestPagination } from '../../site/features/CanvasManifestPagination';
 import { Button, ButtonIcon, ButtonRow, RightButtonIconBox } from '../atoms/Button';
 import { ErrorMessage } from '../atoms/ErrorMessage';
 import { GridContainer } from '../atoms/Grid';
@@ -10,6 +9,8 @@ import { SuccessMessage } from '../atoms/SuccessMessage';
 import { WhiteTickIcon } from '../atoms/TickIcon';
 import { WarningMessage } from '../atoms/WarningMessage';
 import { WidePageWrapper } from '../atoms/WidePage';
+import { HrefLink } from '../utility/href-link';
+import { useManifestPagination } from './CanvasNavigationMinimalist';
 import { ModalButton } from './Modal';
 
 export type WorkflowBarProps = {
@@ -67,6 +68,7 @@ const WorkflowManifestActions = styled.div`
 export const WorkflowBar: React.FC<WorkflowBarProps> = ({ actions = {}, states = {}, expires, statistics, fixed }) => {
   const { t } = useTranslation();
   const { onTooDifficult, onSubmit, onUnusable } = actions;
+  const manifestPagination = useManifestPagination('model');
 
   const canSubmit =
     states.canSubmit &&
@@ -94,18 +96,42 @@ export const WorkflowBar: React.FC<WorkflowBarProps> = ({ actions = {}, states =
         <GridContainer>
           <WorkflowCanvasActions>
             <ButtonRow $noMargin>
-              <Button $primary disabled={!canSubmit} onClick={onSubmit} $success={states.isSubmitted}>
-                {states.isSubmitted ? (
-                  <>
-                    <ButtonIcon>
-                      <WhiteTickIcon style={{ fill: '#fff' }} />
-                    </ButtonIcon>
-                    {t('Submitted')}
-                  </>
-                ) : (
-                  t('Submit')
-                )}
-              </Button>
+              {states.isSubmitted ? (
+                <Button $primary disabled $success>
+                  <ButtonIcon>
+                    <WhiteTickIcon style={{ fill: '#fff' }} />
+                  </ButtonIcon>
+                  {t('Submitted')}
+                </Button>
+              ) : (
+                <ModalButton
+                  title={t('Are you sure?')}
+                  render={() => {
+                    return (
+                      <div>
+                        <h4>{t('Are you sure you want to submit this canvas?')}</h4>
+                        <p>{t('You will not be able to make any further changes')}</p>
+                      </div>
+                    );
+                  }}
+                  renderFooter={({ close }) => {
+                    return (
+                      <ButtonRow $noMargin>
+                        <Button onClick={() => close()}>{t('Cancel')}</Button>
+                        {onTooDifficult ? (
+                          <Button $primary onClick={onSubmit}>
+                            {t('Submit')}
+                          </Button>
+                        ) : null}
+                      </ButtonRow>
+                    );
+                  }}
+                >
+                  <Button $primary disabled={!canSubmit}>
+                    {t('Submit')}
+                  </Button>
+                </ModalButton>
+              )}
               <ModalButton
                 title="Too difficult"
                 render={() => {
@@ -140,10 +166,30 @@ export const WorkflowBar: React.FC<WorkflowBarProps> = ({ actions = {}, states =
               </Button>
             </ButtonRow>
           </WorkflowCanvasActions>
-          <SubtaskProgress progress={statistics.progress} total={statistics.total} done={statistics.done} />
+          <div style={{ width: 300, padding: '1.3em' }}>
+            <SubtaskProgress
+              progress={statistics.progress}
+              total={statistics.total}
+              done={statistics.done}
+              tooltip={false}
+            />
+          </div>
           {fixed ? (
             <WorkflowManifestActions>
-              <CanvasManifestPagination subRoute="model" />
+              {manifestPagination ? (
+                <ButtonRow>
+                  {manifestPagination.hasPrevPage ? (
+                    <Button as={HrefLink} href={manifestPagination.prevPage}>
+                      {t('Previous')}
+                    </Button>
+                  ) : null}
+                  {manifestPagination.hasNextPage ? (
+                    <Button as={HrefLink} href={manifestPagination.nextPage}>
+                      {t('Next')}
+                    </Button>
+                  ) : null}
+                </ButtonRow>
+              ) : null}
             </WorkflowManifestActions>
           ) : null}
         </GridContainer>

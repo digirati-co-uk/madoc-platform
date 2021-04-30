@@ -7,6 +7,8 @@ import { apiHooks } from '../../shared/hooks/use-api-query';
 import { useData } from '../../shared/hooks/use-data';
 import { useViewerSaving } from '../../shared/hooks/use-viewer-saving';
 import { ManifestLoader } from '../pages/loaders/manifest-loader';
+import { useCanvasUserTasks } from './use-canvas-user-tasks';
+import { useManifestTask } from './use-manifest-task';
 import { useManifestUserTasks } from './use-manifest-user-tasks';
 import { useRouteContext } from './use-route-context';
 
@@ -15,6 +17,8 @@ export const useSubmitAllClaims = () => {
   const api = useApi();
   const { refetch: refetchManifest } = useData(ManifestLoader, undefined, { enabled: !!manifestId });
   const { refetch: refetchManifestTasks } = useManifestUserTasks();
+  const { refetch: refetchCanvasTasks } = useCanvasUserTasks();
+  const { refetch: refetchManifestTask } = useManifestTask();
   const deselectRevision = useDeselectRevision();
   const { refetch } = apiHooks.getSiteProjectCanvasTasks(() =>
     projectId && canvasId ? [projectId, canvasId] : undefined
@@ -32,6 +36,8 @@ export const useSubmitAllClaims = () => {
       if (manifestId) {
         await refetchManifest();
         await refetchManifestTasks();
+        await refetchCanvasTasks();
+        await refetchManifestTask();
       }
     }
   };

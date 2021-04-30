@@ -2,6 +2,7 @@ import { exportSite } from './routes/admin/export-site';
 import { getMetadataKeys } from './routes/admin/get-metadata-keys';
 import { getMetadataValues } from './routes/admin/get-metadata-values';
 import { importSite } from './routes/admin/import-site';
+import { listJobs, runJob } from './routes/admin/list-jobs';
 import { getLocalisation, listLocalisations, updateLocalisation } from './routes/admin/localisation';
 import { getMetadataConfiguration, updateMetadataConfiguration } from './routes/admin/metadata-configuration';
 import { pm2Status } from './routes/admin/pm2';
@@ -124,6 +125,8 @@ export const router = new TypedRouter({
   'pm2-list': [TypedRouter.GET, '/api/madoc/pm2/list', pm2Status],
   'export-site': [TypedRouter.POST, '/api/madoc/site/:siteId/export', exportSite],
   'import-site': [TypedRouter.POST, '/api/madoc/site/:siteId/import', importSite],
+  'cron-jobs': [TypedRouter.GET, '/api/madoc/cron/jobs', listJobs],
+  'run-cron-jobs': [TypedRouter.POST, '/api/madoc/cron/jobs/:jobId/run', runJob],
   'update-site-configuration': [TypedRouter.POST, '/api/madoc/configuration', updateSiteConfiguration],
   'update-search-facet-configuration': [
     TypedRouter.POST,

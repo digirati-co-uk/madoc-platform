@@ -3,20 +3,30 @@ import { useApi } from '../../shared/hooks/use-api';
 import { useUser } from '../../shared/hooks/use-site';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useManifestTask } from './use-manifest-task';
+import { useModelPageConfiguration } from './use-model-page-configuration';
 import { useRouteContext } from './use-route-context';
 
 export function useClaimManifest() {
   const { projectId, manifestId } = useRouteContext();
-  const { isManifestComplete, isFetched: manifestTaskFetched, userManifestTasks, refetch } = useManifestTask();
+  const {
+    isManifestComplete,
+    isFetched: manifestTaskFetched,
+    userManifestTasks,
+    refetch,
+    canClaimManifest,
+  } = useManifestTask();
   const config = useSiteConfiguration();
+  const { preventContributionAfterManifestUnassign } = useModelPageConfiguration();
   const api = useApi();
   const user = useUser();
-  const validManifestTask = userManifestTasks.find(task => task.status !== -1);
+  const validManifestTask = userManifestTasks.find(task =>
+    preventContributionAfterManifestUnassign ? task.status !== -1 : task
+  );
   const doesUserHaveManifestClaim = !!validManifestTask;
   const isManifestClaimRequired =
     manifestId && config.project.claimGranularity === 'manifest' && !doesUserHaveManifestClaim;
 
-  const [claim, { isLoading }] = useMutation(async () => {
+  const [claim, { isLoading, isError }] = useMutation(async () => {
     if (projectId && manifestId && user) {
       await api.createResourceClaim(projectId, {
         manifestId,
@@ -31,9 +41,10 @@ export function useClaimManifest() {
     validManifestTask,
     isLoading: !manifestTaskFetched,
     isClaimRequired: isManifestClaimRequired,
+    didError: isError,
     isClaimed: doesUserHaveManifestClaim,
     isClaimLoading: isLoading,
-    canClaim: projectId && manifestId && !isManifestComplete, // @todo IS manifest at capacity?
-    shouldAutoClaim: !isLoading && manifestTaskFetched && isManifestClaimRequired,
+    canClaim: projectId && manifestId && !isManifestComplete && canClaimManifest, // @todo IS manifest at capacity?
+    shouldAutoClaim: !isLoading && canClaimManifest && manifestTaskFetched && isManifestClaimRequired,
   };
 }
