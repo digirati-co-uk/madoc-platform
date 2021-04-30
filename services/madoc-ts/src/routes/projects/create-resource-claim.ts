@@ -33,7 +33,7 @@ export type ResourceClaim = {
 };
 
 // @todo turn this into IIIF endpoint.
-async function verifyResourceInProject(
+export async function verifyResourceInProject(
   context: ApplicationContext,
   siteId: number,
   projectId: number,
@@ -120,7 +120,7 @@ async function verifyResourceInProject(
   }
 }
 
-async function ensureProjectTaskStructure(
+export async function ensureProjectTaskStructure(
   context: ApplicationContext,
   siteId: number,
   projectId: number,
@@ -267,7 +267,7 @@ async function ensureProjectTaskStructure(
   ] as const;
 }
 
-async function getTaskFromClaim({
+export async function getTaskFromClaim({
   userId,
   parent,
   claim,
@@ -447,7 +447,7 @@ async function createUserCrowdsourcingTask({
   return userApi.addSubtasks(task, parentTaskId);
 }
 
-async function getCanonicalClaim(
+export async function getCanonicalClaim(
   resourceClaim: ResourceClaim,
   siteId: number,
   projectId: number,

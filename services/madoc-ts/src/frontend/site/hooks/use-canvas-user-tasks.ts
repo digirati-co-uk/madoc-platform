@@ -68,7 +68,9 @@ export function useCanvasUserTasks() {
       : [];
 
     const userTasks = canvasTask ? canvasTask.userTasks : undefined;
-    const userContributions = (userTasks || []).filter(task => task.type === 'crowdsourcing-task');
+    const userContributions = (userTasks || []).filter(
+      task => task.type === 'crowdsourcing-task' && task.status !== -1
+    );
     const completedAndHide = !config.project.allowSubmissionsWhenCanvasComplete && canvasTask?.canvasTask?.status === 3;
     const canClaimCanvas =
       user && (config.project.claimGranularity ? config.project.claimGranularity === 'canvas' : true);

@@ -39,6 +39,12 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
   const allowMultiple = !config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource;
   const preventFurtherSubmission = !allowMultiple && allTasksDone;
 
+  console.log({
+    allowMultiple,
+    allTasksDone,
+    preventFurtherSubmission,
+  });
+
   const isEditing = isEditingAnotherUsersRevision(captureModel, revision, user.user);
 
   const goHome = () => {

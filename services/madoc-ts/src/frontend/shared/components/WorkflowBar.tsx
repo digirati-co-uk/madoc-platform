@@ -54,14 +54,18 @@ const WorkflowBarContainer = styled.div<{ $fixed?: boolean }>`
 `;
 
 const WorkflowCanvasActions = styled.div`
-  width: 50%;
+  padding: 1em;
+  margin-right: auto;
+`;
+
+const WorkflowActions = styled.div`
+  display: flex;
   padding: 1em;
 `;
 
 const WorkflowManifestActions = styled.div`
   width: 300px;
-  padding: 0.5em;
-  text-align: right;
+  padding: 1em;
   margin-left: auto;
 `;
 
@@ -132,32 +136,6 @@ export const WorkflowBar: React.FC<WorkflowBarProps> = ({ actions = {}, states =
                   </Button>
                 </ModalButton>
               )}
-              <ModalButton
-                title="Too difficult"
-                render={() => {
-                  // @todo improve copy.
-                  return <div>All of your work on these images will be lose if you continue. (not implemented)</div>;
-                }}
-                renderFooter={({ close }) => {
-                  return (
-                    <ButtonRow $noMargin>
-                      <Button onClick={() => close()}>{t('Cancel')}</Button>
-                      {onTooDifficult ? (
-                        <Button
-                          $primary
-                          onClick={() => {
-                            onTooDifficult();
-                          }}
-                        >
-                          {t('Mark as too difficult')}
-                        </Button>
-                      ) : null}
-                    </ButtonRow>
-                  );
-                }}
-              >
-                <Button disabled={!canClickTooDifficult}>Too difficult</Button>
-              </ModalButton>
               <Button onClick={() => (onUnusable ? onUnusable(!isUnusable) : void 0)} disabled={!canClickUnusable}>
                 {t('Unusable')}
                 <RightButtonIconBox $checked={isUnusable}>
@@ -166,18 +144,53 @@ export const WorkflowBar: React.FC<WorkflowBarProps> = ({ actions = {}, states =
               </Button>
             </ButtonRow>
           </WorkflowCanvasActions>
-          <div style={{ width: 300, padding: '1.3em' }}>
-            <SubtaskProgress
-              progress={statistics.progress}
-              total={statistics.total}
-              done={statistics.done}
-              tooltip={false}
-            />
-          </div>
+          <WorkflowActions>
+            <ModalButton
+              title="Too difficult"
+              render={() => {
+                // @todo improve copy.
+                return (
+                  <div>
+                    {t(
+                      'All of your work on these images will be lost if you continue and you will be taken back to the project homepage'
+                    )}
+                  </div>
+                );
+              }}
+              renderFooter={({ close }) => {
+                return (
+                  <ButtonRow $noMargin>
+                    <Button onClick={() => close()}>{t('Cancel')}</Button>
+                    {onTooDifficult ? (
+                      <Button
+                        $primary
+                        onClick={() => {
+                          onTooDifficult();
+                        }}
+                      >
+                        {t('Mark as too difficult')}
+                      </Button>
+                    ) : null}
+                  </ButtonRow>
+                );
+              }}
+            >
+              <Button disabled={!canClickTooDifficult}>Too difficult</Button>
+            </ModalButton>
+            <div style={{ width: 300 }}>
+              <SubtaskProgress
+                progress={statistics.progress}
+                total={statistics.total}
+                done={statistics.done}
+                tooltip={false}
+              />
+            </div>
+          </WorkflowActions>
+
           {fixed ? (
             <WorkflowManifestActions>
               {manifestPagination ? (
-                <ButtonRow>
+                <ButtonRow $noMargin>
                   {manifestPagination.hasPrevPage ? (
                     <Button as={HrefLink} href={manifestPagination.prevPage}>
                       {t('Previous')}

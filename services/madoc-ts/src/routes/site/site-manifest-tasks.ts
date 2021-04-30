@@ -64,7 +64,12 @@ export const siteManifestTasks: RouteMiddleware<{
   } else {
     const uniqueSub = [];
     for (const task of canvasTasks.tasks) {
-      if (task.assignee && task.assignee.id === `urn:madoc:user:${user}`) {
+      if (
+        task.assignee &&
+        task.assignee.id === `urn:madoc:user:${user}` &&
+        task.status !== -1 &&
+        task.type === 'crowdsourcing-task'
+      ) {
         if (uniqueSub.indexOf(task.subject) === -1) {
           if (task.status === 2 || task.status === 3) {
             userManifestStats.done++;
@@ -84,7 +89,9 @@ export const siteManifestTasks: RouteMiddleware<{
       ? await siteApi.getTask(manifestTaskSimple.id, { assignee: true })
       : undefined;
   const maxContributors = manifestTask?.state.maxContributors || config.maxContributionsPerResource;
-  const userTasks = user ? tasks.filter(task => task.assignee && task.assignee.id === `urn:madoc:user:${user}`) : [];
+  const userTasks = user
+    ? tasks.filter(task => task.status !== -1 && task.assignee && task.assignee.id === `urn:madoc:user:${user}`)
+    : [];
 
   const canClaimManifest = user
     ? manifestTask
