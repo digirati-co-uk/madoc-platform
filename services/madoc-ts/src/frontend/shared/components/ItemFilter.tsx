@@ -64,7 +64,7 @@ export const ItemFilter: React.FC<ItemFilterType> = ({
   const { buttonProps, itemProps, isOpen, setIsOpen } = useDropdownMenu(items.length);
 
   return (
-    <ItemFilterContainer style={{ marginLeft: '.5em' }}>
+    <ItemFilterContainer>
       <Button {...buttonProps}>
         <ButtonIcon>
           <FilterIcon />

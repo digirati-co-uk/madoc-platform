@@ -29,10 +29,10 @@ export const ProjectActions: React.FC = () => {
 
   return (
     <>
+      {!options.hideStartContributing ? (
+        <GoToRandomCanvas $primary $large label={{ none: [t('Start contributing')] }} navigateToModel />
+      ) : null}
       <ButtonRow>
-        {!options.hideStartContributing ? (
-          <GoToRandomCanvas $primary label={{ none: [t('Start contributing')] }} navigateToModel />
-        ) : null}
         {!options.hideSearchButton ? (
           <Button as={Link} to={createLink({ subRoute: 'search' })}>
             {t('Search this project')}

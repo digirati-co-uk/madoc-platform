@@ -13,7 +13,8 @@ export const GoToRandomCanvas: React.FC<{
   label?: InternationalString;
   navigateToModel?: boolean;
   $primary?: boolean;
-}> = ({ $primary, label, navigateToModel }) => {
+  $large?: boolean;
+}> = ({ $primary, $large, label, navigateToModel }) => {
   const { projectId } = useRouteContext();
   const { t } = useTranslation();
   const history = useHistory();
@@ -29,6 +30,7 @@ export const GoToRandomCanvas: React.FC<{
   return (
     <Button
       $primary={$primary}
+      $large={$large}
       disabled={error}
       onClick={() => {
         getRandomCanvas().then(resp => {

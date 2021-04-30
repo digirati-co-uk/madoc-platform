@@ -71,7 +71,7 @@ export const ManifestTaskProgress: React.FC = () => {
   }
 
   return (
-    <ItemFilterContainer style={{ marginLeft: '.5em' }}>
+    <ItemFilterContainer>
       <Button {...buttonProps}>
         <ButtonIcon>
           <InfoIcon />

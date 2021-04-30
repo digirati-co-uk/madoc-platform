@@ -24,24 +24,28 @@ export const CollectionFilterOptions: React.FC = () => {
   }
 
   return (
-    <ButtonRow>
-      {showDoneButton || filter ? (
-        <Button
-          as={HrefLink}
-          href={createLink({
-            query: { filter: filter ? undefined : 3, page },
-          })}
-        >
-          {filter ? t('Show completed') : t('Hide completed')}
+    <>
+      <ButtonRow>
+        <GoToRandomCanvas $primary $large label={{ none: [t('Start contributing')] }} navigateToModel />
+      </ButtonRow>
+      <ButtonRow>
+        {showDoneButton || filter ? (
+          <Button
+            as={HrefLink}
+            href={createLink({
+              query: { filter: filter ? undefined : 3, page },
+            })}
+          >
+            {filter ? t('Show completed') : t('Hide completed')}
+          </Button>
+        ) : null}
+        <Button as={Link} to={createLink({ subRoute: 'search' })}>
+          {t('Search this collection')}
         </Button>
-      ) : null}
-      <Button as={Link} to={createLink({ subRoute: 'search' })}>
-        {t('Search this collection')}
-      </Button>
-      <GoToRandomCanvas $primary label={{ none: [t('Start contributing')] }} navigateToModel />
-      <GoToRandomManifest />
-      <GoToRandomCanvas />
-    </ButtonRow>
+        <GoToRandomManifest />
+        <GoToRandomCanvas />
+      </ButtonRow>
+    </>
   );
 };
 

@@ -17,29 +17,33 @@ export const ManifestActions: React.FC = () => {
   const { isManifestComplete, userManifestTask, canClaimManifest } = useManifestTask();
 
   return (
-    <ButtonRow>
-      {!options.hideOpenInMirador ? (
-        <Button
-          as={HrefLink}
-          href={createLink({
-            subRoute: 'mirador',
-          })}
-        >
-          {t('Open in mirador')}
-        </Button>
-      ) : null}
-
-      {!options.hideSearchButton ? (
-        <Button as={Link} to={createLink({ subRoute: 'search' })}>
-          {t('Search this manifest')}
-        </Button>
-      ) : null}
+    <>
       {!options.hideStartContributing && !isManifestComplete && (userManifestTask || canClaimManifest) ? (
-        <GoToRandomCanvas $primary label={{ none: [t('Start contributing')] }} navigateToModel />
+        <ButtonRow>
+          <GoToRandomCanvas $primary $large label={{ none: [t('Start contributing')] }} navigateToModel />
+        </ButtonRow>
       ) : null}
-      {!options.hideRandomCanvas ? <GoToRandomCanvas /> : null}
-      {!options.hideFilterImages ? <ManifestItemFilter /> : null}
-      <ManifestTaskProgress />
-    </ButtonRow>
+      <ButtonRow>
+        {!options.hideOpenInMirador ? (
+          <Button
+            as={HrefLink}
+            href={createLink({
+              subRoute: 'mirador',
+            })}
+          >
+            {t('Open in mirador')}
+          </Button>
+        ) : null}
+
+        {!options.hideSearchButton ? (
+          <Button as={Link} to={createLink({ subRoute: 'search' })}>
+            {t('Search this manifest')}
+          </Button>
+        ) : null}
+        {!options.hideRandomCanvas ? <GoToRandomCanvas /> : null}
+        {!options.hideFilterImages ? <ManifestItemFilter /> : null}
+        <ManifestTaskProgress />
+      </ButtonRow>
+    </>
   );
 };
