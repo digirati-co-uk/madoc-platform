@@ -1,4 +1,4 @@
-import { Revisions, useNavigation } from '@capture-models/editor';
+import { Revisions } from '@capture-models/editor';
 import { RevisionRequest } from '@capture-models/types';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -37,7 +37,7 @@ export const DefaultSubmitButton: React.FC<{ afterSave?: (req: RevisionRequest) 
   }
 
   return (
-    <div style={{ textAlign: 'right' }}>
+    <div style={{ padding: '0.5em 1em' }}>
       <ButtonRow>
         <ModalButton
           autoHeight

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { maxWidth } from '../../site/variables/global';
 import { themeVariable } from '../../themes/helpers/themeVariable';
 
 const containerBackground = themeVariable('siteContainer', 'containerBackground', {
@@ -21,7 +22,7 @@ export const SiteContainerBackground = styled.div`
 
 export const SiteContainer = styled.div`
   flex: 1 1 0;
-  max-width: 1440px;
+  max-width: ${maxWidth};
   padding: 0.2em 2em;
   width: 100%;
   margin-left: auto;

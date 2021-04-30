@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { themeVariable } from '../../themes/helpers/themeVariable';
+import { maxWidth } from '../variables/global';
 
 const background = themeVariable('footer', 'background', {
   dark: '#333',
@@ -21,7 +22,7 @@ const color = themeVariable('footer', 'color', {
 const StyledGlobalFooter = styled.div`
   background: ${background};
   padding: 3em;
-  max-width: 1440px;
+  max-width: ${maxWidth};
   color: ${color};
   text-align: center;
   margin: 0 auto;

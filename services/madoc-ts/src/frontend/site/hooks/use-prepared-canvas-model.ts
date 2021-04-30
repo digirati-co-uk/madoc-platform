@@ -26,8 +26,6 @@ export function usePreparedCanvasModel() {
   const isPreparing = isLoading;
   const shouldAutoPrepare = !isManifestComplete && !manifestClaim.isClaimRequired; // @todo config.
 
-  console.log(shouldAutoPrepare, { isManifestComplete, isClaimRequired: manifestClaim.isClaimRequired });
-
   useEffect(() => {
     if (manifestClaim.shouldAutoClaim && !hasPreparedManifest && !hasExpired) {
       manifestClaim

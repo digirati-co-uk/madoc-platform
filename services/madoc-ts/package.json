@@ -47,7 +47,7 @@
   "dependencies": {
     "@atlas-viewer/atlas": "1.5.1",
     "@atlas-viewer/iiif-image-api": "^1.2.1",
-    "@capture-models/editor": "^0.13.8",
+    "@capture-models/editor": "^0.13.9",
     "@capture-models/helpers": "^0.13.1",
     "@capture-models/types": "^0.13.0",
     "@hyperion-framework/presentation-2": "^1.0.0-alpha.14",
@@ -110,7 +110,7 @@
     "node-schedule": "^2.0.0",
     "node-stream-zip": "^1.13.2",
     "object-assign": "^4.1.1",
-    "pm2": "^4.5.5",
+    "pm2": "^4.5.6",
     "query-string": "^6.12.1",
     "react": "^16.13.1",
     "react-accessible-dropdown-menu-hook": "^2.1.1",

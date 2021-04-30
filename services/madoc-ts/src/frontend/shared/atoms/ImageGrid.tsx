@@ -4,7 +4,8 @@ export const ImageGrid = styled.div`
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-evenly;
+  justify-content: unset;
+  margin: 0 -10px;
   & > * {
     margin: 10px;
   }
@@ -22,7 +23,7 @@ export const ImageGridItem = styled.div<{ $size?: 'large' | 'small'; $static?: b
       case 'large':
         return '310px';
       default:
-        return '251px';
+        return '232px';
     }
   }};
   display: flex;

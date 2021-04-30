@@ -10,7 +10,7 @@ export const ImageStripBox = styled.div<{ $size?: 'large' | 'small' }>`
       case 'large':
         return '310px';
       default:
-        return '251px';
+        return '232px';
     }
   }};
 

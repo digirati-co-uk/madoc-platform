@@ -18,7 +18,12 @@ export const ButtonIcon = styled.span`
   }
 `;
 
-export const Button = styled.button<{ $primary?: boolean; $success?: boolean; $inlineInput?: boolean }>`
+export const Button = styled.button<{
+  $primary?: boolean;
+  $success?: boolean;
+  $inlineInput?: boolean;
+  $large?: boolean;
+}>`
   cursor: pointer;
   padding: 0.4em 1em;
   font-size: 0.9em;
@@ -33,6 +38,13 @@ export const Button = styled.button<{ $primary?: boolean; $success?: boolean; $i
   vertical-align: top;
   transition: color 0.1s, background-color 0.1s, border-color 0.1s;
   white-space: nowrap;
+  
+  ${props =>
+    props.$large &&
+    css`
+      font-size: 1.15em;
+      padding: 0.6em 1.2em;
+    `}
 
   &:active {
     box-shadow: inset 0 2px 8px 0 rgba(39, 75, 155, 0.8);
@@ -287,7 +299,7 @@ export const RightButtonIconBox = styled.span<{ $checked?: boolean }>`
     width: 24px;
     fill: #5071f4;
   }
-  
+
   ${props =>
     props.$checked &&
     css`

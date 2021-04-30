@@ -8,6 +8,7 @@ import { useApi, useIsApiRestarting } from '../../shared/hooks/use-api';
 import { useSite } from '../../shared/hooks/use-site';
 import { HrefLink } from '../../shared/utility/href-link';
 import { themeVariable } from '../../themes/helpers/themeVariable';
+import { maxWidth } from '../variables/global';
 
 const headerBackground = themeVariable('header', 'headerBackground', {
   default: '#fff',
@@ -40,7 +41,7 @@ const searchBorderFocusColor = themeVariable('header', 'searchBorderFocusColor',
 });
 
 const SiteHeader = styled.div`
-  max-width: 1440px;
+  max-width: ${maxWidth};
   width: 100%;
   padding: 0 2em;
   margin-left: auto;
@@ -70,7 +71,7 @@ const SiteTitle = styled.a`
 
 const GlobalSearchContainer = styled.div`
   flex: 1;
-  margin-right: 20px;
+  margin-right: 0;
   width: 100%;
   max-width: 20em;
 `;

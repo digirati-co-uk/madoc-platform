@@ -6,6 +6,7 @@ import { CollectionItemPagination } from '../features/CollectionItemPagination';
 import { CollectionPaginatedItems } from '../features/CollectionPaginatedItems';
 import { CollectionTitle } from '../features/CollectionTitle';
 import { usePaginatedCollection } from '../hooks/use-paginated-collection';
+import { CollectionMetadata } from '../features/CollectionMetadata';
 
 export const ViewCollection: React.FC = () => {
   const { isLoading } = usePaginatedCollection();
@@ -24,17 +25,25 @@ export const ViewCollection: React.FC = () => {
         <CollectionTitle />
 
         <CollectionFilterOptions />
-      </Slot>
-
-      <Slot name="collection-pagination">
-        <CollectionItemPagination />
-
-        <CollectionPaginatedItems />
 
         <CollectionItemPagination />
       </Slot>
 
-      <Slot name="collection-footer" />
+      <div style={{ display: 'flex' }}>
+        <Slot name="collection-body">
+          <CollectionPaginatedItems />
+        </Slot>
+
+        <div style={{ maxWidth: 290 }}>
+          <Slot name="collection-sidebar">
+            <CollectionMetadata compact />
+          </Slot>
+        </div>
+      </div>
+
+      <Slot name="collection-footer">
+        <CollectionItemPagination />
+      </Slot>
     </>
   );
 };

@@ -5,6 +5,7 @@ import { InfoMessage } from '../../shared/atoms/InfoMessage';
 import { CanvasNavigation } from '../../shared/components/CanvasNavigation';
 import { Link } from 'react-router-dom';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { CanvasVaultContext } from '../../shared/components/CanvasVaultContext';
 import { useCanvasSearch } from '../../shared/hooks/use-canvas-search';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { CanvasHighlightedRegions } from '../features/CanvasHighlightedRegions';
@@ -48,7 +49,7 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({ project }) => {
       <ContinueCanvasSubmission />
 
       {showCanvasNavigation ? (
-        <>
+        <CanvasVaultContext>
           <CanvasHighlightedRegions />
 
           {highlightedRegions && highlightedRegions.bounding_boxes ? (
@@ -65,7 +66,7 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({ project }) => {
               <CanvasImageViewer />
             </CanvasViewer>
           )}
-        </>
+        </CanvasVaultContext>
       ) : null}
 
       {hideManifestMetadataOnCanvas ? null : <ManifestMetadata />}

@@ -86,7 +86,7 @@ export const ManifestItemFilter: React.FC = () => {
   }
 
   return (
-    <ItemFilterContainer style={{ marginLeft: '.5em' }}>
+    <ItemFilterContainer>
       <Button {...buttonProps}>
         <ButtonIcon>
           <FilterIcon />

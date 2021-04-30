@@ -1,5 +1,6 @@
 import { Revisions } from '@capture-models/editor';
-import React, { useEffect, useState } from 'react';
+import { RevisionRequest } from '@capture-models/types';
+import React, { useEffect, useState, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyState } from '../../../shared/atoms/EmptyState';
 import {
@@ -10,24 +11,46 @@ import {
 import { RevisionList } from '../../../shared/components/RevisionList';
 import { useUser } from '../../../shared/hooks/use-site';
 import { PersonIcon } from '../../../shared/icons/PersonIcon';
+import { useCanvasUserTasks } from '../use-canvas-user-tasks';
 import { CanvasMenuHook } from './types';
 
-const ViewRevisions: React.FC = () => {
+const ViewRevisions = memo(() => {
   const { t } = useTranslation();
   const revisions = useRevisionList({ filterCurrentView: false });
+  const { updatedAt } = useCanvasUserTasks();
 
-  if (revisions.myUnpublished.length === 0 && revisions.mySubmitted.length === 0) {
+  const [myUnpublished, setMyUnpublished] = useState<RevisionRequest[]>([]);
+  const [mySubmitted, setMySubmitted] = useState<RevisionRequest[]>([]);
+
+  useEffect(() => {
+    setMySubmitted([]);
+    setMyUnpublished([]);
+  }, [updatedAt]);
+
+  useEffect(() => {
+    if (revisions.myUnpublished.length !== myUnpublished.length) {
+      setMyUnpublished(revisions.myUnpublished);
+    }
+  }, [myUnpublished.length, revisions.myUnpublished]);
+
+  useEffect(() => {
+    if (revisions.mySubmitted.length !== mySubmitted.length) {
+      setMySubmitted(revisions.mySubmitted);
+    }
+  }, [mySubmitted.length, revisions.mySubmitted]);
+
+  if (myUnpublished.length === 0 && mySubmitted.length === 0) {
     return <EmptyState>{t('No submissions yet')}</EmptyState>;
   }
 
   return (
     <div style={{ padding: 10 }}>
-      <RevisionList revisions={revisions.myUnpublished} editable />
+      <RevisionList revisions={myUnpublished} editable />
 
-      <RevisionList revisions={revisions.mySubmitted} />
+      <RevisionList revisions={mySubmitted} />
     </div>
   );
-};
+});
 
 export function useRevisionPanel(): CanvasMenuHook {
   const { t } = useTranslation();
