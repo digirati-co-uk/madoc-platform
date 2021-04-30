@@ -18,7 +18,7 @@ export function useCanvasUserTasks() {
   const { refetch: refetchManifest } = useData(ManifestLoader, undefined, { enabled: !!manifestId });
   const { user, scope = defaultScope } = api.getIsServer() ? { user: undefined } : api.getCurrentUser() || {};
   const { refetch: refetchManifestTasks } = useManifestUserTasks();
-  const { data: canvasTask, isLoading, refetch } = apiHooks.getSiteProjectCanvasTasks(() =>
+  const { data: canvasTask, isLoading, refetch, updatedAt } = apiHooks.getSiteProjectCanvasTasks(() =>
     projectId && canvasId ? [projectId, canvasId] : undefined
   );
 
@@ -99,6 +99,7 @@ export function useCanvasUserTasks() {
       canUserSubmit,
       canContribute,
       updateClaim,
+      updatedAt,
       refetch,
     };
   }, [
@@ -107,6 +108,7 @@ export function useCanvasUserTasks() {
     isLoading,
     canvasTask,
     refetch,
+    updatedAt,
     updateClaim,
     config.project.allowSubmissionsWhenCanvasComplete,
     config.project.claimGranularity,
