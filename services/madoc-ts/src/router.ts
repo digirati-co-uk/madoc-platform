@@ -15,7 +15,7 @@ import { deleteBlock } from './routes/content/delete-block';
 import { deletePage } from './routes/content/delete-page';
 import { deleteSlot } from './routes/content/delete-slot';
 import { getBlock } from './routes/content/get-block';
-import { getPage, getStaticPage } from './routes/content/get-page';
+import { getPage } from './routes/content/get-page';
 import { resolveSlots } from './routes/content/resolve-slots';
 import { getCanvasReference } from './routes/iiif/canvases/get-canvas-reference';
 import { fullReindex } from './routes/search/full-reindex';
@@ -38,7 +38,7 @@ import { getParentLinking } from './routes/iiif/linking/get-parent-linking';
 import { indexManifest } from './routes/search/index-manifest';
 import { updateProjectStatus } from './routes/projects/update-project-status';
 import { siteManifestTasks } from './routes/site/site-manifest-tasks';
-import { sitePages } from './routes/site/site-pages';
+import { getStaticPage, sitePages } from './routes/site/site-pages';
 import { siteTaskMetadata } from './routes/site/site-task-metadata';
 import { getUser } from './routes/user/get-user';
 import { userAutocomplete } from './routes/user/user-autocomplete';
@@ -263,7 +263,6 @@ export const router = new TypedRouter({
   // Pages
   'create-page': [TypedRouter.POST, '/api/madoc/pages', createPage],
   'get-page': [TypedRouter.GET, '/api/madoc/pages/root/:paths*', getPage],
-  'get-static-page': [TypedRouter.GET, '/api/madoc/pages/static/root/:paths*', getStaticPage],
   'delete-page': [TypedRouter.DELETE, '/api/madoc/pages/root/:paths*', deletePage],
   'update-page': [TypedRouter.PUT, '/api/madoc/pages/root/:paths*', updatePage],
   'get-all-pages': [TypedRouter.GET, '/api/madoc/pages', getAllPages],

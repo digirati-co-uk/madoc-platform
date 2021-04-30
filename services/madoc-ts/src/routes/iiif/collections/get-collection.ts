@@ -38,7 +38,7 @@ export const getCollection: RouteMiddleware<{ id: number }> = async context => {
       }),
       {
         siteId: Number(siteId),
-        fields: ['label'],
+        // fields: ['label'],
         allCollectionFields: true,
       }
     )
