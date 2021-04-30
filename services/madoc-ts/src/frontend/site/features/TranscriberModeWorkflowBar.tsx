@@ -25,7 +25,6 @@ export const TranscriberModeWorkflowBar: React.FC = () => {
   const isComplete = isManifestComplete;
   const canSubmit = !!canUserSubmit && canSubmitClaims;
   const [isUnusable, setIsUsable] = useState(false);
-  const isSubmitted = firstUserTask?.status === 2 && !isUnusable;
 
   useEffect(() => {
     setIsUsable(markedAsUnusable);
@@ -55,6 +54,7 @@ export const TranscriberModeWorkflowBar: React.FC = () => {
     }
   });
 
+  const isSubmitted = firstUserTask?.status === 2 && !isUnusable;
   const isLoading = isSubmitting || markUnusableStatus.isLoading;
 
   return (

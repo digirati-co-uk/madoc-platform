@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import ReactTooltip from 'react-tooltip';
 
 const SubtaskProgressContainer = styled.div`
-  margin: 0.5em;
+  margin: 0.38em 1em;
   height: 1em;
   background: #ddd;
   border-radius: 0.5em;
