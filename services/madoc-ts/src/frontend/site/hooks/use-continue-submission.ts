@@ -27,7 +27,9 @@ export function useContinueSubmission() {
                 if (task.status_text === 'assigned') {
                   assigned++;
                 } else {
-                  inProgress++;
+                  if (task.state.revisionId) {
+                    inProgress++;
+                  }
                 }
               }
               if (task.status === 3 && task.state && task.state.revisionId) {

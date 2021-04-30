@@ -149,7 +149,13 @@ export const WorkflowBar: React.FC<WorkflowBarProps> = ({ actions = {}, states =
               title="Too difficult"
               render={() => {
                 // @todo improve copy.
-                return <div>All of your work on these images will be lose if you continue. (not implemented)</div>;
+                return (
+                  <div>
+                    {t(
+                      'All of your work on these images will be lost if you continue and you will be taken back to the project homepage'
+                    )}
+                  </div>
+                );
               }}
               renderFooter={({ close }) => {
                 return (

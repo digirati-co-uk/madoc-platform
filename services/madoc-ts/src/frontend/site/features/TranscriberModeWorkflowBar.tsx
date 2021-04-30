@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
+import { useHistory } from 'react-router-dom';
 import { WorkflowBar } from '../../shared/components/WorkflowBar';
 import { useApi } from '../../shared/hooks/use-api';
 import { useManifestStructure } from '../../shared/hooks/use-manifest-structure';
+import { createLink } from '../../shared/utility/create-link';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useManifestTask } from '../hooks/use-manifest-task';
 import { useModelPageConfiguration } from '../hooks/use-model-page-configuration';
@@ -12,10 +14,11 @@ import { useSubmitAllClaims } from '../hooks/use-submit-all-claims';
 export const TranscriberModeWorkflowBar: React.FC = () => {
   const api = useApi();
   const { fixedTranscriptionBar } = useModelPageConfiguration();
-  const { isManifestComplete, userManifestStats } = useManifestTask();
+  const { isManifestComplete, userManifestStats, refetch: refetchManifest } = useManifestTask();
   const { userTasks, canUserSubmit, markedAsUnusable, refetch } = useCanvasUserTasks();
   const { submitAllClaims, isSubmitting, canSubmit: canSubmitClaims } = useSubmitAllClaims();
   const { projectId, canvasId, manifestId } = useRouteContext();
+  const { push } = useHistory();
   const { data: structure } = useManifestStructure(manifestId);
 
   // In transcriber mode, all tasks should have the same status.
@@ -51,11 +54,20 @@ export const TranscriberModeWorkflowBar: React.FC = () => {
       }
 
       await refetch();
+      await refetchManifest();
+    }
+  });
+
+  const [markAsTooDifficult, markDifficultStatus] = useMutation(async () => {
+    if (projectId && manifestId) {
+      await api.revokeResourceClaimOnManifest(projectId, manifestId);
+
+      push(createLink({ projectId }));
     }
   });
 
   const isSubmitted = firstUserTask?.status === 2 && !isUnusable;
-  const isLoading = isSubmitting || markUnusableStatus.isLoading;
+  const isLoading = isSubmitting || markUnusableStatus.isLoading || markDifficultStatus.isLoading;
 
   return (
     <WorkflowBar
@@ -75,6 +87,7 @@ export const TranscriberModeWorkflowBar: React.FC = () => {
           // Warning to user
           // Then on confirm, mark manifest task and canvas tasks in the manifest as error / abandoned.
           // This is a new endpoint (deleteResourceClaim)
+          markAsTooDifficult();
         },
       }}
       states={{

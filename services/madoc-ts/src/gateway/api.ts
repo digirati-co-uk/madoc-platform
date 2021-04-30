@@ -487,6 +487,15 @@ export class ApiClient {
     });
   }
 
+  async revokeResourceClaimOnManifest(projectId: string | number, manifestId: number) {
+    return this.request<{ claim: CrowdsourcingTask }>(`/api/madoc/projects/${projectId}/revoke-claim`, {
+      method: 'POST',
+      body: {
+        manifestId,
+      },
+    });
+  }
+
   async deleteResourceClaim(taskId: string) {
     throw new Error('Not yet implemented');
   }

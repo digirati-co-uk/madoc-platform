@@ -18,6 +18,7 @@ import { getBlock } from './routes/content/get-block';
 import { getPage } from './routes/content/get-page';
 import { resolveSlots } from './routes/content/resolve-slots';
 import { getCanvasReference } from './routes/iiif/canvases/get-canvas-reference';
+import { deleteResourceClaim } from './routes/projects/delete-resource-claim';
 import { fullReindex } from './routes/search/full-reindex';
 import { siteCanvasSource } from './routes/site/site-canvas-reference';
 import { sitePageNavigation } from './routes/site/site-page-navigation';
@@ -254,6 +255,7 @@ export const router = new TypedRouter({
     '/api/madoc/projects/:id/prepare-claim',
     prepareResourceClaim,
   ],
+  'delete-project-resource-claim': [TypedRouter.POST, '/api/madoc/projects/:id/revoke-claim', deleteResourceClaim],
   'update-project-resource-claim': [TypedRouter.POST, '/api/madoc/projects/:id/claim/:claimId', updateResourceClaim],
   'assign-review': [TypedRouter.POST, '/api/madoc/projects/:id/reviews', assignReview],
   'get-project-model': [TypedRouter.GET, '/api/madoc/projects/:id/models/:subject', getProjectModel],
