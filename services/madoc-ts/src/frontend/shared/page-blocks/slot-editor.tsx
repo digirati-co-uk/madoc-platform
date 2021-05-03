@@ -20,6 +20,7 @@ import {
 } from '../atoms/SlotEditor';
 import { SlotLayout } from '../atoms/SlotLayout';
 import { SurfaceEditor } from './surface-editor';
+import { CustomEditorTypes } from './custom-editor-types';
 
 type SlotEditorProps = {
   slot: SiteSlot;
@@ -152,7 +153,7 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
   }
 
   return (
-    <>
+    <CustomEditorTypes>
       <SlotEditorContainer>
         <SlotEditorLabel>{props.slot.label || props.slot.slotId}</SlotEditorLabel>
         <SlotEditorButton
@@ -317,6 +318,6 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
           </DragDropContext>
         )}
       </SlotOutlineContainer>
-    </>
+    </CustomEditorTypes>
   );
 };

@@ -1,10 +1,12 @@
 import { defaultTheme, Revisions } from '@capture-models/editor';
 import { captureModelShorthand, hydrateCompressedModel, serialiseCaptureModel } from '@capture-models/helpers';
-import { CaptureModel } from '@capture-models/types';
+import { PluginContext, pluginStore } from '@capture-models/plugin-api';
+import { CaptureModel, PluginStore } from '@capture-models/types';
 import React, { PropsWithChildren, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import styled, { ThemeProvider } from 'styled-components';
+import { specification as mediaExplorer } from '../../../extensions/capture-models/MediaExplorer';
 import { PageBlockDefinition, PageBlockEditor } from '../../../extensions/page-blocks/extension';
 import { EditorialContext, SiteBlock, SiteBlockRequest } from '../../../types/schemas/site-page';
 import { Button, ButtonRow, TinyButton } from '../atoms/Button';
@@ -13,6 +15,7 @@ import { RevisionProviderWithFeatures } from '../caputre-models/new/components/R
 import { ModalButton } from '../components/Modal';
 import { useApi } from '../hooks/use-api';
 import { createRevisionFromDocument } from '../utility/create-revision-from-document';
+import { CustomEditorTypes } from './custom-editor-types';
 import { RenderBlock } from './render-block';
 
 const EditBlock = styled(TinyButton)`
@@ -92,11 +95,12 @@ export function useBlockModel(block: SiteBlock | SiteBlockRequest, advanced?: bo
 
   const defaultFields = useMemo<CaptureModel['document']>(() => {
     const defaultProps = {
-      RESERVED__name: {
-        label: t('Name (optional)'),
-        description: t('If you would like to find this block later, give it a name'),
-        type: 'text-field',
-      },
+      // @todo Leave this one out for now.
+      // RESERVED__name: {
+      //   label: t('Name (optional)'),
+      //   description: t('If you would like to find this block later, give it a name'),
+      //   type: 'text-field',
+      // },
     };
 
     const advancedProps = {
@@ -280,8 +284,9 @@ const BlockEditorForm: React.FC<{
   return (
     <ModalButton
       as={EditBlock}
+      style={{ zIndex: 9999 }}
       title={`Edit block: ${block.name}`}
-      modalSize={'md'}
+      modalSize={'lg'}
       onClose={async () => {
         await saveChanges();
       }}
@@ -373,17 +378,19 @@ export const BlockEditor: React.FC<{
   const { CustomEditor } = useBlockDetails(block);
 
   return (
-    <BlockWrapper>
-      {CustomEditor ? (
-        <CustomEditorWrapper editor={CustomEditor} block={block} onUpdateBlock={onUpdateBlock}>
-          {children}
-        </CustomEditorWrapper>
-      ) : (
-        <>
-          <BlockEditorForm block={block} context={context} onUpdateBlock={onUpdateBlock} />
-          {children}
-        </>
-      )}
-    </BlockWrapper>
+    <CustomEditorTypes>
+      <BlockWrapper>
+        {CustomEditor ? (
+          <CustomEditorWrapper editor={CustomEditor} block={block} onUpdateBlock={onUpdateBlock}>
+            {children}
+          </CustomEditorWrapper>
+        ) : (
+          <>
+            <BlockEditorForm block={block} context={context} onUpdateBlock={onUpdateBlock} />
+            {children}
+          </>
+        )}
+      </BlockWrapper>
+    </CustomEditorTypes>
   );
 };

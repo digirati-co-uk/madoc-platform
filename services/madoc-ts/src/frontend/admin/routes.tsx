@@ -7,6 +7,9 @@ import { ConfigureLanguages } from './pages/content/internationalisation/configu
 import { EditTranslation } from './pages/content/internationalisation/edit-translation';
 import { ViewCanvasLinking } from './pages/content/linking/view-linking';
 import { ManifestCollections } from './pages/content/manifests/manifest-collections';
+import { ListMedia } from './pages/content/media/list-media';
+import { Media } from './pages/content/media/media';
+import { ViewMedia } from './pages/content/media/view-media';
 import { MetadataConfigurationPage } from './pages/content/metadata-configuration';
 import { CreateNewPage } from './pages/content/page-blocks/create-new-page';
 import { ListPages } from './pages/content/page-blocks/list-pages';
@@ -417,6 +420,22 @@ export const routes: UniversalRoute[] = [
         path: '/page-blocks/new-page',
         exact: true,
         component: CreateNewPage,
+      },
+    ],
+  },
+  {
+    path: '/media',
+    component: Media,
+    routes: [
+      {
+        path: '/media',
+        exact: true,
+        component: ListMedia,
+      },
+      {
+        path: '/media/:mediaId',
+        exact: true,
+        component: ViewMedia,
       },
     ],
   },

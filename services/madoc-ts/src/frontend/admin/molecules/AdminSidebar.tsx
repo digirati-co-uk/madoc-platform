@@ -15,6 +15,7 @@ import {
   InternationalisationIcon,
   ManageCollectionsIcon,
   ManageManifestsIcon,
+  MediaIcon,
   ProjectsIcon,
   SiteConfigurationIcon,
   SiteSwitcherBackButton,
@@ -39,6 +40,7 @@ export const AdminSidebar: React.FC = () => {
     isDashboard,
     isManageManifests,
     isLocalisation,
+    isMedia,
   } = useMemo(() => {
     return {
       isDashboard: pathname === '/',
@@ -51,6 +53,7 @@ export const AdminSidebar: React.FC = () => {
       isSearchIndexing: pathname.startsWith('/enrichment/search-indexing'),
       isSiteConfiguration: pathname.startsWith('/configure'),
       isLocalisation: pathname.startsWith('/i18n'),
+      isMedia: pathname.startsWith('/media'),
     };
   }, [pathname]);
 
@@ -104,6 +107,15 @@ export const AdminSidebar: React.FC = () => {
               {t('View manifests with OCR')}
             </AdminMenuSubItem>
           </AdminMenuSubItemContainer>
+        </AdminMenuItemContainer>
+
+        <AdminMenuItemContainer>
+          <AdminMenuItem as={HrefLink} href="/media" $active={isMedia}>
+            <AdminMenuItemIcon>
+              <MediaIcon />
+            </AdminMenuItemIcon>
+            <AdminMenuItemLabel>{t('Media')}</AdminMenuItemLabel>
+          </AdminMenuItem>
         </AdminMenuItemContainer>
 
         <AdminMenuItemContainer>

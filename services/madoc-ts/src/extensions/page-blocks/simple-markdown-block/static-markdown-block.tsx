@@ -8,6 +8,7 @@ const StyledEditor = styled('div')<{
   readOnly?: boolean;
   readOnlyWriteCheckboxes?: boolean;
 }>`
+  margin: 0.5em 0;
   color: ${props => props.theme.text};
   background: ${props => props.theme.background};
   font-family: ${props => props.theme.fontFamily};
@@ -142,24 +143,6 @@ const StyledEditor = styled('div')<{
     h6 {
       margin-top: 0;
     }
-  }
-  h1:not(.placeholder):before {
-    content: 'H1';
-  }
-  h2:not(.placeholder):before {
-    content: 'H2';
-  }
-  h3:not(.placeholder):before {
-    content: 'H3';
-  }
-  h4:not(.placeholder):before {
-    content: 'H4';
-  }
-  h5:not(.placeholder):before {
-    content: 'H5';
-  }
-  h6:not(.placeholder):before {
-    content: 'H6';
   }
   .with-emoji {
     margin-left: -1em;

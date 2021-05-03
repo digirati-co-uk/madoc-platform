@@ -60,7 +60,7 @@ export const MetadataCardRemove = styled.div`
   }
 `;
 
-export const MetadataDropzone = styled.div`
+export const MetadataDropzone = styled.div<{ $active?: boolean }>`
   //background: #ddd;
   padding: 1em;
   border: 2px dashed #ccc;
@@ -68,6 +68,13 @@ export const MetadataDropzone = styled.div`
   color: #666;
   font-size: 0.8em;
   cursor: pointer;
+  ${props =>
+    props.$active &&
+    css`
+      border-color: #3579f6;
+      background: #98c0ff;
+      color: #fff;
+    `}
 `;
 
 export const MetadataListContainer = styled.div`
