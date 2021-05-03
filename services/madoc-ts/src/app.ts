@@ -106,7 +106,7 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
     (app.context.cron as CronJobs).addJob(
       'check-expired-manifests',
       'Check expired manifests',
-      schedule.scheduleJob('*/1 * * * *', async function(fireDate) {
+      schedule.scheduleJob('*/15 * * * *', async function(fireDate) {
         await pool.connect(async connection => {
           await checkExpiredManifests({ ...app.context, connection } as any, fireDate);
         });
