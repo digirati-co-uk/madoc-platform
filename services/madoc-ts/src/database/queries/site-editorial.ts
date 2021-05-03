@@ -636,7 +636,7 @@ export function addBlock(block: SiteBlockRequest, siteId: number) {
     insert into site_block 
         (name, type, static_data, lazy, i18n_languages, i18n_sort_key, i18n_fallback, site_id) 
         VALUES (
-          ${block.name}, 
+          ${block.name || ''}, 
           ${block.type}, 
           ${block.static_data ? sql.json(block.static_data) : null},
           ${block.lazy || false},
@@ -653,7 +653,7 @@ export function addBlock(block: SiteBlockRequest, siteId: number) {
 export function editBlock(id: number, block: SiteBlockRequest, siteId: number) {
   return sql<SiteBlockRow>`
     update site_block set
-      name=${block.name},
+      name=${block.name || ''},
       type=${block.type},
       static_data=${block.static_data ? sql.json(block.static_data) : null},
       i18n_languages=${block.i18n ? sql.array(block.i18n.languages, 'text') : null},

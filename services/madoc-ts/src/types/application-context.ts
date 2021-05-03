@@ -1,4 +1,5 @@
 import { i18n } from 'i18next';
+import { MediaRepository } from '../repository/media-repository';
 import { PageBlocksRepository } from '../repository/page-blocks-repository';
 import { CronJobs } from '../utility/cron-jobs';
 import { ExternalConfig } from './external-config';
@@ -15,6 +16,7 @@ export interface ApplicationContext {
   mysql: Pool;
   connection: DatabasePoolConnectionType;
   pageBlocks: PageBlocksRepository;
+  media: MediaRepository;
   omeka: OmekaApi;
   cron: CronJobs;
   ajv: Ajv;

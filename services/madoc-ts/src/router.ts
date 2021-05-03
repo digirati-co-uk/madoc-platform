@@ -18,6 +18,11 @@ import { getBlock } from './routes/content/get-block';
 import { getPage } from './routes/content/get-page';
 import { resolveSlots } from './routes/content/resolve-slots';
 import { getCanvasReference } from './routes/iiif/canvases/get-canvas-reference';
+import { createMedia } from './routes/media/create-media';
+import { deleteMedia } from './routes/media/delete-media';
+import { generateThumbnails } from './routes/media/generate-thumbnails';
+import { getMedia } from './routes/media/get-media';
+import { listMedia } from './routes/media/list-media';
 import { deleteResourceClaim } from './routes/projects/delete-resource-claim';
 import { fullReindex } from './routes/search/full-reindex';
 import { siteCanvasSource } from './routes/site/site-canvas-reference';
@@ -291,6 +296,13 @@ export const router = new TypedRouter({
   'assets-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleId.bundle.js', frontendBundles],
   'assets-sub-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleName', frontendBundles],
   'get-user-details': [TypedRouter.GET, '/s/:slug/madoc/api/me', userDetails],
+
+  // Media
+  'list-media': [TypedRouter.GET, '/api/madoc/media', listMedia],
+  'get-media': [TypedRouter.GET, '/api/madoc/media/:mediaId', getMedia],
+  'delete-media': [TypedRouter.DELETE, '/api/madoc/media/:mediaId', deleteMedia],
+  'create-media': [TypedRouter.POST, '/api/madoc/media', createMedia],
+  'generate-media-thumbnails': [TypedRouter.POST, '/api/madoc/media/:mediaId/generate-thumbnails', generateThumbnails],
 
   // New Site routes.
   'site-canvas': [TypedRouter.GET, '/s/:slug/madoc/api/canvases/:id', siteCanvas],

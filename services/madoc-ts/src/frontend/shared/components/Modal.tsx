@@ -24,6 +24,7 @@ export const ModalButton: React.FC<{
   modalSize?: 'lg' | 'md' | 'sm';
   disabled?: boolean;
   openByDefault?: boolean;
+  style?: any;
 }> = ({
   as,
   className,
@@ -38,6 +39,7 @@ export const ModalButton: React.FC<{
   footerAlignRight,
   children,
   openByDefault = false,
+  style,
 }) => {
   const portalEl = useRef<HTMLElement>();
   const [ready, setIsReady] = useState(false);
@@ -99,7 +101,7 @@ export const ModalButton: React.FC<{
             portalEl.current
           )
         : null}
-      <Component className={className} disabled={disabled} onClick={() => setIsReady(true)}>
+      <Component className={className} disabled={disabled} onClick={() => setIsReady(true)} style={style}>
         {children}
       </Component>
     </>

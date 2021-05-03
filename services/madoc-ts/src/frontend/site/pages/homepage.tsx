@@ -6,9 +6,11 @@ import { StaticPage } from '../features/StaticPage';
 export const Homepage = () => {
   return (
     <StaticPage title="Homepage">
+      <Slot name="homepage-header" />
       <Slot name="homepage-main">
         <DefaultHomepage />
       </Slot>
+      <Slot name="homepage-footer" />
     </StaticPage>
   );
 };

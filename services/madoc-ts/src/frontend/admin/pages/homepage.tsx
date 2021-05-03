@@ -96,7 +96,7 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
                   <Link to="/i18n">{t('Localisation')}</Link>
                 </li>
                 <li>
-                  <span>Blog posts</span>
+                  <Link to="/media">{t('Media')}</Link>
                 </li>
               </MenuList>
             </AdminSection>
