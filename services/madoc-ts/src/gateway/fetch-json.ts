@@ -10,6 +10,7 @@ export async function fetchJson<Return>(
     asUser,
     xml,
     plaintext,
+    formData,
     returnText,
     headers: additionalHeaders = {},
     raw,
@@ -21,6 +22,7 @@ export async function fetchJson<Return>(
     xml?: boolean;
     plaintext?: boolean;
     returnText?: boolean;
+    formData?: boolean;
     headers?: any;
     raw?: boolean;
   }
@@ -37,12 +39,14 @@ export async function fetchJson<Return>(
     headers.Authorization = `Bearer ${jwt}`;
   }
 
-  if (plaintext && body) {
-    headers['Content-Type'] = 'text/plain';
-  } else if (xml && body) {
-    headers['Content-Type'] = 'text/xml';
-  } else if (body) {
-    headers['Content-Type'] = 'application/json';
+  if (!formData) {
+    if (plaintext && body) {
+      headers['Content-Type'] = 'text/plain';
+    } else if (xml && body) {
+      headers['Content-Type'] = 'text/xml';
+    } else if (body) {
+      headers['Content-Type'] = 'application/json';
+    }
   }
 
   if (asUser) {
@@ -60,7 +64,7 @@ export async function fetchJson<Return>(
   const resp = await fetch(`${apiGateway}${endpoint}`, {
     headers,
     method,
-    body: body ? (xml || plaintext ? body : JSON.stringify(body)) : undefined,
+    body: body ? (xml || plaintext || formData ? body : JSON.stringify(body)) : undefined,
     credentials: 'omit',
   });
 

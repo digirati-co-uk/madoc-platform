@@ -8,6 +8,7 @@ import { plainTextSource } from '../extensions/capture-models/DynamicDataSources
 import { ExtensionManager } from '../extensions/extension-manager';
 import { defaultPageBlockDefinitions } from '../extensions/page-blocks/default-definitions';
 import { PageBlockExtension } from '../extensions/page-blocks/extension';
+import { MediaExtension } from '../extensions/media/extension';
 import { TaskExtension } from '../extensions/tasks/extension';
 import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
 import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
@@ -73,6 +74,7 @@ export class ApiClient {
   private captureModelDataSources: DynamicData[];
   // Public.
   pageBlocks: PageBlockExtension;
+  media: MediaExtension;
   tasks: TaskExtension;
 
   constructor(options: {
@@ -91,6 +93,7 @@ export class ApiClient {
     this.fetcher = options.customerFetcher || fetchJson;
     this.publicSiteSlug = options.publicSiteSlug;
     this.pageBlocks = new PageBlockExtension(this, defaultPageBlockDefinitions);
+    this.media = new MediaExtension(this);
     this.tasks = new TaskExtension(this);
     this.captureModelDataSources = [plainTextSource];
     this.captureModelExtensions = new ExtensionManager(
@@ -239,6 +242,7 @@ export class ApiClient {
       returnText = false,
       headers = {},
       raw = false,
+      formData = false,
     }: {
       method?: 'GET' | 'PUT' | 'POST' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD';
       body?: Body;
@@ -249,6 +253,7 @@ export class ApiClient {
       returnText?: boolean;
       headers?: any;
       raw?: boolean;
+      formData?: boolean;
     } = {}
   ): Promise<Return> {
     if (!publicRequest && !jwt) {
@@ -267,6 +272,7 @@ export class ApiClient {
       returnText,
       headers,
       raw,
+      formData,
     });
 
     if (response.error) {
@@ -1392,6 +1398,15 @@ export class ApiClient {
     });
   }
 
+  async getStorageRaw(bucket: string, fileName: string, isPublic = false) {
+    return this.request<Response>(
+      isPublic ? `/api/storage/data/${bucket}/public/${fileName}` : `/api/storage/data/${bucket}/${fileName}`,
+      {
+        raw: true,
+      }
+    );
+  }
+
   async getStorageXmlData<T = any>(bucket: string, fileName: string, isPublic = false) {
     return this.request<T>(
       isPublic
@@ -1400,6 +1415,16 @@ export class ApiClient {
       {
         xml: true,
         returnText: true,
+      }
+    );
+  }
+
+  async deleteStorageItem(bucket: string, fileName: string, isPublic = false) {
+    // deleteFile
+    return this.request(
+      isPublic ? `/api/storage/details/${bucket}/public/${fileName}` : `/api/storage/details/${bucket}/${fileName}`,
+      {
+        method: 'DELETE',
       }
     );
   }
