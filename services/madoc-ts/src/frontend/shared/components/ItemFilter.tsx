@@ -9,17 +9,15 @@ export const ItemFilterContainer = styled.div`
   display: inline-block;
 `;
 
-export const ItemFilterPopupContainer = styled.div<{ $visible?: boolean }>`
+export const ItemFilterPopupContainer = styled.div<{ $visible?: boolean, $alignLeft?: boolean }>`
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.15);
   box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.14);
   border-radius: 4px;
   z-index: 11;
-
   position: absolute;
   display: none;
   padding: 0.3em;
-  right: 0;
   top: 2.8em;
   font-size: 0.9em;
   min-width: 10em;
@@ -27,6 +25,12 @@ export const ItemFilterPopupContainer = styled.div<{ $visible?: boolean }>`
     props.$visible &&
     css`
       display: block;
+    `}
+    
+  ${props =>
+    !props.$alignLeft &&
+    css`
+      right: 0;
     `}
 `;
 
