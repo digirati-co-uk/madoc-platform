@@ -78,7 +78,7 @@ export const ManifestTaskProgress: React.FC = () => {
         </ButtonIcon>
         {t('Details')}
       </Button>
-      <ItemFilterPopupContainer $visible={isOpen} role="menu">
+      <ItemFilterPopupContainer $visible={isOpen} $alignLeft={true} role="menu">
         <div style={{ width: 400, padding: '1em' }}>
           {manifestTask?.status === 2 ? (
             <div>

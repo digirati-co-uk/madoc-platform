@@ -46,6 +46,9 @@ const SnippetButton = styled.a<{ role?: string; $center?: boolean }>`
   font-size: 0.8rem;
   text-decoration: none;
   color: #3773db;
+  &:link {
+    color: #3773db;
+  }
 
   ${props =>
     props.role === 'button' &&
