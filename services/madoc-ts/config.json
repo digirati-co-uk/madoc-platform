@@ -48,6 +48,14 @@
       "hideRandomCanvas": false,
       "hideFilterImages": false,
       "directModelPage": false
+    },
+    "headerOptions": {
+      "hideSiteTitle": false,
+      "hideProjectsLink": false,
+      "hideCollectionsLink": false,
+      "hideDashboardLink": false,
+      "hidePageNavLinks": false,
+      "hideSearchBar": false
     }
   },
   "permissions": {

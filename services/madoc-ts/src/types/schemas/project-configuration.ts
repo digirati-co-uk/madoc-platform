@@ -46,4 +46,12 @@ export type ProjectConfiguration = {
     hideFilterImages?: boolean;
     directModelPage?: boolean;
   };
+  headerOptions?: {
+    hideSiteTitle?: boolean;
+    hideProjectsLink?: boolean;
+    hideCollectionsLink?: boolean;
+    hideDashboardLink?: boolean;
+    hidePageNavLinks?: boolean;
+    hideSearchBar?: boolean;
+  }
 };

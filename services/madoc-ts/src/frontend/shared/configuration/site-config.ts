@@ -237,4 +237,35 @@ export const siteConfigurationModel: {
       },
     ],
   },
+  headerOptions: {
+    label: 'Header options',
+    description: 'View options for the global site navigation',
+    type: 'checkbox-list-field',
+    options: [
+      {
+        label: 'Hide the site title',
+        value: 'hideSiteTitle',
+      },
+      {
+        label: 'Hide the projects link',
+        value: 'hideProjectsLink',
+      },
+      {
+        label: 'Hide the collections link',
+        value: 'hideCollectionsLink',
+      },
+      {
+        label: 'Hide the dashboard link',
+        value: 'hideDashboardLink',
+      },
+      {
+        label: 'Hide the page navigation links',
+        value: 'hidePageNavLinks',
+      },
+      {
+        label: 'Hide the search bar',
+        value: 'hideSearchBar',
+      },
+    ],
+  }
 };
