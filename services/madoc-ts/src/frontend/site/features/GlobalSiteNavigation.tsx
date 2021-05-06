@@ -11,27 +11,31 @@ export const GlobalSiteNavigation: React.FC = () => {
   const history = useHistory();
   const { t } = useTranslation();
   const user = useUser();
-  const { navigation } = useSiteConfiguration();
+  const { navigation, project } = useSiteConfiguration();
   const { enableProjects, enableCollections } = useNavigationOptions();
+  const showProjects = enableProjects && !project.headerOptions?.hideProjectsLink;
+  const showCollections = enableCollections && !project.headerOptions?.hideCollectionsLink;
+  const showDashboard = user && !project.headerOptions?.hideDashboardLink;
+  const showNavLinks = !project.headerOptions?.hidePageNavLinks;
 
   return (
     <LightNavigation>
-      {enableProjects ? (
+      {showProjects ? (
         <LightNavigationItem $active={history.location.pathname === '/projects'}>
           <HrefLink href="/projects">{t('Projects')}</HrefLink>
         </LightNavigationItem>
       ) : null}
-      {enableCollections ? (
+      {showCollections ? (
         <LightNavigationItem $active={history.location.pathname === '/collections'}>
           <HrefLink href="/collections">{t('Collections')}</HrefLink>
         </LightNavigationItem>
       ) : null}
-      {user ? (
+      {showDashboard ? (
         <LightNavigationItem $active={history.location.pathname === '/dashboard'}>
           <HrefLink href="/dashboard">{t('User dashboard')}</HrefLink>
         </LightNavigationItem>
       ) : null}
-      {navigation.map(nav => {
+      {showNavLinks && navigation.map(nav => {
         return (
           <LightNavigationItem key={nav.id} $active={history.location.pathname === nav.path}>
             <HrefLink href={nav.path}>

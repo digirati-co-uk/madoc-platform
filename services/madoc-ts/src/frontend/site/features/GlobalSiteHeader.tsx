@@ -9,6 +9,7 @@ import { useSite } from '../../shared/hooks/use-site';
 import { HrefLink } from '../../shared/utility/href-link';
 import { themeVariable } from '../../themes/helpers/themeVariable';
 import { maxWidth } from '../variables/global';
+import { useSiteConfiguration } from './SiteConfigurationContext';
 
 const headerBackground = themeVariable('header', 'headerBackground', {
   default: '#fff',
@@ -120,6 +121,9 @@ export const GlobalSiteHeader: React.FC<{ menu?: any }> = ({ menu }) => {
   const history = useHistory();
   const [query, setQuery] = useState('');
   const { t } = useTranslation();
+  const { project } = useSiteConfiguration();
+  const showSiteTitle = !project.headerOptions?.hideSiteTitle;
+  const showSearch = !project.headerOptions?.hideSearchBar;
 
   return (
     <>
@@ -128,33 +132,37 @@ export const GlobalSiteHeader: React.FC<{ menu?: any }> = ({ menu }) => {
       <SiteHeaderBackground>
         <SiteHeader>
           <SiteDetails>
-            <SiteTitle as={HrefLink} href={`/`} className="site-title">
-              <h1>
-                <span className="title">{site.title}</span>
-              </h1>
-            </SiteTitle>
+            {showSiteTitle &&
+              <SiteTitle as={HrefLink} href={`/`} className="site-title">
+                <h1>
+                  <span className="title">{site.title}</span>
+                </h1>
+              </SiteTitle>
+            }
             <SiteMenuContainer>{menu}</SiteMenuContainer>
           </SiteDetails>
-          <GlobalSearchContainer>
-            <GlobalSearchForm
-              onSubmit={e => {
-                e.preventDefault();
-                history.push(`/search?fulltext=${query}`);
-                setQuery('');
-              }}
-            >
-              <GlobalSearchInput
-                type="text"
-                name="fulltext"
-                value={query}
-                onChange={e => {
-                  setQuery(e.target.value);
+          {showSearch &&
+            <GlobalSearchContainer>
+              <GlobalSearchForm
+                onSubmit={e => {
+                  e.preventDefault();
+                  history.push(`/search?fulltext=${query}`);
+                  setQuery('');
                 }}
-                placeholder={t('Search')}
-              />
-              <GlobalSearchButton type="submit">{t('Search')}</GlobalSearchButton>
-            </GlobalSearchForm>
-          </GlobalSearchContainer>
+              >
+                <GlobalSearchInput
+                  type="text"
+                  name="fulltext"
+                  value={query}
+                  onChange={e => {
+                    setQuery(e.target.value);
+                  }}
+                  placeholder={t('Search')}
+                />
+                <GlobalSearchButton type="submit">{t('Search')}</GlobalSearchButton>
+              </GlobalSearchForm>
+            </GlobalSearchContainer>
+          }
         </SiteHeader>
       </SiteHeaderBackground>
     </>
