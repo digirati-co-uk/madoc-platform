@@ -38,6 +38,7 @@ describe('document to default structure', () => {
         "modelPageOptions",
         "projectPageOptions",
         "manifestPageOptions",
+        "headerOptions",
       ]
     `);
   });
