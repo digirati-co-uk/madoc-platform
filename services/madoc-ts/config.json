@@ -56,6 +56,10 @@
       "hideDashboardLink": false,
       "hidePageNavLinks": false,
       "hideSearchBar": false
+    },
+    "searchOptions": {
+      "nonLatinFulltext": false,
+      "searchMultipleFields": false
     }
   },
   "permissions": {

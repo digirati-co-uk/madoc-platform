@@ -123,6 +123,12 @@ export type SearchQuery = {
 
   /** single madoc id to search within  */
   madoc_id?: string;
+
+  /** If True, this signals to the API that non-Latin text (such as Chinese, Korean, Thai, etc) can be queried using fulltext (for example when the Postgres instance has support for zhparser or similar). This should largely be left un-set, as typically, this support will NOT be present. */
+  non_latin_fulltext?: boolean;
+
+  /** If True, this signals to the API that rather than parsing fulltext queries (using PostgreSQL `ts_query`) and matching against individual metadata fields, we should search across multiple fields for partial matches. Some support for stemming is lost, but more flexibility in matching is gained.   */
+  search_multiple_fields?: boolean;
 };
 
 /**
