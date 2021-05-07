@@ -13,6 +13,7 @@ export const Heading3 = styled.h3<{ $margin?: boolean }>`
     `}
     
   & > a {
+    text-decoration: none;
     transition: color 0.3s;
     &:hover {
       color: #3579f6;

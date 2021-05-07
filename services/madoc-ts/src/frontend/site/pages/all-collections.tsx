@@ -14,6 +14,7 @@ import { HrefLink } from '../../shared/utility/href-link';
 import { CollectionPagination } from '../features/CollectionPagination';
 import { useCollectionList } from '../hooks/use-collection-list';
 import { useRelativeLinks } from '../hooks/use-relative-links';
+import styled from 'styled-components';
 
 export const AllCollections: React.FC = () => {
   const { resolvedData: data } = useCollectionList();
@@ -28,7 +29,7 @@ export const AllCollections: React.FC = () => {
       <CollectionPagination />
       {data?.collections.map(collection => {
         return (
-          <div key={collection.id} style={{ marginBottom: 80 }}>
+          <CollectionContainer key={collection.id}>
             <Heading3>
               <LocaleString
                 as={Link}
@@ -90,6 +91,7 @@ export const AllCollections: React.FC = () => {
             )}
             <ButtonRow>
               <Button
+                $primary
                 as={HrefLink}
                 href={createLink({
                   collectionId: collection.id,
@@ -98,10 +100,16 @@ export const AllCollections: React.FC = () => {
                 {t('view collection')}
               </Button>
             </ButtonRow>
-          </div>
+          </CollectionContainer>
         );
       })}
       <CollectionPagination />
     </>
   );
 };
+
+const CollectionContainer = styled.div`
+  background: #eee;
+  margin-bottom: 20px;
+  padding: 20px 20px 40px;
+`;
