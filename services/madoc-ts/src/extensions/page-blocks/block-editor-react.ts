@@ -1,6 +1,6 @@
-import { captureModelShorthand } from '@capture-models/helpers';
 import { BaseField } from '@capture-models/types';
 import React from 'react';
+import { blockConfigFor } from '../../frontend/shared/plugins/external/block-config-for';
 import { EditorialContext } from '../../types/schemas/site-page';
 import { PageBlockDefinition, PageBlockEditor } from './extension';
 import mitt from 'mitt';
@@ -23,24 +23,9 @@ export function blockEditorFor<Props, MappedProps = Props>(
     customEditor?: PageBlockEditor;
   }
 ): PageBlockDefinition<any, any, any, any> {
-  const definition: PageBlockDefinition<any, any, any, any> = {
-    type: model.type,
-    label: model.label,
-    model: captureModelShorthand(model.editor),
-    render: function PageBlock(props) {
-      return React.createElement(Component, model.mapToProps ? model.mapToProps(props) : props);
-    },
-    defaultData: model.defaultProps || {},
-    renderType: 'react',
-    internal: model.internal,
-    requiredContext: model.requiredContext,
-    anyContext: model.anyContext,
-    customEditor: model.customEditor,
-  };
+  const definition = blockConfigFor(Component, model);
 
   reactBlockEmitter.emit('block', definition);
-
-  (Component as any)[Symbol.for('slot-model')] = definition;
 
   return definition;
 }

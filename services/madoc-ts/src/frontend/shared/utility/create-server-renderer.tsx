@@ -10,16 +10,25 @@ import { api } from '../../../gateway/api.server';
 import { ListLocalisationsResponse } from '../../../routes/admin/localisation';
 import { EditorialContext } from '../../../types/schemas/site-page';
 import { PublicSite } from '../../../utility/omeka-api';
-import { RouteContext } from '../../site/hooks/use-route-context';
+import { PluginManager } from '../plugins/plugin-manager';
 import { queryConfig } from './query-config';
 import { matchUniversalRoutes } from './server-utils';
 import { renderToString } from 'react-dom/server';
 import { I18nextProvider } from 'react-i18next';
 import { StaticRouter } from 'react-router-dom';
 import React from 'react';
-import { UniversalRoute } from '../../types';
+import { CreateRouteType, UniversalRoute } from '../../types';
 import { Helmet } from 'react-helmet';
 import localeCodes from 'locale-codes';
+
+function makeRoutes(routeComponents: any) {
+  return [
+    {
+      ...routeComponents.baseRoute,
+      routes: [...routeComponents.routes, routeComponents.fallback],
+    },
+  ];
+}
 
 export function createServerRenderer(
   RootApplication: React.FC<{
@@ -31,10 +40,13 @@ export function createServerRenderer(
     defaultLocale: string;
     navigationOptions?: any;
   }>,
-  routes: UniversalRoute[],
+  createRoutes: ((components: any) => CreateRouteType) | UniversalRoute[],
+  components: any,
   apiGateway: string,
   extraConfig: Partial<ReactQueryConfig> = {}
 ) {
+  const defaultRoutes = Array.isArray(createRoutes) ? createRoutes : makeRoutes(createRoutes(components));
+
   return async function render({
     url,
     basename,
@@ -46,6 +58,7 @@ export function createServerRenderer(
     user,
     navigationOptions,
     getSlots,
+    pluginManager,
   }: {
     url: string;
     basename: string;
@@ -60,6 +73,7 @@ export function createServerRenderer(
       enableCollections: boolean;
     };
     getSlots?: (ctx: EditorialContext) => Promise<any> | any;
+    pluginManager?: PluginManager;
   }) {
     const prefetchCache = makeQueryCache();
     const sheet = new ServerStyleSheet(); // <-- creating out stylesheet
@@ -68,6 +82,12 @@ export function createServerRenderer(
       jwt,
       publicSiteSlug: siteSlug,
     });
+
+    const routes =
+      Array.isArray(createRoutes) || !pluginManager
+        ? defaultRoutes
+        : pluginManager.makeRoutes(createRoutes(pluginManager.hookComponents(components)));
+
     const context: StaticRouterContext = {};
     const [urlPath, urlQuery] = url.split('?');
     const path = urlPath.slice(urlPath.indexOf(basename) + basename.length);

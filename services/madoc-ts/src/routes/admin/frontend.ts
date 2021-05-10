@@ -99,6 +99,7 @@ export const siteFrontend: RouteMiddleware = async context => {
       siteSlug: site.slug,
       site: site,
       siteLocales,
+      pluginManager: context.pluginManager,
       getSlots: async (ctx: EditorialContext) => {
         const parsedId = ctx.project ? parseProjectId(ctx.project) : undefined;
         const project = parsedId ? await context.connection.one(getProject(parsedId, site.id)) : undefined;

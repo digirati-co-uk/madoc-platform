@@ -1,3 +1,4 @@
+import { acceptNewDevelopmentBundle, developmentPlugin } from './routes/admin/development-plugin';
 import { exportSite } from './routes/admin/export-site';
 import { getMetadataKeys } from './routes/admin/get-metadata-keys';
 import { getMetadataValues } from './routes/admin/get-metadata-values';
@@ -16,6 +17,7 @@ import { deletePage } from './routes/content/delete-page';
 import { deleteSlot } from './routes/content/delete-slot';
 import { getBlock } from './routes/content/get-block';
 import { getPage } from './routes/content/get-page';
+import { linkAutocomplete } from './routes/content/link-autocomplete';
 import { resolveSlots } from './routes/content/resolve-slots';
 import { getCanvasReference } from './routes/iiif/canvases/get-canvas-reference';
 import { createMedia } from './routes/media/create-media';
@@ -55,7 +57,7 @@ import { importCollection, importManifest, importManifestOcr } from './routes/ii
 import { loginPage } from './routes/user/login';
 import { getSiteScopes, saveSiteScopes } from './routes/admin/site-scopes';
 import { logout } from './routes/user/logout';
-import { frontendBundles } from './routes/assets/frontend-bundles';
+import { frontendBundles, pluginBundles } from './routes/assets/frontend-bundles';
 import { adminFrontend, siteFrontend } from './routes/admin/frontend';
 import { createCollection } from './routes/iiif/collections/create-collection';
 import { deleteCollection } from './routes/iiif/collections/delete-collection';
@@ -273,6 +275,7 @@ export const router = new TypedRouter({
   'delete-page': [TypedRouter.DELETE, '/api/madoc/pages/root/:paths*', deletePage],
   'update-page': [TypedRouter.PUT, '/api/madoc/pages/root/:paths*', updatePage],
   'get-all-pages': [TypedRouter.GET, '/api/madoc/pages', getAllPages],
+  'get-link-autocomplete': [TypedRouter.GET, '/api/madoc/links/autocomplete', linkAutocomplete],
 
   // Slots
   'create-slot': [TypedRouter.POST, '/api/madoc/slots', createSlot],
@@ -293,6 +296,11 @@ export const router = new TypedRouter({
   'post-login': [TypedRouter.POST, '/s/:slug/madoc/login', loginPage],
   'get-logout': [TypedRouter.GET, '/s/:slug/madoc/logout', logout],
   'refresh-login': [TypedRouter.POST, '/s/:slug/madoc/auth/refresh', refreshToken],
+  'asset-plugin-bundles': [
+    TypedRouter.GET,
+    '/s/:slug/madoc/assets/plugins/:pluginId/:revisionId/plugin.js',
+    pluginBundles,
+  ],
   'assets-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleId.bundle.js', frontendBundles],
   'assets-sub-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleName', frontendBundles],
   'get-user-details': [TypedRouter.GET, '/s/:slug/madoc/api/me', userDetails],
@@ -356,6 +364,10 @@ export const router = new TypedRouter({
   // To be worked into API calling methods
   'manifest-search': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/search/1.0', searchManifest],
   'manifest-export': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/export/source', exportManifest],
+
+  // Development
+  'development-plugin': [TypedRouter.POST, '/api/madoc/development/plugin-token', developmentPlugin],
+  'accept-development-plugin': [TypedRouter.POST, '/api/madoc/development/dev-bundle', acceptNewDevelopmentBundle],
 
   // PAT
   'personal-access-token': [TypedRouter.POST, '/api/madoc/access-token', personalAccessToken],

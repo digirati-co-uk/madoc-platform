@@ -1,4 +1,5 @@
 import { i18n } from 'i18next';
+import { PluginManager } from '../frontend/shared/plugins/plugin-manager';
 import { MediaRepository } from '../repository/media-repository';
 import { PageBlocksRepository } from '../repository/page-blocks-repository';
 import { CronJobs } from '../utility/cron-jobs';
@@ -18,6 +19,7 @@ export interface ApplicationContext {
   pageBlocks: PageBlocksRepository;
   media: MediaRepository;
   omeka: OmekaApi;
+  pluginManager: PluginManager;
   cron: CronJobs;
   ajv: Ajv;
   omekaPage?: string | ((token: string) => Promise<string | undefined>) | ((token: string) => undefined | string);

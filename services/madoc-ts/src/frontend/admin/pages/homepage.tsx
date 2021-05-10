@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSite } from '../../shared/hooks/use-site';
 import { UniversalComponent } from '../../types';
 import styled from 'styled-components';

@@ -231,7 +231,12 @@ export class PageBlocksRepository extends BaseRepository {
   }
 
   async getSlotsByContext(ctx: ServerEditorialContext, siteId: number) {
+    const slotMap: { [name: string]: SiteSlot } = {};
     const query = getContextualSlots(ctx, siteId);
+
+    if (!query) {
+      return slotMap;
+    }
 
     const results = await this.connection.any(query);
 
@@ -239,7 +244,6 @@ export class PageBlocksRepository extends BaseRepository {
 
     const slotIds = Object.keys(page.slots);
 
-    const slotMap: { [name: string]: SiteSlot } = {};
     for (const slotId of slotIds || []) {
       const slot = page.slots[slotId];
       if (!slot) continue;

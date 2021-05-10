@@ -8,6 +8,8 @@ export type UniversalRoute = {
   routes?: UniversalRoute[];
 };
 
+export type CreateRouteType = {};
+
 export type UniversalComponent<
   Definition extends {
     data?: any;

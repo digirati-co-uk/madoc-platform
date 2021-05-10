@@ -14,16 +14,18 @@ import { I18nextProvider } from 'react-i18next';
 import { BrowserRouter } from 'react-router-dom';
 import { api } from '../../../gateway/api.browser';
 import React, { Suspense } from 'react';
-import { UniversalRoute } from '../../types';
+import { CreateRouteType, UniversalRoute } from '../../types';
 import { ErrorPage } from '../components/NotFoundPage';
 import { Spinner } from '../icons/Spinner';
+import { PluginManager } from '../plugins/plugin-manager';
 import { ErrorBoundary } from './error-boundary';
 import { queryConfig } from './query-config';
 import { ReactQueryDevtools } from 'react-query-devtools';
 
-export function renderClient(
+export async function renderClient(
   Component: React.FC<any>,
-  routes: UniversalRoute[],
+  createRoutes: UniversalRoute[] | ((components: any) => CreateRouteType),
+  components: any,
   requireJwt = true,
   extraConfig: ReactQueryConfig = {}
 ) {
@@ -32,6 +34,27 @@ export function renderClient(
   const dehydratedSiteEl = document.getElementById('react-omeka');
   const dehydratedState = dehydratedStateEl ? JSON.parse(dehydratedStateEl.innerText) : {};
   const dehydratedSite = dehydratedSiteEl ? JSON.parse(dehydratedSiteEl.innerText) : {};
+
+  const remotePlugin = await fetch(
+    '/s/default/madoc/assets/plugins/my-plugin/3ee99c02fb31792f0c8a947153b942519694f64c/plugin.js',
+    {
+      cache: 'force-cache',
+    }
+  )
+    .then(res => res.text())
+    .then(code => {
+      const module = new Function(`
+          ${code};
+          return this['madoc-example-plugin'];
+        `);
+
+      return module();
+    });
+
+  const pluginManager = new PluginManager([remotePlugin as any]);
+  const routes = Array.isArray(createRoutes)
+    ? createRoutes
+    : pluginManager.makeRoutes(createRoutes(pluginManager.hookComponents(components)));
 
   const [, slug] = window.location.pathname.match(/s\/([^/]*)/) as string[];
   const jwt = cookies.get(`madoc/${slug}`) || undefined;
