@@ -163,7 +163,7 @@ export const WorkflowBar: React.FC<WorkflowBarProps> = ({ actions = {}, states =
                     <Button onClick={() => close()}>{t('Cancel')}</Button>
                     {onTooDifficult ? (
                       <Button
-                        $primary
+                        $error
                         onClick={() => {
                           onTooDifficult();
                         }}
@@ -175,7 +175,9 @@ export const WorkflowBar: React.FC<WorkflowBarProps> = ({ actions = {}, states =
                 );
               }}
             >
-              <Button disabled={!canClickTooDifficult}>Too difficult</Button>
+              <Button $error disabled={!canClickTooDifficult}>
+                Too difficult
+              </Button>
             </ModalButton>
             <div style={{ width: 300 }}>
               <SubtaskProgress

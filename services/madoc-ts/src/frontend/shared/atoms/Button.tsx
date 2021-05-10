@@ -21,6 +21,7 @@ export const ButtonIcon = styled.span`
 export const Button = styled.button<{
   $primary?: boolean;
   $success?: boolean;
+  $error?: boolean;
   $inlineInput?: boolean;
   $large?: boolean;
 }>`
@@ -128,7 +129,15 @@ export const Button = styled.button<{
       border: 1px solid #4dac22;
 
       &:active {
+        background: #4dac22;
+        border-color: #4dac22;
         box-shadow: inset 0 2px 8px 0 rgb(56, 155, 39);
+      }
+
+      &:focus,
+      &:focus:hover {
+        background: #4dac22;
+        border-color: #4dac22;
       }
 
       &:link,
@@ -149,6 +158,49 @@ export const Button = styled.button<{
           background: #4dac22;
           border-color: #4dac22;
           color: #fff;
+        }
+      }
+    `}
+  
+  ${props =>
+    props.$error &&
+    css`
+      background: #fff;
+      color: #a90e21;
+      border: 1px solid #a90e21;
+
+      &:active {
+        background: #fff;
+        border-color: #a90e21;
+        box-shadow: inset 0 2px 8px 0 #ffd6dd;
+      }
+
+      &:focus,
+      &:focus:hover {
+        color: #a90e21;
+        background: #fff;
+        border-color: #a90e21;
+      }
+
+      &:link,
+      &:visited {
+        color: #a90e21;
+      }
+
+      &:hover {
+        background: #fff;
+        color: #a90e21;
+        border-color: #a90e21;
+      }
+
+      &:disabled {
+        opacity: 0.9;
+        cursor: not-allowed;
+
+        &:hover {
+          background: #fff;
+          border-color: #a90e21;
+          color: #a90e21;
         }
       }
     `}
