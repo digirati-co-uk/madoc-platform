@@ -79,6 +79,7 @@ export function getSingleCollection({
 
       where single_collection.site_id = ${siteId}
         and single_collection.resource_id = ${collectionId}
+        and single_collection.resource_type = 'collection'
       ${
         type
           ? type === 'collection'

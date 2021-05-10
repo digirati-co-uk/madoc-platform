@@ -51,6 +51,8 @@ export function getSingleManifest({
                          on manifest_count.resource_id = ${manifestId} and manifest_count.site_id = ${siteId}
       where manifest.resource_id = ${manifestId}
         and manifest.site_id = ${siteId}
+        and manifest.resource_type = 'manifest' 
+        and canvas_resources.type = 'canvas'
       order by canvas_links.item_index
       limit ${perPage}
       offset ${offset}
