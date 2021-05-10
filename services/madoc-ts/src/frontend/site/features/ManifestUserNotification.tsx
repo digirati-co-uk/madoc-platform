@@ -65,6 +65,11 @@ export const ManifestUserNotification: React.FC = () => {
   if (inProgress.length) {
     const inProgressTask = inProgress[0];
 
+    const temporaryHold = userManifestTask && userManifestTask.status === 0;
+    if (temporaryHold) {
+      return null;
+    }
+
     return (
       <InfoMessage>
         {t('You are currently working on this manifest')}{' '}
