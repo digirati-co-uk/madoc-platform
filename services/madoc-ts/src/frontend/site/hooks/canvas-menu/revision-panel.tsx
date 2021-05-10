@@ -14,47 +14,51 @@ import { PersonIcon } from '../../../shared/icons/PersonIcon';
 import { useCanvasUserTasks } from '../use-canvas-user-tasks';
 import { CanvasMenuHook } from './types';
 
-const ViewRevisions = memo(() => {
-  const { t } = useTranslation();
-  const revisions = useRevisionList({ filterCurrentView: false });
-  const { updatedAt } = useCanvasUserTasks();
+const ViewRevisions = memo(
+  ({ totalRevisions }: { totalRevisions?: number }) => {
+    const { t } = useTranslation();
+    const revisions = useRevisionList({ filterCurrentView: false });
+    const { updatedAt } = useCanvasUserTasks();
 
-  const [myUnpublished, setMyUnpublished] = useState<RevisionRequest[]>([]);
-  const [mySubmitted, setMySubmitted] = useState<RevisionRequest[]>([]);
+    const [myUnpublished, setMyUnpublished] = useState<RevisionRequest[]>([]);
+    const [mySubmitted, setMySubmitted] = useState<RevisionRequest[]>([]);
 
-  useEffect(() => {
-    setMySubmitted([]);
-    setMyUnpublished([]);
-  }, [updatedAt]);
+    useEffect(() => {
+      setMySubmitted([]);
+      setMyUnpublished([]);
+    }, [updatedAt]);
 
-  useEffect(() => {
-    if (revisions.myUnpublished.length !== myUnpublished.length) {
-      setMyUnpublished(revisions.myUnpublished);
+    useEffect(() => {
+      if (revisions.myUnpublished.length !== myUnpublished.length) {
+        setMyUnpublished(revisions.myUnpublished);
+      }
+    }, [myUnpublished.length, revisions.myUnpublished]);
+
+    useEffect(() => {
+      if (revisions.mySubmitted.length !== mySubmitted.length) {
+        setMySubmitted(revisions.mySubmitted);
+      }
+    }, [mySubmitted.length, revisions.mySubmitted]);
+
+    if (myUnpublished.length === 0 && mySubmitted.length === 0) {
+      return <EmptyState>{t('No submissions yet')}</EmptyState>;
     }
-  }, [myUnpublished.length, revisions.myUnpublished]);
 
-  useEffect(() => {
-    if (revisions.mySubmitted.length !== mySubmitted.length) {
-      setMySubmitted(revisions.mySubmitted);
-    }
-  }, [mySubmitted.length, revisions.mySubmitted]);
+    return (
+      <div style={{ padding: 10 }}>
+        <RevisionList revisions={myUnpublished} editable />
 
-  if (myUnpublished.length === 0 && mySubmitted.length === 0) {
-    return <EmptyState>{t('No submissions yet')}</EmptyState>;
-  }
-
-  return (
-    <div style={{ padding: 10 }}>
-      <RevisionList revisions={myUnpublished} editable />
-
-      <RevisionList revisions={mySubmitted} />
-    </div>
-  );
-});
+        <RevisionList revisions={mySubmitted} />
+      </div>
+    );
+  },
+  (a, b) => a.totalRevisions === b.totalRevisions
+);
 
 export function useRevisionPanel(): CanvasMenuHook {
   const { t } = useTranslation();
   const store = Revisions.useStore();
+  const unsaved = Revisions.useStoreState(s => s.unsavedRevisionIds);
   const user = useUser();
   const [totalRevisions, setTotalRevisions] = useState<number | undefined>();
   const [notifications, setNotifications] = useState<number | undefined>();
@@ -81,12 +85,12 @@ export function useRevisionPanel(): CanvasMenuHook {
         setNotifications(currentUserSubmissions.length);
       }
     }
-  }, [totalRevisions, store, user]);
+  }, [totalRevisions, unsaved, store, user]);
 
   return {
     id: 'revision-panel',
     isHidden: !store,
-    content: <ViewRevisions />,
+    content: <ViewRevisions totalRevisions={totalRevisions} />,
     icon: <PersonIcon />,
     label: t('My Contributions', { count: notifications }),
     isLoaded: true,
