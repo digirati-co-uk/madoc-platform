@@ -46,7 +46,7 @@ export const ViewManifest: React.FC<{
 }> = ({ manifest, pagination, manifestSubjects }) => {
   const { t } = useTranslation();
   const createLink = useRelativeLinks();
-  const { filter, listing } = useLocationQuery();
+  const { filter, listing, firstModel } = useLocationQuery();
   const { showWarning, showNavigationContent } = usePreventCanvasNavigation();
   const config = useSiteConfiguration();
   const createLocaleString = useCreateLocaleString();
@@ -63,6 +63,10 @@ export const ViewManifest: React.FC<{
 
   if (!listing && config.project.skipManifestListingPage && manifest.items.length) {
     return <Redirect to={createLink({ canvasId: manifest.items[0].id })} />;
+  }
+
+  if (firstModel) {
+    return <Redirect to={createLink({ canvasId: manifest.items[0].id, subRoute: 'model' })} />;
   }
 
   return (
