@@ -75,6 +75,7 @@ export const TranscriberModeWorkflowBar: React.FC = () => {
       actions={{
         async onUnusable(newValue) {
           await markUnusable(newValue || false);
+          await refetchManifest();
           // Mark current canvas task as complete, with state unusable=true
           // Set states to loading until mutation is complete.
           // Refresh task
