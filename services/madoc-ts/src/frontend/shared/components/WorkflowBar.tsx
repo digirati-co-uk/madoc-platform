@@ -179,6 +179,7 @@ export const WorkflowBar: React.FC<WorkflowBarProps> = ({ actions = {}, states =
             </ModalButton>
             <div style={{ width: 300 }}>
               <SubtaskProgress
+                hideComplete
                 progress={statistics.progress}
                 total={statistics.total}
                 done={statistics.done}
