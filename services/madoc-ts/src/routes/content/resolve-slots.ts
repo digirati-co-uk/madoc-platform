@@ -1,10 +1,14 @@
 import { getProject } from '../../database/queries/project-queries';
 import { RouteMiddleware } from '../../types/route-middleware';
+import { NotFound } from '../../utility/errors/not-found';
 import { parseProjectId } from '../../utility/parse-project-id';
-import { optionalUserWithScope } from '../../utility/user-with-scope';
 
 export const resolveSlots: RouteMiddleware = async context => {
-  const { siteId } = optionalUserWithScope(context, ['site.read']);
+  const site = await context.omeka.getSiteIdBySlug(context.params.slug);
+
+  if (!site) {
+    throw new NotFound('not found');
+  }
 
   const query = context.query;
 
@@ -20,11 +24,11 @@ export const resolveSlots: RouteMiddleware = async context => {
   };
 
   const parsedId = context.query.project ? parseProjectId(context.query.project) : undefined;
-  const project = parsedId ? await context.connection.one(getProject(parsedId, siteId)) : undefined;
+  const project = parsedId ? await context.connection.one(getProject(parsedId, site.id)) : undefined;
   if (project) {
     slotCtx.project = project.id;
   }
 
-  context.response.body = await context.pageBlocks.getSlotsByContext(slotCtx, siteId);
+  context.response.body = await context.pageBlocks.getSlotsByContext(slotCtx, site.id);
   context.response.status = 200;
 };
