@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { SiteContainer, SiteContainerBackground } from '../../../shared/atoms/SiteContainer';
 import { UserBar } from '../../../shared/components/UserBar';
 import { useSite, useUser } from '../../../shared/hooks/use-site';
+import { ErrorBoundary } from '../../../shared/utility/error-boundary';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { UniversalComponent } from '../../../types';
@@ -43,7 +44,7 @@ export const RootLoader: UniversalComponent<RootLoaderType> = createUniversalCom
         <GlobalSiteHeader menu={<GlobalSiteNavigation />} />
         <SiteContainerBackground>
           <SiteContainer lang={i18n.language} dir={viewingDirection}>
-            {renderUniversalRoutes(route.routes)}
+            <ErrorBoundary>{renderUniversalRoutes(route.routes)}</ErrorBoundary>
           </SiteContainer>
         </SiteContainerBackground>
         <GlobalFooter />

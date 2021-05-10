@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Button } from '../atoms/Button';
 import { ErrorMessage } from '../atoms/ErrorMessage';
 import { WidePageWrapper } from '../atoms/WidePage';
@@ -8,7 +9,7 @@ export const NotFoundPage: React.FC<{ error?: any }> = () => {
   return <h1>Not found</h1>;
 };
 
-export const ErrorPage: React.FC<{ error?: Error }> = props => {
+export const ErrorPage: React.FC<{ error?: Error; resetError?: () => void }> = props => {
   const [trace, setTrace] = useState<string[]>([]);
 
   useEffect(() => {

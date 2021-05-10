@@ -6,6 +6,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { useCurrentAdminPages } from '../../site/hooks/use-current-admin-pages';
 import { useSite } from '../hooks/use-site';
+import { ErrorBoundary } from '../utility/error-boundary';
 import { LocaleString, useLocaleString } from './LocaleString';
 import styled, { css } from 'styled-components';
 
@@ -122,7 +123,11 @@ export const BreadcrumbContext: React.FC<BreadcrumbContextType> = ({
     return newCtx;
   }, [parentCtx, manifest, project, collection, canvas, task, subpage]);
 
-  return <BreadcrumbReactContext.Provider value={ctx}>{children}</BreadcrumbReactContext.Provider>;
+  return (
+    <ErrorBoundary>
+      <BreadcrumbReactContext.Provider value={ctx}>{children}</BreadcrumbReactContext.Provider>
+    </ErrorBoundary>
+  );
 };
 
 export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ currentPage }) => {
