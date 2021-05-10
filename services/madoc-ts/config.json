@@ -28,6 +28,8 @@
     "showSearchFacetCount": false,
     "miradorCanvasPage": false,
     "contributionMode": "annotation",
+    "shortExpiryTime": "10",
+    "longExpiryTime": "1440",
     "modelPageOptions": {
       "fixedTranscriptionBar": false,
       "preventContributionAfterRejection": false,

@@ -156,6 +156,16 @@ export const siteConfigurationModel: {
       { value: 'transcription', text: 'Transcription mode' },
     ],
   },
+  shortExpiryTime: {
+    label: 'Short expiry time (minutes)',
+    description: 'The number of minutes after which to expire an un-started manifest task (default = 10 mins)',
+    type: 'text-field',
+  },
+  longExpiryTime: {
+    label: 'Long expiry time (minutes)',
+    description: 'The number of minutes after which to expire an accepted manifest task (default = 1440 mins = 1 day)',
+    type: 'text-field',
+  },
   modelPageOptions: {
     label: 'Contribution page',
     description: 'View options for the contributions page',

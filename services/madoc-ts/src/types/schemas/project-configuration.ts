@@ -25,6 +25,8 @@ export type ProjectConfiguration = {
   showSearchFacetCount?: boolean;
   miradorCanvasPage?: boolean;
   contributionMode?: 'transcription' | 'annotation';
+  shortExpiryTime?: string;
+  longExpiryTime?: string;
   modelPageOptions?: {
     fixedTranscriptionBar?: boolean;
     preventContributionAfterRejection?: boolean;
