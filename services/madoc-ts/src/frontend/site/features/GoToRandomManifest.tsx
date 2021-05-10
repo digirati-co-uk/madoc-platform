@@ -9,7 +9,12 @@ import { useGetRandomManifest } from '../hooks/use-get-random-manifest';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
 
-export const GoToRandomManifest: React.FC<{ label?: InternationalString }> = ({ label }) => {
+export const GoToRandomManifest: React.FC<{
+  label?: InternationalString;
+  navigateToModel?: boolean;
+  $primary?: boolean;
+  $large?: boolean;
+}> = ({ label, $large, navigateToModel, $primary }) => {
   const { projectId } = useRouteContext();
   const { t } = useTranslation();
   const history = useHistory();
@@ -24,11 +29,18 @@ export const GoToRandomManifest: React.FC<{ label?: InternationalString }> = ({ 
 
   return (
     <Button
+      $primary={$primary}
+      $large={$large}
       disabled={error}
       onClick={() => {
         getRandomManifest().then(resp => {
-          if (resp) {
-            history.push(createLink({ manifestId: resp.manifest }));
+          if (resp && resp.manifest) {
+            history.push(
+              createLink({
+                manifestId: resp.manifest,
+                query: navigateToModel ? { firstModel: true } : undefined,
+              })
+            );
           } else {
             setError(true);
           }

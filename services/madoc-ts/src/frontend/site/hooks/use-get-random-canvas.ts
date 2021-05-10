@@ -7,11 +7,15 @@ export function useGetRandomCanvas() {
   const api = useApi();
   const [getRandomCanvas, randomCanvas] = useMutation(async () => {
     if (projectId) {
-      return await api.randomlyAssignedCanvas(projectId, {
-        manifestId,
-        collectionId,
-        claim: false,
-      });
+      try {
+        return await api.randomlyAssignedCanvas(projectId, {
+          manifestId,
+          collectionId,
+          claim: false,
+        });
+      } catch (err) {
+        return undefined;
+      }
     }
   });
 
