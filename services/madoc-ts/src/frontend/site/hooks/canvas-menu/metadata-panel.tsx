@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { MetaDataDisplay } from '../../../shared/components/MetaDataDisplay';
 import { useData, usePaginatedData } from '../../../shared/hooks/use-data';
 import { InfoIcon } from '../../../shared/icons/InfoIcon';
+import { CanvasMetadata } from '../../features/CanvasMetadata';
 import { ManifestMetadata } from '../../features/ManifestMetadata';
 import { CanvasLoader } from '../../pages/loaders/canvas-loader';
 import { ManifestLoader } from '../../pages/loaders/manifest-loader';
@@ -18,7 +19,7 @@ export function useMetadataMenu(): CanvasMenuHook {
 
   const content = (
     <>
-      {canvas && canvas.metadata ? <MetaDataDisplay variation="list" metadata={canvas.metadata} /> : null}
+      {canvas && canvas.metadata ? <CanvasMetadata compact /> : null}
       <ManifestMetadata compact showEmptyMessage />
     </>
   );
