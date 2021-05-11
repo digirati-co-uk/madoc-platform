@@ -66,6 +66,7 @@ const UserBarUserDetails = styled.span`
 const UserBarLogout = styled.span`
   font-size: 13px;
   a {
+    margin-left: 10px;
     color: #fff;
     text-decoration: underline;
   }
@@ -162,6 +163,7 @@ export const UserBar: React.FC<{
           </GlobalHeaderMenuContainer>
         ) : (
           <UserBarLogout>
+            <a href={`/s/${site.slug}/register`}>{t('Register')}</a>
             <a href={`/s/${site.slug}/madoc/login?${stringify({ redirect })}`}>{t('Log in')}</a>
           </UserBarLogout>
         )}
