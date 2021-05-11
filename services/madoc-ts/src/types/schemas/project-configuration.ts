@@ -15,16 +15,21 @@ export type ProjectConfiguration = {
   priorityRandomness?: boolean;
   skipAutomaticOCRImport?: boolean;
   defaultEditorOrientation: 'vertical' | 'horizontal';
-  skipManifestListingPage?: boolean;
-  hideStatistics?: boolean;
-  hideProjectCollectionNavigation?: boolean;
-  hideProjectManifestNavigation?: boolean;
+  skipManifestListingPage?: boolean; // @todo move to manifest page options
+  hideStatistics?: boolean; // @todo move to project page options
+  hideProjectCollectionNavigation?: boolean; // @todo move to project page options
+  hideProjectManifestNavigation?: boolean; // @todo move to project page options
   searchStrategy?: 'string';
   hideManifestMetadataOnCanvas?: boolean;
   hideCanvasThumbnailNavigation?: boolean;
-  showSearchFacetCount?: boolean;
+  showSearchFacetCount?: boolean; // @todo move to searchOptions
   miradorCanvasPage?: boolean;
   contributionMode?: 'transcription' | 'annotation';
+  // New search options - need to migrate others to this.
+  searchOptions?: {
+    nonLatinFulltext?: boolean;
+    searchMultipleFields?: boolean;
+  };
   shortExpiryTime?: string;
   longExpiryTime?: string;
   modelPageOptions?: {
@@ -55,5 +60,5 @@ export type ProjectConfiguration = {
     hideDashboardLink?: boolean;
     hidePageNavLinks?: boolean;
     hideSearchBar?: boolean;
-  }
+  };
 };

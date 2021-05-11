@@ -277,5 +277,20 @@ export const siteConfigurationModel: {
         value: 'hideSearchBar',
       },
     ],
-  }
+  },
+  searchOptions: {
+    label: 'Search options',
+    description: 'View and query options for search pages',
+    type: 'checkbox-list-field',
+    options: [
+      {
+        label: 'Non-latin fulltext',
+        value: 'nonLatinFulltext',
+      },
+      {
+        label: 'Search multiple fields',
+        value: 'searchMultipleFields',
+      },
+    ],
+  },
 };
