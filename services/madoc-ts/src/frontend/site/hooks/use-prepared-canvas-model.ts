@@ -3,6 +3,7 @@ import { useCanvasModel } from './use-canvas-model';
 import { useClaimManifest } from './use-claim-manifest';
 import { useManifestTask } from './use-manifest-task';
 import { usePrepareContribution } from './use-prepare-contribution';
+import { useProjectStatus } from './use-project-status';
 import { useRouteContext } from './use-route-context';
 
 // Here we have 2 process
@@ -17,6 +18,7 @@ export function usePreparedCanvasModel() {
   const modelResponse = useCanvasModel();
   const { isManifestComplete, isFetched: manifestTaskFetched } = useManifestTask();
   const [prepare, { isLoading }] = usePrepareContribution();
+  const projectStatus = useProjectStatus();
 
   const manifestClaim = useClaimManifest();
 
@@ -24,10 +26,10 @@ export function usePreparedCanvasModel() {
   const isFetched = modelResponse.isFetched && manifestTaskFetched;
   const preparationFailed = hasPrepared && !model;
   const isPreparing = isLoading;
-  const shouldAutoPrepare = !isManifestComplete && !manifestClaim.isClaimRequired; // @todo config.
+  const shouldAutoPrepare = projectStatus.isPreparing || (!isManifestComplete && !manifestClaim.isClaimRequired); // @todo config.
 
   useEffect(() => {
-    if (manifestClaim.shouldAutoClaim && !hasPreparedManifest && !hasExpired) {
+    if (projectStatus.isActive && manifestClaim.shouldAutoClaim && !hasPreparedManifest && !hasExpired) {
       manifestClaim
         .claim()
         .then(() => {
@@ -40,6 +42,7 @@ export function usePreparedCanvasModel() {
         });
     }
   }, [
+    projectStatus.isActive,
     hasExpired,
     hasPreparedManifest,
     manifestClaim,

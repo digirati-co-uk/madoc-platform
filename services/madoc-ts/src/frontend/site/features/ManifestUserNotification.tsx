@@ -10,6 +10,7 @@ import { useApi } from '../../shared/hooks/use-api';
 import { useData } from '../../shared/hooks/use-data';
 import { useManifestTask } from '../hooks/use-manifest-task';
 import { useManifestUserTasks } from '../hooks/use-manifest-user-tasks';
+import { useProjectStatus } from '../hooks/use-project-status';
 import { useRouteContext } from '../hooks/use-route-context';
 import { ManifestLoader } from '../pages/loaders/manifest-loader';
 import { useSiteConfiguration } from './SiteConfigurationContext';
@@ -20,6 +21,7 @@ export const ManifestUserNotification: React.FC = () => {
   const { inProgress, doneTasks, inReview, refetch } = useManifestUserTasks();
   const config = useSiteConfiguration();
   const { isManifestComplete, canClaimManifest, userManifestTask, isFetched } = useManifestTask();
+  const { isActive } = useProjectStatus();
   const { t } = useTranslation();
   const api = useApi();
 
@@ -31,7 +33,7 @@ export const ManifestUserNotification: React.FC = () => {
     await Promise.all([refetch(), refetchManifest()]);
   });
 
-  if (!projectId || !manifestId || !isFetched) {
+  if (!projectId || !manifestId || !isFetched || !isActive) {
     return null;
   }
 
