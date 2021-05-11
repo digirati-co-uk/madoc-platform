@@ -5,6 +5,7 @@ import { Button, ButtonRow } from '../../shared/atoms/Button';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useManifestPageConfiguration } from '../hooks/use-manifest-page-configuration';
 import { useManifestTask } from '../hooks/use-manifest-task';
+import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { GoToFirstCanvas } from './GoToFirstCanvas';
 import { GoToRandomCanvas } from './GoToRandomCanvas';
@@ -16,6 +17,7 @@ export const ManifestActions: React.FC = () => {
   const { t } = useTranslation();
   const createLink = useRelativeLinks();
   const options = useManifestPageConfiguration();
+  const { isActive } = useProjectStatus();
   const {
     project: { claimGranularity },
   } = useSiteConfiguration();
@@ -23,7 +25,7 @@ export const ManifestActions: React.FC = () => {
 
   return (
     <>
-      {!options.hideStartContributing && !isManifestComplete && (userManifestTask || canClaimManifest) ? (
+      {isActive && !options.hideStartContributing && !isManifestComplete && (userManifestTask || canClaimManifest) ? (
         <ButtonRow>
           {claimGranularity === 'manifest' ? (
             <GoToFirstCanvas $primary $large navigateToModel>
@@ -52,7 +54,7 @@ export const ManifestActions: React.FC = () => {
           </Button>
         ) : null}
         {!options.hideRandomCanvas ? <GoToRandomCanvas /> : null}
-        {!options.hideFilterImages ? <ManifestItemFilter /> : null}
+        {isActive && !options.hideFilterImages ? <ManifestItemFilter /> : null}
         <ManifestTaskProgress />
       </ButtonRow>
     </>

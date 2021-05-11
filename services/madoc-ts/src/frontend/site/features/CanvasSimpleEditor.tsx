@@ -5,8 +5,14 @@ import { Button, ButtonIcon, ButtonRow } from '../../shared/atoms/Button';
 import { EmptyState } from '../../shared/atoms/EmptyState';
 import { TickIcon } from '../../shared/atoms/TickIcon';
 import { BackToChoicesButton } from '../../shared/caputre-models/new/components/BackToChoicesButton';
-import { EditorSlots } from '../../shared/caputre-models/new/components/EditorSlots';
-import { RevisionProviderWithFeatures } from '../../shared/caputre-models/new/components/RevisionProviderWithFeatures';
+import { DirectEditButton } from '../../shared/caputre-models/new/components/DirectEditButton';
+import { EditorRenderingConfig, EditorSlots } from '../../shared/caputre-models/new/components/EditorSlots';
+import {
+  RevisionProviderFeatures,
+  RevisionProviderWithFeatures,
+} from '../../shared/caputre-models/new/components/RevisionProviderWithFeatures';
+import { SegmentationFieldInstance } from '../../shared/caputre-models/new/components/SegmentationFieldInstance';
+import { SegmentationInlineEntity } from '../../shared/caputre-models/new/components/SegmentationInlineEntity';
 import { SimpleSaveButton } from '../../shared/caputre-models/new/components/SimpleSaveButton';
 import { EditorContentViewer } from '../../shared/caputre-models/new/EditorContent';
 import { CanvasVaultContext } from '../../shared/components/CanvasVaultContext';
@@ -17,18 +23,23 @@ import { isEditingAnotherUsersRevision } from '../../shared/utility/is-editing-a
 import { useCanvasModel } from '../hooks/use-canvas-model';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useContributionMode } from '../hooks/use-contribution-mode';
+import { useProjectStatus } from '../hooks/use-project-status';
 import { useRouteContext } from '../hooks/use-route-context';
 import { CanvasModelUserStatus } from './CanvasModelUserStatus';
 import { CanvasViewer } from './CanvasViewer';
 import { useSiteConfiguration } from './SiteConfigurationContext';
 import { TranscriberModeWorkflowBar } from './TranscriberModeWorkflowBar';
 
-export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boolean }> = ({ revision }) => {
+export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boolean; isSegmentation?: boolean }> = ({
+  revision,
+  isSegmentation,
+}) => {
   const { t } = useTranslation();
   const { projectId, canvasId } = useRouteContext();
   const { data: projectModel } = useCanvasModel();
   const [{ captureModel }] = useLoadedCaptureModel(projectModel?.model?.id, undefined, canvasId);
   const { updateClaim, allTasksDone, markedAsUnusable } = useCanvasUserTasks();
+  const { isPreparing } = useProjectStatus();
   const user = useCurrentUser(true);
   const config = useSiteConfiguration();
   const mode = useContributionMode();
@@ -77,22 +88,47 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
       user.scope.indexOf('models.admin') !== -1 ||
       user.scope.indexOf('models.contribute') !== -1);
 
-  if (api.getIsServer() || !canvasId || !projectId) {
+  const isModelAdmin =
+    user && user.scope && (user.scope.indexOf('site.admin') !== -1 || user.scope.indexOf('models.admin') !== -1);
+
+  const features: RevisionProviderFeatures = isPreparing
+    ? {
+        autosave: false,
+        autoSelectingRevision: true,
+        revisionEditMode: false,
+        directEdit: true,
+      }
+    : {};
+
+  const components: Partial<EditorRenderingConfig> = isPreparing
+    ? {
+        SubmitButton: DirectEditButton,
+        FieldInstance: isSegmentation ? SegmentationFieldInstance : undefined,
+        InlineEntity: isSegmentation ? SegmentationInlineEntity : undefined,
+      }
+    : isEditing || mode === 'transcription'
+    ? {
+        SubmitButton: SimpleSaveButton,
+      }
+    : {};
+
+  if (api.getIsServer() || !canvasId || !projectId || (isPreparing && !isModelAdmin)) {
     return null;
   }
 
   return (
     <CanvasVaultContext>
       <RevisionProviderWithFeatures
+        features={features}
         key={revision}
-        revision={revision}
+        revision={isSegmentation ? undefined : revision}
         captureModel={captureModel}
         slotConfig={{
           editor: { allowEditing: !preventFurtherSubmission, deselectRevisionAfterSaving: true },
-          components: { SubmitButton: isEditing || mode === 'transcription' ? SimpleSaveButton : undefined },
+          components: components,
         }}
       >
-        <TranscriberModeWorkflowBar />
+        {!isPreparing ? <TranscriberModeWorkflowBar /> : null}
 
         <CanvasViewer>
           <div
@@ -162,7 +198,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
                     <EditorSlots.TopLevelEditor />
                   </div>
 
-                  <EditorSlots.SubmitButton afterSave={isEditing ? undefined : updateClaim} />
+                  <EditorSlots.SubmitButton afterSave={isEditing || isPreparing ? undefined : updateClaim} />
                 </>
               ) : (
                 <EmptyState>{t('Loading your model')}</EmptyState>

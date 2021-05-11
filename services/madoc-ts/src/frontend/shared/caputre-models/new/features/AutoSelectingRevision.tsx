@@ -2,7 +2,7 @@ import { Revisions, useNavigation } from '@capture-models/editor';
 import React, { useEffect, useMemo } from 'react';
 import { useRevisionList } from '../hooks/use-revision-list';
 
-export const AutoSelectingRevision: React.FC = () => {
+export const AutoSelectingRevision: React.FC<{ directEdit?: boolean }> = ({ directEdit }) => {
   const currentRevisionId = Revisions.useStoreState(s => s.currentRevisionId);
   const structure = Revisions.useStoreState(s => s.structure);
   const createRevision = Revisions.useStoreActions(a => a.createRevision);
@@ -25,21 +25,25 @@ export const AutoSelectingRevision: React.FC = () => {
   }, [currentRevisionId, structure]);
 
   useEffect(() => {
-    if (skipToStructureRevision) {
+    if (skipToStructureRevision && !directEdit) {
       if (lastWorkedOn) {
         selectRevision({ revisionId: lastWorkedOn.revision.id });
       } else {
         createRevision({ revisionId: skipToStructureRevision, cloneMode: 'EDIT_ALL_VALUES' });
       }
     }
-  }, [createRevision, lastWorkedOn, selectRevision, skipToStructureRevision]);
+  }, [directEdit, createRevision, lastWorkedOn, selectRevision, skipToStructureRevision]);
 
   useEffect(() => {
-    if (currentView && currentView.type === 'model' && !skipToStructureRevision && !currentRevisionId) {
-      if (lastWorkedOn) {
-        selectRevision({ revisionId: lastWorkedOn.revision.id });
-      } else {
-        createRevision({ revisionId: currentView.id, cloneMode: 'EDIT_ALL_VALUES' });
+    if (currentView && currentView.type === 'model' && !currentRevisionId) {
+      if (directEdit) {
+        selectRevision({ revisionId: currentView.id });
+      } else if (!skipToStructureRevision) {
+        if (lastWorkedOn) {
+          selectRevision({ revisionId: lastWorkedOn.revision.id });
+        } else {
+          createRevision({ revisionId: currentView.id, cloneMode: 'EDIT_ALL_VALUES' });
+        }
       }
     }
     if (
@@ -50,7 +54,16 @@ export const AutoSelectingRevision: React.FC = () => {
     ) {
       push(currentView.items[0].id);
     }
-  }, [createRevision, currentRevisionId, currentView, lastWorkedOn, push, selectRevision, skipToStructureRevision]);
+  }, [
+    directEdit,
+    createRevision,
+    currentRevisionId,
+    currentView,
+    lastWorkedOn,
+    push,
+    selectRevision,
+    skipToStructureRevision,
+  ]);
 
   return null;
 };

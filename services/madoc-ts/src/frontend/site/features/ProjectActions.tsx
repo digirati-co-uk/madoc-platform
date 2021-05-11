@@ -6,6 +6,7 @@ import { Button, ButtonRow } from '../../shared/atoms/Button';
 import { useUser } from '../../shared/hooks/use-site';
 import { useProject } from '../hooks/use-project';
 import { useProjectPageConfiguration } from '../hooks/use-project-page-configuration';
+import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { GoToRandomCanvas } from './GoToRandomCanvas';
 import { GoToRandomManifest } from './GoToRandomManifest';
@@ -13,6 +14,7 @@ import { useSiteConfiguration } from './SiteConfigurationContext';
 
 export const ProjectActions: React.FC = () => {
   const { data: project } = useProject();
+  const { isActive } = useProjectStatus();
   const { t } = useTranslation();
   const createLink = useRelativeLinks();
   const {
@@ -29,7 +31,7 @@ export const ProjectActions: React.FC = () => {
 
   return (
     <>
-      {!options.hideStartContributing ? (
+      {!options.hideStartContributing && isActive ? (
         claimGranularity === 'manifest' ? (
           <GoToRandomManifest $primary $large label={{ none: [t('Start contributing')] }} navigateToModel />
         ) : (
@@ -42,7 +44,7 @@ export const ProjectActions: React.FC = () => {
             {t('Search this project')}
           </Button>
         ) : null}
-        {isReviewer ? (
+        {isReviewer && isActive ? (
           <Button
             as={Link}
             to={createLink({ projectId: project.id, subRoute: 'tasks', query: { type: 'crowdsourcing-review' } })}

@@ -10,6 +10,7 @@ import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useContinueSubmission } from '../hooks/use-continue-submission';
 import { useManifestTask } from '../hooks/use-manifest-task';
 import { useProject } from '../hooks/use-project';
+import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
 import { useSiteConfiguration } from './SiteConfigurationContext';
@@ -25,9 +26,25 @@ export const ContinueCanvasSubmission: React.FC = () => {
   const { tasks: continueSubmission, inProgress: continueCount } = useContinueSubmission();
   const createLink = useRelativeLinks();
   const { data: project } = useProject();
+  const { isPreparing, isActive } = useProjectStatus();
 
-  if (!projectId) {
+  if (!projectId || (!isActive && !isPreparing)) {
     return null;
+  }
+
+  if (project && isPreparing) {
+    return (
+      <ProjectDetailWrapper>
+        <Button
+          $primary
+          as={HrefLink}
+          href={createLink({ canvasId, subRoute: 'model' })}
+          style={{ display: 'inline-block' }}
+        >
+          {t('Prepare model')}
+        </Button>
+      </ProjectDetailWrapper>
+    );
   }
 
   if (project && (completedAndHide || !canUserSubmit || isManifestComplete)) {

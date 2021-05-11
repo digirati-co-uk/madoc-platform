@@ -13,12 +13,14 @@ export const projectStatusColors = [
   '#c2f3c4',
   // Archived
   '#d79f9f',
+  // Prepared
+  '#4265e9',
 ];
 
 export const ProjectStatusContainer = styled.div<{ $status?: number }>`
   background: ${props => (typeof props.$status !== 'undefined' ? projectStatusColors[props.$status] : false) || '#eee'};
   padding: 0.5em;
-  color: #4f4f4f;
+  color: ${props => (props.$status === 4 ? '#fff' : '#4f4f4f')};
   margin: 1em 0;
 `;
 
@@ -47,6 +49,11 @@ export const ProjectStatus: React.FC<{ status?: number }> = ({ status: customSta
       {status === 3 ? (
         <ProjectStatusContainer $status={3}>
           {t('help__project_archived', { defaultValue: 'This project is archived, only you can see it' })}
+        </ProjectStatusContainer>
+      ) : null}
+      {status === 4 ? (
+        <ProjectStatusContainer $status={4}>
+          {t('help__project_prepare', { defaultValue: 'This project is being prepared, only you can see it' })}
         </ProjectStatusContainer>
       ) : null}
     </>

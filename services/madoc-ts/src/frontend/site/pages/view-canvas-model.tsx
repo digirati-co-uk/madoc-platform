@@ -10,6 +10,7 @@ import React, { useEffect, useState } from 'react';
 import { CanvasVaultContext } from '../../shared/components/CanvasVaultContext';
 import { ModalButton } from '../../shared/components/Modal';
 import { useCurrentUser } from '../../shared/hooks/use-current-user';
+import { useLocalStorage } from '../../shared/hooks/use-local-storage';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { createLink } from '../../shared/utility/create-link';
 import { HrefLink } from '../../shared/utility/href-link';
@@ -24,6 +25,7 @@ import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useManifestTask } from '../hooks/use-manifest-task';
 import { useModelPageConfiguration } from '../hooks/use-model-page-configuration';
+import { useProjectStatus } from '../hooks/use-project-status';
 import { useRouteContext } from '../hooks/use-route-context';
 import { RedirectToNextCanvas } from '../features/RedirectToNextCanvas';
 
@@ -36,10 +38,12 @@ export const ViewCanvasModel: React.FC = () => {
   const { t } = useTranslation();
   const user = useCurrentUser(true);
   const { goToNext } = useLocationQuery<any>();
+  const [isSegmentation, setIsSegmentation] = useLocalStorage('segmentation-prepare', false);
   const shouldGoToNext = castBool(goToNext);
   const {
     project: { hideCanvasThumbnailNavigation = false, contributionMode },
   } = useSiteConfiguration();
+  const { isActive, isPreparing } = useProjectStatus();
 
   const { preventContributionAfterManifestUnassign } = useModelPageConfiguration();
   const canContribute =
@@ -50,6 +54,7 @@ export const ViewCanvasModel: React.FC = () => {
       user.scope.indexOf('models.contribute') !== -1);
 
   const hasExpired = userManifestTask?.status === -1 && !canClaimManifest && preventContributionAfterManifestUnassign;
+  const projectPaused = !isActive && !isPreparing;
 
   const [couldUserComplete, setCouldUserComplete] = useState(false);
   const [wasManifestCompleted, setManifestWasCompleted] = useState(false);
@@ -74,7 +79,13 @@ export const ViewCanvasModel: React.FC = () => {
     return <RedirectToNextCanvas subRoute="model" />;
   }
 
-  if ((!canUserSubmit && !isLoadingTasks) || completedAndHide || isManifestComplete || hasExpired) {
+  if (
+    (!canUserSubmit && !isLoadingTasks) ||
+    completedAndHide ||
+    isManifestComplete ||
+    hasExpired ||
+    (!isActive && !isPreparing)
+  ) {
     return (
       <div>
         {contributionMode === 'transcription' && wasManifestCompleted ? (
@@ -106,7 +117,7 @@ export const ViewCanvasModel: React.FC = () => {
 
         <CanvasManifestNavigation subRoute="model" />
 
-        {projectId && (
+        {projectId && !projectPaused && (
           <InfoMessage>
             {hasExpired
               ? t('Your submission has expired')
@@ -147,16 +158,30 @@ export const ViewCanvasModel: React.FC = () => {
 
       {showCanvasNavigation && canContribute ? <PrepareCaptureModel /> : null}
 
-      <CanvasTaskWarningMessage />
+      {!isPreparing ? <CanvasTaskWarningMessage /> : null}
 
-      {showWarning ? (
+      {isPreparing ? (
+        <>
+          {!isSegmentation ? (
+            <ButtonRow>
+              <Button onClick={() => setIsSegmentation(true)}>Segmentation mode</Button>
+            </ButtonRow>
+          ) : (
+            <ButtonRow>
+              <Button onClick={() => setIsSegmentation(false)}>Prepare mode</Button>
+            </ButtonRow>
+          )}
+        </>
+      ) : null}
+
+      {!isPreparing && showWarning ? (
         <div style={{ textAlign: 'center', padding: '2em', marginTop: '1em', marginBottom: '1em', background: '#eee' }}>
           <LockIcon style={{ fontSize: '3em' }} />
           <Heading3>{t('This canvas is not available to browse')}</Heading3>
         </div>
       ) : null}
 
-      {showCanvasNavigation ? <CanvasSimpleEditor revision={revision} /> : null}
+      {showCanvasNavigation ? <CanvasSimpleEditor revision={revision} isSegmentation={isSegmentation} /> : null}
 
       {!hideCanvasThumbnailNavigation && showCanvasNavigation ? (
         <CanvasNavigation

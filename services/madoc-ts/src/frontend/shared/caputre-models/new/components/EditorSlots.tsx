@@ -6,6 +6,7 @@ import { DefaultAdjacentNavigation } from './DefaultAdjacentNavigation';
 import { DefaultBreadcrumbs } from './DefaultBreadcrumbs';
 import { DefaultChoice } from './DefaultChoice';
 import { DefaultEditorWrapper } from './DefaultEditorWrapper';
+import { DefaultFieldInstance } from './DefaultFieldInstance';
 import { DefaultInlineEntity } from './DefaultInlineEntity';
 import { DefaultInlineField } from './DefaultInlineField';
 import { DefaultInlineProperties } from './DefaultInlineProperties';
@@ -30,6 +31,12 @@ export type EditorRenderingConfig = {
   AdjacentNavigation: React.FC;
   ManagePropertyList: React.FC<{ property: string; type: 'field' | 'entity' }>; // Fallbacks passed in
   EditorWrapper: React.FC;
+  FieldInstance: React.FC<{
+    field: BaseField;
+    property: string;
+    path: Array<[string, string]>;
+    hideHeader?: boolean;
+  }>;
   InlineProperties: React.FC<{
     property: string;
     canInlineField?: boolean;
@@ -82,6 +89,7 @@ const Context = React.createContext<EditorRenderingConfig>({
   InlineField: DefaultInlineField,
   InlineEntity: DefaultInlineEntity,
   InlineSelector: DefaultInlineSelector,
+  FieldInstance: DefaultFieldInstance,
   ManagePropertyList: DefaultManagePropertyList,
   Breadcrumbs: DefaultBreadcrumbs,
   SingleEntity: DefaultSingleEntity,
@@ -173,6 +181,17 @@ const ViewEntity: React.FC<{ showTitle?: boolean }> = props => {
   return <Slots.SingleEntity showTitle={props.showTitle}>{props.children}</Slots.SingleEntity>;
 };
 
+const FieldInstance: React.FC<{
+  field: BaseField;
+  property: string;
+  path: Array<[string, string]>;
+  hideHeader?: boolean;
+}> = props => {
+  const Slots = useSlotContext();
+
+  return <Slots.FieldInstance {...props} />;
+};
+
 const ViewField: React.FC = props => {
   const Slots = useSlotContext();
 
@@ -231,4 +250,5 @@ export const EditorSlots = {
   PreviewSubmission,
   PostSubmission,
   EditorWrapper,
+  FieldInstance,
 };

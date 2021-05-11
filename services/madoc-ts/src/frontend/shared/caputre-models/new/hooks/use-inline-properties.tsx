@@ -1,4 +1,3 @@
-import { FieldInstance } from '@capture-models/editor';
 import { isEntityList } from '@capture-models/helpers';
 import { BaseField, CaptureModel } from '@capture-models/types';
 import React, { useMemo } from 'react';
@@ -78,7 +77,7 @@ export function useInlineProperties(
     }
 
     return fields.map((field, idx) => (
-      <FieldInstance key={idx} field={field} property={property} path={path as any} hideHeader={idx !== 0} />
+      <Slots.FieldInstance key={idx} field={field} property={property} path={path as any} hideHeader={idx !== 0} />
     ));
   };
 
