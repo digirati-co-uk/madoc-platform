@@ -26,6 +26,8 @@ export const assignRandomResource: RouteMiddleware<
     throw new NotFound();
   }
 
+  const isTranscriberMode = project.config.contributionMode === 'transcription';
+
   // Getting a random manifest id.
   async function getRandomManifest() {
     // Get project.
@@ -48,7 +50,7 @@ export const assignRandomResource: RouteMiddleware<
           // Invalid task.
           return undefined;
         }
-        if (parsed.type.toLowerCase() === 'manifest' && task.status === 3) {
+        if (parsed.type.toLowerCase() === 'manifest' && (task.status === 3 || task.status === 2)) {
           return parsed.id;
         }
         return undefined;
@@ -138,7 +140,7 @@ export const assignRandomResource: RouteMiddleware<
     }
 
     for (const subject of taskCanvasSubjects.subjects) {
-      if (subject.status === 3 || subject.status === -1) {
+      if (subject.status === 3 || subject.status === -1 || (isTranscriberMode && subject.status === 2)) {
         withoutCanvasId.push(subject.subject);
       }
     }

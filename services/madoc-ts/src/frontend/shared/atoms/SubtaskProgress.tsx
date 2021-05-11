@@ -43,23 +43,24 @@ const WhiteTick = styled(TickIcon)`
   }
 `;
 
-export const SubtaskProgress: React.FC<{ total: number; done: number; progress: number; tooltip?: boolean }> = ({
-  total,
-  progress,
-  done,
-  tooltip = true,
-}) => {
+export const SubtaskProgress: React.FC<{
+  total: number;
+  done: number;
+  progress: number;
+  tooltip?: boolean;
+  hideComplete?: boolean;
+}> = ({ total, progress, done, tooltip = true, hideComplete = false }) => {
   const { t } = useTranslation();
 
   if (total === 0) {
     return null;
   }
 
-  if (total === done) {
+  if (total === done && !hideComplete) {
     return (
       <AllDone>
         <WhiteTick />
-        {t('All sub-tasks have been completed.')}
+        {t('All sub-tasks have been completed')}
       </AllDone>
     );
   }

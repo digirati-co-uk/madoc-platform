@@ -30,6 +30,8 @@ export type ProjectConfiguration = {
     nonLatinFulltext?: boolean;
     searchMultipleFields?: boolean;
   };
+  shortExpiryTime?: string;
+  longExpiryTime?: string;
   modelPageOptions?: {
     fixedTranscriptionBar?: boolean;
     preventContributionAfterRejection?: boolean;

@@ -13,10 +13,14 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, any> {
     });
   }
 
+  resetError = () => {
+    this.setState({ error: undefined, didError: false });
+  };
+
   render() {
     if (this.state.didError) {
       if (!this.props.onError) {
-        return <ErrorPage error={this.state.error} />;
+        return <ErrorPage error={this.state.error} resetError={this.resetError} />;
       }
 
       return this.props.onError(this.state.error as any);

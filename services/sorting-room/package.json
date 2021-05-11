@@ -11,7 +11,7 @@
     "eslint": "^4.18.2",
     "eslint-plugin-import": "^1.8.1",
     "gh-pages": "^1.1.0",
-    "grunt": "~1.0.2",
+    "grunt": "~1.3.0",
     "grunt-accessibility": "^4.2.0",
     "grunt-assemble": "0.6.3",
     "grunt-browser-sync": "^2.2.0",

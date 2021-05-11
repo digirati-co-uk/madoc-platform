@@ -16,7 +16,7 @@ export const ProjectActions: React.FC = () => {
   const { t } = useTranslation();
   const createLink = useRelativeLinks();
   const {
-    project: { allowCollectionNavigation = true, allowManifestNavigation = true },
+    project: { allowCollectionNavigation = true, allowManifestNavigation = true, claimGranularity },
   } = useSiteConfiguration();
   const user = useUser();
   const isAdmin = user && user.scope && user.scope.indexOf('site.admin') !== -1;
@@ -30,7 +30,11 @@ export const ProjectActions: React.FC = () => {
   return (
     <>
       {!options.hideStartContributing ? (
-        <GoToRandomCanvas $primary $large label={{ none: [t('Start contributing')] }} navigateToModel />
+        claimGranularity === 'manifest' ? (
+          <GoToRandomManifest $primary $large label={{ none: [t('Start contributing')] }} navigateToModel />
+        ) : (
+          <GoToRandomCanvas $primary $large label={{ none: [t('Start contributing')] }} navigateToModel />
+        )
       ) : null}
       <ButtonRow>
         {!options.hideSearchButton ? (

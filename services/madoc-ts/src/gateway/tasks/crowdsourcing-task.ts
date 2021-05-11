@@ -182,7 +182,11 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
                       assigned_to: task.assignee.id,
                     });
 
-                    const ids = statuses.subjects.map(s => s.subject).filter(s => s.startsWith('urn:madoc:canvas:'));
+                    const ids = statuses.subjects
+                      .filter(s => s.status === 2 || s.status === 3)
+                      .map(s => s.subject)
+                      .filter(s => s.startsWith('urn:madoc:canvas:'));
+
                     const found = manifestStructure.items.find(item => {
                       return ids.indexOf(`urn:madoc:canvas:${item.id}`) === -1;
                     });

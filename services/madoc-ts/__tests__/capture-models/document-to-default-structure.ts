@@ -35,6 +35,8 @@ describe('document to default structure', () => {
         "showSearchFacetCount",
         "miradorCanvasPage",
         "contributionMode",
+        "shortExpiryTime",
+        "longExpiryTime",
         "modelPageOptions",
         "projectPageOptions",
         "manifestPageOptions",

@@ -46,7 +46,8 @@ const SnippetButton = styled.a<{ role?: string; $center?: boolean }>`
   font-size: 0.8rem;
   text-decoration: none;
   color: #3773db;
-  &:link {
+  &:link,
+  &:visited {
     color: #3773db;
   }
 
@@ -58,6 +59,11 @@ const SnippetButton = styled.a<{ role?: string; $center?: boolean }>`
       border-radius: 3px;
       &:hover {
         background: #d3dbf5;
+        color: #3773db;
+      }
+      &:focus {
+        background: #3773db;
+        color: #fff;
       }
     `}
 `;

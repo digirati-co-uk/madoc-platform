@@ -34,7 +34,7 @@ export const GoToRandomCanvas: React.FC<{
       disabled={error}
       onClick={() => {
         getRandomCanvas().then(resp => {
-          if (resp) {
+          if (resp && resp.manifest && resp.canvas) {
             history.push(
               createLink({
                 manifestId: resp.manifest,

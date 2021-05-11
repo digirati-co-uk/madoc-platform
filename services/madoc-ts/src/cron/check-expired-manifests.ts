@@ -1,6 +1,7 @@
 import { sql } from 'slonik';
 import { api } from '../gateway/api.server';
 import { ApplicationContext } from '../types/application-context';
+import {isNaN} from "formik";
 
 let previousFireDate: Date;
 
@@ -20,15 +21,18 @@ export async function checkExpiredManifests(context: ApplicationContext, fireDat
     select id, task_id, collection_id, slug, site_id, capture_model_id, status from iiif_project where (iiif_project.status = 1 or iiif_project.status = 2)
   `);
 
-  const shortExpiryTime = 10 * 60 * 1000; // 10 minutes
-  const shortTermExpiry = new Date(Date.now() - shortExpiryTime);
-
-  const longExpiryTime = 24 * 60 * 60 * 1000; // 1 day for now..
-  const longTermExpiry = new Date(Date.now() - longExpiryTime);
-
   for (const project of runningProjects) {
     const localApi = api.asUser({ siteId: project.site_id });
     const config = await localApi.getProjectConfiguration(project.id as any, `urn:madoc:site:${project.site_id}`);
+
+    const shortExpiryTimeMins = !isNaN(config.shortExpiryTime) ?
+      Number(config.shortExpiryTime) : 10; // configured value or 10 minutes
+    const shortTermExpiry = new Date(Date.now() - (shortExpiryTimeMins * 60 * 1000));
+
+    const longExpiryTimeMins = !isNaN(config.longExpiryTime) ?
+      Number(config.shortExpiryTime) : 24 * 60; // configured value or 1 day..
+    const longTermExpiry = new Date(Date.now() - (longExpiryTimeMins * 60 * 1000));
+
     if (config.contributionMode !== 'transcription') continue;
 
     const tasks = await localApi.getTasks(0, {

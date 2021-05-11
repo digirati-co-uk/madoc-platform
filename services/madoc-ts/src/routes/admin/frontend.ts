@@ -100,7 +100,7 @@ export const siteFrontend: RouteMiddleware = async context => {
       site: site,
       siteLocales,
       getSlots: async (ctx: EditorialContext) => {
-        const parsedId = context.query.project ? parseProjectId(context.query.project) : undefined;
+        const parsedId = ctx.project ? parseProjectId(ctx.project) : undefined;
         const project = parsedId ? await context.connection.one(getProject(parsedId, site.id)) : undefined;
 
         return await context.pageBlocks.getSlotsByContext(
