@@ -72,7 +72,7 @@ const SiteTitle = styled.a`
 
 const GlobalSearchContainer = styled.div`
   flex: 1;
-  margin-right: 0;
+  margin: 1em 0;
   width: 100%;
   max-width: 20em;
 `;
