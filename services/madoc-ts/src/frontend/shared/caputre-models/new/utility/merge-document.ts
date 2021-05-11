@@ -11,14 +11,11 @@ export function mergeDocument(
   const entityMap: { [key: string]: CaptureModel['document'] } = {};
   const fieldMap: { [key: string]: BaseField } = {};
 
-  console.log(deletions);
-
   // Traverse original document and make map of fields/entities.
   traverseDocument(oldDoc, {
     visitEntity(entity, property, parent) {
       if (deletions.indexOf(entity.id) !== -1) {
         // Delete the property
-        console.log('deleting', entity.id);
         if (parent && property && parent.properties[property]) {
           parent.properties[property] = (parent.properties[property] as any[]).filter(en => en.id !== entity.id);
         }
@@ -29,7 +26,6 @@ export function mergeDocument(
     visitField(field, property, parent) {
       if (deletions.indexOf(field.id) !== -1) {
         // Delete the property
-        console.log('deleting', field.id);
         if (parent && property && parent.properties[property]) {
           parent.properties[property] = (parent.properties[property] as any[]).filter(en => en.id !== field.id);
         }
