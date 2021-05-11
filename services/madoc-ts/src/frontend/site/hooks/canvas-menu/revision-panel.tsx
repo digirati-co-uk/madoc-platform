@@ -58,7 +58,7 @@ const ViewRevisions = memo(
 export function useRevisionPanel(): CanvasMenuHook {
   const { t } = useTranslation();
   const store = Revisions.useStore();
-  const unsaved = Revisions.useStoreState(s => s.unsavedRevisionIds);
+  const [unsaved, setUnsaved] = useState<string[]>([]);
   const user = useUser();
   const [totalRevisions, setTotalRevisions] = useState<number | undefined>();
   const [notifications, setNotifications] = useState<number | undefined>();
@@ -71,9 +71,12 @@ export function useRevisionPanel(): CanvasMenuHook {
         if (totalRevisions !== revs.length) {
           setTotalRevisions(revs.length);
         }
+        if (state.unsavedRevisionIds !== unsaved) {
+          setUnsaved(state.unsavedRevisionIds);
+        }
       });
     }
-  }, [store, totalRevisions]);
+  }, [store, unsaved, totalRevisions]);
 
   useEffect(() => {
     if (store) {

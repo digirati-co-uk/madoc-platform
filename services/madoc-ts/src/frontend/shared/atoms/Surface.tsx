@@ -8,18 +8,22 @@ const surfaceVariations: any = {
   none: {
     $padding: '0',
     $fontSize: '1em',
+    $marginBottom: '0',
   },
   sm: {
     $padding: '1em',
     $fontSize: '0.85em',
+    $marginBottom: '0.5em',
   },
   md: {
     $padding: '2em',
     $fontSize: '1em',
+    $marginBottom: '1em',
   },
   lg: {
     $padding: '3em',
     $fontSize: '1.3em',
+    $marginBottom: '1.5em',
   },
 };
 
@@ -42,6 +46,7 @@ const SurfaceStyled = styled.div<{
   $color?: string;
   $textAlign?: 'left' | 'center' | 'right';
   $padding?: 'none' | 'sm' | 'md' | 'lg';
+  $marginBottom?: 'none' | 'sm' | 'md' | 'lg';
   $fontSize?: 'sm' | 'md' | 'lg';
   $font?: string;
 }>`
@@ -51,6 +56,7 @@ const SurfaceStyled = styled.div<{
   font-size: ${parseProp('$fontSize', '1em')};
   font-family: ${props => (props.$font ? `${props.$font}, sans-serif` : 'inherit')};
   text-align: ${props => (props.$textAlign ? props.$textAlign : 'left')};
+  margin-bottom: ${parseProp('$marginBottom', '0')};
 `;
 
 export type SurfaceProps = {
@@ -59,6 +65,7 @@ export type SurfaceProps = {
   textAlign?: 'left' | 'center' | 'right';
   font?: string;
   padding?: 'none' | 'sm' | 'md' | 'lg';
+  marginBottom?: 'none' | 'sm' | 'md' | 'lg';
   fontSize?: 'sm' | 'md' | 'lg';
 };
 
@@ -70,6 +77,7 @@ export const Surface: React.FC<SurfaceProps> = ({
   fontSize,
   padding,
   children,
+  marginBottom,
 }) => {
   useGoogleFonts(font);
 
@@ -83,6 +91,7 @@ export const Surface: React.FC<SurfaceProps> = ({
       $font={font}
       $padding={padding}
       $fontSize={fontSize}
+      $marginBottom={marginBottom}
     >
       {children}
     </SurfaceStyled>
@@ -100,6 +109,7 @@ blockEditorFor(Surface, {
     padding: 'none',
     fontSize: 'md',
     textAlign: 'left',
+    marginBottom: 'none',
   },
   editor: {
     textColor: { label: 'Text color', type: 'text-field' },
@@ -129,6 +139,16 @@ blockEditorFor(Surface, {
       label: 'Font size',
       type: 'dropdown-field',
       options: [
+        { value: 'sm', text: 'Small' },
+        { value: 'md', text: 'Medium' },
+        { value: 'lg', text: 'Large' },
+      ],
+    },
+    marginBottom: {
+      label: 'Bottom margin',
+      type: 'dropdown-field',
+      options: [
+        { value: 'none', text: 'No margin' },
         { value: 'sm', text: 'Small' },
         { value: 'md', text: 'Medium' },
         { value: 'lg', text: 'Large' },
