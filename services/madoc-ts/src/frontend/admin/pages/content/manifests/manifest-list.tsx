@@ -107,6 +107,12 @@ export const ManifestList: UniversalComponent<ManifestListType> = createUniversa
                 </Link>
               ))}
             </ImageGrid>
+            <Pagination
+              page={data ? data.pagination.page : 1}
+              totalPages={data ? data.pagination.totalPages : 1}
+              stale={!data}
+              extraQuery={{ query }}
+            />
           </div>
         </WidePage>
       </>
