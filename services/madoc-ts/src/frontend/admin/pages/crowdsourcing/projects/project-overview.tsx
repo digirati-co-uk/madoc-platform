@@ -44,17 +44,40 @@ export const ProjectOverview: React.FC<{ project: ProjectFull; refetch: () => Pr
       />
 
       <ButtonRow>
-        <Button disabled={isLoading || project.status === 0} onClick={() => updateStatus(0)}>
+        <Button
+          $success={project.status === 0}
+          disabled={isLoading || project.status === 0}
+          onClick={() => updateStatus(0)}
+        >
           Pause project
         </Button>
-        <Button disabled={isLoading || project.status === 1} onClick={() => updateStatus(1)}>
+        <Button
+          $success={project.status === 1}
+          disabled={isLoading || project.status === 1}
+          onClick={() => updateStatus(1)}
+        >
           Resume project
         </Button>
-        <Button disabled={isLoading || project.status === 2} onClick={() => updateStatus(2)}>
+        <Button
+          $success={project.status === 2}
+          disabled={isLoading || project.status === 2}
+          onClick={() => updateStatus(2)}
+        >
           Mark as complete
         </Button>
-        <Button disabled={isLoading || project.status === 3} onClick={() => updateStatus(3)}>
+        <Button
+          $success={project.status === 3}
+          disabled={isLoading || project.status === 3}
+          onClick={() => updateStatus(3)}
+        >
           Archive project
+        </Button>
+        <Button
+          $success={project.status === 4}
+          disabled={isLoading || project.status === 4}
+          onClick={() => updateStatus(4)}
+        >
+          Prepare project
         </Button>
       </ButtonRow>
     </div>

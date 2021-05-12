@@ -9,12 +9,14 @@ import { useContributorTasks } from '../../shared/hooks/use-contributor-tasks';
 import { firstNTasksWithUniqueSubjects } from '../../shared/utility/first-n-tasks-with-unique-subjects';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useProject } from '../hooks/use-project';
+import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useSiteConfiguration } from './SiteConfigurationContext';
 
 export const ProjectContributionButton: React.FC = () => {
   const { t } = useTranslation();
   const { data: project } = useProject();
+  const { isActive } = useProjectStatus();
   const createLink = useRelativeLinks();
   const {
     project: { contributionMode },
@@ -24,7 +26,7 @@ export const ProjectContributionButton: React.FC = () => {
   const currentTasks = contributorTasks?.drafts.tasks;
   const tasksInReview = contributorTasks?.reviews.tasks;
 
-  if (!project) {
+  if (!project || !isActive) {
     return null;
   }
 

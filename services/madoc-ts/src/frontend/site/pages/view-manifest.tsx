@@ -30,6 +30,7 @@ import { RandomlyAssignCanvas } from '../features/RandomlyAssignCanvas';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useManifestPageConfiguration } from '../hooks/use-manifest-page-configuration';
 import { useManifestTask } from '../hooks/use-manifest-task';
+import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { Redirect } from 'react-router-dom';
 
@@ -52,6 +53,7 @@ export const ViewManifest: React.FC<{
   const createLocaleString = useCreateLocaleString();
   const manifestOptions = useManifestPageConfiguration();
   const { userManifestTask, canClaimManifest } = useManifestTask();
+  const { isActive } = useProjectStatus();
 
   const directToModelPage = (!!userManifestTask || canClaimManifest) && manifestOptions?.directModelPage;
 
@@ -114,7 +116,9 @@ export const ViewManifest: React.FC<{
                         <img alt={createLocaleString(canvas.label, t('Canvas thumbnail'))} src={canvas.thumbnail} />
                       ) : null}
                     </CroppedImage>
-                    {manifestSubjects && subjectMap ? <CanvasStatus status={subjectMap[canvas.id]} /> : null}
+                    {isActive && manifestSubjects && subjectMap ? (
+                      <CanvasStatus status={subjectMap[canvas.id]} />
+                    ) : null}
                     <LocaleString as={Heading5}>{canvas.label}</LocaleString>
                   </ImageStripBox>
                 </Link>

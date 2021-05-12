@@ -32,5 +32,7 @@ export const DefaultTopLevelEditor: EditorRenderingConfig['TopLevelEditor'] = ()
     }
   }
 
+  // We get to this spot if we do not have any auto selecting revisions. This
+  // is the point where we should show the revision list [RevisionChoicePage / RevisionList]
   return null;
 };

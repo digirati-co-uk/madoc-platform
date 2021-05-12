@@ -3,7 +3,6 @@ import { BaseField } from '@capture-models/types';
 import React, { useCallback, useState } from 'react';
 import { FieldPreview, Revisions, RoundedCard } from '@capture-models/editor';
 import { useDebouncedCallback } from 'use-debounce';
-import { InlineProgressIcon } from '../../../atoms/ProgressIcon';
 import { ModifiedStatus } from '../features/ModifiedStatus';
 import { useFieldDetails } from '../hooks/use-field-details';
 import { EditorRenderingConfig } from './EditorSlots';

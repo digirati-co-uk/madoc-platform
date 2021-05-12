@@ -8,6 +8,13 @@ import { SwitchFieldAfterRevises } from '../features/SwitchFieldAfterRevises';
 import { ContributorProvider } from './ContributorContext';
 import { EditorConfig, EditorRenderingConfig, EditorSlots } from './EditorSlots';
 
+export type RevisionProviderFeatures = {
+  revisionEditMode?: boolean;
+  autosave?: boolean;
+  autoSelectingRevision?: boolean;
+  directEdit?: boolean;
+};
+
 export const RevisionProviderWithFeatures: React.FC<{
   slotConfig?: {
     editor?: Partial<EditorConfig>;
@@ -17,11 +24,9 @@ export const RevisionProviderWithFeatures: React.FC<{
   initialRevision?: string | undefined;
   revision?: string | undefined;
   excludeStructures?: boolean | undefined;
-  features?: {
-    autoSelectingRevision?: boolean;
-  };
+  features?: RevisionProviderFeatures;
 }> = ({ slotConfig, children, revision, captureModel, excludeStructures, initialRevision, features }) => {
-  const { autoSelectingRevision = true } = features || {};
+  const { autoSelectingRevision = true, autosave = true, revisionEditMode = true, directEdit = false } = features || {};
   const { components, editor } = slotConfig || {};
 
   return (
@@ -34,10 +39,10 @@ export const RevisionProviderWithFeatures: React.FC<{
         initialRevision={initialRevision}
       >
         {/*<DebugRevisionSwitcher contributors={captureModel?.contributors} />*/}
-        <AutosaveRevision minutes={2} />
-        <SwitchFieldAfterRevises />
-        <SwitchEditMode />
-        {autoSelectingRevision ? <AutoSelectingRevision /> : null}
+        {autosave ? <AutosaveRevision minutes={2} /> : null}
+        {revisionEditMode ? <SwitchFieldAfterRevises /> : null}
+        {revisionEditMode ? <SwitchEditMode /> : null}
+        {autoSelectingRevision ? <AutoSelectingRevision directEdit={directEdit} /> : null}
         <CorrectingRevisionSubtree />
         <EditorSlots.Provider config={editor} components={components}>
           {children}

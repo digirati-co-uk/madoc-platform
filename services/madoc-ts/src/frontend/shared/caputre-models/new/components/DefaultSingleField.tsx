@@ -1,5 +1,5 @@
 import React from 'react';
-import { FieldInstance, RoundedCard } from '@capture-models/editor';
+import { RoundedCard } from '@capture-models/editor';
 import { ModifiedStatus } from '../features/ModifiedStatus';
 import { useCurrentField } from '../hooks/use-current-field';
 import { useFieldDetails } from '../hooks/use-field-details';
@@ -22,7 +22,7 @@ export const DefaultSingleField: EditorRenderingConfig['SingleField'] = () => {
       <Slots.Breadcrumbs />
       <RoundedCard size="small" interactive={false}>
         {isModified && <ModifiedStatus />}
-        <FieldInstance field={field} property={property} path={path as any} />
+        <Slots.FieldInstance field={field} property={property} path={path as any} />
       </RoundedCard>
     </>
   );
