@@ -7,7 +7,8 @@ export const ViewContentFetch: React.FC<{
   id: number;
   height?: number;
   onCreated?: (rt: AtlasContextType) => void;
-}> = ({ id, height, children, onCreated }) => {
+  onPanInSketchMode?: () => void;
+}> = ({ id, height, children, onCreated, onPanInSketchMode }) => {
   const { data } = useApiCanvas(id);
 
   if (!data) {
@@ -23,6 +24,7 @@ export const ViewContentFetch: React.FC<{
       ]}
       canvas={data.canvas}
       onCreated={onCreated}
+      onPanInSketchMode={onPanInSketchMode}
     >
       {children}
     </ViewContent>

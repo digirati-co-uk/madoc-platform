@@ -9,7 +9,8 @@ export const ViewContent: React.FC<{
   canvas: any;
   height?: number;
   onCreated?: (runtime: AtlasContextType) => void;
-}> = ({ target, canvas, height = 600, onCreated, children }) => {
+  onPanInSketchMode?: () => void;
+}> = ({ target, canvas, height = 600, onCreated, onPanInSketchMode, children }) => {
   return useContentType(
     useMemo(() => {
       const fixedType = [];
@@ -32,6 +33,9 @@ export const ViewContent: React.FC<{
       () => ({
         height,
         custom: {
+          controllerConfig: {
+            onPanInSketchMode,
+          },
           onCreateAtlas: onCreated,
           customFetcher: (mid: string) => {
             const canvasTarget: any = target.find((r: any) => r.type === 'Canvas');
@@ -50,7 +54,7 @@ export const ViewContent: React.FC<{
           },
         },
       }),
-      [canvas.source, target]
+      [onPanInSketchMode, height, canvas.source, target]
     ),
     children as any
   );
