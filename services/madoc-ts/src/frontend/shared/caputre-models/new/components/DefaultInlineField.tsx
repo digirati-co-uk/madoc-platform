@@ -5,18 +5,17 @@ import { FieldPreview, Revisions, RoundedCard } from '@capture-models/editor';
 import { useDebouncedCallback } from 'use-debounce';
 import { ModifiedStatus } from '../features/ModifiedStatus';
 import { useFieldDetails } from '../hooks/use-field-details';
-import { EditorRenderingConfig } from './EditorSlots';
+import { EditorRenderingConfig, useProfile, useProfileOverride } from './EditorSlots';
 
-export const DefaultInlineField: EditorRenderingConfig['InlineField'] = ({
-  property,
-  chooseField,
-  path,
-  readonly,
-  field,
-  canRemove,
-  onRemove,
-}) => {
+export const DefaultInlineField: EditorRenderingConfig['InlineField'] = props => {
+  const { property, chooseField, path, readonly, field, canRemove, onRemove } = props;
   const { isModified } = useFieldDetails(field);
+  const profile = useProfile();
+  const ProfileSpecificComponent = useProfileOverride('InlineField');
+
+  if (ProfileSpecificComponent) {
+    return <ProfileSpecificComponent {...props} />;
+  }
 
   return (
     <RoundedCard

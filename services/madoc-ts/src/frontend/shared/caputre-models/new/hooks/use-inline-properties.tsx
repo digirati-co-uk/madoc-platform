@@ -1,7 +1,7 @@
 import { isEntityList } from '@capture-models/helpers';
 import { BaseField, CaptureModel } from '@capture-models/types';
 import React, { useMemo } from 'react';
-import { useSlotContext } from '../components/EditorSlots';
+import { ProfileProvider, useSlotContext } from '../components/EditorSlots';
 import { useCurrentEntity } from './use-current-entity';
 
 export function useInlineProperties(
@@ -24,18 +24,19 @@ export function useInlineProperties(
     const documents = propertyList as Array<CaptureModel['document']>;
 
     return documents.map((doc, n) => (
-      <Slots.InlineEntity
-        key={n}
-        entity={doc}
-        property={property}
-        canRemove={canRemove}
-        onRemove={() => {
-          // @todo remove instance from list.
-        }}
-        chooseEntity={() => {
-          setSelectedField({ property: property, id: doc.id });
-        }}
-      />
+      <ProfileProvider key={n} profile={doc.profile || entity.profile}>
+        <Slots.InlineEntity
+          entity={doc}
+          property={property}
+          canRemove={canRemove}
+          onRemove={() => {
+            // @todo remove instance from list.
+          }}
+          chooseEntity={() => {
+            setSelectedField({ property: property, id: doc.id });
+          }}
+        />
+      </ProfileProvider>
     ));
   };
 
@@ -43,20 +44,21 @@ export function useInlineProperties(
     const fields = propertyList as Array<BaseField>;
 
     return fields.map((field, n) => (
-      <Slots.InlineField
-        key={n}
-        path={path as any}
-        field={field}
-        property={property}
-        canRemove={canRemove}
-        onRemove={() => {
-          // @todo remove instance from list.
-        }}
-        chooseField={() => {
-          setFocusedField({ property: property, id: field.id });
-        }}
-        readonly={true}
-      />
+      <ProfileProvider key={n} profile={field.profile || entity.profile}>
+        <Slots.InlineField
+          path={path as any}
+          field={field}
+          property={property}
+          canRemove={canRemove}
+          onRemove={() => {
+            // @todo remove instance from list.
+          }}
+          chooseField={() => {
+            setFocusedField({ property: property, id: field.id });
+          }}
+          readonly={true}
+        />
+      </ProfileProvider>
     ));
   };
 
@@ -65,19 +67,16 @@ export function useInlineProperties(
 
     if (!Slots.configuration.allowEditing) {
       return fields.map((field, n) => (
-        <Slots.InlineField
-          key={n}
-          path={path as any}
-          field={field}
-          property={property}
-          canRemove={false}
-          readonly={true}
-        />
+        <ProfileProvider key={n} profile={field.profile || entity.profile}>
+          <Slots.InlineField path={path as any} field={field} property={property} canRemove={false} readonly={true} />
+        </ProfileProvider>
       ));
     }
 
     return fields.map((field, idx) => (
-      <Slots.FieldInstance key={idx} field={field} property={property} path={path as any} hideHeader={idx !== 0} />
+      <ProfileProvider key={idx} profile={field.profile || entity.profile}>
+        <Slots.FieldInstance field={field} property={property} path={path as any} hideHeader={idx !== 0} />
+      </ProfileProvider>
     ));
   };
 

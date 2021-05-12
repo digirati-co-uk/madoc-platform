@@ -1,6 +1,5 @@
 import { BaseField, CaptureModel, RevisionRequest } from '@capture-models/types';
 import React, { useContext, useMemo } from 'react';
-import { useSlots } from '../../../page-blocks/slot-context';
 import { useCurrentEntity } from '../hooks/use-current-entity';
 import { DefaultAdjacentNavigation } from './DefaultAdjacentNavigation';
 import { DefaultBreadcrumbs } from './DefaultBreadcrumbs';
@@ -67,11 +66,16 @@ export type EditorRenderingConfig = {
   PostSubmission: React.FC;
 };
 
+export type ProfileConfig = Partial<Omit<EditorRenderingConfig, 'configuration'>>;
+
 export type EditorConfig = {
   allowEditing: boolean;
   selectEntityWhenCreating: boolean;
   selectFieldWhenCreating: boolean;
   deselectRevisionAfterSaving: boolean;
+  profileConfig: {
+    [profile: string]: ProfileConfig;
+  };
 };
 
 const defaultEditorConfig: EditorConfig = {
@@ -79,6 +83,7 @@ const defaultEditorConfig: EditorConfig = {
   selectEntityWhenCreating: true,
   selectFieldWhenCreating: true,
   deselectRevisionAfterSaving: false,
+  profileConfig: {},
 };
 
 const Context = React.createContext<EditorRenderingConfig>({
@@ -113,6 +118,35 @@ export function useSlotConfiguration() {
   return slots.configuration;
 }
 
+const ProfileContext = React.createContext<string | undefined>(undefined);
+
+export const useProfile = () => {
+  return useContext(ProfileContext);
+};
+
+export function useProfileOverride(slotName: keyof ProfileConfig): React.FC | undefined {
+  const configuration = useSlotConfiguration();
+  const profile = useProfile();
+
+  if (!profile) {
+    return undefined;
+  }
+
+  const profileConfig = configuration.profileConfig[profile];
+
+  if (!profileConfig) {
+    return undefined;
+  }
+
+  return profileConfig[slotName];
+}
+
+export const ProfileProvider: React.FC<{ profile?: string }> = props => {
+  const profile = useProfile();
+
+  return <ProfileContext.Provider value={props.profile || profile}>{props.children}</ProfileContext.Provider>;
+};
+
 const Provider: React.FC<{ config?: Partial<EditorConfig>; components?: Partial<EditorRenderingConfig> }> = ({
   components = {},
   children,
@@ -139,6 +173,11 @@ const Provider: React.FC<{ config?: Partial<EditorConfig>; components?: Partial<
         ...defaultConfig.configuration,
         ...filteredComponents.configuration,
         ...config,
+        profileConfig: {
+          ...(defaultConfig.configuration?.profileConfig || {}),
+          ...(filteredComponents.configuration?.profileConfig || {}),
+          ...(config?.profileConfig || {}),
+        },
       },
     };
   }, [components, config, defaultConfig]);
@@ -146,13 +185,13 @@ const Provider: React.FC<{ config?: Partial<EditorConfig>; components?: Partial<
   return <Context.Provider value={newConfig}>{children}</Context.Provider>;
 };
 
-const InlineBreadcrumbs: React.FC = () => {
-  const { Breadcrumbs } = useSlotContext();
+const InlineBreadcrumbs: EditorRenderingConfig['Breadcrumbs'] = () => {
+  const Slots = useSlotContext();
 
-  return <Breadcrumbs />;
+  return <Slots.Breadcrumbs />;
 };
 
-const InlineSelector: React.FC = () => {
+const InlineSelector: EditorRenderingConfig['InlineSelector'] = () => {
   const [entity] = useCurrentEntity();
   const Slots = useSlotContext();
 
@@ -163,77 +202,80 @@ const InlineSelector: React.FC = () => {
   return <Slots.InlineSelector />;
 };
 
-const InlineProperties: React.FC<{ property: string }> = ({ property }) => {
+const InlineProperties: EditorRenderingConfig['InlineProperties'] = ({ property }) => {
   const Slots = useSlotContext();
 
   return <Slots.InlineProperties property={property} />;
 };
 
-const AdjacentNavigation: React.FC = props => {
+const AdjacentNavigation: EditorRenderingConfig['AdjacentNavigation'] = props => {
   const Slots = useSlotContext();
 
   return <Slots.AdjacentNavigation>{props.children}</Slots.AdjacentNavigation>;
 };
 
-const ViewEntity: React.FC<{ showTitle?: boolean }> = props => {
+const ViewEntity: EditorRenderingConfig['SingleEntity'] = props => {
   const Slots = useSlotContext();
 
   return <Slots.SingleEntity showTitle={props.showTitle}>{props.children}</Slots.SingleEntity>;
 };
 
-const FieldInstance: React.FC<{
-  field: BaseField;
-  property: string;
-  path: Array<[string, string]>;
-  hideHeader?: boolean;
-}> = props => {
+const FieldInstance: EditorRenderingConfig['FieldInstance'] = props => {
   const Slots = useSlotContext();
 
   return <Slots.FieldInstance {...props} />;
 };
 
-const ViewField: React.FC = props => {
+const ViewField: EditorRenderingConfig['SingleField'] = props => {
   const Slots = useSlotContext();
 
   return <Slots.SingleField>{props.children}</Slots.SingleField>;
 };
 
-const TopLevelEditor: React.FC = props => {
+const TopLevelEditor: EditorRenderingConfig['TopLevelEditor'] = props => {
   const Slots = useSlotContext();
 
   return <Slots.TopLevelEditor>{props.children}</Slots.TopLevelEditor>;
 };
 
-const Choice: React.FC = props => {
+const Choice: EditorRenderingConfig['Choice'] = props => {
   const Slots = useSlotContext();
 
   return <Slots.Choice>{props.children}</Slots.Choice>;
 };
 
-const SubmitButton: React.FC<{
-  afterSave?: (req: RevisionRequest) => void;
-}> = props => {
+const SubmitButton: EditorRenderingConfig['SubmitButton'] = props => {
   const Slots = useSlotContext();
 
   return <Slots.SubmitButton afterSave={props.afterSave}>{props.children}</Slots.SubmitButton>;
 };
 
-const PreviewSubmission: React.FC = props => {
+const PreviewSubmission: EditorRenderingConfig['PreviewSubmission'] = props => {
   const Slots = useSlotContext();
 
   return <Slots.PreviewSubmission>{props.children}</Slots.PreviewSubmission>;
 };
 
-const EditorWrapper: React.FC = props => {
+const EditorWrapper: EditorRenderingConfig['EditorWrapper'] = props => {
   const Slots = useSlotContext();
 
   return <Slots.EditorWrapper>{props.children}</Slots.EditorWrapper>;
 };
 
-const PostSubmission: React.FC = props => {
+const PostSubmission: EditorRenderingConfig['PostSubmission'] = props => {
   const Slots = useSlotContext();
 
   return <Slots.PostSubmission>{props.children}</Slots.PostSubmission>;
+};
+
+const InlineEntity: EditorRenderingConfig['InlineEntity'] = props => {
+  const Slots = useSlotContext();
+
+  return (
+    <ProfileProvider profile={props.entity.profile}>
+      <Slots.InlineEntity {...props} />
+    </ProfileProvider>
+  );
 };
 
 export const EditorSlots = {
@@ -241,6 +283,7 @@ export const EditorSlots = {
   InlineBreadcrumbs,
   InlineProperties,
   InlineSelector,
+  InlineEntity,
   AdjacentNavigation,
   TopLevelEditor,
   ViewEntity,
