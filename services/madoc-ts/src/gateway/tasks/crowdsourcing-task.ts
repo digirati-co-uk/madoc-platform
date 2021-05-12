@@ -206,7 +206,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
                       );
                       if (foundManifestTask) {
                         await api.updateTask(foundManifestTask.id, {
-                          status: 3,
+                          status: 2,
                           status_text: 'in review',
                         });
                       } else {
