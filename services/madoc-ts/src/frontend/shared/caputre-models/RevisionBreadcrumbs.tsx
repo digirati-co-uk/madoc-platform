@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import { BreadcrumbDivider, BreadcrumbItem, BreadcrumbList } from '../components/Breadcrumbs';
 
 export function useBreads(): {
-  breads: Array<{ id: string; name: string }>;
+  breads: Array<{ id: string; name: string; profile?: string }>;
   revisionPopTo: (args: { id: string }) => void;
   revisionDeselectField: () => void;
   fieldSelected: boolean;
@@ -21,7 +21,7 @@ export function useBreads(): {
   });
 
   return useMemo(() => {
-    const breads: Array<{ id: string; name: string }> = [];
+    const breads: Array<{ id: string; name: string; profile?: string }> = [];
 
     if (revision) {
       let currentLevel = revision.document;
@@ -33,6 +33,7 @@ export function useBreads(): {
           breads.push({
             id: currentLevel.id,
             name: currentLevel.pluralLabel ? currentLevel.pluralLabel : currentLevel.label,
+            profile: currentLevel.profile,
           });
         }
       }
@@ -41,6 +42,7 @@ export function useBreads(): {
         breads.push({
           id: field.id,
           name: field.pluralLabel ? field.pluralLabel : field.label,
+          profile: field.profile,
         });
       }
     }

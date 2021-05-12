@@ -1,6 +1,8 @@
 import { Runtime } from '@atlas-viewer/atlas';
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { PARAGRAPHS_PROFILE } from '../../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
+import { slotConfig } from '../../../extensions/capture-models/Paragraphs/Paragraphs.slots';
 import { Button, ButtonIcon, ButtonRow } from '../../shared/atoms/Button';
 import { EmptyState } from '../../shared/atoms/EmptyState';
 import { SmallToast } from '../../shared/atoms/SmallToast';
@@ -121,6 +123,10 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
       }
     : {};
 
+  const profileConfig: { [key: string]: Partial<EditorRenderingConfig> } = {
+    [PARAGRAPHS_PROFILE]: slotConfig,
+  };
+
   if (api.getIsServer() || !canvasId || !projectId || (isPreparing && !isModelAdmin)) {
     return null;
   }
@@ -133,7 +139,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
         revision={isSegmentation ? undefined : revision}
         captureModel={captureModel}
         slotConfig={{
-          editor: { allowEditing: !preventFurtherSubmission, deselectRevisionAfterSaving: true },
+          editor: { allowEditing: !preventFurtherSubmission, deselectRevisionAfterSaving: true, profileConfig },
           components: components,
         }}
       >

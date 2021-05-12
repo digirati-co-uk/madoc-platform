@@ -1,19 +1,23 @@
 import React from 'react';
 import { FieldHeader } from '@capture-models/editor';
-import { ProgressIcon } from '../../../atoms/ProgressIcon';
 import { getEntityLabel } from '../../utility/get-entity-label';
 import { ModifiedStatus } from '../features/ModifiedStatus';
 import { useCurrentEntity } from '../hooks/use-current-entity';
 import { useEntityDetails } from '../hooks/use-entity-details';
 import { mapProperties } from '../utility/map-properties';
-import { EditorRenderingConfig, useSlotContext } from './EditorSlots';
+import { EditorRenderingConfig, useProfileOverride, useSlotContext } from './EditorSlots';
 
-export const DefaultSingleEntity: EditorRenderingConfig['SingleEntity'] = ({ showTitle = true }) => {
+export const DefaultSingleEntity: EditorRenderingConfig['SingleEntity'] = props => {
+  const { showTitle } = props;
   const Slots = useSlotContext();
   const [entity] = useCurrentEntity();
   const { isModified } = useEntityDetails(entity);
-
   const entityLabel = getEntityLabel(entity);
+  const ProfileSpecificComponent = useProfileOverride('SingleEntity');
+
+  if (ProfileSpecificComponent) {
+    return <ProfileSpecificComponent {...props} />;
+  }
 
   return (
     <>
