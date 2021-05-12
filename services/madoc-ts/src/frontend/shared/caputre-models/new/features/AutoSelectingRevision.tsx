@@ -10,7 +10,10 @@ export const AutoSelectingRevision: React.FC<{ directEdit?: boolean }> = ({ dire
   const [currentView, { push }] = useNavigation();
   const revisionList = useRevisionList({ filterCurrentView: false });
 
-  const lastWorkedOn = revisionList.myUnpublished.length ? revisionList.myUnpublished[0] : undefined;
+  const lastWorkedOn =
+    revisionList.myUnpublished.length && currentView
+      ? revisionList.myUnpublished.find(r => r.revision.structureId === currentView?.id)
+      : undefined;
 
   const skipToStructureRevision = useMemo(() => {
     if (
@@ -39,7 +42,8 @@ export const AutoSelectingRevision: React.FC<{ directEdit?: boolean }> = ({ dire
       if (directEdit) {
         selectRevision({ revisionId: currentView.id });
       } else if (!skipToStructureRevision) {
-        if (lastWorkedOn) {
+        const lastWorkedOnStructure = lastWorkedOn ? lastWorkedOn.revision.structureId === currentView.id : undefined;
+        if (lastWorkedOn && lastWorkedOnStructure) {
           selectRevision({ revisionId: lastWorkedOn.revision.id });
         } else {
           createRevision({ revisionId: currentView.id, cloneMode: 'EDIT_ALL_VALUES' });
