@@ -11,7 +11,7 @@ export const CollectionSearchIndex = () => {
   return (
     <div>
       <Button disabled={isLoading} onClick={() => indexContext()}>
-        Index all manifests {isLoading && percent ? ` ${percent}%` : null}
+        Index all manifests {isLoading ? ` ${percent}%` : null}
       </Button>
     </div>
   );
