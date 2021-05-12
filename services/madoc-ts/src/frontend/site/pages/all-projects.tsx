@@ -18,6 +18,11 @@ export const AllProjects: React.FC = () => {
   return (
     <>
       <Heading1>{t('All projects')}</Heading1>
+      <Pagination
+        page={data ? data.pagination.page : undefined}
+        totalPages={data ? data.pagination.totalPages : undefined}
+        stale={!data}
+      />
       {data?.projects.map(project => (
         <ProjectContainer $status={project.status} key={project.id}>
           <LocaleString as={Heading3}>{project.label}</LocaleString>
