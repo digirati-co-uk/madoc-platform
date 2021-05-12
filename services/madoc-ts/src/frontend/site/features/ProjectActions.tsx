@@ -30,7 +30,7 @@ export const ProjectActions: React.FC = () => {
   }
 
   return (
-    <>
+    <div>
       {!options.hideStartContributing && isActive ? (
         claimGranularity === 'manifest' ? (
           <GoToRandomManifest $primary $large label={{ none: [t('Start contributing')] }} navigateToModel />
@@ -55,7 +55,7 @@ export const ProjectActions: React.FC = () => {
         {allowCollectionNavigation && !options.hideRandomManifest ? <GoToRandomManifest /> : null}
         {allowManifestNavigation && !options.hideRandomCanvas ? <GoToRandomCanvas /> : null}
       </ButtonRow>
-    </>
+    </div>
   );
 };
 

@@ -61,7 +61,7 @@ export const ProjectContributionButton: React.FC = () => {
   }
 
   return (
-    <>
+    <div>
       <Heading3 $margin>{t('Continue where you left off')}</Heading3>
       <GridContainer>{taskComponents}</GridContainer>
       <SmallButton
@@ -70,7 +70,7 @@ export const ProjectContributionButton: React.FC = () => {
       >
         {t('View all contributions')}
       </SmallButton>
-    </>
+    </div>
   );
 };
 
