@@ -6,7 +6,8 @@ export const ViewExternalContent: React.FC<{
   target: any;
   height?: number;
   onCreated?: (runtime: AtlasContextType) => void;
-}> = ({ target, children, onCreated, height = 600 }) => {
+  onPanInSketchMode?: () => void;
+}> = ({ target, children, onCreated, onPanInSketchMode, height = 600 }) => {
   return useContentType(
     useMemo(
       () =>
@@ -20,10 +21,11 @@ export const ViewExternalContent: React.FC<{
         height,
         children,
         custom: {
+          onPanInSketchMode,
           onCreateAtlas: onCreated,
         },
       }),
-      [onCreated, children, height]
+      [onPanInSketchMode, onCreated, children, height]
     )
   );
 };

@@ -1,8 +1,9 @@
 import { Runtime } from '@atlas-viewer/atlas';
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ButtonIcon, ButtonRow } from '../../shared/atoms/Button';
 import { EmptyState } from '../../shared/atoms/EmptyState';
+import { SmallToast } from '../../shared/atoms/SmallToast';
 import { TickIcon } from '../../shared/atoms/TickIcon';
 import { BackToChoicesButton } from '../../shared/caputre-models/new/components/BackToChoicesButton';
 import { EditorSlots } from '../../shared/caputre-models/new/components/EditorSlots';
@@ -37,6 +38,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
   const runtime = useRef<Runtime>();
   const gridRef = useRef<any>();
   const [height, setHeight] = useState(600);
+  const [showPanWarning, setShowPanWarning] = useState(false);
 
   useLayoutEffect(() => {
     if (gridRef.current) {
@@ -51,6 +53,13 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
   const preventFurtherSubmission = !allowMultiple && allTasksDone;
 
   const isEditing = isEditingAnotherUsersRevision(captureModel, revision, user.user);
+
+  const onPanInSketchMode = useCallback(() => {
+    setShowPanWarning(true);
+    setTimeout(() => {
+      setShowPanWarning(false);
+    }, 3000);
+  }, []);
 
   const goHome = () => {
     if (runtime.current) {
@@ -120,6 +129,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
                 onCreated={rt => {
                   return ((runtime as any).current = rt.runtime);
                 }}
+                onPanInSketchMode={onPanInSketchMode}
               />
 
               <ButtonRow style={{ position: 'absolute', top: 0, left: 10, zIndex: 20 }}>
@@ -127,6 +137,20 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
                 <Button onClick={zoomOut}>{t('atlas__zoom_out', { defaultValue: '-' })}</Button>
                 <Button onClick={zoomIn}>{t('atlas__zoom_in', { defaultValue: '+' })}</Button>
               </ButtonRow>
+
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: '50%',
+                  zIndex: 20,
+                  textAlign: 'center',
+                  left: 0,
+                  right: 0,
+                  pointerEvents: 'none',
+                }}
+              >
+                <SmallToast $active={showPanWarning}>{t('Hold space to pan and zoom')}</SmallToast>
+              </div>
             </div>
 
             <div

@@ -24,6 +24,7 @@ export type EditorContentVariations = {
   manifestUri?: string;
   height?: number;
   onCreated?: (runtime: AtlasContextType) => void;
+  onPanInSketchMode?: () => void;
 };
 
 export const EditorContentViewer: React.FC<EditorContentVariations> = ({
@@ -38,6 +39,7 @@ export const EditorContentViewer: React.FC<EditorContentVariations> = ({
   height,
   children,
   onCreated,
+  onPanInSketchMode,
 }) => {
   const { t } = useTranslation();
 
@@ -48,7 +50,7 @@ export const EditorContentViewer: React.FC<EditorContentVariations> = ({
         renderChoice={(cid, reset) => (
           <Suspense fallback={<>Loading</>}>
             <>
-              <ViewContentFetch height={height} id={cid} onCreated={onCreated} />
+              <ViewContentFetch height={height} id={cid} onCreated={onCreated} onPanInSketchMode={onPanInSketchMode} />
               {explorerReset ? (
                 <>
                   <br />
@@ -63,13 +65,22 @@ export const EditorContentViewer: React.FC<EditorContentVariations> = ({
   }
 
   if (canvas && target) {
-    return <ViewContent target={target as any} canvas={canvas} height={height} onCreated={onCreated} />;
+    return (
+      <ViewContent
+        target={target as any}
+        canvas={canvas}
+        height={height}
+        onCreated={onCreated}
+        onPanInSketchMode={onPanInSketchMode}
+      />
+    );
   }
 
   if (canvasUri && manifestUri) {
     return (
       <ViewExternalContent
         onCreated={onCreated}
+        onPanInSketchMode={onPanInSketchMode}
         target={[
           { type: 'Canvas', id: canvasUri },
           { type: 'Manifest', id: manifestUri },
@@ -83,7 +94,12 @@ export const EditorContentViewer: React.FC<EditorContentVariations> = ({
   if (canvasId) {
     return (
       <Suspense fallback={<>{t('loading')}</>}>
-        <ViewContentFetch id={Number(canvasId)} height={height} onCreated={onCreated}>
+        <ViewContentFetch
+          id={Number(canvasId)}
+          height={height}
+          onCreated={onCreated}
+          onPanInSketchMode={onPanInSketchMode}
+        >
           {children}
         </ViewContentFetch>
       </Suspense>
@@ -95,7 +111,12 @@ export const EditorContentViewer: React.FC<EditorContentVariations> = ({
     const canvasTargetUrn = canvasTarget ? parseUrn(canvasTarget.id) : undefined;
     if (canvasTargetUrn) {
       return (
-        <ViewContentFetch id={Number(canvasTargetUrn.id)} height={height} onCreated={onCreated}>
+        <ViewContentFetch
+          id={Number(canvasTargetUrn.id)}
+          height={height}
+          onCreated={onCreated}
+          onPanInSketchMode={onPanInSketchMode}
+        >
           {children}
         </ViewContentFetch>
       );
