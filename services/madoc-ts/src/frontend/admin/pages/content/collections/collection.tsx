@@ -43,12 +43,12 @@ export const CollectionView: UniversalComponent<CollectionViewType> = createUniv
             { label: title, link: '/collections', active: true },
           ]}
           menu={[
-            { label: t('manifests'), link: `/collections/${id}` },
-            { label: t('edit metadata'), link: `/collections/${id}/metadata` },
-            { label: t('edit structure'), link: `/collections/${id}/structure` },
-            { label: t('projects'), link: `/collections/${id}/projects` },
-            { label: t('search index'), link: `/collections/${id}/search` },
-            { label: t('delete'), link: `/collections/${id}/delete` },
+            { label: t('Manifests'), link: `/collections/${id}` },
+            { label: t('Edit metadata'), link: `/collections/${id}/metadata` },
+            { label: t('Edit structure'), link: `/collections/${id}/structure` },
+            { label: t('Projects'), link: `/collections/${id}/projects` },
+            { label: t('Search index'), link: `/collections/${id}/search` },
+            { label: t('Delete'), link: `/collections/${id}/delete` },
           ]}
           title={title}
           subtitle={t('{{count}} manifests', { count: pagination.totalResults })}

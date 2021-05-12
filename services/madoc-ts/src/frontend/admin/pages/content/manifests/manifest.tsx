@@ -1,13 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMutation } from 'react-query';
-import { Button } from '../../../../shared/atoms/Button';
-import { useApi } from '../../../../shared/hooks/use-api';
 import { UniversalComponent } from '../../../../types';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { ManifestFull } from '../../../../../types/schemas/manifest-full';
 import { useParams } from 'react-router-dom';
-import { PublishManifest } from '../../../features/publish-manifest';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
 import { WidePage } from '../../../../shared/atoms/WidePage';
@@ -41,15 +37,15 @@ export const ManifestView: UniversalComponent<ManifestViewType> = createUniversa
             { label: title, link: `/manifests/${id}`, active: true },
           ]}
           menu={[
-            { label: t('canvases'), link: `/manifests/${id}` },
-            { label: t('edit metadata'), link: `/manifests/${id}/metadata` },
-            { label: t('edit structure'), link: `/manifests/${id}/structure` },
-            { label: t('edit linking'), link: `/manifests/${id}/linking` },
-            { label: t('projects'), link: `/manifests/${id}/projects` },
-            { label: t('collections'), link: `/manifests/${id}/collections` },
-            { label: t('ocr'), link: `/manifests/${id}/ocr` },
-            { label: t('delete'), link: `/manifests/${id}/delete` },
-            { label: t('search index'), link: `/manifests/${id}/search` },
+            { label: t('Canvases'), link: `/manifests/${id}` },
+            { label: t('Edit metadata'), link: `/manifests/${id}/metadata` },
+            { label: t('Edit structure'), link: `/manifests/${id}/structure` },
+            { label: t('Edit linking'), link: `/manifests/${id}/linking` },
+            { label: t('Projects'), link: `/manifests/${id}/projects` },
+            { label: t('Collections'), link: `/manifests/${id}/collections` },
+            { label: t('OCR'), link: `/manifests/${id}/ocr` },
+            { label: t('Delete'), link: `/manifests/${id}/delete` },
+            { label: t('Search index'), link: `/manifests/${id}/search` },
           ]}
         />
         <WidePage>{renderUniversalRoutes(route.routes)}</WidePage>

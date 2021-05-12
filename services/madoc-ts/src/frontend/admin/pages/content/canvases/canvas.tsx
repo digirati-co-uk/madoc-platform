@@ -68,23 +68,23 @@ export const CanvasView: UniversalComponent<CanvasViewType> = createUniversalCom
           }
           menu={[
             {
-              label: t('deep zoom'),
+              label: t('Deep zoom'),
               link: manifestId ? `/manifests/${manifestId}/canvases/${id}` : `/canvases/${id}`,
             },
             {
-              label: t('edit metadata'),
+              label: t('Edit metadata'),
               link: manifestId ? `/manifests/${manifestId}/canvases/${id}/metadata` : `/canvases/${id}/metadata`,
             },
             {
-              label: t('edit linking'),
+              label: t('Edit linking'),
               link: manifestId ? `/manifests/${manifestId}/canvases/${id}/linking` : `/canvases/${id}/linking`,
             },
             {
-              label: t('search index'),
+              label: t('Search index'),
               link: manifestId ? `/manifests/${manifestId}/canvases/${id}/search` : `/canvases/${id}/search`,
             },
             {
-              label: t('transcription'),
+              label: t('Transcription'),
               link: manifestId ? `/manifests/${manifestId}/canvases/${id}/plaintext` : `/canvases/${id}/plaintext`,
             },
           ]}
