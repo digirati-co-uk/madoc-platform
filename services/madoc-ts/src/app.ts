@@ -102,7 +102,7 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   app.use(router.routes()).use(router.allowedMethods());
 
   // Cron jobs.
-  if (process.env.NODE_APP_INSTANCE === '0') {
+  if (process.env.NODE_APP_INSTANCE === '0' && process.env.NODE_ENV !== 'test') {
     (app.context.cron as CronJobs).addJob(
       'check-expired-manifests',
       'Check expired manifests',
