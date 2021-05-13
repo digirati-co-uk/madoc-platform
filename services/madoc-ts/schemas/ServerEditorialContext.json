@@ -1,0 +1,21 @@
+{
+  "type": "object",
+  "properties": {
+    "project": {
+      "type": "number"
+    },
+    "collection": {
+      "type": "number"
+    },
+    "manifest": {
+      "type": "number"
+    },
+    "canvas": {
+      "type": "number"
+    },
+    "page": {
+      "type": "number"
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

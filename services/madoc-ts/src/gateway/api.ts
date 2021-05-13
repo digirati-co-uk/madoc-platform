@@ -9,6 +9,7 @@ import { ExtensionManager } from '../extensions/extension-manager';
 import { defaultPageBlockDefinitions } from '../extensions/page-blocks/default-definitions';
 import { PageBlockExtension } from '../extensions/page-blocks/extension';
 import { MediaExtension } from '../extensions/media/extension';
+import { SystemExtension } from "../extensions/system/extension";
 import { TaskExtension } from '../extensions/tasks/extension';
 import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
 import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
@@ -76,6 +77,7 @@ export class ApiClient {
   pageBlocks: PageBlockExtension;
   media: MediaExtension;
   tasks: TaskExtension;
+  system: SystemExtension;
 
   constructor(options: {
     gateway: string;
@@ -95,6 +97,7 @@ export class ApiClient {
     this.pageBlocks = new PageBlockExtension(this, defaultPageBlockDefinitions);
     this.media = new MediaExtension(this);
     this.tasks = new TaskExtension(this);
+    this.system = new SystemExtension(this);
     this.captureModelDataSources = [plainTextSource];
     this.captureModelExtensions = new ExtensionManager(
       options.customCaptureModelExtensions

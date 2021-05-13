@@ -2,6 +2,7 @@ import { i18n } from 'i18next';
 import { PluginManager } from '../frontend/shared/plugins/plugin-manager';
 import { MediaRepository } from '../repository/media-repository';
 import { PageBlocksRepository } from '../repository/page-blocks-repository';
+import { PluginRepository } from '../repository/plugin-repository';
 import { CronJobs } from '../utility/cron-jobs';
 import { ExternalConfig } from './external-config';
 import { router } from '../router';
@@ -17,6 +18,7 @@ export interface ApplicationContext {
   mysql: Pool;
   connection: DatabasePoolConnectionType;
   pageBlocks: PageBlocksRepository;
+  plugins: PluginRepository;
   media: MediaRepository;
   omeka: OmekaApi;
   pluginManager: PluginManager;

@@ -14,6 +14,7 @@ import { I18nextProvider } from 'react-i18next';
 import { BrowserRouter } from 'react-router-dom';
 import { api } from '../../../gateway/api.browser';
 import React, { Suspense } from 'react';
+import { SitePlugin } from '../../../types/schemas/plugins';
 import { CreateRouteType, UniversalRoute } from '../../types';
 import { ErrorPage } from '../components/NotFoundPage';
 import { Spinner } from '../icons/Spinner';
@@ -35,23 +36,32 @@ export async function renderClient(
   const dehydratedState = dehydratedStateEl ? JSON.parse(dehydratedStateEl.innerText) : {};
   const dehydratedSite = dehydratedSiteEl ? JSON.parse(dehydratedSiteEl.innerText) : {};
 
-  const remotePlugin = await fetch(
-    '/s/default/madoc/assets/plugins/my-plugin/3ee99c02fb31792f0c8a947153b942519694f64c/plugin.js',
-    {
-      cache: 'force-cache',
+  const remotePlugins = (dehydratedSite.plugins || []).map(async (plugin: SitePlugin) => {
+    if (plugin.development.enabled && !plugin.development.revision && !plugin.installed) {
+      return null;
     }
-  )
-    .then(res => res.text())
-    .then(code => {
-      const module = new Function(`
+
+    return fetch(
+      plugin.development.enabled && plugin.development.revision
+        ? `/s/default/madoc/assets/plugins/${plugin.id}/${plugin.development.revision}/plugin.js`
+        : `/s/default/madoc/assets/plugins/${plugin.id}/${plugin.version}/plugin.js`,
+      {
+        cache: 'force-cache',
+      }
+    )
+      .then(res => res.text())
+      .then(code => {
+        const module = new Function(`
           ${code};
-          return this['madoc-example-plugin'];
+          return this['${plugin.id}'];
         `);
 
-      return module();
-    });
+        return module();
+      });
+  });
 
-  const pluginManager = new PluginManager([remotePlugin as any]);
+  const availablePlugins = (await Promise.all(remotePlugins)).filter(r => r !== null);
+  const pluginManager = new PluginManager(availablePlugins as any);
   const routes = Array.isArray(createRoutes)
     ? createRoutes
     : pluginManager.makeRoutes(createRoutes(pluginManager.hookComponents(components)));

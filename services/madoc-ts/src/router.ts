@@ -6,6 +6,7 @@ import { importSite } from './routes/admin/import-site';
 import { listJobs, runJob } from './routes/admin/list-jobs';
 import { getLocalisation, listLocalisations, updateLocalisation } from './routes/admin/localisation';
 import { getMetadataConfiguration, updateMetadataConfiguration } from './routes/admin/metadata-configuration';
+import { getPlugin, installPlugin, listPlugins } from './routes/admin/plugins';
 import { pm2Status } from './routes/admin/pm2';
 import { getSiteDetails } from './routes/admin/site-details';
 import { updateSiteConfiguration } from './routes/admin/update-site-configuration';
@@ -135,6 +136,12 @@ export const router = new TypedRouter({
   'import-site': [TypedRouter.POST, '/api/madoc/site/:siteId/import', importSite],
   'cron-jobs': [TypedRouter.GET, '/api/madoc/cron/jobs', listJobs],
   'run-cron-jobs': [TypedRouter.POST, '/api/madoc/cron/jobs/:jobId/run', runJob],
+
+  // Plugins
+  'list-plugins': [TypedRouter.GET, '/api/madoc/system/plugins', listPlugins],
+  'get-plugin': [TypedRouter.GET, '/api/madoc/system/plugins/:id', getPlugin],
+  'install-plugin': [TypedRouter.POST, '/api/madoc/system/plugins', installPlugin, 'SitePlugin'],
+
   'update-site-configuration': [TypedRouter.POST, '/api/madoc/configuration', updateSiteConfiguration],
   'update-search-facet-configuration': [
     TypedRouter.POST,

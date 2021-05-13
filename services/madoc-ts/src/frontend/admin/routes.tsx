@@ -61,6 +61,7 @@ import { EditManifestLinking } from './pages/content/manifests/edit-manifest-lin
 import { EditCanvasLinking } from './pages/content/canvases/edit-canvas-linking';
 import { OcrPage } from './pages/enrichment/ocr';
 import { ManifestSearchIndex } from './pages/content/manifests/manifest-search-index';
+import { ListPlugins } from './pages/system/list-plugins';
 import { OcrManifest } from './pages/enrichment/ocr/ocr-manifest';
 
 export const routes: UniversalRoute[] = [
@@ -459,5 +460,10 @@ export const routes: UniversalRoute[] = [
     path: '/system/development',
     exact: true,
     component: DevelopmentPlugin,
+  },
+  {
+    path: '/system/plugins',
+    exact: true,
+    component: ListPlugins,
   },
 ];

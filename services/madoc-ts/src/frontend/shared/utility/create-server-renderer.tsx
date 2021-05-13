@@ -8,6 +8,7 @@ import { StaticRouterContext } from 'react-router';
 import { parse } from 'query-string';
 import { api } from '../../../gateway/api.server';
 import { ListLocalisationsResponse } from '../../../routes/admin/localisation';
+import { SitePlugin } from '../../../types/schemas/plugins';
 import { EditorialContext } from '../../../types/schemas/site-page';
 import { PublicSite } from '../../../utility/omeka-api';
 import { PluginManager } from '../plugins/plugin-manager';
@@ -59,6 +60,7 @@ export function createServerRenderer(
     navigationOptions,
     getSlots,
     pluginManager,
+    plugins,
   }: {
     url: string;
     basename: string;
@@ -74,6 +76,7 @@ export function createServerRenderer(
     };
     getSlots?: (ctx: EditorialContext) => Promise<any> | any;
     pluginManager?: PluginManager;
+    plugins?: SitePlugin[];
   }) {
     const prefetchCache = makeQueryCache();
     const sheet = new ServerStyleSheet(); // <-- creating out stylesheet
@@ -131,6 +134,7 @@ export function createServerRenderer(
         locales: supportedLocales,
         defaultLocale: siteLocales.defaultLanguage || 'en',
         navigationOptions: navigationOptions,
+        plugins,
       })}</script>
       <script type="application/json" id="react-query-cache">${JSON.stringify(dehydratedState)}</script>
     `;
