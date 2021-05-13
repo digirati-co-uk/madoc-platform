@@ -154,9 +154,7 @@ describe('Create resource claim', () => {
             ],
             "name": "Test manifest 1",
             "parameters": Array [],
-            "state": Object {
-              "approvalsRequired": 1,
-            },
+            "state": Object {},
             "status": 0,
             "status_text": "not started",
             "subject": "urn:madoc:manifest:2001",
@@ -658,9 +656,7 @@ describe('Create resource claim', () => {
             ],
             "name": "Test manifest 1",
             "parameters": Array [],
-            "state": Object {
-              "approvalsRequired": 1,
-            },
+            "state": Object {},
             "status": 0,
             "status_text": "not started",
             "subject": "urn:madoc:manifest:2001",
