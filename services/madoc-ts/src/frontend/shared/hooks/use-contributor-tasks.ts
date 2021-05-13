@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useUserDetails } from './use-user-details';
 import { useQuery } from 'react-query';
 import { isContributor } from '../utility/user-roles';

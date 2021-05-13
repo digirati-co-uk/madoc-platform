@@ -8,6 +8,7 @@ import { SuccessMessage } from '../../shared/atoms/SuccessMessage';
 import { WarningMessage } from '../../shared/atoms/WarningMessage';
 import { useApi } from '../../shared/hooks/use-api';
 import { useData } from '../../shared/hooks/use-data';
+import { useUser } from '../../shared/hooks/use-site';
 import { useManifestTask } from '../hooks/use-manifest-task';
 import { useManifestUserTasks } from '../hooks/use-manifest-user-tasks';
 import { useProjectStatus } from '../hooks/use-project-status';
@@ -23,6 +24,7 @@ export const ManifestUserNotification: React.FC = () => {
   const { isManifestComplete, canClaimManifest, userManifestTask, isFetched } = useManifestTask();
   const { isActive } = useProjectStatus();
   const { t } = useTranslation();
+  const user = useUser();
   const api = useApi();
 
   const [onSubmitForReview] = useMutation(async (tid: string) => {
@@ -33,7 +35,7 @@ export const ManifestUserNotification: React.FC = () => {
     await Promise.all([refetch(), refetchManifest()]);
   });
 
-  if (!projectId || !manifestId || !isFetched || !isActive) {
+  if (!projectId || !manifestId || !isFetched || !isActive || !user) {
     return null;
   }
 

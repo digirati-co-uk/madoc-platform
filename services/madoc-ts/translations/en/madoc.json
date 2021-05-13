@@ -444,5 +444,6 @@
   "{{count}} manifests": "{{count}} manifest",
   "{{count}} manifests_plural": "{{count}} manifests",
   "{{count}} more": "{{count}} more",
-  "{{count}} more_plural": "{{count}} more"
+  "{{count}} more_plural": "{{count}} more",
+  "Go to previous image": "Go to previous image"
 }

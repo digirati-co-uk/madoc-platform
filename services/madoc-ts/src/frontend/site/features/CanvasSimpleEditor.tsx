@@ -143,7 +143,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
           components: components,
         }}
       >
-        {!isPreparing ? <TranscriberModeWorkflowBar /> : null}
+        {!isPreparing && mode === 'transcription' ? <TranscriberModeWorkflowBar /> : null}
 
         <CanvasViewer>
           <div

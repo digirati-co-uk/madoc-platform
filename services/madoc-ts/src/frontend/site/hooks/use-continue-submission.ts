@@ -31,11 +31,12 @@ export function useContinueSubmission() {
                     inProgress++;
                   }
                 }
+                return true;
               }
               if (task.status === 3 && task.state && task.state.revisionId) {
                 completed++;
+                return true;
               }
-              return true;
             }
             return false;
           })
