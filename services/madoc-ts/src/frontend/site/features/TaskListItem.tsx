@@ -26,7 +26,7 @@ export const TaskListItem: React.FC<{ task: BaseTask; onClick: () => void; selec
   const metadata = useTaskMetadata(task);
 
   return (
-    <TaskItem onClick={onClick} $selected={selected}>
+    <TaskItem onClick={onClick} $selected={selected} data-cy="task-list-item">
       <TaskItemImageContainer>
         {metadata && metadata.subject && metadata.subject.thumbnail ? (
           <img

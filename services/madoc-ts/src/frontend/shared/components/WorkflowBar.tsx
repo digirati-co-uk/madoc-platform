@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
+import { useRelativeLinks } from '../../site/hooks/use-relative-links';
+import { useRouteContext } from '../../site/hooks/use-route-context';
 import { Button, ButtonIcon, ButtonRow, RightButtonIconBox } from '../atoms/Button';
 import { ErrorMessage } from '../atoms/ErrorMessage';
 import { GridContainer } from '../atoms/Grid';
@@ -9,6 +11,7 @@ import { SuccessMessage } from '../atoms/SuccessMessage';
 import { WhiteTickIcon } from '../atoms/TickIcon';
 import { WarningMessage } from '../atoms/WarningMessage';
 import { WidePageWrapper } from '../atoms/WidePage';
+import { createLink } from '../utility/create-link';
 import { HrefLink } from '../utility/href-link';
 import { useManifestPagination } from './CanvasNavigationMinimalist';
 import { ModalButton } from './Modal';
@@ -20,6 +23,7 @@ export type WorkflowBarProps = {
     onUnusable: (isUsable?: boolean) => void;
     onSubmit: () => void;
   };
+  completeMessage?: any;
   states: {
     isLoading?: boolean;
     canSubmit: boolean;
@@ -69,10 +73,18 @@ const WorkflowManifestActions = styled.div`
   margin-left: auto;
 `;
 
-export const WorkflowBar: React.FC<WorkflowBarProps> = ({ actions = {}, states = {}, expires, statistics, fixed }) => {
+export const WorkflowBar: React.FC<WorkflowBarProps> = ({
+  actions = {},
+  states = {},
+  expires,
+  statistics,
+  fixed,
+  completeMessage,
+}) => {
   const { t } = useTranslation();
   const { onTooDifficult, onSubmit, onUnusable } = actions;
   const manifestPagination = useManifestPagination('model');
+  const { projectId } = useRouteContext();
 
   const canSubmit =
     states.canSubmit &&
@@ -91,7 +103,9 @@ export const WorkflowBar: React.FC<WorkflowBarProps> = ({ actions = {}, states =
     <WorkflowBarContainer $fixed={fixed}>
       <WidePageWrapper $noPadding>
         {states.isComplete ? (
-          <SuccessMessage style={{ marginBottom: '.5em' }}>{t('Manifest complete')}</SuccessMessage>
+          <SuccessMessage style={{ marginBottom: '.5em' }}>
+            {completeMessage ? completeMessage : t('Manifest is complete')}
+          </SuccessMessage>
         ) : states.hasExpired ? (
           <ErrorMessage style={{ marginBottom: '.5em' }}>{t('Expired')}</ErrorMessage>
         ) : isCloseToExpire ? (
@@ -136,7 +150,11 @@ export const WorkflowBar: React.FC<WorkflowBarProps> = ({ actions = {}, states =
                   </Button>
                 </ModalButton>
               )}
-              <Button onClick={() => (onUnusable ? onUnusable(!isUnusable) : void 0)} disabled={!canClickUnusable}>
+              <Button
+                data-cy="workflow-bar-unusable"
+                onClick={() => (onUnusable ? onUnusable(!isUnusable) : void 0)}
+                disabled={!canClickUnusable}
+              >
                 {t('Unusable')}
                 <RightButtonIconBox $checked={isUnusable}>
                   <WhiteTickIcon />
@@ -164,6 +182,7 @@ export const WorkflowBar: React.FC<WorkflowBarProps> = ({ actions = {}, states =
                     {onTooDifficult ? (
                       <Button
                         $error
+                        data-cy="workflow-bar-difficult-confirm"
                         onClick={() => {
                           onTooDifficult();
                         }}
@@ -175,7 +194,7 @@ export const WorkflowBar: React.FC<WorkflowBarProps> = ({ actions = {}, states =
                 );
               }}
             >
-              <Button $error disabled={!canClickTooDifficult}>
+              <Button data-cy="workflow-bar-difficult" $error disabled={!canClickTooDifficult}>
                 {t('Too difficult')}
               </Button>
             </ModalButton>
@@ -195,12 +214,12 @@ export const WorkflowBar: React.FC<WorkflowBarProps> = ({ actions = {}, states =
               {manifestPagination ? (
                 <ButtonRow $noMargin>
                   {manifestPagination.hasPrevPage ? (
-                    <Button as={HrefLink} href={manifestPagination.prevPage}>
+                    <Button as={HrefLink} href={manifestPagination.prevPage} title={t('Go to previous image')}>
                       {t('Previous')}
                     </Button>
                   ) : null}
                   {manifestPagination.hasNextPage ? (
-                    <Button as={HrefLink} href={manifestPagination.nextPage}>
+                    <Button as={HrefLink} href={manifestPagination.nextPage} title={t('Go to next image')}>
                       {t('Next')}
                     </Button>
                   ) : null}

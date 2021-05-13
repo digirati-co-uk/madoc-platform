@@ -21,8 +21,9 @@ export const importSite: RouteMiddleware = async context => {
     throw new NotFound();
   }
 
-  const { siteId } = userWithScope(context, ['site.admin']);
+  const { siteId, id, name } = userWithScope(context, ['site.admin']);
   const siteApi = api.asUser({ siteId });
+  const userApi = api.asUser({ siteId, userId: id, userName: name });
 
   const data = context.request.body;
   // For tests:
@@ -404,6 +405,15 @@ export const importSite: RouteMiddleware = async context => {
         'status',
       ])
     );
+  }
+
+  if (data.projectConfig) {
+    for (const projectConfig of data.projectConfig) {
+      const { projectId, config } = projectConfig;
+      if (projectId && config) {
+        await userApi.saveSiteConfiguration(config, { project_id: projectId });
+      }
+    }
   }
 
   if (data.files && data.files.resources) {

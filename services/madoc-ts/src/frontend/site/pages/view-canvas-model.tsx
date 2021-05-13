@@ -1,3 +1,4 @@
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { castBool } from '../../../utility/cast-bool';
 import { Button, ButtonRow } from '../../shared/atoms/Button';
@@ -6,14 +7,10 @@ import { InfoMessage } from '../../shared/atoms/InfoMessage';
 import { LockIcon } from '../../shared/atoms/LockIcon';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { CanvasNavigation } from '../../shared/components/CanvasNavigation';
-import React, { useEffect, useState } from 'react';
 import { CanvasVaultContext } from '../../shared/components/CanvasVaultContext';
-import { ModalButton } from '../../shared/components/Modal';
 import { useCurrentUser } from '../../shared/hooks/use-current-user';
 import { useLocalStorage } from '../../shared/hooks/use-local-storage';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
-import { createLink } from '../../shared/utility/create-link';
-import { HrefLink } from '../../shared/utility/href-link';
 import { CanvasImageViewer } from '../features/CanvasImageViewer';
 import { CanvasManifestNavigation } from '../features/CanvasManifestNavigation';
 import { CanvasSimpleEditor } from '../features/CanvasSimpleEditor';
@@ -41,7 +38,7 @@ export const ViewCanvasModel: React.FC = () => {
   const [isSegmentation, setIsSegmentation] = useLocalStorage('segmentation-prepare', false);
   const shouldGoToNext = castBool(goToNext);
   const {
-    project: { hideCanvasThumbnailNavigation = false, contributionMode },
+    project: { hideCanvasThumbnailNavigation = false },
   } = useSiteConfiguration();
   const { isActive, isPreparing } = useProjectStatus();
 
@@ -55,21 +52,6 @@ export const ViewCanvasModel: React.FC = () => {
 
   const hasExpired = userManifestTask?.status === -1 && !canClaimManifest && preventContributionAfterManifestUnassign;
   const projectPaused = !isActive && !isPreparing;
-
-  const [couldUserComplete, setCouldUserComplete] = useState(false);
-  const [wasManifestCompleted, setManifestWasCompleted] = useState(false);
-
-  useEffect(() => {
-    if (userManifestTask && userManifestTask.status === 1) {
-      setCouldUserComplete(true);
-    }
-  }, [userManifestTask]);
-
-  useEffect(() => {
-    if (couldUserComplete && isManifestComplete) {
-      setManifestWasCompleted(true);
-    }
-  }, [couldUserComplete, isManifestComplete]);
 
   if (!canvasId) {
     return null;
@@ -88,31 +70,6 @@ export const ViewCanvasModel: React.FC = () => {
   ) {
     return (
       <div>
-        {contributionMode === 'transcription' && wasManifestCompleted ? (
-          <ModalButton
-            title={t('Manifest complete')}
-            render={() => {
-              return (
-                <div>
-                  {t(
-                    'Thank you. You finished this manifest. Go back to the project to find a new manifest to transcribe.'
-                  )}
-                </div>
-              );
-            }}
-            openByDefault={true}
-            renderFooter={({ close }) => {
-              return (
-                <ButtonRow $noMargin>
-                  <Button onClick={close}>{t('Close')}</Button>
-                  <Button as={HrefLink} href={createLink({ projectId })} $primary>
-                    {t('Back to project')}
-                  </Button>
-                </ButtonRow>
-              );
-            }}
-          />
-        ) : null}
         <DisplayBreadcrumbs />
 
         <CanvasManifestNavigation subRoute="model" />
