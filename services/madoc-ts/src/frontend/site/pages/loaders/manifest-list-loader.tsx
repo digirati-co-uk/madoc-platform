@@ -4,9 +4,9 @@ import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { UniversalComponent } from '../../../types';
 
 type ManifestListLoaderType = {
-  params: { projectId?: string };
+  params: { slug?: string };
   query: { page: string };
-  variables: { projectId?: number; page: number };
+  variables: { projectId?: string; page: number };
   data: ManifestListResponse;
 };
 
@@ -18,9 +18,10 @@ export const ManifestListLoader: UniversalComponent<ManifestListLoaderType> = cr
   },
   {
     getKey: (params, query) => {
-      return ['site-manifests', { project_id: params.projectId, page: Number(query.page) || 1 }];
+      return ['site-manifests', { projectId: params.slug, page: Number(query.page) || 1 }];
     },
     getData: (key, vars, api) => {
+      console.log(vars);
       return api.getSiteManifests({ project_id: vars.projectId, page: vars.page });
     },
   }
