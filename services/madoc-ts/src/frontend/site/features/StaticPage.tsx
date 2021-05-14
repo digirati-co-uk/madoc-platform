@@ -20,7 +20,7 @@ export const StaticPage: React.FC<{ layout?: string; title: string }> = ({ title
     <SlotProvider
       isPage={true}
       editable={editMode}
-      onUpdateSlot={invalidateSlots}
+      invalidateSlots={invalidateSlots}
       onUpdateBlock={invalidateSlots}
       onCreateSlot={invalidateSlots}
       beforeCreateSlot={async req => {

@@ -29,6 +29,7 @@ type SlotEditorProps = {
   context?: EditorialContext;
   onUpdateSlot?: () => void;
   onUpdateBlock?: (blockId: number) => void | Promise<void>;
+  invalidateSlots?: () => void | Promise<void>;
   onResetSlot?: () => void;
   defaultContents?: any;
   surfaceProps?: SurfaceProps;
@@ -95,12 +96,18 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
     if (props.onUpdateSlot) {
       props.onUpdateSlot();
     }
+    if (props.invalidateSlots) {
+      await props.invalidateSlots();
+    }
   });
 
   const [updateSlot] = useMutation(async (slot: SiteSlot) => {
     await api.pageBlocks.updateSlot(slot.id, slot);
     if (props.onUpdateSlot) {
       props.onUpdateSlot();
+    }
+    if (props.invalidateSlots) {
+      await props.invalidateSlots();
     }
   });
 
@@ -109,6 +116,9 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
     await api.pageBlocks.updateSlotStructure(props.slot.id, [...currentBlockIds, block.id]);
     if (props.onUpdateSlot) {
       props.onUpdateSlot();
+    }
+    if (props.invalidateSlots) {
+      await props.invalidateSlots();
     }
   });
 
@@ -121,9 +131,12 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
     if (props.onUpdateSlot) {
       props.onUpdateSlot();
     }
+    if (props.invalidateSlots) {
+      await props.invalidateSlots();
+    }
   });
 
-  const onDragEnd = (result: DropResult) => {
+  const onDragEnd = async (result: DropResult) => {
     // dropped outside the list
     if (!result.destination) {
       return;
@@ -131,7 +144,10 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
 
     const newOrder = reorder(blockOrder, result.source.index, result.destination.index);
     setBlockOrder(newOrder);
-    api.pageBlocks.updateSlotStructure(props.slot.id, newOrder);
+    await api.pageBlocks.updateSlotStructure(props.slot.id, newOrder);
+    if (props.invalidateSlots) {
+      await props.invalidateSlots();
+    }
   };
 
   if (isResetting) {

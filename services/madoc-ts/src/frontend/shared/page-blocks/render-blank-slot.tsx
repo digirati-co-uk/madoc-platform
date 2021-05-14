@@ -80,7 +80,6 @@ export const RenderBlankSlot: React.FC<{ name: string }> = ({ name: slotId, chil
   const api = useApi();
   const blockDefinitions = extractBlockDefinitions(children);
   const { data: project } = useProject();
-  const { buttonProps, itemProps, isOpen, setIsOpen } = useDropdownMenu(2);
 
   const [createSlot, { isLoading }] = useMutation(async (type: string) => {
     // Customise for this page only.
