@@ -104,6 +104,7 @@
   "Currently assigned": "Currently assigned",
   "Customise site pages": "Customise site pages",
   "Dashboard": "Dashboard",
+  "Deep zoom": "Deep zoom",
   "Default": "Default",
   "Default layout": "Default layout",
   "Delete": "Delete",
@@ -137,8 +138,10 @@
   "Found {{count}} results": "Found {{count}} results",
   "Found {{count}} results_plural": "Found {{count}} results",
   "Go back": "Go back",
+  "Go back to project": "Go back to project",
   "Go back to resource": "Go back to resource",
   "Go to next image": "Go to next image",
+  "Go to previous image": "Go to previous image",
   "Go to project": "Go to project",
   "Go to project on site": "Go to project on site",
   "Go to random Canvas": "Go to random Canvas",
@@ -387,7 +390,6 @@
   "choose": "choose",
   "collections": "collections",
   "crowdsourcing-task": "crowdsourcing-task",
-  "Deep zoom": "Deep zoom",
   "delete": "delete",
   "done": "done",
   "edit": "edit",
@@ -444,6 +446,5 @@
   "{{count}} manifests": "{{count}} manifest",
   "{{count}} manifests_plural": "{{count}} manifests",
   "{{count}} more": "{{count}} more",
-  "{{count}} more_plural": "{{count}} more",
-  "Go to previous image": "Go to previous image"
+  "{{count}} more_plural": "{{count}} more"
 }
