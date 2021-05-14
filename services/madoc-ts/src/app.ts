@@ -25,7 +25,6 @@ import { ExternalConfig } from './types/external-config';
 import k2c from 'koa2-connect';
 import cookieParser from 'cookie-parser';
 import schedule from 'node-schedule';
-import * as testPlugin from './frontend/plugins/test-plugin';
 
 export const fileDirectory = process.env.OMEKA_FILE_DIRECTORY || '/home/node/app/omeka-files';
 
