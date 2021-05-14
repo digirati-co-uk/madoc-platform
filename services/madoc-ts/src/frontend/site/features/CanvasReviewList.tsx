@@ -5,15 +5,11 @@ import { BaseTask } from '../../../gateway/tasks/base-task';
 import { Heading3 } from '../../shared/atoms/Heading3';
 import { Status } from '../../shared/atoms/Status';
 import { TableContainer, TableRow, TableRowLabel } from '../../shared/atoms/Table';
-import { apiHooks } from '../../shared/hooks/use-api-query';
-import { useRouteContext } from '../hooks/use-route-context';
+import { useProjectCanvasTasks } from '../hooks/use-project-canvas-tasks';
 
 export const CanvasReviewList: React.FC = () => {
   const { t } = useTranslation();
-  const { projectId, canvasId } = useRouteContext();
-  const { data: tasks, isLoading: isLoadingTasks } = apiHooks.getSiteProjectCanvasTasks(() =>
-    projectId && canvasId ? [projectId, canvasId] : undefined
-  );
+  const { data: tasks, isLoading: isLoadingTasks } = useProjectCanvasTasks();
 
   const reviews = useMemo(
     () =>

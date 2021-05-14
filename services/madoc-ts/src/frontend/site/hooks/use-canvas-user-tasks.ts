@@ -3,9 +3,9 @@ import { useMemo } from 'react';
 import { useMutation } from 'react-query';
 import { BaseTask } from '../../../gateway/tasks/base-task';
 import { useApi } from '../../shared/hooks/use-api';
-import { apiHooks } from '../../shared/hooks/use-api-query';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useInvalidateAfterSubmission } from './use-invalidate-after-submission';
+import { useProjectCanvasTasks } from './use-project-canvas-tasks';
 import { useRouteContext } from './use-route-context';
 
 const defaultScope: any[] = [];
@@ -15,9 +15,7 @@ export function useCanvasUserTasks() {
   const config = useSiteConfiguration();
   const api = useApi();
   const { user, scope = defaultScope } = api.getIsServer() ? { user: undefined } : api.getCurrentUser() || {};
-  const { data: canvasTask, isLoading, refetch, updatedAt } = apiHooks.getSiteProjectCanvasTasks(() =>
-    projectId && canvasId ? [projectId, canvasId] : undefined
-  );
+  const { data: canvasTask, isLoading, refetch, updatedAt } = useProjectCanvasTasks();
 
   const [updateClaim] = useMutation(async (response: RevisionRequest) => {
     if (canvasId && projectId) {
