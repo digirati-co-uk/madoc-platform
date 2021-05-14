@@ -3,7 +3,7 @@ import { SitePlugin } from '../../types/schemas/plugins';
 import { createLimitedSignedToken } from '../../utility/create-signed-token';
 import { RequestError } from '../../utility/errors/request-error';
 import { userWithScope } from '../../utility/user-with-scope';
-import { writeFileSync } from 'fs';
+import { existsSync, writeFileSync, unlinkSync, rmdirSync } from 'fs';
 import mkdirp from 'mkdirp';
 import { createHash } from 'crypto';
 
@@ -98,13 +98,35 @@ export const acceptNewDevelopmentBundle: RouteMiddleware<
     writeFileSync(`${dir}/plugin.js`, body.bundle.code);
 
     // Update plugins
-    // @todo these are PER SITE.
     delete require.cache[require.resolve(`${dir}/plugin.js`)];
     const module = require(`${dir}/plugin.js`);
-    context.pluginManager.updatePlugin(module);
+
+    context.pluginManager.installPlugin({
+      definition: {
+        ...plugin,
+        development: {
+          enabled: true,
+          revision: body.plugin.development.revision,
+        },
+        siteId,
+      },
+      siteId,
+      module,
+    });
 
     if (previousRevision) {
       // 3. Remove previous revision from disk.
+      try {
+        const oldDir = `${fileDirectory}/dev/${plugin.id}/${previousRevision}/`;
+        if (existsSync(`${oldDir}/plugin.js`)) {
+          unlinkSync(`${oldDir}/plugin.js`);
+        }
+        if (existsSync(`${oldDir}`)) {
+          rmdirSync(oldDir);
+        }
+      } catch (e) {
+        // fail silently.
+      }
     }
 
     // 4. Update database.

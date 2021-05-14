@@ -1,7 +1,6 @@
 import { sql } from 'slonik';
 import { api } from '../gateway/api.server';
 import { ApplicationContext } from '../types/application-context';
-import {isNaN} from "formik";
 
 let previousFireDate: Date;
 
@@ -25,13 +24,11 @@ export async function checkExpiredManifests(context: ApplicationContext, fireDat
     const localApi = api.asUser({ siteId: project.site_id });
     const config = await localApi.getProjectConfiguration(project.id as any, `urn:madoc:site:${project.site_id}`);
 
-    const shortExpiryTimeMins = !isNaN(config.shortExpiryTime) ?
-      Number(config.shortExpiryTime) : 10; // configured value or 10 minutes
-    const shortTermExpiry = new Date(Date.now() - (shortExpiryTimeMins * 60 * 1000));
+    const shortExpiryTimeMins = !Number.isNaN(config.shortExpiryTime) ? Number(config.shortExpiryTime) : 10; // configured value or 10 minutes
+    const shortTermExpiry = new Date(Date.now() - shortExpiryTimeMins * 60 * 1000);
 
-    const longExpiryTimeMins = !isNaN(config.longExpiryTime) ?
-      Number(config.shortExpiryTime) : 24 * 60; // configured value or 1 day..
-    const longTermExpiry = new Date(Date.now() - (longExpiryTimeMins * 60 * 1000));
+    const longExpiryTimeMins = !Number.isNaN(config.longExpiryTime) ? Number(config.shortExpiryTime) : 24 * 60; // configured value or 1 day..
+    const longTermExpiry = new Date(Date.now() - longExpiryTimeMins * 60 * 1000);
 
     if (config.contributionMode !== 'transcription') continue;
 

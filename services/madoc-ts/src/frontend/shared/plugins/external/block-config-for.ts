@@ -1,30 +1,11 @@
-import { captureModelShorthand } from '@capture-models/helpers';
-import { BaseField } from '@capture-models/types';
 import React from 'react';
-import { PageBlockDefinition, PageBlockEditor } from '../../../../extensions/page-blocks/extension';
-import { EditorialContext } from '../../../../types/schemas/site-page';
 
-export function blockConfigFor<Props, MappedProps = Props>(
-  Component: React.FC<Props>,
-  model: {
-    label: string;
-    type: string;
-    defaultProps?: Partial<MappedProps>;
-    editor: {
-      [T in keyof MappedProps]?: string | ({ type: string } & Partial<BaseField> & any);
-    };
-    internal?: boolean;
-    requiredContext?: Array<keyof EditorialContext>;
-    anyContext?: Array<keyof EditorialContext>;
-    mapToProps?: (props: MappedProps) => Props;
-    customEditor?: PageBlockEditor;
-  }
-): PageBlockDefinition<any, any, any, any> {
-  const definition: PageBlockDefinition<any, any, any, any> = {
+export function blockConfigFor(Component: any, model: any) {
+  const definition = {
     type: model.type,
     label: model.label,
-    model: captureModelShorthand(model.editor),
-    render: function PageBlock(props) {
+    modelShorthand: model.editor,
+    render: function PageBlock(props: any) {
       return React.createElement(Component, model.mapToProps ? model.mapToProps(props) : props);
     },
     defaultData: model.defaultProps || {},
@@ -35,7 +16,7 @@ export function blockConfigFor<Props, MappedProps = Props>(
     customEditor: model.customEditor,
   };
 
-  (Component as any)[Symbol.for('slot-model')] = definition;
+  Component[Symbol.for('slot-model')] = definition;
 
   return definition;
 }

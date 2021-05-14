@@ -85,11 +85,11 @@ export function createServerRenderer(
       jwt,
       publicSiteSlug: siteSlug,
     });
-
+    const omekaSite = await site;
     const routes =
-      Array.isArray(createRoutes) || !pluginManager
+      Array.isArray(createRoutes) || !pluginManager || !omekaSite
         ? defaultRoutes
-        : pluginManager.makeRoutes(createRoutes(pluginManager.hookComponents(components)));
+        : pluginManager.makeRoutes(createRoutes(pluginManager.hookComponents(components, omekaSite.id)), omekaSite.id);
 
     const context: StaticRouterContext = {};
     const [urlPath, urlQuery] = url.split('?');
@@ -120,7 +120,6 @@ export function createServerRenderer(
     }
 
     await Promise.all(requests);
-    const omekaSite = await site;
     const dehydratedState = dehydrate(prefetchCache);
     const supportedLocales = siteLocales.localisations.map(ln => {
       const label = localeCodes.getByTag(ln.code).name;

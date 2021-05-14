@@ -1,41 +1,101 @@
+import { captureModelShorthand } from '@capture-models/helpers';
 import React from 'react';
+import { reactBlockEmitter } from '../../../extensions/page-blocks/block-editor-react';
+import { SitePlugin } from '../../../types/schemas/plugins';
 import { RouteComponents } from '../../site/routes';
 import { UniversalRoute } from '../../types';
 import { createPluginWrapper } from './create-plugin-wrapper';
 
-type Plugin = {
-  id: string;
-  hookRoutes?: (routes: UniversalRoute[], components: RouteComponents) => UniversalRoute[];
-  hookComponents?: (components: RouteComponents) => any;
-  hookBlocks?: () => { [name: string]: React.FC<any> };
+export type PluginModule = {
+  definition: SitePlugin;
+  siteId: number;
+  module: {
+    id: string;
+    hookRoutes?: (routes: UniversalRoute[], components: RouteComponents) => UniversalRoute[];
+    hookComponents?: (components: RouteComponents) => any;
+    hookBlocks?: () => { [name: string]: React.FC<any> };
+  };
 };
 
 export class PluginManager {
-  plugins: Plugin[];
+  plugins: PluginModule[];
 
-  constructor(plugins: Plugin[]) {
+  constructor(plugins: PluginModule[]) {
     this.plugins = plugins;
 
     // Hook blocks.
+    // @todo rethink.
     for (const plugin of this.plugins) {
-      if (plugin.hookBlocks) {
-        plugin.hookBlocks();
+      this.registerBlocks(plugin);
+    }
+  }
+
+  ensureFullModelDocument(document: any) {
+    if (!document || !document.properties || document.type !== 'entity') {
+      return captureModelShorthand(document || {});
+    }
+
+    return document;
+  }
+
+  registerBlocks(plugin: PluginModule) {
+    if (plugin.module.hookBlocks) {
+      const newBlocks = plugin.module.hookBlocks();
+      if (newBlocks) {
+        const newBlockDefinitions = Object.values(newBlocks).map((r: any) => r[Symbol.for('slot-model')]);
+        for (const block of newBlockDefinitions) {
+          reactBlockEmitter.emit('plugin-block', {
+            pluginId: plugin.definition.id,
+            siteId: plugin.definition.siteId,
+            block: (block as any).modelShorthand
+              ? {
+                  ...block,
+                  model: this.ensureFullModelDocument((block as any).modelShorthand),
+                }
+              : block,
+          });
+        }
       }
     }
   }
 
-  updatePlugin(plugin: Plugin) {
-    const found = this.plugins.find(p => p.id === plugin.id);
-    console.log('Looking for plugin', plugin.id);
+  listPlugins(siteId: number) {
+    return this.plugins
+      .filter(plugin => {
+        return plugin.siteId === siteId;
+      })
+      .map(plugin => plugin.definition);
+  }
+
+  installPlugin(newPlugin: PluginModule) {
+    const found = this.plugins.find(p => p.definition.id === newPlugin.definition.id && p.siteId === newPlugin.siteId);
     if (found) {
       const idx = this.plugins.indexOf(found);
-      console.log('replacing plugin...', idx);
-      this.plugins[idx] = plugin;
+      this.plugins[idx].module = newPlugin.module;
+      this.plugins[idx].definition = newPlugin.definition;
+    } else {
+      this.plugins.push(newPlugin);
+    }
+    this.registerBlocks(newPlugin);
+  }
+
+  updatePluginModule(id: string, module: any, siteId: number, revision?: string) {
+    const found = this.plugins.find(p => p.definition.id === id && p.siteId === siteId);
+    if (found) {
+      const idx = this.plugins.indexOf(found);
+      this.plugins[idx].module = module;
+      this.registerBlocks(this.plugins[idx]);
+      if (revision) {
+        this.plugins[idx].definition.development = {
+          enabled: true,
+          revision,
+        };
+      }
     }
   }
 
-  makeRoutes(routeComponents: any): RouteComponents[] {
-    const newRoutes = this.hookRoutes(routeComponents.routes, routeComponents);
+  makeRoutes(routeComponents: any, siteId: number): RouteComponents[] {
+    const newRoutes = this.hookRoutes(routeComponents.routes, routeComponents, siteId);
 
     return [
       {
@@ -45,14 +105,14 @@ export class PluginManager {
     ];
   }
 
-  hookComponents(components: any) {
+  hookComponents(components: any, siteId: number) {
     const returnComponents = { ...components };
     for (const plugin of this.plugins) {
-      if (plugin.hookComponents) {
-        const newComponents = plugin.hookComponents(components);
+      if (plugin.module.hookComponents && plugin.siteId === siteId) {
+        const newComponents = plugin.module.hookComponents(components);
         const keys = Object.keys(newComponents);
         for (const key of keys) {
-          returnComponents[key] = createPluginWrapper((newComponents as any)[key] as any);
+          returnComponents[key] = createPluginWrapper((newComponents as any)[key] as any, plugin.definition.name);
         }
       }
     }
@@ -60,13 +120,13 @@ export class PluginManager {
     return returnComponents;
   }
 
-  hookRoutes(routes: UniversalRoute[], components: any) {
+  hookRoutes(routes: UniversalRoute[], components: any, siteId: number) {
     const newRoutes = [...routes];
     for (const plugin of this.plugins) {
-      if (plugin.hookRoutes) {
-        const hooked = plugin.hookRoutes(routes, components);
+      if (plugin.module.hookRoutes && plugin.siteId === siteId) {
+        const hooked = plugin.module.hookRoutes(routes, components);
         for (const hookedRoute of hooked) {
-          hookedRoute.component = createPluginWrapper(hookedRoute.component);
+          hookedRoute.component = createPluginWrapper(hookedRoute.component, plugin.definition.name);
         }
         newRoutes.push(...hooked);
       }

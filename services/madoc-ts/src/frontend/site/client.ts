@@ -1,4 +1,5 @@
 import { renderClient } from '../shared/utility/render-client';
+import '../shared/plugins/globals';
 
 Promise.all([
   // The component.

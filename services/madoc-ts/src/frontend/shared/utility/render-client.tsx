@@ -53,10 +53,14 @@ export async function renderClient(
       .then(code => {
         const module = new Function(`
           ${code};
-          return this['${plugin.id}'];
+          return window['${plugin.id}'];
         `);
 
-        return module();
+        return {
+          siteId: dehydratedSite.site.id,
+          definition: plugin,
+          module: module(),
+        };
       });
   });
 
@@ -64,7 +68,10 @@ export async function renderClient(
   const pluginManager = new PluginManager(availablePlugins as any);
   const routes = Array.isArray(createRoutes)
     ? createRoutes
-    : pluginManager.makeRoutes(createRoutes(pluginManager.hookComponents(components)));
+    : pluginManager.makeRoutes(
+        createRoutes(pluginManager.hookComponents(components, dehydratedSite.site.id)),
+        dehydratedSite.site.id
+      );
 
   const [, slug] = window.location.pathname.match(/s\/([^/]*)/) as string[];
   const jwt = cookies.get(`madoc/${slug}`) || undefined;

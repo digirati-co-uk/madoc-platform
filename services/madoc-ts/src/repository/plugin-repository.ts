@@ -30,11 +30,15 @@ export class PluginRepository extends BaseRepository {
           ps.site_id = ${site_id}
     `,
 
-    listPlugins: (site_id: number) => sql<PluginRow & PluginSiteRow>`
+    listPlugins: (site_id?: number) =>
+      site_id
+        ? sql<PluginRow & PluginSiteRow>`
         select plugin.plugin_id as plugin_id, * from plugin
           left join plugin_site ps on plugin.plugin_id = ps.plugin_id 
-                                   and ps.site_id = ${site_id}
-    `,
+                                   and ps.site_id = ${site_id}`
+        : sql<PluginRow & PluginSiteRow>`
+        select plugin.plugin_id as plugin_id, * from plugin
+          left join plugin_site ps on plugin.plugin_id = ps.plugin_id`,
   };
 
   static inserts = {
@@ -106,7 +110,7 @@ export class PluginRepository extends BaseRepository {
       return existingPlugin;
     }
 
-    return this.mapPluginRow(
+    return PluginRepository.mapPluginRow(
       await this.connection.one(
         PluginRepository.inserts.cretePlugin({
           plugin_id: plugin.id,
@@ -131,7 +135,7 @@ export class PluginRepository extends BaseRepository {
    * @throws import('slonik').NotFoundError
    */
   async getSitePlugin(id: string, siteId: number) {
-    return this.mapPluginRow(
+    return PluginRepository.mapPluginRow(
       // Will error if it doesn't exist.
       await this.connection.one(PluginRepository.queries.getSitePlugin(id, siteId))
     );
@@ -140,7 +144,7 @@ export class PluginRepository extends BaseRepository {
   async listPlugins(siteId: number) {
     const rows = await this.connection.any(PluginRepository.queries.listPlugins(siteId));
 
-    return rows.map(row => this.mapPluginRow(row));
+    return rows.map(row => PluginRepository.mapPluginRow(row));
   }
 
   async updateDevRevision(id: string, revision: string, siteId: number) {
@@ -185,7 +189,7 @@ export class PluginRepository extends BaseRepository {
     const row = await this.connection.maybeOne(PluginRepository.queries.getPlugin(id));
 
     if (row) {
-      return this.mapPluginRow(row);
+      return PluginRepository.mapPluginRow(row);
     }
 
     return undefined;
@@ -195,8 +199,9 @@ export class PluginRepository extends BaseRepository {
    * Maps single site specific or non-site specific plugin row.
    *
    * @param row
+   * @param siteId
    */
-  mapPluginRow(row: PluginRow & Partial<PluginSiteRow>): SitePlugin {
+  static mapPluginRow(row: PluginRow & Partial<PluginSiteRow>, includeSiteId = false): SitePlugin {
     return {
       id: row.plugin_id,
       name: row.name,
@@ -212,6 +217,7 @@ export class PluginRepository extends BaseRepository {
         revision: row.dev_revision as string,
       },
       version: row.version,
+      siteId: includeSiteId ? row.site_id : undefined,
     };
   }
 

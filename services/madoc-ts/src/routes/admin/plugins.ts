@@ -1,3 +1,4 @@
+import { loadPluginModule } from '../../middleware/create-plugin-manager';
 import { SitePlugin } from '../../types/schemas/plugins';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { userWithScope } from '../../utility/user-with-scope';
@@ -25,5 +26,20 @@ export const installPlugin: RouteMiddleware<{}, SitePlugin> = async context => {
   const plugin = context.requestBody;
 
   context.response.status = 201;
-  context.response.body = await context.plugins.installPlugin(plugin, siteId);
+  const installedPlugin = await context.plugins.installPlugin(plugin, siteId);
+  context.response.body = installedPlugin;
+
+  const definition = {
+    ...installedPlugin,
+    siteId,
+  };
+
+  const loaded = loadPluginModule(definition);
+  if (loaded.module && !loaded.error) {
+    context.pluginManager.installPlugin({
+      siteId,
+      definition: definition,
+      module: loaded.module,
+    });
+  }
 };

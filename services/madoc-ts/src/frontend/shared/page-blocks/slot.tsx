@@ -4,7 +4,7 @@ import { RenderSlot } from './render-slot';
 import { useSlots } from './slot-context';
 
 export const Slot: React.FC<{ name: string }> = props => {
-  const { slots, context, editable, onUpdateSlot, onUpdateBlock } = useSlots();
+  const { slots, context, editable, onUpdateSlot, onUpdateBlock, invalidateSlots } = useSlots();
 
   const slot = slots[props.name];
 
@@ -71,6 +71,7 @@ export const Slot: React.FC<{ name: string }> = props => {
       editable={editable}
       onUpdateSlot={updateSlot}
       onUpdateBlock={onUpdateBlock}
+      invalidateSlots={invalidateSlots}
       defaultContents={props.children}
     />
   );

@@ -11,6 +11,7 @@ export type RenderSlotProps = {
   editable?: boolean;
   onUpdateSlot?: () => void;
   onUpdateBlock?: (blockId: number) => void | Promise<void>;
+  invalidateSlots?: () => void | Promise<void>;
   defaultContents?: any;
 };
 
@@ -37,6 +38,7 @@ export const RenderSlot: React.FC<RenderSlotProps> = props => {
         onUpdateSlot={props.onUpdateSlot}
         onUpdateBlock={props.onUpdateBlock}
         defaultContents={props.defaultContents}
+        invalidateSlots={props.invalidateSlots}
         surfaceProps={surfaceProps}
       />
     );

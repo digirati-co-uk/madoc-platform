@@ -5,6 +5,7 @@ export type SitePlugin = {
   enabled: boolean;
   installed: boolean;
   thumbnail?: string;
+  siteId?: number;
   repository: {
     owner: string;
     name: string;
