@@ -78,6 +78,7 @@ services:
       - ./services/madoc-ts/webpack.config.js:/home/node/app/webpack.config.js
       - ./services/madoc-ts/config.json:/home/node/app/config.json
       - ./services/madoc-ts/service-jwts:/home/node/app/service-jwts
+      - ./services/madoc-ts/themes:/home/node/app/themes
       - ./services/madoc-ts/translations:/home/node/app/translations
       - ./var/certs:/openssl-certs
       - ./var/jwt:/home/node/app/service-jwt-responses
