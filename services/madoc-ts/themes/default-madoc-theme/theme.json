@@ -1,5 +1,8 @@
 {
   "name": "Default Madoc Theme",
+  "version": "1.0.0",
+  "description": "Example madoc theme with default theme values.",
+  "thumbnail": "https://user-images.githubusercontent.com/8266711/118507448-25750b80-b726-11eb-9f87-d96f43c0a894.png",
   "theme": {
     "header": "default",
     "accent": "default",
