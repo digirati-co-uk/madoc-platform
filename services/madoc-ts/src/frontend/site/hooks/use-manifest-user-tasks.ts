@@ -1,15 +1,8 @@
 import { useMemo } from 'react';
-import { apiHooks } from '../../shared/hooks/use-api-query';
-import { useRouteContext } from './use-route-context';
+import { useProjectManifestTasks } from './use-project-manifest-tasks';
 
 export function useManifestUserTasks() {
-  const { projectId, manifestId } = useRouteContext();
-  const { data, isFetched, refetch } = apiHooks.getSiteProjectManifestTasks(
-    () => (projectId && manifestId ? [projectId, manifestId] : undefined),
-    {
-      refetchOnMount: true,
-    }
-  );
+  const { data, isFetched, refetch } = useProjectManifestTasks();
 
   return useMemo(() => {
     const tasks = data?.userTasks || [];

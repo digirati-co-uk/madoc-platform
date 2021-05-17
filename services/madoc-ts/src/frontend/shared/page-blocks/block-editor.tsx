@@ -217,11 +217,7 @@ export const useBlockEditor = (
   const saveChanges = async (): Promise<SiteBlock | undefined> => {
     const newData = latestRevision.current;
 
-    if (!newData) {
-      return;
-    }
-
-    const newBlock = modelToBlock(newData, block, advanced);
+    const newBlock = newData ? modelToBlock(newData, block, advanced) : block;
     const id = (newBlock as SiteBlock).id;
 
     const savedBlock = id ? await api.pageBlocks.updateBlock(id, newBlock) : await api.pageBlocks.createBlock(newBlock);

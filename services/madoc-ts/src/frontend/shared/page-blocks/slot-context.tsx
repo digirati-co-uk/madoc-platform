@@ -12,6 +12,7 @@ type ReactContextType = {
   onCreateSlot: (slotReq: CreateSlotRequest) => void;
   onUpdateBlock: (blockId: number) => void | Promise<void>;
   beforeCreateSlot: (slotReq: CreateSlotRequest) => void;
+  invalidateSlots: () => void | Promise<void>;
 };
 
 const SlotReactContext = React.createContext<ReactContextType>({
@@ -19,6 +20,9 @@ const SlotReactContext = React.createContext<ReactContextType>({
   slots: {},
   editable: false,
   isPage: false,
+  invalidateSlots: () => {
+    // no-op.
+  },
   onUpdateSlot: () => {
     // no-op.
   },
@@ -44,6 +48,7 @@ type SlotProviderProps = {
   isPage?: boolean;
   slots?: { [slotName: string]: SiteSlot };
   editable?: boolean;
+  invalidateSlots?: () => void | Promise<void>;
   onUpdateSlot?: (slotId: number) => void | Promise<void>;
   onCreateSlot?: (slotReq: CreateSlotRequest) => void | Promise<void>;
   onUpdateBlock?: (blockId: number) => void | Promise<void>;
@@ -85,6 +90,12 @@ export const SlotProvider: React.FC<SlotProviderProps> = props => {
           await props.onUpdateBlock(blockId);
         }
         return existing.onUpdateBlock(blockId);
+      },
+      invalidateSlots: async () => {
+        if (props.invalidateSlots) {
+          await props.invalidateSlots();
+        }
+        return existing.invalidateSlots();
       },
     };
   }, [existing, props, newSlots]);

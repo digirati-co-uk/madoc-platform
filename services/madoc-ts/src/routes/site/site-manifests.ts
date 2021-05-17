@@ -1,7 +1,7 @@
 import { RouteMiddleware } from '../../types/route-middleware';
 
 export type SiteManifestQuery = {
-  project_id?: number;
+  project_id?: string | number;
   page?: number;
 };
 

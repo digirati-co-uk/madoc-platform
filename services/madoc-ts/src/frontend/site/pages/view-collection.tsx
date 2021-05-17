@@ -30,9 +30,11 @@ export const ViewCollection: React.FC = () => {
       </Slot>
 
       <div style={{ display: 'flex' }}>
-        <Slot name="collection-body">
-          <CollectionPaginatedItems />
-        </Slot>
+        <div style={{ width: '100%' }}>
+          <Slot name="collection-body">
+            <CollectionPaginatedItems />
+          </Slot>
+        </div>
 
         <div style={{ maxWidth: 290 }}>
           <Slot name="collection-sidebar">

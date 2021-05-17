@@ -17,6 +17,7 @@ import { createUniversalComponent } from '../../../shared/utility/create-univers
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { UniversalComponent } from '../../../types';
 import { useParams } from 'react-router-dom';
+import { useProjectCanvasTasks } from '../../hooks/use-project-canvas-tasks';
 import { ManifestLoaderType } from './manifest-loader';
 
 export type CanvasLoaderType = {

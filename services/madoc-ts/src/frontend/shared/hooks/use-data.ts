@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { InfiniteQueryConfig } from 'react-query/types/core/types';
-import { CanvasLoader } from '../../site/pages/loaders/canvas-loader';
 import { QueryComponent } from '../../types';
 import {
   InfiniteQueryResult,

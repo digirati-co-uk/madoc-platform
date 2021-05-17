@@ -5,6 +5,7 @@ import { Button, ButtonRow } from '../../shared/atoms/Button';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useManifestPageConfiguration } from '../hooks/use-manifest-page-configuration';
 import { useManifestTask } from '../hooks/use-manifest-task';
+import { useManifestUserTasks } from '../hooks/use-manifest-user-tasks';
 import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { GoToFirstCanvas } from './GoToFirstCanvas';
@@ -22,14 +23,25 @@ export const ManifestActions: React.FC = () => {
     project: { claimGranularity },
   } = useSiteConfiguration();
   const { isManifestComplete, userManifestTask, canClaimManifest } = useManifestTask();
+  const { doneTasks, inReview, inProgress } = useManifestUserTasks();
+
+  const isInProgress = inProgress.length && !(userManifestTask && userManifestTask.status === 0);
+
+  const showButton =
+    isActive &&
+    !options.hideStartContributing &&
+    !isManifestComplete &&
+    (userManifestTask || canClaimManifest) &&
+    !inReview.length &&
+    !isInProgress;
 
   return (
     <>
-      {isActive && !options.hideStartContributing && !isManifestComplete && (userManifestTask || canClaimManifest) ? (
+      {showButton ? (
         <ButtonRow>
           {claimGranularity === 'manifest' ? (
             <GoToFirstCanvas $primary $large navigateToModel>
-              {t('Start contributing')}
+              {userManifestTask && doneTasks.length ? t('View submission') : t('Start contributing')}
             </GoToFirstCanvas>
           ) : (
             <GoToRandomCanvas $primary $large label={{ none: [t('Start contributing')] }} navigateToModel />

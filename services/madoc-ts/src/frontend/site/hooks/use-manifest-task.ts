@@ -1,14 +1,7 @@
-import { apiHooks } from '../../shared/hooks/use-api-query';
-import { useRouteContext } from './use-route-context';
+import { useProjectManifestTasks } from './use-project-manifest-tasks';
 
 export function useManifestTask() {
-  const { projectId, manifestId } = useRouteContext();
-  const { data: projectTasks, refetch, isFetched } = apiHooks.getSiteProjectManifestTasks(
-    () => (projectId && manifestId ? [projectId, manifestId] : undefined),
-    {
-      refetchOnMount: true,
-    }
-  );
+  const { data: projectTasks, refetch, isFetched } = useProjectManifestTasks();
 
   const manifestTask =
     projectTasks?.manifestTask?.type === 'crowdsourcing-manifest-task' ? projectTasks.manifestTask : undefined;

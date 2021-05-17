@@ -2,7 +2,9 @@ import React from 'react';
 import '../../shared/caputre-models/refinements';
 import { useTranslation } from 'react-i18next';
 import { SubjectSnippet } from '../../../extensions/tasks/resolvers/subject-resolver';
+import { EmptyState } from '../../shared/atoms/EmptyState';
 import { useCreateLocaleString } from '../../shared/components/LocaleString';
+import { TaskWrapper } from '../../shared/components/TaskWrapper';
 import { createLink } from '../../shared/utility/create-link';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useTaskMetadata } from '../hooks/use-task-metadata';
@@ -30,39 +32,54 @@ export const ViewTask: React.FC<TaskContext<any>> = ({ task, ...props }) => {
   ) {
     return (
       <div>
-        <h3>{task.name}</h3>
-        <p>{task.description}</p>
-        <a href={`/s/${slug}/madoc/admin/tasks/${task.id}`}>{t('View on admin dashboard')}</a>
+        <TaskWrapper task={task} subject={subject}>
+          <a href={`/s/${slug}/madoc/admin/tasks/${task.id}`}>{t('View on admin dashboard')}</a>
+        </TaskWrapper>
       </div>
     );
   }
 
   if (task.type === 'crowdsourcing-task') {
     return (
-      <BrowserComponent fallback={<div>{t('loading')}</div>}>
-        <ViewCrowdsourcingTask task={task} {...props} />
-      </BrowserComponent>
+      <>
+        <TaskWrapper task={task} subject={subject}>
+          <BrowserComponent fallback={<div>{t('loading')}</div>}>
+            <ViewCrowdsourcingTask task={task} {...props} />
+          </BrowserComponent>
+        </TaskWrapper>
+      </>
     );
   }
 
   // @todo check user role.
   if (task.type === 'crowdsourcing-review') {
-    return <ViewCrowdsourcingReview task={task} {...props} />;
+    return (
+      <>
+        <TaskWrapper task={task} subject={subject}>
+          <ViewCrowdsourcingReview task={task} {...props} />
+        </TaskWrapper>
+      </>
+    );
   }
 
   if (subject) {
     return (
       <>
-        <h1>{task.name}</h1>
-        {subject.thumbnail ? (
-          <img src={subject.thumbnail} alt={createLocaleString(subject.label, 'Thumbnail')} />
-        ) : null}
-        {subject.type === 'manifest' ? (
-          <HrefLink href={createLink({ manifestId: subject.id })}>{t('View manifest')}</HrefLink>
-        ) : null}
+        <TaskWrapper task={task} subject={subject}>
+          {subject.thumbnail ? (
+            <img src={subject.thumbnail} alt={createLocaleString(subject.label, 'Thumbnail')} />
+          ) : null}
+          {subject.type === 'manifest' ? (
+            <HrefLink href={createLink({ manifestId: subject.id })}>{t('View manifest')}</HrefLink>
+          ) : null}
+        </TaskWrapper>
       </>
     );
   }
 
-  return <h1>{task.name}</h1>;
+  return (
+    <TaskWrapper task={task} subject={subject}>
+      <EmptyState>No details on this task</EmptyState>
+    </TaskWrapper>
+  );
 };

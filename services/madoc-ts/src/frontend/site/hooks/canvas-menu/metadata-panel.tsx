@@ -1,6 +1,5 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { MetaDataDisplay } from '../../../shared/components/MetaDataDisplay';
 import { useData, usePaginatedData } from '../../../shared/hooks/use-data';
 import { InfoIcon } from '../../../shared/icons/InfoIcon';
 import { CanvasMetadata } from '../../features/CanvasMetadata';

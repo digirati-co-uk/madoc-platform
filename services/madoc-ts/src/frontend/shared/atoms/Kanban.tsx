@@ -26,7 +26,7 @@ export const KanbanCol = styled.div`
   width: 33.3333%;
   border: 1px solid #e5e5e5;
   border-radius: 4px;
-  background-color: #eee;
+  background-color: #f4f5f7;
   overflow: auto;
 `;
 
@@ -39,9 +39,10 @@ export const KanbanColTitle = styled.div`
   text-overflow: ellipsis;
   overflow: hidden;
   position: sticky;
-  background: #e5e5e5;
+  background: #e7e7ec;
   top: 0px;
   min-height: 2.3rem;
+  text-align: center;
 `;
 
 export const KanbanCard = styled.div<{ $disabled?: boolean }>`

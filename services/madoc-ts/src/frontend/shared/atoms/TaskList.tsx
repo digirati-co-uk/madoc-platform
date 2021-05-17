@@ -1,34 +1,54 @@
 import styled, { css } from 'styled-components';
 
 export const TaskListContainer = styled.div`
-  background: #fff;
+  background: #f4f5f7;
+  overflow: hidden;
+  display: flex;
+  height: 100%;
+  max-height: 100%;
+  width: 100%;
+  padding: 0.5em 0.5em 1em 0.5em;
+`;
+
+export const TaskListInnerContainer = styled.div`
+  overflow-y: scroll;
+  max-height: 100%;
+  width: 100%;
+  padding-right: 0.75em;
 `;
 
 export const TaskItem = styled.div<{ $selected?: boolean }>`
   background: #fff;
   display: flex;
-  border-bottom: 1px solid #eee;
+
+  margin: 0.5em 0;
+  border: 2px solid transparent;
+  border-radius: 5px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.12);
+
   padding: 0.5em;
   font-size: 0.85em;
   cursor: pointer;
-  max-width: 100%;
+  width: 100%;
 
   ${props =>
     props.$selected &&
     css`
-      background: #eff1ff;
-    `}
+      border-color: #4265e9;
+    `};
 `;
 
 export const TaskItemImageContainer = styled.div`
   background: rgba(0, 0, 0, 0.15);
-  width: 4.8em;
-  min-width: 4.8em;
-  height: 4.8em;
+  width: 4.4em;
+  min-width: 4.4em;
+  height: 4.4em;
+  border-radius: 3px;
+  overflow: hidden;
 
   img {
     display: inline-block;
-    object-fit: contain;
+    object-fit: cover;
     flex-shrink: 0;
     width: 100%;
     height: 100%;

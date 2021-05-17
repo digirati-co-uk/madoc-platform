@@ -35,3 +35,18 @@ export const CroppedImage = styled.div<{ $size?: 'small' | 'large' }>`
     height: 100%;
   }
 `;
+
+export const CoveredImage = styled.div`
+  overflow: hidden;
+  margin: 0.5em;
+  border-radius: 5px;
+
+  img {
+    object-fit: cover;
+    object-position: 50% 50%;
+    display: block;
+
+    height: 130px;
+    width: 100%;
+  }
+`;
