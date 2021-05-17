@@ -2,8 +2,9 @@ import React, { useMemo } from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { SiteContainer, SiteContainerBackground } from '../../../shared/atoms/SiteContainer';
+import { RenderFragment } from '../../../shared/components/RenderFragment';
 import { UserBar } from '../../../shared/components/UserBar';
-import { useSite, useUser } from '../../../shared/hooks/use-site';
+import { useSite, useSiteTheme, useUser } from '../../../shared/hooks/use-site';
 import { ErrorBoundary } from '../../../shared/utility/error-boundary';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
@@ -33,13 +34,33 @@ export const RootLoader: UniversalComponent<RootLoaderType> = createUniversalCom
       cacheTime: 24 * 60 * 60,
     });
     const { i18n } = useTranslation();
+    const siteTheme = useSiteTheme();
     const viewingDirection = useMemo(() => i18n.dir(i18n.language), [i18n]);
 
     return (
       <ConfigProvider project={data ? data.project : undefined} navigation={data ? data.navigation : undefined}>
         <Helmet>
           <title>{site.title}</title>
+          {siteTheme && siteTheme.assets.css
+            ? siteTheme.assets.css.map(item => (
+                <link
+                  key={item}
+                  rel="stylesheet"
+                  href={`/s/${site.slug}/madoc/themes/${siteTheme.id}/public/${item}`}
+                />
+              ))
+            : null}
+          {siteTheme && siteTheme.assets.js
+            ? siteTheme.assets.js.map(item => (
+                <script
+                  key={item}
+                  type="application/javascript"
+                  src={`/s/${site.slug}/madoc/themes/${siteTheme.id}/public/${item}`}
+                />
+              ))
+            : null}
         </Helmet>
+        {siteTheme && siteTheme.html.header ? <RenderFragment fragment={siteTheme.html.header} /> : null}
         <UserBar site={site} user={user} />
         <GlobalSiteHeader menu={<GlobalSiteNavigation />} />
         <SiteContainerBackground>

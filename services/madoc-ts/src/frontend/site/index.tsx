@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
-import { Helmet } from 'react-helmet';
 import { ThemeProvider } from 'styled-components';
 import { ApiClient } from '../../gateway/api';
+import { ResolvedTheme } from '../../types/themes';
 import { PublicSite } from '../../utility/omeka-api';
 import { renderUniversalRoutes } from '../shared/utility/server-utils';
 import { ApiContext } from '../shared/hooks/use-api';
@@ -18,6 +18,7 @@ export type SiteAppProps = {
   siteSlug?: string;
   user?: { name: string; id: number; scope: string[] };
   site: PublicSite;
+  theme?: ResolvedTheme | null;
   supportedLocales: Array<{ label: string; code: string }>;
   defaultLocale: string;
   navigationOptions?: {
@@ -37,9 +38,10 @@ const SiteApp: React.FC<SiteAppProps> = ({
     enableProjects: true,
     enableCollections: true,
   },
+  theme,
 }) => {
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <ThemeProvider theme={theme && theme.theme ? theme.theme : defaultTheme}>
       <VaultProvider>
         <SiteProvider
           value={useMemo(
@@ -49,8 +51,9 @@ const SiteApp: React.FC<SiteAppProps> = ({
               supportedLocales,
               defaultLocale,
               navigationOptions,
+              theme,
             }),
-            [site, user, supportedLocales, defaultLocale, navigationOptions]
+            [theme, site, user, supportedLocales, defaultLocale, navigationOptions]
           )}
         >
           <ApiContext.Provider value={api}>{renderUniversalRoutes(routes)}</ApiContext.Provider>

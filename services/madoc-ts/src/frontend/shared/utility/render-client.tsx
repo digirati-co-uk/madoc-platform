@@ -14,6 +14,7 @@ import { I18nextProvider } from 'react-i18next';
 import { BrowserRouter } from 'react-router-dom';
 import { api } from '../../../gateway/api.browser';
 import React, { Suspense } from 'react';
+import { ResolvedTheme } from '../../../types/themes';
 import { UniversalRoute } from '../../types';
 import { ErrorPage } from '../components/NotFoundPage';
 import { Spinner } from '../icons/Spinner';
@@ -41,6 +42,7 @@ export function renderClient(
     window.location.href = `/s/${slug}/madoc/login?redirect=${loc}`;
   }
 
+  const theme: ResolvedTheme | null | undefined = dehydratedSite.theme;
   const localisations = dehydratedSite.locales as Array<{ label: string; code: string }>;
   const supportedLocales = localisations.map(local => local.code);
   const defaultLocale = dehydratedSite.defaultLocale || 'en';
@@ -76,6 +78,7 @@ export function renderClient(
                             siteSlug={slug}
                             site={dehydratedSite.site}
                             user={dehydratedSite.user}
+                            theme={theme}
                             supportedLocales={localisations}
                             defaultLocale={defaultLocale}
                             navigationOptions={dehydratedSite.navigationOptions}
