@@ -21,7 +21,6 @@ import { HrefLink } from '../utility/href-link';
 import { isAdmin } from '../utility/user-roles';
 
 const UserBarContainer = styled.div`
-  position: absolute;
   height: 36px;
   background: #333;
   left: 0;
@@ -45,12 +44,6 @@ const UserBarAdminButton = styled.a`
 
 const UserBarExpander = styled.div`
   flex: 1 1 0px;
-`;
-
-const UserBarSpacer = styled.div`
-  position: relative;
-  height: 36px;
-  display: block;
 `;
 
 const UserBarUserDetails = styled.span`
@@ -168,7 +161,6 @@ export const UserBar: React.FC<{
           </UserBarLogout>
         )}
       </UserBarContainer>
-      <UserBarSpacer />
     </>
   );
 };

@@ -9,6 +9,7 @@ import { parse } from 'query-string';
 import { api } from '../../../gateway/api.server';
 import { ListLocalisationsResponse } from '../../../routes/admin/localisation';
 import { EditorialContext } from '../../../types/schemas/site-page';
+import { ResolvedTheme } from '../../../types/themes';
 import { PublicSite } from '../../../utility/omeka-api';
 import { RouteContext } from '../../site/hooks/use-route-context';
 import { queryConfig } from './query-config';
@@ -30,6 +31,7 @@ export function createServerRenderer(
     supportedLocales: Array<{ label: string; code: string }>;
     defaultLocale: string;
     navigationOptions?: any;
+    theme?: ResolvedTheme | null;
   }>,
   routes: UniversalRoute[],
   apiGateway: string,
@@ -46,6 +48,7 @@ export function createServerRenderer(
     user,
     navigationOptions,
     getSlots,
+    theme,
   }: {
     url: string;
     basename: string;
@@ -55,6 +58,7 @@ export function createServerRenderer(
     site?: PublicSite | Promise<PublicSite | undefined>;
     user?: { name: string; id: number; scope: string[] };
     siteLocales: ListLocalisationsResponse;
+    theme?: ResolvedTheme | null;
     navigationOptions?: {
       enableProjects: boolean;
       enableCollections: boolean;
@@ -111,6 +115,7 @@ export function createServerRenderer(
         locales: supportedLocales,
         defaultLocale: siteLocales.defaultLanguage || 'en',
         navigationOptions: navigationOptions,
+        theme,
       })}</script>
       <script type="application/json" id="react-query-cache">${JSON.stringify(dehydratedState)}</script>
     `;
@@ -133,6 +138,7 @@ export function createServerRenderer(
                     <RootApplication
                       api={api}
                       routes={routes}
+                      theme={theme}
                       site={omekaSite as any}
                       user={user}
                       defaultLocale={siteLocales.defaultLanguage || 'en'}

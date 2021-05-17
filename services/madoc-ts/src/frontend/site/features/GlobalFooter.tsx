@@ -1,6 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { RenderFragment } from '../../shared/components/RenderFragment';
+import { useSiteTheme } from '../../shared/hooks/use-site';
 import { themeVariable } from '../../themes/helpers/themeVariable';
 import { maxWidth } from '../variables/global';
 
@@ -34,6 +36,12 @@ const GlobalFooterContainer = styled.div`
 
 export const GlobalFooter: React.FC = () => {
   const { t } = useTranslation();
+  const siteTheme = useSiteTheme();
+
+  if (siteTheme && siteTheme.html.footer) {
+    return <RenderFragment fragment={siteTheme.html.footer} />;
+  }
+
   return (
     <GlobalFooterContainer>
       <StyledGlobalFooter>{t('Powered by Madoc')}</StyledGlobalFooter>
