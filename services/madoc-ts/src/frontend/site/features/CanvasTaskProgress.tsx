@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
@@ -9,11 +9,11 @@ import { Input, InputContainer, InputLabel } from '../../shared/atoms/Input';
 import { WhiteTickIcon } from '../../shared/atoms/TickIcon';
 import { ItemFilterContainer, ItemFilterPopupContainer } from '../../shared/components/ItemFilter';
 import { useApi } from '../../shared/hooks/use-api';
-import { apiHooks } from '../../shared/hooks/use-api-query';
 import { useUser } from '../../shared/hooks/use-site';
 import { InfoIcon } from '../../shared/icons/InfoIcon';
 import { createLink } from '../../shared/utility/create-link';
 import { HrefLink } from '../../shared/utility/href-link';
+import { useProjectCanvasTasks } from '../hooks/use-project-canvas-tasks';
 import { useRouteContext } from '../hooks/use-route-context';
 
 export const CanvasTaskProgress: React.FC = () => {
@@ -27,12 +27,7 @@ export const CanvasTaskProgress: React.FC = () => {
   const canProgress = user && user.scope && user.scope.indexOf('tasks.create') !== -1;
 
   const { slug } = useParams<{ slug?: string }>();
-  const { data: projectTasks, refetch } = apiHooks.getSiteProjectCanvasTasks(
-    () => (slug && canvasId ? [slug, canvasId] : undefined),
-    {
-      refetchOnMount: true,
-    }
-  );
+  const { data: projectTasks, refetch } = useProjectCanvasTasks();
 
   const canvasTask = projectTasks?.canvasTask;
   const isManifestComplete = projectTasks?.isManifestComplete;

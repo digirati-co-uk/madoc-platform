@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useRouteMatch } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { CanvasStatus } from '../../shared/atoms/CanvasStatus';
 import { Heading3 } from '../../shared/atoms/Heading3';
@@ -8,40 +8,19 @@ import { SingleLineHeading5, Subheading5 } from '../../shared/atoms/Heading5';
 import { ImageGrid, ImageGridItem } from '../../shared/atoms/ImageGrid';
 import { CroppedImage } from '../../shared/atoms/Images';
 import { LocaleString, useCreateLocaleString } from '../../shared/components/LocaleString';
-import { apiHooks } from '../../shared/hooks/use-api-query';
 import { useSubjectMap } from '../../shared/hooks/use-subject-map';
 import { useProject } from '../hooks/use-project';
+import { useProjectManifests } from '../hooks/use-project-manifests';
 import { useSiteConfiguration } from './SiteConfigurationContext';
 
 export const ProjectManifests: React.FC = () => {
   const { t } = useTranslation();
   const {
-    project: { allowManifestNavigation, hideProjectManifestNavigation, hideCompletedResources },
+    project: { allowManifestNavigation, hideProjectManifestNavigation },
   } = useSiteConfiguration();
   const { data: project } = useProject();
-  const { isExact } = useRouteMatch();
   const createLocaleString = useCreateLocaleString();
-  const { data: manifests } = apiHooks.getSiteCollection(
-    () =>
-      project && isExact
-        ? [
-            project.collection_id,
-            hideCompletedResources
-              ? {
-                  type: 'manifest',
-                  project_id: project.slug,
-                  hide_status: '3',
-                }
-              : {
-                  type: 'manifest',
-                  project_id: project.slug,
-                },
-          ]
-        : undefined,
-    {
-      refetchOnMount: true,
-    }
-  );
+  const { data: manifests } = useProjectManifests();
 
   const subjects = manifests?.subjects;
   const [subjectMap] = useSubjectMap(subjects);

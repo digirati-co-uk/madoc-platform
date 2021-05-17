@@ -84,7 +84,7 @@ export const ModalButton: React.FC<{
                   closeModal();
                 }}
               >
-                <InnerModalContainer size={modalSize}>
+                <InnerModalContainer size={modalSize} data-cy="modal">
                   <ModalHeader>
                     <ModalHeaderTitle>{title}</ModalHeaderTitle>
                     <ModalCloseIcon onClick={closeModal} />

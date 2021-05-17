@@ -43,6 +43,7 @@ import { CreateCollection } from './pages/content/collections/create-collection'
 import { CreateManifest } from './pages/content/manifests/create-manifest';
 import { DevelopmentPlugin } from './pages/system/development-plugin';
 import { SystemStatus } from './pages/system/system-status';
+import { ListThemes } from './pages/system/themes/list-themes';
 import { TaskRouter } from './pages/tasks/task-router';
 import { ProjectContent } from './pages/crowdsourcing/projects/project-content';
 import { ProjectMetadata } from './pages/crowdsourcing/projects/project-metadata';
@@ -465,5 +466,10 @@ export const routes: UniversalRoute[] = [
     path: '/system/plugins',
     exact: true,
     component: ListPlugins,
+  },
+  {
+    path: '/system/themes',
+    exact: true,
+    component: ListThemes,
   },
 ];

@@ -8,6 +8,7 @@ import { SitePermission } from '../../types/omeka/SitePermission';
 import { SiteSetting } from '../../types/omeka/SiteSetting';
 import { User } from '../../types/omeka/User';
 import { RouteMiddleware } from '../../types/route-middleware';
+import { ProjectConfiguration } from '../../types/schemas/project-configuration';
 import { mysql } from '../../utility/mysql';
 import { userWithScope } from '../../utility/user-with-scope';
 
@@ -93,6 +94,23 @@ export const exportSite: RouteMiddleware = async context => {
 
   const siteApi = api.asUser({ siteId });
 
+  // Project configuration.
+  const projectConfiguration = Promise.all(
+    projects.map(async project => {
+      const projConfig = await siteApi.getConfiguration<ProjectConfiguration>('madoc', [
+        `urn:madoc:site:${siteId}`,
+        `urn:madoc:project:${project.id}`,
+      ]);
+
+      const confObject = projConfig && projConfig.config && projConfig.config[0]?.config_object;
+
+      return {
+        projectId: project.id,
+        config: confObject,
+      };
+    })
+  );
+
   // - Grab tasks tables (where site = blah)
   const blacklistTypes = [
     'madoc-manifest-import',
@@ -171,6 +189,7 @@ export const exportSite: RouteMiddleware = async context => {
     derivedModels: await derivedModels,
     models: await models,
     projects,
+    projectConfig: await projectConfiguration,
     iiifResources: await iiifResources,
     iiifMetadata: await iiifMetadata,
     iiifLinking: await iiifLinking,

@@ -3,6 +3,7 @@ import { PluginManager } from '../frontend/shared/plugins/plugin-manager';
 import { MediaRepository } from '../repository/media-repository';
 import { PageBlocksRepository } from '../repository/page-blocks-repository';
 import { PluginRepository } from '../repository/plugin-repository';
+import { ThemeRepository } from '../repository/theme-repository';
 import { CronJobs } from '../utility/cron-jobs';
 import { ExternalConfig } from './external-config';
 import { router } from '../router';
@@ -19,6 +20,7 @@ export interface ApplicationContext {
   connection: DatabasePoolConnectionType;
   pageBlocks: PageBlocksRepository;
   plugins: PluginRepository;
+  themes: ThemeRepository;
   media: MediaRepository;
   omeka: OmekaApi;
   pluginManager: PluginManager;

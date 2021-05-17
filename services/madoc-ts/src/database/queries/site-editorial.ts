@@ -34,7 +34,12 @@ export function getContextualSlots(context: ServerEditorialContext, siteId: numb
         filter_project_none = false
         )
     )`);
+  } else {
+    contextQueries.push(sql`
+        filter_project_none = true
+    `);
   }
+
   if (context.collection) {
     contextQueries.push(sql`(
         filter_collection_all = true or
@@ -45,7 +50,12 @@ export function getContextualSlots(context: ServerEditorialContext, siteId: numb
         filter_collection_none = false
         )
     )`);
+  } else {
+    contextQueries.push(sql`
+        filter_collection_none = true
+    `);
   }
+
   if (context.manifest) {
     contextQueries.push(sql`(
         filter_manifest_all = true or
@@ -56,7 +66,12 @@ export function getContextualSlots(context: ServerEditorialContext, siteId: numb
         filter_manifest_none = false
         )
     )`);
+  } else {
+    contextQueries.push(sql`
+        filter_manifest_none = true
+    `);
   }
+
   if (context.canvas) {
     contextQueries.push(sql`(
         filter_canvas_all = true or
@@ -67,6 +82,10 @@ export function getContextualSlots(context: ServerEditorialContext, siteId: numb
           filter_canvas_none = false
         )
     )`);
+  } else {
+    contextQueries.push(sql`
+        filter_canvas_none = true
+    `);
   }
 
   if (slots) {

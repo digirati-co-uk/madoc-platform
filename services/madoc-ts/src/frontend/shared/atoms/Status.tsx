@@ -28,7 +28,7 @@ export const StatusText = styled.div<{ open?: boolean }>`
   margin-left: ${props => (props.open ? '3px' : '0')};
 `;
 
-const StatusIcon: React.FC<{ status: number }> = ({ status }) => {
+export const StatusIcon: React.FC<{ status: number }> = ({ status }) => {
   switch (status) {
     case -1:
       return <ErrorIcon />;

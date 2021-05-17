@@ -51,4 +51,5 @@ export const SlotOutlineContainer = styled.div`
   outline-offset: -1px;
   clear: both;
   padding: 0.1px;
+  margin-bottom: 1em;
 `;

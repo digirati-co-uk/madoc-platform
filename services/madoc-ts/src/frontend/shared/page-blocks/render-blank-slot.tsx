@@ -4,9 +4,11 @@ import { extractBlockDefinitions } from '../../../extensions/page-blocks/block-e
 import { CreateSlotRequest, EditorialContext } from '../../../types/schemas/site-page';
 import { useProject } from '../../site/hooks/use-project';
 import { Button, ButtonRow } from '../atoms/Button';
+import { EmptySlotContainer } from '../atoms/EmptySlot';
 import { EmptyState } from '../atoms/EmptyState';
 import { useApi } from '../hooks/use-api';
 import { useSlots } from './slot-context';
+import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 
 function exactFromContext(context: EditorialContext, projectId?: number): CreateSlotRequest['filters'] {
   return {
@@ -155,7 +157,7 @@ export const RenderBlankSlot: React.FC<{ name: string }> = ({ name: slotId, chil
   }
 
   return (
-    <div>
+    <EmptySlotContainer>
       {children}
       {isPage ? (
         <ButtonRow>
@@ -167,6 +169,6 @@ export const RenderBlankSlot: React.FC<{ name: string }> = ({ name: slotId, chil
           <Button onClick={() => createSlot('all')}>Customise on all of this type in this context</Button>
         </ButtonRow>
       )}
-    </div>
+    </EmptySlotContainer>
   );
 };

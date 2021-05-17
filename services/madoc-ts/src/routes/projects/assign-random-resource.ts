@@ -1,5 +1,6 @@
 import { RouteMiddleware } from '../../types/route-middleware';
 import { api } from '../../gateway/api.server';
+import { ItemStructureListItem } from '../../types/schemas/item-structure-list';
 import { NotFound } from '../../utility/errors/not-found';
 import { parseUrn } from '../../utility/parse-urn';
 import { userWithScope } from '../../utility/user-with-scope';
@@ -29,7 +30,7 @@ export const assignRandomResource: RouteMiddleware<
   const isTranscriberMode = project.config.contributionMode === 'transcription';
 
   // Getting a random manifest id.
-  async function getRandomManifest() {
+  async function getAvailableManifests() {
     // Get project.
     // Get all manifests in a project from flat collection.
     // Request all crowdsourcing-manifest-task from the project
@@ -72,14 +73,12 @@ export const assignRandomResource: RouteMiddleware<
       : projectStructure;
 
     // Valid manifests.
-    const validManifests = collectionStructure.items.filter(item => {
+    return collectionStructure.items.filter(item => {
       return item.type === 'manifest' && completedManifests.indexOf(item.id) === -1;
     });
+  }
 
-    if (validManifests.length === 0) {
-      return [undefined, 0] as const;
-    }
-
+  function getRandomManifest(validManifests: ItemStructureListItem[]) {
     const toChooseFrom = priorityRandom ? validManifests.slice(0, 5) : validManifests;
     const key = Math.floor(toChooseFrom.length * Math.random());
 
@@ -88,97 +87,119 @@ export const assignRandomResource: RouteMiddleware<
     return [randomManifest?.id || undefined, validManifests.length] as const;
   }
 
-  const [manifestId, availableManifests] = requestManifestId ? [requestManifestId, 0] : await getRandomManifest();
+  let manifests = await getAvailableManifests();
 
-  if (!manifestId) {
-    context.response.body = { remainingTasks: 0 };
-    return;
+  async function getAvailableCanvases(manifestId?: number) {
+    if (!manifestId) {
+      return [];
+    }
+
+    // Get manifest task
+    // Get all canvases tasks under it.
+    const manifestTask = await userApi.getTasks(0, {
+      subject: `urn:madoc:manifest:${manifestId}`,
+      root_task_id: project.task_id,
+      all: true,
+    });
+
+    const withoutCanvasId: string[] = [];
+    const manifestTaskId = manifestTask.tasks[0]?.id;
+    const structures = await userApi.getManifestStructure(Number(manifestId));
+
+    if (manifestTaskId) {
+      const subjects = structures.items.map(item => `urn:madoc:canvas:${item.id}`);
+
+      // And then load ALL of the statuses.
+      const taskSubjects = await userApi.getTaskSubjects(project.task_id, subjects, {
+        type: 'crowdsourcing-task',
+        assigned_to: userUrn,
+      });
+
+      const taskCanvasSubjects = await userApi.getTaskSubjects(project.task_id, subjects, {
+        type: 'crowdsourcing-canvas-task',
+      });
+
+      for (const subject of taskSubjects.subjects) {
+        withoutCanvasId.push(subject.subject);
+      }
+
+      for (const subject of taskCanvasSubjects.subjects) {
+        if (subject.status === 3 || subject.status === -1 || (isTranscriberMode && subject.status === 2)) {
+          withoutCanvasId.push(subject.subject);
+        }
+      }
+    }
+
+    return structures.items.filter(item => {
+      return withoutCanvasId.indexOf(`urn:madoc:canvas:${item.id}`) === -1;
+    });
   }
 
-  if (!requestManifestId && type === 'manifest' && !claim) {
+  while (manifests.length) {
+    const [manifestId, availableManifests] = requestManifestId
+      ? [Number(requestManifestId), 0]
+      : getRandomManifest(manifests);
+
+    // No manifest, no tasks.
+    if (!manifestId) {
+      context.response.body = { remainingTasks: 0 };
+      return;
+    }
+
+    // Manifest claims.
+    if (!requestManifestId && type === 'manifest' && !claim) {
+      context.response.body = {
+        manifest: manifestId,
+        claim: null,
+        remainingTasks: availableManifests,
+      };
+      return;
+    }
+
+    if (type !== 'canvas') {
+      // What's no enabled yet?
+      // type="manifest" && claim=true - automatically claim a random manifest.
+      throw new RequestError('Not enabled');
+    }
+
+    const availableCanvases = await getAvailableCanvases(manifestId);
+
+    if (availableCanvases.length === 0) {
+      if (requestManifestId) {
+        context.response.body = { manifest: manifestId, claim: null, remainingTasks: 0 };
+        return;
+      }
+      // Skip this manifest.
+      manifests = manifests.filter(m => m.id !== manifestId);
+      continue;
+    }
+
+    const toChooseFrom = priorityRandom ? availableCanvases.slice(0, 10) : availableCanvases;
+
+    const key = Math.floor(toChooseFrom.length * Math.random());
+
+    const canvas = toChooseFrom[key];
+
+    if (!canvas) {
+      throw new Error();
+    }
+
+    const siteApi = api.asUser({ userId: id, siteId });
+
+    const resourceClaim = claim
+      ? await siteApi.createResourceClaim(project.id, {
+          collectionId: collectionId ? Number(collectionId) : undefined,
+          manifestId: manifestId ? Number(manifestId) : undefined,
+          canvasId: canvas.id,
+        })
+      : null;
+
     context.response.body = {
+      canvas,
       manifest: manifestId,
-      claim: null,
-      remainingTasks: availableManifests,
+      claim: resourceClaim ? resourceClaim.claim : null,
+      remainingTasks: availableCanvases.length,
     };
     return;
   }
-
-  if (type !== 'canvas') {
-    // What's no enabled yet?
-    // type="manifest" && claim=true - automatically claim a random manifest.
-    throw new RequestError('Not enabled');
-  }
-
-  // Get manifest task
-  // Get all canvases tasks under it.
-  const manifestTask = await userApi.getTasks(0, {
-    subject: `urn:madoc:manifest:${manifestId}`,
-    root_task_id: project.task_id,
-    all: true,
-  });
-
-  const withoutCanvasId: string[] = [];
-  const manifestTaskId = manifestTask.tasks[0]?.id;
-  const structures = await userApi.getManifestStructure(Number(manifestId));
-
-  if (manifestTaskId) {
-    const subjects = structures.items.map(item => `urn:madoc:canvas:${item.id}`);
-
-    // And then load ALL of the statuses.
-    const taskSubjects = await userApi.getTaskSubjects(project.task_id, subjects, {
-      type: 'crowdsourcing-task',
-      assigned_to: userUrn,
-    });
-
-    const taskCanvasSubjects = await userApi.getTaskSubjects(project.task_id, subjects, {
-      type: 'crowdsourcing-canvas-task',
-    });
-
-    for (const subject of taskSubjects.subjects) {
-      withoutCanvasId.push(subject.subject);
-    }
-
-    for (const subject of taskCanvasSubjects.subjects) {
-      if (subject.status === 3 || subject.status === -1 || (isTranscriberMode && subject.status === 2)) {
-        withoutCanvasId.push(subject.subject);
-      }
-    }
-  }
-
-  const availableCanvases = structures.items.filter(item => {
-    return withoutCanvasId.indexOf(`urn:madoc:canvas:${item.id}`) === -1;
-  });
-
-  if (availableCanvases.length === 0) {
-    context.response.body = { remainingTasks: availableCanvases.length };
-    return;
-  }
-
-  const toChooseFrom = priorityRandom ? availableCanvases.slice(0, 10) : availableCanvases;
-
-  const key = Math.floor(toChooseFrom.length * Math.random());
-
-  const canvas = toChooseFrom[key];
-
-  if (!canvas) {
-    throw new Error();
-  }
-
-  const siteApi = api.asUser({ userId: id, siteId });
-
-  const resourceClaim = claim
-    ? await siteApi.createResourceClaim(project.id, {
-        collectionId: collectionId ? Number(collectionId) : undefined,
-        manifestId: manifestId ? Number(manifestId) : undefined,
-        canvasId: canvas.id,
-      })
-    : null;
-
-  context.response.body = {
-    canvas,
-    manifest: manifestId,
-    claim: resourceClaim ? resourceClaim.claim : null,
-    remainingTasks: availableCanvases.length,
-  };
 };

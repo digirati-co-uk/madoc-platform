@@ -4,8 +4,9 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { ErrorMessage } from '../../shared/atoms/ErrorMessage';
 import { GlobalStyles } from '../../shared/atoms/GlobalStyles';
+import { RenderFragment } from '../../shared/components/RenderFragment';
 import { useApi, useIsApiRestarting } from '../../shared/hooks/use-api';
-import { useSite } from '../../shared/hooks/use-site';
+import { useSite, useSiteTheme } from '../../shared/hooks/use-site';
 import { HrefLink } from '../../shared/utility/href-link';
 import { themeVariable } from '../../themes/helpers/themeVariable';
 import { maxWidth } from '../variables/global';
@@ -132,16 +133,16 @@ export const GlobalSiteHeader: React.FC<{ menu?: any }> = ({ menu }) => {
       <SiteHeaderBackground>
         <SiteHeader>
           <SiteDetails>
-            {showSiteTitle &&
+            {showSiteTitle && (
               <SiteTitle as={HrefLink} href={`/`} className="site-title">
                 <h1>
                   <span className="title">{site.title}</span>
                 </h1>
               </SiteTitle>
-            }
+            )}
             <SiteMenuContainer>{menu}</SiteMenuContainer>
           </SiteDetails>
-          {showSearch &&
+          {showSearch && (
             <GlobalSearchContainer>
               <GlobalSearchForm
                 onSubmit={e => {
@@ -162,7 +163,7 @@ export const GlobalSiteHeader: React.FC<{ menu?: any }> = ({ menu }) => {
                 <GlobalSearchButton type="submit">{t('Search')}</GlobalSearchButton>
               </GlobalSearchForm>
             </GlobalSearchContainer>
-          }
+          )}
         </SiteHeader>
       </SiteHeaderBackground>
     </>

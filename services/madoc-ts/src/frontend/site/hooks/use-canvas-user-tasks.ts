@@ -3,24 +3,19 @@ import { useMemo } from 'react';
 import { useMutation } from 'react-query';
 import { BaseTask } from '../../../gateway/tasks/base-task';
 import { useApi } from '../../shared/hooks/use-api';
-import { apiHooks } from '../../shared/hooks/use-api-query';
-import { useData } from '../../shared/hooks/use-data';
-import { ManifestLoader } from '../components';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
-import { useManifestUserTasks } from './use-manifest-user-tasks';
+import { useInvalidateAfterSubmission } from './use-invalidate-after-submission';
+import { useProjectCanvasTasks } from './use-project-canvas-tasks';
 import { useRouteContext } from './use-route-context';
 
 const defaultScope: any[] = [];
 export function useCanvasUserTasks() {
+  const invalidate = useInvalidateAfterSubmission();
   const { projectId, manifestId, collectionId, canvasId } = useRouteContext();
   const config = useSiteConfiguration();
   const api = useApi();
-  const { refetch: refetchManifest } = useData(ManifestLoader, undefined, { enabled: !!manifestId });
   const { user, scope = defaultScope } = api.getIsServer() ? { user: undefined } : api.getCurrentUser() || {};
-  const { refetch: refetchManifestTasks } = useManifestUserTasks();
-  const { data: canvasTask, isLoading, refetch, updatedAt } = apiHooks.getSiteProjectCanvasTasks(() =>
-    projectId && canvasId ? [projectId, canvasId] : undefined
-  );
+  const { data: canvasTask, isLoading, refetch, updatedAt } = useProjectCanvasTasks();
 
   const [updateClaim] = useMutation(async (response: RevisionRequest) => {
     if (canvasId && projectId) {
@@ -35,11 +30,8 @@ export function useCanvasUserTasks() {
           collectionId,
           status: 1,
         });
-        await refetch();
-        if (manifestId) {
-          await refetchManifest();
-          await refetchManifestTasks();
-        }
+
+        await invalidate();
       }
 
       if (respStatus === 'submitted') {
@@ -51,11 +43,7 @@ export function useCanvasUserTasks() {
           collectionId,
           status: 2,
         });
-        await refetch();
-        if (manifestId) {
-          await refetchManifest();
-          await refetchManifestTasks();
-        }
+        await invalidate();
       }
     }
   });

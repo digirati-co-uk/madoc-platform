@@ -73,6 +73,7 @@ export const Slot: React.FC<{ name: string }> = props => {
       onUpdateBlock={onUpdateBlock}
       invalidateSlots={invalidateSlots}
       defaultContents={props.children}
+      invalidateSlots={invalidateSlots}
     />
   );
 };

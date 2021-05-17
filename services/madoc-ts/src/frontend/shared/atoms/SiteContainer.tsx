@@ -23,7 +23,7 @@ export const SiteContainerBackground = styled.div`
 export const SiteContainer = styled.div`
   flex: 1 1 0;
   max-width: ${maxWidth};
-  padding: 0.2em 2em;
+  padding: 0.5em 2em;
   width: 100%;
   margin-left: auto;
   margin-right: auto;

@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { ResolvedTheme } from '../../../types/themes';
 import { PublicSite } from '../../../utility/omeka-api';
 
 const SiteReactContext = React.createContext<
@@ -11,9 +12,16 @@ const SiteReactContext = React.createContext<
         enableProjects?: boolean;
         enableCollections?: boolean;
       };
+      theme?: ResolvedTheme | null;
     }
   | undefined
 >(undefined);
+
+export const useSiteTheme = () => {
+  const details = useContext(SiteReactContext);
+
+  return details?.theme;
+};
 
 export const useSite = () => {
   const details = useContext(SiteReactContext);

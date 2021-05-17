@@ -7,7 +7,7 @@ import { WidePage } from '../../shared/atoms/WidePage';
 import { SearchBox } from '../../shared/atoms/SearchBox';
 import { GridContainer } from '../../shared/atoms/Grid';
 
-const AdminHeaderBackground = styled.div<{ $sticky?: boolean }>`
+const AdminHeaderBackground = styled.div<{ $sticky?: boolean; $noMargin?: boolean }>`
   background: #24386b;
   margin-bottom: 1em;
   ${props =>
@@ -16,6 +16,12 @@ const AdminHeaderBackground = styled.div<{ $sticky?: boolean }>`
       position: sticky;
       top: -0.25px;
       z-index: 9;
+    `}
+
+  ${props =>
+    props.$noMargin &&
+    css`
+      margin-bottom: 0;
     `}
 `;
 
@@ -76,11 +82,12 @@ export const AdminHeader: React.FC<{
   menu?: BreadcrumbItem[];
   thumbnail?: string;
   search?: boolean;
+  noMargin?: boolean;
   searchFunction?: (val: string) => [{}];
-}> = ({ title, subtitle, breadcrumbs, menu, thumbnail, search = false, searchFunction, sticky }) => {
+}> = ({ title, subtitle, breadcrumbs, menu, noMargin, thumbnail, search = false, searchFunction, sticky }) => {
   const { pathname } = useLocation();
   return (
-    <AdminHeaderBackground $sticky={sticky}>
+    <AdminHeaderBackground $noMargin={noMargin} $sticky={sticky}>
       {breadcrumbs ? <Breadcrumbs items={breadcrumbs} /> : null}
       <WidePage>
         <AdminHeaderGrid style={{ display: 'flex' }}>

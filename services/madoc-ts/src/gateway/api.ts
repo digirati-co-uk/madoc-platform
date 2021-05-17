@@ -11,6 +11,7 @@ import { PageBlockExtension } from '../extensions/page-blocks/extension';
 import { MediaExtension } from '../extensions/media/extension';
 import { SystemExtension } from "../extensions/system/extension";
 import { TaskExtension } from '../extensions/tasks/extension';
+import { ThemeExtension } from "../extensions/themes/extension";
 import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
 import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
 import { Site } from '../types/omeka/Site';
@@ -78,6 +79,7 @@ export class ApiClient {
   media: MediaExtension;
   tasks: TaskExtension;
   system: SystemExtension;
+  themes: ThemeExtension;
 
   constructor(options: {
     gateway: string;
@@ -98,6 +100,7 @@ export class ApiClient {
     this.media = new MediaExtension(this);
     this.tasks = new TaskExtension(this);
     this.system = new SystemExtension(this);
+    this.themes = new ThemeExtension(this);
     this.captureModelDataSources = [plainTextSource];
     this.captureModelExtensions = new ExtensionManager(
       options.customCaptureModelExtensions

@@ -1,7 +1,7 @@
 {
   "Home page": "/s/default",
   "Login page": "/s/default/madoc/login",
-  "User dashboard": "/s/default/madoc",
+  "User dashboard": "/s/default/madoc/dashboard",
   "Admin dashboard": "/s/default/madoc/admin",
   "Site projects": "/s/default/madoc/projects",
   "Project with model": "/s/default/madoc/projects/project-with-model",

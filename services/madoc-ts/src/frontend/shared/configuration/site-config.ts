@@ -44,7 +44,7 @@ export const siteConfigurationModel: {
     ],
   },
   maxContributionsPerResource: {
-    label: 'Max contributors per resource',
+    label: 'Contributors per resource',
     type: 'text-field',
   },
   allowSubmissionsWhenCanvasComplete: {

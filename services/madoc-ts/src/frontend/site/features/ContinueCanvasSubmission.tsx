@@ -5,6 +5,7 @@ import { InfoMessage } from '../../shared/atoms/InfoMessage';
 import { ProjectListingDescription, ProjectListingItem, ProjectListingTitle } from '../../shared/atoms/ProjectListing';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { ProjectDetailWrapper } from '../../shared/components/ProjectDetailWrapper';
+import { useUser } from '../../shared/hooks/use-site';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useContinueSubmission } from '../hooks/use-continue-submission';
@@ -26,10 +27,15 @@ export const ContinueCanvasSubmission: React.FC = () => {
   const { tasks: continueSubmission, inProgress: continueCount } = useContinueSubmission();
   const createLink = useRelativeLinks();
   const { data: project } = useProject();
+  const user = useUser();
   const { isPreparing, isActive } = useProjectStatus();
 
   if (!projectId || (!isActive && !isPreparing)) {
     return null;
+  }
+
+  if (!user) {
+    return <ProjectDetailWrapper />;
   }
 
   if (project && isPreparing) {

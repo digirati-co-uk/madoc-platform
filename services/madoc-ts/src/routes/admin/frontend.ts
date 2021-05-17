@@ -85,6 +85,10 @@ export const siteFrontend: RouteMiddleware = async context => {
     sql`select id from iiif_project where status = 1 and site_id = ${site.id} limit 1`
   );
 
+  const isAdmin = context.state.jwt && context.state.jwt.scope && context.state.jwt.scope.indexOf('site.admin') !== -1;
+  const forceClearTheme = isAdmin && (context.query.__clear_theme_cache || false);
+  const currentTheme = await context.themes.getResolveTheme(site.id, !!forceClearTheme);
+
   if (!site) {
     throw new NotFound();
   }
@@ -101,6 +105,7 @@ export const siteFrontend: RouteMiddleware = async context => {
       siteLocales,
       pluginManager: context.pluginManager,
       plugins: context.pluginManager.listPlugins(site.id),
+      theme: currentTheme,
       getSlots: async (ctx: EditorialContext) => {
         const parsedId = ctx.project ? parseProjectId(ctx.project) : undefined;
         const project = parsedId ? await context.connection.one(getProject(parsedId, site.id)) : undefined;

@@ -9,8 +9,9 @@ import {
   LayoutSidebar,
   OuterLayoutContainer,
 } from '../../shared/atoms/LayoutContainer';
-import { TaskListContainer } from '../../shared/atoms/TaskList';
+import { TaskListContainer, TaskListInnerContainer } from '../../shared/atoms/TaskList';
 import { SubjectSnippet } from '../../shared/components/SubjectSnippet';
+import { TaskItem } from "../../shared/components/TaskItem";
 import { useLocalStorage } from '../../shared/hooks/use-local-storage';
 import { useResizeLayout } from '../../shared/hooks/use-resize-layout';
 import { useUser } from '../../shared/hooks/use-site';
@@ -100,7 +101,7 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
     }
 
     return (
-      <>
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         <ButtonRow>
           {query.subject ? (
             <Button onClick={() => goToQuery({ subject: undefined })}>{t('Clear image filter')}</Button>
@@ -120,34 +121,38 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
 
         <OuterLayoutContainer style={{ maxHeight: '80vh' }}>
           <LayoutContainer ref={refs.container as any}>
-            <LayoutSidebar ref={refs.resizableDiv as any} style={{ width: isOpen ? widthB : 0 }}>
+            <LayoutSidebar ref={refs.resizableDiv as any} $noScroll style={{ width: isOpen ? widthB : 0 }}>
               <TaskListContainer>
-                {pages
-                  ? pages.map(data =>
-                      (data.tasks || []).map(subtask => (
-                        <TaskListItem
-                          task={subtask}
-                          key={subtask.id}
-                          onClick={() => push(createLink({ taskId: subtask.id, query }))}
-                          selected={subtask.id === taskId}
-                        />
-                      ))
-                    )
-                  : null}
-                <Button
-                  ref={loadMoreButton}
-                  onClick={() => fetchMore()}
-                  style={{ display: canFetchMore ? 'block' : 'none' }}
-                >
-                  Load more
-                </Button>
+                <TaskListInnerContainer>
+                  {pages
+                    ? pages.map(data =>
+                        (data.tasks || []).map(subtask => {
+                          return (
+                            <TaskListItem
+                              task={subtask}
+                              key={subtask.id}
+                              onClick={() => push(createLink({ taskId: subtask.id, query }))}
+                              selected={subtask.id === taskId}
+                            />
+                          );
+                        })
+                      )
+                    : null}
+                  <Button
+                    ref={loadMoreButton}
+                    onClick={() => fetchMore()}
+                    style={{ display: canFetchMore ? 'block' : 'none' }}
+                  >
+                    Load more
+                  </Button>
+                </TaskListInnerContainer>
               </TaskListContainer>
             </LayoutSidebar>
             <LayoutHandle ref={refs.resizer as any} onClick={() => setIsOpen(o => !o)} />
             <LayoutContent $padding>{renderUniversalRoutes(route.routes)}</LayoutContent>
           </LayoutContainer>
         </OuterLayoutContainer>
-      </>
+      </div>
     );
   },
   {

@@ -1,18 +1,13 @@
 import React, { useMemo } from 'react';
 import { useApi } from '../../shared/hooks/use-api';
-import { apiHooks } from '../../shared/hooks/use-api-query';
+import { useProjectManifestTasks } from '../hooks/use-project-manifest-tasks';
 import { useRouteContext } from '../hooks/use-route-context';
 import { useSiteConfiguration } from './SiteConfigurationContext';
 
 export function usePreventCanvasNavigation() {
   const siteConfiguration = useSiteConfiguration();
-  const { projectId, manifestId } = useRouteContext();
-  const { data } = apiHooks.getSiteProjectManifestTasks(
-    () => (projectId && manifestId ? [projectId, manifestId] : undefined),
-    {
-      refetchOnMount: true,
-    }
-  );
+  const { projectId } = useRouteContext();
+  const { data } = useProjectManifestTasks();
   const api = useApi();
   const user = api.getIsServer() ? undefined : api.getCurrentUser();
   const manifestUserTasks = data ? data.userTasks : undefined;

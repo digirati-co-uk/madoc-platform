@@ -1,95 +1,97 @@
 /// <reference types="../../types" />
-before(() => {
-  cy.loadSite('empty-site-users', true);
-});
 
-beforeEach(() => {
-  cy.loadSite('empty-site-users');
-  cy.visit('/logout');
-});
+describe('Site navigating configuration', () => {
+  before(() => {
+    cy.loadSite('empty-site-users', true);
+  });
 
-it('should be able to see the outputs of simple textual annotations', () => {
-  // 1. Transcriber makes annotation
-  cy.siteLogin('Transcriber');
-  cy.visit('/s/default/madoc/projects/project-with-model/manifests/2/c/12/model');
-  cy.waitForReact(1000, '.react-loaded');
-  cy.waitUntil(() => Cypress.$('[data-cy="info-message"]').length === 1);
-  cy.waitUntil(() => Cypress.$('[data-cy="info-message"]').length === 0);
+  beforeEach(() => {
+    cy.loadSite('empty-site-users');
+    cy.visit('/logout');
+  });
 
-  cy.react('TextField', { props: { label: 'description' } }).type('An example value');
-  cy.react('Button').contains('Submit').click();
-  cy.get('[data-cy="publish-button"]').click();
-  cy.get('[data-cy="publish-button"]').should('be.disabled');
-  cy.get('[data-cy="close-add-another"]').should('exist');
+  it('should be able to see the outputs of simple textual annotations', () => {
+    // 1. Transcriber makes annotation
+    cy.siteLogin('Transcriber');
+    cy.visit('/s/default/madoc/projects/project-with-model/manifests/2/c/12/model');
+    cy.waitForReact(1000, '.react-loaded');
+    cy.waitUntil(() => Cypress.$('[data-cy="info-message"]').length === 1);
+    cy.waitUntil(() => Cypress.$('[data-cy="info-message"]').length === 0);
 
-  // 2. Reviewer approves
-  cy.siteLogin('admin');
-  cy.visit('/s/default/madoc/projects/project-with-model');
-  cy.waitForReact(1000, '.react-loaded');
-  cy.get('[data-cy="task-name"] a')
-    .contains('Review of "User contributions to "Forth Bridge illustrations 1886-1887 - 9""')
-    .click();
+    cy.react('TextField', { props: { label: 'description' } }).type('An example value');
+    cy.react('Button').contains('Submit').click();
+    cy.get('[data-cy="publish-button"]').click();
+    cy.get('[data-cy="publish-button"]').should('be.disabled');
+    cy.get('[data-cy="close-add-another"]').should('exist');
 
-  cy.react('KanbanCardButton').contains('Review contribution').click();
-  cy.react('ApproveSubmission').click(); // open modal
-  cy.get('[data-cy="approve-submission"]').click(); // confirmation
-  cy.get('[data-cy="kanban-completed-reviews"]').react('KanbanCard').should('have.length', 1);
+    // 2. Reviewer approves
+    cy.siteLogin('admin');
+    cy.visit('/s/default/madoc/projects/project-with-model/tasks?type=crowdsourcing-review');
+    cy.waitForReact(1000, '.react-loaded');
+    cy.get('[data-cy="task-list-item"] div').contains('Forth Bridge illustrations 1886-1887 - 9').click();
 
-  // 3. See the annotation
-  cy.siteLogin('Viewer');
-  cy.visit('/s/default/madoc/projects/project-with-model/manifests/2/c/12');
-  cy.waitForReact(1000, '.react-loaded');
-  cy.react('DocumentValueWrapper').contains('An example value');
-});
+    cy.react('KanbanCardButton').contains('Review contribution').click();
+    cy.react('ApproveSubmission').click(); // open modal
+    cy.get('[data-cy="approve-submission"]').click(); // confirmation
+    cy.get('[data-cy="kanban-completed-reviews"]').react('KanbanCard').should('have.length', 1);
 
-it('should be able to see the outputs of annotations with selectors', () => {
-  // 1. Transcriber makes annotation
-  cy.siteLogin('Transcriber');
-  cy.visit('/s/default/madoc/projects/project-with-choice/manifests/2/c/13/model');
-  cy.waitForReact(1000, '.react-loaded');
-  cy.waitUntil(() => Cypress.$('[data-cy="info-message"]').length === 1);
-  cy.waitUntil(() => Cypress.$('[data-cy="info-message"]').length === 0);
+    // 3. See the annotation
+    cy.siteLogin('Viewer');
+    cy.visit('/s/default/madoc/projects/project-with-model/manifests/2/c/12');
+    cy.waitForReact(1000, '.react-loaded');
+    cy.get('[data-tip="Document"]').click(); // Document tab.
+    cy.react('DocumentValueWrapper').contains('An example value');
+  });
 
-  cy.get('label').contains('Choice B').click();
-  cy.react('TextField', { props: { label: 'Field B' } }).type('An example value with selector');
-  cy.react('FieldInstance', { props: { property: 'field-b' } })
-    .get('div')
-    .contains('Define region')
-    .click();
+  it('should be able to see the outputs of annotations with selectors', () => {
+    // 1. Transcriber makes annotation
+    cy.siteLogin('Transcriber');
+    cy.visit('/s/default/madoc/projects/project-with-choice/manifests/2/c/15/model');
+    cy.waitForReact(1000, '.react-loaded');
+    cy.waitUntil(() => Cypress.$('[data-cy="info-message"]').length === 1);
+    cy.waitUntil(() => Cypress.$('[data-cy="info-message"]').length === 0);
 
-  // Fill in the selected region
-  cy.get('button').contains('define region').click();
+    cy.get('label').contains('Choice B').click();
+    cy.react('TextField', { props: { label: 'Field B' } }).type('An example value with selector');
+    cy.react('FieldInstance', { props: { property: 'field-b' } })
+      .get('div')
+      .contains('Define region')
+      .click();
 
-  cy.react('Atlas')
-    .get('canvas')
-    .trigger('mousemove', { eventConstructor: 'MouseEvent', button: 0, position: 'topLeft', x: 100, y: 50 })
-    .trigger('mousedown', { eventConstructor: 'MouseEvent', button: 0, position: 'topLeft', x: 100, y: 50 })
-    .trigger('mousemove', { eventConstructor: 'MouseEvent', button: 0, position: 'topLeft', x: 300, y: 150 })
-    .trigger('mousemove', { eventConstructor: 'MouseEvent', button: 0, position: 'topLeft', x: 350, y: 200 })
-    .trigger('mouseup');
+    // Fill in the selected region
+    cy.get('button').contains('define region').click();
 
-  // Submit
-  cy.react('Button').contains('Submit').click();
-  cy.get('[data-cy="publish-button"]').click();
-  cy.get('[data-cy="publish-button"]').should('be.disabled');
-  cy.get('[data-cy="close-add-another"]').should('exist');
+    cy.react('Atlas')
+      .get('canvas')
+      .trigger('mousemove', { eventConstructor: 'MouseEvent', button: 0, position: 'topLeft', x: 100, y: 50 })
+      .trigger('mousedown', { eventConstructor: 'MouseEvent', button: 0, position: 'topLeft', x: 100, y: 50 })
+      .trigger('mousemove', { eventConstructor: 'MouseEvent', button: 0, position: 'topLeft', x: 300, y: 150 })
+      .trigger('mousemove', { eventConstructor: 'MouseEvent', button: 0, position: 'topLeft', x: 350, y: 200 })
+      .trigger('mouseup');
 
-  // 2. Reviewer approves
-  cy.siteLogin('admin');
-  cy.visit('/s/default/madoc/projects/project-with-choice');
-  cy.waitForReact(1000, '.react-loaded');
-  cy.get('[data-cy="task-name"] a')
-    .contains('Review of "User contributions to "Forth Bridge illustrations 1886-1887 - 10""')
-    .click();
+    // Submit
+    cy.react('Button').contains('Submit').click();
+    cy.get('[data-cy="publish-button"]').click();
+    cy.get('[data-cy="publish-button"]').should('be.disabled');
+    cy.get('[data-cy="close-add-another"]').should('exist');
 
-  cy.react('KanbanCardButton').contains('Review contribution').click();
-  cy.react('ApproveSubmission').click(); // open modal
-  cy.get('[data-cy="approve-submission"]').click(); // confirmation
-  cy.get('[data-cy="kanban-completed-reviews"]').react('KanbanCard').should('have.length', 1);
+    // 2. Reviewer approves
+    cy.siteLogin('admin');
+    cy.visit('/s/default/madoc/projects/project-with-choice/tasks?type=crowdsourcing-review');
+    cy.waitForReact(1000, '.react-loaded');
+    cy.get('[data-cy="task-list-item"] div').contains('Forth Bridge illustrations 1886-1887 - 12').click();
 
-  // 3. See the annotation
-  cy.siteLogin('Viewer');
-  cy.visit('/s/default/madoc/projects/project-with-choice/manifests/2/c/13');
-  cy.waitForReact(1000, '.react-loaded');
-  cy.react('DocumentValueWrapper').contains('An example value with selector');
+    cy.react('KanbanCardButton').contains('Review contribution').click();
+    cy.react('ApproveSubmission').click(); // open modal
+    cy.get('[data-cy="approve-submission"]').click(); // confirmation
+    cy.get('[data-cy="kanban-completed-reviews"]');
+
+    // 3. See the annotation
+    cy.siteLogin('Viewer');
+    cy.visit('/s/default/madoc/projects/project-with-choice/manifests/2/c/15');
+    cy.waitForReact(1000, '.react-loaded');
+
+    cy.get('[data-tip="Document"]').click(); // Document tab.
+    cy.react('DocumentValueWrapper').contains('An example value with selector');
+  });
 });

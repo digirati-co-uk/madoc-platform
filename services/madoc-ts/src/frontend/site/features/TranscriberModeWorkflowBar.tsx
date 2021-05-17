@@ -1,21 +1,28 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { WorkflowBar } from '../../shared/components/WorkflowBar';
 import { useApi } from '../../shared/hooks/use-api';
 import { useManifestStructure } from '../../shared/hooks/use-manifest-structure';
 import { createLink } from '../../shared/utility/create-link';
+import { HrefLink } from '../../shared/utility/href-link';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
+import { useInvalidateAfterSubmission } from '../hooks/use-invalidate-after-submission';
 import { useManifestTask } from '../hooks/use-manifest-task';
+import { useManifestUserTasks } from '../hooks/use-manifest-user-tasks';
 import { useModelPageConfiguration } from '../hooks/use-model-page-configuration';
 import { useRouteContext } from '../hooks/use-route-context';
 import { useSubmitAllClaims } from '../hooks/use-submit-all-claims';
 
 export const TranscriberModeWorkflowBar: React.FC = () => {
+  const { t } = useTranslation();
   const api = useApi();
   const { fixedTranscriptionBar } = useModelPageConfiguration();
-  const { isManifestComplete, userManifestStats, refetch: refetchManifest } = useManifestTask();
-  const { userTasks, canUserSubmit, markedAsUnusable, refetch } = useCanvasUserTasks();
+  const invalidate = useInvalidateAfterSubmission();
+  const { isManifestComplete, userManifestStats } = useManifestTask();
+  const { userTasks, canUserSubmit, markedAsUnusable } = useCanvasUserTasks();
+  const { inReview } = useManifestUserTasks();
   const { submitAllClaims, isSubmitting, canSubmit: canSubmitClaims } = useSubmitAllClaims();
   const { projectId, canvasId, manifestId } = useRouteContext();
   const { push } = useHistory();
@@ -25,7 +32,7 @@ export const TranscriberModeWorkflowBar: React.FC = () => {
   const firstUserTask = userTasks ? userTasks[0] : undefined;
 
   const willExpireSoon = false;
-  const isComplete = isManifestComplete;
+  const isComplete = isManifestComplete || !!inReview.length;
   const canSubmit = !!canUserSubmit && canSubmitClaims;
   const [isUnusable, setIsUsable] = useState(false);
 
@@ -53,8 +60,7 @@ export const TranscriberModeWorkflowBar: React.FC = () => {
         });
       }
 
-      await refetch();
-      await refetchManifest();
+      await invalidate();
     }
   });
 
@@ -75,7 +81,7 @@ export const TranscriberModeWorkflowBar: React.FC = () => {
       actions={{
         async onUnusable(newValue) {
           await markUnusable(newValue || false);
-          await refetchManifest();
+          await invalidate();
           // Mark current canvas task as complete, with state unusable=true
           // Set states to loading until mutation is complete.
           // Refresh task
@@ -91,6 +97,12 @@ export const TranscriberModeWorkflowBar: React.FC = () => {
           markAsTooDifficult();
         },
       }}
+      completeMessage={
+        <>
+          {t('Thank you. You finished this manifest. Go back to the project to find a new manifest to transcribe.')}{' '}
+          <HrefLink href={createLink({ projectId })}>{t('Go back to project')}</HrefLink>
+        </>
+      }
       states={{
         isLoading,
         willExpireSoon,

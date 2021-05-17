@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { ProjectConfiguration } from '../../../types/schemas/project-configuration';
 import { SitePage } from '../../../types/site-pages-recursive';
 
@@ -14,7 +14,9 @@ const defaultSiteConfigurationContext: SiteConfigurationContext = {
   project: {} as any,
   navigation: [],
   editMode: false,
-  setEditMode: (value: boolean) => {},
+  setEditMode: (value: boolean) => {
+    // no-op
+  },
 };
 
 const Context = React.createContext<SiteConfigurationContext>(defaultSiteConfigurationContext);
@@ -27,6 +29,10 @@ export const ConfigProvider: React.FC<{ project?: Partial<ProjectConfiguration>;
   const ctx = useSiteConfiguration();
   const [editMode, setEditMode] = useState(false);
 
+  useEffect(() => {
+    setEditMode(ctx.editMode);
+  }, [ctx.editMode]);
+
   const newContext: SiteConfigurationContext = useMemo(() => {
     return {
       project: {
@@ -34,10 +40,14 @@ export const ConfigProvider: React.FC<{ project?: Partial<ProjectConfiguration>;
         ...(props.project || {}),
       },
       navigation: [...ctx.navigation, ...(props.navigation || [])],
-      setEditMode,
+      setEditMode: value => {
+        console.log('setting edit mode', value);
+        ctx.setEditMode(value);
+        setEditMode(value);
+      },
       editMode,
     };
-  }, [ctx.project, ctx.navigation, props.project, props.navigation, editMode]);
+  }, [ctx, props.project, props.navigation, editMode]);
 
   return <Context.Provider value={newContext}>{props.children}</Context.Provider>;
 };

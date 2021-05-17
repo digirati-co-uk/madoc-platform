@@ -193,7 +193,9 @@ export async function ensureProjectTaskStructure(
         label: iiifGetLabel(manifest.label, 'Untitled manifest'),
         maxContributors,
         warningTime,
-        approvalsRequired,
+        // @todo disabling this stops manifests automatically being marked as complete in the project
+        //   however they still cannot be worked on. This step needs to be added to the review.
+        // approvalsRequired,
         manifestId: claim.manifestId,
         collectionId: claim.collectionId,
         projectId,

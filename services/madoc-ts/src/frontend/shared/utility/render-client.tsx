@@ -16,6 +16,7 @@ import { api } from '../../../gateway/api.browser';
 import React, { Suspense } from 'react';
 import { SitePlugin } from '../../../types/schemas/plugins';
 import { CreateRouteType, UniversalRoute } from '../../types';
+import { ResolvedTheme } from '../../../types/themes';
 import { ErrorPage } from '../components/NotFoundPage';
 import { Spinner } from '../icons/Spinner';
 import { PluginManager } from '../plugins/plugin-manager';
@@ -81,6 +82,7 @@ export async function renderClient(
     window.location.href = `/s/${slug}/madoc/login?redirect=${loc}`;
   }
 
+  const theme: ResolvedTheme | null | undefined = dehydratedSite.theme;
   const localisations = dehydratedSite.locales as Array<{ label: string; code: string }>;
   const supportedLocales = localisations.map(local => local.code);
   const defaultLocale = dehydratedSite.defaultLocale || 'en';
@@ -116,6 +118,7 @@ export async function renderClient(
                             siteSlug={slug}
                             site={dehydratedSite.site}
                             user={dehydratedSite.user}
+                            theme={theme}
                             supportedLocales={localisations}
                             defaultLocale={defaultLocale}
                             navigationOptions={dehydratedSite.navigationOptions}
