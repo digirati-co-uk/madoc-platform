@@ -1,31 +1,12 @@
-import { useCollectionList } from '../../site/hooks/use-collection-list';
-import { Button } from '../atoms/Button';
-import { LocaleString } from '../components/LocaleString';
-import { useApi } from '../hooks/use-api';
-import { blockConfigFor } from './external/block-config-for';
-import { serverRendererFor } from './external/server-renderer-for';
-import { atoms, useAtoms } from './use-atoms';
-import { useComponents } from './use-components';
-import { useModule } from './use-module';
+import * as publicApi from './public-api';
 
-const Madoc = {
-  require: useModule,
-  useApi,
-  Atoms: atoms,
-  Button: Button,
-  LocaleString,
-  useAtoms,
-  useComponents,
-  useCollectionList,
-  blockConfigFor,
-  serverRendererFor,
-};
+export const Madoc = publicApi;
 
 // @ts-ignore
 if (typeof window !== 'undefined') {
   // @ts-ignore
-  window.Madoc = Madoc;
+  window.Madoc = publicApi;
 } else {
   // @ts-ignore
-  global.Madoc = Madoc;
+  global.Madoc = publicApi;
 }

@@ -30,7 +30,8 @@
     "lib/",
     "test-utility/",
     "**/*.stories.tsx",
-    "__tests__/"
+    "__tests__/",
+    "npm"
   ],
   "references": [
     // { "path": "../SERVICE_NAME" }

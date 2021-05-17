@@ -21,7 +21,8 @@
     "link:model-editor": "yarn link \"@capture-models/editor\"",
     "unlink:model-editor": "yarn unlink \"@capture-models/editor\" && yarn install --force",
     "link:model-helpers": "yarn link \"@capture-models/helpers\"",
-    "unlink:model-helpers": "yarn unlink \"@capture-models/helpers\" && yarn install --force"
+    "unlink:model-helpers": "yarn unlink \"@capture-models/helpers\" && yarn install --force",
+    "extract:api": "tsc -p ./tsconfig.types.json"
   },
   "browserslist": "> 0.25%, not dead",
   "resolutions": {
@@ -45,6 +46,7 @@
     "html-entities": "1.4.0"
   },
   "dependencies": {
+    "@madoc.io/types": "./npm/madoc-types",
     "@atlas-viewer/atlas": "1.5.2",
     "@atlas-viewer/iiif-image-api": "^1.2.1",
     "@capture-models/editor": "^0.13.10",
@@ -152,6 +154,7 @@
     "@babel/preset-env": "^7.11.5",
     "@blueprintjs/icons": "^3.20.1",
     "@fesk/eslint-config-standard": "1.4.0-pr.b6dc2fa3",
+    "@microsoft/api-extractor": "^7.15.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
     "@storybook/addon-docs": "^5.3.18",
     "@storybook/addon-knobs": "^5.3.18",
@@ -216,6 +219,9 @@
     "webpack-cli": "^3.3.11",
     "webpack-dev-middleware": "^4.1.0",
     "webpack-hot-middleware": "^2.25.0"
+  },
+  "publishConfig": {
+    "access": "restricted"
   },
   "jest": {
     "preset": "ts-jest",

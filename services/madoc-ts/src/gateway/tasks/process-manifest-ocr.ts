@@ -1,4 +1,4 @@
-import { ResourceLinkResponse } from '../../database/queries/linking-queries';
+import { ResourceLinkResponse } from '../../types/schemas/linking';
 import { isLinkHocr, isLinkMetsAlto, isLinkPlaintext } from '../../utility/linking-property-types';
 import { BaseTask } from './base-task';
 import * as importCanvas from './import-canvas';
