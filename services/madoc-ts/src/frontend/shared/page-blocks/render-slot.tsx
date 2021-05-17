@@ -39,7 +39,6 @@ export const RenderSlot: React.FC<RenderSlotProps> = props => {
         onUpdateBlock={props.onUpdateBlock}
         invalidateSlots={props.invalidateSlots}
         defaultContents={props.defaultContents}
-        invalidateSlots={props.invalidateSlots}
         surfaceProps={surfaceProps}
       />
     );

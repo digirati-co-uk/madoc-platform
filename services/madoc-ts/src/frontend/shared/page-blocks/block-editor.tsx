@@ -157,7 +157,7 @@ export function useBlockModel(block: SiteBlock | SiteBlockRequest, advanced?: bo
       return undefined;
     }
     const properties = {
-      ...(definition ? definition.model.properties : {}),
+      ...(definition && definition.model ? definition.model.properties : {}),
       ...defaultFields.properties,
     };
 

@@ -31,7 +31,7 @@ export type PageBlockDefinition<
   label: string;
   type: string;
   renderType: Type;
-  model: CaptureModel['document'];
+  model?: CaptureModel['document'];
   defaultData: Data;
   requiredContext?: RequiredContext[];
   anyContext?: RequiredContext[];
