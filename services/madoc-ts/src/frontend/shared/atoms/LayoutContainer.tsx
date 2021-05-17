@@ -97,11 +97,17 @@ export const LayoutSidebarMenu = styled.div`
   border-right: 1px solid #bcbcbc;
 `;
 
-export const LayoutSidebar = styled.div`
+export const LayoutSidebar = styled.div<{ $noScroll?: boolean }>`
   background: #ffffff;
   border-right: 1px solid #bcbcbc;
   overflow: auto;
   position: relative;
+  ${props =>
+    props.$noScroll &&
+    css`
+      overflow: hidden;
+      max-height: 100%;
+    `}
 `;
 
 export const LayoutHandle = styled.div<{ $isDragging?: boolean }>`

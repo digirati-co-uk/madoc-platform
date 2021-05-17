@@ -28,4 +28,5 @@ export const SiteContainer = styled.div`
   margin-left: auto;
   margin-right: auto;
   background: ${background};
+  margin-bottom: 1em;
 `;
