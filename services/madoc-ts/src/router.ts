@@ -7,7 +7,14 @@ import { getLocalisation, listLocalisations, updateLocalisation } from './routes
 import { getMetadataConfiguration, updateMetadataConfiguration } from './routes/admin/metadata-configuration';
 import { pm2Status } from './routes/admin/pm2';
 import { getSiteDetails } from './routes/admin/site-details';
-import { enableTheme, installTheme, listThemes, serveThemeAsset, uninstallTheme } from "./routes/admin/themes";
+import {
+  disableTheme,
+  enableTheme,
+  installTheme,
+  listThemes,
+  serveThemeAsset,
+  uninstallTheme,
+} from './routes/admin/themes';
 import { updateSiteConfiguration } from './routes/admin/update-site-configuration';
 import { createBlock } from './routes/content/create-block';
 import { createPage } from './routes/content/create-page';
@@ -274,7 +281,7 @@ export const router = new TypedRouter({
   'install-theme': [TypedRouter.POST, '/api/madoc/system/themes/:theme_id/install', installTheme],
   'uninstall-theme': [TypedRouter.POST, '/api/madoc/system/themes/:theme_id/uninstall', uninstallTheme],
   'enable-theme': [TypedRouter.POST, '/api/madoc/system/themes/:theme_id/enable', enableTheme],
-  'disable-theme': [TypedRouter.POST, '/api/madoc/system/themes/:theme_id/disable', enableTheme],
+  'disable-theme': [TypedRouter.POST, '/api/madoc/system/themes/:theme_id/disable', disableTheme],
   'theme-asset': [TypedRouter.GET, '/s/:slug/madoc/themes/:theme_id/public/:bundleName', serveThemeAsset],
 
   // Pages

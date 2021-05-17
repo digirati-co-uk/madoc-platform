@@ -4,9 +4,10 @@
   "description": "Example madoc theme with default theme values.",
   "thumbnail": "https://user-images.githubusercontent.com/8266711/118507448-25750b80-b726-11eb-9f87-d96f43c0a894.png",
   "theme": {
-    "header": "default",
+    "header": "dark",
     "accent": "default",
-    "siteContainer": "default",
-    "footer": "light"
+    "siteContainer": "light",
+    "footer": "dark",
+    "global": "default"
   }
 }

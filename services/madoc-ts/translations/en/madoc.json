@@ -185,6 +185,7 @@
   "Localisation": "Localisation",
   "Location": "Location",
   "Logout": "Logout",
+  "Lost connection to server, retrying...": "Lost connection to server, retrying...",
   "Manage collections": "Manage collections",
   "Manage collections_plural": "Manage collections",
   "Manage manifests": "Manage manifests",
