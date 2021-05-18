@@ -15,6 +15,7 @@ import { useResizeLayout } from '../../shared/hooks/use-resize-layout';
 import { useAnnotationPanel } from '../hooks/canvas-menu/annotation-panel';
 import { useDocumentPanel } from '../hooks/canvas-menu/document-panel';
 import { useMetadataMenu } from '../hooks/canvas-menu/metadata-panel';
+import { usePersonalNotesMenu } from '../hooks/canvas-menu/personal-notes';
 import { useRevisionPanel } from '../hooks/canvas-menu/revision-panel';
 import { useTranscriptionMenu } from '../hooks/canvas-menu/transcription-panel';
 
@@ -27,6 +28,7 @@ export const CanvasViewer: React.FC = ({ children }) => {
     useTranscriptionMenu(),
     useDocumentPanel(),
     useRevisionPanel(),
+    usePersonalNotesMenu(),
   ];
   const currentMenuItem = menuItems.find(e => e.id === openPanel);
 
