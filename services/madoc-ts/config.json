@@ -17,6 +17,7 @@
     "revisionApprovalsRequired": 20,
     "contributionWarningTime": false,
     "skipAutomaticOCRImport": false,
+    "allowPersonalNotes": false,
     "defaultEditorOrientation": "horizontal",
     "skipManifestListingPage": false,
     "hideStatistics": false,

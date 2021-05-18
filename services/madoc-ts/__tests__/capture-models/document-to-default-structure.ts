@@ -24,6 +24,7 @@ describe('document to default structure', () => {
         "revisionApprovalsRequired",
         "contributionWarningTime",
         "skipAutomaticOCRImport",
+        "allowPersonalNotes",
         "defaultEditorOrientation",
         "skipManifestListingPage",
         "hideStatistics",
