@@ -14,6 +14,7 @@ export type ProjectConfiguration = {
   randomlyAssignCanvas?: boolean;
   priorityRandomness?: boolean;
   skipAutomaticOCRImport?: boolean;
+  allowPersonalNotes?: boolean;
   defaultEditorOrientation: 'vertical' | 'horizontal';
   skipManifestListingPage?: boolean; // @todo move to manifest page options
   hideStatistics?: boolean; // @todo move to project page options

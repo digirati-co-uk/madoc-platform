@@ -86,6 +86,11 @@ export const siteConfigurationModel: {
     type: 'checkbox-field',
     inlineLabel: 'Skip automatically processing OCR during IIIF manifest import',
   },
+  allowPersonalNotes: {
+    label: 'Personal notes',
+    type: 'checkbox-field',
+    inlineLabel: 'Allow users to take personal notes only visible to themselves on canvases in a project.',
+  },
   defaultEditorOrientation: {
     label: 'Default editor orientation',
     description:

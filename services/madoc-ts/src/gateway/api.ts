@@ -1114,6 +1114,20 @@ export class ApiClient {
     );
   }
 
+  // Personal notes
+  async getPersonalNote(project: string | number, resourceId: number) {
+    return this.request<{ note: string }>(`/api/madoc/projects/${project}/personal-notes/${resourceId}`);
+  }
+
+  async updatePersonalNote(project: string | number, resourceId: number, note: string) {
+    return this.request(`/api/madoc/projects/${project}/personal-notes/${resourceId}`, {
+      method: 'PUT',
+      body: {
+        note,
+      },
+    });
+  }
+
   async updateTaskStatus<Task extends BaseTask>(
     taskId: string,
     availableStatuses: any,

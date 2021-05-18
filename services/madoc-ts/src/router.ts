@@ -35,6 +35,8 @@ import { generateThumbnails } from './routes/media/generate-thumbnails';
 import { getMedia } from './routes/media/get-media';
 import { listMedia } from './routes/media/list-media';
 import { deleteResourceClaim } from './routes/projects/delete-resource-claim';
+import { getProjectNote } from './routes/projects/get-project-note';
+import { updateProjectNote } from './routes/projects/update-project-note';
 import { fullReindex } from './routes/search/full-reindex';
 import { siteCanvasSource } from './routes/site/site-canvas-reference';
 import { sitePageNavigation } from './routes/site/site-page-navigation';
@@ -283,6 +285,12 @@ export const router = new TypedRouter({
   'get-project-model': [TypedRouter.GET, '/api/madoc/projects/:id/models/:subject', getProjectModel],
   'get-project-task': [TypedRouter.GET, '/api/madoc/projects/:id/task', getProjectTask],
   'assign-random-resource': [TypedRouter.POST, '/api/madoc/projects/:id/random', assignRandomResource],
+  'get-project-personal-note': [TypedRouter.GET, '/api/madoc/projects/:id/personal-notes/:resourceId', getProjectNote],
+  'update-project-personal-note': [
+    TypedRouter.PUT,
+    '/api/madoc/projects/:id/personal-notes/:resourceId',
+    updateProjectNote,
+  ],
 
   // Themes
   'list-themes': [TypedRouter.GET, '/api/madoc/system/themes', listThemes],
