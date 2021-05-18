@@ -80,6 +80,7 @@ type GetApiMethods = keyof Pick<
   | 'getSiteSearchQuery'
   | 'getSiteLocales'
   | 'getSiteLocale'
+  | 'getPersonalNote'
 >;
 
 const keys = Object.getOwnPropertyNames(ApiClient.prototype);
