@@ -10,7 +10,7 @@ import { defaultPageBlockDefinitions } from '../extensions/page-blocks/default-d
 import { PageBlockExtension } from '../extensions/page-blocks/extension';
 import { MediaExtension } from '../extensions/media/extension';
 import { TaskExtension } from '../extensions/tasks/extension';
-import { ThemeExtension } from "../extensions/themes/extension";
+import { ThemeExtension } from '../extensions/themes/extension';
 import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
 import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
 import { Site } from '../types/omeka/Site';
@@ -1108,6 +1108,20 @@ export class ApiClient {
         method: 'DELETE',
       }
     );
+  }
+
+  // Personal notes
+  async getPersonalNote(project: string | number, resourceId: number) {
+    return this.request<{ note: string }>(`/api/madoc/projects/${project}/personal-notes/${resourceId}`);
+  }
+
+  async updatePersonalNote(project: string | number, resourceId: number, note: string) {
+    return this.request(`/api/madoc/projects/${project}/personal-notes/${resourceId}`, {
+      method: 'PUT',
+      body: {
+        note,
+      },
+    });
   }
 
   async updateTaskStatus<Task extends BaseTask>(
