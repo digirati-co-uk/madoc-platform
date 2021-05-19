@@ -3,7 +3,13 @@ import { MetadataDefinition } from '../types/schemas/metadata-definition';
 import { GetMetadata } from '../types/schemas/get-metadata';
 
 export type ParsedMetadata = {
-  [key: string]: { type: 'values'; items: Array<{ id: number } & MetadataDefinition> } | ParsedMetadata[];
+  [key: string]:
+    | { type: 'values'; items: Array<{ id: number } & MetadataDefinition> }
+    | {
+        label: { type: 'values'; items: Array<{ id: number } & MetadataDefinition> };
+        value: { type: 'values'; items: Array<{ id: number } & MetadataDefinition> };
+      }
+    | ParsedMetadata[];
 };
 
 export function mapMetadataList(metadata: GetMetadata) {

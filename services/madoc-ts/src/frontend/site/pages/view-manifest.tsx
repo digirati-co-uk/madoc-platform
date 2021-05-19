@@ -27,12 +27,14 @@ import { ManifestMetadata } from '../features/ManifestMetadata';
 import { ManifestUserNotification } from '../features/ManifestUserNotification';
 import { usePreventCanvasNavigation } from '../features/PreventUsersNavigatingCanvases';
 import { RandomlyAssignCanvas } from '../features/RandomlyAssignCanvas';
+import { RequiredStatement } from '../features/RequiredStatement';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useManifestPageConfiguration } from '../hooks/use-manifest-page-configuration';
 import { useManifestTask } from '../hooks/use-manifest-task';
 import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { Redirect } from 'react-router-dom';
+import { AttributionText } from '../../shared/atoms/AttributionText';
 
 export const ViewManifest: React.FC<{
   project?: ProjectFull;
@@ -78,6 +80,8 @@ export const ViewManifest: React.FC<{
       <Heading1>
         <LocaleString>{manifest.label}</LocaleString>
       </Heading1>
+
+      <RequiredStatement />
 
       <ManifestUserNotification />
 

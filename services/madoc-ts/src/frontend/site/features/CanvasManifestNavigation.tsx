@@ -15,6 +15,7 @@ import { useRouteContext } from '../hooks/use-route-context';
 import { AssignCanvasToUser } from './AssignCanvasToUser';
 import { CanvasManifestPagination } from './CanvasManifestPagination';
 import { CanvasTaskProgress } from './CanvasTaskProgress';
+import { RequiredStatement } from './RequiredStatement';
 
 export const CanvasManifestNavigation: React.FC<{ subRoute?: string }> = ({ subRoute }) => {
   const { manifestId, canvasId } = useRouteContext();
@@ -30,8 +31,11 @@ export const CanvasManifestNavigation: React.FC<{ subRoute?: string }> = ({ subR
 
   return (
     <div style={{ display: 'flex', alignItems: 'center' }}>
-      <div style={{ flex: '1 1 0px', fontSize: '24px', color: '#212529' }}>
-        <LocaleString>{manifest ? manifest.label : { en: ['...'] }}</LocaleString>
+      <div style={{ flex: '1 1 0px' }}>
+        <div style={{ fontSize: '24px', color: '#212529' }}>
+          <LocaleString>{manifest ? manifest.label : { en: ['...'] }}</LocaleString>
+        </div>
+        <RequiredStatement />
       </div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <ButtonRow>
