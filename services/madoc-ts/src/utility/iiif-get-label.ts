@@ -1,6 +1,6 @@
 import { InternationalString } from '@hyperion-framework/types';
 
-export function iiifGetLabel(label: string | InternationalString | null, defaultLabel = 'Untitled') {
+export function iiifGetLabel(label: string | InternationalString | null | undefined, defaultLabel = 'Untitled') {
   if (!label) {
     return defaultLabel;
   }

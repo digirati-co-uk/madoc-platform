@@ -1,17 +1,11 @@
-import { InternationalString, MetadataItem } from '@hyperion-framework/types';
+import { Canvas, InternationalString } from '@hyperion-framework/types';
 
 export type CanvasFull = {
-  canvas: {
-    id: number;
-    thumbnail?: string;
+  canvas: Canvas & {
+    // Some slightly different properties.
     label: InternationalString;
-    metadata?: Array<MetadataItem>;
-    requiredStatement?: MetadataItem;
-    summary?: InternationalString;
-    height: number;
-    width: number;
-    source?: any;
-    duration?: number;
+    id: number;
+    source_id: string;
   };
   plaintext?: string;
 };

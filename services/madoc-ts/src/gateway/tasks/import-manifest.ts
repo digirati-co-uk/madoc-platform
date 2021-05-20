@@ -96,6 +96,8 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
             requiredStatement: iiifManifest.requiredStatement || undefined,
             viewingDirection: iiifManifest.viewingDirection || undefined,
             behavior: iiifManifest.behavior || undefined,
+            rights: iiifManifest?.rights || undefined,
+            navDate: iiifManifest?.navDate || undefined,
             homepage: iiifManifest.homepage ? vault.fromRef<ContentResource>(iiifManifest.homepage) : undefined,
             logo: iiifManifest.logo ? vault.allFromRef<ContentResource>(iiifManifest.logo) : undefined,
             partOf: iiifManifest.partOf ? iiifManifest.partOf : undefined,
@@ -120,6 +122,8 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
                 requiredStatement: iiifManifest.requiredStatement || undefined,
                 viewingDirection: iiifManifest.viewingDirection || undefined,
                 behavior: iiifManifest.behavior || undefined,
+                rights: iiifManifest?.rights || undefined,
+                navDate: iiifManifest?.navDate || undefined,
               },
           fileLocation,
           task.id

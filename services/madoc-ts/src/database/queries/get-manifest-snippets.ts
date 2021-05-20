@@ -75,7 +75,7 @@ export type ManifestSnippetsRow = {
 
 export function getManifestSnippets(
   query: ManifestAggregate,
-  { fields, siteId, allManifestFields }: { fields: string[]; siteId: number; allManifestFields: boolean }
+  { fields, siteId, allManifestFields }: { fields?: string[]; siteId: number; allManifestFields: boolean }
 ) {
   return sql<ManifestSnippetsRow>`
       select

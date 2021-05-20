@@ -20,19 +20,9 @@ const CanvasViewer: React.FC<{ canvas: CanvasFull['canvas'] }> = ({ canvas }) =>
   useVaultEffect(
     vault => {
       if (canvas) {
-        vault
-          .load(
-            canvas.source.id || canvas.source['@id'],
-            canvas.source['@id']
-              ? {
-                  '@context': 'http://iiif.io/api/presentation/2/context.json',
-                  ...canvas.source,
-                }
-              : canvas.source
-          )
-          .then(c => {
-            setCanvasRef(c as any);
-          });
+        vault.load(canvas.id, canvas).then(c => {
+          setCanvasRef(c as any);
+        });
       }
     },
     [canvas]
