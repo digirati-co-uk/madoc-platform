@@ -105,6 +105,7 @@ const MetaDataValue = styled.td<{ $variation?: 'list' | 'table' }>`
   color: #000000;
   text-decoration: rgb(0, 0, 0);
   word-break: break-word;
+  white-space: pre-line;
 
   a {
     color: #4070d9;
@@ -114,8 +115,11 @@ const MetaDataValue = styled.td<{ $variation?: 'list' | 'table' }>`
 const MetadataContainer = styled.tr<{ $variation?: 'list' | 'table' }>`
   ${props =>
     ({
-      table: css``,
+      table: css`
+        min-width: 290px;
+      `,
       list: css`
+        min-width: 290px;
         display: block;
         margin-bottom: 1.5em;
       `,

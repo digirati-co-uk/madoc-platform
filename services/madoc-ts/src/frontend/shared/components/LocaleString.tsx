@@ -115,7 +115,7 @@ export function useLocaleString(inputText: InternationalString | string | null |
         if (typeof candidateText === 'string') {
           return candidateText;
         }
-        return candidateText.join(' ');
+        return candidateText.join('\n');
       }
 
       return '';
@@ -146,7 +146,7 @@ export function useCreateLocaleString() {
       if (typeof candidateText === 'string') {
         return candidateText;
       }
-      return candidateText.join(' ');
+      return candidateText.join('\n');
     }
 
     return '';
