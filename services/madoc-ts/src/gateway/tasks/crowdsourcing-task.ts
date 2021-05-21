@@ -198,7 +198,6 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
                         subject: realManifestTask.subject,
                         detail: true,
                       });
-                      console.log(userManifestTask);
                       const foundManifestTask = findUseManifestTaskFromList(
                         parsedManifest.id,
                         task.assignee.id,

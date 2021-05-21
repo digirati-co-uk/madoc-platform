@@ -280,9 +280,7 @@ export class ApiClient {
 
     if (response.error) {
       if (response.status === 404) {
-        console.log(endpoint, method);
-        console.log(response);
-        throw new NotFound();
+        throw new NotFound(`${method} ${endpoint} not found`);
       }
 
       if (response.data.error === 'There was a problem proxying the request') {

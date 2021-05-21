@@ -172,7 +172,7 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
     try {
       await userApi.indexCaptureModel(modelId, `urn:madoc:canvas:${canvasId}`, resource);
     } catch (err) {
-      console.log(err);
+      // no-op
     }
   }
 
@@ -195,7 +195,7 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
         try {
           await userApi.indexRawSearchIndexable(indexable);
         } catch (err) {
-          console.log(err);
+          // no-op
         }
       }
     }

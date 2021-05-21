@@ -107,7 +107,7 @@ const PreviewCrowdsourcingTask: React.FC<{
                     allowEdits={false}
                     allowNavigation={false}
                     onSaveRevision={async rev => {
-                      console.log(rev);
+                      // no-op
                     }}
                     readOnly={!isEditing}
                   />
