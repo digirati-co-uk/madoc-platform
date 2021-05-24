@@ -14,7 +14,7 @@ export const CanvasVaultContext: React.FC = ({ children }) => {
   useVaultEffect(
     vault => {
       if (canvas && canvas.items) {
-        vault.load(canvas.id as any, canvas).then(c => setCanvasRef(c as any));
+        vault.load(canvas.id as any, JSON.parse(JSON.stringify(canvas))).then(c => setCanvasRef(c as any));
       }
     },
     [canvas]
