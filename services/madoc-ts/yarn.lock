@@ -29,10 +29,10 @@
   resolved "https://registry.yarnpkg.com/@atlas-viewer/dna/-/dna-0.5.0.tgz#aab824540b59dc3897e2ba4cdb51a53e47ed3311"
   integrity sha512-vHyMwXoCFq6ymk+wOVIkMphUo+I+wBRoA2tBf1AIUZWJMsk51cBtO2qzOaZQUh/TmrzrqEY5aEAtgBj52LVRUg==
 
-"@atlas-viewer/iiif-image-api@1.2.1", "@atlas-viewer/iiif-image-api@1.2.4", "@atlas-viewer/iiif-image-api@^1.2.4":
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/@atlas-viewer/iiif-image-api/-/iiif-image-api-1.2.4.tgz#90362c2cf56299111fc95176d4da5d891e60e913"
-  integrity sha512-2B/Ku4/+PrplBampZHfCYMp8wh9z7VYrgAPe3PK+stcpZXt0vJ9pbxgylOWr8cGlKKFREiCvjWkIAPrhwLCfXw==
+"@atlas-viewer/iiif-image-api@1.2.1", "@atlas-viewer/iiif-image-api@1.2.5", "@atlas-viewer/iiif-image-api@^1.2.4", "@atlas-viewer/iiif-image-api@^1.2.5":
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/@atlas-viewer/iiif-image-api/-/iiif-image-api-1.2.5.tgz#1ec38430710751041ee9faeb33cb4d5dbf8f6480"
+  integrity sha512-Cdy4PxQYbSb7J4a4ozl/cVTEjwVmbvTnMsWMf105O2zfZ1JduCpqH07tzahiau9zqlcIkoNTKTBOIPsBQckFNQ==
   dependencies:
     "@hyperion-framework/types" "^1.0.0-alpha.14"
 
