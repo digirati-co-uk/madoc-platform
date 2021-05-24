@@ -21,6 +21,7 @@ type IIIFExportRow = {
   iiif__items_json: any | null;
   iiif__thumbnail_json: any | null;
   iiif__local_source: string | null;
+  iiif__item_index?: number;
 } & (
   | {
       linking__id: number;
@@ -96,6 +97,7 @@ export const buildManifest: RouteMiddleware<{ slug: string; id: string; version:
         iiif.items_json as iiif__items_json,
         iiif.thumbnail_json as iiif__thumbnail_json,
         iiif.local_source as iiif__local_source,
+        manifest_items.item_index as iiif__item_index,
         -- Metadata properties
         metadata.id as metadata__id,
         metadata.key as metadata__key,
@@ -168,7 +170,7 @@ export const buildManifest: RouteMiddleware<{ slug: string; id: string; version:
           };
         };
       };
-      Relations: { [id: number]: number[] };
+      Relations: { [id: number]: Array<{ order: number; id: number }> };
       Metadata: {
         [iiifId: number]: {
           [key: string]: any;
@@ -188,8 +190,11 @@ export const buildManifest: RouteMiddleware<{ slug: string; id: string; version:
       // Relations.
       if (item.derived__id !== item.iiif__id) {
         state.Relations[item.derived__id] = state.Relations[item.derived__id] ? state.Relations[item.derived__id] : [];
-        if (state.Relations[item.derived__id].indexOf(item.iiif__id) === -1) {
-          state.Relations[item.derived__id].push(item.iiif__id);
+        if (!state.Relations[item.derived__id].find(i => i.id === item.iiif__id)) {
+          state.Relations[item.derived__id].push({
+            id: item.iiif__id,
+            order: item.iiif__item_index || 0,
+          });
         }
       }
 
@@ -354,7 +359,9 @@ export const buildManifest: RouteMiddleware<{ slug: string; id: string; version:
       }
     }
 
-    const canvases = (table.Relations[manifestId] || []).map(canvasId => table.Resource[canvasId]);
+    const canvases = (table.Relations[manifestId] || [])
+      .sort((a, b) => a.order - b.order)
+      .map(c => table.Resource[c.id]);
 
     for (const canvasRow of canvases) {
       const newCanvasId =
