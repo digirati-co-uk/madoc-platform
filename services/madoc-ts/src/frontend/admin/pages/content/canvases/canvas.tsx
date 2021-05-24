@@ -6,7 +6,7 @@ import { UniversalComponent } from '../../../../types';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { useLocation, useParams, useRouteMatch } from 'react-router-dom';
 import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
-import { CanvasFull } from '../../../../../types/schemas/canvas-full';
+import { CanvasFull } from '../../../../../types/canvas-full';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { useApiManifest } from '../../../../shared/hooks/use-api-manifest';

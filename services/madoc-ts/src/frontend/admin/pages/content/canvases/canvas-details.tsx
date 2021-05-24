@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { UniversalComponent } from '../../../../types';
-import { CanvasFull } from '../../../../../types/schemas/canvas-full';
+import { CanvasFull } from '../../../../../types/canvas-full';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { CanvasContext, useVaultEffect, VaultProvider } from '@hyperion-framework/react-vault';

@@ -3,7 +3,7 @@ import { CrowdsourcingCanvasTask } from '../../../../gateway/tasks/crowdsourcing
 import { CrowdsourcingManifestTask } from '../../../../gateway/tasks/crowdsourcing-manifest-task';
 import { CrowdsourcingReview } from '../../../../gateway/tasks/crowdsourcing-review';
 import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
-import { CanvasFull } from '../../../../types/schemas/canvas-full';
+import { CanvasFull } from '../../../../types/canvas-full';
 import { ManifestFull } from '../../../../types/schemas/manifest-full';
 import { ProjectFull } from '../../../../types/schemas/project-full';
 import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
