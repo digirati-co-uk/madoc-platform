@@ -41,7 +41,7 @@ export function createTask(manifestUrl: string, omekaUserId: number, siteId?: nu
     type: 'madoc-manifest-import',
     name: 'Importing manifest',
     description: `Importing manifest from url ${manifestUrl}`,
-    subject: manifestUrl,
+    subject: encodeURI(manifestUrl),
     state: {},
     events: [
       'madoc-ts.created',

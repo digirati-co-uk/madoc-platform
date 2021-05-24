@@ -355,7 +355,7 @@ function CustomEditorWrapper({
   return (
     <CustomEditor
       onChange={blk => {
-        console.log('changed', blk);
+        // no-op
       }}
       block={block as SiteBlock}
       onSave={blk => {

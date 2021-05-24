@@ -89,7 +89,6 @@ export const URLContextExplorer: React.FC<{
           vault
             .load(search)
             .then((resource: any) => {
-              console.log('found', resource);
               if (resource.type === 'Collection') {
                 setCollectionId(resource.id);
               }
@@ -121,11 +120,11 @@ export const URLContextExplorer: React.FC<{
   );
 };
 
-export const ContentExplorer: React.FC<{ canvasId?: number; projectId?: string, renderChoice: (id: number, reset: () => void) => any }> = ({
-  projectId,
-  renderChoice,
-  canvasId: defaultCanvasId,
-}) => {
+export const ContentExplorer: React.FC<{
+  canvasId?: number;
+  projectId?: string;
+  renderChoice: (id: number, reset: () => void) => any;
+}> = ({ projectId, renderChoice, canvasId: defaultCanvasId }) => {
   const [recent, addNewRecent] = useRecent<ItemStructureListItem>('content-explorer');
   const { t } = useTranslation();
   const [contentType, setContentType] = useState<'collection' | 'manifest' | undefined>();

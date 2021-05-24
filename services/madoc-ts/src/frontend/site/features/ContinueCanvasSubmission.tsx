@@ -76,12 +76,14 @@ export const ContinueCanvasSubmission: React.FC = () => {
   if (project && continueSubmission?.length) {
     const revision = continueSubmission[0].state.revisionId;
     const notStarted = continueSubmission[0].status === 0;
+    const started = continueSubmission[0].status === 1;
+    const completed = continueSubmission[0].status === 2 || continueSubmission[0].status === 3;
 
     return (
       <ProjectDetailWrapper>
-        {!continueCount && !notStarted ? (
+        {!continueCount && !notStarted && !completed ? (
           <ProjectListingDescription>
-            <strong>{notStarted ? t('You have started this item') : t('You have already completed this item')}</strong>
+            <strong>{started ? t('You have started this item') : t('You have already completed this item')}</strong>
           </ProjectListingDescription>
         ) : null}
         <Button
@@ -98,6 +100,8 @@ export const ContinueCanvasSubmission: React.FC = () => {
             ? t('Continue submission ({{count}})', { count: continueCount || 1 })
             : notStarted
             ? t('Contribute')
+            : started
+            ? t('Continue submission')
             : canUserSubmit && !preventFurtherSubmission
             ? t('Add new submission')
             : t('View submissions')}

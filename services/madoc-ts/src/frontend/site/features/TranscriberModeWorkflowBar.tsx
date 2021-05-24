@@ -32,7 +32,14 @@ export const TranscriberModeWorkflowBar: React.FC = () => {
   const firstUserTask = userTasks ? userTasks[0] : undefined;
 
   const willExpireSoon = false;
-  const isComplete = isManifestComplete || !!inReview.length;
+  const isComplete =
+    // Manifest task complete.
+    isManifestComplete ||
+    // One or more manifest tasks are in review.
+    !!inReview.length ||
+    // The amount of tasks completed matches the amount of items.
+    !!(structure?.items.length && userManifestStats && userManifestStats?.done === structure?.items.length);
+
   const canSubmit = !!canUserSubmit && canSubmitClaims;
   const [isUnusable, setIsUsable] = useState(false);
 

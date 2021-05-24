@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { parseUrn } from '../../../utility/parse-urn';
 import { SmallButton } from '../../shared/atoms/Button';
 import { GridContainer, ThirdGrid } from '../../shared/atoms/Grid';
 import { Heading3 } from '../../shared/atoms/Heading3';
@@ -19,7 +20,7 @@ export const ProjectContributionButton: React.FC = () => {
   const { isActive } = useProjectStatus();
   const createLink = useRelativeLinks();
   const {
-    project: { contributionMode },
+    project: { contributionMode, claimGranularity },
   } = useSiteConfiguration();
   const contributorTasks = useContributorTasks({ rootTaskId: project?.task_id }, !!project);
 
@@ -44,15 +45,24 @@ export const ProjectContributionButton: React.FC = () => {
     }
   }
 
-  if (contributionMode !== 'transcription' && tasksInReview && tasksInReview.length && taskComponents.length < 3) {
+  if (
+    contributionMode !== 'transcription' &&
+    claimGranularity !== 'manifest' &&
+    tasksInReview &&
+    tasksInReview.length &&
+    taskComponents.length < 3
+  ) {
     const firstThree = firstNTasksWithUniqueSubjects(tasksInReview, 3 - taskComponents.length);
 
     for (const task of firstThree) {
-      taskComponents.push(
-        <ThirdGrid key={task.id}>
-          <ContinueTaskDisplay task={task} next />
-        </ThirdGrid>
-      );
+      const parsed = parseUrn(task.subject);
+      if (parsed && parsed.type === 'canvas') {
+        taskComponents.push(
+          <ThirdGrid key={task.id}>
+            <ContinueTaskDisplay task={task} next />
+          </ThirdGrid>
+        );
+      }
     }
   }
 

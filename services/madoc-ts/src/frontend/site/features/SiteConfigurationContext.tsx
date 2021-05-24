@@ -41,7 +41,6 @@ export const ConfigProvider: React.FC<{ project?: Partial<ProjectConfiguration>;
       },
       navigation: [...ctx.navigation, ...(props.navigation || [])],
       setEditMode: value => {
-        console.log('setting edit mode', value);
         ctx.setEditMode(value);
         setEditMode(value);
       },
