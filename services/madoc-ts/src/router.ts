@@ -381,8 +381,13 @@ export const router = new TypedRouter({
 
   // To be worked into API calling methods
   'manifest-search': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/search/1.0', searchManifest],
-  'manifest-export': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/export/source', exportManifest],
+  // 'manifest-export': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/export/source', exportManifest],
   'manifest-build': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/export/:version', buildManifest],
+  'manifest-project-build': [
+    TypedRouter.GET,
+    '/s/:slug/madoc/api/projects/:projectSlug/export/manifest/:id/:version',
+    buildManifest,
+  ],
 
   // PAT
   'personal-access-token': [TypedRouter.POST, '/api/madoc/access-token', personalAccessToken],

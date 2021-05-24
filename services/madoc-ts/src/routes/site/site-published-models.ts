@@ -125,7 +125,7 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
             // Extracted entities will become annotations
             // If there is a labelledBy then use this for the annotation.
 
-            if (entity.selector) {
+            if (entity.selector && entity.selector.state) {
               const labelProp = entity.labelledBy
                 ? entity.properties[entity.labelledBy]
                 : entity.properties[Object.keys(entity.properties)[0]];
@@ -235,10 +235,11 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
               });
 
               if (!serialised) {
-                return { id: m.id };
+                return { id: m.id, derivedFrom: m.derivedFrom };
               }
 
               serialised.id = m.id;
+              serialised.derivedFrom = m.derivedFrom;
 
               return serialised;
             })

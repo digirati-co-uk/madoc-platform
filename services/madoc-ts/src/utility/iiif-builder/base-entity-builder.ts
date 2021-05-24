@@ -10,6 +10,7 @@ import {
   ViewingDirection,
   CollectionItemSchemas,
   AnnotationPageNormalized,
+  AnnotationPage,
 } from '@hyperion-framework/types';
 import { ServiceNormalized } from '@hyperion-framework/types/resources/service';
 import { IIIFBuilder } from './iiif-builder';
@@ -386,6 +387,16 @@ export class BaseEntityBuilder<
   setStart(start: Reference<'Canvas' | 'Selector'>) {
     if (this.isManifest(this.entity)) {
       this.entity.start = start;
+    }
+  }
+
+  addAnnotations(annotationPage: AnnotationPage) {
+    if (this.isCanvas(this.entity)) {
+      this.modified.add('annotations');
+      this.entity.annotations = [
+        ...this.entity.annotations,
+        this.addEmbeddedInstance(annotationPage, 'AnnotationPage'),
+      ];
     }
   }
 

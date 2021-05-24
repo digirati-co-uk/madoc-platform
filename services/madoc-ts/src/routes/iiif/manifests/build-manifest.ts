@@ -71,13 +71,19 @@ type IIIFExportRow = {
 
 const gatewayHost = process.env.GATEWAY_HOST || 'http://localhost:8888';
 
-export const buildManifest: RouteMiddleware<{ slug: string; id: string; version: string }> = async context => {
+export const buildManifest: RouteMiddleware<{
+  slug: string;
+  id: string;
+  version: string;
+  projectSlug?: string;
+}> = async context => {
   const vault = new Vault();
   const builder = new IIIFBuilder(vault);
   const site = context.state.site;
   const siteSlug = context.params.slug;
   const manifestId = Number(context.params.id);
   const version = context.params.version;
+  const projectSlug = context.params.projectSlug;
 
   const rows = await context.connection.any(sql<IIIFExportRow>`
       select 
@@ -280,6 +286,14 @@ export const buildManifest: RouteMiddleware<{ slug: string; id: string; version:
     }
   }
 
+  const configOptions = {
+    includeSearchService: false, // The search service doesn't appear to be working.
+    addUniversalAnnotations: true,
+    includeManifestHomepage: false, // Serializer not working for homepage.
+    includeCanvasHomepage: false, // Serializer not working for homepage.
+    jsonModels: true,
+  };
+
   const newManifestId =
     manifestRow.source && version === 'source'
       ? manifestRow.source
@@ -289,6 +303,31 @@ export const buildManifest: RouteMiddleware<{ slug: string; id: string; version:
     const manifestMetadata = table.Metadata[manifestRow.id] || {};
     const manifestLinking = Object.values(table.Linking[manifestRow.id] || {});
     // Manifest properties.
+    if (configOptions.includeSearchService) {
+      manifest.addServiceProperty({
+        '@context': 'http://iiif.io/api/search/0/context.json',
+        id: `${gatewayHost}/s/${siteSlug}/madoc/api/manifests/${manifestId}/search/1.0`,
+        profile: 'http://iiif.io/api/search/0/search',
+        label: 'Search within',
+      } as any);
+    }
+    if (configOptions.includeManifestHomepage) {
+      if (projectSlug) {
+        manifest.setHomepage({
+          id: `${gatewayHost}/s/${siteSlug}/madoc/projects/${projectSlug}/manifests/${manifestRow.id}`,
+          type: 'Text',
+          label: { en: ['View on Madoc'] },
+          format: 'text/html',
+        } as any);
+      } else {
+        manifest.setHomepage({
+          id: `${gatewayHost}/s/${siteSlug}/madoc/manifests/${manifestRow.id}`,
+          type: 'Text',
+          label: { en: ['View on Madoc'] },
+          format: 'text/html',
+        } as any);
+      }
+    }
     if (manifestRow.thumbnail) {
       manifest.addThumbnail({
         id: manifestRow.thumbnail,
@@ -436,6 +475,44 @@ export const buildManifest: RouteMiddleware<{ slug: string; id: string; version:
           }
         }
 
+        if (configOptions.addUniversalAnnotations) {
+          canvas.addAnnotations({
+            id: projectSlug
+              ? `${gatewayHost}/s/default/madoc/api/canvases/${canvasRow.id}/models?format=open-annotation&selectors=true&project=${projectSlug}`
+              : `${gatewayHost}/s/default/madoc/api/canvases/${canvasRow.id}/models?format=open-annotation&selectors=true`,
+            type: 'AnnotationPage',
+            label: { none: ['Annotations'] },
+          });
+        }
+        if (configOptions.jsonModels) {
+          canvas.addSeeAlso({
+            id: projectSlug
+              ? `${gatewayHost}/s/default/madoc/api/canvases/${canvasRow.id}/models?format=json&selectors=true&project=${projectSlug}`
+              : `${gatewayHost}/s/default/madoc/api/canvases/${canvasRow.id}/models?format=json&selectors=true`,
+            type: 'Dataset',
+            format: 'application/json',
+            profile: 'https://madoc.io/capture-models/json/v1.0',
+          } as any);
+        }
+
+        if (configOptions.includeCanvasHomepage) {
+          if (projectSlug) {
+            canvas.setHomepage({
+              id: `${gatewayHost}/s/${siteSlug}/madoc/projects/${projectSlug}/manifests/${manifestRow.id}/c/${canvasRow.id}`,
+              type: 'Text',
+              label: { en: ['View on Madoc'] },
+              format: 'text/html',
+            } as any);
+          } else {
+            canvas.setHomepage({
+              id: `${gatewayHost}/s/${siteSlug}/madoc/manifests/${manifestRow.id}/c/${canvasRow.id}`,
+              type: 'Text',
+              label: { en: ['View on Madoc'] },
+              format: 'text/html',
+            } as any);
+          }
+        }
+
         // Annotation pages
         if (canvasRow.items) {
           for (const item of canvasRow.items as AnnotationPage[]) {
@@ -453,6 +530,13 @@ export const buildManifest: RouteMiddleware<{ slug: string; id: string; version:
   });
 
   switch (version) {
+    case 'normalized':
+      context.response.body = {
+        manifestId: newManifest.id,
+        madocId: manifestRow.id,
+        store: vault.getState().hyperion,
+      };
+      break;
     case '3.0':
     case 'source':
       context.set('Access-Control-Allow-Origin', '*');
