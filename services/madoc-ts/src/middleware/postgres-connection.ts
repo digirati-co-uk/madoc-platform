@@ -1,5 +1,6 @@
 import { Middleware } from 'koa';
 import { DatabasePoolType } from 'slonik';
+import { ChangeDiscoveryRepository } from '../activity-streams/change-discovery-repository';
 import { MediaRepository } from '../repository/media-repository';
 import { PageBlocksRepository } from '../repository/page-blocks-repository';
 import { ThemeRepository } from '../repository/theme-repository';
@@ -12,6 +13,7 @@ export const postgresConnection = (pool: DatabasePoolType): Middleware => async 
     context.pageBlocks = new PageBlocksRepository(connection);
     context.media = new MediaRepository(connection);
     context.themes = new ThemeRepository(connection);
+    context.changeDiscovery = new ChangeDiscoveryRepository(connection);
 
     await next();
   });
