@@ -50,8 +50,17 @@ export function upsert<T>(
              )}) do update
              set 
                 ${sql.join(
-                  keys.map(key => sql`${sql.identifier([key as string])} = ${sql.identifier(['excluded', key as string])}`),
+                  keys.map(
+                    key => sql`${sql.identifier([key as string])} = ${sql.identifier(['excluded', key as string])}`
+                  ),
                   sql`,`
                 )};
     `;
+}
+
+export function sqlDate(dateLike: Date) {
+  return sql`${dateLike
+    .toISOString()
+    .replace('T', ' ')
+    .replace('Z', '')}::date`;
 }
