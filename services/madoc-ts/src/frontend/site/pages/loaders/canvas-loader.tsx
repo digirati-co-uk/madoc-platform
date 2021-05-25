@@ -1,23 +1,19 @@
 import React, { useMemo } from 'react';
-import { useQuery } from 'react-query';
 import { CrowdsourcingCanvasTask } from '../../../../gateway/tasks/crowdsourcing-canvas-task';
 import { CrowdsourcingManifestTask } from '../../../../gateway/tasks/crowdsourcing-manifest-task';
 import { CrowdsourcingReview } from '../../../../gateway/tasks/crowdsourcing-review';
 import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
-import { CanvasFull } from '../../../../types/schemas/canvas-full';
+import { CanvasFull } from '../../../../types/canvas-full';
 import { ManifestFull } from '../../../../types/schemas/manifest-full';
 import { ProjectFull } from '../../../../types/schemas/project-full';
-import { castBool } from '../../../../utility/cast-bool';
 import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
 import { ApiArgs, apiHooks } from '../../../shared/hooks/use-api-query';
 import { useData } from '../../../shared/hooks/use-data';
 import { HighlightedRegionProvider } from '../../../shared/hooks/use-highlighted-regions';
-import { useLocationQuery } from '../../../shared/hooks/use-location-query';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { UniversalComponent } from '../../../types';
 import { useParams } from 'react-router-dom';
-import { useProjectCanvasTasks } from '../../hooks/use-project-canvas-tasks';
 import { ManifestLoaderType } from './manifest-loader';
 
 export type CanvasLoaderType = {
@@ -51,7 +47,10 @@ export const CanvasLoader: UniversalComponent<CanvasLoaderType> = createUniversa
   ({ route, ...props }) => {
     const { canvasId: id, slug } = useParams<{ canvasId: string; slug?: string }>();
     const { data, refetch } = useData(CanvasLoader, []);
-    const ctx = useMemo(() => (data ? { id: data.canvas.id, name: data.canvas.label } : undefined), [data]);
+    const ctx = useMemo(
+      () => (data ? { id: data.canvas.id, name: data.canvas.label || { none: ['Untitled canvas'] } } : undefined),
+      [data]
+    );
 
     const {
       data: tasks,

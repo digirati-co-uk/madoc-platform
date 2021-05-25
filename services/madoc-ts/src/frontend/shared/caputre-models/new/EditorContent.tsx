@@ -2,7 +2,7 @@ import { AtlasContextType } from '@atlas-viewer/atlas';
 import { CaptureModel } from '@capture-models/types';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CanvasFull } from '../../../../types/schemas/canvas-full';
+import { CanvasFull } from '../../../../types/canvas-full';
 import { parseUrn } from '../../../../utility/parse-urn';
 import { ViewContentFetch } from '../../../admin/molecules/ViewContentFetch';
 import { TinyButton } from '../../atoms/Button';

@@ -154,6 +154,10 @@ const valuesToIntlString = (values: MetadataDefinition[]): InternationalString =
 };
 
 const intlStringToValues = (intlStr: InternationalString, key: string): MetadataDefinition[] => {
+  if (!intlStr) {
+    return [];
+  }
+
   const languages = Object.keys(intlStr);
   const items: MetadataDefinition[] = [];
   let count = 0;

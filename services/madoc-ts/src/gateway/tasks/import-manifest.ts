@@ -93,6 +93,11 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
             label: iiifManifest.label || { none: ['Untitled Manifest'] },
             summary: iiifManifest.summary || undefined,
             metadata: iiifManifest.metadata || undefined,
+            requiredStatement: iiifManifest.requiredStatement || undefined,
+            viewingDirection: iiifManifest.viewingDirection || undefined,
+            behavior: iiifManifest.behavior || undefined,
+            rights: iiifManifest?.rights || undefined,
+            navDate: iiifManifest?.navDate || undefined,
             homepage: iiifManifest.homepage ? vault.fromRef<ContentResource>(iiifManifest.homepage) : undefined,
             logo: iiifManifest.logo ? vault.allFromRef<ContentResource>(iiifManifest.logo) : undefined,
             partOf: iiifManifest.partOf ? iiifManifest.partOf : undefined,
@@ -103,6 +108,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
             start: iiifManifest.start ? vault.fromRef(iiifManifest.start) : undefined,
           } as any;
         } catch (err) {
+          console.log(err);
           console.log('Could not import linking properties.');
         }
         item = await api.asUser({ userId, siteId }).createManifest(
@@ -113,6 +119,11 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
                 label: iiifManifest.label || { none: ['Untitled Manifest'] },
                 summary: iiifManifest.summary || undefined,
                 metadata: iiifManifest.metadata || undefined,
+                requiredStatement: iiifManifest.requiredStatement || undefined,
+                viewingDirection: iiifManifest.viewingDirection || undefined,
+                behavior: iiifManifest.behavior || undefined,
+                rights: iiifManifest?.rights || undefined,
+                navDate: iiifManifest?.navDate || undefined,
               },
           fileLocation,
           task.id

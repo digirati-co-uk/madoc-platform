@@ -82,12 +82,13 @@ export class SubjectResolver implements Resolver<'subject', SubjectSnippet> {
       case 'canvas': {
         // Check for manifest too.
         const { canvas } = await this.api.getCanvasById(parsed.id);
+        const thumbnail = canvas && canvas.thumbnail && canvas.thumbnail[0] ? canvas.thumbnail[0].id : undefined;
 
         return {
           id: canvas.id,
           type: 'canvas',
           label: canvas.label,
-          thumbnail: canvas.thumbnail,
+          thumbnail,
         };
       }
       case 'manifest': {

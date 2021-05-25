@@ -36,7 +36,7 @@ import { ImportCollectionTask } from './tasks/import-collection';
 import { ManifestFull } from '../types/schemas/manifest-full';
 import { GetMetadata } from '../types/schemas/get-metadata';
 import { MetadataUpdate } from '../types/schemas/metadata-update';
-import { CanvasFull } from '../types/schemas/canvas-full';
+import { CanvasFull } from '../types/canvas-full';
 import { stringify } from 'query-string';
 import { CreateProject } from '../types/schemas/create-project';
 import { ProjectSnippet } from '../types/schemas/project-snippet';

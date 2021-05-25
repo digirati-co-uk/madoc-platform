@@ -35,22 +35,25 @@ export const MetadataListItem: React.FC<{
 };
 
 export const MetadataSection: React.FC<{
-  sectionIndex: number;
+  sectionIndex?: number;
   sectionKey: string;
   metadata: ParsedMetadata;
   onSaveField: MetadataEditorProps['onSave'];
   availableLanguages: string[];
   defaultLocale?: string;
-}> = ({ sectionKey, sectionIndex, metadata, onSaveField, availableLanguages, defaultLocale }) => {
+  fixedItems?: boolean;
+}> = ({ sectionKey, sectionIndex, metadata, onSaveField, availableLanguages, defaultLocale, fixedItems }) => {
   const keys = Object.keys(metadata);
   const [isRemoved, setIsRemoved] = useState(false);
+
+  const indexStr = typeof sectionIndex === 'undefined' ? '' : `${sectionIndex}.`;
 
   const undoRemove = () => {
     if (onSaveField) {
       for (const itemId of keys) {
         onSaveField({
           items: [],
-          key: `${sectionKey}.${sectionIndex}.${itemId}`,
+          key: `${sectionKey}.${indexStr}${itemId}`,
           toInternationalString() {
             return {}; // @todo figure out how to implement this part.
           },
@@ -75,12 +78,12 @@ export const MetadataSection: React.FC<{
 
         onSaveField({
           items: [],
-          key: `${sectionKey}.${sectionIndex}.${itemId}`,
+          key: `${sectionKey}.${indexStr}${itemId}`,
           getDiff() {
             return {
               added: [],
               modified: [],
-              removed: item.items.map(arr => {
+              removed: (item as any).items.map((arr: any) => {
                 return arr.id;
               }),
             };
@@ -106,7 +109,7 @@ export const MetadataSection: React.FC<{
     <div style={{ margin: 10, padding: 20 }}>
       {keys.map(itemId => {
         const item = metadata[itemId];
-        const itemKey = `${sectionKey}.${sectionIndex}.${itemId}`;
+        const itemKey = `${sectionKey}.${indexStr}${itemId}`;
         if (Array.isArray(item)) {
           return null; // not supported.
         }
@@ -115,7 +118,7 @@ export const MetadataSection: React.FC<{
           <MetadataListItem
             key={itemKey}
             labelKey={itemId}
-            items={item.items}
+            items={(item as any).items}
             itemKey={itemKey}
             onSaveField={onSaveField}
             availableLanguages={availableLanguages}
@@ -123,7 +126,7 @@ export const MetadataSection: React.FC<{
           />
         );
       })}
-      <Button onClick={removeAll}>Remove</Button>
+      {fixedItems ? null : <Button onClick={removeAll}>Remove</Button>}
     </div>
   );
 };
@@ -241,8 +244,23 @@ export const MetadataListEditor: React.FC<{
         />
       ) : null}
 
+      {metadataKeys.indexOf('requireStatement') === -1 ? (
+        <MetadataSection
+          fixedItems={true}
+          metadata={{
+            label: [],
+            value: [],
+          }}
+          sectionKey={'requiredStatement'}
+          onSaveField={onSaveField}
+          availableLanguages={availableLanguages}
+          defaultLocale={defaultLocale}
+        />
+      ) : null}
+
       {metadataKeys.map(itemId => {
         const item = metadata[itemId];
+
         if (Array.isArray(item)) {
           return (
             <MetadataSectionEditor
@@ -255,12 +273,30 @@ export const MetadataListEditor: React.FC<{
             />
           );
         }
+
+        if ((item as any).label && (item as any).value) {
+          return (
+            <div>
+              <Heading3 style={{ marginLeft: 20 }}>{itemId}</Heading3>
+              <MetadataSection
+                fixedItems={true}
+                metadata={item as any}
+                key={itemId}
+                sectionKey={itemId}
+                onSaveField={onSaveField}
+                availableLanguages={availableLanguages}
+                defaultLocale={defaultLocale}
+              />
+            </div>
+          );
+        }
+
         return (
           <MetadataListItem
             key={itemId}
             itemKey={itemId}
             labelKey={itemId}
-            items={item.items}
+            items={(item as any).items}
             onSaveField={onSaveField}
             availableLanguages={availableLanguages}
             defaultLocale={defaultLocale}

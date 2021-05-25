@@ -13,8 +13,8 @@ export const CanvasMiradorViewer: React.FC<{ annotationPages?: AnnotationPage[] 
 
   // const {} = use
   const canvas = canvasResponse?.canvas;
-  const lastCanvasUrl = useRef();
-  const canvasUrl = canvas?.source['@id'] || canvas?.source['id'];
+  const lastCanvasUrl = useRef<string>();
+  const canvasUrl = canvas?.source_id;
   const { push } = useHistory();
   const createLink = useRelativeLinks();
   const api = useApi();
