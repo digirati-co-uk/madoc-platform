@@ -126,13 +126,13 @@ import { deleteLinking } from './routes/iiif/linking/delete-linking';
 import { updateLinking } from './routes/iiif/linking/update-linking';
 import { getLinking } from './routes/iiif/linking/get-linking';
 import { searchManifest } from './routes/iiif/manifests/search-manifest';
-import { exportManifest } from './routes/iiif/manifests/export-manifest';
 import { assignReview } from './routes/projects/assign-review';
 import { getProjectModel } from './routes/projects/get-project-model';
 import { siteCanvasModels } from './routes/site/site-canvas-models';
 import { siteCanvasTasks } from './routes/site/site-canvas-tasks';
 import { getProjectTask } from './routes/projects/get-project-task';
 import { assignRandomResource } from './routes/projects/assign-random-resource';
+import { router as activityStreamRoutes } from './activity-streams/router';
 
 export const router = new TypedRouter({
   // Normal route
@@ -388,6 +388,9 @@ export const router = new TypedRouter({
     '/s/:slug/madoc/api/projects/:projectSlug/export/manifest/:id/:version',
     buildManifest,
   ],
+
+  // Other routes.
+  ...activityStreamRoutes,
 
   // PAT
   'personal-access-token': [TypedRouter.POST, '/api/madoc/access-token', personalAccessToken],
