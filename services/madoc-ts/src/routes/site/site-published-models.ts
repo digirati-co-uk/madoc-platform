@@ -4,15 +4,13 @@ import { sql } from 'slonik';
 import { getProject } from '../../database/queries/project-queries';
 import { PARAGRAPHS_PROFILE } from '../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
 import { RouteMiddleware } from '../../types/route-middleware';
-import { CaptureModelSnippet } from '../../types/schemas/capture-model-snippet';
 import { castBool } from '../../utility/cast-bool';
 import {
   captureModelFieldToOpenAnnotation,
   captureModelFieldToW3CAnnotation,
 } from '../../utility/model-annotation-helpers';
 import { parseProjectId } from '../../utility/parse-project-id';
-
-const gatewayHost = process.env.GATEWAY_HOST || 'http://localhost:8888';
+import { gatewayHost } from '../../gateway/api.server';
 
 export type SitePublishedModelsQuery = {
   format?:
