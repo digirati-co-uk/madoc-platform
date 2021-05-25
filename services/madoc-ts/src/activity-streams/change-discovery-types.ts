@@ -8,25 +8,55 @@ import { InternationalString, Manifest } from '@hyperion-framework/types';
  * - 3. Publish endpoints for tracking those changes.
  */
 
+export type ActivityItemRow = {
+  activity_id: number;
+  activity_type: string;
+  primary_stream: string;
+  secondary_string: string | null;
+  object_id: string;
+  object_type: string;
+  object_canonical_id: string;
+  start_time: number | null;
+  end_time: number;
+  site_id: number;
+  // A JSON field
+  properties: {
+    summary: string;
+    provider?: Manifest['provider'];
+    seeAlso?: ChangeDiscoverySeeAlso[];
+    actor?: ChangeDiscoveryActor;
+    target?: ChangeDiscoveryBaseObject;
+  };
+};
+
 export type ChangeDiscoveryActivity = {
   id: string;
-  type: ChangeDiscoveryActivityType;
-  object: ChangeDiscoveryObject;
-};
+} & (
+  | {
+      type: Exclude<ChangeDiscoveryActivityType, 'Move'>;
+      object: ChangeDiscoveryBaseObject;
+    }
+  | {
+      type: 'Move';
+      object: ChangeDiscoveryMoveObject;
+    }
+);
 
 export type ChangeDiscoveryBaseObject = {
   id: string;
   canonical?: string;
-  type: 'Collection' | 'Manifest'; // Technically also: Range, Canvas etc.
+  type: 'Collection' | 'Manifest' | 'Canvas'; // Technically also: Range, Canvas etc.
   seeAlso?: ChangeDiscoverySeeAlso[];
-  provider?: Manifest;
+  provider?: Manifest['provider'];
   endTime?: string; // xsd:dateTime
   startTime?: string; // xsd:dateTime
   summary?: string;
-  actor?: {
-    id: string;
-    type: 'Person' | 'Application' | 'Organization';
-  };
+  actor?: ChangeDiscoveryActor;
+};
+
+type ChangeDiscoveryActor = {
+  id: string;
+  type: 'Person' | 'Application' | 'Organization';
 };
 
 export type ChangeDiscoveryGenesisRequest = {
@@ -38,7 +68,7 @@ export type ChangeDiscoveryGenesisResponse = {
   ids: string[];
 };
 
-export type ChangeDiscoveryObject = ChangeDiscoveryBaseObject & {
+export type ChangeDiscoveryMoveObject = ChangeDiscoveryBaseObject & {
   target: ChangeDiscoveryBaseObject;
 };
 
