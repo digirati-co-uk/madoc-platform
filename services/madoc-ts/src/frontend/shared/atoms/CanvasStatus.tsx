@@ -33,7 +33,7 @@ export const CanvasStatusItem = styled.div<{ $status: number }>`
 
 export const CanvasStatus: React.FC<{ status: number }> = ({ status }) => {
   const { t } = useTranslation();
-  const tooltip = status == 3 ? t('Completed') : (status == 2 || status == 1 ? t('You are currently working on this manifest') : t('Available'));
+  const tooltip = status == 3 ? t('Completed') : (status == 2 || status == 1 ? t('You are currently working on this') : t('Available'));
   return (
     <>
       <CanvasStatusBackground>
