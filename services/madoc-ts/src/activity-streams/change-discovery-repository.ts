@@ -2,7 +2,12 @@ import { sql } from 'slonik';
 import { BaseRepository } from '../repository/base-repository';
 import { SQL_EMPTY } from '../utility/postgres-tags';
 import { sqlDate } from '../utility/slonik-helpers';
-import { ActivityItemRow, ChangeDiscoveryActivity, ChangeDiscoveryActivityType } from './change-discovery-types';
+import {
+  ActivityItemRow,
+  ChangeDiscoveryActivity,
+  ChangeDiscoveryActivityRequest,
+  ChangeDiscoveryActivityType,
+} from './change-discovery-types';
 
 type StreamOptions = { primaryStream: string; secondaryStream?: string };
 
@@ -59,10 +64,19 @@ export class ChangeDiscoveryRepository extends BaseRepository {
   async addActivity(
     action: ChangeDiscoveryActivityType,
     { primaryStream, secondaryStream }: StreamOptions,
-    object: ChangeDiscoveryActivity['object'],
+    activity: ChangeDiscoveryActivityRequest,
     siteId: number
   ) {
-    const { id, type, canonical, endTime, startTime, ...properties } = object;
+    const { startTime, object, target, summary, actor } = activity;
+    const { id, type, canonical, provider, seeAlso, ...otherProperties } = object;
+    const allProperties = {
+      seeAlso,
+      provider,
+      target,
+      summary,
+      actor,
+      ...otherProperties,
+    };
 
     const createdActivity = await this.connection.one(sql<ActivityItemRow>`
         insert into change_discovery_activity (
@@ -84,25 +98,31 @@ export class ChangeDiscoveryRepository extends BaseRepository {
           ${canonical || id},
           ${startTime ? sqlDate(new Date(startTime)) : null},
           ${siteId},
-          ${sql.json(properties as any)}
+          ${sql.json(allProperties as any)}
         ) returning *
     `);
 
     return this.mapActivity(createdActivity);
   }
 
-  mapActivity(row: ActivityItemRow): { id: number; type: string; object: ChangeDiscoveryActivity['object'] } {
+  mapActivity(row: ActivityItemRow): ChangeDiscoveryActivity {
+    const { actor, provider, seeAlso, summary, target, ...otherProperties } = row.properties || {};
     return {
-      id: row.activity_id,
-      type: row.activity_type,
+      id: `${row.activity_id}`,
+      type: row.activity_type as any,
       object: {
         id: row.object_id,
         type: row.object_type as any,
-        endTime: new Date(row.end_time).toISOString(),
-        startTime: row.start_time ? new Date(row.start_time).toISOString() : undefined,
         canonical: row.object_canonical_id,
-        ...(row.properties || {}),
+        provider: provider,
+        seeAlso: seeAlso,
+        ...(otherProperties || {}),
       },
+      actor,
+      summary,
+      target,
+      endTime: new Date(row.end_time).toISOString(),
+      startTime: row.start_time ? new Date(row.start_time).toISOString() : undefined,
     };
   }
 }

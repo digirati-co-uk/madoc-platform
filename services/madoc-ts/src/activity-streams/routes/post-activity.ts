@@ -1,12 +1,9 @@
+import { gatewayHost } from '../../gateway/api.server';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { NotFound } from '../../utility/errors/not-found';
 import { RequestError } from '../../utility/errors/request-error';
 import { optionalUserWithScope } from '../../utility/user-with-scope';
-import {
-  ChangeDiscoveryActivityType,
-  ChangeDiscoveryBaseObject,
-  ChangeDiscoveryMoveObject,
-} from '../change-discovery-types';
+import { ChangeDiscoveryActivityRequest, ChangeDiscoveryActivityType } from '../change-discovery-types';
 
 const actionMap: { [key: string]: ChangeDiscoveryActivityType } = {
   create: 'Create',
@@ -23,8 +20,7 @@ export const postActivity: RouteMiddleware<
     secondaryStream?: string;
     action: string;
   },
-  {
-    object: ChangeDiscoveryBaseObject | ChangeDiscoveryMoveObject;
+  ChangeDiscoveryActivityRequest & {
     options?: {
       dispatchToSecondaryStreams?: boolean;
       preventAddToPrimaryStream?: boolean;
@@ -36,7 +32,11 @@ export const postActivity: RouteMiddleware<
   const { action: unmappedAction, primaryStream, secondaryStream } = context.params;
   const action = actionMap[unmappedAction];
   const {
+    target,
+    startTime,
+    actor,
     object,
+    summary,
     options: { dispatchToSecondaryStreams, preventAddToPrimaryStream, preventUpdateToPrimaryStream } = {},
   } = context.requestBody;
 
@@ -58,9 +58,10 @@ export const postActivity: RouteMiddleware<
           primaryStream,
         },
         {
-          id: object.id,
-          type: object.type,
-          canonical: object.canonical,
+          target,
+          startTime,
+          actor,
+          object: object,
           summary: `Automatically created activity from secondary stream: ${secondaryStream}`,
         },
         siteId
@@ -81,9 +82,10 @@ export const postActivity: RouteMiddleware<
         secondaryStream,
       },
       {
-        id: object.id,
-        type: object.type,
-        canonical: object.canonical,
+        target,
+        startTime,
+        actor,
+        object: object,
         summary: `Automatically created before action: ${action}`,
       },
       siteId
@@ -111,7 +113,13 @@ export const postActivity: RouteMiddleware<
         primaryStream,
         secondaryStream,
       },
-      object,
+      {
+        target,
+        startTime,
+        actor,
+        object: object,
+        summary,
+      },
       siteId
     );
 
@@ -126,8 +134,11 @@ export const postActivity: RouteMiddleware<
           primaryStream,
         },
         {
-          ...object,
-          summary: `(source: ${secondaryStream}): ${object.summary || `No summary provided for ${action} action`}`,
+          target,
+          startTime,
+          actor,
+          object: object,
+          summary: `(source: ${secondaryStream}): ${summary || `No summary provided for ${action} action`}`,
         },
         siteId
       );
@@ -139,9 +150,21 @@ export const postActivity: RouteMiddleware<
       {
         primaryStream,
       },
-      object,
+      {
+        target,
+        startTime,
+        actor,
+        object: object,
+        summary,
+      },
       siteId
     );
+
+    const baseUrl = `${gatewayHost}/api/madoc/activity/${primaryStream}${
+      secondaryStream ? '/stream/' + secondaryStream : ''
+    }`;
+
+    activity.id = `${baseUrl}/activity/${activity.id}`;
 
     context.response.status = 201;
     context.response.body = activity;

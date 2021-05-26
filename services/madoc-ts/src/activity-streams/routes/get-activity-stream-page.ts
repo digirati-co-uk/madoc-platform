@@ -48,6 +48,9 @@ export const getActivityStreamPage: RouteMiddleware<{
           type: 'OrderedCollectionPage',
         }
       : undefined,
-    orderedItems: orderedItems,
+    orderedItems: orderedItems.map(item => {
+      item.id = `${baseUrl}/activity/${item.id}`;
+      return item;
+    }),
   };
 };

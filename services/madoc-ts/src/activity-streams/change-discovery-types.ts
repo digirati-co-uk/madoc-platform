@@ -29,8 +29,21 @@ export type ActivityItemRow = {
   };
 };
 
+export type ChangeDiscoveryActivityRequest = {
+  startTime?: string; // xsd:dateTime
+  summary?: string;
+  actor?: ChangeDiscoveryActor;
+  target?: ChangeDiscoveryBaseObject;
+  object: ChangeDiscoveryBaseObject;
+};
+
 export type ChangeDiscoveryActivity = {
   id: string;
+  endTime: string; // xsd:dateTime
+  startTime?: string; // xsd:dateTime
+  summary?: string;
+  actor?: ChangeDiscoveryActor;
+  target?: ChangeDiscoveryBaseObject;
 } & (
   | {
       type: Exclude<ChangeDiscoveryActivityType, 'Move'>;
@@ -38,7 +51,8 @@ export type ChangeDiscoveryActivity = {
     }
   | {
       type: 'Move';
-      object: ChangeDiscoveryMoveObject;
+      object: ChangeDiscoveryBaseObject;
+      target: ChangeDiscoveryBaseObject;
     }
 );
 
@@ -48,10 +62,6 @@ export type ChangeDiscoveryBaseObject = {
   type: 'Collection' | 'Manifest' | 'Canvas'; // Technically also: Range, Canvas etc.
   seeAlso?: ChangeDiscoverySeeAlso[];
   provider?: Manifest['provider'];
-  endTime?: string; // xsd:dateTime
-  startTime?: string; // xsd:dateTime
-  summary?: string;
-  actor?: ChangeDiscoveryActor;
 };
 
 type ChangeDiscoveryActor = {
@@ -66,10 +76,6 @@ export type ChangeDiscoveryGenesisRequest = {
 export type ChangeDiscoveryGenesisResponse = {
   prefix: string;
   ids: string[];
-};
-
-export type ChangeDiscoveryMoveObject = ChangeDiscoveryBaseObject & {
-  target: ChangeDiscoveryBaseObject;
 };
 
 export type ChangeDiscoveryImplementationState = {
