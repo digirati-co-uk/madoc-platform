@@ -2,6 +2,7 @@ import { AnnotationPage } from '@hyperion-framework/types';
 import { Vault } from '@hyperion-framework/vault';
 import { sql } from 'slonik';
 import { deprecationGetItemsJson } from '../../../deprecations/01-local-source-canvas';
+import { gatewayHost } from '../../../gateway/api.server';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { IIIFBuilder } from '../../../utility/iiif-builder/iiif-builder';
 import { createMetadataReducer } from '../../../utility/iiif-metadata';
@@ -68,8 +69,6 @@ type IIIFExportRow = {
         metadata__source: null;
       }
   );
-
-const gatewayHost = process.env.GATEWAY_HOST || 'http://localhost:8888';
 
 export const buildManifest: RouteMiddleware<{
   slug: string;

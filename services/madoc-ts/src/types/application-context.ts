@@ -1,4 +1,5 @@
 import { i18n } from 'i18next';
+import { ChangeDiscoveryRepository } from '../activity-streams/change-discovery-repository';
 import { MediaRepository } from '../repository/media-repository';
 import { PageBlocksRepository } from '../repository/page-blocks-repository';
 import { ThemeRepository } from '../repository/theme-repository';
@@ -19,6 +20,7 @@ export interface ApplicationContext {
   pageBlocks: PageBlocksRepository;
   themes: ThemeRepository;
   media: MediaRepository;
+  changeDiscovery: ChangeDiscoveryRepository;
   omeka: OmekaApi;
   cron: CronJobs;
   ajv: Ajv;

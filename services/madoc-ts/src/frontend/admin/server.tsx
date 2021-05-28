@@ -11,7 +11,6 @@ import AdminApp from './index';
 import { queryConfig } from './query-config';
 import { routes } from './routes';
 import { createServerRenderer } from '../shared/utility/create-server-renderer';
-
-const apiGateway = process.env.API_GATEWAY as string;
+import { apiGateway } from '../../gateway/api.server';
 
 export const render = createServerRenderer(AdminApp as any, routes, apiGateway, queryConfig);

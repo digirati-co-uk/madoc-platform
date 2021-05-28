@@ -1,8 +1,7 @@
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { sql } from 'slonik';
 import * as fs from 'fs';
-
-const gatewayHost = process.env.GATEWAY_HOST || 'http://localhost:8888';
+import { gatewayHost } from '../../../gateway/api.server';
 
 export const exportManifest: RouteMiddleware<{ id: string; slug: string }> = async context => {
   const manifestId = context.params.id;
