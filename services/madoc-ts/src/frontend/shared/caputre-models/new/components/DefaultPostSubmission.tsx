@@ -30,7 +30,7 @@ export const DefaultPostSubmission: React.FC<{ subRoute?: string }> = () => {
       <div style={{ display: 'flex' }}>
         <div style={{ flex: '1 1 0px' }}>
           <h3>{t('Contribution submitted')}</h3>
-          <p>{t('Keep working on this image or move onto next image')}</p>
+          <p>{t('Keep working on this image or move on to next image')}</p>
         </div>
         <div style={{ textAlign: 'center' }}>
           <SnippetStructure

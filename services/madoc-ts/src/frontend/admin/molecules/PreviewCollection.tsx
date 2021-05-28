@@ -121,7 +121,7 @@ export const PreviewCollection: React.FC<{
                     }
                   }}
                 >
-                  {t('preview')}
+                  {t('Preview')}
                 </SmallButton>
               </TableActions>
             </TableRow>
