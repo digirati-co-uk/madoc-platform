@@ -7,10 +7,8 @@ import { createLink } from '../../shared/utility/create-link';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useContinueSubmission } from '../hooks/use-continue-submission';
 import { useContributionMode } from '../hooks/use-contribution-mode';
-import { useProjectPageConfiguration } from '../hooks/use-project-page-configuration';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
-import { useSiteConfiguration } from './SiteConfigurationContext';
 
 export const CanvasModelUserStatus: React.FC<{ isEditing?: boolean }> = ({ isEditing }) => {
   const { t } = useTranslation();
@@ -26,7 +24,7 @@ export const CanvasModelUserStatus: React.FC<{ isEditing?: boolean }> = ({ isEdi
   if (isEditing) {
     return (
       <InfoMessage>
-        {t('You are editing another users submission')}
+        {t("You are editing another user's submission")}
         <Button as={HrefLink} href={relativeLink({ subRoute: 'model' })} style={{ float: 'right', marginLeft: 10 }}>
           {t('Back')}
         </Button>
