@@ -121,7 +121,7 @@ export function useBlockModel(block: SiteBlock | SiteBlockRequest, advanced?: bo
         label: t('Language sort key'),
         type: 'text-field',
         description: t(
-          'If you have multiple blocks using a language you can group them together with this key. Only one of these blocks will be displayed, based on the language.'
+          'If you have multiple blocks using a language group them together with this key. Only one of these blocks will be displayed, based on the language.'
         ),
       },
       RESERVED__i18n__fallback: {

@@ -100,7 +100,7 @@ const MergeCrowdsourcingTask: React.FC<{
   if (status === 'error') {
     return (
       <div>
-        {t('This merge may be corrupted. Would you like to remove it?')}{' '}
+        {t('This merge may be corrupted')}{' '}
         <Button
           onClick={() => {
             api.reviewMergeDiscard({ merge, reviewTaskId: reviewTaskId, revision: merge.mergeId }).then(() => {
