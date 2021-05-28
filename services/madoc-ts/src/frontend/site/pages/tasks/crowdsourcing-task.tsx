@@ -65,13 +65,13 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task,
         {mayExpire ? <WarningMessage>{t('Your contribution may expire soon')}</WarningMessage> : null}
         {isComplete ? (
           <WarningMessage>
-            {t('This task is complete, you can make another contribution from the')}{' '}
+            {t('This task is complete. You can make another contribution from the')}{' '}
             {backLink ? <Link to={backLink}>{t('Image page')}</Link> : t('Image page')}
           </WarningMessage>
         ) : null}
         {wasRejected ? (
           <ErrorMessage>
-            {t('This contribution was rejected , you can make another contribution from the')}{' '}
+            {t('This contribution was rejected. You can make another contribution from the')}{' '}
             {backLink ? <Link to={backLink}>{t('Image page')}</Link> : t('Image page')}
           </ErrorMessage>
         ) : null}
