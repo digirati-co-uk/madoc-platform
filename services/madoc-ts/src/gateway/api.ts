@@ -797,16 +797,16 @@ export class ApiClient {
     return this.request<GetMetadata>(`/api/madoc/iiif/manifests/${id}/metadata`);
   }
 
-  async autocompleteManifests(q: string, project_id?: string, blacklist_ids?: number[]) {
+  async autocompleteManifests(q: string, project_id?: string, blacklist_ids?: number[], page: number = 1) {
     return this.request<Array<{ id: number; label: string }>>(
-      `/api/madoc/iiif/autocomplete/manifests?${stringify({ q, project_id, blacklist_ids }, { arrayFormat: 'comma' })}`
+      `/api/madoc/iiif/autocomplete/manifests?${stringify({ q, project_id, blacklist_ids, page }, { arrayFormat: 'comma' })}`
     );
   }
 
-  async autocompleteCollections(q: string, project_id?: string, blacklist_ids?: number[]) {
+  async autocompleteCollections(q: string, project_id?: string, blacklist_ids?: number[], page: number = 1) {
     return this.request<Array<{ id: number; label: string }>>(
       `/api/madoc/iiif/autocomplete/collections?${stringify(
-        { q, project_id, blacklist_ids },
+        { q, project_id, blacklist_ids, page },
         { arrayFormat: 'comma' }
       )}`
     );

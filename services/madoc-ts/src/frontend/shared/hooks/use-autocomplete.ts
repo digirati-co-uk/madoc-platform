@@ -10,15 +10,15 @@ export function useAutocomplete(
   const [searchResults, setSearchResults] = useState<undefined | Array<{ id: number; label: string }>>();
 
   const performSearch = useCallback(
-    (type: string) => {
+    (type: string, page: number = 1) => {
       if (q) {
         if (type === 'manifest') {
-          api.autocompleteManifests(q, project, blacklistIds).then(results => {
+          api.autocompleteManifests(q, project, blacklistIds, page).then(results => {
             setSearchResultsType(type);
             setSearchResults(results);
           });
         } else {
-          api.autocompleteCollections(q, project, blacklistIds).then(results => {
+          api.autocompleteCollections(q, project, blacklistIds, page).then(results => {
             setSearchResultsType(type);
             setSearchResults(results);
           });

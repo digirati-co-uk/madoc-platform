@@ -12,6 +12,14 @@ import { LocaleString } from '../../shared/components/LocaleString';
 import { ItemStructureListItem } from '../../../types/schemas/item-structure-list';
 import { useTranslation } from 'react-i18next';
 import { useAutocomplete } from '../../shared/hooks/use-autocomplete';
+import styled from 'styled-components';
+
+const PaginationContainer = styled.div`
+  margin: 2em 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+`;
 
 export const CollectionEditorStructure: React.FC<{
   blacklistIds?: number[];
@@ -24,6 +32,8 @@ export const CollectionEditorStructure: React.FC<{
 }> = ({ items, saveOrder, searchCollections, blacklistIds, hideManifests, searchManifests, enableNavigation }) => {
   const { t } = useTranslation();
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [manifestSearch, setManifestSearch] = useState(true);
 
   const [performSearch, searchResultsType, searchResults, resetResults] = useAutocomplete(search, { blacklistIds });
 
@@ -50,6 +60,12 @@ export const CollectionEditorStructure: React.FC<{
     return <>{t('loading')}</>;
   }
 
+  const toPage = (newPage: number) => {
+    const type = manifestSearch ? 'manifest' : 'collection';
+    setPage(newPage);
+    performSearch(type, newPage);
+  };
+
   return (
     <>
       {searchCollections || searchManifests ? (
@@ -60,6 +76,7 @@ export const CollectionEditorStructure: React.FC<{
                 onSubmit={e => {
                   e.preventDefault();
                   performSearch('manifest');
+                  setManifestSearch(true);
                 }}
               >
                 <InputContainer wide>
@@ -86,6 +103,7 @@ export const CollectionEditorStructure: React.FC<{
                 onSubmit={e => {
                   e.preventDefault();
                   performSearch('collection');
+                  setManifestSearch(false);
                 }}
               >
                 <InputContainer wide>
@@ -136,6 +154,18 @@ export const CollectionEditorStructure: React.FC<{
               })}
               {searchResults.length === 0 ? t('No results') : null}
             </TableContainer>
+            <PaginationContainer>
+              {page > 1 ? (
+                <SmallButton onClick={() => toPage(page - 1)}>
+                  Previous
+                </SmallButton>
+              ) : <span /> }
+              {searchResults.length === 10 ? (
+                <SmallButton onClick={() => toPage(page + 1)}>
+                  Next
+                </SmallButton>
+              ) : null}
+            </PaginationContainer>
           </>
         </div>
       ) : null}
