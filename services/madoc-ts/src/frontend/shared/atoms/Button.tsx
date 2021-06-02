@@ -224,22 +224,27 @@ export const RoundedButton = styled.a<{ disabled?: boolean }>`
   text-decoration: none;
   border-radius: 4px;
 
-  &:link,
-  &:visited {
-    color: #007bff;
-  }
-  &:hover {
-    background: #ffffff;
-    border-color: #dee2e6;
-  }
-  &:focus {
-    outline: 1px solid #dee2e6;
-  }
+  ${props =>
+    !props.disabled &&
+    css`
+      &:link,
+      &:visited {
+        color: #007bff;
+      }
+      &:hover {
+        background: #ffffff;
+        border-color: #dee2e6;
+      }
+      &:focus {
+        outline: 1px solid #dee2e6;
+      }
+    `}
   ${props =>
     props.disabled &&
     css`
-      opacity: 0.7;
-      pointer-events: none;
+      cursor: not-allowed;
+      background: #eee;
+      color: #777b80;
     `}
 `;
 
