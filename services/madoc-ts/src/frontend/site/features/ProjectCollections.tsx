@@ -19,8 +19,9 @@ export const ProjectCollections: React.FC = () => {
     project: { allowCollectionNavigation, hideProjectCollectionNavigation },
   } = useSiteConfiguration();
 
-  const { data: collections } = apiHooks.getSiteCollection(() =>
-    project && isExact ? [project.collection_id, { type: 'collection' }] : undefined
+  const { data: collections } = apiHooks.getSiteCollection(
+    () => (project && isExact ? [project.collection_id, { type: 'collection' }] : undefined),
+    { forceFetchOnMount: true }
   );
 
   const shownCollections = collections ? collections.collection.items.slice(0, 4) : [];

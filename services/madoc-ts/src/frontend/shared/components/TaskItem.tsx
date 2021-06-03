@@ -108,7 +108,12 @@ export const TaskItem: React.FC<{
 }> = props => {
   const { t } = useTranslation();
   return (
-    <TaskItemContainer $onDark={props.$onDark} $selected={props.selected} onClick={props.onClick}>
+    <TaskItemContainer
+      $onDark={props.$onDark}
+      $selected={props.selected}
+      onClick={props.onClick}
+      data-cy="task-list-item"
+    >
       <TaskItemStatus $status={props.status} />
       <TaskItemBody>
         <TaskItemLabel title={props.label}>{props.label}</TaskItemLabel>

@@ -6,6 +6,7 @@ import { BaseField } from '@capture-models/types';
 
 const NewInstanceContainer = styled.div`
   text-align: center;
+  margin-bottom: 1em;
 `;
 
 export const NewFieldButtonInstance: React.FC<{ property: string; path: [string, string][]; field: BaseField }> = ({

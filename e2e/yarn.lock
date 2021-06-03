@@ -3554,10 +3554,10 @@ cypress-intellij-reporter@^0.0.4:
   dependencies:
     mocha latest
 
-cypress-react-selector@^2.3.4:
-  version "2.3.4"
-  resolved "https://registry.yarnpkg.com/cypress-react-selector/-/cypress-react-selector-2.3.4.tgz#704204cf6d880abfdb0b288a7f833cfd4ab85d3a"
-  integrity sha512-AzGjb+RDTXlZFwh43Fsai3dA5hiPr45awF7Fqwenx3qKMuMnSUdYBIwB6QMeWMLj//3kXO3JFg8dgciZTr/ggQ==
+cypress-react-selector@^2.3.7:
+  version "2.3.7"
+  resolved "https://registry.yarnpkg.com/cypress-react-selector/-/cypress-react-selector-2.3.7.tgz#26294d182a71b6ed4fb6f705f16662f93b637ceb"
+  integrity sha512-CpgvGuJFumf2WOLEj+5RT2sMgZirkyZAuRCdMzkOu3Gr4+ZIaFtIkVDxS1nhJIHGwDLyiajemct1Sp6kmmlRiA==
   dependencies:
     resq "1.10.0"
 

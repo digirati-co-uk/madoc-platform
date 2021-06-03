@@ -27,7 +27,7 @@
     "babel-loader": "^8.1.0",
     "cypress": "6",
     "cypress-intellij-reporter": "^0.0.4",
-    "cypress-react-selector": "^2.3.4",
+    "cypress-react-selector": "^2.3.7",
     "cypress-react-unit-test": "^4.17.2",
     "dockerode": "^3.2.1",
     "eslint": "^6.8.0",
