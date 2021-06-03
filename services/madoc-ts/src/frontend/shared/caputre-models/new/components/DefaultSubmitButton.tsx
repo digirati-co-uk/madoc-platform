@@ -68,6 +68,7 @@ export const DefaultSubmitButton: React.FC<{ afterSave?: (req: RevisionRequest) 
             ) : (
               <ButtonRow $noMargin>
                 <Button
+                  data-cy="save-later-button"
                   onClick={() => {
                     saveRevision('draft').then(() => {
                       close();

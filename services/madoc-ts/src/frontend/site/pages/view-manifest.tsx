@@ -54,7 +54,7 @@ export const ViewManifest: React.FC<{
   const config = useSiteConfiguration();
   const createLocaleString = useCreateLocaleString();
   const manifestOptions = useManifestPageConfiguration();
-  const { userManifestTask, canClaimManifest } = useManifestTask();
+  const { userManifestTask, canClaimManifest } = useManifestTask({ refetchOnMount: true });
   const { isActive } = useProjectStatus();
 
   const directToModelPage = (!!userManifestTask || canClaimManifest) && manifestOptions?.directModelPage;

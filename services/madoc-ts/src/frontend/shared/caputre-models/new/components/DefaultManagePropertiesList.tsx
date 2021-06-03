@@ -6,7 +6,7 @@ import { useManagePropertyList } from '../hooks/use-manage-property-list';
 import { EditorRenderingConfig } from './EditorSlots';
 
 const NewInstanceContainer = styled.div`
-  margin-bottom: 0.5em;
+  margin-bottom: 1em;
 `;
 
 const InstanceContainer = styled.div`

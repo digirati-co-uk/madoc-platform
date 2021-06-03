@@ -1,7 +1,7 @@
 import { useProjectManifestTasks } from './use-project-manifest-tasks';
 
-export function useManifestTask() {
-  const { data: projectTasks, refetch, isFetched } = useProjectManifestTasks();
+export function useManifestTask(opts?: { refetchOnMount?: boolean }) {
+  const { data: projectTasks, refetch, isFetched } = useProjectManifestTasks(opts);
 
   const manifestTask =
     projectTasks?.manifestTask?.type === 'crowdsourcing-manifest-task' ? projectTasks.manifestTask : undefined;

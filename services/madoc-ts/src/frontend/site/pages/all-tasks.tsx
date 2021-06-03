@@ -10,8 +10,6 @@ import {
   OuterLayoutContainer,
 } from '../../shared/atoms/LayoutContainer';
 import { TaskListContainer, TaskListInnerContainer } from '../../shared/atoms/TaskList';
-import { SubjectSnippet } from '../../shared/components/SubjectSnippet';
-import { TaskItem } from "../../shared/components/TaskItem";
 import { useLocalStorage } from '../../shared/hooks/use-local-storage';
 import { useResizeLayout } from '../../shared/hooks/use-resize-layout';
 import { useUser } from '../../shared/hooks/use-site';

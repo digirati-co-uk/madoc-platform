@@ -6,6 +6,7 @@ import styled from 'styled-components';
 
 const NewInstanceContainer = styled.div`
   text-align: center;
+  margin-bottom: 1em;
 `;
 
 export const NewEntityInstanceButton: React.FC<{

@@ -68,6 +68,7 @@ describe('Empty site users', () => {
     // 1. Task is complete message.
     cy.contains('Task is complete!');
     cy.contains('Thank you. You finished this manifest. Go back to the project to find a new manifest to transcribe.');
+    cy.wait(1000);
 
     // 2. Manifest page says ready for review.
     cy.get('a').contains('00001').click();
@@ -116,6 +117,7 @@ describe('Empty site users', () => {
 
     // Completed the whole manifest.
     cy.contains('Thank you. You finished this manifest. Go back to the project to find a new manifest to transcribe.');
+    cy.wait(1000);
 
     // 2. Manifest page says ready for review.
     cy.get('a').contains('00002').click();
@@ -126,7 +128,7 @@ describe('Empty site users', () => {
     cy.get('[title="00002"]').should('not.exist');
   });
 
-  it.only('Transcriber submitting 1, marking one as unusable and then marking as too difficult', () => {
+  it('Transcriber submitting 1, marking one as unusable and then marking as too difficult', () => {
     cy.loadSite('transcriber-mode');
 
     // Transcriber.
