@@ -2491,13 +2491,13 @@
     screenfull "^3.3.2"
     whatwg-fetch "^3.0.0"
 
-"@capture-models/editor@^0.13.11":
-  version "0.13.11"
-  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.13.11.tgz#f3f8c1c1d78f95935705ee7d740d304683826ffd"
-  integrity sha512-wU14ovdTdSQ3d7L0z6BH1wu3aa2Q85zd4GTQn6htKDrA71tZ988IED1qo8/dnzdox1sS6gx2SE+Iv1n6qdwaSA==
+"@capture-models/editor@^0.13.13":
+  version "0.13.13"
+  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.13.13.tgz#4955df3cc3c8e40d1acfef0fc3d15645ce1c7a8f"
+  integrity sha512-stT0VjmDbEQh4Z/65D6oqcaIPMUOfiI8d5yRfmz2vKbFZU0+gOAMGbXP1WxmqaU6x5w5gwsRgxlWwWqnBkQryQ==
   dependencies:
     "@atlas-viewer/atlas" "^1.5.2"
-    "@capture-models/helpers" "^0.13.6"
+    "@capture-models/helpers" "^0.13.13"
     "@capture-models/plugin-api" "^0.13.0"
     "@capture-models/types" "^0.13.0"
     "@hyperion-framework/react-vault" "^1.0.0"
@@ -2537,10 +2537,10 @@
     use-async-effect "^2.2.1"
     use-debounce "^3.3.0"
 
-"@capture-models/helpers@^0.13.6":
-  version "0.13.6"
-  resolved "https://registry.yarnpkg.com/@capture-models/helpers/-/helpers-0.13.6.tgz#5be9ecbebc531a9cb08c8bb3132b25f873b28cd0"
-  integrity sha512-eyECQ4i1KgBTqVu8d1lcOssf141nIcBJwqb9PVf1nPYUzAfYsynVCz9eqdHp45lSW8kpmEQhFo7kGYXDsfHKMg==
+"@capture-models/helpers@^0.13.13":
+  version "0.13.13"
+  resolved "https://registry.yarnpkg.com/@capture-models/helpers/-/helpers-0.13.13.tgz#392a4ea5896ae283beead64adb149563a7ddf654"
+  integrity sha512-pVyr3CGmqKk7PxOOFK5FOfrHOGD6luEtjD9C+pPbaVrcFjOo9iif18p4r+gTfXlU+HjDpuLC8tr3qYxHF/VbWw==
   dependencies:
     "@capture-models/plugin-api" "^0.13.0"
     "@capture-models/types" "^0.13.0"
