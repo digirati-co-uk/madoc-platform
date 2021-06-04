@@ -298,4 +298,27 @@ export const siteConfigurationModel: {
       },
     ],
   },
+  activityStreams: {
+    label: 'Activity streams',
+    description: 'Below are the enabled activity streams. When you enable them, only new activity will be recorded.',
+    type: 'checkbox-list-field',
+    options: [
+      {
+        label: 'Completed manifests activity',
+        value: 'manifest',
+      },
+      {
+        label: 'Completed canvas activity',
+        value: 'canvas',
+      },
+      {
+        label: 'Curated activity feed',
+        value: 'curated',
+      },
+      {
+        label: 'Project published feed',
+        value: 'published',
+      },
+    ],
+  },
 };

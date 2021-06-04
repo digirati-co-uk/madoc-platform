@@ -63,6 +63,12 @@
     "searchOptions": {
       "nonLatinFulltext": false,
       "searchMultipleFields": false
+    },
+    "activityStreams": {
+      "manifest": true,
+      "canvas": false,
+      "curated": true,
+      "published": false
     }
   },
   "permissions": {

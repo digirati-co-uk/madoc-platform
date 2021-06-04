@@ -62,4 +62,10 @@ export type ProjectConfiguration = {
     hidePageNavLinks?: boolean;
     hideSearchBar?: boolean;
   };
+  activityStreams?: {
+    manifest?: boolean;
+    canvas?: boolean;
+    curated?: boolean;
+    published?: boolean;
+  };
 };

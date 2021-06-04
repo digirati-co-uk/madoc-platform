@@ -3,7 +3,11 @@ import { RouteMiddleware } from '../../types/route-middleware';
 import { NotFound } from '../../utility/errors/not-found';
 import { RequestError } from '../../utility/errors/request-error';
 import { optionalUserWithScope } from '../../utility/user-with-scope';
-import { ChangeDiscoveryActivityRequest, ChangeDiscoveryActivityType } from '../change-discovery-types';
+import {
+  ActivityOptions,
+  ChangeDiscoveryActivityRequest,
+  ChangeDiscoveryActivityType,
+} from '../change-discovery-types';
 
 const actionMap: { [key: string]: ChangeDiscoveryActivityType } = {
   create: 'Create',
@@ -21,11 +25,7 @@ export const postActivity: RouteMiddleware<
     action: string;
   },
   ChangeDiscoveryActivityRequest & {
-    options?: {
-      dispatchToSecondaryStreams?: boolean;
-      preventAddToPrimaryStream?: boolean;
-      preventUpdateToPrimaryStream?: boolean;
-    };
+    options?: ActivityOptions;
   }
 > = async context => {
   const { siteId } = optionalUserWithScope(context, ['site.admin']);
@@ -37,7 +37,12 @@ export const postActivity: RouteMiddleware<
     actor,
     object,
     summary,
-    options: { dispatchToSecondaryStreams, preventAddToPrimaryStream, preventUpdateToPrimaryStream } = {},
+    options: {
+      dispatchToSecondaryStreams,
+      preventAddToPrimaryStream,
+      preventUpdateToPrimaryStream,
+      primaryObjectId,
+    } = {},
   } = context.requestBody;
 
   // Basic validation.
@@ -61,7 +66,12 @@ export const postActivity: RouteMiddleware<
           target,
           startTime,
           actor,
-          object: object,
+          object: primaryObjectId
+            ? {
+                ...object,
+                id: primaryObjectId,
+              }
+            : object,
           summary: `Automatically created activity from secondary stream: ${secondaryStream}`,
         },
         siteId
@@ -137,7 +147,12 @@ export const postActivity: RouteMiddleware<
           target,
           startTime,
           actor,
-          object: object,
+          object: primaryObjectId
+            ? {
+                ...object,
+                id: primaryObjectId,
+              }
+            : object,
           summary: `(source: ${secondaryStream}): ${summary || `No summary provided for ${action} action`}`,
         },
         siteId

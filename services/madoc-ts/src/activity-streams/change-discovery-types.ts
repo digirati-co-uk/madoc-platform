@@ -29,12 +29,23 @@ export type ActivityItemRow = {
   };
 };
 
+export type ActivityOptions = {
+  dispatchToSecondaryStreams?: boolean;
+  preventAddToPrimaryStream?: boolean;
+  preventUpdateToPrimaryStream?: boolean;
+  primaryObjectId?: string;
+};
+
 export type ChangeDiscoveryActivityRequest = {
   startTime?: string; // xsd:dateTime
   summary?: string;
   actor?: ChangeDiscoveryActor;
   target?: ChangeDiscoveryBaseObject;
   object: ChangeDiscoveryBaseObject;
+  madoc?: {
+    manifestId: number;
+    project: string;
+  };
 };
 
 export type ChangeDiscoveryActivity = {
@@ -59,6 +70,7 @@ export type ChangeDiscoveryActivity = {
 export type ChangeDiscoveryBaseObject = {
   id: string;
   canonical?: string;
+  name?: string; // Non-standard.
   type: 'Collection' | 'Manifest' | 'Canvas'; // Technically also: Range, Canvas etc.
   seeAlso?: ChangeDiscoverySeeAlso[];
   provider?: Manifest['provider'];
@@ -123,6 +135,8 @@ export type ActivityOrderedCollection = {
     type: 'OrderedCollection';
   }>;
   rights: string;
+  // Non-standard
+  totalPages?: number;
 };
 
 export type ActivityOrderedCollectionPage = {
