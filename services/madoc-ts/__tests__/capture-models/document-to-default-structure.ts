@@ -43,6 +43,7 @@ describe('document to default structure', () => {
         "manifestPageOptions",
         "headerOptions",
         "searchOptions",
+        "activityStreams",
       ]
     `);
   });
