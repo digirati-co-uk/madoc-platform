@@ -308,7 +308,7 @@ export const siteConfigurationModel: {
         value: 'manifest',
       },
       {
-        label: 'Completed canvas activity',
+        label: 'Completed canvas activity (not yet implemented)',
         value: 'canvas',
       },
       {
@@ -316,7 +316,7 @@ export const siteConfigurationModel: {
         value: 'curated',
       },
       {
-        label: 'Project published feed',
+        label: 'Project published feed (not yet implemented)',
         value: 'published',
       },
     ],
