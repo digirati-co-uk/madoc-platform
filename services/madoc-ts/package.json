@@ -44,7 +44,8 @@
     "@hyperion-framework/vault": "^1.0.0",
     "deepmerge": "4.2.2",
     "dnd-multi-backend": "6.0.0",
-    "html-entities": "1.4.0"
+    "html-entities": "1.4.0",
+    "ws": "7.4.6"
   },
   "dependencies": {
     "@atlas-viewer/atlas": "1.5.2",

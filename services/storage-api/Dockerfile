@@ -15,7 +15,7 @@ FROM node:12-alpine
 
 WORKDIR /home/node/app
 
-RUN npm install -g pm2
+RUN npm install -g pm2@4
 
 COPY --from=build /home/node/app/lib /home/node/app/lib
 COPY --from=build /home/node/app/package.json /home/node/app/package.json

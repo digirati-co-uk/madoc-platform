@@ -1,6 +1,9 @@
 {
   "name": "@madoc-platform/storage",
   "license": "MIT",
+  "resolutions": {
+    "ws": "7.4.6"
+  },
   "dependencies": {
     "@slynova/flydrive": "1.0.2",
     "@koa/router": "^8.0.6",
