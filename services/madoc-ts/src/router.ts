@@ -133,6 +133,8 @@ import { siteCanvasTasks } from './routes/site/site-canvas-tasks';
 import { getProjectTask } from './routes/projects/get-project-task';
 import { assignRandomResource } from './routes/projects/assign-random-resource';
 import { router as activityStreamRoutes } from './activity-streams/router';
+import { registerPage } from './routes/user/resgister';
+import { thanksPage } from './routes/user/thanks';
 
 export const router = new TypedRouter({
   // Normal route
@@ -322,6 +324,9 @@ export const router = new TypedRouter({
   'assets-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleId.bundle.js', frontendBundles],
   'assets-sub-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleName', frontendBundles],
   'get-user-details': [TypedRouter.GET, '/s/:slug/madoc/api/me', userDetails],
+  'get-register': [TypedRouter.GET, '/s/:slug/madoc/register', registerPage],
+  'post-register': [TypedRouter.POST, '/s/:slug/madoc/register', registerPage],
+  'get-thanks': [TypedRouter.GET, '/s/:slug/madoc/register/thank-you', thanksPage],
 
   // Media
   'list-media': [TypedRouter.GET, '/api/madoc/media', listMedia],
