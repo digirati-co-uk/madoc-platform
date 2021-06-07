@@ -150,9 +150,6 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
                   <span>Configure Atlas</span>
                 </li>
                 <li>
-                  <Link to={`/export/site`}>Export site</Link>
-                </li>
-                <li>
                   <Link to={`/sites/permissions`}>Site permissions</Link>
                 </li>
               </MenuList>
