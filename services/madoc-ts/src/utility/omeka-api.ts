@@ -9,6 +9,7 @@ import { Media } from '../types/omeka/Media';
 import { writeFileSync } from 'fs';
 import mkdirp from 'mkdirp';
 import cache from 'memory-cache';
+import {Site} from "../types/omeka/Site";
 
 type UserSite = { id: number; role: string; slug: string; title: string };
 export type PublicSite = { id: number; slug: string; title: string; is_public: number };
@@ -182,6 +183,13 @@ export class OmekaApi {
         select u.id, u.name from user u
           left join site_permission sp on u.id = sp.user_id
           where sp.site_id = ${siteId} and u.id = ${id}
+    `);
+  }
+
+  async getUserByEmail(email: string) {
+    return this.one<User>(mysql`
+      select * from user
+      where email = ${email};
     `);
   }
 
@@ -545,6 +553,12 @@ export class OmekaApi {
         });
       });
     });
+  }
+
+  async getSiteById(siteId: number) {
+    return await this.one<Site>(mysql`
+      select * from site where id = ${siteId};
+    `);
   }
 
   async getSiteIdBySlug(slug: string, userId?: number, isAdmin = false) {
