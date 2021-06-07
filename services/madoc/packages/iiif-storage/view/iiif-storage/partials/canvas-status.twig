@@ -1,9 +1,0 @@
-{% if (showCanvasStatus) %}
-    {% if canvas.complete %}
-        <p>{{ translate('Completed') }}</p>
-    {% elseif canvas.edited %}
-        <p>{{ translate('Edited') }}</p>
-    {% else %}
-        <p>{{ translate('Not started') }}</p>
-    {% endif %}
-{% endif %}

@@ -1,6 +1,0 @@
-{% set core = '' ~ annotationStudio.core() %}
-{% if core != '' %}
-    {% do headLink().prependStylesheet(assetUrl('css/annotation-studio.css', 'AnnotationStudio')) %}
-    {{ annotationStudio.getAssets() | raw }}
-    <div {{ core | raw }}></div>
-{% endif %}

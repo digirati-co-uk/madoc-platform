@@ -22,9 +22,7 @@
 LOCK TABLES `site_page` WRITE;
 /*!40000 ALTER TABLE `site_page` DISABLE KEYS */;
 INSERT INTO `site_page` VALUES
-  (1,1,'homepage','Homepage','2018-06-13 15:02:21','2018-06-13 15:02:21'),
-  (2,1,'login','Login','2018-06-13 15:02:26','2018-06-13 15:02:26'),
-  (3,1,'register','Register','2018-06-13 15:02:32','2018-06-13 15:02:32')
+  (1,1,'homepage','Homepage','2018-06-13 15:02:21','2018-06-13 15:02:21')
 ;
 
 /*!40000 ALTER TABLE `site_page` ENABLE KEYS */;
