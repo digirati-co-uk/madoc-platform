@@ -80,15 +80,21 @@ SQL;
     {
         $url = $this->urlHelper->create('admin/id', ['controller' => 'user', 'id' => $userId], ['force_canonical' => true]);
 
+        error_log('Requesting user bookmarks: ' . $url);
+
         $json = $this->makeRequest('/bookmarks/', [
             'user' => $url,
         ]);
 
         if ($json === null) {
-            return $json;
+            return null;
         }
 
+        error_log('Found ' . count($json['results'] ?? []) . ' bookmarks for ' . $url);
+
         $omekaJson = $this->addOmekaIds($json['results'] ?? []);
+
+        error_log('Added IDs to ' . count($omekaJson) . ' bookmarks for ' . $url);
 
         return [
             'query' => $json['query'] ?? null,

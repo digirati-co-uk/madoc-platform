@@ -66,7 +66,12 @@ class Module extends AbstractModule implements ConfigProviderInterface
                     $mainSite = getenv('OMEKA__MAIN_SITE_DOMAIN');
                     $mainSiteUri = new Uri($mainSite);
 
-                    if (!$annotation['generator'] || !$annotationIndexer) {
+                    if (!$annotationIndexer) {
+                        error_log('Annotation indexer not found');
+                        return;
+                    }
+
+                    if (!$annotation['generator']) {
                         $annotationId = $annotation['id'];
                         $annotationUri = new Uri($annotationId);
                         if ($annotationUri->getHost() === $mainSiteUri->getHost() && $internalAnnotationServer) {
@@ -80,6 +85,9 @@ class Module extends AbstractModule implements ConfigProviderInterface
                         $url->setQuery([
                             'annotation' => $annotationUri->toString(),
                         ]);
+
+                        error_log('Indexing annotation: GET ' . $url);
+
                         try {
                             $client = new Client();
                             $client->get($url->toString());
