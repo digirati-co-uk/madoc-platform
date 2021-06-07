@@ -7,21 +7,32 @@ export const getActivityStreamPage: RouteMiddleware<{
   primaryStream: string;
   secondaryStream?: string;
   page: string;
+  slug?: string;
 }> = async context => {
   // At least for now.
-  const { siteId } = optionalUserWithScope(context, ['site.admin']);
+  const slug = context.params.slug;
+  const siteId = slug
+    ? (await context.omeka.getSiteIdBySlug(slug))?.id
+    : optionalUserWithScope(context, ['site.view']).siteId;
   const { primaryStream, secondaryStream } = context.params;
-  const perPage = 100;
+
+  if (!siteId) {
+    throw new NotFound();
+  }
+
+  const perPage = 10;
   const page = Number(context.params.page);
   const [totalItems, orderedItems] = await Promise.all([
     context.changeDiscovery.getTotalItems({ primaryStream, secondaryStream }, siteId),
     context.changeDiscovery.getActivity({ primaryStream, secondaryStream }, { page, perPage }, siteId),
   ]);
 
-  const baseUrl = `${gatewayHost}/api/madoc/activity/${primaryStream}${
-    secondaryStream ? '/stream/' + secondaryStream : ''
-  }`;
-  const hasNextPage = totalItems > page * perPage;
+  const baseUrl = slug
+    ? `${gatewayHost}/s/${slug}/madoc/api/activity/${primaryStream}${
+        secondaryStream ? '/stream/' + secondaryStream : ''
+      }`
+    : `${gatewayHost}/api/madoc/activity/${primaryStream}${secondaryStream ? '/stream/' + secondaryStream : ''}`;
+  const hasNextPage = totalItems < page * perPage;
   const hasPrevPage = page > 0;
 
   if (Number.isNaN(page)) {

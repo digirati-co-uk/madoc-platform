@@ -1,35 +1,13 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from 'react-query';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { Button } from '../../../../shared/atoms/Button';
+import { SystemBackground } from '../../../../shared/atoms/SystemBackground';
+import { SystemListItem } from '../../../../shared/atoms/SystemListItem';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { Spinner } from '../../../../shared/icons/Spinner';
 import { AdminHeader } from '../../../molecules/AdminHeader';
-
-const ThemesContainer = styled.div`
-  padding: 3em;
-  height: 100%;
-  background: #d0d8e9;
-`;
-
-const ThemeItem = styled.div<{ $enabled?: boolean }>`
-  padding: 1em;
-  margin-bottom: 1em;
-  margin-left: auto;
-  margin-right: auto;
-  background: #fff;
-  border: 2px solid transparent;
-  border-radius: 5px;
-  display: flex;
-  max-width: 800px;
-
-  ${props =>
-    props.$enabled &&
-    css`
-      border-color: #1c8c59;
-    `}
-`;
 
 const ThemeThumbnail = styled.div`
   margin-right: 1em;
@@ -105,11 +83,11 @@ export const ListThemes: React.FC = () => {
     <>
       <AdminHeader title={t('Themes')} breadcrumbs={[{ label: 'Site admin', link: '/' }]} noMargin />
 
-      <ThemesContainer>
+      <SystemBackground>
         {data ? (
           data.themes.map(theme => {
             return (
-              <ThemeItem key={theme.id} $enabled={theme.enabled}>
+              <SystemListItem key={theme.id} $enabled={theme.enabled}>
                 {theme.thumbnail ? (
                   <ThemeThumbnail>
                     <img src={theme.thumbnail} alt="Theme thumbnail" />
@@ -149,13 +127,13 @@ export const ListThemes: React.FC = () => {
                     )}
                   </ThemeAction>
                 </ThemeActions>
-              </ThemeItem>
+              </SystemListItem>
             );
           })
         ) : (
           <Spinner />
         )}
-      </ThemesContainer>
+      </SystemBackground>
     </>
   );
 };

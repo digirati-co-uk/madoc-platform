@@ -137,7 +137,42 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient, d
       break;
     }
     case 'status.3': {
-      const task = await api.getTaskById<CrowdsourcingManifestTask>(taskId);
+      const task = await api.getTask<CrowdsourcingManifestTask>(taskId, {
+        all: true,
+        detail: true,
+      });
+
+      // Also - we want to publish to the activity stream.
+      try {
+        const projects = await api.getProjects(0, { root_task_id: task.root_task });
+        if (projects && projects.pagination.totalResults !== 0) {
+          const project = await api.getProject(projects.projects[0].id);
+          const activityStreams = {
+            published: false,
+            canvas: false,
+            curated: true,
+            manifest: true,
+            ...(project?.config?.activityStreams || {}),
+          };
+          const activated = activityStreams.manifest;
+          if (task.subject) {
+            const parsedUrn = parseUrn(task.subject);
+            if (parsedUrn && parsedUrn.type === 'manifest' && activated) {
+              await api.submitToManifestFeed(project.slug, parsedUrn.id);
+            } else {
+              console.log('Stream: invalid subject', task.subject);
+            }
+          } else {
+            console.log('Stream: missing subject');
+          }
+        } else {
+          console.log('Stream: project not found', task.root_task);
+        }
+      } catch (e) {
+        console.log('error adding to stream', e);
+        // no-op.
+      }
+
       if (!task.parent_task) return;
 
       const parent = await api.getTaskById(task.parent_task, true, undefined, undefined, undefined, true);

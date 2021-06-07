@@ -1,18 +1,11 @@
-// getPm2Status
-
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import { Pm2Status } from '../../../../types/pm2';
-import { ManifestFull } from '../../../../types/schemas/manifest-full';
-import { SnippetLarge } from '../../../shared/atoms/SnippetLarge';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../../shared/atoms/Statistics';
 import { WidePage } from '../../../shared/atoms/WidePage';
-import { LocaleString } from '../../../shared/components/LocaleString';
-import { useData, usePaginatedData } from '../../../shared/hooks/use-data';
+import { useData } from '../../../shared/hooks/use-data';
 import { useUser } from '../../../shared/hooks/use-site';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
-import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { UniversalComponent } from '../../../types';
 import { AdminHeader } from '../../molecules/AdminHeader';
 

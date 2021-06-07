@@ -2,8 +2,6 @@ import React from 'react';
 import { CrowdsourcingManifestTask } from '../../../gateway/tasks/crowdsourcing-manifest-task';
 import { CrowdsourcingReview } from '../../../gateway/tasks/crowdsourcing-review';
 import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
-import { InfoMessage } from '../../shared/atoms/InfoMessage';
-import { SuccessMessage } from '../../shared/atoms/SuccessMessage';
 import { LocaleString, useCreateLocaleString } from '../../shared/components/LocaleString';
 import { CollectionFull } from '../../../types/schemas/collection-full';
 import { ManifestFull } from '../../../types/schemas/manifest-full';
@@ -34,7 +32,6 @@ import { useManifestTask } from '../hooks/use-manifest-task';
 import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { Redirect } from 'react-router-dom';
-import { AttributionText } from '../../shared/atoms/AttributionText';
 
 export const ViewManifest: React.FC<{
   project?: ProjectFull;

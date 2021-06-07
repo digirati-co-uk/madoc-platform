@@ -43,6 +43,7 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
             { label: t('Model'), link: `/projects/${data.id}/model` },
             { label: t('Crowdsourcing'), link: `/projects/${data.id}/tasks` },
             { label: t('Search index'), link: `/projects/${data.id}/search` },
+            { label: t('Activity'), link: `/projects/${data.id}/activity` },
           ]}
           title={<LocaleString>{data.label}</LocaleString>}
           subtitle={
@@ -52,7 +53,6 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
           }
         />
         <WidePage>
-          {data ? <ProjectStatus status={data.status} /> : null}
           {renderUniversalRoutes(route.routes, { captureModelId: data.capture_model_id, project: data, refetch })}
         </WidePage>
       </>

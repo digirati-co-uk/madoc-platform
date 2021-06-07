@@ -34,6 +34,7 @@ import { getMedia } from './routes/media/get-media';
 import { listMedia } from './routes/media/list-media';
 import { deleteResourceClaim } from './routes/projects/delete-resource-claim';
 import { getProjectNote } from './routes/projects/get-project-note';
+import { updateCuratedFeed } from './routes/projects/update-curated-feed';
 import { updateProjectNote } from './routes/projects/update-project-note';
 import { fullReindex } from './routes/search/full-reindex';
 import { siteCanvasSource } from './routes/site/site-canvas-reference';
@@ -266,6 +267,7 @@ export const router = new TypedRouter({
   'update-project-metadata': [TypedRouter.PUT, '/api/madoc/projects/:id/metadata', updateProjectMetadata],
   'update-project-status': [TypedRouter.PUT, '/api/madoc/projects/:id/status', updateProjectStatus],
   'create-project-resource-claim': [TypedRouter.POST, '/api/madoc/projects/:id/claim', createResourceClaim],
+  'update-project-curated-feed': [TypedRouter.POST, '/api/madoc/projects/:id/feeds/:feed', updateCuratedFeed],
   'create-project-resource-prepare-claim': [
     TypedRouter.POST,
     '/api/madoc/projects/:id/prepare-claim',

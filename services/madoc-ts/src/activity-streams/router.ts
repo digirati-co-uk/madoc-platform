@@ -34,4 +34,23 @@ export const router: Record<keyof any, RouteWithParams<any>> = {
     '/api/madoc/activity/:primaryStream/stream/:secondaryStream/action/:action',
     postActivity,
   ],
+
+  // Site routes for public activity.
+  'site-get-primary-stream': [TypedRouter.GET, '/s/:slug/madoc/api/activity/:primaryStream/changes', getActivityStream],
+  'site-get-primary-stream-page': [
+    TypedRouter.GET,
+    '/s/:slug/madoc/api/activity/:primaryStream/page/:page',
+    getActivityStreamPage,
+  ],
+
+  'site-get-secondary-stream': [
+    TypedRouter.GET,
+    '/s/:slug/madoc/api/activity/:primaryStream/stream/:secondaryStream/changes',
+    getActivityStream,
+  ],
+  'site-get-secondary-stream-page': [
+    TypedRouter.GET,
+    '/s/:slug/madoc/api/activity/:primaryStream/stream/:secondaryStream/page/:page',
+    getActivityStreamPage,
+  ],
 };

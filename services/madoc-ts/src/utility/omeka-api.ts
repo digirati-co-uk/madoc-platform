@@ -547,6 +547,18 @@ export class OmekaApi {
     });
   }
 
+  async getSite(id: number) {
+    const site = await this.one<PublicSite>(mysql`
+      select id, title, slug, is_public from site where id = ${id}
+    `);
+
+    if (!site) {
+      return undefined;
+    }
+
+    return site;
+  }
+
   async getSiteIdBySlug(slug: string, userId?: number, isAdmin = false) {
     const cacheKey = `public-site-id:${slug}`;
     const publicSiteId: PublicSite | undefined = cache.get(cacheKey);

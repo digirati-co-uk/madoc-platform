@@ -1,5 +1,11 @@
 import { BaseField, CaptureModel, RevisionRequest } from '@capture-models/types';
 import { createChoice, createDocument, generateId } from '@capture-models/helpers';
+import {
+  ActivityOptions,
+  ActivityOrderedCollection,
+  ActivityOrderedCollectionPage,
+  ChangeDiscoveryActivityRequest,
+} from '../activity-streams/change-discovery-types';
 import { DynamicDataSourcesExtension } from '../extensions/capture-models/DynamicDataSources/DynamicDataSources.extension';
 import { DynamicData } from '../extensions/capture-models/DynamicDataSources/types';
 import { CaptureModelExtension } from '../extensions/capture-models/extension';
@@ -503,6 +509,24 @@ export class ApiClient {
     });
   }
 
+  async submitToCuratedFeed(projectId: string | number, manifestId: number) {
+    return this.request(`/api/madoc/projects/${projectId}/feeds/curated`, {
+      method: 'POST',
+      body: {
+        manifestId,
+      },
+    });
+  }
+
+  async submitToManifestFeed(projectId: string | number, manifestId: number) {
+    return this.request(`/api/madoc/projects/${projectId}/feeds/manifest`, {
+      method: 'POST',
+      body: {
+        manifestId,
+      },
+    });
+  }
+
   async deleteResourceClaim(taskId: string) {
     throw new Error('Not yet implemented');
   }
@@ -797,13 +821,16 @@ export class ApiClient {
     return this.request<GetMetadata>(`/api/madoc/iiif/manifests/${id}/metadata`);
   }
 
-  async autocompleteManifests(q: string, project_id?: string, blacklist_ids?: number[], page: number = 1) {
+  async autocompleteManifests(q: string, project_id?: string, blacklist_ids?: number[], page = 1) {
     return this.request<Array<{ id: number; label: string }>>(
-      `/api/madoc/iiif/autocomplete/manifests?${stringify({ q, project_id, blacklist_ids, page }, { arrayFormat: 'comma' })}`
+      `/api/madoc/iiif/autocomplete/manifests?${stringify(
+        { q, project_id, blacklist_ids, page },
+        { arrayFormat: 'comma' }
+      )}`
     );
   }
 
-  async autocompleteCollections(q: string, project_id?: string, blacklist_ids?: number[], page: number = 1) {
+  async autocompleteCollections(q: string, project_id?: string, blacklist_ids?: number[], page = 1) {
     return this.request<Array<{ id: number; label: string }>>(
       `/api/madoc/iiif/autocomplete/collections?${stringify(
         { q, project_id, blacklist_ids, page },
@@ -1735,6 +1762,65 @@ export class ApiClient {
 
   async getSiteDetails(siteId: number) {
     return this.request<Site>(`/api/madoc/site/${siteId}/details`);
+  }
+
+  // Activity stream
+  postToActivityStream(
+    {
+      primaryStream,
+      secondaryStream,
+      action,
+    }: {
+      primaryStream: string;
+      secondaryStream?: string;
+      action: 'create' | 'update' | 'delete' | 'move' | 'add' | 'remove';
+    },
+    request: ChangeDiscoveryActivityRequest,
+    options?: ActivityOptions
+  ) {
+    const body = { ...request, options };
+
+    if (secondaryStream) {
+      return this.request(`/api/madoc/activity/${primaryStream}/stream/${secondaryStream}/action/${action}`, {
+        method: 'POST',
+        body,
+      });
+    }
+
+    return this.request(`/api/madoc/activity/${primaryStream}/action/${action}`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  getActivityStream(options: { primaryStream: string; secondaryStream?: string }): Promise<ActivityOrderedCollection>;
+  getActivityStream(options: {
+    primaryStream: string;
+    secondaryStream?: string;
+    page: number;
+  }): Promise<ActivityOrderedCollectionPage>;
+  getActivityStream({
+    primaryStream,
+    secondaryStream,
+    page,
+  }: {
+    primaryStream: string;
+    secondaryStream?: string;
+    page?: number;
+  }) {
+    if (typeof page !== 'undefined') {
+      if (secondaryStream) {
+        return this.request(`/api/madoc/activity/${primaryStream}/stream/${secondaryStream}/page/${page}`);
+      }
+
+      return this.request(`/api/madoc/activity/${primaryStream}/page/${page}`);
+    }
+
+    if (secondaryStream) {
+      return this.request(`/api/madoc/activity/${primaryStream}/stream/${secondaryStream}/changes`);
+    }
+
+    return this.request(`/api/madoc/activity/${primaryStream}/changes`);
   }
 
   // Search API

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useMutation } from 'react-query';
 import { Button, ButtonRow } from '../../../../shared/atoms/Button';
+import { ProjectStatus } from '../../../../shared/atoms/ProjectStatus';
 import { SubtaskProgress } from '../../../../shared/atoms/SubtaskProgress';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../../../shared/atoms/Statistics';
 import { ProjectFull } from '../../../../../types/schemas/project-full';
@@ -19,6 +20,7 @@ export const ProjectOverview: React.FC<{ project: ProjectFull; refetch: () => Pr
 
   return (
     <div>
+      <ProjectStatus status={project.status} />
       <StatisticContainer>
         <Statistic>
           <StatisticNumber>{project.statistics['0'] || 0}</StatisticNumber>

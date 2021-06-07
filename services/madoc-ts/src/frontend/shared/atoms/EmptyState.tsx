@@ -6,6 +6,13 @@ export const EmptyState = styled.div<{ $box?: boolean; $noMargin?: boolean }>`
   font-size: 0.8em;
   padding: 1.5em;
   margin: 100px 10px 10px 10px;
+
+  ${props =>
+    props.$noMargin &&
+    css`
+      margin-top: 10px;
+    `}
+
   ${props =>
     props.$box &&
     css`
