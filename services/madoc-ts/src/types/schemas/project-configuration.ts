@@ -53,6 +53,7 @@ export type ProjectConfiguration = {
     hideRandomCanvas?: boolean;
     hideFilterImages?: boolean;
     directModelPage?: boolean;
+    showIIIFLogo?: boolean;
   };
   headerOptions?: {
     hideSiteTitle?: boolean;

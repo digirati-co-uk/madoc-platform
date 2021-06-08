@@ -314,6 +314,10 @@ export const LinkButton = styled.button<{ $inherit?: boolean }>`
 `;
 
 export const ButtonRow = styled.div<{ $noMargin?: boolean }>`
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+
   ${props =>
     props.$noMargin
       ? ''

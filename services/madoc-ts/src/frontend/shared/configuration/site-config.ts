@@ -250,6 +250,10 @@ export const siteConfigurationModel: {
         label: 'Navigate directly to model page from manifest',
         value: 'directModelPage',
       },
+      {
+        label: 'Show IIIF drag and drop logo',
+        value: 'showIIIFLogo',
+      },
     ],
   },
   headerOptions: {
