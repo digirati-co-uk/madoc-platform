@@ -2,6 +2,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Button, ButtonRow } from '../../shared/atoms/Button';
+import { IIIFDragIcon } from '../../shared/components/IIIFDragIcon';
+import { IIIFLogo } from '../../shared/icons/iiif-logo';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useManifestPageConfiguration } from '../hooks/use-manifest-page-configuration';
 import { useManifestTask } from '../hooks/use-manifest-task';
@@ -20,7 +22,7 @@ export const ManifestActions: React.FC = () => {
   const options = useManifestPageConfiguration();
   const { isActive } = useProjectStatus();
   const {
-    project: { claimGranularity },
+    project: { claimGranularity, manifestPageOptions },
   } = useSiteConfiguration();
   const { isManifestComplete, userManifestTask, canClaimManifest } = useManifestTask();
   const { doneTasks, inReview, inProgress } = useManifestUserTasks();
@@ -34,6 +36,8 @@ export const ManifestActions: React.FC = () => {
     (userManifestTask || canClaimManifest) &&
     !inReview.length &&
     !isInProgress;
+
+  const showIIIFLogo = manifestPageOptions?.showIIIFLogo;
 
   return (
     <>
@@ -49,6 +53,7 @@ export const ManifestActions: React.FC = () => {
         </ButtonRow>
       ) : null}
       <ButtonRow>
+        {showIIIFLogo ? <IIIFDragIcon /> : null}
         {!options.hideOpenInMirador ? (
           <Button
             as={HrefLink}
