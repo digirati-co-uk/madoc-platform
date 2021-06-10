@@ -224,7 +224,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
                 <>
                   <BackToChoicesButton />
 
-                  <div style={{ overflowY: 'auto', padding: '1em 1em 0 1em', fontSize: '13px' }}>
+                  <div style={{ padding: '1em 1em 0 1em', fontSize: '13px' }}>
                     <EditorSlots.TopLevelEditor />
                   </div>
 

@@ -6,6 +6,9 @@ import {
   ActivityOrderedCollectionPage,
   ChangeDiscoveryActivityRequest,
 } from '../activity-streams/change-discovery-types';
+import { ConfigInjectionExtension } from '../extensions/capture-models/ConfigInjection/ConfigInjection.extension';
+import { MADOC_MODEL_CONFIG } from '../extensions/capture-models/ConfigInjection/constants';
+import { ConfigInjectionSettings } from '../extensions/capture-models/ConfigInjection/types';
 import { DynamicDataSourcesExtension } from '../extensions/capture-models/DynamicDataSources/DynamicDataSources.extension';
 import { DynamicData } from '../extensions/capture-models/DynamicDataSources/types';
 import { CaptureModelExtension } from '../extensions/capture-models/extension';
@@ -113,6 +116,8 @@ export class ApiClient {
             new Paragraphs(this),
             // Allows for dynamic values to be applied to models
             new DynamicDataSourcesExtension(this, this.captureModelDataSources),
+            // Allows for configuration to make last-minute changes to models.
+            new ConfigInjectionExtension(this),
           ]
     );
   }
@@ -408,7 +413,10 @@ export class ApiClient {
   }
 
   // Projects.
-  async getProjects(page?: number, query: { root_task_id?: string; published?: boolean } = {}) {
+  async getProjects(
+    page?: number,
+    query: { root_task_id?: string; published?: boolean; capture_model_id?: string } = {}
+  ) {
     return this.request<ProjectList>(`/api/madoc/projects?${stringify({ page, ...query })}`);
   }
 
@@ -603,7 +611,7 @@ export class ApiClient {
   }
 
   async getProjectConfiguration(projectId: number, siteUrn: string): Promise<Partial<ProjectConfiguration>> {
-    const projectConfig = await this.getConfiguration<ProjectConfiguration>('madoc', [
+    const projectConfig = await this.getConfiguration<ProjectConfiguration>(MADOC_MODEL_CONFIG, [
       siteUrn,
       `urn:madoc:project:${projectId}`,
     ]);
@@ -611,6 +619,10 @@ export class ApiClient {
     return projectConfig.config && projectConfig.config[0] && projectConfig.config[0].config_object
       ? projectConfig.config[0].config_object
       : {};
+  }
+
+  async getModelConfiguration(query: import('../routes/site/site-model-configuration').SiteModelConfigurationQuery) {
+    return this.request<ConfigInjectionSettings>(`/api/madoc/configuration/model?${stringify(query)}`);
   }
 
   async saveSiteConfiguration(config: ProjectConfiguration, query?: { project_id?: number; collection_id?: number }) {
@@ -2011,6 +2023,12 @@ export class ApiClient {
 
   async getSiteConfiguration(query?: import('../routes/site/site-configuration').SiteConfigurationQuery) {
     return this.publicRequest<ProjectConfiguration>(`/madoc/api/configuration`, query);
+  }
+
+  async getSiteModelConfiguration(
+    query: import('../routes/site/site-model-configuration').SiteModelConfigurationQuery
+  ) {
+    return this.publicRequest<ConfigInjectionSettings>(`/madoc/api/configuration/model`, query);
   }
 
   async getSiteSearchFacetConfiguration() {

@@ -1,6 +1,7 @@
 import { exportSite } from './routes/admin/export-site';
 import { getMetadataKeys } from './routes/admin/get-metadata-keys';
 import { getMetadataValues } from './routes/admin/get-metadata-values';
+import { getModelConfiguration } from './routes/admin/get-model-configuration';
 import { importSite } from './routes/admin/import-site';
 import { listJobs, runJob } from './routes/admin/list-jobs';
 import { getLocalisation, listLocalisations, updateLocalisation } from './routes/admin/localisation';
@@ -15,6 +16,7 @@ import {
   serveThemeAsset,
   uninstallTheme,
 } from './routes/admin/themes';
+import { updateModelConfiguration } from './routes/admin/update-model-configuration';
 import { updateSiteConfiguration } from './routes/admin/update-site-configuration';
 import { createBlock } from './routes/content/create-block';
 import { createPage } from './routes/content/create-page';
@@ -38,6 +40,7 @@ import { updateCuratedFeed } from './routes/projects/update-curated-feed';
 import { updateProjectNote } from './routes/projects/update-project-note';
 import { fullReindex } from './routes/search/full-reindex';
 import { siteCanvasSource } from './routes/site/site-canvas-reference';
+import { siteModelConfiguration } from './routes/site/site-model-configuration';
 import { sitePageNavigation } from './routes/site/site-page-navigation';
 import { getSlot } from './routes/content/get-slot';
 import { getAllPages } from './routes/content/list-pages';
@@ -146,6 +149,8 @@ export const router = new TypedRouter({
   'cron-jobs': [TypedRouter.GET, '/api/madoc/cron/jobs', listJobs],
   'run-cron-jobs': [TypedRouter.POST, '/api/madoc/cron/jobs/:jobId/run', runJob],
   'update-site-configuration': [TypedRouter.POST, '/api/madoc/configuration', updateSiteConfiguration],
+  'get-model-configuration': [TypedRouter.GET, '/api/madoc/configuration/model', getModelConfiguration],
+  'update-model-configuration': [TypedRouter.POST, '/api/madoc/configuration/model', updateModelConfiguration],
   'update-search-facet-configuration': [
     TypedRouter.POST,
     '/api/madoc/configuration/search-facets',
@@ -366,6 +371,7 @@ export const router = new TypedRouter({
     siteCanvasTasks,
   ],
   'site-configuration': [TypedRouter.GET, '/s/:slug/madoc/api/configuration', siteConfiguration],
+  'site-model-configuration': [TypedRouter.GET, '/s/:slug/madoc/api/configuration/model', siteModelConfiguration],
   'site-page-navigation': [TypedRouter.GET, '/s/:slug/madoc/api/pages/navigation/:paths*', sitePageNavigation],
   'site-facet-configuration': [
     TypedRouter.GET,
