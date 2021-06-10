@@ -80,9 +80,9 @@ export class ApiClient {
   private errorRecoveryHandlers: Array<() => void> = [];
   private isDown = false;
   private currentUser?: { scope: string[]; user: { id: string; name?: string } };
-  private captureModelExtensions: ExtensionManager<CaptureModelExtension>;
   private captureModelDataSources: DynamicData[];
   // Public.
+  captureModelExtensions: ExtensionManager<CaptureModelExtension>;
   pageBlocks: PageBlockExtension;
   media: MediaExtension;
   tasks: TaskExtension;
@@ -611,7 +611,7 @@ export class ApiClient {
   }
 
   async getProjectConfiguration(projectId: number, siteUrn: string): Promise<Partial<ProjectConfiguration>> {
-    const projectConfig = await this.getConfiguration<ProjectConfiguration>(MADOC_MODEL_CONFIG, [
+    const projectConfig = await this.getConfiguration<ProjectConfiguration>('madoc', [
       siteUrn,
       `urn:madoc:project:${projectId}`,
     ]);
