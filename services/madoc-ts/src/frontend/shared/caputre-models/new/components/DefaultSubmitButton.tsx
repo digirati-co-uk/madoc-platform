@@ -47,7 +47,6 @@ export const DefaultSubmitButton: React.FC<{ afterSave?: (req: RevisionRequest) 
             return isSuccess ? <EditorSlots.PostSubmission /> : <EditorSlots.PreviewSubmission />;
           }}
           onClose={() => {
-            deselectRevision();
             reset();
           }}
           footerAlignRight
@@ -71,6 +70,7 @@ export const DefaultSubmitButton: React.FC<{ afterSave?: (req: RevisionRequest) 
                   data-cy="save-later-button"
                   onClick={() => {
                     saveRevision('draft').then(() => {
+                      deselectRevision();
                       close();
                     });
                   }}
@@ -82,7 +82,9 @@ export const DefaultSubmitButton: React.FC<{ afterSave?: (req: RevisionRequest) 
                   disabled={isLoading}
                   $primary
                   onClick={() => {
-                    saveRevision('submitted');
+                    saveRevision('submitted').then(() => {
+                      deselectRevision();
+                    });
                   }}
                 >
                   {isLoading ? t('Saving...') : t('Submit')}
