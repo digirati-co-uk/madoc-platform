@@ -9,5 +9,5 @@ export const DefaultPreviewSubmission: React.FC = () => {
     return null;
   }
 
-  return <ViewDocument document={currentRevision.document} />;
+  return <ViewDocument document={currentRevision.document} padding={false} />;
 };
