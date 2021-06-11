@@ -30,7 +30,7 @@ export function useManagePropertyList(property: string) {
 
   const removeItem = useCallback(
     (id: string) => {
-      if (configuration.allowEditing) {
+      if (id && configuration.allowEditing) {
         try {
           removeInstance({ path: [...path, [property, id]] as any });
         } catch (e) {

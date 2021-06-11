@@ -75,7 +75,7 @@ export function useInlineProperties(
 
     return fields.map((field, idx) => (
       <ProfileProvider key={idx} profile={field.profile || entity.profile}>
-        <Slots.FieldInstance field={field} property={property} path={path as any} hideHeader={idx !== 0} />
+        <Slots.FieldInstance field={field} property={property} path={path as any} hideHeader={fields.length > 1} />
       </ProfileProvider>
     ));
   };

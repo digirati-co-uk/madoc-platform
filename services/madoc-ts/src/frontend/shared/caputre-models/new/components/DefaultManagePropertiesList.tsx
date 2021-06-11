@@ -68,7 +68,12 @@ export const DefaultManagePropertyList: EditorRenderingConfig['ManagePropertyLis
       {canRemove
         ? // @todo this is a fragile model.
           React.Children.map(children, comp => {
-            const id = (comp as any)?.props?.field?.id || (comp as any)?.props?.entity?.id;
+            const id =
+              (comp as any)?.props?.children?.props?.field?.id ||
+              (comp as any)?.props?.children?.props?.entity?.id ||
+              (comp as any)?.props?.field?.id ||
+              (comp as any)?.props?.entity?.id;
+
             return (
               <InstanceContainer>
                 <InstanceComponent>{comp}</InstanceComponent>

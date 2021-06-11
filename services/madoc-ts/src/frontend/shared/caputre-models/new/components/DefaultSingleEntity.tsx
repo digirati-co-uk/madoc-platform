@@ -20,7 +20,7 @@ export const DefaultSingleEntity: EditorRenderingConfig['SingleEntity'] = props 
   }
 
   return (
-    <>
+    <React.Fragment key={entity.id}>
       <Slots.Breadcrumbs />
 
       {entityLabel && showTitle ? <FieldHeader label={entityLabel} description={entity.description} /> : null}
@@ -39,6 +39,6 @@ export const DefaultSingleEntity: EditorRenderingConfig['SingleEntity'] = props 
           );
         })}
       </Slots.AdjacentNavigation>
-    </>
+    </React.Fragment>
   );
 };

@@ -7,6 +7,6 @@ export const DefaultFieldInstance: React.FC<{
   property: string;
   path: Array<[string, string]>;
   hideHeader?: boolean;
-}> = ({ field, property, path }) => {
-  return <FieldInstance field={field} property={property} path={path} />;
+}> = ({ field, property, path, hideHeader }) => {
+  return <FieldInstance field={field} property={property} path={path} hideHeader={hideHeader} />;
 };
