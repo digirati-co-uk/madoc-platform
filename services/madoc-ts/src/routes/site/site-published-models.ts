@@ -5,6 +5,7 @@ import { getProject } from '../../database/queries/project-queries';
 import { PARAGRAPHS_PROFILE } from '../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { castBool } from '../../utility/cast-bool';
+import { RequestError } from '../../utility/errors/request-error';
 import {
   captureModelFieldToOpenAnnotation,
   captureModelFieldToW3CAnnotation,
@@ -24,12 +25,24 @@ export type SitePublishedModelsQuery = {
   model_id?: string;
   selectors?: boolean;
   derived_from?: string;
+  version?: 'source' | '3.0' | '2.1';
+  m?: string;
 };
 
 export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> = async context => {
   const { site, siteApi } = context.state;
-  const { derived_from, format, model_id } = context.query as SitePublishedModelsQuery;
+  const {
+    derived_from,
+    format,
+    model_id,
+    version = 'source',
+    m: manifestId,
+  } = context.query as SitePublishedModelsQuery;
   const selectors = castBool(context.query.selectors);
+
+  if (version !== 'source' && !manifestId) {
+    throw new RequestError('Cannot request models with version and no manifest ID');
+  }
 
   // Formats:
   // - Models (default)
@@ -88,6 +101,10 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
     path: context.path,
     canvas: resp.source,
   };
+
+  if (version === '3.0' || version === '2.1') {
+    defaultOptions.canvas = `${gatewayHost}/s/${site.slug}/madoc/api/manifests/${manifestId}/export/${version}/c${resp.id}`;
+  }
 
   switch (format) {
     case 'capture-model':
