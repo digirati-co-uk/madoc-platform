@@ -47,6 +47,13 @@ export const ProjectOverview: React.FC<{ project: ProjectFull; refetch: () => Pr
 
       <ButtonRow>
         <Button
+          $success={project.status === 4}
+          disabled={isLoading || project.status === 4}
+          onClick={() => updateStatus(4)}
+        >
+          Prepare project
+        </Button>
+        <Button
           $success={project.status === 0}
           disabled={isLoading || project.status === 0}
           onClick={() => updateStatus(0)}
@@ -73,13 +80,6 @@ export const ProjectOverview: React.FC<{ project: ProjectFull; refetch: () => Pr
           onClick={() => updateStatus(3)}
         >
           Archive project
-        </Button>
-        <Button
-          $success={project.status === 4}
-          disabled={isLoading || project.status === 4}
-          onClick={() => updateStatus(4)}
-        >
-          Prepare project
         </Button>
       </ButtonRow>
     </div>

@@ -50,8 +50,8 @@
   "dependencies": {
     "@atlas-viewer/atlas": "1.5.2",
     "@atlas-viewer/iiif-image-api": "^1.2.5",
-    "@capture-models/editor": "^0.13.13",
-    "@capture-models/helpers": "^0.13.13",
+    "@capture-models/editor": "^0.13.15",
+    "@capture-models/helpers": "^0.13.14",
     "@capture-models/types": "^0.13.0",
     "@hyperion-framework/presentation-2-parser": "^1.0.0",
     "@hyperion-framework/parser": "^1.0.0",

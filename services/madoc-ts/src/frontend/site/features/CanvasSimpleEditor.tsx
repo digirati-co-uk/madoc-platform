@@ -16,6 +16,7 @@ import {
 } from '../../shared/caputre-models/new/components/RevisionProviderWithFeatures';
 import { SegmentationFieldInstance } from '../../shared/caputre-models/new/components/SegmentationFieldInstance';
 import { SegmentationInlineEntity } from '../../shared/caputre-models/new/components/SegmentationInlineEntity';
+import { SegmentationInlineProperties } from '../../shared/caputre-models/new/components/SegmentationInlineProperties';
 import { SimpleSaveButton } from '../../shared/caputre-models/new/components/SimpleSaveButton';
 import { EditorContentViewer } from '../../shared/caputre-models/new/EditorContent';
 import { CanvasVaultContext } from '../../shared/components/CanvasVaultContext';
@@ -116,6 +117,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
         SubmitButton: DirectEditButton,
         FieldInstance: isSegmentation ? SegmentationFieldInstance : undefined,
         InlineEntity: isSegmentation ? SegmentationInlineEntity : undefined,
+        InlineProperties: isSegmentation ? SegmentationInlineProperties : undefined,
       }
     : isEditing || mode === 'transcription'
     ? {

@@ -1,7 +1,10 @@
 import { isEntity } from '@capture-models/helpers';
 import { CaptureModel } from '@capture-models/types';
+import React from 'react';
 
 export function getEntityLabel(document: CaptureModel['document'], defaultLabel?: string | any): string {
+  const fallback = defaultLabel || '';
+
   if (
     document.labelledBy &&
     document.properties[document.labelledBy] &&
@@ -18,7 +21,8 @@ export function getEntityLabel(document: CaptureModel['document'], defaultLabel?
         parts.push(getEntityLabel(field, defaultLabel));
       }
     }
-    return parts.join(' ');
+
+    return parts.join(' ') || fallback;
   }
 
   const props = Object.keys(document.properties);
@@ -33,14 +37,11 @@ export function getEntityLabel(document: CaptureModel['document'], defaultLabel?
         } else if (isEntity(item)) {
           parts.push(getEntityLabel(item));
         }
-        return parts.join(' ');
+
+        return parts.join(' ') || fallback;
       }
     }
   }
 
-  if (defaultLabel) {
-    return defaultLabel;
-  }
-
-  return `${document.label} (type: ${document.type})`;
+  return fallback;
 }

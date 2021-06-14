@@ -64,8 +64,8 @@ export const exportManifest: RouteMiddleware<{ id: string; slug: string }> = asy
       }
       // @todo on a per-project basis.
       canvas.otherContent.push({
-        '@id': `${gatewayHost}/s/default/madoc/api/canvases/${idMapping[id]}/models?format=open-annotation&selectors=true`,
-        id: `${gatewayHost}/s/default/madoc/api/canvases/${idMapping[id]}/models?format=open-annotation&selectors=true`,
+        '@id': `${gatewayHost}/s/${siteSlug}/madoc/api/canvases/${idMapping[id]}/models?format=open-annotation&selectors=true`,
+        id: `${gatewayHost}/s/${siteSlug}/madoc/api/canvases/${idMapping[id]}/models?format=open-annotation&selectors=true`,
         '@type': 'sc:AnnotationList',
         label: 'Annotations',
       });

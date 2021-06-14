@@ -3,6 +3,7 @@ import { RoundedCard } from '@capture-models/editor';
 import { ModifiedStatus } from '../features/ModifiedStatus';
 import { useCurrentField } from '../hooks/use-current-field';
 import { useFieldDetails } from '../hooks/use-field-details';
+import { useHighlightSelector } from '../hooks/use-highlight-selector';
 import { EditorRenderingConfig, useSlotContext } from './EditorSlots';
 
 /**
@@ -12,6 +13,8 @@ export const DefaultSingleField: EditorRenderingConfig['SingleField'] = () => {
   const Slots = useSlotContext();
   const [field, { property, path }] = useCurrentField();
   const { isModified } = useFieldDetails(field);
+
+  useHighlightSelector(field?.selector?.id);
 
   if (!field || !property) {
     return null;

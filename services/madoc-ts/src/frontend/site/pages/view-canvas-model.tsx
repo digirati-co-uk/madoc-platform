@@ -118,17 +118,15 @@ export const ViewCanvasModel: React.FC = () => {
       {!isPreparing ? <CanvasTaskWarningMessage /> : null}
 
       {isPreparing ? (
-        <>
-          {!isSegmentation ? (
-            <ButtonRow>
-              <Button onClick={() => setIsSegmentation(true)}>Segmentation mode</Button>
-            </ButtonRow>
-          ) : (
-            <ButtonRow>
-              <Button onClick={() => setIsSegmentation(false)}>Prepare mode</Button>
-            </ButtonRow>
-          )}
-        </>
+        <ButtonRow>
+          <Button $primary={isSegmentation} onClick={() => setIsSegmentation(true)}>
+            {t('Segmentation mode')}
+          </Button>
+
+          <Button $primary={!isSegmentation} onClick={() => setIsSegmentation(false)}>
+            {t('Prepare mode')}
+          </Button>
+        </ButtonRow>
       ) : null}
 
       {!isPreparing && showWarning ? (

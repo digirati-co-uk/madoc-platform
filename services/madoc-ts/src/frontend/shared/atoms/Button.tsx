@@ -242,6 +242,7 @@ export const RoundedButton = styled.a<{ disabled?: boolean }>`
   ${props =>
     props.disabled &&
     css`
+      pointer-events: none;
       cursor: not-allowed;
       background: #eee;
       color: #777b80;

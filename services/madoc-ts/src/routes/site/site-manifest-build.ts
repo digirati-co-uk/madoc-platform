@@ -1,11 +1,11 @@
 import { AnnotationPage } from '@hyperion-framework/types';
 import { Vault } from '@hyperion-framework/vault';
 import { sql } from 'slonik';
-import { deprecationGetItemsJson } from '../../../deprecations/01-local-source-canvas';
-import { gatewayHost } from '../../../gateway/api.server';
-import { RouteMiddleware } from '../../../types/route-middleware';
-import { IIIFBuilder } from '../../../utility/iiif-builder/iiif-builder';
-import { createMetadataReducer } from '../../../utility/iiif-metadata';
+import { deprecationGetItemsJson } from '../../deprecations/01-local-source-canvas';
+import { gatewayHost } from '../../gateway/api.server';
+import { RouteMiddleware } from '../../types/route-middleware';
+import { IIIFBuilder } from '../../utility/iiif-builder/iiif-builder';
+import { createMetadataReducer } from '../../utility/iiif-metadata';
 
 type IIIFExportRow = {
   derived__id: number;
@@ -70,7 +70,7 @@ type IIIFExportRow = {
       }
   );
 
-export const buildManifest: RouteMiddleware<{
+export const siteManifestBuild: RouteMiddleware<{
   slug: string;
   id: string;
   version: string;
@@ -291,10 +291,13 @@ export const buildManifest: RouteMiddleware<{
     includeManifestHomepage: false, // Serializer not working for homepage.
     includeCanvasHomepage: false, // Serializer not working for homepage.
     jsonModels: true,
+    sourceIds: false, // Source IDs supported in theory for both P2 and P3. Version = source is the same as P3.
   };
 
+  const useSourceIds = version === 'source' || configOptions.sourceIds;
+
   const newManifestId =
-    manifestRow.source && version === 'source'
+    manifestRow.source && useSourceIds
       ? manifestRow.source
       : `${gatewayHost}/s/${siteSlug}/madoc/api/manifests/${manifestId}/export/${version}`;
 
@@ -402,8 +405,7 @@ export const buildManifest: RouteMiddleware<{
       .map(c => table.Resource[c.id]);
 
     for (const canvasRow of canvases) {
-      const newCanvasId =
-        canvasRow.source && version === 'source' ? canvasRow.source : `${manifest.id}/c${canvasRow.id}`;
+      const newCanvasId = canvasRow.source && useSourceIds ? canvasRow.source : `${manifest.id}/c${canvasRow.id}`;
       manifest.createCanvas(newCanvasId, canvas => {
         const canvasMetadata = table.Metadata[canvasRow.id] || {};
         const canvasLinking = Object.values(table.Linking[canvasRow.id] || {});
@@ -474,11 +476,13 @@ export const buildManifest: RouteMiddleware<{
           }
         }
 
+        const annoVer = configOptions.sourceIds ? 'source' : version;
+
         if (configOptions.addUniversalAnnotations) {
           canvas.addAnnotations({
             id: projectSlug
-              ? `${gatewayHost}/s/default/madoc/api/canvases/${canvasRow.id}/models?format=open-annotation&selectors=true&project=${projectSlug}`
-              : `${gatewayHost}/s/default/madoc/api/canvases/${canvasRow.id}/models?format=open-annotation&selectors=true`,
+              ? `${gatewayHost}/s/${site.slug}/madoc/api/canvases/${canvasRow.id}/models?format=open-annotation&version=${annoVer}&m=${manifestId}&selectors=true&project=${projectSlug}`
+              : `${gatewayHost}/s/${site.slug}/madoc/api/canvases/${canvasRow.id}/models?format=open-annotation&version=${annoVer}&m=${manifestId}&selectors=true`,
             type: 'AnnotationPage',
             label: { none: ['Annotations'] },
           });
@@ -486,8 +490,8 @@ export const buildManifest: RouteMiddleware<{
         if (configOptions.jsonModels) {
           canvas.addSeeAlso({
             id: projectSlug
-              ? `${gatewayHost}/s/default/madoc/api/canvases/${canvasRow.id}/models?format=json&selectors=true&project=${projectSlug}`
-              : `${gatewayHost}/s/default/madoc/api/canvases/${canvasRow.id}/models?format=json&selectors=true`,
+              ? `${gatewayHost}/s/${site.slug}/madoc/api/canvases/${canvasRow.id}/models?format=json&version=${annoVer}&m=${manifestId}&selectors=true&project=${projectSlug}`
+              : `${gatewayHost}/s/${site.slug}/madoc/api/canvases/${canvasRow.id}/models?format=json&version=${annoVer}&m=${manifestId}&selectors=true`,
             type: 'Dataset',
             format: 'application/json',
             profile: 'https://madoc.io/capture-models/json/v1.0',

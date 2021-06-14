@@ -2491,14 +2491,14 @@
     screenfull "^3.3.2"
     whatwg-fetch "^3.0.0"
 
-"@capture-models/editor@^0.13.13":
-  version "0.13.13"
-  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.13.13.tgz#4955df3cc3c8e40d1acfef0fc3d15645ce1c7a8f"
-  integrity sha512-stT0VjmDbEQh4Z/65D6oqcaIPMUOfiI8d5yRfmz2vKbFZU0+gOAMGbXP1WxmqaU6x5w5gwsRgxlWwWqnBkQryQ==
+"@capture-models/editor@^0.13.15":
+  version "0.13.15"
+  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.13.15.tgz#ef5991e6d53a5de591449b4d7cd5d782f9427c82"
+  integrity sha512-80JUIUT1Far/24g27it4s7cqTjsmcDWL+Qczh7JazXv42336VpWyO4Icqyy9ESvCJ9kk6OeeQgG0cO5iBTmjXg==
   dependencies:
     "@atlas-viewer/atlas" "^1.5.2"
-    "@capture-models/helpers" "^0.13.13"
-    "@capture-models/plugin-api" "^0.13.0"
+    "@capture-models/helpers" "^0.13.14"
+    "@capture-models/plugin-api" "^0.13.14"
     "@capture-models/types" "^0.13.0"
     "@hyperion-framework/react-vault" "^1.0.0"
     "@hyperion-framework/types" "^1.0.0"
@@ -2518,6 +2518,7 @@
     immer "^7.0.7"
     immutable "^3.8.2"
     manifesto.js "4.1.0"
+    mitt "^2.1.0"
     normalize.css "^8.0.1"
     prop-types "^15.7.2"
     react "^16.13.1"
@@ -2537,22 +2538,22 @@
     use-async-effect "^2.2.1"
     use-debounce "^3.3.0"
 
-"@capture-models/helpers@^0.13.13":
-  version "0.13.13"
-  resolved "https://registry.yarnpkg.com/@capture-models/helpers/-/helpers-0.13.13.tgz#392a4ea5896ae283beead64adb149563a7ddf654"
-  integrity sha512-pVyr3CGmqKk7PxOOFK5FOfrHOGD6luEtjD9C+pPbaVrcFjOo9iif18p4r+gTfXlU+HjDpuLC8tr3qYxHF/VbWw==
+"@capture-models/helpers@^0.13.14":
+  version "0.13.14"
+  resolved "https://registry.yarnpkg.com/@capture-models/helpers/-/helpers-0.13.14.tgz#ab580a41fb223b77c9118126d4b3563e35f985c3"
+  integrity sha512-+kLOKITTSSuVnpV4xHQmVX144Ge1Vu4x0PeJ6HWbf45Dc43jBCyWHUNzUeQezWAoJgJ4nGYCamSBnXkHZCP88A==
   dependencies:
-    "@capture-models/plugin-api" "^0.13.0"
+    "@capture-models/plugin-api" "^0.13.14"
     "@capture-models/types" "^0.13.0"
     fast-copy "^2.0.4"
     immer "^7.0.7"
     react "^16.13.1"
     uuid "^3.4.0"
 
-"@capture-models/plugin-api@^0.13.0":
-  version "0.13.0"
-  resolved "https://registry.yarnpkg.com/@capture-models/plugin-api/-/plugin-api-0.13.0.tgz#94868bb17469e02a738b27a2695e3d8aadf7498d"
-  integrity sha512-3DfK9OJ9EMCu2xCayebpAr6ldXbTOEC1UpCjfotVauozWEDcb5AccdleU41zhnN8bQTlT049cYRe0V57zs9AqA==
+"@capture-models/plugin-api@^0.13.14":
+  version "0.13.14"
+  resolved "https://registry.yarnpkg.com/@capture-models/plugin-api/-/plugin-api-0.13.14.tgz#d6b49f03d4b7f8ff8990b09e188ef624eaa10602"
+  integrity sha512-+CEWxYDMG+12GBntl+X806LBbd0JnYRknlHZkjA747ITVccPY6SAgi+hSQKDgOcz7AI4haaJ7THeuSpPrJ8Teg==
   dependencies:
     "@capture-models/types" "^0.13.0"
     react "^16.13.1"
