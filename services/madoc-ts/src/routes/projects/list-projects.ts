@@ -15,10 +15,12 @@ export const listProjects: RouteMiddleware = async context => {
 
   const page = Number(context.query.page) || 1;
   const rootTaskId = context.query.root_task_id;
+  const modelId = context.query.capture_model_id;
   const onlyPublished = scope.indexOf('site.admin') !== -1 ? castBool(context.request.query.published) : true;
   const projectsPerPage = 10;
 
   const rootTaskQuery = rootTaskId ? sql`and iiif_project.task_id = ${rootTaskId}` : SQL_EMPTY;
+  const modelQuery = modelId ? sql`and iiif_project.capture_model_id = ${modelId}` : SQL_EMPTY;
   const publishedQuery = onlyPublished ? sql`and (iiif_project.status = 1 or iiif_project.status = 2)` : SQL_EMPTY;
 
   const { total } = await context.connection.one(
@@ -26,6 +28,7 @@ export const listProjects: RouteMiddleware = async context => {
       select count(*) as total 
       from iiif_project
       where site_id = ${siteId}
+      ${modelQuery}
       ${rootTaskQuery}
       ${publishedQuery}
     `
@@ -38,6 +41,7 @@ export const listProjects: RouteMiddleware = async context => {
         select *, collection_id as resource_id, iiif_project.id as project_id from iiif_project 
             left join iiif_resource ir on iiif_project.collection_id = ir.id
         where site_id = ${siteId}
+        ${modelQuery}
         ${rootTaskQuery}
         ${publishedQuery}
         limit ${projectsPerPage} offset ${(page - 1) * projectsPerPage}

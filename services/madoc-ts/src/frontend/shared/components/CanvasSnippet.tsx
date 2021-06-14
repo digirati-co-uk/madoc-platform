@@ -39,7 +39,7 @@ export const CanvasSnippet: React.FC<{
     );
   }
 
-  const thumbnail = data.canvas.thumbnail;
+  const thumbnail = data.canvas.thumbnail && data.canvas.thumbnail[0] ? data.canvas.thumbnail[0].id : undefined;
 
   return (
     <SnippetLarge

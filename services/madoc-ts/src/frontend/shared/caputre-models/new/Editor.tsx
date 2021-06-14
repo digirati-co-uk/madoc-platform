@@ -1,7 +1,7 @@
 import { Revisions } from '@capture-models/editor';
 import { CaptureModel, RevisionRequest } from '@capture-models/types';
 import React, { useMemo, useState } from 'react';
-import { CanvasFull } from '../../../../types/schemas/canvas-full';
+import { CanvasFull } from '../../../../types/canvas-full';
 import { useSiteConfiguration } from '../../../site/features/SiteConfigurationContext';
 import { ViewContent } from '../../components/ViewContent';
 import { useApi } from '../../hooks/use-api';

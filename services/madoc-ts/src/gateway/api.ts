@@ -1,5 +1,14 @@
 import { BaseField, CaptureModel, RevisionRequest } from '@capture-models/types';
 import { createChoice, createDocument, generateId } from '@capture-models/helpers';
+import {
+  ActivityOptions,
+  ActivityOrderedCollection,
+  ActivityOrderedCollectionPage,
+  ChangeDiscoveryActivityRequest,
+} from '../activity-streams/change-discovery-types';
+import { ConfigInjectionExtension } from '../extensions/capture-models/ConfigInjection/ConfigInjection.extension';
+import { MADOC_MODEL_CONFIG } from '../extensions/capture-models/ConfigInjection/constants';
+import { ConfigInjectionSettings } from '../extensions/capture-models/ConfigInjection/types';
 import { DynamicDataSourcesExtension } from '../extensions/capture-models/DynamicDataSources/DynamicDataSources.extension';
 import { DynamicData } from '../extensions/capture-models/DynamicDataSources/types';
 import { CaptureModelExtension } from '../extensions/capture-models/extension';
@@ -38,7 +47,7 @@ import { ImportCollectionTask } from './tasks/import-collection';
 import { ManifestFull } from '../types/schemas/manifest-full';
 import { GetMetadata } from '../types/schemas/get-metadata';
 import { MetadataUpdate } from '../types/schemas/metadata-update';
-import { CanvasFull } from '../types/schemas/canvas-full';
+import { CanvasFull } from '../types/canvas-full';
 import { stringify } from 'query-string';
 import { CreateProject } from '../types/schemas/create-project';
 import { ProjectSnippet } from '../types/schemas/project-snippet';
@@ -73,9 +82,9 @@ export class ApiClient {
   private errorRecoveryHandlers: Array<() => void> = [];
   private isDown = false;
   private currentUser?: { scope: string[]; user: { id: string; name?: string } };
-  private captureModelExtensions: ExtensionManager<CaptureModelExtension>;
   private captureModelDataSources: DynamicData[];
   // Public.
+  captureModelExtensions: ExtensionManager<CaptureModelExtension>;
   pageBlocks: PageBlockExtension;
   media: MediaExtension;
   tasks: TaskExtension;
@@ -111,6 +120,8 @@ export class ApiClient {
             new Paragraphs(this),
             // Allows for dynamic values to be applied to models
             new DynamicDataSourcesExtension(this, this.captureModelDataSources),
+            // Allows for configuration to make last-minute changes to models.
+            new ConfigInjectionExtension(this),
           ]
     );
   }
@@ -284,9 +295,7 @@ export class ApiClient {
 
     if (response.error) {
       if (response.status === 404) {
-        console.log(endpoint, method);
-        console.log(response);
-        throw new NotFound();
+        throw new NotFound(`${method} ${endpoint} not found`);
       }
 
       if (response.data.error === 'There was a problem proxying the request') {
@@ -408,7 +417,10 @@ export class ApiClient {
   }
 
   // Projects.
-  async getProjects(page?: number, query: { root_task_id?: string; published?: boolean } = {}) {
+  async getProjects(
+    page?: number,
+    query: { root_task_id?: string; published?: boolean; capture_model_id?: string } = {}
+  ) {
     return this.request<ProjectList>(`/api/madoc/projects?${stringify({ page, ...query })}`);
   }
 
@@ -509,6 +521,24 @@ export class ApiClient {
     });
   }
 
+  async submitToCuratedFeed(projectId: string | number, manifestId: number) {
+    return this.request(`/api/madoc/projects/${projectId}/feeds/curated`, {
+      method: 'POST',
+      body: {
+        manifestId,
+      },
+    });
+  }
+
+  async submitToManifestFeed(projectId: string | number, manifestId: number) {
+    return this.request(`/api/madoc/projects/${projectId}/feeds/manifest`, {
+      method: 'POST',
+      body: {
+        manifestId,
+      },
+    });
+  }
+
   async deleteResourceClaim(taskId: string) {
     throw new Error('Not yet implemented');
   }
@@ -593,6 +623,10 @@ export class ApiClient {
     return projectConfig.config && projectConfig.config[0] && projectConfig.config[0].config_object
       ? projectConfig.config[0].config_object
       : {};
+  }
+
+  async getModelConfiguration(query: import('../routes/site/site-model-configuration').SiteModelConfigurationQuery) {
+    return this.request<ConfigInjectionSettings>(`/api/madoc/configuration/model?${stringify(query)}`);
   }
 
   async saveSiteConfiguration(config: ProjectConfiguration, query?: { project_id?: number; collection_id?: number }) {
@@ -803,16 +837,19 @@ export class ApiClient {
     return this.request<GetMetadata>(`/api/madoc/iiif/manifests/${id}/metadata`);
   }
 
-  async autocompleteManifests(q: string, project_id?: string, blacklist_ids?: number[]) {
+  async autocompleteManifests(q: string, project_id?: string, blacklist_ids?: number[], page = 1) {
     return this.request<Array<{ id: number; label: string }>>(
-      `/api/madoc/iiif/autocomplete/manifests?${stringify({ q, project_id, blacklist_ids }, { arrayFormat: 'comma' })}`
+      `/api/madoc/iiif/autocomplete/manifests?${stringify(
+        { q, project_id, blacklist_ids, page },
+        { arrayFormat: 'comma' }
+      )}`
     );
   }
 
-  async autocompleteCollections(q: string, project_id?: string, blacklist_ids?: number[]) {
+  async autocompleteCollections(q: string, project_id?: string, blacklist_ids?: number[], page = 1) {
     return this.request<Array<{ id: number; label: string }>>(
       `/api/madoc/iiif/autocomplete/collections?${stringify(
-        { q, project_id, blacklist_ids },
+        { q, project_id, blacklist_ids, page },
         { arrayFormat: 'comma' }
       )}`
     );
@@ -1743,6 +1780,65 @@ export class ApiClient {
     return this.request<Site>(`/api/madoc/site/${siteId}/details`);
   }
 
+  // Activity stream
+  postToActivityStream(
+    {
+      primaryStream,
+      secondaryStream,
+      action,
+    }: {
+      primaryStream: string;
+      secondaryStream?: string;
+      action: 'create' | 'update' | 'delete' | 'move' | 'add' | 'remove';
+    },
+    request: ChangeDiscoveryActivityRequest,
+    options?: ActivityOptions
+  ) {
+    const body = { ...request, options };
+
+    if (secondaryStream) {
+      return this.request(`/api/madoc/activity/${primaryStream}/stream/${secondaryStream}/action/${action}`, {
+        method: 'POST',
+        body,
+      });
+    }
+
+    return this.request(`/api/madoc/activity/${primaryStream}/action/${action}`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  getActivityStream(options: { primaryStream: string; secondaryStream?: string }): Promise<ActivityOrderedCollection>;
+  getActivityStream(options: {
+    primaryStream: string;
+    secondaryStream?: string;
+    page: number;
+  }): Promise<ActivityOrderedCollectionPage>;
+  getActivityStream({
+    primaryStream,
+    secondaryStream,
+    page,
+  }: {
+    primaryStream: string;
+    secondaryStream?: string;
+    page?: number;
+  }) {
+    if (typeof page !== 'undefined') {
+      if (secondaryStream) {
+        return this.request(`/api/madoc/activity/${primaryStream}/stream/${secondaryStream}/page/${page}`);
+      }
+
+      return this.request(`/api/madoc/activity/${primaryStream}/page/${page}`);
+    }
+
+    if (secondaryStream) {
+      return this.request(`/api/madoc/activity/${primaryStream}/stream/${secondaryStream}/changes`);
+    }
+
+    return this.request(`/api/madoc/activity/${primaryStream}/changes`);
+  }
+
   // Search API
   async searchQuery(query: SearchQuery, page = 1, madoc_id?: string) {
     return this.request<SearchResponse>(`/api/search/search?${stringify({ page, madoc_id })}`, {
@@ -1931,6 +2027,12 @@ export class ApiClient {
 
   async getSiteConfiguration(query?: import('../routes/site/site-configuration').SiteConfigurationQuery) {
     return this.publicRequest<ProjectConfiguration>(`/madoc/api/configuration`, query);
+  }
+
+  async getSiteModelConfiguration(
+    query: import('../routes/site/site-model-configuration').SiteModelConfigurationQuery
+  ) {
+    return this.publicRequest<ConfigInjectionSettings>(`/madoc/api/configuration/model`, query);
   }
 
   async getSiteSearchFacetConfiguration() {

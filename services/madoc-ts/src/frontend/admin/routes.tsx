@@ -17,6 +17,7 @@ import { PageBlocks } from './pages/content/page-blocks/page-blocks';
 import { SiteConfiguration } from './pages/content/site-configuration';
 import { ProjectConfiguration } from './pages/crowdsourcing/projects/project-configuration';
 import { ProjectSearchIndex } from './pages/crowdsourcing/projects/project-search-index';
+import { ProjectStreams } from './pages/crowdsourcing/projects/project-streams';
 import { OcrListPage } from './pages/enrichment/ocr/ocr-list';
 import { SearchIndexingPage } from './pages/enrichment/search-indexing';
 import { ExportSite } from './pages/export/export-site';
@@ -42,6 +43,7 @@ import { ProjectModelEditor } from './pages/crowdsourcing/projects/project-model
 import { CreateCollection } from './pages/content/collections/create-collection';
 import { CreateManifest } from './pages/content/manifests/create-manifest';
 import { DevelopmentPlugin } from './pages/system/development-plugin';
+import { ActivityStreams } from './pages/system/activity-streams';
 import { SystemStatus } from './pages/system/system-status';
 import { ListThemes } from './pages/system/themes/list-themes';
 import { TaskRouter } from './pages/tasks/task-router';
@@ -315,6 +317,16 @@ export const routes: UniversalRoute[] = [
         component: ProjectTasks,
         exact: true,
       },
+      {
+        path: '/projects/:id/activity',
+        component: ProjectStreams,
+        exact: true,
+      },
+      {
+        path: '/projects/:id/activity/:stream',
+        component: ProjectStreams,
+        exact: true,
+      },
     ],
   },
 
@@ -471,5 +483,10 @@ export const routes: UniversalRoute[] = [
     path: '/system/themes',
     exact: true,
     component: ListThemes,
+  },
+  {
+    path: '/system/activity-streams',
+    exact: true,
+    component: ActivityStreams,
   },
 ];

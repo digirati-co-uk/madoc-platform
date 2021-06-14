@@ -1,5 +1,6 @@
 import { i18n } from 'i18next';
 import { PluginManager } from '../frontend/shared/plugins/plugin-manager';
+import { ChangeDiscoveryRepository } from '../activity-streams/change-discovery-repository';
 import { MediaRepository } from '../repository/media-repository';
 import { PageBlocksRepository } from '../repository/page-blocks-repository';
 import { PluginRepository } from '../repository/plugin-repository';
@@ -22,6 +23,7 @@ export interface ApplicationContext {
   plugins: PluginRepository;
   themes: ThemeRepository;
   media: MediaRepository;
+  changeDiscovery: ChangeDiscoveryRepository;
   omeka: OmekaApi;
   pluginManager: PluginManager;
   cron: CronJobs;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { UniversalComponent } from '../../../../types';
-import { CanvasFull } from '../../../../../types/schemas/canvas-full';
+import { CanvasFull } from '../../../../../types/canvas-full';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { CanvasContext, useVaultEffect, VaultProvider } from '@hyperion-framework/react-vault';
@@ -20,19 +20,9 @@ const CanvasViewer: React.FC<{ canvas: CanvasFull['canvas'] }> = ({ canvas }) =>
   useVaultEffect(
     vault => {
       if (canvas) {
-        vault
-          .load(
-            canvas.source.id || canvas.source['@id'],
-            canvas.source['@id']
-              ? {
-                  '@context': 'http://iiif.io/api/presentation/2/context.json',
-                  ...canvas.source,
-                }
-              : canvas.source
-          )
-          .then(c => {
-            setCanvasRef(c as any);
-          });
+        vault.load(canvas.id, JSON.parse(JSON.stringify(canvas))).then(c => {
+          setCanvasRef(c as any);
+        });
       }
     },
     [canvas]

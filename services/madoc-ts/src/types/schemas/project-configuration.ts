@@ -53,6 +53,7 @@ export type ProjectConfiguration = {
     hideRandomCanvas?: boolean;
     hideFilterImages?: boolean;
     directModelPage?: boolean;
+    showIIIFLogo?: boolean;
   };
   headerOptions?: {
     hideSiteTitle?: boolean;
@@ -61,5 +62,11 @@ export type ProjectConfiguration = {
     hideDashboardLink?: boolean;
     hidePageNavLinks?: boolean;
     hideSearchBar?: boolean;
+  };
+  activityStreams?: {
+    manifest?: boolean;
+    canvas?: boolean;
+    curated?: boolean;
+    published?: boolean;
   };
 };

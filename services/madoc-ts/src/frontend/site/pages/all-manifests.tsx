@@ -19,6 +19,11 @@ export const AllManifests: React.FC = () => {
   return (
     <>
       <h1>{t('All manifests')}</h1>
+      <Pagination
+        page={latestData ? latestData.pagination.page : 1}
+        totalPages={latestData ? latestData.pagination.totalPages : 1}
+        stale={!latestData}
+      />
       <ImageGrid>
         {data?.manifests.map((manifest, idx) => (
           <Link to={createLink({ manifestId: manifest.id })} key={`${manifest.id}_${idx}`}>

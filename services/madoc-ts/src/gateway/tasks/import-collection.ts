@@ -38,7 +38,7 @@ export function createTask(collectionUrl: string, omekaUserId: number, siteId?: 
     type: 'madoc-collection-import',
     name: 'Importing collection',
     description: `Importing collection from url ${collectionUrl}`,
-    subject: collectionUrl,
+    subject: encodeURI(collectionUrl),
     state: {},
     events: [
       'madoc-ts.created',

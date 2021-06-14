@@ -2,6 +2,7 @@ import { acceptNewDevelopmentBundle, developmentPlugin } from './routes/admin/de
 import { exportSite } from './routes/admin/export-site';
 import { getMetadataKeys } from './routes/admin/get-metadata-keys';
 import { getMetadataValues } from './routes/admin/get-metadata-values';
+import { getModelConfiguration } from './routes/admin/get-model-configuration';
 import { importSite } from './routes/admin/import-site';
 import { listJobs, runJob } from './routes/admin/list-jobs';
 import { getLocalisation, listLocalisations, updateLocalisation } from './routes/admin/localisation';
@@ -17,6 +18,7 @@ import {
   serveThemeAsset,
   uninstallTheme,
 } from './routes/admin/themes';
+import { updateModelConfiguration } from './routes/admin/update-model-configuration';
 import { updateSiteConfiguration } from './routes/admin/update-site-configuration';
 import { createBlock } from './routes/content/create-block';
 import { createPage } from './routes/content/create-page';
@@ -29,6 +31,7 @@ import { getPage } from './routes/content/get-page';
 import { linkAutocomplete } from './routes/content/link-autocomplete';
 import { resolveSlots } from './routes/content/resolve-slots';
 import { getCanvasReference } from './routes/iiif/canvases/get-canvas-reference';
+import { siteManifestBuild } from './routes/site/site-manifest-build';
 import { createMedia } from './routes/media/create-media';
 import { deleteMedia } from './routes/media/delete-media';
 import { generateThumbnails } from './routes/media/generate-thumbnails';
@@ -36,9 +39,11 @@ import { getMedia } from './routes/media/get-media';
 import { listMedia } from './routes/media/list-media';
 import { deleteResourceClaim } from './routes/projects/delete-resource-claim';
 import { getProjectNote } from './routes/projects/get-project-note';
+import { updateCuratedFeed } from './routes/projects/update-curated-feed';
 import { updateProjectNote } from './routes/projects/update-project-note';
 import { fullReindex } from './routes/search/full-reindex';
 import { siteCanvasSource } from './routes/site/site-canvas-reference';
+import { siteModelConfiguration } from './routes/site/site-model-configuration';
 import { sitePageNavigation } from './routes/site/site-page-navigation';
 import { getSlot } from './routes/content/get-slot';
 import { getAllPages } from './routes/content/list-pages';
@@ -128,13 +133,13 @@ import { deleteLinking } from './routes/iiif/linking/delete-linking';
 import { updateLinking } from './routes/iiif/linking/update-linking';
 import { getLinking } from './routes/iiif/linking/get-linking';
 import { searchManifest } from './routes/iiif/manifests/search-manifest';
-import { exportManifest } from './routes/iiif/manifests/export-manifest';
 import { assignReview } from './routes/projects/assign-review';
 import { getProjectModel } from './routes/projects/get-project-model';
 import { siteCanvasModels } from './routes/site/site-canvas-models';
 import { siteCanvasTasks } from './routes/site/site-canvas-tasks';
 import { getProjectTask } from './routes/projects/get-project-task';
 import { assignRandomResource } from './routes/projects/assign-random-resource';
+import { router as activityStreamRoutes } from './activity-streams/router';
 
 export const router = new TypedRouter({
   // Normal route
@@ -153,6 +158,8 @@ export const router = new TypedRouter({
   'install-plugin': [TypedRouter.POST, '/api/madoc/system/plugins', installPlugin, 'SitePlugin'],
 
   'update-site-configuration': [TypedRouter.POST, '/api/madoc/configuration', updateSiteConfiguration],
+  'get-model-configuration': [TypedRouter.GET, '/api/madoc/configuration/model', getModelConfiguration],
+  'update-model-configuration': [TypedRouter.POST, '/api/madoc/configuration/model', updateModelConfiguration],
   'update-search-facet-configuration': [
     TypedRouter.POST,
     '/api/madoc/configuration/search-facets',
@@ -274,6 +281,7 @@ export const router = new TypedRouter({
   'update-project-metadata': [TypedRouter.PUT, '/api/madoc/projects/:id/metadata', updateProjectMetadata],
   'update-project-status': [TypedRouter.PUT, '/api/madoc/projects/:id/status', updateProjectStatus],
   'create-project-resource-claim': [TypedRouter.POST, '/api/madoc/projects/:id/claim', createResourceClaim],
+  'update-project-curated-feed': [TypedRouter.POST, '/api/madoc/projects/:id/feeds/:feed', updateCuratedFeed],
   'create-project-resource-prepare-claim': [
     TypedRouter.POST,
     '/api/madoc/projects/:id/prepare-claim',
@@ -378,6 +386,7 @@ export const router = new TypedRouter({
     siteCanvasTasks,
   ],
   'site-configuration': [TypedRouter.GET, '/s/:slug/madoc/api/configuration', siteConfiguration],
+  'site-model-configuration': [TypedRouter.GET, '/s/:slug/madoc/api/configuration/model', siteModelConfiguration],
   'site-page-navigation': [TypedRouter.GET, '/s/:slug/madoc/api/pages/navigation/:paths*', sitePageNavigation],
   'site-facet-configuration': [
     TypedRouter.GET,
@@ -395,7 +404,16 @@ export const router = new TypedRouter({
 
   // To be worked into API calling methods
   'manifest-search': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/search/1.0', searchManifest],
-  'manifest-export': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/export/source', exportManifest],
+  // 'manifest-export': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/export/source', exportManifest],
+  'manifest-build': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/export/:version', siteManifestBuild],
+  'manifest-project-build': [
+    TypedRouter.GET,
+    '/s/:slug/madoc/api/projects/:projectSlug/export/manifest/:id/:version',
+    siteManifestBuild,
+  ],
+
+  // Other routes.
+  ...activityStreamRoutes,
 
   // Development
   'development-plugin': [TypedRouter.POST, '/api/madoc/development/plugin-token', developmentPlugin],

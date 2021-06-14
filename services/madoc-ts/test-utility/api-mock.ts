@@ -1,5 +1,4 @@
 import { Response } from 'cross-fetch';
-import { LocalisationSiteConfig } from '../src/routes/admin/localisation';
 import { ConfigResponse } from '../src/types/schemas/config-response';
 import { ProjectFull } from '../src/types/schemas/project-full';
 
@@ -76,7 +75,7 @@ Mock this route using the following:
     this.mockStacks[fullUrl][method].push({ response, bodyAssertion });
   }
 
-  mockConfigRequest(projectId: number, config: Partial<ProjectFull['config']>) {
+  mockConfigRequest(projectId: number, config: Partial<ProjectFull['config']>, service = 'madoc', extra = '') {
     const wrapper: ConfigResponse<ProjectFull['config']> = {
       config: [
         {
@@ -88,12 +87,12 @@ Mock this route using the following:
       ],
       query: {
         context: [],
-        service: 'madoc',
+        service: service,
       } as any,
     };
     this.mockRoute(
       'GET',
-      `/api/configurator/query?context=urn%3Amadoc%3Asite%3A1&context=urn%3Amadoc%3Aproject%3A${projectId}&service=madoc`,
+      `/api/configurator/query?context=urn%3Amadoc%3Asite%3A1&context=urn%3Amadoc%3Aproject%3A${projectId}${extra}&service=${service}`,
       wrapper
     );
   }

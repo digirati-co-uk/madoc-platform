@@ -12,6 +12,7 @@ import { useUser } from '../../shared/hooks/use-site';
 import { InfoIcon } from '../../shared/icons/InfoIcon';
 import { createLink } from '../../shared/utility/create-link';
 import { HrefLink } from '../../shared/utility/href-link';
+import { useActivityStreamConfig } from '../hooks/use-activity-stream-config';
 import { useManifestTask } from '../hooks/use-manifest-task';
 import { useRouteContext } from '../hooks/use-route-context';
 
@@ -24,6 +25,8 @@ export const ManifestTaskProgress: React.FC = () => {
   const isAdmin =
     user && user.scope && (user.scope.indexOf('site.admin') !== -1 || user.scope.indexOf('tasks.admin') !== -1);
   const canProgress = user && user.scope && user.scope.indexOf('tasks.create') !== -1;
+  const activityStreams = useActivityStreamConfig();
+  const [isPublished, setIsPublished] = useState(false);
 
   const { manifestTask, totalContributors, refetch } = useManifestTask();
 
@@ -64,6 +67,11 @@ export const ManifestTaskProgress: React.FC = () => {
       });
       await refetch();
     }
+  });
+
+  const [submitToCuratedFeed, submitToCuratedFeedStatus] = useMutation(async () => {
+    await api.submitToCuratedFeed(projectId, manifestId);
+    setIsPublished(true);
   });
 
   if (!projectId || (!isAdmin && !canProgress)) {
@@ -154,6 +162,21 @@ export const ManifestTaskProgress: React.FC = () => {
               ) : null}
             </div>
           ) : null}
+
+          {activityStreams.curated ? (
+            <div>
+              <h4>{t('Activity stream')}</h4>
+              <ButtonRow>
+                <Button
+                  disabled={submitToCuratedFeedStatus.isLoading || isPublished}
+                  onClick={() => submitToCuratedFeed()}
+                >
+                  {isPublished ? t('Published!') : t('Publish to curated stream')}
+                </Button>
+              </ButtonRow>
+            </div>
+          ) : null}
+
           {typeof totalContributors !== 'undefined' ? (
             <div>
               {t('Total contributors')}: <strong>{totalContributors}</strong>

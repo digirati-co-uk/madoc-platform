@@ -26,8 +26,6 @@ export const ProjectTasks: UniversalComponent<ProjectTasksType> = createUniversa
     const { t } = useTranslation();
     const { data: task } = useData(ProjectTasks);
 
-    console.log(task);
-
     if (!task) {
       return <>Loading...</>;
     }

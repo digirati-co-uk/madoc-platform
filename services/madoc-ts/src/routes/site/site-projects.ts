@@ -6,6 +6,7 @@ export type SiteProjectsQuery = {
   // parent_collection_ids: number[];
   collection_id?: number;
   manifest_id?: number;
+  capture_model_id?: string;
   // canvas_id?: number;
 };
 
@@ -16,7 +17,7 @@ export const siteProjects: RouteMiddleware<{ slug: string }> = async context => 
   const scope = context.state.jwt?.scope || [];
   const onlyPublished = scope.indexOf('site.admin') !== -1 ? castBool(context.request.query.published) : true;
 
-  const { collection_id, manifest_id } = context.query;
+  const { collection_id, manifest_id, capture_model_id } = context.query;
 
   if (manifest_id) {
     context.response.body = await siteApi.getManifestProjects(Number(manifest_id), { published: onlyPublished });
@@ -30,7 +31,7 @@ export const siteProjects: RouteMiddleware<{ slug: string }> = async context => 
     return;
   }
 
-  const projects = await siteApi.getProjects(page, { published: onlyPublished });
+  const projects = await siteApi.getProjects(page, { published: onlyPublished, capture_model_id });
 
   context.response.status = 200;
   context.response.body = projects;

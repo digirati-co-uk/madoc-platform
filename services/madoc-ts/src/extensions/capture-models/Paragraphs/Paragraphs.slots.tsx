@@ -71,9 +71,11 @@ const SingleParagraphEntity: ProfileConfig['SingleEntity'] = ({ showTitle = true
       <Slots.AdjacentNavigation>
         {isModified && <ModifiedStatus />}
         <Slots.InlineSelector />
-        {mapProperties(entity, ({ label, description, property, canInlineField }) => {
+        {mapProperties(entity, ({ hasSelector, type, label, description, property, canInlineField }) => {
           return (
             <Slots.InlineProperties
+              hasSelector={hasSelector}
+              type={type}
               property={property}
               label={label}
               description={description}

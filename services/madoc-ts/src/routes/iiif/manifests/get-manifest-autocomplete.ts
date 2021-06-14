@@ -6,7 +6,7 @@ import { userWithScope } from '../../../utility/user-with-scope';
 
 export const getManifestAutocomplete: RouteMiddleware = async context => {
   const { siteId } = userWithScope(context, ['site.admin']);
-  const { q, project_id, blacklist_ids } = context.query;
+  const { q, project_id, blacklist_ids, page } = context.query;
   const { projectId, projectSlug } = parseProjectId(project_id);
 
   const blackListIds = (blacklist_ids || '')
@@ -18,6 +18,9 @@ export const getManifestAutocomplete: RouteMiddleware = async context => {
     context.response.body = [];
     return;
   }
+
+  const pageSize = 10;
+  const offset = (page - 1) * pageSize;
 
   const query = sql`
     select distinct im.resource_id as id, im.value as label
@@ -36,7 +39,8 @@ export const getManifestAutocomplete: RouteMiddleware = async context => {
       ${projectId ? sql`and ip.id = ${projectId}` : SQL_EMPTY}
       ${projectSlug ? sql`and ip.slug = ${projectSlug}` : SQL_EMPTY}
       and iiif_derived_resource.id = any(${sql.array(blackListIds, SQL_INT_ARRAY)}) is false
-      and iiif_derived_resource.site_id = ${siteId} limit 10;
+      and iiif_derived_resource.site_id = ${siteId}
+    limit ${pageSize} ${offset > 0 ? sql`offset ${offset}` : SQL_EMPTY};
   `;
 
   context.response.body = await context.connection.any<{ id: number; label: string }>(query);

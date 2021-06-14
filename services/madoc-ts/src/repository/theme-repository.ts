@@ -2,6 +2,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'fs';
 import path from 'path';
 import { sql } from 'slonik';
 import { DiskTheme, ResolvedTheme, ThemeRow, ThemeSiteRow } from '../types/themes';
+import { b64EncodeUnicode } from '../utility/base64';
 import { BaseRepository } from './base-repository';
 import cache from 'memory-cache';
 
@@ -69,7 +70,9 @@ export class ThemeRepository extends BaseRepository {
       return '';
     }
 
-    return readFileSync(fragPath).toString('base64');
+    return b64EncodeUnicode(readFileSync(fragPath).toString('utf-8'), str =>
+      new Buffer(str, 'utf-8').toString('base64')
+    );
   }
 
   // Current site theme.

@@ -12,6 +12,8 @@ export function mapProperties(
     description?: string;
     profile?: string;
     dataSources?: string[];
+    hasSelector: boolean;
+    type: 'entity' | 'field';
     instances: Array<BaseField | CaptureModel['document']>;
   }) => {}
 ) {
@@ -22,10 +24,12 @@ export function mapProperties(
     const singleEntity = instances[0];
     const label =
       instances.length > 1 && singleEntity.pluralLabel ? singleEntity.pluralLabel : singleEntity.label || 'Untitled';
-    const canInlineField = !isEntityList(instances) && (canInlineProperty(instances) || !singleEntity.selector);
+    const isEntity = isEntityList(instances);
+    const canInlineField = !isEntity && (canInlineProperty(instances) || !singleEntity.selector);
     const description = singleEntity.description;
     const profile = singleEntity.profile;
     const dataSources = singleEntity.dataSources;
+    const hasSelector = !!instances[0]?.selector;
 
     return (
       <React.Fragment key={property}>
@@ -37,6 +41,8 @@ export function mapProperties(
           description,
           profile,
           dataSources,
+          hasSelector,
+          type: isEntity ? 'entity' : 'field',
         })}
       </React.Fragment>
     );

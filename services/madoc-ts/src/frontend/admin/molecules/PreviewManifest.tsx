@@ -14,11 +14,20 @@ const CanvasThumbnail: React.FC<{ canvas: CanvasNormalized; height: number }> = 
   const [thumbnail, setThumbnail] = useState<string | undefined>();
 
   useVaultEffect(vault => {
-    vault.getThumbnail(canvas, {}, true).then(t => {
-      if (t.best) {
-        setThumbnail(t.best.id);
-      }
-    });
+    vault
+      .getThumbnail(
+        canvas,
+        {
+          minHeight: 64,
+          minWidth: 64,
+        },
+        true
+      )
+      .then(t => {
+        if (t.best) {
+          setThumbnail(t.best.id);
+        }
+      });
   });
 
   if (!thumbnail) {
@@ -101,7 +110,7 @@ export const PreviewManifest: React.FC<{
                   }}
                 >
                   <CroppedImage $size="small">
-                    <CanvasThumbnail canvas={canvas} height={50} />
+                    <CanvasThumbnail canvas={canvas} height={100} />
                   </CroppedImage>
                   <SingleLineHeading5>
                     <LocaleString>{canvas.label || { none: ['Untitled canvas'] }}</LocaleString>

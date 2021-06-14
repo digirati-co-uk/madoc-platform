@@ -6,7 +6,7 @@ import { UniversalComponent } from '../../../../types';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { useLocation, useParams, useRouteMatch } from 'react-router-dom';
 import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
-import { CanvasFull } from '../../../../../types/schemas/canvas-full';
+import { CanvasFull } from '../../../../../types/canvas-full';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { useApiManifest } from '../../../../shared/hooks/use-api-manifest';
@@ -36,6 +36,7 @@ export const CanvasView: UniversalComponent<CanvasViewType> = createUniversalCom
 
     const { canvas } = data || {};
     const title = canvas ? canvas.label ? <LocaleString>{canvas.label}</LocaleString> : 'Untitled' : '...';
+    const thumbnail = canvas && canvas.thumbnail && canvas.thumbnail[0] ? canvas.thumbnail[0].id : undefined;
     const manifestTitle = manifestId ? (
       manifestResponse?.manifest.label ? (
         <LocaleString>{manifestResponse.manifest.label}</LocaleString>
@@ -50,7 +51,7 @@ export const CanvasView: UniversalComponent<CanvasViewType> = createUniversalCom
       <>
         <AdminHeader
           title={title}
-          thumbnail={canvas?.thumbnail}
+          thumbnail={thumbnail}
           subtitle={<a href={`/s/${site.slug}/madoc/manifests/${manifestId}/c/${id}`}>{t('View on site')}</a>}
           breadcrumbs={
             manifestId

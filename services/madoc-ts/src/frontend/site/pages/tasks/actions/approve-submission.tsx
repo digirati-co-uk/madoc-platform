@@ -71,7 +71,7 @@ export const ApproveSubmission: React.FC<{
       render={() => (
         <div>
           <ul>
-            <li>{t('The submission will be approved and all other submission will remain.')}</li>
+            <li>{t('The submission will be approved and all other submissions will remain')}</li>
           </ul>
         </div>
       )}

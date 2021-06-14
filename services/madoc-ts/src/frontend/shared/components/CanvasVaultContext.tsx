@@ -13,20 +13,8 @@ export const CanvasVaultContext: React.FC = ({ children }) => {
 
   useVaultEffect(
     vault => {
-      if (canvas && canvas.source) {
-        vault
-          .load(
-            canvas.source.id || canvas.source['@id'],
-            canvas.source['@id']
-              ? {
-                  '@context': 'http://iiif.io/api/presentation/2/context.json',
-                  ...canvas.source,
-                }
-              : canvas.source
-          )
-          .then(c => {
-            setCanvasRef(c as any);
-          });
+      if (canvas && canvas.items) {
+        vault.load(canvas.id as any, JSON.parse(JSON.stringify(canvas))).then(c => setCanvasRef(c as any));
       }
     },
     [canvas]

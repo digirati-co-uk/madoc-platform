@@ -40,21 +40,15 @@ export const ViewContent: React.FC<{
           customFetcher: (mid: string) => {
             const canvasTarget: any = target.find((r: any) => r.type === 'Canvas');
             return {
-              '@context': 'http://iiif.io/api/presentation/2/context.json',
-              '@id': `${mid}`,
-              '@type': 'sc:Manifest',
-              sequences: [
-                {
-                  '@id': `${mid}/s1`,
-                  '@type': 'sc:Sequence',
-                  canvases: [{ ...canvas.source, '@id': `${canvasTarget.id}` }],
-                },
-              ],
+              '@context': 'http://iiif.io/api/presentation/3/context.json',
+              id: `${mid}`,
+              type: 'Manifest',
+              items: [{ ...JSON.parse(JSON.stringify(canvas)), id: `${canvasTarget.id}` }],
             };
           },
         },
       }),
-      [onPanInSketchMode, height, canvas.source, target]
+      [onPanInSketchMode, height, canvas, target]
     ),
     children as any
   );

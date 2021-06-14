@@ -1,12 +1,13 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { useSelectorHelper } from '@capture-models/editor';
 import { CloseIcon } from '../../../atoms/CloseIcon';
 import { useManagePropertyList } from '../hooks/use-manage-property-list';
 import { EditorRenderingConfig } from './EditorSlots';
 
 const NewInstanceContainer = styled.div`
-  margin-bottom: 0.5em;
+  margin-bottom: 1em;
 `;
 
 const InstanceContainer = styled.div`
@@ -58,6 +59,19 @@ export const DefaultManagePropertyList: EditorRenderingConfig['ManagePropertyLis
     removeItem,
   } = useManagePropertyList(property);
   const { t } = useTranslation();
+  const helper = useSelectorHelper();
+
+  const onMouseEnter = (selector?: string) => () => {
+    if (selector) {
+      helper.highlight(selector);
+    }
+  };
+
+  const onMouseLeave = (selector?: string) => () => {
+    if (selector) {
+      helper.clearHighlight(selector);
+    }
+  };
 
   if (!allowMultiple || (!canRemove && !canAdd)) {
     return <>{children}</>;
@@ -68,9 +82,16 @@ export const DefaultManagePropertyList: EditorRenderingConfig['ManagePropertyLis
       {canRemove
         ? // @todo this is a fragile model.
           React.Children.map(children, comp => {
-            const id = (comp as any)?.props?.field?.id || (comp as any)?.props?.entity?.id;
+            const item =
+              (comp as any)?.props?.children?.props?.field ||
+              (comp as any)?.props?.children?.props?.entity ||
+              (comp as any)?.props?.field ||
+              (comp as any)?.props?.entity;
+            const id = item?.id;
+            const selector = item?.selector?.id;
+
             return (
-              <InstanceContainer>
+              <InstanceContainer onMouseEnter={onMouseEnter(selector)} onMouseLeave={onMouseLeave(selector)}>
                 <InstanceComponent>{comp}</InstanceComponent>
                 <InstanceRemove onClick={() => removeItem(id)}>
                   <CloseIcon />

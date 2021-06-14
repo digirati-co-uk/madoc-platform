@@ -1,4 +1,4 @@
-import { CanvasFull } from '../../../types/schemas/canvas-full';
+import { CanvasFull } from '../../../types/canvas-full';
 import { CaptureModel } from '@capture-models/types';
 import { useApi } from './use-api';
 import { useQuery } from 'react-query';

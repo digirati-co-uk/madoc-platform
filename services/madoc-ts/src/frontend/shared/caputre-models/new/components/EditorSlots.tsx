@@ -37,7 +37,9 @@ export type EditorRenderingConfig = {
     hideHeader?: boolean;
   }>;
   InlineProperties: React.FC<{
+    type: 'field' | 'entity';
     property: string;
+    hasSelector: boolean;
     canInlineField?: boolean;
     label?: string;
     description?: string;
@@ -202,10 +204,10 @@ const InlineSelector: EditorRenderingConfig['InlineSelector'] = () => {
   return <Slots.InlineSelector />;
 };
 
-const InlineProperties: EditorRenderingConfig['InlineProperties'] = ({ property }) => {
+const InlineProperties: EditorRenderingConfig['InlineProperties'] = props => {
   const Slots = useSlotContext();
 
-  return <Slots.InlineProperties property={property} />;
+  return <Slots.InlineProperties {...props} />;
 };
 
 const AdjacentNavigation: EditorRenderingConfig['AdjacentNavigation'] = props => {

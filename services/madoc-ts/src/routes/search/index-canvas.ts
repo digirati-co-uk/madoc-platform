@@ -19,10 +19,7 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
   const canvasId = Number(context.params.id);
 
   const { canvas } = await userApi.getCanvasById(canvasId);
-  const sourceId =
-    canvas && canvas.source && (canvas.source['@id'] || canvas.source.id)
-      ? canvas.source['@id'] || canvas.source.id
-      : `http://madoc.dev/urn:madoc:canvas:${canvasId}`;
+  const sourceId = `http://madoc.dev/urn:madoc:canvas:${canvasId}`;
 
   const manifestsWithin = await context.connection.any(getParentResources(canvasId as any, siteId));
   const projectsWithin = manifestsWithin.length
@@ -55,7 +52,7 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
       type: 'Canvas',
       id: sourceId,
       label: canvas.label as any,
-      thumbnail: canvas.thumbnail as any,
+      thumbnail: canvas.thumbnail ? (canvas.thumbnail[0].id as any) : null,
       summary: canvas.summary,
       metadata: canvas.metadata,
       rights: (canvas as any).rights,
@@ -63,7 +60,7 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
       requiredStatement: canvas.requiredStatement,
       navDate: (canvas as any).navDate,
     },
-    thumbnail: canvas.thumbnail as string,
+    thumbnail: canvas.thumbnail ? (canvas.thumbnail[0].id as any) : null,
     contexts: [
       { id: siteUrn, type: 'Site' },
       ...projectsWithin.map(({ id }) => {
@@ -172,7 +169,7 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
     try {
       await userApi.indexCaptureModel(modelId, `urn:madoc:canvas:${canvasId}`, resource);
     } catch (err) {
-      console.log(err);
+      // no-op
     }
   }
 
@@ -195,7 +192,7 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
         try {
           await userApi.indexRawSearchIndexable(indexable);
         } catch (err) {
-          console.log(err);
+          // no-op
         }
       }
     }

@@ -21,7 +21,6 @@ export const ManifestListLoader: UniversalComponent<ManifestListLoaderType> = cr
       return ['site-manifests', { projectId: params.slug, page: Number(query.page) || 1 }];
     },
     getData: (key, vars, api) => {
-      console.log(vars);
       return api.getSiteManifests({ project_id: vars.projectId, page: vars.page });
     },
   }

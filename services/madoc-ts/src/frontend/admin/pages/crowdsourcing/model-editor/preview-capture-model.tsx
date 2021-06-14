@@ -1,10 +1,12 @@
-import React, { Suspense } from 'react';
-import { Revisions, useCaptureModel } from '@capture-models/editor';
+import React, { Suspense, useState } from 'react';
+import { useCaptureModel } from '@capture-models/editor';
 import { useParams } from 'react-router-dom';
+import { BackToChoicesButton } from '../../../../shared/caputre-models/new/components/BackToChoicesButton';
+import { EditorSlots } from '../../../../shared/caputre-models/new/components/EditorSlots';
+import { RevisionProviderWithFeatures } from '../../../../shared/caputre-models/new/components/RevisionProviderWithFeatures';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { ContentExplorer } from '../../../../shared/components/ContentExplorer';
-import { TinyButton } from '../../../../shared/atoms/Button';
-import { RevisionNavigation } from '../../../../shared/caputre-models/RevisionNavigation';
+import { Button, ButtonRow, TinyButton } from '../../../../shared/atoms/Button';
 import '../../../../shared/caputre-models/refinements';
 import { CaptureModel } from '@capture-models/types';
 import { ViewContentFetch } from '../../../molecules/ViewContentFetch';
@@ -17,11 +19,24 @@ export const PreviewCaptureModel: React.FC<{
   const { id } = useParams<{ id: string }>();
   const captureModel = useCaptureModel();
   const api = useApi();
+  const [preview, setPreview] = useState(false);
 
   return (
     <>
       <h3>Preview</h3>
-      <Revisions.Provider key={revisionNumber} captureModel={{ ...captureModel, structure, document }}>
+      <RevisionProviderWithFeatures
+        key={revisionNumber}
+        slotConfig={{
+          editor: {
+            allowEditing: true,
+          },
+        }}
+        features={{
+          autosave: false,
+          revisionEditMode: true,
+        }}
+        captureModel={{ ...captureModel, structure, document }}
+      >
         <div style={{ display: 'flex', flexDirection: 'row' }}>
           <div style={{ width: '67%' }}>
             <ContentExplorer
@@ -37,18 +52,21 @@ export const PreviewCaptureModel: React.FC<{
               )}
             />
           </div>
-          <div style={{ width: '33%', padding: '1em' }}>
+          <div style={{ width: '33%', padding: '0 1em' }}>
             {api.getIsServer() ? null : (
-              <RevisionNavigation
-                structure={captureModel.structure}
-                onSaveRevision={async (rev, status) => {
-                  // no-op
-                }}
-              />
+              <>
+                <div style={{ padding: '1em 1em 0 1em', fontSize: '13px' }}>
+                  <BackToChoicesButton />
+                  {preview ? <EditorSlots.PreviewSubmission /> : <EditorSlots.TopLevelEditor />}
+                  <ButtonRow>
+                    <Button onClick={() => setPreview(p => !p)}>{preview ? 'Edit mode' : 'Preview mode'}</Button>
+                  </ButtonRow>
+                </div>
+              </>
             )}
           </div>
         </div>
-      </Revisions.Provider>
+      </RevisionProviderWithFeatures>
     </>
   );
 };
