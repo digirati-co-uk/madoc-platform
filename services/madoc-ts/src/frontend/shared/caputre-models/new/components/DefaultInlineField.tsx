@@ -1,17 +1,27 @@
 import { useField } from '@capture-models/plugin-api';
 import { BaseField } from '@capture-models/types';
-import React, { useCallback, useState } from 'react';
-import { FieldPreview, Revisions, RoundedCard } from '@capture-models/editor';
+import React, { useCallback, useEffect, useState } from 'react';
+import { FieldPreview, Revisions, RoundedCard, useSelectorHelper } from '@capture-models/editor';
 import { useDebouncedCallback } from 'use-debounce';
 import { ModifiedStatus } from '../features/ModifiedStatus';
 import { useFieldDetails } from '../hooks/use-field-details';
-import { EditorRenderingConfig, useProfile, useProfileOverride } from './EditorSlots';
+import { EditorRenderingConfig, useProfileOverride } from './EditorSlots';
 
 export const DefaultInlineField: EditorRenderingConfig['InlineField'] = props => {
   const { property, chooseField, path, readonly, field, canRemove, onRemove } = props;
   const { isModified } = useFieldDetails(field);
-  const profile = useProfile();
   const ProfileSpecificComponent = useProfileOverride('InlineField');
+  const helper = useSelectorHelper();
+
+  useEffect(() => {
+    if (field && field.selector) {
+      return helper.withSelector(field.selector.id).on('click', () => {
+        if (chooseField) {
+          chooseField();
+        }
+      });
+    }
+  }, [chooseField, field, helper]);
 
   if (ProfileSpecificComponent) {
     return <ProfileSpecificComponent {...props} />;

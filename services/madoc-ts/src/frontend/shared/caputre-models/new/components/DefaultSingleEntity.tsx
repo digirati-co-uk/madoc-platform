@@ -4,6 +4,7 @@ import { getEntityLabel } from '../../utility/get-entity-label';
 import { ModifiedStatus } from '../features/ModifiedStatus';
 import { useCurrentEntity } from '../hooks/use-current-entity';
 import { useEntityDetails } from '../hooks/use-entity-details';
+import { useHighlightSelector } from '../hooks/use-highlight-selector';
 import { mapProperties } from '../utility/map-properties';
 import { EditorRenderingConfig, useProfileOverride, useSlotContext } from './EditorSlots';
 
@@ -14,6 +15,8 @@ export const DefaultSingleEntity: EditorRenderingConfig['SingleEntity'] = props 
   const { isModified } = useEntityDetails(entity);
   const entityLabel = getEntityLabel(entity);
   const ProfileSpecificComponent = useProfileOverride('SingleEntity');
+
+  useHighlightSelector(entity.selector?.id);
 
   if (ProfileSpecificComponent) {
     return <ProfileSpecificComponent {...props} />;
