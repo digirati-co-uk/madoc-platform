@@ -27,13 +27,15 @@ export const DefaultSingleEntity: EditorRenderingConfig['SingleEntity'] = props 
       <Slots.AdjacentNavigation>
         {isModified && <ModifiedStatus />}
         <Slots.InlineSelector />
-        {mapProperties(entity, ({ label, description, property, canInlineField }) => {
+        {mapProperties(entity, ({ type, hasSelector, label, description, property, canInlineField }) => {
           return (
             <Slots.InlineProperties
+              type={type}
               property={property}
               label={label}
               description={description}
               canInlineField={canInlineField}
+              hasSelector={hasSelector}
               disableRemoving
             />
           );

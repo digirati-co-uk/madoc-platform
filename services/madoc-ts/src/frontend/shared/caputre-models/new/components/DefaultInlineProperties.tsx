@@ -1,15 +1,9 @@
 import { FieldHeader } from '@capture-models/editor';
 import React from 'react';
 import { useInlineProperties } from '../hooks/use-inline-properties';
-import { useSlotContext } from './EditorSlots';
+import { EditorRenderingConfig, useSlotContext } from './EditorSlots';
 
-export const DefaultInlineProperties: React.FC<{
-  label?: string;
-  description?: string;
-  property: string;
-  canInlineField?: boolean;
-  disableRemoving?: boolean;
-}> = props => {
+export const DefaultInlineProperties: EditorRenderingConfig['InlineProperties'] = props => {
   const [renderProperties, { type, isEmpty, showTitle }] = useInlineProperties(props.property, {
     canInlineField: props.canInlineField,
     disableRemoving: props.disableRemoving,
