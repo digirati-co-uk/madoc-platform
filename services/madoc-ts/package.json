@@ -21,7 +21,8 @@
     "link:model-editor": "yarn link \"@capture-models/editor\"",
     "unlink:model-editor": "yarn unlink \"@capture-models/editor\" && yarn install --force",
     "link:model-helpers": "yarn link \"@capture-models/helpers\"",
-    "unlink:model-helpers": "yarn unlink \"@capture-models/helpers\" && yarn install --force"
+    "unlink:model-helpers": "yarn unlink \"@capture-models/helpers\" && yarn install --force",
+    "extract:api": "tsc -p ./tsconfig.types.json"
   },
   "browserslist": "> 0.25%, not dead",
   "resolutions": {
@@ -48,6 +49,7 @@
     "ws": "7.4.6"
   },
   "dependencies": {
+    "@madoc.io/types": "./npm/madoc-types",
     "@atlas-viewer/atlas": "1.5.2",
     "@atlas-viewer/iiif-image-api": "^1.2.5",
     "@capture-models/editor": "^0.13.15",
@@ -140,6 +142,7 @@
     "react-timeago": "^4.4.0",
     "react-tooltip": "^4.2.15",
     "rich-markdown-editor": "^11.6.7",
+    "semver": "^7.3.5",
     "sharp": "^0.25.2",
     "slonik": "^23.5.5",
     "slugify": "^1.4.7",
@@ -150,7 +153,8 @@
     "ts-loader": "^7.0.2",
     "typesafe-actions": "^5.1.0",
     "uuid": "^7.0.1",
-    "webpack": "^4.46.0"
+    "webpack": "^4.46.0",
+    "vm2": "^3.9.3"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
@@ -158,6 +162,7 @@
     "@babel/preset-env": "^7.11.5",
     "@blueprintjs/icons": "^3.20.1",
     "@fesk/eslint-config-standard": "1.4.0-pr.b6dc2fa3",
+    "@microsoft/api-extractor": "^7.15.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
     "@storybook/addon-docs": "^5.3.18",
     "@storybook/addon-knobs": "^5.3.18",
@@ -187,6 +192,7 @@
     "@types/slonik": "^22.1.4",
     "@types/styled-components": "^5.1.0",
     "@types/styled-theming": "^2.2.5",
+    "@types/semver": "^7.3.6",
     "@types/uuid": "^7.0.0",
     "@typescript-eslint/eslint-plugin": "^2.4.0",
     "@typescript-eslint/parser": "^2.4.0",
@@ -222,6 +228,9 @@
     "webpack-cli": "^3.3.11",
     "webpack-dev-middleware": "^4.1.0",
     "webpack-hot-middleware": "^2.25.0"
+  },
+  "publishConfig": {
+    "access": "restricted"
   },
   "jest": {
     "preset": "ts-jest",

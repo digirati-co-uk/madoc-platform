@@ -1,0 +1,223 @@
+{
+  "type": "object",
+  "properties": {
+    "slots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "specificity": {
+            "type": "number"
+          },
+          "slotId": {
+            "type": "string"
+          },
+          "label": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "layout": {
+            "type": "string"
+          },
+          "props": {},
+          "filters": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "object",
+                "properties": {
+                  "none": {
+                    "type": "boolean"
+                  },
+                  "all": {
+                    "type": "boolean"
+                  },
+                  "exact": {
+                    "type": "number"
+                  },
+                  "whitelist": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    }
+                  },
+                  "blacklist": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    }
+                  }
+                }
+              },
+              "collection": {
+                "type": "object",
+                "properties": {
+                  "none": {
+                    "type": "boolean"
+                  },
+                  "all": {
+                    "type": "boolean"
+                  },
+                  "exact": {
+                    "type": "number"
+                  },
+                  "whitelist": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    }
+                  },
+                  "blacklist": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    }
+                  }
+                }
+              },
+              "manifest": {
+                "type": "object",
+                "properties": {
+                  "none": {
+                    "type": "boolean"
+                  },
+                  "all": {
+                    "type": "boolean"
+                  },
+                  "exact": {
+                    "type": "number"
+                  },
+                  "whitelist": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    }
+                  },
+                  "blacklist": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    }
+                  }
+                }
+              },
+              "canvas": {
+                "type": "object",
+                "properties": {
+                  "none": {
+                    "type": "boolean"
+                  },
+                  "all": {
+                    "type": "boolean"
+                  },
+                  "exact": {
+                    "type": "number"
+                  },
+                  "whitelist": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    }
+                  },
+                  "blacklist": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "pageId": {
+            "type": "number"
+          },
+          "blocks": {
+            "type": "array",
+            "items": {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "static_data": {},
+                    "lazy": {
+                      "type": "boolean"
+                    },
+                    "order": {
+                      "type": "number"
+                    },
+                    "i18n": {
+                      "type": "object",
+                      "properties": {
+                        "languages": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "sortKey": {
+                          "type": "string"
+                        },
+                        "fallback": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "languages"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "lazy",
+                    "name",
+                    "static_data",
+                    "type"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number"
+                    },
+                    "order": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "blocks",
+          "id",
+          "layout",
+          "slotId",
+          "specificity"
+        ]
+      }
+    }
+  },
+  "required": [
+    "slots"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

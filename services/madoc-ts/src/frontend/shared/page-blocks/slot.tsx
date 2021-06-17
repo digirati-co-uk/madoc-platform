@@ -71,8 +71,8 @@ export const Slot: React.FC<{ name: string }> = props => {
       editable={editable}
       onUpdateSlot={updateSlot}
       onUpdateBlock={onUpdateBlock}
-      defaultContents={props.children}
       invalidateSlots={invalidateSlots}
+      defaultContents={props.children}
     />
   );
 };

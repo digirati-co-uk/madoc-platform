@@ -1,4 +1,5 @@
 import { renderClient } from '../shared/utility/render-client';
+import '../shared/plugins/globals';
 
 Promise.all([
   // The component.
@@ -7,7 +8,7 @@ Promise.all([
   import('./routes'),
   // And the components
   import('./components'),
-]).then(([mod, routes, components]) => {
+]).then(async ([mod, routes, components]) => {
   // For plugins, I'm expecting this is where they would be detected and loaded.
   // - Get array of plugins
   // - Run hooks for routes and components
@@ -19,5 +20,5 @@ Promise.all([
   // - This will be picked up in a script tag for the SSR in some way.
   // - A plugin could in theory be a remote URL too, and have some fancy server-side caching
   //   of them.
-  renderClient(mod.default, routes.createRoutes(components), false);
+  await renderClient(mod.default, routes.createRoutes, components, false);
 });

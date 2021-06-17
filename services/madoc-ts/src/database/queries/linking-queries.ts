@@ -1,4 +1,5 @@
 import { sql } from 'slonik';
+import { ResourceLinkResponse } from '../../types/schemas/linking';
 import { SQL_AND, SQL_COMMA, SQL_EMPTY, SQL_INT_ARRAY } from '../../utility/postgres-tags';
 
 export type ResourceLink<ExtraProperties = any> = {
@@ -16,25 +17,6 @@ export type ResourceLink<ExtraProperties = any> = {
   motivation?: string;
   format?: string;
   properties?: ExtraProperties;
-};
-
-export type ResourceLinkResponse<T = { [key: string]: any }> = {
-  id: number;
-  resource_id: number;
-  property: string;
-  source?: string;
-  link: {
-    id: string;
-    label: string;
-    type?: string;
-    format?: string;
-    motivation?: string;
-  } & T;
-  file?: {
-    path: string;
-    bucket: string;
-    hash?: string;
-  };
 };
 
 export type ResourceLinkRow<ExtraProperties = any> = ResourceLink<ExtraProperties> & {

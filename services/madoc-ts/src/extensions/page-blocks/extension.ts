@@ -31,7 +31,7 @@ export type PageBlockDefinition<
   label: string;
   type: string;
   renderType: Type;
-  model: CaptureModel['document'];
+  model?: CaptureModel['document'];
   defaultData: Data;
   requiredContext?: RequiredContext[];
   anyContext?: RequiredContext[];
@@ -56,6 +56,13 @@ export class PageBlockExtension implements BaseExtension {
   definitionMap: {
     [type: string]: PageBlockDefinition<any, any, any, any>;
   };
+  pluginBlocks: {
+    [type: string]: Array<{
+      siteId: number;
+      pluginId: string;
+      definition: PageBlockDefinition<any, any, any>;
+    }>;
+  } = {};
 
   constructor(api: ApiClient, definitions: PageBlockDefinition<any, any, any, any>[]) {
     this.api = api;
@@ -67,10 +74,51 @@ export class PageBlockExtension implements BaseExtension {
     reactBlockEmitter.on('block', block => {
       this.definitionMap[block.type] = block;
     });
+
+    reactBlockEmitter.on('plugin-block', ({ pluginId, siteId, block }) => {
+      this.pluginBlocks[block.type] = this.pluginBlocks[block.type] ? this.pluginBlocks[block.type] : [];
+      for (const pluginBlock of this.pluginBlocks[block.type]) {
+        if (pluginBlock.pluginId === pluginId && pluginBlock.siteId === siteId) {
+          // Overriding block.
+          pluginBlock.definition = block;
+          return;
+        }
+      }
+      this.pluginBlocks[block.type].push({
+        siteId,
+        pluginId,
+        definition: block,
+      });
+    });
+
+    reactBlockEmitter.on('remove-plugin-block', ({ type, pluginId, siteId }) => {
+      const allBlocks = this.pluginBlocks[type];
+      if (allBlocks) {
+        this.pluginBlocks[type] = this.pluginBlocks[type].filter(
+          def => !(def.pluginId === pluginId && def.siteId === siteId)
+        );
+      }
+    });
   }
 
-  createBlankBlock(type: string): SiteBlockRequest {
-    const definition = this.definitionMap[type];
+  getDefinition(type: string, siteId: number) {
+    // Check plugin blocks.
+    const types = this.pluginBlocks[type];
+    if (types) {
+      const found = types.find(r => r.siteId === siteId)?.definition;
+      if (found) {
+        return found;
+      }
+    }
+
+    return this.definitionMap[type];
+  }
+
+  /**
+   * @frontend
+   */
+  createBlankBlock(type: string, siteId: number): SiteBlockRequest {
+    const definition = this.getDefinition(type, siteId);
 
     if (!definition) {
       throw new Error('Invalid block');
@@ -84,13 +132,22 @@ export class PageBlockExtension implements BaseExtension {
     };
   }
 
-  getDefinition(type: string) {
-    return this.definitionMap[type];
-  }
-
-  getDefinitions(context: EditorialContext = {}) {
+  /**
+   * @frontend
+   */
+  getDefinitions(siteId: number, context: EditorialContext = {}) {
     // Configuration blocks.
     const definitions = Object.values(this.definitionMap);
+    const pluginDefinitionKeys = Object.keys(this.pluginBlocks);
+    for (const pluginDefinitionKey of pluginDefinitionKeys) {
+      const defs = this.pluginBlocks[pluginDefinitionKey];
+      if (defs) {
+        const found = defs.find(def => def.siteId === siteId);
+        if (found) {
+          definitions.push(found.definition);
+        }
+      }
+    }
 
     const currentCtxKeys = Object.keys(context).filter((key: any) => {
       return !!(context as any)[key];
@@ -121,6 +178,9 @@ export class PageBlockExtension implements BaseExtension {
     });
   }
 
+  /**
+   * @frontend
+   */
   requestSlots(params: EditorialContext) {
     return this.api.publicRequest<any>(`/madoc/api/slots`, {
       project: params.project,
@@ -130,9 +190,13 @@ export class PageBlockExtension implements BaseExtension {
     });
   }
 
-  renderBlockToReact(block: SiteBlock | SiteBlockRequest, context: EditorialContext): JSX.Element | null {
+  renderBlockToReact(
+    block: SiteBlock | SiteBlockRequest,
+    siteId: number,
+    context: EditorialContext
+  ): JSX.Element | null {
     // @todo check required context.
-    const definition = this.definitionMap[block.type];
+    const definition = this.getDefinition(block.type, siteId);
     if (!definition) {
       return null;
     }
@@ -150,8 +214,8 @@ export class PageBlockExtension implements BaseExtension {
     return null;
   }
 
-  renderBlockToHTML(block: SiteBlock, context: EditorialContext) {
-    const definition = this.definitionMap[block.type];
+  renderBlockToHTML(block: SiteBlock, siteId: number, context: EditorialContext) {
+    const definition = this.getDefinition(block.type, siteId);
     if (!definition) {
       return null;
     }
@@ -178,6 +242,10 @@ export class PageBlockExtension implements BaseExtension {
     return this.api.request<{ pages: SitePage[] }>(`/api/madoc/pages`);
   }
 
+  /**
+   * @server
+   * @frontend
+   */
   async getPageNavigation(pagePath = '/') {
     const slug = pagePath && pagePath !== '/' ? `/${pagePath}` : '';
 

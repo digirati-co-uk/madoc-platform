@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { ResourceLinkResponse } from '../../../../../types/schemas/linking';
 import { EmptyState } from '../../../../shared/atoms/EmptyState';
 import { Spinner } from '../../../../shared/icons/Spinner';
 import { UniversalComponent } from '../../../../types';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
-import { ResourceLinkResponse } from '../../../../../database/queries/linking-queries';
 import { useData } from '../../../../shared/hooks/use-data';
 import { TableContainer } from '../../../../shared/atoms/Table';
 import { LinkingProperty } from '../../../../shared/atoms/LinkingProperty';

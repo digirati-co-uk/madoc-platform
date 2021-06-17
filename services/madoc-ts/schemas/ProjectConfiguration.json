@@ -70,6 +70,9 @@
     "skipAutomaticOCRImport": {
       "type": "boolean"
     },
+    "allowPersonalNotes": {
+      "type": "boolean"
+    },
     "defaultEditorOrientation": {
       "enum": [
         "horizontal",
@@ -79,6 +82,160 @@
     },
     "skipManifestListingPage": {
       "type": "boolean"
+    },
+    "hideStatistics": {
+      "type": "boolean"
+    },
+    "hideProjectCollectionNavigation": {
+      "type": "boolean"
+    },
+    "hideProjectManifestNavigation": {
+      "type": "boolean"
+    },
+    "searchStrategy": {
+      "type": "string",
+      "enum": [
+        "string"
+      ]
+    },
+    "hideManifestMetadataOnCanvas": {
+      "type": "boolean"
+    },
+    "hideCanvasThumbnailNavigation": {
+      "type": "boolean"
+    },
+    "showSearchFacetCount": {
+      "type": "boolean"
+    },
+    "miradorCanvasPage": {
+      "type": "boolean"
+    },
+    "contributionMode": {
+      "enum": [
+        "annotation",
+        "transcription"
+      ],
+      "type": "string"
+    },
+    "searchOptions": {
+      "type": "object",
+      "properties": {
+        "nonLatinFulltext": {
+          "type": "boolean"
+        },
+        "searchMultipleFields": {
+          "type": "boolean"
+        }
+      }
+    },
+    "shortExpiryTime": {
+      "type": "string"
+    },
+    "longExpiryTime": {
+      "type": "string"
+    },
+    "modelPageOptions": {
+      "type": "object",
+      "properties": {
+        "fixedTranscriptionBar": {
+          "type": "boolean"
+        },
+        "preventContributionAfterRejection": {
+          "type": "boolean"
+        },
+        "preventContributionAfterSubmission": {
+          "type": "boolean"
+        },
+        "preventMultipleUserSubmissionsPerResource": {
+          "type": "boolean"
+        },
+        "preventContributionAfterManifestUnassign": {
+          "type": "boolean"
+        }
+      }
+    },
+    "projectPageOptions": {
+      "type": "object",
+      "properties": {
+        "hideStartContributing": {
+          "type": "boolean"
+        },
+        "hideSearchButton": {
+          "type": "boolean"
+        },
+        "hideRandomManifest": {
+          "type": "boolean"
+        },
+        "hideRandomCanvas": {
+          "type": "boolean"
+        }
+      }
+    },
+    "manifestPageOptions": {
+      "type": "object",
+      "properties": {
+        "hideStartContributing": {
+          "type": "boolean"
+        },
+        "hideOpenInMirador": {
+          "type": "boolean"
+        },
+        "hideSearchButton": {
+          "type": "boolean"
+        },
+        "hideRandomCanvas": {
+          "type": "boolean"
+        },
+        "hideFilterImages": {
+          "type": "boolean"
+        },
+        "directModelPage": {
+          "type": "boolean"
+        },
+        "showIIIFLogo": {
+          "type": "boolean"
+        }
+      }
+    },
+    "headerOptions": {
+      "type": "object",
+      "properties": {
+        "hideSiteTitle": {
+          "type": "boolean"
+        },
+        "hideProjectsLink": {
+          "type": "boolean"
+        },
+        "hideCollectionsLink": {
+          "type": "boolean"
+        },
+        "hideDashboardLink": {
+          "type": "boolean"
+        },
+        "hidePageNavLinks": {
+          "type": "boolean"
+        },
+        "hideSearchBar": {
+          "type": "boolean"
+        }
+      }
+    },
+    "activityStreams": {
+      "type": "object",
+      "properties": {
+        "manifest": {
+          "type": "boolean"
+        },
+        "canvas": {
+          "type": "boolean"
+        },
+        "curated": {
+          "type": "boolean"
+        },
+        "published": {
+          "type": "boolean"
+        }
+      }
     }
   },
   "required": [

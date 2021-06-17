@@ -3,6 +3,8 @@ import json from 'koa-json';
 import logger from 'koa-logger';
 import Ajv from 'ajv';
 import { checkExpiredManifests } from './cron/check-expired-manifests';
+import './frontend/shared/plugins/globals';
+import { createPluginManager } from './middleware/create-plugin-manager';
 import { errorHandler } from './middleware/error-handler';
 import { CronJobs } from './utility/cron-jobs';
 import { TypedRouter } from './utility/typed-router';
@@ -23,6 +25,8 @@ import { ExternalConfig } from './types/external-config';
 import k2c from 'koa2-connect';
 import cookieParser from 'cookie-parser';
 import schedule from 'node-schedule';
+
+export const fileDirectory = process.env.OMEKA_FILE_DIRECTORY || '/home/node/app/omeka-files';
 
 export async function createApp(router: TypedRouter<any, any>, config: ExternalConfig) {
   const app = new Koa();
@@ -72,6 +76,7 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   app.context.routes = router;
   app.context.mysql = mysqlPool;
   app.context.cron = new CronJobs();
+  app.context.pluginManager = await createPluginManager(pool);
 
   // Set i18next
   const [, i18next] = await i18nextPromise;
@@ -97,7 +102,6 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   app.use(errorHandler);
   app.use(omekaPage);
   app.use(setJwt);
-
   app.use(omekaApi);
   app.use(router.routes()).use(router.allowedMethods());
 

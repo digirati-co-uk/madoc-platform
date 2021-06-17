@@ -103,6 +103,8 @@ export const siteFrontend: RouteMiddleware = async context => {
       siteSlug: site.slug,
       site: site,
       siteLocales,
+      pluginManager: context.pluginManager,
+      plugins: context.pluginManager.listPlugins(site.id),
       theme: currentTheme,
       getSlots: async (ctx: EditorialContext) => {
         const parsedId = ctx.project ? parseProjectId(ctx.project) : undefined;

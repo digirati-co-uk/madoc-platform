@@ -1,12 +1,10 @@
 import { defaultTheme, Revisions } from '@capture-models/editor';
 import { captureModelShorthand, hydrateCompressedModel, serialiseCaptureModel } from '@capture-models/helpers';
-import { PluginContext, pluginStore } from '@capture-models/plugin-api';
-import { CaptureModel, PluginStore } from '@capture-models/types';
+import { CaptureModel } from '@capture-models/types';
 import React, { PropsWithChildren, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import styled, { ThemeProvider } from 'styled-components';
-import { specification as mediaExplorer } from '../../../extensions/capture-models/MediaExplorer';
 import { PageBlockDefinition, PageBlockEditor } from '../../../extensions/page-blocks/extension';
 import { EditorialContext, SiteBlock, SiteBlockRequest } from '../../../types/schemas/site-page';
 import { Button, ButtonRow, TinyButton } from '../atoms/Button';
@@ -14,6 +12,7 @@ import { EditorSlots } from '../caputre-models/new/components/EditorSlots';
 import { RevisionProviderWithFeatures } from '../caputre-models/new/components/RevisionProviderWithFeatures';
 import { ModalButton } from '../components/Modal';
 import { useApi } from '../hooks/use-api';
+import { useSite } from '../hooks/use-site';
 import { createRevisionFromDocument } from '../utility/create-revision-from-document';
 import { CustomEditorTypes } from './custom-editor-types';
 import { RenderBlock } from './render-block';
@@ -88,10 +87,11 @@ export function modelToBlock(
 export function useBlockModel(block: SiteBlock | SiteBlockRequest, advanced?: boolean) {
   const { t } = useTranslation();
   const api = useApi();
+  const site = useSite();
 
   const definition: PageBlockDefinition<any, any, any, any> | undefined = useMemo(() => {
-    return api.pageBlocks.definitionMap[block.type];
-  }, [api.pageBlocks.definitionMap, block.type]);
+    return api.pageBlocks.getDefinition(block.type, site.id);
+  }, [site.id, api.pageBlocks.definitionMap, api.pageBlocks.pluginBlocks, block.type]);
 
   const defaultFields = useMemo<CaptureModel['document']>(() => {
     const defaultProps = {
@@ -157,7 +157,7 @@ export function useBlockModel(block: SiteBlock | SiteBlockRequest, advanced?: bo
       return undefined;
     }
     const properties = {
-      ...(definition ? definition.model.properties : {}),
+      ...(definition && definition.model ? definition.model.properties : {}),
       ...defaultFields.properties,
     };
 
@@ -170,6 +170,8 @@ export function useBlockModel(block: SiteBlock | SiteBlockRequest, advanced?: bo
       __meta__: meta,
       ...value,
     });
+
+    console.log(document);
 
     return createRevisionFromDocument(document);
   }, [value, definition, defaultFields]);
@@ -212,7 +214,7 @@ export const useBlockEditor = (
     return () => {
       clearInterval(id);
     };
-  }, [block]);
+  }, [advanced, block]);
 
   const saveChanges = async (): Promise<SiteBlock | undefined> => {
     const newData = latestRevision.current;
@@ -248,6 +250,10 @@ export const useBlockEditor = (
         captureModel={revision.model}
         initialRevision={revision.revisionId}
         slotConfig={{ editor: { allowEditing: true } }}
+        features={{
+          autoSelectingRevision: true,
+          autosave: false,
+        }}
       >
         <OnChangeDocument
           onChange={newRevision => {
@@ -320,13 +326,14 @@ const BlockEditorForm: React.FC<{
 
 function useBlockDetails(block: SiteBlock | SiteBlockRequest) {
   const api = useApi();
+  const site = useSite();
 
   const customEditor = useMemo(() => {
-    const definition = api.pageBlocks.definitionMap[block.type];
+    const definition = api.pageBlocks.getDefinition(block.type, site.id);
     if (definition.customEditor) {
       return definition.customEditor;
     }
-  }, [api.pageBlocks.definitionMap, block.type]);
+  }, [site.id, api.pageBlocks.definitionMap, api.pageBlocks.pluginBlocks, block.type]);
 
   return { CustomEditor: customEditor };
 }

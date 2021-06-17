@@ -1,7 +1,9 @@
 import { i18n } from 'i18next';
+import { PluginManager } from '../frontend/shared/plugins/plugin-manager';
 import { ChangeDiscoveryRepository } from '../activity-streams/change-discovery-repository';
 import { MediaRepository } from '../repository/media-repository';
 import { PageBlocksRepository } from '../repository/page-blocks-repository';
+import { PluginRepository } from '../repository/plugin-repository';
 import { ThemeRepository } from '../repository/theme-repository';
 import { CronJobs } from '../utility/cron-jobs';
 import { ExternalConfig } from './external-config';
@@ -18,10 +20,12 @@ export interface ApplicationContext {
   mysql: Pool;
   connection: DatabasePoolConnectionType;
   pageBlocks: PageBlocksRepository;
+  plugins: PluginRepository;
   themes: ThemeRepository;
   media: MediaRepository;
   changeDiscovery: ChangeDiscoveryRepository;
   omeka: OmekaApi;
+  pluginManager: PluginManager;
   cron: CronJobs;
   ajv: Ajv;
   omekaPage?: string | ((token: string) => Promise<string | undefined>) | ((token: string) => undefined | string);

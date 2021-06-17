@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { EditorialContext, SiteBlock, SiteBlockRequest } from '../../../types/schemas/site-page';
 import { WarningMessage } from '../atoms/WarningMessage';
 import { useApi } from '../hooks/use-api';
+import { useSite } from '../hooks/use-site';
 import { BlockEditor } from './block-editor';
 
 type RenderBlockProps = {
@@ -14,10 +15,11 @@ type RenderBlockProps = {
 
 export const RenderBlock: React.FC<RenderBlockProps> = props => {
   const api = useApi();
+  const site = useSite();
 
   const blockContents = useMemo(() => {
-    return api.pageBlocks.renderBlockToReact(props.block, props.context || {});
-  }, [api, props.block, props.context]);
+    return api.pageBlocks.renderBlockToReact(props.block, site.id, props.context || {});
+  }, [site.id, api, props.block, props.context]);
 
   if (props.editable) {
     if (!blockContents) {

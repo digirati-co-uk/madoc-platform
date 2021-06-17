@@ -1,7 +1,7 @@
 import { useMutation } from 'react-query';
-import { ResourceLinkResponse } from '../../../../../database/queries/linking-queries';
 import { PARAGRAPHS_PROFILE } from '../../../../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
 import { ItemStructureList } from '../../../../../types/schemas/item-structure-list';
+import { ResourceLinkResponse } from '../../../../../types/schemas/linking';
 import { ManifestFull } from '../../../../../types/schemas/manifest-full';
 import { iiifGetLabel } from '../../../../../utility/iiif-get-label';
 import { Button } from '../../../../shared/atoms/Button';

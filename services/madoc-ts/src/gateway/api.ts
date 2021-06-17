@@ -18,6 +18,7 @@ import { ExtensionManager } from '../extensions/extension-manager';
 import { defaultPageBlockDefinitions } from '../extensions/page-blocks/default-definitions';
 import { PageBlockExtension } from '../extensions/page-blocks/extension';
 import { MediaExtension } from '../extensions/media/extension';
+import { SystemExtension } from '../extensions/system/extension';
 import { TaskExtension } from '../extensions/tasks/extension';
 import { ThemeExtension } from '../extensions/themes/extension';
 import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
@@ -25,6 +26,7 @@ import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/ad
 import { Site } from '../types/omeka/Site';
 import { SingleUser } from '../types/omeka/User';
 import { Pm2Status } from '../types/pm2';
+import { ResourceLinkResponse } from '../types/schemas/linking';
 import { ProjectConfiguration } from '../types/schemas/project-configuration';
 import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/search';
 import { SearchIndexable } from '../utility/capture-model-to-indexables';
@@ -65,7 +67,7 @@ import {
 } from './tasks/crowdsourcing-review';
 import { CrowdsourcingCanvasTask } from './tasks/crowdsourcing-canvas-task';
 import { ConfigResponse } from '../types/schemas/config-response';
-import { ResourceLinkResponse, ResourceLinkRow } from '../database/queries/linking-queries';
+import { ResourceLinkRow } from '../database/queries/linking-queries';
 import { SearchIndexTask } from './tasks/search-index-task';
 
 export class ApiClient {
@@ -86,6 +88,7 @@ export class ApiClient {
   pageBlocks: PageBlockExtension;
   media: MediaExtension;
   tasks: TaskExtension;
+  system: SystemExtension;
   themes: ThemeExtension;
 
   constructor(options: {
@@ -106,6 +109,7 @@ export class ApiClient {
     this.pageBlocks = new PageBlockExtension(this, defaultPageBlockDefinitions);
     this.media = new MediaExtension(this);
     this.tasks = new TaskExtension(this);
+    this.system = new SystemExtension(this);
     this.themes = new ThemeExtension(this);
     this.captureModelDataSources = [plainTextSource];
     this.captureModelExtensions = new ExtensionManager(
@@ -122,7 +126,7 @@ export class ApiClient {
     );
   }
 
-  getJwt() {
+  private getJwt() {
     if (!this.jwt && this.jwtFunction) {
       this.jwt = this.jwtFunction();
     }

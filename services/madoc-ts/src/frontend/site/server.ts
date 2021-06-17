@@ -9,8 +9,9 @@ React.useLayoutEffect = React.useEffect;
 
 import SiteApp from './index';
 import { createRoutes } from './routes';
-import * as components from './components';
 import { createServerRenderer } from '../shared/utility/create-server-renderer';
-import { apiGateway } from '../../gateway/api.server';
+import * as components from './components';
 
-export const render = createServerRenderer(SiteApp, createRoutes(components), apiGateway);
+const apiGateway = process.env.API_GATEWAY as string;
+
+export const render = createServerRenderer(SiteApp, createRoutes, components, apiGateway);

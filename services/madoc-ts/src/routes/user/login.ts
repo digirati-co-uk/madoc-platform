@@ -35,7 +35,7 @@ export const loginPage: RouteMiddleware<{ slug: string }, { email: string; passw
   }
 
   if (context.state.jwt) {
-    context.response.redirect(`/s/${context.params.slug}/madoc`);
+    context.response.redirect(context.query.redirect || `/s/${context.params.slug}/madoc`);
     return;
   }
 

@@ -3,6 +3,7 @@ import React, { useMemo, useRef, useState } from 'react';
 import { EditorialContext, SiteBlock, SiteBlockRequest } from '../../../types/schemas/site-page';
 import { Button, SmallButton } from '../atoms/Button';
 import { useApi } from '../hooks/use-api';
+import { useSite } from '../hooks/use-site';
 import { useBlockEditor } from './block-editor';
 import { RenderBlock } from './render-block';
 
@@ -49,19 +50,20 @@ export const BlockCreator: React.FC<{
   onSave: (block: SiteBlock) => void | Promise<void>;
 }> = props => {
   const api = useApi();
+  const site = useSite();
   const [chosenBlockType, setChosenBlockType] = useState<string | undefined>();
 
   // Step 1: Choose a block type (possibly filter based on current context)
   // - List all block types
   const blockTypes = useMemo(() => {
-    return api.pageBlocks.getDefinitions(props.context);
+    return api.pageBlocks.getDefinitions(site.id, props.context);
   }, [api.pageBlocks, props.context]);
 
   const chosenBlock = useMemo(() => {
     if (chosenBlockType) {
-      return api.pageBlocks.createBlankBlock(chosenBlockType);
+      return api.pageBlocks.createBlankBlock(chosenBlockType, site.id);
     }
-  }, [api.pageBlocks, chosenBlockType]);
+  }, [site, api.pageBlocks, chosenBlockType]);
 
   // @todo later Step 4: Save for later
 

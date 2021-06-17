@@ -1,12 +1,10 @@
-import { UniversalRoute } from '../types';
+import { CreateRouteType } from '../types';
 
 type BaseRouteComponents = typeof import('./components');
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface RouteComponents extends BaseRouteComponents {}
 
-export function createRoutes(components: RouteComponents): UniversalRoute[] {
-  // const components = hookComponents(inputComponents);
-
+export function createRoutes(components: RouteComponents): CreateRouteType {
   const routes = [
     {
       path: '/collections',
@@ -492,7 +490,15 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
         },
       ],
     },
-    {
+  ];
+
+  return {
+    baseRoute: {
+      path: '/',
+      exact: false,
+      component: components.RootLoader,
+    },
+    fallback: {
       path: '/:pagePath+',
       exact: false,
       component: components.PageLoader,
@@ -503,16 +509,6 @@ export function createRoutes(components: RouteComponents): UniversalRoute[] {
         },
       ],
     },
-  ];
-
-  // hookRoutes(routes);
-
-  return [
-    {
-      path: '/',
-      exact: false,
-      routes: routes,
-      component: components.RootLoader,
-    },
-  ];
+    routes,
+  };
 }

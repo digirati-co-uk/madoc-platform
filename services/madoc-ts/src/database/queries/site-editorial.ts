@@ -95,7 +95,7 @@ export function getContextualSlots(context: ServerEditorialContext, siteId: numb
   }
 
   if (contextQueries.length === 0) {
-    throw new NotFoundError();
+    return undefined;
   }
 
   return sql<SlotJoinedProperties & BlockJoinedProperties>`

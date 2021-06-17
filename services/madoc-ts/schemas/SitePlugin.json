@@ -1,0 +1,90 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "enabled": {
+      "type": "boolean"
+    },
+    "installed": {
+      "type": "boolean"
+    },
+    "thumbnail": {
+      "type": "string"
+    },
+    "siteId": {
+      "type": "number"
+    },
+    "repository": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "owner"
+      ]
+    },
+    "version": {
+      "type": "string"
+    },
+    "development": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "enum": [
+                false
+              ]
+            }
+          },
+          "required": [
+            "enabled"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "enum": [
+                true
+              ]
+            },
+            "revision": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "enabled",
+            "revision"
+          ]
+        }
+      ]
+    }
+  },
+  "required": [
+    "development",
+    "enabled",
+    "id",
+    "installed",
+    "name",
+    "repository",
+    "version"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

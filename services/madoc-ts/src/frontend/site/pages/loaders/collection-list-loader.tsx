@@ -18,7 +18,7 @@ export const CollectionListLoader: UniversalComponent<CollectionListLoaderType> 
   CollectionListLoaderType
 >(
   ({ route }) => {
-    return <BreadcrumbContext>{renderUniversalRoutes(route.routes)}</BreadcrumbContext>;
+    return <BreadcrumbContext>{route ? renderUniversalRoutes(route.routes) : null}</BreadcrumbContext>;
   },
   {
     getKey: (params, query) => {

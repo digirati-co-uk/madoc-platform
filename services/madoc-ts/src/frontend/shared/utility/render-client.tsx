@@ -14,17 +14,22 @@ import { I18nextProvider } from 'react-i18next';
 import { BrowserRouter } from 'react-router-dom';
 import { api } from '../../../gateway/api.browser';
 import React, { Suspense } from 'react';
+import { SitePlugin } from '../../../types/schemas/plugins';
+import { CreateRouteType, UniversalRoute } from '../../types';
 import { ResolvedTheme } from '../../../types/themes';
-import { UniversalRoute } from '../../types';
 import { ErrorPage } from '../components/NotFoundPage';
 import { Spinner } from '../icons/Spinner';
+import { Madoc } from '../plugins/globals';
+import { PluginManager, PluginModule } from '../plugins/plugin-manager';
+import { useModule } from '../plugins/use-module';
 import { ErrorBoundary } from './error-boundary';
 import { queryConfig } from './query-config';
 import { ReactQueryDevtools } from 'react-query-devtools';
 
-export function renderClient(
+export async function renderClient(
   Component: React.FC<any>,
-  routes: UniversalRoute[],
+  createRoutes: UniversalRoute[] | ((components: any) => CreateRouteType),
+  components: any,
   requireJwt = true,
   extraConfig: ReactQueryConfig = {}
 ) {
@@ -33,6 +38,51 @@ export function renderClient(
   const dehydratedSiteEl = document.getElementById('react-omeka');
   const dehydratedState = dehydratedStateEl ? JSON.parse(dehydratedStateEl.innerText) : {};
   const dehydratedSite = dehydratedSiteEl ? JSON.parse(dehydratedSiteEl.innerText) : {};
+
+  const remotePlugins = (dehydratedSite.plugins || []).map(async (plugin: SitePlugin) => {
+    if (plugin.development.enabled && !plugin.development.revision && !plugin.installed) {
+      return null;
+    }
+
+    return fetch(
+      plugin.development.enabled && plugin.development.revision
+        ? `/s/default/madoc/assets/plugins/${plugin.id}/${plugin.development.revision}/plugin.js`
+        : `/s/default/madoc/assets/plugins/${plugin.id}/${plugin.version}/plugin.js`,
+      {
+        cache: 'force-cache',
+      }
+    )
+      .then(res => res.text())
+      .then(code => {
+        const module = new Function(`
+          return (function(require, module, exports) {
+            ${code};
+            
+            return exports;
+          })(this.require, this.module, this.exports);
+        `);
+
+        return {
+          siteId: dehydratedSite.site.id,
+          definition: plugin,
+          module: module.call({
+            Madoc: Madoc,
+            require: useModule,
+            exports: {},
+            module: {},
+          }),
+        } as PluginModule;
+      });
+  });
+
+  const availablePlugins = (await Promise.all(remotePlugins)).filter(r => r !== null);
+  const pluginManager = new PluginManager(availablePlugins as any);
+  const routes = Array.isArray(createRoutes)
+    ? createRoutes
+    : pluginManager.makeRoutes(
+        createRoutes(pluginManager.hookComponents(components, dehydratedSite.site.id)),
+        dehydratedSite.site.id
+      );
 
   const [, slug] = window.location.pathname.match(/s\/([^/]*)/) as string[];
   const jwt = cookies.get(`madoc/${slug}`) || undefined;

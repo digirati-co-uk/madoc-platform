@@ -1,5 +1,5 @@
-import { ResourceLinkResponse } from '../database/queries/linking-queries';
 import { PARAGRAPHS_PROFILE } from '../extensions/capture-models/Paragraphs/Paragraphs.helpers';
+import { ResourceLinkResponse } from '../types/schemas/linking';
 
 export function isLinkMetsAlto(link: ResourceLinkResponse) {
   return (

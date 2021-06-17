@@ -1,5 +1,6 @@
 import { Middleware } from 'koa';
 import { NotFound } from '../utility/errors/not-found';
+import { ReactServerError } from '../utility/errors/react-server-error';
 import { RequestError } from '../utility/errors/request-error';
 import { ServerError } from '../utility/errors/server-error';
 import { SlonikError } from 'slonik';
@@ -38,6 +39,15 @@ export const errorHandler: Middleware = async (context, next) => {
       console.log('Unhandled error');
       console.log(err);
       context.response.status = 500;
+    }
+
+    if (process.env.NODE_ENV === 'development') {
+      context.response.body = `
+        <h1>Server error</h1>
+        <p>This will only appear in development.</p>
+        <pre>${err.message}</pre>
+        <pre>${err.stack}</pre>
+      `;
     }
   }
 };

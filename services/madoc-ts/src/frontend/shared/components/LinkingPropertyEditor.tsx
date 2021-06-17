@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from 'react-query';
-import { ResourceLinkResponse } from '../../../database/queries/linking-queries';
+import { ResourceLinkResponse } from '../../../types/schemas/linking';
 import { Button } from '../atoms/Button';
 import { useApi } from '../hooks/use-api';
 

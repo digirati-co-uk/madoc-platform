@@ -1,23 +1,11 @@
-import { syncJwtRequests } from './utility/sync-jwt-requests';
+// Entry point for types/library.
 
-async function main() {
-  await syncJwtRequests();
+export * from './frontend/shared/plugins/public-api';
 
-  const config = require('../config.json');
-  const { createApp } = require('./app');
-  const { port } = require('./config');
-  const { router } = require('./router');
+import { Madoc as M } from './frontend/shared/plugins/globals';
 
-  const app = await createApp(router, config);
-
-  app.listen(port);
-
-  if (process.env.NODE_ENV !== 'production') {
-    console.log(`Server ready at: http://localhost:${port}`);
-  }
+declare global {
+  const Madoc: typeof M;
 }
 
-main().catch(err => {
-  console.error(err);
-  process.exit(1);
-});
+export default M;

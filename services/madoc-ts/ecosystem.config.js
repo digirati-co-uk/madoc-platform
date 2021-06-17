@@ -5,7 +5,7 @@ module.exports = {
       ? [
           {
             name: 'server',
-            script: 'lib/index.js',
+            script: 'lib/server.js',
             instances: 1,
             autorestart: true,
             watch: false,
@@ -40,12 +40,12 @@ module.exports = {
       : [
           {
             name: 'server',
-            script: 'lib/index.js',
+            script: 'lib/server.js',
             instances: 1,
             autorestart: true,
             watch: ['lib'],
             watch_options: {
-              ignored: 'frontend/admin/build/**',
+              ignored: ['frontend/admin/build/**'],
               awaitWriteFinish: {
                 stabilityThreshold: 2000,
                 pollInterval: 100,

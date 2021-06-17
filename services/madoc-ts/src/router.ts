@@ -1,3 +1,4 @@
+import { acceptNewDevelopmentBundle, developmentPlugin } from './routes/admin/development-plugin';
 import { exportSite } from './routes/admin/export-site';
 import { getMetadataKeys } from './routes/admin/get-metadata-keys';
 import { getMetadataValues } from './routes/admin/get-metadata-values';
@@ -6,6 +7,17 @@ import { importSite } from './routes/admin/import-site';
 import { listJobs, runJob } from './routes/admin/list-jobs';
 import { getLocalisation, listLocalisations, updateLocalisation } from './routes/admin/localisation';
 import { getMetadataConfiguration, updateMetadataConfiguration } from './routes/admin/metadata-configuration';
+import {
+  disablePlugin,
+  enablePlugin,
+  getPlugin,
+  getPluginDependencies,
+  installPlugin,
+  installRemotePlugin,
+  listPlugins,
+  uninstallPlugin,
+  viewRemotePlugin,
+} from './routes/admin/plugins';
 import { pm2Status } from './routes/admin/pm2';
 import { getSiteDetails } from './routes/admin/site-details';
 import {
@@ -26,6 +38,7 @@ import { deletePage } from './routes/content/delete-page';
 import { deleteSlot } from './routes/content/delete-slot';
 import { getBlock } from './routes/content/get-block';
 import { getPage } from './routes/content/get-page';
+import { linkAutocomplete } from './routes/content/link-autocomplete';
 import { resolveSlots } from './routes/content/resolve-slots';
 import { getCanvasReference } from './routes/iiif/canvases/get-canvas-reference';
 import { siteManifestBuild } from './routes/site/site-manifest-build';
@@ -70,7 +83,7 @@ import { importCollection, importManifest, importManifestOcr } from './routes/ii
 import { loginPage } from './routes/user/login';
 import { getSiteScopes, saveSiteScopes } from './routes/admin/site-scopes';
 import { logout } from './routes/user/logout';
-import { frontendBundles } from './routes/assets/frontend-bundles';
+import { frontendBundles, pluginBundles } from './routes/assets/frontend-bundles';
 import { adminFrontend, siteFrontend } from './routes/admin/frontend';
 import { createCollection } from './routes/iiif/collections/create-collection';
 import { deleteCollection } from './routes/iiif/collections/delete-collection';
@@ -148,6 +161,18 @@ export const router = new TypedRouter({
   'import-site': [TypedRouter.POST, '/api/madoc/site/:siteId/import', importSite],
   'cron-jobs': [TypedRouter.GET, '/api/madoc/cron/jobs', listJobs],
   'run-cron-jobs': [TypedRouter.POST, '/api/madoc/cron/jobs/:jobId/run', runJob],
+
+  // Plugins
+  'list-plugins': [TypedRouter.GET, '/api/madoc/system/plugins', listPlugins],
+  'get-plugin': [TypedRouter.GET, '/api/madoc/system/plugins/:id', getPlugin],
+  'install-plugin': [TypedRouter.POST, '/api/madoc/system/plugins', installPlugin, 'SitePlugin'],
+  'view-remote-plugin': [TypedRouter.GET, '/api/madoc/system/plugins/external/:author/:repo', viewRemotePlugin],
+  'install-remote-plugin': [TypedRouter.POST, '/api/madoc/system/plugins/external/install', installRemotePlugin],
+  'enable-plugin': [TypedRouter.POST, '/api/madoc/system/plugins/:id/enable', enablePlugin],
+  'disable-plugin': [TypedRouter.POST, '/api/madoc/system/plugins/:id/disable', disablePlugin],
+  'uninstall-plugin': [TypedRouter.POST, '/api/madoc/system/plugins/:id/uninstall', uninstallPlugin],
+  'plugin-dependencies': [TypedRouter.GET, '/api/madoc/system/plugins/:id/dependencies', getPluginDependencies],
+
   'update-site-configuration': [TypedRouter.POST, '/api/madoc/configuration', updateSiteConfiguration],
   'get-model-configuration': [TypedRouter.GET, '/api/madoc/configuration/model', getModelConfiguration],
   'update-model-configuration': [TypedRouter.POST, '/api/madoc/configuration/model', updateModelConfiguration],
@@ -306,6 +331,7 @@ export const router = new TypedRouter({
   'delete-page': [TypedRouter.DELETE, '/api/madoc/pages/root/:paths*', deletePage],
   'update-page': [TypedRouter.PUT, '/api/madoc/pages/root/:paths*', updatePage],
   'get-all-pages': [TypedRouter.GET, '/api/madoc/pages', getAllPages],
+  'get-link-autocomplete': [TypedRouter.GET, '/api/madoc/links/autocomplete', linkAutocomplete],
 
   // Slots
   'create-slot': [TypedRouter.POST, '/api/madoc/slots', createSlot],
@@ -326,6 +352,11 @@ export const router = new TypedRouter({
   'post-login': [TypedRouter.POST, '/s/:slug/madoc/login', loginPage],
   'get-logout': [TypedRouter.GET, '/s/:slug/madoc/logout', logout],
   'refresh-login': [TypedRouter.POST, '/s/:slug/madoc/auth/refresh', refreshToken],
+  'asset-plugin-bundles': [
+    TypedRouter.GET,
+    '/s/:slug/madoc/assets/plugins/:pluginId/:revisionId/plugin.js',
+    pluginBundles,
+  ],
   'assets-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleId.bundle.js', frontendBundles],
   'assets-sub-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleName', frontendBundles],
   'get-user-details': [TypedRouter.GET, '/s/:slug/madoc/api/me', userDetails],
@@ -399,6 +430,10 @@ export const router = new TypedRouter({
 
   // Other routes.
   ...activityStreamRoutes,
+
+  // Development
+  'development-plugin': [TypedRouter.POST, '/api/madoc/development/plugin-token', developmentPlugin],
+  'accept-development-plugin': [TypedRouter.POST, '/api/madoc/development/dev-bundle', acceptNewDevelopmentBundle],
 
   // PAT
   'personal-access-token': [TypedRouter.POST, '/api/madoc/access-token', personalAccessToken],

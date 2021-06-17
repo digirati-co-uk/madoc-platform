@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useMutation } from 'react-query';
 import styled from 'styled-components';
-import { ResourceLinkResponse } from '../../../database/queries/linking-queries';
+import { ResourceLinkResponse } from '../../../types/schemas/linking';
 import { LinkingPropertyEditor } from '../components/LinkingPropertyEditor';
 import { useApi } from '../hooks/use-api';
 import { createLink } from '../utility/create-link';

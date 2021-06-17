@@ -42,7 +42,9 @@ import { Project } from './pages/crowdsourcing/projects/project';
 import { ProjectModelEditor } from './pages/crowdsourcing/projects/project-model-editor';
 import { CreateCollection } from './pages/content/collections/create-collection';
 import { CreateManifest } from './pages/content/manifests/create-manifest';
+import { DevelopmentPlugin } from './pages/system/development-plugin';
 import { ActivityStreams } from './pages/system/activity-streams';
+import { ViewExternalPlugin } from './pages/system/external-plugin';
 import { SystemStatus } from './pages/system/system-status';
 import { ListThemes } from './pages/system/themes/list-themes';
 import { TaskRouter } from './pages/tasks/task-router';
@@ -63,6 +65,7 @@ import { EditManifestLinking } from './pages/content/manifests/edit-manifest-lin
 import { EditCanvasLinking } from './pages/content/canvases/edit-canvas-linking';
 import { OcrPage } from './pages/enrichment/ocr';
 import { ManifestSearchIndex } from './pages/content/manifests/manifest-search-index';
+import { ListPlugins } from './pages/system/list-plugins';
 import { OcrManifest } from './pages/enrichment/ocr/ocr-manifest';
 
 export const routes: UniversalRoute[] = [
@@ -466,6 +469,21 @@ export const routes: UniversalRoute[] = [
     path: '/system/status',
     exact: true,
     component: SystemStatus,
+  },
+  {
+    path: '/system/development',
+    exact: true,
+    component: DevelopmentPlugin,
+  },
+  {
+    path: '/system/plugins',
+    exact: true,
+    component: ListPlugins,
+  },
+  {
+    path: '/system/plugins/external/:owner/:repo',
+    exact: true,
+    component: ViewExternalPlugin,
   },
   {
     path: '/system/themes',

@@ -1,13 +1,13 @@
 {
   "allOf": [
     {
-      "$ref": "#/definitions/{header:\"default\"|\"dark\"|\"midnight\";accent:\"default\";siteContainer:\"default\"|\"light\"|\"dark\";footer:\"light\"|\"dark\";}"
+      "$ref": "#/definitions/{header:\"default\"|\"dark\"|\"midnight\";accent:\"default\";siteContainer:\"default\"|\"light\"|\"dark\";footer:\"light\"|\"dark\";global:\"default\";}"
     },
     {
       "type": "object",
       "properties": {
         "custom": {
-          "$ref": "#/definitions/{header?:Pick<Partial<ThemeVariation<{headerBackground:string;globalBackground:string;menuHoverBackground:string;headerText:string;searchBorder:string;searchBorderFocusColor:string;size:number;},\"default\"|\"dark\"|\"midnight\">>,\"headerBackground\"|\"size\"|\"globalBackground\"|\"menuHoverBackground\"|\"headerText\"|\"searchBorder\"|\"searchBorderFocusColor\">;accent?:Pick<Partial<ThemeVariation<{primary:string;secondary:string;},\"default\">>,\"primary\"|\"secondary\">;siteContainer?:Pick<Partial<ThemeVariation<{containerBackground:string;background:string;},\"default\"|\"light\"|\"dark\">>,\"background\"|\"containerBackground\">;footer?:Pick<Partial<ThemeVariation<{background:string;containerBackground:string;color:string;},\"light\"|\"dark\">>,\"color\"|\"background\"|\"containerBackground\">;}"
+          "$ref": "#/definitions/{header?:Pick<Partial<ThemeVariation<{headerBackground:string;globalBackground:string;menuHoverBackground:string;headerText:string;searchBorder:string;searchBorderFocusColor:string;size:number;},\"default\"|\"dark\"|\"midnight\">>,\"size\"|\"headerBackground\"|\"globalBackground\"|\"menuHoverBackground\"|\"headerText\"|\"searchBorder\"|\"searchBorderFocusColor\">;accent?:Pick<Partial<ThemeVariation<{primary:string;secondary:string;},\"default\">>,\"primary\"|\"secondary\">;siteContainer?:Pick<Partial<ThemeVariation<{containerBackground:string;background:string;},\"default\"|\"light\"|\"dark\">>,\"background\"|\"containerBackground\">;footer?:Pick<Partial<ThemeVariation<{background:string;containerBackground:string;color:string;},\"light\"|\"dark\">>,\"color\"|\"background\"|\"containerBackground\">;global?:Pick<Partial<ThemeVariation<{maxWidth:string;},\"default\">>,\"maxWidth\">;}"
         }
       }
     }
@@ -16,7 +16,10 @@
     "T": {
       "type": "object"
     },
-    "{header:\"default\"|\"dark\"|\"midnight\";accent:\"default\";siteContainer:\"default\"|\"light\"|\"dark\";footer:\"light\"|\"dark\";}": {
+    "T_1": {
+      "type": "object"
+    },
+    "{header:\"default\"|\"dark\"|\"midnight\";accent:\"default\";siteContainer:\"default\"|\"light\"|\"dark\";footer:\"light\"|\"dark\";global:\"default\";}": {
       "type": "object",
       "properties": {
         "header": {
@@ -33,11 +36,18 @@
         },
         "footer": {
           "$ref": "#/definitions/FooterTheme"
+        },
+        "global": {
+          "type": "string",
+          "enum": [
+            "default"
+          ]
         }
       },
       "required": [
         "accent",
         "footer",
+        "global",
         "header",
         "siteContainer"
       ]
@@ -65,11 +75,11 @@
       ],
       "type": "string"
     },
-    "{header?:Pick<Partial<ThemeVariation<{headerBackground:string;globalBackground:string;menuHoverBackground:string;headerText:string;searchBorder:string;searchBorderFocusColor:string;size:number;},\"default\"|\"dark\"|\"midnight\">>,\"headerBackground\"|\"size\"|\"globalBackground\"|\"menuHoverBackground\"|\"headerText\"|\"searchBorder\"|\"searchBorderFocusColor\">;accent?:Pick<Partial<ThemeVariation<{primary:string;secondary:string;},\"default\">>,\"primary\"|\"secondary\">;siteContainer?:Pick<Partial<ThemeVariation<{containerBackground:string;background:string;},\"default\"|\"light\"|\"dark\">>,\"background\"|\"containerBackground\">;footer?:Pick<Partial<ThemeVariation<{background:string;containerBackground:string;color:string;},\"light\"|\"dark\">>,\"color\"|\"background\"|\"containerBackground\">;}": {
+    "{header?:Pick<Partial<ThemeVariation<{headerBackground:string;globalBackground:string;menuHoverBackground:string;headerText:string;searchBorder:string;searchBorderFocusColor:string;size:number;},\"default\"|\"dark\"|\"midnight\">>,\"size\"|\"headerBackground\"|\"globalBackground\"|\"menuHoverBackground\"|\"headerText\"|\"searchBorder\"|\"searchBorderFocusColor\">;accent?:Pick<Partial<ThemeVariation<{primary:string;secondary:string;},\"default\">>,\"primary\"|\"secondary\">;siteContainer?:Pick<Partial<ThemeVariation<{containerBackground:string;background:string;},\"default\"|\"light\"|\"dark\">>,\"background\"|\"containerBackground\">;footer?:Pick<Partial<ThemeVariation<{background:string;containerBackground:string;color:string;},\"light\"|\"dark\">>,\"color\"|\"background\"|\"containerBackground\">;global?:Pick<Partial<ThemeVariation<{maxWidth:string;},\"default\">>,\"maxWidth\">;}": {
       "type": "object",
       "properties": {
         "header": {
-          "$ref": "#/definitions/Pick<Partial<ThemeVariation<{headerBackground:string;globalBackground:string;menuHoverBackground:string;headerText:string;searchBorder:string;searchBorderFocusColor:string;size:number;},\"default\"|\"dark\"|\"midnight\">>,\"headerBackground\"|\"size\"|\"globalBackground\"|\"menuHoverBackground\"|\"headerText\"|\"searchBorder\"|\"searchBorderFocusColor\">"
+          "$ref": "#/definitions/Pick<Partial<ThemeVariation<{headerBackground:string;globalBackground:string;menuHoverBackground:string;headerText:string;searchBorder:string;searchBorderFocusColor:string;size:number;},\"default\"|\"dark\"|\"midnight\">>,\"size\"|\"headerBackground\"|\"globalBackground\"|\"menuHoverBackground\"|\"headerText\"|\"searchBorder\"|\"searchBorderFocusColor\">"
         },
         "accent": {
           "$ref": "#/definitions/Pick<Partial<ThemeVariation<{primary:string;secondary:string;},\"default\">>,\"primary\"|\"secondary\">"
@@ -79,17 +89,20 @@
         },
         "footer": {
           "$ref": "#/definitions/Pick<Partial<ThemeVariation<{background:string;containerBackground:string;color:string;},\"light\"|\"dark\">>,\"color\"|\"background\"|\"containerBackground\">"
+        },
+        "global": {
+          "$ref": "#/definitions/Pick<Partial<ThemeVariation<{maxWidth:string;},\"default\">>,\"maxWidth\">"
         }
       }
     },
-    "Pick<Partial<ThemeVariation<{headerBackground:string;globalBackground:string;menuHoverBackground:string;headerText:string;searchBorder:string;searchBorderFocusColor:string;size:number;},\"default\"|\"dark\"|\"midnight\">>,\"headerBackground\"|\"size\"|\"globalBackground\"|\"menuHoverBackground\"|\"headerText\"|\"searchBorder\"|\"searchBorderFocusColor\">": {
+    "Pick<Partial<ThemeVariation<{headerBackground:string;globalBackground:string;menuHoverBackground:string;headerText:string;searchBorder:string;searchBorderFocusColor:string;size:number;},\"default\"|\"dark\"|\"midnight\">>,\"size\"|\"headerBackground\"|\"globalBackground\"|\"menuHoverBackground\"|\"headerText\"|\"searchBorder\"|\"searchBorderFocusColor\">": {
       "type": "object",
       "properties": {
-        "headerBackground": {
-          "type": "string"
-        },
         "size": {
           "type": "number"
+        },
+        "headerBackground": {
+          "type": "string"
         },
         "globalBackground": {
           "type": "string"
@@ -140,6 +153,14 @@
           "type": "string"
         },
         "containerBackground": {
+          "type": "string"
+        }
+      }
+    },
+    "Pick<Partial<ThemeVariation<{maxWidth:string;},\"default\">>,\"maxWidth\">": {
+      "type": "object",
+      "properties": {
+        "maxWidth": {
           "type": "string"
         }
       }

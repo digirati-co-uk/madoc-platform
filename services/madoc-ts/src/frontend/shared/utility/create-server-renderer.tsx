@@ -8,19 +8,30 @@ import { StaticRouterContext } from 'react-router';
 import { parse } from 'query-string';
 import { api } from '../../../gateway/api.server';
 import { ListLocalisationsResponse } from '../../../routes/admin/localisation';
+import { SitePlugin } from '../../../types/schemas/plugins';
 import { EditorialContext } from '../../../types/schemas/site-page';
 import { ResolvedTheme } from '../../../types/themes';
+import { ReactServerError } from '../../../utility/errors/react-server-error';
 import { PublicSite } from '../../../utility/omeka-api';
-import { RouteContext } from '../../site/hooks/use-route-context';
+import { PluginManager } from '../plugins/plugin-manager';
 import { queryConfig } from './query-config';
 import { matchUniversalRoutes } from './server-utils';
 import { renderToString } from 'react-dom/server';
 import { I18nextProvider } from 'react-i18next';
 import { StaticRouter } from 'react-router-dom';
 import React from 'react';
-import { UniversalRoute } from '../../types';
+import { CreateRouteType, UniversalRoute } from '../../types';
 import { Helmet } from 'react-helmet';
 import localeCodes from 'locale-codes';
+
+function makeRoutes(routeComponents: any) {
+  return [
+    {
+      ...routeComponents.baseRoute,
+      routes: [...routeComponents.routes, routeComponents.fallback],
+    },
+  ];
+}
 
 export function createServerRenderer(
   RootApplication: React.FC<{
@@ -33,10 +44,13 @@ export function createServerRenderer(
     navigationOptions?: any;
     theme?: ResolvedTheme | null;
   }>,
-  routes: UniversalRoute[],
+  createRoutes: ((components: any) => CreateRouteType) | UniversalRoute[],
+  components: any,
   apiGateway: string,
   extraConfig: Partial<ReactQueryConfig> = {}
 ) {
+  const defaultRoutes = Array.isArray(createRoutes) ? createRoutes : makeRoutes(createRoutes(components));
+
   return async function render({
     url,
     basename,
@@ -48,6 +62,8 @@ export function createServerRenderer(
     user,
     navigationOptions,
     getSlots,
+    pluginManager,
+    plugins,
     theme,
   }: {
     url: string;
@@ -64,6 +80,8 @@ export function createServerRenderer(
       enableCollections: boolean;
     };
     getSlots?: (ctx: EditorialContext) => Promise<any> | any;
+    pluginManager?: PluginManager;
+    plugins?: SitePlugin[];
   }) {
     const prefetchCache = makeQueryCache();
     const sheet = new ServerStyleSheet(); // <-- creating out stylesheet
@@ -72,6 +90,12 @@ export function createServerRenderer(
       jwt,
       publicSiteSlug: siteSlug,
     });
+    const omekaSite = await site;
+    const routes =
+      Array.isArray(createRoutes) || !pluginManager || !omekaSite
+        ? defaultRoutes
+        : pluginManager.makeRoutes(createRoutes(pluginManager.hookComponents(components, omekaSite.id)), omekaSite.id);
+
     const context: StaticRouterContext = {};
     const [urlPath, urlQuery] = url.split('?');
     const path = urlPath.slice(urlPath.indexOf(basename) + basename.length);
@@ -101,7 +125,6 @@ export function createServerRenderer(
     }
 
     await Promise.all(requests);
-    const omekaSite = await site;
     const dehydratedState = dehydrate(prefetchCache);
     const supportedLocales = siteLocales.localisations.map(ln => {
       const label = localeCodes.getByTag(ln.code).name;
@@ -115,6 +138,7 @@ export function createServerRenderer(
         locales: supportedLocales,
         defaultLocale: siteLocales.defaultLanguage || 'en',
         navigationOptions: navigationOptions,
+        plugins,
         theme,
       })}</script>
       <script type="application/json" id="react-query-cache">${JSON.stringify(dehydratedState)}</script>
@@ -127,32 +151,41 @@ export function createServerRenderer(
       };
     }
 
-    const markup = renderToString(
-      sheet.collectStyles(
-        <ReactQueryConfigProvider config={{ ...extraConfig, ...queryConfig }}>
-          <ReactQueryCacheProvider>
-            <Hydrate state={dehydratedState}>
-              <I18nextProvider i18n={i18next}>
-                <StaticRouter basename={basename} location={url} context={context}>
-                  <ThemeProvider theme={defaultTheme}>
-                    <RootApplication
-                      api={api}
-                      routes={routes}
-                      theme={theme}
-                      site={omekaSite as any}
-                      user={user}
-                      defaultLocale={siteLocales.defaultLanguage || 'en'}
-                      supportedLocales={supportedLocales}
-                      navigationOptions={navigationOptions}
-                    />
-                  </ThemeProvider>
-                </StaticRouter>
-              </I18nextProvider>
-            </Hydrate>
-          </ReactQueryCacheProvider>
-        </ReactQueryConfigProvider>
-      )
-    );
+    const state = {
+      markup: '',
+    };
+
+    try {
+      state.markup = renderToString(
+        sheet.collectStyles(
+          <ReactQueryConfigProvider config={{ ...extraConfig, ...queryConfig }}>
+            <ReactQueryCacheProvider>
+              <Hydrate state={dehydratedState}>
+                <I18nextProvider i18n={i18next}>
+                  <StaticRouter basename={basename} location={url} context={context}>
+                    <ThemeProvider theme={defaultTheme}>
+                      <RootApplication
+                        api={api}
+                        routes={routes}
+                        theme={theme}
+                        site={omekaSite as any}
+                        user={user}
+                        defaultLocale={siteLocales.defaultLanguage || 'en'}
+                        supportedLocales={supportedLocales}
+                        navigationOptions={navigationOptions}
+                      />
+                    </ThemeProvider>
+                  </StaticRouter>
+                </I18nextProvider>
+              </Hydrate>
+            </ReactQueryCacheProvider>
+          </ReactQueryConfigProvider>
+        )
+      );
+    } catch (e) {
+      throw new ReactServerError(e);
+    }
+
     const helmet = Helmet.renderStatic();
 
     if (context.url) {
@@ -179,7 +212,7 @@ export function createServerRenderer(
         ${styles}
     </head>
     <body ${helmet.bodyAttributes.toString()}>
-        <div id="react-component">${markup}</div>
+        <div id="react-component">${state.markup}</div>
         
         
         <script crossorigin src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.0.0/dist/fetch.umd.js"></script>
@@ -203,7 +236,7 @@ export function createServerRenderer(
         ${styles}
     </head>
     <body ${helmet.bodyAttributes.toString()}>
-        <div id="react-component">${markup}</div>
+        <div id="react-component">${state.markup}</div>
 
         <script crossorigin src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.0.0/dist/fetch.umd.js"></script>
         <script crossorigin src="https://cdn.jsdelivr.net/npm/react@16.13.1/umd/react.development.js"></script>

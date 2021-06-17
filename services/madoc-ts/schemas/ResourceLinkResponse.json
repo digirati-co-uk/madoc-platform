@@ -1,0 +1,73 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "number"
+    },
+    "resource_id": {
+      "type": "number"
+    },
+    "property": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string"
+    },
+    "link": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "label": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "format": {
+              "type": "string"
+            },
+            "motivation": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "label"
+          ]
+        },
+        {
+          "$ref": "#/definitions/T_1"
+        }
+      ]
+    },
+    "file": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "bucket": {
+          "type": "string"
+        },
+        "hash": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "path"
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "link",
+    "property",
+    "resource_id"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

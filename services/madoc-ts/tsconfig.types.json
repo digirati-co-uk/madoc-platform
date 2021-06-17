@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./npm/madoc-types/dist",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+  },
+  "exclude": [
+    "src/cron/",
+    "src/database/",
+    "src/middleware/",
+    "src/queue/",
+    "src/repository/",
+    "src/routes/",
+    "src/uxpin-merge/",
+    "src/migrate.ts",
+    "src/router.ts",
+    "stories",
+    "__tests__",
+    "test-utility",
+    "npm",
+    "lib"
+  ]
+}

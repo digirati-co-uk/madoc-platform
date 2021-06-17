@@ -7,5 +7,5 @@ Promise.all([
   // The routes themselves.
   import('./routes'),
 ]).then(([mod, routes]) => {
-  renderClient(mod.default, routes.routes, true, queryConfig);
+  renderClient(mod.default, routes.routes, {}, true, queryConfig);
 });
