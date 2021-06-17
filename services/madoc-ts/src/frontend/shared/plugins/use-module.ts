@@ -1,37 +1,48 @@
-type AvailableModules =
-  | '@atlas-viewer/atlas'
-  | '@atlas-viewer/iiif-image-api'
-  | '@capture-models/editor'
-  | '@capture-models/helpers'
-  | '@hyperion-framework/presentation-2'
-  | '@hyperion-framework/react-vault'
-  | '@hyperion-framework/vault'
-  | 'color-hash'
-  | 'easy-peasy'
-  | 'i18next'
-  | 'immer'
-  | 'make-color-accessible'
-  | 'react-accessible-dropdown-menu-hook'
-  | 'react-beautiful-dnd'
-  | 'react-dnd'
-  | 'react-dnd-html5-backend'
-  | 'react-dnd-multi-backend'
-  | 'react-dnd-touch-backend'
-  | 'react-dropzone'
-  | 'react-error-boundary'
-  | 'react-helmet'
-  | 'react-i18next'
-  | 'react-intersection-observer'
-  | 'react-mosaic-component'
-  | 'react-query'
-  | 'react-router-config'
-  | 'react-router-dom'
-  | 'react-stack-grid'
-  | 'react-timeago'
-  | 'react-tooltip';
+import * as publicApi from './public-api';
+
+export const _ALLOWED_MODULES = [
+  '@madoc.io/types',
+  '@atlas-viewer/atlas',
+  '@atlas-viewer/iiif-image-api',
+  '@capture-models/editor',
+  '@capture-models/helpers',
+  '@hyperion-framework/presentation-2',
+  '@hyperion-framework/react-vault',
+  '@hyperion-framework/vault',
+  'color-hash',
+  'easy-peasy',
+  'i18next',
+  'immer',
+  'make-color-accessible',
+  'react',
+  'react-accessible-dropdown-menu-hook',
+  'react-beautiful-dnd',
+  'react-dnd',
+  'react-dnd-html5-backend',
+  'react-dnd-multi-backend',
+  'react-dnd-touch-backend',
+  'react-dropzone',
+  'react-error-boundary',
+  'react-helmet',
+  'react-i18next',
+  'react-intersection-observer',
+  'react-mosaic-component',
+  'react-query',
+  'react-router-config',
+  'react-router-dom',
+  'react-stack-grid',
+  'react-timeago',
+  'react-tooltip',
+] as const;
+
+export const ALLOWED_MODULES = [..._ALLOWED_MODULES];
+
+type AvailableModules = typeof _ALLOWED_MODULES[number];
 
 export function useModule(name: AvailableModules) {
   switch (name) {
+    case '@madoc.io/types':
+      return publicApi;
     case '@atlas-viewer/atlas':
       return require('@atlas-viewer/atlas');
     case '@atlas-viewer/iiif-image-api':
@@ -56,6 +67,8 @@ export function useModule(name: AvailableModules) {
       return require('immer');
     case 'make-color-accessible':
       return require('make-color-accessible');
+    case 'react':
+      return require('react');
     case 'react-accessible-dropdown-menu-hook':
       return require('react-accessible-dropdown-menu-hook');
     case 'react-beautiful-dnd':

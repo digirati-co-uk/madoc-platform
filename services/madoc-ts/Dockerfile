@@ -4,6 +4,7 @@ WORKDIR /home/node/app
 
 ADD ./package.json /home/node/app/package.json
 ADD ./yarn.lock /home/node/app/yarn.lock
+COPY ./npm /home/node/app/npm
 
 RUN yarn install
 
@@ -25,6 +26,7 @@ WORKDIR /home/node/app
 
 COPY --from=build /home/node/app/package.json /home/node/app/package.json
 COPY --from=build /home/node/app/yarn.lock /home/node/app/yarn.lock
+COPY --from=build /home/node/app/npm /home/node/app/npm
 
 RUN yarn install --no-interactive --frozen-lockfile --production=true
 
@@ -42,6 +44,7 @@ COPY ./schemas /home/node/app/schemas
 COPY ./webpack.config.js /home/node/app/webpack.config.js
 COPY ./ecosystem.config.js /home/node/app/ecosystem.config.js
 COPY ./themes /home/node/app/themes
+COPY ./npm /home/node/app/npm
 
 ENV SERVER_PORT=3000
 ENV DATABASE_HOST=localhost

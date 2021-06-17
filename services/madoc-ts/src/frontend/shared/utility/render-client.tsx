@@ -19,7 +19,7 @@ import { CreateRouteType, UniversalRoute } from '../../types';
 import { ResolvedTheme } from '../../../types/themes';
 import { ErrorPage } from '../components/NotFoundPage';
 import { Spinner } from '../icons/Spinner';
-import { PluginManager } from '../plugins/plugin-manager';
+import { PluginManager, PluginModule } from '../plugins/plugin-manager';
 import { ErrorBoundary } from './error-boundary';
 import { queryConfig } from './query-config';
 import { ReactQueryDevtools } from 'react-query-devtools';
@@ -61,7 +61,7 @@ export async function renderClient(
           siteId: dehydratedSite.site.id,
           definition: plugin,
           module: module(),
-        };
+        } as PluginModule;
       });
   });
 

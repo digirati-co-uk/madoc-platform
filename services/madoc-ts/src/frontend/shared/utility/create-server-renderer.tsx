@@ -11,6 +11,7 @@ import { ListLocalisationsResponse } from '../../../routes/admin/localisation';
 import { SitePlugin } from '../../../types/schemas/plugins';
 import { EditorialContext } from '../../../types/schemas/site-page';
 import { ResolvedTheme } from '../../../types/themes';
+import { ReactServerError } from '../../../utility/errors/react-server-error';
 import { PublicSite } from '../../../utility/omeka-api';
 import { PluginManager } from '../plugins/plugin-manager';
 import { queryConfig } from './query-config';
@@ -150,32 +151,41 @@ export function createServerRenderer(
       };
     }
 
-    const markup = renderToString(
-      sheet.collectStyles(
-        <ReactQueryConfigProvider config={{ ...extraConfig, ...queryConfig }}>
-          <ReactQueryCacheProvider>
-            <Hydrate state={dehydratedState}>
-              <I18nextProvider i18n={i18next}>
-                <StaticRouter basename={basename} location={url} context={context}>
-                  <ThemeProvider theme={defaultTheme}>
-                    <RootApplication
-                      api={api}
-                      routes={routes}
-                      theme={theme}
-                      site={omekaSite as any}
-                      user={user}
-                      defaultLocale={siteLocales.defaultLanguage || 'en'}
-                      supportedLocales={supportedLocales}
-                      navigationOptions={navigationOptions}
-                    />
-                  </ThemeProvider>
-                </StaticRouter>
-              </I18nextProvider>
-            </Hydrate>
-          </ReactQueryCacheProvider>
-        </ReactQueryConfigProvider>
-      )
-    );
+    const state = {
+      markup: '',
+    };
+
+    try {
+      state.markup = renderToString(
+        sheet.collectStyles(
+          <ReactQueryConfigProvider config={{ ...extraConfig, ...queryConfig }}>
+            <ReactQueryCacheProvider>
+              <Hydrate state={dehydratedState}>
+                <I18nextProvider i18n={i18next}>
+                  <StaticRouter basename={basename} location={url} context={context}>
+                    <ThemeProvider theme={defaultTheme}>
+                      <RootApplication
+                        api={api}
+                        routes={routes}
+                        theme={theme}
+                        site={omekaSite as any}
+                        user={user}
+                        defaultLocale={siteLocales.defaultLanguage || 'en'}
+                        supportedLocales={supportedLocales}
+                        navigationOptions={navigationOptions}
+                      />
+                    </ThemeProvider>
+                  </StaticRouter>
+                </I18nextProvider>
+              </Hydrate>
+            </ReactQueryCacheProvider>
+          </ReactQueryConfigProvider>
+        )
+      );
+    } catch (e) {
+      throw new ReactServerError(e);
+    }
+
     const helmet = Helmet.renderStatic();
 
     if (context.url) {
@@ -202,7 +212,7 @@ export function createServerRenderer(
         ${styles}
     </head>
     <body ${helmet.bodyAttributes.toString()}>
-        <div id="react-component">${markup}</div>
+        <div id="react-component">${state.markup}</div>
         
         
         <script crossorigin src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.0.0/dist/fetch.umd.js"></script>
@@ -226,7 +236,7 @@ export function createServerRenderer(
         ${styles}
     </head>
     <body ${helmet.bodyAttributes.toString()}>
-        <div id="react-component">${markup}</div>
+        <div id="react-component">${state.markup}</div>
 
         <script crossorigin src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.0.0/dist/fetch.umd.js"></script>
         <script crossorigin src="https://cdn.jsdelivr.net/npm/react@16.13.1/umd/react.development.js"></script>
