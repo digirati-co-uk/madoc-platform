@@ -13,8 +13,14 @@
     "enabled": {
       "type": "boolean"
     },
+    "installed": {
+      "type": "boolean"
+    },
     "thumbnail": {
       "type": "string"
+    },
+    "siteId": {
+      "type": "number"
     },
     "repository": {
       "type": "object",
@@ -75,6 +81,7 @@
     "development",
     "enabled",
     "id",
+    "installed",
     "name",
     "repository",
     "version"

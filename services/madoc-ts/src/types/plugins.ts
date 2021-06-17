@@ -1,3 +1,7 @@
+import React from 'react';
+import { RouteComponents } from '../frontend/site/routes';
+import { UniversalRoute } from '../frontend/types';
+
 export type PluginRow = {
   plugin_id: string;
   name: string;
@@ -55,4 +59,11 @@ export type RemotePlugin = {
   installedVersion: string;
   latestVersion: string | null;
   versions: string[];
+};
+
+export type ModuleWrapper = {
+  id: string;
+  hookRoutes?: (routes: UniversalRoute[], components: RouteComponents) => UniversalRoute[];
+  hookComponents?: (components: RouteComponents) => any;
+  hookBlocks?: () => { [name: string]: React.FC<any> };
 };

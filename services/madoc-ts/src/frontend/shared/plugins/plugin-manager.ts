@@ -1,6 +1,7 @@
 import { captureModelShorthand } from '@capture-models/helpers';
 import { reactBlockEmitter } from '../../../extensions/page-blocks/block-editor-react';
-import { ModuleWrapper, SitePlugin } from '../../../types/schemas/plugins';
+import { ModuleWrapper } from '../../../types/plugins';
+import { SitePlugin } from '../../../types/schemas/plugins';
 import { RouteComponents } from '../../site/routes';
 import { UniversalRoute } from '../../types';
 import { createPluginWrapper } from './create-plugin-wrapper';

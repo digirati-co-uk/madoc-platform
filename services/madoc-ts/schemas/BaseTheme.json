@@ -16,6 +16,9 @@
     "T": {
       "type": "object"
     },
+    "T_1": {
+      "type": "object"
+    },
     "{header:\"default\"|\"dark\"|\"midnight\";accent:\"default\";siteContainer:\"default\"|\"light\"|\"dark\";footer:\"light\"|\"dark\";global:\"default\";}": {
       "type": "object",
       "properties": {

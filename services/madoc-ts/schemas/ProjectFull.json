@@ -96,6 +96,9 @@
     "T": {
       "type": "object"
     },
+    "T_1": {
+      "type": "object"
+    },
     "{header:\"default\"|\"dark\"|\"midnight\";accent:\"default\";siteContainer:\"default\"|\"light\"|\"dark\";footer:\"light\"|\"dark\";global:\"default\";}": {
       "type": "object",
       "properties": {
@@ -315,6 +318,9 @@
         "skipAutomaticOCRImport": {
           "type": "boolean"
         },
+        "allowPersonalNotes": {
+          "type": "boolean"
+        },
         "defaultEditorOrientation": {
           "enum": [
             "horizontal",
@@ -433,6 +439,9 @@
             },
             "directModelPage": {
               "type": "boolean"
+            },
+            "showIIIFLogo": {
+              "type": "boolean"
             }
           }
         },
@@ -455,6 +464,23 @@
               "type": "boolean"
             },
             "hideSearchBar": {
+              "type": "boolean"
+            }
+          }
+        },
+        "activityStreams": {
+          "type": "object",
+          "properties": {
+            "manifest": {
+              "type": "boolean"
+            },
+            "canvas": {
+              "type": "boolean"
+            },
+            "curated": {
+              "type": "boolean"
+            },
+            "published": {
               "type": "boolean"
             }
           }

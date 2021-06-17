@@ -2,7 +2,8 @@ import { DatabasePoolType } from 'slonik';
 import { PluginManager, PluginModule } from '../frontend/shared/plugins/plugin-manager';
 import { PluginRepository } from '../repository/plugin-repository';
 import { pluginDirectory } from '../routes/admin/development-plugin';
-import { ModuleWrapper, SitePlugin } from '../types/schemas/plugins';
+import { ModuleWrapper } from '../types/plugins';
+import { SitePlugin } from '../types/schemas/plugins';
 import { sandboxedRequire } from '../utility/sandboxed-require';
 
 export function loadPluginModule(plugin: SitePlugin): { module: ModuleWrapper | null; error: boolean } {

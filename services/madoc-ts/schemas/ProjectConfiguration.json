@@ -70,6 +70,9 @@
     "skipAutomaticOCRImport": {
       "type": "boolean"
     },
+    "allowPersonalNotes": {
+      "type": "boolean"
+    },
     "defaultEditorOrientation": {
       "enum": [
         "horizontal",
@@ -188,6 +191,9 @@
         },
         "directModelPage": {
           "type": "boolean"
+        },
+        "showIIIFLogo": {
+          "type": "boolean"
         }
       }
     },
@@ -210,6 +216,23 @@
           "type": "boolean"
         },
         "hideSearchBar": {
+          "type": "boolean"
+        }
+      }
+    },
+    "activityStreams": {
+      "type": "object",
+      "properties": {
+        "manifest": {
+          "type": "boolean"
+        },
+        "canvas": {
+          "type": "boolean"
+        },
+        "curated": {
+          "type": "boolean"
+        },
+        "published": {
           "type": "boolean"
         }
       }
