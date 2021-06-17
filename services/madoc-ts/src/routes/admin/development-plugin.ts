@@ -2,12 +2,14 @@ import { RouteMiddleware } from '../../types/route-middleware';
 import { SitePlugin } from '../../types/schemas/plugins';
 import { createLimitedSignedToken } from '../../utility/create-signed-token';
 import { RequestError } from '../../utility/errors/request-error';
+import { sandboxedRequire } from '../../utility/sandboxed-require';
 import { userWithScope } from '../../utility/user-with-scope';
 import { existsSync, writeFileSync, unlinkSync, rmdirSync } from 'fs';
 import mkdirp from 'mkdirp';
 import { createHash } from 'crypto';
 
 export const fileDirectory = process.env.OMEKA_FILE_DIRECTORY || '/home/node/app/omeka-files';
+export const pluginDirectory = `${fileDirectory}/plugins`;
 
 export const developmentPlugin: RouteMiddleware<{}, { pluginId: string }> = async context => {
   const { siteId, id, siteName } = userWithScope(context, ['site.admin']);
@@ -93,13 +95,12 @@ export const acceptNewDevelopmentBundle: RouteMiddleware<
     const previousRevision = plugin.development.enabled ? plugin.development.revision : undefined;
 
     // 2. Save to disk.
-    const dir = `${fileDirectory}/dev/${plugin.id}/${body.plugin.development.revision}/`;
+    const dir = `${pluginDirectory}/${plugin.id}/${body.plugin.development.revision}/`;
     mkdirp.sync(dir);
     writeFileSync(`${dir}/plugin.js`, body.bundle.code);
 
     // Update plugins
-    delete require.cache[require.resolve(`${dir}/plugin.js`)];
-    const module = require(`${dir}/plugin.js`);
+    const module = sandboxedRequire(`${dir}/plugin.js`);
 
     context.pluginManager.installPlugin({
       definition: {
@@ -117,7 +118,7 @@ export const acceptNewDevelopmentBundle: RouteMiddleware<
     if (previousRevision) {
       // 3. Remove previous revision from disk.
       try {
-        const oldDir = `${fileDirectory}/dev/${plugin.id}/${previousRevision}/`;
+        const oldDir = `${pluginDirectory}/${plugin.id}/${previousRevision}/`;
         if (existsSync(`${oldDir}/plugin.js`)) {
           unlinkSync(`${oldDir}/plugin.js`);
         }

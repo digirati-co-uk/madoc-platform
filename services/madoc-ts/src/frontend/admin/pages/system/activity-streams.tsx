@@ -12,7 +12,7 @@ import { Button } from '../../../shared/atoms/Button';
 import { EmptyState } from '../../../shared/atoms/EmptyState';
 import { Heading1, Subheading1 } from '../../../shared/atoms/Heading1';
 import { Input, InputContainer, InputLabel } from '../../../shared/atoms/Input';
-import { SystemBackground } from '../../../shared/atoms/SystemBackground';
+import { SystemBackground } from '../../../shared/atoms/SystemUI';
 import { SystemListItem } from '../../../shared/atoms/SystemListItem';
 import { WarningMessage } from '../../../shared/atoms/WarningMessage';
 import { Activity, ActivityContainer } from '../../../shared/components/Activity';

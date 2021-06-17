@@ -142,6 +142,7 @@
     "react-timeago": "^4.4.0",
     "react-tooltip": "^4.2.15",
     "rich-markdown-editor": "^11.6.7",
+    "semver": "^7.3.5",
     "sharp": "^0.25.2",
     "slonik": "^23.5.5",
     "slugify": "^1.4.7",
@@ -152,7 +153,8 @@
     "ts-loader": "^7.0.2",
     "typesafe-actions": "^5.1.0",
     "uuid": "^7.0.1",
-    "webpack": "^4.46.0"
+    "webpack": "^4.46.0",
+    "vm2": "^3.9.3"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
@@ -190,6 +192,7 @@
     "@types/slonik": "^22.1.4",
     "@types/styled-components": "^5.1.0",
     "@types/styled-theming": "^2.2.5",
+    "@types/semver": "^7.3.6",
     "@types/uuid": "^7.0.0",
     "@typescript-eslint/eslint-plugin": "^2.4.0",
     "@typescript-eslint/parser": "^2.4.0",

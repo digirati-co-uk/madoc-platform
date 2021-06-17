@@ -7,7 +7,15 @@ import { importSite } from './routes/admin/import-site';
 import { listJobs, runJob } from './routes/admin/list-jobs';
 import { getLocalisation, listLocalisations, updateLocalisation } from './routes/admin/localisation';
 import { getMetadataConfiguration, updateMetadataConfiguration } from './routes/admin/metadata-configuration';
-import { getPlugin, installPlugin, listPlugins } from './routes/admin/plugins';
+import {
+  disablePlugin,
+  enablePlugin,
+  getPlugin, getPluginDependencies,
+  installPlugin,
+  installRemotePlugin,
+  listPlugins, uninstallPlugin,
+  viewRemotePlugin
+} from "./routes/admin/plugins";
 import { pm2Status } from './routes/admin/pm2';
 import { getSiteDetails } from './routes/admin/site-details';
 import {
@@ -156,6 +164,12 @@ export const router = new TypedRouter({
   'list-plugins': [TypedRouter.GET, '/api/madoc/system/plugins', listPlugins],
   'get-plugin': [TypedRouter.GET, '/api/madoc/system/plugins/:id', getPlugin],
   'install-plugin': [TypedRouter.POST, '/api/madoc/system/plugins', installPlugin, 'SitePlugin'],
+  'view-remote-plugin': [TypedRouter.GET, '/api/madoc/system/plugins/external/:author/:repo', viewRemotePlugin],
+  'install-remote-plugin': [TypedRouter.POST, '/api/madoc/system/plugins/external/install', installRemotePlugin],
+  'enable-plugin': [TypedRouter.POST, '/api/madoc/system/plugins/:id/enable', enablePlugin],
+  'disable-plugin': [TypedRouter.POST, '/api/madoc/system/plugins/:id/disable', disablePlugin],
+  'uninstall-plugin': [TypedRouter.POST, '/api/madoc/system/plugins/:id/uninstall', uninstallPlugin],
+  'plugin-dependencies': [TypedRouter.GET, '/api/madoc/system/plugins/:id/dependencies', getPluginDependencies],
 
   'update-site-configuration': [TypedRouter.POST, '/api/madoc/configuration', updateSiteConfiguration],
   'get-model-configuration': [TypedRouter.GET, '/api/madoc/configuration/model', getModelConfiguration],

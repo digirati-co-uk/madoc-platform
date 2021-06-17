@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { madocStreams } from '../../../../../activity-streams/madoc-streams';
 import { ProjectFull } from '../../../../../types/schemas/project-full';
 import { Button } from '../../../../shared/atoms/Button';
-import { SystemBackground } from '../../../../shared/atoms/SystemBackground';
+import { SystemBackground } from '../../../../shared/atoms/SystemUI';
 import { SystemListItem } from '../../../../shared/atoms/SystemListItem';
 import { apiHooks } from '../../../../shared/hooks/use-api-query';
 import { HrefLink } from '../../../../shared/utility/href-link';

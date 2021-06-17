@@ -1,56 +1,21 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from 'react-query';
-import styled from 'styled-components';
 import { Button } from '../../../../shared/atoms/Button';
-import { SystemBackground } from '../../../../shared/atoms/SystemBackground';
+import {
+  SystemAction,
+  SystemActions,
+  SystemBackground,
+  SystemDescription,
+  SystemMetadata,
+  SystemName,
+  SystemThumbnail,
+  SystemVersion,
+} from '../../../../shared/atoms/SystemUI';
 import { SystemListItem } from '../../../../shared/atoms/SystemListItem';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { Spinner } from '../../../../shared/icons/Spinner';
 import { AdminHeader } from '../../../molecules/AdminHeader';
-
-const ThemeThumbnail = styled.div`
-  margin-right: 1em;
-  width: 3.2em;
-  height: 3.2em;
-  border-radius: 3px;
-  overflow: hidden;
-  background: #999;
-
-  img {
-    width: 3.2em;
-    height: 3.2em;
-    object-fit: contain;
-    object-position: 50% 50%;
-  }
-`;
-
-const ThemeMetadata = styled.div`
-  flex: 1 1 0px;
-`;
-
-const ThemeName = styled.div`
-  font-size: 1.2em;
-  margin-bottom: 0.5em;
-`;
-
-const ThemeVersion = styled.div`
-  font-size: 0.8em;
-  color: #999;
-`;
-
-const ThemeDescription = styled.div`
-  font-size: 0.8em;
-  margin-bottom: 0.5em;
-`;
-
-const ThemeActions = styled.div`
-  text-align: right;
-`;
-
-const ThemeAction = styled.div<{ $error?: boolean }>`
-  margin-bottom: 0.25em;
-`;
 
 export const ListThemes: React.FC = () => {
   const { t } = useTranslation();
@@ -89,19 +54,19 @@ export const ListThemes: React.FC = () => {
             return (
               <SystemListItem key={theme.id} $enabled={theme.enabled}>
                 {theme.thumbnail ? (
-                  <ThemeThumbnail>
+                  <SystemThumbnail>
                     <img src={theme.thumbnail} alt="Theme thumbnail" />
-                  </ThemeThumbnail>
+                  </SystemThumbnail>
                 ) : null}
-                <ThemeMetadata>
-                  <ThemeName>{theme.name}</ThemeName>
-                  <ThemeDescription>{theme.description}</ThemeDescription>
-                  <ThemeVersion>{theme.version}</ThemeVersion>
-                </ThemeMetadata>
-                <ThemeActions>
-                  {!theme.onDisk ? <ThemeAction $error>Theme not found on disk.</ThemeAction> : null}
+                <SystemMetadata>
+                  <SystemName>{theme.name}</SystemName>
+                  <SystemDescription>{theme.description}</SystemDescription>
+                  <SystemVersion>{theme.version}</SystemVersion>
+                </SystemMetadata>
+                <SystemActions>
+                  {!theme.onDisk ? <SystemAction $error>Theme not found on disk.</SystemAction> : null}
                   {theme.installed ? (
-                    <ThemeAction>
+                    <SystemAction>
                       {theme.enabled ? (
                         <Button disabled={disableThemeInfo.isLoading} $error onClick={() => disableTheme(theme.id)}>
                           {t('Disable theme')}
@@ -111,9 +76,9 @@ export const ListThemes: React.FC = () => {
                           {t('Enable theme')}
                         </Button>
                       )}
-                    </ThemeAction>
+                    </SystemAction>
                   ) : null}
-                  <ThemeAction>
+                  <SystemAction>
                     {theme.installed ? (
                       theme.enabled ? null : (
                         <Button disabled={uninstallThemeInfo.isLoading} $error onClick={() => uninstallTheme(theme.id)}>
@@ -125,8 +90,8 @@ export const ListThemes: React.FC = () => {
                         {t('install theme')}
                       </Button>
                     )}
-                  </ThemeAction>
-                </ThemeActions>
+                  </SystemAction>
+                </SystemActions>
               </SystemListItem>
             );
           })

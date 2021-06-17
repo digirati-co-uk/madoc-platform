@@ -126,7 +126,7 @@ export class ApiClient {
     );
   }
 
-  getJwt() {
+  private getJwt() {
     if (!this.jwt && this.jwtFunction) {
       this.jwt = this.jwtFunction();
     }

@@ -30,15 +30,53 @@ export class PluginRepository extends BaseRepository {
           ps.site_id = ${site_id}
     `,
 
+    /**
+     * Returns plugin, site specific.
+     *
+     * @param owner
+     * @param repo
+     */
+    getPluginByRepository: (owner: string, repo: string) => sql<PluginRow>`
+      select * from plugin where
+          plugin.repository_owner = ${owner} and
+          plugin.repository = ${repo}
+    `,
+
     listPlugins: (site_id?: number) =>
       site_id
         ? sql<PluginRow & PluginSiteRow>`
-        select plugin.plugin_id as plugin_id, * from plugin
-          left join plugin_site ps on plugin.plugin_id = ps.plugin_id 
+        select
+            p.plugin_id as plugin_id,
+            p.name as name,
+            p.description as description,
+            p.repository as repository,
+            p.repository_owner as repository_owner,
+            p.version as version,
+            p.thumbnail as thumbnail,
+            p.installed as installed,
+            ps.enabled as enabled,
+            ps.site_id as site_id,
+            ps.dev_revision as dev_revision,
+            ps.dev_mode as dev_mode
+        from plugin p
+          left join plugin_site ps on p.plugin_id = ps.plugin_id 
                                    and ps.site_id = ${site_id}`
         : sql<PluginRow & PluginSiteRow>`
-        select plugin.plugin_id as plugin_id, * from plugin
-          left join plugin_site ps on plugin.plugin_id = ps.plugin_id`,
+        select
+            p.plugin_id as plugin_id, 
+            p.name as name, 
+            p.description as description, 
+            p.repository as repository, 
+            p.repository_owner as repository_owner, 
+            p.version as version, 
+            p.thumbnail as thumbnail, 
+            p.installed as installed,
+            ps.enabled as enabled,
+            ps.site_id as site_id,
+            ps.dev_revision as dev_revision,
+            ps.dev_mode as dev_mode
+        from plugin p
+          left join plugin_site ps on p.plugin_id = ps.plugin_id`,
   };
 
   static inserts = {
@@ -94,11 +132,48 @@ export class PluginRepository extends BaseRepository {
         ${pluginToken.site_id}
       ) returning *
     `,
+  };
 
+  static updates = {
     updateDevRevision: (pluginId: string, revisionId: string, siteId: number) => sql`
         update plugin_site set dev_revision = ${revisionId} where plugin_id = ${pluginId} and site_id = ${siteId}
     `,
+
+    updatePlugin: (id: string, version: string, name: string, description?: string, thumbnail?: string) => sql<
+      PluginRow
+    >`
+        update plugin 
+            set version = ${version},
+                name = ${name},
+                description = ${description || ''},
+                thumbnail = ${thumbnail || null} 
+        where plugin_id = ${id} returning *
+    `,
   };
+
+  async enablePlugin(id: string, siteId: number) {
+    await this.connection.query(
+      PluginRepository.inserts.upsertSitePlugin({
+        plugin_id: id,
+        site_id: siteId,
+        enabled: true,
+        dev_mode: false,
+        dev_revision: null,
+      })
+    );
+  }
+
+  async disablePlugin(id: string, siteId: number) {
+    await this.connection.query(
+      PluginRepository.inserts.upsertSitePlugin({
+        plugin_id: id,
+        site_id: siteId,
+        enabled: false,
+        dev_mode: false,
+        dev_revision: null,
+      })
+    );
+  }
 
   /**
    * This is a manual way of creating a plugin. If it already exists, this won't do anything.
@@ -141,6 +216,18 @@ export class PluginRepository extends BaseRepository {
     );
   }
 
+  async getPluginByRepository(owner: string, repo: string) {
+    const resp = await this.connection.maybeOne(PluginRepository.queries.getPluginByRepository(owner, repo));
+    if (!resp) {
+      return null;
+    }
+
+    return PluginRepository.mapPluginRow(
+      // Will error if it doesn't exist.
+      resp
+    );
+  }
+
   async listPlugins(siteId: number) {
     const rows = await this.connection.any(PluginRepository.queries.listPlugins(siteId));
 
@@ -148,7 +235,13 @@ export class PluginRepository extends BaseRepository {
   }
 
   async updateDevRevision(id: string, revision: string, siteId: number) {
-    await this.connection.query(PluginRepository.inserts.updateDevRevision(id, revision, siteId));
+    await this.connection.query(PluginRepository.updates.updateDevRevision(id, revision, siteId));
+  }
+
+  async updatePlugin(id: string, version: string, name: string, description?: string, thumbnail?: string) {
+    return PluginRepository.mapPluginRow(
+      await this.connection.one(PluginRepository.updates.updatePlugin(id, version, name, description, thumbnail))
+    );
   }
 
   /**
@@ -161,11 +254,12 @@ export class PluginRepository extends BaseRepository {
     // Upsert plugin.
     const pluginToInstall = await this.createPlugin(plugin);
 
-    if (pluginToInstall.version !== plugin.version) {
-      throw new RequestError(
-        `Different version already installed, try updating. Installed: ${pluginToInstall.version}, requested: ${plugin.version}`
-      );
-    }
+    // @todo come back to this and how dev mode works.
+    // if (pluginToInstall.version !== plugin.version) {
+    //   throw new RequestError(
+    //     `Different version already installed, try updating. Installed: ${pluginToInstall.version}, requested: ${plugin.version}`
+    //   );
+    // }
 
     await this.connection.one(
       PluginRepository.inserts.upsertSitePlugin({
@@ -195,17 +289,33 @@ export class PluginRepository extends BaseRepository {
     return undefined;
   }
 
+  async getPluginSites(id: string) {
+    const { site_count } = await this.connection.one(
+      sql<{
+        site_count: number;
+      }>`select COUNT(*) as site_count from plugin_site where plugin_id = ${id} and enabled = true`
+    );
+    return site_count;
+  }
+
+  async deletePlugin(id: string) {
+    await this.connection.query(sql`
+        delete from plugin where plugin_id = ${id}
+    `);
+  }
+
   /**
    * Maps single site specific or non-site specific plugin row.
    *
    * @param row
-   * @param siteId
+   * @param includeSiteId
    */
   static mapPluginRow(row: PluginRow & Partial<PluginSiteRow>, includeSiteId = false): SitePlugin {
     return {
       id: row.plugin_id,
       name: row.name,
       description: row.description || '',
+      thumbnail: row.thumbnail || '',
       enabled: Boolean(row.enabled),
       repository: {
         name: row.repository,

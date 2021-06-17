@@ -1,10 +1,11 @@
 import { DatabasePoolType } from 'slonik';
-import { fileDirectory } from '../app';
 import { PluginManager, PluginModule } from '../frontend/shared/plugins/plugin-manager';
 import { PluginRepository } from '../repository/plugin-repository';
-import { SitePlugin } from '../types/schemas/plugins';
+import { pluginDirectory } from '../routes/admin/development-plugin';
+import { ModuleWrapper, SitePlugin } from '../types/schemas/plugins';
+import { sandboxedRequire } from '../utility/sandboxed-require';
 
-export function loadPluginModule(plugin: SitePlugin): { module: any | null; error: boolean } {
+export function loadPluginModule(plugin: SitePlugin): { module: ModuleWrapper | null; error: boolean } {
   if (!plugin.enabled) {
     console.log(`Plugin<site:${plugin.siteId}>: ${plugin.name} (${plugin.id}) | ${plugin.version} [not enabled]`);
     return { module: null, error: false };
@@ -20,14 +21,14 @@ export function loadPluginModule(plugin: SitePlugin): { module: any | null; erro
       console.log(
         `Plugin<site:${plugin.siteId}>: ${plugin.name} (${plugin.id}) | ${plugin.development.revision} [error]`
       );
-      return { module: null, error: false };
+      return { module: null, error: true };
     }
 
     console.log(`Plugin<site:${plugin.siteId}>: ${plugin.name} (${plugin.id}) | ${plugin.development.revision} [dev]`);
 
     try {
       return {
-        module: require(`${fileDirectory}/dev/${plugin.id}/${plugin.development.revision}/plugin.js`),
+        module: sandboxedRequire(`${pluginDirectory}/${plugin.id}/${plugin.development.revision}/plugin.js`),
         error: false,
       };
     } catch (e) {
@@ -39,10 +40,13 @@ export function loadPluginModule(plugin: SitePlugin): { module: any | null; erro
     }
   }
 
+  // @todo first try plugins folder, then fallback to dev.
+  //   When installing, we can also check permissions and show a warning.
+
   console.log(`Plugin<site:${plugin.siteId}>: ${plugin.name} (${plugin.id}) | ${plugin.version}`);
   try {
     return {
-      module: require(`${fileDirectory}/dev/${plugin.id}/${plugin.version}/plugin.js`),
+      module: sandboxedRequire(`${pluginDirectory}/${plugin.id}/${plugin.version}/plugin.js`),
       error: false,
     };
   } catch (e) {

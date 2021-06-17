@@ -1,7 +1,6 @@
 import { captureModelShorthand } from '@capture-models/helpers';
-import React from 'react';
 import { reactBlockEmitter } from '../../../extensions/page-blocks/block-editor-react';
-import { SitePlugin } from '../../../types/schemas/plugins';
+import { ModuleWrapper, SitePlugin } from '../../../types/schemas/plugins';
 import { RouteComponents } from '../../site/routes';
 import { UniversalRoute } from '../../types';
 import { createPluginWrapper } from './create-plugin-wrapper';
@@ -9,12 +8,7 @@ import { createPluginWrapper } from './create-plugin-wrapper';
 export type PluginModule = {
   definition: SitePlugin;
   siteId: number;
-  module: {
-    id: string;
-    hookRoutes?: (routes: UniversalRoute[], components: RouteComponents) => UniversalRoute[];
-    hookComponents?: (components: RouteComponents) => any;
-    hookBlocks?: () => { [name: string]: React.FC<any> };
-  };
+  module: ModuleWrapper;
 };
 
 export class PluginManager {
@@ -36,6 +30,22 @@ export class PluginManager {
     }
 
     return document;
+  }
+
+  unregisterBlocks(plugin: PluginModule) {
+    if (plugin.module.hookBlocks) {
+      const newBlocks = plugin.module.hookBlocks();
+      if (newBlocks) {
+        const newBlockDefinitions = Object.values(newBlocks).map((r: any) => r[Symbol.for('slot-model')]);
+        for (const block of newBlockDefinitions) {
+          reactBlockEmitter.emit('remove-plugin-block', {
+            pluginId: plugin.definition.id,
+            siteId: plugin.definition.siteId,
+            type: block.type,
+          });
+        }
+      }
+    }
   }
 
   registerBlocks(plugin: PluginModule) {
@@ -67,6 +77,20 @@ export class PluginManager {
       .map(plugin => plugin.definition);
   }
 
+  uninstallPlugin(pluginId: string, siteId?: number) {
+    const allFound = this.plugins.filter(p => {
+      if (!siteId) {
+        return p.definition.id === pluginId;
+      }
+      return p.definition.id === pluginId && p.siteId === siteId;
+    });
+    for (const found of allFound) {
+      const idx = this.plugins.indexOf(found);
+      this.plugins = this.plugins.slice(0, idx).concat(this.plugins.slice(idx + 1));
+      this.unregisterBlocks(found);
+    }
+  }
+
   installPlugin(newPlugin: PluginModule) {
     const found = this.plugins.find(p => p.definition.id === newPlugin.definition.id && p.siteId === newPlugin.siteId);
     if (found) {
@@ -79,10 +103,24 @@ export class PluginManager {
     this.registerBlocks(newPlugin);
   }
 
-  updatePluginModule(id: string, module: any, siteId: number, revision?: string) {
-    const found = this.plugins.find(p => p.definition.id === id && p.siteId === siteId);
-    if (found) {
+  updatePluginModule(id: string, module: any, siteId?: number, revision?: string) {
+    const foundItems = this.plugins.filter(p => {
+      if (p.definition.id === id) {
+        if (!siteId) {
+          return true;
+        }
+
+        return p.siteId === siteId;
+      }
+
+      return false;
+    });
+    for (const found of foundItems) {
       const idx = this.plugins.indexOf(found);
+      // Skip if already set up for development.
+      if (!siteId && this.plugins[idx].definition.development && this.plugins[idx].definition.development.enabled) {
+        continue;
+      }
       this.plugins[idx].module = module;
       this.registerBlocks(this.plugins[idx]);
       if (revision) {

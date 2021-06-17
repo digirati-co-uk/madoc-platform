@@ -1,6 +1,7 @@
 import * as path from 'path';
 import send from 'koa-send';
 import { RouteMiddleware } from '../../types/route-middleware';
+import { pluginDirectory } from '../admin/development-plugin';
 
 export const fileDirectory = process.env.OMEKA_FILE_DIRECTORY || '/home/node/app/omeka-files';
 
@@ -41,7 +42,7 @@ export const pluginBundles: RouteMiddleware<{
     return;
   }
 
-  const root = path.resolve(fileDirectory, 'dev', context.params.pluginId, context.params.revisionId);
+  const root = path.resolve(pluginDirectory, context.params.pluginId, context.params.revisionId);
 
   await send(context, 'plugin.js', { root });
 };
