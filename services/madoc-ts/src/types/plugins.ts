@@ -31,3 +31,28 @@ export type PluginTokenRow = {
   plugin_id: string;
   site_id: number;
 };
+
+export type RemotePlugin = {
+  name: string;
+  owner: {
+    name: string;
+    logo?: string;
+    url: string;
+  };
+  description: string;
+  enabled: boolean;
+  installed: boolean;
+  installable: boolean;
+  upToDate: boolean;
+  url: string;
+  stars: number;
+  issues: number;
+  license: null | {
+    name: string;
+    key: string;
+    spdx_id: string;
+  };
+  installedVersion: string;
+  latestVersion: string | null;
+  versions: string[];
+};

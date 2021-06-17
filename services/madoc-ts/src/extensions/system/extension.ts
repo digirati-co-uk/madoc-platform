@@ -1,4 +1,5 @@
 import { ApiClient } from '../../gateway/api';
+import { RemotePlugin } from '../../types/plugins';
 import { SitePlugin } from '../../types/schemas/plugins';
 import { BaseExtension } from '../extension-manager';
 
@@ -8,10 +9,6 @@ export class SystemExtension implements BaseExtension {
   constructor(api: ApiClient) {
     this.api = api;
   }
-
-  // 'list-plugins': [TypedRouter.GET, '/api/madoc/system/plugins', listPlugins],
-  //   'get-plugin': [TypedRouter.GET, '/api/madoc/system/plugins/:id', getPlugin],
-  //   'install-plugin': [TypedRouter.POST, '/api/madoc/system/plugins', installPlugin, 'SitePlugin'],
 
   listPlugins() {
     return this.api.request<{ plugins: SitePlugin[] }>(`/api/madoc/system/plugins`, {
@@ -31,7 +28,7 @@ export class SystemExtension implements BaseExtension {
   }
 
   async viewExternalPlugin(owner: string, repo: string) {
-    return this.api.request<any>(`/api/madoc/system/plugins/external/${owner}/${repo}`);
+    return this.api.request<RemotePlugin>(`/api/madoc/system/plugins/external/${owner}/${repo}`);
   }
 
   async installExternalPlugin(owner: string, repository: string, version?: string) {
@@ -58,8 +55,4 @@ export class SystemExtension implements BaseExtension {
       method: 'POST',
     });
   }
-
-  // Disable dev mode.
-  // Get remote plugin.
-  // Install remote plugin.
 }

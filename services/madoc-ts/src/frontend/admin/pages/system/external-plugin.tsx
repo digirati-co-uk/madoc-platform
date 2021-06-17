@@ -1,19 +1,31 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { RemotePlugin } from '../../../../types/plugins';
 import { Button } from '../../../shared/atoms/Button';
-import { SystemBackground } from '../../../shared/atoms/SystemUI';
+import { Heading1 } from '../../../shared/atoms/Heading1';
+import { SystemListItem } from '../../../shared/atoms/SystemListItem';
+import {
+  SystemActions,
+  SystemBackground,
+  SystemDescription,
+  SystemLinkBar,
+  SystemMetadata,
+  SystemName,
+  SystemThumbnail,
+} from '../../../shared/atoms/SystemUI';
 import { useApi } from '../../../shared/hooks/use-api';
 import { useData } from '../../../shared/hooks/use-data';
 import { useSite } from '../../../shared/hooks/use-site';
+import { Spinner } from '../../../shared/icons/Spinner';
 import { serverRendererFor } from '../../../shared/plugins/external/server-renderer-for';
 import { AdminHeader } from '../../molecules/AdminHeader';
 
 export const ViewExternalPlugin: React.FC = () => {
   const { owner, repo } = useParams<{ owner: string; repo: string }>();
   const { t } = useTranslation();
-  const { data } = useData(ViewExternalPlugin);
+  const { data } = useData<RemotePlugin>(ViewExternalPlugin);
   const api = useApi();
   const site = useSite();
 
@@ -34,10 +46,62 @@ export const ViewExternalPlugin: React.FC = () => {
       />
 
       <SystemBackground>
-        <pre>{JSON.stringify(data, null, 2)}</pre>
-        <Button $primary onClick={() => install()} disabled={installStatus.isLoading}>
-          Install
-        </Button>
+        {data ? (
+          <>
+            <SystemListItem>
+              {data.owner.logo ? (
+                <SystemThumbnail>
+                  <img src={data.owner.logo} alt={data.owner.name} />
+                </SystemThumbnail>
+              ) : null}
+              <SystemMetadata>
+                <SystemName>
+                  <a rel="noopener noreferrer" target="_blank" href={data.url}>
+                    {data.name}
+                  </a>
+                </SystemName>
+                <SystemDescription>{data.description}</SystemDescription>
+                <SystemLinkBar>
+                  <span>Created by</span>
+                  <a rel="noopener noreferrer" target="_blank" href={data.owner.url}>
+                    {data.owner.name}
+                  </a>
+                </SystemLinkBar>
+
+                <SystemLinkBar>
+                  <>
+                    <a href={data.url} rel="noopener noreferrer" target="_blank">
+                      View on Github
+                    </a>
+                    <a href={`${data.url}/issues`} rel="noopener noreferrer" target="_blank">
+                      {data.issues} Issues
+                    </a>
+                    <span>{data.stars} Stars</span>
+                  </>
+                </SystemLinkBar>
+              </SystemMetadata>
+              <SystemActions>
+                {data.installed ? (
+                  data.upToDate ? (
+                    <Button $primary disabled>
+                      Up to date
+                    </Button>
+                  ) : (
+                    <Button $primary onClick={() => install()}>
+                      Update ({data.installedVersion} to {data.latestVersion})
+                    </Button>
+                  )
+                ) : (
+                  <Button $primary onClick={() => install()} disabled={!data.installable || installStatus.isLoading}>
+                    {data.installable ? 'Install' : 'Cannot install'}
+                  </Button>
+                )}
+              </SystemActions>
+            </SystemListItem>
+          </>
+        ) : (
+          <Spinner />
+        )}
       </SystemBackground>
     </>
   );
@@ -47,7 +111,7 @@ serverRendererFor(ViewExternalPlugin, {
   getKey: (params, query, pathname) => {
     return ['system-plugins', { owner: params.owner, repo: params.repo }];
   },
-  getData: (key, vars, api, pathname) => {
+  getData: async (key, vars, api, pathname) => {
     return api.system.viewExternalPlugin(vars.owner, vars.repo);
   },
 });

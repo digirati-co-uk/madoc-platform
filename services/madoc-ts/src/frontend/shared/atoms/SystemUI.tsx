@@ -71,7 +71,8 @@ export const SystemLinkBar = styled.div`
   font-size: 0.8em;
   display: flex;
   margin-bottom: 0.5em;
-  a {
+  a,
+  span {
     margin-right: 0.5em;
     display: block;
   }

@@ -13,7 +13,6 @@ export const StaticPage: React.FC<{ layout?: string; title: string }> = ({ title
   const api = useApi();
 
   const invalidateSlots = async () => {
-    console.log('invalidate slots');
     await refetch();
   };
 

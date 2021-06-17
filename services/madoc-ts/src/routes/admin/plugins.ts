@@ -174,7 +174,7 @@ export const viewRemotePlugin: RouteMiddleware<{ author: string; repo: string }>
 
   const existingPlugin = await context.plugins.getPluginByRepository(author, repo);
 
-  const installedVersion = latestRelease && latestRelease.version ? semver.clean(latestRelease.version) : null;
+  const latestVersion = latestRelease && latestRelease.tag_name ? semver.clean(latestRelease.tag_name) : null;
 
   context.response.body = {
     name: repoDetails.name,
@@ -183,7 +183,7 @@ export const viewRemotePlugin: RouteMiddleware<{ author: string; repo: string }>
     enabled: existingPlugin?.enabled || false,
     installed: existingPlugin?.installed || false,
     installable: !!latestRelease && !existingPlugin,
-    upToDate: existingPlugin && installedVersion ? semver.eq(installedVersion, existingPlugin.version) : false,
+    upToDate: existingPlugin && latestVersion ? semver.eq(latestVersion, existingPlugin.version) : false,
     url: repoDetails.html_url,
     stars: repoDetails.stargazers_count,
     issues: repoDetails.open_issues_count,
@@ -194,8 +194,8 @@ export const viewRemotePlugin: RouteMiddleware<{ author: string; repo: string }>
           spdx_id: repoDetails.license.spdx_id,
         }
       : null,
-    installedVersion: existingPlugin?.version || null,
-    latestVersion: installedVersion,
+    installedVersion: existingPlugin?.version,
+    latestVersion: latestVersion,
     versions: restReleases.map((r: any) => (r.tag_name ? semver.clean(r.tag_name) : null)),
   };
 };

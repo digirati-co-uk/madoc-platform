@@ -75,7 +75,6 @@ export const BlockCreator: React.FC<{
           block={chosenBlock}
           context={props.context}
           onSave={savedBlock => {
-            console.log('on save?', savedBlock);
             return props.onSave(savedBlock);
           }}
         />
