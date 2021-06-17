@@ -19,7 +19,9 @@ import { CreateRouteType, UniversalRoute } from '../../types';
 import { ResolvedTheme } from '../../../types/themes';
 import { ErrorPage } from '../components/NotFoundPage';
 import { Spinner } from '../icons/Spinner';
+import { Madoc } from '../plugins/globals';
 import { PluginManager, PluginModule } from '../plugins/plugin-manager';
+import { useModule } from '../plugins/use-module';
 import { ErrorBoundary } from './error-boundary';
 import { queryConfig } from './query-config';
 import { ReactQueryDevtools } from 'react-query-devtools';
@@ -53,14 +55,22 @@ export async function renderClient(
       .then(res => res.text())
       .then(code => {
         const module = new Function(`
-          ${code};
-          return window['${plugin.id}'];
+          return (function(require, module, exports) {
+            ${code};
+            
+            return exports;
+          })(this.require, this.module, this.exports);
         `);
 
         return {
           siteId: dehydratedSite.site.id,
           definition: plugin,
-          module: module(),
+          module: module.call({
+            Madoc: Madoc,
+            require: useModule,
+            exports: {},
+            module: {},
+          }),
         } as PluginModule;
       });
   });

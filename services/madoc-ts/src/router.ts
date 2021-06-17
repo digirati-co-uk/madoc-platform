@@ -10,12 +10,14 @@ import { getMetadataConfiguration, updateMetadataConfiguration } from './routes/
 import {
   disablePlugin,
   enablePlugin,
-  getPlugin, getPluginDependencies,
+  getPlugin,
+  getPluginDependencies,
   installPlugin,
   installRemotePlugin,
-  listPlugins, uninstallPlugin,
-  viewRemotePlugin
-} from "./routes/admin/plugins";
+  listPlugins,
+  uninstallPlugin,
+  viewRemotePlugin,
+} from './routes/admin/plugins';
 import { pm2Status } from './routes/admin/pm2';
 import { getSiteDetails } from './routes/admin/site-details';
 import {
