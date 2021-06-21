@@ -1,3 +1,4 @@
+import { createDelegatedRequest, delegatedRequest } from './routes/admin/deletegated-request';
 import { acceptNewDevelopmentBundle, developmentPlugin } from './routes/admin/development-plugin';
 import { exportSite } from './routes/admin/export-site';
 import { getMetadataKeys } from './routes/admin/get-metadata-keys';
@@ -172,6 +173,10 @@ export const router = new TypedRouter({
   'disable-plugin': [TypedRouter.POST, '/api/madoc/system/plugins/:id/disable', disablePlugin],
   'uninstall-plugin': [TypedRouter.POST, '/api/madoc/system/plugins/:id/uninstall', uninstallPlugin],
   'plugin-dependencies': [TypedRouter.GET, '/api/madoc/system/plugins/:id/dependencies', getPluginDependencies],
+
+  // Delegated tasks
+  'run-delegated-task': [TypedRouter.POST, '/api/madoc/delegated/:id', delegatedRequest],
+  'create-delegated-task': [TypedRouter.POST, '/api/madoc/delegated', createDelegatedRequest],
 
   'update-site-configuration': [TypedRouter.POST, '/api/madoc/configuration', updateSiteConfiguration],
   'get-model-configuration': [TypedRouter.GET, '/api/madoc/configuration/model', getModelConfiguration],

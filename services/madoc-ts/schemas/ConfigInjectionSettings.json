@@ -1,0 +1,29 @@
+{
+  "type": "object",
+  "properties": {
+    "documentChanges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "property": {
+            "type": "string"
+          },
+          "field": {
+            "type": "string"
+          },
+          "value": {}
+        },
+        "required": [
+          "field",
+          "property",
+          "value"
+        ]
+      }
+    }
+  },
+  "required": [
+    "documentChanges"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

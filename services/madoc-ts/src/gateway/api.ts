@@ -31,6 +31,9 @@ import { ProjectConfiguration } from '../types/schemas/project-configuration';
 import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/search';
 import { SearchIndexable } from '../utility/capture-model-to-indexables';
 import { NotFound } from '../utility/errors/not-found';
+import { apiDefinitionIndex } from './api-definitions/_index';
+import { ApiRequest } from './api-definitions/_meta';
+import { validateApiRequest } from './api-definitions/_validate';
 import { fetchJson } from './fetch-json';
 import { BaseTask } from './tasks/base-task';
 import { CanvasNormalized, CollectionNormalized, Manifest } from '@hyperion-framework/types';
@@ -1350,6 +1353,19 @@ export class ApiClient {
     return this.request<Task>(`/api/tasks/${id}`, {
       method: 'PATCH',
       body: task,
+    });
+  }
+
+  async createDelegatedRequest(request: ApiRequest<any, any>, subject?: string) {
+    return this.request(subject ? `/api/madoc/delegated?subject=${subject}` : `/api/madoc/delegated`, {
+      method: 'POST',
+      body: request,
+    });
+  }
+
+  async runDelegatedRequest(id: string) {
+    return this.request(`/api/madoc/delegated/${id}`, {
+      method: 'POST',
     });
   }
 

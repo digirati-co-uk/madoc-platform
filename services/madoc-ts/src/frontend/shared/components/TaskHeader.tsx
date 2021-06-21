@@ -78,7 +78,9 @@ const TaskHeaderStatusText = styled.div`
   font-size: 0.85em;
 `;
 
-const typeMapping: any = {};
+const typeMapping: any = {
+  'madoc-api-action-task': 'API Action request',
+};
 
 export const TaskHeader: React.FC<{ task: BaseTask }> = ({ task }) => {
   const metadata = useTaskMetadata(task);
@@ -86,9 +88,9 @@ export const TaskHeader: React.FC<{ task: BaseTask }> = ({ task }) => {
   const subject = metadata.subject;
 
   const manifestLink =
-    subject.type === 'manifest'
+    subject && subject.type === 'manifest'
       ? createLink({ manifestId: subject.id, taskId: undefined, parentTaskId: undefined })
-      : subject.parent && subject.parent.type === 'manifest'
+      : subject && subject.parent && subject.parent.type === 'manifest'
       ? createLink({
           manifestId: subject.parent.id,
           canvasId: undefined,

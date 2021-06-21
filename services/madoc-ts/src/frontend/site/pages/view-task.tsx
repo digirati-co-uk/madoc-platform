@@ -8,6 +8,7 @@ import { TaskWrapper } from '../../shared/components/TaskWrapper';
 import { createLink } from '../../shared/utility/create-link';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useTaskMetadata } from '../hooks/use-task-metadata';
+import { ViewApiActionTask } from './tasks/api-action-task';
 import { ViewCrowdsourcingTask } from './tasks/crowdsourcing-task.lazy';
 import { BrowserComponent } from '../../shared/utility/browser-component';
 import { useApi } from '../../shared/hooks/use-api';
@@ -57,6 +58,16 @@ export const ViewTask: React.FC<TaskContext<any>> = ({ task, ...props }) => {
       <>
         <TaskWrapper task={task} subject={subject}>
           <ViewCrowdsourcingReview task={task} {...props} />
+        </TaskWrapper>
+      </>
+    );
+  }
+
+  if (task.type === 'madoc-api-action-task') {
+    return (
+      <>
+        <TaskWrapper task={task}>
+          <ViewApiActionTask task={task} {...props} />
         </TaskWrapper>
       </>
     );
