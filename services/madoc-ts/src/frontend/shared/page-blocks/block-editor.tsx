@@ -150,12 +150,13 @@ export function useBlockModel(block: SiteBlock | SiteBlockRequest, advanced?: bo
       ...(definition.defaultData || {}),
       ...block.static_data,
     };
-  }, [block.i18n, block.name, block.static_data]);
+  }, [block.i18n, block.name, block.static_data, definition.defaultData]);
 
   return useMemo(() => {
     if (!value) {
       return undefined;
     }
+
     const properties = {
       ...(definition && definition.model ? definition.model.properties : {}),
       ...defaultFields.properties,
@@ -170,8 +171,6 @@ export function useBlockModel(block: SiteBlock | SiteBlockRequest, advanced?: bo
       __meta__: meta,
       ...value,
     });
-
-    console.log(document);
 
     return createRevisionFromDocument(document);
   }, [value, definition, defaultFields]);
