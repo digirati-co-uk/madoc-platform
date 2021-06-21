@@ -1,10 +1,16 @@
+import { captureModelShorthand } from '@capture-models/helpers';
 import React from 'react';
+import { PageBlockDefinition } from '../../../../extensions/page-blocks/extension';
 
 export function blockConfigFor(Component: any, model: any) {
-  const definition = {
+  const definition: PageBlockDefinition<any, any, any> = {
     type: model.type,
     label: model.label,
-    modelShorthand: model.editor,
+    model: model.editor
+      ? model.editor.type === 'entity'
+        ? model.editor
+        : captureModelShorthand(model.editor)
+      : undefined,
     render: function PageBlock(props: any) {
       return React.createElement(Component, model.mapToProps ? model.mapToProps(props) : props);
     },

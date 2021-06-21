@@ -481,7 +481,7 @@ export async function getCanonicalClaim(
 }
 
 export const prepareResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim> = async context => {
-  const { id, siteId, siteUrn } = userWithScope(context, ['models.contribute']);
+  const { id, siteId, siteUrn, scope } = userWithScope(context, ['models.contribute']);
   const userApi = api.asUser({ userId: id, siteId });
   const project = await userApi.getProject(context.params.id);
 
@@ -500,7 +500,11 @@ export const prepareResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim
   // Check for existing claim
   const [existingClaim, manifestClaim] = await getTaskFromClaim({ userId: id, parent, claim });
 
+  const isPreparing = scope.indexOf('site.admin') !== -1 && project.status === 4;
+
   if (
+    // Not preparing.
+    !isPreparing &&
     !existingClaim &&
     (config.claimGranularity !== 'manifest' || !manifestUserTask) &&
     !canUserClaimCanvas({

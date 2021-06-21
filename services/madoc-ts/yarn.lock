@@ -2491,10 +2491,10 @@
     screenfull "^3.3.2"
     whatwg-fetch "^3.0.0"
 
-"@capture-models/editor@^0.13.15":
-  version "0.13.15"
-  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.13.15.tgz#ef5991e6d53a5de591449b4d7cd5d782f9427c82"
-  integrity sha512-80JUIUT1Far/24g27it4s7cqTjsmcDWL+Qczh7JazXv42336VpWyO4Icqyy9ESvCJ9kk6OeeQgG0cO5iBTmjXg==
+"@capture-models/editor@^0.13.16":
+  version "0.13.16"
+  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.13.16.tgz#d8bf1b75aefdbafd41322009da82f4b06ca922f8"
+  integrity sha512-vBpRusVTqoGRCoc2la36it33Lpm5PTfdROcsA/eaF716CnQFcdqkldzBdf9itTWeEuqrR0eTELj04YnJaX3i/w==
   dependencies:
     "@atlas-viewer/atlas" "^1.5.2"
     "@capture-models/helpers" "^0.13.14"
@@ -3075,7 +3075,7 @@
     path-to-regexp "^6.1.0"
 
 "@madoc.io/types@./npm/madoc-types":
-  version "0.0.4"
+  version "0.0.5"
   dependencies:
     "@types/react" "*"
     "@types/styled-components" "*"
@@ -4384,7 +4384,7 @@
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.4.tgz#38fd73ddfd9b55abb1e1b2ed578cb55bd7b7d339"
   integrity sha512-8+KAKzEvSUdeo+kmqnKrqgeE+LcA0tjYWFY7RPProVYwnqDjukzO+3b6dLD56rYX5TdWejnEOLJYOIeh4CXKuA==
 
-"@types/json-schema@^7.0.5":
+"@types/json-schema@^7.0.5", "@types/json-schema@^7.0.7":
   version "7.0.7"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.7.tgz#98a993516c859eb0d5c4c8f098317a9ea68db9ad"
   integrity sha512-cxWFQVseBm6O9Gbw1IWb8r6OS4OhSt3hPZLkFApLjM8TEXROBuQGLAH2i2gZpcXdLBIrpXuTDhH7Vbm1iXmNGA==
@@ -14796,7 +14796,7 @@ path-to-regexp@^1.7.0:
   dependencies:
     isarray "0.0.1"
 
-path-to-regexp@^6.1.0:
+path-to-regexp@^6.1.0, path-to-regexp@^6.2.0:
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/path-to-regexp/-/path-to-regexp-6.2.0.tgz#f7b3803336104c346889adece614669230645f38"
   integrity sha512-f66KywYG6+43afgE/8j/GoiNyygk/bnoCbps++3ErRKsIYkGGupyv07R2Ok5m9i67Iqc+T2g1eAUGUPzWhYTyg==
