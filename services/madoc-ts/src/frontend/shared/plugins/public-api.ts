@@ -1,4 +1,5 @@
 import { useCollectionList } from '../../site/hooks/use-collection-list';
+import { useRouteContext } from '../../site/hooks/use-route-context';
 import { Button } from '../atoms/Button';
 import { LocaleString } from '../components/LocaleString';
 import { useApi } from '../hooks/use-api';
@@ -19,4 +20,5 @@ export {
   useCollectionList,
   blockConfigFor,
   serverRendererFor,
+  useRouteContext,
 };
