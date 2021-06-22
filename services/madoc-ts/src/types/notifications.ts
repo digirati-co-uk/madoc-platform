@@ -1,7 +1,10 @@
+import { Pagination } from './schemas/_pagination';
+
 export type NotificationRow = {
   id: string;
   title: string;
   summary?: string | null;
+  thumbnail?: string | null;
   created_at: number;
   read_at?: number | null;
   site_id: number;
@@ -18,6 +21,7 @@ export type NotificationRequest = {
   id: string;
   title: string;
   user: number;
+  thumbnail?: string;
   summary?: string;
   from?: {
     id: number;
@@ -38,4 +42,6 @@ export type Notification = NotificationRequest & {
 
 export type NotificationList = {
   notifications: Notification[];
+  unread: number;
+  pagination: Pagination;
 };

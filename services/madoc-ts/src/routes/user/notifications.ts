@@ -2,13 +2,32 @@ import { NotificationRequest } from '../../types/notifications';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { optionalUserWithScope, userWithScope } from '../../utility/user-with-scope';
 
+export const getNotificationCount: RouteMiddleware = async context => {
+  const { id, siteId } = userWithScope(context, ['site.read']);
+
+  context.response.body = {
+    unread: await context.notifications.unreadCount(id, siteId),
+  };
+};
 export const getNotifications: RouteMiddleware = async context => {
   const { id, siteId } = userWithScope(context, ['site.read']);
   const page = context.query.page ?? 0;
 
+  const [totalItems, allNotifications, totalUnread] = await Promise.all([
+    context.notifications.totalCount(id, siteId),
+    context.notifications.getNotifications(id, page, siteId),
+    context.notifications.unreadCount(id, siteId),
+  ]);
+
   context.response.status = 200;
   context.response.body = {
-    notifications: await context.notifications.getNotifications(id, page, siteId),
+    notifications: allNotifications,
+    unread: totalUnread,
+    pagination: {
+      page: page,
+      totalResults: totalItems,
+      totalPages: Math.ceil(totalItems / 20),
+    },
   };
 };
 

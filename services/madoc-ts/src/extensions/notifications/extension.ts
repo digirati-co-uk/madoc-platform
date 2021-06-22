@@ -1,6 +1,6 @@
 import { stringify } from 'query-string';
 import { ApiClient } from '../../gateway/api';
-import { NotificationRequest } from '../../types/notifications';
+import { NotificationList, NotificationRequest } from '../../types/notifications';
 import { BaseExtension } from '../extension-manager';
 
 export class NotificationExtension implements BaseExtension {
@@ -11,7 +11,11 @@ export class NotificationExtension implements BaseExtension {
   }
 
   getAllNotifications(page = 0) {
-    return this.api.request(`/api/madoc/notifications?${stringify({ page })}`);
+    return this.api.request<NotificationList>(`/api/madoc/notifications?${stringify({ page })}`);
+  }
+
+  getNotificationCount() {
+    return this.api.request<{ unread: number }>(`/api/madoc/notifications/count`);
   }
 
   readNotification(id: string) {

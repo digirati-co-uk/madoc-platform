@@ -13,6 +13,7 @@ create table notifications
     action_text text,
     from_user_id int,
     from_user_name text,
+    thumbnail text,
     tags text[]
 );
 

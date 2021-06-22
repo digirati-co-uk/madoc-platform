@@ -20,6 +20,22 @@ export class NotificationRepository extends BaseRepository {
     return rows.map(row => this.mapNotification(row));
   }
 
+  async unreadCount(user_id: number, site_id: number) {
+    return (
+      await this.connection.one<{ unread_count: number }>(
+        sql`select COUNT(*) as unread_count from notifications where read_at is null and user_id = ${user_id} and site_id = ${site_id}`
+      )
+    ).unread_count;
+  }
+
+  async totalCount(user_id: number, site_id: number) {
+    return (
+      await this.connection.one<{ total_count: number }>(
+        sql`select COUNT(*) as total_count from notifications where user_id = ${user_id} and site_id = ${site_id}`
+      )
+    ).total_count;
+  }
+
   async readNotification(id: string, user_id: number, site_id: number) {
     await this.connection.query(
       sql`update notifications set read_at = CURRENT_TIMESTAMP where id = ${id} and user_id = ${user_id} and site_id = ${site_id} and read_at is null`
@@ -56,7 +72,8 @@ export class NotificationRepository extends BaseRepository {
              action_text, 
              from_user_id, 
              from_user_name, 
-             tags
+             tags,
+             thumbnail
          ) VALUES (
            ${generateId()},
            ${req.title},
@@ -68,7 +85,8 @@ export class NotificationRepository extends BaseRepository {
            ${req.action.text || null},
            ${req.from?.id || null},
            ${req.from?.name || null},
-           ${sql.array(req.tags, 'text')}
+           ${req.tags ? sql.array(req.tags, 'text') : null},
+           ${req.thumbnail || null}
          ) returning *
     `)
     );
@@ -91,6 +109,7 @@ export class NotificationRepository extends BaseRepository {
       createdAt: row.created_at,
       readAt: row.read_at || undefined,
       summary: row.summary || undefined,
+      thumbnail: row.thumbnail || undefined,
       tags: row.tags,
       title: row.title,
       user: row.user_id,

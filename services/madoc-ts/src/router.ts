@@ -79,11 +79,11 @@ import { getUser } from './routes/user/get-user';
 import {
   clearAllNotifications,
   clearNotification,
-  createNotification,
+  createNotification, getNotificationCount,
   getNotifications,
   readAllNotifications,
-  readNotification,
-} from './routes/user/notifications';
+  readNotification
+} from "./routes/user/notifications";
 import { userAutocomplete } from './routes/user/user-autocomplete';
 import { TypedRouter } from './utility/typed-router';
 import { ping } from './routes/ping';
@@ -203,6 +203,7 @@ export const router = new TypedRouter({
 
   // Notifications.
   'get-all-notifications': [TypedRouter.GET, '/api/madoc/notifications', getNotifications],
+  'get-notification-count': [TypedRouter.GET, '/api/madoc/notifications/count', getNotificationCount],
   'read-notification': [TypedRouter.POST, '/api/madoc/notifications/:id/read', readNotification],
   'read-all-notifications': [TypedRouter.POST, '/api/madoc/notifications/read-all', readAllNotifications],
   'clear-notification': [TypedRouter.DELETE, '/api/madoc/notifications/:id', clearNotification],

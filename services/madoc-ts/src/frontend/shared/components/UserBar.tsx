@@ -19,6 +19,7 @@ import { useUser } from '../hooks/use-site';
 import { ArrowDownIcon } from '../icons/ArrowDownIcon';
 import { HrefLink } from '../utility/href-link';
 import { isAdmin } from '../utility/user-roles';
+import { NotificationCenter } from './NotificationCenter';
 
 const UserBarContainer = styled.div`
   height: 36px;
@@ -97,6 +98,9 @@ export const UserBar: React.FC<{
           )
         ) : null}
         <UserBarExpander />
+
+        {user ? <NotificationCenter /> : null}
+
         {showAdmin && !admin ? (
           <GlobalHeaderMenuContainer>
             <GlobalHeaderMenuLabel onClick={() => setEditMode(!editMode)}>
