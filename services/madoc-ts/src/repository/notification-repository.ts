@@ -110,7 +110,7 @@ export class NotificationRepository extends BaseRepository {
       readAt: row.read_at || undefined,
       summary: row.summary || undefined,
       thumbnail: row.thumbnail || undefined,
-      tags: row.tags,
+      tags: row.tags || [],
       title: row.title,
       user: row.user_id,
     };

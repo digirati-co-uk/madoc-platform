@@ -32,7 +32,7 @@ export type NotificationRequest = {
     text?: string;
     link?: string;
   };
-  tags?: string[];
+  tags: string[];
 };
 
 export type Notification = NotificationRequest & {
