@@ -15,7 +15,7 @@ import { CaptureModelExtension } from '../extensions/capture-models/extension';
 import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.extension';
 import { plainTextSource } from '../extensions/capture-models/DynamicDataSources/sources/Plaintext.source';
 import { ExtensionManager } from '../extensions/extension-manager';
-import { NotificationExtension } from "../extensions/notifications/extension";
+import { NotificationExtension } from '../extensions/notifications/extension';
 import { defaultPageBlockDefinitions } from '../extensions/page-blocks/default-definitions';
 import { PageBlockExtension } from '../extensions/page-blocks/extension';
 import { MediaExtension } from '../extensions/media/extension';
@@ -1305,14 +1305,14 @@ export class ApiClient {
     return this.request<Task & { id: string }>(`/api/tasks/${id}?${stringify({ page, all, assignee, detail })}`);
   }
 
-  async userAutocomplete(q: string) {
+  async userAutocomplete(q: string, roles?: string[]) {
     return this.request<{
       users: Array<{
         id: number;
         name: string;
         role?: string;
       }>;
-    }>(`/api/madoc/users?q=${q}`, {
+    }>(`/api/madoc/users?${stringify({ q, roles }, { arrayFormat: 'comma' })}`, {
       method: 'GET',
     });
   }

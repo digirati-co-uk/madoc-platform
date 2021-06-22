@@ -1,15 +1,19 @@
 import { User } from '../../types/omeka/User';
 import { RouteMiddleware } from '../../types/route-middleware';
-import { mysql } from '../../utility/mysql';
+import { mysql, raw } from '../../utility/mysql';
 import { userWithScope } from '../../utility/user-with-scope';
 
 export const userAutocomplete: RouteMiddleware = async context => {
   // @todo need scope for reading user data.
   const { id, siteId } = userWithScope(context, ['tasks.create']);
   const q = (context.query.q || '').trim();
+  const roles = (context.query.roles || '')
+    .split(',')
+    .map((r: string) => r.trim())
+    .filter((e: string) => e);
   const query = `%${q || ''}%`;
 
-  if (!context.query.q) {
+  if (!context.query.q && !roles.length) {
     context.response.body = {
       users: [],
     };
@@ -21,13 +25,15 @@ export const userAutocomplete: RouteMiddleware = async context => {
       mysql`
         select user.id,
                user.name,
-               user.role
+               sp.role as role
         from user 
           left join site_permission sp 
               on user.id = sp.user_id 
         where sp.role is not null 
-          and user.name LIKE ${query}  and sp.site_id = ${siteId}
-        group by user_id limit 10
+          ${q ? raw(mysql`and user.name LIKE ${query}`) : raw('')}  
+          and sp.site_id = ${siteId} 
+          ${roles.length ? raw(mysql`and sp.role IN (${roles})`) : raw('')}
+        group by user_id limit 50
       `,
       (err, results: any) => {
         if (err) {

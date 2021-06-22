@@ -15,6 +15,8 @@ type UserAutoCompleteProps = {
   placeholder?: string;
   value?: AutocompleteUser;
   clearable?: boolean;
+  initialQuery?: boolean;
+  roles?: string[];
   updateValue: (user?: AutocompleteUser) => void;
 };
 
@@ -34,6 +36,22 @@ export const UserAutocomplete: React.FC<UserAutoCompleteProps> = props => {
   const [error, setError] = useState('');
   const api = useApi();
   const ref = useRef<any>();
+
+  useEffect(() => {
+    if (props.initialQuery) {
+      api.userAutocomplete('', props.roles).then(items => {
+        // Make API Request.
+        setOptions(alreadyExistingUsers => {
+          if (alreadyExistingUsers.length) {
+            return alreadyExistingUsers;
+          }
+          return items.users;
+        });
+        setIsLoading(false);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onOptionChange = (option: AutocompleteUser | undefined) => {
     if (!option) {
@@ -61,7 +79,7 @@ export const UserAutocomplete: React.FC<UserAutoCompleteProps> = props => {
   const onSearchChange = async (value: string | undefined) => {
     if (value) {
       try {
-        const items = await api.userAutocomplete(value);
+        const items = await api.userAutocomplete(value, props.roles);
         // Make API Request.
         setOptions(items.users);
         setIsLoading(false);
