@@ -14,7 +14,7 @@ export type NotificationRow = {
   action_text?: string | null;
   from_user_id?: number | null;
   from_user_name?: string | null;
-  tags: string[];
+  tags?: string[] | null;
 };
 
 export type NotificationRequest = {
@@ -32,7 +32,7 @@ export type NotificationRequest = {
     text?: string;
     link?: string;
   };
-  tags: string[];
+  tags?: string[];
 };
 
 export type Notification = NotificationRequest & {

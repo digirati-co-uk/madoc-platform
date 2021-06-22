@@ -31,7 +31,7 @@ const NotificationIconContainer = styled.button`
 
 const NotificationContainer = styled.div<{ $visible?: boolean }>`
   position: absolute;
-  width: 300px;
+  width: 360px;
   top: 36px;
   right: -40px;
   overflow: hidden;

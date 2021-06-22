@@ -25,10 +25,14 @@ export class NotificationExtension implements BaseExtension {
   }
 
   createNotification(req: NotificationRequest) {
-    return this.api.request(`/api/madoc/notifications`, {
-      method: 'POST',
-      body: req,
-    });
+    try {
+      return this.api.request(`/api/madoc/notifications`, {
+        method: 'POST',
+        body: req,
+      });
+    } catch (e) {
+      // Silent fail.
+    }
   }
 
   clearNotification(id: string) {
