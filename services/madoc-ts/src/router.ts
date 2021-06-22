@@ -76,6 +76,14 @@ import { siteManifestTasks } from './routes/site/site-manifest-tasks';
 import { getStaticPage, sitePages } from './routes/site/site-pages';
 import { siteTaskMetadata } from './routes/site/site-task-metadata';
 import { getUser } from './routes/user/get-user';
+import {
+  clearAllNotifications,
+  clearNotification,
+  createNotification,
+  getNotifications,
+  readAllNotifications,
+  readNotification,
+} from './routes/user/notifications';
 import { userAutocomplete } from './routes/user/user-autocomplete';
 import { TypedRouter } from './utility/typed-router';
 import { ping } from './routes/ping';
@@ -192,6 +200,14 @@ export const router = new TypedRouter({
   // User API.
   'get-user': [TypedRouter.GET, '/api/madoc/users/:id', getUser],
   'get-user-autocomplete': [TypedRouter.GET, '/api/madoc/users', userAutocomplete],
+
+  // Notifications.
+  'get-all-notifications': [TypedRouter.GET, '/api/madoc/notifications', getNotifications],
+  'read-notification': [TypedRouter.POST, '/api/madoc/notifications/:id/read', readNotification],
+  'read-all-notifications': [TypedRouter.POST, '/api/madoc/notifications/read-all', readAllNotifications],
+  'clear-notification': [TypedRouter.DELETE, '/api/madoc/notifications/:id', clearNotification],
+  'clear-all-notifications': [TypedRouter.POST, '/api/madoc/notifications/clear-all', clearAllNotifications],
+  'create-notification': [TypedRouter.POST, '/api/madoc/notifications', createNotification],
 
   // Localisation
   'i18n-list-locales': [TypedRouter.GET, '/api/madoc/locales', listLocalisations],

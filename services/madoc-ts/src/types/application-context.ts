@@ -2,6 +2,7 @@ import { i18n } from 'i18next';
 import { PluginManager } from '../frontend/shared/plugins/plugin-manager';
 import { ChangeDiscoveryRepository } from '../activity-streams/change-discovery-repository';
 import { MediaRepository } from '../repository/media-repository';
+import { NotificationRepository } from '../repository/notification-repository';
 import { PageBlocksRepository } from '../repository/page-blocks-repository';
 import { PluginRepository } from '../repository/plugin-repository';
 import { ThemeRepository } from '../repository/theme-repository';
@@ -23,6 +24,7 @@ export interface ApplicationContext {
   plugins: PluginRepository;
   themes: ThemeRepository;
   media: MediaRepository;
+  notifications: NotificationRepository;
   changeDiscovery: ChangeDiscoveryRepository;
   omeka: OmekaApi;
   pluginManager: PluginManager;
