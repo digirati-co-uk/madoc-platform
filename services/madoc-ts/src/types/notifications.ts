@@ -32,12 +32,13 @@ export type NotificationRequest = {
     text?: string;
     link?: string;
   };
-  tags: string[];
+  tags?: string[];
 };
 
 export type Notification = NotificationRequest & {
   createdAt: number;
   readAt?: number;
+  tags: string[];
 };
 
 export type NotificationList = {
