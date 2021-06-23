@@ -25,22 +25,33 @@ export const ModalButton: React.FC<{
   disabled?: boolean;
   openByDefault?: boolean;
   style?: any;
-}> = ({
-  as,
-  className,
-  disabled,
-  button,
-  title,
-  render,
-  renderFooter,
-  onClose,
-  modalSize,
-  autoHeight,
-  footerAlignRight,
-  children,
-  openByDefault = false,
-  style,
-}) => {
+
+  onKeyDown?: (e: React.KeyboardEvent<HTMLAnchorElement>) => void;
+  tabIndex?: number;
+  role?: string;
+  $disabled?: boolean;
+}> = React.forwardRef(function ModalButton(
+  {
+    as,
+    className,
+    disabled,
+    button,
+    title,
+    render,
+    renderFooter,
+    onClose,
+    modalSize,
+    autoHeight,
+    footerAlignRight,
+    children,
+    openByDefault = false,
+    style,
+    onKeyDown,
+    tabIndex,
+    role,
+  },
+  ref
+) {
   const portalEl = useRef<HTMLElement>();
   const [ready, setIsReady] = useState(false);
   const containerRef = useRef<any>();
@@ -101,9 +112,18 @@ export const ModalButton: React.FC<{
             portalEl.current
           )
         : null}
-      <Component className={className} disabled={disabled} onClick={() => setIsReady(true)} style={style}>
+      <Component
+        onKeyDown={onKeyDown}
+        tabIndex={tabIndex}
+        role={role}
+        ref={ref}
+        className={className}
+        disabled={disabled}
+        onClick={() => setIsReady(true)}
+        style={style}
+      >
         {children}
       </Component>
     </>
   );
-};
+});

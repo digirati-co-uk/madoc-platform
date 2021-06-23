@@ -1359,6 +1359,12 @@ export class ApiClient {
     });
   }
 
+  async unassignTask(taskId: string) {
+    return this.request<BaseTask>(`/api/tasks/${taskId}/unassign`, {
+      method: 'POST',
+    });
+  }
+
   async createDelegatedRequest(request: ApiRequest<any, any>, subject?: string) {
     return this.request(subject ? `/api/madoc/delegated?subject=${subject}` : `/api/madoc/delegated`, {
       method: 'POST',

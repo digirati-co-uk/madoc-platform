@@ -4,10 +4,14 @@ import { BaseTask } from '../../../gateway/tasks/base-task';
 import { ExpandGrid, GridContainer } from '../atoms/Grid';
 import { TaskHeader } from './TaskHeader';
 
-export const TaskWrapper: React.FC<{ task: BaseTask; subject?: SubjectSnippet }> = ({ task, children }) => {
+export const TaskWrapper: React.FC<{ task: BaseTask; subject?: SubjectSnippet; refetch?: () => Promise<void> }> = ({
+  task,
+  refetch,
+  children,
+}) => {
   return (
     <>
-      <TaskHeader task={task} />
+      <TaskHeader task={task} refetch={refetch} />
       <GridContainer>
         <ExpandGrid>{children}</ExpandGrid>
       </GridContainer>

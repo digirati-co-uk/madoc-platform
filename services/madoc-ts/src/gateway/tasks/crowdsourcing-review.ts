@@ -1,3 +1,5 @@
+import { generateId } from '@capture-models/helpers';
+import { parseUrn } from '../../utility/parse-urn';
 import { BaseTask } from './base-task';
 import { ApiClient } from '../api';
 import { CrowdsourcingTask } from './crowdsourcing-task';
@@ -106,6 +108,14 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           }
         }
       }
+      break;
+    }
+
+    case 'assigned': {
+      const task = await api.getTask<CrowdsourcingReview>(taskId);
+
+      await api.notifications.taskAssignmentNotification('You have been assigned a review', task);
+
       break;
     }
   }

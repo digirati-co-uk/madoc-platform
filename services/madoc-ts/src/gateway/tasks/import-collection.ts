@@ -1,3 +1,4 @@
+import { generateId } from '@capture-models/helpers';
 import { BaseTask } from './base-task';
 import * as importManifest from './import-manifest';
 import * as tasks from './task-helpers';
@@ -170,11 +171,27 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       }
       const manifestResourceIds = manifestIds.map(id => idMap[id]).filter(e => e);
 
+      const userApi = await api.asUser({ siteId, userId });
+
       // 4. Save structure of collection
-      await api.asUser({ siteId, userId }).updateCollectionStructure(task.state.resourceId, manifestResourceIds);
+      await userApi.updateCollectionStructure(task.state.resourceId, manifestResourceIds);
 
       // 5. Update the task.
       await api.updateTask(taskId, changeStatus('done'));
+
+      // 6. Notify user.
+      if (!task.parent_task) {
+        await userApi.notifications.createNotification({
+          id: generateId(),
+          title: 'Finished importing collection',
+          summary: task.subject,
+          action: {
+            id: 'task:admin',
+            link: `urn:madoc:task:${taskId}`,
+          },
+          user: userId,
+        });
+      }
 
       break;
     }

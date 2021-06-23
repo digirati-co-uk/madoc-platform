@@ -43,6 +43,7 @@ USER node
 
 COPY ./migrate.js /home/node/app/migrate.js
 COPY ./migrations /home/node/app/migrations
+COPY ./config.json /home/node/app/config.json
 
 CMD ["pm2-runtime", "start", "./ecosystem.config.js", "--only", "tasks-api-prod"]
 

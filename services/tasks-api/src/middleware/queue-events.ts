@@ -2,7 +2,19 @@ import { RouteMiddleware } from '../types';
 
 const queueList = process.env.QUEUE_LIST ? process.env.QUEUE_LIST.split(',') : [];
 
-export const queueEvents: RouteMiddleware = async (context, next) => {
+type BaseQueueConfig = {
+  dispatch: {
+    assigned: string[];
+    created: string[];
+    modified: string[];
+    subtask_created: string[];
+    deleted: string[];
+  };
+};
+
+export const queueEvents = (baseConfig?: BaseQueueConfig): RouteMiddleware => async (context, next) => {
+  const dispatchConfig = baseConfig?.dispatch || ({} as any);
+
   context.state.queue = [];
   context.state.queueList = queueList;
   context.state.dispatch = (
@@ -29,22 +41,30 @@ export const queueEvents: RouteMiddleware = async (context, next) => {
       allEvents.push(ev);
     }
 
-    // @todo apply default events from configuration.
-
     // Push the event.
     const realEvent = `${eventName}${hasSubject ? `.${subject}` : ''}`;
+    function push(queue_id: string) {
+      context.state.queue.push({
+        queue_id,
+        event: {
+          name: realEvent,
+          data: { subject, state, taskId: task.id, type: task.type, context: context.state.jwt.context },
+          opts: {
+            lifo: eventName !== 'created',
+          },
+        },
+      });
+    }
+
     if (allEvents.indexOf(realEvent) !== -1 && queueMap[realEvent]) {
       for (const queue_id of queueMap[realEvent]) {
-        context.state.queue.push({
-          queue_id,
-          event: {
-            name: realEvent,
-            data: { subject, state, taskId: task.id, type: task.type, context: context.state.jwt.context },
-            opts: {
-              lifo: eventName !== 'created',
-            },
-          },
-        });
+        push(queue_id);
+      }
+    }
+
+    if (dispatchConfig[eventName]?.length) {
+      for (const queue_id of dispatchConfig[eventName]) {
+        push(queue_id);
       }
     }
   };

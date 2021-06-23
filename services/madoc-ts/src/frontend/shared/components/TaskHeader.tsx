@@ -5,9 +5,20 @@ import styled from 'styled-components';
 import { BaseTask } from '../../../gateway/tasks/base-task';
 import { extractIdFromUrn } from '../../../utility/parse-urn';
 import { useTaskMetadata } from '../../site/hooks/use-task-metadata';
+import {
+  ContextualLabel,
+  ContextualMenuList,
+  ContextualMenuListItem,
+  ContextualMenuWrapper,
+  ContextualPositionWrapper,
+} from '../atoms/ContextualMenu';
 import { StatusIcon, StatusWrapper } from '../atoms/Status';
+import { SettingsIcon } from '../icons/SettingsIcon';
 import { createLink } from '../utility/create-link';
 import { HrefLink } from '../utility/href-link';
+import { ModalButton } from './Modal';
+import { TaskContextualMenu } from './TaskContextualMenu';
+import { UserAutocomplete } from './UserAutocomplete';
 
 const TaskHeaderContainer = styled.div`
   background: #fff;
@@ -52,20 +63,20 @@ const TaskHeaderActions = styled.div`
   display: flex;
   color: #999;
   margin-top: 0.5em;
-  font-size: 0.85em;
-
-  a {
-    color: #4a67e4;
-    text-decoration: underline;
-  }
 `;
 
 const TaskHeaderAction = styled.div`
   padding: 0.25em 1em 0.25em 0;
+  font-size: 0.85em;
 
   & ~ & {
     padding-left: 1em;
     border-left: 1px solid #eee;
+  }
+
+  > a {
+    color: #4a67e4;
+    text-decoration: underline;
   }
 `;
 
@@ -82,7 +93,7 @@ const typeMapping: any = {
   'madoc-api-action-task': 'API Action request',
 };
 
-export const TaskHeader: React.FC<{ task: BaseTask }> = ({ task }) => {
+export const TaskHeader: React.FC<{ task: BaseTask; refetch?: () => Promise<void> }> = ({ task, refetch }) => {
   const metadata = useTaskMetadata(task);
   const { t } = useTranslation();
   const subject = metadata.subject;
@@ -144,6 +155,7 @@ export const TaskHeader: React.FC<{ task: BaseTask }> = ({ task }) => {
               <HrefLink href={`/users/${extractIdFromUrn(task.assignee.id)}`}>{task.assignee.name}</HrefLink>
             </TaskHeaderAction>
           ) : null}
+          <TaskContextualMenu task={task} refetch={refetch} />
         </TaskHeaderActions>
       </TaskHeaderContent>
       <TaskHeaderStatus>

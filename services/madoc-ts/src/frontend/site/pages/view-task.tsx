@@ -33,7 +33,7 @@ export const ViewTask: React.FC<TaskContext<any>> = ({ task, ...props }) => {
   ) {
     return (
       <div>
-        <TaskWrapper task={task} subject={subject}>
+        <TaskWrapper task={task} refetch={props.refetch as any} subject={subject}>
           <a href={`/s/${slug}/madoc/admin/tasks/${task.id}`}>{t('View on admin dashboard')}</a>
         </TaskWrapper>
       </div>
@@ -43,7 +43,7 @@ export const ViewTask: React.FC<TaskContext<any>> = ({ task, ...props }) => {
   if (task.type === 'crowdsourcing-task') {
     return (
       <>
-        <TaskWrapper task={task} subject={subject}>
+        <TaskWrapper task={task} refetch={props.refetch as any} subject={subject}>
           <BrowserComponent fallback={<div>{t('loading')}</div>}>
             <ViewCrowdsourcingTask task={task} {...props} />
           </BrowserComponent>
@@ -56,7 +56,7 @@ export const ViewTask: React.FC<TaskContext<any>> = ({ task, ...props }) => {
   if (task.type === 'crowdsourcing-review') {
     return (
       <>
-        <TaskWrapper task={task} subject={subject}>
+        <TaskWrapper task={task} refetch={props.refetch as any} subject={subject}>
           <ViewCrowdsourcingReview task={task} {...props} />
         </TaskWrapper>
       </>
@@ -66,7 +66,7 @@ export const ViewTask: React.FC<TaskContext<any>> = ({ task, ...props }) => {
   if (task.type === 'madoc-api-action-task') {
     return (
       <>
-        <TaskWrapper task={task}>
+        <TaskWrapper task={task} refetch={props.refetch as any}>
           <ViewApiActionTask task={task} {...props} />
         </TaskWrapper>
       </>
@@ -76,7 +76,7 @@ export const ViewTask: React.FC<TaskContext<any>> = ({ task, ...props }) => {
   if (subject) {
     return (
       <>
-        <TaskWrapper task={task} subject={subject}>
+        <TaskWrapper task={task} refetch={props.refetch as any} subject={subject}>
           {subject.thumbnail ? (
             <img src={subject.thumbnail} alt={createLocaleString(subject.label, 'Thumbnail')} />
           ) : null}
@@ -89,7 +89,7 @@ export const ViewTask: React.FC<TaskContext<any>> = ({ task, ...props }) => {
   }
 
   return (
-    <TaskWrapper task={task} subject={subject}>
+    <TaskWrapper task={task} refetch={props.refetch as any} subject={subject}>
       <EmptyState>No details on this task</EmptyState>
     </TaskWrapper>
   );

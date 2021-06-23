@@ -1,6 +1,7 @@
 import { deleteSubtasks } from './routes/delete-subtasks';
 import { exportTasks } from './routes/export-tasks';
 import { importTasks } from './routes/import-tasks';
+import { unassignTask } from './routes/unassign-task';
 import { updateMetadata } from './routes/update-metadata';
 import { TypedRouter } from './utility/typed-router';
 import { getSingleTask } from './routes/get-single-task';
@@ -34,4 +35,5 @@ export const router = new TypedRouter({
   'post-task-subjects': [TypedRouter.POST, '/tasks/:id/subjects', getSubjectStatistics],
   'accept-task': [TypedRouter.POST, '/tasks/:id/accept', acceptTask],
   'post-task-event': [TypedRouter.POST, '/tasks/:id/dispatch/:event', postEvent],
+  'unassign-task': [TypedRouter.POST, '/tasks/:id/unassign', unassignTask],
 });
