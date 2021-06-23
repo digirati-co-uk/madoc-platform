@@ -42,6 +42,11 @@ export class NotificationExtension implements BaseExtension {
     if (task.assignee && task.assignee.id) {
       const user = parseUrn(task.assignee.id);
       if (user && user.id) {
+        if (task.id && this.api.tasks.requiresUpdate(task)) {
+          const newMetadata = await this.api.tasks.remoteMetadata(task, false);
+          task = await this.api.tasks.updateTaskMetadata(task.id, newMetadata);
+        }
+
         const subject = task.metadata?.subject;
         await this.createNotification({
           id: generateId(),

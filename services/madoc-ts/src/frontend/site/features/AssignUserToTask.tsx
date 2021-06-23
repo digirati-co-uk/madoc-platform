@@ -87,7 +87,7 @@ export const AssignTaskToUser: React.FC<AssignCanvasToUserProps> = props => {
       <div>
         <h4>{t('Assign to user')}</h4>
         {selectedError ? <ErrorMessage>{selectedError}</ErrorMessage> : null}
-        <div style={{ display: 'flex', marginBottom: '10em' }}>
+        <div style={{ display: 'flex' }}>
           <div style={{ flex: '1 1 0px', marginRight: 10 }}>
             <UserAutocomplete
               clearable

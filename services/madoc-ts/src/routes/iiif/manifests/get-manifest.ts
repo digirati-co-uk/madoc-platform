@@ -9,7 +9,7 @@ import { ManifestFull } from '../../../types/schemas/manifest-full';
 import { getResourceCount } from '../../../database/queries/count-queries';
 
 export const getManifest: RouteMiddleware<{ id: string }> = async context => {
-  const { siteId } = optionalUserWithScope(context, ['site.read']);
+  const { siteId } = optionalUserWithScope(context, ['site.view']);
   const manifestId = Number(context.params.id);
 
   const canvasesPerPage = 28;

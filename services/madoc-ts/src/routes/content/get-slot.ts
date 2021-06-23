@@ -4,7 +4,7 @@ import { RouteMiddleware } from '../../types/route-middleware';
 import { optionalUserWithScope } from '../../utility/user-with-scope';
 
 export const getSlot: RouteMiddleware<{ slotId: string }> = async context => {
-  const { siteId } = optionalUserWithScope(context, ['site.read']);
+  const { siteId } = optionalUserWithScope(context, ['site.view']);
   const slotId = Number(context.params.slotId);
 
   const results = await context.connection.any(sql<SlotJoinedProperties & BlockJoinedProperties>`

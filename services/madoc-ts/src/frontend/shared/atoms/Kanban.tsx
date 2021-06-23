@@ -76,7 +76,7 @@ export const KanbanType = styled.div`
   color: #999;
 `;
 
-export const KanbanAvatarContainer = styled.button`
+export const KanbanAvatarContainer = styled.button<{ $inline?: boolean }>`
   display: flex;
   padding: 0.5em;
   align-items: center;
@@ -92,6 +92,13 @@ export const KanbanAvatarContainer = styled.button`
     border-color: #4265e9;
   }
   text-decoration: none;
+
+  ${props =>
+    props.$inline &&
+    css`
+      margin: 0;
+      padding: 0.1em;
+    `}
 `;
 
 export const KanbanAvatar = styled.div`
@@ -137,11 +144,15 @@ function pastelColour(input: string) {
   return [`rgb(${red}, ${green}, ${blue})`, color];
 }
 
-export const KanbanAssignee: React.FC<{ children: string; href?: string }> = ({ href, children }) => {
+export const KanbanAssignee: React.FC<{ children: string; href?: string; inline?: boolean }> = ({
+  href,
+  inline,
+  children,
+}) => {
   const [background, color] = useMemo(() => pastelColour(children), [children]);
 
   return (
-    <KanbanAvatarContainer as={href ? HrefLink : undefined} href={href}>
+    <KanbanAvatarContainer as={href ? HrefLink : undefined} href={href} $inline={inline}>
       <KanbanAvatar style={{ background, color }}>{children[0].toUpperCase()}</KanbanAvatar>
       <KanbanAssigneeName>{children}</KanbanAssigneeName>
     </KanbanAvatarContainer>

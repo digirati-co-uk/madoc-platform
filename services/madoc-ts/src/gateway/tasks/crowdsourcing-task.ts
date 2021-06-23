@@ -371,7 +371,16 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
     case 'assigned': {
       const task = await api.getTask<CrowdsourcingReview>(taskId);
 
-      await api.notifications.taskAssignmentNotification('You have been assigned a task', task);
+      let message = 'You have been assigned a task';
+      const subject = task.subject ? parseUrn(task.subject) : undefined;
+      if (subject && subject.type === 'manifest') {
+        message = 'You have been assigned a manifest';
+      }
+      if (subject && subject.type === 'canvas') {
+        message = 'You have been assigned an image';
+      }
+
+      await api.notifications.taskAssignmentNotification(message, task);
 
       break;
     }

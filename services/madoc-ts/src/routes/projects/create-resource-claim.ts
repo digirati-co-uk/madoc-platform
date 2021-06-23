@@ -513,7 +513,7 @@ export const prepareResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim
       userId: id,
     })
   ) {
-    throw new Error('Maximum number of contributors reached');
+    throw new RequestError('Maximum number of contributors reached');
   }
 
   const model = await upsertCaptureModelForResource(context, siteId, projectId, id, claim);
@@ -633,7 +633,7 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
         revisionId: claim.revisionId,
       })
     ) {
-      throw new Error('Maximum number of contributors reached');
+      throw new RequestError('Maximum number of contributors reached');
     }
 
     // Make sure a capture model exists and retrieve it.
@@ -685,7 +685,7 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
         config,
       })
     ) {
-      throw new Error('Maximum number of contributors reached');
+      throw new RequestError('Maximum number of contributors reached');
     }
 
     const task = await createUserCrowdsourcingTask({

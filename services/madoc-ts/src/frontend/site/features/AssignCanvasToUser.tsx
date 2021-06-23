@@ -9,12 +9,16 @@ import { useUserDetails } from '../../shared/hooks/use-user-details';
 import { isReviewer } from '../../shared/utility/user-roles';
 import { useProjectCanvasTasks } from '../hooks/use-project-canvas-tasks';
 import { useRouteContext } from '../hooks/use-route-context';
+import { AssignManifestToUser } from './AssignManifestToUser';
 import { AssignTaskToUser } from './AssignUserToTask';
+import { PrepareCaptureModel } from './PrepareCaptureModel';
+import { useSiteConfiguration } from './SiteConfigurationContext';
 
 export const AssignCanvasToUser: React.FC = () => {
   const { t } = useTranslation();
   const { projectId, canvasId, manifestId, collectionId } = useRouteContext();
   const { data: projectTasks, refetch } = useProjectCanvasTasks();
+  const { project } = useSiteConfiguration();
   const api = useApi();
 
   const canvasTask = projectTasks?.canvasTask;
@@ -33,6 +37,10 @@ export const AssignCanvasToUser: React.FC = () => {
     }
   });
 
+  if (project.claimGranularity === 'manifest' || project.contributionMode === 'transcription') {
+    return <AssignManifestToUser />;
+  }
+
   if (!details || !details.user || !isReviewer(details, true) || !projectId) {
     return null;
   }
@@ -40,7 +48,6 @@ export const AssignCanvasToUser: React.FC = () => {
   return (
     <ModalButton
       as={Button}
-      disabled={!canvasTask}
       title={t('Assign to user')}
       render={() =>
         canvasTask && canvasTask.id ? (
@@ -52,7 +59,9 @@ export const AssignCanvasToUser: React.FC = () => {
               await refetch();
             }}
           />
-        ) : null
+        ) : (
+          <PrepareCaptureModel />
+        )
       }
     >
       {t('Assign')}
