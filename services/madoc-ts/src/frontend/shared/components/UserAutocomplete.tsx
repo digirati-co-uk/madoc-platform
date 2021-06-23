@@ -15,6 +15,8 @@ type UserAutoCompleteProps = {
   placeholder?: string;
   value?: AutocompleteUser;
   clearable?: boolean;
+  initialQuery?: boolean;
+  roles?: string[];
   updateValue: (user?: AutocompleteUser) => void;
 };
 
@@ -34,6 +36,22 @@ export const UserAutocomplete: React.FC<UserAutoCompleteProps> = props => {
   const [error, setError] = useState('');
   const api = useApi();
   const ref = useRef<any>();
+
+  useEffect(() => {
+    if (props.initialQuery) {
+      api.userAutocomplete('', props.roles).then(items => {
+        // Make API Request.
+        setOptions(alreadyExistingUsers => {
+          if (alreadyExistingUsers.length) {
+            return alreadyExistingUsers;
+          }
+          return items.users;
+        });
+        setIsLoading(false);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onOptionChange = (option: AutocompleteUser | undefined) => {
     if (!option) {
@@ -61,7 +79,7 @@ export const UserAutocomplete: React.FC<UserAutoCompleteProps> = props => {
   const onSearchChange = async (value: string | undefined) => {
     if (value) {
       try {
-        const items = await api.userAutocomplete(value);
+        const items = await api.userAutocomplete(value, props.roles);
         // Make API Request.
         setOptions(items.users);
         setIsLoading(false);
@@ -73,34 +91,52 @@ export const UserAutocomplete: React.FC<UserAutoCompleteProps> = props => {
   };
 
   return (
-    <Select
-      ref={ref}
-      themeConfig={{
-        color: {
-          primary: '#005cc5',
-        },
-        control: {
-          boxShadow: '0 0 0 0',
-          focusedBorderColor: '#005cc5',
-          selectedBgColor: '#005cc5',
-          backgroundColor: '#fff',
-        },
-      }}
-      isInvalid={!!error}
-      inputId={props.id}
-      initialValue={options[0]}
-      placeholder={props.placeholder ? t(props.placeholder) : t('Select option...')}
-      options={options}
-      isLoading={isLoading}
-      isClearable={props.clearable}
-      onOptionChange={onOptionChange}
-      noOptionsMsg={t('No options')}
-      filterMatchFrom="any"
-      onInputChange={onInputChange}
-      onSearchChange={onSearchChange}
-      getOptionValue={option => option.id}
-      getOptionLabel={option => option.name}
-      renderOptionLabel={renderOptionLabel}
-    />
+    <>
+      <Select
+        ref={ref}
+        themeConfig={{
+          color: {
+            primary: '#005cc5',
+          },
+          select: {
+            css: 'font-size: 0.9em;',
+          },
+          control: {
+            boxShadow: '0 0 0 0',
+            focusedBorderColor: '#005cc5',
+            selectedBgColor: '#005cc5',
+            backgroundColor: '#fff',
+          },
+          noOptions: {
+            fontSize: '.8em',
+            padding: '2em 0',
+          },
+          menu: {
+            css: `
+              position: fixed;
+              width: 500px;
+              overflow: hidden;
+              border: none;
+              box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.18), 0 0px 0px 1px rgba(0, 0, 0, 0.15), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+            `,
+          },
+        }}
+        isInvalid={!!error}
+        inputId={props.id}
+        initialValue={options[0]}
+        placeholder={props.placeholder ? t(props.placeholder) : t('Select option...')}
+        options={options}
+        isLoading={isLoading}
+        isClearable={props.clearable}
+        onOptionChange={onOptionChange}
+        noOptionsMsg={t('No options')}
+        filterMatchFrom="any"
+        onInputChange={onInputChange}
+        onSearchChange={onSearchChange}
+        getOptionValue={option => option.id}
+        getOptionLabel={option => option.name}
+        renderOptionLabel={renderOptionLabel}
+      />
+    </>
   );
 };

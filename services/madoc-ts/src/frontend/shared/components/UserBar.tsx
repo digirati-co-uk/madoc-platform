@@ -99,7 +99,7 @@ export const UserBar: React.FC<{
         ) : null}
         <UserBarExpander />
 
-        {user ? <NotificationCenter /> : null}
+        {user ? <NotificationCenter isAdmin={admin} /> : null}
 
         {showAdmin && !admin ? (
           <GlobalHeaderMenuContainer>

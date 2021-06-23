@@ -17,7 +17,7 @@ type AssignCanvasToUserProps = {
 export const AssignTaskToUser: React.FC<AssignCanvasToUserProps> = props => {
   const { t } = useTranslation();
   const { projectId } = useRouteContext();
-  const { data: task } = apiHooks.getTask(() => [props.taskId, { all: true, detail: true, assignee: true }]);
+  const { data: task, refetch } = apiHooks.getTask(() => [props.taskId, { all: true, detail: true, assignee: true }]);
   const [selectedUser, setSelectedUser] = useState<AutocompleteUser | undefined>();
   const [selectedError, setSelectedError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -57,6 +57,7 @@ export const AssignTaskToUser: React.FC<AssignCanvasToUserProps> = props => {
     if (selectedUser) {
       setIsLoading(true);
       await props.onAssignUser(selectedUser);
+      await refetch();
       setSelectedUser(undefined);
       setIsLoading(false);
     }
@@ -90,6 +91,8 @@ export const AssignTaskToUser: React.FC<AssignCanvasToUserProps> = props => {
           <div style={{ flex: '1 1 0px', marginRight: 10 }}>
             <UserAutocomplete
               clearable
+              initialQuery
+              roles={['admin', 'reviewer', 'limited-reviewer', 'transcriber', 'limited-transcriber']}
               value={selectedUser}
               updateValue={user => {
                 const alreadyAssigned = user ? assignees.find(u => u.id === `urn:madoc:user:${user.id}`) : undefined;

@@ -36,15 +36,15 @@ const sizes = {
 export const InnerModalContainer = styled.div<{ size?: keyof typeof sizes }>`
   max-width: ${props => sizes[props.size || 'sm'].maxWidth};
   width: 100%;
-  min-height: 350px;
+  min-height: 250px;
   height: auto;
   display: flex;
-  margin: auto;
+  margin: 8em auto auto;
   flex-direction: column;
   max-height: 80vh;
   border-radius: 5px;
   overflow: hidden;
-  box-shadow: 4px 0 20px 0 rgba(0, 0, 0, 0.5);
+  box-shadow: 4px 0 40px 0 rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.2);
 `;
 
 export const ModalHeader = styled.div`

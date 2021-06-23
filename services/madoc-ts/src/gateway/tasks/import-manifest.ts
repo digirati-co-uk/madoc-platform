@@ -1,4 +1,6 @@
+import { generateId } from '@capture-models/helpers';
 import { BaseTask } from './base-task';
+import { CrowdsourcingReview } from './crowdsourcing-review';
 import * as importCanvas from './import-canvas';
 import * as manifestOcr from './process-manifest-ocr';
 import { createTask as createSearchIndexTask } from './search-index-task';
@@ -247,6 +249,18 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
 
       // Update task.
       await api.updateTask(taskId, changeStatus('done'));
+      if (!task.parent_task) {
+        await userApi.notifications.createNotification({
+          id: generateId(),
+          title: 'Finished importing manifest',
+          summary: task.subject,
+          action: {
+            id: 'task:admin',
+            link: `urn:madoc:task:${taskId}`,
+          },
+          user: userId,
+        });
+      }
 
       // Queue up OCR extraction.
       try {

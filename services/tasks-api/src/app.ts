@@ -11,6 +11,24 @@ import { migrate } from './migrate';
 import { Queue } from 'bullmq';
 import { queueEvents } from './middleware/queue-events';
 
+function getConfig() {
+  try {
+    return require('../config.json');
+  } catch (e) {
+    return {
+      dispatch: {
+        assigned: [],
+        created: [],
+        modified: [],
+        subtask_created: [],
+        deleted: [],
+      },
+    };
+  }
+}
+
+const baseConfig = getConfig();
+
 export async function createApp(router: TypedRouter<any, any>) {
   const app = new Koa();
   const pool = createPostgresPool();
@@ -31,7 +49,7 @@ export async function createApp(router: TypedRouter<any, any>) {
       },
     });
 
-  app.use(queueEvents);
+  app.use(queueEvents(baseConfig));
   app.use(parseJwt);
   app.use(dbConnection(pool));
   app.use(json({ pretty: process.env.NODE_ENV !== 'production' }));

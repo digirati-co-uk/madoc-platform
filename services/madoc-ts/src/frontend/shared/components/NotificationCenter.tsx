@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from 'react-query';
 import ReactTimeago from 'react-timeago';
 import styled, { css } from 'styled-components';
 import { Notification } from '../../../types/notifications';
+import { parseAllUrn } from '../../../utility/parse-urn';
 import { EmptyState } from '../atoms/EmptyState';
 import { useApi } from '../hooks/use-api';
-import { useUser } from '../hooks/use-site';
+import { useSite, useUser } from '../hooks/use-site';
 import { NotificationIcon } from '../icons/NotificationIcon';
+import { HrefLink } from '../utility/href-link';
 
 const NotificationIconContainer = styled.button`
   padding: 0.2em;
@@ -90,7 +92,7 @@ const NotificationTime = styled.div`
 `;
 
 const NotificationTitle = styled.div<{ $unread: boolean }>`
-  font-size: 0.9em;
+  font-size: 0.8em;
   ${props =>
     props.$unread &&
     css`
@@ -160,14 +162,72 @@ const NotificationThumbnail = styled.div`
   }
 `;
 
-export const NotificationItem: React.FC<{ notification: Notification }> = ({ notification }) => {
+export const useNotificationLink = (
+  notification: Notification,
+  isAdmin = false
+): { isExternal?: boolean; link: string | null } => {
+  const site = useSite();
+
+  if (!notification || !notification.action || !notification.action.link) {
+    return { link: null };
+  }
+
+  const actionLink = parseAllUrn(notification.action.link);
+
+  if (actionLink?.type === 'task') {
+    if (notification.action.id === 'task:admin') {
+      if (isAdmin) {
+        return { link: `/tasks/${actionLink.id}`, isExternal: false };
+      } else {
+        return { link: `/s/${site.slug}/madoc/admin/tasks/${actionLink.id}`, isExternal: true };
+      }
+    }
+
+    if (isAdmin) {
+      return { link: `/s/${site.slug}/madoc/tasks/${actionLink.id}`, isExternal: true };
+    } else {
+      return { link: `/tasks/${actionLink.id}`, isExternal: false };
+    }
+  }
+
+  if (actionLink?.type === 'manifest') {
+    if (isAdmin) {
+      return { link: `/manifests/${actionLink.id}`, isExternal: true };
+    }
+  }
+
+  return { link: null };
+};
+
+export const NotificationItem: React.FC<{
+  notification: Notification;
+  isAdmin?: boolean;
+  refetch?: () => Promise<void>;
+}> = ({ notification, isAdmin, refetch }) => {
+  const { isExternal, link } = useNotificationLink(notification, isAdmin);
+  const api = useApi();
+  const [markAsRead] = useMutation(async () => {
+    if (!notification.readAt) {
+      await api.notifications.readNotification(notification.id);
+      if (refetch) {
+        await refetch();
+      }
+    }
+  });
+
   return (
     <NotificationListItem $unread={!notification.readAt}>
-      <NotificationSection>
-        {notification.action.link ? (
-          <NotificationTitle as="a" href={notification.action.link} $unread={!notification.readAt}>
-            {notification.title}
-          </NotificationTitle>
+      <NotificationSection onClickCapture={() => markAsRead()}>
+        {link ? (
+          isExternal ? (
+            <NotificationTitle as="a" href={link} $unread={!notification.readAt}>
+              {notification.title}
+            </NotificationTitle>
+          ) : (
+            <NotificationTitle as={HrefLink} href={link} $unread={!notification.readAt}>
+              {notification.title}
+            </NotificationTitle>
+          )
         ) : (
           <NotificationTitle $unread={!notification.readAt}>{notification.title}</NotificationTitle>
         )}
@@ -185,7 +245,7 @@ export const NotificationItem: React.FC<{ notification: Notification }> = ({ not
   );
 };
 
-export const NotificationCenter: React.FC = () => {
+export const NotificationCenter: React.FC<{ isAdmin?: boolean }> = ({ isAdmin }) => {
   const api = useApi();
   const user = useUser();
   const { t } = useTranslation();
@@ -237,6 +297,10 @@ export const NotificationCenter: React.FC = () => {
     }
   }, [isOpen]);
 
+  const refetchAll = useCallback(async () => {
+    await Promise.all([refetchCount(), refetch()]);
+  }, [refetch, refetchCount]);
+
   const unread = countData?.unread;
 
   if (!user) {
@@ -262,7 +326,7 @@ export const NotificationCenter: React.FC = () => {
               {data.notifications.map((notification, k) => {
                 return (
                   <div key={notification.id} {...(itemProps[k] as any)}>
-                    <NotificationItem notification={notification} />
+                    <NotificationItem notification={notification} isAdmin={isAdmin} refetch={refetchAll} />
                   </div>
                 );
               })}

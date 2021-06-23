@@ -1,6 +1,9 @@
+import { generateId } from '@capture-models/helpers';
 import { stringify } from 'query-string';
 import { ApiClient } from '../../gateway/api';
+import { BaseTask } from '../../gateway/tasks/base-task';
 import { NotificationList, NotificationRequest } from '../../types/notifications';
+import { parseUrn } from '../../utility/parse-urn';
 import { BaseExtension } from '../extension-manager';
 
 export class NotificationExtension implements BaseExtension {
@@ -32,6 +35,27 @@ export class NotificationExtension implements BaseExtension {
       });
     } catch (e) {
       // Silent fail.
+    }
+  }
+
+  async taskAssignmentNotification(message: string, task: BaseTask) {
+    if (task.assignee && task.assignee.id) {
+      const user = parseUrn(task.assignee.id);
+      if (user && user.id) {
+        const subject = task.metadata?.subject;
+        await this.createNotification({
+          id: generateId(),
+          title: message,
+          summary: task.name,
+          thumbnail: subject?.thumbnail,
+          action: {
+            id: 'task:assign',
+            link: `urn:madoc:task:${task.id}`,
+          },
+          user: user.id,
+          tags: [task.type],
+        });
+      }
     }
   }
 

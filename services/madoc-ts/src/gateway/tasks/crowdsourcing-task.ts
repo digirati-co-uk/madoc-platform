@@ -5,6 +5,7 @@ import { BaseTask } from './base-task';
 import { CaptureModel } from '@capture-models/types';
 import { ApiClient } from '../api';
 import { CrowdsourcingManifestTask, syncManifestTaskStatus } from './crowdsourcing-manifest-task';
+import { CrowdsourcingReview } from './crowdsourcing-review';
 import * as reviewTask from './crowdsourcing-review';
 import { CaptureModelSnippet } from '../../types/schemas/capture-model-snippet';
 import { CrowdsourcingCanvasTask } from './crowdsourcing-canvas-task';
@@ -363,6 +364,14 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         // Non-fatal error here.
         console.log('error while re-indexing', err);
       }
+
+      break;
+    }
+
+    case 'assigned': {
+      const task = await api.getTask<CrowdsourcingReview>(taskId);
+
+      await api.notifications.taskAssignmentNotification('You have been assigned a task', task);
 
       break;
     }
