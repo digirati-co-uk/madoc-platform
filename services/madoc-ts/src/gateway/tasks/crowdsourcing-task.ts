@@ -1,3 +1,4 @@
+import { generateId } from '@capture-models/helpers';
 import { findUseManifestTaskFromList } from '../../utility/claim-utilities';
 import { parseUrn } from '../../utility/parse-urn';
 import { BaseTask } from './base-task';
@@ -322,6 +323,25 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           await api.updateTask(parent.id, {
             status: 2,
             status_text: `In progress`,
+          });
+        }
+      }
+
+      // Notify user
+      const userId = task.assignee?.id;
+      if (userId) {
+        const user = parseUrn(userId);
+        if (user && user.id) {
+          const subject = task.metadata?.subject;
+          await api.notifications.createNotification({
+            id: generateId(),
+            title: 'Your contribution has been accepted',
+            summary: task.name,
+            thumbnail: subject?.thumbnail,
+            action: {
+              id: 'crowdsourcing-task:complete',
+            },
+            user: user.id,
           });
         }
       }

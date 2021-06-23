@@ -15,6 +15,7 @@ import { CaptureModelExtension } from '../extensions/capture-models/extension';
 import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.extension';
 import { plainTextSource } from '../extensions/capture-models/DynamicDataSources/sources/Plaintext.source';
 import { ExtensionManager } from '../extensions/extension-manager';
+import { NotificationExtension } from "../extensions/notifications/extension";
 import { defaultPageBlockDefinitions } from '../extensions/page-blocks/default-definitions';
 import { PageBlockExtension } from '../extensions/page-blocks/extension';
 import { MediaExtension } from '../extensions/media/extension';
@@ -93,6 +94,7 @@ export class ApiClient {
   tasks: TaskExtension;
   system: SystemExtension;
   themes: ThemeExtension;
+  notifications: NotificationExtension;
 
   constructor(options: {
     gateway: string;
@@ -114,6 +116,7 @@ export class ApiClient {
     this.tasks = new TaskExtension(this);
     this.system = new SystemExtension(this);
     this.themes = new ThemeExtension(this);
+    this.notifications = new NotificationExtension(this);
     this.captureModelDataSources = [plainTextSource];
     this.captureModelExtensions = new ExtensionManager(
       options.customCaptureModelExtensions
@@ -339,7 +342,7 @@ export class ApiClient {
         }
       }
 
-      if (response.status === 204) {
+      if (response.status === 204 || response.status === 201) {
         return undefined as any;
       }
 

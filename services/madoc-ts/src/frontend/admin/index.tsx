@@ -43,17 +43,17 @@ const AdminApp: React.FC<AdminAppProps> = ({ api, routes, site, user, supportedL
           [site, user, supportedLocales, defaultLocale]
         )}
       >
-        <GlobalStyles />
-        <UserBar site={site} user={user} admin />
-        {restarting ? <ErrorMessage>{t('Lost connection to server, retrying...')}</ErrorMessage> : null}
-        <AdminLayoutContainer>
-          <AdminLayoutMenu>
-            <AdminSidebar />
-          </AdminLayoutMenu>
-          <AdminLayoutMain>
-            <ApiContext.Provider value={api}>{renderUniversalRoutes(routes)}</ApiContext.Provider>
-          </AdminLayoutMain>
-        </AdminLayoutContainer>
+        <ApiContext.Provider value={api}>
+          <GlobalStyles />
+          <UserBar site={site} user={user} admin />
+          {restarting ? <ErrorMessage>{t('Lost connection to server, retrying...')}</ErrorMessage> : null}
+          <AdminLayoutContainer>
+            <AdminLayoutMenu>
+              <AdminSidebar />
+            </AdminLayoutMenu>
+            <AdminLayoutMain>{renderUniversalRoutes(routes)}</AdminLayoutMain>
+          </AdminLayoutContainer>
+        </ApiContext.Provider>
       </SiteProvider>
     </div>
   );
