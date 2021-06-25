@@ -21,7 +21,7 @@ type ManifestSnippetRow = {
 };
 
 export const listManifests: RouteMiddleware = async context => {
-  const { siteId } = optionalUserWithScope(context, ['site.read']);
+  const { siteId } = optionalUserWithScope(context, ['site.view']);
   const parent = context.query.parent ? Number(context.query.parent) : undefined;
 
   const manifestCount = 24;

@@ -37,6 +37,7 @@ const NotificationContainer = styled.div<{ $visible?: boolean }>`
   top: 36px;
   right: -40px;
   overflow: hidden;
+  z-index: 15;
 
   color: #000;
   background: #ffffff;
@@ -204,6 +205,7 @@ export const NotificationItem: React.FC<{
   isAdmin?: boolean;
   refetch?: () => Promise<void>;
 }> = ({ notification, isAdmin, refetch }) => {
+  const { t } = useTranslation();
   const { isExternal, link } = useNotificationLink(notification, isAdmin);
   const api = useApi();
   const [markAsRead] = useMutation(async () => {
@@ -221,15 +223,15 @@ export const NotificationItem: React.FC<{
         {link ? (
           isExternal ? (
             <NotificationTitle as="a" href={link} $unread={!notification.readAt}>
-              {notification.title}
+              {t(notification.title)}
             </NotificationTitle>
           ) : (
             <NotificationTitle as={HrefLink} href={link} $unread={!notification.readAt}>
-              {notification.title}
+              {t(notification.title)}
             </NotificationTitle>
           )
         ) : (
-          <NotificationTitle $unread={!notification.readAt}>{notification.title}</NotificationTitle>
+          <NotificationTitle $unread={!notification.readAt}>{t(notification.title)}</NotificationTitle>
         )}
         <NotificationSummary>{notification.summary}</NotificationSummary>
         <NotificationTime>

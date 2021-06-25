@@ -2,7 +2,7 @@ import { RouteMiddleware } from '../../types/route-middleware';
 import { optionalUserWithScope } from '../../utility/user-with-scope';
 
 export const getPage: RouteMiddleware = async context => {
-  const { siteId } = optionalUserWithScope(context, ['site.read']);
+  const { siteId } = optionalUserWithScope(context, ['site.view']);
   const pathToFind = context.params.paths ? `/${context.params.paths}` : '/';
 
   const root = await context.pageBlocks.getNavigationRoot(pathToFind, siteId);

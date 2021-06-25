@@ -30,11 +30,16 @@ export const TableRow = styled.div<{ warning?: boolean; addition?: boolean; inte
   }
 `;
 
-export const TableRowLabel = styled.div`
+export const TableRowLabel = styled.div<{ $flex?: boolean }>`
   margin-left: 10px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  ${props =>
+    props.$flex &&
+    css`
+      flex: 1 1 0px;
+    `}
 `;
 
 export const TableActions = styled.div`

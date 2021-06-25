@@ -15,6 +15,7 @@ export const errorHandler: Middleware = async (context, next) => {
     if (err instanceof RequestError) {
       context.response.body = { error: err.message };
       context.status = 400;
+      return;
     } else if (err instanceof ServerError) {
       context.response.status = 500;
     } else if (err instanceof NotFound) {
@@ -35,6 +36,7 @@ export const errorHandler: Middleware = async (context, next) => {
       // @todo refresh token?
       context.response.status = 401;
       context.response.body = { error: err.message };
+      return;
     } else {
       console.log('Unhandled error');
       console.log(err);

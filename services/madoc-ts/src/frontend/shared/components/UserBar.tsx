@@ -13,12 +13,9 @@ import {
   GlobalHeaderMenuList,
 } from '../atoms/GlobalHeader';
 import { LanguageSwitcher } from '../atoms/LanguageSwitcher';
-import { useStaticData } from '../hooks/use-data';
 import { useLocationQuery } from '../hooks/use-location-query';
-import { useUser } from '../hooks/use-site';
 import { ArrowDownIcon } from '../icons/ArrowDownIcon';
 import { HrefLink } from '../utility/href-link';
-import { isAdmin } from '../utility/user-roles';
 import { NotificationCenter } from './NotificationCenter';
 
 const UserBarContainer = styled.div`
@@ -31,7 +28,7 @@ const UserBarContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  z-index: 10;
+  z-index: 11; // 10 = image viewer, this allows the notification center to be above.
   padding: 0 18px;
 `;
 

@@ -21,21 +21,15 @@ export const GoToFirstCanvas: React.FC<{
     return null;
   }
 
+  const link = firstCanvas
+    ? createLink({
+        canvasId: firstCanvas.id,
+        subRoute: navigateToModel ? 'model' : undefined,
+      })
+    : undefined;
+
   return (
-    <Button
-      as={HrefLink}
-      href={
-        firstCanvas
-          ? createLink({
-              canvasId: firstCanvas.id,
-              subRoute: navigateToModel ? 'model' : undefined,
-            })
-          : undefined
-      }
-      $primary={$primary}
-      $large={$large}
-      disabled={!firstCanvas}
-    >
+    <Button as={link ? HrefLink : 'div'} href={link} $primary={$primary} $large={$large} disabled={!firstCanvas}>
       {children}
     </Button>
   );

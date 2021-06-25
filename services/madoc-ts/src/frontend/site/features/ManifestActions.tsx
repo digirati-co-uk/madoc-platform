@@ -10,6 +10,7 @@ import { useManifestTask } from '../hooks/use-manifest-task';
 import { useManifestUserTasks } from '../hooks/use-manifest-user-tasks';
 import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
+import { AssignManifestToUser } from './AssignManifestToUser';
 import { GoToFirstCanvas } from './GoToFirstCanvas';
 import { GoToRandomCanvas } from './GoToRandomCanvas';
 import { ManifestItemFilter } from './ManifestItemFilter';
@@ -73,6 +74,7 @@ export const ManifestActions: React.FC = () => {
         {!options.hideRandomCanvas ? <GoToRandomCanvas /> : null}
         {isActive && !options.hideFilterImages ? <ManifestItemFilter /> : null}
         <ManifestTaskProgress />
+        <AssignManifestToUser />
       </ButtonRow>
     </>
   );

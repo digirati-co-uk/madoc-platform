@@ -8,6 +8,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalHeaderTitle,
+  ModalResizeIcon,
 } from '../atoms/Modal';
 import { createPortal } from 'react-dom';
 
@@ -54,6 +55,7 @@ export const ModalButton: React.FC<{
 ) {
   const portalEl = useRef<HTMLElement>();
   const [ready, setIsReady] = useState(false);
+  const [expanded, setIsExpanded] = useState(false);
   const containerRef = useRef<any>();
 
   useLayoutEffect(() => {
@@ -73,6 +75,7 @@ export const ModalButton: React.FC<{
 
   const closeModal = () => {
     setIsReady(false);
+    setIsExpanded(false);
     if (onClose) {
       onClose();
     }
@@ -95,9 +98,10 @@ export const ModalButton: React.FC<{
                   closeModal();
                 }}
               >
-                <InnerModalContainer size={modalSize} data-cy="modal">
+                <InnerModalContainer $expanded={expanded} size={modalSize} data-cy="modal">
                   <ModalHeader>
                     <ModalHeaderTitle>{title}</ModalHeaderTitle>
+                    <ModalResizeIcon onClick={() => setIsExpanded(e => !e)} />
                     <ModalCloseIcon onClick={closeModal} />
                   </ModalHeader>
                   <ModalBody>{render({ close: closeModal })}</ModalBody>

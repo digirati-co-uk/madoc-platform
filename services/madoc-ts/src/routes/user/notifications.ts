@@ -3,14 +3,14 @@ import { RouteMiddleware } from '../../types/route-middleware';
 import { optionalUserWithScope, userWithScope } from '../../utility/user-with-scope';
 
 export const getNotificationCount: RouteMiddleware = async context => {
-  const { id, siteId } = userWithScope(context, ['site.read']);
+  const { id, siteId } = userWithScope(context, ['site.view']);
 
   context.response.body = {
     unread: await context.notifications.unreadCount(id, siteId),
   };
 };
 export const getNotifications: RouteMiddleware = async context => {
-  const { id, siteId } = userWithScope(context, ['site.read']);
+  const { id, siteId } = userWithScope(context, ['site.view']);
   const page = context.query.page ?? 0;
 
   const [totalItems, allNotifications, totalUnread] = await Promise.all([
@@ -42,7 +42,7 @@ export const createNotification: RouteMiddleware<{}, NotificationRequest> = asyn
 };
 
 export const readNotification: RouteMiddleware<{ id: string }> = async context => {
-  const { id, siteId } = userWithScope(context, ['site.read']);
+  const { id, siteId } = userWithScope(context, ['site.view']);
 
   await context.notifications.readNotification(context.params.id, id, siteId);
 
@@ -50,7 +50,7 @@ export const readNotification: RouteMiddleware<{ id: string }> = async context =
 };
 
 export const readAllNotifications: RouteMiddleware = async context => {
-  const { id, siteId } = userWithScope(context, ['site.read']);
+  const { id, siteId } = userWithScope(context, ['site.view']);
 
   await context.notifications.readAllUserNotifications(id, siteId);
 
@@ -58,7 +58,7 @@ export const readAllNotifications: RouteMiddleware = async context => {
 };
 
 export const clearNotification: RouteMiddleware<{ id: string }> = async context => {
-  const { id, siteId } = userWithScope(context, ['site.read']);
+  const { id, siteId } = userWithScope(context, ['site.view']);
 
   await context.notifications.clearNotification(context.params.id, id, siteId);
 
@@ -66,7 +66,7 @@ export const clearNotification: RouteMiddleware<{ id: string }> = async context 
 };
 
 export const clearAllNotifications: RouteMiddleware = async context => {
-  const { id, siteId } = userWithScope(context, ['site.read']);
+  const { id, siteId } = userWithScope(context, ['site.view']);
 
   await context.notifications.clearAllUserNotification(id, siteId);
 
