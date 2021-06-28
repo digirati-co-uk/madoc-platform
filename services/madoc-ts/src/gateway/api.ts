@@ -24,6 +24,7 @@ import { TaskExtension } from '../extensions/tasks/extension';
 import { ThemeExtension } from '../extensions/themes/extension';
 import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
 import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
+import { ManifestDeletionSummary } from "../types/deletion-summary";
 import { Site } from '../types/omeka/Site';
 import { SingleUser } from '../types/omeka/User';
 import { Pm2Status } from '../types/pm2';
@@ -821,6 +822,10 @@ export class ApiClient {
   async getManifestById(id: number, page = 0, excluded?: number[]) {
     const query = page || excluded ? `?${stringify({ page, excluded }, { arrayFormat: 'comma' })}` : '';
     return this.request<ManifestFull>(`/api/madoc/iiif/manifests/${id}${query}`);
+  }
+
+  async getManifestDeletionSummary(id: number) {
+    return this.request<ManifestDeletionSummary>(`/api/madoc/iiif/manifests/${id}/deletion-summary`);
   }
 
   async deleteManifest(id: number): Promise<void> {
