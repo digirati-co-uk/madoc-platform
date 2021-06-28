@@ -1,14 +1,32 @@
-import { sql } from 'slonik';
+import { api } from '../../../gateway/api.server';
 import { userWithScope } from '../../../utility/user-with-scope';
 import { RouteMiddleware } from '../../../types/route-middleware';
-import { deleteResource } from '../../../database/queries/resource-queries';
 
 export const deleteManifest: RouteMiddleware<{ id: number }> = async context => {
   const { siteId } = userWithScope(context, ['site.admin']);
+  const manifestId = context.params.id;
 
-  await context.connection.any(deleteResource(context.params.id, 'manifest', siteId));
+  const siteApi = api.asUser({ siteId });
 
-  await context.connection.query(sql`select refresh_item_counts()`);
+  const {} = await siteApi.getManifestDeletionSummary(manifestId);
+
+  // Delete derived manifest
+  //  - Manifest items
+  //  - Derived canvases - if no other links
+  //  - Linking
+  //  - Derived metadata
+  // Delete full manifest
+  //  - Same as above.
+  // Delete notifications with subject
+  // Delete from search
+  // Delete tasks
+  // Delete parent tasks
+  // Delete models
+  // Delete from activity streams
+
+  // await context.connection.any(deleteResource(context.params.id, 'manifest', siteId));
+  //
+  // await context.connection.query(sql`select refresh_item_counts()`);
 
   context.response.status = 200;
 };

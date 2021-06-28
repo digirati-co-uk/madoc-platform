@@ -42,6 +42,7 @@ import { getPage } from './routes/content/get-page';
 import { linkAutocomplete } from './routes/content/link-autocomplete';
 import { resolveSlots } from './routes/content/resolve-slots';
 import { getCanvasReference } from './routes/iiif/canvases/get-canvas-reference';
+import { deleteManifestSummary } from "./routes/iiif/manifests/delete-manifest-summary";
 import { siteManifestBuild } from './routes/site/site-manifest-build';
 import { createMedia } from './routes/media/create-media';
 import { deleteMedia } from './routes/media/delete-media';
@@ -262,6 +263,7 @@ export const router = new TypedRouter({
   'get-manifest-metadata': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/metadata', getManifestMetadata],
   'get-manifest-structure': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/structure', getManifestStructure],
   'get-manifest-projects': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/projects', getManifestProjects],
+  'get-manifest-deletion-summary': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/deletion-summary', deleteManifestSummary],
   'put-manifest-metadata': [
     TypedRouter.PUT,
     '/api/madoc/iiif/manifests/:id/metadata',
