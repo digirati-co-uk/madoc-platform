@@ -7,7 +7,12 @@ export type ApiArgs<T extends keyof ApiClient> = MethodArgs<ApiClient[T]>;
 type MethodArgs<T> = T extends (...arg: infer R) => Promise<any> ? R : never;
 type MethodReturn<T> = T extends (...arg: any) => Promise<infer R> ? R : never;
 
-type GetApiMethods = keyof Pick<
+export type AdditionalHooks<Params = any, Query = any, Key extends GetApiMethods = GetApiMethods> = {
+  name: GetApiMethods;
+  creator: (params: Params, query: Query) => undefined | MethodArgs<ApiClient[Key]>;
+};
+
+export type GetApiMethods = keyof Pick<
   ApiClient,
   | 'getCurrentUser'
   | 'getIsServer'
