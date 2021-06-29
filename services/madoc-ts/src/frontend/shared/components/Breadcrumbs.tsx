@@ -23,6 +23,7 @@ export const BreadcrumbList = styled.div`
   display: flex;
   padding: 0.5em 0;
   font-size: 0.9em;
+  min-height: 2.5em;
 `;
 
 export const BreadcrumbItem = styled.div<{ active?: boolean }>`

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { useApi } from '../../shared/hooks/use-api';
 import { useProjectManifestTasks } from '../hooks/use-project-manifest-tasks';
 import { useRouteContext } from '../hooks/use-route-context';

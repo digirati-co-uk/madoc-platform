@@ -1,7 +1,8 @@
 import styled, { css } from 'styled-components';
 import React from 'react';
-import ReactTooltip from "react-tooltip";
-import {useTranslation} from "react-i18next";
+import ReactTooltip from 'react-tooltip';
+import { useTranslation } from 'react-i18next';
+import { useApi } from '../hooks/use-api';
 
 export const CanvasStatusBackground = styled.div`
   background: #ddd;
@@ -33,13 +34,19 @@ export const CanvasStatusItem = styled.div<{ $status: number }>`
 
 export const CanvasStatus: React.FC<{ status: number }> = ({ status }) => {
   const { t } = useTranslation();
-  const tooltip = status == 3 ? t('Completed') : (status == 2 || status == 1 ? t('You are currently working on this') : t('Available'));
+  const api = useApi();
+  const tooltip =
+    status === 3
+      ? t('Completed')
+      : status === 2 || status === 1
+      ? t('You are currently working on this')
+      : t('Available');
   return (
     <>
       <CanvasStatusBackground>
         <CanvasStatusItem data-tip={tooltip} $status={status} />
       </CanvasStatusBackground>
-      <ReactTooltip place="bottom" type="dark" effect="solid" />
+      {api.getIsServer() ? null : <ReactTooltip place="bottom" type="dark" effect="solid" />}
     </>
   );
 };

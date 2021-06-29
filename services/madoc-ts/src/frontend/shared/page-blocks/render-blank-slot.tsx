@@ -1,11 +1,20 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { extractBlockDefinitions } from '../../../extensions/page-blocks/block-editor-react';
 import { CreateSlotRequest, EditorialContext } from '../../../types/schemas/site-page';
 import { useProject } from '../../site/hooks/use-project';
 import { Button, ButtonRow } from '../atoms/Button';
-import { EmptySlotContainer } from '../atoms/EmptySlot';
+import { EmptySlotActions, EmptySlotContainer, EmptySlotLabel } from '../atoms/EmptySlot';
 import { EmptyState } from '../atoms/EmptyState';
+import { PageEditorButton } from '../atoms/PageEditor';
+import {
+  SlotEditorButton,
+  SlotEditorLabelReadOnly,
+  SlotEditorReadOnly,
+  SlotOutlineContainer,
+} from '../atoms/SlotEditor';
+import { WidePage } from '../atoms/WidePage';
 import { useApi } from '../hooks/use-api';
 import { useSlots } from './slot-context';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
@@ -76,6 +85,7 @@ function allOfTypeFromContext(ctx: EditorialContext, projectId?: number): Create
 }
 
 export const RenderBlankSlot: React.FC<{ name: string }> = ({ name: slotId, children }) => {
+  const { t } = useTranslation();
   const { context, editable, isPage, beforeCreateSlot, onCreateSlot } = useSlots();
   const api = useApi();
   const blockDefinitions = extractBlockDefinitions(children);
@@ -140,7 +150,7 @@ export const RenderBlankSlot: React.FC<{ name: string }> = ({ name: slotId, chil
 
   if (!children) {
     return (
-      <div>
+      <>
         <EmptyState $box>Empty slot</EmptyState>
         {isPage ? (
           <ButtonRow>
@@ -152,23 +162,28 @@ export const RenderBlankSlot: React.FC<{ name: string }> = ({ name: slotId, chil
             <Button onClick={() => createSlot('all')}>Customise on all of this type in this context</Button>
           </ButtonRow>
         )}
-      </div>
+      </>
     );
   }
 
   return (
-    <EmptySlotContainer>
-      {children}
-      {isPage ? (
-        <ButtonRow>
-          <Button onClick={() => createSlot()}>Customise</Button>
-        </ButtonRow>
-      ) : (
-        <ButtonRow>
-          <Button onClick={() => createSlot('exact')}>Customise only on this page</Button>
-          <Button onClick={() => createSlot('all')}>Customise on all of this type in this context</Button>
-        </ButtonRow>
-      )}
-    </EmptySlotContainer>
+    <div>
+      <SlotEditorReadOnly>
+        <SlotEditorLabelReadOnly>{slotId}</SlotEditorLabelReadOnly>
+        {isPage ? (
+          <>
+            <SlotEditorButton onClick={() => createSlot()}>Customise</SlotEditorButton>
+          </>
+        ) : (
+          <>
+            <SlotEditorButton onClick={() => createSlot('exact')}>Customise only on this page</SlotEditorButton>
+            <SlotEditorButton onClick={() => createSlot('all')}>
+              Customise on all of this type in this context
+            </SlotEditorButton>
+          </>
+        )}
+      </SlotEditorReadOnly>
+      <SlotOutlineContainer>{children}</SlotOutlineContainer>
+    </div>
   );
 };

@@ -20,13 +20,18 @@ import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { Heading3 } from '../../shared/atoms/Heading3';
 import { LockIcon } from '../../shared/atoms/LockIcon';
 import { Heading1 } from '../../shared/atoms/Heading1';
+import { Slot } from '../../shared/page-blocks/slot';
 import { ManifestActions } from '../features/ManifestActions';
+import { ManifestCanvasGrid } from '../features/ManifestCanvasGrid';
+import { ManifestHeading } from '../features/ManifestHeading';
 import { ManifestMetadata } from '../features/ManifestMetadata';
+import { ManifestNotAvailableToBrowse } from '../features/ManifestNotAvailableToBrowse';
+import { ManifestPagination } from '../features/ManifestPagination';
 import { ManifestUserNotification } from '../features/ManifestUserNotification';
 import { usePreventCanvasNavigation } from '../features/PreventUsersNavigatingCanvases';
-import { RandomlyAssignCanvas } from '../features/RandomlyAssignCanvas';
 import { RequiredStatement } from '../features/RequiredStatement';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
+import { useManifest } from '../hooks/use-manifest';
 import { useManifestPageConfiguration } from '../hooks/use-manifest-page-configuration';
 import { useManifestTask } from '../hooks/use-manifest-task';
 import { useProjectStatus } from '../hooks/use-project-status';
@@ -43,94 +48,68 @@ export const ViewManifest: React.FC<{
   manifestUserTasks?: Array<CrowdsourcingTask | CrowdsourcingReview>;
   canUserSubmit?: boolean;
   refetch: () => Promise<any>;
-}> = ({ manifest, pagination, manifestSubjects }) => {
-  const { t } = useTranslation();
+}> = () => {
+  const { data } = useManifest();
+  const manifest = data?.manifest;
   const createLink = useRelativeLinks();
-  const { filter, listing, firstModel } = useLocationQuery();
-  const { showWarning, showNavigationContent } = usePreventCanvasNavigation();
+  const { listing, firstModel } = useLocationQuery();
   const config = useSiteConfiguration();
-  const createLocaleString = useCreateLocaleString();
-  const manifestOptions = useManifestPageConfiguration();
-  const { userManifestTask, canClaimManifest } = useManifestTask({ refetchOnMount: true });
-  const { isActive } = useProjectStatus();
 
-  const directToModelPage = (!!userManifestTask || canClaimManifest) && manifestOptions?.directModelPage;
-
-  const [subjectMap] = useSubjectMap(manifestSubjects);
-
-  if (!manifest) {
-    return <DisplayBreadcrumbs />;
-  }
-
-  if (!listing && config.project.skipManifestListingPage && manifest.items.length) {
-    return <Redirect to={createLink({ canvasId: manifest.items[0].id })} />;
+  if (!listing && config.project.skipManifestListingPage) {
+    if (!manifest) {
+      return null;
+    }
+    if (manifest.items.length) {
+      return <Redirect to={createLink({ canvasId: manifest.items[0].id })} />;
+    }
   }
 
   if (firstModel) {
-    return <Redirect to={createLink({ canvasId: manifest.items[0].id, subRoute: 'model' })} />;
+    if (!manifest) {
+      return null;
+    }
+    return <Redirect to={createLink({ canvasId: manifest?.items[0].id, subRoute: 'model' })} />;
   }
 
   return (
     <>
-      <DisplayBreadcrumbs />
+      <Slot name="common-breadcrumbs">
+        <DisplayBreadcrumbs />
+      </Slot>
 
-      <Heading1>
-        <LocaleString>{manifest.label}</LocaleString>
-      </Heading1>
+      <Slot name="manifest-heading">
+        <ManifestHeading />
 
-      <RequiredStatement />
+        <RequiredStatement />
 
-      <ManifestUserNotification />
+        <ManifestUserNotification />
+      </Slot>
 
-      {showNavigationContent ? <ManifestActions /> : null}
+      <Slot name="manifest-actions">
+        <ManifestActions />
+      </Slot>
 
-      {showWarning ? (
-        <div style={{ textAlign: 'center', padding: '2em', background: '#eee' }}>
-          <LockIcon style={{ fontSize: '3em' }} />
-          <Heading3>{t('This manifest is not available to browse')}</Heading3>
-          <RandomlyAssignCanvas />
+      <Slot name="manifest-fallback">
+        <ManifestNotAvailableToBrowse />
+      </Slot>
+
+      <Slot name="manifest-listing-header">
+        <ManifestPagination />
+      </Slot>
+
+      <div style={{ display: 'flex' }}>
+        <Slot name="manifest-content">
+          <ManifestCanvasGrid />
+        </Slot>
+        <div style={{ maxWidth: 290 }}>
+          <Slot name="manifest-metadata">
+            <ManifestMetadata />
+          </Slot>
         </div>
-      ) : null}
-
-      {showNavigationContent ? (
-        <>
-          <Pagination
-            pageParam={'m'}
-            page={pagination ? pagination.page : 1}
-            totalPages={pagination ? pagination.totalPages : 1}
-            stale={!pagination}
-            extraQuery={{ filter, listing }}
-          />
-          <div style={{ display: 'flex' }}>
-            <ImageGrid>
-              {manifest.items.map((canvas, idx) => (
-                <Link
-                  key={`${canvas.id}_${idx}`}
-                  to={createLink({
-                    canvasId: canvas.id,
-                    subRoute: directToModelPage ? 'model' : undefined,
-                  })}
-                >
-                  <ImageStripBox>
-                    <CroppedImage>
-                      {canvas.thumbnail ? (
-                        <img alt={createLocaleString(canvas.label, t('Canvas thumbnail'))} src={canvas.thumbnail} />
-                      ) : null}
-                    </CroppedImage>
-                    {isActive && manifestSubjects && subjectMap ? (
-                      <CanvasStatus status={subjectMap[canvas.id]} />
-                    ) : null}
-                    <LocaleString as={Heading5}>{canvas.label}</LocaleString>
-                  </ImageStripBox>
-                </Link>
-              ))}
-            </ImageGrid>
-            <div style={{ maxWidth: 290 }}>
-              <ManifestMetadata compact />
-            </div>
-          </div>
-        </>
-      ) : null}
+      </div>
+      <Slot name="manifest-footer">
+        <ManifestPagination />
+      </Slot>
     </>
   );
 };
