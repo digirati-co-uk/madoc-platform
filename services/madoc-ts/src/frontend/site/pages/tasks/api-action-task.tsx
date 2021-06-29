@@ -1,12 +1,69 @@
+import Ajv from 'ajv';
 import React from 'react';
+import { useMutation } from 'react-query';
 import { apiDefinitionIndex } from '../../../../gateway/api-definitions/_index';
+import { ApiDefinitionSubject, ApiRequest } from '../../../../gateway/api-definitions/_meta';
 import { ApiActionTask } from '../../../../gateway/tasks/api-action-task';
-import { Heading2 } from '../../../shared/atoms/Heading2';
+import { Button, ButtonRow } from '../../../shared/atoms/Button';
+import { ErrorMessage } from '../../../shared/atoms/ErrorMessage';
+import { SuccessMessage } from '../../../shared/atoms/SuccessMessage';
+import { CanvasSnippet } from '../../../shared/components/CanvasSnippet';
+import { CodeBlock } from '../../../shared/components/CodeBlock.lazy';
+import { ManifestSnippet } from '../../../shared/components/ManifestSnippet';
+import { useApi } from '../../../shared/hooks/use-api';
 
-export const ViewApiActionTask: React.FC<{ task: ApiActionTask }> = ({ task }) => {
+const resolveSubjectId = (subject: ApiDefinitionSubject, request: ApiRequest<any, any>) => {
+  const source = subject.source;
+  let sourceData = request[source];
+  for (const pathId of subject.path) {
+    if (!sourceData) {
+      return null;
+    }
+    sourceData = sourceData[pathId];
+  }
+  return sourceData;
+};
+
+const RenderSubject: React.FC<{ subject: ApiDefinitionSubject; request: ApiRequest<any, any> }> = ({
+  subject,
+  request,
+}) => {
+  const id = resolveSubjectId(subject, request);
+
+  if (!id) {
+    return null;
+  }
+
+  if (subject.type === 'manifest') {
+    return <ManifestSnippet id={id} summary={subject.label} />;
+  }
+
+  if (subject.type === 'canvas') {
+    return <CanvasSnippet id={id} summary={subject.label} />;
+  }
+
+  return null;
+};
+
+export const ViewApiActionTask: React.FC<{ task: ApiActionTask; refetch: () => Promise<any> }> = ({
+  task,
+  refetch,
+}) => {
+  const api = useApi();
   const details = task.parameters[0];
   const definitionId = details?.request?.id;
   const definition = definitionId ? apiDefinitionIndex[definitionId] : null;
+
+  const [runRequest, runRequestStatus] = useMutation<any>(async () => {
+    if (task.id) {
+      const response = await api.runDelegatedRequest(task.id);
+
+      await refetch();
+
+      return response;
+    }
+    throw new Error('No id');
+  });
 
   if (!definition) {
     return <div>Invalid action</div>;
@@ -17,12 +74,79 @@ export const ViewApiActionTask: React.FC<{ task: ApiActionTask }> = ({ task }) =
   // Definition check.
 
   return (
-    <div>
+    <div style={{ padding: '1em' }}>
+      {task.status === 3 ? <SuccessMessage>This task has been executed</SuccessMessage> : null}
+
+      {runRequestStatus.data && runRequestStatus.data.errors
+        ? runRequestStatus.data.errors.map((error: string | Ajv.ErrorObject) => {
+            if (typeof error === 'string') {
+              return <ErrorMessage>{error}</ErrorMessage>;
+            }
+
+            if (error.message) {
+              return <ErrorMessage>{error.message}</ErrorMessage>;
+            }
+
+            return null;
+          })
+        : null}
+
+      {runRequestStatus.data && !runRequestStatus.data.errors ? (
+        <CodeBlock>{JSON.stringify(runRequestStatus.data, null, 2)}</CodeBlock>
+      ) : null}
+
+      <p style={{ maxWidth: 650 }}>{task.description}</p>
+
+      <ButtonRow>
+        <Button
+          disabled={!(task.status === 0 || task.status === 1) || runRequestStatus.isLoading}
+          $primary
+          onClick={() => runRequest()}
+        >
+          Execute this request
+        </Button>
+
+        {task.status === -1 ? (
+          <Button disabled={runRequestStatus.isLoading} $primary onClick={() => runRequest()}>
+            Retry this request
+          </Button>
+        ) : null}
+      </ButtonRow>
+
+      <hr />
+
+      <h3>API Request details</h3>
+
       {definition.description.map((para, n) => (
         <p key={n} style={{ maxWidth: 650 }}>
           {para}
         </p>
       ))}
+
+      {definition.subjects
+        ? definition.subjects.map((subject, n) => <RenderSubject key={n} subject={subject} request={details.request} />)
+        : null}
+
+      <h5>
+        {definition.method} {definition.url}
+      </h5>
+      <h5>Scope of API</h5>
+      <ul>
+        {definition.scope.map(scope => (
+          <li key={scope}>
+            <pre>{scope}</pre>
+          </li>
+        ))}
+      </ul>
+
+      <h5>URL Params</h5>
+      <CodeBlock>{JSON.stringify(details.request.params, null, 2)}</CodeBlock>
+
+      <h5>Body</h5>
+      <CodeBlock>{JSON.stringify(details.request.body, null, 2)}</CodeBlock>
+
+      <h5>Query</h5>
+      <CodeBlock>{JSON.stringify(details.request.query, null, 2)}</CodeBlock>
     </div>
   );
 };

@@ -1,4 +1,8 @@
-import { createDelegatedRequest, delegatedRequest } from './routes/admin/deletegated-request';
+import {
+  assignUserToDelegatedRequest,
+  createDelegatedRequest,
+  delegatedRequest,
+} from './routes/admin/deletegated-request';
 import { acceptNewDevelopmentBundle, developmentPlugin } from './routes/admin/development-plugin';
 import { exportSite } from './routes/admin/export-site';
 import { getMetadataKeys } from './routes/admin/get-metadata-keys';
@@ -79,11 +83,12 @@ import { getUser } from './routes/user/get-user';
 import {
   clearAllNotifications,
   clearNotification,
-  createNotification, getNotificationCount,
+  createNotification,
+  getNotificationCount,
   getNotifications,
   readAllNotifications,
-  readNotification
-} from "./routes/user/notifications";
+  readNotification,
+} from './routes/user/notifications';
 import { userAutocomplete } from './routes/user/user-autocomplete';
 import { TypedRouter } from './utility/typed-router';
 import { ping } from './routes/ping';
@@ -184,6 +189,7 @@ export const router = new TypedRouter({
 
   // Delegated tasks
   'run-delegated-task': [TypedRouter.POST, '/api/madoc/delegated/:id', delegatedRequest],
+  'assign-delegated-task': [TypedRouter.POST, '/api/madoc/delegated/:id/assign', assignUserToDelegatedRequest],
   'create-delegated-task': [TypedRouter.POST, '/api/madoc/delegated', createDelegatedRequest],
 
   'update-site-configuration': [TypedRouter.POST, '/api/madoc/configuration', updateSiteConfiguration],

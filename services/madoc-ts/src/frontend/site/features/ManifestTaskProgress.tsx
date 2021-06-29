@@ -70,8 +70,10 @@ export const ManifestTaskProgress: React.FC = () => {
   });
 
   const [submitToCuratedFeed, submitToCuratedFeedStatus] = useMutation(async () => {
-    await api.submitToCuratedFeed(projectId, manifestId);
-    setIsPublished(true);
+    if (projectId && manifestId) {
+      await api.submitToCuratedFeed(projectId, manifestId);
+      setIsPublished(true);
+    }
   });
 
   if (!projectId || (!isAdmin && !canProgress)) {

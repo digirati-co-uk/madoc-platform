@@ -7,7 +7,6 @@ import {
   ChangeDiscoveryActivityRequest,
 } from '../activity-streams/change-discovery-types';
 import { ConfigInjectionExtension } from '../extensions/capture-models/ConfigInjection/ConfigInjection.extension';
-import { MADOC_MODEL_CONFIG } from '../extensions/capture-models/ConfigInjection/constants';
 import { ConfigInjectionSettings } from '../extensions/capture-models/ConfigInjection/types';
 import { DynamicDataSourcesExtension } from '../extensions/capture-models/DynamicDataSources/DynamicDataSources.extension';
 import { DynamicData } from '../extensions/capture-models/DynamicDataSources/types';
@@ -32,9 +31,7 @@ import { ProjectConfiguration } from '../types/schemas/project-configuration';
 import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/search';
 import { SearchIndexable } from '../utility/capture-model-to-indexables';
 import { NotFound } from '../utility/errors/not-found';
-import { apiDefinitionIndex } from './api-definitions/_index';
 import { ApiRequest } from './api-definitions/_meta';
-import { validateApiRequest } from './api-definitions/_validate';
 import { fetchJson } from './fetch-json';
 import { BaseTask } from './tasks/base-task';
 import { CanvasNormalized, CollectionNormalized, Manifest } from '@hyperion-framework/types';
@@ -82,11 +79,11 @@ export class ApiClient {
   private readonly publicSiteSlug?: string;
   private errorHandlers: Array<() => void> = [];
   private jwt?: string;
-  private jwtFunction?: () => string;
+  private readonly jwtFunction?: () => string;
   private errorRecoveryHandlers: Array<() => void> = [];
   private isDown = false;
   private currentUser?: { scope: string[]; user: { id: string; name?: string } };
-  private captureModelDataSources: DynamicData[];
+  private readonly captureModelDataSources: DynamicData[];
   // Public.
   captureModelExtensions: ExtensionManager<CaptureModelExtension>;
   pageBlocks: PageBlockExtension;
@@ -309,7 +306,7 @@ export class ApiClient {
         for (const err of this.errorHandlers) {
           err();
         }
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 3000));
         // Always retry this error.
         return this.request(endpoint, { method, body, jwt });
       }
@@ -464,14 +461,6 @@ export class ApiClient {
     }>(`/api/madoc/projects/${projectId}/models/${subject}`);
   }
 
-  async getProjectsByResource(resourceId: number, context: string[]) {
-    throw new Error('Not yet implemented');
-  }
-
-  async getCrowdsourcingTasks(resourceId: number, context: string[]) {
-    throw new Error('Not yet implemented'); // @todo might be covered elsewhere?
-  }
-
   async createProject(project: CreateProject) {
     return this.request<any>(`/api/madoc/projects`, {
       method: 'POST',
@@ -543,30 +532,6 @@ export class ApiClient {
         manifestId,
       },
     });
-  }
-
-  async deleteResourceClaim(taskId: string) {
-    throw new Error('Not yet implemented');
-  }
-
-  async getRandomManifest(projectId: number) {
-    throw new Error('Not yet implemented');
-  }
-
-  async getRangeCanvas(projectId: number) {
-    throw new Error('Not yet implemented');
-  }
-
-  async updateProjectConfiguration() {
-    throw new Error('Not yet implemented');
-  }
-
-  async updateProjectStructure() {
-    throw new Error('Not yet implemented');
-  }
-
-  async deleteProject(projectId: number) {
-    throw new Error('Not yet implemented');
   }
 
   // Locale.
@@ -871,10 +836,6 @@ export class ApiClient {
 
   async getCanvasPlaintext(id: number) {
     return this.request<{ found: boolean; transcription: string }>(`/api/madoc/iiif/canvases/${id}/plaintext`);
-  }
-
-  async getLinkingProperty(id: number) {
-    return this.request<ResourceLinkResponse>(`/api/madoc/`);
   }
 
   async updateCollectionMetadata(id: number, request: MetadataUpdate) {
@@ -1374,6 +1335,12 @@ export class ApiClient {
 
   async runDelegatedRequest(id: string) {
     return this.request(`/api/madoc/delegated/${id}`, {
+      method: 'POST',
+    });
+  }
+
+  async assignDelegatedRequest(id: string) {
+    return this.request(`/api/madoc/delegated/${id}/assign`, {
       method: 'POST',
     });
   }

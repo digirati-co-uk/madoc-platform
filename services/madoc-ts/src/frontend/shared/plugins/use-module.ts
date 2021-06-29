@@ -33,6 +33,7 @@ export const _ALLOWED_MODULES = [
   'react-stack-grid',
   'react-timeago',
   'react-tooltip',
+  'styled-components',
 ] as const;
 
 export const ALLOWED_MODULES = [..._ALLOWED_MODULES];
@@ -105,6 +106,8 @@ export function useModule(name: AvailableModules) {
       return require('react-timeago');
     case 'react-tooltip':
       return require('react-tooltip');
+    case 'styled-components':
+      return require('styled-components');
     default:
       return undefined;
   }

@@ -191,7 +191,7 @@ const OnChangeDocument: React.FC<{ onChange: (revision: CaptureModel['document']
 
 export const useBlockEditor = (
   block: SiteBlock | SiteBlockRequest,
-  onChange?: (block: SiteBlock | SiteBlockRequest) => void,
+  onChange?: (b: SiteBlock | SiteBlockRequest) => void,
   onSave?: (id: number) => void
 ) => {
   const api = useApi();
@@ -262,7 +262,9 @@ export const useBlockEditor = (
             }
           }}
         />
-        <EditorSlots.TopLevelEditor />
+        <div style={{ fontSize: '0.85em', maxWidth: 550, margin: '0 auto' }}>
+          <EditorSlots.TopLevelEditor />
+        </div>
       </RevisionProviderWithFeatures>
     </ThemeProvider>
   ) : null;
