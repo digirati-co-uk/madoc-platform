@@ -10,7 +10,13 @@ import { getMetadataValues } from './routes/admin/get-metadata-values';
 import { getModelConfiguration } from './routes/admin/get-model-configuration';
 import { importSite } from './routes/admin/import-site';
 import { listJobs, runJob } from './routes/admin/list-jobs';
-import { getLocalisation, listLocalisations, updateLocalisation } from './routes/admin/localisation';
+import {
+  extractLocalesFromContent,
+  getLocalisation,
+  listLocalisations,
+  updateLanguagePreferences,
+  updateLocalisation,
+} from './routes/admin/localisation';
 import { getMetadataConfiguration, updateMetadataConfiguration } from './routes/admin/metadata-configuration';
 import {
   disablePlugin,
@@ -218,8 +224,10 @@ export const router = new TypedRouter({
 
   // Localisation
   'i18n-list-locales': [TypedRouter.GET, '/api/madoc/locales', listLocalisations],
+  'i18n-analysis-locales': [TypedRouter.GET, '/api/madoc/locales/analysis', extractLocalesFromContent],
   'i18n-get-locale': [TypedRouter.GET, '/api/madoc/locales/:code', getLocalisation],
   'i18n-update-locale': [TypedRouter.POST, '/api/madoc/locales/:code', updateLocalisation],
+  'i18n-update-locale-pref': [TypedRouter.PATCH, '/api/madoc/locales', updateLanguagePreferences],
 
   // Collection API.
   'list-collections': [TypedRouter.GET, '/api/madoc/iiif/collections', listCollections],

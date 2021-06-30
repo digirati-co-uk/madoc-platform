@@ -1,5 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs';
+import { sql } from 'slonik';
 import { calculateTranslationProgress } from '../../frontend/shared/utility/calculate-translation-progress';
 import { api } from '../../gateway/api.server';
 import { RouteMiddleware } from '../../types/route-middleware';
@@ -12,6 +13,8 @@ const baseConfiguration = path.resolve(__dirname, '../../../translations/en/mado
 
 export type LocalisationSiteConfig = {
   defaultLanguage: string;
+  displayLanguages?: string[];
+  contentLanguages?: string[];
   availableLanguages: {
     [language: string]: {
       url: string;
@@ -23,15 +26,31 @@ export type LocalisationSiteConfig = {
 const defaultSiteLocalisationSiteConfig: LocalisationSiteConfig = {
   defaultLanguage: 'en',
   availableLanguages: {},
+  contentLanguages: ['en'],
+  displayLanguages: ['en'],
 };
 
 export type ListLocalisationsResponse = {
   defaultLanguage: string;
+  contentLanguages: string[];
+  displayLanguages: string[];
   localisations: Array<{
     code: string;
     percent?: number;
     isStatic: boolean;
   }>;
+};
+
+export const extractLocalesFromContent: RouteMiddleware = async context => {
+  const { siteId } = optionalUserWithScope(context, []);
+
+  const query = sql<{ language: string; totals: number }>`
+      select language as language, COUNT(*) as totals from iiif_metadata where site_id = ${siteId} and language != 'none'  group by language
+  `;
+
+  context.response.body = {
+    metadata: await context.connection.any(query),
+  };
 };
 
 export const listLocalisations: RouteMiddleware = async context => {
@@ -68,6 +87,8 @@ export const listLocalisations: RouteMiddleware = async context => {
         isStatic: false,
       })),
     ],
+    contentLanguages: config.contentLanguages || [...keys, ...staticKeys],
+    displayLanguages: config.displayLanguages || [...keys, ...staticKeys],
   } as ListLocalisationsResponse;
 };
 
@@ -161,6 +182,59 @@ export const getLocalisation: RouteMiddleware<{ code: string }> = async context 
     percentage: calculateTranslationProgress(content),
     content: showEmpty ? content : filterEmptyContent(content),
   } as GetLocalisationResponse;
+};
+
+export const updateLanguagePreferences: RouteMiddleware<
+  unknown,
+  { displayLanguages?: string[]; contentLanguages?: string[] }
+> = async context => {
+  const { id, siteId } = userWithScope(context, ['site.admin']);
+  const userApi = api.asUser({ userId: id, siteId });
+
+  const changes = context.requestBody;
+
+  if (typeof changes.displayLanguages === 'undefined' && typeof changes.contentLanguages === 'undefined') {
+    context.response.status = 200;
+    return;
+  }
+
+  const configResponse = await userApi.getConfiguration<LocalisationSiteConfig>('madoc-i18n', [
+    `urn:madoc:site:${siteId}`,
+  ]);
+  const oldConfiguration = configResponse.config[0];
+
+  const newConfiguration: LocalisationSiteConfig = {
+    ...defaultSiteLocalisationSiteConfig,
+    ...oldConfiguration?.config_object,
+  };
+
+  if (typeof changes.displayLanguages !== 'undefined') {
+    newConfiguration.displayLanguages = changes.displayLanguages;
+  }
+
+  if (typeof changes.contentLanguages !== 'undefined') {
+    newConfiguration.contentLanguages = changes.contentLanguages;
+  }
+
+  if (oldConfiguration && oldConfiguration.id) {
+    const rawConfiguration = await userApi.getSingleConfigurationRaw(oldConfiguration.id);
+    const etagHeader = rawConfiguration.headers.get('etag');
+    const etag = etagHeader ? parseEtag(etagHeader.toString()) : undefined;
+
+    if (etag) {
+      //  - If it exists, then grab the UUID and update that resource
+      await userApi.replaceConfiguration(oldConfiguration.id, etag, newConfiguration);
+    }
+  } else {
+    try {
+      //  - If it does not exist, then POST the new configuration.
+      await userApi.addConfiguration('madoc-i18n', [`urn:madoc:site:${siteId}`], newConfiguration);
+    } catch (err) {
+      console.log('Could not save config', err);
+    }
+  }
+
+  context.response.status = 200;
 };
 
 export const updateLocalisation: RouteMiddleware<{ code: string }> = async context => {
