@@ -24,7 +24,7 @@ export const ContextualLabel = styled.button`
   }
 `;
 
-export const ContextualMenuWrapper = styled.div<{ $isOpen?: boolean; $padding?: boolean }>`
+export const ContextualMenuWrapper = styled.div<{ $isOpen?: boolean; $padding?: boolean; $right?: boolean }>`
   position: absolute;
   padding: 0.15em;
   top: 100%;
@@ -37,6 +37,12 @@ export const ContextualMenuWrapper = styled.div<{ $isOpen?: boolean; $padding?: 
   z-index: 10;
   transition: transform 0.2s, opacity 0.2s;
   font-size: 0.8em;
+  
+  ${props =>
+    props.$right &&
+    css`
+      right: 0;
+    `}
 
   ${props =>
     props.$isOpen
