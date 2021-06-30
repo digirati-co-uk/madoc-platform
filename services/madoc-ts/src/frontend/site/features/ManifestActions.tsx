@@ -1,9 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { Button, ButtonRow } from '../../shared/atoms/Button';
 import { IIIFDragIcon } from '../../shared/components/IIIFDragIcon';
-import { IIIFLogo } from '../../shared/icons/iiif-logo';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useManifestPageConfiguration } from '../hooks/use-manifest-page-configuration';
 import { useManifestTask } from '../hooks/use-manifest-task';
@@ -15,12 +15,14 @@ import { GoToFirstCanvas } from './GoToFirstCanvas';
 import { GoToRandomCanvas } from './GoToRandomCanvas';
 import { ManifestItemFilter } from './ManifestItemFilter';
 import { ManifestTaskProgress } from './ManifestTaskProgress';
+import { usePreventCanvasNavigation } from './PreventUsersNavigatingCanvases';
 import { useSiteConfiguration } from './SiteConfigurationContext';
 
 export const ManifestActions: React.FC = () => {
   const { t } = useTranslation();
   const createLink = useRelativeLinks();
   const options = useManifestPageConfiguration();
+  const { showNavigationContent } = usePreventCanvasNavigation();
   const { isActive } = useProjectStatus();
   const {
     project: { claimGranularity, manifestPageOptions },
@@ -39,6 +41,10 @@ export const ManifestActions: React.FC = () => {
     !isInProgress;
 
   const showIIIFLogo = manifestPageOptions?.showIIIFLogo;
+
+  if (!showNavigationContent) {
+    return null;
+  }
 
   return (
     <>
@@ -79,3 +85,11 @@ export const ManifestActions: React.FC = () => {
     </>
   );
 };
+
+blockEditorFor(ManifestActions, {
+  type: 'default.ManifestActions',
+  label: 'Manifest actions',
+  anyContext: ['manifest'],
+  requiredContext: ['manifest'],
+  editor: {},
+});

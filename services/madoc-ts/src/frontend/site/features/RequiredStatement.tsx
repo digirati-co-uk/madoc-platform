@@ -1,4 +1,5 @@
 import React from 'react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { AttributionText } from '../../shared/atoms/AttributionText';
 import { LocaleString, useCreateLocaleString } from '../../shared/components/LocaleString';
 import { useManifest } from '../hooks/use-manifest';
@@ -17,3 +18,11 @@ export const RequiredStatement: React.FC = () => {
     </>
   );
 };
+
+blockEditorFor(RequiredStatement, {
+  type: 'default.ManifestRequiredStatement',
+  label: 'Manifest required statement',
+  anyContext: ['manifest', 'canvas'],
+  requiredContext: ['manifest'],
+  editor: {},
+});

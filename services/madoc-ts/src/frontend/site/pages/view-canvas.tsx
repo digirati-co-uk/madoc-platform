@@ -69,7 +69,7 @@ export const ViewCanvas: React.FC<ViewCanvasProps> = ({ project }) => {
         </CanvasVaultContext>
       ) : null}
 
-      {hideManifestMetadataOnCanvas ? null : <ManifestMetadata />}
+      {hideManifestMetadataOnCanvas ? null : <ManifestMetadata compact={false} />}
       {hideCanvasThumbnailNavigation ? null : (
         <CanvasNavigation
           manifestId={manifestId}

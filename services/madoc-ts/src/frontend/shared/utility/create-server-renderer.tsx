@@ -44,7 +44,7 @@ export function createServerRenderer(
     navigationOptions?: any;
     theme?: ResolvedTheme | null;
   }>,
-  createRoutes: ((components: any) => CreateRouteType) | UniversalRoute[],
+  createRoutes: ((c: any) => CreateRouteType) | UniversalRoute[],
   components: any,
   apiGateway: string,
   extraConfig: Partial<ReactQueryConfig> = {}
@@ -104,19 +104,26 @@ export function createServerRenderer(
     const requests = [];
     const routeContext: EditorialContext = {};
     for (const { match, route } of matches) {
+      if (match.isExact && match.params) {
+        // Extract project.
+        routeContext.collection = match.params.collectionId ? Number(match.params.collectionId) : undefined;
+        routeContext.manifest = match.params.manifestId ? Number(match.params.manifestId) : undefined;
+        routeContext.canvas = match.params.canvasId ? Number(match.params.canvasId) : undefined;
+        routeContext.project = match.params.slug ? match.params.slug : undefined;
+      }
       if (route.component.getKey && route.component.getData) {
-        if (match.isExact && match.params) {
-          // Extract project.
-          routeContext.collection = match.params.collectionId ? Number(match.params.collectionId) : undefined;
-          routeContext.manifest = match.params.manifestId ? Number(match.params.manifestId) : undefined;
-          routeContext.canvas = match.params.canvasId ? Number(match.params.canvasId) : undefined;
-          routeContext.project = match.params.slug ? match.params.slug : undefined;
-        }
         requests.push(
           prefetchCache.prefetchQuery(route.component.getKey(match.params, queryString, path), (key, vars) =>
             route.component.getData ? route.component.getData(key, vars, userApi, path) : (undefined as any)
           )
         );
+      }
+      const hooks = route.component.hooks || [];
+      for (const hook of hooks) {
+        const args = hook.creator(match.params, queryString);
+        if (typeof args !== 'undefined') {
+          requests.push(prefetchCache.prefetchQuery([hook.name, args], () => (userApi as any)[hook.name](...args)));
+        }
       }
     }
 

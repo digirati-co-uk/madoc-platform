@@ -20,12 +20,28 @@ import { RenderBlock } from './render-block';
 const EditBlock = styled(TinyButton)`
   opacity: 0;
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 0.2em;
+  right: 0.2em;
   transition: opacity 0.2s;
 `;
 
+const BlockLabel = styled.div`
+  position: absolute;
+  top: 0.2em;
+  left: 0.2em;
+  background: #333;
+  color: #fff;
+  font-size: 0.7em;
+  padding: 0.4em;
+  z-index: 15; // should be above most things.
+  transition: opacity 0.2s;
+  &:hover {
+    opacity: 0;
+  }
+`;
+
 const BlockWrapper = styled.div`
+  min-height: 2.5em;
   transition: outline 0.2s;
   outline: 3px solid transparent;
   &:hover {
@@ -191,7 +207,7 @@ const OnChangeDocument: React.FC<{ onChange: (revision: CaptureModel['document']
 
 export const useBlockEditor = (
   block: SiteBlock | SiteBlockRequest,
-  onChange?: (block: SiteBlock | SiteBlockRequest) => void,
+  onChange?: (b: SiteBlock | SiteBlockRequest) => void,
   onSave?: (id: number) => void
 ) => {
   const api = useApi();
@@ -262,7 +278,9 @@ export const useBlockEditor = (
             }
           }}
         />
-        <EditorSlots.TopLevelEditor />
+        <div style={{ fontSize: '0.85em', maxWidth: 550, margin: '0 auto' }}>
+          <EditorSlots.TopLevelEditor />
+        </div>
       </RevisionProviderWithFeatures>
     </ThemeProvider>
   ) : null;
@@ -327,14 +345,12 @@ function useBlockDetails(block: SiteBlock | SiteBlockRequest) {
   const api = useApi();
   const site = useSite();
 
-  const customEditor = useMemo(() => {
+  return useMemo(() => {
     const definition = api.pageBlocks.getDefinition(block.type, site.id);
-    if (definition.customEditor) {
-      return definition.customEditor;
-    }
-  }, [site.id, api.pageBlocks.definitionMap, api.pageBlocks.pluginBlocks, block.type]);
+    const customEditor = definition.customEditor ? definition.customEditor : undefined;
 
-  return { CustomEditor: customEditor };
+    return { CustomEditor: customEditor, label: definition?.label };
+  }, [api.pageBlocks, block.type, site.id]);
 }
 
 function CustomEditorWrapper({
@@ -377,7 +393,7 @@ export const BlockEditor: React.FC<{
   context?: EditorialContext;
   onUpdateBlock?: (id: number) => void;
 }> = ({ block, context, children, onUpdateBlock }) => {
-  const { CustomEditor } = useBlockDetails(block);
+  const { CustomEditor, label } = useBlockDetails(block);
 
   return (
     <CustomEditorTypes>
@@ -388,6 +404,7 @@ export const BlockEditor: React.FC<{
           </CustomEditorWrapper>
         ) : (
           <>
+            <BlockLabel>{label}</BlockLabel>
             <BlockEditorForm block={block} context={context} onUpdateBlock={onUpdateBlock} />
             {children}
           </>

@@ -69,7 +69,7 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - ./services/madoc-ts/lib:/home/node/app/lib:delegated
-      - ./services/madoc-ts/src:/home/node/app/src:delegated
+      - ./services/madoc-ts/src:/home/node/app/src
       - ./services/madoc-ts/package.json:/home/node/app/package.json:delegated
       - ./services/madoc-ts/yarn.lock:/home/node/app/yarn.lock:delegated
       - ./services/madoc-ts/migrations:/home/node/app/migrations:delegated

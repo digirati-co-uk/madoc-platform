@@ -3,7 +3,7 @@ import { RouteMiddleware } from '../../types/route-middleware';
 import { userWithScope } from '../../utility/user-with-scope';
 
 async function pm2Connect() {
-  await new Promise((resolve, reject) =>
+  await new Promise<void>((resolve, reject) =>
     pm2.connect(error => {
       if (error) {
         reject(error);

@@ -1,13 +1,12 @@
 import { useTranslation } from 'react-i18next';
-import { useCurrentUser } from '../../shared/hooks/use-current-user';
-import { useSite } from '../../shared/hooks/use-site';
+import { useSite, useUser } from '../../shared/hooks/use-site';
 import { useProject } from './use-project';
 import { useRouteContext } from './use-route-context';
 
 export const useCurrentAdminPages = () => {
   const { slug } = useSite();
   const { manifestId, collectionId, canvasId } = useRouteContext();
-  const user = useCurrentUser(true);
+  const user = useUser();
   const { t } = useTranslation();
   const project = useProject();
   const availablePages: Array<{ label: string; link: string }> = [];

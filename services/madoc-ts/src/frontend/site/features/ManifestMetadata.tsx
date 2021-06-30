@@ -1,4 +1,5 @@
 import React from 'react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { MetaDataDisplay } from '../../shared/components/MetaDataDisplay';
 import { usePaginatedData } from '../../shared/hooks/use-data';
 import { useSiteMetadataConfiguration } from '../../shared/hooks/use-site-metadata-configuration';
@@ -6,7 +7,7 @@ import { useRouteContext } from '../hooks/use-route-context';
 import { ManifestLoader } from '../pages/loaders/manifest-loader';
 
 export const ManifestMetadata: React.FC<{ compact?: boolean; showEmptyMessage?: boolean }> = ({
-  compact,
+  compact = true,
   showEmptyMessage,
 }) => {
   const { manifestId } = useRouteContext();
@@ -32,3 +33,18 @@ export const ManifestMetadata: React.FC<{ compact?: boolean; showEmptyMessage?: 
     />
   );
 };
+
+blockEditorFor(ManifestMetadata, {
+  type: 'default.ManifestMetadata',
+  label: 'Manifest metadata',
+  anyContext: ['manifest', 'canvas'],
+  requiredContext: ['manifest'],
+  editor: {
+    compact: { type: 'checkbox-field', inlineLabel: 'Show as compact', label: 'Display options' },
+    showEmptyMessage: { type: 'checkbox-field', inlineLabel: 'Show empty message', label: 'Empty message' },
+  },
+  defaultProps: {
+    compact: true,
+    showEmptyMessage: false,
+  },
+});

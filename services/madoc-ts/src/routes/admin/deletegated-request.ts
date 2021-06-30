@@ -4,7 +4,7 @@ import { api } from '../../gateway/api.server';
 import { ApiActionTask } from '../../gateway/tasks/api-action-task';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { NotFound } from '../../utility/errors/not-found';
-import { userWithScope } from '../../utility/user-with-scope';
+import { optionalUserWithScope, userWithScope } from '../../utility/user-with-scope';
 import * as apiActionTask from '../../gateway/tasks/api-action-task';
 
 export const delegatedRequest: RouteMiddleware<{ id: string }> = async context => {
@@ -12,13 +12,15 @@ export const delegatedRequest: RouteMiddleware<{ id: string }> = async context =
   const taskId = context.params.id;
   const userApi = api.asUser({ userId: id, siteId, userName: name });
 
-  const task = await userApi.getTask(taskId, { detail: true });
+  const task = await userApi.getTask<ApiActionTask>(taskId, { detail: true });
 
   if (!task || task.type !== apiActionTask.type) {
     throw new NotFound();
   }
 
-  const request = task?.parameters ? task?.parameters[0] : null;
+  const details = task?.parameters ? task?.parameters[0] : null;
+  const request = details?.request;
+
   if (!request) {
     throw new NotFound();
   }
@@ -59,8 +61,34 @@ export const createDelegatedRequest: RouteMiddleware<{}, ApiRequest<any, any>> =
   const subject = context.query.subject;
   const userApi = api.asUser({ userId: id, siteId, userName: name });
 
-  const task = await userApi.newTask(apiActionTask.createTask(request, id, siteId, subject));
+  const task = await userApi.newTask(apiActionTask.createTask(request, id, siteId, subject, request.summary));
 
   context.response.status = 200;
   context.response.body = task;
+};
+
+export const assignUserToDelegatedRequest: RouteMiddleware<{ id: string }> = async context => {
+  const { siteId } = optionalUserWithScope(context, ['site.admin']);
+
+  const taskId = context.params.id;
+
+  const users = await context.omeka.getUsersByRoles(siteId, ['admin'], true);
+
+  const siteApi = api.asUser({ siteId });
+  const first = users[0];
+
+  const task = await siteApi.getTask(taskId);
+
+  if (task.type !== apiActionTask.type) {
+    throw new NotFound();
+  }
+
+  if (first) {
+    await siteApi.assignUserToTask(taskId, {
+      id: `urn:madoc:user:${first.id}`,
+      name: first.name,
+    });
+  }
+
+  context.response.status = 200;
 };

@@ -3,7 +3,7 @@ import { ApiClient } from '../api';
 import { apiDefinitionIndex } from './_index';
 import { ApiRequest } from './_meta';
 import { validateApiRequest } from './_validate';
-import pathToRegexp from 'path-to-regexp';
+import { compile } from 'path-to-regexp';
 
 export async function runApiRequest(
   api: ApiClient,
@@ -19,7 +19,7 @@ export async function runApiRequest(
     return { success: false, errors: result.errors };
   }
 
-  const toPathRegexp = pathToRegexp.compile(definition.url);
+  const toPathRegexp = compile(definition.url);
   const url = toPathRegexp(request.params);
   const fullUrl = request.query
     ? `${url}?${stringify(request.query, { arrayFormat: definition?.options?.queryArrayType })}`
