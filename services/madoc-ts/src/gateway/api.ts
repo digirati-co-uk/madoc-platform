@@ -543,11 +543,32 @@ export class ApiClient {
       `/madoc/api/locales/${code}${withTemplate ? `?show_empty=true` : ''}`
     );
   }
+  async getLocaleAnalysis() {
+    return this.request<{
+      metadata: Array<{ language: string; totals: number }>;
+    }>(`/api/madoc/locales/analysis`);
+  }
 
   async updateSiteLocale(code: string, json: any) {
     return this.request<GetLocalisationResponse>(`/api/madoc/locales/${code}`, {
       method: 'POST',
       body: json,
+    });
+  }
+
+  async updateLocalePreferences({
+    displayLanguages,
+    contentLanguages,
+  }: {
+    displayLanguages?: string[];
+    contentLanguages?: string[];
+  }) {
+    return this.request<GetLocalisationResponse>(`/api/madoc/locales`, {
+      method: 'PATCH',
+      body: {
+        displayLanguages,
+        contentLanguages,
+      },
     });
   }
 

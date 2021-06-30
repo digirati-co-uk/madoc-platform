@@ -20,6 +20,8 @@ export type SiteAppProps = {
   site: PublicSite;
   theme?: ResolvedTheme | null;
   supportedLocales: Array<{ label: string; code: string }>;
+  displayLanguages: Array<{ label: string; code: string }>;
+  contentLanguages: Array<{ label: string; code: string }>;
   defaultLocale: string;
   navigationOptions?: {
     enableProjects: boolean;
@@ -32,6 +34,8 @@ const SiteApp: React.FC<SiteAppProps> = ({
   site,
   user,
   supportedLocales,
+  contentLanguages,
+  displayLanguages,
   defaultLocale,
   routes,
   navigationOptions = {
@@ -49,11 +53,13 @@ const SiteApp: React.FC<SiteAppProps> = ({
               site,
               user,
               supportedLocales,
+              contentLanguages,
+              displayLanguages,
               defaultLocale,
               navigationOptions,
               theme,
             }),
-            [theme, site, user, supportedLocales, defaultLocale, navigationOptions]
+            [contentLanguages, displayLanguages, theme, site, user, supportedLocales, defaultLocale, navigationOptions]
           )}
         >
           <ApiContext.Provider value={api}>{renderUniversalRoutes(routes)}</ApiContext.Provider>

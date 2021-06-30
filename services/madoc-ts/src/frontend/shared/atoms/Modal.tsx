@@ -101,6 +101,7 @@ export const ModalBody = styled.div`
   background: #fff;
   padding: 1em;
   overflow-y: auto;
+  overflow-x: hidden;
   min-height: 230px;
 `;
 

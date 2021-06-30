@@ -81,6 +81,7 @@ export type GetApiMethods = keyof Pick<
   | 'getSiteSearchQuery'
   | 'getSiteLocales'
   | 'getSiteLocale'
+  | 'getLocaleAnalysis'
   | 'getPersonalNote'
 >;
 

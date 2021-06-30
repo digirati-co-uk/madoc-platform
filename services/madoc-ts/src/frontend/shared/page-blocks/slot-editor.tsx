@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useMutation } from 'react-query';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { EditorialContext, SiteBlock, SiteSlot } from '../../../types/schemas/site-page';
 import { Button, ButtonRow, TinyButton } from '../atoms/Button';
 import { SurfaceProps } from '../atoms/Surface';

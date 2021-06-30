@@ -40,6 +40,8 @@ export function createServerRenderer(
     site: PublicSite;
     user?: { name: string; id: number; scope: string[] };
     supportedLocales: Array<{ label: string; code: string }>;
+    contentLanguages: Array<{ label: string; code: string }>;
+    displayLanguages: Array<{ label: string; code: string }>;
     defaultLocale: string;
     navigationOptions?: any;
     theme?: ResolvedTheme | null;
@@ -133,10 +135,15 @@ export function createServerRenderer(
 
     await Promise.all(requests);
     const dehydratedState = dehydrate(prefetchCache);
+    const mapLocalCodes = (ln: string) => {
+      const label = localeCodes.getByTag(ln).name;
+      return { label: label, code: ln };
+    };
     const supportedLocales = siteLocales.localisations.map(ln => {
-      const label = localeCodes.getByTag(ln.code).name;
-      return { label: label, code: ln.code };
+      return mapLocalCodes(ln.code);
     });
+    const displayLanguages = (siteLocales.displayLanguages || []).map(mapLocalCodes);
+    const contentLanguages = (siteLocales.contentLanguages || []).map(mapLocalCodes);
 
     const routeData = `
       <script type="application/json" id="react-omeka">${JSON.stringify({
@@ -145,6 +152,8 @@ export function createServerRenderer(
         locales: supportedLocales,
         defaultLocale: siteLocales.defaultLanguage || 'en',
         navigationOptions: navigationOptions,
+        contentLanguages,
+        displayLanguages,
         plugins,
         theme,
       })}</script>
@@ -178,6 +187,8 @@ export function createServerRenderer(
                         site={omekaSite as any}
                         user={user}
                         defaultLocale={siteLocales.defaultLanguage || 'en'}
+                        contentLanguages={contentLanguages}
+                        displayLanguages={displayLanguages}
                         supportedLocales={supportedLocales}
                         navigationOptions={navigationOptions}
                       />

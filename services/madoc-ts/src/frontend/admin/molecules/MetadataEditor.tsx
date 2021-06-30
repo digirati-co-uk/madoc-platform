@@ -1,7 +1,21 @@
 import React, { useMemo, useReducer, useState } from 'react';
 import produce from 'immer';
-import { Button, LinkButton } from '../../shared/atoms/Button';
-import { IntlInput, IntlInputButton, IntlInputContainer, IntlInputDefault } from '../../shared/atoms/IntlField';
+import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
+import { Button, ButtonRow, LinkButton } from '../../shared/atoms/Button';
+import {
+  ContextualLabel,
+  ContextualMenuList,
+  ContextualMenuListItem,
+  ContextualMenuWrapper,
+  ContextualPositionWrapper,
+} from '../../shared/atoms/ContextualMenu';
+import {
+  IntlInput,
+  IntlInputButton,
+  IntlInputContainer,
+  IntlInputDefault,
+  IntlMultiline,
+} from '../../shared/atoms/IntlField';
 import { ModalButton } from '../../shared/components/Modal';
 import { CloseIcon } from '../../shared/atoms/CloseIcon';
 import styled, { css } from 'styled-components';
@@ -11,6 +25,8 @@ import { InternationalString } from '@hyperion-framework/types';
 import { useTranslation } from 'react-i18next';
 import { MetadataDefinition } from '../../../types/schemas/metadata-definition';
 import { EmptyInputValue } from '../../shared/atoms/Input';
+import { useApi } from '../../shared/hooks/use-api';
+import { SettingsIcon } from '../../shared/icons/SettingsIcon';
 
 export type MetadataDiff = {
   added: Array<{ key: string; language: string; value: string }>;
@@ -236,15 +252,51 @@ const MetadataEditorContainer = styled.div<{ enabled?: boolean; fluid?: boolean 
       : ''}
 `;
 
+const LanguageMenu: React.FC<{ language: string; languages: string[]; onSelectLanguage: (code: string) => void }> = ({
+  language,
+  languages,
+  onSelectLanguage,
+}) => {
+  const { isOpen, buttonProps, itemProps } = useDropdownMenu(languages.length + 1);
+
+  return (
+    <ContextualPositionWrapper>
+      <IntlInputButton {...buttonProps}>{language}</IntlInputButton>
+      <ContextualMenuWrapper $padding $isOpen={isOpen} $right>
+        <ContextualMenuList>
+          <ContextualMenuListItem
+            $disabled={language === 'none'}
+            onClick={() => onSelectLanguage('none')}
+            {...itemProps[0]}
+          >
+            none
+          </ContextualMenuListItem>
+          {languages.map((lng, k) => {
+            return (
+              <ContextualMenuListItem
+                $disabled={language === lng}
+                onClick={() => onSelectLanguage(lng)}
+                {...itemProps[k + 1]}
+              >
+                {lng}
+              </ContextualMenuListItem>
+            );
+          })}
+        </ContextualMenuList>
+      </ContextualMenuWrapper>
+    </ContextualPositionWrapper>
+  );
+};
+
 const MetadataField: React.FC<{
   language: string;
   value: string;
   removable?: boolean;
   onRemove: () => void;
   onChange: (value: string) => void;
-  selected?: boolean;
-  onLanguageSelect: () => void;
-}> = ({ language, removable, value, selected, onChange, onLanguageSelect, onRemove }) => {
+  onSelectLanguage: (code: string) => void;
+  availableLanguages: string[];
+}> = ({ language, removable, value, availableLanguages, onChange, onSelectLanguage, onRemove }) => {
   const { t } = useTranslation();
   const [isFocused, setIsFocused] = useState(false);
 
@@ -252,7 +304,7 @@ const MetadataField: React.FC<{
     <IntlInputContainer focused={isFocused}>
       <IntlInputDefault>
         <CloseIcon disabled={!removable} title={t('remove')} onClick={onRemove} />
-        <IntlInput
+        <IntlMultiline
           autoComplete="off"
           type="text"
           value={value}
@@ -260,9 +312,7 @@ const MetadataField: React.FC<{
           onBlur={() => setIsFocused(false)}
           onChange={e => onChange(e.currentTarget.value)}
         />
-        <IntlInputButton active={selected} onClick={onLanguageSelect}>
-          {language}
-        </IntlInputButton>
+        <LanguageMenu language={language} languages={availableLanguages} onSelectLanguage={onSelectLanguage} />
       </IntlInputDefault>
     </IntlInputContainer>
   );
@@ -281,6 +331,7 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
 }) => {
   const { t } = useTranslation();
   const [isFocused, setIsFocused] = useState(false);
+  const api = useApi();
   const [state, dispatch] = useReducer(metadataEditorReducer, { fields, key: metadataKey }, createInitialValues);
 
   // Computed values.
@@ -330,29 +381,7 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
     }
   };
 
-  // Components
-  const languageSwitch = selected ? (
-    <LanguageCol>
-      <LanguageList>
-        {availableLanguages.map(lang =>
-          state.fields[selected].language === lang ? (
-            <LanguageItem key={lang}>{lang}</LanguageItem>
-          ) : (
-            <LanguageItem key={lang}>
-              <LinkButton
-                key={lang}
-                onClick={() => dispatch({ type: 'CHANGE_LANGUAGE', payload: { id: selected, language: lang } })}
-              >
-                {lang}
-              </LinkButton>
-            </LanguageItem>
-          )
-        )}
-      </LanguageList>
-    </LanguageCol>
-  ) : null;
-
-  const fieldList = ({ close }: { close: () => void }) => (
+  const fieldList = () => (
     <div>
       <GridContainer>
         <ExpandGrid>
@@ -365,7 +394,9 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
                 language={field.language}
                 value={field.value}
                 removable={fieldKeys.length > 1}
-                selected={key === state.selected}
+                onSelectLanguage={(lang: string) =>
+                  dispatch({ type: 'CHANGE_LANGUAGE', payload: { id: key, language: lang } })
+                }
                 onChange={value =>
                   dispatch({
                     type: 'CHANGE_VALUE',
@@ -375,19 +406,23 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
                     },
                   })
                 }
+                availableLanguages={availableLanguages}
                 onRemove={() => dispatch({ type: 'REMOVE_ITEM', payload: { id: key } })}
-                onLanguageSelect={() => dispatch({ type: 'SELECT_ITEM', payload: { id: key } })}
               />
             );
           })}
         </ExpandGrid>
-        {languageSwitch}
       </GridContainer>
-      <LinkButton onClick={createNewItem(true)}>{t('Add new')}</LinkButton>
-      <div style={{ marginTop: '2em' }}>
-        <Button onClick={close}>{t('Finish editing')}</Button>
-      </div>
     </div>
+  );
+
+  const fieldListFooter = ({ close }: { close: () => void }) => (
+    <ButtonRow $noMargin>
+      <Button onClick={createNewItem(true)}>{t('Add new field')}</Button>
+      <Button $primary onClick={close}>
+        {t('Finish editing')}
+      </Button>
+    </ButtonRow>
   );
 
   if (!firstItem || !defaultItem) {
@@ -398,11 +433,13 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
     );
   }
 
+  const Component: typeof IntlMultiline = api.getIsServer() ? (IntlInput as any) : IntlMultiline;
+
   return (
     <MetadataEditorContainer enabled={!disabled} fluid={fluid}>
       <IntlInputContainer focused={isFocused}>
         <IntlInputDefault>
-          <IntlInput
+          <Component
             autoComplete="off"
             type="text"
             onBlur={() => {
@@ -422,7 +459,12 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
               })
             }
           />
-          <ModalButton render={fieldList} title={label || metadataKey || t('Editing field')} onClose={saveChanges}>
+          <ModalButton
+            render={fieldList}
+            renderFooter={fieldListFooter}
+            title={label || metadataKey || t('Editing field')}
+            onClose={saveChanges}
+          >
             <IntlInputButton>
               {firstItem.language} {fieldKeys.length > 1 ? `+ ${fieldKeys.length - 1}` : ''}
             </IntlInputButton>
