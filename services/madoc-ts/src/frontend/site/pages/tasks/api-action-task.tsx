@@ -1,5 +1,7 @@
 import Ajv from 'ajv';
-import React from 'react';
+import { compile } from 'path-to-regexp';
+import { stringify } from 'query-string';
+import React, { useMemo } from 'react';
 import { useMutation } from 'react-query';
 import { apiDefinitionIndex } from '../../../../gateway/api-definitions/_index';
 import { ApiDefinitionSubject, ApiRequest } from '../../../../gateway/api-definitions/_meta';
@@ -53,6 +55,16 @@ export const ViewApiActionTask: React.FC<{ task: ApiActionTask; refetch: () => P
   const details = task.parameters[0];
   const definitionId = details?.request?.id;
   const definition = definitionId ? apiDefinitionIndex[definitionId] : null;
+  const fullUrl = useMemo(() => {
+    if (definition) {
+      const toPathRegexp = compile(definition.url);
+      const url = toPathRegexp(details.request.params);
+      const query = details.request.query
+        ? stringify(details.request.query, { arrayFormat: definition?.options?.queryArrayType })
+        : '';
+      return query ? `${url}?${query}` : url;
+    }
+  }, [definition, details]);
 
   const [runRequest, runRequestStatus] = useMutation<any>(async () => {
     if (task.id) {
@@ -68,10 +80,6 @@ export const ViewApiActionTask: React.FC<{ task: ApiActionTask; refetch: () => P
   if (!definition) {
     return <div>Invalid action</div>;
   }
-
-  // Site id check.
-  // User id check.
-  // Definition check.
 
   return (
     <div style={{ padding: '1em' }}>
@@ -128,7 +136,7 @@ export const ViewApiActionTask: React.FC<{ task: ApiActionTask; refetch: () => P
         : null}
 
       <h5>
-        {definition.method} {definition.url}
+        {definition.method} {fullUrl}
       </h5>
       <h5>Scope of API</h5>
       <ul>

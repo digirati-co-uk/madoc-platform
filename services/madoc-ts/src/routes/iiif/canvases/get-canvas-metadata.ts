@@ -1,10 +1,10 @@
 import { sql } from 'slonik';
-import { userWithScope } from '../../../utility/user-with-scope';
+import { optionalUserWithScope } from '../../../utility/user-with-scope';
 import { RouteMiddleware } from '../../../types/route-middleware';
 
 // @todo maybe de-duplicate these endpoints.
 export const getCanvasMetadata: RouteMiddleware<{ id: string }> = async context => {
-  const { siteId } = userWithScope(context, []);
+  const { siteId } = optionalUserWithScope(context, ['site.view']);
   const canvasId = context.params.id;
 
   const canvas = await context.connection.many<{

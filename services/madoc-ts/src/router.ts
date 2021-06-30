@@ -64,6 +64,7 @@ import { updateCuratedFeed } from './routes/projects/update-curated-feed';
 import { updateProjectNote } from './routes/projects/update-project-note';
 import { fullReindex } from './routes/search/full-reindex';
 import { siteCanvasSource } from './routes/site/site-canvas-reference';
+import { siteMetadata } from "./routes/site/site-metadata";
 import { siteModelConfiguration } from './routes/site/site-model-configuration';
 import { sitePageNavigation } from './routes/site/site-page-navigation';
 import { getSlot } from './routes/content/get-slot';
@@ -406,10 +407,13 @@ export const router = new TypedRouter({
 
   // New Site routes.
   'site-canvas': [TypedRouter.GET, '/s/:slug/madoc/api/canvases/:id', siteCanvas],
+  'site-canvas-metadata': [TypedRouter.GET, '/s/:slug/madoc/api/canvases/:canvasId/metadata', siteMetadata],
   'site-collection': [TypedRouter.GET, '/s/:slug/madoc/api/collections/:id', siteCollection],
   'site-collections': [TypedRouter.GET, '/s/:slug/madoc/api/collections', siteCollections],
+  'site-collection-metadata': [TypedRouter.GET, '/s/:slug/madoc/api/collections/:collectionId/metadata', siteMetadata],
   'site-manifest': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id', siteManifest],
   'site-manifest-structure': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/structure', getSiteManifestStructure],
+  'site-manifest-metadata': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:manifestId/metadata', siteMetadata],
   'site-manifests': [TypedRouter.GET, '/s/:slug/madoc/api/manifests', siteManifests],
   'site-manifest-tasks': [
     TypedRouter.GET,

@@ -55,7 +55,7 @@ const IntlMultilineInternal = styled(Textarea)`
 
 export const IntlMultiline: typeof IntlMultilineInternal = ((props: any) => {
   return (
-    <React.Suspense fallback={() => <IntlInput {...props} />}>
+    <React.Suspense fallback={<IntlInput {...props} />}>
       <IntlMultilineInternal {...props} />
     </React.Suspense>
   );

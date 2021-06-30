@@ -274,6 +274,7 @@ const LanguageMenu: React.FC<{ language: string; languages: string[]; onSelectLa
           {languages.map((lng, k) => {
             return (
               <ContextualMenuListItem
+                key={lng}
                 $disabled={language === lng}
                 onClick={() => onSelectLanguage(lng)}
                 {...itemProps[k + 1]}
@@ -338,7 +339,6 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
   const fieldKeys = Object.keys(state.fields);
   // Returns a language code to display as the default to the user, based on their language.
   const closestLang = useClosestLanguage(() => fieldKeys.map(key => state.fields[key].language), [state.fields]);
-  const selected = state.selected;
   const defaultItem = useMemo(() => {
     if (state.fields) {
       const keys = Object.keys(state.fields);
