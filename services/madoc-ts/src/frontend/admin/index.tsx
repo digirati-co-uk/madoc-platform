@@ -21,10 +21,21 @@ export type AdminAppProps = {
   user: { name: string; id: number; scope: string[] };
   site: PublicSite;
   supportedLocales: Array<{ label: string; code: string }>;
+  contentLanguages: Array<{ label: string; code: string }>;
+  displayLanguages: Array<{ label: string; code: string }>;
   defaultLocale: string;
 };
 
-const AdminApp: React.FC<AdminAppProps> = ({ api, routes, site, user, supportedLocales, defaultLocale }) => {
+const AdminApp: React.FC<AdminAppProps> = ({
+  api,
+  routes,
+  site,
+  user,
+  supportedLocales,
+  contentLanguages,
+  displayLanguages,
+  defaultLocale,
+}) => {
   const { i18n, t } = useTranslation();
   const restarting = useIsApiRestarting(api);
   const viewingDirection = useMemo(() => i18n.dir(i18n.language), [i18n.language]);
@@ -38,6 +49,8 @@ const AdminApp: React.FC<AdminAppProps> = ({ api, routes, site, user, supportedL
             user,
             supportedLocales,
             defaultLocale,
+            contentLanguages,
+            displayLanguages,
             navigationOptions: { enableProjects: true, enableCollections: true },
           }),
           [site, user, supportedLocales, defaultLocale]

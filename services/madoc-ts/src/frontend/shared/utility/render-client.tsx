@@ -28,7 +28,7 @@ import { ReactQueryDevtools } from 'react-query-devtools';
 
 export async function renderClient(
   Component: React.FC<any>,
-  createRoutes: UniversalRoute[] | ((components: any) => CreateRouteType),
+  createRoutes: UniversalRoute[] | ((c: any) => CreateRouteType),
   components: any,
   requireJwt = true,
   extraConfig: ReactQueryConfig = {}
@@ -130,6 +130,8 @@ export async function renderClient(
                             user={dehydratedSite.user}
                             theme={theme}
                             supportedLocales={localisations}
+                            contentLanguages={dehydratedSite.contentLanguages}
+                            displayLanguages={dehydratedSite.displayLanguages}
                             defaultLocale={defaultLocale}
                             navigationOptions={dehydratedSite.navigationOptions}
                           />

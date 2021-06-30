@@ -35,6 +35,7 @@ export const adminFrontend: RouteMiddleware = async context => {
       i18next: i18nInstance,
       site: site,
       siteLocales,
+      siteSlug: context.params.slug,
       user:
         context.state.jwt && context.state.jwt.user && context.state.jwt.user.id
           ? {
