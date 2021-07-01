@@ -10,3 +10,14 @@ export type ManifestDeletionSummary = {
   parentTasks: number;
   models: number;
 };
+
+export type CollectionDeletionSummary = {
+  siteCount: number;
+  fullDelete: boolean;
+  search: {
+    indexed: boolean;
+    id: string;
+  }
+  tasks: number;
+  parentTasks: number;
+};
