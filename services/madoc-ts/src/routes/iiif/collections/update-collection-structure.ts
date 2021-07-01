@@ -1,4 +1,5 @@
 import { sql } from 'slonik';
+import { api } from '../../../gateway/api.server';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { UpdateStructureList } from '../../../types/schemas/item-structure-list';
 import { userWithScope } from '../../../utility/user-with-scope';
@@ -78,6 +79,17 @@ export const updateCollectionStructure: RouteMiddleware<{ id: number }, UpdateSt
   `;
 
   await context.connection.query(updateQuery);
+
+  try {
+    const userApi = api.asUser({ siteId });
+    userApi.postUniversalChangeToStreams({
+      id: collectionId,
+      type: 'collection',
+      summary: `Collection structural changes`,
+    });
+  } catch (e) {
+    console.log(e);
+  }
 
   await context.connection.query(sql`select refresh_item_counts()`);
 

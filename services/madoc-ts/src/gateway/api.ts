@@ -1834,6 +1834,13 @@ export class ApiClient {
     });
   }
 
+  postUniversalChangeToStreams(body: { id: number; type: 'collection' | 'manifest' | 'canvas'; summary?: string }) {
+    return this.request(`/api/madoc/activity/all`, {
+      method: 'POST',
+      body,
+    });
+  }
+
   getActivityStream(options: { primaryStream: string; secondaryStream?: string }): Promise<ActivityOrderedCollection>;
   getActivityStream(options: {
     primaryStream: string;

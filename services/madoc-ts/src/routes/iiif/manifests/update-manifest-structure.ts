@@ -45,6 +45,11 @@ export const updateManifestStructure: RouteMiddleware<{ id: number }, UpdateStru
   try {
     const userApi = api.asUser({ siteId });
     userApi.indexManifest(manifestId);
+    userApi.postUniversalChangeToStreams({
+      id: manifestId,
+      type: 'manifest',
+      summary: `Manifest structural changes`,
+    });
   } catch (e) {
     console.log(e);
   }
