@@ -160,6 +160,7 @@ import { siteCanvasTasks } from './routes/site/site-canvas-tasks';
 import { getProjectTask } from './routes/projects/get-project-task';
 import { assignRandomResource } from './routes/projects/assign-random-resource';
 import { router as activityStreamRoutes } from './activity-streams/router';
+import { getCollectionDeletionSummary } from './routes/iiif/collections/delete-collection-summary';
 
 export const router = new TypedRouter({
   // Normal route
@@ -225,6 +226,7 @@ export const router = new TypedRouter({
   'get-collection-metadata': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/metadata', getCollectionMetadata],
   'get-collection-structure': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/structure', getCollectionStructure],
   'get-collection-projects': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/projects', getCollectionProjects],
+  'get-collection-deletion-summary': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/deletion-summary', getCollectionDeletionSummary],
   'put-collection-metadata': [
     TypedRouter.PUT,
     '/api/madoc/iiif/collections/:id/metadata',

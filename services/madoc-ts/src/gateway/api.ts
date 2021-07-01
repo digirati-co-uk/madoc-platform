@@ -74,6 +74,7 @@ import { CrowdsourcingCanvasTask } from './tasks/crowdsourcing-canvas-task';
 import { ConfigResponse } from '../types/schemas/config-response';
 import { ResourceLinkRow } from '../database/queries/linking-queries';
 import { SearchIndexTask } from './tasks/search-index-task';
+import { CollectionDeletionSummary } from '../types/deletion-summary';
 
 export class ApiClient {
   private readonly gateway: string;
@@ -685,6 +686,10 @@ export class ApiClient {
     return this.request<CollectionListResponse>(
       `/api/madoc/iiif/collections?${stringify({ page, parent, published: onlyPublished })}`
     );
+  }
+
+  async getCollectionDeletionSummary(id: number) {
+    return this.request<CollectionDeletionSummary>(`/api/madoc/iiif/collections/${id}/deletion-summary`);
   }
 
   async getManifests(
