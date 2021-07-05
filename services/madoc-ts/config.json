@@ -69,6 +69,11 @@
       "canvas": false,
       "curated": true,
       "published": false
+    },
+    "metadataSuggestions": {
+      "collection": false,
+      "manifest": false,
+      "canvas": false
     }
   },
   "permissions": {

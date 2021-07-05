@@ -34,6 +34,11 @@ export const updateMetadata: RouteMiddleware<{ id: number }, MetadataUpdate> = a
     try {
       const userApi = api.asUser({ siteId });
       userApi.indexManifest(resourceId);
+      userApi.postUniversalChangeToStreams({
+        id: resourceId,
+        type: 'manifest',
+        summary: `Manifest metadata changes`,
+      });
     } catch (e) {
       console.log(e);
     }
@@ -43,9 +48,23 @@ export const updateMetadata: RouteMiddleware<{ id: number }, MetadataUpdate> = a
     try {
       const userApi = api.asUser({ siteId });
       userApi.indexCanvas(resourceId);
+      userApi.postUniversalChangeToStreams({
+        id: resourceId,
+        type: 'canvas',
+        summary: `Canvas metadata changes`,
+      });
     } catch (e) {
       console.log(e);
     }
+  }
+
+  if (context.request.originalUrl.indexOf('iiif/collections') !== -1) {
+    const userApi = api.asUser({ siteId });
+    userApi.postUniversalChangeToStreams({
+      id: resourceId,
+      type: 'collection',
+      summary: `Collection metadata changes`,
+    });
   }
 
   context.response.status = 200;

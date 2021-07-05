@@ -44,6 +44,7 @@ describe('document to default structure', () => {
         "headerOptions",
         "searchOptions",
         "activityStreams",
+        "metadataSuggestions",
       ]
     `);
   });

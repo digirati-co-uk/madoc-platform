@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useDefaultLocale, useSupportedLocales } from '../../shared/hooks/use-site';
+import { useDefaultLocale, useSupportedLocales, useUser } from '../../shared/hooks/use-site';
 import { MetadataDiff, MetadataEditor, MetadataEditorProps } from './MetadataEditor';
 import { useMutation } from 'react-query';
 import { Button } from '../../shared/atoms/Button';
@@ -188,7 +188,9 @@ export const MetadataListEditor: React.FC<{
   metadata: ParsedMetadata;
   template?: string[];
   onSave: (opts: { diff: MetadataDiff; empty: boolean }) => void;
-}> = ({ metadata, onSave, template = [] }) => {
+  loading?: boolean;
+}> = ({ metadata, onSave, template = [], loading }) => {
+  const { t } = useTranslation();
   // Props
   const metadataKeys = Object.keys(metadata).sort((a, b) => template.indexOf(a) - template.indexOf(b));
   const availableLanguages = useSupportedLocales();
@@ -244,7 +246,7 @@ export const MetadataListEditor: React.FC<{
         />
       ) : null}
 
-      {metadataKeys.indexOf('requireStatement') === -1 ? (
+      {metadataKeys.indexOf('requiredStatement') === -1 ? (
         <MetadataSection
           fixedItems={true}
           metadata={{
@@ -315,7 +317,9 @@ export const MetadataListEditor: React.FC<{
           defaultLocale={defaultLocale}
         />
       ))}
-      <Button onClick={() => saveChanges()}>Save changes</Button>
+      <Button disabled={!!loading} onClick={() => saveChanges()}>
+        {t('Save changes')}
+      </Button>
     </>
   );
 };

@@ -1,4 +1,3 @@
-import { setValueDotNotation } from '../src/utility/iiif-metadata';
 import { mapMetadataList } from '../src/utility/map-metadata-list';
 import { extractLinks } from '../src/utility/extract-links';
 

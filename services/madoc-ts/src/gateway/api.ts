@@ -829,6 +829,18 @@ export class ApiClient {
     return this.request<GetMetadata>(`/api/madoc/iiif/manifests/${id}/metadata`);
   }
 
+  async getSiteCanvasMetadata(id: number) {
+    return this.publicRequest<GetMetadata>(`/madoc/api/canvases/${id}/metadata`);
+  }
+
+  async getSiteManifestMetadata(id: number) {
+    return this.publicRequest<GetMetadata>(`/madoc/api/manifests/${id}/metadata`);
+  }
+
+  async getSiteCollectionMetadata(id: number) {
+    return this.publicRequest<GetMetadata>(`/madoc/api/collections/${id}/metadata`);
+  }
+
   async autocompleteManifests(q: string, project_id?: string, blacklist_ids?: number[], page = 1) {
     return this.request<Array<{ id: number; label: string }>>(
       `/api/madoc/iiif/autocomplete/manifests?${stringify(
@@ -1347,7 +1359,7 @@ export class ApiClient {
     });
   }
 
-  async createDelegatedRequest(request: ApiRequest<any, any>, subject?: string) {
+  async createDelegatedRequest<Req extends ApiRequest<any, any>>(request: Req, subject?: string) {
     return this.request(subject ? `/api/madoc/delegated?subject=${subject}` : `/api/madoc/delegated`, {
       method: 'POST',
       body: request,
@@ -1817,6 +1829,13 @@ export class ApiClient {
     }
 
     return this.request(`/api/madoc/activity/${primaryStream}/action/${action}`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  postUniversalChangeToStreams(body: { id: number; type: 'collection' | 'manifest' | 'canvas'; summary?: string }) {
+    return this.request(`/api/madoc/activity/all`, {
       method: 'POST',
       body,
     });

@@ -3,6 +3,8 @@ import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-rea
 import { MetaDataDisplay } from '../../shared/components/MetaDataDisplay';
 import { usePaginatedData } from '../../shared/hooks/use-data';
 import { useSiteMetadataConfiguration } from '../../shared/hooks/use-site-metadata-configuration';
+import { useMetadataSuggestionConfiguration } from '../hooks/use-metadata-suggestion-configuration';
+import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
 import { ManifestLoader } from '../pages/loaders/manifest-loader';
 
@@ -10,7 +12,9 @@ export const ManifestMetadata: React.FC<{ compact?: boolean; showEmptyMessage?: 
   compact = true,
   showEmptyMessage,
 }) => {
+  const createLink = useRelativeLinks();
   const { manifestId } = useRouteContext();
+  const { manifest } = useMetadataSuggestionConfiguration();
   const { resolvedData: data } = usePaginatedData(ManifestLoader, undefined, { enabled: !!manifestId });
   const { data: metadataConfig } = useSiteMetadataConfiguration();
 
@@ -30,6 +34,7 @@ export const ManifestMetadata: React.FC<{ compact?: boolean; showEmptyMessage?: 
       config={metadataConfig?.metadata}
       metadata={metadata || []}
       showEmptyMessage={showEmptyMessage}
+      suggestEdit={manifest ? createLink({ canvasId: undefined, subRoute: `metadata/edit` }) : undefined}
     />
   );
 };
