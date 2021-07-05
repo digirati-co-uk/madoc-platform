@@ -425,8 +425,8 @@ async function createUserCrowdsourcingTask({
   warningTime?: number;
   userManifestTask?: CrowdsourcingTask;
 }): Promise<CrowdsourcingTask> {
-  const user = await context.omeka.getUserById(userId, siteId);
-  const assignee = await context.omeka.getUserById(assigneeId, siteId);
+  const user = await context.siteManager.getSiteUserById(userId, siteId);
+  const assignee = await context.siteManager.getSiteUserById(assigneeId, siteId);
   const userApi = api.asUser({ userId, siteId, userName: user.name });
 
   const structureId = undefined; // @todo call to config service to get structure id.

@@ -8,6 +8,9 @@ import { exportSite } from './routes/admin/export-site';
 import { getMetadataKeys } from './routes/admin/get-metadata-keys';
 import { getMetadataValues } from './routes/admin/get-metadata-values';
 import { getModelConfiguration } from './routes/admin/get-model-configuration';
+import { allUsersAutocomplete } from './routes/manage-site/all-users-autocomplete';
+import { deleteUserSiteRole } from './routes/manage-site/delete-user-site-role';
+import { getSiteUsers } from './routes/manage-site/get-site-users';
 import { importSite } from './routes/admin/import-site';
 import { listJobs, runJob } from './routes/admin/list-jobs';
 import {
@@ -17,6 +20,7 @@ import {
   updateLanguagePreferences,
   updateLocalisation,
 } from './routes/admin/localisation';
+import { listAllSites } from './routes/manage-site/list-all-sites';
 import { getMetadataConfiguration, updateMetadataConfiguration } from './routes/admin/metadata-configuration';
 import {
   disablePlugin,
@@ -52,6 +56,7 @@ import { getPage } from './routes/content/get-page';
 import { linkAutocomplete } from './routes/content/link-autocomplete';
 import { resolveSlots } from './routes/content/resolve-slots';
 import { getCanvasReference } from './routes/iiif/canvases/get-canvas-reference';
+import { updateUserSiteRole } from './routes/manage-site/update-user-site-role';
 import { siteManifestBuild } from './routes/site/site-manifest-build';
 import { createMedia } from './routes/media/create-media';
 import { deleteMedia } from './routes/media/delete-media';
@@ -64,7 +69,7 @@ import { updateCuratedFeed } from './routes/projects/update-curated-feed';
 import { updateProjectNote } from './routes/projects/update-project-note';
 import { fullReindex } from './routes/search/full-reindex';
 import { siteCanvasSource } from './routes/site/site-canvas-reference';
-import { siteMetadata } from "./routes/site/site-metadata";
+import { siteMetadata } from './routes/site/site-metadata';
 import { siteModelConfiguration } from './routes/site/site-model-configuration';
 import { sitePageNavigation } from './routes/site/site-page-navigation';
 import { getSlot } from './routes/content/get-slot';
@@ -182,6 +187,13 @@ export const router = new TypedRouter({
   'import-site': [TypedRouter.POST, '/api/madoc/site/:siteId/import', importSite],
   'cron-jobs': [TypedRouter.GET, '/api/madoc/cron/jobs', listJobs],
   'run-cron-jobs': [TypedRouter.POST, '/api/madoc/cron/jobs/:jobId/run', runJob],
+
+  // Site admin.
+  'site-admin-list-all-sites': [TypedRouter.GET, '/api/madoc/sites', listAllSites],
+  'site-admin-list-all-site-users': [TypedRouter.GET, '/api/madoc/manage-site/users', getSiteUsers],
+  'manage-site-set-user-role': [TypedRouter.POST, '/api/madoc/manage-site/users/:userId/role', updateUserSiteRole],
+  'manage-site-all-users': [TypedRouter.GET, '/api/madoc/manage-site/users/search', allUsersAutocomplete],
+  'manage-site-delete-user-role': [TypedRouter.DELETE, '/api/madoc/manage-site/users/:userId/role', deleteUserSiteRole],
 
   // Plugins
   'list-plugins': [TypedRouter.GET, '/api/madoc/system/plugins', listPlugins],

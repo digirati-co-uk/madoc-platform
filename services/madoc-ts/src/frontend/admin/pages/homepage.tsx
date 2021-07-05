@@ -152,6 +152,9 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
                 <li>
                   <Link to={`/export/site`}>Export site</Link>
                 </li>
+                <li>
+                  <Link to={`/sites/permissions`}>Site permissions</Link>
+                </li>
               </MenuList>
             </AdminSection>
           </AdminSectionGrid>

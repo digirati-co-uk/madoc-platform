@@ -1,9 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from 'react-query';
-import styled from 'styled-components';
 import { SitePlugin } from '../../../../types/schemas/plugins';
-import { Button, ButtonRow, SmallButton } from '../../../shared/atoms/Button';
+import { Button, ButtonRow } from '../../../shared/atoms/Button';
 import { EmptyState } from '../../../shared/atoms/EmptyState';
 import { SystemListItem } from '../../../shared/atoms/SystemListItem';
 import {
@@ -21,32 +20,9 @@ import {
 import { ModalButton } from '../../../shared/components/Modal';
 import { useApi } from '../../../shared/hooks/use-api';
 import { useData } from '../../../shared/hooks/use-data';
-import { useSite } from '../../../shared/hooks/use-site';
-import { useSiteMetadataConfiguration } from '../../../shared/hooks/use-site-metadata-configuration';
 import { Spinner } from '../../../shared/icons/Spinner';
 import { serverRendererFor } from '../../../shared/plugins/external/server-renderer-for';
 import { AdminHeader } from '../../molecules/AdminHeader';
-
-const PluginContainer = styled.div`
-  padding: 3em;
-  height: 100%;
-  background: #d0d8e9;
-`;
-
-const PluginGrid = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-`;
-
-const PluginItem = styled.div`
-  padding: 1em;
-  width: 300px;
-  border: 1px solid #ddd;
-  margin: 0 auto;
-  border-radius: 10px;
-  box-shadow: 0px 5px 10px 0 rgba(0, 0, 0, 0.1);
-  background: #fff;
-`;
 
 const ConfirmDeletion: React.FC<{ pluginId: string }> = ({ pluginId }) => {
   const api = useApi();

@@ -72,7 +72,7 @@ export const assignUserToDelegatedRequest: RouteMiddleware<{ id: string }> = asy
 
   const taskId = context.params.id;
 
-  const users = await context.omeka.getUsersByRoles(siteId, ['admin'], true);
+  const users = await context.siteManager.getUsersByRoles(siteId, ['admin'], true);
 
   const siteApi = api.asUser({ siteId });
   const first = users[0];

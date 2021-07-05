@@ -41,7 +41,7 @@ export const refreshToken: RouteMiddleware<{ slug: string }, { token: string }> 
       return;
     }
 
-    const userResp = await context.omeka.getUser(userDetails.user.id);
+    const userResp = await context.siteManager.getUserAndSites(userDetails.user.id);
     if (!userResp) {
       context.response.status = 403;
       context.response.body = { error: 'User not found' };
