@@ -162,6 +162,7 @@ import { assignRandomResource } from './routes/projects/assign-random-resource';
 import { router as activityStreamRoutes } from './activity-streams/router';
 import { getCollectionDeletionSummary } from './routes/iiif/collections/delete-collection-summary';
 import { deleteCanvasSummary } from './routes/iiif/canvases/delete-canvas-summary';
+import { deleteProjectSummary } from './routes/projects/delete-project-summary';
 import { deleteCanvas } from './routes/iiif/canvases/delete-canvas';
 
 export const router = new TypedRouter({
@@ -345,6 +346,7 @@ export const router = new TypedRouter({
     '/api/madoc/projects/:id/personal-notes/:resourceId',
     updateProjectNote,
   ],
+  'get-project-deletion-summary': [TypedRouter.GET, '/api/madoc/projects/:id/deletionSummary', deleteProjectSummary],
 
   // Themes
   'list-themes': [TypedRouter.GET, '/api/madoc/system/themes', listThemes],

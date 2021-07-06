@@ -481,6 +481,10 @@ export class ApiClient {
     });
   }
 
+  async getProjectDeletionSummary(id: number) {
+    return this.request<ProjectDeletionSummary>(`/api/madoc/iiif/projects/${id}/deletion-summary`);
+  }
+
   async updateProjectMetadata(id: number, metadata: MetadataUpdate) {
     return this.request<any>(`/api/madoc/projects/${id}/metadata`, {
       method: 'PUT',

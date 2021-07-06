@@ -33,3 +33,16 @@ export type CanvasDeletionSummary = {
   tasks: number;
   parentTasks: number;
 };
+
+// TODO can a project exist on multiple sites?
+export type ProjectDeletionSummary = {
+  siteCount: number;
+  collectionCount: number;
+  manifestCount: number;
+  search: {
+    indexed: boolean;
+    id: string;
+  };
+  tasks: number;
+  parentTasks: number;
+}
