@@ -4,8 +4,8 @@ import { useApi } from './use-api';
 
 export type ApiArgs<T extends keyof ApiClient> = MethodArgs<ApiClient[T]>;
 
-type MethodArgs<T> = T extends (...arg: infer R) => Promise<any> ? R : never;
-type MethodReturn<T> = T extends (...arg: any) => Promise<infer R> ? R : never;
+export type MethodArgs<T> = T extends (...arg: infer R) => Promise<any> ? R : never;
+export type MethodReturn<T> = T extends (...arg: any) => Promise<infer R> ? R : never;
 
 export type AdditionalHooks<Params = any, Query = any, Key extends GetApiMethods = GetApiMethods> = {
   name: GetApiMethods;
@@ -90,6 +90,28 @@ export type GetApiMethods = keyof Pick<
 
 const keys = Object.getOwnPropertyNames(ApiClient.prototype);
 
+export function createApiHook(
+  key: string,
+  { extension, queryMethod = useQuery }: { extension?: string; queryMethod?: any } = {}
+) {
+  return (args: any, config: any) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const hookedApi = useApi();
+    const argsToUse = args();
+    const keyToUse = extension ? `${extension}/${key}` : key;
+    const apiToUse: any = extension ? (hookedApi as any)[extension] : (hookedApi as any);
+
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return queryMethod(
+      [keyToUse, argsToUse],
+      () => {
+        return apiToUse[key](...argsToUse);
+      },
+      { enabled: typeof argsToUse !== 'undefined', ...(config || {}) }
+    );
+  };
+}
+
 export const apiHooks: {
   [Key in GetApiMethods]: (
     creator: () => undefined | MethodArgs<ApiClient[Key]>,
@@ -98,20 +120,7 @@ export const apiHooks: {
 } = {} as any;
 for (const key of keys) {
   if (key.startsWith('get') || key === 'searchQuery') {
-    (apiHooks as any)[key] = (args: any, config: any) => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const hookedApi = useApi();
-      const argsToUse = args();
-
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      return useQuery(
-        [key, argsToUse],
-        () => {
-          return (hookedApi as any)[key](...argsToUse);
-        },
-        { enabled: typeof argsToUse !== 'undefined', ...(config || {}) }
-      );
-    };
+    (apiHooks as any)[key] = createApiHook(key);
   }
 }
 
@@ -123,19 +132,6 @@ export const paginatedApiHooks: {
 } = {} as any;
 for (const key of keys) {
   if (key.startsWith('get') || key === 'searchQuery') {
-    (paginatedApiHooks as any)[key] = (args: any, config: any) => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const hookedApi = useApi();
-      const argsToUse = args();
-
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      return usePaginatedQuery(
-        [key, argsToUse],
-        () => {
-          return (hookedApi as any)[key](...argsToUse);
-        },
-        { enabled: typeof argsToUse !== 'undefined', ...(config || {}) }
-      );
-    };
+    (paginatedApiHooks as any)[key] = createApiHook(key, { queryMethod: usePaginatedQuery });
   }
 }

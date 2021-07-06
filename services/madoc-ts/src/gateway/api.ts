@@ -18,6 +18,7 @@ import { NotificationExtension } from '../extensions/notifications/extension';
 import { defaultPageBlockDefinitions } from '../extensions/page-blocks/default-definitions';
 import { PageBlockExtension } from '../extensions/page-blocks/extension';
 import { MediaExtension } from '../extensions/media/extension';
+import { SiteManagerExtension } from "../extensions/site-manager/extension";
 import { SystemExtension } from '../extensions/system/extension';
 import { TaskExtension } from '../extensions/tasks/extension';
 import { ThemeExtension } from '../extensions/themes/extension';
@@ -92,6 +93,7 @@ export class ApiClient {
   system: SystemExtension;
   themes: ThemeExtension;
   notifications: NotificationExtension;
+  siteManager: SiteManagerExtension;
 
   constructor(options: {
     gateway: string;
@@ -114,6 +116,7 @@ export class ApiClient {
     this.system = new SystemExtension(this);
     this.themes = new ThemeExtension(this);
     this.notifications = new NotificationExtension(this);
+    this.siteManager = new SiteManagerExtension(this);
     this.captureModelDataSources = [plainTextSource];
     this.captureModelExtensions = new ExtensionManager(
       options.customCaptureModelExtensions

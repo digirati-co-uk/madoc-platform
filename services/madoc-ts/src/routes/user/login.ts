@@ -19,7 +19,7 @@ export const loginPage: RouteMiddleware<{ slug: string }, { email: string; passw
     });
     const userId = Number(response.headers.get('X-Authenticated-User-Id'));
     if (userId && !context.state.jwt) {
-      const foundUser = await context.omeka.getUser(userId);
+      const foundUser = await context.siteManager.getUserAndSites(userId);
       if (foundUser) {
         const { user, sites } = foundUser;
         context.state.authenticatedUser = {
@@ -42,7 +42,7 @@ export const loginPage: RouteMiddleware<{ slug: string }, { email: string; passw
   const { email, password } = context.requestBody || {};
   if (context.request.method === 'POST') {
     try {
-      const resp = await context.omeka.verifyLogin(email, password);
+      const resp = await context.siteManager.verifyLogin(email, password);
       if (resp) {
         const { user, sites } = resp;
         // Success.

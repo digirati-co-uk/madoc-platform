@@ -2,12 +2,14 @@ import { Tag } from '@capture-models/editor';
 import React, { useEffect, useRef, useState } from 'react';
 import { Select } from 'react-functional-select';
 import { useTranslation } from 'react-i18next';
+import { DefaultSelect } from '../atoms/DefaulSelect';
 import { useApi } from '../hooks/use-api';
 
 export type AutocompleteUser = {
   id: number;
   name: string;
   role?: string;
+  email?: string;
 };
 
 type UserAutoCompleteProps = {
@@ -18,12 +20,16 @@ type UserAutoCompleteProps = {
   initialQuery?: boolean;
   roles?: string[];
   updateValue: (user?: AutocompleteUser) => void;
+  allUsers?: boolean;
 };
 
 function renderOptionLabel(option: AutocompleteUser) {
   return (
     <>
       <strong style={{ lineHeight: '1.8em', verticalAlign: 'middle' }}>{option.name}</strong>
+      {option.email ? (
+        <span style={{ lineHeight: '1.8em', fontSize: '0.8em', marginLeft: '1em' }}>{option.email}</span>
+      ) : null}
       {option.role ? <Tag style={{ float: 'right', marginLeft: 10 }}>{option.role}</Tag> : null}
     </>
   );
@@ -39,7 +45,9 @@ export const UserAutocomplete: React.FC<UserAutoCompleteProps> = props => {
 
   useEffect(() => {
     if (props.initialQuery) {
-      api.userAutocomplete('', props.roles).then(items => {
+      const query = props.allUsers ? api.siteManager.searchAllUsers('') : api.userAutocomplete('', props.roles);
+
+      query.then(items => {
         // Make API Request.
         setOptions(alreadyExistingUsers => {
           if (alreadyExistingUsers.length) {
@@ -77,9 +85,12 @@ export const UserAutocomplete: React.FC<UserAutoCompleteProps> = props => {
   };
 
   const onSearchChange = async (value: string | undefined) => {
-    if (value) {
+    if (value || props.initialQuery) {
       try {
-        const items = await api.userAutocomplete(value, props.roles);
+        const items = props.allUsers
+          ? await api.siteManager.searchAllUsers(value || '')
+          : await api.userAutocomplete(value || '', props.roles);
+
         // Make API Request.
         setOptions(items.users);
         setIsLoading(false);
@@ -92,35 +103,8 @@ export const UserAutocomplete: React.FC<UserAutoCompleteProps> = props => {
 
   return (
     <>
-      <Select
+      <DefaultSelect
         ref={ref}
-        themeConfig={{
-          color: {
-            primary: '#005cc5',
-          },
-          select: {
-            css: 'font-size: 0.9em;',
-          },
-          control: {
-            boxShadow: '0 0 0 0',
-            focusedBorderColor: '#005cc5',
-            selectedBgColor: '#005cc5',
-            backgroundColor: '#fff',
-          },
-          noOptions: {
-            fontSize: '.8em',
-            padding: '2em 0',
-          },
-          menu: {
-            css: `
-              position: fixed;
-              width: 500px;
-              overflow: hidden;
-              border: none;
-              box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.18), 0 0px 0px 1px rgba(0, 0, 0, 0.15), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
-            `,
-          },
-        }}
         isInvalid={!!error}
         inputId={props.id}
         initialValue={options[0]}
@@ -134,7 +118,7 @@ export const UserAutocomplete: React.FC<UserAutoCompleteProps> = props => {
         onInputChange={onInputChange}
         onSearchChange={onSearchChange}
         getOptionValue={option => option.id}
-        getOptionLabel={option => option.name}
+        getOptionLabel={option => option.name + (option.email || '')}
         renderOptionLabel={renderOptionLabel}
       />
     </>

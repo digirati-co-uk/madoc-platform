@@ -27,7 +27,7 @@ export const updateCuratedFeed: RouteMiddleware<
   const primaryStream = (feedMap as any)[context.params.feed];
   const summary = (messageMap as any)[context.params.feed];
   const userApi = api.asUser({ userId: id, siteId });
-  const site = await context.omeka.getSite(siteId);
+  const site = await context.siteManager.getSiteById(siteId);
 
   if (!primaryStream) {
     throw new NotFoundError();

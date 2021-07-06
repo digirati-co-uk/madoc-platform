@@ -40,8 +40,8 @@ export class KoaContextMock {
       status: 0,
       body: {},
     },
-    omeka: {
-      getUserById: (userId: number, siteId: number) => {
+    siteManager: {
+      getSiteUserById: (userId: number, siteId: number) => {
         if (userId === this.context.state.jwt.user.id) {
           return {
             id: this.context.state.jwt.user.id,

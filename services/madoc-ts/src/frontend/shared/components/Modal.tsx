@@ -13,6 +13,7 @@ import {
 import { createPortal } from 'react-dom';
 
 export const ModalButton: React.FC<{
+  ref?: any;
   title: string;
   button?: boolean;
   as?: any;

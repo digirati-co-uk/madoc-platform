@@ -24,7 +24,7 @@ export const parseJwt: RouteMiddleware<{ slug?: string }> = async (context, next
 
   if (asUser && asUser.userId && asUser.siteId && !asUser.userName) {
     try {
-      const user = await context.omeka.getUserById(asUser.userId, asUser.siteId);
+      const user = await context.siteManager.getSiteUserById(asUser.userId, asUser.siteId);
       if (user) {
         asUser.userName = user.name;
       }

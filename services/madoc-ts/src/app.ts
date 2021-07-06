@@ -6,7 +6,9 @@ import { checkExpiredManifests } from './cron/check-expired-manifests';
 import './frontend/shared/plugins/globals';
 import { createPluginManager } from './middleware/create-plugin-manager';
 import { errorHandler } from './middleware/error-handler';
+import { SiteUserRepository } from './repository/site-user-repository';
 import { CronJobs } from './utility/cron-jobs';
+import { OmekaApi } from './utility/omeka-api';
 import { TypedRouter } from './utility/typed-router';
 import { createPostgresPool } from './database/create-postgres-pool';
 import { postgresConnection } from './middleware/postgres-connection';
@@ -40,6 +42,9 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
     }
 
     await syncOmeka(mysqlPool, pool, config);
+
+    const siteRepo = new SiteUserRepository(pool, new OmekaApi(mysqlPool), 'HYBRID_OMEKA');
+    await siteRepo.legacyOmekaDatabaseSync();
   }
 
   if (
