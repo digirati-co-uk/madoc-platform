@@ -21,3 +21,15 @@ export type CollectionDeletionSummary = {
   tasks: number;
   parentTasks: number;
 };
+
+// TODO can a canvas be in multiple manifests? can a canvas be in a capture model?
+export type CanvasDeletionSummary = {
+  siteCount: number;
+  manifestCount: number;
+  search: {
+    indexed: boolean;
+    id: string;
+  }
+  tasks: number;
+  parentTasks: number;
+};

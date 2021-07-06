@@ -161,6 +161,8 @@ import { getProjectTask } from './routes/projects/get-project-task';
 import { assignRandomResource } from './routes/projects/assign-random-resource';
 import { router as activityStreamRoutes } from './activity-streams/router';
 import { getCollectionDeletionSummary } from './routes/iiif/collections/delete-collection-summary';
+import { deleteCanvasSummary } from './routes/iiif/canvases/delete-canvas-summary';
+import { deleteCanvas } from './routes/iiif/canvases/delete-canvas';
 
 export const router = new TypedRouter({
   // Normal route
@@ -296,6 +298,8 @@ export const router = new TypedRouter({
   'convert-linking-property': [TypedRouter.POST, '/api/madoc/iiif/linking/:id/convert', convertLinking],
   'get-canvas-plaintext': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/plaintext', getCanvasPlaintext],
   'get-canvas-source': [TypedRouter.GET, '/api/madoc/iiif/canvas-source', getCanvasReference],
+  'get-canvas-deletion-summary': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/deletion-summary', deleteCanvasSummary],
+  'delete-canvas': [TypedRouter.DELETE, '/api/madoc/iiif/canvases/:id', deleteCanvas],
 
   // Import API
   'import-manifest': [TypedRouter.POST, '/api/madoc/iiif/import/manifest', importManifest],

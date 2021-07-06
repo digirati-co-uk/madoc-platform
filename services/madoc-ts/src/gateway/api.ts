@@ -24,7 +24,7 @@ import { TaskExtension } from '../extensions/tasks/extension';
 import { ThemeExtension } from '../extensions/themes/extension';
 import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
 import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
-import { ManifestDeletionSummary } from "../types/deletion-summary";
+import {CanvasDeletionSummary, ManifestDeletionSummary, ProjectDeletionSummary} from "../types/deletion-summary";
 import { Site } from '../types/omeka/Site';
 import { SingleUser } from '../types/omeka/User';
 import { Pm2Status } from '../types/pm2';
@@ -881,6 +881,16 @@ export class ApiClient {
 
   async getCanvasPlaintext(id: number) {
     return this.request<{ found: boolean; transcription: string }>(`/api/madoc/iiif/canvases/${id}/plaintext`);
+  }
+
+  async getCanvasDeletionSummary(id: number) {
+    return this.request<CanvasDeletionSummary>(`/api/madoc/iiif/canvases/${id}/deletion-summary`);
+  }
+
+  async deleteCanvas(id: number): Promise<void> {
+    return this.request(`/api/madoc/iiif/canvases/${id}`, {
+      method: 'DELETE',
+    });
   }
 
   async getLinkingProperty(id: number) {
