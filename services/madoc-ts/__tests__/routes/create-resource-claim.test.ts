@@ -547,8 +547,8 @@ describe('Create resource claim', () => {
         status: 0,
         body: {},
       },
-      omeka: {
-        getUserById(userId: number, siteId: number) {
+      siteManager: {
+        getSiteUserById(userId: number, siteId: number) {
           return {
             id: userId,
             name: 'Test user',
