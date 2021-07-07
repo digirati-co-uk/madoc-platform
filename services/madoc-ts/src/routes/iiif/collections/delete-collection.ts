@@ -9,7 +9,11 @@ export const deleteCollection: RouteMiddleware<{ id: number }> = async context =
   const collectionId = context.params.id;
   const siteApi = api.asUser({ siteId });
 
-  const {} = await siteApi.getManifestDeletionSummary(collectionId);
+  const deletionSummary = await siteApi.getManifestDeletionSummary(collectionId);
+
+  if (deletionSummary.search.indexed && deletionSummary.search.id) {
+    await siteApi.searchDeleteIIIF(deletionSummary.search.id);
+  }
 
   //await context.connection.any(deleteResource(context.params.id, 'collection', siteId));
 

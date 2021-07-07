@@ -8,7 +8,11 @@ export const deleteManifest: RouteMiddleware<{ id: number }> = async context => 
 
   const siteApi = api.asUser({ siteId });
 
-  const {} = await siteApi.getManifestDeletionSummary(manifestId);
+  const deletionSummary = await siteApi.getManifestDeletionSummary(manifestId);
+
+  if (deletionSummary.search.indexed && deletionSummary.search.id) {
+    await siteApi.searchDeleteIIIF(deletionSummary.search.id);
+  }
 
   // Delete derived manifest
   //  - Manifest items

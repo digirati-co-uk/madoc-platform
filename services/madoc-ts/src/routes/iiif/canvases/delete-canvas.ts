@@ -9,7 +9,11 @@ export const deleteCanvas: RouteMiddleware<{ id: number }> = async context => {
 
   const canvasId = context.params.id;
   const siteApi = api.asUser({ siteId });
-  const {} = await siteApi.getCanvasDeletionSummary(canvasId);
+  const deletionSummary = await siteApi.getCanvasDeletionSummary(canvasId);
+
+  if (deletionSummary.search.indexed && deletionSummary.search.id) {
+    await siteApi.searchDeleteIIIF(deletionSummary.search.id);
+  }
 
   // await context.connection.any(deleteResource(context.params.id, 'canvas', siteId));
   //

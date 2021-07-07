@@ -164,6 +164,7 @@ import { getCollectionDeletionSummary } from './routes/iiif/collections/delete-c
 import { deleteCanvasSummary } from './routes/iiif/canvases/delete-canvas-summary';
 import { deleteProjectSummary } from './routes/projects/delete-project-summary';
 import { deleteCanvas } from './routes/iiif/canvases/delete-canvas';
+import { deleteProject } from './routes/projects/deleteProject';
 
 export const router = new TypedRouter({
   // Normal route
@@ -347,6 +348,7 @@ export const router = new TypedRouter({
     updateProjectNote,
   ],
   'get-project-deletion-summary': [TypedRouter.GET, '/api/madoc/projects/:id/deletionSummary', deleteProjectSummary],
+  'delete-project': [TypedRouter.DELETE, '/api/madoc/projects/:id', deleteProject],
 
   // Themes
   'list-themes': [TypedRouter.GET, '/api/madoc/system/themes', listThemes],

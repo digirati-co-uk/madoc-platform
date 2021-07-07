@@ -572,7 +572,9 @@ export class ApiClient {
   }
 
   async deleteProject(projectId: number) {
-    throw new Error('Not yet implemented');
+    return this.request<any>(`/api/madoc/projects/${projectId}`, {
+      method: 'DELETE',
+    });
   }
 
   // Locale.
@@ -1978,6 +1980,16 @@ export class ApiClient {
   async searchGetIIIF(id: string) {
     try {
       return this.request(`/api/search/iiif/${id}`);
+    } catch (err) {
+      return undefined;
+    }
+  }
+
+  async searchDeleteIIIF(id: string) {
+    try {
+      return this.request(`/api/search/iiif/${id}`, {
+        method: 'DELETE',
+      });
     } catch (err) {
       return undefined;
     }
