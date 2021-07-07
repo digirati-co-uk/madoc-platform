@@ -9,15 +9,6 @@ export const deleteProjectSummary: RouteMiddleware<{ id: number }> = async conte
 
   const siteApi = api.asUser({siteId});
 
-  // Fact checking stage.
-  const { site_count } = await context.connection.one(
-    // This will let us know if the manifest appears on any other sites.
-    // If === 1 then we can safely delete underlying resource.
-    sql<{ site_count: number; manifest_count: number }>`
-      select COUNT(distinct site_id) as site_count from iiif_derived_resource where resource_id=${projectId}
-    `
-  );
-
   const project = await siteApi.getProject(projectId);
   const { collection_count } = await context.connection.one(
     sql<{ collection_count: number }>`
@@ -54,7 +45,6 @@ export const deleteProjectSummary: RouteMiddleware<{ id: number }> = async conte
   });
 
   context.response.body = {
-    siteCount: site_count,
     collectionCount: collection_count,
     manifestCount: manifest_count,
     search: {

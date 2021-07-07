@@ -32,12 +32,6 @@ export const DeleteProject: UniversalComponent<DeleteProjectType> = createUniver
               This project contains <strong>{data?.collectionCount}</strong> collections, and
               <strong>{data?.manifestCount}</strong> manifests. These will not be deleted.
             </p>
-            {data?.siteCount !== 1 ? (
-              <p>
-                This project will still be available on <strong>{data.siteCount - 1}</strong> other site(s). You must
-                delete from all sites to fully delete the project.
-              </p>
-            ) : null}
             {data.search?.indexed ? <p>This item is currently in the search index, it will be removed</p> : null}
             {data.tasks ? (
               <p>
