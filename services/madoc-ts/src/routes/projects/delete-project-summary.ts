@@ -18,11 +18,12 @@ export const deleteProjectSummary: RouteMiddleware<{ id: number }> = async conte
     `
   );
 
+  const project = await siteApi.getProject(projectId);
   const { collection_count } = await context.connection.one(
     sql<{ collection_count: number }>`
       select COUNT(*) as collection_count from iiif_derived_resource
         where
-          id in (select item_id from iiif_derived_resource_items where resource_id = &{projectId})
+          id in (select item_id from iiif_derived_resource_items where resource_id = ${project.collection_id})
         and resource_type = 'collection'
     `
   );
@@ -30,7 +31,7 @@ export const deleteProjectSummary: RouteMiddleware<{ id: number }> = async conte
     sql<{ manifest_count: number }>`
       select COUNT(*) as manifest_count from iiif_derived_resource
         where
-          id in (select item_id from iiif_derived_resource_items where resource_id = &{projectId})
+          id in (select item_id from iiif_derived_resource_items where resource_id = ${project.collection_id})
         and resource_type = 'manifest'
     `
   );
