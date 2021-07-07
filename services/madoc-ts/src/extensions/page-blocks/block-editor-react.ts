@@ -2,10 +2,7 @@ import { BaseField } from '@capture-models/types';
 import React from 'react';
 import { blockConfigFor } from '../../frontend/shared/plugins/external/block-config-for';
 import { EditorialContext } from '../../types/schemas/site-page';
-import { PageBlockDefinition, PageBlockEditor } from './extension';
-import mitt from 'mitt';
-
-export const reactBlockEmitter = mitt();
+import { PageBlockDefinition, PageBlockEditor, PageBlockExtension } from './extension';
 
 export function blockEditorFor<Props, MappedProps = Props>(
   Component: React.FC<Props>,
@@ -25,7 +22,7 @@ export function blockEditorFor<Props, MappedProps = Props>(
 ): PageBlockDefinition<any, any, any, any> {
   const definition = blockConfigFor(Component, model);
 
-  reactBlockEmitter.emit('block', definition);
+  PageBlockExtension.register(definition);
 
   return definition;
 }

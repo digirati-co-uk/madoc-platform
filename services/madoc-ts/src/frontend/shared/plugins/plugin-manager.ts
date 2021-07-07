@@ -1,5 +1,5 @@
 import { captureModelShorthand } from '@capture-models/helpers';
-import { reactBlockEmitter } from '../../../extensions/page-blocks/block-editor-react';
+import { PageBlockExtension } from '../../../extensions/page-blocks/extension';
 import { ModuleWrapper } from '../../../types/plugins';
 import { SitePlugin } from '../../../types/schemas/plugins';
 import { RouteComponents } from '../../site/routes';
@@ -39,7 +39,7 @@ export class PluginManager {
       if (newBlocks) {
         const newBlockDefinitions = Object.values(newBlocks).map((r: any) => r[Symbol.for('slot-model')]);
         for (const block of newBlockDefinitions) {
-          reactBlockEmitter.emit('remove-plugin-block', {
+          PageBlockExtension.removePlugin({
             pluginId: plugin.definition.id,
             siteId: plugin.definition.siteId,
             type: block.type,
@@ -55,10 +55,10 @@ export class PluginManager {
       if (newBlocks) {
         const newBlockDefinitions = Object.values(newBlocks).map((r: any) => r[Symbol.for('slot-model')]);
         for (const block of newBlockDefinitions) {
-          reactBlockEmitter.emit('plugin-block', {
+          PageBlockExtension.registerPlugin({
             pluginId: plugin.definition.id,
             siteId: plugin.definition.siteId,
-            block: (block as any).modelShorthand
+            definition: (block as any).modelShorthand
               ? {
                   ...block,
                   model: this.ensureFullModelDocument((block as any).modelShorthand),
