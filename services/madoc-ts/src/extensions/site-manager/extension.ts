@@ -1,6 +1,6 @@
 import { stringify } from 'query-string';
 import { ApiClient } from '../../gateway/api';
-import { BaseExtension } from '../extension-manager';
+import { BaseExtension, defaultDispose } from '../extension-manager';
 import { SiteUser, User } from './types';
 
 export class SiteManagerExtension implements BaseExtension {
@@ -8,6 +8,10 @@ export class SiteManagerExtension implements BaseExtension {
 
   constructor(api: ApiClient) {
     this.api = api;
+  }
+
+  dispose() {
+    defaultDispose(this);
   }
 
   getAllSites() {

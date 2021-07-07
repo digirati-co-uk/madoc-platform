@@ -110,8 +110,12 @@ export class PageBlockExtension implements BaseExtension {
         return found;
       }
     }
+  }
 
     return this.definitionMap[type];
+  dispose() {
+    super.dispose();
+    defaultDispose(this);
   }
 
   /**

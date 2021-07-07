@@ -4,13 +4,20 @@ import { ApiClient } from '../../gateway/api';
 import { BaseTask } from '../../gateway/tasks/base-task';
 import { NotificationList, NotificationRequest } from '../../types/notifications';
 import { parseUrn } from '../../utility/parse-urn';
-import { BaseExtension } from '../extension-manager';
+import { BaseExtension, defaultDispose } from '../extension-manager';
 
 export class NotificationExtension implements BaseExtension {
   api: ApiClient;
 
   constructor(api: ApiClient) {
     this.api = api;
+  }
+
+  /**
+   * NOTE: This extension is run in "light" mode, and cannot have side effects.
+   */
+  dispose() {
+    defaultDispose(this);
   }
 
   getAllNotifications(page = 0) {

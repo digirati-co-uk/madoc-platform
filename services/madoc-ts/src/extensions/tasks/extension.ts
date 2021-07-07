@@ -1,6 +1,6 @@
 import { ApiClient } from '../../gateway/api';
 import { BaseTask } from '../../gateway/tasks/base-task';
-import { BaseExtension } from '../extension-manager';
+import { BaseExtension, defaultDispose } from '../extension-manager';
 import { Resolver } from './resolvers/resolver';
 import { SubjectResolver } from './resolvers/subject-resolver';
 
@@ -11,6 +11,10 @@ export class TaskExtension implements BaseExtension {
   constructor(api: ApiClient) {
     this.api = api;
     this.resolvers = [new SubjectResolver(api)];
+  }
+
+  dispose() {
+    defaultDispose(this);
   }
 
   // When you load a task we need to do the following:

@@ -1,13 +1,17 @@
 import { ApiClient } from '../../gateway/api';
 import { RemotePlugin } from '../../types/plugins';
 import { SitePlugin } from '../../types/schemas/plugins';
-import { BaseExtension } from '../extension-manager';
+import { BaseExtension, defaultDispose } from '../extension-manager';
 
 export class SystemExtension implements BaseExtension {
   api: ApiClient;
 
   constructor(api: ApiClient) {
     this.api = api;
+  }
+
+  dispose() {
+    defaultDispose(this);
   }
 
   listPlugins() {

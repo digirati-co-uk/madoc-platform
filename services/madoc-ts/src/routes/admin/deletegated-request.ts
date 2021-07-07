@@ -10,7 +10,8 @@ import * as apiActionTask from '../../gateway/tasks/api-action-task';
 export const delegatedRequest: RouteMiddleware<{ id: string }> = async context => {
   const { siteId, id, name } = userWithScope(context, ['site.admin']);
   const taskId = context.params.id;
-  const userApi = api.asUser({ userId: id, siteId, userName: name });
+  const userApi = api.asUser({ userId: id, siteId, userName: name }, {}, true);
+  context.disposableApis.push(userApi);
 
   const task = await userApi.getTask<ApiActionTask>(taskId, { detail: true });
 

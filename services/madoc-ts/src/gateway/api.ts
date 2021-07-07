@@ -72,6 +72,20 @@ import { ConfigResponse } from '../types/schemas/config-response';
 import { ResourceLinkRow } from '../database/queries/linking-queries';
 import { SearchIndexTask } from './tasks/search-index-task';
 
+export type ApiClientWithoutExtensions = Omit<
+  ApiClient,
+  | 'captureModelExtensions'
+  | 'pageBlocks'
+  | 'media'
+  | 'tasks'
+  | 'system'
+  | 'themes'
+  | 'siteManager'
+  | 'projectTemplates'
+  | 'getCaptureModelDataSources'
+  | 'cloneCaptureModel'
+>;
+
 export class ApiClient {
   private readonly gateway: string;
   private readonly isServer: boolean;
@@ -84,16 +98,17 @@ export class ApiClient {
   private errorRecoveryHandlers: Array<() => void> = [];
   private isDown = false;
   private currentUser?: { scope: string[]; user: { id: string; name?: string } };
-  private readonly captureModelDataSources: DynamicData[];
+  private readonly captureModelDataSources: DynamicData[] = [];
   // Public.
-  captureModelExtensions: ExtensionManager<CaptureModelExtension>;
-  pageBlocks: PageBlockExtension;
-  media: MediaExtension;
-  tasks: TaskExtension;
-  system: SystemExtension;
-  themes: ThemeExtension;
-  notifications: NotificationExtension;
-  siteManager: SiteManagerExtension;
+  captureModelExtensions!: ExtensionManager<CaptureModelExtension>;
+  pageBlocks!: PageBlockExtension;
+  media!: MediaExtension;
+  tasks!: TaskExtension;
+  system!: SystemExtension;
+  themes!: ThemeExtension;
+  notifications!: NotificationExtension;
+  siteManager!: SiteManagerExtension;
+  projectTemplates!: ProjectTemplateExtension;
 
   constructor(options: {
     gateway: string;
@@ -102,6 +117,7 @@ export class ApiClient {
     asUser?: { userId?: number; siteId?: number; userName?: string };
     customerFetcher?: typeof fetchJson;
     customCaptureModelExtensions?: (api: ApiClient) => Array<CaptureModelExtension>;
+    withoutExtensions?: boolean;
   }) {
     this.gateway = options.gateway;
     this.jwtFunction = typeof options.jwt === 'string' ? undefined : options.jwt;
@@ -110,6 +126,14 @@ export class ApiClient {
     this.isServer = !(globalThis as any).window;
     this.fetcher = options.customerFetcher || fetchJson;
     this.publicSiteSlug = options.publicSiteSlug;
+
+    // This extension will be fine.
+    this.notifications = new NotificationExtension(this);
+
+    if (options.withoutExtensions) {
+      return;
+    }
+
     this.pageBlocks = new PageBlockExtension(this, defaultPageBlockDefinitions);
     this.media = new MediaExtension(this);
     this.tasks = new TaskExtension(this);
@@ -130,6 +154,20 @@ export class ApiClient {
             new ConfigInjectionExtension(this),
           ]
     );
+  }
+
+  dispose() {
+    this.pageBlocks.dispose();
+    this.media.dispose();
+    this.tasks.dispose();
+    this.system.dispose();
+    this.themes.dispose();
+    this.notifications.dispose();
+    this.siteManager.dispose();
+    this.projectTemplates.dispose();
+    this.captureModelExtensions.dispose();
+    this.errorHandlers = [];
+    this.errorRecoveryHandlers = [];
   }
 
   private getJwt() {
@@ -387,14 +425,38 @@ export class ApiClient {
     });
   }
 
-  asUser(user: { userId?: number; siteId?: number; userName?: string }, options?: { siteSlug?: string }): ApiClient {
+  asUser(
+    user: { userId?: number; siteId?: number; userName?: string },
+    options: { siteSlug?: string },
+    withExtensions: true
+  ): ApiClient;
+  asUser(
+    user: { userId?: number; siteId?: number; userName?: string },
+    options?: { siteSlug?: string }
+  ): ApiClientWithoutExtensions;
+  asUser(
+    user: { userId?: number; siteId?: number; userName?: string },
+    options?: { siteSlug?: string },
+    withExtensions?: boolean
+  ): ApiClientWithoutExtensions {
     return new ApiClient({
       gateway: this.gateway,
       jwt: this.getJwt(),
       asUser: user,
       customerFetcher: this.fetcher,
       publicSiteSlug: options && options.siteSlug ? options.siteSlug : this.publicSiteSlug,
+      withoutExtensions: !withExtensions,
     });
+  }
+
+  async asUserWithExtensions(
+    callback: (api: ApiClient) => Promise<void>,
+    user: { userId?: number; siteId?: number; userName?: string },
+    options?: { siteSlug?: string }
+  ) {
+    const userApi = this.asUser(user, options);
+    await callback(userApi as any);
+    userApi.dispose(); // Need to make sure extensions unregister their events properly.
   }
 
   getCaptureModelDataSources() {

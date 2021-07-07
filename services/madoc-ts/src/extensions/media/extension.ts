@@ -1,7 +1,7 @@
 import { stringify } from 'query-string';
 import { ApiClient } from '../../gateway/api';
 import { CreateMediaRow, MediaItem, MediaListResponse } from '../../types/media';
-import { BaseExtension } from '../extension-manager';
+import { BaseExtension, defaultDispose } from '../extension-manager';
 
 async function getImageDimensions(file: File): Promise<{ height: number; width: number }> {
   return new Promise(resolve => {
@@ -23,6 +23,10 @@ export class MediaExtension implements BaseExtension {
 
   constructor(api: ApiClient) {
     this.api = api;
+  }
+
+  dispose() {
+    defaultDispose(this);
   }
 
   async createMedia(file: File) {
