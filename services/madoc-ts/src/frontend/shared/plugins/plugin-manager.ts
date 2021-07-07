@@ -1,5 +1,6 @@
 import { captureModelShorthand } from '@capture-models/helpers';
 import { PageBlockExtension } from '../../../extensions/page-blocks/extension';
+import { ProjectTemplateExtension } from '../../../extensions/projects/extension';
 import { ModuleWrapper } from '../../../types/plugins';
 import { SitePlugin } from '../../../types/schemas/plugins';
 import { RouteComponents } from '../../site/routes';
@@ -22,6 +23,7 @@ export class PluginManager {
     // @todo rethink.
     for (const plugin of this.plugins) {
       this.registerBlocks(plugin);
+      this.registerProjectTemplates(plugin);
     }
   }
 
@@ -70,6 +72,30 @@ export class PluginManager {
     }
   }
 
+  registerProjectTemplates(plugin: PluginModule) {
+    if (plugin.module.projectTemplates) {
+      for (const projectTemplate of plugin.module.projectTemplates) {
+        ProjectTemplateExtension.registerPlugin({
+          pluginId: plugin.definition.id,
+          siteId: plugin.siteId,
+          definition: projectTemplate,
+        });
+      }
+    }
+  }
+
+  unregisterProjectTemplates(plugin: PluginModule) {
+    if (plugin.module.projectTemplates) {
+      for (const projectTemplate of plugin.module.projectTemplates) {
+        ProjectTemplateExtension.removePlugin({
+          pluginId: plugin.definition.id,
+          siteId: plugin.siteId,
+          type: projectTemplate.type,
+        });
+      }
+    }
+  }
+
   listPlugins(siteId: number) {
     return this.plugins
       .filter(plugin => {
@@ -89,6 +115,7 @@ export class PluginManager {
       const idx = this.plugins.indexOf(found);
       this.plugins = this.plugins.slice(0, idx).concat(this.plugins.slice(idx + 1));
       this.unregisterBlocks(found);
+      this.unregisterProjectTemplates(found);
     }
   }
 
@@ -102,6 +129,7 @@ export class PluginManager {
       this.plugins.push(newPlugin);
     }
     this.registerBlocks(newPlugin);
+    this.registerProjectTemplates(newPlugin);
   }
 
   updatePluginModule(id: string, module: any, siteId?: number, revision?: string) {
@@ -124,6 +152,7 @@ export class PluginManager {
       }
       this.plugins[idx].module = module;
       this.registerBlocks(this.plugins[idx]);
+      this.registerProjectTemplates(this.plugins[idx]);
       if (revision) {
         this.plugins[idx].definition.development = {
           enabled: true,

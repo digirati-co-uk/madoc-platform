@@ -1,6 +1,7 @@
 import { DocumentStore, StructureStore } from '@capture-models/editor';
-import { generateId, traverseDocument } from '@capture-models/helpers';
+import { generateId } from '@capture-models/helpers';
 import React, { useEffect, useMemo } from 'react';
+import { generateModelFields } from '../../../../../utility/generate-model-fields';
 
 export const AutoStructure: React.FC = () => {
   const newDocument = DocumentStore.useStoreState(s => s.document);
@@ -51,33 +52,12 @@ export const AutoStructure: React.FC = () => {
   useEffect(() => {
     // When the document changes, can we update the structure?
     if (newDocument && automaticStructure) {
-      const fullTree = { value: null } as any;
-      traverseDocument<{ value: any[] }>(newDocument, {
-        beforeVisitEntity: (entity, key, parent) => {
-          entity.temp = entity.temp ? entity.temp : { value: [] };
-          if (parent && parent.temp && parent.temp.value) {
-            parent.temp.value.push([key, entity.temp.value]);
-          }
-        },
-        visitField: (field, key, parent) => {
-          field.temp = { value: key as any };
-          if (parent && parent.temp && parent.temp.value) {
-            parent.temp.value.push(key);
-          }
-        },
-        visitEntity: (entity, key, parent) => {
-          if (!parent && entity.temp && entity.temp.value) {
-            // The root has complete.
-            fullTree.value = entity.temp.value;
-          }
-        },
-      });
-
-      if (fullTree.value) {
+      const newModelFields = generateModelFields(newDocument);
+      if (newModelFields.length) {
         try {
           setModelFields({
             index: [0],
-            fields: fullTree.value,
+            fields: newModelFields,
           });
         } catch (e) {
           // If it fails that's fine, its a UX improvement.

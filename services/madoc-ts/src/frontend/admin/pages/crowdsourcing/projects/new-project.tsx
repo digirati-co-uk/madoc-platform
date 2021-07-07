@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { InternationalString } from '@hyperion-framework/types';
+import { DefaultSelect } from '../../../../shared/atoms/DefaulSelect';
+import { useProjectTemplates } from '../../../../shared/hooks/use-project-templates';
 import { useDefaultLocale, useSupportedLocales } from '../../../../shared/hooks/use-site';
 import { MetadataEditor } from '../../../molecules/MetadataEditor';
 import { useMutation } from 'react-query';
 import { CreateProject } from '../../../../../types/schemas/create-project';
 import { useApi } from '../../../../shared/hooks/use-api';
-import { Button } from '../../../../shared/atoms/Button';
+import { Button, ButtonRow } from '../../../../shared/atoms/Button';
 import { Input, InputContainer, InputLabel } from '../../../../shared/atoms/Input';
 import { useHistory } from 'react-router-dom';
 import { AdminHeader } from '../../../molecules/AdminHeader';
@@ -22,9 +24,11 @@ export const NewProjectPage: React.FC = () => {
   const [slug, setSlug] = useState('');
   const [autoSlug, setAutoSlug] = useState(true);
   const [error, setError] = useState('');
+  const [selectedTemplate, setSelectedTemplate] = useState('');
   const history = useHistory();
   const defaultLocale = useDefaultLocale();
   const availableLanguages = useSupportedLocales();
+  const availableTemplates = useProjectTemplates();
 
   const [saveProject, { status }] = useMutation(async (data: CreateProject) => {
     setError('');
@@ -91,9 +95,28 @@ export const NewProjectPage: React.FC = () => {
           />
         </InputContainer>
 
-        <Button disabled={status === 'loading'} onClick={() => saveProject({ label, summary, slug })}>
-          Create
-        </Button>
+        {availableTemplates.length ? (
+          <InputContainer>
+            <InputLabel htmlFor="slug">Project template</InputLabel>
+            <DefaultSelect
+              isClearable
+              renderOptionLabel={data => <span style={{ lineHeight: '1.8em' }}>{data.label}</span>}
+              getOptionValue={data => data?.value}
+              getOptionLabel={data => data?.label}
+              onOptionChange={data => setSelectedTemplate(data?.value || '')}
+              options={availableTemplates.map(template => ({ label: template.metadata.label, value: template.type }))}
+            />
+          </InputContainer>
+        ) : null}
+
+        <ButtonRow>
+          <Button
+            disabled={status === 'loading'}
+            onClick={() => saveProject({ label, summary, slug, template: selectedTemplate })}
+          >
+            Create
+          </Button>
+        </ButtonRow>
       </WidePage>
     </>
   );

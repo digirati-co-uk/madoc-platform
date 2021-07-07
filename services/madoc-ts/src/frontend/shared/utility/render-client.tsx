@@ -134,6 +134,7 @@ export async function renderClient(
                             displayLanguages={dehydratedSite.displayLanguages}
                             defaultLocale={defaultLocale}
                             navigationOptions={dehydratedSite.navigationOptions}
+                            themeOverrides={dehydratedSite.themeOverrides}
                           />
                         </Suspense>
                         {process.env.NODE_ENV === 'development' ? <ReactQueryDevtools /> : null}

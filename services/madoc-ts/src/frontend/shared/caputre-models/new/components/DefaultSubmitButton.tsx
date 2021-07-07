@@ -1,5 +1,4 @@
 import { Revisions } from '@capture-models/editor';
-import { RevisionRequest } from '@capture-models/types';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
@@ -9,9 +8,9 @@ import { ModalButton } from '../../../components/Modal';
 import { useViewerSaving } from '../../../hooks/use-viewer-saving';
 import { HrefLink } from '../../../utility/href-link';
 import { useDeselectRevision } from '../hooks/use-deselect-revision';
-import { EditorSlots } from './EditorSlots';
+import { EditorRenderingConfig, EditorSlots } from './EditorSlots';
 
-export const DefaultSubmitButton: React.FC<{ afterSave?: (req: RevisionRequest) => void }> = ({ afterSave }) => {
+export const DefaultSubmitButton: EditorRenderingConfig['SubmitButton'] = ({ afterSave }) => {
   const { t } = useTranslation();
   const { projectId } = useRouteContext();
   const currentRevision = Revisions.useStoreState(s => s.currentRevision);

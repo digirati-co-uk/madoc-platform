@@ -82,6 +82,13 @@ export type CreateSlotRequest = {
   blocks?: SiteBlockRequest[];
 };
 
+export type SlotMappingRequest = {
+  project?: { [slotName: string]: CreateSlotRequest };
+  collection?: { [slotName: string]: CreateSlotRequest };
+  manifest?: { [slotName: string]: CreateSlotRequest };
+  canvas?: { [slotName: string]: CreateSlotRequest };
+};
+
 export type SitePageRow = {
   id: number;
   path: string;

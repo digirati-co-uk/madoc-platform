@@ -1,5 +1,6 @@
 import { BaseField, CaptureModel, RevisionRequest } from '@capture-models/types';
-import { createChoice, createDocument, generateId } from '@capture-models/helpers';
+import { createChoice, createDocument, generateId, traverseDocument } from '@capture-models/helpers';
+import deepmerge from 'deepmerge';
 import {
   ActivityOptions,
   ActivityOrderedCollection,
@@ -18,7 +19,8 @@ import { NotificationExtension } from '../extensions/notifications/extension';
 import { defaultPageBlockDefinitions } from '../extensions/page-blocks/default-definitions';
 import { PageBlockExtension } from '../extensions/page-blocks/extension';
 import { MediaExtension } from '../extensions/media/extension';
-import { SiteManagerExtension } from "../extensions/site-manager/extension";
+import { ProjectTemplateExtension } from '../extensions/projects/extension';
+import { SiteManagerExtension } from '../extensions/site-manager/extension';
 import { SystemExtension } from '../extensions/system/extension';
 import { TaskExtension } from '../extensions/tasks/extension';
 import { ThemeExtension } from '../extensions/themes/extension';
@@ -32,6 +34,7 @@ import { ProjectConfiguration } from '../types/schemas/project-configuration';
 import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/search';
 import { SearchIndexable } from '../utility/capture-model-to-indexables';
 import { NotFound } from '../utility/errors/not-found';
+import { generateModelFields } from '../utility/generate-model-fields';
 import { ApiRequest } from './api-definitions/_meta';
 import { fetchJson } from './fetch-json';
 import { BaseTask } from './tasks/base-task';
@@ -139,8 +142,8 @@ export class ApiClient {
     this.tasks = new TaskExtension(this);
     this.system = new SystemExtension(this);
     this.themes = new ThemeExtension(this);
-    this.notifications = new NotificationExtension(this);
     this.siteManager = new SiteManagerExtension(this);
+    this.projectTemplates = new ProjectTemplateExtension(this);
     this.captureModelDataSources = [plainTextSource];
     this.captureModelExtensions = new ExtensionManager(
       options.customCaptureModelExtensions
@@ -1075,6 +1078,45 @@ export class ApiClient {
     return this.request<{
       results: ModelSearch[];
     }>(`/api/crowdsourcing/search/published?${stringify(queryString)}`);
+  }
+
+  async createCaptureModelFromTemplate(model: CaptureModel['document'], label?: string) {
+    const newModel = deepmerge({}, model, { clone: true });
+    const updateId = (e: any) => {
+      if (e.id) {
+        e.id = generateId();
+      }
+    };
+    traverseDocument(newModel, {
+      visitEntity: updateId,
+      visitField: updateId,
+      visitSelector: updateId,
+    });
+    const modelFields = generateModelFields(newModel);
+
+    return this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model`, {
+      method: 'POST',
+      body: {
+        id: generateId(),
+        structure: createChoice({
+          label,
+          items: [
+            {
+              id: generateId(),
+              type: 'model',
+              label: 'Default',
+              fields: modelFields,
+            },
+          ],
+        }),
+        document: label
+          ? {
+              ...newModel,
+              label,
+            }
+          : newModel,
+      },
+    });
   }
 
   async createCaptureModel(label: string) {

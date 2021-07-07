@@ -9,4 +9,5 @@ export type ProjectListItem = {
   label: InternationalString;
   summary: InternationalString;
   status: number;
+  template?: string;
 };

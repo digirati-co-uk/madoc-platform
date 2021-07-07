@@ -30,7 +30,7 @@ export const AllProjects: React.FC = () => {
           <Button $primary as={Link} to={createLink({ projectId: project.slug })}>
             {t('Go to project')}
           </Button>
-          <ProjectStatus status={project.status} />
+          <ProjectStatus status={project.status} template={project.template} />
         </ProjectContainer>
       ))}
       <Pagination
