@@ -64,8 +64,9 @@ export class PluginManager {
               ? {
                   ...block,
                   model: this.ensureFullModelDocument((block as any).modelShorthand),
+                  source: { id: plugin.definition.id, name: plugin.definition.name, type: 'plugin' },
                 }
-              : block,
+              : { ...block, source: { id: plugin.definition.id, name: plugin.definition.name, type: 'plugin' } },
           });
         }
       }
@@ -78,7 +79,10 @@ export class PluginManager {
         ProjectTemplateExtension.registerPlugin({
           pluginId: plugin.definition.id,
           siteId: plugin.siteId,
-          definition: projectTemplate,
+          definition: {
+            ...projectTemplate,
+            source: { id: plugin.definition.id, name: plugin.definition.name, type: 'plugin' },
+          },
         });
       }
     }

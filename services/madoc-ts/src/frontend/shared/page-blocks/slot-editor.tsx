@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useMutation } from 'react-query';
 import styled from 'styled-components';
+import { extractBlockDefinitions } from '../../../extensions/page-blocks/block-editor-react';
 import { EditorialContext, SiteBlock, SiteSlot } from '../../../types/schemas/site-page';
 import { Button, ButtonRow, TinyButton } from '../atoms/Button';
 import { SurfaceProps } from '../atoms/Surface';
@@ -168,6 +169,8 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
     );
   }
 
+  const defaultDefinitions = extractBlockDefinitions(props.defaultContents);
+
   return (
     <CustomEditorTypes>
       <SlotEditorContainer>
@@ -182,10 +185,12 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
         <ModalButton
           as={SlotEditorButton}
           title="Add block"
-          modalSize={'md'}
+          modalSize={'lg'}
           render={({ close }) => (
             <BlockCreator
               context={props.context}
+              defaultBlocks={defaultDefinitions}
+              existingBlocks={props.blocks}
               onSave={block => {
                 saveBlockToSlot(block).then(() => {
                   close();

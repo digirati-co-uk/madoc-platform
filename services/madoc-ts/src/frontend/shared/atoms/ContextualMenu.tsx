@@ -65,8 +65,9 @@ export const ContextualMenuWrapper = styled.div<{ $isOpen?: boolean; $padding?: 
 `;
 
 export const ContextualMenuList = styled.div`
-  padding: 0.25em 0;
-  min-width: 8em;
+  padding: 0.15rem 0;
+  min-width: 8rem;
+  font-size: 0.8rem;
 
   & ~ & {
     border-top: 1px solid #ccc;
@@ -82,7 +83,8 @@ export const ContextualMenuList = styled.div`
 `;
 
 export const ContextualMenuListItem = styled.a<{ $disabled?: boolean }>`
-  padding: 0.25em 0.5em;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.8rem;
   border-radius: 3px;
   border: none;
   display: block;
@@ -92,6 +94,7 @@ export const ContextualMenuListItem = styled.a<{ $disabled?: boolean }>`
   color: #000;
   text-decoration: none;
   user-select: none;
+  white-space: nowrap;
 
   &:hover,
   &:focus {

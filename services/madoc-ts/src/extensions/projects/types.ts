@@ -95,4 +95,5 @@ export type ProjectTemplate<RevSession = any> = JsonProjectTemplate & {
   components?: {
     customEditor?: React.FC<any>;
   };
+  source?: { type: string; id?: string; name: string };
 };

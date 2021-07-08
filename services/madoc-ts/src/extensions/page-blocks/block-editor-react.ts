@@ -1,5 +1,5 @@
 import { BaseField } from '@capture-models/types';
-import React from 'react';
+import React, { JSXElementConstructor } from 'react';
 import { blockConfigFor } from '../../frontend/shared/plugins/external/block-config-for';
 import { EditorialContext } from '../../types/schemas/site-page';
 import { PageBlockDefinition, PageBlockEditor, PageBlockExtension } from './extension';
@@ -14,10 +14,12 @@ export function blockEditorFor<Props, MappedProps = Props>(
       [T in keyof MappedProps]?: string | ({ type: string } & Partial<BaseField> & any);
     };
     internal?: boolean;
+    svgIcon?: string | JSXElementConstructor<React.SVGProps<SVGSVGElement>>;
     requiredContext?: Array<keyof EditorialContext>;
     anyContext?: Array<keyof EditorialContext>;
     mapToProps?: (props: MappedProps) => Props;
     customEditor?: PageBlockEditor;
+    source?: string;
   }
 ): PageBlockDefinition<any, any, any, any> {
   const definition = blockConfigFor(Component, model);
