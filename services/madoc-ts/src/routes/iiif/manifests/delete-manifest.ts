@@ -1,6 +1,7 @@
 import { api } from '../../../gateway/api.server';
 import { userWithScope } from '../../../utility/user-with-scope';
 import { RouteMiddleware } from '../../../types/route-middleware';
+import { deleteIiifMetadata } from '../../../database/queries/deletion-queries';
 
 export const deleteManifest: RouteMiddleware<{ id: number }> = async context => {
   const { siteId } = userWithScope(context, ['site.admin']);
@@ -13,6 +14,9 @@ export const deleteManifest: RouteMiddleware<{ id: number }> = async context => 
   if (deletionSummary.search.indexed && deletionSummary.search.id) {
     await siteApi.searchDeleteIIIF(deletionSummary.search.id);
   }
+
+  // Delete metadata
+  await context.connection.any(deleteIiifMetadata(manifestId));
 
   // Delete derived manifest
   //  - Manifest items
