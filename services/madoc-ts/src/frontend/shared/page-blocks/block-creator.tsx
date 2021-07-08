@@ -95,7 +95,7 @@ export const BlockCreator: React.FC<{
     );
   }
 
-  const renderBlock = (block: PageBlockDefinition<any, any, any, any>, n) => {
+  const renderBlock = (block: PageBlockDefinition<any, any, any, any>, n: number) => {
     const added = props.existingBlocks?.find(b => b.type === block.type);
     const Icon = block.svgIcon;
     return (
