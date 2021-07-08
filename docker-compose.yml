@@ -240,8 +240,6 @@ services:
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@shared-postgres:${POSTGRES_PORT}/${POSTGRES_DB}
     links:
       - shared-postgres
-    volumes:
-      - ./services/search/search_service:/app:delegated
 
   okra:
     image: digirati/okra:cf88584

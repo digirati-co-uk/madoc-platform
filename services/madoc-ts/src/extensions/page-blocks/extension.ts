@@ -34,11 +34,13 @@ export type PageBlockDefinition<
   renderType: Type;
   model?: CaptureModel['document'];
   defaultData: Data;
+  svgIcon?: JSXElementConstructor<React.SVGProps<SVGSVGElement>>;
   requiredContext?: RequiredContext[];
   anyContext?: RequiredContext[];
   internal?: boolean;
   customEditor?: PageBlockEditor;
   render: (data: Data, context: EditorialContext, api: ApiClient) => Return;
+  source?: { type: string; id?: string; name: string };
 };
 
 export type ReactPageBlockDefinition<

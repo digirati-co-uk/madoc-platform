@@ -5,6 +5,13 @@ import { extractBlockDefinitions } from '../../../extensions/page-blocks/block-e
 import { CreateSlotRequest, EditorialContext } from '../../../types/schemas/site-page';
 import { useProject } from '../../site/hooks/use-project';
 import { Button, ButtonRow } from '../atoms/Button';
+import {
+  ContextualLabel,
+  ContextualMenuList,
+  ContextualMenuListItem,
+  ContextualMenuWrapper,
+  ContextualPositionWrapper,
+} from '../atoms/ContextualMenu';
 import { EmptySlotActions, EmptySlotContainer, EmptySlotLabel } from '../atoms/EmptySlot';
 import { EmptyState } from '../atoms/EmptyState';
 import { PageEditorButton } from '../atoms/PageEditor';
@@ -15,7 +22,9 @@ import {
   SlotOutlineContainer,
 } from '../atoms/SlotEditor';
 import { WidePage } from '../atoms/WidePage';
+import { ModalButton } from '../components/Modal';
 import { useApi } from '../hooks/use-api';
+import { SettingsIcon } from '../icons/SettingsIcon';
 import { useSlots } from './slot-context';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 
@@ -84,6 +93,30 @@ function allOfTypeFromContext(ctx: EditorialContext, projectId?: number): Create
   return exact;
 }
 
+export const BlankSlotDropdown: React.FC<{
+  actions: Array<{
+    label: string;
+    onClick: () => void;
+  }>;
+}> = ({ actions, children }) => {
+  const { buttonProps, itemProps, isOpen } = useDropdownMenu(actions.length);
+
+  return (
+    <ContextualPositionWrapper>
+      <SlotEditorButton {...buttonProps}>{children}</SlotEditorButton>
+      <ContextualMenuWrapper $padding $isOpen={isOpen}>
+        <ContextualMenuList>
+          {actions.map((action, n) => (
+            <ContextualMenuListItem {...itemProps[n]} onClick={action.onClick}>
+              {action.label}
+            </ContextualMenuListItem>
+          ))}
+        </ContextualMenuList>
+      </ContextualMenuWrapper>
+    </ContextualPositionWrapper>
+  );
+};
+
 export const RenderBlankSlot: React.FC<{ name: string }> = ({ name: slotId, children }) => {
   const { t } = useTranslation();
   const { context, editable, isPage, beforeCreateSlot, onCreateSlot } = useSlots();
@@ -151,17 +184,23 @@ export const RenderBlankSlot: React.FC<{ name: string }> = ({ name: slotId, chil
   if (!children) {
     return (
       <>
-        <EmptyState $box>Empty slot</EmptyState>
-        {isPage ? (
-          <ButtonRow>
-            <Button onClick={() => createSlot()}>Customise</Button>
-          </ButtonRow>
-        ) : (
-          <ButtonRow>
-            <Button onClick={() => createSlot('exact')}>Customise only on this page</Button>
-            <Button onClick={() => createSlot('all')}>Customise on all of this type in this context</Button>
-          </ButtonRow>
-        )}
+        <EmptySlotContainer>
+          <EmptySlotLabel>Empty slot</EmptySlotLabel>
+          <EmptySlotActions>
+            {isPage ? (
+              <PageEditorButton onClick={() => createSlot()}>Customise</PageEditorButton>
+            ) : (
+              <BlankSlotDropdown
+                actions={[
+                  { label: 'Only on this page', onClick: () => createSlot('exact') },
+                  { label: 'On all of this type in this context', onClick: () => createSlot('all') },
+                ]}
+              >
+                Customise
+              </BlankSlotDropdown>
+            )}
+          </EmptySlotActions>
+        </EmptySlotContainer>
       </>
     );
   }
@@ -176,10 +215,14 @@ export const RenderBlankSlot: React.FC<{ name: string }> = ({ name: slotId, chil
           </>
         ) : (
           <>
-            <SlotEditorButton onClick={() => createSlot('exact')}>Customise only on this page</SlotEditorButton>
-            <SlotEditorButton onClick={() => createSlot('all')}>
-              Customise on all of this type in this context
-            </SlotEditorButton>
+            <BlankSlotDropdown
+              actions={[
+                { label: 'Only on this page', onClick: () => createSlot('exact') },
+                { label: 'On all of this type in this context', onClick: () => createSlot('all') },
+              ]}
+            >
+              Customise
+            </BlankSlotDropdown>
           </>
         )}
       </SlotEditorReadOnly>

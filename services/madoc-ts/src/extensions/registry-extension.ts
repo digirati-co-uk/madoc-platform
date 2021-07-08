@@ -9,7 +9,9 @@ GLOBAL_EMITTER.on('*', (type, data) => {
   PRE_EVENTS.push({ type, data } as any);
 });
 
-export abstract class RegistryExtension<ExtensionDefinition extends { type: string } = any> {
+export abstract class RegistryExtension<
+  ExtensionDefinition extends { type: string; source?: { type: string; id?: string; name: string } } = any
+> {
   static emitter = GLOBAL_EMITTER;
 
   registryName: string;

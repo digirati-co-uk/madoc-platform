@@ -1,7 +1,18 @@
 import { color, select, text } from '@storybook/addon-knobs';
 import * as React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+import { defaultPageBlockDefinitions } from '../src/extensions/page-blocks/default-definitions';
+import { PageBlockDefinition } from '../src/extensions/page-blocks/extension';
+import {
+  AddBlockContainer,
+  AddBlockIconWrapper,
+  AddBlockLabel,
+  AddBlockList,
+  AddBlockPluginName,
+} from '../src/frontend/shared/atoms/AddBlock';
 import { Heading1, Subheading1 } from '../src/frontend/shared/atoms/Heading1';
+import { Heading2 } from '../src/frontend/shared/atoms/Heading2';
+import { ModalButton } from '../src/frontend/shared/components/Modal';
 import { useAccessibleColor } from '../src/frontend/shared/hooks/use-accessible-color';
 import { useGoogleFonts } from '../src/frontend/shared/hooks/use-google-fonts';
 
@@ -143,5 +154,66 @@ export const Surface_Heading1 = () => {
       <Heading1>{heading}</Heading1>
       <Subheading1>{subheading}</Subheading1>
     </Surface>
+  );
+};
+
+const blocks = [
+  ...defaultPageBlockDefinitions,
+  Heading1[Symbol.for('slot-model')],
+  {
+    ...(Heading2[Symbol.for('slot-model') as any] as any),
+    source: { id: '123', type: 'plugin', name: 'Editorial plugin' },
+  },
+] as PageBlockDefinition<any, any, any>[];
+
+export const SelectBlock = () => {
+  return (
+    <>
+      <ModalButton
+        title="Add block"
+        render={() => {
+          return (
+            <>
+              <AddBlockList>
+                {blocks.map((block, n) => {
+                  const Icon = block.svgIcon;
+                  return (
+                    <AddBlockContainer $active={n === 2}>
+                      <AddBlockIconWrapper>
+                        {Icon ? (
+                          <Icon />
+                        ) : (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="1em"
+                            height="1em"
+                            viewBox="0 0 385.419 385.419"
+                          >
+                            <path
+                              fill="#D1D8E8"
+                              d="M188.998 331.298l-.231-107.449-92.494-53.907-92.327 53.712.225 108.29 92.102 53.475 92.725-54.121zm-83.342 26.994l.165-75.232 64.289-37.558.165 75.067-64.619 37.723zM96.26 191.586l64.603 37.658-64.384 37.606-64.605-37.8 64.386-37.464zm-73.557 53.77l64.411 37.691-.164 75.335-64.092-37.217-.155-75.809zM288.748 169.948l-92.324 53.706.231 108.29 92.104 53.475 92.714-54.121-.231-107.449-92.494-53.901zm-.013 21.638l64.605 37.658-64.386 37.606-64.606-37.801 64.387-37.463zm-73.556 53.77l64.404 37.691-.164 75.335-64.076-37.217-.164-75.809zm82.958 112.936l.159-75.232 64.289-37.558.164 75.067-64.612 37.723zM285.216 53.892L192.719 0l-92.324 53.697.222 108.295 92.102 53.479 92.717-54.121-.22-107.458zm-92.509-32.257l64.609 37.649-64.384 37.619-64.609-37.811 64.384-37.457zm-73.558 53.766l64.411 37.698-.161 75.335-64.095-37.211-.155-75.822zm82.95 112.942l.162-75.234 64.292-37.564.164 75.073-64.618 37.725z"
+                            />
+                          </svg>
+                        )}
+                      </AddBlockIconWrapper>
+                      <AddBlockLabel>{block.label}</AddBlockLabel>
+                      {block.source ? (
+                        <AddBlockPluginName>{block.source.name}</AddBlockPluginName>
+                      ) : (
+                        <AddBlockPluginName>Built-in</AddBlockPluginName>
+                      )}
+                    </AddBlockContainer>
+                  );
+                })}
+              </AddBlockList>
+            </>
+          );
+        }}
+        openByDefault
+        modalSize={'lg'}
+      >
+        <button>Open</button>
+      </ModalButton>
+    </>
   );
 };

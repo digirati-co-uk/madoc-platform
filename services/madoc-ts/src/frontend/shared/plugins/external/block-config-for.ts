@@ -6,6 +6,13 @@ export function blockConfigFor(Component: any, model: any) {
   const definition: PageBlockDefinition<any, any, any> = {
     type: model.type,
     label: model.label,
+    svgIcon: model.svgIcon
+      ? typeof model.svgIcon === 'string'
+        ? function SvgIcon(props: any) {
+            return React.createElement('span', { dangerouslySetInnerHTML: { __html: model.svgIcon }, ...props }, []);
+          }
+        : model.svgIcon
+      : undefined,
     model: model.editor
       ? model.editor.type === 'entity'
         ? model.editor
