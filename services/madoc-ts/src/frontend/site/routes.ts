@@ -9,12 +9,19 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
     {
       path: '/collections',
       exact: true,
-      component: components.CollectionListLoader,
+      component: components.PageLoader,
       routes: [
         {
           path: '/collections',
-          component: components.AllCollections,
           exact: true,
+          component: components.CollectionListLoader,
+          routes: [
+            {
+              path: '/collections',
+              component: components.AllCollections,
+              exact: true,
+            },
+          ],
         },
       ],
     },
@@ -121,13 +128,20 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
     },
     {
       path: '/manifests',
-      component: components.ManifestListLoader,
       exact: true,
+      component: components.PageLoader,
       routes: [
         {
           path: '/manifests',
-          component: components.AllManifests,
+          component: components.ManifestListLoader,
           exact: true,
+          routes: [
+            {
+              path: '/manifests',
+              component: components.AllManifests,
+              exact: true,
+            },
+          ],
         },
       ],
     },
@@ -202,13 +216,20 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
     },
     {
       path: '/projects',
-      component: components.ProjectListLoader,
       exact: true,
+      component: components.PageLoader,
       routes: [
         {
           path: '/projects',
-          component: components.AllProjects,
+          component: components.ProjectListLoader,
           exact: true,
+          routes: [
+            {
+              path: '/projects',
+              component: components.AllProjects,
+              exact: true,
+            },
+          ],
         },
       ],
     },

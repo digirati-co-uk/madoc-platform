@@ -13,6 +13,7 @@ export type RenderSlotProps = {
   onUpdateBlock?: (blockId: number) => void | Promise<void>;
   invalidateSlots?: () => void | Promise<void>;
   defaultContents?: any;
+  pagePath?: string;
 };
 
 export const RenderSlot: React.FC<RenderSlotProps> = props => {
@@ -40,6 +41,7 @@ export const RenderSlot: React.FC<RenderSlotProps> = props => {
         invalidateSlots={props.invalidateSlots}
         defaultContents={props.defaultContents}
         surfaceProps={surfaceProps}
+        pagePath={props.pagePath}
       />
     );
   }

@@ -2,6 +2,7 @@ import React, { ComponentPropsWithRef, forwardRef } from 'react';
 import { Helmet } from 'react-helmet';
 import styled, { css } from 'styled-components';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { convertComponentToText } from '../../../utility/convert-component-to-text';
 import { useSite } from '../hooks/use-site';
 
 export const _Heading1 = styled.h1<{ $margin?: boolean }>`
@@ -57,6 +58,9 @@ blockEditorFor(Heading1, {
       </svg>
     );
   },
+  mapFromProps: props => ({
+    text: convertComponentToText(props.children),
+  }),
   mapToProps: props => ({
     children: <>{props.text}</>,
   }),

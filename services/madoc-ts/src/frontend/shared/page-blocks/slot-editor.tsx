@@ -34,6 +34,7 @@ type SlotEditorProps = {
   onResetSlot?: () => void;
   defaultContents?: any;
   surfaceProps?: SurfaceProps;
+  pagePath?: string;
 };
 
 const EditingBlockContainer = styled.div`
@@ -188,6 +189,7 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
           modalSize={'lg'}
           render={({ close }) => (
             <BlockCreator
+              pagePath={props.pagePath}
               context={props.context}
               defaultBlocks={defaultDefinitions}
               existingBlocks={props.blocks}

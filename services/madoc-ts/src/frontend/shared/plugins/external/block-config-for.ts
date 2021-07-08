@@ -27,6 +27,9 @@ export function blockConfigFor(Component: any, model: any) {
     requiredContext: model.requiredContext,
     anyContext: model.anyContext,
     customEditor: model.customEditor,
+    mapFromProps: model.mapFromProps,
+    mapToProps: model.mapToProps,
+    source: model.source,
   };
 
   Component[Symbol.for('slot-model')] = definition;

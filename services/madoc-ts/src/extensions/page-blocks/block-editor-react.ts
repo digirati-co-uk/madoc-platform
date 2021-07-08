@@ -18,8 +18,9 @@ export function blockEditorFor<Props, MappedProps = Props>(
     requiredContext?: Array<keyof EditorialContext>;
     anyContext?: Array<keyof EditorialContext>;
     mapToProps?: (props: MappedProps) => Props;
+    mapFromProps?: (props: Props) => MappedProps;
     customEditor?: PageBlockEditor;
-    source?: string;
+    source?: { type: string; id?: string; name: string };
   }
 ): PageBlockDefinition<any, any, any, any> {
   const definition = blockConfigFor(Component, model);
@@ -43,11 +44,12 @@ export function extractBlockDefinitions(components: any): PageBlockDefinition<an
       singleComponent.type &&
       (singleComponent.type[Symbol.for('slot-model')] as PageBlockDefinition<any, any, any, any>);
     if (definition) {
+      const propsToAdd = definition.mapFromProps ? definition.mapFromProps(props || {}) : props;
       return {
         ...definition,
         defaultData: {
           ...(definition.defaultData || {}),
-          ...(props || {}),
+          ...(propsToAdd || {}),
         },
       };
     }
