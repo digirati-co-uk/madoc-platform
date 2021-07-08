@@ -1,5 +1,6 @@
 import { BaseField, CaptureModel, RevisionRequest } from '@capture-models/types';
-import { createChoice, createDocument, generateId } from '@capture-models/helpers';
+import { createChoice, createDocument, generateId, traverseDocument } from '@capture-models/helpers';
+import deepmerge from 'deepmerge';
 import {
   ActivityOptions,
   ActivityOrderedCollection,
@@ -18,7 +19,8 @@ import { NotificationExtension } from '../extensions/notifications/extension';
 import { defaultPageBlockDefinitions } from '../extensions/page-blocks/default-definitions';
 import { PageBlockExtension } from '../extensions/page-blocks/extension';
 import { MediaExtension } from '../extensions/media/extension';
-import { SiteManagerExtension } from "../extensions/site-manager/extension";
+import { ProjectTemplateExtension } from '../extensions/projects/extension';
+import { SiteManagerExtension } from '../extensions/site-manager/extension';
 import { SystemExtension } from '../extensions/system/extension';
 import { TaskExtension } from '../extensions/tasks/extension';
 import { ThemeExtension } from '../extensions/themes/extension';
@@ -32,6 +34,7 @@ import { ProjectConfiguration } from '../types/schemas/project-configuration';
 import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/search';
 import { SearchIndexable } from '../utility/capture-model-to-indexables';
 import { NotFound } from '../utility/errors/not-found';
+import { generateModelFields } from '../utility/generate-model-fields';
 import { ApiRequest } from './api-definitions/_meta';
 import { fetchJson } from './fetch-json';
 import { BaseTask } from './tasks/base-task';
@@ -72,6 +75,20 @@ import { ConfigResponse } from '../types/schemas/config-response';
 import { ResourceLinkRow } from '../database/queries/linking-queries';
 import { SearchIndexTask } from './tasks/search-index-task';
 
+export type ApiClientWithoutExtensions = Omit<
+  ApiClient,
+  | 'captureModelExtensions'
+  | 'pageBlocks'
+  | 'media'
+  | 'tasks'
+  | 'system'
+  | 'themes'
+  | 'siteManager'
+  | 'projectTemplates'
+  | 'getCaptureModelDataSources'
+  | 'cloneCaptureModel'
+>;
+
 export class ApiClient {
   private readonly gateway: string;
   private readonly isServer: boolean;
@@ -84,16 +101,17 @@ export class ApiClient {
   private errorRecoveryHandlers: Array<() => void> = [];
   private isDown = false;
   private currentUser?: { scope: string[]; user: { id: string; name?: string } };
-  private readonly captureModelDataSources: DynamicData[];
+  private readonly captureModelDataSources: DynamicData[] = [];
   // Public.
-  captureModelExtensions: ExtensionManager<CaptureModelExtension>;
-  pageBlocks: PageBlockExtension;
-  media: MediaExtension;
-  tasks: TaskExtension;
-  system: SystemExtension;
-  themes: ThemeExtension;
-  notifications: NotificationExtension;
-  siteManager: SiteManagerExtension;
+  captureModelExtensions!: ExtensionManager<CaptureModelExtension>;
+  pageBlocks!: PageBlockExtension;
+  media!: MediaExtension;
+  tasks!: TaskExtension;
+  system!: SystemExtension;
+  themes!: ThemeExtension;
+  notifications!: NotificationExtension;
+  siteManager!: SiteManagerExtension;
+  projectTemplates!: ProjectTemplateExtension;
 
   constructor(options: {
     gateway: string;
@@ -102,6 +120,7 @@ export class ApiClient {
     asUser?: { userId?: number; siteId?: number; userName?: string };
     customerFetcher?: typeof fetchJson;
     customCaptureModelExtensions?: (api: ApiClient) => Array<CaptureModelExtension>;
+    withoutExtensions?: boolean;
   }) {
     this.gateway = options.gateway;
     this.jwtFunction = typeof options.jwt === 'string' ? undefined : options.jwt;
@@ -110,13 +129,21 @@ export class ApiClient {
     this.isServer = !(globalThis as any).window;
     this.fetcher = options.customerFetcher || fetchJson;
     this.publicSiteSlug = options.publicSiteSlug;
+
+    // This extension will be fine.
+    this.notifications = new NotificationExtension(this);
+
+    if (options.withoutExtensions) {
+      return;
+    }
+
     this.pageBlocks = new PageBlockExtension(this, defaultPageBlockDefinitions);
     this.media = new MediaExtension(this);
     this.tasks = new TaskExtension(this);
     this.system = new SystemExtension(this);
     this.themes = new ThemeExtension(this);
-    this.notifications = new NotificationExtension(this);
     this.siteManager = new SiteManagerExtension(this);
+    this.projectTemplates = new ProjectTemplateExtension(this);
     this.captureModelDataSources = [plainTextSource];
     this.captureModelExtensions = new ExtensionManager(
       options.customCaptureModelExtensions
@@ -130,6 +157,20 @@ export class ApiClient {
             new ConfigInjectionExtension(this),
           ]
     );
+  }
+
+  dispose() {
+    this.pageBlocks.dispose();
+    this.media.dispose();
+    this.tasks.dispose();
+    this.system.dispose();
+    this.themes.dispose();
+    this.notifications.dispose();
+    this.siteManager.dispose();
+    this.projectTemplates.dispose();
+    this.captureModelExtensions.dispose();
+    this.errorHandlers = [];
+    this.errorRecoveryHandlers = [];
   }
 
   private getJwt() {
@@ -387,14 +428,38 @@ export class ApiClient {
     });
   }
 
-  asUser(user: { userId?: number; siteId?: number; userName?: string }, options?: { siteSlug?: string }): ApiClient {
+  asUser(
+    user: { userId?: number; siteId?: number; userName?: string },
+    options: { siteSlug?: string },
+    withExtensions: true
+  ): ApiClient;
+  asUser(
+    user: { userId?: number; siteId?: number; userName?: string },
+    options?: { siteSlug?: string }
+  ): ApiClientWithoutExtensions;
+  asUser(
+    user: { userId?: number; siteId?: number; userName?: string },
+    options?: { siteSlug?: string },
+    withExtensions?: boolean
+  ): ApiClientWithoutExtensions {
     return new ApiClient({
       gateway: this.gateway,
       jwt: this.getJwt(),
       asUser: user,
       customerFetcher: this.fetcher,
       publicSiteSlug: options && options.siteSlug ? options.siteSlug : this.publicSiteSlug,
+      withoutExtensions: !withExtensions,
     });
+  }
+
+  async asUserWithExtensions(
+    callback: (api: ApiClient) => Promise<void>,
+    user: { userId?: number; siteId?: number; userName?: string },
+    options?: { siteSlug?: string }
+  ) {
+    const userApi = this.asUser(user, options);
+    await callback(userApi as any);
+    userApi.dispose(); // Need to make sure extensions unregister their events properly.
   }
 
   getCaptureModelDataSources() {
@@ -1013,6 +1078,45 @@ export class ApiClient {
     return this.request<{
       results: ModelSearch[];
     }>(`/api/crowdsourcing/search/published?${stringify(queryString)}`);
+  }
+
+  async createCaptureModelFromTemplate(model: CaptureModel['document'], label?: string) {
+    const newModel = deepmerge({}, model, { clone: true });
+    const updateId = (e: any) => {
+      if (e.id) {
+        e.id = generateId();
+      }
+    };
+    traverseDocument(newModel, {
+      visitEntity: updateId,
+      visitField: updateId,
+      visitSelector: updateId,
+    });
+    const modelFields = generateModelFields(newModel);
+
+    return this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model`, {
+      method: 'POST',
+      body: {
+        id: generateId(),
+        structure: createChoice({
+          label,
+          items: [
+            {
+              id: generateId(),
+              type: 'model',
+              label: 'Default',
+              fields: modelFields,
+            },
+          ],
+        }),
+        document: label
+          ? {
+              ...newModel,
+              label,
+            }
+          : newModel,
+      },
+    });
   }
 
   async createCaptureModel(label: string) {

@@ -4,7 +4,7 @@ import { ApiClient } from '../../gateway/api';
 import { useTranslation } from 'react-i18next';
 import { PublicSite } from '../../utility/omeka-api';
 import { GlobalStyles } from '../shared/atoms/GlobalStyles';
-import { AdminLayoutContainer, AdminLayoutMain, AdminLayoutMenu } from '../shared/components/AdminMenu';
+import { AdminLayoutContainer, AdminLayoutMain, AdminLayoutMenu, useAdminLayout } from '../shared/components/AdminMenu';
 import { UserBar } from '../shared/components/UserBar';
 import { renderUniversalRoutes } from '../shared/utility/server-utils';
 import { ApiContext, useIsApiRestarting } from '../shared/hooks/use-api';

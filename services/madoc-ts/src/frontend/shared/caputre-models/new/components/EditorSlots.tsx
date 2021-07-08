@@ -63,7 +63,7 @@ export type EditorRenderingConfig = {
   }>; // Fallbacks passed in
   InlineSelector: any; // Fallbacks passed in
   Choice: React.FC;
-  SubmitButton: React.FC<{ afterSave?: (req: RevisionRequest) => void }>;
+  SubmitButton: React.FC<{ afterSave?: (req: RevisionRequest) => void | Promise<void> }>;
   PreviewSubmission: React.FC;
   PostSubmission: React.FC;
 };
@@ -72,6 +72,7 @@ export type ProfileConfig = Partial<Omit<EditorRenderingConfig, 'configuration'>
 
 export type EditorConfig = {
   allowEditing: boolean;
+  immutableFields: string[];
   selectEntityWhenCreating: boolean;
   selectFieldWhenCreating: boolean;
   deselectRevisionAfterSaving: boolean;
@@ -86,6 +87,7 @@ const defaultEditorConfig: EditorConfig = {
   selectFieldWhenCreating: true,
   deselectRevisionAfterSaving: false,
   profileConfig: {},
+  immutableFields: [],
 };
 
 const Context = React.createContext<EditorRenderingConfig>({

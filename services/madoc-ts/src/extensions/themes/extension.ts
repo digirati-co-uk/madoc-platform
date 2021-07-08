@@ -1,12 +1,16 @@
 import { ApiClient } from '../../gateway/api';
 import { ThemeListItem } from '../../types/themes';
-import { BaseExtension } from '../extension-manager';
+import { BaseExtension, defaultDispose } from '../extension-manager';
 
 export class ThemeExtension implements BaseExtension {
   api: ApiClient;
 
   constructor(api: ApiClient) {
     this.api = api;
+  }
+
+  dispose() {
+    defaultDispose(this);
   }
 
   // List all themes

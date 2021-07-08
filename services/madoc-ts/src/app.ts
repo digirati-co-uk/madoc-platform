@@ -5,6 +5,7 @@ import Ajv from 'ajv';
 import { checkExpiredManifests } from './cron/check-expired-manifests';
 import './frontend/shared/plugins/globals';
 import { createPluginManager } from './middleware/create-plugin-manager';
+import { disposeApis } from './middleware/dispose-apis';
 import { errorHandler } from './middleware/error-handler';
 import { SiteUserRepository } from './repository/site-user-repository';
 import { CronJobs } from './utility/cron-jobs';
@@ -108,6 +109,7 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   app.use(omekaPage);
   app.use(setJwt);
   app.use(omekaApi);
+  app.use(disposeApis);
   app.use(router.routes()).use(router.allowedMethods());
 
   // Cron jobs.

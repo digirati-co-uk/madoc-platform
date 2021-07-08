@@ -5,6 +5,8 @@ const styledComponentsTransformer = createStyledComponentsTransformer({
   displayName: true,
 });
 
+const skipHotReload = !!process.env.SKIP_HOT_RELOAD;
+
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
   devtool: process.env.NODE_ENV !== 'production' ? 'eval-cheap-module-source-map' : false,
@@ -29,7 +31,7 @@ module.exports = {
     publicPath: `/s/default/madoc/assets/`,
   },
   plugins:
-    process.env.NODE_ENV === 'production'
+    process.env.NODE_ENV === 'production' || skipHotReload
       ? [new webpack.IgnorePlugin(/@blueprintjs\/core/)]
       : [
           new webpack.HotModuleReplacementPlugin(),
@@ -45,9 +47,9 @@ module.exports = {
           {
             loader: 'babel-loader',
             options: {
-              plugins: [process.env.NODE_ENV !== 'production' && require.resolve('react-refresh/babel')].filter(
-                Boolean
-              ),
+              plugins: [
+                process.env.NODE_ENV !== 'production' && !skipHotReload && require.resolve('react-refresh/babel'),
+              ].filter(Boolean),
               presets: [
                 process.env.NODE_ENV === 'production' && [
                   '@babel/preset-env',

@@ -1,4 +1,4 @@
-import { ProjectStatus } from '../../../../shared/atoms/ProjectStatus';
+import { useProjectTemplate } from '../../../../shared/hooks/use-project-template';
 import { useSite } from '../../../../shared/hooks/use-site';
 import { UniversalComponent } from '../../../../types';
 import React from 'react';
@@ -12,7 +12,7 @@ import { createUniversalComponent } from '../../../../shared/utility/create-univ
 
 type ProjectType = {
   params: { id: string };
-  query: {};
+  query: unknown;
   data: any;
   variables: { id: number };
 };
@@ -22,6 +22,11 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
     const { t } = useTranslation();
     const { data, status, refetch } = useData(Project);
     const { slug } = useSite();
+    const projectTemplate = useProjectTemplate(data?.template);
+
+    const configFrozen = !!projectTemplate?.configuration?.frozen;
+    const noModel = !!projectTemplate?.configuration?.captureModels?.noCaptureModel;
+    const noActivity = !!projectTemplate?.configuration?.activity?.noActivity;
 
     if (!data || status === 'loading' || status === 'error') {
       return <div>loading...</div>;
@@ -39,11 +44,11 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
             { label: t('Overview'), link: `/projects/${data.id}` },
             { label: t('Details'), link: `/projects/${data.id}/metadata` },
             { label: t('Content'), link: `/projects/${data.id}/content` },
-            { label: t('Configuration'), link: `/projects/${data.id}/configuration` },
-            { label: t('Model'), link: `/projects/${data.id}/model` },
+            !configFrozen ? { label: t('Configuration'), link: `/projects/${data.id}/configuration` } : null,
+            !noModel ? { label: t('Model'), link: `/projects/${data.id}/model` } : null,
             { label: t('Crowdsourcing'), link: `/projects/${data.id}/tasks` },
             { label: t('Search index'), link: `/projects/${data.id}/search` },
-            { label: t('Activity'), link: `/projects/${data.id}/activity` },
+            !noActivity ? { label: t('Activity'), link: `/projects/${data.id}/activity` } : null,
           ]}
           title={<LocaleString>{data.label}</LocaleString>}
           subtitle={

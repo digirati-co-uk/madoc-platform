@@ -10,9 +10,9 @@ import { useApi } from '../../../hooks/use-api';
 import { useLoadedCaptureModel } from '../../../hooks/use-loaded-capture-model';
 import { useDeselectRevision } from '../hooks/use-deselect-revision';
 import { mergeDocument } from '../utility/merge-document';
-import { useSlotConfiguration } from './EditorSlots';
+import { EditorRenderingConfig, useSlotConfiguration } from './EditorSlots';
 
-export const DirectEditButton: React.FC<{ afterSave?: (req: RevisionRequest) => void }> = ({ afterSave }) => {
+export const DirectEditButton: EditorRenderingConfig['SubmitButton'] = ({ afterSave }) => {
   const { canvasId } = useRouteContext();
   const { data: projectModel } = useCanvasModel();
   const [{ captureModel }, , refetchModel] = useLoadedCaptureModel(projectModel?.model?.id, undefined, canvasId);

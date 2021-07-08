@@ -36,6 +36,8 @@ export const adminFrontend: RouteMiddleware = async context => {
       site: site,
       siteLocales,
       siteSlug: context.params.slug,
+      pluginManager: context.pluginManager,
+      plugins: context.pluginManager.listPlugins(site.id),
       user:
         context.state.jwt && context.state.jwt.user && context.state.jwt.user.id
           ? {

@@ -2,6 +2,7 @@ import { DocumentStore, StructureEditor, StructureStore, useFocusedStructureEdit
 import { CaptureModel } from '@capture-models/types';
 import React from 'react';
 import { useApi } from '../../../../shared/hooks/use-api';
+import { useModelEditorConfig } from './use-model-editor-config';
 
 export const FullStructureEditor: React.FC = () => {
   const api = useApi();
@@ -20,8 +21,9 @@ export const FullStructureEditor: React.FC = () => {
     setProfile,
     reorderChoices,
   } = useFocusedStructureEditor();
+  const { preventChangeDocument } = useModelEditorConfig();
 
-  if (api.getIsServer()) {
+  if (api.getIsServer() || preventChangeDocument) {
     return null;
   }
 

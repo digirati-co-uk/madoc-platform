@@ -52,7 +52,7 @@ export const ListProjects: UniversalComponent<ListProjectsType> = createUniversa
               <Button as={Link} to={`/projects/${project.id}`}>
                 {t('Go to project')}
               </Button>
-              <ProjectStatus status={project.status} />
+              <ProjectStatus status={project.status} template={project.template} />
             </ProjectContainer>
           ))}
           <Pagination

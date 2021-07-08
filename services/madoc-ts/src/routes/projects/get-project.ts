@@ -47,6 +47,7 @@ export const getProject: RouteMiddleware<{ id: string }> = async context => {
       collection_id: project.id,
       task_id: project.task_id,
       status: project.status,
+      template: project.template_name,
     };
   });
 

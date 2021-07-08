@@ -11,6 +11,7 @@ import { BaseField } from '@capture-models/types';
 import { Header } from '../../../../shared/atoms/Header';
 import { isEntityList } from '@capture-models/helpers';
 import { useApi } from '../../../../shared/hooks/use-api';
+import { useModelEditorConfig } from './use-model-editor-config';
 
 export const FullDocumentEditor: React.FC = () => {
   const api = useApi();
@@ -26,6 +27,11 @@ export const FullDocumentEditor: React.FC = () => {
   const sourceTypes = useMemo(() => {
     return api.getCaptureModelDataSources().map(source => source.definition);
   }, [api]);
+  const { preventChangeDocument } = useModelEditorConfig();
+
+  if (preventChangeDocument) {
+    return null;
+  }
 
   return (
     <div style={{ display: 'flex', fontSize: 14 }}>

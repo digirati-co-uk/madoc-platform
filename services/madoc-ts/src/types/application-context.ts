@@ -1,6 +1,7 @@
 import { i18n } from 'i18next';
 import { PluginManager } from '../frontend/shared/plugins/plugin-manager';
 import { ChangeDiscoveryRepository } from '../activity-streams/change-discovery-repository';
+import { ApiClient } from '../gateway/api';
 import { MediaRepository } from '../repository/media-repository';
 import { NotificationRepository } from '../repository/notification-repository';
 import { PageBlocksRepository } from '../repository/page-blocks-repository';
@@ -35,4 +36,5 @@ export interface ApplicationContext {
   omekaPage?: string | ((token: string) => Promise<string | undefined>) | ((token: string) => undefined | string);
   omekaMessages: Array<{ type: 'success' | 'error'; message: string }>;
   omekaMinimal?: boolean;
+  disposableApis: ApiClient[];
 }

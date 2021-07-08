@@ -10,10 +10,11 @@ import {
   SiteBlock,
   SiteBlockRequest,
   SiteSlot,
+  SlotMappingRequest,
 } from '../../types/schemas/site-page';
 import { SitePage } from '../../types/site-pages-recursive';
-import { BaseExtension } from '../extension-manager';
-import { reactBlockEmitter } from './block-editor-react';
+import { BaseExtension, defaultDispose } from '../extension-manager';
+import { RegistryExtension } from '../registry-extension';
 
 export type PageBlockEditor = JSXElementConstructor<{
   block: SiteBlock;
@@ -51,67 +52,36 @@ export type HTMLPageBlockDefinition<Data, RequiredContext extends keyof Editoria
   RequiredContext
 >;
 
-export class PageBlockExtension implements BaseExtension {
+export class PageBlockExtension extends RegistryExtension<PageBlockDefinition<any, any, any, any>>
+  implements BaseExtension {
   api: ApiClient;
-  definitionMap: {
-    [type: string]: PageBlockDefinition<any, any, any, any>;
-  };
-  pluginBlocks: {
-    [type: string]: Array<{
-      siteId: number;
-      pluginId: string;
-      definition: PageBlockDefinition<any, any, any>;
-    }>;
-  } = {};
+
+  static register(definition: PageBlockDefinition<any, any, any>) {
+    RegistryExtension.emitter.emit('block', definition);
+  }
+
+  static removePlugin(event: { pluginId: string; siteId?: number; type: string }) {
+    RegistryExtension.emitter.emit('remove-plugin-block', event);
+  }
+
+  static registerPlugin(event: { pluginId: string; siteId?: number; definition: PageBlockDefinition<any, any, any> }) {
+    RegistryExtension.emitter.emit('plugin-block', event);
+  }
 
   constructor(api: ApiClient, definitions: PageBlockDefinition<any, any, any, any>[]) {
+    super({
+      registryName: 'block',
+    });
+
     this.api = api;
-    this.definitionMap = {};
     for (const definition of definitions) {
       this.definitionMap[definition.type] = definition;
     }
-
-    reactBlockEmitter.on('block', block => {
-      this.definitionMap[block.type] = block;
-    });
-
-    reactBlockEmitter.on('plugin-block', ({ pluginId, siteId, block }) => {
-      this.pluginBlocks[block.type] = this.pluginBlocks[block.type] ? this.pluginBlocks[block.type] : [];
-      for (const pluginBlock of this.pluginBlocks[block.type]) {
-        if (pluginBlock.pluginId === pluginId && pluginBlock.siteId === siteId) {
-          // Overriding block.
-          pluginBlock.definition = block;
-          return;
-        }
-      }
-      this.pluginBlocks[block.type].push({
-        siteId,
-        pluginId,
-        definition: block,
-      });
-    });
-
-    reactBlockEmitter.on('remove-plugin-block', ({ type, pluginId, siteId }) => {
-      const allBlocks = this.pluginBlocks[type];
-      if (allBlocks) {
-        this.pluginBlocks[type] = this.pluginBlocks[type].filter(
-          def => !(def.pluginId === pluginId && def.siteId === siteId)
-        );
-      }
-    });
   }
 
-  getDefinition(type: string, siteId: number) {
-    // Check plugin blocks.
-    const types = this.pluginBlocks[type];
-    if (types) {
-      const found = types.find(r => r.siteId === siteId)?.definition;
-      if (found) {
-        return found;
-      }
-    }
-
-    return this.definitionMap[type];
+  dispose() {
+    super.dispose();
+    defaultDispose(this);
   }
 
   /**
@@ -137,17 +107,7 @@ export class PageBlockExtension implements BaseExtension {
    */
   getDefinitions(siteId: number, context: EditorialContext = {}) {
     // Configuration blocks.
-    const definitions = Object.values(this.definitionMap);
-    const pluginDefinitionKeys = Object.keys(this.pluginBlocks);
-    for (const pluginDefinitionKey of pluginDefinitionKeys) {
-      const defs = this.pluginBlocks[pluginDefinitionKey];
-      if (defs) {
-        const found = defs.find(def => def.siteId === siteId);
-        if (found) {
-          definitions.push(found.definition);
-        }
-      }
-    }
+    const definitions = this.getAllDefinitions(siteId);
 
     const currentCtxKeys = Object.keys(context).filter((key: any) => {
       return !!(context as any)[key];
@@ -293,6 +253,80 @@ export class PageBlockExtension implements BaseExtension {
       body: slot,
       method: 'POST',
     });
+  }
+
+  async processSlotMappingRequest(req: SlotMappingRequest, projectId: number) {
+    // Project slots.
+    if (req.project) {
+      const slotNames = Object.keys(req.project);
+      for (const slotName of slotNames) {
+        const slotReq = req.project[slotName];
+        if (slotReq) {
+          await this.createSlot({
+            ...slotReq,
+            filters: {
+              manifest: { none: true },
+              collection: { none: true },
+              canvas: { none: true },
+              project: { exact: projectId },
+            },
+          });
+        }
+      }
+    }
+
+    if (req.collection) {
+      const slotNames = Object.keys(req.collection);
+      for (const slotName of slotNames) {
+        const slotReq = req.collection[slotName];
+        if (slotReq) {
+          await this.createSlot({
+            ...slotReq,
+            filters: {
+              manifest: { none: true },
+              collection: { all: true },
+              canvas: { none: true },
+              project: { exact: projectId },
+            },
+          });
+        }
+      }
+    }
+    if (req.manifest) {
+      const slotNames = Object.keys(req.manifest);
+      for (const slotName of slotNames) {
+        const slotReq = req.manifest[slotName];
+        if (slotReq) {
+          await this.createSlot({
+            ...slotReq,
+            filters: {
+              manifest: { all: true },
+              collection: { none: true },
+              canvas: { none: true },
+              project: { exact: projectId },
+            },
+          });
+        }
+      }
+    }
+
+    if (req.canvas) {
+      const slotNames = Object.keys(req.canvas);
+      for (const slotName of slotNames) {
+        const slotReq = req.canvas[slotName];
+        if (slotReq) {
+          await this.createSlot({
+            ...slotReq,
+            filters: {
+              manifest: { none: true },
+              collection: { none: true },
+              canvas: { all: true },
+              project: { exact: projectId },
+            },
+          });
+        }
+      }
+    }
   }
 
   async createBlock(block: SiteBlockRequest) {

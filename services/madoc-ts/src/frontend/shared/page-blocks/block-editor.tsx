@@ -107,7 +107,7 @@ export function useBlockModel(block: SiteBlock | SiteBlockRequest, advanced?: bo
 
   const definition: PageBlockDefinition<any, any, any, any> | undefined = useMemo(() => {
     return api.pageBlocks.getDefinition(block.type, site.id);
-  }, [site.id, api.pageBlocks.definitionMap, api.pageBlocks.pluginBlocks, block.type]);
+  }, [site.id, api.pageBlocks.definitionMap, api.pageBlocks.pluginDefinitions, block.type]);
 
   const defaultFields = useMemo<CaptureModel['document']>(() => {
     const defaultProps = {

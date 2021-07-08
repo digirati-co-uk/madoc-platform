@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useMemo, useRef } from 'react';
 import styled, { css } from 'styled-components';
 import { SettingsIcon } from '../icons/SettingsIcon';
 
@@ -252,8 +252,37 @@ export const AdminLayoutMenu = styled.div<{ $collapsed?: boolean }>`
     `}
 `;
 
-export const AdminLayoutMain = styled.div`
+const _AdminLayoutMain = styled.div`
   min-width: 0;
   flex: 1 1 0px;
   overflow-y: auto;
 `;
+
+const AdminMainScrollContext = React.createContext({
+  scrollToTop: () => {
+    // no-op
+  },
+});
+
+export const useAdminLayout = () => {
+  return useContext(AdminMainScrollContext);
+};
+
+export const AdminLayoutMain: typeof _AdminLayoutMain = ((props: any) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const ctx = useMemo(() => {
+    return {
+      scrollToTop: () => {
+        if (ref.current) {
+          ref.current.scrollTop = 0;
+        }
+      },
+    };
+  }, [ref]);
+
+  return (
+    <AdminMainScrollContext.Provider value={ctx}>
+      <_AdminLayoutMain ref={ref as any} {...props} />
+    </AdminMainScrollContext.Provider>
+  );
+}) as any;

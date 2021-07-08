@@ -45,6 +45,7 @@ export function createServerRenderer(
     defaultLocale: string;
     navigationOptions?: any;
     theme?: ResolvedTheme | null;
+    themeOverrides?: any;
   }>,
   createRoutes: ((c: any) => CreateRouteType) | UniversalRoute[],
   components: any,
@@ -105,6 +106,8 @@ export function createServerRenderer(
     const matches = matchUniversalRoutes(routes, path);
     const requests = [];
     const routeContext: EditorialContext = {};
+    const themeOverrides: any = {};
+    let projectApplied = false;
     for (const { match, route } of matches) {
       if (match.isExact && match.params) {
         // Extract project.
@@ -115,9 +118,28 @@ export function createServerRenderer(
       }
       if (route.component.getKey && route.component.getData) {
         requests.push(
-          prefetchCache.prefetchQuery(route.component.getKey(match.params, queryString, path), (key, vars) =>
-            route.component.getData ? route.component.getData(key, vars, userApi, path) : (undefined as any)
-          )
+          prefetchCache.prefetchQuery(route.component.getKey(match.params, queryString, path), (key, vars) => {
+            const data = route.component.getData
+              ? route.component.getData(key, vars, userApi, path)
+              : (undefined as any);
+            // Hack for server-side theme from template.
+            if (!projectApplied && key === 'getSiteProject' && omekaSite) {
+              data.then((resp: any) => {
+                try {
+                  if (resp?.template) {
+                    const definition = api.projectTemplates.getDefinition(resp?.template, omekaSite.id);
+                    if (definition?.theme) {
+                      themeOverrides[`project-template(${definition.type})`] = definition.theme;
+                    }
+                    projectApplied = true;
+                  }
+                } catch (e) {
+                  // no-op.
+                }
+              });
+            }
+            return data;
+          })
         );
       }
       const hooks = route.component.hooks || [];
@@ -126,6 +148,11 @@ export function createServerRenderer(
         if (typeof args !== 'undefined') {
           requests.push(prefetchCache.prefetchQuery([hook.name, args], () => (userApi as any)[hook.name](...args)));
         }
+      }
+
+      const customTheme = route.component.theme;
+      if (customTheme && customTheme.name) {
+        themeOverrides[customTheme.name] = customTheme;
       }
     }
 
@@ -144,21 +171,6 @@ export function createServerRenderer(
     });
     const displayLanguages = (siteLocales.displayLanguages || []).map(mapLocalCodes);
     const contentLanguages = (siteLocales.contentLanguages || []).map(mapLocalCodes);
-
-    const routeData = `
-      <script type="application/json" id="react-omeka">${JSON.stringify({
-        site: omekaSite,
-        user,
-        locales: supportedLocales,
-        defaultLocale: siteLocales.defaultLanguage || 'en',
-        navigationOptions: navigationOptions,
-        contentLanguages,
-        displayLanguages,
-        plugins,
-        theme,
-      })}</script>
-      <script type="application/json" id="react-query-cache">${JSON.stringify(dehydratedState)}</script>
-    `;
 
     if (matches.length === 0) {
       return {
@@ -190,6 +202,7 @@ export function createServerRenderer(
                         contentLanguages={contentLanguages}
                         displayLanguages={displayLanguages}
                         supportedLocales={supportedLocales}
+                        themeOverrides={themeOverrides}
                         navigationOptions={navigationOptions}
                       />
                     </ThemeProvider>
@@ -217,6 +230,22 @@ export function createServerRenderer(
     const styles = sheet.getStyleTags(); // <-- getting all the tags from the sheet
 
     // sheet.seal();
+
+    const routeData = `
+      <script type="application/json" id="react-omeka">${JSON.stringify({
+        site: omekaSite,
+        user,
+        locales: supportedLocales,
+        defaultLocale: siteLocales.defaultLanguage || 'en',
+        navigationOptions: navigationOptions,
+        contentLanguages,
+        displayLanguages,
+        plugins,
+        theme,
+        themeOverrides,
+      })}</script>
+      <script type="application/json" id="react-query-cache">${JSON.stringify(dehydratedState)}</script>
+    `;
 
     if (process.env.NODE_ENV === 'production') {
       return {

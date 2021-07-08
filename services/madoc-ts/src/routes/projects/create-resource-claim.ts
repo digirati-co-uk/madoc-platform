@@ -349,7 +349,7 @@ async function upsertCaptureModelForResource(
     }>`select task_id, capture_model_id from iiif_project where site_id = ${siteId} and id = ${projectId}`
   );
 
-  const userApi = api.asUser({ userId, siteId });
+  const userApi = api.asUser({ userId, siteId }, {}, true);
   const mainTarget = claim.canvasId
     ? { type: 'Canvas', id: `urn:madoc:canvas:${claim.canvasId}` }
     : claim.manifestId
@@ -389,7 +389,9 @@ async function upsertCaptureModelForResource(
   }
 
   // @TODO need to add custom context too.
-  return userApi.cloneCaptureModel(capture_model_id, target);
+  const response = await userApi.cloneCaptureModel(capture_model_id, target);
+  userApi.dispose();
+  return response;
 }
 
 async function createUserCrowdsourcingTask({

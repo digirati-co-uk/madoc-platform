@@ -1,6 +1,7 @@
-import { FieldInstance, useSelectorHelper } from '@capture-models/editor';
+import { FieldInstance, FieldPreview, useSelectorHelper } from '@capture-models/editor';
 import { BaseField } from '@capture-models/types';
 import React, { useEffect, useState } from 'react';
+import { useSlotConfiguration } from './EditorSlots';
 
 export const DefaultFieldInstance: React.FC<{
   field: BaseField;
@@ -10,6 +11,8 @@ export const DefaultFieldInstance: React.FC<{
 }> = ({ field, property, path, hideHeader }) => {
   const helper = useSelectorHelper();
   const [isHighlighted, setIsHighlighted] = useState(false);
+  const { immutableFields = [] } = useSlotConfiguration();
+  const immutable = immutableFields.indexOf(property) !== -1;
 
   useEffect(() => {
     if (field?.selector) {
@@ -32,6 +35,11 @@ export const DefaultFieldInstance: React.FC<{
       setIsHighlighted(false);
     }
   };
+
+  if (immutable) {
+    // @todo come back to this and make FieldInstance accept "disabled"
+    return null;
+  }
 
   return (
     <span onFocus={onFocus} onBlur={onBlur}>

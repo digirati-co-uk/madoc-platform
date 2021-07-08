@@ -48,7 +48,7 @@ const worker = new Worker(
     if (job.data && job.data.context) {
       const siteId = getSiteId(job.data.context);
       if (siteId) {
-        contextualApi = api.asUser({ siteId });
+        contextualApi = api.asUser({ siteId }, {}, true);
       }
     }
 
