@@ -116,22 +116,6 @@ INSERT INTO `resource_class` VALUES
   (102,NULL,4,'OnlineAccount','Online Account','An online account.'),
   (103,NULL,4,'OnlineGamingAccount','Online Gaming Account','An online gaming account.'),
   (104,NULL,4,'OnlineEcommerceAccount','Online E-commerce Account','An online e-commerce account.'),
-  (105,NULL,4,'OnlineChatAccount','Online Chat Account','An online chat account.'),
-  (106,1,7,'Resource','Resource','The class resource, everything.'),
-  (107,1,7,'Class','Class','The concept of Class'),
-  (108,1,7,'Literal','Literal','This represents the set of atomic values, eg. textual strings.'),
-  (109,1,7,'Container','Container','This represents the set Containers.'),
-  (110,1,7,'ContainerMembershipProperty','ContainerMembershipProperty','The container membership properties, rdf:1, rdf:2, ..., all of which are sub-properties of member.'),
-  (111,1,8,'Zone','Zone','Used to group annotations together in an area of a Canvas, for example to model columns, foldouts or palimpsests; Note that Zones are not currently used in the IIIF Presentation API.'),
-  (112,1,8,'AnnotationList','AnnotationList','AnnotationLists are an ordered list of Annotation objects. Typically all Annnotations in a list target the same Canvas'),
-  (113,1,8,'Sequence','Sequence','The sequence conveys the ordering of the views of the object.'),
-  (114,1,8,'ViewingHint','ViewingHint',NULL),
-  (115,1,8,'Canvas','Canvas','The canvas represents an individual page or view and acts as a central point for laying out the different content resources that make up the display.'),
-  (116,1,8,'Layer','Layer','Layers are lists of AnnotationLists to group them together, for example to create the set of lists that make up a particular translation/edition of a text'),
-  (117,1,8,'Manifest','Manifest','The manifest resource represents a single object and any intellectual work or works embodied within that object'),
-  (118,1,8,'Range','Range','Ranges describe additional structure within an object, such as newspaper articles that span pages, the range of non-content-bearing pages at the beginning of a work, or chapters within a book'),
-  (119,1,8,'Collection','Collection','Collections are used to list the manifests available for viewing, and to describe the structures, hierarchies or collections that the physical objects are part of.'),
-  (120,1,8,'ViewingDirection','ViewingDirection',NULL),
-  (121, 1, 12, 'Service', 'Service', 'A Service is web service associated with a Site or part of it.');
+  (105,NULL,4,'OnlineChatAccount','Online Chat Account','An online chat account.')
 /*!40000 ALTER TABLE `resource_class` ENABLE KEYS */;
 UNLOCK TABLES;

@@ -80,8 +80,6 @@ export const ListPlugins: React.FC = () => {
 
   const { data, refetch } = useData<{ plugins: SitePlugin[] }>(ListPlugins, undefined, {
     retry: false,
-    initialStale: false,
-    refetchOnMount: false,
     refetchIntervalInBackground: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,

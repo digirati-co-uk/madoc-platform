@@ -1,10 +1,4 @@
 vendor
-repos/**/vendor
-services/sorting-room/node_modules
-services/sorting-room/dist
-services/sorting-room/docs
 files
-database/data
-bare
 node_modules
 var

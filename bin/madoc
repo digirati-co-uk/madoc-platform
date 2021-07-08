@@ -5,7 +5,7 @@ set -e
 commandToRun=$1;shift;
 
 case "${commandToRun}" in
-    init)
+    init-dev)
         ( cd services/madoc;
             mdkir -p ./.omeka;
             ( cd ./.omeka;
@@ -23,11 +23,6 @@ case "${commandToRun}" in
             cp ./config/composer.json ./composer.json;
             php ./config/patch-composer.php;
             composer install --no-dev --no-scripts --optimize-autoloader;
-        )
-
-        ## Sorting room
-        ( cd services/sorting-room;
-          ./build.sh;
         )
     ;;
 
@@ -111,102 +106,18 @@ case "${commandToRun}" in
         docker-compose restart "$@"
     ;;
 
-    rebuild)
-        echo "=> Stopping running containers"
-        docker-compose -f docker-compose.server.yml stop
-        echo "=> Removing containers and network"
-        docker-compose -f docker-compose.server.yml down
-        echo "=> Building new containers"
-        docker-compose -f docker-compose.server.yml up --build --force-recreate -d
-        echo "done."
-    ;;
-
     down)
         docker-compose down "$@"
-    ;;
-
-    generate-language)
-      ( cd services/madoc;
-          vendor/bin/twig-extract -vvv -R -d madoc -o ./translations ./packages;
-          rm ./translations/madoc/template.pot;
-          mv ./translations/madoc.en_GB.po ./translations/madoc/template.pot;
-          php ./packages/extract-tagged-strings/extract-tagged-strings.php packages >> ./translations/madoc/template.pot;
-      )
     ;;
 
     logs)
         docker-compose logs -f --tail=50
     ;;
 
-    refresh-gateway)
+    reload-gateway)
       curl -H "x-tyk-authorization: y@@-rwzsqsqTRcuJjp6L8" http://localhost:8888/tyk/reload
     ;;
 
-    ci-init)
-      ( cd services/madoc;
-          ( cd ./.omeka;
-              git clone https://github.com/digirati-co-uk/omeka-s.git --branch bugfix/7.2-rebase-1.3.0 --depth 1;
-          );
-
-          ( cd packages;
-              git clone https://github.com/digirati-co-uk/iiif-php.git --branch feature/expanded-api --depth 1;
-          );
-      );
-    ;;
-
-    ci-start)
-        docker-compose -p ci -f docker-compose.ci.yml up -d --build
-    ;;
-
-    ci-stop)
-        docker-compose -p ci -f docker-compose.ci.yml stop
-        docker-compose -p ci -f docker-compose.ci.yml down
-    ;;
-
-    server-init)
-      ( cd services/madoc;
-          ( cd ./.omeka;
-              git clone https://github.com/digirati-co-uk/omeka-s.git --branch bugfix/7.2-rebase-1.3.0 --depth 1;
-          )
-
-          ( cd packages;
-              git clone https://github.com/digirati-co-uk/iiif-php.git --branch feature/expanded-api --depth 1;
-          )
-      )
-    ;;
-
-    server-start)
-         docker-compose -f docker-compose.server.yml build
-         docker-compose -f docker-compose.server.yml up -d
-    ;;
-
-    server-stop)
-         docker-compose -f docker-compose.server.yml stop
-    ;;
-
-    server-down)
-        docker-compose -f docker-compose.server.yml down
-    ;;
-
-    server-logs)
-         docker-compose -f docker-compose.server.yml logs -f --tail=50
-    ;;
-
-    server-rebuild)
-        read -p "WARNING: if you have not set up volumes for files or database these will be deleted. Are you sure you want to rebuild? (Y) " -n 1 -r
-        echo
-        if [[ ! $REPLY =~ ^[Yy]$ ]]
-        then
-            [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1
-        fi
-        echo "=> Stopping running containers"
-        docker-compose -f docker-compose.server.yml stop
-        echo "=> Removing containers and network"
-        docker-compose -f docker-compose.server.yml down
-        echo "=> Building new containers"
-        docker-compose -f docker-compose.server.yml up --build --force-recreate -d
-        echo "done."
-    ;;
     *)
 
     echo
@@ -216,21 +127,12 @@ case "${commandToRun}" in
     echo
     echo "Available commands:"
     echo
-    echo "  init                      Initialise dev environment"
+    echo "  init-dev                  Initialise dev environment"
     echo "  start                     Starts up fresh set of docker containers (detached)"
     echo "  stop                      Stops all containers"
+    echo "  up                        Start all containers"
     echo "  down                      Stop all containers if running and remove all containers"
     echo "  restart                   Restarts all containers"
     echo "  rebuild                   Rebuilds all containers"
     echo "  logs                      Show and tail the logs in the docker containers"
-    echo "  generate-language         Generate language files for the current build of Madoc"
-    echo
-    echo "Server commands:"
-    echo
-    echo "  server-init                Initialise server environment"
-    echo "  server-start               Starts containers using server docker compose"
-    echo "  server-stop                Stops all containers"
-    echo "  server-rebuild             Rebuilds all containers. WARNING: deletes containers before rebuilds"
-    echo "  server-logs                Show and tail the logs in the server docker containers"
-    echo "  server-down                Bring server down and remove containers"
 esac
