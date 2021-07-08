@@ -109,7 +109,7 @@ export const ViewExternalPlugin: React.FC = () => {
 
 serverRendererFor(ViewExternalPlugin, {
   getKey: (params, query, pathname) => {
-    return ['system-plugins', { owner: params.owner, repo: params.repo }];
+    return ['external-plugin', { owner: params.owner, repo: params.repo }];
   },
   getData: async (key, vars, api, pathname) => {
     return api.system.viewExternalPlugin(vars.owner, vars.repo);
