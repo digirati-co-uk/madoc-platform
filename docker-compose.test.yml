@@ -51,5 +51,4 @@ services:
 
   storage-api:
     volumes:
-      - ./services/storage-api/lib:/home/node/app/lib:delegated
       - ./var/test-environment/files/storage-api:/home/node/app/files
