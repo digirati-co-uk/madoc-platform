@@ -12,7 +12,7 @@ import { useCurrentUser } from '../../shared/hooks/use-current-user';
 import { useLocalStorage } from '../../shared/hooks/use-local-storage';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { CanvasImageViewer } from '../features/CanvasImageViewer';
-import { CanvasManifestNavigation } from '../features/CanvasManifestNavigation';
+import { CanvasPageHeader } from '../features/CanvasPageHeader';
 import { CanvasSimpleEditor } from '../features/CanvasSimpleEditor';
 import { CanvasTaskWarningMessage } from '../features/CanvasTaskWarningMessage';
 import { CanvasViewer } from '../features/CanvasViewer';
@@ -72,7 +72,7 @@ export const ViewCanvasModel: React.FC = () => {
       <div>
         <DisplayBreadcrumbs />
 
-        <CanvasManifestNavigation subRoute="model" />
+        <CanvasPageHeader subRoute="model" />
 
         {projectId && !projectPaused && (
           <InfoMessage>
@@ -111,7 +111,7 @@ export const ViewCanvasModel: React.FC = () => {
     <div>
       <DisplayBreadcrumbs />
 
-      <CanvasManifestNavigation subRoute="model" />
+      <CanvasPageHeader subRoute="model" />
 
       {showCanvasNavigation && canContribute ? <PrepareCaptureModel /> : null}
 

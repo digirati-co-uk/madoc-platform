@@ -8,17 +8,18 @@ import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
 import { ManifestLoader } from '../pages/loaders/manifest-loader';
 
-export const ManifestMetadata: React.FC<{ compact?: boolean; showEmptyMessage?: boolean }> = ({
+export const ManifestMetadata: React.FC<{ hidden?: boolean; compact?: boolean; showEmptyMessage?: boolean }> = ({
+  hidden,
   compact = true,
   showEmptyMessage,
 }) => {
   const createLink = useRelativeLinks();
   const { manifestId } = useRouteContext();
   const { manifest } = useMetadataSuggestionConfiguration();
-  const { resolvedData: data } = usePaginatedData(ManifestLoader, undefined, { enabled: !!manifestId });
-  const { data: metadataConfig } = useSiteMetadataConfiguration();
+  const { resolvedData: data } = usePaginatedData(ManifestLoader, undefined, { enabled: !!manifestId && !hidden });
+  const { data: metadataConfig } = useSiteMetadataConfiguration({ enabled: !hidden });
 
-  if (!data || !metadataConfig) {
+  if (!data || !metadataConfig || hidden) {
     return null;
   }
 
@@ -45,10 +46,12 @@ blockEditorFor(ManifestMetadata, {
   anyContext: ['manifest', 'canvas'],
   requiredContext: ['manifest'],
   editor: {
+    hidden: { type: 'checkbox-field', inlineLabel: 'Hide on page', label: 'Hide' },
     compact: { type: 'checkbox-field', inlineLabel: 'Show as compact', label: 'Display options' },
     showEmptyMessage: { type: 'checkbox-field', inlineLabel: 'Show empty message', label: 'Empty message' },
   },
   defaultProps: {
+    hidden: true,
     compact: true,
     showEmptyMessage: false,
   },

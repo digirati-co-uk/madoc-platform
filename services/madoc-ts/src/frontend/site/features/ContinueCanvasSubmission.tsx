@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { Button } from '../../shared/atoms/Button';
 import { InfoMessage } from '../../shared/atoms/InfoMessage';
 import { ProjectListingDescription, ProjectListingItem, ProjectListingTitle } from '../../shared/atoms/ProjectListing';
@@ -162,3 +163,12 @@ export const ContinueCanvasSubmission: React.FC = () => {
     </div>
   );
 };
+
+blockEditorFor(ContinueCanvasSubmission, {
+  type: 'default.ContinueCanvasSubmission',
+  label: 'Canvas continue submission',
+  anyContext: ['canvas'],
+  requiredContext: ['project', 'manifest', 'canvas'],
+  editor: {},
+  defaultProps: {},
+});

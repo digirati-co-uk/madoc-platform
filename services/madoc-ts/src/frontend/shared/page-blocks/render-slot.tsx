@@ -14,10 +14,11 @@ export type RenderSlotProps = {
   invalidateSlots?: () => void | Promise<void>;
   defaultContents?: any;
   pagePath?: string;
+  layout?: string;
 };
 
 export const RenderSlot: React.FC<RenderSlotProps> = props => {
-  const layout = props.slot.layout;
+  const layout = props.layout || props.slot.layout;
   const surfaceProps = props.slot?.props?.surface as SurfaceProps;
 
   const orderedBlocks = useMemo(() => {

@@ -4,16 +4,13 @@ import { useMutation } from 'react-query';
 import { extractBlockDefinitions } from '../../../extensions/page-blocks/block-editor-react';
 import { CreateSlotRequest, EditorialContext } from '../../../types/schemas/site-page';
 import { useProject } from '../../site/hooks/use-project';
-import { Button, ButtonRow } from '../atoms/Button';
 import {
-  ContextualLabel,
   ContextualMenuList,
   ContextualMenuListItem,
   ContextualMenuWrapper,
   ContextualPositionWrapper,
 } from '../atoms/ContextualMenu';
 import { EmptySlotActions, EmptySlotContainer, EmptySlotLabel } from '../atoms/EmptySlot';
-import { EmptyState } from '../atoms/EmptyState';
 import { PageEditorButton } from '../atoms/PageEditor';
 import {
   SlotEditorButton,
@@ -21,10 +18,7 @@ import {
   SlotEditorReadOnly,
   SlotOutlineContainer,
 } from '../atoms/SlotEditor';
-import { WidePage } from '../atoms/WidePage';
-import { ModalButton } from '../components/Modal';
 import { useApi } from '../hooks/use-api';
-import { SettingsIcon } from '../icons/SettingsIcon';
 import { useSlots } from './slot-context';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 
@@ -107,7 +101,7 @@ export const BlankSlotDropdown: React.FC<{
       <ContextualMenuWrapper $padding $isOpen={isOpen}>
         <ContextualMenuList>
           {actions.map((action, n) => (
-            <ContextualMenuListItem {...itemProps[n]} onClick={action.onClick}>
+            <ContextualMenuListItem key={n} {...itemProps[n]} onClick={action.onClick}>
               {action.label}
             </ContextualMenuListItem>
           ))}
@@ -118,7 +112,6 @@ export const BlankSlotDropdown: React.FC<{
 };
 
 export const RenderBlankSlot: React.FC<{ name: string }> = ({ name: slotId, children }) => {
-  const { t } = useTranslation();
   const { context, editable, isPage, beforeCreateSlot, onCreateSlot } = useSlots();
   const api = useApi();
   const blockDefinitions = extractBlockDefinitions(children);
