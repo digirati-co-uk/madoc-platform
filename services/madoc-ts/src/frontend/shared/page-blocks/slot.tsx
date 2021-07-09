@@ -12,7 +12,6 @@ export const Slot: React.FC<{ name: string; hidden?: boolean; layout?: string }>
   const updateSlot = useCallback(() => (slotId ? onUpdateSlot(slotId) : undefined), [onUpdateSlot, slotId]);
 
   if (props.hidden && !editable) {
-    console.log('hiding', props.name);
     return null;
   }
 
