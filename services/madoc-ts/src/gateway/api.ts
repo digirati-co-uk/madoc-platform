@@ -132,6 +132,7 @@ export class ApiClient {
 
     // This extension will be fine.
     this.notifications = new NotificationExtension(this);
+    this.tasks = new TaskExtension(this);
 
     if (options.withoutExtensions) {
       return;
@@ -139,7 +140,6 @@ export class ApiClient {
 
     this.pageBlocks = new PageBlockExtension(this, defaultPageBlockDefinitions);
     this.media = new MediaExtension(this);
-    this.tasks = new TaskExtension(this);
     this.system = new SystemExtension(this);
     this.themes = new ThemeExtension(this);
     this.siteManager = new SiteManagerExtension(this);
