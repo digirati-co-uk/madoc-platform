@@ -20,6 +20,10 @@ export const SlotLayout = React.forwardRef(function SlotLayout(
   }: { layout?: 'none' | 'stack' | 'flex' | string; surfaceProps?: SurfaceProps; children: any },
   ref
 ) {
+  if (layout === 'none') {
+    return children;
+  }
+
   if (layout === 'flex') {
     return (
       <Surface {...surfaceProps}>

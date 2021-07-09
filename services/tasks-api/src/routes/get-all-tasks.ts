@@ -104,6 +104,24 @@ export const getAllTasks: RouteMiddleware = async context => {
     : sql``;
 
   try {
+    const countQuery = sql<{ total_items: number }>`
+        select COUNT(*) as total_items from tasks t
+        where t.context ?& ${sql.array(context.state.jwt.context, 'text')}
+        ${subtaskExclusion}
+        ${userExclusion}
+        ${typeFilter}
+        ${subjectFilter}
+        ${parentSubjectFilter}
+        ${statusFilter}
+        ${rootTaskFilter}
+        ${parentTaskFilter}
+        ${modifiedStartFilter}
+        ${modifiedEndFilter}
+        ${modifiedInterval}
+        ${createdStartFilter}
+        ${createdEndFilter}
+        ${createdInterval}
+    `;
     const query = sql`
       SELECT t.id, t.name, t.status, t.status_text, t.metadata, t.type ${detailedFields}
       FROM tasks t 
@@ -126,7 +144,7 @@ export const getAllTasks: RouteMiddleware = async context => {
         ${orderBy}
     `;
 
-    const { rowCount } = await context.connection.query(query);
+    const { total_items: rowCount } = await context.connection.one(countQuery);
 
     const taskList = await context.connection.many(
       sql`

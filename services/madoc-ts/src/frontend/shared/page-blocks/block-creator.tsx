@@ -60,7 +60,9 @@ export const BlockCreator: React.FC<{
   context?: EditorialContext;
   defaultBlocks?: PageBlockDefinition<any, any, any, any>[];
   existingBlocks?: SiteBlock[];
+  blockTypesInOtherSlots?: string[];
   onSave: (block: SiteBlock) => void | Promise<void>;
+  pagePath?: string;
 }> = props => {
   const api = useApi();
   const site = useSite();
@@ -70,7 +72,27 @@ export const BlockCreator: React.FC<{
   // - List all block types
   const blockTypes = useMemo(() => {
     return api.pageBlocks.getDefinitions(site.id, props.context);
-  }, [api.pageBlocks, props.context]);
+  }, [api.pageBlocks, props.context, site.id]);
+
+  const availableBlocks = useMemo(() => {
+    return blockTypes.filter(block => {
+      if (block?.source?.type === 'custom-page') {
+        return block?.source.id === props.pagePath;
+      }
+
+      return !block.internal;
+    });
+  }, [blockTypes, props.pagePath]);
+
+  const pagePathBlocks = useMemo(() => {
+    return blockTypes.filter(block => {
+      console.log('block source', block.source);
+      if (block?.source?.type === 'custom-page' && props.pagePath) {
+        return block?.source.id === props.pagePath;
+      }
+      return false;
+    });
+  }, [blockTypes, props.pagePath]);
 
   const chosenBlock = useMemo(() => {
     if (chosenBlockType) {
@@ -122,11 +144,17 @@ export const BlockCreator: React.FC<{
       {props.defaultBlocks && props.defaultBlocks.length ? (
         <>
           <h4>Default blocks for this slot</h4>
-          <AddBlockList>{props.defaultBlocks?.map(renderBlock)}</AddBlockList>
+          <AddBlockList>{props.defaultBlocks.map(renderBlock)}</AddBlockList>
+        </>
+      ) : null}
+      {pagePathBlocks && pagePathBlocks.length ? (
+        <>
+          <h4>Page specific blocks</h4>
+          <AddBlockList>{pagePathBlocks.map(renderBlock)}</AddBlockList>
         </>
       ) : null}
       <h4>All blocks</h4>
-      <AddBlockList>{blockTypes.map(renderBlock)}</AddBlockList>
+      <AddBlockList>{availableBlocks.map(renderBlock)}</AddBlockList>
     </>
   );
 };

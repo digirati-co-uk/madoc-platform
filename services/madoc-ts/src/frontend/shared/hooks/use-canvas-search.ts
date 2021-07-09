@@ -1,9 +1,13 @@
 import { apiHooks } from './use-api-query';
 import { useLocationQuery } from './use-location-query';
 
-export function useCanvasSearch(id?: number | string, queryParam = 'searchText') {
+export function useCanvasSearchText(id?: number | string, queryParam = 'searchText'): string | undefined {
   const query = useLocationQuery();
-  const searchText = query[queryParam];
+  return query[queryParam];
+}
+
+export function useCanvasSearch(id?: number | string, queryParam = 'searchText') {
+  const searchText = useCanvasSearchText(id, queryParam);
   const { data: search } = apiHooks.searchQuery(() =>
     searchText && id ? [{ fulltext: searchText }, 1, `urn:madoc:canvas:${id}`] : undefined
   );
@@ -19,5 +23,5 @@ export function useCanvasSearch(id?: number | string, queryParam = 'searchText')
     search.results[0].hits[0]
       ? search.results[0].hits[0]
       : undefined,
-  ];
+  ] as const;
 }

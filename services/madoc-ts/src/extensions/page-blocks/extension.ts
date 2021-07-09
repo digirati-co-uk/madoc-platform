@@ -39,6 +39,8 @@ export type PageBlockDefinition<
   anyContext?: RequiredContext[];
   internal?: boolean;
   customEditor?: PageBlockEditor;
+  mapToProps?: (props: Data) => any;
+  mapFromProps?: (props: any) => Data;
   render: (data: Data, context: EditorialContext, api: ApiClient) => Return;
   source?: { type: string; id?: string; name: string };
 };

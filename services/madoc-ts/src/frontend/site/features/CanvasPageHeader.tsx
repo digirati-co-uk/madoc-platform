@@ -1,10 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { Button, ButtonIcon, ButtonRow } from '../../shared/atoms/Button';
-import { CanvasNavigationMinimalist } from '../../shared/components/CanvasNavigationMinimalist';
 import { LocaleString } from '../../shared/components/LocaleString';
-import { useCanvasSearch } from '../../shared/hooks/use-canvas-search';
 import { useData } from '../../shared/hooks/use-data';
 import { GridIcon } from '../../shared/icons/GridIcon';
 import { HrefLink } from '../../shared/utility/href-link';
@@ -17,7 +15,7 @@ import { CanvasManifestPagination } from './CanvasManifestPagination';
 import { CanvasTaskProgress } from './CanvasTaskProgress';
 import { RequiredStatement } from './RequiredStatement';
 
-export const CanvasManifestNavigation: React.FC<{ subRoute?: string }> = ({ subRoute }) => {
+export const CanvasPageHeader: React.FC<{ subRoute?: string }> = ({ subRoute }) => {
   const { manifestId, canvasId } = useRouteContext();
   const createLink = useRelativeLinks();
   const { t } = useTranslation();
@@ -59,3 +57,20 @@ export const CanvasManifestNavigation: React.FC<{ subRoute?: string }> = ({ subR
     </div>
   );
 };
+
+blockEditorFor(CanvasPageHeader, {
+  type: 'default.CanvasPageHeader',
+  label: 'Canvas page header',
+  anyContext: ['canvas'],
+  requiredContext: ['manifest', 'canvas'],
+  editor: {
+    subRoute: {
+      type: 'text-field',
+      label: 'Navigation sub route',
+      description: `If you use this on a sub page (e.g. manifest/1/c/2/SUB_ROUTE) this will ensure paginated links are accurate.`,
+    },
+  },
+  defaultProps: {
+    subRoute: '',
+  },
+});

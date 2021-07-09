@@ -13,10 +13,12 @@ export type RenderSlotProps = {
   onUpdateBlock?: (blockId: number) => void | Promise<void>;
   invalidateSlots?: () => void | Promise<void>;
   defaultContents?: any;
+  pagePath?: string;
+  layout?: string;
 };
 
 export const RenderSlot: React.FC<RenderSlotProps> = props => {
-  const layout = props.slot.layout;
+  const layout = props.layout || props.slot.layout;
   const surfaceProps = props.slot?.props?.surface as SurfaceProps;
 
   const orderedBlocks = useMemo(() => {
@@ -40,6 +42,7 @@ export const RenderSlot: React.FC<RenderSlotProps> = props => {
         invalidateSlots={props.invalidateSlots}
         defaultContents={props.defaultContents}
         surfaceProps={surfaceProps}
+        pagePath={props.pagePath}
       />
     );
   }

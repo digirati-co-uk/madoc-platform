@@ -34,6 +34,7 @@ type SlotEditorProps = {
   onResetSlot?: () => void;
   defaultContents?: any;
   surfaceProps?: SurfaceProps;
+  pagePath?: string;
 };
 
 const EditingBlockContainer = styled.div`
@@ -188,6 +189,7 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
           modalSize={'lg'}
           render={({ close }) => (
             <BlockCreator
+              pagePath={props.pagePath}
               context={props.context}
               defaultBlocks={defaultDefinitions}
               existingBlocks={props.blocks}
@@ -259,13 +261,12 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
           Edit surface
         </ModalButton>
 
-        {/* @todo */}
-        <SlotEditorButton>Change layout</SlotEditorButton>
-        <ModalButton as={SlotEditorButton} title="Advanced options" render={() => <div>Advanced</div>}>
-          Advanced options
-        </ModalButton>
+        {/*/!* @todo *!/*/}
+        {/*<SlotEditorButton>Change layout</SlotEditorButton>*/}
+        {/*<ModalButton as={SlotEditorButton} title="Advanced options" render={() => <div>Advanced</div>}>*/}
+        {/*  Advanced options*/}
+        {/*</ModalButton>*/}
         <SlotEditorButton onClick={() => setIsResetting(r => !r)}>Reset slot</SlotEditorButton>
-        {/* @todo */}
 
         <ModalButton
           as={SlotEditorWhy}

@@ -31,6 +31,12 @@ export const DefaultHomepage: React.FC = () => {
 blockEditorFor(DefaultHomepage, {
   label: 'Default homepage',
   editor: {},
+  source: {
+    id: '/',
+    type: 'static-page',
+    name: 'Homepage',
+  },
+  internal: true,
   requiredContext: [],
   type: 'default.DefaultHomepage',
 });
