@@ -110,7 +110,9 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
         revisionEditMode: false,
         directEdit: true,
       }
-    : {};
+    : {
+        preventMultiple: !allowMultiple,
+      };
 
   const components: Partial<EditorRenderingConfig> = isPreparing
     ? {
