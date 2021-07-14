@@ -28,14 +28,22 @@ export const AutoSelectingRevision: React.FC<{ directEdit?: boolean }> = ({ dire
   }, [currentRevisionId, structure]);
 
   useEffect(() => {
-    if (skipToStructureRevision && !directEdit) {
+    if (skipToStructureRevision && !directEdit && currentView && currentView.type === 'model' && !currentRevisionId) {
       if (lastWorkedOn) {
         selectRevision({ revisionId: lastWorkedOn.revision.id });
       } else {
         createRevision({ revisionId: skipToStructureRevision, cloneMode: 'EDIT_ALL_VALUES' });
       }
     }
-  }, [directEdit, createRevision, lastWorkedOn, selectRevision, skipToStructureRevision]);
+  }, [
+    directEdit,
+    createRevision,
+    lastWorkedOn,
+    selectRevision,
+    skipToStructureRevision,
+    currentView,
+    currentRevisionId,
+  ]);
 
   useEffect(() => {
     if (currentView && currentView.type === 'model' && !currentRevisionId) {
