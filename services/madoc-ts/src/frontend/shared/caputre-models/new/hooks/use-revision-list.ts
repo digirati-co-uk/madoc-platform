@@ -39,7 +39,7 @@ export function useRevisionList({ filterCurrentView = true }: { filterCurrentVie
   const revisionsMap = Revisions.useStoreState(s => s.revisions);
   const revisions: RevisionRequest[] = useMemo(
     () => revisionsMapToRevisionsList(revisionsMap, filterCurrentView ? currentView : undefined),
-    [currentView, revisionsMap]
+    [currentView, filterCurrentView, revisionsMap]
   );
 
   const canonicalRevision = useMemo(() => filterCanonicalRevisions(revisions), [revisions]);
