@@ -26,7 +26,7 @@
   },
   "browserslist": "> 0.25%, not dead",
   "resolutions": {
-    "@atlas-viewer/atlas": "1.5.2",
+    "@atlas-viewer/atlas": "1.6.4",
     "canvas-panel-beta": "2.0.2",
     "@iiif/vocabulary": "1.0.17",
     "immutable": "3.8.2",
@@ -49,7 +49,7 @@
     "ws": "7.4.6"
   },
   "dependencies": {
-    "@atlas-viewer/atlas": "1.5.2",
+    "@atlas-viewer/atlas": "1.6.4",
     "@atlas-viewer/iiif-image-api": "^1.2.5",
     "@capture-models/editor": "^0.13.16",
     "@capture-models/helpers": "^0.13.14",

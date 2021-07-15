@@ -2,15 +2,15 @@
 # yarn lockfile v1
 
 
-"@atlas-viewer/atlas@1.5.2", "@atlas-viewer/atlas@^1.5.2":
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-1.5.2.tgz#b6cabf8761ee9472208a63c4325acc5ca5d1ebf6"
-  integrity sha512-TU5OwRrIIY4f2zYHtCPYZ1lA0gemdpmYY9OBjTgji3f7/Isu02ZtIc5zqA9h7X1QcjH+E6EveiPbAHSNiRKdJw==
+"@atlas-viewer/atlas@1.6.4", "@atlas-viewer/atlas@^1.5.2":
+  version "1.6.4"
+  resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-1.6.4.tgz#0409f1b16182bc36fcf5384edcd24fa0c23aef76"
+  integrity sha512-GjPCVI+xAdHlbryR+/FSalPmUjOwpVi0hGPAOmHvVkfYGI7P8btScsfSjXxA6RPUhR20YE1kadq9BHyY29EBpA==
   dependencies:
     "@atlas-viewer/dna" "^0.5.0"
-    "@atlas-viewer/iiif-image-api" "1.2.1"
-    "@hyperion-framework/types" "1.0.0-alpha.14"
-    "@hyperion-framework/vault" "1.0.0-alpha.19"
+    "@atlas-viewer/iiif-image-api" "^1.2.5"
+    "@hyperion-framework/types" "^1.0.0"
+    "@hyperion-framework/vault" "^1.0.0"
     "@popmotion/popcorn" "^0.4.4"
     nanoid "^3.1.9"
     normalize-wheel "^1.0.1"
@@ -29,7 +29,7 @@
   resolved "https://registry.yarnpkg.com/@atlas-viewer/dna/-/dna-0.5.0.tgz#aab824540b59dc3897e2ba4cdb51a53e47ed3311"
   integrity sha512-vHyMwXoCFq6ymk+wOVIkMphUo+I+wBRoA2tBf1AIUZWJMsk51cBtO2qzOaZQUh/TmrzrqEY5aEAtgBj52LVRUg==
 
-"@atlas-viewer/iiif-image-api@1.2.1", "@atlas-viewer/iiif-image-api@1.2.5", "@atlas-viewer/iiif-image-api@^1.2.4", "@atlas-viewer/iiif-image-api@^1.2.5":
+"@atlas-viewer/iiif-image-api@1.2.5", "@atlas-viewer/iiif-image-api@^1.2.4", "@atlas-viewer/iiif-image-api@^1.2.5":
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/@atlas-viewer/iiif-image-api/-/iiif-image-api-1.2.5.tgz#1ec38430710751041ee9faeb33cb4d5dbf8f6480"
   integrity sha512-Cdy4PxQYbSb7J4a4ozl/cVTEjwVmbvTnMsWMf105O2zfZ1JduCpqH07tzahiau9zqlcIkoNTKTBOIPsBQckFNQ==
@@ -2808,14 +2808,14 @@
     rollup "^2.36.1"
     typesafe-actions "^5.1.0"
 
-"@hyperion-framework/types@1.0.0-alpha.14", "@hyperion-framework/types@^1.0.0", "@hyperion-framework/types@^1.0.0-alpha.14":
+"@hyperion-framework/types@^1.0.0", "@hyperion-framework/types@^1.0.0-alpha.14":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@hyperion-framework/types/-/types-1.0.0.tgz#860aae1884f866a1a3ddccf9130655279342d063"
   integrity sha512-n7oScX1Gjaxlf06vVT8Qyo35NILfzGsqO+b0yXwAIq2R289z91aoiwIb+WYeNKyWHXWCrIJ9HBLC8KAZIe/abA==
   dependencies:
     "@types/geojson" "^7946.0.7"
 
-"@hyperion-framework/vault@1.0.0-alpha.19", "@hyperion-framework/vault@^1.0.0":
+"@hyperion-framework/vault@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@hyperion-framework/vault/-/vault-1.0.0.tgz#da1412e6078fc438060d251467e5eeae81de9a33"
   integrity sha512-CA3QUoC2ESDzmPvhad8NGjghn6N44wr0Oge8CqFZIrLKvmHyU1XvTXYPc1FwcDF7XGAnvSKacI/jex9yL8ZfXg==
@@ -3111,7 +3111,7 @@
     path-to-regexp "^6.1.0"
 
 "@madoc.io/types@./npm/madoc-types":
-  version "0.0.5"
+  version "0.0.8"
   dependencies:
     "@types/react" "*"
     "@types/styled-components" "*"
