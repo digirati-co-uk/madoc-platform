@@ -21,7 +21,11 @@
     },
     "slug": {
       "type": "string"
-    }
+    },
+    "template": {
+      "type": "string"
+    },
+    "template_options": {}
   },
   "required": [
     "label",

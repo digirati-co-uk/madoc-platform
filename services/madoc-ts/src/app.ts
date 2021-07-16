@@ -91,11 +91,13 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   // Validator.
   app.context.ajv = new Ajv();
   for (const file of readdirSync(path.resolve(__dirname, '..', 'schemas'))) {
-    const name = path.basename(file, '.json');
-    app.context.ajv.addSchema(
-      JSON.parse(readFileSync(path.resolve(__dirname, '..', 'schemas', file)).toString('utf-8')),
-      name
-    );
+    if (!file.startsWith('.')) {
+      const name = path.basename(file, '.json');
+      app.context.ajv.addSchema(
+        JSON.parse(readFileSync(path.resolve(__dirname, '..', 'schemas', file)).toString('utf-8')),
+        name
+      );
+    }
   }
 
   app.use(k2c(cookieParser(app.keys)));

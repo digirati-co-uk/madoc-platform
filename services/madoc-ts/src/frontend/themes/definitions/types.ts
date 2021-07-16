@@ -4,12 +4,16 @@ export type ThemeVariation<Definition, Variations = 'default'> = {
   __VARIATIONS__: Variations;
 } & Definition;
 
-export type MadocTheme = {
+type MadocThemeBase = {
   [Def in keyof ThemeDefinitions]: ThemeDefinitions[Def]['__VARIATIONS__'];
-} & {
-  custom?: {
-    [Prop in keyof ThemeDefinitions]?: Omit<Partial<ThemeDefinitions[Prop]>, '__VARIATIONS__'>;
-  };
+};
+
+type MadocThemeCustom = {
+  [Prop in keyof ThemeDefinitions]?: Omit<Partial<ThemeDefinitions[Prop]>, '__VARIATIONS__'>;
+};
+
+export type MadocTheme = MadocThemeBase & {
+  custom?: MadocThemeCustom;
 };
 
 type ExtractThemeDefinition<

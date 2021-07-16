@@ -63,10 +63,13 @@ export const BlockCreator: React.FC<{
   blockTypesInOtherSlots?: string[];
   onSave: (block: SiteBlock) => void | Promise<void>;
   pagePath?: string;
+  source?: { type: string; id: string };
 }> = props => {
   const api = useApi();
   const site = useSite();
   const [chosenBlockType, setChosenBlockType] = useState<string | undefined>();
+
+  const { id: sourceId, type: sourceType } = props.source || {};
 
   // Step 1: Choose a block type (possibly filter based on current context)
   // - List all block types
@@ -76,17 +79,21 @@ export const BlockCreator: React.FC<{
 
   const availableBlocks = useMemo(() => {
     return blockTypes.filter(block => {
+      if (sourceId) {
+        // We only want matching sources here.
+        return block?.source?.id === sourceId && block?.source?.type === sourceType;
+      }
+
       if (block?.source?.type === 'custom-page') {
         return block?.source.id === props.pagePath;
       }
 
       return !block.internal;
     });
-  }, [blockTypes, props.pagePath]);
+  }, [blockTypes, props.pagePath, sourceId, sourceType]);
 
   const pagePathBlocks = useMemo(() => {
     return blockTypes.filter(block => {
-      console.log('block source', block.source);
       if (block?.source?.type === 'custom-page' && props.pagePath) {
         return block?.source.id === props.pagePath;
       }
@@ -153,8 +160,12 @@ export const BlockCreator: React.FC<{
           <AddBlockList>{pagePathBlocks.map(renderBlock)}</AddBlockList>
         </>
       ) : null}
-      <h4>All blocks</h4>
-      <AddBlockList>{availableBlocks.map(renderBlock)}</AddBlockList>
+      {availableBlocks && availableBlocks.length ? (
+        <>
+          <h4>All blocks</h4>
+          <AddBlockList>{availableBlocks.map(renderBlock)}</AddBlockList>
+        </>
+      ) : null}
     </>
   );
 };

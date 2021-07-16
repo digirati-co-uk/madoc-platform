@@ -98,12 +98,14 @@ export const ViewManifest: React.FC<{
       </Slot>
 
       <div style={{ display: 'flex' }}>
-        <Slot name="manifest-content">
-          <ManifestCanvasGrid />
-        </Slot>
+        <div style={{ width: '100%' }}>
+          <Slot name="manifest-content">
+            <ManifestCanvasGrid />
+          </Slot>
+        </div>
         <div style={{ maxWidth: 290 }}>
-          <Slot name="manifest-metadata">
-            <ManifestMetadata />
+          <Slot name="manifest-metadata" small>
+            <ManifestMetadata hidden={false} />
           </Slot>
         </div>
       </div>

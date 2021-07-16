@@ -109,7 +109,7 @@ export const siteFrontend: RouteMiddleware = async context => {
       pluginManager: context.pluginManager,
       plugins: context.pluginManager.listPlugins(site.id),
       theme: currentTheme,
-      getSlots: async (ctx: EditorialContext) => {
+      getSlots: async (ctx: EditorialContext, slotIds?: string[]) => {
         const parsedId = ctx.project ? parseProjectId(ctx.project) : undefined;
         const project = parsedId ? await context.connection.one(getProject(parsedId, site.id)) : undefined;
 
@@ -119,6 +119,7 @@ export const siteFrontend: RouteMiddleware = async context => {
             manifest: ctx.manifest,
             canvas: ctx.canvas,
             project: project ? project.id : undefined,
+            slotIds,
           },
           site.id
         );

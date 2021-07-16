@@ -34,6 +34,9 @@
         }
       }
     },
+    "template": {
+      "type": "string"
+    },
     "status": {
       "type": "number"
     },
@@ -76,7 +79,7 @@
       ]
     },
     "config": {
-      "$ref": "#/definitions/Partial<ProjectConfiguration>"
+      "$ref": "#/definitions/30cf5068c0f04f0a3ba12f444ae228b0"
     }
   },
   "required": [
@@ -99,7 +102,7 @@
     "T_1": {
       "type": "object"
     },
-    "{header:\"default\"|\"dark\"|\"midnight\";accent:\"default\";siteContainer:\"default\"|\"light\"|\"dark\";footer:\"light\"|\"dark\";global:\"default\";}": {
+    "MadocThemeBase": {
       "type": "object",
       "properties": {
         "header": {
@@ -155,27 +158,27 @@
       ],
       "type": "string"
     },
-    "{header?:Pick<Partial<ThemeVariation<{headerBackground:string;globalBackground:string;menuHoverBackground:string;headerText:string;searchBorder:string;searchBorderFocusColor:string;size:number;},\"default\"|\"dark\"|\"midnight\">>,\"size\"|\"headerBackground\"|\"globalBackground\"|\"menuHoverBackground\"|\"headerText\"|\"searchBorder\"|\"searchBorderFocusColor\">;accent?:Pick<Partial<ThemeVariation<{primary:string;secondary:string;},\"default\">>,\"primary\"|\"secondary\">;siteContainer?:Pick<Partial<ThemeVariation<{containerBackground:string;background:string;},\"default\"|\"light\"|\"dark\">>,\"background\"|\"containerBackground\">;footer?:Pick<Partial<ThemeVariation<{background:string;containerBackground:string;color:string;},\"light\"|\"dark\">>,\"color\"|\"background\"|\"containerBackground\">;global?:Pick<Partial<ThemeVariation<{maxWidth:string;},\"default\">>,\"maxWidth\">;}": {
+    "MadocThemeCustom": {
       "type": "object",
       "properties": {
         "header": {
-          "$ref": "#/definitions/Pick<Partial<ThemeVariation<{headerBackground:string;globalBackground:string;menuHoverBackground:string;headerText:string;searchBorder:string;searchBorderFocusColor:string;size:number;},\"default\"|\"dark\"|\"midnight\">>,\"size\"|\"headerBackground\"|\"globalBackground\"|\"menuHoverBackground\"|\"headerText\"|\"searchBorder\"|\"searchBorderFocusColor\">"
+          "$ref": "#/definitions/0401f2f741528638b0822a2e2dd0a1fc"
         },
         "accent": {
-          "$ref": "#/definitions/Pick<Partial<ThemeVariation<{primary:string;secondary:string;},\"default\">>,\"primary\"|\"secondary\">"
+          "$ref": "#/definitions/6d0ff98e927bc7a52245590565e54b78"
         },
         "siteContainer": {
-          "$ref": "#/definitions/Pick<Partial<ThemeVariation<{containerBackground:string;background:string;},\"default\"|\"light\"|\"dark\">>,\"background\"|\"containerBackground\">"
+          "$ref": "#/definitions/2ee55e91c5c92743fa84ea849165ac9f"
         },
         "footer": {
-          "$ref": "#/definitions/Pick<Partial<ThemeVariation<{background:string;containerBackground:string;color:string;},\"light\"|\"dark\">>,\"color\"|\"background\"|\"containerBackground\">"
+          "$ref": "#/definitions/7991c4d60d5f2beadb873109e8d85e16"
         },
         "global": {
-          "$ref": "#/definitions/Pick<Partial<ThemeVariation<{maxWidth:string;},\"default\">>,\"maxWidth\">"
+          "$ref": "#/definitions/d820679a83f41809404cd3b745312032"
         }
       }
     },
-    "Pick<Partial<ThemeVariation<{headerBackground:string;globalBackground:string;menuHoverBackground:string;headerText:string;searchBorder:string;searchBorderFocusColor:string;size:number;},\"default\"|\"dark\"|\"midnight\">>,\"size\"|\"headerBackground\"|\"globalBackground\"|\"menuHoverBackground\"|\"headerText\"|\"searchBorder\"|\"searchBorderFocusColor\">": {
+    "0401f2f741528638b0822a2e2dd0a1fc": {
       "type": "object",
       "properties": {
         "size": {
@@ -201,7 +204,7 @@
         }
       }
     },
-    "Pick<Partial<ThemeVariation<{primary:string;secondary:string;},\"default\">>,\"primary\"|\"secondary\">": {
+    "6d0ff98e927bc7a52245590565e54b78": {
       "type": "object",
       "properties": {
         "primary": {
@@ -212,7 +215,7 @@
         }
       }
     },
-    "Pick<Partial<ThemeVariation<{containerBackground:string;background:string;},\"default\"|\"light\"|\"dark\">>,\"background\"|\"containerBackground\">": {
+    "2ee55e91c5c92743fa84ea849165ac9f": {
       "type": "object",
       "properties": {
         "background": {
@@ -223,7 +226,7 @@
         }
       }
     },
-    "Pick<Partial<ThemeVariation<{background:string;containerBackground:string;color:string;},\"light\"|\"dark\">>,\"color\"|\"background\"|\"containerBackground\">": {
+    "7991c4d60d5f2beadb873109e8d85e16": {
       "type": "object",
       "properties": {
         "color": {
@@ -237,7 +240,7 @@
         }
       }
     },
-    "Pick<Partial<ThemeVariation<{maxWidth:string;},\"default\">>,\"maxWidth\">": {
+    "d820679a83f41809404cd3b745312032": {
       "type": "object",
       "properties": {
         "maxWidth": {
@@ -245,7 +248,7 @@
         }
       }
     },
-    "Partial<ProjectConfiguration>": {
+    "30cf5068c0f04f0a3ba12f444ae228b0": {
       "description": "Make all properties in T optional",
       "type": "object",
       "properties": {
@@ -481,6 +484,20 @@
               "type": "boolean"
             },
             "published": {
+              "type": "boolean"
+            }
+          }
+        },
+        "metadataSuggestions": {
+          "type": "object",
+          "properties": {
+            "manifest": {
+              "type": "boolean"
+            },
+            "collection": {
+              "type": "boolean"
+            },
+            "canvas": {
               "type": "boolean"
             }
           }
