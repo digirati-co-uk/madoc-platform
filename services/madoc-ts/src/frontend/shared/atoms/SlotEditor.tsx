@@ -1,7 +1,7 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { PageEditorButton } from './PageEditor';
 
-export const SlotEditorContainer = styled.div`
+export const SlotEditorContainer = styled.div<{ $small?: boolean }>`
   background: #53658f;
   color: #fff;
   padding: 0.2em;

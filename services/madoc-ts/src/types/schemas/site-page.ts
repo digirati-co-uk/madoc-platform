@@ -6,6 +6,7 @@ export type EditorialContext = {
   manifest?: number;
   canvas?: number;
   page?: number;
+  slotIds?: string[];
 };
 
 export type ServerEditorialContext = {
@@ -14,6 +15,7 @@ export type ServerEditorialContext = {
   manifest?: number;
   canvas?: number;
   page?: number;
+  slotIds?: string[];
 };
 
 export type SlotResponse = {

@@ -418,7 +418,7 @@ export class ApiClient {
       throw new Error('Site slug not found');
     }
 
-    const queryString = query ? `?${stringify(query)}` : '';
+    const queryString = query ? `?${stringify(query, { arrayFormat: 'comma' })}` : '';
 
     return this.request<Return, Body>(`/s/${this.publicSiteSlug}${endpoint}${queryString}`, {
       method,

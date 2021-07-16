@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useMutation } from 'react-query';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { extractBlockDefinitions } from '../../../extensions/page-blocks/block-editor-react';
 import { EditorialContext, SiteBlock, SiteSlot } from '../../../types/schemas/site-page';
 import { Button, ButtonRow, TinyButton } from '../atoms/Button';
@@ -35,6 +35,9 @@ type SlotEditorProps = {
   defaultContents?: any;
   surfaceProps?: SurfaceProps;
   pagePath?: string;
+  source?: { type: string; id: string };
+  noSurface?: boolean;
+  small?: boolean;
 };
 
 const EditingBlockContainer = styled.div`
@@ -44,8 +47,16 @@ const EditingBlockContainer = styled.div`
   background: inherit;
 `;
 
-const EditingBlock = styled.div`
+const EditingBlock = styled.div<{ $vertical?: boolean }>`
   display: flex;
+
+  ${props =>
+    props.$vertical &&
+    css`
+      flex-direction: column;
+      align-self: stretch;
+      margin: 0.2em 0;
+    `}
 `;
 
 const EditingBlockActions = styled.div`
@@ -76,6 +87,7 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
   const [isResetting, setIsResetting] = useState(false);
   const [blockOrder, setBlockOrder] = useState(() => props.blocks.map(block => block.id));
   const slotSurface = useRef<SurfaceProps>(props.slot?.props?.surface || {});
+  const isVertical = props.layout === 'flex' || props.layout === 'flex-center';
 
   useEffect(() => {
     setBlockOrder(props.blocks.map(block => block.id));
@@ -175,7 +187,7 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
   return (
     <CustomEditorTypes>
       <SlotEditorContainer>
-        <SlotEditorLabel>{props.slot.label || props.slot.slotId}</SlotEditorLabel>
+        {props.small ? null : <SlotEditorLabel>{props.slot.label || props.slot.slotId}</SlotEditorLabel>}
         <SlotEditorButton
           onClick={() => {
             setIsEditing(e => !e);
@@ -198,68 +210,71 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
                   close();
                 });
               }}
+              source={props.source}
             />
           )}
         >
           Add block
         </ModalButton>
 
-        <ModalButton
-          as={SlotEditorButton}
-          title="Edit surface"
-          modalSize="lg"
-          render={() => {
-            return (
-              <SurfaceEditor
-                surfaceContent={
-                  <div>
-                    {orderedBlocks.map(block => {
-                      return (
-                        <RenderBlock
-                          key={block.id}
-                          block={block}
-                          context={props.context}
-                          editable={false}
-                          showWarning={true}
-                          onUpdateBlock={props.onUpdateBlock}
-                        />
-                      );
-                    })}
-                  </div>
-                }
-                surfaceProps={slotSurface.current}
-                onChange={newData => {
-                  slotSurface.current = newData;
-                }}
-              />
-            );
-          }}
-          footerAlignRight
-          renderFooter={({ close }) => {
-            return (
-              <ButtonRow $noMargin>
-                <Button
-                  $primary
-                  onClick={() => {
-                    updateSlot({
-                      ...props.slot,
-                      props: {
-                        ...(props.slot.props || {}),
-                        surface: slotSurface.current,
-                      },
-                    }).then(() => {
-                      close();
-                    });
+        {props.noSurface ? null : (
+          <ModalButton
+            as={SlotEditorButton}
+            title="Edit surface"
+            modalSize="lg"
+            render={() => {
+              return (
+                <SurfaceEditor
+                  surfaceContent={
+                    <div>
+                      {orderedBlocks.map(block => {
+                        return (
+                          <RenderBlock
+                            key={block.id}
+                            block={block}
+                            context={props.context}
+                            editable={false}
+                            showWarning={true}
+                            onUpdateBlock={props.onUpdateBlock}
+                          />
+                        );
+                      })}
+                    </div>
+                  }
+                  surfaceProps={slotSurface.current}
+                  onChange={newData => {
+                    slotSurface.current = newData;
                   }}
-                >
-                  Save
-                </Button>
-              </ButtonRow>
-            );
-          }}
-        >
-          Edit surface
-        </ModalButton>
+                />
+              );
+            }}
+            footerAlignRight
+            renderFooter={({ close }) => {
+              return (
+                <ButtonRow $noMargin>
+                  <Button
+                    $primary
+                    onClick={() => {
+                      updateSlot({
+                        ...props.slot,
+                        props: {
+                          ...(props.slot.props || {}),
+                          surface: slotSurface.current,
+                        },
+                      }).then(() => {
+                        close();
+                      });
+                    }}
+                  >
+                    Save
+                  </Button>
+                </ButtonRow>
+              );
+            }}
+          >
+            Edit surface
+          </ModalButton>
+        )}
 
         {/*/!* @todo *!/*/}
         {/*<SlotEditorButton>Change layout</SlotEditorButton>*/}
@@ -268,23 +283,26 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
         {/*</ModalButton>*/}
         <SlotEditorButton onClick={() => setIsResetting(r => !r)}>Reset slot</SlotEditorButton>
 
-        <ModalButton
-          as={SlotEditorWhy}
-          title="Why am I seeing this slot?"
-          modalSize={'md'}
-          render={({ close }) => <ExplainSlot context={props.context} slot={props.slot} />}
-        >
-          Why am I seeing this slot?
-        </ModalButton>
+        {props.small ? null : (
+          <ModalButton
+            as={SlotEditorWhy}
+            title="Why am I seeing this slot?"
+            modalSize={'md'}
+            render={({ close }) => <ExplainSlot context={props.context} slot={props.slot} />}
+          >
+            Why am I seeing this slot?
+          </ModalButton>
+        )}
       </SlotEditorContainer>
       <SlotOutlineContainer>
         {isResetting ? (
           <div>{props.defaultContents || null}</div>
         ) : (
           <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="droppable" direction={props.layout === 'flex' ? 'horizontal' : 'vertical'}>
+            <Droppable droppableId="droppable" direction={isVertical ? 'horizontal' : 'vertical'}>
               {provided => (
                 <SlotLayout
+                  editing
                   layout={props.layout}
                   surfaceProps={props.surfaceProps}
                   {...provided.droppableProps}
@@ -295,7 +313,12 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
                       return (
                         <Draggable key={block.id} draggableId={`${block.id}`} index={idx}>
                           {providedInner => (
-                            <EditingBlock key={block.id} ref={providedInner.innerRef} {...providedInner.draggableProps}>
+                            <EditingBlock
+                              key={block.id}
+                              $vertical={isVertical}
+                              ref={providedInner.innerRef}
+                              {...providedInner.draggableProps}
+                            >
                               <EditingBlockActions>
                                 <TableHandle {...providedInner.dragHandleProps} />
                               </EditingBlockActions>

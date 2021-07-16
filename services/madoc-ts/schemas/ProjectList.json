@@ -41,6 +41,9 @@
           },
           "status": {
             "type": "number"
+          },
+          "template": {
+            "type": "string"
           }
         },
         "required": [

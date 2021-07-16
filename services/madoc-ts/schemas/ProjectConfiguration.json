@@ -236,6 +236,20 @@
           "type": "boolean"
         }
       }
+    },
+    "metadataSuggestions": {
+      "type": "object",
+      "properties": {
+        "manifest": {
+          "type": "boolean"
+        },
+        "collection": {
+          "type": "boolean"
+        },
+        "canvas": {
+          "type": "boolean"
+        }
+      }
     }
   },
   "required": [

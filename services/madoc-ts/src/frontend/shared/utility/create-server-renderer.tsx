@@ -158,6 +158,11 @@ export function createServerRenderer(
 
     if (getSlots) {
       requests.push(prefetchCache.prefetchQuery(['slot-request', routeContext], () => getSlots(routeContext)));
+      requests.push(
+        prefetchCache.prefetchQuery(['slot-request', { slotIds: ['global-header'] }], () =>
+          getSlots({ slotIds: ['global-header'] })
+        )
+      );
     }
 
     await Promise.all(requests);

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { CanvasStatus } from '../../shared/atoms/CanvasStatus';
 import { Heading5 } from '../../shared/atoms/Heading5';
 import { ImageGrid } from '../../shared/atoms/ImageGrid';
@@ -58,3 +59,11 @@ export const ManifestCanvasGrid: React.FC = () => {
     </ImageGrid>
   );
 };
+
+blockEditorFor(ManifestCanvasGrid, {
+  type: 'default.ManifestCanvasGrid',
+  label: 'Manifest canvas grid',
+  editor: {},
+  requiredContext: ['manifest'],
+  anyContext: ['collection', 'manifest'],
+});

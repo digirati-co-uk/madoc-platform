@@ -3,6 +3,7 @@ import { castBool } from '../../../utility/cast-bool';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { useCurrentUser } from '../../shared/hooks/use-current-user';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
+import { AutoSlotLoader } from '../../shared/page-blocks/auto-slot-loader';
 import { Slot } from '../../shared/page-blocks/slot';
 import { CanvasModelCompleteMessage } from '../features/CanvasModelCompleteMessage';
 import { CanvasModelEditor } from '../features/CanvasModelEditor';
@@ -61,7 +62,7 @@ export const ViewCanvasModel: React.FC = () => {
   }
 
   return (
-    <>
+    <AutoSlotLoader>
       <Slot name="common-breadcrumbs">
         <DisplayBreadcrumbs />
       </Slot>
@@ -73,13 +74,13 @@ export const ViewCanvasModel: React.FC = () => {
       {!isReadOnly && showCanvasNavigation && canContribute ? <PrepareCaptureModel /> : null}
 
       {/* One of the following 3 slots will be rendered */}
-      <Slot name="canvas-model-read-only" hidden={!isReadOnly}>
+      <Slot name="canvas-model-read-only" layout="none" hidden={!isReadOnly}>
         <CanvasModelCompleteMessage />
 
         <CanvasModelReadOnlyViewer />
       </Slot>
 
-      <Slot name="canvas-model-editing" hidden={isReadOnly || !showCanvasNavigation}>
+      <Slot name="canvas-model-editing" layout="none" hidden={isReadOnly || !showCanvasNavigation}>
         <CanvasTaskWarningMessage />
 
         <CanvasModelPrepareActions />
@@ -94,6 +95,6 @@ export const ViewCanvasModel: React.FC = () => {
       <Slot name="canvas-model-footer">
         <CanvasThumbnailNavigation subRoute="model" hidden={hideCanvasThumbnailNavigation || !showCanvasNavigation} />
       </Slot>
-    </>
+    </AutoSlotLoader>
   );
 };
