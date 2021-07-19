@@ -1,3 +1,5 @@
+import { InternationalString } from '@hyperion-framework/types/iiif/descriptive';
+
 export type Site = {
   id: number;
   slug: string;
@@ -7,6 +9,13 @@ export type Site = {
   created: Date;
   modified?: Date;
   owner?: { id: number; name?: string };
+};
+
+export type CreateSiteRequest = {
+  slug: string;
+  title: string;
+  is_public?: boolean;
+  summary?: string;
 };
 
 export type SiteRow = {
@@ -50,6 +59,12 @@ export type User = {
   is_active: boolean;
 };
 
+export type UserCreationRequest = {
+  email: string;
+  name: string;
+  role: string;
+};
+
 /**
  * Requirements for a site user:
  * - Active in the database
@@ -76,7 +91,7 @@ export type UserRow = {
   name: string;
   created: string;
   modified: string;
-  password_hash: string;
+  password_hash: string | null;
   role: string;
   is_active: boolean;
 };
@@ -100,3 +115,50 @@ export type SitePermissionRow = {
 export type LegacySitePermissionRow = SitePermissionRow;
 
 export type UserSite = { id: number; role: string; slug: string; title: string };
+
+export type PasswordCreationRow = {
+  id: string;
+  user_id: number;
+  created: string;
+  activate: boolean;
+};
+
+export type UserInvitationsRequest = {
+  invitation_id: string;
+  role: string;
+  site_role: string;
+  expires: Date;
+  uses_left?: number;
+  message?: InternationalString;
+};
+
+export type UserInvitationsRow = {
+  id: number;
+  invitation_id: string;
+  owner_id: number;
+  site_id: number;
+  role: string;
+  site_role: string;
+  expires: string;
+  created_at: string;
+  uses_left?: number | null;
+  message?: InternationalString | null;
+
+  // Joins.
+  redeem_user_id?: number;
+  redeem_user_name?: string;
+  redeem_redeemed_at?: string;
+};
+
+export type UserInvitation = {
+  id: number;
+  invitation_id: string;
+  createdAt: Date;
+  expires: Date;
+  detail: {
+    role: string;
+    site_role: string;
+    message: InternationalString;
+  };
+  users: Array<{ id: number; name?: string; redeemed_at?: Date }>;
+};

@@ -1,21 +1,26 @@
+import { InternationalString } from '@hyperion-framework/types/iiif/descriptive';
 import cache from 'memory-cache';
 import { DatabasePoolConnectionType, DatabaseTransactionConnectionType, NotFoundError, sql } from 'slonik';
 import {
+  CreateSiteRequest,
   LegacySiteRow,
   Site,
   SitePermissionRow,
   SiteRow,
   SiteUser,
   User,
+  UserCreationRequest,
+  UserInvitation,
+  UserInvitationsRequest,
+  UserInvitationsRow,
   UserRow,
   UserRowWithoutPassword,
   UserSite,
 } from '../extensions/site-manager/types';
-import { mysql } from '../utility/mysql';
-import { OmekaApi, PublicSite } from '../utility/omeka-api';
+import { OmekaApi } from '../utility/omeka-api';
 import { phpHashCompare } from '../utility/php-hash-compare';
 import { SQL_EMPTY, SQL_INT_ARRAY } from '../utility/postgres-tags';
-import { upsert } from '../utility/slonik-helpers';
+import { sqlDate, upsert } from '../utility/slonik-helpers';
 import { BaseRepository } from './base-repository';
 
 /**
@@ -122,6 +127,12 @@ export class SiteUserRepository extends BaseRepository {
         where id = ${id};
     `,
 
+    getUserByEmail: (email: string) => sql<UserRowWithoutPassword>`
+        select id, email, name, created, modified, role, is_active
+        from "user"
+        where email = ${email};
+    `,
+
     getSiteCreator: (siteId: number) => sql<SiteUser>`
         select u.id, u.name, u.role
         from "user" u
@@ -172,6 +183,16 @@ export class SiteUserRepository extends BaseRepository {
         left join site_permission sp on u.id = sp.user_id
       where sp.site_id = ${siteId}
     `,
+
+    getInvitations: (siteId: number) => sql<UserInvitationsRow>`
+      select * from user_invitations where site_id = ${siteId}
+    `,
+
+    getInvitation: (invitationId: string, siteId: number) => sql<UserInvitationsRow>`
+      select ui.*, uir.user_id as redeem_user_id, uir.redeemed_at as redeem_redeemed_at from user_invitations ui
+        left join user_invitations_redeem uir on ui.id = uir.invite_id
+        where site_id = ${siteId} and ui.invitation_id = ${invitationId}
+    `,
   };
 
   static mutations = {
@@ -191,6 +212,105 @@ export class SiteUserRepository extends BaseRepository {
 
     removeUserRoleOnSite: (siteId: number, userId: number) => sql`
       delete from site_permission where site_id = ${siteId} and user_id = ${userId}
+    `,
+
+    createUser: (user: UserCreationRequest) => sql<UserRow>`
+      insert into "user" (email, name, is_active, role, password_hash) values (
+        ${user.email},
+        ${user.name},
+        false,
+        ${user.role},
+        null
+       ) returning *
+    `,
+
+    setUserPassword: (userId: number, passwordHash: string) => sql`
+      update "user" set password_hash = ${passwordHash} where id = ${userId}
+    `,
+
+    resetPassword: (id: string, userId: number, activate: boolean) => sql`
+      insert into password_creation (id, user_id, activate) values (${id}, ${userId}, ${Boolean(activate)})
+    `,
+
+    removeResetPassword: (id: string) => sql`
+      delete from password_creation where id = ${id}
+    `,
+
+    activateUser: (userId: number) => sql`
+      update "user" set is_active = true where id = ${userId}
+    `,
+
+    deactivateUser: (userId: number) => sql`
+      update "user" set is_active = false where id = ${userId}
+    `,
+
+    deleteUser: (userId: number) => sql`
+      delete from "user" where id = ${userId} and is_active = false
+    `,
+
+    deleteSite: (siteId: number) => sql`
+      delete from site where id = ${siteId} and is_public = false
+    `,
+
+    changeSiteVisibility: (siteId: number, isPublic: boolean) => sql`
+      update site set is_public = ${Boolean(isPublic)} where id = ${siteId}
+    `,
+
+    createInvitation: (req: UserInvitationsRequest, siteId: number, ownerId: number) => sql<UserInvitationsRow>`
+      insert into user_invitations (invitation_id, owner_id, site_id, role, site_role, expires, uses_left, message) values (
+        ${req.invitation_id},
+        ${ownerId},
+        ${siteId},
+        ${req.role},
+        ${req.site_role},
+        ${sqlDate(req.expires)},
+        ${req.uses_left || null},
+        ${sql.json(req.message || {})}
+      ) returning *
+    `,
+
+    updateInvitationExpiry: (invitationId: string, siteId: number, expires: Date) => sql<UserInvitationsRow>`
+      update user_invitations 
+        set expires = ${sqlDate(expires)}
+      where invitation_id = ${invitationId} and site_id = ${siteId}
+    `,
+
+    updateInvitationMessage: (invitationId: string, siteId: number, message: InternationalString) => sql<
+      UserInvitationsRow
+    >`
+      update user_invitations 
+        set message = ${sql.json(message)}
+      where invitation_id = ${invitationId} and site_id = ${siteId}
+    `,
+
+    updateInvitationUsesLeft: (invitationId: string, siteId: number, usesLeft: number) => sql<UserInvitationsRow>`
+      update user_invitations 
+        set uses_left = ${usesLeft}
+      where invitation_id = ${invitationId} and site_id = ${siteId}
+    `,
+
+    useInvitation: (invitationId: string, siteId: number) => sql<UserInvitationsRow>`
+      update user_invitations 
+        set uses_left = uses_left::int - 1
+      where invitation_id = ${invitationId} and site_id = ${siteId}
+    `,
+
+    createInvitationRedemption: (invitationId: number, userId: number) => sql`
+      insert into user_invitations_redeem (user_id, invite_id) values (${userId}, ${invitationId})
+    `,
+
+    deleteInvitation: (invitationId: string, siteId: number) => sql`
+      delete from user_invitations where invitation_id = ${invitationId} and site_id = ${siteId}
+    `,
+
+    createSite: (req: CreateSiteRequest, userId: number) => sql`
+      insert into site (owner_id, title, slug, is_public, summary) values (
+        ${userId},
+        ${req.title},
+        ${req.slug},
+        ${Boolean(req.is_public)},
+        ${req.summary || ''}
+      )
     `,
   };
 
@@ -237,6 +357,47 @@ export class SiteUserRepository extends BaseRepository {
       slug: row.slug,
       title: row.title,
     };
+  }
+
+  static mapInvitation(row: UserInvitationsRow): UserInvitation {
+    return {
+      id: row.id,
+      expires: new Date(row.expires),
+      users: [],
+      invitation_id: row.invitation_id,
+      createdAt: new Date(row.created_at),
+      detail: {
+        role: row.role,
+        site_role: row.site_role,
+        message: row.message || {},
+      },
+    };
+  }
+
+  static mapInvitationWithUsers(invitations: readonly UserInvitationsRow[]): UserInvitation {
+    const reduced = invitations.reduce(SiteUserRepository.reduceInvitations, {} as any);
+    return reduced[invitations[0].invitation_id];
+  }
+
+  static reduceInvitations(
+    state: { [id: string]: UserInvitation },
+    row: UserInvitationsRow
+  ): { [id: string]: UserInvitation } {
+    if (!state[row.id]) {
+      state[row.id] = SiteUserRepository.mapInvitation(row);
+    }
+
+    if (row.redeem_user_id) {
+      if (!state[row.id].users.find(u => u.id === row.redeem_user_id)) {
+        state[row.id].users.push({
+          id: row.redeem_user_id,
+          name: row.redeem_user_name || undefined,
+          redeemed_at: row.redeem_redeemed_at ? new Date(row.redeem_redeemed_at) : undefined,
+        });
+      }
+    }
+
+    return state;
   }
 
   static compatibility = {
@@ -302,6 +463,18 @@ export class SiteUserRepository extends BaseRepository {
       return this.omeka.getUserById(id);
     } else {
       return this.connection.one(SiteUserRepository.query.getUserById(id));
+    }
+  }
+
+  /**
+   * This can return inactive users, use getActiveUserById() instead or check is_active
+   * @throws NotFoundError
+   */
+  async getUserByEmail(email: string) {
+    if (this.shouldReadFromOmeka()) {
+      return this.omeka.getUserByEmail(email);
+    } else {
+      return this.connection.one(SiteUserRepository.query.getUserByEmail(email));
     }
   }
 
@@ -533,11 +706,125 @@ export class SiteUserRepository extends BaseRepository {
     `);
   }
 
+  async createUser(user: UserCreationRequest) {
+    if (this.shouldWriteToOmeka()) {
+      await this.omeka.createUser(user);
+    }
+
+    if (this.shouldWriteToPostgres()) {
+      await this.connection.query(SiteUserRepository.mutations.createUser(user));
+    }
+
+    return this.getUserByEmail(user.email);
+  }
+
+  async activateUser(userId: number) {
+    if (this.shouldWriteToOmeka()) {
+      await this.omeka.activateUser(userId);
+    }
+
+    if (this.shouldWriteToPostgres()) {
+      await this.connection.query(SiteUserRepository.mutations.activateUser(userId));
+    }
+  }
+
+  async deactivateUser(userId: number) {
+    if (this.shouldWriteToOmeka()) {
+      await this.omeka.deactivateUser(userId);
+    }
+
+    if (this.shouldWriteToPostgres()) {
+      await this.connection.query(SiteUserRepository.mutations.deactivateUser(userId));
+    }
+  }
+
+  async deleteUser(userId: number) {
+    if (this.shouldWriteToOmeka()) {
+      await this.omeka.deleteUser(userId);
+    }
+
+    if (this.shouldWriteToPostgres()) {
+      await this.connection.query(SiteUserRepository.mutations.deleteUser(userId));
+    }
+  }
+
+  async resetUserPassword(id: string, userId: number, activate: boolean) {
+    if (this.shouldWriteToOmeka()) {
+      await this.omeka.resetPassword(id, userId, activate);
+    }
+
+    if (this.shouldWriteToPostgres()) {
+      await this.connection.query(SiteUserRepository.mutations.resetPassword(id, userId, activate));
+    }
+  }
+
+  async getInvitations(siteId: number) {
+    if (this.shouldReadFromOmeka()) {
+      return (await this.omeka.getInvitations(siteId)).map(SiteUserRepository.mapInvitation);
+    }
+
+    if (this.shouldReadFromPostgres()) {
+      return (await this.connection.any(SiteUserRepository.query.getInvitations(siteId))).map(
+        SiteUserRepository.mapInvitation
+      );
+    }
+  }
+
+  async getInvitation(invitationId: string, siteId: number) {
+    if (this.shouldReadFromOmeka()) {
+      return SiteUserRepository.mapInvitation(await this.omeka.getInvitation(invitationId, siteId));
+    }
+
+    if (this.shouldReadFromPostgres()) {
+      return SiteUserRepository.mapInvitationWithUsers(
+        await this.connection.any(SiteUserRepository.query.getInvitation(invitationId, siteId))
+      );
+    }
+  }
+
+  async deleteInvitation(invitationId: string, siteId: number) {
+    if (this.shouldWriteToOmeka()) {
+      await this.omeka.deleteInvitation(invitationId, siteId);
+    }
+
+    if (this.shouldWriteToPostgres()) {
+      await this.connection.query(SiteUserRepository.mutations.deleteInvitation(invitationId, siteId));
+    }
+  }
+
+  async changeSiteVisibility(siteId: number, isPublic: boolean) {
+    if (this.shouldWriteToOmeka()) {
+      await this.omeka.changeSiteVisibility(siteId, isPublic);
+    }
+
+    if (this.shouldWriteToPostgres()) {
+      await this.connection.query(SiteUserRepository.mutations.changeSiteVisibility(siteId, isPublic));
+    }
+  }
+
+  async deleteSite(siteId: number) {
+    // Note - sites must first be made non-public before deleting.
+    if (this.shouldWriteToOmeka()) {
+      await this.omeka.deleteSite(siteId);
+    }
+
+    if (this.shouldWriteToPostgres()) {
+      await this.connection.query(SiteUserRepository.mutations.deleteSite(siteId));
+    }
+  }
+
+  async createSite(req: CreateSiteRequest, userId: number) {
+    if (this.shouldWriteToOmeka()) {
+      await this.omeka.createSite(req, userId);
+    }
+
+    if (this.shouldWriteToPostgres()) {
+      await this.connection.query(SiteUserRepository.mutations.createSite(req, userId));
+    }
+
+    return this.getSiteBySlug(req.slug);
+  }
+
   // @todo Areas to migrate Omeka functionality:
-  //   - Register [+]
-  //   - Reset password [+]
-  //   - Email activation [+]
-  //   - User invitations [+]
-  //   - Delete users [+]
   //   - Autocomplete/browse [+]
 }
