@@ -116,6 +116,6 @@ INSERT INTO `resource_class` VALUES
   (102,NULL,4,'OnlineAccount','Online Account','An online account.'),
   (103,NULL,4,'OnlineGamingAccount','Online Gaming Account','An online gaming account.'),
   (104,NULL,4,'OnlineEcommerceAccount','Online E-commerce Account','An online e-commerce account.'),
-  (105,NULL,4,'OnlineChatAccount','Online Chat Account','An online chat account.')
+  (105,NULL,4,'OnlineChatAccount','Online Chat Account','An online chat account.');
 /*!40000 ALTER TABLE `resource_class` ENABLE KEYS */;
 UNLOCK TABLES;
