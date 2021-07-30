@@ -98,3 +98,9 @@ export function getParentResources(resourceId: string, siteId: number, projectId
         and parent_resources.site_id = ${siteId} 
   `;
 }
+
+export function getResourceLocalSource(resourceId: number) {
+  return sql<{ local_source: string }>`
+    select local_source from iiif_resource where id = ${resourceId};
+  `;
+}
