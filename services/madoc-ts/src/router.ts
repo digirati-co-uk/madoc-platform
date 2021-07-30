@@ -96,7 +96,7 @@ import { logout } from './routes/user/logout';
 import { frontendBundles, pluginBundles } from './routes/assets/frontend-bundles';
 import { adminFrontend, siteFrontend } from './routes/admin/frontend';
 import { createCollection } from './routes/iiif/collections/create-collection';
-import { deleteCollection } from './routes/iiif/collections/delete-collection';
+import { deleteCollectionEndpoint } from './routes/iiif/collections/delete-collection';
 import { getCollection } from './routes/iiif/collections/get-collection';
 import { getCollectionStructure } from './routes/iiif/collections/get-collection-structure';
 import { getCollectionMetadata } from './routes/iiif/collections/get-collection-metadata';
@@ -105,7 +105,7 @@ import { updateCollectionStructure } from './routes/iiif/collections/update-coll
 import { listManifests } from './routes/iiif/manifests/list-manifests';
 import { createManifest } from './routes/iiif/manifests/create-manifest';
 import { getManifest } from './routes/iiif/manifests/get-manifest';
-import { deleteManifest } from './routes/iiif/manifests/delete-manifest';
+import { deleteManifestEndpoint } from './routes/iiif/manifests/delete-manifest';
 import { getManifestMetadata } from './routes/iiif/manifests/get-manifest-metadata';
 import { listCanvases } from './routes/iiif/canvases/list-canvases';
 import { createCanvas } from './routes/iiif/canvases/create-canvas';
@@ -163,8 +163,8 @@ import { router as activityStreamRoutes } from './activity-streams/router';
 import { getCollectionDeletionSummary } from './routes/iiif/collections/delete-collection-summary';
 import { deleteCanvasSummary } from './routes/iiif/canvases/delete-canvas-summary';
 import { deleteProjectSummary } from './routes/projects/delete-project-summary';
-import { deleteCanvas } from './routes/iiif/canvases/delete-canvas';
-import { deleteProject } from './routes/projects/deleteProject';
+import { deleteCanvasEndpoint } from './routes/iiif/canvases/delete-canvas';
+import { deleteProjectEndpoint } from './routes/projects/deleteProject';
 
 export const router = new TypedRouter({
   // Normal route
@@ -225,7 +225,7 @@ export const router = new TypedRouter({
   'list-collections': [TypedRouter.GET, '/api/madoc/iiif/collections', listCollections],
   'get-collection': [TypedRouter.GET, '/api/madoc/iiif/collections/:id', getCollection],
   'create-collection': [TypedRouter.POST, '/api/madoc/iiif/collections', createCollection, 'CreateCollection'],
-  'delete-collection': [TypedRouter.DELETE, '/api/madoc/iiif/collections/:id', deleteCollection],
+  'delete-collection': [TypedRouter.DELETE, '/api/madoc/iiif/collections/:id', deleteCollectionEndpoint],
   'publish-collection': [TypedRouter.POST, '/api/madoc/iiif/collections/:id/publish', publishCollection],
   'get-collection-metadata': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/metadata', getCollectionMetadata],
   'get-collection-structure': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/structure', getCollectionStructure],
@@ -264,7 +264,7 @@ export const router = new TypedRouter({
   'list-manifests': [TypedRouter.GET, '/api/madoc/iiif/manifests', listManifests],
   'get-manifest': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id', getManifest],
   'create-manifest': [TypedRouter.POST, '/api/madoc/iiif/manifests', createManifest, 'CreateManifest'],
-  'delete-manifest': [TypedRouter.DELETE, '/api/madoc/iiif/manifests/:id', deleteManifest],
+  'delete-manifest': [TypedRouter.DELETE, '/api/madoc/iiif/manifests/:id', deleteManifestEndpoint],
   'publish-manifest': [TypedRouter.POST, '/api/madoc/iiif/manifests/:id/publish', publishManifest],
   'get-manifest-metadata': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/metadata', getManifestMetadata],
   'get-manifest-structure': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/structure', getManifestStructure],
@@ -301,7 +301,7 @@ export const router = new TypedRouter({
   'get-canvas-plaintext': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/plaintext', getCanvasPlaintext],
   'get-canvas-source': [TypedRouter.GET, '/api/madoc/iiif/canvas-source', getCanvasReference],
   'get-canvas-deletion-summary': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/deletion-summary', deleteCanvasSummary],
-  'delete-canvas': [TypedRouter.DELETE, '/api/madoc/iiif/canvases/:id', deleteCanvas],
+  'delete-canvas': [TypedRouter.DELETE, '/api/madoc/iiif/canvases/:id', deleteCanvasEndpoint],
 
   // Import API
   'import-manifest': [TypedRouter.POST, '/api/madoc/iiif/import/manifest', importManifest],
@@ -347,8 +347,8 @@ export const router = new TypedRouter({
     '/api/madoc/projects/:id/personal-notes/:resourceId',
     updateProjectNote,
   ],
-  'get-project-deletion-summary': [TypedRouter.GET, '/api/madoc/projects/:id/deletionSummary', deleteProjectSummary],
-  'delete-project': [TypedRouter.DELETE, '/api/madoc/projects/:id', deleteProject],
+  'get-project-deletion-summary': [TypedRouter.GET, '/api/madoc/projects/:id/deletion-summary', deleteProjectSummary],
+  'delete-project': [TypedRouter.DELETE, '/api/madoc/projects/:id', deleteProjectEndpoint],
 
   // Themes
   'list-themes': [TypedRouter.GET, '/api/madoc/system/themes', listThemes],
