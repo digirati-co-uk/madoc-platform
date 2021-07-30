@@ -482,7 +482,7 @@ export class ApiClient {
   }
 
   async getProjectDeletionSummary(id: number) {
-    return this.request<ProjectDeletionSummary>(`/api/madoc/iiif/projects/${id}/deletion-summary`);
+    return this.request<ProjectDeletionSummary>(`/api/madoc/projects/${id}/deletion-summary`);
   }
 
   async updateProjectMetadata(id: number, metadata: MetadataUpdate) {
@@ -1237,6 +1237,13 @@ export class ApiClient {
     await this.request(`/api/tasks/${id}`, {
       method: 'DELETE',
     });
+  }
+
+  async batchDeleteTasks(query: { resourceId?: number, subject?: string }) {
+    console.log('ROB TEST - batch delete for resource ' + query.resourceId + ' and subject ' + query.subject);
+    await this.request(`/api/tasks?${stringify(query)}`, {
+      method: 'DELETE'
+    })
   }
 
   async randomlyAssignedCanvas(

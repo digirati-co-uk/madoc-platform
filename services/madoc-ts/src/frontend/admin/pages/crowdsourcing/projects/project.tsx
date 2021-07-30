@@ -44,6 +44,7 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
             { label: t('Crowdsourcing'), link: `/projects/${data.id}/tasks` },
             { label: t('Search index'), link: `/projects/${data.id}/search` },
             { label: t('Activity'), link: `/projects/${data.id}/activity` },
+            { label: t('Delete'), link: `/projects/${data.id}/delete` },
           ]}
           title={<LocaleString>{data.label}</LocaleString>}
           subtitle={

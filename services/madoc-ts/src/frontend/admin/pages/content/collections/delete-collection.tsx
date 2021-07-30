@@ -30,7 +30,7 @@ export const DeleteCollection: UniversalComponent<DeleteCollectionType> = create
     });
 
     return (
-      <p>
+      <>
         <Heading3>Are you sure you want to delete this collection?</Heading3>
         {data ? (
           <>
@@ -60,12 +60,12 @@ export const DeleteCollection: UniversalComponent<DeleteCollectionType> = create
         <Button disabled={status !== 'idle'} onClick={() => deleteCollection()}>
           Delete collection
         </Button>
-      </p>
+      </>
     );
   },
   {
     async getData(key, vars, api) {
-      return await api.getCollectionDeletionSummary(vars.id);
+      return await api.getCollectionDeletionSummary(Number(vars.id));
     },
     getKey(params, query) {
       return ['collection-deletion', {id: Number(params.id), page: query.page || 1}];
