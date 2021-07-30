@@ -1,4 +1,4 @@
-import { sql } from 'slonik';
+import { DatabasePoolConnectionType, sql } from 'slonik';
 import { api } from '../../../gateway/api.server';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { userWithScope } from '../../../utility/user-with-scope';
@@ -7,10 +7,18 @@ export const getCollectionDeletionSummary: RouteMiddleware<{ id: number }> = asy
   const { siteId } = userWithScope(context, ['site.admin']);
   const collectionId = context.params.id;
 
+  context.response.body = await buildCollectionDeletionSummary(collectionId, siteId, () => context.connection);
+};
+
+export async function buildCollectionDeletionSummary(
+  collectionId: number,
+  siteId: number,
+  connection: () => DatabasePoolConnectionType
+) {
   const siteApi = api.asUser({ siteId });
 
   // Fact checking stage.
-  const { site_count } = await context.connection.one(
+  const { site_count } = await connection().one(
     // This will let us know if the collection appears on any other sites.
     // If === 1 then we can safely delete underlying resource.
     sql<{ site_count: number }>`
@@ -19,7 +27,8 @@ export const getCollectionDeletionSummary: RouteMiddleware<{ id: number }> = asy
   );
 
   // Search
-  const iiifSearchItem = await siteApi.searchGetIIIF(`urn:madoc:collection:${collectionId}`);
+  //const iiifSearchItem = await siteApi.searchGetIIIF(`urn:madoc:collection:${collectionId}`);
+  const iiifSearchItem = null;
 
   // Tasks
   const tasks = await siteApi.getTasks(0, {
@@ -37,7 +46,7 @@ export const getCollectionDeletionSummary: RouteMiddleware<{ id: number }> = asy
 
   const fullDelete = site_count === 1;
 
-  context.response.body = {
+  return {
     siteCount: site_count,
     fullDelete,
     search: {
@@ -47,4 +56,4 @@ export const getCollectionDeletionSummary: RouteMiddleware<{ id: number }> = asy
     tasks: tasks.pagination.totalResults,
     parentTasks: parentTasks.pagination.totalResults,
   };
-};
+}

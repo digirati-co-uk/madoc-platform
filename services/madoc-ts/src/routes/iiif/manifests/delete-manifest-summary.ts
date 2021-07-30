@@ -1,4 +1,4 @@
-import { sql } from 'slonik';
+import { DatabasePoolConnectionType, sql } from 'slonik';
 import { api } from '../../../gateway/api.server';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { userWithScope } from '../../../utility/user-with-scope';
@@ -7,10 +7,18 @@ export const deleteManifestSummary: RouteMiddleware<{ id: number }> = async cont
   const { siteId } = userWithScope(context, ['site.admin']);
   const manifestId = context.params.id;
 
+  context.response.body = await buildManifestDeletionSummary(manifestId, siteId, () => context.connection);
+};
+
+export async function buildManifestDeletionSummary(
+  manifestId: number,
+  siteId: number,
+  connection: () => DatabasePoolConnectionType
+) {
   const siteApi = api.asUser({ siteId });
 
   // Fact checking stage.
-  const { site_count } = await context.connection.one(
+  const { site_count } = await connection().one(
     // This will let us know if the manifest appears on any other sites.
     // If === 1 then we can safely delete underlying resource.
     sql<{ site_count: number }>`
@@ -18,7 +26,7 @@ export const deleteManifestSummary: RouteMiddleware<{ id: number }> = async cont
     `
   );
 
-  const { canvas_distinct } = await context.connection.one(
+  const { canvas_distinct } = await connection().one(
     // This lets us know how many other manifests share canvases with this manifest.
     // If === 1 then we can safely delete all canvases.
     sql<{ canvas_distinct: number }>`
@@ -55,7 +63,7 @@ export const deleteManifestSummary: RouteMiddleware<{ id: number }> = async cont
   const fullDelete = site_count === 1;
   const deleteAllCanvases = canvas_distinct === 1;
 
-  context.response.body = {
+  return {
     siteCount: site_count,
     fullDelete,
     deleteAllCanvases,
@@ -67,4 +75,4 @@ export const deleteManifestSummary: RouteMiddleware<{ id: number }> = async cont
     parentTasks: parentTasks.pagination.totalResults,
     models: models.length,
   };
-};
+}
