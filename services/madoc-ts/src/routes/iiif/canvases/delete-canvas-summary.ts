@@ -27,7 +27,8 @@ export async function buildCanvasDeletionSummary(
   );
 
   // Search
-  const iiifSearchItem = await siteApi.searchGetIIIF(`urn:madoc:canvas:${canvasId}`);
+  const iiifSearchItem = await siteApi.searchGetIIIF(`urn:madoc:canvas:${canvasId}`)
+    .catch(() => null);
 
   // Tasks
   const tasks = await siteApi.getTasks(0, {
