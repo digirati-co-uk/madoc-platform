@@ -51,7 +51,7 @@ export async function deleteManifest(
 
     // Delete child canvases
     const deleteAll = deletionSummary.deleteAllCanvases;
-    const canvasIds = await connection().many(getChildResourceIds(manifestId, 'canvas', !deleteAll));
+    const canvasIds = await connection().any(getChildResourceIds(manifestId, 'canvas', !deleteAll));
     for (let i = 0; i < canvasIds.length; i++) {
       await deleteCanvas(canvasIds[i].item_id, siteId, connection);
     }
