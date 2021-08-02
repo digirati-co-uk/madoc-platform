@@ -24,9 +24,9 @@ export const DeleteCanvas: UniversalComponent<DeleteCanvasType> = createUniversa
 
     const api = useApi();
 
-    const [deleteCollection, { status }] = useMutation(async () => {
+    const [deleteCanvas, { status }] = useMutation(async () => {
       await api.deleteCanvas(Number(id));
-      history.push(`/canvases`);
+      history.push(`/admin`);
     });
 
     return (
@@ -48,8 +48,8 @@ export const DeleteCanvas: UniversalComponent<DeleteCanvasType> = createUniversa
             ) : null}
           </>
         ) : null}
-        <Button disabled={status !== 'idle'} onClick={() => deleteCollection()}>
-          Delete collection
+        <Button disabled={status !== 'idle'} onClick={() => deleteCanvas()}>
+          Delete canvas
         </Button>
       </p>
     );
