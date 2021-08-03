@@ -26,7 +26,7 @@ export const DeleteCanvas: UniversalComponent<DeleteCanvasType> = createUniversa
 
     const [deleteCanvas, { status }] = useMutation(async () => {
       await api.deleteCanvas(Number(id));
-      history.push(`/admin`);
+      history.push(`/`);
     });
 
     return (
