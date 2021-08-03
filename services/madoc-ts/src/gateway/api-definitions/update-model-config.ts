@@ -6,9 +6,9 @@ export type UpdateModelConfigRequest = ApiRequest<
   {
     body: ConfigInjectionSettings;
     query: {
-      manifestId: number;
-      projectId: number | string;
-      collectionId?: number;
+      manifest_id: number;
+      project_id: number | string;
+      collection_id?: number;
     };
   }
 >;
@@ -27,15 +27,29 @@ export const updateModelConfig: ApiDefinition = {
   method: 'POST',
   params: null,
   scope: ['site.admin'],
+  subjects: [
+    {
+      type: 'manifest',
+      label: 'Target manifest',
+      source: 'query',
+      path: ['manifest_id'],
+    },
+    {
+      type: 'project',
+      label: 'Project',
+      source: 'query',
+      path: ['project_id'],
+    },
+  ],
   query: {
     $schema: 'http://json-schema.org/draft-07/schema#',
     type: 'object',
     properties: {
-      collectionId: { type: 'number' },
-      manifestId: { type: 'number' },
-      projectId: { anyOf: [{ type: 'number' }, { type: 'string' }] },
+      collection_id: { type: 'number' },
+      manifest_id: { type: 'number' },
+      project_id: { anyOf: [{ type: 'number' }, { type: 'string' }] },
     },
-    required: ['manifestId', 'projectId'],
+    required: ['manifest_id', 'project_id'],
   },
   body: {
     $schema: 'http://json-schema.org/draft-07/schema#',

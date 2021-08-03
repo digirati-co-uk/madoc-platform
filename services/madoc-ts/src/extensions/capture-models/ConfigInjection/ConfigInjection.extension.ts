@@ -1,12 +1,17 @@
 import { CaptureModel } from '@capture-models/types';
 import { ApiClient } from '../../../gateway/api';
 import { parseUrn } from '../../../utility/parse-urn';
+import { defaultDispose } from '../../extension-manager';
 import { CaptureModelExtension } from '../extension';
 
 export class ConfigInjectionExtension implements CaptureModelExtension {
   api: ApiClient;
   constructor(api: ApiClient) {
     this.api = api;
+  }
+
+  dispose() {
+    defaultDispose(this);
   }
 
   async onCloneCaptureModel(captureModel: CaptureModel): Promise<CaptureModel> {

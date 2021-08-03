@@ -37,7 +37,8 @@ export function createTask(
   request: ApiRequest<any, any>,
   userId: number,
   siteId: number,
-  subject?: string
+  subject?: string,
+  summary?: string
 ): ApiActionTask {
   const definition = apiDefinitionIndex[request.id];
   if (!definition) {
@@ -49,7 +50,7 @@ export function createTask(
 
   return {
     name: definition.name,
-    description: definition.description.join(''),
+    description: summary || definition.description.join(''),
     type,
     subject: subject || 'none',
     status: 0,
@@ -72,9 +73,27 @@ export function createTask(
 export const jobHandler = async (name: string, taskId: string, api: ApiClient) => {
   switch (name) {
     case 'created': {
-      // const task = await api.getTask<ApiActionTask>(taskId, { detail: true });
-      // const [{ action, creator, siteId }] = task.parameters;
+      const task = await api.getTask<ApiActionTask>(taskId, { detail: true });
+      const [{ siteId }] = task.parameters;
       // @todo Find all admins and assign to random admin.
+      if (!task.assignee && siteId) {
+        try {
+          const siteApi = api.asUser({ siteId });
+          await siteApi.assignDelegatedRequest(task.id);
+        } catch (e) {
+          //...
+        }
+      }
+
+      break;
+    }
+    case 'assigned': {
+      const task = await api.getTask<ApiActionTask>(taskId);
+      const [{ siteId }] = task.parameters;
+      if (siteId) {
+        const siteApi = api.asUser({ siteId });
+        await siteApi.notifications.taskAssignmentNotification('You have been assigned a task', task);
+      }
 
       break;
     }

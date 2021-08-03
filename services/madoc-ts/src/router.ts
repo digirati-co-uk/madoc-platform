@@ -1,12 +1,26 @@
-import { createDelegatedRequest, delegatedRequest } from './routes/admin/deletegated-request';
+import {
+  assignUserToDelegatedRequest,
+  createDelegatedRequest,
+  delegatedRequest,
+} from './routes/admin/deletegated-request';
 import { acceptNewDevelopmentBundle, developmentPlugin } from './routes/admin/development-plugin';
 import { exportSite } from './routes/admin/export-site';
 import { getMetadataKeys } from './routes/admin/get-metadata-keys';
 import { getMetadataValues } from './routes/admin/get-metadata-values';
 import { getModelConfiguration } from './routes/admin/get-model-configuration';
+import { allUsersAutocomplete } from './routes/manage-site/all-users-autocomplete';
+import { deleteUserSiteRole } from './routes/manage-site/delete-user-site-role';
+import { getSiteUsers } from './routes/manage-site/get-site-users';
 import { importSite } from './routes/admin/import-site';
 import { listJobs, runJob } from './routes/admin/list-jobs';
-import { getLocalisation, listLocalisations, updateLocalisation } from './routes/admin/localisation';
+import {
+  extractLocalesFromContent,
+  getLocalisation,
+  listLocalisations,
+  updateLanguagePreferences,
+  updateLocalisation,
+} from './routes/admin/localisation';
+import { listAllSites } from './routes/manage-site/list-all-sites';
 import { getMetadataConfiguration, updateMetadataConfiguration } from './routes/admin/metadata-configuration';
 import {
   disablePlugin,
@@ -42,6 +56,7 @@ import { getPage } from './routes/content/get-page';
 import { linkAutocomplete } from './routes/content/link-autocomplete';
 import { resolveSlots } from './routes/content/resolve-slots';
 import { getCanvasReference } from './routes/iiif/canvases/get-canvas-reference';
+import { updateUserSiteRole } from './routes/manage-site/update-user-site-role';
 import { deleteManifestSummary } from "./routes/iiif/manifests/delete-manifest-summary";
 import { siteManifestBuild } from './routes/site/site-manifest-build';
 import { createMedia } from './routes/media/create-media';
@@ -55,6 +70,7 @@ import { updateCuratedFeed } from './routes/projects/update-curated-feed';
 import { updateProjectNote } from './routes/projects/update-project-note';
 import { fullReindex } from './routes/search/full-reindex';
 import { siteCanvasSource } from './routes/site/site-canvas-reference';
+import { siteMetadata } from './routes/site/site-metadata';
 import { siteModelConfiguration } from './routes/site/site-model-configuration';
 import { sitePageNavigation } from './routes/site/site-page-navigation';
 import { getSlot } from './routes/content/get-slot';
@@ -80,11 +96,12 @@ import { getUser } from './routes/user/get-user';
 import {
   clearAllNotifications,
   clearNotification,
-  createNotification, getNotificationCount,
+  createNotification,
+  getNotificationCount,
   getNotifications,
   readAllNotifications,
-  readNotification
-} from "./routes/user/notifications";
+  readNotification,
+} from './routes/user/notifications';
 import { userAutocomplete } from './routes/user/user-autocomplete';
 import { TypedRouter } from './utility/typed-router';
 import { ping } from './routes/ping';
@@ -177,6 +194,13 @@ export const router = new TypedRouter({
   'cron-jobs': [TypedRouter.GET, '/api/madoc/cron/jobs', listJobs],
   'run-cron-jobs': [TypedRouter.POST, '/api/madoc/cron/jobs/:jobId/run', runJob],
 
+  // Site admin.
+  'site-admin-list-all-sites': [TypedRouter.GET, '/api/madoc/sites', listAllSites],
+  'site-admin-list-all-site-users': [TypedRouter.GET, '/api/madoc/manage-site/users', getSiteUsers],
+  'manage-site-set-user-role': [TypedRouter.POST, '/api/madoc/manage-site/users/:userId/role', updateUserSiteRole],
+  'manage-site-all-users': [TypedRouter.GET, '/api/madoc/manage-site/users/search', allUsersAutocomplete],
+  'manage-site-delete-user-role': [TypedRouter.DELETE, '/api/madoc/manage-site/users/:userId/role', deleteUserSiteRole],
+
   // Plugins
   'list-plugins': [TypedRouter.GET, '/api/madoc/system/plugins', listPlugins],
   'get-plugin': [TypedRouter.GET, '/api/madoc/system/plugins/:id', getPlugin],
@@ -190,6 +214,7 @@ export const router = new TypedRouter({
 
   // Delegated tasks
   'run-delegated-task': [TypedRouter.POST, '/api/madoc/delegated/:id', delegatedRequest],
+  'assign-delegated-task': [TypedRouter.POST, '/api/madoc/delegated/:id/assign', assignUserToDelegatedRequest],
   'create-delegated-task': [TypedRouter.POST, '/api/madoc/delegated', createDelegatedRequest],
 
   'update-site-configuration': [TypedRouter.POST, '/api/madoc/configuration', updateSiteConfiguration],
@@ -218,8 +243,10 @@ export const router = new TypedRouter({
 
   // Localisation
   'i18n-list-locales': [TypedRouter.GET, '/api/madoc/locales', listLocalisations],
+  'i18n-analysis-locales': [TypedRouter.GET, '/api/madoc/locales/analysis', extractLocalesFromContent],
   'i18n-get-locale': [TypedRouter.GET, '/api/madoc/locales/:code', getLocalisation],
   'i18n-update-locale': [TypedRouter.POST, '/api/madoc/locales/:code', updateLocalisation],
+  'i18n-update-locale-pref': [TypedRouter.PATCH, '/api/madoc/locales', updateLanguagePreferences],
 
   // Collection API.
   'list-collections': [TypedRouter.GET, '/api/madoc/iiif/collections', listCollections],
@@ -404,10 +431,13 @@ export const router = new TypedRouter({
 
   // New Site routes.
   'site-canvas': [TypedRouter.GET, '/s/:slug/madoc/api/canvases/:id', siteCanvas],
+  'site-canvas-metadata': [TypedRouter.GET, '/s/:slug/madoc/api/canvases/:canvasId/metadata', siteMetadata],
   'site-collection': [TypedRouter.GET, '/s/:slug/madoc/api/collections/:id', siteCollection],
   'site-collections': [TypedRouter.GET, '/s/:slug/madoc/api/collections', siteCollections],
+  'site-collection-metadata': [TypedRouter.GET, '/s/:slug/madoc/api/collections/:collectionId/metadata', siteMetadata],
   'site-manifest': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id', siteManifest],
   'site-manifest-structure': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/structure', getSiteManifestStructure],
+  'site-manifest-metadata': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:manifestId/metadata', siteMetadata],
   'site-manifests': [TypedRouter.GET, '/s/:slug/madoc/api/manifests', siteManifests],
   'site-manifest-tasks': [
     TypedRouter.GET,

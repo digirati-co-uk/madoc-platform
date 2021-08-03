@@ -1,21 +1,18 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { castBool } from '../../../utility/cast-bool';
-import { Button, ButtonRow } from '../../shared/atoms/Button';
-import { Heading3 } from '../../shared/atoms/Heading3';
-import { InfoMessage } from '../../shared/atoms/InfoMessage';
-import { LockIcon } from '../../shared/atoms/LockIcon';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
-import { CanvasNavigation } from '../../shared/components/CanvasNavigation';
-import { CanvasVaultContext } from '../../shared/components/CanvasVaultContext';
 import { useCurrentUser } from '../../shared/hooks/use-current-user';
-import { useLocalStorage } from '../../shared/hooks/use-local-storage';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
-import { CanvasImageViewer } from '../features/CanvasImageViewer';
-import { CanvasManifestNavigation } from '../features/CanvasManifestNavigation';
-import { CanvasSimpleEditor } from '../features/CanvasSimpleEditor';
+import { AutoSlotLoader } from '../../shared/page-blocks/auto-slot-loader';
+import { Slot } from '../../shared/page-blocks/slot';
+import { CanvasModelCompleteMessage } from '../features/CanvasModelCompleteMessage';
+import { CanvasModelEditor } from '../features/CanvasModelEditor';
+import { CanvasModelPrepareActions } from '../features/CanvasModelPrepareActions';
+import { CanvasModelReadOnlyViewer } from '../features/CanvasModelReadOnlyViewer';
+import { CanvasNotAvailableToBrowse } from '../features/CanvasNotAvailableToBrowse';
+import { CanvasPageHeader } from '../features/CanvasPageHeader';
 import { CanvasTaskWarningMessage } from '../features/CanvasTaskWarningMessage';
-import { CanvasViewer } from '../features/CanvasViewer';
+import { CanvasThumbnailNavigation } from '../features/CanvasThumbnailNavigation';
 import { PrepareCaptureModel } from '../features/PrepareCaptureModel';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
@@ -27,15 +24,12 @@ import { useRouteContext } from '../hooks/use-route-context';
 import { RedirectToNextCanvas } from '../features/RedirectToNextCanvas';
 
 export const ViewCanvasModel: React.FC = () => {
-  const { projectId, canvasId, manifestId, collectionId } = useRouteContext();
+  const { canvasId } = useRouteContext();
   const { showCanvasNavigation, showWarning } = useCanvasNavigation();
   const { isManifestComplete, userManifestTask, canClaimManifest } = useManifestTask();
   const { canUserSubmit, isLoading: isLoadingTasks, completedAndHide } = useCanvasUserTasks();
-  const { revision } = useLocationQuery();
-  const { t } = useTranslation();
   const user = useCurrentUser(true);
   const { goToNext } = useLocationQuery<any>();
-  const [isSegmentation, setIsSegmentation] = useLocalStorage('segmentation-prepare', false);
   const shouldGoToNext = castBool(goToNext);
   const {
     project: { hideCanvasThumbnailNavigation = false },
@@ -51,7 +45,13 @@ export const ViewCanvasModel: React.FC = () => {
       user.scope.indexOf('models.contribute') !== -1);
 
   const hasExpired = userManifestTask?.status === -1 && !canClaimManifest && preventContributionAfterManifestUnassign;
-  const projectPaused = !isActive && !isPreparing;
+
+  const isReadOnly =
+    (!canUserSubmit && !isLoadingTasks) ||
+    completedAndHide ||
+    isManifestComplete ||
+    hasExpired ||
+    (!isActive && !isPreparing);
 
   if (!canvasId) {
     return null;
@@ -61,92 +61,40 @@ export const ViewCanvasModel: React.FC = () => {
     return <RedirectToNextCanvas subRoute="model" />;
   }
 
-  if (
-    (!canUserSubmit && !isLoadingTasks) ||
-    completedAndHide ||
-    isManifestComplete ||
-    hasExpired ||
-    (!isActive && !isPreparing)
-  ) {
-    return (
-      <div>
-        <DisplayBreadcrumbs />
-
-        <CanvasManifestNavigation subRoute="model" />
-
-        {projectId && !projectPaused && (
-          <InfoMessage>
-            {hasExpired
-              ? t('Your submission has expired')
-              : isManifestComplete
-              ? t('This manifest is complete')
-              : completedAndHide
-              ? t('This image is complete')
-              : t('Maximum number of contributors reached')}
-          </InfoMessage>
-        )}
-
-        {showCanvasNavigation ? (
-          <CanvasVaultContext>
-            <CanvasViewer>
-              <CanvasImageViewer />
-            </CanvasViewer>
-          </CanvasVaultContext>
-        ) : null}
-
-        {!hideCanvasThumbnailNavigation && showCanvasNavigation ? (
-          <CanvasNavigation
-            subRoute="model"
-            manifestId={manifestId}
-            canvasId={canvasId}
-            collectionId={collectionId}
-            projectId={projectId}
-          />
-        ) : null}
-      </div>
-    );
-  }
-
   return (
-    <div>
-      <DisplayBreadcrumbs />
+    <AutoSlotLoader>
+      <Slot name="common-breadcrumbs">
+        <DisplayBreadcrumbs />
+      </Slot>
 
-      <CanvasManifestNavigation subRoute="model" />
+      <Slot name="canvas-model-header">
+        <CanvasPageHeader subRoute="model" />
+      </Slot>
 
-      {showCanvasNavigation && canContribute ? <PrepareCaptureModel /> : null}
+      {!isReadOnly && showCanvasNavigation && canContribute ? <PrepareCaptureModel /> : null}
 
-      {!isPreparing ? <CanvasTaskWarningMessage /> : null}
+      {/* One of the following 3 slots will be rendered */}
+      <Slot name="canvas-model-read-only" layout="none" hidden={!isReadOnly}>
+        <CanvasModelCompleteMessage />
 
-      {isPreparing ? (
-        <ButtonRow>
-          <Button $primary={isSegmentation} onClick={() => setIsSegmentation(true)}>
-            {t('Segmentation mode')}
-          </Button>
+        <CanvasModelReadOnlyViewer />
+      </Slot>
 
-          <Button $primary={!isSegmentation} onClick={() => setIsSegmentation(false)}>
-            {t('Prepare mode')}
-          </Button>
-        </ButtonRow>
-      ) : null}
+      <Slot name="canvas-model-editing" layout="none" hidden={isReadOnly || !showCanvasNavigation}>
+        <CanvasTaskWarningMessage />
 
-      {!isPreparing && showWarning ? (
-        <div style={{ textAlign: 'center', padding: '2em', marginTop: '1em', marginBottom: '1em', background: '#eee' }}>
-          <LockIcon style={{ fontSize: '3em' }} />
-          <Heading3>{t('This canvas is not available to browse')}</Heading3>
-        </div>
-      ) : null}
+        <CanvasModelPrepareActions />
 
-      {showCanvasNavigation ? <CanvasSimpleEditor revision={revision} isSegmentation={isSegmentation} /> : null}
+        <CanvasModelEditor />
+      </Slot>
 
-      {!hideCanvasThumbnailNavigation && showCanvasNavigation ? (
-        <CanvasNavigation
-          subRoute="model"
-          manifestId={manifestId}
-          canvasId={canvasId}
-          collectionId={collectionId}
-          projectId={projectId}
-        />
-      ) : null}
-    </div>
+      <Slot name="canvas-model-unavailable" hidden={isPreparing || !showWarning}>
+        <CanvasNotAvailableToBrowse />
+      </Slot>
+
+      <Slot name="canvas-model-footer">
+        <CanvasThumbnailNavigation subRoute="model" hidden={hideCanvasThumbnailNavigation || !showCanvasNavigation} />
+      </Slot>
+    </AutoSlotLoader>
   );
 };

@@ -13,6 +13,7 @@ export type RevisionProviderFeatures = {
   autosave?: boolean;
   autoSelectingRevision?: boolean;
   directEdit?: boolean;
+  preventMultiple?: boolean;
 };
 
 export const RevisionProviderWithFeatures: React.FC<{
@@ -26,7 +27,13 @@ export const RevisionProviderWithFeatures: React.FC<{
   excludeStructures?: boolean | undefined;
   features?: RevisionProviderFeatures;
 }> = ({ slotConfig, children, revision, captureModel, excludeStructures, initialRevision, features }) => {
-  const { autoSelectingRevision = true, autosave = true, revisionEditMode = true, directEdit = false } = features || {};
+  const {
+    autoSelectingRevision = true,
+    autosave = true,
+    revisionEditMode = true,
+    directEdit = false,
+    preventMultiple = false,
+  } = features || {};
   const { components, editor } = slotConfig || {};
 
   return (
@@ -42,7 +49,9 @@ export const RevisionProviderWithFeatures: React.FC<{
         {autosave ? <AutosaveRevision minutes={2} /> : null}
         {revisionEditMode ? <SwitchFieldAfterRevises /> : null}
         {revisionEditMode ? <SwitchEditMode /> : null}
-        {autoSelectingRevision ? <AutoSelectingRevision directEdit={directEdit} /> : null}
+        {autoSelectingRevision ? (
+          <AutoSelectingRevision directEdit={directEdit} preventMultiple={preventMultiple} />
+        ) : null}
         <CorrectingRevisionSubtree />
         <EditorSlots.Provider config={editor} components={components}>
           {children}

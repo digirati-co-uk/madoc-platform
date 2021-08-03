@@ -6,6 +6,13 @@ export function blockConfigFor(Component: any, model: any) {
   const definition: PageBlockDefinition<any, any, any> = {
     type: model.type,
     label: model.label,
+    svgIcon: model.svgIcon
+      ? typeof model.svgIcon === 'string'
+        ? function SvgIcon(props: any) {
+            return React.createElement('span', { dangerouslySetInnerHTML: { __html: model.svgIcon }, ...props }, []);
+          }
+        : model.svgIcon
+      : undefined,
     model: model.editor
       ? model.editor.type === 'entity'
         ? model.editor
@@ -20,6 +27,9 @@ export function blockConfigFor(Component: any, model: any) {
     requiredContext: model.requiredContext,
     anyContext: model.anyContext,
     customEditor: model.customEditor,
+    mapFromProps: model.mapFromProps,
+    mapToProps: model.mapToProps,
+    source: model.source,
   };
 
   Component[Symbol.for('slot-model')] = definition;

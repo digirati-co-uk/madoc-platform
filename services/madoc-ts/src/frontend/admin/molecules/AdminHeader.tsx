@@ -79,7 +79,7 @@ export const AdminHeader: React.FC<{
   sticky?: boolean;
   subtitle?: any;
   breadcrumbs?: BreadcrumbItem[];
-  menu?: BreadcrumbItem[];
+  menu?: Array<BreadcrumbItem | null>;
   thumbnail?: string;
   search?: boolean;
   noMargin?: boolean;
@@ -104,16 +104,18 @@ export const AdminHeader: React.FC<{
         {menu ? (
           <GridContainer $justify={'space-between'}>
             <AdminTabRow>
-              {menu.map((item, n) => (
-                <AdminTabItem
-                  key={item.link}
-                  $active={item.active || pathname === item.link || (pathname.indexOf(item.link) !== -1 && n > 0)}
-                  as={Link}
-                  to={item.link}
-                >
-                  {item.label}
-                </AdminTabItem>
-              ))}
+              {menu.map((item, n) =>
+                item ? (
+                  <AdminTabItem
+                    key={item.link}
+                    $active={item.active || pathname === item.link || (pathname.indexOf(item.link) !== -1 && n > 0)}
+                    as={Link}
+                    to={item.link}
+                  >
+                    {item.label}
+                  </AdminTabItem>
+                ) : null
+              )}
             </AdminTabRow>
             {search && searchFunction ? <SearchBox isAdmin={true} onSearch={val => searchFunction(val)} /> : null}
           </GridContainer>

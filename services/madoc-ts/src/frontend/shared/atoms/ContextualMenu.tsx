@@ -24,7 +24,7 @@ export const ContextualLabel = styled.button`
   }
 `;
 
-export const ContextualMenuWrapper = styled.div<{ $isOpen?: boolean; $padding?: boolean }>`
+export const ContextualMenuWrapper = styled.div<{ $isOpen?: boolean; $padding?: boolean; $right?: boolean }>`
   position: absolute;
   padding: 0.15em;
   top: 100%;
@@ -34,9 +34,15 @@ export const ContextualMenuWrapper = styled.div<{ $isOpen?: boolean; $padding?: 
   box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.18), 0 0px 0px 1px rgba(0, 0, 0, 0.15),
     inset 0 0 0 1px rgba(255, 255, 255, 0.2);
   border-radius: 7px;
-  z-index: 10;
+  z-index: 21; // 20 - buttons above atlas viewer.
   transition: transform 0.2s, opacity 0.2s;
   font-size: 0.8em;
+  
+  ${props =>
+    props.$right &&
+    css`
+      right: 0;
+    `}
 
   ${props =>
     props.$isOpen
@@ -59,8 +65,9 @@ export const ContextualMenuWrapper = styled.div<{ $isOpen?: boolean; $padding?: 
 `;
 
 export const ContextualMenuList = styled.div`
-  padding: 0.25em 0;
-  min-width: 8em;
+  padding: 0.15rem 0;
+  min-width: 8rem;
+  font-size: 0.8rem;
 
   & ~ & {
     border-top: 1px solid #ccc;
@@ -76,7 +83,8 @@ export const ContextualMenuList = styled.div`
 `;
 
 export const ContextualMenuListItem = styled.a<{ $disabled?: boolean }>`
-  padding: 0.25em 0.5em;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.8rem;
   border-radius: 3px;
   border: none;
   display: block;
@@ -86,6 +94,7 @@ export const ContextualMenuListItem = styled.a<{ $disabled?: boolean }>`
   color: #000;
   text-decoration: none;
   user-select: none;
+  white-space: nowrap;
 
   &:hover,
   &:focus {

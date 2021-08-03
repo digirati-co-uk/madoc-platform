@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
-import { ThemeProvider } from 'styled-components';
 import { ApiClient } from '../../gateway/api';
 import { ResolvedTheme } from '../../types/themes';
 import { PublicSite } from '../../utility/omeka-api';
 import { renderUniversalRoutes } from '../shared/utility/server-utils';
 import { ApiContext } from '../shared/hooks/use-api';
 import { defaultTheme } from '../themes/default-theme';
+import { CustomThemeProvider } from '../themes/helpers/CustomThemeProvider';
 import { UniversalRoute } from '../types';
 import { VaultProvider } from '@hyperion-framework/react-vault';
 import '../shared/caputre-models/plugins';
@@ -20,11 +20,15 @@ export type SiteAppProps = {
   site: PublicSite;
   theme?: ResolvedTheme | null;
   supportedLocales: Array<{ label: string; code: string }>;
+  displayLanguages: Array<{ label: string; code: string }>;
+  contentLanguages: Array<{ label: string; code: string }>;
   defaultLocale: string;
   navigationOptions?: {
     enableProjects: boolean;
     enableCollections: boolean;
   };
+  collectThemeOverrides?: (name: string, theme: any) => void;
+  themeOverrides?: any;
 };
 
 const SiteApp: React.FC<SiteAppProps> = ({
@@ -32,6 +36,8 @@ const SiteApp: React.FC<SiteAppProps> = ({
   site,
   user,
   supportedLocales,
+  contentLanguages,
+  displayLanguages,
   defaultLocale,
   routes,
   navigationOptions = {
@@ -39,9 +45,10 @@ const SiteApp: React.FC<SiteAppProps> = ({
     enableCollections: true,
   },
   theme,
+  themeOverrides,
 }) => {
   return (
-    <ThemeProvider theme={theme && theme.theme ? theme.theme : defaultTheme}>
+    <CustomThemeProvider theme={theme && theme.theme ? theme.theme : defaultTheme} themeOverrides={themeOverrides}>
       <VaultProvider>
         <SiteProvider
           value={useMemo(
@@ -49,17 +56,19 @@ const SiteApp: React.FC<SiteAppProps> = ({
               site,
               user,
               supportedLocales,
+              contentLanguages,
+              displayLanguages,
               defaultLocale,
               navigationOptions,
               theme,
             }),
-            [theme, site, user, supportedLocales, defaultLocale, navigationOptions]
+            [contentLanguages, displayLanguages, theme, site, user, supportedLocales, defaultLocale, navigationOptions]
           )}
         >
           <ApiContext.Provider value={api}>{renderUniversalRoutes(routes)}</ApiContext.Provider>
         </SiteProvider>
       </VaultProvider>
-    </ThemeProvider>
+    </CustomThemeProvider>
   );
 };
 

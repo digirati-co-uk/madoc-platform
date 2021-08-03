@@ -9,6 +9,7 @@ import { SiteSetting } from '../../types/omeka/SiteSetting';
 import { User } from '../../types/omeka/User';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { ProjectConfiguration } from '../../types/schemas/project-configuration';
+import { NotFound } from '../../utility/errors/not-found';
 import { mysql } from '../../utility/mysql';
 import { userWithScope } from '../../utility/user-with-scope';
 
@@ -17,6 +18,10 @@ export const fileDirectory = process.env.OMEKA_FILE_DIRECTORY || '/home/node/app
 export const exportSite: RouteMiddleware = async context => {
   // @todo add option to reset passwords to testable default. Tests should assume a standard password.
   const { siteId } = userWithScope(context, ['site.admin']);
+
+  if (process.env.NODE_ENV === 'production') {
+    throw new NotFound();
+  }
 
   // - Grab Omeka tables as JSON
   //    - Get the site

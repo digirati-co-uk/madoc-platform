@@ -93,7 +93,7 @@ export const PageEditorBar: React.FC<{
             }}
           />
           <EditPageLayoutButton onUpdate={() => refetch()} />
-          <PageEditorButton>Navigation options</PageEditorButton>
+          {/*<PageEditorButton>Navigation options</PageEditorButton>*/}
           <DeletePageButton />
         </PageEditorActions>
       </PageEditorContainer>

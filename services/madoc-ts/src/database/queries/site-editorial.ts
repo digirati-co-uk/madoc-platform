@@ -21,7 +21,7 @@ import { SQL_INT_ARRAY } from '../../utility/postgres-tags';
 // Get slots + blocks (context + slots)
 // @note this does not filter based on specificity!
 // @todo join blocks
-export function getContextualSlots(context: ServerEditorialContext, siteId: number, slots?: string[]) {
+export function getContextualSlots(context: ServerEditorialContext, siteId: number) {
   const contextQueries = [];
 
   if (context.project) {
@@ -88,10 +88,18 @@ export function getContextualSlots(context: ServerEditorialContext, siteId: numb
     `);
   }
 
-  if (slots) {
-    contextQueries.push(sql`
-        slot_id = any ${sql.array(slots, SQL_INT_ARRAY)}
-    `);
+  if (context.slotIds && context.slotIds.length) {
+    if (context.slotIds.length === 1) {
+      contextQueries.push(sql`
+        ss.slot_id = ${context.slotIds[0]}
+      `);
+    } else {
+      contextQueries.push(sql`
+        ss.slot_id = any (
+          ${sql.array(context.slotIds, 'text')}
+        )
+      `);
+    }
   }
 
   if (contextQueries.length === 0) {

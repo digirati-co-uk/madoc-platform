@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { Pagination } from '../../../../types/schemas/_pagination';
 import { ApiArgs, apiHooks } from '../../../shared/hooks/use-api-query';
+import { AutoSlotLoader } from '../../../shared/page-blocks/auto-slot-loader';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { UniversalComponent } from '../../../types';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
@@ -41,23 +42,35 @@ export const ManifestLoader: UniversalComponent<ManifestLoaderType> = createUniv
     const ctx = useMemo(() => (data ? { id: data.manifest.id, name: data.manifest.label } : undefined), [data]);
 
     return (
-      <BreadcrumbContext manifest={ctx}>
-        {renderUniversalRoutes(route.routes, {
-          ...props,
-          manifest: data?.manifest,
-          pagination: data?.pagination,
-          collection,
-          manifestSubjects: data?.subjects,
-          manifestTask: projectTasks?.manifestTask,
-          manifestUserTasks: projectTasks?.userTasks,
-          canUserSubmit: projectTasks?.canUserSubmit,
-          refetchManifestTasks,
-          refetchManifest,
-        })}
-      </BreadcrumbContext>
+      <AutoSlotLoader>
+        <BreadcrumbContext manifest={ctx}>
+          {renderUniversalRoutes(route.routes, {
+            ...props,
+            manifest: data?.manifest,
+            pagination: data?.pagination,
+            collection,
+            manifestSubjects: data?.subjects,
+            manifestTask: projectTasks?.manifestTask,
+            manifestUserTasks: projectTasks?.userTasks,
+            canUserSubmit: projectTasks?.canUserSubmit,
+            refetchManifestTasks,
+            refetchManifest,
+          })}
+        </BreadcrumbContext>
+      </AutoSlotLoader>
     );
   },
   {
+    hooks: [
+      {
+        name: 'getSiteMetadataConfiguration',
+        creator: params => (params.slug ? [{ project_id: params.slug }] : undefined),
+      },
+      {
+        name: 'getSiteProjectManifestTasks',
+        creator: params => (params.slug ? [params.slug, Number(params.manifestId)] : undefined),
+      },
+    ],
     getKey: (params, query) => {
       return [
         'getSiteManifest',

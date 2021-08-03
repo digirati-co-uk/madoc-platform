@@ -3,6 +3,8 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import { InputContainer, InputLabel } from './Input';
 
+const Textarea = React.lazy(() => /* webpackChunkName: "browser" */ import('react-textarea-autosize'));
+
 export const IntlInputContainer = styled.div<{ focused?: boolean }>`
   background: #fff;
   border: 2px solid #999;
@@ -23,20 +25,41 @@ export const IntlInputDefault = styled.div`
   }
 `;
 
-export const IntlInput = styled.input`
+const inputStyles = css`
   flex: 1 1 0px;
   background: #fff;
   border: none;
   padding-left: 0.4em;
-  margin: 0.2em;
-  margin-right: 0;
+  margin: 0.2em 0 0.2em 0.2em;
   border-radius: 0;
   font-size: 0.9em;
   border-right: 1px solid #ddd;
+  font-family: inherit;
+  resize: none;
+  -webkit-appearance: none;
+  tap-highlight-color: rgba(255, 255, 255, 0);
+  line-height: 1.5em;
+
   &:focus {
     outline: none;
   }
 `;
+
+export const IntlInput = styled.input`
+  ${inputStyles}
+`;
+
+const IntlMultilineInternal = styled(Textarea)`
+  ${inputStyles}
+`;
+
+export const IntlMultiline: typeof IntlMultilineInternal = ((props: any) => {
+  return (
+    <React.Suspense fallback={<IntlInput {...props} />}>
+      <IntlMultilineInternal {...props} />
+    </React.Suspense>
+  );
+}) as any;
 
 export const IntlInputButton = styled.button<{ active?: boolean }>`
   background: #fff;
@@ -132,7 +155,7 @@ export const IntlField: React.FC<{
       <InputLabel>Label</InputLabel>
       <IntlInputContainer>
         <IntlInputDefault>
-          <IntlInput type="text" value={primary.value} />
+          <IntlMultiline type="text" value={primary.value} />
           <IntlInputButton>{primary.language}</IntlInputButton>
         </IntlInputDefault>
         <IntlInputExtraInput style={{ display: 'none' }}>

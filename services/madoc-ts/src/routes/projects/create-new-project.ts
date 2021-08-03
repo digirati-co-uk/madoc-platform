@@ -1,6 +1,11 @@
+import deepmerge from 'deepmerge';
 import { CrowdsourcingProjectTask } from '../../gateway/tasks/crowdsourcing-project-task';
+import { Site } from '../../types/omeka/Site';
+import { ProjectRow } from '../../types/projects';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { api } from '../../gateway/api.server';
+import { RequestError } from '../../utility/errors/request-error';
+import { mysql } from '../../utility/mysql';
 import { userWithScope } from '../../utility/user-with-scope';
 import { sql } from 'slonik';
 import { CreateProject } from '../../types/schemas/create-project';
@@ -13,10 +18,22 @@ const firstLang = (field: InternationalString) => {
   return (field[keys[0]] || [])[0] || 'Untitled project';
 };
 
-export const createNewProject: RouteMiddleware<{}, CreateProject> = async context => {
-  const { siteId, id } = userWithScope(context, ['site.admin']);
-  const userApi = api.asUser({ userId: id, siteId });
-  const { label, slug, summary } = context.requestBody;
+export const createNewProject: RouteMiddleware<unknown, CreateProject> = async context => {
+  const { siteId, siteUrn, id } = userWithScope(context, ['site.admin']);
+  const userApi = api.asUser({ userId: id, siteId }, {}, true);
+  context.disposableApis.push(userApi);
+
+  const { label, slug, summary, template, template_options } = context.requestBody;
+  const chosenTemplate = template ? api.projectTemplates.getDefinition(template, siteId) : null;
+  const setupFunctions = chosenTemplate?.setup;
+
+  if (template && !chosenTemplate) {
+    throw new RequestError(`Invalid template ${template}.`);
+  }
+
+  context.response.body = {
+    chosenTemplate,
+  };
 
   if (!slug || !slug.trim()) {
     throw new ConflictError('Invalid slug, cannot be blank');
@@ -43,7 +60,18 @@ export const createNewProject: RouteMiddleware<{}, CreateProject> = async contex
   );
 
   // 2. Create or fork capture model
-  const captureModel = await userApi.createCaptureModel(iiifGetLabel(label));
+  const beforeForkDocument = chosenTemplate?.setup?.beforeForkDocument;
+  const modelTemplate =
+    chosenTemplate?.captureModel && beforeForkDocument
+      ? await beforeForkDocument(chosenTemplate?.captureModel, {
+          api: userApi,
+          options: template_options,
+        })
+      : null;
+
+  const captureModel = chosenTemplate?.captureModel
+    ? await userApi.createCaptureModelFromTemplate(modelTemplate || chosenTemplate?.captureModel, iiifGetLabel(label))
+    : await userApi.createCaptureModel(iiifGetLabel(label));
 
   // 3. Create crowdsourcing task.
   const task = await userApi.newTask<CrowdsourcingProjectTask>({
@@ -58,69 +86,54 @@ export const createNewProject: RouteMiddleware<{}, CreateProject> = async contex
 
   // 4. Create project entry.
   try {
-    const project = await context.connection.one(sql<{
-      id: number;
-      task_id: string;
-      collection_id: string;
-      slug: string | null;
-      capture_model_id: number;
-    }>`
-        insert into iiif_project (task_id, collection_id, slug, site_id, capture_model_id)
-        VALUES (${task.id}, ${collection.id}, ${slug}, ${siteId}, ${captureModel.id})
+    const defaultStatus = chosenTemplate?.configuration?.status?.defaultStatus || 0;
+
+    const project = await context.connection.one(sql<ProjectRow>`
+        insert into iiif_project (task_id, collection_id, slug, site_id, capture_model_id, template_name, status)
+        VALUES (
+          ${task.id}, 
+          ${collection.id}, 
+          ${slug}, 
+          ${siteId}, 
+          ${captureModel.id}, 
+          ${template || null}, 
+          ${defaultStatus}
+        )
         returning *
     `);
 
-    // 5. todo Post default configuration to config service.
+    const configurationOptions = chosenTemplate?.configuration;
+    if (configurationOptions && configurationOptions.defaults) {
+      // Apply default configuration.
+      const siteConfig = await userApi.getProjectConfiguration(project.id, siteUrn);
+      const onCreateConfiguration = setupFunctions?.onCreateConfiguration;
+      const mergedConfiguration = deepmerge(siteConfig, configurationOptions.defaults);
+      const hookConfiguration = onCreateConfiguration
+        ? await onCreateConfiguration(mergedConfiguration, { api: userApi, options: template_options })
+        : null;
+      await userApi.saveSiteConfiguration(hookConfiguration ? hookConfiguration : mergedConfiguration, {
+        project_id: project.id,
+      });
+    }
 
-    // For now.
+    if (setupFunctions?.onCreateProject) {
+      await setupFunctions?.onCreateProject(project, { api: userApi, options: template_options });
+    }
+
+    if (chosenTemplate?.slots) {
+      // This might not be the fastest, but it will ensure they are added correctly. Lot's of slots will
+      // slow this down a bit.
+      await userApi.pageBlocks.processSlotMappingRequest(chosenTemplate.slots, project.id);
+    }
+
+    // Returning project.
     context.response.body = project;
   } catch (err) {
+    console.log(err);
     // todo
     //   Mark task as errored – or delete it
     //   Delete collection
     //   Delete capture model derivative.
+    return;
   }
-
-  //create table iiif_project
-  // (
-  // 	id serial not null
-  // 		constraint iiif_project_pk
-  // 			primary key,
-  // 	task_id uuid not null,
-  // 	collection_id integer not null
-  // 		constraint iiif_project_iiif_resource_id_fk
-  // 			references iiif_resource,
-  // 	slug text not null,
-  // 	site_id integer not null,
-  // 	capture_model_id uuid not null
-  // );
-  //
-  // alter table iiif_project owner to madoc;
-  //
-  // create unique index iiif_project_site_id_slug_uindex
-  // 	on iiif_project (site_id, slug);
-
-  // Name of project
-  // Project content
-  // crowdsourcing template - later
-  //
-  // What this will do:
-  // - Create new row for project in DB
-  // - Create new collection and link to project
-  // - Create new capture model that will be used as base - possibly from template (context is [site, project])
-  // - Create new root crowdsourcing task
-  //
-  // Endpoints for admins
-  // - Update project
-  //    - Update project metadata
-  //    - Resume/start project
-  //    - Pause project
-  //    - Finish project
-  // - Update project content
-  // - Export project
-  //
-  // Other project related endpoints for users
-  // - Claim resource
-  // - Abandon resource (DELETE claim)
-  // - Get random resource
 };

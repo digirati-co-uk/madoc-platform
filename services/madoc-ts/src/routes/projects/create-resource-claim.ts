@@ -349,7 +349,7 @@ async function upsertCaptureModelForResource(
     }>`select task_id, capture_model_id from iiif_project where site_id = ${siteId} and id = ${projectId}`
   );
 
-  const userApi = api.asUser({ userId, siteId });
+  const userApi = api.asUser({ userId, siteId }, {}, true);
   const mainTarget = claim.canvasId
     ? { type: 'Canvas', id: `urn:madoc:canvas:${claim.canvasId}` }
     : claim.manifestId
@@ -389,7 +389,9 @@ async function upsertCaptureModelForResource(
   }
 
   // @TODO need to add custom context too.
-  return userApi.cloneCaptureModel(capture_model_id, target);
+  const response = await userApi.cloneCaptureModel(capture_model_id, target);
+  userApi.dispose();
+  return response;
 }
 
 async function createUserCrowdsourcingTask({
@@ -425,8 +427,8 @@ async function createUserCrowdsourcingTask({
   warningTime?: number;
   userManifestTask?: CrowdsourcingTask;
 }): Promise<CrowdsourcingTask> {
-  const user = await context.omeka.getUserById(userId, siteId);
-  const assignee = await context.omeka.getUserById(assigneeId, siteId);
+  const user = await context.siteManager.getSiteUserById(userId, siteId);
+  const assignee = await context.siteManager.getSiteUserById(assigneeId, siteId);
   const userApi = api.asUser({ userId, siteId, userName: user.name });
 
   const structureId = undefined; // @todo call to config service to get structure id.

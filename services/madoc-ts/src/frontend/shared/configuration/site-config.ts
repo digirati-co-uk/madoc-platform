@@ -325,4 +325,23 @@ export const siteConfigurationModel: {
       },
     ],
   },
+  metadataSuggestions: {
+    label: 'Metadata suggestions',
+    description: 'Allow users to suggest additions or corrections to metadata',
+    type: 'checkbox-list-field',
+    options: [
+      {
+        label: 'Collection metadata',
+        value: 'collection',
+      },
+      {
+        label: 'Manifest metadata',
+        value: 'manifest',
+      },
+      {
+        label: 'Canvas metadata',
+        value: 'canvas',
+      },
+    ],
+  },
 };

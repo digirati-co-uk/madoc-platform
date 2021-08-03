@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next';
+import { EmptyState } from '../../../../shared/atoms/EmptyState';
 import { DashboardTab, DashboardTabs } from '../../../../shared/components/DashboardTabs';
+import { useProjectTemplate } from '../../../../shared/hooks/use-project-template';
 import { UniversalComponent } from '../../../../types';
 import { EditorContext } from '@capture-models/editor';
 import React, { useState } from 'react';
@@ -13,12 +15,16 @@ import { useApi } from '../../../../shared/hooks/use-api';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { AutoStructure } from '../model-editor/auto-structure';
+import { ModelEditorProvider } from '../model-editor/use-model-editor-config';
 
 type ProjectModelEditorType = {
   params: { id: string; captureModelId: string };
-  query: {};
+  query: unknown;
   variables: { id: number };
-  data: CaptureModel;
+  data: {
+    captureModel: CaptureModel;
+    template?: string;
+  };
 };
 
 export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = createUniversalComponent<
@@ -33,10 +39,13 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
     const { location } = useHistory();
     const [revisionNumber, setRevisionNumber] = useState(0);
     const api = useApi();
+    const model = data?.captureModel;
+    const config = useProjectTemplate(data?.template);
+    const editorConfig = config?.configuration?.captureModels;
 
-    const [updateModel, updateModelStatus] = useMutation(async (model: CaptureModel) => {
-      if (model.id) {
-        const newModel = await api.updateCaptureModel(model.id, model);
+    const [updateModel, updateModelStatus] = useMutation(async (m: CaptureModel) => {
+      if (m.id) {
+        const newModel = await api.updateCaptureModel(m.id, m);
 
         setNewStructure(newModel.structure);
         setNewDocument(newModel.document);
@@ -44,8 +53,12 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
       }
     }, {});
 
-    if (!data || status !== 'success') {
+    if (!data || status !== 'success' || !model) {
       return <div>{t('loading')}</div>;
+    }
+
+    if (editorConfig?.noCaptureModel) {
+      return <EmptyState>{t('No capture model for this project type')}</EmptyState>;
     }
 
     return (
@@ -56,13 +69,17 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
               <Link to={`/projects/${id}/model`}>{t('Home')}</Link>
             </DashboardTab>
 
-            <DashboardTab $active={location.pathname === `/projects/${id}/model/document`}>
-              <Link to={`/projects/${id}/model/document`}>{t('Document')}</Link>
-            </DashboardTab>
+            {!editorConfig?.preventChangeDocument ? (
+              <DashboardTab $active={location.pathname === `/projects/${id}/model/document`}>
+                <Link to={`/projects/${id}/model/document`}>{t('Document')}</Link>
+              </DashboardTab>
+            ) : null}
 
-            <DashboardTab $active={location.pathname === `/projects/${id}/model/structure`}>
-              <Link to={`/projects/${id}/model/structure`}>{t('Structure')}</Link>
-            </DashboardTab>
+            {!editorConfig?.preventChangeStructure ? (
+              <DashboardTab $active={location.pathname === `/projects/${id}/model/structure`}>
+                <Link to={`/projects/${id}/model/structure`}>{t('Structure')}</Link>
+              </DashboardTab>
+            ) : null}
 
             <DashboardTab $active={location.pathname === `/projects/${id}/model/preview`}>
               <Link to={`/projects/${id}/model/preview`}>{t('Preview')}</Link>
@@ -77,9 +94,9 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
               if (structure !== newStructure) {
                 setNewStructure(structure);
                 updateModel({
-                  ...data,
+                  ...model,
                   structure,
-                  document: newDocument ? newDocument : data.document,
+                  document: newDocument ? newDocument : model.document,
                 });
               }
             }}
@@ -87,22 +104,22 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
               if (doc !== newDocument) {
                 setNewDocument(doc);
                 updateModel({
-                  ...data,
-                  structure: newStructure ? newStructure : data.structure,
+                  ...model,
+                  structure: newStructure ? newStructure : model.structure,
                   document: doc,
                 });
               }
             }}
-            captureModel={data}
+            captureModel={model}
           >
-            <>
+            <ModelEditorProvider template={data.template}>
               <AutoStructure />
               {renderUniversalRoutes(route.routes, {
-                structure: newStructure ? newStructure : data.structure,
-                document: newDocument ? newDocument : data.document,
+                structure: newStructure ? newStructure : model.structure,
+                document: newDocument ? newDocument : model.document,
                 revisionNumber,
               })}
-            </>
+            </ModelEditorProvider>
           </EditorContext>
         </ThemeProvider>
       </>
@@ -110,9 +127,12 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
   },
   {
     getData: async (key, { id }, api) => {
-      const { capture_model_id } = await api.getProject(id);
+      const { capture_model_id, template } = await api.getProject(id);
 
-      return api.getCaptureModel(capture_model_id);
+      return {
+        template,
+        captureModel: await api.getCaptureModel(capture_model_id),
+      };
     },
     getKey: params => {
       return ['project-model', { id: Number(params.id) }];

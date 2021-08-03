@@ -5,13 +5,16 @@ import { FieldPreview, Revisions, RoundedCard, useSelectorHelper } from '@captur
 import { useDebouncedCallback } from 'use-debounce';
 import { ModifiedStatus } from '../features/ModifiedStatus';
 import { useFieldDetails } from '../hooks/use-field-details';
-import { EditorRenderingConfig, useProfileOverride } from './EditorSlots';
+import { EditorRenderingConfig, useProfileOverride, useSlotConfiguration } from './EditorSlots';
 
 export const DefaultInlineField: EditorRenderingConfig['InlineField'] = props => {
-  const { property, chooseField, path, readonly, field, canRemove, onRemove } = props;
+  const { property, chooseField, path, readonly: propsReadonly, field, canRemove, onRemove } = props;
   const { isModified } = useFieldDetails(field);
   const ProfileSpecificComponent = useProfileOverride('InlineField');
   const helper = useSelectorHelper();
+  const { immutableFields = [] } = useSlotConfiguration();
+
+  const readonly = propsReadonly || immutableFields.indexOf(property) === -1;
 
   useEffect(() => {
     if (field && field.selector) {

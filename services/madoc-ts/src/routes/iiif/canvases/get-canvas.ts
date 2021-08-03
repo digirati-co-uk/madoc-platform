@@ -44,7 +44,8 @@ export const getCanvas: RouteMiddleware<{ id: string }> = async context => {
             ir.local_source,
             ir.thumbnail_json,
             ir.items_json,
-            im.source from iiif_derived_resource ifd
+            ir.source 
+      from iiif_derived_resource ifd
         left join iiif_resource ir on ifd.resource_id = ir.id
         left outer join iiif_metadata im on ifd.resource_id = im.resource_id and im.site_id = ${siteId}
       where ifd.resource_id = ${canvasId}

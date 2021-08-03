@@ -1,6 +1,7 @@
 import { traverseDocument } from '@capture-models/helpers';
 import { BaseField, CaptureModel } from '@capture-models/types';
 import { ApiClient } from '../../../gateway/api';
+import { defaultDispose } from '../../extension-manager';
 import { CaptureModelExtension } from '../extension';
 import { DynamicData } from './types';
 
@@ -10,6 +11,10 @@ export class DynamicDataSourcesExtension implements CaptureModelExtension {
   constructor(api: ApiClient, dataLoaders: DynamicData[]) {
     this.api = api;
     this.dataLoaders = dataLoaders;
+  }
+
+  dispose() {
+    defaultDispose(this);
   }
 
   async onCloneCaptureModel(captureModel: CaptureModel): Promise<CaptureModel> {

@@ -17,10 +17,12 @@ export const resolveSlots: RouteMiddleware = async context => {
     manifest?: number;
     canvas?: number;
     project?: number;
+    slotIds?: string[];
   } = {
     collection: query.collection ? Number(query.collection) : undefined,
     manifest: query.manifest ? Number(query.manifest) : undefined,
     canvas: query.canvas ? Number(query.canvas) : undefined,
+    slotIds: query.slotIds ? query.slotIds.split(',') : undefined,
   };
 
   const parsedId = context.query.project ? parseProjectId(context.query.project) : undefined;

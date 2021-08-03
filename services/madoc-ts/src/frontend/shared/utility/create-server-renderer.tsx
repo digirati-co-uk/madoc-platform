@@ -40,11 +40,14 @@ export function createServerRenderer(
     site: PublicSite;
     user?: { name: string; id: number; scope: string[] };
     supportedLocales: Array<{ label: string; code: string }>;
+    contentLanguages: Array<{ label: string; code: string }>;
+    displayLanguages: Array<{ label: string; code: string }>;
     defaultLocale: string;
     navigationOptions?: any;
     theme?: ResolvedTheme | null;
+    themeOverrides?: any;
   }>,
-  createRoutes: ((components: any) => CreateRouteType) | UniversalRoute[],
+  createRoutes: ((c: any) => CreateRouteType) | UniversalRoute[],
   components: any,
   apiGateway: string,
   extraConfig: Partial<ReactQueryConfig> = {}
@@ -103,46 +106,76 @@ export function createServerRenderer(
     const matches = matchUniversalRoutes(routes, path);
     const requests = [];
     const routeContext: EditorialContext = {};
+    const themeOverrides: any = {};
+    let projectApplied = false;
     for (const { match, route } of matches) {
+      if (match.isExact && match.params) {
+        // Extract project.
+        routeContext.collection = match.params.collectionId ? Number(match.params.collectionId) : undefined;
+        routeContext.manifest = match.params.manifestId ? Number(match.params.manifestId) : undefined;
+        routeContext.canvas = match.params.canvasId ? Number(match.params.canvasId) : undefined;
+        routeContext.project = match.params.slug ? match.params.slug : undefined;
+      }
       if (route.component.getKey && route.component.getData) {
-        if (match.isExact && match.params) {
-          // Extract project.
-          routeContext.collection = match.params.collectionId ? Number(match.params.collectionId) : undefined;
-          routeContext.manifest = match.params.manifestId ? Number(match.params.manifestId) : undefined;
-          routeContext.canvas = match.params.canvasId ? Number(match.params.canvasId) : undefined;
-          routeContext.project = match.params.slug ? match.params.slug : undefined;
-        }
         requests.push(
-          prefetchCache.prefetchQuery(route.component.getKey(match.params, queryString, path), (key, vars) =>
-            route.component.getData ? route.component.getData(key, vars, userApi, path) : (undefined as any)
-          )
+          prefetchCache.prefetchQuery(route.component.getKey(match.params, queryString, path), (key, vars) => {
+            const data = route.component.getData
+              ? route.component.getData(key, vars, userApi, path)
+              : (undefined as any);
+            // Hack for server-side theme from template.
+            if (!projectApplied && key === 'getSiteProject' && omekaSite) {
+              data.then((resp: any) => {
+                try {
+                  if (resp?.template) {
+                    const definition = api.projectTemplates.getDefinition(resp?.template, omekaSite.id);
+                    if (definition?.theme) {
+                      themeOverrides[`project-template(${definition.type})`] = definition.theme;
+                    }
+                    projectApplied = true;
+                  }
+                } catch (e) {
+                  // no-op.
+                }
+              });
+            }
+            return data;
+          })
         );
+      }
+      const hooks = route.component.hooks || [];
+      for (const hook of hooks) {
+        const args = hook.creator(match.params, queryString);
+        if (typeof args !== 'undefined') {
+          requests.push(prefetchCache.prefetchQuery([hook.name, args], () => (userApi as any)[hook.name](...args)));
+        }
+      }
+
+      const customTheme = route.component.theme;
+      if (customTheme && customTheme.name) {
+        themeOverrides[customTheme.name] = customTheme;
       }
     }
 
     if (getSlots) {
       requests.push(prefetchCache.prefetchQuery(['slot-request', routeContext], () => getSlots(routeContext)));
+      requests.push(
+        prefetchCache.prefetchQuery(['slot-request', { slotIds: ['global-header'] }], () =>
+          getSlots({ slotIds: ['global-header'] })
+        )
+      );
     }
 
     await Promise.all(requests);
     const dehydratedState = dehydrate(prefetchCache);
+    const mapLocalCodes = (ln: string) => {
+      const label = localeCodes.getByTag(ln).name;
+      return { label: label, code: ln };
+    };
     const supportedLocales = siteLocales.localisations.map(ln => {
-      const label = localeCodes.getByTag(ln.code).name;
-      return { label: label, code: ln.code };
+      return mapLocalCodes(ln.code);
     });
-
-    const routeData = `
-      <script type="application/json" id="react-omeka">${JSON.stringify({
-        site: omekaSite,
-        user,
-        locales: supportedLocales,
-        defaultLocale: siteLocales.defaultLanguage || 'en',
-        navigationOptions: navigationOptions,
-        plugins,
-        theme,
-      })}</script>
-      <script type="application/json" id="react-query-cache">${JSON.stringify(dehydratedState)}</script>
-    `;
+    const displayLanguages = (siteLocales.displayLanguages || []).map(mapLocalCodes);
+    const contentLanguages = (siteLocales.contentLanguages || []).map(mapLocalCodes);
 
     if (matches.length === 0) {
       return {
@@ -171,7 +204,10 @@ export function createServerRenderer(
                         site={omekaSite as any}
                         user={user}
                         defaultLocale={siteLocales.defaultLanguage || 'en'}
+                        contentLanguages={contentLanguages}
+                        displayLanguages={displayLanguages}
                         supportedLocales={supportedLocales}
+                        themeOverrides={themeOverrides}
                         navigationOptions={navigationOptions}
                       />
                     </ThemeProvider>
@@ -199,6 +235,22 @@ export function createServerRenderer(
     const styles = sheet.getStyleTags(); // <-- getting all the tags from the sheet
 
     // sheet.seal();
+
+    const routeData = `
+      <script type="application/json" id="react-omeka">${JSON.stringify({
+        site: omekaSite,
+        user,
+        locales: supportedLocales,
+        defaultLocale: siteLocales.defaultLanguage || 'en',
+        navigationOptions: navigationOptions,
+        contentLanguages,
+        displayLanguages,
+        plugins,
+        theme,
+        themeOverrides,
+      })}</script>
+      <script type="application/json" id="react-query-cache">${JSON.stringify(dehydratedState)}</script>
+    `;
 
     if (process.env.NODE_ENV === 'production') {
       return {

@@ -24,6 +24,7 @@ export const Button = styled.button<{
   $error?: boolean;
   $inlineInput?: boolean;
   $large?: boolean;
+  $disabled?: boolean;
 }>`
   cursor: pointer;
   padding: 0.4em 1em;
@@ -163,53 +164,94 @@ export const Button = styled.button<{
     `}
   
   ${props =>
-    props.$error &&
-    css`
-      background: #fff;
-      color: #a90e21;
-      border: 1px solid #a90e21;
+    props.$error
+      ? props.$primary
+        ? css`
+            background: #a90e21;
+            color: #fff;
+            border: 1px solid #a90e21;
 
-      &:active {
-        background: #fff;
-        border-color: #a90e21;
-        box-shadow: inset 0 2px 8px 0 #ffd6dd;
-      }
+            &:active {
+              box-shadow: inset 0 2px 8px 0 rgba(118, 9, 51, 0.8);
+            }
 
-      &:focus,
-      &:focus:hover {
-        color: #a90e21;
-        background: #fff;
-        border-color: #a90e21;
-      }
+            &:link,
+            &:visited {
+              color: #fff;
+            }
 
-      &:link,
-      &:visited {
-        color: #a90e21;
-      }
+            &:focus,
+            &:focus:hover {
+              color: #fff;
+              background: #a90e21;
+              border-color: #a90e21;
+            }
 
-      &:hover {
-        background: #fff;
-        color: #a90e21;
-        border-color: #a90e21;
-      }
+            &:hover {
+              background: #d91a45;
+              border-color: #a90e21;
+            }
 
-      &:disabled {
-        opacity: 0.9;
-        cursor: not-allowed;
+            &:disabled {
+              opacity: 0.7;
+              cursor: not-allowed;
+            }
+          `
+        : css`
+            background: #fff;
+            color: #a90e21;
+            border: 1px solid #a90e21;
 
-        &:hover {
-          background: #fff;
-          border-color: #a90e21;
-          color: #a90e21;
-        }
-      }
-    `}
+            &:active {
+              background: #fff;
+              border-color: #a90e21;
+              box-shadow: inset 0 2px 8px 0 #ffd6dd;
+            }
+
+            &:focus,
+            &:focus:hover {
+              color: #a90e21;
+              background: #fff;
+              border-color: #a90e21;
+            }
+
+            &:link,
+            &:visited {
+              color: #a90e21;
+            }
+
+            &:hover {
+              background: #fff;
+              color: #a90e21;
+              border-color: #a90e21;
+            }
+
+            &:disabled {
+              opacity: 0.9;
+              cursor: not-allowed;
+
+              &:hover {
+                background: #fff;
+                border-color: #a90e21;
+                color: #a90e21;
+              }
+            }
+          `
+      : css``}
 
   ${props =>
     props.$inlineInput &&
     css`
       height: 2.7em;
       border-radius: 0 3px 3px 0;
+    `}
+  
+  ${props =>
+    props.$disabled &&
+    css`
+      opacity: 0.8;
+      cursor: not-allowed;
+      pointer-events: none;
     `}
 `;
 

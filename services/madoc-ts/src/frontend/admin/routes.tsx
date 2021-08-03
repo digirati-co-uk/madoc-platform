@@ -42,6 +42,8 @@ import { Project } from './pages/crowdsourcing/projects/project';
 import { ProjectModelEditor } from './pages/crowdsourcing/projects/project-model-editor';
 import { CreateCollection } from './pages/content/collections/create-collection';
 import { CreateManifest } from './pages/content/manifests/create-manifest';
+import { ListSites } from './pages/sites/list-sites';
+import { SitePermissions } from './pages/sites/site-permissions';
 import { DevelopmentPlugin } from './pages/system/development-plugin';
 import { ActivityStreams } from './pages/system/activity-streams';
 import { ViewExternalPlugin } from './pages/system/external-plugin';
@@ -511,5 +513,15 @@ export const routes: UniversalRoute[] = [
     path: '/system/activity-streams',
     exact: true,
     component: ActivityStreams,
+  },
+  {
+    path: '/sites',
+    exact: true,
+    component: ListSites,
+  },
+  {
+    path: '/sites/permissions',
+    exact: true,
+    component: SitePermissions,
   },
 ];

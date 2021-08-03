@@ -1,11 +1,8 @@
 import { BaseField } from '@capture-models/types';
-import React from 'react';
+import React, { JSXElementConstructor } from 'react';
 import { blockConfigFor } from '../../frontend/shared/plugins/external/block-config-for';
 import { EditorialContext } from '../../types/schemas/site-page';
-import { PageBlockDefinition, PageBlockEditor } from './extension';
-import mitt from 'mitt';
-
-export const reactBlockEmitter = mitt();
+import { PageBlockDefinition, PageBlockEditor, PageBlockExtension } from './extension';
 
 export function blockEditorFor<Props, MappedProps = Props>(
   Component: React.FC<Props>,
@@ -17,15 +14,18 @@ export function blockEditorFor<Props, MappedProps = Props>(
       [T in keyof MappedProps]?: string | ({ type: string } & Partial<BaseField> & any);
     };
     internal?: boolean;
+    svgIcon?: string | JSXElementConstructor<React.SVGProps<SVGSVGElement>>;
     requiredContext?: Array<keyof EditorialContext>;
     anyContext?: Array<keyof EditorialContext>;
     mapToProps?: (props: MappedProps) => Props;
+    mapFromProps?: (props: Props) => MappedProps;
     customEditor?: PageBlockEditor;
+    source?: { type: string; id?: string; name: string };
   }
 ): PageBlockDefinition<any, any, any, any> {
   const definition = blockConfigFor(Component, model);
 
-  reactBlockEmitter.emit('block', definition);
+  PageBlockExtension.register(definition);
 
   return definition;
 }
@@ -44,11 +44,12 @@ export function extractBlockDefinitions(components: any): PageBlockDefinition<an
       singleComponent.type &&
       (singleComponent.type[Symbol.for('slot-model')] as PageBlockDefinition<any, any, any, any>);
     if (definition) {
+      const propsToAdd = definition.mapFromProps ? definition.mapFromProps(props || {}) : props;
       return {
         ...definition,
         defaultData: {
           ...(definition.defaultData || {}),
-          ...(props || {}),
+          ...(propsToAdd || {}),
         },
       };
     }

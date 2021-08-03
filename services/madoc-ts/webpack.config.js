@@ -5,19 +5,23 @@ const styledComponentsTransformer = createStyledComponentsTransformer({
   displayName: true,
 });
 
+const skipHotReload = !!process.env.SKIP_HOT_RELOAD;
+
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
-  devtool: process.env.NODE_ENV !== 'production' ? 'inline-source-map' : false,
+  devtool: process.env.NODE_ENV !== 'production' ? 'eval-cheap-module-source-map' : false,
   entry: {
     admin: [
       './src/frontend/admin/client.tsx',
-      process.env.NODE_ENV !== 'production' &&
-        'webpack-hot-middleware/client?path=/s/default/madoc/__webpack_hmr&quiet=false&noInfo=false',
+      process.env.NODE_ENV === 'development' &&
+        process.env.watch === 'false' &&
+        'webpack-hot-middleware/client?name=admin&path=/s/default/madoc/__webpack_hmr&quiet=false&noInfo=false',
     ].filter(Boolean),
     site: [
       './src/frontend/site/client.ts',
-      process.env.NODE_ENV !== 'production' &&
-        'webpack-hot-middleware/client?path=/s/default/madoc/__webpack_hmr&quiet=false&noInfo=false',
+      process.env.NODE_ENV === 'development' &&
+        process.env.watch === 'false' &&
+        'webpack-hot-middleware/client?name=site&path=/s/default/madoc/__webpack_hmr&quiet=false&noInfo=false',
     ].filter(Boolean),
   },
   output: {
@@ -27,7 +31,7 @@ module.exports = {
     publicPath: `/s/default/madoc/assets/`,
   },
   plugins:
-    process.env.NODE_ENV === 'production'
+    process.env.NODE_ENV === 'production' || skipHotReload
       ? [new webpack.IgnorePlugin(/@blueprintjs\/core/)]
       : [
           new webpack.HotModuleReplacementPlugin(),
@@ -43,9 +47,9 @@ module.exports = {
           {
             loader: 'babel-loader',
             options: {
-              plugins: [process.env.NODE_ENV !== 'production' && require.resolve('react-refresh/babel')].filter(
-                Boolean
-              ),
+              plugins: [
+                process.env.NODE_ENV !== 'production' && !skipHotReload && require.resolve('react-refresh/babel'),
+              ].filter(Boolean),
               presets: [
                 process.env.NODE_ENV === 'production' && [
                   '@babel/preset-env',
@@ -90,10 +94,12 @@ module.exports = {
       '@capture-models/editor': '@capture-models/editor/lib',
       'react-dnd': require.resolve('react-dnd'),
       'styled-components': require.resolve('styled-components'),
-      // https: false,
-      // http: false,
-      // '@blueprintjs/core': false,
     },
+    // fallback: {
+    //   https: false,
+    //   http: false,
+    //   '@blueprintjs/core': false,
+    // },
   },
   externals: {
     react: 'React',

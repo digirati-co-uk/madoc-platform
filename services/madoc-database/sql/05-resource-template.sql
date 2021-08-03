@@ -12,12 +12,7 @@
 LOCK TABLES `resource_template` WRITE;
 /*!40000 ALTER TABLE `resource_template` DISABLE KEYS */;
 INSERT INTO `resource_template` VALUES
-  (1,NULL,NULL,'Base Resource'),
-  (2,NULL,27,'Crowd Source Element'),
-  (3,NULL,27,'Crowd Source Group'),
-  (4,NULL,117,'IIIF Manifest'),
-  (5,NULL,115,'IIIF Canvas'),
-  (6,NULL,119,'IIIF Collection')
+  (1,NULL,NULL,'Base Resource')
 ;
 /*!40000 ALTER TABLE `resource_template` ENABLE KEYS */;
 UNLOCK TABLES;

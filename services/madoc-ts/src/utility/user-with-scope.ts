@@ -1,3 +1,4 @@
+import { SiteUserRepository } from '../repository/site-user-repository';
 import { NotFound } from './errors/not-found';
 import { ApplicationState } from '../types/application-state';
 
@@ -27,6 +28,20 @@ export function userWithScope(context: { state: ApplicationState; cookies: any }
     siteUrn: `urn:madoc:site:${context.state.jwt.site.id}`,
     userUrn: `urn:madoc:user:${context.state.jwt.user.id}`,
   };
+}
+
+export async function onlyGlobalAdmin(context: {
+  siteManager: SiteUserRepository;
+  state: ApplicationState;
+  cookies: any;
+}) {
+  const scope = userWithScope(context, ['site.admin']);
+  const user = await context.siteManager.getSiteUserById(scope.id, scope.siteId);
+  if (user.role !== 'global_admin') {
+    throw new NotFound();
+  }
+
+  return scope;
 }
 
 export function optionalUserWithScope(context: { state: ApplicationState }, scopes: string[]) {

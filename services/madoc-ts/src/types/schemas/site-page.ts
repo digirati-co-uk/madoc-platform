@@ -6,6 +6,7 @@ export type EditorialContext = {
   manifest?: number;
   canvas?: number;
   page?: number;
+  slotIds?: string[];
 };
 
 export type ServerEditorialContext = {
@@ -14,6 +15,7 @@ export type ServerEditorialContext = {
   manifest?: number;
   canvas?: number;
   page?: number;
+  slotIds?: string[];
 };
 
 export type SlotResponse = {
@@ -80,6 +82,13 @@ export type CreateSlotRequest = {
   };
   pageId?: number;
   blocks?: SiteBlockRequest[];
+};
+
+export type SlotMappingRequest = {
+  project?: { [slotName: string]: CreateSlotRequest };
+  collection?: { [slotName: string]: CreateSlotRequest };
+  manifest?: { [slotName: string]: CreateSlotRequest };
+  canvas?: { [slotName: string]: CreateSlotRequest };
 };
 
 export type SitePageRow = {

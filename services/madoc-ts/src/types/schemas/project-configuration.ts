@@ -69,4 +69,9 @@ export type ProjectConfiguration = {
     curated?: boolean;
     published?: boolean;
   };
+  metadataSuggestions?: {
+    manifest?: boolean;
+    collection?: boolean;
+    canvas?: boolean;
+  };
 };

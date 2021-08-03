@@ -19,10 +19,10 @@ export function validateApiRequest(
     if (!validateParams(request.params)) {
       return {
         valid: false,
-        errors: validateParams.errors || [],
+        errors: validateParams.errors?.map(error => `params/${error.dataPath} ${error.message}`) || ['Invalid params'],
       };
     }
-  } else if (definition.params && Object.keys(request.body).length) {
+  } else if (request.params && Object.keys(request.params).length) {
     return {
       valid: false,
       errors: ['No params defined for this definition'],
@@ -31,10 +31,10 @@ export function validateApiRequest(
 
   if (definition.body) {
     const validateBody = ajv.compile(definition.body);
-    if (!validateBody(request.params)) {
+    if (!validateBody(request.body)) {
       return {
         valid: false,
-        errors: validateBody.errors || [],
+        errors: validateBody.errors?.map(error => `body/${error.dataPath} ${error.message}`) || ['Invalid body'],
       };
     }
   } else if (request.body && Object.keys(request.body).length) {
@@ -46,13 +46,13 @@ export function validateApiRequest(
 
   if (definition.query) {
     const validateQuery = ajv.compile(definition.query);
-    if (!validateQuery(request.params)) {
+    if (!validateQuery(request.query)) {
       return {
         valid: false,
-        errors: validateQuery.errors || [],
+        errors: validateQuery.errors?.map(error => `query/${error.dataPath} ${error.message}`) || ['Invalid query'],
       };
     }
-  } else if (request.query && Object.keys(request.body).length) {
+  } else if (request.query && Object.keys(request.query).length) {
     return {
       valid: false,
       errors: ['No query defined for this definition'],

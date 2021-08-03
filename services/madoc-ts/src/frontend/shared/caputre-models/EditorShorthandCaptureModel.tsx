@@ -1,14 +1,25 @@
-import { Revisions } from '@capture-models/editor';
-import { hydrateCompressedModel } from '@capture-models/helpers';
-import React, { useMemo } from 'react';
-import { ViewDocument } from './ViewDocument';
+import { hydrateCompressedModel, serialiseCaptureModel } from '@capture-models/helpers';
+import { RevisionRequest } from '@capture-models/types';
+import React, { useCallback, useMemo } from 'react';
+import { CustomSubmitButton } from './new/components/CustomSubmitButton';
+import { EditorSlots } from './new/components/EditorSlots';
+import { RevisionProviderWithFeatures } from './new/components/RevisionProviderWithFeatures';
 import { createRevisionFromDocument } from '../utility/create-revision-from-document';
+import { ButtonRow } from '../atoms/Button';
 
 export const EditShorthandCaptureModel: React.FC<{
   data: any | undefined;
   template: any;
+  immutableFields?: string[];
   onSave: (revision: any) => Promise<void> | void;
-}> = ({ data, onSave, template }) => {
+}> = ({ data, onSave, template, immutableFields }) => {
+  const saveRevision = useCallback(
+    (revision: RevisionRequest) => {
+      onSave(revision ? serialiseCaptureModel(revision.document) : null);
+    },
+    [onSave]
+  );
+
   const rev = useMemo(() => {
     if (!data) {
       return undefined;
@@ -22,12 +33,30 @@ export const EditShorthandCaptureModel: React.FC<{
   }, [data, template]);
 
   return rev ? (
-    <Revisions.Provider captureModel={rev.model} initialRevision={rev.revisionId}>
-      <ViewDocument
-        onSave={revision => {
-          onSave(revision);
-        }}
-      />
-    </Revisions.Provider>
+    <RevisionProviderWithFeatures
+      slotConfig={{
+        editor: {
+          allowEditing: true,
+          immutableFields,
+        },
+        components: {
+          SubmitButton: CustomSubmitButton,
+        },
+      }}
+      features={{
+        autosave: false,
+        revisionEditMode: true,
+      }}
+      captureModel={rev.model}
+      initialRevision={rev.revisionId}
+      revision={rev.revisionId}
+    >
+      <div style={{ fontSize: '0.85em', maxWidth: 800 }}>
+        <EditorSlots.TopLevelEditor />
+      </div>
+      <ButtonRow>
+        <EditorSlots.SubmitButton afterSave={saveRevision} />
+      </ButtonRow>
+    </RevisionProviderWithFeatures>
   ) : null;
 };

@@ -7,6 +7,7 @@ type ReactContextType = {
     [slotName: string]: SiteSlot;
   };
   isPage?: boolean;
+  pagePath?: string;
   editable?: boolean;
   onUpdateSlot: (slotId: number) => void;
   onCreateSlot: (slotReq: CreateSlotRequest) => void;
@@ -64,6 +65,7 @@ export const SlotProvider: React.FC<SlotProviderProps> = props => {
   const newContext = useMemo(() => {
     return {
       isPage: existing.isPage ? props.isPage : props.isPage,
+      pagePath: existing.pagePath ? existing.pagePath : props.pagePath,
       context: { ...existing.context, ...props.context },
       slots: { ...existing.slots, ...(props.slots || {}), ...newSlots }, // Possibly merge the slots based on the priority thing.
       editable: typeof props.editable !== 'undefined' ? props.editable : existing.editable,

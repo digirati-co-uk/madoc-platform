@@ -11,6 +11,7 @@ import * as crowdsourcingManifest from '../gateway/tasks/crowdsourcing-manifest-
 import * as processManifestOcr from '../gateway/tasks/process-manifest-ocr';
 import * as processCanvasOcr from '../gateway/tasks/process-canvas-ocr';
 import * as searchIndex from '../gateway/tasks/search-index-task';
+import * as apiActionTask from '../gateway/tasks/api-action-task';
 
 const configOptions: WorkerOptions = {
   connection: {
@@ -47,7 +48,7 @@ const worker = new Worker(
     if (job.data && job.data.context) {
       const siteId = getSiteId(job.data.context);
       if (siteId) {
-        contextualApi = api.asUser({ siteId });
+        contextualApi = api.asUser({ siteId }, {}, true);
       }
     }
 
@@ -80,9 +81,11 @@ const worker = new Worker(
             throw err;
           });
         case crowdsourcingManifest.type:
-          return await crowdsourcingManifest.jobHandler(job.name, job.data.taskId, contextualApi, job.data).catch(err => {
-            throw err;
-          });
+          return await crowdsourcingManifest
+            .jobHandler(job.name, job.data.taskId, contextualApi, job.data)
+            .catch(err => {
+              throw err;
+            });
         case processManifestOcr.type:
           return await processManifestOcr.jobHandler(job.name, job.data.taskId, contextualApi).catch(err => {
             throw err;
@@ -93,6 +96,10 @@ const worker = new Worker(
           });
         case searchIndex.type:
           return await searchIndex.jobHandler(job.name, job.data.taskId, contextualApi).catch(err => {
+            throw err;
+          });
+        case apiActionTask.type:
+          return await apiActionTask.jobHandler(job.name, job.data.taskId, contextualApi).catch(err => {
             throw err;
           });
       }

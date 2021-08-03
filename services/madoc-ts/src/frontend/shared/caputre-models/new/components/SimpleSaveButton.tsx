@@ -1,14 +1,13 @@
 import { Revisions } from '@capture-models/editor';
-import { RevisionRequest } from '@capture-models/types';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { Button, ButtonRow } from '../../../atoms/Button';
 import { useViewerSaving } from '../../../hooks/use-viewer-saving';
 import { useDeselectRevision } from '../hooks/use-deselect-revision';
-import { useSlotConfiguration } from './EditorSlots';
+import { EditorRenderingConfig, useSlotConfiguration } from './EditorSlots';
 
-export const SimpleSaveButton: React.FC<{ afterSave?: (req: RevisionRequest) => void }> = ({ afterSave }) => {
+export const SimpleSaveButton: EditorRenderingConfig['SubmitButton'] = ({ afterSave }) => {
   const { t } = useTranslation();
   const currentRevision = Revisions.useStoreState(s => s.currentRevision);
   const updateFunction = useViewerSaving(afterSave);

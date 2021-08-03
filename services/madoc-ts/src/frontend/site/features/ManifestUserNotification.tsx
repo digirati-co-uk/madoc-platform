@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { Button } from '../../shared/atoms/Button';
 import { ErrorMessage } from '../../shared/atoms/ErrorMessage';
 import { InfoMessage } from '../../shared/atoms/InfoMessage';
@@ -92,3 +93,11 @@ export const ManifestUserNotification: React.FC = () => {
 
   return null;
 };
+
+blockEditorFor(ManifestUserNotification, {
+  type: 'default.ManifestUserNotification',
+  label: 'Manifest user notifications',
+  anyContext: ['manifest'],
+  requiredContext: ['project', 'manifest'],
+  editor: {},
+});

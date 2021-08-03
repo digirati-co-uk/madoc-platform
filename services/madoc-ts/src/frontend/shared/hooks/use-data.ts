@@ -182,7 +182,12 @@ export function useInfiniteData<Data = any, TKey = any, TVariables = any>(
   );
 
   if (potentialReturn.data && !Array.isArray(potentialReturn.data)) {
-    potentialReturn.data = [potentialReturn.data as any];
+    potentialReturn.canFetchMore = true;
+    const allPages = [potentialReturn.data];
+    if (config?.getFetchMore) {
+      potentialReturn.canFetchMore = typeof config.getFetchMore(potentialReturn.data, allPages) !== 'undefined';
+    }
+    potentialReturn.data = allPages;
   }
 
   return potentialReturn;

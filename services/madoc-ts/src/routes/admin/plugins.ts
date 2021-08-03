@@ -278,7 +278,7 @@ export const installRemotePlugin: RouteMiddleware<
   }
 
   mkdirp.sync(`${pluginDirectory}/temp/${pluginZip.node_id}`);
-  await new Promise((resolve, reject) => {
+  await new Promise<void>((resolve, reject) => {
     const fileStream = fs.createWriteStream(pluginZipLocation);
     if (zipResponse.body) {
       (zipResponse.body as any).pipe(fileStream);
@@ -295,7 +295,7 @@ export const installRemotePlugin: RouteMiddleware<
     file: pluginZipLocation,
   });
 
-  await new Promise(resolve => zip.on('ready', resolve));
+  await new Promise<void>(resolve => zip.on('ready', resolve));
 
   // - Make sure the madoc-plugin is valid
   const madocConfigData = zip.entryDataSync('madoc-plugin.json');

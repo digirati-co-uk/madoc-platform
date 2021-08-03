@@ -1,5 +1,6 @@
 import { BaseField, CaptureModel, RevisionRequest } from '@capture-models/types';
-import { createChoice, createDocument, generateId } from '@capture-models/helpers';
+import { createChoice, createDocument, generateId, traverseDocument } from '@capture-models/helpers';
+import deepmerge from 'deepmerge';
 import {
   ActivityOptions,
   ActivityOrderedCollection,
@@ -7,7 +8,6 @@ import {
   ChangeDiscoveryActivityRequest,
 } from '../activity-streams/change-discovery-types';
 import { ConfigInjectionExtension } from '../extensions/capture-models/ConfigInjection/ConfigInjection.extension';
-import { MADOC_MODEL_CONFIG } from '../extensions/capture-models/ConfigInjection/constants';
 import { ConfigInjectionSettings } from '../extensions/capture-models/ConfigInjection/types';
 import { DynamicDataSourcesExtension } from '../extensions/capture-models/DynamicDataSources/DynamicDataSources.extension';
 import { DynamicData } from '../extensions/capture-models/DynamicDataSources/types';
@@ -19,6 +19,8 @@ import { NotificationExtension } from '../extensions/notifications/extension';
 import { defaultPageBlockDefinitions } from '../extensions/page-blocks/default-definitions';
 import { PageBlockExtension } from '../extensions/page-blocks/extension';
 import { MediaExtension } from '../extensions/media/extension';
+import { ProjectTemplateExtension } from '../extensions/projects/extension';
+import { SiteManagerExtension } from '../extensions/site-manager/extension';
 import { SystemExtension } from '../extensions/system/extension';
 import { TaskExtension } from '../extensions/tasks/extension';
 import { ThemeExtension } from '../extensions/themes/extension';
@@ -33,9 +35,8 @@ import { ProjectConfiguration } from '../types/schemas/project-configuration';
 import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/search';
 import { SearchIndexable } from '../utility/capture-model-to-indexables';
 import { NotFound } from '../utility/errors/not-found';
-import { apiDefinitionIndex } from './api-definitions/_index';
+import { generateModelFields } from '../utility/generate-model-fields';
 import { ApiRequest } from './api-definitions/_meta';
-import { validateApiRequest } from './api-definitions/_validate';
 import { fetchJson } from './fetch-json';
 import { BaseTask } from './tasks/base-task';
 import { CanvasNormalized, CollectionNormalized, Manifest } from '@hyperion-framework/types';
@@ -76,6 +77,20 @@ import { ResourceLinkRow } from '../database/queries/linking-queries';
 import { SearchIndexTask } from './tasks/search-index-task';
 import { CollectionDeletionSummary } from '../types/deletion-summary';
 
+export type ApiClientWithoutExtensions = Omit<
+  ApiClient,
+  | 'captureModelExtensions'
+  | 'pageBlocks'
+  | 'media'
+  | 'tasks'
+  | 'system'
+  | 'themes'
+  | 'siteManager'
+  | 'projectTemplates'
+  | 'getCaptureModelDataSources'
+  | 'cloneCaptureModel'
+>;
+
 export class ApiClient {
   private readonly gateway: string;
   private readonly isServer: boolean;
@@ -84,19 +99,21 @@ export class ApiClient {
   private readonly publicSiteSlug?: string;
   private errorHandlers: Array<() => void> = [];
   private jwt?: string;
-  private jwtFunction?: () => string;
+  private readonly jwtFunction?: () => string;
   private errorRecoveryHandlers: Array<() => void> = [];
   private isDown = false;
   private currentUser?: { scope: string[]; user: { id: string; name?: string } };
-  private captureModelDataSources: DynamicData[];
+  private readonly captureModelDataSources: DynamicData[] = [];
   // Public.
-  captureModelExtensions: ExtensionManager<CaptureModelExtension>;
-  pageBlocks: PageBlockExtension;
-  media: MediaExtension;
-  tasks: TaskExtension;
-  system: SystemExtension;
-  themes: ThemeExtension;
-  notifications: NotificationExtension;
+  captureModelExtensions!: ExtensionManager<CaptureModelExtension>;
+  pageBlocks!: PageBlockExtension;
+  media!: MediaExtension;
+  tasks!: TaskExtension;
+  system!: SystemExtension;
+  themes!: ThemeExtension;
+  notifications!: NotificationExtension;
+  siteManager!: SiteManagerExtension;
+  projectTemplates!: ProjectTemplateExtension;
 
   constructor(options: {
     gateway: string;
@@ -105,6 +122,7 @@ export class ApiClient {
     asUser?: { userId?: number; siteId?: number; userName?: string };
     customerFetcher?: typeof fetchJson;
     customCaptureModelExtensions?: (api: ApiClient) => Array<CaptureModelExtension>;
+    withoutExtensions?: boolean;
   }) {
     this.gateway = options.gateway;
     this.jwtFunction = typeof options.jwt === 'string' ? undefined : options.jwt;
@@ -113,12 +131,21 @@ export class ApiClient {
     this.isServer = !(globalThis as any).window;
     this.fetcher = options.customerFetcher || fetchJson;
     this.publicSiteSlug = options.publicSiteSlug;
+
+    // This extension will be fine.
+    this.notifications = new NotificationExtension(this);
+    this.tasks = new TaskExtension(this);
+
+    if (options.withoutExtensions) {
+      return;
+    }
+
     this.pageBlocks = new PageBlockExtension(this, defaultPageBlockDefinitions);
     this.media = new MediaExtension(this);
-    this.tasks = new TaskExtension(this);
     this.system = new SystemExtension(this);
     this.themes = new ThemeExtension(this);
-    this.notifications = new NotificationExtension(this);
+    this.siteManager = new SiteManagerExtension(this);
+    this.projectTemplates = new ProjectTemplateExtension(this);
     this.captureModelDataSources = [plainTextSource];
     this.captureModelExtensions = new ExtensionManager(
       options.customCaptureModelExtensions
@@ -132,6 +159,20 @@ export class ApiClient {
             new ConfigInjectionExtension(this),
           ]
     );
+  }
+
+  dispose() {
+    this.pageBlocks.dispose();
+    this.media.dispose();
+    this.tasks.dispose();
+    this.system.dispose();
+    this.themes.dispose();
+    this.notifications.dispose();
+    this.siteManager.dispose();
+    this.projectTemplates.dispose();
+    this.captureModelExtensions.dispose();
+    this.errorHandlers = [];
+    this.errorRecoveryHandlers = [];
   }
 
   private getJwt() {
@@ -311,7 +352,7 @@ export class ApiClient {
         for (const err of this.errorHandlers) {
           err();
         }
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 3000));
         // Always retry this error.
         return this.request(endpoint, { method, body, jwt });
       }
@@ -379,7 +420,7 @@ export class ApiClient {
       throw new Error('Site slug not found');
     }
 
-    const queryString = query ? `?${stringify(query)}` : '';
+    const queryString = query ? `?${stringify(query, { arrayFormat: 'comma' })}` : '';
 
     return this.request<Return, Body>(`/s/${this.publicSiteSlug}${endpoint}${queryString}`, {
       method,
@@ -389,14 +430,38 @@ export class ApiClient {
     });
   }
 
-  asUser(user: { userId?: number; siteId?: number; userName?: string }, options?: { siteSlug?: string }): ApiClient {
+  asUser(
+    user: { userId?: number; siteId?: number; userName?: string },
+    options: { siteSlug?: string },
+    withExtensions: true
+  ): ApiClient;
+  asUser(
+    user: { userId?: number; siteId?: number; userName?: string },
+    options?: { siteSlug?: string }
+  ): ApiClientWithoutExtensions;
+  asUser(
+    user: { userId?: number; siteId?: number; userName?: string },
+    options?: { siteSlug?: string },
+    withExtensions?: boolean
+  ): ApiClientWithoutExtensions {
     return new ApiClient({
       gateway: this.gateway,
       jwt: this.getJwt(),
       asUser: user,
       customerFetcher: this.fetcher,
       publicSiteSlug: options && options.siteSlug ? options.siteSlug : this.publicSiteSlug,
+      withoutExtensions: !withExtensions,
     });
+  }
+
+  async asUserWithExtensions(
+    callback: (api: ApiClient) => Promise<void>,
+    user: { userId?: number; siteId?: number; userName?: string },
+    options?: { siteSlug?: string }
+  ) {
+    const userApi = this.asUser(user, options);
+    await callback(userApi as any);
+    userApi.dispose(); // Need to make sure extensions unregister their events properly.
   }
 
   getCaptureModelDataSources() {
@@ -464,14 +529,6 @@ export class ApiClient {
         id: string;
       };
     }>(`/api/madoc/projects/${projectId}/models/${subject}`);
-  }
-
-  async getProjectsByResource(resourceId: number, context: string[]) {
-    throw new Error('Not yet implemented');
-  }
-
-  async getCrowdsourcingTasks(resourceId: number, context: string[]) {
-    throw new Error('Not yet implemented'); // @todo might be covered elsewhere?
   }
 
   async createProject(project: CreateProject) {
@@ -551,26 +608,6 @@ export class ApiClient {
     });
   }
 
-  async deleteResourceClaim(taskId: string) {
-    throw new Error('Not yet implemented');
-  }
-
-  async getRandomManifest(projectId: number) {
-    throw new Error('Not yet implemented');
-  }
-
-  async getRangeCanvas(projectId: number) {
-    throw new Error('Not yet implemented');
-  }
-
-  async updateProjectConfiguration() {
-    throw new Error('Not yet implemented');
-  }
-
-  async updateProjectStructure() {
-    throw new Error('Not yet implemented');
-  }
-
   async deleteProject(projectId: number) {
     return this.request<any>(`/api/madoc/projects/${projectId}`, {
       method: 'DELETE',
@@ -586,11 +623,32 @@ export class ApiClient {
       `/madoc/api/locales/${code}${withTemplate ? `?show_empty=true` : ''}`
     );
   }
+  async getLocaleAnalysis() {
+    return this.request<{
+      metadata: Array<{ language: string; totals: number }>;
+    }>(`/api/madoc/locales/analysis`);
+  }
 
   async updateSiteLocale(code: string, json: any) {
     return this.request<GetLocalisationResponse>(`/api/madoc/locales/${code}`, {
       method: 'POST',
       body: json,
+    });
+  }
+
+  async updateLocalePreferences({
+    displayLanguages,
+    contentLanguages,
+  }: {
+    displayLanguages?: string[];
+    contentLanguages?: string[];
+  }) {
+    return this.request<GetLocalisationResponse>(`/api/madoc/locales`, {
+      method: 'PATCH',
+      body: {
+        displayLanguages,
+        contentLanguages,
+      },
     });
   }
 
@@ -859,6 +917,18 @@ export class ApiClient {
     return this.request<GetMetadata>(`/api/madoc/iiif/manifests/${id}/metadata`);
   }
 
+  async getSiteCanvasMetadata(id: number) {
+    return this.publicRequest<GetMetadata>(`/madoc/api/canvases/${id}/metadata`);
+  }
+
+  async getSiteManifestMetadata(id: number) {
+    return this.publicRequest<GetMetadata>(`/madoc/api/manifests/${id}/metadata`);
+  }
+
+  async getSiteCollectionMetadata(id: number) {
+    return this.publicRequest<GetMetadata>(`/madoc/api/collections/${id}/metadata`);
+  }
+
   async autocompleteManifests(q: string, project_id?: string, blacklist_ids?: number[], page = 1) {
     return this.request<Array<{ id: number; label: string }>>(
       `/api/madoc/iiif/autocomplete/manifests?${stringify(
@@ -897,10 +967,6 @@ export class ApiClient {
     return this.request(`/api/madoc/iiif/canvases/${id}`, {
       method: 'DELETE',
     });
-  }
-
-  async getLinkingProperty(id: number) {
-    return this.request<ResourceLinkResponse>(`/api/madoc/`);
   }
 
   async updateCollectionMetadata(id: number, request: MetadataUpdate) {
@@ -1042,6 +1108,45 @@ export class ApiClient {
     return this.request<{
       results: ModelSearch[];
     }>(`/api/crowdsourcing/search/published?${stringify(queryString)}`);
+  }
+
+  async createCaptureModelFromTemplate(model: CaptureModel['document'], label?: string) {
+    const newModel = deepmerge({}, model, { clone: true });
+    const updateId = (e: any) => {
+      if (e.id) {
+        e.id = generateId();
+      }
+    };
+    traverseDocument(newModel, {
+      visitEntity: updateId,
+      visitField: updateId,
+      visitSelector: updateId,
+    });
+    const modelFields = generateModelFields(newModel);
+
+    return this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model`, {
+      method: 'POST',
+      body: {
+        id: generateId(),
+        structure: createChoice({
+          label,
+          items: [
+            {
+              id: generateId(),
+              type: 'model',
+              label: 'Default',
+              fields: modelFields,
+            },
+          ],
+        }),
+        document: label
+          ? {
+              ...newModel,
+              label,
+            }
+          : newModel,
+      },
+    });
   }
 
   async createCaptureModel(label: string) {
@@ -1398,7 +1503,7 @@ export class ApiClient {
     });
   }
 
-  async createDelegatedRequest(request: ApiRequest<any, any>, subject?: string) {
+  async createDelegatedRequest<Req extends ApiRequest<any, any>>(request: Req, subject?: string) {
     return this.request(subject ? `/api/madoc/delegated?subject=${subject}` : `/api/madoc/delegated`, {
       method: 'POST',
       body: request,
@@ -1407,6 +1512,12 @@ export class ApiClient {
 
   async runDelegatedRequest(id: string) {
     return this.request(`/api/madoc/delegated/${id}`, {
+      method: 'POST',
+    });
+  }
+
+  async assignDelegatedRequest(id: string) {
+    return this.request(`/api/madoc/delegated/${id}/assign`, {
       method: 'POST',
     });
   }
@@ -1862,6 +1973,13 @@ export class ApiClient {
     }
 
     return this.request(`/api/madoc/activity/${primaryStream}/action/${action}`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  postUniversalChangeToStreams(body: { id: number; type: 'collection' | 'manifest' | 'canvas'; summary?: string }) {
+    return this.request(`/api/madoc/activity/all`, {
       method: 'POST',
       body,
     });

@@ -10,6 +10,7 @@ import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
 import { ApiArgs, apiHooks } from '../../../shared/hooks/use-api-query';
 import { useData } from '../../../shared/hooks/use-data';
 import { HighlightedRegionProvider } from '../../../shared/hooks/use-highlighted-regions';
+import { AutoSlotLoader } from '../../../shared/page-blocks/auto-slot-loader';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { UniversalComponent } from '../../../types';
@@ -60,23 +61,25 @@ export const CanvasLoader: UniversalComponent<CanvasLoaderType> = createUniversa
     const { data: model } = apiHooks.getSiteProjectCanvasModel(() => (slug ? [slug, Number(id)] : undefined));
 
     return (
-      <BreadcrumbContext canvas={ctx}>
-        <HighlightedRegionProvider>
-          {renderUniversalRoutes(route.routes, {
-            ...props,
-            isLoadingTasks,
-            canvas: data?.canvas,
-            plaintext: data?.plaintext,
-            canvasTask: tasks?.canvasTask,
-            userTasks: tasks?.userTasks,
-            canUserSubmit: !!tasks?.canUserSubmit,
-            manifestTask: tasks?.manifestTask,
-            model: model?.model,
-            refetch,
-            refetchCanvasTasks,
-          })}
-        </HighlightedRegionProvider>
-      </BreadcrumbContext>
+      <AutoSlotLoader>
+        <BreadcrumbContext canvas={ctx}>
+          <HighlightedRegionProvider>
+            {renderUniversalRoutes(route.routes, {
+              ...props,
+              isLoadingTasks,
+              canvas: data?.canvas,
+              plaintext: data?.plaintext,
+              canvasTask: tasks?.canvasTask,
+              userTasks: tasks?.userTasks,
+              canUserSubmit: !!tasks?.canUserSubmit,
+              manifestTask: tasks?.manifestTask,
+              model: model?.model,
+              refetch,
+              refetchCanvasTasks,
+            })}
+          </HighlightedRegionProvider>
+        </BreadcrumbContext>
+      </AutoSlotLoader>
     );
   },
   {

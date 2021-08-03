@@ -1,5 +1,7 @@
 import React from 'react';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { useMetadataSuggestionConfiguration } from '../hooks/use-metadata-suggestion-configuration';
+import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
 import { usePaginatedData } from '../../shared/hooks/use-data';
 import { CollectionLoader } from '../pages/loaders/collection-loader';
@@ -13,6 +15,8 @@ export const CollectionMetadata: React.FC<{ compact?: boolean; showEmptyMessage?
   const { collectionId } = useRouteContext();
   const { resolvedData: data } = usePaginatedData(CollectionLoader, undefined, { enabled: !!collectionId });
   const { data: metadataConfig } = useSiteMetadataConfiguration();
+  const createLink = useRelativeLinks();
+  const { collection } = useMetadataSuggestionConfiguration();
 
   if (!data || !metadataConfig) {
     return null;
@@ -30,6 +34,9 @@ export const CollectionMetadata: React.FC<{ compact?: boolean; showEmptyMessage?
       config={undefined}
       metadata={metadata || []}
       showEmptyMessage={showEmptyMessage}
+      suggestEdit={
+        collection ? createLink({ canvasId: undefined, manifestId: undefined, subRoute: `metadata/edit` }) : undefined
+      }
     />
   );
 };

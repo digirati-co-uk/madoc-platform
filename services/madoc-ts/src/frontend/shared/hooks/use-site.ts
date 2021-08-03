@@ -7,6 +7,8 @@ const SiteReactContext = React.createContext<
       site: PublicSite;
       user?: { id: number; name: string; scope: string[] };
       supportedLocales: Array<{ code: string; label: string }>;
+      contentLanguages: Array<{ label: string; code: string }>;
+      displayLanguages: Array<{ label: string; code: string }>;
       defaultLocale: string;
       navigationOptions: {
         enableProjects?: boolean;
@@ -49,13 +51,13 @@ export const useNavigationOptions = () => {
 export const useDetailedSupportLocales = () => {
   const details = useContext(SiteReactContext);
 
-  return details?.supportedLocales || [{ label: 'English', code: 'en' }];
+  return details?.displayLanguages || [{ label: 'English', code: 'en' }];
 };
 
 export const useSupportedLocales = () => {
   const details = useContext(SiteReactContext);
 
-  return details?.supportedLocales.map(r => r.code) || ['en'];
+  return details?.contentLanguages.map(r => r.code) || ['en'];
 };
 
 export const useDefaultLocale = () => {

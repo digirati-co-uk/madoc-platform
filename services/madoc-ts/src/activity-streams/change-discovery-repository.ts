@@ -44,6 +44,34 @@ export class ChangeDiscoveryRepository extends BaseRepository {
     return items.map(item => this.mapActivity(item));
   }
 
+  async lastActionsForAllStreamsFromResource(id: number, type: 'canvas' | 'manifest' | 'collection', siteId: number) {
+    const urn = `urn:madoc:${type}:${id}`;
+    const query = sql<{
+      primary_stream: string;
+      secondary_stream: string;
+      last_action: ChangeDiscoveryActivityType;
+      object_id: string;
+    }>`
+       select distinct on (primary_stream, secondary_stream)
+         primary_stream,
+         secondary_stream,
+         object_id,
+         first_value(activity_type) over (
+           partition by (primary_stream, secondary_stream, object_id)
+           order by end_time desc
+           range between
+             unbounded preceding and
+             unbounded following
+           ) last_action
+       from change_discovery_activity
+       where object_canonical_id = ${urn}
+         and site_id = ${siteId}
+       group by primary_stream, secondary_stream, activity_type, end_time, object_id;
+    `;
+
+    return this.connection.any(query);
+  }
+
   async resourceExists({ primaryStream, secondaryStream }: StreamOptions, canonicalId: string, siteId: number) {
     // Find the latest Add, Create, Delete or Remove for this resource in this site.
     const exists = await this.connection.maybeOne(sql<{ activity_type: string }>`

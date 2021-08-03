@@ -5,6 +5,7 @@ import { MediaRepository } from '../repository/media-repository';
 import { NotificationRepository } from '../repository/notification-repository';
 import { PageBlocksRepository } from '../repository/page-blocks-repository';
 import { PluginRepository } from '../repository/plugin-repository';
+import { SiteUserRepository } from '../repository/site-user-repository';
 import { ThemeRepository } from '../repository/theme-repository';
 
 export const postgresConnection = (pool: DatabasePoolType): Middleware => async (context, next) => {

@@ -5,8 +5,11 @@ import Ajv from 'ajv';
 import { checkExpiredManifests } from './cron/check-expired-manifests';
 import './frontend/shared/plugins/globals';
 import { createPluginManager } from './middleware/create-plugin-manager';
+import { disposeApis } from './middleware/dispose-apis';
 import { errorHandler } from './middleware/error-handler';
+import { SiteUserRepository } from './repository/site-user-repository';
 import { CronJobs } from './utility/cron-jobs';
+import { OmekaApi } from './utility/omeka-api';
 import { TypedRouter } from './utility/typed-router';
 import { createPostgresPool } from './database/create-postgres-pool';
 import { postgresConnection } from './middleware/postgres-connection';
@@ -40,6 +43,9 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
     }
 
     await syncOmeka(mysqlPool, pool, config);
+
+    const siteRepo = new SiteUserRepository(pool, new OmekaApi(mysqlPool), 'HYBRID_OMEKA');
+    await siteRepo.legacyOmekaDatabaseSync();
   }
 
   if (
@@ -85,11 +91,13 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   // Validator.
   app.context.ajv = new Ajv();
   for (const file of readdirSync(path.resolve(__dirname, '..', 'schemas'))) {
-    const name = path.basename(file, '.json');
-    app.context.ajv.addSchema(
-      JSON.parse(readFileSync(path.resolve(__dirname, '..', 'schemas', file)).toString('utf-8')),
-      name
-    );
+    if (!file.startsWith('.')) {
+      const name = path.basename(file, '.json');
+      app.context.ajv.addSchema(
+        JSON.parse(readFileSync(path.resolve(__dirname, '..', 'schemas', file)).toString('utf-8')),
+        name
+      );
+    }
   }
 
   app.use(k2c(cookieParser(app.keys)));
@@ -103,6 +111,7 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   app.use(omekaPage);
   app.use(setJwt);
   app.use(omekaApi);
+  app.use(disposeApis);
   app.use(router.routes()).use(router.allowedMethods());
 
   // Cron jobs.

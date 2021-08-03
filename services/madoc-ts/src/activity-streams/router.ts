@@ -2,6 +2,7 @@ import { RouteWithParams, TypedRouter } from '../utility/typed-router';
 import { getActivityStream } from './routes/get-activity-stream';
 import { getActivityStreamPage } from './routes/get-activity-stream-page';
 import { postActivity } from './routes/post-activity';
+import { postUniversalChange } from './routes/post-universal-change';
 
 // create: 'Create',
 //   update: 'Update',
@@ -34,6 +35,7 @@ export const router: Record<keyof any, RouteWithParams<any>> = {
     '/api/madoc/activity/:primaryStream/stream/:secondaryStream/action/:action',
     postActivity,
   ],
+  'activity-universal-change': [TypedRouter.POST, '/api/madoc/activity/all', postUniversalChange],
 
   // Site routes for public activity.
   'site-get-primary-stream': [TypedRouter.GET, '/s/:slug/madoc/api/activity/:primaryStream/changes', getActivityStream],

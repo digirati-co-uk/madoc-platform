@@ -1,5 +1,4 @@
 import { getSpecificity } from '../src/database/queries/site-editorial';
-import { CreateSlotRequest } from '../src/types/schemas/site-page';
 
 describe('Slot specificity', () => {
   test('project specificity none=true', () => {

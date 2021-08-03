@@ -1,16 +1,25 @@
 import { Connection, Pool, PoolConnection, Query } from 'mysql';
+import { NotFoundError } from 'slonik';
+import {
+  LegacySitePermissionRow,
+  LegacySiteRow,
+  LegacyUserRow,
+  SiteUser,
+  UserRow,
+  UserRowWithoutPassword,
+  UserSite,
+} from '../extensions/site-manager/types';
 import { mysql, raw } from './mysql';
 import { Resource, ResourceItem, ResourceItemSet, ResourceMedia } from '../types/omeka/Resource';
 import { Value } from '../types/omeka/Value';
 import { phpHashCompare } from './php-hash-compare';
 import { User } from '../types/omeka/User';
-import { entity, MediaValue, urlMedia, VirtualMedia } from './field-value';
+import { entity, MediaValue, VirtualMedia } from './field-value';
 import { Media } from '../types/omeka/Media';
 import { writeFileSync } from 'fs';
 import mkdirp from 'mkdirp';
 import cache from 'memory-cache';
 
-type UserSite = { id: number; role: string; slug: string; title: string };
 export type PublicSite = { id: number; slug: string; title: string; is_public: number };
 
 const fileDirectory = process.env.OMEKA_FILE_DIRECTORY || '/home/node/app/omeka-files';
@@ -22,7 +31,7 @@ export class OmekaApi {
     return `${fileDirectory}/original${file}`;
   }
 
-  async getTerms<T extends string>(terms: T[]): Promise<{ [term in T]: { id: number; term: string } }> {
+  private async getTerms<T extends string>(terms: T[]): Promise<{ [term in T]: { id: number; term: string } }> {
     const dbTerms = await this.many<{ id: number; term: string }>(mysql`
       SELECT property.id, CONCAT(v.prefix, ':', local_name) AS term 
       FROM property 
@@ -39,6 +48,10 @@ export class OmekaApi {
     return termMap;
   }
 
+  /**
+   * @deprecated
+   * @internal
+   */
   async updateItem(
     id: number,
     document: { [term: string]: Array<Partial<Value> | Omit<MediaValue, 'property_id'>> },
@@ -76,6 +89,10 @@ export class OmekaApi {
     );
   }
 
+  /**
+   * @deprecated
+   * @internal
+   */
   async addToItemSet(id: number, ids: number[]) {
     if (ids.length === 0) {
       return;
@@ -88,6 +105,10 @@ export class OmekaApi {
     `);
   }
 
+  /**
+   * @deprecated
+   * @internal
+   */
   async createItemFromTemplate(
     templateName: string,
     resourceType: Resource['resource_type'],
@@ -152,6 +173,10 @@ export class OmekaApi {
     });
   }
 
+  /**
+   * @deprecated
+   * @internal
+   */
   async getTemplate(
     name: string
   ): Promise<{
@@ -168,6 +193,10 @@ export class OmekaApi {
     };
   }
 
+  /**
+   * @deprecated
+   * @internal
+   */
   async getSiteLabelById(siteId?: number) {
     if (!siteId) {
       return;
@@ -177,32 +206,101 @@ export class OmekaApi {
     return site.label;
   }
 
-  async getUserById(id: number, siteId: number) {
-    return this.one<{ id: number; name: string }>(mysql`
-        select u.id, u.name from user u
+  /**
+   * @deprecated use context.siteManager.getUserById() instead
+   */
+  async getSiteUserById(id: number, siteId: number) {
+    return this.one<SiteUser>(mysql`
+        select u.id, u.name, u.role, sp.role as site_role from user u
           left join site_permission sp on u.id = sp.user_id
           where sp.site_id = ${siteId} and u.id = ${id}
     `);
   }
 
+  /**
+   * @deprecated use context.siteManager.getSiteCreator() instead
+   */
   async getSiteCreator(siteId: number) {
-    return this.one<{ id: number; name: string }>(
-      mysql`select u.id, u.name from user u left join site s on u.id = s.owner_id where s.id = ${siteId}`
+    return this.one<SiteUser>(
+      mysql`select u.id, u.name, u.role from user u left join site s on u.id = s.owner_id where s.id = ${siteId}`
     );
   }
 
+  /**
+   * @deprecated use context.siteManager.getUsersByRoles() instead
+   */
   async getUsersByRoles(siteId: number, roles: string[], includeAdmins = true) {
-    // IN ${roles}
-
     const adminQuery = includeAdmins ? raw(` or sp.role = "admin"`) : mysql``;
 
-    return await this.many<{ id: number; name: string }>(mysql`
-      select u.id, u.name from user u
+    return await this.many<SiteUser>(mysql`
+      select u.id, u.name, u.role, sp.role as site_role from user u
           left join site_permission sp on u.id = sp.user_id
           where sp.site_id = ${siteId} and (sp.role IN (${roles})${adminQuery})
     `);
   }
 
+  /**
+   * @deprecated use context.siteManager.listAllSites() instead
+   */
+  async listAllSites() {
+    return await this.many<LegacySiteRow>(
+      mysql`
+        select * from site s
+      `
+    );
+  }
+
+  async getSiteUsers(siteId: number): Promise<SiteUser[]> {
+    return await this.many<SiteUser>(
+      mysql`
+        select u.id, u.name, u.role, sp.role as site_role, u.email from user u
+           left join site_permission sp on u.id = sp.user_id
+        where sp.site_id = ${siteId}
+      `
+    );
+  }
+
+  /**
+   * @internal
+   * @deprecated This should only be used for migration
+   */
+  async listAllUsers() {
+    return await this.many<LegacyUserRow>(
+      mysql`
+        SELECT * from user
+      `
+    );
+  }
+
+  /**
+   * @internal
+   * @deprecated This should only be used for migration
+   */
+  async listSitePermissions() {
+    return await this.many<LegacySitePermissionRow>(
+      mysql`
+        SELECT * from site_permission
+      `
+    );
+  }
+
+  async getAuthenticatedSites(userId: number) {
+    return await this.many<UserSite>(mysql`
+      SELECT s.id, sp.role, s.slug, s.title FROM site_permission sp LEFT JOIN site s on sp.site_id = s.id WHERE user_id=${userId}
+    `);
+  }
+
+  async getPublicSites(userId: number) {
+    return await this.many<UserSite>(
+      mysql`
+        SELECT s.id, s.slug, s.title, 'viewer' as role from site s where s.is_public = 1 or s.owner_id=${userId}
+      `
+    );
+  }
+
+  /**
+   * @deprecated use context.siteManager.getUserSites() instead
+   */
   async getUserSites(userId: number, role: string): Promise<UserSite[]> {
     if (role && role === 'global_admin') {
       const sites = await this.many<UserSite>(mysql`SELECT s.id, s.slug, s.title FROM site s`);
@@ -238,10 +336,30 @@ export class OmekaApi {
     return userSites;
   }
 
-  async getUser(id: number) {
-    const user = await this.one<User>(
-      mysql`SELECT id, name, email, role FROM user WHERE is_active = true AND id = ${id}`
+  /**
+   * @internal
+   */
+  async getUserById(id: number) {
+    return await this.one<UserRowWithoutPassword>(
+      mysql`SELECT id, name, email, role, is_active, created, modified FROM user WHERE id = ${id}`
     );
+  }
+
+  /**
+   * @internal
+   */
+  async getActiveUserById(id: number) {
+    return await this.one<UserRowWithoutPassword>(
+      mysql`SELECT id, name, email, role, is_active, created, modified FROM user WHERE is_active = 1 AND id = ${id}`
+    );
+  }
+
+  /**
+   * @deprecated use context.siteManager.getUserAndSites() instead
+   * @internal
+   */
+  async getUser(id: number) {
+    const user = await this.getActiveUserById(id);
 
     if (!user) {
       return undefined;
@@ -251,9 +369,19 @@ export class OmekaApi {
     return { user, sites };
   }
 
+  async getActiveUserByEmailWithPassword(email: string) {
+    return await this.one<UserRow>(
+      mysql`SELECT id, name, email, created, modified, password_hash, role, is_active FROM user WHERE is_active = 1 AND email = ${email}`
+    );
+  }
+
+  /**
+   * @deprecated use context.siteManager.verifyLogin() instead
+   * @internal
+   */
   async verifyLogin(email: string, password: string) {
     const user = await this.one<User>(
-      mysql`SELECT id, name, email, password_hash, role FROM user WHERE is_active = true AND email = ${email}`
+      mysql`SELECT id, name, email, password_hash, role FROM user WHERE is_active = 1 AND email = ${email}`
     );
 
     if (!user || !password || !user.password_hash) {
@@ -266,6 +394,10 @@ export class OmekaApi {
     }
   }
 
+  /**
+   * @deprecated
+   * @internal
+   */
   async addFieldsToItem(connection: PoolConnection, id: number, values: Array<Omit<Value, 'id'>>) {
     await this.one(
       mysql`
@@ -282,6 +414,10 @@ export class OmekaApi {
     );
   }
 
+  /**
+   * @deprecated
+   * @internal
+   */
   async createResourceItem(
     connection: PoolConnection,
     { resource, mediaType }: { resource: Omit<Resource, 'id'>; mediaType?: Omit<Media, 'id'> }
@@ -335,6 +471,10 @@ export class OmekaApi {
     return item;
   }
 
+  /**
+   * @deprecated
+   * @internal
+   */
   async getTransaction<R>(callback: (connection: PoolConnection) => Promise<R>) {
     return new Promise<R>((resolve, reject) => {
       this.connection.getConnection((cErr, connection) => {
@@ -358,6 +498,10 @@ export class OmekaApi {
     });
   }
 
+  /**
+   * @deprecated
+   * @internal
+   */
   async getCollectionById(id: number, siteId: number, connection?: PoolConnection) {
     return this.one<{ id: number; label: string; count: number }>(
       mysql`
@@ -378,6 +522,10 @@ export class OmekaApi {
     );
   }
 
+  /**
+   * @deprecated
+   * @internal
+   */
   async getCollections(page = 0, siteId?: number, connection?: PoolConnection) {
     const collectionsPerPage = 5;
     const offset = collectionsPerPage * page;
@@ -413,6 +561,10 @@ export class OmekaApi {
     }
   }
 
+  /**
+   * @deprecated
+   * @internal
+   */
   async getManifestSnippetsByCollectionId(
     collectionId: number,
     pagination: { perPage: number; page: number } = { perPage: 5, page: 0 },
@@ -448,6 +600,10 @@ export class OmekaApi {
     );
   }
 
+  /**
+   * @deprecated
+   * @internal
+   */
   async createResource({
     resource,
     values = [],
@@ -547,18 +703,28 @@ export class OmekaApi {
     });
   }
 
+  /**
+   * @deprecated use context.siteManager.getSiteById() instead
+   * @internal
+   */
   async getSite(id: number) {
-    const site = await this.one<PublicSite>(mysql`
-      select id, title, slug, is_public from site where id = ${id}
+    return await this.one<LegacySiteRow>(mysql`
+      select * from site where id = ${id}
     `);
-
-    if (!site) {
-      return undefined;
-    }
-
-    return site;
   }
 
+  /**
+   * @internal use context.siteManager.getSiteBySlug() instead
+   */
+  async getSiteBySlug(slug: string) {
+    return await this.one<LegacySiteRow>(mysql`
+      select * from site where slug = ${slug}
+    `);
+  }
+
+  /**
+   * @todo port to site-user-repository
+   */
   async getSiteIdBySlug(slug: string, userId?: number, isAdmin = false) {
     const cacheKey = `public-site-id:${slug}`;
     const publicSiteId: PublicSite | undefined = cache.get(cacheKey);
@@ -603,7 +769,34 @@ export class OmekaApi {
     }
   }
 
+  async query(query: Query | string, connection?: Connection): Promise<void> {
+    return new Promise((resolve, reject) =>
+      (connection ? connection : this.connection).query(query, error => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve();
+        }
+      })
+    );
+  }
+
   async one<Result>(query: Query | string, connection?: Connection): Promise<Result> {
+    return new Promise((resolve, reject) =>
+      (connection ? connection : this.connection).query(query, (error, data) => {
+        if (error) {
+          reject(error);
+        } else {
+          if (!data.length) {
+            reject(new NotFoundError());
+          }
+          resolve(data[0]);
+        }
+      })
+    );
+  }
+
+  async maybeOne<Result>(query: Query | string, connection?: Connection): Promise<Result | undefined> {
     return new Promise((resolve, reject) =>
       (connection ? connection : this.connection).query(query, (error, data) => {
         if (error) {
@@ -625,5 +818,30 @@ export class OmekaApi {
         }
       })
     );
+  }
+
+  // Mutations.
+
+  async setUsersRoleOnSite(siteId: number, userId: number, newSiteRole: string) {
+    const resp = await this.maybeOne<{ site_role: string }>(
+      mysql`select role as site_role from site_permission where site_id = ${siteId} and user_id = ${userId}`
+    );
+
+    if (!resp) {
+      // Create new role.
+      await this.query(
+        mysql`insert into site_permission (site_id, user_id, role) values (${siteId}, ${userId}, ${newSiteRole})`
+      );
+    } else {
+      await this.query(
+        mysql`update site_permission set role = ${newSiteRole} where site_id = ${siteId} and user_id = ${userId}`
+      );
+    }
+  }
+
+  async removeUserRoleOnSite(siteId: number, userId: number) {
+    await this.query(mysql`
+      delete from site_permission where site_id = ${siteId} and user_id = ${userId}
+    `);
   }
 }

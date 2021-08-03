@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useSite } from '../../shared/hooks/use-site';
 import { UniversalComponent } from '../../types';
 import styled from 'styled-components';
@@ -17,7 +17,7 @@ import {
 } from '../../shared/atoms/Statistics';
 
 const AdminSection = styled.div`
-  width: 25%;
+  width: 33.3333%;
 `;
 
 const AdminSectionGrid = styled.div`
@@ -73,9 +73,9 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
               <StatisticLink to="/projects" number={stats.projects} label="Projects" cypressCountLabel="project-count" />
             </StatisticContainer>
           ) : null}
-          <AdminSectionGrid>
+          <AdminSectionGrid style={{ maxWidth: 1000, margin: '0 auto' }}>
             <AdminSection>
-              <MenuTitle>Content</MenuTitle>
+              <MenuTitle>{t('Content')}</MenuTitle>
               <MenuList>
                 <li>
                   <a href={`/admin/site/s/${site.slug}/show/`}>{t('Omeka admin')}</a>
@@ -101,56 +101,36 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
               </MenuList>
             </AdminSection>
             <AdminSection>
-              <MenuTitle>Crowdsourcing</MenuTitle>
+              <MenuTitle>{t('Crowdsourcing')}</MenuTitle>
               <MenuList>
                 <li>
                   <Link to="/projects">{t('Manage projects', { count: 2 })}</Link>
-                </li>
-                {/* <li>
-                  <Link to="/capture-models">{t('Manage capture models')}</Link>
-                </li> */}
-                <li>
-                  <span>Reviews</span>
-                </li>
-                <li>
-                  <span>Authority</span>
-                </li>
-              </MenuList>
-            </AdminSection>
-            <AdminSection>
-              <MenuTitle>Enrichment</MenuTitle>
-              <MenuList>
-                <li>
-                  <span>Segmentation</span>
-                </li>
-                <li>
-                  <span>Import segmentation</span>
                 </li>
                 <li>
                   <Link to="/enrichment/search-indexing">{t('Search indexing')}</Link>
                 </li>
                 <li>
-                  <Link to={`/enrichment/ocr`}>OCR</Link>
+                  <Link to={`/enrichment/ocr`}>{t('OCR')}</Link>
+                </li>
+                <li>
+                  <Link to="/system/activity-streams">{t('Activity streams')}</Link>
                 </li>
               </MenuList>
             </AdminSection>
             <AdminSection>
-              <MenuTitle>Content</MenuTitle>
+              <MenuTitle>{t('System')}</MenuTitle>
               <MenuList>
                 <li>
-                  <span>Download contributions</span>
+                  <Link to="/system/status">{t('System status')}</Link>
                 </li>
                 <li>
-                  <span>Configure Universal Viewer</span>
+                  <Link to="/system/themes">{t('Themes')}</Link>
                 </li>
                 <li>
-                  <span>Configure Mirador</span>
+                  <Link to="/system/plugins">{t('Plugins')}</Link>
                 </li>
                 <li>
-                  <span>Configure Atlas</span>
-                </li>
-                <li>
-                  <Link to={`/export/site`}>Export site</Link>
+                  <Link to={`/sites/permissions`}>Site permissions</Link>
                 </li>
               </MenuList>
             </AdminSection>

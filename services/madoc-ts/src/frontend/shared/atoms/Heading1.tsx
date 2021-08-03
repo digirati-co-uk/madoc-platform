@@ -2,6 +2,7 @@ import React, { ComponentPropsWithRef, forwardRef } from 'react';
 import { Helmet } from 'react-helmet';
 import styled, { css } from 'styled-components';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { convertComponentToText } from '../../../utility/convert-component-to-text';
 import { useSite } from '../hooks/use-site';
 
 export const _Heading1 = styled.h1<{ $margin?: boolean }>`
@@ -43,6 +44,23 @@ blockEditorFor(Heading1, {
   defaultProps: {
     text: 'Example header',
   },
+  svgIcon: props => {
+    return (
+      <svg width="1em" height="1em" viewBox="0 0 177 127" xmlns="http://www.w3.org/2000/svg" {...props}>
+        <g fill="none" fillRule="evenodd">
+          <path d="M0 0h177v127H0z" />
+          <text fontFamily="Helvetica-Bold, Helvetica" fontSize={53} fontWeight="bold" fill="#000">
+            <tspan x={57.075} y={84}>
+              {'h1'}
+            </tspan>
+          </text>
+        </g>
+      </svg>
+    );
+  },
+  mapFromProps: props => ({
+    text: convertComponentToText(props.children),
+  }),
   mapToProps: props => ({
     children: <>{props.text}</>,
   }),

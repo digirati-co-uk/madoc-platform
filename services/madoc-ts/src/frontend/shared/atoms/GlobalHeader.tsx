@@ -1,7 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
-import { LanguageSwitcher } from './LanguageSwitcher';
 
 export const GlobalHeaderContainer = styled.div`
   background: #2f3338;

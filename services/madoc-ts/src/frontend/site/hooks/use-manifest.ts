@@ -4,5 +4,5 @@ import { useRouteContext } from './use-route-context';
 
 export function useManifest() {
   const { manifestId } = useRouteContext();
-  return useStaticData(ManifestLoader, undefined, { enabled: !!manifestId });
+  return useStaticData(ManifestLoader, undefined, { enabled: !!manifestId, keepPreviousData: true });
 }

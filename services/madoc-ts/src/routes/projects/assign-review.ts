@@ -45,7 +45,7 @@ export const assignReview: RouteMiddleware<{ id: string }, { task_id: string }> 
     const includeAdmins = project.config.adminsAreReviewers;
 
     // 1. Find all reviewers
-    const users = await context.omeka.getUsersByRoles(siteId, ['reviewer'], !!includeAdmins);
+    const users = await context.siteManager.getUsersByRoles(siteId, ['reviewer'], !!includeAdmins);
 
     if (users.length) {
       // 2. Choose one at random.
@@ -73,7 +73,7 @@ export const assignReview: RouteMiddleware<{ id: string }, { task_id: string }> 
     const userId = project.config.manuallyAssignedReviewer;
     if (userId) {
       // 1. Get users name
-      const user = await context.omeka.getUserById(userId, siteId);
+      const user = await context.siteManager.getSiteUserById(userId, siteId);
 
       if (user) {
         await userApi.assignUserToTask(task.id, {
@@ -92,9 +92,9 @@ export const assignReview: RouteMiddleware<{ id: string }, { task_id: string }> 
   }
 
   // Fallback to site owner if they are an admin.
-  const admins = await context.omeka.getUsersByRoles(siteId, ['admin']);
+  const admins = await context.siteManager.getUsersByRoles(siteId, ['admin']);
   const ids = admins.map(u => u.id);
-  const creator = await context.omeka.getSiteCreator(siteId);
+  const creator = await context.siteManager.getSiteCreator(siteId);
 
   if (creator && ids.indexOf(creator.id) !== -1) {
     await userApi.assignUserToTask(task.id, {

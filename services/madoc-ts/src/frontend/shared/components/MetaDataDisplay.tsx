@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import { InternationalString } from '@hyperion-framework/types';
 import { useTranslation } from 'react-i18next';
 import { MetadataEmptyState } from '../atoms/MetadataConfiguration';
+import { HrefLink } from '../utility/href-link';
 import { LocaleString } from './LocaleString';
 import { FacetConfig } from './MetadataFacetEditor';
 
@@ -134,7 +135,17 @@ export const MetaDataDisplay: React.FC<{
   labelWidth?: number;
   bordered?: boolean;
   showEmptyMessage?: boolean;
-}> = ({ metadata = [], config, variation = 'table', labelWidth = 16, bordered, labelStyle, showEmptyMessage }) => {
+  suggestEdit?: string;
+}> = ({
+  metadata = [],
+  config,
+  variation = 'table',
+  labelWidth = 16,
+  bordered,
+  labelStyle,
+  showEmptyMessage,
+  suggestEdit,
+}) => {
   const { t } = useTranslation();
   const metadataKeyMap = useMemo(() => {
     const flatKeys = (config || []).reduce((state, i) => {
@@ -198,6 +209,15 @@ export const MetaDataDisplay: React.FC<{
             );
           })}
         </tbody>
+        {suggestEdit ? (
+          <tfoot>
+            <tr>
+              <td>
+                <HrefLink href={suggestEdit}>{t('Suggest edit')}</HrefLink>
+              </td>
+            </tr>
+          </tfoot>
+        ) : null}
       </MetadataDisplayContainer>
     );
   }
@@ -225,6 +245,15 @@ export const MetaDataDisplay: React.FC<{
             })
           : t('No metadata to display')}
       </tbody>
+      {suggestEdit ? (
+        <tfoot>
+          <tr>
+            <td>
+              <HrefLink href={suggestEdit}>{t('Suggest edit')}</HrefLink>
+            </td>
+          </tr>
+        </tfoot>
+      ) : null}
     </MetadataDisplayContainer>
   );
 };

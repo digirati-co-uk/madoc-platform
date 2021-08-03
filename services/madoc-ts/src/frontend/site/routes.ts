@@ -9,12 +9,19 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
     {
       path: '/collections',
       exact: true,
-      component: components.CollectionListLoader,
+      component: components.PageLoader,
       routes: [
         {
           path: '/collections',
-          component: components.AllCollections,
           exact: true,
+          component: components.CollectionListLoader,
+          routes: [
+            {
+              path: '/collections',
+              component: components.AllCollections,
+              exact: true,
+            },
+          ],
         },
       ],
     },
@@ -33,6 +40,11 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
           component: components.Search,
         },
         {
+          path: '/collections/:collectionId/metadata/edit',
+          exact: true,
+          component: components.SuggestMetadata,
+        },
+        {
           path: '/collections/:collectionId/manifests/:manifestId',
           component: components.ManifestLoader,
           routes: [
@@ -45,6 +57,11 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
               path: '/collections/:collectionId/manifests/:manifestId/search',
               exact: true,
               component: components.Search,
+            },
+            {
+              path: '/collections/:collectionId/manifests/:manifestId/metadata/edit',
+              exact: true,
+              component: components.SuggestMetadata,
             },
             {
               path: '/collections/:collectionId/manifests/:manifestId/mirador',
@@ -64,6 +81,11 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
                   path: '/collections/:collectionId/manifests/:manifestId/c/:canvasId/model',
                   exact: true,
                   component: components.ViewCanvasModel,
+                },
+                {
+                  path: '/collections/:collectionId/manifests/:manifestId/c/:canvasId/metadata/edit',
+                  exact: true,
+                  component: components.SuggestMetadata,
                 },
                 {
                   path: '/:pagePath+',
@@ -106,13 +128,20 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
     },
     {
       path: '/manifests',
-      component: components.ManifestListLoader,
       exact: true,
+      component: components.PageLoader,
       routes: [
         {
           path: '/manifests',
-          component: components.AllManifests,
+          component: components.ManifestListLoader,
           exact: true,
+          routes: [
+            {
+              path: '/manifests',
+              component: components.AllManifests,
+              exact: true,
+            },
+          ],
         },
       ],
     },
@@ -129,6 +158,11 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
           path: '/manifests/:manifestId/search',
           exact: true,
           component: components.Search,
+        },
+        {
+          path: '/manifests/:manifestId/metadata/edit',
+          exact: true,
+          component: components.SuggestMetadata,
         },
         {
           path: '/manifests/:manifestId/mirador',
@@ -148,6 +182,11 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
               path: '/manifests/:manifestId/c/:canvasId/model',
               exact: true,
               component: components.ViewCanvasModel,
+            },
+            {
+              path: '/manifests/:manifestId/c/:canvasId/metadata/edit',
+              exact: true,
+              component: components.SuggestMetadata,
             },
             {
               path: '/:pagePath+',
@@ -177,13 +216,20 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
     },
     {
       path: '/projects',
-      component: components.ProjectListLoader,
       exact: true,
+      component: components.PageLoader,
       routes: [
         {
           path: '/projects',
-          component: components.AllProjects,
+          component: components.ProjectListLoader,
           exact: true,
+          routes: [
+            {
+              path: '/projects',
+              component: components.AllProjects,
+              exact: true,
+            },
+          ],
         },
       ],
     },
@@ -233,6 +279,11 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
               component: components.Search,
             },
             {
+              path: '/projects/:slug/collections/:collectionId/metadata/edit',
+              exact: true,
+              component: components.SuggestMetadata,
+            },
+            {
               path: '/projects/:slug/collections/:collectionId/manifests/:manifestId',
               component: components.ManifestLoader,
               routes: [
@@ -245,6 +296,11 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
                   path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/search',
                   exact: true,
                   component: components.Search,
+                },
+                {
+                  path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/metadata/edit',
+                  exact: true,
+                  component: components.SuggestMetadata,
                 },
                 {
                   path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/mirador',
@@ -264,6 +320,11 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
                       path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/c/:canvasId/model',
                       exact: true,
                       component: components.ViewCanvasModel,
+                    },
+                    {
+                      path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/c/:canvasId/metadata/edit',
+                      exact: true,
+                      component: components.SuggestMetadata,
                     },
                     {
                       path: '/:pagePath+',
@@ -331,6 +392,11 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
               component: components.Search,
             },
             {
+              path: '/projects/:slug/manifests/:manifestId/metadata/edit',
+              exact: true,
+              component: components.SuggestMetadata,
+            },
+            {
               path: '/projects/:slug/manifests/:manifestId/mirador',
               exact: true,
               component: components.ViewManifestMirador,
@@ -348,6 +414,11 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
                   path: '/projects/:slug/manifests/:manifestId/c/:canvasId/model',
                   exact: true,
                   component: components.ViewCanvasModel,
+                },
+                {
+                  path: '/projects/:slug/manifests/:manifestId/c/:canvasId/metadata/edit',
+                  exact: true,
+                  component: components.SuggestMetadata,
                 },
                 {
                   path: '/:pagePath+',

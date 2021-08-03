@@ -1,13 +1,13 @@
-import { AnnotationPage } from '@hyperion-framework/types';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { useApi } from '../../shared/hooks/use-api';
 import { useData, usePrefetchData } from '../../shared/hooks/use-data';
 import { ViewManifestMirador } from '../components';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { CanvasLoader } from '../pages/loaders/canvas-loader';
 
-export const CanvasMiradorViewer: React.FC<{ annotationPages?: AnnotationPage[] }> = ({ annotationPages }) => {
+export const CanvasMiradorViewer: React.FC = () => {
   const { data: canvasResponse } = useData(CanvasLoader);
   const prefetch = usePrefetchData(CanvasLoader);
 
@@ -35,3 +35,11 @@ export const CanvasMiradorViewer: React.FC<{ annotationPages?: AnnotationPage[] 
 
   return <ViewManifestMirador hideBreadcrumbs canvasUrl={canvasUrl} onChangeCanvas={onChangeCanvas} />;
 };
+
+blockEditorFor(CanvasMiradorViewer, {
+  type: 'CanvasMiradorViewer',
+  label: 'Mirador (single canvas)',
+  requiredContext: ['manifest', 'canvas'],
+  anyContext: ['canvas'],
+  editor: {},
+});
