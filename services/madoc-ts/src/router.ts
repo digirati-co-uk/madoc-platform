@@ -163,7 +163,6 @@ import { updateResourceClaim } from './routes/projects/update-resource-claim';
 import { getSiteManifestStructure } from './routes/site/site-manifest-structure';
 import { userDetails } from './routes/user/details';
 import { sitePublishedModels } from './routes/site/site-published-models';
-import { personalAccessToken } from './routes/user/personal-access-token';
 import { addLinking } from './routes/iiif/linking/add-linking';
 import { deleteLinking } from './routes/iiif/linking/delete-linking';
 import { updateLinking } from './routes/iiif/linking/update-linking';
@@ -486,9 +485,6 @@ export const router = new TypedRouter({
   // Development
   'development-plugin': [TypedRouter.POST, '/api/madoc/development/plugin-token', developmentPlugin],
   'accept-development-plugin': [TypedRouter.POST, '/api/madoc/development/dev-bundle', acceptNewDevelopmentBundle],
-
-  // PAT
-  'personal-access-token': [TypedRouter.POST, '/api/madoc/access-token', personalAccessToken],
 
   // Locale
   'get-locale': [TypedRouter.GET, '/s/:slug/madoc/api/locales/:lng/:ns', getLocale],
