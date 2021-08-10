@@ -74,6 +74,7 @@ import { CrowdsourcingCanvasTask } from './tasks/crowdsourcing-canvas-task';
 import { ConfigResponse } from '../types/schemas/config-response';
 import { ResourceLinkRow } from '../database/queries/linking-queries';
 import { SearchIndexTask } from './tasks/search-index-task';
+import { ProjectExport } from '../types/schemas/project-export';
 
 export type ApiClientWithoutExtensions = Omit<
   ApiClient,
@@ -552,6 +553,10 @@ export class ApiClient {
         status,
       },
     });
+  }
+
+  async exportProject(id: number) {
+    return this.request<ProjectExport>(`/api/madoc/projects/${id}/export`);
   }
 
   async createResourceClaim(projectId: string | number, claim: ResourceClaim) {

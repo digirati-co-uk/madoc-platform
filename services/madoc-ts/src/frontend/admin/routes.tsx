@@ -69,6 +69,7 @@ import { OcrPage } from './pages/enrichment/ocr';
 import { ManifestSearchIndex } from './pages/content/manifests/manifest-search-index';
 import { ListPlugins } from './pages/system/list-plugins';
 import { OcrManifest } from './pages/enrichment/ocr/ocr-manifest';
+import { ProjectExportTab } from './pages/crowdsourcing/projects/project-export';
 
 export const routes: UniversalRoute[] = [
   {
@@ -328,6 +329,11 @@ export const routes: UniversalRoute[] = [
       {
         path: '/projects/:id/activity/:stream',
         component: ProjectStreams,
+        exact: true,
+      },
+      {
+        path: '/projects/:id/export',
+        component: ProjectExportTab,
         exact: true,
       },
     ],
