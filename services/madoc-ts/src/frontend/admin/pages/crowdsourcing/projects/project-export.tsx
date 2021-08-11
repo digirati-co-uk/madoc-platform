@@ -3,12 +3,12 @@ import { UniversalComponent } from '../../../../types';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { useTranslation } from 'react-i18next';
 import { usePaginatedData } from '../../../../shared/hooks/use-data';
-import { ProjectExportFull } from '../../../../../types/project-export-full';
+import { JsonProjectTemplate } from '../../../../../extensions/projects/types';
 
 type ProjectExportType = {
   params: { id: string };
   query: unknown;
-  data: ProjectExportFull;
+  data: JsonProjectTemplate;
   variables: { id: number };
 };
 
@@ -27,13 +27,7 @@ export const ProjectExportTab: UniversalComponent<ProjectExportType> = createUni
   },
   {
     getData: async (key, { id }, api) => {
-      const projectExport = await api.exportProject(id);
-      const captureModel = await api.getCaptureModel(projectExport.capture_model_id);
-      return {
-        templateName: projectExport.templateName,
-        config: projectExport.config,
-        captureModel: captureModel,
-      };
+      return await api.exportProject(id)
     },
     getKey: params => {
       return ['project-export', { id: Number(params.id) }];
