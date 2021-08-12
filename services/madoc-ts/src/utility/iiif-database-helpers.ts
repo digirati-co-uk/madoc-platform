@@ -1,14 +1,5 @@
 import { sql, TaggedTemplateLiteralInvocationType } from 'slonik';
 
-export type GetMetadataRow = {
-  resource_id: number;
-  created_at: Date;
-  key: string;
-  value: string;
-  language: string;
-  source: string;
-};
-
 export const getMetadata = <T, R = any>(
   query: TaggedTemplateLiteralInvocationType<T>,
   sid: number,

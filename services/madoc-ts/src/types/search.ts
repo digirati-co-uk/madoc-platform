@@ -131,16 +131,6 @@ export type SearchQuery = {
   search_multiple_fields?: boolean;
 };
 
-/**
- * Search facet configuration for query.
- */
-export type SearchFacet = {
-  type: string;
-  subtype: string;
-  value: string;
-  applied?: boolean;
-};
-
 /** Post body for ingesting content into search */
 export type SearchIngestRequest = {
   id: string;

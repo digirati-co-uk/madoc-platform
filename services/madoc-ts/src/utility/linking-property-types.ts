@@ -30,11 +30,3 @@ export function isLinkCaptureModelParagraphs(link: ResourceLinkResponse) {
     link.link.profile === PARAGRAPHS_PROFILE
   );
 }
-
-export function isLinkLocalOcr(link: ResourceLinkResponse) {
-  return isLinkPlaintext(link) || isLinkCaptureModelParagraphs(link);
-}
-
-export function isLinkOcr(link: ResourceLinkResponse) {
-  return isLinkPlaintext(link) || isLinkHocr(link) || isLinkMetsAlto(link);
-}

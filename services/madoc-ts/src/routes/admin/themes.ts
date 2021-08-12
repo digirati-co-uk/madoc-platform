@@ -1,5 +1,4 @@
 import send from 'koa-send';
-import path from 'path';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { ThemeListItem } from '../../types/themes';
 import { NotFound } from '../../utility/errors/not-found';
@@ -35,18 +34,6 @@ export const listThemes: RouteMiddleware = async context => {
   context.response.body = {
     themes,
   };
-};
-
-export const syncTheme: RouteMiddleware<{ theme_id: string }> = async context => {
-  userWithScope(context, ['site.admin']);
-  // Check on disk
-  // Insert or update in database with new theme parameters.
-};
-
-export const getThemeDetails: RouteMiddleware<{ theme_id: string }> = async context => {
-  userWithScope(context, ['site.admin']);
-  // Get theme from database
-  // Get theme from disk
 };
 
 export const installTheme: RouteMiddleware<{ theme_id: string }> = async context => {
