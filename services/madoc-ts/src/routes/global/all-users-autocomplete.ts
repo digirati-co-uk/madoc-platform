@@ -5,5 +5,5 @@ export const allUsersAutocomplete: RouteMiddleware = async context => {
   await onlyGlobalAdmin(context);
   const q = (context.query.q || '').trim();
 
-  context.response.body = { users: await context.siteManager.searchUser(q) };
+  context.response.body = { users: await context.siteManager.searchAllUsers(q) };
 };
