@@ -13,8 +13,8 @@ export const getProjectTask: RouteMiddleware<{ id: string }> = async context => 
   const onlyPublished = scope.indexOf('site.admin') === -1;
 
   const project = await context.connection.one(
-    sql<{ id: number; task_id: number }>`
-        select id, task_id from iiif_project 
+    sql<{ id: number; task_id: number; status: number }>`
+        select id, task_id, status from iiif_project 
         where site_id = ${siteId} 
           ${projectId ? sql`and iiif_project.id = ${projectId}` : SQL_EMPTY}
           ${projectSlug ? sql`and iiif_project.slug = ${projectSlug}` : SQL_EMPTY}
@@ -25,5 +25,6 @@ export const getProjectTask: RouteMiddleware<{ id: string }> = async context => 
   context.response.body = {
     id: project.id,
     task_id: project.task_id,
+    status: project.status,
   };
 };
