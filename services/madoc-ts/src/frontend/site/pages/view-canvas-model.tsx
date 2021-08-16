@@ -53,6 +53,8 @@ export const ViewCanvasModel: React.FC = () => {
     hasExpired ||
     (!isActive && !isPreparing);
 
+  const showPrepareMessage = !isReadOnly && showCanvasNavigation && canContribute;
+
   if (!canvasId) {
     return null;
   }
@@ -71,7 +73,7 @@ export const ViewCanvasModel: React.FC = () => {
         <CanvasPageHeader subRoute="model" />
       </Slot>
 
-      {!isReadOnly && showCanvasNavigation && canContribute ? <PrepareCaptureModel /> : null}
+      {showPrepareMessage ? <PrepareCaptureModel /> : null}
 
       {/* One of the following 3 slots will be rendered */}
       <Slot name="canvas-model-read-only" layout="none" hidden={!isReadOnly}>
