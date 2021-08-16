@@ -10,7 +10,7 @@ import { SystemListItem } from '../../../../shared/atoms/SystemListItem';
 import { apiHooks } from '../../../../shared/hooks/use-api-query';
 import { useProjectTemplate } from '../../../../shared/hooks/use-project-template';
 import { HrefLink } from '../../../../shared/utility/href-link';
-import { ViewActivityStream } from '../../system/activity-streams';
+import { ViewActivityStream } from '../../sites/activity-streams';
 
 export const ProjectStreams = ({ project }: { project: ProjectFull }) => {
   const { t } = useTranslation();
