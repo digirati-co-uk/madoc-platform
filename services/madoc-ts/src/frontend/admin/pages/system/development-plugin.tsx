@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
+import { Redirect } from 'react-router-dom';
 import styled from 'styled-components';
 import { SitePlugin } from '../../../../types/schemas/plugins';
 import { Button } from '../../../shared/atoms/Button';
 import { ErrorMessage } from '../../../shared/atoms/ErrorMessage';
 import { useApi } from '../../../shared/hooks/use-api';
 import { useLocationQuery } from '../../../shared/hooks/use-location-query';
+import { useUser } from '../../../shared/hooks/use-site';
 import { Spinner } from '../../../shared/icons/Spinner';
 
 const DevOuterContainer = styled.div`
@@ -72,6 +74,7 @@ function BoxIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export const DevelopmentPlugin: React.FC = () => {
   const api = useApi();
+  const user = useUser();
   const { code, cb } = useLocationQuery<any>();
   const [getPluginDetails, setGetPluginDetails] = useState(false);
   const [revision, setRevision] = useState<{ revision: string } | undefined>();
@@ -113,6 +116,10 @@ export const DevelopmentPlugin: React.FC = () => {
 
     setRevision(response);
   });
+
+  if (user?.role !== 'global_admin') {
+    return <Redirect to={'/'} />;
+  }
 
   if (data) {
     return (

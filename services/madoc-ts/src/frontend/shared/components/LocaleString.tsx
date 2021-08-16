@@ -1,6 +1,6 @@
 import { InternationalString } from '@hyperion-framework/types';
 import { useTranslation } from 'react-i18next';
-import React, { useMemo } from 'react';
+import React, { CSSProperties, useMemo } from 'react';
 
 export const LanguageString: React.FC<{ [key: string]: any } & { as?: string | React.FC<any>; language: string }> = ({
   as: Component,
@@ -159,6 +159,7 @@ export const LocaleString: React.FC<{
   to?: string;
   enableDangerouslySetInnerHTML?: boolean;
   children: InternationalString | null | undefined;
+  style?: React.CSSProperties;
 }> = ({ as: Component, defaultText, enableDangerouslySetInnerHTML, children, ...props }) => {
   const [text, language] = useLocaleString(children, defaultText);
 

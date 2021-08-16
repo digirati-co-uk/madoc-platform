@@ -4,6 +4,7 @@ import { SelectRef } from 'react-functional-select/dist/Select';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { SiteUser } from '../../../../extensions/site-manager/types';
+import { siteRoles } from '../../../config';
 import { Button, ButtonRow, SmallButton } from '../../../shared/atoms/Button';
 import { DefaultSelect } from '../../../shared/atoms/DefaulSelect';
 import { ErrorMessage } from '../../../shared/atoms/ErrorMessage';
@@ -16,16 +17,6 @@ import { useUserDetails } from '../../../shared/hooks/use-user-details';
 import { serverRendererFor } from '../../../shared/plugins/external/server-renderer-for';
 import { AdminHeader } from '../../molecules/AdminHeader';
 import { SimpleTable } from '../../../shared/atoms/SimpleTable';
-
-const allRoles = [
-  { label: 'Admin', value: 'admin' },
-  { label: 'Reviewer', value: 'reviewer' },
-  { label: 'Limited reviewer', value: 'limited-reviewer' },
-  { label: 'Transcriber', value: 'transcriber' },
-  { label: 'Limited transcriber', value: 'limited-transcriber' },
-  { label: 'Viewer', value: 'viewer' },
-  { label: 'Editor', value: 'editor' },
-];
 
 export const SitePermissions = () => {
   const { t } = useTranslation();
@@ -43,7 +34,7 @@ export const SitePermissions = () => {
 
   useEffect(() => {
     if (selectedUserExistingRole) {
-      select.current?.setValue(allRoles.find(r => r.value === selectedUserExistingRole));
+      select.current?.setValue(siteRoles.find(r => r.value === selectedUserExistingRole));
       setSelectedRole(selectedUserExistingRole);
     }
   }, [selectedUser, selectedUserExistingRole]);
@@ -58,13 +49,7 @@ export const SitePermissions = () => {
 
   return (
     <>
-      <AdminHeader
-        title={t('Site permissions')}
-        breadcrumbs={[
-          { label: 'Site admin', link: '/' },
-          { label: 'All sites', link: '/sites' },
-        ]}
-      />
+      <AdminHeader title={t('Site permissions')} breadcrumbs={[{ label: 'Site admin', link: '/' }]} />
 
       <WidePage>
         {currentUser && !isGlobalAdmin ? (
@@ -99,7 +84,7 @@ export const SitePermissions = () => {
                     ref={select}
                     inputId="role"
                     initialValue={selectedRole}
-                    options={allRoles}
+                    options={siteRoles}
                     renderOptionLabel={({ label }) => <div style={{ lineHeight: '1.8em' }}>{label}</div>}
                     getOptionLabel={({ label }) => label}
                     getOptionValue={({ value }) => value}

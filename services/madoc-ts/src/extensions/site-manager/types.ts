@@ -9,13 +9,34 @@ export type Site = {
   created: Date;
   modified?: Date;
   owner?: { id: number; name?: string };
+  config: SiteSystemConfig;
 };
+
+export type SiteSystemConfig = {
+  enableRegistrations: boolean;
+  emailActivation: boolean;
+  enableNotifications: boolean;
+};
+
+export type SystemConfig = {
+  installationTitle: string;
+  defaultSite: string | null;
+} & SiteSystemConfig;
 
 export type CreateSiteRequest = {
   slug: string;
   title: string;
   is_public?: boolean;
   summary?: string;
+  config?: SiteSystemConfig;
+};
+
+export type UpdateSiteRequest = {
+  title: string;
+  summary: string | null;
+  is_public: boolean;
+  owner_id?: number | null;
+  config?: Partial<SiteSystemConfig> | null;
 };
 
 export type SiteRow = {
@@ -28,6 +49,7 @@ export type SiteRow = {
   owner_name?: string | null;
   created: string;
   modified?: string;
+  config?: Partial<SiteSystemConfig> | null;
 };
 
 export type LegacySiteRow = SiteRow & {
@@ -45,7 +67,13 @@ export type UserRowWithoutPassword = {
   modified?: string | null;
   password_hash: never;
   role: string;
+  site_role?: string;
   is_active: boolean;
+};
+
+export type GetUser = {
+  user: User;
+  sites: UserSite[];
 };
 
 export type User = {
@@ -85,6 +113,16 @@ export type SiteUser = {
   email?: string;
 };
 
+export type CurrentUserWithScope = SiteUser & {
+  scope: string[];
+};
+
+export type UpdateUser = {
+  email?: string;
+  name?: string;
+  role?: string;
+};
+
 export type UserRow = {
   id: number;
   email: string;
@@ -116,20 +154,31 @@ export type LegacySitePermissionRow = SitePermissionRow;
 
 export type UserSite = { id: number; role: string; slug: string; title: string };
 
-export type PasswordCreationRow = {
-  id: string;
-  user_id: number;
-  created: string;
-  activate: boolean;
-};
-
 export type UserInvitationsRequest = {
   invitation_id: string;
   role: string;
   site_role: string;
-  expires: Date;
+  expires?: Date | null;
   uses_left?: number;
   message?: InternationalString;
+  config?: Partial<UserInvitationConfig>;
+};
+
+export type UserInvitationPostBody = {
+  site_role: string;
+  expires?: string | null;
+  uses_left?: number;
+  message?: InternationalString;
+  config?: Partial<UserInvitationConfig>;
+};
+
+export type UpdateInvitation = {
+  message?: InternationalString;
+  uses_left?: number;
+  expires?: string;
+  role?: string;
+  site_role?: string;
+  config?: Partial<UserInvitationConfig>;
 };
 
 export type UserInvitationsRow = {
@@ -139,7 +188,7 @@ export type UserInvitationsRow = {
   site_id: number;
   role: string;
   site_role: string;
-  expires: string;
+  expires?: string;
   created_at: string;
   uses_left?: number | null;
   message?: InternationalString | null;
@@ -148,17 +197,35 @@ export type UserInvitationsRow = {
   redeem_user_id?: number;
   redeem_user_name?: string;
   redeem_redeemed_at?: string;
+  redeem_user_email?: string;
+  config?: Partial<UserInvitationConfig> | null;
+};
+
+export type UserInvitationConfig = {
+  allowExistingUsers: boolean;
+  allowRoleChange: boolean;
+  singleUserId: number | null;
+  singleUserEmail: string | null;
 };
 
 export type UserInvitation = {
-  id: number;
-  invitation_id: string;
+  id: string;
   createdAt: Date;
-  expires: Date;
+  expires?: Date;
   detail: {
     role: string;
     site_role: string;
     message: InternationalString;
+    usesLeft?: number;
   };
-  users: Array<{ id: number; name?: string; redeemed_at?: Date }>;
+  users: Array<{ id: number; name?: string; redeemed_at?: Date; email?: string }>;
+  config: UserInvitationConfig;
+};
+
+export type PasswordCreationRow = {
+  id: string;
+  user_id: number;
+  shared_hash: string | null;
+  created: string;
+  activate: boolean;
 };

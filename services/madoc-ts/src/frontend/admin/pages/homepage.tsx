@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSite } from '../../shared/hooks/use-site';
+import { useSite, useUser } from '../../shared/hooks/use-site';
 import { UniversalComponent } from '../../types';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
@@ -57,6 +57,8 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
     const { data: stats } = useStaticData(Homepage);
     const { t } = useTranslation();
     const site = useSite();
+    const user = useUser();
+    const isGlobal = user?.role === 'global_admin';
 
     return (
       <div>
@@ -77,9 +79,6 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
             <AdminSection>
               <MenuTitle>{t('Content')}</MenuTitle>
               <MenuList>
-                <li>
-                  <a href={`/admin/site/s/${site.slug}/show/`}>{t('Omeka admin')}</a>
-                </li>
                 <li>
                   <Link to="/collections">{t('Manage collections', { count: 2 })}</Link>
                 </li>
@@ -118,22 +117,41 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
               </MenuList>
             </AdminSection>
             <AdminSection>
-              <MenuTitle>{t('System')}</MenuTitle>
+              <MenuTitle>{t('Site')}</MenuTitle>
               <MenuList>
                 <li>
-                  <Link to="/system/status">{t('System status')}</Link>
+                  <Link to={`/site/permissions`}>{t('Site permissions')}</Link>
                 </li>
                 <li>
-                  <Link to="/system/themes">{t('Themes')}</Link>
-                </li>
-                <li>
-                  <Link to="/system/plugins">{t('Plugins')}</Link>
-                </li>
-                <li>
-                  <Link to={`/sites/permissions`}>Site permissions</Link>
+                  <Link to={`/site/invitations`}>{t('User invitations')}</Link>
                 </li>
               </MenuList>
             </AdminSection>
+            {isGlobal ? (
+              <AdminSection>
+                <MenuTitle>{t('System')}</MenuTitle>
+                <MenuList>
+                  <li>
+                    <Link to="/global/status">{t('System status')}</Link>
+                  </li>
+                  <li>
+                    <Link to="/global/sites">{t('Sites')}</Link>
+                  </li>
+                  <li>
+                    <Link to="/system/themes">{t('Themes')}</Link>
+                  </li>
+                  <li>
+                    <Link to="/system/plugins">{t('Plugins')}</Link>
+                  </li>
+                  <li>
+                    <Link to="/global/users">{t('Users')}</Link>
+                  </li>
+                  <li>
+                    <Link to="/global/config">{t('Global config')}</Link>
+                  </li>
+                </MenuList>
+              </AdminSection>
+            ) : null}
           </AdminSectionGrid>
         </WidePage>
       </div>

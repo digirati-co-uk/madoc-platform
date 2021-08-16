@@ -35,7 +35,7 @@ export async function renderClient(
 ) {
   const component = document.getElementById('react-component');
   const dehydratedStateEl = document.getElementById('react-query-cache');
-  const dehydratedSiteEl = document.getElementById('react-omeka');
+  const dehydratedSiteEl = document.getElementById('react-site-data');
   const dehydratedState = dehydratedStateEl ? JSON.parse(dehydratedStateEl.innerText) : {};
   const dehydratedSite = dehydratedSiteEl ? JSON.parse(dehydratedSiteEl.innerText) : {};
 
@@ -135,6 +135,8 @@ export async function renderClient(
                             defaultLocale={defaultLocale}
                             navigationOptions={dehydratedSite.navigationOptions}
                             themeOverrides={dehydratedSite.themeOverrides}
+                            formResponse={dehydratedSite.reactFormResponse}
+                            systemConfig={dehydratedSite.systemConfig}
                           />
                         </Suspense>
                         {process.env.NODE_ENV === 'development' ? <ReactQueryDevtools /> : null}

@@ -3,6 +3,7 @@ import { makeQueryCache, ReactQueryCacheProvider, ReactQueryConfig, ReactQueryCo
 import { dehydrate, Hydrate } from 'react-query/hydration';
 import { ServerStyleSheet, ThemeProvider } from 'styled-components';
 import { defaultTheme } from '@capture-models/editor';
+import { CurrentUserWithScope, SystemConfig, Site } from '../../../extensions/site-manager/types';
 import { ApiClient } from '../../../gateway/api';
 import { StaticRouterContext } from 'react-router';
 import { parse } from 'query-string';
@@ -12,7 +13,6 @@ import { SitePlugin } from '../../../types/schemas/plugins';
 import { EditorialContext } from '../../../types/schemas/site-page';
 import { ResolvedTheme } from '../../../types/themes';
 import { ReactServerError } from '../../../utility/errors/react-server-error';
-import { PublicSite } from '../../../utility/omeka-api';
 import { PluginManager } from '../plugins/plugin-manager';
 import { queryConfig } from './query-config';
 import { matchUniversalRoutes } from './server-utils';
@@ -37,8 +37,9 @@ export function createServerRenderer(
   RootApplication: React.FC<{
     api: ApiClient;
     routes: UniversalRoute[];
-    site: PublicSite;
-    user?: { name: string; id: number; scope: string[] };
+    site: Site;
+    user?: CurrentUserWithScope;
+    systemConfig: SystemConfig;
     supportedLocales: Array<{ label: string; code: string }>;
     contentLanguages: Array<{ label: string; code: string }>;
     displayLanguages: Array<{ label: string; code: string }>;
@@ -46,6 +47,7 @@ export function createServerRenderer(
     navigationOptions?: any;
     theme?: ResolvedTheme | null;
     themeOverrides?: any;
+    formResponse?: any;
   }>,
   createRoutes: ((c: any) => CreateRouteType) | UniversalRoute[],
   components: any,
@@ -60,7 +62,7 @@ export function createServerRenderer(
     jwt,
     i18next,
     siteSlug,
-    site,
+    site: sitePromise,
     siteLocales,
     user,
     navigationOptions,
@@ -68,14 +70,16 @@ export function createServerRenderer(
     pluginManager,
     plugins,
     theme,
+    reactFormResponse,
+    systemConfig,
   }: {
     url: string;
     basename: string;
     jwt: string;
     i18next: i18n;
     siteSlug?: string;
-    site?: PublicSite | Promise<PublicSite | undefined>;
-    user?: { name: string; id: number; scope: string[] };
+    site?: Site | Promise<Site | undefined>;
+    user?: CurrentUserWithScope;
     siteLocales: ListLocalisationsResponse;
     theme?: ResolvedTheme | null;
     navigationOptions?: {
@@ -85,6 +89,8 @@ export function createServerRenderer(
     getSlots?: (ctx: EditorialContext) => Promise<any> | any;
     pluginManager?: PluginManager;
     plugins?: SitePlugin[];
+    reactFormResponse?: any;
+    systemConfig: SystemConfig;
   }) {
     const prefetchCache = makeQueryCache();
     const sheet = new ServerStyleSheet(); // <-- creating out stylesheet
@@ -93,11 +99,11 @@ export function createServerRenderer(
       jwt,
       publicSiteSlug: siteSlug,
     });
-    const omekaSite = await site;
+    const site = await sitePromise;
     const routes =
-      Array.isArray(createRoutes) || !pluginManager || !omekaSite
+      Array.isArray(createRoutes) || !pluginManager || !site
         ? defaultRoutes
-        : pluginManager.makeRoutes(createRoutes(pluginManager.hookComponents(components, omekaSite.id)), omekaSite.id);
+        : pluginManager.makeRoutes(createRoutes(pluginManager.hookComponents(components, site.id)), site.id);
 
     const context: StaticRouterContext = {};
     const [urlPath, urlQuery] = url.split('?');
@@ -123,11 +129,11 @@ export function createServerRenderer(
               ? route.component.getData(key, vars, userApi, path)
               : (undefined as any);
             // Hack for server-side theme from template.
-            if (!projectApplied && key === 'getSiteProject' && omekaSite) {
+            if (!projectApplied && key === 'getSiteProject' && site) {
               data.then((resp: any) => {
                 try {
                   if (resp?.template) {
-                    const definition = api.projectTemplates.getDefinition(resp?.template, omekaSite.id);
+                    const definition = api.projectTemplates.getDefinition(resp?.template, site.id);
                     if (definition?.theme) {
                       themeOverrides[`project-template(${definition.type})`] = definition.theme;
                     }
@@ -188,6 +194,11 @@ export function createServerRenderer(
       markup: '',
     };
 
+    const resolvedSystemConfig = {
+      ...(systemConfig || {}),
+      ...(site?.config || {}),
+    };
+
     try {
       state.markup = renderToString(
         sheet.collectStyles(
@@ -201,7 +212,7 @@ export function createServerRenderer(
                         api={api}
                         routes={routes}
                         theme={theme}
-                        site={omekaSite as any}
+                        site={site as any}
                         user={user}
                         defaultLocale={siteLocales.defaultLanguage || 'en'}
                         contentLanguages={contentLanguages}
@@ -209,6 +220,8 @@ export function createServerRenderer(
                         supportedLocales={supportedLocales}
                         themeOverrides={themeOverrides}
                         navigationOptions={navigationOptions}
+                        formResponse={reactFormResponse}
+                        systemConfig={resolvedSystemConfig}
                       />
                     </ThemeProvider>
                   </StaticRouter>
@@ -237,19 +250,29 @@ export function createServerRenderer(
     // sheet.seal();
 
     const routeData = `
-      <script type="application/json" id="react-omeka">${JSON.stringify({
-        site: omekaSite,
-        user,
-        locales: supportedLocales,
-        defaultLocale: siteLocales.defaultLanguage || 'en',
-        navigationOptions: navigationOptions,
-        contentLanguages,
-        displayLanguages,
-        plugins,
-        theme,
-        themeOverrides,
-      })}</script>
-      <script type="application/json" id="react-query-cache">${JSON.stringify(dehydratedState)}</script>
+      <script type="application/json" id="react-site-data">${JSON.stringify(
+        {
+          site: site,
+          user,
+          locales: supportedLocales,
+          defaultLocale: siteLocales.defaultLanguage || 'en',
+          navigationOptions: navigationOptions,
+          contentLanguages,
+          displayLanguages,
+          plugins,
+          theme,
+          themeOverrides,
+          reactFormResponse,
+          systemConfig: resolvedSystemConfig,
+        },
+        null,
+        process.env.NODE_ENV === 'production' ? undefined : 2
+      )}</script>
+      <script type="application/json" id="react-query-cache">${JSON.stringify(
+        dehydratedState,
+        null,
+        process.env.NODE_ENV === 'production' ? undefined : 2
+      )}</script>
     `;
 
     if (process.env.NODE_ENV === 'production') {

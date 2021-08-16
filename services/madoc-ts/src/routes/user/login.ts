@@ -1,9 +1,16 @@
 import fetch from 'node-fetch';
+import { omekaSite } from '../../middleware/omeka-site';
 import { RouteMiddleware } from '../../types/route-middleware';
+import { siteFrontend } from '../admin/frontend';
 
 const omekaUrl = process.env.OMEKA__URL as string;
 
-export const loginPage: RouteMiddleware<{ slug: string }, { email: string; password: string }> = async context => {
+export const loginPage: RouteMiddleware<{ slug: string }, { email: string; password: string }> = async (
+  context,
+  next
+) => {
+  const success = Boolean(context.query.success);
+
   if (context.query.redirect && !context.query.redirect.startsWith('/')) {
     context.query.redirect = '';
   }
@@ -39,14 +46,12 @@ export const loginPage: RouteMiddleware<{ slug: string }, { email: string; passw
     return;
   }
 
-  const { email, password } = context.requestBody || {};
   if (context.request.method === 'POST') {
+    const { email, password } = context.requestBody || {};
     try {
       const resp = await context.siteManager.verifyLogin(email, password);
       if (resp) {
         const { user, sites } = resp;
-        // Success.
-        context.omekaMessages.push({ type: 'success', message: 'Logged in' });
         // Authenticate
         context.state.authenticatedUser = {
           role: user.role,
@@ -58,45 +63,20 @@ export const loginPage: RouteMiddleware<{ slug: string }, { email: string; passw
         context.response.redirect(context.query.redirect || `/s/${context.params.slug}/madoc`);
         return;
       } else {
-        context.omekaMessages.push({ type: 'error', message: 'Your email or password is invalid' });
+        context.reactFormResponse = { loginError: true, email };
       }
     } catch (err) {
       console.log(err);
-      context.omekaMessages.push({ type: 'error', message: 'Unknown error' });
+      context.reactFormResponse = { loginError: true, email };
     }
   }
 
-  context.omekaPage = `
-    <div class="c-form c-form--login">
-      <h1 class="c-form__heading">Login</h1>
-      <form method="post" name="loginform" id="loginform" action="${context.routes.url(
-        'post-login',
-        {
-          slug: context.params.slug,
-        },
-        { query: { redirect: context.query.redirect } }
-      )}">
-        <div class="field required">
-          <div class="field-meta">
-            <label for="email">Email</label>
-          </div>
-          <div class="inputs">
-            <input type="email" name="email" required="required" id="email" value="${email || ''}">    
-          </div>
-        </div>
-        <div class="field required">
-          <div class="field-meta">
-            <label for="password">Password</label>
-          </div>
-          <div class="inputs">
-            <input type="password" name="password" required="required" id="password" value="">    
-          </div>
-        </div>
-        <input type="submit" name="submit" value="Log in"><input type="hidden" name="redir" value="">
-      </form>
-      <p class="c-form__forgot-password">
-        <a href="/forgot-password">Forgot password?</a>
-      </p>
-    </div>
-  `;
+  context.reactFormResponse = context.reactFormResponse || {};
+  if (success) {
+    context.reactFormResponse.success = true;
+  }
+
+  await omekaSite(context, async () => {
+    await siteFrontend(context, next);
+  });
 };
