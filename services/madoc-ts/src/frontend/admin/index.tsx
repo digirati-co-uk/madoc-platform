@@ -1,10 +1,9 @@
-import React, { useMemo } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useMemo, useState } from 'react';
+import { CurrentUserWithScope, Site, SystemConfig } from '../../extensions/site-manager/types';
 import { ApiClient } from '../../gateway/api';
 import { useTranslation } from 'react-i18next';
-import { PublicSite } from '../../utility/omeka-api';
 import { GlobalStyles } from '../shared/atoms/GlobalStyles';
-import { AdminLayoutContainer, AdminLayoutMain, AdminLayoutMenu, useAdminLayout } from '../shared/components/AdminMenu';
+import { AdminLayoutContainer, AdminLayoutMain, AdminLayoutMenu } from '../shared/components/AdminMenu';
 import { UserBar } from '../shared/components/UserBar';
 import { renderUniversalRoutes } from '../shared/utility/server-utils';
 import { ApiContext, useIsApiRestarting } from '../shared/hooks/use-api';
@@ -18,12 +17,13 @@ export type AdminAppProps = {
   jwt?: string;
   api: ApiClient;
   routes: UniversalRoute[];
-  user: { name: string; id: number; scope: string[] };
-  site: PublicSite;
+  user: CurrentUserWithScope;
+  site: Site;
   supportedLocales: Array<{ label: string; code: string }>;
   contentLanguages: Array<{ label: string; code: string }>;
   displayLanguages: Array<{ label: string; code: string }>;
   defaultLocale: string;
+  systemConfig: SystemConfig;
 };
 
 const AdminApp: React.FC<AdminAppProps> = ({
@@ -35,30 +35,36 @@ const AdminApp: React.FC<AdminAppProps> = ({
   contentLanguages,
   displayLanguages,
   defaultLocale,
+  systemConfig,
 }) => {
   const { i18n, t } = useTranslation();
   const restarting = useIsApiRestarting(api);
   const viewingDirection = useMemo(() => i18n.dir(i18n.language), [i18n.language]);
+  const [updatedSite, setSite] = useState(site);
+  const [updatedSystemConfig, updateSystemConfig] = useState(systemConfig);
 
   return (
     <div lang={i18n.language} dir={viewingDirection}>
       <SiteProvider
         value={useMemo(
           () => ({
-            site,
+            site: updatedSite,
+            setSite,
             user,
             supportedLocales,
             defaultLocale,
             contentLanguages,
             displayLanguages,
             navigationOptions: { enableProjects: true, enableCollections: true },
+            systemConfig: updatedSystemConfig,
+            updateSystemConfig,
           }),
-          [site, user, supportedLocales, defaultLocale]
+          [updatedSite, user, supportedLocales, defaultLocale, contentLanguages, displayLanguages, updatedSystemConfig]
         )}
       >
         <ApiContext.Provider value={api}>
           <GlobalStyles />
-          <UserBar site={site} user={user} admin />
+          <UserBar user={user} admin />
           {restarting ? <ErrorMessage>{t('Lost connection to server, retrying...')}</ErrorMessage> : null}
           <AdminLayoutContainer>
             <AdminLayoutMenu>

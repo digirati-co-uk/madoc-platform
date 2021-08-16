@@ -8,5 +8,6 @@ export type RouteMiddleware<Params = any, Body = any> = Koa.Middleware<
   ApplicationContext &
     Omit<RouterParamContext<ApplicationState, ApplicationContext>, 'params'> & { params: Params } & {
       requestBody: Body;
+      reactFormResponse: any;
     }
 >;

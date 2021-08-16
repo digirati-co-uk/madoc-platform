@@ -4,7 +4,7 @@ import { NotFound } from '../../utility/errors/not-found';
 import { parseProjectId } from '../../utility/parse-project-id';
 
 export const resolveSlots: RouteMiddleware = async context => {
-  const site = await context.omeka.getSiteIdBySlug(context.params.slug);
+  const site = await context.siteManager.getSiteBySlug(context.params.slug);
 
   if (!site) {
     throw new NotFound('not found');

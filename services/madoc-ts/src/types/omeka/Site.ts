@@ -1,4 +1,4 @@
-export type Site = {
+type Site = {
   id: number;
   owner_id?: number;
   slug: string;
