@@ -45,7 +45,7 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
 
     await syncOmeka(mysqlPool, pool, config);
 
-    const siteRepo = new SiteUserRepository(pool, new OmekaApi(mysqlPool), 'HYBRID_OMEKA');
+    const siteRepo = new SiteUserRepository(pool, new OmekaApi(mysqlPool), 'HYBRID_POSTGRES');
     await siteRepo.legacyOmekaDatabaseSync(config.permissions);
   }
 
