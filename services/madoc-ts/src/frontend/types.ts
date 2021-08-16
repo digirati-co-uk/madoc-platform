@@ -1,6 +1,6 @@
 import React from 'react';
 import { ApiClient } from '../gateway/api';
-import { AdditionalHooks, GetApiMethods } from './shared/hooks/use-api-query';
+import { AdditionalHooks } from './shared/hooks/use-api-query';
 import { MadocTheme } from './themes/definitions/types';
 
 export type UniversalRoute = {
@@ -10,7 +10,7 @@ export type UniversalRoute = {
   routes?: UniversalRoute[];
 };
 
-export type CreateRouteType = {};
+export type CreateRouteType = any;
 
 export type UniversalComponent<
   Definition extends {

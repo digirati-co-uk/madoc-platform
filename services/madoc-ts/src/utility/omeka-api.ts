@@ -1,10 +1,13 @@
 import { Connection, Pool, PoolConnection, Query } from 'mysql';
-import { NotFoundError } from 'slonik';
+import { NotFoundError, sql } from 'slonik';
 import {
+  CreateSiteRequest,
   LegacySitePermissionRow,
   LegacySiteRow,
   LegacyUserRow,
   SiteUser,
+  UserCreationRequest,
+  UserInvitationsRow,
   UserRow,
   UserRowWithoutPassword,
   UserSite,
@@ -348,10 +351,74 @@ export class OmekaApi {
   /**
    * @internal
    */
+  async getUserByEmail(email: string) {
+    return await this.one<UserRowWithoutPassword>(
+      mysql`SELECT id, name, email, role, is_active, created, modified FROM user WHERE email = ${email}`
+    );
+  }
+
+  /**
+   * @internal
+   */
+  async activateUser(userId: number) {
+    await this.query(mysql`update user set is_active = true where id = ${userId}`);
+  }
+
+  /**
+   * @internal
+   */
+  async deactivateUser(userId: number) {
+    await this.query(mysql`update user set is_active = false where id = ${userId}`);
+  }
+
+  /**
+   * @internal
+   */
+  async deleteUser(userId: number) {
+    await this.query(mysql`delete from user where id = ${userId} and is_active = false`);
+  }
+
+  /**
+   * @internal
+   */
   async getActiveUserById(id: number) {
     return await this.one<UserRowWithoutPassword>(
       mysql`SELECT id, name, email, role, is_active, created, modified FROM user WHERE is_active = 1 AND id = ${id}`
     );
+  }
+
+  /**
+   * @internal
+   */
+  async resetPassword(id: string, userId: number, activate: boolean) {
+    await this.query(mysql`
+      insert into password_creation (id, user_id, activate) values (${id}, ${userId}, ${activate ? 1 : 0})
+    `);
+  }
+
+  /**
+   * @internal
+   */
+  async getInvitations(siteId: number) {
+    return this.many<UserInvitationsRow>(mysql`select * from user_invitations where site_id = ${siteId}`);
+  }
+
+  /**
+   * @internal
+   */
+  async getInvitation(invitationId: string, siteId: number) {
+    return this.one<UserInvitationsRow>(
+      mysql`select * from user_invitations where invitation_id = ${invitationId} and site_id = ${siteId}`
+    );
+  }
+
+  /**
+   * @internal
+   */
+  async deleteInvitation(invitationId: string, siteId: number) {
+    await this.query(mysql`
+      delete from user_invitations where invitation_id = ${invitationId} and site_id = ${siteId}
+    `);
   }
 
   /**
@@ -842,6 +909,48 @@ export class OmekaApi {
   async removeUserRoleOnSite(siteId: number, userId: number) {
     await this.query(mysql`
       delete from site_permission where site_id = ${siteId} and user_id = ${userId}
+    `);
+  }
+
+  /**
+   * @internal
+   * @deprecated use context.siteManager.createUser() instead
+   */
+  async createUser(user: UserCreationRequest) {
+    await this.query(
+      mysql`
+        insert into "user" (email, name, is_active, role, password_hash) values (
+          ${user.email},
+          ${user.name},
+          false,
+          ${user.role},
+          null
+        )
+      `
+    );
+  }
+
+  async deleteSite(siteId: number) {
+    await this.query(mysql`delete from site where id = ${siteId} and is_public = false`);
+  }
+
+  async changeSiteVisibility(siteId: number, isPublic: boolean) {
+    await this.query(mysql`update site set is_public = ${Boolean(isPublic)} where id = ${siteId}`);
+  }
+
+  async createSite(req: CreateSiteRequest, userId: number) {
+    await this.query(mysql`
+      insert into site (owner_id, title, slug, is_public, summary, navigation, item_pool, created, theme) values (
+        ${userId},
+        ${req.title},
+        ${req.slug},
+        ${req.is_public ? 1 : 0},
+        ${req.summary || ''},
+        '[]',
+        '[]',
+        CURRENT_TIMESTAMP(),
+        'madoc-crowd-sourcing-theme'
+      )
     `);
   }
 }
