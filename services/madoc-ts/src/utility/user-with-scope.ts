@@ -36,7 +36,7 @@ export async function onlyGlobalAdmin(context: {
   cookies: any;
 }) {
   const scope = userWithScope(context, ['site.admin']);
-  const user = await context.siteManager.getSiteUserById(scope.id, scope.siteId);
+  const user = await context.siteManager.getUserById(scope.id);
   if (user.role !== 'global_admin') {
     throw new NotFound();
   }
