@@ -1,16 +1,16 @@
 import React from 'react';
-import { SingleUser } from '../../../types/omeka/User';
+import { SiteUser } from '../../../extensions/site-manager/types';
 import { TableContainer, TableRow, TableRowLabel } from '../../shared/atoms/Table';
 import { useData } from '../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../shared/utility/create-universal-component';
 import { UniversalComponent } from '../../types';
 
 type ViewUserType = {
-  query: {};
+  query: any;
   variables: { id: number };
   params: { id: string };
-  data: { user: SingleUser };
-  context: {};
+  data: { user: SiteUser };
+  context: any;
 };
 
 export const ViewUser: UniversalComponent<ViewUserType> = createUniversalComponent<ViewUserType>(
@@ -35,7 +35,7 @@ export const ViewUser: UniversalComponent<ViewUserType> = createUniversalCompone
             <TableRowLabel>
               <strong>Role</strong>
             </TableRowLabel>
-            <TableRowLabel>{data.user.role}</TableRowLabel>
+            <TableRowLabel>{data.user.site_role}</TableRowLabel>
           </TableRow>
           <TableRow>
             <TableRowLabel>

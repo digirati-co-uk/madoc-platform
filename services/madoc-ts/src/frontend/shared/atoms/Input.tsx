@@ -1,4 +1,5 @@
-import styled from 'styled-components';
+import React, { useRef } from 'react';
+import styled, { css } from 'styled-components';
 
 export const InputLabel = styled.label`
   font-size: 0.9em;
@@ -21,6 +22,22 @@ export const Input = styled.input`
   }
 `;
 
+export const HighlightInput: typeof Input = ((props: any) => {
+  const ref = useRef<HTMLInputElement>(null);
+
+  return (
+    <Input
+      ref={ref}
+      onFocus={() => {
+        if (ref.current) {
+          ref.current.select();
+        }
+      }}
+      {...props}
+    />
+  );
+}) as any;
+
 export const InputBorderless = styled.input`
   background: transparent;
   border: none;
@@ -36,11 +53,51 @@ export const InputBorderless = styled.input`
   }
 `;
 
-export const InputContainer = styled.div<{ wide?: boolean; fluid?: boolean }>`
+export const InputContainer = styled.div<{ wide?: boolean; fluid?: boolean; $error?: boolean }>`
   display: flex;
   flex-direction: column;
   max-width: ${props => (props.fluid ? '100%' : props.wide ? '550px' : '360px')};
   margin: 0.5em 0;
+
+  ${props =>
+    props.$error &&
+    css`
+      background: #ffeaea;
+      outline: 5px solid #ffeaea;
+
+      input,
+      textarea {
+        border-color: #9c2824;
+      }
+    `}
+`;
+
+export const InputCheckboxContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5em;
+
+  label {
+    flex: 1 1 0px;
+    margin: 0;
+    margin-left: 1em;
+  }
+`;
+
+export const InputCheckboxInputContainer = styled.div<{ $checked?: boolean }>`
+  background: #ddd;
+  height: 2em;
+  width: 2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ccc;
+  ${props =>
+    props.$checked &&
+    css`
+      background-color: #c5e8c5;
+      border-color: #6ccd55;
+    `}
 `;
 
 export const EmptyInputValue = styled.div<{ wide?: boolean }>`
