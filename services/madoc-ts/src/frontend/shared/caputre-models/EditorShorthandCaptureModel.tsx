@@ -14,8 +14,8 @@ export const EditShorthandCaptureModel: React.FC<{
   onSave: (revision: any) => Promise<void> | void;
 }> = ({ data, onSave, template, immutableFields }) => {
   const saveRevision = useCallback(
-    (revision: RevisionRequest) => {
-      onSave(revision ? serialiseCaptureModel(revision.document) : null);
+    ({ revisionRequest }: { revisionRequest: RevisionRequest }) => {
+      onSave(revisionRequest ? serialiseCaptureModel(revisionRequest.document) : null);
     },
     [onSave]
   );

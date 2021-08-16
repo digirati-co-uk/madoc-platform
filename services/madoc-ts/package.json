@@ -46,7 +46,8 @@
     "deepmerge": "4.2.2",
     "dnd-multi-backend": "6.0.0",
     "html-entities": "1.4.0",
-    "ws": "7.4.6"
+    "ws": "7.4.6",
+    "popmotion": "^8.7.6"
   },
   "dependencies": {
     "@atlas-viewer/atlas": "1.6.4",

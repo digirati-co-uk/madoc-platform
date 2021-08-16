@@ -143,7 +143,12 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
         revision={isSegmentation ? undefined : revision}
         captureModel={captureModel}
         slotConfig={{
-          editor: { allowEditing: !preventFurtherSubmission, deselectRevisionAfterSaving: true, profileConfig },
+          editor: {
+            allowEditing: !preventFurtherSubmission,
+            deselectRevisionAfterSaving: true,
+            profileConfig,
+            saveOnNavigate: isPreparing || mode === 'transcription',
+          },
           components: components,
         }}
       >
