@@ -196,6 +196,10 @@ export const siteConfigurationModel: {
         label: 'Prevent submissions after expiry (existing canvases)',
         value: 'preventContributionAfterManifestUnassign',
       },
+      {
+        label: 'Hide viewer controls (zoom + home)',
+        value: 'hideViewerControls',
+      },
     ],
   },
   projectPageOptions: {
