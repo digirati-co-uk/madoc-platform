@@ -14,13 +14,25 @@ import { MetadataConfigurationPage } from './pages/content/metadata-configuratio
 import { CreateNewPage } from './pages/content/page-blocks/create-new-page';
 import { ListPages } from './pages/content/page-blocks/list-pages';
 import { PageBlocks } from './pages/content/page-blocks/page-blocks';
+import { SiteProjectConfiguration } from './pages/content/project-configuration';
 import { SiteConfiguration } from './pages/content/site-configuration';
+import { SiteSystemConfiguration } from './pages/content/system-configuration';
 import { ProjectConfiguration } from './pages/crowdsourcing/projects/project-configuration';
 import { ProjectSearchIndex } from './pages/crowdsourcing/projects/project-search-index';
 import { ProjectStreams } from './pages/crowdsourcing/projects/project-streams';
 import { OcrListPage } from './pages/enrichment/ocr/ocr-list';
 import { SearchIndexingPage } from './pages/enrichment/search-indexing';
 import { ExportSite } from './pages/export/export-site';
+import { CreateSite } from './pages/global/create-site';
+import { CreateUser } from './pages/global/create-user';
+import { GlobalSystemConfig } from './pages/global/global-system-config';
+import { ListUsers } from './pages/global/list-users';
+import { UserDelete } from './pages/global/user/user-delete';
+import { UserOverview } from './pages/global/user/user-overview';
+import { UserResetPassword } from './pages/global/user/user-reset-password';
+import { UserSites } from './pages/global/user/user-sites';
+import { UserUpdateDetails } from './pages/global/user/user-update-details';
+import { ViewUser } from './pages/global/view-user';
 import { Homepage } from './pages/homepage';
 import { CollectionList } from './pages/content/collections/collection-list';
 import { EditCollectionStructure } from './pages/content/collections/edit-collection-structure';
@@ -42,10 +54,15 @@ import { Project } from './pages/crowdsourcing/projects/project';
 import { ProjectModelEditor } from './pages/crowdsourcing/projects/project-model-editor';
 import { CreateCollection } from './pages/content/collections/create-collection';
 import { CreateManifest } from './pages/content/manifests/create-manifest';
-import { ListSites } from './pages/sites/list-sites';
+import { CreateInvitation } from './pages/sites/create-invitation';
+import { EditInvitation } from './pages/sites/edit-invitation';
+import { ListInvitations } from './pages/sites/list-invitations';
+import { ListSites } from './pages/global/list-sites';
+import { SiteName } from './pages/sites/site-name';
 import { SitePermissions } from './pages/sites/site-permissions';
+import { ViewInvitation } from './pages/sites/view-invitation';
 import { DevelopmentPlugin } from './pages/system/development-plugin';
-import { ActivityStreams } from './pages/system/activity-streams';
+import { ActivityStreams } from './pages/sites/activity-streams';
 import { ViewExternalPlugin } from './pages/system/external-plugin';
 import { SystemStatus } from './pages/system/system-status';
 import { ListThemes } from './pages/system/themes/list-themes';
@@ -426,6 +443,16 @@ export const routes: UniversalRoute[] = [
     component: MetadataConfigurationPage,
   },
   {
+    path: '/configure/site/project',
+    exact: true,
+    component: SiteProjectConfiguration,
+  },
+  {
+    path: '/configure/site/system',
+    exact: true,
+    component: SiteSystemConfiguration,
+  },
+  {
     path: '/page-blocks',
     component: PageBlocks,
     routes: [
@@ -468,9 +495,14 @@ export const routes: UniversalRoute[] = [
     component: EditTranslation,
   },
   {
-    path: '/system/status',
+    path: '/global/status',
     exact: true,
     component: SystemStatus,
+  },
+  {
+    path: '/global/config',
+    exact: true,
+    component: GlobalSystemConfig,
   },
   {
     path: '/system/development',
@@ -498,13 +530,81 @@ export const routes: UniversalRoute[] = [
     component: ActivityStreams,
   },
   {
-    path: '/sites',
+    path: '/site/permissions',
+    exact: true,
+    component: SitePermissions,
+  },
+  {
+    path: '/site/details',
+    exact: true,
+    component: SiteName,
+  },
+  {
+    path: '/site/invitations',
+    exact: true,
+    component: ListInvitations,
+  },
+  {
+    path: '/site/invitations/create',
+    exact: true,
+    component: CreateInvitation,
+  },
+  {
+    path: '/site/invitations/:invitationId',
+    exact: true,
+    component: ViewInvitation,
+  },
+
+  // Only global admins
+  {
+    path: '/global/sites',
     exact: true,
     component: ListSites,
   },
   {
-    path: '/sites/permissions',
+    path: '/global/sites/create',
     exact: true,
-    component: SitePermissions,
+    component: CreateSite,
+  },
+  {
+    path: '/global/users',
+    exact: true,
+    component: ListUsers,
+  },
+  {
+    path: '/global/users/create',
+    component: CreateUser,
+    exact: true,
+  },
+  {
+    path: '/global/users/:userId',
+    component: ViewUser,
+    routes: [
+      {
+        path: '/global/users/:userId',
+        component: UserOverview,
+        exact: true,
+      },
+      {
+        path: '/global/users/:userId/edit',
+        component: UserUpdateDetails,
+        exact: true,
+      },
+      {
+        path: '/global/users/:userId/sites',
+        component: UserSites,
+        exact: true,
+      },
+      {
+        path: '/global/users/:userId/delete',
+        component: UserDelete,
+        exact: true,
+      },
+      {
+        path: '/global/users/:userId/password',
+        component: UserResetPassword,
+        exact: true,
+      },
+    ],
   },
 ];

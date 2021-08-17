@@ -12,7 +12,7 @@ export const siteSearch: RouteMiddleware<
   const { page, madoc_id } = context.query;
 
   const id = context.state.jwt?.user.id;
-  const site = await context.omeka.getSiteIdBySlug(context.params.slug);
+  const site = await context.siteManager.getSiteBySlug(context.params.slug);
 
   if (!site) {
     throw new NotFound('not found');

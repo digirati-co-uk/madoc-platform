@@ -2,8 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { sql } from 'slonik';
 import { ResourceLinkRow } from '../../database/queries/linking-queries';
+import { LegacySiteRow } from '../../extensions/site-manager/types';
 import { api } from '../../gateway/api.server';
-import { Site } from '../../types/omeka/Site';
 import { SitePermission } from '../../types/omeka/SitePermission';
 import { SiteSetting } from '../../types/omeka/SiteSetting';
 import { User } from '../../types/omeka/User';
@@ -25,7 +25,7 @@ export const exportSite: RouteMiddleware = async context => {
 
   // - Grab Omeka tables as JSON
   //    - Get the site
-  const site = new Promise<Site>(resolve =>
+  const site = new Promise<LegacySiteRow>(resolve =>
     context.mysql.query(mysql`select * from site where site.id = ${siteId}`, (err, data) => {
       resolve(data[0]);
     })

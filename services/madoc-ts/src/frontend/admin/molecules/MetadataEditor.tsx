@@ -3,7 +3,6 @@ import produce from 'immer';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import { Button, ButtonRow, LinkButton } from '../../shared/atoms/Button';
 import {
-  ContextualLabel,
   ContextualMenuList,
   ContextualMenuListItem,
   ContextualMenuWrapper,
@@ -26,7 +25,6 @@ import { useTranslation } from 'react-i18next';
 import { MetadataDefinition } from '../../../types/schemas/metadata-definition';
 import { EmptyInputValue } from '../../shared/atoms/Input';
 import { useApi } from '../../shared/hooks/use-api';
-import { SettingsIcon } from '../../shared/icons/SettingsIcon';
 
 export type MetadataDiff = {
   added: Array<{ key: string; language: string; value: string }>;

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from 'react-query';
+import { Redirect } from 'react-router-dom';
 import { Button } from '../../../../shared/atoms/Button';
 import {
   SystemAction,
@@ -14,12 +15,14 @@ import {
 } from '../../../../shared/atoms/SystemUI';
 import { SystemListItem } from '../../../../shared/atoms/SystemListItem';
 import { useApi } from '../../../../shared/hooks/use-api';
+import { useUser } from '../../../../shared/hooks/use-site';
 import { Spinner } from '../../../../shared/icons/Spinner';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 
 export const ListThemes: React.FC = () => {
   const { t } = useTranslation();
   const api = useApi();
+  const user = useUser();
   const { data, refetch } = useQuery(['themes'], async () => {
     return api.themes.listThemes();
   });
@@ -43,6 +46,10 @@ export const ListThemes: React.FC = () => {
     await api.themes.disableTheme(id);
     await refetch();
   });
+
+  if (user?.role !== 'global_admin') {
+    return <Redirect to={'/'} />;
+  }
 
   return (
     <>

@@ -1,7 +1,7 @@
+import { Site } from '../extensions/site-manager/types';
 import { CachedApiHelper } from '../utility/cached-api-helper';
 import { AuthenticatedUser } from './authenticated-user';
 import { ApiClient } from '../gateway/api';
-import { PublicSite } from '../utility/omeka-api';
 
 export interface ApplicationState {
   // User.
@@ -12,7 +12,7 @@ export interface ApplicationState {
   loggedOut?: boolean;
   siteApi: ApiClient;
   cachedApi: CachedApiHelper;
-  site: PublicSite;
+  site: Site;
   jwt?: {
     token: string;
     scope: string[];

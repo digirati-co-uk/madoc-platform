@@ -15,6 +15,9 @@ export type RenderSlotProps = {
   defaultContents?: any;
   pagePath?: string;
   layout?: string;
+  source?: { type: string; id: string };
+  noSurface?: boolean;
+  small?: boolean;
 };
 
 export const RenderSlot: React.FC<RenderSlotProps> = props => {
@@ -33,6 +36,8 @@ export const RenderSlot: React.FC<RenderSlotProps> = props => {
   if (props.editable) {
     return (
       <SlotEditor
+        small={props.small}
+        noSurface={props.noSurface}
         layout={layout}
         slot={props.slot}
         blocks={orderedBlocks}
@@ -43,12 +48,13 @@ export const RenderSlot: React.FC<RenderSlotProps> = props => {
         defaultContents={props.defaultContents}
         surfaceProps={surfaceProps}
         pagePath={props.pagePath}
+        source={props.source}
       />
     );
   }
 
   return (
-    <SlotLayout layout={layout} surfaceProps={surfaceProps}>
+    <SlotLayout layout={layout} surfaceProps={surfaceProps} noSurface={props.noSurface}>
       {orderedBlocks.map(block => {
         return <RenderBlock key={block.id} block={block} context={props.context} />;
       })}

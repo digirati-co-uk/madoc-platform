@@ -1,10 +1,17 @@
 import { Connection, Pool, PoolConnection, Query } from 'mysql';
 import { NotFoundError } from 'slonik';
 import {
+  CreateSiteRequest,
   LegacySitePermissionRow,
   LegacySiteRow,
   LegacyUserRow,
   SiteUser,
+  UpdateInvitation,
+  UpdateSiteRequest,
+  UpdateUser,
+  UserCreationRequest,
+  UserInvitationsRequest,
+  UserInvitationsRow,
   UserRow,
   UserRowWithoutPassword,
   UserSite,
@@ -20,7 +27,7 @@ import { writeFileSync } from 'fs';
 import mkdirp from 'mkdirp';
 import cache from 'memory-cache';
 
-export type PublicSite = { id: number; slug: string; title: string; is_public: number };
+type PublicSite = { id: number; slug: string; title: string; is_public: number };
 
 const fileDirectory = process.env.OMEKA_FILE_DIRECTORY || '/home/node/app/omeka-files';
 
@@ -243,11 +250,16 @@ export class OmekaApi {
    * @deprecated use context.siteManager.listAllSites() instead
    */
   async listAllSites() {
-    return await this.many<LegacySiteRow>(
-      mysql`
-        select * from site s
-      `
-    );
+    try {
+      return await this.many<LegacySiteRow>(
+        mysql`
+            select *
+            from site s
+        `
+      );
+    } catch (e) {
+      return [] as LegacySiteRow[];
+    }
   }
 
   async getSiteUsers(siteId: number): Promise<SiteUser[]> {
@@ -265,11 +277,63 @@ export class OmekaApi {
    * @deprecated This should only be used for migration
    */
   async listAllUsers() {
-    return await this.many<LegacyUserRow>(
+    try {
+      return await this.many<LegacyUserRow>(
+        mysql`
+            SELECT *
+            from user
+        `
+      );
+    } catch (e) {
+      return [] as LegacyUserRow[];
+    }
+  }
+
+  async countAllUsers() {
+    return await this.one<{ total_users: number }>(mysql`select COUNT(*) as total_users from user`);
+  }
+
+  /**
+   * @internal
+   */
+  async getAllUsers(page: number, perPage: number) {
+    return await this.many<UserRowWithoutPassword>(
       mysql`
-        SELECT * from user
+        SELECT id, email, name, created, modified, role, is_active from user
+        limit ${perPage} offset ${(page - 1) * perPage}
       `
     );
+  }
+
+  async searchUsers(q: string, siteId: number, roles: string[] = []) {
+    const query = `%${q || ''}%`;
+
+    if (!q && !roles.length) {
+      return [];
+    }
+
+    return await this.many<SiteUser>(mysql`
+      select u.id, u.name, u.role, sp.role as site_role
+      from user u 
+        left join site_permission sp 
+            on u.id = sp.user_id 
+      where sp.role is not null 
+        ${q ? raw(mysql`and u.name LIKE ${query}`) : raw('')}  
+        and sp.site_id = ${siteId} 
+        ${roles.length ? raw(mysql`and sp.role IN (${roles})`) : raw('')}
+      limit 50
+    `);
+  }
+
+  async searchAllUsers(q: string) {
+    const query = `%${q || ''}%`;
+
+    return await this.many<UserRowWithoutPassword>(mysql`
+      select u.id, u.email, u.name, u.role from user as u
+        where u.is_active = true
+        and (u.name LIKE ${query} or  u.email LIKE ${query})  
+      limit 20
+    `);
   }
 
   /**
@@ -277,11 +341,16 @@ export class OmekaApi {
    * @deprecated This should only be used for migration
    */
   async listSitePermissions() {
-    return await this.many<LegacySitePermissionRow>(
-      mysql`
-        SELECT * from site_permission
-      `
-    );
+    try {
+      return await this.many<LegacySitePermissionRow>(
+        mysql`
+            SELECT *
+            from site_permission
+        `
+      );
+    } catch (e) {
+      return [] as LegacySitePermissionRow[];
+    }
   }
 
   async getAuthenticatedSites(userId: number) {
@@ -348,10 +417,175 @@ export class OmekaApi {
   /**
    * @internal
    */
+  async getUserByEmail(email: string) {
+    return await this.one<UserRowWithoutPassword>(
+      mysql`SELECT id, name, email, role, is_active, created, modified FROM user WHERE email = ${email}`
+    );
+  }
+
+  async updateUser(userId: number, req: UpdateUser) {
+    const setValues = [];
+
+    if (typeof req.role !== 'undefined') {
+      setValues.push(mysql`role = ${req.role}`);
+    }
+    if (typeof req.name !== 'undefined') {
+      setValues.push(mysql`name = ${req.name}`);
+    }
+    if (typeof req.email !== 'undefined') {
+      setValues.push(mysql`email = ${req.email}`);
+    }
+
+    if (setValues.length === 0) {
+      throw new Error('Invalid update request');
+    }
+
+    await this.query(mysql`
+      update user 
+      set ${raw(setValues.join(','))}
+      where user.id = ${userId}
+    `);
+  }
+
+  /**
+   * @internal
+   */
+  async activateUser(userId: number) {
+    await this.query(mysql`update user set is_active = true where id = ${userId}`);
+  }
+
+  /**
+   * @internal
+   */
+  async deactivateUser(userId: number) {
+    await this.query(mysql`update user set is_active = false where id = ${userId}`);
+  }
+
+  /**
+   * @internal
+   */
+  async deleteUser(userId: number) {
+    await this.query(mysql`delete from user where id = ${userId} and is_active = false`);
+  }
+
+  /**
+   * @internal
+   */
   async getActiveUserById(id: number) {
     return await this.one<UserRowWithoutPassword>(
       mysql`SELECT id, name, email, role, is_active, created, modified FROM user WHERE is_active = 1 AND id = ${id}`
     );
+  }
+
+  /**
+   * @internal
+   * @deprecated DO NOT USE.
+   */
+  async resetPassword(id: string, userId: number, activate: boolean) {
+    await this.query(mysql`
+      insert into password_creation (id, user_id, activate, created) 
+        values (${id}, ${userId}, ${activate ? 1 : 0}, CURRENT_TIMESTAMP())
+    `);
+  }
+
+  async setUserPassword(userId: number, passwordHash: string) {
+    await this.query(mysql`update user set password_hash = ${passwordHash} where id = ${userId}`);
+  }
+
+  /**
+   * @internal
+   */
+  async getInvitations(siteId: number) {
+    const invitations = await this.many<UserInvitationsRow>(
+      mysql`select * from user_invitations where site_id = ${siteId}`
+    );
+
+    return invitations ? [...invitations].map(OmekaApi.mapInvitation) : [];
+  }
+
+  /**
+   * @internal
+   */
+  async getInvitation(invitationId: string, siteId: number) {
+    return OmekaApi.mapInvitation(
+      await this.one<UserInvitationsRow & { message: string }>(
+        mysql`select * from user_invitations where invitation_id = ${invitationId} and site_id = ${siteId}`
+      )
+    );
+  }
+
+  static mapInvitation(invtation: any): UserInvitationsRow {
+    if (!invtation.message) {
+      return invtation;
+    }
+
+    try {
+      return {
+        ...invtation,
+        message: JSON.parse(invtation.message),
+      };
+    } catch (e) {
+      return invtation;
+    }
+  }
+
+  /**
+   * @internal
+   */
+  async createInvitation(req: UserInvitationsRequest, siteId: number, ownerId: number) {
+    await this.query(mysql`
+      insert into user_invitations (invitation_id, owner_id, site_id, role, site_role, expires, uses_left, message) values (
+        ${req.invitation_id},
+        ${ownerId},
+        ${siteId},
+        ${req.role},
+        ${req.site_role},
+        ${req.expires},
+        ${req.uses_left || null},
+        ${JSON.stringify(req.message || {})}
+      )
+    `);
+  }
+
+  /**
+   * @internal
+   */
+  async updateInvitation(invitationId: string, siteId: number, req: UpdateInvitation) {
+    const setValues = [];
+    if (typeof req.message !== 'undefined') {
+      setValues.push(mysql`message = ${JSON.stringify(req.message)}`);
+    }
+    if (typeof req.site_role !== 'undefined') {
+      setValues.push(mysql`site_role = ${req.site_role}`);
+    }
+    if (typeof req.expires !== 'undefined') {
+      setValues.push(mysql`expires = ${new Date(req.expires)}`);
+    }
+    if (typeof req.role !== 'undefined') {
+      setValues.push(mysql`role = ${req.role}`);
+    }
+    if (typeof req.uses_left !== 'undefined') {
+      setValues.push(mysql`uses_left = ${req.uses_left}`);
+    }
+
+    if (setValues.length === 0) {
+      throw new Error('Invalid update request');
+    }
+
+    await this.query(mysql`
+      update user_invitations 
+      set ${raw(setValues.join(','))} 
+      where site_id = ${siteId} and invitation_id = ${invitationId}
+    `);
+  }
+
+  /**
+   * @internal
+   */
+  async deleteInvitation(invitationId: string, siteId: number) {
+    await this.query(mysql`
+      delete from user_invitations where invitation_id = ${invitationId} and site_id = ${siteId}
+    `);
   }
 
   /**
@@ -822,6 +1056,10 @@ export class OmekaApi {
 
   // Mutations.
 
+  async updateUserPassword(userId: number, hash: string) {
+    await this.query(mysql`update user set password_hash = ${hash} where id = ${userId}`);
+  }
+
   async setUsersRoleOnSite(siteId: number, userId: number, newSiteRole: string) {
     const resp = await this.maybeOne<{ site_role: string }>(
       mysql`select role as site_role from site_permission where site_id = ${siteId} and user_id = ${userId}`
@@ -843,5 +1081,70 @@ export class OmekaApi {
     await this.query(mysql`
       delete from site_permission where site_id = ${siteId} and user_id = ${userId}
     `);
+  }
+
+  /**
+   * @internal
+   * @deprecated use context.siteManager.createUser() instead
+   */
+  async createUser(user: UserCreationRequest) {
+    await this.query(
+      mysql`
+        insert into user (email, name, is_active, role, password_hash, created) values (
+          ${user.email},
+          ${user.name},
+          false,
+          ${user.role},
+          null,
+          CURRENT_TIMESTAMP()
+        )
+      `
+    );
+  }
+
+  async deleteSite(siteId: number) {
+    await this.query(mysql`delete from site where id = ${siteId} and is_public = false`);
+  }
+
+  async changeSiteVisibility(siteId: number, isPublic: boolean) {
+    await this.query(mysql`update site set is_public = ${Boolean(isPublic)} where id = ${siteId}`);
+  }
+
+  async createSite(req: CreateSiteRequest, userId: number) {
+    await this.query(mysql`
+      insert into site (owner_id, title, slug, is_public, summary, navigation, item_pool, created, theme) values (
+        ${userId},
+        ${req.title},
+        ${req.slug},
+        ${req.is_public ? 1 : 0},
+        ${req.summary || ''},
+        '[]',
+        '{}',
+        CURRENT_TIMESTAMP(),
+        'madoc-crowd-sourcing-theme'
+      )
+    `);
+  }
+
+  async updateSite(siteId: number, req: Partial<UpdateSiteRequest>) {
+    const setValues = [];
+    if (typeof req.title !== 'undefined') {
+      setValues.push(mysql`title = ${req.title}`);
+    }
+    if (typeof req.summary !== 'undefined') {
+      setValues.push(mysql`summary = ${req.summary}`);
+    }
+    if (typeof req.is_public !== 'undefined') {
+      setValues.push(mysql`is_public = ${Boolean(req.is_public)}`);
+    }
+    if (typeof req.owner_id !== 'undefined') {
+      setValues.push(mysql`owner_id = ${req.owner_id}`);
+    }
+
+    if (setValues.length === 0) {
+      return; // This could be config.
+    }
+
+    await this.query(mysql`update site set ${raw(setValues.join(','))} where id = ${siteId}`);
   }
 }

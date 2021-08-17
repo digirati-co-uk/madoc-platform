@@ -12,7 +12,7 @@ export const getActivityStreamPage: RouteMiddleware<{
   // At least for now.
   const slug = context.params.slug;
   const siteId = slug
-    ? (await context.omeka.getSiteIdBySlug(slug))?.id
+    ? (await context.siteManager.getSiteBySlug(slug))?.id
     : optionalUserWithScope(context, ['site.view']).siteId;
   const { primaryStream, secondaryStream } = context.params;
 

@@ -18,6 +18,7 @@ import {
   SlotEditorReadOnly,
   SlotOutlineContainer,
 } from '../atoms/SlotEditor';
+import { SlotLayout } from '../atoms/SlotLayout';
 import { useApi } from '../hooks/use-api';
 import { useSlots } from './slot-context';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
@@ -92,7 +93,8 @@ export const BlankSlotDropdown: React.FC<{
     label: string;
     onClick: () => void;
   }>;
-}> = ({ actions, children }) => {
+  layout?: string;
+}> = ({ actions, layout, children }) => {
   const { buttonProps, itemProps, isOpen } = useDropdownMenu(actions.length);
 
   return (
@@ -111,7 +113,12 @@ export const BlankSlotDropdown: React.FC<{
   );
 };
 
-export const RenderBlankSlot: React.FC<{ name: string }> = ({ name: slotId, children }) => {
+export const RenderBlankSlot: React.FC<{ name: string; source?: { type: string; id: string }; layout?: string }> = ({
+  name: slotId,
+  source,
+  layout,
+  children,
+}) => {
   const { context, editable, isPage, beforeCreateSlot, onCreateSlot } = useSlots();
   const api = useApi();
   const blockDefinitions = extractBlockDefinitions(children);
@@ -167,11 +174,15 @@ export const RenderBlankSlot: React.FC<{ name: string }> = ({ name: slotId, chil
   });
 
   if (isLoading) {
-    return <div>Creating slot...</div>;
+    return (
+      <SlotLayout layout={layout}>
+        <div>Creating slot...</div>
+      </SlotLayout>
+    );
   }
 
   if (!editable) {
-    return <>{children}</>;
+    return <SlotLayout layout={layout}>{children}</SlotLayout>;
   }
 
   if (!children) {
@@ -202,7 +213,7 @@ export const RenderBlankSlot: React.FC<{ name: string }> = ({ name: slotId, chil
     <div>
       <SlotEditorReadOnly>
         <SlotEditorLabelReadOnly>{slotId}</SlotEditorLabelReadOnly>
-        {isPage ? (
+        {isPage || source?.type === 'global' ? (
           <>
             <SlotEditorButton onClick={() => createSlot()}>Customise</SlotEditorButton>
           </>
@@ -219,7 +230,9 @@ export const RenderBlankSlot: React.FC<{ name: string }> = ({ name: slotId, chil
           </>
         )}
       </SlotEditorReadOnly>
-      <SlotOutlineContainer>{children}</SlotOutlineContainer>
+      <SlotOutlineContainer>
+        <SlotLayout layout={layout}>{children}</SlotLayout>
+      </SlotOutlineContainer>
     </div>
   );
 };

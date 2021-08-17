@@ -4,7 +4,7 @@ import { NotFound } from '../../utility/errors/not-found';
 import { parseProjectId } from '../../utility/parse-project-id';
 
 export const resolveSlots: RouteMiddleware = async context => {
-  const site = await context.omeka.getSiteIdBySlug(context.params.slug);
+  const site = await context.siteManager.getSiteBySlug(context.params.slug);
 
   if (!site) {
     throw new NotFound('not found');
@@ -17,10 +17,12 @@ export const resolveSlots: RouteMiddleware = async context => {
     manifest?: number;
     canvas?: number;
     project?: number;
+    slotIds?: string[];
   } = {
     collection: query.collection ? Number(query.collection) : undefined,
     manifest: query.manifest ? Number(query.manifest) : undefined,
     canvas: query.canvas ? Number(query.canvas) : undefined,
+    slotIds: query.slotIds ? query.slotIds.split(',') : undefined,
   };
 
   const parsedId = context.query.project ? parseProjectId(context.query.project) : undefined;

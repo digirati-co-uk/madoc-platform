@@ -3,7 +3,14 @@ import { RenderBlankSlot } from './render-blank-slot';
 import { RenderSlot } from './render-slot';
 import { useSlots } from './slot-context';
 
-export const Slot: React.FC<{ name: string; hidden?: boolean; layout?: string }> = props => {
+export const Slot: React.FC<{
+  name: string;
+  hidden?: boolean;
+  layout?: string;
+  noSurface?: boolean;
+  small?: boolean;
+  source?: { type: string; id: string };
+}> = props => {
   const { slots, context, editable, onUpdateSlot, onUpdateBlock, invalidateSlots, pagePath } = useSlots();
 
   const slot = slots[props.name];
@@ -16,11 +23,17 @@ export const Slot: React.FC<{ name: string; hidden?: boolean; layout?: string }>
   }
 
   if (!slot) {
-    return <RenderBlankSlot name={props.name}>{props.children}</RenderBlankSlot>;
+    return (
+      <RenderBlankSlot name={props.name} source={props.source} layout={props.layout}>
+        {props.children}
+      </RenderBlankSlot>
+    );
   }
 
   return (
     <RenderSlot
+      small={props.small}
+      noSurface={props.noSurface}
       layout={props.layout}
       slot={slot}
       context={context}
@@ -30,6 +43,7 @@ export const Slot: React.FC<{ name: string; hidden?: boolean; layout?: string }>
       invalidateSlots={invalidateSlots}
       defaultContents={props.children}
       pagePath={pagePath}
+      source={props.source}
     />
   );
 };
