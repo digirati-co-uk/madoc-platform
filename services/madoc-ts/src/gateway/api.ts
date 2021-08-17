@@ -514,6 +514,7 @@ export class ApiClient {
     return this.request<{
       id: string;
       task_id: string;
+      status: number;
     }>(`/api/madoc/projects/${id}/task`);
   }
 
@@ -1359,7 +1360,7 @@ export class ApiClient {
   async getTaskSubjects(
     id: string,
     subjects?: string[],
-    query: { type?: string; assignee?: boolean; assigned_to?: string } = {},
+    query: { type?: string; assignee?: boolean; assigned_to?: string; status?: number } = {},
     parentTask = false
   ) {
     return this.request<{ subjects: Array<{ subject: string; status: number; assignee_id?: string }> }>(

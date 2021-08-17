@@ -23,7 +23,7 @@ export const ManifestActions: React.FC = () => {
   const createLink = useRelativeLinks();
   const options = useManifestPageConfiguration();
   const { showNavigationContent } = usePreventCanvasNavigation();
-  const { isActive } = useProjectStatus();
+  const { isActive, isPreparing } = useProjectStatus();
   const {
     project: { claimGranularity, manifestPageOptions },
   } = useSiteConfiguration();
@@ -78,7 +78,7 @@ export const ManifestActions: React.FC = () => {
           </Button>
         ) : null}
         {!options.hideRandomCanvas ? <GoToRandomCanvas /> : null}
-        {isActive && !options.hideFilterImages ? <ManifestItemFilter /> : null}
+        {(isActive || isPreparing) && !options.hideFilterImages ? <ManifestItemFilter /> : null}
         <ManifestTaskProgress />
         <AssignManifestToUser />
       </ButtonRow>

@@ -24,7 +24,7 @@ export const ManifestCanvasGrid: React.FC = () => {
   const createLocaleString = useCreateLocaleString();
   const manifestOptions = useManifestPageConfiguration();
   const { showNavigationContent } = usePreventCanvasNavigation();
-  const { isActive } = useProjectStatus();
+  const { isActive, isPreparing } = useProjectStatus();
   const manifestSubjects = data?.subjects;
   const [subjectMap] = useSubjectMap(manifestSubjects);
 
@@ -51,7 +51,9 @@ export const ManifestCanvasGrid: React.FC = () => {
                 <img alt={createLocaleString(canvas.label, t('Canvas thumbnail'))} src={canvas.thumbnail} />
               ) : null}
             </CroppedImage>
-            {isActive && manifestSubjects && subjectMap ? <CanvasStatus status={subjectMap[canvas.id]} /> : null}
+            {(isActive || isPreparing) && manifestSubjects && subjectMap ? (
+              <CanvasStatus status={subjectMap[canvas.id]} />
+            ) : null}
             <LocaleString as={Heading5}>{canvas.label}</LocaleString>
           </ImageStripBox>
         </Link>
