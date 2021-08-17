@@ -13,6 +13,7 @@ import { useUser } from '../../shared/hooks/use-site';
 import { InfoIcon } from '../../shared/icons/InfoIcon';
 import { createLink } from '../../shared/utility/create-link';
 import { HrefLink } from '../../shared/utility/href-link';
+import { usePrepareContribution } from '../hooks/use-prepare-contribution';
 import { useProjectCanvasTasks } from '../hooks/use-project-canvas-tasks';
 import { useRouteContext } from '../hooks/use-route-context';
 
@@ -25,6 +26,7 @@ export const CanvasTaskProgress: React.FC = () => {
   const isAdmin =
     user && user.scope && (user.scope.indexOf('site.admin') !== -1 || user.scope.indexOf('tasks.admin') !== -1);
   const canProgress = user && user.scope && user.scope.indexOf('tasks.create') !== -1;
+  const [prepare] = usePrepareContribution();
 
   const { slug } = useParams<{ slug?: string }>();
   const { data: projectTasks, refetch } = useProjectCanvasTasks();
@@ -48,6 +50,11 @@ export const CanvasTaskProgress: React.FC = () => {
       });
       await refetch();
     }
+  });
+  const [markAsCompleteNoTask, markAsCompleteNoTaskStatus] = useMutation(async () => {
+    await prepare();
+    await refetch();
+    await markAsComplete();
   });
 
   const [markAsIncomplete, markAsIncompleteStatus] = useMutation(async () => {
@@ -157,7 +164,16 @@ export const CanvasTaskProgress: React.FC = () => {
                     {t('Mark as complete')}
                   </Button>
                 </ButtonRow>
-              ) : null}
+              ) : (
+                <ButtonRow>
+                  <Button onClick={() => markAsCompleteNoTask()} disabled={markAsCompleteNoTaskStatus.isLoading}>
+                    <ButtonIcon>
+                      <WhiteTickIcon />
+                    </ButtonIcon>
+                    {t('Mark as complete')}
+                  </Button>
+                </ButtonRow>
+              )}
             </div>
           ) : null}
           {projectTasks?.totalContributors ? (

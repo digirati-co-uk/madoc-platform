@@ -1,3 +1,4 @@
+import { VaultProvider } from '@hyperion-framework/react-vault';
 import React, { Suspense, useState } from 'react';
 import { useCaptureModel } from '@capture-models/editor';
 import { useParams } from 'react-router-dom';
@@ -22,7 +23,7 @@ export const PreviewCaptureModel: React.FC<{
   const [preview, setPreview] = useState(false);
 
   return (
-    <>
+    <VaultProvider>
       <h3>Preview</h3>
       <RevisionProviderWithFeatures
         key={revisionNumber}
@@ -67,6 +68,6 @@ export const PreviewCaptureModel: React.FC<{
           </div>
         </div>
       </RevisionProviderWithFeatures>
-    </>
+    </VaultProvider>
   );
 };

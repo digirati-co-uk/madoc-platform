@@ -9,6 +9,7 @@ import { PluginRepository } from '../repository/plugin-repository';
 import { SiteUserRepository } from '../repository/site-user-repository';
 import { ThemeRepository } from '../repository/theme-repository';
 import { CronJobs } from '../utility/cron-jobs';
+import { Mailer } from '../utility/mailer';
 import { ExternalConfig } from './external-config';
 import { router } from '../router';
 import { Pool } from 'mysql';
@@ -26,6 +27,7 @@ export interface ApplicationContext {
   plugins: PluginRepository;
   themes: ThemeRepository;
   media: MediaRepository;
+  mailer: Mailer;
   notifications: NotificationRepository;
   changeDiscovery: ChangeDiscoveryRepository;
   omeka: OmekaApi;

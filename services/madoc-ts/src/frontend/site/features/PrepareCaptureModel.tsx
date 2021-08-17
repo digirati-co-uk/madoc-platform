@@ -1,8 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ErrorMessage } from '../../shared/atoms/ErrorMessage';
-import { InfoMessage } from '../../shared/atoms/InfoMessage';
-import { Spinner } from '../../shared/icons/Spinner';
 import { usePreparedCanvasModel } from '../hooks/use-prepared-canvas-model';
 
 /**
@@ -23,11 +21,14 @@ export const PrepareCaptureModel: React.FC = () => {
   }
 
   if (isPreparing) {
-    return (
-      <InfoMessage>
-        <Spinner style={{ marginRight: 10 }} /> {t('Preparing this image')}
-      </InfoMessage>
-    );
+    // This is causing a reflow issue that can't currently be resolved.
+    // Related bug: https://github.com/pmndrs/react-use-measure/issues/9
+    // return (
+    //   <InfoMessage>
+    //     <Spinner style={{ marginRight: 10 }} /> {t('Preparing this image')}
+    //   </InfoMessage>
+    // );
+    return null;
   }
 
   return null;

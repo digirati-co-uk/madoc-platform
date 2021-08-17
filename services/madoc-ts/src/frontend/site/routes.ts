@@ -1,3 +1,4 @@
+import React from 'react';
 import { CreateRouteType } from '../types';
 
 type BaseRouteComponents = typeof import('./components');
@@ -561,13 +562,48 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
         },
       ],
     },
+    {
+      path: '/login',
+      exact: true,
+      component: components.LoginPage,
+    },
+    {
+      path: '/forgot-password',
+      exact: true,
+      component: components.ForgotPasswordPage,
+    },
+    {
+      path: '/activate-account',
+      exact: true,
+      component: components.ResetPassword,
+    },
+    {
+      path: '/reset-password',
+      exact: true,
+      component: components.ResetPassword,
+    },
+    {
+      path: '/register',
+      exact: true,
+      component: components.Register,
+    },
+    {
+      path: '/profile',
+      exact: true,
+      component: components.ProfilePage,
+    },
+    {
+      path: '/profile/password',
+      exact: true,
+      component: components.UpdatePasswordPage,
+    },
   ];
 
   return {
     baseRoute: {
       path: '/',
       exact: false,
-      component: components.RootLoader,
+      component: React.memo(components.RootLoader),
     },
     fallback: {
       path: '/:pagePath+',

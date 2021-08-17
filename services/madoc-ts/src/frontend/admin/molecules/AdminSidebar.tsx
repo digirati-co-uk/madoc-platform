@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import {
   AdminMenuContainer,
   AdminMenuItem,
@@ -18,17 +18,21 @@ import {
   MediaIcon,
   ProjectsIcon,
   SiteConfigurationIcon,
+  SiteGlobIcon,
   SiteSwitcherBackButton,
   SiteSwitcherContainer,
   SiteSwitcherSiteName,
 } from '../../shared/components/AdminMenu';
-import { useSite } from '../../shared/hooks/use-site';
+import { useSite, useUser } from '../../shared/hooks/use-site';
 import { HrefLink } from '../../shared/utility/href-link';
 
 export const AdminSidebar: React.FC = () => {
   const site = useSite();
   const location = useLocation();
   const { t } = useTranslation();
+  const user = useUser();
+
+  const isGlobalAdmin = user?.role === 'global_admin';
 
   const pathname = location.pathname;
 
@@ -41,6 +45,7 @@ export const AdminSidebar: React.FC = () => {
     isManageManifests,
     isLocalisation,
     isMedia,
+    isSiteGlobal,
   } = useMemo(() => {
     return {
       isDashboard: pathname === '/',
@@ -51,9 +56,11 @@ export const AdminSidebar: React.FC = () => {
         pathname.startsWith('/enrichment/ocr'),
       isProjects: pathname.startsWith('/projects'),
       isSearchIndexing: pathname.startsWith('/enrichment/search-indexing'),
-      isSiteConfiguration: pathname.startsWith('/configure'),
+      isSiteConfiguration:
+        pathname.startsWith('/configure') || pathname.startsWith('/system') || pathname.startsWith('/site'),
       isLocalisation: pathname.startsWith('/i18n'),
       isMedia: pathname.startsWith('/media'),
+      isSiteGlobal: pathname.startsWith('/global'),
     };
   }, [pathname]);
 
@@ -99,7 +106,7 @@ export const AdminSidebar: React.FC = () => {
             <AdminMenuItemLabel>{t('Manage manifests', { count: 2 })}</AdminMenuItemLabel>
           </AdminMenuItem>
 
-          <AdminMenuSubItemContainer>
+          <AdminMenuSubItemContainer $open={isManageManifests}>
             <AdminMenuSubItem as={HrefLink} href="/import/manifest">
               {t('Add new manifest')}
             </AdminMenuSubItem>
@@ -152,7 +159,57 @@ export const AdminSidebar: React.FC = () => {
             </AdminMenuItemIcon>
             <AdminMenuItemLabel>{t('Site configuration')}</AdminMenuItemLabel>
           </AdminMenuItem>
+
+          <AdminMenuSubItemContainer $open={isSiteConfiguration}>
+            <AdminMenuSubItem as={HrefLink} href="/configure/site/metadata">
+              {t('Configure metadata')}
+            </AdminMenuSubItem>
+            <AdminMenuSubItem as={HrefLink} href="/site/details">
+              {t('Site name')}
+            </AdminMenuSubItem>
+            <AdminMenuSubItem as={HrefLink} href="/system/plugins">
+              {t('Plugins')}
+            </AdminMenuSubItem>
+            <AdminMenuSubItem as={HrefLink} href="/system/themes">
+              {t('Themes')}
+            </AdminMenuSubItem>
+            <AdminMenuSubItem as={HrefLink} href="/site/permissions">
+              {t('Permissions')}
+            </AdminMenuSubItem>
+            <AdminMenuSubItem as={HrefLink} href="/site/invitations">
+              {t('Invitations')}
+            </AdminMenuSubItem>
+          </AdminMenuSubItemContainer>
         </AdminMenuItemContainer>
+
+        {isGlobalAdmin ? (
+          <AdminMenuItemContainer>
+            <AdminMenuItem as={HrefLink} href="/global/sites" $active={isSiteGlobal}>
+              <AdminMenuItemIcon>
+                <SiteGlobIcon />
+              </AdminMenuItemIcon>
+              <AdminMenuItemLabel>{t('Global')}</AdminMenuItemLabel>
+            </AdminMenuItem>
+
+            <AdminMenuSubItemContainer $open={isSiteGlobal}>
+              <AdminMenuSubItem as={HrefLink} href="/global/sites">
+                {t('All sites')}
+              </AdminMenuSubItem>
+              <AdminMenuSubItem as={HrefLink} href="/global/sites/create">
+                {t('Create  site')}
+              </AdminMenuSubItem>
+              <AdminMenuSubItem as={HrefLink} href="/global/users">
+                {t('All users')}
+              </AdminMenuSubItem>
+              <AdminMenuSubItem as={HrefLink} href="/global/users/create">
+                {t('Create user')}
+              </AdminMenuSubItem>
+              <AdminMenuSubItem as={HrefLink} href="/global/status">
+                {t('System status')}
+              </AdminMenuSubItem>
+            </AdminMenuSubItemContainer>
+          </AdminMenuItemContainer>
+        ) : null}
       </AdminMenuContainer>
     </AdminSidebarContainer>
   );

@@ -1,8 +1,8 @@
 import { Revisions } from '@capture-models/editor';
-import { RevisionRequest } from '@capture-models/types';
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
+import { useHistory } from 'react-router-dom';
 import { useCanvasModel } from '../../../../site/hooks/use-canvas-model';
 import { useRouteContext } from '../../../../site/hooks/use-route-context';
 import { Button, ButtonRow } from '../../../atoms/Button';
@@ -12,11 +12,10 @@ import { useDeselectRevision } from '../hooks/use-deselect-revision';
 import { mergeDocument } from '../utility/merge-document';
 import { EditorRenderingConfig, useSlotConfiguration } from './EditorSlots';
 
-export const DirectEditButton: EditorRenderingConfig['SubmitButton'] = ({ afterSave }) => {
+export const DirectEditButton: EditorRenderingConfig['SubmitButton'] = ({ saveOnNavigate = true, afterSave }) => {
   const { canvasId } = useRouteContext();
   const { data: projectModel } = useCanvasModel();
   const [{ captureModel }, , refetchModel] = useLoadedCaptureModel(projectModel?.model?.id, undefined, canvasId);
-
   const api = useApi();
   const { t } = useTranslation();
   const currentRevision = Revisions.useStoreState(s => s.currentRevision);
@@ -24,10 +23,28 @@ export const DirectEditButton: EditorRenderingConfig['SubmitButton'] = ({ afterS
   const deselectRevision = useDeselectRevision();
   const unsavedIds = Revisions.useStoreState(s => s.unsavedRevisionIds);
   const isUnsaved = currentRevision && unsavedIds.indexOf(currentRevision.revision.id) !== -1;
+  const [isUpToDate, setIsUpToDate] = useState(true);
+  const latestRevision = useRef<any>();
+  const isUnMounting = useRef(false);
+  const history = useHistory();
 
-  const [saveRevision, { isLoading, reset }] = useMutation(async (status: string) => {
+  useEffect(() => {
+    if (latestRevision.current && latestRevision.current !== currentRevision?.document) {
+      setIsUpToDate(false);
+
+      latestRevision.current = currentRevision?.document;
+    }
+    if (!latestRevision.current) {
+      latestRevision.current = currentRevision?.document;
+    }
+  }, [currentRevision]);
+
+  const [saveRevision, { isLoading, isIdle, reset }] = useMutation(async (status: string) => {
     if (!currentRevision || !captureModel || !captureModel.id) {
-      throw new Error(t('Unable to save your submission'));
+      if (!isUnMounting.current) {
+        throw new Error(t('Unable to save your submission'));
+      }
+      return;
     }
 
     try {
@@ -43,6 +60,12 @@ export const DirectEditButton: EditorRenderingConfig['SubmitButton'] = ({ afterS
         document: newDocument,
       });
 
+      if (isUnMounting.current) {
+        return;
+      }
+
+      setIsUpToDate(true);
+
       if (config.deselectRevisionAfterSaving) {
         deselectRevision();
         reset();
@@ -50,9 +73,20 @@ export const DirectEditButton: EditorRenderingConfig['SubmitButton'] = ({ afterS
       }
     } catch (e) {
       console.error(e);
-      throw new Error(t('Unable to save your submission'));
+      if (!isUnMounting.current) {
+        throw new Error(t('Unable to save your submission'));
+      }
     }
   });
+
+  useEffect(() => {
+    return history.listen(() => {
+      if (!isUpToDate && latestRevision.current && saveOnNavigate) {
+        isUnMounting.current = true;
+        saveRevision(latestRevision.current.status);
+      }
+    });
+  }, [saveOnNavigate, history, isUpToDate, saveRevision]);
 
   if (!currentRevision) {
     return null;
@@ -65,9 +99,15 @@ export const DirectEditButton: EditorRenderingConfig['SubmitButton'] = ({ afterS
   return (
     <div style={{ padding: '0.5em 1em' }}>
       <ButtonRow $noMargin>
-        <Button $primary disabled={isLoading} onClick={() => saveRevision(currentRevision.revision.status)}>
-          {isLoading ? t('Saving...') : isUnsaved ? t('Save') : t('Save changes')}
-        </Button>
+        {isUpToDate && isIdle ? null : (
+          <Button
+            $primary
+            disabled={isLoading || isUpToDate}
+            onClick={() => saveRevision(currentRevision.revision.status)}
+          >
+            {isUpToDate ? t('Saved') : isLoading ? t('Saving...') : isUnsaved ? t('Save') : t('Save changes')}
+          </Button>
+        )}
       </ButtonRow>
     </div>
   );

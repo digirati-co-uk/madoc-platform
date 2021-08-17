@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const SuccessMessage = styled.div`
+export const SuccessMessage = styled.div<{ $margin?: boolean }>`
   background: #337c34;
   color: #fff;
   width: 100%;
@@ -10,4 +10,10 @@ export const SuccessMessage = styled.div`
   a {
     color: #fff;
   }
+
+  ${props =>
+    props.$margin &&
+    css`
+      margin-bottom: 1em;
+    `}
 `;

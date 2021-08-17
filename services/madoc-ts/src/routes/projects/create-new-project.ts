@@ -1,11 +1,9 @@
 import deepmerge from 'deepmerge';
 import { CrowdsourcingProjectTask } from '../../gateway/tasks/crowdsourcing-project-task';
-import { Site } from '../../types/omeka/Site';
 import { ProjectRow } from '../../types/projects';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { api } from '../../gateway/api.server';
 import { RequestError } from '../../utility/errors/request-error';
-import { mysql } from '../../utility/mysql';
 import { userWithScope } from '../../utility/user-with-scope';
 import { sql } from 'slonik';
 import { CreateProject } from '../../types/schemas/create-project';

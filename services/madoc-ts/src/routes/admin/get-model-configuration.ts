@@ -2,21 +2,15 @@ import { getProject } from '../../database/queries/project-queries';
 import { MADOC_MODEL_CONFIG } from '../../extensions/capture-models/ConfigInjection/constants';
 import { ConfigInjectionSettings } from '../../extensions/capture-models/ConfigInjection/types';
 import { api } from '../../gateway/api.server';
-import { Site } from '../../types/omeka/Site';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { NotFound } from '../../utility/errors/not-found';
 import { RequestError } from '../../utility/errors/request-error';
-import { mysql } from '../../utility/mysql';
 import { parseProjectId } from '../../utility/parse-project-id';
 import { optionalUserWithScope } from '../../utility/user-with-scope';
 
 export const getModelConfiguration: RouteMiddleware<{ slug: string }> = async context => {
   const { siteId } = optionalUserWithScope(context, ['site.admin']);
-  const site = await new Promise<Site>(resolve =>
-    context.mysql.query(mysql`select * from site where site.id = ${siteId}`, (err, data) => {
-      resolve(data[0]);
-    })
-  );
+  const site = await context.siteManager.getSiteById(siteId);
 
   if (!site || !site.slug) {
     throw new NotFound('Site not found');

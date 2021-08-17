@@ -1,10 +1,8 @@
 import { getProject } from '../../database/queries/project-queries';
 import { FacetConfig } from '../../frontend/shared/components/MetadataFacetEditor';
 import { api } from '../../gateway/api.server';
-import { Site } from '../../types/omeka/Site';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { NotFound } from '../../utility/errors/not-found';
-import { mysql } from '../../utility/mysql';
 import { parseEtag } from '../../utility/parse-etag';
 import { parseProjectId } from '../../utility/parse-project-id';
 import { userWithScope } from '../../utility/user-with-scope';
@@ -51,11 +49,7 @@ export const updateMetadataConfiguration: RouteMiddleware = async context => {
   const { id, siteId } = userWithScope(context, ['site.admin']);
   const staticConfiguration = { metadata: [] };
 
-  const site = await new Promise<Site>(resolve =>
-    context.mysql.query(mysql`select * from site where site.id = ${siteId}`, (err, data) => {
-      resolve(data[0]);
-    })
-  );
+  const site = await context.siteManager.getSiteById(siteId);
 
   if (!site || !site.slug) {
     throw new NotFound('Site not found');

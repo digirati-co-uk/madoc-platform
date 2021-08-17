@@ -10,7 +10,7 @@ export const getActivityStream: RouteMiddleware<{
 }> = async context => {
   const slug = context.params.slug;
   const siteId = slug
-    ? (await context.omeka.getSiteIdBySlug(slug))?.id
+    ? (await context.siteManager.getSiteBySlug(slug))?.id
     : optionalUserWithScope(context, ['site.view']).siteId;
   const { primaryStream, secondaryStream } = context.params;
 
@@ -35,7 +35,7 @@ export const getActivityStream: RouteMiddleware<{
     id: `${baseUrl}/changes`,
     type: 'OrderedCollection',
     totalItems: totalItems,
-    totalPages: lastPage,
+    totalPages: lastPage + 1,
     rights: 'http://creativecommons.org/licenses/by/4.0/',
     partOf: secondaryStream
       ? [

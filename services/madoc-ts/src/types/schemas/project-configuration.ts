@@ -39,6 +39,7 @@ export type ProjectConfiguration = {
     preventContributionAfterSubmission?: boolean;
     preventMultipleUserSubmissionsPerResource?: boolean;
     preventContributionAfterManifestUnassign?: boolean;
+    hideViewerControls?: boolean;
   };
   projectPageOptions?: {
     hideStartContributing?: boolean;

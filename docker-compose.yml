@@ -99,6 +99,12 @@ services:
       - GATEWAY_HOST=${GATEWAY_HOST}
       - OMEKA_FILE_DIRECTORY=/home/node/app/omeka-files
       - MIGRATE=true
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_SECURITY=${SMTP_SECURITY}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - MAIL_FROM_USER=${MAIL_FROM_USER}
     ports:
       - "127.0.0.1:${PORTS_MADOC_TS_DEBUGGER:-9230}:9230"
       - "127.0.0.1:${PORTS_MADOC_TS_WEBPACK:-40493}:40493"

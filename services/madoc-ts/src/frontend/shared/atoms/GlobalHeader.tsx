@@ -14,6 +14,11 @@ export const GlobalHeaderTitle = styled.div`
   color: #fff;
 `;
 
+export const GlobalHeaderInstallation = styled.div`
+  margin-right: 1em;
+  color: rgba(255, 255, 255, 0.5);
+`;
+
 export const GlobalHeaderMenuContainer = styled.div`
   position: relative;
 `;
@@ -53,7 +58,7 @@ export const GlobalHeaderMenuList = styled.div<{ $visible?: boolean }>`
   right: 0;
   top: 1.8em;
   font-size: 0.9em;
-  min-width: 10em;
+  min-width: 10.5em;
   ${props =>
     props.$visible &&
     css`

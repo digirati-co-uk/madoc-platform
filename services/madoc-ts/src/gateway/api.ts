@@ -26,7 +26,7 @@ import { TaskExtension } from '../extensions/tasks/extension';
 import { ThemeExtension } from '../extensions/themes/extension';
 import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
 import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
-import { Site } from '../types/omeka/Site';
+import { Site } from '../extensions/site-manager/types';
 import { SingleUser } from '../types/omeka/User';
 import { Pm2Status } from '../types/pm2';
 import { ResourceLinkResponse } from '../types/schemas/linking';
@@ -515,6 +515,7 @@ export class ApiClient {
     return this.request<{
       id: string;
       task_id: string;
+      status: number;
     }>(`/api/madoc/projects/${id}/task`);
   }
 
@@ -1364,7 +1365,7 @@ export class ApiClient {
   async getTaskSubjects(
     id: string,
     subjects?: string[],
-    query: { type?: string; assignee?: boolean; assigned_to?: string } = {},
+    query: { type?: string; assignee?: boolean; assigned_to?: string; status?: number } = {},
     parentTask = false
   ) {
     return this.request<{ subjects: Array<{ subject: string; status: number; assignee_id?: string }> }>(
@@ -2181,6 +2182,10 @@ export class ApiClient {
 
   async getSiteSearchFacetConfiguration() {
     return this.publicRequest<{ facets: FacetConfig[] }>(`/madoc/api/configuration/search-facets`);
+  }
+
+  async getCurrentSiteDetails() {
+    return this.publicRequest<Site>(`/madoc/api/site`);
   }
 
   async getSiteMetadataConfiguration(query?: { project_id?: string; collection_id?: number }) {
