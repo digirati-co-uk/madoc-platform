@@ -1,5 +1,6 @@
 import { BaseField, CaptureModel, RevisionRequest } from '@capture-models/types';
 import React, { useContext, useMemo } from 'react';
+import { RouteContext } from '../../../../site/hooks/use-route-context';
 import { useCurrentEntity } from '../hooks/use-current-entity';
 import { DefaultAdjacentNavigation } from './DefaultAdjacentNavigation';
 import { DefaultBreadcrumbs } from './DefaultBreadcrumbs';
@@ -63,7 +64,10 @@ export type EditorRenderingConfig = {
   }>; // Fallbacks passed in
   InlineSelector: any; // Fallbacks passed in
   Choice: React.FC;
-  SubmitButton: React.FC<{ afterSave?: (req: RevisionRequest) => void | Promise<void> }>;
+  SubmitButton: React.FC<{
+    afterSave?: (req: { revisionRequest: RevisionRequest; context: RouteContext }) => void | Promise<void>;
+    saveOnNavigate?: boolean;
+  }>;
   PreviewSubmission: React.FC;
   PostSubmission: React.FC;
 };
@@ -76,6 +80,7 @@ export type EditorConfig = {
   selectEntityWhenCreating: boolean;
   selectFieldWhenCreating: boolean;
   deselectRevisionAfterSaving: boolean;
+  saveOnNavigate: boolean;
   profileConfig: {
     [profile: string]: ProfileConfig;
   };
@@ -86,6 +91,7 @@ const defaultEditorConfig: EditorConfig = {
   selectEntityWhenCreating: true,
   selectFieldWhenCreating: true,
   deselectRevisionAfterSaving: false,
+  saveOnNavigate: false,
   profileConfig: {},
   immutableFields: [],
 };
@@ -251,7 +257,11 @@ const Choice: EditorRenderingConfig['Choice'] = props => {
 const SubmitButton: EditorRenderingConfig['SubmitButton'] = props => {
   const Slots = useSlotContext();
 
-  return <Slots.SubmitButton afterSave={props.afterSave}>{props.children}</Slots.SubmitButton>;
+  return (
+    <Slots.SubmitButton saveOnNavigate={Slots.configuration.saveOnNavigate} afterSave={props.afterSave}>
+      {props.children}
+    </Slots.SubmitButton>
+  );
 };
 
 const PreviewSubmission: EditorRenderingConfig['PreviewSubmission'] = props => {

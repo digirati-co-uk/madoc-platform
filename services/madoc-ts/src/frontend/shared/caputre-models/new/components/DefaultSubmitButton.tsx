@@ -12,9 +12,19 @@ import { EditorRenderingConfig, EditorSlots } from './EditorSlots';
 
 export const DefaultSubmitButton: EditorRenderingConfig['SubmitButton'] = ({ afterSave }) => {
   const { t } = useTranslation();
-  const { projectId } = useRouteContext();
+  const routeContext = useRouteContext();
+  const { projectId } = routeContext;
   const currentRevision = Revisions.useStoreState(s => s.currentRevision);
-  const updateFunction = useViewerSaving(afterSave);
+  const updateFunction = useViewerSaving(
+    afterSave
+      ? async revisionRequest => {
+          await afterSave({
+            revisionRequest,
+            context: routeContext,
+          });
+        }
+      : undefined
+  );
   const deselectRevision = useDeselectRevision();
 
   const [saveRevision, { isLoading, isSuccess, reset }] = useMutation(async (status: string) => {

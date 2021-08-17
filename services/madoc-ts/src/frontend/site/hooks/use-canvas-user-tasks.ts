@@ -6,47 +6,48 @@ import { useApi } from '../../shared/hooks/use-api';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useInvalidateAfterSubmission } from './use-invalidate-after-submission';
 import { useProjectCanvasTasks } from './use-project-canvas-tasks';
-import { useRouteContext } from './use-route-context';
+import { RouteContext } from './use-route-context';
 
 const defaultScope: any[] = [];
 export function useCanvasUserTasks() {
   const invalidate = useInvalidateAfterSubmission();
-  const { projectId, manifestId, collectionId, canvasId } = useRouteContext();
   const config = useSiteConfiguration();
   const api = useApi();
   const { user, scope = defaultScope } = api.getIsServer() ? { user: undefined } : api.getCurrentUser() || {};
   const { data: canvasTask, isLoading, refetch, updatedAt } = useProjectCanvasTasks();
 
-  const [updateClaim] = useMutation(async (response: RevisionRequest) => {
-    if (canvasId && projectId) {
-      const respStatus = response.revision.status;
+  const [updateClaim] = useMutation(
+    async ({ revisionRequest: response, context }: { revisionRequest: RevisionRequest; context: RouteContext }) => {
+      if (context.canvasId && context.projectId) {
+        const respStatus = response.revision.status;
 
-      if (respStatus === 'draft') {
-        // Create user task and mark as in progress.
-        await api.createResourceClaim(projectId, {
-          revisionId: response.revision.id,
-          manifestId,
-          canvasId,
-          collectionId,
-          status: 1,
-        });
+        if (respStatus === 'draft') {
+          // Create user task and mark as in progress.
+          await api.createResourceClaim(context.projectId, {
+            revisionId: response.revision.id,
+            manifestId: context.manifestId,
+            canvasId: context.canvasId,
+            collectionId: context.collectionId,
+            status: 1,
+          });
 
-        await invalidate();
-      }
+          await invalidate();
+        }
 
-      if (respStatus === 'submitted') {
-        // Create user task and mark as in review.
-        await api.createResourceClaim(projectId, {
-          revisionId: response.revision.id,
-          manifestId,
-          canvasId,
-          collectionId,
-          status: 2,
-        });
-        await invalidate();
+        if (respStatus === 'submitted') {
+          // Create user task and mark as in review.
+          await api.createResourceClaim(context.projectId, {
+            revisionId: response.revision.id,
+            manifestId: context.manifestId,
+            canvasId: context.canvasId,
+            collectionId: context.collectionId,
+            status: 2,
+          });
+          await invalidate();
+        }
       }
     }
-  });
+  );
 
   return useMemo(() => {
     const reviews = canvasTask?.userTasks
