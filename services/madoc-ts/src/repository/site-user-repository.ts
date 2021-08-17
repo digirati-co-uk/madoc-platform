@@ -26,7 +26,7 @@ import { ExternalConfig } from '../types/external-config';
 import { OmekaApi } from '../utility/omeka-api';
 import { phpHashCompare } from '../utility/php-hash-compare';
 import { passwordHash } from '../utility/php-password-hash';
-import { SQL_COMMA, SQL_EMPTY, SQL_INT_ARRAY } from '../utility/postgres-tags';
+import { SQL_COMMA, SQL_EMPTY } from '../utility/postgres-tags';
 import { sqlDate, upsert } from '../utility/slonik-helpers';
 import { BaseRepository } from './base-repository';
 
@@ -170,7 +170,7 @@ export class SiteUserRepository extends BaseRepository {
           where sp.site_id = ${siteId}
             and u.is_active = true
             and (
-              sp.role = ANY (${sql.array(roles, SQL_INT_ARRAY)}) 
+              sp.role = ANY (${sql.array(roles, 'text')}) 
               ${includeAdmins ? sql`or sp.role = 'admin'` : SQL_EMPTY}
             )
       `,
