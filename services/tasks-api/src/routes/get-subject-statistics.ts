@@ -11,6 +11,7 @@ export const getSubjectStatistics: RouteMiddleware<{ id: string }> = async ctx =
   const taskId = ctx.params.id;
   const context = ctx.state.jwt.context;
   const type = ctx.query.type;
+  const status = typeof ctx.query.status !== 'undefined' ? Number(ctx.query.status) : undefined;
   const parentSubject = ctx.query.parent_subject;
   const assignee = ctx.query.assignee && ctx.query.assignee === 'true';
   const assigned_to = ctx.query.assigned_to;
@@ -22,6 +23,7 @@ export const getSubjectStatistics: RouteMiddleware<{ id: string }> = async ctx =
   const parentQuery = parentSubject ? sql`and pt.subject = ${parentSubject}` : sql``;
   const assigneeFields = assignee ? sql`, t.assignee_id` : sql``;
   const assignedToQuery = assigned_to ? sql`and t.assignee_id = ${assigned_to}` : sql``;
+  const statusQuery = typeof status !== 'undefined' && !Number.isNaN(status) ? sql`and t.status = ${status}` : sql``;
 
   const results = await ctx.connection.any(sql`
     select t.subject, t.status ${assigneeFields} from tasks t 
@@ -31,6 +33,7 @@ export const getSubjectStatistics: RouteMiddleware<{ id: string }> = async ctx =
         ${typeQuery}
         ${parentQuery}
         ${assignedToQuery}
+        ${statusQuery}
         and t.context ?& ${sql.array(context, 'text')}
   `);
 

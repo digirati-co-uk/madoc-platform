@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from 'react-query';
+import { Redirect } from 'react-router-dom';
 import { SitePlugin } from '../../../../types/schemas/plugins';
 import { Button, ButtonRow } from '../../../shared/atoms/Button';
 import { EmptyState } from '../../../shared/atoms/EmptyState';

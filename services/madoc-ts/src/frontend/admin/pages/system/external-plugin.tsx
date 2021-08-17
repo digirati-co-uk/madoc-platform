@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { useParams } from 'react-router-dom';
+import { Redirect, useParams } from 'react-router-dom';
 import { RemotePlugin } from '../../../../types/plugins';
 import { Button } from '../../../shared/atoms/Button';
 import { Heading1 } from '../../../shared/atoms/Heading1';
@@ -17,7 +17,7 @@ import {
 } from '../../../shared/atoms/SystemUI';
 import { useApi } from '../../../shared/hooks/use-api';
 import { useData } from '../../../shared/hooks/use-data';
-import { useSite } from '../../../shared/hooks/use-site';
+import { useSite, useUser } from '../../../shared/hooks/use-site';
 import { Spinner } from '../../../shared/icons/Spinner';
 import { serverRendererFor } from '../../../shared/plugins/external/server-renderer-for';
 import { AdminHeader } from '../../molecules/AdminHeader';
@@ -28,11 +28,16 @@ export const ViewExternalPlugin: React.FC = () => {
   const { data } = useData<RemotePlugin>(ViewExternalPlugin);
   const api = useApi();
   const site = useSite();
+  const user = useUser();
 
   const [install, installStatus] = useMutation(async (version?: string) => {
     await api.system.installExternalPlugin(owner, repo, version);
     window.location.href = `/s/${site.slug}/madoc/admin/system/plugins`;
   });
+
+  if (user?.role !== 'global_admin') {
+    return <Redirect to={'/'} />;
+  }
 
   return (
     <>

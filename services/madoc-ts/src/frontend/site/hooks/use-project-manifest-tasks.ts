@@ -5,5 +5,6 @@ export function useProjectManifestTasks({ refetchOnMount }: { refetchOnMount?: b
   const { projectId, manifestId } = useRouteContext();
   return apiHooks.getSiteProjectManifestTasks(() => (projectId && manifestId ? [projectId, manifestId] : undefined), {
     forceFetchOnMount: refetchOnMount,
+    staleTime: 500,
   });
 }

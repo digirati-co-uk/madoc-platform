@@ -9,6 +9,7 @@ import { disposeApis } from './middleware/dispose-apis';
 import { errorHandler } from './middleware/error-handler';
 import { SiteUserRepository } from './repository/site-user-repository';
 import { CronJobs } from './utility/cron-jobs';
+import { MailConfig, Mailer } from './utility/mailer';
 import { OmekaApi } from './utility/omeka-api';
 import { TypedRouter } from './utility/typed-router';
 import { createPostgresPool } from './database/create-postgres-pool';
@@ -31,7 +32,7 @@ import schedule from 'node-schedule';
 
 export const fileDirectory = process.env.OMEKA_FILE_DIRECTORY || '/home/node/app/omeka-files';
 
-export async function createApp(router: TypedRouter<any, any>, config: ExternalConfig) {
+export async function createApp(router: TypedRouter<any, any>, config: ExternalConfig, env: { smtp: MailConfig }) {
   const app = new Koa();
   const pool = createPostgresPool();
   const mysqlPool = createMysqlPool();
@@ -44,8 +45,8 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
 
     await syncOmeka(mysqlPool, pool, config);
 
-    const siteRepo = new SiteUserRepository(pool, new OmekaApi(mysqlPool), 'HYBRID_OMEKA');
-    await siteRepo.legacyOmekaDatabaseSync();
+    const siteRepo = new SiteUserRepository(pool, new OmekaApi(mysqlPool), 'HYBRID_POSTGRES');
+    await siteRepo.legacyOmekaDatabaseSync(config.permissions);
   }
 
   if (
@@ -83,10 +84,16 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   app.context.mysql = mysqlPool;
   app.context.cron = new CronJobs();
   app.context.pluginManager = await createPluginManager(pool);
+  app.context.mailer = new Mailer(env.smtp);
 
   // Set i18next
   const [, i18next] = await i18nextPromise;
   app.context.i18next = await i18next;
+  await app.context.mailer.verify();
+
+  if (!app.context.mailer.enabled) {
+    console.log('WARNING: SMTP has not been configured');
+  }
 
   // Validator.
   app.context.ajv = new Ajv();

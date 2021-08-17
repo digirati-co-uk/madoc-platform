@@ -36,7 +36,8 @@
       "preventContributionAfterRejection": false,
       "preventContributionAfterSubmission": false,
       "preventMultipleUserSubmissionsPerResource": false,
-      "preventContributionAfterManifestUnassign": false
+      "preventContributionAfterManifestUnassign": false,
+      "hideViewerControls": false
     },
     "projectPageOptions": {
       "hideStartContributing": false,

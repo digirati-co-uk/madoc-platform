@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
+import { CurrentUserWithScope, SystemConfig, Site } from '../../extensions/site-manager/types';
 import { ApiClient } from '../../gateway/api';
 import { ResolvedTheme } from '../../types/themes';
-import { PublicSite } from '../../utility/omeka-api';
 import { renderUniversalRoutes } from '../shared/utility/server-utils';
 import { ApiContext } from '../shared/hooks/use-api';
 import { defaultTheme } from '../themes/default-theme';
@@ -16,8 +16,8 @@ export type SiteAppProps = {
   api: ApiClient;
   routes: UniversalRoute[];
   siteSlug?: string;
-  user?: { name: string; id: number; scope: string[] };
-  site: PublicSite;
+  user?: CurrentUserWithScope;
+  site: Site;
   theme?: ResolvedTheme | null;
   supportedLocales: Array<{ label: string; code: string }>;
   displayLanguages: Array<{ label: string; code: string }>;
@@ -29,6 +29,8 @@ export type SiteAppProps = {
   };
   collectThemeOverrides?: (name: string, theme: any) => void;
   themeOverrides?: any;
+  formResponse?: any;
+  systemConfig: SystemConfig;
 };
 
 const SiteApp: React.FC<SiteAppProps> = ({
@@ -46,14 +48,23 @@ const SiteApp: React.FC<SiteAppProps> = ({
   },
   theme,
   themeOverrides,
+  formResponse,
+  systemConfig,
 }) => {
+  const [updatedSite, setSite] = useState(site);
+  const [updatedFormResponse, setUpdatedFormResponse] = useState<any | undefined>(formResponse);
+  const clearFormResponse = useCallback(() => {
+    setUpdatedFormResponse(undefined);
+  }, []);
+
   return (
     <CustomThemeProvider theme={theme && theme.theme ? theme.theme : defaultTheme} themeOverrides={themeOverrides}>
       <VaultProvider>
         <SiteProvider
           value={useMemo(
             () => ({
-              site,
+              site: updatedSite,
+              setSite,
               user,
               supportedLocales,
               contentLanguages,
@@ -61,8 +72,23 @@ const SiteApp: React.FC<SiteAppProps> = ({
               defaultLocale,
               navigationOptions,
               theme,
+              formResponse: updatedFormResponse,
+              clearFormResponse,
+              systemConfig,
             }),
-            [contentLanguages, displayLanguages, theme, site, user, supportedLocales, defaultLocale, navigationOptions]
+            [
+              updatedSite,
+              user,
+              supportedLocales,
+              contentLanguages,
+              displayLanguages,
+              defaultLocale,
+              navigationOptions,
+              theme,
+              updatedFormResponse,
+              clearFormResponse,
+              systemConfig,
+            ]
           )}
         >
           <ApiContext.Provider value={api}>{renderUniversalRoutes(routes)}</ApiContext.Provider>

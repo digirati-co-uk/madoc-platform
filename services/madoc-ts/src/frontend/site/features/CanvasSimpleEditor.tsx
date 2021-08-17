@@ -64,6 +64,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
   }, []);
 
   const allowMultiple = !config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource;
+  const hideViewerControls = !!config.project.modelPageOptions?.hideViewerControls;
   const preventFurtherSubmission = !allowMultiple && allTasksDone;
 
   const isEditing = isEditingAnotherUsersRevision(captureModel, revision, user.user);
@@ -143,7 +144,12 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
         revision={isSegmentation ? undefined : revision}
         captureModel={captureModel}
         slotConfig={{
-          editor: { allowEditing: !preventFurtherSubmission, deselectRevisionAfterSaving: true, profileConfig },
+          editor: {
+            allowEditing: !preventFurtherSubmission,
+            deselectRevisionAfterSaving: true,
+            profileConfig,
+            saveOnNavigate: isPreparing || mode === 'transcription',
+          },
           components: components,
         }}
       >
@@ -178,11 +184,13 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
                 onPanInSketchMode={onPanInSketchMode}
               />
 
-              <ButtonRow style={{ position: 'absolute', top: 0, left: 10, zIndex: 20 }}>
-                <Button onClick={goHome}>{t('atlas__zoom_home', { defaultValue: 'Home' })}</Button>
-                <Button onClick={zoomOut}>{t('atlas__zoom_out', { defaultValue: '-' })}</Button>
-                <Button onClick={zoomIn}>{t('atlas__zoom_in', { defaultValue: '+' })}</Button>
-              </ButtonRow>
+              {hideViewerControls ? null : (
+                <ButtonRow style={{ position: 'absolute', top: 0, left: 10, zIndex: 20 }}>
+                  <Button onClick={goHome}>{t('atlas__zoom_home', { defaultValue: 'Home' })}</Button>
+                  <Button onClick={zoomOut}>{t('atlas__zoom_out', { defaultValue: '-' })}</Button>
+                  <Button onClick={zoomIn}>{t('atlas__zoom_in', { defaultValue: '+' })}</Button>
+                </ButtonRow>
+              )}
 
               <div
                 style={{

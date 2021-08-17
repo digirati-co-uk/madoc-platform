@@ -3,7 +3,6 @@ import { OmekaApi } from '../utility/omeka-api';
 import { RouteMiddleware } from '../types/route-middleware';
 
 export const omekaApi: RouteMiddleware<{ slug: string }> = async (context, next) => {
-  context.omeka = new OmekaApi(context.mysql);
-  context.siteManager = new SiteUserRepository(context.connection, context.omeka, 'HYBRID_OMEKA');
+  context.siteManager = new SiteUserRepository(context.connection, new OmekaApi(context.mysql), 'HYBRID_POSTGRES');
   await next();
 };

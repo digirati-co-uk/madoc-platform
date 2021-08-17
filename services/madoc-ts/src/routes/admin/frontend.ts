@@ -19,9 +19,10 @@ export const adminFrontend: RouteMiddleware = async context => {
       return;
     }
   }
+  const systemConfig = context.siteManager.getSystemConfig();
   const bundle = context.routes.url('assets-bundles', { slug: context.params.slug, bundleId: 'admin' });
-
   const { cachedApi, site } = context.state;
+  const user = context.siteManager.getUserFromJwt(site.id, context.state.jwt);
   const siteLocales = await cachedApi(`locales`, 3000, api => api.getSiteLocales());
   const lng = context.cookies.get('i18next');
   const [, i18nInstance] = await createBackend(lng, site.id);
@@ -38,14 +39,8 @@ export const adminFrontend: RouteMiddleware = async context => {
       siteSlug: context.params.slug,
       pluginManager: context.pluginManager,
       plugins: context.pluginManager.listPlugins(site.id),
-      user:
-        context.state.jwt && context.state.jwt.user && context.state.jwt.user.id
-          ? {
-              name: context.state.jwt.user.name,
-              id: context.state.jwt.user.id,
-              scope: context.state.jwt.scope,
-            }
-          : undefined,
+      user: await user,
+      systemConfig: await systemConfig,
     });
 
     if (result.type === 'redirect') {
@@ -79,6 +74,8 @@ export const siteFrontend: RouteMiddleware = async context => {
 
   // ...
   const { cachedApi, site } = context.state;
+  const systemConfig = context.siteManager.getSystemConfig();
+  const user = context.siteManager.getUserFromJwt(site.id, context.state.jwt);
   const siteLocales = await cachedApi(`locales`, 3000, api => api.getSiteLocales());
 
   const collectionsEnabled = await context.connection.maybeOne(
@@ -106,6 +103,7 @@ export const siteFrontend: RouteMiddleware = async context => {
       siteSlug: site.slug,
       site: site,
       siteLocales,
+      reactFormResponse: context.reactFormResponse,
       pluginManager: context.pluginManager,
       plugins: context.pluginManager.listPlugins(site.id),
       theme: currentTheme,
@@ -124,14 +122,8 @@ export const siteFrontend: RouteMiddleware = async context => {
           site.id
         );
       },
-      user:
-        context.state.jwt && context.state.jwt.user && context.state.jwt.user.id
-          ? {
-              name: context.state.jwt.user.name,
-              id: context.state.jwt.user.id,
-              scope: context.state.jwt.scope,
-            }
-          : undefined,
+      user: await user,
+      systemConfig: await systemConfig,
       navigationOptions: {
         enableCollections: !!collectionsEnabled,
         enableProjects: !!projectsEnabled,

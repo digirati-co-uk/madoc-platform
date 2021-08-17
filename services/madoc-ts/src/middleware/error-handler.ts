@@ -43,7 +43,7 @@ export const errorHandler: Middleware = async (context, next) => {
       context.response.status = 500;
     }
 
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development' && context.response.status !== 409 && context.response.status !== 400) {
       context.response.body = `
         <h1>Server error</h1>
         <p>This will only appear in development.</p>

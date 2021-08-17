@@ -46,9 +46,13 @@ export const omekaPage: RouteMiddleware<{ slug: string }> = async (context, next
       // Return the response wrapped in Omeka.
       context.response.body = `
         ${context.omekaMinimal ? '' : header}
-        ${(context.omekaMessages || []).map(
-          ({ type, message }) => `<ul class="messages messages--body"><li class="${type}">${message}</li></ul>`
-        )}
+        ${
+          context.omekaMinimal
+            ? ''
+            : (context.omekaMessages || []).map(
+                ({ type, message }) => `<ul class="messages messages--body"><li class="${type}">${message}</li></ul>`
+              )
+        }
         ${context.omekaPage}
         ${context.omekaMinimal ? '' : footer}
       `;

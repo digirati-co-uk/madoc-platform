@@ -8,8 +8,22 @@ import { exportSite } from './routes/admin/export-site';
 import { getMetadataKeys } from './routes/admin/get-metadata-keys';
 import { getMetadataValues } from './routes/admin/get-metadata-values';
 import { getModelConfiguration } from './routes/admin/get-model-configuration';
-import { allUsersAutocomplete } from './routes/manage-site/all-users-autocomplete';
+import { getSystemConfig } from './routes/global/get-system-config';
+import { getUser } from './routes/global/get-user';
+import { listAllUsers } from './routes/global/list-all-users';
+import { resetPassword } from './routes/global/reset-password';
+import { updateSystemConfig } from './routes/global/update-system-config';
+import { updateUser } from './routes/global/update-user';
+import { activateUser } from './routes/global/activate-user';
+import { allUsersAutocomplete } from './routes/global/all-users-autocomplete';
+import { createInvitation } from './routes/manage-site/create-invitation';
+import { createSite } from './routes/global/create-site';
+import { createUser } from './routes/global/create-user';
+import { deactivateUser } from './routes/global/deactivate-user';
+import { deleteInvitation } from './routes/manage-site/delete-invitation';
+import { deleteUser } from './routes/global/delete-user';
 import { deleteUserSiteRole } from './routes/manage-site/delete-user-site-role';
+import { getInvitation } from './routes/manage-site/get-invitation';
 import { getSiteUsers } from './routes/manage-site/get-site-users';
 import { importSite } from './routes/admin/import-site';
 import { listJobs, runJob } from './routes/admin/list-jobs';
@@ -20,7 +34,7 @@ import {
   updateLanguagePreferences,
   updateLocalisation,
 } from './routes/admin/localisation';
-import { listAllSites } from './routes/manage-site/list-all-sites';
+import { listAllSites } from './routes/global/list-all-sites';
 import { getMetadataConfiguration, updateMetadataConfiguration } from './routes/admin/metadata-configuration';
 import {
   disablePlugin,
@@ -56,7 +70,11 @@ import { getPage } from './routes/content/get-page';
 import { linkAutocomplete } from './routes/content/link-autocomplete';
 import { resolveSlots } from './routes/content/resolve-slots';
 import { getCanvasReference } from './routes/iiif/canvases/get-canvas-reference';
+import { listInvitations } from './routes/manage-site/list-invitations';
+import { updateInvitation } from './routes/manage-site/update-invitation';
+import { updateSiteDetails } from './routes/manage-site/update-site-details';
 import { updateUserSiteRole } from './routes/manage-site/update-user-site-role';
+import { siteDetails } from './routes/site/site-details';
 import { deleteManifestSummary } from "./routes/iiif/manifests/delete-manifest-summary";
 import { siteManifestBuild } from './routes/site/site-manifest-build';
 import { createMedia } from './routes/media/create-media';
@@ -92,7 +110,8 @@ import { updateProjectStatus } from './routes/projects/update-project-status';
 import { siteManifestTasks } from './routes/site/site-manifest-tasks';
 import { getStaticPage, sitePages } from './routes/site/site-pages';
 import { siteTaskMetadata } from './routes/site/site-task-metadata';
-import { getUser } from './routes/user/get-user';
+import { forgotPassword } from './routes/user/forgot-password';
+import { getSiteUser } from './routes/user/get-site-user';
 import {
   clearAllNotifications,
   clearNotification,
@@ -102,6 +121,10 @@ import {
   readAllNotifications,
   readNotification,
 } from './routes/user/notifications';
+import { registerPage } from './routes/user/register';
+import { resetPasswordPage } from './routes/user/reset-password';
+import { updatePassword } from './routes/user/update-password';
+import { updateProfilePage } from './routes/user/update-profile';
 import { userAutocomplete } from './routes/user/user-autocomplete';
 import { TypedRouter } from './utility/typed-router';
 import { ping } from './routes/ping';
@@ -164,7 +187,6 @@ import { updateResourceClaim } from './routes/projects/update-resource-claim';
 import { getSiteManifestStructure } from './routes/site/site-manifest-structure';
 import { userDetails } from './routes/user/details';
 import { sitePublishedModels } from './routes/site/site-published-models';
-import { personalAccessToken } from './routes/user/personal-access-token';
 import { addLinking } from './routes/iiif/linking/add-linking';
 import { deleteLinking } from './routes/iiif/linking/delete-linking';
 import { updateLinking } from './routes/iiif/linking/update-linking';
@@ -194,12 +216,39 @@ export const router = new TypedRouter({
   'cron-jobs': [TypedRouter.GET, '/api/madoc/cron/jobs', listJobs],
   'run-cron-jobs': [TypedRouter.POST, '/api/madoc/cron/jobs/:jobId/run', runJob],
 
-  // Site admin.
+  // Manage sites.
   'site-admin-list-all-sites': [TypedRouter.GET, '/api/madoc/sites', listAllSites],
+  'site-admin-create-site': [TypedRouter.POST, '/api/madoc/sites', createSite],
+
+  // Manage all users
+  'global-list-all-users': [TypedRouter.GET, '/api/madoc/users', listAllUsers],
+  'global-get-user': [TypedRouter.GET, '/api/madoc/users/:userId', getUser],
+  'global-put-user': [TypedRouter.PUT, '/api/madoc/users/:userId', updateUser],
+  'global-create-user': [TypedRouter.POST, '/api/madoc/users', createUser],
+  'global-activate-user': [TypedRouter.POST, '/api/madoc/users/:userId/activate', activateUser],
+  'global-deactivate-user': [TypedRouter.POST, '/api/madoc/users/:userId/deactivate', deactivateUser],
+  'global-delete-user': [TypedRouter.DELETE, '/api/madoc/users/:userId', deleteUser],
+  'global-reset-password-user': [TypedRouter.POST, '/api/madoc/users/:userId/reset-password', resetPassword],
+  'global-get-system-config': [TypedRouter.GET, '/api/madoc/system/config', getSystemConfig],
+  'global-update-system-config': [TypedRouter.POST, '/api/madoc/system/config', updateSystemConfig],
+
+  // Manage users (on site)
   'site-admin-list-all-site-users': [TypedRouter.GET, '/api/madoc/manage-site/users', getSiteUsers],
   'manage-site-set-user-role': [TypedRouter.POST, '/api/madoc/manage-site/users/:userId/role', updateUserSiteRole],
   'manage-site-all-users': [TypedRouter.GET, '/api/madoc/manage-site/users/search', allUsersAutocomplete],
   'manage-site-delete-user-role': [TypedRouter.DELETE, '/api/madoc/manage-site/users/:userId/role', deleteUserSiteRole],
+  'manage-site-details': [TypedRouter.PUT, '/api/madoc/manage-site/details', updateSiteDetails],
+
+  // Invitations (on site)
+  'manage-site-list-invitations': [TypedRouter.GET, '/api/madoc/manage-site/invitations', listInvitations],
+  'manage-site-get-invitation': [TypedRouter.GET, '/api/madoc/manage-site/invitations/:invitationId', getInvitation],
+  'manage-site-put-invitation': [TypedRouter.PUT, '/api/madoc/manage-site/invitations/:invitationId', updateInvitation],
+  'manage-site-delete-invitation': [
+    TypedRouter.DELETE,
+    '/api/madoc/manage-site/invitations/:invitationId',
+    deleteInvitation,
+  ],
+  'manage-site-post-invitation': [TypedRouter.POST, '/api/madoc/manage-site/invitations', createInvitation],
 
   // Plugins
   'list-plugins': [TypedRouter.GET, '/api/madoc/system/plugins', listPlugins],
@@ -229,7 +278,7 @@ export const router = new TypedRouter({
   'site-details': [TypedRouter.GET, '/api/madoc/site/:siteId/details', getSiteDetails],
 
   // User API.
-  'get-user': [TypedRouter.GET, '/api/madoc/users/:id', getUser],
+  'get-user': [TypedRouter.GET, '/api/madoc/users/:id', getSiteUser],
   'get-user-autocomplete': [TypedRouter.GET, '/api/madoc/users', userAutocomplete],
 
   // Notifications.
@@ -408,10 +457,20 @@ export const router = new TypedRouter({
   'delete-block': [TypedRouter.DELETE, '/api/madoc/blocks/:blockId', deleteBlock],
   'update-block': [TypedRouter.PUT, '/api/madoc/blocks/:blockId', updateBlock],
 
-  // Omeka routes
+  // Anonymous routes
   'get-login': [TypedRouter.GET, '/s/:slug/madoc/login', loginPage],
   'post-login': [TypedRouter.POST, '/s/:slug/madoc/login', loginPage],
+  'get-register': [TypedRouter.GET, '/s/:slug/madoc/register', registerPage],
+  'post-register': [TypedRouter.POST, '/s/:slug/madoc/register', registerPage],
+  'get-forgot-password': [TypedRouter.GET, '/s/:slug/madoc/forgot-password', forgotPassword],
+  'post-forgot-password': [TypedRouter.POST, '/s/:slug/madoc/forgot-password', forgotPassword],
+  'get-change-password': [TypedRouter.GET, '/s/:slug/madoc/profile/password', updatePassword],
+  'post-change-password': [TypedRouter.POST, '/s/:slug/madoc/profile/password', updatePassword],
+  'post-update-password': [TypedRouter.POST, '/s/:slug/madoc/profile', updateProfilePage],
   'get-logout': [TypedRouter.GET, '/s/:slug/madoc/logout', logout],
+  'reset-password': [TypedRouter.GET, '/s/:slug/madoc/reset-password', resetPasswordPage],
+  'activate-account': [TypedRouter.GET, '/s/:slug/madoc/activate-account', resetPasswordPage],
+  'post-reset-password': [TypedRouter.POST, '/s/:slug/madoc/reset-password', resetPasswordPage],
   'refresh-login': [TypedRouter.POST, '/s/:slug/madoc/auth/refresh', refreshToken],
   'asset-plugin-bundles': [
     TypedRouter.GET,
@@ -430,6 +489,7 @@ export const router = new TypedRouter({
   'generate-media-thumbnails': [TypedRouter.POST, '/api/madoc/media/:mediaId/generate-thumbnails', generateThumbnails],
 
   // New Site routes.
+  'current-site-details': [TypedRouter.GET, '/s/:slug/madoc/api/site', siteDetails],
   'site-canvas': [TypedRouter.GET, '/s/:slug/madoc/api/canvases/:id', siteCanvas],
   'site-canvas-metadata': [TypedRouter.GET, '/s/:slug/madoc/api/canvases/:canvasId/metadata', siteMetadata],
   'site-collection': [TypedRouter.GET, '/s/:slug/madoc/api/collections/:id', siteCollection],
@@ -498,9 +558,6 @@ export const router = new TypedRouter({
   // Development
   'development-plugin': [TypedRouter.POST, '/api/madoc/development/plugin-token', developmentPlugin],
   'accept-development-plugin': [TypedRouter.POST, '/api/madoc/development/dev-bundle', acceptNewDevelopmentBundle],
-
-  // PAT
-  'personal-access-token': [TypedRouter.POST, '/api/madoc/access-token', personalAccessToken],
 
   // Locale
   'get-locale': [TypedRouter.GET, '/s/:slug/madoc/api/locales/:lng/:ns', getLocale],

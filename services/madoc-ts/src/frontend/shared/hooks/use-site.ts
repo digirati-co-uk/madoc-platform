@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
+import { CurrentUserWithScope, SystemConfig, Site } from '../../../extensions/site-manager/types';
 import { ResolvedTheme } from '../../../types/themes';
-import { PublicSite } from '../../../utility/omeka-api';
 
 const SiteReactContext = React.createContext<
   | {
-      site: PublicSite;
-      user?: { id: number; name: string; scope: string[] };
+      site: Site;
+      user?: CurrentUserWithScope;
       supportedLocales: Array<{ code: string; label: string }>;
       contentLanguages: Array<{ label: string; code: string }>;
       displayLanguages: Array<{ label: string; code: string }>;
@@ -15,6 +15,11 @@ const SiteReactContext = React.createContext<
         enableCollections?: boolean;
       };
       theme?: ResolvedTheme | null;
+      setSite: (site: Site) => void;
+      formResponse?: any;
+      systemConfig: SystemConfig;
+      clearFormResponse?: () => void;
+      updateSystemConfig?: (config: SystemConfig) => void;
     }
   | undefined
 >(undefined);
@@ -25,10 +30,44 @@ export const useSiteTheme = () => {
   return details?.theme;
 };
 
+export const useSystemConfig = () => {
+  const details = useContext(SiteReactContext);
+
+  return details?.systemConfig as SystemConfig;
+};
+
+const noOp = () => {
+  // no-op
+};
+
+export const useUpdateSystemConfig = () => {
+  const details = useContext(SiteReactContext);
+
+  return details?.updateSystemConfig || noOp;
+};
+
+export const useClearFormResponse = () => {
+  const details = useContext(SiteReactContext);
+
+  return details?.clearFormResponse || noOp;
+};
+
+export const useFormResponse = <T>() => {
+  const details = useContext(SiteReactContext);
+
+  return details?.formResponse as T | undefined;
+};
+
 export const useSite = () => {
   const details = useContext(SiteReactContext);
 
-  return details?.site as PublicSite;
+  return details?.site as Site;
+};
+
+export const useSetSite = () => {
+  const details = useContext(SiteReactContext);
+
+  return details?.setSite || noOp;
 };
 
 export const useUser = () => {

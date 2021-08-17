@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Redirect } from 'react-router-dom';
 import { Pm2Status } from '../../../../types/pm2';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../../shared/atoms/Statistics';
 import { WidePage } from '../../../shared/atoms/WidePage';
@@ -17,11 +18,11 @@ type SystemStatusType = {
 };
 
 export const SystemStatus: UniversalComponent<SystemStatusType> = createUniversalComponent<SystemStatusType>(
-  ({ route }) => {
+  () => {
     const user = useUser();
 
-    if (!user || user.scope.indexOf('site.admin') === -1) {
-      throw new Error();
+    if (user?.role !== 'global_admin') {
+      return <Redirect to={'/'} />;
     }
 
     const { t } = useTranslation();
