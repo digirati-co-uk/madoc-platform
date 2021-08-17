@@ -81,6 +81,31 @@ type ChangeDiscoveryActor = {
   type: 'Person' | 'Application' | 'Organization';
 };
 
+export type ChangeDiscoveryGenesisRequest = {
+  ids: string[];
+};
+
+export type ChangeDiscoveryGenesisResponse = {
+  prefix: string;
+  ids: string[];
+};
+
+export type ChangeDiscoveryImplementationState = {
+  processItems: any[];
+  lastCrawl: number;
+  onlyDelete: boolean;
+};
+
+export type ActivityCollectionProcessor = (
+  collection: ActivityOrderedCollection,
+  state: ChangeDiscoveryImplementationState
+) => ChangeDiscoveryImplementationState;
+
+export type ActivityPageProcessor = (
+  page: ActivityOrderedCollectionPage,
+  state: ChangeDiscoveryImplementationState
+) => ChangeDiscoveryImplementationState;
+
 export type ChangeDiscoveryActivityType = 'Create' | 'Update' | 'Delete' | 'Move' | 'Add' | 'Remove';
 
 export type ChangeDiscoverySeeAlso = {

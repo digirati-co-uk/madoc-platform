@@ -18,3 +18,32 @@ export function themeVariable<
 
   return theme(name, newDef);
 }
+
+export function themeVariables<
+  Key extends keyof ThemeDefinitions,
+  Keys extends keyof ThemeDefinitions[Key],
+  Definition extends ThemeDefinitions[Key],
+  Definitions extends Omit<
+    {
+      [Def in Keys]?: ThemeDefinitionMap<Key, Def>;
+    },
+    '__VARIATIONS__'
+  >
+>(
+  name: Key,
+  definition: Definitions
+): Omit<
+  {
+    [Def in keyof Definitions]: theme.ThemeSet;
+  },
+  '__VARIATIONS__'
+> {
+  const map: any = {};
+  const keys = Object.keys(definition);
+
+  for (const key of keys) {
+    map[key] = themeVariable(name, key as any, (definition as any)[key]);
+  }
+
+  return map;
+}
