@@ -20,29 +20,9 @@
  * New canvases imported will have the new fields and will bypass this step.
  */
 import { convertPresentation2 } from '@hyperion-framework/presentation-2-parser';
-import { Canvas } from '@hyperion-framework/types';
-import { Vault } from '@hyperion-framework/vault';
+
 import { existsSync, readFileSync } from 'fs';
-import { DatabasePoolConnectionType, DatabasePoolType, sql } from 'slonik';
-
-export async function deprecationLocalSourceCanvas({
-  row,
-  connection,
-}: {
-  row: {
-    id: number;
-    local_source: string | null;
-    thumbnail_json: any | null;
-    items_json: any | null;
-  };
-  connection: DatabasePoolConnectionType;
-}) {
-  if (!row.local_source) {
-    return undefined;
-  }
-
-  return undefined;
-}
+import { DatabasePoolConnectionType, sql } from 'slonik';
 
 /**
  * Get items json.

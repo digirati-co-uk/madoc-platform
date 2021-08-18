@@ -10,13 +10,6 @@ import { UniversalComponent } from '../../../types';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { useStaticData } from '../../../shared/hooks/use-data';
 
-export type PageContext = {
-  page: SitePage;
-  parentPage?: number;
-  navigation?: SitePage[];
-  refetch: () => Promise<{ page: SitePage }>;
-};
-
 export type PageLoaderType = {
   params: { pagePath?: string };
   variables: { pagePath: string; isStatic?: boolean };
