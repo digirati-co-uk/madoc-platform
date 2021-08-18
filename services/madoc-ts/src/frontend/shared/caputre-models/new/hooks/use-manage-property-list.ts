@@ -30,24 +30,31 @@ export function useManagePropertyList(property: string) {
 
   const removeItem = useCallback(
     (id: string) => {
-      if (id && configuration.allowEditing) {
-        try {
-          removeInstance({ path: [...path, [property, id]] as any });
-        } catch (e) {
-          // Possible race condition.
-          console.error(e);
+      if (configuration.allowEditing) {
+        if (fields.length <= 1) {
+          if (fields[0].type === 'entity') {
+            createNewEntityInstance({ property, path: path as any });
+          } else {
+            createNewFieldInstance({ property, path: path as any });
+          }
+        }
+        if (id) {
+          try {
+            removeInstance({ path: [...path, [property, id]] as any });
+          } catch (e) {
+            // Possible race condition.
+            console.error(e);
+          }
         }
       }
     },
-    [configuration.allowEditing, path, property, removeInstance]
+    [configuration.allowEditing, createNewFieldInstance, fields.length, path, property, removeInstance]
   );
-
-  const canRemove = fields.length > 1 && configuration.allowEditing;
 
   return {
     label,
     allowMultiple,
-    canRemove,
+    canRemove: configuration.allowEditing,
     canAdd: configuration.allowEditing,
     removeItem,
     createNewEntity,

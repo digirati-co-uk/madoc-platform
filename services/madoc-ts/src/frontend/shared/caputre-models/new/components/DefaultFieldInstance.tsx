@@ -43,7 +43,13 @@ export const DefaultFieldInstance: React.FC<{
 
   return (
     <span onFocus={onFocus} onBlur={onBlur}>
-      <FieldInstance field={field} property={property} path={path} hideHeader={hideHeader} />
+      <FieldInstance
+        key={field.revises ? field.revises : field.id}
+        field={field}
+        property={property}
+        path={path}
+        hideHeader={hideHeader}
+      />
     </span>
   );
 };
