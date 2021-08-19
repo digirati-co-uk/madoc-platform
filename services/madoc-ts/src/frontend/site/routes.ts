@@ -249,6 +249,11 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
           component: components.ViewProjectTasks,
         },
         {
+          path: '/projects/:slug/personal-notes',
+          exact: true,
+          component: components.ViewProjectNotes,
+        },
+        {
           path: '/projects/:slug/search',
           exact: true,
           component: components.Search,

@@ -74,6 +74,7 @@ import { listInvitations } from './routes/manage-site/list-invitations';
 import { updateInvitation } from './routes/manage-site/update-invitation';
 import { updateSiteDetails } from './routes/manage-site/update-site-details';
 import { updateUserSiteRole } from './routes/manage-site/update-user-site-role';
+import { getAllProjectNotes } from './routes/projects/get-all-project-notes';
 import { siteDetails } from './routes/site/site-details';
 import { siteManifestBuild } from './routes/site/site-manifest-build';
 import { createMedia } from './routes/media/create-media';
@@ -408,6 +409,7 @@ export const router = new TypedRouter({
   'get-project-task': [TypedRouter.GET, '/api/madoc/projects/:id/task', getProjectTask],
   'assign-random-resource': [TypedRouter.POST, '/api/madoc/projects/:id/random', assignRandomResource],
   'get-project-personal-note': [TypedRouter.GET, '/api/madoc/projects/:id/personal-notes/:resourceId', getProjectNote],
+  'get-project-all-personal-note': [TypedRouter.GET, '/api/madoc/projects/:id/personal-notes', getAllProjectNotes],
   'update-project-personal-note': [
     TypedRouter.PUT,
     '/api/madoc/projects/:id/personal-notes/:resourceId',
