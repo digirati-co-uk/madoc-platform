@@ -18,7 +18,7 @@ export const ProjectActions: React.FC = () => {
   const { t } = useTranslation();
   const createLink = useRelativeLinks();
   const {
-    project: { allowCollectionNavigation = true, allowManifestNavigation = true, claimGranularity },
+    project: { allowCollectionNavigation = true, allowManifestNavigation = true, claimGranularity, allowPersonalNotes },
   } = useSiteConfiguration();
   const user = useUser();
   const isAdmin = user && user.scope && user.scope.indexOf('site.admin') !== -1;
@@ -54,6 +54,11 @@ export const ProjectActions: React.FC = () => {
         ) : null}
         {allowCollectionNavigation && !options.hideRandomManifest ? <GoToRandomManifest /> : null}
         {allowManifestNavigation && !options.hideRandomCanvas ? <GoToRandomCanvas /> : null}
+        {user && allowPersonalNotes ? (
+          <Button as={Link} to={createLink({ subRoute: 'personal-notes' })}>
+            {t('Personal notes')}
+          </Button>
+        ) : null}
       </ButtonRow>
     </div>
   );

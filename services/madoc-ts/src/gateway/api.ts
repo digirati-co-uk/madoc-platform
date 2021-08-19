@@ -28,6 +28,7 @@ import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
 import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
 import { Site } from '../extensions/site-manager/types';
 import { SingleUser } from '../types/omeka/User';
+import { NoteListResponse } from '../types/personal-notes';
 import { Pm2Status } from '../types/pm2';
 import { ResourceLinkResponse } from '../types/schemas/linking';
 import { ProjectConfiguration } from '../types/schemas/project-configuration';
@@ -1260,6 +1261,10 @@ export class ApiClient {
   }
 
   // Personal notes
+  async getAllPersonalNotes(project: string | number, page = 1) {
+    return this.request<NoteListResponse>(`/api/madoc/projects/${project}/personal-notes?${stringify({ page })}`);
+  }
+
   async getPersonalNote(project: string | number, resourceId: number) {
     return this.request<{ note: string }>(`/api/madoc/projects/${project}/personal-notes/${resourceId}`);
   }
