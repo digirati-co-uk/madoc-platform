@@ -26,8 +26,10 @@ import { TaskExtension } from '../extensions/tasks/extension';
 import { ThemeExtension } from '../extensions/themes/extension';
 import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
 import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
+import {CanvasDeletionSummary, ManifestDeletionSummary, ProjectDeletionSummary} from "../types/deletion-summary";
 import { Site } from '../extensions/site-manager/types';
 import { SingleUser } from '../types/omeka/User';
+import { NoteListResponse } from '../types/personal-notes';
 import { Pm2Status } from '../types/pm2';
 import { ResourceLinkResponse } from '../types/schemas/linking';
 import { ProjectConfiguration } from '../types/schemas/project-configuration';
@@ -74,6 +76,7 @@ import { CrowdsourcingCanvasTask } from './tasks/crowdsourcing-canvas-task';
 import { ConfigResponse } from '../types/schemas/config-response';
 import { ResourceLinkRow } from '../database/queries/linking-queries';
 import { SearchIndexTask } from './tasks/search-index-task';
+import { CollectionDeletionSummary } from '../types/deletion-summary';
 import { JsonProjectTemplate } from '../extensions/projects/types';
 
 export type ApiClientWithoutExtensions = Omit<
@@ -538,6 +541,10 @@ export class ApiClient {
     });
   }
 
+  async getProjectDeletionSummary(id: number) {
+    return this.request<ProjectDeletionSummary>(`/api/madoc/projects/${id}/deletion-summary`);
+  }
+
   async updateProjectMetadata(id: number, metadata: MetadataUpdate) {
     return this.request<any>(`/api/madoc/projects/${id}/metadata`, {
       method: 'PUT',
@@ -605,6 +612,12 @@ export class ApiClient {
       body: {
         manifestId,
       },
+    });
+  }
+
+  async deleteProject(projectId: number) {
+    return this.request<any>(`/api/madoc/projects/${projectId}`, {
+      method: 'DELETE',
     });
   }
 
@@ -746,6 +759,10 @@ export class ApiClient {
     );
   }
 
+  async getCollectionDeletionSummary(id: number) {
+    return this.request<CollectionDeletionSummary>(`/api/madoc/iiif/collections/${id}/deletion-summary`);
+  }
+
   async getManifests(
     page = 0,
     {
@@ -883,6 +900,10 @@ export class ApiClient {
     return this.request<ManifestFull>(`/api/madoc/iiif/manifests/${id}${query}`);
   }
 
+  async getManifestDeletionSummary(id: number) {
+    return this.request<ManifestDeletionSummary>(`/api/madoc/iiif/manifests/${id}/deletion-summary`);
+  }
+
   async deleteManifest(id: number): Promise<void> {
     return this.request(`/api/madoc/iiif/manifests/${id}`, {
       method: 'DELETE',
@@ -943,6 +964,16 @@ export class ApiClient {
 
   async getCanvasPlaintext(id: number) {
     return this.request<{ found: boolean; transcription: string }>(`/api/madoc/iiif/canvases/${id}/plaintext`);
+  }
+
+  async getCanvasDeletionSummary(id: number) {
+    return this.request<CanvasDeletionSummary>(`/api/madoc/iiif/canvases/${id}/deletion-summary`);
+  }
+
+  async deleteCanvas(id: number): Promise<void> {
+    return this.request(`/api/madoc/iiif/canvases/${id}`, {
+      method: 'DELETE',
+    });
   }
 
   async updateCollectionMetadata(id: number, request: MetadataUpdate) {
@@ -1265,6 +1296,10 @@ export class ApiClient {
   }
 
   // Personal notes
+  async getAllPersonalNotes(project: string | number, page = 1) {
+    return this.request<NoteListResponse>(`/api/madoc/projects/${project}/personal-notes?${stringify({ page })}`);
+  }
+
   async getPersonalNote(project: string | number, resourceId: number) {
     return this.request<{ note: string }>(`/api/madoc/projects/${project}/personal-notes/${resourceId}`);
   }
@@ -1318,6 +1353,12 @@ export class ApiClient {
     await this.request(`/api/tasks/${id}`, {
       method: 'DELETE',
     });
+  }
+
+  async batchDeleteTasks(query: { resourceId?: number, subject?: string }) {
+    await this.request(`/api/tasks?${stringify(query)}`, {
+      method: 'DELETE'
+    })
   }
 
   async randomlyAssignedCanvas(
@@ -2074,6 +2115,16 @@ export class ApiClient {
   async searchGetIIIF(id: string) {
     try {
       return this.request(`/api/search/iiif/${id}`);
+    } catch (err) {
+      return undefined;
+    }
+  }
+
+  async searchDeleteIIIF(id: string) {
+    try {
+      return this.request(`/api/search/iiif/${id}`, {
+        method: 'DELETE',
+      });
     } catch (err) {
       return undefined;
     }

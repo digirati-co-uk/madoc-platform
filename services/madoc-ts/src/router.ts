@@ -74,7 +74,9 @@ import { listInvitations } from './routes/manage-site/list-invitations';
 import { updateInvitation } from './routes/manage-site/update-invitation';
 import { updateSiteDetails } from './routes/manage-site/update-site-details';
 import { updateUserSiteRole } from './routes/manage-site/update-user-site-role';
+import { getAllProjectNotes } from './routes/projects/get-all-project-notes';
 import { siteDetails } from './routes/site/site-details';
+import { deleteManifestSummary } from "./routes/iiif/manifests/delete-manifest-summary";
 import { siteManifestBuild } from './routes/site/site-manifest-build';
 import { createMedia } from './routes/media/create-media';
 import { deleteMedia } from './routes/media/delete-media';
@@ -135,7 +137,7 @@ import { logout } from './routes/user/logout';
 import { frontendBundles, pluginBundles } from './routes/assets/frontend-bundles';
 import { adminFrontend, siteFrontend } from './routes/admin/frontend';
 import { createCollection } from './routes/iiif/collections/create-collection';
-import { deleteCollection } from './routes/iiif/collections/delete-collection';
+import { deleteCollectionEndpoint } from './routes/iiif/collections/delete-collection';
 import { getCollection } from './routes/iiif/collections/get-collection';
 import { getCollectionStructure } from './routes/iiif/collections/get-collection-structure';
 import { getCollectionMetadata } from './routes/iiif/collections/get-collection-metadata';
@@ -144,7 +146,7 @@ import { updateCollectionStructure } from './routes/iiif/collections/update-coll
 import { listManifests } from './routes/iiif/manifests/list-manifests';
 import { createManifest } from './routes/iiif/manifests/create-manifest';
 import { getManifest } from './routes/iiif/manifests/get-manifest';
-import { deleteManifest } from './routes/iiif/manifests/delete-manifest';
+import { deleteManifestEndpoint } from './routes/iiif/manifests/delete-manifest';
 import { getManifestMetadata } from './routes/iiif/manifests/get-manifest-metadata';
 import { listCanvases } from './routes/iiif/canvases/list-canvases';
 import { createCanvas } from './routes/iiif/canvases/create-canvas';
@@ -198,6 +200,11 @@ import { siteCanvasTasks } from './routes/site/site-canvas-tasks';
 import { getProjectTask } from './routes/projects/get-project-task';
 import { assignRandomResource } from './routes/projects/assign-random-resource';
 import { router as activityStreamRoutes } from './activity-streams/router';
+import { getCollectionDeletionSummary } from './routes/iiif/collections/delete-collection-summary';
+import { deleteCanvasSummary } from './routes/iiif/canvases/delete-canvas-summary';
+import { deleteProjectSummary } from './routes/projects/delete-project-summary';
+import { deleteCanvasEndpoint } from './routes/iiif/canvases/delete-canvas';
+import { deleteProjectEndpoint } from './routes/projects/deleteProject';
 import { exportProjectTemplate } from './routes/projects/export-project-template';
 
 export const router = new TypedRouter({
@@ -296,11 +303,12 @@ export const router = new TypedRouter({
   'list-collections': [TypedRouter.GET, '/api/madoc/iiif/collections', listCollections],
   'get-collection': [TypedRouter.GET, '/api/madoc/iiif/collections/:id', getCollection],
   'create-collection': [TypedRouter.POST, '/api/madoc/iiif/collections', createCollection, 'CreateCollection'],
-  'delete-collection': [TypedRouter.DELETE, '/api/madoc/iiif/collections/:id', deleteCollection],
+  'delete-collection': [TypedRouter.DELETE, '/api/madoc/iiif/collections/:id', deleteCollectionEndpoint],
   'publish-collection': [TypedRouter.POST, '/api/madoc/iiif/collections/:id/publish', publishCollection],
   'get-collection-metadata': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/metadata', getCollectionMetadata],
   'get-collection-structure': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/structure', getCollectionStructure],
   'get-collection-projects': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/projects', getCollectionProjects],
+  'get-collection-deletion-summary': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/deletion-summary', getCollectionDeletionSummary],
   'put-collection-metadata': [
     TypedRouter.PUT,
     '/api/madoc/iiif/collections/:id/metadata',
@@ -334,11 +342,12 @@ export const router = new TypedRouter({
   'list-manifests': [TypedRouter.GET, '/api/madoc/iiif/manifests', listManifests],
   'get-manifest': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id', getManifest],
   'create-manifest': [TypedRouter.POST, '/api/madoc/iiif/manifests', createManifest, 'CreateManifest'],
-  'delete-manifest': [TypedRouter.DELETE, '/api/madoc/iiif/manifests/:id', deleteManifest],
+  'delete-manifest': [TypedRouter.DELETE, '/api/madoc/iiif/manifests/:id', deleteManifestEndpoint],
   'publish-manifest': [TypedRouter.POST, '/api/madoc/iiif/manifests/:id/publish', publishManifest],
   'get-manifest-metadata': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/metadata', getManifestMetadata],
   'get-manifest-structure': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/structure', getManifestStructure],
   'get-manifest-projects': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/projects', getManifestProjects],
+  'get-manifest-deletion-summary': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/deletion-summary', deleteManifestSummary],
   'put-manifest-metadata': [
     TypedRouter.PUT,
     '/api/madoc/iiif/manifests/:id/metadata',
@@ -369,6 +378,8 @@ export const router = new TypedRouter({
   'convert-linking-property': [TypedRouter.POST, '/api/madoc/iiif/linking/:id/convert', convertLinking],
   'get-canvas-plaintext': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/plaintext', getCanvasPlaintext],
   'get-canvas-source': [TypedRouter.GET, '/api/madoc/iiif/canvas-source', getCanvasReference],
+  'get-canvas-deletion-summary': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/deletion-summary', deleteCanvasSummary],
+  'delete-canvas': [TypedRouter.DELETE, '/api/madoc/iiif/canvases/:id', deleteCanvasEndpoint],
 
   // Import API
   'import-manifest': [TypedRouter.POST, '/api/madoc/iiif/import/manifest', importManifest],
@@ -410,11 +421,14 @@ export const router = new TypedRouter({
   'get-project-task': [TypedRouter.GET, '/api/madoc/projects/:id/task', getProjectTask],
   'assign-random-resource': [TypedRouter.POST, '/api/madoc/projects/:id/random', assignRandomResource],
   'get-project-personal-note': [TypedRouter.GET, '/api/madoc/projects/:id/personal-notes/:resourceId', getProjectNote],
+  'get-project-all-personal-note': [TypedRouter.GET, '/api/madoc/projects/:id/personal-notes', getAllProjectNotes],
   'update-project-personal-note': [
     TypedRouter.PUT,
     '/api/madoc/projects/:id/personal-notes/:resourceId',
     updateProjectNote,
   ],
+  'get-project-deletion-summary': [TypedRouter.GET, '/api/madoc/projects/:id/deletion-summary', deleteProjectSummary],
+  'delete-project': [TypedRouter.DELETE, '/api/madoc/projects/:id', deleteProjectEndpoint],
 
   // Themes
   'list-themes': [TypedRouter.GET, '/api/madoc/system/themes', listThemes],

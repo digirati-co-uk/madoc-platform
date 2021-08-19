@@ -14,6 +14,7 @@ import { acceptTask } from './routes/accept-task';
 import { postEvent } from './routes/event';
 import { getStatistics } from './routes/get-statistics';
 import { getSubjectStatistics } from './routes/get-subject-statistics';
+import { batchDeleteTasks } from './routes/delete-tasks';
 
 export const router = new TypedRouter({
   // All tasks
@@ -22,6 +23,7 @@ export const router = new TypedRouter({
   'get-all-statistics': [TypedRouter.GET, '/tasks/stats', getStatistics],
   'export-tasks': [TypedRouter.GET, '/tasks/export-all', exportTasks],
   'import-tasks': [TypedRouter.POST, '/tasks/import', importTasks],
+  'batch-delete': [TypedRouter.DELETE, '/tasks', batchDeleteTasks],
 
   // Single task.
   'get-single-task': [TypedRouter.GET, '/tasks/:id', getSingleTask],

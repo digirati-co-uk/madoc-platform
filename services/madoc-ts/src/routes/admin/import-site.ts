@@ -390,6 +390,13 @@ export const importSite: RouteMiddleware = async context => {
         'site_id',
       ])
     );
+    await context.connection.query(
+      upsert('iiif_resource_items', ['resource_id', 'item_id'], data.iiifDerivedResourceItems, [
+        'resource_id',
+        'item_id',
+        'item_index'
+      ])
+    );
     // @todo delete extras: where resource_id::text || item_id::text || site_id::text = '1372011'
   }
 

@@ -15,12 +15,6 @@ export type GetRoute<
   Value = any
 > = Routes[RouteName] extends RouteWithParams<infer T> ? T : never;
 
-export type GetBody<
-  Routes extends { [key in RouteName]: Value },
-  RouteName extends string,
-  Value = any
-> = Routes[RouteName] extends RouteWithParams<any, infer T> ? T : never;
-
 export class TypedRouter<
   Routes extends string,
   MappedRoutes extends { [key in Routes]: RouteWithParams<GetRoute<MappedRoutes, Routes>> }

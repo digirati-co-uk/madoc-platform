@@ -37,11 +37,11 @@ const linkStyle = {
   color: 'unset',
 };
 
-export const StatisticLink: React.FC<any> = ({ to, number, label }) => {
+export const StatisticLink: React.FC<any> = ({ to, number, label, cypressCountLabel }) => {
   return (
     <Statistic style={{ padding: '0' }}>
       <Link to={to} style={linkStyle}>
-        <StatisticNumber>{number}</StatisticNumber>
+        <StatisticNumber data-cy={cypressCountLabel}>{number}</StatisticNumber>
         <StatisticLabel>{label}</StatisticLabel>
       </Link>
     </Statistic>

@@ -51,7 +51,7 @@ const ResultText = styled.span`
   line-height: 1.3em;
 `;
 
-const ResultTitle = styled.div`
+export const ResultTitle = styled.div`
   text-decoration: none;
   color: #2962ff;
   font-size: 1.25rem;

@@ -86,6 +86,8 @@ import { OcrPage } from './pages/enrichment/ocr';
 import { ManifestSearchIndex } from './pages/content/manifests/manifest-search-index';
 import { ListPlugins } from './pages/system/list-plugins';
 import { OcrManifest } from './pages/enrichment/ocr/ocr-manifest';
+import { DeleteCanvas } from './pages/content/canvases/delete-canvas';
+import { DeleteProject } from './pages/crowdsourcing/projects/delete-project';
 import { ProjectExportTab } from './pages/crowdsourcing/projects/project-export';
 
 export const routes: UniversalRoute[] = [
@@ -174,6 +176,11 @@ export const routes: UniversalRoute[] = [
         exact: true,
         component: CanvasPlaintext,
       },
+      {
+        path: '/manifests/:maifestId/canvases/:id/delete',
+        exact: true,
+        component: DeleteCanvas,
+      },
     ],
   },
   {
@@ -260,6 +267,11 @@ export const routes: UniversalRoute[] = [
         path: '/canvases/:id/plaintext',
         exact: true,
         component: CanvasPlaintext,
+      },
+      {
+        path: '/canvases/:id/delete',
+        exact: true,
+        component: DeleteCanvas,
       },
     ],
   },
@@ -351,6 +363,11 @@ export const routes: UniversalRoute[] = [
       {
         path: '/projects/:id/export',
         component: ProjectExportTab,
+        exact: true,
+      },
+      {
+        path: '/projects/:id/delete',
+        component: DeleteProject,
         exact: true,
       },
     ],
