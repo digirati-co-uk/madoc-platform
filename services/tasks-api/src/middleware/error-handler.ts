@@ -3,6 +3,7 @@ import { NotFound } from '../errors/not-found';
 import { RequestError } from '../errors/request-error';
 import { ServerError } from '../errors/server-error';
 import { NotFoundError, SlonikError } from 'slonik';
+import { Forbidden } from '../errors/forbidden';
 
 export const errorHandler: Middleware = async (context, next) => {
   try {
@@ -15,9 +16,11 @@ export const errorHandler: Middleware = async (context, next) => {
       context.response.status = 500;
     } else if (err instanceof NotFound) {
       if (err.message) {
-        context.response.body = { error: err.message };
+        context.response.body = {error: err.message};
       }
       context.response.status = 404;
+    } else if (err instanceof Forbidden) {
+      context.response.status = 403;
     } else if (err instanceof NotFoundError) {
       context.response.status = 404;
     } else if (err instanceof SlonikError) {

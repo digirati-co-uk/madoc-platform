@@ -88,6 +88,10 @@ export const CanvasView: UniversalComponent<CanvasViewType> = createUniversalCom
               label: t('Transcription'),
               link: manifestId ? `/manifests/${manifestId}/canvases/${id}/plaintext` : `/canvases/${id}/plaintext`,
             },
+            {
+              label: t('Delete'),
+              link: manifestId ? `/manifests/${manifestId}/canvases/${id}/delete` : `/canvases/${id}/delete`,
+            },
           ]}
         />
         <WidePage>

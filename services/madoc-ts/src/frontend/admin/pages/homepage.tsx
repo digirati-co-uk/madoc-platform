@@ -66,13 +66,13 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
         <WidePage>
           {stats ? (
             <StatisticContainer>
-              <StatisticLink to="/collections" number={stats.collections} label="Collections" />
-              <StatisticLink to="/manifests" number={stats.manifests} label="Manifests" />
+              <StatisticLink to="/collections" number={stats.collections} label="Collections" cypressCountLabel="collection-count" />
+              <StatisticLink to="/manifests" number={stats.manifests} label="Manifests" cypressCountLabel="manifest-count" />
               <Statistic>
-                <StatisticNumber>{stats.canvases}</StatisticNumber>
+                <StatisticNumber data-cy="canvas-count">{stats.canvases}</StatisticNumber>
                 <StatisticLabel>Canvases</StatisticLabel>
               </Statistic>
-              <StatisticLink to="/projects" number={stats.projects} label="Projects" />
+              <StatisticLink to="/projects" number={stats.projects} label="Projects" cypressCountLabel="project-count" />
             </StatisticContainer>
           ) : null}
           <AdminSectionGrid style={{ maxWidth: 1000, margin: '0 auto' }}>
