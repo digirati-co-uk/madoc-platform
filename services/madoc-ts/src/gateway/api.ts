@@ -77,6 +77,7 @@ import { ConfigResponse } from '../types/schemas/config-response';
 import { ResourceLinkRow } from '../database/queries/linking-queries';
 import { SearchIndexTask } from './tasks/search-index-task';
 import { CollectionDeletionSummary } from '../types/deletion-summary';
+import { JsonProjectTemplate } from '../extensions/projects/types';
 
 export type ApiClientWithoutExtensions = Omit<
   ApiClient,
@@ -560,6 +561,10 @@ export class ApiClient {
         status,
       },
     });
+  }
+
+  async exportProject(id: number) {
+    return this.request<JsonProjectTemplate>(`/api/madoc/projects/${id}/export`);
   }
 
   async createResourceClaim(projectId: string | number, claim: ResourceClaim) {

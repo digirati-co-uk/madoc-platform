@@ -205,6 +205,7 @@ import { deleteCanvasSummary } from './routes/iiif/canvases/delete-canvas-summar
 import { deleteProjectSummary } from './routes/projects/delete-project-summary';
 import { deleteCanvasEndpoint } from './routes/iiif/canvases/delete-canvas';
 import { deleteProjectEndpoint } from './routes/projects/deleteProject';
+import { exportProjectTemplate } from './routes/projects/export-project-template';
 
 export const router = new TypedRouter({
   // Normal route
@@ -406,6 +407,7 @@ export const router = new TypedRouter({
   'update-project-metadata': [TypedRouter.PUT, '/api/madoc/projects/:id/metadata', updateProjectMetadata],
   'update-project-status': [TypedRouter.PUT, '/api/madoc/projects/:id/status', updateProjectStatus],
   'create-project-resource-claim': [TypedRouter.POST, '/api/madoc/projects/:id/claim', createResourceClaim],
+  'export-project-template': [TypedRouter.GET, '/api/madoc/projects/:id/export', exportProjectTemplate],
   'update-project-curated-feed': [TypedRouter.POST, '/api/madoc/projects/:id/feeds/:feed', updateCuratedFeed],
   'create-project-resource-prepare-claim': [
     TypedRouter.POST,
