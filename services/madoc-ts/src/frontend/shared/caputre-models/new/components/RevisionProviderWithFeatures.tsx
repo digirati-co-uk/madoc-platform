@@ -1,6 +1,7 @@
 import { Revisions } from '@capture-models/editor';
 import React from 'react';
 import { AutosaveRevision } from '../features/AutosaveRevision';
+import { AutoSelectDefineRegion } from '../features/AutoSelectDefineRegion';
 import { AutoSelectingRevision } from '../features/AutoSelectingRevision';
 import { CorrectingRevisionSubtree } from '../features/CorrectingRevisionSubtree';
 import { SwitchEditMode } from '../features/SwitchEditMode';
@@ -46,6 +47,7 @@ export const RevisionProviderWithFeatures: React.FC<{
         initialRevision={initialRevision}
       >
         {/*<DebugRevisionSwitcher contributors={captureModel?.contributors} />*/}
+        <AutoSelectDefineRegion />
         {autosave ? <AutosaveRevision minutes={2} /> : null}
         {revisionEditMode ? <SwitchFieldAfterRevises /> : null}
         {revisionEditMode ? <SwitchEditMode /> : null}
