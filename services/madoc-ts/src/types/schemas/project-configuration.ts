@@ -30,6 +30,7 @@ export type ProjectConfiguration = {
   searchOptions?: {
     nonLatinFulltext?: boolean;
     searchMultipleFields?: boolean;
+    onlyShowManifests?: boolean;
   };
   shortExpiryTime?: string;
   longExpiryTime?: string;

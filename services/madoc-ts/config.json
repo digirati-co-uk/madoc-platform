@@ -63,7 +63,8 @@
     },
     "searchOptions": {
       "nonLatinFulltext": false,
-      "searchMultipleFields": false
+      "searchMultipleFields": false,
+      "onlyShowManifests": false
     },
     "activityStreams": {
       "manifest": true,
