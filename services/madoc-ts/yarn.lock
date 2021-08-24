@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@atlas-viewer/atlas@1.6.6", "@atlas-viewer/atlas@^1.6.4":
-  version "1.6.6"
-  resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-1.6.6.tgz#c6d4adb3ce57f26ddf79b8c32ca168315c78fa88"
-  integrity sha512-buQZjS0c/Z/nZds4n2MdiATRe8+ICctVRSrVbFSDPrpbF8Go9JAtqQL8Y3Bp1tbQeJwF6CdyCtgxNn3YX6mmiQ==
+"@atlas-viewer/atlas@1.6.8", "@atlas-viewer/atlas@^1.6.8":
+  version "1.6.8"
+  resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-1.6.8.tgz#324d5440b9b0d5ab770d99f536ff3aa4b1f60cc0"
+  integrity sha512-gFnv1SSULP5cUFofBh8Ss46HXRWCMPkDbqhiLkRvj2CbIjTKz66kfB0KLDFDNRAUwmZv11BnadEOM/HKR8fW7g==
   dependencies:
     "@atlas-viewer/dna" "^0.5.0"
     "@atlas-viewer/iiif-image-api" "^1.2.5"
@@ -2512,12 +2512,12 @@
     screenfull "^3.3.2"
     whatwg-fetch "^3.0.0"
 
-"@capture-models/editor@^0.13.17":
-  version "0.13.17"
-  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.13.17.tgz#131f9afca1eab568013ef2c0a1b1ed1f9cf70131"
-  integrity sha512-BCMiurRPzjvc+mQ9Sh/41e7ivTiwyL+hMVbT1W/2qAT+WbEr/wMeqKkkWM+zrb+96fgfPrQY/yvJxt8xYtngRw==
+"@capture-models/editor@^0.13.18":
+  version "0.13.18"
+  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.13.18.tgz#373132dc5e33a28c7decd5d449d62955f55d7fed"
+  integrity sha512-vepEGch/e7g5sqPD6sURu9TGAsEb4ZOEfou3zuRLT/mcap1sZOxiWaWjmMO7xmWb/crztvQcFUf5lgpGStjTfg==
   dependencies:
-    "@atlas-viewer/atlas" "^1.6.4"
+    "@atlas-viewer/atlas" "^1.6.8"
     "@capture-models/helpers" "^0.13.14"
     "@capture-models/plugin-api" "^0.13.14"
     "@capture-models/types" "^0.13.0"

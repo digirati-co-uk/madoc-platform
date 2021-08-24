@@ -376,6 +376,9 @@
             },
             "searchMultipleFields": {
               "type": "boolean"
+            },
+            "onlyShowManifests": {
+              "type": "boolean"
             }
           }
         },

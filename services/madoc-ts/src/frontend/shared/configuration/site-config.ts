@@ -304,6 +304,10 @@ export const siteConfigurationModel: {
         label: 'Search multiple fields',
         value: 'searchMultipleFields',
       },
+      {
+        label: 'Only show manifests',
+        value: 'onlyShowManifests',
+      },
     ],
   },
   activityStreams: {

@@ -16,7 +16,7 @@ export function useSearch() {
   const {
     project: { searchStrategy, claimGranularity, searchOptions },
   } = useSiteConfiguration();
-  const { searchMultipleFields, nonLatinFulltext } = searchOptions || {};
+  const { searchMultipleFields, nonLatinFulltext, onlyShowManifests } = searchOptions || {};
   const searchFacetConfig = apiHooks.getSiteSearchFacetConfiguration(() => []);
 
   const [facetsToRequest, facetDisplayOrder, facetIdMap] = useMemo(() => {
@@ -58,7 +58,7 @@ export function useSearch() {
         facet_on_manifests: true,
         search_type: searchStrategy as any,
         number_of_facets: searchFacetConfig.data?.facets.length ? 100 : undefined,
-        iiif_type: claimGranularity === 'manifest' ? 'Manifest' : undefined,
+        iiif_type: claimGranularity === 'manifest' || onlyShowManifests ? 'Manifest' : undefined,
         non_latin_fulltext: nonLatinFulltext,
         search_multiple_fields: searchMultipleFields,
       },
