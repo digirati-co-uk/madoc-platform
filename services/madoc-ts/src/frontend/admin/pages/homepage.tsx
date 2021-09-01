@@ -164,6 +164,9 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
                   <li>
                     <Link to="/global/config">{t('Global config')}</Link>
                   </li>
+                  <li>
+                    <Link to="/global/apiKey">{t('API keys')}</Link>
+                  </li>
                 </MenuList>
               </AdminSection>
             ) : null}

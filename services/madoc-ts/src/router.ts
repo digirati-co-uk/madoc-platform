@@ -207,6 +207,8 @@ import { deleteProjectSummary } from './routes/projects/delete-project-summary';
 import { deleteCanvasEndpoint } from './routes/iiif/canvases/delete-canvas';
 import { deleteProjectEndpoint } from './routes/projects/deleteProject';
 import { exportProjectTemplate } from './routes/projects/export-project-template';
+import { generateApiKey } from './routes/admin/generate-api-key';
+import { authenticateApi } from './routes/global/api-authentication';
 
 export const router = new TypedRouter({
   // Normal route
@@ -221,6 +223,7 @@ export const router = new TypedRouter({
   'cron-jobs': [TypedRouter.GET, '/api/madoc/cron/jobs', listJobs],
   'run-cron-jobs': [TypedRouter.POST, '/api/madoc/cron/jobs/:jobId/run', runJob],
   'regenerate-keys': [TypedRouter.POST, '/api/madoc/system/key-regen', keyRegenerate],
+  'generate-api-key': [TypedRouter.POST, '/api/madoc/apiKey', generateApiKey],
 
   // Manage sites.
   'site-admin-list-all-sites': [TypedRouter.GET, '/api/madoc/sites', listAllSites],
@@ -510,6 +513,7 @@ export const router = new TypedRouter({
   'assets-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleId.bundle.js', frontendBundles, { isPublic: true }],
   'assets-sub-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleName', frontendBundles, { isPublic: true }],
   'get-user-details': [TypedRouter.GET, '/s/:slug/madoc/api/me', userDetails],
+  'api-authentication': [TypedRouter.POST, '/s/:slug/madoc/api', authenticateApi],
 
   // Media
   'list-media': [TypedRouter.GET, '/api/madoc/media', listMedia],
