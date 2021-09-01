@@ -89,6 +89,7 @@ import { OcrManifest } from './pages/enrichment/ocr/ocr-manifest';
 import { DeleteCanvas } from './pages/content/canvases/delete-canvas';
 import { DeleteProject } from './pages/crowdsourcing/projects/delete-project';
 import { ProjectExportTab } from './pages/crowdsourcing/projects/project-export';
+import { GenerateApiKey } from './pages/system/generate-api-key';
 
 export const routes: UniversalRoute[] = [
   {
@@ -597,6 +598,11 @@ export const routes: UniversalRoute[] = [
   {
     path: '/global/users/create',
     component: CreateUser,
+    exact: true,
+  },
+  {
+    path: '/global/apiKey',
+    component: GenerateApiKey,
     exact: true,
   },
   {

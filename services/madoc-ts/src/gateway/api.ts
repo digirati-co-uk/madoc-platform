@@ -78,6 +78,7 @@ import { ResourceLinkRow } from '../database/queries/linking-queries';
 import { SearchIndexTask } from './tasks/search-index-task';
 import { CollectionDeletionSummary } from '../types/deletion-summary';
 import { JsonProjectTemplate } from '../extensions/projects/types';
+import { ApiKey } from '../types/api-key';
 
 export type ApiClientWithoutExtensions = Omit<
   ApiClient,
@@ -464,6 +465,13 @@ export class ApiClient {
     const userApi = this.asUser(user, options);
     await callback(userApi as any);
     userApi.dispose(); // Need to make sure extensions unregister their events properly.
+  }
+
+  async generateApiKey(apiKey: ApiKey) {
+    return this.request<any>(`/api/madoc/apiKey`, {
+      method: 'POST',
+      body: apiKey,
+    });
   }
 
   getCaptureModelDataSources() {
