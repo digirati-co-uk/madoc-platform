@@ -29,7 +29,7 @@ export const MetadataConfigurationPage: React.FC<{ route: UniversalRoute }> = ({
           { label: 'Configure site', link: '/configure/site' },
           { label: 'Metadata', active: true, link: `/configure/site/metadata` },
         ]}
-        title="Metadata configuration"
+        title="Site configuration"
       />
       <WidePage>
         {currentConfig.data ? (

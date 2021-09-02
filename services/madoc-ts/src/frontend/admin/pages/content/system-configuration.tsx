@@ -43,7 +43,7 @@ export const SiteSystemConfiguration: React.FC = () => {
         breadcrumbs={[
           { label: 'Site admin', link: '/' },
           { label: 'Configure site', link: '/configure/site' },
-          { label: 'Project configuration', link: '/configure/site/project' },
+          { label: 'Site-wide configuration', link: '/configure/site/system' },
         ]}
       />
       <WidePage>
