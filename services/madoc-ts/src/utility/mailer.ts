@@ -20,21 +20,18 @@ export class Mailer {
     if (
       mailConfig.host &&
       mailConfig.port &&
-      mailConfig.security &&
-      mailConfig.user &&
-      mailConfig.password &&
       mailConfig.from_user
     ) {
       this.enabled = true;
       this.transporter = createTransport({
         host: mailConfig.host,
         port: mailConfig.port,
-        auth: {
+        auth: mailConfig.user && mailConfig.password ? {
           type: 'LOGIN',
           user: mailConfig.user,
           pass: mailConfig.password,
-        },
-        secure: mailConfig.security.toLowerCase() === 'tls',
+        } : undefined,
+        secure: (mailConfig.security || '').toLowerCase() === 'tls',
       });
     }
   }
