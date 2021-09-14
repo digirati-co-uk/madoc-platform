@@ -23,7 +23,6 @@ import {
   SystemConfig,
 } from '../extensions/site-manager/types';
 import { ExternalConfig } from '../types/external-config';
-import { OmekaApi } from '../utility/omeka-api';
 import { phpHashCompare } from '../utility/php-hash-compare';
 import { passwordHash } from '../utility/php-password-hash';
 import { SQL_COMMA, SQL_EMPTY } from '../utility/postgres-tags';
@@ -32,17 +31,6 @@ import { BaseRepository } from './base-repository';
 
 /**
  * Site + User repository.
- *
- * Soon Madoc will transition from the Omeka MySQL database to a purely
- * postgres-driven database.
- *
- * In order for this to be as smooth as possible, this repository will act as the
- * adapter where all code currently relying on the Omeka database will flow through
- * here instead.
- *
- * A write-only clone of the data will be created and synced when starting up. This
- * syncing process will only eventually only exist if a MySQL database is detected.
- * For 2.0 stable, this will be removed.
  *
  * Synced tables
  * - site
@@ -79,28 +67,9 @@ import { BaseRepository } from './base-repository';
  *
  */
 
-type OmekaTransitionModes =
-  // Write to Omeka, read from Omeka
-  | 'FULL_OMEKA'
-  // Write to Omeka + Postgres, read from Omeka
-  | 'HYBRID_OMEKA'
-  // Write to Omeka + Postgres, read from Postgres
-  | 'HYBRID_POSTGRES'
-  // Write to Postgres, read from Postgres
-  | 'FULL_POSTGRES';
-
 export class SiteUserRepository extends BaseRepository {
-  omeka: OmekaApi;
-  transitionMode: OmekaTransitionModes;
-
-  constructor(
-    postgres: DatabasePoolConnectionType | DatabaseTransactionConnectionType,
-    omeka: OmekaApi,
-    transitionMode: OmekaTransitionModes
-  ) {
+  constructor(postgres: DatabasePoolConnectionType | DatabaseTransactionConnectionType) {
     super(postgres);
-    this.omeka = omeka;
-    this.transitionMode = transitionMode;
   }
 
   static query = {
@@ -460,26 +429,6 @@ export class SiteUserRepository extends BaseRepository {
     `,
   };
 
-  shouldSync() {
-    return this.transitionMode !== 'FULL_POSTGRES';
-  }
-
-  shouldWriteToOmeka() {
-    return this.transitionMode !== 'FULL_POSTGRES';
-  }
-
-  shouldWriteToPostgres() {
-    return this.transitionMode !== 'FULL_OMEKA';
-  }
-
-  shouldReadFromOmeka() {
-    return this.transitionMode === 'FULL_OMEKA' || this.transitionMode === 'HYBRID_OMEKA';
-  }
-
-  shouldReadFromPostgres() {
-    return this.transitionMode === 'FULL_POSTGRES' || this.transitionMode === 'HYBRID_POSTGRES';
-  }
-
   static mapUser(row: UserRowWithoutPassword | UserRow): User {
     return {
       id: row.id,
@@ -576,73 +525,6 @@ export class SiteUserRepository extends BaseRepository {
     },
   };
 
-  async legacyOmekaDatabaseSync(permissions: ExternalConfig['permissions']) {
-    if (!this.shouldSync()) {
-      console.log('Skipping sync...');
-      return;
-    }
-
-    console.log('Starting sync...');
-
-    const sites = (await this.omeka.listAllSites()).map(SiteUserRepository.compatibility.site);
-    if (sites.length) {
-      for (const site of sites) {
-        if (!site.created) {
-          site.created = new Date();
-        }
-        if (!site.modified) {
-          site.modified = site.created;
-        }
-      }
-      console.log(`=> Syncing ${sites.length} sites`);
-      await this.connection.query(
-        upsert('site', ['id'], sites, ['id', 'slug', 'title', 'summary', 'created', 'modified', 'is_public'], {
-          dateKeys: ['created', 'modified'],
-        })
-      );
-
-      for (const site of sites) {
-        const { rowCount } = await this.connection.query(
-          sql`SELECT id FROM jwt_site_scopes WHERE site_id = ${site.id}`
-        );
-        if (rowCount === 0) {
-          console.log(`=> Adding missing permissions to site ${site.title}`);
-          await this.addJWTPermissionsToSite(site.id, permissions);
-        }
-      }
-
-      await this.connection.query(sql`select setval('site_id_seq', (select max(id) from site));`);
-    }
-
-    const users = await this.omeka.listAllUsers();
-    if (users.length) {
-      console.log(`=> Syncing ${users.length} users`);
-      await this.connection.query(
-        upsert(
-          'user',
-          ['id'],
-          users,
-          ['id', 'email', 'name', 'created', 'modified', 'password_hash', 'role', 'is_active'],
-          {
-            dateKeys: ['created', 'modified'],
-          }
-        )
-      );
-
-      await this.connection.query(sql`select setval('user_id_seq', (select max(id) from "user"));`);
-    }
-
-    const sitePermissions = await this.omeka.listSitePermissions();
-    if (sitePermissions.length) {
-      console.log(`=> Syncing ${sitePermissions.length} site permissions`);
-      await this.connection.query(
-        upsert('site_permission', ['site_id', 'user_id'], sitePermissions, ['site_id', 'user_id', 'role'])
-      );
-    }
-
-    console.log('Completed sync');
-  }
-
   async getSystemConfig(cached = true): Promise<SystemConfig> {
     const cacheKey = `madoc-system-config`;
     const cachedConfig = cache.get(cacheKey) as SystemConfig;
@@ -681,11 +563,7 @@ export class SiteUserRepository extends BaseRepository {
    * @throws NotFoundError
    */
   async getUserById(id: number) {
-    if (this.shouldReadFromOmeka()) {
-      return SiteUserRepository.mapUser(await this.omeka.getUserById(id));
-    } else {
-      return SiteUserRepository.mapUser(await this.connection.one(SiteUserRepository.query.getUserById(id)));
-    }
+    return SiteUserRepository.mapUser(await this.connection.one(SiteUserRepository.query.getUserById(id)));
   }
 
   /**
@@ -693,11 +571,7 @@ export class SiteUserRepository extends BaseRepository {
    * @throws NotFoundError
    */
   async getUserByEmail(email: string) {
-    if (this.shouldReadFromOmeka()) {
-      return this.omeka.getUserByEmail(email);
-    } else {
-      return this.connection.one(SiteUserRepository.query.getUserByEmail(email));
-    }
+    return this.connection.one(SiteUserRepository.query.getUserByEmail(email));
   }
 
   async userEmailExists(email: string) {
@@ -716,22 +590,14 @@ export class SiteUserRepository extends BaseRepository {
    * @throws NotFoundError
    */
   async getActiveUserById(id: number): Promise<User> {
-    if (this.shouldReadFromOmeka()) {
-      return SiteUserRepository.mapUser(await this.omeka.getActiveUserById(id));
-    } else {
-      return SiteUserRepository.mapUser(await this.connection.one(SiteUserRepository.query.getActiveUserById(id)));
-    }
+    return SiteUserRepository.mapUser(await this.connection.one(SiteUserRepository.query.getActiveUserById(id)));
   }
 
   /**
    * @throws NotFoundError
    */
   private async getActiveUserByEmailWithPassword(email: string): Promise<UserRow> {
-    if (this.shouldReadFromOmeka()) {
-      return this.omeka.getActiveUserByEmailWithPassword(email);
-    } else {
-      return this.connection.one(SiteUserRepository.query.getActiveUserByEmail(email));
-    }
+    return this.connection.one(SiteUserRepository.query.getActiveUserByEmail(email));
   }
 
   /**
@@ -739,11 +605,7 @@ export class SiteUserRepository extends BaseRepository {
    */
   async getSiteUserById(id: number, siteId: number): Promise<SiteUser> {
     try {
-      if (this.shouldReadFromOmeka()) {
-        return await this.omeka.getSiteUserById(id, siteId);
-      } else {
-        return await this.connection.one(SiteUserRepository.query.getSiteUserById(id, siteId));
-      }
+      return await this.connection.one(SiteUserRepository.query.getSiteUserById(id, siteId));
     } catch (e) {
       const user = await this.getActiveUserById(id);
       if (user.role === 'global_admin') {
@@ -775,19 +637,11 @@ export class SiteUserRepository extends BaseRepository {
    * @throws NotFoundError
    */
   async getSiteCreator(siteId: number) {
-    if (this.shouldReadFromOmeka()) {
-      return this.omeka.getSiteCreator(siteId);
-    } else {
-      return this.connection.one(SiteUserRepository.query.getSiteCreator(siteId));
-    }
+    return this.connection.one(SiteUserRepository.query.getSiteCreator(siteId));
   }
 
   async getUsersByRoles(siteId: number, roles: string[], includeAdmins = true) {
-    if (this.shouldReadFromOmeka()) {
-      return this.omeka.getUsersByRoles(siteId, roles, includeAdmins);
-    } else {
-      return this.connection.any(SiteUserRepository.query.getUsersByRoles(siteId, roles, includeAdmins));
-    }
+    return this.connection.any(SiteUserRepository.query.getUsersByRoles(siteId, roles, includeAdmins));
   }
 
   async searchUsers(q: string, siteId: number, roles: string[] = []) {
@@ -795,64 +649,39 @@ export class SiteUserRepository extends BaseRepository {
       return [];
     }
 
-    if (this.shouldReadFromOmeka()) {
-      return this.omeka.searchUsers(q, siteId, roles);
-    } else {
-      return this.connection.any(SiteUserRepository.query.searchUsers(q, siteId, roles));
-    }
+    return this.connection.any(SiteUserRepository.query.searchUsers(q, siteId, roles));
   }
 
   async searchAllUsers(q: string) {
-    if (this.shouldReadFromOmeka()) {
-      return this.omeka.searchAllUsers(q);
-    } else {
-      return this.connection.any(SiteUserRepository.query.searchAllUsers(q));
-    }
+    return this.connection.any(SiteUserRepository.query.searchAllUsers(q));
   }
 
   async listAllSites() {
-    if (this.shouldReadFromOmeka()) {
-      return (await this.omeka.listAllSites()).map(SiteUserRepository.mapSite);
-    } else {
-      return (await this.connection.any(SiteUserRepository.query.listAllSites())).map(SiteUserRepository.mapSite);
-    }
+    return (await this.connection.any(SiteUserRepository.query.listAllSites())).map(SiteUserRepository.mapSite);
   }
 
   async getSiteUsers(siteId: number): Promise<readonly SiteUser[]> {
-    if (this.shouldReadFromOmeka()) {
-      return await this.omeka.getSiteUsers(siteId);
-    } else {
-      return await this.connection.any(SiteUserRepository.query.getSiteUsers(siteId));
-    }
+    return await this.connection.any(SiteUserRepository.query.getSiteUsers(siteId));
   }
 
   /**
    * @throws NotFoundError
    */
   async getSiteById(id: number): Promise<Site> {
-    if (this.shouldReadFromOmeka()) {
-      return SiteUserRepository.mapSite(await this.omeka.getSite(id));
-    } else {
-      return SiteUserRepository.mapSite(await this.connection.one(SiteUserRepository.query.getSiteById(id)));
-    }
+    return SiteUserRepository.mapSite(await this.connection.one(SiteUserRepository.query.getSiteById(id)));
   }
 
   /**
    * @throws NotFoundError
    */
   async getSiteBySlug(slug: string): Promise<Site> {
-    if (this.shouldReadFromOmeka()) {
-      return SiteUserRepository.mapSite(await this.omeka.getSiteBySlug(slug));
-    } else {
-      return SiteUserRepository.mapSite(await this.connection.one(SiteUserRepository.query.getSiteBySlug(slug)));
-    }
+    return SiteUserRepository.mapSite(await this.connection.one(SiteUserRepository.query.getSiteBySlug(slug)));
   }
 
   /**
    * @throws NotFoundError
    */
   async getCachedSiteIdBySlug(slug: string, userId?: number, isAdmin = false): Promise<Site> {
-    console.log(slug);
     const cacheKey = `public-site-id:${slug}`;
     const publicSiteId: Site | undefined = cache.get(cacheKey);
     if (publicSiteId) {
@@ -882,19 +711,11 @@ export class SiteUserRepository extends BaseRepository {
   }
 
   async getAuthenticatedSites(userId: number): Promise<readonly UserSite[]> {
-    if (this.shouldReadFromOmeka()) {
-      return await this.omeka.getAuthenticatedSites(userId);
-    } else {
-      return await this.connection.any(SiteUserRepository.query.getAuthenticatedSites(userId));
-    }
+    return await this.connection.any(SiteUserRepository.query.getAuthenticatedSites(userId));
   }
 
   async getPublicSites(userId: number): Promise<readonly UserSite[]> {
-    if (this.shouldReadFromOmeka()) {
-      return await this.omeka.getPublicSites(userId);
-    } else {
-      return await this.connection.any(SiteUserRepository.query.getPublicSites(userId));
-    }
+    return await this.connection.any(SiteUserRepository.query.getPublicSites(userId));
   }
 
   async getUserSites(userId: number, role?: string) {
@@ -941,23 +762,14 @@ export class SiteUserRepository extends BaseRepository {
   }
 
   async countAllUsers() {
-    if (this.shouldReadFromOmeka()) {
-      const resp = await this.omeka.countAllUsers();
-      return resp.total_users;
-    } else {
-      const resp = await this.connection.one(SiteUserRepository.query.countAllUsers());
-      return resp.total_users;
-    }
+    const resp = await this.connection.one(SiteUserRepository.query.countAllUsers());
+    return resp.total_users;
   }
 
   async getAllUsers(page: number, perPage = 50) {
-    if (this.shouldReadFromOmeka()) {
-      return (await this.omeka.getAllUsers(page || 1, perPage)).map(SiteUserRepository.mapUser);
-    } else {
-      return (await this.connection.many(SiteUserRepository.query.getAllUsers(page || 1, perPage))).map(
-        SiteUserRepository.mapUser
-      );
-    }
+    return (await this.connection.many(SiteUserRepository.query.getAllUsers(page || 1, perPage))).map(
+      SiteUserRepository.mapUser
+    );
   }
 
   /**
@@ -983,105 +795,42 @@ export class SiteUserRepository extends BaseRepository {
   async updateUserPassword(userId: number, password: string) {
     const hash = await passwordHash(password);
 
-    if (this.shouldWriteToOmeka()) {
-      await this.omeka.updateUserPassword(userId, hash);
-    }
-
-    if (this.shouldWriteToPostgres()) {
-      await this.connection.query(SiteUserRepository.mutations.updateUserPassword(userId, hash));
-    }
+    await this.connection.query(SiteUserRepository.mutations.updateUserPassword(userId, hash));
   }
 
   async setUsersRoleOnSite(siteId: number, userId: number, role: string) {
-    if (this.shouldWriteToOmeka()) {
-      await this.omeka.setUsersRoleOnSite(siteId, userId, role);
-    }
-    if (this.shouldWriteToPostgres()) {
-      await this.connection.query(SiteUserRepository.mutations.setUsersRoleOnSite(siteId, userId, role));
-    }
+    await this.connection.query(SiteUserRepository.mutations.setUsersRoleOnSite(siteId, userId, role));
   }
 
   async removeUserRoleOnSite(siteId: number, userId: number) {
-    if (this.shouldWriteToOmeka()) {
-      await this.omeka.removeUserRoleOnSite(siteId, userId);
-    }
-
-    if (this.shouldWriteToPostgres()) {
-      await this.connection.query(SiteUserRepository.mutations.removeUserRoleOnSite(siteId, userId));
-    }
+    await this.connection.query(SiteUserRepository.mutations.removeUserRoleOnSite(siteId, userId));
   }
 
   async createUser(user: UserCreationRequest) {
-    if (this.shouldWriteToOmeka()) {
-      await this.omeka.createUser(user);
-
-      // In this case we need to use the ID we got from Omeka as the canonical ID.
-      // Once we migrate this shouldn't be a problem.
-      if (this.shouldWriteToPostgres()) {
-        const omekaUser = await this.omeka.getUserByEmail(user.email);
-
-        // So we force the ID from Omeka to be used.
-        await this.connection.query(SiteUserRepository.mutations.createUserWithId(omekaUser.id, user));
-
-        // We also need to reset the seq.
-        await this.connection.query(sql`select setval('user_id_seq', (select max(id) from "user"));`);
-      }
-    } else {
-      if (this.shouldWriteToPostgres()) {
-        await this.connection.query(SiteUserRepository.mutations.createUser(user));
-      }
-    }
+    await this.connection.query(SiteUserRepository.mutations.createUser(user));
 
     return this.getUserByEmail(user.email);
   }
 
   async updateUser(userId: number, req: UpdateUser) {
-    if (this.shouldWriteToOmeka()) {
-      await this.omeka.updateUser(userId, req);
-    }
-
-    if (this.shouldWriteToPostgres()) {
-      await this.connection.query(SiteUserRepository.mutations.updateUser(userId, req));
-    }
+    await this.connection.query(SiteUserRepository.mutations.updateUser(userId, req));
 
     return this.getUserById(userId);
   }
 
   async activateUser(userId: number) {
-    if (this.shouldWriteToOmeka()) {
-      await this.omeka.activateUser(userId);
-    }
-
-    if (this.shouldWriteToPostgres()) {
-      await this.connection.query(SiteUserRepository.mutations.activateUser(userId));
-    }
+    await this.connection.query(SiteUserRepository.mutations.activateUser(userId));
   }
 
   async deactivateUser(userId: number) {
-    if (this.shouldWriteToOmeka()) {
-      await this.omeka.deactivateUser(userId);
-    }
-
-    if (this.shouldWriteToPostgres()) {
-      await this.connection.query(SiteUserRepository.mutations.deactivateUser(userId));
-    }
+    await this.connection.query(SiteUserRepository.mutations.deactivateUser(userId));
   }
 
   async deleteUser(userId: number) {
-    if (this.shouldWriteToOmeka()) {
-      await this.omeka.deleteUser(userId);
-    }
-
-    if (this.shouldWriteToPostgres()) {
-      await this.connection.query(SiteUserRepository.mutations.deleteUser(userId));
-    }
+    await this.connection.query(SiteUserRepository.mutations.deleteUser(userId));
   }
 
   async getPasswordReset(c1: string, c2: string) {
-    if (!this.shouldWriteToPostgres()) {
-      throw new Error('Not enabled');
-    }
-
     const resetRow = await this.connection.one(SiteUserRepository.query.getPasswordReset(c2));
 
     if (!resetRow.shared_hash) {
@@ -1104,14 +853,8 @@ export class SiteUserRepository extends BaseRepository {
 
     const hash = await passwordHash(password);
 
-    if (this.shouldWriteToOmeka()) {
-      await this.omeka.setUserPassword(resetRow.user_id, hash);
-    }
-
-    if (this.shouldWriteToPostgres()) {
-      await this.connection.query(SiteUserRepository.mutations.setUserPassword(resetRow.user_id, hash));
-      await this.connection.query(SiteUserRepository.mutations.removeResetPassword(c2));
-    }
+    await this.connection.query(SiteUserRepository.mutations.setUserPassword(resetRow.user_id, hash));
+    await this.connection.query(SiteUserRepository.mutations.removeResetPassword(c2));
 
     if (resetRow.activate) {
       await this.activateUser(resetRow.user_id);
@@ -1119,101 +862,49 @@ export class SiteUserRepository extends BaseRepository {
   }
 
   async resetUserPassword(id: string, hash: string, userId: number, activate: boolean) {
-    // Only used postgres for resetting password.
-    // if (this.shouldWriteToOmeka()) {
-    //   await this.omeka.resetPassword(id, userId, activate);
-    // }
-
-    if (this.shouldWriteToPostgres()) {
-      await this.connection.query(SiteUserRepository.mutations.resetPassword(id, hash, userId, activate));
-    }
+    await this.connection.query(SiteUserRepository.mutations.resetPassword(id, hash, userId, activate));
   }
 
   async getInvitations(siteId: number) {
-    if (this.shouldReadFromOmeka()) {
-      return (await this.omeka.getInvitations(siteId)).map(SiteUserRepository.mapInvitation);
-    }
-
-    if (this.shouldReadFromPostgres()) {
-      return (await this.connection.any(SiteUserRepository.query.getInvitations(siteId))).map(
-        SiteUserRepository.mapInvitation
-      );
-    }
+    return (await this.connection.any(SiteUserRepository.query.getInvitations(siteId))).map(
+      SiteUserRepository.mapInvitation
+    );
   }
 
   async getInvitation(invitationId: string, siteId: number): Promise<UserInvitation> {
-    if (this.shouldReadFromOmeka()) {
-      return SiteUserRepository.mapInvitation(await this.omeka.getInvitation(invitationId, siteId));
-    }
-
-    if (this.shouldReadFromPostgres()) {
-      return SiteUserRepository.mapInvitationWithUsers(
-        await this.connection.any(SiteUserRepository.query.getInvitation(invitationId, siteId))
-      );
-    }
-
-    throw new Error();
+    return SiteUserRepository.mapInvitationWithUsers(
+      await this.connection.any(SiteUserRepository.query.getInvitation(invitationId, siteId))
+    );
   }
 
   async createInvitationRedemption(invitationId: string, userId: number, siteId: number) {
-    if (this.shouldWriteToPostgres()) {
-      const invitation = await this.connection.one(SiteUserRepository.query.getInvitation(invitationId, siteId));
-      await this.connection.query(SiteUserRepository.mutations.createInvitationRedemption(invitation.id, userId));
-      await this.connection.query(SiteUserRepository.mutations.useInvitation(invitationId, siteId));
-    }
+    const invitation = await this.connection.one(SiteUserRepository.query.getInvitation(invitationId, siteId));
+    await this.connection.query(SiteUserRepository.mutations.createInvitationRedemption(invitation.id, userId));
+    await this.connection.query(SiteUserRepository.mutations.useInvitation(invitationId, siteId));
   }
 
   async createInvitation(req: UserInvitationsRequest, siteId: number, userId: number) {
-    if (this.shouldWriteToOmeka()) {
-      await this.omeka.createInvitation(req, siteId, userId);
-    }
-
-    if (this.shouldWriteToPostgres()) {
-      await this.connection.query(SiteUserRepository.mutations.createInvitation(req, siteId, userId));
-    }
+    await this.connection.query(SiteUserRepository.mutations.createInvitation(req, siteId, userId));
 
     return await this.getInvitation(req.invitation_id, siteId);
   }
 
   async deleteInvitation(invitationId: string, siteId: number) {
-    if (this.shouldWriteToOmeka()) {
-      await this.omeka.deleteInvitation(invitationId, siteId);
-    }
-
-    if (this.shouldWriteToPostgres()) {
-      await this.connection.query(SiteUserRepository.mutations.deleteInvitation(invitationId, siteId));
-    }
+    await this.connection.query(SiteUserRepository.mutations.deleteInvitation(invitationId, siteId));
   }
 
   async changeSiteVisibility(siteId: number, isPublic: boolean) {
-    if (this.shouldWriteToOmeka()) {
-      await this.omeka.changeSiteVisibility(siteId, isPublic);
-    }
-
-    if (this.shouldWriteToPostgres()) {
-      await this.connection.query(SiteUserRepository.mutations.changeSiteVisibility(siteId, isPublic));
-    }
+    await this.connection.query(SiteUserRepository.mutations.changeSiteVisibility(siteId, isPublic));
   }
 
   async deleteSite(siteId: number) {
     // Note - sites must first be made non-public before deleting.
-    if (this.shouldWriteToOmeka()) {
-      await this.omeka.deleteSite(siteId);
-    }
 
-    if (this.shouldWriteToPostgres()) {
-      await this.connection.query(SiteUserRepository.mutations.deleteSite(siteId));
-    }
+    await this.connection.query(SiteUserRepository.mutations.deleteSite(siteId));
   }
 
   async createSite(req: CreateSiteRequest, userId: number, permissions: ExternalConfig['permissions']) {
-    if (this.shouldWriteToOmeka()) {
-      await this.omeka.createSite(req, userId);
-    }
-
-    if (this.shouldWriteToPostgres()) {
-      await this.connection.query(SiteUserRepository.mutations.createSite(req, userId));
-    }
+    await this.connection.query(SiteUserRepository.mutations.createSite(req, userId));
 
     const site = await this.getSiteBySlug(req.slug);
 
@@ -1250,13 +941,7 @@ export class SiteUserRepository extends BaseRepository {
   }
 
   async updateSite(siteId: number, req: Partial<UpdateSiteRequest>) {
-    if (this.shouldWriteToOmeka()) {
-      await this.omeka.updateSite(siteId, req);
-    }
-
-    if (this.shouldWriteToPostgres()) {
-      await this.connection.query(SiteUserRepository.mutations.updateSite(siteId, req));
-    }
+    await this.connection.query(SiteUserRepository.mutations.updateSite(siteId, req));
 
     try {
       const site = await this.getSiteById(siteId);
@@ -1268,13 +953,7 @@ export class SiteUserRepository extends BaseRepository {
   }
 
   async updateInvitation(invitationId: string, siteId: number, req: UpdateInvitation) {
-    if (this.shouldWriteToOmeka()) {
-      await this.omeka.updateInvitation(invitationId, siteId, req);
-    }
-
-    if (this.shouldWriteToPostgres()) {
-      await this.connection.query(SiteUserRepository.mutations.updateInvitation(invitationId, siteId, req));
-    }
+    await this.connection.query(SiteUserRepository.mutations.updateInvitation(invitationId, siteId, req));
 
     return this.getInvitation(invitationId, siteId);
   }
@@ -1344,7 +1023,4 @@ export class SiteUserRepository extends BaseRepository {
       return undefined;
     }
   }
-
-  // @todo Areas to migrate Omeka functionality:
-  //   - Autocomplete/browse [+]
 }

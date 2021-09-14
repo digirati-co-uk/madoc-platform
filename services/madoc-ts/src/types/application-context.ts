@@ -12,16 +12,13 @@ import { CronJobs } from '../utility/cron-jobs';
 import { Mailer } from '../utility/mailer';
 import { ExternalConfig } from './external-config';
 import { router } from '../router';
-import { Pool } from 'mysql';
 import { DatabasePoolConnectionType } from 'slonik';
-import { OmekaApi } from '../utility/omeka-api';
 import { Ajv } from 'ajv';
 
 export interface ApplicationContext {
   i18next: i18n;
   externalConfig: ExternalConfig;
   routes: typeof router;
-  mysql: Pool;
   connection: DatabasePoolConnectionType;
   pageBlocks: PageBlocksRepository;
   plugins: PluginRepository;
@@ -30,13 +27,10 @@ export interface ApplicationContext {
   mailer: Mailer;
   notifications: NotificationRepository;
   changeDiscovery: ChangeDiscoveryRepository;
-  omeka: OmekaApi;
   siteManager: SiteUserRepository;
   pluginManager: PluginManager;
   cron: CronJobs;
   ajv: Ajv;
-  omekaPage?: string | ((token: string) => Promise<string | undefined>) | ((token: string) => undefined | string);
-  omekaMessages: Array<{ type: 'success' | 'error'; message: string }>;
-  omekaMinimal?: boolean;
+  staticPage?: string | ((token: string) => Promise<string | undefined>) | ((token: string) => undefined | string);
   disposableApis: ApiClient[];
 }

@@ -3,7 +3,7 @@ import koaBody from 'koa-body';
 import { requestBody } from '../middleware/request-body';
 import { parseJwt } from '../middleware/parse-jwt';
 import { RouteMiddleware } from '../types/route-middleware';
-import { omekaSite } from '../middleware/omeka-site';
+import { siteState } from '../middleware/site-state';
 
 export type RouteWithParams<Props, Body = any> =
   | [string, string, RouteMiddleware<Props, Body>]
@@ -47,7 +47,7 @@ export class TypedRouter<
           break;
         case TypedRouter.GET:
           // @ts-ignore
-          this.router.get(route, path, parseJwt, omekaSite, func);
+          this.router.get(route, path, parseJwt, siteState, func);
           break;
         case TypedRouter.DELETE:
           // @ts-ignore

@@ -1,10 +1,11 @@
 import {
   FixedSizeImage,
   FixedSizeImageService,
-  ImageCandidate,
   UnknownSizeImage,
   VariableSizeImage,
 } from '@atlas-viewer/iiif-image-api';
+import * as path from 'path';
+import { MANIFESTS_PATH } from '../../paths';
 import { BaseTask } from './base-task';
 import mkdirp from 'mkdirp';
 import { existsSync, readFile, writeFileSync } from 'fs';
@@ -23,8 +24,6 @@ export const STATUS = {
   DONE: 3,
 };
 
-export const fileDirectory = process.env.OMEKA_FILE_DIRECTORY || '/home/node/app/omeka-files';
-
 export function changeStatus<Task extends BaseTask>(
   availableStatuses: any,
   newStatus: string,
@@ -40,10 +39,10 @@ export function changeStatus<Task extends BaseTask>(
 }
 
 export function saveManifestToDisk(idHash: string, content: string) {
-  mkdirp.sync(`${fileDirectory}/original/madoc-manifests/${idHash}`);
-  const fileLocation = `${fileDirectory}/original/madoc-manifests/${idHash}/manifest.json`;
+  mkdirp.sync(path.join(MANIFESTS_PATH, `/${idHash}`));
+  const fileLocation = path.join(MANIFESTS_PATH, `/${idHash}/manifest.json`);
   if (!existsSync(fileLocation)) {
-    writeFileSync(`${fileDirectory}/original/madoc-manifests/${idHash}/manifest.json`, Buffer.from(content));
+    writeFileSync(path.join(MANIFESTS_PATH, `/${idHash}/manifest.json`), Buffer.from(content));
   }
   return fileLocation;
 }
@@ -110,8 +109,8 @@ export function sharedVault(manifestId: string): Vault {
 }
 
 export function writeCanvasToDisk(idHash: string, content: any, canvasOrder: number) {
-  mkdirp.sync(`${fileDirectory}/original/madoc-manifests/${idHash}/canvases/`);
-  const fileLocation = `${fileDirectory}/original/madoc-manifests/${idHash}/canvases/c${canvasOrder}.json`;
+  mkdirp.sync(path.join(MANIFESTS_PATH, `/${idHash}/canvases/`));
+  const fileLocation = path.join(MANIFESTS_PATH, `/${idHash}/canvases/c${canvasOrder}.json`);
   if (!existsSync(fileLocation)) {
     writeFileSync(fileLocation, Buffer.from(JSON.stringify(content)));
   }

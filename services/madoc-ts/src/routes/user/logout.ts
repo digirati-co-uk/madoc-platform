@@ -1,8 +1,6 @@
 import fetch from 'node-fetch';
 import { RouteMiddleware } from '../../types/route-middleware';
 
-const omekaUrl = process.env.OMEKA__URL as string;
-
 export const logout: RouteMiddleware<{ slug: string }> = async context => {
   const jwt = context.state.jwt;
   if (jwt && jwt.user.id) {
@@ -13,7 +11,6 @@ export const logout: RouteMiddleware<{ slug: string }> = async context => {
     const sites = siteCookies.split(',');
     const cookieName = context.externalConfig.cookieName || 'madoc';
     // // Get user sites
-    // const sites = await context.omeka.getUserSites(jwt.user.id, 'admin'); // @todo change this to avoid leaking sites
     // Unset cookies.
     for (const site of sites) {
       const domain = `/s/${site}`;
@@ -30,14 +27,6 @@ export const logout: RouteMiddleware<{ slug: string }> = async context => {
     context.query.redirect = '';
   }
 
-  // Automatic logout of Omeka:
-  await fetch(`${omekaUrl}/logout`, {
-    headers: {
-      Cookie: context.req.headers.cookie ? context.req.headers.cookie.toString() : '',
-      // Authorization: context.state.jwt ? `Bearer ${context.state.jwt.token}` : '',
-    },
-  });
-
-  // Redirect to Omeka.
+  // Redirect to site homepage.
   context.response.redirect(context.query.redirect || `/s/${context.params.slug}`);
 };

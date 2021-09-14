@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useMutation } from 'react-query';
-import { SystemConfig } from '../../../../extensions/site-manager/types';
+import { Site, SystemConfig } from '../../../../extensions/site-manager/types';
 import { SuccessMessage } from '../../../shared/atoms/SuccessMessage';
 import { EditShorthandCaptureModel } from '../../../shared/caputre-models/EditorShorthandCaptureModel';
 import { useApi } from '../../../shared/hooks/use-api';

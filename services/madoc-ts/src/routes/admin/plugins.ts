@@ -3,6 +3,7 @@ import mkdirp from 'mkdirp';
 import path from 'path';
 import semver from 'semver/preload';
 import { loadPluginModule } from '../../middleware/create-plugin-manager';
+import { PLUGINS_PATH } from '../../paths';
 import { SitePlugin } from '../../types/schemas/plugins';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { RequestError } from '../../utility/errors/request-error';
@@ -10,7 +11,6 @@ import { ServerError } from '../../utility/errors/server-error';
 import { sandboxRun } from '../../utility/sandboxed-require';
 import { userWithScope } from '../../utility/user-with-scope';
 import NodeStreamZip from 'node-stream-zip';
-import { pluginDirectory } from './development-plugin';
 
 export const listPlugins: RouteMiddleware = async context => {
   const { siteId } = userWithScope(context, ['site.admin']);
@@ -29,7 +29,7 @@ export const getPlugin: RouteMiddleware = async context => {
   context.response.body = await context.plugins.getSitePlugin(id, siteId);
 };
 
-export const installPlugin: RouteMiddleware<{}, SitePlugin> = async context => {
+export const installPlugin: RouteMiddleware<unknown, SitePlugin> = async context => {
   const { siteId } = userWithScope(context, ['site.admin']);
 
   const plugin = context.requestBody;
@@ -218,7 +218,7 @@ export const disableDevMode: RouteMiddleware<{ id: string }> = async context => 
 };
 
 export const installRemotePlugin: RouteMiddleware<
-  {},
+  unknown,
   { owner: string; repository: string; version?: string }
 > = async context => {
   userWithScope(context, ['site.admin']);
@@ -271,13 +271,13 @@ export const installRemotePlugin: RouteMiddleware<
 
   // - Save plugin.zip to temporary folder
   const zipResponse = await fetch(pluginZip.browser_download_url, { redirect: 'follow' });
-  const pluginZipLocation = `${pluginDirectory}/temp/${pluginZip.node_id}/plugin.zip`;
+  const pluginZipLocation = path.join(PLUGINS_PATH, `/temp/${pluginZip.node_id}/plugin.zip`);
 
   if (!zipResponse.body) {
     throw new RequestError('Invalid release (zip download)');
   }
 
-  mkdirp.sync(`${pluginDirectory}/temp/${pluginZip.node_id}`);
+  mkdirp.sync(path.join(PLUGINS_PATH, `/temp/${pluginZip.node_id}`));
   await new Promise<void>((resolve, reject) => {
     const fileStream = fs.createWriteStream(pluginZipLocation);
     if (zipResponse.body) {
@@ -323,7 +323,7 @@ export const installRemotePlugin: RouteMiddleware<
   };
 
   // - Add plugin to disk in the right place
-  const pluginDest = `${pluginDirectory}/${madocConfig.id}/${madocConfig.version}`;
+  const pluginDest = path.join(PLUGINS_PATH, `/${madocConfig.id}/${madocConfig.version}`);
   mkdirp.sync(pluginDest);
   fs.writeFileSync(path.join(pluginDest, 'plugin.js'), madocBundle);
   fs.writeFileSync(path.join(pluginDest, 'madoc-plugin.json'), madocConfigData);

@@ -1,10 +1,9 @@
 import { JWK, JWT } from 'jose';
 import { readFileSync } from 'fs';
 import * as path from 'path';
+import { OPEN_SSL_KEY_PATH } from '../paths';
 
-const keyPath = process.env.MADOC_KEY_PATH || '/openssl-certs/';
-
-const publicKey = JWK.asKey(readFileSync(path.join(keyPath, 'madoc.pub')));
+const publicKey = JWK.asKey(readFileSync(path.join(OPEN_SSL_KEY_PATH, 'madoc.pub')));
 
 export type TokenReturn = {
   token: string;

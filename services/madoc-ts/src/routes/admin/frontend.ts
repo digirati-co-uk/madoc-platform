@@ -27,8 +27,7 @@ export const adminFrontend: RouteMiddleware = async context => {
   const lng = context.cookies.get('i18next');
   const [, i18nInstance] = await createBackend(lng, site.id);
 
-  context.omekaMinimal = true;
-  context.omekaPage = async token => {
+  context.staticPage = async token => {
     const result = await renderAdmin({
       url: context.req.url || '',
       jwt: token,
@@ -69,7 +68,6 @@ export const siteFrontend: RouteMiddleware = async context => {
   }
 
   const bundle = context.routes.url('assets-bundles', { slug: context.params.slug, bundleId: 'site' });
-  context.omekaMinimal = true;
   const lng = context.cookies.get('i18next');
 
   // ...
@@ -93,7 +91,7 @@ export const siteFrontend: RouteMiddleware = async context => {
     throw new NotFound();
   }
 
-  context.omekaPage = async token => {
+  context.staticPage = async token => {
     const [, i18nInstance] = await createBackend(lng, site.id);
     const result = await renderSite({
       url: context.req.url || '',

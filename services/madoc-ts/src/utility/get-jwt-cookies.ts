@@ -2,7 +2,6 @@ import { sql } from 'slonik';
 import { createSignedToken } from './create-signed-token';
 import { AuthenticatedUser } from '../types/authenticated-user';
 import { ApplicationContext } from '../types/application-context';
-import { syncOmeka } from './sync-omeka';
 
 export async function getJwtCookies(
   context: ApplicationContext,
@@ -28,9 +27,7 @@ export async function getJwtCookies(
     );
 
     if (scopesForJWT.length === 0 && !retry) {
-      console.log('Syncing omeka...');
-      // Are the scopes right?
-      await syncOmeka(context.mysql, context.connection, context.externalConfig);
+      // @todo May need to sync JWTs here in Postgres.
 
       return getJwtCookies(context, user, siteId, true);
     }

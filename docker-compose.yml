@@ -29,31 +29,6 @@ services:
       - certs
       - gateway-redis
 
-  madoc:
-    build:
-      context: services/madoc
-    links:
-      - madoc-database
-    environment:
-      - APP_ENV=${APP_ENV}
-      - OMEKA__DATABASE_HOST=madoc-database
-      - OMEKA__DATABASE_NAME=${MYSQL_DATABASE}
-      - OMEKA__DATABASE_USER=${MYSQL_USER}
-      - OMEKA__DATABASE_PASSWORD=${MYSQL_PASSWORD}
-      - OMEKA__DATABASE_PORT=${MYSQL_PORT}
-    volumes:
-      - ./services/madoc/packages/auto-complete:/srv/omeka/repos/auto-complete:delegated
-      - ./services/madoc/packages/default-theme:/srv/omeka/repos/default-theme:delegated
-      - ./services/madoc/packages/google-analytics:/srv/omeka/repos/google-analytics:delegated
-      - ./services/madoc/packages/madoc-bridge:/srv/omeka/repos/madoc-bridge:delegated
-      - ./services/madoc/packages/madoc-crowd-sourcing-theme:/srv/omeka/repos/madoc-crowd-sourcing-theme:delegated
-      - ./services/madoc/packages/public-user:/srv/omeka/repos/public-user:delegated
-      - ./services/madoc/packages/shared-library:/srv/omeka/repos/shared-library:delegated
-      - ./services/madoc/.omeka/omeka-s/application:/srv/omeka/application:cached
-      - ./var/files:/srv/omeka/files
-      - ./services/madoc/config/omeka-app/application.config.php:/srv/omeka/application/config/application.config.php
-      - ./var/certs:/openssl-certs
-
   certs:
     build:
       context: services/certs
@@ -88,16 +63,10 @@ services:
       - DATABASE_USER=${POSTGRES_MADOC_TS_USER}
       - DATABASE_SCHEMA=${POSTGRES_MADOC_TS_SCHEMA}
       - DATABASE_PASSWORD=${POSTGRES_MADOC_TS_PASSWORD}
-      - OMEKA__DATABASE_HOST=madoc-database
-      - OMEKA__DATABASE_NAME=${MYSQL_DATABASE}
-      - OMEKA__DATABASE_USER=${MYSQL_USER}
-      - OMEKA__DATABASE_PASSWORD=${MYSQL_PASSWORD}
-      - OMEKA__DATABASE_PORT=${MYSQL_PORT}
-      - OMEKA__URL=http://madoc
       - REDIS_HOST=gateway-redis
       - API_GATEWAY=http://gateway:8080
       - GATEWAY_HOST=${GATEWAY_HOST}
-      - OMEKA_FILE_DIRECTORY=/home/node/app/omeka-files
+      - STORAGE_FILE_DIRECTORY=/home/node/app/omeka-files
       - MIGRATE=true
       - SMTP_HOST=${SMTP_HOST}
       - SMTP_PORT=${SMTP_PORT}
@@ -179,20 +148,6 @@ services:
 
   gateway-redis:
     image: redis:5-alpine
-
-  madoc-database:
-    build:
-      context: services/madoc-database
-    environment:
-      - MYSQL_RANDOM_ROOT_PASSWORD=yes
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_PORT=${MYSQL_PORT}
-    volumes:
-      - ./var/database/data:/var/lib/mysql/
-    ports:
-      - "${PORTS_MYSQL_DATABASE:-3334}:3306"
 
   config-service:
     image: digirati/madoc_config_service_django:175410fc5b7dbef4cc259686564fbedeb60c8789

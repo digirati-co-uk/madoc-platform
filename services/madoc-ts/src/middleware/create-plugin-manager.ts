@@ -1,7 +1,8 @@
+import * as path from 'path';
 import { DatabasePoolType } from 'slonik';
 import { PluginManager, PluginModule } from '../frontend/shared/plugins/plugin-manager';
+import { PLUGINS_PATH } from '../paths';
 import { PluginRepository } from '../repository/plugin-repository';
-import { pluginDirectory } from '../routes/admin/development-plugin';
 import { ModuleWrapper } from '../types/plugins';
 import { SitePlugin } from '../types/schemas/plugins';
 import { sandboxedRequire } from '../utility/sandboxed-require';
@@ -29,7 +30,7 @@ export function loadPluginModule(plugin: SitePlugin): { module: ModuleWrapper | 
 
     try {
       return {
-        module: sandboxedRequire(`${pluginDirectory}/${plugin.id}/${plugin.development.revision}/plugin.js`),
+        module: sandboxedRequire(path.join(PLUGINS_PATH, `/${plugin.id}/${plugin.development.revision}/plugin.js`)),
         error: false,
       };
     } catch (e) {
@@ -47,7 +48,7 @@ export function loadPluginModule(plugin: SitePlugin): { module: ModuleWrapper | 
   console.log(`Plugin<site:${plugin.siteId}>: ${plugin.name} (${plugin.id}) | ${plugin.version}`);
   try {
     return {
-      module: sandboxedRequire(`${pluginDirectory}/${plugin.id}/${plugin.version}/plugin.js`),
+      module: sandboxedRequire(path.join(PLUGINS_PATH, `/${plugin.id}/${plugin.version}/plugin.js`)),
       error: false,
     };
   } catch (e) {

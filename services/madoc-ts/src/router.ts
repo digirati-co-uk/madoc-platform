@@ -5,7 +5,6 @@ import {
   delegatedRequest,
 } from './routes/admin/deletegated-request';
 import { acceptNewDevelopmentBundle, developmentPlugin } from './routes/admin/development-plugin';
-import { exportSite } from './routes/admin/export-site';
 import { getMetadataKeys } from './routes/admin/get-metadata-keys';
 import { getMetadataValues } from './routes/admin/get-metadata-values';
 import { getModelConfiguration } from './routes/admin/get-model-configuration';
@@ -26,7 +25,6 @@ import { deleteUser } from './routes/global/delete-user';
 import { deleteUserSiteRole } from './routes/manage-site/delete-user-site-role';
 import { getInvitation } from './routes/manage-site/get-invitation';
 import { getSiteUsers } from './routes/manage-site/get-site-users';
-import { importSite } from './routes/admin/import-site';
 import { listJobs, runJob } from './routes/admin/list-jobs';
 import {
   extractLocalesFromContent,
@@ -214,8 +212,6 @@ export const router = new TypedRouter({
   'get-scopes': [TypedRouter.GET, '/api/madoc/site/:siteId/permissions', getSiteScopes],
   'update-scopes': [TypedRouter.POST, '/api/madoc/site/:siteId/permissions', saveSiteScopes],
   'pm2-list': [TypedRouter.GET, '/api/madoc/pm2/list', pm2Status],
-  'export-site': [TypedRouter.POST, '/api/madoc/site/:siteId/export', exportSite],
-  'import-site': [TypedRouter.POST, '/api/madoc/site/:siteId/import', importSite],
   'cron-jobs': [TypedRouter.GET, '/api/madoc/cron/jobs', listJobs],
   'run-cron-jobs': [TypedRouter.POST, '/api/madoc/cron/jobs/:jobId/run', runJob],
 
@@ -580,9 +576,6 @@ export const router = new TypedRouter({
   'get-locale': [TypedRouter.GET, '/s/:slug/madoc/api/locales/:lng/:ns', getLocale],
   'add-missing-locale': [TypedRouter.POST, '/s/:slug/madoc/api/locales/:lng/:ns', saveMissingLocale],
 
-  // Test omeka pages.
-  // 'get-page': [TypedRouter.GET, '/s/:slug/madoc/page/:pageSlug+', sitePage],
-
   // Frontend
   'admin-frontend': [TypedRouter.GET, '/s/:slug/admin(.*)', adminFrontend],
   'site-frontend-root': [TypedRouter.GET, '/s/:slug', siteFrontend],
@@ -590,5 +583,5 @@ export const router = new TypedRouter({
 
   // Make sure this is last.
   'site-root': [TypedRouter.GET, '/', siteRoot],
-  'omeka-404': [TypedRouter.GET, '/s/:slug(.*)', madocNotFound],
+  'site-404': [TypedRouter.GET, '/s/:slug(.*)', madocNotFound],
 });

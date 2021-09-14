@@ -34,7 +34,7 @@ export interface ImportCollectionTask extends BaseTask {
   };
 }
 
-export function createTask(collectionUrl: string, omekaUserId: number, siteId?: number): ImportCollectionTask {
+export function createTask(collectionUrl: string, userId: number, siteId?: number): ImportCollectionTask {
   return {
     type: 'madoc-collection-import',
     name: 'Importing collection',
@@ -47,7 +47,7 @@ export function createTask(collectionUrl: string, omekaUserId: number, siteId?: 
     ],
     status: 0,
     status_text: status[0],
-    parameters: [omekaUserId, siteId],
+    parameters: [userId, siteId],
   };
 }
 
@@ -143,7 +143,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       break;
     }
     case `subtask_type_status.${importManifest.type}.${tasks.STATUS.DONE}`: {
-      // 1. Update Omeka with manifest ids from sub tasks
+      // 1. Update with manifest ids from sub tasks
       const vault = new Vault();
       const task = await api.getTaskById<ImportCollectionTask>(taskId);
       const subtasks = task.subtasks || [];

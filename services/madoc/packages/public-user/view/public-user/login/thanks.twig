@@ -1,8 +1,0 @@
-<div class="c-form c-form--thank-you">
-    <h2>{{ translate('Thank you for registering') }}</h2>
-    {% if customSite %}
-        <a href="{{ url('site', {'site-slug': customSite}, {}) }}">{{ translate('Proceed to site') }}</a>
-    {% else %}
-        <a href="{{ url('site', {}, {}, true) }}">{{ translate('Proceed to site') }}</a>
-    {% endif %}
-</div>

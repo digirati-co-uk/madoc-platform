@@ -7,18 +7,15 @@ import './frontend/shared/plugins/globals';
 import { createPluginManager } from './middleware/create-plugin-manager';
 import { disposeApis } from './middleware/dispose-apis';
 import { errorHandler } from './middleware/error-handler';
-import { SiteUserRepository } from './repository/site-user-repository';
+import { SCHEMAS_PATH } from './paths';
 import { CronJobs } from './utility/cron-jobs';
 import { MailConfig, Mailer } from './utility/mailer';
-import { OmekaApi } from './utility/omeka-api';
 import { TypedRouter } from './utility/typed-router';
 import { createPostgresPool } from './database/create-postgres-pool';
 import { postgresConnection } from './middleware/postgres-connection';
 import { migrate } from './migrate';
-import { createMysqlPool } from './database/create-mysql-pool';
-import { omekaPage } from './middleware/omeka-page';
-import { omekaApi } from './middleware/omeka-api';
-import { syncOmeka } from './utility/sync-omeka';
+import { staticPage } from './middleware/static-page';
+import { siteManager } from './middleware/site-api';
 import { setJwt } from './middleware/set-jwt';
 import { generateKeys } from './utility/generate-keys';
 import { readdirSync, readFileSync } from 'fs';
@@ -35,45 +32,12 @@ export const fileDirectory = process.env.OMEKA_FILE_DIRECTORY || '/home/node/app
 export async function createApp(router: TypedRouter<any, any>, config: ExternalConfig, env: { smtp: MailConfig }) {
   const app = new Koa();
   const pool = createPostgresPool();
-  const mysqlPool = createMysqlPool();
   const i18nextPromise = createBackend();
 
   if (process.env.NODE_APP_INSTANCE === '0') {
     if (process.env.NODE_ENV === 'production' || process.env.MIGRATE) {
       await migrate();
     }
-
-    // await syncOmeka(mysqlPool, pool, config);
-
-    // const siteRepo = new SiteUserRepository(pool, new OmekaApi(mysqlPool), 'HYBRID_POSTGRES');
-    // await siteRepo.legacyOmekaDatabaseSync(config.permissions);
-  }
-
-  if (
-    process.env.NODE_ENV === 'development' &&
-    process.env.watch === 'false' &&
-    process.env.NODE_APP_INSTANCE === '0'
-  ) {
-    const webpack = require('webpack');
-    const webpackConfig = require('../webpack.config');
-    const compiler = webpack(webpackConfig);
-
-    app.use(
-      k2c(
-        require('webpack-dev-middleware')(compiler, {
-          publicPath: webpackConfig.output.publicPath,
-          stats: false,
-        })
-      )
-    );
-
-    app.use(
-      k2c(
-        require('webpack-hot-middleware')(compiler, {
-          path: '/s/default/__webpack_hmr',
-        })
-      )
-    );
   }
 
   // Generate cookie keys.
@@ -81,7 +45,6 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
 
   app.context.externalConfig = config;
   app.context.routes = router;
-  app.context.mysql = mysqlPool;
   app.context.cron = new CronJobs();
   app.context.pluginManager = await createPluginManager(pool);
   app.context.mailer = new Mailer(env.smtp);
@@ -97,13 +60,10 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
 
   // Validator.
   app.context.ajv = new Ajv();
-  for (const file of readdirSync(path.resolve(__dirname, '..', 'schemas'))) {
+  for (const file of readdirSync(SCHEMAS_PATH)) {
     if (!file.startsWith('.')) {
       const name = path.basename(file, '.json');
-      app.context.ajv.addSchema(
-        JSON.parse(readFileSync(path.resolve(__dirname, '..', 'schemas', file)).toString('utf-8')),
-        name
-      );
+      app.context.ajv.addSchema(JSON.parse(readFileSync(path.resolve(SCHEMAS_PATH, file)).toString('utf-8')), name);
     }
   }
 
@@ -115,9 +75,9 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   // app.use(conditional());
 
   app.use(errorHandler);
-  app.use(omekaPage);
+  app.use(staticPage);
   app.use(setJwt);
-  app.use(omekaApi);
+  app.use(siteManager);
   app.use(disposeApis);
   app.use(router.routes()).use(router.allowedMethods());
 
@@ -135,9 +95,6 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   }
 
   process.on('SIGINT', async () => {
-    console.log('closing database connections...');
-    await Promise.all([pool.end(), new Promise(resolve => mysqlPool.end(resolve))]);
-
     console.log('cancelling cron jobs...');
     app.context.cron.cancelAllJobs();
 

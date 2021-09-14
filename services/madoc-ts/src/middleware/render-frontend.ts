@@ -1,9 +1,9 @@
 import { siteFrontend } from '../routes/admin/frontend';
 import { RouteMiddleware } from '../types/route-middleware';
-import { omekaSite } from './omeka-site';
+import { siteState } from './site-state';
 
 export const renderFrontend: RouteMiddleware = async (context, next) => {
-  await omekaSite(context, async () => {
+  await siteState(context, async () => {
     await siteFrontend(context, next);
   });
 };

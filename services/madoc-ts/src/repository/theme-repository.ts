@@ -1,12 +1,11 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'fs';
 import path from 'path';
 import { sql } from 'slonik';
+import { THEMES_PATH } from '../paths';
 import { DiskTheme, ResolvedTheme, ThemeRow, ThemeSiteRow } from '../types/themes';
 import { b64EncodeUnicode } from '../utility/base64';
 import { BaseRepository } from './base-repository';
 import cache from 'memory-cache';
-
-const themesDirectory = process.env.THEME_DIR || path.join(__dirname, '../../themes');
 
 export class ThemeRepository extends BaseRepository {
   // List themes
@@ -54,7 +53,7 @@ export class ThemeRepository extends BaseRepository {
   }
 
   loadAsset(theme: string, bundle: string) {
-    const assetPath = path.join(themesDirectory, theme, 'public', bundle);
+    const assetPath = path.join(THEMES_PATH, theme, 'public', bundle);
 
     if (!existsSync(assetPath)) {
       return '';
@@ -64,7 +63,7 @@ export class ThemeRepository extends BaseRepository {
   }
 
   loadFragment(theme: string, fragment: string) {
-    const fragPath = path.join(themesDirectory, theme, 'fragments', fragment);
+    const fragPath = path.join(THEMES_PATH, theme, 'fragments', fragment);
 
     if (!existsSync(fragPath)) {
       return '';
@@ -89,8 +88,8 @@ export class ThemeRepository extends BaseRepository {
       return;
     }
 
-    const assetDirectory = path.join(themesDirectory, themeId, 'public');
-    const assetPath = path.join(themesDirectory, themeId, 'public', asset);
+    const assetDirectory = path.join(THEMES_PATH, themeId, 'public');
+    const assetPath = path.join(THEMES_PATH, themeId, 'public', asset);
 
     if (!existsSync(assetPath)) {
       return '';
@@ -169,12 +168,12 @@ export class ThemeRepository extends BaseRepository {
 
   // Get disk themes
   async getDiskThemes() {
-    const dirs = readdirSync(themesDirectory);
+    const dirs = readdirSync(THEMES_PATH);
     const diskThemes: any = {};
     for (const themeDir of dirs) {
-      if (statSync(`${themesDirectory}/${themeDir}`).isDirectory()) {
+      if (statSync(path.join(THEMES_PATH, `/${themeDir}`)).isDirectory()) {
         // We have a valid directory. Now load the JSON.
-        const themeJson = `${themesDirectory}/${themeDir}/theme.json`;
+        const themeJson = path.join(THEMES_PATH, `/${themeDir}/theme.json`);
         if (existsSync(themeJson)) {
           diskThemes[themeDir] = {
             id: themeDir,
@@ -191,8 +190,8 @@ export class ThemeRepository extends BaseRepository {
       return null;
     }
 
-    if (statSync(`${themesDirectory}/${themeDir}`).isDirectory()) {
-      const themeJson = `${themesDirectory}/${themeDir}/theme.json`;
+    if (statSync(path.join(THEMES_PATH, `/${themeDir}`)).isDirectory()) {
+      const themeJson = path.join(THEMES_PATH, `/${themeDir}/theme.json`);
       if (existsSync(themeJson)) {
         return {
           id: themeDir,

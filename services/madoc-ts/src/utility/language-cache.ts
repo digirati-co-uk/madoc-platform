@@ -1,11 +1,9 @@
 import * as fs from 'fs';
 import path from 'path';
+import { STORAGE_API_PATH, TRANSLATIONS_PATH } from '../paths';
 import { filterEmptyContent } from '../routes/admin/localisation';
 import { BackendModule, InitOptions, Services, ReadCallback } from 'i18next';
 import cache from 'memory-cache';
-
-const localFolder = path.resolve(__dirname, '..', '..', 'translations');
-const dynamicFolder = path.resolve(__dirname, '..', '..', 'omeka-files');
 
 export class LanguageCache implements BackendModule {
   static type: string;
@@ -15,7 +13,7 @@ export class LanguageCache implements BackendModule {
   options!: any;
   i18nextOptions!: InitOptions;
 
-  init(services: Services, backendOptions: object, i18nextOptions: InitOptions): void {
+  init(services: Services, backendOptions: any, i18nextOptions: InitOptions): void {
     this.services = services;
     this.options = backendOptions;
     this.i18nextOptions = i18nextOptions;
@@ -31,9 +29,9 @@ export class LanguageCache implements BackendModule {
       return;
     }
 
-    const localPath = path.join(localFolder, language, `${namespace}.json`);
+    const localPath = path.join(TRANSLATIONS_PATH, language, `${namespace}.json`);
     const dynamicPath = siteUrn
-      ? path.join(dynamicFolder, 'storage-api', siteUrn, bucket, 'public', language, `${namespace}.json`)
+      ? path.join(STORAGE_API_PATH, siteUrn, bucket, 'public', language, `${namespace}.json`)
       : undefined;
 
     const canonical: any = {};

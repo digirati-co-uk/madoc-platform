@@ -24,7 +24,6 @@ export interface ImportCanvasTask extends BaseTask {
   parameters: [number, string, string, number | undefined];
   status: -1 | 0 | 1 | 2 | 3 | 4;
   state: {
-    omekaId?: number;
     errorMessage?: string;
     isDuplicate?: boolean;
     canvasOrder?: number;
@@ -34,7 +33,7 @@ export interface ImportCanvasTask extends BaseTask {
 
 export function createTask(
   canvasUrl: string,
-  omekaUserId: number,
+  userId: number,
   pathToManifest: string,
   manifestId: string,
   siteId?: number
@@ -48,7 +47,7 @@ export function createTask(
     events: ['madoc-ts.created'],
     status: 0,
     status_text: status[0],
-    parameters: [omekaUserId, pathToManifest, manifestId, siteId],
+    parameters: [userId, pathToManifest, manifestId, siteId],
   };
 }
 

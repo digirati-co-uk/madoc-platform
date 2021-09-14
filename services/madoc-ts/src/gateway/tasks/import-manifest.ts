@@ -38,7 +38,7 @@ export interface ImportManifestTask extends BaseTask {
   };
 }
 
-export function createTask(manifestUrl: string, omekaUserId: number, siteId?: number): ImportManifestTask {
+export function createTask(manifestUrl: string, userId: number, siteId?: number): ImportManifestTask {
   return {
     type: 'madoc-manifest-import',
     name: 'Importing manifest',
@@ -51,7 +51,7 @@ export function createTask(manifestUrl: string, omekaUserId: number, siteId?: nu
     ],
     status: 0,
     status_text: status[0],
-    parameters: [omekaUserId, siteId],
+    parameters: [userId, siteId],
   };
 }
 
@@ -202,7 +202,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
     }
     case `subtask_type_status.${importCanvas.type}.${tasks.STATUS.DONE}`: {
       // 0. Set task to processing manifests
-      // 1. Update Omeka with manifest ids from sub tasks
+      // 1. Update with manifest ids from sub tasks
       const task = await api.getTaskById<ImportManifestTask>(taskId);
       const [userId, siteId] = task.parameters;
       const subtasks = task.subtasks || [];

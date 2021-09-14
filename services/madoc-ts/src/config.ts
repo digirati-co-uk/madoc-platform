@@ -11,14 +11,6 @@ export const config = {
   synchronize: process.env.NODE_ENV === 'development',
   logging: true,
 
-  mysql: {
-    host: process.env.OMEKA__DATABASE_HOST as string,
-    database: process.env.OMEKA__DATABASE_NAME as string,
-    username: process.env.OMEKA__DATABASE_USER as string,
-    password: process.env.OMEKA__DATABASE_PASSWORD as string,
-    port: Number(process.env.OMEKA__DATABASE_PORT as string),
-  },
-
   smtp: {
     host: process.env.SMTP_HOST as string,
     port: process.env.SMTP_PORT ? +process.env.SMTP_PORT : 587,

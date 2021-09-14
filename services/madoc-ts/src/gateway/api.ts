@@ -27,8 +27,7 @@ import { ThemeExtension } from '../extensions/themes/extension';
 import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
 import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
 import { CanvasDeletionSummary, ManifestDeletionSummary, ProjectDeletionSummary } from '../types/deletion-summary';
-import { Site } from '../extensions/site-manager/types';
-import { SingleUser } from '../types/omeka/User';
+import { Site, User } from "../extensions/site-manager/types";
 import { NoteListResponse } from '../types/personal-notes';
 import { Pm2Status } from '../types/pm2';
 import { ResourceLinkResponse } from '../types/schemas/linking';
@@ -1070,7 +1069,7 @@ export class ApiClient {
 
   // User API
   async getUser(id: number) {
-    return this.request<{ user: SingleUser }>(`/api/madoc/users/${id}`);
+    return this.request<{ user: User }>(`/api/madoc/users/${id}`);
   }
 
   // Capture model API.

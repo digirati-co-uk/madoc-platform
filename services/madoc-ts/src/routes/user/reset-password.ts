@@ -1,4 +1,4 @@
-import { omekaSite } from '../../middleware/omeka-site';
+import { siteState } from '../../middleware/site-state';
 import { RouteMiddleware } from '../../types/route-middleware';
 import validate from 'uuid-validate';
 import { siteFrontend } from '../admin/frontend';
@@ -14,7 +14,7 @@ export const resetPasswordPage: RouteMiddleware = async (context, next) => {
   if (!c1 || !c2 || !validate(c1) || !validate(c2)) {
     context.reactFormResponse = { error: true };
 
-    await omekaSite(context, async () => {
+    await siteState(context, async () => {
       await siteFrontend(context, next);
     });
     return;
@@ -28,7 +28,7 @@ export const resetPasswordPage: RouteMiddleware = async (context, next) => {
     if (shouldExpire.getTime() > created.getTime()) {
       context.reactFormResponse = { error: true };
 
-      await omekaSite(context, async () => {
+      await siteState(context, async () => {
         await siteFrontend(context, next);
       });
       return;
@@ -53,7 +53,7 @@ export const resetPasswordPage: RouteMiddleware = async (context, next) => {
     context.reactFormResponse = { error: true };
   }
 
-  await omekaSite(context, async () => {
+  await siteState(context, async () => {
     await siteFrontend(context, next);
   });
 };

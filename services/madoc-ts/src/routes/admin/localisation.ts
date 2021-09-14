@@ -3,13 +3,13 @@ import * as fs from 'fs';
 import { sql } from 'slonik';
 import { calculateTranslationProgress } from '../../frontend/shared/utility/calculate-translation-progress';
 import { api } from '../../gateway/api.server';
+import { TRANSLATIONS_PATH } from '../../paths';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { castBool } from '../../utility/cast-bool';
 import { parseEtag } from '../../utility/parse-etag';
 import { optionalUserWithScope, userWithScope } from '../../utility/user-with-scope';
 
-const diskLocalisations = path.resolve(__dirname, '../../../translations'); // en/madoc.json
-const baseConfiguration = path.resolve(__dirname, '../../../translations/en/madoc.json');
+const baseConfiguration = path.resolve(TRANSLATIONS_PATH, 'en/madoc.json');
 
 export type LocalisationSiteConfig = {
   defaultLanguage: string;
@@ -65,12 +65,12 @@ export const listLocalisations: RouteMiddleware = async context => {
   const keys = Object.keys(config.availableLanguages);
 
   // 2. Disk localisations
-  // List directory diskLocalisations
-  const directories = fs.readdirSync(diskLocalisations);
+  // List directory TRANSLATIONS_PATH
+  const directories = fs.readdirSync(TRANSLATIONS_PATH);
   const staticKeys: string[] = [];
   for (const dir of directories) {
     // Check for madoc.json
-    if (keys.indexOf(dir) === -1 && fs.existsSync(path.join(diskLocalisations, dir, 'madoc.json'))) {
+    if (keys.indexOf(dir) === -1 && fs.existsSync(path.join(TRANSLATIONS_PATH, dir, 'madoc.json'))) {
       staticKeys.push(dir);
     }
   }
@@ -138,7 +138,7 @@ export const getLocalisation: RouteMiddleware<{ code: string }> = async context 
   const emptyJson = loadLocaleTemplate();
 
   // Load from disk if exists.
-  const location = path.resolve(diskLocalisations, languageCode, 'madoc.json');
+  const location = path.resolve(TRANSLATIONS_PATH, languageCode, 'madoc.json');
   const isStatic = fs.existsSync(location);
   const staticOverride = isStatic ? JSON.parse(fs.readFileSync(location).toString()) : {};
 
