@@ -5,27 +5,6 @@ set -e
 commandToRun=$1;shift;
 
 case "${commandToRun}" in
-    init-dev)
-        ( cd services/madoc;
-            mdkir -p ./.omeka;
-            ( cd ./.omeka;
-                git clone https://github.com/digirati-co-uk/omeka-s.git --branch bugfix/7.2-rebase-1.3.0 --depth 1
-            );
-
-            ( cd packages;
-                git clone https://github.com/digirati-co-uk/iiif-php.git --branch feature/expanded-api --depth 1
-            );
-
-            ## Install vendors for development
-            rm ./composer.json;
-            rm ./composer.lock;
-            rm -rf ./vendor;
-            cp ./config/composer.json ./composer.json;
-            php ./config/patch-composer.php;
-            composer install --no-dev --no-scripts --optimize-autoloader;
-        )
-    ;;
-
     up)
          docker-compose up -d "$@"
     ;;
@@ -75,12 +54,6 @@ case "${commandToRun}" in
       docker-compose -f docker-compose.yml -f docker-compose.test.yml -p test-madoc --env-file ./.env-test "$@"
     ;;
 
-    test-instance-dump-omeka)
-      if [[ -z "$1" ]]; then
-        echo -e "You must pass in a table to export"
-      fi;
-      docker-compose -f docker-compose.yml -f docker-compose.test.yml -p test-madoc --env-file ./.env-test exec madoc-database env MYSQL_PWD=Password123 /usr/bin/mysqldump -u omeka_s omeka_s $1 --skip-comments --no-tablespaces > ./e2e/test-fixtures/omeka/$1.sql
-    ;;
 
     test-instance-dump-postgres)
       if [[ -z "$1" ]]; then

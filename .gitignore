@@ -1,15 +1,6 @@
-services/madoc/.omeka/*
-services/madoc/omeka-s/
 .idea
 var/database/data
-services/madoc.php_cs.cache
-services/madoc/composer.json
-services/madoc/composer.lock
-services/madoc/vendor
-services/madoc/repos/iiif-php
 var/files/*
-services/madoc/translations/*.po~
-services/madoc/translations/s/*
 theme.zip
 node_modules
 var/shared-database/*

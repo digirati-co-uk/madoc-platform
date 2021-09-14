@@ -3,14 +3,6 @@ This documentation is for the 2.x version of Madoc. The legacy Madoc is availabl
 
 ## LICENSE
 
-Omeka S is licensed under the GPL, and the license information can be found here:
-
-https://github.com/omeka/omeka-s/blob/develop/LICENSE
-
-For Digirati developed code provided as part of this installation, we use the MIT License. 
-
-_Madoc_ is an aggregate, as per the GNU GPL FAQ, https://www.gnu.org/licenses/gpl-faq.en.html#MereAggregation and the GPL does not apply to Digirati products.
-
 MIT License
 
 **Copyright Digirati Ltd. &copy; 2018-2021**

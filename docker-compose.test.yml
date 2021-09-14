@@ -8,13 +8,6 @@ services:
     volumes:
       - ./e2e/test-fixtures/certs:/openssl-certs
 
-  madoc:
-    environment:
-      - APP_ENV=TEST
-    volumes:
-      - ./var/test-environment/files:/srv/omeka/files
-      - ./e2e/test-fixtures/certs:/openssl-certs
-
   certs:
     build:
       context: services/certs
@@ -41,13 +34,6 @@ services:
   shared-postgres:
     volumes:
       - ./var/test-environment/shared-database:/var/lib/postgresql/data
-
-  madoc-database:
-    volumes:
-      - ./e2e/test-fixtures/omeka/user.sql:/docker-entrypoint-initdb.d/99-user.sql
-      - ./e2e/test-fixtures/omeka/site_permission.sql:/docker-entrypoint-initdb.d/99-site_permission.sql
-      - ./e2e/utility/reset-database.sh:/opt/tools/reset-database.sh
-      - ./var/test-environment/database/data:/var/lib/mysql/
 
   storage-api:
     volumes:

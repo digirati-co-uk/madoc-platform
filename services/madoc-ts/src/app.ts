@@ -27,8 +27,6 @@ import k2c from 'koa2-connect';
 import cookieParser from 'cookie-parser';
 import schedule from 'node-schedule';
 
-export const fileDirectory = process.env.OMEKA_FILE_DIRECTORY || '/home/node/app/omeka-files';
-
 export async function createApp(router: TypedRouter<any, any>, config: ExternalConfig, env: { smtp: MailConfig }) {
   const app = new Koa();
   const pool = createPostgresPool();
