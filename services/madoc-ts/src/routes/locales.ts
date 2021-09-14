@@ -1,3 +1,4 @@
+import { TRANSLATIONS_PATH } from './../paths';
 // /api/madoc/locales/{{lng}}/{{ns}}
 
 import deepmerge from 'deepmerge';
@@ -24,7 +25,7 @@ export const getLocale: RouteMiddleware<{ lng: string; ns: string }> = async con
     return;
   }
 
-  const bundle = path.resolve(__dirname, '..', '..', 'translations', context.params.lng, `${context.params.ns}.json`);
+  const bundle = path.resolve(TRANSLATIONS_PATH, context.params.lng, `${context.params.ns}.json`);
 
   if (existsSync(bundle)) {
     await send(context, bundle, { root: '/' });
@@ -44,14 +45,7 @@ export const saveMissingLocale: RouteMiddleware<{ lng: string; ns: string }> = a
     // During development we want to add missing translations to the local file to commit.
     if (process.env.NODE_ENV !== 'production') {
       try {
-        const bundle = path.resolve(
-          __dirname,
-          '..',
-          '..',
-          'translations',
-          context.params.lng,
-          `${context.params.ns}.json`
-        );
+        const bundle = path.resolve(TRANSLATIONS_PATH, context.params.lng, `${context.params.ns}.json`);
         if (existsSync(bundle)) {
           const bundleJson = JSON.parse(readFileSync(bundle).toString('utf-8'));
           const newBundle = deepmerge(bundleJson, context.requestBody);

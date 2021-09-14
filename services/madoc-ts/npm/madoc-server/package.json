@@ -1,0 +1,23 @@
+{
+  "name": "@madoc.io/server",
+  "version": "0.0.1",
+  "files": [
+    "lib"
+  ],
+  "main": "lib/server.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@madoc.io/types": "./npm/madoc-types",
+    "slonik": "^23.5.5",
+    "@slonik/migrator": "0.8.5",
+    "bcrypt": "^5.0.1",
+    "pg": "^8.5.1",
+    "sharp": "^0.29.1",
+    "pm2": "^5.1.1",
+    "mjml": "^4.10.3",
+    "jose": "^1.25.0",
+    "vm2": "^3.9.3"
+  }
+}

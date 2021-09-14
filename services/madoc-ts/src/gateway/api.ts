@@ -26,7 +26,7 @@ import { TaskExtension } from '../extensions/tasks/extension';
 import { ThemeExtension } from '../extensions/themes/extension';
 import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
 import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
-import {CanvasDeletionSummary, ManifestDeletionSummary, ProjectDeletionSummary} from "../types/deletion-summary";
+import { CanvasDeletionSummary, ManifestDeletionSummary, ProjectDeletionSummary } from '../types/deletion-summary';
 import { Site } from '../extensions/site-manager/types';
 import { SingleUser } from '../types/omeka/User';
 import { NoteListResponse } from '../types/personal-notes';
@@ -1355,10 +1355,10 @@ export class ApiClient {
     });
   }
 
-  async batchDeleteTasks(query: { resourceId?: number, subject?: string }) {
+  async batchDeleteTasks(query: { resourceId?: number; subject?: string }) {
     await this.request(`/api/tasks?${stringify(query)}`, {
-      method: 'DELETE'
-    })
+      method: 'DELETE',
+    });
   }
 
   async randomlyAssignedCanvas(

@@ -1,3 +1,4 @@
+import { SCHEMAS_PATH } from './paths';
 import Koa from 'koa';
 import json from 'koa-json';
 import logger from 'koa-logger';
@@ -49,32 +50,32 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
     await siteRepo.legacyOmekaDatabaseSync(config.permissions);
   }
 
-  if (
-    process.env.NODE_ENV === 'development' &&
-    process.env.watch === 'false' &&
-    process.env.NODE_APP_INSTANCE === '0'
-  ) {
-    const webpack = require('webpack');
-    const webpackConfig = require('../webpack.config');
-    const compiler = webpack(webpackConfig);
+  // if (
+  //   process.env.NODE_ENV === 'development' &&
+  //   process.env.watch === 'false' &&
+  //   process.env.NODE_APP_INSTANCE === '0'
+  // ) {
+  //   const webpack = require('webpack');
+  //   const webpackConfig = require('../webpack.config');
+  //   const compiler = webpack(webpackConfig);
 
-    app.use(
-      k2c(
-        require('webpack-dev-middleware')(compiler, {
-          publicPath: webpackConfig.output.publicPath,
-          stats: false,
-        })
-      )
-    );
+  //   app.use(
+  //     k2c(
+  //       require('webpack-dev-middleware')(compiler, {
+  //         publicPath: webpackConfig.output.publicPath,
+  //         stats: false,
+  //       })
+  //     )
+  //   );
 
-    app.use(
-      k2c(
-        require('webpack-hot-middleware')(compiler, {
-          path: '/s/default/madoc/__webpack_hmr',
-        })
-      )
-    );
-  }
+  //   app.use(
+  //     k2c(
+  //       require('webpack-hot-middleware')(compiler, {
+  //         path: '/s/default/madoc/__webpack_hmr',
+  //       })
+  //     )
+  //   );
+  // }
 
   // Generate cookie keys.
   app.keys = generateKeys();
@@ -97,13 +98,10 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
 
   // Validator.
   app.context.ajv = new Ajv();
-  for (const file of readdirSync(path.resolve(__dirname, '..', 'schemas'))) {
+  for (const file of readdirSync(SCHEMAS_PATH)) {
     if (!file.startsWith('.')) {
       const name = path.basename(file, '.json');
-      app.context.ajv.addSchema(
-        JSON.parse(readFileSync(path.resolve(__dirname, '..', 'schemas', file)).toString('utf-8')),
-        name
-      );
+      app.context.ajv.addSchema(JSON.parse(readFileSync(path.resolve(SCHEMAS_PATH, file)).toString('utf-8')), name);
     }
   }
 

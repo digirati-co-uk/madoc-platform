@@ -1,0 +1,17 @@
+{
+  "name": "@madoc.io/types",
+  "version": "0.0.8",
+  "files": [
+    "dist",
+    "index.js"
+  ],
+  "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@types/styled-components": "*",
+    "@types/react": "*"
+  },
+  "types": "dist/index.d.ts"
+}

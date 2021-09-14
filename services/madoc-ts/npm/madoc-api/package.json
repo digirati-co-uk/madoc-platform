@@ -1,0 +1,14 @@
+{
+  "name": "@madoc.io/api",
+  "version": "0.0.1",
+  "files": [
+    "dist",
+    "index.js"
+  ],
+  "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {},
+  "types": "dist/index.d.ts"
+}

@@ -63,9 +63,10 @@ services:
   madoc-ts:
     build:
       context: services/madoc-ts
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.new
     volumes:
-      - ./services/madoc-ts/lib:/home/node/app/lib:delegated
+      - ./services/madoc-ts/lib/server.js:/home/node/app/npm/madoc-server/lib/server.js
+      - ./services/madoc-ts/lib/frontend:/home/node/app/lib/frontend
       - ./services/madoc-ts/src:/home/node/app/src
       - ./services/madoc-ts/package.json:/home/node/app/package.json:delegated
       - ./services/madoc-ts/yarn.lock:/home/node/app/yarn.lock:delegated
@@ -137,7 +138,7 @@ services:
       - ./services/tasks-api/migrations:/home/node/app/migrations
 
   model-api:
-    image: digirati/capture-models:v0.13.6
+    image: digirati/capture-models:v0.13.19
     environment:
       - SERVER_PORT=3000
       - DATABASE_HOST=shared-postgres

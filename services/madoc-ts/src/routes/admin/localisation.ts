@@ -1,3 +1,4 @@
+import { TRANSLATIONS_PATH } from './../../paths';
 import * as path from 'path';
 import * as fs from 'fs';
 import { sql } from 'slonik';
@@ -8,8 +9,8 @@ import { castBool } from '../../utility/cast-bool';
 import { parseEtag } from '../../utility/parse-etag';
 import { optionalUserWithScope, userWithScope } from '../../utility/user-with-scope';
 
-const diskLocalisations = path.resolve(__dirname, '../../../translations'); // en/madoc.json
-const baseConfiguration = path.resolve(__dirname, '../../../translations/en/madoc.json');
+const diskLocalisations = TRANSLATIONS_PATH;
+const baseConfiguration = path.resolve(TRANSLATIONS_PATH, 'en/madoc.json');
 
 export type LocalisationSiteConfig = {
   defaultLanguage: string;

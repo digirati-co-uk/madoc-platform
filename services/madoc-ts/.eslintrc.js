@@ -20,6 +20,7 @@ module.exports = {
     'react-hooks',
     'jest',
     'react',
+    'import',
     // 'json-format',
   ],
   parser: '@typescript-eslint/parser',
@@ -72,6 +73,9 @@ module.exports = {
     quotes: [ERROR, 'single', { avoidEscape: true, allowTemplateLiterals: true }],
     'space-before-blocks': ERROR,
     'space-before-function-paren': OFF,
+
+    // Experimental
+    'import/no-relative-parent-imports': 1,
   },
 
   settings: {

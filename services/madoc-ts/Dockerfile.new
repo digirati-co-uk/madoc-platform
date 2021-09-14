@@ -1,0 +1,73 @@
+FROM node:12 as build
+
+WORKDIR /home/node/app
+
+COPY ./package.json /home/node/app/package.json
+COPY ./yarn.lock /home/node/app/yarn.lock
+COPY ./npm /home/node/app/npm
+
+RUN yarn install --no-dev --no-interactive --frozen-lockfile
+
+COPY ./src /home/node/app/src
+COPY ./ecosystem.config.js /home/node/app/ecosystem.config.js
+COPY ./migrate.js /home/node/app/migrate.js
+COPY ./tsconfig.json /home/node/app/tsconfig.json
+COPY ./tsconfig.frontend.json /home/node/app/tsconfig.frontend.json
+COPY ./migrations /home/node/app/migrations
+COPY ./config.json /home/node/app/config.json
+COPY ./webpack.config.js /home/node/app/webpack.config.js
+COPY ./generate-schemas.js /home/node/app/generate-schemas.js
+COPY ./translations /home/node/app/translations
+COPY ./schemas /home/node/app/schemas
+COPY ./themes /home/node/app/themes
+COPY ./tools /home/node/app/tools
+RUN yarn node tools/server-bundle.js
+RUN yarn build:frontend 
+
+
+FROM node:12 as npm
+
+WORKDIR /home/node/app
+
+COPY --from=build /home/node/app/npm /home/node/app/npm
+COPY --from=build /home/node/app/npm/madoc-server/package.json /home/node/app/package.json
+COPY --from=build /home/node/app/npm/madoc-server/yarn.lock /home/node/app/yarn.lock
+
+RUN yarn install --no-dev --no-interactive --frozen-lockfile
+
+FROM node:12
+
+ENV SERVER_PORT=3000
+ENV DATABASE_HOST=localhost
+ENV DATABASE_NAME=postgres
+ENV DATABASE_PORT=5400
+ENV DATABASE_USER=postgres
+ENV DATABASE_SCHEMA=public
+ENV DATABASE_PASSWORD=postgres
+ENV NODE_ENV=development
+ENV API_GATEWAY_HOST=http://gateway
+
+EXPOSE 3000
+EXPOSE 9230
+
+COPY --from=build /home/node/app/npm/madoc-server/package.json /home/node/app/package.json
+COPY --from=build /home/node/app/npm/madoc-server/yarn.lock /home/node/app/yarn.lock
+COPY --from=npm /home/node/app/node_modules /home/node/app/node_modules
+
+# Runtime code from the original
+COPY ./translations /home/node/app/translations
+COPY ./schemas /home/node/app/schemas
+COPY ./themes /home/node/app/themes
+COPY ./migrate.js /home/node/app/migrate.js
+COPY ./migrations /home/node/app/migrations
+COPY ./config.json /home/node/app/config.json
+COPY ./ecosystem.config.js /home/node/app/ecosystem.config.js
+
+COPY --from=build /home/node/app/npm /home/node/app/npm
+COPY --from=build /home/node/app/npm/madoc-server/lib /home/node/app/lib
+COPY --from=build /home/node/app/lib/frontend /home/node/app/lib/frontend
+
+WORKDIR /home/node/app
+
+CMD ["/home/node/app/node_modules/.bin/pm2", "start", "ecosystem.config.js", "--watch", "--no-daemon"]
+
