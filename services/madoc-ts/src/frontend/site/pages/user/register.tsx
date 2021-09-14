@@ -66,7 +66,7 @@ export const Register: React.FC = () => {
     // @todo.
     return (
       <div>
-        <form method="POST" action={`/s/${site.slug}/madoc/register`}>
+        <form method="POST" action={`/s/${site.slug}/register`}>
           <LoginContainer>
             <Heading1 $margin>Invitation</Heading1>
             <p style={{ marginBottom: 20 }}>
@@ -89,7 +89,7 @@ export const Register: React.FC = () => {
 
   return (
     <div>
-      <form method="POST" action={`/s/${site.slug}/madoc/register`}>
+      <form method="POST" action={`/s/${site.slug}/register`}>
         <LoginContainer>
           {form?.invitation ? (
             <>

@@ -26,7 +26,7 @@ import { TaskExtension } from '../extensions/tasks/extension';
 import { ThemeExtension } from '../extensions/themes/extension';
 import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
 import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
-import {CanvasDeletionSummary, ManifestDeletionSummary, ProjectDeletionSummary} from "../types/deletion-summary";
+import { CanvasDeletionSummary, ManifestDeletionSummary, ProjectDeletionSummary } from '../types/deletion-summary';
 import { Site } from '../extensions/site-manager/types';
 import { SingleUser } from '../types/omeka/User';
 import { NoteListResponse } from '../types/personal-notes';
@@ -363,7 +363,7 @@ export class ApiClient {
         const match = window.location.pathname.match(/s\/([^/]+)\//);
         if (match) {
           const [, slug] = match;
-          const newTokenResponse = await fetchJson<{ token: string }>(this.gateway, `/s/${slug}/madoc/auth/refresh`, {
+          const newTokenResponse = await fetchJson<{ token: string }>(this.gateway, `/s/${slug}/auth/refresh`, {
             method: 'POST',
             body: {
               token: jwt,
@@ -372,7 +372,7 @@ export class ApiClient {
           });
 
           if (newTokenResponse.error || !newTokenResponse.data.token) {
-            window.location.href = `/s/${slug}/madoc/login?redirect=${encodeURI(
+            window.location.href = `/s/${slug}/login?redirect=${encodeURI(
               window.location.pathname + window.location.search
             )}`;
 
@@ -1355,10 +1355,10 @@ export class ApiClient {
     });
   }
 
-  async batchDeleteTasks(query: { resourceId?: number, subject?: string }) {
+  async batchDeleteTasks(query: { resourceId?: number; subject?: string }) {
     await this.request(`/api/tasks?${stringify(query)}`, {
-      method: 'DELETE'
-    })
+      method: 'DELETE',
+    });
   }
 
   async randomlyAssignedCanvas(

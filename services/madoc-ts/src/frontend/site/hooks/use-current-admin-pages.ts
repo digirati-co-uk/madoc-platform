@@ -19,28 +19,28 @@ export const useCurrentAdminPages = () => {
     // @todo requires ID, instead of link.
     availablePages.push({
       label: t('Project'),
-      link: `/s/${slug}/madoc/admin/projects/${project.data?.id}`,
+      link: `/s/${slug}/admin/projects/${project.data?.id}`,
     });
   }
 
   if (collectionId) {
     availablePages.push({
       label: t('Collection'),
-      link: `/s/${slug}/madoc/admin/collections/${collectionId}`,
+      link: `/s/${slug}/admin/collections/${collectionId}`,
     });
   }
 
   if (manifestId) {
     availablePages.push({
       label: t('Manifest'),
-      link: `/s/${slug}/madoc/admin/manifests/${manifestId}`,
+      link: `/s/${slug}/admin/manifests/${manifestId}`,
     });
   }
 
   if (canvasId && manifestId) {
     availablePages.push({
       label: t('Canvas'),
-      link: `/s/${slug}/madoc/admin/manifests/${manifestId}/canvases/${canvasId}`,
+      link: `/s/${slug}/admin/manifests/${manifestId}/canvases/${canvasId}`,
     });
   }
 

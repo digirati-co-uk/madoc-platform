@@ -55,7 +55,7 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
           title={<LocaleString>{data.label}</LocaleString>}
           subtitle={
             <>
-              <a href={`/s/${slug}/madoc/projects/${data.slug}`}>{t('Go to project on site')}</a>
+              <a href={`/s/${slug}/projects/${data.slug}`}>{t('Go to project on site')}</a>
             </>
           }
         />

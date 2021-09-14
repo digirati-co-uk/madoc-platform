@@ -43,10 +43,10 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
       await migrate();
     }
 
-    await syncOmeka(mysqlPool, pool, config);
+    // await syncOmeka(mysqlPool, pool, config);
 
-    const siteRepo = new SiteUserRepository(pool, new OmekaApi(mysqlPool), 'HYBRID_POSTGRES');
-    await siteRepo.legacyOmekaDatabaseSync(config.permissions);
+    // const siteRepo = new SiteUserRepository(pool, new OmekaApi(mysqlPool), 'HYBRID_POSTGRES');
+    // await siteRepo.legacyOmekaDatabaseSync(config.permissions);
   }
 
   if (
@@ -70,7 +70,7 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
     app.use(
       k2c(
         require('webpack-hot-middleware')(compiler, {
-          path: '/s/default/madoc/__webpack_hmr',
+          path: '/s/default/__webpack_hmr',
         })
       )
     );

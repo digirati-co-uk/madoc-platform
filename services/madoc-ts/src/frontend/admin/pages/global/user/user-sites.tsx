@@ -36,9 +36,7 @@ export const UserSites: React.FC = () => {
               <Button
                 as={site.slug === currentSite.slug ? HrefLink : 'a'}
                 $primary
-                href={
-                  site.slug === currentSite.slug ? '/site/permissions' : `/s/${site.slug}/madoc/admin/site/permissions`
-                }
+                href={site.slug === currentSite.slug ? '/site/permissions' : `/s/${site.slug}/admin/site/permissions`}
               >
                 {t('Go to site permissions')}
               </Button>

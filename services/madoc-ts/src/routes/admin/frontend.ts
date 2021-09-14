@@ -32,7 +32,7 @@ export const adminFrontend: RouteMiddleware = async context => {
     const result = await renderAdmin({
       url: context.req.url || '',
       jwt: token,
-      basename: `/s/${context.params.slug}/madoc/admin`,
+      basename: `/s/${context.params.slug}/admin`,
       i18next: i18nInstance,
       site: site,
       siteLocales,
@@ -98,7 +98,7 @@ export const siteFrontend: RouteMiddleware = async context => {
     const result = await renderSite({
       url: context.req.url || '',
       jwt: token,
-      basename: `/s/${site.slug}/madoc`,
+      basename: `/s/${site.slug}`,
       i18next: i18nInstance,
       siteSlug: site.slug,
       site: site,

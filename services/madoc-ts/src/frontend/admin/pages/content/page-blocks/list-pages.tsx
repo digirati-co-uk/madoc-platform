@@ -25,7 +25,7 @@ export const ListPages: UniversalComponent<ListPagesType> = createUniversalCompo
           ? data.pages.map(page => {
               return (
                 <li key={page.id}>
-                  <a href={`/s/${slug}/madoc/${page.path}`}>
+                  <a href={`/s/${slug}/${page.path}`}>
                     <LocaleString>{page.title}</LocaleString>
                   </a>
                 </li>

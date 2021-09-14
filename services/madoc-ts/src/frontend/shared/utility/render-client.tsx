@@ -46,8 +46,8 @@ export async function renderClient(
 
     return fetch(
       plugin.development.enabled && plugin.development.revision
-        ? `/s/default/madoc/assets/plugins/${plugin.id}/${plugin.development.revision}/plugin.js`
-        : `/s/default/madoc/assets/plugins/${plugin.id}/${plugin.version}/plugin.js`,
+        ? `/s/default/assets/plugins/${plugin.id}/${plugin.development.revision}/plugin.js`
+        : `/s/default/assets/plugins/${plugin.id}/${plugin.version}/plugin.js`,
       {
         cache: 'force-cache',
       }
@@ -89,7 +89,7 @@ export async function renderClient(
 
   if (!jwt && requireJwt) {
     const loc = window.location.pathname;
-    window.location.href = `/s/${slug}/madoc/login?redirect=${loc}`;
+    window.location.href = `/s/${slug}/login?redirect=${loc}`;
   }
 
   const theme: ResolvedTheme | null | undefined = dehydratedSite.theme;

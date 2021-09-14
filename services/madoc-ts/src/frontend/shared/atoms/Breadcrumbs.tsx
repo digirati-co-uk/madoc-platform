@@ -77,7 +77,7 @@ export const Breadcrumbs: React.FC<{
   return (
     <BreadcrumbContainer background={background} color={color} padding={padding}>
       <BreadcrumbItem active>
-        <a style={{ color: '#fff' }} href={`/s/${site.slug}/madoc`}>
+        <a style={{ color: '#fff' }} href={`/s/${site.slug}`}>
           Back to site
         </a>
       </BreadcrumbItem>

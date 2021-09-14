@@ -35,14 +35,14 @@ export const loginPage: RouteMiddleware<{ slug: string }, { email: string; passw
           id: user.id,
           sites,
         };
-        context.response.redirect(context.query.redirect || `/s/${context.params.slug}/madoc`);
+        context.response.redirect(context.query.redirect || `/s/${context.params.slug}`);
         return;
       }
     }
   }
 
   if (context.state.jwt) {
-    context.response.redirect(context.query.redirect || `/s/${context.params.slug}/madoc`);
+    context.response.redirect(context.query.redirect || `/s/${context.params.slug}`);
     return;
   }
 
@@ -60,7 +60,7 @@ export const loginPage: RouteMiddleware<{ slug: string }, { email: string; passw
           sites,
         };
 
-        context.response.redirect(context.query.redirect || `/s/${context.params.slug}/madoc`);
+        context.response.redirect(context.query.redirect || `/s/${context.params.slug}`);
         return;
       } else {
         context.reactFormResponse = { loginError: true, email };

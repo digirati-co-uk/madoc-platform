@@ -18,7 +18,7 @@ export const registerPage: RouteMiddleware = async (context, next) => {
   const systemConfig = await context.siteManager.getSystemConfig();
   const invitation = invitationId ? await context.siteManager.getInvitation(invitationId, site.id) : null;
   if (!systemConfig.enableRegistrations) {
-    return context.redirect(`/s/${site.slug}/madoc/login`);
+    return context.redirect(`/s/${site.slug}/login`);
   }
 
   context.reactFormResponse = {
@@ -49,12 +49,12 @@ export const registerPage: RouteMiddleware = async (context, next) => {
   if (isLoggedIn) {
     // @todo more in the config to control this. But simplified for now.
     if (!userId || !invitation || !invitation.config.allowExistingUsers) {
-      return context.redirect(`/s/${site.slug}/madoc/login`);
+      return context.redirect(`/s/${site.slug}/login`);
     }
 
     const user = await context.siteManager.getSiteUserById(userId, site.id);
     if (user.site_role && user.site_role !== 'viewer') {
-      return context.redirect(`/s/${site.slug}/madoc`);
+      return context.redirect(`/s/${site.slug}`);
     }
   }
 
@@ -67,7 +67,7 @@ export const registerPage: RouteMiddleware = async (context, next) => {
         await context.siteManager.createInvitationRedemption(invitationId, user.id, site.id);
       }
 
-      context.redirect(`/s/${site.slug}/madoc`);
+      context.redirect(`/s/${site.slug}`);
       return;
     }
 

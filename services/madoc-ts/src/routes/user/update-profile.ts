@@ -5,7 +5,7 @@ export const updateProfilePage: RouteMiddleware = async (context, next) => {
   const userId = context.state.jwt?.user?.id;
 
   if (!userId) {
-    return context.redirect(`/s/${context.params.slug}/madoc`);
+    return context.redirect(`/s/${context.params.slug}`);
   }
 
   if (context.method === 'POST') {

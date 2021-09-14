@@ -8,6 +8,11 @@ export interface RouteComponents extends BaseRouteComponents {}
 export function createRoutes(components: RouteComponents): CreateRouteType {
   const routes = [
     {
+      path: '/madoc/:pagePath+',
+      exact: true,
+      component: components.RedirectPage,
+    },
+    {
       path: '/collections',
       exact: true,
       component: components.PageLoader,

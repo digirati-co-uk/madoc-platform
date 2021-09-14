@@ -1,3 +1,4 @@
+import { siteRoot } from './routes/root';
 import {
   assignUserToDelegatedRequest,
   createDelegatedRequest,
@@ -76,7 +77,7 @@ import { updateSiteDetails } from './routes/manage-site/update-site-details';
 import { updateUserSiteRole } from './routes/manage-site/update-user-site-role';
 import { getAllProjectNotes } from './routes/projects/get-all-project-notes';
 import { siteDetails } from './routes/site/site-details';
-import { deleteManifestSummary } from "./routes/iiif/manifests/delete-manifest-summary";
+import { deleteManifestSummary } from './routes/iiif/manifests/delete-manifest-summary';
 import { siteManifestBuild } from './routes/site/site-manifest-build';
 import { createMedia } from './routes/media/create-media';
 import { deleteMedia } from './routes/media/delete-media';
@@ -308,7 +309,11 @@ export const router = new TypedRouter({
   'get-collection-metadata': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/metadata', getCollectionMetadata],
   'get-collection-structure': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/structure', getCollectionStructure],
   'get-collection-projects': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/projects', getCollectionProjects],
-  'get-collection-deletion-summary': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/deletion-summary', getCollectionDeletionSummary],
+  'get-collection-deletion-summary': [
+    TypedRouter.GET,
+    '/api/madoc/iiif/collections/:id/deletion-summary',
+    getCollectionDeletionSummary,
+  ],
   'put-collection-metadata': [
     TypedRouter.PUT,
     '/api/madoc/iiif/collections/:id/metadata',
@@ -347,7 +352,11 @@ export const router = new TypedRouter({
   'get-manifest-metadata': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/metadata', getManifestMetadata],
   'get-manifest-structure': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/structure', getManifestStructure],
   'get-manifest-projects': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/projects', getManifestProjects],
-  'get-manifest-deletion-summary': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/deletion-summary', deleteManifestSummary],
+  'get-manifest-deletion-summary': [
+    TypedRouter.GET,
+    '/api/madoc/iiif/manifests/:id/deletion-summary',
+    deleteManifestSummary,
+  ],
   'put-manifest-metadata': [
     TypedRouter.PUT,
     '/api/madoc/iiif/manifests/:id/metadata',
@@ -378,7 +387,11 @@ export const router = new TypedRouter({
   'convert-linking-property': [TypedRouter.POST, '/api/madoc/iiif/linking/:id/convert', convertLinking],
   'get-canvas-plaintext': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/plaintext', getCanvasPlaintext],
   'get-canvas-source': [TypedRouter.GET, '/api/madoc/iiif/canvas-source', getCanvasReference],
-  'get-canvas-deletion-summary': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/deletion-summary', deleteCanvasSummary],
+  'get-canvas-deletion-summary': [
+    TypedRouter.GET,
+    '/api/madoc/iiif/canvases/:id/deletion-summary',
+    deleteCanvasSummary,
+  ],
   'delete-canvas': [TypedRouter.DELETE, '/api/madoc/iiif/canvases/:id', deleteCanvasEndpoint],
 
   // Import API
@@ -437,7 +450,7 @@ export const router = new TypedRouter({
   'uninstall-theme': [TypedRouter.POST, '/api/madoc/system/themes/:theme_id/uninstall', uninstallTheme],
   'enable-theme': [TypedRouter.POST, '/api/madoc/system/themes/:theme_id/enable', enableTheme],
   'disable-theme': [TypedRouter.POST, '/api/madoc/system/themes/:theme_id/disable', disableTheme],
-  'theme-asset': [TypedRouter.GET, '/s/:slug/madoc/themes/:theme_id/public/:bundleName', serveThemeAsset],
+  'theme-asset': [TypedRouter.GET, '/s/:slug/themes/:theme_id/public/:bundleName', serveThemeAsset],
 
   // Pages
   'create-page': [TypedRouter.POST, '/api/madoc/pages', createPage],
@@ -462,20 +475,20 @@ export const router = new TypedRouter({
   'update-block': [TypedRouter.PUT, '/api/madoc/blocks/:blockId', updateBlock],
 
   // Anonymous routes
-  'get-login': [TypedRouter.GET, '/s/:slug/madoc/login', loginPage],
-  'post-login': [TypedRouter.POST, '/s/:slug/madoc/login', loginPage],
-  'get-register': [TypedRouter.GET, '/s/:slug/madoc/register', registerPage],
-  'post-register': [TypedRouter.POST, '/s/:slug/madoc/register', registerPage],
-  'get-forgot-password': [TypedRouter.GET, '/s/:slug/madoc/forgot-password', forgotPassword],
-  'post-forgot-password': [TypedRouter.POST, '/s/:slug/madoc/forgot-password', forgotPassword],
-  'get-change-password': [TypedRouter.GET, '/s/:slug/madoc/profile/password', updatePassword],
-  'post-change-password': [TypedRouter.POST, '/s/:slug/madoc/profile/password', updatePassword],
-  'post-update-password': [TypedRouter.POST, '/s/:slug/madoc/profile', updateProfilePage],
-  'get-logout': [TypedRouter.GET, '/s/:slug/madoc/logout', logout],
-  'reset-password': [TypedRouter.GET, '/s/:slug/madoc/reset-password', resetPasswordPage],
-  'activate-account': [TypedRouter.GET, '/s/:slug/madoc/activate-account', resetPasswordPage],
-  'post-reset-password': [TypedRouter.POST, '/s/:slug/madoc/reset-password', resetPasswordPage],
-  'refresh-login': [TypedRouter.POST, '/s/:slug/madoc/auth/refresh', refreshToken],
+  'get-login': [TypedRouter.GET, '/s/:slug/login', loginPage],
+  'post-login': [TypedRouter.POST, '/s/:slug/login', loginPage],
+  'get-register': [TypedRouter.GET, '/s/:slug/register', registerPage],
+  'post-register': [TypedRouter.POST, '/s/:slug/register', registerPage],
+  'get-forgot-password': [TypedRouter.GET, '/s/:slug/forgot-password', forgotPassword],
+  'post-forgot-password': [TypedRouter.POST, '/s/:slug/forgot-password', forgotPassword],
+  'get-change-password': [TypedRouter.GET, '/s/:slug/profile/password', updatePassword],
+  'post-change-password': [TypedRouter.POST, '/s/:slug/profile/password', updatePassword],
+  'post-update-password': [TypedRouter.POST, '/s/:slug/profile', updateProfilePage],
+  'get-logout': [TypedRouter.GET, '/s/:slug/logout', logout],
+  'reset-password': [TypedRouter.GET, '/s/:slug/reset-password', resetPasswordPage],
+  'activate-account': [TypedRouter.GET, '/s/:slug/activate-account', resetPasswordPage],
+  'post-reset-password': [TypedRouter.POST, '/s/:slug/reset-password', resetPasswordPage],
+  'refresh-login': [TypedRouter.POST, '/s/:slug/auth/refresh', refreshToken],
   'asset-plugin-bundles': [
     TypedRouter.GET,
     '/s/:slug/madoc/assets/plugins/:pluginId/:revisionId/plugin.js',
@@ -571,9 +584,11 @@ export const router = new TypedRouter({
   // 'get-page': [TypedRouter.GET, '/s/:slug/madoc/page/:pageSlug+', sitePage],
 
   // Frontend
-  'admin-frontend': [TypedRouter.GET, '/s/:slug/madoc/admin(.*)', adminFrontend],
-  'site-frontend': [TypedRouter.GET, '/s/:slug/madoc(.*)', siteFrontend],
+  'admin-frontend': [TypedRouter.GET, '/s/:slug/admin(.*)', adminFrontend],
+  'site-frontend-root': [TypedRouter.GET, '/s/:slug', siteFrontend],
+  'site-frontend': [TypedRouter.GET, '/s/:slug/(.*)', siteFrontend],
 
   // Make sure this is last.
-  'omeka-404': [TypedRouter.GET, '/s/:slug/madoc(.*)', madocNotFound],
+  'site-root': [TypedRouter.GET, '/', siteRoot],
+  'omeka-404': [TypedRouter.GET, '/s/:slug(.*)', madocNotFound],
 });

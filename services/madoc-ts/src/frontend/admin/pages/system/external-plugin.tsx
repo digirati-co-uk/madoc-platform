@@ -32,7 +32,7 @@ export const ViewExternalPlugin: React.FC = () => {
 
   const [install, installStatus] = useMutation(async (version?: string) => {
     await api.system.installExternalPlugin(owner, repo, version);
-    window.location.href = `/s/${site.slug}/madoc/admin/system/plugins`;
+    window.location.href = `/s/${site.slug}/admin/system/plugins`;
   });
 
   if (user?.role !== 'global_admin') {

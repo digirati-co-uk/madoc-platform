@@ -8,7 +8,7 @@ export const updatePassword: RouteMiddleware<
   const userId = context.state.jwt?.user?.id;
 
   if (!userId) {
-    return context.redirect(`/s/${context.params.slug}/madoc`);
+    return context.redirect(`/s/${context.params.slug}`);
   }
 
   if (context.method === 'POST') {
@@ -22,7 +22,7 @@ export const updatePassword: RouteMiddleware<
     const user = await context.siteManager.getUserById(userId);
 
     if (!user.email) {
-      return context.redirect(`/s/${context.params.slug}/madoc`);
+      return context.redirect(`/s/${context.params.slug}`);
     }
 
     const resp = await context.siteManager.verifyLogin(user.email, password_old);

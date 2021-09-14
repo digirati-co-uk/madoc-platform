@@ -60,16 +60,24 @@ export const parseJwt: RouteMiddleware<{ slug?: string }> = async (context, next
     }
   }
 
-  // If there is no slug, then a JWT is always required, BUT it is always verified by the Gateway. We will verify
-  // it anyway.
-  const jwt = getToken(context);
-  if (jwt) {
-    const token = verifySignedToken(jwt);
-    if (token) {
-      context.state.jwt = parseJWT(token, asUser);
-      await next(); // only here.
-      return;
+  if (context.request.path === '/') {
+    return next();
+  }
+
+  try {
+    // If there is no slug, then a JWT is always required, BUT it is always verified by the Gateway. We will verify
+    // it anyway.
+    const jwt = getToken(context);
+    if (jwt) {
+      const token = verifySignedToken(jwt);
+      if (token) {
+        context.state.jwt = parseJWT(token, asUser);
+        await next(); // only here.
+        return;
+      }
     }
+  } catch (e) {
+    throw new NotFound();
   }
 
   if (!slug) {

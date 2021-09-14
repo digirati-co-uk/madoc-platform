@@ -13,7 +13,7 @@ export const forgotPassword: RouteMiddleware = async (context, next) => {
 
   // For logged in users.
   if (context.state.jwt) {
-    context.response.redirect(context.query.redirect || `/s/${context.params.slug}/madoc`);
+    context.response.redirect(context.query.redirect || `/s/${context.params.slug}`);
     return;
   }
 

@@ -70,14 +70,14 @@ function useLoginRedirect(admin = false) {
   const query = useLocationQuery();
 
   if (admin) {
-    return `/s/${site.slug}/madoc`;
+    return `/s/${site.slug}`;
   }
 
   if (location.pathname === '/login' || location.pathname === '/register') {
-    return `/s/${site.slug}/madoc`;
+    return `/s/${site.slug}`;
   }
 
-  return `/s/${site.slug}/madoc/${location.pathname}${query ? `?${stringify(query)}` : ''}`;
+  return `/s/${site.slug}/${location.pathname}${query ? `?${stringify(query)}` : ''}`;
 }
 
 export const UserBar: React.FC<{
@@ -108,7 +108,7 @@ export const UserBar: React.FC<{
               {site.title}
             </UserBarAdminButton>
           ) : (
-            <UserBarAdminButton href={`/s/${site.slug}/madoc/admin`}>{site.title}</UserBarAdminButton>
+            <UserBarAdminButton href={`/s/${site.slug}/admin`}>{site.title}</UserBarAdminButton>
           )
         ) : admin ? (
           <UserBarAdminButton href={`/s/${site.slug}`}>{site.title}</UserBarAdminButton>
@@ -144,18 +144,18 @@ export const UserBar: React.FC<{
                       {t('Site admin')}
                     </GlobalHeaderMenuItem>
                   ) : null}
-                  <GlobalHeaderMenuItem href={`/s/${site.slug}/madoc/dashboard`} {...itemProps[0 + adminIdx]}>
+                  <GlobalHeaderMenuItem href={`/s/${site.slug}/dashboard`} {...itemProps[0 + adminIdx]}>
                     {t('Dashboard')}
                   </GlobalHeaderMenuItem>
-                  <GlobalHeaderMenuItem href={`/s/${site.slug}/madoc`} {...itemProps[1 + adminIdx]}>
+                  <GlobalHeaderMenuItem href={`/s/${site.slug}`} {...itemProps[1 + adminIdx]}>
                     {t('View site')}
                   </GlobalHeaderMenuItem>
 
-                  <GlobalHeaderMenuItem href={`/s/${site.slug}/madoc/profile`} {...itemProps[2 + adminIdx]}>
+                  <GlobalHeaderMenuItem href={`/s/${site.slug}/profile`} {...itemProps[2 + adminIdx]}>
                     {t('Account')}
                   </GlobalHeaderMenuItem>
                   <GlobalHeaderMenuItem
-                    href={`/s/${site.slug}/madoc/logout?${stringify({ redirect })}`}
+                    href={`/s/${site.slug}/logout?${stringify({ redirect })}`}
                     {...itemProps[3 + adminIdx]}
                   >
                     {t('Logout')}
@@ -164,7 +164,7 @@ export const UserBar: React.FC<{
               ) : (
                 <>
                   {showAdmin ? (
-                    <GlobalHeaderMenuItem as="a" href={`/s/${site.slug}/madoc/admin`} {...itemProps[0]}>
+                    <GlobalHeaderMenuItem as="a" href={`/s/${site.slug}/admin`} {...itemProps[0]}>
                       {t('Site admin')}
                     </GlobalHeaderMenuItem>
                   ) : null}
@@ -179,7 +179,7 @@ export const UserBar: React.FC<{
                     {t('Account')}
                   </GlobalHeaderMenuItem>
                   <GlobalHeaderMenuItem
-                    href={`/s/${site.slug}/madoc/logout?${stringify({ redirect })}`}
+                    href={`/s/${site.slug}/logout?${stringify({ redirect })}`}
                     {...itemProps[3 + adminIdx]}
                   >
                     {t('Logout')}

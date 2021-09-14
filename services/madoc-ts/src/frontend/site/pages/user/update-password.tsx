@@ -72,7 +72,7 @@ export const UpdatePasswordPage: React.FC = () => {
         </>
       ) : (
         <>
-          <form method="POST" action={`/s/${site.slug}/madoc/profile/password`}>
+          <form method="POST" action={`/s/${site.slug}/profile/password`}>
             <LoginContainer>
               <Heading1 $margin>{t('Change password')}</Heading1>
 

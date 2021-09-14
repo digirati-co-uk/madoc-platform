@@ -852,6 +852,7 @@ export class SiteUserRepository extends BaseRepository {
    * @throws NotFoundError
    */
   async getCachedSiteIdBySlug(slug: string, userId?: number, isAdmin = false): Promise<Site> {
+    console.log(slug);
     const cacheKey = `public-site-id:${slug}`;
     const publicSiteId: Site | undefined = cache.get(cacheKey);
     if (publicSiteId) {

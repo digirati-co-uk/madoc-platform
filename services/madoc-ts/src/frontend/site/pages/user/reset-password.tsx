@@ -45,7 +45,7 @@ export const ResetPassword: React.FC = () => {
             ? t('Thank you, your email is confirmed. Please choose a password.')
             : t('Please choose a new password')}
         </p>
-        <form method="post" action={`/s/${site.slug}/madoc/reset-password`}>
+        <form method="post" action={`/s/${site.slug}/reset-password`}>
           <InputContainer $error={formError}>
             <InputLabel htmlFor="p1">{t('Password')}</InputLabel>
             <Input type="password" required name="p1" id="p1" />

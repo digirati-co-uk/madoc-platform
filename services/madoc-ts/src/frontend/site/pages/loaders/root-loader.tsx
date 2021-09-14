@@ -53,11 +53,7 @@ export const RootLoader: UniversalComponent<RootLoaderType> = createUniversalCom
           <title>{site.title}</title>
           {siteTheme && siteTheme.assets.css
             ? siteTheme.assets.css.map(item => (
-                <link
-                  key={item}
-                  rel="stylesheet"
-                  href={`/s/${site.slug}/madoc/themes/${siteTheme.id}/public/${item}`}
-                />
+                <link key={item} rel="stylesheet" href={`/s/${site.slug}/themes/${siteTheme.id}/public/${item}`} />
               ))
             : null}
           {siteTheme && siteTheme.assets.js
@@ -65,7 +61,7 @@ export const RootLoader: UniversalComponent<RootLoaderType> = createUniversalCom
                 <script
                   key={item}
                   type="application/javascript"
-                  src={`/s/${site.slug}/madoc/themes/${siteTheme.id}/public/${item}`}
+                  src={`/s/${site.slug}/themes/${siteTheme.id}/public/${item}`}
                 />
               ))
             : null}

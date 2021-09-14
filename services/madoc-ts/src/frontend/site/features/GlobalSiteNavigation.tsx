@@ -35,15 +35,16 @@ export const GlobalSiteNavigation: React.FC = () => {
           <HrefLink href="/dashboard">{t('User dashboard')}</HrefLink>
         </LightNavigationItem>
       ) : null}
-      {showNavLinks && navigation.map(nav => {
-        return (
-          <LightNavigationItem key={nav.id} $active={history.location.pathname === nav.path}>
-            <HrefLink href={nav.path}>
-              <LocaleString>{nav.navigationTitle ? nav.navigationTitle : nav.title}</LocaleString>
-            </HrefLink>
-          </LightNavigationItem>
-        );
-      })}
+      {showNavLinks &&
+        navigation.map(nav => {
+          return (
+            <LightNavigationItem key={nav.id} $active={history.location.pathname === nav.path}>
+              <HrefLink href={nav.path}>
+                <LocaleString>{nav.navigationTitle ? nav.navigationTitle : nav.title}</LocaleString>
+              </HrefLink>
+            </LightNavigationItem>
+          );
+        })}
     </LightNavigation>
   );
 };

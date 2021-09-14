@@ -33,7 +33,7 @@ export const CreateNewPage: React.FC = () => {
     return (
       <div>
         Page created:{' '}
-        <a href={`/s/${slug}/madoc${createPageResponse.data.path}`}>
+        <a href={`/s/${slug}${createPageResponse.data.path}`}>
           <LocaleString>{createPageResponse.data.title}</LocaleString>
         </a>
       </div>

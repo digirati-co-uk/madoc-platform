@@ -52,7 +52,7 @@ export const CanvasView: UniversalComponent<CanvasViewType> = createUniversalCom
         <AdminHeader
           title={title}
           thumbnail={thumbnail}
-          subtitle={<a href={`/s/${site.slug}/madoc/manifests/${manifestId}/c/${id}`}>{t('View on site')}</a>}
+          subtitle={<a href={`/s/${site.slug}/manifests/${manifestId}/c/${id}`}>{t('View on site')}</a>}
           breadcrumbs={
             manifestId
               ? [

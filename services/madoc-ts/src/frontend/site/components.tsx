@@ -37,3 +37,4 @@ export { Register } from './pages/user/register';
 export { ProfilePage } from './pages/user/profile';
 export { UpdatePasswordPage } from './pages/user/update-password';
 export { ViewProjectNotes } from './pages/view-project-notes';
+export { RedirectPage } from './pages/redirect';

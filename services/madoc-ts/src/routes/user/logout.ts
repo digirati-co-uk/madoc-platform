@@ -39,5 +39,5 @@ export const logout: RouteMiddleware<{ slug: string }> = async context => {
   });
 
   // Redirect to Omeka.
-  context.response.redirect(context.query.redirect || `/s/${context.params.slug}/madoc`);
+  context.response.redirect(context.query.redirect || `/s/${context.params.slug}`);
 };

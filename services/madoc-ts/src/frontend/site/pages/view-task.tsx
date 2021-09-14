@@ -34,7 +34,7 @@ export const ViewTask: React.FC<TaskContext<any>> = ({ task, ...props }) => {
     return (
       <div>
         <TaskWrapper task={task} refetch={props.refetch as any} subject={subject}>
-          <a href={`/s/${slug}/madoc/admin/tasks/${task.id}`}>{t('View on admin dashboard')}</a>
+          <a href={`/s/${slug}/admin/tasks/${task.id}`}>{t('View on admin dashboard')}</a>
         </TaskWrapper>
       </div>
     );

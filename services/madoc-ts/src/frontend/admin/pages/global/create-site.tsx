@@ -64,7 +64,7 @@ export const CreateSite: React.FC = () => {
             <div>
               <h1>{createSiteStatus.data.site.title}</h1>
               <div>
-                <a href={`/s/${createSiteStatus.data.site.slug}/madoc/admin`}>Go to site</a>
+                <a href={`/s/${createSiteStatus.data.site.slug}/admin`}>Go to site</a>
               </div>
             </div>
           </div>

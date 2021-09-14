@@ -30,7 +30,7 @@ export const LoginPage: React.FC = () => {
       {form && form.success ? <SuccessMessage>{t('You may now login')}</SuccessMessage> : null}
       <LoginContainer>
         <Heading1 $margin>{t('Login')}</Heading1>
-        <form method="post" action={`/s/${site.slug}/madoc/login?${stringify({ redirect })}`}>
+        <form method="post" action={`/s/${site.slug}/login?${stringify({ redirect })}`}>
           <InputContainer $error={didError}>
             <InputLabel htmlFor="email">{t('Email')}</InputLabel>
             <Input type="text" required defaultValue={form?.email} name="email" id="email" />

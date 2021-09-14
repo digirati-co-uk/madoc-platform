@@ -52,7 +52,7 @@ export const ForgotPasswordPage: React.FC = () => {
 
   return (
     <div>
-      <form method="post" action={`/s/${site.slug}/madoc/forgot-password`}>
+      <form method="post" action={`/s/${site.slug}/forgot-password`}>
         <LoginContainer>
           <Heading1 $margin>{t('Forgot password')}</Heading1>
           <p>{t('Please enter your email and we will sent you a link to recover your account.')}</p>

@@ -45,7 +45,7 @@ export const resetPasswordPage: RouteMiddleware = async (context, next) => {
         // Here is the where we change the password and/or activate.
         await context.siteManager.setUserPassword(c2, p1);
 
-        context.redirect(`/s/${context.params.slug}/madoc/login?success=true`);
+        context.redirect(`/s/${context.params.slug}/login?success=true`);
         return;
       }
     }

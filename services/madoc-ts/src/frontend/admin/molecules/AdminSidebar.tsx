@@ -68,7 +68,7 @@ export const AdminSidebar: React.FC = () => {
     <AdminSidebarContainer>
       <SiteSwitcherContainer>
         <SiteSwitcherSiteName>{site.title}</SiteSwitcherSiteName>
-        <SiteSwitcherBackButton as="a" href={`/s/${site.slug}/madoc`}>
+        <SiteSwitcherBackButton as="a" href={`/s/${site.slug}`}>
           {t('Back to site')}
         </SiteSwitcherBackButton>
       </SiteSwitcherContainer>

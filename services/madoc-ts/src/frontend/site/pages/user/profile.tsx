@@ -32,7 +32,7 @@ export const ProfilePage: React.FC = () => {
 
   return (
     <div>
-      <form method="POST" action={`/s/${site.slug}/madoc/profile`}>
+      <form method="POST" action={`/s/${site.slug}/profile`}>
         <LoginContainer>
           <Heading1 $margin>{t('Profile')}</Heading1>
           {form?.success ? <SuccessMessage>{t('Profile updated')}</SuccessMessage> : null}

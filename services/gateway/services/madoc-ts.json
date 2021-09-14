@@ -17,7 +17,7 @@
     }
   },
   "proxy": {
-    "listen_path": "/s/{slug}/madoc",
+    "listen_path": "/",
     "target_url": "http://madoc-ts:3000/",
     "strip_listen_path": false
   },

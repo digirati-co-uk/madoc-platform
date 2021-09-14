@@ -180,12 +180,12 @@ export const useNotificationLink = (
       if (isAdmin) {
         return { link: `/tasks/${actionLink.id}`, isExternal: false };
       } else {
-        return { link: `/s/${site.slug}/madoc/admin/tasks/${actionLink.id}`, isExternal: true };
+        return { link: `/s/${site.slug}/admin/tasks/${actionLink.id}`, isExternal: true };
       }
     }
 
     if (isAdmin) {
-      return { link: `/s/${site.slug}/madoc/tasks/${actionLink.id}`, isExternal: true };
+      return { link: `/s/${site.slug}/tasks/${actionLink.id}`, isExternal: true };
     } else {
       return { link: `/tasks/${actionLink.id}`, isExternal: false };
     }
