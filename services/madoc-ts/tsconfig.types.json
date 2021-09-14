@@ -12,7 +12,6 @@
     "src/queue/",
     "src/repository/",
     "src/routes/",
-    "src/uxpin-merge/",
     "src/migrate.ts",
     "src/router.ts",
     "stories",
