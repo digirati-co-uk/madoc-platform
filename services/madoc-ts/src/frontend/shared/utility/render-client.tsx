@@ -46,8 +46,8 @@ export async function renderClient(
 
     return fetch(
       plugin.development.enabled && plugin.development.revision
-        ? `/s/default/assets/plugins/${plugin.id}/${plugin.development.revision}/plugin.js`
-        : `/s/default/assets/plugins/${plugin.id}/${plugin.version}/plugin.js`,
+        ? `/s/${dehydratedSite.site.slug}/assets/plugins/${plugin.id}/${plugin.development.revision}/plugin.js`
+        : `/s/${dehydratedSite.site.slug}/assets/plugins/${plugin.id}/${plugin.version}/plugin.js`,
       {
         cache: 'force-cache',
       }

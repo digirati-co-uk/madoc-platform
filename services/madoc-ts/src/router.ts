@@ -583,5 +583,6 @@ export const router = new TypedRouter({
 
   // Make sure this is last.
   'site-root': [TypedRouter.GET, '/', siteRoot],
+  'site-root-post': [TypedRouter.POST, '/', siteRoot],
   'site-404': [TypedRouter.GET, '/s/:slug(.*)', madocNotFound],
 });

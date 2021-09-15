@@ -12,7 +12,6 @@ services:
     ports:
       - "${PORTS_GATEWAY:-8888}:8080"
     links:
-      - madoc
       - gateway-redis
       - tasks-api
       - model-api
@@ -67,6 +66,7 @@ services:
       - API_GATEWAY=http://gateway:8080
       - GATEWAY_HOST=${GATEWAY_HOST}
       - STORAGE_FILE_DIRECTORY=/home/node/app/omeka-files
+      - MADOC_INSTALLATION_CODE=${MADOC_INSTALLATION_CODE}
       - MIGRATE=true
       - SMTP_HOST=${SMTP_HOST}
       - SMTP_PORT=${SMTP_PORT}
@@ -79,8 +79,6 @@ services:
       - "127.0.0.1:${PORTS_MADOC_TS_WEBPACK:-40493}:40493"
     links:
       - shared-postgres
-      - madoc-database
-      - madoc
     depends_on:
       - certs
 
