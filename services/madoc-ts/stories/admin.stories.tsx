@@ -3,16 +3,16 @@ import { MemoryRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import { AdminHeader } from '../src/frontend/admin/molecules/AdminHeader';
 import * as React from 'react';
-import { Button, ButtonRow } from '../src/frontend/shared/atoms/Button';
-import { EmptySlotActions, EmptySlotContainer, EmptySlotLabel } from '../src/frontend/shared/atoms/EmptySlot';
-import { GlobalHeader } from '../src/frontend/shared/atoms/GlobalHeader';
+import { Button, ButtonRow } from '../src/frontend/shared/navigation/Button';
+import { EmptySlotActions, EmptySlotContainer, EmptySlotLabel } from '../src/frontend/shared/layout/EmptySlot';
+import { GlobalHeader } from '../src/frontend/shared/navigation/GlobalHeader';
 import {
   PageEditorActions,
   PageEditorButton,
   PageEditorContainer,
   PageEditorDescription,
   PageEditorTitle,
-} from '../src/frontend/shared/atoms/PageEditor';
+} from '../src/frontend/shared/page-blocks/PageEditor';
 import {
   SlotEditorButton,
   SlotEditorContainer,
@@ -21,9 +21,9 @@ import {
   SlotEditorReadOnly,
   SlotEditorWhy,
   SlotOutlineContainer,
-} from '../src/frontend/shared/atoms/SlotEditor';
-import { WidePage } from '../src/frontend/shared/atoms/WidePage';
-import { LightNavigation, LightNavigationItem } from '../src/frontend/shared/atoms/LightNavigation';
+} from '../src/frontend/shared/layout/SlotEditor';
+import { WidePage } from '../src/frontend/shared/layout/WidePage';
+import { LightNavigation, LightNavigationItem } from '../src/frontend/shared/navigation/LightNavigation';
 import {
   AdminLayoutContainer,
   AdminLayoutMain,

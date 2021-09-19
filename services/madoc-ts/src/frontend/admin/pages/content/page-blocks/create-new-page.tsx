@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { useMutation } from 'react-query';
 import { CreateNormalPageRequest } from '../../../../../types/schemas/site-page';
-import { Button } from '../../../../shared/atoms/Button';
+import { Button } from '../../../../shared/navigation/Button';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { PageCreator } from '../../../../shared/components/PageCreator';
 import { useApi } from '../../../../shared/hooks/use-api';

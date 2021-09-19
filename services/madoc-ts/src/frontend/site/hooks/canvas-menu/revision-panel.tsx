@@ -2,7 +2,7 @@ import { Revisions } from '@capture-models/editor';
 import { RevisionRequest } from '@capture-models/types';
 import React, { useEffect, useState, memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { EmptyState } from '../../../shared/atoms/EmptyState';
+import { EmptyState } from '../../../shared/layout/EmptyState';
 import {
   filterUserRevisions,
   revisionsMapToRevisionsList,

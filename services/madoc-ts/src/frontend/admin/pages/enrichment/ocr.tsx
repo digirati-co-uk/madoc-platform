@@ -1,5 +1,5 @@
 import React from 'react';
-import { WidePage } from '../../../shared/atoms/WidePage';
+import { WidePage } from '../../../shared/layout/WidePage';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { UniversalRoute } from '../../../types';
 import { AdminHeader } from '../../molecules/AdminHeader';

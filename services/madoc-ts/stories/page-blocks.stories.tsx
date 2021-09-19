@@ -9,9 +9,9 @@ import {
   AddBlockLabel,
   AddBlockList,
   AddBlockPluginName,
-} from '../src/frontend/shared/atoms/AddBlock';
-import { Heading1, Subheading1 } from '../src/frontend/shared/atoms/Heading1';
-import { Heading2 } from '../src/frontend/shared/atoms/Heading2';
+} from '../src/frontend/shared/page-blocks/AddBlock';
+import { Heading1, Subheading1 } from '../src/frontend/shared/typography/Heading1';
+import { Heading2 } from '../src/frontend/shared/typography/Heading2';
 import { ModalButton } from '../src/frontend/shared/components/Modal';
 import { useAccessibleColor } from '../src/frontend/shared/hooks/use-accessible-color';
 import { useGoogleFonts } from '../src/frontend/shared/hooks/use-google-fonts';

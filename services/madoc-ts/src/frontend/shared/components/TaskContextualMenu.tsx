@@ -8,7 +8,7 @@ import {
   ContextualMenuListItem,
   ContextualMenuWrapper,
   ContextualPositionWrapper,
-} from '../atoms/ContextualMenu';
+} from '../navigation/ContextualMenu';
 import { useApi } from '../hooks/use-api';
 import { SettingsIcon } from '../icons/SettingsIcon';
 import { AssignTask } from './AssignTask';

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 
-import { InputBorderless } from './Input';
-import { LinkButton } from './Button';
-import { SearchIcon } from './SearchIcon';
+import { InputBorderless } from '../form/Input';
+import { LinkButton } from '../navigation/Button';
+import { SearchIcon } from '../icons/SearchIcon';
 
 const SearchContainer = styled.div<{ $isFocus?: boolean; $isAdmin?: boolean }>`
   padding: 0.2em 0.4em;

@@ -5,10 +5,10 @@ import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { SiteUser } from '../../../../extensions/site-manager/types';
 import { siteRoles } from '../../../config';
-import { Button, ButtonRow, SmallButton } from '../../../shared/atoms/Button';
-import { DefaultSelect } from '../../../shared/atoms/DefaulSelect';
-import { ErrorMessage } from '../../../shared/atoms/ErrorMessage';
-import { WidePage } from '../../../shared/atoms/WidePage';
+import { Button, ButtonRow, SmallButton } from '../../../shared/navigation/Button';
+import { DefaultSelect } from '../../../shared/form/DefaulSelect';
+import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
+import { WidePage } from '../../../shared/layout/WidePage';
 import { ModalButton } from '../../../shared/components/Modal';
 import { AutocompleteUser, UserAutocomplete } from '../../../shared/components/UserAutocomplete';
 import { useApi } from '../../../shared/hooks/use-api';
@@ -16,7 +16,7 @@ import { useData } from '../../../shared/hooks/use-data';
 import { useUserDetails } from '../../../shared/hooks/use-user-details';
 import { serverRendererFor } from '../../../shared/plugins/external/server-renderer-for';
 import { AdminHeader } from '../../molecules/AdminHeader';
-import { SimpleTable } from '../../../shared/atoms/SimpleTable';
+import { SimpleTable } from '../../../shared/layout/SimpleTable';
 
 export const SitePermissions = () => {
   const { t } = useTranslation();

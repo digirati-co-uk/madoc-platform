@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Button, ButtonRow } from '../../shared/atoms/Button';
+import { Button, ButtonRow } from '../../shared/navigation/Button';
 import { useData } from '../../shared/hooks/use-data';
 import { useLocalStorage } from '../../shared/hooks/use-local-storage';
 import { CanvasLoader } from '../pages/loaders/canvas-loader';

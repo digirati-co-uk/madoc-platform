@@ -1,11 +1,11 @@
 import React from 'react';
-import { AdminPageTitle, AdminPageSubtitle } from '../../shared/atoms/AdminPageTitle';
+import { AdminPageTitle, AdminPageSubtitle } from '../../shared/typography/AdminPageTitle';
 import styled, { css } from 'styled-components';
-import { BreadcrumbItem, Breadcrumbs } from '../../shared/atoms/Breadcrumbs';
+import { BreadcrumbItem, Breadcrumbs } from '../../shared/navigation/Breadcrumbs';
 import { Link, useLocation } from 'react-router-dom';
-import { WidePage } from '../../shared/atoms/WidePage';
+import { WidePage } from '../../shared/layout/WidePage';
 import { SearchBox } from '../../shared/atoms/SearchBox';
-import { GridContainer } from '../../shared/atoms/Grid';
+import { GridContainer } from '../../shared/layout/Grid';
 
 const AdminHeaderBackground = styled.div<{ $sticky?: boolean; $noMargin?: boolean }>`
   background: #24386b;

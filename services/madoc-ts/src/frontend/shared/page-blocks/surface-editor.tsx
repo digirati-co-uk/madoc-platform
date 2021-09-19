@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Surface, SurfaceProps } from '../atoms/Surface';
+import { Surface, SurfaceProps } from '../layout/Surface';
 import { useBlockEditor } from './block-editor';
 
 export const SurfaceEditor: React.FC<{

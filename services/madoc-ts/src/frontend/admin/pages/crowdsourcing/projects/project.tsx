@@ -5,7 +5,7 @@ import React from 'react';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
 import { AdminHeader } from '../../../molecules/AdminHeader';
-import { WidePage } from '../../../../shared/atoms/WidePage';
+import { WidePage } from '../../../../shared/layout/WidePage';
 import { useTranslation } from 'react-i18next';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';

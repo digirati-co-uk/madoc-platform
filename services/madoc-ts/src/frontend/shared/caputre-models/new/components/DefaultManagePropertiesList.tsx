@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useSelectorHelper } from '@capture-models/editor';
-import { CloseIcon } from '../../../atoms/CloseIcon';
+import { CloseIcon } from '../../../icons/CloseIcon';
 import { useManagePropertyList } from '../hooks/use-manage-property-list';
 import { EditorRenderingConfig } from './EditorSlots';
 

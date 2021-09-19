@@ -4,12 +4,12 @@ import ReactTooltip from 'react-tooltip';
 import { useTranslation } from 'react-i18next';
 import { useApi } from '../hooks/use-api';
 
-export const CanvasStatusBackground = styled.div`
+const CanvasStatusBackground = styled.div`
   background: #ddd;
   height: 10px;
 `;
 
-export const CanvasStatusItem = styled.div<{ $status: number }>`
+const CanvasStatusItem = styled.div<{ $status: number }>`
   height: 10px;
   ${props => {
     switch (props.$status) {

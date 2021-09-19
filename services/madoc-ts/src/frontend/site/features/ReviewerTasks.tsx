@@ -1,10 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { ButtonRow, TinyButton } from '../../shared/atoms/Button';
-import { Heading3 } from '../../shared/atoms/Heading3';
+import { ButtonRow, TinyButton } from '../../shared/navigation/Button';
+import { Heading3 } from '../../shared/typography/Heading3';
 import { Status } from '../../shared/atoms/Status';
-import { TableContainer, TableEmpty, TableRow, TableRowLabel } from '../../shared/atoms/Table';
+import { TableContainer, TableEmpty, TableRow, TableRowLabel } from '../../shared/layout/Table';
 import { HrefLink } from '../../shared/utility/href-link';
 import { isReviewer } from '../../shared/utility/user-roles';
 import { useRelativeLinks } from '../hooks/use-relative-links';

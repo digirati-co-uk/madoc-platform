@@ -2,7 +2,7 @@ import React from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import styled from 'styled-components';
 import { TableHandleIcon } from '../icons/TableHandleIcon';
-import { TableActions, TableContainer, TableRow, TableRowLabel } from './Table';
+import { TableActions, TableContainer, TableRow, TableRowLabel } from '../layout/Table';
 
 const TableHandle = styled(TableHandleIcon)`
   margin: 4px;

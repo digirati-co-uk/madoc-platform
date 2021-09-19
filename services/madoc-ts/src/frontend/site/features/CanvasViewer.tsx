@@ -9,7 +9,7 @@ import {
   NavIconContainer,
   NavIconNotifcation,
   OuterLayoutContainer,
-} from '../../shared/atoms/LayoutContainer';
+} from '../../shared/layout/LayoutContainer';
 import { useLocalStorage } from '../../shared/hooks/use-local-storage';
 import { useResizeLayout } from '../../shared/hooks/use-resize-layout';
 import { useAnnotationPanel } from '../hooks/canvas-menu/annotation-panel';

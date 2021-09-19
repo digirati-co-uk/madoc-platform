@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UserInvitation } from '../../../../extensions/site-manager/types';
-import { Button, ButtonRow } from '../../../shared/atoms/Button';
+import { Button, ButtonRow } from '../../../shared/navigation/Button';
 import { SystemBackground } from '../../../shared/atoms/SystemUI';
 import { useData } from '../../../shared/hooks/use-data';
 import { Spinner } from '../../../shared/icons/Spinner';

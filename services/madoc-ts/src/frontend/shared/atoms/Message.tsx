@@ -2,9 +2,9 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 import { useLocalStorage } from '../hooks/use-local-storage';
 import { DownArrowIcon } from '../icons/DownArrowIcon';
-import { ButtonIcon } from './Button';
+import { ButtonIcon } from '../navigation/Button';
 
-export const MessageHeader = styled.div`
+const MessageHeader = styled.div`
   background: #d3e0ff;
   color: #0d2047;
   padding: 0.5em 1em;
@@ -12,7 +12,7 @@ export const MessageHeader = styled.div`
   cursor: pointer;
 `;
 
-export const MessageBody = styled.div.attrs<{ $isOpen?: boolean }, { $isOpen?: boolean }>(props => ({
+const MessageBody = styled.div.attrs<{ $isOpen?: boolean }, { $isOpen?: boolean }>(props => ({
   'data-cy': 'info-message',
   $isOpen: props.$isOpen,
 }))`

@@ -4,7 +4,7 @@ import {
   ContextualMenuListItem,
   ContextualMenuWrapper,
   ContextualPositionWrapper,
-} from '../src/frontend/shared/atoms/ContextualMenu';
+} from '../src/frontend/shared/navigation/ContextualMenu';
 import { ModalButton } from '../src/frontend/shared/components/Modal';
 import * as React from 'react';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';

@@ -1,10 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { Button, SmallButton } from '../../../../shared/atoms/Button';
-import { EmptyState } from '../../../../shared/atoms/EmptyState';
-import { TickIcon } from '../../../../shared/atoms/TickIcon';
-import { WidePage } from '../../../../shared/atoms/WidePage';
+import { Button, SmallButton } from '../../../../shared/navigation/Button';
+import { EmptyState } from '../../../../shared/layout/EmptyState';
+import { TickIcon } from '../../../../shared/icons/TickIcon';
+import { WidePage } from '../../../../shared/layout/WidePage';
 import { ModalButton } from '../../../../shared/components/Modal';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { apiHooks } from '../../../../shared/hooks/use-api-query';
@@ -13,7 +13,7 @@ import { serverRendererFor } from '../../../../shared/plugins/external/server-re
 import { HrefLink } from '../../../../shared/utility/href-link';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import * as locale from 'locale-codes';
-import { SimpleTable } from '../../../../shared/atoms/SimpleTable';
+import { SimpleTable } from '../../../../shared/layout/SimpleTable';
 
 export const ConfigureLanguages: React.FC = () => {
   const { t, i18n } = useTranslation();

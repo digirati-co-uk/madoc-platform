@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { useHistory } from 'react-router-dom';
-import { WidePage } from '../../../shared/atoms/WidePage';
+import { WidePage } from '../../../shared/layout/WidePage';
 import { EditShorthandCaptureModel } from '../../../shared/caputre-models/EditorShorthandCaptureModel';
 import { siteConfigurationModel } from '../../../shared/configuration/site-config';
 import { useApi } from '../../../shared/hooks/use-api';

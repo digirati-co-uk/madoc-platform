@@ -23,7 +23,7 @@ import {
   LayoutSidebarMenu,
   NavIconContainer,
   OuterLayoutContainer,
-} from '../src/frontend/shared/atoms/LayoutContainer';
+} from '../src/frontend/shared/layout/LayoutContainer';
 import {
   TaskItem,
   TaskItemAuthor,

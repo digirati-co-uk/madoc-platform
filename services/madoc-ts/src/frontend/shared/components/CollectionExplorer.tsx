@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ItemStructureListItem } from '../../../types/schemas/item-structure-list';
-import { TinyButton } from '../atoms/Button';
-import { SingleLineHeading5 } from '../atoms/Heading5';
+import { TinyButton } from '../navigation/Button';
+import { SingleLineHeading5 } from '../typography/Heading5';
 import { ImageGrid, ImageGridItem } from '../atoms/ImageGrid';
 import { CroppedImage } from '../atoms/Images';
 import { useApiStructure } from '../hooks/use-api-structure';

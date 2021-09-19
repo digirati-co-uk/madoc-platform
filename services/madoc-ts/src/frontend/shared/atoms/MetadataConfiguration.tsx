@@ -1,8 +1,8 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { SmallButton } from './Button';
-import { CloseIcon } from './CloseIcon';
-import { InputLabel } from './Input';
+import { SmallButton } from '../navigation/Button';
+import { CloseIcon } from '../icons/CloseIcon';
+import { InputLabel } from '../form/Input';
 
 export const MetadataCardListContainer = styled.div<{ isOver?: boolean; canDrop?: boolean }>`
   display: flex;

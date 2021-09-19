@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { TinyButton } from '../../shared/atoms/Button';
-import { Heading3 } from '../../shared/atoms/Heading3';
+import { TinyButton } from '../../shared/navigation/Button';
+import { Heading3 } from '../../shared/typography/Heading3';
 import { ProjectListing } from '../../shared/atoms/ProjectListing';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useUserHomepage } from '../hooks/use-user-homepage';

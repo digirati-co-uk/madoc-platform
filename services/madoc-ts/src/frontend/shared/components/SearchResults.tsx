@@ -5,7 +5,7 @@ import { parseUrn } from '../../../utility/parse-urn';
 import { useRouteContext } from '../../site/hooks/use-route-context';
 import { CroppedImage } from '../atoms/Images';
 import { ImageStripBox } from '../atoms/ImageStrip';
-import { GridContainer } from '../atoms/Grid';
+import { GridContainer } from '../layout/Grid';
 import { SnippetThumbnail, SnippetThumbnailContainer } from '../atoms/SnippetLarge';
 import { createLink } from '../utility/create-link';
 import { HrefLink } from '../utility/href-link';

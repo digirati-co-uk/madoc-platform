@@ -23,6 +23,7 @@ import {
   SystemConfig,
 } from '../extensions/site-manager/types';
 import { ExternalConfig } from '../types/external-config';
+import { SiteNotFound } from '../utility/errors/site-not-found';
 import { phpHashCompare } from '../utility/php-hash-compare';
 import { passwordHash } from '../utility/php-password-hash';
 import { SQL_COMMA, SQL_EMPTY } from '../utility/postgres-tags';
@@ -687,27 +688,30 @@ export class SiteUserRepository extends BaseRepository {
     if (publicSiteId) {
       return publicSiteId;
     }
+    try {
+      const site = await this.getSiteBySlug(slug);
 
-    const site = await this.getSiteBySlug(slug);
+      if (site.is_public) {
+        cache.put(cacheKey, site, 60 * 60 * 1000); // 1-hour cache.
+      }
 
-    if (site.is_public) {
-      cache.put(cacheKey, site, 60 * 60 * 1000); // 1-hour cache.
-    }
+      if (site.is_public || isAdmin) {
+        return site;
+      }
 
-    if (site.is_public || isAdmin) {
-      return site;
-    }
-
-    if (userId) {
-      const authenticatedSites = await this.getAuthenticatedSites(userId);
-      for (const authedSite of authenticatedSites) {
-        if (authedSite.id === site.id) {
-          return site;
+      if (userId) {
+        const authenticatedSites = await this.getAuthenticatedSites(userId);
+        for (const authedSite of authenticatedSites) {
+          if (authedSite.id === site.id) {
+            return site;
+          }
         }
       }
+    } catch (e) {
+      // let it fall through to the site not found error.
     }
 
-    throw new NotFoundError();
+    throw new SiteNotFound();
   }
 
   async getAuthenticatedSites(userId: number): Promise<readonly UserSite[]> {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { BaseField } from '@capture-models/types';
-import { TableEmpty } from '../../../frontend/shared/atoms/Table';
+import { TableEmpty } from '../../../frontend/shared/layout/Table';
 
 export interface ParagraphsProps extends BaseField {
   id: string;

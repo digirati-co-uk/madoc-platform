@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { EditorialContext, SiteSlot } from '../../../types/schemas/site-page';
-import { SlotLayout } from '../atoms/SlotLayout';
-import { SurfaceProps } from '../atoms/Surface';
+import { SlotLayout } from '../layout/SlotLayout';
+import { SurfaceProps } from '../layout/Surface';
 import { RenderBlock } from './render-block';
 import { SlotEditor } from './slot-editor';
 

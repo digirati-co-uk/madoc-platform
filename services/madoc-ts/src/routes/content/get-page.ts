@@ -7,10 +7,19 @@ export const getPage: RouteMiddleware = async context => {
 
   const root = await context.pageBlocks.getNavigationRoot(pathToFind, siteId);
 
-  context.response.body = {
-    page: await context.pageBlocks.getPageByPath(pathToFind, siteId),
-    root,
-    navigation: root ? await context.pageBlocks.getPageNavigation(root.path, siteId) : [],
-  };
-  context.response.status = 200;
+  try {
+    context.response.body = {
+      page: await context.pageBlocks.getPageByPath(pathToFind, siteId),
+      root,
+      navigation: root ? await context.pageBlocks.getPageNavigation(root.path, siteId) : [],
+    };
+    context.response.status = 200;
+  } catch (e) {
+    // This case we just return empty.
+    context.response.body = {
+      page: undefined,
+      root,
+      navigation: root ? await context.pageBlocks.getPageNavigation(root.path, siteId) : [],
+    };
+  }
 };

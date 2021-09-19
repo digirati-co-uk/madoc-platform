@@ -3,7 +3,7 @@ import * as React from 'react';
 import { SnippetLarge } from '../src/frontend/shared/atoms/SnippetLarge';
 import StackGrid from 'react-stack-grid';
 import { MetaDataDisplay } from '../src/frontend/shared/components/MetaDataDisplay';
-import { MetadataContainer, MetadataLayoutContainer } from '../src/frontend/shared/layouts/collections';
+import { MetadataContainer, MetadataLayoutContainer } from '../src/frontend/shared/layout/MetadataContainer';
 
 export default { title: 'Layouts' };
 

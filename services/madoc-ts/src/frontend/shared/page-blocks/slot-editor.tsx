@@ -3,13 +3,17 @@ import { useMutation } from 'react-query';
 import styled, { css } from 'styled-components';
 import { extractBlockDefinitions } from '../../../extensions/page-blocks/block-editor-react';
 import { EditorialContext, SiteBlock, SiteSlot } from '../../../types/schemas/site-page';
-import { Button, ButtonRow, TinyButton } from '../atoms/Button';
-import { SurfaceProps } from '../atoms/Surface';
+import { CloseIcon } from '../icons/CloseIcon';
+import { Button, ButtonRow, TinyButton } from '../navigation/Button';
+import { SurfaceProps } from '../layout/Surface';
 import { ModalButton } from '../components/Modal';
 import { useApi } from '../hooks/use-api';
 import { TableHandleIcon } from '../icons/TableHandleIcon';
 import { BlockCreator } from './block-creator';
+import { BlockEditorForm } from './block-editor';
+import { BlockLabel } from './block-label';
 import { ExplainSlot } from './explain-slot';
+import { PageEditorButton } from './PageEditor';
 import { RenderBlock } from './render-block';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import {
@@ -18,8 +22,8 @@ import {
   SlotEditorLabel,
   SlotEditorWhy,
   SlotOutlineContainer,
-} from '../atoms/SlotEditor';
-import { SlotLayout } from '../atoms/SlotLayout';
+} from '../layout/SlotEditor';
+import { SlotLayout } from '../layout/SlotLayout';
 import { SurfaceEditor } from './surface-editor';
 import { CustomEditorTypes } from './custom-editor-types';
 
@@ -43,12 +47,12 @@ type SlotEditorProps = {
 const EditingBlockContainer = styled.div`
   flex: 1 1 0px;
   border-bottom: 1px solid #ccc;
-  padding-left: 10px;
   background: inherit;
 `;
 
 const EditingBlock = styled.div<{ $vertical?: boolean }>`
   display: flex;
+  flex-direction: column;
 
   ${props =>
     props.$vertical &&
@@ -59,10 +63,30 @@ const EditingBlock = styled.div<{ $vertical?: boolean }>`
     `}
 `;
 
-const EditingBlockActions = styled.div`
-  background: #eee;
+const EditingBlocksBar = styled.div`
   padding: 0.5em;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #8a96a6;
+  display: flex;
+  background: #fff;
+  font-size: 0.9em;
+`;
+const EditingBlocksBarLeft = styled.div`
+  align-self: flex-start;
+  align-items: center;
+  display: flex;
+  flex: 1 1 0px;
+`;
+const EditingBlocksBarRight = styled.div`
+  align-self: flex-end;
+  align-items: center;
+  display: flex;
+  ${Button} {
+    margin-right: 0.5em;
+  }
+`;
+const EditingBlockLabel = styled.div`
+  padding-left: 1em;
+  font-weight: bold;
 `;
 
 const EditBlockWrapper = styled.div`
@@ -319,9 +343,40 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
                               ref={providedInner.innerRef}
                               {...providedInner.draggableProps}
                             >
-                              <EditingBlockActions>
-                                <TableHandle {...providedInner.dragHandleProps} />
-                              </EditingBlockActions>
+                              <EditingBlocksBar>
+                                <EditingBlocksBarLeft>
+                                  <TableHandle {...providedInner.dragHandleProps} />
+                                  <EditingBlockLabel>
+                                    <BlockLabel block={block} />
+                                  </EditingBlockLabel>
+                                </EditingBlocksBarLeft>
+                                <EditingBlocksBarRight>
+                                  <BlockEditorForm
+                                    as={Button}
+                                    block={block}
+                                    context={props.context}
+                                    onUpdateBlock={props.onUpdateBlock}
+                                  />
+                                  <ModalButton
+                                    as="div"
+                                    title="Delete block"
+                                    render={() => <div>Are you sure you want to delete this page block?</div>}
+                                    footerAlignRight
+                                    renderFooter={({ close }) => {
+                                      return (
+                                        <ButtonRow $noMargin>
+                                          <Button onClick={close}>Cancel</Button>
+                                          <Button $primary onClick={() => removeBlock(block.id).then(() => close())}>
+                                            Delete block
+                                          </Button>
+                                        </ButtonRow>
+                                      );
+                                    }}
+                                  >
+                                    <CloseIcon />
+                                  </ModalButton>
+                                </EditingBlocksBarRight>
+                              </EditingBlocksBar>
                               <EditingBlockContainer>
                                 <EditBlockWrapper>
                                   <RenderBlock
@@ -334,9 +389,6 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
                                   />
                                 </EditBlockWrapper>
                               </EditingBlockContainer>
-                              <EditingBlockActions>
-                                <TinyButton onClick={() => removeBlock(block.id)}>Remove</TinyButton>
-                              </EditingBlockActions>
                             </EditingBlock>
                           )}
                         </Draggable>

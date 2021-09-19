@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { ButtonRow, SmallButton } from '../../../shared/atoms/Button';
+import { ButtonRow, SmallButton } from '../../../shared/navigation/Button';
 import {
   MetadataCard,
   MetadataCardItem,

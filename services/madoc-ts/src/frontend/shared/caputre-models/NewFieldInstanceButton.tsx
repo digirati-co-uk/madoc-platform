@@ -1,7 +1,7 @@
 import React from 'react';
 import { Revisions } from '@capture-models/editor';
 import styled from 'styled-components';
-import { TinyButton } from '../atoms/Button';
+import { TinyButton } from '../navigation/Button';
 import { BaseField } from '@capture-models/types';
 
 const NewInstanceContainer = styled.div`

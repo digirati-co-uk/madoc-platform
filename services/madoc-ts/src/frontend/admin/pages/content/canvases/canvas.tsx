@@ -11,7 +11,7 @@ import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { useApiManifest } from '../../../../shared/hooks/use-api-manifest';
 import { AdminHeader } from '../../../molecules/AdminHeader';
-import { WidePage } from '../../../../shared/atoms/WidePage';
+import { WidePage } from '../../../../shared/layout/WidePage';
 import { ManifestFull } from '../../../../../types/schemas/manifest-full';
 
 type CanvasViewType = {

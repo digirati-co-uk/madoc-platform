@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MetadataEditor } from '../src/frontend/admin/molecules/MetadataEditor';
-import { CloseIcon } from '../src/frontend/shared/atoms/CloseIcon';
-import { InputLabel } from '../src/frontend/shared/atoms/Input';
+import { CloseIcon } from '../src/frontend/shared/icons/CloseIcon';
+import { InputLabel } from '../src/frontend/shared/form/Input';
 import {
   FacetEditActions,
   FacetEditBack,

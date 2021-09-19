@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
 import { Pm2Status } from '../../../../types/pm2';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../../shared/atoms/Statistics';
-import { WidePage } from '../../../shared/atoms/WidePage';
+import { WidePage } from '../../../shared/layout/WidePage';
 import { useData } from '../../../shared/hooks/use-data';
 import { useUser } from '../../../shared/hooks/use-site';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';

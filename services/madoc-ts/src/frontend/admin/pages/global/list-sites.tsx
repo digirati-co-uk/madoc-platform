@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
 import ReactTimeago from 'react-timeago';
 import { siteManagerHooks } from '../../../../extensions/site-manager/hooks';
-import { Button, ButtonRow } from '../../../shared/atoms/Button';
+import { Button, ButtonRow } from '../../../shared/navigation/Button';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../../shared/atoms/Statistics';
 import { SystemListItem } from '../../../shared/atoms/SystemListItem';
 import {

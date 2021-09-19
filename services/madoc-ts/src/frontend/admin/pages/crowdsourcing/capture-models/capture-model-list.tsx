@@ -2,14 +2,14 @@ import React from 'react';
 import { CaptureModelSnippet } from '../../../../../types/schemas/capture-model-snippet';
 import { UniversalComponent } from '../../../../types';
 import { Link, useHistory } from 'react-router-dom';
-import { Button } from '../../../../shared/atoms/Button';
+import { Button } from '../../../../shared/navigation/Button';
 import { useMutation } from 'react-query';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { Card, CardContent } from '@capture-models/editor';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { AdminHeader } from '../../../molecules/AdminHeader';
-import { WidePage } from '../../../../shared/atoms/WidePage';
+import { WidePage } from '../../../../shared/layout/WidePage';
 import { useTranslation } from 'react-i18next';
 
 type CaptureModelListType = {

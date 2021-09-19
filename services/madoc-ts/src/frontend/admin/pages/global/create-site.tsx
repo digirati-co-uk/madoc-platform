@@ -3,17 +3,17 @@ import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import slugify from 'slugify';
 import { siteManagerHooks } from '../../../../extensions/site-manager/hooks';
-import { Button, ButtonRow } from '../../../shared/atoms/Button';
-import { ErrorMessage } from '../../../shared/atoms/ErrorMessage';
+import { Button, ButtonRow } from '../../../shared/navigation/Button';
+import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
 import {
   Input,
   InputCheckboxContainer,
   InputCheckboxInputContainer,
   InputContainer,
   InputLabel,
-} from '../../../shared/atoms/Input';
-import { SuccessMessage } from '../../../shared/atoms/SuccessMessage';
-import { WidePageWrapper } from '../../../shared/atoms/WidePage';
+} from '../../../shared/form/Input';
+import { SuccessMessage } from '../../../shared/callouts/SuccessMessage';
+import { WidePageWrapper } from '../../../shared/layout/WidePage';
 import { useApi } from '../../../shared/hooks/use-api';
 import { AdminHeader } from '../../molecules/AdminHeader';
 

@@ -6,7 +6,7 @@ import { ImageService } from '@hyperion-framework/types';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
-import { EmptyState } from '../../atoms/EmptyState';
+import { EmptyState } from '../../layout/EmptyState';
 import { CroppedImage } from '../../atoms/Images';
 import { useCroppedRegion } from '../../hooks/use-cropped-region';
 import { DownArrowIcon } from '../../icons/DownArrowIcon';

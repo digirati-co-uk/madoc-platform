@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components';
 import { themeVariable } from '../../themes/helpers/themeVariable';
+import { accent } from '../variables';
 
 const text = themeVariable('header', 'headerText', {
   default: '#333',
@@ -11,10 +12,6 @@ const menuHoverBackground = themeVariable('header', 'menuHoverBackground', {
   default: '#eee',
   dark: '#666',
   midnight: '#444',
-});
-
-const accent = themeVariable('accent', 'primary', {
-  default: '#5b80b2',
 });
 
 export const LightNavigation = styled.ul`

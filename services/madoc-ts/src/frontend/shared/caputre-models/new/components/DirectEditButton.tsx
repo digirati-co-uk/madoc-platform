@@ -5,7 +5,7 @@ import { useMutation } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { useCanvasModel } from '../../../../site/hooks/use-canvas-model';
 import { useRouteContext } from '../../../../site/hooks/use-route-context';
-import { Button, ButtonRow } from '../../../atoms/Button';
+import { Button, ButtonRow } from '../../../navigation/Button';
 import { useApi } from '../../../hooks/use-api';
 import { useLoadedCaptureModel } from '../../../hooks/use-loaded-capture-model';
 import { useDeselectRevision } from '../hooks/use-deselect-revision';

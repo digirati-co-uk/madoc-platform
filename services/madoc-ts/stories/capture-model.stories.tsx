@@ -1,7 +1,7 @@
 import { Revisions } from '@capture-models/editor';
 import { URLContextExplorer } from '../src/frontend/shared/components/ContentExplorer';
 import * as React from 'react';
-import { TinyButton } from '../src/frontend/shared/atoms/Button';
+import { TinyButton } from '../src/frontend/shared/navigation/Button';
 import { object, text } from '@storybook/addon-knobs';
 import { CaptureModel } from '@capture-models/types';
 import { RevisionNavigation } from '../src/frontend/shared/caputre-models/RevisionNavigation';

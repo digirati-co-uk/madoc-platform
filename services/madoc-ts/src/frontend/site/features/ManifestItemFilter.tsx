@@ -4,7 +4,7 @@ import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import { Button, ButtonIcon } from '../../shared/atoms/Button';
+import { Button, ButtonIcon } from '../../shared/navigation/Button';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { FilterIcon } from '../../shared/icons/FilterIcon';
 import { useRouteContext } from '../hooks/use-route-context';

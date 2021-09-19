@@ -6,7 +6,7 @@ import ReactTimeago from 'react-timeago';
 import styled, { css } from 'styled-components';
 import { Notification } from '../../../types/notifications';
 import { parseAllUrn } from '../../../utility/parse-urn';
-import { EmptyState } from '../atoms/EmptyState';
+import { EmptyState } from '../layout/EmptyState';
 import { useApi } from '../hooks/use-api';
 import { useSite, useUser } from '../hooks/use-site';
 import { NotificationIcon } from '../icons/NotificationIcon';

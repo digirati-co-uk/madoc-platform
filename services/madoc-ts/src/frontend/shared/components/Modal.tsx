@@ -9,7 +9,7 @@ import {
   ModalHeader,
   ModalHeaderTitle,
   ModalResizeIcon,
-} from '../atoms/Modal';
+} from '../layout/Modal';
 import { createPortal } from 'react-dom';
 
 export const ModalButton: React.FC<{

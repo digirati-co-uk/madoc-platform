@@ -8,10 +8,10 @@ import { ThemeProvider } from 'styled-components';
 import { CaptureModel } from '@capture-models/types';
 import { useMutation } from 'react-query';
 import { useApi } from '../../../../shared/hooks/use-api';
-import { Button } from '../../../../shared/atoms/Button';
+import { Button } from '../../../../shared/navigation/Button';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
-import { LightNavigation, LightNavigationItem } from '../../../../shared/atoms/LightNavigation';
+import { LightNavigation, LightNavigationItem } from '../../../../shared/navigation/LightNavigation';
 
 type ViewCaptureModelType = {
   params: { id: string; captureModelId: string };

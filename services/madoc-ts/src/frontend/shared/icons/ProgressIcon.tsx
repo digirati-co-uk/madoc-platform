@@ -29,8 +29,3 @@ export const ProgressIcon = styled.div`
   box-shadow: 0 0 5px 0 #ffd53c;
   animation: ${pulse} 2s ease-in-out 0s infinite;
 `;
-
-export const InlineProgressIcon = styled(ProgressIcon)`
-  margin: 0 6px;
-  display: inline-block;
-`;

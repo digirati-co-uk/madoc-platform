@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
-import { SearchIcon } from './SearchIcon';
-import { GlobalSearchButton, GlobalSearchContainer, GlobalSearchForm, GlobalSearchInput } from './SiteHeader';
+import { SearchIcon } from '../icons/SearchIcon';
+import { GlobalSearchButton, GlobalSearchContainer, GlobalSearchForm, GlobalSearchInput } from '../layout/SiteHeader';
 
 export const GlobalSearch: React.FC = () => {
   const history = useHistory();

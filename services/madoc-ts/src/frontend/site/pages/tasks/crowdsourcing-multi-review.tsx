@@ -1,7 +1,7 @@
 import React, { Suspense, useCallback, useMemo } from 'react';
 import { CrowdsourcingReview } from '../../../../gateway/tasks/crowdsourcing-review';
 import { extractIdFromUrn } from '../../../../utility/parse-urn';
-import { Breadcrumbs } from '../../../shared/atoms/Breadcrumbs';
+import { Breadcrumbs } from '../../../shared/navigation/Breadcrumbs';
 import {
   KanbanAssignee,
   KanbanBoard,
@@ -16,7 +16,7 @@ import {
   KanbanEmpty,
   KanbanCardTextButton,
 } from '../../../shared/atoms/Kanban';
-import { Heading3, Subheading3 } from '../../../shared/atoms/Heading3';
+import { Heading3, Subheading3 } from '../../../shared/typography/Heading3';
 import { Link, useParams, useHistory } from 'react-router-dom';
 import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
 import TimeAgo from 'react-timeago';
@@ -26,7 +26,7 @@ import { useLocationQuery } from '../../../shared/hooks/use-location-query';
 import { HrefLink } from '../../../shared/utility/href-link';
 import { PreviewCrowdsourcingTask } from './preview-crowdsourcing-task.lazy';
 import { MergeCrowdsourcingTask } from './merge-crowdsourcing-task.lazy';
-import { WarningMessage } from '../../../shared/atoms/WarningMessage';
+import { WarningMessage } from '../../../shared/callouts/WarningMessage';
 
 export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; refetch?: () => Promise<void> }> = ({
   task: reviewTask,

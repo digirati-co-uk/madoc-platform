@@ -6,13 +6,12 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
 import {
-  GlobalHeaderInstallation,
   GlobalHeaderMenuContainer,
   GlobalHeaderMenuItem,
   GlobalHeaderMenuLabel,
   GlobalHeaderMenuList,
-} from '../atoms/GlobalHeader';
-import { LanguageSwitcher } from '../atoms/LanguageSwitcher';
+} from '../navigation/GlobalHeader';
+import { LanguageSwitcher } from '../navigation/LanguageSwitcher';
 import { useLocationQuery } from '../hooks/use-location-query';
 import { useSite, useSystemConfig } from '../hooks/use-site';
 import { ArrowDownIcon } from '../icons/ArrowDownIcon';
@@ -64,6 +63,11 @@ const UserBarLogout = styled.span`
   }
 `;
 
+const UserBarInstallation = styled.div`
+  margin-right: 1em;
+  color: rgba(255, 255, 255, 0.5);
+`;
+
 function useLoginRedirect(admin = false) {
   const site = useSite();
   const { location } = useHistory();
@@ -101,7 +105,7 @@ export const UserBar: React.FC<{
   return (
     <>
       <UserBarContainer>
-        <GlobalHeaderInstallation>{systemConfig.installationTitle}</GlobalHeaderInstallation>
+        <UserBarInstallation>{systemConfig.installationTitle}</UserBarInstallation>
         {showAdmin ? (
           admin ? (
             <UserBarAdminButton as={HrefLink} href={`/`}>

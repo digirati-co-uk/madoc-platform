@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { GetUser, User } from '../../../../extensions/site-manager/types';
-import { WidePage } from '../../../shared/atoms/WidePage';
+import { WidePage } from '../../../shared/layout/WidePage';
 import { useData } from '../../../shared/hooks/use-data';
 import { serverRendererFor } from '../../../shared/plugins/external/server-renderer-for';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';

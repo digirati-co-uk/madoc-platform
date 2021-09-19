@@ -12,7 +12,7 @@ import {
   EditorToolbarLabel,
   EditorToolbarSpacer,
   EditorToolbarTitle,
-} from '../atoms/EditorToolbar';
+} from '../navigation/EditorToolbar';
 import { HrefLink } from '../utility/href-link';
 import { ArrowBackIcon } from '../icons/ArrowBackIcon';
 import { CaptureModelHeader } from '../caputre-models/CaptureModelHeader';
@@ -21,7 +21,7 @@ import { FullScreenExitIcon } from '../icons/FullScreenExitIcon';
 import { FullScreenEnterIcon } from '../icons/FullScreenEnterIcon';
 import { ViewContent } from '../components/ViewContent';
 import { CaptureModelEditor } from '../caputre-models/CaptureModelEditor';
-import { MaximiseWindow } from '../atoms/MaximiseWindow';
+import { MaximiseWindow } from '../layout/MaximiseWindow';
 import { CaptureModel, RevisionRequest } from '@capture-models/types';
 import '../caputre-models/refinements';
 import { RevisionEditor } from './revision-editor';

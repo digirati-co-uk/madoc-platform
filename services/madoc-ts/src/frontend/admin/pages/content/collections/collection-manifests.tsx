@@ -7,7 +7,7 @@ import { PublishCollection } from '../../../features/publish-collection';
 import { Pagination } from '../../../molecules/Pagination';
 import { ImageGrid, ImageGridItem } from '../../../../shared/atoms/ImageGrid';
 import { CroppedImage } from '../../../../shared/atoms/Images';
-import { SingleLineHeading5, Subheading5 } from '../../../../shared/atoms/Heading5';
+import { SingleLineHeading5, Subheading5 } from '../../../../shared/typography/Heading5';
 import { Link } from 'react-router-dom';
 import { usePaginatedData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';

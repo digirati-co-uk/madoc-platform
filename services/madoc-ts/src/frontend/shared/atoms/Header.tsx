@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { _Heading1 } from './Heading1';
+import { _Heading1 } from '../typography/Heading1';
 
 export const Header = styled.div`
   margin-top: 0.5em;

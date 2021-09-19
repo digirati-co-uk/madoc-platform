@@ -1,6 +1,6 @@
 import React from 'react';
 import { ManifestListResponse } from '../../../../../types/schemas/manifest-list';
-import { TableContainer, TableRow, TableRowLabel } from '../../../../shared/atoms/Table';
+import { TableContainer, TableRow, TableRowLabel } from '../../../../shared/layout/Table';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { Pagination } from '../../../../shared/components/Pagination';
 import { useData } from '../../../../shared/hooks/use-data';

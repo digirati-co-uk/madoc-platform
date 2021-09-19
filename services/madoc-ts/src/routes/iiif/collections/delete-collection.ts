@@ -1,11 +1,16 @@
 import { userWithScope } from '../../../utility/user-with-scope';
 import { RouteMiddleware } from '../../../types/route-middleware';
-import {api} from "../../../gateway/api.server";
+import { api } from '../../../gateway/api.server';
 import {
-  deleteChildIiifDerivedResourceItems, deleteChildIiifDerivedResources,
-  deleteIiifDerivedResource, deleteIiifLinking,
-  deleteIiifMetadata, deleteIiifResource, deleteIiifResourceItem, deleteParentIiifDerivedResourceItems,
-  getDerivedChildResourceIds
+  deleteChildIiifDerivedResourceItems,
+  deleteChildIiifDerivedResources,
+  deleteIiifDerivedResource,
+  deleteIiifLinking,
+  deleteIiifMetadata,
+  deleteIiifResource,
+  deleteIiifResourceItem,
+  deleteParentIiifDerivedResourceItems,
+  getDerivedChildResourceIds,
 } from '../../../database/queries/deletion-queries';
 import { getResourceLocalSource } from '../../../database/queries/resource-queries';
 import { removeIiifFromDisk } from '../../../utility/deletion-utils';
@@ -17,7 +22,7 @@ export const deleteCollectionEndpoint: RouteMiddleware<{ id: number }> = async c
   const { siteId } = userWithScope(context, ['site.admin']);
   const collectionId = context.params.id;
 
-  await deleteCollection(collectionId, siteId, () => context.connection, true);
+  await deleteCollection(collectionId, siteId, () => context.connection, false);
 
   context.response.status = 200;
 };
@@ -32,11 +37,9 @@ export async function deleteCollection(
   const deletionSummary = await buildCollectionDeletionSummary(collectionId, siteId, connection);
 
   if (deletionSummary.fullDelete) {
-
     // Remove collection from all sites
 
     if (recursive) {
-
       // Delete derived collections
       const childCollections = await connection().any(getDerivedChildResourceIds(collectionId, 'collection'));
       for (let i = 0; i < childCollections.length; i++) {
@@ -78,9 +81,7 @@ export async function deleteCollection(
     await connection().any(deleteIiifResource(collectionId));
 
     await connection().query(sql`select refresh_item_counts()`);
-
   } else {
-
     // Remove collection from this site
 
     await connection().any(deleteIiifMetadata(collectionId, siteId));

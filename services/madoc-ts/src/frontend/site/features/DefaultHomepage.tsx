@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
-import { Heading1 } from '../../shared/atoms/Heading1';
+import { Heading1 } from '../../shared/typography/Heading1';
 import { useUser } from '../../shared/hooks/use-site';
 import { HrefLink } from '../../shared/utility/href-link';
 

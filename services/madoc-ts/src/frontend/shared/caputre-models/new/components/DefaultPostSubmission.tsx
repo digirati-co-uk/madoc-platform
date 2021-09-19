@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRelativeLinks } from '../../../../site/hooks/use-relative-links';
 import { useRouteContext } from '../../../../site/hooks/use-route-context';
-import { Button } from '../../../atoms/Button';
+import { Button } from '../../../navigation/Button';
 import { SnippetStructure } from '../../../components/StructureSnippet';
 import { useManifestStructure } from '../../../hooks/use-manifest-structure';
 import { HrefLink } from '../../../utility/href-link';

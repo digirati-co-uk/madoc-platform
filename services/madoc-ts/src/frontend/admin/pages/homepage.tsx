@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AdminHeader } from '../molecules/AdminHeader';
-import { WidePage } from '../../shared/atoms/WidePage';
+import { WidePage } from '../../shared/layout/WidePage';
 import { createUniversalComponent } from '../../shared/utility/create-universal-component';
 import { useStaticData } from '../../shared/hooks/use-data';
 import {

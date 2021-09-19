@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
-import { SingleLineHeading5, Subheading5 } from '../../shared/atoms/Heading5';
+import { SingleLineHeading5, Subheading5 } from '../../shared/typography/Heading5';
 import { ImageGrid } from '../../shared/atoms/ImageGrid';
 import { CroppedImage } from '../../shared/atoms/Images';
 import { ImageStripBox } from '../../shared/atoms/ImageStrip';

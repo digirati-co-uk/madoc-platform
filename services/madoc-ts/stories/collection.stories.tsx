@@ -1,17 +1,17 @@
 import * as React from 'react';
-import { ButtonRow, SmallButton } from '../src/frontend/shared/atoms/Button';
-import { Heading3, Subheading3 } from '../src/frontend/shared/atoms/Heading3';
-import { Heading5, Subheading5, SingleLineHeading5 } from '../src/frontend/shared/atoms/Heading5';
+import { ButtonRow, SmallButton } from '../src/frontend/shared/navigation/Button';
+import { Heading3, Subheading3 } from '../src/frontend/shared/typography/Heading3';
+import { Heading5, Subheading5, SingleLineHeading5 } from '../src/frontend/shared/typography/Heading5';
 import { ImageStrip, ImageStripBox } from '../src/frontend/shared/atoms/ImageStrip';
-import { MoreContainer, MoreDot, MoreIconContainer, MoreLabel } from '../src/frontend/shared/atoms/MoreButton';
+import { MoreContainer, MoreDot, MoreIconContainer, MoreLabel } from '../src/frontend/shared/navigation/MoreButton';
 import { ImageGrid, ImageGridItem } from '../src/frontend/shared/atoms/ImageGrid';
 import { CroppedImage } from '../src/frontend/shared/atoms/Images';
-import { Heading1, Subheading1 } from '../src/frontend/shared/atoms/Heading1';
+import { Heading1, Subheading1 } from '../src/frontend/shared/typography/Heading1';
 import { ReorderTable, ReorderTableRow } from '../src/frontend/shared/atoms/ReorderTable';
 import { ContextHeading, Header } from '../src/frontend/shared/atoms/Header';
-import { TableActions, TableContainer, TableRow, TableRowLabel } from '../src/frontend/shared/atoms/Table';
-import { Input, InputContainer, InputLabel, InputLink } from '../src/frontend/shared/atoms/Input';
-import { GridContainer, HalfGird } from '../src/frontend/shared/atoms/Grid';
+import { TableActions, TableContainer, TableRow, TableRowLabel } from '../src/frontend/shared/layout/Table';
+import { Input, InputContainer, InputLabel, InputLink } from '../src/frontend/shared/form/Input';
+import { GridContainer, HalfGird } from '../src/frontend/shared/layout/Grid';
 import { MetadataEditor } from '../src/frontend/admin/molecules/MetadataEditor';
 import { useState } from 'react';
 

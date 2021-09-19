@@ -1,9 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { NoteListResponse } from '../../../types/personal-notes';
-import { EmptyState } from '../../shared/atoms/EmptyState';
-import { GridContainer } from '../../shared/atoms/Grid';
-import { Heading1, Subheading1 } from '../../shared/atoms/Heading1';
+import { EmptyState } from '../../shared/layout/EmptyState';
+import { GridContainer } from '../../shared/layout/Grid';
+import { Heading1, Subheading1 } from '../../shared/typography/Heading1';
 import { CroppedImage } from '../../shared/atoms/Images';
 import { ImageStripBox } from '../../shared/atoms/ImageStrip';
 import { SnippetThumbnail, SnippetThumbnailContainer } from '../../shared/atoms/SnippetLarge';

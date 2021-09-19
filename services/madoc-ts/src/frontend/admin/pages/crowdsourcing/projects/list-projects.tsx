@@ -1,13 +1,13 @@
-import { Heading3, Subheading3 } from '../../../../shared/atoms/Heading3';
+import { Heading3, Subheading3 } from '../../../../shared/typography/Heading3';
 import { ProjectContainer, ProjectStatus } from '../../../../shared/atoms/ProjectStatus';
 import { UniversalComponent } from '../../../../types';
 import React from 'react';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { Link } from 'react-router-dom';
-import { WidePage } from '../../../../shared/atoms/WidePage';
+import { WidePage } from '../../../../shared/layout/WidePage';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { useTranslation } from 'react-i18next';
-import { Button } from '../../../../shared/atoms/Button';
+import { Button } from '../../../../shared/navigation/Button';
 import { useData, usePaginatedData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { ProjectList } from '../../../../../types/schemas/project-list';

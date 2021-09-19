@@ -6,8 +6,8 @@ import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautif
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { MetadataEditor } from '../../admin/molecules/MetadataEditor';
-import { Button } from '../atoms/Button';
-import { CloseIcon } from '../atoms/CloseIcon';
+import { Button } from '../navigation/Button';
+import { CloseIcon } from '../icons/CloseIcon';
 import {
   FacetEditActions,
   FacetEditBack,

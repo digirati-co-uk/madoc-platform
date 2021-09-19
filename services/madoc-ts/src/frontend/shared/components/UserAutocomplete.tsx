@@ -2,7 +2,7 @@ import { Tag } from '@capture-models/editor';
 import React, { useEffect, useRef, useState } from 'react';
 import { Select } from 'react-functional-select';
 import { useTranslation } from 'react-i18next';
-import { DefaultSelect } from '../atoms/DefaulSelect';
+import { DefaultSelect } from '../form/DefaulSelect';
 import { useApi } from '../hooks/use-api';
 
 export type AutocompleteUser = {

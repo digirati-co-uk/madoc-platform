@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { maxWidth } from '../../site/variables/global';
 import { themeVariable } from '../../themes/helpers/themeVariable';
+import { accent } from '../variables';
 
 const headerBackground = themeVariable('header', 'headerBackground', {
   default: '#fff',
@@ -27,9 +28,9 @@ const searchBorder = themeVariable('header', 'searchBorder', {
 });
 
 const searchBorderFocusColor = themeVariable('header', 'searchBorderFocusColor', {
-  default: '#4B67E1',
-  midnight: '#4B67E1',
-  dark: '#4B67E1',
+  default: accent,
+  midnight: accent,
+  dark: accent,
 });
 
 export const SiteHeader = styled.div`

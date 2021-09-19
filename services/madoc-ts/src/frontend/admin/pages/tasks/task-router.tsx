@@ -1,6 +1,6 @@
 import { BaseTask } from '../../../../gateway/tasks/base-task';
 import { Status } from '../../../shared/atoms/Status';
-import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../../shared/atoms/Table';
+import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../../shared/layout/Table';
 import { UniversalComponent } from '../../../types';
 import React, { useEffect, useState } from 'react';
 import { GenericTask } from './generic-task';
@@ -8,14 +8,14 @@ import { ManifestImportTask } from './manifest-import-task';
 import { ImportManifestTask } from '../../../../gateway/tasks/import-manifest';
 import { CollectionImportTask } from './collection-import-task';
 import { AdminHeader } from '../../molecules/AdminHeader';
-import { WidePage } from '../../../shared/atoms/WidePage';
+import { WidePage } from '../../../shared/layout/WidePage';
 import { useTranslation } from 'react-i18next';
 import { SubtaskProgress } from '../../../shared/atoms/SubtaskProgress';
 import { usePaginatedData } from '../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { CanvasSnippet } from '../../../shared/components/CanvasSnippet';
 import { Link } from 'react-router-dom';
-import { SmallButton } from '../../../shared/atoms/Button';
+import { SmallButton } from '../../../shared/navigation/Button';
 
 type TaskRouterType = {
   query: { page: number };

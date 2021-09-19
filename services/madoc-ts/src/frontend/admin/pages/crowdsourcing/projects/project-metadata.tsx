@@ -8,8 +8,8 @@ import { mapMetadataList, ParsedMetadata } from '../../../../../utility/map-meta
 import { MetadataListEditor } from '../../../molecules/MetadataListEditor';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
-import { SuccessMessage } from '../../../../shared/atoms/SuccessMessage';
-import { ErrorMessage } from '../../../../shared/atoms/ErrorMessage';
+import { SuccessMessage } from '../../../../shared/callouts/SuccessMessage';
+import { ErrorMessage } from '../../../../shared/callouts/ErrorMessage';
 
 type ProjectMetadataType = {
   params: { id: number };

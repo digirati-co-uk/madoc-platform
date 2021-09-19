@@ -5,7 +5,7 @@ import { EditShorthandCaptureModel } from '../../../shared/caputre-models/Editor
 import { useApi } from '../../../shared/hooks/use-api';
 import { useSite, useSystemConfig, useUpdateSystemConfig } from '../../../shared/hooks/use-site';
 import { AdminHeader } from '../../molecules/AdminHeader';
-import { WidePage } from '../../../shared/atoms/WidePage';
+import { WidePage } from '../../../shared/layout/WidePage';
 
 const systemConfigModel = {
   enableRegistrations: {

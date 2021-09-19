@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Button } from '../atoms/Button';
-import { ErrorMessage } from '../atoms/ErrorMessage';
-import { WidePageWrapper } from '../atoms/WidePage';
+import { Button } from '../navigation/Button';
+import { ErrorMessage } from '../callouts/ErrorMessage';
+import { WidePageWrapper } from '../layout/WidePage';
 import { mapStackTrace } from 'sourcemapped-stacktrace';
 
 export const NotFoundPage: React.FC<{ error?: any }> = () => {

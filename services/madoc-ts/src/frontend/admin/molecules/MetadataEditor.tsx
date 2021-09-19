@@ -1,29 +1,29 @@
 import React, { useMemo, useReducer, useState } from 'react';
 import produce from 'immer';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
-import { Button, ButtonRow, LinkButton } from '../../shared/atoms/Button';
+import { Button, ButtonRow, LinkButton } from '../../shared/navigation/Button';
 import {
   ContextualMenuList,
   ContextualMenuListItem,
   ContextualMenuWrapper,
   ContextualPositionWrapper,
-} from '../../shared/atoms/ContextualMenu';
+} from '../../shared/navigation/ContextualMenu';
 import {
   IntlInput,
   IntlInputButton,
   IntlInputContainer,
   IntlInputDefault,
   IntlMultiline,
-} from '../../shared/atoms/IntlField';
+} from '../../shared/form/IntlField';
 import { ModalButton } from '../../shared/components/Modal';
-import { CloseIcon } from '../../shared/atoms/CloseIcon';
+import { CloseIcon } from '../../shared/icons/CloseIcon';
 import styled, { css } from 'styled-components';
-import { ExpandGrid, GridContainer } from '../../shared/atoms/Grid';
+import { ExpandGrid, GridContainer } from '../../shared/layout/Grid';
 import { useClosestLanguage } from '../../shared/components/LocaleString';
 import { InternationalString } from '@hyperion-framework/types';
 import { useTranslation } from 'react-i18next';
 import { MetadataDefinition } from '../../../types/schemas/metadata-definition';
-import { EmptyInputValue } from '../../shared/atoms/Input';
+import { EmptyInputValue } from '../../shared/form/Input';
 import { useApi } from '../../shared/hooks/use-api';
 
 export type MetadataDiff = {

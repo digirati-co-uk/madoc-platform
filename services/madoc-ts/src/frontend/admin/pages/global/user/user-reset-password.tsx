@@ -1,8 +1,8 @@
 import React from 'react';
 import { useMutation } from 'react-query';
 import { GetUser } from '../../../../../extensions/site-manager/types';
-import { Button } from '../../../../shared/atoms/Button';
-import { SuccessMessage } from '../../../../shared/atoms/SuccessMessage';
+import { Button } from '../../../../shared/navigation/Button';
+import { SuccessMessage } from '../../../../shared/callouts/SuccessMessage';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useData } from '../../../../shared/hooks/use-data';
 import { ViewUser } from '../view-user';

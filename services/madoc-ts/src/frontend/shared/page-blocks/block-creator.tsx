@@ -10,9 +10,9 @@ import {
   AddBlockList,
   AddBlockPluginName,
   DefaultBlockIcon,
-} from '../atoms/AddBlock';
-import { Button, SmallButton } from '../atoms/Button';
-import { WhiteTickIcon } from '../atoms/TickIcon';
+} from './AddBlock';
+import { Button, SmallButton } from '../navigation/Button';
+import { WhiteTickIcon } from '../icons/TickIcon';
 import { useApi } from '../hooks/use-api';
 import { useSite } from '../hooks/use-site';
 import { useBlockEditor } from './block-editor';

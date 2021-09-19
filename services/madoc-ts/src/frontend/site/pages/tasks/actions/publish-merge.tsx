@@ -3,9 +3,9 @@ import { CrowdsourcingReviewMerge } from '../../../../../gateway/tasks/crowdsour
 import { useApi } from '../../../../shared/hooks/use-api';
 import { Revisions } from '@capture-models/editor';
 import { useMutation } from 'react-query';
-import { EditorToolbarButton, EditorToolbarIcon, EditorToolbarLabel } from '../../../../shared/atoms/EditorToolbar';
+import { EditorToolbarButton, EditorToolbarIcon, EditorToolbarLabel } from '../../../../shared/navigation/EditorToolbar';
 import { ModalButton } from '../../../../shared/components/Modal';
-import { Button } from '../../../../shared/atoms/Button';
+import { Button } from '../../../../shared/navigation/Button';
 import { GradingIcon } from '../../../../shared/icons/GradingIcon';
 
 export const PublishMerge: React.FC<{

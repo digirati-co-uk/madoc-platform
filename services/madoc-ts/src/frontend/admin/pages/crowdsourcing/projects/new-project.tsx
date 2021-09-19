@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { InternationalString } from '@hyperion-framework/types';
-import { DefaultSelect } from '../../../../shared/atoms/DefaulSelect';
+import { DefaultSelect } from '../../../../shared/form/DefaulSelect';
 import { useProjectTemplates } from '../../../../shared/hooks/use-project-templates';
 import { useDefaultLocale, useSupportedLocales } from '../../../../shared/hooks/use-site';
 import { MetadataEditor } from '../../../molecules/MetadataEditor';
 import { useMutation } from 'react-query';
 import { CreateProject } from '../../../../../types/schemas/create-project';
 import { useApi } from '../../../../shared/hooks/use-api';
-import { Button, ButtonRow } from '../../../../shared/atoms/Button';
-import { Input, InputContainer, InputLabel } from '../../../../shared/atoms/Input';
+import { Button, ButtonRow } from '../../../../shared/navigation/Button';
+import { Input, InputContainer, InputLabel } from '../../../../shared/form/Input';
 import { useHistory } from 'react-router-dom';
 import { AdminHeader } from '../../../molecules/AdminHeader';
-import { WidePage } from '../../../../shared/atoms/WidePage';
+import { WidePage } from '../../../../shared/layout/WidePage';
 import { useTranslation } from 'react-i18next';
-import { ErrorMessage } from '../../../../shared/atoms/ErrorMessage';
+import { ErrorMessage } from '../../../../shared/callouts/ErrorMessage';
 import slugify from 'slugify';
 
 export const NewProjectPage: React.FC = () => {

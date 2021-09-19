@@ -1,8 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '../../shared/atoms/Button';
-import { InfoMessage } from '../../shared/atoms/InfoMessage';
-import { SuccessMessage } from '../../shared/atoms/SuccessMessage';
+import { Button } from '../../shared/navigation/Button';
+import { InfoMessage } from '../../shared/callouts/InfoMessage';
+import { SuccessMessage } from '../../shared/callouts/SuccessMessage';
 import { createLink } from '../../shared/utility/create-link';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useContinueSubmission } from '../hooks/use-continue-submission';

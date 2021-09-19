@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { InternationalString } from '@hyperion-framework/types';
-import { ErrorMessage } from '../../../../shared/atoms/ErrorMessage';
+import { ErrorMessage } from '../../../../shared/callouts/ErrorMessage';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useHistory } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import { CreateManifest as CreateManifestType } from '../../../../../types/schemas/create-manifest';
 import { VaultProvider } from '@hyperion-framework/react-vault';
-import { GridContainer, HalfGird } from '../../../../shared/atoms/Grid';
-import { Heading3, Subheading3 } from '../../../../shared/atoms/Heading3';
-import { Button, SmallButton } from '../../../../shared/atoms/Button';
-import { Input, InputContainer, InputLabel } from '../../../../shared/atoms/Input';
+import { GridContainer, HalfGird } from '../../../../shared/layout/Grid';
+import { Heading3, Subheading3 } from '../../../../shared/typography/Heading3';
+import { Button, SmallButton } from '../../../../shared/navigation/Button';
+import { Input, InputContainer, InputLabel } from '../../../../shared/form/Input';
 import { PreviewManifest } from '../../../molecules/PreviewManifest';
 import { AdminHeader } from '../../../molecules/AdminHeader';
-import { WidePage } from '../../../../shared/atoms/WidePage';
+import { WidePage } from '../../../../shared/layout/WidePage';
 import { useLocationQuery } from '../../../../shared/hooks/use-location-query';
 
 export const CreateManifest: React.FC = () => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Heading1 } from '../../shared/atoms/Heading1';
+import { Heading1 } from '../../shared/typography/Heading1';
 import { Slot } from '../../shared/page-blocks/slot';
 import { AllManifestsPaginatedItems } from '../features/AllManifestsPaginatedItems';
 import { AllManifestsPagination } from '../features/AllManifestsPagination';

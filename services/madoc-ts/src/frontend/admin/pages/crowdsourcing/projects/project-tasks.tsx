@@ -1,11 +1,11 @@
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
-import { EmptyState } from '../../../../shared/atoms/EmptyState';
+import { EmptyState } from '../../../../shared/layout/EmptyState';
 import { UniversalComponent } from '../../../../types';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import React from 'react';
 import { BaseTask } from '../../../../../gateway/tasks/base-task';
 import { useData } from '../../../../shared/hooks/use-data';
-import { TableRow, TableRowLabel } from '../../../../shared/atoms/Table';
+import { TableRow, TableRowLabel } from '../../../../shared/layout/Table';
 import { Status } from '../../../../shared/atoms/Status';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';

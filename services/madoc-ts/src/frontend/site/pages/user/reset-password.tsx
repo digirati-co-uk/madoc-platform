@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '../../../shared/atoms/Button';
-import { ErrorMessage } from '../../../shared/atoms/ErrorMessage';
-import { FlexSpacer } from '../../../shared/atoms/FlexSpacer';
-import { Heading1 } from '../../../shared/atoms/Heading1';
-import { Input, InputContainer, InputLabel } from '../../../shared/atoms/Input';
-import { LoginActions, LoginContainer } from '../../../shared/atoms/LoginContainer';
+import { Button } from '../../../shared/navigation/Button';
+import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
+import { FlexSpacer } from '../../../shared/layout/FlexSpacer';
+import { Heading1 } from '../../../shared/typography/Heading1';
+import { Input, InputContainer, InputLabel } from '../../../shared/form/Input';
+import { LoginActions, LoginContainer } from '../../../shared/layout/LoginContainer';
 import { useFormResponse, useSite } from '../../../shared/hooks/use-site';
 import { HrefLink } from '../../../shared/utility/href-link';
 

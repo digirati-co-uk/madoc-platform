@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { ApiError } from '../../../utility/errors/api-error';
-import { Button } from '../../shared/atoms/Button';
+import { Button } from '../../shared/navigation/Button';
 import { ModalButton } from '../../shared/components/Modal';
 import { AutocompleteUser } from '../../shared/components/UserAutocomplete';
 import { useApi } from '../../shared/hooks/use-api';

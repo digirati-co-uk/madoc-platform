@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { CanvasNormalized, ManifestNormalized } from '@hyperion-framework/types';
 import { useVaultEffect } from '@hyperion-framework/react-vault';
-import { ErrorMessage } from '../../shared/atoms/ErrorMessage';
-import { Heading3 } from '../../shared/atoms/Heading3';
+import { ErrorMessage } from '../../shared/callouts/ErrorMessage';
+import { Heading3 } from '../../shared/typography/Heading3';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { ImageGrid, ImageGridItem } from '../../shared/atoms/ImageGrid';
 import { CroppedImage } from '../../shared/atoms/Images';
-import { SingleLineHeading5 } from '../../shared/atoms/Heading5';
-import { SmallButton } from '../../shared/atoms/Button';
+import { SingleLineHeading5 } from '../../shared/typography/Heading5';
+import { SmallButton } from '../../shared/navigation/Button';
 import { useTranslation } from 'react-i18next';
 
 const CanvasThumbnail: React.FC<{ canvas: CanvasNormalized; height: number }> = ({ canvas, height }) => {

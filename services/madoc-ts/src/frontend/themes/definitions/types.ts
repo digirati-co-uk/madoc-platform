@@ -1,8 +1,13 @@
+import { ThemeSet } from 'styled-theming';
 import { ThemeDefinitions } from './index';
 
 export type ThemeVariation<Definition, Variations = 'default'> = {
   __VARIATIONS__: Variations;
-} & Definition;
+} & DefinitionWithVariables<Definition>;
+
+type DefinitionWithVariables<Definition> = {
+  [Property in keyof Definition]: Definition[Property] | ThemeSet;
+};
 
 type MadocThemeBase = {
   [Def in keyof ThemeDefinitions]: ThemeDefinitions[Def]['__VARIATIONS__'];
@@ -25,7 +30,7 @@ type ExtractThemeDefinition<
   },
   any
 >
-  ? R
+  ? R | ThemeSet
   : never;
 
 export type ThemeDefinitionMap<Key extends keyof ThemeDefinitions, Component extends keyof ThemeDefinitions[Key]> = {

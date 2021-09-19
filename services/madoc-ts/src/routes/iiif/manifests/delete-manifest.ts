@@ -4,9 +4,13 @@ import { RouteMiddleware } from '../../../types/route-middleware';
 import {
   deleteIiifDerivedResource,
   deleteParentIiifDerivedResourceItems,
-  deleteIiifMetadata, deleteIiifResource, deleteIiifResourceItem,
+  deleteIiifMetadata,
+  deleteIiifResource,
+  deleteIiifResourceItem,
   getChildResourceIds,
-  deleteChildIiifDerivedResourceItems, deleteChildIiifDerivedResources, deleteIiifLinking
+  deleteChildIiifDerivedResourceItems,
+  deleteChildIiifDerivedResources,
+  deleteIiifLinking,
 } from '../../../database/queries/deletion-queries';
 import { getResourceLocalSource } from '../../../database/queries/resource-queries';
 import { removeIiifFromDisk } from '../../../utility/deletion-utils';
@@ -15,7 +19,6 @@ import { DatabasePoolConnectionType, sql } from 'slonik';
 import { deleteCanvas } from '../canvases/delete-canvas';
 
 export const deleteManifestEndpoint: RouteMiddleware<{ id: number }> = async context => {
-
   // Delete derived manifest
   //  - Manifest items
   //  - Derived canvases - if no other links
@@ -38,11 +41,7 @@ export const deleteManifestEndpoint: RouteMiddleware<{ id: number }> = async con
   context.response.status = 200;
 };
 
-export async function deleteManifest(
-  manifestId: number,
-  siteId: number,
-  connection: () => DatabasePoolConnectionType
-) {
+export async function deleteManifest(manifestId: number, siteId: number, connection: () => DatabasePoolConnectionType) {
   const siteApi = api.asUser({ siteId });
   const deletionSummary = await buildManifestDeletionSummary(manifestId, siteId, connection);
 
@@ -85,9 +84,7 @@ export async function deleteManifest(
     await connection().any(deleteIiifResource(manifestId));
 
     await connection().query(sql`select refresh_item_counts()`);
-
   } else {
-
     // Delete manifest records from this site
 
     await connection().any(deleteIiifMetadata(manifestId, siteId));

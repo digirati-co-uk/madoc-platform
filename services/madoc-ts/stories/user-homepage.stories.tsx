@@ -1,8 +1,8 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Heading1 } from '../src/frontend/shared/atoms/Heading1';
+import { Heading1 } from '../src/frontend/shared/typography/Heading1';
 import { UserPermissions } from '../src/frontend/shared/components/UserPermissions';
-import { Heading3, Subheading3 } from '../src/frontend/shared/atoms/Heading3';
+import { Heading3, Subheading3 } from '../src/frontend/shared/typography/Heading3';
 import { ProjectListing } from '../src/frontend/shared/atoms/ProjectListing';
 import { MemoryRouter } from 'react-router-dom';
 import {
@@ -11,10 +11,10 @@ import {
   StatisticLabel,
   StatisticNumber,
 } from '../src/frontend/shared/atoms/Statistics';
-import { TinyButton } from '../src/frontend/shared/atoms/Button';
-import { TableContainer, TableRow, TableRowLabel } from '../src/frontend/shared/atoms/Table';
+import { TinyButton } from '../src/frontend/shared/navigation/Button';
+import { TableContainer, TableRow, TableRowLabel } from '../src/frontend/shared/layout/Table';
 import { Status } from '../src/frontend/shared/atoms/Status';
-import { GridContainer, HalfGird } from '../src/frontend/shared/atoms/Grid';
+import { GridContainer, HalfGird } from '../src/frontend/shared/layout/Grid';
 
 const StorybookPaddedBox = styled.div`
   max-width: 1200px;

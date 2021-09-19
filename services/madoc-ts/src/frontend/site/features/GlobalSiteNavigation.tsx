@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
-import { LightNavigation, LightNavigationItem } from '../../shared/atoms/LightNavigation';
+import { LightNavigation, LightNavigationItem } from '../../shared/navigation/LightNavigation';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { useNavigationOptions, useUser } from '../../shared/hooks/use-site';
 import { HrefLink } from '../../shared/utility/href-link';

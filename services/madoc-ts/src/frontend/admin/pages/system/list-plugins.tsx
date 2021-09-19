@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from 'react-query';
 import { Redirect } from 'react-router-dom';
 import { SitePlugin } from '../../../../types/schemas/plugins';
-import { Button, ButtonRow } from '../../../shared/atoms/Button';
-import { EmptyState } from '../../../shared/atoms/EmptyState';
+import { Button, ButtonRow } from '../../../shared/navigation/Button';
+import { EmptyState } from '../../../shared/layout/EmptyState';
 import { SystemListItem } from '../../../shared/atoms/SystemListItem';
 import {
   SystemAction,

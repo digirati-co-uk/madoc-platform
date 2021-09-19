@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SubjectSnippet } from '../../../../extensions/tasks/resolvers/subject-resolver';
 import { CrowdsourcingReview } from '../../../../gateway/tasks/crowdsourcing-review';
-import { Button, ButtonRow } from '../../../shared/atoms/Button';
+import { Button, ButtonRow } from '../../../shared/navigation/Button';
 import { SnippetLarge } from '../../../shared/atoms/SnippetLarge';
 import { LocaleString } from '../../../shared/components/LocaleString';
 import { HrefLink } from '../../../shared/utility/href-link';

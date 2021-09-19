@@ -1,14 +1,14 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BaseTask } from '../../../gateway/tasks/base-task';
-import { Button, ButtonRow } from '../../shared/atoms/Button';
+import { Button, ButtonRow } from '../../shared/navigation/Button';
 import {
   LayoutContainer,
   LayoutContent,
   LayoutHandle,
   LayoutSidebar,
   OuterLayoutContainer,
-} from '../../shared/atoms/LayoutContainer';
+} from '../../shared/layout/LayoutContainer';
 import { TaskListContainer, TaskListInnerContainer } from '../../shared/atoms/TaskList';
 import { useLocalStorage } from '../../shared/hooks/use-local-storage';
 import { useResizeLayout } from '../../shared/hooks/use-resize-layout';

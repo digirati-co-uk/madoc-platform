@@ -1,7 +1,7 @@
 import { InternationalString } from '@hyperion-framework/types/iiif/descriptive';
 import React, { useEffect, useState } from 'react';
 import { MetadataEditor } from '../../admin/molecules/MetadataEditor';
-import { Input, InputContainer, InputLabel } from '../atoms/Input';
+import { Input, InputContainer, InputLabel } from '../form/Input';
 
 export const PageCreator: React.FC<{
   defaultPath?: string;

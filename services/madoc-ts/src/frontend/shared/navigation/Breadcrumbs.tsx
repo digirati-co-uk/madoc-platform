@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
@@ -10,7 +11,7 @@ export type BreadcrumbItem = {
   active?: boolean;
 };
 
-export const BreadcrumbContainer = styled.div<{ background?: string; color?: string; padding?: string }>`
+const BreadcrumbContainer = styled.div<{ background?: string; color?: string; padding?: string }>`
   background: ${props => (props.background ? props.background : `#485C9B`)};
   color: ${props => (props.color ? props.color : `#fff`)};
   display: flex;
@@ -18,7 +19,7 @@ export const BreadcrumbContainer = styled.div<{ background?: string; color?: str
   font-size: 0.9em;
 `;
 
-export const BreadcrumbItem = styled.div<{ active?: boolean; color?: string; $activeColor?: string }>`
+const SingleBreadcrumbItem = styled.div<{ active?: boolean; color?: string; $activeColor?: string }>`
   a {
     text-decoration: none;
     color: ${props => (props.color ? props.color : `rgba(255, 255, 255, 0.7)`)};
@@ -39,7 +40,7 @@ export const BreadcrumbItem = styled.div<{ active?: boolean; color?: string; $ac
   }
 `;
 
-export const BreadcrumbSeparator = styled.div<{ color?: string }>`
+const BreadcrumbSeparator = styled.div<{ color?: string }>`
   color: ${props => (props.color ? props.color : `rgba(255, 255, 255, 0.7)`)};
   margin: 0 0.6em;
 `;
@@ -52,6 +53,7 @@ export const Breadcrumbs: React.FC<{
   $activeColor?: string;
   padding?: string;
 }> = ({ items: rawItems, type, background, color, $activeColor, padding }) => {
+  const { t } = useTranslation();
   const items: BreadcrumbItem[] = useMemo(() => rawItems.filter(r => r) as BreadcrumbItem[], [rawItems]);
   const site = useSite();
 
@@ -76,21 +78,21 @@ export const Breadcrumbs: React.FC<{
 
   return (
     <BreadcrumbContainer background={background} color={color} padding={padding}>
-      <BreadcrumbItem active>
+      <SingleBreadcrumbItem active>
         <a style={{ color: '#fff' }} href={`/s/${site.slug}`}>
-          Back to site
+          {t('Back to site')}
         </a>
-      </BreadcrumbItem>
+      </SingleBreadcrumbItem>
       <BreadcrumbSeparator color={color}>{`/`}</BreadcrumbSeparator>
       {items.map((item, n) => {
         return (
           <React.Fragment key={item.link}>
             {n !== 0 ? <BreadcrumbSeparator color={color}>{`/`}</BreadcrumbSeparator> : null}
-            <BreadcrumbItem key={item.link} active={item.active} color={color} $activeColor={$activeColor}>
+            <SingleBreadcrumbItem key={item.link} active={item.active} color={color} $activeColor={$activeColor}>
               <Link to={item.link} title={item.label}>
                 {item.label}
               </Link>
-            </BreadcrumbItem>
+            </SingleBreadcrumbItem>
           </React.Fragment>
         );
       })}

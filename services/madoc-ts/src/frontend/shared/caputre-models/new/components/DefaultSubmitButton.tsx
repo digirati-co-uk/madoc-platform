@@ -3,7 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { useRouteContext } from '../../../../site/hooks/use-route-context';
-import { Button, ButtonRow } from '../../../atoms/Button';
+import { Button, ButtonRow } from '../../../navigation/Button';
 import { ModalButton } from '../../../components/Modal';
 import { useViewerSaving } from '../../../hooks/use-viewer-saving';
 import { HrefLink } from '../../../utility/href-link';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '../../../../shared/atoms/Button';
+import { Button } from '../../../../shared/navigation/Button';
 import { useData } from '../../../../shared/hooks/use-data';
 import { useIndexResources } from '../../../hooks/use-index-resource';
 import { EditCollectionStructure } from './edit-collection-structure';

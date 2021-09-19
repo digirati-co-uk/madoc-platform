@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import { FullScreenEnterIcon } from '../icons/FullScreenEnterIcon';
-import { CloseIcon } from './CloseIcon';
+import { CloseIcon } from '../icons/CloseIcon';
 
 export const ModalBackground = styled.div`
   position: fixed;

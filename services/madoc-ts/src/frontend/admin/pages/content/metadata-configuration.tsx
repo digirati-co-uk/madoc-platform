@@ -1,6 +1,6 @@
 import React from 'react';
 import { useMutation } from 'react-query';
-import { WidePage } from '../../../shared/atoms/WidePage';
+import { WidePage } from '../../../shared/layout/WidePage';
 import { FacetConfig, MetadataFacetEditor } from '../../../shared/components/MetadataFacetEditor';
 import { useApi } from '../../../shared/hooks/use-api';
 import { apiHooks } from '../../../shared/hooks/use-api-query';

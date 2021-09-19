@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
-import { Button, ButtonIcon, ButtonRow } from '../../shared/atoms/Button';
+import { Button, ButtonIcon, ButtonRow } from '../../shared/navigation/Button';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { useData } from '../../shared/hooks/use-data';
 import { GridIcon } from '../../shared/icons/GridIcon';

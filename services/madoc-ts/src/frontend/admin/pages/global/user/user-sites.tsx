@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { GetUser } from '../../../../../extensions/site-manager/types';
 import { siteRoles } from '../../../../config';
-import { Button } from '../../../../shared/atoms/Button';
+import { Button } from '../../../../shared/navigation/Button';
 import { SystemListItem } from '../../../../shared/atoms/SystemListItem';
 import {
   SystemActions,

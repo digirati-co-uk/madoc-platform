@@ -7,7 +7,7 @@ import { PublishManifest } from '../../../features/publish-manifest';
 import { Pagination } from '../../../molecules/Pagination';
 import { ImageStripBox } from '../../../../shared/atoms/ImageStrip';
 import { CroppedImage } from '../../../../shared/atoms/Images';
-import { Heading5 } from '../../../../shared/atoms/Heading5';
+import { Heading5 } from '../../../../shared/typography/Heading5';
 import { ImageGrid } from '../../../../shared/atoms/ImageGrid';
 import { Link } from 'react-router-dom';
 import { usePaginatedData } from '../../../../shared/hooks/use-data';

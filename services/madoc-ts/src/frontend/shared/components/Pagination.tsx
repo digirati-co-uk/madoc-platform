@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { stringify } from 'query-string';
-import { SmallButton, SmallRoundedButton, MediumRoundedButton } from '../atoms/Button';
+import { SmallButton, SmallRoundedButton, MediumRoundedButton } from '../navigation/Button';
 
 import styled from 'styled-components';
 import { HrefLink } from '../utility/href-link';

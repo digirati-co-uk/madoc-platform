@@ -1,10 +1,10 @@
 import React from 'react';
-import { ButtonRow, Button } from '../../../../shared/atoms/Button';
-import { Heading3, Subheading3 } from '../../../../shared/atoms/Heading3';
+import { ButtonRow, Button } from '../../../../shared/navigation/Button';
+import { Heading3, Subheading3 } from '../../../../shared/typography/Heading3';
 import { ImageStrip, ImageStripBox } from '../../../../shared/atoms/ImageStrip';
 import { CroppedImage } from '../../../../shared/atoms/Images';
-import { SingleLineHeading5, Subheading5 } from '../../../../shared/atoms/Heading5';
-import { MoreContainer, MoreDot, MoreIconContainer, MoreLabel } from '../../../../shared/atoms/MoreButton';
+import { SingleLineHeading5, Subheading5 } from '../../../../shared/typography/Heading5';
+import { MoreContainer, MoreDot, MoreIconContainer, MoreLabel } from '../../../../shared/navigation/MoreButton';
 import { useTranslation } from 'react-i18next';
 import { UniversalComponent } from '../../../../types';
 import { Pagination } from '../../../molecules/Pagination';
@@ -12,7 +12,7 @@ import { LocaleString, useCreateLocaleString } from '../../../../shared/componen
 import { CollectionListResponse } from '../../../../../types/schemas/collection-list';
 import { Link } from 'react-router-dom';
 import { AdminHeader } from '../../../molecules/AdminHeader';
-import { WidePage } from '../../../../shared/atoms/WidePage';
+import { WidePage } from '../../../../shared/layout/WidePage';
 import { usePaginatedData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 

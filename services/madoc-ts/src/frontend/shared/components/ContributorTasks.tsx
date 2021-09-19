@@ -1,11 +1,11 @@
 import React from 'react';
-import { useTranslation } from "react-i18next";
-import { Heading3, Subheading3 } from '../atoms/Heading3';
-import { GridContainer, HalfGird } from '../atoms/Grid';
-import { TableContainer, TableEmpty, TableRow, TableRowLabel } from '../atoms/Table';
+import { useTranslation } from 'react-i18next';
+import { Heading3, Subheading3 } from '../typography/Heading3';
+import { GridContainer, HalfGird } from '../layout/Grid';
+import { TableContainer, TableEmpty, TableRow, TableRowLabel } from '../layout/Table';
 import { Status } from '../atoms/Status';
 import { Link } from 'react-router-dom';
-import { TinyButton } from '../atoms/Button';
+import { TinyButton } from '../navigation/Button';
 import { HrefLink } from '../utility/href-link';
 import { Pagination } from '../../../types/schemas/_pagination';
 import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';

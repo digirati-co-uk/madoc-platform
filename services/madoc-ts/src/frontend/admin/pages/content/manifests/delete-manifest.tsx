@@ -6,7 +6,7 @@ import { UniversalComponent } from '../../../../types';
 import { ManifestFull } from '../../../../../types/schemas/manifest-full';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { useParams, useHistory } from 'react-router-dom';
-import { Button } from '../../../../shared/atoms/Button';
+import { Button } from '../../../../shared/navigation/Button';
 import { useApi } from '../../../../shared/hooks/use-api';
 
 type DeleteManifestType = {

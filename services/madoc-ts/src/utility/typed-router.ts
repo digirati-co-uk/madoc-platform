@@ -7,7 +7,7 @@ import { siteState } from '../middleware/site-state';
 
 export type RouteWithParams<Props, Body = any> =
   | [string, string, RouteMiddleware<Props, Body>]
-  | [string, string, RouteMiddleware<Props, Body>, string];
+  | [string, string, RouteMiddleware<Props, Body>, { schemaName?: string; isPublic?: boolean }];
 
 export type GetRoute<
   Routes extends { [key in RouteName]: Value },
@@ -30,7 +30,8 @@ export class TypedRouter<
   constructor(routes: MappedRoutes) {
     const routeNames = Object.keys(routes) as Routes[];
     for (const route of routeNames) {
-      const [method, path, func, schemaName] = routes[route];
+      const [method, path, func, options = {}] = routes[route];
+      const { schemaName, isPublic } = options;
 
       switch (method) {
         case TypedRouter.PUT:
@@ -45,10 +46,16 @@ export class TypedRouter<
           // @ts-ignore
           this.router.patch(route, path, koaBody(), parseJwt, requestBody(schemaName), func);
           break;
-        case TypedRouter.GET:
-          // @ts-ignore
-          this.router.get(route, path, parseJwt, siteState, func);
+        case TypedRouter.GET: {
+          if (isPublic) {
+            // @ts-ignore
+            this.router.get(route, path, func);
+          } else {
+            // @ts-ignore
+            this.router.get(route, path, parseJwt, siteState, func);
+          }
           break;
+        }
         case TypedRouter.DELETE:
           // @ts-ignore
           this.router.delete(route, path, parseJwt, func);

@@ -1,9 +1,9 @@
 import React from 'react';
 import { useMutation } from 'react-query';
-import { Button } from '../../../../shared/atoms/Button';
+import { Button } from '../../../../shared/navigation/Button';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useHistory, useParams } from 'react-router-dom';
-import { Heading3 } from '../../../../shared/atoms/Heading3';
+import { Heading3 } from '../../../../shared/typography/Heading3';
 import { CollectionDeletionSummary } from '../../../../../types/deletion-summary';
 import { UniversalComponent } from '../../../../types';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
@@ -16,7 +16,9 @@ type DeleteCollectionType = {
   variables: { id: number; page: number };
 };
 
-export const DeleteCollection: UniversalComponent<DeleteCollectionType> = createUniversalComponent<DeleteCollectionType>(
+export const DeleteCollection: UniversalComponent<DeleteCollectionType> = createUniversalComponent<
+  DeleteCollectionType
+>(
   () => {
     const { data } = useData(DeleteCollection);
     const { id } = useParams<{ id: string }>();
@@ -68,7 +70,7 @@ export const DeleteCollection: UniversalComponent<DeleteCollectionType> = create
       return await api.getCollectionDeletionSummary(Number(vars.id));
     },
     getKey(params, query) {
-      return ['collection-deletion', {id: Number(params.id), page: query.page || 1}];
+      return ['collection-deletion', { id: Number(params.id), page: query.page || 1 }];
     },
   }
 );

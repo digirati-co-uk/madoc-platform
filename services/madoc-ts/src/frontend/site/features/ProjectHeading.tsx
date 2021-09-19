@@ -1,6 +1,6 @@
 import React from 'react';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
-import { Heading1, Subheading1 } from '../../shared/atoms/Heading1';
+import { Heading1, Subheading1 } from '../../shared/typography/Heading1';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { useProject } from '../hooks/use-project';
 

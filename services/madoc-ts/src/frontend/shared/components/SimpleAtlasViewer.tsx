@@ -3,7 +3,7 @@ import { AnnotationPage, ImageService } from '@hyperion-framework/types';
 import { AtlasAuto, RegionHighlight, Runtime } from '@atlas-viewer/atlas';
 import { useCanvas, useImageService } from '@hyperion-framework/react-vault';
 import { useTranslation } from 'react-i18next';
-import { Button, ButtonRow } from '../atoms/Button';
+import { Button, ButtonRow } from '../navigation/Button';
 import { useHighlightedRegions } from '../hooks/use-highlighted-regions';
 import { webglSupport } from '../utility/webgl-support';
 import { AtlasTiledImages } from './AtlasTiledImages';

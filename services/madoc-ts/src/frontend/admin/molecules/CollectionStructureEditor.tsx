@@ -2,11 +2,11 @@ import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
 import { ModalButton } from '../../shared/components/Modal';
 import { useReorderItems } from '../hooks/use-reorder-items';
-import { ExpandGrid, GridContainer, HalfGird } from '../../shared/atoms/Grid';
-import { Input, InputContainer, InputLabel } from '../../shared/atoms/Input';
-import { Button, ButtonRow, SmallButton } from '../../shared/atoms/Button';
-import { Heading3 } from '../../shared/atoms/Heading3';
-import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../shared/atoms/Table';
+import { ExpandGrid, GridContainer, HalfGird } from '../../shared/layout/Grid';
+import { Input, InputContainer, InputLabel } from '../../shared/form/Input';
+import { Button, ButtonRow, SmallButton } from '../../shared/navigation/Button';
+import { Heading3 } from '../../shared/typography/Heading3';
+import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../shared/layout/Table';
 import { ReorderTable, ReorderTableRow } from '../../shared/atoms/ReorderTable';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { ItemStructureListItem } from '../../../types/schemas/item-structure-list';
@@ -155,16 +155,8 @@ export const CollectionEditorStructure: React.FC<{
               {searchResults.length === 0 ? t('No results') : null}
             </TableContainer>
             <PaginationContainer>
-              {page > 1 ? (
-                <SmallButton onClick={() => toPage(page - 1)}>
-                  Previous
-                </SmallButton>
-              ) : <span /> }
-              {searchResults.length === 10 ? (
-                <SmallButton onClick={() => toPage(page + 1)}>
-                  Next
-                </SmallButton>
-              ) : null}
+              {page > 1 ? <SmallButton onClick={() => toPage(page - 1)}>Previous</SmallButton> : <span />}
+              {searchResults.length === 10 ? <SmallButton onClick={() => toPage(page + 1)}>Next</SmallButton> : null}
             </PaginationContainer>
           </>
         </div>

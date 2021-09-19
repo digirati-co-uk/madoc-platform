@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { EmptyState } from '../../../../shared/atoms/EmptyState';
+import { EmptyState } from '../../../../shared/layout/EmptyState';
 import { DashboardTab, DashboardTabs } from '../../../../shared/components/DashboardTabs';
 import { useProjectTemplate } from '../../../../shared/hooks/use-project-template';
 import { UniversalComponent } from '../../../../types';

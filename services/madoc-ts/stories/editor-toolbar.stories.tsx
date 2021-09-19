@@ -13,19 +13,18 @@ import {
   EditorToolbarLabel,
   EditorToolbarSpacer,
   EditorToolbarTitle,
-} from '../src/frontend/shared/atoms/EditorToolbar';
+} from '../src/frontend/shared/navigation/EditorToolbar';
 import { ModalButton } from '../src/frontend/shared/components/Modal';
-import { Heading3 } from '../src/frontend/shared/atoms/Heading3';
-import { Button, ButtonRow } from '../src/frontend/shared/atoms/Button';
+import { Heading3 } from '../src/frontend/shared/typography/Heading3';
+import { Button, ButtonRow } from '../src/frontend/shared/navigation/Button';
 import { TextField } from '@capture-models/editor/lib/input-types/TextField/TextField';
 import { Suspense, useState } from 'react';
 import { FullScreenEnterIcon } from '../src/frontend/shared/icons/FullScreenEnterIcon';
 import { ArrowForwardIcon } from '../src/frontend/shared/icons/ArrowForwardIcon';
 import { CompareIcon } from '../src/frontend/shared/icons/CompareIcon';
-import { MaximiseWindow } from '../src/frontend/shared/atoms/MaximiseWindow';
+import { MaximiseWindow } from '../src/frontend/shared/layout/MaximiseWindow';
 
 export default { title: 'Editor toolbar' };
-
 
 export const ReviewEditor = () => {
   const [change, setChange] = useState('');

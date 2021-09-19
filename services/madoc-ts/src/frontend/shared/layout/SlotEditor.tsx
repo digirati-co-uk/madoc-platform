@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { PageEditorButton } from './PageEditor';
+import { PageEditorButton } from '../page-blocks/PageEditor';
 
 export const SlotEditorContainer = styled.div<{ $small?: boolean }>`
   background: #53658f;

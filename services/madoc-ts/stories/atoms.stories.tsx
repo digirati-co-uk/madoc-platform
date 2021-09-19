@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Button, SmallButton } from '../src/frontend/shared/atoms/Button';
-import { Breadcrumbs } from '../src/frontend/shared/atoms/Breadcrumbs';
+import { Button, SmallButton } from '../src/frontend/shared/navigation/Button';
+import { Breadcrumbs } from '../src/frontend/shared/navigation/Breadcrumbs';
 import { MemoryRouter } from 'react-router-dom';
 import { SearchBox } from '../src/frontend/shared/atoms/SearchBox';
 import { Dropdown } from '@capture-models/editor';

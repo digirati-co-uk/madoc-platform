@@ -1,7 +1,7 @@
 import React from 'react';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import styled, { css } from 'styled-components';
-import { Button, ButtonIcon } from '../atoms/Button';
+import { Button, ButtonIcon } from '../navigation/Button';
 import { FilterIcon } from '../icons/FilterIcon';
 
 export const ItemFilterContainer = styled.div`

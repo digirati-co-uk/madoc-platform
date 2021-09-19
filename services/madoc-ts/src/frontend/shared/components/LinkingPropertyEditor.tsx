@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from 'react-query';
 import { ResourceLinkResponse } from '../../../types/schemas/linking';
-import { Button } from '../atoms/Button';
+import { Button } from '../navigation/Button';
 import { useApi } from '../hooks/use-api';
 
 export const LinkingPropertyEditor: React.FC<{

@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
 import { useMutation } from 'react-query';
 import { Site, SystemConfig } from '../../../../extensions/site-manager/types';
-import { SuccessMessage } from '../../../shared/atoms/SuccessMessage';
+import { SuccessMessage } from '../../../shared/callouts/SuccessMessage';
 import { EditShorthandCaptureModel } from '../../../shared/caputre-models/EditorShorthandCaptureModel';
 import { useApi } from '../../../shared/hooks/use-api';
 import { useData } from '../../../shared/hooks/use-data';
 import { serverRendererFor } from '../../../shared/plugins/external/server-renderer-for';
 import { AdminHeader } from '../../molecules/AdminHeader';
-import { WidePage } from '../../../shared/atoms/WidePage';
+import { WidePage } from '../../../shared/layout/WidePage';
 
 const globalSystemConfigModel: Partial<{ [key in keyof SystemConfig]: any }> = {
   enableRegistrations: {

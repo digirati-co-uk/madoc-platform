@@ -1,9 +1,9 @@
 import React from 'react';
 import { useMutation } from 'react-query';
-import { Button } from '../../../../shared/atoms/Button';
+import { Button } from '../../../../shared/navigation/Button';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useHistory, useParams } from 'react-router-dom';
-import { Heading3 } from '../../../../shared/atoms/Heading3';
+import { Heading3 } from '../../../../shared/typography/Heading3';
 import { CanvasDeletionSummary } from '../../../../../types/deletion-summary';
 import { UniversalComponent } from '../../../../types';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
@@ -42,8 +42,8 @@ export const DeleteCanvas: UniversalComponent<DeleteCanvasType> = createUniversa
             ) : null}
             {data.parentTasks ? (
               <p>
-                There are <strong>{data.parentTasks}</strong> tasks indirectly associated with this canvas that will
-                be deleted
+                There are <strong>{data.parentTasks}</strong> tasks indirectly associated with this canvas that will be
+                deleted
               </p>
             ) : null}
           </>
@@ -59,7 +59,7 @@ export const DeleteCanvas: UniversalComponent<DeleteCanvasType> = createUniversa
       return await api.getCanvasDeletionSummary(vars.id);
     },
     getKey(params, query) {
-      return ['canvas-deletion', {id: Number(params.id), page: query.page || 1}];
+      return ['canvas-deletion', { id: Number(params.id), page: query.page || 1 }];
     },
   }
 );

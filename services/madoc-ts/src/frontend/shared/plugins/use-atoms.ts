@@ -1,59 +1,55 @@
 import { Grid } from '@capture-models/editor';
-import { useMemo } from 'react';
-import AdminPageTitle from '../atoms/AdminPageTitle';
-import { Breadcrumbs } from '../atoms/Breadcrumbs';
-import { Button } from '../atoms/Button';
-import { ButtonDropdown } from '../atoms/ButtonDropdown';
+import AdminPageTitle from '../typography/AdminPageTitle';
+import { Breadcrumbs } from '../navigation/Breadcrumbs';
+import { Button } from '../navigation/Button';
+import { ButtonDropdown } from '../navigation/ButtonDropdown';
 import { CanvasStatus } from '../atoms/CanvasStatus';
-import { CloseIcon } from '../atoms/CloseIcon';
-import { Debug } from '../atoms/Debug';
-import { Dropdown } from '../atoms/Dropdown';
-import { EmptyState } from '../atoms/EmptyState';
-import { ErrorIcon } from '../atoms/ErrorIcon';
-import { ErrorMessage } from '../atoms/ErrorMessage';
-import { GlobalHeader } from '../atoms/GlobalHeader';
-import { GlobalStyles } from '../atoms/GlobalStyles';
+import { CloseIcon } from '../icons/CloseIcon';
+import { EmptyState } from '../layout/EmptyState';
+import { ErrorIcon } from '../icons/ErrorIcon';
+import { ErrorMessage } from '../callouts/ErrorMessage';
+import { GlobalHeader } from '../navigation/GlobalHeader';
+import { GlobalStyles } from '../typography/GlobalStyles';
 import { Header } from '../atoms/Header';
-import { Heading1 } from '../atoms/Heading1';
-import { Heading2 } from '../atoms/Heading2';
-import { Heading3 } from '../atoms/Heading3';
-import { Heading5 } from '../atoms/Heading5';
-import { HelpText } from '../atoms/HelpText';
+import { Heading1 } from '../typography/Heading1';
+import { Heading2 } from '../typography/Heading2';
+import { Heading3 } from '../typography/Heading3';
+import { Heading5 } from '../typography/Heading5';
+import { HelpText } from '../typography/HelpText';
 import { ImageGrid } from '../atoms/ImageGrid';
 import { ImageStrip } from '../atoms/ImageStrip';
-import { InfoMessage } from '../atoms/InfoMessage';
-import { Input } from '../atoms/Input';
-import { IntlField } from '../atoms/IntlField';
-import { LanguageSwitcher } from '../atoms/LanguageSwitcher';
-import { LayoutContainer } from '../atoms/LayoutContainer';
-import { LightNavigation } from '../atoms/LightNavigation';
+import { InfoMessage } from '../callouts/InfoMessage';
+import { Input } from '../form/Input';
+import { IntlField } from '../form/IntlField';
+import { LanguageSwitcher } from '../navigation/LanguageSwitcher';
+import { LayoutContainer } from '../layout/LayoutContainer';
+import { LightNavigation } from '../navigation/LightNavigation';
 import { LinkingProperty } from '../atoms/LinkingProperty';
-import { LoadingBlock } from '../atoms/LoadingBlock';
-import { LockIcon } from '../atoms/LockIcon';
-import { MaximiseWindow } from '../atoms/MaximiseWindow';
+import { LoadingBlock } from '../callouts/LoadingBlock';
+import { LockIcon } from '../icons/LockIcon';
+import { MaximiseWindow } from '../layout/MaximiseWindow';
 import { Message } from '../atoms/Message';
-import { NotStartedIcon } from '../atoms/NotStartedIcon';
-import { PageTitle } from '../atoms/PageTitle';
+import { NotStartedIcon } from '../icons/NotStartedIcon';
 import { ProgressBar } from '../atoms/ProgressBar';
-import { ProgressIcon } from '../atoms/ProgressIcon';
+import { ProgressIcon } from '../icons/ProgressIcon';
 import { ProjectListing } from '../atoms/ProjectListing';
 import { ProjectStatus } from '../atoms/ProjectStatus';
 import { ReorderTable } from '../atoms/ReorderTable';
 import { SearchBox } from '../atoms/SearchBox';
-import { SearchIcon } from '../atoms/SearchIcon';
-import { SimpleTable } from '../atoms/SimpleTable';
-import { SiteContainer } from '../atoms/SiteContainer';
-import { SlotLayout } from '../atoms/SlotLayout';
+import { SearchIcon } from '../icons/SearchIcon';
+import { SimpleTable } from '../layout/SimpleTable';
+import { SiteContainer } from '../layout/SiteContainer';
+import { SlotLayout } from '../layout/SlotLayout';
 import { SnippetLarge } from '../atoms/SnippetLarge';
 import { StandardButton } from '../atoms/StandardButton';
 import { Status } from '../atoms/Status';
 import { SubtaskProgress } from '../atoms/SubtaskProgress';
-import { SuccessMessage } from '../atoms/SuccessMessage';
-import { Surface } from '../atoms/Surface';
-import { TickIcon } from '../atoms/TickIcon';
+import { SuccessMessage } from '../callouts/SuccessMessage';
+import { Surface } from '../layout/Surface';
+import { TickIcon } from '../icons/TickIcon';
 import { TranslationInput } from '../atoms/TranslationInput';
-import { WarningMessage } from '../atoms/WarningMessage';
-import { WidePage } from '../atoms/WidePage';
+import { WarningMessage } from '../callouts/WarningMessage';
+import { WidePage } from '../layout/WidePage';
 import { SlotEditor } from '../page-blocks/slot-editor';
 
 export const atoms = {
@@ -63,8 +59,6 @@ export const atoms = {
   ButtonDropdown: ButtonDropdown,
   CanvasStatus: CanvasStatus,
   CloseIcon: CloseIcon,
-  Debug: Debug,
-  Dropdown: Dropdown,
   // EditorToolbar: EditorToolbar,
   // EmptySlot: EmptySlot,
   EmptyState: EmptyState,
@@ -99,7 +93,6 @@ export const atoms = {
   // MoreButton: MoreButton,
   NotStartedIcon: NotStartedIcon,
   // PageEditor: PageEditor,
-  PageTitle: PageTitle,
   // Pill: Pill,
   ProgressBar: ProgressBar,
   ProgressIcon: ProgressIcon,

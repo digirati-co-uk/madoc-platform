@@ -4,13 +4,13 @@ import { ItemStructureList } from '../../../../../types/schemas/item-structure-l
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { Link, useParams } from 'react-router-dom';
-import { SmallButton, TinyButton } from '../../../../shared/atoms/Button';
+import { SmallButton, TinyButton } from '../../../../shared/navigation/Button';
 import { ContextHeading, Header } from '../../../../shared/atoms/Header';
-import { Subheading1 } from '../../../../shared/atoms/Heading1';
+import { Subheading1 } from '../../../../shared/typography/Heading1';
 import { ReorderTable, ReorderTableRow } from '../../../../shared/atoms/ReorderTable';
 import { resetServerContext } from 'react-beautiful-dnd';
-import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../../../shared/atoms/Table';
-import { Heading3 } from '../../../../shared/atoms/Heading3';
+import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../../../shared/layout/Table';
+import { Heading3 } from '../../../../shared/typography/Heading3';
 import { useReorderItems } from '../../../hooks/use-reorder-items';
 import { useTranslation } from 'react-i18next';
 import { InView } from 'react-intersection-observer';

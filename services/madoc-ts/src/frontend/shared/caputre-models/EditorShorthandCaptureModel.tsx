@@ -5,7 +5,7 @@ import { CustomSubmitButton } from './new/components/CustomSubmitButton';
 import { EditorSlots } from './new/components/EditorSlots';
 import { RevisionProviderWithFeatures } from './new/components/RevisionProviderWithFeatures';
 import { createRevisionFromDocument } from '../utility/create-revision-from-document';
-import { ButtonRow } from '../atoms/Button';
+import { ButtonRow } from '../navigation/Button';
 
 export const EditShorthandCaptureModel: React.FC<{
   data: any | undefined;

@@ -7,7 +7,7 @@ import { useMutation } from 'react-query';
 import styled, { ThemeProvider } from 'styled-components';
 import { PageBlockDefinition, PageBlockEditor } from '../../../extensions/page-blocks/extension';
 import { EditorialContext, SiteBlock, SiteBlockRequest } from '../../../types/schemas/site-page';
-import { Button, ButtonRow, TinyButton } from '../atoms/Button';
+import { Button, ButtonRow, TinyButton } from '../navigation/Button';
 import { EditorSlots } from '../caputre-models/new/components/EditorSlots';
 import { RevisionProviderWithFeatures } from '../caputre-models/new/components/RevisionProviderWithFeatures';
 import { ModalButton } from '../components/Modal';
@@ -170,7 +170,7 @@ export function useBlockModel(block: SiteBlock | SiteBlockRequest, advanced?: bo
 
   return useMemo(() => {
     if (!value) {
-      return undefined;
+      return { revision: undefined, isEmpty: true };
     }
 
     const properties = {
@@ -179,7 +179,8 @@ export function useBlockModel(block: SiteBlock | SiteBlockRequest, advanced?: bo
     };
 
     const meta: any = {};
-    for (const prop of Object.keys(properties)) {
+    const propKeys = Object.keys(properties);
+    for (const prop of propKeys) {
       meta[prop] = properties[prop][0];
     }
 
@@ -188,7 +189,9 @@ export function useBlockModel(block: SiteBlock | SiteBlockRequest, advanced?: bo
       ...value,
     });
 
-    return createRevisionFromDocument(document);
+    const revision = createRevisionFromDocument(document);
+
+    return { revision, isEmpty: propKeys.length === 0 };
   }, [value, definition, defaultFields]);
 }
 
@@ -244,7 +247,7 @@ export const useBlockEditor = (
     return savedBlock;
   };
 
-  const revision = useBlockModel(block, advanced);
+  const { revision, isEmpty } = useBlockModel(block, advanced);
 
   const editor = revision ? (
     <ThemeProvider
@@ -290,19 +293,25 @@ export const useBlockEditor = (
     preview,
     saveChanges,
     setAdvanced,
+    isEmpty,
   };
 };
 
-const BlockEditorForm: React.FC<{
+export const BlockEditorForm: React.FC<{
   block: SiteBlock;
   context?: EditorialContext;
   onUpdateBlock?: (id: number) => void;
-}> = ({ block, context, onUpdateBlock }) => {
-  const { editor, preview, saveChanges } = useBlockEditor(block, undefined, onUpdateBlock);
+  as?: any;
+}> = ({ as, block, context, onUpdateBlock }) => {
+  const { editor, preview, saveChanges, isEmpty } = useBlockEditor(block, undefined, onUpdateBlock);
+
+  if (isEmpty) {
+    return null;
+  }
 
   return (
     <ModalButton
-      as={EditBlock}
+      as={as ? as : EditBlock}
       style={{ zIndex: 9999 }}
       title={`Edit block: ${block.name}`}
       modalSize={'lg'}
@@ -341,7 +350,7 @@ const BlockEditorForm: React.FC<{
   );
 };
 
-function useBlockDetails(block: SiteBlock | SiteBlockRequest) {
+export function useBlockDetails(block: SiteBlock | SiteBlockRequest) {
   const api = useApi();
   const site = useSite();
 
@@ -393,7 +402,7 @@ export const BlockEditor: React.FC<{
   context?: EditorialContext;
   onUpdateBlock?: (id: number) => void;
 }> = ({ block, context, children, onUpdateBlock }) => {
-  const { CustomEditor, label } = useBlockDetails(block);
+  const { CustomEditor } = useBlockDetails(block);
 
   return (
     <CustomEditorTypes>
@@ -404,7 +413,6 @@ export const BlockEditor: React.FC<{
           </CustomEditorWrapper>
         ) : (
           <>
-            <BlockLabel>{label}</BlockLabel>
             <BlockEditorForm block={block} context={context} onUpdateBlock={onUpdateBlock} />
             {children}
           </>

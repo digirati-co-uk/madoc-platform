@@ -3,12 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
 import { ApiError } from '../../../utility/errors/api-error';
 import { parseUrn } from '../../../utility/parse-urn';
-import { Button } from '../../shared/atoms/Button';
-import { EmptyState } from '../../shared/atoms/EmptyState';
-import { ErrorMessage } from '../../shared/atoms/ErrorMessage';
+import { Button } from '../../shared/navigation/Button';
+import { EmptyState } from '../../shared/layout/EmptyState';
+import { ErrorMessage } from '../../shared/callouts/ErrorMessage';
 import { KanbanAssignee } from '../../shared/atoms/Kanban';
 import { Status } from '../../shared/atoms/Status';
-import { TableContainer, TableRow, TableRowLabel } from '../../shared/atoms/Table';
+import { TableContainer, TableRow, TableRowLabel } from '../../shared/layout/Table';
 import { AutocompleteUser, UserAutocomplete } from '../../shared/components/UserAutocomplete';
 import { useManifestTask } from '../hooks/use-manifest-task';
 

@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { BaseTask } from '../../../gateway/tasks/base-task';
-import { SmallButton } from '../../shared/atoms/Button';
+import { SmallButton } from '../../shared/navigation/Button';
 import { Status } from '../../shared/atoms/Status';
-import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../shared/atoms/Table';
+import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../shared/layout/Table';
 
 export const CollapsibleTaskList: React.FC<{
   tasks: BaseTask[];

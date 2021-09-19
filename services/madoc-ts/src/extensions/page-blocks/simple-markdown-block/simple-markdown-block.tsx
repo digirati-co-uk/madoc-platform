@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import Editor, { theme } from 'rich-markdown-editor';
 import { captureModelShorthand } from '@capture-models/helpers';
 import styled from 'styled-components';
-import { Button } from '../../../frontend/shared/atoms/Button';
-import { ModalFooter } from '../../../frontend/shared/atoms/Modal';
+import { Button } from '../../../frontend/shared/navigation/Button';
+import { ModalFooter } from '../../../frontend/shared/layout/Modal';
 import { PageBlockEditor, ReactPageBlockDefinition } from '../extension';
 import { StaticMarkdownBlock } from './static-markdown-block';
 

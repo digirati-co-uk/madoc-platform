@@ -11,16 +11,16 @@ import {
   EditorToolbarLabel,
   EditorToolbarSpacer,
   EditorToolbarTitle,
-} from '../../../shared/atoms/EditorToolbar';
+} from '../../../shared/navigation/EditorToolbar';
 import { useApiTask } from '../../../shared/hooks/use-api-task';
 import { ArrowBackIcon } from '../../../shared/icons/ArrowBackIcon';
 import { EditIcon } from '../../../shared/icons/EditIcon';
 import { FullScreenExitIcon } from '../../../shared/icons/FullScreenExitIcon';
 import { FullScreenEnterIcon } from '../../../shared/icons/FullScreenEnterIcon';
-import { MaximiseWindow } from '../../../shared/atoms/MaximiseWindow';
+import { MaximiseWindow } from '../../../shared/layout/MaximiseWindow';
 import { PreviewIcon } from '../../../shared/icons/PreviewIcon';
 import { useLoadedCaptureModel } from '../../../shared/hooks/use-loaded-capture-model';
-import { WarningMessage } from '../../../shared/atoms/WarningMessage';
+import { WarningMessage } from '../../../shared/callouts/WarningMessage';
 import { RequestChanges } from './actions/request-changes';
 import { ApproveSubmission } from './actions/approve-submission';
 import { RejectSubmission } from './actions/reject-submission';

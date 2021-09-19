@@ -1,15 +1,15 @@
-import { WidePage } from '../../../shared/atoms/WidePage';
+import { WidePage } from '../../../shared/layout/WidePage';
 import React, { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
-import { Button, ButtonRow } from '../../../shared/atoms/Button';
+import { Button, ButtonRow } from '../../../shared/navigation/Button';
 import {
   Input,
   InputCheckboxContainer,
   InputCheckboxInputContainer,
   InputContainer,
   InputLabel,
-} from '../../../shared/atoms/Input';
-import { SuccessMessage } from '../../../shared/atoms/SuccessMessage';
+} from '../../../shared/form/Input';
+import { SuccessMessage } from '../../../shared/callouts/SuccessMessage';
 import { useApi } from '../../../shared/hooks/use-api';
 import { useData } from '../../../shared/hooks/use-data';
 import { useSetSite } from '../../../shared/hooks/use-site';

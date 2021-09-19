@@ -1,6 +1,6 @@
 import React from 'react';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
-import { AttributionText } from '../../shared/atoms/AttributionText';
+import { AttributionText } from '../../shared/typography/AttributionText';
 import { LocaleString, useCreateLocaleString } from '../../shared/components/LocaleString';
 import { useManifest } from '../hooks/use-manifest';
 

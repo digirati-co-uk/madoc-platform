@@ -1,7 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
-import { Heading1 } from './Heading1';
 
 export const Heading2 = styled.h2<{ $margin?: boolean }>`
   font-size: 1.75em;

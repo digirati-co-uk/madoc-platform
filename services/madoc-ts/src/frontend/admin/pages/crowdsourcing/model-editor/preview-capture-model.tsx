@@ -7,7 +7,7 @@ import { EditorSlots } from '../../../../shared/caputre-models/new/components/Ed
 import { RevisionProviderWithFeatures } from '../../../../shared/caputre-models/new/components/RevisionProviderWithFeatures';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { ContentExplorer } from '../../../../shared/components/ContentExplorer';
-import { Button, ButtonRow, TinyButton } from '../../../../shared/atoms/Button';
+import { Button, ButtonRow, TinyButton } from '../../../../shared/navigation/Button';
 import '../../../../shared/caputre-models/refinements';
 import { CaptureModel } from '@capture-models/types';
 import { ViewContentFetch } from '../../../molecules/ViewContentFetch';

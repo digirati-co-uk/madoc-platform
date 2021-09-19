@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Button } from './Button';
+import { Button } from '../navigation/Button';
 
 export const InfoMessage = styled.div.attrs(() => ({ 'data-cy': 'info-message' }))`
   background: #5476e9;

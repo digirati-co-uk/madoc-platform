@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { Revisions } from '@capture-models/editor';
 import { useMutation } from 'react-query';
-import { EditorToolbarButton, EditorToolbarIcon, EditorToolbarLabel } from '../../../../shared/atoms/EditorToolbar';
+import { EditorToolbarButton, EditorToolbarIcon, EditorToolbarLabel } from '../../../../shared/navigation/EditorToolbar';
 import { CompareIcon } from '../../../../shared/icons/CompareIcon';
 
 export const SaveMergeChanges: React.FC<{ mergeId: string; onSave: () => Promise<void> | void }> = ({

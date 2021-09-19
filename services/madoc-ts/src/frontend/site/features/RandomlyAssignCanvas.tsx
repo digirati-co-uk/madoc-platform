@@ -1,8 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '../../shared/atoms/Button';
-import { ErrorMessage } from '../../shared/atoms/ErrorMessage';
-import { Heading3, Subheading3 } from '../../shared/atoms/Heading3';
+import { Button } from '../../shared/navigation/Button';
+import { ErrorMessage } from '../../shared/callouts/ErrorMessage';
+import { Heading3, Subheading3 } from '../../shared/typography/Heading3';
 import { LocaleString, useCreateLocaleString } from '../../shared/components/LocaleString';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useAssignRandomCanvas } from '../hooks/use-assign-random-canvas';

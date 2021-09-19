@@ -1,6 +1,6 @@
 import React from 'react';
 import { useMutation } from 'react-query';
-import { Button, ButtonRow } from '../../../../shared/atoms/Button';
+import { Button, ButtonRow } from '../../../../shared/navigation/Button';
 import { getStatusMapItem, ProjectStatus } from '../../../../shared/atoms/ProjectStatus';
 import { SubtaskProgress } from '../../../../shared/atoms/SubtaskProgress';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../../../shared/atoms/Statistics';

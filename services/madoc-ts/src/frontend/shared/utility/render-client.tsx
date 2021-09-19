@@ -39,6 +39,11 @@ export async function renderClient(
   const dehydratedState = dehydratedStateEl ? JSON.parse(dehydratedStateEl.innerText) : {};
   const dehydratedSite = dehydratedSiteEl ? JSON.parse(dehydratedSiteEl.innerText) : {};
 
+  // @ts-ignore
+  window.umami = {
+    trackEvent: () => {},
+  };
+
   const remotePlugins = (dehydratedSite.plugins || []).map(async (plugin: SitePlugin) => {
     if (plugin.development.enabled && !plugin.development.revision && !plugin.installed) {
       return null;
@@ -46,8 +51,8 @@ export async function renderClient(
 
     return fetch(
       plugin.development.enabled && plugin.development.revision
-        ? `/s/${dehydratedSite.site.slug}/assets/plugins/${plugin.id}/${plugin.development.revision}/plugin.js`
-        : `/s/${dehydratedSite.site.slug}/assets/plugins/${plugin.id}/${plugin.version}/plugin.js`,
+        ? `/s/default/madoc/assets/plugins/${plugin.id}/${plugin.development.revision}/plugin.js`
+        : `/s/default/madoc/assets/plugins/${plugin.id}/${plugin.version}/plugin.js`,
       {
         cache: 'force-cache',
       }

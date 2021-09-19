@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { Redirect, useParams } from 'react-router-dom';
 import { RemotePlugin } from '../../../../types/plugins';
-import { Button } from '../../../shared/atoms/Button';
-import { Heading1 } from '../../../shared/atoms/Heading1';
+import { Button } from '../../../shared/navigation/Button';
+import { Heading1 } from '../../../shared/typography/Heading1';
 import { SystemListItem } from '../../../shared/atoms/SystemListItem';
 import {
   SystemActions,

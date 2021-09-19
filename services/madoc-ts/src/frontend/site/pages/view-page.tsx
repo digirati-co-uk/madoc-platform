@@ -8,9 +8,10 @@ import { Slot } from '../../shared/page-blocks/slot';
 import { SlotProvider } from '../../shared/page-blocks/slot-context';
 import { PageEditorBar } from '../features/PageEditorBar';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
+import { PageNotFound } from './page-not-found';
 
 type ViewPageProps = {
-  page: SitePage;
+  page?: SitePage;
   navigation: SitePage[];
   root?: {
     id: number;
@@ -26,7 +27,7 @@ type ViewPageProps = {
 
 export const ViewPage: React.FC<ViewPageProps> = ({ page, navigation, root, refetch }) => {
   // Page properties.
-  const title = page.title;
+  const title = page?.title;
   const { editMode } = useSiteConfiguration();
   const [isEditing, setIsEditing] = useState(false);
   const { location } = useHistory();
@@ -36,6 +37,10 @@ export const ViewPage: React.FC<ViewPageProps> = ({ page, navigation, root, refe
       setIsEditing(false);
     }
   }, [editMode]);
+
+  if (!page) {
+    return <PageNotFound />;
+  }
 
   return (
     <SlotProvider

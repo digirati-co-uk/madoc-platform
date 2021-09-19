@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { ButtonDropdown, ButtonDropdownDefaultItem } from '../../shared/atoms/ButtonDropdown';
-import { PageEditorButton } from '../../shared/atoms/PageEditor';
+import { ButtonDropdown, ButtonDropdownDefaultItem } from '../../shared/navigation/ButtonDropdown';
+import { PageEditorButton } from '../../shared/page-blocks/PageEditor';
 import { useApi } from '../../shared/hooks/use-api';
 import { useStaticData } from '../../shared/hooks/use-data';
 import { PageLoader } from '../pages/loaders/page-loader';

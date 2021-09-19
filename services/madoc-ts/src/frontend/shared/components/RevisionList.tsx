@@ -2,7 +2,7 @@ import { Revisions, useNavigation } from '@capture-models/editor';
 import { RevisionRequest, StatusTypes } from '@capture-models/types';
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
-import { SmallButton } from '../atoms/Button';
+import { SmallButton } from '../navigation/Button';
 import { ViewDocument } from '../caputre-models/inspector/ViewDocument';
 import { useContributors } from '../caputre-models/new/components/ContributorContext';
 

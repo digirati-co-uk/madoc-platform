@@ -1,4 +1,4 @@
-import { SmallButton } from './Button';
+import { SmallButton } from '../navigation/Button';
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import { InputContainer, InputLabel } from './Input';

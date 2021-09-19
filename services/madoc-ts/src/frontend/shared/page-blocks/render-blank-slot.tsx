@@ -9,16 +9,16 @@ import {
   ContextualMenuListItem,
   ContextualMenuWrapper,
   ContextualPositionWrapper,
-} from '../atoms/ContextualMenu';
-import { EmptySlotActions, EmptySlotContainer, EmptySlotLabel } from '../atoms/EmptySlot';
-import { PageEditorButton } from '../atoms/PageEditor';
+} from '../navigation/ContextualMenu';
+import { EmptySlotActions, EmptySlotContainer, EmptySlotLabel } from '../layout/EmptySlot';
+import { PageEditorButton } from './PageEditor';
 import {
   SlotEditorButton,
   SlotEditorLabelReadOnly,
   SlotEditorReadOnly,
   SlotOutlineContainer,
-} from '../atoms/SlotEditor';
-import { SlotLayout } from '../atoms/SlotLayout';
+} from '../layout/SlotEditor';
+import { SlotLayout } from '../layout/SlotLayout';
 import { useApi } from '../hooks/use-api';
 import { useSlots } from './slot-context';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';

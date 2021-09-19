@@ -2,9 +2,9 @@ import React, { useCallback, useState } from 'react';
 import { Revisions } from '@capture-models/editor';
 import { useTranslation } from 'react-i18next';
 import { useApi } from '../../../../shared/hooks/use-api';
-import { EditorToolbarButton, EditorToolbarIcon, EditorToolbarLabel } from '../../../../shared/atoms/EditorToolbar';
+import { EditorToolbarButton, EditorToolbarIcon, EditorToolbarLabel } from '../../../../shared/navigation/EditorToolbar';
 import { ModalButton } from '../../../../shared/components/Modal';
-import { Button, ButtonRow } from '../../../../shared/atoms/Button';
+import { Button, ButtonRow } from '../../../../shared/navigation/Button';
 import { GradingIcon } from '../../../../shared/icons/GradingIcon';
 
 export const ApproveSubmission: React.FC<{

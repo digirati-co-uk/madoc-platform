@@ -1,7 +1,7 @@
 import { Revisions, useNavigation } from '@capture-models/editor';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, ButtonRow } from '../../../atoms/Button';
+import { Button, ButtonRow } from '../../../navigation/Button';
 
 export const BackToChoicesButton: React.FC = () => {
   const { t } = useTranslation();

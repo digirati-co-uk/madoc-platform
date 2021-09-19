@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { useMutation } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { globalRoles } from '../../../config';
-import { Button, ButtonRow } from '../../../shared/atoms/Button';
-import { DefaultSelect } from '../../../shared/atoms/DefaulSelect';
-import { ErrorMessage } from '../../../shared/atoms/ErrorMessage';
-import { Input, InputContainer, InputLabel } from '../../../shared/atoms/Input';
+import { Button, ButtonRow } from '../../../shared/navigation/Button';
+import { DefaultSelect } from '../../../shared/form/DefaulSelect';
+import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
+import { Input, InputContainer, InputLabel } from '../../../shared/form/Input';
 import { useApi } from '../../../shared/hooks/use-api';
-import { WidePage } from '../../../shared/atoms/WidePage';
+import { WidePage } from '../../../shared/layout/WidePage';
 import { AdminHeader } from '../../molecules/AdminHeader';
 
 export const CreateUser: React.FC = () => {

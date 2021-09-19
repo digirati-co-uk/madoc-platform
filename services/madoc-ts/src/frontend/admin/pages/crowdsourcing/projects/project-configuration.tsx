@@ -1,8 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProjectFull } from '../../../../../types/schemas/project-full';
-import { EmptyState } from '../../../../shared/atoms/EmptyState';
-import { SuccessMessage } from '../../../../shared/atoms/SuccessMessage';
+import { EmptyState } from '../../../../shared/layout/EmptyState';
+import { SuccessMessage } from '../../../../shared/callouts/SuccessMessage';
 import { EditShorthandCaptureModel } from '../../../../shared/caputre-models/EditorShorthandCaptureModel';
 import { useAdminLayout } from '../../../../shared/components/AdminMenu';
 import { siteConfigurationModel } from '../../../../shared/configuration/site-config';

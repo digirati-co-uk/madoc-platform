@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
-import { InfoMessage } from '../../shared/atoms/InfoMessage';
+import { InfoMessage } from '../../shared/callouts/InfoMessage';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useManifestTask } from '../hooks/use-manifest-task';
 import { useModelPageConfiguration } from '../hooks/use-model-page-configuration';

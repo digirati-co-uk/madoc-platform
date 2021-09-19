@@ -1,8 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
-import { Heading3 } from '../../shared/atoms/Heading3';
-import { LockIcon } from '../../shared/atoms/LockIcon';
+import { Heading3 } from '../../shared/typography/Heading3';
+import { LockIcon } from '../../shared/icons/LockIcon';
 import { usePreventCanvasNavigation } from './PreventUsersNavigatingCanvases';
 import { RandomlyAssignCanvas } from './RandomlyAssignCanvas';
 

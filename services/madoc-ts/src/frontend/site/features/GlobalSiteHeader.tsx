@@ -1,9 +1,9 @@
 import React from 'react';
-import { ErrorMessage } from '../../shared/atoms/ErrorMessage';
-import { FlexSpacer } from '../../shared/atoms/FlexSpacer';
-import { GlobalSearch } from '../../shared/atoms/GlobalSearch';
-import { GlobalStyles } from '../../shared/atoms/GlobalStyles';
-import { SiteHeader, SiteHeaderBackground } from '../../shared/atoms/SiteHeader';
+import { ErrorMessage } from '../../shared/callouts/ErrorMessage';
+import { FlexSpacer } from '../../shared/layout/FlexSpacer';
+import { GlobalSearch } from '../../shared/form/GlobalSearch';
+import { GlobalStyles } from '../../shared/typography/GlobalStyles';
+import { SiteHeader, SiteHeaderBackground } from '../../shared/layout/SiteHeader';
 import { useApi, useIsApiRestarting } from '../../shared/hooks/use-api';
 import { AutoSlotLoader } from '../../shared/page-blocks/auto-slot-loader';
 import { Slot } from '../../shared/page-blocks/slot';

@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
-import { TickIcon } from '../atoms/TickIcon';
-import { CloseIcon } from '../atoms/CloseIcon';
+import { TickIcon } from '../icons/TickIcon';
+import { CloseIcon } from '../icons/CloseIcon';
 import * as React from 'react';
 
 export const PermissionList = styled.div`

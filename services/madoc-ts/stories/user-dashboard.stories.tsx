@@ -2,9 +2,9 @@ import { boolean } from '@storybook/addon-knobs';
 import { useState } from 'react';
 import * as React from 'react';
 import styled from 'styled-components';
-import { GlobalHeader } from '../src/frontend/shared/atoms/GlobalHeader';
-import { Heading1 } from '../src/frontend/shared/atoms/Heading1';
-import { Heading3 } from '../src/frontend/shared/atoms/Heading3';
+import { GlobalHeader } from '../src/frontend/shared/navigation/GlobalHeader';
+import { Heading1 } from '../src/frontend/shared/typography/Heading1';
+import { Heading3 } from '../src/frontend/shared/typography/Heading3';
 import { DashboardTabs, DashboardTab } from '../src/frontend/shared/components/DashboardTabs';
 
 const StorybookPaddedBox = styled.div`

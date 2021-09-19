@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { MediaListResponse } from '../../../../../types/media';
-import { Heading5 } from '../../../../shared/atoms/Heading5';
+import { Heading5 } from '../../../../shared/typography/Heading5';
 import { ImageGrid } from '../../../../shared/atoms/ImageGrid';
 import { CroppedImage } from '../../../../shared/atoms/Images';
 import { ImageStripBox } from '../../../../shared/atoms/ImageStrip';

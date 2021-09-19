@@ -2,7 +2,7 @@ import { stringify } from 'query-string';
 import { Link, useLocation } from 'react-router-dom';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { SmallButton } from '../../shared/atoms/Button';
+import { SmallButton } from '../../shared/navigation/Button';
 
 export const Pagination: React.FC<{ page: number; totalPages: number; stale: boolean; extraQuery?: any }> = ({
   page,

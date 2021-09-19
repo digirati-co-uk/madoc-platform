@@ -2,21 +2,16 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 
-export const GlobalHeaderContainer = styled.div`
+const GlobalHeaderContainer = styled.div`
   background: #2f3338;
   display: flex;
   padding: 0.5em 1em;
   align-items: center;
 `;
 
-export const GlobalHeaderTitle = styled.div`
+const GlobalHeaderTitle = styled.div`
   margin-right: auto;
   color: #fff;
-`;
-
-export const GlobalHeaderInstallation = styled.div`
-  margin-right: 1em;
-  color: rgba(255, 255, 255, 0.5);
 `;
 
 export const GlobalHeaderMenuContainer = styled.div`

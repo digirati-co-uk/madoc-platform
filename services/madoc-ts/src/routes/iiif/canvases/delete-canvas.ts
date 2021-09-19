@@ -4,8 +4,10 @@ import { api } from '../../../gateway/api.server';
 import {
   deleteIiifDerivedResource,
   deleteParentIiifDerivedResourceItems,
-  deleteIiifMetadata, deleteIiifResource,
-  deleteIiifResourceItem, deleteIiifLinking
+  deleteIiifMetadata,
+  deleteIiifResource,
+  deleteIiifResourceItem,
+  deleteIiifLinking,
 } from '../../../database/queries/deletion-queries';
 import { removeIiifFromDisk } from '../../../utility/deletion-utils';
 import { getResourceLocalSource } from '../../../database/queries/resource-queries';
@@ -21,13 +23,10 @@ export const deleteCanvasEndpoint: RouteMiddleware<{ id: number }> = async conte
   context.response.status = 200;
 };
 
-export async function deleteCanvas(
-  canvasId: number,
-  siteId: number,
-  connection: () => DatabasePoolConnectionType
-) {
+export async function deleteCanvas(canvasId: number, siteId: number, connection: () => DatabasePoolConnectionType) {
   const siteApi = api.asUser({ siteId });
   const deletionSummary = await buildCanvasDeletionSummary(canvasId, siteId, connection);
+  const fullyDelete = deletionSummary.siteCount <= 1;
 
   const captureModels = await siteApi.getAllCaptureModels({
     target_id: String(canvasId),
@@ -37,7 +36,7 @@ export async function deleteCanvas(
     siteApi.deleteCaptureModel(captureModel.id);
   });
 
-  if (deletionSummary.search.indexed && deletionSummary.search.id) {
+  if (fullyDelete && deletionSummary.search.indexed && deletionSummary.search.id) {
     await siteApi.searchDeleteIIIF(deletionSummary.search.id);
   }
 
@@ -45,25 +44,35 @@ export async function deleteCanvas(
     await siteApi.batchDeleteTasks({ resourceId: canvasId, subject: `urn:madoc:canvas:${canvasId}` });
   }
 
-  // Delete metadata
-  await connection().any(deleteIiifMetadata(canvasId));
-  await connection().any(deleteIiifLinking(canvasId));
+  if (fullyDelete) {
+    // Fully delete from System
+    await connection().any(deleteIiifMetadata(canvasId));
+    await connection().any(deleteIiifLinking(canvasId));
 
-  // Delete local IIIF file
-  const localSource = await connection().maybeOne(getResourceLocalSource(canvasId));
-  if (!!localSource && !!localSource.local_source) {
-    removeIiifFromDisk(localSource.local_source);
+    await connection().any(deleteIiifResourceItem(canvasId));
+    await connection().any(deleteParentIiifDerivedResourceItems(canvasId));
+
+    // Delete from iiif_derived_resource <- Canvas meta
+    await connection().any(deleteIiifDerivedResource(canvasId));
+    // Delete from iiif_resource <- Core record
+    await connection().any(deleteIiifResource(canvasId));
+
+    // Delete local IIIF file
+    const localSource = await connection().maybeOne(getResourceLocalSource(canvasId));
+    if (!!localSource && !!localSource.local_source) {
+      removeIiifFromDisk(localSource.local_source);
+    }
+  } else {
+    // Only delete from this site.
+
+    // Metadata + linking
+    await connection().any(deleteIiifMetadata(canvasId, siteId));
+    await connection().any(deleteIiifLinking(canvasId, siteId));
+    // Remove canvas from manifests
+    await connection().any(deleteParentIiifDerivedResourceItems(canvasId, siteId));
+    // Delete from iiif_derived_resource <- Canvas meta
+    await connection().any(deleteIiifDerivedResource(canvasId, siteId));
   }
-
-  // Remove canvas from manifests
-  await connection().any(deleteIiifResourceItem(canvasId));
-  await connection().any(deleteParentIiifDerivedResourceItems(canvasId));
-
-  // Delete from iiif_derived_resource <- Canvas meta
-  await connection().any(deleteIiifDerivedResource(canvasId));
-
-  // Delete from iiif_resource <- Core record
-  await connection().any(deleteIiifResource(canvasId));
 
   await connection().query(sql`select refresh_item_counts()`);
 }

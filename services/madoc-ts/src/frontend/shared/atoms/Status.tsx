@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import React, { useState } from 'react';
-import { NotStartedIcon } from './NotStartedIcon';
-import { ProgressIcon } from './ProgressIcon';
-import { TickIcon } from './TickIcon';
-import { ErrorIcon } from './ErrorIcon';
+import { NotStartedIcon } from '../icons/NotStartedIcon';
+import { ProgressIcon } from '../icons/ProgressIcon';
+import { TickIcon } from '../icons/TickIcon';
+import { ErrorIcon } from '../icons/ErrorIcon';
 
 export const StatusWrapper = styled.div<{ open?: boolean }>`
   display: flex;

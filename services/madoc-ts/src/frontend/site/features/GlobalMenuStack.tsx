@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
-import { SiteDetails, SiteMenuContainer, SiteTitle } from '../../shared/atoms/SiteHeader';
+import { SiteDetails, SiteMenuContainer, SiteTitle } from '../../shared/layout/SiteHeader';
 import { useSite } from '../../shared/hooks/use-site';
 import { HrefLink } from '../../shared/utility/href-link';
 import { GlobalSiteNavigation } from './GlobalSiteNavigation';

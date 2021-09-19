@@ -1,6 +1,6 @@
 import { ImportManifestTask } from '../../../../gateway/tasks/import-manifest';
 import React from 'react';
-import { Button } from '../../../shared/atoms/Button';
+import { Button } from '../../../shared/navigation/Button';
 import { useTranslation } from 'react-i18next';
 import { ManifestSnippet } from '../../../shared/components/ManifestSnippet';
 import { GenericTask } from './generic-task';

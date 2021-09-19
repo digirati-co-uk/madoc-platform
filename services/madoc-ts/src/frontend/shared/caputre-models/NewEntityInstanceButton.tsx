@@ -1,4 +1,4 @@
-import { TinyButton } from '../atoms/Button';
+import { TinyButton } from '../navigation/Button';
 import React from 'react';
 import { Revisions } from '@capture-models/editor';
 import { CaptureModel } from '@capture-models/types';

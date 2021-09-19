@@ -2,7 +2,7 @@ import { InternationalString } from '@hyperion-framework/types/iiif/descriptive'
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
-import { Button } from '../../shared/atoms/Button';
+import { Button } from '../../shared/navigation/Button';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { useUser } from '../../shared/hooks/use-site';
 import { useGetRandomCanvas } from '../hooks/use-get-random-canvas';

@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { useMutation } from 'react-query';
-import { Button } from '../../../shared/atoms/Button';
-import { WidePage } from '../../../shared/atoms/WidePage';
+import { Button } from '../../../shared/navigation/Button';
+import { WidePage } from '../../../shared/layout/WidePage';
 import { useApi } from '../../../shared/hooks/use-api';
 import { AdminHeader } from '../../molecules/AdminHeader';
 

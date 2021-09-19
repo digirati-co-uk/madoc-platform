@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { LocaleString } from '../components/LocaleString';
-import { Button } from './Button';
+import { Button } from '../navigation/Button';
 import { useTranslation } from 'react-i18next';
 import { HrefLink } from '../utility/href-link';
 import { ProjectSnippet } from '../../../types/schemas/project-snippet';

@@ -37,7 +37,7 @@ export const ViewCollection: React.FC = () => {
         </div>
 
         <div style={{ maxWidth: 290 }}>
-          <Slot name="collection-sidebar">
+          <Slot name="collection-sidebar" small>
             <CollectionMetadata compact />
           </Slot>
         </div>

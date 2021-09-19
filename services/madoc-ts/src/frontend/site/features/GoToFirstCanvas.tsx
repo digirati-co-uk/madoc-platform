@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '../../shared/atoms/Button';
+import { Button } from '../../shared/navigation/Button';
 import { useManifestStructure } from '../../shared/hooks/use-manifest-structure';
 import { useUser } from '../../shared/hooks/use-site';
 import { HrefLink } from '../../shared/utility/href-link';

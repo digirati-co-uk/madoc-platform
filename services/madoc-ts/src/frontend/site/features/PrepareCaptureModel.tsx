@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ErrorMessage } from '../../shared/atoms/ErrorMessage';
+import { ErrorMessage } from '../../shared/callouts/ErrorMessage';
 import { usePreparedCanvasModel } from '../hooks/use-prepared-canvas-model';
 
 /**

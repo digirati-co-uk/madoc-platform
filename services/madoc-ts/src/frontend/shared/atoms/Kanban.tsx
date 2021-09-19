@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import { HrefLink } from '../utility/href-link';
-import { Button } from './Button';
+import { Button } from '../navigation/Button';
 
 export const KanbanBoard = styled.div`
   overflow: auto;

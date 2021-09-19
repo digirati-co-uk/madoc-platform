@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { Input } from './Input';
+import { Input } from '../form/Input';
 
 const TranslationInputContainer = styled.div<{ $focus?: boolean }>`
   background: #fff;

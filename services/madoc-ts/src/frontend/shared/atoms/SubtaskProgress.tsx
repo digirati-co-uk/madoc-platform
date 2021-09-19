@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import React from 'react';
-import { TickIcon } from './TickIcon';
+import { TickIcon } from '../icons/TickIcon';
 import { useTranslation } from 'react-i18next';
 import ReactTooltip from 'react-tooltip';
 

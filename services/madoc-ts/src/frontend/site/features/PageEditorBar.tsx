@@ -6,8 +6,8 @@ import {
   PageEditorContainer,
   PageEditorDescription,
   PageEditorTitle,
-} from '../../shared/atoms/PageEditor';
-import { SuccessMessage } from '../../shared/atoms/SuccessMessage';
+} from '../../shared/page-blocks/PageEditor';
+import { SuccessMessage } from '../../shared/callouts/SuccessMessage';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { useStaticData } from '../../shared/hooks/use-data';
 import { HrefLink } from '../../shared/utility/href-link';

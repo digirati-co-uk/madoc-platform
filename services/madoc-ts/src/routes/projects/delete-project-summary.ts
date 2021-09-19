@@ -4,7 +4,7 @@ import { RouteMiddleware } from '../../types/route-middleware';
 import { userWithScope } from '../../utility/user-with-scope';
 
 export const deleteProjectSummary: RouteMiddleware<{ id: number }> = async context => {
-  const {siteId} = userWithScope(context, ['site.admin']);
+  const { siteId } = userWithScope(context, ['site.admin']);
   const projectId = context.params.id;
 
   context.response.body = await buildProjectDeletionSummary(projectId, siteId, () => context.connection);
@@ -15,7 +15,7 @@ export async function buildProjectDeletionSummary(
   siteId: number,
   connection: () => DatabasePoolConnectionType
 ) {
-  const siteApi = api.asUser({siteId});
+  const siteApi = api.asUser({ siteId });
 
   const project = await siteApi.getProject(projectId);
 

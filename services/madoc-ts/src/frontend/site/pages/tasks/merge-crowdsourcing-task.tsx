@@ -7,26 +7,26 @@ import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task'
 import { useLoadedCaptureModel } from '../../../shared/hooks/use-loaded-capture-model';
 import { ThemeProvider } from 'styled-components';
 import { defaultTheme, Revisions } from '@capture-models/editor';
-import { MaximiseWindow } from '../../../shared/atoms/MaximiseWindow';
+import { MaximiseWindow } from '../../../shared/layout/MaximiseWindow';
 import {
   EditorToolbarButton,
   EditorToolbarContainer,
   EditorToolbarIcon,
   EditorToolbarLabel,
   EditorToolbarSpacer,
-} from '../../../shared/atoms/EditorToolbar';
+} from '../../../shared/navigation/EditorToolbar';
 import { ArrowBackIcon } from '../../../shared/icons/ArrowBackIcon';
 import { FullScreenExitIcon } from '../../../shared/icons/FullScreenExitIcon';
 import { FullScreenEnterIcon } from '../../../shared/icons/FullScreenEnterIcon';
 import { ViewContent } from '../../../shared/components/ViewContent';
 import { RevisionTopLevel } from '../../../shared/caputre-models/RevisionTopLevel';
 import { ModalButton } from '../../../shared/components/Modal';
-import { Button, LinkButton } from '../../../shared/atoms/Button';
+import { Button, LinkButton } from '../../../shared/navigation/Button';
 import { ArrowForwardIcon } from '../../../shared/icons/ArrowForwardIcon';
-import { WarningMessage } from '../../../shared/atoms/WarningMessage';
-import { TableContainer, TableRow, TableRowLabel } from '../../../shared/atoms/Table';
+import { WarningMessage } from '../../../shared/callouts/WarningMessage';
+import { TableContainer, TableRow, TableRowLabel } from '../../../shared/layout/Table';
 import TimeAgo from 'react-timeago';
-import { Heading3 } from '../../../shared/atoms/Heading3';
+import { Heading3 } from '../../../shared/typography/Heading3';
 import { SaveMergeChanges } from './actions/save-merge-changes';
 import { DiscardMerge } from './actions/discard-merge';
 import { PublishMerge } from './actions/publish-merge';

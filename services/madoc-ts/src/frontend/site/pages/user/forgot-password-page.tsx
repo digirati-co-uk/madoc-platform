@@ -3,11 +3,11 @@ import { useEffect } from 'react';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect, useHistory } from 'react-router-dom';
-import { Button } from '../../../shared/atoms/Button';
-import { FlexSpacer } from '../../../shared/atoms/FlexSpacer';
-import { Heading1 } from '../../../shared/atoms/Heading1';
-import { Input, InputContainer, InputLabel } from '../../../shared/atoms/Input';
-import { LoginActions, LoginContainer } from '../../../shared/atoms/LoginContainer';
+import { Button } from '../../../shared/navigation/Button';
+import { FlexSpacer } from '../../../shared/layout/FlexSpacer';
+import { Heading1 } from '../../../shared/typography/Heading1';
+import { Input, InputContainer, InputLabel } from '../../../shared/form/Input';
+import { LoginActions, LoginContainer } from '../../../shared/layout/LoginContainer';
 import { useLocationQuery } from '../../../shared/hooks/use-location-query';
 import { useFormResponse, useSite, useUser } from '../../../shared/hooks/use-site';
 

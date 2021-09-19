@@ -2,13 +2,16 @@ import { InternationalString } from '@hyperion-framework/types/iiif/descriptive'
 import React, { useMemo } from 'react';
 import { EditorialContext } from '../../../../types/schemas/site-page';
 import { SitePage } from '../../../../types/site-pages-recursive';
+import { MetadataEmptyState } from '../../../shared/atoms/MetadataConfiguration';
 import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
 import { useApi } from '../../../shared/hooks/use-api';
 import { SlotProvider } from '../../../shared/page-blocks/slot-context';
+import { Heading1 } from '../../../shared/typography/Heading1';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { UniversalComponent } from '../../../types';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { useStaticData } from '../../../shared/hooks/use-data';
+import { PageNotFound } from '../page-not-found';
 
 export type PageLoaderType = {
   params: { pagePath?: string };
@@ -41,6 +44,7 @@ export const PageLoader: UniversalComponent<PageLoaderType> = createUniversalCom
         refetchInterval: false,
         refetchIntervalInBackground: false,
         retry: false,
+        useErrorBoundary: false,
       }
     );
     const api = useApi();
@@ -66,10 +70,6 @@ export const PageLoader: UniversalComponent<PageLoaderType> = createUniversalCom
 
     if (isLoading) {
       return <>Loading...</>;
-    }
-
-    if (!data) {
-      return <h1>Not found</h1>;
     }
 
     const page = data?.page;

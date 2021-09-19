@@ -1,5 +1,5 @@
 import React from 'react';
-import { WarningMessage } from '../../../../shared/atoms/WarningMessage';
+import { WarningMessage } from '../../../../shared/callouts/WarningMessage';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 

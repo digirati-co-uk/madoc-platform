@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { useInfiniteQuery } from 'react-query';
-import { Button } from '../../../frontend/shared/atoms/Button';
-import { Heading5 } from '../../../frontend/shared/atoms/Heading5';
+import { Button } from '../../../frontend/shared/navigation/Button';
+import { Heading5 } from '../../../frontend/shared/typography/Heading5';
 import { ImageGrid } from '../../../frontend/shared/atoms/ImageGrid';
 import { CroppedImage } from '../../../frontend/shared/atoms/Images';
 import { ImageStripBox } from '../../../frontend/shared/atoms/ImageStrip';

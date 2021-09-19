@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useDefaultLocale, useSupportedLocales, useUser } from '../../shared/hooks/use-site';
 import { MetadataDiff, MetadataEditor, MetadataEditorProps } from './MetadataEditor';
 import { useMutation } from 'react-query';
-import { Button } from '../../shared/atoms/Button';
+import { Button } from '../../shared/navigation/Button';
 import { MetadataDefinition } from '../../../types/schemas/metadata-definition';
 import { useTranslation } from 'react-i18next';
 import { ParsedMetadata } from '../../../utility/map-metadata-list';
-import { Heading3 } from '../../shared/atoms/Heading3';
+import { Heading3 } from '../../shared/typography/Heading3';
 
 export const MetadataListItem: React.FC<{
   labelKey: string;

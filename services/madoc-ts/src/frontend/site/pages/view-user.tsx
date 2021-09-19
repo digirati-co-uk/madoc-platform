@@ -1,6 +1,6 @@
 import React from 'react';
 import { SiteUser } from '../../../extensions/site-manager/types';
-import { TableContainer, TableRow, TableRowLabel } from '../../shared/atoms/Table';
+import { TableContainer, TableRow, TableRowLabel } from '../../shared/layout/Table';
 import { useData } from '../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../shared/utility/create-universal-component';
 import { UniversalComponent } from '../../types';

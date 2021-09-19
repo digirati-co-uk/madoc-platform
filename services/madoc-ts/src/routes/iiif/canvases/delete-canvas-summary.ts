@@ -4,7 +4,7 @@ import { RouteMiddleware } from '../../../types/route-middleware';
 import { userWithScope } from '../../../utility/user-with-scope';
 
 export const deleteCanvasSummary: RouteMiddleware<{ id: number }> = async context => {
-  const {siteId} = userWithScope(context, ['site.admin']);
+  const { siteId } = userWithScope(context, ['site.admin']);
   const canvasId = context.params.id;
 
   context.response.body = await buildCanvasDeletionSummary(canvasId, siteId, () => context.connection);
@@ -15,7 +15,7 @@ export async function buildCanvasDeletionSummary(
   siteId: number,
   connection: () => DatabasePoolConnectionType
 ) {
-  const siteApi = api.asUser({siteId});
+  const siteApi = api.asUser({ siteId });
 
   // Fact checking stage.
   const { site_count, manifest_count } = await connection().one(
@@ -27,8 +27,7 @@ export async function buildCanvasDeletionSummary(
   );
 
   // Search
-  const iiifSearchItem = await siteApi.searchGetIIIF(`urn:madoc:canvas:${canvasId}`)
-    .catch(() => null);
+  const iiifSearchItem = await siteApi.searchGetIIIF(`urn:madoc:canvas:${canvasId}`).catch(() => null);
 
   // Tasks
   const tasks = await siteApi.getTasks(0, {

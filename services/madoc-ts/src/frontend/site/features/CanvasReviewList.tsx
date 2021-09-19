@@ -2,9 +2,9 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { BaseTask } from '../../../gateway/tasks/base-task';
-import { Heading3 } from '../../shared/atoms/Heading3';
+import { Heading3 } from '../../shared/typography/Heading3';
 import { Status } from '../../shared/atoms/Status';
-import { TableContainer, TableRow, TableRowLabel } from '../../shared/atoms/Table';
+import { TableContainer, TableRow, TableRowLabel } from '../../shared/layout/Table';
 import { useProjectCanvasTasks } from '../hooks/use-project-canvas-tasks';
 
 export const CanvasReviewList: React.FC = () => {

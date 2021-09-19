@@ -3,20 +3,20 @@ import { useTranslation } from 'react-i18next';
 import { ThemeProvider } from 'styled-components';
 import { defaultTheme } from '@capture-models/editor';
 import { Link } from 'react-router-dom';
-import { Button } from '../../../shared/atoms/Button';
+import { Button } from '../../../shared/navigation/Button';
 import { EditorSlots } from '../../../shared/caputre-models/new/components/EditorSlots';
 import { RevisionProviderWithFeatures } from '../../../shared/caputre-models/new/components/RevisionProviderWithFeatures';
 import { SimpleSaveButton } from '../../../shared/caputre-models/new/components/SimpleSaveButton';
 import { LocaleString } from '../../../shared/components/LocaleString';
-import { Heading3 } from '../../../shared/atoms/Heading3';
+import { Heading3 } from '../../../shared/typography/Heading3';
 import '@capture-models/editor/lib/input-types/TextField';
 import '@capture-models/editor/lib/input-types/HTMLField';
 import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
 import { HrefLink } from '../../../shared/utility/href-link';
 import { useCrowdsourcingTaskDetails } from '../../hooks/use-crowdsourcing-task-details';
 import { TaskContext } from '../loaders/task-loader';
-import { WarningMessage } from '../../../shared/atoms/WarningMessage';
-import { ErrorMessage } from '../../../shared/atoms/ErrorMessage';
+import { WarningMessage } from '../../../shared/callouts/WarningMessage';
+import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
 import { CrowdsourcingTaskManifest } from './crowdsourcing-task-manifest';
 
 const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task, parentTask }) => {

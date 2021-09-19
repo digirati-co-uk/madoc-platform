@@ -8,13 +8,13 @@ import {
   ActivityOrderedCollectionPage,
 } from '../../../../activity-streams/change-discovery-types';
 import { madocStreams } from '../../../../activity-streams/madoc-streams';
-import { Button } from '../../../shared/atoms/Button';
-import { EmptyState } from '../../../shared/atoms/EmptyState';
-import { Heading1, Subheading1 } from '../../../shared/atoms/Heading1';
-import { Input, InputContainer, InputLabel } from '../../../shared/atoms/Input';
+import { Button } from '../../../shared/navigation/Button';
+import { EmptyState } from '../../../shared/layout/EmptyState';
+import { Heading1, Subheading1 } from '../../../shared/typography/Heading1';
+import { Input, InputContainer, InputLabel } from '../../../shared/form/Input';
 import { SystemBackground } from '../../../shared/atoms/SystemUI';
 import { SystemListItem } from '../../../shared/atoms/SystemListItem';
-import { WarningMessage } from '../../../shared/atoms/WarningMessage';
+import { WarningMessage } from '../../../shared/callouts/WarningMessage';
 import { Activity, ActivityContainer } from '../../../shared/components/Activity';
 import { useApi } from '../../../shared/hooks/use-api';
 import { useLocationQuery } from '../../../shared/hooks/use-location-query';

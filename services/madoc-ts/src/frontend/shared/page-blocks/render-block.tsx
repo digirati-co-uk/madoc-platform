@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { EditorialContext, SiteBlock, SiteBlockRequest } from '../../../types/schemas/site-page';
-import { WarningMessage } from '../atoms/WarningMessage';
+import { WarningMessage } from '../callouts/WarningMessage';
 import { useApi } from '../hooks/use-api';
 import { useSite } from '../hooks/use-site';
 import { BlockEditor } from './block-editor';

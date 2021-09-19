@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
-import { Button, ButtonRow } from '../../shared/atoms/Button';
+import { Button, ButtonRow } from '../../shared/navigation/Button';
 import { IIIFDragIcon } from '../../shared/components/IIIFDragIcon';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useManifestPageConfiguration } from '../hooks/use-manifest-page-configuration';

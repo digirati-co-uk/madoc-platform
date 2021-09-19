@@ -1,8 +1,8 @@
 import { ImportManifestTask } from '../../../../gateway/tasks/import-manifest';
 import React, { useState } from 'react';
-import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../../shared/atoms/Table';
+import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../../shared/layout/Table';
 import { Status } from '../../../shared/atoms/Status';
-import { Button, SmallButton } from '../../../shared/atoms/Button';
+import { Button, SmallButton } from '../../../shared/navigation/Button';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';

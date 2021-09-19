@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { useRouteContext } from '../../../../site/hooks/use-route-context';
-import { Button, ButtonRow } from '../../../atoms/Button';
+import { Button, ButtonRow } from '../../../navigation/Button';
 import { useViewerSaving } from '../../../hooks/use-viewer-saving';
 import { useDeselectRevision } from '../hooks/use-deselect-revision';
 import { EditorRenderingConfig, useSlotConfiguration } from './EditorSlots';

@@ -1,7 +1,7 @@
 import { ProjectSnippet } from '../../../../../types/schemas/project-snippet';
 import React from 'react';
 import { LocaleString } from '../../../../shared/components/LocaleString';
-import { SmallButton } from '../../../../shared/atoms/Button';
+import { SmallButton } from '../../../../shared/navigation/Button';
 import { Link } from 'react-router-dom';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';

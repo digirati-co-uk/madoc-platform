@@ -4,7 +4,7 @@ import { SubjectSnippet as SubjectSnippetType } from '../../../extensions/tasks/
 import { BaseTask } from '../../../gateway/tasks/base-task';
 import { useRelativeLinks } from '../../site/hooks/use-relative-links';
 import { useTaskMetadata } from '../../site/hooks/use-task-metadata';
-import { PrimaryButtonLink } from '../atoms/Button';
+import { PrimaryButtonLink } from '../navigation/Button';
 import { SnippetLarge } from '../atoms/SnippetLarge';
 import { useCreateLocaleString } from './LocaleString';
 

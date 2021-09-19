@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
-import { Button } from '../atoms/Button';
+import { Button } from '../navigation/Button';
 
 export type CrowdSourcingBannerProps = {
   title: string;

@@ -2,7 +2,7 @@ import { captureModelShorthand } from '@capture-models/helpers';
 import { useCollectionList } from '../../site/hooks/use-collection-list';
 import { useRouteContext } from '../../site/hooks/use-route-context';
 import { useCustomTheme, usePageTheme } from '../../themes/helpers/CustomThemeProvider';
-import { Button } from '../atoms/Button';
+import { Button } from '../navigation/Button';
 import { LocaleString } from '../components/LocaleString';
 import { useApi } from '../hooks/use-api';
 import { useUser } from '../hooks/use-site';

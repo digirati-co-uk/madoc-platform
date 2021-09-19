@@ -11,7 +11,7 @@ import {
   ContextualMenuListItem,
   ContextualMenuWrapper,
   ContextualPositionWrapper,
-} from '../atoms/ContextualMenu';
+} from '../navigation/ContextualMenu';
 import { StatusIcon, StatusWrapper } from '../atoms/Status';
 import { SettingsIcon } from '../icons/SettingsIcon';
 import { createLink } from '../utility/create-link';

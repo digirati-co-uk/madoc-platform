@@ -153,7 +153,7 @@
     "react-syntax-highlighter": "^15.4.3",
     "react-timeago": "^4.4.0",
     "react-tooltip": "^4.2.15",
-    "rich-markdown-editor": "^11.6.7",
+    "rich-markdown-editor": "^11.17.8",
     "semver": "^7.3.5",
     "sharp": "^0.25.2",
     "slonik": "^23.5.5",

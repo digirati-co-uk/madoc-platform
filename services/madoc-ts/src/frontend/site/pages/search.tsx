@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { CloseIcon } from '../../shared/atoms/CloseIcon';
-import { LoadingBlock } from '../../shared/atoms/LoadingBlock';
+import { CloseIcon } from '../../shared/icons/CloseIcon';
+import { LoadingBlock } from '../../shared/callouts/LoadingBlock';
 import { SearchBox } from '../../shared/atoms/SearchBox';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { LocaleString } from '../../shared/components/LocaleString';
@@ -24,7 +24,7 @@ import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useSearch } from '../hooks/use-search';
 import { useSearchFacets } from '../hooks/use-search-facets';
 import { useSearchQuery } from '../hooks/use-search-query';
-import { ButtonRow, TinyButton } from '../../shared/atoms/Button';
+import { ButtonRow, TinyButton } from '../../shared/navigation/Button';
 
 export const Search: React.FC = () => {
   const { t } = useTranslation();
