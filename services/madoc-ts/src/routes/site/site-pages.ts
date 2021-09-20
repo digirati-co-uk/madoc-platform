@@ -2,7 +2,11 @@ import { RouteMiddleware } from '../../types/route-middleware';
 
 export const sitePages: RouteMiddleware<{ paths?: string }> = async context => {
   const { site } = context.state;
-  const pathToFind = context.params.paths ? `/${context.params.paths}` : '/';
+  const pathToFind = context.params.paths
+    ? context.params.paths.startsWith('/')
+      ? context.params.paths
+      : `/${context.params.paths}`
+    : '/';
 
   const root = await context.pageBlocks.getNavigationRoot(pathToFind, site.id);
 

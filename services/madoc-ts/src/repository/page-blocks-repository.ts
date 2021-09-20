@@ -23,6 +23,7 @@ import {
 } from '../types/schemas/site-page';
 import { SitePage } from '../types/site-pages-recursive';
 import { NotFound } from '../utility/errors/not-found';
+import { SQL_EMPTY } from '../utility/postgres-tags';
 import { BaseRepository } from './base-repository';
 
 export class PageBlocksRepository extends BaseRepository {
@@ -195,6 +196,8 @@ export class PageBlocksRepository extends BaseRepository {
   }
 
   async getNavigationRoot(pathToFind: string, siteId: number) {
+    const pathWithoutSlash = pathToFind.startsWith('/') ? pathToFind.slice(1) : undefined;
+
     return await this.connection.maybeOne(sql<{
       id: number;
       title: InternationalString;
@@ -207,7 +210,9 @@ export class PageBlocksRepository extends BaseRepository {
       WITH RECURSIVE find_nav_root(id, title, parent_page, is_navigation_root, path, depth, findPath, cycle) AS (
           SELECT sp.id, sp.title, sp.parent_page, sp.is_navigation_root, sp.path, 0, array [sp.path], false
           FROM site_pages sp
-          where sp.path = ${pathToFind} and sp.site_id = ${siteId}
+          where 
+            (sp.path = ${pathToFind} ${pathWithoutSlash ? sql`or sp.path = ${pathWithoutSlash}` : SQL_EMPTY}) 
+            and sp.site_id = ${siteId}
           UNION ALL
           SELECT spi.id,
                  spi.title,
@@ -266,6 +271,8 @@ export class PageBlocksRepository extends BaseRepository {
   }
 
   async getPageByPath(pathToFind: string, siteId: number): Promise<SitePage> {
+    const pathWithoutSlash = pathToFind.startsWith('/') ? pathToFind.slice(1) : undefined;
+
     const results = await this.connection.any(sql<PageJoinedColumns & SlotJoinedProperties & BlockJoinedProperties>`
       select
           -- Page properties
@@ -330,7 +337,9 @@ export class PageBlocksRepository extends BaseRepository {
           left join site_slots ss on sps.slot_id = ss.id
           left join site_slot_blocks ssb on ss.id = ssb.slot_id
           left join site_block sb on ssb.block_id = sb.id
-      where sp.path = ${pathToFind} and sp.site_id = ${siteId}
+      where
+        (sp.path = ${pathToFind} ${pathWithoutSlash ? sql`or sp.path = ${pathWithoutSlash}` : SQL_EMPTY}) 
+        and sp.site_id = ${siteId}
     `);
 
     const page = pageSlotReducer(results);

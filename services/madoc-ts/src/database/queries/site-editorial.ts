@@ -160,6 +160,7 @@ export function getContextualSlots(context: ServerEditorialContext, siteId: numb
 // -- Pages
 // Add page
 export function addPage(page: CreateNormalPageRequest, siteId: number, user: { id: number; name?: string }) {
+  const path = page.path.startsWith('/') ? page.path : `/${page.path}`;
   return sql<SitePageRow>`
       insert into site_pages (
         path,
@@ -178,7 +179,7 @@ export function addPage(page: CreateNormalPageRequest, siteId: number, user: { i
         include_in_search, 
         site_id
       ) VALUES (
-        ${page.path},
+        ${path},
         ${sql.json(page.title)},
         ${page.navigationTitle ? sql.json(page.navigationTitle) : null},
         ${page.description ? sql.json(page.description) : null},

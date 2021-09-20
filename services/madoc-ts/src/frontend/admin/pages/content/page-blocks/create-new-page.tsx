@@ -30,10 +30,12 @@ export const CreateNewPage: React.FC = () => {
   }
 
   if (createPageResponse.isSuccess && createPageResponse.data) {
+    const path = createPageResponse.data.path;
+    const pathWithSlash = path.startsWith('/') ? path : `/${path}`;
     return (
       <div>
         Page created:{' '}
-        <a href={`/s/${slug}${createPageResponse.data.path}`}>
+        <a href={`/s/${slug}${pathWithSlash}`}>
           <LocaleString>{createPageResponse.data.title}</LocaleString>
         </a>
       </div>
