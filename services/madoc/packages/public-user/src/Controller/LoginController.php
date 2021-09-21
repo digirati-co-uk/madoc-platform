@@ -330,7 +330,7 @@ class LoginController extends AbstractActionController
         $perms = new SitePermission();
         $perms->setSite($invitation ? $invitation->siteId : $site->id());
         $perms->setUser($user->getId());
-        $perms->setRole($invitation ? $invitation->siteRole : 'viewer');
+        $perms->setRole($invitation ? $invitation->siteRole :  strtolower($role) );
 
         $this->entityManager->persist($perms);
         $this->entityManager->flush();
