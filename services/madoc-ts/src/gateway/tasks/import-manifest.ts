@@ -71,12 +71,13 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       const [userId, siteId] = task.parameters;
 
       // 1. Fetch manifest
-      const text = await fetch(task.subject).then(r => r.text());
+      const subject = decodeURI(task.subject);
+      const text = await fetch(subject).then(r => r.text());
       const json = JSON.parse(text);
-      const iiifManifest = await vault.loadManifest(task.subject, json);
+      const iiifManifest = await vault.loadManifest(subject, json);
 
       if (!iiifManifest) {
-        throw new Error(`Error loading manifest ${task.subject}`);
+        throw new Error(`Error loading manifest ${subject}`);
       }
 
       const idHash = tasks.manifestHash(iiifManifest.id);
@@ -253,7 +254,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         await userApi.notifications.createNotification({
           id: generateId(),
           title: 'Finished importing manifest',
-          summary: task.subject,
+          summary: subject,
           action: {
             id: 'task:admin',
             link: `urn:madoc:task:${taskId}`,
