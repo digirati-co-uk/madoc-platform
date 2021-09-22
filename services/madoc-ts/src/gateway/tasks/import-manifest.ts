@@ -254,7 +254,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         await userApi.notifications.createNotification({
           id: generateId(),
           title: 'Finished importing manifest',
-          summary: subject,
+          summary: task.subject,
           action: {
             id: 'task:admin',
             link: `urn:madoc:task:${taskId}`,
