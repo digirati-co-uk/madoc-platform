@@ -72,6 +72,7 @@ function useLoginRedirect(admin = false) {
   const site = useSite();
   const { location } = useHistory();
   const query = useLocationQuery();
+  const queryKeys = Object.keys(query || {});
 
   if (admin) {
     return `/s/${site.slug}`;
@@ -81,7 +82,11 @@ function useLoginRedirect(admin = false) {
     return `/s/${site.slug}`;
   }
 
-  return `/s/${site.slug}/${location.pathname}${query ? `?${stringify(query)}` : ''}`;
+  if (location.pathname === '/') {
+    return `/s/${site.slug}${queryKeys.length ? `?${stringify(query)}` : ''}`;
+  }
+
+  return `/s/${site.slug}${location.pathname}${queryKeys.length ? `?${stringify(query)}` : ''}`;
 }
 
 export const UserBar: React.FC<{

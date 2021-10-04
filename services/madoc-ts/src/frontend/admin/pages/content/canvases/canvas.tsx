@@ -63,7 +63,7 @@ export const CanvasView: UniversalComponent<CanvasViewType> = createUniversalCom
                 ]
               : [
                   { label: 'Site admin', link: '/' },
-                  { label: 'Manifests', link: '/canvases' },
+                  { label: 'Manifests', link: '/manifests' },
                   { label: title, link: `/canvases/${id}`, active: true },
                 ]
           }

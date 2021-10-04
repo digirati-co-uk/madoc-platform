@@ -12,13 +12,14 @@ export const siteSearch: RouteMiddleware<
   const { page, madoc_id } = context.query;
 
   const id = context.state.jwt?.user.id;
+  const name = context.state.jwt?.user.name;
   const site = await context.siteManager.getSiteBySlug(context.params.slug);
 
   if (!site) {
     throw new NotFound('not found');
   }
 
-  const siteApi = api.asUser({ userId: id, siteId: site.id });
+  const siteApi = api.asUser({ userId: id, siteId: site.id, userName: name });
 
   const { projectId, collectionId, manifestId, ...request } = context.requestBody;
 

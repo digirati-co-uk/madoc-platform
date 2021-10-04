@@ -122,7 +122,7 @@ export const KanbanAssigneeName = styled.div`
 /**
  * Source: Robert Sharp
  */
-function pastelColour(input: string) {
+export function pastelColour(input: string) {
   const baseRed = 128;
   const baseGreen = 128;
   const baseBlue = 128;

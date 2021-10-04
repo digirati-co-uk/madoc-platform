@@ -29,6 +29,7 @@ export const EditPageLayoutButton: React.FC<{ onUpdate?: () => void }> = props =
     () => [
       { id: 'page-with-menu', label: t('Default layout') },
       { id: 'page-without-menu', label: t('No menu') },
+      { id: 'article', label: t('Article') },
     ],
     [t]
   );

@@ -10,7 +10,7 @@ import { HrefLink } from '../../../../shared/utility/href-link';
 
 type ManifestProjectsType = {
   params: { id: string };
-  query: {};
+  query: unknown;
   variables: { id: number };
   data: { projects: ProjectSnippet[] };
 };

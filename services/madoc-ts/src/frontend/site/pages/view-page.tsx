@@ -63,64 +63,78 @@ export const ViewPage: React.FC<ViewPageProps> = ({ page, navigation, root, refe
         await refetch();
       }}
     >
-      <div>
+      <>
         {editMode ? <PageEditorBar isEditing={isEditing} onEdit={() => setIsEditing(e => !e)} /> : null}
         <DisplayBreadcrumbs />
-        <h1>
-          <LocaleString>{title}</LocaleString>
-        </h1>
-        <Slot name="header" />
-        <div style={{ display: 'flex' }}>
-          {root && navigation.length && page.layout !== 'page-without-menu' ? (
-            <div style={{ width: 300 }}>
-              <h4>
-                {root.path === location.pathname ? (
-                  <LocaleString>{root.title}</LocaleString>
-                ) : (
-                  <Link to={root.path}>
+        <div
+          style={
+            page.layout === 'article'
+              ? {
+                  maxWidth: 680,
+                  margin: '0 auto',
+                  fontSize: '1.2em',
+                  marginBottom: '3em',
+                  fontFamily: 'charter, Georgia, Cambria, "Times New Roman", Times, serif',
+                }
+              : {}
+          }
+        >
+          <h1>
+            <LocaleString>{title}</LocaleString>
+          </h1>
+          <Slot name="header" />
+          <div style={{ display: 'flex' }}>
+            {root && navigation.length && page.layout !== 'page-without-menu' ? (
+              <div style={{ width: 300 }}>
+                <h4>
+                  {root.path === location.pathname ? (
                     <LocaleString>{root.title}</LocaleString>
-                  </Link>
-                )}
-              </h4>
-              <ul>
-                {navigation.map(nav => {
-                  return (
-                    <li key={nav.id}>
-                      {nav.path === location.pathname ? (
-                        <LocaleString>{nav.title}</LocaleString>
-                      ) : (
-                        <Link to={nav.path}>
+                  ) : (
+                    <Link to={root.path}>
+                      <LocaleString>{root.title}</LocaleString>
+                    </Link>
+                  )}
+                </h4>
+                <ul>
+                  {navigation.map(nav => {
+                    return (
+                      <li key={nav.id}>
+                        {nav.path === location.pathname ? (
                           <LocaleString>{nav.title}</LocaleString>
-                        </Link>
-                      )}
-                      {nav.subpages?.length ? (
-                        <ul>
-                          {nav.subpages.map(subNav => {
-                            return (
-                              <li key={subNav.id}>
-                                {subNav.path === location.pathname ? (
-                                  <LocaleString>{subNav.title}</LocaleString>
-                                ) : (
-                                  <Link to={subNav.path}>
+                        ) : (
+                          <Link to={nav.path}>
+                            <LocaleString>{nav.title}</LocaleString>
+                          </Link>
+                        )}
+                        {nav.subpages?.length ? (
+                          <ul>
+                            {nav.subpages.map(subNav => {
+                              return (
+                                <li key={subNav.id}>
+                                  {subNav.path === location.pathname ? (
                                     <LocaleString>{subNav.title}</LocaleString>
-                                  </Link>
-                                )}
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      ) : null}
-                    </li>
-                  );
-                })}
-              </ul>
+                                  ) : (
+                                    <Link to={subNav.path}>
+                                      <LocaleString>{subNav.title}</LocaleString>
+                                    </Link>
+                                  )}
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        ) : null}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ) : null}
+            <div style={{ flex: '1 1 0px' }}>
+              <Slot name="page-body" />
             </div>
-          ) : null}
-          <div style={{ flex: '1 1 0px' }}>
-            <Slot name="page-body" />
           </div>
         </div>
-      </div>
+      </>
     </SlotProvider>
   );
 };

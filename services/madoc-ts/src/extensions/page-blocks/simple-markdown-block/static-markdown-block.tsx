@@ -11,8 +11,8 @@ const StyledEditor = styled('div')<{
   margin: 0.5em 0;
   color: ${props => props.theme.text};
   background: ${props => props.theme.background};
-  font-family: ${props => props.theme.fontFamily};
-  font-weight: ${props => props.theme.fontWeight};
+  // font-family: ${props => props.theme.fontFamily};
+  // font-weight: ${props => props.theme.fontWeight};
   font-size: 1em;
   line-height: 1.7em;
   width: 100%;
@@ -255,9 +255,6 @@ const StyledEditor = styled('div')<{
   }
   p {
     margin: 0;
-  }
-  a {
-    color: ${props => props.theme.link};
   }
   a:hover {
     text-decoration: ${props => (props.readOnly ? 'underline' : 'none')};

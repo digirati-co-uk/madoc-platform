@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSite } from '../../../../shared/hooks/use-site';
 import { UniversalComponent } from '../../../../types';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { ManifestFull } from '../../../../../types/schemas/manifest-full';
@@ -22,6 +23,7 @@ export const ManifestView: UniversalComponent<ManifestViewType> = createUniversa
     const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
     const { resolvedData } = usePaginatedData(ManifestView);
+    const site = useSite();
     const { manifest, pagination } = resolvedData || {};
 
     const title = manifest ? <LocaleString>{manifest.label}</LocaleString> : '...';
@@ -30,7 +32,13 @@ export const ManifestView: UniversalComponent<ManifestViewType> = createUniversa
       <>
         <AdminHeader
           title={title}
-          subtitle={t('{{count}} canvases', { count: pagination ? pagination.totalResults : 0 })}
+          subtitle={
+            <>
+              {t('{{count}} canvases', { count: pagination ? pagination.totalResults : 0 })}
+              {' | '}
+              <a href={`/s/${site.slug}/manifests/${id}`}>{t('View on site')}</a>
+            </>
+          }
           breadcrumbs={[
             { label: 'Site admin', link: '/' },
             { label: 'Manifests', link: '/manifests' },

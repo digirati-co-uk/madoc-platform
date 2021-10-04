@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSite } from '../../../../shared/hooks/use-site';
 import { UniversalComponent } from '../../../../types';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { CollectionFull } from '../../../../../types/schemas/collection-full';
@@ -21,6 +22,7 @@ export const CollectionView: UniversalComponent<CollectionViewType> = createUniv
   ({ route }) => {
     const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
+    const site = useSite();
     const { resolvedData, status } = usePaginatedData(CollectionView);
 
     if (status === 'error') {
@@ -51,7 +53,13 @@ export const CollectionView: UniversalComponent<CollectionViewType> = createUniv
             { label: t('Delete'), link: `/collections/${id}/delete` },
           ]}
           title={title}
-          subtitle={t('{{count}} manifests', { count: pagination.totalResults })}
+          subtitle={
+            <>
+              {t('{{count}} manifests', { count: pagination.totalResults })}
+              {' | '}
+              <a href={`/s/${site.slug}/collections/${id}`}>{t('View on site')}</a>
+            </>
+          }
         />
         <WidePage>{renderUniversalRoutes(route.routes, { collection })}</WidePage>
       </>

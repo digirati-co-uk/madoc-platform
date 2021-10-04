@@ -46,14 +46,14 @@ export type JsonProjectTemplate = {
   slots?: SlotMappingRequest;
 };
 
-export type ProjectTemplate<RevSession = any> = JsonProjectTemplate & {
+export type ProjectTemplate<Options = any, RevSession = any> = JsonProjectTemplate & {
   // Unknown parameters.
   setup?: {
     beforeForkDocument?: (
       model: Readonly<CaptureModel['document']>,
       extra: {
         api: ApiClient;
-        options: any;
+        options: Options;
       }
     ) =>
       | Promise<CaptureModel['document'] | Readonly<CaptureModel['document']> | undefined | void>
@@ -65,14 +65,14 @@ export type ProjectTemplate<RevSession = any> = JsonProjectTemplate & {
       config: ProjectConfiguration,
       extra: {
         api: ApiClient;
-        options: any;
+        options: Options;
       }
     ) => ProjectConfiguration | void | undefined | Promise<ProjectConfiguration | void | undefined>;
     onCreateProject?: (
       project: ProjectRow,
       extra: {
         api: ApiClient;
-        options: any;
+        options: Options;
       }
     ) => void | Promise<void>;
   };

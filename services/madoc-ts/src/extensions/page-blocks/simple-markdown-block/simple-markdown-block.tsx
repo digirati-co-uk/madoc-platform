@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Editor, { theme } from 'rich-markdown-editor';
 import { captureModelShorthand } from '@capture-models/helpers';
 import styled from 'styled-components';
+import { useApi } from '../../../frontend/shared/hooks/use-api';
 import { Button } from '../../../frontend/shared/navigation/Button';
 import { ModalFooter } from '../../../frontend/shared/layout/Modal';
 import { PageBlockEditor, ReactPageBlockDefinition } from '../extension';
@@ -13,11 +14,30 @@ const MarkdownEditorWrapper = styled.div`
 
 const MarkdownEditor: PageBlockEditor = props => {
   const [value, setValue] = useState<string>(props.block.static_data.markdown || '');
+  const api = useApi();
+  // const searchLink = async (term: string): Promise<SearchResult[]> => {
+  //   return [
+  //     {
+  //       title: 'Test link',
+  //       subtitle: 'Manifest',
+  //       url: '/',
+  //     },
+  //   ];
+  // };
+
+  const uploadMedia = async (file: File) => {
+    return api.media.createMedia(file).then(media => {
+      return media.publicLink;
+    });
+  };
+
   return (
     <>
       <MarkdownEditorWrapper>
         <Editor
+          // onSearchLink={term => searchLink(term)}
           defaultValue={value}
+          uploadImage={uploadMedia}
           onChange={newValue => {
             const md = newValue();
             setValue(md);

@@ -16,10 +16,17 @@ export const getProjectMetadata: RouteMiddleware<{ id: string }> = async context
     getProjectCollectionId({ projectId, projectSlug }, siteId, onlyPublished)
   );
 
-  const collection = await context.connection.many(getDerivedMetadata(collection_id, 'collection', siteId));
+  try {
+    const collection = await context.connection.many(getDerivedMetadata(collection_id, 'collection', siteId));
 
-  context.response.body = {
-    fields: collection,
-    template: ['label', 'summary'],
-  } as GetMetadata;
+    context.response.body = {
+      fields: collection,
+      template: ['label', 'summary'],
+    } as GetMetadata;
+  } catch (e) {
+    context.response.body = {
+      fields: [],
+      template: ['label', 'summary'],
+    } as GetMetadata;
+  }
 };

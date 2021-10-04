@@ -3,7 +3,7 @@ import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-rea
 import { CanvasImageViewer } from './CanvasImageViewer';
 import { CanvasViewer } from './CanvasViewer';
 
-export const CanvasAtlasViewer: React.FC<{ rendering?: 'webgl' | 'canvas' }> = ({ rendering = 'webgl' }) => {
+export const CanvasAtlasViewer: React.FC<{ rendering?: 'webgl' | 'canvas' }> = ({ rendering = 'canvas' }) => {
   return (
     <CanvasViewer>
       <CanvasImageViewer rendering={rendering} />
