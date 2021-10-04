@@ -37,6 +37,7 @@ ENV API_GATEWAY_HOST=http://gateway
 RUN yarn build
 
 EXPOSE 3000
+EXPOSE 3001
 EXPOSE 9230
 
 CMD ["yarn", "start"]

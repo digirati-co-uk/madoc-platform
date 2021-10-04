@@ -1,9 +1,7 @@
-FROM tykio/tyk-gateway:latest
+FROM nginx:stable-alpine
 
-COPY ./gateway.conf /opt/tyk-gateway/tyk.conf
-COPY ./policies.json /opt/tyk-gateway/policies/policies.json
-COPY ./services /opt/tyk-gateway/apps
 
-COPY ./entrypoint.sh /opt/custom/custom-entrypoint.sh
-
-ENTRYPOINT ["/opt/custom/custom-entrypoint.sh"]
+# Nginx config
+COPY ./nginx.conf /etc/nginx/nginx.conf
+COPY ./conf.d /etc/nginx/conf.d
+COPY ./www /www

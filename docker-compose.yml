@@ -5,14 +5,9 @@ services:
   gateway:
     build:
       context: services/gateway
-    environment:
-      - TYK_GW_STORAGE_HOST=gateway-redis
-      - TYK_GW_SECRET=${GATEWAY_SECRET}
-      - JWT_SERVICES=tasks-api,madoc-api,configuration-api,storage-api
     ports:
       - "${PORTS_GATEWAY:-8888}:8080"
     links:
-      - gateway-redis
       - tasks-api
       - model-api
       - madoc-ts
@@ -20,19 +15,6 @@ services:
       - storage-api
       - okra
       - search
-    volumes:
-      - ./services/gateway/gateway.conf:/opt/tyk-gateway/tyk.conf
-      - ./services/gateway/policies.json:/opt/tyk-gateway/policies/policies.json
-      - ./var/certs:/openssl-certs
-    depends_on:
-      - certs
-      - gateway-redis
-
-  certs:
-    build:
-      context: services/certs
-    volumes:
-      - ./var/certs:/openssl-certs
 
   madoc-ts:
     build:

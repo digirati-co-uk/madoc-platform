@@ -1,9 +1,5 @@
 import { JWK, JWT } from 'jose';
-import { readFileSync } from 'fs';
-import * as path from 'path';
-import { OPEN_SSL_KEY_PATH } from '../paths';
-
-const key = JWK.asKey(readFileSync(path.join(OPEN_SSL_KEY_PATH, 'madoc.key')));
+import { getPem } from './get-pem';
 
 export type TokenRequest = {
   scope?: string[];
@@ -37,7 +33,7 @@ export function createLimitedSignedToken(req: {
         name: req.name,
         ...(req.data || {}),
       },
-      key,
+      JWK.asKey(getPem()),
       {
         subject: req.identifier,
         issuer: req.site ? `urn:madoc:site:${req.site.id}` : `urn:madoc:site:admin`,
@@ -62,7 +58,7 @@ export function createSignedToken(req: TokenRequest) {
         iss_name: req.site ? req.site.name : undefined,
         name: req.user.name,
       },
-      key,
+      JWK.asKey(getPem()),
       {
         subject: `urn:madoc:user:${req.user.id}`,
         issuer: req.site ? `urn:madoc:site:${req.site.id}` : `urn:madoc:site:admin`,

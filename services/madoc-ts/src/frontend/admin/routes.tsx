@@ -64,6 +64,7 @@ import { ViewInvitation } from './pages/sites/view-invitation';
 import { DevelopmentPlugin } from './pages/system/development-plugin';
 import { ActivityStreams } from './pages/sites/activity-streams';
 import { ViewExternalPlugin } from './pages/system/external-plugin';
+import { KeyRegen } from './pages/system/key-regen';
 import { SystemStatus } from './pages/system/system-status';
 import { ListThemes } from './pages/system/themes/list-themes';
 import { TaskRouter } from './pages/tasks/task-router';
@@ -531,6 +532,11 @@ export const routes: UniversalRoute[] = [
     path: '/system/development',
     exact: true,
     component: DevelopmentPlugin,
+  },
+  {
+    path: '/system/reset',
+    exact: true,
+    component: KeyRegen,
   },
   {
     path: '/system/plugins',

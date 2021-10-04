@@ -36,6 +36,17 @@ module.exports = {
               NODE_ENV: 'production',
             },
           },
+          {
+            name: 'auth',
+            script: 'lib/auth-server.js',
+            instances: 1,
+            autorestart: true,
+            watch: false,
+            max_memory_restart: '1G',
+            env_production: {
+              NODE_ENV: 'production',
+            },
+          },
         ]
       : [
           {
@@ -88,6 +99,13 @@ module.exports = {
                 pollInterval: 100,
               },
             },
+          },
+          {
+            name: 'auth',
+            script: 'lib/auth-server.js',
+            instances: 1,
+            autorestart: true,
+            watch: ['lib/auth-server.js'],
           },
         ],
 };

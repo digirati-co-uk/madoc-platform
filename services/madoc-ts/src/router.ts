@@ -1,3 +1,4 @@
+import { keyRegenerate } from './routes/admin/key-regenerate';
 import { siteRoot } from './routes/root';
 import {
   assignUserToDelegatedRequest,
@@ -46,7 +47,7 @@ import {
   uninstallPlugin,
   viewRemotePlugin,
 } from './routes/admin/plugins';
-import { pm2Status } from './routes/admin/pm2';
+import { pm2RestartAuth, pm2RestartMadoc, pm2RestartQueue, pm2RestartScheduler, pm2Status } from './routes/admin/pm2';
 import { getSiteDetails } from './routes/admin/site-details';
 import {
   disableTheme,
@@ -112,6 +113,7 @@ import { getStaticPage, sitePages } from './routes/site/site-pages';
 import { siteTaskMetadata } from './routes/site/site-task-metadata';
 import { forgotPassword } from './routes/user/forgot-password';
 import { getSiteUser } from './routes/user/get-site-user';
+import { loginRefresh } from './routes/user/login-refresh';
 import {
   clearAllNotifications,
   clearNotification,
@@ -212,8 +214,13 @@ export const router = new TypedRouter({
   'get-scopes': [TypedRouter.GET, '/api/madoc/site/:siteId/permissions', getSiteScopes],
   'update-scopes': [TypedRouter.POST, '/api/madoc/site/:siteId/permissions', saveSiteScopes],
   'pm2-list': [TypedRouter.GET, '/api/madoc/pm2/list', pm2Status],
+  'pm2-restart-auth': [TypedRouter.POST, '/api/madoc/pm2/restart/auth', pm2RestartAuth],
+  'pm2-restart-queue': [TypedRouter.POST, '/api/madoc/pm2/restart/queue', pm2RestartQueue],
+  'pm2-restart-madoc': [TypedRouter.POST, '/api/madoc/pm2/restart/madoc', pm2RestartMadoc],
+  'pm2-restart-scheduler': [TypedRouter.POST, '/api/madoc/pm2/restart/scheduler', pm2RestartScheduler],
   'cron-jobs': [TypedRouter.GET, '/api/madoc/cron/jobs', listJobs],
   'run-cron-jobs': [TypedRouter.POST, '/api/madoc/cron/jobs/:jobId/run', runJob],
+  'regenerate-keys': [TypedRouter.POST, '/api/madoc/system/key-regen', keyRegenerate],
 
   // Manage sites.
   'site-admin-list-all-sites': [TypedRouter.GET, '/api/madoc/sites', listAllSites],
@@ -495,6 +502,7 @@ export const router = new TypedRouter({
   'activate-account': [TypedRouter.GET, '/s/:slug/activate-account', resetPasswordPage],
   'post-reset-password': [TypedRouter.POST, '/s/:slug/reset-password', resetPasswordPage],
   'refresh-login': [TypedRouter.POST, '/s/:slug/auth/refresh', refreshToken],
+  'get-login-refresh': [TypedRouter.GET, '/s/:slug/login/refresh', loginRefresh],
   'asset-plugin-bundles': [
     TypedRouter.GET,
     '/s/:slug/madoc/assets/plugins/:pluginId/:revisionId/plugin.js',

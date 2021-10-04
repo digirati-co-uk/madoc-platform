@@ -84,7 +84,12 @@ export const ListSites: React.FC = () => {
                 </SystemVersion>
               </SystemMetadata>
               <SystemActions>
-                <Button as="a" $disabled={site.slug === currentSite.slug} $primary href={`/s/${site.slug}/admin`}>
+                <Button
+                  as="a"
+                  $disabled={site.slug === currentSite.slug}
+                  $primary
+                  href={`/s/${currentSite.slug}/login/refresh?redirect=/s/${site.slug}/admin`}
+                >
                   {t('Go to site')}
                 </Button>
               </SystemActions>

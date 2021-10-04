@@ -27,6 +27,7 @@ export async function syncJwtRequests() {
         const json = JSON.parse(request);
         const token = await generateServiceToken(json);
         if (token) {
+          console.log(`Writing new token for ${file}`);
           writeFileSync(path.join(JWT_RESPONSE_PATH, file), `{"token": "${token}"}`);
         }
       }

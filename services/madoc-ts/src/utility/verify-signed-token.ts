@@ -1,9 +1,5 @@
 import { JWK, JWT } from 'jose';
-import { readFileSync } from 'fs';
-import * as path from 'path';
-import { OPEN_SSL_KEY_PATH } from '../paths';
-
-const publicKey = JWK.asKey(readFileSync(path.join(OPEN_SSL_KEY_PATH, 'madoc.pub')));
+import { getPublicPem } from './get-pem';
 
 export type TokenReturn = {
   token: string;
@@ -21,21 +17,25 @@ export type TokenReturn = {
 };
 
 export function verifySignedToken(token: string, ignoreExpired = false): TokenReturn | undefined {
-  const { payload, header, key } = JWT.verify(token, publicKey, {
-    algorithms: ['RS256'],
-    typ: 'JWT',
-    clockTolerance: '1 min',
-    complete: true,
-    ignoreExp: ignoreExpired,
-  });
+  try {
+    const { payload, header, key } = JWT.verify(token, JWK.asKey(getPublicPem()), {
+      algorithms: ['RS256'],
+      typ: 'JWT',
+      clockTolerance: '1 min',
+      complete: true,
+      ignoreExp: ignoreExpired,
+    });
 
-  if (key && payload && header) {
-    return {
-      token,
-      header,
-      payload,
-      key,
-    } as TokenReturn;
+    if (key && payload && header) {
+      return {
+        token,
+        header,
+        payload,
+        key,
+      } as TokenReturn;
+    }
+  } catch (e) {
+    // Catch errors, fallthrough to undefined.
   }
 
   return undefined;

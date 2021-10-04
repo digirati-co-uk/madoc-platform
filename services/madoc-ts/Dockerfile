@@ -57,6 +57,7 @@ ENV NODE_ENV=production
 ENV API_GATEWAY_HOST=http://gateway
 
 EXPOSE 3000
+EXPOSE 3001
 
 RUN mkdir -p /home/node/app/service-jwt && \
     mkdir -p /home/node/app/service-jwt-responses && \

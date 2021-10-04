@@ -1,6 +1,6 @@
 import pm2, { ProcessDescription } from 'pm2';
 import { RouteMiddleware } from '../../types/route-middleware';
-import { userWithScope } from '../../utility/user-with-scope';
+import { onlyGlobalAdmin } from '../../utility/user-with-scope';
 
 async function pm2Connect() {
   await new Promise<void>((resolve, reject) =>
@@ -26,8 +26,20 @@ async function pm2List() {
   });
 }
 
+export async function pm2Restart(process: string) {
+  return new Promise<void>((resolve, reject) => {
+    pm2.reload(process, err => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve();
+    });
+  });
+}
+
 export const pm2Status: RouteMiddleware = async context => {
-  userWithScope(context, ['site.admin']);
+  await onlyGlobalAdmin(context);
 
   // Connect.
   await pm2Connect();
@@ -50,4 +62,40 @@ export const pm2Status: RouteMiddleware = async context => {
   };
 
   pm2.disconnect();
+};
+
+export const pm2RestartAuth: RouteMiddleware = async context => {
+  await onlyGlobalAdmin(context);
+
+  console.log('Restarting auth');
+  await pm2Restart('auth');
+
+  context.response.body = { success: true };
+};
+
+export const pm2RestartQueue: RouteMiddleware = async context => {
+  await onlyGlobalAdmin(context);
+
+  console.log('Restarting queue');
+  await pm2Restart('queue');
+
+  context.response.body = { success: true };
+};
+
+export const pm2RestartMadoc: RouteMiddleware = async context => {
+  await onlyGlobalAdmin(context);
+
+  console.log('Restarting server');
+  await pm2Restart('server');
+
+  context.response.body = { success: true };
+};
+
+export const pm2RestartScheduler: RouteMiddleware = async context => {
+  await onlyGlobalAdmin(context);
+
+  console.log('Restarting scheduler');
+  await pm2Restart('scheduler');
+
+  context.response.body = { success: true };
 };

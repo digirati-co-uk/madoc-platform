@@ -1,6 +1,8 @@
+import { genRSA } from './utility/gen-rsa';
 import { syncJwtRequests } from './utility/sync-jwt-requests';
 
 async function main() {
+  await genRSA();
   await syncJwtRequests();
 
   const config = require('../config.json');

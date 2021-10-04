@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import slugify from 'slugify';
 import { siteManagerHooks } from '../../../../extensions/site-manager/hooks';
+import { useSite } from '../../../shared/hooks/use-site';
 import { Button, ButtonRow } from '../../../shared/navigation/Button';
 import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
 import {
@@ -26,6 +27,7 @@ export const CreateSite: React.FC = () => {
   const [slug, setSlug] = useState('');
   const [isPublic, setIsPublic] = useState(false);
   const [autoSlug, setAutoSlug] = useState(true);
+  const site = useSite();
 
   useEffect(() => {
     if (autoSlug) {
@@ -64,7 +66,9 @@ export const CreateSite: React.FC = () => {
             <div>
               <h1>{createSiteStatus.data.site.title}</h1>
               <div>
-                <a href={`/s/${createSiteStatus.data.site.slug}/admin`}>Go to site</a>
+                <a href={`/s/${site.slug}/login/refresh?redirect=/s/${createSiteStatus.data.site.slug}/admin`}>
+                  Go to site
+                </a>
               </div>
             </div>
           </div>

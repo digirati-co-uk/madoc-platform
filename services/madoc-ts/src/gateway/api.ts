@@ -27,7 +27,7 @@ import { ThemeExtension } from '../extensions/themes/extension';
 import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
 import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
 import { CanvasDeletionSummary, ManifestDeletionSummary, ProjectDeletionSummary } from '../types/deletion-summary';
-import { Site, User } from "../extensions/site-manager/types";
+import { Site, User } from '../extensions/site-manager/types';
 import { NoteListResponse } from '../types/personal-notes';
 import { Pm2Status } from '../types/pm2';
 import { ResourceLinkResponse } from '../types/schemas/linking';
@@ -182,6 +182,12 @@ export class ApiClient {
     }
 
     return this.jwt;
+  }
+
+  invalidateJwt() {
+    if (this.jwtFunction) {
+      this.jwt = this.jwtFunction();
+    }
   }
 
   resolveUrl(pathName: string) {
@@ -471,6 +477,10 @@ export class ApiClient {
 
   async getPm2Status() {
     return this.request<{ list: Pm2Status[] }>(`/api/madoc/pm2/list`);
+  }
+
+  async pm2Restart(service: 'auth' | 'queue' | 'madoc' | 'scheduler') {
+    return this.request<{ success: true }>(`/api/madoc/pm2/restart/${service}`, { method: 'POST' });
   }
 
   async getMetadataKeys() {

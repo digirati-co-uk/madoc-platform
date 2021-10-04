@@ -1,9 +1,5 @@
 import { JWK, JWT } from 'jose';
-import { readFileSync } from 'fs';
-import * as path from 'path';
-import { OPEN_SSL_KEY_PATH } from '../paths';
-
-const key = JWK.asKey(readFileSync(path.join(OPEN_SSL_KEY_PATH, 'madoc.key')));
+import { getPem } from './get-pem';
 
 export type ServiceTokenRequest = {
   scope: string[];
@@ -22,7 +18,7 @@ export function generateServiceToken(req: ServiceTokenRequest) {
         name: req.service.name,
         service: true,
       },
-      key,
+      JWK.asKey(getPem()),
       {
         subject: `urn:madoc:service:${req.service.id}`,
         issuer: `urn:madoc:gateway`,
