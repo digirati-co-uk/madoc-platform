@@ -8,6 +8,7 @@ import { createPluginManager } from './middleware/create-plugin-manager';
 import { disposeApis } from './middleware/dispose-apis';
 import { errorHandler } from './middleware/error-handler';
 import { SCHEMAS_PATH } from './paths';
+import { createAwaiter } from './utility/awaiter';
 import { CronJobs } from './utility/cron-jobs';
 import { MailConfig, Mailer } from './utility/mailer';
 import { TypedRouter } from './utility/typed-router';
@@ -18,19 +19,21 @@ import { staticPage } from './middleware/static-page';
 import { siteManager } from './middleware/site-api';
 import { setJwt } from './middleware/set-jwt';
 import { generateKeys } from './utility/generate-keys';
-import { readdirSync, readFileSync } from 'fs';
+import { promises } from 'fs';
 import * as path from 'path';
 import { createBackend } from './middleware/i18n/i18next.server';
 import { ExternalConfig } from './types/external-config';
-// @ts-ignore
+import './types/application-context';
 import k2c from 'koa2-connect';
 import cookieParser from 'cookie-parser';
 import schedule from 'node-schedule';
+const { readFile, readdir } = promises;
 
 export async function createApp(router: TypedRouter<any, any>, config: ExternalConfig, env: { smtp: MailConfig }) {
   const app = new Koa();
   const pool = createPostgresPool();
   const i18nextPromise = createBackend();
+  const { awaitProperty, awaiter } = createAwaiter();
 
   if (process.env.NODE_APP_INSTANCE === '0') {
     if (process.env.NODE_ENV === 'production' || process.env.MIGRATE) {
@@ -44,24 +47,44 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   app.context.externalConfig = config;
   app.context.routes = router;
   app.context.cron = new CronJobs();
-  app.context.pluginManager = await createPluginManager(pool);
+
+  awaitProperty(createPluginManager(pool), manager => {
+    app.context.pluginManager = manager;
+  });
+
   app.context.mailer = new Mailer(env.smtp);
 
   // Set i18next
-  const [, i18next] = await i18nextPromise;
-  app.context.i18next = await i18next;
-  await app.context.mailer.verify();
+  awaitProperty(
+    i18nextPromise.then(async ([, i18next]) => await i18next),
+    i18next => {
+      app.context.i18next = i18next;
+    }
+  );
 
-  if (!app.context.mailer.enabled) {
-    console.log('WARNING: SMTP has not been configured');
-  }
+  awaitProperty(app.context.mailer.verify(), () => {
+    if (!app.context.mailer.enabled) {
+      console.log('WARNING: SMTP has not been configured');
+    }
+  });
 
   // Validator.
   app.context.ajv = new Ajv();
-  for (const file of readdirSync(SCHEMAS_PATH)) {
+
+  for (const file of await readdir(SCHEMAS_PATH)) {
     if (!file.startsWith('.')) {
-      const name = path.basename(file, '.json');
-      app.context.ajv.addSchema(JSON.parse(readFileSync(path.resolve(SCHEMAS_PATH, file)).toString('utf-8')), name);
+      awaitProperty(
+        // eslint-disable-next-line no-async-promise-executor
+        (async () => {
+          const pathToFile = path.resolve(SCHEMAS_PATH, file);
+          const data = await readFile(pathToFile);
+          return JSON.parse(data.toString('utf-8'));
+        })(),
+        (schema: any) => {
+          const name = path.basename(file, '.json');
+          app.context.ajv.addSchema(schema, name);
+        }
+      );
     }
   }
 
@@ -99,6 +122,8 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
     console.log('done');
     process.exit(0);
   });
+
+  await awaiter();
 
   return app;
 }
