@@ -90,8 +90,12 @@ export type SearchQuery = {
 
   /** Unknown list of madoc identifiers to search within? */
   madoc_identifiers?: string[];
+
   /** Unknown list of identifiers to search within? */
   iiif_identifiers?: string[];
+
+  /** Facet languages to be shown */
+  facet_languages?: string[];
 
   /** List of values of facets to search for */
   facets?: Array<
