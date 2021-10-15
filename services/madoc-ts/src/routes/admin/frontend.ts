@@ -61,7 +61,7 @@ export const adminFrontend: RouteMiddleware = async context => {
   };
 };
 
-export const siteFrontend: RouteMiddleware = async context => {
+export const siteFrontend: RouteMiddleware = async (context, next) => {
   // This is a fallback route, filter out dev routes.
   if (context.request.url.indexOf('__webpack_hmr') !== -1) {
     return;
@@ -145,4 +145,6 @@ export const siteFrontend: RouteMiddleware = async context => {
       <script type="application/javascript" src="${bundle}"></script>
     `;
   };
+
+  await next();
 };
