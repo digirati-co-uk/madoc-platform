@@ -1,11 +1,14 @@
-import { existsSync, readdirSync, readFileSync, statSync } from 'fs';
+import { promises, existsSync } from 'fs';
+
 import path from 'path';
 import { sql } from 'slonik';
 import { THEMES_PATH } from '../paths';
-import { DiskTheme, ResolvedTheme, ThemeRow, ThemeSiteRow } from '../types/themes';
+import { DiskTheme, ResolvedTheme, ThemeListItem, ThemeRow, ThemeSiteRow } from '../types/themes';
 import { b64EncodeUnicode } from '../utility/base64';
 import { BaseRepository } from './base-repository';
 import cache from 'memory-cache';
+
+const { readdir, readFile, stat } = promises;
 
 export class ThemeRepository extends BaseRepository {
   // List themes
@@ -38,8 +41,8 @@ export class ThemeRepository extends BaseRepository {
       theme: theme.theme,
       name: theme.name,
       html: {
-        header: this.loadFragment(theme.theme_id, 'header.html'),
-        footer: this.loadFragment(theme.theme_id, 'footer.html'),
+        header: await this.loadFragment(theme.theme_id, 'header.html'),
+        footer: await this.loadFragment(theme.theme_id, 'footer.html'),
       },
       assets: {
         css: [this.loadAsset(theme.theme_id, 'style.css')].filter(Boolean),
@@ -62,16 +65,18 @@ export class ThemeRepository extends BaseRepository {
     return bundle;
   }
 
-  loadFragment(theme: string, fragment: string) {
+  async loadFragment(theme: string, fragment: string) {
     const fragPath = path.join(THEMES_PATH, theme, 'fragments', fragment);
 
     if (!existsSync(fragPath)) {
       return '';
     }
 
-    return b64EncodeUnicode(readFileSync(fragPath).toString('utf-8'), str =>
-      new Buffer(str, 'utf-8').toString('base64')
-    );
+    const data = await readFile(fragPath);
+
+    return b64EncodeUnicode(data.toString('utf-8'), str => {
+      return new Buffer(str, 'utf-8').toString('base64');
+    });
   }
 
   // Current site theme.
@@ -125,7 +130,10 @@ export class ThemeRepository extends BaseRepository {
     await this.connection.query(sql`insert into theme_site (theme_id, site_id) VALUES (${themeId}, ${siteId})`);
   }
 
-  mapTheme(theme: ThemeRow, { siteTheme, onDisk }: { onDisk?: boolean; siteTheme?: (ThemeRow & ThemeSiteRow) | null }) {
+  mapTheme(
+    theme: ThemeRow,
+    { siteTheme, onDisk }: { onDisk?: boolean | undefined; siteTheme?: (ThemeRow & ThemeSiteRow) | null }
+  ): ThemeListItem {
     return {
       id: theme.theme_id,
       name: theme.name,
@@ -168,16 +176,18 @@ export class ThemeRepository extends BaseRepository {
 
   // Get disk themes
   async getDiskThemes() {
-    const dirs = readdirSync(THEMES_PATH);
+    const dirs = await readdir(THEMES_PATH);
     const diskThemes: any = {};
     for (const themeDir of dirs) {
-      if (statSync(path.join(THEMES_PATH, `/${themeDir}`)).isDirectory()) {
+      const dirStat = await stat(path.join(THEMES_PATH, `/${themeDir}`));
+      if (dirStat.isDirectory()) {
         // We have a valid directory. Now load the JSON.
         const themeJson = path.join(THEMES_PATH, `/${themeDir}/theme.json`);
         if (existsSync(themeJson)) {
+          const file = await readFile(themeJson);
           diskThemes[themeDir] = {
             id: themeDir,
-            config: JSON.parse(readFileSync(themeJson).toString('utf-8')),
+            config: JSON.parse(file.toString('utf-8')),
           };
         }
       }
@@ -189,13 +199,14 @@ export class ThemeRepository extends BaseRepository {
     if (themeDir.indexOf('../') !== -1) {
       return null;
     }
-
-    if (statSync(path.join(THEMES_PATH, `/${themeDir}`)).isDirectory()) {
+    const dirStat = await stat(path.join(THEMES_PATH, `/${themeDir}`));
+    if (dirStat.isDirectory()) {
       const themeJson = path.join(THEMES_PATH, `/${themeDir}/theme.json`);
       if (existsSync(themeJson)) {
+        const file = await readFile(themeJson);
         return {
           id: themeDir,
-          config: JSON.parse(readFileSync(themeJson).toString('utf-8')),
+          config: JSON.parse(file.toString('utf-8')),
         } as DiskTheme;
       }
     }

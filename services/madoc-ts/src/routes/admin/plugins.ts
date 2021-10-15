@@ -43,7 +43,7 @@ export const installPlugin: RouteMiddleware<unknown, SitePlugin> = async context
     siteId,
   };
 
-  const loaded = loadPluginModule(definition);
+  const loaded = await loadPluginModule(definition);
   if (loaded.module && !loaded.error) {
     context.pluginManager.installPlugin({
       siteId,
@@ -100,7 +100,7 @@ export const enablePlugin: RouteMiddleware<{ id: string }> = async context => {
   };
 
   // Enable and load.
-  const loaded = loadPluginModule(definition);
+  const loaded = await loadPluginModule(definition);
 
   if (!loaded.module || loaded.error) {
     await context.plugins.disablePlugin(plugin.id, siteId);

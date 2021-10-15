@@ -83,7 +83,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       const idHash = tasks.manifestHash(iiifManifest.id);
 
       // 2. Save manifest to disk, IF it does not already exist.
-      const fileLocation = tasks.saveManifestToDisk(idHash, text);
+      const fileLocation = await tasks.saveManifestToDisk(idHash, text);
 
       // 3. POST request to `/api/madoc/iiif/manifests`
       let retries = 3;

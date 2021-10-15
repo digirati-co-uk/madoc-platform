@@ -99,7 +99,7 @@ export const acceptNewDevelopmentBundle: RouteMiddleware<
     writeFileSync(`${dir}/plugin.js`, body.bundle.code);
 
     // Update plugins
-    const module = sandboxedRequire(`${dir}/plugin.js`);
+    const module = await sandboxedRequire(`${dir}/plugin.js`);
 
     context.pluginManager.installPlugin({
       definition: {

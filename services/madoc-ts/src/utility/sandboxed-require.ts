@@ -12,8 +12,8 @@ const vm = new NodeVM({
   },
 });
 
-export function sandboxedRequire(name: string) {
-  const script = new VMScript(fs.readFileSync(name).toString(), name);
+export async function sandboxedRequire(name: string) {
+  const script = new VMScript((await fs.promises.readFile(name)).toString(), name);
 
   return vm.run(script);
 }

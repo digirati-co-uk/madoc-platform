@@ -7,7 +7,7 @@ import { ModuleWrapper } from '../types/plugins';
 import { SitePlugin } from '../types/schemas/plugins';
 import { sandboxedRequire } from '../utility/sandboxed-require';
 
-export function loadPluginModule(plugin: SitePlugin): { module: ModuleWrapper | null; error: boolean } {
+export async function loadPluginModule(plugin: SitePlugin): Promise<{ module: ModuleWrapper | null; error: boolean }> {
   if (!plugin.enabled) {
     console.log(`Plugin<site:${plugin.siteId}>: ${plugin.name} (${plugin.id}) | ${plugin.version} [not enabled]`);
     return { module: null, error: false };
@@ -30,7 +30,9 @@ export function loadPluginModule(plugin: SitePlugin): { module: ModuleWrapper | 
 
     try {
       return {
-        module: sandboxedRequire(path.join(PLUGINS_PATH, `/${plugin.id}/${plugin.development.revision}/plugin.js`)),
+        module: await sandboxedRequire(
+          path.join(PLUGINS_PATH, `/${plugin.id}/${plugin.development.revision}/plugin.js`)
+        ),
         error: false,
       };
     } catch (e) {
@@ -48,7 +50,7 @@ export function loadPluginModule(plugin: SitePlugin): { module: ModuleWrapper | 
   console.log(`Plugin<site:${plugin.siteId}>: ${plugin.name} (${plugin.id}) | ${plugin.version}`);
   try {
     return {
-      module: sandboxedRequire(path.join(PLUGINS_PATH, `/${plugin.id}/${plugin.version}/plugin.js`)),
+      module: await sandboxedRequire(path.join(PLUGINS_PATH, `/${plugin.id}/${plugin.version}/plugin.js`)),
       error: false,
     };
   } catch (e) {
@@ -68,25 +70,27 @@ export const createPluginManager = async (db: DatabasePoolType) => {
       const plugins = result.map(plugin => PluginRepository.mapPluginRow(plugin, true));
 
       // No we load them..
-      const loadedPlugins = plugins
-        .map(plugin => {
-          if (!plugin.siteId) {
-            return null;
-          }
+      const loadedPlugins = (
+        await Promise.all(
+          plugins.map(async plugin => {
+            if (!plugin.siteId) {
+              return null;
+            }
 
-          const { module, error } = loadPluginModule(plugin);
+            const { module, error } = await loadPluginModule(plugin);
 
-          if (!module || error) {
-            return null;
-          }
+            if (!module || error) {
+              return null;
+            }
 
-          return {
-            definition: plugin,
-            siteId: plugin.siteId,
-            module: module,
-          };
-        })
-        .filter(plugin => plugin !== null) as PluginModule[];
+            return {
+              definition: plugin,
+              siteId: plugin.siteId,
+              module: module,
+            };
+          })
+        )
+      ).filter(plugin => plugin !== null) as PluginModule[];
 
       // Here we need to load _all_ plugins and their modules.
       resolve(new PluginManager(loadedPlugins));

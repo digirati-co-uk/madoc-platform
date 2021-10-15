@@ -8,11 +8,12 @@ import * as path from 'path';
 import { MANIFESTS_PATH } from '../../paths';
 import { BaseTask } from './base-task';
 import mkdirp from 'mkdirp';
-import { existsSync, readFile, writeFileSync } from 'fs';
+import { promises, existsSync } from 'fs';
 import cache from 'memory-cache';
 import { Vault } from '@hyperion-framework/vault';
 import { CanvasNormalized, Manifest, ManifestNormalized } from '@hyperion-framework/types';
 import { createHash } from 'crypto';
+const { readFile, writeFile } = promises;
 
 // @ts-ignore
 global.fetch = require('node-fetch');
@@ -38,11 +39,11 @@ export function changeStatus<Task extends BaseTask>(
   } as Partial<Task>;
 }
 
-export function saveManifestToDisk(idHash: string, content: string) {
-  mkdirp.sync(path.join(MANIFESTS_PATH, `/${idHash}`));
+export async function saveManifestToDisk(idHash: string, content: string) {
+  await mkdirp(path.join(MANIFESTS_PATH, `/${idHash}`));
   const fileLocation = path.join(MANIFESTS_PATH, `/${idHash}/manifest.json`);
   if (!existsSync(fileLocation)) {
-    writeFileSync(path.join(MANIFESTS_PATH, `/${idHash}/manifest.json`), Buffer.from(content));
+    await writeFile(path.join(MANIFESTS_PATH, `/${idHash}/manifest.json`), Buffer.from(content));
   }
   return fileLocation;
 }
@@ -53,11 +54,8 @@ export function loadFileWithRetries(file: string): Promise<string> {
   }
 
   function doLoad() {
-    return new Promise<string>((resolve, reject) => {
-      readFile(file, { encoding: 'utf-8' }, (err, data) => {
-        if (err) reject(err);
-        resolve(data.toString());
-      });
+    return readFile(file, { encoding: 'utf-8' }).then(data => {
+      return data.toString();
     });
   }
 
@@ -108,11 +106,11 @@ export function sharedVault(manifestId: string): Vault {
   return vault;
 }
 
-export function writeCanvasToDisk(idHash: string, content: any, canvasOrder: number) {
-  mkdirp.sync(path.join(MANIFESTS_PATH, `/${idHash}/canvases/`));
+export async function writeCanvasToDisk(idHash: string, content: any, canvasOrder: number) {
+  await mkdirp(path.join(MANIFESTS_PATH, `/${idHash}/canvases/`));
   const fileLocation = path.join(MANIFESTS_PATH, `/${idHash}/canvases/c${canvasOrder}.json`);
   if (!existsSync(fileLocation)) {
-    writeFileSync(fileLocation, Buffer.from(JSON.stringify(content)));
+    await writeFile(fileLocation, Buffer.from(JSON.stringify(content)));
   }
   return fileLocation;
 }
@@ -121,16 +119,16 @@ export async function getThumbnail(
   vault: Vault,
   canvas: any
 ): Promise<null | undefined | FixedSizeImage | FixedSizeImageService | VariableSizeImage | UnknownSizeImage> {
-  const sizes = [256, 512, 768, 1024];
+  const sizes = [512, 256, 768, 1024];
 
   for (const size of sizes) {
     try {
-      const { best, log } = await vault.getThumbnail(
+      const { best } = await vault.getThumbnail(
         canvas,
         {
           maxWidth: size,
           maxHeight: size,
-          explain: true,
+          explain: false,
         } as any,
         true
       );
