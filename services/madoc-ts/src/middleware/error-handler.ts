@@ -1,4 +1,5 @@
 import { Middleware } from 'koa';
+import { NotAuthorized } from '../utility/errors/not-authorized';
 import { NotFound } from '../utility/errors/not-found';
 import { RequestError } from '../utility/errors/request-error';
 import { ServerError } from '../utility/errors/server-error';
@@ -39,7 +40,7 @@ export const errorHandler: Middleware = async (context, next) => {
     } else if (err instanceof ApiError) {
       context.response.status = 400;
       context.response.body = { error: err.message };
-    } else if (err instanceof errors.JWTExpired) {
+    } else if (err instanceof errors.JWTExpired || err instanceof NotAuthorized) {
       // @todo refresh token?
       context.response.status = 401;
       context.response.body = { error: err.message };

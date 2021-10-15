@@ -5,8 +5,6 @@ export const RedirectPage: React.FC = () => {
   const { pathname, search } = useLocation();
   const { pagePath } = useParams<{ pagePath: string }>();
 
-  console.log({ pagePath });
-
   return (
     <Redirect
       to={{

@@ -6,7 +6,7 @@ export const setJwt: RouteMiddleware<{ slug?: string }> = async (context, next) 
 
   // If a user has been set, but no JWT is available...
   // Maybe also check if 404?
-  if (context.params && context.params.slug && context.state.authenticatedUser && !context.state.jwt) {
+  if (context.params && /*context.params.slug &&*/ context.state.authenticatedUser && !context.state.jwt) {
     // Then set the cookies, so that the JWT can be parsed in future requests.
     // This indicates that the application has authenticated the user, but not yet assigned permissions.
     const user = context.state.authenticatedUser;

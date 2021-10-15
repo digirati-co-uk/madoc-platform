@@ -1,3 +1,4 @@
+import { NotAuthorized } from '../utility/errors/not-authorized';
 import { verifySignedToken } from '../utility/verify-signed-token';
 import { parseJWT } from '../utility/parse-jwt';
 import { getToken } from '../utility/get-token';
@@ -53,14 +54,14 @@ export const parseJwt: RouteMiddleware<{ slug?: string }> = async (context, next
         // Rethrow expired tokens.
         if (e instanceof errors.JWTExpired) {
           // @todo refresh?
-          // throw e;
+          throw e;
         }
       }
       return next();
     }
   }
 
-  if (context.request.path === '/') {
+  if (context.request.path === '/' || context.request.path.startsWith('/auth/')) {
     return next();
   }
 
@@ -72,17 +73,23 @@ export const parseJwt: RouteMiddleware<{ slug?: string }> = async (context, next
       const token = verifySignedToken(jwt);
       if (token) {
         context.state.jwt = parseJWT(token, asUser);
+        context.state.user = context.state.jwt?.user;
         await next(); // only here.
         return;
       }
     }
   } catch (e) {
+    if (e instanceof errors.JWTExpired) {
+      // @todo refresh?
+      throw e;
+    }
+
     throw new NotFound();
   }
 
   if (!slug) {
     // If we get to here, no valid token on a non-madoc endpoint.
-    throw new NotFound();
+    throw new NotAuthorized();
   }
 
   await next();
