@@ -11,7 +11,6 @@ import { useApi } from '../../shared/hooks/use-api';
 import { useData } from '../../shared/hooks/use-data';
 import { useUser } from '../../shared/hooks/use-site';
 import { useManifestTask } from '../hooks/use-manifest-task';
-import { useManifestUserTasks } from '../hooks/use-manifest-user-tasks';
 import { useProjectStatus } from '../hooks/use-project-status';
 import { useRouteContext } from '../hooks/use-route-context';
 import { ManifestLoader } from '../pages/loaders/manifest-loader';
@@ -20,9 +19,17 @@ import { useSiteConfiguration } from './SiteConfigurationContext';
 export const ManifestUserNotification: React.FC = () => {
   const { projectId, manifestId } = useRouteContext();
   const { refetch: refetchManifest } = useData(ManifestLoader);
-  const { inProgress, doneTasks, inReview, refetch } = useManifestUserTasks();
   const config = useSiteConfiguration();
-  const { isManifestComplete, canClaimManifest, userManifestTask, isFetched } = useManifestTask();
+  const {
+    isManifestComplete,
+    canClaimManifest,
+    userManifestTask,
+    isFetched,
+    refetch,
+    filteredTasks,
+    hasExpired,
+  } = useManifestTask();
+  const { inProgress, done, inReview } = filteredTasks;
   const { isActive } = useProjectStatus();
   const { t } = useTranslation();
   const user = useUser();
@@ -40,8 +47,8 @@ export const ManifestUserNotification: React.FC = () => {
     return null;
   }
 
-  const hasExpired = config.project.claimGranularity === 'manifest' && userManifestTask?.status === -1;
   const canReclaim = config.project.claimGranularity === 'manifest' && hasExpired && canClaimManifest;
+  const taskIsDone = done.length > 0;
 
   if (canReclaim) {
     return (
@@ -87,7 +94,7 @@ export const ManifestUserNotification: React.FC = () => {
     );
   }
 
-  if (doneTasks.length) {
+  if (taskIsDone) {
     return <SuccessMessage>{t('You have already completed this manifest')}</SuccessMessage>;
   }
 

@@ -7,7 +7,6 @@ import { IIIFDragIcon } from '../../shared/components/IIIFDragIcon';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useManifestPageConfiguration } from '../hooks/use-manifest-page-configuration';
 import { useManifestTask } from '../hooks/use-manifest-task';
-import { useManifestUserTasks } from '../hooks/use-manifest-user-tasks';
 import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { AssignManifestToUser } from './AssignManifestToUser';
@@ -27,10 +26,14 @@ export const ManifestActions: React.FC = () => {
   const {
     project: { claimGranularity, manifestPageOptions },
   } = useSiteConfiguration();
-  const { isManifestComplete, userManifestTask, canClaimManifest } = useManifestTask();
-  const { doneTasks, inReview, inProgress } = useManifestUserTasks();
-
-  const isInProgress = inProgress.length && !(userManifestTask && userManifestTask.status === 0);
+  const {
+    isManifestComplete,
+    userManifestTask,
+    canClaimManifest,
+    filteredTasks,
+    isManifestInProgress,
+  } = useManifestTask();
+  const { done, inReview } = filteredTasks;
 
   const showButton =
     isActive &&
@@ -38,7 +41,7 @@ export const ManifestActions: React.FC = () => {
     !isManifestComplete &&
     (userManifestTask || canClaimManifest) &&
     !inReview.length &&
-    !isInProgress;
+    !isManifestInProgress;
 
   const showIIIFLogo = manifestPageOptions?.showIIIFLogo;
 
@@ -52,7 +55,7 @@ export const ManifestActions: React.FC = () => {
         <ButtonRow>
           {claimGranularity === 'manifest' ? (
             <GoToFirstCanvas $primary $large navigateToModel>
-              {userManifestTask && doneTasks.length ? t('View submission') : t('Start contributing')}
+              {userManifestTask && done.length ? t('View submission') : t('Start contributing')}
             </GoToFirstCanvas>
           ) : (
             <GoToRandomCanvas $primary $large label={{ none: [t('Start contributing')] }} navigateToModel />

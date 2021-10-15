@@ -23,6 +23,8 @@ export const AssignCanvasToUser: React.FC = () => {
 
   const canvasTask = projectTasks?.canvasTask;
   const details = useUserDetails();
+  const shouldAssignToManifest =
+    project.claimGranularity === 'manifest' || project.contributionMode === 'transcription';
 
   const [assignUser] = useMutation(async (user: AutocompleteUser) => {
     if (projectId) {
@@ -37,7 +39,7 @@ export const AssignCanvasToUser: React.FC = () => {
     }
   });
 
-  if (project.claimGranularity === 'manifest' || project.contributionMode === 'transcription') {
+  if (shouldAssignToManifest) {
     return <AssignManifestToUser />;
   }
 

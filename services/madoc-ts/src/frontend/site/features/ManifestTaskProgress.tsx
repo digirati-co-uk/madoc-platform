@@ -33,7 +33,7 @@ export const ManifestTaskProgress: React.FC = () => {
   const [requiredApprovals, setRequiredApprovals] = useState(0);
 
   useEffect(() => {
-    if (manifestTask) {
+    if (manifestTask && manifestTask.type === 'crowdsourcing-manifest-task') {
       setRequiredApprovals(manifestTask.state.approvalsRequired || 0);
     }
   }, [manifestTask]);
@@ -101,42 +101,44 @@ export const ManifestTaskProgress: React.FC = () => {
                   {t('Mark as complete')}
                 </Button>
               </ButtonRow>
-              {isAdmin && manifestTask?.state.approvalsRequired && (
-                <div>
-                  <InputContainer>
-                    <InputLabel htmlFor="approvals">
-                      {t('Approvals required')} ({manifestTask.state.approvalsRequired})
-                    </InputLabel>
-                    <GridContainer>
-                      <HalfGird $margin>
-                        <Input
-                          type="number"
-                          id="approvals"
-                          value={requiredApprovals}
-                          onChange={e => {
-                            const newValue = Number(e.target.value);
-                            if (!Number.isNaN(newValue)) {
-                              setRequiredApprovals(newValue);
+              {isAdmin &&
+                manifestTask?.type === 'crowdsourcing-manifest-task' &&
+                manifestTask?.state.approvalsRequired && (
+                  <div>
+                    <InputContainer>
+                      <InputLabel htmlFor="approvals">
+                        {t('Approvals required')} ({manifestTask.state.approvalsRequired})
+                      </InputLabel>
+                      <GridContainer>
+                        <HalfGird $margin>
+                          <Input
+                            type="number"
+                            id="approvals"
+                            value={requiredApprovals}
+                            onChange={e => {
+                              const newValue = Number(e.target.value);
+                              if (!Number.isNaN(newValue)) {
+                                setRequiredApprovals(newValue);
+                              }
+                            }}
+                          />
+                        </HalfGird>
+                        <HalfGird $margin>
+                          <Button
+                            $primary
+                            disabled={
+                              manifestTask.state.approvalsRequired === requiredApprovals ||
+                              updateRequiredApprovalsStatus.isLoading
                             }
-                          }}
-                        />
-                      </HalfGird>
-                      <HalfGird $margin>
-                        <Button
-                          $primary
-                          disabled={
-                            manifestTask.state.approvalsRequired === requiredApprovals ||
-                            updateRequiredApprovalsStatus.isLoading
-                          }
-                          onClick={() => updateRequiredApprovals()}
-                        >
-                          {updateRequiredApprovalsStatus.isLoading ? t('Loading') : t('Update required approvals')}
-                        </Button>
-                      </HalfGird>
-                    </GridContainer>
-                  </InputContainer>
-                </div>
-              )}
+                            onClick={() => updateRequiredApprovals()}
+                          >
+                            {updateRequiredApprovalsStatus.isLoading ? t('Loading') : t('Update required approvals')}
+                          </Button>
+                        </HalfGird>
+                      </GridContainer>
+                    </InputContainer>
+                  </div>
+                )}
             </div>
           ) : null}
           {manifestTask?.status === 3 ? (

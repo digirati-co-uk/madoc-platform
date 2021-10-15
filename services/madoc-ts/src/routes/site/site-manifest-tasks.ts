@@ -1,4 +1,6 @@
 import { CrowdsourcingManifestTask } from '../../gateway/tasks/crowdsourcing-manifest-task';
+import { CrowdsourcingTask } from '../../gateway/tasks/crowdsourcing-task';
+import { ProjectManifestTasks } from '../../types/manifest-tasks';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { canUserClaimManifest, findUserManifestTask } from '../../utility/claim-utilities';
 
@@ -13,13 +15,19 @@ export const siteManifestTasks: RouteMiddleware<{
   const { siteApi, site } = context.state;
 
   const project = await siteApi.getProjectTask(projectSlug);
-  const [config, { tasks }] = await Promise.all([
+  const [config, { tasks }, canvasTasks] = await Promise.all([
     siteApi.getProjectConfiguration(project.id as any, `urn:madoc:site:${site.id}`),
     siteApi.getTasks(0, {
       root_task_id: project?.task_id,
       subject: `urn:madoc:manifest:${manifestId}`,
       detail: true,
       all: true,
+    }),
+    siteApi.getTasks(0, {
+      all: true,
+      root_task_id: project?.task_id,
+      subject_parent: `urn:madoc:manifest:${manifestId}`,
+      detail: true,
     }),
   ]);
 
@@ -36,13 +44,6 @@ export const siteManifestTasks: RouteMiddleware<{
       manifestContributors.push(task.assignee.id);
     }
   }
-
-  const canvasTasks = await siteApi.getTasks(0, {
-    all: true,
-    root_task_id: project?.task_id,
-    subject_parent: `urn:madoc:manifest:${manifestId}`,
-    detail: true,
-  });
 
   const userManifestStats = {
     done: 0,
@@ -90,7 +91,13 @@ export const siteManifestTasks: RouteMiddleware<{
       : undefined;
   const maxContributors = manifestTask?.state.maxContributors || config.maxContributionsPerResource;
   const userTasks = user
-    ? tasks.filter(task => task.status !== -1 && task.assignee && task.assignee.id === `urn:madoc:user:${user}`)
+    ? (tasks.filter(
+        task =>
+          task.type === 'crowdsourcing-task' &&
+          task.status !== -1 &&
+          task.assignee &&
+          task.assignee.id === `urn:madoc:user:${user}`
+      ) as CrowdsourcingTask[])
     : [];
 
   const canClaimManifest = user
@@ -107,8 +114,19 @@ export const siteManifestTasks: RouteMiddleware<{
   const canUserSubmit =
     (!maxContributors || userTasks.length || maxContributors > contributors.length) && manifestTask?.status !== 3;
 
+  const hasExpired =
+    userManifestTask?.status === -1 &&
+    config.claimGranularity === 'manifest' &&
+    !canClaimManifest &&
+    config.modelPageOptions?.preventContributionAfterManifestUnassign;
+
+  const isManifestInProgress =
+    userTasks.filter(task => task.status !== -1 && task.status !== 3).length &&
+    !(userManifestTask && userManifestTask.status === 0);
+
   context.response.status = 200;
   context.response.body = {
+    hasExpired,
     canClaimManifest,
     userManifestTask,
     isManifestComplete,
@@ -117,8 +135,9 @@ export const siteManifestTasks: RouteMiddleware<{
     totalContributors: contributors.length,
     maxContributors: config.maxContributionsPerResource,
     canUserSubmit: canUserSubmit,
+    isManifestInProgress,
     userManifestStats,
-  };
+  } as ProjectManifestTasks;
 
   return;
 };

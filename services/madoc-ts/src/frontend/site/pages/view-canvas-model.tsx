@@ -26,7 +26,7 @@ import { RedirectToNextCanvas } from '../features/RedirectToNextCanvas';
 export const ViewCanvasModel: React.FC = () => {
   const { canvasId } = useRouteContext();
   const { showCanvasNavigation, showWarning } = useCanvasNavigation();
-  const { isManifestComplete, userManifestTask, canClaimManifest } = useManifestTask();
+  const { isManifestComplete, hasExpired } = useManifestTask();
   const { canUserSubmit, isLoading: isLoadingTasks, completedAndHide } = useCanvasUserTasks();
   const user = useCurrentUser(true);
   const { goToNext } = useLocationQuery<any>();
@@ -35,16 +35,12 @@ export const ViewCanvasModel: React.FC = () => {
     project: { hideCanvasThumbnailNavigation = false },
   } = useSiteConfiguration();
   const { isActive, isPreparing } = useProjectStatus();
-
-  const { preventContributionAfterManifestUnassign } = useModelPageConfiguration();
   const canContribute =
     user &&
     user.scope &&
     (user.scope.indexOf('site.admin') !== -1 ||
       user.scope.indexOf('models.admin') !== -1 ||
       user.scope.indexOf('models.contribute') !== -1);
-
-  const hasExpired = userManifestTask?.status === -1 && !canClaimManifest && preventContributionAfterManifestUnassign;
 
   const isReadOnly =
     (!canUserSubmit && !isLoadingTasks) ||

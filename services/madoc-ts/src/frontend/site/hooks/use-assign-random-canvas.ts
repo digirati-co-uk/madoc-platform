@@ -1,13 +1,13 @@
 import { useMutation } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { useApi } from '../../shared/hooks/use-api';
-import { useManifestUserTasks } from './use-manifest-user-tasks';
+import { useManifestTask } from './use-manifest-task';
 import { useRelativeLinks } from './use-relative-links';
 import { useRouteContext } from './use-route-context';
 
 export function useAssignRandomCanvas() {
   const createLink = useRelativeLinks();
-  const { refetch } = useManifestUserTasks();
+  const { refetch } = useManifestTask();
   const { projectId, manifestId, collectionId } = useRouteContext();
   const api = useApi();
   const history = useHistory();

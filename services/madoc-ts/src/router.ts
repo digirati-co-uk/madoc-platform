@@ -16,7 +16,6 @@ import { resetPassword } from './routes/global/reset-password';
 import { updateSystemConfig } from './routes/global/update-system-config';
 import { updateUser } from './routes/global/update-user';
 import { activateUser } from './routes/global/activate-user';
-import { allUsersAutocomplete } from './routes/global/all-users-autocomplete';
 import { createInvitation } from './routes/manage-site/create-invitation';
 import { createSite } from './routes/global/create-site';
 import { createUser } from './routes/global/create-user';
@@ -111,6 +110,7 @@ import { updateProjectStatus } from './routes/projects/update-project-status';
 import { siteManifestTasks } from './routes/site/site-manifest-tasks';
 import { getStaticPage, sitePages } from './routes/site/site-pages';
 import { siteTaskMetadata } from './routes/site/site-task-metadata';
+import { siteUserAutocomplete } from './routes/site/site-user-autocomplete';
 import { forgotPassword } from './routes/user/forgot-password';
 import { getSiteUser } from './routes/user/get-site-user';
 import { loginRefresh } from './routes/user/login-refresh';
@@ -201,6 +201,7 @@ import { siteCanvasTasks } from './routes/site/site-canvas-tasks';
 import { getProjectTask } from './routes/projects/get-project-task';
 import { assignRandomResource } from './routes/projects/assign-random-resource';
 import { router as activityStreamRoutes } from './activity-streams/router';
+import { router as authRoutes } from './auth/router';
 import { getCollectionDeletionSummary } from './routes/iiif/collections/delete-collection-summary';
 import { deleteCanvasSummary } from './routes/iiif/canvases/delete-canvas-summary';
 import { deleteProjectSummary } from './routes/projects/delete-project-summary';
@@ -240,8 +241,10 @@ export const router = new TypedRouter({
 
   // Manage users (on site)
   'site-admin-list-all-site-users': [TypedRouter.GET, '/api/madoc/manage-site/users', getSiteUsers],
+  // User API.
+  'site-admin-get-user': [TypedRouter.GET, '/api/madoc/manage-site/users/:userId', getSiteUser],
   'manage-site-set-user-role': [TypedRouter.POST, '/api/madoc/manage-site/users/:userId/role', updateUserSiteRole],
-  'manage-site-all-users': [TypedRouter.GET, '/api/madoc/manage-site/users/search', allUsersAutocomplete],
+  'manage-site-all-users': [TypedRouter.GET, '/api/madoc/manage-site/users/search', userAutocomplete],
   'manage-site-delete-user-role': [TypedRouter.DELETE, '/api/madoc/manage-site/users/:userId/role', deleteUserSiteRole],
   'manage-site-details': [TypedRouter.PUT, '/api/madoc/manage-site/details', updateSiteDetails],
 
@@ -282,10 +285,6 @@ export const router = new TypedRouter({
   ],
   'update-metadata-configuration': [TypedRouter.POST, '/api/madoc/configuration/metadata', updateMetadataConfiguration],
   'site-details': [TypedRouter.GET, '/api/madoc/site/:siteId/details', getSiteDetails],
-
-  // User API.
-  'get-user': [TypedRouter.GET, '/api/madoc/users/:id', getSiteUser],
-  'get-user-autocomplete': [TypedRouter.GET, '/api/madoc/users', userAutocomplete],
 
   // Notifications.
   'get-all-notifications': [TypedRouter.GET, '/api/madoc/notifications', getNotifications],
@@ -573,6 +572,7 @@ export const router = new TypedRouter({
   'site-task-metadata': [TypedRouter.GET, '/s/:slug/madoc/api/task-metadata/:taskId', siteTaskMetadata],
   'site-list-locales': [TypedRouter.GET, '/s/:slug/madoc/api/locales', listLocalisations],
   'site-get-locale': [TypedRouter.GET, '/s/:slug/madoc/api/locales/:code', getLocalisation],
+  'site-user-autocomplete': [TypedRouter.GET, '/s/:slug/madoc/api/users/autocomplete', siteUserAutocomplete],
 
   // To be worked into API calling methods
   'manifest-search': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/search/1.0', searchManifest],
@@ -586,6 +586,7 @@ export const router = new TypedRouter({
 
   // Other routes.
   ...activityStreamRoutes,
+  ...authRoutes,
 
   // Development
   'development-plugin': [TypedRouter.POST, '/api/madoc/development/plugin-token', developmentPlugin],
@@ -603,5 +604,5 @@ export const router = new TypedRouter({
   // Make sure this is last.
   'site-root': [TypedRouter.GET, '/', siteRoot],
   'site-root-post': [TypedRouter.POST, '/', siteRoot],
-  'site-404': [TypedRouter.GET, '/s/:slug(.*)', madocNotFound],
+  // 'site-404': [TypedRouter.GET, '/s/:slug(.*)', madocNotFound],
 });

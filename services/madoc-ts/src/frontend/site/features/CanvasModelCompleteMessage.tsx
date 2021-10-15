@@ -4,22 +4,18 @@ import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-rea
 import { InfoMessage } from '../../shared/callouts/InfoMessage';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useManifestTask } from '../hooks/use-manifest-task';
-import { useModelPageConfiguration } from '../hooks/use-model-page-configuration';
 import { useProjectStatus } from '../hooks/use-project-status';
 import { useRouteContext } from '../hooks/use-route-context';
 
 export const CanvasModelCompleteMessage: React.FC = () => {
   const { projectId } = useRouteContext();
-  const { isManifestComplete, userManifestTask, canClaimManifest } = useManifestTask();
+  const { isManifestComplete, hasExpired } = useManifestTask();
   const { canUserSubmit, isLoading: isLoadingTasks, completedAndHide } = useCanvasUserTasks();
 
   const { t } = useTranslation();
 
   const { isActive, isPreparing } = useProjectStatus();
 
-  const { preventContributionAfterManifestUnassign } = useModelPageConfiguration();
-
-  const hasExpired = userManifestTask?.status === -1 && !canClaimManifest && preventContributionAfterManifestUnassign;
   const projectPaused = !isActive && !isPreparing;
 
   const hideModelEditor =
@@ -29,7 +25,9 @@ export const CanvasModelCompleteMessage: React.FC = () => {
     hasExpired ||
     (!isActive && !isPreparing);
 
-  if (hideModelEditor && projectId && !projectPaused) {
+  const shouldShowMessage = hideModelEditor && projectId && !projectPaused;
+
+  if (shouldShowMessage) {
     return (
       <InfoMessage>
         {hasExpired

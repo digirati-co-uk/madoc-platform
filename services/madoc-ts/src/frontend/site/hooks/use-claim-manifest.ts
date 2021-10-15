@@ -11,7 +11,7 @@ export function useClaimManifest() {
   const {
     isManifestComplete,
     isFetched: manifestTaskFetched,
-    userManifestTasks,
+    userTasks,
     refetch,
     canClaimManifest,
   } = useManifestTask();
@@ -19,7 +19,7 @@ export function useClaimManifest() {
   const { preventContributionAfterManifestUnassign } = useModelPageConfiguration();
   const api = useApi();
   const user = useUser();
-  const validManifestTask = userManifestTasks.find(task =>
+  const validManifestTask = (userTasks || []).find(task =>
     preventContributionAfterManifestUnassign ? task.status !== -1 : task
   );
   const doesUserHaveManifestClaim = !!validManifestTask;

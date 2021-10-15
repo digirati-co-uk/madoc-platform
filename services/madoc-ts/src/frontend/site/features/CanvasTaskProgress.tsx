@@ -33,6 +33,8 @@ export const CanvasTaskProgress: React.FC = () => {
 
   const canvasTask = projectTasks?.canvasTask;
   const isManifestComplete = projectTasks?.isManifestComplete;
+  const canBeMarkedAsComplete = !canvasTask || canvasTask.status <= 1;
+  const totalContributors = projectTasks?.totalContributors;
 
   const [requiredApprovals, setRequiredApprovals] = useState(0);
 
@@ -152,7 +154,7 @@ export const CanvasTaskProgress: React.FC = () => {
               </ButtonRow>
             </div>
           ) : null}
-          {!canvasTask || canvasTask.status <= 1 ? (
+          {canBeMarkedAsComplete ? (
             <div>
               {t('Current status')}: <strong>{canvasTask ? canvasTask.status_text : 'Not started'}</strong>
               {canvasTask ? (
@@ -176,9 +178,9 @@ export const CanvasTaskProgress: React.FC = () => {
               )}
             </div>
           ) : null}
-          {projectTasks?.totalContributors ? (
+          {totalContributors ? (
             <div>
-              {t('Total contributors')}: <strong>{projectTasks.totalContributors}</strong>
+              {t('Total contributors')}: <strong>{totalContributors}</strong>
               <ButtonRow>
                 <Button
                   as={HrefLink}

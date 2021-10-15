@@ -1,15 +1,15 @@
 import { useApi } from '../../shared/hooks/use-api';
+import { useUser } from '../../shared/hooks/use-site';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
-import { useManifestUserTasks } from './use-manifest-user-tasks';
+import { useManifestTask } from './use-manifest-task';
 
 export function useCanvasNavigation() {
-  const { tasks: manifestUserTasks } = useManifestUserTasks();
-  const api = useApi();
-  const user = api.getIsServer() ? undefined : api.getCurrentUser();
+  const { userTasks } = useManifestTask();
+  const user = useUser();
   const config = useSiteConfiguration();
   const bypassCanvasNavigation = user
     ? user.scope.indexOf('site.admin') !== -1 || user.scope.indexOf('models.revision') !== -1
-    : manifestUserTasks && manifestUserTasks.length > 0;
+    : userTasks && userTasks.length > 0;
   const preventCanvasNavigation = !config.project.allowCanvasNavigation;
 
   const showWarning = preventCanvasNavigation && !bypassCanvasNavigation;
@@ -19,5 +19,6 @@ export function useCanvasNavigation() {
     showWarning,
     showCanvasNavigation,
     bypassCanvasNavigation,
+    preventCanvasNavigation,
   };
 }

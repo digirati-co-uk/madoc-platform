@@ -28,6 +28,7 @@ import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
 import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
 import { CanvasDeletionSummary, ManifestDeletionSummary, ProjectDeletionSummary } from '../types/deletion-summary';
 import { Site, User } from '../extensions/site-manager/types';
+import { ProjectManifestTasks } from '../types/manifest-tasks';
 import { NoteListResponse } from '../types/personal-notes';
 import { Pm2Status } from '../types/pm2';
 import { ResourceLinkResponse } from '../types/schemas/linking';
@@ -1469,7 +1470,7 @@ export class ApiClient {
         name: string;
         role?: string;
       }>;
-    }>(`/api/madoc/users?${stringify({ q, roles }, { arrayFormat: 'comma' })}`, {
+    }>(`/api/madoc/manage-site/users/search?${stringify({ q, roles }, { arrayFormat: 'comma' })}`, {
       method: 'GET',
     });
   }
@@ -2283,16 +2284,19 @@ export class ApiClient {
   }
 
   async getSiteProjectManifestTasks(projectId: string | number, manifestId: number) {
+    return this.publicRequest<ProjectManifestTasks>(`/madoc/api/projects/${projectId}/manifest-tasks/${manifestId}`);
+  }
+
+  async siteUserAutocomplete(q: string, roles?: string[]) {
     return this.publicRequest<{
-      manifestTask?: CrowdsourcingTask | CrowdsourcingManifestTask;
-      userManifestTask?: CrowdsourcingTask;
-      canClaimManifest?: boolean;
-      userTasks?: CrowdsourcingTask[];
-      canUserSubmit?: boolean;
-      totalContributors?: number;
-      maxContributors?: number;
-      userManifestStats?: { done: number; progress: number };
-    }>(`/madoc/api/projects/${projectId}/manifest-tasks/${manifestId}`);
+      completions: Array<{
+        uri: string;
+        label: string;
+        resource_class?: string;
+      }>;
+    }>(`/madoc/api/users/autocomplete?${stringify({ q, roles }, { arrayFormat: 'comma' })}`, {
+      method: 'GET',
+    });
   }
 
   async getUserDetails() {

@@ -27,9 +27,11 @@ export function usePreparedCanvasModel() {
   const preparationFailed = hasPrepared && !model;
   const isPreparing = isLoading;
   const shouldAutoPrepare = projectStatus.isPreparing || (!isManifestComplete && !manifestClaim.isClaimRequired); // @todo config.
+  const canClaim = projectStatus.isActive && manifestClaim.shouldAutoClaim && !hasPreparedManifest && !hasExpired;
+  const shouldPrepare = shouldAutoPrepare && !model && isFetched && !hasPrepared && !isLoading;
 
   useEffect(() => {
-    if (projectStatus.isActive && manifestClaim.shouldAutoClaim && !hasPreparedManifest && !hasExpired) {
+    if (canClaim) {
       manifestClaim
         .claim()
         .then(() => {
@@ -41,16 +43,7 @@ export function usePreparedCanvasModel() {
           setHasPreparedManifest(true); // @todo handle this error in a better way.
         });
     }
-  }, [
-    projectStatus.isActive,
-    hasExpired,
-    hasPreparedManifest,
-    manifestClaim,
-    manifestClaim.isClaimLoading,
-    manifestClaim.isClaimRequired,
-    manifestClaim.isLoading,
-    manifestTaskFetched,
-  ]);
+  }, [canClaim, manifestClaim]);
 
   useEffect(() => {
     if (canvasId) {
@@ -60,13 +53,13 @@ export function usePreparedCanvasModel() {
   }, [canvasId, modelResponse.data]);
 
   useEffect(() => {
-    if (shouldAutoPrepare && !model && isFetched && !hasPrepared && !isLoading) {
+    if (shouldPrepare) {
       prepare().then(async () => {
         await modelResponse.refetch();
         setHasPrepared(true);
       });
     }
-  }, [model, isFetched, prepare, hasPrepared, isLoading, shouldAutoPrepare, modelResponse]);
+  }, [modelResponse, prepare, shouldPrepare]);
 
   return {
     ...modelResponse,
