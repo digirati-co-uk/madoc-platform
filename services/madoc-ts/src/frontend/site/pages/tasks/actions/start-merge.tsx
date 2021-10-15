@@ -2,7 +2,11 @@ import React, { useCallback, useState } from 'react';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
 import { Revisions } from '@capture-models/editor';
 import { useApi } from '../../../../shared/hooks/use-api';
-import { EditorToolbarButton, EditorToolbarIcon, EditorToolbarLabel } from '../../../../shared/navigation/EditorToolbar';
+import {
+  EditorToolbarButton,
+  EditorToolbarIcon,
+  EditorToolbarLabel,
+} from '../../../../shared/navigation/EditorToolbar';
 import { ModalButton } from '../../../../shared/components/Modal';
 import ReactTimeago from 'react-timeago';
 import { Button } from '../../../../shared/navigation/Button';

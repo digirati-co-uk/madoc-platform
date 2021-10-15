@@ -8,4 +8,3 @@ export function FullScreenExitIcon(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-

@@ -21,13 +21,13 @@ export const ProjectExportTab: UniversalComponent<ProjectExportType> = createUni
       <>
         <h2>Export Project</h2>
         <hr />
-        {data && (<pre>{JSON.stringify(data, null, 2)}</pre>)}
+        {data && <pre>{JSON.stringify(data, null, 2)}</pre>}
       </>
-    )
+    );
   },
   {
     getData: async (key, { id }, api) => {
-      return await api.exportProject(id)
+      return await api.exportProject(id);
     },
     getKey: params => {
       return ['project-export', { id: Number(params.id) }];

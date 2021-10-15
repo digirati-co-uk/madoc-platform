@@ -14,9 +14,8 @@ export type MetadataField = {
 };
 
 export const setValueDotNotation = (property: any, key: string, setValue: (prop: any) => void) => {
-  // @ts-ignore
   // eslint-disable-next-line eqeqeq
-  const properties = key ? key.split('.').map(r => (r == Number(r) ? Number(r) : r)) : [];
+  const properties = key ? key.split('.').map((r: string | number) => (r == Number(r) ? Number(r) : r)) : [];
   for (let i = 0; i < properties.length; i++) {
     if (!property[properties[i]]) {
       if (typeof properties[i + 1] !== 'undefined') {
@@ -52,9 +51,8 @@ export const createMetadataReducer = <T, M extends MetadataField = MetadataField
 
   let property = acc[next.resource_id];
 
-  // @ts-ignore
   // eslint-disable-next-line eqeqeq
-  const properties = next.key ? next.key.split('.').map(r => (r == Number(r) ? Number(r) : r)) : [];
+  const properties = next.key ? next.key.split('.').map((r: string | number) => (r == Number(r) ? Number(r) : r)) : [];
   for (let i = 0; i < properties.length; i++) {
     if (!property[properties[i]]) {
       if (typeof properties[i + 1] !== 'undefined') {

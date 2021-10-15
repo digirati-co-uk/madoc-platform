@@ -39,7 +39,9 @@ export const CollapsibleTaskList: React.FC<{
       {isOpen ? null : (
         <TableRow>
           <TableRowLabel>
-            <em>Showing {tasksToShow} of {tasks.length}</em>
+            <em>
+              Showing {tasksToShow} of {tasks.length}
+            </em>
           </TableRowLabel>
           <TableRowLabel>
             <SmallButton onClick={() => setIsOpen(true)}>show all</SmallButton>

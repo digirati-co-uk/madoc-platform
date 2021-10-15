@@ -10,7 +10,9 @@ module.exports = {
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
     // 'plugin:jest/recommended',
-    // 'plugin:react/recommended',
+    'plugin:import/recommended',
+    'plugin:react/recommended',
+    'plugin:import/typescript',
     // 'prettier/@typescript-eslint',
   ],
 
@@ -20,6 +22,7 @@ module.exports = {
     'react-hooks',
     'jest',
     'react',
+    'import',
     // 'json-format',
   ],
   parser: '@typescript-eslint/parser',
@@ -43,9 +46,20 @@ module.exports = {
     '@typescript-eslint/camelcase': 0,
     'require-yield': 0,
     'react-hooks/exhaustive-deps': [
-      'warn',
+      1,
       {
         additionalHooks: '(useEventHandler)',
+      },
+    ],
+    'import/no-restricted-paths': [
+      2,
+      {
+        zones: [
+          {
+            target: './src/!(frontend)/**/*',
+            from: './src/frontend/**/*',
+          },
+        ],
       },
     ],
     'no-undef': OFF,

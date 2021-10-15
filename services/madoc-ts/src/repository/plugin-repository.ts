@@ -2,7 +2,6 @@ import { generateId } from '@capture-models/helpers';
 import { sql } from 'slonik';
 import { PluginRow, PluginSiteRow, PluginTokenRow } from '../types/plugins';
 import { PluginTokenRequest, SitePlugin } from '../types/schemas/plugins';
-import { RequestError } from '../utility/errors/request-error';
 import { BaseRepository } from './base-repository';
 
 export class PluginRepository extends BaseRepository {

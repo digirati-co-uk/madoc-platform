@@ -1,7 +1,11 @@
 import React, { Suspense, useCallback, useState } from 'react';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { Revisions } from '@capture-models/editor';
-import { EditorToolbarButton, EditorToolbarIcon, EditorToolbarLabel } from '../../../../shared/navigation/EditorToolbar';
+import {
+  EditorToolbarButton,
+  EditorToolbarIcon,
+  EditorToolbarLabel,
+} from '../../../../shared/navigation/EditorToolbar';
 import { ModalButton } from '../../../../shared/components/Modal';
 import { TextField } from '@capture-models/editor/lib/input-types/TextField/TextField';
 import { Button } from '../../../../shared/navigation/Button';

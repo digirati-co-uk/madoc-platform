@@ -8,4 +8,3 @@ export function PreviewIcon(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-

@@ -37,7 +37,7 @@ export const exportProjectTemplate: RouteMiddleware<{ id: string }> = async cont
     metadata: {
       label: `Project ${project.id} export`,
       description: `An export of project ${project.slug}`,
-      version: '1.0.0'
+      version: '1.0.0',
     },
     configuration: {
       defaults: project.config,

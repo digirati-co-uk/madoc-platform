@@ -96,13 +96,13 @@ export const SitePermissions = () => {
                 {selectedUser && userAlreadyInSite ? (
                   selectedRole === selectedUserExistingRole ? (
                     <p>
-                      The user <strong>"{selectedUser.name}"</strong> is already on this site. You change change their
+                      The user <strong>{selectedUser.name}</strong> is already on this site. You change change their
                       role from here.
                     </p>
                   ) : (
                     <p>
-                      You are about to change the role of <strong>"{selectedUser.name}"</strong> from{' '}
-                      <strong>"{selectedUserExistingRole}"</strong> to "<strong>{selectedRole}</strong>"
+                      You are about to change the role of <strong>{selectedUser.name}</strong> from{' '}
+                      <strong>{selectedUserExistingRole}</strong> to <strong>{selectedRole}</strong>
                     </p>
                   )
                 ) : null}

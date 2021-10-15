@@ -1,6 +1,6 @@
 import { BaseTask } from '../../../../gateway/tasks/base-task';
 import { Status } from '../../../shared/atoms/Status';
-import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../../shared/layout/Table';
+import { TableContainer, TableRow, TableRowLabel } from '../../../shared/layout/Table';
 import { UniversalComponent } from '../../../types';
 import React, { useEffect, useState } from 'react';
 import { GenericTask } from './generic-task';

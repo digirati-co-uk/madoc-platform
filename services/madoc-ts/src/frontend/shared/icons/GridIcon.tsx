@@ -8,4 +8,3 @@ export function GridIcon(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-

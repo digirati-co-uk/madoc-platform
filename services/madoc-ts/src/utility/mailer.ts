@@ -17,20 +17,19 @@ export class Mailer {
 
   constructor(mailConfig: Partial<MailConfig> = {}) {
     this.config = mailConfig;
-    if (
-      mailConfig.host &&
-      mailConfig.port &&
-      mailConfig.from_user
-    ) {
+    if (mailConfig.host && mailConfig.port && mailConfig.from_user) {
       this.enabled = true;
       this.transporter = createTransport({
         host: mailConfig.host,
         port: mailConfig.port,
-        auth: mailConfig.user && mailConfig.password ? {
-          type: 'LOGIN',
-          user: mailConfig.user,
-          pass: mailConfig.password,
-        } : undefined,
+        auth:
+          mailConfig.user && mailConfig.password
+            ? {
+                type: 'LOGIN',
+                user: mailConfig.user,
+                pass: mailConfig.password,
+              }
+            : undefined,
         secure: (mailConfig.security || '').toLowerCase() === 'tls',
       });
     }

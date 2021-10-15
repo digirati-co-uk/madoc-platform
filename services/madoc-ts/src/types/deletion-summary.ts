@@ -17,7 +17,7 @@ export type CollectionDeletionSummary = {
   search: {
     indexed: boolean;
     id: string;
-  }
+  };
   tasks: number;
   parentTasks: number;
 };
@@ -29,7 +29,7 @@ export type CanvasDeletionSummary = {
   search: {
     indexed: boolean;
     id: string;
-  }
+  };
   tasks: number;
   parentTasks: number;
 };
@@ -43,4 +43,4 @@ export type ProjectDeletionSummary = {
   };
   tasks: number;
   parentTasks: number;
-}
+};

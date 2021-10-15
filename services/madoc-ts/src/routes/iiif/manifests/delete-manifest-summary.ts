@@ -37,8 +37,7 @@ export async function buildManifestDeletionSummary(
   );
 
   // Search
-  const iiifSearchItem = await siteApi.searchGetIIIF(`urn:madoc:manifest:${manifestId}`)
-    .catch(() => null);
+  const iiifSearchItem = await siteApi.searchGetIIIF(`urn:madoc:manifest:${manifestId}`).catch(() => null);
 
   // Tasks
   const tasks = await siteApi.getTasks(0, {

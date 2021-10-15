@@ -4,7 +4,6 @@ import { useMutation } from 'react-query';
 import { Redirect, useParams } from 'react-router-dom';
 import { RemotePlugin } from '../../../../types/plugins';
 import { Button } from '../../../shared/navigation/Button';
-import { Heading1 } from '../../../shared/typography/Heading1';
 import { SystemListItem } from '../../../shared/atoms/SystemListItem';
 import {
   SystemActions,
@@ -113,10 +112,10 @@ export const ViewExternalPlugin: React.FC = () => {
 };
 
 serverRendererFor(ViewExternalPlugin, {
-  getKey: (params, query, pathname) => {
+  getKey: params => {
     return ['external-plugin', { owner: params.owner, repo: params.repo }];
   },
-  getData: async (key, vars, api, pathname) => {
+  getData: async (key, vars, api) => {
     return api.system.viewExternalPlugin(vars.owner, vars.repo);
   },
 });

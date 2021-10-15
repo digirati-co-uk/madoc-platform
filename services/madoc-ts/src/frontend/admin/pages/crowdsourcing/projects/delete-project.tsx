@@ -40,8 +40,8 @@ export const DeleteProject: UniversalComponent<DeleteProjectType> = createUniver
             ) : null}
             {data.parentTasks ? (
               <p>
-                There are <strong>{data.parentTasks}</strong> tasks indirectly associated with this project that will
-                be deleted
+                There are <strong>{data.parentTasks}</strong> tasks indirectly associated with this project that will be
+                deleted
               </p>
             ) : null}
           </>

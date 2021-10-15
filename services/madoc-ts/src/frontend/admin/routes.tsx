@@ -55,7 +55,6 @@ import { ProjectModelEditor } from './pages/crowdsourcing/projects/project-model
 import { CreateCollection } from './pages/content/collections/create-collection';
 import { CreateManifest } from './pages/content/manifests/create-manifest';
 import { CreateInvitation } from './pages/sites/create-invitation';
-import { EditInvitation } from './pages/sites/edit-invitation';
 import { ListInvitations } from './pages/sites/list-invitations';
 import { ListSites } from './pages/global/list-sites';
 import { SiteName } from './pages/sites/site-name';

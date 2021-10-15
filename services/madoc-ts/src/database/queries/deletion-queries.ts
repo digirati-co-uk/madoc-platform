@@ -113,9 +113,9 @@ export function deleteProjectRecord(projectId: number) {
   `;
 }
 
-export function getChildResourceIds(parentId: number, type: 'canvas' | 'manifest' | 'collection', unique: boolean = false) {
+export function getChildResourceIds(parentId: number, type: 'canvas' | 'manifest' | 'collection', unique = false) {
   if (unique) {
-    return sql<{ item_id: number; }>`
+    return sql<{ item_id: number }>`
       select distinct item_id from iiif_resource_items
       join iiif_resource ir on iiif_resource_items.item_id = ir.id
       where iiif_resource_items.resource_id = ${parentId}
@@ -123,7 +123,7 @@ export function getChildResourceIds(parentId: number, type: 'canvas' | 'manifest
       and (select count(distinct resource_id) from iiif_resource_items where item_id = ir.id) = 1;
     `;
   }
-  return sql<{ item_id: number; }>`
+  return sql<{ item_id: number }>`
     select distinct item_id from iiif_resource_items
     join iiif_resource ir on iiif_resource_items.item_id = ir.id
     where iiif_resource_items.resource_id = ${parentId}
@@ -132,7 +132,7 @@ export function getChildResourceIds(parentId: number, type: 'canvas' | 'manifest
 }
 
 export function getDerivedChildResourceIds(parentId: number, type: 'canvas' | 'manifest' | 'collection') {
-  return sql<{ item_id: number; }>`
+  return sql<{ item_id: number }>`
     select distinct item_id from iiif_derived_resource_items
     join iiif_derived_resource ir on iiif_derived_resource_items.item_id = ir.resource_id
     where iiif_derived_resource_items.resource_id = ${parentId}
@@ -141,7 +141,7 @@ export function getDerivedChildResourceIds(parentId: number, type: 'canvas' | 'm
 }
 
 export function getProjectAssociates(projectId: number) {
-  return sql<{ collection_id: number, capture_model_id: string }>`
+  return sql<{ collection_id: number; capture_model_id: string }>`
     select collection_id, capture_model_id from iiif_project where id = ${projectId};
   `;
 }

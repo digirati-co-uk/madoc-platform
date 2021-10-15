@@ -15,9 +15,9 @@ import { AdminHeader } from '../../molecules/AdminHeader';
 
 type SystemStatusType = {
   data: { list: Pm2Status[] };
-  query: {};
-  params: {};
-  variables: {};
+  query: unknown;
+  params: unknown;
+  variables: unknown;
 };
 
 export const SystemStatus: UniversalComponent<SystemStatusType> = createUniversalComponent<SystemStatusType>(
@@ -110,7 +110,7 @@ export const SystemStatus: UniversalComponent<SystemStatusType> = createUniversa
     async getData(key, vars, api) {
       return await api.getPm2Status();
     },
-    getKey(params, query) {
+    getKey() {
       return ['pm2-status', {}];
     },
   }

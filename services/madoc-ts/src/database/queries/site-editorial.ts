@@ -1,5 +1,5 @@
 import { InternationalString } from '@hyperion-framework/types/iiif/descriptive';
-import { NotFoundError, sql } from 'slonik';
+import { sql } from 'slonik';
 import {
   CreateNormalPageRequest,
   CreateSlotRequest,
@@ -13,7 +13,6 @@ import {
   SlotFilterConfig,
 } from '../../types/schemas/site-page';
 import { SitePage } from '../../types/site-pages-recursive';
-import { SQL_INT_ARRAY } from '../../utility/postgres-tags';
 
 // -- Combo
 // @todo Get page + slots + blocks (page + slots)

@@ -6,8 +6,13 @@ import { RouteMiddleware } from '../types/route-middleware';
 import { siteState } from '../middleware/site-state';
 
 export type RouteWithParams<Props, Body = any> =
-  | [string, string, RouteMiddleware<Props, Body>]
-  | [string, string, RouteMiddleware<Props, Body>, { schemaName?: string; isPublic?: boolean }];
+  | [string, string, RouteMiddleware<Props, Body> | Array<RouteMiddleware<Props, Body>>]
+  | [
+      string,
+      string,
+      RouteMiddleware<Props, Body> | Array<RouteMiddleware<Props, Body>>,
+      { schemaName?: string; isPublic?: boolean }
+    ];
 
 export type GetRoute<
   Routes extends { [key in RouteName]: Value },
@@ -33,32 +38,28 @@ export class TypedRouter<
       const [method, path, func, options = {}] = routes[route];
       const { schemaName, isPublic } = options;
 
+      const funcArray = Array.isArray(func) ? func : [func];
+
       switch (method) {
         case TypedRouter.PUT:
-          // @ts-ignore
-          this.router.put(route, path, koaBody(), parseJwt, requestBody(schemaName), func);
+          (this.router as any).put(route, path, koaBody(), parseJwt, requestBody(schemaName), ...funcArray);
           break;
         case TypedRouter.POST:
-          // @ts-ignore
-          this.router.post(route, path, koaBody(), parseJwt, requestBody(schemaName), func);
+          (this.router as any).post(route, path, koaBody(), parseJwt, requestBody(schemaName), ...funcArray);
           break;
         case TypedRouter.PATCH:
-          // @ts-ignore
-          this.router.patch(route, path, koaBody(), parseJwt, requestBody(schemaName), func);
+          (this.router as any).patch(route, path, koaBody(), parseJwt, requestBody(schemaName), ...funcArray);
           break;
         case TypedRouter.GET: {
           if (isPublic) {
-            // @ts-ignore
-            this.router.get(route, path, func);
+            (this.router as any).get(route, path, ...funcArray);
           } else {
-            // @ts-ignore
-            this.router.get(route, path, parseJwt, siteState, func);
+            (this.router as any).get(route, path, parseJwt, siteState, ...funcArray);
           }
           break;
         }
         case TypedRouter.DELETE:
-          // @ts-ignore
-          this.router.delete(route, path, parseJwt, func);
+          (this.router as any).delete(route, path, parseJwt, ...funcArray);
           break;
       }
     }

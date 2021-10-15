@@ -6,7 +6,7 @@ import { addLinks } from '../../../database/queries/linking-queries';
 import { extractLinks } from '../../../utility/extract-links';
 import { api } from '../../../gateway/api.server';
 
-export const createCanvas: RouteMiddleware<{}, CreateCanvas> = async context => {
+export const createCanvas: RouteMiddleware<unknown, CreateCanvas> = async context => {
   const { userUrn, siteId } = userWithScope(context, ['site.admin']);
 
   const canvasJson = JSON.stringify(context.requestBody.canvas);

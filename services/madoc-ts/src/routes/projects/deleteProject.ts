@@ -3,10 +3,11 @@ import { userWithScope } from '../../utility/user-with-scope';
 import { RouteMiddleware } from '../../types/route-middleware';
 import {
   deleteProjectMetadata,
-  deleteProjectNotes, deleteProjectRecord,
-  getProjectAssociates
+  deleteProjectNotes,
+  deleteProjectRecord,
+  getProjectAssociates,
 } from '../../database/queries/deletion-queries';
-import { DatabasePoolConnectionType} from 'slonik';
+import { DatabasePoolConnectionType } from 'slonik';
 import { deleteCollection } from '../iiif/collections/delete-collection';
 import { buildProjectDeletionSummary } from './delete-project-summary';
 
@@ -19,11 +20,7 @@ export const deleteProjectEndpoint: RouteMiddleware<{ id: number }> = async cont
   context.response.status = 200;
 };
 
-export async function deleteProject(
-  projectId: number,
-  siteId: number,
-  connection: () => DatabasePoolConnectionType
-) {
+export async function deleteProject(projectId: number, siteId: number, connection: () => DatabasePoolConnectionType) {
   const siteApi = api.asUser({ siteId });
 
   const deletionSummary = await buildProjectDeletionSummary(projectId, siteId, connection);

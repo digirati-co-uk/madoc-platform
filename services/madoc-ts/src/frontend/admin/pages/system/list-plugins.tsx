@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from 'react-query';
-import { Redirect } from 'react-router-dom';
 import { SitePlugin } from '../../../../types/schemas/plugins';
 import { Button, ButtonRow } from '../../../shared/navigation/Button';
 import { EmptyState } from '../../../shared/layout/EmptyState';
@@ -208,7 +207,7 @@ serverRendererFor(ListPlugins, {
   getKey: () => {
     return ['system-plugins', {}];
   },
-  getData: (key, vars, api, pathname) => {
+  getData: (key, vars, api) => {
     return api.system.listPlugins();
   },
 });
