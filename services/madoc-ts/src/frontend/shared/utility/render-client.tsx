@@ -11,7 +11,7 @@ import { defaultTheme } from '@capture-models/editor';
 import { createBackend } from '../../../middleware/i18n/i18next.client';
 import { render } from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Redirect } from 'react-router-dom';
 import { api } from '../../../gateway/api.browser';
 import React, { Suspense } from 'react';
 import { SitePlugin } from '../../../types/schemas/plugins';
@@ -25,6 +25,7 @@ import { useModule } from '../plugins/use-module';
 import { ErrorBoundary } from './error-boundary';
 import { queryConfig } from './query-config';
 import { ReactQueryDevtools } from 'react-query-devtools';
+import { ScrollTop } from './scroll-top';
 
 export async function renderClient(
   Component: React.FC<any>,
@@ -122,6 +123,7 @@ export async function renderClient(
             <Hydrate state={dehydratedState}>
               <I18nextProvider i18n={i18n}>
                 <BrowserRouter basename={basename}>
+                  <ScrollTop />
                   <DndProvider backend={MultiBackend} options={HTML5toTouch}>
                     <ThemeProvider theme={defaultTheme}>
                       <ErrorBoundary onError={error => <ErrorPage error={error} />}>
