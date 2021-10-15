@@ -9,6 +9,9 @@ const migrator = setupSlonikMigrator({
   migrationsPath: __dirname + '/migrations',
   slonik,
   mainModule: module,
+  log: () => {
+    // no-op
+  },
 });
 
 module.exports = { slonik, migrator };
