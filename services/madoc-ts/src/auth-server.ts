@@ -6,7 +6,7 @@ const host = '0.0.0.0';
 const port = 3001;
 
 function errorResponse(res: ServerResponse) {
-  res.writeHead(403, {
+  res.writeHead(401, {
     'Content-Type': 'application/json',
   });
   res.write('{"error": "invalid token"}');
