@@ -204,6 +204,9 @@ export const AdminSidebar: React.FC = () => {
               <AdminMenuSubItem as={HrefLink} href="/global/users/create">
                 {t('Create user')}
               </AdminMenuSubItem>
+              <AdminMenuSubItem as={HrefLink} href="/global/api-keys">
+                {t('API keys')}
+              </AdminMenuSubItem>
               <AdminMenuSubItem as={HrefLink} href="/global/status">
                 {t('System status')}
               </AdminMenuSubItem>

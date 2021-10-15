@@ -1,5 +1,7 @@
 import { getAuthRoutes } from './auth';
+import { deleteApiKey } from './routes/admin/delete-api-key';
 import { keyRegenerate } from './routes/admin/key-regenerate';
+import { listApiKeys } from './routes/admin/list-api-keys';
 import { siteRoot } from './routes/root';
 import {
   assignUserToDelegatedRequest,
@@ -223,7 +225,9 @@ export const router = new TypedRouter({
   'cron-jobs': [TypedRouter.GET, '/api/madoc/cron/jobs', listJobs],
   'run-cron-jobs': [TypedRouter.POST, '/api/madoc/cron/jobs/:jobId/run', runJob],
   'regenerate-keys': [TypedRouter.POST, '/api/madoc/system/key-regen', keyRegenerate],
-  'generate-api-key': [TypedRouter.POST, '/api/madoc/apiKey', generateApiKey],
+  'generate-api-key': [TypedRouter.POST, '/api/madoc/system/api-keys', generateApiKey],
+  'get-api-keys': [TypedRouter.GET, '/api/madoc/system/api-keys', listApiKeys],
+  'delete-api-key': [TypedRouter.DELETE, '/api/madoc/system/api-keys/:client_id', deleteApiKey],
 
   // Manage sites.
   'site-admin-list-all-sites': [TypedRouter.GET, '/api/madoc/sites', listAllSites],
@@ -503,6 +507,7 @@ export const router = new TypedRouter({
   'activate-account': [TypedRouter.GET, '/s/:slug/activate-account', resetPasswordPage],
   'post-reset-password': [TypedRouter.POST, '/s/:slug/reset-password', resetPasswordPage],
   'refresh-login': [TypedRouter.POST, '/s/:slug/auth/refresh', refreshToken],
+  'api-authentication': [TypedRouter.POST, '/s/:slug/auth/api-token', authenticateApi],
   'get-login-refresh': [TypedRouter.GET, '/s/:slug/login/refresh', loginRefresh],
   'asset-plugin-bundles': [
     TypedRouter.GET,
@@ -513,7 +518,6 @@ export const router = new TypedRouter({
   'assets-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleId.bundle.js', frontendBundles, { isPublic: true }],
   'assets-sub-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleName', frontendBundles, { isPublic: true }],
   'get-user-details': [TypedRouter.GET, '/s/:slug/madoc/api/me', userDetails],
-  'api-authentication': [TypedRouter.POST, '/s/:slug/madoc/api', authenticateApi],
 
   // Media
   'list-media': [TypedRouter.GET, '/api/madoc/media', listMedia],

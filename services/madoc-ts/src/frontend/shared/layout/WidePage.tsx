@@ -21,4 +21,4 @@ export const WidePage: typeof WidePageWrapper = ((props: any) => {
       <WidePageWrapper {...props} />
     </ErrorBoundary>
   );
-}) as any;
+}) as typeof WidePageWrapper;

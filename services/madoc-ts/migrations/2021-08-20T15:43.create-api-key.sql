@@ -7,28 +7,12 @@ create table api_key (
     client_secret text not null,
     user_id integer,
     user_name text,
-    password_attempts integer
+    site_id integer,
+    scope text[],
+    password_attempts integer,
+    created_at timestamp default CURRENT_TIMESTAMP not null,
+    last_used timestamp
 );
-
-create table api_key_scope (
-    id serial not null
-        constraint api_key_scope_pk
-            primary key,
-    key_id integer,
-    scope text not null,
-    constraint api_key_fk
-        foreign key (key_id)
-            references api_key(id)
-);
-
-alter table api_key
-    owner to current_user;
-
-alter table api_key_scope
-    owner to current_user;
 
 create unique index api_key_uindex
     on api_key (id);
-
-create unique index api_key_scope_uindex
-    on api_key_scope (id);

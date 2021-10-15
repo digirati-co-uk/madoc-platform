@@ -26,7 +26,12 @@ import { TaskExtension } from '../extensions/tasks/extension';
 import { ThemeExtension } from '../extensions/themes/extension';
 import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
 import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
-import { CanvasDeletionSummary, ManifestDeletionSummary, ProjectDeletionSummary } from '../types/deletion-summary';
+import {
+  CanvasDeletionSummary,
+  ManifestDeletionSummary,
+  ProjectDeletionSummary,
+  CollectionDeletionSummary,
+} from '../types/deletion-summary';
 import { Site, User } from '../extensions/site-manager/types';
 import { ProjectManifestTasks } from '../types/manifest-tasks';
 import { NoteListResponse } from '../types/personal-notes';
@@ -76,7 +81,6 @@ import { CrowdsourcingCanvasTask } from './tasks/crowdsourcing-canvas-task';
 import { ConfigResponse } from '../types/schemas/config-response';
 import { ResourceLinkRow } from '../database/queries/linking-queries';
 import { SearchIndexTask } from './tasks/search-index-task';
-import { CollectionDeletionSummary } from '../types/deletion-summary';
 import { JsonProjectTemplate } from '../extensions/projects/types';
 import { ApiKey } from '../types/api-key';
 
@@ -473,10 +477,29 @@ export class ApiClient {
     userApi.dispose(); // Need to make sure extensions unregister their events properly.
   }
 
+  async listApiKeys() {
+    return this.request<{
+      keys: Array<{
+        label: string;
+        user_id: number;
+        user_name: string;
+        client_id: string;
+        scope: string[];
+        created_at: string;
+        last_used: string | null;
+      }>;
+    }>(`/api/madoc/system/api-keys`);
+  }
+
   async generateApiKey(apiKey: ApiKey) {
-    return this.request<any>(`/api/madoc/apiKey`, {
+    return this.request<{ clientId: string; clientSecret: string }>(`/api/madoc/system/api-keys`, {
       method: 'POST',
       body: apiKey,
+    });
+  }
+  async deleteApiKey(clientId: string) {
+    return this.request<{ clientId: string; clientSecret: string }>(`/api/madoc/system/api-keys/${clientId}`, {
+      method: 'DELETE',
     });
   }
 

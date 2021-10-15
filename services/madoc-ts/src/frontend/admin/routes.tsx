@@ -64,6 +64,7 @@ import { DevelopmentPlugin } from './pages/system/development-plugin';
 import { ActivityStreams } from './pages/sites/activity-streams';
 import { ViewExternalPlugin } from './pages/system/external-plugin';
 import { KeyRegen } from './pages/system/key-regen';
+import { ListApiKeys } from './pages/system/list-api-keys';
 import { SystemStatus } from './pages/system/system-status';
 import { ListThemes } from './pages/system/themes/list-themes';
 import { TaskRouter } from './pages/tasks/task-router';
@@ -606,7 +607,12 @@ export const routes: UniversalRoute[] = [
     exact: true,
   },
   {
-    path: '/global/apiKey',
+    path: '/global/api-keys',
+    component: ListApiKeys,
+    exact: true,
+  },
+  {
+    path: '/global/api-keys/create',
     component: GenerateApiKey,
     exact: true,
   },
