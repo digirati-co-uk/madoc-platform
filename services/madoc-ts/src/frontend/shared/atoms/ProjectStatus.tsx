@@ -3,9 +3,8 @@ import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { useProject } from '../../site/hooks/use-project';
-// @ts-ignore
-import makeColorAccessible from 'make-color-accessible';
 import { useProjectTemplate } from '../hooks/use-project-template';
+import { makeColorAccessible } from '../utility/make-color-accessible';
 
 export const projectStatusColors = [
   // Paused
@@ -25,7 +24,7 @@ export const ProjectStatusContainer = styled.div<{ $status?: number; $color?: st
     const background = props.$color
       ? props.$color
       : (typeof props.$status !== 'undefined' ? projectStatusColors[props.$status] : false) || '#eee';
-    const color = makeColorAccessible('#000', { background });
+    const color = makeColorAccessible(background);
 
     return css`
       background: ${background};
