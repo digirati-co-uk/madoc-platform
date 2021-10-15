@@ -85,6 +85,7 @@
     "canvas-panel-beta": "2.0.2",
     "color-hash": "^1.0.3",
     "content-type": "^1.0.4",
+    "contrast": "^1.0.1",
     "cookie-parser": "^1.4.5",
     "core-js": "3",
     "cross-fetch": "^3.0.4",

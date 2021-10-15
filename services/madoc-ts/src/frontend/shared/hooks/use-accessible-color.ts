@@ -1,9 +1,8 @@
-// @ts-ignore
-import makeColorAccessible from 'make-color-accessible';
 import { useMemo } from 'react';
+import { makeColorAccessible } from '../utility/make-color-accessible';
 
-export function useAccessibleColor(background: string, color = '#000') {
+export function useAccessibleColor(background: string) {
   return useMemo(() => {
-    return makeColorAccessible(color, { background }) as string;
-  }, [background, color]);
+    return makeColorAccessible(background);
+  }, [background]);
 }

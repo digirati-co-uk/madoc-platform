@@ -13,7 +13,6 @@ export const _ALLOWED_MODULES = [
   'easy-peasy',
   'i18next',
   'immer',
-  'make-color-accessible',
   'react',
   'react-accessible-dropdown-menu-hook',
   'react-beautiful-dnd',
@@ -66,8 +65,6 @@ export function useModule(name: AvailableModules) {
       return require('i18next');
     case 'immer':
       return require('immer');
-    case 'make-color-accessible':
-      return require('make-color-accessible');
     case 'react':
       return require('react');
     case 'react-accessible-dropdown-menu-hook':

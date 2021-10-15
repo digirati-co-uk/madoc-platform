@@ -81,7 +81,7 @@ export const Surface: React.FC<SurfaceProps> = ({
 }) => {
   useGoogleFonts(font);
 
-  const accessibleTextColor = useAccessibleColor(background || '#fff', textColor);
+  const accessibleTextColor = useAccessibleColor(background || '#fff');
 
   return (
     <SurfaceStyled
