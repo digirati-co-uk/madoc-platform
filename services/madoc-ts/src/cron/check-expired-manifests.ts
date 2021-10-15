@@ -1,10 +1,10 @@
+import { Context } from 'koa';
 import { sql } from 'slonik';
 import { api } from '../gateway/api.server';
-import { ApplicationContext } from '../types/application-context';
 
 let previousFireDate: Date;
 
-export async function checkExpiredManifests(context: ApplicationContext, fireDate: Date) {
+export async function checkExpiredManifests(context: Context, fireDate: Date) {
   console.log('checking expired manifests', { fireDate, previousFireDate });
 
   // 1. Loop through each project

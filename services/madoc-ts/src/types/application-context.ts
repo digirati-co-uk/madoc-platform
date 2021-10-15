@@ -15,22 +15,26 @@ import { router } from '../router';
 import { DatabasePoolConnectionType } from 'slonik';
 import { Ajv } from 'ajv';
 
-export interface ApplicationContext {
-  i18next: i18n;
-  externalConfig: ExternalConfig;
-  routes: typeof router;
-  connection: DatabasePoolConnectionType;
-  pageBlocks: PageBlocksRepository;
-  plugins: PluginRepository;
-  themes: ThemeRepository;
-  media: MediaRepository;
-  mailer: Mailer;
-  notifications: NotificationRepository;
-  changeDiscovery: ChangeDiscoveryRepository;
-  siteManager: SiteUserRepository;
-  pluginManager: PluginManager;
-  cron: CronJobs;
-  ajv: Ajv;
-  staticPage?: string | ((token: string) => Promise<string | undefined>) | ((token: string) => undefined | string);
-  disposableApis: ApiClient[];
+type AllRoutes = typeof router;
+
+declare module 'koa' {
+  interface Context {
+    i18next: i18n;
+    externalConfig: ExternalConfig;
+    routes: AllRoutes;
+    connection: DatabasePoolConnectionType;
+    pageBlocks: PageBlocksRepository;
+    plugins: PluginRepository;
+    themes: ThemeRepository;
+    media: MediaRepository;
+    mailer: Mailer;
+    notifications: NotificationRepository;
+    changeDiscovery: ChangeDiscoveryRepository;
+    siteManager: SiteUserRepository;
+    pluginManager: PluginManager;
+    cron: CronJobs;
+    ajv: Ajv;
+    staticPage?: string | ((token: string) => Promise<string | undefined>) | ((token: string) => undefined | string);
+    disposableApis: ApiClient[];
+  }
 }

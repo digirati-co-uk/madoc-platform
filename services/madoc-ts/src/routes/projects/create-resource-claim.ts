@@ -7,7 +7,7 @@ import { BaseTask } from '../../gateway/tasks/base-task';
 import { CaptureModel } from '@capture-models/types';
 import { canUserClaimCanvas, canUserClaimManifest, findUserManifestTask } from '../../utility/claim-utilities';
 import { userWithScope } from '../../utility/user-with-scope';
-import { ApplicationContext } from '../../types/application-context';
+import { Context } from 'koa';
 import { RequestError } from '../../utility/errors/request-error';
 import { sql } from 'slonik';
 import { CrowdsourcingCollectionTask } from '../../gateway/tasks/crowdsourcing-collection-task';
@@ -34,7 +34,7 @@ export type ResourceClaim = {
 
 // @todo turn this into IIIF endpoint.
 export async function verifyResourceInProject(
-  context: ApplicationContext,
+  context: Context,
   siteId: number,
   projectId: number,
   claim: ResourceClaim
@@ -121,7 +121,7 @@ export async function verifyResourceInProject(
 }
 
 export async function ensureProjectTaskStructure(
-  context: ApplicationContext,
+  context: Context,
   siteId: number,
   projectId: number,
   userId: number,
@@ -335,7 +335,7 @@ export async function getTaskFromClaim({
 }
 
 async function upsertCaptureModelForResource(
-  context: ApplicationContext,
+  context: Context,
   siteId: number,
   projectId: number,
   userId: number,
@@ -411,7 +411,7 @@ async function createUserCrowdsourcingTask({
   userManifestTask,
   context,
 }: {
-  context: ApplicationContext;
+  context: Context;
   siteId: number;
   projectId: number;
   userId: number;

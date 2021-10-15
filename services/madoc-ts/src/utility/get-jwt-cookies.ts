@@ -1,10 +1,10 @@
 import { sql } from 'slonik';
 import { createSignedToken } from './create-signed-token';
 import { AuthenticatedUser } from '../types/authenticated-user';
-import { ApplicationContext } from '../types/application-context';
+import { Context } from 'koa';
 
 export async function getJwtCookies(
-  context: ApplicationContext,
+  context: Context,
   user: AuthenticatedUser,
   siteId?: number,
   retry = false
