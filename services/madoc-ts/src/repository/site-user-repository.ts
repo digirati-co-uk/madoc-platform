@@ -796,6 +796,21 @@ export class SiteUserRepository extends BaseRepository {
     }
   }
 
+  async getVerifiedLogin(id: number): Promise<{ user: User; sites: UserSite[] } | undefined> {
+    const user = await this.getActiveUserById(id);
+
+    if (!user) {
+      return undefined;
+    }
+
+    const sites = await this.getUserSites(user.id, user.role);
+
+    return {
+      user,
+      sites,
+    };
+  }
+
   async updateUserPassword(userId: number, password: string) {
     const hash = await passwordHash(password);
 
