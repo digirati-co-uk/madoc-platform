@@ -2,6 +2,7 @@ import Koa from 'koa';
 import json from 'koa-json';
 import logger from 'koa-logger';
 import Ajv from 'ajv';
+import { strategies } from './auth';
 import { checkExpiredManifests } from './cron/check-expired-manifests';
 import './frontend/shared/plugins/globals';
 import { createPluginManager } from './middleware/create-plugin-manager';
@@ -27,6 +28,8 @@ import './types/application-context';
 import k2c from 'koa2-connect';
 import cookieParser from 'cookie-parser';
 import schedule from 'node-schedule';
+import passport from 'koa-passport';
+
 const { readFile, readdir } = promises;
 
 export async function createApp(router: TypedRouter<any, any>, config: ExternalConfig, env: { smtp: MailConfig }) {
@@ -94,6 +97,26 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
   app.use(logger());
   // Disabled for now, causing issues logging in.
   // app.use(conditional());
+
+  let enabled = false;
+  for (const strategy of strategies) {
+    if (strategy.isAvailable()) {
+      enabled = true;
+      strategy.register();
+    }
+  }
+
+  if (enabled) {
+    passport.serializeUser(function(user: any, done) {
+      done(null, user);
+    });
+
+    passport.deserializeUser(function(user: any, done) {
+      done(null, user);
+    });
+
+    app.use(passport.initialize());
+  }
 
   app.use(errorHandler);
   app.use(staticPage);

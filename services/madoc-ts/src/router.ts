@@ -1,3 +1,4 @@
+import { getAuthRoutes } from './auth';
 import { keyRegenerate } from './routes/admin/key-regenerate';
 import { siteRoot } from './routes/root';
 import {
@@ -130,7 +131,6 @@ import { updateProfilePage } from './routes/user/update-profile';
 import { userAutocomplete } from './routes/user/user-autocomplete';
 import { TypedRouter } from './utility/typed-router';
 import { ping } from './routes/ping';
-import { madocNotFound } from './routes/madoc-not-found';
 import { importCollection, importManifest, importManifestOcr } from './routes/iiif-import/import';
 import { loginPage } from './routes/user/login';
 import { getSiteScopes, saveSiteScopes } from './routes/admin/site-scopes';
@@ -201,7 +201,6 @@ import { siteCanvasTasks } from './routes/site/site-canvas-tasks';
 import { getProjectTask } from './routes/projects/get-project-task';
 import { assignRandomResource } from './routes/projects/assign-random-resource';
 import { router as activityStreamRoutes } from './activity-streams/router';
-import { router as authRoutes } from './auth/router';
 import { getCollectionDeletionSummary } from './routes/iiif/collections/delete-collection-summary';
 import { deleteCanvasSummary } from './routes/iiif/canvases/delete-canvas-summary';
 import { deleteProjectSummary } from './routes/projects/delete-project-summary';
@@ -586,7 +585,7 @@ export const router = new TypedRouter({
 
   // Other routes.
   ...activityStreamRoutes,
-  ...authRoutes,
+  ...getAuthRoutes(),
 
   // Development
   'development-plugin': [TypedRouter.POST, '/api/madoc/development/plugin-token', developmentPlugin],
