@@ -64,7 +64,12 @@ export const ManifestLoader: UniversalComponent<ManifestLoaderType> = createUniv
     hooks: [
       {
         name: 'getSiteMetadataConfiguration',
-        creator: params => (params.slug ? [{ project_id: params.slug }] : undefined),
+        creator: params => [
+          {
+            project_id: params.slug,
+            collection_id: params.collectionId ? Number(params.collectionId) : undefined,
+          },
+        ],
       },
       {
         name: 'getSiteProjectManifestTasks',

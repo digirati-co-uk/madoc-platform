@@ -147,7 +147,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
     }
 
     case `subtask_type_status.${type}.3`: {
-      const task = await api.getTask<SearchIndexTask>(taskId, { all: true });
+      const task = await api.getTask<SearchIndexTask>(taskId);
 
       const [resources] = task.parameters;
 
@@ -158,11 +158,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
 
       const resource = resources[0];
       if (resource.type === 'manifest') {
-        if (task.subtasks) {
-          for (const subtask of task.subtasks) {
-            await api.deleteTask(subtask.id);
-          }
-        }
+        await api.deleteSubtasks(task.id);
       }
 
       await api.updateTask(taskId, { status: 3 });

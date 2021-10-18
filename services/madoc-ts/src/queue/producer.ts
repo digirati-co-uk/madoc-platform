@@ -18,7 +18,7 @@ const configOptions: WorkerOptions = {
     host: process.env.REDIS_HOST,
     db: 2,
   },
-  concurrency: 2,
+  concurrency: 20,
 };
 
 function getSiteId(context: string[]) {
