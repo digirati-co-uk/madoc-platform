@@ -15,6 +15,9 @@ import {
   StatisticLink,
   StatisticNumber,
 } from '../../shared/atoms/Statistics';
+import { Button } from '../../shared/atoms/Button';
+import { HrefLink } from '../../shared/utility/href-link';
+import { Heading3 } from '../../shared/atoms/Heading3';
 
 const AdminSection = styled.div`
   width: 33.3333%;
@@ -52,6 +55,15 @@ type HomepageType = {
   data: { collections: number; manifests: number; canvases: number; projects: number };
 };
 
+const MigrationBanner = styled.div`
+  background: #fdfbbd;
+  border: 2px solid #ffe2ad;
+  max-width: 1000px;
+  margin: 1em auto;
+  padding: 1em;
+  border-radius: 5px;
+`;
+
 export const Homepage: UniversalComponent<HomepageType> = createUniversalComponent<HomepageType>(
   () => {
     const { data: stats } = useStaticData(Homepage);
@@ -66,15 +78,38 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
         <WidePage>
           {stats ? (
             <StatisticContainer>
-              <StatisticLink to="/collections" number={stats.collections} label="Collections" cypressCountLabel="collection-count" />
-              <StatisticLink to="/manifests" number={stats.manifests} label="Manifests" cypressCountLabel="manifest-count" />
+              <StatisticLink
+                to="/collections"
+                number={stats.collections}
+                label="Collections"
+                cypressCountLabel="collection-count"
+              />
+              <StatisticLink
+                to="/manifests"
+                number={stats.manifests}
+                label="Manifests"
+                cypressCountLabel="manifest-count"
+              />
               <Statistic>
                 <StatisticNumber data-cy="canvas-count">{stats.canvases}</StatisticNumber>
                 <StatisticLabel>Canvases</StatisticLabel>
               </Statistic>
-              <StatisticLink to="/projects" number={stats.projects} label="Projects" cypressCountLabel="project-count" />
+              <StatisticLink
+                to="/projects"
+                number={stats.projects}
+                label="Projects"
+                cypressCountLabel="project-count"
+              />
             </StatisticContainer>
           ) : null}
+          <MigrationBanner>
+            <Heading3 style={{ marginTop: 0 }}>Get ready for v2.0</Heading3>
+            <p>Before upgrading to the stable v2.0 release there is some changes that you need to be aware of.</p>
+            <Button $primary as={HrefLink} href={`/system/migration`}>
+              Migration guide
+            </Button>
+          </MigrationBanner>
+
           <AdminSectionGrid style={{ maxWidth: 1000, margin: '0 auto' }}>
             <AdminSection>
               <MenuTitle>{t('Content')}</MenuTitle>

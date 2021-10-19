@@ -577,6 +577,8 @@ export class SiteUserRepository extends BaseRepository {
   };
 
   async legacyOmekaDatabaseSync(permissions: ExternalConfig['permissions']) {
+    const issues: string[] = [];
+
     if (!this.shouldSync()) {
       console.log('Skipping sync...');
       return;
@@ -584,63 +586,155 @@ export class SiteUserRepository extends BaseRepository {
 
     console.log('Starting sync...');
 
-    const sites = (await this.omeka.listAllSites()).map(SiteUserRepository.compatibility.site);
-    if (sites.length) {
-      for (const site of sites) {
-        if (!site.created) {
-          site.created = new Date();
-        }
-        if (!site.modified) {
-          site.modified = site.created;
-        }
-      }
-      console.log(`=> Syncing ${sites.length} sites`);
-      await this.connection.query(
-        upsert('site', ['id'], sites, ['id', 'slug', 'title', 'summary', 'created', 'modified', 'is_public'], {
-          dateKeys: ['created', 'modified'],
-        })
-      );
-
-      for (const site of sites) {
-        const { rowCount } = await this.connection.query(
-          sql`SELECT id FROM jwt_site_scopes WHERE site_id = ${site.id}`
-        );
-        if (rowCount === 0) {
-          console.log(`=> Adding missing permissions to site ${site.title}`);
-          await this.addJWTPermissionsToSite(site.id, permissions);
-        }
-      }
-
-      await this.connection.query(sql`select setval('site_id_seq', (select max(id) from site));`);
-    }
-
-    const users = await this.omeka.listAllUsers();
-    if (users.length) {
-      console.log(`=> Syncing ${users.length} users`);
-      await this.connection.query(
-        upsert(
-          'user',
-          ['id'],
-          users,
-          ['id', 'email', 'name', 'created', 'modified', 'password_hash', 'role', 'is_active'],
-          {
-            dateKeys: ['created', 'modified'],
+    try {
+      const sites = (await this.omeka.listAllSites()).map(SiteUserRepository.compatibility.site);
+      if (sites.length) {
+        for (const site of sites) {
+          if (!site.created) {
+            site.created = new Date();
           }
-        )
-      );
+          if (!site.modified) {
+            site.modified = site.created;
+          }
+        }
+        try {
+          console.log(`=> Syncing ${sites.length} sites`);
+          await this.connection.query(
+            upsert('site', ['id'], sites, ['id', 'slug', 'title', 'summary', 'created', 'modified', 'is_public'], {
+              dateKeys: ['created', 'modified'],
+            })
+          );
+        } catch (e) {
+          console.log('Error syncing all sites, trying individually');
+          for (const site of sites) {
+            try {
+              await this.connection.query(
+                upsert('site', ['id'], [site], ['id', 'slug', 'title', 'summary', 'created', 'modified', 'is_public'], {
+                  dateKeys: ['created', 'modified'],
+                })
+              );
+            } catch (e2) {
+              issues.push(`Failed syncing site(${site.id}) with slug ${site.slug}`);
+              console.log(`=> Failed syncing site(${site.id}) with slug ${site.slug}`);
+              console.log(e2);
+            }
+          }
+        }
 
-      await this.connection.query(sql`select setval('user_id_seq', (select max(id) from "user"));`);
+        for (const site of sites) {
+          try {
+            const { rowCount } = await this.connection.query(
+              sql`SELECT id
+                  FROM jwt_site_scopes
+                  WHERE site_id = ${site.id}`
+            );
+            if (rowCount === 0) {
+              console.log(`=> Adding missing permissions to site ${site.title}`);
+              await this.addJWTPermissionsToSite(site.id, permissions);
+            }
+          } catch (e) {
+            issues.push(`Error adding missing permissions to site ${site.title}`);
+            console.log(`=> Error adding missing permissions to site ${site.title}`);
+          }
+        }
+
+        try {
+          await this.connection.query(sql`select setval('site_id_seq', (select max(id) from site));`);
+        } catch (e) {
+          console.log('=> Error updating ID sequence');
+        }
+      }
+    } catch (e) {
+      issues.push(`Fatal error syncing sites.`);
+      console.log('Error syncing sites.');
     }
 
-    const sitePermissions = await this.omeka.listSitePermissions();
-    if (sitePermissions.length) {
-      console.log(`=> Syncing ${sitePermissions.length} site permissions`);
-      await this.connection.query(
-        upsert('site_permission', ['site_id', 'user_id'], sitePermissions, ['site_id', 'user_id', 'role'])
-      );
+    try {
+      const users = await this.omeka.listAllUsers();
+      if (users.length) {
+        console.log(`=> Syncing ${users.length} users`);
+        try {
+          await this.connection.query(
+            upsert(
+              'user',
+              ['id'],
+              users,
+              ['id', 'email', 'name', 'created', 'modified', 'password_hash', 'role', 'is_active'],
+              {
+                dateKeys: ['created', 'modified'],
+              }
+            )
+          );
+        } catch (e) {
+          console.log('=> Error syncing all users, trying individually');
+          for (const user of users) {
+            try {
+              await this.connection.query(
+                upsert(
+                  'user',
+                  ['id'],
+                  [user],
+                  ['id', 'email', 'name', 'created', 'modified', 'password_hash', 'role', 'is_active'],
+                  {
+                    dateKeys: ['created', 'modified'],
+                  }
+                )
+              );
+            } catch (e2) {
+              issues.push(`Failed syncing user(${user.id})`);
+              console.log(`=> Failed syncing user(${user.id})`);
+              console.log(e2);
+            }
+          }
+        }
+
+        try {
+          await this.connection.query(sql`select setval('user_id_seq', (select max(id) from "user"));`);
+        } catch (e) {
+          issues.push(`Error updating ID sequence.`);
+          console.log('=> Error updating ID sequence');
+        }
+      }
+    } catch (e) {
+      issues.push(`Failed to fetch users.`);
+      console.log(`=> Failed to fetch users`);
     }
 
-    console.log('Completed sync');
+    try {
+      const sitePermissions = await this.omeka.listSitePermissions();
+      if (sitePermissions.length) {
+        try {
+          console.log(`=> Syncing ${sitePermissions.length} site permissions`);
+          await this.connection.query(
+            upsert('site_permission', ['site_id', 'user_id'], sitePermissions, ['site_id', 'user_id', 'role'])
+          );
+        } catch (e) {
+          console.log('=> Failed to sync site permissions, trying individually');
+          for (const sitePermission of sitePermissions) {
+            try {
+              await this.connection.query(
+                upsert('site_permission', ['site_id', 'user_id'], sitePermissions, ['site_id', 'user_id', 'role'])
+              );
+            } catch (e2) {
+              issues.push(
+                `Failed adding site permission site: ${sitePermission.site_id}, user: ${sitePermission.user_id}, role: ${sitePermission.role}`
+              );
+              console.log(
+                `=> Failed adding site permission site: ${sitePermission.site_id}, user: ${sitePermission.user_id}, role: ${sitePermission.role}`
+              );
+              console.log(e2);
+            }
+          }
+        }
+      }
+    } catch (e) {
+      issues.push(`Failed to fetch user permissions.`);
+      console.log(`=> Failed to fetch user permissions`);
+    }
+
+    console.log('=> Completed sync');
+
+    return issues;
   }
 
   async getSystemConfig(cached = true): Promise<SystemConfig> {
