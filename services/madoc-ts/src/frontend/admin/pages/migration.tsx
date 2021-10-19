@@ -8,18 +8,15 @@ import {
   ActivityContainer,
   ActivityDot,
   ActivityItem,
-  ActivityLink,
   ActivitySummary,
-  ActivityTime,
   ActivityTitle,
 } from '../../shared/components/Activity';
-import ReactTimeago from 'react-timeago';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useMutation } from 'react-query';
 import { useApi } from '../../shared/hooks/use-api';
-import { Heading3 } from '../../../../lib/frontend/shared/atoms/Heading3';
 import styled from 'styled-components';
-import { WarningMessage } from '../../../../lib/frontend/shared/atoms/WarningMessage';
+import { Heading3 } from '../../shared/atoms/Heading3';
+import { WarningMessage } from '../../shared/atoms/WarningMessage';
 
 const green = 'Add';
 const yellow = 'Update';

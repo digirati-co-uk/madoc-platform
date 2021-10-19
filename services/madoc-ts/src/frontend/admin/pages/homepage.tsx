@@ -17,7 +17,7 @@ import {
 } from '../../shared/atoms/Statistics';
 import { Button } from '../../shared/atoms/Button';
 import { HrefLink } from '../../shared/utility/href-link';
-import { Heading3 } from '../../../../lib/frontend/shared/atoms/Heading3';
+import { Heading3 } from '../../shared/atoms/Heading3';
 
 const AdminSection = styled.div`
   width: 33.3333%;
