@@ -206,6 +206,7 @@ import { deleteProjectSummary } from './routes/projects/delete-project-summary';
 import { deleteCanvasEndpoint } from './routes/iiif/canvases/delete-canvas';
 import { deleteProjectEndpoint } from './routes/projects/deleteProject';
 import { exportProjectTemplate } from './routes/projects/export-project-template';
+import { migrate } from './routes/migrate';
 
 export const router = new TypedRouter({
   // Normal route
@@ -233,6 +234,7 @@ export const router = new TypedRouter({
   'global-reset-password-user': [TypedRouter.POST, '/api/madoc/users/:userId/reset-password', resetPassword],
   'global-get-system-config': [TypedRouter.GET, '/api/madoc/system/config', getSystemConfig],
   'global-update-system-config': [TypedRouter.POST, '/api/madoc/system/config', updateSystemConfig],
+  'global-migrate-check': [TypedRouter.POST, '/api/madoc/system/migrate-check', migrate],
 
   // Manage users (on site)
   'site-admin-list-all-site-users': [TypedRouter.GET, '/api/madoc/manage-site/users', getSiteUsers],

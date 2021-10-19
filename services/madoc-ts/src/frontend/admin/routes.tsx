@@ -89,6 +89,7 @@ import { OcrManifest } from './pages/enrichment/ocr/ocr-manifest';
 import { DeleteCanvas } from './pages/content/canvases/delete-canvas';
 import { DeleteProject } from './pages/crowdsourcing/projects/delete-project';
 import { ProjectExportTab } from './pages/crowdsourcing/projects/project-export';
+import { Migration } from './pages/migration';
 
 export const routes: UniversalRoute[] = [
   {
@@ -526,6 +527,11 @@ export const routes: UniversalRoute[] = [
     path: '/global/config',
     exact: true,
     component: GlobalSystemConfig,
+  },
+  {
+    path: '/system/migration',
+    exact: true,
+    component: Migration,
   },
   {
     path: '/system/development',

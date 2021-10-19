@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactTimeago from 'react-timeago';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { ChangeDiscoveryActivity } from '../../../activity-streams/change-discovery-types';
 import { parseUrn } from '../../../utility/parse-urn';
 import { HrefLink } from '../utility/href-link';
@@ -39,7 +39,7 @@ const colors: any = {
   Remove: '#a90e21',
 };
 
-const ActivityDot = styled.div<{ $action?: string }>`
+export const ActivityDot = styled.div<{ $action?: string }>`
   height: 15px;
   width: 15px;
   margin-top: 0.2em;
@@ -54,47 +54,55 @@ const ActivityDot = styled.div<{ $action?: string }>`
   z-index: 3;
 `;
 
-const ActivityItem = styled.div`
+export const ActivityItem = styled.div`
   background: #fff;
   padding: 0.5em;
   margin-bottom: 1em;
 `;
 
-const ActivityTitle = styled.div`
+export const ActivityTitle = styled.div`
   font-weight: bold;
   font-size: 0.9em;
 `;
 
-const ActivitySummary = styled.div`
+export const ActivitySummary = styled.div`
   color: #333;
   font-size: 0.8em;
 `;
 
-const ActivityLink = styled.a`
+export const ActivityLink = styled.a`
   font-size: 0.8em;
   color: #999;
 `;
 
-const ActivityActions = styled.div`
+export const ActivityActions = styled.div`
   display: flex;
   padding: 0.5em 0;
   font-size: 0.7em;
 `;
 
-const ActivityAction = styled.a`
+export const ActivityAction = styled.a<{ $disabled?: boolean }>`
   margin-right: 1em;
   padding: 0.4em 0.8em;
   background: #e4e7f1;
   border-radius: 3px;
   color: #333;
   text-decoration: none;
+  cursor: pointer;
 
   &:hover {
     background: #cfd4e5;
   }
+
+  ${props =>
+    props.$disabled &&
+    css`
+      pointer-events: none;
+      opacity: 0.5;
+    `}
 `;
 
-const ActivityTime = styled.div`
+export const ActivityTime = styled.div`
   color: #666;
   font-size: 0.7em;
   margin-bottom: 0.5em;

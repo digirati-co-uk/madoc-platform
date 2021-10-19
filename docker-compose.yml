@@ -49,7 +49,7 @@ services:
       - ./services/madoc/packages/madoc-crowd-sourcing-theme:/srv/omeka/repos/madoc-crowd-sourcing-theme:delegated
       - ./services/madoc/packages/public-user:/srv/omeka/repos/public-user:delegated
       - ./services/madoc/packages/shared-library:/srv/omeka/repos/shared-library:delegated
-      - ./services/madoc/.omeka/omeka-s/application:/srv/omeka/application:cached
+#      - ./services/madoc/.omeka/omeka-s/application:/srv/omeka/application:cached
       - ./var/files:/srv/omeka/files
       - ./services/madoc/config/omeka-app/application.config.php:/srv/omeka/application/config/application.config.php
       - ./var/certs:/openssl-certs
@@ -116,8 +116,7 @@ services:
       - certs
 
   tasks-api:
-    build:
-      context: services/tasks-api
+    image: ghcr.io/digirati-co-uk/tasks-api:latest
     environment:
       - SERVER_PORT=3000
       - DATABASE_HOST=shared-postgres
@@ -131,10 +130,6 @@ services:
     links:
       - shared-postgres
       - gateway-redis
-    volumes:
-      - ./services/tasks-api/lib:/home/node/app/lib
-      - ./services/tasks-api/schemas:/home/node/app/schemas
-      - ./services/tasks-api/migrations:/home/node/app/migrations
 
   model-api:
     image: digirati/capture-models:v0.13.6

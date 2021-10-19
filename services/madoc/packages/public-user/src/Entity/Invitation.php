@@ -37,6 +37,17 @@ class Invitation
         $this->expires = $expires;
         $this->createdAt = $createdAt;
         $this->usesLeft = $usesLeft;
+
+        if (trim($message[0]) === '{') {
+            try {
+                $_message = json_decode($message, true);
+                $message = $_message['en'][0] ?: '';
+            } catch (\Throwable $err) {
+                var_dump((string)$err);
+                $message = '';
+            }
+        }
+
         $this->message = $message;
         $this->siteRole = $siteRole;
     }
