@@ -1,5 +1,5 @@
 import { Mirador } from '../src/frontend/shared/viewers/mirador.lazy';
-import React from 'react';
+import * as React from 'react';
 
 export default { title: 'Mirador viewer' };
 
