@@ -1,9 +1,10 @@
 import { stringify } from 'query-string';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+import { siteRoles } from '../../config';
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
 import {
   GlobalHeaderMenuContainer,
@@ -89,8 +90,30 @@ function useLoginRedirect(admin = false) {
   return `/s/${site.slug}${location.pathname}${queryKeys.length ? `?${stringify(query)}` : ''}`;
 }
 
+export const ViewRole: React.FC<{ role: string; site_role: string }> = ({ role, site_role }) => {
+  const { t } = useTranslation();
+
+  const siteRole = useMemo(() => {
+    return siteRoles.find(r => r.value.toLowerCase() === site_role.toLowerCase());
+  }, [site_role]);
+
+  if (role === 'global_admin') {
+    return <> ({t('Global admin')})</>;
+  }
+
+  if (!siteRole) {
+    return null;
+  }
+
+  if (site_role === 'viewer') {
+    return null;
+  }
+
+  return <> ({t(siteRole.label)})</>;
+};
+
 export const UserBar: React.FC<{
-  user?: { name: string; id: number; scope: string[] };
+  user?: { name: string; id: number; scope: string[]; role: string; site_role: string };
   admin?: boolean;
 }> = ({ user, admin }) => {
   const { t } = useTranslation();
@@ -143,7 +166,8 @@ export const UserBar: React.FC<{
         {user ? (
           <GlobalHeaderMenuContainer>
             <GlobalHeaderMenuLabel {...buttonProps}>
-              {user.name} <ArrowDownIcon style={{ fill: '#fff', fontSize: '1em', transform: 'translateY(2px)' }} />
+              {user.name} <ViewRole role={user.role} site_role={user.site_role} />{' '}
+              <ArrowDownIcon style={{ fill: '#fff', fontSize: '1em', transform: 'translateY(2px)' }} />
             </GlobalHeaderMenuLabel>
             <GlobalHeaderMenuList $visible={isOpen} role="menu">
               {admin ? (
