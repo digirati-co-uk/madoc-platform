@@ -75,8 +75,8 @@ export const deleteResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
     return;
   }
 
+  // Don't post an error here, it's possible they don't have a claim anymore.
   context.response.body = {
-    error: true,
     existingClaim,
     claim,
   };

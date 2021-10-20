@@ -72,7 +72,12 @@ export const TranscriberModeWorkflowBar: React.FC = () => {
 
   const [markAsTooDifficult, markDifficultStatus] = useMutation(async () => {
     if (projectId && manifestId) {
-      await api.revokeResourceClaimOnManifest(projectId, manifestId);
+      try {
+        await api.revokeResourceClaimOnManifest(projectId, manifestId);
+      } catch (e) {
+        console.log('Possible error');
+        console.log(e);
+      }
 
       push(createLink({ projectId }));
     }
