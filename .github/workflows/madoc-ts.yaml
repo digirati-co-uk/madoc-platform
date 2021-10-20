@@ -15,7 +15,7 @@ on:
       - "services/madoc-ts/webpack.config.js"
       - "services/madoc-ts/tsconfig.json"
   push:
-    branches: [v2]
+    branches: [main]
     paths:
       - ".github/workflows/madoc-ts.yaml"
       - "services/madoc-ts/src/**"

@@ -1,8 +1,11 @@
-name: Shared Postgres Docker (v2)
+name: Shared Postgres Docker
 
 on:
   push:
-    branches: [v2]
+    branches: ['main']
+    tags: ['v*']
+  pull_request:
+    branches: ['main']
     paths:
       - ".github/workflows/shared-postgres-docker.yaml"
       - "services/shared-database/Dockerfile"
@@ -19,6 +22,18 @@ jobs:
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ghcr.io/digirati-co-uk/madoc-postgres
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
 
       - name: Cache Docker layers
         uses: actions/cache@v2
@@ -42,10 +57,9 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: services/shared-postgres
-          push: true
-          tags: |
-            ghcr.io/digirati-co-uk/madoc-shared-postgres:${{ github.sha }}
-            ghcr.io/digirati-co-uk/madoc-shared-postgres:latest
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
