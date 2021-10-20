@@ -8,10 +8,11 @@ export const getSiteDetails: RouteMiddleware = async context => {
   const systemConfig = await context.siteManager.getSystemConfig();
   const site = await context.siteManager.getSiteById(siteId);
 
-  site.config = {
-    ...systemConfig,
-    ...site.config,
-  };
+  // Setting details.
+  site.config.autoPublishImport =
+    typeof site.config.autoPublishImport === 'undefined'
+      ? systemConfig.autoPublishImport
+      : site.config.autoPublishImport;
 
   if (!site || !site.slug) {
     throw new NotFound('Site not found');

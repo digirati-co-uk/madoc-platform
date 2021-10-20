@@ -69,7 +69,7 @@ const UserBarInstallation = styled.div`
   color: rgba(255, 255, 255, 0.5);
 `;
 
-function useLoginRedirect(admin = false) {
+export function useLoginRedirect(admin = false) {
   const site = useSite();
   const { location } = useHistory();
   const query = useLocationQuery();
@@ -90,10 +90,13 @@ function useLoginRedirect(admin = false) {
   return `/s/${site.slug}${location.pathname}${queryKeys.length ? `?${stringify(query)}` : ''}`;
 }
 
-export const ViewRole: React.FC<{ role: string; site_role: string }> = ({ role, site_role }) => {
+export const ViewRole: React.FC<{ role: string; site_role?: string }> = ({ role, site_role }) => {
   const { t } = useTranslation();
 
   const siteRole = useMemo(() => {
+    if (!site_role) {
+      return undefined;
+    }
     return siteRoles.find(r => r.value.toLowerCase() === site_role.toLowerCase());
   }, [site_role]);
 
@@ -113,7 +116,7 @@ export const ViewRole: React.FC<{ role: string; site_role: string }> = ({ role, 
 };
 
 export const UserBar: React.FC<{
-  user?: { name: string; id: number; scope: string[]; role: string; site_role: string };
+  user?: { name: string; id: number; scope: string[]; role: string; site_role?: string };
   admin?: boolean;
 }> = ({ user, admin }) => {
   const { t } = useTranslation();

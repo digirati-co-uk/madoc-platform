@@ -141,6 +141,7 @@ export const siteRoot: RouteMiddleware = async context => {
             emailActivation: true,
             enableRegistrations: false,
             enableNotifications: true,
+            autoPublishImport: system.autoPublishImport,
           },
         },
         createdUser.id,

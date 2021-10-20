@@ -1,7 +1,7 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Button } from '../navigation/Button';
 
-export const InfoMessage = styled.div.attrs(() => ({ 'data-cy': 'info-message' }))`
+export const InfoMessage = styled.div.attrs(() => ({ 'data-cy': 'info-message' }))<{ $wide?: boolean }>`
   background: #5476e9;
   color: #fff;
   width: 100%;
@@ -17,4 +17,12 @@ export const InfoMessage = styled.div.attrs(() => ({ 'data-cy': 'info-message' }
     border-color: #1136b8;
     color: #fff;
   }
+
+  ${props =>
+    props.$wide &&
+    css`
+      margin-left: -2em;
+      margin-right: -2em;
+      width: auto;
+    `}
 `;

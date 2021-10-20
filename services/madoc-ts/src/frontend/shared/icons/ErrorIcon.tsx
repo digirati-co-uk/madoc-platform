@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const ErrorIcon: React.FC<{ inline?: boolean; height?: number; className?: string; style: any }> = ({
+export const ErrorIcon: React.FC<{ inline?: boolean; height?: number; className?: string; style?: any }> = ({
   className,
   inline,
   height = 20,
