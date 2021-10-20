@@ -24,7 +24,7 @@ import { InternationalString } from '@hyperion-framework/types';
 import { useTranslation } from 'react-i18next';
 import { MetadataDefinition } from '../../../types/schemas/metadata-definition';
 import { EmptyInputValue } from '../../shared/form/Input';
-import { useApi } from '../../shared/hooks/use-api';
+import { useOptionalApi } from '../../shared/hooks/use-api';
 
 export type MetadataDiff = {
   added: Array<{ key: string; language: string; value: string }>;
@@ -330,7 +330,7 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
 }) => {
   const { t } = useTranslation();
   const [isFocused, setIsFocused] = useState(false);
-  const api = useApi();
+  const api = useOptionalApi();
   const [state, dispatch] = useReducer(metadataEditorReducer, { fields, key: metadataKey }, createInitialValues);
 
   // Computed values.
@@ -431,7 +431,7 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
     );
   }
 
-  const Component: typeof IntlMultiline = api.getIsServer() ? (IntlInput as any) : IntlMultiline;
+  const Component: typeof IntlMultiline = api && api.getIsServer() ? (IntlInput as any) : IntlMultiline;
 
   return (
     <MetadataEditorContainer enabled={!disabled} fluid={fluid}>

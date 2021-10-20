@@ -27,9 +27,11 @@ export const Register: React.FC = () => {
     name?: string;
     email?: string;
     registerSuccess?: boolean;
+    noEmail?: boolean;
   }>();
 
   const didError = form?.emailError || form?.unknownError;
+  const noEmail = form?.noEmail;
 
   useEffect(() => {
     if (user) {
@@ -52,7 +54,11 @@ export const Register: React.FC = () => {
       <div>
         <LoginContainer>
           <Heading1 $margin>{t('Register')}</Heading1>
-          <p>{t('We have sent you an email with a link to complete your registration.')}</p>
+          {noEmail ? (
+            <p>{t('Thank you for registering, an administrator will be in touch.')}</p>
+          ) : (
+            <p>{t('We have sent you an email with a link to complete your registration.')}</p>
+          )}
         </LoginContainer>
       </div>
     );

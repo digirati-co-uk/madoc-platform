@@ -1,3 +1,4 @@
+import { generateId } from '@capture-models/helpers';
 import { v4 } from 'uuid';
 import { createUserActivationEmail, createUserActivationText } from '../../emails/user-activation-email';
 import { gatewayHost } from '../../gateway/api.server';
@@ -127,6 +128,32 @@ export const registerPage: RouteMiddleware = async (context, next) => {
       });
     } catch (e) {
       // unknown email error.
+      context.reactFormResponse.noEmail = true;
+      try {
+        const siteAdmins = await context.siteManager.getUsersByRoles(site.id, ['admin'], true);
+        for (const admin of siteAdmins) {
+          try {
+            await context.notifications.addNotification(
+              {
+                id: generateId(),
+                title: `User registered`,
+                summary: `${createdUser.name}: We were not able to send an email to this user. You can activate or generate password reset links.`,
+                action: {
+                  id: 'user:admin',
+                  link: `urn:madoc:user:${createdUser.id}`,
+                },
+                user: admin.id,
+              },
+              site.id
+            );
+          } catch (err) {
+            console.log('Not able to send notification');
+            console.log(err);
+          }
+        }
+      } catch (err) {
+        console.log('Unable to list site admins');
+      }
     }
 
     context.reactFormResponse.registerSuccess = true;

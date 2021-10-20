@@ -5,9 +5,11 @@ import { globalRoles } from '../../../config';
 import { Button, ButtonRow } from '../../../shared/navigation/Button';
 import { DefaultSelect } from '../../../shared/form/DefaulSelect';
 import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
+import { WarningMessage } from '../../../shared/callouts/WarningMessage';
 import { Input, InputContainer, InputLabel } from '../../../shared/form/Input';
 import { useApi } from '../../../shared/hooks/use-api';
 import { WidePage } from '../../../shared/layout/WidePage';
+import { HrefLink } from '../../../shared/utility/href-link';
 import { AdminHeader } from '../../molecules/AdminHeader';
 
 export const CreateUser: React.FC = () => {
@@ -24,8 +26,49 @@ export const CreateUser: React.FC = () => {
       role,
     });
 
+    if (user.emailError || user.verificationLink) {
+      // Show error + link that can be manually sent to user
+      return user;
+    }
+
     push(`/global/users/${user.id}`);
   });
+
+  if (createUserStatus.isSuccess && createUserStatus.data) {
+    const user = createUserStatus.data;
+    return (
+      <>
+        <AdminHeader
+          title="Create user"
+          breadcrumbs={[
+            { label: 'Site admin', link: '/' },
+            { label: 'Users', link: '/global/users' },
+            { label: 'Create user', link: '/global/users/create', active: true },
+          ]}
+        />
+        <WidePage>
+          <h3>
+            User <strong>{user.name}</strong> created.
+          </h3>
+          {user.emailError ? <WarningMessage>We could not send an email to the user</WarningMessage> : null}
+          <p>
+            Here is a link you can send to the user you created, so they can choose a password and login.
+            <br />
+            <br />
+            <br />
+            <div>
+              <code>{user.verificationLink}</code>
+            </div>
+          </p>
+          <ButtonRow>
+            <Button $primary as={HrefLink} href={`/global/users/${user.id}`}>
+              Go to user
+            </Button>
+          </ButtonRow>
+        </WidePage>
+      </>
+    );
+  }
 
   return (
     <>
@@ -66,7 +109,7 @@ export const CreateUser: React.FC = () => {
 
         <ButtonRow>
           <Button $primary onClick={() => createUser()} disabled={createUserStatus.isLoading}>
-            Save changes
+            Create user
           </Button>
         </ButtonRow>
       </WidePage>

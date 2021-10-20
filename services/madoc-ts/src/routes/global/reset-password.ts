@@ -5,8 +5,10 @@ import { RouteMiddleware } from '../../types/route-middleware';
 import { passwordHash } from '../../utility/php-password-hash';
 import { onlyGlobalAdmin } from '../../utility/user-with-scope';
 
-export const resetPassword: RouteMiddleware<{ userId: string }> = async context => {
+export const resetPassword: RouteMiddleware<{ userId: string }, { skipEmail?: boolean }> = async context => {
   const { siteId } = await onlyGlobalAdmin(context);
+
+  const { skipEmail } = context.requestBody || {};
 
   const site = await context.siteManager.getSiteById(siteId);
 
@@ -24,17 +26,32 @@ export const resetPassword: RouteMiddleware<{ userId: string }> = async context 
 
   const route = context.routes.url('reset-password', { slug: site.slug }, { query: `?c1=${codeForUser}&c2=${idHash}` });
 
-  const vars = {
-    resetLink: `${gatewayHost}${route}`,
-    installationTitle: systemConfig.installationTitle,
-    username: user.name,
-  };
+  if (skipEmail) {
+    context.response.status = 200;
+    context.response.body = {
+      accepted: false,
+      verificationLink: `${gatewayHost}${route}`,
+    };
+    return;
+  } else {
+    try {
+      const vars = {
+        resetLink: `${gatewayHost}${route}`,
+        installationTitle: systemConfig.installationTitle,
+        username: user.name,
+      };
 
-  await context.mailer.sendMail(user.email, {
-    subject: `Password reset`,
-    text: createResetPasswordText(vars),
-    html: createResetPasswordEmail(vars),
-  });
-
-  context.response.body = { accepted: true };
+      await context.mailer.sendMail(user.email, {
+        subject: `Password reset`,
+        text: createResetPasswordText(vars),
+        html: createResetPasswordEmail(vars),
+      });
+    } catch (e) {
+      context.response.status = 200;
+      context.response.body = {
+        accepted: false,
+        verificationLink: `${gatewayHost}${route}`,
+      };
+    }
+  }
 };

@@ -197,6 +197,14 @@ export const useNotificationLink = (
     }
   }
 
+  if (actionLink?.type === 'user') {
+    if (isAdmin) {
+      return { link: `/global/users/${actionLink.id}` };
+    }
+
+    return { link: `/s/${site.slug}/admin/global/users/${actionLink.id}`, isExternal: true };
+  }
+
   return { link: null };
 };
 

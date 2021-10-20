@@ -82,10 +82,14 @@ export class SiteManagerExtension implements BaseExtension {
     return this.api.request<UserInvitation>(`/api/madoc/manage-site/invitations/${invitationId}`);
   }
 
-  async resetPassword(userId: number) {
-    return this.api.request(`/api/madoc/users/${userId}/reset-password`, {
-      method: 'POST',
-    });
+  async resetPassword(userId: number, body: { skipEmail?: boolean } = {}) {
+    return this.api.request<{ accepted: true } | { accepted: false; verificationLink: string }>(
+      `/api/madoc/users/${userId}/reset-password`,
+      {
+        method: 'POST',
+        body,
+      }
+    );
   }
 
   async createInvitation(req: UserInvitationPostBody) {
@@ -109,7 +113,7 @@ export class SiteManagerExtension implements BaseExtension {
   }
 
   async createUser(req: UserCreationRequest) {
-    return this.api.request<User>(`/api/madoc/users`, {
+    return this.api.request<User & { verificationLink?: string; emailError?: boolean }>(`/api/madoc/users`, {
       method: 'POST',
       body: req,
     });

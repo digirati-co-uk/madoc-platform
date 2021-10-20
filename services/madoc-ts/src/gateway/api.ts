@@ -360,7 +360,7 @@ export class ApiClient {
         throw new NotFound(`${method} ${endpoint} not found`);
       }
 
-      if (response.data.error === 'There was a problem proxying the request') {
+      if (response.status === 502) {
         this.isDown = true;
         for (const err of this.errorHandlers) {
           err();

@@ -91,6 +91,7 @@ export type UserCreationRequest = {
   email: string;
   name: string;
   role: string;
+  skipEmail?: boolean;
 };
 
 /**

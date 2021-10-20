@@ -15,10 +15,10 @@ export const WidePageWrapper = styled.div<{ $noPadding?: boolean }>`
     `}
 `;
 
-export const WidePage: typeof WidePageWrapper = ((props: any) => {
+export const WidePage: React.FC<Partial<React.ComponentProps<typeof WidePageWrapper>>> = (props: any) => {
   return (
     <ErrorBoundary>
       <WidePageWrapper {...props} />
     </ErrorBoundary>
   );
-}) as typeof WidePageWrapper;
+};

@@ -33,21 +33,28 @@ export const createUser: RouteMiddleware<unknown, UserCreationRequest> = async c
     { query: `?c1=${codeForUser}&c2=${idHash}` }
   );
 
-  try {
-    const systemConfig = await context.siteManager.getSystemConfig();
-    const vars = {
-      resetLink: `${gatewayHost}${route}`,
-      installationTitle: systemConfig.installationTitle,
-      username: createdUser.name,
-    };
+  if (user.skipEmail) {
+    // We want to return the link to activate for the administrator to share with the user.
+    (createdUser as any).verificationLink = `${gatewayHost}${route}`;
+  } else {
+    try {
+      const systemConfig = await context.siteManager.getSystemConfig();
+      const vars = {
+        resetLink: `${gatewayHost}${route}`,
+        installationTitle: systemConfig.installationTitle,
+        username: createdUser.name,
+      };
 
-    await context.mailer.sendMail(createdUser.email, {
-      subject: `Activate your account`,
-      text: createUserActivationText(vars),
-      html: createUserActivationEmail(vars),
-    });
-  } catch (e) {
-    // unknown email error.
+      await context.mailer.sendMail(createdUser.email, {
+        subject: `Activate your account`,
+        text: createUserActivationText(vars),
+        html: createUserActivationEmail(vars),
+      });
+    } catch (e) {
+      (createdUser as any).emailError = true;
+      (createdUser as any).verificationLink = `${gatewayHost}${route}`;
+      // unknown email error.
+    }
   }
 
   context.response.body = createdUser;
