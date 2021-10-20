@@ -539,6 +539,7 @@ export class SiteUserRepository extends BaseRepository {
       enableNotifications: true,
       emailActivation: true,
       defaultSite: null,
+      autoPublishImport: true,
     };
 
     const global = await this.connection.any(SiteUserRepository.query.getSystemConfig());

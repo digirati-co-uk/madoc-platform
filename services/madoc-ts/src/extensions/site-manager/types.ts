@@ -1,4 +1,4 @@
-import { InternationalString } from '@hyperion-framework/types/iiif/descriptive';
+import { InternationalString } from '@hyperion-framework/types';
 
 export type Site = {
   id: number;
@@ -16,11 +16,13 @@ export type SiteSystemConfig = {
   enableRegistrations: boolean;
   emailActivation: boolean;
   enableNotifications: boolean;
+  autoPublishImport: boolean;
 };
 
 export type SystemConfig = {
   installationTitle: string;
   defaultSite: string | null;
+  autoPublishImport: boolean | null;
 } & SiteSystemConfig;
 
 export type CreateSiteRequest = {

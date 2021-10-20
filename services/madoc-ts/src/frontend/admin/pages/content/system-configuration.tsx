@@ -13,6 +13,11 @@ const systemConfigModel = {
     type: 'checkbox-field',
     inlineLabel: 'Allow users to register to the site',
   },
+  autoPublishImport: {
+    label: 'Auto publish',
+    type: 'checkbox-field',
+    inlineLabel: 'Automatically publish manifest after importing',
+  },
 };
 
 export const SiteSystemConfiguration: React.FC = () => {

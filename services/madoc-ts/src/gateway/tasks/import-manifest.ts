@@ -239,13 +239,16 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         }
       );
 
-      if (siteId) {
-        // Also available through the API:
-        // await userApi.batchIndexResources([{ type: 'manifest', id: task.state.resourceId }], { recursive: true });
-        await userApi.newTask(
-          createSearchIndexTask([{ type: 'manifest', id: task.state.resourceId }], siteId, { recursive: true }),
-          taskId
-        );
+      if (site) {
+        if (site.config.autoPublishImport) {
+          await userApi.publishManifest(task.state.resourceId);
+          // Also available through the API:
+          // await userApi.batchIndexResources([{ type: 'manifest', id: task.state.resourceId }], { recursive: true });
+          await userApi.newTask(
+            createSearchIndexTask([{ type: 'manifest', id: task.state.resourceId }], site.id, { recursive: true }),
+            taskId
+          );
+        }
       }
 
       // Update task.

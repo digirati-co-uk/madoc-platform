@@ -179,6 +179,14 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       // 5. Update the task.
       await api.updateTask(taskId, changeStatus('done'));
 
+      // 5.1
+      if (siteId) {
+        const site = await userApi.getSiteDetails(siteId);
+        if (site.config.autoPublishImport) {
+          await userApi.publishCollection(task.state.resourceId);
+        }
+      }
+
       // 6. Notify user.
       if (!task.parent_task) {
         await userApi.notifications.createNotification({

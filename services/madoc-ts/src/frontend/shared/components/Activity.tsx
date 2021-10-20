@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactTimeago from 'react-timeago';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { ChangeDiscoveryActivity } from '../../../activity-streams/change-discovery-types';
 import { parseUrn } from '../../../utility/parse-urn';
 import { HrefLink } from '../utility/href-link';
@@ -75,23 +75,31 @@ const ActivityLink = styled.a`
   color: #999;
 `;
 
-const ActivityActions = styled.div`
+export const ActivityActions = styled.div`
   display: flex;
   padding: 0.5em 0;
   font-size: 0.7em;
 `;
 
-const ActivityAction = styled.a`
+export const ActivityAction = styled.a<{ $disabled?: boolean }>`
   margin-right: 1em;
   padding: 0.4em 0.8em;
   background: #e4e7f1;
   border-radius: 3px;
   color: #333;
   text-decoration: none;
+  cursor: pointer;
 
   &:hover {
     background: #cfd4e5;
   }
+
+  ${props =>
+    props.$disabled &&
+    css`
+      opacity: 0.8;
+      pointer-events: none;
+    `}
 `;
 
 const ActivityTime = styled.div`
