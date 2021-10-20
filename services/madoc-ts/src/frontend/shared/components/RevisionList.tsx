@@ -39,10 +39,18 @@ const RevisionLabel = styled.div`
   font-weight: bold;
 `;
 
+const RevisionListTitle = styled.div`
+  text-transform: uppercase;
+  font-size: 0.65em;
+  color: #666;
+  margin-bottom: 1em;
+  font-weight: 600;
+`;
+
 const statusColours: { [key in StatusTypes]: string } = {
-  accepted: '#ccc',
-  draft: '#ffc63f',
-  submitted: '#337c34',
+  accepted: '#337c34',
+  draft: '#4a67e4',
+  submitted: '#ffc63f',
 };
 
 const RevisionStatus = styled.div<{ $status?: RevisionRequest['revision']['status'] }>`
@@ -133,12 +141,14 @@ export const RevisionListItem: React.FC<{ revision: RevisionRequest; editable?: 
   );
 };
 
-export const RevisionList: React.FC<{ revisions: RevisionRequest[]; editable?: boolean }> = ({
+export const RevisionList: React.FC<{ revisions: RevisionRequest[]; editable?: boolean; title?: string }> = ({
   revisions,
   editable,
+  title,
 }) => {
   return (
     <RevisionListContainer>
+      {title && revisions.length ? <RevisionListTitle>{title}</RevisionListTitle> : null}
       {revisions.map(rev => {
         return <RevisionListItem key={rev.revision.id} editable={editable} revision={rev} />;
       })}

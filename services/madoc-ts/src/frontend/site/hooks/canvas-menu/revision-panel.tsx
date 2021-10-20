@@ -22,6 +22,7 @@ const ViewRevisions = memo(
 
     const [myUnpublished, setMyUnpublished] = useState<RevisionRequest[]>([]);
     const [mySubmitted, setMySubmitted] = useState<RevisionRequest[]>([]);
+    const [myAcceptedRevisions, setMyAcceptedRevisions] = useState<RevisionRequest[]>([]);
 
     useEffect(() => {
       setMySubmitted([]);
@@ -40,15 +41,21 @@ const ViewRevisions = memo(
       }
     }, [mySubmitted.length, revisions.mySubmitted]);
 
-    if (myUnpublished.length === 0 && mySubmitted.length === 0) {
+    useEffect(() => {
+      if (revisions.myAcceptedRevisions.length !== myAcceptedRevisions.length) {
+        setMyAcceptedRevisions(revisions.myAcceptedRevisions);
+      }
+    }, [myAcceptedRevisions.length, revisions.myAcceptedRevisions]);
+
+    if (myUnpublished.length === 0 && mySubmitted.length === 0 && myAcceptedRevisions.length === 0) {
       return <EmptyState>{t('No submissions yet')}</EmptyState>;
     }
 
     return (
-      <div style={{ padding: 10 }}>
-        <RevisionList revisions={myUnpublished} editable />
-
-        <RevisionList revisions={mySubmitted} />
+      <div style={{ padding: '0 .5em' }}>
+        <RevisionList title={t('Drafts')} revisions={myUnpublished} editable />
+        <RevisionList title={t('In review')} revisions={mySubmitted} />
+        <RevisionList title={t('Approved')} revisions={myAcceptedRevisions} />
       </div>
     );
   },
