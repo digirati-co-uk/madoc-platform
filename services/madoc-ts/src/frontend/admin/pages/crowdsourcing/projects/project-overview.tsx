@@ -1,5 +1,5 @@
 import React from 'react';
-import { useMutation } from 'react-query';
+import { queryCache, useMutation } from 'react-query';
 import { Button, ButtonRow } from '../../../../shared/navigation/Button';
 import { getStatusMapItem, ProjectStatus } from '../../../../shared/atoms/ProjectStatus';
 import { SubtaskProgress } from '../../../../shared/atoms/SubtaskProgress';
@@ -16,6 +16,7 @@ export const ProjectOverview: React.FC<{ project: ProjectFull; refetch: () => Pr
   const template = useProjectTemplate(project?.template);
   const [updateStatus, { isLoading }] = useMutation(async (newStatus: number) => {
     await api.updateProjectStatus(project.id, newStatus);
+    await queryCache.invalidateQueries(['get-project', { id: Number(project.id) }]);
     await refetch();
   });
   const statusMapping = template?.configuration?.status?.statusMap || {};
