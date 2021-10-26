@@ -2808,10 +2808,10 @@
     screenfull "^3.3.2"
     whatwg-fetch "^3.0.0"
 
-"@capture-models/editor@^0.13.18":
-  version "0.13.18"
-  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.13.18.tgz#373132dc5e33a28c7decd5d449d62955f55d7fed"
-  integrity sha512-vepEGch/e7g5sqPD6sURu9TGAsEb4ZOEfou3zuRLT/mcap1sZOxiWaWjmMO7xmWb/crztvQcFUf5lgpGStjTfg==
+"@capture-models/editor@^0.13.20":
+  version "0.13.20"
+  resolved "https://registry.yarnpkg.com/@capture-models/editor/-/editor-0.13.20.tgz#d7d316dce2e8b6aeda1183b31631e62d0716f797"
+  integrity sha512-xrRn0f6+YY2VDGFq9Hb+pWBE8JlIkd3orM9RHOpRKgDcfCokD4eKuOHvgPF5eSAYjPFj27MXJkX1t/OVnNDTMg==
   dependencies:
     "@atlas-viewer/atlas" "^1.6.8"
     "@capture-models/helpers" "^0.13.14"
@@ -2822,7 +2822,7 @@
     "@iiif/vocabulary" "1.0.18"
     "@styled-icons/entypo" "^10.0.0"
     "@styled-icons/styled-icon" "^10.0.0"
-    canvas-panel-beta "2.0.0"
+    canvas-panel-beta "2.0.6"
     draft-js "^0.11.6"
     draft-js-export-html "^1.4.1"
     draft-js-import-element "^1.4.0"
@@ -7514,7 +7514,7 @@ caniuse-lite@^1.0.30001135:
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001148.tgz#dc97c7ed918ab33bf8706ddd5e387287e015d637"
   integrity sha512-E66qcd0KMKZHNJQt9hiLZGE3J4zuTqE1OnU53miEVtylFbwOEmeA5OsRu90noZful+XGSQOni1aT2tiqu/9yYw==
 
-canvas-panel-beta@2.0.0, canvas-panel-beta@2.0.2:
+canvas-panel-beta@2.0.2, canvas-panel-beta@2.0.6:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/canvas-panel-beta/-/canvas-panel-beta-2.0.2.tgz#ba930793e09f88f6572d8384e806e17b96e5d5b6"
   integrity sha512-bq+DIpdYSCXBymyzQgIM76Uc1muYs0FosD0xq6LeKs0Lz7jvp9Ws/ZWYulg6jte4c2DTWBAZjEnW+QvpqZI7yQ==
