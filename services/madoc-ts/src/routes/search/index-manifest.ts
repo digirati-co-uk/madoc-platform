@@ -54,6 +54,8 @@ export const indexManifest: RouteMiddleware<{ id: string }> = async context => {
   const searchPayload = {
     id: `urn:madoc:manifest:${manifestId}`,
     type: 'Manifest',
+    cascade: false,
+    cascade_canvases: false,
     resource: {
       ...manifest,
       id: `http://madoc.dev/urn:madoc:manifest:${manifestId}`,

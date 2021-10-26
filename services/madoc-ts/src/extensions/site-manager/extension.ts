@@ -71,7 +71,7 @@ export class SiteManagerExtension implements BaseExtension {
   }
 
   async searchAllUsers(q: string) {
-    return this.api.request<{ users: User[] }>(`/api/madoc/manage-site/users/search?${stringify({ q })}`);
+    return this.api.request<{ users: User[] }>(`/api/madoc/users/search?${stringify({ q })}`);
   }
 
   async listInvitations() {

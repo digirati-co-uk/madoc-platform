@@ -2,6 +2,7 @@ import { getAuthRoutes } from './auth';
 import { deleteApiKey } from './routes/admin/delete-api-key';
 import { keyRegenerate } from './routes/admin/key-regenerate';
 import { listApiKeys } from './routes/admin/list-api-keys';
+import { searchAllUsers } from "./routes/global/search-all-users";
 import { siteRoot } from './routes/root';
 import {
   assignUserToDelegatedRequest,
@@ -234,6 +235,7 @@ export const router = new TypedRouter({
   'site-admin-create-site': [TypedRouter.POST, '/api/madoc/sites', createSite],
 
   // Manage all users
+  'global-search-user': [TypedRouter.GET, '/api/madoc/users/search', searchAllUsers],
   'global-list-all-users': [TypedRouter.GET, '/api/madoc/users', listAllUsers],
   'global-get-user': [TypedRouter.GET, '/api/madoc/users/:userId', getUser],
   'global-put-user': [TypedRouter.PUT, '/api/madoc/users/:userId', updateUser],
@@ -248,9 +250,9 @@ export const router = new TypedRouter({
   // Manage users (on site)
   'site-admin-list-all-site-users': [TypedRouter.GET, '/api/madoc/manage-site/users', getSiteUsers],
   // User API.
+  'manage-site-all-users': [TypedRouter.GET, '/api/madoc/manage-site/users/search', userAutocomplete],
   'site-admin-get-user': [TypedRouter.GET, '/api/madoc/manage-site/users/:userId', getSiteUser],
   'manage-site-set-user-role': [TypedRouter.POST, '/api/madoc/manage-site/users/:userId/role', updateUserSiteRole],
-  'manage-site-all-users': [TypedRouter.GET, '/api/madoc/manage-site/users/search', userAutocomplete],
   'manage-site-delete-user-role': [TypedRouter.DELETE, '/api/madoc/manage-site/users/:userId/role', deleteUserSiteRole],
   'manage-site-details': [TypedRouter.PUT, '/api/madoc/manage-site/details', updateSiteDetails],
 

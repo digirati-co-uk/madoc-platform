@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
-import { useApi } from './use-api';
+import { useApi, useOptionalApi } from './use-api';
 import { useSite } from './use-site';
 
 export function useProjectTemplates() {
-  const api = useApi();
+  const api = useOptionalApi();
   const site = useSite();
 
-  return useMemo(() => api.projectTemplates.getAllDefinitions(site.id), [api, site]);
+  return useMemo(() => (api ? api.projectTemplates.getAllDefinitions(site.id) : []), [api, site]);
 }

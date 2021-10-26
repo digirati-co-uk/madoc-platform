@@ -13,7 +13,7 @@ import { WidePage } from '../../../shared/layout/WidePage';
 export const ListApiKeys: React.FC = () => {
   const { t } = useTranslation();
   const api = useApi();
-  const { data, refetch } = useQuery(['list-api-keys'], () => {
+  const { data, refetch } = useQuery(['list-api-keys', {}], () => {
     return api.listApiKeys();
   });
 

@@ -184,10 +184,9 @@ export class SiteUserRepository extends BaseRepository {
         from "user" u 
           left join site_permission sp 
               on u.id = sp.user_id 
-        where sp.role is not null 
-          ${q ? sql`and (u.email ilike ${query} or u.name ilike ${query})` : SQL_EMPTY}  
-          and sp.site_id = ${siteId} 
-          ${roles.length ? sql`and sp.role = ANY(${sql.array(roles, 'text')})` : SQL_EMPTY}
+        where sp.site_id = ${siteId} 
+          ${q ? sql`and (u.email ilike ${query} or u.name ilike ${query})` : SQL_EMPTY}   
+          ${roles.length ? sql`and sp.role = ANY(${sql.array(roles, 'text')}) and sp.role is not null` : SQL_EMPTY}
         group by u.id, sp.user_id, sp.role limit 50
       `;
     },
