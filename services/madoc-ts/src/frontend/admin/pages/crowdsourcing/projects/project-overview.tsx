@@ -4,7 +4,7 @@ import { Button, ButtonRow } from '../../../../shared/navigation/Button';
 import { getStatusMapItem, ProjectStatus } from '../../../../shared/atoms/ProjectStatus';
 import { SubtaskProgress } from '../../../../shared/atoms/SubtaskProgress';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../../../shared/atoms/Statistics';
-import { ProjectFull } from '../../../../../types/schemas/project-full';
+import { ProjectFull } from '../../../../../types/project-full';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useProjectTemplate } from '../../../../shared/hooks/use-project-template';
 

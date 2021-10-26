@@ -1,5 +1,5 @@
 import { sql } from 'slonik';
-import { Project } from '../types/schemas/project-full';
+import { Project } from '../types/project-full';
 import { getMetadata } from '../utility/iiif-database-helpers';
 import { mapMetadata } from '../utility/iiif-metadata';
 import { parseProjectId } from '../utility/parse-project-id';

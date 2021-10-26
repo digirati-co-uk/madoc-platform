@@ -1,6 +1,6 @@
 import { Response } from 'cross-fetch';
 import { ConfigResponse } from '../src/types/schemas/config-response';
-import { ProjectFull } from '../src/types/schemas/project-full';
+import { ProjectFull } from '../src/types/project-full';
 
 export type ApiMockEndpoint = {
   response: any;

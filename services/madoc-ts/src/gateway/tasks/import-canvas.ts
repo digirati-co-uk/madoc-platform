@@ -98,11 +98,11 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
             behavior: canvas.behavior || undefined,
             rights: canvas.rights || undefined,
             navDate: canvas.navDate || undefined,
-            homepage: canvas.homepage ? vault.fromRef<ContentResource>(canvas.homepage) : undefined,
-            logo: canvas.logo ? vault.allFromRef<ContentResource>(canvas.logo) : undefined,
+            homepage: canvas.homepage ? vault.fromRef(canvas.homepage) : undefined,
+            logo: canvas.logo ? vault.allFromRef(canvas.logo) : undefined,
             partOf: canvas.partOf ? canvas.partOf : undefined,
-            rendering: canvas.rendering ? vault.allFromRef<ContentResource>(canvas.rendering) : undefined,
-            seeAlso: canvas.seeAlso ? vault.allFromRef<ContentResource>(canvas.seeAlso) : undefined,
+            rendering: canvas.rendering ? vault.allFromRef(canvas.rendering) : undefined,
+            seeAlso: canvas.seeAlso ? vault.allFromRef(canvas.seeAlso) : undefined,
             service: canvas.service,
           } as any;
         } catch (err) {

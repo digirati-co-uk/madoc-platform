@@ -630,7 +630,7 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
       !canUserClaimCanvas({
         config,
         parentTask: parent,
-        manifestClaim,
+        manifestClaim: manifestClaim as any,
         userId,
         revisionId: claim.revisionId,
       })

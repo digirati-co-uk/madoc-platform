@@ -1,6 +1,6 @@
 import { InternationalString } from '@hyperion-framework/types';
-import { ProjectTemplate, ProjectTemplateConfig } from '../../extensions/projects/types';
-import { ProjectConfiguration } from './project-configuration';
+import { ProjectTemplate, ProjectTemplateConfig } from '../extensions/projects/types';
+import { ProjectConfiguration } from './schemas/project-configuration';
 
 export type Project<Template extends ProjectTemplate = never> = {
   id: number;

@@ -5,7 +5,7 @@ import { CrowdsourcingReview } from '../../../../gateway/tasks/crowdsourcing-rev
 import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
 import { CanvasFull } from '../../../../types/canvas-full';
 import { ManifestFull } from '../../../../types/schemas/manifest-full';
-import { ProjectFull } from '../../../../types/schemas/project-full';
+import { ProjectFull } from '../../../../types/project-full';
 import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
 import { ApiArgs, apiHooks } from '../../../shared/hooks/use-api-query';
 import { useData } from '../../../shared/hooks/use-data';

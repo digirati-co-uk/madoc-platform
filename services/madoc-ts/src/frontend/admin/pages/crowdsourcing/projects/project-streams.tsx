@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { madocStreams } from '../../../../../activity-streams/madoc-streams';
-import { ProjectFull } from '../../../../../types/schemas/project-full';
+import { ProjectFull } from '../../../../../types/project-full';
 import { Button } from '../../../../shared/navigation/Button';
 import { EmptyState } from '../../../../shared/layout/EmptyState';
 import { SystemBackground } from '../../../../shared/atoms/SystemUI';

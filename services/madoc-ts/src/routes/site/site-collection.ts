@@ -37,7 +37,7 @@ function combineStatuses(
     }
   }
 
-  for (const subject of allSubjects.values()) {
+  allSubjects.forEach(subject => {
     const userStatus = userSubjectMap[subject];
     const projectStatus = projectSubjectMap[subject];
 
@@ -47,7 +47,7 @@ function combineStatuses(
         subject,
         status: 3,
       });
-      continue;
+      return;
     }
 
     // If the users submitted or completed item [done]
@@ -56,7 +56,7 @@ function combineStatuses(
         subject,
         status: 3,
       });
-      continue;
+      return;
     }
 
     // Assigned to the user.
@@ -65,7 +65,7 @@ function combineStatuses(
         subject,
         status: 2,
       });
-      continue;
+      return;
     }
 
     // If the users not assigned and its unavailable, mark as "done"
@@ -74,7 +74,7 @@ function combineStatuses(
         subject,
         status: 3,
       });
-      continue;
+      return;
     }
 
     // Available for working on.
@@ -84,7 +84,7 @@ function combineStatuses(
         status: 1,
       });
     }
-  }
+  });
 
   return combinedStatues;
 }

@@ -1,5 +1,6 @@
 import { Revisions } from '@capture-models/editor';
 import { isEntity } from '@capture-models/helpers';
+import { BaseField } from '@capture-models/types';
 
 export function useCurrentField() {
   const { field, property, parentEntity, subtreePath } = Revisions.useStoreState(s => {
@@ -18,7 +19,7 @@ export function useCurrentField() {
   }
 
   return [
-    field,
+    field as BaseField,
     {
       property,
       parentEntity,
