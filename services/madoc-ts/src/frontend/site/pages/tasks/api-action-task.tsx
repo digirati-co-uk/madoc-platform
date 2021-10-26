@@ -77,6 +77,20 @@ export const ViewApiActionTask: React.FC<{ task: ApiActionTask; refetch: () => P
     throw new Error('No id');
   });
 
+  const [rejectRequest, rejectRequestStatus] = useMutation<any>(async () => {
+    if (task.id) {
+      const response = await api.updateTask(task.id, {
+        status: -1,
+        status_text: 'Rejected',
+      });
+
+      await refetch();
+
+      return response;
+    }
+    throw new Error('No id');
+  });
+
   if (!definition) {
     return <div>Invalid action</div>;
   }
@@ -105,23 +119,37 @@ export const ViewApiActionTask: React.FC<{ task: ApiActionTask; refetch: () => P
 
       <p style={{ maxWidth: 650 }}>{task.description}</p>
 
-      <ButtonRow>
-        <Button
-          disabled={!(task.status === 0 || task.status === 1) || runRequestStatus.isLoading}
-          $primary
-          onClick={() => runRequest()}
-        >
-          Execute this request
-        </Button>
-
-        {task.status === -1 ? (
-          <Button disabled={runRequestStatus.isLoading} $primary onClick={() => runRequest()}>
-            Retry this request
+      {task.status === -1 && task.status_text === 'Rejected' ? (
+        <ErrorMessage $banner>This request has been rejected</ErrorMessage>
+      ) : (
+        <ButtonRow>
+          <Button
+            disabled={
+              !(task.status === 0 || task.status === 1) || runRequestStatus.isLoading || rejectRequestStatus.isLoading
+            }
+            $primary
+            onClick={() => runRequest()}
+          >
+            Execute this request
           </Button>
-        ) : null}
-      </ButtonRow>
 
-      <hr />
+          <Button
+            disabled={
+              !(task.status === 0 || task.status === 1) || rejectRequestStatus.isLoading || runRequestStatus.isLoading
+            }
+            $error
+            onClick={() => rejectRequest()}
+          >
+            Reject this request
+          </Button>
+
+          {task.status === -1 ? (
+            <Button disabled={runRequestStatus.isLoading} $primary onClick={() => runRequest()}>
+              Retry this request
+            </Button>
+          ) : null}
+        </ButtonRow>
+      )}
 
       <h3>API Request details</h3>
 

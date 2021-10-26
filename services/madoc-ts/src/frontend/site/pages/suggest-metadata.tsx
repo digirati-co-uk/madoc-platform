@@ -27,6 +27,7 @@ export const SuggestMetadata: React.FC = () => {
   const { t } = useTranslation();
   const createLink = useRelativeLinks();
   const config = useMetadataSuggestionConfiguration();
+  const canSuggest = user && user.scope.indexOf('models.contribute') !== -1;
 
   const { data: canvasRequest } = apiHooks.getSiteCanvasMetadata(() => (canvasId ? [canvasId] : undefined));
   const { data: manifestRequest } = apiHooks.getSiteManifestMetadata(() =>
@@ -112,7 +113,7 @@ export const SuggestMetadata: React.FC = () => {
     }
   });
 
-  if (!user) {
+  if (!user || !canSuggest) {
     return <Redirect to={createLink({ subRoute: '' })} />;
   }
 
