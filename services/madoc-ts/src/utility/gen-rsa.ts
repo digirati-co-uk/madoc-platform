@@ -1,11 +1,16 @@
 import { generateKeyPairSync, RSAKeyPairOptions } from 'crypto';
 import { existsSync, writeFileSync } from 'fs';
+import mkdirp from 'mkdirp';
 import * as path from 'path';
 import { OPEN_SSL_KEY_PATH } from '../paths';
 import { clearPemCache } from './get-pem';
 import { syncJwtRequests } from './sync-jwt-requests';
 
 export async function genRSA(force = false) {
+  if (!existsSync(OPEN_SSL_KEY_PATH)) {
+    await mkdirp(OPEN_SSL_KEY_PATH);
+  }
+
   const publicKeyFile = path.join(OPEN_SSL_KEY_PATH, 'madoc.pub');
   const privateKeyFile = path.join(OPEN_SSL_KEY_PATH, 'madoc.key');
 
