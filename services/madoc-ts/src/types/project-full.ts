@@ -10,8 +10,8 @@ export type Project<Template extends ProjectTemplate = never> = {
   task_id: string;
   label: InternationalString;
   summary: InternationalString;
-  template: Template['type'];
-  template_config: ProjectTemplateConfig<Template>;
+  template?: Template['type'];
+  template_config?: ProjectTemplateConfig<Template>;
   status: number;
 };
 
