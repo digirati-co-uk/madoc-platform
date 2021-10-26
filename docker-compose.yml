@@ -173,5 +173,5 @@ services:
       - shared-postgres
 
   okra:
-    image: digirati/okra:cf88584
+    image: digirati/okra:latest
 
