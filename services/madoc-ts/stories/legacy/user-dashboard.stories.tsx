@@ -2,10 +2,10 @@ import { boolean } from '@storybook/addon-knobs';
 import { useState } from 'react';
 import * as React from 'react';
 import styled from 'styled-components';
-import { GlobalHeader } from '../src/frontend/shared/navigation/GlobalHeader';
-import { Heading1 } from '../src/frontend/shared/typography/Heading1';
-import { Heading3 } from '../src/frontend/shared/typography/Heading3';
-import { DashboardTabs, DashboardTab } from '../src/frontend/shared/components/DashboardTabs';
+import { GlobalHeader } from '../../src/frontend/shared/navigation/GlobalHeader';
+import { Heading1 } from '../../src/frontend/shared/typography/Heading1';
+import { Heading3 } from '../../src/frontend/shared/typography/Heading3';
+import { DashboardTabs, DashboardTab } from '../../src/frontend/shared/components/DashboardTabs';
 
 const StorybookPaddedBox = styled.div`
   max-width: 1200px;
@@ -13,7 +13,7 @@ const StorybookPaddedBox = styled.div`
   padding: 1em;
 `;
 
-export default { title: 'User dashboard' };
+export default { title: 'Legacy/User dashboard' };
 
 export const NormalUser: React.FC = () => {
   const isLoading = boolean('Set loading state', false);

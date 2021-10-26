@@ -1,9 +1,9 @@
-import { ProjectList } from '../src/types/schemas/project-list';
+import { ProjectList } from '../../src/types/schemas/project-list';
 import * as React from 'react';
-import { ProjectListing } from '../src/frontend/shared/atoms/ProjectListing';
+import { ProjectListing } from '../../src/frontend/shared/atoms/ProjectListing';
 import { MemoryRouter } from 'react-router-dom';
 
-export default { title: 'Projects' };
+export default { title: 'Legacy/Projects' };
 
 const projects: ProjectList['projects'] = [
   {

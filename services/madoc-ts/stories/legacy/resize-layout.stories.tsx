@@ -1,8 +1,8 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { useResizeLayout } from '../src/frontend/shared/hooks/use-resize-layout';
+import { useResizeLayout } from '../../src/frontend/shared/hooks/use-resize-layout';
 
-export default { title: 'Resize layout' };
+export default { title: 'Legacy/Resize layout' };
 
 const SomeDiv = styled.div`
   width: 500px;

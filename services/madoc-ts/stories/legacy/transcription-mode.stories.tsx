@@ -1,9 +1,9 @@
 import { boolean } from '@storybook/addon-knobs';
 import { useState } from 'react';
 import * as React from 'react';
-import { WorkflowBar } from '../src/frontend/shared/components/WorkflowBar';
+import { WorkflowBar } from '../../src/frontend/shared/components/WorkflowBar';
 
-export default { title: 'Transcription mode' };
+export default { title: 'Legacy/Transcription mode' };
 
 // Workflow bar.
 

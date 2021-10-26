@@ -1,11 +1,11 @@
 import { boolean, select } from '@storybook/addon-knobs';
 import * as React from 'react';
-import { SnippetLarge } from '../src/frontend/shared/atoms/SnippetLarge';
+import { SnippetLarge } from '../../src/frontend/shared/atoms/SnippetLarge';
 import StackGrid from 'react-stack-grid';
-import { MetaDataDisplay } from '../src/frontend/shared/components/MetaDataDisplay';
-import { MetadataContainer, MetadataLayoutContainer } from '../src/frontend/shared/layout/MetadataContainer';
+import { MetaDataDisplay } from '../../src/frontend/shared/components/MetaDataDisplay';
+import { MetadataContainer, MetadataLayoutContainer } from '../../src/frontend/shared/layout/MetadataContainer';
 
-export default { title: 'Layouts' };
+export default { title: 'Legacy/Layouts' };
 
 const collections: any[] = [
   {

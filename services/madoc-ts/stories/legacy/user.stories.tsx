@@ -1,12 +1,12 @@
-import { Heading1 } from '../src/frontend/shared/typography/Heading1';
-import { Button } from '../src/frontend/shared/navigation/Button';
-import { ErrorMessage } from '../src/frontend/shared/callouts/ErrorMessage';
-import { LoginContainer, LoginActions } from '../src/frontend/shared/layout/LoginContainer';
-import { Input, InputContainer, InputLabel } from '../src/frontend/shared/form/Input';
+import { Heading1 } from '../../src/frontend/shared/typography/Heading1';
+import { Button } from '../../src/frontend/shared/navigation/Button';
+import { ErrorMessage } from '../../src/frontend/shared/callouts/ErrorMessage';
+import { LoginContainer, LoginActions } from '../../src/frontend/shared/layout/LoginContainer';
+import { Input, InputContainer, InputLabel } from '../../src/frontend/shared/form/Input';
 import * as React from 'react';
 import styled from 'styled-components';
 
-export default { title: 'User pages' };
+export default { title: 'Legacy/User pages' };
 
 const FlexAction = styled.div`
   flex: 1 1 0px;

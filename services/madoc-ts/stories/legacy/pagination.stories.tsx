@@ -2,12 +2,12 @@
 
 import * as React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import * as MoleculesPagination from '../src/frontend/admin/molecules/Pagination';
-import { NavigationButton, PaginationContainer } from '../src/frontend/shared/components/CanvasNavigationMinimalist';
-import { PaginationNumbered } from '../src/frontend/shared/components/Pagination';
-import * as SharedPagination from '../src/frontend/shared/components/Pagination';
+import * as MoleculesPagination from '../../src/frontend/admin/molecules/Pagination';
+import { NavigationButton, PaginationContainer } from '../../src/frontend/shared/components/CanvasNavigationMinimalist';
+import { PaginationNumbered } from '../../src/frontend/shared/components/Pagination';
+import * as SharedPagination from '../../src/frontend/shared/components/Pagination';
 
-export default { title: 'Pagination variations' };
+export default { title: 'Legacy/Pagination variations' };
 
 export const Molecules_Pagination = () => {
   return (

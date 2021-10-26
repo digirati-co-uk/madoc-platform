@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { SystemBackground } from '../src/frontend/shared/atoms/SystemUI';
-import { ActivityContainer, Activity } from '../src/frontend/shared/components/Activity';
+import { SystemBackground } from '../../src/frontend/shared/atoms/SystemUI';
+import { ActivityContainer, Activity } from '../../src/frontend/shared/components/Activity';
 
-export default { title: 'Activity streams' };
+export default { title: 'Legacy/Activity streams' };
 
 const mockItems = [
   {

@@ -4,13 +4,13 @@ import {
   ContextualMenuListItem,
   ContextualMenuWrapper,
   ContextualPositionWrapper,
-} from '../src/frontend/shared/navigation/ContextualMenu';
-import { ModalButton } from '../src/frontend/shared/components/Modal';
+} from '../../src/frontend/shared/navigation/ContextualMenu';
+import { ModalButton } from '../../src/frontend/shared/components/Modal';
 import * as React from 'react';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
-import { SettingsIcon } from '../src/frontend/shared/icons/SettingsIcon';
+import { SettingsIcon } from '../../src/frontend/shared/icons/SettingsIcon';
 
-export default { title: 'Contextual menu' };
+export default { title: 'Legacy/Contextual menu' };
 
 export const Default_Contextual = () => {
   const { isOpen, buttonProps, itemProps } = useDropdownMenu(9);

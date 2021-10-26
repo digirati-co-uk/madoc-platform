@@ -1,22 +1,22 @@
 import { color, select, text } from '@storybook/addon-knobs';
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { defaultPageBlockDefinitions } from '../src/extensions/page-blocks/default-definitions';
-import { PageBlockDefinition } from '../src/extensions/page-blocks/extension';
+import { defaultPageBlockDefinitions } from '../../src/extensions/page-blocks/default-definitions';
+import { PageBlockDefinition } from '../../src/extensions/page-blocks/extension';
 import {
   AddBlockContainer,
   AddBlockIconWrapper,
   AddBlockLabel,
   AddBlockList,
   AddBlockPluginName,
-} from '../src/frontend/shared/page-blocks/AddBlock';
-import { Heading1, Subheading1 } from '../src/frontend/shared/typography/Heading1';
-import { Heading2 } from '../src/frontend/shared/typography/Heading2';
-import { ModalButton } from '../src/frontend/shared/components/Modal';
-import { useAccessibleColor } from '../src/frontend/shared/hooks/use-accessible-color';
-import { useGoogleFonts } from '../src/frontend/shared/hooks/use-google-fonts';
+} from '../../src/frontend/shared/page-blocks/AddBlock';
+import { Heading1, Subheading1 } from '../../src/frontend/shared/typography/Heading1';
+import { Heading2 } from '../../src/frontend/shared/typography/Heading2';
+import { ModalButton } from '../../src/frontend/shared/components/Modal';
+import { useAccessibleColor } from '../../src/frontend/shared/hooks/use-accessible-color';
+import { useGoogleFonts } from '../../src/frontend/shared/hooks/use-google-fonts';
 
-export default { title: 'Page blocks' };
+export default { title: 'Legacy/Page blocks' };
 
 export const Default_ = () => {
   return <div>This contains some of the atoms that can be used to compose page block atoms.</div>;

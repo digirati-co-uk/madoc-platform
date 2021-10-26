@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { MetadataEditor } from '../src/frontend/admin/molecules/MetadataEditor';
-import { CloseIcon } from '../src/frontend/shared/icons/CloseIcon';
-import { InputLabel } from '../src/frontend/shared/form/Input';
+import { MetadataEditor } from '../../src/frontend/admin/molecules/MetadataEditor';
+import { CloseIcon } from '../../src/frontend/shared/icons/CloseIcon';
+import { InputLabel } from '../../src/frontend/shared/form/Input';
 import {
   FacetEditActions,
   FacetEditBack,
@@ -25,9 +25,9 @@ import {
   MetadataListItemLabel,
   MetadataListItemSubtitle,
   TableHandleIcon,
-} from '../src/frontend/shared/atoms/MetadataConfiguration';
+} from '../../src/frontend/shared/atoms/MetadataConfiguration';
 
-export default { title: 'Search configuration' };
+export default { title: 'Legacy/Search configuration' };
 
 export const Facet_Edit_Empty = () => {
   return (

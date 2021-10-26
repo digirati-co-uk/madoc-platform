@@ -4,9 +4,9 @@ import {
   StatisticContainer,
   StatisticLabel,
   StatisticNumber,
-} from '../src/frontend/shared/atoms/Statistics';
+} from '../../src/frontend/shared/atoms/Statistics';
 
-export default { title: 'Statistics' };
+export default { title: 'Legacy/Statistics' };
 
 export const simpleList = () => {
   return (

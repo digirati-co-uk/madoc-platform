@@ -1,15 +1,15 @@
 import { Revisions } from '@capture-models/editor';
-import { URLContextExplorer } from '../src/frontend/shared/components/ContentExplorer';
+import { URLContextExplorer } from '../../src/frontend/shared/components/ContentExplorer';
 import * as React from 'react';
-import { TinyButton } from '../src/frontend/shared/navigation/Button';
+import { TinyButton } from '../../src/frontend/shared/navigation/Button';
 import { object, text } from '@storybook/addon-knobs';
 import { CaptureModel } from '@capture-models/types';
-import { RevisionNavigation } from '../src/frontend/shared/caputre-models/RevisionNavigation';
+import { RevisionNavigation } from '../../src/frontend/shared/caputre-models/RevisionNavigation';
 import { VaultProvider } from '@hyperion-framework/react-vault';
-import { ViewExternalContent } from '../src/frontend/shared/components/ViewExternalContent';
-import '../src/frontend/shared/caputre-models/refinements';
+import { ViewExternalContent } from '../../src/frontend/shared/components/ViewExternalContent';
+import '../../src/frontend/shared/caputre-models/refinements/index';
 
-export default { title: 'Capture models' };
+export default { title: 'Legacy/Capture models' };
 
 const exampleModel: any = {
   id: '0e1cf2ad-6a8a-4a50-93dc-147c78c107a5',

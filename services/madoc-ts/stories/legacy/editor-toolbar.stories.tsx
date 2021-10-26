@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { ArrowBackIcon } from '../src/frontend/shared/icons/ArrowBackIcon';
-import { EditIcon } from '../src/frontend/shared/icons/EditIcon';
-import { DeleteForeverIcon } from '../src/frontend/shared/icons/DeleteForeverIcon';
-import { ReadMoreIcon } from '../src/frontend/shared/icons/ReadMoreIcon';
-import { CallMergeIcon } from '../src/frontend/shared/icons/CallMergeIcon';
-import { GradingIcon } from '../src/frontend/shared/icons/GradingIcon';
-import { FullScreenExitIcon } from '../src/frontend/shared/icons/FullScreenExitIcon';
+import { ArrowBackIcon } from '../../src/frontend/shared/icons/ArrowBackIcon';
+import { EditIcon } from '../../src/frontend/shared/icons/EditIcon';
+import { DeleteForeverIcon } from '../../src/frontend/shared/icons/DeleteForeverIcon';
+import { ReadMoreIcon } from '../../src/frontend/shared/icons/ReadMoreIcon';
+import { CallMergeIcon } from '../../src/frontend/shared/icons/CallMergeIcon';
+import { GradingIcon } from '../../src/frontend/shared/icons/GradingIcon';
+import { FullScreenExitIcon } from '../../src/frontend/shared/icons/FullScreenExitIcon';
 import {
   EditorToolbarButton,
   EditorToolbarContainer,
@@ -13,18 +13,18 @@ import {
   EditorToolbarLabel,
   EditorToolbarSpacer,
   EditorToolbarTitle,
-} from '../src/frontend/shared/navigation/EditorToolbar';
-import { ModalButton } from '../src/frontend/shared/components/Modal';
-import { Heading3 } from '../src/frontend/shared/typography/Heading3';
-import { Button, ButtonRow } from '../src/frontend/shared/navigation/Button';
+} from '../../src/frontend/shared/navigation/EditorToolbar';
+import { ModalButton } from '../../src/frontend/shared/components/Modal';
+import { Heading3 } from '../../src/frontend/shared/typography/Heading3';
+import { Button, ButtonRow } from '../../src/frontend/shared/navigation/Button';
 import { TextField } from '@capture-models/editor/lib/input-types/TextField/TextField';
 import { Suspense, useState } from 'react';
-import { FullScreenEnterIcon } from '../src/frontend/shared/icons/FullScreenEnterIcon';
-import { ArrowForwardIcon } from '../src/frontend/shared/icons/ArrowForwardIcon';
-import { CompareIcon } from '../src/frontend/shared/icons/CompareIcon';
-import { MaximiseWindow } from '../src/frontend/shared/layout/MaximiseWindow';
+import { FullScreenEnterIcon } from '../../src/frontend/shared/icons/FullScreenEnterIcon';
+import { ArrowForwardIcon } from '../../src/frontend/shared/icons/ArrowForwardIcon';
+import { CompareIcon } from '../../src/frontend/shared/icons/CompareIcon';
+import { MaximiseWindow } from '../../src/frontend/shared/layout/MaximiseWindow';
 
-export default { title: 'Editor toolbar' };
+export default { title: 'Legacy/Editor toolbar' };
 
 export const ReviewEditor = () => {
   const [change, setChange] = useState('');

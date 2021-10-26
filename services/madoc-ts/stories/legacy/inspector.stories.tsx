@@ -1,8 +1,8 @@
 import { captureModelShorthand, hydrateCompressedModel } from '@capture-models/helpers';
 import { select } from '@storybook/addon-knobs';
 import * as React from 'react';
-import { ViewDocument } from '../src/frontend/shared/caputre-models/inspector/ViewDocument';
-import { RevisionList } from '../src/frontend/shared/components/RevisionList';
+import { ViewDocument } from '../../src/frontend/shared/caputre-models/inspector/ViewDocument';
+import { RevisionList } from '../../src/frontend/shared/components/RevisionList';
 
 const fixtureOptions = [
   {
@@ -92,7 +92,7 @@ const fixtureOptions = [
   },
 ];
 
-export default { title: 'Model inspector' };
+export default { title: 'Legacy/Model inspector' };
 
 export const View_Document = () => {
   const { document } = select<any>('Test Model', fixtureOptions, fixtureOptions[1]);

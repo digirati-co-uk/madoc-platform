@@ -6,14 +6,15 @@ import {
   KanbanBoardContainer,
   KanbanCard,
   KanbanCardButton,
-  KanbanCardInner, KanbanCardTextButton,
+  KanbanCardInner,
+  KanbanCardTextButton,
   KanbanCol,
   KanbanColTitle,
   KanbanLabel,
   KanbanType,
-} from '../src/frontend/shared/atoms/Kanban';
+} from '../../src/frontend/shared/atoms/Kanban';
 
-export default { title: 'Kanban' };
+export default { title: 'Legacy/Kanban' };
 
 const DemoPage = styled.div`
   max-width: 1100px;

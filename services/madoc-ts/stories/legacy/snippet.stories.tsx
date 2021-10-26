@@ -1,9 +1,9 @@
 import { boolean, select } from '@storybook/addon-knobs';
 import * as React from 'react';
-import { SnippetLarge } from '../src/frontend/shared/atoms/SnippetLarge';
+import { SnippetLarge } from '../../src/frontend/shared/atoms/SnippetLarge';
 import styled from 'styled-components';
 
-export default { title: 'Snippets' };
+export default { title: 'Legacy/Snippets' };
 
 const StorybookPaddedBox = styled.div`
   padding: 2em;

@@ -14,7 +14,7 @@ import {
   KanbanColTitle,
   KanbanLabel,
   KanbanType,
-} from '../src/frontend/shared/atoms/Kanban';
+} from '../../src/frontend/shared/atoms/Kanban';
 import {
   LayoutContainer,
   LayoutContent,
@@ -23,7 +23,7 @@ import {
   LayoutSidebarMenu,
   NavIconContainer,
   OuterLayoutContainer,
-} from '../src/frontend/shared/layout/LayoutContainer';
+} from '../../src/frontend/shared/layout/LayoutContainer';
 import {
   TaskItem,
   TaskItemAuthor,
@@ -34,18 +34,18 @@ import {
   TaskItemTagStatus,
   TaskItemTagType,
   TaskListContainer,
-} from '../src/frontend/shared/atoms/TaskList';
-import { URLContextExplorer } from '../src/frontend/shared/components/ContentExplorer';
-import { MetaDataDisplay } from '../src/frontend/shared/components/MetaDataDisplay';
-import { SimpleAtlasViewer } from '../src/frontend/shared/components/SimpleAtlasViewer';
-import { useResizeLayout } from '../src/frontend/shared/hooks/use-resize-layout';
+} from '../../src/frontend/shared/atoms/TaskList';
+import { URLContextExplorer } from '../../src/frontend/shared/components/ContentExplorer';
+import { MetaDataDisplay } from '../../src/frontend/shared/components/MetaDataDisplay';
+import { SimpleAtlasViewer } from '../../src/frontend/shared/components/SimpleAtlasViewer';
+import { useResizeLayout } from '../../src/frontend/shared/hooks/use-resize-layout';
 import ReactTooltip from 'react-tooltip';
-import { AnnotationsIcon } from '../src/frontend/shared/icons/AnnotationsIcon';
-import { InfoIcon } from '../src/frontend/shared/icons/InfoIcon';
-import { ModelDocumentIcon } from '../src/frontend/shared/icons/ModelDocumentIcon';
-import { TranscriptionIcon } from '../src/frontend/shared/icons/TranscriptionIcon';
+import { AnnotationsIcon } from '../../src/frontend/shared/icons/AnnotationsIcon';
+import { InfoIcon } from '../../src/frontend/shared/icons/InfoIcon';
+import { ModelDocumentIcon } from '../../src/frontend/shared/icons/ModelDocumentIcon';
+import { TranscriptionIcon } from '../../src/frontend/shared/icons/TranscriptionIcon';
 
-export default { title: 'Canvas page' };
+export default { title: 'Legacy/Canvas page' };
 
 const exampleMetadata = [
   {

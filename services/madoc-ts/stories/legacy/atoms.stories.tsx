@@ -1,14 +1,14 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Button, SmallButton } from '../src/frontend/shared/navigation/Button';
-import { Breadcrumbs } from '../src/frontend/shared/navigation/Breadcrumbs';
+import { Button, SmallButton } from '../../src/frontend/shared/navigation/Button';
+import { Breadcrumbs } from '../../src/frontend/shared/navigation/Breadcrumbs';
 import { MemoryRouter } from 'react-router-dom';
-import { SearchBox } from '../src/frontend/shared/atoms/SearchBox';
+import { SearchBox } from '../../src/frontend/shared/atoms/SearchBox';
 import { Dropdown } from '@capture-models/editor';
-import { StandardButton } from '../src/frontend/shared/atoms/StandardButton';
-import { SiteProvider } from '../src/frontend/shared/hooks/use-site';
+import { StandardButton } from '../../src/frontend/shared/atoms/StandardButton';
+import { SiteProvider } from '../../src/frontend/shared/hooks/use-site';
 
-export default { title: 'Atoms' };
+export default { title: 'Legacy/Atoms' };
 
 const StorybookPaddedBox = styled.div`
   max-width: 1200px;

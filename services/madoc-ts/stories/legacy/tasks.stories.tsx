@@ -2,12 +2,12 @@ import { useState } from 'react';
 import * as React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import { StatusIcon, StatusWrapper } from '../src/frontend/shared/atoms/Status';
-import { TaskListContainer, TaskListInnerContainer } from '../src/frontend/shared/atoms/TaskList';
-import { TaskItem } from "../src/frontend/shared/components/TaskItem";
-import { HrefLink } from '../src/frontend/shared/utility/href-link';
+import { StatusIcon, StatusWrapper } from '../../src/frontend/shared/atoms/Status';
+import { TaskListContainer, TaskListInnerContainer } from '../../src/frontend/shared/atoms/TaskList';
+import { TaskItem } from '../../src/frontend/shared/components/TaskItem';
+import { HrefLink } from '../../src/frontend/shared/utility/href-link';
 
-export default { title: 'Tasks' };
+export default { title: 'Legacy/Tasks' };
 
 export const TasksOverview = () => {
   return <div>All variations of tasks.</div>;

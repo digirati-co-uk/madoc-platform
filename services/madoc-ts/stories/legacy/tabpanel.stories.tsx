@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { TabPanel } from '../src/frontend/shared/components/TabPanel';
+import { TabPanel } from '../../src/frontend/shared/components/TabPanel';
 
-export default { title: 'Tab Panel' };
+export default { title: 'Legacy/Tab Panel' };
 
 export const Tab_Panel = () => {
   const [selected, setSelected] = React.useState(0);

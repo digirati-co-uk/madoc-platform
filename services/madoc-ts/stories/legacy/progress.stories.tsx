@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { SubtaskProgress } from '../src/frontend/shared/atoms/SubtaskProgress';
+import { SubtaskProgress } from '../../src/frontend/shared/atoms/SubtaskProgress';
 
-export default { title: 'Progress bar' };
+export default { title: 'Legacy/Progress bar' };
 
 export const example = () => {
   return <SubtaskProgress total={100} done={34} progress={20} />;

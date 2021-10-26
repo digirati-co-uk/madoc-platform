@@ -1,8 +1,8 @@
 import { boolean, number, select } from '@storybook/addon-knobs';
 import * as React from 'react';
-import { MetaDataDisplay } from '../src/frontend/shared/components/MetaDataDisplay';
+import { MetaDataDisplay } from '../../src/frontend/shared/components/MetaDataDisplay';
 
-export default { title: 'metadata Display' };
+export default { title: 'Legacy/metadata Display' };
 
 const exampleMetadata = [
   {
