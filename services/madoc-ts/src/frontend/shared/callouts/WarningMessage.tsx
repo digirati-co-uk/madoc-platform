@@ -1,13 +1,7 @@
 import styled from 'styled-components';
+import { BaseMessage } from './BaseMessage';
 
-export const WarningMessage = styled.div`
-  background: #e38627;
+export const WarningMessage = styled(BaseMessage)`
+  background: #e89d3b;
   color: #fff;
-  width: 100%;
-  padding: 0.5em 1em;
-  line-height: 1.9em;
-
-  a {
-    color: #fff;
-  }
 `;
