@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { InputContainer, InputLabel } from '../../shared/form/Input';
 import { useDefaultLocale, useSupportedLocales, useUser } from '../../shared/hooks/use-site';
 import { MetadataDiff, MetadataEditor, MetadataEditorProps } from './MetadataEditor';
 import { useMutation } from 'react-query';
@@ -18,10 +19,10 @@ export const MetadataListItem: React.FC<{
 }> = ({ labelKey, itemKey, items, onSaveField, availableLanguages, defaultLocale }) => {
   const { t } = useTranslation();
   return (
-    <div>
-      <label htmlFor={itemKey} style={{ marginBottom: `5px`, display: `block` }}>
+    <InputContainer>
+      <InputLabel $caps htmlFor={itemKey}>
         {t(labelKey, { context: 'metadata' })}
-      </label>
+      </InputLabel>
       <MetadataEditor
         id={itemKey}
         fields={items}
@@ -30,7 +31,7 @@ export const MetadataListItem: React.FC<{
         availableLanguages={availableLanguages}
         defaultLocale={defaultLocale}
       />
-    </div>
+    </InputContainer>
   );
 };
 

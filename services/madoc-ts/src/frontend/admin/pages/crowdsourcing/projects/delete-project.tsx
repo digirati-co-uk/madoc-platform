@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useMutation } from 'react-query';
 import { ProjectDeletionSummary } from '../../../../../types/deletion-summary';
 import { useData } from '../../../../shared/hooks/use-data';
 import { UniversalComponent } from '../../../../types';
@@ -21,8 +22,12 @@ export const DeleteProject: UniversalComponent<DeleteProjectType> = createUniver
     const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
     const history = useHistory();
-
     const api = useApi();
+
+    const [deleteProject, deleteProjectStatus] = useMutation(async () => {
+      await api.deleteProject(Number(id));
+      history.push(`/projects`);
+    });
 
     return (
       <>
@@ -47,9 +52,9 @@ export const DeleteProject: UniversalComponent<DeleteProjectType> = createUniver
           </>
         ) : null}
         <Button
+          disabled={deleteProjectStatus.isLoading}
           onClick={() => {
-            history.push(`/projects`);
-            api.deleteProject(Number(id));
+            deleteProject();
           }}
         >
           {t('Delete Project')}
