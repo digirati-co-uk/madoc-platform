@@ -1,6 +1,8 @@
 import { ApiClient } from '../../gateway/api';
 import { BaseExtension, defaultDispose } from '../extension-manager';
 import { RegistryExtension } from '../registry-extension';
+import { crowdsourcedTranscription } from './templates/crowdsourced-transcription';
+import { customProject } from './templates/custom-project';
 import { ProjectTemplate } from './types';
 
 export class ProjectTemplateExtension extends RegistryExtension<ProjectTemplate> implements BaseExtension {
@@ -13,6 +15,8 @@ export class ProjectTemplateExtension extends RegistryExtension<ProjectTemplate>
       registryName: ProjectTemplateExtension.REGISTRY,
     });
     this.api = api;
+    ProjectTemplateExtension.register(crowdsourcedTranscription);
+    ProjectTemplateExtension.register(customProject);
   }
 
   dispose() {

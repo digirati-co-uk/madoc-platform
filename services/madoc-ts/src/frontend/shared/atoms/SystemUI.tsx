@@ -77,3 +77,43 @@ export const SystemLinkBar = styled.div`
     display: block;
   }
 `;
+
+export const SystemListingContainer = styled.div`
+  max-width: 750px;
+  margin: 0 auto;
+`;
+
+export const SystemListingItem = styled.div`
+  display: flex;
+  padding: 1em;
+  margin: 1.5em 0;
+  background: #ffffff;
+  border: 1px solid #c9c9c9;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.13);
+  border-radius: 5px;
+`;
+
+export const SystemListingThumbnail = styled.div`
+  width: 110px;
+  margin-right: 1em;
+  img {
+    display: block;
+    object-fit: contain;
+    width: 110px;
+  }
+`;
+
+export const SystemListingLabel = styled.div`
+  font-size: 1.1em;
+  margin-bottom: 0.8em;
+`;
+
+export const SystemListingDescription = styled.div`
+  color: #999;
+  font-size: 0.85em;
+  margin-bottom: 1em;
+`;
+
+export const SystemListingMetadata = styled.div`
+  flex: 1 1 0px;
+`;

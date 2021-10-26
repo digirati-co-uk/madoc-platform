@@ -1,28 +1,52 @@
 import React, { useRef } from 'react';
 import styled, { css } from 'styled-components';
 
-export const InputLabel = styled.label`
-  font-size: 0.9em;
-  font-weight: bold;
+export const InputLabel = styled.label<{ $caps?: boolean }>`
   margin-bottom: 0.5em;
+  letter-spacing: -0.3px;
+  font-weight: 500;
+  line-height: 1.8em;
+
+  ${props =>
+    props.$caps &&
+    css`
+      text-transform: capitalize;
+    `}
 `;
 
-export const Input = styled.input`
+export const CheckboxInput = styled.input.attrs({ type: 'checkbox' })``;
+
+export const _Input = styled.input`
   background: #fff;
-  border: 2px solid #999;
-  padding: 0.5em;
-  font-size: 0.9em;
-  line-height: 1.3em;
-  border-radius: 0;
+  border: 1px solid rgba(5, 42, 68, 0.2);
+  padding: 0.7em 0.9em;
+  font-size: 0.85em;
+  line-height: 1.2em;
+  border-radius: 3px;
   width: 100%;
-  box-shadow: none;
+  box-shadow: 0 0 0 0 transparent inset;
   &:focus {
     border-color: #333;
     outline: none;
   }
+  display: block;
+  margin: 0;
+  outline: 0;
+  font-family: inherit;
+  -webkit-appearance: none;
+  tap-highlight-color: rgba(255, 255, 255, 0);
+  color: rgba(0, 0, 0, 0.87);
+
+  &:focus {
+    border-color: #5168d9;
+    outline: none;
+  }
 `;
 
-export const HighlightInput: typeof Input = ((props: any) => {
+export const Input: typeof _Input = ((props: any) =>
+  props.type === 'checkbox' ? <CheckboxInput {...props} /> : <_Input {...props} />) as any;
+
+export const HighlightInput: typeof _Input = ((props: any) => {
   const ref = useRef<HTMLInputElement>(null);
 
   return (
@@ -57,7 +81,7 @@ export const InputContainer = styled.div<{ wide?: boolean; fluid?: boolean; $err
   display: flex;
   flex-direction: column;
   max-width: ${props => (props.fluid ? '100%' : props.wide ? '550px' : '360px')};
-  margin: 0.5em 0;
+  margin-bottom: 1em;
 
   ${props =>
     props.$error &&
@@ -102,9 +126,9 @@ export const InputCheckboxInputContainer = styled.div<{ $checked?: boolean }>`
 
 export const EmptyInputValue = styled.div<{ wide?: boolean }>`
   background: #eee;
-  border: 2px solid #999;
-  padding: 0.55em;
-  font-size: 0.9em;
+  border: 1px solid rgba(5, 42, 68, 0.2);
+  padding: 0.7em 0.9em;
+  font-size: 0.85em;
   line-height: 1.3em;
   border-radius: 0;
   width: 100%;

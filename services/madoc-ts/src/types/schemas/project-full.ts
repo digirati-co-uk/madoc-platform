@@ -1,7 +1,8 @@
 import { InternationalString } from '@hyperion-framework/types';
+import { ProjectTemplate, ProjectTemplateConfig } from '../../extensions/projects/types';
 import { ProjectConfiguration } from './project-configuration';
 
-export type ProjectFull = {
+export type Project<Template extends ProjectTemplate = never> = {
   id: number;
   collection_id: number;
   slug: string;
@@ -9,8 +10,12 @@ export type ProjectFull = {
   task_id: string;
   label: InternationalString;
   summary: InternationalString;
-  template?: string;
+  template: Template['type'];
+  template_config: ProjectTemplateConfig<Template>;
   status: number;
+};
+
+export type ProjectFull<Template extends ProjectTemplate = never> = Project<Template> & {
   statistics: {
     0: number;
     1: number;

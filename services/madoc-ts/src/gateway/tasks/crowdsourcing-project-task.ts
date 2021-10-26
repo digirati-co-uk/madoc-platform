@@ -5,8 +5,9 @@ export interface CrowdsourcingProjectTask extends BaseTask {
   /**
    * Parameters:
    * - Capture model ID
+   * - Project template
    */
-  parameters: [string];
+  parameters: [string, string?];
 
   /**
    * -1 - Error

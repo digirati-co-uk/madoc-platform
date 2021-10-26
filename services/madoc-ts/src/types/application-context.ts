@@ -6,6 +6,7 @@ import { MediaRepository } from '../repository/media-repository';
 import { NotificationRepository } from '../repository/notification-repository';
 import { PageBlocksRepository } from '../repository/page-blocks-repository';
 import { PluginRepository } from '../repository/plugin-repository';
+import { ProjectRepository } from '../repository/project-repository';
 import { SiteUserRepository } from '../repository/site-user-repository';
 import { ThemeRepository } from '../repository/theme-repository';
 import { CronJobs } from '../utility/cron-jobs';
@@ -29,6 +30,7 @@ declare module 'koa' {
     media: MediaRepository;
     mailer: Mailer;
     notifications: NotificationRepository;
+    projects: ProjectRepository;
     changeDiscovery: ChangeDiscoveryRepository;
     siteManager: SiteUserRepository;
     pluginManager: PluginManager;

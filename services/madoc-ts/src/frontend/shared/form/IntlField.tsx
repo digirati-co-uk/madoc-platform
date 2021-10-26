@@ -5,14 +5,20 @@ import { InputContainer, InputLabel } from './Input';
 
 const Textarea = React.lazy(() => /* webpackChunkName: "browser" */ import('react-textarea-autosize'));
 
-export const IntlInputContainer = styled.div<{ focused?: boolean }>`
+export const IntlInputContainer = styled.div<{ focused?: boolean; $margin?: boolean }>`
   background: #fff;
-  border: 2px solid #999;
-  margin-bottom: 0.8em;
+  border: 1px solid rgba(5, 42, 68, 0.2);
+  border-radius: 3px;
   ${props =>
     props.focused
       ? css`
-          border: 2px solid #5071f4;
+          border: 1px solid #5071f4;
+        `
+      : ''}
+  ${props =>
+    props.$margin
+      ? css`
+          margin-bottom: 0.8em;
         `
       : ''}
 `;
@@ -29,23 +35,23 @@ const inputStyles = css`
   flex: 1 1 0px;
   background: #fff;
   border: none;
-  padding-left: 0.4em;
+  padding: 0.5em 0 0.5em 0.7em;
   margin: 0.2em 0 0.2em 0.2em;
   border-radius: 0;
-  font-size: 0.9em;
+  font-size: 0.85em;
+  line-height: 1.2em;
   border-right: 1px solid #ddd;
   font-family: inherit;
   resize: none;
   -webkit-appearance: none;
   tap-highlight-color: rgba(255, 255, 255, 0);
-  line-height: 1.5em;
 
   &:focus {
     outline: none;
   }
 `;
 
-export const IntlInput = styled.input`
+export const IntlInput = styled.input.attrs({ type: 'text' })`
   ${inputStyles}
 `;
 
@@ -155,7 +161,7 @@ export const IntlField: React.FC<{
       <InputLabel>Label</InputLabel>
       <IntlInputContainer>
         <IntlInputDefault>
-          <IntlMultiline type="text" value={primary.value} />
+          <IntlMultiline value={primary.value} />
           <IntlInputButton>{primary.language}</IntlInputButton>
         </IntlInputDefault>
         <IntlInputExtraInput style={{ display: 'none' }}>

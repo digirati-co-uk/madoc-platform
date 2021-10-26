@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Redirect } from 'react-router-dom';
 import ReactTimeago from 'react-timeago';
 import { siteManagerHooks } from '../../../../extensions/site-manager/hooks';
+import { SystemCallToAction } from '../../../shared/components/SystemCallToAction';
 import { Button, ButtonRow } from '../../../shared/navigation/Button';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../../shared/atoms/Statistics';
 import { SystemListItem } from '../../../shared/atoms/SystemListItem';
@@ -39,11 +40,12 @@ export const ListSites: React.FC = () => {
         noMargin
       />
       <SystemBackground>
-        <ButtonRow>
-          <Button as={HrefLink} href={`/global/sites/create`}>
-            Create site
-          </Button>
-        </ButtonRow>
+        <SystemCallToAction
+          title={'Create a new site'}
+          href={`/global/sites/create`}
+          description="Create a new space"
+          maxWidth
+        />
 
         {data?.sites.map(site => {
           const stats = {

@@ -1158,7 +1158,20 @@ export class ApiClient {
     }>(`/api/crowdsourcing/search/published?${stringify(queryString)}`);
   }
 
-  async createCaptureModelFromTemplate(model: CaptureModel['document'], label?: string) {
+  async createCaptureModelFromTemplate(
+    model: CaptureModel['document'],
+    label?: string,
+    options: {
+      processStructure?: (
+        captureModel: Readonly<CaptureModel>
+      ) =>
+        | Promise<CaptureModel['structure'] | Readonly<CaptureModel['structure']> | undefined | void>
+        | CaptureModel['structure']
+        | Readonly<CaptureModel['structure']>
+        | void
+        | undefined;
+    } = {}
+  ) {
     const newModel = deepmerge({}, model, { clone: true });
     const updateId = (e: any) => {
       if (e.id) {
@@ -1172,28 +1185,37 @@ export class ApiClient {
     });
     const modelFields = generateModelFields(newModel);
 
+    const fullModel: CaptureModel = {
+      id: generateId(),
+      structure: createChoice({
+        label,
+        items: [
+          {
+            id: generateId(),
+            type: 'model',
+            label: 'Default',
+            fields: modelFields,
+          },
+        ],
+      }),
+      document: label
+        ? {
+            ...newModel,
+            label,
+          }
+        : newModel,
+    };
+
+    if (options.processStructure) {
+      const newStructure = await options.processStructure(fullModel);
+      if (newStructure) {
+        fullModel.structure = newStructure;
+      }
+    }
+
     return this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model`, {
       method: 'POST',
-      body: {
-        id: generateId(),
-        structure: createChoice({
-          label,
-          items: [
-            {
-              id: generateId(),
-              type: 'model',
-              label: 'Default',
-              fields: modelFields,
-            },
-          ],
-        }),
-        document: label
-          ? {
-              ...newModel,
-              label,
-            }
-          : newModel,
-      },
+      body: fullModel,
     });
   }
 

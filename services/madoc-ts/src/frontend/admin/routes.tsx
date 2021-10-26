@@ -17,6 +17,7 @@ import { PageBlocks } from './pages/content/page-blocks/page-blocks';
 import { SiteProjectConfiguration } from './pages/content/project-configuration';
 import { SiteConfiguration } from './pages/content/site-configuration';
 import { SiteSystemConfiguration } from './pages/content/system-configuration';
+import { NewProjectFromTemplate } from "./pages/crowdsourcing/projects/new-project-from-template";
 import { ProjectConfiguration } from './pages/crowdsourcing/projects/project-configuration';
 import { ProjectSearchIndex } from './pages/crowdsourcing/projects/project-search-index';
 import { ProjectStreams } from './pages/crowdsourcing/projects/project-streams';
@@ -281,6 +282,11 @@ export const routes: UniversalRoute[] = [
     path: '/projects/create',
     exact: true,
     component: NewProjectPage,
+  },
+  {
+    path: '/projects/create/:template+',
+    exact: true,
+    component: NewProjectFromTemplate,
   },
   {
     path: '/projects',
