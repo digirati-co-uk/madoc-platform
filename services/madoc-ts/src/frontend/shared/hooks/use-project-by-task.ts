@@ -1,7 +1,7 @@
 import { useApi } from './use-api';
 import { useQuery } from 'react-query';
 import { BaseTask } from '../../../gateway/tasks/base-task';
-import { ProjectFull } from '../../../types/schemas/project-full';
+import { ProjectFull } from '../../../types/project-full';
 
 export function useProjectByTask(task: BaseTask): ProjectFull | undefined {
   const api = useApi();

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { BaseTask } from '../../../gateway/tasks/base-task';
-import { ProjectFull } from '../../../types/schemas/project-full';
+import { ProjectFull } from '../../../types/project-full';
 import { parseUrn } from '../../../utility/parse-urn';
 import { ButtonRow, TinyButton } from '../../shared/navigation/Button';
 import { GridContainer, HalfGird } from '../../shared/layout/Grid';
