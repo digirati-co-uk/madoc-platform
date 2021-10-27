@@ -1,4 +1,5 @@
 import { Grid } from '@capture-models/editor';
+import { ManifestHero } from '../../site/features/ManifestHero';
 import AdminPageTitle from '../typography/AdminPageTitle';
 import { Breadcrumbs } from '../navigation/Breadcrumbs';
 import { Button } from '../navigation/Button';
