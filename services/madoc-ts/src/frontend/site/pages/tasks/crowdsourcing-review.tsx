@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SubjectSnippet } from '../../../../extensions/tasks/resolvers/subject-resolver';
 import { CrowdsourcingReview } from '../../../../gateway/tasks/crowdsourcing-review';
+import { useProjectByTask } from '../../../shared/hooks/use-project-by-task';
 import { Button, ButtonRow } from '../../../shared/navigation/Button';
 import { SnippetLarge } from '../../../shared/atoms/SnippetLarge';
 import { LocaleString } from '../../../shared/components/LocaleString';
@@ -16,15 +17,17 @@ export const ViewCrowdsourcingReview: React.FC<TaskContext<CrowdsourcingReview>>
   const reviewType = task.parameters[1] || 'canvas';
   const { t } = useTranslation();
   const { subject } = useTaskMetadata<{ subject?: SubjectSnippet }>(task);
+  const project = useProjectByTask(task);
   const createLink = useRelativeLinks();
   const link = subject
     ? subject.type === 'manifest'
-      ? createLink({ manifestId: subject.id, taskId: undefined, parentTaskId: undefined })
+      ? createLink({ manifestId: subject.id, taskId: undefined, parentTaskId: undefined, projectId: project?.slug })
       : subject.parent
       ? createLink({
           manifestId: subject.parent.id,
           canvasId: subject.id,
           taskId: undefined,
+          projectId: project?.slug,
           parentTaskId: undefined,
           subRoute: 'model',
         })

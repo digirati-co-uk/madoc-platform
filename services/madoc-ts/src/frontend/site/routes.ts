@@ -1,4 +1,3 @@
-import React from 'react';
 import { CreateRouteType } from '../types';
 
 type BaseRouteComponents = typeof import('./components');
@@ -613,7 +612,7 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
     baseRoute: {
       path: '/',
       exact: false,
-      component: React.memo(components.RootLoader),
+      component: components.RootLoader,
     },
     fallback: {
       path: '/:pagePath+',

@@ -12,6 +12,7 @@ const PaginationContainer = styled.div`
   display: flex;
   background: #eee;
   padding: 0.3em;
+  border-radius: 5px;
 `;
 
 const PaginationContainerNumbered = styled.div`

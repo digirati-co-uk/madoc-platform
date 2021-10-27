@@ -34,9 +34,9 @@ services:
       - ./services/madoc-ts/themes:/home/node/app/themes
       - ./services/madoc-ts/translations:/home/node/app/translations
       - ./services/madoc-ts/npm:/home/node/app/npm
-      - ./var/certs:/openssl-certs
+      - ./var/certs:/home/node/app/openssl-certs
       - ./var/jwt:/home/node/app/service-jwt-responses
-      - ./var/files:/home/node/app/omeka-files
+      - ./var/files:/home/node/app/files
     environment:
       - DATABASE_HOST=shared-postgres
       - DATABASE_NAME=${POSTGRES_DB}
@@ -47,7 +47,7 @@ services:
       - REDIS_HOST=gateway-redis
       - API_GATEWAY=http://gateway:8080
       - GATEWAY_HOST=${GATEWAY_HOST}
-      - STORAGE_FILE_DIRECTORY=/home/node/app/omeka-files
+      - STORAGE_FILE_DIRECTORY=/home/node/app/files
       - MADOC_INSTALLATION_CODE=${MADOC_INSTALLATION_CODE}
       - MIGRATE=true
       - SMTP_HOST=${SMTP_HOST}

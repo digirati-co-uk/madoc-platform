@@ -200,6 +200,12 @@
         },
         "showIIIFLogo": {
           "type": "boolean"
+        },
+        "coveredImages": {
+          "type": "boolean"
+        },
+        "hideCanvasLabels": {
+          "type": "boolean"
         }
       }
     },

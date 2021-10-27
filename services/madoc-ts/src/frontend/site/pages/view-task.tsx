@@ -2,6 +2,7 @@ import React from 'react';
 import '../../shared/caputre-models/refinements';
 import { useTranslation } from 'react-i18next';
 import { SubjectSnippet } from '../../../extensions/tasks/resolvers/subject-resolver';
+import { useProjectByTask } from '../../shared/hooks/use-project-by-task';
 import { EmptyState } from '../../shared/layout/EmptyState';
 import { useCreateLocaleString } from '../../shared/components/LocaleString';
 import { TaskWrapper } from '../../shared/components/TaskWrapper';

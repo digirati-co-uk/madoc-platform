@@ -3,13 +3,13 @@ import { useQuery } from 'react-query';
 import { BaseTask } from '../../../gateway/tasks/base-task';
 import { ProjectFull } from '../../../types/project-full';
 
-export function useProjectByTask(task: BaseTask): ProjectFull | undefined {
+export function useProjectByTask(task?: BaseTask): ProjectFull | undefined {
   const api = useApi();
 
   const { data } = useQuery(
-    ['project-by-task', { taskId: task.root_task }],
+    ['project-by-task', { taskId: task?.root_task }],
     async () => {
-      if (!task.root_task) {
+      if (!task?.root_task) {
         return undefined;
       }
 
@@ -22,6 +22,7 @@ export function useProjectByTask(task: BaseTask): ProjectFull | undefined {
       return await api.getProject(projects.projects[0].id);
     },
     {
+      enabled: !!task,
       refetchInterval: false,
       refetchOnWindowFocus: false,
       refetchOnMount: false,
