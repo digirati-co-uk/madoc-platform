@@ -69,7 +69,7 @@ import { Pagination } from '../types/schemas/_pagination';
 import { CrowdsourcingTask } from './tasks/crowdsourcing-task';
 import { ResourceClaim } from '../routes/projects/create-resource-claim';
 import { ProjectList } from '../types/schemas/project-list';
-import { ProjectFull } from '../types/schemas/project-full';
+import { ProjectFull } from '../types/project-full';
 import { UserDetails } from '../types/schemas/user-details';
 import { ModelSearch } from '../types/schemas/search';
 import {
@@ -382,7 +382,7 @@ export class ApiClient {
             asUser: this.user,
           });
 
-          if (newTokenResponse.error || !newTokenResponse.data.token) {
+          if (newTokenResponse.error || !(newTokenResponse as any)?.data?.token) {
             window.location.href = `/s/${slug}/login?redirect=${encodeURI(
               window.location.pathname + window.location.search
             )}`;
@@ -390,7 +390,7 @@ export class ApiClient {
             throw new ApiError('Unknown error', response.debugResponse);
           }
 
-          this.jwt = newTokenResponse.data.token;
+          this.jwt = (newTokenResponse.data as any).token as any;
           // Still wait.
           await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -409,7 +409,8 @@ export class ApiClient {
       }
       this.isDown = false;
     }
-    return response.data;
+
+    return response.data as Return;
   }
 
   getSiteSlug() {
@@ -1158,7 +1159,20 @@ export class ApiClient {
     }>(`/api/crowdsourcing/search/published?${stringify(queryString)}`);
   }
 
-  async createCaptureModelFromTemplate(model: CaptureModel['document'], label?: string) {
+  async createCaptureModelFromTemplate(
+    model: CaptureModel['document'],
+    label?: string,
+    options: {
+      processStructure?: (
+        captureModel: Readonly<CaptureModel>
+      ) =>
+        | Promise<CaptureModel['structure'] | Readonly<CaptureModel['structure']> | undefined | void>
+        | CaptureModel['structure']
+        | Readonly<CaptureModel['structure']>
+        | void
+        | undefined;
+    } = {}
+  ) {
     const newModel = deepmerge({}, model, { clone: true });
     const updateId = (e: any) => {
       if (e.id) {
@@ -1172,28 +1186,37 @@ export class ApiClient {
     });
     const modelFields = generateModelFields(newModel);
 
+    const fullModel: CaptureModel = {
+      id: generateId(),
+      structure: createChoice({
+        label,
+        items: [
+          {
+            id: generateId(),
+            type: 'model',
+            label: 'Default',
+            fields: modelFields,
+          },
+        ],
+      }),
+      document: label
+        ? {
+            ...newModel,
+            label,
+          }
+        : newModel,
+    };
+
+    if (options.processStructure) {
+      const newStructure = await options.processStructure(fullModel);
+      if (newStructure) {
+        fullModel.structure = newStructure;
+      }
+    }
+
     return this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model`, {
       method: 'POST',
-      body: {
-        id: generateId(),
-        structure: createChoice({
-          label,
-          items: [
-            {
-              id: generateId(),
-              type: 'model',
-              label: 'Default',
-              fields: modelFields,
-            },
-          ],
-        }),
-        document: label
-          ? {
-              ...newModel,
-              label,
-            }
-          : newModel,
-      },
+      body: fullModel,
     });
   }
 

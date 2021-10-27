@@ -125,6 +125,9 @@
         },
         "searchMultipleFields": {
           "type": "boolean"
+        },
+        "onlyShowManifests": {
+          "type": "boolean"
         }
       }
     },
@@ -150,6 +153,9 @@
           "type": "boolean"
         },
         "preventContributionAfterManifestUnassign": {
+          "type": "boolean"
+        },
+        "hideViewerControls": {
           "type": "boolean"
         }
       }
@@ -193,6 +199,12 @@
           "type": "boolean"
         },
         "showIIIFLogo": {
+          "type": "boolean"
+        },
+        "coveredImages": {
+          "type": "boolean"
+        },
+        "hideCanvasLabels": {
           "type": "boolean"
         }
       }

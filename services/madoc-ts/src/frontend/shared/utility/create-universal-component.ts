@@ -21,7 +21,7 @@ export function createUniversalComponent<
     hooks?: AdditionalHooks[];
   }
 ): QueryComponent<Definition['data'], string, Definition['variables'], Definition['params'], Definition['query']> {
-  const ReturnComponent: any = Component;
+  const ReturnComponent: any = React.memo(Component);
   ReturnComponent.displayName = 'PageComponent';
   ReturnComponent.getKey = options.getKey;
   ReturnComponent.getData = options.getData;

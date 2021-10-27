@@ -1,6 +1,7 @@
 import React, { Suspense, useCallback, useMemo } from 'react';
 import { CrowdsourcingReview } from '../../../../gateway/tasks/crowdsourcing-review';
 import { extractIdFromUrn } from '../../../../utility/parse-urn';
+import { useProjectByTask } from '../../../shared/hooks/use-project-by-task';
 import { Breadcrumbs } from '../../../shared/navigation/Breadcrumbs';
 import {
   KanbanAssignee,
@@ -32,7 +33,7 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
   task: reviewTask,
   refetch,
 }) => {
-  const { slug } = useParams<{ slug: string }>();
+  const { slug: _slug } = useParams<{ slug: string }>();
   const history = useHistory();
   const { preview, ...query } = useLocationQuery();
 
@@ -42,6 +43,8 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
     type: 'crowdsourcing-task',
     detail: true,
   });
+  const project = useProjectByTask(reviewTask);
+  const slug = _slug || project?.slug;
 
   const backTasks = useApiTaskSearch<CrowdsourcingReview>(
     {

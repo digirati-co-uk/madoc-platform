@@ -10,17 +10,16 @@ export const kitchenSinkTemplate: ProjectTemplate = {
     actionLabel: 'Create kitchen sink',
     documentation: 'https://docs.madoc.io/',
   },
-  setupModel: captureModelShorthand({
-    customField: 'text-field',
-  }),
-  captureModel: captureModelShorthand({
-    transcription: {
-      type: 'text-field',
-      multiline: true,
-      minLines: 6,
-      label: 'Transcription',
-    },
-  }),
+  captureModel: {
+    document: captureModelShorthand({
+      transcription: {
+        type: 'text-field',
+        multiline: true,
+        minLines: 6,
+        label: 'Transcription',
+      },
+    }),
+  },
   configuration: {
     defaults: {
       claimGranularity: 'canvas',
@@ -94,6 +93,10 @@ export const kitchenSinkTemplate: ProjectTemplate = {
     },
   },
   setup: {
+    defaults: { customField: '' },
+    model: {
+      customField: 'text-field',
+    },
     async onCreateConfiguration(projectConfig, { options }: { options: { customField: string } }) {
       console.log('onCreateConfiguration', { projectConfig, options });
     },

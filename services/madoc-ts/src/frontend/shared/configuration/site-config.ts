@@ -258,6 +258,14 @@ export const siteConfigurationModel: {
         label: 'Show IIIF drag and drop logo',
         value: 'showIIIFLogo',
       },
+      {
+        label: 'Covered image style variation',
+        value: 'coveredImages',
+      },
+      {
+        label: 'Hide canvas labels on manifest listing',
+        value: 'hideCanvasLabels',
+      },
     ],
   },
   headerOptions: {

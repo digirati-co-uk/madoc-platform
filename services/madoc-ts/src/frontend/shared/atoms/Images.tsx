@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const CroppedImage = styled.div<{ $size?: 'small' | 'large' }>`
+export const CroppedImage = styled.div<{ $size?: 'small' | 'large'; $covered?: boolean }>`
   background: #000;
   padding: 2px;
   height: ${props => {
@@ -27,12 +27,28 @@ export const CroppedImage = styled.div<{ $size?: 'small' | 'large' }>`
   justify-content: center;
   align-items: center;
   overflow: hidden;
+
+  ${props =>
+    props.$covered &&
+    css`
+      padding: 0;
+      border-radius: 3px;
+      background: transparent;
+    `}
+
   img {
     display: inline-block;
     object-fit: contain;
     flex-shrink: 0;
     width: 100%;
     height: 100%;
+
+    ${props =>
+      props.$covered &&
+      css`
+        object-fit: cover;
+        transform: scale(1.1);
+      `}
   }
 `;
 

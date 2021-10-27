@@ -9,9 +9,9 @@ export const decorators = [(Story) => {
   return (
     <MemoryRouter>
       <DndProvider backend={MultiBackend} options={HTML5toTouch}>
-        <ApiContext>
+        <ApiContext.Provider value={undefined}>
           <Story />
-        </ApiContext>
+        </ApiContext.Provider>
       </DndProvider>
     </MemoryRouter>
   )

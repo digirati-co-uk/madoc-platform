@@ -140,6 +140,8 @@ export type SearchIngestRequest = {
   id: string;
   type: string;
   thumbnail: string;
+  cascade?: boolean;
+  cascade_canvases?: boolean;
   resource: Manifest | Canvas | Collection; // Raw IIIF resource if available.
   contexts: Array<{
     id: string;

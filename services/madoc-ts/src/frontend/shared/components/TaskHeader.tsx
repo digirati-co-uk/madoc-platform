@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { BaseTask } from '../../../gateway/tasks/base-task';
 import { extractIdFromUrn } from '../../../utility/parse-urn';
 import { useTaskMetadata } from '../../site/hooks/use-task-metadata';
+import { useProjectByTask } from '../hooks/use-project-by-task';
 import {
   ContextualLabel,
   ContextualMenuList,
@@ -95,18 +96,20 @@ const typeMapping: any = {
 
 export const TaskHeader: React.FC<{ task: BaseTask; refetch?: () => Promise<void> }> = ({ task, refetch }) => {
   const metadata = useTaskMetadata(task);
+  const project = useProjectByTask(task);
   const { t } = useTranslation();
   const subject = metadata.subject;
 
   const manifestLink =
     subject && subject.type === 'manifest'
-      ? createLink({ manifestId: subject.id, taskId: undefined, parentTaskId: undefined })
+      ? createLink({ manifestId: subject.id, taskId: undefined, parentTaskId: undefined, projectId: project?.slug })
       : subject && subject.parent && subject.parent.type === 'manifest'
       ? createLink({
           manifestId: subject.parent.id,
           canvasId: undefined,
           taskId: undefined,
           parentTaskId: undefined,
+          projectId: project?.slug,
         })
       : null;
 
@@ -118,6 +121,7 @@ export const TaskHeader: React.FC<{ task: BaseTask; refetch?: () => Promise<void
           taskId: undefined,
           parentTaskId: undefined,
           subRoute: 'model',
+          projectId: project?.slug,
         })
       : null;
 

@@ -1,5 +1,5 @@
 import { ProjectConfiguration } from '../src/types/schemas/project-configuration';
-import { ProjectFull } from '../src/types/schemas/project-full';
+import { ProjectFull } from '../src/types/project-full';
 
 export function createProjectMock(config: Partial<ProjectConfiguration> = {}) {
   return {

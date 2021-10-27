@@ -3,7 +3,7 @@ import { CrowdsourcingCanvasTask } from '../gateway/tasks/crowdsourcing-canvas-t
 import { CrowdsourcingCollectionTask } from '../gateway/tasks/crowdsourcing-collection-task';
 import { CrowdsourcingManifestTask } from '../gateway/tasks/crowdsourcing-manifest-task';
 import { CrowdsourcingTask } from '../gateway/tasks/crowdsourcing-task';
-import { ProjectFull } from '../types/schemas/project-full';
+import { ProjectFull } from '../types/project-full';
 
 export function manifestTaskCountsAsContribution(task: BaseTask) {
   return task.type === 'crowdsourcing-task' && task.status !== -1;

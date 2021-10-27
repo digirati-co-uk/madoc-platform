@@ -10,9 +10,10 @@ import { ButtonRow } from '../navigation/Button';
 export const EditShorthandCaptureModel: React.FC<{
   data: any | undefined;
   template: any;
+  saveLabel?: string;
   immutableFields?: string[];
   onSave: (revision: any) => Promise<void> | void;
-}> = ({ data, onSave, template, immutableFields }) => {
+}> = ({ data, onSave, template, saveLabel, immutableFields }) => {
   const saveRevision = useCallback(
     ({ revisionRequest }: { revisionRequest: RevisionRequest }) => {
       onSave(revisionRequest ? serialiseCaptureModel(revisionRequest.document) : null);
@@ -51,12 +52,11 @@ export const EditShorthandCaptureModel: React.FC<{
       initialRevision={rev.revisionId}
       revision={rev.revisionId}
     >
-      <div style={{ fontSize: '0.85em', maxWidth: 800 }}>
+      <div style={{ fontSize: '0.85em', maxWidth: 550 }}>
         <EditorSlots.TopLevelEditor />
       </div>
-      <ButtonRow>
-        <EditorSlots.SubmitButton afterSave={saveRevision} />
-      </ButtonRow>
+
+      <EditorSlots.SubmitButton afterSave={saveRevision}>{saveLabel}</EditorSlots.SubmitButton>
     </RevisionProviderWithFeatures>
   ) : null;
 };

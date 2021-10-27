@@ -1,5 +1,5 @@
 import React from 'react';
-import { ProjectFull } from '../../../../types/schemas/project-full';
+import { ProjectFull } from '../../../../types/project-full';
 import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';

@@ -2,6 +2,7 @@ import React from 'react';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { MetaDataDisplay } from '../../shared/components/MetaDataDisplay';
 import { usePaginatedData } from '../../shared/hooks/use-data';
+import { useUser } from '../../shared/hooks/use-site';
 import { useSiteMetadataConfiguration } from '../../shared/hooks/use-site-metadata-configuration';
 import { useMetadataSuggestionConfiguration } from '../hooks/use-metadata-suggestion-configuration';
 import { useRelativeLinks } from '../hooks/use-relative-links';
@@ -18,6 +19,8 @@ export const ManifestMetadata: React.FC<{ hidden?: boolean; compact?: boolean; s
   const { manifest } = useMetadataSuggestionConfiguration();
   const { resolvedData: data } = usePaginatedData(ManifestLoader, undefined, { enabled: !!manifestId && !hidden });
   const { data: metadataConfig } = useSiteMetadataConfiguration({ enabled: !hidden });
+  const user = useUser();
+  const canSuggest = user && user.scope.indexOf('models.contribute') !== -1;
 
   if (!data || !metadataConfig || hidden) {
     return null;
@@ -35,7 +38,7 @@ export const ManifestMetadata: React.FC<{ hidden?: boolean; compact?: boolean; s
       config={metadataConfig?.metadata}
       metadata={metadata || []}
       showEmptyMessage={showEmptyMessage}
-      suggestEdit={manifest ? createLink({ canvasId: undefined, subRoute: `metadata/edit` }) : undefined}
+      suggestEdit={manifest && canSuggest ? createLink({ canvasId: undefined, subRoute: `metadata/edit` }) : undefined}
     />
   );
 };

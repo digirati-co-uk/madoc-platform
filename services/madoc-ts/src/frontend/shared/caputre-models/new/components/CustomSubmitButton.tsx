@@ -7,7 +7,7 @@ import { Button, ButtonRow } from '../../../navigation/Button';
 import { useDeselectRevision } from '../hooks/use-deselect-revision';
 import { EditorRenderingConfig, useSlotConfiguration } from './EditorSlots';
 
-export const CustomSubmitButton: EditorRenderingConfig['SubmitButton'] = ({ afterSave }) => {
+export const CustomSubmitButton: EditorRenderingConfig['SubmitButton'] = ({ afterSave, children }) => {
   const { t } = useTranslation();
   const currentRevision = Revisions.useStoreState(s => s.currentRevision);
   const config = useSlotConfiguration();
@@ -54,12 +54,10 @@ export const CustomSubmitButton: EditorRenderingConfig['SubmitButton'] = ({ afte
   }
 
   return (
-    <div style={{ padding: '0.5em 1em' }}>
-      <ButtonRow $noMargin>
-        <Button $primary disabled={isLoading} onClick={() => saveRevision()}>
-          {isLoading ? t('Saving...') : isUnsaved ? t('Save') : t('Save changes')}
-        </Button>
-      </ButtonRow>
-    </div>
+    <ButtonRow $noMargin>
+      <Button $primary disabled={isLoading} onClick={() => saveRevision()}>
+        {children ? children : <>{isLoading ? t('Saving...') : isUnsaved ? t('Save') : t('Save changes')}</>}
+      </Button>
+    </ButtonRow>
   );
 };

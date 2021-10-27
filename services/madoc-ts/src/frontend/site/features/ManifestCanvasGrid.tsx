@@ -30,6 +30,8 @@ export const ManifestCanvasGrid: React.FC = () => {
   const [subjectMap] = useSubjectMap(manifestSubjects);
 
   const directToModelPage = (!!userManifestTask || canClaimManifest) && manifestOptions?.directModelPage;
+  const coveredImages = manifestOptions?.coveredImages;
+  const hideCanvasLabels = manifestOptions?.hideCanvasLabels;
   const manifest = data?.manifest;
 
   if (!manifest || !showNavigationContent) {
@@ -47,7 +49,7 @@ export const ManifestCanvasGrid: React.FC = () => {
           })}
         >
           <ImageStripBox>
-            <CroppedImage>
+            <CroppedImage $covered={coveredImages}>
               {canvas.thumbnail ? (
                 <img alt={createLocaleString(canvas.label, t('Canvas thumbnail'))} src={canvas.thumbnail} />
               ) : null}
@@ -55,7 +57,7 @@ export const ManifestCanvasGrid: React.FC = () => {
             {(isActive || isPreparing) && manifestSubjects && subjectMap ? (
               <CanvasStatus status={subjectMap[canvas.id]} />
             ) : null}
-            <LocaleString as={Heading5}>{canvas.label}</LocaleString>
+            {hideCanvasLabels ? null : <LocaleString as={Heading5}>{canvas.label}</LocaleString>}
           </ImageStripBox>
         </Link>
       ))}

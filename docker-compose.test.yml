@@ -21,7 +21,7 @@ services:
     environment:
       - NODE_ENV=test
     volumes:
-      - ./e2e/test-fixtures/certs:/openssl-certs
+      - ./e2e/test-fixtures/certs:/home/node/app/openssl-certs
       - ./var/test-environment/jwt:/home/node/app/service-jwt-responses
       - ./var/test-environment/files:/home/node/app/omeka-files
 

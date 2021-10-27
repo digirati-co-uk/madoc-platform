@@ -1,4 +1,5 @@
 import { CaptureModel } from '@capture-models/types';
+import { BaseField } from '@capture-models/types/src/field-types';
 import React from 'react';
 import { ModelEditorConfig } from '../../frontend/admin/pages/crowdsourcing/model-editor/use-model-editor-config';
 import { ProjectStatusMap } from '../../frontend/shared/atoms/ProjectStatus';
@@ -18,8 +19,9 @@ export type JsonProjectTemplate = {
     documentation?: string;
     actionLabel?: string;
   };
-  setupModel?: CaptureModel['document'];
-  captureModel?: CaptureModel['document'];
+  captureModel?: {
+    document: CaptureModel['document'];
+  };
   configuration?: {
     defaults?: Partial<ProjectConfiguration>;
     immutable?: Array<keyof ProjectConfiguration>;
@@ -46,9 +48,22 @@ export type JsonProjectTemplate = {
   slots?: SlotMappingRequest;
 };
 
-export type ProjectTemplate<Options = any, RevSession = any> = JsonProjectTemplate & {
+export type CaptureModelShorthand<Keys extends string | number | symbol> = Record<
+  Keys,
+  string | Partial<CaptureModel['document']> | Partial<BaseField>
+>;
+
+export type ProjectTemplateConfig<T extends ProjectTemplate> = T extends ProjectTemplate<any, any, infer R> ? R : never;
+
+export type ProjectTemplate<
+  Options extends Record<string, any> = any,
+  RevSession extends Record<string, any> = any,
+  CustomConfig extends Record<string, any> = any
+> = JsonProjectTemplate & {
   // Unknown parameters.
   setup?: {
+    model?: CaptureModelShorthand<keyof Options>;
+    defaults?: Options;
     beforeForkDocument?: (
       model: Readonly<CaptureModel['document']>,
       extra: {
@@ -59,6 +74,18 @@ export type ProjectTemplate<Options = any, RevSession = any> = JsonProjectTempla
       | Promise<CaptureModel['document'] | Readonly<CaptureModel['document']> | undefined | void>
       | CaptureModel['document']
       | Readonly<CaptureModel['document']>
+      | void
+      | undefined;
+    beforeForkStructure?: (
+      model: Readonly<CaptureModel>,
+      extra: {
+        api: ApiClient;
+        options: Options;
+      }
+    ) =>
+      | Promise<CaptureModel['structure'] | Readonly<CaptureModel['structure']> | undefined | void>
+      | CaptureModel['structure']
+      | Readonly<CaptureModel['structure']>
       | void
       | undefined;
     onCreateConfiguration?: (
@@ -75,7 +102,26 @@ export type ProjectTemplate<Options = any, RevSession = any> = JsonProjectTempla
         options: Options;
       }
     ) => void | Promise<void>;
+
+    // This will be used in the set up to generate initial values for the custom config. If this does not exist,
+    // customConfig.defaultConfig will be used instead. The default config will also be used if this function
+    // failed for any reason.
+    onCreateCustomConfiguration?: (
+      config: ProjectConfiguration,
+      extra: { api: ApiClient; options: Options }
+    ) => CustomConfig | Promise<CustomConfig>;
   };
+  customConfig?: {
+    replacesProjectConfig?: boolean;
+    defaultConfig: CustomConfig;
+    model: CaptureModelShorthand<keyof CustomConfig>;
+    applyConfig: (newConfig: CustomConfig, prevConfig: CustomConfig) => void | Promise<void>;
+  };
+  customActions?: Array<{
+    label: string;
+    roles?: string[]; // Default = admin only
+    doAction: (extra: { api: ApiClient; config: CustomConfig }) => void | Promise<void>;
+  }>;
   hooks?: {
     onCreateUserRevisionSession?: () => RevSession;
     onAddContentToProject?: () => void | Promise<void>;
@@ -92,6 +138,10 @@ export type ProjectTemplate<Options = any, RevSession = any> = JsonProjectTempla
     onCreateReview?: () => void | Promise<void>;
     onAssignReview?: () => void | Promise<void>;
   };
+  migrations?: Array<{
+    version: string;
+    upgrade: () => void | Promise<void>;
+  }>;
   components?: {
     customEditor?: React.FC<any>;
   };

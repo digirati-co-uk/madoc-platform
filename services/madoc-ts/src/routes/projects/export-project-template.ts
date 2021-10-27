@@ -42,6 +42,8 @@ export const exportProjectTemplate: RouteMiddleware<{ id: string }> = async cont
     configuration: {
       defaults: project.config,
     },
-    captureModel: newDocument,
+    captureModel: {
+      document: newDocument,
+    },
   } as JsonProjectTemplate;
 };

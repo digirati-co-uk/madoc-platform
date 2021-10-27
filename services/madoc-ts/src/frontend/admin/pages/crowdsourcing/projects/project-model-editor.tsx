@@ -3,11 +3,10 @@ import { EmptyState } from '../../../../shared/layout/EmptyState';
 import { DashboardTab, DashboardTabs } from '../../../../shared/components/DashboardTabs';
 import { useProjectTemplate } from '../../../../shared/hooks/use-project-template';
 import { UniversalComponent } from '../../../../types';
-import { EditorContext } from '@capture-models/editor';
+import { EditorContext, defaultTheme } from '@capture-models/editor';
 import React, { useState } from 'react';
 import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
 import { Link, useHistory, useParams } from 'react-router-dom';
-import { defaultTheme } from '@capture-models/editor';
 import { ThemeProvider } from 'styled-components';
 import { CaptureModel } from '@capture-models/types';
 import { useMutation } from 'react-query';
@@ -15,6 +14,7 @@ import { useApi } from '../../../../shared/hooks/use-api';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { AutoStructure } from '../model-editor/auto-structure';
+import { PreviewCaptureModel } from '../model-editor/preview-capture-model';
 import { ModelEditorProvider } from '../model-editor/use-model-editor-config';
 
 type ProjectModelEditorType = {
@@ -59,6 +59,20 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
 
     if (editorConfig?.noCaptureModel) {
       return <EmptyState>{t('No capture model for this project type')}</EmptyState>;
+    }
+
+    if (editorConfig?.preventChangeDocument && editorConfig?.preventChangeStructure) {
+      return (
+        <EditorContext captureModel={model}>
+          <ModelEditorProvider template={data.template}>
+            <PreviewCaptureModel
+              structure={newStructure ? newStructure : model.structure}
+              document={newDocument ? newDocument : model.document}
+              revisionNumber={revisionNumber}
+            />
+          </ModelEditorProvider>
+        </EditorContext>
+      );
     }
 
     return (

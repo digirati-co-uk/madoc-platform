@@ -58,24 +58,32 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
   );
 
   // 2. Create or fork capture model
+  const modelDocument = chosenTemplate?.captureModel?.document;
   const beforeForkDocument = chosenTemplate?.setup?.beforeForkDocument;
+  const beforeForkStructure = chosenTemplate?.setup?.beforeForkStructure;
   const modelTemplate =
-    chosenTemplate?.captureModel && beforeForkDocument
-      ? await beforeForkDocument(chosenTemplate?.captureModel, {
+    modelDocument && beforeForkDocument
+      ? await beforeForkDocument(modelDocument, {
           api: userApi,
           options: template_options,
         })
       : null;
 
-  const captureModel = chosenTemplate?.captureModel
-    ? await userApi.createCaptureModelFromTemplate(modelTemplate || chosenTemplate?.captureModel, iiifGetLabel(label))
+  const captureModel = modelDocument
+    ? await userApi.createCaptureModelFromTemplate(modelTemplate || modelDocument, iiifGetLabel(label), {
+        processStructure: beforeForkStructure
+          ? fullModel => {
+              return beforeForkStructure(fullModel, { api: userApi, options: template_options });
+            }
+          : undefined,
+      })
     : await userApi.createCaptureModel(iiifGetLabel(label));
 
   // 3. Create crowdsourcing task.
   const task = await userApi.newTask<CrowdsourcingProjectTask>({
     name: firstLang(label),
     subject: `urn:madoc:collection:${collection.id}`,
-    parameters: [captureModel.id],
+    parameters: [captureModel.id, chosenTemplate?.type],
     type: 'crowdsourcing-project',
     status_text: 'paused',
     status: 0,
@@ -107,7 +115,8 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
       const onCreateConfiguration = setupFunctions?.onCreateConfiguration;
       const mergedConfiguration = deepmerge(siteConfig, configurationOptions.defaults);
       const hookConfiguration = onCreateConfiguration
-        ? await onCreateConfiguration(mergedConfiguration, { api: userApi, options: template_options })
+        ? // @todo add config
+          await onCreateConfiguration(mergedConfiguration, { api: userApi, options: template_options })
         : null;
       await userApi.saveSiteConfiguration(hookConfiguration ? hookConfiguration : mergedConfiguration, {
         project_id: project.id,
@@ -115,6 +124,7 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
     }
 
     if (setupFunctions?.onCreateProject) {
+      // @todo add config
       await setupFunctions?.onCreateProject(project, { api: userApi, options: template_options });
     }
 
@@ -125,7 +135,7 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
     }
 
     // Returning project.
-    context.response.body = project;
+    context.response.body = await context.projects.getProjectByIdOrSlug(project.id, siteId);
   } catch (err) {
     console.log(err);
     // todo

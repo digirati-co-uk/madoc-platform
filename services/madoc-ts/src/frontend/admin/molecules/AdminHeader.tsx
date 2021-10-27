@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from '../../shared/navigation/Button';
 import { AdminPageTitle, AdminPageSubtitle } from '../../shared/typography/AdminPageTitle';
 import styled, { css } from 'styled-components';
 import { BreadcrumbItem, Breadcrumbs } from '../../shared/navigation/Breadcrumbs';
@@ -6,6 +7,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { WidePage } from '../../shared/layout/WidePage';
 import { SearchBox } from '../../shared/atoms/SearchBox';
 import { GridContainer } from '../../shared/layout/Grid';
+import { HrefLink } from '../../shared/utility/href-link';
 
 const AdminHeaderBackground = styled.div<{ $sticky?: boolean; $noMargin?: boolean }>`
   background: #24386b;
@@ -74,6 +76,11 @@ const TitleContainer = styled.div`
   margin-right: auto;
 `;
 
+const ActionContainer = styled.div`
+  margin-left: auto;
+  align-self: center;
+`;
+
 export const AdminHeader: React.FC<{
   title: any;
   sticky?: boolean;
@@ -83,8 +90,13 @@ export const AdminHeader: React.FC<{
   thumbnail?: string;
   search?: boolean;
   noMargin?: boolean;
-  searchFunction?: (val: string) => [{}];
-}> = ({ title, subtitle, breadcrumbs, menu, noMargin, thumbnail, search = false, searchFunction, sticky }) => {
+  searchFunction?: (val: string) => any;
+  action?: {
+    label: string;
+    link: string;
+    external?: boolean;
+  };
+}> = ({ title, subtitle, breadcrumbs, menu, noMargin, thumbnail, search = false, searchFunction, sticky, action }) => {
   const { pathname } = useLocation();
   return (
     <AdminHeaderBackground $noMargin={noMargin} $sticky={sticky}>
@@ -100,6 +112,13 @@ export const AdminHeader: React.FC<{
             <AdminPageTitle subtitle={!!subtitle}>{title}</AdminPageTitle>
             {subtitle ? <AdminPageSubtitle>{subtitle}</AdminPageSubtitle> : null}
           </TitleContainer>
+          {action ? (
+            <ActionContainer>
+              <Button $primary as={action.external ? 'a' : HrefLink} href={action.link}>
+                {action.label}
+              </Button>
+            </ActionContainer>
+          ) : null}
         </AdminHeaderGrid>
         {menu ? (
           <GridContainer $justify={'space-between'}>

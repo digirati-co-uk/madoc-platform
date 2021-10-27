@@ -61,8 +61,12 @@ EXPOSE 3001
 
 RUN mkdir -p /home/node/app/service-jwt && \
     mkdir -p /home/node/app/service-jwt-responses && \
+    mkdir -p /home/node/app/files && \
+    mkdir -p /home/node/app/openssl-certs && \
     chown node:node /home/node/app/service-jwt && \
-    chown node:node /home/node/app/service-jwt-responses
+    chown node:node /home/node/app/service-jwt-responses && \
+    chown node:node /home/node/app/files && \
+    chown node:node /home/node/app/openssl-certs
 
 USER node
 

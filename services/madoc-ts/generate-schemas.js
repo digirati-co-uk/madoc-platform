@@ -9,6 +9,10 @@ const files = readdirSync(join(__dirname, './src/types/schemas')).map(f => join(
 const program = TJS.getProgramFromFiles(files, {
   baseUrl: './src/types/schemas',
   skipLibCheck: true,
+  jsx: 'react',
+  esModuleInterop: true,
+  typeRoots: ['../../node_modules/@types', 'node_modules/@types'],
+  allowSyntheticDefaultImports: true,
 });
 
 const generator = TJS.buildGenerator(program, { required: true, noExtraProps: false });

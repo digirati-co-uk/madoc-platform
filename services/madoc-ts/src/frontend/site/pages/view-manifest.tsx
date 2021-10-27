@@ -4,7 +4,7 @@ import { CrowdsourcingReview } from '../../../gateway/tasks/crowdsourcing-review
 import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
 import { CollectionFull } from '../../../types/schemas/collection-full';
 import { ManifestFull } from '../../../types/schemas/manifest-full';
-import { ProjectFull } from '../../../types/schemas/project-full';
+import { ProjectFull } from '../../../types/project-full';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { Slot } from '../../shared/page-blocks/slot';

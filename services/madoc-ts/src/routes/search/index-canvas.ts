@@ -48,6 +48,8 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
   const searchPayload: SearchIngestRequest = {
     id: `urn:madoc:canvas:${canvasId}`,
     type: 'Canvas',
+    cascade: false,
+    cascade_canvases: false,
     resource: {
       type: 'Canvas',
       id: sourceId,

@@ -1,5 +1,5 @@
 import { CaptureModel } from '@capture-models/types';
-import { ProjectFull } from '../../src/types/schemas/project-full';
+import { ProjectFull } from '../../src/types/project-full';
 import { ApiMock } from '../../test-utility/api-mock';
 import { DatabaseMock } from '../../test-utility/database-mock';
 import { createProjectMock, KoaContextMock } from '../../test-utility/mocks';

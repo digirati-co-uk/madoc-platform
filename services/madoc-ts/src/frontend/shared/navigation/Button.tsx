@@ -25,6 +25,7 @@ export const Button = styled.button<{
   $inlineInput?: boolean;
   $large?: boolean;
   $disabled?: boolean;
+  $link?: boolean;
 }>`
   cursor: pointer;
   padding: 0.4em 1em;
@@ -33,13 +34,19 @@ export const Button = styled.button<{
   border-radius: 3px;
   background: #fff;
   color: #3579f6;
-  border: 1px solid #4265e9;
   text-decoration: none;
   display: inline-block;
   letter-spacing: 0.25px;
   vertical-align: top;
   transition: color 0.1s, background-color 0.1s, border-color 0.1s;
   white-space: nowrap;
+  border: 1px solid #4265e9;
+  
+  ${props =>
+    props.$link &&
+    css`
+      border-color: transparent;
+    `}
   
   ${props =>
     props.$large &&
@@ -62,14 +69,14 @@ export const Button = styled.button<{
     border-color: #4265e9;
     color: #fff;
   }
-
+  
   &:focus {
     outline: none;
     color: #fff;
     background: #4265e9;
     border-color: #4265e9;
   }
-
+  
   &:focus:hover {
     border-color: #4265e9;
   }
@@ -109,6 +116,9 @@ export const Button = styled.button<{
       &:hover {
         background: #5371e9;
         border-color: #5371e9;
+      }
+      &:focus-visible {
+        box-shadow: inset 0 0px 0px 2px rgba(255, 255, 255, 0.8);
       }
       &:disabled {
         opacity: 0.7;

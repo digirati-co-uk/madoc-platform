@@ -101,89 +101,134 @@
       "type": "object",
       "properties": {
         "header": {
-          "$ref": "#/definitions/0401f2f741528638b0822a2e2dd0a1fc"
+          "$ref": "#/definitions/5f960e3e2e87815f1d28c4d9b87c5a1f"
         },
         "accent": {
-          "$ref": "#/definitions/6d0ff98e927bc7a52245590565e54b78"
+          "$ref": "#/definitions/2465ba41b990ac278a27e94fc80de680"
         },
         "siteContainer": {
-          "$ref": "#/definitions/2ee55e91c5c92743fa84ea849165ac9f"
+          "$ref": "#/definitions/c8680ad2ae0ff85f6800663e1968c10f"
         },
         "footer": {
-          "$ref": "#/definitions/7991c4d60d5f2beadb873109e8d85e16"
+          "$ref": "#/definitions/707af62e329a855f15bc72dc96445a8e"
         },
         "global": {
-          "$ref": "#/definitions/d820679a83f41809404cd3b745312032"
+          "$ref": "#/definitions/2c90d36b20396f72f9bf51b77fb57411"
         }
       }
     },
-    "0401f2f741528638b0822a2e2dd0a1fc": {
+    "5f960e3e2e87815f1d28c4d9b87c5a1f": {
       "type": "object",
       "properties": {
         "size": {
-          "type": "number"
+          "type": [
+            "number",
+            "object"
+          ]
         },
         "headerBackground": {
-          "type": "string"
+          "type": [
+            "string",
+            "object"
+          ]
         },
         "globalBackground": {
-          "type": "string"
+          "type": [
+            "string",
+            "object"
+          ]
         },
         "menuHoverBackground": {
-          "type": "string"
+          "type": [
+            "string",
+            "object"
+          ]
         },
         "headerText": {
-          "type": "string"
+          "type": [
+            "string",
+            "object"
+          ]
         },
         "searchBorder": {
-          "type": "string"
+          "type": [
+            "string",
+            "object"
+          ]
         },
         "searchBorderFocusColor": {
-          "type": "string"
+          "type": [
+            "string",
+            "object"
+          ]
         }
       }
     },
-    "6d0ff98e927bc7a52245590565e54b78": {
+    "2465ba41b990ac278a27e94fc80de680": {
       "type": "object",
       "properties": {
         "primary": {
-          "type": "string"
+          "type": [
+            "string",
+            "object"
+          ]
         },
         "secondary": {
-          "type": "string"
+          "type": [
+            "string",
+            "object"
+          ]
         }
       }
     },
-    "2ee55e91c5c92743fa84ea849165ac9f": {
+    "c8680ad2ae0ff85f6800663e1968c10f": {
       "type": "object",
       "properties": {
         "background": {
-          "type": "string"
+          "type": [
+            "string",
+            "object"
+          ]
         },
         "containerBackground": {
-          "type": "string"
+          "type": [
+            "string",
+            "object"
+          ]
         }
       }
     },
-    "7991c4d60d5f2beadb873109e8d85e16": {
+    "707af62e329a855f15bc72dc96445a8e": {
       "type": "object",
       "properties": {
         "color": {
-          "type": "string"
+          "type": [
+            "string",
+            "object"
+          ]
         },
         "background": {
-          "type": "string"
+          "type": [
+            "string",
+            "object"
+          ]
         },
         "containerBackground": {
-          "type": "string"
+          "type": [
+            "string",
+            "object"
+          ]
         }
       }
     },
-    "d820679a83f41809404cd3b745312032": {
+    "2c90d36b20396f72f9bf51b77fb57411": {
       "type": "object",
       "properties": {
         "maxWidth": {
-          "type": "string"
+          "type": [
+            "string",
+            "object"
+          ]
         }
       }
     }

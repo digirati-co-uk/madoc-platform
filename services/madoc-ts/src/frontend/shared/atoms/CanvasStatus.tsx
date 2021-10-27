@@ -6,7 +6,7 @@ import { useApi } from '../hooks/use-api';
 import { useUser } from '../hooks/use-site';
 
 const CanvasStatusBackground = styled.div`
-  background: #ddd;
+  background: #ced8ea;
   height: 10px;
 `;
 

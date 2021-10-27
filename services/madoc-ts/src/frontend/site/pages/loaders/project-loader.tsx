@@ -15,7 +15,7 @@ import { UniversalComponent } from '../../../types';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { useStaticData } from '../../../shared/hooks/use-data';
 import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
-import { ProjectFull } from '../../../../types/schemas/project-full';
+import { ProjectFull } from '../../../../types/project-full';
 import { ConfigProvider } from '../../features/SiteConfigurationContext';
 
 type ProjectLoaderType = {

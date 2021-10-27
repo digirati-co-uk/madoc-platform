@@ -5,6 +5,7 @@ import { getToken } from '../utility/get-token';
 import { NotFound } from '../utility/errors/not-found';
 import { RouteMiddleware } from '../types/route-middleware';
 import { errors } from 'jose';
+import { errorHandler } from './error-handler';
 
 export const parseJwt: RouteMiddleware<{ slug?: string }> = async (context, next) => {
   const slug = context.params ? context.params.slug : undefined;
@@ -74,7 +75,9 @@ export const parseJwt: RouteMiddleware<{ slug?: string }> = async (context, next
       if (token) {
         context.state.jwt = parseJWT(token, asUser);
         context.state.user = context.state.jwt?.user;
-        await next(); // only here.
+
+        await errorHandler(context, next); // only here.
+
         return;
       }
     }

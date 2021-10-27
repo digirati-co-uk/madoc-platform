@@ -8,11 +8,12 @@ import { ModalButton } from '../../../components/Modal';
 import { useViewerSaving } from '../../../hooks/use-viewer-saving';
 import { HrefLink } from '../../../utility/href-link';
 import { useDeselectRevision } from '../hooks/use-deselect-revision';
-import { EditorRenderingConfig, EditorSlots } from './EditorSlots';
+import { EditorRenderingConfig, useSlotContext } from './EditorSlots';
 
 export const DefaultSubmitButton: EditorRenderingConfig['SubmitButton'] = ({ afterSave }) => {
   const { t } = useTranslation();
   const routeContext = useRouteContext();
+  const Slots = useSlotContext();
   const { projectId } = routeContext;
   const currentRevision = Revisions.useStoreState(s => s.currentRevision);
   const updateFunction = useViewerSaving(
@@ -53,7 +54,7 @@ export const DefaultSubmitButton: EditorRenderingConfig['SubmitButton'] = ({ aft
           modalSize={isSuccess ? 'sm' : 'lg'}
           title={t('Submit for review')}
           render={() => {
-            return isSuccess ? <EditorSlots.PostSubmission /> : <EditorSlots.PreviewSubmission />;
+            return isSuccess ? <Slots.PostSubmission /> : <Slots.PreviewSubmission />;
           }}
           onClose={() => {
             reset();

@@ -125,7 +125,7 @@ export const ContentExplorer: React.FC<{
   projectId?: string;
   renderChoice: (id: number, reset: () => void) => any;
 }> = ({ projectId, renderChoice, canvasId: defaultCanvasId }) => {
-  const [recent, addNewRecent] = useRecent<ItemStructureListItem>('content-explorer');
+  const [recent, addNewRecent] = useRecent<ItemStructureListItem>(`content-explorer-${projectId}`);
   const { t } = useTranslation();
   const [contentType, setContentType] = useState<'collection' | 'manifest' | undefined>();
   const [search, setSearch] = useState<string>('');
