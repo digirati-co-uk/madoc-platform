@@ -20,6 +20,7 @@ import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useManifest } from '../hooks/use-manifest';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { Redirect } from 'react-router-dom';
+import '../features/ManifestHero';
 
 export const ViewManifest: React.FC<{
   project?: ProjectFull;
