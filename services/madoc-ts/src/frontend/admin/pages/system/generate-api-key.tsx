@@ -19,6 +19,7 @@ import { Button } from '../../../shared/navigation/Button';
 const scopeDefinitions = [
   { label: 'Site admin', value: 'site.admin' },
   { label: 'Capture model admin', value: 'model.admin' },
+  { label: 'Tasks admin', value: 'tasks.admin' },
 ];
 
 export const GenerateApiKey: React.FC = () => {
