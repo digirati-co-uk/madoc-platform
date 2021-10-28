@@ -27,7 +27,8 @@ export const SuggestMetadata: React.FC = () => {
   const { t } = useTranslation();
   const createLink = useRelativeLinks();
   const config = useMetadataSuggestionConfiguration();
-  const canSuggest = user && user.scope.indexOf('models.contribute') !== -1;
+  const canSuggest =
+    user && (user.scope.indexOf('models.contribute') !== -1 || user.scope.indexOf('site.admin') !== -1);
 
   const { data: canvasRequest } = apiHooks.getSiteCanvasMetadata(() => (canvasId ? [canvasId] : undefined));
   const { data: manifestRequest } = apiHooks.getSiteManifestMetadata(() =>

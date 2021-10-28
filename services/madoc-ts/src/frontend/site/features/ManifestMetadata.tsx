@@ -20,7 +20,8 @@ export const ManifestMetadata: React.FC<{ hidden?: boolean; compact?: boolean; s
   const { resolvedData: data } = usePaginatedData(ManifestLoader, undefined, { enabled: !!manifestId && !hidden });
   const { data: metadataConfig } = useSiteMetadataConfiguration({ enabled: !hidden });
   const user = useUser();
-  const canSuggest = user && user.scope.indexOf('models.contribute') !== -1;
+  const canSuggest =
+    user && (user.scope.indexOf('models.contribute') !== -1 || user.scope.indexOf('site.admin') !== -1);
 
   if (!data || !metadataConfig || hidden) {
     return null;
