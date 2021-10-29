@@ -4,9 +4,10 @@ import { IIIFHero } from '../../shared/components/IIIFHero';
 import { useManifest } from '../hooks/use-manifest';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 
-export const ManifestHero: React.FC<{ backgroundColor?: string; hideAsset?: boolean }> = ({
+export const ManifestHero: React.FC<{ backgroundColor?: string; hideAsset?: boolean; titleOverride?: string }> = ({
   backgroundColor,
   hideAsset,
+  titleOverride,
 }) => {
   const { data } = useManifest();
   const manifest = data?.manifest;
@@ -18,7 +19,7 @@ export const ManifestHero: React.FC<{ backgroundColor?: string; hideAsset?: bool
 
   return (
     <IIIFHero
-      title={manifest.label}
+      title={titleOverride ? { none: [titleOverride] } : manifest.label}
       description={manifest.summary}
       backgroundImage={manifest.items.length ? manifest.items[0].thumbnail : ''}
       asset={
@@ -44,8 +45,10 @@ blockEditorFor(ManifestHero, {
   defaultProps: {
     backgroundColor: '#000',
     hideAsset: false,
+    titleOverride: '',
   },
   editor: {
+    titleOverride: { type: 'text-field', label: 'Override the hero title' },
     backgroundColor: { type: 'text-field', label: 'Background color (right side)' },
     hideAsset: { type: 'checkbox-field', label: 'Hide asset', inlineLabel: 'Check this to hide asset on the right' },
   },
