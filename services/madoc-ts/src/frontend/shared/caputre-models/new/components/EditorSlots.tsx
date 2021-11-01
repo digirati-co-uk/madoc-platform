@@ -292,7 +292,17 @@ const InlineEntity: EditorRenderingConfig['InlineEntity'] = props => {
   );
 };
 
-export const EditorSlots = {
+function addNames<T>(name: string, record: T): T {
+  const keys = Object.keys(record);
+
+  for (const key of keys) {
+    (record as any)[key].displayName = `${name}.${key}`;
+  }
+
+  return record;
+}
+
+export const EditorSlots = addNames('EditorSlots', {
   Provider,
   InlineBreadcrumbs,
   InlineProperties,
@@ -308,4 +318,4 @@ export const EditorSlots = {
   PostSubmission,
   EditorWrapper,
   FieldInstance,
-};
+});
