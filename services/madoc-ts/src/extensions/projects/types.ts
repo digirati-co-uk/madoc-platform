@@ -21,6 +21,7 @@ export type JsonProjectTemplate = {
   };
   captureModel?: {
     document: CaptureModel['document'];
+    structure?: CaptureModel['structure'];
   };
   configuration?: {
     defaults?: Partial<ProjectConfiguration>;
@@ -55,14 +56,18 @@ export type CaptureModelShorthand<Keys extends string | number | symbol> = Recor
 
 export type ProjectTemplateConfig<T extends ProjectTemplate> = T extends ProjectTemplate<any, any, infer R> ? R : never;
 
+export type ModelDefinition<Options = any> =
+  | { verboseDocument: true; model: CaptureModel['document'] }
+  | { verboseDocument: false; model?: CaptureModelShorthand<keyof Options> }
+  | { model?: CaptureModelShorthand<keyof Options> };
+
 export type ProjectTemplate<
   Options extends Record<string, any> = any,
   RevSession extends Record<string, any> = any,
   CustomConfig extends Record<string, any> = any
 > = JsonProjectTemplate & {
   // Unknown parameters.
-  setup?: {
-    model?: CaptureModelShorthand<keyof Options>;
+  setup?: ModelDefinition<Options> & {
     defaults?: Options;
     beforeForkDocument?: (
       model: Readonly<CaptureModel['document']>,
