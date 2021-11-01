@@ -11,7 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added support for capture model "structure" in project templates
 
 ### Fixed
+
 - Skip choice in capture model when only one option
+- Fixed "Back to choices" taking the user back too far
+- Fixed double button issue where "Back to choices" would appear next to "Back"
 
 ## [2.0.0](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.0) - 2021-XX-XX
 First stable release of Madoc 2.0
