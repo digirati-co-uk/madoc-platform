@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added support for capture model "structure" in project templates
 - [internal] Added better debugging names for capture model slots in React devtools
+- Missing translations for capture models
 
 ### Fixed
 
@@ -19,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed text wrapping of "Next [entity]" and "Prev [entity]" on capture model navigation
 - Added missing translation tags to "Next [entity]" and "Prev [entity]"
 - Fixed i18next-react integration with capture models
+- Fixed layout styling with capture model editor
 
 ## [2.0.0](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.0) - 2021-XX-XX
 First stable release of Madoc 2.0
