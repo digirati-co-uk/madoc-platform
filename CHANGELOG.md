@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Skip choice in capture model when only one option
 - Fixed "Back to choices" taking the user back too far
 - Fixed double button issue where "Back to choices" would appear next to "Back"
+- Fixed text wrapping of "Next [entity]" and "Prev [entity]" on capture model navigation
+- Added missing translation tags to "Next [entity]" and "Prev [entity]"
+- Fixed i18next-react integration with capture models
 
 ## [2.0.0](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.0) - 2021-XX-XX
 First stable release of Madoc 2.0
