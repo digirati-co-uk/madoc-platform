@@ -266,6 +266,7 @@ describe('Create resource claim', () => {
             "madoc-ts.status.-1",
             "madoc-ts.status.2",
             "madoc-ts.status.3",
+            "madoc-ts.status.4",
           ],
           "name": "test: submission undefined",
           "parameters": Array [
@@ -768,6 +769,7 @@ describe('Create resource claim', () => {
             "madoc-ts.status.-1",
             "madoc-ts.status.2",
             "madoc-ts.status.3",
+            "madoc-ts.status.4",
           ],
           "name": "Test user: submission undefined",
           "parameters": Array [
@@ -1287,6 +1289,7 @@ describe('Create resource claim', () => {
             "madoc-ts.status.-1",
             "madoc-ts.status.2",
             "madoc-ts.status.3",
+            "madoc-ts.status.4",
           ],
           "name": "test: submission undefined",
           "parameters": Array [
