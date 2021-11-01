@@ -2,11 +2,10 @@
 
 import deepmerge from 'deepmerge';
 import * as path from 'path';
-import { promises, existsSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 import send from 'koa-send';
 import { TRANSLATIONS_PATH } from '../paths';
 import { RouteMiddleware } from '../types/route-middleware';
-const { readFile, writeFile } = promises;
 
 export const getLocale: RouteMiddleware<{ lng: string; ns: string }> = async context => {
   if (context.params.lng.match(/\.\./) || context.params.ns.match(/\.\./)) {
@@ -48,10 +47,10 @@ export const saveMissingLocale: RouteMiddleware<{ lng: string; ns: string }> = a
       try {
         const bundle = path.resolve(TRANSLATIONS_PATH, context.params.lng, `${context.params.ns}.json`);
         if (existsSync(bundle)) {
-          const file = await readFile(bundle);
+          const file = readFileSync(bundle);
           const bundleJson = JSON.parse(file.toString('utf-8'));
           const newBundle = deepmerge(bundleJson, context.requestBody);
-          await writeFile(bundle, JSON.stringify(newBundle, Object.keys(newBundle as any).sort(), 2));
+          await writeFileSync(bundle, JSON.stringify(newBundle, Object.keys(newBundle as any).sort(), 2));
         }
       } catch (e) {
         console.log(e);
