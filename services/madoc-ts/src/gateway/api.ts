@@ -42,6 +42,7 @@ import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/searc
 import { SearchIndexable } from '../utility/capture-model-to-indexables';
 import { NotFound } from '../utility/errors/not-found';
 import { generateModelFields } from '../utility/generate-model-fields';
+import { traverseStructure } from '../utility/traverse-structure';
 import { ApiRequest } from './api-definitions/_meta';
 import { fetchJson } from './fetch-json';
 import { BaseTask } from './tasks/base-task';
@@ -1163,6 +1164,7 @@ export class ApiClient {
     model: CaptureModel['document'],
     label?: string,
     options: {
+      structure?: CaptureModel['structure'];
       processStructure?: (
         captureModel: Readonly<CaptureModel>
       ) =>
@@ -1185,20 +1187,29 @@ export class ApiClient {
       visitSelector: updateId,
     });
     const modelFields = generateModelFields(newModel);
+    let structure: CaptureModel['structure'] | undefined = undefined;
+    if (options.structure) {
+      structure = deepmerge({}, options.structure as any, { clone: true }) as CaptureModel['structure'];
+      traverseStructure(structure, str => {
+        str.id = generateId();
+      });
+    }
 
     const fullModel: CaptureModel = {
       id: generateId(),
-      structure: createChoice({
-        label,
-        items: [
-          {
-            id: generateId(),
-            type: 'model',
-            label: 'Default',
-            fields: modelFields,
-          },
-        ],
-      }),
+      structure: structure
+        ? structure
+        : createChoice({
+            label,
+            items: [
+              {
+                id: generateId(),
+                type: 'model',
+                label: 'Default',
+                fields: modelFields,
+              },
+            ],
+          }),
       document: label
         ? {
             ...newModel,
