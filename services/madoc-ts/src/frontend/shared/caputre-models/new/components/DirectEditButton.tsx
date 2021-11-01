@@ -12,10 +12,17 @@ import { useDeselectRevision } from '../hooks/use-deselect-revision';
 import { mergeDocument } from '../utility/merge-document';
 import { EditorRenderingConfig, useSlotConfiguration } from './EditorSlots';
 
-export const DirectEditButton: EditorRenderingConfig['SubmitButton'] = ({ saveOnNavigate = true, afterSave }) => {
+export const DirectEditButton: EditorRenderingConfig['SubmitButton'] = ({
+  saveOnNavigate = true,
+  captureModel: _captureModel,
+}) => {
   const { canvasId } = useRouteContext();
   const { data: projectModel } = useCanvasModel();
-  const [{ captureModel }, , refetchModel] = useLoadedCaptureModel(projectModel?.model?.id, undefined, canvasId);
+  const [{ captureModel }, , refetchModel] = useLoadedCaptureModel(
+    _captureModel ? _captureModel.id : projectModel?.model?.id,
+    _captureModel,
+    canvasId
+  );
   const api = useApi();
   const { t } = useTranslation();
   const currentRevision = Revisions.useStoreState(s => s.currentRevision);
@@ -51,7 +58,7 @@ export const DirectEditButton: EditorRenderingConfig['SubmitButton'] = ({ saveOn
       const newDocument = mergeDocument(
         captureModel.document,
         currentRevision.document,
-        currentRevision.revision.deletedFields,
+        currentRevision.revision.deletedFields || [],
         currentRevision.revision.id
       );
 

@@ -5,8 +5,11 @@ export const EditorToolbarContainer = styled.div`
   display: flex;
   overflow: hidden;
   align-items: center;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
+  border: 1px solid #eee;
   height: 50px;
+  min-height: 50px;
+  border-radius: 5px;
+  margin: 0.5em 0;
 `;
 
 export const EditorToolbarButton = styled.button<{ $rightBorder?: boolean }>`

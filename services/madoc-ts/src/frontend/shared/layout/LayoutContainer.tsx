@@ -85,6 +85,8 @@ export const LayoutContent = styled.div<{ $padding?: boolean }>`
   flex: 1 1 0px;
   min-width: 0;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   ${props =>
     props.$padding &&
     css`

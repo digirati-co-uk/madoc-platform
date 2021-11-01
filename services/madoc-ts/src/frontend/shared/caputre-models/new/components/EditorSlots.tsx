@@ -67,6 +67,7 @@ export type EditorRenderingConfig = {
   SubmitButton: React.FC<{
     afterSave?: (req: { revisionRequest: RevisionRequest; context: RouteContext }) => void | Promise<void>;
     saveOnNavigate?: boolean;
+    captureModel?: CaptureModel;
   }>;
   PreviewSubmission: React.FC;
   PostSubmission: React.FC;
@@ -258,7 +259,11 @@ const SubmitButton: EditorRenderingConfig['SubmitButton'] = props => {
   const Slots = useSlotContext();
 
   return (
-    <Slots.SubmitButton saveOnNavigate={Slots.configuration.saveOnNavigate} afterSave={props.afterSave}>
+    <Slots.SubmitButton
+      saveOnNavigate={Slots.configuration.saveOnNavigate}
+      captureModel={props.captureModel}
+      afterSave={props.afterSave}
+    >
       {props.children}
     </Slots.SubmitButton>
   );
