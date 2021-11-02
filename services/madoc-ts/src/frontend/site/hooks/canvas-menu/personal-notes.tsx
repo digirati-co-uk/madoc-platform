@@ -27,7 +27,9 @@ export function usePersonalNotesMenu(): CanvasMenuHook {
 
   const enabled = config.project.allowPersonalNotes || false;
 
-  const { data, refetch } = apiHooks.getPersonalNote(() => (canvasId && projectId ? [projectId, canvasId] : undefined));
+  const { data, refetch } = apiHooks.getPersonalNote(() =>
+    canvasId && projectId && user ? [projectId, canvasId] : undefined
+  );
 
   const [saveNote, saveNoteStatus] = useMutation(async (newNoteValue: string) => {
     if (projectId && canvasId) {
