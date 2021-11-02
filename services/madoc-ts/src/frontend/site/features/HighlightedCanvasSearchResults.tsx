@@ -16,7 +16,6 @@ export const HighlightedCanvasSearchResults: React.FC = () => {
 
   return (
     <>
-      <CanvasHighlightedRegions />
       {highlightedRegions && highlightedRegions.bounding_boxes ? (
         <InfoMessage>
           {highlightedRegions.bounding_boxes.length} {t('Search results for {{searchText}}', { searchText })}{' '}
