@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed missing annotations on model page
 - Fixed message "Maximum number of contributors reached" for logged-out user
 - Fixed bug where short submissions would appear collapsed in sidebar
+- Fixed re-fetching on window focus
 
 ## [2.0.0](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.0) - 2021-XX-XX
 First stable release of Madoc 2.0
