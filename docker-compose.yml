@@ -18,6 +18,7 @@ services:
       - search
 
   madoc-ts:
+    tty: true
     build:
       context: services/madoc-ts
       dockerfile: Dockerfile.dev
@@ -64,6 +65,7 @@ services:
       - shared-postgres
 
   tasks-api:
+    tty: true
     image: ghcr.io/digirati-co-uk/tasks-api:latest
     environment:
       - SERVER_PORT=3000
@@ -80,6 +82,7 @@ services:
       - gateway-redis
 
   model-api:
+    tty: true
     image: digirati/capture-models:v0.13.21
     environment:
       - SERVER_PORT=3000
@@ -146,6 +149,7 @@ services:
       - ./configuration/defaults:/app/configurator/default_config
 
   storage-api:
+    tty: true
     image: ghcr.io/digirati-co-uk/storage-api:latest
     environment:
       - GATEWAY_HOST=${GATEWAY_HOST}
