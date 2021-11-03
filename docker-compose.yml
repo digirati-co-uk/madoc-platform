@@ -5,6 +5,7 @@ services:
   gateway:
     build:
       context: services/gateway
+      dockerfile: Dockerfile.dev
     ports:
       - "${PORTS_GATEWAY:-8888}:8080"
     links:

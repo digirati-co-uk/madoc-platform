@@ -1,0 +1,11 @@
+FROM nginx:stable-alpine
+
+# Nginx config
+COPY ./nginx.conf /etc/nginx/nginx.conf
+COPY ./conf.d /etc/nginx/conf.d
+
+## DEV ONLY.
+COPY ./dev/madoc-assets.conf /etc/nginx/conf.d/services/madoc-assets.conf
+##
+
+COPY ./www /www
