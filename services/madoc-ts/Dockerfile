@@ -1,4 +1,4 @@
-FROM node:12 as build
+FROM node:14 as build
 
 WORKDIR /home/node/app
 
@@ -20,7 +20,7 @@ ENV NODE_ENV=production
 
 RUN yarn build
 
-FROM node:12 as modules
+FROM node:14 as modules
 
 WORKDIR /home/node/app
 
@@ -30,7 +30,7 @@ COPY --from=build /home/node/app/npm /home/node/app/npm
 
 RUN yarn install --no-interactive --frozen-lockfile --production=true
 
-FROM node:12
+FROM node:14
 
 WORKDIR /home/node/app
 
