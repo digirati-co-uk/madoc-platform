@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed i18next-react integration with capture models
 - Fixed layout styling with capture model editor 
 - Fixed "changes requested" notification
+- Fixed "total collections" count when listing sites
 - [internal] Fixed corrupted translation saving in development
 
 ### Removed
