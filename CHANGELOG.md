@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Missing translations for capture models
 - Added support for new capture model editor in review screen
 - Added ability for Admins to "reset" capture models and remove contributions
+- New configuration option for session refresh window (default 24 hours)
 - [Internal] Added new "api.crowdsourcing" namespace to consolidate crowdsourcing APIs together.
 - [internal] Added better debugging names for capture model slots in React devtools
 
@@ -34,6 +35,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed layout styling with capture model editor 
 - Fixed "changes requested" notification
 - Fixed missing cache-control headers on static assets
+- Fixed "total collections" count when listing sites
+- Fixed bug with sessions not refreshing when loading pages
+- Fixed bug with cookie expire time not taking into account the refresh window
 - [internal] Fixed corrupted translation saving in development
 
 ### Removed
