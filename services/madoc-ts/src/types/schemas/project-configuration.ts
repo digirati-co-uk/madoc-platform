@@ -25,6 +25,7 @@ export type ProjectConfiguration = {
   hideCanvasThumbnailNavigation?: boolean;
   showSearchFacetCount?: boolean; // @todo move to searchOptions
   miradorCanvasPage?: boolean;
+  universalViewerCanvasPage?: boolean;
   contributionMode?: 'transcription' | 'annotation';
   // New search options - need to migrate others to this.
   searchOptions?: {

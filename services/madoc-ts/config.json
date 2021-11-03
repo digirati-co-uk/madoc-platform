@@ -29,6 +29,7 @@
     "hideCanvasThumbnailNavigation": false,
     "showSearchFacetCount": false,
     "miradorCanvasPage": false,
+    "universalViewerCanvasPage": false,
     "contributionMode": "annotation",
     "shortExpiryTime": "10",
     "longExpiryTime": "1440",

@@ -74,6 +74,11 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
               component: components.ViewManifestMirador,
             },
             {
+              path: '/collections/:collectionId/manifests/:manifestId/uv',
+              exact: true,
+              component: components.ViewManifestUV,
+            },
+            {
               path: '/collections/:collectionId/manifests/:manifestId/c/:canvasId',
               component: components.CanvasLoader,
               routes: [
@@ -173,6 +178,11 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
           path: '/manifests/:manifestId/mirador',
           exact: true,
           component: components.ViewManifestMirador,
+        },
+        {
+          path: '/manifests/:manifestId/uv',
+          exact: true,
+          component: components.ViewManifestUV,
         },
         {
           path: '/manifests/:manifestId/c/:canvasId',
@@ -316,6 +326,11 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
                   path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/mirador',
                   exact: true,
                   component: components.ViewManifestMirador,
+                },
+                {
+                  path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/uv',
+                  exact: true,
+                  component: components.ViewManifestUV,
                 },
                 {
                   path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/c/:canvasId',
