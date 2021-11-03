@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added support for new capture model editor in review screen
 - Added ability for Admins to "reset" capture models and remove contributions
 - New configuration option for session refresh window (default 24 hours)
+- Updated [react-beautiful-dnd](https://github.com/atlassian/react-beautiful-dnd/releases/tag/v13.1.0) with React 17 support
 - [Internal] Added new "api.crowdsourcing" namespace to consolidate crowdsourcing APIs together.
 - [internal] Added better debugging names for capture model slots in React devtools
 
