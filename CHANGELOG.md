@@ -6,8 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.0.0...main)
 
+### Fixed
+
+- Fixed bug with resolving image services on content resources without heights/widths (via [@atlas-viewer/iiif-image-api](https://github.com/atlas-viewer/iiif-image-api/commit/4fd3266426d2608bc6a7e307e92687c197bd6e8d)) 
+
+
 ## [2.0.0](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.0) - 2021-XX-XX
-First stable release of Madoc 2.0
+First stable release of Madoc 2.0a
 Check out the [documentation](https://docs.madoc.io)
 
 For [Madoc v1.x](https://github.com/digirati-co-uk/madoc-platform/tree/v1.x) you can see the [changelog](https://github.com/digirati-co-uk/madoc-platform/blob/master/CHANGELOG.md)

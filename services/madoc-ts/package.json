@@ -34,7 +34,7 @@
     "scheduler": "0.19.1",
     "styled-components": "5.1.1",
     "slonik-sql-tag-raw": "1.0.2",
-    "@atlas-viewer/iiif-image-api": "1.2.5",
+    "@atlas-viewer/iiif-image-api": "1.2.6",
     "@babel/runtime": "7.14.6",
     "@hyperion-framework/presentation-2-parser": "^1.0.0",
     "@hyperion-framework/parser": "^1.0.0",
@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "@atlas-viewer/atlas": "1.6.9",
-    "@atlas-viewer/iiif-image-api": "^1.2.5",
+    "@atlas-viewer/iiif-image-api": "^1.2.6",
     "@babel/runtime": "^7.14.6",
     "@capture-models/editor": "^0.13.20",
     "@capture-models/helpers": "^0.13.14",
