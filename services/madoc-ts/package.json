@@ -68,7 +68,7 @@
     "babel-preset-react": "^6.24.1",
     "bcrypt": "^5.0.1",
     "browser-cookies": "^1.2.0",
-    "bullmq": "^1.8.7",
+    "bullmq": "^1.51.2",
     "canvas-panel-beta": "2.0.2",
     "color-hash": "^1.0.3",
     "colorthief": "^2.3.2",
