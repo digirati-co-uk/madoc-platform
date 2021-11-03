@@ -1,10 +1,11 @@
-import { NotAuthorized } from '../utility/errors/not-authorized';
-import { verifySignedToken } from '../utility/verify-signed-token';
-import { parseJWT } from '../utility/parse-jwt';
-import { getToken } from '../utility/get-token';
-import { NotFound } from '../utility/errors/not-found';
-import { RouteMiddleware } from '../types/route-middleware';
 import { errors } from 'jose';
+import { RouteMiddleware } from '../types/route-middleware';
+import { NotAuthorized } from '../utility/errors/not-authorized';
+import { NotFound } from '../utility/errors/not-found';
+import { getJwtCookies } from '../utility/get-jwt-cookies';
+import { getToken } from '../utility/get-token';
+import { parseJWT } from '../utility/parse-jwt';
+import { verifySignedToken } from '../utility/verify-signed-token';
 import { errorHandler } from './error-handler';
 
 export const parseJwt: RouteMiddleware<{ slug?: string }> = async (context, next) => {
@@ -38,6 +39,7 @@ export const parseJwt: RouteMiddleware<{ slug?: string }> = async (context, next
   // Only from the context of the Madoc site /s/{slug}/madoc
   if (slug) {
     const cookieName = context.externalConfig.cookieName || 'madoc';
+    const refreshWindow = context.externalConfig.tokenRefresh || 60 * 60 * 24 * 1000; // 24 hours.
     const cookie = context.cookies.get(`${cookieName}/${slug}`, { signed: process.env.NODE_ENV !== 'test' });
 
     if (cookie) {
@@ -48,13 +50,35 @@ export const parseJwt: RouteMiddleware<{ slug?: string }> = async (context, next
           // Set the internal state to the JWT.
           context.state.jwt = parsedToken;
         } else {
+          const expiredToken = verifySignedToken(cookie, true);
+          if (expiredToken) {
+            const { canRefresh, hasExpired, siteId, details } = await context.siteManager.refreshExpiredToken(
+              expiredToken.token,
+              refreshWindow
+            );
+
+            if (hasExpired && canRefresh && details) {
+              const { lastToken, cookiesToAdd } = await getJwtCookies(
+                context,
+                { ...details.user, sites: details.sites },
+                siteId
+              );
+              for (const newCookie of cookiesToAdd) {
+                context.cookies.set(newCookie.name, newCookie.value, newCookie.options);
+              }
+              if (lastToken) {
+                const refreshedToken = verifySignedToken(lastToken);
+                context.state.jwt = refreshedToken ? parseJWT(refreshedToken) : undefined;
+              }
+              return next();
+            }
+          }
           // Otherwise UN-set the cookie.
-          context.cookies.set(cookieName, { signed: true });
+          context.cookies.set(cookieName, '', { signed: true });
         }
       } catch (e) {
         // Rethrow expired tokens.
         if (e instanceof errors.JWTExpired) {
-          // @todo refresh?
           throw e;
         }
       }

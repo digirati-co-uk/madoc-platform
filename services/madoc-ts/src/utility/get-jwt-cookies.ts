@@ -18,6 +18,8 @@ export async function getJwtCookies(
   let siteToken;
   const expiresIn = context.externalConfig.tokenExpires || 24 * 60 * 60 * 7; // 7-day token.
   const cookieName = context.externalConfig.cookieName || 'madoc';
+  const refreshWindow = context.externalConfig.tokenRefresh || 24 * 60 * 60; // 24-hour refresh
+
   const siteIds: string[] = [];
   // Loop all of the sites the user is to be logged into.
   for (const site of user.sites) {
@@ -52,7 +54,7 @@ export async function getJwtCookies(
       value: token,
       options: {
         path: domain,
-        maxAge: expiresIn * 1000,
+        maxAge: (expiresIn + refreshWindow) * 1000,
         overwrite: true,
         signed: true,
         httpOnly: false,
