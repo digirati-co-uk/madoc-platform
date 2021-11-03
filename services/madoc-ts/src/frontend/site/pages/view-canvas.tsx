@@ -5,6 +5,7 @@ import { CanvasVaultContext } from '../../shared/components/CanvasVaultContext';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { Slot } from '../../shared/page-blocks/slot';
 import { CanvasConfigurationViewer } from '../features/CanvasConfigurationViewer';
+import { CanvasHighlightedRegions } from '../features/CanvasHighlightedRegions';
 import { CanvasPageHeader } from '../features/CanvasPageHeader';
 import { CanvasThumbnailNavigation } from '../features/CanvasThumbnailNavigation';
 import { ContinueCanvasSubmission } from '../features/ContinueCanvasSubmission';
@@ -33,6 +34,8 @@ export const ViewCanvas: React.FC = () => {
       </Slot>
 
       <CanvasVaultContext>
+        <CanvasHighlightedRegions />
+
         <Slot name="canvas-viewer-header" hidden={!showCanvasNavigation}>
           <CanvasPageHeader />
 

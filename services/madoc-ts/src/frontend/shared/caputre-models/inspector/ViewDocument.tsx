@@ -76,7 +76,7 @@ const FieldPreviewWrapper = styled.div`
   white-space: pre-wrap;
 `;
 
-const renderFieldList = (fields: BaseField[]) => {
+const renderFieldList = (fields: BaseField[], { fluidImage }: { fluidImage?: boolean }) => {
   if (!fields || isEmptyFieldList(fields)) {
     return null;
   }
@@ -91,7 +91,7 @@ const renderFieldList = (fields: BaseField[]) => {
         if (field.value && field.selector) {
           return (
             <React.Fragment key={field.id}>
-              <SelectorPreview selector={field.selector} />
+              <SelectorPreview selector={field.selector} fluidImage={fluidImage} />
               <FieldPreview field={field} />
             </React.Fragment>
           );
@@ -109,7 +109,8 @@ const renderEntityList = (
     filterRevisions = [],
     highlightRevisionChanges,
     collapsedEntity,
-  }: { filterRevisions: string[]; highlightRevisionChanges?: string; collapsedEntity?: boolean }
+    fluidImage,
+  }: { filterRevisions: string[]; highlightRevisionChanges?: string; collapsedEntity?: boolean; fluidImage?: boolean }
 ) => {
   const toRender = entities
     .map(entity => {
@@ -136,7 +137,7 @@ const renderEntityList = (
       }
 
       return (
-        <ViewEntity key={entity.id} entity={entity}>
+        <ViewEntity key={entity.id} entity={entity} fluidImage={fluidImage}>
           {renderedProps}
         </ViewEntity>
       );
@@ -150,12 +151,12 @@ const renderEntityList = (
   return <DocumentEntityList>{toRender}</DocumentEntityList>;
 };
 
-const ViewEntity: React.FC<{ collapsed?: boolean; entity: CaptureModel['document']; interactive?: boolean }> = ({
-  entity,
-  collapsed,
-  children,
-  interactive = true,
-}) => {
+const ViewEntity: React.FC<{
+  collapsed?: boolean;
+  entity: CaptureModel['document'];
+  interactive?: boolean;
+  fluidImage?: boolean;
+}> = ({ entity, collapsed, children, interactive = true, fluidImage }) => {
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
 
   // @todo make better.
@@ -183,7 +184,7 @@ const ViewEntity: React.FC<{ collapsed?: boolean; entity: CaptureModel['document
       {/* This is where the entity selector will go, if it exists. */}
       {isCollapsed ? null : (
         <>
-          {entity.selector ? <SelectorPreview selector={entity.selector} /> : null}
+          {entity.selector ? <SelectorPreview selector={entity.selector} fluidImage={fluidImage} /> : null}
           {children}
         </>
       )}
@@ -199,12 +200,14 @@ const renderProperty = (
     collapsed,
     collapsedEntity,
     highlightRevisionChanges,
+    fluidImage,
   }: {
     key: any;
     filterRevisions?: string[];
     highlightRevisionChanges?: string;
     collapsed?: boolean;
     collapsedEntity?: boolean;
+    fluidImage?: boolean;
   }
 ) => {
   const label = fields.length > 1 && fields[0].pluralLabel ? fields[0].pluralLabel : fields[0].label;
@@ -217,8 +220,8 @@ const renderProperty = (
   });
   const description = fields[0].description;
   const renderedProperties = isEntityList(filteredFields)
-    ? renderEntityList(filteredFields, { filterRevisions, highlightRevisionChanges, collapsedEntity })
-    : renderFieldList(filteredFields as any);
+    ? renderEntityList(filteredFields, { filterRevisions, highlightRevisionChanges, collapsedEntity, fluidImage })
+    : renderFieldList(filteredFields as any, { fluidImage });
 
   if (!renderedProperties) {
     return null;
@@ -274,7 +277,10 @@ export const ViewProperty: React.FC<{
   );
 };
 
-export const SelectorPreview: React.FC<{ selector?: BaseSelector }> = ({ selector }) => {
+export const SelectorPreview: React.FC<{ selector?: BaseSelector; fluidImage?: boolean }> = ({
+  selector,
+  fluidImage,
+}) => {
   const { data: service } = useImageService() as { data?: ImageService };
   const croppedRegion = useCroppedRegion();
   const [image, setImage] = useState('');
@@ -293,20 +299,31 @@ export const SelectorPreview: React.FC<{ selector?: BaseSelector }> = ({ selecto
   }
 
   return (
-    <CroppedImage $size="small" style={{ margin: '.5em' }}>
-      <img src={image} alt="cropped region of image" width={100} />
+    <CroppedImage $size={'small'} $fluid={fluidImage} style={{ margin: '.5em 0' }}>
+      <img src={image} alt="cropped region of image" width={fluidImage ? '100%' : 100} />
     </CroppedImage>
   );
 };
 
 export const ViewDocument: React.FC<{
-  document: CaptureModel['document'];
+  document: CaptureModel['document'] | Array<CaptureModel['document']>;
   filterRevisions?: string[];
   hideTitle?: boolean;
   padding?: boolean;
   collapsed?: boolean;
+  fluidImage?: boolean;
   highlightRevisionChanges?: string;
-}> = ({ document, filterRevisions = [], hideTitle, padding = true, highlightRevisionChanges, collapsed }) => {
+  hideEmpty?: boolean;
+}> = ({
+  document: documentOrArray,
+  filterRevisions = [],
+  hideTitle,
+  hideEmpty,
+  padding = true,
+  highlightRevisionChanges,
+  collapsed,
+  fluidImage,
+}) => {
   const { t } = useTranslation();
   // ✅ Label (plural label / labelled by)
   // ✅ Description
@@ -330,28 +347,43 @@ export const ViewDocument: React.FC<{
   // Add show history on field
   //  - Traverses up the revises field
   //  - Shows it in a list
+  const documentList = Array.isArray(documentOrArray) ? documentOrArray : [documentOrArray];
+  const renderedList: any[] = [];
+  for (const document of documentList) {
+    const flatProperties = Object.entries(document.properties);
 
-  const flatProperties = Object.entries(document.properties);
+    if (flatProperties.length === 0) {
+      return <EmptyState>{t('No document yet')}</EmptyState>;
+    }
 
-  if (flatProperties.length === 0) {
-    return <EmptyState>{t('No document yet')}</EmptyState>;
+    const rendered = flatProperties
+      .map(([, field], key) => {
+        return renderProperty(field, { key: key, filterRevisions, highlightRevisionChanges, fluidImage });
+      })
+      .filter(r => r !== null);
+
+    if (rendered.length) {
+      renderedList.push({
+        label: document.label,
+        description: document.description,
+        rendered,
+      });
+    }
   }
 
-  const rendered = flatProperties
-    .map(([, field], key) => {
-      return renderProperty(field, { key: key, filterRevisions, highlightRevisionChanges });
-    })
-    .filter(r => r !== null);
-
-  if (rendered.length === 0) {
+  if (renderedList.length === 0) {
     return <EmptyState>{t('No document yet')}</EmptyState>;
   }
 
   return (
     <div style={{ padding: padding ? 20 : 0 }}>
-      {!hideTitle ? <h3>{document.label}</h3> : null}
-      {!hideTitle ? <p>{document.description}</p> : null}
-      {rendered}
+      {renderedList.map(({ label, description, rendered }, n) => (
+        <React.Fragment key={n}>
+          {!hideTitle ? <h3>{label}</h3> : null}
+          {!hideTitle ? <p>{description}</p> : null}
+          {rendered}
+        </React.Fragment>
+      ))}
     </div>
   );
 };

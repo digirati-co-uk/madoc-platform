@@ -10,8 +10,10 @@ import { CanvasMenuHook } from './types';
 
 export function useDocumentPanel(): CanvasMenuHook {
   const { projectId, canvasId } = useRouteContext();
-  const { data, isLoading } = apiHooks.getSiteCanvasPublishedModels(() =>
-    canvasId ? [canvasId, { project_id: projectId, selectors: true, format: 'capture-model-with-pages' }] : undefined
+  const { data, isLoading } = apiHooks.getSiteCanvasPublishedModels(
+    () =>
+      canvasId ? [canvasId, { project_id: projectId, selectors: true, format: 'capture-model-with-pages' }] : undefined,
+    { refetchOnWindowFocus: false }
   );
   const { t } = useTranslation();
   const canvas = data?.canvas;
@@ -40,7 +42,9 @@ export function useDocumentPanel(): CanvasMenuHook {
               return null;
             }
 
-            return <ViewDocument key={model.id} document={model.document} filterRevisions={incompleteRevisions} />;
+            return (
+              <ViewDocument hideEmpty key={model.id} document={model.document} filterRevisions={incompleteRevisions} />
+            );
           })
         ) : (
           <MetadataEmptyState style={{ marginTop: 100 }}>{t('No document yet')}</MetadataEmptyState>
