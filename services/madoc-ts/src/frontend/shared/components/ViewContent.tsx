@@ -3,10 +3,11 @@ import React, { useMemo } from 'react';
 import { useContentType } from '@capture-models/plugin-api';
 import { Target } from '@capture-models/types';
 import '@capture-models/editor/lib/content-types/Atlas';
+import { CanvasFull } from '../../../types/canvas-full';
 
 export const ViewContent: React.FC<{
   target: Target[];
-  canvas: any;
+  canvas: CanvasFull['canvas'];
   height?: number;
   onCreated?: (runtime: AtlasContextType) => void;
   onPanInSketchMode?: () => void;

@@ -7,8 +7,6 @@ import { Button } from '../../../shared/navigation/Button';
 import { EditorSlots } from '../../../shared/caputre-models/new/components/EditorSlots';
 import { RevisionProviderWithFeatures } from '../../../shared/caputre-models/new/components/RevisionProviderWithFeatures';
 import { SimpleSaveButton } from '../../../shared/caputre-models/new/components/SimpleSaveButton';
-import { LocaleString } from '../../../shared/components/LocaleString';
-import { Heading3 } from '../../../shared/typography/Heading3';
 import '@capture-models/editor/lib/input-types/TextField';
 import '@capture-models/editor/lib/input-types/HTMLField';
 import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
@@ -16,6 +14,7 @@ import { HrefLink } from '../../../shared/utility/href-link';
 import { useCrowdsourcingTaskDetails } from '../../hooks/use-crowdsourcing-task-details';
 import { TaskContext } from '../loaders/task-loader';
 import { WarningMessage } from '../../../shared/callouts/WarningMessage';
+import { SuccessMessage } from '../../../shared/callouts/SuccessMessage';
 import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
 import { CrowdsourcingTaskManifest } from './crowdsourcing-task-manifest';
 
@@ -26,7 +25,6 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task,
     project,
     backLink,
     editLink,
-    subject,
     mayExpire,
     isComplete,
     isSubmitted,
@@ -50,24 +48,18 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task,
   return (
     <ThemeProvider theme={defaultTheme}>
       <div>
-        {backLink ? (
-          <div>
-            <Link to={backLink}>{t('Back to resource')}</Link>
-          </div>
-        ) : null}
-        {subject ? <LocaleString as="h1">{subject.label}</LocaleString> : null}
         {changesRequested ? (
-          <div style={{ background: 'lightblue', padding: '1em', marginBottom: '1em' }}>
-            <Heading3>{t('The following changes were requested')}</Heading3>
+          <WarningMessage $banner>
+            <strong>{t('The following changes were requested')}</strong>
             <p>{changesRequested}</p>
-          </div>
+          </WarningMessage>
         ) : null}
-        {mayExpire ? <WarningMessage>{t('Your contribution may expire soon')}</WarningMessage> : null}
+        {mayExpire ? <WarningMessage $banner>{t('Your contribution may expire soon')}</WarningMessage> : null}
         {isComplete ? (
-          <WarningMessage>
+          <SuccessMessage $banner>
             {t('This task is complete. You can make another contribution from the')}{' '}
             {backLink ? <Link to={backLink}>{t('Image page')}</Link> : t('Image page')}
-          </WarningMessage>
+          </SuccessMessage>
         ) : null}
         {wasRejected ? (
           <ErrorMessage>

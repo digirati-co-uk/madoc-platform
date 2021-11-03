@@ -3,6 +3,7 @@ import React from 'react';
 import { AutosaveRevision } from '../features/AutosaveRevision';
 import { AutoSelectDefineRegion } from '../features/AutoSelectDefineRegion';
 import { AutoSelectingRevision } from '../features/AutoSelectingRevision';
+import { BasicUnNesting } from '../features/BasicUnNesting';
 import { CorrectingRevisionSubtree } from '../features/CorrectingRevisionSubtree';
 import { SwitchEditMode } from '../features/SwitchEditMode';
 import { SwitchFieldAfterRevises } from '../features/SwitchFieldAfterRevises';
@@ -15,6 +16,7 @@ export type RevisionProviderFeatures = {
   autoSelectingRevision?: boolean;
   directEdit?: boolean;
   preventMultiple?: boolean;
+  basicUnNesting?: boolean;
 };
 
 export const RevisionProviderWithFeatures: React.FC<{
@@ -34,6 +36,7 @@ export const RevisionProviderWithFeatures: React.FC<{
     revisionEditMode = true,
     directEdit = false,
     preventMultiple = false,
+    basicUnNesting = true,
   } = features || {};
   const { components, editor } = slotConfig || {};
 
@@ -54,6 +57,7 @@ export const RevisionProviderWithFeatures: React.FC<{
         {autoSelectingRevision ? (
           <AutoSelectingRevision directEdit={directEdit} preventMultiple={preventMultiple} />
         ) : null}
+        {basicUnNesting ? <BasicUnNesting /> : null}
         <CorrectingRevisionSubtree />
         <EditorSlots.Provider config={editor} components={components}>
           {children}

@@ -12,7 +12,7 @@ import { ViewExternalContent } from '../../components/ViewExternalContent';
 
 export type EditorContentVariations = {
   // This is the aim to resolve.
-  canvas?: CanvasFull;
+  canvas?: CanvasFull['canvas'];
   transcription?: string;
   // Can be resolved from this.
   target?: CaptureModel['target'];
@@ -80,6 +80,7 @@ export const EditorContentViewer: React.FC<EditorContentVariations> = ({
     return (
       <ViewExternalContent
         onCreated={onCreated}
+        height={height}
         onPanInSketchMode={onPanInSketchMode}
         target={[
           { type: 'Canvas', id: canvasUri },

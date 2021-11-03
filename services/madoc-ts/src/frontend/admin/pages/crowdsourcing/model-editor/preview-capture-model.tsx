@@ -35,6 +35,7 @@ export const PreviewCaptureModel: React.FC<{
         features={{
           autosave: false,
           revisionEditMode: true,
+          basicUnNesting: true,
         }}
         captureModel={{ ...captureModel, structure, document }}
       >

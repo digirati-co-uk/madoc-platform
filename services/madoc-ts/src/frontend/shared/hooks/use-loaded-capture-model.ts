@@ -47,7 +47,7 @@ export function useLoadedCaptureModel(modelId?: string, initialModel?: CaptureMo
   );
 
   return [
-    (data || ({} as any)) as { canvas?: CanvasFull; captureModel?: CaptureModel; target?: any },
+    (data || ({} as any)) as { canvas?: CanvasFull['canvas']; captureModel?: CaptureModel; target?: any },
     status,
     refetch,
   ] as const;

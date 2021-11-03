@@ -14,6 +14,20 @@ export const InputLabel = styled.label<{ $caps?: boolean }>`
     `}
 `;
 
+export const InputAsCard = styled.div`
+  background: #fff;
+  border: 2px solid rgba(5, 42, 68, 0.2);
+  border-radius: 5px;
+  padding: 0.7em 0.9em;
+  margin-bottom: 1em;
+  cursor: pointer;
+
+  &:focus,
+  &:hover {
+    border-color: #5168d9;
+  }
+`;
+
 export const CheckboxInput = styled.input.attrs({ type: 'checkbox' })``;
 
 export const _Input = styled.input`

@@ -120,6 +120,8 @@ export function createTask({
       'madoc-ts.status.2',
       // When the task is marked as done
       'madoc-ts.status.3',
+      // Changes requested.
+      'madoc-ts.status.4',
     ],
   };
 }
@@ -341,6 +343,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
             thumbnail: subject?.thumbnail,
             action: {
               id: 'crowdsourcing-task:complete',
+              link: `urn:madoc:task:${task.id}`,
             },
             user: user.id,
           });
@@ -365,6 +368,32 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         console.log('error while re-indexing', err);
       }
 
+      break;
+    }
+
+    case 'status.4': {
+      // Changes requested.
+      const task = await api.getTask(taskId);
+      if (task) {
+        const userId = task.assignee?.id;
+        if (userId) {
+          const user = parseUrn(userId);
+          if (user && user.id) {
+            const subject = task.metadata?.subject;
+            await api.notifications.createNotification({
+              id: generateId(),
+              title: 'Changes requested on your submission',
+              summary: task.name,
+              thumbnail: subject?.thumbnail,
+              action: {
+                id: 'crowdsourcing-task:changes',
+                link: `urn:madoc:task:${task.id}`,
+              },
+              user: user.id,
+            });
+          }
+        }
+      }
       break;
     }
 

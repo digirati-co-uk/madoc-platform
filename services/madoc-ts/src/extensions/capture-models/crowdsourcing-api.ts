@@ -1,4 +1,4 @@
-import { createChoice, createDocument, generateId, traverseDocument } from '@capture-models/helpers';
+import { createChoice, createDocument, generateId, traverseDocument, traverseStructure } from '@capture-models/helpers';
 import { CaptureModel, RevisionRequest } from '@capture-models/types';
 import deepmerge from 'deepmerge';
 import { stringify } from 'query-string';
@@ -85,6 +85,7 @@ export class CrowdsourcingApi implements BaseExtension {
     model: CaptureModel['document'],
     label?: string,
     options: {
+      structure?: CaptureModel['structure'];
       processStructure?: (
         captureModel: Readonly<CaptureModel>
       ) =>
@@ -107,20 +108,29 @@ export class CrowdsourcingApi implements BaseExtension {
       visitSelector: updateId,
     });
     const modelFields = generateModelFields(newModel);
+    let structure: CaptureModel['structure'] | undefined = undefined;
+    if (options.structure) {
+      structure = deepmerge({}, options.structure as any, { clone: true }) as CaptureModel['structure'];
+      traverseStructure(structure, str => {
+        str.id = generateId();
+      });
+    }
 
     const fullModel: CaptureModel = {
       id: generateId(),
-      structure: createChoice({
-        label,
-        items: [
-          {
-            id: generateId(),
-            type: 'model',
-            label: 'Default',
-            fields: modelFields,
-          },
-        ],
-      }),
+      structure: structure
+        ? structure
+        : createChoice({
+            label,
+            items: [
+              {
+                id: generateId(),
+                type: 'model',
+                label: 'Default',
+                fields: modelFields,
+              },
+            ],
+          }),
       document: label
         ? {
             ...newModel,

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { useUserPermissions } from '../../shared/hooks/use-site';
 import { Button, ButtonIcon, ButtonRow } from '../../shared/navigation/Button';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { useData } from '../../shared/hooks/use-data';
@@ -21,6 +22,7 @@ export const CanvasPageHeader: React.FC<{ subRoute?: string }> = ({ subRoute }) 
   const { t } = useTranslation();
   const { data: manifestResponse } = useData(ManifestLoader);
   const { showCanvasNavigation } = useCanvasNavigation();
+  const { canProgress, isAdmin } = useUserPermissions();
   const manifest = manifestResponse?.manifest;
 
   if (!canvasId || !manifestId) {
@@ -39,7 +41,7 @@ export const CanvasPageHeader: React.FC<{ subRoute?: string }> = ({ subRoute }) 
         <ButtonRow>
           <AssignCanvasToUser />
 
-          <CanvasTaskProgress />
+          {!isAdmin && !canProgress ? null : <CanvasTaskProgress />}
 
           <Button
             as={HrefLink}

@@ -59,6 +59,7 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
 
   // 2. Create or fork capture model
   const modelDocument = chosenTemplate?.captureModel?.document;
+  const modelStructure = chosenTemplate?.captureModel?.structure;
   const beforeForkDocument = chosenTemplate?.setup?.beforeForkDocument;
   const beforeForkStructure = chosenTemplate?.setup?.beforeForkStructure;
   const modelTemplate =
@@ -71,6 +72,7 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
 
   const captureModel = modelDocument
     ? await userApi.createCaptureModelFromTemplate(modelTemplate || modelDocument, iiifGetLabel(label), {
+        structure: modelStructure,
         processStructure: beforeForkStructure
           ? fullModel => {
               return beforeForkStructure(fullModel, { api: userApi, options: template_options });

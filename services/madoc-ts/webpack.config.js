@@ -94,6 +94,7 @@ module.exports = {
       '@capture-models/editor': '@capture-models/editor/lib',
       'react-dnd': require.resolve('react-dnd'),
       'styled-components': require.resolve('styled-components'),
+      'react-i18next': require.resolve('react-i18next'),
     },
     // fallback: {
     //   https: false,

@@ -3,16 +3,18 @@ import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { useParams } from 'react-router-dom';
+import { ModalButton } from '../../shared/components/Modal';
+import { LockIcon } from '../../shared/icons/LockIcon';
 import { Button, ButtonIcon, ButtonRow } from '../../shared/navigation/Button';
 import { GridContainer, HalfGird } from '../../shared/layout/Grid';
 import { Input, InputContainer, InputLabel } from '../../shared/form/Input';
 import { WhiteTickIcon } from '../../shared/icons/TickIcon';
 import { ItemFilterContainer, ItemFilterPopupContainer } from '../../shared/components/ItemFilter';
 import { useApi } from '../../shared/hooks/use-api';
-import { useUser } from '../../shared/hooks/use-site';
-import { InfoIcon } from '../../shared/icons/InfoIcon';
+import { useUserPermissions } from '../../shared/hooks/use-site';
 import { createLink } from '../../shared/utility/create-link';
 import { HrefLink } from '../../shared/utility/href-link';
+import { useCanvasModel } from '../hooks/use-canvas-model';
 import { usePrepareContribution } from '../hooks/use-prepare-contribution';
 import { useProjectCanvasTasks } from '../hooks/use-project-canvas-tasks';
 import { useRouteContext } from '../hooks/use-route-context';
@@ -22,14 +24,12 @@ export const CanvasTaskProgress: React.FC = () => {
   const { buttonProps, isOpen } = useDropdownMenu(1);
   const { canvasId } = useRouteContext();
   const api = useApi();
-  const user = useUser();
-  const isAdmin =
-    user && user.scope && (user.scope.indexOf('site.admin') !== -1 || user.scope.indexOf('tasks.admin') !== -1);
-  const canProgress = user && user.scope && user.scope.indexOf('tasks.create') !== -1;
+  const { canProgress, isAdmin } = useUserPermissions();
   const [prepare] = usePrepareContribution();
 
   const { slug } = useParams<{ slug?: string }>();
   const { data: projectTasks, refetch } = useProjectCanvasTasks();
+  const { data: canvasModel, refetch: refetchModel } = useCanvasModel();
 
   const canvasTask = projectTasks?.canvasTask;
   const isManifestComplete = projectTasks?.isManifestComplete;
@@ -80,6 +80,13 @@ export const CanvasTaskProgress: React.FC = () => {
     }
   });
 
+  const [deleteCaptureModel, deleteCaptureModelStatus] = useMutation(async () => {
+    if (canvasModel && canvasModel.model && canvasModel.model.id) {
+      await api.deleteCaptureModel(canvasModel.model.id);
+      await refetchModel();
+    }
+  });
+
   if (!slug || (!isAdmin && !canProgress)) {
     return null;
   }
@@ -88,9 +95,9 @@ export const CanvasTaskProgress: React.FC = () => {
     <ItemFilterContainer>
       <Button {...buttonProps}>
         <ButtonIcon>
-          <InfoIcon />
+          <LockIcon />
         </ButtonIcon>
-        {t('Details')}
+        {t('Administer')}
       </Button>
       <ItemFilterPopupContainer $visible={isOpen} role="menu">
         <div style={{ width: 400, padding: '1em' }}>
@@ -194,6 +201,31 @@ export const CanvasTaskProgress: React.FC = () => {
                 </Button>
               </ButtonRow>
             </div>
+          ) : null}
+          {isAdmin && canvasModel && canvasModel.model && canvasModel.model.id ? (
+            <ModalButton
+              title="Are you sure you want to delete this model?"
+              render={() => {
+                return <div>{t('All of the contributions to this canvas will be deleted')}</div>;
+              }}
+              renderFooter={({ close }) => {
+                return (
+                  <ButtonRow style={{ margin: '0 0 0 auto' }}>
+                    <Button
+                      $error
+                      onClick={() => deleteCaptureModel().then(close)}
+                      disabled={deleteCaptureModelStatus.isLoading}
+                    >
+                      {t('Delete all contributions')}
+                    </Button>
+                  </ButtonRow>
+                );
+              }}
+            >
+              <ButtonRow>
+                <Button $error>{t('Delete all contributions')}</Button>
+              </ButtonRow>
+            </ModalButton>
           ) : null}
         </div>
       </ItemFilterPopupContainer>

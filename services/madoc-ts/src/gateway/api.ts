@@ -1154,6 +1154,7 @@ export class ApiClient {
     model: CaptureModel['document'],
     label?: string,
     options: {
+      structure?: CaptureModel['structure'];
       processStructure?: (
         captureModel: Readonly<CaptureModel>
       ) =>

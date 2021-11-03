@@ -20,13 +20,14 @@ const InstanceComponent = styled.div`
 `;
 
 const InstanceRemove = styled.div`
-  margin-bottom: 15px;
-  margin-left: 5px;
+  margin-bottom: 1.2em;
+  margin-left: 0.5em;
+  align-self: flex-end;
 `;
 
 const AddNewInstance = styled.button`
-  background: #eee;
-  color: #666;
+  background: #e8edff;
+  color: rgba(0, 0, 0, 0.6);
   font-size: 0.9em;
   border-radius: 1.25em;
   height: 2em;

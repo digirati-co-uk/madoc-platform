@@ -97,7 +97,7 @@ const MergeCrowdsourcingTask: React.FC<{
     });
   }, [merge.mergeId, mergedModelIds]);
 
-  if (status === 'error') {
+  if (status === 'error' || modelStatus === 'error') {
     return (
       <div>
         {t('This merge may be corrupted')}{' '}

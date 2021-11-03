@@ -3,7 +3,7 @@ import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PARAGRAPHS_PROFILE } from '../../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
 import { slotConfig } from '../../../extensions/capture-models/Paragraphs/Paragraphs.slots';
-import { Button, ButtonIcon, ButtonRow } from '../../shared/navigation/Button';
+import { Button, ButtonIcon } from '../../shared/navigation/Button';
 import { EmptyState } from '../../shared/layout/EmptyState';
 import { SmallToast } from '../../shared/callouts/SmallToast';
 import { TickIcon } from '../../shared/icons/TickIcon';
@@ -31,6 +31,14 @@ import { useProjectStatus } from '../hooks/use-project-status';
 import { useRouteContext } from '../hooks/use-route-context';
 import { CanvasModelUserStatus } from './CanvasModelUserStatus';
 import { CanvasViewer } from './CanvasViewer';
+import {
+  CanvasViewerContentOverlay,
+  CanvasViewerControls,
+  CanvasViewerEditorStyleReset,
+  CanvasViewerGrid,
+  CanvasViewerGridContent,
+  CanvasViewerGridSidebar,
+} from './CanvasViewerGrid';
 import { useSiteConfiguration } from './SiteConfigurationContext';
 import { TranscriberModeWorkflowBar } from './TranscriberModeWorkflowBar';
 
@@ -156,25 +164,8 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
         {!isPreparing && mode === 'transcription' ? <TranscriberModeWorkflowBar /> : null}
 
         <CanvasViewer>
-          <div
-            ref={gridRef}
-            style={{
-              display: 'flex',
-              flexDirection: isVertical ? 'column' : 'row',
-              width: '100%',
-              maxHeight: '100%',
-              height: '100%',
-            }}
-          >
-            <div
-              style={{
-                width: isVertical ? '100%' : 'auto',
-                flex: '1 1 0px',
-                height: '100%',
-                minWidth: 0,
-                position: 'relative',
-              }}
-            >
+          <CanvasViewerGrid $vertical={isVertical} ref={gridRef}>
+            <CanvasViewerGridContent $vertical={isVertical}>
               <EditorContentViewer
                 height={height}
                 canvasId={canvasId}
@@ -185,36 +176,19 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
               />
 
               {hideViewerControls ? null : (
-                <ButtonRow style={{ position: 'absolute', top: 0, left: 10, zIndex: 20 }}>
+                <CanvasViewerControls>
                   <Button onClick={goHome}>{t('atlas__zoom_home', { defaultValue: 'Home' })}</Button>
                   <Button onClick={zoomOut}>{t('atlas__zoom_out', { defaultValue: '-' })}</Button>
                   <Button onClick={zoomIn}>{t('atlas__zoom_in', { defaultValue: '+' })}</Button>
-                </ButtonRow>
+                </CanvasViewerControls>
               )}
 
-              <div
-                style={{
-                  position: 'absolute',
-                  bottom: '50%',
-                  zIndex: 20,
-                  textAlign: 'center',
-                  left: 0,
-                  right: 0,
-                  pointerEvents: 'none',
-                }}
-              >
+              <CanvasViewerContentOverlay>
                 <SmallToast $active={showPanWarning}>{t('Hold space to pan and zoom')}</SmallToast>
-              </div>
-            </div>
+              </CanvasViewerContentOverlay>
+            </CanvasViewerGridContent>
 
-            <div
-              style={{
-                width: isVertical ? '100%' : '420px',
-                maxHeight: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
+            <CanvasViewerGridSidebar $vertical={isVertical}>
               <CanvasModelUserStatus isEditing={isEditing} />
               {preventFurtherSubmission ? (
                 <>
@@ -236,17 +210,17 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
                 <>
                   <BackToChoicesButton />
 
-                  <div style={{ padding: '1em 1em 0 1em', fontSize: '13px' }}>
+                  <CanvasViewerEditorStyleReset>
                     <EditorSlots.TopLevelEditor />
-                  </div>
+                  </CanvasViewerEditorStyleReset>
 
                   <EditorSlots.SubmitButton afterSave={isEditing || isPreparing ? undefined : updateClaim} />
                 </>
               ) : (
                 <EmptyState>{t('Loading your model')}</EmptyState>
               )}
-            </div>
-          </div>
+            </CanvasViewerGridSidebar>
+          </CanvasViewerGrid>
         </CanvasViewer>
       </RevisionProviderWithFeatures>
     </CanvasVaultContext>

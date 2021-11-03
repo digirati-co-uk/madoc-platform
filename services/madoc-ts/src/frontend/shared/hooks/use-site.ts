@@ -76,6 +76,19 @@ export const useUser = () => {
   return details?.user;
 };
 
+export const useUserPermissions = () => {
+  const user = useUser();
+  const isAdmin =
+    user && user.scope && (user.scope.indexOf('site.admin') !== -1 || user.scope.indexOf('tasks.admin') !== -1);
+  const canProgress = user && user.scope && user.scope.indexOf('tasks.create') !== -1;
+
+  return {
+    user,
+    isAdmin,
+    canProgress,
+  };
+};
+
 export const useNavigationOptions = () => {
   const details = useContext(SiteReactContext);
 

@@ -67,6 +67,7 @@ export type EditorRenderingConfig = {
   SubmitButton: React.FC<{
     afterSave?: (req: { revisionRequest: RevisionRequest; context: RouteContext }) => void | Promise<void>;
     saveOnNavigate?: boolean;
+    captureModel?: CaptureModel;
   }>;
   PreviewSubmission: React.FC;
   PostSubmission: React.FC;
@@ -258,7 +259,11 @@ const SubmitButton: EditorRenderingConfig['SubmitButton'] = props => {
   const Slots = useSlotContext();
 
   return (
-    <Slots.SubmitButton saveOnNavigate={Slots.configuration.saveOnNavigate} afterSave={props.afterSave}>
+    <Slots.SubmitButton
+      saveOnNavigate={Slots.configuration.saveOnNavigate}
+      captureModel={props.captureModel}
+      afterSave={props.afterSave}
+    >
       {props.children}
     </Slots.SubmitButton>
   );
@@ -292,7 +297,17 @@ const InlineEntity: EditorRenderingConfig['InlineEntity'] = props => {
   );
 };
 
-export const EditorSlots = {
+function addNames<T>(name: string, record: T): T {
+  const keys = Object.keys(record);
+
+  for (const key of keys) {
+    (record as any)[key].displayName = `${name}.${key}`;
+  }
+
+  return record;
+}
+
+export const EditorSlots = addNames('EditorSlots', {
   Provider,
   InlineBreadcrumbs,
   InlineProperties,
@@ -308,4 +323,4 @@ export const EditorSlots = {
   PostSubmission,
   EditorWrapper,
   FieldInstance,
-};
+});
