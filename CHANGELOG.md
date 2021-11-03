@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ability for Admins to "reset" capture models and remove contributions
 - New configuration option for session refresh window (default 24 hours)
 - Updated [react-beautiful-dnd](https://github.com/atlassian/react-beautiful-dnd/releases/tag/v13.1.0) with React 17 support
+- Updated [react-accessible-dropdown-menu-hook](https://github.com/sparksuite/react-accessible-dropdown-menu-hook/releases)
+- Updated [styled-components](https://github.com/styled-components/styled-components/blob/main/CHANGELOG.md#v530---2021-05-04)
 - [Internal] Added new "api.crowdsourcing" namespace to consolidate crowdsourcing APIs together.
 - [internal] Added better debugging names for capture model slots in React devtools
 
@@ -39,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed "total collections" count when listing sites
 - Fixed bug with sessions not refreshing when loading pages
 - Fixed bug with cookie expire time not taking into account the refresh window
+- Fixed keyboard navigation in top right menu
 - [internal] Fixed corrupted translation saving in development
 
 ### Removed
