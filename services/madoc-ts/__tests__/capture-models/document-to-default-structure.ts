@@ -35,6 +35,7 @@ describe('document to default structure', () => {
         "hideCanvasThumbnailNavigation",
         "showSearchFacetCount",
         "miradorCanvasPage",
+        "universalViewerCanvasPage",
         "contributionMode",
         "shortExpiryTime",
         "longExpiryTime",
