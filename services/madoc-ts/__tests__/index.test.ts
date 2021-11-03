@@ -169,7 +169,7 @@ describe('test', () => {
                 "type": "values",
               },
             },
-            undefined,
+            ,
             Object {
               "label": Object {
                 "items": Array [

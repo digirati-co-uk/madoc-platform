@@ -44,6 +44,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Removed redundant "Back to resource" button from crowdsourcing review page
 
+### Security
+
+- [dev dependency] Updated Jest 26 -> 27
+- 
+
 
 ## [2.0.0](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.0) - 2021-10-09
 
