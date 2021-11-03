@@ -1,5 +1,7 @@
 import { Grid } from '@capture-models/editor';
+import { CanvasUniversalViewer } from '../../site/features/CanvasUniversalViewer';
 import { ManifestHero } from '../../site/features/ManifestHero';
+import { ViewManifestUV } from '../../site/pages/view-manifest-uv';
 import AdminPageTitle from '../typography/AdminPageTitle';
 import { Breadcrumbs } from '../navigation/Breadcrumbs';
 import { Button } from '../navigation/Button';

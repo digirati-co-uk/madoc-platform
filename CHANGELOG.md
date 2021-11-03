@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated [react-accessible-dropdown-menu-hook](https://github.com/sparksuite/react-accessible-dropdown-menu-hook/releases)
 - Updated [styled-components](https://github.com/styled-components/styled-components/blob/main/CHANGELOG.md#v530---2021-05-04)
 - Updated [React + React DOM](https://github.com/facebook/react/blob/main/CHANGELOG.md#1700-october-20-2020) to v17
+- Added new experimental [Universal Viewer](https://github.com/universalViewer/universalviewer) page block
 - [Internal] Added new "api.crowdsourcing" namespace to consolidate crowdsourcing APIs together.
 - [internal] Added better debugging names for capture model slots in React devtools
 
@@ -59,6 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [dev dependency] Updated Jest 26 -> 27
 - [dev dependency] Updated Webpack 4 -> 5
 - [dev dependency]  Updated babel
+- Updated Node to latest LTS
 
 
 ## [2.0.0](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.0) - 2021-10-09

@@ -150,14 +150,18 @@ export const ContinueCanvasSubmission: React.FC = () => {
               {t('Contribute')}
             </Button>
           ) : (
-            <div style={{ height: '2.38em' }} />
+            <Button disabled style={{ opacity: 0 }}>
+              {t('...')}
+            </Button>
           )
         ) : canClaimCanvas ? (
           <Button disabled style={{ minWidth: 100 }}>
             {t('...')}
           </Button>
         ) : (
-          <div style={{ height: '2.38em' }} />
+          <Button disabled style={{ opacity: 0 }}>
+            {t('...')}
+          </Button>
         )}
       </ProjectListingItem>
     </div>

@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { InfiniteQueryConfig } from 'react-query/types/core/types';
+import { EditorialContext } from '../../../types/schemas/site-page';
 import { QueryComponent } from '../../types';
 import {
   InfiniteQueryResult,
@@ -47,7 +48,7 @@ export function usePrefetchData<Data = any, TKey = any, TVariables = any>(
     return paramsToReturn;
   }, [context, routeParams]);
 
-  async function prefetch(vars: Partial<TVariables>) {
+  async function prefetch(vars: Partial<TVariables>, slot?: EditorialContext) {
     const getKey = component.getKey;
     const getData = component.getData;
     if (!getKey || !getData) {
@@ -58,9 +59,17 @@ export function usePrefetchData<Data = any, TKey = any, TVariables = any>(
 
     const newVars = Array.isArray(initialVars) ? vars || initialVars : { ...initialVars, ...vars };
 
-    await cache.prefetchQuery([key, newVars] as any, (queryKey: any, queryVars: any) => {
-      return getData(queryKey, queryVars, api, pathname);
-    });
+
+    await Promise.all([
+      cache.prefetchQuery([key, newVars] as any, (queryKey: any, queryVars: any) => {
+        return getData(queryKey, queryVars, api, pathname);
+      }),
+      slot
+        ? cache.prefetchQuery(['slot-request', slot], () => {
+            return api.pageBlocks.requestSlots(slot);
+          })
+        : null,
+    ]);
   }
 
   return prefetch;

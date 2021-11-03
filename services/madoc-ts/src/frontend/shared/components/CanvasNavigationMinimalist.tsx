@@ -36,11 +36,12 @@ export const NavigationButton: React.FC<{
   label?: string;
   link: string;
   alignment?: 'left' | 'right';
+  onClick?: (e: React.PointerEvent) => void;
   item: ItemStructureListItem;
 }> = props => {
   return (
     <PaginationButton>
-      <HrefLink href={props.link}>
+      <HrefLink href={props.link} onClick={props.onClick}>
         {props.item ? (
           <DownArrowIcon
             style={
@@ -100,13 +101,14 @@ export function useManifestPagination(subRoute?: string) {
 }
 
 export const CanvasNavigationMinimalist: React.FC<{
+  handleNavigation?: (canvasId: number) => Promise<void> | void;
   canvasId: string | number;
   manifestId?: string | number;
   projectId?: string | number;
   collectionId?: string | number;
   subRoute?: string;
   query?: any;
-}> = ({ canvasId: id, manifestId, projectId, collectionId, subRoute, query }) => {
+}> = ({ canvasId: id, manifestId, projectId, collectionId, subRoute, query, handleNavigation }) => {
   const structure = useManifestStructure(manifestId);
   const { t } = useTranslation();
 
@@ -121,6 +123,14 @@ export const CanvasNavigationMinimalist: React.FC<{
       {idx > 0 ? (
         <NavigationButton
           alignment="left"
+          onClick={e => {
+            if (handleNavigation) {
+              e.preventDefault();
+              if (structure.data) {
+                handleNavigation(structure.data.items[idx - 1].id);
+              }
+            }
+          }}
           link={createLink({
             projectId,
             collectionId,
@@ -143,6 +153,14 @@ export const CanvasNavigationMinimalist: React.FC<{
       {idx < structure.data.items.length - 1 ? (
         <NavigationButton
           alignment="right"
+          onClick={e => {
+            if (handleNavigation) {
+              e.preventDefault();
+              if (structure.data) {
+                handleNavigation(structure.data.items[idx + 1].id);
+              }
+            }
+          }}
           link={createLink({
             projectId,
             collectionId,
