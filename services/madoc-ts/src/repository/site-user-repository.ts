@@ -995,7 +995,7 @@ export class SiteUserRepository extends BaseRepository {
         resource_type: string;
         site_id: number;
         total_items: number;
-      }>`select resource_type, site_id, COUNT(*) as total_items from iiif_derived_resource group by site_id, resource_type`
+      }>`select resource_type, site_id, COUNT(*) as total_items from iiif_derived_resource where flat = false group by site_id, resource_type`
     );
     const projects = await this.connection.any(
       sql<{
