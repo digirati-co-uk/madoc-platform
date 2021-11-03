@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated [react-beautiful-dnd](https://github.com/atlassian/react-beautiful-dnd/releases/tag/v13.1.0) with React 17 support
 - Updated [react-accessible-dropdown-menu-hook](https://github.com/sparksuite/react-accessible-dropdown-menu-hook/releases)
 - Updated [styled-components](https://github.com/styled-components/styled-components/blob/main/CHANGELOG.md#v530---2021-05-04)
+- Updated [React + React DOM](https://github.com/facebook/react/blob/main/CHANGELOG.md#1700-october-20-2020) to v17
 - [Internal] Added new "api.crowdsourcing" namespace to consolidate crowdsourcing APIs together.
 - [internal] Added better debugging names for capture model slots in React devtools
 

@@ -127,7 +127,7 @@ export async function renderClient(
                   <DndProvider backend={MultiBackend} options={HTML5toTouch}>
                     <ThemeProvider theme={defaultTheme}>
                       <ErrorBoundary onError={error => <ErrorPage error={error} />}>
-                        <Suspense fallback={<Spinner />} unstable_avoidThisFallback={true}>
+                        <Suspense fallback={<Spinner />}>
                           <Component
                             jwt={jwt}
                             api={api}

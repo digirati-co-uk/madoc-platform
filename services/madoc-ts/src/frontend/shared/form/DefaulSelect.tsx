@@ -2,10 +2,31 @@ import React from 'react';
 import { Select } from 'react-functional-select';
 import { useTranslation } from 'react-i18next';
 
-export const DefaultSelect: typeof Select = React.forwardRef((props, ref) => {
+type TemporaryReactFunctionalSelectProps = {
+  inputId?: string;
+  placeholder?: string;
+  initialValue?: any;
+  isInvalid?: boolean;
+  isLoading?: boolean;
+  isClearable?: boolean;
+  noOptionsMsg?: string;
+  filterMatchFrom?: string;
+  options: Array<any>;
+  renderOptionLabel?: (opts: any) => any;
+  getOptionLabel?: (opts: any) => any;
+  getOptionValue?: (opts: any) => any;
+  onOptionChange?: (opts: any) => void;
+  onInputChange?: (opts: any) => void;
+  onSearchChange?: (opts: any) => void;
+};
+
+export const DefaultSelect = React.forwardRef<any, TemporaryReactFunctionalSelectProps>((props, ref) => {
   const { t } = useTranslation();
+
+  const _Select: any = Select;
+
   return (
-    <Select
+    <_Select
       ref={ref}
       themeConfig={{
         color: {
@@ -40,8 +61,10 @@ export const DefaultSelect: typeof Select = React.forwardRef((props, ref) => {
       placeholder={props.placeholder ? t(props.placeholder) : t('Select option...')}
       noOptionsMsg={t('No options')}
       filterMatchFrom="any"
-      getOptionValue={option => option.id}
+      getOptionValue={(option: any) => option.id}
       {...props}
     />
   );
 });
+
+DefaultSelect.displayName = 'DefaultSelect';
