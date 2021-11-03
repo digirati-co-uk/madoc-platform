@@ -32,11 +32,11 @@ module.exports = {
   },
   plugins:
     process.env.NODE_ENV === 'production' || skipHotReload
-      ? [new webpack.IgnorePlugin(/@blueprintjs\/core/)]
+      ? [new webpack.IgnorePlugin({ resourceRegExp: /@blueprintjs\/core/ })]
       : [
           new webpack.HotModuleReplacementPlugin(),
           new ReactRefreshWebpackPlugin(),
-          new webpack.IgnorePlugin(/@blueprintjs\/core/),
+          new webpack.IgnorePlugin({ resourceRegExp: /@blueprintjs\/core/ }),
         ],
 
   module: {
@@ -96,11 +96,11 @@ module.exports = {
       'styled-components': require.resolve('styled-components'),
       'react-i18next': require.resolve('react-i18next'),
     },
-    // fallback: {
-    //   https: false,
-    //   http: false,
-    //   '@blueprintjs/core': false,
-    // },
+    fallback: {
+      https: false,
+      http: false,
+      '@blueprintjs/core': false,
+    },
   },
   externals: {
     react: 'React',

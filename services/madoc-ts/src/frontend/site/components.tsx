@@ -1,4 +1,3 @@
-export { UniversalRoute } from '../types';
 export { AllCollections } from './pages/all-collections';
 export { CollectionListLoader } from './pages/loaders/collection-list-loader';
 export { CollectionLoader } from './pages/loaders/collection-loader';
