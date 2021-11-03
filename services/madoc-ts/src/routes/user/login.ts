@@ -1,4 +1,3 @@
-import fetch from 'node-fetch';
 import { siteState } from '../../middleware/site-state';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { siteFrontend } from '../admin/frontend';
