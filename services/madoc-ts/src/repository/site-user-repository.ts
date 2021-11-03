@@ -23,11 +23,15 @@ import {
   SystemConfig,
 } from '../extensions/site-manager/types';
 import { ExternalConfig } from '../types/external-config';
+import { NotFound } from '../utility/errors/not-found';
 import { SiteNotFound } from '../utility/errors/site-not-found';
+import { getJwtCookies } from '../utility/get-jwt-cookies';
+import { parseJWT } from '../utility/parse-jwt';
 import { phpHashCompare } from '../utility/php-hash-compare';
 import { passwordHash } from '../utility/php-password-hash';
 import { SQL_COMMA, SQL_EMPTY } from '../utility/postgres-tags';
 import { sqlDate, upsert } from '../utility/slonik-helpers';
+import { verifySignedToken } from '../utility/verify-signed-token';
 import { BaseRepository } from './base-repository';
 
 /**
@@ -1041,5 +1045,40 @@ export class SiteUserRepository extends BaseRepository {
     } catch (e) {
       return undefined;
     }
+  }
+
+  async refreshExpiredToken(token: string, refreshWindow: number) {
+    const response = verifySignedToken(token, true);
+    if (!response) {
+      throw new NotFound();
+    }
+
+    const userDetails = parseJWT(response);
+    if (!userDetails || userDetails.user.service || !userDetails.user.id) {
+      throw new NotFound();
+    }
+
+    const { payload } = response;
+
+    const exp = payload.exp * 1000;
+    const time = new Date().getTime();
+    const allowedTime = time - refreshWindow * 1000;
+    const canRefresh = exp - allowedTime > 0;
+    const hasExpired = exp - time < 0;
+
+    if (!hasExpired) {
+      return { canRefresh: false, hasExpired: false, siteId: userDetails.site.id, details: null } as const;
+    }
+
+    if (!canRefresh) {
+      return { canRefresh: false, hasExpired: true, siteId: userDetails.site.id, details: null } as const;
+    }
+
+    return {
+      canRefresh: true,
+      hasExpired: true,
+      siteId: userDetails.site.id,
+      details: await this.getUserAndSites(userDetails.user.id),
+    } as const;
   }
 }
