@@ -1,6 +1,7 @@
 import { traverseDocument } from '@capture-models/helpers';
 import { BaseField, CaptureModel } from '@capture-models/types';
 import { ApiClient } from '../../../gateway/api';
+import { parseModelTarget } from '../../../utility/parse-model-target';
 import { defaultDispose } from '../../extension-manager';
 import { CaptureModelExtension } from '../extension';
 import { DynamicData } from './types';
@@ -53,7 +54,7 @@ export class DynamicDataSourcesExtension implements CaptureModelExtension {
     }
 
     // 3. Resolve data needed about the resource
-    const { canvas } = this.api.parseModelTarget(captureModel.target);
+    const { canvas } = parseModelTarget(captureModel.target);
 
     if (!canvas) {
       // No valid target.

@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { SubjectSnippet } from '../../../extensions/tasks/resolvers/subject-resolver';
 import { BaseTask } from '../../../gateway/tasks/base-task';
 import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
+import { resolveUrn } from '../../../utility/resolve-urn';
 import { useApi } from '../../shared/hooks/use-api';
 import { useApiCaptureModel } from '../../shared/hooks/use-api-capture-model';
 import { useProjectByTask } from '../../shared/hooks/use-project-by-task';
@@ -30,7 +31,7 @@ export function useCrowdsourcingTaskDetails(task: CrowdsourcingTask & { id: stri
 
   const target = useMemo(() => {
     if (captureModel && captureModel.target && captureModel.target[0]) {
-      return captureModel.target.map(item => api.resolveUrn(item.id));
+      return captureModel.target.map(item => resolveUrn(item.id));
     }
     return [];
   }, [api, captureModel]);

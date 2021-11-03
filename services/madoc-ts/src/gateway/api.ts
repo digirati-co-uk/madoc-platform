@@ -1,16 +1,14 @@
 import { BaseField, CaptureModel, RevisionRequest } from '@capture-models/types';
-import { createChoice, createDocument, generateId, traverseDocument } from '@capture-models/helpers';
-import deepmerge from 'deepmerge';
 import {
   ActivityOptions,
   ActivityOrderedCollection,
   ActivityOrderedCollectionPage,
   ChangeDiscoveryActivityRequest,
 } from '../activity-streams/change-discovery-types';
+import { CrowdsourcingApi } from '../extensions/capture-models/crowdsourcing-api';
 import { ConfigInjectionExtension } from '../extensions/capture-models/ConfigInjection/ConfigInjection.extension';
 import { ConfigInjectionSettings } from '../extensions/capture-models/ConfigInjection/types';
 import { DynamicDataSourcesExtension } from '../extensions/capture-models/DynamicDataSources/DynamicDataSources.extension';
-import { DynamicData } from '../extensions/capture-models/DynamicDataSources/types';
 import { CaptureModelExtension } from '../extensions/capture-models/extension';
 import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.extension';
 import { plainTextSource } from '../extensions/capture-models/DynamicDataSources/sources/Plaintext.source';
@@ -41,7 +39,6 @@ import { ProjectConfiguration } from '../types/schemas/project-configuration';
 import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/search';
 import { SearchIndexable } from '../utility/capture-model-to-indexables';
 import { NotFound } from '../utility/errors/not-found';
-import { generateModelFields } from '../utility/generate-model-fields';
 import { ApiRequest } from './api-definitions/_meta';
 import { fetchJson } from './fetch-json';
 import { BaseTask } from './tasks/base-task';
@@ -63,7 +60,6 @@ import { CanvasFull } from '../types/canvas-full';
 import { stringify } from 'query-string';
 import { CreateProject } from '../types/schemas/create-project';
 import { ProjectSnippet } from '../types/schemas/project-snippet';
-import { CaptureModelSnippet } from '../types/schemas/capture-model-snippet';
 import { ApiError } from '../utility/errors/api-error';
 import { Pagination } from '../types/schemas/_pagination';
 import { CrowdsourcingTask } from './tasks/crowdsourcing-task';
@@ -71,12 +67,7 @@ import { ResourceClaim } from '../routes/projects/create-resource-claim';
 import { ProjectList } from '../types/schemas/project-list';
 import { ProjectFull } from '../types/project-full';
 import { UserDetails } from '../types/schemas/user-details';
-import { ModelSearch } from '../types/schemas/search';
-import {
-  CrowdsourcingReview,
-  CrowdsourcingReviewMerge,
-  CrowdsourcingReviewMergeComplete,
-} from './tasks/crowdsourcing-review';
+import { CrowdsourcingReviewMerge } from './tasks/crowdsourcing-review';
 import { CrowdsourcingCanvasTask } from './tasks/crowdsourcing-canvas-task';
 import { ConfigResponse } from '../types/schemas/config-response';
 import { ResourceLinkRow } from '../database/queries/linking-queries';
@@ -86,7 +77,7 @@ import { ApiKey } from '../types/api-key';
 
 export type ApiClientWithoutExtensions = Omit<
   ApiClient,
-  | 'captureModelExtensions'
+  | 'crowdsourcing'
   | 'pageBlocks'
   | 'media'
   | 'tasks'
@@ -110,9 +101,7 @@ export class ApiClient {
   private errorRecoveryHandlers: Array<() => void> = [];
   private isDown = false;
   private currentUser?: { scope: string[]; user: { id: string; name?: string } };
-  private readonly captureModelDataSources: DynamicData[] = [];
   // Public.
-  captureModelExtensions!: ExtensionManager<CaptureModelExtension>;
   pageBlocks!: PageBlockExtension;
   media!: MediaExtension;
   tasks!: TaskExtension;
@@ -121,6 +110,7 @@ export class ApiClient {
   notifications!: NotificationExtension;
   siteManager!: SiteManagerExtension;
   projectTemplates!: ProjectTemplateExtension;
+  crowdsourcing!: CrowdsourcingApi;
 
   constructor(options: {
     gateway: string;
@@ -138,12 +128,14 @@ export class ApiClient {
     this.isServer = !(globalThis as any).window;
     this.fetcher = options.customerFetcher || fetchJson;
     this.publicSiteSlug = options.publicSiteSlug;
+    const captureModelDataSources = [plainTextSource];
 
     // This extension will be fine.
     this.notifications = new NotificationExtension(this);
     this.tasks = new TaskExtension(this);
 
     if (options.withoutExtensions) {
+      this.crowdsourcing = new CrowdsourcingApi(this, null, captureModelDataSources);
       return;
     }
 
@@ -153,19 +145,19 @@ export class ApiClient {
     this.themes = new ThemeExtension(this);
     this.siteManager = new SiteManagerExtension(this);
     this.projectTemplates = new ProjectTemplateExtension(this);
-    this.captureModelDataSources = [plainTextSource];
-    this.captureModelExtensions = new ExtensionManager(
+    const captureModelExtensions = new ExtensionManager(
       options.customCaptureModelExtensions
         ? options.customCaptureModelExtensions(this)
         : [
             // Allows for OCR to be detected and added to models
             new Paragraphs(this),
             // Allows for dynamic values to be applied to models
-            new DynamicDataSourcesExtension(this, this.captureModelDataSources),
+            new DynamicDataSourcesExtension(this, captureModelDataSources),
             // Allows for configuration to make last-minute changes to models.
             new ConfigInjectionExtension(this),
           ]
     );
+    this.crowdsourcing = new CrowdsourcingApi(this, captureModelExtensions, captureModelDataSources);
   }
 
   dispose() {
@@ -177,7 +169,7 @@ export class ApiClient {
     this.notifications.dispose();
     this.siteManager.dispose();
     this.projectTemplates.dispose();
-    this.captureModelExtensions.dispose();
+    this.crowdsourcing.dispose();
     this.errorHandlers = [];
     this.errorRecoveryHandlers = [];
   }
@@ -502,10 +494,6 @@ export class ApiClient {
     return this.request<{ clientId: string; clientSecret: string }>(`/api/madoc/system/api-keys/${clientId}`, {
       method: 'DELETE',
     });
-  }
-
-  getCaptureModelDataSources() {
-    return this.captureModelDataSources;
   }
 
   async getPm2Status() {
@@ -1116,28 +1104,36 @@ export class ApiClient {
   }
 
   // Capture model API.
+
+  /**
+   * @deprecated use api.crowdsourcing.getCaptureModel() instead
+   */
   async getCaptureModel(id: string, query?: { author?: string; published?: boolean }) {
-    return this.request<{ id: string } & CaptureModel>(
-      `/api/crowdsourcing/model/${id}${query ? `?${stringify(query)}` : ''}`
-    );
+    return this.crowdsourcing.getCaptureModel(id, query);
   }
 
+  /**
+   * @deprecated use api.crowdsourcing.getAllCaptureModels() instead
+   */
   async getAllCaptureModels(query?: {
     target_id?: string;
     target_type?: string;
     derived_from?: string;
     all_derivatives?: boolean;
   }) {
-    return this.request<CaptureModelSnippet[]>(`/api/crowdsourcing/model${query ? `?${stringify(query)}` : ''}`);
+    return this.crowdsourcing.getAllCaptureModels(query);
   }
 
+  /**
+   * @deprecated use api.crowdsourcing.updateCaptureModel() instead
+   */
   async updateCaptureModel(id: string, captureModel: CaptureModel) {
-    return this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model/${id}`, {
-      method: 'PUT',
-      body: captureModel,
-    });
+    return this.crowdsourcing.updateCaptureModel(id, captureModel);
   }
 
+  /**
+   * @deprecated use api.crowdsourcing.searchPublishedModelFields() instead
+   */
   async searchPublishedModelFields(
     target: { canvas?: string; manifest?: string; collection?: string },
     query: string,
@@ -1148,17 +1144,12 @@ export class ApiClient {
       capture_model_id?: string;
     }
   ) {
-    const queryString = {
-      ...target,
-      q: query,
-      ...filters,
-    };
-
-    return this.request<{
-      results: ModelSearch[];
-    }>(`/api/crowdsourcing/search/published?${stringify(queryString)}`);
+    return this.crowdsourcing.searchPublishedModelFields(target, query, filters);
   }
 
+  /**
+   * @deprecated use api.crowdsourcing.createCaptureModelFromTemplate() instead
+   */
   async createCaptureModelFromTemplate(
     model: CaptureModel['document'],
     label?: string,
@@ -1173,190 +1164,162 @@ export class ApiClient {
         | undefined;
     } = {}
   ) {
-    const newModel = deepmerge({}, model, { clone: true });
-    const updateId = (e: any) => {
-      if (e.id) {
-        e.id = generateId();
-      }
-    };
-    traverseDocument(newModel, {
-      visitEntity: updateId,
-      visitField: updateId,
-      visitSelector: updateId,
-    });
-    const modelFields = generateModelFields(newModel);
-
-    const fullModel: CaptureModel = {
-      id: generateId(),
-      structure: createChoice({
-        label,
-        items: [
-          {
-            id: generateId(),
-            type: 'model',
-            label: 'Default',
-            fields: modelFields,
-          },
-        ],
-      }),
-      document: label
-        ? {
-            ...newModel,
-            label,
-          }
-        : newModel,
-    };
-
-    if (options.processStructure) {
-      const newStructure = await options.processStructure(fullModel);
-      if (newStructure) {
-        fullModel.structure = newStructure;
-      }
-    }
-
-    return this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model`, {
-      method: 'POST',
-      body: fullModel,
-    });
+    return this.crowdsourcing.createCaptureModelFromTemplate(model, label, options);
   }
 
+  /**
+   * @deprecated use api.crowdsourcing.getCaptureModelDataSources() instead
+   */
+  getCaptureModelDataSources() {
+    return this.crowdsourcing.getDataSources();
+  }
+
+  /**
+   * @deprecated use api.crowdsourcing.createCaptureModel() instead
+   */
   async createCaptureModel(label: string) {
-    return this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model`, {
-      method: 'POST',
-      body: {
-        id: generateId(),
-        structure: createChoice({
-          label,
-          items: [
-            {
-              id: generateId(),
-              type: 'model',
-              label: 'Default',
-              fields: [],
-            },
-          ],
-        }),
-        document: createDocument({ label }),
-      },
-    });
+    return this.crowdsourcing.createCaptureModel(label);
   }
 
-  async importCaptureModel(model: CaptureModel) {
-    return this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model`, {
-      method: 'POST',
-      body: model,
-    });
-  }
-
+  /**
+   * @deprecated use api.crowdsourcing.deleteCaptureModel() instead
+   */
   async deleteCaptureModel(id: string) {
-    return this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model/${id}`, {
-      method: 'DELETE',
-    });
+    return this.crowdsourcing.deleteCaptureModel(id);
   }
 
-  parseModelTarget(inputTarget: CaptureModel['target']) {
-    const target = (inputTarget || []).map(t => this.resolveUrn(t.id));
-    const collection = target.find(item => item && item.type.toLowerCase() === 'collection');
-    const manifest = target.find(item => item && item.type.toLowerCase() === 'manifest');
-    const canvas = target.find(item => item && item.type.toLowerCase() === 'canvas');
-
-    return { collection, manifest, canvas };
-  }
-
-  resolveUrn(urn: string) {
-    const regex = /^urn:madoc:([A-Za-z]+):([\d]+)$/g;
-    const match = regex.exec(urn);
-
-    if (!match) {
-      return;
-    }
-
-    return { id: Number(match[2]), type: match[1] };
-  }
-
+  /**
+   * @deprecated use api.crowdsourcing.cloneCaptureModel() instead
+   */
   async cloneCaptureModel(id: string, target: Array<{ id: string; type: string }>) {
-    return this.captureModelExtensions.dispatch<{ id: string } & CaptureModel, 'onCloneCaptureModel'>(
-      'onCloneCaptureModel',
-      await this.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model/${id}/clone`, {
-        method: 'POST',
-        body: {
-          target,
-        },
-      })
-    );
+    return this.crowdsourcing.cloneCaptureModel(id, target);
   }
 
-  async forkCaptureModelRevision(
-    captureModelId: string,
-    revisionId: string,
-    query?: { clone_mode?: 'EDIT_ALL_VALUES' | 'FORK_ALL_VALUES' | 'FORK_TEMPLATE' | 'FORK_INSTANCE' }
-  ) {
-    return this.request<RevisionRequest>(
-      `/api/crowdsourcing/model/${captureModelId}/fork/${revisionId}${query ? `?${stringify(query)}` : ''}`
-    );
-  }
-
+  /**
+   * @deprecated use api.crowdsourcing.cloneCaptureModelRevision() instead
+   */
   async cloneCaptureModelRevision(captureModelId: string, revisionId: string) {
-    return this.request<RevisionRequest>(`/api/crowdsourcing/model/${captureModelId}/clone/${revisionId}`);
+    return this.crowdsourcing.cloneCaptureModelRevision(captureModelId, revisionId);
   }
 
+  /**
+   * @deprecated use api.crowdsourcing.createCaptureModelRevision() instead
+   */
   async createCaptureModelRevision(req: RevisionRequest, status?: string) {
-    return this.request<RevisionRequest>(`/api/crowdsourcing/model/${req.captureModelId}/revision`, {
-      method: 'POST',
-      body: status ? { ...req, revision: { ...req.revision, status } } : req,
-    });
+    return this.crowdsourcing.createCaptureModelRevision(req, status);
   }
 
+  /**
+   * @deprecated use api.crowdsourcing.updateCaptureModelRevision() instead
+   */
   async updateCaptureModelRevision(req: RevisionRequest, status?: string) {
-    return this.request<RevisionRequest>(`/api/crowdsourcing/revision/${req.revision.id}`, {
-      method: 'PUT',
-      body: status ? { ...req, revision: { ...req.revision, status } } : req,
-    });
+    return this.crowdsourcing.updateCaptureModelRevision(req, status);
   }
 
+  /**
+   * @deprecated use api.crowdsourcing.getCaptureModelRevision() instead
+   */
   async getCaptureModelRevision(revisionId: string) {
-    return this.request<RevisionRequest>(`/api/crowdsourcing/revision/${revisionId}`);
+    return this.crowdsourcing.getCaptureModelRevision(revisionId);
   }
 
-  async approveCaptureModelRevision(revisionRequest: RevisionRequest) {
-    return this.request<RevisionRequest>(`/api/crowdsourcing/revision/${revisionRequest.revision.id}`, {
-      method: 'PUT',
-      body: {
-        ...revisionRequest,
-        revision: {
-          ...revisionRequest.revision,
-          status: 'accepted',
-          accepted: true,
-        },
-        status: 'accepted',
-      },
-    });
-  }
-
-  async reDraftCaptureModelRevision(revisionRequest: RevisionRequest) {
-    return this.request<RevisionRequest>(`/api/crowdsourcing/revision/${revisionRequest.revision.id}`, {
-      method: 'PUT',
-      body: {
-        ...revisionRequest,
-        status: 'draft',
-        revision: {
-          ...revisionRequest.revision,
-          status: 'draft',
-          accepted: false,
-        },
-      },
-    });
-  }
-
+  /**
+   * @deprecated use api.crowdsourcing.deleteCaptureModelRevision() instead
+   */
   async deleteCaptureModelRevision(revisionRequest: string | RevisionRequest) {
-    return this.request<void>(
-      `/api/crowdsourcing/revision/${
-        typeof revisionRequest === 'string' ? revisionRequest : revisionRequest.revision.id
-      }`,
-      {
-        method: 'DELETE',
-      }
-    );
+    return this.crowdsourcing.deleteCaptureModelRevision(revisionRequest);
+  }
+
+  // Review API
+  async reviewRejectSubmission(options: { revisionRequest: RevisionRequest; userTaskId: string; statusText?: string }) {
+    return this.crowdsourcing.reviewRejectSubmission(options);
+  }
+
+  /**
+   * @deprecated use api.crowdsourcing.reviewRequestChanges() instead
+   */
+  async reviewRequestChanges(options: {
+    message: string;
+    revisionRequest: RevisionRequest;
+    userTaskId: string;
+    statusText?: string;
+  }) {
+    return this.crowdsourcing.reviewRequestChanges(options);
+  }
+
+  /**
+   * @deprecated use api.crowdsourcing.reviewPrepareMerge() instead
+   */
+  async reviewPrepareMerge(options: {
+    reviewTaskId: string;
+    revision: RevisionRequest;
+    toMerge: string[];
+    revisionTask: string;
+  }) {
+    return this.crowdsourcing.reviewPrepareMerge(options);
+  }
+
+  /**
+   * @deprecated use api.crowdsourcing.reviewApproveSubmission() instead
+   */
+  async reviewApproveSubmission(options: {
+    userTaskId: string;
+    revisionRequest: RevisionRequest;
+    statusText?: string;
+  }) {
+    return this.crowdsourcing.reviewApproveSubmission(options);
+  }
+
+  /**
+   * @deprecated use api.crowdsourcing.reviewApproveAndRemoveSubmission() instead
+   */
+  async reviewApproveAndRemoveSubmission(options: {
+    userTaskIds: string[];
+    revisionIdsToRemove: string[];
+    acceptedRevision: RevisionRequest;
+    reviewTaskId: string;
+    statusText?: string;
+  }) {
+    return this.crowdsourcing.reviewApproveAndRemoveSubmission(options);
+  }
+
+  /**
+   * @deprecated use api.crowdsourcing.reviewMergeSave() instead
+   */
+  async reviewMergeSave(req: RevisionRequest) {
+    // Save capture model revision as normal - no other changes.
+    return this.crowdsourcing.reviewMergeSave(req);
+  }
+
+  /**
+   * @deprecated use api.crowdsourcing.reviewMergeDiscard() instead
+   */
+  async reviewMergeDiscard(options: {
+    revision: RevisionRequest | string;
+    reviewTaskId: string;
+    merge: CrowdsourcingReviewMerge;
+  }) {
+    return this.crowdsourcing.reviewMergeDiscard(options);
+  }
+
+  /**
+   * @deprecated use api.crowdsourcing.reviewMergeApprove() instead
+   */
+  async reviewMergeApprove(options: {
+    revision: RevisionRequest;
+    merge: CrowdsourcingReviewMerge;
+    reviewTaskId: string;
+    toMergeTaskIds: string[];
+    toMergeRevisionIds: string[];
+  }) {
+    return this.crowdsourcing.reviewMergeApprove(options);
+  }
+
+  /**
+   * @deprecated use api.crowdsourcing.assignUserToReview() instead
+   */
+  async assignUserToReview(projectId: string | number, reviewId: string) {
+    return this.crowdsourcing.assignUserToReview(projectId, reviewId);
   }
 
   // Personal notes
@@ -1535,18 +1498,6 @@ export class ApiClient {
       status: 1,
       status_text: 'accepted',
     });
-  }
-
-  async assignUserToReview(projectId: string | number, reviewId: string) {
-    return this.request<{ user: { id: number; name: string }; reason: string }>(
-      `/api/madoc/projects/${projectId}/reviews`,
-      {
-        method: 'POST',
-        body: {
-          task_id: reviewId,
-        },
-      }
-    );
   }
 
   async getTasksByStatus<Task extends BaseTask>(status: number) {
@@ -1774,249 +1725,6 @@ export class ApiClient {
         ? `/api/storage/data/${bucket}/public/${fileName.endsWith('.json') ? fileName : `${fileName}.json`}`
         : `/api/storage/data/${bucket}/${fileName.endsWith('.json') ? fileName : `${fileName}.json`}`
     );
-  }
-
-  // Review API
-  async reviewRejectSubmission({
-    revisionRequest,
-    userTaskId,
-    statusText,
-  }: {
-    revisionRequest: RevisionRequest;
-    userTaskId: string;
-    statusText?: string;
-  }) {
-    try {
-      // Delete the revision
-      await this.deleteCaptureModelRevision(revisionRequest);
-    } catch (err) {
-      // No-op
-    }
-
-    // Mark task as rejected
-    await this.updateTask<CrowdsourcingTask>(userTaskId, {
-      status: -1,
-      status_text: statusText || 'Rejected',
-    });
-  }
-
-  async reviewRequestChanges({
-    userTaskId,
-    message,
-    revisionRequest,
-    statusText,
-  }: {
-    message: string;
-    revisionRequest: RevisionRequest;
-    userTaskId: string;
-    statusText?: string;
-  }) {
-    // Save this change to the revision.
-    await this.reDraftCaptureModelRevision(revisionRequest);
-
-    await this.updateTask<CrowdsourcingTask>(userTaskId, {
-      // Mark the task as needing changes
-      status: 4,
-      status_text: statusText || 'changed requested',
-      // Add the message to the task
-      state: {
-        changesRequested: message,
-      },
-    });
-  }
-
-  async reviewPrepareMerge({
-    reviewTaskId,
-    revision,
-    toMerge,
-    revisionTask,
-  }: {
-    reviewTaskId: string;
-    revision: RevisionRequest;
-    toMerge: string[];
-    revisionTask: string;
-  }) {
-    if (!revision.captureModelId) {
-      throw new Error('Invalid capture model');
-    }
-    // Fork of the chosen revision is created - this is not saved, only a GET request.
-    const req = await this.cloneCaptureModelRevision(revision.captureModelId, revision.revision.id);
-
-    await this.createCaptureModelRevision(req, 'draft');
-
-    // Task is updated with forked version + chosen merges.
-    await this.updateTask<CrowdsourcingReview>(reviewTaskId, {
-      state: {
-        currentMerge: {
-          revisionId: revision.revision.id,
-          revisionTaskId: revisionTask,
-          mergeId: req.revision.id,
-          toMerge,
-        },
-      },
-    });
-
-    return req;
-  }
-
-  async reviewApproveSubmission({
-    userTaskId,
-    revisionRequest,
-    statusText,
-  }: {
-    userTaskId: string;
-    revisionRequest: RevisionRequest;
-    statusText?: string;
-  }) {
-    // Revision is marked as approved
-    await this.approveCaptureModelRevision(revisionRequest);
-
-    // Mark users task as approved.
-    await this.updateTask<CrowdsourcingTask>(userTaskId, {
-      status: 3,
-      status_text: statusText || 'Approved',
-      state: {
-        changesRequested: '',
-      },
-    });
-  }
-
-  async reviewApproveAndRemoveSubmission({
-    userTaskIds,
-    revisionIdsToRemove,
-    acceptedRevision,
-    reviewTaskId,
-    statusText,
-  }: {
-    userTaskIds: string[];
-    revisionIdsToRemove: string[];
-    acceptedRevision: RevisionRequest;
-    reviewTaskId: string;
-    statusText?: string;
-  }) {
-    await Promise.all(
-      userTaskIds.map(userTaskId =>
-        // User tasks are marked as approved
-        this.updateTask<CrowdsourcingTask>(userTaskId, {
-          status: 3,
-          status_text: statusText || 'Approved',
-          state: {
-            changesRequested: '',
-          },
-        })
-      )
-    );
-    await Promise.all(
-      revisionIdsToRemove.map(
-        // Remove other revisions.
-        revision => this.deleteCaptureModelRevision(revision)
-      )
-    );
-    // The chosen revision is saved.
-    await this.approveCaptureModelRevision(acceptedRevision);
-    // Updated review task.
-    await this.updateTask(reviewTaskId, { status: 3, status_text: statusText || 'Approved' });
-  }
-
-  async reviewMergeSave(req: RevisionRequest) {
-    // Save capture model revision as normal - no other changes.
-    return this.updateCaptureModelRevision(req);
-  }
-
-  async reviewMergeDiscard({
-    revision,
-    reviewTaskId,
-    merge,
-  }: {
-    revision: RevisionRequest | string;
-    reviewTaskId: string;
-    merge: CrowdsourcingReviewMerge;
-  }) {
-    try {
-      // Remove the capture model revision.
-      await this.deleteCaptureModelRevision(revision);
-    } catch (e) {
-      // This may fail if it is already deleted.
-    }
-
-    // Update the task state with a record of the discarded merge.
-    const fullTask = await this.getTaskById<CrowdsourcingReview>(reviewTaskId);
-    const existingMerges: CrowdsourcingReviewMergeComplete[] = fullTask.state?.merges || [];
-    const merges: CrowdsourcingReviewMergeComplete[] = [
-      ...existingMerges.filter(m => m.mergeId !== merge.mergeId),
-      {
-        ...merge,
-        status: 'DISCARDED',
-      },
-    ];
-
-    // Revert task state to pre-merge completely.
-    await this.updateTask<CrowdsourcingReview>(reviewTaskId, {
-      state: {
-        currentMerge: null,
-        merges,
-      },
-    });
-  }
-  async reviewMergeApprove({
-    revision,
-    reviewTaskId,
-    toMergeRevisionIds,
-    toMergeTaskIds,
-    merge,
-  }: {
-    revision: RevisionRequest;
-    merge: CrowdsourcingReviewMerge;
-    reviewTaskId: string;
-    toMergeTaskIds: string[];
-    toMergeRevisionIds: string[];
-  }) {
-    // Save capture model revision as ACCEPTED
-    await this.updateCaptureModelRevision(revision, 'accepted');
-
-    // Update task state to cancel merge and store in "previousMerges" state.
-    const fullTask = await this.getTaskById<CrowdsourcingReview>(reviewTaskId);
-
-    const existingMerges: CrowdsourcingReviewMergeComplete[] = fullTask.state?.merges || [];
-    const merges: CrowdsourcingReviewMergeComplete[] = [
-      ...existingMerges.filter(m => m.mergeId !== merge.mergeId),
-      {
-        ...merge,
-        status: 'MERGED',
-      },
-    ];
-
-    await this.updateTask<CrowdsourcingReview>(reviewTaskId, {
-      state: {
-        currentMerge: null,
-        merges,
-      },
-    });
-
-    for (const delId of toMergeRevisionIds) {
-      try {
-        await this.deleteCaptureModelRevision(delId);
-      } catch (err) {
-        // May already be deleted.
-      }
-    }
-    // Mark tasks as accepted.
-    await Promise.all(
-      toMergeTaskIds.map(taskId =>
-        this.updateTask<CrowdsourcingTask>(taskId, {
-          status_text: 'accepted',
-          status: 3,
-          state: {
-            changesRequested: null,
-            mergeId: merge.mergeId,
-          },
-        })
-      )
-    ).catch(err => {
-      if (err && (!err.status || err.status !== 404)) {
-        console.log(err);
-      }
-    });
   }
 
   async getSiteDetails(siteId: number) {
