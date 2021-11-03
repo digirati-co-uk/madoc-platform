@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 
-export const CroppedImage = styled.div<{ $size?: 'small' | 'large'; $covered?: boolean }>`
+export const CroppedImage = styled.div<{ $size?: 'small' | 'large'; $fluid?: boolean; $covered?: boolean }>`
   background: #000;
   padding: 2px;
   height: ${props => {
@@ -27,6 +27,18 @@ export const CroppedImage = styled.div<{ $size?: 'small' | 'large'; $covered?: b
   justify-content: center;
   align-items: center;
   overflow: hidden;
+
+  ${props =>
+    props.$fluid &&
+    css`
+      width: auto;
+      height: auto;
+      max-height: 150px;
+      padding: 0;
+      img {
+        max-height: 150px;
+      }
+    `}
 
   ${props =>
     props.$covered &&

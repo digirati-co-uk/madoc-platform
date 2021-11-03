@@ -79,7 +79,7 @@ services:
       - gateway-redis
 
   model-api:
-    image: digirati/capture-models:v0.13.19
+    image: digirati/capture-models:v0.13.21
     environment:
       - SERVER_PORT=3000
       - DATABASE_HOST=shared-postgres

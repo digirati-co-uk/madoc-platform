@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { InfoMessage } from '../../shared/callouts/InfoMessage';
+import { useUser } from '../../shared/hooks/use-site';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useManifestTask } from '../hooks/use-manifest-task';
 import { useProjectStatus } from '../hooks/use-project-status';
@@ -10,6 +11,7 @@ import { useRouteContext } from '../hooks/use-route-context';
 export const CanvasModelCompleteMessage: React.FC = () => {
   const { projectId } = useRouteContext();
   const { isManifestComplete, hasExpired } = useManifestTask();
+  const user = useUser();
   const { canUserSubmit, isLoading: isLoadingTasks, completedAndHide } = useCanvasUserTasks();
 
   const { t } = useTranslation();
@@ -25,7 +27,7 @@ export const CanvasModelCompleteMessage: React.FC = () => {
     hasExpired ||
     (!isActive && !isPreparing);
 
-  const shouldShowMessage = hideModelEditor && projectId && !projectPaused;
+  const shouldShowMessage = hideModelEditor && projectId && !projectPaused && user;
 
   if (shouldShowMessage) {
     return (

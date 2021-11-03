@@ -1,6 +1,7 @@
 import { traverseDocument, traverseStructure } from '@capture-models/helpers';
 import { BaseField, CaptureModel, NestedModelFields } from '@capture-models/types';
 import { ApiClient } from '../../../gateway/api';
+import { parseModelTarget } from '../../../utility/parse-model-target';
 import { defaultDispose } from '../../extension-manager';
 import { CaptureModelExtension } from '../extension';
 import { PARAGRAPHS_PROFILE, preprocessCaptureModel } from './Paragraphs.helpers';
@@ -49,7 +50,7 @@ export class Paragraphs implements CaptureModelExtension {
     }
 
     // 2. If it does - then extract the target
-    const { canvas } = this.api.parseModelTarget(captureModel.target);
+    const { canvas } = parseModelTarget(captureModel.target);
 
     if (!canvas) {
       // No valid target.

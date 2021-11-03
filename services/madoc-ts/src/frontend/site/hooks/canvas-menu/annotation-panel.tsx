@@ -52,10 +52,11 @@ export function useAnnotationPanel(active: boolean): CanvasMenuHook {
         {regions.length !== 0 || regionCollections.length > 1 ? (
           <SmallButton onClick={() => setCurrentCollection(undefined)}>{t('Back to list')}</SmallButton>
         ) : null}
-        {regions.length === 0 ? (
-          <MetadataEmptyState style={{ marginTop: 100 }}>{t('No annotations')}</MetadataEmptyState>
-        ) : null}
       </ButtonRow>
+
+      {regions.length === 0 ? (
+        <MetadataEmptyState style={{ marginTop: 100 }}>{t('No annotations')}</MetadataEmptyState>
+      ) : null}
 
       {regions.map(item => {
         return (

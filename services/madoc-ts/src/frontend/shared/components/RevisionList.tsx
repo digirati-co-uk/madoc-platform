@@ -1,6 +1,6 @@
 import { Revisions, useNavigation } from '@capture-models/editor';
 import { RevisionRequest, StatusTypes } from '@capture-models/types';
-import React, { useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { SmallButton } from '../navigation/Button';
 import { ViewDocument } from '../caputre-models/inspector/ViewDocument';
@@ -106,12 +106,25 @@ export const RevisionListItem: React.FC<{ revision: RevisionRequest; editable?: 
   revision: rev,
   editable,
 }) => {
+  const outerDiv = useRef<HTMLDivElement>(null);
+  const innerDiv = useRef<HTMLDivElement>(null);
+
   const [isCollapsed, setIsCollapsed] = useState(true);
   const contributors = useContributors();
   const author = rev.revision.authors && contributors ? contributors[rev.revision.authors[0]]?.name || '' : '';
   const currentRevisionId = Revisions.useStoreState(s => s.currentRevisionId);
   const selectRevision = Revisions.useStoreActions(a => a.selectRevision);
   const [, { goTo }] = useNavigation();
+
+  useLayoutEffect(() => {
+    if (outerDiv.current && innerDiv.current) {
+      const { height: h1 } = outerDiv.current.getBoundingClientRect();
+      const { height: h2 } = innerDiv.current.getBoundingClientRect();
+      if (h1 >= h2) {
+        setIsCollapsed(false);
+      }
+    }
+  }, []);
 
   return (
     <RevisionListItemContainer $selected={currentRevisionId === rev.revision.id}>
@@ -134,8 +147,16 @@ export const RevisionListItem: React.FC<{ revision: RevisionRequest; editable?: 
           </SmallButton>
         )}
       </RevisionActions>
-      <RevisionPreviewContainer $collapsed={isCollapsed} onClick={() => setIsCollapsed(false)}>
-        <ViewDocument document={rev.document} padding={false} hideTitle highlightRevisionChanges={rev.revision.id} />
+      <RevisionPreviewContainer ref={outerDiv} $collapsed={isCollapsed} onClick={() => setIsCollapsed(false)}>
+        <div ref={innerDiv}>
+          <ViewDocument
+            fluidImage
+            document={rev.document}
+            padding={false}
+            hideTitle
+            highlightRevisionChanges={rev.revision.id}
+          />
+        </div>
       </RevisionPreviewContainer>
     </RevisionListItemContainer>
   );

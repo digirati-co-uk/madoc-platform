@@ -1,5 +1,6 @@
 import { CanvasFull } from '../../../types/canvas-full';
 import { CaptureModel } from '@capture-models/types';
+import { resolveUrn } from "../../../utility/resolve-urn";
 import { useApi } from './use-api';
 import { useQuery } from 'react-query';
 
@@ -27,7 +28,7 @@ export function useLoadedCaptureModel(modelId?: string, initialModel?: CaptureMo
           captureModel,
         };
       }
-      const target = captureModel.target.map(item => api.resolveUrn(item.id));
+      const target = captureModel.target.map(item => resolveUrn(item.id));
       const primaryTarget = captureModel ? target.find((t: any) => t.type.toLowerCase() === 'canvas') : undefined;
 
       if (!primaryTarget) {
