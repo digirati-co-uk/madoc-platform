@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed i18next-react integration with capture models
 - Fixed layout styling with capture model editor 
 - Fixed "changes requested" notification
+- Fixed missing cache-control headers on static assets
 - Fixed "total collections" count when listing sites
 - Fixed bug with sessions not refreshing when loading pages
 - Fixed bug with cookie expire time not taking into account the refresh window
