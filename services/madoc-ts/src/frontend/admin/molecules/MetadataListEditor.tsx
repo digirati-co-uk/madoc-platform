@@ -279,7 +279,7 @@ export const MetadataListEditor: React.FC<{
 
         if ((item as any).label && (item as any).value) {
           return (
-            <div>
+            <div key={itemId}>
               <Heading3 style={{ marginLeft: 20 }}>{itemId}</Heading3>
               <MetadataSection
                 fixedItems={true}
