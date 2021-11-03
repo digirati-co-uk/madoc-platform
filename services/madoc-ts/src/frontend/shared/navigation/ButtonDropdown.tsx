@@ -54,7 +54,9 @@ export function ButtonDropdown<
   children,
   ...props
 }: PropsWithChildren<{ as: Comp; items: Array<ButtonDropdownItem> } & ExtraProps>) {
-  const { buttonProps, itemProps, isOpen, setIsOpen } = useDropdownMenu(items.length);
+  const { buttonProps, itemProps, isOpen, setIsOpen } = useDropdownMenu(items.length, {
+    disableFocusFirstItemOnClick: items.length === 0,
+  });
 
   return (
     <ButtonDropdownContainer>

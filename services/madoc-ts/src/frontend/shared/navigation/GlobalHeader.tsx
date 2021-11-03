@@ -66,7 +66,9 @@ export const GlobalHeader: React.FC<{
   links: Array<{ link: string; label: string }>;
   username: string;
 }> = ({ username, title, links }) => {
-  const { buttonProps, itemProps, isOpen } = useDropdownMenu(links.length);
+  const { buttonProps, itemProps, isOpen } = useDropdownMenu(links.length, {
+    disableFocusFirstItemOnClick: links.length === 0,
+  });
 
   return (
     <GlobalHeaderContainer>

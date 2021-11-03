@@ -58,7 +58,9 @@ export const ManifestItemFilter: React.FC = () => {
         .filter((b: number) => !Number.isNaN(b)) as number[])
     : [];
 
-  const { buttonProps, itemProps, isOpen } = useDropdownMenu(3);
+  const { buttonProps, itemProps, isOpen } = useDropdownMenu(3, {
+    disableFocusFirstItemOnClick: true,
+  });
 
   const toggleStatus = (filterNumber: number) => (e: any) => {
     if (e.target.checked) {

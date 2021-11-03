@@ -21,7 +21,9 @@ import { useRouteContext } from '../hooks/use-route-context';
 
 export const CanvasTaskProgress: React.FC = () => {
   const { t } = useTranslation();
-  const { buttonProps, isOpen } = useDropdownMenu(1);
+  const { buttonProps, isOpen } = useDropdownMenu(1, {
+    disableFocusFirstItemOnClick: true,
+  });
   const { canvasId } = useRouteContext();
   const api = useApi();
   const { canProgress, isAdmin } = useUserPermissions();

@@ -95,7 +95,9 @@ export const BlankSlotDropdown: React.FC<{
   }>;
   layout?: string;
 }> = ({ actions, layout, children }) => {
-  const { buttonProps, itemProps, isOpen } = useDropdownMenu(actions.length);
+  const { buttonProps, itemProps, isOpen } = useDropdownMenu(actions.length, {
+    disableFocusFirstItemOnClick: actions.length === 0,
+  });
 
   return (
     <ContextualPositionWrapper>

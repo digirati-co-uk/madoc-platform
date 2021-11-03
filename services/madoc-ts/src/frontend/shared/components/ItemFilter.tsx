@@ -65,7 +65,9 @@ export const ItemFilter: React.FC<ItemFilterType> = ({
   selected,
   closeOnChange = true,
 }) => {
-  const { buttonProps, itemProps, isOpen, setIsOpen } = useDropdownMenu(items.length);
+  const { buttonProps, itemProps, isOpen, setIsOpen } = useDropdownMenu(items.length, {
+    disableFocusFirstItemOnClick: items.length === 0,
+  });
 
   return (
     <ItemFilterContainer>

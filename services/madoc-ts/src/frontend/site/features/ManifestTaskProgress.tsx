@@ -18,7 +18,9 @@ import { useRouteContext } from '../hooks/use-route-context';
 
 export const ManifestTaskProgress: React.FC = () => {
   const { t } = useTranslation();
-  const { buttonProps, isOpen } = useDropdownMenu(1);
+  const { buttonProps, isOpen } = useDropdownMenu(1, {
+    disableFocusFirstItemOnClick: true,
+  });
   const { projectId, manifestId } = useRouteContext();
   const api = useApi();
   const user = useUser();

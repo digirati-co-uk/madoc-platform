@@ -294,7 +294,9 @@ export const NotificationCenter: React.FC<{ isAdmin?: boolean }> = ({ isAdmin })
     await refetch();
   });
 
-  const { buttonProps, itemProps, isOpen } = useDropdownMenu(data?.notifications.length || 0);
+  const { buttonProps, itemProps, isOpen } = useDropdownMenu(data?.notifications.length || 0, {
+    disableFocusFirstItemOnClick: true,
+  });
 
   useEffect(() => {
     if (isOpen) {

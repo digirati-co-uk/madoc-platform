@@ -14,7 +14,9 @@ import {
 export const LanguageSwitcher: React.FC = () => {
   const supported = useDetailedSupportLocales();
   const { i18n } = useTranslation();
-  const { buttonProps, itemProps, isOpen, setIsOpen } = useDropdownMenu(supported.length);
+  const { buttonProps, itemProps, isOpen, setIsOpen } = useDropdownMenu(supported.length, {
+    disableFocusFirstItemOnClick: supported.length === 0,
+  });
 
   if (supported.length === 1) {
     return null;
