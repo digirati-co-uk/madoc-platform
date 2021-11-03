@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+- Updated immer 8 -> 9 [CVE-2021-23436](https://github.com/advisories/GHSA-33f9-j839-rf8h) | [CVE-2021-3757](https://github.com/advisories/GHSA-c36v-fmgq-m8hx)
 - [dev dependency] Updated Jest 26 -> 27
 - [dev dependency] Updated Webpack 4 -> 5
 - [dev dependency]  Updated babel
