@@ -39,7 +39,13 @@ export const CanvasUniversalViewer: React.FC = () => {
     return null;
   }
 
-  return <ViewManifestUV hideBreadcrumbs canvasIndex={canvasIndex} onChangeCanvas={onChangeCanvas} />;
+  return (
+    <ViewManifestUV
+      hideBreadcrumbs
+      canvasIndex={canvasIndex && canvasIndex >= 0 ? canvasIndex : undefined}
+      onChangeCanvas={onChangeCanvas}
+    />
+  );
 };
 
 blockEditorFor(CanvasUniversalViewer, {

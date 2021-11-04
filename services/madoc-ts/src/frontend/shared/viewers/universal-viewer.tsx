@@ -17,7 +17,7 @@ const UniversalViewer: React.FC<UniversalViewerProps> = React.memo(({ manifestId
   const options = useMemo(
     () => ({
       manifest: manifestId,
-      canvasIndex,
+      canvasIndex: canvasIndex || 0,
     }),
     []
   );

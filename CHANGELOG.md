@@ -44,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug with sessions not refreshing when loading pages
 - Fixed bug with cookie expire time not taking into account the refresh window
 - Fixed keyboard navigation in top right menu
+- Fixed broken manifest link in activity stream and exported manifests
 - [internal] Fixed corrupted translation saving in development
 
 ### Removed

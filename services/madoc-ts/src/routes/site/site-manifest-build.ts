@@ -301,7 +301,7 @@ export const siteManifestBuild: RouteMiddleware<{
   const newManifestId =
     manifestRow.source && useSourceIds
       ? manifestRow.source
-      : `${baseUrl}/api/manifests/${manifestId}/export/${version}`;
+      : `${baseUrl}/madoc/api/manifests/${manifestId}/export/${version}`;
 
   const newManifest = builder.createManifest(newManifestId, manifest => {
     const manifestMetadata = table.Metadata[manifestRow.id] || {};
@@ -310,7 +310,7 @@ export const siteManifestBuild: RouteMiddleware<{
     if (configOptions.includeSearchService) {
       manifest.addServiceProperty({
         '@context': 'http://iiif.io/api/search/0/context.json',
-        id: `${baseUrl}/api/manifests/${manifestId}/search/1.0`,
+        id: `${baseUrl}/madoc/api/manifests/${manifestId}/search/1.0`,
         profile: 'http://iiif.io/api/search/0/search',
         label: 'Search within',
       } as any);
@@ -483,8 +483,8 @@ export const siteManifestBuild: RouteMiddleware<{
         if (configOptions.addUniversalAnnotations) {
           canvas.addAnnotations({
             id: projectSlug
-              ? `${baseUrl}/api/canvases/${canvasRow.id}/models?format=open-annotation&version=${annoVer}&m=${manifestId}&selectors=true&project=${projectSlug}`
-              : `${baseUrl}/api/canvases/${canvasRow.id}/models?format=open-annotation&version=${annoVer}&m=${manifestId}&selectors=true`,
+              ? `${baseUrl}/madoc/api/canvases/${canvasRow.id}/models?format=open-annotation&version=${annoVer}&m=${manifestId}&selectors=true&project=${projectSlug}`
+              : `${baseUrl}/madoc/api/canvases/${canvasRow.id}/models?format=open-annotation&version=${annoVer}&m=${manifestId}&selectors=true`,
             type: 'AnnotationPage',
             label: { none: ['Annotations'] },
           });
@@ -492,8 +492,8 @@ export const siteManifestBuild: RouteMiddleware<{
         if (configOptions.jsonModels) {
           canvas.addSeeAlso({
             id: projectSlug
-              ? `${baseUrl}/api/canvases/${canvasRow.id}/models?format=json&version=${annoVer}&m=${manifestId}&selectors=true&project=${projectSlug}`
-              : `${baseUrl}/api/canvases/${canvasRow.id}/models?format=json&version=${annoVer}&m=${manifestId}&selectors=true`,
+              ? `${baseUrl}/madoc/api/canvases/${canvasRow.id}/models?format=json&version=${annoVer}&m=${manifestId}&selectors=true&project=${projectSlug}`
+              : `${baseUrl}/madoc/api/canvases/${canvasRow.id}/models?format=json&version=${annoVer}&m=${manifestId}&selectors=true`,
             type: 'Dataset',
             format: 'application/json',
             profile: 'https://madoc.io/capture-models/json/v1.0',
