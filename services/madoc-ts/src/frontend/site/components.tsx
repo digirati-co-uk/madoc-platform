@@ -26,6 +26,7 @@ export { RootLoader } from './pages/loaders/root-loader';
 export { ProjectListLoader } from './pages/loaders/project-list-loader';
 export { UserDashboard } from './pages/dashboard/dashboard';
 export { UserContributions } from './pages/dashboard/user-contributions';
+export { MySites } from './pages/dashboard/my-sites';
 export { UserReviews } from './pages/dashboard/user-reviews';
 export { Homepage } from './pages/homepage';
 export { ViewProjectTasks } from './pages/view-project-tasks';

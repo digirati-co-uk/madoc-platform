@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
+import { useUserDetails } from '../../../shared/hooks/use-user-details';
 import { SiteContainer, SiteContainerBackground } from '../../../shared/layout/SiteContainer';
 import { RenderFragment } from '../../../shared/components/RenderFragment';
 import { UserBar } from '../../../shared/components/UserBar';
@@ -83,6 +84,12 @@ export const RootLoader: UniversalComponent<RootLoaderType> = createUniversalCom
     );
   },
   {
+    hooks: [
+      {
+        creator: () => [],
+        name: 'getUserDetails',
+      },
+    ],
     getKey: () => {
       return ['root-config', []];
     },

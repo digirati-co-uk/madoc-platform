@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { Redirect, useLocation } from 'react-router-dom';
 import { DashboardTab, DashboardTabs } from '../../shared/components/DashboardTabs';
+import { useUser } from '../../shared/hooks/use-site';
+import { useUserDetails } from '../../shared/hooks/use-user-details';
 import { HrefLink } from '../../shared/utility/href-link';
 import { renderUniversalRoutes } from '../../shared/utility/server-utils';
 import { UniversalComponent } from '../../types';
@@ -34,11 +36,13 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
   ({ route }) => {
     const { data, error } = useStaticData(UserHomepage, {}, { retry: false });
     const location = useLocation();
+    const user = useUser();
+    const userDetails = useUserDetails();
     const { t } = useTranslation();
 
     const showReviews = data && isReviewer(data.userDetails);
 
-    if (error) {
+    if (error || !user) {
       return <Redirect to={'/'} />;
     }
 
@@ -50,7 +54,6 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
     return (
       <div>
         <UserGreeting />
-
         <DashboardTabs>
           <DashboardTab $active={location.pathname === '/dashboard'}>
             <HrefLink href="/dashboard">{t('Overview')}</HrefLink>
@@ -63,6 +66,11 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
               <HrefLink href="/dashboard/reviews">{t('Reviews')}</HrefLink>
             </DashboardTab>
           )}
+          {userDetails?.sites && userDetails?.sites.length > 1 ? (
+            <DashboardTab $active={location.pathname === '/dashboard/my-sites'}>
+              <HrefLink href="/dashboard/my-sites">{t('My sites')}</HrefLink>
+            </DashboardTab>
+          ) : null}
         </DashboardTabs>
 
         {renderUniversalRoutes(route.routes)}
@@ -70,6 +78,12 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
     );
   },
   {
+    hooks: [
+      {
+        creator: () => [],
+        name: 'getUserDetails',
+      },
+    ],
     getKey: () => {
       return ['current-user', {}];
     },

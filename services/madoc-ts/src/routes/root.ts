@@ -1,5 +1,6 @@
 import * as EmailValidator from 'email-validator';
 import { phpHashCompare } from '../utility/php-hash-compare';
+import { optionalUserWithScope } from '../utility/user-with-scope';
 import { RouteMiddleware } from './../types/route-middleware';
 
 function installPage(body: string) {
@@ -225,21 +226,6 @@ export const siteRoot: RouteMiddleware = async context => {
     return;
   }
 
-  // @todo list of sites or similar? Possibly onboarding process.
-  context.response.body = `<!doctype html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-      <meta http-equiv="X-UA-Compatible" content="ie=edge">
-      <title>Madoc</title>
-    </head>
-    <body>
-      <div>
-        <h1>Madoc</h1>
-      </div>    
-    </body>
-    </html>
-  `;
-  context.response.status = 200;
+  const chosenDefaultSite = allSites[0];
+  context.redirect(`/s/${chosenDefaultSite.slug}`);
 };

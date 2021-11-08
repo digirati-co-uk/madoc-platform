@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Internal] Added new "api.crowdsourcing" namespace to consolidate crowdsourcing APIs together.
 - [internal] Added better debugging names for capture model slots in React devtools
 - Added more APIs to `@madoc.io/types` package (still experimental) for plugins to use.
+- Added page for users to see their other sites from the dashboard
 
 ### Fixed
 
