@@ -2,6 +2,7 @@ import { Grid } from '@capture-models/editor';
 import { CanvasUniversalViewer } from '../../site/features/CanvasUniversalViewer';
 import { ManifestHero } from '../../site/features/ManifestHero';
 import { ViewManifestUV } from '../../site/pages/view-manifest-uv';
+import { DefaultSelect } from '../form/DefaulSelect';
 import AdminPageTitle from '../typography/AdminPageTitle';
 import { Breadcrumbs } from '../navigation/Breadcrumbs';
 import { Button } from '../navigation/Button';
@@ -61,9 +62,10 @@ export const atoms = {
   Button: Button,
   ButtonDropdown: ButtonDropdown,
   CanvasStatus: CanvasStatus,
-  CloseIcon: CloseIcon,
+  DefaultSelect: DefaultSelect,
   // EditorToolbar: EditorToolbar,
   // EmptySlot: EmptySlot,
+  CloseIcon: CloseIcon,
   EmptyState: EmptyState,
   ErrorIcon: ErrorIcon,
   ErrorMessage: ErrorMessage,

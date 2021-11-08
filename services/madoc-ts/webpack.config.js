@@ -2,6 +2,9 @@ const webpack = require('webpack');
 const createStyledComponentsTransformer = require('typescript-plugin-styled-components').default;
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const styledComponentsTransformer = createStyledComponentsTransformer({
+  namespace: 'madoc',
+  ssr: true,
+  pure: true,
   displayName: true,
 });
 
@@ -49,6 +52,15 @@ module.exports = {
             options: {
               plugins: [
                 process.env.NODE_ENV !== 'production' && !skipHotReload && require.resolve('react-refresh/babel'),
+                [
+                  'babel-plugin-styled-components',
+                  {
+                    ssr: true,
+                    pure: true,
+                    fileName: false,
+                    transpileTemplateLiterals: true,
+                  },
+                ],
               ].filter(Boolean),
               presets: [
                 process.env.NODE_ENV === 'production' && [

@@ -1,4 +1,5 @@
 import { CreateRouteType } from '../types';
+import { MySites } from './pages/dashboard/my-sites';
 
 type BaseRouteComponents = typeof import('./components');
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -561,6 +562,11 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
           path: '/dashboard/contributions',
           exact: true,
           component: components.UserContributions,
+        },
+        {
+          path: '/dashboard/my-sites',
+          exact: true,
+          component: components.MySites,
         },
         {
           path: '/dashboard/reviews',

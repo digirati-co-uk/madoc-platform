@@ -1,5 +1,5 @@
 import { DropdownFieldProps } from '@capture-models/editor/lib/input-types/DropdownField/DropdownField';
-import { captureModelShorthand } from '../../../frontend/shared/plugins/public-api';
+import { captureModelShorthand } from '@capture-models/helpers';
 import { ProjectTemplate } from '../types';
 
 type CrowdsourcedTranscriptionOptions = {
