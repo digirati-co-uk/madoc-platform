@@ -65,6 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [dev dependency] Updated Webpack 4 -> 5
 - [dev dependency]  Updated babel
 - Updated Node to latest LTS
+- [dev dependency] Various security patches
 
 
 ## [2.0.0](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.0) - 2021-10-09
