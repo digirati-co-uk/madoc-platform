@@ -1,4 +1,17 @@
-import { ApiDefinition } from './_meta';
+import { ConfigInjectionSettings } from '../../extensions/capture-models/ConfigInjection/types';
+import { ApiDefinition, ApiRequest } from './_meta';
+
+export type UpdateModelConfigRequest = ApiRequest<
+  'update-model-config',
+  {
+    body: ConfigInjectionSettings;
+    query: {
+      manifest_id: number;
+      project_id: number | string;
+      collection_id?: number;
+    };
+  }
+>;
 
 export const updateModelConfig: ApiDefinition = {
   id: 'update-model-config',

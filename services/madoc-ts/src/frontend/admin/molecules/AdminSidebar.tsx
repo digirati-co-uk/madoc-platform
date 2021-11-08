@@ -210,6 +210,9 @@ export const AdminSidebar: React.FC = () => {
               <AdminMenuSubItem as={HrefLink} href="/global/status">
                 {t('System status')}
               </AdminMenuSubItem>
+              <AdminMenuSubItem as={HrefLink} href="/global/config">
+                {t('Global config')}
+              </AdminMenuSubItem>
             </AdminMenuSubItemContainer>
           </AdminMenuItemContainer>
         ) : null}
