@@ -55,7 +55,7 @@
     "@atlas-viewer/atlas": "1.6.9",
     "@atlas-viewer/iiif-image-api": "^1.2.6",
     "@babel/runtime": "^7.16.0",
-    "@capture-models/editor": "^0.13.20",
+    "@capture-models/editor": "^0.13.23",
     "@capture-models/helpers": "^0.13.14",
     "@capture-models/types": "^0.13.0",
     "@hyperion-framework/parser": "^1.0.0",
