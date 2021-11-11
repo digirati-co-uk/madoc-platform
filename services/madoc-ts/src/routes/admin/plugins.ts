@@ -69,7 +69,7 @@ export const disablePlugin: RouteMiddleware<{ id: string }> = async context => {
   // 3. Disable in module
   context.pluginManager.uninstallPlugin(plugin.id, siteId);
 
-  context.response.status = 200;
+  context.response.status = 204;
 };
 
 export const enablePlugin: RouteMiddleware<{ id: string }> = async context => {
@@ -214,7 +214,7 @@ export const disableDevMode: RouteMiddleware<{ id: string }> = async context => 
     }
   }
 
-  context.response.status = 200;
+  context.response.status = 204;
 };
 
 export const installRemotePlugin: RouteMiddleware<

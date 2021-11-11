@@ -7,5 +7,5 @@ export const deleteBlock: RouteMiddleware<{ blockId: string }> = async context =
 
   await context.pageBlocks.deleteBlock(blockId, siteId);
 
-  context.response.status = 200;
+  context.response.status = 204;
 };

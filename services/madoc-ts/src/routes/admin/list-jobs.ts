@@ -18,5 +18,5 @@ export const runJob: RouteMiddleware = async context => {
 
   context.cron.runJob(context.params.jobId);
 
-  context.response.status = 200;
+  context.response.status = 204;
 };

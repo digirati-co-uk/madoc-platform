@@ -20,5 +20,5 @@ export const publishManifest: RouteMiddleware<{ id: string }, { isPublished?: bo
     `);
   }
 
-  context.response.status = 200;
+  context.response.status = 201;
 };

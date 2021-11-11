@@ -32,5 +32,5 @@ export const updateProjectStatus: RouteMiddleware<{ id: string }, UpdateProjectS
       and site_id = ${siteId}
   `);
 
-  context.response.status = 200;
+  context.response.status = 204;
 };

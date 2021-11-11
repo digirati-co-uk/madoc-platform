@@ -6,5 +6,5 @@ export const activateUser: RouteMiddleware<{ userId: string }> = async context =
 
   await context.siteManager.activateUser(Number(context.params.userId));
 
-  context.response.status = 200;
+  context.response.status = 204;
 };

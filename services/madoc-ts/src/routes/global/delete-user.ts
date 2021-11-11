@@ -12,5 +12,5 @@ export const deleteUser: RouteMiddleware<{ userId: string }> = async context => 
 
   await context.siteManager.deleteUser(toBeDeleted);
 
-  context.response.status = 200;
+  context.response.status = 204;
 };

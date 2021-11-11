@@ -70,5 +70,5 @@ export const updateCuratedFeed: RouteMiddleware<
     }
   );
 
-  context.response.status = 200;
+  context.response.status = 201;
 };

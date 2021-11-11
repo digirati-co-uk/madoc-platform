@@ -11,5 +11,5 @@ export const deleteApiKey: RouteMiddleware = async context => {
         and site_id = ${siteId}
   `);
 
-  context.response.status = 200;
+  context.response.status = 204;
 };

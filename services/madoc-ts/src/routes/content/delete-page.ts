@@ -7,5 +7,5 @@ export const deletePage: RouteMiddleware<{ paths: string }> = async context => {
 
   await context.pageBlocks.deletePage(pathToFind, siteId);
 
-  context.response.status = 200;
+  context.response.status = 204;
 };

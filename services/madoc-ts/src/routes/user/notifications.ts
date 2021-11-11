@@ -46,7 +46,7 @@ export const readNotification: RouteMiddleware<{ id: string }> = async context =
 
   await context.notifications.readNotification(context.params.id, id, siteId);
 
-  context.response.status = 200;
+  context.response.status = 204;
 };
 
 export const readAllNotifications: RouteMiddleware = async context => {
@@ -54,7 +54,7 @@ export const readAllNotifications: RouteMiddleware = async context => {
 
   await context.notifications.readAllUserNotifications(id, siteId);
 
-  context.response.status = 200;
+  context.response.status = 204;
 };
 
 export const clearNotification: RouteMiddleware<{ id: string }> = async context => {
@@ -62,7 +62,7 @@ export const clearNotification: RouteMiddleware<{ id: string }> = async context 
 
   await context.notifications.clearNotification(context.params.id, id, siteId);
 
-  context.response.status = 200;
+  context.response.status = 204;
 };
 
 export const clearAllNotifications: RouteMiddleware = async context => {
@@ -70,5 +70,5 @@ export const clearAllNotifications: RouteMiddleware = async context => {
 
   await context.notifications.clearAllUserNotification(id, siteId);
 
-  context.response.status = 200;
+  context.response.status = 204;
 };

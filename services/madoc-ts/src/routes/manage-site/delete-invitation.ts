@@ -6,5 +6,5 @@ export const deleteInvitation: RouteMiddleware<{ invitationId: string }> = async
 
   await context.siteManager.deleteInvitation(context.params.invitationId, siteId);
 
-  context.response.status = 200;
+  context.response.status = 204;
 };

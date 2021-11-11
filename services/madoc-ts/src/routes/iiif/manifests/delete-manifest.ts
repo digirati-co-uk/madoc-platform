@@ -38,7 +38,7 @@ export const deleteManifestEndpoint: RouteMiddleware<{ id: number }> = async con
 
   await deleteManifest(manifestId, siteId, () => context.connection);
 
-  context.response.status = 200;
+  context.response.status = 204;
 };
 
 export async function deleteManifest(manifestId: number, siteId: number, connection: () => DatabasePoolConnectionType) {

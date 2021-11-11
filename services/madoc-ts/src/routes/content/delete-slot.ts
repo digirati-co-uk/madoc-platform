@@ -7,5 +7,5 @@ export const deleteSlot: RouteMiddleware<{ slotId: string }> = async context => 
 
   await context.pageBlocks.deleteSlot(slotId, siteId);
 
-  context.response.status = 200;
+  context.response.status = 204;
 };

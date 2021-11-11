@@ -43,7 +43,7 @@ export const deleteResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
         status_text: 'abandoned',
       });
     }
-    context.response.status = 200;
+    context.response.status = 204;
     return;
   }
 
@@ -71,7 +71,7 @@ export const deleteResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
       }
     }
 
-    context.response.status = 200;
+    context.response.status = 204;
     return;
   }
 

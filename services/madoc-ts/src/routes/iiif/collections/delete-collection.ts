@@ -24,7 +24,7 @@ export const deleteCollectionEndpoint: RouteMiddleware<{ id: number }> = async c
 
   await deleteCollection(collectionId, siteId, () => context.connection, false);
 
-  context.response.status = 200;
+  context.response.status = 204;
 };
 
 export async function deleteCollection(

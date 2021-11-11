@@ -194,7 +194,7 @@ export const updateLanguagePreferences: RouteMiddleware<
   const changes = context.requestBody;
 
   if (typeof changes.displayLanguages === 'undefined' && typeof changes.contentLanguages === 'undefined') {
-    context.response.status = 200;
+    context.response.status = 204;
     return;
   }
 
@@ -234,7 +234,7 @@ export const updateLanguagePreferences: RouteMiddleware<
     }
   }
 
-  context.response.status = 200;
+  context.response.status = 201;
 };
 
 export const updateLocalisation: RouteMiddleware<{ code: string }> = async context => {
