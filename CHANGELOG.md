@@ -55,6 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed scrolling overflow in admin menu
 - Fixed missing title for site configuration + navigation
 - Fixed title of "create site" page
+- Fixed error message when sending user activation email
 
 ### Removed
 
