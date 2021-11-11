@@ -91,5 +91,5 @@ export const assignUserToDelegatedRequest: RouteMiddleware<{ id: string }> = asy
     });
   }
 
-  context.response.status = 200;
+  context.response.status = 204;
 };

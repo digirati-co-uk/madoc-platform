@@ -62,7 +62,7 @@ export const enableTheme: RouteMiddleware<{ theme_id: string }> = async context 
 
   await context.themes.setSiteTheme(theme.theme_id, siteId);
 
-  context.response.status = 200;
+  context.response.status = 204;
 };
 
 export const disableTheme: RouteMiddleware<{ theme_id: string }> = async context => {
@@ -76,7 +76,7 @@ export const disableTheme: RouteMiddleware<{ theme_id: string }> = async context
 
   await context.themes.unsetSiteTheme(theme.theme_id, siteId);
 
-  context.response.status = 200;
+  context.response.status = 204;
 };
 
 export const uninstallTheme: RouteMiddleware<{ theme_id: string }> = async context => {
@@ -85,7 +85,7 @@ export const uninstallTheme: RouteMiddleware<{ theme_id: string }> = async conte
   // Remove from database.
   await context.themes.deleteTheme(context.params.theme_id);
 
-  context.response.status = 200;
+  context.response.status = 204;
 };
 
 export const serveThemeAsset: RouteMiddleware<{ theme_id: string; bundleName: string }> = async (context, next) => {

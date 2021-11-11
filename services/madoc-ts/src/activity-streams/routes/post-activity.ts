@@ -107,7 +107,7 @@ export const postActivity: RouteMiddleware<
 
   if (!doesObjectExist && (action === 'Remove' || action === 'Delete')) {
     // Do nothing.
-    context.response.status = 200;
+    context.response.status = 204;
     return;
   }
 

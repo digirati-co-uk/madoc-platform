@@ -20,7 +20,7 @@ export const deleteCanvasEndpoint: RouteMiddleware<{ id: number }> = async conte
 
   await deleteCanvas(canvasId, siteId, () => context.connection);
 
-  context.response.status = 200;
+  context.response.status = 204;
 };
 
 export async function deleteCanvas(canvasId: number, siteId: number, connection: () => DatabasePoolConnectionType) {

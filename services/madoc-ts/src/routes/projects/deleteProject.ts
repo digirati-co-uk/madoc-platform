@@ -17,7 +17,7 @@ export const deleteProjectEndpoint: RouteMiddleware<{ id: number }> = async cont
 
   await deleteProject(projectId, siteId, () => context.connection);
 
-  context.response.status = 200;
+  context.response.status = 204;
 };
 
 export async function deleteProject(projectId: number, siteId: number, connection: () => DatabasePoolConnectionType) {

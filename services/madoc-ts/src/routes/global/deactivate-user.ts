@@ -6,5 +6,5 @@ export const deactivateUser: RouteMiddleware<{ userId: string }> = async context
 
   await context.siteManager.deactivateUser(Number(context.params.userId));
 
-  context.response.status = 200;
+  context.response.status = 204;
 };

@@ -67,5 +67,5 @@ export const updateMetadata: RouteMiddleware<{ id: number }, MetadataUpdate> = a
     });
   }
 
-  context.response.status = 200;
+  context.response.status = 201;
 };

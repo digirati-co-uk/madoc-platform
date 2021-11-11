@@ -16,5 +16,5 @@ export const updateSystemConfig: RouteMiddleware<unknown, Partial<SystemConfig>>
     }
   }
 
-  context.response.status = 200;
+  context.response.status = 201;
 };
