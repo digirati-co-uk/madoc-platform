@@ -50,7 +50,7 @@ export const CreateSite: React.FC = () => {
   return (
     <>
       <AdminHeader
-        title={t('Sites')}
+        title={t('Create site')}
         breadcrumbs={[
           { label: 'Site admin', link: '/' },
           { label: 'Sites', link: '/global/sites' },

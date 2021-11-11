@@ -51,6 +51,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [internal] Fixed corrupted translation saving in development
 - Fixed server-side rendering bug with dropdowns
 - Fixed returning 200 status codes with no return body (changed to 204)
+- Fixed scrolling overflow in admin menu
+- Fixed missing title for site configuration + navigation
+- Fixed title of "create site" page
 
 ### Removed
 

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { WidePage } from '../../../shared/layout/WidePage';
 import React, { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
@@ -16,8 +17,10 @@ import { useSetSite } from '../../../shared/hooks/use-site';
 import { Spinner } from '../../../shared/icons/Spinner';
 import { serverRendererFor } from '../../../shared/plugins/external/server-renderer-for';
 import { Site } from '../../../../extensions/site-manager/types';
+import { AdminHeader } from '../../molecules/AdminHeader';
 
 const SiteEditor: React.FC<{ site: Site; refetch: () => Promise<any> }> = ({ site, refetch }) => {
+  const { t } = useTranslation();
   const api = useApi();
   const [title, setTitle] = useState(site.title);
   const [summary, setSummary] = useState(site.summary || '');
@@ -43,34 +46,37 @@ const SiteEditor: React.FC<{ site: Site; refetch: () => Promise<any> }> = ({ sit
   const formReady = !!title && !updateSiteStatus.isLoading;
 
   return (
-    <WidePage>
-      {updateSiteStatus.isSuccess ? <SuccessMessage>Site details updated</SuccessMessage> : <br />}
-      <InputContainer>
-        <InputLabel htmlFor="title">Title</InputLabel>
-        <Input type="text" required value={title} onChange={e => setTitle(e.currentTarget.value)} />
-      </InputContainer>
-      <InputContainer>
-        <InputLabel htmlFor="title">Summary</InputLabel>
-        <Input type="text" value={summary} onChange={e => setSummary(e.currentTarget.value)} />
-      </InputContainer>
-      <InputContainer>
-        <InputLabel htmlFor="title">Site slug</InputLabel>
-        <Input type="text" required disabled value={site.slug} />
-      </InputContainer>
-      <InputContainer>
-        <InputCheckboxContainer>
-          <InputCheckboxInputContainer $checked={isPublic}>
-            <Input type="checkbox" id="is_public" checked={isPublic} onChange={e => setIsPublic(e.target.checked)} />
-          </InputCheckboxInputContainer>
-          <InputLabel htmlFor="is_public">This is a public site</InputLabel>
-        </InputCheckboxContainer>
-      </InputContainer>
-      <ButtonRow>
-        <Button $primary disabled={!formReady} onClick={() => updateSite()}>
-          Update
-        </Button>
-      </ButtonRow>
-    </WidePage>
+    <>
+      <AdminHeader title={t('Site details')} breadcrumbs={[{ label: 'Site admin', link: '/' }]} />
+      <WidePage>
+        {updateSiteStatus.isSuccess ? <SuccessMessage>Site details updated</SuccessMessage> : <br />}
+        <InputContainer>
+          <InputLabel htmlFor="title">Title</InputLabel>
+          <Input type="text" required value={title} onChange={e => setTitle(e.currentTarget.value)} />
+        </InputContainer>
+        <InputContainer>
+          <InputLabel htmlFor="title">Summary</InputLabel>
+          <Input type="text" value={summary} onChange={e => setSummary(e.currentTarget.value)} />
+        </InputContainer>
+        <InputContainer>
+          <InputLabel htmlFor="title">Site slug</InputLabel>
+          <Input type="text" required disabled value={site.slug} />
+        </InputContainer>
+        <InputContainer>
+          <InputCheckboxContainer>
+            <InputCheckboxInputContainer $checked={isPublic}>
+              <Input type="checkbox" id="is_public" checked={isPublic} onChange={e => setIsPublic(e.target.checked)} />
+            </InputCheckboxInputContainer>
+            <InputLabel htmlFor="is_public">This is a public site</InputLabel>
+          </InputCheckboxContainer>
+        </InputContainer>
+        <ButtonRow>
+          <Button $primary disabled={!formReady} onClick={() => updateSite()}>
+            Update
+          </Button>
+        </ButtonRow>
+      </WidePage>
+    </>
   );
 };
 
