@@ -46,6 +46,10 @@ export const resetPassword: RouteMiddleware<{ userId: string }, { skipEmail?: bo
         text: createResetPasswordText(vars),
         html: createResetPasswordEmail(vars),
       });
+      context.response.status = 200;
+      context.response.body = {
+        accepted: true,
+      };
     } catch (e) {
       context.response.status = 200;
       context.response.body = {
