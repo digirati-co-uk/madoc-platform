@@ -33,6 +33,11 @@ export const SiteConfiguration: React.FC = () => {
       <WidePage>
         {success ? <SuccessMessage $margin>{t('Changes saved')}</SuccessMessage> : null}
         <div style={{ maxWidth: 600 }}>
+          <HrefLink href={`/site/details`} style={{ textDecoration: 'none' }}>
+            <RoundedCard label="Edit site metadata" interactive>
+              Change the label or slug of the site
+            </RoundedCard>
+          </HrefLink>
           <HrefLink href={`/configure/site/project`} style={{ textDecoration: 'none' }}>
             <RoundedCard label="Edit project configuration" interactive>
               Change the configuration for the site - this will be overridden by configuration on a project.
