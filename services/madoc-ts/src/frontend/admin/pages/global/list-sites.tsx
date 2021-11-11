@@ -1,9 +1,12 @@
-import React from 'react';
+import { stringify } from 'query-string';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Redirect } from 'react-router-dom';
+import { Redirect, useHistory, useLocation } from 'react-router-dom';
 import ReactTimeago from 'react-timeago';
 import { siteManagerHooks } from '../../../../extensions/site-manager/hooks';
 import { SystemCallToAction } from '../../../shared/components/SystemCallToAction';
+import { SystemOrderBy } from '../../../shared/components/SystemOrderBy';
+import { useLocationQuery } from '../../../shared/hooks/use-location-query';
 import { Button } from '../../../shared/navigation/Button';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../../shared/atoms/Statistics';
 import { SystemListItem } from '../../../shared/atoms/SystemListItem';
@@ -22,7 +25,30 @@ export const ListSites: React.FC = () => {
   const { t } = useTranslation();
   const user = useUser();
   const currentSite = useSite();
-  const { data } = siteManagerHooks.getAllSites(() => []);
+  const query = useLocationQuery();
+  const { data } = siteManagerHooks.getAllSites(() => [{ desc: query.desc, order_by: query.order_by }], {
+    keepPreviousData: true,
+  });
+  const { push } = useHistory();
+  const location = useLocation();
+
+  const search = (query?.search || '').toLowerCase();
+
+  const filteredSites = useMemo(() => {
+    if (!data?.sites) {
+      return [];
+    }
+    if (!search) {
+      return data.sites;
+    }
+    return data.sites.filter(site => {
+      return (
+        site.title.toLowerCase().indexOf(search) !== -1 ||
+        (site.summary || '').toLowerCase().indexOf(search) !== -1 ||
+        site.slug.toLowerCase().indexOf(search) !== -1
+      );
+    });
+  }, [search, data]);
 
   if (user?.role !== 'global_admin') {
     return <Redirect to={'/'} />;
@@ -46,13 +72,44 @@ export const ListSites: React.FC = () => {
           maxWidth
         />
 
-        {data?.sites.map(site => {
+        <SystemOrderBy
+          liveSearch
+          initialSearch={search}
+          initialValue={query.order_by}
+          initialDesc={query.desc}
+          maxWidth
+          items={['title', 'slug', 'modified', 'created']}
+          onSearch={q => {
+            push(
+              `${location.pathname}${
+                q || query.order_by
+                  ? `?${stringify({ order_by: query.order_by, desc: query.desc ? 'true' : undefined, search: q })}`
+                  : ''
+              }`
+            );
+          }}
+          onChange={opt => {
+            push(
+              `${location.pathname}${
+                opt.value
+                  ? `?${stringify({
+                      order_by: opt.value,
+                      desc: opt.desc ? 'true' : undefined,
+                      search: search || undefined,
+                    })}`
+                  : ''
+              }`
+            );
+          }}
+        />
+
+        {filteredSites.map(site => {
           const stats = {
             canvas: 0,
             projects: 0,
             manifest: 0,
             collection: 0,
-            ...(data.siteStats[site.id] || {}),
+            ...(data?.siteStats[site.id] || {}),
           };
 
           return (

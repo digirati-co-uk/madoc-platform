@@ -82,11 +82,33 @@ export class SiteUserRepository extends BaseRepository {
     // Sites
     // ==============================
 
-    listAllSites: () => sql<SiteRow>`
-        select site.*, u.name as owner_name
-        from site
-           left join "user" u on site.owner_id = u.id
-    `,
+    listAllSites: ({ orderBy, orderDesc }: { orderBy?: string; orderDesc?: boolean } = {}) => {
+      let sort = SQL_EMPTY;
+      const sortDir = orderDesc ? sql`desc` : sql`asc`;
+      switch (orderBy) {
+        case 'title':
+          sort = sql`order by site.title ${sortDir}`;
+          break;
+        case 'slug':
+          sort = sql`order by site.slug ${sortDir}`;
+          break;
+        case 'modified':
+          sort = sql`order by site.modified ${sortDir}`;
+          break;
+        case 'created':
+          sort = sql`order by site.created ${sortDir}`;
+          break;
+      }
+
+      console.log({ orderBy, orderDesc })
+
+      return sql<SiteRow>`
+          select site.*, u.name as owner_name
+          from site
+             left join "user" u on site.owner_id = u.id
+          ${sort}
+      `;
+    },
 
     getSiteById: (id: number) => sql<SiteRow>`
         ${SiteUserRepository.query.listAllSites()}
@@ -661,8 +683,10 @@ export class SiteUserRepository extends BaseRepository {
     return this.connection.any(SiteUserRepository.query.searchAllUsers(q));
   }
 
-  async listAllSites() {
-    return (await this.connection.any(SiteUserRepository.query.listAllSites())).map(SiteUserRepository.mapSite);
+  async listAllSites({ orderBy, orderDesc }: { orderBy?: string; orderDesc?: boolean } = {}) {
+    return (await this.connection.any(SiteUserRepository.query.listAllSites({ orderBy, orderDesc }))).map(
+      SiteUserRepository.mapSite
+    );
   }
 
   async getSiteUsers(siteId: number): Promise<readonly SiteUser[]> {
