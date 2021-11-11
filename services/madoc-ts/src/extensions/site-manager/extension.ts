@@ -29,7 +29,7 @@ export class SiteManagerExtension implements BaseExtension {
     defaultDispose(this);
   }
 
-  getAllSites() {
+  getAllSites(query?: { order_by?: 'title' | 'slug' | 'modified' | 'created'; desc?: boolean }) {
     return this.api.request<{
       sites: Array<{
         id: number;
@@ -48,7 +48,7 @@ export class SiteManagerExtension implements BaseExtension {
           canvas?: number;
         };
       };
-    }>(`/api/madoc/sites`);
+    }>(`/api/madoc/sites${query ? `?${stringify(query)}` : ``}`);
   }
 
   getAllSiteUsers() {
