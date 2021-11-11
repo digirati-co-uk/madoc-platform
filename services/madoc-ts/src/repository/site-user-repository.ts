@@ -255,7 +255,7 @@ export class SiteUserRepository extends BaseRepository {
     createUserWithId: (id: number, user: UserCreationRequest) => sql<UserRow>`
       insert into "user" (id, email, name, is_active, role, password_hash) values (
         ${id},
-        ${user.email},
+        ${user.email.toLowerCase()},
         ${user.name},
         false,
         ${user.role},
@@ -265,7 +265,7 @@ export class SiteUserRepository extends BaseRepository {
 
     createUser: (user: UserCreationRequest) => sql<UserRow>`
       insert into "user" (email, name, is_active, role, password_hash) values (
-        ${user.email},
+        ${user.email.toLowerCase()},
         ${user.name},
         false,
         ${user.role},
@@ -576,12 +576,12 @@ export class SiteUserRepository extends BaseRepository {
    * @throws NotFoundError
    */
   async getUserByEmail(email: string) {
-    return this.connection.one(SiteUserRepository.query.getUserByEmail(email));
+    return this.connection.one(SiteUserRepository.query.getUserByEmail(email.toLowerCase()));
   }
 
   async userEmailExists(email: string) {
     try {
-      await this.getUserByEmail(email);
+      await this.getUserByEmail(email.toLowerCase());
       return true;
     } catch (e) {
       if (e instanceof NotFoundError) {
@@ -602,7 +602,7 @@ export class SiteUserRepository extends BaseRepository {
    * @throws NotFoundError
    */
   private async getActiveUserByEmailWithPassword(email: string): Promise<UserRow> {
-    return this.connection.one(SiteUserRepository.query.getActiveUserByEmail(email));
+    return this.connection.one(SiteUserRepository.query.getActiveUserByEmail(email.toLowerCase()));
   }
 
   /**
@@ -784,7 +784,7 @@ export class SiteUserRepository extends BaseRepository {
    * @throws NotFoundError
    */
   async verifyLogin(email: string, password: string): Promise<{ user: User; sites: UserSite[] } | undefined> {
-    const user = await this.getActiveUserByEmailWithPassword(email);
+    const user = await this.getActiveUserByEmailWithPassword(email.toLowerCase());
 
     if (!user || !password || !user.password_hash) {
       return undefined;
@@ -832,7 +832,7 @@ export class SiteUserRepository extends BaseRepository {
   async createUser(user: UserCreationRequest) {
     await this.connection.query(SiteUserRepository.mutations.createUser(user));
 
-    return this.getUserByEmail(user.email);
+    return this.getUserByEmail(user.email.toLowerCase());
   }
 
   async updateUser(userId: number, req: UpdateUser) {

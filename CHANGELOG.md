@@ -50,6 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed broken manifest link in activity stream and exported manifests
 - [internal] Fixed corrupted translation saving in development
 - Fixed server-side rendering bug with dropdowns
+- Fixed bug with users being able to be created with the same email
 
 ### Removed
 
