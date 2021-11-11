@@ -56,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed missing title for site configuration + navigation
 - Fixed title of "create site" page
 - Fixed error message when sending user activation email
+- Fixed bug with users being able to be created with the same email
 
 ### Removed
 
