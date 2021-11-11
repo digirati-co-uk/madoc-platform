@@ -141,6 +141,8 @@ export const AdminSidebarContainer = styled.div`
   padding: 0.8em;
   color: #fff;
   height: 100%;
+  overflow-y: auto;
+  padding-bottom: 2em;
 `;
 
 // Site switcher.
