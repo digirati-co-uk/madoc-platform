@@ -543,16 +543,22 @@ export const siteManifestBuild: RouteMiddleware<{
       };
       break;
     case '3.0':
-    case 'source':
+    case 'source': {
       context.set('Access-Control-Allow-Origin', '*');
       context.response.status = 200;
-      context.response.body = builder.toPresentation3({ id: newManifest.id, type: 'Manifest' });
+      const manifestJson: any = builder.toPresentation3({ id: newManifest.id, type: 'Manifest' });
+      manifestJson['@context'] = 'http://iiif.io/api/presentation/3/context.json';
+      context.response.body = manifestJson;
       return;
-    case '2.1':
+    }
+    case '2.1': {
       context.set('Access-Control-Allow-Origin', '*');
       context.response.status = 200;
-      context.response.body = builder.toPresentation2({ id: newManifest.id, type: 'Manifest' });
+      const manifestJson: any = builder.toPresentation2({ id: newManifest.id, type: 'Manifest' });
+      manifestJson['@context'] = 'http://iiif.io/api/presentation/2/context.json';
+      context.response.body = manifestJson;
       return;
+    }
     default:
       context.status = 404;
       return;
