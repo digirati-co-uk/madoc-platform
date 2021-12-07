@@ -101,7 +101,8 @@ class Module extends AbstractModule
                 $serviceContainer->get(CreatedTimestampSubscriber::class),
                 $serviceContainer->get(FlaggingNotificationSubscriber::class),
                 $serviceContainer->get(AnnotationModerationSubscriber::class),
-                $serviceContainer->get(UserBookmarksSubscriber::class),
+                // Removing UserBookmarksSubscriber.
+                // $serviceContainer->get(UserBookmarksSubscriber::class),
             ];
 
             foreach ($subscribers as $subscriber) {

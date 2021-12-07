@@ -156,6 +156,7 @@ class AccountController extends AbstractActionController
 
         $view->setVariable('form', $form);
         $view->setVariable('user', $user);
+        $view->setVariable('slug', $this->currentSite()->slug());
         $view->setVariable('messages', $this->messenger()->get());
         $view->setVariable('canvases', $bookmarks);
         $view->setVariable('statistics', $statistics);

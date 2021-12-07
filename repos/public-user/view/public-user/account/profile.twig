@@ -1,4 +1,5 @@
 {% do headLink().prependStylesheet(assetUrl('css/statistics.css', 'PublicUser')) %}
+{% do headLink().prependStylesheet(assetUrl('css/iiif-storage.css', 'IIIFStorage')) %}
 {% set theForm = form.prepare() %}
 {% set sectionNavs = {'user-information': translate('User information'), 'change-password': translate('Password')} %}
 
@@ -72,119 +73,32 @@
     </div>
 </div>
 {{ form().closeTag()| raw }}
-    {{ trigger('view.edit.after') }}
+{{ trigger('view.edit.after') }}
 
-    {% if manifest.getCanvases() %}
-        <div class="c-divider"></div>
-        <h2 class="h2">Your annotated images</h2>
-        <div class="c-statistics  ">
-            <dl class="c-statistic c-statistic--sm ">
-                <dt>Images</dt>
-                <dd>78</dd>
-            </dl>
-        </div>
-        <div class="c-dig-grid ">
-            {% for canvas in manifest.getCanvases() %}
-                <div class="c-dig-grid__col--3">
-                    <div class="c-thumbnail c-thumbnail--sm">
-                        {% if(canvas.omekaId) %}
-                            <a href="{{ url('site/iiif-view-canvas-view', { 'site-slug': slug, manifest: manifest.omekaId, canvas: canvas.omekaId }) }}"
-                               class="c-image__src">
-                                <img src="{{ canvas.smallThumbnail }}" alt="{{ canvas.thumbnailAlt }}" height="400"/>
-                            </a>
-                        {% else %}
-                            <div class="c-image__src">
-                                <img src="{{ canvas.smallThumbnail }}" alt="{{ canvas.thumbnailAlt }}" height="400"/>
-                            </div>
-                        {% endif %}
-                    </div>
-                    {% if(canvas.omekaId) %}
-                        <a href="{{ url('site/iiif-view-canvas-view', { 'site-slug': slug, manifest: manifest.omekaId, canvas: canvas.omekaId }) }}"
-                        >
-                            {{ canvas.label }}
-                        </a>
-                    {% else %}
-                        <div>
-                            {{ canvas.label }}
-                        </div>
-                    {% endif %}
-                    <p class="muted">
-                        {# TO BE ADDED BY ELUCIDATE #}
-                        {% if(manifest.totalViews) %}
-                            ,{{ manifest.totalViews }} views
-                        {% endif %}
-
-                        {% if(canvas.showStatistics) %}
-                            {% if(annotationTotal) %}
-                                ,{{ canvas.annotationTotal }} comments
-                            {% endif %}
-                        {% endif %}
-                    </p>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-
-    {% if collection.getManifests() %}
-        <div class="c-divider"></div>
-        <h2 class="h2">Your collections</h2>
-        <div class="c-dig-grid c-dig-grid--md">
-            {% for userCollection in collection.getManifests() %}
-                <div class="c-dig-grid__col--6">
-                    <div class="c-thumbnail c-thumbnail--sm">
-                        <a href="{{ url('site/iiif-view-manifest-view', { 'site-slug': slug, manifest: userCollection.omekaId }) }}">
-                            {% for thumbnail in userCollection.getThumbnails()[:1] %}
-                                <img src="{{ thumbnail }}" height="400"/>
-                            {% endfor %}
-                        </a>
-                    </div>
-                    <p>
-                        <a href="{{ url('site/iiif-view-manifest-view', { 'site-slug': slug, manifest: userCollection.omekaId }) }}">
-                            {{ userCollection.getLabel() }}
-                        </a> by
-                        <a href="view_profile.html">{{ userCollection.getUser() }}</a> {# <span class="muted">added {{ userCollection.created()|time_elapsed_string }}</span> #}
-                    </p>
-                    <p class="muted">
-                        {{ userCollection.getThumbnails() |length }} images
-
-                        {# TO BE ADDED BY ELUCIDATE #}
-                        {% if(userCollection.totalViews) %}
-                            ,{{ userCollection.totalViews }} views
-                        {% endif %}
-
-                        {# TO BE ADDED BY ELUCIDATE #}
-                        {% if(userCollection.totalDiscussions) %}
-                            ,{{ userCollection.totalDiscussions }} discussions
-                        {% endif %}
-                    </p>
-                </div>
-
-            {% endfor %}
-
-
-        </div>
-    {% endif %}
-
-{% if(userBookmarks) %}
+{% if(canvases) %}
     <h3>Your bookmarks</h3>
-    <section class="c-main__tiles c-grid-flex">
-        {% for result in userBookmarks.searchResults %}
-            <div class="c-grid-flex__thirds">
-                <div class="c-image">
-                    <div class="c-image__container">
-                        <a class="c-image__src" href="/s/ida/iiif/manifest/{{ result.omekaId }}">
-                            <img src="{{ result.thumbnail }}"/>
+    <section class="iiif-view-manifest-list">
+        {% for canvas in canvases %}
+            {% set result = canvas.getJson() %}
+            {% if result.partOf[0]['o:id'] and result['o:id'] %}
+                <div class="iiif-view-manifest-list__canvas">
+                    <div class="iiif-view-manifest-list__canvas-image">
+                        <div class="c-image c-image--sm ">
+
+                            <a href="/s/{{ slug }}/manifests/view/{{ result.partOf[0]['o:id'] }}/{{ result['o:id'] }}">
+                                <div class="c-image__src">
+                                    <img src="{{ result.thumbnail['@id'] }}"/>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="iiif-view-manifest-list__canvas-label">
+                        <a href="/s/{{ slug }}/manifests/view/{{ result.partOf[0]['o:id'] }}/{{ result['o:id'] }}">
+                            {{ result.label }}
                         </a>
                     </div>
-                    <div class="c-image__label">
-                        <a href="/s/ida/iiif/manifest/{{ result.omekaId }}">{{ result.label }}</a>
-                        {% if result.canvases %}
-                            <br/>
-                            <span style="background: #E08A70; padding: 3px; color: #fff; display: inline-block">{{ result.canvases }} bookmarked page{% if result.canvases|length > 1 %}s{% endif %}</span>
-                        {% endif %}
-                    </div>
                 </div>
-            </div>
+            {% endif %}
         {% endfor %}
     </section>
 {% else %}

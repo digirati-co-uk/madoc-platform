@@ -99,6 +99,7 @@ class CanvasBuilder
 
                     return [
                         '@id' => $this->router->manifest($manifest->id(), !!$this->siteId),
+                        'o:id' => $manifest->id(),
                         'label' => $manifest->displayTitle(),
                         '@type' => 'sc:Manifest',
                     ];

@@ -4,6 +4,8 @@ use Digirati\OmekaShared\Factory\PropertyIdSaturatorFactory;
 use Digirati\OmekaShared\Factory\SettingsHelperFactory;
 use Digirati\OmekaShared\Helper\SettingsHelper;
 use Digirati\OmekaShared\Utility\PropertyIdSaturator;
+use IIIFStorage\JsonBuilder\CanvasBuilder;
+use IIIFStorage\Repository\CanvasRepository;
 use PublicUser\Auth\TokenService;
 use PublicUser\Auth\TokenStorage;
 use PublicUser\Extension\ConfigurableMailer;
@@ -68,7 +70,9 @@ return [
             BookmarksService::class => function (ContainerInterface $container) {
                 return new BookmarksService(
                     $container->get(GuzzleHttp\Client::class),
-                    $container->get('Omeka\Connection')
+                    $container->get('Omeka\Connection'),
+                    $container->get(CanvasRepository::class),
+                    $container->get(CanvasBuilder::class)
                 );
             },
 
