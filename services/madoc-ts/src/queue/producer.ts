@@ -1,4 +1,4 @@
-import { Worker, WorkerOptions } from 'bullmq';
+import { Job, Worker, WorkerOptions } from 'bullmq';
 import * as manifest from '../gateway/tasks/import-manifest';
 import * as collection from '../gateway/tasks/import-collection';
 import * as canvas from '../gateway/tasks/import-canvas';
@@ -52,6 +52,20 @@ const worker = new Worker(
       }
     }
 
+    // Waiting for response from ping.
+    // The worker runs multiple tasks at once. It may be possible to share this waiting across multiple tasks
+    // to avoid the calls to /api/madoc. But since it's only hitting nginx, it shouldn't be a problem.
+    let isWaiting = true;
+    while (isWaiting) {
+      try {
+        await api.request('/api/madoc');
+        isWaiting = false;
+      } catch (e) {
+        console.log('Waiting for Madoc to come online...');
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    }
+
     console.log('starting job...', job.id, job.data ? job.data.taskId : undefined);
 
     try {
@@ -102,21 +116,21 @@ const worker = new Worker(
           return await apiActionTask.jobHandler(job.name, job.data.taskId, contextualApi).catch(err => {
             throw err;
           });
+
+        default:
+          // No our task.
+          return true;
       }
     } catch (e) {
+      console.log('failed', job.data.type, e && e.status, e && e.message);
       if (e && e.status && e.status === 404) {
-        return;
+        return true;
       }
 
-      console.log(e);
       if (job.data.taskId) {
         try {
-          await contextualApi.updateTask(
-            job.data.taskId,
-            tasks.changeStatus([], 'error', {
-              state: { error: e.toString() },
-            })
-          );
+          // Leave this for now, the retry should be working.
+          // await contextualApi.updateTask(job.data.taskId, { status: 0, status_text: 'Failed, retrying...' });
         } catch (err) {
           // no-op
         }
@@ -126,5 +140,25 @@ const worker = new Worker(
   },
   configOptions
 );
+
+worker.on('failed', async (job: Job) => {
+  // job has failed
+  if (job.data && job.data.taskId) {
+    let contextualApi;
+
+    if (job.data.context) {
+      const siteId = getSiteId(job.data.context);
+      if (siteId) {
+        contextualApi = api.asUser({ siteId }, {}, true);
+      }
+    }
+
+    await (contextualApi || api).updateTask(job.data.taskId, { status: -1, status_text: 'Failed' });
+
+    if (contextualApi) {
+      contextualApi.dispose();
+    }
+  }
+});
 
 console.log(`Worker ${worker.name} started...`);
