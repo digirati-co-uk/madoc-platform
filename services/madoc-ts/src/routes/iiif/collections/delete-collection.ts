@@ -54,7 +54,12 @@ export async function deleteCollection(
     }
 
     if (deletionSummary.tasks > 0 || deletionSummary.parentTasks > 0) {
-      await siteApi.batchDeleteTasks({ resourceId: collectionId, subject: `urn:madoc:collection:${collectionId}` });
+      try {
+        await siteApi.batchDeleteTasks({ resourceId: collectionId, subject: `urn:madoc:collection:${collectionId}` });
+      } catch (e) {
+        // Some old collections may not be able to delete in batch like this.
+        // Leave as no-op. It may result in some lingering tasks.
+      }
     }
 
     if (deletionSummary.search.indexed && deletionSummary.search.id) {
