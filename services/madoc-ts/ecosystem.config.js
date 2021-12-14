@@ -9,7 +9,7 @@ module.exports = {
             instances: 1,
             autorestart: true,
             watch: false,
-            max_memory_restart: '2G',
+            max_memory_restart: '300M',
             env_production: {
               NODE_ENV: 'production',
             },
@@ -20,7 +20,7 @@ module.exports = {
             instances: 2,
             autorestart: true,
             watch: false,
-            max_memory_restart: '2G',
+            max_memory_restart: '300M',
             env_production: {
               NODE_ENV: 'production',
             },
@@ -31,7 +31,7 @@ module.exports = {
             instances: 1,
             autorestart: true,
             watch: false,
-            max_memory_restart: '2G',
+            max_memory_restart: '300M',
             env_production: {
               NODE_ENV: 'production',
             },
@@ -42,7 +42,7 @@ module.exports = {
             instances: 1,
             autorestart: true,
             watch: false,
-            max_memory_restart: '1G',
+            max_memory_restart: '300M',
             env_production: {
               NODE_ENV: 'production',
             },
@@ -63,7 +63,7 @@ module.exports = {
               },
             },
             node_args: '--expose-gc --inspect=0.0.0.0:9230',
-            max_memory_restart: '2G',
+            max_memory_restart: '300M',
             env: {
               NODE_ENV: process.env.NODE_ENV,
             },
@@ -76,7 +76,7 @@ module.exports = {
             script: 'lib/queue/producer.js',
             instances: 1,
             autorestart: true,
-            max_memory_restart: '2G',
+            max_memory_restart: '300M',
             watch: ['lib/queue/producer.js'],
             watch_options: {
               ignored: 'frontend/admin/build/**',
@@ -92,6 +92,7 @@ module.exports = {
             instances: 1,
             autorestart: true,
             watch: ['lib/queue/scheduler.js'],
+            max_memory_restart: '300M',
             watch_options: {
               ignored: 'frontend/admin/build/**',
               awaitWriteFinish: {
@@ -103,6 +104,7 @@ module.exports = {
           {
             name: 'auth',
             script: 'lib/auth-server.js',
+            max_memory_restart: '300M',
             instances: 1,
             autorestart: true,
             watch: ['lib/auth-server.js'],
