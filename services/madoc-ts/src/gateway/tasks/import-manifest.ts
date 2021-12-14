@@ -32,6 +32,7 @@ export interface ImportManifestTask extends BaseTask {
   parameters: [number, number | undefined];
   status: -1 | 0 | 1 | 2 | 3 | 4;
   state: {
+    structureComplete?: boolean;
     resourceId?: number;
     errorMessage?: string;
     isDuplicate?: boolean;
@@ -204,9 +205,14 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
     case `subtask_type_status.${importCanvas.type}.${tasks.STATUS.DONE}`: {
       // 0. Set task to processing manifests
       // 1. Update with manifest ids from sub tasks
+
       const task = await api.getTaskById<ImportManifestTask>(taskId);
+      if (task && task.state && task.state.structureComplete) {
+        return;
+      }
+
       const [userId, siteId] = task.parameters;
-      const subtasks = task.subtasks || [];
+      const subtasks = (task.subtasks || []).filter(t => t.type === importCanvas.type);
 
       if (!task.state.resourceId) {
         return;
@@ -225,7 +231,6 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       if (orderedSubtasks.length) {
         // Grab the canvas ids in order.
         const canvasIds = orderedSubtasks.map(subtask => subtask.state.resourceId);
-
         // Update canvases.
         await api.asUser({ userId, siteId }).updateManifestStructure(task.state.resourceId, canvasIds);
       }
@@ -239,7 +244,11 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         }
       );
 
-      if (site) {
+      const freshTask = await userApi.getTask(task.id, { all: true });
+      const addToSearch = (freshTask.subtasks || []).filter(t => t.type === 'search-index-task').length === 0;
+      const shouldOcr = (freshTask.subtasks || []).filter(t => t.type === 'madoc-ocr-manifest').length === 0;
+
+      if (site && addToSearch) {
         if (site.config.autoPublishImport) {
           await userApi.publishManifest(task.state.resourceId);
           // Also available through the API:
@@ -251,29 +260,42 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         }
       }
 
-      // Update task.
-      await api.updateTask(taskId, changeStatus('done'));
-      if (!task.parent_task) {
-        await userApi.notifications.createNotification({
-          id: generateId(),
-          title: 'Finished importing manifest',
-          summary: task.subject,
-          action: {
-            id: 'task:admin',
-            link: `urn:madoc:task:${taskId}`,
+      if (freshTask.status !== 3) {
+        // Update task.
+        await api.updateTask(taskId, {
+          ...changeStatus('done'),
+          state: {
+            structureComplete: true,
           },
-          user: userId,
         });
+        try {
+          if (!task.parent_task) {
+            await userApi.notifications.createNotification({
+              id: generateId(),
+              title: 'Finished importing manifest',
+              summary: task.subject,
+              action: {
+                id: 'task:admin',
+                link: `urn:madoc:task:${taskId}`,
+              },
+              user: userId,
+            });
+          }
+        } catch (e) {
+          // no-op
+        }
       }
 
       // Queue up OCR extraction.
       try {
-        const config = await userApi.getSiteConfiguration();
-        if (!config.skipAutomaticOCRImport) {
-          await userApi.newTask(
-            manifestOcr.createTask(task.state.resourceId, `${task.state.resourceId}`, userId, siteId as number),
-            taskId
-          );
+        if (shouldOcr) {
+          const config = await userApi.getSiteConfiguration();
+          if (!config.skipAutomaticOCRImport) {
+            await userApi.newTask(
+              manifestOcr.createTask(task.state.resourceId, `${task.state.resourceId}`, userId, siteId as number),
+              taskId
+            );
+          }
         }
       } catch (err) {
         // no-op.

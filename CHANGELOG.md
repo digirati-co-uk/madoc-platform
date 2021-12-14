@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changed memory restart level to 300MB per instance
 - Fixed large collection imports not collapsing elements
 - Fixed bug where task would show as complete before completing
+- Fixed bug where multiple search indexing or OCR tasks would be triggered
 
 
 ## [2.0.1](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.1) - 2021-11-19
