@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed logging in with lower-case email address
 - Fixed updating user in admin with upper-case email
 - Changed memory restart level to 300MB per instance
+- Fixed large collection imports not collapsing elements
 
 
 ## [2.0.1](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.1) - 2021-11-19

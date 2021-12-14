@@ -1,13 +1,12 @@
 import { ImportManifestTask } from '../../../../gateway/tasks/import-manifest';
 import React, { useState } from 'react';
-import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../../shared/layout/Table';
-import { Status } from '../../../shared/atoms/Status';
-import { Button, SmallButton } from '../../../shared/navigation/Button';
-import { Link } from 'react-router-dom';
+import { TableContainer } from '../../../shared/layout/Table';
+import { Button } from '../../../shared/navigation/Button';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { useApi } from '../../../shared/hooks/use-api';
 import { CollectionSnippet } from '../../../shared/components/CollectionSnippet';
+import { CollapsibleTaskList } from '../../molecules/CollapsibleTaskList';
 
 export const CollectionImportTask: React.FC<{ task: ImportManifestTask; statusBar?: JSX.Element }> = ({
   task,
@@ -39,24 +38,7 @@ export const CollectionImportTask: React.FC<{ task: ImportManifestTask; statusBa
       )}
       {statusBar}
       <TableContainer>
-        {(task.subtasks || []).map(subtask => (
-          <TableRow key={subtask.id}>
-            <TableRowLabel>
-              <Status status={subtask.status || 0} text={t(subtask.status_text || 'unknown')} />
-            </TableRowLabel>
-            <TableRowLabel>
-              <Link to={`/tasks/${subtask.id}`}>{subtask.name}</Link>
-            </TableRowLabel>
-            <TableActions>
-              <SmallButton
-                onClick={() => (subtask.id ? trigger(subtask.id) : null)}
-                disabled={subtask.id ? taskStatusMap[subtask.id] : false}
-              >
-                Retry
-              </SmallButton>
-            </TableActions>
-          </TableRow>
-        ))}
+        <CollapsibleTaskList tasks={task.subtasks || []} trigger={trigger} taskStatusMap={taskStatusMap} />
       </TableContainer>
     </div>
   );
