@@ -129,7 +129,7 @@ const MetadataContainer = styled.tr<{ $variation?: 'list' | 'table' }>`
 
 export const MetaDataDisplay: React.FC<{
   config?: FacetConfig[];
-  metadata?: Array<{ label: InternationalString; value: InternationalString }>;
+  metadata?: Array<{ label: InternationalString; value: InternationalString } | null>;
   variation?: 'table' | 'list';
   labelStyle?: 'muted' | 'bold' | 'caps' | 'small-caps';
   labelWidth?: number;
@@ -156,7 +156,12 @@ export const MetaDataDisplay: React.FC<{
     for (const item of metadata) {
       const labels = item && item.label ? Object.values(item.label) : [];
       for (const label of labels) {
-        if (label && label.length && (flatKeys.indexOf(`metadata.${label[0]}`) !== -1 || flatKeys.length === 0)) {
+        if (
+          label &&
+          label.length &&
+          (flatKeys.indexOf(`metadata.${label[0]}`) !== -1 || flatKeys.length === 0) &&
+          item
+        ) {
           const key = `metadata.${label[0]}`;
           map[key] = map[key] ? map[key] : [];
           map[key].push(item);
@@ -227,6 +232,9 @@ export const MetaDataDisplay: React.FC<{
       <tbody>
         {metadata && metadata.length
           ? metadata.map((metadataItem, idx: number) => {
+              if (!metadataItem) {
+                return null; // null items.
+              }
               return (
                 <MetadataContainer key={idx} $variation={variation}>
                   <MetaDataKey
