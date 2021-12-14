@@ -100,7 +100,6 @@ export class SiteUserRepository extends BaseRepository {
           break;
       }
 
-
       return sql<SiteRow>`
           select site.*, u.name as owner_name
           from site
@@ -147,7 +146,7 @@ export class SiteUserRepository extends BaseRepository {
     getUserByEmail: (email: string) => sql<UserRowWithoutPassword>`
         select id, lower(email), name, created, modified, role, is_active
         from "user"
-        where lower(email) = ${email};
+        where email = ${email};
     `,
 
     getSiteCreator: (siteId: number) => sql<SiteUser>`
@@ -192,7 +191,7 @@ export class SiteUserRepository extends BaseRepository {
     getActiveUserByEmail: (email: string) => sql<UserRow>`
       select id, name, lower(email), created, modified, password_hash, role, is_active 
       from "user" 
-      where is_active = true and lower(email) = ${email}
+      where is_active = true and email = ${email}
     `,
 
     getSiteUsers: (siteId: number) => sql<SiteUser>`
@@ -383,7 +382,7 @@ export class SiteUserRepository extends BaseRepository {
         setValues.push(sql`name = ${req.name}`);
       }
       if (typeof req.email !== 'undefined') {
-        setValues.push(sql`lower(email) = ${req.email.toLowerCase()}`);
+        setValues.push(sql`email = ${req.email.toLowerCase()}`);
       }
 
       if (setValues.length === 0) {
