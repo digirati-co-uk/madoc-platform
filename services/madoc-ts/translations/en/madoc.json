@@ -193,6 +193,7 @@
   "Export": "Export",
   "Extracting OCR data": "Extracting OCR data",
   "Extracting OCR data from canvases": "Extracting OCR data from canvases",
+  "Failed, retrying...": "Failed, retrying...",
   "Field type": "Field type",
   "Filter by status": "Filter by status",
   "Filter by type": "Filter by type",

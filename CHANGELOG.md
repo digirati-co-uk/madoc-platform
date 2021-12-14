@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug where task would show as complete before completing
 - Fixed bug where multiple search indexing or OCR tasks would be triggered
 - Fixed retry of tasks when added to queue
+- Fixed bug with 404 status not being handled correctly
 
 
 ## [2.0.1](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.1) - 2021-11-19
