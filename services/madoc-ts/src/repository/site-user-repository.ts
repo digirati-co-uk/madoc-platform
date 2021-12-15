@@ -100,8 +100,6 @@ export class SiteUserRepository extends BaseRepository {
           break;
       }
 
-      console.log({ orderBy, orderDesc })
-
       return sql<SiteRow>`
           select site.*, u.name as owner_name
           from site
@@ -146,7 +144,7 @@ export class SiteUserRepository extends BaseRepository {
     `,
 
     getUserByEmail: (email: string) => sql<UserRowWithoutPassword>`
-        select id, email, name, created, modified, role, is_active
+        select id, lower(email), name, created, modified, role, is_active
         from "user"
         where email = ${email};
     `,
@@ -185,13 +183,13 @@ export class SiteUserRepository extends BaseRepository {
     `,
 
     getActiveUserById: (userId: number) => sql<UserRowWithoutPassword>`
-      select id, name, email, role, is_active, created, modified 
+      select id, name, lower(email), role, is_active, created, modified 
       from "user" 
       where is_active = true and id = ${userId}
     `,
 
     getActiveUserByEmail: (email: string) => sql<UserRow>`
-      select id, name, email, created, modified, password_hash, role, is_active 
+      select id, name, lower(email), created, modified, password_hash, role, is_active 
       from "user" 
       where is_active = true and email = ${email}
     `,
@@ -218,7 +216,7 @@ export class SiteUserRepository extends BaseRepository {
     },
 
     searchAllUsers: (q: string) => sql<UserRowWithoutPassword>`
-      select u.id, u.email, u.name, u.role from "user" as u
+      select u.id, lower(u.email), u.name, u.role from "user" as u
         where u.is_active = true
         and (
           u.email ilike ${'%' + q + '%'} or u.name ilike ${'%' + q + '%'}
@@ -235,7 +233,7 @@ export class SiteUserRepository extends BaseRepository {
     `,
 
     getInvitation: (invitationId: string, siteId: number) => sql<UserInvitationsRow>`
-      select ui.*, uir.user_id as redeem_user_id, u.name as redeem_user_name, u.email as redeem_user_email, uir.redeemed_at as redeem_redeemed_at from user_invitations ui
+      select ui.*, uir.user_id as redeem_user_id, u.name as redeem_user_name, lower(u.email) as redeem_user_email, uir.redeemed_at as redeem_redeemed_at from user_invitations ui
         left join user_invitations_redeem uir on ui.id = uir.invite_id
         left join "user" u on uir.user_id = u.id
         where site_id = ${siteId} and ui.invitation_id = ${invitationId}
@@ -384,7 +382,7 @@ export class SiteUserRepository extends BaseRepository {
         setValues.push(sql`name = ${req.name}`);
       }
       if (typeof req.email !== 'undefined') {
-        setValues.push(sql`email = ${req.email}`);
+        setValues.push(sql`email = ${req.email.toLowerCase()}`);
       }
 
       if (setValues.length === 0) {
@@ -458,7 +456,7 @@ export class SiteUserRepository extends BaseRepository {
   static mapUser(row: UserRowWithoutPassword | UserRow): User {
     return {
       id: row.id,
-      email: row.email,
+      email: row.email?.toLowerCase(),
       role: row.role,
       name: row.name,
       created: new Date(row.created),
@@ -638,7 +636,7 @@ export class SiteUserRepository extends BaseRepository {
       if (user.role === 'global_admin') {
         return {
           id: user.id,
-          email: user.email,
+          email: user.email.toLowerCase(),
           role: user.role,
           site_role: 'admin',
           name: user.name,
@@ -652,7 +650,7 @@ export class SiteUserRepository extends BaseRepository {
 
       return {
         id: user.id,
-        email: user.email,
+        email: user.email.toLowerCase(),
         role: user.role,
         site_role: 'viewer',
         name: user.name,

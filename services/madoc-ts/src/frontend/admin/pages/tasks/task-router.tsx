@@ -75,9 +75,6 @@ export const TaskRouter: UniversalComponent<TaskRouterType> = createUniversalCom
 
     useEffect(() => {
       if (data && data.task.subtasks) {
-        if (data.task.status === 3) {
-          setIsDone(true);
-        }
         if (data.task.subtasks.length === 0 && data.task.status !== 1) {
           setIsDone(true);
         } else if (

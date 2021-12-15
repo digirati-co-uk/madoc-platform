@@ -6,7 +6,7 @@ import { userWithScope } from '../../../utility/user-with-scope';
 import { api } from '../../../gateway/api.server';
 
 export const updateManifestStructure: RouteMiddleware<{ id: number }, UpdateStructureList> = async context => {
-  const { siteId, userUrn } = userWithScope(context, ['site.admin']);
+  const { siteId, id, userUrn } = userWithScope(context, ['site.admin']);
 
   const manifestId = context.params.id;
   const canvasIds = context.requestBody.item_ids;
@@ -42,17 +42,21 @@ export const updateManifestStructure: RouteMiddleware<{ id: number }, UpdateStru
       )
     `);
   });
-  try {
-    const userApi = api.asUser({ siteId });
-    userApi.indexManifest(manifestId);
-    userApi.postUniversalChangeToStreams({
-      id: manifestId,
-      type: 'manifest',
-      summary: `Manifest structural changes`,
-    });
-  } catch (e) {
-    console.log(e);
-  }
+
+  // Background task.
+  (async () => {
+    try {
+      const userApi = api.asUser({ userId: id, siteId });
+      await userApi.indexManifest(manifestId);
+      await userApi.postUniversalChangeToStreams({
+        id: manifestId,
+        type: 'manifest',
+        summary: `Manifest structural changes`,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  })();
 
   await context.connection.query(sql`select refresh_item_counts()`);
 

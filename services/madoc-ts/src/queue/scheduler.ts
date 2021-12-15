@@ -1,5 +1,4 @@
-import { QueueScheduler, QueueSchedulerOptions } from 'bullmq';
-import { QueueEvents } from 'bullmq';
+import { QueueScheduler, QueueSchedulerOptions, QueueEvents } from 'bullmq';
 
 const configOptions: QueueSchedulerOptions = {
   connection: {
@@ -21,7 +20,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 queueEvents.on('failed', (jobId, err) => {
-  console.error('error', jobId, err);
+  console.error('Job failed with error error', jobId, err);
 });
 
 console.log(`Scheduler ${scheduler.name} starting...`);
