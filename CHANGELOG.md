@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug with `null` metadata values breaking admin
 - Prevent error when deleting collection (task related)
 - Fixed bug with invalid i18n configuration
+- Fixed bug with missing sites when reducing statistics
 
 ## [2.0.1](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.1) - 2021-11-19
 
