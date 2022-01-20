@@ -1035,12 +1035,16 @@ export class SiteUserRepository extends BaseRepository {
     }
 
     const stats = resources.reduce((map, next) => {
-      map[next.site_id][next.resource_type] = next.total_items;
+      if (map[next.site_id]) {
+        map[next.site_id][next.resource_type] = next.total_items;
+      }
       return map;
     }, siteMap);
 
     for (const project of projects) {
-      stats[project.site_id].projects = project.total_projects;
+      if (stats[project.site_id]) {
+        stats[project.site_id].projects = project.total_projects;
+      }
     }
 
     return stats;

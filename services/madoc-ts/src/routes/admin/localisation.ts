@@ -149,14 +149,21 @@ export const getLocalisation: RouteMiddleware<{ code: string }> = async context 
   const config = configResponse?.config[0]?.config_object || defaultSiteLocalisationSiteConfig;
   if (config && config.availableLanguages[languageCode]) {
     const found = config.availableLanguages[languageCode];
-    // Merge.
-    const url = found.remote ? found.url : api.resolveUrl(found.url);
-    const overrideJson = await fetch(url).then(r => r.json());
+
+    const mergeRemote = async () => {
+      try {
+        // Merge.
+        const url = found.remote ? found.url : api.resolveUrl(found.url);
+        return await fetch(url).then(r => r.json());
+      } catch (e) {
+        return {}; // Invalid or missing remote config.
+      }
+    };
 
     const content = {
       ...emptyJson,
       ...staticOverride,
-      ...overrideJson,
+      ...(await mergeRemote()),
     };
 
     context.response.body = {
