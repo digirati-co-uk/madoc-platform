@@ -47,7 +47,7 @@ export const siteSearch: RouteMiddleware<
 
   if (searchQuery.iiif_type) {
     searchQuery.raw = {
-      indexables__iiif__type__iexact: searchQuery.iiif_type,
+      type__iexact: searchQuery.iiif_type,
     };
     delete searchQuery.iiif_type;
   }
