@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.0.2...main)
 
+### Added
+- Added notifications number to "annotations" panel to show how many are available
+- Added notifications number to "documents" panel to show how many are available
+- Added notifications number to "transcription" panel to show when one is available
+
+### Fixed
+- Fixed inconsistencies in translations
 
 
 ## [2.0.2](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.2) - 2022-01-20

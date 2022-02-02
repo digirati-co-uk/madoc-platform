@@ -88,7 +88,7 @@ export const AdminSidebar: React.FC = () => {
             <AdminMenuItemIcon>
               <ManageCollectionsIcon />
             </AdminMenuItemIcon>
-            <AdminMenuItemLabel>{t('Manage collections', { count: 2 })}</AdminMenuItemLabel>
+            <AdminMenuItemLabel>{t('Collections', { count: 2 })}</AdminMenuItemLabel>
           </AdminMenuItem>
 
           <AdminMenuSubItemContainer $open={isManageCollections}>
@@ -103,7 +103,7 @@ export const AdminSidebar: React.FC = () => {
             <AdminMenuItemIcon>
               <ManageManifestsIcon />
             </AdminMenuItemIcon>
-            <AdminMenuItemLabel>{t('Manage manifests', { count: 2 })}</AdminMenuItemLabel>
+            <AdminMenuItemLabel>{t('Manifests', { count: 2 })}</AdminMenuItemLabel>
           </AdminMenuItem>
 
           <AdminMenuSubItemContainer $open={isManageManifests}>
@@ -161,14 +161,17 @@ export const AdminSidebar: React.FC = () => {
           </AdminMenuItem>
 
           <AdminMenuSubItemContainer $open={isSiteConfiguration}>
+            <AdminMenuSubItem as={HrefLink} href="/site/details">
+              {t('Site metadata')}
+            </AdminMenuSubItem>
+            <AdminMenuSubItem as={HrefLink} href="/configure/site/project">
+              {t('Project configuration')}
+            </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/configure/site/metadata">
               {t('Configure metadata')}
             </AdminMenuSubItem>
-            <AdminMenuSubItem as={HrefLink} href="/site/details">
-              {t('Site name')}
-            </AdminMenuSubItem>
-            <AdminMenuSubItem as={HrefLink} href="/system/plugins">
-              {t('Plugins')}
+            <AdminMenuSubItem as={HrefLink} href="/configure/site/system">
+              {t('Site-wide config')}
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/system/themes">
               {t('Themes')}
@@ -178,6 +181,9 @@ export const AdminSidebar: React.FC = () => {
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/site/invitations">
               {t('Invitations')}
+            </AdminMenuSubItem>
+            <AdminMenuSubItem as={HrefLink} href="/system/plugins">
+              {t('Plugins')}
             </AdminMenuSubItem>
           </AdminMenuSubItemContainer>
         </AdminMenuItemContainer>

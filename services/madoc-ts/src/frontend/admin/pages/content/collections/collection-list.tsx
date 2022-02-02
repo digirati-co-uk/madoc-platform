@@ -44,7 +44,7 @@ export const CollectionList: UniversalComponent<CollectionListType> = createUniv
             { label: 'Site admin', link: '/' },
             { label: 'Collections', link: '/collections', active: true },
           ]}
-          title={t('Manage collections', { count: pagination.totalResults })}
+          title={t('Collections', { count: pagination.totalResults })}
         />
         <WidePage>
           <Button as={Link} to={`/import/collection`}>

@@ -27,6 +27,7 @@ export function useTranscriptionMenu(): CanvasMenuHook {
     label: t('Transcription'),
     icon: <TranscriptionIcon />,
     isLoaded: !!data,
+    notifications: plaintext ? 1 : 0,
     content,
   };
 }

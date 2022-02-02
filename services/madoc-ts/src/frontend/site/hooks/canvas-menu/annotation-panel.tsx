@@ -79,6 +79,7 @@ export function useAnnotationPanel(active: boolean): CanvasMenuHook {
     label: t('Annotations'),
     icon: <AnnotationsIcon />,
     isLoaded: true,
+    notifications: regions.length,
     content,
   };
 }
