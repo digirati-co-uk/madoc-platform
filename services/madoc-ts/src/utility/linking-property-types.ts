@@ -3,7 +3,7 @@ import { ResourceLinkResponse } from '../types/schemas/linking';
 
 export function isLinkMetsAlto(link: ResourceLinkResponse) {
   return (
-    (link.link.format === 'text/xml' || link.link.format === 'application/xml+alto') &&
+    (link.link.format === 'text/xml' || link.link.format === 'application/xml+alto' || !link.link.format) &&
     link.link.profile &&
     link.link.profile.startsWith('http://www.loc.gov/standards/alto/')
   );
@@ -11,7 +11,7 @@ export function isLinkMetsAlto(link: ResourceLinkResponse) {
 
 export function isLinkHocr(link: ResourceLinkResponse) {
   return (
-    link.link.format === 'text/vnd.hocr+html' &&
+    (link.link.format === 'text/vnd.hocr+html' || !link.link.format) &&
     link.link.profile &&
     (link.link.profile.startsWith('http://kba.cloud/hocr-spec') ||
       link.link.profile.startsWith('http://kba.github.io/hocr-spec/') ||

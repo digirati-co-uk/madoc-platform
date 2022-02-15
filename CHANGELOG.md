@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed inconsistencies in translations
 - Fixed bug sending email after registering (case-sensitivity)
 - Fixed setting roles when registering with invitation
+- Fixed embedded hOCR without `"format": "text/vnd.hocr+html"`
 
 ## [2.0.2](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.2) - 2022-01-20
 
