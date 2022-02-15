@@ -35,12 +35,20 @@ export class Mailer {
     }
   }
 
-  async verify() {
-    if (this.enabled) {
+  async verify(force = false) {
+    const issues: string[] = [];
+    if (this.enabled || force) {
       await new Promise<void>(resolve => {
+        if (!this.transporter) {
+          issues.push('Invalid environment variables');
+          this.enabled = false;
+          resolve();
+          return;
+        }
         this.transporter.verify(error => {
           if (error) {
             console.log('Mailer', error);
+            issues.push(error.toString());
             this.enabled = false;
             resolve();
           } else {
@@ -50,6 +58,8 @@ export class Mailer {
         });
       });
     }
+
+    return issues;
   }
 
   async sendMail(

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added notifications number to "annotations" panel to show how many are available
 - Added notifications number to "documents" panel to show how many are available
 - Added notifications number to "transcription" panel to show when one is available
+- Added email server status to system status page
 
 ### Fixed
 - Fixed inconsistencies in translations

@@ -2,7 +2,8 @@ import { getAuthRoutes } from './auth';
 import { deleteApiKey } from './routes/admin/delete-api-key';
 import { keyRegenerate } from './routes/admin/key-regenerate';
 import { listApiKeys } from './routes/admin/list-api-keys';
-import { searchAllUsers } from "./routes/global/search-all-users";
+import { searchAllUsers } from './routes/global/search-all-users';
+import { systemCheck } from './routes/global/system-check';
 import { siteRoot } from './routes/root';
 import {
   assignUserToDelegatedRequest,
@@ -246,6 +247,7 @@ export const router = new TypedRouter({
   'global-reset-password-user': [TypedRouter.POST, '/api/madoc/users/:userId/reset-password', resetPassword],
   'global-get-system-config': [TypedRouter.GET, '/api/madoc/system/config', getSystemConfig],
   'global-update-system-config': [TypedRouter.POST, '/api/madoc/system/config', updateSystemConfig],
+  'global-system-check': [TypedRouter.POST, '/api/madoc/system/check', systemCheck],
 
   // Manage users (on site)
   'site-admin-list-all-site-users': [TypedRouter.GET, '/api/madoc/manage-site/users', getSiteUsers],

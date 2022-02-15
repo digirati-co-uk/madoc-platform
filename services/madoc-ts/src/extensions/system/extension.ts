@@ -1,4 +1,5 @@
 import { ApiClient } from '../../gateway/api';
+import { systemCheck } from '../../routes/global/system-check';
 import { RemotePlugin } from '../../types/plugins';
 import { SitePlugin } from '../../types/schemas/plugins';
 import { BaseExtension, defaultDispose } from '../extension-manager';
@@ -56,6 +57,17 @@ export class SystemExtension implements BaseExtension {
 
   async uninstallPlugin(id: string) {
     return this.api.request(`/api/madoc/system/plugins/${id}/uninstall`, {
+      method: 'POST',
+    });
+  }
+
+  async systemCheck() {
+    return this.api.request<{
+      email: {
+        enabled: boolean;
+        issues: string[];
+      };
+    }>(`/api/madoc/system/check`, {
       method: 'POST',
     });
   }
