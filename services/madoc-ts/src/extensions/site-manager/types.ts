@@ -212,6 +212,7 @@ export type UserInvitationConfig = {
 };
 
 export type UserInvitation = {
+  _id: number;
   id: string;
   createdAt: Date;
   expires?: Date;

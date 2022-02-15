@@ -127,6 +127,8 @@ export const registerPage: RouteMiddleware = async (context, next) => {
         html: createUserActivationEmail(vars),
       });
     } catch (e) {
+      console.log('Unable to send email');
+      console.log(e);
       // unknown email error.
       context.reactFormResponse.noEmail = true;
       try {
