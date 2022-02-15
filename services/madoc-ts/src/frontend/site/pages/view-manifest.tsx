@@ -77,7 +77,7 @@ export const ViewManifest: React.FC<{
         <ManifestNotAvailableToBrowse />
       </Slot>
 
-      <Slot name="manifest-listing-header">
+      <Slot name="manifest-listing-header" id="listing-header">
         <ManifestPagination />
       </Slot>
 

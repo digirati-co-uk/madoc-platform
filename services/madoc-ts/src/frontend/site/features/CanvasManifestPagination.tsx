@@ -19,9 +19,10 @@ export const CanvasManifestPagination: React.FC<{ subRoute?: string }> = ({ subR
 
   const beforeNavigate = useCallback(
     async (newCanvasId: number) => {
-      console.log('PREFETCH');
       await prefetch([newCanvasId], { ...context, canvas: newCanvasId });
-      push(createLink({ canvasId: newCanvasId, subRoute, query: searchText ? { searchText } : undefined }));
+      push(
+        createLink({ canvasId: newCanvasId, subRoute, hash: 'canvas', query: searchText ? { searchText } : undefined })
+      );
     },
     [context, createLink, prefetch, push]
   );
@@ -32,6 +33,7 @@ export const CanvasManifestPagination: React.FC<{ subRoute?: string }> = ({ subR
 
   return (
     <CanvasNavigationMinimalist
+      hash="canvas"
       handleNavigation={beforeNavigate}
       manifestId={manifestId}
       canvasId={canvasId}

@@ -36,7 +36,7 @@ export const ViewCanvas: React.FC = () => {
       <CanvasVaultContext>
         <CanvasHighlightedRegions />
 
-        <Slot name="canvas-viewer-header" hidden={!showCanvasNavigation}>
+        <Slot id="canvas" name="canvas-viewer-header" hidden={!showCanvasNavigation}>
           <CanvasPageHeader />
 
           <ContinueCanvasSubmission />

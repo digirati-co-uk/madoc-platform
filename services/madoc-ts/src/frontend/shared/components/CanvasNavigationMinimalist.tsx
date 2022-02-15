@@ -101,6 +101,7 @@ export function useManifestPagination(subRoute?: string) {
 }
 
 export const CanvasNavigationMinimalist: React.FC<{
+  hash?: string;
   handleNavigation?: (canvasId: number) => Promise<void> | void;
   canvasId: string | number;
   manifestId?: string | number;
@@ -108,7 +109,7 @@ export const CanvasNavigationMinimalist: React.FC<{
   collectionId?: string | number;
   subRoute?: string;
   query?: any;
-}> = ({ canvasId: id, manifestId, projectId, collectionId, subRoute, query, handleNavigation }) => {
+}> = ({ canvasId: id, manifestId, projectId, collectionId, subRoute, query, handleNavigation, hash }) => {
   const structure = useManifestStructure(manifestId);
   const { t } = useTranslation();
 
@@ -138,6 +139,7 @@ export const CanvasNavigationMinimalist: React.FC<{
             canvasId: structure.data.items[idx - 1].id,
             subRoute,
             query,
+            hash,
           })}
           item={structure.data.items[idx - 1]}
         />
@@ -168,6 +170,7 @@ export const CanvasNavigationMinimalist: React.FC<{
             canvasId: structure.data.items[idx + 1].id,
             subRoute,
             query,
+            hash,
           })}
           item={structure.data.items[idx + 1]}
         />

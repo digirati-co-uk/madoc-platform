@@ -60,6 +60,7 @@ const SurfaceStyled = styled.div<{
 `;
 
 export type SurfaceProps = {
+  id?: string;
   background?: string;
   textColor?: string;
   textAlign?: 'left' | 'center' | 'right';
@@ -70,6 +71,7 @@ export type SurfaceProps = {
 };
 
 export const Surface: React.FC<SurfaceProps> = ({
+  id,
   textAlign,
   textColor,
   background,
@@ -85,6 +87,7 @@ export const Surface: React.FC<SurfaceProps> = ({
 
   return (
     <SurfaceStyled
+      id={id}
       $color={accessibleTextColor}
       $background={background}
       $textAlign={textAlign}

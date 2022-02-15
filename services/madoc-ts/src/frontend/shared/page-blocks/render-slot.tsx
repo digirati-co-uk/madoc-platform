@@ -6,6 +6,7 @@ import { RenderBlock } from './render-block';
 import { SlotEditor } from './slot-editor';
 
 export type RenderSlotProps = {
+  id?: string;
   slot: SiteSlot;
   context?: EditorialContext;
   editable?: boolean;
@@ -54,7 +55,7 @@ export const RenderSlot: React.FC<RenderSlotProps> = props => {
   }
 
   return (
-    <SlotLayout layout={layout} surfaceProps={surfaceProps} noSurface={props.noSurface}>
+    <SlotLayout id={props.id} layout={layout} surfaceProps={surfaceProps} noSurface={props.noSurface}>
       {orderedBlocks.map(block => {
         return <RenderBlock key={block.id} block={block} context={props.context} />;
       })}

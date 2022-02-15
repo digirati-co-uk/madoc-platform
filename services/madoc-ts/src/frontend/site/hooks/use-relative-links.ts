@@ -17,6 +17,7 @@ export function useRelativeLinks() {
         query?: any;
         subRoute?: string;
         admin?: boolean;
+        hash?: string;
       } = {}
     ) => {
       return createLink({
