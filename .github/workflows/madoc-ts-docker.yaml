@@ -65,6 +65,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: services/madoc-ts
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
