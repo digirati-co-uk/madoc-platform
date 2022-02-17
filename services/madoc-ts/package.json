@@ -166,7 +166,7 @@
     "use-match-media-hook": "^1.0.1",
     "uuid": "^7.0.1",
     "uuid-validate": "^0.0.3",
-    "vm2": "^3.9.5"
+    "vm2": "^3.9.6"
   },
   "devDependencies": {
     "@babel/core": "^7.16.0",
