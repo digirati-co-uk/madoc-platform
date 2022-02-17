@@ -117,7 +117,7 @@
     "mkdirp": "^1.0.4",
     "mustache": "^4.2.0",
     "mysql": "^2.18.1",
-    "node-fetch": "^2.6.6",
+    "node-fetch": "^2.6.7",
     "node-schedule": "^2.0.0",
     "node-stream-zip": "^1.13.2",
     "nodemailer": "^6.6.3",
