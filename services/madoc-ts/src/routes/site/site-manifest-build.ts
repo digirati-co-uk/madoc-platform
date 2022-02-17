@@ -21,7 +21,6 @@ type IIIFExportRow = {
   iiif__viewing_direction: 0 | 1 | 2 | 3 | null;
   iiif__items_json: any | null;
   iiif__thumbnail_json: any | null;
-  iiif__local_source: string | null;
   iiif__item_index?: number;
 } & (
   | {
@@ -103,7 +102,6 @@ export const siteManifestBuild: RouteMiddleware<{
         iiif.viewing_direction as iiif__viewing_direction,
         iiif.items_json as iiif__items_json,
         iiif.thumbnail_json as iiif__thumbnail_json,
-        iiif.local_source as iiif__local_source,
         manifest_items.item_index as iiif__item_index,
         -- Metadata properties
         metadata.id as metadata__id,
@@ -156,7 +154,6 @@ export const siteManifestBuild: RouteMiddleware<{
           viewing_direction: 0 | 1 | 2 | 3 | null;
           items?: any;
           thumbnail_json?: any;
-          local_source: string | null;
         };
       };
       Linking: {
@@ -231,7 +228,6 @@ export const siteManifestBuild: RouteMiddleware<{
           viewing_direction: item.iiif__viewing_direction,
           items: item.iiif__items_json || undefined,
           thumbnail_json: item.iiif__thumbnail_json || undefined,
-          local_source: item.iiif__local_source,
         };
 
         processedIIIFIds.push(item.iiif__id);
@@ -276,7 +272,7 @@ export const siteManifestBuild: RouteMiddleware<{
             height: canvas.height,
             items_json: canvas.items,
             thumbnail_json: canvas.thumbnail_json,
-            local_source: canvas.local_source,
+            local_source: null,
           },
         });
 

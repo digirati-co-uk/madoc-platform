@@ -11,7 +11,7 @@ export const createCanvas: RouteMiddleware<unknown, CreateCanvas> = async contex
 
   const canvasJson = JSON.stringify(context.requestBody.canvas);
 
-  const localSource = context.requestBody.local_source || null;
+  const localSource = null; // This is no longer required.
   const thumbnail = context.requestBody.thumbnail || null;
 
   const { canonical_id } = await context.connection.one<{ derived_id: number; canonical_id: number }>(

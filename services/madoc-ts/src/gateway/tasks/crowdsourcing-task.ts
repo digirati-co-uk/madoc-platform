@@ -58,6 +58,7 @@ export interface CrowdsourcingTask extends BaseTask {
     reviewTask?: string;
     // Can start adding to this as we need.
     changesRequested?: string | null;
+    rejectedMessage?: string | null;
     mergeId?: string;
     warningTime?: number;
     userManifestTask?: string | null;

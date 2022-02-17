@@ -72,7 +72,7 @@ export async function deleteCollection(
     // Delete local IIIF file
     const localSource = await connection().maybeOne(getResourceLocalSource(collectionId));
     if (!!localSource && !!localSource.local_source) {
-      removeIiifFromDisk(localSource.local_source);
+      await removeIiifFromDisk(localSource.local_source);
     }
 
     // Remove collection from parent collections

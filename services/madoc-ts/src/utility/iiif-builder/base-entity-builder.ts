@@ -13,6 +13,7 @@ import {
   AnnotationPage,
 } from '@hyperion-framework/types';
 import { ServiceNormalized } from '@hyperion-framework/types/resources/service';
+import { getViewingDirection } from '../get-viewing-direction';
 import { IIIFBuilder } from './iiif-builder';
 
 export class BaseEntityBuilder<
@@ -252,27 +253,8 @@ export class BaseEntityBuilder<
   // ✅  viewingDirection
   setViewingDirection(dir: string | number) {
     if (this.isManifest(this.entity)) {
-      let viewDir: ViewingDirection = 'left-to-right';
-      switch (dir) {
-        case 'left-to-right':
-        case 0:
-          viewDir = 'left-to-right';
-          break;
-        case 'right-to-left':
-        case 1:
-          viewDir = 'right-to-left';
-          break;
-        case 'top-to-bottom':
-        case 2:
-          viewDir = 'top-to-bottom';
-          break;
-        case 'bottom-to-top':
-        case 3:
-          viewDir = 'bottom-to-top';
-          break;
-      }
       this.modified.add('viewingDirection');
-      this.entity.viewingDirection = viewDir;
+      this.entity.viewingDirection = getViewingDirection(dir);
     }
   }
 

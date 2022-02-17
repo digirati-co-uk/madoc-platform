@@ -25,7 +25,6 @@ export const ManifestView: UniversalComponent<ManifestViewType> = createUniversa
     const { resolvedData } = usePaginatedData(ManifestView);
     const site = useSite();
     const { manifest, pagination } = resolvedData || {};
-
     const title = manifest ? <LocaleString>{manifest.label}</LocaleString> : '...';
 
     return (
@@ -37,6 +36,15 @@ export const ManifestView: UniversalComponent<ManifestViewType> = createUniversa
               {t('{{count}} canvases', { count: pagination ? pagination.totalResults : 0 })}
               {' | '}
               <a href={`/s/${site.slug}/manifests/${id}`}>{t('View on site')}</a>
+              {manifest && manifest.source ? (
+                <>
+                  <br />
+                  {t('Source manifest')}{' '}
+                  <a href={manifest.source} target="_blank" rel="noreferrer">
+                    {manifest.source}
+                  </a>
+                </>
+              ) : null}
             </>
           }
           breadcrumbs={[

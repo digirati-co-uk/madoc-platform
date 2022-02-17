@@ -70,7 +70,7 @@ export async function deleteManifest(manifestId: number, siteId: number, connect
     // Delete local IIIF file
     const localSource = await connection().maybeOne(getResourceLocalSource(manifestId));
     if (!!localSource && !!localSource.local_source) {
-      removeIiifFromDisk(localSource.local_source);
+      await removeIiifFromDisk(localSource.local_source);
     }
 
     // Remove manifest from collections

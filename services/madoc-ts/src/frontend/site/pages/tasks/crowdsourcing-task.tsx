@@ -10,6 +10,7 @@ import { SimpleSaveButton } from '../../../shared/caputre-models/new/components/
 import '@capture-models/editor/lib/input-types/TextField';
 import '@capture-models/editor/lib/input-types/HTMLField';
 import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
+import { Heading4 } from '../../../shared/typography/Heading4';
 import { HrefLink } from '../../../shared/utility/href-link';
 import { useCrowdsourcingTaskDetails } from '../../hooks/use-crowdsourcing-task-details';
 import { TaskContext } from '../loaders/task-loader';
@@ -33,6 +34,7 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task,
     revisionId,
     wasRejected,
     changesRequested,
+    rejectedMessage,
   } = useCrowdsourcingTaskDetails(task, parentTask);
 
   if (!isCanvas) {
@@ -62,9 +64,17 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task,
           </SuccessMessage>
         ) : null}
         {wasRejected ? (
-          <ErrorMessage>
+          <ErrorMessage $banner>
             {t('This contribution was rejected. You can make another contribution from the')}{' '}
             {backLink ? <Link to={backLink}>{t('Image page')}</Link> : t('Image page')}
+            {rejectedMessage ? (
+              <>
+                <div style={{ marginTop: '.5em' }}>
+                  <strong>{t('Message from reviewer')}</strong>
+                </div>
+                <p style={{ marginTop: '0.4em' }}>{rejectedMessage}</p>
+              </>
+            ) : null}
           </ErrorMessage>
         ) : null}
         {isSubmitted ? <WarningMessage>{t('Your submission is in review')}</WarningMessage> : null}
@@ -82,7 +92,7 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task,
           </RevisionProviderWithFeatures>
         ) : null}
 
-        {!isSubmitted && !isComplete && editLink ? (
+        {!isSubmitted && !isComplete && editLink && !wasRejected ? (
           <div>
             <Button $primary as={HrefLink} href={editLink}>
               {t('Edit submission')}

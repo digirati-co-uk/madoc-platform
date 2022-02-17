@@ -871,12 +871,11 @@ export class ApiClient {
     return this.request<{ manifests: number; canvases: number }>(`/api/madoc/iiif/collections/${id}/statistics`);
   }
 
-  async createManifest(manifest: Partial<Manifest>, source?: string, taskId?: string) {
+  async createManifest(manifest: Partial<Manifest>, taskId?: string) {
     return this.request<{ id: number }, CreateManifest>(`/api/madoc/iiif/manifests`, {
       method: 'POST',
       body: {
         manifest,
-        local_source: source,
         taskId,
       },
     });
@@ -887,7 +886,6 @@ export class ApiClient {
       method: 'POST',
       body: {
         canvas,
-        local_source: source,
         thumbnail,
       },
     });
@@ -1232,7 +1230,12 @@ export class ApiClient {
   }
 
   // Review API
-  async reviewRejectSubmission(options: { revisionRequest: RevisionRequest; userTaskId: string; statusText?: string }) {
+  async reviewRejectSubmission(options: {
+    revisionRequest: RevisionRequest;
+    message?: string;
+    userTaskId: string;
+    statusText?: string;
+  }) {
     return this.crowdsourcing.reviewRejectSubmission(options);
   }
 

@@ -1,6 +1,8 @@
 import { generateId } from '@capture-models/helpers';
+import fs from 'fs';
+import { dirname } from 'path';
+import { FILES_PATH } from '../../paths';
 import { BaseTask } from './base-task';
-import { CrowdsourcingReview } from './crowdsourcing-review';
 import * as importCanvas from './import-canvas';
 import * as manifestOcr from './process-manifest-ocr';
 import { createTask as createSearchIndexTask } from './search-index-task';
@@ -11,6 +13,7 @@ import { ImportCanvasTask } from './import-canvas';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
 import { ApiClient } from '../api';
 import { ContentResource } from '@hyperion-framework/types';
+import del from 'del';
 
 export const type = 'madoc-manifest-import';
 
@@ -32,6 +35,7 @@ export interface ImportManifestTask extends BaseTask {
   parameters: [number, number | undefined];
   status: -1 | 0 | 1 | 2 | 3 | 4;
   state: {
+    diskCacheLocation?: string;
     structureComplete?: boolean;
     resourceId?: number;
     errorMessage?: string;
@@ -129,7 +133,6 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
                 rights: iiifManifest?.rights || undefined,
                 navDate: iiifManifest?.navDate || undefined,
               },
-          fileLocation,
           task.id
         );
         if (item) {
@@ -187,7 +190,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
 
       // 6. Mark as done if no canvases
       if (subtasks.length === 0 && subtasksToReTrigger.length === 0) {
-        await api.updateTask(task.id, changeStatus('done'));
+        await api.updateTask(task.id, changeStatus('done', { state: { diskCacheLocation: fileLocation } }));
         return;
       }
 
@@ -196,7 +199,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         task.id,
         changeStatus('waiting for canvases', {
           name: iiifGetLabel(iiifManifest.label),
-          state: { resourceId: item.id, isDuplicate: false },
+          state: { resourceId: item.id, isDuplicate: false, diskCacheLocation: fileLocation },
         })
       );
 
@@ -207,6 +210,23 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       // 1. Update with manifest ids from sub tasks
 
       const task = await api.getTaskById<ImportManifestTask>(taskId);
+
+      // At this point, we don't need the Manifest JSON locally.
+      if (task && task.state && task.state.diskCacheLocation) {
+        try {
+          if (fs.existsSync(task.state.diskCacheLocation)) {
+            if (!task.state.diskCacheLocation.startsWith(`${FILES_PATH}/original/madoc-manifests`)) {
+              console.log('Unable to delete manifest file');
+            } else {
+              console.log('Deleted manifest cache', task.state.diskCacheLocation);
+              await del(dirname(task.state.diskCacheLocation));
+            }
+          }
+        } catch (e) {
+          console.log('Unable to delete local manifest file', e);
+        }
+      }
+
       if (task && task.state && task.state.structureComplete) {
         return;
       }

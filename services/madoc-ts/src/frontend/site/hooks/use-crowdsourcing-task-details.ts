@@ -28,6 +28,7 @@ export function useCrowdsourcingTaskDetails(task: CrowdsourcingTask & { id: stri
     task.state.warningTime &&
     date - task.modified_at > task.state.warningTime;
   const changesRequested = task.status !== 3 && task.state?.changesRequested ? task.state?.changesRequested : undefined;
+  const rejectedMessage = task.state?.rejectedMessage ? task.state?.rejectedMessage : undefined;
 
   const target = useMemo(() => {
     if (captureModel && captureModel.target && captureModel.target[0]) {
@@ -81,5 +82,6 @@ export function useCrowdsourcingTaskDetails(task: CrowdsourcingTask & { id: stri
     target,
     captureModel,
     subject,
+    rejectedMessage,
   };
 }

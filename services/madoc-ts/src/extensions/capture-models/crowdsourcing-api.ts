@@ -278,10 +278,12 @@ export class CrowdsourcingApi implements BaseExtension {
   async reviewRejectSubmission({
     revisionRequest,
     userTaskId,
+    message,
     statusText,
   }: {
     revisionRequest: RevisionRequest;
     userTaskId: string;
+    message?: string;
     statusText?: string;
   }) {
     try {
@@ -295,6 +297,9 @@ export class CrowdsourcingApi implements BaseExtension {
     await this.api.updateTask<CrowdsourcingTask>(userTaskId, {
       status: -1,
       status_text: statusText || 'Rejected',
+      state: {
+        rejectedMessage: message,
+      },
     });
   }
 
