@@ -1230,7 +1230,12 @@ export class ApiClient {
   }
 
   // Review API
-  async reviewRejectSubmission(options: { revisionRequest: RevisionRequest; userTaskId: string; statusText?: string }) {
+  async reviewRejectSubmission(options: {
+    revisionRequest: RevisionRequest;
+    message?: string;
+    userTaskId: string;
+    statusText?: string;
+  }) {
     return this.crowdsourcing.reviewRejectSubmission(options);
   }
 

@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added alpha page block for canvas panel
 - Added removal of Manifest JSON saved to disk after import (no longer used)
 - Added "source manifest" to admin
+- Added the ability to specify a reason for rejecting a contribution
 
 ### Fixed
 - Fixed inconsistencies in translations
