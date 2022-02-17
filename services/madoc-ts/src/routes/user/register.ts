@@ -94,12 +94,28 @@ export const registerPage: RouteMiddleware = async (context, next) => {
     const createdUser = await context.siteManager.createUser({
       name,
       email,
-      role: 'researcher',
+      role: invitation && invitation.detail.role ? invitation.detail.role : 'researcher',
     });
 
     if (invitation) {
       // @todo invitation handling, including possibly setting password.
       await context.siteManager.createInvitationRedemption(invitationId, createdUser.id, site.id);
+
+      try {
+        if (invitation.detail.site_role) {
+          await context.siteManager.setUsersRoleOnSite(site.id, createdUser.id, invitation.detail.site_role);
+        }
+      } catch (e) {
+        console.log('Unable to set users role on the site.');
+        console.log(e);
+      }
+    } else if (systemConfig.registeredUserTranscriber) {
+      try {
+        await context.siteManager.setUsersRoleOnSite(site.id, createdUser.id, 'transcriber');
+      } catch (e) {
+        console.log('Unable to set users role to transcriber on the site.');
+        console.log(e);
+      }
     }
 
     const idHash = v4(); // Stored in database and sent to user
@@ -127,6 +143,8 @@ export const registerPage: RouteMiddleware = async (context, next) => {
         html: createUserActivationEmail(vars),
       });
     } catch (e) {
+      console.log('Unable to send email');
+      console.log(e);
       // unknown email error.
       context.reactFormResponse.noEmail = true;
       try {

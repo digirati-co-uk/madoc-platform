@@ -56,13 +56,12 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
   () => {
     const { data: stats } = useStaticData(Homepage);
     const { t } = useTranslation();
-    const site = useSite();
     const user = useUser();
     const isGlobal = user?.role === 'global_admin';
 
     return (
       <div>
-        <AdminHeader breadcrumbs={[{ label: 'Site admin', link: '/', active: true }]} title={t('Site admin')} />
+        <AdminHeader breadcrumbs={[{ label: t('Admin dashboard'), link: '/', active: true }]} title={t('Site admin')} />
         <WidePage>
           {stats ? (
             <StatisticContainer>
@@ -111,6 +110,14 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
                 </li>
                 <li>
                   <Link to="/media">{t('Media')}</Link>
+                </li>
+              </MenuList>
+            </AdminSection>
+            <AdminSection>
+              <MenuTitle>{t('Configuration')}</MenuTitle>
+              <MenuList>
+                <li>
+                  <Link to="/configure/site">{t('Configure site')}</Link>
                 </li>
               </MenuList>
             </AdminSection>

@@ -30,12 +30,14 @@ const PaginationDisplay = styled.div`
 `;
 
 export const Pagination: React.FC<{
+  hash?: string;
   page?: number;
   totalPages?: number;
   stale: boolean;
   pageParam?: string;
   extraQuery?: any;
 }> = ({
+  hash,
   page: propsPage,
   stale,
   totalPages: propsTotalPages,
@@ -79,7 +81,7 @@ export const Pagination: React.FC<{
       <SmallRoundedButton
         disabled={!prevPage || isLoading}
         as={HrefLink}
-        href={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}`}
+        href={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}${hash ? `#${hash}` : ''}`}
       >
         {isLoading ? t('loading...') : t('Previous page')}
       </SmallRoundedButton>
@@ -90,7 +92,7 @@ export const Pagination: React.FC<{
       <SmallRoundedButton
         as={HrefLink}
         disabled={!nextPage || isLoading}
-        href={`${pathname}?${pageParam}=${page + 1}${q ? `&${q}` : ''}`}
+        href={`${pathname}?${pageParam}=${page + 1}${q ? `&${q}` : ''}${hash ? `#${hash}` : ''}`}
       >
         {isLoading ? t('loading...') : t('Next page')}
       </SmallRoundedButton>

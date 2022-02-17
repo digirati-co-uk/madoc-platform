@@ -16,6 +16,7 @@ import { useLocationQuery } from '../../../../shared/hooks/use-location-query';
 import { useSite } from '../../../../shared/hooks/use-site';
 import { Spinner } from '../../../../shared/icons/Spinner';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
+import { useViewerHeight } from '../../../../site/hooks/use-viewer-height';
 import { UniversalComponent } from '../../../../types';
 
 type ViewMediaType = {
@@ -28,6 +29,7 @@ type ViewMediaType = {
 const AtlasViewerImage: React.FC<{ media: MediaItem }> = ({ media }) => {
   const [canvasRef, setCanvasRef] = useState<CanvasNormalized>();
   const { id } = useSite();
+  const height = useViewerHeight();
   const serviceId = `/public/storage/iiif/0/urn:madoc:site:${id}/media/public/${media.id}/${media.fileName}`;
   const canvas = {
     source: {
@@ -89,7 +91,7 @@ const AtlasViewerImage: React.FC<{ media: MediaItem }> = ({ media }) => {
     <>
       {canvasRef ? (
         <CanvasContext canvas={canvasRef.id}>
-          <SimpleAtlasViewer style={{ height: '70vh' }} />
+          <SimpleAtlasViewer style={{ height }} />
         </CanvasContext>
       ) : null}
     </>

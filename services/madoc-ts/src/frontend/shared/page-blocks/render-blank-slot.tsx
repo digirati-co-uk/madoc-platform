@@ -115,12 +115,12 @@ export const BlankSlotDropdown: React.FC<{
   );
 };
 
-export const RenderBlankSlot: React.FC<{ name: string; source?: { type: string; id: string }; layout?: string }> = ({
-  name: slotId,
-  source,
-  layout,
-  children,
-}) => {
+export const RenderBlankSlot: React.FC<{
+  id?: string;
+  name: string;
+  source?: { type: string; id: string };
+  layout?: string;
+}> = ({ id, name: slotId, source, layout, children }) => {
   const { context, editable, isPage, beforeCreateSlot, onCreateSlot } = useSlots();
   const api = useApi();
   const blockDefinitions = extractBlockDefinitions(children);
@@ -177,20 +177,24 @@ export const RenderBlankSlot: React.FC<{ name: string; source?: { type: string; 
 
   if (isLoading) {
     return (
-      <SlotLayout layout={layout}>
+      <SlotLayout id={id} layout={layout}>
         <div>Creating slot...</div>
       </SlotLayout>
     );
   }
 
   if (!editable) {
-    return <SlotLayout layout={layout}>{children}</SlotLayout>;
+    return (
+      <SlotLayout id={id} layout={layout}>
+        {children}
+      </SlotLayout>
+    );
   }
 
   if (!children) {
     return (
       <>
-        <EmptySlotContainer>
+        <EmptySlotContainer id={id}>
           <EmptySlotLabel>Empty slot</EmptySlotLabel>
           <EmptySlotActions>
             {isPage ? (
@@ -212,7 +216,7 @@ export const RenderBlankSlot: React.FC<{ name: string; source?: { type: string; 
   }
 
   return (
-    <div>
+    <div id={id}>
       <SlotEditorReadOnly>
         <SlotEditorLabelReadOnly>{slotId}</SlotEditorLabelReadOnly>
         {isPage || source?.type === 'global' ? (

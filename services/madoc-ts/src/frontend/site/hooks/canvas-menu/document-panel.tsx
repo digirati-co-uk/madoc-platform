@@ -17,7 +17,6 @@ export function useDocumentPanel(): CanvasMenuHook {
   );
   const { t } = useTranslation();
   const canvas = data?.canvas;
-
   const validModels =
     data && data.models
       ? data.models.filter((model: any) => {
@@ -60,6 +59,7 @@ export function useDocumentPanel(): CanvasMenuHook {
     label: t('Document'),
     icon: <ModelDocumentIcon />,
     isLoaded: !!canvas,
+    notifications: validModels.length,
     content,
   };
 }

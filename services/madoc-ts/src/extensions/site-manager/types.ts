@@ -14,6 +14,7 @@ export type Site = {
 
 export type SiteSystemConfig = {
   enableRegistrations: boolean;
+  registeredUserTranscriber: boolean;
   emailActivation: boolean;
   enableNotifications: boolean;
   autoPublishImport: boolean;
@@ -212,6 +213,7 @@ export type UserInvitationConfig = {
 };
 
 export type UserInvitation = {
+  _id: number;
   id: string;
   createdAt: Date;
   expires?: Date;

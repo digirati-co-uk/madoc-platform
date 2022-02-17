@@ -23,12 +23,14 @@ const FlexCenterLayout = styled.div`
 
 export const SlotLayout = React.forwardRef(function SlotLayout(
   {
+    id,
     editing,
     children,
     surfaceProps,
     layout,
     noSurface,
   }: {
+    id?: string;
     layout?: 'none' | 'stack' | 'flex' | string;
     editing?: boolean;
     surfaceProps?: SurfaceProps;
@@ -43,10 +45,14 @@ export const SlotLayout = React.forwardRef(function SlotLayout(
 
   if (layout === 'flex-center') {
     if (noSurface || !surfaceProps) {
-      return <FlexCenterLayout ref={ref as any}>{children}</FlexCenterLayout>;
+      return (
+        <FlexCenterLayout ref={ref as any} id={id}>
+          {children}
+        </FlexCenterLayout>
+      );
     }
     return (
-      <Surface {...surfaceProps}>
+      <Surface id={id} {...surfaceProps}>
         <FlexCenterLayout ref={ref as any}>{children}</FlexCenterLayout>
       </Surface>
     );
@@ -54,20 +60,30 @@ export const SlotLayout = React.forwardRef(function SlotLayout(
 
   if (layout === 'flex') {
     if (noSurface || !surfaceProps) {
-      return <FlexSlotLayout ref={ref as any}>{children}</FlexSlotLayout>;
+      return (
+        <FlexSlotLayout id={id} ref={ref as any}>
+          {children}
+        </FlexSlotLayout>
+      );
     }
     return (
       <Surface {...surfaceProps}>
-        <FlexSlotLayout ref={ref as any}>{children}</FlexSlotLayout>
+        <FlexSlotLayout id={id} ref={ref as any}>
+          {children}
+        </FlexSlotLayout>
       </Surface>
     );
   }
 
   if (noSurface || !surfaceProps) {
-    return <StackSlotLayout ref={ref as any}>{children}</StackSlotLayout>;
+    return (
+      <StackSlotLayout id={id} ref={ref as any}>
+        {children}
+      </StackSlotLayout>
+    );
   }
   return (
-    <Surface {...surfaceProps}>
+    <Surface id={id} {...surfaceProps}>
       <StackSlotLayout ref={ref as any}>{children}</StackSlotLayout>
     </Surface>
   );

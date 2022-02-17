@@ -18,7 +18,6 @@ import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useManifestTask } from '../hooks/use-manifest-task';
-import { useModelPageConfiguration } from '../hooks/use-model-page-configuration';
 import { useProjectStatus } from '../hooks/use-project-status';
 import { useRouteContext } from '../hooks/use-route-context';
 import { RedirectToNextCanvas } from '../features/RedirectToNextCanvas';
@@ -65,7 +64,7 @@ export const ViewCanvasModel: React.FC = () => {
         <DisplayBreadcrumbs />
       </Slot>
 
-      <Slot name="canvas-model-header">
+      <Slot id="canvas" name="canvas-model-header">
         <CanvasPageHeader subRoute="model" />
       </Slot>
 

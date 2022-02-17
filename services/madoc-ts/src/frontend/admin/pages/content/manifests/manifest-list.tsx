@@ -49,7 +49,7 @@ export const ManifestList: UniversalComponent<ManifestListType> = createUniversa
             { label: 'Site admin', link: '/' },
             { label: 'Manifests', link: '/manifests', active: true },
           ]}
-          title={t('Manage manifests', { count: pagination.totalResults })}
+          title={t('Manifests', { count: pagination.totalResults })}
         />
         <WidePage>
           <Button as={Link} to={`/import/manifest`}>

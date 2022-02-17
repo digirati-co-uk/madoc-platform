@@ -4,6 +4,7 @@ import { RenderSlot } from './render-slot';
 import { useSlots } from './slot-context';
 
 export const Slot: React.FC<{
+  id?: string;
   name: string;
   hidden?: boolean;
   layout?: string;
@@ -24,7 +25,7 @@ export const Slot: React.FC<{
 
   if (!slot) {
     return (
-      <RenderBlankSlot name={props.name} source={props.source} layout={props.layout}>
+      <RenderBlankSlot id={props.id} name={props.name} source={props.source} layout={props.layout}>
         {props.children}
       </RenderBlankSlot>
     );
@@ -32,6 +33,7 @@ export const Slot: React.FC<{
 
   return (
     <RenderSlot
+      id={props.id}
       small={props.small}
       noSurface={props.noSurface}
       layout={props.layout}

@@ -144,7 +144,7 @@ export class SiteUserRepository extends BaseRepository {
     `,
 
     getUserByEmail: (email: string) => sql<UserRowWithoutPassword>`
-        select id, lower(email), name, created, modified, role, is_active
+        select id, lower(email) as email, name, created, modified, role, is_active
         from "user"
         where email = ${email};
     `,
@@ -183,13 +183,13 @@ export class SiteUserRepository extends BaseRepository {
     `,
 
     getActiveUserById: (userId: number) => sql<UserRowWithoutPassword>`
-      select id, name, lower(email), role, is_active, created, modified 
+      select id, name, lower(email) as email, role, is_active, created, modified 
       from "user" 
       where is_active = true and id = ${userId}
     `,
 
     getActiveUserByEmail: (email: string) => sql<UserRow>`
-      select id, name, lower(email), created, modified, password_hash, role, is_active 
+      select id, name, lower(email) as email, created, modified, password_hash, role, is_active 
       from "user" 
       where is_active = true and email = ${email}
     `,
@@ -216,7 +216,7 @@ export class SiteUserRepository extends BaseRepository {
     },
 
     searchAllUsers: (q: string) => sql<UserRowWithoutPassword>`
-      select u.id, lower(u.email), u.name, u.role from "user" as u
+      select u.id, lower(u.email) as email, u.name, u.role from "user" as u
         where u.is_active = true
         and (
           u.email ilike ${'%' + q + '%'} or u.name ilike ${'%' + q + '%'}
@@ -479,6 +479,7 @@ export class SiteUserRepository extends BaseRepository {
         emailActivation: true,
         enableNotifications: true,
         enableRegistrations: true,
+        registeredUserTranscriber: false,
         ...(row.config || {}),
       },
     } as Site;
@@ -486,6 +487,7 @@ export class SiteUserRepository extends BaseRepository {
 
   static mapInvitation(row: UserInvitationsRow): UserInvitation {
     return {
+      _id: row.id,
       id: row.invitation_id,
       expires: row.expires ? new Date(row.expires) : undefined,
       createdAt: new Date(row.created_at),
@@ -559,6 +561,7 @@ export class SiteUserRepository extends BaseRepository {
     const defaultConfig: SystemConfig = {
       installationTitle: 'Madoc',
       enableRegistrations: true,
+      registeredUserTranscriber: false,
       enableNotifications: true,
       emailActivation: true,
       defaultSite: null,
@@ -923,8 +926,8 @@ export class SiteUserRepository extends BaseRepository {
   }
 
   async createInvitationRedemption(invitationId: string, userId: number, siteId: number) {
-    const invitation = await this.connection.one(SiteUserRepository.query.getInvitation(invitationId, siteId));
-    await this.connection.query(SiteUserRepository.mutations.createInvitationRedemption(invitation.id, userId));
+    const invitation = await this.getInvitation(invitationId, siteId);
+    await this.connection.query(SiteUserRepository.mutations.createInvitationRedemption(invitation._id, userId));
     await this.connection.query(SiteUserRepository.mutations.useInvitation(invitationId, siteId));
   }
 

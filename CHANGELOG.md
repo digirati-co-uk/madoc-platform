@@ -6,7 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.0.2...main)
 
+### Added
+- Added notifications number to "annotations" panel to show how many are available
+- Added notifications number to "documents" panel to show how many are available
+- Added notifications number to "transcription" panel to show when one is available
+- Added email server status to system status page
+- Added configuration option to allow new users to be contributors
+- Added alpha page block for canvas panel
 
+### Fixed
+- Fixed inconsistencies in translations
+- Fixed bug sending email after registering (case-sensitivity)
+- Fixed setting roles when registering with invitation
+- Fixed embedded hOCR without `"format": "text/vnd.hocr+html"`
+- Fixed height of viewer on smaller displays
+- Fixed scrolling to top on manifest pages
+- Fixed scrolling to top on canvas pages
+- Fixed not found error when logged in and resetting password
 
 ## [2.0.2](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.2) - 2022-01-20
 

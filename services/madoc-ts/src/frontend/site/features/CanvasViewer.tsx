@@ -18,10 +18,12 @@ import { useMetadataMenu } from '../hooks/canvas-menu/metadata-panel';
 import { usePersonalNotesMenu } from '../hooks/canvas-menu/personal-notes';
 import { useRevisionPanel } from '../hooks/canvas-menu/revision-panel';
 import { useTranscriptionMenu } from '../hooks/canvas-menu/transcription-panel';
+import { useViewerHeight } from '../hooks/use-viewer-height';
 
 export const CanvasViewer: React.FC = ({ children }) => {
   const [openPanel, setOpenPanel] = useLocalStorage<string>(`canvas-page-selected`, 'metadata');
   const [isOpen, setIsOpen] = useLocalStorage<boolean>(`canvas-page-sidebar`, false);
+  const height = useViewerHeight();
   const menuItems = [
     useMetadataMenu(),
     useAnnotationPanel(openPanel === 'annotations' && isOpen),
@@ -44,7 +46,7 @@ export const CanvasViewer: React.FC = ({ children }) => {
 
   return (
     <>
-      <OuterLayoutContainer style={{ height: '70vh' }}>
+      <OuterLayoutContainer style={{ height }}>
         <LayoutSidebarMenu>
           {menuItems.map(menuItem => {
             if (menuItem.isHidden) {

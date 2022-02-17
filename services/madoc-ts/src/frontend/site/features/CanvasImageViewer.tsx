@@ -3,10 +3,12 @@ import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-rea
 import { SimpleAtlasViewer } from '../../shared/components/SimpleAtlasViewer';
 import { useCanvasSearch } from '../../shared/hooks/use-canvas-search';
 import { useRouteContext } from '../hooks/use-route-context';
+import { useViewerHeight } from '../hooks/use-viewer-height';
 
 export const CanvasImageViewer: React.FC<{ rendering?: 'webgl' | 'canvas' }> = ({ rendering = 'webgl' }) => {
   const { canvasId } = useRouteContext();
   const [, highlightedRegions] = useCanvasSearch(canvasId);
+  const height = useViewerHeight();
 
   if (!canvasId) {
     return null;
@@ -15,7 +17,7 @@ export const CanvasImageViewer: React.FC<{ rendering?: 'webgl' | 'canvas' }> = (
   return (
     <SimpleAtlasViewer
       unstable_webglRenderer={rendering === 'webgl'}
-      style={{ height: '70vh', width: '100%' }}
+      style={{ height, width: '100%' }}
       highlightedRegions={highlightedRegions ? highlightedRegions.bounding_boxes : undefined}
     />
   );

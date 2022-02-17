@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useViewerHeight } from '../../../../site/hooks/use-viewer-height';
 import { UniversalComponent } from '../../../../types';
 import { CanvasFull } from '../../../../../types/canvas-full';
 import { useData } from '../../../../shared/hooks/use-data';
@@ -16,6 +17,7 @@ type CanvasDetailsType = {
 
 const CanvasViewer: React.FC<{ canvas: CanvasFull['canvas'] }> = ({ canvas }) => {
   const [canvasRef, setCanvasRef] = useState<CanvasNormalized>();
+  const height = useViewerHeight();
 
   useVaultEffect(
     vault => {
@@ -32,7 +34,7 @@ const CanvasViewer: React.FC<{ canvas: CanvasFull['canvas'] }> = ({ canvas }) =>
     <>
       {canvasRef ? (
         <CanvasContext canvas={canvasRef.id}>
-          <SimpleAtlasViewer style={{ height: '70vh' }} />
+          <SimpleAtlasViewer style={{ height }} />
         </CanvasContext>
       ) : null}
     </>

@@ -140,7 +140,8 @@ export const siteRoot: RouteMiddleware = async context => {
           is_public: true, // for now.
           config: {
             emailActivation: true,
-            enableRegistrations: false,
+            enableRegistrations: true,
+            registeredUserTranscriber: false,
             enableNotifications: true,
             autoPublishImport: system.autoPublishImport,
           },

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMutation } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { Redirect } from 'react-router-dom';
 import { Pm2Status } from '../../../../types/pm2';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../../shared/atoms/Statistics';
@@ -32,6 +32,10 @@ export const SystemStatus: UniversalComponent<SystemStatusType> = createUniversa
     const api = useApi();
     const { data } = useData(SystemStatus, undefined, {
       refetchInterval: 1000,
+    });
+
+    const { data: systemCheck } = useQuery(['systemCheck'], () => {
+      return api.system.systemCheck();
     });
 
     const [restart, restartStatus] = useMutation(async (service: 'queue' | 'madoc' | 'auth' | 'scheduler') => {
@@ -66,6 +70,19 @@ export const SystemStatus: UniversalComponent<SystemStatusType> = createUniversa
         </StatisticContainer>
 
         <WidePage>
+          {systemCheck ? (
+            <div>
+              <h3>{systemCheck.email.enabled ? 'Email server is running' : 'Email server is not running'}</h3>
+              <ul>
+                {systemCheck.email.issues.map((issue, n) => {
+                  return <li key={n}>{issue}</li>;
+                })}
+              </ul>
+            </div>
+          ) : null}
+
+          <h3>Docker images</h3>
+
           <ButtonRow>
             <Button onClick={() => restart('queue')} disabled={restartStatus.isLoading}>
               {t('Restart queue')}

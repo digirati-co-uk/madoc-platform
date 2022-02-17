@@ -13,6 +13,11 @@ const systemConfigModel = {
     type: 'checkbox-field',
     inlineLabel: 'Allow users to register to the site',
   },
+  registeredUserTranscriber: {
+    label: 'User role',
+    type: 'checkbox-field',
+    inlineLabel: 'New users can contribute to crowdsourcing projects',
+  },
   autoPublishImport: {
     label: 'Auto publish',
     type: 'checkbox-field',

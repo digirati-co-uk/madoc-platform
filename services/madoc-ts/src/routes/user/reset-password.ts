@@ -5,6 +5,7 @@ import { siteFrontend } from '../admin/frontend';
 
 export const resetPasswordPage: RouteMiddleware = async (context, next) => {
   if (context.state.jwt) {
+    context.redirect(`/s/${context.params.slug}`);
     return;
   }
 

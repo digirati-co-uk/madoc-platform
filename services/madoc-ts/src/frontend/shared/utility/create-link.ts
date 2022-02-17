@@ -10,9 +10,12 @@ export function createLink(opt: {
   query?: any;
   subRoute?: string;
   admin?: boolean;
+  hash?: string;
 }) {
   const subRoute = opt.subRoute ? `/${opt.subRoute}` : '';
-  const suffix = `${subRoute}${opt.query && Object.keys(opt.query).length ? `?${stringify(opt.query)}` : ''}`;
+  const suffix = `${subRoute}${opt.query && Object.keys(opt.query).length ? `?${stringify(opt.query)}` : ''}${
+    opt.hash ? `#${opt.hash}` : ''
+  }`;
   const canvasSubRoute = opt.admin ? 'canvases' : 'c';
 
   // Tasks.

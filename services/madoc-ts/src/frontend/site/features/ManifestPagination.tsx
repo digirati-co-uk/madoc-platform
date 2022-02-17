@@ -18,6 +18,7 @@ export const ManifestPagination: React.FC = () => {
 
   return (
     <Pagination
+      hash={'listing-header'}
       pageParam={'m'}
       page={pagination ? pagination.page : 1}
       totalPages={pagination ? pagination.totalPages : 1}

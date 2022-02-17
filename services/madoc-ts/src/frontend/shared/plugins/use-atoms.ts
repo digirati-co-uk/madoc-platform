@@ -1,6 +1,7 @@
 import { Grid } from '@capture-models/editor';
 import { CanvasUniversalViewer } from '../../site/features/CanvasUniversalViewer';
 import { ManifestHero } from '../../site/features/ManifestHero';
+import { CanvasPanelBlock } from '../../shared/components/CanvasPanelBlock';
 import { ViewManifestUV } from '../../site/pages/view-manifest-uv';
 import { DefaultSelect } from '../form/DefaulSelect';
 import AdminPageTitle from '../typography/AdminPageTitle';
