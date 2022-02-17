@@ -1,4 +1,4 @@
-import { InternationalString, MetadataItem } from '@hyperion-framework/types';
+import { InternationalString, MetadataItem, ViewingDirection } from '@hyperion-framework/types';
 import { Pagination } from './_pagination';
 
 export type ManifestFull = {
@@ -10,6 +10,8 @@ export type ManifestFull = {
     requiredStatement?: MetadataItem;
     summary?: InternationalString;
     published?: boolean;
+    viewingDirection: ViewingDirection;
+    source?: string;
     items: Array<{
       id: number;
       label: InternationalString;

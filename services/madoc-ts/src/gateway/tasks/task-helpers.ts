@@ -106,15 +106,6 @@ export function sharedVault(manifestId: string): Vault {
   return vault;
 }
 
-export async function writeCanvasToDisk(idHash: string, content: any, canvasOrder: number) {
-  await mkdirp(path.join(MANIFESTS_PATH, `/${idHash}/canvases/`));
-  const fileLocation = path.join(MANIFESTS_PATH, `/${idHash}/canvases/c${canvasOrder}.json`);
-  if (!existsSync(fileLocation)) {
-    await writeFile(fileLocation, Buffer.from(JSON.stringify(content)));
-  }
-  return fileLocation;
-}
-
 export async function getThumbnail(
   vault: Vault,
   canvas: any

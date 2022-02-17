@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added email server status to system status page
 - Added configuration option to allow new users to be contributors
 - Added alpha page block for canvas panel
+- Added removal of Manifest JSON saved to disk after import (no longer used)
+- Added "source manifest" to admin
 
 ### Fixed
 - Fixed inconsistencies in translations

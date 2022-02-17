@@ -9,7 +9,7 @@ export const createManifest: RouteMiddleware<{}, CreateManifest> = async context
   const { userUrn, siteId } = userWithScope(context, ['site.admin']);
 
   const manifestJson = JSON.stringify(context.requestBody.manifest);
-  const localSource = context.requestBody.local_source || null;
+  const localSource = null;
   const taskId = context.requestBody.taskId || null;
 
   const { canonical_id } = await context.connection.transaction(async connection => {

@@ -1,5 +1,6 @@
 import { sql, TaggedTemplateLiteralInvocationType } from 'slonik';
-import { metadataReducer } from '../../utility/iiif-metadata';
+import { getViewingDirection } from '../../utility/get-viewing-direction';
+import { createMetadataReducer, MetadataField, metadataReducer } from '../../utility/iiif-metadata';
 import { SQL_EMPTY, SQL_INT_ARRAY } from '../../utility/postgres-tags';
 
 type ManifestAggregate = TaggedTemplateLiteralInvocationType<{
@@ -36,6 +37,9 @@ export function getSingleManifest({
     canvas_thumbnail: string;
     task_id?: string;
     task_complete?: boolean;
+    rights: string | null;
+    viewing_direction: number;
+    source: string;
   }>`
       select ${manifestId}::int                         as manifest_id,
              canvas_links.item_id                       as canvas_id,
@@ -43,8 +47,12 @@ export function getSingleManifest({
              canvas_resources.default_thumbnail         as canvas_thumbnail,
              manifest.task_id                           as task_id,
              manifest.task_complete                     as task_complete,
-             manifest.published                         as published
+             manifest.published                         as published,
+             manifest_resource.rights                   as rights,
+             manifest_resource.viewing_direction        as viewing_direction,
+             manifest_resource.source                   as source
       from iiif_derived_resource manifest
+            left join iiif_resource manifest_resource on manifest.resource_id = manifest_resource.id
             left join iiif_derived_resource_items canvas_links on manifest.resource_id = canvas_links.resource_id and canvas_links.site_id = ${siteId} ${canvasExclusion}
             left join iiif_resource canvas_resources on canvas_links.item_id = canvas_resources.id
             left join iiif_derived_resource_item_counts manifest_count
@@ -71,6 +79,11 @@ export type ManifestSnippetsRow = {
   source: string;
   resource_id: number;
   canvas_count?: number;
+
+  // Other properties.
+  manifest_source: string | null;
+  manifest_rights: string | null;
+  manifest_viewing_direction: number;
 };
 
 export function getManifestSnippets(
@@ -85,14 +98,17 @@ export function getManifestSnippets(
            manifest_aggregate.canvas_thumbnail as canvas_thumbnail,
            manifest_aggregate.canvas_id as canvas_id,
            manifest_aggregate.canvas_count as canvas_count,
-           manifest_aggregate.m_published as published,
+           manifest_aggregate.published as published,
+           manifest_aggregate.rights                   as manifest_rights,
+           manifest_aggregate.viewing_direction        as manifest_viewing_direction,
+           manifest_aggregate.source                   as manifest_source,
            metadata.id as metadata_id,
            metadata.key as key,
            metadata.value as value,
            metadata.language as language,
            metadata.source as source,
            metadata.resource_id as resource_id
-      from (${query}) manifest_aggregate(manifest_id, canvas_id, canvas_count, canvas_thumbnail, task_id, task_complete, m_published)
+      from (${query}) manifest_aggregate(manifest_id, canvas_id, canvas_count, canvas_thumbnail, task_id, task_complete, published, rights, viewing_direction, source)
           left join iiif_metadata metadata
               on (manifest_aggregate.canvas_id = metadata.resource_id or
                  manifest_aggregate.manifest_id = metadata.resource_id)
@@ -241,6 +257,16 @@ export function getManifestList({
   `;
 }
 
+export const manifestReducer = createMetadataReducer((next: MetadataField & ManifestSnippetsRow) => ({
+  id: next.resource_id,
+  type: next.resource_type,
+  created: next.created_at,
+  thumbnail: next.thumbnail,
+  published: next.published,
+  source: next.manifest_source,
+  viewingDirection: getViewingDirection(next.manifest_viewing_direction),
+}));
+
 export function mapManifestSnippets(rows: readonly ManifestSnippetsRow[]) {
   return rows.reduce(
     (state, row) => {
@@ -282,7 +308,7 @@ export function mapManifestSnippets(rows: readonly ManifestSnippetsRow[]) {
       return {
         manifest_to_canvas: state.manifest_to_canvas,
         canvases: state.canvases,
-        manifests: metadataReducer(state.manifests, row),
+        manifests: manifestReducer(state.manifests, row),
         metadata_ids: state.metadata_ids,
       };
     },

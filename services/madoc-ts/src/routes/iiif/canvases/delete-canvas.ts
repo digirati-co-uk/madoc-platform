@@ -60,7 +60,7 @@ export async function deleteCanvas(canvasId: number, siteId: number, connection:
     // Delete local IIIF file
     const localSource = await connection().maybeOne(getResourceLocalSource(canvasId));
     if (!!localSource && !!localSource.local_source) {
-      removeIiifFromDisk(localSource.local_source);
+      await removeIiifFromDisk(localSource.local_source);
     }
   } else {
     // Only delete from this site.

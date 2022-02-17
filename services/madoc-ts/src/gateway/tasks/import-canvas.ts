@@ -2,7 +2,6 @@ import { BaseTask } from './base-task';
 import * as tasks from './task-helpers';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
 import { ApiClient } from '../api';
-import { ContentResource } from '@hyperion-framework/types';
 
 export const type = 'madoc-canvas-import';
 
@@ -64,19 +63,10 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
 
       const [userId, pathToManifest, manifestId, siteId] = task.parameters;
 
-      const idHash = tasks.manifestHash(manifestId);
-
-      const { manifest, unmodifiedManifest, canvas, vault } = await tasks.tryGetManifest(
-        manifestId,
-        pathToManifest,
-        task.subject
-      );
+      const { manifest, canvas, vault } = await tasks.tryGetManifest(manifestId, pathToManifest, task.subject);
 
       const idList = (manifest.items || []).map(r => r.id);
       const canvasOrder = idList.indexOf(canvas.id);
-      const canvasJson = tasks.getCanvasFromManifest(unmodifiedManifest, canvas.id);
-
-      const fileLocation = await tasks.writeCanvasToDisk(idHash, canvasJson, canvasOrder);
 
       const thumbnail = await tasks.getThumbnail(vault, canvas);
       const thumbId = thumbnail && thumbnail.id ? thumbnail.id : undefined;
@@ -124,8 +114,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
                 rights: canvas.rights || undefined,
                 navDate: canvas.navDate || undefined,
               },
-          thumbId,
-          fileLocation
+          thumbId
         );
         if (item) {
           break;
