@@ -109,6 +109,13 @@ export const registerPage: RouteMiddleware = async (context, next) => {
         console.log('Unable to set users role on the site.');
         console.log(e);
       }
+    } else if (systemConfig.registeredUserTranscriber) {
+      try {
+        await context.siteManager.setUsersRoleOnSite(site.id, createdUser.id, 'transcriber');
+      } catch (e) {
+        console.log('Unable to set users role to transcriber on the site.');
+        console.log(e);
+      }
     }
 
     const idHash = v4(); // Stored in database and sent to user

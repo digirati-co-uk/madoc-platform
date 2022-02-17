@@ -14,6 +14,7 @@ export type Site = {
 
 export type SiteSystemConfig = {
   enableRegistrations: boolean;
+  registeredUserTranscriber: boolean;
   emailActivation: boolean;
   enableNotifications: boolean;
   autoPublishImport: boolean;

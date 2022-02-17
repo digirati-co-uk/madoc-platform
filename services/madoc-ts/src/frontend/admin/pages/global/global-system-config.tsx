@@ -15,6 +15,11 @@ const globalSystemConfigModel: Partial<{ [key in keyof SystemConfig]: any }> = {
     type: 'checkbox-field',
     inlineLabel: 'Allow users to register to the site',
   },
+  registeredUserTranscriber: {
+    label: 'User role',
+    type: 'checkbox-field',
+    inlineLabel: 'New users can contribute to crowdsourcing projects',
+  },
   installationTitle: {
     label: 'Installation title',
     type: 'text-field',

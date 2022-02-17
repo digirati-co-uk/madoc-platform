@@ -479,6 +479,7 @@ export class SiteUserRepository extends BaseRepository {
         emailActivation: true,
         enableNotifications: true,
         enableRegistrations: true,
+        registeredUserTranscriber: false,
         ...(row.config || {}),
       },
     } as Site;
@@ -560,6 +561,7 @@ export class SiteUserRepository extends BaseRepository {
     const defaultConfig: SystemConfig = {
       installationTitle: 'Madoc',
       enableRegistrations: true,
+      registeredUserTranscriber: false,
       enableNotifications: true,
       emailActivation: true,
       defaultSite: null,
