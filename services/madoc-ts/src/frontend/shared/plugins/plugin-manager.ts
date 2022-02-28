@@ -76,6 +76,7 @@ export class PluginManager {
   }
 
   registerThemes(plugin: PluginModule) {
+    if (plugin.module.themes) {
       for (const theme of plugin.module.themes) {
         ThemeExtension.registerPlugin({
           pluginId: plugin.definition.id,
