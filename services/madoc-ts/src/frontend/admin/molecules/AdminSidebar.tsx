@@ -55,9 +55,11 @@ export const AdminSidebar: React.FC = () => {
         pathname.startsWith('/import/manifest') ||
         pathname.startsWith('/enrichment/ocr'),
       isProjects: pathname.startsWith('/projects'),
-      isSearchIndexing: pathname.startsWith('/enrichment/search-indexing'),
       isSiteConfiguration:
-        pathname.startsWith('/configure') || pathname.startsWith('/system') || pathname.startsWith('/site'),
+        pathname.startsWith('/configure') ||
+        pathname.startsWith('/system') ||
+        pathname.startsWith('/site') ||
+        pathname.startsWith('/enrichment/search-indexing'),
       isLocalisation: pathname.startsWith('/i18n'),
       isMedia: pathname.startsWith('/media'),
       isSiteGlobal: pathname.startsWith('/global'),
@@ -79,7 +81,7 @@ export const AdminSidebar: React.FC = () => {
             <AdminMenuItemIcon>
               <DashboardIcon />
             </AdminMenuItemIcon>
-            <AdminMenuItemLabel>{t('Admin dashboard')}</AdminMenuItemLabel>
+            <AdminMenuItemLabel>{t('Dashboard')}</AdminMenuItemLabel>
           </AdminMenuItem>
         </AdminMenuItemContainer>
 
@@ -117,15 +119,6 @@ export const AdminSidebar: React.FC = () => {
         </AdminMenuItemContainer>
 
         <AdminMenuItemContainer>
-          <AdminMenuItem as={HrefLink} href="/media" $active={isMedia}>
-            <AdminMenuItemIcon>
-              <MediaIcon />
-            </AdminMenuItemIcon>
-            <AdminMenuItemLabel>{t('Media')}</AdminMenuItemLabel>
-          </AdminMenuItem>
-        </AdminMenuItemContainer>
-
-        <AdminMenuItemContainer>
           <AdminMenuItem as={HrefLink} href="/projects" $active={isProjects}>
             <AdminMenuItemIcon>
               <ProjectsIcon />
@@ -135,11 +128,11 @@ export const AdminSidebar: React.FC = () => {
         </AdminMenuItemContainer>
 
         <AdminMenuItemContainer>
-          <AdminMenuItem as={HrefLink} href="/enrichment/search-indexing" $active={isSearchIndexing}>
+          <AdminMenuItem as={HrefLink} href="/media" $active={isMedia}>
             <AdminMenuItemIcon>
-              <AdminSearchIcon />
+              <MediaIcon />
             </AdminMenuItemIcon>
-            <AdminMenuItemLabel>{t('Search indexing')}</AdminMenuItemLabel>
+            <AdminMenuItemLabel>{t('Media')}</AdminMenuItemLabel>
           </AdminMenuItem>
         </AdminMenuItemContainer>
 
@@ -172,6 +165,9 @@ export const AdminSidebar: React.FC = () => {
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/configure/site/system">
               {t('Site-wide config')}
+            </AdminMenuSubItem>
+            <AdminMenuSubItem as={HrefLink} href="/enrichment/search-indexing">
+              {t('Search indexing')}
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/system/themes">
               {t('Themes')}

@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - The link in the top bar now always links to the site (previously the admin for admins).
 - Changed size of the footer, minimised size
+- Changed position of menu items in Admin to be more logical
 
 ### Removed
 
