@@ -84,30 +84,30 @@ export const AdminSidebar: React.FC = () => {
         </AdminMenuItemContainer>
 
         <AdminMenuItemContainer>
-          <AdminMenuItem as={HrefLink} href="/collections" $active={isManageCollections}>
-            <AdminMenuItemIcon>
-              <ManageCollectionsIcon />
-            </AdminMenuItemIcon>
-            <AdminMenuItemLabel>{t('Collections', { count: 2 })}</AdminMenuItemLabel>
-          </AdminMenuItem>
-
-          <AdminMenuSubItemContainer $open={isManageCollections}>
-            <AdminMenuSubItem as={HrefLink} href="/import/collection/create">
-              {t('Create new collection')}
-            </AdminMenuSubItem>
-            <AdminMenuSubItem as={HrefLink} href="/import/collection">
-              {t('Import collection')}
-            </AdminMenuSubItem>
-          </AdminMenuSubItemContainer>
-        </AdminMenuItemContainer>
-
-        <AdminMenuItemContainer>
           <AdminMenuItem as={HrefLink} href="/manifests" $active={isManageManifests}>
             <AdminMenuItemIcon>
               <ManageManifestsIcon />
             </AdminMenuItemIcon>
             <AdminMenuItemLabel>{t('Manifests', { count: 2 })}</AdminMenuItemLabel>
           </AdminMenuItem>
+
+          <AdminMenuItemContainer>
+            <AdminMenuItem as={HrefLink} href="/collections" $active={isManageCollections}>
+              <AdminMenuItemIcon>
+                <ManageCollectionsIcon />
+              </AdminMenuItemIcon>
+              <AdminMenuItemLabel>{t('Collections', { count: 2 })}</AdminMenuItemLabel>
+            </AdminMenuItem>
+
+            <AdminMenuSubItemContainer $open={isManageCollections}>
+              <AdminMenuSubItem as={HrefLink} href="/import/collection/create">
+                {t('Create new collection')}
+              </AdminMenuSubItem>
+              <AdminMenuSubItem as={HrefLink} href="/import/collection">
+                {t('Import collection')}
+              </AdminMenuSubItem>
+            </AdminMenuSubItemContainer>
+          </AdminMenuItemContainer>
 
           <AdminMenuSubItemContainer $open={isManageManifests}>
             <AdminMenuSubItem as={HrefLink} href="/import/manifest">
@@ -156,32 +156,36 @@ export const AdminSidebar: React.FC = () => {
 
           <AdminMenuSubItemContainer $open={isSiteConfiguration}>
             <AdminMenuSubItem as={HrefLink} href="/site/details">
-              {t('Site metadata')}
+              {t('Site details')}
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/configure/site/project">
               {t('Project configuration')}
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/configure/site/metadata">
-              {t('Configure metadata')}
+              {t('Metadata configuration')}
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/configure/site/system">
-              {t('Site-wide config')}
+              {t('Site-wide configuration')}
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/enrichment/search-indexing">
               {t('Search indexing')}
             </AdminMenuSubItem>
-            <AdminMenuSubItem as={HrefLink} href="/system/themes">
-              {t('Themes')}
-            </AdminMenuSubItem>
+            {isGlobalAdmin ? (
+              <AdminMenuSubItem as={HrefLink} href="/system/themes">
+                {t('Themes')}
+              </AdminMenuSubItem>
+            ) : null}
             <AdminMenuSubItem as={HrefLink} href="/site/permissions">
-              {t('Permissions')}
+              {t('Site permissions')}
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/site/invitations">
               {t('Invitations')}
             </AdminMenuSubItem>
-            <AdminMenuSubItem as={HrefLink} href="/system/plugins">
-              {t('Plugins')}
-            </AdminMenuSubItem>
+            {isGlobalAdmin ? (
+              <AdminMenuSubItem as={HrefLink} href="/system/plugins">
+                {t('Plugins')}
+              </AdminMenuSubItem>
+            ) : null}
           </AdminMenuSubItemContainer>
         </AdminMenuItemContainer>
 

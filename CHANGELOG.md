@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changed size of the footer, minimised size
 - Changed position of menu items in Admin to be more logical
 - Split Add and Import collection pages, reflected in navigation
+- Swapped manifests / collections order in admin
 
 ### Removed
 
