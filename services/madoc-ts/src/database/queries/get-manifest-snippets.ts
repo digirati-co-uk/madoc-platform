@@ -134,8 +134,6 @@ export function getCanvasFilter(
         select resource_id
         from iiif_linking
         where property = 'seeAlso'
-          and (format = 'text/xml' or format = 'application/xml+alto')
-          and type = 'Text'
           and (
               properties ->> 'profile' = 'http://www.loc.gov/standards/alto/v3/alto.xsd' or
               properties ->> 'profile' = 'http://www.loc.gov/standards/alto/v4/alto.xsd'
@@ -146,8 +144,6 @@ export function getCanvasFilter(
         select resource_id
         from iiif_linking
         where property = 'seeAlso'
-          and format = 'text/vnd.hocr+html'
-          and type = 'Text'
           and (
             properties ->> 'profile' ilike 'http://kba.cloud/hocr-spec%' or 
             properties ->> 'profile' ilike 'http://kba.github.io/hocr-spec/%' or 

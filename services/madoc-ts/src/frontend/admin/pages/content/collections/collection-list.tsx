@@ -47,18 +47,21 @@ export const CollectionList: UniversalComponent<CollectionListType> = createUniv
           title={t('Collections', { count: pagination.totalResults })}
         />
         <WidePage>
-          <Button as={Link} to={`/import/collection`}>
-            {t('Add new collection')}
-          </Button>
-          <br />
-          <br />
-          <div>
-            <Pagination
-              page={data ? data.pagination.page : 1}
-              totalPages={data ? data.pagination.totalPages : 1}
-              stale={!data}
-            />
-          </div>
+          <ButtonRow>
+            <Button as={Link} to={`/import/collection`}>
+              {t('Import collection')}
+            </Button>
+            <Button as={Link} to={`/import/collection/create`}>
+              {t('Add new collection')}
+            </Button>
+          </ButtonRow>
+
+          <Pagination
+            page={data ? data.pagination.page : 1}
+            totalPages={data ? data.pagination.totalPages : 1}
+            stale={!data}
+          />
+
           {collections.map((collection, idx) => (
             <div key={idx} style={{ marginBottom: 80 }}>
               <Heading3>

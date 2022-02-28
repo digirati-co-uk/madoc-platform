@@ -13,10 +13,10 @@ type OcrListPageType = {
     hocr: ManifestListResponse;
     alto: ManifestListResponse;
   };
-  query: {};
+  query: any;
   params: { page: string };
   variables: { page: number };
-  context: {};
+  context: any;
 };
 
 export const OcrListPage: UniversalComponent<OcrListPageType> = createUniversalComponent<OcrListPageType>(
@@ -30,7 +30,7 @@ export const OcrListPage: UniversalComponent<OcrListPageType> = createUniversalC
         <h3>Alto XML OCR</h3>
         <TableContainer>
           {alto?.manifests.map(manifest => (
-            <TableRow>
+            <TableRow key={manifest.id}>
               <TableRowLabel>
                 <HrefLink href={`/manifests/${manifest.id}/ocr`}>
                   <LocaleString>{manifest.label}</LocaleString>
@@ -50,7 +50,7 @@ export const OcrListPage: UniversalComponent<OcrListPageType> = createUniversalC
             <h3>hOCR</h3>
             <TableContainer>
               {hocr?.manifests.map(manifest => (
-                <TableRow>
+                <TableRow key={manifest.id}>
                   <TableRowLabel>
                     <HrefLink href={`/manifests/${manifest.id}/ocr`}>
                       <LocaleString>{manifest.label}</LocaleString>

@@ -285,7 +285,7 @@ export const Admin_Menu = () => {
                   </AdminMenuItem>
 
                   <AdminMenuSubItemContainer $open={selected === 2}>
-                    <AdminMenuSubItem>Add new manifest</AdminMenuSubItem>
+                    <AdminMenuSubItem>Import manifest</AdminMenuSubItem>
                     <AdminMenuSubItem>View manifests with OCR</AdminMenuSubItem>
                   </AdminMenuSubItemContainer>
                 </AdminMenuItemContainer>

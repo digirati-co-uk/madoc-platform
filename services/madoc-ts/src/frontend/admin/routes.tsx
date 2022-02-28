@@ -3,6 +3,7 @@ import { CanvasPlaintext } from './pages/content/canvases/canvas-plaintext';
 import { CanvasSearchIndex } from './pages/content/canvases/canvas-search-index';
 import { CollectionView } from './pages/content/collections/collection';
 import { CollectionSearchIndex } from './pages/content/collections/collection-search-index';
+import { ImportCollection } from './pages/content/collections/import-collection';
 import { ConfigureLanguages } from './pages/content/internationalisation/configure-languages';
 import { EditTranslation } from './pages/content/internationalisation/edit-translation';
 import { ViewCanvasLinking } from './pages/content/linking/view-linking';
@@ -17,7 +18,7 @@ import { PageBlocks } from './pages/content/page-blocks/page-blocks';
 import { SiteProjectConfiguration } from './pages/content/project-configuration';
 import { SiteConfiguration } from './pages/content/site-configuration';
 import { SiteSystemConfiguration } from './pages/content/system-configuration';
-import { NewProjectFromTemplate } from "./pages/crowdsourcing/projects/new-project-from-template";
+import { NewProjectFromTemplate } from './pages/crowdsourcing/projects/new-project-from-template';
 import { ProjectConfiguration } from './pages/crowdsourcing/projects/project-configuration';
 import { ProjectSearchIndex } from './pages/crowdsourcing/projects/project-search-index';
 import { ProjectStreams } from './pages/crowdsourcing/projects/project-streams';
@@ -383,9 +384,14 @@ export const routes: UniversalRoute[] = [
 
   // To be organised
   {
-    path: '/import/collection',
+    path: '/import/collection/create',
     exact: true,
     component: CreateCollection,
+  },
+  {
+    path: '/import/collection',
+    exact: true,
+    component: ImportCollection,
   },
   {
     path: '/import/manifest',

@@ -9,7 +9,6 @@ import {
   AdminMenuItemLabel,
   AdminMenuSubItem,
   AdminMenuSubItemContainer,
-  AdminSearchIcon,
   AdminSidebarContainer,
   DashboardIcon,
   InternationalisationIcon,
@@ -38,7 +37,6 @@ export const AdminSidebar: React.FC = () => {
 
   const {
     isSiteConfiguration,
-    isSearchIndexing,
     isProjects,
     isManageCollections,
     isDashboard,
@@ -94,8 +92,11 @@ export const AdminSidebar: React.FC = () => {
           </AdminMenuItem>
 
           <AdminMenuSubItemContainer $open={isManageCollections}>
+            <AdminMenuSubItem as={HrefLink} href="/import/collection/create">
+              {t('Create new collection')}
+            </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/import/collection">
-              {t('Add new collection')}
+              {t('Import collection')}
             </AdminMenuSubItem>
           </AdminMenuSubItemContainer>
         </AdminMenuItemContainer>
@@ -110,9 +111,9 @@ export const AdminSidebar: React.FC = () => {
 
           <AdminMenuSubItemContainer $open={isManageManifests}>
             <AdminMenuSubItem as={HrefLink} href="/import/manifest">
-              {t('Add new manifest')}
+              {t('Import manifest')}
             </AdminMenuSubItem>
-            <AdminMenuSubItem as={HrefLink} href="/enrichement/ocr">
+            <AdminMenuSubItem as={HrefLink} href="/enrichment/ocr">
               {t('View manifests with OCR')}
             </AdminMenuSubItem>
           </AdminMenuSubItemContainer>

@@ -78,9 +78,9 @@ export const CreateManifest: React.FC = () => {
         breadcrumbs={[
           { label: t('Site admin'), link: '/' },
           { label: t('Manifests'), link: '/manifests' },
-          { label: t('Add new manifest'), link: `/import/manifest`, active: true },
+          { label: t('Import manifest'), link: `/import/manifest`, active: true },
         ]}
-        title={t('Add new manifest')}
+        title={t('Import manifest')}
       />
       <WidePage>
         {urlManifest ? (
@@ -112,10 +112,8 @@ export const CreateManifest: React.FC = () => {
           <>
             <GridContainer>
               <HalfGird>
-                <Heading3>Import existing</Heading3>
-                <Subheading3>Import a manifest using a URL pointing to an existing IIIF manifest.</Subheading3>
                 <InputContainer>
-                  <InputLabel>Manifest URL</InputLabel>
+                  <InputLabel>{t('Manifest URL')}</InputLabel>
                   <Input type="text" onChange={e => setImportedManifestId(e.currentTarget.value)} />
                 </InputContainer>
                 <SmallButton
@@ -124,7 +122,7 @@ export const CreateManifest: React.FC = () => {
                     history.push(`/import/manifest?manifest=${importedManifestId}`);
                   }}
                 >
-                  Import
+                  {t('Import manifest')}
                 </SmallButton>
               </HalfGird>
             </GridContainer>

@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.0.3...main)
 
+### Fixed
+- Fixed OCR page linking from menu
+- Fixed missing OCR listed
+
 ### Added
 - Added refresh on 500 error page (usually appears during deployment)
 
@@ -13,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The link in the top bar now always links to the site (previously the admin for admins).
 - Changed size of the footer, minimised size
 - Changed position of menu items in Admin to be more logical
+- Split Add and Import collection pages, reflected in navigation
 
 ### Removed
 
