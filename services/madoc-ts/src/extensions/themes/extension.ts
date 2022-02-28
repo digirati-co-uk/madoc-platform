@@ -1,16 +1,37 @@
 import { ApiClient } from '../../gateway/api';
-import { ThemeListItem } from '../../types/themes';
+import { DiskTheme, ThemeListItem } from '../../types/themes';
 import { BaseExtension, defaultDispose } from '../extension-manager';
+import { RegistryExtension } from '../registry-extension';
 
-export class ThemeExtension implements BaseExtension {
+type ThemeDef = DiskTheme & { type: string };
+
+export class ThemeExtension extends RegistryExtension<ThemeDef> implements BaseExtension {
   api: ApiClient;
 
+  static REGISTRY = 'themes';
+
   constructor(api: ApiClient) {
+    super({
+      registryName: ThemeExtension.REGISTRY,
+    });
     this.api = api;
   }
 
   dispose() {
     defaultDispose(this);
+    super.dispose();
+  }
+
+  static register(definition: ThemeDef) {
+    RegistryExtension.emitter.emit(ThemeExtension.REGISTRY, definition);
+  }
+
+  static removePlugin(event: { pluginId: string; siteId?: number; type: string }) {
+    RegistryExtension.emitter.emit(`remove-plugin-${ThemeExtension.REGISTRY}`, event);
+  }
+
+  static registerPlugin(event: { pluginId: string; siteId?: number; definition: ThemeDef }) {
+    RegistryExtension.emitter.emit(`plugin-${ThemeExtension.REGISTRY}`, event);
   }
 
   // List all themes

@@ -39,16 +39,23 @@ export class TypedRouter<
       const { schemaName, isPublic } = options;
 
       const funcArray = Array.isArray(func) ? func : [func];
+      const bodyOpts: koaBody.IKoaBodyOptions = {
+        jsonLimit: '10mb',
+      };
+
+      if (path === '/api/madoc/development/dev-bundle') {
+        bodyOpts.jsonLimit = '50mb';
+      }
 
       switch (method) {
         case TypedRouter.PUT:
-          (this.router as any).put(route, path, koaBody(), parseJwt, requestBody(schemaName), ...funcArray);
+          (this.router as any).put(route, path, koaBody(bodyOpts), parseJwt, requestBody(schemaName), ...funcArray);
           break;
         case TypedRouter.POST:
-          (this.router as any).post(route, path, koaBody(), parseJwt, requestBody(schemaName), ...funcArray);
+          (this.router as any).post(route, path, koaBody(bodyOpts), parseJwt, requestBody(schemaName), ...funcArray);
           break;
         case TypedRouter.PATCH:
-          (this.router as any).patch(route, path, koaBody(), parseJwt, requestBody(schemaName), ...funcArray);
+          (this.router as any).patch(route, path, koaBody(bodyOpts), parseJwt, requestBody(schemaName), ...funcArray);
           break;
         case TypedRouter.GET: {
           if (isPublic) {

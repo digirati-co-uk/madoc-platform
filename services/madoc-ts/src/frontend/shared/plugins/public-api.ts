@@ -130,6 +130,7 @@ import {
   useSlotConfiguration,
   useSlotContext,
 } from '../caputre-models/new/components/EditorSlots';
+import { BaseTheme } from '../../../types/schemas/madoc-theme';
 
 const Callouts = {
   BaseMessage: BaseMessage,
@@ -258,6 +259,8 @@ const Models = {
   useSlotContext,
 };
 
+type PluginTheme = { id: string } & BaseTheme;
+
 export {
   useModule as require,
   useApi,
@@ -287,4 +290,6 @@ export {
   captureModelShorthand,
   // API Extensions
   UpdateModelConfigRequest,
+  BaseTheme,
+  PluginTheme,
 };

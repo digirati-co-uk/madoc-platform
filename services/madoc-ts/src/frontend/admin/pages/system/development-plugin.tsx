@@ -9,6 +9,7 @@ import { useApi } from '../../../shared/hooks/use-api';
 import { useLocationQuery } from '../../../shared/hooks/use-location-query';
 import { useUser } from '../../../shared/hooks/use-site';
 import { Spinner } from '../../../shared/icons/Spinner';
+import { HrefLink } from '../../../shared/utility/href-link';
 
 const DevOuterContainer = styled.div`
   padding: 3em;
@@ -145,6 +146,9 @@ export const DevelopmentPlugin: React.FC = () => {
               </Button>
             </DevButtonContainer>
           )}
+          <DevButtonContainer>
+            <HrefLink href="/system/plugins">Go to plugins</HrefLink>
+          </DevButtonContainer>
         </DevContainer>
       </DevOuterContainer>
     );

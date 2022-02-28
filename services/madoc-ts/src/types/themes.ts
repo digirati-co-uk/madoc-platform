@@ -19,6 +19,7 @@ export type ThemeListItem = {
   name: string;
   description: string;
   onDisk: boolean;
+  isPlugin: boolean;
   enabled: boolean;
   installed: boolean;
   version: string;
@@ -34,6 +35,7 @@ export type DiskTheme = {
     thumbnail?: string;
     theme: any;
   };
+  source?: { type: string; id?: string; name: string };
 };
 
 export type ResolvedTheme = {

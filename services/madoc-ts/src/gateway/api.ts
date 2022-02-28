@@ -460,14 +460,15 @@ export class ApiClient {
     });
   }
 
-  async asUserWithExtensions(
-    callback: (api: ApiClient) => Promise<void>,
+  async asUserWithExtensions<T = void>(
+    callback: (api: ApiClient) => Promise<T>,
     user: { userId?: number; siteId?: number; userName?: string },
-    options?: { siteSlug?: string }
-  ) {
-    const userApi = this.asUser(user, options);
-    await callback(userApi as any);
+    options: { siteSlug?: string } = {}
+  ): Promise<T> {
+    const userApi = this.asUser(user, options, true);
+    const resp = await callback(userApi as any);
     userApi.dispose(); // Need to make sure extensions unregister their events properly.
+    return resp as T;
   }
 
   async listApiKeys() {

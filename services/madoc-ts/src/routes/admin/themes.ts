@@ -1,4 +1,5 @@
 import send from 'koa-send';
+import { api } from '../../gateway/api.server';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { ThemeListItem } from '../../types/themes';
 import { NotFound } from '../../utility/errors/not-found';
@@ -10,6 +11,7 @@ export const listThemes: RouteMiddleware = async context => {
   const themes: ThemeListItem[] = [];
   const diskThemes = await context.themes.getDiskThemes();
   const allThemes = await context.themes.listThemes();
+  const pluginThemes = api.themes.getAllDefinitions(siteId) || [];
   const siteTheme = await context.themes.getSiteTheme(siteId);
 
   const diskKeys = Object.keys(diskThemes);
@@ -17,8 +19,14 @@ export const listThemes: RouteMiddleware = async context => {
 
   for (const theme of allThemes) {
     const onDisk = diskThemes[theme.theme_id];
+    const isPlugin = pluginThemes.findIndex(t => t.id === theme.theme_id);
+
+    if (isPlugin !== -1) {
+      pluginThemes.splice(isPlugin, 1);
+    }
+
     // Push each theme.
-    themes.push(context.themes.mapTheme(theme, { onDisk: !!onDisk, siteTheme }));
+    themes.push(context.themes.mapTheme(theme, { onDisk: !!onDisk, isPlugin: isPlugin !== -1, siteTheme }));
     // Keep track of keys.
     dbKeys.push(theme.theme_id);
   }
@@ -30,6 +38,9 @@ export const listThemes: RouteMiddleware = async context => {
       themes.push(context.themes.mapDiskTheme(diskTheme));
     }
   }
+  for (const pluginTheme of pluginThemes) {
+    themes.push(context.themes.mapDiskTheme(pluginTheme));
+  }
 
   context.response.body = {
     themes,
@@ -37,14 +48,17 @@ export const listThemes: RouteMiddleware = async context => {
 };
 
 export const installTheme: RouteMiddleware<{ theme_id: string }> = async context => {
-  userWithScope(context, ['site.admin']);
+  const { siteId } = userWithScope(context, ['site.admin']);
 
-  const diskTheme = await context.themes.getDiskTheme(context.params.theme_id);
-  if (!diskTheme) {
-    throw new NotFound('Theme not found');
+  let themeToLoad: any = await api.themes.getDefinition(context.params.theme_id, siteId);
+  if (!themeToLoad) {
+    themeToLoad = await context.themes.getDiskTheme(context.params.theme_id);
+    if (!themeToLoad) {
+      throw new NotFound('Theme not found');
+    }
   }
 
-  const theme = await context.themes.installTheme(diskTheme);
+  const theme = await context.themes.installTheme(themeToLoad);
 
   context.response.body = {
     theme: context.themes.mapTheme(theme, { onDisk: true }),
