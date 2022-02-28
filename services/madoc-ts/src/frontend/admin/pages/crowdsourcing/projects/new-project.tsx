@@ -50,7 +50,7 @@ export const NewProjectPage: React.FC = () => {
                       {template.metadata.actionLabel || 'Create project'}
                     </Button>
                     {template.metadata.documentation ? (
-                      <Button $link as={'a'} href={template.metadata.documentation}>
+                      <Button $link as={'a'} target="_blank" href={template.metadata.documentation}>
                         {t('View documentation')}
                       </Button>
                     ) : null}

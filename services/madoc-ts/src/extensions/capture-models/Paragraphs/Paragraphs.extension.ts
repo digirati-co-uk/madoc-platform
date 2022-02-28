@@ -85,7 +85,19 @@ export class Paragraphs implements CaptureModelExtension {
     });
 
     //   4.4 - Replace field on model with new field
+    const prevModel = state.parent.properties[state.key]
+      ? (state.parent.properties[state.key][0] as CaptureModel['document'])
+      : null;
     state.parent.properties[state.key] = documentWrapper.paragraph;
+    const resources = state.parent.properties[state.key] as CaptureModel['document'][];
+    if (prevModel && resources) {
+      for (const single of resources) {
+        // This breaks "Next paragraph" button. Maybe improved in the future.
+        // single.label = prevModel.label;
+        single.pluralLabel = prevModel.pluralLabel || prevModel.label;
+        single.description = prevModel.description;
+      }
+    }
 
     // 5. Update the structure with the paragraph structure.
     //   5.1 - Extract path to all fields from document
@@ -109,6 +121,7 @@ export class Paragraphs implements CaptureModelExtension {
       return await this.api.updateCaptureModel(captureModel.id, captureModel);
       ///  6.1 - Any errors - add to the placeholder field in the future
     } catch (err) {
+      console.log('Not able to save', err);
       return captureModel;
     }
   }
