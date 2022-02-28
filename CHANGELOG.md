@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.0.3...main)
 
 ### Added
+- Added refresh on 500 error page (usually appears during deployment)
+
 ### Removed
 
 
