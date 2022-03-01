@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import { InternationalString } from '@hyperion-framework/types';
 import { useTranslation } from 'react-i18next';
 import { MetadataEmptyState } from '../atoms/MetadataConfiguration';
+import { Button } from '../navigation/Button';
 import { HrefLink } from '../utility/href-link';
 import { LocaleString } from './LocaleString';
 import { FacetConfig } from './MetadataFacetEditor';
@@ -218,7 +219,9 @@ export const MetaDataDisplay: React.FC<{
           <tfoot>
             <tr>
               <td>
-                <HrefLink href={suggestEdit}>{t('Suggest edit')}</HrefLink>
+                <Button as={HrefLink} href={suggestEdit}>
+                  {t('Suggest edit')}
+                </Button>
               </td>
             </tr>
           </tfoot>
@@ -257,7 +260,9 @@ export const MetaDataDisplay: React.FC<{
         <tfoot>
           <tr>
             <td>
-              <HrefLink href={suggestEdit}>{t('Suggest edit')}</HrefLink>
+              <Button as={HrefLink} href={suggestEdit}>
+                {t('Suggest edit')}
+              </Button>
             </td>
           </tr>
         </tfoot>
