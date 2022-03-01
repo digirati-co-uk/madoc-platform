@@ -1061,6 +1061,16 @@ export class ApiClient {
       },
     });
   }
+
+  async importManifests(ids: string[]) {
+    return this.request<BaseTask>(`/api/madoc/iiif/import/manifest/bulk`, {
+      method: 'POST',
+      body: {
+        manifests: ids,
+      },
+    });
+  }
+
   async importManifestOcr(id: number, label: string) {
     return this.request<ImportManifestTask>(`/api/madoc/iiif/import/manifest-ocr`, {
       method: 'POST',

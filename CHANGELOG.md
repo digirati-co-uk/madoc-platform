@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added refresh on 500 error page (usually appears during deployment)
 - Added new "OCR Correction" project template
 - Added basic theme support for plugins
+- Added bulk import of manifests
 
 ### Changed
 - The link in the top bar now always links to the site (previously the admin for admins).
