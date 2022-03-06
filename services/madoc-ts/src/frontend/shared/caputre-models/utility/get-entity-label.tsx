@@ -32,7 +32,7 @@ export function getEntityLabel(
     });
 
     if (state.isEmpty || !labelToUse) {
-      return state.empty || defaultLabel;
+      return state.empty || labelToUse || defaultLabel;
     }
 
     return labelToUse.trim();
