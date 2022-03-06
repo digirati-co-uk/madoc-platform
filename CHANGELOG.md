@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added new "OCR Correction" project template
 - Added basic theme support for plugins
 - Added bulk import of manifests
+- Support for advanced `labelledBy` in capture models
+  - Allow replacements like `{fieldA} - {fieldB}`
+  - Allow for empty value `{fieldA/No value provided}`
+  - Allow for complex empty value `{firstName} - {lastName} {@empty/untitled person}`
 
 ### Changed
 - The link in the top bar now always links to the site (previously the admin for admins).

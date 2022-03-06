@@ -3,6 +3,7 @@ import { BaseField } from '@capture-models/types';
 import { sql } from 'slonik';
 import { getProject } from '../../database/queries/project-queries';
 import { PARAGRAPHS_PROFILE } from '../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
+import { getEntityLabel } from '../../frontend/shared/caputre-models/utility/get-entity-label';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { castBool } from '../../utility/cast-bool';
 import { RequestError } from '../../utility/errors/request-error';
@@ -141,25 +142,17 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
             // If there is a labelledBy then use this for the annotation.
 
             if (entity.selector && entity.selector.state) {
-              const labelProp = entity.labelledBy
-                ? entity.properties[entity.labelledBy]
-                : entity.properties[Object.keys(entity.properties)[0]];
+              const labelValue = getEntityLabel(entity);
               // Try to get the value of the labelledby
-              if (labelProp && labelProp[0] && labelProp[0].type !== 'entity' && (labelProp[0] as BaseField).value) {
+              if (labelValue) {
                 if (entity.temp && entity.temp.PARAGRAPHS) {
                   // We have a paragraphs item.
-                  const labelValue = (labelProp as BaseField[])
-                    .map(field => {
-                      return field.value;
-                    })
-                    .join(' ');
                   annotations.push(
                     format === 'open-annotation'
                       ? captureModelFieldToOpenAnnotation(entity.id, labelValue, entity.selector, defaultOptions)
                       : captureModelFieldToW3CAnnotation(entity.id, labelValue, entity.selector, defaultOptions)
                   );
                 } else {
-                  const labelValue = (labelProp[0] as BaseField).value;
                   annotations.push(
                     format === 'open-annotation'
                       ? captureModelFieldToOpenAnnotation(entity.id, labelValue, entity.selector, defaultOptions)
