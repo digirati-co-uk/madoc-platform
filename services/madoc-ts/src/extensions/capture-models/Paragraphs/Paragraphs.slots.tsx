@@ -1,4 +1,3 @@
-import { DocumentPreview } from '@capture-models/editor';
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { InlineReadonlyValue } from '../../../frontend/shared/caputre-models/new/components/DefaultInlineField';
@@ -9,6 +8,7 @@ import { useEntityDetails } from '../../../frontend/shared/caputre-models/new/ho
 import { useFieldDetails } from '../../../frontend/shared/caputre-models/new/hooks/use-field-details';
 import { mapProperties } from '../../../frontend/shared/caputre-models/new/utility/map-properties';
 import { getEntityLabel } from '../../../frontend/shared/caputre-models/utility/get-entity-label';
+import { DocumentPreview } from '../../../frontend/shared/caputre-models/DocumentPreview';
 
 const InlineLine = styled.div<{ $isModified?: boolean }>`
   border-left: 3px solid transparent;

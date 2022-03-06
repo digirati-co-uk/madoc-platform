@@ -1,9 +1,10 @@
 import React from 'react';
-import { DocumentPreview, Revisions, RoundedCard } from '@capture-models/editor';
+import { Revisions, RoundedCard } from '@capture-models/editor';
 import { getLabel } from '@capture-models/helpers';
 import { useRefinement } from '@capture-models/plugin-api';
 import { CaptureModel, EntityInstanceListRefinement } from '@capture-models/types';
 import { NewEntityInstanceButton } from './NewEntityInstanceButton';
+import { DocumentPreview } from './DocumentPreview';
 
 export const EntityInstanceList: React.FC<{
   entities: Array<CaptureModel['document']>;

@@ -1,10 +1,11 @@
-import { DocumentPreview, RoundedCard } from '@capture-models/editor';
+import { RoundedCard } from '@capture-models/editor';
 import React from 'react';
 import { InputAsCard } from '../../../form/Input';
 import { getEntityLabel } from '../../utility/get-entity-label';
 import { ModifiedStatus } from '../features/ModifiedStatus';
 import { useEntityDetails } from '../hooks/use-entity-details';
 import { EditorRenderingConfig, useProfileOverride, useSlotContext } from './EditorSlots';
+import { DocumentPreview } from '../../DocumentPreview';
 
 export const DefaultInlineEntity: EditorRenderingConfig['InlineEntity'] = props => {
   const { entity, chooseEntity, onRemove, canRemove } = props;
