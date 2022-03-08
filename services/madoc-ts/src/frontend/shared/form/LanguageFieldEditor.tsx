@@ -21,6 +21,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
   // We can set these up from config, or the browser or just allow them to be passed down.
   // This is where we choose a default for which languages will appear in the dropdown.
   // The `firstItem` will be based on the i18n of the user's browser.
+  // ...
   const availableLanguages = props.availableLanguages || ['en', 'none'];
 
   // The hidden fields.
