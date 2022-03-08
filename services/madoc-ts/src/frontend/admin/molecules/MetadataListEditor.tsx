@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { InputContainer, InputLabel } from '../../shared/form/Input';
+import { MetadataDiff } from "../../shared/hooks/use-metadata-editor";
 import { useDefaultLocale, useSupportedLocales, useUser } from '../../shared/hooks/use-site';
-import { MetadataDiff, MetadataEditor, MetadataEditorProps } from './MetadataEditor';
+import { MetadataEditor, MetadataEditorProps } from './MetadataEditor';
 import { useMutation } from 'react-query';
 import { Button } from '../../shared/navigation/Button';
 import { MetadataDefinition } from '../../../types/schemas/metadata-definition';
