@@ -2,9 +2,9 @@
 // resource may be assigned to the requesting user and a task created to track that. By default, no rules apply for
 // claiming resources.
 
+import { CaptureModel } from '../../frontend/shared/capture-models/types/capture-model';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { BaseTask } from '../../gateway/tasks/base-task';
-import { CaptureModel } from '@capture-models/types';
 import { canUserClaimCanvas, canUserClaimManifest, findUserManifestTask } from '../../utility/claim-utilities';
 import { userWithScope } from '../../utility/user-with-scope';
 import { Context } from 'koa';

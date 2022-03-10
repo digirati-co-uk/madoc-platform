@@ -1,0 +1,16 @@
+{
+  "structure": {
+    "id": "7223ccb9-27f2-44cf-843c-9a21b333764e",
+    "type": "choice",
+    "label": "profiles - tagging",
+    "items": []
+  },
+  "document": {
+    "id": "08c07ec0-d553-4e8c-a4f8-ace08d6c0298",
+    "type": "entity",
+    "label": "TODO",
+    "labelledBy": "label",
+    "properties": {}
+  },
+  "id": "5bf7b5f8-980d-44de-bc41-8594abf22647"
+}

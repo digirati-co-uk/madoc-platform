@@ -1,0 +1,114 @@
+{
+  "structure": {
+    "id": "f197bd74-5ede-407b-aace-a2223c520b8f",
+    "type": "choice",
+    "label": "nesting - nested model multiple",
+    "items": [
+      {
+        "id": "b0405656-79cb-4295-b7bb-940e0318ae1b",
+        "label": "Choice 1",
+        "type": "model",
+        "fields": [
+          "name",
+          "description"
+        ],
+        "description": "The first choice in the list"
+      },
+      {
+        "id": "0e29f176-aeeb-4bf3-a92c-d64654e29c90",
+        "label": "Person",
+        "type": "model",
+        "fields": [
+          [
+            "person",
+            [
+              "firstName",
+              "lastName"
+            ]
+          ]
+        ],
+        "description": "The second choice in the list"
+      }
+    ],
+    "description": "Contains 3 choices with multiple text fields nested"
+  },
+  "document": {
+    "id": "626422b1-abbf-4f46-b160-d9bb768b2e29",
+    "type": "entity",
+    "properties": {
+      "name": [
+        {
+          "id": "714479f5-f46a-486e-8b86-2638d9ae0259",
+          "type": "text-field",
+          "label": "Name",
+          "description": "The name of the thing"
+        }
+      ],
+      "description": [
+        {
+          "id": "54e3f035-fd5c-4593-bd28-8af49f039d27",
+          "type": "text-field",
+          "label": "Description",
+          "description": "Tell us something about the thing"
+        }
+      ],
+      "person": [
+        {
+          "id": "3036e4a5-c350-426b-82b5-8fafdfe55e27",
+          "type": "entity",
+          "label": "Person",
+          "labelledBy": "firstName",
+          "allowMultiple": true,
+          "properties": {
+            "firstName": [
+              {
+                "id": "1da67423-f4a1-49e6-8561-55c40be47c00",
+                "type": "text-field",
+                "label": "First name",
+                "value": "first first name"
+              }
+            ],
+            "lastName": [
+              {
+                "id": "6b7ce0c3-2a13-4ea3-a190-822fee80176b",
+                "type": "text-field",
+                "label": "Last name",
+                "value": "first last name"
+              }
+            ]
+          },
+          "description": "Describe a person"
+        },
+        {
+          "id": "41cf9550-af77-4310-82ca-130141ed215d",
+          "type": "entity",
+          "label": "Person",
+          "labelledBy": "firstName",
+          "allowMultiple": true,
+          "properties": {
+            "firstName": [
+              {
+                "id": "f8678b43-f803-40b2-8e2e-fcc014631e1a",
+                "type": "text-field",
+                "label": "First name",
+                "value": "second first name"
+              }
+            ],
+            "lastName": [
+              {
+                "id": "12e92ef6-6ebc-49af-95b3-42718ac92c26",
+                "type": "text-field",
+                "label": "Last name",
+                "value": "second last name"
+              }
+            ]
+          },
+          "description": "Describe a person"
+        }
+      ]
+    },
+    "label": "Nested choices",
+    "description": ""
+  },
+  "id": "a09e5ee4-9c95-4403-b152-278b0a9be9f8"
+}

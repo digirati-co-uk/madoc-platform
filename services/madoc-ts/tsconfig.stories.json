@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./.storybook/types",
+    "esModuleInterop": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+  },
+  "include": [
+    "src/**/*.stories.tsx",
+    "stories/**/*.stories.tsx"
+  ],
+  "exclude": [
+    "__tests__",
+    "npm",
+    "lib"
+  ]
+}

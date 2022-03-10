@@ -1,0 +1,35 @@
+{
+  "structure": {
+    "id": "efcfc161-4942-4dfa-9017-5530b3084944",
+    "type": "choice",
+    "label": "basic - single field value",
+    "description": "Contains single choice with single text field and a pre-filled value",
+    "items": [
+      {
+        "id": "77baec35-90bc-4509-9335-97604177dd40",
+        "type": "model",
+        "label": "Only choice",
+        "description": "This could be a top level item without a choice.",
+        "fields": [
+          "name"
+        ]
+      }
+    ]
+  },
+  "document": {
+    "id": "44a62032-2e14-471d-86e8-4b5701b68daa",
+    "type": "entity",
+    "label": "Simple document",
+    "properties": {
+      "name": [
+        {
+          "id": "8f12928a-67a7-48ba-9038-e682fd8e2fb2",
+          "type": "text-field",
+          "label": "Name",
+          "value": "Forth Bridge Illustrations"
+        }
+      ]
+    }
+  },
+  "id": "0b826265-f985-49a1-a628-d2ee95f669ae"
+}

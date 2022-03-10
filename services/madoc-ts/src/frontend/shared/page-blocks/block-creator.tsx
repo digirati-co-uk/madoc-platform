@@ -1,4 +1,3 @@
-import { CardHeader } from '@capture-models/editor';
 import React, { useMemo, useRef, useState } from 'react';
 import { PageBlockDefinition } from '../../../extensions/page-blocks/extension';
 import { EditorialContext, SiteBlock, SiteBlockRequest } from '../../../types/schemas/site-page';

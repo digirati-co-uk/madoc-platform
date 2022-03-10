@@ -1,4 +1,3 @@
-import { captureModelShorthand } from '@capture-models/helpers';
 import { PageBlockExtension } from '../../../extensions/page-blocks/extension';
 import { ProjectTemplateExtension } from '../../../extensions/projects/extension';
 import { ThemeExtension } from '../../../extensions/themes/extension';
@@ -6,6 +5,7 @@ import { ModuleWrapper } from '../../../types/plugins';
 import { SitePlugin } from '../../../types/schemas/plugins';
 import { RouteComponents } from '../../site/routes';
 import { UniversalRoute } from '../../types';
+import { captureModelShorthand } from '../capture-models/helpers/capture-model-shorthand';
 import { createPluginWrapper } from './create-plugin-wrapper';
 
 export type PluginModule = {

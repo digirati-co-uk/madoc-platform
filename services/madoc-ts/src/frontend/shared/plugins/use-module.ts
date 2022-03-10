@@ -4,9 +4,6 @@ export const _ALLOWED_MODULES = [
   '@madoc.io/types',
   '@atlas-viewer/atlas',
   '@atlas-viewer/iiif-image-api',
-  '@capture-models/editor',
-  '@capture-models/helpers',
-  '@capture-models/plugin-api',
   '@hyperion-framework/presentation-2',
   '@hyperion-framework/react-vault',
   '@hyperion-framework/vault',
@@ -48,12 +45,6 @@ export function useModule(name: AvailableModules) {
       return require('@atlas-viewer/atlas');
     case '@atlas-viewer/iiif-image-api':
       return require('@atlas-viewer/iiif-image-api');
-    case '@capture-models/editor':
-      return require('@capture-models/editor');
-    case '@capture-models/helpers':
-      return require('@capture-models/helpers');
-    case '@capture-models/plugin-api':
-      return require('@capture-models/plugin-api');
     case '@hyperion-framework/presentation-2':
       return require('@hyperion-framework/presentation-2');
     case '@hyperion-framework/react-vault':

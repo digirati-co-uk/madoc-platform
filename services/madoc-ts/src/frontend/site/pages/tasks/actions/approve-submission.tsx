@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Revisions } from '@capture-models/editor';
+import { Revisions } from '../../../../shared/capture-models/editor/stores/revisions/index';
 import { useTranslation } from 'react-i18next';
 import { useApi } from '../../../../shared/hooks/use-api';
 import {

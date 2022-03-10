@@ -1,0 +1,60 @@
+{
+  "structure": {
+    "id": "2416e3ed-90cc-4160-8d7b-ceefeb6d2adc",
+    "type": "choice",
+    "label": "revisions - single field with revision",
+    "items": [
+      {
+        "id": "31b27c9b-2388-47df-b6f4-73fb4878c1fa",
+        "label": "Only choice",
+        "type": "model",
+        "fields": [
+          "name"
+        ],
+        "description": "This could be a top level item without a choice."
+      }
+    ],
+    "description": "Contains single choice with single text field"
+  },
+  "document": {
+    "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+    "type": "entity",
+    "properties": {
+      "name": [
+        {
+          "id": "aca844a3-836a-45c3-bb16-dc28bcdce46f",
+          "type": "text-field",
+          "label": "Name",
+          "description": "The name of the thing"
+        },
+        {
+          "id": "eafb62d7-71b7-47bd-b887-def8655d8d2a",
+          "type": "text-field",
+          "label": "Name",
+          "revision": "7c26cf57-5950-4849-b533-11e0ee4afa4b",
+          "description": "The name of the thing",
+          "value": "Some value that was submitted"
+        }
+      ]
+    },
+    "label": "Simple document",
+    "description": ""
+  },
+  "contributors": {
+    "7c26cf57-5950-4849-b533-11e0ee4afa4b": {
+      "id": "7c26cf57-5950-4849-b533-11e0ee4afa4b",
+      "type": "Person",
+      "name": "Test person"
+    }
+  },
+  "revisions": [
+    {
+      "id": "7c26cf57-5950-4849-b533-11e0ee4afa4b",
+      "structureId": "31b27c9b-2388-47df-b6f4-73fb4878c1fa",
+      "fields": [
+        "name"
+      ]
+    }
+  ],
+  "id": "b329e009-1c8a-4bed-bfde-c2a587a22f97"
+}

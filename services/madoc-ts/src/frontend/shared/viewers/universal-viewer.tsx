@@ -1,5 +1,4 @@
-import React, { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
-import { Helmet } from 'react-helmet';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { BaseEvents } from 'universalviewer';
 import { useEvent, useUniversalViewer } from '../../../utility/use-universal-viewer';
 

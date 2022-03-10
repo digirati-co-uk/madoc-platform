@@ -1,0 +1,53 @@
+{
+  "structure": {
+    "id": "2f5a6921-23b7-4618-9ba1-74849f0b4949",
+    "type": "choice",
+    "label": "basic - multiple choice",
+    "items": [
+      {
+        "id": "4e989334-cc39-426a-af77-f77963ebf475",
+        "label": "Choice 1",
+        "type": "model",
+        "fields": [
+          "name"
+        ],
+        "description": "The first choice in the list"
+      },
+      {
+        "id": "6f7f2d6c-2457-479a-830d-a80ea39304d0",
+        "label": "Choice 2",
+        "type": "model",
+        "fields": [
+          "description"
+        ],
+        "description": "The second choice in the list"
+      }
+    ],
+    "description": "Contains 2 choices with multiple text fields"
+  },
+  "document": {
+    "id": "600f7437-4511-46c0-ada5-ecc907bacbea",
+    "type": "entity",
+    "properties": {
+      "name": [
+        {
+          "id": "63003ba2-bf3b-41e9-8e63-5cb8e4ebd049",
+          "type": "text-field",
+          "label": "Name",
+          "description": "The name of the thing"
+        }
+      ],
+      "description": [
+        {
+          "id": "53a76e7b-f7f8-4460-853c-64588aeaaa86",
+          "type": "text-field",
+          "label": "Description",
+          "description": "Tell us something about the thing"
+        }
+      ]
+    },
+    "label": "Multiple choices",
+    "description": ""
+  },
+  "id": "8eae33be-2c12-4230-9cc4-6ee5a2b1fc15"
+}

@@ -1,0 +1,55 @@
+{
+  "captureModelId": "5b3b131d-51fc-46cb-9c05-aaa884144d82",
+  "source": "structure",
+  "document": {
+    "id": "988664d3-1d51-44b4-9a77-5956a800cdfa",
+    "type": "entity",
+    "label": "Untitled document",
+    "properties": {
+      "regionOfInterest": [
+        {
+          "id": "cd6534b2-0236-4ac2-83d7-1d1743bb06d6",
+          "type": "text-field",
+          "label": "regionOfInterest test test",
+          "value": "",
+          "description": "test",
+          "selector": {
+            "id": "1affad96-4823-479e-a49f-b35d476cfc25",
+            "type": "box-selector",
+            "state": null
+          }
+        },
+        {
+          "id": "d04c340b-1845-4432-90ce-20ed1a1273ad",
+          "type": "text-field",
+          "label": "regionOfInterest test test",
+          "value": "test region",
+          "revises": "cd6534b2-0236-4ac2-83d7-1d1743bb06d6",
+          "description": "test",
+          "selector": {
+            "id": "ecd25628-84ed-4b3b-8a12-57aaa33fbc45",
+            "type": "box-selector",
+            "state": null
+          },
+          "revision": "e2beba84-bdd1-4ae1-bcb0-cd01ba95a450"
+        }
+      ]
+    },
+    "immutable": true
+  },
+  "revision": {
+    "structureId": "9c2c6558-703d-4276-ac44-01c78e66ecef",
+    "approved": false,
+    "label": "Default",
+    "id": "e2beba84-bdd1-4ae1-bcb0-cd01ba95a450",
+    "fields": [
+      "regionOfInterest"
+    ],
+    "status": "submitted",
+    "revises": "9c2c6558-703d-4276-ac44-01c78e66ecef",
+    "authors": [
+      "urn:madoc:user:1"
+    ],
+    "deletedFields": null
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "captureModelId": "ece903d1-9e17-41b0-af83-5f417df2a22c",
+  "source": "canonical",
+  "document": {
+    "id": "aa2344b4-a70b-41cf-aa62-5e211e76ee2c",
+    "type": "entity",
+    "label": "Untitled document",
+    "properties": {
+      "transcription": [
+        {
+          "id": "b2867260-78e3-484f-8549-40a89a55d51c",
+          "type": "entity",
+          "label": "Paragraph",
+          "pluralLabel": "Paragraphs",
+          "description": "Region of the page denoting a single paragraph",
+          "allowMultiple": false,
+          "labelledBy": "lines",
+          "properties": {
+            "lines": [
+              {
+                "id": "a9d8cae8-db25-4880-bc33-e4c0ff192939",
+                "type": "entity",
+                "label": "Line",
+                "pluralLabel": "Lines",
+                "description": "All of the lines inside of a paragraph",
+                "allowMultiple": false,
+                "labelledBy": "text",
+                "properties": {
+                  "text": [
+                    {
+                      "id": "bd56ecd1-d010-4899-896c-748deddeda0d",
+                      "type": "text-field",
+                      "label": "Text of line",
+                      "value": "beglücken.",
+                      "description": "Single word, phrase or the whole line",
+                      "allowMultiple": true,
+                      "selector": {
+                        "id": "e255f928-6445-4f58-93c6-1b4a7fd7019d",
+                        "type": "box-selector",
+                        "state": {
+                          "x": 746,
+                          "y": 2504,
+                          "width": 265,
+                          "height": 48
+                        }
+                      },
+                      "pluralField": "Text of lines",
+                      "previewInline": true,
+                      "revision": "95e40449-7e93-4441-a916-ec3915fcd217",
+                      "revises": "a29eb861-a893-4f2d-a3d2-e420ea405e4a"
+                    }
+                  ]
+                },
+                "selector": {
+                  "id": "98751c14-a342-4958-9803-5e0bd5d11b6a",
+                  "type": "box-selector",
+                  "state": {
+                    "x": 312,
+                    "y": 2499,
+                    "width": 1695,
+                    "height": 53
+                  }
+                },
+                "immutable": true
+              }
+            ]
+          },
+          "selector": {
+            "id": "750603ef-bf14-464a-b812-6540f53497dd",
+            "type": "box-selector",
+            "state": {
+              "x": 296,
+              "y": 310,
+              "width": 1730,
+              "height": 2582
+            }
+          },
+          "immutable": true
+        }
+      ]
+    },
+    "immutable": true
+  },
+  "revision": {
+    "id": "95e40449-7e93-4441-a916-ec3915fcd217",
+    "fields": [
+      [
+        "transcription",
+        [
+          [
+            "lines",
+            [
+              "text"
+            ]
+          ]
+        ]
+      ]
+    ]
+  },
+  "author": {
+    "id": "urn:madoc:user:1",
+    "name": "Admin"
+  },
+  "target": [
+    {
+      "id": "urn:madoc:collection:21206",
+      "type": "Collection"
+    },
+    {
+      "id": "urn:madoc:manifest:15267",
+      "type": "Manifest"
+    },
+    {
+      "id": "urn:madoc:canvas:15302",
+      "type": "Canvas"
+    }
+  ]
+}

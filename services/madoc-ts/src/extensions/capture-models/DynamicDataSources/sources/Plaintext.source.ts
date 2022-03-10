@@ -1,4 +1,4 @@
-import { FieldSource } from '@capture-models/editor';
+import { FieldSource } from '../../../../frontend/shared/capture-models/editor/components/FieldEditor/FieldEditor';
 import { DynamicData, DynamicDataLoader } from '../types';
 
 const plaintextSourceDefinition: FieldSource = {

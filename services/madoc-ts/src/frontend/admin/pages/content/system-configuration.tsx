@@ -1,7 +1,7 @@
 import React from 'react';
 import { useMutation } from 'react-query';
 import { useHistory } from 'react-router-dom';
-import { EditShorthandCaptureModel } from '../../../shared/caputre-models/EditorShorthandCaptureModel';
+import { EditShorthandCaptureModel } from '../../../shared/capture-models/EditorShorthandCaptureModel';
 import { useApi } from '../../../shared/hooks/use-api';
 import { useSite, useSystemConfig, useUpdateSystemConfig } from '../../../shared/hooks/use-site';
 import { AdminHeader } from '../../molecules/AdminHeader';

@@ -1,0 +1,709 @@
+{
+  "structure": {
+    "id": "2416e3ed-90cc-4160-8d7b-ceefeb6d2adc",
+    "type": "choice",
+    "label": "revisions - model root",
+    "items": [
+      {
+        "id": "e5c95a41-2544-4cb6-aa69-376c60f617cc",
+        "label": "Edit field A",
+        "type": "model",
+        "fields": [
+          "field-a"
+        ]
+      },
+      {
+        "id": "9d4236af-a38d-4fbe-ac32-200fd07b5b08",
+        "label": "Edit model A - no model root",
+        "description": "This should allow you to create new 'model-a' instances",
+        "type": "model",
+        "fields": [
+          [
+            "model-a",
+            [
+              "field-b"
+            ]
+          ]
+        ]
+      },
+      {
+        "id": "e31b1e2c-7362-45f6-86f4-52c1ff637f45",
+        "label": "Edit model A - with model root",
+        "description": "This should allow you to edit all of the 'field-b' fields. If model-a id is specified then it should allow you to only edit that one documents field, since the field has allowMultiple false",
+        "type": "model",
+        "modelRoot": [
+          "model-a"
+        ],
+        "fields": [
+          [
+            "model-a",
+            [
+              "field-b"
+            ]
+          ]
+        ]
+      },
+      {
+        "id": "2741b3c3-3bc3-4793-b766-7888c34970f6",
+        "label": "Edit model A - model root and field above root",
+        "description": "This should throw an error",
+        "type": "model",
+        "modelRoot": [
+          "model-a"
+        ],
+        "fields": [
+          "field-a",
+          [
+            "model-a",
+            [
+              "field-b"
+            ]
+          ]
+        ]
+      },
+      {
+        "id": "475fa8bc-607d-4d88-b0ef-1e1e08e4edc2",
+        "label": "Edit model C - no model root",
+        "description": "This should [???]",
+        "type": "model",
+        "fields": [
+          [
+            "model-a",
+            [
+              [
+                "model-c",
+                [
+                  "field-c"
+                ]
+              ]
+            ]
+          ]
+        ]
+      },
+      {
+        "id": "0c94ac8e-04ca-47ac-87de-3789fa1f7adc",
+        "label": "Edit model C - model root depth 1",
+        "description": "This should [???]",
+        "type": "model",
+        "modelRoot": [
+          "model-a"
+        ],
+        "fields": [
+          [
+            "model-a",
+            [
+              [
+                "model-c",
+                [
+                  "field-c"
+                ]
+              ]
+            ]
+          ]
+        ]
+      },
+      {
+        "id": "a6781d80-331a-45d5-8b2e-b544cd8bd6d8",
+        "label": "Edit model C - model root depth 2",
+        "description": "This should [???]",
+        "type": "model",
+        "modelRoot": [
+          "model-a",
+          "model-c"
+        ],
+        "fields": [
+          [
+            "model-a",
+            [
+              [
+                "model-c",
+                [
+                  "field-c"
+                ]
+              ]
+            ]
+          ]
+        ]
+      },
+      {
+        "id": "c7950199-2910-474c-8551-bee1c5838c5b",
+        "label": "Edit model C - model root depth 1 + field under",
+        "description": "This should [???]",
+        "type": "model",
+        "modelRoot": [
+          "model-a"
+        ],
+        "fields": [
+          [
+            "model-a",
+            [
+              "field-b",
+              [
+                "model-c",
+                [
+                  "field-c"
+                ]
+              ]
+            ]
+          ]
+        ]
+      },
+      {
+        "id": "abe68dc4-7326-421d-9854-b97330eca026",
+        "label": "Edit model C - model root depth 1 + field over",
+        "description": "This should [???]",
+        "type": "model",
+        "modelRoot": [
+          "model-a"
+        ],
+        "fields": [
+          "field-a",
+          [
+            "model-a",
+            [
+              [
+                "model-c",
+                [
+                  "field-c"
+                ]
+              ]
+            ]
+          ]
+        ]
+      },
+      {
+        "id": "b36f45cb-0d14-4fd9-bd19-6335b72d7174",
+        "label": "Edit model C - model root depth 2 + field over",
+        "description": "This should [???]",
+        "type": "model",
+        "modelRoot": [
+          "model-a",
+          "model-c"
+        ],
+        "fields": [
+          "field-a",
+          [
+            "model-a",
+            [
+              [
+                "model-c",
+                [
+                  "field-c"
+                ]
+              ]
+            ]
+          ]
+        ]
+      },
+      {
+        "id": "09524831-d748-4469-ab1f-fb9e69f56427",
+        "label": "Edit model C - model root depth 2 + field over (x2)",
+        "description": "This should [???]",
+        "type": "model",
+        "modelRoot": [
+          "model-a",
+          "model-c"
+        ],
+        "fields": [
+          "field-a",
+          [
+            "model-a",
+            [
+              "field-b",
+              [
+                "model-c",
+                [
+                  "field-c"
+                ]
+              ]
+            ]
+          ]
+        ]
+      },
+      {
+        "id": "0577d939-4a66-4c9f-ac8b-b858483a8f1f",
+        "label": "Edit model B - edit nested field (no duplicate allow)",
+        "description": "This should [???]",
+        "type": "model",
+        "modelRoot": [
+          "model-b"
+        ],
+        "fields": [
+          [
+            "model-b",
+            [
+              "field-d",
+              [
+                "model-c",
+                [
+                  "field-e",
+                  [
+                    "model-d",
+                    [
+                      "field-f"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      },
+      {
+        "id": "0f426597-f4c1-4ce3-8f51-1d1964fc28f5",
+        "label": "Edit model B - edit nested field (root on allowMultiple=false)",
+        "description": "This should [???]",
+        "type": "model",
+        "modelRoot": [
+          "model-b",
+          "model-c"
+        ],
+        "fields": [
+          [
+            "model-b",
+            [
+              "field-d",
+              [
+                "model-c",
+                [
+                  "field-e",
+                  [
+                    "model-d",
+                    [
+                      "field-f"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      },
+      {
+        "id": "0b619955-21d7-4e01-8907-b540a18528ce",
+        "label": "Edit model B - depth 3",
+        "description": "This should [???]",
+        "type": "model",
+        "modelRoot": [
+          "model-b",
+          "model-c",
+          "model-d"
+        ],
+        "fields": [
+          [
+            "model-b",
+            [
+              "field-d",
+              [
+                "model-c",
+                [
+                  "field-e",
+                  [
+                    "model-d",
+                    [
+                      "field-f"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      },
+      {
+        "id": "dba590fc-78b6-4def-beee-20447977a845",
+        "label": "Edit model F - depth 1",
+        "description": "This should [???]",
+        "type": "model",
+        "modelRoot": [
+          "model-f"
+        ],
+        "fields": [
+          [
+            "model-f",
+            [
+              [
+                "model-g",
+                [
+                  "field-f"
+                ]
+              ]
+            ]
+          ]
+        ]
+      },
+      {
+        "id": "205fac90-1659-41fa-abf4-199bf5f9b092",
+        "label": "Edit model F - depth 2",
+        "description": "This should [???]",
+        "type": "model",
+        "modelRoot": [
+          "model-f",
+          "model-g"
+        ],
+        "fields": [
+          [
+            "model-f",
+            [
+              [
+                "model-g",
+                [
+                  "field-f"
+                ]
+              ]
+            ]
+          ]
+        ]
+      },
+      {
+        "id": "7e5da7c6-ec21-4277-bf5c-37c5044b450f",
+        "label": "Edit model H - depth 0",
+        "description": "This should [???]",
+        "type": "model",
+        "fields": [
+          [
+            "model-h",
+            [
+              [
+                "model-i",
+                [
+                  "field-g"
+                ]
+              ]
+            ]
+          ]
+        ]
+      },
+      {
+        "id": "5fed695d-2815-41c4-9a3b-fb2b27a929ee",
+        "label": "Edit model H - depth 1",
+        "description": "This should [???]",
+        "modelRoot": [
+          "model-h"
+        ],
+        "type": "model",
+        "fields": [
+          [
+            "model-h",
+            [
+              [
+                "model-i",
+                [
+                  "field-g"
+                ]
+              ]
+            ]
+          ]
+        ]
+      },
+      {
+        "id": "0e65ee6c-4ac9-4112-b291-42998845e30c",
+        "label": "Edit model H - depth 2",
+        "description": "This should [???]",
+        "modelRoot": [
+          "model-h",
+          "model-i"
+        ],
+        "type": "model",
+        "fields": [
+          [
+            "model-h",
+            [
+              [
+                "model-i",
+                [
+                  "field-g"
+                ]
+              ]
+            ]
+          ]
+        ]
+      },
+      {
+        "id": "45e13064-887e-4dc2-aebf-4742f4beea29",
+        "label": "Edit model B - one field",
+        "description": "This should [???]",
+        "type": "model",
+        "modelRoot": [
+          "model-b"
+        ],
+        "fields": [
+          [
+            "model-b",
+            [
+              [
+                "model-c",
+                [
+                  [
+                    "model-d",
+                    [
+                      "field-f"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      }
+    ],
+    "description": "Contains single choice with single text field"
+  },
+  "document": {
+    "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+    "type": "entity",
+    "properties": {
+      "field-a": [
+        {
+          "id": "5f0e4511-957d-429c-8151-396ec4585a2d",
+          "type": "text-field",
+          "value": "value for field",
+          "label": "Top level text field"
+        }
+      ],
+      "model-a": [
+        {
+          "id": "d58f5f48-28bf-44ca-8396-c30ed4ae779b",
+          "type": "entity",
+          "label": "Model A.1: Allow multiple = true",
+          "allowMultiple": true,
+          "properties": {
+            "field-b": [
+              {
+                "id": "58a09b28-219c-4609-b24f-c0ed6e5cfa42",
+                "type": "text-field",
+                "value": "value for field",
+                "label": "First level text field"
+              }
+            ],
+            "model-c": [
+              {
+                "id": "435017ff-5bc0-4559-ac49-5aa1e1058121",
+                "type": "entity",
+                "label": "Model C.1: Allow multiple = true",
+                "allowMultiple": true,
+                "properties": {
+                  "field-c": [
+                    {
+                      "id": "53cdccf0-ef2b-432c-85dc-f9f6fb177297",
+                      "type": "text-field",
+                      "value": "value for field",
+                      "label": "Second level text field"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "model-b": [
+        {
+          "id": "d948d756-14ad-4554-92ce-0296e5ce8735",
+          "type": "entity",
+          "label": "Model B.1: Allow multiple = false",
+          "allowMultiple": false,
+          "properties": {
+            "field-d": [
+              {
+                "id": "7ff9cbd8-a393-4b82-ab2b-fd3814541722",
+                "type": "text-field",
+                "value": "value for field",
+                "label": "First level text field"
+              }
+            ],
+            "model-c": [
+              {
+                "id": "b51eae75-e76f-496f-b048-f0b5b7f6cacd",
+                "type": "entity",
+                "label": "Model B.2: Allow multiple = true",
+                "allowMultiple": true,
+                "properties": {
+                  "field-e": [
+                    {
+                      "id": "7c19f5f0-75ba-4153-9f96-35055bc2a286",
+                      "type": "text-field",
+                      "value": "value for field",
+                      "label": "Second level text field"
+                    }
+                  ],
+                  "model-d": [
+                    {
+                      "id": "4e167b01-6c0c-4e2f-bec6-d0f4dc4126eb",
+                      "type": "entity",
+                      "label": "Model B.3: Allow multiple = false",
+                      "allowMultiple": false,
+                      "properties": {
+                        "field-f": [
+                          {
+                            "id": "23fb8e8b-6ae4-4503-b688-80116b5df127",
+                            "type": "text-field",
+                            "value": "value for field",
+                            "label": "Third level text field"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "model-f": [
+        {
+          "id": "602df1a8-9071-409a-ba6d-43b8dfc97683",
+          "type": "entity",
+          "label": "Model F.1: Allow multiple = false",
+          "allowMultiple": false,
+          "properties": {
+            "field-e": [
+              {
+                "id": "64e0aa6d-3288-4b6a-9cea-8e40373861d9",
+                "type": "text-field",
+                "value": "value for field",
+                "label": "First level text field"
+              }
+            ],
+            "model-g": [
+              {
+                "id": "1a7e07f0-f111-406e-972e-71976258a47f",
+                "type": "entity",
+                "label": "Model F.2: Allow multiple = true",
+                "allowMultiple": true,
+                "properties": {
+                  "field-f": [
+                    {
+                      "id": "1ecda588-c846-48c1-813c-2fd4ccfd6700",
+                      "type": "text-field",
+                      "value": "value for field (first)",
+                      "label": "Second level text field (first)"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "20254fca-fdad-4c70-b748-590f206e51d8",
+                "type": "entity",
+                "label": "Model F.3: Allow multiple = true",
+                "allowMultiple": true,
+                "properties": {
+                  "field-f": [
+                    {
+                      "id": "5019c619-a64c-4893-bf39-857df15f1e92",
+                      "type": "text-field",
+                      "value": "value for field (second)",
+                      "label": "Second level text field (second)"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "model-h": [
+        {
+          "id": "ab70224e-4cb8-4d8d-a379-9769ad3e06e5",
+          "type": "entity",
+          "label": "Model H.1: Allow multiple = true",
+          "allowMultiple": true,
+          "properties": {
+            "model-i": [
+              {
+                "id": "ecbd3446-6da3-4125-934f-1a3b766b8afe",
+                "type": "entity",
+                "label": "Model I.1: Allow multiple = true",
+                "allowMultiple": true,
+                "properties": {
+                  "field-g": [
+                    {
+                      "id": "e72d1003-5b50-42ed-9495-f4d80cc53961",
+                      "type": "text-field",
+                      "value": "value for field",
+                      "label": "Second level text field"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "7de07c37-6157-4d63-8097-d2d4a78b778f",
+                "type": "entity",
+                "label": "Model I.2: Allow multiple = true",
+                "allowMultiple": true,
+                "properties": {
+                  "field-g": [
+                    {
+                      "id": "8d4e3122-0f15-42db-864d-52c1a2843a90",
+                      "type": "text-field",
+                      "value": "value for field",
+                      "label": "Second level text field"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "aa6fe309-deef-4211-802c-dbc0f2ba16ed",
+          "type": "entity",
+          "label": "Model H.2: Allow multiple = true",
+          "allowMultiple": true,
+          "properties": {
+            "model-i": [
+              {
+                "id": "3c5abf69-5258-4b0f-a082-a7e53ec15c47",
+                "type": "entity",
+                "label": "Model I.3: Allow multiple = true",
+                "allowMultiple": true,
+                "properties": {
+                  "field-g": [
+                    {
+                      "id": "8fed8e4d-fa2f-4279-a145-ea88b1193bae",
+                      "type": "text-field",
+                      "value": "value for field",
+                      "label": "Second level text field"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "915106fd-f663-4e55-a727-8253e251c62d",
+                "type": "entity",
+                "label": "Model I.4: Allow multiple = true",
+                "allowMultiple": true,
+                "properties": {
+                  "field-g": [
+                    {
+                      "id": "bb6ec6db-eaab-4271-b69e-34bf5501684b",
+                      "type": "text-field",
+                      "value": "value for field",
+                      "label": "Second level text field"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "label": "Simple document",
+    "description": ""
+  },
+  "target": [
+    {
+      "type": "manifest",
+      "id": "https://view.nls.uk/manifest/7446/74464117/manifest.json"
+    },
+    {
+      "type": "canvas",
+      "id": "https://view.nls.uk/iiif/7446/74464117/canvas/3"
+    }
+  ],
+  "contributors": {},
+  "revisions": [],
+  "id": "998f9673-61aa-4979-a6e6-258306917119"
+}

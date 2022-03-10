@@ -1,6 +1,6 @@
-import { captureModelShorthand } from '@capture-models/helpers';
-import { documentFragmentWrapper } from '../../src/frontend/shared/caputre-models/utility/document-fragment-wrapper';
-import { documentToDefaultStructure } from '../../src/frontend/shared/caputre-models/utility/document-to-default-structure';
+import { captureModelShorthand } from '../../src/frontend/shared/capture-models/helpers/capture-model-shorthand';
+import { documentFragmentWrapper } from '../../src/frontend/shared/capture-models/utility/document-fragment-wrapper';
+import { documentToDefaultStructure } from '../../src/frontend/shared/capture-models/utility/document-to-default-structure';
 import { siteConfigurationModel } from '../../src/frontend/shared/configuration/site-config';
 
 describe('document to default structure', () => {

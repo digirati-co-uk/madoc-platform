@@ -1,11 +1,11 @@
 import React from 'react';
 import { CaptureModelSnippet } from '../../../../../types/schemas/capture-model-snippet';
+import { Card, CardContent } from '../../../../shared/capture-models/editor/atoms/Card';
 import { UniversalComponent } from '../../../../types';
 import { Link, useHistory } from 'react-router-dom';
 import { Button } from '../../../../shared/navigation/Button';
 import { useMutation } from 'react-query';
 import { useApi } from '../../../../shared/hooks/use-api';
-import { Card, CardContent } from '@capture-models/editor';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { AdminHeader } from '../../../molecules/AdminHeader';

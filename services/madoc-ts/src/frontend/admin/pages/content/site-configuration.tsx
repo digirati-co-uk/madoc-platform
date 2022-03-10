@@ -1,8 +1,8 @@
-import { RoundedCard } from '@capture-models/editor';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { SuccessMessage } from '../../../shared/callouts/SuccessMessage';
+import { RoundedCard } from '../../../shared/capture-models/editor/components/RoundedCard/RoundedCard';
 import { WidePage } from '../../../shared/layout/WidePage';
 import { useLocationQuery } from '../../../shared/hooks/use-location-query';
 import { HrefLink } from '../../../shared/utility/href-link';

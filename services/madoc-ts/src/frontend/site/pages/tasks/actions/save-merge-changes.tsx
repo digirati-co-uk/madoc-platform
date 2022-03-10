@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useApi } from '../../../../shared/hooks/use-api';
-import { Revisions } from '@capture-models/editor';
+import { Revisions } from '../../../../shared/capture-models/editor/stores/revisions/index';
 import { useMutation } from 'react-query';
 import {
   EditorToolbarButton,

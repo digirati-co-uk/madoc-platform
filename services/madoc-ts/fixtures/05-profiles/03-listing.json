@@ -1,0 +1,16 @@
+{
+  "structure": {
+    "id": "aaea4581-96a2-4e7f-b66c-004a7ba882d6",
+    "type": "choice",
+    "label": "profiles - listing",
+    "items": []
+  },
+  "document": {
+    "id": "1800bc5d-60f3-4064-8d9d-131e379981f5",
+    "type": "entity",
+    "label": "TODO",
+    "labelledBy": "label",
+    "properties": {}
+  },
+  "id": "5cc7a821-5fbe-4d34-acdf-0c3a1f0a2d65"
+}

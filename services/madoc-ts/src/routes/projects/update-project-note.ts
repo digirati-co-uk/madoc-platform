@@ -1,6 +1,6 @@
-import { generateId } from '@capture-models/helpers';
 import { sql } from 'slonik';
 import { getProject } from '../../database/queries/project-queries';
+import { generateId } from '../../frontend/shared/capture-models/helpers/generate-id';
 import { PersonalNotesRow } from '../../types/personal-notes';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { RequestError } from '../../utility/errors/request-error';

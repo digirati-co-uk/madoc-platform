@@ -17,7 +17,7 @@ import {
 import { ModalButton } from '../../src/frontend/shared/components/Modal';
 import { Heading3 } from '../../src/frontend/shared/typography/Heading3';
 import { Button, ButtonRow } from '../../src/frontend/shared/navigation/Button';
-import { TextField } from '@capture-models/editor/lib/input-types/TextField/TextField';
+import { TextField } from '../../src/frontend/shared/capture-models/editor/input-types/TextField/TextField';
 import { Suspense, useState } from 'react';
 import { FullScreenEnterIcon } from '../../src/frontend/shared/icons/FullScreenEnterIcon';
 import { ArrowForwardIcon } from '../../src/frontend/shared/icons/ArrowForwardIcon';

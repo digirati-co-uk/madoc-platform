@@ -1,7 +1,7 @@
+import { Revisions } from '../capture-models/editor/stores/revisions/index';
+import { RevisionRequest } from '../capture-models/types/revision-request';
 import { useApi } from './use-api';
-import { Revisions } from '@capture-models/editor';
 import { useMutation } from 'react-query';
-import { RevisionRequest } from '@capture-models/types';
 import { useCallback } from 'react';
 import { useUser } from './use-site';
 

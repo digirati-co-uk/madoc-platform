@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Editor, { theme } from 'rich-markdown-editor';
-import { captureModelShorthand } from '@capture-models/helpers';
 import styled from 'styled-components';
+import { captureModelShorthand } from '../../../frontend/shared/capture-models/helpers/capture-model-shorthand';
 import { useApi } from '../../../frontend/shared/hooks/use-api';
 import { Button } from '../../../frontend/shared/navigation/Button';
 import { ModalFooter } from '../../../frontend/shared/layout/Modal';

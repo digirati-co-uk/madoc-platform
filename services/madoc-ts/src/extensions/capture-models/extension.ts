@@ -1,4 +1,4 @@
-import { CaptureModel } from '@capture-models/types';
+import { CaptureModel } from '../../frontend/shared/capture-models/types/capture-model';
 import { BaseExtension } from '../extension-manager';
 
 export interface CaptureModelExtension extends BaseExtension {

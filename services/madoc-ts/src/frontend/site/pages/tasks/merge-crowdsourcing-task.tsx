@@ -1,12 +1,13 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CrowdsourcingReviewMerge } from '../../../../gateway/tasks/crowdsourcing-review';
+import { defaultTheme } from '../../../shared/capture-models/editor/themes';
+import { Revisions } from '../../../shared/capture-models/editor/stores/revisions/index';
 import { useApi } from '../../../shared/hooks/use-api';
 import { useQuery } from 'react-query';
 import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
 import { useLoadedCaptureModel } from '../../../shared/hooks/use-loaded-capture-model';
 import { ThemeProvider } from 'styled-components';
-import { defaultTheme, Revisions } from '@capture-models/editor';
 import { MaximiseWindow } from '../../../shared/layout/MaximiseWindow';
 import {
   EditorToolbarButton,
@@ -19,7 +20,7 @@ import { ArrowBackIcon } from '../../../shared/icons/ArrowBackIcon';
 import { FullScreenExitIcon } from '../../../shared/icons/FullScreenExitIcon';
 import { FullScreenEnterIcon } from '../../../shared/icons/FullScreenEnterIcon';
 import { ViewContent } from '../../../shared/components/ViewContent';
-import { RevisionTopLevel } from '../../../shared/caputre-models/RevisionTopLevel';
+import { RevisionTopLevel } from '../../../shared/capture-models/RevisionTopLevel';
 import { ModalButton } from '../../../shared/components/Modal';
 import { Button, LinkButton } from '../../../shared/navigation/Button';
 import { ArrowForwardIcon } from '../../../shared/icons/ArrowForwardIcon';

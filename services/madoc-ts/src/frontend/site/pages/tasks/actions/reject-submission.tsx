@@ -1,7 +1,7 @@
-import { TextField } from '@capture-models/editor/lib/input-types/TextField/TextField';
+import { TextField } from '../../../../shared/capture-models/editor/input-types/TextField/TextField';
 import React, { useCallback, useState } from 'react';
 import { useApi } from '../../../../shared/hooks/use-api';
-import { Revisions } from '@capture-models/editor';
+import { Revisions } from '../../../../shared/capture-models/editor/stores/revisions/index';
 import {
   EditorToolbarButton,
   EditorToolbarIcon,

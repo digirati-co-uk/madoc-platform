@@ -1,0 +1,104 @@
+{
+  "id": "5a51cdec-ea69-473c-a0ec-674b3e43b51f",
+  "structure": {
+    "id": "bbf9c022-3cc5-4ced-b836-652ddf16fcd4",
+    "type": "choice",
+    "label": "Multiple entities and fields",
+    "items": [
+      {
+        "id": "bbf9c022-3cc5-4ced-b836-652ddf16fcd3",
+        "type": "model",
+        "label": "Default",
+        "fields": [
+          [
+            "place",
+            [
+              "place_name"
+            ]
+          ]
+        ]
+      }
+    ]
+  },
+  "revisions": [
+    {
+      "structureId": "bbf9c022-3cc5-4ced-b836-652ddf16fcd3",
+      "approved": false,
+      "label": "Default",
+      "id": "3fde8b6b-a31a-413c-a6f7-9747c8ad3268",
+      "fields": [
+        [
+          "place",
+          [
+            "place_name"
+          ]
+        ]
+      ],
+      "status": "submitted",
+      "revises": null,
+      "authors": []
+    },
+    {
+      "structureId": "bbf9c022-3cc5-4ced-b836-652ddf16fcd3",
+      "approved": false,
+      "label": "Default",
+      "id": "8d95f27b-613a-40f7-8f4e-118c666a2272",
+      "fields": [
+        [
+          "place",
+          [
+            "place_name"
+          ]
+        ]
+      ],
+      "status": "submitted",
+      "revises": null,
+      "authors": []
+    }
+  ],
+  "document": {
+    "id": "c4b51b4d-6bad-4eab-845e-bf64085f3d03",
+    "type": "entity",
+    "label": "Test",
+    "properties": {
+      "place": [
+        {
+          "id": "2d39427f-3c30-4013-b3b4-d0833574fe1d",
+          "type": "entity",
+          "label": "place",
+          "properties": {
+            "place_name": [
+              {
+                "id": "41e8fd6e-9265-498a-8a9a-5f0ad2a597be",
+                "type": "text-field",
+                "label": "place_name",
+                "value": ""
+              }
+            ]
+          },
+          "selector": {
+            "id": "c5e8c546-d529-484c-b59c-913b3259bb74",
+            "type": "box-selector",
+            "state": null,
+            "revisedBy": [
+              {
+                "id": "032b7148-8491-45c5-ac5f-fa7714d1eb44",
+                "type": "box-selector",
+                "state": {
+                  "x": 1391,
+                  "y": 1374,
+                  "width": 474,
+                  "height": 140
+                },
+                "revises": "c5e8c546-d529-484c-b59c-913b3259bb74",
+                "revisionId": "3fde8b6b-a31a-413c-a6f7-9747c8ad3268"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "source": "structure",
+  "status": "accepted"
+}

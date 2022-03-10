@@ -1,4 +1,4 @@
-import { CaptureModel } from '@capture-models/types';
+import { CaptureModel } from '../frontend/shared/capture-models/types/capture-model';
 
 export function traverseStructure(structure: CaptureModel['structure'], cb: (item: any) => void, maxDepth = 10) {
   if (!maxDepth) {

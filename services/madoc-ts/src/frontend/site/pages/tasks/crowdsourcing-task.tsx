@@ -1,16 +1,16 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ThemeProvider } from 'styled-components';
-import { defaultTheme } from '@capture-models/editor';
 import { Link } from 'react-router-dom';
+import { defaultTheme } from '../../../shared/capture-models/editor/themes';
 import { Button } from '../../../shared/navigation/Button';
-import { EditorSlots } from '../../../shared/caputre-models/new/components/EditorSlots';
-import { RevisionProviderWithFeatures } from '../../../shared/caputre-models/new/components/RevisionProviderWithFeatures';
-import { SimpleSaveButton } from '../../../shared/caputre-models/new/components/SimpleSaveButton';
-import '@capture-models/editor/lib/input-types/TextField';
-import '@capture-models/editor/lib/input-types/HTMLField';
+import { EditorSlots } from '../../../shared/capture-models/new/components/EditorSlots';
+import { RevisionProviderWithFeatures } from '../../../shared/capture-models/new/components/RevisionProviderWithFeatures';
+import { SimpleSaveButton } from '../../../shared/capture-models/new/components/SimpleSaveButton';
+import '../../../shared/capture-models/editor/input-types/TextField';
+import '../../../shared/capture-models/editor/input-types/HTMLField';
+
 import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
-import { Heading4 } from '../../../shared/typography/Heading4';
 import { HrefLink } from '../../../shared/utility/href-link';
 import { useCrowdsourcingTaskDetails } from '../../hooks/use-crowdsourcing-task-details';
 import { TaskContext } from '../loaders/task-loader';

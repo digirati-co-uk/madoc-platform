@@ -1,4 +1,4 @@
-import { CaptureModel } from '@capture-models/types';
+import { CaptureModel } from '../capture-models/types/capture-model';
 
 export function isEditingAnotherUsersRevision(captureModel?: CaptureModel, revisionId?: string, user?: { id: any }) {
   if (!captureModel || !revisionId || !user || !captureModel.revisions) {

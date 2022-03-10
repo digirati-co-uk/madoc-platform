@@ -1,4 +1,4 @@
-import { CaptureModel } from '@capture-models/types';
+import { CaptureModel } from '../../src/frontend/shared/capture-models/types/capture-model';
 import { ProjectFull } from '../../src/types/project-full';
 import { ApiMock } from '../../test-utility/api-mock';
 import { DatabaseMock } from '../../test-utility/database-mock';

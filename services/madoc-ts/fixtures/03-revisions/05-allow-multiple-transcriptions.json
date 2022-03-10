@@ -1,0 +1,128 @@
+{
+  "structure": {
+    "id": "8d36f25f-649b-47b4-b7fe-02043f8cfe7a",
+    "type": "choice",
+    "label": "revisions - allow multiple transcriptions",
+    "items": [
+      {
+        "id": "fd847948-11bf-42ca-bfdd-cab85ea818f3",
+        "label": "Transcriptions",
+        "type": "model",
+        "fields": [
+          "transcription"
+        ]
+      }
+    ],
+    "description": ""
+  },
+  "document": {
+    "id": "47e8a9d8-76f8-422b-91af-b457d1c624a0",
+    "type": "entity",
+    "label": "Name of entity",
+    "properties": {
+      "transcription": [
+        {
+          "id": "1615a172-b2c5-4192-bcc1-606a871b6230",
+          "type": "text-field",
+          "label": "Transcription",
+          "allowMultiple": true,
+          "value": ""
+        },
+        {
+          "id": "2666cf79-ef2f-419f-a3f4-038216a89783",
+          "type": "text-field",
+          "label": "Transcription",
+          "revises": "1615a172-b2c5-4192-bcc1-606a871b6230",
+          "allowMultiple": true,
+          "revision": "f496a9aa-25eb-4b1d-9d94-9cdcef03e527",
+          "value": "Person A created this one, which revises the original"
+        },
+        {
+          "id": "1efd5946-a3a1-484f-a862-710741a3b682",
+          "type": "text-field",
+          "label": "Transcription",
+          "allowMultiple": true,
+          "revision": "daf3f9d9-2a16-4c1f-8657-3560775bd9eb",
+          "value": "Person B created this one, which is completely new"
+        },
+        {
+          "id": "892f3abe-bbbe-4b1e-9167-a52ec76ea5c1",
+          "type": "text-field",
+          "label": "Transcription",
+          "allowMultiple": true,
+          "revision": "bb5d55b1-6c38-4bb9-a6e6-ed236347671b",
+          "value": "Person C created this one"
+        },
+        {
+          "id": "912683e3-fd6e-4599-bb0f-acd232c9cf87",
+          "type": "text-field",
+          "label": "Transcription",
+          "allowMultiple": true,
+          "revises": "2666cf79-ef2f-419f-a3f4-038216a89783",
+          "revision": "896c6278-655a-4a39-965c-08abbffb0bf2",
+          "value": "Person D created this one, which overrides Person As one"
+        }
+      ]
+    }
+  },
+  "contributors": {
+    "f496a9aa-25eb-4b1d-9d94-9cdcef03e527": {
+      "id": "f496a9aa-25eb-4b1d-9d94-9cdcef03e527",
+      "type": "Person",
+      "name": "Test person A"
+    },
+    "daf3f9d9-2a16-4c1f-8657-3560775bd9eb": {
+      "id": "daf3f9d9-2a16-4c1f-8657-3560775bd9eb",
+      "type": "Person",
+      "name": "Test person B"
+    },
+    "bb5d55b1-6c38-4bb9-a6e6-ed236347671b": {
+      "id": "bb5d55b1-6c38-4bb9-a6e6-ed236347671b",
+      "type": "Person",
+      "name": "Test person C"
+    },
+    "896c6278-655a-4a39-965c-08abbffb0bf2": {
+      "id": "896c6278-655a-4a39-965c-08abbffb0bf2",
+      "type": "Person",
+      "name": "Test person D"
+    }
+  },
+  "revisions": [
+    {
+      "id": "f496a9aa-25eb-4b1d-9d94-9cdcef03e527",
+      "approved": true,
+      "status": "accepted",
+      "structureId": "fd847948-11bf-42ca-bfdd-cab85ea818f3",
+      "fields": [
+        "transcription"
+      ]
+    },
+    {
+      "id": "daf3f9d9-2a16-4c1f-8657-3560775bd9eb",
+      "status": "accepted",
+      "approved": true,
+      "structureId": "fd847948-11bf-42ca-bfdd-cab85ea818f3",
+      "fields": [
+        "transcription"
+      ]
+    },
+    {
+      "id": "bb5d55b1-6c38-4bb9-a6e6-ed236347671b",
+      "status": "submitted",
+      "structureId": "fd847948-11bf-42ca-bfdd-cab85ea818f3",
+      "fields": [
+        "transcription"
+      ]
+    },
+    {
+      "id": "896c6278-655a-4a39-965c-08abbffb0bf2",
+      "status": "submitted",
+      "revises": "f496a9aa-25eb-4b1d-9d94-9cdcef03e527",
+      "structureId": "fd847948-11bf-42ca-bfdd-cab85ea818f3",
+      "fields": [
+        "transcription"
+      ]
+    }
+  ],
+  "id": "143d9c4a-5d4e-4ca2-89f3-dc4bd7b45e3e"
+}

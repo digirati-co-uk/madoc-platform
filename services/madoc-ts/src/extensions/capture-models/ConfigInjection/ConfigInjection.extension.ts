@@ -1,4 +1,4 @@
-import { CaptureModel } from '@capture-models/types';
+import { CaptureModel } from '../../../frontend/shared/capture-models/types/capture-model';
 import { ApiClient } from '../../../gateway/api';
 import { parseUrn } from '../../../utility/parse-urn';
 import { defaultDispose } from '../../extension-manager';

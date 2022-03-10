@@ -1,8 +1,8 @@
-import { generateId } from '@capture-models/helpers';
+import { generateId } from '../../frontend/shared/capture-models/helpers/generate-id';
+import { CaptureModel } from '../../frontend/shared/capture-models/types/capture-model';
 import { findUseManifestTaskFromList } from '../../utility/claim-utilities';
 import { parseUrn } from '../../utility/parse-urn';
 import { BaseTask } from './base-task';
-import { CaptureModel } from '@capture-models/types';
 import { ApiClient } from '../api';
 import { CrowdsourcingManifestTask, syncManifestTaskStatus } from './crowdsourcing-manifest-task';
 import { CrowdsourcingReview } from './crowdsourcing-review';

@@ -1,0 +1,56 @@
+{
+  "structure": {
+    "id": "892f0228-53d2-4f79-986d-712c122bd33f",
+    "type": "choice",
+    "label": "selectors - wunder selector",
+    "items": [
+      {
+        "id": "e801f905-5afc-4612-9e59-2b78cf407b9d",
+        "label": "Book cover",
+        "type": "model",
+        "fields": [
+          "title"
+        ],
+        "description": "Describe the cover of a book"
+      }
+    ]
+  },
+  "target": [
+    {
+      "type": "manifest",
+      "id": "https://wellcomelibrary.org/iiif/b18035723/manifest"
+    },
+    {
+      "type": "canvas",
+      "id": "https://wellcomelibrary.org/iiif/b18035723/canvas/c0"
+    }
+  ],
+  "document": {
+    "id": "12396c9f-0706-49c1-9559-1ab853040be1",
+    "type": "entity",
+    "properties": {
+      "title": [
+        {
+          "id": "35ffb3e1-76ef-437e-acce-3523db75b54a",
+          "type": "text-field",
+          "selector": {
+            "id": "d35b5a96-e653-4b9b-8f6c-a93ea590dbd4",
+            "type": "box-selector",
+            "state": {
+              "height": 771,
+              "width": 2199,
+              "x": 164,
+              "y": 235
+            }
+          },
+          "label": "Title",
+          "description": "The title of the book as it is printed on the cover.",
+          "value": "WUNDER DER VERERBUNG"
+        }
+      ]
+    },
+    "label": "Simple document",
+    "description": ""
+  },
+  "id": "31fd2fae-7fd5-40bd-9300-007c5a7f28f0"
+}

@@ -1,0 +1,16 @@
+{
+  "structure": {
+    "id": "f78cb77f-ff5d-4c95-afd0-34df8a967b0f",
+    "type": "choice",
+    "label": "selectors - mulitple nested selectors",
+    "items": []
+  },
+  "document": {
+    "id": "c01518ad-a79c-43a4-a301-22b959faa089",
+    "type": "entity",
+    "label": "TODO",
+    "labelledBy": "label",
+    "properties": {}
+  },
+  "id": "109a102e-9c0b-4253-bb48-a75730a6030e"
+}

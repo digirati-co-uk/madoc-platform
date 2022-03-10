@@ -1,6 +1,9 @@
-import { DocumentStore, StructureEditor, StructureStore, useFocusedStructureEditor } from '@capture-models/editor';
-import { CaptureModel } from '@capture-models/types';
 import React from 'react';
+import { StructureEditor } from '../../../../shared/capture-models/editor/components/StructureEditor/StructureEditor';
+import { DocumentStore } from '../../../../shared/capture-models/editor/stores/document/document-store';
+import { StructureStore } from '../../../../shared/capture-models/editor/stores/structure/structure-store';
+import { useFocusedStructureEditor } from '../../../../shared/capture-models/editor/stores/structure/use-focused-structure-editor';
+import { CaptureModel } from '../../../../shared/capture-models/types/capture-model';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useModelEditorConfig } from './use-model-editor-config';
 

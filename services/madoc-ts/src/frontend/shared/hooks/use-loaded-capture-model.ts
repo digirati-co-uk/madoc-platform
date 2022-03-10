@@ -1,6 +1,6 @@
 import { CanvasFull } from '../../../types/canvas-full';
-import { CaptureModel } from '@capture-models/types';
-import { resolveUrn } from "../../../utility/resolve-urn";
+import { resolveUrn } from '../../../utility/resolve-urn';
+import { CaptureModel } from '../capture-models/types/capture-model';
 import { useApi } from './use-api';
 import { useQuery } from 'react-query';
 

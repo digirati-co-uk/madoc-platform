@@ -1,4 +1,3 @@
-import { generateId } from '@capture-models/helpers';
 import { InternationalString } from '@hyperion-framework/types';
 import produce from 'immer';
 import React, { useEffect, useMemo, useReducer, useState } from 'react';
@@ -6,6 +5,7 @@ import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautif
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { MetadataEditor } from '../../admin/molecules/MetadataEditor';
+import { generateId } from '../capture-models/helpers/generate-id';
 import { Button } from '../navigation/Button';
 import { CloseIcon } from '../icons/CloseIcon';
 import {

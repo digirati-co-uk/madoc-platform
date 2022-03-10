@@ -1,8 +1,4 @@
-import { Grid } from '@capture-models/editor';
-import { CanvasUniversalViewer } from '../../site/features/CanvasUniversalViewer';
-import { ManifestHero } from '../../site/features/ManifestHero';
-import { CanvasPanelBlock } from '../../shared/components/CanvasPanelBlock';
-import { ViewManifestUV } from '../../site/pages/view-manifest-uv';
+import { Grid } from '../capture-models/editor/atoms/Grid';
 import { DefaultSelect } from '../form/DefaulSelect';
 import AdminPageTitle from '../typography/AdminPageTitle';
 import { Breadcrumbs } from '../navigation/Breadcrumbs';

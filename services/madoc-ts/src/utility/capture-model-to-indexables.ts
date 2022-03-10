@@ -1,5 +1,6 @@
-import { traverseDocument } from '@capture-models/helpers';
-import { BaseField, CaptureModel } from '@capture-models/types';
+import { traverseDocument } from '../frontend/shared/capture-models/helpers/traverse-document';
+import { CaptureModel } from '../frontend/shared/capture-models/types/capture-model';
+import { BaseField } from '../frontend/shared/capture-models/types/field-types';
 
 export type SearchIndexable = {
   resource_id: string;

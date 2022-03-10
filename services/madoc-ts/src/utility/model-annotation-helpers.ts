@@ -1,6 +1,6 @@
-import { BaseField } from '@capture-models/types';
 import { AnnotationW3C } from '@hyperion-framework/types';
 import { Annotation } from '@hyperion-framework/presentation-2';
+import { BaseField } from '../frontend/shared/capture-models/types/field-types';
 
 export function captureModelFieldToW3CAnnotation(
   id: string,
