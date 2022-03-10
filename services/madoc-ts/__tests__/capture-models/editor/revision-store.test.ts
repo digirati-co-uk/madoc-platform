@@ -21,15 +21,15 @@ registerField({
 } as any);
 
 const models: () => any[] = () => [
-  require('../../../../fixtures/03-revisions/01-single-field-with-revision.json'),
-  require('../../../../fixtures/03-revisions/02-single-field-with-multiple-revisions.json'),
-  require('../../../../fixtures/03-revisions/03-nested-revision.json'),
-  require('../../../../fixtures/03-revisions/04-dual-transcription.json'),
-  require('../../../../fixtures/03-revisions/05-allow-multiple-transcriptions.json'),
-  require('../../../../fixtures/04-selectors/01-simple-selector.json'),
-  require('../../../../fixtures/04-selectors/02-multiple-selectors.json'),
-  require('../../../../fixtures/04-selectors/03-nested-selector.json'),
-  require('../../../../fixtures/04-selectors/08-hocr-output.json'),
+  require('../../../fixtures/03-revisions/01-single-field-with-revision.json'),
+  require('../../../fixtures/03-revisions/02-single-field-with-multiple-revisions.json'),
+  require('../../../fixtures/03-revisions/03-nested-revision.json'),
+  require('../../../fixtures/03-revisions/04-dual-transcription.json'),
+  require('../../../fixtures/03-revisions/05-allow-multiple-transcriptions.json'),
+  require('../../../fixtures/04-selectors/01-simple-selector.json'),
+  require('../../../fixtures/04-selectors/02-multiple-selectors.json'),
+  require('../../../fixtures/04-selectors/03-nested-selector.json'),
+  require('../../../fixtures/04-selectors/08-hocr-output.json'),
 ];
 
 describe('Revision store', () => {
@@ -292,7 +292,7 @@ describe('Revision store', () => {
     });
 
     test('duplicating entity - allowMultiple=false', () => {
-      const model = require('../../../../fixtures/02-nesting/01-nested-model.json');
+      const model = require('../../../fixtures/02-nesting/01-nested-model.json');
 
       const store = createRevisionStore({
         captureModel: model,
@@ -309,7 +309,7 @@ describe('Revision store', () => {
       ).toThrowErrorMatchingInlineSnapshot(`"entity does not support multiple values."`);
     });
     test('duplicating entity - allowMultiple=true', () => {
-      const model = require('../../../../fixtures/02-nesting/05-nested-model-multiple.json');
+      const model = require('../../../fixtures/02-nesting/05-nested-model-multiple.json');
 
       const store = createRevisionStore({
         captureModel: model,
@@ -373,7 +373,7 @@ describe('Revision store', () => {
     });
 
     test('duplicating entity with selector', () => {
-      const model = require('../../../../fixtures/04-selectors/08-hocr-output.json');
+      const model = require('../../../fixtures/04-selectors/08-hocr-output.json');
 
       const store = createRevisionStore({
         captureModel: model,
@@ -449,7 +449,7 @@ describe('Revision store', () => {
     });
 
     test('removing entity instance', () => {
-      const model = require('../../../../fixtures/04-selectors/08-hocr-output.json');
+      const model = require('../../../fixtures/04-selectors/08-hocr-output.json');
 
       const store = createRevisionStore({
         captureModel: model,
@@ -608,7 +608,7 @@ describe('Revision store', () => {
     describe('selectors while navigating revision', () => {
       test('can select linear path', () => {
         const store = createRevisionStore({
-          captureModel: require('../../../../fixtures/04-selectors/08-hocr-output.json'),
+          captureModel: require('../../../fixtures/04-selectors/08-hocr-output.json'),
         });
         const { selectRevision, revisionPushSubtree } = store.getActions();
 
