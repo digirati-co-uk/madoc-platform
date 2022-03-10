@@ -78,7 +78,6 @@ export const metadataEditorReducer = produce((state: MetadataEditorState, action
     }
 
     case 'CREATE_ITEM': {
-      console.log(action);
       state.hasChanged = true;
       state.fields[action.payload.id] = {
         language: action.payload.language,
