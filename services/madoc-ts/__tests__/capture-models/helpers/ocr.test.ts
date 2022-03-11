@@ -31,10 +31,10 @@ registerField({
 // import { fieldsToInserts } from '../../../database/src/utility/fields-to-inserts';
 
 function getModel() {
-  return require('../../../../fixtures/02-nesting/06-ocr.json') as CaptureModel;
+  return require('../../../fixtures/02-nesting/06-ocr.json') as CaptureModel;
 }
 function getRevisionA() {
-  return require('../../../../fixtures/98-revision-requests/add-ocr-text.json') as RevisionRequest;
+  return require('../../../fixtures/98-revision-requests/add-ocr-text.json') as RevisionRequest;
 }
 
 describe('OCR Capture model', () => {

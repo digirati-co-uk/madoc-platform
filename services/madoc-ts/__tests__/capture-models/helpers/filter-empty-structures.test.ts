@@ -2,7 +2,7 @@ import { filterEmptyStructureFields } from '../../../src/frontend/shared/capture
 import { filterEmptyStructures } from '../../../src/frontend/shared/capture-models/helpers/filter-empty-structures';
 import { CaptureModel } from '../../../src/frontend/shared/capture-models/types/capture-model';
 
-const filterEmpty = require('../../../../fixtures/06-invalid/01-empty-structure.json');
+const filterEmpty = require('../../../fixtures/06-invalid/01-empty-structure.json');
 
 describe('filterEmptyStructures', () => {
   test('filterEmptyStructureFields - non-nested', () => {

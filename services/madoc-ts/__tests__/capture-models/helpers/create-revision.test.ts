@@ -29,7 +29,7 @@ const { generateId } = require('../../../src/frontend/shared/capture-models/help
 generateId.mockImplementation(() => '[--------GENERATED-ID--------]');
 
 describe('create revision', () => {
-  const captureModel: CaptureModel = require('../../../../fixtures/03-revisions/06-model-root.json');
+  const captureModel: CaptureModel = require('../../../fixtures/03-revisions/06-model-root.json');
   const [
     createFieldA,
     editModelA,
@@ -937,7 +937,7 @@ describe('create revision', () => {
   });
 
   describe('Revision with revised field', () => {
-    const multi = require('../../../../fixtures/03-revisions/05-allow-multiple-transcriptions.json');
+    const multi = require('../../../fixtures/03-revisions/05-allow-multiple-transcriptions.json');
     test('Canonical revision should contain both types and filter out the empty', () => {
       const [main] = captureModelToRevisionList(multi, true);
 

@@ -3,7 +3,7 @@
  */
 
 import { hydrateRevisionStore } from '../../../../src/frontend/shared/capture-models/editor/stores/revisions/revisions-store';
-import { registerField } from '../../../../src/frontend/shared/capture-models/plugin-api';
+import { registerField } from '../../../../src/frontend/shared/capture-models/plugin-api/global-store';
 
 registerField({
   label: 'Text field',

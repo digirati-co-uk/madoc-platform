@@ -8,6 +8,7 @@ import {
   mergeFlatKeys,
   structureToFlatStructureDefinition,
 } from '../../../src/frontend/shared/capture-models/editor/core/structure-editor';
+import { expandModelFields } from '../../../src/frontend/shared/capture-models/helpers/expand-model-fields';
 import { registerField } from '../../../src/frontend/shared/capture-models/plugin-api/global-store';
 import { CaptureModel } from '../../../src/frontend/shared/capture-models/types/capture-model';
 

@@ -3,7 +3,7 @@ import { CaptureModel } from '../../../src/frontend/shared/capture-models/types/
 
 describe('current form', () => {
   describe('createFormFieldReducer', () => {
-    const doc: CaptureModel = require('../../../../fixtures/simple.json');
+    const doc: CaptureModel = require('../../../fixtures/simple.json');
     test('simple flat fields', () => {
       const reducer = createFormFieldReducer(doc.document);
 

@@ -6,7 +6,7 @@
 // eslint-disable-next-line
 if (global) { global.globalThis = global; } else { try { globalThis = typeof globalThis !== 'undefined' ? this : globalThis; } catch (e) {} }
 
-import React from 'react';
+import * as React from 'react';
 import { captureModelToRevisionList } from '../../../src/frontend/shared/capture-models/helpers/capture-model-to-revision-list';
 import { hydratePartialDocument } from '../../../src/frontend/shared/capture-models/helpers/hydrate-partial-document';
 import { registerField } from '../../../src/frontend/shared/capture-models/plugin-api/global-store';
@@ -33,7 +33,7 @@ const GENERATED_ID = '[--------GENERATED-ID--------]';
 generateId.mockImplementation(() => GENERATED_ID);
 
 describe('hydratePartialDocument', () => {
-  const captureModel: CaptureModel = require('../../../../fixtures/03-revisions/06-model-root.json');
+  const captureModel: CaptureModel = require('../../../fixtures/03-revisions/06-model-root.json');
   const [
     createFieldA,
     editModelA,
