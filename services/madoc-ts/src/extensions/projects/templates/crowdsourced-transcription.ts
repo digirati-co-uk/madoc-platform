@@ -1,10 +1,8 @@
-import { DropdownFieldProps } from '@capture-models/editor/lib/input-types/DropdownField/DropdownField';
-import { captureModelShorthand } from '@capture-models/helpers';
+import { DropdownFieldProps } from '../../../frontend/shared/capture-models/editor/input-types/DropdownField/DropdownField';
+import { captureModelShorthand } from '../../../frontend/shared/capture-models/helpers/capture-model-shorthand';
 import { ProjectTemplate } from '../types';
 
 type CrowdsourcedTranscriptionOptions = {
-  // submissionsPerImage: number;
-  // enablePersonalNotes: boolean;
   modelLabel: string;
   modelDescription: string;
   crowdsourcingInstructions: string;
