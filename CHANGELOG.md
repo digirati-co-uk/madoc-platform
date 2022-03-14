@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Split Add and Import collection pages, reflected in navigation
 - Swapped manifests / collections order in admin
 - Moved `<DocumentPreview />` from capture models to this repo
+- Moved `@capture-models/*` packages into this repo (See [#529](https://github.com/digirati-co-uk/madoc-platform/pull/529))
 
 ### Removed
 
