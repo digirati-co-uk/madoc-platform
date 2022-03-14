@@ -205,6 +205,10 @@ export const siteConfigurationModel: {
         label: 'Hide viewer controls (zoom + home)',
         value: 'hideViewerControls',
       },
+      {
+        label: 'Disable save for later button',
+        value: 'disableSaveForLater',
+      },
     ],
   },
   projectPageOptions: {

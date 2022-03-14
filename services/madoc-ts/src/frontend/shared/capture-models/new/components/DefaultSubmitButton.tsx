@@ -14,6 +14,7 @@ export const DefaultSubmitButton: EditorRenderingConfig['SubmitButton'] = ({ aft
   const { t } = useTranslation();
   const routeContext = useRouteContext();
   const Slots = useSlotContext();
+  const { disableSaveForLater = false } = Slots.configuration;
   const { projectId } = routeContext;
   const currentRevision = Revisions.useStoreState(s => s.currentRevision);
   const updateFunction = useViewerSaving(
@@ -76,17 +77,20 @@ export const DefaultSubmitButton: EditorRenderingConfig['SubmitButton'] = ({ aft
               </>
             ) : (
               <ButtonRow $noMargin>
-                <Button
-                  data-cy="save-later-button"
-                  onClick={() => {
-                    saveRevision('draft').then(() => {
-                      deselectRevision();
-                      close();
-                    });
-                  }}
-                >
-                  {isLoading ? t('Saving...') : t('Save for later')}
-                </Button>
+                {!disableSaveForLater ? (
+                  <Button
+                    data-cy="save-later-button"
+                    disabled={isLoading}
+                    onClick={() => {
+                      saveRevision('draft').then(() => {
+                        deselectRevision();
+                        close();
+                      });
+                    }}
+                  >
+                    {t('Save for later')}
+                  </Button>
+                ) : null}
                 <Button
                   data-cy="publish-button"
                   disabled={isLoading}

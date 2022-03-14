@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Allow for empty value `{fieldA/No value provided}`
   - Allow for complex empty value `{firstName} - {lastName} {@empty/untitled person}`
 - Ability to reorder fields in the structure editor
+- Added project option for disabling "save for later"
 - Added "Selector is required" to capture model editor
 - Added required selector styling using disabled field sets.
 

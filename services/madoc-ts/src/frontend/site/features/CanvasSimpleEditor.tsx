@@ -41,6 +41,7 @@ import {
 } from './CanvasViewerGrid';
 import { useSiteConfiguration } from './SiteConfigurationContext';
 import { TranscriberModeWorkflowBar } from './TranscriberModeWorkflowBar';
+import { useModelPageConfiguration } from '../hooks/use-model-page-configuration';
 
 export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boolean; isSegmentation?: boolean }> = ({
   revision,
@@ -54,6 +55,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
   const { isPreparing } = useProjectStatus();
   const user = useCurrentUser(true);
   const config = useSiteConfiguration();
+  const { disableSaveForLater = false } = useModelPageConfiguration();
   const mode = useContributionMode();
   const isVertical = config.project.defaultEditorOrientation === 'vertical';
   const api = useApi();
@@ -157,6 +159,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
             deselectRevisionAfterSaving: true,
             profileConfig,
             saveOnNavigate: isPreparing || mode === 'transcription',
+            disableSaveForLater,
           },
           components: components,
         }}
