@@ -1,7 +1,7 @@
-import { RevisionRequest } from '@capture-models/types';
 import { useMemo } from 'react';
 import { useMutation } from 'react-query';
 import { BaseTask } from '../../../gateway/tasks/base-task';
+import { RevisionRequest } from '../../shared/capture-models/types/revision-request';
 import { useApi } from '../../shared/hooks/use-api';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useInvalidateAfterSubmission } from './use-invalidate-after-submission';

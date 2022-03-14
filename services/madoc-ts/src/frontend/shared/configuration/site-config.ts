@@ -1,5 +1,5 @@
-import { BaseField } from '@capture-models/types';
 import { ProjectConfiguration } from '../../../types/schemas/project-configuration';
+import { BaseField } from '../capture-models/types/field-types';
 
 export const siteConfigurationModel: {
   [key in keyof ProjectConfiguration]: string | (Partial<BaseField> & any);

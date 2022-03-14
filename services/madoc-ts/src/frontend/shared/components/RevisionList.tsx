@@ -1,10 +1,12 @@
-import { Revisions, useNavigation } from '@capture-models/editor';
-import { RevisionRequest, StatusTypes } from '@capture-models/types';
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
+import { useNavigation } from '../capture-models/editor/hooks/useNavigation';
+import { Revisions } from '../capture-models/editor/stores/revisions/index';
+import { StatusTypes } from '../capture-models/types/capture-model';
+import { RevisionRequest } from '../capture-models/types/revision-request';
 import { SmallButton } from '../navigation/Button';
-import { ViewDocument } from '../caputre-models/inspector/ViewDocument';
-import { useContributors } from '../caputre-models/new/components/ContributorContext';
+import { ViewDocument } from '../capture-models/inspector/ViewDocument';
+import { useContributors } from '../capture-models/new/components/ContributorContext';
 
 const RevisionListContainer = styled.div`
   padding: 10px;

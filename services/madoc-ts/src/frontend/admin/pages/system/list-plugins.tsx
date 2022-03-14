@@ -1,7 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from 'react-query';
+import { Redirect } from 'react-router-dom';
 import { SitePlugin } from '../../../../types/schemas/plugins';
+import { useUser } from '../../../shared/hooks/use-site';
 import { Button, ButtonRow } from '../../../shared/navigation/Button';
 import { EmptyState } from '../../../shared/layout/EmptyState';
 import { SystemListItem } from '../../../shared/atoms/SystemListItem';
@@ -77,6 +79,7 @@ const ConfirmDeletionFooter: React.FC<{
 export const ListPlugins: React.FC = () => {
   const { t } = useTranslation();
   const api = useApi();
+  const user = useUser();
 
   const { data, refetch } = useData<{ plugins: SitePlugin[] }>(ListPlugins, undefined, {
     retry: false,
@@ -100,6 +103,10 @@ export const ListPlugins: React.FC = () => {
     await api.system.uninstallPlugin(id);
     await refetch();
   });
+
+  if (user?.role !== 'global_admin') {
+    return <Redirect to={'/'} />;
+  }
 
   return (
     <>
@@ -197,8 +204,6 @@ export const ListPlugins: React.FC = () => {
           <Spinner />
         )}
       </SystemBackground>
-
-      <pre>{JSON.stringify(data, null, 2)}</pre>
     </>
   );
 };

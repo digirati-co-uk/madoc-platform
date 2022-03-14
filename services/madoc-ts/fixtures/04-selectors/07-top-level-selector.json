@@ -1,0 +1,56 @@
+{
+  "structure": {
+    "id": "ce61be72-aed8-4f5f-ba07-c42829eba7d0",
+    "type": "choice",
+    "label": "selectors - top level selector",
+    "items": [
+      {
+        "id": "7f244335-6501-4faf-a089-c3f2bb18ffad",
+        "label": "Only choice",
+        "type": "model",
+        "fields": [
+          "name"
+        ],
+        "description": "This could be a top level item without a choice."
+      }
+    ],
+    "description": "Contains single choice with single text field"
+  },
+  "target": [
+    {
+      "type": "manifest",
+      "id": "https://wellcomelibrary.org/iiif/b18035723/manifest"
+    },
+    {
+      "type": "canvas",
+      "id": "https://wellcomelibrary.org/iiif/b18035723/canvas/c0"
+    }
+  ],
+  "document": {
+    "id": "5e2bbb8a-d351-476b-8925-43a40c51a808",
+    "type": "entity",
+    "selector": {
+      "id": "b3c438a0-6926-4622-ad72-2973f674a649",
+      "type": "box-selector",
+      "state": {
+        "height": 771,
+        "width": 2199,
+        "x": 164,
+        "y": 235
+      }
+    },
+    "properties": {
+      "name": [
+        {
+          "id": "cbbea03e-22f3-406c-8f9d-b3ab5676d998",
+          "type": "text-field",
+          "label": "Name",
+          "description": "The name of the thing"
+        }
+      ]
+    },
+    "label": "Simple document",
+    "description": ""
+  },
+  "id": "fa843fe4-c8d3-4005-a5eb-e0765377d48d"
+}

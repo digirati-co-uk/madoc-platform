@@ -2,6 +2,7 @@ import React from 'react';
 import { ProjectTemplate } from '../extensions/projects/types';
 import { RouteComponents } from '../frontend/site/routes';
 import { UniversalRoute } from '../frontend/types';
+import { BaseTheme } from './schemas/madoc-theme';
 
 export type PluginRow = {
   plugin_id: string;
@@ -67,5 +68,6 @@ export type ModuleWrapper = {
   hookRoutes?: (routes: UniversalRoute[], components: RouteComponents) => UniversalRoute[];
   hookComponents?: (components: RouteComponents) => any;
   hookBlocks?: () => { [name: string]: React.FC<any> };
+  themes?: Array<BaseTheme & { id: string }>;
   projectTemplates?: Array<ProjectTemplate>;
 };

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 import { useParams, useHistory } from 'react-router-dom';
+import { MetadataDiff } from "../../../../shared/hooks/use-metadata-editor";
 import { UniversalComponent } from '../../../../types';
-import { MetadataDiff } from '../../../molecules/MetadataEditor';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { mapMetadataList, ParsedMetadata } from '../../../../../utility/map-metadata-list';
 import { MetadataListEditor } from '../../../molecules/MetadataListEditor';

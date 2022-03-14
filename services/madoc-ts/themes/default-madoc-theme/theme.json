@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/digirati-co-uk/madoc-platform/main/services/madoc-ts/schemas/BaseTheme.json",
   "name": "Default Madoc Theme",
   "version": "1.0.0",
   "description": "Example madoc theme with default theme values.",

@@ -1,0 +1,142 @@
+{
+  "id": "a57d168a-77f8-4125-b317-11abecd460b2",
+  "structure": {
+    "id": "259797ed-bc96-480e-a6ed-4a81280790e6",
+    "type": "choice",
+    "label": "Multiple entities and fields",
+    "items": [
+      {
+        "id": "7d172208-7d3e-4e73-9874-a85fd24b33d6",
+        "type": "model",
+        "label": "Default",
+        "fields": [
+          ["entity-multiple-selector", ["test"]],
+          ["entity-multiple", ["test"]],
+          "field-multiple",
+          "field-multiple-selector"
+        ]
+      }
+    ]
+  },
+  "document": {
+    "id": "97f13c42-045f-4b83-875b-1bda76cee77f",
+    "type": "entity",
+    "label": "Multiple entities and fields",
+    "properties": {
+      "entity-multiple-selector": [
+        {
+          "id": "42165553-16ff-4910-bf6f-2bd924ed94ad",
+          "type": "entity",
+          "label": "entity-multiple-selector",
+          "allowMultiple": true,
+          "properties": {
+            "test": [
+              { "id": "f7c3b5b8-52f8-466f-927e-6e46564fd231", "type": "text-field", "label": "test", "value": "" }
+            ]
+          },
+          "selector": {
+            "id": "27893b54-e46a-4dab-a5ac-93d0c422deaf",
+            "type": "box-selector",
+            "state": { "x": 1465, "y": 216, "width": 235, "height": 151 }
+          }
+        },
+        {
+          "id": "c91bd07e-4d5c-4708-9e6c-3a4145afc02a",
+          "type": "entity",
+          "label": "entity-multiple-selector",
+          "allowMultiple": true,
+          "properties": {
+            "test": [
+              { "id": "f3474412-7eae-4166-b0c8-629a7810ecbb", "type": "text-field", "label": "test", "value": "" }
+            ]
+          },
+          "selector": {
+            "id": "ac2b7586-b308-4968-9218-39419418e8ca",
+            "type": "box-selector",
+            "state": { "x": 1797, "y": 448, "width": 190, "height": 151 }
+          }
+        }
+      ],
+      "entity-multiple": [
+        {
+          "id": "0fddf46f-26f4-498e-9454-8ac7f27736e4",
+          "type": "entity",
+          "label": "entity-multiple",
+          "allowMultiple": true,
+          "properties": {
+            "test": [
+              { "id": "1520fd2c-90a0-47ab-816f-9a967f32aa1d", "type": "text-field", "label": "test", "value": "" }
+            ]
+          }
+        },
+        {
+          "id": "b019e80d-ee0d-4aa6-98e9-d1874a81ecd9",
+          "type": "entity",
+          "label": "entity-multiple",
+          "allowMultiple": true,
+          "properties": {
+            "test": [
+              { "id": "5af75e4e-2d3e-4266-a3e0-99bc1ac634b1", "type": "text-field", "label": "test", "value": "" }
+            ]
+          }
+        }
+      ],
+      "field-multiple": [
+        {
+          "id": "7b3cfc39-60c4-4162-b9cb-db261f9f5a92",
+          "type": "text-field",
+          "label": "field-multiple",
+          "value": "1",
+          "allowMultiple": true
+        },
+        {
+          "id": "63ebf562-ce9c-4f98-b7df-1addbce0c83f",
+          "type": "text-field",
+          "label": "field-multiple",
+          "value": "2",
+          "allowMultiple": true
+        }
+      ],
+      "field-multiple-selector": [
+        {
+          "id": "c99ea6d2-36d4-4d44-9135-b78a65b63993",
+          "type": "text-field",
+          "label": "field-multiple-selector",
+          "value": "1",
+          "allowMultiple": true,
+          "selector": {
+            "id": "ed37a3c7-b950-445b-92f5-96f8b048d468",
+            "type": "box-selector",
+            "state": { "x": 1403, "y": 881, "width": 287, "height": 134 }
+          }
+        },
+        {
+          "id": "044c6407-2c61-4d17-9c7f-616670a8de46",
+          "type": "text-field",
+          "label": "field-multiple-selector",
+          "value": "2",
+          "allowMultiple": true,
+          "selector": {
+            "id": "4505db9b-25d0-41fd-a52e-14b5e50b7190",
+            "type": "box-selector",
+            "state": { "x": 1938, "y": 896, "width": 180, "height": 154 }
+          }
+        },
+        {
+          "id": "11beb6d9-d7f3-4516-8e44-917a61be72c1",
+          "type": "text-field",
+          "label": "field-multiple-selector",
+          "value": "3",
+          "allowMultiple": true,
+          "selector": { "id": "0650ae1a-be98-40df-8616-70726d686c9f", "type": "box-selector", "state": null }
+        }
+      ]
+    }
+  },
+  "target": [
+    { "id": "urn:madoc:manifest:3", "type": "Manifest" },
+    { "id": "urn:madoc:canvas:44", "type": "Canvas" }
+  ],
+  "profile": null,
+  "contributors": { "urn:madoc:user:1": { "id": "urn:madoc:user:1", "type": "Person", "name": "Madoc TS" } }
+}

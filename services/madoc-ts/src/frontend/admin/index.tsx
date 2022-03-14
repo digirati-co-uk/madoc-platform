@@ -9,7 +9,7 @@ import { renderUniversalRoutes } from '../shared/utility/server-utils';
 import { ApiContext, useIsApiRestarting } from '../shared/hooks/use-api';
 import { ErrorMessage } from '../shared/callouts/ErrorMessage';
 import { UniversalRoute } from '../types';
-import '../shared/caputre-models/plugins';
+import '../shared/capture-models/plugins';
 import { SiteProvider } from '../shared/hooks/use-site';
 import { AdminSidebar } from './molecules/AdminSidebar';
 

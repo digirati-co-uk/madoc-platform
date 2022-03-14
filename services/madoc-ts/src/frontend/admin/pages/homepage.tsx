@@ -94,13 +94,10 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
               <MenuTitle>{t('Content')}</MenuTitle>
               <MenuList>
                 <li>
-                  <Link to="/collections">{t('Manage collections', { count: 2 })}</Link>
-                </li>
-                <li>
                   <Link to="/manifests">{t('Manage manifests', { count: 2 })}</Link>
                 </li>
                 <li>
-                  <Link to="/configure/site">{t('Site configuration')}</Link>
+                  <Link to="/collections">{t('Manage collections', { count: 2 })}</Link>
                 </li>
                 <li>
                   <Link to="/page-blocks">{t('Customise site pages')}</Link>
@@ -110,14 +107,6 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
                 </li>
                 <li>
                   <Link to="/media">{t('Media')}</Link>
-                </li>
-              </MenuList>
-            </AdminSection>
-            <AdminSection>
-              <MenuTitle>{t('Configuration')}</MenuTitle>
-              <MenuList>
-                <li>
-                  <Link to="/configure/site">{t('Configure site')}</Link>
                 </li>
               </MenuList>
             </AdminSection>
@@ -139,19 +128,34 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
               </MenuList>
             </AdminSection>
             <AdminSection>
-              <MenuTitle>{t('Site')}</MenuTitle>
+              <MenuTitle>{t('Configuration')}</MenuTitle>
               <MenuList>
                 <li>
-                  <Link to={`/site/permissions`}>{t('Site permissions')}</Link>
+                  <Link to="/configure/site/details">{t('Site details')}</Link>
                 </li>
                 <li>
-                  <Link to={`/site/invitations`}>{t('User invitations')}</Link>
+                  <Link to="/configure/site/project">{t('Project configuration')}</Link>
+                </li>
+                <li>
+                  <Link to="/configure/site/metadata">{t('Metadata configuration')}</Link>
+                </li>
+                <li>
+                  <Link to="/configure/site/system">{t('Site-wide configuration')}</Link>
+                </li>
+                <li>
+                  <Link to="/enrichment/search-indexing">{t('Search indexing')}</Link>
+                </li>
+                <li>
+                  <Link to="/system/themes">{t('Site permissions')}</Link>
+                </li>
+                <li>
+                  <Link to="/site/invitations">{t('User invitations')}</Link>
                 </li>
               </MenuList>
             </AdminSection>
             {isGlobal ? (
               <AdminSection>
-                <MenuTitle>{t('System')}</MenuTitle>
+                <MenuTitle>{t('Global')}</MenuTitle>
                 <MenuList>
                   <li>
                     <Link to="/global/status">{t('System status')}</Link>

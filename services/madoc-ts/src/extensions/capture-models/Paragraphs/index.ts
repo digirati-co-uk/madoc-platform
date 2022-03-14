@@ -1,11 +1,12 @@
 import React from 'react';
-import { registerField } from '@capture-models/plugin-api';
+import { registerField } from '../../../frontend/shared/capture-models/plugin-api/global-store';
+import { FieldSpecification } from '../../../frontend/shared/capture-models/types/field-types';
+
 import { Paragraphs, ParagraphsProps } from './Paragraphs';
-import { FieldSpecification } from '@capture-models/types';
 import { ParagraphsPreview } from './Paragraphs.preview';
 
-declare module '@capture-models/types' {
-  export interface FieldTypeMap {
+declare module '../../../frontend/shared/capture-models/types/field-types' {
+  interface FieldTypeMap {
     'madoc-paragraphs': ParagraphsProps;
   }
 }

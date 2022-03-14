@@ -1,0 +1,3478 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Edit model B - depth 3 Edit values - should... 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-b": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "d948d756-14ad-4554-92ce-0296e5ce8735",
+        "immutable": true,
+        "label": "Model B.1: Allow multiple = false",
+        "properties": Object {
+          "field-d": Array [
+            Object {
+              "id": "7ff9cbd8-a393-4b82-ab2b-fd3814541722",
+              "label": "First level text field",
+              "type": "text-field",
+              "value": "value for field",
+            },
+          ],
+          "model-c": Array [
+            Object {
+              "allowMultiple": false,
+              "id": "b51eae75-e76f-496f-b048-f0b5b7f6cacd",
+              "immutable": true,
+              "label": "Model B.2: Allow multiple = true",
+              "properties": Object {
+                "field-e": Array [
+                  Object {
+                    "id": "7c19f5f0-75ba-4153-9f96-35055bc2a286",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+                "model-d": Array [
+                  Object {
+                    "allowMultiple": false,
+                    "id": "4e167b01-6c0c-4e2f-bec6-d0f4dc4126eb",
+                    "immutable": true,
+                    "label": "Model B.3: Allow multiple = false",
+                    "properties": Object {
+                      "field-f": Array [
+                        Object {
+                          "id": "23fb8e8b-6ae4-4503-b688-80116b5df127",
+                          "label": "Third level text field",
+                          "type": "text-field",
+                          "value": "value for field",
+                        },
+                      ],
+                    },
+                    "type": "entity",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Edit model B - depth 3 Fork template, should... 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-b": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "d948d756-14ad-4554-92ce-0296e5ce8735",
+        "immutable": true,
+        "label": "Model B.1: Allow multiple = false",
+        "properties": Object {
+          "field-d": Array [
+            Object {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "First level text field",
+              "revises": "7ff9cbd8-a393-4b82-ab2b-fd3814541722",
+              "revision": "REVISION-ID",
+              "type": "text-field",
+              "value": "",
+            },
+          ],
+          "model-c": Array [
+            Object {
+              "allowMultiple": false,
+              "id": "b51eae75-e76f-496f-b048-f0b5b7f6cacd",
+              "immutable": true,
+              "label": "Model B.2: Allow multiple = true",
+              "properties": Object {
+                "field-e": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revises": "7c19f5f0-75ba-4153-9f96-35055bc2a286",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "",
+                  },
+                ],
+                "model-d": Array [
+                  Object {
+                    "allowMultiple": false,
+                    "id": "[--------GENERATED-ID--------]",
+                    "immutable": false,
+                    "label": "Model B.3: Allow multiple = false",
+                    "properties": Object {
+                      "field-f": Array [
+                        Object {
+                          "id": "[--------GENERATED-ID--------]",
+                          "label": "Third level text field",
+                          "revision": "REVISION-ID",
+                          "type": "text-field",
+                          "value": "",
+                        },
+                      ],
+                    },
+                    "revises": "4e167b01-6c0c-4e2f-bec6-d0f4dc4126eb",
+                    "revision": "REVISION-ID",
+                    "type": "entity",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Edit model B - depth 3 Fork values - should... 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-b": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "d948d756-14ad-4554-92ce-0296e5ce8735",
+        "immutable": true,
+        "label": "Model B.1: Allow multiple = false",
+        "properties": Object {
+          "field-d": Array [
+            Object {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "First level text field",
+              "revises": "7ff9cbd8-a393-4b82-ab2b-fd3814541722",
+              "revision": "REVISION-ID",
+              "type": "text-field",
+              "value": "value for field",
+            },
+          ],
+          "model-c": Array [
+            Object {
+              "allowMultiple": false,
+              "id": "b51eae75-e76f-496f-b048-f0b5b7f6cacd",
+              "immutable": true,
+              "label": "Model B.2: Allow multiple = true",
+              "properties": Object {
+                "field-e": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revises": "7c19f5f0-75ba-4153-9f96-35055bc2a286",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+                "model-d": Array [
+                  Object {
+                    "allowMultiple": false,
+                    "id": "[--------GENERATED-ID--------]",
+                    "immutable": false,
+                    "label": "Model B.3: Allow multiple = false",
+                    "properties": Object {
+                      "field-f": Array [
+                        Object {
+                          "id": "[--------GENERATED-ID--------]",
+                          "label": "Third level text field",
+                          "revision": "REVISION-ID",
+                          "type": "text-field",
+                          "value": "value for field",
+                        },
+                      ],
+                    },
+                    "revises": "4e167b01-6c0c-4e2f-bec6-d0f4dc4126eb",
+                    "revision": "REVISION-ID",
+                    "type": "entity",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Edit model B - edit nested field (no duplicate allow) [model-b] Edit values - model-b should be immutable, the rest should be the same 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-b": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "d948d756-14ad-4554-92ce-0296e5ce8735",
+        "immutable": true,
+        "label": "Model B.1: Allow multiple = false",
+        "properties": Object {
+          "field-d": Array [
+            Object {
+              "id": "7ff9cbd8-a393-4b82-ab2b-fd3814541722",
+              "label": "First level text field",
+              "type": "text-field",
+              "value": "value for field",
+            },
+          ],
+          "model-c": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "b51eae75-e76f-496f-b048-f0b5b7f6cacd",
+              "immutable": true,
+              "label": "Model B.2: Allow multiple = true",
+              "properties": Object {
+                "field-e": Array [
+                  Object {
+                    "id": "7c19f5f0-75ba-4153-9f96-35055bc2a286",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+                "model-d": Array [
+                  Object {
+                    "allowMultiple": false,
+                    "id": "4e167b01-6c0c-4e2f-bec6-d0f4dc4126eb",
+                    "immutable": true,
+                    "label": "Model B.3: Allow multiple = false",
+                    "properties": Object {
+                      "field-f": Array [
+                        Object {
+                          "id": "23fb8e8b-6ae4-4503-b688-80116b5df127",
+                          "label": "Third level text field",
+                          "type": "text-field",
+                          "value": "value for field",
+                        },
+                      ],
+                    },
+                    "type": "entity",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Edit model B - edit nested field (no duplicate allow) [model-b] Fork template, model-b should be immutable, the rest mutable and forked 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-b": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model B.1: Allow multiple = false",
+        "properties": Object {
+          "field-d": Array [
+            Object {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "First level text field",
+              "revision": "REVISION-ID",
+              "type": "text-field",
+              "value": "",
+            },
+          ],
+          "model-c": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model B.2: Allow multiple = true",
+              "properties": Object {
+                "field-e": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "",
+                  },
+                ],
+                "model-d": Array [
+                  Object {
+                    "allowMultiple": false,
+                    "id": "[--------GENERATED-ID--------]",
+                    "immutable": false,
+                    "label": "Model B.3: Allow multiple = false",
+                    "properties": Object {
+                      "field-f": Array [
+                        Object {
+                          "id": "[--------GENERATED-ID--------]",
+                          "label": "Third level text field",
+                          "revision": "REVISION-ID",
+                          "type": "text-field",
+                          "value": "",
+                        },
+                      ],
+                    },
+                    "revision": "REVISION-ID",
+                    "type": "entity",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "revises": "d948d756-14ad-4554-92ce-0296e5ce8735",
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Edit model B - edit nested field (no duplicate allow) [model-b] Fork values - model-b should be immutable, the rest mutable with values 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-b": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model B.1: Allow multiple = false",
+        "properties": Object {
+          "field-d": Array [
+            Object {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "First level text field",
+              "revision": "REVISION-ID",
+              "type": "text-field",
+              "value": "value for field",
+            },
+          ],
+          "model-c": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model B.2: Allow multiple = true",
+              "properties": Object {
+                "field-e": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+                "model-d": Array [
+                  Object {
+                    "allowMultiple": false,
+                    "id": "[--------GENERATED-ID--------]",
+                    "immutable": false,
+                    "label": "Model B.3: Allow multiple = false",
+                    "properties": Object {
+                      "field-f": Array [
+                        Object {
+                          "id": "[--------GENERATED-ID--------]",
+                          "label": "Third level text field",
+                          "revision": "REVISION-ID",
+                          "type": "text-field",
+                          "value": "value for field",
+                        },
+                      ],
+                    },
+                    "revision": "REVISION-ID",
+                    "type": "entity",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "revises": "d948d756-14ad-4554-92ce-0296e5ce8735",
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Edit model B - edit nested field (root on allowMultiple=false) Edit values - model-b and c should be immutable, the rest should be the same 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-b": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "d948d756-14ad-4554-92ce-0296e5ce8735",
+        "immutable": true,
+        "label": "Model B.1: Allow multiple = false",
+        "properties": Object {
+          "field-d": Array [
+            Object {
+              "id": "7ff9cbd8-a393-4b82-ab2b-fd3814541722",
+              "label": "First level text field",
+              "type": "text-field",
+              "value": "value for field",
+            },
+          ],
+          "model-c": Array [
+            Object {
+              "allowMultiple": false,
+              "id": "b51eae75-e76f-496f-b048-f0b5b7f6cacd",
+              "immutable": true,
+              "label": "Model B.2: Allow multiple = true",
+              "properties": Object {
+                "field-e": Array [
+                  Object {
+                    "id": "7c19f5f0-75ba-4153-9f96-35055bc2a286",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+                "model-d": Array [
+                  Object {
+                    "allowMultiple": false,
+                    "id": "4e167b01-6c0c-4e2f-bec6-d0f4dc4126eb",
+                    "immutable": true,
+                    "label": "Model B.3: Allow multiple = false",
+                    "properties": Object {
+                      "field-f": Array [
+                        Object {
+                          "id": "23fb8e8b-6ae4-4503-b688-80116b5df127",
+                          "label": "Third level text field",
+                          "type": "text-field",
+                          "value": "value for field",
+                        },
+                      ],
+                    },
+                    "type": "entity",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Edit model B - edit nested field (root on allowMultiple=false) Fork template, no models should be forked, since allowMultiple is in the root 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-b": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "d948d756-14ad-4554-92ce-0296e5ce8735",
+        "immutable": true,
+        "label": "Model B.1: Allow multiple = false",
+        "properties": Object {
+          "field-d": Array [
+            Object {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "First level text field",
+              "revises": "7ff9cbd8-a393-4b82-ab2b-fd3814541722",
+              "revision": "REVISION-ID",
+              "type": "text-field",
+              "value": "",
+            },
+          ],
+          "model-c": Array [
+            Object {
+              "allowMultiple": false,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model B.2: Allow multiple = true",
+              "properties": Object {
+                "field-e": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "",
+                  },
+                ],
+                "model-d": Array [
+                  Object {
+                    "allowMultiple": false,
+                    "id": "[--------GENERATED-ID--------]",
+                    "immutable": false,
+                    "label": "Model B.3: Allow multiple = false",
+                    "properties": Object {
+                      "field-f": Array [
+                        Object {
+                          "id": "[--------GENERATED-ID--------]",
+                          "label": "Third level text field",
+                          "revision": "REVISION-ID",
+                          "type": "text-field",
+                          "value": "",
+                        },
+                      ],
+                    },
+                    "revision": "REVISION-ID",
+                    "type": "entity",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Edit model B - edit nested field (root on allowMultiple=false) Fork values - model-b and c should be immutable, the rest mutable with values 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-b": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "d948d756-14ad-4554-92ce-0296e5ce8735",
+        "immutable": true,
+        "label": "Model B.1: Allow multiple = false",
+        "properties": Object {
+          "field-d": Array [
+            Object {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "First level text field",
+              "revises": "7ff9cbd8-a393-4b82-ab2b-fd3814541722",
+              "revision": "REVISION-ID",
+              "type": "text-field",
+              "value": "value for field",
+            },
+          ],
+          "model-c": Array [
+            Object {
+              "allowMultiple": false,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model B.2: Allow multiple = true",
+              "properties": Object {
+                "field-e": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+                "model-d": Array [
+                  Object {
+                    "allowMultiple": false,
+                    "id": "[--------GENERATED-ID--------]",
+                    "immutable": false,
+                    "label": "Model B.3: Allow multiple = false",
+                    "properties": Object {
+                      "field-f": Array [
+                        Object {
+                          "id": "[--------GENERATED-ID--------]",
+                          "label": "Third level text field",
+                          "revision": "REVISION-ID",
+                          "type": "text-field",
+                          "value": "value for field",
+                        },
+                      ],
+                    },
+                    "revision": "REVISION-ID",
+                    "type": "entity",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Edit model F - depth 1 Edit values - should contain all models 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-f": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "602df1a8-9071-409a-ba6d-43b8dfc97683",
+        "immutable": true,
+        "label": "Model F.1: Allow multiple = false",
+        "properties": Object {
+          "model-g": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "1a7e07f0-f111-406e-972e-71976258a47f",
+              "immutable": true,
+              "label": "Model F.2: Allow multiple = true",
+              "properties": Object {
+                "field-f": Array [
+                  Object {
+                    "id": "1ecda588-c846-48c1-813c-2fd4ccfd6700",
+                    "label": "Second level text field (first)",
+                    "type": "text-field",
+                    "value": "value for field (first)",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+            Object {
+              "allowMultiple": true,
+              "id": "20254fca-fdad-4c70-b748-590f206e51d8",
+              "immutable": true,
+              "label": "Model F.3: Allow multiple = true",
+              "properties": Object {
+                "field-f": Array [
+                  Object {
+                    "id": "5019c619-a64c-4893-bf39-857df15f1e92",
+                    "label": "Second level text field (second)",
+                    "type": "text-field",
+                    "value": "value for field (second)",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Edit model F - depth 1 Fork template, should only contain 1 model 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-f": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model F.1: Allow multiple = false",
+        "properties": Object {
+          "model-g": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model F.2: Allow multiple = true",
+              "properties": Object {
+                "field-f": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field (first)",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "revises": "602df1a8-9071-409a-ba6d-43b8dfc97683",
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Edit model F - depth 1 Fork values - should only contain ??? model 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-f": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model F.1: Allow multiple = false",
+        "properties": Object {
+          "model-g": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model F.2: Allow multiple = true",
+              "properties": Object {
+                "field-f": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field (first)",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field (first)",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model F.3: Allow multiple = true",
+              "properties": Object {
+                "field-f": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field (second)",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field (second)",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "revises": "602df1a8-9071-409a-ba6d-43b8dfc97683",
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Edit model F - depth 2 Edit values - should contain all models 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-f": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "602df1a8-9071-409a-ba6d-43b8dfc97683",
+        "immutable": true,
+        "label": "Model F.1: Allow multiple = false",
+        "properties": Object {
+          "model-g": Array [
+            Object {
+              "allowMultiple": false,
+              "id": "1a7e07f0-f111-406e-972e-71976258a47f",
+              "immutable": true,
+              "label": "Model F.2: Allow multiple = true",
+              "properties": Object {
+                "field-f": Array [
+                  Object {
+                    "id": "1ecda588-c846-48c1-813c-2fd4ccfd6700",
+                    "label": "Second level text field (first)",
+                    "type": "text-field",
+                    "value": "value for field (first)",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+            Object {
+              "allowMultiple": false,
+              "id": "20254fca-fdad-4c70-b748-590f206e51d8",
+              "immutable": true,
+              "label": "Model F.3: Allow multiple = true",
+              "properties": Object {
+                "field-f": Array [
+                  Object {
+                    "id": "5019c619-a64c-4893-bf39-857df15f1e92",
+                    "label": "Second level text field (second)",
+                    "type": "text-field",
+                    "value": "value for field (second)",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Edit model F - depth 2 Fork template, should only contain 1 model matching ID 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-f": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "602df1a8-9071-409a-ba6d-43b8dfc97683",
+        "immutable": true,
+        "label": "Model F.1: Allow multiple = false",
+        "properties": Object {
+          "model-g": Array [
+            Object {
+              "allowMultiple": false,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model F.2: Allow multiple = true",
+              "properties": Object {
+                "field-f": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field (first)",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "",
+                  },
+                ],
+              },
+              "revises": "1a7e07f0-f111-406e-972e-71976258a47f",
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Edit model F - depth 2 Fork values - should only contain ??? model 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-f": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "602df1a8-9071-409a-ba6d-43b8dfc97683",
+        "immutable": true,
+        "label": "Model F.1: Allow multiple = false",
+        "properties": Object {
+          "model-g": Array [
+            Object {
+              "allowMultiple": false,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model F.2: Allow multiple = true",
+              "properties": Object {
+                "field-f": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field (first)",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field (first)",
+                  },
+                ],
+              },
+              "revises": "1a7e07f0-f111-406e-972e-71976258a47f",
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Model H - 2x2 models test model-h depth 0 Edit values - should contain all models 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-h": Array [
+      Object {
+        "allowMultiple": true,
+        "id": "ab70224e-4cb8-4d8d-a379-9769ad3e06e5",
+        "immutable": true,
+        "label": "Model H.1: Allow multiple = true",
+        "properties": Object {
+          "model-i": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "ecbd3446-6da3-4125-934f-1a3b766b8afe",
+              "immutable": true,
+              "label": "Model I.1: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "e72d1003-5b50-42ed-9495-f4d80cc53961",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+            Object {
+              "allowMultiple": true,
+              "id": "7de07c37-6157-4d63-8097-d2d4a78b778f",
+              "immutable": true,
+              "label": "Model I.2: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "8d4e3122-0f15-42db-864d-52c1a2843a90",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+      Object {
+        "allowMultiple": true,
+        "id": "aa6fe309-deef-4211-802c-dbc0f2ba16ed",
+        "immutable": true,
+        "label": "Model H.2: Allow multiple = true",
+        "properties": Object {
+          "model-i": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "3c5abf69-5258-4b0f-a082-a7e53ec15c47",
+              "immutable": true,
+              "label": "Model I.3: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "8fed8e4d-fa2f-4279-a145-ea88b1193bae",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+            Object {
+              "allowMultiple": true,
+              "id": "915106fd-f663-4e55-a727-8253e251c62d",
+              "immutable": true,
+              "label": "Model I.4: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "bb6ec6db-eaab-4271-b69e-34bf5501684b",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Model H - 2x2 models test model-h depth 0 Fork template, should only contain one model at each level 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-h": Array [
+      Object {
+        "allowMultiple": true,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model H.1: Allow multiple = true",
+        "properties": Object {
+          "model-i": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model I.1: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Model H - 2x2 models test model-h depth 0 Fork values - should only contain all models, with values but no revises 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-h": Array [
+      Object {
+        "allowMultiple": true,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model H.1: Allow multiple = true",
+        "properties": Object {
+          "model-i": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model I.1: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model I.2: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+      Object {
+        "allowMultiple": true,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model H.2: Allow multiple = true",
+        "properties": Object {
+          "model-i": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model I.3: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model I.4: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Model H - 2x2 models test model-h depth 1 - with field value at depth below should _not_ filter Edit values - should contain all models 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-h": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "ab70224e-4cb8-4d8d-a379-9769ad3e06e5",
+        "immutable": true,
+        "label": "Model H.1: Allow multiple = true",
+        "properties": Object {
+          "model-i": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "ecbd3446-6da3-4125-934f-1a3b766b8afe",
+              "immutable": true,
+              "label": "Model I.1: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "e72d1003-5b50-42ed-9495-f4d80cc53961",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+            Object {
+              "allowMultiple": true,
+              "id": "7de07c37-6157-4d63-8097-d2d4a78b778f",
+              "immutable": true,
+              "label": "Model I.2: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "8d4e3122-0f15-42db-864d-52c1a2843a90",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+      Object {
+        "allowMultiple": false,
+        "id": "aa6fe309-deef-4211-802c-dbc0f2ba16ed",
+        "immutable": true,
+        "label": "Model H.2: Allow multiple = true",
+        "properties": Object {
+          "model-i": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "3c5abf69-5258-4b0f-a082-a7e53ec15c47",
+              "immutable": true,
+              "label": "Model I.3: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "8fed8e4d-fa2f-4279-a145-ea88b1193bae",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+            Object {
+              "allowMultiple": true,
+              "id": "915106fd-f663-4e55-a727-8253e251c62d",
+              "immutable": true,
+              "label": "Model I.4: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "bb6ec6db-eaab-4271-b69e-34bf5501684b",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Model H - 2x2 models test model-h depth 1 - with field value at depth below should _not_ filter Fork template, should only contain one model at each level, not any special selection 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-h": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model H.1: Allow multiple = true",
+        "properties": Object {
+          "model-i": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model I.1: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Model H - 2x2 models test model-h depth 1 - with field value at depth below should _not_ filter Fork values - should only contain all models, and not filter 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-h": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model H.1: Allow multiple = true",
+        "properties": Object {
+          "model-i": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model I.1: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model I.2: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+      Object {
+        "allowMultiple": false,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model H.2: Allow multiple = true",
+        "properties": Object {
+          "model-i": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model I.3: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model I.4: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Model H - 2x2 models test model-h depth 1 - with field value at first depth Edit values - should contain all models under chosen model h 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-h": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "aa6fe309-deef-4211-802c-dbc0f2ba16ed",
+        "immutable": true,
+        "label": "Model H.2: Allow multiple = true",
+        "properties": Object {
+          "model-i": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "3c5abf69-5258-4b0f-a082-a7e53ec15c47",
+              "immutable": true,
+              "label": "Model I.3: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "8fed8e4d-fa2f-4279-a145-ea88b1193bae",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+            Object {
+              "allowMultiple": true,
+              "id": "915106fd-f663-4e55-a727-8253e251c62d",
+              "immutable": true,
+              "label": "Model I.4: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "bb6ec6db-eaab-4271-b69e-34bf5501684b",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Model H - 2x2 models test model-h depth 1 - with field value at first depth Fork template, should only contain one model at each level, using chosen model H 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-h": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model H.2: Allow multiple = true",
+        "properties": Object {
+          "model-i": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model I.3: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "revises": "aa6fe309-deef-4211-802c-dbc0f2ba16ed",
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Model H - 2x2 models test model-h depth 1 - with field value at first depth Fork values - should only contain all models under model h, with values but no revises 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-h": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model H.2: Allow multiple = true",
+        "properties": Object {
+          "model-i": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model I.3: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model I.4: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "revises": "aa6fe309-deef-4211-802c-dbc0f2ba16ed",
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Model H - 2x2 models test model-h depth 1 Edit values - should contain all models 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-h": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "ab70224e-4cb8-4d8d-a379-9769ad3e06e5",
+        "immutable": true,
+        "label": "Model H.1: Allow multiple = true",
+        "properties": Object {
+          "model-i": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "ecbd3446-6da3-4125-934f-1a3b766b8afe",
+              "immutable": true,
+              "label": "Model I.1: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "e72d1003-5b50-42ed-9495-f4d80cc53961",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+            Object {
+              "allowMultiple": true,
+              "id": "7de07c37-6157-4d63-8097-d2d4a78b778f",
+              "immutable": true,
+              "label": "Model I.2: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "8d4e3122-0f15-42db-864d-52c1a2843a90",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+      Object {
+        "allowMultiple": false,
+        "id": "aa6fe309-deef-4211-802c-dbc0f2ba16ed",
+        "immutable": true,
+        "label": "Model H.2: Allow multiple = true",
+        "properties": Object {
+          "model-i": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "3c5abf69-5258-4b0f-a082-a7e53ec15c47",
+              "immutable": true,
+              "label": "Model I.3: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "8fed8e4d-fa2f-4279-a145-ea88b1193bae",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+            Object {
+              "allowMultiple": true,
+              "id": "915106fd-f663-4e55-a727-8253e251c62d",
+              "immutable": true,
+              "label": "Model I.4: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "bb6ec6db-eaab-4271-b69e-34bf5501684b",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Model H - 2x2 models test model-h depth 1 Fork template, should only contain one model at each level 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-h": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model H.1: Allow multiple = true",
+        "properties": Object {
+          "model-i": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model I.1: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Model H - 2x2 models test model-h depth 1 Fork values - should only contain all models, with values but no revises 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-h": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model H.1: Allow multiple = true",
+        "properties": Object {
+          "model-i": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model I.1: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model I.2: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+      Object {
+        "allowMultiple": false,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model H.2: Allow multiple = true",
+        "properties": Object {
+          "model-i": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model I.3: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model I.4: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Model H - 2x2 models test model-h depth 2 - with field value at all depths Edit values - should contain all models 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-h": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "aa6fe309-deef-4211-802c-dbc0f2ba16ed",
+        "immutable": true,
+        "label": "Model H.2: Allow multiple = true",
+        "properties": Object {
+          "model-i": Array [
+            Object {
+              "allowMultiple": false,
+              "id": "915106fd-f663-4e55-a727-8253e251c62d",
+              "immutable": true,
+              "label": "Model I.4: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "bb6ec6db-eaab-4271-b69e-34bf5501684b",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Model H - 2x2 models test model-h depth 2 - with field value at all depths Fork template, should only contain one model at each level 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-h": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "aa6fe309-deef-4211-802c-dbc0f2ba16ed",
+        "immutable": true,
+        "label": "Model H.2: Allow multiple = true",
+        "properties": Object {
+          "model-i": Array [
+            Object {
+              "allowMultiple": false,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model I.4: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "",
+                  },
+                ],
+              },
+              "revises": "915106fd-f663-4e55-a727-8253e251c62d",
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Model H - 2x2 models test model-h depth 2 - with field value at all depths Fork values - should only contain all models, with values but no revises 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-h": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "aa6fe309-deef-4211-802c-dbc0f2ba16ed",
+        "immutable": true,
+        "label": "Model H.2: Allow multiple = true",
+        "properties": Object {
+          "model-i": Array [
+            Object {
+              "allowMultiple": false,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model I.4: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "revises": "915106fd-f663-4e55-a727-8253e251c62d",
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Model H - 2x2 models test model-h depth 2 - with field value at different depths – invalid state Edit values - should contain all models 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-h": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "aa6fe309-deef-4211-802c-dbc0f2ba16ed",
+        "immutable": true,
+        "label": "Model H.2: Allow multiple = true",
+        "properties": Object {
+          "model-i": Array [],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Model H - 2x2 models test model-h depth 2 - with field value at different depths – invalid state Fork template, should only contain one model at each level 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-h": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "aa6fe309-deef-4211-802c-dbc0f2ba16ed",
+        "immutable": true,
+        "label": "Model H.2: Allow multiple = true",
+        "properties": Object {
+          "model-i": Array [
+            Object {
+              "allowMultiple": false,
+              "id": "3c5abf69-5258-4b0f-a082-a7e53ec15c47",
+              "label": "Model I.3: Allow multiple = true",
+              "properties": Object {
+                "field-g": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revises": "8fed8e4d-fa2f-4279-a145-ea88b1193bae",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Multi-dimensional revision creation (adjacent at all levels) Model H - 2x2 models test model-h depth 2 - with field value at different depths – invalid state Fork values - should only contain all models, with values but no revises 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-h": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "aa6fe309-deef-4211-802c-dbc0f2ba16ed",
+        "immutable": true,
+        "label": "Model H.2: Allow multiple = true",
+        "properties": Object {
+          "model-i": Array [],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit field A 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "field-a": Array [
+      Object {
+        "id": "[--------GENERATED-ID--------]",
+        "label": "Top level text field",
+        "revises": "5f0e4511-957d-429c-8151-396ec4585a2d",
+        "revision": "REVISION-ID",
+        "type": "text-field",
+        "value": "",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model C - model root depth 1 + field over Edit values should should keep model a immutable, but keep the field over mutable 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "field-a": Array [
+      Object {
+        "id": "5f0e4511-957d-429c-8151-396ec4585a2d",
+        "label": "Top level text field",
+        "type": "text-field",
+        "value": "value for field",
+      },
+    ],
+    "model-a": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "d58f5f48-28bf-44ca-8396-c30ed4ae779b",
+        "immutable": true,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "model-c": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "435017ff-5bc0-4559-ac49-5aa1e1058121",
+              "immutable": true,
+              "label": "Model C.1: Allow multiple = true",
+              "properties": Object {
+                "field-c": Array [
+                  Object {
+                    "id": "53cdccf0-ef2b-432c-85dc-f9f6fb177297",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model C - model root depth 1 + field over Fork template should keep model a immutable, but keep the field over mutable 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "field-a": Array [
+      Object {
+        "id": "[--------GENERATED-ID--------]",
+        "label": "Top level text field",
+        "revises": "5f0e4511-957d-429c-8151-396ec4585a2d",
+        "revision": "REVISION-ID",
+        "type": "text-field",
+        "value": "",
+      },
+    ],
+    "model-a": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "model-c": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model C.1: Allow multiple = true",
+              "properties": Object {
+                "field-c": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model C - model root depth 1 + field over Fork values should keep model a immutable, but keep the field over mutable 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "field-a": Array [
+      Object {
+        "id": "[--------GENERATED-ID--------]",
+        "label": "Top level text field",
+        "revises": "5f0e4511-957d-429c-8151-396ec4585a2d",
+        "revision": "REVISION-ID",
+        "type": "text-field",
+        "value": "value for field",
+      },
+    ],
+    "model-a": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "model-c": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model C.1: Allow multiple = true",
+              "properties": Object {
+                "field-c": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model C - model root depth 1 + field under Edit values should set values immutable until field-b and model-c 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-a": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "d58f5f48-28bf-44ca-8396-c30ed4ae779b",
+        "immutable": true,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "field-b": Array [
+            Object {
+              "id": "58a09b28-219c-4609-b24f-c0ed6e5cfa42",
+              "label": "First level text field",
+              "type": "text-field",
+              "value": "value for field",
+            },
+          ],
+          "model-c": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "435017ff-5bc0-4559-ac49-5aa1e1058121",
+              "immutable": true,
+              "label": "Model C.1: Allow multiple = true",
+              "properties": Object {
+                "field-c": Array [
+                  Object {
+                    "id": "53cdccf0-ef2b-432c-85dc-f9f6fb177297",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model C - model root depth 1 + field under Fork template should create new field-b and model-c 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-a": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "field-b": Array [
+            Object {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "First level text field",
+              "revision": "REVISION-ID",
+              "type": "text-field",
+              "value": "",
+            },
+          ],
+          "model-c": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model C.1: Allow multiple = true",
+              "properties": Object {
+                "field-c": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model C - model root depth 1 + field under Fork values should create new field-b and model-c with values 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-a": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "field-b": Array [
+            Object {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "First level text field",
+              "revision": "REVISION-ID",
+              "type": "text-field",
+              "value": "value for field",
+            },
+          ],
+          "model-c": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model C.1: Allow multiple = true",
+              "properties": Object {
+                "field-c": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model C - model root depth 1 Edit values should return the original documents 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-a": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "d58f5f48-28bf-44ca-8396-c30ed4ae779b",
+        "immutable": true,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "model-c": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "435017ff-5bc0-4559-ac49-5aa1e1058121",
+              "immutable": true,
+              "label": "Model C.1: Allow multiple = true",
+              "properties": Object {
+                "field-c": Array [
+                  Object {
+                    "id": "53cdccf0-ef2b-432c-85dc-f9f6fb177297",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model C - model root depth 1 Fork template should fork at Model A.1 with nuked values throughout 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-a": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "model-c": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model C.1: Allow multiple = true",
+              "properties": Object {
+                "field-c": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model C - model root depth 1 Fork values should fork at Model A.1 with the same values but new ids 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-a": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "model-c": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model C.1: Allow multiple = true",
+              "properties": Object {
+                "field-c": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model C - model root depth 2 + field over (x2) Edit values should should keep model a immutable, but keep all 2 fields over mutable 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "field-a": Array [
+      Object {
+        "id": "5f0e4511-957d-429c-8151-396ec4585a2d",
+        "label": "Top level text field",
+        "type": "text-field",
+        "value": "value for field",
+      },
+    ],
+    "model-a": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "d58f5f48-28bf-44ca-8396-c30ed4ae779b",
+        "immutable": true,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "field-b": Array [
+            Object {
+              "id": "58a09b28-219c-4609-b24f-c0ed6e5cfa42",
+              "label": "First level text field",
+              "type": "text-field",
+              "value": "value for field",
+            },
+          ],
+          "model-c": Array [
+            Object {
+              "allowMultiple": false,
+              "id": "435017ff-5bc0-4559-ac49-5aa1e1058121",
+              "immutable": true,
+              "label": "Model C.1: Allow multiple = true",
+              "properties": Object {
+                "field-c": Array [
+                  Object {
+                    "id": "53cdccf0-ef2b-432c-85dc-f9f6fb177297",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model C - model root depth 2 + field over (x2) Fork template should keep model a immutable, but keep all 2 fields over mutable 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "field-a": Array [
+      Object {
+        "id": "[--------GENERATED-ID--------]",
+        "label": "Top level text field",
+        "revises": "5f0e4511-957d-429c-8151-396ec4585a2d",
+        "revision": "REVISION-ID",
+        "type": "text-field",
+        "value": "",
+      },
+    ],
+    "model-a": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "d58f5f48-28bf-44ca-8396-c30ed4ae779b",
+        "immutable": true,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "field-b": Array [
+            Object {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "First level text field",
+              "revises": "58a09b28-219c-4609-b24f-c0ed6e5cfa42",
+              "revision": "REVISION-ID",
+              "type": "text-field",
+              "value": "",
+            },
+          ],
+          "model-c": Array [
+            Object {
+              "allowMultiple": false,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model C.1: Allow multiple = true",
+              "properties": Object {
+                "field-c": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model C - model root depth 2 + field over (x2) Fork values should keep model a immutable, but keep all 2 fields over mutable 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "field-a": Array [
+      Object {
+        "id": "[--------GENERATED-ID--------]",
+        "label": "Top level text field",
+        "revises": "5f0e4511-957d-429c-8151-396ec4585a2d",
+        "revision": "REVISION-ID",
+        "type": "text-field",
+        "value": "value for field",
+      },
+    ],
+    "model-a": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "d58f5f48-28bf-44ca-8396-c30ed4ae779b",
+        "immutable": true,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "field-b": Array [
+            Object {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "First level text field",
+              "revises": "58a09b28-219c-4609-b24f-c0ed6e5cfa42",
+              "revision": "REVISION-ID",
+              "type": "text-field",
+              "value": "value for field",
+            },
+          ],
+          "model-c": Array [
+            Object {
+              "allowMultiple": false,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model C.1: Allow multiple = true",
+              "properties": Object {
+                "field-c": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model C - model root depth 2 + field over Edit values should should keep both models immutable, but keep the field over mutable 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "field-a": Array [
+      Object {
+        "id": "5f0e4511-957d-429c-8151-396ec4585a2d",
+        "label": "Top level text field",
+        "type": "text-field",
+        "value": "value for field",
+      },
+    ],
+    "model-a": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "d58f5f48-28bf-44ca-8396-c30ed4ae779b",
+        "immutable": true,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "model-c": Array [
+            Object {
+              "allowMultiple": false,
+              "id": "435017ff-5bc0-4559-ac49-5aa1e1058121",
+              "immutable": true,
+              "label": "Model C.1: Allow multiple = true",
+              "properties": Object {
+                "field-c": Array [
+                  Object {
+                    "id": "53cdccf0-ef2b-432c-85dc-f9f6fb177297",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model C - model root depth 2 + field over Fork template should keep both models immutable, but keep the field over mutable 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "field-a": Array [
+      Object {
+        "id": "[--------GENERATED-ID--------]",
+        "label": "Top level text field",
+        "revises": "5f0e4511-957d-429c-8151-396ec4585a2d",
+        "revision": "REVISION-ID",
+        "type": "text-field",
+        "value": "",
+      },
+    ],
+    "model-a": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "d58f5f48-28bf-44ca-8396-c30ed4ae779b",
+        "immutable": true,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "model-c": Array [
+            Object {
+              "allowMultiple": false,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model C.1: Allow multiple = true",
+              "properties": Object {
+                "field-c": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model C - model root depth 2 + field over Fork values should keep both models immutable, but keep the field over mutable 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "field-a": Array [
+      Object {
+        "id": "[--------GENERATED-ID--------]",
+        "label": "Top level text field",
+        "revises": "5f0e4511-957d-429c-8151-396ec4585a2d",
+        "revision": "REVISION-ID",
+        "type": "text-field",
+        "value": "value for field",
+      },
+    ],
+    "model-a": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "d58f5f48-28bf-44ca-8396-c30ed4ae779b",
+        "immutable": true,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "model-c": Array [
+            Object {
+              "allowMultiple": false,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model C.1: Allow multiple = true",
+              "properties": Object {
+                "field-c": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model C - model root depth 2 Edit values should return the original documents 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-a": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "d58f5f48-28bf-44ca-8396-c30ed4ae779b",
+        "immutable": true,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "model-c": Array [
+            Object {
+              "allowMultiple": false,
+              "id": "435017ff-5bc0-4559-ac49-5aa1e1058121",
+              "immutable": true,
+              "label": "Model C.1: Allow multiple = true",
+              "properties": Object {
+                "field-c": Array [
+                  Object {
+                    "id": "53cdccf0-ef2b-432c-85dc-f9f6fb177297",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model C - model root depth 2 Fork template should fork at Model C.1 with nuked values throughout 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-a": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "d58f5f48-28bf-44ca-8396-c30ed4ae779b",
+        "immutable": true,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "model-c": Array [
+            Object {
+              "allowMultiple": false,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model C.1: Allow multiple = true",
+              "properties": Object {
+                "field-c": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model C - model root depth 2 Fork values should fork at Model C.1 with the same values but new ids 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-a": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "d58f5f48-28bf-44ca-8396-c30ed4ae779b",
+        "immutable": true,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "model-c": Array [
+            Object {
+              "allowMultiple": false,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model C.1: Allow multiple = true",
+              "properties": Object {
+                "field-c": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model C - no model root Edit values should return the original documents 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-a": Array [
+      Object {
+        "allowMultiple": true,
+        "id": "d58f5f48-28bf-44ca-8396-c30ed4ae779b",
+        "immutable": true,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "model-c": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "435017ff-5bc0-4559-ac49-5aa1e1058121",
+              "immutable": true,
+              "label": "Model C.1: Allow multiple = true",
+              "properties": Object {
+                "field-c": Array [
+                  Object {
+                    "id": "53cdccf0-ef2b-432c-85dc-f9f6fb177297",
+                    "label": "Second level text field",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model C - no model root Fork template should fork at Model A.1 with nuked values throughout 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-a": Array [
+      Object {
+        "allowMultiple": true,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "model-c": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model C.1: Allow multiple = true",
+              "properties": Object {
+                "field-c": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model C - no model root Fork values should fork at Model A.1 with the same values but new ids 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-a": Array [
+      Object {
+        "allowMultiple": true,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "model-c": Array [
+            Object {
+              "allowMultiple": true,
+              "id": "[--------GENERATED-ID--------]",
+              "immutable": false,
+              "label": "Model C.1: Allow multiple = true",
+              "properties": Object {
+                "field-c": Array [
+                  Object {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "Second level text field",
+                    "revision": "REVISION-ID",
+                    "type": "text-field",
+                    "value": "value for field",
+                  },
+                ],
+              },
+              "revision": "REVISION-ID",
+              "type": "entity",
+            },
+          ],
+        },
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model a - model root and field above root This should throw as an invalid structure because the field is above the root 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "field-a": Array [
+      Object {
+        "id": "[--------GENERATED-ID--------]",
+        "label": "Top level text field",
+        "revises": "5f0e4511-957d-429c-8151-396ec4585a2d",
+        "revision": "REVISION-ID",
+        "type": "text-field",
+        "value": "value for field",
+      },
+    ],
+    "model-a": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "field-b": Array [
+            Object {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "First level text field",
+              "revision": "REVISION-ID",
+              "type": "text-field",
+              "value": "value for field",
+            },
+          ],
+        },
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model a - with model root Edit values should return the original documents 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-a": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "d58f5f48-28bf-44ca-8396-c30ed4ae779b",
+        "immutable": true,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "field-b": Array [
+            Object {
+              "id": "58a09b28-219c-4609-b24f-c0ed6e5cfa42",
+              "label": "First level text field",
+              "type": "text-field",
+              "value": "value for field",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model a - with model root Fork template should fork at Model A.1 with nuked values throughout 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-a": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "field-b": Array [
+            Object {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "First level text field",
+              "revision": "REVISION-ID",
+              "type": "text-field",
+              "value": "",
+            },
+          ],
+        },
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model a - with model root Fork values should create a new document with pre-filled fields and different ID 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-a": Array [
+      Object {
+        "allowMultiple": false,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "field-b": Array [
+            Object {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "First level text field",
+              "revision": "REVISION-ID",
+              "type": "text-field",
+              "value": "value for field",
+            },
+          ],
+        },
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model a Edit values should return the original documents 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-a": Array [
+      Object {
+        "allowMultiple": true,
+        "id": "d58f5f48-28bf-44ca-8396-c30ed4ae779b",
+        "immutable": true,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "field-b": Array [
+            Object {
+              "id": "58a09b28-219c-4609-b24f-c0ed6e5cfa42",
+              "label": "First level text field",
+              "type": "text-field",
+              "value": "value for field",
+            },
+          ],
+        },
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model a Fork template should fork at Model A.1 with nuked values throughout 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-a": Array [
+      Object {
+        "allowMultiple": true,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "field-b": Array [
+            Object {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "First level text field",
+              "revision": "REVISION-ID",
+              "type": "text-field",
+              "value": "",
+            },
+          ],
+        },
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;
+
+exports[`create revision Single dimension revision creation (non-adjacent) Edit model a Fork values should create a new document with pre-filled fields and different ID 1`] = `
+Object {
+  "description": "",
+  "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
+  "immutable": true,
+  "label": "Simple document",
+  "properties": Object {
+    "model-a": Array [
+      Object {
+        "allowMultiple": true,
+        "id": "[--------GENERATED-ID--------]",
+        "immutable": false,
+        "label": "Model A.1: Allow multiple = true",
+        "properties": Object {
+          "field-b": Array [
+            Object {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "First level text field",
+              "revision": "REVISION-ID",
+              "type": "text-field",
+              "value": "value for field",
+            },
+          ],
+        },
+        "revision": "REVISION-ID",
+        "type": "entity",
+      },
+    ],
+  },
+  "type": "entity",
+}
+`;

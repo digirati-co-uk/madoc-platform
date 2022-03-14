@@ -1,0 +1,106 @@
+{
+  "structure": {
+    "type": "choice",
+    "label": "nesting - deeply nested subset",
+    "items": [
+      {
+        "label": "Edit all names",
+        "type": "model",
+        "fields": [
+          [
+            "depth1",
+            [
+              [
+                "second",
+                [
+                  [
+                    "third",
+                    [
+                      "name"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "id": "25db5732-2b41-4bd0-86a7-9e805805bca0"
+      },
+      {
+        "label": "Edit all descriptions",
+        "type": "model",
+        "fields": [
+          [
+            "depth1",
+            [
+              [
+                "second",
+                [
+                  [
+                    "third",
+                    [
+                      "description"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "id": "78a999ee-70e5-4f05-a77f-95edd22e0dc8"
+      }
+    ],
+    "description": "A document with a nested structure, but only editing a single field deep in the tree.",
+    "id": "ca92dd59-4de9-4b76-8c87-900717bd13f0"
+  },
+  "document": {
+    "type": "entity",
+    "properties": {
+      "depth1": [
+        {
+          "type": "entity",
+          "label": "First depth",
+          "properties": {
+            "second": [
+              {
+                "type": "entity",
+                "label": "second",
+                "properties": {
+                  "third": [
+                    {
+                      "type": "entity",
+                      "label": "Third depth",
+                      "properties": {
+                        "name": [
+                          {
+                            "type": "text-field",
+                            "label": "Name",
+                            "id": "30c19e58-108c-48ea-a147-89ec29493805"
+                          }
+                        ],
+                        "description": [
+                          {
+                            "type": "text-field",
+                            "label": "description",
+                            "id": "970fffe8-f5ae-4d8a-8762-0368858fc254"
+                          }
+                        ]
+                      },
+                      "id": "0ada8521-6acc-498d-b502-0cec689aceff"
+                    }
+                  ]
+                },
+                "description": "Second depth",
+                "id": "0f7cc808-7179-440b-b3dd-d43bdc967b1f"
+              }
+            ]
+          },
+          "id": "0a097b04-249f-4c23-9e40-7fa29015951d"
+        }
+      ]
+    },
+    "label": "Deeply nested subset",
+    "id": "4a07959a-0333-460c-82ea-4cf377050f22"
+  },
+  "id": "201453f3-ebfb-4966-80ea-152b03741db1"
+}

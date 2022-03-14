@@ -1,13 +1,13 @@
-import { Revisions } from '@capture-models/editor';
-import { RevisionRequest } from '@capture-models/types';
+import { Revisions } from '../../../shared/capture-models/editor/stores/revisions/index';
 import React, { useEffect, useState, memo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { RevisionRequest } from '../../../shared/capture-models/types/revision-request';
 import { EmptyState } from '../../../shared/layout/EmptyState';
 import {
   filterUserRevisions,
   revisionsMapToRevisionsList,
   useRevisionList,
-} from '../../../shared/caputre-models/new/hooks/use-revision-list';
+} from '../../../shared/capture-models/new/hooks/use-revision-list';
 import { RevisionList } from '../../../shared/components/RevisionList';
 import { useUser } from '../../../shared/hooks/use-site';
 import { PersonIcon } from '../../../shared/icons/PersonIcon';

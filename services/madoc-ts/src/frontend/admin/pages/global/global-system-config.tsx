@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useMutation } from 'react-query';
 import { Site, SystemConfig } from '../../../../extensions/site-manager/types';
 import { SuccessMessage } from '../../../shared/callouts/SuccessMessage';
-import { EditShorthandCaptureModel } from '../../../shared/caputre-models/EditorShorthandCaptureModel';
+import { EditShorthandCaptureModel } from '../../../shared/capture-models/EditorShorthandCaptureModel';
 import { useApi } from '../../../shared/hooks/use-api';
 import { useData } from '../../../shared/hooks/use-data';
 import { serverRendererFor } from '../../../shared/plugins/external/server-renderer-for';

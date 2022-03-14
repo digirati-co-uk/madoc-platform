@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
-import { EditorContentViewer } from '../caputre-models/new/EditorContent';
-import { AutoSelectingRevision } from '../caputre-models/new/features/AutoSelectingRevision';
+import { EditorContentViewer } from '../capture-models/new/EditorContent';
+import { AutoSelectingRevision } from '../capture-models/new/features/AutoSelectingRevision';
+import { CaptureModel } from '../capture-models/types/capture-model';
+import { RevisionRequest } from '../capture-models/types/revision-request';
 import { useLoadedCaptureModel } from '../hooks/use-loaded-capture-model';
-import { Revisions } from '@capture-models/editor';
 import {
   EditorToolbarButton,
   EditorToolbarContainer,
@@ -15,16 +16,15 @@ import {
 } from '../navigation/EditorToolbar';
 import { HrefLink } from '../utility/href-link';
 import { ArrowBackIcon } from '../icons/ArrowBackIcon';
-import { CaptureModelHeader } from '../caputre-models/CaptureModelHeader';
+import { CaptureModelHeader } from '../capture-models/CaptureModelHeader';
 import { PreviewIcon } from '../icons/PreviewIcon';
 import { FullScreenExitIcon } from '../icons/FullScreenExitIcon';
 import { FullScreenEnterIcon } from '../icons/FullScreenEnterIcon';
-import { ViewContent } from '../components/ViewContent';
-import { CaptureModelEditor } from '../caputre-models/CaptureModelEditor';
+import { CaptureModelEditor } from '../capture-models/CaptureModelEditor';
 import { MaximiseWindow } from '../layout/MaximiseWindow';
-import { CaptureModel, RevisionRequest } from '@capture-models/types';
-import '../caputre-models/refinements';
+import '../capture-models/refinements';
 import { RevisionEditor } from './revision-editor';
+import { Revisions } from '../capture-models/editor/stores/revisions/index';
 
 export const CaptureModelViewer: React.FC<{
   modelId: string;

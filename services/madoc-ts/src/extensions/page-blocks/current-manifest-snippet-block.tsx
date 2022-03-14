@@ -1,5 +1,5 @@
-import { captureModelShorthand } from '@capture-models/helpers';
 import React from 'react';
+import { captureModelShorthand } from '../../frontend/shared/capture-models/helpers/capture-model-shorthand';
 import { ManifestSnippet } from '../../frontend/shared/components/ManifestSnippet';
 import { ReactPageBlockDefinition } from './extension';
 

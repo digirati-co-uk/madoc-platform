@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ProjectFull } from '../../../../../types/project-full';
 import { EmptyState } from '../../../../shared/layout/EmptyState';
 import { SuccessMessage } from '../../../../shared/callouts/SuccessMessage';
-import { EditShorthandCaptureModel } from '../../../../shared/caputre-models/EditorShorthandCaptureModel';
+import { EditShorthandCaptureModel } from '../../../../shared/capture-models/EditorShorthandCaptureModel';
 import { useAdminLayout } from '../../../../shared/components/AdminMenu';
 import { siteConfigurationModel } from '../../../../shared/configuration/site-config';
 import { useApi } from '../../../../shared/hooks/use-api';

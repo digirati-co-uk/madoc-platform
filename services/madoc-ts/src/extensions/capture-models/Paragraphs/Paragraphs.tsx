@@ -1,5 +1,5 @@
 import React from 'react';
-import { BaseField } from '@capture-models/types';
+import { BaseField } from '../../../frontend/shared/capture-models/types/field-types';
 import { TableEmpty } from '../../../frontend/shared/layout/Table';
 
 export interface ParagraphsProps extends BaseField {

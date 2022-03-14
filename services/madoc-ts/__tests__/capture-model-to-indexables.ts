@@ -1,5 +1,6 @@
-import { generateId, hydrateCompressedModel } from '@capture-models/helpers';
-import { CaptureModel } from '@capture-models/types';
+import { generateId } from '../src/frontend/shared/capture-models/helpers/generate-id';
+import { hydrateCompressedModel } from '../src/frontend/shared/capture-models/helpers/hydrate-compressed-model';
+import { CaptureModel } from '../src/frontend/shared/capture-models/types/capture-model';
 import { captureModelToIndexables } from '../src/utility/capture-model-to-indexables';
 
 describe('Capture model to indexables', () => {

@@ -1,4 +1,4 @@
-import { generateId } from '@capture-models/helpers';
+import { generateId } from '../../frontend/shared/capture-models/helpers/generate-id';
 import { BaseTask } from './base-task';
 import * as importManifest from './import-manifest';
 import * as tasks from './task-helpers';

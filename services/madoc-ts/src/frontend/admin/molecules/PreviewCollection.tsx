@@ -10,7 +10,8 @@ import { useTranslation } from 'react-i18next';
 import { PreviewManifest } from './PreviewManifest';
 
 export const PreviewCollection: React.FC<{
-  id: string;
+  id?: string;
+  manifestIds?: string[];
   manifestId?: string;
   disabled?: boolean;
   onClick?: (manifestId: string, type: string) => void;
@@ -28,54 +29,73 @@ export const PreviewCollection: React.FC<{
 
   useVaultEffect(
     vault => {
-      vault.loadCollection(props.id).then(col => {
-        if (col?.type !== 'Collection') {
-          setError('Invalid collection');
-          return;
-        }
+      if (props.id) {
+        vault.loadCollection(props.id).then(col => {
+          if (col?.type !== 'Collection') {
+            setError('Invalid collection');
+            return;
+          }
 
-        if (col) {
-          setCollection(col);
-          setManifests(
-            col.items.map(man => {
-              return vault.fromRef(man);
-            })
-          );
-        } else {
-          // error?
-        }
-      });
+          if (col) {
+            setCollection(col);
+            setManifests(
+              col.items.map(man => {
+                return vault.fromRef(man);
+              })
+            );
+          } else {
+            // error?
+          }
+        });
+      }
     },
     [props.id]
+  );
+
+  useVaultEffect(
+    vault => {
+      if (props.manifestIds && props.manifestIds.length) {
+        setManifests(
+          props.manifestIds.map(man => {
+            return vault.fromRef({ id: man, type: 'Manifest' });
+          })
+        );
+      }
+    },
+    [props.manifestIds]
   );
 
   if (error) {
     return <div>{t('Invalid collection')}</div>;
   }
 
-  if (!collection) {
+  if (!collection && !props.manifestIds) {
     return <div>{t('loading')}</div>;
   }
 
   return (
     <div>
       <Header>
-        <Heading1>
-          <LocaleString>{collection.label || { none: [t('Untitled collection')] }}</LocaleString>
-        </Heading1>
+        {collection ? (
+          <Heading1>
+            <LocaleString>{collection.label || { none: [t('Untitled collection')] }}</LocaleString>
+          </Heading1>
+        ) : null}
         {props.onImport ? (
           <Button
             disabled={excludedManifests.length === manifests.length || props.disabled}
             onClick={() => {
               if (props.onImport) {
                 props.onImport(
-                  collection.id,
+                  collection?.id || '',
                   manifests.map(m => m.id).filter(id => excludedManifests.indexOf(id) === -1)
                 );
               }
             }}
           >
-            {t('Import collection and {{count}} manifests', { count: manifests.length - excludedManifests.length })}
+            {collection
+              ? t('Import collection and {{count}} manifests', { count: manifests.length - excludedManifests.length })
+              : t('Import {{count}} manifests', { count: manifests.length - excludedManifests.length })}
           </Button>
         ) : null}
       </Header>
@@ -91,7 +111,9 @@ export const PreviewCollection: React.FC<{
           return (
             <TableRow key={manifest.id}>
               <TableRowLabel>
-                <LocaleString>{manifest.label || { none: ['Untitled manifest'] }}</LocaleString>
+                <LocaleString>
+                  {manifest.label || (props.manifestIds ? { none: [manifest.id] } : { none: ['Untitled manifest'] })}
+                </LocaleString>
               </TableRowLabel>
               <TableActions>
                 {excludeEnabled ? (

@@ -1,5 +1,5 @@
-import { generateId } from '@capture-models/helpers';
 import { sql } from 'slonik';
+import { generateId } from '../frontend/shared/capture-models/helpers/generate-id';
 import { PluginRow, PluginSiteRow, PluginTokenRow } from '../types/plugins';
 import { PluginTokenRequest, SitePlugin } from '../types/schemas/plugins';
 import { BaseRepository } from './base-repository';

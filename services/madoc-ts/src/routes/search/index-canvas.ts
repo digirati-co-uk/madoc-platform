@@ -1,11 +1,11 @@
-import { traverseDocument } from '@capture-models/helpers';
-import { BaseField } from '@capture-models/types';
 import { sql } from 'slonik';
 import {
   isParagraphEntity,
   ParagraphEntity,
   PARAGRAPHS_PROFILE,
 } from '../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
+import { traverseDocument } from '../../frontend/shared/capture-models/helpers/traverse-document';
+import { BaseField } from '../../frontend/shared/capture-models/types/field-types';
 import { api } from '../../gateway/api.server';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { SearchIngestRequest } from '../../types/search';

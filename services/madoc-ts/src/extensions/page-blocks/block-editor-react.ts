@@ -1,5 +1,5 @@
-import { BaseField } from '@capture-models/types';
 import React, { JSXElementConstructor } from 'react';
+import { BaseField } from '../../frontend/shared/capture-models/types/field-types';
 import { blockConfigFor } from '../../frontend/shared/plugins/external/block-config-for';
 import { EditorialContext } from '../../types/schemas/site-page';
 import { PageBlockDefinition, PageBlockEditor, PageBlockExtension } from './extension';

@@ -1,0 +1,767 @@
+{
+  "id": "5aff4557-b331-4181-9030-1097f5220b67",
+  "structure": {
+    "id": "abf9e833-09a6-4f2a-a30e-c42da2527ae1",
+    "type": "choice",
+    "description": "This structure provides the fields that the annotator will use to capture information related to a specific court proceeding, a case, a swearing in of attorneys, a naturalization ceremony, etc.",
+    "profile": [],
+    "label": "Court Proceeding Annotation",
+    "items": [
+      {
+        "id": "dfcf67af-5026-4a71-880a-861d399132c5",
+        "type": "choice",
+        "label": "Court Proceeding",
+        "items": []
+      },
+      {
+        "id": "4f8d8d46-1e27-4d77-a33e-56a37992487d",
+        "type": "model",
+        "description": "Unique identifier of a court proceeding in the format of XXYYY-ZZZZZZZZZ",
+        "label": "Court Proceeding ID",
+        "fields": [
+          [
+            "Nation",
+            [
+              [
+                "Early America",
+                [
+                  [
+                    "Massachusetts",
+                    [
+                      [
+                        "CourtProceeding",
+                        [
+                          "ProceedingID",
+                          "ColonyName",
+                          "TribunalName",
+                          "VolumeName",
+                          "VolumePage",
+                          "CourtProceedingBeginMonth",
+                          "CourtTermBeginYear",
+                          "CourtTermCity",
+                          "CaseName",
+                          "VariantCaseName",
+                          "CourtProceedingType",
+                          "OtherCourtProceedingType"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "instructions": "XX=colony abbreviation\nYYY=court abbreviation (may be more than 3 characters)\nZZZZZZZZZ=a unique sequential number beginning with 000000001"
+      }
+    ]
+  },
+  "document": {
+    "id": "a539ffda-aaec-4885-bc6c-a01cebeed1b4",
+    "type": "entity",
+    "label": "Early Court Records",
+    "description": "Entities and fields that can be used to annotate court proceeding documents",
+    "properties": {
+      "Nation": [
+        {
+          "id": "2ea4f20c-86ff-4da6-8b81-8e38abd532e3",
+          "type": "entity",
+          "label": "Nation",
+          "properties": {
+            "Early America": [
+              {
+                "id": "172d059a-ffe9-4568-a35f-b5de60538a59",
+                "type": "entity",
+                "label": "Early America",
+                "properties": {
+                  "Massachusetts": [
+                    {
+                      "id": "9cf9ca8e-2e2f-4f25-9c91-4cf714067d03",
+                      "type": "entity",
+                      "label": "Massachusetts",
+                      "properties": {
+                        "Court Term": [
+                          {
+                            "id": "7ae00473-e513-4033-a8c2-d7e5e845a704",
+                            "type": "entity",
+                            "label": "Court Term",
+                            "properties": {
+                              "TermEndYear": [
+                                {
+                                  "id": "98172f8e-9d06-4734-9568-68b14d3e37aa",
+                                  "type": "text-field",
+                                  "label": "Term End Year",
+                                  "value": "",
+                                  "description": "The year in which a court proceeding was concluded."
+                                }
+                              ],
+                              "TermNote": [
+                                {
+                                  "id": "3ff15fcb-dbaa-4654-9b05-63a6cd11d6be",
+                                  "type": "text-field",
+                                  "label": "Term Note",
+                                  "value": "",
+                                  "description": "Additional information regarding the court term, such as reason for delay, missing personnel, change of venue, etc."
+                                }
+                              ],
+                              "City": [
+                                {
+                                  "id": "553aea5d-44b7-4242-9687-73c9e51a37ce",
+                                  "type": "text-field",
+                                  "label": "City",
+                                  "value": "",
+                                  "description": "The name of a city or community in which court business may be conducted."
+                                }
+                              ],
+                              "County": [
+                                {
+                                  "id": "7db9ae75-2917-48c6-9e15-3b4f9a94b0d9",
+                                  "type": "text-field",
+                                  "label": "County",
+                                  "value": "",
+                                  "description": "The county in which court business may be conducted."
+                                }
+                              ],
+                              "TermBeginDay": [
+                                {
+                                  "id": "970547e0-9a71-4993-a4a5-c04d79f03d01",
+                                  "type": "dropdown-field",
+                                  "label": "Term Begin Day",
+                                  "value": null,
+                                  "description": "The day of the month on which a court proceeding was started.",
+                                  "options": [
+                                    {
+                                      "text": "1",
+                                      "value": "1"
+                                    },
+                                    {
+                                      "text": "2",
+                                      "value": "2"
+                                    },
+                                    {
+                                      "text": "3",
+                                      "value": "3"
+                                    },
+                                    {
+                                      "text": "4",
+                                      "value": "4"
+                                    },
+                                    {
+                                      "text": "5",
+                                      "value": "5"
+                                    },
+                                    {
+                                      "text": "6",
+                                      "value": "6"
+                                    },
+                                    {
+                                      "text": "7",
+                                      "value": "7"
+                                    },
+                                    {
+                                      "text": "8",
+                                      "value": "8"
+                                    },
+                                    {
+                                      "text": "9",
+                                      "value": "9"
+                                    },
+                                    {
+                                      "text": "10",
+                                      "value": "10"
+                                    },
+                                    {
+                                      "text": "11",
+                                      "value": "11"
+                                    },
+                                    {
+                                      "text": "12",
+                                      "value": "12"
+                                    },
+                                    {
+                                      "text": "13",
+                                      "value": "13"
+                                    },
+                                    {
+                                      "text": "14",
+                                      "value": "14"
+                                    },
+                                    {
+                                      "text": "15",
+                                      "value": "15"
+                                    },
+                                    {
+                                      "text": "16",
+                                      "value": "16"
+                                    },
+                                    {
+                                      "text": "17",
+                                      "value": "17"
+                                    },
+                                    {
+                                      "text": "18",
+                                      "value": "18"
+                                    },
+                                    {
+                                      "text": "19",
+                                      "value": "19"
+                                    },
+                                    {
+                                      "text": "20",
+                                      "value": "20"
+                                    },
+                                    {
+                                      "text": "21",
+                                      "value": "21"
+                                    },
+                                    {
+                                      "text": "22",
+                                      "value": "22"
+                                    },
+                                    {
+                                      "text": "23",
+                                      "value": "23"
+                                    },
+                                    {
+                                      "text": "24",
+                                      "value": "24"
+                                    },
+                                    {
+                                      "text": "25",
+                                      "value": "25"
+                                    },
+                                    {
+                                      "text": "26",
+                                      "value": "26"
+                                    },
+                                    {
+                                      "text": "27",
+                                      "value": "27"
+                                    },
+                                    {
+                                      "text": "28",
+                                      "value": "28"
+                                    },
+                                    {
+                                      "text": "29",
+                                      "value": "29"
+                                    },
+                                    {
+                                      "text": "30",
+                                      "value": "30"
+                                    },
+                                    {
+                                      "text": "31",
+                                      "value": "31"
+                                    }
+                                  ],
+                                  "clearable": true
+                                }
+                              ],
+                              "TermBeginMonth": [
+                                {
+                                  "id": "2596870e-f6b1-4fed-a51e-c697286e3da1",
+                                  "type": "dropdown-field",
+                                  "label": "Term Begin Month",
+                                  "value": null,
+                                  "description": "The month of the year in which a court proceeding was started.",
+                                  "options": [
+                                    {
+                                      "text": "January",
+                                      "value": "January"
+                                    },
+                                    {
+                                      "text": "February",
+                                      "value": "February"
+                                    },
+                                    {
+                                      "text": "March",
+                                      "value": "March"
+                                    },
+                                    {
+                                      "text": "April",
+                                      "value": "April"
+                                    },
+                                    {
+                                      "text": "May",
+                                      "value": "May"
+                                    },
+                                    {
+                                      "text": "June",
+                                      "value": "June"
+                                    },
+                                    {
+                                      "text": "July",
+                                      "value": "July"
+                                    },
+                                    {
+                                      "text": "August",
+                                      "value": "August"
+                                    },
+                                    {
+                                      "text": "September",
+                                      "value": "September"
+                                    },
+                                    {
+                                      "text": "October",
+                                      "value": "October"
+                                    },
+                                    {
+                                      "text": "November",
+                                      "value": "November"
+                                    },
+                                    {
+                                      "text": "December",
+                                      "value": "December"
+                                    }
+                                  ],
+                                  "clearable": true
+                                }
+                              ],
+                              "TermBeginYear": [
+                                {
+                                  "id": "3d135e1f-91c5-4f9e-b77f-12409e2e6722",
+                                  "type": "text-field",
+                                  "label": "Term Begin Year",
+                                  "value": "",
+                                  "description": "The year in which a court proceeding was started."
+                                }
+                              ],
+                              "TermEndDay": [
+                                {
+                                  "id": "9a090c08-7c01-48f1-b511-ec8daf0b2985",
+                                  "type": "dropdown-field",
+                                  "label": "Term End Day",
+                                  "value": null,
+                                  "description": "The day of the month on which a court proceeding was concluded.",
+                                  "options": [
+                                    {
+                                      "text": "1",
+                                      "value": "1"
+                                    },
+                                    {
+                                      "text": "2",
+                                      "value": "2"
+                                    },
+                                    {
+                                      "text": "3",
+                                      "value": "3"
+                                    },
+                                    {
+                                      "text": "4",
+                                      "value": "4"
+                                    },
+                                    {
+                                      "text": "5",
+                                      "value": "5"
+                                    },
+                                    {
+                                      "text": "6",
+                                      "value": "6"
+                                    },
+                                    {
+                                      "text": "7",
+                                      "value": "7"
+                                    },
+                                    {
+                                      "text": "8",
+                                      "value": "8"
+                                    },
+                                    {
+                                      "text": "9",
+                                      "value": "9"
+                                    },
+                                    {
+                                      "text": "10",
+                                      "value": "10"
+                                    },
+                                    {
+                                      "text": "11",
+                                      "value": "11"
+                                    },
+                                    {
+                                      "text": "12",
+                                      "value": "12"
+                                    },
+                                    {
+                                      "text": "13",
+                                      "value": "13"
+                                    },
+                                    {
+                                      "text": "14",
+                                      "value": "14"
+                                    },
+                                    {
+                                      "text": "15",
+                                      "value": "15"
+                                    },
+                                    {
+                                      "text": "16",
+                                      "value": "16"
+                                    },
+                                    {
+                                      "text": "17",
+                                      "value": "17"
+                                    },
+                                    {
+                                      "text": "18",
+                                      "value": "18"
+                                    },
+                                    {
+                                      "text": "19",
+                                      "value": "19"
+                                    },
+                                    {
+                                      "text": "20",
+                                      "value": "20"
+                                    },
+                                    {
+                                      "text": "21",
+                                      "value": "21"
+                                    },
+                                    {
+                                      "text": "22",
+                                      "value": "22"
+                                    },
+                                    {
+                                      "text": "23",
+                                      "value": "23"
+                                    },
+                                    {
+                                      "text": "24",
+                                      "value": "24"
+                                    },
+                                    {
+                                      "text": "25",
+                                      "value": "25"
+                                    },
+                                    {
+                                      "text": "26",
+                                      "value": "26"
+                                    },
+                                    {
+                                      "text": "27",
+                                      "value": "27"
+                                    },
+                                    {
+                                      "text": "28",
+                                      "value": "28"
+                                    },
+                                    {
+                                      "text": "29",
+                                      "value": "29"
+                                    },
+                                    {
+                                      "text": "30",
+                                      "value": "30"
+                                    },
+                                    {
+                                      "text": "31",
+                                      "value": "31"
+                                    }
+                                  ],
+                                  "clearable": true
+                                }
+                              ],
+                              "TermEndMonth": [
+                                {
+                                  "id": "2df8094a-632b-482a-a864-ea1d22b32022",
+                                  "type": "dropdown-field",
+                                  "label": "Term End Month",
+                                  "value": null,
+                                  "description": "The month of the year in which a court proceeding was concluded.",
+                                  "options": [
+                                    {
+                                      "text": "January",
+                                      "value": "January"
+                                    },
+                                    {
+                                      "text": "February",
+                                      "value": "February"
+                                    },
+                                    {
+                                      "text": "March",
+                                      "value": "March"
+                                    },
+                                    {
+                                      "text": "April",
+                                      "value": "April"
+                                    },
+                                    {
+                                      "text": "May",
+                                      "value": "May"
+                                    },
+                                    {
+                                      "text": "June",
+                                      "value": "June"
+                                    },
+                                    {
+                                      "text": "July",
+                                      "value": "July"
+                                    },
+                                    {
+                                      "text": "August",
+                                      "value": "August"
+                                    },
+                                    {
+                                      "text": "September",
+                                      "value": "September"
+                                    },
+                                    {
+                                      "text": "October",
+                                      "value": "October"
+                                    },
+                                    {
+                                      "text": "November",
+                                      "value": "November"
+                                    }
+                                  ],
+                                  "clearable": true
+                                }
+                              ]
+                            }
+                          }
+                        ],
+                        "CourtProceeding": [
+                          {
+                            "id": "4368c4a8-ef38-4a25-95e4-3420af5ca2ee",
+                            "type": "entity",
+                            "label": "CourtProceeding",
+                            "properties": {
+                              "ColonyName": [
+                                {
+                                  "id": "a7680c67-b616-45f2-b925-b016c644e4a0",
+                                  "type": "text-field",
+                                  "label": "Colony Name",
+                                  "value": "",
+                                  "description": "The name of the colony in which the court proceeding took place."
+                                }
+                              ],
+                              "TribunalName": [
+                                {
+                                  "id": "a86ac9fc-031a-4424-b86d-1d7642800122",
+                                  "type": "text-field",
+                                  "label": "Tribunal Name",
+                                  "value": "",
+                                  "description": "The name of the court in which the proceeding occurred."
+                                }
+                              ],
+                              "VolumePage": [
+                                {
+                                  "id": "45565ffa-211a-4dba-be4e-95995be9f87d",
+                                  "type": "text-field",
+                                  "label": "Volume Page",
+                                  "value": "",
+                                  "description": "Identifies the specific page within a volume of court proceedings, i.e., 31 recto for front side of page 31 or 31 verso for backside of page 31."
+                                }
+                              ],
+                              "ProceedingID": [
+                                {
+                                  "id": "e8bc6b2a-0853-445b-b592-1eb1df038ad3",
+                                  "type": "text-field",
+                                  "label": "Court Proceeding ID",
+                                  "value": "",
+                                  "description": "The unique identifier of the court proceeding in the format XXYYY-zzzzzzzzz, where\nXX = colony abbreviation (i.e., MA for Massachusetts), \nYYY = tribunal (i.e., SCJ for Superior Court of Judicature) (may be more or less that 3 characters),\nzzzzzzzzz = incremental number beginning with 000000001"
+                                }
+                              ],
+                              "VolumeName": [
+                                {
+                                  "id": "27fd80ed-971e-4220-b4a4-4d75d44c36a1",
+                                  "type": "text-field",
+                                  "label": "VolumeName",
+                                  "value": "",
+                                  "description": "The name of the volume containing the record of the court proceeding."
+                                }
+                              ],
+                              "OriginalTrialCourtName": [
+                                {
+                                  "id": "49f2aab9-1495-4fdd-b291-8735465b6953",
+                                  "type": "dropdown-field",
+                                  "label": "Original Trial Court Name",
+                                  "value": null,
+                                  "description": "The name of the lower court in which the case was originally tried.",
+                                  "options": [
+                                    {
+                                      "text": "County - civil",
+                                      "value": "County - civil"
+                                    },
+                                    {
+                                      "text": "County - criminal",
+                                      "value": "County - criminal"
+                                    },
+                                    {
+                                      "text": "Other Trial Court",
+                                      "value": "Other Trial Court"
+                                    }
+                                  ],
+                                  "clearable": true
+                                },
+                                {
+                                  "id": "1c778b6a-b593-45ed-9cf7-5a311c53163e",
+                                  "type": "text-field",
+                                  "label": "Original Trial Court Name",
+                                  "value": "",
+                                  "description": "The name of the court that first heard this case.  Most commonly, this will be either the Inferior Court of Common Pleas (county-civil) or the Court of Gaol Delivery & General Assize (county-criminal)."
+                                }
+                              ],
+                              "CourtProceedingBeginMonth": [
+                                {
+                                  "id": "0baa18ce-231f-4122-83e5-fe5e9478e2b2",
+                                  "type": "text-field",
+                                  "label": "CourtTermBeginMonth",
+                                  "value": "",
+                                  "description": "The month of the year in which the court began its session."
+                                }
+                              ],
+                              "VariantCaseName": [
+                                {
+                                  "id": "5a21cf64-b799-4370-b356-fe3305b5fcb8",
+                                  "type": "text-field",
+                                  "label": "Variant Case Name",
+                                  "value": "",
+                                  "description": "An alternate name for the case, as found in the court record.",
+                                  "selector": {
+                                    "id": "887f2af0-912f-499a-ac03-46f486ff27db",
+                                    "type": "box-selector",
+                                    "state": null
+                                  }
+                                }
+                              ],
+                              "CourtTermBeginYear": [
+                                {
+                                  "id": "6545da7e-1bad-4b9e-afbf-221d3e17320d",
+                                  "type": "text-field",
+                                  "label": "Court Term Begin Year",
+                                  "value": "",
+                                  "description": "The year in which the court began a session."
+                                }
+                              ],
+                              "CourtTermCity": [
+                                {
+                                  "id": "80cbcf7c-c89c-400b-a971-8b3c897a3fb8",
+                                  "type": "text-field",
+                                  "label": "Court Term City",
+                                  "value": "",
+                                  "description": "The city in which the court held a session."
+                                }
+                              ],
+                              "CaseName": [
+                                {
+                                  "id": "c19add98-ea9a-4033-8e47-d71d377ddddf",
+                                  "type": "text-field",
+                                  "label": "Case Name",
+                                  "value": "",
+                                  "description": "The name that a case would be commonly called, such as Jones v. Smith",
+                                  "selector": {
+                                    "id": "951fe3ba-b39d-4c16-93b6-ea1069bd60a5",
+                                    "type": "box-selector",
+                                    "state": null
+                                  }
+                                }
+                              ],
+                              "CourtProceedingType": [
+                                {
+                                  "id": "d28140bf-238f-48d0-af77-02c5bc41e223",
+                                  "type": "dropdown-field",
+                                  "label": "Court Proceeding Type",
+                                  "value": null,
+                                  "description": "Indicates what kind of proceeding is reflected in the court record, what exactly the court is doing.",
+                                  "options": [
+                                    {
+                                      "text": "Admission of Attorneys",
+                                      "value": "Admission of Attorneys"
+                                    },
+                                    {
+                                      "text": "Appeal [judges only]",
+                                      "value": "Appeal [judges only]"
+                                    },
+                                    {
+                                      "text": "Appeal by Review",
+                                      "value": "Appeal by Review"
+                                    },
+                                    {
+                                      "text": "Appeal in Chancery",
+                                      "value": "Appeal in Chancery"
+                                    },
+                                    {
+                                      "text": "Appeal with Jury",
+                                      "value": "Appeal with Jury"
+                                    },
+                                    {
+                                      "text": "Appeal with Referee",
+                                      "value": "Appeal with Referee"
+                                    },
+                                    {
+                                      "text": "Hearing - Petition",
+                                      "value": "Hearing - Petition"
+                                    },
+                                    {
+                                      "text": "Hearing - Petition for sale of real estate",
+                                      "value": "Hearing - Petition for sale of real estate"
+                                    },
+                                    {
+                                      "text": "Hearing - Petition for division of real estate",
+                                      "value": "Hearing - Petition for division of real estate"
+                                    },
+                                    {
+                                      "text": "Naturalization",
+                                      "value": "Naturalization"
+                                    },
+                                    {
+                                      "text": "Trial of First Instance",
+                                      "value": "Trial of First Instance"
+                                    },
+                                    {
+                                      "text": "Other",
+                                      "value": "Other"
+                                    }
+                                  ],
+                                  "clearable": true
+                                }
+                              ],
+                              "OtherCourtProceedingType": [
+                                {
+                                  "id": "d4e53036-be4e-4b3c-9d1f-7ca6dc1b3962",
+                                  "type": "text-field",
+                                  "label": "Other Court Proceeding Type",
+                                  "value": "",
+                                  "description": "A court proceeding type that is no a common proceeding, but has been noted in the court record."
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "target": [
+    {
+      "id": "urn:madoc:collection:53",
+      "type": "Collection"
+    },
+    {
+      "id": "urn:madoc:manifest:1",
+      "type": "Manifest"
+    },
+    {
+      "id": "urn:madoc:canvas:9",
+      "type": "Canvas"
+    }
+  ],
+  "derivedFrom": "70d2bd06-1744-4512-b55c-bcea4dfa1ef0",
+  "contributors": {
+    "urn:madoc:user:1": {
+      "id": "urn:madoc:user:1",
+      "type": "Person",
+      "name": "Madoc TS"
+    }
+  }
+}

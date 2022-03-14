@@ -1,6 +1,6 @@
 import { AtlasContextType } from '@atlas-viewer/atlas';
 import React, { useMemo } from 'react';
-import { useContentType } from '@capture-models/plugin-api';
+import { useContentType } from '../capture-models/plugin-api/hooks/use-content-type';
 
 export const ViewExternalContent: React.FC<{
   target: any;

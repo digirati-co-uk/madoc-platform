@@ -6,7 +6,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.0.3...main)
 
+### Fixed
+- Fixed OCR page linking from menu
+- Fixed missing OCR listed
+- Styling of "Suggest edit" to be clearer
+
 ### Added
+- Added refresh on 500 error page (usually appears during deployment)
+- Added new "OCR Correction" project template
+- Added basic theme support for plugins
+- Added bulk import of manifests
+- Support for advanced `labelledBy` in capture models
+  - Allow replacements like `{fieldA} - {fieldB}`
+  - Allow for empty value `{fieldA/No value provided}`
+  - Allow for complex empty value `{firstName} - {lastName} {@empty/untitled person}`
+
+### Changed
+- The link in the top bar now always links to the site (previously the admin for admins).
+- Changed size of the footer, minimised size
+- Changed position of menu items in Admin to be more logical
+- Split Add and Import collection pages, reflected in navigation
+- Swapped manifests / collections order in admin
+- Moved `<DocumentPreview />` from capture models to this repo
+- Moved `@capture-models/*` packages into this repo (See [#529](https://github.com/digirati-co-uk/madoc-platform/pull/529))
+
 ### Removed
 
 

@@ -4,9 +4,6 @@
     "canvas": {},
     "thumbnail": {
       "type": "string"
-    },
-    "local_source": {
-      "type": "string"
     }
   },
   "required": [

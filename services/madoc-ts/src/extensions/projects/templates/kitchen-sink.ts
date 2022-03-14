@@ -1,4 +1,4 @@
-import { captureModelShorthand } from '@capture-models/helpers';
+import { captureModelShorthand } from '../../../frontend/shared/capture-models/helpers/capture-model-shorthand';
 import { ProjectTemplate } from '../types';
 
 export const kitchenSinkTemplate: ProjectTemplate = {

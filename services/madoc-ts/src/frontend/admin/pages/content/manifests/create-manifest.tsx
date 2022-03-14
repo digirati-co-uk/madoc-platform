@@ -1,62 +1,41 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { InternationalString } from '@hyperion-framework/types';
-import { madocStreams } from '../../../../../activity-streams/madoc-streams';
 import { ImportManifestTask } from '../../../../../gateway/tasks/import-manifest';
 import { SystemListItem } from '../../../../shared/atoms/SystemListItem';
-import {
-  SystemActions,
-  SystemBackground,
-  SystemDescription,
-  SystemMetadata,
-  SystemName,
-} from '../../../../shared/atoms/SystemUI';
+import { SystemBackground, SystemDescription, SystemMetadata, SystemName } from '../../../../shared/atoms/SystemUI';
 import { ErrorMessage } from '../../../../shared/callouts/ErrorMessage';
 import { ActivityAction, ActivityActions } from '../../../../shared/components/Activity';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useHistory } from 'react-router-dom';
 import { useMutation } from 'react-query';
-import { CreateManifest as CreateManifestType } from '../../../../../types/schemas/create-manifest';
 import { VaultProvider } from '@hyperion-framework/react-vault';
-import { useData, usePaginatedData } from '../../../../shared/hooks/use-data';
+import { usePaginatedData } from '../../../../shared/hooks/use-data';
 import { ErrorIcon } from '../../../../shared/icons/ErrorIcon';
 import { Spinner } from '../../../../shared/icons/Spinner';
 import { TickIcon } from '../../../../shared/icons/TickIcon';
 import { GridContainer, HalfGird } from '../../../../shared/layout/Grid';
 import { serverRendererFor } from '../../../../shared/plugins/external/server-renderer-for';
-import { Heading3, Subheading3 } from '../../../../shared/typography/Heading3';
+import { Heading3 } from '../../../../shared/typography/Heading3';
 import { Button, SmallButton } from '../../../../shared/navigation/Button';
 import { Input, InputContainer, InputLabel } from '../../../../shared/form/Input';
 import { HrefLink } from '../../../../shared/utility/href-link';
 import { Pagination } from '../../../molecules/Pagination';
+import { PreviewCollection } from '../../../molecules/PreviewCollection';
 import { PreviewManifest } from '../../../molecules/PreviewManifest';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { WidePage } from '../../../../shared/layout/WidePage';
 import { useLocationQuery } from '../../../../shared/hooks/use-location-query';
+import { IntlInputContainer, IntlInputDefault, IntlMultiline } from '../../../../shared/form/IntlField';
 
 export const CreateManifest: React.FC = () => {
-  const {
-    t,
-    i18n: { language },
-  } = useTranslation();
-  const [manifestToAdd, setManifestToAdd] = useState<{ label: InternationalString }>({
-    label: { [language || 'none']: [''] },
-  });
+  const { t } = useTranslation();
   const [isCreating, setIsCreating] = useState(false);
   const api = useApi();
   const history = useHistory();
   const query = useLocationQuery<{ manifest?: string }>();
-  const [importedManifestId, setImportedManifestId] = useState<string | undefined>(query.manifest);
+  const [manifestList, setManifestList] = useState('');
   const [error, setError] = useState('');
   const { data, refetch: refreshTasks } = usePaginatedData(CreateManifest);
-
-  const [createManifest] = useMutation(async (manifest: CreateManifestType['manifest']) => {
-    setIsCreating(true);
-
-    const response = await api.createManifest(manifest);
-
-    history.push(`/manifests/${response.id}`);
-  });
 
   const [importManifest] = useMutation(async (manifestId: string) => {
     setIsCreating(true);
@@ -64,6 +43,12 @@ export const CreateManifest: React.FC = () => {
 
     history.push(`/tasks/${task.id}`);
   });
+
+  const [importManifests] = useMutation(async (manifestIds: string[]) => {
+    setIsCreating(true);
+    return await api.importManifests(manifestIds);
+  });
+
   const [deleteTask, deleteTaskStatus] = useMutation(async (taskId: string) => {
     await api.deleteTask(taskId);
 
@@ -72,18 +57,44 @@ export const CreateManifest: React.FC = () => {
 
   const urlManifest = query.manifest;
 
+  const [chosenManifestList, setChosenManifestList] = useState<string[]>([]);
+
   return (
     <>
       <AdminHeader
         breadcrumbs={[
           { label: t('Site admin'), link: '/' },
           { label: t('Manifests'), link: '/manifests' },
-          { label: t('Add new manifest'), link: `/import/manifest`, active: true },
+          { label: t('Import manifest'), link: `/import/manifest`, active: true },
         ]}
-        title={t('Add new manifest')}
+        title={t('Import manifest')}
       />
       <WidePage>
-        {urlManifest ? (
+        {chosenManifestList.length ? (
+          <>
+            <VaultProvider>
+              <PreviewCollection
+                manifestIds={chosenManifestList}
+                manifestId={query.manifest}
+                disabled={isCreating}
+                onImport={(_, manifestIds) => {
+                  importManifests(manifestIds).then(task => {
+                    if (task) {
+                      history.push(`/tasks/${task.id}`);
+                    }
+                  });
+                }}
+              />
+            </VaultProvider>
+            <SmallButton
+              onClick={() => {
+                setChosenManifestList([]);
+              }}
+            >
+              {t('Back to list')}
+            </SmallButton>
+          </>
+        ) : urlManifest ? (
           <div>
             <Button disabled={isCreating || !!error} onClick={() => importManifest(urlManifest)}>
               {t('Import manifest')}
@@ -92,39 +103,65 @@ export const CreateManifest: React.FC = () => {
             {error ? (
               <ErrorMessage>{error}</ErrorMessage>
             ) : (
-              <div style={{ background: '#eee', borderRadius: 5, padding: '1em' }}>
-                <VaultProvider>
-                  <PreviewManifest
-                    id={urlManifest}
-                    setInvalid={isInvalid => {
-                      if (isInvalid) {
-                        setError('Invalid manifest');
-                      } else {
-                        setError('');
-                      }
-                    }}
-                  />
-                </VaultProvider>
-              </div>
+              <>
+                <div style={{ background: '#eee', borderRadius: 5, padding: '1em' }}>
+                  <VaultProvider>
+                    <PreviewManifest
+                      id={urlManifest}
+                      setInvalid={isInvalid => {
+                        if (isInvalid) {
+                          setError('Invalid manifest');
+                        } else {
+                          setError('');
+                        }
+                      }}
+                    />
+                  </VaultProvider>
+                </div>
+                <SmallButton as={HrefLink} href={`/import/manifest`}>
+                  {t('Back to import')}
+                </SmallButton>
+              </>
             )}
           </div>
         ) : (
           <>
             <GridContainer>
               <HalfGird>
-                <Heading3>Import existing</Heading3>
-                <Subheading3>Import a manifest using a URL pointing to an existing IIIF manifest.</Subheading3>
-                <InputContainer>
-                  <InputLabel>Manifest URL</InputLabel>
-                  <Input type="text" onChange={e => setImportedManifestId(e.currentTarget.value)} />
+                <InputContainer style={{ maxWidth: 800 }}>
+                  <InputLabel>{t('Manifest URL')}</InputLabel>
+                  {api.getIsServer() ? (
+                    <Input type="text" disabled />
+                  ) : (
+                    <React.Suspense fallback={<Input type="text" disabled />}>
+                      <IntlInputContainer style={{ width: '100%' }}>
+                        <IntlInputDefault>
+                          <IntlMultiline
+                            rows={10}
+                            value={manifestList}
+                            onChange={e => setManifestList(e.currentTarget.value)}
+                            style={{ borderRight: 'none', whiteSpace: 'no-wrap' } as any}
+                          />
+                        </IntlInputDefault>
+                      </IntlInputContainer>
+                    </React.Suspense>
+                  )}
                 </InputContainer>
                 <SmallButton
                   disabled={isCreating}
                   onClick={() => {
-                    history.push(`/import/manifest?manifest=${importedManifestId}`);
+                    const list = manifestList.split('\n').filter(Boolean);
+                    if (!list.length) {
+                      return;
+                    }
+                    if (list.length === 1) {
+                      history.push(`/import/manifest?manifest=${list[0]}`);
+                    } else {
+                      setChosenManifestList(list);
+                    }
                   }}
                 >
-                  Import
+                  {manifestList.indexOf('\n') === -1 ? t('Import manifest') : t('Import manifests')}
                 </SmallButton>
               </HalfGird>
             </GridContainer>

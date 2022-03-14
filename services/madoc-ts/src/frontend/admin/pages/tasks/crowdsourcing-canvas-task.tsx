@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { CrowdsourcingCanvasTask } from '../../../../gateway/tasks/crowdsourcing-canvas-task';
 import { parseUrn } from '../../../../utility/parse-urn';
-import { Inspector } from '../../../shared/caputre-models/inspector/Inspector';
-import { Editor, EditorProps } from '../../../shared/caputre-models/new/Editor';
+import { Inspector } from '../../../shared/capture-models/inspector/Inspector';
+import { Editor, EditorProps } from '../../../shared/capture-models/new/Editor';
 import { apiHooks } from '../../../shared/hooks/use-api-query';
 import { GenericTask } from './generic-task';
 

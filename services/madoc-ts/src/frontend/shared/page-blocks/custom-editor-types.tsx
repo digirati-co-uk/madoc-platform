@@ -1,7 +1,8 @@
-import { PluginContext, pluginStore } from '@capture-models/plugin-api';
-import { PluginStore } from '@capture-models/types';
 import React, { useMemo } from 'react';
 import { specification as mediaExplorer } from '../../../extensions/capture-models/MediaExplorer/index';
+import { pluginStore } from '../capture-models/plugin-api/globals';
+import { PluginStore } from '../capture-models/types/plugin-store';
+import { PluginContext } from '../capture-models/plugin-api/context';
 
 export const CustomEditorTypes: React.FC = ({ children }) => {
   const customStore: PluginStore = useMemo(() => {

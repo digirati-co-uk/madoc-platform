@@ -1,6 +1,6 @@
-import { captureModelShorthand } from '@capture-models/helpers';
 import React from 'react';
 import { PageBlockDefinition } from '../../../../extensions/page-blocks/extension';
+import { captureModelShorthand } from '../../capture-models/helpers/capture-model-shorthand';
 
 export function blockConfigFor(Component: any, model: any) {
   const definition: PageBlockDefinition<any, any, any> = {
@@ -9,7 +9,7 @@ export function blockConfigFor(Component: any, model: any) {
     svgIcon: model.svgIcon
       ? typeof model.svgIcon === 'string'
         ? function SvgIcon(props: any) {
-            return React.createElement('span', { dangerouslySetInnerHTML: { __html: model.svgIcon }, ...props }, []);
+            return React.createElement('span', { dangerouslySetInnerHTML: { __html: model.svgIcon }, ...props });
           }
         : model.svgIcon
       : undefined,

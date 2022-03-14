@@ -8,7 +8,7 @@ import { defaultTheme } from '../themes/default-theme';
 import { CustomThemeProvider } from '../themes/helpers/CustomThemeProvider';
 import { UniversalRoute } from '../types';
 import { VaultProvider } from '@hyperion-framework/react-vault';
-import '../shared/caputre-models/plugins';
+import '../shared/capture-models/plugins';
 import { SiteProvider } from '../shared/hooks/use-site';
 
 export type SiteAppProps = {

@@ -1,0 +1,144 @@
+{
+  "structure": {
+    "id": "86dafca3-ae73-4d61-b655-a2919fe4993c",
+    "type": "choice",
+    "label": "selectors - nested selector",
+    "items": [
+      {
+        "id": "7b9703b9-22f5-40ab-8bfa-bdaf6c1cfc67",
+        "label": "Choice 1",
+        "type": "model",
+        "fields": [
+          "name",
+          "description"
+        ],
+        "description": "The first choice in the list"
+      },
+      {
+        "id": "18e0d089-e87c-448f-9ef2-3282a44cf6d2",
+        "label": "Person",
+        "type": "model",
+        "fields": [
+          [
+            "person",
+            [
+              "firstName",
+              "lastName"
+            ]
+          ]
+        ],
+        "description": "The second choice in the list"
+      },
+      {
+        "id": "98cea2df-824f-46d7-ae50-c6d1340b26e2",
+        "label": "All fields",
+        "type": "model",
+        "fields": [
+          "name",
+          "description",
+          [
+            "person",
+            [
+              "firstName",
+              "lastName"
+            ]
+          ]
+        ],
+        "description": "The second choice in the list"
+      }
+    ],
+    "description": "Contains 3 choices with multiple text fields nested"
+  },
+  "document": {
+    "id": "c2ec0d72-6ac8-4bb8-a037-1516ffc3dd9a",
+    "type": "entity",
+    "properties": {
+      "name": [
+        {
+          "id": "7cdfa7ab-f3b2-466d-a802-a2090e68723d",
+          "selector": {
+            "id": "74830725-7279-4a91-aaab-35f69a825a03",
+            "type": "box-selector",
+            "state": null
+          },
+          "type": "text-field",
+          "label": "Name",
+          "description": "The name of the thing"
+        }
+      ],
+      "description": [
+        {
+          "id": "03d2b79f-7efc-4df5-b78f-32bb49a9d650",
+          "type": "text-field",
+          "label": "Description",
+          "description": "Tell us something about the thing"
+        }
+      ],
+      "person": [
+        {
+          "id": "cc2570c7-b3a5-4e5b-8f3d-3b3693769969",
+          "type": "entity",
+          "label": "Person",
+          "allowMultiple": true,
+          "properties": {
+            "firstName": [
+              {
+                "id": "c3434721-19f7-4402-9bfb-1e11875a0de0",
+                "selector": {
+                  "id": "05a99c13-eedd-4a14-940a-f774fc461ca4",
+                  "type": "box-selector",
+                  "state": null
+                },
+                "type": "text-field",
+                "label": "First name",
+                "value": "first first name"
+              }
+            ],
+            "lastName": [
+              {
+                "id": "f55be233-4a97-4e14-8863-04706799b2d8",
+                "type": "text-field",
+                "label": "Last name",
+                "value": "first last name"
+              }
+            ]
+          },
+          "description": "Describe a person"
+        },
+        {
+          "id": "56405dc7-b910-45e0-8ade-898594276795",
+          "type": "entity",
+          "label": "Person",
+          "allowMultiple": true,
+          "properties": {
+            "firstName": [
+              {
+                "id": "9a55a096-4a79-46b0-8111-d9775d074a14",
+                "selector": {
+                  "id": "007a5ace-b1a4-49ca-8dd3-c78aee2d5409",
+                  "type": "box-selector",
+                  "state": null
+                },
+                "type": "text-field",
+                "label": "First name",
+                "value": "second first name"
+              }
+            ],
+            "lastName": [
+              {
+                "id": "4772f6cc-9ee3-48b2-9c5b-bb19ef48aeaf",
+                "type": "text-field",
+                "label": "Last name",
+                "value": "second last name"
+              }
+            ]
+          },
+          "description": "Describe a person"
+        }
+      ]
+    },
+    "label": "Nested choices",
+    "description": ""
+  },
+  "id": "fdcd413f-fa2a-424b-a8c5-ae53080f77b5"
+}

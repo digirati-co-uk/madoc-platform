@@ -1,8 +1,8 @@
-import { RoundedCard } from '@capture-models/editor';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { SuccessMessage } from '../../../shared/callouts/SuccessMessage';
+import { RoundedCard } from '../../../shared/capture-models/editor/components/RoundedCard/RoundedCard';
 import { WidePage } from '../../../shared/layout/WidePage';
 import { useLocationQuery } from '../../../shared/hooks/use-location-query';
 import { HrefLink } from '../../../shared/utility/href-link';
@@ -34,7 +34,7 @@ export const SiteConfiguration: React.FC = () => {
         {success ? <SuccessMessage $margin>{t('Changes saved')}</SuccessMessage> : null}
         <div style={{ maxWidth: 600 }}>
           <HrefLink href={`/site/details`} style={{ textDecoration: 'none' }}>
-            <RoundedCard label="Edit site metadata" interactive>
+            <RoundedCard label="Edit site details" interactive>
               Change the label or slug of the site
             </RoundedCard>
           </HrefLink>

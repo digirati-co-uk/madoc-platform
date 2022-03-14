@@ -1,0 +1,71 @@
+{
+  "structure": {
+    "id": "0215bbe1-27b3-4783-a9b7-def91578b445",
+    "type": "choice",
+    "label": "revisions - single field with values",
+    "items": [
+      {
+        "id": "d14f911a-051c-4dac-b96e-b0ff951e7754",
+        "label": "Only choice",
+        "type": "model",
+        "fields": [
+          "name"
+        ],
+        "description": "This could be a top level item without a choice."
+      }
+    ],
+    "description": "Contains single choice with single text field"
+  },
+  "document": {
+    "id": "5e64ba01-05d0-424b-b083-dde979b7fa46",
+    "type": "entity",
+    "properties": {
+      "name": [
+        {
+          "id": "4f655b57-9eb3-4b21-8a0b-0652ae16df42",
+          "type": "text-field",
+          "label": "Name",
+          "allowMultiple": true,
+          "description": "The name of the thing"
+        },
+        {
+          "id": "1e0017ea-0553-4973-89a5-44583a9a1e4f",
+          "type": "text-field",
+          "label": "Name",
+          "allowMultiple": true,
+          "revision": "2badfa7f-369c-488c-bdde-df236b70eb36",
+          "description": "The name of the thing",
+          "value": "FIRST VALUE"
+        },
+        {
+          "id": "c9470cec-05f4-4987-80ca-04eb7d835055",
+          "type": "text-field",
+          "label": "Name",
+          "allowMultiple": true,
+          "revision": "2badfa7f-369c-488c-bdde-df236b70eb36",
+          "description": "The name of the thing",
+          "value": "SECOND VALUE"
+        }
+      ]
+    },
+    "label": "Simple document",
+    "description": ""
+  },
+  "contributors": {
+    "613da999-e851-4867-8439-d5cf9e054da0": {
+      "id": "613da999-e851-4867-8439-d5cf9e054da0",
+      "type": "Person",
+      "name": "Test person"
+    }
+  },
+  "revisions": [
+    {
+      "id": "2badfa7f-369c-488c-bdde-df236b70eb36",
+      "structureId": "d14f911a-051c-4dac-b96e-b0ff951e7754",
+      "fields": [
+        "name"
+      ]
+    }
+  ],
+  "id": "4bb58cd0-8586-44c6-85b3-d11a698cd720"
+}

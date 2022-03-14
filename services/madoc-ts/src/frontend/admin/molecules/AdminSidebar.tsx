@@ -9,7 +9,6 @@ import {
   AdminMenuItemLabel,
   AdminMenuSubItem,
   AdminMenuSubItemContainer,
-  AdminSearchIcon,
   AdminSidebarContainer,
   DashboardIcon,
   InternationalisationIcon,
@@ -38,7 +37,6 @@ export const AdminSidebar: React.FC = () => {
 
   const {
     isSiteConfiguration,
-    isSearchIndexing,
     isProjects,
     isManageCollections,
     isDashboard,
@@ -55,9 +53,11 @@ export const AdminSidebar: React.FC = () => {
         pathname.startsWith('/import/manifest') ||
         pathname.startsWith('/enrichment/ocr'),
       isProjects: pathname.startsWith('/projects'),
-      isSearchIndexing: pathname.startsWith('/enrichment/search-indexing'),
       isSiteConfiguration:
-        pathname.startsWith('/configure') || pathname.startsWith('/system') || pathname.startsWith('/site'),
+        pathname.startsWith('/configure') ||
+        pathname.startsWith('/system') ||
+        pathname.startsWith('/site') ||
+        pathname.startsWith('/enrichment/search-indexing'),
       isLocalisation: pathname.startsWith('/i18n'),
       isMedia: pathname.startsWith('/media'),
       isSiteGlobal: pathname.startsWith('/global'),
@@ -79,23 +79,8 @@ export const AdminSidebar: React.FC = () => {
             <AdminMenuItemIcon>
               <DashboardIcon />
             </AdminMenuItemIcon>
-            <AdminMenuItemLabel>{t('Admin dashboard')}</AdminMenuItemLabel>
+            <AdminMenuItemLabel>{t('Dashboard')}</AdminMenuItemLabel>
           </AdminMenuItem>
-        </AdminMenuItemContainer>
-
-        <AdminMenuItemContainer>
-          <AdminMenuItem as={HrefLink} href="/collections" $active={isManageCollections}>
-            <AdminMenuItemIcon>
-              <ManageCollectionsIcon />
-            </AdminMenuItemIcon>
-            <AdminMenuItemLabel>{t('Collections', { count: 2 })}</AdminMenuItemLabel>
-          </AdminMenuItem>
-
-          <AdminMenuSubItemContainer $open={isManageCollections}>
-            <AdminMenuSubItem as={HrefLink} href="/import/collection">
-              {t('Add new collection')}
-            </AdminMenuSubItem>
-          </AdminMenuSubItemContainer>
         </AdminMenuItemContainer>
 
         <AdminMenuItemContainer>
@@ -106,23 +91,32 @@ export const AdminSidebar: React.FC = () => {
             <AdminMenuItemLabel>{t('Manifests', { count: 2 })}</AdminMenuItemLabel>
           </AdminMenuItem>
 
+          <AdminMenuItemContainer>
+            <AdminMenuItem as={HrefLink} href="/collections" $active={isManageCollections}>
+              <AdminMenuItemIcon>
+                <ManageCollectionsIcon />
+              </AdminMenuItemIcon>
+              <AdminMenuItemLabel>{t('Collections', { count: 2 })}</AdminMenuItemLabel>
+            </AdminMenuItem>
+
+            <AdminMenuSubItemContainer $open={isManageCollections}>
+              <AdminMenuSubItem as={HrefLink} href="/import/collection/create">
+                {t('Create new collection')}
+              </AdminMenuSubItem>
+              <AdminMenuSubItem as={HrefLink} href="/import/collection">
+                {t('Import collection')}
+              </AdminMenuSubItem>
+            </AdminMenuSubItemContainer>
+          </AdminMenuItemContainer>
+
           <AdminMenuSubItemContainer $open={isManageManifests}>
             <AdminMenuSubItem as={HrefLink} href="/import/manifest">
-              {t('Add new manifest')}
+              {t('Import manifest')}
             </AdminMenuSubItem>
-            <AdminMenuSubItem as={HrefLink} href="/enrichement/ocr">
+            <AdminMenuSubItem as={HrefLink} href="/enrichment/ocr">
               {t('View manifests with OCR')}
             </AdminMenuSubItem>
           </AdminMenuSubItemContainer>
-        </AdminMenuItemContainer>
-
-        <AdminMenuItemContainer>
-          <AdminMenuItem as={HrefLink} href="/media" $active={isMedia}>
-            <AdminMenuItemIcon>
-              <MediaIcon />
-            </AdminMenuItemIcon>
-            <AdminMenuItemLabel>{t('Media')}</AdminMenuItemLabel>
-          </AdminMenuItem>
         </AdminMenuItemContainer>
 
         <AdminMenuItemContainer>
@@ -135,11 +129,11 @@ export const AdminSidebar: React.FC = () => {
         </AdminMenuItemContainer>
 
         <AdminMenuItemContainer>
-          <AdminMenuItem as={HrefLink} href="/enrichment/search-indexing" $active={isSearchIndexing}>
+          <AdminMenuItem as={HrefLink} href="/media" $active={isMedia}>
             <AdminMenuItemIcon>
-              <AdminSearchIcon />
+              <MediaIcon />
             </AdminMenuItemIcon>
-            <AdminMenuItemLabel>{t('Search indexing')}</AdminMenuItemLabel>
+            <AdminMenuItemLabel>{t('Media')}</AdminMenuItemLabel>
           </AdminMenuItem>
         </AdminMenuItemContainer>
 
@@ -162,29 +156,36 @@ export const AdminSidebar: React.FC = () => {
 
           <AdminMenuSubItemContainer $open={isSiteConfiguration}>
             <AdminMenuSubItem as={HrefLink} href="/site/details">
-              {t('Site metadata')}
+              {t('Site details')}
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/configure/site/project">
               {t('Project configuration')}
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/configure/site/metadata">
-              {t('Configure metadata')}
+              {t('Metadata configuration')}
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/configure/site/system">
-              {t('Site-wide config')}
+              {t('Site-wide configuration')}
             </AdminMenuSubItem>
-            <AdminMenuSubItem as={HrefLink} href="/system/themes">
-              {t('Themes')}
+            <AdminMenuSubItem as={HrefLink} href="/enrichment/search-indexing">
+              {t('Search indexing')}
             </AdminMenuSubItem>
+            {isGlobalAdmin ? (
+              <AdminMenuSubItem as={HrefLink} href="/system/themes">
+                {t('Themes')}
+              </AdminMenuSubItem>
+            ) : null}
             <AdminMenuSubItem as={HrefLink} href="/site/permissions">
-              {t('Permissions')}
+              {t('Site permissions')}
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/site/invitations">
               {t('Invitations')}
             </AdminMenuSubItem>
-            <AdminMenuSubItem as={HrefLink} href="/system/plugins">
-              {t('Plugins')}
-            </AdminMenuSubItem>
+            {isGlobalAdmin ? (
+              <AdminMenuSubItem as={HrefLink} href="/system/plugins">
+                {t('Plugins')}
+              </AdminMenuSubItem>
+            ) : null}
           </AdminMenuSubItemContainer>
         </AdminMenuItemContainer>
 

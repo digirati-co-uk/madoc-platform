@@ -1,14 +1,14 @@
-import { Revisions } from '@capture-models/editor';
-import { CaptureModel } from '@capture-models/types';
 import * as React from 'react';
 import { Suspense, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { preprocessCaptureModel } from '../../../../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
 import { ResourceLinkResponse } from '../../../../../types/schemas/linking';
-import { RevisionNavigation } from '../../../../shared/caputre-models/RevisionNavigation';
-import { documentFragmentWrapper } from '../../../../shared/caputre-models/utility/document-fragment-wrapper';
+import { RevisionNavigation } from '../../../../shared/capture-models/RevisionNavigation';
+import { CaptureModel } from '../../../../shared/capture-models/types/capture-model';
+import { documentFragmentWrapper } from '../../../../shared/capture-models/utility/document-fragment-wrapper';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { ViewContentFetch } from '../../../molecules/ViewContentFetch';
+import { Revisions } from '../../../../shared/capture-models/editor/stores/revisions/index';
 
 export const ViewOCRModel: React.FC<{ canvasId: number; link: ResourceLinkResponse }> = ({ canvasId, link }) => {
   const api = useApi();

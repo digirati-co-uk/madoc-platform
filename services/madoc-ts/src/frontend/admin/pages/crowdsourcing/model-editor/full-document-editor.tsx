@@ -1,15 +1,13 @@
 import React, { useMemo } from 'react';
-import {
-  DocumentEditor,
-  DocumentStore,
-  FieldEditor,
-  FieldWrapper,
-  Segment,
-  StructureStore,
-} from '@capture-models/editor';
-import { BaseField } from '@capture-models/types';
 import { Header } from '../../../../shared/atoms/Header';
-import { isEntityList } from '@capture-models/helpers';
+import { Segment } from '../../../../shared/capture-models/editor/atoms/Segment';
+import { DocumentEditor } from '../../../../shared/capture-models/editor/components/DocumentEditor/DocumentEditor';
+import { FieldEditor } from '../../../../shared/capture-models/editor/components/FieldEditor/FieldEditor';
+import { FieldWrapper } from '../../../../shared/capture-models/editor/components/FieldWrapper/FieldWrapper';
+import { DocumentStore } from '../../../../shared/capture-models/editor/stores/document/document-store';
+import { StructureStore } from '../../../../shared/capture-models/editor/stores/structure/structure-store';
+import { isEntityList } from '../../../../shared/capture-models/helpers/is-entity';
+import { BaseField } from '../../../../shared/capture-models/types/field-types';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useModelEditorConfig } from './use-model-editor-config';
 

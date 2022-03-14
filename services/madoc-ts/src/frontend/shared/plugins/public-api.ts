@@ -1,4 +1,3 @@
-import { captureModelShorthand } from '@capture-models/helpers';
 import { UpdateModelConfigRequest } from '../../../gateway/api-definitions/update-model-config';
 import { useCollectionList } from '../../site/hooks/use-collection-list';
 import { useRouteContext } from '../../site/hooks/use-route-context';
@@ -13,8 +12,8 @@ import { WarningMessage } from '../callouts/WarningMessage';
 import {
   RevisionProviderFeatures,
   RevisionProviderWithFeatures,
-} from '../caputre-models/new/components/RevisionProviderWithFeatures';
-import { EditorContentViewer } from '../caputre-models/new/EditorContent';
+} from '../capture-models/new/components/RevisionProviderWithFeatures';
+import { EditorContentViewer } from '../capture-models/new/EditorContent';
 import { CanvasVaultContext } from '../components/CanvasVaultContext';
 import { DefaultSelect } from '../form/DefaulSelect';
 import { GlobalSearch } from '../form/GlobalSearch';
@@ -129,7 +128,9 @@ import {
   EditorConfig,
   useSlotConfiguration,
   useSlotContext,
-} from '../caputre-models/new/components/EditorSlots';
+} from '../capture-models/new/components/EditorSlots';
+import { BaseTheme } from '../../../types/schemas/madoc-theme';
+import { captureModelShorthand } from '../capture-models/helpers/capture-model-shorthand';
 
 const Callouts = {
   BaseMessage: BaseMessage,
@@ -258,6 +259,18 @@ const Models = {
   useSlotContext,
 };
 
+type PluginTheme = { id: string } & BaseTheme;
+
+// export {
+//   RevisionProviderFeatures,
+//   EditorConfig,
+//   ProfileConfig,
+//   EditorRenderingConfig,
+//   UpdateModelConfigRequest,
+//   BaseTheme,
+//   PluginTheme,
+// };
+
 export {
   useModule as require,
   useApi,
@@ -266,10 +279,6 @@ export {
   Typography,
   Models,
   atoms as Atoms,
-  RevisionProviderFeatures,
-  EditorConfig,
-  ProfileConfig,
-  EditorRenderingConfig,
   Hooks,
   Callouts,
   EditorSlots,
@@ -286,5 +295,4 @@ export {
   useCustomTheme,
   captureModelShorthand,
   // API Extensions
-  UpdateModelConfigRequest,
 };

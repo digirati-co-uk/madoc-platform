@@ -1,0 +1,55 @@
+{
+  "structure": {
+    "id": "32777457-064d-42c5-866a-678e6c95c722",
+    "type": "choice",
+    "label": "selectors - multiple selectors",
+    "items": [
+      {
+        "id": "bc28bc85-2fc5-4371-916a-c23779a88b43",
+        "label": "Only choice",
+        "type": "model",
+        "fields": [
+          "firstName",
+          "lastName"
+        ],
+        "description": "This could be a top level item without a choice."
+      }
+    ],
+    "description": "Contains single choice with single text field"
+  },
+  "document": {
+    "id": "bc5e10b9-1ee2-4318-a46c-36c61b4e58a2",
+    "type": "entity",
+    "properties": {
+      "firstName": [
+        {
+          "id": "060dd509-d167-49f5-bd9e-8da5080583e4",
+          "type": "text-field",
+          "selector": {
+            "id": "6ffcfd34-4141-4f38-918d-5348e9d42ab5",
+            "type": "box-selector",
+            "state": null
+          },
+          "label": "First name",
+          "description": "The name of the thing"
+        }
+      ],
+      "lastName": [
+        {
+          "id": "9d81a5d1-c626-41a6-9f6f-e11bda2fbdb3",
+          "type": "text-field",
+          "selector": {
+            "id": "9b25da35-f1fb-4b58-92e4-0eef3d929029",
+            "type": "box-selector",
+            "state": null
+          },
+          "label": "Last name",
+          "description": "The last name of the thing"
+        }
+      ]
+    },
+    "label": "Simple document",
+    "description": ""
+  },
+  "id": "63257644-8196-43fc-ad6f-633631f20824"
+}

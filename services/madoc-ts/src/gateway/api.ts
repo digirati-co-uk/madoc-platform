@@ -1,4 +1,3 @@
-import { BaseField, CaptureModel, RevisionRequest } from '@capture-models/types';
 import {
   ActivityOptions,
   ActivityOrderedCollection,
@@ -22,6 +21,9 @@ import { SiteManagerExtension } from '../extensions/site-manager/extension';
 import { SystemExtension } from '../extensions/system/extension';
 import { TaskExtension } from '../extensions/tasks/extension';
 import { ThemeExtension } from '../extensions/themes/extension';
+import { CaptureModel } from '../frontend/shared/capture-models/types/capture-model';
+import { BaseField } from '../frontend/shared/capture-models/types/field-types';
+import { RevisionRequest } from '../frontend/shared/capture-models/types/revision-request';
 import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
 import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
 import {
@@ -460,14 +462,15 @@ export class ApiClient {
     });
   }
 
-  async asUserWithExtensions(
-    callback: (api: ApiClient) => Promise<void>,
+  async asUserWithExtensions<T = void>(
+    callback: (api: ApiClient) => Promise<T>,
     user: { userId?: number; siteId?: number; userName?: string },
-    options?: { siteSlug?: string }
-  ) {
-    const userApi = this.asUser(user, options);
-    await callback(userApi as any);
+    options: { siteSlug?: string } = {}
+  ): Promise<T> {
+    const userApi = this.asUser(user, options, true);
+    const resp = await callback(userApi as any);
     userApi.dispose(); // Need to make sure extensions unregister their events properly.
+    return resp as T;
   }
 
   async listApiKeys() {
@@ -1060,6 +1063,16 @@ export class ApiClient {
       },
     });
   }
+
+  async importManifests(ids: string[]) {
+    return this.request<BaseTask>(`/api/madoc/iiif/import/manifest/bulk`, {
+      method: 'POST',
+      body: {
+        manifests: ids,
+      },
+    });
+  }
+
   async importManifestOcr(id: number, label: string) {
     return this.request<ImportManifestTask>(`/api/madoc/iiif/import/manifest-ocr`, {
       method: 'POST',

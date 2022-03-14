@@ -1,5 +1,5 @@
-import { traverseDocument } from '@capture-models/helpers';
-import { CaptureModel, ModelFields } from '@capture-models/types';
+import { traverseDocument } from '../frontend/shared/capture-models/helpers/traverse-document';
+import { CaptureModel, ModelFields } from '../frontend/shared/capture-models/types/capture-model';
 
 export function generateModelFields(doc: CaptureModel['document']): ModelFields {
   const fullTree = { value: null } as any;

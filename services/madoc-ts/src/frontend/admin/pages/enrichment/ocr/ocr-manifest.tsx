@@ -19,6 +19,7 @@ import { createUniversalComponent } from '../../../../shared/utility/create-univ
 import { HrefLink } from '../../../../shared/utility/href-link';
 import { UniversalComponent } from '../../../../types';
 import React, { useMemo } from 'react';
+import { OCRTaskTags } from '../../../molecules/OCRTaskTags';
 
 type OcrManifestType = {
   data: {
@@ -97,28 +98,7 @@ export const OcrManifest: UniversalComponent<OcrManifestType> = createUniversalC
                   <LocaleString>{item.label}</LocaleString>
                 </TableRowLabel>
                 <TableActions>
-                  {canvasLinkingMap[item.id] ? (
-                    canvasLinkingMap[item.id].map(link => {
-                      if (
-                        link.link.profile === 'http://www.loc.gov/standards/alto/v3/alto.xsd' ||
-                        link.link.profile === 'http://www.loc.gov/standards/alto/v4/alto.xsd'
-                      ) {
-                        return <TaskItemTag>ALTO</TaskItemTag>;
-                      }
-
-                      if (link.link.format === 'text/plain') {
-                        return <TaskItemTag>Plaintext</TaskItemTag>;
-                      }
-
-                      if (link.link.profile === PARAGRAPHS_PROFILE) {
-                        return <TaskItemTagSuccess>Imported OCR</TaskItemTagSuccess>;
-                      }
-
-                      return <TaskItemTag key={link.id}>{link.link.profile}</TaskItemTag>;
-                    })
-                  ) : (
-                    <TaskItemTag>No OCR Data found</TaskItemTag>
-                  )}
+                  <OCRTaskTags links={canvasLinkingMap[item.id]} />
                 </TableActions>
               </TableRow>
             );

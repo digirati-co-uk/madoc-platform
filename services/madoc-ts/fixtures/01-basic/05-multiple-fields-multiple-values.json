@@ -1,0 +1,73 @@
+{
+  "structure": {
+    "id": "04e37aea-9a1e-48f1-af1c-35fe3a83f3d9",
+    "type": "choice",
+    "label": "basic - multiple fields multiple values",
+    "items": [
+      {
+        "id": "e28edc8c-66a2-453a-aaf1-55ff3b833efa",
+        "label": "Only choice - multiple fields, multiple values",
+        "type": "model",
+        "fields": [
+          "name",
+          "description"
+        ],
+        "description": "This could be a top level item without a choice."
+      }
+    ],
+    "description": "Contains single choice with multiple single text fields"
+  },
+  "document": {
+    "id": "9fc61fd8-9f0c-4bfd-b7a5-4e60b909cb0f",
+    "type": "entity",
+    "label": "Simple document",
+    "description": "",
+    "properties": {
+      "name": [
+        {
+          "id": "ae2b084e-9eb0-4514-83e9-51f2f18aa785",
+          "type": "text-field",
+          "label": "Name",
+          "allowMultiple": true,
+          "description": "The name of the thing",
+          "value": "The first name in the list"
+        },
+        {
+          "id": "701abade-3c4a-4574-8714-535192500317",
+          "type": "text-field",
+          "label": "Name",
+          "allowMultiple": true,
+          "description": "The name of the thing",
+          "value": "The second name in the list"
+        }
+      ],
+      "description": [
+        {
+          "id": "686fa013-8ad6-4ab0-bbe2-57b9694f81a9",
+          "type": "text-field",
+          "label": "Description",
+          "allowMultiple": true,
+          "description": "Tell us something about the thing",
+          "value": "First description"
+        },
+        {
+          "id": "8aa400bd-5e74-4f34-ab9b-4892dc97c472",
+          "type": "text-field",
+          "label": "Description",
+          "allowMultiple": true,
+          "description": "Tell us something about the thing",
+          "value": "Second description"
+        },
+        {
+          "id": "f94f9dec-0245-4fdf-84e0-9535c3fcf732",
+          "type": "text-field",
+          "label": "Description",
+          "allowMultiple": true,
+          "description": "Tell us something about the thing",
+          "value": "Third description"
+        }
+      ]
+    }
+  },
+  "id": "5a2bee89-9e7a-4850-b2e9-cdae75f428c0"
+}

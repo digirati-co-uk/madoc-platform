@@ -1,0 +1,56 @@
+{
+  "captureModelId": "d3ab792c-5bad-4634-aeb5-7beaa3266e9d",
+  "revision": {
+    "structureId": "9c2c6558-703d-4276-ac44-01c78e66ecef",
+    "approved": false,
+    "label": "Default",
+    "id": "c0d80087-7ded-40a2-bc8d-ea014fd96b7c",
+    "fields": [
+      "regionOfInterest"
+    ],
+    "status": "draft",
+    "revises": "9c2c6558-703d-4276-ac44-01c78e66ecef",
+    "authors": [
+      "urn:madoc:user:1"
+    ],
+    "deletedFields": null
+  },
+  "document": {
+    "id": "9342aea3-cf76-4787-b779-3445e9dece79",
+    "type": "entity",
+    "label": "Untitled document",
+    "properties": {
+      "regionOfInterest": [
+        {
+          "id": "09b103ae-2701-4eb0-99c9-acef6314c9ff",
+          "type": "text-field",
+          "label": "regionOfInterest test test",
+          "value": "test",
+          "revises": "1490ec4f-b36f-44bc-8ae0-3cf10bf1b7e3",
+          "description": "test",
+          "selector": {
+            "id": "59b4e34b-cfaa-4a29-9bd3-b476992b9846",
+            "type": "box-selector",
+            "state": null,
+            "revisedBy": [
+              {
+                "id": "b9d01f98-b16f-4d10-bd31-c945232a68c3",
+                "type": "box-selector",
+                "state": {
+                  "x": 1716,
+                  "y": 304,
+                  "width": 476,
+                  "height": 252
+                },
+                "revisionId": "c0d80087-7ded-40a2-bc8d-ea014fd96b7c",
+                "revises": "59b4e34b-cfaa-4a29-9bd3-b476992b9846"
+              }
+            ]
+          },
+          "revision": "c0d80087-7ded-40a2-bc8d-ea014fd96b7c"
+        }
+      ]
+    }
+  },
+  "source": "structure"
+}

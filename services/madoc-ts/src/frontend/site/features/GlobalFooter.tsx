@@ -18,12 +18,13 @@ const containerBackground = themeVariable('footer', 'containerBackground', {
 
 const color = themeVariable('footer', 'color', {
   light: '#999',
-  dark: '#fff',
+  dark: '#BBB',
 });
 
 const StyledGlobalFooter = styled.div`
   background: ${background};
-  padding: 3em;
+  padding: 0.5em 1em;
+  font-size: 0.8em;
   max-width: ${maxWidth};
   color: ${color};
   text-align: center;

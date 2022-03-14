@@ -33,7 +33,7 @@ const UserBarContainer = styled.div`
   padding: 0 18px;
 `;
 
-const UserBarAdminButton = styled.a`
+const UserBarSiteButton = styled.a`
   text-decoration: none;
   color: #fff;
   &:hover {
@@ -137,20 +137,12 @@ export const UserBar: React.FC<{
     <>
       <UserBarContainer>
         <UserBarInstallation>{systemConfig.installationTitle}</UserBarInstallation>
-        {showAdmin ? (
-          admin ? (
-            <UserBarAdminButton as={HrefLink} href={`/`}>
-              {site.title}
-            </UserBarAdminButton>
-          ) : (
-            <UserBarAdminButton href={`/s/${site.slug}/admin`}>{site.title}</UserBarAdminButton>
-          )
-        ) : admin ? (
-          <UserBarAdminButton href={`/s/${site.slug}`}>{site.title}</UserBarAdminButton>
+        {admin ? (
+          <UserBarSiteButton href={`/s/${site.slug}`}>{site.title}</UserBarSiteButton>
         ) : (
-          <UserBarAdminButton as={HrefLink} href={`/`}>
+          <UserBarSiteButton as={HrefLink} href={`/`}>
             {site.title}
-          </UserBarAdminButton>
+          </UserBarSiteButton>
         )}
         <UserBarExpander />
 

@@ -1,15 +1,15 @@
 import { VaultProvider } from '@hyperion-framework/react-vault';
 import React, { Suspense, useState } from 'react';
-import { useCaptureModel } from '@capture-models/editor';
 import { useParams } from 'react-router-dom';
-import { BackToChoicesButton } from '../../../../shared/caputre-models/new/components/BackToChoicesButton';
-import { EditorSlots } from '../../../../shared/caputre-models/new/components/EditorSlots';
-import { RevisionProviderWithFeatures } from '../../../../shared/caputre-models/new/components/RevisionProviderWithFeatures';
+import { useCaptureModel } from '../../../../shared/capture-models/editor/components/EditorContext/EditorContext';
+import { BackToChoicesButton } from '../../../../shared/capture-models/new/components/BackToChoicesButton';
+import { EditorSlots } from '../../../../shared/capture-models/new/components/EditorSlots';
+import { RevisionProviderWithFeatures } from '../../../../shared/capture-models/new/components/RevisionProviderWithFeatures';
+import { CaptureModel } from '../../../../shared/capture-models/types/capture-model';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { ContentExplorer } from '../../../../shared/components/ContentExplorer';
 import { Button, ButtonRow, TinyButton } from '../../../../shared/navigation/Button';
-import '../../../../shared/caputre-models/refinements';
-import { CaptureModel } from '@capture-models/types';
+import '../../../../shared/capture-models/refinements';
 import { ViewContentFetch } from '../../../molecules/ViewContentFetch';
 
 export const PreviewCaptureModel: React.FC<{

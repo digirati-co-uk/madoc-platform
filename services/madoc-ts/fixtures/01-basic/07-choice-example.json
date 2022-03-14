@@ -1,0 +1,217 @@
+{
+  "id": "5bd7c9b6-9128-4861-91c2-73d88468a882",
+  "structure": {
+    "id": "79f2ef76-e661-44d7-881c-9829d0d5ae88",
+    "type": "choice",
+    "description": "Example showing nested levels of navigation",
+    "label": "basic - choice example",
+    "items": [
+      {
+        "id": "d018606d-1bcc-4d04-b073-4d42b8a08e59",
+        "type": "model",
+        "description": "This is a model choice at the top level",
+        "label": "Top level model",
+        "fields": [
+          "field-a"
+        ]
+      },
+      {
+        "id": "2139c4da-73a5-45c1-8326-dfc8b0e97bcc",
+        "type": "choice",
+        "description": "This choice is 2 levels deep, taking you through a nested example of structured navigation.",
+        "label": "2 Deep choice",
+        "items": [
+          {
+            "id": "50bca69d-b01f-4f2c-aa9d-189b8d6dbf34",
+            "type": "choice",
+            "description": "This is the first of two choices.",
+            "label": "Choice A",
+            "items": [
+              {
+                "id": "01698929-fe2e-4976-869a-f565e9d2b8b7",
+                "type": "model",
+                "label": "Model A",
+                "fields": [
+                  "field-a"
+                ]
+              },
+              {
+                "id": "895c69ac-5e45-4ea1-a6b5-7ec7fb141e0d",
+                "type": "model",
+                "label": "Model B",
+                "fields": [
+                  "field-b"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "f4a38c60-32ae-4b66-b663-fa55f7107e37",
+            "type": "choice",
+            "description": "This is the second of 2 choices.",
+            "label": "Choice B",
+            "items": [
+              {
+                "id": "b20e3231-6332-447f-9bd8-f0170c9e510f",
+                "type": "model",
+                "label": "Model C",
+                "fields": [
+                  "field-c"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "27ccfb83-8331-4f2a-b783-9a9ffb58f6c6",
+        "type": "choice",
+        "description": "This choice is 3 levels deep and has a many choices.",
+        "label": "3 Deep choice",
+        "items": [
+          {
+            "id": "111f5ff0-6275-48ec-ad60-5514846694a3",
+            "type": "choice",
+            "description": "This has 2 models",
+            "label": "Choice A",
+            "items": [
+              {
+                "id": "81013c61-bb89-4cad-b282-99c4b5e5b02a",
+                "type": "model",
+                "label": "Model A",
+                "fields": [
+                  "field-a"
+                ]
+              },
+              {
+                "id": "26313e4d-12e7-4e57-9d14-acf61de29eca",
+                "type": "model",
+                "label": "Model B",
+                "fields": [
+                  "field-b"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "fd78366c-877d-48c1-9b99-d80d16defcd2",
+            "type": "choice",
+            "description": "This has 2 models",
+            "label": "Choice B",
+            "items": [
+              {
+                "id": "e3a4bcde-54fd-4b8b-b369-8a4ce864c606",
+                "type": "model",
+                "label": "Model A",
+                "fields": [
+                  "field-a"
+                ]
+              },
+              {
+                "id": "21e770f4-183c-4750-86da-8e5c8abc78fb",
+                "type": "model",
+                "description": "These are examples, but show the many variations in navigation you can provide users to break down a crowdsourcing document.",
+                "label": "Model B - in choice B",
+                "fields": [
+                  "field-a",
+                  "field-c",
+                  "field-b"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "8416974d-3a15-467c-96d9-7c0c2c127d0e",
+            "type": "choice",
+            "description": "This has a model choice.",
+            "label": "Choice C",
+            "items": [
+              {
+                "id": "bd52999e-9abf-4bdb-babb-b017da8743a2",
+                "type": "model",
+                "description": "The only choice here",
+                "label": "Model choice",
+                "fields": [
+                  "field-b"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "d32ec353-7a2f-4f61-924f-3ac93003dad3",
+            "type": "choice",
+            "description": "This has a mix of models and further choices.",
+            "label": "Choice D",
+            "items": [
+              {
+                "id": "db753f53-33c5-4fed-996e-55a214c51a26",
+                "type": "model",
+                "description": "This is a model",
+                "label": "Choice A",
+                "fields": [
+                  "field-c"
+                ]
+              },
+              {
+                "id": "db870187-92b3-4ffb-8bbe-ba66a327f551",
+                "type": "choice",
+                "description": "But this is another nested level",
+                "label": "Choice B",
+                "items": [
+                  {
+                    "id": "652c6ca9-05be-4835-8cef-c7ea758f4e85",
+                    "type": "model",
+                    "label": "Model A",
+                    "fields": [
+                      "field-a"
+                    ]
+                  },
+                  {
+                    "id": "97537f77-cd58-451c-abe7-cf4540973a5a",
+                    "type": "model",
+                    "label": "Model B",
+                    "fields": [
+                      "field-b"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "document": {
+    "id": "809fb289-0f2f-491e-9a3b-4847a57fc19a",
+    "type": "entity",
+    "label": "Navigation demo",
+    "properties": {
+      "field-a": [
+        {
+          "id": "55d48800-685b-4a9a-9580-5d13f7cc6d3f",
+          "type": "text-field",
+          "label": "Field A",
+          "value": ""
+        }
+      ],
+      "field-c": [
+        {
+          "id": "6988ae7d-5e9d-4e03-8c2e-98d331fff8ec",
+          "type": "text-field",
+          "label": "Field C",
+          "value": ""
+        }
+      ],
+      "field-b": [
+        {
+          "id": "a9e8311e-233d-4b07-aee1-e67e0953c752",
+          "type": "text-field",
+          "label": "Field B",
+          "value": ""
+        }
+      ]
+    }
+  },
+  "target": null
+}

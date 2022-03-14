@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../shared/caputre-models/refinements';
+import '../../shared/capture-models/refinements';
 import { useTranslation } from 'react-i18next';
 import { SubjectSnippet } from '../../../extensions/tasks/resolvers/subject-resolver';
 import { useProjectByTask } from '../../shared/hooks/use-project-by-task';

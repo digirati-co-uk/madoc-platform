@@ -1,10 +1,11 @@
-import { captureModelShorthand } from '@capture-models/helpers';
 import { PageBlockExtension } from '../../../extensions/page-blocks/extension';
 import { ProjectTemplateExtension } from '../../../extensions/projects/extension';
+import { ThemeExtension } from '../../../extensions/themes/extension';
 import { ModuleWrapper } from '../../../types/plugins';
 import { SitePlugin } from '../../../types/schemas/plugins';
 import { RouteComponents } from '../../site/routes';
 import { UniversalRoute } from '../../types';
+import { captureModelShorthand } from '../capture-models/helpers/capture-model-shorthand';
 import { createPluginWrapper } from './create-plugin-wrapper';
 
 export type PluginModule = {
@@ -24,6 +25,7 @@ export class PluginManager {
     for (const plugin of this.plugins) {
       this.registerBlocks(plugin);
       this.registerProjectTemplates(plugin);
+      this.registerThemes(plugin);
     }
   }
 
@@ -69,6 +71,35 @@ export class PluginManager {
               : { ...block, source: { id: plugin.definition.id, name: plugin.definition.name, type: 'plugin' } },
           });
         }
+      }
+    }
+  }
+
+  registerThemes(plugin: PluginModule) {
+    if (plugin.module.themes) {
+      for (const theme of plugin.module.themes) {
+        ThemeExtension.registerPlugin({
+          pluginId: plugin.definition.id,
+          siteId: plugin.siteId,
+          definition: {
+            id: `${plugin.definition.id}::${theme.id}`,
+            type: `${plugin.definition.id}::${theme.id}`,
+            source: { id: plugin.definition.id, name: plugin.definition.name, type: 'plugin' },
+            config: theme,
+          },
+        });
+      }
+    }
+  }
+
+  unregisterThemes(plugin: PluginModule) {
+    if (plugin.module.themes) {
+      for (const theme of plugin.module.themes) {
+        ThemeExtension.removePlugin({
+          pluginId: plugin.definition.id,
+          siteId: plugin.siteId,
+          type: `${plugin.definition.id}::${theme.id}`,
+        });
       }
     }
   }
@@ -120,6 +151,7 @@ export class PluginManager {
       this.plugins = this.plugins.slice(0, idx).concat(this.plugins.slice(idx + 1));
       this.unregisterBlocks(found);
       this.unregisterProjectTemplates(found);
+      this.unregisterThemes(found);
     }
   }
 
@@ -134,6 +166,7 @@ export class PluginManager {
     }
     this.registerBlocks(newPlugin);
     this.registerProjectTemplates(newPlugin);
+    this.registerThemes(newPlugin);
   }
 
   updatePluginModule(id: string, module: any, siteId?: number, revision?: string) {
@@ -157,6 +190,7 @@ export class PluginManager {
       this.plugins[idx].module = module;
       this.registerBlocks(this.plugins[idx]);
       this.registerProjectTemplates(this.plugins[idx]);
+      this.registerThemes(this.plugins[idx]);
       if (revision) {
         this.plugins[idx].definition.development = {
           enabled: true,

@@ -1,4 +1,4 @@
-import { CaptureModel } from '@capture-models/types';
+import { CaptureModel } from '../frontend/shared/capture-models/types/capture-model';
 import { resolveUrn } from './resolve-urn';
 
 export function parseModelTarget(inputTarget: CaptureModel['target']) {

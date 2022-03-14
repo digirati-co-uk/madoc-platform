@@ -1,14 +1,15 @@
 import { useTranslation } from 'react-i18next';
+import { EditorContext } from '../../../../shared/capture-models/editor/components/EditorContext/EditorContext';
+import { defaultTheme } from '../../../../shared/capture-models/editor/themes';
+import { CaptureModel } from '../../../../shared/capture-models/types/capture-model';
 import { EmptyState } from '../../../../shared/layout/EmptyState';
 import { DashboardTab, DashboardTabs } from '../../../../shared/components/DashboardTabs';
 import { useProjectTemplate } from '../../../../shared/hooks/use-project-template';
 import { UniversalComponent } from '../../../../types';
-import { EditorContext, defaultTheme } from '@capture-models/editor';
 import React, { useState } from 'react';
 import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
-import { CaptureModel } from '@capture-models/types';
 import { useMutation } from 'react-query';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useData } from '../../../../shared/hooks/use-data';

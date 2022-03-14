@@ -1,14 +1,14 @@
-import { DocumentPreview } from '@capture-models/editor';
 import React from 'react';
 import styled, { css } from 'styled-components';
-import { InlineReadonlyValue } from '../../../frontend/shared/caputre-models/new/components/DefaultInlineField';
-import { ProfileConfig, useSlotContext } from '../../../frontend/shared/caputre-models/new/components/EditorSlots';
-import { ModifiedStatus } from '../../../frontend/shared/caputre-models/new/features/ModifiedStatus';
-import { useCurrentEntity } from '../../../frontend/shared/caputre-models/new/hooks/use-current-entity';
-import { useEntityDetails } from '../../../frontend/shared/caputre-models/new/hooks/use-entity-details';
-import { useFieldDetails } from '../../../frontend/shared/caputre-models/new/hooks/use-field-details';
-import { mapProperties } from '../../../frontend/shared/caputre-models/new/utility/map-properties';
-import { getEntityLabel } from '../../../frontend/shared/caputre-models/utility/get-entity-label';
+import { InlineReadonlyValue } from '../../../frontend/shared/capture-models/new/components/DefaultInlineField';
+import { ProfileConfig, useSlotContext } from '../../../frontend/shared/capture-models/new/components/EditorSlots';
+import { ModifiedStatus } from '../../../frontend/shared/capture-models/new/features/ModifiedStatus';
+import { useCurrentEntity } from '../../../frontend/shared/capture-models/new/hooks/use-current-entity';
+import { useEntityDetails } from '../../../frontend/shared/capture-models/new/hooks/use-entity-details';
+import { useFieldDetails } from '../../../frontend/shared/capture-models/new/hooks/use-field-details';
+import { mapProperties } from '../../../frontend/shared/capture-models/new/utility/map-properties';
+import { getEntityLabel } from '../../../frontend/shared/capture-models/utility/get-entity-label';
+import { DocumentPreview } from '../../../frontend/shared/capture-models/DocumentPreview';
 
 const InlineLine = styled.div<{ $isModified?: boolean }>`
   border-left: 3px solid transparent;

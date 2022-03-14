@@ -1,7 +1,7 @@
-import { RevisionRequest } from '@capture-models/types';
 import { useMutation } from 'react-query';
-import { useDeselectRevision } from '../../shared/caputre-models/new/hooks/use-deselect-revision';
-import { useRevisionList } from '../../shared/caputre-models/new/hooks/use-revision-list';
+import { useDeselectRevision } from '../../shared/capture-models/new/hooks/use-deselect-revision';
+import { useRevisionList } from '../../shared/capture-models/new/hooks/use-revision-list';
+import { RevisionRequest } from '../../shared/capture-models/types/revision-request';
 import { useApi } from '../../shared/hooks/use-api';
 import { useViewerSaving } from '../../shared/hooks/use-viewer-saving';
 import { useInvalidateAfterSubmission } from './use-invalidate-after-submission';

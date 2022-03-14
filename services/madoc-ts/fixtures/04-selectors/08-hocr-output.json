@@ -1,0 +1,188 @@
+{
+  "id": "c800d47f-6053-4ad3-9c2f-f5d88756f47e",
+  "structure": {
+    "id": "d09d9b0c-c465-4777-b102-f54398982b78",
+    "type": "choice",
+    "description": "test",
+    "label": "selectors - hocr output",
+    "items": [
+      {
+        "id": "b65179f7-08fa-46b0-95dd-ceec9387de4c",
+        "type": "model",
+        "description": "test",
+        "label": "Transcribe",
+        "fields": [
+          "label",
+          "description",
+          "html-test",
+          "dropdown"
+        ],
+        "instructions": "Fill in the fields"
+      },
+      {
+        "id": "c8bb939a-7a76-4b15-9f77-81375519128c",
+        "type": "model",
+        "label": "OCR Example",
+        "fields": [
+          [
+            "paragraph",
+            [
+              [
+                "lines",
+                [
+                  "text"
+                ]
+              ]
+            ]
+          ]
+        ]
+      }
+    ]
+  },
+  "document": {
+    "id": "5b8b5649-b7c4-47eb-911e-329556b26f5f",
+    "type": "entity",
+    "label": "Untitled document",
+    "properties": {
+      "paragraph": [
+        {
+          "id": "159621fb-4f93-4cd7-a394-5a1141fc1091",
+          "type": "entity",
+          "label": "Paragraph",
+          "pluralLabel": "Paragraphs",
+          "description": "Region of the page denoting a single paragraph",
+          "allowMultiple": true,
+          "labelledBy": "lines",
+          "properties": {
+            "lines": [
+              {
+                "id": "64e82cb7-16f8-432e-b2b7-3828233a134c",
+                "type": "entity",
+                "label": "Line",
+                "pluralLabel": "Lines",
+                "description": "All of the lines inside of a paragraph",
+                "allowMultiple": true,
+                "labelledBy": "text",
+                "properties": {
+                  "text": [
+                    {
+                      "id": "eb122262-fab3-43c8-9432-ac93dad3abf8",
+                      "type": "text-field",
+                      "label": "Text of line",
+                      "value": "",
+                      "description": "Single word, phrase or the whole line",
+                      "allowMultiple": true,
+                      "selector": {
+                        "id": "da7e26f8-9797-423e-a0cf-276df7b859ea",
+                        "type": "box-selector",
+                        "state": {
+                          "x": 10,
+                          "y": 20,
+                          "width": 30,
+                          "height": 40
+                        }
+                      },
+                      "multiline": false,
+                      "pluralField": "Text of lines"
+                    }
+                  ]
+                },
+                "selector": {
+                  "id": "0d0a0325-6d9a-407a-93c2-db0f55bb7209",
+                  "type": "box-selector",
+                  "state": {
+                    "x": 100,
+                    "y": 200,
+                    "width": 300,
+                    "height": 400
+                  }
+                }
+              }
+            ]
+          },
+          "selector": {
+            "id": "2f32a9f6-525e-4cba-9bef-115129680fce",
+            "type": "box-selector",
+            "state": {
+              "x": 200,
+              "y": 400,
+              "width": 600,
+              "height": 800
+            }
+          }
+        }
+      ],
+      "label": [
+        {
+          "id": "289f768b-c904-4bcf-b621-85dbd8b6ecf9",
+          "type": "html-field",
+          "label": "label",
+          "value": ""
+        }
+      ],
+      "html-test": [
+        {
+          "id": "c0eebc2d-553f-4c8f-8a92-e66ecea6819d",
+          "type": "html-field",
+          "label": "html-test",
+          "value": ""
+        }
+      ],
+      "description": [
+        {
+          "id": "6a62a11f-171d-41e9-ab41-747d7748a99b",
+          "type": "text-field",
+          "label": "description",
+          "value": "",
+          "multiline": true,
+          "enableLinks": false,
+          "enableExternalImages": false
+        }
+      ],
+      "dropdown": [
+        {
+          "id": "3bef2d0d-bd96-4955-ab7e-f410df217b60",
+          "type": "dropdown-field",
+          "label": "dropdown test",
+          "value": "d",
+          "options": [
+            {
+              "text": "Choice A",
+              "value": "a"
+            },
+            {
+              "text": "Choice B",
+              "value": "b"
+            },
+            {
+              "text": "Choice C",
+              "value": "c"
+            },
+            {
+              "text": "Choice D",
+              "value": "d"
+            }
+          ],
+          "clearable": true
+        }
+      ]
+    }
+  },
+  "target": [
+    {
+      "id": "urn:madoc:canvas:6095",
+      "type": "Canvas"
+    },
+    {
+      "id": "urn:madoc:manifest:6058",
+      "type": "Manifest"
+    }
+  ],
+  "contributors": {
+    "8ec9ed91-22a3-4e5c-bc67-0684173c4a7c": {
+      "id": "8ec9ed91-22a3-4e5c-bc67-0684173c4a7c",
+      "type": "Person",
+      "name": "Madoc TS"
+    }
+  }
+}

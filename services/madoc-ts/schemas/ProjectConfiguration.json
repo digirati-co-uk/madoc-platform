@@ -110,6 +110,9 @@
     "miradorCanvasPage": {
       "type": "boolean"
     },
+    "universalViewerCanvasPage": {
+      "type": "boolean"
+    },
     "contributionMode": {
       "enum": [
         "annotation",

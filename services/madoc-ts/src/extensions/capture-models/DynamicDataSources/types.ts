@@ -1,5 +1,5 @@
-import { FieldSource } from '@capture-models/editor';
-import { BaseField } from '@capture-models/types';
+import { FieldSource } from '../../../frontend/shared/capture-models/editor/components/FieldEditor/FieldEditor';
+import { BaseField } from '../../../frontend/shared/capture-models/types/field-types';
 import { ApiClient } from '../../../gateway/api';
 
 export type DynamicDataLoader = (

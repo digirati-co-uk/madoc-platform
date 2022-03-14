@@ -1,0 +1,241 @@
+{
+  "structure": {
+    "id": "cdee3083-5f74-43c1-9d80-d97349f5fa69",
+    "type": "choice",
+    "label": "invalid - empty structure",
+    "description": "Contains single choice with single text field",
+    "items": [
+      {
+        "id": "f0c7f99c-9e4b-4211-8dc5-f94c1287690b",
+        "type": "model",
+        "label": "Completely valid",
+        "fields": [
+          "label"
+        ]
+      },
+      {
+        "id": "c9db4483-9421-4370-abab-2c24ee656de2",
+        "type": "model",
+        "label": "Partially valid",
+        "fields": [
+          "label",
+          "description"
+        ]
+      },
+      {
+        "id": "d4e96195-e6ea-47f7-8bd1-69fa366be166",
+        "type": "model",
+        "label": "Completely invalid",
+        "fields": [
+          "description"
+        ]
+      },
+      {
+        "id": "983b5776-4a2a-4107-a50d-eab94f0d2c0e",
+        "label": "Nested choice - partially valid",
+        "type": "choice",
+        "items": [
+          {
+            "label": "Nested - partially valid",
+            "id": "c40a1d4b-6bcc-4dd0-89f3-f8146a0837d0",
+            "type": "model",
+            "fields": [
+              "label",
+              "description"
+            ]
+          },
+          {
+            "label": "Nested - completely valid",
+            "id": "6961fa68-0886-4bbe-b680-9f6004a2fe12",
+            "type": "model",
+            "fields": [
+              "label"
+            ]
+          },
+          {
+            "label": "Nested - completely invalid",
+            "id": "b229fe32-684b-420b-8287-d26fa3569cd2",
+            "type": "model",
+            "fields": [
+              "description"
+            ]
+          }
+        ],
+        "description": "This is a nested choice"
+      },
+      {
+        "id": "8dee1d18-6570-4e75-a18d-73acb40a11ad",
+        "label": "Completely invalid choice",
+        "type": "choice",
+        "items": [
+          {
+            "label": "Nested - completely invalid",
+            "id": "c68d65d1-a493-4c25-acb5-2588440ee953",
+            "type": "model",
+            "fields": [
+              "description"
+            ]
+          },
+          {
+            "label": "Nested - completely invalid",
+            "id": "e27e35b8-9882-443a-8453-2e418d77f613",
+            "type": "model",
+            "fields": [
+              "description"
+            ]
+          }
+        ],
+        "description": "This is a nested choice"
+      },
+      {
+        "id": "3cb849fe-e2fe-4d0d-87ab-dff1519c6c3c",
+        "label": "Valid Person",
+        "type": "model",
+        "fields": [
+          [
+            "person",
+            [
+              "firstName",
+              "lastName"
+            ]
+          ]
+        ],
+        "description": "The second choice in the list"
+      },
+      {
+        "id": "bd34d28a-0299-4407-af0a-113f027bd3d0",
+        "label": "Partially valid person",
+        "type": "model",
+        "fields": [
+          [
+            "person",
+            [
+              "firstName",
+              "NOT_EXIST"
+            ]
+          ]
+        ],
+        "description": "The second choice in the list"
+      },
+      {
+        "id": "1d6c1829-58c7-4c23-8f99-813edad87517",
+        "label": "Invalid person",
+        "type": "model",
+        "fields": [
+          [
+            "person",
+            [
+              "NOT_EXIST",
+              "ALSO_NOT_EXIST"
+            ]
+          ]
+        ],
+        "description": "The second choice in the list"
+      },
+      {
+        "id": "0c1675fc-96d0-42f3-bfb9-f9f8fa56ffa0",
+        "label": "Partially valid choice",
+        "type": "choice",
+        "items": [
+          {
+            "id": "3404e64c-dae4-470a-a1b0-3f1d453c80c6",
+            "label": "Valid Person",
+            "type": "model",
+            "fields": [
+              [
+                "person",
+                [
+                  "firstName",
+                  "lastName"
+                ]
+              ]
+            ],
+            "description": "The second choice in the list"
+          },
+          {
+            "id": "77a0b28d-d072-4862-a0d1-cb23d17f9fe5",
+            "label": "Partially valid person",
+            "type": "model",
+            "fields": [
+              [
+                "person",
+                [
+                  "firstName",
+                  "NOT_EXIST"
+                ]
+              ]
+            ],
+            "description": "The second choice in the list"
+          },
+          {
+            "id": "ff7acdea-c7ed-4158-bcf8-81e1559ae004",
+            "label": "Invalid person",
+            "type": "model",
+            "fields": [
+              [
+                "person",
+                [
+                  "NOT_EXIST",
+                  "ALSO_NOT_EXIST"
+                ]
+              ]
+            ],
+            "description": "The second choice in the list"
+          }
+        ],
+        "description": "This is a nested choice"
+      }
+    ]
+  },
+  "target": [
+    {
+      "type": "manifest",
+      "id": "https://view.nls.uk/manifest/7446/74464117/manifest.json"
+    },
+    {
+      "type": "canvas",
+      "id": "https://view.nls.uk/iiif/7446/74464117/canvas/3"
+    }
+  ],
+  "document": {
+    "id": "e03c5f63-d7d4-4f87-b3a5-16f98c8737e1",
+    "type": "entity",
+    "label": "Label",
+    "labelledBy": "label",
+    "properties": {
+      "label": [
+        {
+          "id": "11590355-556c-4c4c-a9dd-7f0656d028c6",
+          "type": "text-field",
+          "label": "Name",
+          "value": "Forth Road Bridge"
+        }
+      ],
+      "person": [
+        {
+          "id": "1ad53177-c2c6-45c0-a202-f485db1e57df",
+          "type": "entity",
+          "label": "Person",
+          "properties": {
+            "firstName": [
+              {
+                "id": "4e79f032-e8da-4619-91e1-0e9716d7c2d8",
+                "type": "text-field",
+                "label": "First name"
+              }
+            ],
+            "lastName": [
+              {
+                "id": "7fcbe69a-c9b2-4519-a9bb-cf5b05c6a87a",
+                "type": "text-field",
+                "label": "Last name"
+              }
+            ]
+          },
+          "description": "Describe a person"
+        }
+      ]
+    }
+  },
+  "id": "22949fda-79d6-4a31-a693-a7b66fdfaa94"
+}

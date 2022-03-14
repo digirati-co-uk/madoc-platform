@@ -132,13 +132,18 @@ export class ThemeRepository extends BaseRepository {
 
   mapTheme(
     theme: ThemeRow,
-    { siteTheme, onDisk }: { onDisk?: boolean | undefined; siteTheme?: (ThemeRow & ThemeSiteRow) | null }
+    {
+      siteTheme,
+      onDisk,
+      isPlugin,
+    }: { onDisk?: boolean | undefined; isPlugin?: boolean | undefined; siteTheme?: (ThemeRow & ThemeSiteRow) | null }
   ): ThemeListItem {
     return {
       id: theme.theme_id,
       name: theme.name,
       description: theme.description || '',
-      onDisk: !!onDisk,
+      onDisk: !!onDisk || !!isPlugin,
+      isPlugin: !!isPlugin,
       enabled: !!(siteTheme && siteTheme.theme_id === theme.theme_id),
       installed: true,
       version: theme.version,
@@ -146,12 +151,13 @@ export class ThemeRepository extends BaseRepository {
     };
   }
 
-  mapDiskTheme(diskTheme: DiskTheme) {
+  mapDiskTheme(diskTheme: DiskTheme, plugin = false): ThemeListItem {
     return {
       id: diskTheme.id,
       name: diskTheme.config.name,
       description: diskTheme.config.description || '',
       onDisk: true,
+      isPlugin: plugin,
       enabled: false,
       version: diskTheme.config.version || 'v0.0.0',
       thumbnail: diskTheme.config.thumbnail || null,

@@ -1,5 +1,5 @@
-import { generateId } from '@capture-models/helpers';
 import { sql } from 'slonik';
+import { generateId } from '../frontend/shared/capture-models/helpers/generate-id';
 import { NotificationRow, Notification, NotificationRequest } from '../types/notifications';
 import { BaseRepository } from './base-repository';
 
