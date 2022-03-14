@@ -1,7 +1,7 @@
 import React from 'react';
-import {BreadcrumbDivider, BreadcrumbItem, BreadcrumbList} from '../components/Breadcrumbs';
-import {HomeIcon} from '../icons/HomeIcon';
-import {useBreads} from './hooks/use-breads';
+import { BreadcrumbDivider, BreadcrumbItem, BreadcrumbList } from '../components/Breadcrumbs';
+import { HomeIcon } from '../icons/HomeIcon';
+import { useBreads } from './hooks/use-breads';
 
 export const RevisionBreadcrumbs: React.FC = () => {
   const { breads, revisionPopTo, fieldSelected, revisionDeselectField } = useBreads();
