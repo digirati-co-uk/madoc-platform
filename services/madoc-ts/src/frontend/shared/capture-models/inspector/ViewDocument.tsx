@@ -15,6 +15,7 @@ import { BaseField } from '../types/field-types';
 import { BaseSelector } from '../types/selector-types';
 import { getEntityLabel } from '../utility/get-entity-label';
 import { isEmptyFieldList } from '../utility/is-field-list-empty';
+import {useResolvedSelector} from '../new/hooks/use-resolved-selector';
 
 const DocumentLabel = styled.div`
   position: relative;
@@ -161,8 +162,7 @@ const ViewEntity: React.FC<{
   fluidImage?: boolean;
 }> = ({ entity, collapsed, children, interactive = true, fluidImage }) => {
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
-
-  // @todo make better.
+  const [selector] = useResolvedSelector(entity);
   const label = getEntityLabel(entity);
 
   return (
@@ -187,7 +187,7 @@ const ViewEntity: React.FC<{
       {/* This is where the entity selector will go, if it exists. */}
       {isCollapsed ? null : (
         <>
-          {entity.selector ? <SelectorPreview selector={entity.selector} fluidImage={fluidImage} /> : null}
+          {selector ? <SelectorPreview selector={selector} fluidImage={fluidImage} /> : null}
           {children}
         </>
       )}

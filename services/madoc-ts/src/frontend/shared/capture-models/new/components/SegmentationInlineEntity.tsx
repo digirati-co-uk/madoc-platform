@@ -4,10 +4,11 @@ import { RoundedCard } from '../../editor/components/RoundedCard/RoundedCard';
 import { Revisions } from '../../editor/stores/revisions/index';
 import { DefaultInlineEntity } from './DefaultInlineEntity';
 import { EditorRenderingConfig } from './EditorSlots';
+import { useResolvedSelector } from '../hooks/use-resolved-selector';
 
 export const SegmentationInlineEntity: EditorRenderingConfig['InlineEntity'] = props => {
   const previewData = Revisions.useStoreState(s => s.selector.selectorPreviewData);
-  const selector = props.entity.selector;
+  const [selector] = useResolvedSelector(props.entity);
 
   if (selector && previewData[selector.id]) {
     return (

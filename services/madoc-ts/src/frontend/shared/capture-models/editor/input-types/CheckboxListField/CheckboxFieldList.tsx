@@ -8,12 +8,15 @@ export interface CheckboxListFieldProps extends BaseField {
   options?: Array<{ label: string; value: string }>;
   value: { [key: string]: boolean };
   previewList?: boolean;
+  disabled?: boolean;
 }
 
-const CheckboxContainer = styled.div<{ inline?: boolean }>`
+const CheckboxContainer = styled.fieldset<{ inline?: boolean }>`
   background: rgba(5, 42, 68, 0.05);
   border: 1px solid rgba(5, 42, 68, 0.1);
   border-radius: 3px;
+  padding: 0;
+  margin: 0;
   ${props =>
     props.inline &&
     css`
@@ -23,7 +26,7 @@ const CheckboxContainer = styled.div<{ inline?: boolean }>`
 
 export const CheckboxFieldList: FieldComponent<CheckboxListFieldProps> = props => {
   return (
-    <CheckboxContainer>
+    <CheckboxContainer disabled={props.disabled}>
       {(props.options || []).map(option => {
         return (
           <StyledFormLabel key={option.value}>

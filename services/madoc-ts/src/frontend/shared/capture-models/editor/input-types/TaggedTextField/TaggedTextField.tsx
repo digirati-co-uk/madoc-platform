@@ -28,6 +28,7 @@ export interface TaggedTextFieldProps extends BaseField {
   enableLineBreak?: boolean;
   enablePageBreak?: boolean;
   enableIllegible?: boolean;
+  disabled?: boolean;
 }
 
 export type TagDefinition = {

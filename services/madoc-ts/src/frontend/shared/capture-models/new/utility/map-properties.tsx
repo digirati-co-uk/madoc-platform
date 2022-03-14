@@ -30,7 +30,7 @@ export function mapProperties(
     const description = singleEntity.description;
     const profile = singleEntity.profile;
     const dataSources = singleEntity.dataSources;
-    const hasSelector = !!instances[0]?.selector;
+    const hasSelector = !!singleEntity?.selector;
 
     return (
       <React.Fragment key={property}>

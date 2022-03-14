@@ -12,6 +12,7 @@ export interface AutocompleteFieldProps extends BaseField {
   clearable?: boolean;
   requestInitial?: boolean;
   dataSource: string;
+  disabled?: boolean;
 }
 
 export type CompletionItem = {
@@ -99,6 +100,7 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
             backgroundColor: '#fff',
           },
         }}
+        isDisabled={props.disabled}
         isInvalid={!!error}
         inputId={props.id}
         initialValue={options[0]}

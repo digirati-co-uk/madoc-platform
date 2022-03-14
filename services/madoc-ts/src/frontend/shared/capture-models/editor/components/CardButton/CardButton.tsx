@@ -38,6 +38,9 @@ export const CardButton = styled.button<{ size?: 'large' | 'medium' | 'small'; s
     opacity: 0.5;
     cursor: initial;
   }
+  &:disabled[type='button'] {
+    opacity: 1;
+  }
   &:hover {
     transform: translateY(-2px);
   }

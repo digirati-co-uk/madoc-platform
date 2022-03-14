@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Allow for complex empty value `{firstName} - {lastName} {@empty/untitled person}`
 - Ability to reorder fields in the structure editor
 - Added "Selector is required" to capture model editor
+- Added required selector styling using disabled field sets.
 
 ### Changed
 - The link in the top bar now always links to the site (previously the admin for admins).

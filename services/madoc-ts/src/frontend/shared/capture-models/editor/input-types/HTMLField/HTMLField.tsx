@@ -13,6 +13,7 @@ export interface HTMLFieldProps extends BaseField {
   enableExternalImages?: boolean;
   enableLinks?: boolean;
   enableStylesDropdown?: boolean;
+  disabled?: boolean;
 }
 
 const INLINE_STYLE_BUTTONS = [
@@ -69,6 +70,7 @@ export const HTMLField: FieldComponent<HTMLFieldProps> = ({
   enableHistory,
   enableLinks,
   enableStylesDropdown,
+  disabled,
 }) => {
   const [initialValue, setValue] = React.useState<EditorValue>(() =>
     RichTextEditor.createValueFromString(value, format)
@@ -102,6 +104,7 @@ export const HTMLField: FieldComponent<HTMLFieldProps> = ({
 
   return (
     <StyledRichTextEditor
+      disabled={disabled}
       toolbarConfig={toolbarConfig}
       value={initialValue}
       editorStyle={{ fontFamily: 'inherit', fontSize: 'inherit' }}
