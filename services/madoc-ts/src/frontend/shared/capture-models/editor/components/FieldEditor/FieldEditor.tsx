@@ -170,6 +170,30 @@ export const FieldEditor: React.FC<{
               />
             </StyledFormLabel>
           </StyledFormField>
+          {selector ? (
+            <StyledFormField>
+              <StyledFormLabel>
+                <StyledCheckbox
+                  type="checkbox"
+                  checked={!!selector.required}
+                  onChange={(e: any) => {
+                    const checked = e.target.checked;
+                    setSelector(prevSelector => {
+                      if (!prevSelector) {
+                        return prevSelector;
+                      }
+                      return {
+                        ...prevSelector,
+                        required: checked,
+                      };
+                    });
+                  }}
+                  style={{ marginRight: 10 }}
+                />
+                {t('Selector is required')}
+              </StyledFormLabel>
+            </StyledFormField>
+          ) : null}
           <StyledFormField>
             <StyledFormLabel>
               <Field as={StyledCheckbox} type="checkbox" name="allowMultiple" style={{ marginRight: 10 }} />

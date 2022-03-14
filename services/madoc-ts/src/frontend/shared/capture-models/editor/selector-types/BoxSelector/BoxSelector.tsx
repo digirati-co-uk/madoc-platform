@@ -105,7 +105,7 @@ export const BoxSelector: SelectorComponent<BoxSelectorProps> = ({
       {t('No region has been selected. Draw a box on the image to define a region.')}
       <br />
       {chooseSelector && !readOnly ? (
-        <SelectorButton inline={true} size="small" onClick={() => chooseSelector(props.id)}>
+        <SelectorButton type="button" inline={true} size="small" onClick={() => chooseSelector(props.id)}>
           {t('define region')}
         </SelectorButton>
       ) : null}

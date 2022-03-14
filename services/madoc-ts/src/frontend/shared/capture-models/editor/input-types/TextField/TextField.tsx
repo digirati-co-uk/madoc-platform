@@ -11,6 +11,7 @@ export interface TextFieldProps extends BaseField {
   previewInline?: boolean;
   minLines?: number;
   value: string;
+  disabled?: boolean;
 }
 
 export const TextField: FieldComponent<TextFieldProps> = ({
@@ -20,6 +21,7 @@ export const TextField: FieldComponent<TextFieldProps> = ({
   minLines,
   multiline,
   updateValue,
+  disabled,
 }) => {
   if (multiline) {
     return (
@@ -28,6 +30,7 @@ export const TextField: FieldComponent<TextFieldProps> = ({
         id={id}
         placeholder={placeholder}
         value={value || ''}
+        disabled={disabled}
         onChange={e => updateValue(e.currentTarget.value)}
         minRows={Number(minLines)}
       />
@@ -40,6 +43,7 @@ export const TextField: FieldComponent<TextFieldProps> = ({
       id={id}
       placeholder={placeholder}
       value={value || ''}
+      disabled={disabled}
       onChange={e => updateValue(e.currentTarget.value)}
     />
   );

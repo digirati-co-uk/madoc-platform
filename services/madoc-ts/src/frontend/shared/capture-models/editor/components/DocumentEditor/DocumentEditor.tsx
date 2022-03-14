@@ -218,9 +218,9 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                       {t('Choose selector (optional)')}
                       <ChooseSelectorButton
                         value={subtree.selector ? subtree.selector.type : ''}
-                        onChange={t => {
-                          if (t) {
-                            const selector = selectors[t as keyof SelectorTypeMap];
+                        onChange={selectorType => {
+                          if (selectorType) {
+                            const selector = selectors[selectorType as keyof SelectorTypeMap];
                             if (selector) {
                               setSelector({
                                 selector: {
@@ -237,6 +237,30 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     </StyledFormLabel>
                   </StyledFormField>
                 </StyledForm>
+                {subtree.selector ? (
+                  <StyledFormField>
+                    <StyledFormLabel>
+                      <StyledCheckbox
+                        type="checkbox"
+                        checked={!!subtree.selector.required}
+                        onChange={(e: any) => {
+                          const checked = e.target.checked;
+                          const prevSelector = subtree.selector;
+                          if (prevSelector) {
+                            setSelector({
+                              selector: {
+                                ...prevSelector,
+                                required: checked,
+                              },
+                            });
+                          }
+                        }}
+                        style={{ marginRight: 10 }}
+                      />
+                      {t('Selector is required')}
+                    </StyledFormLabel>
+                  </StyledFormField>
+                ) : null}
                 <Button size="tiny" onClick={() => setMetadataOpen(m => !m)}>
                   {t('Close metadata')}
                 </Button>

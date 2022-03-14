@@ -40,6 +40,10 @@ export const inputCss = css`
   &:focus {
     border-color: #005cc5;
   }
+  &:disabled {
+    background: #f0f0f0;
+    cursor: not-allowed;
+  }
 `;
 
 const _StyledCheckbox = styled.input`

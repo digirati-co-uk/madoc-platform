@@ -10,7 +10,8 @@ export const FieldInstance: React.FC<{
   property: string;
   path: Array<[string, string]>;
   hideHeader?: boolean;
-}> = ({ field, property, path, hideHeader }) => {
+  disabled?: boolean;
+}> = ({ field, property, path, hideHeader, disabled }) => {
   const updateFieldValue = Revisions.useStoreActions(a => a.updateFieldValue);
   const updateSelectorValue = Revisions.useStoreActions(a => a.updateSelector);
   const chooseSelector = Revisions.useStoreActions(a => a.chooseSelector);
@@ -37,6 +38,7 @@ export const FieldInstance: React.FC<{
     <FieldWrapper
       hideHeader={hideHeader}
       field={field}
+      disabled={disabled}
       selector={selector}
       onUpdateValue={updateValue}
       onUpdateSelector={updateSelector}
