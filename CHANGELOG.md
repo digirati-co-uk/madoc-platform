@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed OCR page linking from menu
 - Fixed missing OCR listed
 - Styling of "Suggest edit" to be clearer
+- Styling of "Breadcrumbs" and labelling
 
 ### Added
 - Added refresh on 500 error page (usually appears during deployment)

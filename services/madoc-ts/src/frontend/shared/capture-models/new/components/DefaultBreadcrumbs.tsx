@@ -1,7 +1,8 @@
 import React from 'react';
 import { BreadcrumbDivider, BreadcrumbItem, BreadcrumbList } from '../../../components/Breadcrumbs';
-import { useBreads } from '../../RevisionBreadcrumbs';
 import { EditorRenderingConfig } from './EditorSlots';
+import { HomeIcon } from '../../../icons/HomeIcon';
+import {useBreads} from '../../hooks/use-breads';
 
 export const DefaultBreadcrumbs: EditorRenderingConfig['Breadcrumbs'] = () => {
   const { breads, revisionPopTo, fieldSelected, revisionDeselectField } = useBreads();
@@ -10,47 +11,27 @@ export const DefaultBreadcrumbs: EditorRenderingConfig['Breadcrumbs'] = () => {
     return null;
   }
 
-  if (breads.length === 1) {
-    const s = breads[0];
-    return (
-      <BreadcrumbList style={{ marginBottom: '1em' }}>
-        <BreadcrumbItem>
-          <a
-            onClick={() => {
-              if (fieldSelected) {
-                revisionDeselectField();
-              } else {
-                revisionPopTo({ id: s.id });
-              }
-            }}
-          >
-            Back
-          </a>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    );
+  function selectItem(id: string, n: number) {
+    if (fieldSelected && n === breads.length - 1) {
+      revisionDeselectField();
+    } else {
+      revisionPopTo({ id });
+    }
   }
 
   return (
     <BreadcrumbList style={{ marginBottom: '1em' }}>
-      {breads.map((s, n) => (
-        <React.Fragment key={s.id}>
-          <BreadcrumbItem>
-            <a
-              onClick={() => {
-                if (fieldSelected && n === breads.length - 1) {
-                  revisionDeselectField();
-                } else {
-                  revisionPopTo({ id: s.id });
-                }
-              }}
-            >
-              {s.name}
-            </a>
-          </BreadcrumbItem>
-          {n < breads.length - 1 ? <BreadcrumbDivider /> : null}
-        </React.Fragment>
-      ))}
+      {breads.map((s, n) => {
+        const name = n === 0 ? <HomeIcon title={s.name} /> : s.name;
+        return (
+          <React.Fragment key={s.id}>
+            <BreadcrumbItem active={s.active} $icon={n === 0}>
+              {!s.active ? <a onClick={() => selectItem(s.id, n)}>{name}</a> : name}
+            </BreadcrumbItem>
+            {n < breads.length - 1 ? <BreadcrumbDivider /> : null}
+          </React.Fragment>
+        );
+      })}
     </BreadcrumbList>
   );
 };
