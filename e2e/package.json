@@ -35,7 +35,7 @@
     "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-react-hooks": "^2.1.2",
     "jose": "^2.0.5",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2.6.7",
     "picklejs": "^0.101.0",
     "prettier": "^2.1.2",
     "react": "16.14.0",

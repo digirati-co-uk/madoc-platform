@@ -7,6 +7,7 @@ export interface CheckboxFieldProps extends BaseField {
   type: 'checkbox-field';
   value: boolean;
   inlineLabel?: string;
+  disabled?: boolean;
 }
 
 const CheckboxContainer = styled.div<{ inline?: boolean }>`
@@ -28,6 +29,7 @@ export const CheckboxField: FieldComponent<CheckboxFieldProps> = props => {
           <StyledCheckbox
             name={props.id}
             id={props.id}
+            disabled={props.disabled}
             checked={props.value}
             onChange={v => {
               props.updateValue(v.target.checked);

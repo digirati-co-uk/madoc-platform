@@ -3,6 +3,8 @@ import { FieldInstance } from '../../editor/connected-components/FieldInstance';
 import { useSelectorHelper } from '../../editor/stores/selectors/selector-helper';
 import { BaseField } from '../../types/field-types';
 import { useSlotConfiguration } from './EditorSlots';
+import { FieldSet } from '../../../form/FieldSet';
+import { useResolvedSelector } from '../hooks/use-resolved-selector';
 
 export const DefaultFieldInstance: React.FC<{
   field: BaseField;
@@ -14,24 +16,25 @@ export const DefaultFieldInstance: React.FC<{
   const [isHighlighted, setIsHighlighted] = useState(false);
   const { immutableFields = [] } = useSlotConfiguration();
   const immutable = immutableFields.indexOf(property) !== -1;
+  const [selector, { isBlockingForm: disableForm }] = useResolvedSelector(field);
 
   useEffect(() => {
-    if (field?.selector) {
+    if (selector) {
       if (isHighlighted) {
-        return helper.highlight(field.selector.id);
+        return helper.highlight(selector.id);
       } else {
-        helper.clearHighlight(field.selector.id);
+        helper.clearHighlight(selector.id);
       }
     }
-  });
+  }, []);
 
-  const onFocus = (e: React.FocusEvent<HTMLDivElement>) => {
+  const onFocus = (e: React.FocusEvent<HTMLElement>) => {
     if (e.currentTarget !== e.target && field && field.selector) {
       setIsHighlighted(true);
     }
   };
 
-  const onBlur = (e: React.FocusEvent<HTMLDivElement>) => {
+  const onBlur = (e: React.FocusEvent<HTMLElement>) => {
     if (e.currentTarget !== e.target && field && field.selector) {
       setIsHighlighted(false);
     }
@@ -43,7 +46,7 @@ export const DefaultFieldInstance: React.FC<{
   }
 
   return (
-    <span onFocus={onFocus} onBlur={onBlur}>
+    <FieldSet disabled={disableForm} onFocus={onFocus} onBlur={onBlur}>
       <FieldInstance
         key={field.revises ? field.revises : field.id}
         field={field}
@@ -51,6 +54,6 @@ export const DefaultFieldInstance: React.FC<{
         path={path}
         hideHeader={hideHeader}
       />
-    </span>
+    </FieldSet>
   );
 };

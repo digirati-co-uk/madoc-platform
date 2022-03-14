@@ -4,6 +4,7 @@ import { useSelectorStatus } from '../../../plugin-api/hooks/use-selector-status
 import { BaseField } from '../../../types/field-types';
 import { BaseSelector } from '../../../types/selector-types';
 import { FieldHeader } from '../FieldHeader/FieldHeader';
+import { FieldSet } from '../../../../form/FieldSet';
 
 type Props<T extends BaseField = BaseField> = {
   field: T;
@@ -18,6 +19,7 @@ type Props<T extends BaseField = BaseField> = {
   onUpdateSelector?: (state: any) => void;
   clearSelector?: () => void;
   selectorPreview?: any;
+  disabled?: boolean;
   selectorLabel?: string;
 
   // @todo other things for the selector.
@@ -42,6 +44,7 @@ export const FieldWrapper: React.FC<Props> = ({
   selectorPreview,
   onUpdateSelector,
   selectorLabel,
+  disabled,
 }) => {
   const [value, setValue] = useState(field.value);
 
@@ -53,7 +56,7 @@ export const FieldWrapper: React.FC<Props> = ({
     [onUpdateValue]
   );
 
-  const fieldComponent = useField(field, value, updateValue);
+  const fieldComponent = useField(field, value, updateValue, { disabled });
 
   // @todo pass a lot of (optional) things from props to this selector status for actions on selectors.
   const selectorComponent = useSelectorStatus(selector, {
@@ -94,7 +97,7 @@ export const FieldWrapper: React.FC<Props> = ({
             term={term}
           />
         )}
-        <div>{fieldComponent || ''}</div>
+        {fieldComponent || ''}
       </div>
     </React.Suspense>
   );

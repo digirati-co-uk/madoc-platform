@@ -8,12 +8,14 @@ export interface DropdownFieldProps extends BaseField {
   placeholder?: string;
   options: DropdownOption[];
   clearable?: boolean;
+  disabled?: boolean;
 }
 
 export const DropdownField: FieldComponent<DropdownFieldProps> = props => {
   return (
     <Dropdown
       id={props.id}
+      disabled={props.disabled}
       options={props.options || []}
       placeholder={props.placeholder}
       value={props.value}
