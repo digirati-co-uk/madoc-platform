@@ -83,6 +83,7 @@ export type EditorConfig = {
   selectEntityWhenCreating: boolean;
   selectFieldWhenCreating: boolean;
   deselectRevisionAfterSaving: boolean;
+  disableSaveForLater: boolean;
   saveOnNavigate: boolean;
   profileConfig: {
     [profile: string]: ProfileConfig;
@@ -94,6 +95,7 @@ const defaultEditorConfig: EditorConfig = {
   selectEntityWhenCreating: true,
   selectFieldWhenCreating: true,
   deselectRevisionAfterSaving: false,
+  disableSaveForLater: false,
   saveOnNavigate: false,
   profileConfig: {},
   immutableFields: [],
