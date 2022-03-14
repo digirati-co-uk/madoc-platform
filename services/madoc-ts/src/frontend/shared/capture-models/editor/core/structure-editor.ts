@@ -4,12 +4,14 @@ import { CaptureModel, ModelFields, NestedModelFields } from '../../types/captur
 type FlatStructureDefinition =
   | {
       label?: string;
+      fullLabel?: string;
       type: 'model';
       key: string[];
       fields: FlatStructureDefinition[];
     }
   | {
       label?: string;
+      fullLabel?: string;
       type: Exclude<string, 'model'>;
       key: string[];
     };
@@ -61,7 +63,8 @@ export function structureToFlatStructureDefinition(
         key: [...keyScope, field],
         type: fullField.type,
         label: fullField.label,
-      });
+        fullLabel: keyScope.length > 0 ? `${document.label} / ${fullField.label}` : fullField.label,
+      } as any);
     }
 
     const [modelKey, fields] = field as [string, ModelFields];

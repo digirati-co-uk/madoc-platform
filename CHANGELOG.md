@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Allow replacements like `{fieldA} - {fieldB}`
   - Allow for empty value `{fieldA/No value provided}`
   - Allow for complex empty value `{firstName} - {lastName} {@empty/untitled person}`
+- Ability to reorder fields in the structure editor
 
 ### Changed
 - The link in the top bar now always links to the site (previously the admin for admins).
