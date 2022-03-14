@@ -28,12 +28,15 @@ const FieldHeaderTop = styled.div`
 
 const FieldHeaderLeft = styled.div`
   flex: 1 1 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;
 
 export const FieldHeaderTitle = styled.label`
   letter-spacing: -0.3px;
   font-weight: 500;
-  font-size: 1.3em;
+  font-size: 1.2em;
   .ui.tiny.label {
     margin-left: 0.5em;
   }
@@ -58,7 +61,6 @@ const FieldHeaderIcon = styled.div<{ open?: boolean }>`
   background: transparent;
   color: #6041e2;
   transition: transform 0.5s, background-color 0.5s, color 0.5s;
-  margin-bottom: 0.5em;
   transform: translateY(0);
   &:hover {
     background: #eee;
@@ -68,7 +70,6 @@ const FieldHeaderIcon = styled.div<{ open?: boolean }>`
       ? css`
           color: #fff;
           background: #aaa7de;
-          transform: translateY(0.5em);
           &:hover {
             background: #aaa7de;
           }

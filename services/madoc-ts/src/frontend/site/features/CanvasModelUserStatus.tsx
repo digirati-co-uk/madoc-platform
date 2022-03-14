@@ -23,7 +23,7 @@ export const CanvasModelUserStatus: React.FC<{ isEditing?: boolean }> = ({ isEdi
 
   if (isEditing) {
     return (
-      <InfoMessage>
+      <InfoMessage $margin>
         {t("You are editing another user's submission")}
         <Button as={HrefLink} href={relativeLink({ subRoute: 'model' })} style={{ float: 'right', marginLeft: 10 }}>
           {t('Back')}
@@ -33,19 +33,19 @@ export const CanvasModelUserStatus: React.FC<{ isEditing?: boolean }> = ({ isEdi
   }
 
   if (assigned) {
-    return <InfoMessage>{t('You have been assigned this image')}</InfoMessage>;
+    return <InfoMessage $margin>{t('You have been assigned this image')}</InfoMessage>;
   }
 
   if (inProgress) {
     if (mode === 'transcription') {
-      return <InfoMessage>{t('You have unsubmitted contributions')}</InfoMessage>;
+      return <InfoMessage $margin>{t('You have unsubmitted contributions')}</InfoMessage>;
     }
-    return <InfoMessage>{t('You have previously started working on this image')}</InfoMessage>;
+    return <InfoMessage $margin>{t('You have previously started working on this image')}</InfoMessage>;
   }
 
   if (completed) {
     return (
-      <SuccessMessage>
+      <SuccessMessage $margin>
         {t('You have already completed this item')}{' '}
         <HrefLink
           href={createLink({
