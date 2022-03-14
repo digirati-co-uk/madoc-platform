@@ -86,7 +86,6 @@ export const ModelEditor: React.FC<Props> = ({
         />
       </CardContent>
       <CardContent>
-        <div>Testing</div>
         <React.Suspense fallback={<>{t('loading...')}</>}>
           <ReorderableFieldList document={document} selected={selected} setSelected={setSelected} />
         </React.Suspense>
