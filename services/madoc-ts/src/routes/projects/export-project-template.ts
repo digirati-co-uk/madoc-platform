@@ -1,12 +1,13 @@
+import { generateId } from '../../frontend/shared/capture-models/helpers/generate-id';
+import { traverseDocument } from '../../frontend/shared/capture-models/helpers/traverse-document';
+import { CaptureModel } from '../../frontend/shared/capture-models/types/capture-model';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { userWithScope } from '../../utility/user-with-scope';
 import { parseProjectId } from '../../utility/parse-project-id';
 import { NotFound } from '../../utility/errors/not-found';
 import { api } from '../../gateway/api.server';
 import { JsonProjectTemplate } from '../../extensions/projects/types';
-import { CaptureModel } from '@capture-models/types';
 import deepmerge from 'deepmerge';
-import { generateId, traverseDocument } from '@capture-models/helpers';
 
 export const exportProjectTemplate: RouteMiddleware<{ id: string }> = async context => {
   const { siteId } = userWithScope(context, []);

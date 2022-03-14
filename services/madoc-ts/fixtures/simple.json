@@ -1,0 +1,243 @@
+{
+  "structure": {
+    "id": "c1",
+    "type": "choice",
+    "label": "Annotate this book",
+    "description": "Add some details on this book, or leave a review",
+    "items": [
+      {
+        "id": "c2",
+        "type": "choice",
+        "label": "Describe this book",
+        "items": [
+          {
+            "id": "c3",
+            "type": "model",
+            "label": "Basic information",
+            "fields": [
+              "name",
+              "description",
+              "author"
+            ]
+          },
+          {
+            "id": "c4",
+            "type": "model",
+            "label": "Add an ISBN number",
+            "fields": [
+              "isbn"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "c6",
+        "type": "model",
+        "label": "Rate this book",
+        "fields": [
+          [
+            "review",
+            [
+              "author",
+              "datePublished",
+              "reviewRating"
+            ]
+          ]
+        ]
+      }
+    ]
+  },
+  "document": {
+    "@context": "http://schema.org",
+    "conformsTo": "Book",
+    "type": "entity",
+    "properties": {
+      "name": [
+        {
+          "type": "text-field",
+          "term": "name",
+          "label": "Enter the name of the book",
+          "value": "The Hitchhiker's Guide to the Galaxy",
+          "selector": {
+            "type": "box-selector",
+            "state": null
+          }
+        }
+      ],
+      "description": [
+        {
+          "type": "text-field",
+          "term": "description",
+          "label": "Enter a description of the book",
+          "value": "The Hitchhiker's Guide to the Galaxy is the first of five books in the Hitchhiker's Guide to the Galaxy comedy science fiction \"trilogy\" by Douglas Adams. The novel is an adaptation of the first four parts of Adams' radio series of the same name."
+        }
+      ],
+      "isbn": [
+        {
+          "type": "text-field",
+          "term": "isbn",
+          "label": "Enter the ISBN",
+          "value": "0345391802"
+        }
+      ],
+      "author": [
+        {
+          "type": "text-field",
+          "term": "author",
+          "label": "Author",
+          "value": "http://viaf.org/viaf/113230702"
+        }
+      ],
+      "review": [
+        {
+          "type": "entity",
+          "label": "Review",
+          "conformsTo": "Review",
+          "term": "review",
+          "properties": {
+            "author": [
+              {
+                "type": "text-field",
+                "term": "author",
+                "label": "Enter your name",
+                "value": "John Doe"
+              }
+            ],
+            "datePublished": [
+              {
+                "type": "text-field",
+                "label": "Current date",
+                "term": "datePublished",
+                "format": "YYYY-MM-DD",
+                "value": "2019-10-10"
+              }
+            ],
+            "name": [
+              {
+                "type": "text-field",
+                "term": "name",
+                "label": "Short name of your review",
+                "value": "A masterpiece of literature"
+              }
+            ],
+            "reviewBody": [
+              {
+                "type": "text-field",
+                "term": "reviewBody",
+                "label": "Write your review",
+                "value": "Very simply, the book is one of the funniest SF spoofs ever written, with hyperbolic ideas folding in on themselves"
+              }
+            ],
+            "reviewRating": [
+              {
+                "term": "reviewRating",
+                "label": "Star rating",
+                "type": "text-field",
+                "max": 5,
+                "value": 5
+              }
+            ]
+          }
+        },
+        {
+          "type": "entity",
+          "label": "Review",
+          "conformsTo": "Review",
+          "term": "review",
+          "properties": {
+            "author": [
+              {
+                "term": "author",
+                "type": "text-field",
+                "label": "Enter your name",
+                "value": "John Smith"
+              }
+            ],
+            "datePublished": [
+              {
+                "term": "datePublished",
+                "type": "text-field",
+                "label": "Current date",
+                "format": "YYYY-MM-DD",
+                "value": "2019-10-11"
+              }
+            ],
+            "name": [
+              {
+                "term": "name",
+                "type": "text-field",
+                "label": "Short name of your review",
+                "value": ""
+              }
+            ],
+            "reviewBody": [
+              {
+                "term": "reviewBody",
+                "type": "text-field",
+                "label": "Write your review",
+                "value": ""
+              }
+            ],
+            "reviewRating": [
+              {
+                "type": "text-field",
+                "max": 5,
+                "value": 4,
+                "term": "reviewRating"
+              }
+            ]
+          }
+        },
+        {
+          "type": "entity",
+          "label": "Review",
+          "conformsTo": "Review",
+          "term": "review",
+          "properties": {
+            "author": [
+              {
+                "term": "author",
+                "type": "text-field",
+                "label": "Enter your name",
+                "value": "Jane Doe"
+              }
+            ],
+            "datePublished": [
+              {
+                "term": "datePublished",
+                "type": "text-field",
+                "label": "Current date",
+                "format": "YYYY-MM-DD",
+                "value": "2019-10-12"
+              }
+            ],
+            "name": [
+              {
+                "term": "name",
+                "type": "text-field",
+                "label": "Short name of your review",
+                "value": "A great book"
+              }
+            ],
+            "reviewBody": [
+              {
+                "term": "reviewBody",
+                "type": "text-field",
+                "label": "Write your review",
+                "value": "It's very great"
+              }
+            ],
+            "reviewRating": [
+              {
+                "term": "reviewRating",
+                "type": "text-field",
+                "max": 5,
+                "value": 5
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

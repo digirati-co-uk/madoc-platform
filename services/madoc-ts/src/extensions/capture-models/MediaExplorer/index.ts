@@ -1,9 +1,9 @@
-import { FieldSpecification } from '@capture-models/types';
 import React from 'react';
+import { FieldSpecification } from '../../../frontend/shared/capture-models/types/field-types';
 import { MediaExplorer, MediaExplorerProps } from './MediaExplorer';
 import { MediaExplorerPreview } from './MediaExplorer.preview';
 
-declare module '@capture-models/types' {
+declare module '../../../frontend/shared/capture-models/types/field-types' {
   export interface FieldTypeMap {
     'madoc-media-explorer': MediaExplorerProps;
   }

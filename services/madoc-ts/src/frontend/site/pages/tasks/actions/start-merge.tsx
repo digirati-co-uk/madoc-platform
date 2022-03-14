@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
-import { Revisions } from '@capture-models/editor';
+import { Revisions } from '../../../../shared/capture-models/editor/stores/revisions/index';
 import { useApi } from '../../../../shared/hooks/use-api';
 import {
   EditorToolbarButton,

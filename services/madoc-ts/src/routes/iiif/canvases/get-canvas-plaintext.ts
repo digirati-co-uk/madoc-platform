@@ -1,8 +1,8 @@
-import { traverseDocument } from '@capture-models/helpers';
 import {
   paragraphsToPlaintext,
   PARAGRAPHS_PROFILE,
 } from '../../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
+import { traverseDocument } from '../../../frontend/shared/capture-models/helpers/traverse-document';
 import { api } from '../../../gateway/api.server';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { isLinkCaptureModelParagraphs, isLinkPlaintext } from '../../../utility/linking-property-types';

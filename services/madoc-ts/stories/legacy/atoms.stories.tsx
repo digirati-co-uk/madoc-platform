@@ -4,7 +4,7 @@ import { Button, SmallButton } from '../../src/frontend/shared/navigation/Button
 import { Breadcrumbs } from '../../src/frontend/shared/navigation/Breadcrumbs';
 import { MemoryRouter } from 'react-router-dom';
 import { SearchBox } from '../../src/frontend/shared/atoms/SearchBox';
-import { Dropdown } from '@capture-models/editor';
+import { Dropdown } from '../../src/frontend/shared/capture-models/editor/atoms/Dropdown';
 import { StandardButton } from '../../src/frontend/shared/atoms/StandardButton';
 import { SiteProvider } from '../../src/frontend/shared/hooks/use-site';
 

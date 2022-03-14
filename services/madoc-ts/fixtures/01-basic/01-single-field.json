@@ -1,0 +1,45 @@
+{
+  "structure": {
+    "id": "b6098ae7-c474-4061-957f-358368f24213",
+    "type": "choice",
+    "label": "basic - single field",
+    "description": "Contains single choice with single text field",
+    "items": [
+      {
+        "id": "e25a8ece-df85-4fc2-b6ad-0fd1006dd4c1",
+        "type": "model",
+        "label": "Metadata",
+        "fields": [
+          "label"
+        ]
+      }
+    ]
+  },
+  "target": [
+    {
+      "type": "manifest",
+      "id": "https://view.nls.uk/manifest/7446/74464117/manifest.json"
+    },
+    {
+      "type": "canvas",
+      "id": "https://view.nls.uk/iiif/7446/74464117/canvas/3"
+    }
+  ],
+  "document": {
+    "id": "0bc81bf9-807a-423e-a4b2-d8ada10de95a",
+    "type": "entity",
+    "label": "Label",
+    "labelledBy": "label",
+    "properties": {
+      "label": [
+        {
+          "id": "9a98d760-56a3-4474-8080-346200910907",
+          "type": "text-field",
+          "label": "Name",
+          "value": "Forth Road Bridge"
+        }
+      ]
+    }
+  },
+  "id": "f8302402-0c99-4eb9-88fe-9588f9366378"
+}

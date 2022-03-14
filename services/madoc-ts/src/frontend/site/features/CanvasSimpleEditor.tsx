@@ -7,18 +7,18 @@ import { Button, ButtonIcon } from '../../shared/navigation/Button';
 import { EmptyState } from '../../shared/layout/EmptyState';
 import { SmallToast } from '../../shared/callouts/SmallToast';
 import { TickIcon } from '../../shared/icons/TickIcon';
-import { BackToChoicesButton } from '../../shared/caputre-models/new/components/BackToChoicesButton';
-import { DirectEditButton } from '../../shared/caputre-models/new/components/DirectEditButton';
-import { EditorRenderingConfig, EditorSlots } from '../../shared/caputre-models/new/components/EditorSlots';
+import { BackToChoicesButton } from '../../shared/capture-models/new/components/BackToChoicesButton';
+import { DirectEditButton } from '../../shared/capture-models/new/components/DirectEditButton';
+import { EditorRenderingConfig, EditorSlots } from '../../shared/capture-models/new/components/EditorSlots';
 import {
   RevisionProviderFeatures,
   RevisionProviderWithFeatures,
-} from '../../shared/caputre-models/new/components/RevisionProviderWithFeatures';
-import { SegmentationFieldInstance } from '../../shared/caputre-models/new/components/SegmentationFieldInstance';
-import { SegmentationInlineEntity } from '../../shared/caputre-models/new/components/SegmentationInlineEntity';
-import { SegmentationInlineProperties } from '../../shared/caputre-models/new/components/SegmentationInlineProperties';
-import { SimpleSaveButton } from '../../shared/caputre-models/new/components/SimpleSaveButton';
-import { EditorContentViewer } from '../../shared/caputre-models/new/EditorContent';
+} from '../../shared/capture-models/new/components/RevisionProviderWithFeatures';
+import { SegmentationFieldInstance } from '../../shared/capture-models/new/components/SegmentationFieldInstance';
+import { SegmentationInlineEntity } from '../../shared/capture-models/new/components/SegmentationInlineEntity';
+import { SegmentationInlineProperties } from '../../shared/capture-models/new/components/SegmentationInlineProperties';
+import { SimpleSaveButton } from '../../shared/capture-models/new/components/SimpleSaveButton';
+import { EditorContentViewer } from '../../shared/capture-models/new/EditorContent';
 import { CanvasVaultContext } from '../../shared/components/CanvasVaultContext';
 import { useApi } from '../../shared/hooks/use-api';
 import { useCurrentUser } from '../../shared/hooks/use-current-user';

@@ -1,0 +1,69 @@
+{
+  "id": "0d32980f-8964-49ff-9dea-47fc7510c409",
+  "structure": {
+    "id": "006d634e-e8c4-4edd-9d37-b4beff3da7f2",
+    "type": "choice",
+    "label": "profiles - tabs",
+    "profile": [
+      "tabs"
+    ],
+    "items": [
+      {
+        "id": "6c42bb4e-05db-4c3c-b423-20e4972dc11f",
+        "type": "model",
+        "label": "Tab A",
+        "fields": [
+          "name"
+        ]
+      },
+      {
+        "id": "2f612ee8-8756-4ebf-98bb-aa25b7585481",
+        "type": "model",
+        "label": "Tab B",
+        "fields": [
+          "something"
+        ]
+      },
+      {
+        "id": "15f5306e-9acc-4d35-accc-e7cb9608f302",
+        "type": "model",
+        "label": "Tab C",
+        "fields": [
+          "something_else"
+        ]
+      }
+    ]
+  },
+  "document": {
+    "id": "af6480bd-1805-4229-a11a-b4e939032549",
+    "type": "entity",
+    "label": "Untitled document",
+    "properties": {
+      "something_else": [
+        {
+          "id": "d18fbed3-a74e-402a-95b0-1ae03ed8f760",
+          "type": "text-field",
+          "label": "something_else",
+          "value": ""
+        }
+      ],
+      "something": [
+        {
+          "id": "34b88eed-52ae-4eec-b6e9-b4a404e0f0cd",
+          "type": "text-field",
+          "label": "something",
+          "value": ""
+        }
+      ],
+      "name": [
+        {
+          "id": "7daa9087-7934-400d-922b-d245a4b73f27",
+          "type": "text-field",
+          "label": "name",
+          "value": ""
+        }
+      ]
+    }
+  },
+  "target": null
+}

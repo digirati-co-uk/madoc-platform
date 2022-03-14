@@ -1,0 +1,84 @@
+{
+  "structure": {
+    "id": "44a1c57f-8dc5-41a4-a020-91adfa3f402b",
+    "type": "choice",
+    "label": "nesting - nested model",
+    "items": [
+      {
+        "id": "1a0d894a-1897-4448-abd0-0acc451e76fc",
+        "label": "Choice 1",
+        "type": "model",
+        "fields": [
+          "name",
+          "description"
+        ],
+        "description": "The first choice in the list"
+      },
+      {
+        "id": "6fb10d2e-8a88-4a5f-a318-ac6542f073de",
+        "label": "Person",
+        "type": "model",
+        "fields": [
+          [
+            "person",
+            [
+              "firstName",
+              "lastName"
+            ]
+          ]
+        ],
+        "description": "The second choice in the list"
+      }
+    ],
+    "description": "Contains 3 choices with multiple text fields nested"
+  },
+  "document": {
+    "id": "0169c23d-c72a-4d7d-8728-27c306cd9860",
+    "type": "entity",
+    "properties": {
+      "name": [
+        {
+          "id": "c312dc73-c278-4edd-a649-f3bdc9828a6d",
+          "type": "text-field",
+          "label": "Name",
+          "description": "The name of the thing"
+        }
+      ],
+      "description": [
+        {
+          "id": "d4429fce-3edd-4997-856c-f3c90e304962",
+          "type": "text-field",
+          "label": "Description",
+          "description": "Tell us something about the thing"
+        }
+      ],
+      "person": [
+        {
+          "id": "1ad53177-c2c6-45c0-a202-f485db1e57df",
+          "type": "entity",
+          "label": "Person",
+          "properties": {
+            "firstName": [
+              {
+                "id": "4e79f032-e8da-4619-91e1-0e9716d7c2d8",
+                "type": "text-field",
+                "label": "First name"
+              }
+            ],
+            "lastName": [
+              {
+                "id": "7fcbe69a-c9b2-4519-a9bb-cf5b05c6a87a",
+                "type": "text-field",
+                "label": "Last name"
+              }
+            ]
+          },
+          "description": "Describe a person"
+        }
+      ]
+    },
+    "label": "Nested choices",
+    "description": ""
+  },
+  "id": "c8e4436b-ac8a-4935-bce6-f423aee5c9ec"
+}

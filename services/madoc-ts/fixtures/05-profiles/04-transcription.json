@@ -1,0 +1,16 @@
+{
+  "structure": {
+    "id": "d89acd33-c56d-4dfd-ba90-fc0b1cb31c12",
+    "type": "choice",
+    "label": "profiles - transcription",
+    "items": []
+  },
+  "document": {
+    "id": "28b43424-5efe-40d5-9c9d-771770db4319",
+    "type": "entity",
+    "label": "TODO",
+    "labelledBy": "label",
+    "properties": {}
+  },
+  "id": "87e91625-80ae-4808-a914-223ffab54179"
+}

@@ -1,5 +1,7 @@
-import { traverseDocument, traverseStructure } from '@capture-models/helpers';
-import { BaseField, CaptureModel, NestedModelFields } from '@capture-models/types';
+import { traverseDocument } from '../../../frontend/shared/capture-models/helpers/traverse-document';
+import { traverseStructure } from '../../../frontend/shared/capture-models/helpers/traverse-structure';
+import { CaptureModel, NestedModelFields } from '../../../frontend/shared/capture-models/types/capture-model';
+import { BaseField } from '../../../frontend/shared/capture-models/types/field-types';
 import { ApiClient } from '../../../gateway/api';
 import { parseModelTarget } from '../../../utility/parse-model-target';
 import { defaultDispose } from '../../extension-manager';

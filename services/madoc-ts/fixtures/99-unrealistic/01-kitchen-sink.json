@@ -1,0 +1,16 @@
+{
+  "structure": {
+    "id": "f48bf990-c8ef-4b03-8c91-262cd5ecaa1a",
+    "type": "choice",
+    "label": "unrealistic - kitchen sink",
+    "items": []
+  },
+  "document": {
+    "id": "00737ca3-ddcd-4a4f-846a-16c9e21ae2d8",
+    "type": "entity",
+    "label": "TODO",
+    "labelledBy": "label",
+    "properties": {}
+  },
+  "id": "da06bdab-7cc2-426b-bcb5-7f3bb52e5d1a"
+}

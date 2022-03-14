@@ -1,4 +1,3 @@
-import { StyledFormMultilineInputElement } from '@capture-models/editor';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
@@ -12,6 +11,7 @@ import { useUser } from '../../../shared/hooks/use-site';
 import { useSiteConfiguration } from '../../features/SiteConfigurationContext';
 import { useRouteContext } from '../use-route-context';
 import { CanvasMenuHook } from './types';
+import { StyledFormMultilineInputElement } from '../../../shared/capture-models/editor/atoms/StyledForm';
 
 const NoteContainer = styled.div`
   padding: 0.5em;

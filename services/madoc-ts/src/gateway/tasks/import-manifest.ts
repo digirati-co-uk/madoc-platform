@@ -1,6 +1,6 @@
-import { generateId } from '@capture-models/helpers';
 import fs from 'fs';
 import { dirname } from 'path';
+import { generateId } from '../../frontend/shared/capture-models/helpers/generate-id';
 import { FILES_PATH } from '../../paths';
 import { BaseTask } from './base-task';
 import * as importCanvas from './import-canvas';

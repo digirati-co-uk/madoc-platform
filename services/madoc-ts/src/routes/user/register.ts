@@ -1,6 +1,6 @@
-import { generateId } from '@capture-models/helpers';
 import { v4 } from 'uuid';
 import { createUserActivationEmail, createUserActivationText } from '../../emails/user-activation-email';
+import { generateId } from '../../frontend/shared/capture-models/helpers/generate-id';
 import { gatewayHost } from '../../gateway/api.server';
 import { renderFrontend } from '../../middleware/render-frontend';
 import { RouteMiddleware } from '../../types/route-middleware';

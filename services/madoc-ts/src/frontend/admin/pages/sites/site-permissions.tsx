@@ -1,10 +1,10 @@
-import { Tag } from '@capture-models/editor';
 import React, { useEffect, useRef, useState } from 'react';
 import { SelectRef } from 'react-functional-select/dist/Select';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { SiteUser } from '../../../../extensions/site-manager/types';
 import { siteRoles } from '../../../config';
+import { Tag } from '../../../shared/capture-models/editor/atoms/Tag';
 import { Button, ButtonRow, SmallButton } from '../../../shared/navigation/Button';
 import { DefaultSelect } from '../../../shared/form/DefaulSelect';
 import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';

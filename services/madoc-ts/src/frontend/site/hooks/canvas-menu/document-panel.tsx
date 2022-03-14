@@ -1,8 +1,8 @@
-import { CaptureModel } from '@capture-models/types';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { MetadataEmptyState } from '../../../shared/atoms/MetadataConfiguration';
-import { ViewDocument } from '../../../shared/caputre-models/inspector/ViewDocument';
+import { ViewDocument } from '../../../shared/capture-models/inspector/ViewDocument';
+import { CaptureModel } from '../../../shared/capture-models/types/capture-model';
 import { apiHooks } from '../../../shared/hooks/use-api-query';
 import { ModelDocumentIcon } from '../../../shared/icons/ModelDocumentIcon';
 import { useRouteContext } from '../use-route-context';

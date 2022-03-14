@@ -1,0 +1,41 @@
+{
+  "structure": {
+    "id": "0b190e61-6870-41ed-9ef2-e921811683bd",
+    "type": "choice",
+    "label": "selectors - simple selector",
+    "items": [
+      {
+        "id": "34083298-1792-4790-b909-e0166ea20a5d",
+        "label": "Only choice",
+        "type": "model",
+        "fields": [
+          "name"
+        ],
+        "description": "This could be a top level item without a choice."
+      }
+    ],
+    "description": "Contains single choice with single text field"
+  },
+  "document": {
+    "id": "d2820942-a460-41fb-94a8-878d952189c3",
+    "type": "entity",
+    "properties": {
+      "name": [
+        {
+          "id": "76e7ea6c-fcd1-4b71-aa8f-be5e100e755d",
+          "type": "text-field",
+          "selector": {
+            "id": "0c15c2b8-48e9-4c83-b77e-054cd8215f93",
+            "type": "box-selector",
+            "state": null
+          },
+          "label": "Name",
+          "description": "The name of the thing"
+        }
+      ]
+    },
+    "label": "Simple document",
+    "description": ""
+  },
+  "id": "ca100c44-6593-48cf-80a5-96d8e440aa0b"
+}

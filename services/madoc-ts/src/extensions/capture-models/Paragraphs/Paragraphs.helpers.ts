@@ -1,5 +1,9 @@
-import { generateId, isEntity, isEntityList, traverseDocument } from '@capture-models/helpers';
-import { BaseField, BaseSelector, CaptureModel } from '@capture-models/types';
+import { generateId } from '../../../frontend/shared/capture-models/helpers/generate-id';
+import { isEntity } from '../../../frontend/shared/capture-models/helpers/is-entity';
+import { traverseDocument } from '../../../frontend/shared/capture-models/helpers/traverse-document';
+import { CaptureModel } from '../../../frontend/shared/capture-models/types/capture-model';
+import { BaseField } from '../../../frontend/shared/capture-models/types/field-types';
+import { BaseSelector } from '../../../frontend/shared/capture-models/types/selector-types';
 
 export const PARAGRAPHS_PROFILE = 'http://madoc.io/profiles/capture-model-fields/paragraphs';
 

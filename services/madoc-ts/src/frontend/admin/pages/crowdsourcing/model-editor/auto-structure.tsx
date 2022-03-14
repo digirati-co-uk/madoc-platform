@@ -1,7 +1,8 @@
-import { DocumentStore, StructureStore } from '@capture-models/editor';
-import { generateId } from '@capture-models/helpers';
 import React, { useEffect, useMemo } from 'react';
 import { generateModelFields } from '../../../../../utility/generate-model-fields';
+import { DocumentStore } from '../../../../shared/capture-models/editor/stores/document/document-store';
+import { StructureStore } from '../../../../shared/capture-models/editor/stores/structure/structure-store';
+import { generateId } from '../../../../shared/capture-models/helpers/generate-id';
 
 export const AutoStructure: React.FC = () => {
   const newDocument = DocumentStore.useStoreState(s => s.document);

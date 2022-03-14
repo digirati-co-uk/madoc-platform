@@ -1,0 +1,249 @@
+{
+  "id": "aa2344b4-a70b-41cf-aa62-5e211e76ee2c",
+  "type": "entity",
+  "label": "Untitled document",
+  "properties": {
+    "transcription": [
+      {
+        "id": "b2867260-78e3-484f-8549-40a89a55d51c",
+        "type": "entity",
+        "label": "Paragraph",
+        "pluralLabel": "Paragraphs",
+        "description": "Region of the page denoting a single paragraph",
+        "allowMultiple": false,
+        "labelledBy": "lines",
+        "properties": {
+          "lines": [
+            {
+              "id": "95b51378-ef27-480e-a380-b9673100f497",
+              "type": "entity",
+              "label": "Line",
+              "pluralLabel": "Lines",
+              "description": "All of the lines inside of a paragraph",
+              "allowMultiple": false,
+              "labelledBy": "text",
+              "properties": {
+                "text": [
+                  {
+                    "id": "72c8175b-7684-4d67-8987-5b4d53623025",
+                    "type": "text-field",
+                    "label": "Text of line",
+                    "value": "bereidiern",
+                    "description": "Single word, phrase or the whole line",
+                    "allowMultiple": true,
+                    "selector": {
+                      "id": "b4ad337b-5c11-4639-999c-6c818e5362d6",
+                      "type": "box-selector",
+                      "state": {
+                        "x": 312,
+                        "y": 2503,
+                        "width": 262,
+                        "height": 39
+                      }
+                    },
+                    "pluralField": "Text of lines",
+                    "previewInline": true,
+                    "revision": "98751c14-a342-4958-9803-5e0bd5d11b6a"
+                  },
+                  {
+                    "id": "bc8bb1c6-9e02-4655-8b01-fcf8e23254ba",
+                    "type": "text-field",
+                    "label": "Text of line",
+                    "value": "und",
+                    "description": "Single word, phrase or the whole line",
+                    "allowMultiple": true,
+                    "selector": {
+                      "id": "2dc4f63d-ab34-49cc-bdee-7223c57ca42e",
+                      "type": "box-selector",
+                      "state": {
+                        "x": 617,
+                        "y": 2504,
+                        "width": 92,
+                        "height": 38
+                      }
+                    },
+                    "pluralField": "Text of lines",
+                    "previewInline": true,
+                    "revision": "98751c14-a342-4958-9803-5e0bd5d11b6a"
+                  },
+                  {
+                    "id": "597938a0-194e-4076-8351-9bf562d125a4",
+                    "type": "text-field",
+                    "label": "Text of line",
+                    "value": "beglücken.",
+                    "description": "Single word, phrase or the whole line",
+                    "allowMultiple": true,
+                    "selector": {
+                      "id": "3dd7df09-9bc9-4d95-a2f3-f44c16eeb09f",
+                      "type": "box-selector",
+                      "state": {
+                        "x": 746,
+                        "y": 2504,
+                        "width": 265,
+                        "height": 48
+                      }
+                    },
+                    "pluralField": "Text of lines",
+                    "previewInline": true,
+                    "revision": "98751c14-a342-4958-9803-5e0bd5d11b6a"
+                  },
+                  {
+                    "id": "d5bd1fcb-bc2a-4b9c-badd-689f4334faee",
+                    "type": "text-field",
+                    "label": "Text of line",
+                    "value": "Man",
+                    "description": "Single word, phrase or the whole line",
+                    "allowMultiple": true,
+                    "selector": {
+                      "id": "60148ad3-2069-40f1-9ff6-9613ea7fb405",
+                      "type": "box-selector",
+                      "state": {
+                        "x": 1065,
+                        "y": 2504,
+                        "width": 111,
+                        "height": 37
+                      }
+                    },
+                    "pluralField": "Text of lines",
+                    "previewInline": true,
+                    "revision": "98751c14-a342-4958-9803-5e0bd5d11b6a"
+                  },
+                  {
+                    "id": "9984408b-d29a-4338-98a0-10e667726afc",
+                    "type": "text-field",
+                    "label": "Text of line",
+                    "value": "lernt,",
+                    "description": "Single word, phrase or the whole line",
+                    "allowMultiple": true,
+                    "selector": {
+                      "id": "727aab1f-6640-4207-9e9f-b32eae018362",
+                      "type": "box-selector",
+                      "state": {
+                        "x": 1216,
+                        "y": 2504,
+                        "width": 126,
+                        "height": 43
+                      }
+                    },
+                    "pluralField": "Text of lines",
+                    "previewInline": true,
+                    "revision": "98751c14-a342-4958-9803-5e0bd5d11b6a"
+                  },
+                  {
+                    "id": "272dbf0c-1e20-4294-a2d0-c35a7f4b1fb2",
+                    "type": "text-field",
+                    "label": "Text of line",
+                    "value": "indem",
+                    "description": "Single word, phrase or the whole line",
+                    "allowMultiple": true,
+                    "selector": {
+                      "id": "7a9dcb1a-6796-4926-84f9-4cd4b93d455c",
+                      "type": "box-selector",
+                      "state": {
+                        "x": 1394,
+                        "y": 2503,
+                        "width": 153,
+                        "height": 37
+                      }
+                    },
+                    "pluralField": "Text of lines",
+                    "previewInline": true,
+                    "revision": "98751c14-a342-4958-9803-5e0bd5d11b6a"
+                  },
+                  {
+                    "id": "0997c9ea-bb34-4ae9-a063-2cafd8a4bd7f",
+                    "type": "text-field",
+                    "label": "Text of line",
+                    "value": "man",
+                    "description": "Single word, phrase or the whole line",
+                    "allowMultiple": true,
+                    "selector": {
+                      "id": "2a069825-b397-404f-8aa6-f35b0b6ca3f4",
+                      "type": "box-selector",
+                      "state": {
+                        "x": 1595,
+                        "y": 2512,
+                        "width": 105,
+                        "height": 27
+                      }
+                    },
+                    "pluralField": "Text of lines",
+                    "previewInline": true,
+                    "revision": "98751c14-a342-4958-9803-5e0bd5d11b6a"
+                  },
+                  {
+                    "id": "23859747-7bb2-403d-83f7-e36df634024a",
+                    "type": "text-field",
+                    "label": "Text of line",
+                    "value": "aufs",
+                    "description": "Single word, phrase or the whole line",
+                    "allowMultiple": true,
+                    "selector": {
+                      "id": "7daa348c-45ad-4f6e-b900-042eb3910046",
+                      "type": "box-selector",
+                      "state": {
+                        "x": 1739,
+                        "y": 2499,
+                        "width": 99,
+                        "height": 40
+                      }
+                    },
+                    "pluralField": "Text of lines",
+                    "previewInline": true,
+                    "revision": "98751c14-a342-4958-9803-5e0bd5d11b6a"
+                  },
+                  {
+                    "id": "aa8389e8-e639-423d-8f1c-ffbe498ae25e",
+                    "type": "text-field",
+                    "label": "Text of line",
+                    "value": "beste",
+                    "description": "Single word, phrase or the whole line",
+                    "allowMultiple": true,
+                    "selector": {
+                      "id": "61484374-e52c-4717-b5ca-e752fc1feab0",
+                      "type": "box-selector",
+                      "state": {
+                        "x": 1876,
+                        "y": 2500,
+                        "width": 131,
+                        "height": 37
+                      }
+                    },
+                    "pluralField": "Text of lines",
+                    "previewInline": true,
+                    "revision": "98751c14-a342-4958-9803-5e0bd5d11b6a"
+                  }
+                ]
+              },
+              "selector": {
+                "id": "793fa89c-82ee-4f6f-b105-28ec8b9760b9",
+                "type": "box-selector",
+                "state": {
+                  "x": 312,
+                  "y": 2499,
+                  "width": 1695,
+                  "height": 53
+                }
+              },
+              "revises": "a9d8cae8-db25-4880-bc33-e4c0ff192939",
+              "immutable": false,
+              "revision": "98751c14-a342-4958-9803-5e0bd5d11b6a"
+            }
+          ]
+        },
+        "selector": {
+          "id": "750603ef-bf14-464a-b812-6540f53497dd",
+          "type": "box-selector",
+          "state": {
+            "x": 296,
+            "y": 310,
+            "width": 1730,
+            "height": 2582
+          }
+        },
+        "immutable": true
+      }
+    ]
+  },
+  "immutable": true
+}

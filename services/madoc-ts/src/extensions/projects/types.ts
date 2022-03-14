@@ -1,8 +1,8 @@
-import { CaptureModel } from '@capture-models/types';
-import { BaseField } from '@capture-models/types/src/field-types';
 import React from 'react';
 import { ModelEditorConfig } from '../../frontend/admin/pages/crowdsourcing/model-editor/use-model-editor-config';
 import { ProjectStatusMap } from '../../frontend/shared/atoms/ProjectStatus';
+import { CaptureModel } from '../../frontend/shared/capture-models/types/capture-model';
+import { BaseField } from '../../frontend/shared/capture-models/types/field-types';
 import { MadocTheme } from '../../frontend/themes/definitions/types';
 import { ApiClient } from '../../gateway/api';
 import { ProjectRow } from '../../types/projects';

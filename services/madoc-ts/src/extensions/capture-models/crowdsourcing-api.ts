@@ -1,7 +1,11 @@
-import { createChoice, createDocument, generateId, traverseDocument, traverseStructure } from '@capture-models/helpers';
-import { CaptureModel, RevisionRequest } from '@capture-models/types';
 import deepmerge from 'deepmerge';
 import { stringify } from 'query-string';
+import { createChoice } from '../../frontend/shared/capture-models/helpers/create-choice';
+import { createDocument } from '../../frontend/shared/capture-models/helpers/create-document';
+import { generateId } from '../../frontend/shared/capture-models/helpers/generate-id';
+import { traverseDocument } from '../../frontend/shared/capture-models/helpers/traverse-document';
+import { CaptureModel } from '../../frontend/shared/capture-models/types/capture-model';
+import { RevisionRequest } from '../../frontend/shared/capture-models/types/revision-request';
 import { ApiClient } from '../../gateway/api';
 import {
   CrowdsourcingReview,
@@ -12,6 +16,7 @@ import { CrowdsourcingTask } from '../../gateway/tasks/crowdsourcing-task';
 import { CaptureModelSnippet } from '../../types/schemas/capture-model-snippet';
 import { ModelSearch } from '../../types/schemas/search';
 import { generateModelFields } from '../../utility/generate-model-fields';
+import { traverseStructure } from "../../utility/traverse-structure";
 import { BaseExtension, defaultDispose, ExtensionManager } from '../extension-manager';
 import { DynamicData } from './DynamicDataSources/types';
 import { CaptureModelExtension } from './extension';

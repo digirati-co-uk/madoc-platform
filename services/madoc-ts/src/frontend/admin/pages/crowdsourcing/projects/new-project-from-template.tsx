@@ -6,7 +6,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import slugify from 'slugify';
 import { CreateProject } from '../../../../../types/schemas/create-project';
 import { ErrorMessage } from '../../../../shared/callouts/ErrorMessage';
-import { EditShorthandCaptureModel } from '../../../../shared/caputre-models/EditorShorthandCaptureModel';
+import { EditShorthandCaptureModel } from '../../../../shared/capture-models/EditorShorthandCaptureModel';
 import { ProjectBanner } from '../../../../shared/components/ProjectBanner';
 import { Stepper, StepperContainer } from '../../../../shared/components/Stepper';
 import { Input, InputContainer, InputLabel } from '../../../../shared/form/Input';

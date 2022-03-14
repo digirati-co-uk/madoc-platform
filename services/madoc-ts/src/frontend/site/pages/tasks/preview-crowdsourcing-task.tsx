@@ -3,12 +3,12 @@ import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
 import { ThemeProvider } from 'styled-components';
-import { defaultTheme } from '@capture-models/editor';
 import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
-import { DirectEditButton } from '../../../shared/caputre-models/new/components/DirectEditButton';
-import { EditorSlots } from '../../../shared/caputre-models/new/components/EditorSlots';
-import { RevisionProviderWithFeatures } from '../../../shared/caputre-models/new/components/RevisionProviderWithFeatures';
-import { EditorContentViewer } from '../../../shared/caputre-models/new/EditorContent';
+import { defaultTheme } from '../../../shared/capture-models/editor/themes';
+import { DirectEditButton } from '../../../shared/capture-models/new/components/DirectEditButton';
+import { EditorSlots } from '../../../shared/capture-models/new/components/EditorSlots';
+import { RevisionProviderWithFeatures } from '../../../shared/capture-models/new/components/RevisionProviderWithFeatures';
+import { EditorContentViewer } from '../../../shared/capture-models/new/EditorContent';
 import { Button } from '../../../shared/navigation/Button';
 import {
   EditorToolbarButton,

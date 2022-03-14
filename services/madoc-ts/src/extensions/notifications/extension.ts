@@ -1,5 +1,5 @@
-import { generateId } from '@capture-models/helpers';
 import { stringify } from 'query-string';
+import { generateId } from '../../frontend/shared/capture-models/helpers/generate-id';
 import { ApiClient } from '../../gateway/api';
 import { BaseTask } from '../../gateway/tasks/base-task';
 import { NotificationList, NotificationRequest } from '../../types/notifications';

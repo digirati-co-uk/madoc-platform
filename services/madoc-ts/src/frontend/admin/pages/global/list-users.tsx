@@ -1,8 +1,8 @@
-import { Tag } from '@capture-models/editor';
 import React, { useEffect, useState } from 'react';
 import { Redirect, useHistory } from 'react-router-dom';
 import ReactTimeago from 'react-timeago';
 import { User } from '../../../../extensions/site-manager/types';
+import { Tag } from '../../../shared/capture-models/editor/atoms/Tag';
 import { Button, ButtonRow } from '../../../shared/navigation/Button';
 import { SimpleTable } from '../../../shared/layout/SimpleTable';
 import { SuccessMessage } from '../../../shared/callouts/SuccessMessage';

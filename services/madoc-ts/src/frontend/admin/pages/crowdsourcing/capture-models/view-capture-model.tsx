@@ -1,11 +1,11 @@
+import { EditorContext } from '../../../../shared/capture-models/editor/components/EditorContext/EditorContext';
+import { defaultTheme } from '../../../../shared/capture-models/editor/themes';
+import { CaptureModel } from '../../../../shared/capture-models/types/capture-model';
 import { UniversalComponent } from '../../../../types';
-import { EditorContext } from '@capture-models/editor';
 import React, { useState } from 'react';
 import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
 import { Link, useParams } from 'react-router-dom';
-import { defaultTheme } from '@capture-models/editor';
 import { ThemeProvider } from 'styled-components';
-import { CaptureModel } from '@capture-models/types';
 import { useMutation } from 'react-query';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { Button } from '../../../../shared/navigation/Button';
@@ -15,7 +15,7 @@ import { LightNavigation, LightNavigationItem } from '../../../../shared/navigat
 
 type ViewCaptureModelType = {
   params: { id: string; captureModelId: string };
-  query: {};
+  query: any;
   variables: { id: string };
   data: CaptureModel;
 };

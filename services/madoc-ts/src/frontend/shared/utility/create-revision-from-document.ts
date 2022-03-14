@@ -1,6 +1,8 @@
-import { createChoice, generateId, traverseDocument } from '@capture-models/helpers';
-import { CaptureModel } from '@capture-models/types';
 import { generateModelFields } from '../../../utility/generate-model-fields';
+import { createChoice } from '../capture-models/helpers/create-choice';
+import { generateId } from '../capture-models/helpers/generate-id';
+import { traverseDocument } from '../capture-models/helpers/traverse-document';
+import { CaptureModel } from '../capture-models/types/capture-model';
 
 export function createRevisionFromDocument(
   document: CaptureModel['document'],

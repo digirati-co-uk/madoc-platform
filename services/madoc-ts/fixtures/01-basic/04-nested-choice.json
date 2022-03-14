@@ -1,0 +1,69 @@
+{
+  "structure": {
+    "id": "423381d2-8a56-4791-b5a6-e250781e12b6",
+    "type": "choice",
+    "label": "basic - nested choice",
+    "items": [
+      {
+        "id": "bc3cfee2-ddf6-495b-91b3-3561d814b5a7",
+        "label": "Choice 1",
+        "type": "model",
+        "fields": [
+          "name"
+        ],
+        "description": "The first choice in the list"
+      },
+      {
+        "id": "8105a457-5329-4498-933d-f7b396cba695",
+        "label": "Choice 2",
+        "type": "model",
+        "fields": [
+          "description"
+        ],
+        "description": "The second choice in the list"
+      },
+      {
+        "id": "067f652d-275e-4812-b257-7b4b6954e0d4",
+        "label": "Nested choice",
+        "type": "choice",
+        "items": [
+          {
+            "label": "Choice 3",
+            "id": "1da44ff0-1b93-40c4-bb13-f37b77b6e57e",
+            "type": "model",
+            "fields": [
+              "name",
+              "description"
+            ]
+          }
+        ],
+        "description": "This is a nested choice"
+      }
+    ],
+    "description": "Contains 3 choices with multiple text fields nested"
+  },
+  "document": {
+    "id": "dec387c1-55fb-45ba-ba6d-49d9effb073d",
+    "type": "entity",
+    "label": "Nested choices",
+    "properties": {
+      "name": [
+        {
+          "id": "73d82757-442c-4661-8b5c-692b63d60670",
+          "type": "text-field",
+          "label": "Name",
+          "description": "The name of the thing"
+        }
+      ],
+      "description": [
+        {
+          "id": "ff309a32-7cf1-494e-a484-1b9943021fff",
+          "type": "text-field",
+          "label": "Description",
+          "description": "Tell us something about the thing"
+        }
+      ]
+    }
+  },
+  "id": "db84d51c-8148-4fc8-9974-8d99fca350c7"
+}

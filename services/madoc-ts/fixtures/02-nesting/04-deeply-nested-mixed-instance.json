@@ -1,0 +1,280 @@
+{
+  "structure": {
+    "type": "choice",
+    "label": "nesting - deeply nested mixed instance",
+    "items": [
+      {
+        "label": "Edit all names",
+        "type": "model",
+        "fields": [
+          [
+            "depth1",
+            [
+              [
+                "second",
+                [
+                  [
+                    "third",
+                    [
+                      "name"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "id": "a7555a55-4e3f-4bf2-954e-5f1e51a7b35c"
+      }
+    ],
+    "description": "A document with a nested structure, but only editing a single field deep in the tree.",
+    "id": "0a6ec3f0-4f9e-49c4-9051-eadbb5a6df09"
+  },
+  "document": {
+    "type": "entity",
+    "properties": {
+      "depth1": [
+        {
+          "type": "entity",
+          "label": "First depth",
+          "properties": {
+            "second": [
+              {
+                "type": "entity",
+                "label": "second",
+                "properties": {
+                  "third": [
+                    {
+                      "type": "entity",
+                      "label": "Third depth",
+                      "properties": {
+                        "name": [
+                          {
+                            "type": "text-field",
+                            "label": "Name",
+                            "value": "One instance at the depth",
+                            "id": "e3a2be45-88f9-476b-b7de-7a089cdf104f"
+                          }
+                        ]
+                      },
+                      "id": "8ac324b8-23a7-4533-8ef5-4739fa035697"
+                    }
+                  ]
+                },
+                "description": "Second depth",
+                "id": "770c6a1d-da3e-4449-965b-39d19a5bbc83"
+              }
+            ]
+          },
+          "id": "613f6989-9e39-443d-97d0-d663f35371a7"
+        },
+        {
+          "type": "entity",
+          "label": "First depth",
+          "properties": {
+            "second": [
+              {
+                "type": "entity",
+                "label": "second",
+                "properties": {
+                  "third": [
+                    {
+                      "type": "entity",
+                      "label": "Third depth",
+                      "properties": {
+                        "name": [
+                          {
+                            "type": "text-field",
+                            "label": "Name",
+                            "value": "two instances at second level (first)",
+                            "id": "ccf79c5c-b7ff-4e90-9811-90e3ce3c7fd6"
+                          }
+                        ]
+                      },
+                      "id": "e1f99235-83af-4633-a82e-28b088fef2f8"
+                    }
+                  ]
+                },
+                "description": "Second depth",
+                "id": "23d7e13e-a165-4343-8f10-db9d80efe4af"
+              },
+              {
+                "type": "entity",
+                "label": "second",
+                "properties": {
+                  "third": [
+                    {
+                      "type": "entity",
+                      "label": "Third depth",
+                      "properties": {
+                        "name": [
+                          {
+                            "type": "text-field",
+                            "label": "Name",
+                            "value": "two instances at second level (second)",
+                            "id": "45e19d0c-354a-456b-858b-37f1ade18744"
+                          },
+                          {
+                            "type": "text-field",
+                            "label": "Name",
+                            "value": "two instances at second level (third)",
+                            "id": "a616e598-2443-43e7-9b4a-56b05d4b9345"
+                          }
+                        ]
+                      },
+                      "id": "cd295cc9-21bc-443c-895f-0e5d0d349fd3"
+                    }
+                  ]
+                },
+                "description": "Second depth",
+                "id": "5d4bc3a1-be93-4ec5-a271-22b49667820d"
+              }
+            ]
+          },
+          "id": "f64a0886-548e-43ae-8c9e-00bee45028b7"
+        },
+        {
+          "type": "entity",
+          "label": "First depth",
+          "properties": {
+            "second": [
+              {
+                "type": "entity",
+                "label": "second",
+                "properties": {
+                  "third": [
+                    {
+                      "type": "entity",
+                      "label": "Third depth",
+                      "properties": {
+                        "name": [
+                          {
+                            "type": "text-field",
+                            "label": "Name",
+                            "value": "two instance at third depth (first)",
+                            "id": "a9814af8-8dc3-4cdb-9e34-c7ecb4f76d68"
+                          }
+                        ]
+                      },
+                      "id": "70614425-da9a-4841-97bf-65fa5d36892d"
+                    },
+                    {
+                      "type": "entity",
+                      "label": "Third depth",
+                      "properties": {
+                        "name": [
+                          {
+                            "type": "text-field",
+                            "label": "Name",
+                            "value": "two instance at third depth (second)",
+                            "id": "3ed870a8-5b66-4259-93e6-6a2e4a952463"
+                          }
+                        ]
+                      },
+                      "id": "5f46b580-788b-4f99-a0d8-31ba158024b7"
+                    }
+                  ]
+                },
+                "description": "Second depth",
+                "id": "0dae58b6-4143-4852-a3bd-f2b9aadc34de"
+              }
+            ]
+          },
+          "id": "cab51c44-fbf5-405e-8829-4f01480e5f36"
+        },
+        {
+          "type": "entity",
+          "label": "First depth",
+          "properties": {
+            "second": [
+              {
+                "type": "entity",
+                "label": "second",
+                "properties": {
+                  "third": [
+                    {
+                      "type": "entity",
+                      "label": "Third depth",
+                      "properties": {
+                        "name": [
+                          {
+                            "type": "text-field",
+                            "label": "Name",
+                            "value": "2x2 at second and third levels (first 1-1)",
+                            "id": "e3e37449-aa19-43ec-93fe-7a41f296c215"
+                          }
+                        ]
+                      },
+                      "id": "2d48cf1f-4379-4cb8-96e5-0258db40926e"
+                    },
+                    {
+                      "type": "entity",
+                      "label": "Third depth",
+                      "properties": {
+                        "name": [
+                          {
+                            "type": "text-field",
+                            "label": "Name",
+                            "value": "2x2 at second and third levels (second 1-2)",
+                            "id": "54e8e65c-de36-4f26-bdb1-21da73a2054d"
+                          }
+                        ]
+                      },
+                      "id": "dd335cbb-7569-46da-90ee-0a4f5849af5b"
+                    }
+                  ]
+                },
+                "description": "Second depth",
+                "id": "b2650738-5304-4c69-b54d-b9d13d27d104"
+              },
+              {
+                "type": "entity",
+                "label": "second",
+                "properties": {
+                  "third": [
+                    {
+                      "type": "entity",
+                      "label": "Third depth",
+                      "properties": {
+                        "name": [
+                          {
+                            "type": "text-field",
+                            "label": "Name",
+                            "value": "2x2 at second and third levels (third 2-1)",
+                            "id": "c9616dc5-8204-421d-8bbf-86824d67c1ec"
+                          }
+                        ]
+                      },
+                      "id": "41f10183-bc70-4fdf-878d-8841d96f4cfe"
+                    },
+                    {
+                      "type": "entity",
+                      "label": "Third depth",
+                      "properties": {
+                        "name": [
+                          {
+                            "type": "text-field",
+                            "label": "Name",
+                            "value": "2x2 at second and third levels (fourth 2-2)",
+                            "id": "6ff7d593-4f5f-4cdc-8a7d-9712f8ac5291"
+                          }
+                        ]
+                      },
+                      "id": "40e6b0bf-74c5-4b5b-a43d-b3c5cf71d4c7"
+                    }
+                  ]
+                },
+                "description": "Second depth",
+                "id": "38910bae-d1a1-443d-a590-c5add5cb9dbe"
+              }
+            ]
+          },
+          "id": "fa769b2e-268f-4489-99c4-bfb22ece4da0"
+        }
+      ]
+    },
+    "label": "Deeply nested subset",
+    "id": "f62184ff-ba48-438c-a318-9b7471530baa"
+  },
+  "id": "59b58f08-9267-4913-8c4f-ad6011939e6b"
+}

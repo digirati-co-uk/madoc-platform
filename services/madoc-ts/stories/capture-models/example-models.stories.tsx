@@ -1,9 +1,9 @@
-import { captureModelShorthand } from '@capture-models/helpers';
+import { captureModelShorthand } from '../../src/frontend/shared/capture-models/helpers/capture-model-shorthand';
 import * as React from 'react';
 import { slotConfig } from '../../src/extensions/capture-models/Paragraphs/Paragraphs.slots';
-import { EditShorthandCaptureModel } from '../../src/frontend/shared/caputre-models/EditorShorthandCaptureModel';
-import { BackToChoicesButton } from '../../src/frontend/shared/caputre-models/new/components/BackToChoicesButton';
-import { DefaultAdjacentNavigation } from '../../src/frontend/shared/caputre-models/new/components/DefaultAdjacentNavigation';
+import { EditShorthandCaptureModel } from '../../src/frontend/shared/capture-models/EditorShorthandCaptureModel';
+import { BackToChoicesButton } from '../../src/frontend/shared/capture-models/new/components/BackToChoicesButton';
+import { DefaultAdjacentNavigation } from '../../src/frontend/shared/capture-models/new/components/DefaultAdjacentNavigation';
 import { EditorSlots } from '../../src/index';
 import { captureModelShorthandModifier } from '../../src/utility/capture-model-shorthand-modifier';
 import { ModelStorybookProvider } from './helpers';

@@ -1,0 +1,89 @@
+{
+  "id": "5b49767b-f79b-4039-b933-9c917498dc42",
+  "structure": {
+    "id": "16e4789c-6866-4271-bdfd-ee5220e9ffeb",
+    "type": "choice",
+    "label": "bugs - approve revision",
+    "items": [
+      {
+        "id": "9c2c6558-703d-4276-ac44-01c78e66ecef",
+        "type": "model",
+        "label": "Default",
+        "fields": [
+          "regionOfInterest"
+        ]
+      }
+    ]
+  },
+  "document": {
+    "id": "4f6d0447-b3fa-4ed9-b137-7f6e68f4849c",
+    "type": "entity",
+    "label": "Untitled document",
+    "properties": {
+      "regionOfInterest": [
+        {
+          "id": "48304e90-4257-4cbd-b3ef-4c8fcfb45b96",
+          "type": "text-field",
+          "label": "regionOfInterest",
+          "value": "",
+          "selector": {
+            "id": "6353eac6-518d-4a28-a598-b251f754db9c",
+            "type": "box-selector",
+            "state": null
+          }
+        },
+        {
+          "id": "3930eefd-50bf-40f1-9ed6-f7c59aea693c",
+          "type": "text-field",
+          "label": "regionOfInterest",
+          "value": "tests",
+          "revises": "48304e90-4257-4cbd-b3ef-4c8fcfb45b96",
+          "selector": {
+            "id": "01a9a2fd-bb23-4cfa-b3b4-7be643c66a15",
+            "type": "box-selector",
+            "state": null
+          },
+          "revision": "7b0052c9-ff2c-4463-b198-c6bcc6d18606"
+        }
+      ]
+    }
+  },
+  "target": [
+    {
+      "id": "urn:madoc:collection:1",
+      "type": "Collection"
+    },
+    {
+      "id": "urn:madoc:manifest:3",
+      "type": "Manifest"
+    },
+    {
+      "id": "urn:madoc:canvas:46",
+      "type": "Canvas"
+    }
+  ],
+  "profile": null,
+  "revisions": [
+    {
+      "structureId": "9c2c6558-703d-4276-ac44-01c78e66ecef",
+      "approved": false,
+      "label": "Default",
+      "id": "7b0052c9-ff2c-4463-b198-c6bcc6d18606",
+      "fields": [
+        "regionOfInterest"
+      ],
+      "status": "submitted",
+      "revises": null,
+      "authors": [
+        "ca7c97bb-78ab-44ec-82be-e559eaf6c7df"
+      ]
+    }
+  ],
+  "contributors": {
+    "ca7c97bb-78ab-44ec-82be-e559eaf6c7df": {
+      "id": "ca7c97bb-78ab-44ec-82be-e559eaf6c7df",
+      "type": "Person",
+      "name": "admin"
+    }
+  }
+}

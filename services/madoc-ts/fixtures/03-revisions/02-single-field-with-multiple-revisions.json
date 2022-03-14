@@ -1,0 +1,78 @@
+{
+  "structure": {
+    "id": "11f4882a-b246-4415-b90b-d3bb91598835",
+    "type": "choice",
+    "label": "revisions - single field with multiple revisions",
+    "items": [
+      {
+        "id": "b321af45-bac1-4f5e-b069-f4bef4fda215",
+        "label": "Only choice",
+        "type": "model",
+        "fields": [
+          "name"
+        ],
+        "description": "This could be a top level item without a choice."
+      }
+    ],
+    "description": "Contains single choice with single text field"
+  },
+  "document": {
+    "id": "b3f53013-23cc-45db-825a-12500bf3c20e",
+    "type": "entity",
+    "properties": {
+      "name": [
+        {
+          "id": "06b23c90-b4a4-437c-ade2-fb84bbefaa6e",
+          "type": "text-field",
+          "label": "Name",
+          "description": "The name of the thing"
+        },
+        {
+          "id": "baf51d8c-ce99-4bf4-afd0-0ca2092a7784",
+          "type": "text-field",
+          "label": "Name",
+          "revision": "514c8d52-80b0-49c1-ab97-24a67f29d194",
+          "value": "Person A wrote this",
+          "description": "The name of the thing"
+        },
+        {
+          "id": "205c9b62-48e3-43ff-8853-222dcd357710",
+          "type": "text-field",
+          "label": "Name",
+          "revision": "b4077dff-3bea-4783-9712-32b52a1146e3",
+          "value": "Person B wrote this",
+          "description": "The name of the thing"
+        }
+      ]
+    },
+    "label": "Simple document",
+    "description": ""
+  },
+  "contributors": {
+    "514c8d52-80b0-49c1-ab97-24a67f29d194": {
+      "id": "514c8d52-80b0-49c1-ab97-24a67f29d194",
+      "type": "Person",
+      "name": "Test person A"
+    },
+    "b4077dff-3bea-4783-9712-32b52a1146e3": {
+      "id": "b4077dff-3bea-4783-9712-32b52a1146e3",
+      "type": "Person",
+      "name": "Test person B"
+    }
+  },
+  "revisions": [
+    {
+      "id": "514c8d52-80b0-49c1-ab97-24a67f29d194",
+      "fields": [
+        "name"
+      ]
+    },
+    {
+      "id": "b4077dff-3bea-4783-9712-32b52a1146e3",
+      "fields": [
+        "name"
+      ]
+    }
+  ],
+  "id": "93d09b85-9332-4b71-8e27-1294c8a963f3"
+}

@@ -1,0 +1,16 @@
+{
+  "structure": {
+    "id": "feefb384-db35-4b23-a60b-979680bc548c",
+    "type": "choice",
+    "label": "profiles - comments",
+    "items": []
+  },
+  "document": {
+    "id": "3a0e2700-ad58-4468-9127-f9c5be6ca87f",
+    "type": "entity",
+    "label": "TODO",
+    "labelledBy": "label",
+    "properties": {}
+  },
+  "id": "d0e513e0-0d05-406c-b52e-e63eac54e2cb"
+}

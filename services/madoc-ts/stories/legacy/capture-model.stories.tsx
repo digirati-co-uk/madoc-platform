@@ -1,13 +1,12 @@
-import { Revisions } from '@capture-models/editor';
+import {Revisions} from '../../src/frontend/shared/capture-models/editor/stores/revisions/index';
 import { URLContextExplorer } from '../../src/frontend/shared/components/ContentExplorer';
 import * as React from 'react';
 import { TinyButton } from '../../src/frontend/shared/navigation/Button';
-import { object, text } from '@storybook/addon-knobs';
-import { CaptureModel } from '@capture-models/types';
-import { RevisionNavigation } from '../../src/frontend/shared/caputre-models/RevisionNavigation';
+import { text } from '@storybook/addon-knobs';
+import { RevisionNavigation } from '../../src/frontend/shared/capture-models/RevisionNavigation';
 import { VaultProvider } from '@hyperion-framework/react-vault';
 import { ViewExternalContent } from '../../src/frontend/shared/components/ViewExternalContent';
-import '../../src/frontend/shared/caputre-models/refinements/index';
+import '../../src/frontend/shared/capture-models/refinements/index';
 
 export default { title: 'Legacy/Capture models' };
 

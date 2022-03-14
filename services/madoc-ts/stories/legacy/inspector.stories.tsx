@@ -1,7 +1,7 @@
-import { captureModelShorthand, hydrateCompressedModel } from '@capture-models/helpers';
+import { hydrateCompressedModel } from '../../src/frontend/shared/capture-models/helpers/hydrate-compressed-model';
 import { select } from '@storybook/addon-knobs';
 import * as React from 'react';
-import { ViewDocument } from '../../src/frontend/shared/caputre-models/inspector/ViewDocument';
+import { ViewDocument } from '../../src/frontend/shared/capture-models/inspector/ViewDocument';
 import { RevisionList } from '../../src/frontend/shared/components/RevisionList';
 
 const fixtureOptions = [

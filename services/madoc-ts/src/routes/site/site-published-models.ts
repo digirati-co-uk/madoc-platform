@@ -1,9 +1,9 @@
-import { serialiseCaptureModel, traverseDocument } from '@capture-models/helpers';
-import { BaseField } from '@capture-models/types';
 import { sql } from 'slonik';
 import { getProject } from '../../database/queries/project-queries';
 import { PARAGRAPHS_PROFILE } from '../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
-import { getEntityLabel } from '../../frontend/shared/caputre-models/utility/get-entity-label';
+import { serialiseCaptureModel } from '../../frontend/shared/capture-models/helpers/serialise-capture-model';
+import { traverseDocument } from '../../frontend/shared/capture-models/helpers/traverse-document';
+import { getEntityLabel } from '../../frontend/shared/capture-models/utility/get-entity-label';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { castBool } from '../../utility/cast-bool';
 import { RequestError } from '../../utility/errors/request-error';

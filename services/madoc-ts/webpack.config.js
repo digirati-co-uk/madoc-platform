@@ -1,3 +1,4 @@
+const path = require('path');
 const webpack = require('webpack');
 const createStyledComponentsTransformer = require('typescript-plugin-styled-components').default;
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
@@ -103,10 +104,10 @@ module.exports = {
     extensions: ['.js', '.ts', '.tsx'],
     alias: {
       '@atlas-viewer/atlas': require.resolve('@atlas-viewer/atlas'),
-      '@capture-models/editor': '@capture-models/editor/lib',
       'react-dnd': require.resolve('react-dnd'),
       'styled-components': require.resolve('styled-components'),
       'react-i18next': require.resolve('react-i18next'),
+      universalviewer: require.resolve('universalviewer/dist/esm/index.js'),
     },
     fallback: {
       https: false,

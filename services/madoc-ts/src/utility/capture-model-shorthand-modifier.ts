@@ -1,5 +1,5 @@
-import { captureModelShorthand } from '@capture-models/helpers';
-import { CaptureModel } from '@capture-models/types';
+import { captureModelShorthand } from '../frontend/shared/capture-models/helpers/capture-model-shorthand';
+import { CaptureModel } from '../frontend/shared/capture-models/types/capture-model';
 
 export function captureModelShorthandModifier(
   shorthand: Record<string, any>,

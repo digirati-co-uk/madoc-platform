@@ -7,16 +7,16 @@ import HTML5toTouch from 'react-dnd-multi-backend/dist/cjs/HTML5toTouch';
 import { ReactQueryCacheProvider, ReactQueryConfig, ReactQueryConfigProvider } from 'react-query';
 import { Hydrate } from 'react-query/hydration';
 import { ThemeProvider } from 'styled-components';
-import { defaultTheme } from '@capture-models/editor';
 import { createBackend } from '../../../middleware/i18n/i18next.client';
 import { render } from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
-import { BrowserRouter, Redirect } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { api } from '../../../gateway/api.browser';
 import React, { Suspense } from 'react';
 import { SitePlugin } from '../../../types/schemas/plugins';
 import { CreateRouteType, UniversalRoute } from '../../types';
 import { ResolvedTheme } from '../../../types/themes';
+import { defaultTheme } from '../capture-models/editor/themes';
 import { ErrorPage } from '../components/NotFoundPage';
 import { Spinner } from '../icons/Spinner';
 import { Madoc } from '../plugins/globals';
@@ -26,6 +26,7 @@ import { ErrorBoundary } from './error-boundary';
 import { queryConfig } from './query-config';
 import { ReactQueryDevtools } from 'react-query-devtools';
 import { ScrollTop } from './scroll-top';
+import '../capture-models/editor/bundle';
 
 export async function renderClient(
   Component: React.FC<any>,

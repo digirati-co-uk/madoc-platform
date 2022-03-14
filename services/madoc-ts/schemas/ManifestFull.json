@@ -88,6 +88,12 @@
         "published": {
           "type": "boolean"
         },
+        "viewingDirection": {
+          "$ref": "#/definitions/ViewingDirection"
+        },
+        "source": {
+          "type": "string"
+        },
         "items": {
           "type": "array",
           "items": {
@@ -121,7 +127,8 @@
         "id",
         "items",
         "label",
-        "thumbnail"
+        "thumbnail",
+        "viewingDirection"
       ]
     },
     "subjects": {

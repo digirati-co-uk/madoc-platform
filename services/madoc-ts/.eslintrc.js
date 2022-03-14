@@ -51,17 +51,17 @@ module.exports = {
         additionalHooks: '(useEventHandler)',
       },
     ],
-    'import/no-restricted-paths': [
-      2,
-      {
-        zones: [
-          {
-            target: './src/!(frontend)/**/*',
-            from: './src/frontend/**/*',
-          },
-        ],
-      },
-    ],
+    // 'import/no-restricted-paths': [
+    //   2,
+    //   {
+    //     zones: [
+    //       {
+    //         target: './src/!(frontend)/**/*',
+    //         from: './src/frontend/**/*',
+    //       },
+    //     ],
+    //   },
+    // ],
     'no-undef': OFF,
     'no-use-before-define': OFF,
     'react-hooks/rules-of-hooks': 'error',

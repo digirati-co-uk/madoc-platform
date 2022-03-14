@@ -20,15 +20,14 @@
     "noImplicitAny": true,
     "downlevelIteration": true,
     "noUnusedLocals": false,
-    "noFallthroughCasesInSwitch": true,
-    "paths": {
-      // "PACKAGE_NAME": ["../SERVICE_NAME"]
-    }
+    "noFallthroughCasesInSwitch": true
   },
   "exclude": [
     "node_modules",
     "lib/",
     "test-utility/",
+    "fixtures/",
+    "stories/",
     "**/*.stories.tsx",
     "__tests__/",
     "npm"

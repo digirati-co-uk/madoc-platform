@@ -1,4 +1,3 @@
-import { BaseField, CaptureModel, RevisionRequest } from '@capture-models/types';
 import {
   ActivityOptions,
   ActivityOrderedCollection,
@@ -22,6 +21,9 @@ import { SiteManagerExtension } from '../extensions/site-manager/extension';
 import { SystemExtension } from '../extensions/system/extension';
 import { TaskExtension } from '../extensions/tasks/extension';
 import { ThemeExtension } from '../extensions/themes/extension';
+import { CaptureModel } from '../frontend/shared/capture-models/types/capture-model';
+import { BaseField } from '../frontend/shared/capture-models/types/field-types';
+import { RevisionRequest } from '../frontend/shared/capture-models/types/revision-request';
 import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
 import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
 import {

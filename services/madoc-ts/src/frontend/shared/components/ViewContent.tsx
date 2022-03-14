@@ -1,9 +1,9 @@
 import { AtlasContextType } from '@atlas-viewer/atlas';
 import React, { useMemo } from 'react';
-import { useContentType } from '@capture-models/plugin-api';
-import { Target } from '@capture-models/types';
-import '@capture-models/editor/lib/content-types/Atlas';
+import '../capture-models/editor/content-types/Atlas';
 import { CanvasFull } from '../../../types/canvas-full';
+import { useContentType } from '../capture-models/plugin-api/hooks/use-content-type';
+import { Target } from '../capture-models/types/capture-model';
 
 export const ViewContent: React.FC<{
   target: Target[];

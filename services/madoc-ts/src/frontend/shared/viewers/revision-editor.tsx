@@ -1,6 +1,6 @@
-import { RevisionRequest } from '@capture-models/types';
-import { RevisionTopLevel } from '../caputre-models/RevisionTopLevel';
+import { RevisionTopLevel } from '../capture-models/RevisionTopLevel';
 import React from 'react';
+import { RevisionRequest } from '../capture-models/types/revision-request';
 import { useViewerSaving } from '../hooks/use-viewer-saving';
 
 export const RevisionEditor: React.FC<{
