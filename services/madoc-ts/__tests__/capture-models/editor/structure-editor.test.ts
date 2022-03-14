@@ -189,7 +189,7 @@ describe('structure editor', () => {
             {
               id: 'e1',
               type: 'entity',
-              label: 'field 2',
+              label: 'entity 1',
               properties: {
                 field2: [{ id: 'f2', type: 'text-field', label: 'field 2', value: '' }],
                 field3: [
@@ -219,11 +219,13 @@ describe('structure editor', () => {
       expect(def).toEqual([
         {
           key: ['entity1', 'field2'],
+          fullLabel: 'entity 1 / field 2',
           label: 'field 2',
           type: 'text-field',
         },
         {
           key: ['entity1', 'field4'],
+          fullLabel: 'entity 1 / field 4',
           label: 'field 4',
           type: 'text-field',
         },

@@ -12,6 +12,7 @@ import { Box } from '@styled-icons/entypo/Box';
 import { Edit } from '@styled-icons/entypo/Edit';
 import { Tag } from '../../atoms/Tag';
 import { useTranslation } from 'react-i18next';
+import { ReorderableFieldList } from '../ReorderableFieldList/ReorderableFieldList.lazy';
 
 type Props = {
   document: CaptureModel['document'];
@@ -33,7 +34,6 @@ type Props = {
 // @todo later
 //   - Reorder fields
 //   - Profile value
-
 export const ModelEditor: React.FC<Props> = ({
   document,
   model,
@@ -86,29 +86,9 @@ export const ModelEditor: React.FC<Props> = ({
         />
       </CardContent>
       <CardContent>
-        <List>
-          {structureToFlatStructureDefinition(document, mergeFlatKeys(selected)).map((item, key) => (
-            <ListItem key={key}>
-              {item.type === 'entity' ? <Box size={16} /> : <Edit size={16} />}
-              <ListContent fluid>
-                <ListHeader>{item.label}</ListHeader>
-              </ListContent>
-              <ListContent>
-                <Tag style={{ marginRight: 5 }}>{item.type}</Tag>
-                <Button
-                  alert
-                  size="mini"
-                  onClick={() => {
-                    // Remove the current item.
-                    setSelected(selected.filter(r => r.join('--HASH--') !== item.key.join('--HASH--')));
-                  }}
-                >
-                  {t('Remove')}
-                </Button>
-              </ListContent>
-            </ListItem>
-          ))}
-        </List>
+        <React.Suspense fallback={<>{t('loading...')}</>}>
+          <ReorderableFieldList document={document} selected={selected} setSelected={setSelected} />
+        </React.Suspense>
       </CardContent>
       <CardContent>
         {isSelecting ? (
