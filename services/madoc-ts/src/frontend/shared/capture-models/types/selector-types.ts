@@ -9,6 +9,7 @@ export type BaseSelector = {
   revisionId?: string | null;
   revises?: string | null;
   revisedBy?: BaseSelector[];
+  required?: boolean;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
