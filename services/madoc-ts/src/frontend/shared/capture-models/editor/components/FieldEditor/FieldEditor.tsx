@@ -48,6 +48,7 @@ export const FieldEditor: React.FC<{
 
   if (!field) {
     throw new Error(`Plugin ${props.type} does not exist`);
+
   }
 
   const editorProps = field.mapEditorProps ? field.mapEditorProps(props) : props;
@@ -119,7 +120,7 @@ export const FieldEditor: React.FC<{
                 <ChooseFieldButton
                   fieldType={field.type}
                   onChange={type =>
-                    type && fields[type] ? onChangeFieldType(t as any, (fields[type] as any).defaultProps, term) : null
+                    type && fields[type] ? onChangeFieldType(type, (fields[type] as any).defaultProps, term) : null
                   }
                 />
               </StyledFormLabel>
