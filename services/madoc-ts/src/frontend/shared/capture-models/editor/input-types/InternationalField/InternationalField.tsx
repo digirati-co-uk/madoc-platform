@@ -6,7 +6,7 @@ import { useDefaultLocale, useSupportedLocales } from '../../../../hooks/use-sit
 
 export interface InternationalFieldProps extends BaseField {
   id: string;
-  type: 'text-field';
+  type: 'international-field';
   placeholder?: string;
   required?: boolean;
   multiline?: boolean;
