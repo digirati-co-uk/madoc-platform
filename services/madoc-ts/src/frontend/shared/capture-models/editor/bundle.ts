@@ -8,6 +8,7 @@ import './input-types/CheckboxField';
 import './input-types/CheckboxListField';
 import './input-types/DropdownField';
 import './input-types/HTMLField';
+import './input-types/InternationalField';
 import './input-types/TaggedTextField';
 import './input-types/TextField';
 
