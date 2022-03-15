@@ -209,6 +209,10 @@ export const siteConfigurationModel: {
         label: 'Disable save for later button',
         value: 'disableSaveForLater',
       },
+      {
+        label: 'Disable preview popup (direct submit)',
+        value: 'disablePreview',
+      },
     ],
   },
   projectPageOptions: {

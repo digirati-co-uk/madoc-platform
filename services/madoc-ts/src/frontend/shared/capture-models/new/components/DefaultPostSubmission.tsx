@@ -2,12 +2,14 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRelativeLinks } from '../../../../site/hooks/use-relative-links';
 import { useRouteContext } from '../../../../site/hooks/use-route-context';
-import { Button } from '../../../navigation/Button';
+import { InfoMessage } from '../../../callouts/InfoMessage';
+import { Button, ButtonRow } from '../../../navigation/Button';
 import { SnippetStructure } from '../../../components/StructureSnippet';
 import { useManifestStructure } from '../../../hooks/use-manifest-structure';
 import { HrefLink } from '../../../utility/href-link';
+import { EditorRenderingConfig } from './EditorSlots';
 
-export const DefaultPostSubmission: React.FC<{ subRoute?: string }> = () => {
+export const DefaultPostSubmission: EditorRenderingConfig['PostSubmission'] = ({ onContinue, stacked }) => {
   const { t } = useTranslation();
   const { manifestId, canvasId, projectId } = useRouteContext();
   const structure = useManifestStructure(manifestId);
@@ -21,13 +23,38 @@ export const DefaultPostSubmission: React.FC<{ subRoute?: string }> = () => {
 
   const next = idx < structure.data.items.length - 1 ? structure.data.items[idx + 1] : null;
 
+  const buttonRow = (
+    <ButtonRow>
+      {onContinue ? (
+        <Button data-cy="add-another" onClick={onContinue}>
+          {t('Continue working')}
+        </Button>
+      ) : null}
+      {next ? (
+        <Button
+          data-cy="go-to-next-image"
+          $primary
+          as={HrefLink}
+          href={createLink({ canvasId: next.id, subRoute: 'model' })}
+        >
+          {t('Next image')}
+        </Button>
+      ) : null}
+    </ButtonRow>
+  );
+
   if (!next) {
-    return <div>{t('Thanks for you submission')}</div>;
+    return (
+      <div>
+        <InfoMessage $banner>{t('Thanks for your submission')}</InfoMessage>
+        <div style={{ padding: '0 1em' }}>{buttonRow}</div>
+      </div>
+    );
   }
 
   return (
     <div>
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex', flexDirection: stacked ? 'column' : 'row', padding: '0 1em' }}>
         <div style={{ flex: '1 1 0px' }}>
           <h3>{t('Contribution submitted')}</h3>
           <p>{t('Keep working on this image or move on to next image')}</p>
@@ -41,16 +68,9 @@ export const DefaultPostSubmission: React.FC<{ subRoute?: string }> = () => {
               subRoute: 'model',
             })}
           />
-          <br />
-          <Button
-            data-cy="go-to-next-image"
-            $primary
-            as={HrefLink}
-            href={createLink({ canvasId: next.id, subRoute: 'model' })}
-          >
-            {t('Next image')}
-          </Button>
+          {stacked ? null : buttonRow}
         </div>
+        {stacked ? buttonRow : null}
       </div>
     </div>
   );

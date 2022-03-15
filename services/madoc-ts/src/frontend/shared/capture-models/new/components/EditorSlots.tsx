@@ -74,7 +74,11 @@ export type EditorRenderingConfig = {
     canSubmit?: boolean;
   }>;
   PreviewSubmission: React.FC;
-  PostSubmission: React.FC;
+  PostSubmission: React.FC<{
+    stacked?: boolean;
+    onContinue?: () => void;
+    subRoute?: string;
+  }>;
 };
 
 export type ProfileConfig = Partial<Omit<EditorRenderingConfig, 'configuration'>>;
@@ -292,7 +296,7 @@ const EditorWrapper: EditorRenderingConfig['EditorWrapper'] = props => {
 const PostSubmission: EditorRenderingConfig['PostSubmission'] = props => {
   const Slots = useSlotContext();
 
-  return <Slots.PostSubmission>{props.children}</Slots.PostSubmission>;
+  return <Slots.PostSubmission {...props}>{props.children}</Slots.PostSubmission>;
 };
 
 const InlineEntity: EditorRenderingConfig['InlineEntity'] = props => {

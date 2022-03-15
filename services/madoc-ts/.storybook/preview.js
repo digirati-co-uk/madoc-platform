@@ -7,10 +7,13 @@ import { MemoryRouter } from 'react-router-dom';
 
 export const decorators = [(Story) => {
   return (
+
     <MemoryRouter>
       <DndProvider backend={MultiBackend} options={HTML5toTouch}>
         <ApiContext.Provider value={undefined}>
-          <Story />
+          <React.Suspense fallback={null}>
+            <Story />
+          </React.Suspense>
         </ApiContext.Provider>
       </DndProvider>
     </MemoryRouter>

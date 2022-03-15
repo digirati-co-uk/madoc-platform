@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed OCR page linking from menu
 - Fixed missing OCR listed
 - Styling of "Suggest edit" to be clearer
+- Styling of "Breadcrumbs" and labelling
 
 ### Added
 - Added refresh on 500 error page (usually appears during deployment)
@@ -25,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added "Selector is required" to capture model editor
 - Added required selector styling using disabled field sets.
 - Added "canSubmit" which will disable the Submit button if required selectors are not complete
+- Added new "international-field" type to capture models
+- Added new "Disable preview popup" project configuration option
 
 ### Changed
 - The link in the top bar now always links to the site (previously the admin for admins).

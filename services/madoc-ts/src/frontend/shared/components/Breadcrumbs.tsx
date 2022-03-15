@@ -27,11 +27,26 @@ export const BreadcrumbList = styled.div`
   margin: 0.5em 0;
 `;
 
-export const BreadcrumbItem = styled.div<{ active?: boolean }>`
+export const BreadcrumbItem = styled.div<{ active?: boolean; $icon?: boolean }>`
   font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  ${props =>
+    props.$icon &&
+    css`
+      width: 1.5em;
+      font-size: 1.2em;
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-radius: 3px;
+      &:hover {
+        background: #f0f0f0;
+      }
+    `}
+
   &,
   a {
     cursor: pointer;
