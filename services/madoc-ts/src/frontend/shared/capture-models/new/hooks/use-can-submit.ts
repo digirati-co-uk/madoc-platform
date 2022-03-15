@@ -1,4 +1,5 @@
 import { Revisions } from '../../editor/stores/revisions/index';
+import { resolveSelector } from '../../helpers/resolve-selector';
 import { BaseSelector } from '../../types/selector-types';
 
 export function useCanSubmit() {
@@ -27,13 +28,12 @@ export function useCanSubmit() {
     }
   }
 
-  if (true as boolean) {
-    return false;
-  }
-
-  for (const selector of selectorsToValidate) {
-    if (selector && selector.required && !selector.state) {
-      return false;
+  if (revision) {
+    for (const selector of selectorsToValidate) {
+      const resolved = resolveSelector(selector, revision?.revision.id);
+      if (resolved && resolved.required && !resolved.state) {
+        return false;
+      }
     }
   }
 
