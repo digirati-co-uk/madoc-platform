@@ -8,7 +8,7 @@ import { Revisions } from '../../editor/stores/revisions/index';
 import { useDeselectRevision } from '../hooks/use-deselect-revision';
 import { EditorRenderingConfig, useSlotContext } from './EditorSlots';
 
-export const SubmitWithoutPreview: EditorRenderingConfig['SubmitButton'] = ({ afterSave }) => {
+export const SubmitWithoutPreview: EditorRenderingConfig['SubmitButton'] = ({ afterSave, canSubmit = true }) => {
   const { t } = useTranslation();
   const routeContext = useRouteContext();
   const Slots = useSlotContext();
@@ -63,7 +63,7 @@ export const SubmitWithoutPreview: EditorRenderingConfig['SubmitButton'] = ({ af
         ) : null}
         <Button
           data-cy="publish-button"
-          disabled={isLoading}
+          disabled={isLoading || !canSubmit}
           $primary
           onClick={() => {
             saveRevision('submitted').then(() => {
