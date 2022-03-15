@@ -1,8 +1,10 @@
 import { Runtime } from '@atlas-viewer/atlas';
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PARAGRAPHS_PROFILE } from '../../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
 import { slotConfig } from '../../../extensions/capture-models/Paragraphs/Paragraphs.slots';
+import { SubmitWithoutPreview } from '../../shared/capture-models/new/components/SubmitWithoutPreview';
+import { RevisionRequest } from '../../shared/capture-models/types/revision-request';
 import { Button, ButtonIcon } from '../../shared/navigation/Button';
 import { EmptyState } from '../../shared/layout/EmptyState';
 import { SmallToast } from '../../shared/callouts/SmallToast';
@@ -28,7 +30,7 @@ import { useCanvasModel } from '../hooks/use-canvas-model';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useContributionMode } from '../hooks/use-contribution-mode';
 import { useProjectStatus } from '../hooks/use-project-status';
-import { useRouteContext } from '../hooks/use-route-context';
+import { RouteContext, useRouteContext } from '../hooks/use-route-context';
 import { CanvasModelUserStatus } from './CanvasModelUserStatus';
 import { CanvasViewer } from './CanvasViewer';
 import {
@@ -55,7 +57,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
   const { isPreparing } = useProjectStatus();
   const user = useCurrentUser(true);
   const config = useSiteConfiguration();
-  const { disableSaveForLater = false } = useModelPageConfiguration();
+  const { disableSaveForLater = false, disablePreview = false } = useModelPageConfiguration();
   const mode = useContributionMode();
   const isVertical = config.project.defaultEditorOrientation === 'vertical';
   const api = useApi();
@@ -63,6 +65,11 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
   const gridRef = useRef<any>();
   const [height, setHeight] = useState(600);
   const [showPanWarning, setShowPanWarning] = useState(false);
+  const [postSubmission, setPostSubmission] = useState(false);
+
+  useEffect(() => {
+    setPostSubmission(false);
+  }, [revision, canvasId]);
 
   useLayoutEffect(() => {
     if (gridRef.current) {
@@ -136,11 +143,26 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
     ? {
         SubmitButton: SimpleSaveButton,
       }
+    : disablePreview
+    ? {
+        SubmitButton: SubmitWithoutPreview,
+      }
     : {};
 
   const profileConfig: { [key: string]: Partial<EditorRenderingConfig> } = {
     [PARAGRAPHS_PROFILE]: slotConfig,
   };
+
+  async function onAfterSave(ctx: { revisionRequest: RevisionRequest; context: RouteContext }) {
+    if (!isEditing && !isPreparing) {
+      await updateClaim(ctx);
+    }
+
+    // If we have disabled preview, we need to show the post-submission.
+    if (disablePreview && ctx.revisionRequest.revision.status !== 'draft') {
+      setPostSubmission(true);
+    }
+  }
 
   if (api.getIsServer() || !canvasId || !projectId || (isPreparing && !isModelAdmin)) {
     return null;
@@ -209,6 +231,10 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
                         )}
                   </EmptyState>
                 </>
+              ) : postSubmission ? (
+                <div>
+                  <EditorSlots.PostSubmission stacked onContinue={() => setPostSubmission(false)} />
+                </div>
               ) : canContribute && captureModel ? (
                 <>
                   <BackToChoicesButton />
@@ -217,7 +243,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
                     <EditorSlots.TopLevelEditor />
                   </CanvasViewerEditorStyleReset>
 
-                  <EditorSlots.SubmitButton afterSave={isEditing || isPreparing ? undefined : updateClaim} />
+                  <EditorSlots.SubmitButton afterSave={onAfterSave} />
                 </>
               ) : (
                 <EmptyState>{t('Loading your model')}</EmptyState>

@@ -43,6 +43,7 @@ export type ProjectConfiguration = {
     preventContributionAfterManifestUnassign?: boolean;
     hideViewerControls?: boolean;
     disableSaveForLater?: boolean;
+    disablePreview?: boolean;
   };
   projectPageOptions?: {
     hideStartContributing?: boolean;

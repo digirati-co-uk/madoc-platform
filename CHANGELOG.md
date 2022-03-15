@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added project option for disabling "save for later"
 - Added "Selector is required" to capture model editor
 - Added required selector styling using disabled field sets.
+- Added new "Disable preview popup" project configuration option
 
 ### Changed
 - The link in the top bar now always links to the site (previously the admin for admins).
