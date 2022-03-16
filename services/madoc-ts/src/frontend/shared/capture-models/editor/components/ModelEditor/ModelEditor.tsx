@@ -1,10 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { CaptureModel, ModelFields } from '../../../types/capture-model';
 import { StructureType } from '../../../types/utility';
+import { modelFieldsToModelRoot } from '../../../utility/model-fields-to-model-root';
 import { Button } from '../../atoms/Button';
 import { Card, CardContent, CardMeta, CardHeader } from '../../atoms/Card';
+import { Dropdown } from '../../atoms/Dropdown';
 import { Grid, GridColumn } from '../../atoms/Grid';
 import { List, ListHeader, ListContent, ListItem } from '../../atoms/List';
+import { MultiDropdown } from '../../atoms/MultiDropdown';
+import { StyledFormField, StyledFormLabel } from '../../atoms/StyledForm';
 import { expandModelFields, mergeFlatKeys, structureToFlatStructureDefinition } from '../../core/structure-editor';
 import { SelectModelFields } from '../SelectModelFields/SelectModelFields';
 import { StructureMetadataEditor } from '../StructureMetadataEditor/StructureMetadataEditor';
@@ -22,6 +26,7 @@ type Props = {
   setDescription: (description: string) => void;
   setInstructions: (instructions: string) => void;
   setModelFields: (fields: ModelFields) => void;
+  setModelRoot: (modelRoot?: string[] | null) => void;
 
   initialPath?: number[];
   popFocus: () => void;
@@ -41,6 +46,7 @@ export const ModelEditor: React.FC<Props> = ({
   modelFields,
   setLabel,
   setDescription,
+  setModelRoot,
   setInstructions,
   initialPath = [],
   setModelFields,
@@ -48,14 +54,22 @@ export const ModelEditor: React.FC<Props> = ({
   const { t } = useTranslation();
   const [isSelecting, setIsSelecting] = useState(false);
   const [selected, setSelected] = useState<string[][]>(() => expandModelFields(modelFields));
+  const modelRoot = model.modelRoot || [];
 
   const flatKeys = useMemo(() => mergeFlatKeys(selected), [selected]);
+  const modelRootOptions = useMemo(() => modelFieldsToModelRoot(flatKeys, { singleLevel: true }), [flatKeys]);
 
   useEffect(() => {
     if (flatKeys) {
       setModelFields(flatKeys);
     }
   }, [flatKeys, setModelFields]);
+
+  useEffect(() => {
+    if (modelRootOptions.length === 0) {
+      setModelRoot(null);
+    }
+  }, [modelRootOptions]);
 
   return (
     <Card fluid>
@@ -108,6 +122,33 @@ export const ModelEditor: React.FC<Props> = ({
           <Button onClick={() => setIsSelecting(true)}>{t('Add new field')}</Button>
         )}
       </CardContent>
+      {modelRootOptions.length ? (
+        <CardContent extra>
+          <StyledFormField>
+            <StyledFormLabel>
+              {t('Model root')}
+              <Dropdown
+                placeholder={t('Choose a root for the form')}
+                fluid
+                selection
+                isClearable
+                value={modelRoot.join('{SEPARATOR}')}
+                onChange={val => {
+                  const newRoot = val ? val.split('{SEPARATOR}') : [];
+                  setModelRoot(newRoot.length ? newRoot : null);
+                }}
+                options={modelRootOptions.map(source => {
+                  return {
+                    key: source.root.join(' / '),
+                    text: source.root.join(' / '),
+                    value: source.root.join('{SEPARATOR}'),
+                  };
+                })}
+              />
+            </StyledFormLabel>
+          </StyledFormField>
+        </CardContent>
+      ) : null}
       <CardContent extra>
         <pre>{JSON.stringify(mergeFlatKeys(selected), null, 2)}</pre>
       </CardContent>

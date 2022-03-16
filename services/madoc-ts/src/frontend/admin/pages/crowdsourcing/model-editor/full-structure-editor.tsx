@@ -20,6 +20,7 @@ export const FullStructureEditor: React.FC = () => {
     setInstructions,
     addStructureToChoice,
     setModelFields,
+    setModelRoot,
     removeStructureFromChoice,
     setProfile,
     reorderChoices,
@@ -45,6 +46,7 @@ export const FullStructureEditor: React.FC = () => {
       onRemove={removeStructureFromChoice}
       currentPath={currentPath}
       setModelFields={setModelFields}
+      setModelRoot={setModelRoot}
       structure={current as CaptureModel['structure']}
       setProfile={setProfile}
       reorderChoices={reorderChoices}

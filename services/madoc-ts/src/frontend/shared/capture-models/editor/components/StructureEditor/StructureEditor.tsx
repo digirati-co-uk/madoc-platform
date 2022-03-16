@@ -19,6 +19,7 @@ type Props = {
   setInstructions: (value: string) => void;
   onAddChoice: (choice: StructureType<'choice'>) => void;
   onAddModel: (model: StructureType<'model'>) => void;
+  setModelRoot: (modelRoot?: string[] | null) => void;
   onRemove: (id: number) => void;
   pushFocus: (idx: number) => void;
   setFocus: (idx: number[]) => void;
@@ -35,6 +36,7 @@ export const StructureEditor: React.FC<Props> = ({
   currentPath,
   setDescription,
   setInstructions,
+  setModelRoot,
   setLabel,
   setProfile,
   setPath,
@@ -78,6 +80,7 @@ export const StructureEditor: React.FC<Props> = ({
               setLabel={setLabel}
               setDescription={setDescription}
               setInstructions={setInstructions}
+              setModelRoot={setModelRoot}
               document={document}
               modelFields={structure.fields}
               setModelFields={setModelFields}

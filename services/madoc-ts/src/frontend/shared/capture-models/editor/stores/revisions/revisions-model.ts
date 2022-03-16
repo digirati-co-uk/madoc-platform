@@ -141,7 +141,7 @@ export type RevisionsModel = {
   importRevision: Action<RevisionsModel, { revisionRequest: RevisionRequest }>;
   // Save will remove the revision from unsavedRevisionIds
   saveRevision: Action<RevisionsModel, { revisionId: string }>;
-  selectRevision: Action<RevisionsModel, { revisionId: string; readMode?: boolean }>;
+  selectRevision: Action<RevisionsModel, { revisionId: string; readMode?: boolean; modelRoot?: string[] }>;
   deselectRevision: Action<RevisionsModel, { revisionId: string }>;
   setRevisionLabel: Action<RevisionsModel, { revisionId?: string; label: string }>;
   // discardRevisionChanges(rid) -- maybe

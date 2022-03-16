@@ -5,6 +5,7 @@ import { createNewFieldInstance } from '../../../helpers/create-new-field-instan
 import { createRevisionDocument } from '../../../helpers/create-revision-document';
 import { createRevisionRequest } from '../../../helpers/create-revision-request';
 import { filterEmptyStructures } from '../../../helpers/filter-empty-structures';
+import { findStructure } from '../../../helpers/find-structure';
 import { forkFieldEditMode } from '../../../helpers/fork-field-edit-mode';
 import { forkSelectorEditMode } from '../../../helpers/fork-selector-edit-mode';
 import { generateId } from '../../../helpers/generate-id';
@@ -16,6 +17,8 @@ import { traverseStructure } from '../../../helpers/traverse-structure';
 import { CaptureModel } from '../../../types/capture-model';
 import { BaseField } from '../../../types/field-types';
 import { BaseSelector } from '../../../types/selector-types';
+import { applyModelRootToDocument } from '../../../utility/apply-model-root-to-document';
+import { processImportedRevision } from '../../../utility/process-imported-revision';
 import { RevisionsModel } from './revisions-model';
 import { createSelectorStore, updateSelectorStore } from '../selectors/selector-store';
 import { batchedSubscribe } from 'redux-batched-subscribe';
@@ -504,6 +507,12 @@ export const revisionStore: RevisionsModel = {
   ),
 
   importRevision: action((state, { revisionRequest }) => {
+    const foundStructure = revisionRequest.revision.structureId
+      ? findStructure({ structure: state.structure } as any, revisionRequest.revision.structureId)
+      : null;
+    if (foundStructure && foundStructure.type === 'model' && foundStructure.modelRoot) {
+      applyModelRootToDocument(revisionRequest.document, foundStructure.modelRoot);
+    }
     state.revisions[revisionRequest.revision.id] = revisionRequest;
   }),
 
@@ -632,7 +641,6 @@ export const revisionStore: RevisionsModel = {
   removeInstance: action((state, { path, revisionId }) => {
     const [fieldProp, fieldId] = path.slice(-1)[0];
     const pathToResource = path.slice(0, -1);
-    // console.log('removing instance', pathToResource, fieldProp, fieldId);
     const entity = getRevisionFieldFromPath<CaptureModel['document']>(state, pathToResource, revisionId);
 
     const fields = entity ? entity.properties[fieldProp] : undefined;

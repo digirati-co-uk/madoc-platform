@@ -12,6 +12,7 @@ export function useFocusedStructureEditor() {
     setModelFields: act.setModelFields,
     addStructureToChoice: act.addStructureToChoice,
     removeStructureFromChoice: act.removeStructureFromChoice,
+    setModelRoot: act.setModelRoot,
   }));
   const index = StructureStore.useStoreState(state => state.focus.index);
 
@@ -27,6 +28,10 @@ export function useFocusedStructureEditor() {
   ]);
   const setProfile = useCallback((profile: string[]) => actions.setProfile({ profile, index }), [actions, index]);
   const setModelFields = useCallback((fields: ModelFields) => actions.setModelFields({ fields, index }), [
+    actions,
+    index,
+  ]);
+  const setModelRoot = useCallback((modelRoot?: string[] | null) => actions.setModelRoot({ modelRoot, index }), [
     actions,
     index,
   ]);
@@ -59,6 +64,7 @@ export function useFocusedStructureEditor() {
     setInstructions,
     setProfile,
     setModelFields,
+    setModelRoot,
     reorderChoices,
     addStructureToChoice,
     removeStructureFromChoice,

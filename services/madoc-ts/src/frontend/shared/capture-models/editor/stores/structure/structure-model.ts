@@ -27,6 +27,7 @@ export type StructureModel = {
   setStructureInstructions: Action<StructureModel, { index: number[]; instructions: string }>;
   setStructureProfile: Action<StructureModel, { index: number[]; profile: string[] }>;
   setModelFields: Action<StructureModel, { index: number[]; fields: ModelFields }>;
+  setModelRoot: Action<StructureModel, { index: number[]; modelRoot?: string[] | null }>;
   reorderChoices: Action<StructureModel, { index: number[]; startIndex: number; endIndex: number }>;
   removeField: Action<StructureModel, { term: string }>;
 

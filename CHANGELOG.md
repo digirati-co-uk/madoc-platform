@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added required selector styling using disabled field sets.
 - Added new "international-field" type to capture models
 - Added new "Disable preview popup" project configuration option
+- Added support for choosing "Model root" in capture model editor
 
 ### Changed
 - The link in the top bar now always links to the site (previously the admin for admins).

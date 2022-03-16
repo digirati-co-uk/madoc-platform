@@ -93,6 +93,11 @@ export const StructureStore = createContextStore<
   setModelFields: action((state, { index, fields }) => {
     itemFromIndex<'model'>(state, index).fields = fields;
   }),
+
+  setModelRoot: action((state, { index, modelRoot }) => {
+    itemFromIndex<'model'>(state, index).modelRoot = modelRoot;
+  }),
+
   reorderChoices: action((state, { index, startIndex, endIndex }) => {
     const result = itemFromIndex(state, index);
     if (result.type !== 'choice' || !result.items[startIndex] || !result.items[endIndex]) {
@@ -130,6 +135,7 @@ export const StructureStore = createContextStore<
       actions.setStructureDescription,
       actions.setStructureProfile,
       actions.setModelFields,
+      actions.setModelRoot,
       actions.reorderChoices,
     ],
     async (_, payload, store) => {

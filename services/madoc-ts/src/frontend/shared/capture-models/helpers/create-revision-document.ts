@@ -9,27 +9,35 @@ import { isEntity, isEntityList } from './is-entity';
 import { splitDocumentByModelRoot } from './split-document-by-model-root';
 import { traverseDocument } from './traverse-document';
 
+interface ForkDocumentOptions<Fields extends string> {
+  revisionId?: string;
+  modelMapping?: Partial<{ [key in Fields]: string }>;
+  modelRoot?: Fields[];
+  removeValues?: boolean;
+  removeDefaultValues?: boolean;
+  editValues?: boolean;
+  editableAboveRoot?: boolean;
+  preventAdditionsAdjacentToRoot?: boolean;
+  branchFromRoot?: boolean;
+  addRevises?: boolean;
+  keepListedValues?: boolean;
+  fieldsToEdit?: string[];
+}
+
 /**
  * Fork template - The first "allowMultiple" below the root will be copied and
  * it's values nuked, as per template rules in fork template mode, fields above
  * will be copied (and revises set) Everything (immutable) above the model root
  * is marked as "allowMultiple=false"
- *
- * @param inputDoc
- * @param modelRoot
- * @param modelMapping
- * @param removeValues
- * @param removeDefaultValues
- * @param editValues
- * @param editableAboveRoot
- * @param preventAdditionsAdjacentToRoot
  */
 export function forkDocument<Fields extends string>(
   inputDoc: CaptureModel['document'],
-  {
+  options: ForkDocumentOptions<Fields>
+) {
+  let { modelRoot = [] as Fields[] } = options;
+  const {
     revisionId,
-    modelRoot = [],
-    modelMapping: inputModelMapping = {},
+    modelMapping: inputModelMapping = {} as Required<ForkDocumentOptions<Fields>>['modelMapping'],
     removeValues = true,
     removeDefaultValues = false,
     editValues = false,
@@ -39,21 +47,7 @@ export function forkDocument<Fields extends string>(
     addRevises = true,
     keepListedValues = false,
     fieldsToEdit,
-  }: {
-    revisionId?: string;
-    modelMapping?: Partial<{ [key in Fields]: string }>;
-    modelRoot?: Fields[];
-    removeValues?: boolean;
-    removeDefaultValues?: boolean;
-    editValues?: boolean;
-    editableAboveRoot?: boolean;
-    preventAdditionsAdjacentToRoot?: boolean;
-    branchFromRoot?: boolean;
-    addRevises?: boolean;
-    keepListedValues?: boolean;
-    fieldsToEdit?: string[];
-  }
-) {
+  } = options;
   // New document.
   const document = copy(inputDoc);
   const modelMapping: Partial<typeof inputModelMapping> = {};
