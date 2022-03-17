@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added new "international-field" type to capture models
 - Added new "Disable preview popup" project configuration option
 - Added support for choosing "Model root" in capture model editor
+- Added configuration to hide "next canvas" when preview is disabled
 
 ### Changed
 - The link in the top bar now always links to the site (previously the admin for admins).
@@ -137,6 +138,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug with users being able to be created with the same email
 - Fixed missing `@context` on exported Manifests
 - Fixed image service (via hyperion framework)
+- Fixed typo in language files
 
 ### Removed
 

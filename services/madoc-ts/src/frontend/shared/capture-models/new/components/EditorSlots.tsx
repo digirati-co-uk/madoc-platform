@@ -76,6 +76,7 @@ export type EditorRenderingConfig = {
   PreviewSubmission: React.FC;
   PostSubmission: React.FC<{
     stacked?: boolean;
+    messageOnly?: boolean;
     onContinue?: () => void;
     subRoute?: string;
   }>;

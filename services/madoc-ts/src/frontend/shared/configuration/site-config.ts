@@ -213,6 +213,10 @@ export const siteConfigurationModel: {
         label: 'Disable preview popup (direct submit)',
         value: 'disablePreview',
       },
+      {
+        label: 'Disable next canvas prompt after submission',
+        value: 'disableNextCanvas',
+      },
     ],
   },
   projectPageOptions: {

@@ -57,7 +57,11 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
   const { isPreparing } = useProjectStatus();
   const user = useCurrentUser(true);
   const config = useSiteConfiguration();
-  const { disableSaveForLater = false, disablePreview = false } = useModelPageConfiguration();
+  const {
+    disableSaveForLater = false,
+    disablePreview = false,
+    disableNextCanvas = false,
+  } = useModelPageConfiguration();
   const mode = useContributionMode();
   const isVertical = config.project.defaultEditorOrientation === 'vertical';
   const api = useApi();
@@ -66,6 +70,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
   const [height, setHeight] = useState(600);
   const [showPanWarning, setShowPanWarning] = useState(false);
   const [postSubmission, setPostSubmission] = useState(false);
+  const [postSubmissionMessage, setPostSubmissionMessage] = useState(false);
 
   useEffect(() => {
     setPostSubmission(false);
@@ -160,7 +165,11 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
 
     // If we have disabled preview, we need to show the post-submission.
     if (disablePreview && ctx.revisionRequest.revision.status !== 'draft') {
-      setPostSubmission(true);
+      if (disableNextCanvas) {
+        setPostSubmissionMessage(true);
+      } else {
+        setPostSubmission(true);
+      }
     }
   }
 
@@ -214,6 +223,11 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
             </CanvasViewerGridContent>
 
             <CanvasViewerGridSidebar $vertical={isVertical}>
+              {postSubmissionMessage ? (
+                <div>
+                  <EditorSlots.PostSubmission stacked messageOnly onContinue={() => setPostSubmissionMessage(false)} />
+                </div>
+              ) : null}
               <CanvasModelUserStatus isEditing={isEditing} />
               {preventFurtherSubmission ? (
                 <>

@@ -9,9 +9,13 @@ import { useManifestStructure } from '../../../hooks/use-manifest-structure';
 import { HrefLink } from '../../../utility/href-link';
 import { EditorRenderingConfig } from './EditorSlots';
 
-export const DefaultPostSubmission: EditorRenderingConfig['PostSubmission'] = ({ onContinue, stacked }) => {
+export const DefaultPostSubmission: EditorRenderingConfig['PostSubmission'] = ({
+  onContinue,
+  messageOnly,
+  stacked,
+}) => {
   const { t } = useTranslation();
-  const { manifestId, canvasId, projectId } = useRouteContext();
+  const { manifestId, canvasId } = useRouteContext();
   const structure = useManifestStructure(manifestId);
   const createLink = useRelativeLinks();
 
@@ -43,10 +47,14 @@ export const DefaultPostSubmission: EditorRenderingConfig['PostSubmission'] = ({
     </ButtonRow>
   );
 
+  if (messageOnly) {
+    return <InfoMessage onClick={onContinue}>{t('Thank you for your submission')}</InfoMessage>;
+  }
+
   if (!next) {
     return (
       <div>
-        <InfoMessage $banner>{t('Thanks for your submission')}</InfoMessage>
+        <InfoMessage>{t('Thank you for your submission')}</InfoMessage>
         <div style={{ padding: '0 1em' }}>{buttonRow}</div>
       </div>
     );
