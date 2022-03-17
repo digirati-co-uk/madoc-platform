@@ -274,18 +274,21 @@ export function forkDocument<Fields extends string>(
       // if it does not and create a revises, similar to fields.
       // - If we do fork, we mark the item as branched for the fields to pick up
       if (willBranch) {
-        // console.log('BRANCHING', entity);
-
         if ((entity.allowMultiple || hasParentDocumentBranched) && !isInModelMapping) {
           entity.id = generateId();
           entity.immutable = false;
         } else {
-          entity.revises = entity.id;
+          if (addRevises) {
+            entity.revises = entity.id;
+          }
           entity.id = generateId();
           entity.immutable = false;
         }
         if (entity.selector) {
           entity.selector.id = generateId();
+          if (removeValues) {
+            entity.selector.state = null;
+          }
         }
         if (revisionId) {
           entity.revision = revisionId;

@@ -95,7 +95,7 @@ export const StructureStore = createContextStore<
   }),
 
   setModelRoot: action((state, { index, modelRoot }) => {
-    itemFromIndex<'model'>(state, index).modelRoot = modelRoot;
+    itemFromIndex<'model'>(state, index).modelRoot = modelRoot || undefined;
   }),
 
   reorderChoices: action((state, { index, startIndex, endIndex }) => {

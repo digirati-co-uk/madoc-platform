@@ -36,7 +36,11 @@ export const AutoSelectingRevision: React.FC<{ directEdit?: boolean; preventMult
       if (lastWorkedOn) {
         selectRevision({ revisionId: lastWorkedOn.revision.id });
       } else {
-        createRevision({ revisionId: skipToStructureRevision, cloneMode: 'EDIT_ALL_VALUES' });
+        if (currentView.modelRoot && currentView.modelRoot.length) {
+          createRevision({ revisionId: skipToStructureRevision, cloneMode: 'FORK_INSTANCE' });
+        } else {
+          createRevision({ revisionId: skipToStructureRevision, cloneMode: 'EDIT_ALL_VALUES' });
+        }
       }
     }
   }, [
