@@ -44,6 +44,7 @@ export type ProjectConfiguration = {
     hideViewerControls?: boolean;
     disableSaveForLater?: boolean;
     disablePreview?: boolean;
+    disableNextCanvas?: boolean;
   };
   projectPageOptions?: {
     hideStartContributing?: boolean;
