@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { PluginContext } from '../../../plugin-api/context';
 import { Dropdown } from '../../atoms/Dropdown';
 
@@ -13,7 +13,14 @@ type Props = {
 
 export const ChooseFieldButton: React.FC<Props> = ({ onChange, fieldType }) => {
   const { fields } = useContext(PluginContext);
-  const [value, setValue] = useState(fieldType || fields[0]?.type);
+  const textSelector = fields['text-field'];
+  const [value, setValue] = useState(fieldType || (textSelector ? 'text-field' : undefined));
+
+  useEffect(() => {
+    onChange(value);
+    // Adding onChange here results in infinite loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
 
   return (
     <Dropdown
@@ -22,7 +29,6 @@ export const ChooseFieldButton: React.FC<Props> = ({ onChange, fieldType }) => {
       selection
       value={value}
       onChange={v => {
-        onChange(v);
         setValue(v);
       }}
       options={

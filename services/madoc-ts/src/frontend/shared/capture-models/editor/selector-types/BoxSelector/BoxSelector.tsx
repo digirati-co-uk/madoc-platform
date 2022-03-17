@@ -48,6 +48,7 @@ export const BoxSelector: SelectorComponent<BoxSelectorProps> = ({
   chooseSelector,
   clearSelector,
   updateSelector,
+  hideSelector,
   readOnly,
   ...props
 }) => {
@@ -79,6 +80,11 @@ export const BoxSelector: SelectorComponent<BoxSelectorProps> = ({
             <div>
               {t('Move and resize the highlighted box on the image to choose your selection.')}
               <br />
+              {props.state && clearSelector ? (
+                <SelectorButton inline={true} size="small" onClick={() => clearSelector()} style={{ marginRight: 10 }}>
+                  {t('confirm')}
+                </SelectorButton>
+              ) : null}
               {props.state && updateSelector ? (
                 <SelectorButton
                   inline={true}

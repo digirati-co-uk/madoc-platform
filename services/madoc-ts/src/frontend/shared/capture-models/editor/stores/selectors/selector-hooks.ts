@@ -154,6 +154,7 @@ export function useSelectorHandlers() {
 export function useCurrentSelector(contentType: string, defaultState: any = null) {
   const { updateSelectorPreview } = useSelectorHandlers();
   const updateSelector = Revisions.useStoreActions(a => a.updateCurrentSelector);
+  const clearSelector = Revisions.useStoreActions(a => a.clearSelector);
 
   return useSelector(
     Revisions.useStoreState(s => s.resolvedSelectors.find(({ id }) => id === s.selector.currentSelectorId)),
@@ -164,6 +165,7 @@ export function useCurrentSelector(contentType: string, defaultState: any = null
       ),
       updateSelectorPreview,
       updateSelector,
+      clearSelector,
       defaultState,
     }
   );
