@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -Eeo pipefail
 
 source /usr/local/bin/docker-entrypoint.sh
 
@@ -10,6 +10,8 @@ if [ "$1" = 'postgres' ]; then
 
     if [ -z "$(ls -A "$PGDATA")" ]; then
         gosu postgres initdb
+        declare -g NEW_DATABASE_CREATED
+        NEW_DATABASE_CREATED='true'
     fi
 
     if [ "$(id -u)" = '0' ]; then
@@ -20,7 +22,6 @@ if [ "$1" = 'postgres' ]; then
     pg_setup_hba_conf
 
     docker_temp_server_start
-
 
 ## Model api
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
@@ -132,6 +133,10 @@ CREATE EXTENSION IF NOT EXISTS "ltree";
 
 EOSQL
 
+if [ $NEW_DATABASE_CREATED = 'true' ]; then
+    # Restore a backup if provided.
+    docker_process_init_files /docker-entrypoint-initdb.d/*
+fi
 
     docker_temp_server_stop
 fi

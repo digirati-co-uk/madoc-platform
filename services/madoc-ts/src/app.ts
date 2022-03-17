@@ -1,3 +1,5 @@
+import { promises } from 'fs';
+import * as path from 'path';
 import Koa from 'koa';
 import json from 'koa-json';
 import logger from 'koa-logger';
@@ -9,10 +11,10 @@ import { createPluginManager } from './middleware/create-plugin-manager';
 import { disposeApis } from './middleware/dispose-apis';
 import { errorHandler } from './middleware/error-handler';
 import { SCHEMAS_PATH } from './paths';
+import { EnvConfig } from './types/env-config';
 import { createAwaiter } from './utility/awaiter';
 import { CronJobs } from './utility/cron-jobs';
-import { MailConfig, Mailer } from './utility/mailer';
-import { TypedRouter } from './utility/typed-router';
+import { Mailer } from './utility/mailer';
 import { createPostgresPool } from './database/create-postgres-pool';
 import { postgresConnection } from './middleware/postgres-connection';
 import { migrate } from './migrate';
@@ -20,8 +22,7 @@ import { staticPage } from './middleware/static-page';
 import { siteManager } from './middleware/site-api';
 import { setJwt } from './middleware/set-jwt';
 import { generateKeys } from './utility/generate-keys';
-import { promises } from 'fs';
-import * as path from 'path';
+import { router } from './router';
 import { createBackend } from './middleware/i18n/i18next.server';
 import { ExternalConfig } from './types/external-config';
 import './types/application-context';
@@ -32,9 +33,9 @@ import passport from 'koa-passport';
 
 const { readFile, readdir } = promises;
 
-export async function createApp(router: TypedRouter<any, any>, config: ExternalConfig, env: { smtp: MailConfig }) {
+export async function createApp(config: ExternalConfig, env: EnvConfig) {
   const app = new Koa();
-  const pool = createPostgresPool();
+  const pool = createPostgresPool(env.postgres);
   const i18nextPromise = createBackend();
   const { awaitProperty, awaiter } = createAwaiter();
 
@@ -55,7 +56,7 @@ export async function createApp(router: TypedRouter<any, any>, config: ExternalC
     app.context.pluginManager = manager;
   });
 
-  app.context.mailer = new Mailer(env.smtp);
+  app.context.mailer = new Mailer(env.smtp || {});
 
   // Set i18next
   awaitProperty(

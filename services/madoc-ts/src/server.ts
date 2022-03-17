@@ -7,10 +7,10 @@ async function main() {
 
   const config = require('../config.json');
   const { createApp } = require('./app');
-  const { port, config: env } = require('./config');
-  const { router } = require('./router');
+  const { config: env } = require('./config');
+  const port = process.env.SERVER_PORT || 3000;
 
-  const app = await createApp(router, config, env);
+  const app = await createApp(config, env);
 
   app.listen(port);
 

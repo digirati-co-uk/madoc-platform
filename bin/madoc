@@ -50,20 +50,36 @@ case "${commandToRun}" in
       docker-compose -f docker-compose.yml -f docker-compose.test.yml -p test-madoc --env-file ./.env-test up "$@"
     ;;
 
+    test-instance-down)
+      docker-compose -f docker-compose.yml -f docker-compose.test.yml -p test-madoc --env-file ./.env-test down -v
+    ;;
+
     test-compose)
       docker-compose -f docker-compose.yml -f docker-compose.test.yml -p test-madoc --env-file ./.env-test "$@"
     ;;
 
 
+    test-instance-restore-postgres)
+      docker-compose -f docker-compose.yml -f docker-compose.test.yml -p test-madoc --env-file ./.env-test exec shared-postgres \
+             pg_restore -U postgres postgres < ./e2e/test-fixtures/postgres/$1.sql
+    ;;
+
     test-instance-dump-postgres)
       if [[ -z "$1" ]]; then
-        echo -e "You must pass in a schema to export"
+        docker-compose -f docker-compose.yml -f docker-compose.test.yml -p test-madoc --env-file ./.env-test exec shared-postgres \
+               pg_dump -U postgres postgres > ./e2e/test-fixtures/postgres/full.sql
+
+        echo "Dump created at: ./e2e/test-fixtures/postgres/full.sql";
+        exit 1;
       fi;
       if [[ -z "$2" ]]; then
         echo -e "You must pass in a table to export"
+        exit 0;
       fi;
       docker-compose -f docker-compose.yml -f docker-compose.test.yml -p test-madoc --env-file ./.env-test exec shared-postgres \
        pg_dump -n $1 -t $1.$2 -U postgres postgres > ./e2e/test-fixtures/postgres/$1-$2.sql
+
+      echo "Dump created at: ./e2e/test-fixtures/postgres/$1-$2.sql";
     ;;
 
     start)
@@ -85,10 +101,6 @@ case "${commandToRun}" in
 
     logs)
         docker-compose logs -f --tail=50
-    ;;
-
-    reload-gateway)
-      curl -H "x-tyk-authorization: y@@-rwzsqsqTRcuJjp6L8" http://localhost:8888/tyk/reload
     ;;
 
     *)
