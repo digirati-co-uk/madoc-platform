@@ -5,14 +5,6 @@ services:
   gateway:
     ports:
       - "8988:8080"
-    volumes:
-      - ./e2e/test-fixtures/certs:/openssl-certs
-
-  certs:
-    build:
-      context: services/certs
-    volumes:
-      - ./e2e/test-fixtures/certs:/openssl-certs
 
   madoc-ts:
     build:
@@ -22,19 +14,38 @@ services:
       - NODE_ENV=test
     volumes:
       - ./e2e/test-fixtures/certs:/home/node/app/openssl-certs
-      - ./var/test-environment/jwt:/home/node/app/service-jwt-responses
-      - ./var/test-environment/files:/home/node/app/omeka-files
+      - jwt:/home/node/app/service-jwt-responses
+      - files:/home/node/app/omeka-files
 
   tasks-api: {}
 
   model-api: {}
 
-  config-service: {}
-
   shared-postgres:
     volumes:
-      - ./var/test-environment/shared-database:/var/lib/postgresql/data
+      - shared_postgres_data:/var/lib/postgresql/data
+      - ./e2e/test-fixtures/postgres/default:/docker-entrypoint-initdb.d
+
+  gateway-redis: {}
+
+  config-service: {}
 
   storage-api:
     volumes:
-      - ./var/test-environment/files/storage-api:/home/node/app/files
+      - storage-api:/home/node/app/files
+
+  search: {}
+
+  okra: {}
+
+volumes:
+
+  # Shared resources
+  jwt: {}
+
+  # Databases
+  shared_postgres_data: {}
+
+  # Files
+  files: {}
+  storage-api: {}

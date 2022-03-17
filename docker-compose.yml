@@ -63,6 +63,9 @@ services:
       - "127.0.0.1:${PORTS_MADOC_TS_WEBPACK:-40493}:40493"
     links:
       - shared-postgres
+    depends_on:
+      shared-postgres:
+        condition: service_healthy
 
   tasks-api:
     tty: true
@@ -80,10 +83,13 @@ services:
     links:
       - shared-postgres
       - gateway-redis
+    depends_on:
+      shared-postgres:
+        condition: service_healthy
 
   model-api:
     tty: true
-    image: digirati/capture-models:v0.13.21
+    image: digirati/capture-models:latest
     environment:
       - SERVER_PORT=3000
       - DATABASE_HOST=shared-postgres
@@ -94,6 +100,9 @@ services:
       - DATABASE_PASSWORD=${POSTGRES_MODELS_API_PASSWORD}
     links:
       - shared-postgres
+    depends_on:
+      shared-postgres:
+        condition: service_healthy
 
   shared-postgres:
     build:
@@ -117,6 +126,11 @@ services:
       - POSTGRES_SEARCH_API_USER=${POSTGRES_SEARCH_API_USER}
       - POSTGRES_SEARCH_API_SCHEMA=${POSTGRES_SEARCH_API_SCHEMA}
       - POSTGRES_SEARCH_API_PASSWORD=${POSTGRES_SEARCH_API_PASSWORD}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
     ports:
       - "${PORTS_SHARED_POSTGRES:-5400}:5432"
@@ -155,9 +169,15 @@ services:
       - GATEWAY_HOST=${GATEWAY_HOST}
     volumes:
       - ./var/files/storage-api:/home/node/app/files
+    depends_on:
+      shared-postgres:
+        condition: service_healthy
 
   search:
-    image: digirati/madoc-search:latest
+    image: ghcr.io/digirati-co-uk/madoc-search-service:main
+#    build:
+#      context: services/search
+#      dockerfile: Dockerfile
     environment:
       - BROWSABLE=False
       - USE_DOCKER=yes
@@ -176,6 +196,8 @@ services:
       - DATABASE_URL=postgres://${POSTGRES_SEARCH_API_USER}:${POSTGRES_SEARCH_API_PASSWORD}@shared-postgres:${POSTGRES_PORT}/${POSTGRES_DB}
     links:
       - shared-postgres
+#    volumes:
+#      - ./services/search/search_service:/app
 
   okra:
     image: digirati/okra:latest
