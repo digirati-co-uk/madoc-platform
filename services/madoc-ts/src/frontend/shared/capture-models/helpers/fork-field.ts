@@ -76,6 +76,10 @@ export function formPropertyValue<T extends BaseField | CaptureModel['document']
         // Selector has not yet changed.
         newField.selector.id = generateId();
       }
+
+      if (!forkValue) {
+        newField.selector.state = null;
+      }
     }
   }
 

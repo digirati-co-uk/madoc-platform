@@ -10,12 +10,13 @@ import { DownArrowIcon } from '../../icons/DownArrowIcon';
 import { FieldPreview } from '../editor/components/FieldPreview/FieldPreview';
 import { filterRevises } from '../helpers/filter-revises';
 import { isEntityList } from '../helpers/is-entity';
+import { resolveSelector } from '../helpers/resolve-selector';
 import { CaptureModel } from '../types/capture-model';
 import { BaseField } from '../types/field-types';
 import { BaseSelector } from '../types/selector-types';
 import { getEntityLabel } from '../utility/get-entity-label';
 import { isEmptyFieldList } from '../utility/is-field-list-empty';
-import {useResolvedSelector} from '../new/hooks/use-resolved-selector';
+import { useResolvedSelector } from '../new/hooks/use-resolved-selector';
 
 const DocumentLabel = styled.div`
   position: relative;
@@ -162,7 +163,7 @@ const ViewEntity: React.FC<{
   fluidImage?: boolean;
 }> = ({ entity, collapsed, children, interactive = true, fluidImage }) => {
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
-  const [selector] = useResolvedSelector(entity);
+  const selector = entity.selector ? resolveSelector(entity.selector) : undefined;
   const label = getEntityLabel(entity);
 
   return (
