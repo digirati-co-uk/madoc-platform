@@ -14,7 +14,7 @@ export const AutosaveRevision: React.FC<{ minutes?: number }> = ({ minutes = 2 }
 
   const [autosaveRevision] = useMutation(async () => {
     if (!currentRevision) {
-      throw new Error(t('Unable to save your submission'));
+      return;
     }
 
     try {
