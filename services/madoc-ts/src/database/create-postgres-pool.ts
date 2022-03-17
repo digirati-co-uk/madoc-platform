@@ -1,7 +1,13 @@
 import { createPool } from 'slonik';
-import { config } from '../config';
+import { EnvConfig } from '../types/env-config';
 
-export function createPostgresPool() {
+export function createPostgresPool(config: EnvConfig['postgres']) {
+  if (typeof config === 'string') {
+    return createPool(config, {
+      connectionTimeout: 'DISABLE_TIMEOUT',
+    });
+  }
+
   return createPool(
     `postgres://${config.username}:${config.password}@${config.host}:${config.port}/${config.database}`,
     {
