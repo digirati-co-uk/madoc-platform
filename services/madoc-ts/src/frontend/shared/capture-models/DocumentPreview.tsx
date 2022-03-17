@@ -1,14 +1,21 @@
-import React, { ComponentClass, FunctionComponent, useMemo } from 'react';
+import React, { ComponentClass, FunctionComponent, ReactNode, useMemo } from 'react';
 import { FieldPreview } from './editor/components/FieldPreview/FieldPreview';
 import { isEntity } from './helpers/is-entity';
 import { CaptureModel } from './types/capture-model';
 import { BaseField } from './types/field-types';
 import { getEntityLabel } from './utility/get-entity-label';
 
-export const DocumentPreview: React.FC<{
+export function DocumentPreview({
+  entity,
+  as,
+  wrapper = a => a,
+  children,
+}: {
+  wrapper?: (element: React.ReactElement) => React.ReactElement;
   entity: CaptureModel['document'] | BaseField;
   as?: FunctionComponent<any> | ComponentClass<any> | string;
-}> = ({ entity, as, children }) => {
+  children: any;
+}) {
   const filteredLabeledBy = useMemo(() => {
     if (isEntity(entity)) {
       return getEntityLabel(entity, undefined, true);
@@ -19,11 +26,11 @@ export const DocumentPreview: React.FC<{
 
   if (isEntity(entity)) {
     if (!filteredLabeledBy) {
-      return <>{children}</>;
+      return wrapper(children);
     }
 
-    return <>{filteredLabeledBy}</>;
+    return wrapper(<>{filteredLabeledBy}</>);
   }
 
-  return <FieldPreview as={as} field={entity} />;
-};
+  return wrapper(<FieldPreview as={as} field={entity} />);
+}

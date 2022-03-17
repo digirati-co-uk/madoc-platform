@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed missing OCR listed
 - Styling of "Suggest edit" to be clearer
 - Styling of "Breadcrumbs" and labelling
+- Fixed default selected field "type" - it is now "text-field" making models quicker to create
+- Fixed issue where you could not de-select an entity selector
+- Fixed auto-selecting the "define" region when using editing an existing region
 
 ### Added
 - Added refresh on 500 error page (usually appears during deployment)
@@ -29,6 +32,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added new "international-field" type to capture models
 - Added new "Disable preview popup" project configuration option
 - Added support for choosing "Model root" in capture model editor
+- Added "tiny" variation of image wrapper [dev]
+- Added preview for entity lists using selector if it's available
+- Added "confirm" to deselect or confirm the current selector
 
 ### Changed
 - The link in the top bar now always links to the site (previously the admin for admins).
@@ -41,7 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changed back to choices styling
 
 ### Removed
-
+- Removed auto-save by default, causing errors and no immediate feedback to the user
 
 ## [2.0.3](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.3) - 2022-02-17
 

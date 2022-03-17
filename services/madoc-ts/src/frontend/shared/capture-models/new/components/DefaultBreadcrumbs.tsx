@@ -2,7 +2,7 @@ import React from 'react';
 import { BreadcrumbDivider, BreadcrumbItem, BreadcrumbList } from '../../../components/Breadcrumbs';
 import { EditorRenderingConfig } from './EditorSlots';
 import { HomeIcon } from '../../../icons/HomeIcon';
-import {useBreads} from '../../hooks/use-breads';
+import { useBreads } from '../../hooks/use-breads';
 
 export const DefaultBreadcrumbs: EditorRenderingConfig['Breadcrumbs'] = () => {
   const { breads, revisionPopTo, fieldSelected, revisionDeselectField } = useBreads();
@@ -24,7 +24,7 @@ export const DefaultBreadcrumbs: EditorRenderingConfig['Breadcrumbs'] = () => {
       {breads.map((s, n) => {
         const name = n === 0 ? <HomeIcon title={s.name} /> : s.name;
         return (
-          <React.Fragment key={s.id}>
+          <React.Fragment key={n}>
             <BreadcrumbItem active={s.active} $icon={n === 0}>
               {!s.active ? <a onClick={() => selectItem(s.id, n)}>{name}</a> : name}
             </BreadcrumbItem>

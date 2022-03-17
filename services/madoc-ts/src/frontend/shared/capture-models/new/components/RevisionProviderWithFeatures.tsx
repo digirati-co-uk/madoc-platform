@@ -33,7 +33,7 @@ export const RevisionProviderWithFeatures: React.FC<{
 }> = ({ slotConfig, children, revision, captureModel, excludeStructures, initialRevision, features }) => {
   const {
     autoSelectingRevision = true,
-    autosave = true,
+    autosave = false,
     revisionEditMode = true,
     directEdit = false,
     preventMultiple = false,

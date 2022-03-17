@@ -12,6 +12,7 @@ export function useSelectors<T extends BaseSelector>(
     readOnly?: boolean;
     isTopLevel?: boolean;
     isAdjacent?: boolean;
+    clearSelector?: any;
     hidden?: boolean;
     defaultState?: any;
     onClick?: (selector: T & InjectedSelectorProps<T['state']>) => void;
@@ -21,6 +22,7 @@ export function useSelectors<T extends BaseSelector>(
     updateSelector = null,
     selectorPreview = null,
     updateSelectorPreview,
+    clearSelector,
     readOnly = false,
     defaultState = null,
     isTopLevel = false,
@@ -54,6 +56,7 @@ export function useSelectors<T extends BaseSelector>(
         updateSelectorPreview,
         selectorPreview,
         updateSelector,
+        clearSelector,
         isTopLevel,
         isAdjacent,
         onClick,

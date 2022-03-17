@@ -7,6 +7,7 @@ export function useSelector<T extends BaseSelector>(
   customOptions: {
     updateSelector?: any;
     selectorPreview?: any;
+    clearSelector?: any;
     updateSelectorPreview?: (value: any) => void;
     readOnly?: boolean;
     defaultState?: any;

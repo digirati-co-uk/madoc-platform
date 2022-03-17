@@ -22,7 +22,7 @@ const InstanceComponent = styled.div`
 const InstanceRemove = styled.div`
   margin-bottom: 1.2em;
   margin-left: 0.5em;
-  align-self: flex-end;
+  align-self: center;
 `;
 
 const AddNewInstance = styled.button`

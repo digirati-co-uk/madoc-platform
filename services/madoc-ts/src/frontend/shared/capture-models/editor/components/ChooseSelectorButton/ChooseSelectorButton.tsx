@@ -13,8 +13,7 @@ type Props = {
 export const ChooseSelectorButton: React.FC<Props> = ({ value: initialValue, onChange }) => {
   const { t } = useTranslation();
   const { selectors } = useContext(PluginContext);
-  const [value, setValue] = useState(initialValue);
-
+  const [value, setValue] = useState<string | undefined>(initialValue || '');
   return (
     <div>
       <Dropdown

@@ -1,10 +1,12 @@
 import styled, { css } from 'styled-components';
 
-export const CroppedImage = styled.div<{ $size?: 'small' | 'large'; $fluid?: boolean; $covered?: boolean }>`
+export const CroppedImage = styled.div<{ $size?: 'tiny' | 'small' | 'large'; $fluid?: boolean; $covered?: boolean }>`
   background: #000;
   padding: 2px;
   height: ${props => {
     switch (props.$size) {
+      case 'tiny':
+        return '50px';
       case 'small':
         return '150px';
       case 'large':
@@ -15,6 +17,8 @@ export const CroppedImage = styled.div<{ $size?: 'small' | 'large'; $fluid?: boo
   }};
   width: ${props => {
     switch (props.$size) {
+      case 'tiny':
+        return '50px';
       case 'small':
         return '150px';
       case 'large':
