@@ -3,6 +3,7 @@ import { RouteContext } from '../../../../site/hooks/use-route-context';
 import { CaptureModel } from '../../types/capture-model';
 import { BaseField } from '../../types/field-types';
 import { RevisionRequest } from '../../types/revision-request';
+import { useCanSubmit } from '../hooks/use-can-submit';
 import { useCurrentEntity } from '../hooks/use-current-entity';
 import { DefaultAdjacentNavigation } from './DefaultAdjacentNavigation';
 import { DefaultBreadcrumbs } from './DefaultBreadcrumbs';
@@ -70,6 +71,7 @@ export type EditorRenderingConfig = {
     afterSave?: (req: { revisionRequest: RevisionRequest; context: RouteContext }) => void | Promise<void>;
     saveOnNavigate?: boolean;
     captureModel?: CaptureModel;
+    canSubmit?: boolean;
   }>;
   PreviewSubmission: React.FC;
   PostSubmission: React.FC<{
@@ -265,12 +267,14 @@ const Choice: EditorRenderingConfig['Choice'] = props => {
 
 const SubmitButton: EditorRenderingConfig['SubmitButton'] = props => {
   const Slots = useSlotContext();
+  const canSubmit = useCanSubmit();
 
   return (
     <Slots.SubmitButton
       saveOnNavigate={Slots.configuration.saveOnNavigate}
       captureModel={props.captureModel}
       afterSave={props.afterSave}
+      canSubmit={typeof props.canSubmit !== 'undefined' ? props.canSubmit : canSubmit}
     >
       {props.children}
     </Slots.SubmitButton>

@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added project option for disabling "save for later"
 - Added "Selector is required" to capture model editor
 - Added required selector styling using disabled field sets.
+- Added "canSubmit" which will disable the Submit button if required selectors are not complete
 - Added new "international-field" type to capture models
 - Added new "Disable preview popup" project configuration option
 - Added support for choosing "Model root" in capture model editor
