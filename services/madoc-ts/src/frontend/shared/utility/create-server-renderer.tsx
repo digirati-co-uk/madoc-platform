@@ -212,7 +212,6 @@ export function createServerRenderer(
               processedWithHooks.push(block.id);
               const args = hook.creator(block.static_data);
               if (typeof args !== 'undefined') {
-                console.log('prefetching..', [hook.name, args]);
                 requests.push(
                   prefetchCache.prefetchQuery([hook.name, args], () => (userApi as any)[hook.name](...args))
                 );
