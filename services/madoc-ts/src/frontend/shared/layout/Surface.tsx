@@ -115,8 +115,8 @@ blockEditorFor(Surface, {
     marginBottom: 'none',
   },
   editor: {
-    textColor: { label: 'Text color', type: 'text-field' },
-    background: { label: 'Background color', type: 'text-field' },
+    textColor: { label: 'Text color', type: 'color-field' },
+    background: { label: 'Background color', type: 'color-field' },
     font: { label: 'Font (from google)', type: 'text-field' },
     padding: {
       label: 'Padding size',

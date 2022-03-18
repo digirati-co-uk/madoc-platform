@@ -6,6 +6,7 @@ import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-rea
 import { ProjectFull } from '../../../types/project-full';
 import { useRelativeLinks } from '../../site/hooks/use-relative-links';
 import { ProjectContainer, ProjectStatus } from '../atoms/ProjectStatus';
+import { useAccessibleColor } from '../hooks/use-accessible-color';
 import { Button } from '../navigation/Button';
 import { Heading3, Subheading3 } from '../typography/Heading3';
 import { LocaleString } from './LocaleString';
@@ -13,20 +14,29 @@ import { LocaleString } from './LocaleString';
 interface SingleProjectProps {
   customButtonLabel?: InternationalString;
   project?: { id: string };
+  background?: string;
   data?: ProjectFull;
+  radius?: string;
 }
 
 export function SingleProject(props: SingleProjectProps) {
   const { t } = useTranslation();
   const createLink = useRelativeLinks();
   const { data, project, customButtonLabel } = props;
+  const accessibleTextColor = useAccessibleColor(props.background || '#eeeeee');
+  const radius = props.radius ? parseInt(props.radius, 10) : undefined;
 
   if (!project || !data) {
     return null;
   }
 
   return (
-    <ProjectContainer $status={data.status}>
+    <ProjectContainer
+      $status={data.status}
+      $background={props.background}
+      $color={accessibleTextColor}
+      $radius={radius}
+    >
       <LocaleString as={Heading3}>{data.label || { en: ['...'] }}</LocaleString>
       <LocaleString as={Subheading3}>{data.summary || { en: ['...'] }}</LocaleString>
       <Button $primary as={Link} to={createLink({ projectId: project.id })}>
@@ -43,6 +53,8 @@ blockEditorFor(SingleProject, {
   defaultProps: {
     customButtonLabel: '',
     project: null,
+    background: null,
+    radius: null,
   },
   hooks: [
     {
@@ -55,9 +67,11 @@ blockEditorFor(SingleProject, {
   ],
   editor: {
     customButtonLabel: { type: 'text-field', label: 'Custom button label' },
+    background: { type: 'color-field', label: 'Background color', defaultValue: '#eeeeee' },
+    radius: { type: 'text-field', label: 'Border radius', defaultValue: '' },
     project: {
       label: 'Project',
-      type: 'project-selector',
+      type: 'project-explorer',
     },
   },
   requiredContext: [],

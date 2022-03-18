@@ -11,6 +11,7 @@ import './input-types/HTMLField';
 import './input-types/InternationalField';
 import './input-types/TaggedTextField';
 import './input-types/TextField';
+import './input-types/ColorField';
 
 // Default selectors
 import './selector-types/BoxSelector';

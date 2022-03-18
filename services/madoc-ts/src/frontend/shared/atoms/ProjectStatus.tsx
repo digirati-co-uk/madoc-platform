@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { useProject } from '../../site/hooks/use-project';
 import { useProjectTemplate } from '../hooks/use-project-template';
+import { Heading3, Subheading3 } from '../typography/Heading3';
 import { makeColorAccessible } from '../utility/make-color-accessible';
 
 export const projectStatusColors = [
@@ -99,8 +100,28 @@ blockEditorFor(ProjectStatus, {
   editor: {},
 });
 
-export const ProjectContainer = styled.div<{ $status?: number }>`
-  background: #eee;
+export const ProjectContainer = styled.div<{
+  $status?: number;
+  $background?: string;
+  $color?: string;
+  $radius?: number;
+}>`
+  background: ${props => props.$background || '#eee'};
+  color: ${props => props.$color || 'inherit'};
   margin-bottom: 20px;
   padding: 20px 20px 40px;
+
+  ${props =>
+    props.$radius
+      ? css`
+          border-radius: ${props.$radius}px;
+        `
+      : ''}
+
+  ${Heading3} {
+    color: ${props => props.$color || 'inherit'};
+  }
+  ${Subheading3} {
+    color: ${props => props.$color || 'inherit'};
+  }
 `;

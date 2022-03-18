@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added "confirm" to deselect or confirm the current selector
 - Added support for API calls as part of a page block (with server rendering) [dev]
 - Added "Single project" page block
+- Added "color" field for capture models
 
 ### Changed
 - The link in the top bar now always links to the site (previously the admin for admins).
