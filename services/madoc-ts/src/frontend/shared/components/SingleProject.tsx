@@ -3,9 +3,10 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
-import { ProjectFull } from '../../../types/project-full';
+import { Project } from '../../../types/project-full';
 import { useRelativeLinks } from '../../site/hooks/use-relative-links';
-import { ProjectContainer, ProjectStatus } from '../atoms/ProjectStatus';
+import { ObjectContainer } from '../atoms/ObjectContainer';
+import { ProjectStatus } from '../atoms/ProjectStatus';
 import { useAccessibleColor } from '../hooks/use-accessible-color';
 import { Button } from '../navigation/Button';
 import { Heading3, Subheading3 } from '../typography/Heading3';
@@ -15,7 +16,7 @@ interface SingleProjectProps {
   customButtonLabel?: InternationalString;
   project?: { id: string };
   background?: string;
-  data?: ProjectFull;
+  data?: Project;
   radius?: string;
 }
 
@@ -31,19 +32,14 @@ export function SingleProject(props: SingleProjectProps) {
   }
 
   return (
-    <ProjectContainer
-      $status={data.status}
-      $background={props.background}
-      $color={accessibleTextColor}
-      $radius={radius}
-    >
+    <ObjectContainer $background={props.background} $color={accessibleTextColor} $radius={radius}>
       <LocaleString as={Heading3}>{data.label || { en: ['...'] }}</LocaleString>
       <LocaleString as={Subheading3}>{data.summary || { en: ['...'] }}</LocaleString>
       <Button $primary as={Link} to={createLink({ projectId: project.id })}>
         {customButtonLabel ? <LocaleString>{customButtonLabel}</LocaleString> : t('Go to project')}
       </Button>
       <ProjectStatus status={data.status} template={data.template} />
-    </ProjectContainer>
+    </ObjectContainer>
   );
 }
 

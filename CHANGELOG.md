@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added support for API calls as part of a page block (with server rendering) [dev]
 - Added "Single project" page block
 - Added "color" field for capture models
+- Added "Single collection" page block
 - Added "project explorer" capture model field (page blocks only)
 - Added "collection explorer" capture model field (page blocks only)
 
