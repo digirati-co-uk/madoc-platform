@@ -9,7 +9,7 @@ export type SnippetLargeProps = {
   summary?: string | JSX.Element;
   thumbnail?: string | null;
   link: string;
-  buttonText: string;
+  buttonText: string | JSX.Element;
   linkAs?: any;
   flat?: boolean;
   margin?: boolean;

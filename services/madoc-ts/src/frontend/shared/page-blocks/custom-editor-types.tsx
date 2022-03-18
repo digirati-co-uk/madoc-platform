@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { specification as collectionExplorer } from '../../../extensions/capture-models/CollectionExplorer/index';
 import { specification as mediaExplorer } from '../../../extensions/capture-models/MediaExplorer/index';
 import { specification as projectExplorer } from '../../../extensions/capture-models/ProjectExplorer/index';
 import { pluginStore } from '../capture-models/plugin-api/globals';
@@ -14,6 +15,7 @@ export const CustomEditorTypes: React.FC = ({ children }) => {
         // Custom fields.
         [mediaExplorer.type]: mediaExplorer,
         [projectExplorer.type]: projectExplorer,
+        [collectionExplorer.type]: collectionExplorer,
       },
     };
   }, []);
