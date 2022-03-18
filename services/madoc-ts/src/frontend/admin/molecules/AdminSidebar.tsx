@@ -91,30 +91,30 @@ export const AdminSidebar: React.FC = () => {
             <AdminMenuItemLabel>{t('Manifests', { count: 2 })}</AdminMenuItemLabel>
           </AdminMenuItem>
 
-          <AdminMenuItemContainer>
-            <AdminMenuItem as={HrefLink} href="/collections" $active={isManageCollections}>
-              <AdminMenuItemIcon>
-                <ManageCollectionsIcon />
-              </AdminMenuItemIcon>
-              <AdminMenuItemLabel>{t('Collections', { count: 2 })}</AdminMenuItemLabel>
-            </AdminMenuItem>
-
-            <AdminMenuSubItemContainer $open={isManageCollections}>
-              <AdminMenuSubItem as={HrefLink} href="/import/collection/create">
-                {t('Create new collection')}
-              </AdminMenuSubItem>
-              <AdminMenuSubItem as={HrefLink} href="/import/collection">
-                {t('Import collection')}
-              </AdminMenuSubItem>
-            </AdminMenuSubItemContainer>
-          </AdminMenuItemContainer>
-
           <AdminMenuSubItemContainer $open={isManageManifests}>
             <AdminMenuSubItem as={HrefLink} href="/import/manifest">
               {t('Import manifest')}
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/enrichment/ocr">
               {t('View manifests with OCR')}
+            </AdminMenuSubItem>
+          </AdminMenuSubItemContainer>
+        </AdminMenuItemContainer>
+
+        <AdminMenuItemContainer>
+          <AdminMenuItem as={HrefLink} href="/collections" $active={isManageCollections}>
+            <AdminMenuItemIcon>
+              <ManageCollectionsIcon />
+            </AdminMenuItemIcon>
+            <AdminMenuItemLabel>{t('Collections', { count: 2 })}</AdminMenuItemLabel>
+          </AdminMenuItem>
+
+          <AdminMenuSubItemContainer $open={isManageCollections}>
+            <AdminMenuSubItem as={HrefLink} href="/import/collection/create">
+              {t('Create new collection')}
+            </AdminMenuSubItem>
+            <AdminMenuSubItem as={HrefLink} href="/import/collection">
+              {t('Import collection')}
             </AdminMenuSubItem>
           </AdminMenuSubItemContainer>
         </AdminMenuItemContainer>
