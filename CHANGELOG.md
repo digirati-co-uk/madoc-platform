@@ -50,6 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Moved `<DocumentPreview />` from capture models to this repo
 - Moved `@capture-models/*` packages into this repo (See [#529](https://github.com/digirati-co-uk/madoc-platform/pull/529))
 - Changed back to choices styling
+- Changed order of projects (the newest first)
 
 ### Removed
 - Removed auto-save by default, causing errors and no immediate feedback to the user

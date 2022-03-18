@@ -46,6 +46,13 @@ export const getCollection: RouteMiddleware<{ id: number }> = async context => {
 
   const table = mapCollectionSnippets(rows);
 
+  const totals = await context.connection.any(getResourceCount([collectionId], siteId));
+
+  const totalsIdMap = totals.reduce((state, row) => {
+    state[row.resource_id] = row.total;
+    return state;
+  }, {} as { [id: string]: number });
+
   const returnCollections = [];
   const collection = table.collections[`${collectionId}`] || {
     id: collectionId,
@@ -53,6 +60,7 @@ export const getCollection: RouteMiddleware<{ id: number }> = async context => {
   };
   const manifestIds = table.collection_to_manifest[`${collectionId}`] || [];
   collection.items = manifestIds.map((id: number) => table.manifests[id]);
+  collection.itemCount = totalsIdMap[collectionId] || 0;
   returnCollections.push(collection);
 
   context.response.body = {
