@@ -26,7 +26,7 @@ import { ErrorBoundary } from './error-boundary';
 import { queryConfig } from './query-config';
 import { ReactQueryDevtools } from 'react-query-devtools';
 import { ScrollTop } from './scroll-top';
-import '../capture-models/editor/bundle';
+import '../required-modules';
 
 export async function renderClient(
   Component: React.FC<any>,

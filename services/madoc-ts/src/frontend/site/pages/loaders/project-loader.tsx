@@ -10,7 +10,7 @@ import { Button } from '../../../shared/navigation/Button';
 import { AutoSlotLoader } from '../../../shared/page-blocks/auto-slot-loader';
 import { HrefLink } from '../../../shared/utility/href-link';
 import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
-import { CustomThemeProvider, nullTheme, useCustomTheme } from '../../../themes/helpers/CustomThemeProvider';
+import { nullTheme, useCustomTheme } from '../../../themes/helpers/CustomThemeProvider';
 import { UniversalComponent } from '../../../types';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { useStaticData } from '../../../shared/hooks/use-data';
@@ -21,7 +21,7 @@ import { ConfigProvider } from '../../features/SiteConfigurationContext';
 type ProjectLoaderType = {
   params: { slug: string };
   query: unknown;
-  variables: { slug: string };
+  variables: [string];
   data: ProjectFull;
   context: { project: ProjectFull };
 };
@@ -62,10 +62,10 @@ export const ProjectLoader: UniversalComponent<ProjectLoaderType> = createUniver
   },
   {
     getKey: params => {
-      return ['getSiteProject', { slug: params.slug }];
+      return ['getSiteProject', [params.slug]];
     },
     getData: async (key, variables, api) => {
-      return await api.getSiteProject(variables.slug);
+      return await api.getSiteProject(...variables);
     },
   }
 );

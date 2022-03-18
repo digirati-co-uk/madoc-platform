@@ -8,10 +8,13 @@ import { StaticRouterContext } from 'react-router';
 import { parse } from 'query-string';
 import { api } from '../../../gateway/api.server';
 import { ListLocalisationsResponse } from '../../../routes/admin/localisation';
+import { GetSlots } from '../../../types/get-slots';
+import { BlockCollector } from '../../../types/block-collector';
 import { SitePlugin } from '../../../types/schemas/plugins';
 import { EditorialContext } from '../../../types/schemas/site-page';
 import { ResolvedTheme } from '../../../types/themes';
 import { ReactServerError } from '../../../utility/errors/react-server-error';
+import { PageLoader } from '../../site/pages/loaders/page-loader';
 import { defaultTheme } from '../capture-models/editor/themes';
 import { PluginManager } from '../plugins/plugin-manager';
 import { queryConfig } from './query-config';
@@ -23,6 +26,7 @@ import React from 'react';
 import { CreateRouteType, UniversalRoute } from '../../types';
 import { Helmet } from 'react-helmet';
 import localeCodes from 'locale-codes';
+import '../required-modules';
 
 function makeRoutes(routeComponents: any) {
   return [
@@ -86,7 +90,7 @@ export function createServerRenderer(
       enableProjects: boolean;
       enableCollections: boolean;
     };
-    getSlots?: (ctx: EditorialContext) => Promise<any> | any;
+    getSlots?: GetSlots;
     pluginManager?: PluginManager;
     plugins?: SitePlugin[];
     reactFormResponse?: any;
@@ -110,6 +114,7 @@ export function createServerRenderer(
     const path = urlPath.slice(urlPath.indexOf(basename) + basename.length);
     const queryString = urlQuery ? parse(urlQuery) : {};
     const matches = matchUniversalRoutes(routes, path);
+    const blockCollector: BlockCollector = { blocks: [] };
     const requests = [];
     const routeContext: EditorialContext = {};
     const themeOverrides: any = {};
@@ -128,6 +133,23 @@ export function createServerRenderer(
             const data = route.component.getData
               ? route.component.getData(key, vars, userApi, path)
               : (undefined as any);
+
+            // Hook for page loader.
+            if (route.component === PageLoader) {
+              data.then((resp: any) => {
+                if (resp && resp.page && resp.page.slots) {
+                  for (const slotId of Object.keys(resp.page.slots)) {
+                    const slot = resp.page.slots[slotId];
+                    if (slot && slot.blocks) {
+                      blockCollector.blocks.push(...slot.blocks);
+                    }
+                  }
+                }
+
+                return resp;
+              });
+            }
+
             // Hack for server-side theme from template.
             if (!projectApplied && key === 'getSiteProject' && site) {
               data.then((resp: any) => {
@@ -163,15 +185,46 @@ export function createServerRenderer(
     }
 
     if (getSlots) {
-      requests.push(prefetchCache.prefetchQuery(['slot-request', routeContext], () => getSlots(routeContext)));
-      requests.push(
-        prefetchCache.prefetchQuery(['slot-request', { slotIds: ['global-header'] }], () =>
-          getSlots({ slotIds: ['global-header'] })
-        )
+      const slotRequest = prefetchCache.prefetchQuery(['slot-request', routeContext], () =>
+        getSlots(routeContext, { collector: blockCollector })
       );
+      const headerSlotRequest = prefetchCache.prefetchQuery(['slot-request', { slotIds: ['global-header'] }], () =>
+        getSlots({ slotIds: ['global-header'] }, { collector: blockCollector })
+      );
+
+      requests.push(slotRequest);
+      requests.push(headerSlotRequest);
+
+      await headerSlotRequest;
+      await slotRequest;
+
+      if (site) {
+        const processedWithHooks = [];
+        for (const block of blockCollector.blocks) {
+          const definition = userApi.pageBlocks.getDefinition(block.type, site.id);
+          if (
+            processedWithHooks.indexOf(block.id) === -1 &&
+            definition &&
+            definition.hooks &&
+            definition.hooks.length
+          ) {
+            for (const hook of definition.hooks) {
+              processedWithHooks.push(block.id);
+              const args = hook.creator(block.static_data);
+              if (typeof args !== 'undefined') {
+                console.log('prefetching..', [hook.name, args]);
+                requests.push(
+                  prefetchCache.prefetchQuery([hook.name, args], () => (userApi as any)[hook.name](...args))
+                );
+              }
+            }
+          }
+        }
+      }
     }
 
     await Promise.all(requests);
+
     const dehydratedState = dehydrate(prefetchCache);
     const mapLocalCodes = (ln: string) => {
       const label = localeCodes.getByTag(ln).name;

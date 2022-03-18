@@ -13,6 +13,7 @@ import {
   pageSlotReducer,
   SlotJoinedProperties,
 } from '../database/queries/site-editorial';
+import { BlockCollector } from '../types/block-collector';
 import {
   CreateNormalPageRequest,
   CreateSlotRequest,
@@ -235,7 +236,7 @@ export class PageBlocksRepository extends BaseRepository {
     `);
   }
 
-  async getSlotsByContext(ctx: ServerEditorialContext, siteId: number) {
+  async getSlotsByContext(ctx: ServerEditorialContext, siteId: number, collector?: BlockCollector) {
     const slotMap: { [name: string]: SiteSlot } = {};
     const query = getContextualSlots(ctx, siteId);
 
@@ -264,6 +265,13 @@ export class PageBlocksRepository extends BaseRepository {
         slotMap[slot.slotId].blocks = (page.slot_to_blocks[slotMap[slot.slotId].id] || []).map(
           blockId => page.blocks[blockId]
         );
+        if (collector) {
+          for (const block of slotMap[slot.slotId].blocks) {
+            if (block && block.static_data) {
+              collector.blocks.push(block);
+            }
+          }
+        }
       }
     }
 

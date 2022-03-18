@@ -3,6 +3,7 @@ import { InternationalString } from '@hyperion-framework/types';
 import React, { JSXElementConstructor } from 'react';
 import ReactDOM from 'react-dom';
 import { ApiClient } from '../../gateway/api';
+import { BlockHook } from '../../types/block-hook';
 import {
   CreateNormalPageRequest,
   CreateSlotRequest,
@@ -41,6 +42,7 @@ export type PageBlockDefinition<
   customEditor?: PageBlockEditor;
   mapToProps?: (props: Data) => any;
   mapFromProps?: (props: any) => Data;
+  hooks?: Array<BlockHook>;
   render: (data: Data, context: EditorialContext, api: ApiClient) => Return;
   source?: { type: string; id?: string; name: string };
 };
@@ -79,7 +81,9 @@ export class PageBlockExtension extends RegistryExtension<PageBlockDefinition<an
 
     this.api = api;
     for (const definition of definitions) {
-      this.definitionMap[definition.type] = definition;
+      if (definition) {
+        this.definitionMap[definition.type] = definition;
+      }
     }
   }
 

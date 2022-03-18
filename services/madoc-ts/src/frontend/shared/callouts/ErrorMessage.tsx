@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { BaseMessage } from './BaseMessage';
 
 export const ErrorMessage = styled(BaseMessage)`

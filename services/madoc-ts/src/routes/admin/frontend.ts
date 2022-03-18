@@ -3,6 +3,7 @@ import { getProject } from '../../database/queries/project-queries';
 import { render as renderAdmin } from '../../frontend/admin/server';
 import { render as renderSite } from '../../frontend/site/server';
 import { createBackend } from '../../middleware/i18n/i18next.server';
+import { GetSlotsOptions } from '../../types/get-slots';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { EditorialContext } from '../../types/schemas/site-page';
 import { NotFound } from '../../utility/errors/not-found';
@@ -105,7 +106,9 @@ export const siteFrontend: RouteMiddleware = async (context, next) => {
       pluginManager: context.pluginManager,
       plugins: context.pluginManager.listPlugins(site.id),
       theme: currentTheme,
-      getSlots: async (ctx: EditorialContext, slotIds?: string[]) => {
+      getSlots: async (ctx: EditorialContext, options: GetSlotsOptions = {}) => {
+        const slotIds = options.slotIds;
+        const collector = options.collector;
         const parsedId = ctx.project ? parseProjectId(ctx.project) : undefined;
         const project = parsedId ? await context.connection.one(getProject(parsedId, site.id)) : undefined;
 
@@ -117,7 +120,8 @@ export const siteFrontend: RouteMiddleware = async (context, next) => {
             project: project ? project.id : undefined,
             slotIds,
           },
-          site.id
+          site.id,
+          collector
         );
       },
       user: await user,

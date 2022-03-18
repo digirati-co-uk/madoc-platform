@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { PageBlockDefinition } from '../../../extensions/page-blocks/extension';
 import { EditorialContext, SiteBlock, SiteBlockRequest } from '../../../types/schemas/site-page';
+import { ErrorBoundary } from '../utility/error-boundary';
 import {
   AddBlockAdded,
   AddBlockContainer,
@@ -112,13 +113,15 @@ export const BlockCreator: React.FC<{
     return (
       <div>
         <SmallButton onClick={() => setChosenBlockType(undefined)}>Back to choices</SmallButton>
-        <BlockCreatorForm
-          block={chosenBlock}
-          context={props.context}
-          onSave={savedBlock => {
-            return props.onSave(savedBlock);
-          }}
-        />
+        <ErrorBoundary>
+          <BlockCreatorForm
+            block={chosenBlock}
+            context={props.context}
+            onSave={savedBlock => {
+              return props.onSave(savedBlock);
+            }}
+          />
+        </ErrorBoundary>
       </div>
     );
   }
