@@ -6,7 +6,7 @@ export const InlineFieldContainer = styled.div<{ $inline?: boolean; $light?: boo
   border-radius: 3px;
 
   ${props =>
-    props.inline &&
+    props.$inline &&
     css`
       display: inline-block;
     `}
