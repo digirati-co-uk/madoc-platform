@@ -23,8 +23,6 @@ export const SimpleAtlasViewer = React.forwardRef<
   const { data: service } = useImageService();
   const [isLoaded, setIsLoaded] = useState(false);
 
-  console.log(canvas);
-
   const { highlighted, regions, setHighlightStatus, isActive } = useHighlightedRegions();
 
   const goHome = () => {

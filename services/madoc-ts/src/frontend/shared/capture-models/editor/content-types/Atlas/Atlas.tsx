@@ -108,8 +108,6 @@ export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
   const selectors = useAllSelectors('atlas', selectorVisibility);
   const [actions] = useSelectorActions();
 
-  console.log('All selectors', selectors);
-
   if (!isLoaded) {
     return null;
   }
