@@ -1,11 +1,11 @@
-import { AtlasContextType } from '@atlas-viewer/atlas';
+import { Preset } from '@atlas-viewer/atlas';
 import React, { useMemo } from 'react';
 import { useContentType } from '../capture-models/plugin-api/hooks/use-content-type';
 
 export const ViewExternalContent: React.FC<{
   target: any;
   height?: number;
-  onCreated?: (runtime: AtlasContextType) => void;
+  onCreated?: (runtime: Preset) => void;
   onPanInSketchMode?: () => void;
 }> = ({ target, children, onCreated, onPanInSketchMode, height = 600 }) => {
   return useContentType(

@@ -1,5 +1,6 @@
 import { ImageService } from '@hyperion-framework/types';
 import React, { Suspense, useMemo, useState } from 'react';
+import { webglSupport } from '../../../../utility/webgl-support';
 import { BaseContent, ContentOptions } from '../../../types/content-types';
 import { useAllSelectors, useCurrentSelector, useSelectorActions } from '../../stores/selectors/selector-hooks';
 import {
@@ -10,13 +11,13 @@ import {
   VaultProvider,
   useVaultEffect,
 } from '@hyperion-framework/react-vault';
-import { AtlasAuto, getId, GetTile, TileSet, AtlasContextType, PopmotionControllerConfig } from '@atlas-viewer/atlas';
+import { AtlasAuto, getId, GetTile, TileSet, Preset, PopmotionControllerConfig } from '@atlas-viewer/atlas';
 import { ImageServiceContext } from './Atlas.helpers';
 
 export type AtlasCustomOptions = {
   unstable_webglRenderer?: boolean;
   customFetcher?: <T>(url: string, options: T) => unknown | Promise<unknown>;
-  onCreateAtlas?: (context: AtlasContextType) => void;
+  onCreateAtlas?: (preset: Preset) => void;
   controllerConfig?: PopmotionControllerConfig;
 };
 
@@ -37,8 +38,7 @@ const Canvas: React.FC<{
   onCreated?: (ctx: any) => void;
   unstable_webglRenderer?: boolean;
   controllerConfig?: PopmotionControllerConfig;
-  style?: any;
-}> = ({ isEditing, onDeselect, children, onCreated, unstable_webglRenderer, controllerConfig, style }) => {
+}> = ({ isEditing, onDeselect, children, onCreated, unstable_webglRenderer, controllerConfig }) => {
   const canvas = useCanvas();
   const { data: service } = useImageService() as { data?: ImageService };
   const [thumbnail, setThumbnail] = useState<any | undefined>(undefined);
@@ -77,17 +77,17 @@ const Canvas: React.FC<{
 
   return (
     <AtlasAuto
-      style={style}
+      containerStyle={{ flex: '1 1 0px' }}
       onCreated={onCreated}
       mode={isEditing ? 'sketch' : 'explore'}
-      unstable_webglRenderer={unstable_webglRenderer}
+      unstable_webglRenderer={webglSupport() && unstable_webglRenderer}
       controllerConfig={controllerConfig}
     >
       <world onClick={onDeselect}>
         <ImageServiceContext value={service}>
           {tiles ? <TileSet x={0} y={0} height={canvas.height} width={canvas.width} tiles={tiles} /> : null}
-          <world-object x={0} y={0} height={canvas.height} width={canvas.width}>
-            <Suspense fallback={null}>{children}</Suspense>
+          <world-object id={`${canvas.id}/annotations`} x={0} y={0} height={canvas.height} width={canvas.width}>
+            {children}
           </world-object>
         </ImageServiceContext>
       </world>
@@ -114,20 +114,29 @@ export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
 
   const { height = 500, width = '100%', maxHeight, maxWidth } = props.options || { height: 500 };
 
-  const styleProps = {
-    minWidth: 100,
-    minHeight: 100,
-    height,
-    width,
-    maxHeight,
-    maxWidth,
-  };
-
   return (
-    <div style={styleProps}>
+    <div
+      style={{
+        flex: '1 1 0px',
+        minWidth: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        height,
+        width,
+        maxHeight,
+        maxWidth,
+      }}
+    >
+      <style>
+        {`
+        .atlas-container {
+          --atlas-container-flex: 1 1 0px;
+          --atlas-background: #f9f9f9;
+        }
+        `}
+      </style>
       <CanvasContext canvas={props.state.canvasId}>
         <Canvas
-          style={{ height: styleProps.height }}
           unstable_webglRenderer={props.options?.custom?.unstable_webglRenderer}
           controllerConfig={props.options?.custom?.controllerConfig}
           onCreated={props.options?.custom?.onCreateAtlas}

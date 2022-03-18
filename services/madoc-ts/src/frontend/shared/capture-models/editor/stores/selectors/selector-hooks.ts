@@ -86,6 +86,11 @@ export function useSelectorHandlers() {
 
   const onClickDisplaySelector = useCallback(
     (s: BaseSelector) => {
+      // Disable display level selector for now.
+      if (true as boolean) {
+        return;
+      }
+
       const id = s.id;
       const path = paths[id];
       if (!path) {
@@ -108,6 +113,10 @@ export function useSelectorHandlers() {
 
   const onClickTopLevelSelector = useCallback(
     (s: BaseSelector) => {
+      // Disable top level selector for now.
+      if (true as boolean) {
+        return;
+      }
       // @todo make this "popTo" and get the id from the selector.
       const id = s.id;
       const path = paths[id];
@@ -124,6 +133,11 @@ export function useSelectorHandlers() {
 
   const onClickAdjacentSelector = useCallback(
     (s: BaseSelector) => {
+      // Disable adjacent selector.
+      if (true as boolean) {
+        return;
+      }
+
       const id = s.id;
       const path = paths[id];
       if (!path) {
@@ -226,6 +240,7 @@ export function SelectorRenderer({
   selector,
   options,
 }: {
+  id: any;
   contentType: string;
   selector: BaseSelector;
   options: {
@@ -288,6 +303,7 @@ export function useAllSelectors(
       topLevel.push(
         React.createElement(SelectorRenderer, {
           key: selector.id,
+          id: selector.id,
           contentType,
           selector,
           options: {
@@ -307,6 +323,7 @@ export function useAllSelectors(
       currentLevel.push(
         React.createElement(SelectorRenderer, {
           key: selector.id,
+          id: selector.id,
           contentType,
           selector,
           options: {
@@ -325,6 +342,7 @@ export function useAllSelectors(
       adjacent.push(
         React.createElement(SelectorRenderer, {
           key: selector.id,
+          id: selector.id,
           contentType,
           selector,
           options: {
@@ -342,6 +360,7 @@ export function useAllSelectors(
     hidden.push(
       React.createElement(SelectorRenderer, {
         key: selector.id,
+        id: selector.id,
         contentType,
         selector,
         options: {

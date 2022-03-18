@@ -2,6 +2,7 @@ import React from 'react';
 import { registerSelector } from '../../../plugin-api/global-store';
 import { SelectorSpecification } from '../../../types/selector-types';
 import { BoxSelector, BoxSelectorProps } from './BoxSelector';
+import BoxSelectorAtlas from './BoxSelector.atlas';
 
 declare module '../../../types/selector-types' {
   export interface SelectorTypeMap {
@@ -9,17 +10,15 @@ declare module '../../../types/selector-types' {
   }
 }
 
-const specification: SelectorSpecification<BoxSelectorProps, 'canvas-panel' | 'atlas'> = {
+const specification: SelectorSpecification<BoxSelectorProps, 'atlas'> = {
   label: 'Box Selector',
   type: 'box-selector',
   description: 'Supports selecting a region of a IIIF image.',
   FormComponent: BoxSelector,
   defaultState: null,
-  supportedContentTypes: ['canvas-panel', 'atlas'],
+  supportedContentTypes: ['atlas'],
   contentComponents: {
-    'canvas-panel': React.lazy(() => import(/* webpackChunkName: "canvas-panel" */ './BoxSelector.canvas-panel')),
-    atlas: React.lazy(() => import(/* webpackChunkName: "atlas" */ './BoxSelector.atlas')),
-    // 'canvas-panel': BoxSelectorCanvasPanel,
+    atlas: BoxSelectorAtlas,
   },
 };
 

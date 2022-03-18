@@ -1,4 +1,4 @@
-import { AtlasContextType } from '@atlas-viewer/atlas';
+import { Preset } from '@atlas-viewer/atlas';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CanvasFull } from '../../../../types/canvas-full';
@@ -23,7 +23,7 @@ export type EditorContentVariations = {
   canvasUri?: string;
   manifestUri?: string;
   height?: number;
-  onCreated?: (runtime: AtlasContextType) => void;
+  onCreated?: (preset: Preset) => void;
   onPanInSketchMode?: () => void;
 };
 

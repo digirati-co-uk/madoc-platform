@@ -52,12 +52,33 @@ export const SimpleAtlasViewer = React.forwardRef<
   }
 
   return (
-    <div ref={ref} style={{ position: 'relative', flex: '1 1 0px', minWidth: 0, overflow: 'hidden', ...style }}>
+    <div
+      ref={ref}
+      style={{
+        position: 'relative',
+        flex: '1 1 0px',
+        minWidth: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        ...style,
+      }}
+    >
+      <style>
+        {`
+        .atlas-container {
+          --atlas-container-flex: 1 1 0px;
+          --atlas-background: #f9f9f9;
+        }
+        `}
+      </style>
       {isLoaded ? (
         <>
           <AtlasAuto
-            style={style}
-            onCreated={rt => (runtime.current = rt.runtime)}
+            containerStyle={{ flex: '1 1 0px' }}
+            onCreated={rt => {
+              runtime.current = rt.runtime;
+            }}
             unstable_webglRenderer={webglSupport() && unstable_webglRenderer}
           >
             <world>
@@ -70,7 +91,9 @@ export const SimpleAtlasViewer = React.forwardRef<
                           <RegionHighlight
                             region={{ id: key, x, y, width, height }}
                             isEditing={false}
-                            background={'rgba(2,219,255, .5)'}
+                            style={{
+                              background: 'rgba(2,219,255, .5)',
+                            }}
                             onSave={() => {
                               // no-op
                             }}
@@ -90,9 +113,10 @@ export const SimpleAtlasViewer = React.forwardRef<
                           <RegionHighlight
                             region={{ id: region.id, x, y, width, height }}
                             isEditing={false}
-                            background={
-                              highlighted.indexOf(region.id) !== -1 ? 'rgba(2,219,255, .5)' : 'rgba(2,219,255, .2)'
-                            }
+                            style={{
+                              background:
+                                highlighted.indexOf(region.id) !== -1 ? 'rgba(2,219,255, .5)' : 'rgba(2,219,255, .2)',
+                            }}
                             onSave={() => {
                               // no-op
                             }}
