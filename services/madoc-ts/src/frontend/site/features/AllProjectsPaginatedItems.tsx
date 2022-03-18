@@ -1,30 +1,33 @@
+import { InternationalString } from '@hyperion-framework/types';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
-import { Button } from '../../shared/navigation/Button';
-import { Heading3, Subheading3 } from '../../shared/typography/Heading3';
-import { ProjectContainer, ProjectStatus } from '../../shared/atoms/ProjectStatus';
-import { LocaleString } from '../../shared/components/LocaleString';
+import { SingleProject } from '../../shared/components/SingleProject';
 import { useProjectList } from '../hooks/use-project-list';
-import { useRelativeLinks } from '../hooks/use-relative-links';
 
-export const AllProjectsPaginatedItems: React.FC = () => {
-  const { t } = useTranslation();
-  const createLink = useRelativeLinks();
+interface AllProjectPaginatedItemsProps {
+  customButtonLabel?: InternationalString;
+  background?: string;
+  radius?: string;
+}
+
+export const AllProjectsPaginatedItems: React.FC<AllProjectPaginatedItemsProps> = ({
+  customButtonLabel,
+  radius,
+  background,
+}) => {
   const { resolvedData: data } = useProjectList();
 
   return (
     <>
       {data?.projects.map(project => (
-        <ProjectContainer $status={project.status} key={project.id}>
-          <LocaleString as={Heading3}>{project.label}</LocaleString>
-          <LocaleString as={Subheading3}>{project.summary}</LocaleString>
-          <Button $primary as={Link} to={createLink({ projectId: project.slug })}>
-            {t('Go to project')}
-          </Button>
-          <ProjectStatus status={project.status} template={project.template} />
-        </ProjectContainer>
+        <SingleProject
+          key={project.id}
+          project={{ id: project.slug }}
+          data={project as any}
+          customButtonLabel={customButtonLabel}
+          radius={radius}
+          background={background}
+        />
       ))}
     </>
   );
@@ -34,6 +37,11 @@ blockEditorFor(AllProjectsPaginatedItems, {
   type: 'default.AllProjectsPaginatedItems',
   label: 'All projects listing',
   internal: true,
+  defaultProps: {
+    customButtonLabel: '',
+    background: null,
+    radius: null,
+  },
   source: {
     name: 'All projects page',
     type: 'custom-page',
@@ -41,5 +49,9 @@ blockEditorFor(AllProjectsPaginatedItems, {
   },
   anyContext: [],
   requiredContext: [],
-  editor: {},
+  editor: {
+    customButtonLabel: { type: 'text-field', label: 'Custom button label' },
+    background: { type: 'color-field', label: 'Background color', defaultValue: '#eeeeee' },
+    radius: { type: 'text-field', label: 'Border radius', defaultValue: '' },
+  },
 });

@@ -48,7 +48,7 @@ export const CustomNestedModel: React.FC = () => (
       <FieldSet
         {...props}
         style={{
-          background: `hsl(${(props.depth // 1) * 80}, 80%, 70%)`,
+          background: `hsl(${props.depth * 80}, 80%, 70%)`,
           marginBottom: 10,
           padding: 15,
           border: '1px solid #000',

@@ -44,6 +44,7 @@ export const listProjects: RouteMiddleware = async context => {
         ${modelQuery}
         ${rootTaskQuery}
         ${publishedQuery}
+        order by iiif_project.id desc
         limit ${projectsPerPage} offset ${(page - 1) * projectsPerPage}
       `,
       siteId

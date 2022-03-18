@@ -99,8 +99,3 @@ blockEditorFor(ProjectStatus, {
   editor: {},
 });
 
-export const ProjectContainer = styled.div<{ $status?: number }>`
-  background: #eee;
-  margin-bottom: 20px;
-  padding: 20px 20px 40px;
-`;

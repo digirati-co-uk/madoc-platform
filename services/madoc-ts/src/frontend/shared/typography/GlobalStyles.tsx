@@ -29,4 +29,9 @@ export const GlobalStyles = createGlobalStyle`
     display: flex;
     flex-direction: column;
   }
+  
+  .rfs-menu-container {
+    position: fixed;
+    max-width: 550px;
+  }
 `;

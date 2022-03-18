@@ -17,6 +17,7 @@ import { ModalButton } from '../components/Modal';
 import { useApi } from '../hooks/use-api';
 import { useSite } from '../hooks/use-site';
 import { createRevisionFromDocument } from '../utility/create-revision-from-document';
+import { ErrorBoundary } from '../utility/error-boundary';
 import { CustomEditorTypes } from './custom-editor-types';
 import { RenderBlock } from './render-block';
 
@@ -111,6 +112,10 @@ export function useBlockModel(block: SiteBlock | SiteBlockRequest, advanced?: bo
   const definition: PageBlockDefinition<any, any, any, any> | undefined = useMemo(() => {
     return api.pageBlocks.getDefinition(block.type, site.id);
   }, [site.id, api.pageBlocks.definitionMap, api.pageBlocks.pluginDefinitions, block.type]);
+
+  if (!definition) {
+    throw new Error(`Page block type ${block.type} not found`);
+  }
 
   const defaultFields = useMemo<CaptureModel['document']>(() => {
     const defaultProps = {
@@ -410,16 +415,19 @@ export const BlockEditor: React.FC<{
   return (
     <CustomEditorTypes>
       <BlockWrapper>
-        {CustomEditor ? (
-          <CustomEditorWrapper editor={CustomEditor} block={block} onUpdateBlock={onUpdateBlock}>
-            {children}
-          </CustomEditorWrapper>
-        ) : (
-          <>
-            <BlockEditorForm block={block} context={context} onUpdateBlock={onUpdateBlock} />
-            {children}
-          </>
-        )}
+        <ErrorBoundary>
+          {CustomEditor ? (
+            <CustomEditorWrapper editor={CustomEditor} block={block} onUpdateBlock={onUpdateBlock}>
+              {children}
+            </CustomEditorWrapper>
+          ) : (
+            <>
+              <BlockEditorForm block={block} context={context} onUpdateBlock={onUpdateBlock} />
+
+              {children}
+            </>
+          )}
+        </ErrorBoundary>
       </BlockWrapper>
     </CustomEditorTypes>
   );

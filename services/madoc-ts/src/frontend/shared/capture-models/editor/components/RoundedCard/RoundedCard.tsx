@@ -8,7 +8,7 @@ export type CardSize = 'large' | 'medium' | 'small';
 export type RoundedCardProps = {
   size?: CardSize;
   count?: number;
-  label?: string;
+  label?: string | React.ReactElement;
   labelFor?: string;
   image?: string;
   interactive?: boolean;

@@ -13,9 +13,10 @@ export const ImageStripBox = styled.div<{ $size?: 'large' | 'small' }>`
         return '232px';
     }
   }};
+  border-radius: 3px;
 
   &:hover {
-    background: #eee;
+    background: rgba(0, 0, 0, 0.1);
     cursor: pointer;
   }
 `;

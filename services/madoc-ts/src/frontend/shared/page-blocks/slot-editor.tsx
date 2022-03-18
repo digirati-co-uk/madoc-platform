@@ -9,11 +9,13 @@ import { SurfaceProps } from '../layout/Surface';
 import { ModalButton } from '../components/Modal';
 import { useApi } from '../hooks/use-api';
 import { TableHandleIcon } from '../icons/TableHandleIcon';
+import { ErrorBoundary } from '../utility/error-boundary';
 import { BlockCreator } from './block-creator';
 import { BlockEditorForm } from './block-editor';
 import { BlockLabel } from './block-label';
 import { ExplainSlot } from './explain-slot';
 import { PageEditorButton } from './PageEditor';
+import { ErrorMessage } from '../callouts/ErrorMessage';
 import { RenderBlock } from './render-block';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import {
@@ -334,6 +336,27 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
                 >
                   {orderedBlocks.map((block, idx) => {
                     if (isEditing) {
+                      const deleteButton = (
+                        <ModalButton
+                          as="div"
+                          title="Delete block"
+                          render={() => <div>Are you sure you want to delete this page block?</div>}
+                          footerAlignRight
+                          renderFooter={({ close }) => {
+                            return (
+                              <ButtonRow $noMargin>
+                                <Button onClick={close}>Cancel</Button>
+                                <Button $primary onClick={() => removeBlock(block.id).then(() => close())}>
+                                  Delete block
+                                </Button>
+                              </ButtonRow>
+                            );
+                          }}
+                        >
+                          <CloseIcon />
+                        </ModalButton>
+                      );
+
                       return (
                         <Draggable key={block.id} draggableId={`${block.id}`} index={idx}>
                           {providedInner => (
@@ -343,52 +366,48 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
                               ref={providedInner.innerRef}
                               {...providedInner.draggableProps}
                             >
-                              <EditingBlocksBar>
-                                <EditingBlocksBarLeft>
-                                  <TableHandle {...providedInner.dragHandleProps} />
-                                  <EditingBlockLabel>
-                                    <BlockLabel block={block} />
-                                  </EditingBlockLabel>
-                                </EditingBlocksBarLeft>
-                                <EditingBlocksBarRight>
-                                  <BlockEditorForm
-                                    as={Button}
-                                    block={block}
-                                    context={props.context}
-                                    onUpdateBlock={props.onUpdateBlock}
-                                  />
-                                  <ModalButton
-                                    as="div"
-                                    title="Delete block"
-                                    render={() => <div>Are you sure you want to delete this page block?</div>}
-                                    footerAlignRight
-                                    renderFooter={({ close }) => {
-                                      return (
-                                        <ButtonRow $noMargin>
-                                          <Button onClick={close}>Cancel</Button>
-                                          <Button $primary onClick={() => removeBlock(block.id).then(() => close())}>
-                                            Delete block
-                                          </Button>
-                                        </ButtonRow>
-                                      );
-                                    }}
-                                  >
-                                    <CloseIcon />
-                                  </ModalButton>
-                                </EditingBlocksBarRight>
-                              </EditingBlocksBar>
-                              <EditingBlockContainer>
-                                <EditBlockWrapper>
-                                  <RenderBlock
-                                    key={block.id}
-                                    block={block}
-                                    context={props.context}
-                                    editable={true}
-                                    showWarning={true}
-                                    onUpdateBlock={props.onUpdateBlock}
-                                  />
-                                </EditBlockWrapper>
-                              </EditingBlockContainer>
+                              <ErrorBoundary
+                                onError={() => (
+                                  <div>
+                                    <ErrorMessage>
+                                      Found an invalid block, Click on the cross to delete.
+                                      {deleteButton}
+                                    </ErrorMessage>
+                                  </div>
+                                )}
+                              >
+                                <EditingBlocksBar>
+                                  <EditingBlocksBarLeft>
+                                    <TableHandle {...providedInner.dragHandleProps} />
+                                    <EditingBlockLabel>
+                                      <BlockLabel block={block} />
+                                    </EditingBlockLabel>
+                                  </EditingBlocksBarLeft>
+                                  <EditingBlocksBarRight>
+                                    <ErrorBoundary>
+                                      <BlockEditorForm
+                                        as={Button}
+                                        block={block}
+                                        context={props.context}
+                                        onUpdateBlock={props.onUpdateBlock}
+                                      />
+                                    </ErrorBoundary>
+                                    {deleteButton}
+                                  </EditingBlocksBarRight>
+                                </EditingBlocksBar>
+                                <EditingBlockContainer>
+                                  <EditBlockWrapper>
+                                    <RenderBlock
+                                      key={block.id}
+                                      block={block}
+                                      context={props.context}
+                                      editable={true}
+                                      showWarning={true}
+                                      onUpdateBlock={props.onUpdateBlock}
+                                    />
+                                  </EditBlockWrapper>
+                                </EditingBlockContainer>
+                              </ErrorBoundary>
                             </EditingBlock>
                           )}
                         </Draggable>

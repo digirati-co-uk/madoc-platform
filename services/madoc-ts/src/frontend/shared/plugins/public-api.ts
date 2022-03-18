@@ -15,6 +15,7 @@ import {
 } from '../capture-models/new/components/RevisionProviderWithFeatures';
 import { EditorContentViewer } from '../capture-models/new/EditorContent';
 import { CanvasVaultContext } from '../components/CanvasVaultContext';
+import { SingleProject } from '../components/SingleProject';
 import { DefaultSelect } from '../form/DefaulSelect';
 import { GlobalSearch } from '../form/GlobalSearch';
 import {
@@ -131,6 +132,10 @@ import {
 } from '../capture-models/new/components/EditorSlots';
 import { BaseTheme } from '../../../types/schemas/madoc-theme';
 import { captureModelShorthand } from '../capture-models/helpers/capture-model-shorthand';
+
+const Blocks = {
+  SingleProject,
+};
 
 const Callouts = {
   BaseMessage: BaseMessage,
@@ -280,6 +285,7 @@ export {
   Models,
   atoms as Atoms,
   Hooks,
+  Blocks,
   Callouts,
   EditorSlots,
   Button,

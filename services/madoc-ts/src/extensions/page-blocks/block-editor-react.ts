@@ -1,6 +1,7 @@
 import React, { JSXElementConstructor } from 'react';
 import { BaseField } from '../../frontend/shared/capture-models/types/field-types';
 import { blockConfigFor } from '../../frontend/shared/plugins/external/block-config-for';
+import { BlockHook } from '../../types/block-hook';
 import { EditorialContext } from '../../types/schemas/site-page';
 import { PageBlockDefinition, PageBlockEditor, PageBlockExtension } from './extension';
 
@@ -20,6 +21,7 @@ export function blockEditorFor<Props, MappedProps = Props>(
     mapToProps?: (props: MappedProps) => Props;
     mapFromProps?: (props: Props) => MappedProps;
     customEditor?: PageBlockEditor;
+    hooks?: Array<BlockHook>;
     source?: { type: string; id?: string; name: string };
   }
 ): PageBlockDefinition<any, any, any, any> {
