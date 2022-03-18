@@ -23,8 +23,7 @@
   },
   "browserslist": "> 0.25%, not dead",
   "resolutions": {
-    "@atlas-viewer/atlas": "1.6.9",
-    "canvas-panel-beta": "2.0.2",
+    "@atlas-viewer/atlas": "2.0.0-alpha.9",
     "@iiif/vocabulary": "1.0.17",
     "immutable": "3.8.2",
     "react-i18next": "11.7.2",
@@ -53,7 +52,7 @@
     "immer": "^9"
   },
   "dependencies": {
-    "@atlas-viewer/atlas": "1.6.9",
+    "@atlas-viewer/atlas": "2.0.0-alpha.9",
     "@atlas-viewer/iiif-image-api": "^1.2.6",
     "@babel/runtime": "^7.16.0",
     "@hyperion-framework/parser": "^1.1.0",
@@ -72,7 +71,6 @@
     "bcrypt": "^5.0.1",
     "browser-cookies": "^1.2.0",
     "bullmq": "^1.51.2",
-    "canvas-panel-beta": "2.0.2",
     "color-hash": "^1.0.3",
     "colorthief": "^2.3.2",
     "content-type": "^1.0.4",

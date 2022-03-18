@@ -1,5 +1,4 @@
 // Default content types.
-import './content-types/CanvasPanel';
 import './content-types/Atlas';
 
 // Default input types.

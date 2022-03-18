@@ -1,4 +1,4 @@
-import { AtlasContextType } from '@atlas-viewer/atlas';
+import { Preset } from '@atlas-viewer/atlas';
 import React from 'react';
 import { ViewContent } from '../../shared/components/ViewContent';
 import { useApiCanvas } from '../../shared/hooks/use-api-canvas';
@@ -6,7 +6,7 @@ import { useApiCanvas } from '../../shared/hooks/use-api-canvas';
 export const ViewContentFetch: React.FC<{
   id: number;
   height?: number;
-  onCreated?: (rt: AtlasContextType) => void;
+  onCreated?: (rt: Preset) => void;
   onPanInSketchMode?: () => void;
 }> = ({ id, height, children, onCreated, onPanInSketchMode }) => {
   const { data } = useApiCanvas(id);

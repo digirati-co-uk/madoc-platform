@@ -1,6 +1,6 @@
 import { SelectorTypeProps } from '../../../types/selector-types';
 import { useSelectorController } from '../../stores/selectors/selector-helper';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { BoxSelectorProps } from './BoxSelector';
 
 export function useBoxSelector(
@@ -17,6 +17,7 @@ export function useBoxSelector(
 ) {
   const controller = useSelectorController();
   const [isHighlighted, setIsHighlighted] = useState(false);
+  const lastPreview = useRef<string | undefined>();
 
   const backgroundColor = isHighlighted
     ? 'rgba(75, 103, 225, 0.4)'
@@ -63,7 +64,8 @@ export function useBoxSelector(
   useEffect(() => {
     if (updateSelectorPreview && state && generatePreview) {
       const preview = generatePreview(state);
-      if (preview) {
+      if (preview && lastPreview.current !== preview) {
+        lastPreview.current = preview;
         updateSelectorPreview({ selectorId: id, preview });
       }
     }

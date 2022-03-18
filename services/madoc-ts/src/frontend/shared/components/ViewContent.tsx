@@ -1,4 +1,4 @@
-import { AtlasContextType } from '@atlas-viewer/atlas';
+import { Preset } from '@atlas-viewer/atlas';
 import React, { useMemo } from 'react';
 import '../capture-models/editor/content-types/Atlas';
 import { CanvasFull } from '../../../types/canvas-full';
@@ -9,7 +9,7 @@ export const ViewContent: React.FC<{
   target: Target[];
   canvas: CanvasFull['canvas'];
   height?: number;
-  onCreated?: (runtime: AtlasContextType) => void;
+  onCreated?: (runtime: Preset) => void;
   onPanInSketchMode?: () => void;
 }> = ({ target, canvas, height = 600, onCreated, onPanInSketchMode, children }) => {
   return useContentType(
