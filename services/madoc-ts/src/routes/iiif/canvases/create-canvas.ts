@@ -9,6 +9,7 @@ import { api } from '../../../gateway/api.server';
 export const createCanvas: RouteMiddleware<unknown, CreateCanvas> = async context => {
   const { userUrn, siteId } = userWithScope(context, ['site.admin']);
 
+  const canvas = context.requestBody.canvas;
   const canvasJson = JSON.stringify(context.requestBody.canvas);
 
   const localSource = null; // This is no longer required.
@@ -17,6 +18,18 @@ export const createCanvas: RouteMiddleware<unknown, CreateCanvas> = async contex
   const { canonical_id } = await context.connection.one<{ derived_id: number; canonical_id: number }>(
     sql`select * from create_canvas(${canvasJson}, ${localSource}, ${thumbnail}, ${siteId}, ${userUrn})`
   );
+
+  if (canvas.items && canvas.thumbnail) {
+    await context.connection.query(
+      sql`update iiif_resource
+            set width          = ${canvas.width || 0},
+                height         = ${canvas.height || 0},
+                duration       = ${canvas.duration || null},
+                items_json     = ${canvas.items ? sql.json(canvas.items) : null},
+                thumbnail_json = ${canvas.thumbnail ? sql.json(canvas.thumbnail) : null}
+            where id = ${canonical_id}`
+    );
+  }
 
   try {
     // Links.

@@ -2,6 +2,7 @@ import { BaseTask } from './base-task';
 import * as tasks from './task-helpers';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
 import { ApiClient } from '../api';
+import { Canvas } from '@hyperion-framework/types';
 
 export const type = 'madoc-canvas-import';
 
@@ -76,25 +77,8 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       while (retries > 0) {
         let canvasToAdd: any;
         try {
-          canvasToAdd = {
-            id: canvas.id,
-            label: canvas.label || { none: ['Untitled canvas'] },
-            summary: canvas.summary || undefined,
-            metadata: canvas.metadata || undefined,
-            height: canvas.height,
-            width: canvas.width,
-            duration: canvas.duration || undefined,
-            requiredStatement: canvas.requiredStatement || undefined,
-            behavior: canvas.behavior || undefined,
-            rights: canvas.rights || undefined,
-            navDate: canvas.navDate || undefined,
-            homepage: canvas.homepage ? vault.fromRef(canvas.homepage) : undefined,
-            logo: canvas.logo ? vault.allFromRef(canvas.logo) : undefined,
-            partOf: canvas.partOf ? canvas.partOf : undefined,
-            rendering: canvas.rendering ? vault.allFromRef(canvas.rendering) : undefined,
-            seeAlso: canvas.seeAlso ? vault.allFromRef(canvas.seeAlso) : undefined,
-            service: canvas.service,
-          } as any;
+          canvasToAdd = vault.toPresentation3<Canvas>(canvas);
+          canvasToAdd.label = canvasToAdd.label || { none: ['Untitled canvas'] };
         } catch (err) {
           console.log('Could not import linking properties.');
         }

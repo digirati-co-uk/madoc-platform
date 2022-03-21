@@ -41,7 +41,7 @@ export const PublishManifest: React.FC = () => {
 
   if (manifest.published) {
     return (
-      <InfoMessage>
+      <InfoMessage $banner>
         <div style={{ padding: '.4em' }}>This manifest is visible on the site</div>
         <Button $primary disabled={publishStatus.isLoading} onClick={() => publishManifest()}>
           {isLoading ? ` indexing ${percent || 0}%` : t('Unpublish')}
@@ -51,7 +51,7 @@ export const PublishManifest: React.FC = () => {
   }
 
   return (
-    <WarningMessage>
+    <WarningMessage $banner>
       <div style={{ padding: '.4em' }}>This manifest is not yet visible on the site</div>
       <Button $primary disabled={publishStatus.isLoading} onClick={() => publishManifest()}>
         {t('Publish to site')} {isLoading ? ` indexing ${percent || 0}%` : null}
