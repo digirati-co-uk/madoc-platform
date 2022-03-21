@@ -75,15 +75,24 @@ export function paragraphsToPlaintext(input: ParagraphEntity['properties']['para
   const paragraphs = [];
   for (const paragraph of input) {
     const lines = [];
-    for (const line of paragraph.properties.lines) {
-      const texts = [];
-      for (const text of line.properties.text) {
-        texts.push(text.value);
+    if (paragraph && paragraph.properties && paragraph.properties.lines) {
+      for (const line of paragraph.properties.lines) {
+        if (line && line.properties && line.properties.text) {
+          const texts = [];
+          for (const text of line.properties.text) {
+            texts.push(text.value);
+          }
+          lines.push(texts.join(' '));
+        }
       }
-      lines.push(texts.join(' '));
     }
     paragraphs.push(lines.join('\n'));
   }
+
+  if (!paragraphs.length) {
+    return '';
+  }
+
   return paragraphs.join('\n\n');
 }
 
