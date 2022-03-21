@@ -19,7 +19,7 @@ export const createCanvas: RouteMiddleware<unknown, CreateCanvas> = async contex
     sql`select * from create_canvas(${canvasJson}, ${localSource}, ${thumbnail}, ${siteId}, ${userUrn})`
   );
 
-  if (canvas.items && canvas.thumbnail) {
+  if (canvas.items || canvas.thumbnail) {
     await context.connection.query(
       sql`update iiif_resource
             set width          = ${canvas.width || 0},
