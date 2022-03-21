@@ -41,7 +41,7 @@ export const PublishCollection: React.FC = () => {
 
   if (collection.published) {
     return (
-      <InfoMessage>
+      <InfoMessage $banner>
         <div style={{ padding: '.4em' }}>This collection is visible on the site</div>
         <Button $primary disabled={publishStatus.isLoading} onClick={() => publishCollection()}>
           {isLoading ? ` indexing ${percent || 0}%` : t('Unpublish')}
@@ -51,7 +51,7 @@ export const PublishCollection: React.FC = () => {
   }
 
   return (
-    <WarningMessage>
+    <WarningMessage $banner>
       <div style={{ padding: '.4em' }}>This collection is not yet visible on the site</div>
       <Button $primary disabled={publishStatus.isLoading} onClick={() => publishCollection()}>
         {t('Publish to site')} {isLoading ? ` indexing ${percent || 0}%` : null}

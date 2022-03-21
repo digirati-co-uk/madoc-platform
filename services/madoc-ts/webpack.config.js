@@ -108,8 +108,10 @@ module.exports = {
       'styled-components': require.resolve('styled-components'),
       'react-i18next': require.resolve('react-i18next'),
       universalviewer: require.resolve('universalviewer/dist/esm/index.js'),
+      nanoid: require.resolve('./node_modules/nanoid/index.browser.cjs'),
     },
     fallback: {
+      crypto: false,
       https: false,
       http: false,
       '@blueprintjs/core': false,
