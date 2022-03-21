@@ -5,7 +5,7 @@ import { useCanvasSearch } from '../../shared/hooks/use-canvas-search';
 import { useRouteContext } from '../hooks/use-route-context';
 import { useViewerHeight } from '../hooks/use-viewer-height';
 
-export const CanvasImageViewer: React.FC<{ rendering?: 'webgl' | 'canvas' }> = ({ rendering = 'webgl' }) => {
+export const CanvasImageViewer: React.FC<{ rendering?: 'webgl' | 'canvas' }> = ({ rendering = 'canvas' }) => {
   const { canvasId } = useRouteContext();
   const [, highlightedRegions] = useCanvasSearch(canvasId);
   const height = useViewerHeight();
