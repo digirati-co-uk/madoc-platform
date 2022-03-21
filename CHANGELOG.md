@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed default selected field "type" - it is now "text-field" making models quicker to create
 - Fixed issue where you could not de-select an entity selector
 - Fixed auto-selecting the "define" region when using editing an existing region
+- Fixed error generating transcription from empty capture model (paragraphs).
 
 ### Added
 - Added refresh on 500 error page (usually appears during deployment)
