@@ -3,6 +3,7 @@ import { BaseExtension, defaultDispose } from '../extension-manager';
 import { RegistryExtension } from '../registry-extension';
 import { crowdsourcedTranscription } from './templates/crowdsourced-transcription';
 import { customProject } from './templates/custom-project';
+import { metadataSuggestions } from './templates/metadata-suggestions';
 import { ocrCorrection } from './templates/ocr-correction';
 import { ProjectTemplate } from './types';
 
@@ -19,6 +20,7 @@ export class ProjectTemplateExtension extends RegistryExtension<ProjectTemplate>
     ProjectTemplateExtension.register(crowdsourcedTranscription);
     ProjectTemplateExtension.register(customProject);
     ProjectTemplateExtension.register(ocrCorrection);
+    ProjectTemplateExtension.register(metadataSuggestions);
   }
 
   dispose() {

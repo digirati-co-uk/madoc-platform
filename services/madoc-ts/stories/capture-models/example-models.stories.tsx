@@ -1,11 +1,14 @@
+import { useState } from 'react';
 import { captureModelShorthand } from '../../src/frontend/shared/capture-models/helpers/capture-model-shorthand';
 import * as React from 'react';
 import { slotConfig } from '../../src/extensions/capture-models/Paragraphs/Paragraphs.slots';
 import { EditShorthandCaptureModel } from '../../src/frontend/shared/capture-models/EditorShorthandCaptureModel';
+import { captureModelShorthandText } from '../../src/frontend/shared/capture-models/helpers/capture-model-shorthand-text';
 import { BackToChoicesButton } from '../../src/frontend/shared/capture-models/new/components/BackToChoicesButton';
 import { DefaultAdjacentNavigation } from '../../src/frontend/shared/capture-models/new/components/DefaultAdjacentNavigation';
 import { EditorSlots } from '../../src/index';
 import { captureModelShorthandModifier } from '../../src/utility/capture-model-shorthand-modifier';
+import { unindent } from '../../test-utility/unindent';
 import { ModelStorybookProvider } from './helpers';
 import { ocrCorrectionModel } from './models/ocr-correction';
 
@@ -57,6 +60,29 @@ const Template = (_props: any) => {
     </ModelStorybookProvider>
   );
 };
+
+export function ShorthandEditor() {
+  const [value, setValue] = useState(
+    unindent(`
+      Label {@type/international-field} {@langs/en,de}
+      Description
+      Tag {@many} {@type/text-field} {@pluralLabel/Tags}
+    `)
+  );
+  const [doc, setDoc] = useState(() => captureModelShorthandText(value));
+
+  return (
+    <div style={{ display: 'flex' }}>
+      <div style={{ flex: 1 }}>
+        <textarea value={value} onChange={e => setValue(e.currentTarget.value)} rows={50} style={{ width: '100%' }} />
+        <button onClick={() => setDoc(captureModelShorthandText(value))}>Preview</button>
+      </div>
+      <div style={{ flex: 1, padding: 20 }}>
+        <Template document={doc} />
+      </div>
+    </div>
+  );
+}
 
 export const SimpleTranscription = Template.bind({});
 SimpleTranscription.args = {

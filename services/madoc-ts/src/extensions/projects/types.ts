@@ -68,6 +68,7 @@ export type ProjectTemplate<
 > = JsonProjectTemplate & {
   // Unknown parameters.
   setup?: ModelDefinition<Options> & {
+    modelPreview?: React.FC<Options>;
     defaults?: Options;
     beforeForkDocument?: (
       model: Readonly<CaptureModel['document']>,
@@ -118,7 +119,7 @@ export type ProjectTemplate<
   };
   customConfig?: {
     replacesProjectConfig?: boolean;
-    defaultConfig: CustomConfig;
+    defaults: CustomConfig;
     model: CaptureModelShorthand<keyof CustomConfig>;
     applyConfig: (newConfig: CustomConfig, prevConfig: CustomConfig) => void | Promise<void>;
   };

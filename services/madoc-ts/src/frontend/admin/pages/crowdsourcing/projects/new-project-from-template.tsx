@@ -15,8 +15,14 @@ import { useProjectTemplate } from '../../../../shared/hooks/use-project-templat
 import { useDefaultLocale, useSupportedLocales } from '../../../../shared/hooks/use-site';
 import { WidePage } from '../../../../shared/layout/WidePage';
 import { Button, ButtonRow } from '../../../../shared/navigation/Button';
+import { ErrorBoundary } from '../../../../shared/utility/error-boundary';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { MetadataEditor } from '../../../molecules/MetadataEditor';
+
+const PROJECT_DETAILS = 0;
+const ADDITIONAL_SETTINGS = 1;
+const COMPLETE = 2;
+const CUSTOM_CONFIG = 3;
 
 export const NewProjectFromTemplate: React.FC = () => {
   const api = useApi();
@@ -47,10 +53,15 @@ export const NewProjectFromTemplate: React.FC = () => {
     }
   }, [autoSlug, label]);
 
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(PROJECT_DETAILS);
   const [customOptions, setCustomOptions] = useState<any>(null);
+  const [customConfigValues, setCustomConfigValues] = useState<any>(null);
+  const [previewData, setPreviewData] = useState<any>(null);
   const basicDetailsDone = label && summary && slug;
   const hasTemplate = template?.setup?.defaults && template?.setup?.model;
+  const ModelPreview = template?.setup?.modelPreview;
+  const customConfig = template?.customConfig;
+  const hasCustomConfig = !!(customConfig && !customConfig.replacesProjectConfig);
 
   if (!template) {
     return <div>Template not found</div>;
@@ -76,9 +87,9 @@ export const NewProjectFromTemplate: React.FC = () => {
           <Stepper
             status={basicDetailsDone ? 'done' : 'progress'}
             title="Project details"
-            description={step === 0 ? '' : 'Click to edit'}
-            onClickDescription={() => setStep(0)}
-            open={step === 0}
+            description={step === PROJECT_DETAILS ? '' : 'Click to edit'}
+            onClickDescription={() => (isSuccess ? null : setStep(0))}
+            open={step === PROJECT_DETAILS}
           >
             <InputContainer wide>
               <InputLabel htmlFor="label">Label</InputLabel>
@@ -121,9 +132,13 @@ export const NewProjectFromTemplate: React.FC = () => {
               onClick={() => {
                 reset();
                 if (hasTemplate) {
-                  setStep(1);
+                  setStep(ADDITIONAL_SETTINGS);
                 } else {
-                  setStep(2);
+                  if (hasCustomConfig) {
+                    setStep(CUSTOM_CONFIG);
+                  } else {
+                    setStep(COMPLETE);
+                  }
                 }
               }}
               disabled={!basicDetailsDone}
@@ -134,28 +149,66 @@ export const NewProjectFromTemplate: React.FC = () => {
 
           {hasTemplate ? (
             <Stepper
-              description={step === 1 || !basicDetailsDone ? '' : 'Click to edit'}
-              onClickDescription={() => setStep(1)}
-              status={step === 2 ? 'done' : step === 1 ? 'progress' : 'todo'}
+              description={step === ADDITIONAL_SETTINGS || !basicDetailsDone ? '' : 'Click to edit'}
+              onClickDescription={() => (isSuccess ? null : setStep(1))}
+              status={step > ADDITIONAL_SETTINGS ? 'done' : step === ADDITIONAL_SETTINGS ? 'progress' : 'todo'}
               title="Additional settings"
-              open={step === 1}
+              open={step === ADDITIONAL_SETTINGS}
             >
-              <div style={{ maxWidth: 550 }}>
-                {template?.setup?.model ? (
-                  <EditShorthandCaptureModel
-                    saveLabel="Save"
-                    data={template?.setup?.defaults}
-                    template={template?.setup?.model}
-                    onSave={model => {
-                      reset();
-                      setCustomOptions(model);
-                      setStep(2);
-                    }}
-                  />
+              <div style={{ display: 'flex' }}>
+                <div style={{ maxWidth: 550, flex: 1 }}>
+                  {template?.setup?.model ? (
+                    <EditShorthandCaptureModel
+                      saveLabel="Save"
+                      data={template?.setup?.defaults}
+                      template={template?.setup?.model}
+                      onPreview={
+                        ModelPreview
+                          ? model => {
+                              setPreviewData(model);
+                            }
+                          : undefined
+                      }
+                      onSave={model => {
+                        reset();
+                        setCustomOptions(model);
+                        setStep(hasCustomConfig ? CUSTOM_CONFIG : COMPLETE);
+                      }}
+                    />
+                  ) : null}
+                </div>
+
+                {previewData && ModelPreview ? (
+                  <ErrorBoundary onError={() => <div>ERROR: project preview failed.</div>}>
+                    <div style={{ flex: 1, padding: '0 1em' }}>
+                      <ModelPreview {...previewData} />
+                    </div>
+                  </ErrorBoundary>
                 ) : null}
               </div>
             </Stepper>
           ) : null}
+
+          {hasCustomConfig ? (
+            <Stepper
+              title={'Custom config'}
+              description={''}
+              open={step === CUSTOM_CONFIG}
+              status={step > CUSTOM_CONFIG ? 'done' : step === CUSTOM_CONFIG ? 'progress' : 'todo'}
+            >
+              <EditShorthandCaptureModel
+                saveLabel="Save"
+                data={customConfig?.defaults}
+                template={customConfig?.model}
+                onSave={model => {
+                  reset();
+                  setCustomConfigValues(model);
+                  setStep(COMPLETE);
+                }}
+              />
+            </Stepper>
+          ) : null}
+
           <Stepper
             status={isError ? 'error' : isSuccess && !isError ? 'done' : step === 2 ? 'progress' : 'todo'}
             title={'Complete'}
@@ -175,7 +228,14 @@ export const NewProjectFromTemplate: React.FC = () => {
                   $primary
                   disabled={status === 'loading' || isSuccess}
                   onClick={() =>
-                    saveProject({ label, summary, slug, template: chosenTemplateType, template_options: customOptions })
+                    saveProject({
+                      label,
+                      summary,
+                      slug,
+                      template: chosenTemplateType,
+                      template_options: customOptions,
+                      template_config: customConfigValues,
+                    })
                   }
                 >
                   Create

@@ -11,23 +11,27 @@ import { CaptureModel } from './types/capture-model';
 import { RevisionRequest } from './types/revision-request';
 
 export const EditShorthandCaptureModel: React.FC<{
-  data: any | undefined;
+  data?: any | undefined;
   template: any;
   fullDocument?: boolean;
   slotConfig?: ProfileConfig;
   saveLabel?: string;
+  previewLabel?: string;
   immutableFields?: string[];
   onSave?: (revision: any) => Promise<void> | void;
+  onPreview?: (revision: any) => Promise<void> | void;
   keepExtraFields?: boolean;
   structure?: CaptureModel['structure'];
   children?: any;
 }> = ({
   data,
   onSave,
+  onPreview,
   keepExtraFields,
   template,
   slotConfig: _slotConfig,
   saveLabel,
+  previewLabel = 'Preview',
   fullDocument,
   immutableFields,
   structure,
@@ -40,6 +44,14 @@ export const EditShorthandCaptureModel: React.FC<{
       }
     },
     [onSave]
+  );
+  const previewRevision = useCallback(
+    ({ revisionRequest }: { revisionRequest: RevisionRequest }) => {
+      if (onPreview) {
+        onPreview(revisionRequest ? serialiseCaptureModel(revisionRequest.document) : null);
+      }
+    },
+    [onPreview]
   );
 
   const rev = useMemo(() => {
@@ -97,7 +109,14 @@ export const EditShorthandCaptureModel: React.FC<{
     >
       <div style={{ fontSize: '0.85em', maxWidth: 550 }}>{children ? children : <EditorSlots.TopLevelEditor />}</div>
 
-      {onSave ? <EditorSlots.SubmitButton afterSave={saveRevision}>{saveLabel}</EditorSlots.SubmitButton> : null}
+      <div style={{ display: 'flex' }}>
+        {onSave ? <EditorSlots.SubmitButton afterSave={saveRevision}>{saveLabel}</EditorSlots.SubmitButton> : null}
+        {onPreview ? (
+          <div style={{ marginLeft: 10 }}>
+            <EditorSlots.SubmitButton afterSave={previewRevision}>{previewLabel}</EditorSlots.SubmitButton>
+          </div>
+        ) : null}
+      </div>
     </RevisionProviderWithFeatures>
   ) : null;
 };
