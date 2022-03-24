@@ -21,7 +21,7 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
   const userApi = api.asUser({ userId: id, siteId }, {}, true);
   context.disposableApis.push(userApi);
 
-  const { label, slug, summary, template, template_options } = context.requestBody;
+  const { label, slug, summary, template, template_options, template_config } = context.requestBody;
   const chosenTemplate = template ? api.projectTemplates.getDefinition(template, siteId) : null;
   const setupFunctions = chosenTemplate?.setup;
 
@@ -97,7 +97,7 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
     const defaultStatus = chosenTemplate?.configuration?.status?.defaultStatus || 0;
 
     const project = await context.connection.one(sql<ProjectRow>`
-        insert into iiif_project (task_id, collection_id, slug, site_id, capture_model_id, template_name, status)
+        insert into iiif_project (task_id, collection_id, slug, site_id, capture_model_id, template_name, template_config, status)
         VALUES (
           ${task.id}, 
           ${collection.id}, 
@@ -105,6 +105,7 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
           ${siteId}, 
           ${captureModel.id}, 
           ${template || null}, 
+          ${template_config ? sql.json(template_config) : null},
           ${defaultStatus}
         )
         returning *

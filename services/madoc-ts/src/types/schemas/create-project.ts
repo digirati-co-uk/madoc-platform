@@ -6,4 +6,5 @@ export type CreateProject = {
   slug: string;
   template?: string;
   template_options?: any;
+  template_config?: any;
 };

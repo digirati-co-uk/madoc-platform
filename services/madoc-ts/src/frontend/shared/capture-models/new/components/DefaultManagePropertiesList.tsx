@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { CloseIcon } from '../../../icons/CloseIcon';
 import { useSelectorHelper } from '../../editor/stores/selectors/selector-helper';
 import { useManagePropertyList } from '../hooks/use-manage-property-list';
@@ -19,10 +19,17 @@ const InstanceComponent = styled.div`
   flex: 1 1 0px;
 `;
 
-const InstanceRemove = styled.div`
-  margin-bottom: 1.2em;
+const InstanceRemove = styled.div<{ $center?: boolean }>`
+  margin-bottom: 1.3em;
   margin-left: 0.5em;
-  align-self: center;
+  ${props =>
+    props.$center
+      ? css`
+          align-self: center;
+        `
+      : css`
+          align-self: flex-end;
+        `}
 `;
 
 const AddNewInstance = styled.button`
