@@ -40,6 +40,7 @@ describe('document to default structure', () => {
         "shortExpiryTime",
         "longExpiryTime",
         "modelPageOptions",
+        "reviewOptions",
         "projectPageOptions",
         "manifestPageOptions",
         "headerOptions",
