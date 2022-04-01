@@ -58,32 +58,32 @@ export const ListUsers: React.FC = () => {
         <SimpleTable.Table>
           <thead>
             <SimpleTable.Row>
-              <SimpleTable.Cell>
+              <SimpleTable.Header>
                 <strong>ID</strong>
-              </SimpleTable.Cell>
-              <SimpleTable.Cell>
+              </SimpleTable.Header>
+              <SimpleTable.Header>
                 <strong>Name</strong>
-              </SimpleTable.Cell>
-              <SimpleTable.Cell>
+              </SimpleTable.Header>
+              <SimpleTable.Header>
                 <strong>Email</strong>
-              </SimpleTable.Cell>
-              <SimpleTable.Cell>
+              </SimpleTable.Header>
+              <SimpleTable.Header>
                 <strong>Is active</strong>
-              </SimpleTable.Cell>
-              <SimpleTable.Cell>
+              </SimpleTable.Header>
+              <SimpleTable.Header>
                 <strong>Created</strong>
-              </SimpleTable.Cell>
-              <SimpleTable.Cell>
+              </SimpleTable.Header>
+              <SimpleTable.Header>
                 <strong>Last modified</strong>
-              </SimpleTable.Cell>
-              <SimpleTable.Cell>
+              </SimpleTable.Header>
+              <SimpleTable.Header>
                 <strong>Global role</strong>
-              </SimpleTable.Cell>
+              </SimpleTable.Header>
             </SimpleTable.Row>
           </thead>
           <tbody>
             {data?.users.map(user => (
-              <SimpleTable.Row key={user.id}>
+              <SimpleTable.Row key={user.id} $interactive>
                 <SimpleTable.Cell>{user.id}</SimpleTable.Cell>
                 <SimpleTable.Cell>
                   <HrefLink href={`/global/users/${user.id}`}>{user.name}</HrefLink>

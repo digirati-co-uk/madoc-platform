@@ -14,8 +14,8 @@ import { GradingIcon } from '../../../../shared/icons/GradingIcon';
 export const ApproveSubmission: React.FC<{
   onApprove: () => void;
   userTaskId: string;
-  allUserTaskIds: string[];
-  allRevisionIds: string[];
+  allUserTaskIds?: string[];
+  allRevisionIds?: string[];
   reviewTaskId: string;
 }> = ({ userTaskId, allUserTaskIds, allRevisionIds, reviewTaskId, onApprove }) => {
   const { acceptedRevision } = Revisions.useStoreState(state => {
@@ -26,10 +26,10 @@ export const ApproveSubmission: React.FC<{
   const [loading, setIsLoading] = useState(false);
   const api = useApi();
   const { t } = useTranslation();
-  const revisionIdsToRemove = allRevisionIds.filter(id => id && id !== acceptedRevision?.revision.id);
-  const userTaskIdsToRemove = allUserTaskIds.filter(id => id && id !== userTaskId);
+  const revisionIdsToRemove = allRevisionIds?.filter(id => id && id !== acceptedRevision?.revision.id);
+  const userTaskIdsToRemove = allUserTaskIds?.filter(id => id && id !== userTaskId);
   const approveAndRemoveApiCall = useCallback(() => {
-    if (acceptedRevision) {
+    if (acceptedRevision && revisionIdsToRemove && userTaskIdsToRemove) {
       setIsLoading(true);
       api
         .reviewApproveAndRemoveSubmission({

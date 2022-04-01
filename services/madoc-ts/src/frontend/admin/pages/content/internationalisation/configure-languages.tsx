@@ -100,7 +100,7 @@ export const ConfigureLanguages: React.FC = () => {
             {enabledLocales.map(enabledLocale => {
               const data = locale.getByTag(enabledLocale.code);
               return (
-                <SimpleTable.Row>
+                <SimpleTable.Row $interactive>
                   <SimpleTable.Cell>
                     <TickIcon />
                   </SimpleTable.Cell>

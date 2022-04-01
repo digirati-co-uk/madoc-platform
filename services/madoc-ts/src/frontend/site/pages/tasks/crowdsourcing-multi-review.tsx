@@ -25,6 +25,7 @@ import { useApiTaskSearch } from '../../../shared/hooks/use-api-task-search';
 import { createLink } from '../../../shared/utility/create-link';
 import { useLocationQuery } from '../../../shared/hooks/use-location-query';
 import { HrefLink } from '../../../shared/utility/href-link';
+import { useReviewConfiguration } from '../../hooks/use-review-configuration';
 import { PreviewCrowdsourcingTask } from './preview-crowdsourcing-task.lazy';
 import { MergeCrowdsourcingTask } from './merge-crowdsourcing-task.lazy';
 import { WarningMessage } from '../../../shared/callouts/WarningMessage';

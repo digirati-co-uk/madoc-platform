@@ -473,6 +473,28 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
           ],
         },
         {
+          path: '/projects/:slug/reviews',
+          component: components.ReviewListingPage,
+          exact: true,
+        },
+        {
+          path: '/projects/:slug/reviews/:taskId',
+          component: components.ReviewListingPage,
+          routes: [
+            {
+              path: '/projects/:slug/reviews/:taskId',
+              component: components.TaskLoader,
+              routes: [
+                {
+                  path: '/projects/:slug/reviews/:taskId',
+                  exact: true,
+                  component: components.SingleReview,
+                },
+              ],
+            },
+          ],
+        },
+        {
           path: '/projects/:slug/tasks',
           component: components.AllTasks,
           exact: true,

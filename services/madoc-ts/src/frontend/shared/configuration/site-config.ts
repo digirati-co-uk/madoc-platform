@@ -219,6 +219,17 @@ export const siteConfigurationModel: {
       },
     ],
   },
+  reviewOptions: {
+    label: 'Review options',
+    description: 'Options for review listing and pages',
+    type: 'checkbox-list-field',
+    options: [
+      {
+        label: 'Allow merging submissions',
+        value: 'allowMerging',
+      },
+    ],
+  },
   projectPageOptions: {
     label: 'Project landing page',
     description: 'View options for the project landing page',
@@ -239,6 +250,10 @@ export const siteConfigurationModel: {
       {
         label: 'Hide go to random canvas',
         value: 'hideRandomCanvas',
+      },
+      {
+        label: 'Show reviewer dashboard',
+        value: 'reviewerDashboard',
       },
     ],
   },

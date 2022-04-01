@@ -39,3 +39,5 @@ export { ProfilePage } from './pages/user/profile';
 export { UpdatePasswordPage } from './pages/user/update-password';
 export { ViewProjectNotes } from './pages/view-project-notes';
 export { RedirectPage } from './pages/redirect';
+export { ReviewListingPage } from './pages/tasks/review-listing/review-listing-page';
+export { SingleReview } from './pages/tasks/review-listing/single-review';

@@ -51,6 +51,10 @@ export type ProjectConfiguration = {
     hideSearchButton?: boolean;
     hideRandomManifest?: boolean;
     hideRandomCanvas?: boolean;
+    reviewerDashboard?: boolean;
+  };
+  reviewOptions?: {
+    allowMerging?: boolean;
   };
   manifestPageOptions?: {
     hideStartContributing?: boolean;

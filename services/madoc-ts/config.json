@@ -33,6 +33,9 @@
     "contributionMode": "annotation",
     "shortExpiryTime": "10",
     "longExpiryTime": "1440",
+    "reviewOptions": {
+      "allowMerging": false
+    },
     "modelPageOptions": {
       "fixedTranscriptionBar": false,
       "preventContributionAfterRejection": false,
@@ -45,7 +48,8 @@
       "hideStartContributing": false,
       "hideSearchButton": false,
       "hideRandomManifest": false,
-      "hideRandomCanvas": false
+      "hideRandomCanvas": false,
+      "reviewerDashboard": false
     },
     "manifestPageOptions": {
       "hideStartContributing": false,

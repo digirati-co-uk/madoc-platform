@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BaseTask } from '../../../gateway/tasks/base-task';
+import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { Button, ButtonRow } from '../../shared/navigation/Button';
 import {
   LayoutContainer,
@@ -100,6 +101,7 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <DisplayBreadcrumbs currentPage={t('Tasks')} />
         <ButtonRow>
           {query.subject ? (
             <Button onClick={() => goToQuery({ subject: undefined })}>{t('Clear image filter')}</Button>
