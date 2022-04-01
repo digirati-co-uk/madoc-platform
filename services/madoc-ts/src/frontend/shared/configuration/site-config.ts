@@ -240,6 +240,10 @@ export const siteConfigurationModel: {
         label: 'Hide go to random canvas',
         value: 'hideRandomCanvas',
       },
+      {
+        label: 'Show reviewer dashboard',
+        value: 'reviewerDashboard',
+      },
     ],
   },
   manifestPageOptions: {

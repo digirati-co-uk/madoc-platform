@@ -25,7 +25,8 @@
     "template": {
       "type": "string"
     },
-    "template_options": {}
+    "template_options": {},
+    "template_config": {}
   },
   "required": [
     "label",

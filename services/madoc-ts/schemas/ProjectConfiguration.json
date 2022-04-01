@@ -160,6 +160,15 @@
         },
         "hideViewerControls": {
           "type": "boolean"
+        },
+        "disableSaveForLater": {
+          "type": "boolean"
+        },
+        "disablePreview": {
+          "type": "boolean"
+        },
+        "disableNextCanvas": {
+          "type": "boolean"
         }
       }
     },
@@ -176,6 +185,9 @@
           "type": "boolean"
         },
         "hideRandomCanvas": {
+          "type": "boolean"
+        },
+        "reviewerDashboard": {
           "type": "boolean"
         }
       }

@@ -62,6 +62,7 @@ const ThickTableRow = styled(SimpleTable.Row)<{ $active?: boolean }>`
 `;
 
 export function ReviewListingPage({ route }: { route: UniversalRoute }) {
+  const { t } = useTranslation();
   const { data, refetch } = useData<{ tasks: CrowdsourcingTask[] }>(ReviewListingPage);
   const params = useParams<{ taskId?: string }>();
 
@@ -77,7 +78,7 @@ export function ReviewListingPage({ route }: { route: UniversalRoute }) {
 
   return (
     <RefetchProvider refetch={refetch}>
-      <DisplayBreadcrumbs />
+      <DisplayBreadcrumbs currentPage={t('Reviews')} />
       <ReviewListingContainer>
         <TaskListContainer>
           <SimpleTable.Table>

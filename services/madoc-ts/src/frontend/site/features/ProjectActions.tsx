@@ -47,7 +47,11 @@ export const ProjectActions: React.FC = () => {
         {isReviewer && isActive ? (
           <Button
             as={Link}
-            to={createLink({ projectId: project.id, subRoute: 'tasks', query: { type: 'crowdsourcing-review' } })}
+            to={
+              options.reviewerDashboard
+                ? createLink({ projectId: project.id, subRoute: 'reviews' })
+                : createLink({ projectId: project.id, subRoute: 'tasks', query: { type: 'crowdsourcing-review' } })
+            }
           >
             {t('Reviews')}
           </Button>

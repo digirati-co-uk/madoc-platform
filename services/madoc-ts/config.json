@@ -45,7 +45,8 @@
       "hideStartContributing": false,
       "hideSearchButton": false,
       "hideRandomManifest": false,
-      "hideRandomCanvas": false
+      "hideRandomCanvas": false,
+      "reviewerDashboard": false
     },
     "manifestPageOptions": {
       "hideStartContributing": false,
