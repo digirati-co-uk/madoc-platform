@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Added new alternative review page
+- Added configuration for enabling "Merging"
+
+
 <!--
 ### Fixed
 ### Added

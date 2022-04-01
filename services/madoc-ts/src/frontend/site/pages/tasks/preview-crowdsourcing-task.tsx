@@ -34,6 +34,7 @@ import {
   CanvasViewerGridContent,
   CanvasViewerGridSidebar,
 } from '../../features/CanvasViewerGrid';
+import { useReviewConfiguration } from '../../hooks/use-review-configuration';
 import { RequestChanges } from './actions/request-changes';
 import { ApproveSubmission } from './actions/approve-submission';
 import { RejectSubmission } from './actions/reject-submission';
@@ -56,6 +57,7 @@ const PreviewCrowdsourcingTask: React.FC<{
   const gridRef = useRef<any>();
   const runtime = useRef<Runtime>();
   const [{ captureModel, canvas }, modelStatus] = useLoadedCaptureModel(modelId);
+  const config = useReviewConfiguration();
   const [height, setHeight] = useState(600);
   const isLocked = props.lockedTasks && props.lockedTasks.indexOf(props.task.id) !== -1;
   const isDone = taskData?.status === 3;
@@ -149,12 +151,14 @@ const PreviewCrowdsourcingTask: React.FC<{
                       onRequest={() => props.goBack({ refresh: true })}
                     />
 
-                    <StartMerge
-                      allTasks={props.allTasks as any}
-                      reviewTaskId={props.reviewTaskId}
-                      userTask={props.task}
-                      onStartMerge={(revId: string) => props.goBack({ refresh: true, revisionId: revId })}
-                    />
+                    {config.allowMerging ? (
+                      <StartMerge
+                        allTasks={props.allTasks as any}
+                        reviewTaskId={props.reviewTaskId}
+                        userTask={props.task}
+                        onStartMerge={(revId: string) => props.goBack({ refresh: true, revisionId: revId })}
+                      />
+                    ) : null}
 
                     <ApproveSubmission
                       userTaskId={props.task.id}
