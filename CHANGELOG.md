@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.0.4...main)
 
+
+### Added
+- Added new alternative review page
 <!--
 ### Fixed
 ### Added

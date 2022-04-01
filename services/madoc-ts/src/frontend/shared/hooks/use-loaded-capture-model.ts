@@ -43,6 +43,7 @@ export function useLoadedCaptureModel(modelId?: string, initialModel?: CaptureMo
       cacheTime: 0,
       staleTime: 0,
       refetchOnMount: true,
+      keepPreviousData: true,
     }
   );
 

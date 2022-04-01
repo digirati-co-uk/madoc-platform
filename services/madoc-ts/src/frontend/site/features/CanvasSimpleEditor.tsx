@@ -5,6 +5,7 @@ import { PARAGRAPHS_PROFILE } from '../../../extensions/capture-models/Paragraph
 import { slotConfig } from '../../../extensions/capture-models/Paragraphs/Paragraphs.slots';
 import { SubmitWithoutPreview } from '../../shared/capture-models/new/components/SubmitWithoutPreview';
 import { RevisionRequest } from '../../shared/capture-models/types/revision-request';
+import { useLocalStorage } from '../../shared/hooks/use-local-storage';
 import { Button, ButtonIcon } from '../../shared/navigation/Button';
 import { EmptyState } from '../../shared/layout/EmptyState';
 import { SmallToast } from '../../shared/callouts/SmallToast';
@@ -68,12 +69,13 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
   const runtime = useRef<Runtime>();
   const gridRef = useRef<any>();
   const [height, setHeight] = useState(600);
-  const [showPanWarning, setShowPanWarning] = useState(false);
+  const [showPanWarning, setShowPanWarning] = useLocalStorage('pan-warning', false);
   const [postSubmission, setPostSubmission] = useState(false);
   const [postSubmissionMessage, setPostSubmissionMessage] = useState(false);
 
   useEffect(() => {
     setPostSubmission(false);
+    setPostSubmissionMessage(false);
   }, [revision, canvasId]);
 
   useLayoutEffect(() => {

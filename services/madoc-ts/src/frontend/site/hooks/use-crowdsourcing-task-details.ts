@@ -4,7 +4,7 @@ import { BaseTask } from '../../../gateway/tasks/base-task';
 import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
 import { resolveUrn } from '../../../utility/resolve-urn';
 import { useApi } from '../../shared/hooks/use-api';
-import { useApiCaptureModel } from '../../shared/hooks/use-api-capture-model';
+import { useLoadedCaptureModel } from '../../shared/hooks/use-loaded-capture-model';
 import { useProjectByTask } from '../../shared/hooks/use-project-by-task';
 import { createLink } from '../../shared/utility/create-link';
 import { useTaskMetadata } from './use-task-metadata';
@@ -12,7 +12,7 @@ import { useTaskMetadata } from './use-task-metadata';
 export function useCrowdsourcingTaskDetails(task: CrowdsourcingTask & { id: string }, parentTask?: BaseTask) {
   const project = useProjectByTask(task);
   const api = useApi();
-  const { data: captureModel } = useApiCaptureModel(task.parameters[0]);
+  const [{ captureModel, canvas }, modelStatus, refetchModel] = useLoadedCaptureModel(task.parameters[0] || undefined);
   const { subject } = useTaskMetadata<{ subject?: SubjectSnippet }>(task);
 
   const date = new Date().getTime();
@@ -43,20 +43,20 @@ export function useCrowdsourcingTaskDetails(task: CrowdsourcingTask & { id: stri
     }
     const collection = target.find(item => item && item.type === 'collection');
     const manifest = target.find(item => item && item.type === 'manifest');
-    const canvas = target.find(item => item && item.type === 'canvas');
+    const canvasRef = target.find(item => item && item.type === 'canvas');
 
     return {
       editLink: createLink({
         projectId: project?.id,
-        canvasId: canvas?.id,
+        canvasId: canvasRef?.id,
         manifestId: manifest?.id,
         collectionId: collection?.id,
-        subRoute: canvas ? 'model' : undefined,
+        subRoute: canvasRef ? 'model' : undefined,
         query: revisionId ? { revision: revisionId } : undefined,
       }),
       backLink: createLink({
         projectId: project?.id,
-        canvasId: canvas?.id,
+        canvasId: canvasRef?.id,
         manifestId: manifest?.id,
         collectionId: collection?.id,
       }),
@@ -71,6 +71,9 @@ export function useCrowdsourcingTaskDetails(task: CrowdsourcingTask & { id: stri
     project,
     revisionId,
     modelId,
+    canvas,
+    modelStatus,
+    refetchModel,
     isCanvas,
     isComplete,
     isSubmitted,
