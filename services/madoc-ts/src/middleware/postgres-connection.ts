@@ -1,6 +1,7 @@
 import { Middleware } from 'koa';
 import { DatabasePoolType } from 'slonik';
 import { ChangeDiscoveryRepository } from '../activity-streams/change-discovery-repository';
+import { AnnotationStylesRepository } from '../repository/annotation-styles-repository';
 import { MediaRepository } from '../repository/media-repository';
 import { NotificationRepository } from '../repository/notification-repository';
 import { PageBlocksRepository } from '../repository/page-blocks-repository';
@@ -21,6 +22,7 @@ export const postgresConnection = (pool: DatabasePoolType): Middleware => async 
     context.changeDiscovery = new ChangeDiscoveryRepository(connection);
     context.notifications = new NotificationRepository(connection);
     context.projects = new ProjectRepository(connection);
+    context.annotationStyles = new AnnotationStylesRepository(connection);
 
     await next();
   });

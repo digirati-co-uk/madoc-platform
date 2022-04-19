@@ -97,10 +97,10 @@ export const ConfigureLanguages: React.FC = () => {
         <p>{t('If enabled, these will will be available for users to choose from the menu bar')}</p>
         <SimpleTable.Table>
           <tbody>
-            {enabledLocales.map(enabledLocale => {
+            {enabledLocales.map((enabledLocale, i) => {
               const data = locale.getByTag(enabledLocale.code);
               return (
-                <SimpleTable.Row $interactive>
+                <SimpleTable.Row $interactive key={i}>
                   <SimpleTable.Cell>
                     <TickIcon />
                   </SimpleTable.Cell>

@@ -14,6 +14,35 @@ export const InputLabel = styled.label<{ $caps?: boolean }>`
     `}
 `;
 
+export const inputStyles = css`
+  background: #fff;
+  border: none;
+  padding: 0.5em 0 0.5em 0.7em;
+  margin: 0.2em 0 0.2em 0.2em;
+  border-radius: 0;
+  font-size: 0.85em;
+  line-height: 1.2em;
+  border-right: 1px solid #ddd;
+  font-family: inherit;
+  resize: none;
+  -webkit-appearance: none;
+  tap-highlight-color: rgba(255, 255, 255, 0);
+
+  &:focus {
+    outline: none;
+  }
+`;
+
+export const InputInner = styled.input`
+  flex: 1 1 0px;
+  ${inputStyles}
+`;
+
+export const InputInnerText = styled.div`
+  line-height: 1.2em;
+  padding: 0.5em 0 0.5em 0.7em;
+`;
+
 export const InputAsCard = styled.div`
   background: #fff;
   border: 2px solid rgba(5, 42, 68, 0.2);
@@ -30,7 +59,7 @@ export const InputAsCard = styled.div`
 
 export const CheckboxInput = styled.input.attrs({ type: 'checkbox' })``;
 
-export const _Input = styled.input`
+export const _Input = styled.input<{ $inactive?: boolean }>`
   background: #fff;
   border: 1px solid rgba(5, 42, 68, 0.2);
   padding: 0.7em 0.9em;
@@ -55,6 +84,12 @@ export const _Input = styled.input`
     border-color: #5168d9;
     outline: none;
   }
+
+  ${props =>
+    props.$inactive &&
+    css`
+      background: #e6e6e6;
+    `}
 `;
 
 export const Input: typeof _Input = ((props: any) =>

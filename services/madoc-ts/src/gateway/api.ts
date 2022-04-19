@@ -26,6 +26,7 @@ import { BaseField } from '../frontend/shared/capture-models/types/field-types';
 import { RevisionRequest } from '../frontend/shared/capture-models/types/revision-request';
 import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
 import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
+import { AnnotationStyles } from '../types/annotation-styles';
 import {
   CanvasDeletionSummary,
   ManifestDeletionSummary,
@@ -1861,6 +1862,35 @@ export class ApiClient {
       method: 'POST',
       body: modelPayload,
     });
+  }
+
+  // Annotation styles
+  async getAnnotationStyle(id: number) {
+    return this.request<AnnotationStyles>(`/api/madoc/annotation-styles/${id}`);
+  }
+
+  async updateAnnotationStyle(style: AnnotationStyles) {
+    await this.request(`/api/madoc/annotation-styles/${style.id}`, {
+      method: 'PUT',
+      body: style,
+    });
+  }
+
+  async createAnnotationStyle(name: string, data: { theme: any }) {
+    return await this.request<AnnotationStyles>(`/api/madoc/annotation-styles`, {
+      method: 'POST',
+      body: { name, data },
+    });
+  }
+
+  async deleteAnnotationStyle(id: number) {
+    return this.request<AnnotationStyles>(`/api/madoc/annotation-styles/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async listAnnotationStyles() {
+    return this.request<{ styles: AnnotationStyles[] }>(`/api/madoc/annotation-styles`);
   }
 
   // Search index api

@@ -32,6 +32,7 @@ export class ProjectRepository extends BaseRepository {
         collection_id: project.id,
         task_id: project.task_id,
         status: project.status,
+        style_id: project.style_id || null,
         template: project.template_name,
         template_config: project.template_config,
       };

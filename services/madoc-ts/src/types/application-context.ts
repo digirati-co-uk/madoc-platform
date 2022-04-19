@@ -2,6 +2,7 @@ import { i18n } from 'i18next';
 import { PluginManager } from '../frontend/shared/plugins/plugin-manager';
 import { ChangeDiscoveryRepository } from '../activity-streams/change-discovery-repository';
 import { ApiClient } from '../gateway/api';
+import { AnnotationStylesRepository } from '../repository/annotation-styles-repository';
 import { MediaRepository } from '../repository/media-repository';
 import { NotificationRepository } from '../repository/notification-repository';
 import { PageBlocksRepository } from '../repository/page-blocks-repository';
@@ -28,6 +29,7 @@ declare module 'koa' {
     plugins: PluginRepository;
     themes: ThemeRepository;
     media: MediaRepository;
+    annotationStyles: AnnotationStylesRepository;
     mailer: Mailer;
     notifications: NotificationRepository;
     projects: ProjectRepository;

@@ -800,7 +800,7 @@ export class SiteUserRepository extends BaseRepository {
   }
 
   async getAllUsers(page: number, perPage = 50) {
-    return (await this.connection.many(SiteUserRepository.query.getAllUsers(page || 1, perPage))).map(
+    return (await this.connection.any(SiteUserRepository.query.getAllUsers(page || 1, perPage))).map(
       SiteUserRepository.mapUser
     );
   }

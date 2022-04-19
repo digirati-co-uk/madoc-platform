@@ -117,3 +117,43 @@ export const SystemListingDescription = styled.div`
 export const SystemListingMetadata = styled.div`
   flex: 1 1 0px;
 `;
+
+export const SystemGrid = {
+  Container: styled.div`
+    display: flex;
+    max-width: 1120px;
+    margin: 0 auto;
+  `,
+  Menu: styled.div`
+    width: 220px;
+  `,
+  Content: styled.div`
+    flex: 1 1 0px;
+  `,
+};
+
+export const SystemMenu = styled.ul`
+  margin: 0;
+  padding: 0;
+  list-style: none;
+`;
+
+export const SystemMenuItem = styled.li<{ $active?: boolean }>`
+  margin: 0;
+  padding: 0.2em 0;
+  &,
+  & a {
+    color: ${props => (props.$active ? '#1c2d57' : '#8d9cb8')};
+
+    &:hover {
+      color: #1c2d57;
+    }
+  }
+
+  ${SystemMenu} {
+    margin-top: 0.5em;
+    margin-left: 0.5em;
+    padding-left: 1em;
+    border-left: 2px solid #8d9cb8;
+  }
+`;

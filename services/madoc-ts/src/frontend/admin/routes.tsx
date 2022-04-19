@@ -1,4 +1,5 @@
 import { UniversalRoute } from '../types';
+import { annotationStylesRoutes } from './pages/annotation-styles/index';
 import { CanvasPlaintext } from './pages/content/canvases/canvas-plaintext';
 import { CanvasSearchIndex } from './pages/content/canvases/canvas-search-index';
 import { CollectionView } from './pages/content/collections/collection';
@@ -100,6 +101,10 @@ export const routes: UniversalRoute[] = [
     exact: true,
     component: Homepage,
   },
+  // Aggregations.
+  ...annotationStylesRoutes,
+
+  // Manual routes.
   {
     path: '/collections',
     exact: true,

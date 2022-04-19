@@ -5,7 +5,7 @@ import { onlyGlobalAdmin } from '../../utility/user-with-scope';
 export const listApiKeys: RouteMiddleware = async context => {
   const { siteId } = await onlyGlobalAdmin(context);
 
-  const keys = await context.connection.many(sql<{
+  const keys = await context.connection.any(sql<{
     label: string;
     user_id: number;
     user_name: string;

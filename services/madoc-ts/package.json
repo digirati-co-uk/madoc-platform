@@ -6,6 +6,7 @@
   "author": "Stephen Fraser <stephen.fraser@digirati.com>",
   "scripts": {
     "start-local": "MADOC_KEY_PATH=../../var/certs/ JWT_REQUEST_DIR=./service-jwts JWT_RESPONSE_DIR=../../var/jwt node ./lib/index.js",
+    "dev": "NODE_ENV=development pm2 start ecosystem.config.js --watch --no-daemon",
     "start": "concurrently yarn:watch yarn:frontend",
     "storybook": "start-storybook -p 6500",
     "watch": "tsc -p . --watch",

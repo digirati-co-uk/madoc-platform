@@ -31,7 +31,7 @@ export function formPropertyValue<T extends BaseField | CaptureModel['document']
   if (!forkValue && !isEntity(field) && !isEntity(newField)) {
     const description = pluginStore.fields[field.type];
     if (description) {
-      (newField as BaseField).value = description.defaultValue;
+      (newField as BaseField).value = copy(description.defaultValue);
     }
   }
 

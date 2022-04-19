@@ -193,7 +193,7 @@ export const AdminMenuSubItemContainer = styled.div<{ $open?: boolean }>`
   padding-left: 3.5em;
   box-shadow: inset 0 -2px 0 0 #345dc9;
   max-height: 0;
-  overflow: hidden;
+  overflow-y: auto;
   transition: max-height 0.4s;
   font-size: 0.85em;
 

@@ -2,8 +2,11 @@ import { getAuthRoutes } from './auth';
 import { deleteApiKey } from './routes/admin/delete-api-key';
 import { keyRegenerate } from './routes/admin/key-regenerate';
 import { listApiKeys } from './routes/admin/list-api-keys';
+import { getProjectAnnotationStyle } from './routes/annotation-styles/get-project-annotation-style';
+import { annotationStyles } from './routes/annotation-styles/index';
 import { searchAllUsers } from './routes/global/search-all-users';
 import { systemCheck } from './routes/global/system-check';
+import { updateProjectAnnotationStyle } from './routes/projects/update-project-annotation-style';
 import { siteRoot } from './routes/root';
 import {
   assignUserToDelegatedRequest,
@@ -135,7 +138,7 @@ import { updateProfilePage } from './routes/user/update-profile';
 import { userAutocomplete } from './routes/user/user-autocomplete';
 import { TypedRouter } from './utility/typed-router';
 import { ping } from './routes/ping';
-import { importBulkManifests, importCollection, importManifest, importManifestOcr } from "./routes/iiif-import/import";
+import { importBulkManifests, importCollection, importManifest, importManifestOcr } from './routes/iiif-import/import';
 import { loginPage } from './routes/user/login';
 import { getSiteScopes, saveSiteScopes } from './routes/admin/site-scopes';
 import { logout } from './routes/user/logout';
@@ -441,6 +444,16 @@ export const router = new TypedRouter({
   'get-project-structure': [TypedRouter.GET, '/api/madoc/projects/:id/structure', getProjectStructure],
   'get-project-metadata': [TypedRouter.GET, '/api/madoc/projects/:id/metadata', getProjectMetadata],
   'update-project-metadata': [TypedRouter.PUT, '/api/madoc/projects/:id/metadata', updateProjectMetadata],
+  'update-project-annotation-style': [
+    TypedRouter.PUT,
+    '/api/madoc/projects/:id/annotation-style',
+    updateProjectAnnotationStyle,
+  ],
+  'get-project-annotation-style': [
+    TypedRouter.GET,
+    '/api/madoc/projects/:id/annotation-style',
+    getProjectAnnotationStyle,
+  ],
   'update-project-status': [TypedRouter.PUT, '/api/madoc/projects/:id/status', updateProjectStatus],
   'create-project-resource-claim': [TypedRouter.POST, '/api/madoc/projects/:id/claim', createResourceClaim],
   'export-project-template': [TypedRouter.GET, '/api/madoc/projects/:id/export', exportProjectTemplate],
@@ -598,6 +611,7 @@ export const router = new TypedRouter({
 
   // Other routes.
   ...activityStreamRoutes,
+  ...annotationStyles,
   ...getAuthRoutes(),
 
   // Development
