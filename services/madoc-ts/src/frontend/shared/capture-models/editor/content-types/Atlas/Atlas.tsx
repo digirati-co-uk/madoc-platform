@@ -1,6 +1,7 @@
 import { ImageService } from '@hyperion-framework/types';
-import React, { Suspense, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { webglSupport } from '../../../../utility/webgl-support';
+import { AnnotationStyleProvider, useAnnotationStyles } from '../../../AnnotationStyleContext';
 import { BaseContent, ContentOptions } from '../../../types/content-types';
 import { useAllSelectors, useCurrentSelector, useSelectorActions } from '../../stores/selectors/selector-hooks';
 import {
@@ -41,6 +42,7 @@ const Canvas: React.FC<{
 }> = ({ isEditing, onDeselect, children, onCreated, unstable_webglRenderer, controllerConfig }) => {
   const canvas = useCanvas();
   const { data: service } = useImageService() as { data?: ImageService };
+  const style = useAnnotationStyles();
   const [thumbnail, setThumbnail] = useState<any | undefined>(undefined);
 
   useVaultEffect(
@@ -84,12 +86,14 @@ const Canvas: React.FC<{
       controllerConfig={controllerConfig}
     >
       <world onClick={onDeselect}>
-        <ImageServiceContext value={service}>
-          {tiles ? <TileSet x={0} y={0} height={canvas.height} width={canvas.width} tiles={tiles} /> : null}
-          <world-object id={`${canvas.id}/annotations`} x={0} y={0} height={canvas.height} width={canvas.width}>
-            {children}
-          </world-object>
-        </ImageServiceContext>
+        <AnnotationStyleProvider theme={style}>
+          <ImageServiceContext value={service}>
+            {tiles ? <TileSet x={0} y={0} height={canvas.height} width={canvas.width} tiles={tiles} /> : null}
+            <world-object id={`${canvas.id}/annotations`} x={0} y={0} height={canvas.height} width={canvas.width}>
+              {children}
+            </world-object>
+          </ImageServiceContext>
+        </AnnotationStyleProvider>
       </world>
     </AtlasAuto>
   );

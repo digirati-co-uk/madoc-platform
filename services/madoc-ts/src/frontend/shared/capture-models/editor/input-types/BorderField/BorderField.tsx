@@ -73,6 +73,7 @@ export const BorderField: FieldComponent<BorderFieldProps> = ({ value, id, updat
               max={100}
               value={typeof value.opacity !== 'undefined' ? value.opacity * 100 : 100}
               onChange={e => updateValue({ ...value, opacity: e.currentTarget.valueAsNumber / 100 })}
+              style={{ width: 70 }}
             />
           </CompositeInput.StackControl>
         </CompositeInput.Stack>

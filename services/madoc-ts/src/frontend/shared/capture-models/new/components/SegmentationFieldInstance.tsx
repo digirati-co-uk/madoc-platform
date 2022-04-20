@@ -48,6 +48,7 @@ export const SegmentationFieldInstance: React.FC<{
         label={field.label}
         description={field.description}
         selectorComponent={selectorComponent}
+        selectorId={field.selector?.id}
         onSelectorOpen={() => {
           if (chooseSelector && selector) {
             chooseSelector({ selectorId: selector.id });

@@ -30,6 +30,7 @@ import { isEditingAnotherUsersRevision } from '../../shared/utility/is-editing-a
 import { useCanvasModel } from '../hooks/use-canvas-model';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useContributionMode } from '../hooks/use-contribution-mode';
+import { useProjectAnnotationStyles } from '../hooks/use-project-annotation-styles';
 import { useProjectStatus } from '../hooks/use-project-status';
 import { RouteContext, useRouteContext } from '../hooks/use-route-context';
 import { CanvasModelUserStatus } from './CanvasModelUserStatus';
@@ -56,6 +57,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
   const [{ captureModel }] = useLoadedCaptureModel(projectModel?.model?.id, undefined, canvasId);
   const { updateClaim, allTasksDone, markedAsUnusable } = useCanvasUserTasks();
   const { isPreparing } = useProjectStatus();
+  const annotationTheme = useProjectAnnotationStyles();
   const user = useCurrentUser(true);
   const config = useSiteConfiguration();
   const {
@@ -196,6 +198,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
           },
           components: components,
         }}
+        annotationTheme={annotationTheme}
       >
         {!isPreparing && mode === 'transcription' ? <TranscriberModeWorkflowBar /> : null}
 

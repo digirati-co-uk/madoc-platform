@@ -1,13 +1,13 @@
 import styled, { css } from 'styled-components';
 
-export const SystemListItem = styled.div<{ $enabled?: boolean; $connected?: boolean }>`
+export const SystemListItem = styled.div<{ $enabled?: boolean; $connected?: boolean; $block?: boolean }>`
   padding: 1em;
   margin-left: auto;
   margin-right: auto;
   background: #fff;
   border: 2px solid transparent;
   border-radius: 5px;
-  display: flex;
+  display: ${props => (props.$block ? 'block' : 'flex')};
   max-width: 800px;
 
   ${props =>

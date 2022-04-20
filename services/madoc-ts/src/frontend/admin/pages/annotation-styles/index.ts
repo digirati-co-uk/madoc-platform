@@ -1,7 +1,6 @@
 import { CreateAnnotationStyle } from './create-annotation-style';
 import { EditAnnotationStyle } from './edit-annotation-style';
 import { ListAnnotationStyles } from './list-annotation-styles';
-import { PreviewAnnotationStyle } from './preview-annotation-style';
 
 export const annotationStylesRoutes = [
   {
@@ -16,11 +15,6 @@ export const annotationStylesRoutes = [
   },
   {
     path: '/site/annotation-styles/:id',
-    exact: true,
-    component: PreviewAnnotationStyle,
-  },
-  {
-    path: '/site/annotation-styles/:id/edit',
     exact: true,
     component: EditAnnotationStyle,
   },

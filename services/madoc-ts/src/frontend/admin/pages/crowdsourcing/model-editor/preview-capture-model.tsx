@@ -1,6 +1,7 @@
 import { VaultProvider } from '@hyperion-framework/react-vault';
 import React, { Suspense, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { AnnotationStyles } from '../../../../../types/annotation-styles';
 import { useCaptureModel } from '../../../../shared/capture-models/editor/components/EditorContext/EditorContext';
 import { BackToChoicesButton } from '../../../../shared/capture-models/new/components/BackToChoicesButton';
 import { EditorSlots } from '../../../../shared/capture-models/new/components/EditorSlots';
@@ -15,8 +16,9 @@ import { ViewContentFetch } from '../../../molecules/ViewContentFetch';
 export const PreviewCaptureModel: React.FC<{
   structure: CaptureModel['structure'];
   document: CaptureModel['document'];
+  annotationTheme?: AnnotationStyles['theme'];
   revisionNumber: number;
-}> = ({ document, structure, revisionNumber }) => {
+}> = ({ document, structure, revisionNumber, annotationTheme }) => {
   const { id } = useParams<{ id: string }>();
   const captureModel = useCaptureModel();
   const api = useApi();
@@ -38,6 +40,7 @@ export const PreviewCaptureModel: React.FC<{
           basicUnNesting: true,
         }}
         captureModel={{ ...captureModel, structure, document }}
+        annotationTheme={annotationTheme}
       >
         <div style={{ display: 'flex', flexDirection: 'row' }}>
           <div style={{ width: '67%' }}>

@@ -597,6 +597,13 @@ export class ApiClient {
     });
   }
 
+  async updateProjectAnnotationStyle(id: string | number, style_id: number) {
+    return this.request(`/api/madoc/projects/${id}/annotation-style`, {
+      method: 'PUT',
+      body: { style_id },
+    });
+  }
+
   async exportProject(id: number) {
     return this.request<JsonProjectTemplate>(`/api/madoc/projects/${id}/export`);
   }

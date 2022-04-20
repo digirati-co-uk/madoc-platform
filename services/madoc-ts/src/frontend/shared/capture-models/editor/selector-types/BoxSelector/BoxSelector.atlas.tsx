@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { SelectorComponent } from '../../../types/selector-types';
 import { useCroppedRegion } from '../../content-types/Atlas/Atlas.helpers';
 import { BoxSelectorProps } from './BoxSelector';
-import { BoxStyle, DrawBox, ResizeWorldItem, useMode } from '@atlas-viewer/atlas';
+import { BoxStyle, DrawBox, ResizeWorldItem } from '@atlas-viewer/atlas';
 import { useBoxSelector } from './BoxSelector.helpers';
 
 type RegionHighlightType = {
@@ -41,8 +41,8 @@ export const RegionHighlight: React.FC<{
     >
       <box
         id={`${id}/box`}
+        relativeStyle
         interactive={interactive}
-        className="anything"
         onClick={e => {
           e.preventDefault();
           e.stopPropagation();
@@ -58,7 +58,7 @@ export const RegionHighlight: React.FC<{
 const BoxSelectorAtlas: SelectorComponent<BoxSelectorProps> = props => {
   const { state, hidden, readOnly, id } = props;
   const generatePreview = useCroppedRegion();
-  const { onSave, isHighlighted, backgroundColor, border, onClick } = useBoxSelector(props, { generatePreview });
+  const { onSave, style, onClick } = useBoxSelector(props, { generatePreview });
 
   // if (hidden && !isHighlighted) {
   //   return null;
@@ -80,11 +80,7 @@ const BoxSelectorAtlas: SelectorComponent<BoxSelectorProps> = props => {
       isEditing={!readOnly}
       onSave={onSave}
       interactive={!hidden}
-      style={{
-        background: backgroundColor,
-        border: border,
-        opacity: hidden ? 0 : 1,
-      }}
+      style={style}
       onClick={e => {
         if (props.onClick) {
           props.onClick(props);

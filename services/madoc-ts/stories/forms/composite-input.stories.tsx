@@ -190,7 +190,7 @@ export const AnnoStyle = () => {
       <SystemGrid.Container>
         <SystemGrid.Menu>
           <SystemMenu>
-            <SystemMenuItem>Annotations panel</SystemMenuItem>
+            <SystemMenuItem>Annotations panel</SystemMenuItem>yeah
             <SystemMenuItem>Document panel</SystemMenuItem>
             <SystemMenuItem>Submission panel</SystemMenuItem>
             <SystemMenuItem>

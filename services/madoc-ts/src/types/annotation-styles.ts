@@ -14,7 +14,7 @@ export type AnnotationThemeDefinition = BoxStyle & {
 };
 
 export type AnnotationBuckets =
-  | 'default'
+  | 'highlighted'
   | 'topLevel'
   | 'currentLevel'
   | 'adjacent'
