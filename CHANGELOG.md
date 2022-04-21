@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added configuration for hiding/showing annotations on model and canvas page
 - Added configuration for hiding/showing document regions on model and canvas page
 - Added new Annotation styles for customising colors and borders of annotations
+- Added new zoom controls
 
 ### Fixed
 - Regression with dropdown (reverts fix for overflow bug in popup)

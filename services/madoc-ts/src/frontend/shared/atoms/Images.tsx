@@ -1,9 +1,27 @@
 import styled, { css } from 'styled-components';
 
-export const CroppedImage = styled.div<{ $size?: 'tiny' | 'small' | 'large'; $fluid?: boolean; $covered?: boolean }>`
+export const CroppedImage = styled.div<{
+  $size?: 'tiny' | 'small' | 'large';
+  $fluid?: boolean;
+  $covered?: boolean;
+  $rect?: boolean;
+}>`
   background: #000;
   padding: 2px;
   height: ${props => {
+    if (props.$rect) {
+      switch (props.$size) {
+        case 'tiny':
+          return `${50 / 1.618}px`;
+        case 'small':
+          return `${150 / 1.618}px`;
+        case 'large':
+          return `${294 / 1.618}px`;
+        default:
+          return `${222 / 1.618}px`;
+      }
+    }
+
     switch (props.$size) {
       case 'tiny':
         return '50px';
@@ -64,6 +82,11 @@ export const CroppedImage = styled.div<{ $size?: 'tiny' | 'small' | 'large'; $fl
       css`
         object-fit: cover;
         transform: scale(1.1);
+        transition: transform 500ms;
+
+        &:hover {
+          transform: scale(1.2);
+        }
       `}
   }
 `;

@@ -342,6 +342,10 @@ export const siteConfigurationModel: {
         value: 'coveredImages',
       },
       {
+        label: 'Rectangular image variation',
+        value: 'rectangularImages',
+      },
+      {
         label: 'Hide canvas labels on manifest listing',
         value: 'hideCanvasLabels',
       },

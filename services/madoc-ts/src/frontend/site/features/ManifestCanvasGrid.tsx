@@ -31,6 +31,7 @@ export const ManifestCanvasGrid: React.FC = () => {
 
   const directToModelPage = (!!userManifestTask || canClaimManifest) && manifestOptions?.directModelPage;
   const coveredImages = manifestOptions?.coveredImages;
+  const rectangularImages = manifestOptions?.rectangularImages;
   const hideCanvasLabels = manifestOptions?.hideCanvasLabels;
   const manifest = data?.manifest;
 
@@ -49,7 +50,7 @@ export const ManifestCanvasGrid: React.FC = () => {
           })}
         >
           <ImageStripBox>
-            <CroppedImage $covered={coveredImages}>
+            <CroppedImage $covered={coveredImages} $rect={rectangularImages}>
               {canvas.thumbnail ? (
                 <img alt={createLocaleString(canvas.label, t('Canvas thumbnail'))} src={canvas.thumbnail} />
               ) : null}

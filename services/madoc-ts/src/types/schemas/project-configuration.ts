@@ -71,6 +71,7 @@ export type ProjectConfiguration = {
     directModelPage?: boolean;
     showIIIFLogo?: boolean;
     coveredImages?: boolean;
+    rectangularImages?: boolean;
     hideCanvasLabels?: boolean;
   };
   headerOptions?: {
