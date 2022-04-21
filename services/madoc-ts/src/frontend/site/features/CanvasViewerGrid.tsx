@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ButtonRow } from '../../shared/navigation/Button';
+import { Button, ButtonRow } from '../../shared/navigation/Button';
 
 export const CanvasViewerGrid = styled.div<{ $vertical?: boolean }>`
   display: flex;
@@ -37,8 +37,20 @@ export const CanvasViewerContentOverlay = styled.div`
 export const CanvasViewerControls = styled(ButtonRow)`
   position: absolute;
   top: 0;
-  left: 1em;
+  right: 1em;
   z-index: 20;
+`;
+
+export const CanvasViewerButton = styled(Button)`
+  border-radius: 0;
+  padding: 0.8em;
+  font-size: 1em;
+  border: none;
+  background: #fff;
+  display: flex;
+  &:focus {
+    outline: 2px solid orange;
+  }
 `;
 
 export const CanvasViewerEditorStyleReset = styled.div`

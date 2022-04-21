@@ -35,6 +35,12 @@ export type ProjectConfiguration = {
   };
   shortExpiryTime?: string;
   longExpiryTime?: string;
+
+  modelPageShowAnnotations?: 'always' | 'when-open' | 'highlighted';
+  modelPageShowDocument?: 'always' | 'when-open' | 'highlighted';
+  canvasPageShowAnnotations?: 'always' | 'when-open' | 'highlighted';
+  canvasPageShowDocument?: 'always' | 'when-open' | 'highlighted';
+
   modelPageOptions?: {
     fixedTranscriptionBar?: boolean;
     preventContributionAfterRejection?: boolean;

@@ -176,6 +176,53 @@ export const siteConfigurationModel: {
     description: 'The number of minutes after which to expire an accepted manifest task (default = 1440 mins = 1 day)',
     type: 'text-field',
   },
+  // Annotation options.
+
+  canvasPageShowAnnotations: {
+    label: 'Canvas page annotations',
+    description: 'Decide when annotations are shown on the canvas page',
+    type: 'dropdown-field',
+    options: [
+      { value: 'when-open', text: 'Show when panel is open' },
+      { value: 'highlighted', text: 'Only show if highlighted' },
+      { value: 'always', text: 'Always show' },
+    ],
+  },
+
+  canvasPageShowDocument: {
+    label: 'Canvas page document regions',
+    description: 'Decide when document regions are shown on the canvas page',
+    type: 'dropdown-field',
+    options: [
+      { value: 'when-open', text: 'Show when panel is open' },
+      { value: 'highlighted', text: 'Only show if highlighted' },
+      { value: 'always', text: 'Always show' },
+    ],
+  },
+
+  modelPageShowAnnotations: {
+    label: 'Contribution page annotations',
+    description: 'Decide when annotations are shown when a user is on the contributing page',
+    type: 'dropdown-field',
+    options: [
+      { value: 'when-open', text: 'Show when panel is open' },
+      { value: 'highlighted', text: 'Only show if highlighted' },
+      { value: 'always', text: 'Always show' },
+    ],
+  },
+
+  modelPageShowDocument: {
+    label: 'Contribution page document regions',
+    description: 'Decide when document regions are shown when a user is on the contributing page',
+    type: 'dropdown-field',
+    options: [
+      { value: 'when-open', text: 'Show when panel is open' },
+      { value: 'highlighted', text: 'Only show if highlighted' },
+      { value: 'always', text: 'Always show' },
+    ],
+  },
+
+  // Page options.
   modelPageOptions: {
     label: 'Contribution page',
     description: 'View options for the contributions page',

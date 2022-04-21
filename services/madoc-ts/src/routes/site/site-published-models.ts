@@ -18,6 +18,7 @@ export type SitePublishedModelsQuery = {
   format?:
     | 'capture-model'
     | 'capture-model-with-pages'
+    | 'capture-model-with-pages-resolved'
     | 'open-annotation'
     | 'w3c-annotation'
     | 'json'
@@ -71,7 +72,11 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
 
   const annotationPages = [];
 
-  if (format === 'w3c-annotation-pages' || format === 'capture-model-with-pages') {
+  if (
+    format === 'w3c-annotation-pages' ||
+    format === 'capture-model-with-pages' ||
+    format === 'capture-model-with-pages-resolved'
+  ) {
     annotationPages.push(
       ...models.map(model => {
         return {
@@ -118,6 +123,7 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
       };
       break;
     }
+    case 'capture-model-with-pages-resolved':
     case 'open-annotation':
     case 'w3c-annotation': {
       // Return a W3C annotation list.
@@ -204,6 +210,20 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
           resources: annotations,
         };
       } else {
+        if (format === 'capture-model-with-pages-resolved') {
+          context.response.body = {
+            models: await Promise.all(ms),
+            pages: annotationPages.length ? annotationPages : undefined,
+            annotations: {
+              id: `${gatewayHost}${context.path}?format=w3c-annotation`,
+              label: resolveModels.length === 1 ? resolveModels[0].document.label : null,
+              type: 'AnnotationPage',
+              items: annotations,
+            },
+          };
+          return;
+        }
+
         // W3C annotation page.
         context.response.body = {
           id: `${gatewayHost}${context.path}?format=w3c-annotation`,

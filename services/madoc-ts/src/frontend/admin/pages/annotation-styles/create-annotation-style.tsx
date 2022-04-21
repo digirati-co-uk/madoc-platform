@@ -93,10 +93,20 @@ export function CreateAnnotationStyle({ existing }: { existing?: AnnotationStyle
       const toApply = { backgroundColor: 'none', borderWidth: '0', ...(newConfig[current] || {}) };
 
       if (!toApply[':hover']) {
-        toApply[':hover'] = { ...toApply };
+        toApply[':hover'] = {
+          backgroundColor: toApply.backgroundColor,
+          borderColor: toApply.borderColor,
+          borderStyle: toApply.borderStyle,
+          borderWidth: toApply.borderWidth,
+        };
       }
       if (!toApply[':active']) {
-        toApply[':active'] = { ...toApply };
+        toApply[':active'] = {
+          backgroundColor: toApply.backgroundColor,
+          borderColor: toApply.borderColor,
+          borderStyle: toApply.borderStyle,
+          borderWidth: toApply.borderWidth,
+        };
       }
 
       displayAnno.current.applyStyle(toApply);

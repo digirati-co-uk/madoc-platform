@@ -3,11 +3,13 @@ import { ImageService } from '@hyperion-framework/types';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
+import { useHighlightedRegions } from '../../hooks/use-highlighted-regions';
 import { EmptyState } from '../../layout/EmptyState';
 import { CroppedImage } from '../../atoms/Images';
 import { useCroppedRegion } from '../../hooks/use-cropped-region';
 import { DownArrowIcon } from '../../icons/DownArrowIcon';
 import { FieldPreview } from '../editor/components/FieldPreview/FieldPreview';
+import { useSelectorHelper } from '../editor/stores/selectors/selector-helper';
 import { filterRevises } from '../helpers/filter-revises';
 import { isEntityList } from '../helpers/is-entity';
 import { resolveSelector } from '../helpers/resolve-selector';
@@ -20,9 +22,9 @@ import { useResolvedSelector } from '../new/hooks/use-resolved-selector';
 
 const DocumentLabel = styled.div`
   position: relative;
-  font-size: 13px;
-  font-weight: bold;
-  color: #333;
+  font-size: 11px;
+  font-weight: 600;
+  color: #999;
 `;
 
 const DocumentLabelIcon = styled.div`
@@ -50,9 +52,17 @@ const DocumentValueWrapper = styled.div`
 `;
 
 const DocumentSection = styled.div`
+  border-bottom: 1px solid #eff3fd;
+  background: #fff;
+  overflow: hidden;
+  margin: 0.4em;
+  border-radius: 3px;
+`;
+
+const DocumentSectionField = styled.div`
   //border-bottom: 1px solid #eee;
-  //padding-bottom: 5px;
-  margin-bottom: 5px;
+  padding-bottom: 0.4em;
+  margin-bottom: 0.2em;
   background: #fff;
 `;
 
@@ -63,15 +73,15 @@ const DocumentCollapse = styled.div`
 `;
 
 const DocumentEntityList = styled.div`
-  border-left: 1px solid #ddd;
-  padding: 4px 3px;
+  padding: 2px;
   background: #e9effc;
+  border-radius: 5px;
   overflow-y: auto;
 `;
 
 const DocumentEntityLabel = styled.div`
-  color: #111;
-  font-weight: bold;
+  color: #777;
+  font-weight: 600;
   font-size: 15px;
   position: relative;
   padding: 5px 10px;
@@ -79,6 +89,8 @@ const DocumentEntityLabel = styled.div`
 
 const FieldPreviewWrapper = styled.div`
   white-space: pre-wrap;
+  display: flex;
+  align-items: center;
 `;
 
 const renderFieldList = (fields: BaseField[], { fluidImage }: { fluidImage?: boolean }) => {
@@ -254,7 +266,7 @@ export const ViewProperty: React.FC<{
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
 
   return (
-    <DocumentSection>
+    <DocumentSectionField>
       <DocumentHeading $interactive={interactive} onClick={() => (interactive ? setIsCollapsed(i => !i) : undefined)}>
         <DocumentLabel>
           {label}
@@ -277,7 +289,7 @@ export const ViewProperty: React.FC<{
         ) : null}
       </DocumentHeading>
       {!isCollapsed ? <DocumentValueWrapper>{children}</DocumentValueWrapper> : null}
-    </DocumentSection>
+    </DocumentSectionField>
   );
 };
 
@@ -285,9 +297,11 @@ export const SelectorPreview: React.FC<{ selector?: BaseSelector; fluidImage?: b
   selector,
   fluidImage,
 }) => {
+  const helper = useSelectorHelper();
   const { data: service } = useImageService() as { data?: ImageService };
   const croppedRegion = useCroppedRegion();
   const [image, setImage] = useState('');
+  const selectorId = selector?.id;
 
   useEffect(() => {
     if (selector && service && selector.state) {
@@ -303,7 +317,14 @@ export const SelectorPreview: React.FC<{ selector?: BaseSelector; fluidImage?: b
   }
 
   return (
-    <CroppedImage $size={'small'} $fluid={fluidImage} style={{ margin: '.5em 0' }}>
+    <CroppedImage
+      $size={'tiny'}
+      $fluid={fluidImage}
+      $covered
+      style={{ marginRight: '.5em', background: '#f9f9f9' }}
+      onMouseEnter={() => (selectorId ? helper.highlight(selectorId) : null)}
+      onMouseLeave={() => (selectorId ? helper.clearHighlight(selectorId) : null)}
+    >
       <img src={image} alt="cropped region of image" width={fluidImage ? '100%' : 100} />
     </CroppedImage>
   );
