@@ -72,7 +72,9 @@ export const EditorContentViewer: React.FC<EditorContentVariations> = ({
         height={height}
         onCreated={onCreated}
         onPanInSketchMode={onPanInSketchMode}
-      />
+      >
+        {children}
+      </ViewContent>
     );
   }
 

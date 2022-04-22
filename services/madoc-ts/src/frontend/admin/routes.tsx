@@ -1,4 +1,5 @@
 import { UniversalRoute } from '../types';
+import { annotationStylesRoutes } from './pages/annotation-styles/index';
 import { CanvasPlaintext } from './pages/content/canvases/canvas-plaintext';
 import { CanvasSearchIndex } from './pages/content/canvases/canvas-search-index';
 import { CollectionView } from './pages/content/collections/collection';
@@ -18,6 +19,7 @@ import { PageBlocks } from './pages/content/page-blocks/page-blocks';
 import { SiteProjectConfiguration } from './pages/content/project-configuration';
 import { SiteConfiguration } from './pages/content/site-configuration';
 import { SiteSystemConfiguration } from './pages/content/system-configuration';
+import { ChooseAnnotationStyle } from './pages/crowdsourcing/model-editor/choose-annotation-style';
 import { NewProjectFromTemplate } from './pages/crowdsourcing/projects/new-project-from-template';
 import { ProjectConfiguration } from './pages/crowdsourcing/projects/project-configuration';
 import { ProjectSearchIndex } from './pages/crowdsourcing/projects/project-search-index';
@@ -100,6 +102,10 @@ export const routes: UniversalRoute[] = [
     exact: true,
     component: Homepage,
   },
+  // Aggregations.
+  ...annotationStylesRoutes,
+
+  // Manual routes.
   {
     path: '/collections',
     exact: true,
@@ -335,6 +341,11 @@ export const routes: UniversalRoute[] = [
           {
             path: '/projects/:id/model/structure',
             component: FullStructureEditor,
+            exact: true,
+          },
+          {
+            path: '/projects/:id/model/style',
+            component: ChooseAnnotationStyle,
             exact: true,
           },
           {

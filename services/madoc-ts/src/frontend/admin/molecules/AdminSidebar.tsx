@@ -175,6 +175,9 @@ export const AdminSidebar: React.FC = () => {
                 {t('Themes')}
               </AdminMenuSubItem>
             ) : null}
+            <AdminMenuSubItem as={HrefLink} href="/site/annotation-styles">
+              {t('Annotation styles')}
+            </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/site/permissions">
               {t('Site permissions')}
             </AdminMenuSubItem>

@@ -1,4 +1,5 @@
 // There will be something here.
+import { AnnotationBuckets } from '../../../../types/annotation-styles';
 import { MapValues } from './utility';
 import { FC } from 'react';
 
@@ -41,6 +42,7 @@ export type InjectedSelectorProps<T> = {
   hideSelector?: (selectorId: string) => void;
   currentSelectorId?: string;
   isTopLevel?: boolean;
+  bucket?: AnnotationBuckets;
   isAdjacent?: boolean;
   onClick?: (selector: BaseSelector & InjectedSelectorProps<any>) => void;
 };

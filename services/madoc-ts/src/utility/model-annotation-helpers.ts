@@ -7,7 +7,7 @@ export function captureModelFieldToW3CAnnotation(
   value: string,
   selector: BaseField['selector'],
   options: { madocCanvasId: number; canvas: string; gatewayHost: string; path: string }
-): AnnotationW3C & { id: string; type: string; ['madoc:id']: number } {
+): AnnotationW3C & { id: string; type: string; ['madoc:id']: number; ['madoc:selectorId']: string | undefined } {
   const selectorState = selector?.state;
   const madocCanvasId = options.madocCanvasId;
   const gatewayHost = options.gatewayHost;
@@ -22,6 +22,7 @@ export function captureModelFieldToW3CAnnotation(
       value: value,
     },
     'madoc:id': madocCanvasId,
+    'madoc:selectorId': selector?.id,
     target: selectorState
       ? `${
           options.canvas
@@ -35,7 +36,7 @@ export function captureModelFieldToOpenAnnotation(
   value: string,
   selector: BaseField['selector'],
   options: { madocCanvasId: number; canvas: string; gatewayHost: string; path: string }
-): Annotation & { ['madoc:id']: number } {
+): Annotation & { ['madoc:id']: number; ['madoc:selectorId']: string | undefined } {
   const selectorState = selector?.state;
   const madocCanvasId = options.madocCanvasId;
   const gatewayHost = options.gatewayHost;
@@ -50,6 +51,7 @@ export function captureModelFieldToOpenAnnotation(
       chars: value,
     },
     'madoc:id': madocCanvasId,
+    'madoc:selectorId': selector?.id,
     on: selectorState
       ? `${
           options.canvas

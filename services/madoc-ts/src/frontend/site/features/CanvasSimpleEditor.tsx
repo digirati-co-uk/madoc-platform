@@ -6,7 +6,11 @@ import { slotConfig } from '../../../extensions/capture-models/Paragraphs/Paragr
 import { SubmitWithoutPreview } from '../../shared/capture-models/new/components/SubmitWithoutPreview';
 import { RevisionRequest } from '../../shared/capture-models/types/revision-request';
 import { useLocalStorage } from '../../shared/hooks/use-local-storage';
-import { Button, ButtonIcon } from '../../shared/navigation/Button';
+import { useReadOnlyAnnotations } from '../../shared/hooks/use-read-only-annotations';
+import { HomeIcon } from '../../shared/icons/HomeIcon';
+import { MinusIcon } from '../../shared/icons/MinusIcon';
+import { PlusIcon } from '../../shared/icons/PlusIcon';
+import { ButtonIcon } from '../../shared/navigation/Button';
 import { EmptyState } from '../../shared/layout/EmptyState';
 import { SmallToast } from '../../shared/callouts/SmallToast';
 import { TickIcon } from '../../shared/icons/TickIcon';
@@ -30,11 +34,13 @@ import { isEditingAnotherUsersRevision } from '../../shared/utility/is-editing-a
 import { useCanvasModel } from '../hooks/use-canvas-model';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useContributionMode } from '../hooks/use-contribution-mode';
+import { useProjectAnnotationStyles } from '../hooks/use-project-annotation-styles';
 import { useProjectStatus } from '../hooks/use-project-status';
 import { RouteContext, useRouteContext } from '../hooks/use-route-context';
 import { CanvasModelUserStatus } from './CanvasModelUserStatus';
 import { CanvasViewer } from './CanvasViewer';
 import {
+  CanvasViewerButton,
   CanvasViewerContentOverlay,
   CanvasViewerControls,
   CanvasViewerEditorStyleReset,
@@ -56,6 +62,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
   const [{ captureModel }] = useLoadedCaptureModel(projectModel?.model?.id, undefined, canvasId);
   const { updateClaim, allTasksDone, markedAsUnusable } = useCanvasUserTasks();
   const { isPreparing } = useProjectStatus();
+  const annotationTheme = useProjectAnnotationStyles();
   const user = useCurrentUser(true);
   const config = useSiteConfiguration();
   const {
@@ -72,6 +79,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
   const [showPanWarning, setShowPanWarning] = useLocalStorage('pan-warning', false);
   const [postSubmission, setPostSubmission] = useState(false);
   const [postSubmissionMessage, setPostSubmissionMessage] = useState(false);
+  const readOnlyAnnotations = useReadOnlyAnnotations(true);
 
   useEffect(() => {
     setPostSubmission(false);
@@ -196,6 +204,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
           },
           components: components,
         }}
+        annotationTheme={annotationTheme}
       >
         {!isPreparing && mode === 'transcription' ? <TranscriberModeWorkflowBar /> : null}
 
@@ -209,13 +218,23 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
                   return ((runtime as any).current = rt.runtime);
                 }}
                 onPanInSketchMode={onPanInSketchMode}
-              />
+              >
+                {readOnlyAnnotations.map(anno => (
+                  <box key={anno.id} {...anno} />
+                ))}
+              </EditorContentViewer>
 
               {hideViewerControls ? null : (
                 <CanvasViewerControls>
-                  <Button onClick={goHome}>{t('atlas__zoom_home', { defaultValue: 'Home' })}</Button>
-                  <Button onClick={zoomOut}>{t('atlas__zoom_out', { defaultValue: '-' })}</Button>
-                  <Button onClick={zoomIn}>{t('atlas__zoom_in', { defaultValue: '+' })}</Button>
+                  <CanvasViewerButton onClick={goHome}>
+                    <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
+                  </CanvasViewerButton>
+                  <CanvasViewerButton onClick={zoomOut}>
+                    <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
+                  </CanvasViewerButton>
+                  <CanvasViewerButton onClick={zoomIn}>
+                    <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
+                  </CanvasViewerButton>
                 </CanvasViewerControls>
               )}
 

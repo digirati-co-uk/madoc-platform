@@ -8,7 +8,7 @@ export const getCollectionMetadata: RouteMiddleware<{ id: string }> = async cont
   const { siteId } = optionalUserWithScope(context, ['site.view']);
   const collectionId = Number(context.params.id);
 
-  const collection = await context.connection.many(getDerivedMetadata(collectionId, 'collection', siteId));
+  const collection = await context.connection.any(getDerivedMetadata(collectionId, 'collection', siteId));
 
   context.response.body = {
     fields: collection,

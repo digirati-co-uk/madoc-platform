@@ -108,6 +108,19 @@ export const AllFields: React.FC = () => {
             }}
             onUpdateValue={value => console.log(value)}
           />
+          <FieldWrapper
+            field={
+              {
+                id: '1',
+                type: 'color-field',
+                value: '#ff0000',
+                description: 'Some other longer description',
+                inlineLabel: 'Choose color',
+                label: 'Another field',
+              } as any
+            }
+            onUpdateValue={value => console.log(value)}
+          />
         </PluginProvider>
       </React.Suspense>
     </div>

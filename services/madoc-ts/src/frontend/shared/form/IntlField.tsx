@@ -1,7 +1,7 @@
 import { SmallButton } from '../navigation/Button';
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { InputContainer, InputLabel } from './Input';
+import { InputContainer, InputLabel, inputStyles } from './Input';
 
 const Textarea = React.lazy(() => /* webpackChunkName: "browser" */ import('react-textarea-autosize'));
 
@@ -31,31 +31,13 @@ export const IntlInputDefault = styled.div`
   }
 `;
 
-const inputStyles = css`
-  flex: 1 1 0px;
-  background: #fff;
-  border: none;
-  padding: 0.5em 0 0.5em 0.7em;
-  margin: 0.2em 0 0.2em 0.2em;
-  border-radius: 0;
-  font-size: 0.85em;
-  line-height: 1.2em;
-  border-right: 1px solid #ddd;
-  font-family: inherit;
-  resize: none;
-  -webkit-appearance: none;
-  tap-highlight-color: rgba(255, 255, 255, 0);
-
-  &:focus {
-    outline: none;
-  }
-`;
-
 export const IntlInput = styled.input.attrs({ type: 'text' })`
+  flex: 1 1 0px;
   ${inputStyles}
 `;
 
 const IntlMultilineInternal = styled(Textarea)`
+  flex: 1 1 0px;
   ${inputStyles}
 `;
 

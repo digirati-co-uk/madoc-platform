@@ -29,7 +29,7 @@ export const getProject: RouteMiddleware<{ id: string }> = async context => {
     '3': 0,
   } as any;
 
-  const [content, taskStats, projectConfiguration] = await Promise.all([
+  const [content, taskStats, projectConfiguration, annotationStyles] = await Promise.all([
     userApi.getCollectionStatistics(project.collection_id),
     userApi.getTaskStats(project.task_id, {
       type: 'crowdsourcing-task',
@@ -37,6 +37,7 @@ export const getProject: RouteMiddleware<{ id: string }> = async context => {
       distinct_subjects: true,
     }),
     userApi.getConfiguration<ProjectConfiguration>('madoc', [siteUrn, `urn:madoc:project:${project.id}`]),
+    context.annotationStyles.getProjectAnnotationStyle(project.id, siteId),
   ]);
 
   const taskStatuses = taskStats.statuses || {};
@@ -58,5 +59,6 @@ export const getProject: RouteMiddleware<{ id: string }> = async context => {
     statistics,
     content,
     config,
+    annotationTheme: annotationStyles ? annotationStyles.theme : null,
   };
 };

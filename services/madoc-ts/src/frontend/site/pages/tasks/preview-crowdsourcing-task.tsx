@@ -9,6 +9,9 @@ import { DirectEditButton } from '../../../shared/capture-models/new/components/
 import { EditorSlots } from '../../../shared/capture-models/new/components/EditorSlots';
 import { RevisionProviderWithFeatures } from '../../../shared/capture-models/new/components/RevisionProviderWithFeatures';
 import { EditorContentViewer } from '../../../shared/capture-models/new/EditorContent';
+import { HomeIcon } from '../../../shared/icons/HomeIcon';
+import { MinusIcon } from '../../../shared/icons/MinusIcon';
+import { PlusIcon } from '../../../shared/icons/PlusIcon';
 import { Button } from '../../../shared/navigation/Button';
 import {
   EditorToolbarButton,
@@ -28,6 +31,7 @@ import { PreviewIcon } from '../../../shared/icons/PreviewIcon';
 import { useLoadedCaptureModel } from '../../../shared/hooks/use-loaded-capture-model';
 import { WarningMessage } from '../../../shared/callouts/WarningMessage';
 import {
+  CanvasViewerButton,
   CanvasViewerControls,
   CanvasViewerEditorStyleReset,
   CanvasViewerGrid,
@@ -188,9 +192,15 @@ const PreviewCrowdsourcingTask: React.FC<{
                   ) : null}
 
                   <CanvasViewerControls>
-                    <Button onClick={goHome}>{t('atlas__zoom_home', { defaultValue: 'Home' })}</Button>
-                    <Button onClick={zoomOut}>{t('atlas__zoom_out', { defaultValue: '-' })}</Button>
-                    <Button onClick={zoomIn}>{t('atlas__zoom_in', { defaultValue: '+' })}</Button>
+                    <CanvasViewerButton onClick={goHome}>
+                      <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
+                    </CanvasViewerButton>
+                    <CanvasViewerButton onClick={zoomOut}>
+                      <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
+                    </CanvasViewerButton>
+                    <CanvasViewerButton onClick={zoomIn}>
+                      <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
+                    </CanvasViewerButton>
                   </CanvasViewerControls>
                 </CanvasViewerGridContent>
                 <CanvasViewerGridSidebar>

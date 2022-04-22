@@ -54,7 +54,7 @@ export const StyledCheckbox: typeof _StyledCheckbox = forwardRef(function Styled
 }) as any;
 
 const _StyledColor = styled.input`
-  margin: 0.5em;
+  //margin: 0.5em;
 `;
 export const StyledColor: typeof _StyledColor = forwardRef(function StyledColor(props: any, ref) {
   return <_StyledColor ref={ref} type="color" {...props} />;

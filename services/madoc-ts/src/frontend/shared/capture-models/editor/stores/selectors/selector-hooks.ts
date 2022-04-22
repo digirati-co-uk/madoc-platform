@@ -1,4 +1,5 @@
 import React, { useCallback, useContext, useRef } from 'react';
+import { AnnotationBuckets } from '../../../../../../types/annotation-styles';
 import { isEntity, isEntityList } from '../../../helpers/is-entity';
 import { PluginContext } from '../../../plugin-api/context';
 import { useSelector } from '../../../plugin-api/hooks/use-selector';
@@ -235,7 +236,21 @@ export function useDisplaySelectors(contentType: string) {
   ] as const;
 }
 
-export function SelectorRenderer({
+export const SelectorRenderer = React.memo(_SelectorRenderer, (a, b) => {
+  return (
+    a.id === b.id &&
+    a.selector.state === b.selector.state &&
+    a.selector.revisionId === b.selector.revisionId &&
+    Boolean(a.options.readOnly) === Boolean(b.options.readOnly) &&
+    Boolean(a.options.isTopLevel) === Boolean(b.options.isTopLevel) &&
+    Boolean(a.options.isAdjacent) === Boolean(b.options.isAdjacent) &&
+    Boolean(a.options.hidden) === Boolean(b.options.hidden) &&
+    Boolean(a.options.updateSelector) === Boolean(b.options.updateSelector) &&
+    Boolean(a.options.selectorPreview) === Boolean(b.options.selectorPreview)
+  );
+});
+
+function _SelectorRenderer({
   contentType,
   selector,
   options,
@@ -244,6 +259,7 @@ export function SelectorRenderer({
   contentType: string;
   selector: BaseSelector;
   options: {
+    bucket: AnnotationBuckets;
     updateSelector?: any;
     selectorPreview?: any;
     updateSelectorPreview?: (data: { selectorId: string; preview: string }) => void;
@@ -307,6 +323,7 @@ export function useAllSelectors(
           contentType,
           selector,
           options: {
+            bucket: 'topLevel',
             isTopLevel: true,
             hidden: !selectorVisibility.topLevelSelectors,
             readOnly: true,
@@ -327,6 +344,7 @@ export function useAllSelectors(
           contentType,
           selector,
           options: {
+            bucket: 'currentLevel',
             hidden: !selectorVisibility.currentSelector,
             readOnly: true,
             onClick: selectorHandlers.onClickDisplaySelector,
@@ -346,6 +364,7 @@ export function useAllSelectors(
           contentType,
           selector,
           options: {
+            bucket: 'adjacent',
             isAdjacent: true,
             readOnly: true,
             onClick: selectorHandlers.onClickAdjacentSelector,
@@ -364,6 +383,7 @@ export function useAllSelectors(
         contentType,
         selector,
         options: {
+          bucket: 'hidden',
           hidden: true,
           readOnly: true,
         },
@@ -371,5 +391,5 @@ export function useAllSelectors(
     );
   }
 
-  return [...adjacent, ...topLevel, ...currentLevel, ...hidden];
+  return [...adjacent, ...currentLevel, ...topLevel, ...hidden];
 }

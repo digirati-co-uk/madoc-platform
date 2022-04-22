@@ -1,4 +1,6 @@
 import { useTranslation } from 'react-i18next';
+import { AnnotationStyles } from '../../../../../types/annotation-styles';
+import { ProjectFull } from '../../../../../types/project-full';
 import { EditorContext } from '../../../../shared/capture-models/editor/components/EditorContext/EditorContext';
 import { defaultTheme } from '../../../../shared/capture-models/editor/themes';
 import { CaptureModel } from '../../../../shared/capture-models/types/capture-model';
@@ -25,6 +27,8 @@ type ProjectModelEditorType = {
   data: {
     captureModel: CaptureModel;
     template?: string;
+    annotationTheme?: ProjectFull['annotationTheme'];
+    style_id?: ProjectFull['style_id'];
   };
 };
 
@@ -34,7 +38,7 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
   ({ route }) => {
     const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
-    const { data, status } = useData(ProjectModelEditor, {}, { refetchInterval: false });
+    const { data, status, refetch } = useData(ProjectModelEditor, {}, { refetchInterval: false });
     const [newStructure, setNewStructure] = useState<CaptureModel['structure'] | undefined>();
     const [newDocument, setNewDocument] = useState<CaptureModel['document'] | undefined>();
     const { location } = useHistory();
@@ -43,6 +47,8 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
     const model = data?.captureModel;
     const config = useProjectTemplate(data?.template);
     const editorConfig = config?.configuration?.captureModels;
+    const annotationTheme = data?.annotationTheme;
+    const styleId = data?.style_id;
 
     const [updateModel, updateModelStatus] = useMutation(async (m: CaptureModel) => {
       if (m.id) {
@@ -96,6 +102,10 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
               </DashboardTab>
             ) : null}
 
+            <DashboardTab $active={location.pathname === `/projects/${id}/model/style`}>
+              <Link to={`/projects/${id}/model/style`}>{t('Style')}</Link>
+            </DashboardTab>
+
             <DashboardTab $active={location.pathname === `/projects/${id}/model/preview`}>
               <Link to={`/projects/${id}/model/preview`}>{t('Preview')}</Link>
             </DashboardTab>
@@ -133,6 +143,9 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
                 structure: newStructure ? newStructure : model.structure,
                 document: newDocument ? newDocument : model.document,
                 revisionNumber,
+                annotationTheme,
+                styleId,
+                refetch,
               })}
             </ModelEditorProvider>
           </EditorContext>
@@ -142,11 +155,13 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
   },
   {
     getData: async (key, { id }, api) => {
-      const { capture_model_id, template } = await api.getProject(id);
+      const { capture_model_id, template, annotationTheme, style_id } = await api.getProject(id);
 
       return {
         template,
         captureModel: await api.getCaptureModel(capture_model_id),
+        annotationTheme,
+        style_id,
       };
     },
     getKey: params => {

@@ -3,10 +3,14 @@ import { AnnotationPage, ImageService } from '@hyperion-framework/types';
 import { AtlasAuto, RegionHighlight, Runtime } from '@atlas-viewer/atlas';
 import { useCanvas, useImageService } from '@hyperion-framework/react-vault';
 import { useTranslation } from 'react-i18next';
+import { CanvasViewerButton, CanvasViewerControls } from '../../site/features/CanvasViewerGrid';
+import { HomeIcon } from '../icons/HomeIcon';
+import { MinusIcon } from '../icons/MinusIcon';
+import { PlusIcon } from '../icons/PlusIcon';
 import { Button, ButtonRow } from '../navigation/Button';
-import { useHighlightedRegions } from '../hooks/use-highlighted-regions';
 import { webglSupport } from '../utility/webgl-support';
 import { AtlasTiledImages } from './AtlasTiledImages';
+import { useReadOnlyAnnotations } from '../hooks/use-read-only-annotations';
 
 export const SimpleAtlasViewer = React.forwardRef<
   any,
@@ -22,8 +26,7 @@ export const SimpleAtlasViewer = React.forwardRef<
   const runtime = useRef<Runtime>();
   const { data: service } = useImageService();
   const [isLoaded, setIsLoaded] = useState(false);
-
-  const { highlighted, regions, setHighlightStatus, isActive } = useHighlightedRegions();
+  const readOnlyAnnotations = useReadOnlyAnnotations(false);
 
   const goHome = () => {
     if (runtime.current) {
@@ -105,37 +108,23 @@ export const SimpleAtlasViewer = React.forwardRef<
                       );
                     })
                   : null}
-                {isActive && regions
-                  ? regions.map((region, key) => {
-                      const { x, y, width, height } = region.target;
-                      return (
-                        <React.Fragment key={key}>
-                          <RegionHighlight
-                            region={{ id: region.id, x, y, width, height }}
-                            isEditing={false}
-                            style={{
-                              background:
-                                highlighted.indexOf(region.id) !== -1 ? 'rgba(2,219,255, .5)' : 'rgba(2,219,255, .2)',
-                            }}
-                            onSave={() => {
-                              // no-op
-                            }}
-                            onClick={() => {
-                              setHighlightStatus(region.id, true);
-                            }}
-                          />
-                        </React.Fragment>
-                      );
-                    })
-                  : null}
+                {readOnlyAnnotations.map(anno => (
+                  <box key={anno.id} {...anno} />
+                ))}
               </worldObject>
             </world>
           </AtlasAuto>
-          <ButtonRow style={{ position: 'absolute', top: 0, left: 10, zIndex: 20 }}>
-            <Button onClick={goHome}>{t('atlas__zoom_home', { defaultValue: 'Home' })}</Button>
-            <Button onClick={zoomOut}>{t('atlas__zoom_out', { defaultValue: '-' })}</Button>
-            <Button onClick={zoomIn}>{t('atlas__zoom_in', { defaultValue: '+' })}</Button>
-          </ButtonRow>
+          <CanvasViewerControls>
+            <CanvasViewerButton onClick={goHome}>
+              <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
+            </CanvasViewerButton>
+            <CanvasViewerButton onClick={zoomOut}>
+              <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
+            </CanvasViewerButton>
+            <CanvasViewerButton onClick={zoomIn}>
+              <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
+            </CanvasViewerButton>
+          </CanvasViewerControls>
         </>
       ) : null}
     </div>

@@ -7,6 +7,7 @@ export function getProject({ projectId, projectSlug }: { projectId?: number; pro
     task_id: string;
     collection_id: number;
     capture_model_id: string;
+    style_id: number | null;
     slug?: string;
     site_id: number;
   }>`
@@ -15,6 +16,7 @@ export function getProject({ projectId, projectSlug }: { projectId?: number; pro
              collection_id,
              capture_model_id,
              slug,
+             style_id,
              site_id
       from iiif_project
       where site_id = ${site_id}

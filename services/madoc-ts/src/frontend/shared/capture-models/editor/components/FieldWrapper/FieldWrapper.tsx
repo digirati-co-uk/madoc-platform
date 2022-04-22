@@ -87,6 +87,7 @@ export const FieldWrapper: React.FC<Props> = ({
             label={field.label}
             description={field.description}
             selectorComponent={selectorComponent}
+            selectorId={field.selector?.id}
             showTerm={showTerm}
             onSelectorOpen={() => {
               if (chooseSelector && selector) {

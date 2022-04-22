@@ -1,3 +1,5 @@
+import { AnnotationBuckets } from '../../../../../../types/annotation-styles';
+import { useAnnotationStyles } from '../../../AnnotationStyleContext';
 import { SelectorTypeProps } from '../../../types/selector-types';
 import { useSelectorController } from '../../stores/selectors/selector-helper';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -12,24 +14,16 @@ export function useBoxSelector(
     readOnly,
     isAdjacent,
     isTopLevel,
+    bucket,
   }: SelectorTypeProps<BoxSelectorProps>,
   { generatePreview }: { generatePreview?: (s?: BoxSelectorProps['state']) => string | undefined } = {}
 ) {
   const controller = useSelectorController();
+  const styles = useAnnotationStyles();
   const [isHighlighted, setIsHighlighted] = useState(false);
   const lastPreview = useRef<string | undefined>();
-
-  const backgroundColor = isHighlighted
-    ? 'rgba(75, 103, 225, 0.4)'
-    : !readOnly
-    ? 'transparent'
-    : isAdjacent
-    ? 'rgba(141,160,203,.1)'
-    : isTopLevel
-    ? 'rgba(141,160,203,.4)'
-    : 'rgba(252,141,98, .4)';
-
-  const border = isHighlighted ? '5px solid #4B67E1' : isTopLevel ? '5px solid #000' : '5px solid rgba(5, 42, 68, 0.2)';
+  const style =
+    isHighlighted && bucket === 'currentLevel' ? styles.highlighted : styles[bucket || 'hidden'] || styles.hidden;
 
   // Controller effects.
   useEffect(() => {
@@ -93,7 +87,6 @@ export function useBoxSelector(
     onClick,
     controller,
     isHighlighted,
-    backgroundColor,
-    border,
+    style,
   };
 }

@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
+import { annotationPageToRegions } from '../utility/annotation-page-to-regions';
 import parseSelectorTarget from '../utility/parse-selector-target';
 
 export function useAnnotationPage(pageId?: string) {
@@ -17,31 +18,7 @@ export function useAnnotationPage(pageId?: string) {
   );
 
   const annotationRegions = useMemo(() => {
-    if (!annotationPage || !annotationPage.items || annotationPage.items.length === 0) {
-      return [];
-    }
-
-    const regions: Array<{
-      id: string;
-      label: string;
-      target: { x: number; y: number; width: number; height: number };
-    }> = [];
-
-    for (const annotation of annotationPage.items) {
-      const parsed = parseSelectorTarget(annotation.target);
-      if (!annotation || !annotation.body || !annotation.body.value) {
-        continue;
-      }
-      if (typeof parsed !== 'string') {
-        regions.push({
-          id: annotation.id,
-          label: annotation.body.value,
-          target: parsed,
-        });
-      }
-    }
-
-    return regions;
+    return annotationPageToRegions(annotationPage);
   }, [annotationPage]);
 
   return {

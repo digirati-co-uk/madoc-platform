@@ -8,7 +8,7 @@ export const updateSlotStructure: RouteMiddleware<{ slotId: string }, { blocks: 
   const { siteId } = userWithScope(context, ['site.admin']);
   const slotId = Number(context.params.slotId);
   const { blocks } = context.requestBody;
-  const currentStructure = await context.connection.many(sql<{
+  const currentStructure = await context.connection.any(sql<{
     slot_id: number;
     block_id: number;
     display_order: number;

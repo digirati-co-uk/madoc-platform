@@ -7,7 +7,7 @@ export const getManifestMetadata: RouteMiddleware<{ id: string }> = async contex
   const { siteId } = optionalUserWithScope(context, ['site.view']);
   const manifestId = Number(context.params.id);
 
-  const manifest = await context.connection.many(getDerivedMetadata(manifestId, 'manifest', siteId));
+  const manifest = await context.connection.any(getDerivedMetadata(manifestId, 'manifest', siteId));
 
   context.response.body = {
     fields: manifest,

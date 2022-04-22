@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { Tag } from '../../atoms/Tag';
 import { useTranslation } from 'react-i18next';
+import { useSelectorController, useSelectorHelper } from '../../stores/selectors/selector-helper';
 
 type FieldHeaderProps = {
   labelFor?: string;
@@ -10,6 +11,7 @@ type FieldHeaderProps = {
   showTerm?: boolean;
   term?: string;
   description?: string;
+  selectorId?: string;
   selectorComponent?: any;
   onSelectorClose?: () => void;
   onSelectorOpen?: () => void;
@@ -101,9 +103,11 @@ export const FieldHeader: React.FC<FieldHeaderProps> = ({
   onSelectorClose,
   onSelectorOpen,
   selectorLabel,
+  selectorId,
 }) => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const helper = useSelectorHelper();
 
   const toggleSelector = useCallback(() => {
     if (open) {
@@ -129,7 +133,11 @@ export const FieldHeader: React.FC<FieldHeaderProps> = ({
           {description ? <FieldHeaderSubtitle htmlFor={labelFor}>{description}</FieldHeaderSubtitle> : null}
         </FieldHeaderLeft>
         {selectorComponent ? (
-          <FieldHeaderRight onClick={toggleSelector}>
+          <FieldHeaderRight
+            onClick={toggleSelector}
+            onMouseEnter={() => (selectorId ? helper.highlight(selectorId) : null)}
+            onMouseLeave={() => (selectorId ? helper.clearHighlight(selectorId) : null)}
+          >
             <FieldHeaderIcon open={open}>{selectorLabel || t('Define region')}</FieldHeaderIcon>
           </FieldHeaderRight>
         ) : null}

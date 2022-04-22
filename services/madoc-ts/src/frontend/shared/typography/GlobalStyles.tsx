@@ -30,8 +30,8 @@ export const GlobalStyles = createGlobalStyle`
     flex-direction: column;
   }
   
-  .rfs-menu-container {
-    position: fixed;
-    max-width: 550px;
-  }
+  //.rfs-menu-container {
+  //  position: fixed;
+  //  max-width: 550px;
+  //}
 `;

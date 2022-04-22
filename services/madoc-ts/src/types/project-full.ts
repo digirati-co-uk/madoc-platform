@@ -1,5 +1,6 @@
 import { InternationalString } from '@hyperion-framework/types';
 import { ProjectTemplate, ProjectTemplateConfig } from '../extensions/projects/types';
+import { AnnotationStyles } from './annotation-styles';
 import { ProjectConfiguration } from './schemas/project-configuration';
 
 export type Project<Template extends ProjectTemplate = never> = {
@@ -10,6 +11,7 @@ export type Project<Template extends ProjectTemplate = never> = {
   task_id: string;
   label: InternationalString;
   summary: InternationalString;
+  style_id?: number | null;
   template?: Template['type'];
   template_config?: ProjectTemplateConfig<Template>;
   status: number;
@@ -27,4 +29,5 @@ export type ProjectFull<Template extends ProjectTemplate = never> = Project<Temp
     canvases: number;
   };
   config: Partial<ProjectConfiguration>;
+  annotationTheme?: AnnotationStyles['theme'] | null;
 };

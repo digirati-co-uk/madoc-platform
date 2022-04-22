@@ -346,7 +346,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                     field: {
                       type: newField.fieldType,
                       label: newField.term,
-                      value: newField.field.defaultValue,
+                      value: copy(newField.field.defaultValue),
                       selector: newField.selector
                         ? {
                             type: newField.selector.type,
