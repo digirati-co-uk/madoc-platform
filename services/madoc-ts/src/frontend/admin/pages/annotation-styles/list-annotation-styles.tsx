@@ -22,7 +22,11 @@ import { Button, ButtonRow } from '../../../shared/navigation/Button';
 import { serverRendererFor } from '../../../shared/plugins/external/server-renderer-for';
 import { HrefLink } from '../../../shared/utility/href-link';
 import { AdminHeader } from '../../molecules/AdminHeader';
-import { AnnotationStylePreview, AnnotationStylePreviewList } from '../../molecules/AnnotationStylePreview';
+import {
+  annotationBucketOrder,
+  AnnotationStylePreview,
+  AnnotationStylePreviewList,
+} from '../../molecules/AnnotationStylePreview';
 
 export function ListAnnotationStyles() {
   const { t } = useTranslation();
@@ -52,7 +56,7 @@ export function ListAnnotationStyles() {
                 <SystemName>{style.name}</SystemName>
                 <SystemDescription>
                   <AnnotationStylePreviewList>
-                    {Object.keys(style.theme).map(theme => {
+                    {annotationBucketOrder.map(theme => {
                       return (
                         <AnnotationStylePreview
                           key={theme}

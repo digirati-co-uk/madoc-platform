@@ -13,6 +13,11 @@ import { InputContainer, InputLabel } from '../../../shared/form/Input';
 import { useApi } from '../../../shared/hooks/use-api';
 import { ButtonRow, Button } from '../../../shared/navigation/Button';
 import { AdminHeader } from '../../molecules/AdminHeader';
+import {
+  annotationBucketOrder,
+  AnnotationStylePreview,
+  AnnotationStylePreviewList,
+} from '../../molecules/AnnotationStylePreview';
 
 function getDefaultStyles() {
   const defaultStyles = getDefaultAnnotationStyles();
@@ -137,7 +142,7 @@ export function CreateAnnotationStyle({ existing }: { existing?: AnnotationStyle
               <SystemMenuItem {...menu('contributedDocument')}>Document panel</SystemMenuItem>
               <SystemMenuItem {...menu('submissions')}>Submission panel</SystemMenuItem>
               <SystemMenuItem>
-                Current submission
+                <span {...menu('topLevel')}>Current submission</span>
                 <SystemMenu>
                   <SystemMenuItem {...menu('topLevel')}>Top level</SystemMenuItem>
                   <SystemMenuItem {...menu('currentLevel')}>Current level</SystemMenuItem>
@@ -153,6 +158,20 @@ export function CreateAnnotationStyle({ existing }: { existing?: AnnotationStyle
                 <InputLabel htmlFor="title">Title</InputLabel>
                 <TextField id="title" type="text-field" value={title} label="Title" updateValue={setTitle} />
               </InputContainer>
+
+              <AnnotationStylePreviewList style={{ marginTop: '1em' }}>
+                {annotationBucketOrder.map(theme => {
+                  return (
+                    <AnnotationStylePreview
+                      key={theme}
+                      title={theme}
+                      data={(newConfig as any)[theme] || {}}
+                      style={{ width: 50, height: 50 }}
+                      {...menu(theme)}
+                    />
+                  );
+                })}
+              </AnnotationStylePreviewList>
             </SystemListItem>
 
             <SystemListItem $block>

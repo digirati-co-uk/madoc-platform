@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { AnnotationStyles } from '../../../types/annotation-styles';
+import { AnnotationBuckets, AnnotationStyles } from '../../../types/annotation-styles';
 
 export const AnnotationStylePreviewList = styled.div`
   display: flex;
@@ -12,6 +12,17 @@ export const AnnotationStylePreview = styled.div<{ data: AnnotationStyles['theme
   outline: 1px solid #f9f9f9;
   ${props => toStyle(props.data)}
 `;
+
+export const annotationBucketOrder: AnnotationBuckets[] = [
+  'highlighted',
+  'contributedAnnotations',
+  'contributedDocument',
+  'submissions',
+  'topLevel',
+  'currentLevel',
+  'adjacent',
+  'hidden',
+];
 
 export function toStyle(style: any) {
   style.borderStyle = 'solid';

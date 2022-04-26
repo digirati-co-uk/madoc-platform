@@ -16,7 +16,12 @@ import { useApi } from '../../../../shared/hooks/use-api';
 import { useData } from '../../../../shared/hooks/use-data';
 import { EmptyState } from '../../../../shared/layout/EmptyState';
 import { Button } from '../../../../shared/navigation/Button';
-import { AnnotationStylePreview, AnnotationStylePreviewList } from '../../../molecules/AnnotationStylePreview';
+import { HrefLink } from '../../../../shared/utility/href-link';
+import {
+  annotationBucketOrder,
+  AnnotationStylePreview,
+  AnnotationStylePreviewList,
+} from '../../../molecules/AnnotationStylePreview';
 import { ListAnnotationStyles } from '../../annotation-styles/list-annotation-styles';
 
 export function ChooseAnnotationStyle(props: any) {
@@ -39,7 +44,7 @@ export function ChooseAnnotationStyle(props: any) {
               <SystemName>{style.name}</SystemName>
               <SystemDescription>
                 <AnnotationStylePreviewList>
-                  {Object.keys(style.theme).map(theme => {
+                  {annotationBucketOrder.map(theme => {
                     return (
                       <AnnotationStylePreview
                         key={theme}
@@ -60,6 +65,11 @@ export function ChooseAnnotationStyle(props: any) {
                   disabled={chooseStyleStatus.isLoading || style.id === props.styleId}
                 >
                   {style.id !== props.styleId ? t('Choose style') : t('This is the current style')}
+                </Button>
+              </SystemAction>
+              <SystemAction>
+                <Button as={HrefLink} href={`/site/annotation-styles/${style.id}`}>
+                  {t('Edit style')}
                 </Button>
               </SystemAction>
             </SystemActions>
