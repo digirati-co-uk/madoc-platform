@@ -3,6 +3,7 @@ import { ModelEditorConfig } from '../../frontend/admin/pages/crowdsourcing/mode
 import { ProjectStatusMap } from '../../frontend/shared/atoms/ProjectStatus';
 import { CaptureModel } from '../../frontend/shared/capture-models/types/capture-model';
 import { BaseField } from '../../frontend/shared/capture-models/types/field-types';
+import { RevisionRequest } from '../../frontend/shared/capture-models/types/revision-request';
 import { MadocTheme } from '../../frontend/themes/definitions/types';
 import { ApiClient } from '../../gateway/api';
 import { ProjectRow } from '../../types/projects';
@@ -41,7 +42,7 @@ export type JsonProjectTemplate = {
     // slots?: {
     //   immutable?: boolean;
     // };
-    activity: {
+    activity?: {
       noActivity?: boolean;
     };
   };
@@ -136,9 +137,18 @@ export type ProjectTemplate<
     onProjectStatus?: (status: number) => void | Promise<void>;
     onLoadRevision?: () => void | Promise<void>;
     beforeSaveRevision?: () => void | Promise<void>;
-    beforeCloneModel?: () => void | Promise<void>;
+    beforeCloneModel?: (opts: {
+      captureModel: CaptureModel;
+      api: ApiClient;
+      config: CustomConfig;
+    }) => void | Promise<void>;
     onSubmitRevision?: () => void | Promise<void>;
-    onRevisionApproved?: () => void | Promise<void>;
+    onRevisionApproved?: (opts: {
+      revision: RevisionRequest;
+      captureModel: CaptureModel;
+      api: ApiClient;
+      config: CustomConfig;
+    }) => void | Promise<void>;
     onRevisionRejected?: () => void | Promise<void>;
     onResourceComplete?: () => void | Promise<void>;
     onCreateReview?: () => void | Promise<void>;

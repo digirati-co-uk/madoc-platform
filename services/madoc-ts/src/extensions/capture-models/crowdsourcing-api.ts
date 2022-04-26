@@ -16,8 +16,9 @@ import { CrowdsourcingTask } from '../../gateway/tasks/crowdsourcing-task';
 import { CaptureModelSnippet } from '../../types/schemas/capture-model-snippet';
 import { ModelSearch } from '../../types/schemas/search';
 import { generateModelFields } from '../../utility/generate-model-fields';
-import { traverseStructure } from "../../utility/traverse-structure";
+import { traverseStructure } from '../../utility/traverse-structure';
 import { BaseExtension, defaultDispose, ExtensionManager } from '../extension-manager';
+import { ProjectTemplate } from '../projects/types';
 import { DynamicData } from './DynamicDataSources/types';
 import { CaptureModelExtension } from './extension';
 
@@ -191,19 +192,43 @@ export class CrowdsourcingApi implements BaseExtension {
     });
   }
 
-  async cloneCaptureModel(id: string, target: Array<{ id: string; type: string }>) {
+  async cloneCaptureModel(
+    id: string,
+    target: Array<{ id: string; type: string }>,
+    projectTemplate?: { template: ProjectTemplate; config: any }
+  ) {
     if (!this.extensions) {
       throw new Error('API must be enabled with extensions');
     }
 
+    const newModel = await this.api.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model/${id}/clone`, {
+      method: 'POST',
+      body: {
+        target,
+      },
+    });
+
+    if (
+      projectTemplate &&
+      projectTemplate.template &&
+      projectTemplate.template.hooks &&
+      projectTemplate.template.hooks.beforeCloneModel
+    ) {
+      try {
+        await projectTemplate.template.hooks.beforeCloneModel({
+          captureModel: newModel,
+          api: this.api,
+          config: projectTemplate.config,
+        });
+      } catch (e) {
+        console.log('claim error', e);
+        // no-op, let it continue.
+      }
+    }
+
     return this.extensions.dispatch<{ id: string } & CaptureModel, 'onCloneCaptureModel'>(
       'onCloneCaptureModel',
-      await this.api.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model/${id}/clone`, {
-        method: 'POST',
-        body: {
-          target,
-        },
-      })
+      newModel
     );
   }
 
@@ -371,13 +396,37 @@ export class CrowdsourcingApi implements BaseExtension {
     userTaskId,
     revisionRequest,
     statusText,
+    projectTemplate,
   }: {
     userTaskId: string;
     revisionRequest: RevisionRequest;
     statusText?: string;
+    projectTemplate?: { template: ProjectTemplate; config: any };
   }) {
     // Revision is marked as approved
-    await this.approveCaptureModelRevision(revisionRequest);
+    const approvedRequest = await this.approveCaptureModelRevision(revisionRequest);
+
+    // @todo this makes it so that only Admins can make these changes.
+    //   This should instead be an API call for a capture model hook or should
+    //   be called from the worker when a task is updated. That might be better.
+    if (
+      revisionRequest.captureModelId &&
+      projectTemplate &&
+      projectTemplate.template &&
+      projectTemplate.template.hooks &&
+      projectTemplate.template.hooks.onRevisionApproved
+    ) {
+      try {
+        await projectTemplate.template.hooks.onRevisionApproved({
+          api: this.api,
+          captureModel: await this.getCaptureModel(revisionRequest.captureModelId),
+          config: projectTemplate.config,
+          revision: approvedRequest,
+        });
+      } catch (e) {
+        console.log('Error reviewApproveSubmission', e);
+      }
+    }
 
     // Mark users task as approved.
     await this.api.updateTask<CrowdsourcingTask>(userTaskId, {
