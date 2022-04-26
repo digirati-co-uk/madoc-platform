@@ -1,7 +1,9 @@
 import React, { useCallback, useState } from 'react';
+import { ProjectFull } from '../../../../../types/project-full';
 import { Revisions } from '../../../../shared/capture-models/editor/stores/revisions/index';
 import { useTranslation } from 'react-i18next';
 import { useApi } from '../../../../shared/hooks/use-api';
+import { useSite } from '../../../../shared/hooks/use-site';
 import {
   EditorToolbarButton,
   EditorToolbarIcon,
@@ -17,7 +19,8 @@ export const ApproveSubmission: React.FC<{
   allUserTaskIds?: string[];
   allRevisionIds?: string[];
   reviewTaskId: string;
-}> = ({ userTaskId, allUserTaskIds, allRevisionIds, reviewTaskId, onApprove }) => {
+  project?: ProjectFull<any>;
+}> = ({ userTaskId, allUserTaskIds, allRevisionIds, reviewTaskId, onApprove, project }) => {
   const { acceptedRevision } = Revisions.useStoreState(state => {
     return {
       acceptedRevision: state.currentRevision,
@@ -25,6 +28,7 @@ export const ApproveSubmission: React.FC<{
   });
   const [loading, setIsLoading] = useState(false);
   const api = useApi();
+  const site = useSite();
   const { t } = useTranslation();
   const revisionIdsToRemove = allRevisionIds?.filter(id => id && id !== acceptedRevision?.revision.id);
   const userTaskIdsToRemove = allUserTaskIds?.filter(id => id && id !== userTaskId);
@@ -47,11 +51,21 @@ export const ApproveSubmission: React.FC<{
 
   const approveApiCall = useCallback(() => {
     if (acceptedRevision) {
+      const definition =
+        project && project.template ? api.projectTemplates.getDefinition(project.template, site.id) : null;
+
       setIsLoading(true);
       api
         .reviewApproveSubmission({
           revisionRequest: acceptedRevision,
           userTaskId,
+          projectTemplate:
+            definition && project
+              ? {
+                  template: definition,
+                  config: project.template_config,
+                }
+              : undefined,
         })
         .then(() => {
           setIsLoading(false);

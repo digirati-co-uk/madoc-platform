@@ -5,6 +5,7 @@ import { usePaginatedData } from '../../shared/hooks/use-data';
 import { useUser } from '../../shared/hooks/use-site';
 import { useSiteMetadataConfiguration } from '../../shared/hooks/use-site-metadata-configuration';
 import { useMetadataSuggestionConfiguration } from '../hooks/use-metadata-suggestion-configuration';
+import { useProjectShadowConfiguration } from '../hooks/use-project-shadow-configuration';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
 import { ManifestLoader } from '../pages/loaders/manifest-loader';
@@ -19,9 +20,12 @@ export const ManifestMetadata: React.FC<{ hidden?: boolean; compact?: boolean; s
   const { manifest } = useMetadataSuggestionConfiguration();
   const { resolvedData: data } = usePaginatedData(ManifestLoader, undefined, { enabled: !!manifestId && !hidden });
   const { data: metadataConfig } = useSiteMetadataConfiguration({ enabled: !hidden });
+  const { showCaptureModelOnManifest } = useProjectShadowConfiguration();
   const user = useUser();
   const canSuggest =
-    user && (user.scope.indexOf('models.contribute') !== -1 || user.scope.indexOf('site.admin') !== -1);
+    user &&
+    (user.scope.indexOf('models.contribute') !== -1 || user.scope.indexOf('site.admin') !== -1) &&
+    !showCaptureModelOnManifest;
 
   if (!data || !metadataConfig || hidden) {
     return null;

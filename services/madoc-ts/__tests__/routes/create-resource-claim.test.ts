@@ -39,7 +39,7 @@ describe('Create resource claim', () => {
   `;
 
   const projectModelQuery = sqlMock<{ task_id: string; capture_model_id: string }>`
-    select task_id, capture_model_id from iiif_project where site_id = $1 and id = $2
+    select task_id, capture_model_id, template_name, template_config from iiif_project where site_id = $1 and id = $2
   `;
 
   test('default settings - minimum test', async () => {
@@ -153,8 +153,12 @@ describe('Create resource claim', () => {
               "madoc-ts.status.3",
             ],
             "name": "Test manifest 1",
-            "parameters": Array [],
-            "state": Object {},
+            "parameters": Array [
+              false,
+            ],
+            "state": Object {
+              "approvalsRequired": 1,
+            },
             "status": 0,
             "status_text": "not started",
             "subject": "urn:madoc:manifest:2001",
@@ -656,8 +660,12 @@ describe('Create resource claim', () => {
               "madoc-ts.status.3",
             ],
             "name": "Test manifest 1",
-            "parameters": Array [],
-            "state": Object {},
+            "parameters": Array [
+              false,
+            ],
+            "state": Object {
+              "approvalsRequired": 1,
+            },
             "status": 0,
             "status_text": "not started",
             "subject": "urn:madoc:manifest:2001",

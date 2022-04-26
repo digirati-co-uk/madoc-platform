@@ -7,12 +7,20 @@ import { useApi } from '../../shared/hooks/use-api';
 import { useLoadedCaptureModel } from '../../shared/hooks/use-loaded-capture-model';
 import { useProjectByTask } from '../../shared/hooks/use-project-by-task';
 import { createLink } from '../../shared/utility/create-link';
+import { useProjectShadowConfiguration } from './use-project-shadow-configuration';
 import { useTaskMetadata } from './use-task-metadata';
 
 export function useCrowdsourcingTaskDetails(task: CrowdsourcingTask & { id: string }, parentTask?: BaseTask) {
   const project = useProjectByTask(task);
   const api = useApi();
-  const [{ captureModel, canvas }, modelStatus, refetchModel] = useLoadedCaptureModel(task.parameters[0] || undefined);
+  const [{ captureModel, canvas }, modelStatus, refetchModel] = useLoadedCaptureModel(
+    task.parameters[0] || undefined,
+    undefined,
+    undefined
+  );
+
+  // Split this hook.
+
   const { subject } = useTaskMetadata<{ subject?: SubjectSnippet }>(task);
 
   const date = new Date().getTime();
@@ -29,6 +37,7 @@ export function useCrowdsourcingTaskDetails(task: CrowdsourcingTask & { id: stri
     date - task.modified_at > task.state.warningTime;
   const changesRequested = task.status !== 3 && task.state?.changesRequested ? task.state?.changesRequested : undefined;
   const rejectedMessage = task.state?.rejectedMessage ? task.state?.rejectedMessage : undefined;
+  const { showCaptureModelOnManifest } = useProjectShadowConfiguration();
 
   const target = useMemo(() => {
     if (captureModel && captureModel.target && captureModel.target[0]) {
@@ -51,7 +60,7 @@ export function useCrowdsourcingTaskDetails(task: CrowdsourcingTask & { id: stri
         canvasId: canvasRef?.id,
         manifestId: manifest?.id,
         collectionId: collection?.id,
-        subRoute: canvasRef ? 'model' : undefined,
+        subRoute: canvasRef || showCaptureModelOnManifest ? 'model' : undefined,
         query: revisionId ? { revision: revisionId } : undefined,
       }),
       backLink: createLink({
@@ -61,7 +70,7 @@ export function useCrowdsourcingTaskDetails(task: CrowdsourcingTask & { id: stri
         collectionId: collection?.id,
       }),
     };
-  }, [revisionId, project, target]);
+  }, [target, project, showCaptureModelOnManifest, revisionId]);
 
   const modelId = task.parameters[0];
   const isCanvas =

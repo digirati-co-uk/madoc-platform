@@ -160,7 +160,8 @@ export const LocaleString: React.FC<{
   enableDangerouslySetInnerHTML?: boolean;
   children: InternationalString | null | undefined;
   style?: React.CSSProperties;
-}> = ({ as: Component, defaultText, enableDangerouslySetInnerHTML, children, ...props }) => {
+  extraProps?: any;
+} & Record<string, any>> = ({ as: Component, defaultText, enableDangerouslySetInnerHTML, children, ...props }) => {
   const [text, language] = useLocaleString(children, defaultText);
 
   if (language) {

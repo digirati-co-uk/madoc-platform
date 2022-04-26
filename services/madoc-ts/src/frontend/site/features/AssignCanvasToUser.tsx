@@ -11,7 +11,7 @@ import { useProjectCanvasTasks } from '../hooks/use-project-canvas-tasks';
 import { useRouteContext } from '../hooks/use-route-context';
 import { AssignManifestToUser } from './AssignManifestToUser';
 import { AssignTaskToUser } from './AssignUserToTask';
-import { PrepareCaptureModel } from './PrepareCaptureModel';
+import { PrepareCanvasCaptureModel } from './PrepareCanvasCaptureModel';
 import { useSiteConfiguration } from './SiteConfigurationContext';
 
 export const AssignCanvasToUser: React.FC = () => {
@@ -62,7 +62,7 @@ export const AssignCanvasToUser: React.FC = () => {
             }}
           />
         ) : (
-          <PrepareCaptureModel />
+          <PrepareCanvasCaptureModel />
         )
       }
     >

@@ -36,8 +36,9 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task,
     changesRequested,
     rejectedMessage,
   } = useCrowdsourcingTaskDetails(task, parentTask);
+  const showCaptureModelOnManifest = project?.config.shadow?.showCaptureModelOnManifest;
 
-  if (!isCanvas) {
+  if (!isCanvas && !showCaptureModelOnManifest) {
     return (
       <CrowdsourcingTaskManifest
         task={parentTask ? parentTask : task}

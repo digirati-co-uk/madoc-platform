@@ -1,7 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ErrorMessage } from '../../shared/callouts/ErrorMessage';
+import { InfoMessage } from '../../shared/callouts/InfoMessage';
+import { Spinner } from '../../shared/icons/Spinner';
 import { usePreparedCanvasModel } from '../hooks/use-prepared-canvas-model';
+import { usePreparedManifestModel } from '../hooks/use-prepared-manifest-model';
 
 /**
  * Prepare Capture Model
@@ -12,8 +15,9 @@ import { usePreparedCanvasModel } from '../hooks/use-prepared-canvas-model';
  *
  * If the user is assigned this task, it will always be auto-prepared.
  */
-export const PrepareCaptureModel: React.FC = () => {
-  const { isPreparing, hasExpired } = usePreparedCanvasModel();
+export function PrepareManifestsCaptureModel() {
+  const { isPreparing, hasExpired } = usePreparedManifestModel();
+
   const { t } = useTranslation();
 
   if (hasExpired) {
@@ -23,13 +27,13 @@ export const PrepareCaptureModel: React.FC = () => {
   if (isPreparing) {
     // This is causing a reflow issue that can't currently be resolved.
     // Related bug: https://github.com/pmndrs/react-use-measure/issues/9
-    // return (
-    //   <InfoMessage>
-    //     <Spinner style={{ marginRight: 10 }} /> {t('Preparing this image')}
-    //   </InfoMessage>
-    // );
+    return (
+      <InfoMessage $banner>
+        <Spinner style={{ marginRight: 10 }} /> {t('Preparing this manifest')}
+      </InfoMessage>
+    );
     return null;
   }
 
   return null;
-};
+}

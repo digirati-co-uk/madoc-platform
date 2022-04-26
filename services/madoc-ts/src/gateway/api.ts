@@ -1,3 +1,4 @@
+import invariant from 'tiny-invariant';
 import {
   ActivityOptions,
   ActivityOrderedCollection,
@@ -42,6 +43,7 @@ import { ProjectConfiguration } from '../types/schemas/project-configuration';
 import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/search';
 import { SearchIndexable } from '../utility/capture-model-to-indexables';
 import { NotFound } from '../utility/errors/not-found';
+import { parseUrn } from '../utility/parse-urn';
 import { ApiRequest } from './api-definitions/_meta';
 import { fetchJson } from './fetch-json';
 import { BaseTask } from './tasks/base-task';
@@ -75,7 +77,7 @@ import { CrowdsourcingCanvasTask } from './tasks/crowdsourcing-canvas-task';
 import { ConfigResponse } from '../types/schemas/config-response';
 import { ResourceLinkRow } from '../database/queries/linking-queries';
 import { SearchIndexTask } from './tasks/search-index-task';
-import { JsonProjectTemplate } from '../extensions/projects/types';
+import { JsonProjectTemplate, ProjectTemplate } from '../extensions/projects/types';
 import { ApiKey } from '../types/api-key';
 
 export type ApiClientWithoutExtensions = Omit<
@@ -934,6 +936,19 @@ export class ApiClient {
     });
   }
 
+  async getManifestByCaptureModel(captureModel: CaptureModel, page = 0, excluded?: number[]) {
+    const target = captureModel.target?.find(t => t.type.toLowerCase() === 'manifest');
+
+    invariant(captureModel.id, 'Missing capture model id');
+    invariant(target, 'Missing target on model');
+
+    const manifestUrn = parseUrn(target.id);
+
+    invariant(manifestUrn, 'Missing or invalid manifest ID');
+
+    return this.getManifestById(manifestUrn.id, page, excluded);
+  }
+
   async getManifestById(id: number, page = 0, excluded?: number[]) {
     const query = page || excluded ? `?${stringify({ page, excluded }, { arrayFormat: 'comma' })}` : '';
     return this.request<ManifestFull>(`/api/madoc/iiif/manifests/${id}${query}`);
@@ -1211,8 +1226,12 @@ export class ApiClient {
   /**
    * @deprecated use api.crowdsourcing.cloneCaptureModel() instead
    */
-  async cloneCaptureModel(id: string, target: Array<{ id: string; type: string }>) {
-    return this.crowdsourcing.cloneCaptureModel(id, target);
+  async cloneCaptureModel(
+    id: string,
+    target: Array<{ id: string; type: string }>,
+    template?: { template: ProjectTemplate; config: any }
+  ) {
+    return this.crowdsourcing.cloneCaptureModel(id, target, template);
   }
 
   /**
@@ -1291,6 +1310,7 @@ export class ApiClient {
     userTaskId: string;
     revisionRequest: RevisionRequest;
     statusText?: string;
+    projectTemplate?: { template: ProjectTemplate; config: any };
   }) {
     return this.crowdsourcing.reviewApproveSubmission(options);
   }
@@ -2045,6 +2065,12 @@ export class ApiClient {
 
   async getSiteProjectCanvasModel(projectId: string | number, canvasId: number) {
     return this.publicRequest<{ model?: CaptureModel }>(`/madoc/api/projects/${projectId}/canvas-models/${canvasId}`);
+  }
+
+  async getSiteProjectManifestModel(projectId: string | number, manifestId: number) {
+    return this.publicRequest<{ model?: CaptureModel }>(
+      `/madoc/api/projects/${projectId}/manifest-models/${manifestId}`
+    );
   }
 
   async getSiteConfiguration(query?: import('../routes/site/site-configuration').SiteConfigurationQuery) {

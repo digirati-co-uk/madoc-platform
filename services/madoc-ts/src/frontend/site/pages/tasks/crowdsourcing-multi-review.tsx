@@ -1,6 +1,6 @@
 import React, { Suspense, useCallback, useMemo } from 'react';
 import { CrowdsourcingReview } from '../../../../gateway/tasks/crowdsourcing-review';
-import { extractIdFromUrn } from '../../../../utility/parse-urn';
+import { extractIdFromUrn, parseUrn } from '../../../../utility/parse-urn';
 import { useProjectByTask } from '../../../shared/hooks/use-project-by-task';
 import { Breadcrumbs } from '../../../shared/navigation/Breadcrumbs';
 import {
@@ -25,10 +25,11 @@ import { useApiTaskSearch } from '../../../shared/hooks/use-api-task-search';
 import { createLink } from '../../../shared/utility/create-link';
 import { useLocationQuery } from '../../../shared/hooks/use-location-query';
 import { HrefLink } from '../../../shared/utility/href-link';
-import { useReviewConfiguration } from '../../hooks/use-review-configuration';
 import { PreviewCrowdsourcingTask } from './preview-crowdsourcing-task.lazy';
 import { MergeCrowdsourcingTask } from './merge-crowdsourcing-task.lazy';
 import { WarningMessage } from '../../../shared/callouts/WarningMessage';
+import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
+import { PreviewManifestCrowdsourcingTask } from './preview-manifest-crowdsourcing-task';
 
 export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; refetch?: () => Promise<void> }> = ({
   task: reviewTask,
@@ -157,6 +158,36 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
   const allTaskIds = ready.map(task => task.id as string);
 
   if (previewTask) {
+    const subject = parseUrn(previewTask.subject);
+
+    if (!subject) {
+      return <ErrorMessage $banner>Invalid task</ErrorMessage>;
+    }
+
+    const goBack = async (opt: any) => {
+      if (opt?.refresh && refetch) {
+        await refreshAll();
+      }
+      const rev = opt?.revisionId;
+      history.push(
+        createLink({ projectId: slug, taskId: reviewTask.id, query: rev ? { preview: rev, ...query } : query })
+      );
+    };
+
+    if (subject.type === 'manifest') {
+      return (
+        <PreviewManifestCrowdsourcingTask
+          allTaskIds={allTaskIds}
+          lockedTasks={lockedTasks}
+          allRevisionIds={allRevisionIds}
+          allTasks={ready}
+          task={previewTask as any}
+          goBack={goBack}
+          reviewTaskId={reviewTask.id as string}
+        />
+      );
+    }
+
     return (
       <>
         {header}
@@ -167,15 +198,7 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
             allRevisionIds={allRevisionIds}
             allTasks={ready}
             task={previewTask as any}
-            goBack={async opt => {
-              if (opt?.refresh && refetch) {
-                await refreshAll();
-              }
-              const rev = opt?.revisionId;
-              history.push(
-                createLink({ projectId: slug, taskId: reviewTask.id, query: rev ? { preview: rev, ...query } : query })
-              );
-            }}
+            goBack={goBack}
             reviewTaskId={reviewTask.id as string}
           />
         </Suspense>

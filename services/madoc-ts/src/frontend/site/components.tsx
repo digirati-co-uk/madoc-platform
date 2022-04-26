@@ -5,6 +5,7 @@ export { ManifestLoader } from './pages/loaders/manifest-loader';
 export { CanvasLoader } from './pages/loaders/canvas-loader';
 export { ViewCollection } from './pages/view-collection';
 export { ViewManifest } from './pages/view-manifest';
+export { ViewManifestModel } from './pages/view-manifest-model';
 export { ViewCanvas } from './pages/view-canvas';
 export { AllProjects } from './pages/all-projects';
 export { ProjectLoader } from './pages/loaders/project-loader';

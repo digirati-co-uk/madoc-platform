@@ -12,6 +12,7 @@ import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useContinueSubmission } from '../hooks/use-continue-submission';
 import { useManifestTask } from '../hooks/use-manifest-task';
 import { useProject } from '../hooks/use-project';
+import { useProjectShadowConfiguration } from '../hooks/use-project-shadow-configuration';
 import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
@@ -30,8 +31,9 @@ export const ContinueCanvasSubmission: React.FC = () => {
   const { data: project } = useProject();
   const user = useUser();
   const { isPreparing, isActive } = useProjectStatus();
+  const { showCaptureModelOnManifest } = useProjectShadowConfiguration();
 
-  if (!projectId || (!isActive && !isPreparing)) {
+  if (!projectId || (!isActive && !isPreparing) || showCaptureModelOnManifest) {
     return null;
   }
 

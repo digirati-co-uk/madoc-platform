@@ -96,6 +96,7 @@ import { updateCuratedFeed } from './routes/projects/update-curated-feed';
 import { updateProjectNote } from './routes/projects/update-project-note';
 import { fullReindex } from './routes/search/full-reindex';
 import { siteCanvasSource } from './routes/site/site-canvas-reference';
+import { siteManifestModels } from './routes/site/site-manifest-models';
 import { siteMetadata } from './routes/site/site-metadata';
 import { siteModelConfiguration } from './routes/site/site-model-configuration';
 import { sitePageNavigation } from './routes/site/site-page-navigation';
@@ -574,6 +575,11 @@ export const router = new TypedRouter({
     TypedRouter.GET,
     '/s/:slug/madoc/api/projects/:projectSlug/canvas-models/:canvasId',
     siteCanvasModels,
+  ],
+  'site-manifest-models': [
+    TypedRouter.GET,
+    '/s/:slug/madoc/api/projects/:projectSlug/manifest-models/:manifestId',
+    siteManifestModels,
   ],
   'site-canvas-source': [TypedRouter.GET, '/s/:slug/madoc/api/canvas-source', siteCanvasSource],
   'site-canvas-tasks': [

@@ -1,18 +1,22 @@
-import { Runtime } from '@atlas-viewer/atlas';
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
+import React, { useRef, useState } from 'react';
 import { ThemeProvider } from 'styled-components';
+import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
+import { MetadataEmptyState } from '../../../shared/atoms/MetadataConfiguration';
 import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
+import { WarningMessage } from '../../../shared/callouts/WarningMessage';
 import { defaultTheme } from '../../../shared/capture-models/editor/themes';
 import { DirectEditButton } from '../../../shared/capture-models/new/components/DirectEditButton';
 import { EditorSlots } from '../../../shared/capture-models/new/components/EditorSlots';
 import { RevisionProviderWithFeatures } from '../../../shared/capture-models/new/components/RevisionProviderWithFeatures';
-import { EditorContentViewer } from '../../../shared/capture-models/new/EditorContent';
-import { HomeIcon } from '../../../shared/icons/HomeIcon';
-import { MinusIcon } from '../../../shared/icons/MinusIcon';
-import { PlusIcon } from '../../../shared/icons/PlusIcon';
-import { Button } from '../../../shared/navigation/Button';
+import { apiHooks } from '../../../shared/hooks/use-api-query';
+import { useApiTask } from '../../../shared/hooks/use-api-task';
+import { ArrowBackIcon } from '../../../shared/icons/ArrowBackIcon';
+import { EditIcon } from '../../../shared/icons/EditIcon';
+import { FullScreenEnterIcon } from '../../../shared/icons/FullScreenEnterIcon';
+import { FullScreenExitIcon } from '../../../shared/icons/FullScreenExitIcon';
+import { PreviewIcon } from '../../../shared/icons/PreviewIcon';
+import { EmptyState } from '../../../shared/layout/EmptyState';
+import { MaximiseWindow } from '../../../shared/layout/MaximiseWindow';
 import {
   EditorToolbarButton,
   EditorToolbarContainer,
@@ -21,92 +25,37 @@ import {
   EditorToolbarSpacer,
   EditorToolbarTitle,
 } from '../../../shared/navigation/EditorToolbar';
-import { useApiTask } from '../../../shared/hooks/use-api-task';
-import { ArrowBackIcon } from '../../../shared/icons/ArrowBackIcon';
-import { EditIcon } from '../../../shared/icons/EditIcon';
-import { FullScreenExitIcon } from '../../../shared/icons/FullScreenExitIcon';
-import { FullScreenEnterIcon } from '../../../shared/icons/FullScreenEnterIcon';
-import { MaximiseWindow } from '../../../shared/layout/MaximiseWindow';
-import { PreviewIcon } from '../../../shared/icons/PreviewIcon';
-import { useLoadedCaptureModel } from '../../../shared/hooks/use-loaded-capture-model';
-import { WarningMessage } from '../../../shared/callouts/WarningMessage';
 import {
-  CanvasViewerButton,
-  CanvasViewerControls,
   CanvasViewerEditorStyleReset,
   CanvasViewerGrid,
   CanvasViewerGridContent,
   CanvasViewerGridSidebar,
 } from '../../features/CanvasViewerGrid';
 import { useCrowdsourcingTaskDetails } from '../../hooks/use-crowdsourcing-task-details';
-import { useReviewConfiguration } from '../../hooks/use-review-configuration';
-import { RequestChanges } from './actions/request-changes';
 import { ApproveSubmission } from './actions/approve-submission';
 import { RejectSubmission } from './actions/reject-submission';
-import { StartMerge } from './actions/start-merge';
-import { EmptyState } from '../../../shared/layout/EmptyState';
+import { RequestChanges } from './actions/request-changes';
 
-const PreviewCrowdsourcingTask: React.FC<{
+export function PreviewManifestCrowdsourcingTask(props: {
   task: CrowdsourcingTask & { id: string };
   reviewTaskId: string;
   allRevisionIds: string[];
   allTaskIds: string[];
   lockedTasks?: string[];
   allTasks: Array<CrowdsourcingTask>;
-  goBack: (props?: { refresh?: boolean; revisionId?: string }) => void | Promise<void>;
-}> = props => {
+  goBack: (p?: { refresh?: boolean; revisionId?: string }) => void | Promise<void>;
+}) {
   const [isEditing, setIsEditing] = useState(false);
   const { data: taskData } = useApiTask<CrowdsourcingTask>(props.task.id);
-  const { captureModel, canvas, project, modelStatus } = useCrowdsourcingTaskDetails(props.task);
-  const { t } = useTranslation();
   const gridRef = useRef<any>();
-  const runtime = useRef<Runtime>();
-  const config = useReviewConfiguration();
-  const [height, setHeight] = useState(600);
+  const { captureModel, project, modelStatus } = useCrowdsourcingTaskDetails(props.task);
   const isLocked = props.lockedTasks && props.lockedTasks.indexOf(props.task.id) !== -1;
   const isDone = taskData?.status === 3;
-
-  const goHome = () => {
-    if (runtime.current) {
-      runtime.current.world.goHome();
-    }
-  };
-
-  const zoomIn = () => {
-    if (runtime.current) {
-      runtime.current.world.zoomIn();
-    }
-  };
-
-  const zoomOut = () => {
-    if (runtime.current) {
-      runtime.current.world.zoomOut();
-    }
-  };
-
-  const resize = useCallback(() => {
-    if (gridRef.current) {
-      const bounds = gridRef.current.getBoundingClientRect();
-      if (bounds.height) {
-        setHeight(bounds.height);
-      }
-    }
-  }, []);
-
-  useLayoutEffect(() => {
-    resize();
-    if (window) {
-      window.addEventListener('resize', resize);
-      return () => {
-        window.removeEventListener('resize', resize);
-      };
-    }
-  }, [resize, captureModel]);
 
   return (
     <ThemeProvider theme={defaultTheme}>
       {isLocked ? <WarningMessage>This task is locked, there is a merge in progress</WarningMessage> : null}
-      <MaximiseWindow onChange={resize}>
+      <MaximiseWindow>
         {({ toggle, isOpen }) =>
           captureModel ? (
             <RevisionProviderWithFeatures
@@ -155,15 +104,6 @@ const PreviewCrowdsourcingTask: React.FC<{
                       onRequest={() => props.goBack({ refresh: true })}
                     />
 
-                    {config.allowMerging ? (
-                      <StartMerge
-                        allTasks={props.allTasks as any}
-                        reviewTaskId={props.reviewTaskId}
-                        userTask={props.task}
-                        onStartMerge={(revId: string) => props.goBack({ refresh: true, revisionId: revId })}
-                      />
-                    ) : null}
-
                     <ApproveSubmission
                       project={project}
                       userTaskId={props.task.id}
@@ -182,27 +122,7 @@ const PreviewCrowdsourcingTask: React.FC<{
 
               <CanvasViewerGrid ref={gridRef}>
                 <CanvasViewerGridContent>
-                  {canvas ? (
-                    <EditorContentViewer
-                      height={height}
-                      canvasId={canvas.id}
-                      onCreated={rt => {
-                        return ((runtime as any).current = rt.runtime);
-                      }}
-                    />
-                  ) : null}
-
-                  <CanvasViewerControls>
-                    <CanvasViewerButton onClick={goHome}>
-                      <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
-                    </CanvasViewerButton>
-                    <CanvasViewerButton onClick={zoomOut}>
-                      <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
-                    </CanvasViewerButton>
-                    <CanvasViewerButton onClick={zoomIn}>
-                      <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
-                    </CanvasViewerButton>
-                  </CanvasViewerControls>
+                  <MetadataEmptyState>No preview</MetadataEmptyState>
                 </CanvasViewerGridContent>
                 <CanvasViewerGridSidebar>
                   <CanvasViewerEditorStyleReset>
@@ -235,6 +155,4 @@ const PreviewCrowdsourcingTask: React.FC<{
       </MaximiseWindow>
     </ThemeProvider>
   );
-};
-
-export default PreviewCrowdsourcingTask;
+}

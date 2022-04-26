@@ -6,6 +6,7 @@ import { Button, ButtonRow } from '../../shared/navigation/Button';
 import { useUser } from '../../shared/hooks/use-site';
 import { useProject } from '../hooks/use-project';
 import { useProjectPageConfiguration } from '../hooks/use-project-page-configuration';
+import { useProjectShadowConfiguration } from '../hooks/use-project-shadow-configuration';
 import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { GoToRandomCanvas } from './GoToRandomCanvas';
@@ -24,6 +25,7 @@ export const ProjectActions: React.FC = () => {
   const isAdmin = user && user.scope && user.scope.indexOf('site.admin') !== -1;
   const isReviewer = isAdmin || (user && user.scope && user.scope.indexOf('tasks.create') !== -1);
   const options = useProjectPageConfiguration();
+  const { showCaptureModelOnManifest } = useProjectShadowConfiguration();
 
   if (!project) {
     return null;
@@ -32,8 +34,14 @@ export const ProjectActions: React.FC = () => {
   return (
     <div>
       {!options.hideStartContributing && isActive ? (
-        claimGranularity === 'manifest' ? (
-          <GoToRandomManifest $primary $large label={{ none: [t('Start contributing')] }} navigateToModel />
+        claimGranularity === 'manifest' || showCaptureModelOnManifest ? (
+          <GoToRandomManifest
+            $primary
+            $large
+            label={{ none: [t('Start contributing')] }}
+            navigateToModel
+            manifestModel={showCaptureModelOnManifest}
+          />
         ) : (
           <GoToRandomCanvas $primary $large label={{ none: [t('Start contributing')] }} navigateToModel />
         )

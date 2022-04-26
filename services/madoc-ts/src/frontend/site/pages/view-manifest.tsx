@@ -1,10 +1,4 @@
 import React from 'react';
-import { CrowdsourcingManifestTask } from '../../../gateway/tasks/crowdsourcing-manifest-task';
-import { CrowdsourcingReview } from '../../../gateway/tasks/crowdsourcing-review';
-import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
-import { CollectionFull } from '../../../types/schemas/collection-full';
-import { ManifestFull } from '../../../types/schemas/manifest-full';
-import { ProjectFull } from '../../../types/project-full';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { Slot } from '../../shared/page-blocks/slot';
@@ -22,17 +16,7 @@ import { useRelativeLinks } from '../hooks/use-relative-links';
 import { Redirect } from 'react-router-dom';
 import '../features/ManifestHero';
 
-export const ViewManifest: React.FC<{
-  project?: ProjectFull;
-  collection?: CollectionFull['collection'];
-  manifest?: ManifestFull['manifest'];
-  pagination?: ManifestFull['pagination'];
-  manifestSubjects?: ManifestFull['subjects'];
-  manifestTask?: CrowdsourcingManifestTask | CrowdsourcingTask;
-  manifestUserTasks?: Array<CrowdsourcingTask | CrowdsourcingReview>;
-  canUserSubmit?: boolean;
-  refetch: () => Promise<any>;
-}> = () => {
+export function ViewManifest() {
   const { data } = useManifest();
   const manifest = data?.manifest;
   const createLink = useRelativeLinks();
@@ -98,4 +82,4 @@ export const ViewManifest: React.FC<{
       </Slot>
     </>
   );
-};
+}

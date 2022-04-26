@@ -7,6 +7,7 @@ import { IIIFDragIcon } from '../../shared/components/IIIFDragIcon';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useManifestPageConfiguration } from '../hooks/use-manifest-page-configuration';
 import { useManifestTask } from '../hooks/use-manifest-task';
+import { useProjectShadowConfiguration } from '../hooks/use-project-shadow-configuration';
 import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { AssignManifestToUser } from './AssignManifestToUser';
@@ -26,6 +27,7 @@ export const ManifestActions: React.FC = () => {
   const {
     project: { claimGranularity, manifestPageOptions },
   } = useSiteConfiguration();
+  const { showCaptureModelOnManifest } = useProjectShadowConfiguration();
   const {
     isManifestComplete,
     userManifestTask,
@@ -53,7 +55,11 @@ export const ManifestActions: React.FC = () => {
     <>
       {showButton ? (
         <ButtonRow>
-          {claimGranularity === 'manifest' ? (
+          {showCaptureModelOnManifest ? (
+            <Button as={HrefLink} href={createLink({ subRoute: 'model' })} $primary $large>
+              {userManifestTask && done.length ? t('View submission') : t('Start contributing')}
+            </Button>
+          ) : claimGranularity === 'manifest' ? (
             <GoToFirstCanvas $primary $large navigateToModel>
               {userManifestTask && done.length ? t('View submission') : t('Start contributing')}
             </GoToFirstCanvas>
@@ -81,9 +87,11 @@ export const ManifestActions: React.FC = () => {
           </Button>
         ) : null}
         {!options.hideRandomCanvas ? <GoToRandomCanvas /> : null}
-        {(isActive || isPreparing) && !options.hideFilterImages ? <ManifestItemFilter /> : null}
+        {(isActive || isPreparing) && !options.hideFilterImages && !showCaptureModelOnManifest ? (
+          <ManifestItemFilter />
+        ) : null}
         <ManifestTaskProgress />
-        <AssignManifestToUser />
+        {!showCaptureModelOnManifest ? <AssignManifestToUser /> : null}
       </ButtonRow>
     </>
   );

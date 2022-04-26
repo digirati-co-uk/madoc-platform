@@ -93,4 +93,9 @@ export type ProjectConfiguration = {
     collection?: boolean;
     canvas?: boolean;
   };
+
+  // Configuration that's not available from the editor.
+  shadow?: {
+    showCaptureModelOnManifest?: boolean;
+  };
 };

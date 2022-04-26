@@ -1,5 +1,4 @@
 import { CreateRouteType } from '../types';
-import { MySites } from './pages/dashboard/my-sites';
 
 type BaseRouteComponents = typeof import('./components');
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -329,6 +328,11 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
                   component: components.ViewManifestMirador,
                 },
                 {
+                  path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/model',
+                  exact: true,
+                  component: components.ViewManifestModel,
+                },
+                {
                   path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/uv',
                   exact: true,
                   component: components.ViewManifestUV,
@@ -426,6 +430,11 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
               path: '/projects/:slug/manifests/:manifestId/mirador',
               exact: true,
               component: components.ViewManifestMirador,
+            },
+            {
+              path: '/projects/:slug/manifests/:manifestId/model',
+              exact: true,
+              component: components.ViewManifestModel,
             },
             {
               path: '/projects/:slug/manifests/:manifestId/c/:canvasId',

@@ -56,6 +56,22 @@ type SlotProviderProps = {
   beforeCreateSlot?: (slotReq: CreateSlotRequest) => void | Promise<void>;
 };
 
+export const CustomRouteContext: React.FC<{ ctx: Partial<EditorialContext> }> = ({ ctx, children }) => {
+  const slots = useSlots();
+
+  const newContext = useMemo(() => {
+    return {
+      ...slots,
+      context: {
+        ...slots.context,
+        ...(ctx || {}),
+      },
+    };
+  }, [ctx, slots]);
+
+  return <SlotReactContext.Provider value={newContext}>{children}</SlotReactContext.Provider>;
+};
+
 export const SlotProvider: React.FC<SlotProviderProps> = props => {
   const existing = useSlots();
 
