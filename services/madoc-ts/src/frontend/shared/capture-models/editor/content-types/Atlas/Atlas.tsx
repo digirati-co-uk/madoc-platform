@@ -20,6 +20,7 @@ export type AtlasCustomOptions = {
   customFetcher?: <T>(url: string, options: T) => unknown | Promise<unknown>;
   onCreateAtlas?: (preset: Preset) => void;
   controllerConfig?: PopmotionControllerConfig;
+  backgroundColor?: string;
 };
 
 export interface AtlasViewerProps extends BaseContent {
@@ -116,7 +117,8 @@ export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
     return null;
   }
 
-  const { height = 500, width = '100%', maxHeight, maxWidth } = props.options || { height: 500 };
+  const { height = 500, width = '100%', maxHeight, maxWidth, custom = {} } = props.options || { height: 500 };
+  const { backgroundColor } = custom;
 
   return (
     <div
@@ -135,7 +137,7 @@ export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
         {`
         .atlas-container {
           --atlas-container-flex: 1 1 0px;
-          --atlas-background: #f9f9f9;
+          --atlas-background: ${backgroundColor || '#f9f9f9'};
         }
         `}
       </style>

@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enabled new project template hook: `beforeCloneModel`
 - Enabled new project template hook: `onRevisionApproved`
 - Added support for Manifest capture models (only through project templates)
+- Added configuration for background
 
 ### Fixed
 - Regression with dropdown (reverts fix for overflow bug in popup)

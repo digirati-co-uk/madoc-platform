@@ -157,6 +157,13 @@ export const siteConfigurationModel: {
     type: 'checkbox-field',
     inlineLabel: 'Use UniversalViewer in place of the default viewer',
   },
+  atlasBackground: {
+    label: 'Atlas background',
+    type: 'color-field',
+    description: 'Change the background of the deep zoom viewer',
+    defaultValue: '#f9f9f9',
+  },
+
   contributionMode: {
     label: 'Contribution mode',
     description: 'This changes many aspects of how contributions work. (default = annotation)',

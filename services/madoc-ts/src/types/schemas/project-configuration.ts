@@ -27,6 +27,7 @@ export type ProjectConfiguration = {
   miradorCanvasPage?: boolean;
   universalViewerCanvasPage?: boolean;
   contributionMode?: 'transcription' | 'annotation';
+  atlasBackground?: string;
   // New search options - need to migrate others to this.
   searchOptions?: {
     nonLatinFulltext?: boolean;
