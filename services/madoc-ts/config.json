@@ -35,6 +35,7 @@
     "longExpiryTime": "1440",
     "modelPageShowAnnotations": "when-open",
     "modelPageShowDocument":"when-open",
+    "atlasBackground": "#f9f9f9",
     "canvasPageShowAnnotations": "when-open",
     "canvasPageShowDocument":"when-open",
     "reviewOptions": {

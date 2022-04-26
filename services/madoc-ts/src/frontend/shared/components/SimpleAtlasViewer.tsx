@@ -4,6 +4,7 @@ import { AtlasAuto, RegionHighlight, Runtime } from '@atlas-viewer/atlas';
 import { useCanvas, useImageService } from '@hyperion-framework/react-vault';
 import { useTranslation } from 'react-i18next';
 import { CanvasViewerButton, CanvasViewerControls } from '../../site/features/CanvasViewerGrid';
+import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
 import { HomeIcon } from '../icons/HomeIcon';
 import { MinusIcon } from '../icons/MinusIcon';
 import { PlusIcon } from '../icons/PlusIcon';
@@ -25,6 +26,7 @@ export const SimpleAtlasViewer = React.forwardRef<
   const canvas = useCanvas();
   const runtime = useRef<Runtime>();
   const { data: service } = useImageService();
+  const { project: { atlasBackground } } = useSiteConfiguration();
   const [isLoaded, setIsLoaded] = useState(false);
   const readOnlyAnnotations = useReadOnlyAnnotations(false);
 
@@ -71,7 +73,7 @@ export const SimpleAtlasViewer = React.forwardRef<
         {`
         .atlas-container {
           --atlas-container-flex: 1 1 0px;
-          --atlas-background: #f9f9f9;
+          --atlas-background:  ${style.backgroundColor || atlasBackground || '#f9f9f9'};
         }
         `}
       </style>
