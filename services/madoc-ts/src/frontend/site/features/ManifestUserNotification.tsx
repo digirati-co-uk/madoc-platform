@@ -11,6 +11,7 @@ import { useApi } from '../../shared/hooks/use-api';
 import { useData } from '../../shared/hooks/use-data';
 import { useUser } from '../../shared/hooks/use-site';
 import { useManifestTask } from '../hooks/use-manifest-task';
+import { useProjectShadowConfiguration } from '../hooks/use-project-shadow-configuration';
 import { useProjectStatus } from '../hooks/use-project-status';
 import { useRouteContext } from '../hooks/use-route-context';
 import { ManifestLoader } from '../pages/loaders/manifest-loader';
@@ -29,6 +30,7 @@ export const ManifestUserNotification: React.FC = () => {
     filteredTasks,
     hasExpired,
   } = useManifestTask();
+  const { showCaptureModelOnManifest } = useProjectShadowConfiguration();
   const { inProgress, done, inReview } = filteredTasks;
   const { isActive } = useProjectStatus();
   const { t } = useTranslation();
@@ -85,7 +87,7 @@ export const ManifestUserNotification: React.FC = () => {
     return (
       <InfoMessage>
         {t('You are currently working on this manifest')}{' '}
-        {config.project.contributionMode !== 'transcription' ? (
+        {config.project.contributionMode !== 'transcription' && !showCaptureModelOnManifest ? (
           <Button onClick={() => onSubmitForReview(inProgressTask.id as string)} style={{ marginLeft: 10 }}>
             {t('Submit for review')}
           </Button>

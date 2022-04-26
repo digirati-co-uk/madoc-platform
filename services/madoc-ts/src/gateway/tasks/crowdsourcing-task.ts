@@ -157,6 +157,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       break;
     }
     case 'status.2': {
+      console.log('crowdsourcing-task.status.2');
       try {
         const task = await api.getTask<CrowdsourcingTask>(taskId);
 
@@ -167,7 +168,9 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
             if (project) {
               // We have the ful project here.
               const manifestClaims = project.config.claimGranularity === 'manifest';
-              if (manifestClaims) {
+              const onlyManifest = project.config.shadow?.showCaptureModelOnManifest || false;
+
+              if (manifestClaims && !onlyManifest) {
                 const manifestTasks = await api.getTasks(0, {
                   subject: task.subject_parent,
                   root_task_id: task.root_task,
@@ -225,6 +228,8 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
                 } else {
                   console.log('real manifest task not found');
                 }
+              } else if (onlyManifest) {
+                // @todo At this point we are editing a manifest task, maybe?
               } else {
                 console.log('manifest claim not valid');
               }

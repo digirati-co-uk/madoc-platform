@@ -12,9 +12,10 @@ import { useRouteContext } from '../hooks/use-route-context';
 export const GoToRandomManifest: React.FC<{
   label?: InternationalString;
   navigateToModel?: boolean;
+  manifestModel?: boolean;
   $primary?: boolean;
   $large?: boolean;
-}> = ({ label, $large, navigateToModel, $primary }) => {
+}> = ({ label, $large, navigateToModel, manifestModel, $primary }) => {
   const { projectId } = useRouteContext();
   const { t } = useTranslation();
   const history = useHistory();
@@ -38,7 +39,8 @@ export const GoToRandomManifest: React.FC<{
             history.push(
               createLink({
                 manifestId: resp.manifest,
-                query: navigateToModel ? { firstModel: true } : undefined,
+                query: navigateToModel && !manifestModel ? { firstModel: true } : undefined,
+                subRoute: navigateToModel && manifestModel ? 'model' : '',
               })
             );
           } else {

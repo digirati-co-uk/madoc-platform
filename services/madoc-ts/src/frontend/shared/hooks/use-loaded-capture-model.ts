@@ -32,7 +32,7 @@ export function useLoadedCaptureModel(modelId?: string, initialModel?: CaptureMo
       const primaryTarget = captureModel ? target.find((t: any) => t.type.toLowerCase() === 'canvas') : undefined;
 
       if (!primaryTarget) {
-        throw new Error('No valid target');
+        return { target, captureModel };
       }
 
       const { canvas } = await api.getSiteCanvas(primaryTarget.id);

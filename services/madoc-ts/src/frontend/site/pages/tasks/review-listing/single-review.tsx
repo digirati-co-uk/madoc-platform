@@ -23,7 +23,7 @@ function ViewSingleReview({
   task: CrowdsourcingTask & { id: string };
   review: (CrowdsourcingReview & { id: string }) | null;
 }) {
-  const { captureModel, revisionId, wasRejected, canvas } = useCrowdsourcingTaskDetails(task);
+  const { captureModel, revisionId, wasRejected, canvas, project } = useCrowdsourcingTaskDetails(task);
   const refetch = useRefetch();
 
   if (!review) {
@@ -73,6 +73,7 @@ function ViewSingleReview({
               {/*/>*/}
 
               <ApproveSubmission
+                project={project}
                 userTaskId={task.id}
                 onApprove={() => {
                   refetch();

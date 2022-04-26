@@ -6,6 +6,7 @@ import { Button } from '../../shared/navigation/Button';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { useUser } from '../../shared/hooks/use-site';
 import { useGetRandomCanvas } from '../hooks/use-get-random-canvas';
+import { useProjectShadowConfiguration } from '../hooks/use-project-shadow-configuration';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
 
@@ -19,11 +20,12 @@ export const GoToRandomCanvas: React.FC<{
   const { t } = useTranslation();
   const history = useHistory();
   const createLink = useRelativeLinks();
+  const { showCaptureModelOnManifest } = useProjectShadowConfiguration();
   const [getRandomCanvas] = useGetRandomCanvas();
   const user = useUser();
   const [error, setError] = useState(false);
 
-  if (!projectId || !user) {
+  if (!projectId || !user || showCaptureModelOnManifest) {
     return null;
   }
 

@@ -86,6 +86,7 @@ export type GetApiMethods = keyof Pick<
   | 'getSiteCollectionMetadata'
   | 'getSiteManifestMetadata'
   | 'getSiteCanvasMetadata'
+  | 'getSiteProjectManifestModel'
 >;
 
 const keys = Object.getOwnPropertyNames(ApiClient.prototype);
@@ -105,6 +106,9 @@ export function createApiHook(
     return queryMethod(
       [keyToUse, argsToUse],
       () => {
+        if (typeof argsToUse === 'undefined') {
+          console.error(`Bad call to apiHook.${key}(undefined) with enabled.`);
+        }
         return apiToUse[key](...argsToUse);
       },
       { enabled: typeof argsToUse !== 'undefined', ...(config || {}) }

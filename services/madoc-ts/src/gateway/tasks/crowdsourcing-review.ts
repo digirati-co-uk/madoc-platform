@@ -77,7 +77,7 @@ export function createTask(task: CrowdsourcingTask): CrowdsourcingReview {
     name: `Review of "${task.name}"`,
     type,
     subject: task.subject,
-    subject_parent: task.subject_parent,
+    subject_parent: task.subject_parent || undefined,
     status: 0,
     status_text: 'not started',
     parameters: [task.id, task.parameters[2]],

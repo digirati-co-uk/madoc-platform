@@ -7,29 +7,33 @@ import { useProjectCanvasTasks } from './use-project-canvas-tasks';
 import { useProjectManifestTasks } from './use-project-manifest-tasks';
 import { useRouteContext } from './use-route-context';
 
-export function usePrepareContribution() {
+export function usePrepareContribution(options: { allowEmptyCanvas?: boolean } = {}) {
   const { projectId, manifestId, collectionId, canvasId } = useRouteContext();
-  const { refetch: refetchCanvas } = useData(CanvasLoader, undefined, { enabled: !!canvasId });
+  const { refetch: refetchCanvas, isFetched: isFetchedCanvas } = useData(CanvasLoader, undefined, {
+    enabled: !!canvasId,
+  });
   const { refetch: refetchManifest } = useData(ManifestLoader, undefined, { enabled: !!manifestId });
   const { refetch: refetchManifestTasks } = useProjectManifestTasks();
-  const { refetch: refetchCanvasTasks } = useProjectCanvasTasks();
+  const { refetch: refetchCanvasTasks, isFetched: isFetchedCanvasTasks } = useProjectCanvasTasks();
 
   const api = useApi();
 
   return useMutation(async () => {
-    if (projectId && canvasId) {
+    if (projectId && (canvasId || options.allowEmptyCanvas)) {
       await api.prepareResourceClaim(projectId, {
         canvasId,
         manifestId,
         collectionId,
       });
 
-      await refetchCanvas();
+      if (isFetchedCanvas) {
+        await refetchCanvas();
+      }
 
       if (refetchManifestTasks) {
         await refetchManifestTasks();
       }
-      if (refetchCanvasTasks) {
+      if (refetchCanvasTasks && isFetchedCanvasTasks) {
         await refetchCanvasTasks();
       }
       if (refetchManifest) {

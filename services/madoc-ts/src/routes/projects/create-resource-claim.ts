@@ -153,6 +153,7 @@ export async function ensureProjectTaskStructure(
   const approvalsRequired = config.revisionApprovalsRequired || 1;
   const warningTime = config.contributionWarningTime || undefined;
   const claimGranularity = config.claimGranularity || 'canvas';
+  const manifestOnly = config.shadow?.showCaptureModelOnManifest;
 
   // Disabled collection crowdsourcing tasks for now.
   // if (claim.collectionId) {
@@ -191,6 +192,7 @@ export async function ensureProjectTaskStructure(
 
       const task = crowdsourcingManifestTask.createTask({
         label: iiifGetLabel(manifest.label, 'Untitled manifest'),
+        approvalsRequired,
         maxContributors,
         warningTime,
         // @todo disabling this stops manifests automatically being marked as complete in the project
@@ -199,6 +201,7 @@ export async function ensureProjectTaskStructure(
         manifestId: claim.manifestId,
         collectionId: claim.collectionId,
         projectId,
+        isManifestTask: !!manifestOnly,
       });
 
       parent = await userApi.addSubtasks<BaseTask & { id: string }>(task, parent.id);
@@ -207,7 +210,7 @@ export async function ensureProjectTaskStructure(
     }
   }
 
-  if (claim.canvasId) {
+  if (claim.canvasId && !manifestOnly) {
     const foundCanvasTask = (parent.subtasks || []).find(
       (task: any) => task.subject === `urn:madoc:canvas:${claim.canvasId}`
     );
@@ -342,12 +345,17 @@ async function upsertCaptureModelForResource(
   claim: ResourceClaim
 ): Promise<CaptureModel & { id: string }> {
   // Get top level project task.
-  const { capture_model_id } = await context.connection.one(
+  const { capture_model_id, template_config, template_name } = await context.connection.one(
     sql<{
       task_id: string;
       capture_model_id: string;
-    }>`select task_id, capture_model_id from iiif_project where site_id = ${siteId} and id = ${projectId}`
+      template_name: string | null;
+      template_config: any | null;
+    }>`select task_id, capture_model_id, template_name, template_config from iiif_project where site_id = ${siteId} and id = ${projectId}`
   );
+
+  const template = template_name ? api.projectTemplates.getDefinition(template_name, siteId) : null;
+  const projectTemplate = template ? { template, config: template_config } : undefined;
 
   const userApi = api.asUser({ userId, siteId }, {}, true);
   const mainTarget = claim.canvasId
@@ -389,7 +397,7 @@ async function upsertCaptureModelForResource(
   }
 
   // @TODO need to add custom context too.
-  const response = await userApi.cloneCaptureModel(capture_model_id, target);
+  const response = await userApi.cloneCaptureModel(capture_model_id, target, projectTemplate);
   userApi.dispose();
   return response;
 }
@@ -550,6 +558,7 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
 
   // Get project configuration.
   const config = await userApi.getProjectConfiguration(projectId, siteUrn);
+  const manifestOnly = config.shadow?.showCaptureModelOnManifest;
 
   // Make sure our fancy structure exists.
   const [parent, userManifestTask] = await ensureProjectTaskStructure(
@@ -616,8 +625,60 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
   }
 
   // Can't claim a canvas is you've already claimed the manifest.
-  // @todo how does this interact when saving a capture model task.
+  // This is copied from the canvas above.
+  // @todo de-duplicate.
   if (manifestClaim) {
+    if (manifestOnly) {
+      if (!manifestClaim.state.revisionId && claim.revisionId) {
+        context.response.body = {
+          claim: await userApi.updateTask(manifestClaim.id, {
+            state: {
+              revisionId: claim.revisionId,
+            },
+            status: claim.status,
+            status_text: statusToClaimMap[claim.status as any] || 'in progress',
+          }),
+        };
+        return;
+      }
+
+      // @todo this should ALWAYS be false.
+      const revisionDontMatch =
+        manifestClaim.state.revisionId && claim.revisionId && manifestClaim.state.revisionId !== claim.revisionId;
+      const revisionExistsAndMatch = !revisionDontMatch;
+
+      if (config.modelPageOptions?.preventMultipleUserSubmissionsPerResource && revisionDontMatch) {
+        throw new Error('Can only submit one revision per resource');
+      }
+
+      if (revisionExistsAndMatch) {
+        if (typeof claim.status !== 'undefined' && claim.status !== manifestClaim.status) {
+          if (
+            config.modelPageOptions?.preventContributionAfterSubmission &&
+            manifestClaim.status === 2 &&
+            (claim.status === 0 || claim.status === 1) &&
+            manifestClaim.state.revisionId
+          ) {
+            throw new Error('Cannot update task in review');
+          }
+
+          context.response.body = {
+            claim: await userApi.updateTask(manifestClaim.id, {
+              status: claim.status,
+              status_text: statusToClaimMap[claim.status as any] || 'in progress',
+            }),
+          };
+          return;
+        }
+
+        context.response.body = {
+          claim: await userApi.getTaskById(manifestClaim.id as string, true, 0, undefined, undefined, true),
+        };
+        return;
+      }
+    }
+
+    // The normal path.
     context.response.body = {
       claim: await userApi.getTaskById(manifestClaim.id as string, true, 0, undefined, undefined, true),
     };
@@ -690,6 +751,49 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
       throw new RequestError('Maximum number of contributors reached');
     }
 
+    // Option A. This is when there is a capture model on the Manifest, not canvas.
+    if (manifestOnly) {
+      const captureModel = await upsertCaptureModelForResource(context, siteId, projectId, userId, claim);
+      const task = await createUserCrowdsourcingTask({
+        context,
+        siteId,
+        projectId,
+        userId: userId,
+        assigneeId: claim.userId || userId,
+        name,
+        parentTaskId: parent.id,
+        taskName: parent.name,
+        subject: `urn:madoc:manifest:${claim.manifestId}`,
+        parentSubject: claim.collectionId ? `urn:madoc:collection:${claim.collectionId}` : undefined,
+        type: 'manifest',
+        claim,
+        captureModel,
+        userManifestTask,
+      });
+
+      if (userManifestTask && userManifestTask.status === 0) {
+        await userApi.updateTask(userManifestTask.id, {
+          status: 1,
+          status_text: statusToClaimMap[claim.status as any] || 'in progress',
+        });
+      }
+
+      if (typeof claim.status !== 'undefined' && claim.status !== task.status) {
+        context.response.body = {
+          claim: await userApi.updateTask(task.id, {
+            status: claim.status,
+            status_text: statusToClaimMap[claim.status as any] || 'in progress',
+          }),
+        };
+        return;
+      }
+
+      context.response.body = { claim: task };
+
+      return;
+    }
+
+    // Option B. The task is all individual capture models on the canvas.
     const task = await createUserCrowdsourcingTask({
       context,
       siteId,

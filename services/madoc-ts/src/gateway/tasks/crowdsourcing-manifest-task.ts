@@ -14,7 +14,7 @@ export interface CrowdsourcingManifestTask extends BaseTask {
   /**
    * Parameters: none
    */
-  parameters: [];
+  parameters: [boolean];
 
   /**
    * Can contain either manifest or collection tasks.
@@ -47,6 +47,7 @@ export function createTask({
   approvalsRequired,
   warningTime,
   projectId,
+  isManifestTask,
 }: {
   label: string;
   manifestId: number;
@@ -55,6 +56,7 @@ export function createTask({
   approvalsRequired?: number;
   warningTime?: number;
   projectId?: number;
+  isManifestTask?: boolean;
 }): CrowdsourcingManifestTask {
   return {
     name: label,
@@ -68,7 +70,7 @@ export function createTask({
       approvalsRequired,
       warningTime,
     },
-    parameters: [],
+    parameters: [isManifestTask || false],
     events: [
       // - Event: onComplete
       //   Description:

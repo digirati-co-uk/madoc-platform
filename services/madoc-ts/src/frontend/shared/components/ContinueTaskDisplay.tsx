@@ -8,7 +8,15 @@ import { PrimaryButtonLink } from '../navigation/Button';
 import { SnippetLarge } from '../atoms/SnippetLarge';
 import { useCreateLocaleString } from './LocaleString';
 
-export function ContinueTaskDisplay({ task, next }: { task: BaseTask; next?: boolean }) {
+export function ContinueTaskDisplay({
+  task,
+  next,
+  manifestModel,
+}: {
+  task: BaseTask;
+  next?: boolean;
+  manifestModel?: boolean;
+}) {
   const { subject } = useTaskMetadata<{ subject?: SubjectSnippetType }>(task);
   const createLocalString = useCreateLocaleString();
   const createLink = useRelativeLinks();
@@ -16,7 +24,7 @@ export function ContinueTaskDisplay({ task, next }: { task: BaseTask; next?: boo
 
   const link = subject
     ? subject.type === 'manifest'
-      ? createLink({ manifestId: subject.id })
+      ? createLink({ manifestId: subject.id, subRoute: manifestModel ? 'model' : '' })
       : subject.type === 'canvas'
       ? createLink({
           canvasId: subject.id,

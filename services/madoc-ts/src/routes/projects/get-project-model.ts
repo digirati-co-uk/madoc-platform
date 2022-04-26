@@ -1,5 +1,6 @@
 import { RouteMiddleware } from '../../types/route-middleware';
 import { NotFound } from '../../utility/errors/not-found';
+import { RequestError } from '../../utility/errors/request-error';
 import { parseProjectId } from '../../utility/parse-project-id';
 import { parseUrn } from '../../utility/parse-urn';
 import { sql } from 'slonik';
@@ -37,9 +38,16 @@ export const getProjectModel: RouteMiddleware<{ id: string; subject: string }> =
 
   const parsed = parseUrn(context.params.subject);
 
+  const parsedType = (parsed?.type || '').toLowerCase();
+  const targetType = parsedType === 'canvas' ? 'Canvas' : parsedType === 'manifest' ? 'Manifest' : undefined;
+
+  if (!targetType) {
+    throw new RequestError(`Invalid target ${context.params.subject}`);
+  }
+
   const models = await userApi.getAllCaptureModels({
     target_id: context.params.subject,
-    target_type: 'Canvas',
+    target_type: targetType,
     derived_from: project.capture_model_id,
   });
 

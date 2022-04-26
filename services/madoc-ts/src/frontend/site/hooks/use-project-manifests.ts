@@ -29,7 +29,7 @@ export function useProjectManifests() {
         : undefined,
     {
       forceFetchOnMount: true,
-      enabled: isExact,
+      enabled: isExact && project,
     }
   );
 }

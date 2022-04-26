@@ -1,4 +1,5 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import { castBool } from '../../../utility/cast-bool';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { useCurrentUser } from '../../shared/hooks/use-current-user';
@@ -13,12 +14,14 @@ import { CanvasNotAvailableToBrowse } from '../features/CanvasNotAvailableToBrow
 import { CanvasPageHeader } from '../features/CanvasPageHeader';
 import { CanvasTaskWarningMessage } from '../features/CanvasTaskWarningMessage';
 import { CanvasThumbnailNavigation } from '../features/CanvasThumbnailNavigation';
-import { PrepareCaptureModel } from '../features/PrepareCaptureModel';
+import { PrepareCanvasCaptureModel } from '../features/PrepareCanvasCaptureModel';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useManifestTask } from '../hooks/use-manifest-task';
+import { useProjectShadowConfiguration } from '../hooks/use-project-shadow-configuration';
 import { useProjectStatus } from '../hooks/use-project-status';
+import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
 import { RedirectToNextCanvas } from '../features/RedirectToNextCanvas';
 
@@ -33,6 +36,7 @@ export const ViewCanvasModel: React.FC = () => {
   const {
     project: { hideCanvasThumbnailNavigation = false },
   } = useSiteConfiguration();
+  const createLink = useRelativeLinks();
   const { isActive, isPreparing } = useProjectStatus();
   const canContribute =
     user &&
@@ -40,6 +44,8 @@ export const ViewCanvasModel: React.FC = () => {
     (user.scope.indexOf('site.admin') !== -1 ||
       user.scope.indexOf('models.admin') !== -1 ||
       user.scope.indexOf('models.contribute') !== -1);
+
+  const { showCaptureModelOnManifest } = useProjectShadowConfiguration();
 
   const isReadOnly =
     (!canUserSubmit && !isLoadingTasks) ||
@@ -52,6 +58,10 @@ export const ViewCanvasModel: React.FC = () => {
 
   if (!canvasId) {
     return null;
+  }
+
+  if (showCaptureModelOnManifest) {
+    return <Redirect to={createLink({ subRoute: '' })} />;
   }
 
   if (shouldGoToNext) {
@@ -68,7 +78,7 @@ export const ViewCanvasModel: React.FC = () => {
         <CanvasPageHeader subRoute="model" />
       </Slot>
 
-      {showPrepareMessage ? <PrepareCaptureModel /> : null}
+      {showPrepareMessage ? <PrepareCanvasCaptureModel /> : null}
 
       {/* One of the following 3 slots will be rendered */}
       <Slot name="canvas-model-read-only" layout="none" hidden={!isReadOnly}>

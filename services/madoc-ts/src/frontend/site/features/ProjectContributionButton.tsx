@@ -10,6 +10,7 @@ import { useContributorTasks } from '../../shared/hooks/use-contributor-tasks';
 import { firstNTasksWithUniqueSubjects } from '../../shared/utility/first-n-tasks-with-unique-subjects';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useProject } from '../hooks/use-project';
+import { useProjectShadowConfiguration } from '../hooks/use-project-shadow-configuration';
 import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useSiteConfiguration } from './SiteConfigurationContext';
@@ -23,6 +24,7 @@ export const ProjectContributionButton: React.FC = () => {
     project: { contributionMode, claimGranularity },
   } = useSiteConfiguration();
   const contributorTasks = useContributorTasks({ rootTaskId: project?.task_id }, !!project);
+  const { showCaptureModelOnManifest } = useProjectShadowConfiguration();
 
   const currentTasks = contributorTasks?.drafts.tasks;
   const tasksInReview = contributorTasks?.reviews.tasks;
@@ -39,7 +41,7 @@ export const ProjectContributionButton: React.FC = () => {
     for (const task of firstThree) {
       taskComponents.push(
         <ThirdGrid key={task.id}>
-          <ContinueTaskDisplay task={task} />
+          <ContinueTaskDisplay task={task} manifestModel={showCaptureModelOnManifest} />
         </ThirdGrid>
       );
     }
@@ -59,7 +61,7 @@ export const ProjectContributionButton: React.FC = () => {
       if (parsed && parsed.type === 'canvas') {
         taskComponents.push(
           <ThirdGrid key={task.id}>
-            <ContinueTaskDisplay task={task} next />
+            <ContinueTaskDisplay task={task} next manifestModel={showCaptureModelOnManifest} />
           </ThirdGrid>
         );
       }
