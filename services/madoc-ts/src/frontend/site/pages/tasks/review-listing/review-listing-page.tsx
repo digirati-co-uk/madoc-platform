@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { Redirect, useParams } from 'react-router-dom';
 import ReactTimeago from 'react-timeago';
 import styled, { css } from 'styled-components';
 import { SubjectSnippet } from '../../../../../extensions/tasks/resolvers/subject-resolver';
@@ -65,9 +65,14 @@ export function ReviewListingPage({ route }: { route: UniversalRoute }) {
   const { t } = useTranslation();
   const { data, refetch } = useData<{ tasks: CrowdsourcingTask[] }>(ReviewListingPage);
   const params = useParams<{ taskId?: string }>();
+  const createLink = useRelativeLinks();
 
   if (!data) {
     return <>Loading...</>;
+  }
+
+  if (data && !params.taskId && data.tasks[0]) {
+    return <Redirect to={createLink({ taskId: undefined, subRoute: `reviews/${data.tasks[0].id}` })} />;
   }
 
   // 1. Make requests for all crowdsourcing tasks marked as in review.

@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Regression with dropdown (reverts fix for overflow bug in popup)
+- Fist selection on reviewer dashboard
 
 <!--
 ### Fixed
