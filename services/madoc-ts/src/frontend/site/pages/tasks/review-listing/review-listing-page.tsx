@@ -10,6 +10,7 @@ import { SimpleStatus } from '../../../../shared/atoms/SimpleStatus';
 import { DisplayBreadcrumbs } from '../../../../shared/components/Breadcrumbs';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { useData } from '../../../../shared/hooks/use-data';
+import { useLocationQuery } from '../../../../shared/hooks/use-location-query';
 import { SimpleTable } from '../../../../shared/layout/SimpleTable';
 import { serverRendererFor } from '../../../../shared/plugins/external/server-renderer-for';
 import { HrefLink } from '../../../../shared/utility/href-link';
@@ -110,6 +111,7 @@ export function ReviewListingPage({ route }: { route: UniversalRoute }) {
 
 function SingleReviewTableRow({ task, active }: { task: CrowdsourcingTask; active?: boolean }) {
   const { t } = useTranslation();
+  const { page, ...query } = useLocationQuery();
   const createLink = useRelativeLinks();
   const metadata = useTaskMetadata<{ subject?: SubjectSnippet }>(task);
 
@@ -120,6 +122,7 @@ function SingleReviewTableRow({ task, active }: { task: CrowdsourcingTask; activ
           href={createLink({
             taskId: undefined,
             subRoute: `reviews/${task.id}`,
+            query,
           })}
         >
           {metadata && metadata.subject ? (

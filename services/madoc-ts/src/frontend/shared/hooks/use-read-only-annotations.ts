@@ -45,11 +45,10 @@ export function useReadOnlyAnnotations(isModelPage = false): ReadOnlyAnnotation[
     : canvasPageShowAnnotations === 'always' ||
       (canvasPageShowAnnotations === 'when-open' && isOpen && openPanel === 'annotations');
 
+  const isAnno = openPanel === 'document' || openPanel === 'revision-panel';
   const showDocumentRegions = isModelPage
-    ? modelPageShowDocument === 'always' ||
-      (modelPageShowDocument === 'when-open' && isOpen && openPanel === 'document')
-    : canvasPageShowDocument === 'always' ||
-      (canvasPageShowDocument === 'when-open' && isOpen && openPanel === 'document');
+    ? modelPageShowDocument === 'always' || (modelPageShowDocument === 'when-open' && isOpen && isAnno)
+    : canvasPageShowDocument === 'always' || (canvasPageShowDocument === 'when-open' && isOpen && isAnno);
 
   const annotations = useMemo(() => {
     const regions: ReadOnlyAnnotation[] = [];

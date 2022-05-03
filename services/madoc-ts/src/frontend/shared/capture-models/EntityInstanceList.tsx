@@ -1,4 +1,5 @@
 import React from 'react';
+import { LocaleString } from '../components/LocaleString';
 import { RoundedCard } from './editor/components/RoundedCard/RoundedCard';
 import { Revisions } from './editor/stores/revisions/index';
 import { getLabel } from './helpers/get-label';
@@ -50,7 +51,9 @@ export const EntityInstanceList: React.FC<{
             onClick={() => chooseEntity({ instance: field, property })}
             onRemove={canRemove ? () => removeInstance({ path: [...path, [property, field.id]] }) : undefined}
           >
-            <DocumentPreview entity={field}>{getLabel(field)}</DocumentPreview>
+            <DocumentPreview entity={field}>
+              <LocaleString>{getLabel(field)}</LocaleString>
+            </DocumentPreview>
           </RoundedCard>
         );
       })}

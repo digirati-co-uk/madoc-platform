@@ -39,7 +39,7 @@ const DocumentDescription = styled.div`
 `;
 
 const DocumentHeading = styled.div<{ $interactive?: boolean }>`
-  margin-bottom: 5px;
+  margin: 5px 0;
   ${props =>
     props.$interactive &&
     css`
@@ -181,18 +181,17 @@ const ViewEntity: React.FC<{
   return (
     <DocumentSection>
       <DocumentHeading $interactive={interactive} onClick={() => (interactive ? setIsCollapsed(i => !i) : undefined)}>
-        <DocumentEntityLabel>
-          {label}
+        <DocumentEntityLabel style={{ display: 'flex', alignItems: 'center' }}>
+          {selector && !fluidImage ? <SelectorPreview selector={selector} inline /> : null}
+          <div style={{ flex: 1, paddingLeft: '0.5em' }}>{label}</div>
           {interactive ? (
-            <DocumentLabelIcon>
-              <DownArrowIcon
-                style={
-                  isCollapsed
-                    ? { transform: 'rotate(180deg)', fill: '#6c757d', width: '22px', height: '23px' }
-                    : { transform: 'rotate(0deg)', fill: '#6c757d', width: '22px', height: '23px' }
-                }
-              />
-            </DocumentLabelIcon>
+            <DownArrowIcon
+              style={
+                isCollapsed
+                  ? { transform: 'rotate(180deg)', fill: '#6c757d', width: '22px', height: '23px' }
+                  : { transform: 'rotate(0deg)', fill: '#6c757d', width: '22px', height: '23px' }
+              }
+            />
           ) : null}
         </DocumentEntityLabel>
       </DocumentHeading>
@@ -200,7 +199,7 @@ const ViewEntity: React.FC<{
       {/* This is where the entity selector will go, if it exists. */}
       {isCollapsed ? null : (
         <>
-          {selector ? <SelectorPreview selector={selector} fluidImage={fluidImage} /> : null}
+          {selector && fluidImage ? <SelectorPreview selector={selector} fluidImage={fluidImage} /> : null}
           {children}
         </>
       )}
@@ -293,9 +292,10 @@ export const ViewProperty: React.FC<{
   );
 };
 
-export const SelectorPreview: React.FC<{ selector?: BaseSelector; fluidImage?: boolean }> = ({
+export const SelectorPreview: React.FC<{ selector?: BaseSelector; fluidImage?: boolean; inline?: boolean }> = ({
   selector,
   fluidImage,
+  inline,
 }) => {
   const helper = useSelectorHelper();
   const { data: service } = useImageService() as { data?: ImageService };
@@ -321,11 +321,11 @@ export const SelectorPreview: React.FC<{ selector?: BaseSelector; fluidImage?: b
       $size={'tiny'}
       $fluid={fluidImage}
       $covered
-      style={{ marginRight: '.5em', background: '#f9f9f9' }}
+      style={{ margin: inline ? 'none' : '0 .5em', background: '#f9f9f9' }}
       onMouseEnter={() => (selectorId ? helper.highlight(selectorId) : null)}
       onMouseLeave={() => (selectorId ? helper.clearHighlight(selectorId) : null)}
     >
-      <img src={image} alt="cropped region of image" width={fluidImage ? '100%' : 100} />
+      <img src={image} data-madoc-id={selectorId} alt="cropped region of image" width={fluidImage ? '100%' : 100} />
     </CroppedImage>
   );
 };

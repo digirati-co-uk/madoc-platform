@@ -37,6 +37,7 @@ import { useContributionMode } from '../hooks/use-contribution-mode';
 import { useProjectAnnotationStyles } from '../hooks/use-project-annotation-styles';
 import { useProjectStatus } from '../hooks/use-project-status';
 import { RouteContext, useRouteContext } from '../hooks/use-route-context';
+import { CanvasHighlightedRegions } from './CanvasHighlightedRegions';
 import { CanvasModelUserStatus } from './CanvasModelUserStatus';
 import { CanvasViewer } from './CanvasViewer';
 import {
@@ -209,6 +210,8 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
         {!isPreparing && mode === 'transcription' ? <TranscriberModeWorkflowBar /> : null}
 
         <CanvasViewer>
+          <CanvasHighlightedRegions />
+
           <CanvasViewerGrid $vertical={isVertical} ref={gridRef}>
             <CanvasViewerGridContent $vertical={isVertical}>
               <EditorContentViewer

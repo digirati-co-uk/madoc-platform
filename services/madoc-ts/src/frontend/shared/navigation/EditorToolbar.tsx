@@ -12,7 +12,7 @@ export const EditorToolbarContainer = styled.div`
   margin: 0.5em 0;
 `;
 
-export const EditorToolbarButton = styled.button<{ $rightBorder?: boolean }>`
+export const EditorToolbarButton = styled.button<{ $rightBorder?: boolean; $leftBorder?: boolean }>`
   display: flex;
   padding: 0.25em 0.5em;
   height: 100%;
@@ -46,6 +46,11 @@ export const EditorToolbarButton = styled.button<{ $rightBorder?: boolean }>`
     props.$rightBorder &&
     css`
       border-right: 1px solid #eee;
+    `}
+  ${props =>
+    props.$leftBorder &&
+    css`
+      border-left: 1px solid #eee;
     `}
 `;
 
