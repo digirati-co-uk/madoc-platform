@@ -57,8 +57,6 @@ export function ManifestCaptureModelEditor({ revision }: { revision: string; isS
       user.scope.indexOf('models.admin') !== -1 ||
       user.scope.indexOf('models.contribute') !== -1);
 
-  console.log({ preventFurtherSubmission });
-
   const isModelAdmin =
     user && user.scope && (user.scope.indexOf('site.admin') !== -1 || user.scope.indexOf('models.admin') !== -1);
 

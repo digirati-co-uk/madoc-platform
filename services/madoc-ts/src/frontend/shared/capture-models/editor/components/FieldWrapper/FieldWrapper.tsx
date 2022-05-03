@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { useModelTranslation } from '../../../hooks/use-model-translation';
 import { useField } from '../../../plugin-api/hooks/use-field';
 import { useSelectorStatus } from '../../../plugin-api/hooks/use-selector-status';
 import { BaseField } from '../../../types/field-types';

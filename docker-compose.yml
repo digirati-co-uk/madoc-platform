@@ -164,7 +164,7 @@ services:
 
   storage-api:
     tty: true
-    image: ghcr.io/digirati-co-uk/storage-api:latest
+    image: ghcr.io/digirati-co-uk/storage-api:main
     environment:
       - GATEWAY_HOST=${GATEWAY_HOST}
     volumes:

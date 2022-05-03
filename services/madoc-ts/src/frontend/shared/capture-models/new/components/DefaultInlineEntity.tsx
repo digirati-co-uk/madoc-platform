@@ -4,7 +4,7 @@ import { InputAsCard } from '../../../form/Input';
 import { Grid, GridColumn } from '../../editor/atoms/Grid';
 import { RoundedCard } from '../../editor/components/RoundedCard/RoundedCard';
 import { Revisions } from '../../editor/stores/revisions/index';
-import { SelectorPreview } from '../../inspector/ViewDocument';
+import { useModelTranslation } from '../../hooks/use-model-translation';
 import { getEntityLabel } from '../../utility/get-entity-label';
 import { ModifiedStatus } from '../features/ModifiedStatus';
 import { useEntityDetails } from '../hooks/use-entity-details';
@@ -13,6 +13,7 @@ import { EditorRenderingConfig, useProfileOverride, useSlotContext } from './Edi
 import { DocumentPreview } from '../../DocumentPreview';
 
 export const DefaultInlineEntity: EditorRenderingConfig['InlineEntity'] = props => {
+  const { t: tModel } = useModelTranslation();
   const { entity, chooseEntity, onRemove, canRemove } = props;
   const { configuration } = useSlotContext();
   const { isModified } = useEntityDetails(entity);
@@ -44,7 +45,9 @@ export const DefaultInlineEntity: EditorRenderingConfig['InlineEntity'] = props 
       >
         {getEntityLabel(
           entity,
-          <span style={{ color: '#999' }}>No value {configuration.allowEditing ? '(click to edit)' : null}</span>
+          <span style={{ color: '#999' }}>No value {configuration.allowEditing ? '(click to edit)' : null}</span>,
+          false,
+          tModel
         )}
       </DocumentPreview>
     </>

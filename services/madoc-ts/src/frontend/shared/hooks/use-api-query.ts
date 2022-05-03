@@ -87,6 +87,7 @@ export type GetApiMethods = keyof Pick<
   | 'getSiteManifestMetadata'
   | 'getSiteCanvasMetadata'
   | 'getSiteProjectManifestModel'
+  | 'getLocale'
 >;
 
 const keys = Object.getOwnPropertyNames(ApiClient.prototype);

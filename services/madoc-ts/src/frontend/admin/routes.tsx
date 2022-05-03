@@ -543,6 +543,11 @@ export const routes: UniversalRoute[] = [
     component: EditTranslation,
   },
   {
+    path: '/i18n/edit/:code/:namespace',
+    exact: true,
+    component: EditTranslation,
+  },
+  {
     path: '/global/status',
     exact: true,
     component: SystemStatus,

@@ -13,6 +13,7 @@ import { useSelectorHelper } from '../editor/stores/selectors/selector-helper';
 import { filterRevises } from '../helpers/filter-revises';
 import { isEntityList } from '../helpers/is-entity';
 import { resolveSelector } from '../helpers/resolve-selector';
+import { useModelTranslation } from '../hooks/use-model-translation';
 import { CaptureModel } from '../types/capture-model';
 import { BaseField } from '../types/field-types';
 import { BaseSelector } from '../types/selector-types';
@@ -93,7 +94,10 @@ const FieldPreviewWrapper = styled.div`
   align-items: center;
 `;
 
-const renderFieldList = (fields: BaseField[], { fluidImage }: { fluidImage?: boolean }) => {
+const renderFieldList = (
+  fields: BaseField[],
+  { fluidImage }: { fluidImage?: boolean; tModel: (s: string) => string }
+) => {
   if (!fields || isEmptyFieldList(fields)) {
     return null;
   }
@@ -127,7 +131,14 @@ const renderEntityList = (
     highlightRevisionChanges,
     collapsedEntity,
     fluidImage,
-  }: { filterRevisions: string[]; highlightRevisionChanges?: string; collapsedEntity?: boolean; fluidImage?: boolean }
+    tModel,
+  }: {
+    filterRevisions: string[];
+    highlightRevisionChanges?: string;
+    collapsedEntity?: boolean;
+    fluidImage?: boolean;
+    tModel: (s: string) => string;
+  }
 ) => {
   const toRender = entities
     .map(entity => {
@@ -141,6 +152,7 @@ const renderEntityList = (
             filterRevisions,
             highlightRevisionChanges,
             collapsed: collapsedEntity,
+            tModel,
           });
           if (!rendered) {
             return null;
@@ -176,7 +188,8 @@ const ViewEntity: React.FC<{
 }> = ({ entity, collapsed, children, interactive = true, fluidImage }) => {
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
   const selector = entity.selector ? resolveSelector(entity.selector) : undefined;
-  const label = getEntityLabel(entity);
+  const { t: tModel } = useModelTranslation();
+  const label = getEntityLabel(entity, undefined, false, tModel);
 
   return (
     <DocumentSection>
@@ -216,6 +229,7 @@ const renderProperty = (
     collapsedEntity,
     highlightRevisionChanges,
     fluidImage,
+    tModel,
   }: {
     key: any;
     filterRevisions?: string[];
@@ -223,6 +237,7 @@ const renderProperty = (
     collapsed?: boolean;
     collapsedEntity?: boolean;
     fluidImage?: boolean;
+    tModel: (s: string) => string;
   }
 ) => {
   const label = fields.length > 1 && fields[0].pluralLabel ? fields[0].pluralLabel : fields[0].label;
@@ -235,8 +250,14 @@ const renderProperty = (
   });
   const description = fields[0].description;
   const renderedProperties = isEntityList(filteredFields)
-    ? renderEntityList(filteredFields, { filterRevisions, highlightRevisionChanges, collapsedEntity, fluidImage })
-    : renderFieldList(filteredFields as any, { fluidImage });
+    ? renderEntityList(filteredFields, {
+        filterRevisions,
+        highlightRevisionChanges,
+        collapsedEntity,
+        fluidImage,
+        tModel,
+      })
+    : renderFieldList(filteredFields as any, { fluidImage, tModel });
 
   if (!renderedProperties) {
     return null;
@@ -245,8 +266,8 @@ const renderProperty = (
   return (
     <ViewProperty
       key={key}
-      label={label}
-      description={description}
+      label={tModel(label)}
+      description={description ? tModel(description) : ''}
       collapsed={collapsed}
       interactive={isEntityList(filteredFields)}
     >
@@ -349,6 +370,7 @@ export const ViewDocument: React.FC<{
   collapsed,
   fluidImage,
 }) => {
+  const { t: tModel } = useModelTranslation();
   const { t } = useTranslation();
   // ✅ Label (plural label / labelled by)
   // ✅ Description
@@ -383,14 +405,14 @@ export const ViewDocument: React.FC<{
 
     const rendered = flatProperties
       .map(([, field], key) => {
-        return renderProperty(field, { key: key, filterRevisions, highlightRevisionChanges, fluidImage });
+        return renderProperty(field, { key: key, filterRevisions, highlightRevisionChanges, fluidImage, tModel });
       })
       .filter(r => r !== null);
 
     if (rendered.length) {
       renderedList.push({
-        label: document.label,
-        description: document.description,
+        label: tModel(document.label),
+        description: document.description ? tModel(document.description) : undefined,
         rendered,
       });
     }
@@ -404,8 +426,8 @@ export const ViewDocument: React.FC<{
     <div style={{ padding: padding ? 20 : 0 }}>
       {renderedList.map(({ label, description, rendered }, n) => (
         <React.Fragment key={n}>
-          {!hideTitle ? <h3>{label}</h3> : null}
-          {!hideTitle ? <p>{description}</p> : null}
+          {!hideTitle ? <h3>{tModel(label)}</h3> : null}
+          {!hideTitle ? <p>{description ? tModel(description) : ''}</p> : null}
           {rendered}
         </React.Fragment>
       ))}

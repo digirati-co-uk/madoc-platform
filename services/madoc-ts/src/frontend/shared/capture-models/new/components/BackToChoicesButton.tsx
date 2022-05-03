@@ -4,6 +4,7 @@ import { useNavigation } from '../../editor/hooks/useNavigation';
 import { Revisions } from '../../editor/stores/revisions/index';
 import styled from 'styled-components';
 import { CloseIcon } from '../../../icons/CloseIcon';
+import { useModelTranslation } from '../../hooks/use-model-translation';
 
 const ChoicesHeader = styled.div`
   padding: 0 1em;
@@ -36,6 +37,7 @@ const ChoiceCloseButton = styled.button`
 
 export const BackToChoicesButton: React.FC = () => {
   const { t } = useTranslation();
+  const { t: tModel } = useModelTranslation();
   const currentRevisionId = Revisions.useStoreState(s => s.currentRevisionId);
   const revisionSubtreePath = Revisions.useStoreState(s => s.revisionSubtreePath);
   const deselectRevision = Revisions.useStoreActions(a => a.deselectRevision);
@@ -78,7 +80,7 @@ export const BackToChoicesButton: React.FC = () => {
     return (
       <ChoicesHeader>
         <ChoiceLabel title={t('Back to choices')} style={{ flex: 1 }}>
-          {current?.structure.label && current?.structure.label !== 'Default' ? current?.structure.label : null}
+          {current?.structure.label && current?.structure.label !== 'Default' ? tModel(current?.structure.label) : null}
         </ChoiceLabel>
         <ChoiceCloseButton onClick={backToChoices}>
           <CloseIcon />

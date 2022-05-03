@@ -30,16 +30,6 @@ export function usePreparedManifestModel() {
   const canClaim = projectStatus.isActive && manifestClaim.shouldAutoClaim && !hasPreparedManifest && !hasExpired;
   const shouldPrepare = shouldAutoPrepare && !model && isFetched && !hasPrepared && !isLoading;
 
-  console.log({
-    model,
-    isFetched,
-    preparationFailed,
-    isPreparing,
-    shouldAutoPrepare,
-    canClaim,
-    shouldPrepare,
-  });
-
   useEffect(() => {
     if (canClaim) {
       manifestClaim

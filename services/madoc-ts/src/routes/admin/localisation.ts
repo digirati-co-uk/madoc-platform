@@ -1,15 +1,19 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import { sql } from 'slonik';
+import { Headers } from 'node-fetch';
+import invariant from 'tiny-invariant';
+import { TextFieldProps } from '../../frontend/shared/capture-models/editor/input-types/TextField/TextField';
+import { traverseDocument } from '../../frontend/shared/capture-models/helpers/traverse-document';
 import { calculateTranslationProgress } from '../../frontend/shared/utility/calculate-translation-progress';
+import { ApiClientWithoutExtensions } from '../../gateway/api';
 import { api } from '../../gateway/api.server';
 import { TRANSLATIONS_PATH } from '../../paths';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { castBool } from '../../utility/cast-bool';
 import { parseEtag } from '../../utility/parse-etag';
+import { traverseStructure } from '../../utility/traverse-structure';
 import { optionalUserWithScope, userWithScope } from '../../utility/user-with-scope';
-
-const baseConfiguration = path.resolve(TRANSLATIONS_PATH, 'en/madoc.json');
 
 export type LocalisationSiteConfig = {
   defaultLanguage: string;
@@ -40,6 +44,8 @@ export type ListLocalisationsResponse = {
     isStatic: boolean;
   }>;
 };
+
+const supportedNamespaces = ['madoc', 'capture-models'];
 
 export const extractLocalesFromContent: RouteMiddleware = async context => {
   const { siteId } = optionalUserWithScope(context, []);
@@ -93,6 +99,7 @@ export const listLocalisations: RouteMiddleware = async context => {
 };
 
 export type GetLocalisationResponse = {
+  namespace?: string;
   code: string;
   isStatic: boolean;
   isDynamic: boolean;
@@ -102,11 +109,67 @@ export type GetLocalisationResponse = {
   };
 };
 
-function loadLocaleTemplate() {
-  const baseJson = JSON.parse(fs.readFileSync(baseConfiguration).toString());
+async function loadLocaleTemplate(userApi: ApiClientWithoutExtensions, namespace?: string) {
   const emptyJson: any = {};
-  for (const key of Object.keys(baseJson)) {
-    emptyJson[key] = '';
+
+  if (namespace === 'capture-models') {
+    // @todo extract all language strings from all project models.
+    const models = await userApi.getAllCaptureModels();
+    const promises: Promise<any>[] = [];
+    const foundStrings = new Set<string>();
+    for (const modelSnippet of models) {
+      promises.push(userApi.getCaptureModel(modelSnippet.id));
+    }
+
+    (await Promise.all(promises)).forEach(singleModel => {
+      traverseDocument(singleModel.document, {
+        visitField(field) {
+          if (field.label) foundStrings.add(field.label);
+          if (field.description) foundStrings.add(field.description);
+          if (field.pluralLabel) foundStrings.add(field.pluralLabel);
+          if ((field as TextFieldProps).placeholder) {
+            foundStrings.add((field as TextFieldProps).placeholder as string);
+          }
+        },
+        visitEntity(entity) {
+          if (entity.label) foundStrings.add(entity.label);
+          if (entity.description) foundStrings.add(entity.description);
+          if (entity.pluralLabel) foundStrings.add(entity.pluralLabel);
+        },
+        visitSelector(selector) {
+          // Nothing to extract from selectors.
+        },
+      });
+      traverseStructure(singleModel.structure, structure => {
+        if (structure.label) foundStrings.add(structure.label);
+        if (structure.description) foundStrings.add(structure.description);
+        if (structure.type !== 'choice') {
+          if (structure.label) foundStrings.add(structure.label);
+          if (structure.description) foundStrings.add(structure.description);
+          if (structure.pluralLabel) foundStrings.add(structure.pluralLabel);
+          if (structure.instructions) foundStrings.add(structure.instructions);
+        }
+      });
+    });
+
+    for (const key of foundStrings) {
+      emptyJson[key] = '';
+    }
+    return emptyJson;
+  }
+
+  const filePath = path.resolve(TRANSLATIONS_PATH, `en/${namespace}.json`);
+  if (fs.existsSync(filePath)) {
+    try {
+      const baseJson = JSON.parse(
+        fs.readFileSync(path.resolve(TRANSLATIONS_PATH, `en/${namespace}.json`)).toString('utf-8')
+      );
+      for (const key of Object.keys(baseJson)) {
+        emptyJson[key] = '';
+      }
+    } catch (e) {
+      // ignore.
+    }
   }
   return emptyJson;
 }
@@ -121,29 +184,29 @@ export function filterEmptyContent(obj: any) {
   return nonEmpty;
 }
 
-export const getLocalisation: RouteMiddleware<{ code: string }> = async context => {
+export const getLocalisation: RouteMiddleware<{ code: string; namespace?: string }> = async context => {
   const { id, siteId } = optionalUserWithScope(context, []);
   const userApi = context.state.siteApi || api.asUser({ userId: id, siteId });
   const showEmpty = castBool(context.query.show_empty);
 
   // Language code
   const languageCode = context.params.code;
+  const namespace = context.params.namespace || 'madoc';
 
-  if (languageCode.match(/\.\./)) {
-    context.status = 404;
-    return;
-  }
+  invariant(supportedNamespaces.includes(namespace), `Namespace ${namespace} not found`);
+  invariant(!languageCode.match(/\.\./), 'Language not found');
+  invariant(!namespace.match(/\.\./), 'Namespace not found');
 
   // Load default english.
-  const emptyJson = loadLocaleTemplate();
+  const emptyJson = await loadLocaleTemplate(api, namespace);
 
   // Load from disk if exists.
-  const location = path.resolve(TRANSLATIONS_PATH, languageCode, 'madoc.json');
+  const location = path.resolve(TRANSLATIONS_PATH, languageCode, `${namespace}.json`);
   const isStatic = fs.existsSync(location);
   const staticOverride = isStatic ? JSON.parse(fs.readFileSync(location).toString()) : {};
 
   // Load from config if exists.
-  const configResponse = await userApi.getConfiguration<LocalisationSiteConfig>('madoc-i18n', [
+  const configResponse = await userApi.getConfiguration<LocalisationSiteConfig>(`${namespace}-i18n`, [
     `urn:madoc:site:${siteId}`,
   ]);
   const config = configResponse?.config[0]?.config_object || defaultSiteLocalisationSiteConfig;
@@ -154,8 +217,13 @@ export const getLocalisation: RouteMiddleware<{ code: string }> = async context 
       try {
         // Merge.
         const url = found.remote ? found.url : api.resolveUrl(found.url);
-        return await fetch(url).then(r => r.json());
+        const headers = new Headers();
+        headers.set('X-Cache-Bypass', 'true');
+        return await fetch(url, {
+          headers: headers as any,
+        }).then(r => r.json());
       } catch (e) {
+        console.log(e);
         return {}; // Invalid or missing remote config.
       }
     };
@@ -167,6 +235,7 @@ export const getLocalisation: RouteMiddleware<{ code: string }> = async context 
     };
 
     context.response.body = {
+      namespace,
       code: languageCode,
       isDynamic: true,
       isStatic,
@@ -183,6 +252,8 @@ export const getLocalisation: RouteMiddleware<{ code: string }> = async context 
   };
 
   context.response.body = {
+    namespace,
+
     code: languageCode,
     isDynamic: false,
     isStatic,
@@ -193,19 +264,20 @@ export const getLocalisation: RouteMiddleware<{ code: string }> = async context 
 
 export const updateLanguagePreferences: RouteMiddleware<
   unknown,
-  { displayLanguages?: string[]; contentLanguages?: string[] }
+  { namespace?: string; displayLanguages?: string[]; contentLanguages?: string[] }
 > = async context => {
   const { id, siteId } = userWithScope(context, ['site.admin']);
   const userApi = api.asUser({ userId: id, siteId });
 
   const changes = context.requestBody;
+  const namespace = changes.namespace || 'madoc';
 
   if (typeof changes.displayLanguages === 'undefined' && typeof changes.contentLanguages === 'undefined') {
     context.response.status = 204;
     return;
   }
 
-  const configResponse = await userApi.getConfiguration<LocalisationSiteConfig>('madoc-i18n', [
+  const configResponse = await userApi.getConfiguration<LocalisationSiteConfig>(`${namespace}-i18n`, [
     `urn:madoc:site:${siteId}`,
   ]);
   const oldConfiguration = configResponse.config[0];
@@ -235,7 +307,7 @@ export const updateLanguagePreferences: RouteMiddleware<
   } else {
     try {
       //  - If it does not exist, then POST the new configuration.
-      await userApi.addConfiguration('madoc-i18n', [`urn:madoc:site:${siteId}`], newConfiguration);
+      await userApi.addConfiguration(`${namespace}-i18n`, [`urn:madoc:site:${siteId}`], newConfiguration);
     } catch (err) {
       console.log('Could not save config', err);
     }
@@ -244,20 +316,23 @@ export const updateLanguagePreferences: RouteMiddleware<
   context.response.status = 201;
 };
 
-export const updateLocalisation: RouteMiddleware<{ code: string }> = async context => {
+export const updateLocalisation: RouteMiddleware<{ code: string; namespace?: string }> = async context => {
   const { id, siteId } = userWithScope(context, ['site.admin']);
   const userApi = api.asUser({ userId: id, siteId });
 
   // Language code
   const languageCode = context.params.code;
+  const namespace = context.params.namespace || 'madoc';
 
-  if (languageCode.match(/\.\./)) {
+  invariant(supportedNamespaces.includes(namespace), `Namespace ${namespace} not found`);
+
+  if (languageCode.match(/\.\./) || namespace.match(/\.\./)) {
     context.status = 404;
     return;
   }
 
   const keys = Object.keys(context.requestBody);
-  const template = loadLocaleTemplate();
+  const template = await loadLocaleTemplate(userApi, namespace);
   const validStrings: any = {};
   for (const key of keys) {
     if (typeof template[key] !== 'undefined' && typeof context.requestBody[key] === 'string') {
@@ -266,11 +341,13 @@ export const updateLocalisation: RouteMiddleware<{ code: string }> = async conte
   }
 
   // Create language in storage API at specific location.
-  await userApi.saveStorageJson('madoc-i18n', `${languageCode}/madoc.json`, validStrings, true);
-  const url = `/public/storage/urn:madoc:site:${siteId}/madoc-i18n/public/${languageCode}/madoc.json`;
+  await userApi.saveStorageJson(`madoc-i18n`, `${languageCode}/${namespace}.json`, validStrings, true);
+  const url = `/public/storage/urn:madoc:site:${siteId}/madoc-i18n/public/${languageCode}/${namespace}.json`;
+
+  console.log(`${languageCode}/${namespace}.json`, url);
 
   // Save to site configuration
-  const configResponse = await userApi.getConfiguration<LocalisationSiteConfig>('madoc-i18n', [
+  const configResponse = await userApi.getConfiguration<LocalisationSiteConfig>(`${namespace}-i18n`, [
     `urn:madoc:site:${siteId}`,
   ]);
   const oldConfiguration = configResponse.config[0];
@@ -298,7 +375,7 @@ export const updateLocalisation: RouteMiddleware<{ code: string }> = async conte
   } else {
     try {
       //  - If it does not exist, then POST the new configuration.
-      await userApi.addConfiguration('madoc-i18n', [`urn:madoc:site:${siteId}`], newConfiguration);
+      await userApi.addConfiguration(`${namespace}-i18n`, [`urn:madoc:site:${siteId}`], newConfiguration);
     } catch (err) {
       console.log('Could not save config', err);
     }

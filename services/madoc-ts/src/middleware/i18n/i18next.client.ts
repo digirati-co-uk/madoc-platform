@@ -11,7 +11,7 @@ export async function createBackend(slug: string, jwt?: string, languages?: stri
     .init({
       fallbackLng: 'en',
       // lng: defaultLocale,
-      ns: 'madoc',
+      ns: ['madoc', 'capture-models'],
       defaultNS: 'madoc',
       supportedLngs: languages,
       saveMissing: true,

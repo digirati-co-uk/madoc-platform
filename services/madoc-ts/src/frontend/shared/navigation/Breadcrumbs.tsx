@@ -46,7 +46,7 @@ const BreadcrumbSeparator = styled.div<{ color?: string }>`
 `;
 
 export const Breadcrumbs: React.FC<{
-  items: Array<BreadcrumbItem | undefined>;
+  items: Array<BreadcrumbItem | undefined | null>;
   type?: 'site';
   background?: string;
   color?: string;

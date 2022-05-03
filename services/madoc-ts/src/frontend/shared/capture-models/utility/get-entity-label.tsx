@@ -5,9 +5,10 @@ import { CaptureModel } from '../types/capture-model';
 export function getEntityLabel(
   document: CaptureModel['document'],
   defaultLabel?: string | any,
-  shouldFilterRevises = false
+  shouldFilterRevises = false,
+  tModel: (str: string) => string = s => s
 ): string {
-  const labelledBy = document.labelledBy;
+  const labelledBy = document.labelledBy ? tModel(document.labelledBy) : undefined;
 
   if (labelledBy && labelledBy.match(/{(.+?)}/)) {
     const state = {

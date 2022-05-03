@@ -92,18 +92,21 @@ export const _Input = styled.input<{ $inactive?: boolean }>`
     `}
 `;
 
-export const Input: typeof _Input = ((props: any) =>
-  props.type === 'checkbox' ? <CheckboxInput {...props} /> : <_Input {...props} />) as any;
+export const Input: typeof _Input = React.forwardRef(function Input(props: any, ref: any) {
+  return props.type === 'checkbox' ? (
+    <CheckboxInput ref={ref} {...props} />
+  ) : (
+    ((<_Input ref={ref} {...props} />) as any)
+  );
+}) as any;
 
-export const HighlightInput: typeof _Input = ((props: any) => {
-  const ref = useRef<HTMLInputElement>(null);
-
+export const HighlightInput: typeof _Input = React.forwardRef(function HighlightInput(props: any, outerRef: any) {
   return (
     <Input
-      ref={ref}
+      ref={outerRef}
       onFocus={() => {
-        if (ref.current) {
-          ref.current.select();
+        if (outerRef.current) {
+          outerRef.current.select();
         }
       }}
       {...props}

@@ -668,9 +668,9 @@ export class ApiClient {
   async getSiteLocales() {
     return this.publicRequest<ListLocalisationsResponse>(`/madoc/api/locales`);
   }
-  async getSiteLocale(code: string, withTemplate?: boolean) {
-    return this.publicRequest<GetLocalisationResponse>(
-      `/madoc/api/locales/${code}${withTemplate ? `?show_empty=true` : ''}`
+  async getSiteLocale(code: string, namespace?: string, withTemplate?: boolean) {
+    return this.publicRequest<Record<string, string>>(
+      `/madoc/api/locales/${code}${namespace ? `/${namespace}` : ''}${withTemplate ? `?show_empty=true` : ''}`
     );
   }
   async getLocaleAnalysis() {
@@ -679,8 +679,14 @@ export class ApiClient {
     }>(`/api/madoc/locales/analysis`);
   }
 
-  async updateSiteLocale(code: string, json: any) {
-    return this.request<GetLocalisationResponse>(`/api/madoc/locales/${code}`, {
+  async getLocale(code: string, namespace?: string, withTemplate?: boolean) {
+    return this.request<GetLocalisationResponse>(
+      `/api/madoc/locales/${code}${namespace ? `/${namespace}` : ''}${withTemplate ? `?show_empty=true` : ''}`
+    );
+  }
+
+  async updateLocale(code: string, json: any, namespace?: string) {
+    return this.request<GetLocalisationResponse>(`/api/madoc/locales/${code}${namespace ? `/${namespace}` : ''}`, {
       method: 'POST',
       body: json,
     });

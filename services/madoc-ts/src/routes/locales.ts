@@ -8,14 +8,14 @@ import { TRANSLATIONS_PATH } from '../paths';
 import { RouteMiddleware } from '../types/route-middleware';
 
 export const getLocale: RouteMiddleware<{ lng: string; ns: string }> = async context => {
-  if (context.params.lng.match(/\.\./) || context.params.ns.match(/\.\./)) {
+  if (context.params.lng.match(/\.\./) || (context.params.ns && context.params.ns.match(/\.\./))) {
     context.status = 404;
     return;
   }
 
-  if (context.params.ns === 'madoc') {
+  if (context.params.ns === 'madoc' || context.params.ns === 'capture-models') {
     const { siteApi } = context.state;
-    const locale = await siteApi.getSiteLocale(context.params.lng);
+    const locale = await siteApi.getLocale(context.params.lng, context.params.ns);
 
     if (locale.isStatic || locale.isDynamic) {
       context.response.body = locale.content;
@@ -36,7 +36,7 @@ export const getLocale: RouteMiddleware<{ lng: string; ns: string }> = async con
 };
 
 export const saveMissingLocale: RouteMiddleware<{ lng: string; ns: string }> = async context => {
-  if (context.params.lng.match(/\.\./) || context.params.ns.match(/\.\./)) {
+  if (context.params.lng.match(/\.\./) || (context.params.ns && context.params.ns.match(/\.\./))) {
     context.status = 404;
     return;
   }

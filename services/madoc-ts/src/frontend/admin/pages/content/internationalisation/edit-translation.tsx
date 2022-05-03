@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { Redirect, useParams } from 'react-router-dom';
 import * as locale from 'locale-codes';
+import { ExperimentalFeature } from '../../../../shared/components/ExperimentalFeature';
 import { Button } from '../../../../shared/navigation/Button';
 import { ProgressBar } from '../../../../shared/atoms/ProgressBar';
 import { TranslationInput } from '../../../../shared/atoms/TranslationInput';
@@ -13,21 +14,25 @@ import { calculateTranslationProgress } from '../../../../shared/utility/calcula
 import { AdminHeader } from '../../../molecules/AdminHeader';
 
 export const EditTranslation: React.FC = () => {
-  const { code } = useParams<{ code: string }>();
+  const { code, namespace } = useParams<{ code: string; namespace?: string }>();
   const { t, i18n } = useTranslation();
   const api = useApi();
 
   const localeData = locale.getByTag(code);
 
-  const { data, refetch } = apiHooks.getSiteLocale(() => [code, true]);
+  const { data, refetch } = apiHooks.getLocale(() => [code, namespace, true]);
 
   const [modifiedData, setModifiedData] = useState<any>({});
   const [saveChanges, saveChangesState] = useMutation(async () => {
     if (data) {
-      await api.updateSiteLocale(code, {
-        ...data.content,
-        ...modifiedData,
-      });
+      await api.updateLocale(
+        code,
+        {
+          ...data.content,
+          ...modifiedData,
+        },
+        namespace
+      );
       await refetch();
       await i18n.reloadResources();
       setModifiedData({});
@@ -45,9 +50,14 @@ export const EditTranslation: React.FC = () => {
         breadcrumbs={[
           { label: 'Site admin', link: '/' },
           { label: 'Localisation', active: false, link: `/i18n` },
-          { label: localeData.name, active: true, link: `/i18n/edit/${code}` },
+          { label: localeData.name, active: !namespace, link: `/i18n/edit/${code}` },
+          namespace ? { label: namespace, active: !namespace, link: `/i18n/edit/${code}/${namespace}` } : null,
         ]}
-        title={t('Edit {{langName}}', { langName: localeData.name })}
+        title={
+          namespace
+            ? t('Edit {{langName}} ({{namespace}})', { langName: localeData.name, namespace })
+            : t('Edit {{langName}}', { langName: localeData.name })
+        }
         subtitle={
           <Button
             disabled={Object.keys(modifiedData).length === 0 || saveChangesState.isLoading}
@@ -58,6 +68,7 @@ export const EditTranslation: React.FC = () => {
         }
       />
       <WidePage>
+        {namespace ? <ExperimentalFeature feature="Editing custom namespaces" discussion={567} /> : null}
         <h3>{t('Edit translation')}</h3>
         {data ? (
           <>
@@ -74,7 +85,7 @@ export const EditTranslation: React.FC = () => {
               />
             </ProgressBar.Container>
             <div>
-              {Object.keys(data.content).map(key => {
+              {Object.keys(data.content || {}).map(key => {
                 return (
                   <TranslationInput
                     id={key}

@@ -313,7 +313,9 @@ export const router = new TypedRouter({
   'i18n-list-locales': [TypedRouter.GET, '/api/madoc/locales', listLocalisations],
   'i18n-analysis-locales': [TypedRouter.GET, '/api/madoc/locales/analysis', extractLocalesFromContent],
   'i18n-get-locale': [TypedRouter.GET, '/api/madoc/locales/:code', getLocalisation],
+  'i18n-get-locale-ns': [TypedRouter.GET, '/api/madoc/locales/:code/:namespace', getLocalisation],
   'i18n-update-locale': [TypedRouter.POST, '/api/madoc/locales/:code', updateLocalisation],
+  'i18n-update-locale-ns': [TypedRouter.POST, '/api/madoc/locales/:code/:namespace', updateLocalisation],
   'i18n-update-locale-pref': [TypedRouter.PATCH, '/api/madoc/locales', updateLanguagePreferences],
 
   // Collection API.
@@ -602,7 +604,8 @@ export const router = new TypedRouter({
   ],
   'site-task-metadata': [TypedRouter.GET, '/s/:slug/madoc/api/task-metadata/:taskId', siteTaskMetadata],
   'site-list-locales': [TypedRouter.GET, '/s/:slug/madoc/api/locales', listLocalisations],
-  'site-get-locale': [TypedRouter.GET, '/s/:slug/madoc/api/locales/:code', getLocalisation],
+  'site-get-locale': [TypedRouter.GET, '/s/:slug/madoc/api/locales/:lng', getLocale],
+  'site-get-locale-ns': [TypedRouter.GET, '/s/:slug/madoc/api/locales/:lng/:ns', getLocale],
   'site-user-autocomplete': [TypedRouter.GET, '/s/:slug/madoc/api/users/autocomplete', siteUserAutocomplete],
 
   // To be worked into API calling methods

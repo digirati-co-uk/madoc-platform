@@ -43,9 +43,6 @@ export function applyModelRootToDocument(
     // Prevent the documents at the root from being added to.
     for (const doc of documentsToPreventFurtherAdditions) {
       doc.allowMultiple = false;
-      console.log('->', doc);
     }
   }
-
-  console.log({ documentsToPreventFurtherAdditions });
 }

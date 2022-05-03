@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import styled, { css } from 'styled-components';
+import { useModelTranslation } from '../../../hooks/use-model-translation';
 import { Tag } from '../../atoms/Tag';
 import { useTranslation } from 'react-i18next';
 import { useSelectorController, useSelectorHelper } from '../../stores/selectors/selector-helper';
@@ -108,6 +109,7 @@ export const FieldHeader: React.FC<FieldHeaderProps> = ({
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const helper = useSelectorHelper();
+  const { t: tModel, i18n } = useModelTranslation();
 
   const toggleSelector = useCallback(() => {
     if (open) {
@@ -128,9 +130,9 @@ export const FieldHeader: React.FC<FieldHeaderProps> = ({
       <FieldHeaderTop>
         <FieldHeaderLeft>
           <FieldHeaderTitle htmlFor={labelFor}>
-            {label} {showTerm && term ? <Tag size="tiny">{term}</Tag> : null}
+            {tModel(label)} {showTerm && term ? <Tag size="tiny">{term}</Tag> : null}
           </FieldHeaderTitle>
-          {description ? <FieldHeaderSubtitle htmlFor={labelFor}>{description}</FieldHeaderSubtitle> : null}
+          {description ? <FieldHeaderSubtitle htmlFor={labelFor}>{tModel(description)}</FieldHeaderSubtitle> : null}
         </FieldHeaderLeft>
         {selectorComponent ? (
           <FieldHeaderRight

@@ -85,8 +85,8 @@ export const AdminHeader: React.FC<{
   title: any;
   sticky?: boolean;
   subtitle?: any;
-  breadcrumbs?: BreadcrumbItem[];
-  menu?: Array<BreadcrumbItem | null>;
+  breadcrumbs?: Array<BreadcrumbItem | null | undefined>;
+  menu?: Array<BreadcrumbItem | null | undefined>;
   thumbnail?: string;
   search?: boolean;
   noMargin?: boolean;
