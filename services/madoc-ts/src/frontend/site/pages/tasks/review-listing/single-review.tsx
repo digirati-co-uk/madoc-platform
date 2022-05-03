@@ -8,8 +8,16 @@ import { RevisionProviderWithFeatures } from '../../../../shared/capture-models/
 import { SimpleSaveButton } from '../../../../shared/capture-models/new/components/SimpleSaveButton';
 import { EditorContentViewer } from '../../../../shared/capture-models/new/EditorContent';
 import { useData } from '../../../../shared/hooks/use-data';
+import { PreviewIcon } from '../../../../shared/icons/PreviewIcon';
+import { ReadMoreIcon } from '../../../../shared/icons/ReadMoreIcon';
 import { EmptyState } from '../../../../shared/layout/EmptyState';
+import {
+  EditorToolbarButton,
+  EditorToolbarIcon,
+  EditorToolbarLabel,
+} from '../../../../shared/navigation/EditorToolbar';
 import { serverRendererFor } from '../../../../shared/plugins/external/server-renderer-for';
+import { HrefLink } from '../../../../shared/utility/href-link';
 import { RefetchProvider, useRefetch } from '../../../../shared/utility/refetch-context';
 import { useCrowdsourcingTaskDetails } from '../../../hooks/use-crowdsourcing-task-details';
 import { ApproveSubmission } from '../actions/approve-submission';
@@ -23,7 +31,15 @@ function ViewSingleReview({
   task: CrowdsourcingTask & { id: string };
   review: (CrowdsourcingReview & { id: string }) | null;
 }) {
-  const { captureModel, revisionId, wasRejected, canvas, project } = useCrowdsourcingTaskDetails(task);
+  const {
+    captureModel,
+    revisionId,
+    wasRejected,
+    canvas,
+    project,
+    canvasLink,
+    manifestLink,
+  } = useCrowdsourcingTaskDetails(task);
   const refetch = useRefetch();
 
   if (!review) {
@@ -50,6 +66,23 @@ function ViewSingleReview({
         <div style={{ width: 300 }}>
           {review && !wasRejected ? (
             <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {canvasLink ? (
+                <EditorToolbarButton as={HrefLink} href={canvasLink} $leftBorder>
+                  <EditorToolbarIcon>
+                    <PreviewIcon />
+                  </EditorToolbarIcon>
+                  <EditorToolbarLabel>View resource</EditorToolbarLabel>
+                </EditorToolbarButton>
+              ) : null}
+              {manifestLink ? (
+                <EditorToolbarButton as={HrefLink} href={manifestLink} $leftBorder>
+                  <EditorToolbarIcon>
+                    <PreviewIcon />
+                  </EditorToolbarIcon>
+                  <EditorToolbarLabel>View manifest</EditorToolbarLabel>
+                </EditorToolbarButton>
+              ) : null}
+
               <RejectSubmission
                 userTaskId={task.id}
                 onReject={() => {

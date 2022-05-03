@@ -158,7 +158,7 @@ export const LocaleString: React.FC<{
   defaultText?: string;
   to?: string;
   enableDangerouslySetInnerHTML?: boolean;
-  children: InternationalString | null | undefined;
+  children: InternationalString | string | null | undefined;
   style?: React.CSSProperties;
   extraProps?: any;
 } & Record<string, any>> = ({ as: Component, defaultText, enableDangerouslySetInnerHTML, children, ...props }) => {

@@ -72,6 +72,31 @@ export function useCrowdsourcingTaskDetails(task: CrowdsourcingTask & { id: stri
     };
   }, [target, project, showCaptureModelOnManifest, revisionId]);
 
+  const manifestLink =
+    subject && subject.type === 'manifest'
+      ? createLink({ manifestId: subject.id, taskId: undefined, parentTaskId: undefined, projectId: project?.slug })
+      : subject && subject.parent && subject.parent.type === 'manifest'
+      ? createLink({
+          manifestId: subject.parent.id,
+          canvasId: undefined,
+          taskId: undefined,
+          parentTaskId: undefined,
+          projectId: project?.slug,
+        })
+      : null;
+
+  const canvasLink =
+    subject && subject.parent && subject.parent.type === 'manifest'
+      ? createLink({
+          manifestId: subject.parent.id,
+          canvasId: subject.id,
+          taskId: undefined,
+          parentTaskId: undefined,
+          subRoute: 'model',
+          projectId: project?.slug,
+        })
+      : null;
+
   const modelId = task.parameters[0];
   const isCanvas =
     parentTask && parentTask.parameters ? parentTask.parameters[2] === 'canvas' : task.parameters[2] === 'canvas';
@@ -83,6 +108,8 @@ export function useCrowdsourcingTaskDetails(task: CrowdsourcingTask & { id: stri
     canvas,
     modelStatus,
     refetchModel,
+    manifestLink,
+    canvasLink,
     isCanvas,
     isComplete,
     isSubmitted,
