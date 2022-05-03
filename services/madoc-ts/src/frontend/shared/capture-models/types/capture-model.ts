@@ -27,7 +27,7 @@ export type Revision = {
   fields: ModelFields;
   approved?: boolean;
   revises?: string;
-  deletedFields?: string[];
+  deletedFields?: string[] | null;
 };
 
 export type StatusTypes = 'draft' | 'submitted' | 'accepted';
