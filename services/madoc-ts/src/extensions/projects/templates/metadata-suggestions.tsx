@@ -10,7 +10,8 @@ import { EditorSlots } from '../../../frontend/shared/capture-models/new/compone
 import { MetadataDiff } from '../../../frontend/shared/hooks/use-metadata-editor';
 import { EmptyState } from '../../../frontend/shared/layout/EmptyState';
 import { MetadataDefinition } from '../../../types/schemas/metadata-definition';
-import { MetadataField } from '../../../utility/iiif-metadata';
+import { extractRevisionTextFields, stringBasedFields } from '../../../utility/extract-revision-text-fields';
+import { parseMetadataListToValueMap } from '../../../utility/iiif-metadata';
 import { parseUrn } from '../../../utility/parse-urn';
 import { ProjectTemplate } from '../types';
 
@@ -18,8 +19,6 @@ type MetadataSuggestionsOptions = {
   bulkMetadata: string;
   allowCustomPairs: boolean;
 };
-
-const stringBasedFields = ['text-field', 'dropdown-field', 'tagged-text-field', 'html-field', 'color-field'];
 
 export const metadataSuggestions: ProjectTemplate<MetadataSuggestionsOptions> = {
   type: '@madoc.io/metadata-suggestions',
@@ -230,35 +229,10 @@ export const metadataSuggestions: ProjectTemplate<MetadataSuggestionsOptions> = 
     },
 
     async onRevisionApproved({ revision, captureModel, api }) {
-      let modified = false;
-      const keysFound: string[] = [];
-      const stringValues: Record<string, string> = {};
-      const langValues: Record<string, InternationalString> = {};
-      const keyLabels: Record<string, string> = {};
-      // 1) Extract revision fields.
-
-      traverseDocument(revision.document, {
-        visitField(field, key_) {
-          if (field.revision === revision.revision.id) {
-            // Only apply changes made in this revision.
-            const key = key_.toLowerCase();
-            keyLabels[key] = field.label || key_;
-            if (key && field.type === 'international-field') {
-              keysFound.push(key);
-              langValues[key] = field.value;
-              modified = true;
-              return;
-            }
-
-            if (key && stringBasedFields.indexOf(field.type) !== -1) {
-              keysFound.push(key);
-              stringValues[key] = field.value;
-              modified = true;
-              return;
-            }
-          }
-        },
-      });
+      const { stringValues, modified, langValues, keysFound, keyLabels } = extractRevisionTextFields(
+        revision.document,
+        revision.revision.id
+      );
 
       // Nothing to do
       if (!modified) {
@@ -276,29 +250,8 @@ export const metadataSuggestions: ProjectTemplate<MetadataSuggestionsOptions> = 
       invariant(manifestUrn, 'Missing or invalid manifest ID');
 
       const { fields } = await api.getManifestMetadata(manifestUrn.id);
-
-      const keysIndex: Record<string, number> = {};
-      const valueIndex: Record<number, Array<MetadataDefinition & { id: number }>> = {};
-      let metadataCursor = 0;
-
-      for (const field of fields) {
-        if (field.key.startsWith('metadata.') && field.key.endsWith('.label')) {
-          const [, index] = field.key.split('.');
-          const keyToStore = field.value.toLowerCase();
-          keysIndex[keyToStore] = Number(index);
-
-          metadataCursor = Math.max(metadataCursor, Number(index));
-        }
-        if (field.key.startsWith('metadata.') && field.key.endsWith('.value')) {
-          const [, index] = field.key.split('.');
-          const numberIndex = Number(index);
-          valueIndex[numberIndex] = valueIndex[numberIndex] ? valueIndex[numberIndex] : [];
-          valueIndex[numberIndex].push(field);
-          metadataCursor = Math.max(metadataCursor, numberIndex);
-        }
-      }
-
-      metadataCursor++;
+      const parsedMetadata = parseMetadataListToValueMap(fields);
+      const { valueIndex, keysIndex } = parsedMetadata;
 
       const fullDiff: MetadataDiff = {
         added: [],
@@ -360,7 +313,7 @@ export const metadataSuggestions: ProjectTemplate<MetadataSuggestionsOptions> = 
         } else {
           if (langValue) {
             // Creating.
-            const cursor = metadataCursor++;
+            const cursor = parsedMetadata.metadataCursor++;
 
             fullDiff.added.push({
               key: `metadata.${cursor}.label`,
@@ -404,7 +357,7 @@ export const metadataSuggestions: ProjectTemplate<MetadataSuggestionsOptions> = 
         } else {
           if (stringValue) {
             // Creating.
-            const cursor = metadataCursor++;
+            const cursor = parsedMetadata.metadataCursor++;
 
             fullDiff.added.push({
               key: `metadata.${cursor}.label`,

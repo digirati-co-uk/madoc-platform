@@ -1,4 +1,5 @@
 import { InternationalString } from '@hyperion-framework/types';
+import { MetadataDefinition } from '../types/schemas/metadata-definition';
 
 export type MetadataField = {
   resource_id: number;
@@ -106,4 +107,35 @@ export function mapMetadata<
     returnList.push(fieldMap[id]);
   }
   return returnList as any;
+}
+
+export function parseMetadataListToValueMap(fields: Array<MetadataDefinition & { id: number }>) {
+  const keysIndex: Record<string, number> = {};
+  const valueIndex: Record<number, Array<MetadataDefinition & { id: number }>> = {};
+  let metadataCursor = 0;
+
+  for (const field of fields) {
+    if (field.key.startsWith('metadata.') && field.key.endsWith('.label')) {
+      const [, index] = field.key.split('.');
+      const keyToStore = field.value.toLowerCase();
+      keysIndex[keyToStore] = Number(index);
+
+      metadataCursor = Math.max(metadataCursor, Number(index));
+    }
+    if (field.key.startsWith('metadata.') && field.key.endsWith('.value')) {
+      const [, index] = field.key.split('.');
+      const numberIndex = Number(index);
+      valueIndex[numberIndex] = valueIndex[numberIndex] ? valueIndex[numberIndex] : [];
+      valueIndex[numberIndex].push(field);
+      metadataCursor = Math.max(metadataCursor, numberIndex);
+    }
+  }
+
+  metadataCursor++;
+
+  return {
+    metadataCursor,
+    keysIndex,
+    valueIndex,
+  };
 }
