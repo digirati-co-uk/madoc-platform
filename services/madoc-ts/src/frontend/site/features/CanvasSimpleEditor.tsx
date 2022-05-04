@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import { useTranslation } from 'react-i18next';
 import { PARAGRAPHS_PROFILE } from '../../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
 import { slotConfig } from '../../../extensions/capture-models/Paragraphs/Paragraphs.slots';
+import { ViewReadOnlyAnnotation } from '../../shared/atlas/ViewReadOnlyAnnotation';
 import { SubmitWithoutPreview } from '../../shared/capture-models/new/components/SubmitWithoutPreview';
 import { RevisionRequest } from '../../shared/capture-models/types/revision-request';
 import { useLocalStorage } from '../../shared/hooks/use-local-storage';
@@ -223,7 +224,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
                 onPanInSketchMode={onPanInSketchMode}
               >
                 {readOnlyAnnotations.map(anno => (
-                  <box key={anno.id} {...anno} />
+                  <ViewReadOnlyAnnotation key={anno.id} {...anno} />
                 ))}
               </EditorContentViewer>
 

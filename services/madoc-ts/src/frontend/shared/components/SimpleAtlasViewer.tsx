@@ -5,10 +5,10 @@ import { useCanvas, useImageService } from '@hyperion-framework/react-vault';
 import { useTranslation } from 'react-i18next';
 import { CanvasViewerButton, CanvasViewerControls } from '../../site/features/CanvasViewerGrid';
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
+import { ViewReadOnlyAnnotation } from '../atlas/ViewReadOnlyAnnotation';
 import { HomeIcon } from '../icons/HomeIcon';
 import { MinusIcon } from '../icons/MinusIcon';
 import { PlusIcon } from '../icons/PlusIcon';
-import { Button, ButtonRow } from '../navigation/Button';
 import { webglSupport } from '../utility/webgl-support';
 import { AtlasTiledImages } from './AtlasTiledImages';
 import { useReadOnlyAnnotations } from '../hooks/use-read-only-annotations';
@@ -26,7 +26,9 @@ export const SimpleAtlasViewer = React.forwardRef<
   const canvas = useCanvas();
   const runtime = useRef<Runtime>();
   const { data: service } = useImageService();
-  const { project: { atlasBackground } } = useSiteConfiguration();
+  const {
+    project: { atlasBackground },
+  } = useSiteConfiguration();
   const [isLoaded, setIsLoaded] = useState(false);
   const readOnlyAnnotations = useReadOnlyAnnotations(false);
 
@@ -111,7 +113,7 @@ export const SimpleAtlasViewer = React.forwardRef<
                     })
                   : null}
                 {readOnlyAnnotations.map(anno => (
-                  <box key={anno.id} {...anno} />
+                  <ViewReadOnlyAnnotation key={anno.id} {...anno} />
                 ))}
               </worldObject>
             </world>

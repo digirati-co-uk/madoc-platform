@@ -191,6 +191,9 @@ export function CreateAnnotationStyle({ existing }: { existing?: AnnotationStyle
 
               <AnnotationStyleForm
                 key={current}
+                showHotspot={
+                  current === 'contributedAnnotations' || current === 'contributedDocument' || current === 'submissions'
+                }
                 value={newConfig[current] || {}}
                 onUpdate={newValues => {
                   setNewConfig(prev => {

@@ -8,6 +8,7 @@ import { Input, InputContainer, InputLabel } from '../form/Input';
 
 export interface AnnotationStyleFormProps {
   value: AnnotationThemeDefinition;
+  showHotspot?: boolean;
   onUpdate(newValue: AnnotationThemeDefinition): void;
 }
 
@@ -20,6 +21,8 @@ enum ThemeActionTypes {
   SET_BORDER_COLOR,
   SET_BORDER_WIDTH,
   RESET,
+  SET_HOTSPOT,
+  SET_HOTSPOT_SIZE,
 }
 
 function themeDefinitionReducer(
@@ -63,6 +66,12 @@ function themeDefinitionReducer(
 
       return { ...state, borderWidth: action.value };
     }
+    case ThemeActionTypes.SET_HOTSPOT:
+      return { ...state, hotspot: action.value };
+
+    case ThemeActionTypes.SET_HOTSPOT_SIZE:
+      return { ...state, hotspotSize: action.value };
+
     case ThemeActionTypes.RESET:
       return action.value;
   }
@@ -96,6 +105,63 @@ export function AnnotationStyleForm(props: AnnotationStyleFormProps) {
       </InputContainer>
       {!state.hidden ? (
         <>
+          {props.showHotspot ? (
+            <>
+              <InputContainer fluid>
+                <InputLabel>Hotspot</InputLabel>
+                <CheckboxField
+                  type="checkbox-field"
+                  value={state.hotspot || false}
+                  id="hidden"
+                  inlineLabel="Show hotspot user interface for annotation"
+                  label="Hidden"
+                  updateValue={v => {
+                    dispatch({ type: ThemeActionTypes.SET_HOTSPOT, value: v });
+                  }}
+                />
+              </InputContainer>
+              {state.hotspot ? (
+                <>
+                  <InputContainer fluid>
+                    <InputLabel>Hotspot size</InputLabel>
+
+                    <CompositeInput.Container>
+                      <CompositeInput.InputSplitRow>
+                        <Input
+                          type="button"
+                          value="Small"
+                          $inactive={!state.hotspotSize || state.hotspotSize === 'sm'}
+                          onClick={e => {
+                            e.preventDefault();
+                            dispatch({ type: ThemeActionTypes.SET_HOTSPOT_SIZE, value: 'sm' });
+                          }}
+                        />
+                        <Input
+                          type="button"
+                          value="Medium"
+                          $inactive={state.hotspotSize === 'md'}
+                          onClick={e => {
+                            e.preventDefault();
+                            dispatch({ type: ThemeActionTypes.SET_HOTSPOT_SIZE, value: 'md' });
+                          }}
+                        />
+                        <Input
+                          type="button"
+                          value="Large"
+                          $inactive={state.hotspotSize === 'lg'}
+                          onClick={e => {
+                            e.preventDefault();
+                            dispatch({ type: ThemeActionTypes.SET_HOTSPOT_SIZE, value: 'lg' });
+                          }}
+                        />
+                      </CompositeInput.InputSplitRow>
+                    </CompositeInput.Container>
+                  </InputContainer>
+                </>
+              ) : null}
+            </>
+          ) : null}
+
           <InputContainer fluid>
             <InputLabel>Interactivity</InputLabel>
             <CheckboxField

@@ -1,5 +1,5 @@
-import { BoxStyle } from '@atlas-viewer/atlas';
 import { useEffect, useMemo, useState } from 'react';
+import { AnnotationThemeDefinition } from '../../../types/annotation-styles';
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
 import { useProjectAnnotationStyles } from '../../site/hooks/use-project-annotation-styles';
 import { useRouteContext } from '../../site/hooks/use-route-context';
@@ -10,10 +10,10 @@ import { useHighlightedRegions } from './use-highlighted-regions';
 import { useLocalStorage } from './use-local-storage';
 import { annotationPageToRegions } from '../utility/annotation-page-to-regions';
 
-interface ReadOnlyAnnotation {
+export interface ReadOnlyAnnotation {
   id: string;
   target: { x: number; y: number; width: number; height: number };
-  style: BoxStyle;
+  style: AnnotationThemeDefinition;
 }
 
 export function useReadOnlyAnnotations(isModelPage = false): ReadOnlyAnnotation[] {
@@ -54,20 +54,21 @@ export function useReadOnlyAnnotations(isModelPage = false): ReadOnlyAnnotation[
     const regions: ReadOnlyAnnotation[] = [];
     const ids: string[] = [];
 
-    if (showAnnotations && data?.annotations) {
+    if (showAnnotations && data?.annotations && !styles.contributedAnnotations?.hidden) {
       const annotationRegions = annotationPageToRegions(data.annotations);
-      ids.push(...annotationRegions.map(r => r.id));
-      regions.push(
-        ...annotationRegions.map(region => ({
+
+      for (const region of annotationRegions) {
+        if (ids.indexOf(region.id) !== -1) continue;
+        ids.push(region.id);
+        regions.push({
           id: region.id,
           target: region.target,
           style:
             highlightedAnnotation === region.id || highlighted.indexOf(region.id) !== -1
               ? styles.highlighted
               : styles.contributedAnnotations,
-        }))
-      );
-      //
+        });
+      }
     }
 
     return { regions, ids };
@@ -75,14 +76,14 @@ export function useReadOnlyAnnotations(isModelPage = false): ReadOnlyAnnotation[
 
   const unstyledDocumentRegions = useMemo(() => {
     const regions: ReadOnlyAnnotation[] = [];
-    const ids: string[] = [];
+    const ids: string[] = annotations.ids;
 
-    if (showDocumentRegions) {
+    if (showDocumentRegions && !styles.contributedDocument?.hidden) {
       if (data && data.models) {
         for (const model of data.models) {
           traverseDocument(model.document, {
             visitSelector(selector) {
-              if (selector.state) {
+              if (selector.state && ids.indexOf(selector.id) === -1) {
                 ids.push(selector.id);
                 regions.push({
                   id: selector.id,
@@ -97,10 +98,11 @@ export function useReadOnlyAnnotations(isModelPage = false): ReadOnlyAnnotation[
     }
 
     return { regions, ids };
-  }, [data, showDocumentRegions, styles.contributedDocument]);
+  }, [data, showDocumentRegions, styles.contributedDocument, annotations.ids]);
 
   const documentRegions = useMemo(() => {
     const returnRegions = [];
+
     for (const region of unstyledDocumentRegions.regions) {
       if (region.id === highlightedDocumentRegion || highlighted.indexOf(region.id) !== -1) {
         returnRegions.push({ ...region, style: styles.highlighted });
