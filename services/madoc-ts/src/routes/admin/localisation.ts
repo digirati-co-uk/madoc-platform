@@ -109,50 +109,54 @@ export type GetLocalisationResponse = {
   };
 };
 
-async function loadLocaleTemplate(userApi: ApiClientWithoutExtensions, namespace?: string) {
+async function loadLocaleTemplate(userApi: ApiClientWithoutExtensions, namespace?: string, modelIds?: string[]) {
   const emptyJson: any = {};
 
-  if (namespace === 'capture-models') {
+  if (namespace === 'capture-models' && modelIds) {
     // @todo extract all language strings from all project models.
-    const models = await userApi.getAllCaptureModels();
     const promises: Promise<any>[] = [];
     const foundStrings = new Set<string>();
-    for (const modelSnippet of models) {
-      promises.push(userApi.getCaptureModel(modelSnippet.id));
+    for (const modelId of modelIds) {
+      promises.push(userApi.getCaptureModel(modelId));
     }
 
-    (await Promise.all(promises)).forEach(singleModel => {
-      traverseDocument(singleModel.document, {
-        visitField(field) {
-          if (field.label) foundStrings.add(field.label);
-          if (field.description) foundStrings.add(field.description);
-          if (field.pluralLabel) foundStrings.add(field.pluralLabel);
-          if ((field as TextFieldProps).placeholder) {
-            foundStrings.add((field as TextFieldProps).placeholder as string);
-          }
-        },
-        visitEntity(entity) {
-          if (entity.label) foundStrings.add(entity.label);
-          if (entity.description) foundStrings.add(entity.description);
-          if (entity.pluralLabel) foundStrings.add(entity.pluralLabel);
-        },
-        visitSelector(selector) {
-          // Nothing to extract from selectors.
-        },
-      });
-      traverseStructure(singleModel.structure, structure => {
-        if (structure.label) foundStrings.add(structure.label);
-        if (structure.description) foundStrings.add(structure.description);
-        if (structure.type !== 'choice') {
+    for (const singleModelPromise of promises) {
+      try {
+        const singleModel = await singleModelPromise;
+        traverseDocument(singleModel.document, {
+          visitField(field) {
+            if (field.label) foundStrings.add(field.label);
+            if (field.description) foundStrings.add(field.description);
+            if (field.pluralLabel) foundStrings.add(field.pluralLabel);
+            if ((field as TextFieldProps).placeholder) {
+              foundStrings.add((field as TextFieldProps).placeholder as string);
+            }
+          },
+          visitEntity(entity) {
+            if (entity.label) foundStrings.add(entity.label);
+            if (entity.description) foundStrings.add(entity.description);
+            if (entity.pluralLabel) foundStrings.add(entity.pluralLabel);
+          },
+          visitSelector(selector) {
+            // Nothing to extract from selectors.
+          },
+        });
+        traverseStructure(singleModel.structure, structure => {
           if (structure.label) foundStrings.add(structure.label);
           if (structure.description) foundStrings.add(structure.description);
-          if (structure.pluralLabel) foundStrings.add(structure.pluralLabel);
-          if (structure.instructions) foundStrings.add(structure.instructions);
-        }
-      });
-    });
+          if (structure.type !== 'choice') {
+            if (structure.label) foundStrings.add(structure.label);
+            if (structure.description) foundStrings.add(structure.description);
+            if (structure.pluralLabel) foundStrings.add(structure.pluralLabel);
+            if (structure.instructions) foundStrings.add(structure.instructions);
+          }
+        });
+      } catch (e) {
+        // ignore.
+      }
+    }
 
-    for (const key of foundStrings) {
+    for (const key of foundStrings.values()) {
       emptyJson[key] = '';
     }
     return emptyJson;
@@ -197,9 +201,16 @@ export const getLocalisation: RouteMiddleware<{ code: string; namespace?: string
   invariant(!languageCode.match(/\.\./), 'Language not found');
   invariant(!namespace.match(/\.\./), 'Namespace not found');
 
+  const modelIds =
+    namespace === 'capture-models'
+      ? (
+          await context.connection.many(
+            sql<{ capture_model_id: string }>`select capture_model_id from iiif_project where site_id = ${siteId}`
+          )
+        ).map(m => m.capture_model_id)
+      : [];
   // Load default english.
-  const emptyJson = await loadLocaleTemplate(api, namespace);
-
+  const emptyJson = await loadLocaleTemplate(userApi, namespace, modelIds);
   // Load from disk if exists.
   const location = path.resolve(TRANSLATIONS_PATH, languageCode, `${namespace}.json`);
   const isStatic = fs.existsSync(location);
@@ -331,8 +342,17 @@ export const updateLocalisation: RouteMiddleware<{ code: string; namespace?: str
     return;
   }
 
+  const modelIds =
+    namespace === 'capture-models'
+      ? (
+          await context.connection.many(
+            sql<{ capture_model_id: string }>`select capture_model_id from iiif_project where site_id = ${siteId}`
+          )
+        ).map(m => m.capture_model_id)
+      : [];
+
   const keys = Object.keys(context.requestBody);
-  const template = await loadLocaleTemplate(userApi, namespace);
+  const template = await loadLocaleTemplate(userApi, namespace, modelIds);
   const validStrings: any = {};
   for (const key of keys) {
     if (typeof template[key] !== 'undefined' && typeof context.requestBody[key] === 'string') {
@@ -343,8 +363,6 @@ export const updateLocalisation: RouteMiddleware<{ code: string; namespace?: str
   // Create language in storage API at specific location.
   await userApi.saveStorageJson(`madoc-i18n`, `${languageCode}/${namespace}.json`, validStrings, true);
   const url = `/public/storage/urn:madoc:site:${siteId}/madoc-i18n/public/${languageCode}/${namespace}.json`;
-
-  console.log(`${languageCode}/${namespace}.json`, url);
 
   // Save to site configuration
   const configResponse = await userApi.getConfiguration<LocalisationSiteConfig>(`${namespace}-i18n`, [

@@ -17,10 +17,8 @@ export const getLocale: RouteMiddleware<{ lng: string; ns: string }> = async con
     const { siteApi } = context.state;
     const locale = await siteApi.getLocale(context.params.lng, context.params.ns);
 
-    if (locale.isStatic || locale.isDynamic) {
-      context.response.body = locale.content;
-      context.response.status = 200;
-    }
+    context.response.body = locale.content;
+    context.response.status = 200;
 
     return;
   }
