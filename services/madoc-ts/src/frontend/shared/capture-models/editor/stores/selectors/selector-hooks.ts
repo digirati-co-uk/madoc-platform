@@ -304,21 +304,25 @@ export function useAllSelectors(
   const selectors = Revisions.useStoreState(state => state.resolvedSelectors);
   const selectorHandlers = useSelectorHandlers();
 
+  const ids: string[] = [];
+
   const topLevel = [];
   const currentLevel = [];
   const adjacent = [];
   const hidden = [];
 
   for (const selector of selectors) {
-    if (selectorHandlers.visibleSelectors.current === selector.id) {
+    if (selectorHandlers.visibleSelectors.current === selector.id || ids.indexOf(selector.id) !== -1) {
       continue;
     }
+
+    ids.push(selector.id);
 
     if (selectorHandlers.visibleSelectors.topLevel === selector.id) {
       // The top level one.
       topLevel.push(
         React.createElement(SelectorRenderer, {
-          key: selector.id,
+          key: 'hook_' + selector.id,
           id: selector.id,
           contentType,
           selector,
@@ -339,7 +343,7 @@ export function useAllSelectors(
       // Render  current level.
       currentLevel.push(
         React.createElement(SelectorRenderer, {
-          key: selector.id,
+          key: 'hook_' + selector.id,
           id: selector.id,
           contentType,
           selector,
@@ -359,7 +363,7 @@ export function useAllSelectors(
       // Render adjacent level.
       adjacent.push(
         React.createElement(SelectorRenderer, {
-          key: selector.id,
+          key: 'hook_' + selector.id,
           id: selector.id,
           contentType,
           selector,
@@ -378,7 +382,7 @@ export function useAllSelectors(
     // Render hidden selectors.
     hidden.push(
       React.createElement(SelectorRenderer, {
-        key: selector.id,
+        key: 'hook_' + selector.id,
         id: selector.id,
         contentType,
         selector,

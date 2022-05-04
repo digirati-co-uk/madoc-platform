@@ -11,6 +11,8 @@ export interface AnnotationStyles {
 export type AnnotationThemeDefinition = BoxStyle & {
   hidden?: boolean;
   interactive?: boolean;
+  hotspot?: boolean;
+  hotspotSize?: 'lg' | 'md' | 'sm';
 };
 
 export type AnnotationBuckets =
