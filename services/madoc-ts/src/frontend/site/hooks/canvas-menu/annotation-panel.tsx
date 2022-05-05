@@ -10,6 +10,7 @@ import {
 } from '../../../shared/atoms/MetadataConfiguration';
 import { useHighlightedRegions } from '../../../shared/hooks/use-highlighted-regions';
 import { AnnotationsIcon } from '../../../shared/icons/AnnotationsIcon';
+import { useProjectAnnotationStyles } from '../use-project-annotation-styles';
 import { CanvasMenuHook } from './types';
 
 const AnnotationContainer = styled.div`
@@ -26,6 +27,7 @@ export function useAnnotationPanel(active: boolean): CanvasMenuHook {
     setCurrentCollection,
     setIsActive,
   } = useHighlightedRegions();
+  const styles = useProjectAnnotationStyles();
 
   useEffect(() => {
     setIsActive(active);
@@ -62,6 +64,8 @@ export function useAnnotationPanel(active: boolean): CanvasMenuHook {
         return (
           <MetadataCardItem
             key={item.id}
+            // onMouseOver={styles.contributedAnnotations.hotspot ? undefined : () => setHighlightStatus(item.id, true)}
+            // onMouseOut={styles.contributedAnnotations.hotspot ? undefined : () => setHighlightStatus(item.id, false)}
             onMouseOver={() => setHighlightStatus(item.id, true)}
             onMouseOut={() => setHighlightStatus(item.id, false)}
           >

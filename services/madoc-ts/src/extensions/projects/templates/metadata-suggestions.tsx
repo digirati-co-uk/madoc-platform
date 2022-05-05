@@ -17,7 +17,6 @@ import { ProjectTemplate } from '../types';
 
 type MetadataSuggestionsOptions = {
   bulkMetadata: string;
-  allowCustomPairs: boolean;
 };
 
 export const metadataSuggestions: ProjectTemplate<MetadataSuggestionsOptions> = {
@@ -26,6 +25,28 @@ export const metadataSuggestions: ProjectTemplate<MetadataSuggestionsOptions> = 
     label: 'Metadata suggestions',
     description: 'Crowd source the metadata for your canvases or manifests',
     version: '1.0.0',
+    thumbnail: `<svg width="109px" height="109px" viewBox="0 0 109 109" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g transform="translate(-96.000000, -719.000000)">
+            <g transform="translate(96.000000, 719.000000)">
+                <rect stroke="#E7E9EC" stroke-width="2" x="1" y="1" width="107" height="107" rx="5"></rect>
+                <rect fill="#BFBFBF" x="17" y="15" width="28" height="3"></rect>
+                <rect fill="#E7E9EC" x="17" y="21" width="45" height="5"></rect>
+                <rect fill="#5B78E5" x="17" y="21" width="45" height="5"></rect>
+                <rect fill="#BFBFBF" x="17" y="32" width="28" height="3"></rect>
+                <rect fill="#E7E9EC" x="17" y="38" width="39" height="5"></rect>
+                <rect fill="#BFBFBF" x="17" y="49" width="28" height="3"></rect>
+                <rect fill="#E7E9EC" x="17" y="55" width="33" height="5"></rect>
+                <rect fill="#BFBFBF" x="17" y="66" width="28" height="3"></rect>
+                <rect fill="#BFBFBF" x="17" y="83" width="28" height="3"></rect>
+                <rect fill="#E7E9EC" x="17" y="72" width="41" height="5"></rect>
+                <rect fill="#E7E9EC" x="17" y="89" width="39" height="5"></rect>
+                <rect fill="#5B78E5" x="17" y="55" width="33" height="5"></rect>
+                <rect fill="#5B78E5" x="17" y="89" width="39" height="5"></rect>
+            </g>
+        </g>
+    </g>
+</svg>`,
   },
   captureModel: {
     document: captureModelShorthand({}),
@@ -104,10 +125,6 @@ export const metadataSuggestions: ProjectTemplate<MetadataSuggestionsOptions> = 
         multiline: true,
         minLines: 10,
       } as Partial<TextFieldProps>,
-      allowCustomPairs: {
-        type: 'checkbox-field',
-        label: 'Populate existing metadata values',
-      },
     },
     modelPreview: function ModelPreview(options) {
       const doc = useMemo(() => {
@@ -132,7 +149,6 @@ export const metadataSuggestions: ProjectTemplate<MetadataSuggestionsOptions> = 
     },
     defaults: {
       bulkMetadata: '',
-      allowCustomPairs: false,
     },
     async beforeForkDocument(doc: any, { options }) {
       if (options.bulkMetadata) {
@@ -141,18 +157,6 @@ export const metadataSuggestions: ProjectTemplate<MetadataSuggestionsOptions> = 
           Object.assign(doc.properties, secondDoc.properties);
         }
       }
-
-      if (options.allowCustomPairs) {
-        const custom = captureModelShorthand({
-          label: { type: 'international-field', label: 'Label', value: [{ none: '' }] },
-          value: { type: 'international-field', label: 'Value', value: [{ none: '' }] },
-        });
-        custom.allowMultiple = true;
-        custom.label = 'Custom metadata';
-        custom.labelledBy = `{label} - {value}`;
-        doc.properties.customMetadata = [custom];
-      }
-
       return doc;
     },
   },

@@ -131,7 +131,7 @@ export const UserBar: React.FC<{
 
   useEffect(() => {
     setIsOpen(false);
-  }, [location, setIsOpen]);
+  }, [location]);
 
   return (
     <>

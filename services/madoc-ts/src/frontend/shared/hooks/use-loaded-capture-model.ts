@@ -40,7 +40,7 @@ export function useLoadedCaptureModel(modelId?: string, initialModel?: CaptureMo
       return { canvas, target, captureModel };
     },
     {
-      cacheTime: 0,
+      cacheTime: 1000 * 60 * 60,
       staleTime: 0,
       refetchOnMount: true,
       keepPreviousData: true,

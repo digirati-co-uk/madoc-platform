@@ -40,6 +40,7 @@ export const RegionHighlight: React.FC<{
       onSave={saveCallback}
     >
       <box
+        html
         id={`${id}/box`}
         relativeStyle
         interactive={interactive}

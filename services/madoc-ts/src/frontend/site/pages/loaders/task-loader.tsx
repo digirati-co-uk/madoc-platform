@@ -26,7 +26,7 @@ export const TaskLoader: UniversalComponent<TaskLoaderType> = createUniversalCom
       TaskLoader,
       {},
       {
-        cacheTime: 0,
+        cacheTime: 1000 * 60 * 60,
         staleTime: 0,
       }
     );

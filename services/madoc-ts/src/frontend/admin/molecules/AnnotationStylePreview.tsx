@@ -29,3 +29,27 @@ export function toStyle(style: any) {
 
   return css(style);
 }
+
+export const AnnotationStyleBigBackground = styled.div`
+  padding: 2em;
+  position: relative;
+  background: linear-gradient(
+    270deg,
+    rgba(255, 121, 0, 1) 13%,
+    rgb(50, 141, 147) 29%,
+    rgb(107, 18, 182) 45%,
+    rgba(255, 255, 255, 1) 57%,
+    rgba(255, 255, 255, 1) 70%,
+    rgba(0, 0, 0, 1) 85%
+  );
+`;
+
+export const AnnotationStyleBigBox = styled.div`
+  position: relative;
+  text-align: center;
+  padding: 1em;
+  width: 100%;
+  color: #fff;
+  text-shadow: #000 1px 0 5px;
+  margin-bottom: 1em;
+`;
