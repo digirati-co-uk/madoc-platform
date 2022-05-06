@@ -4,8 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.0.4...main)
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.0.5...main)
 
+<!--
+### Fixed
+### Added
+### Changed
+### Removed
+### Security
+-->
+
+
+## [2.0.5](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.5) - 2022-05-06
 
 ### Added
 - Added new alternative review page
@@ -32,13 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updated react query to latest 2.x version (3.x is a breaking change)
 
-<!--
-### Fixed
-### Added
-### Changed
-### Removed
-### Security
--->
+
 
 ## [2.0.4](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.4) - 2022-03-22
 
