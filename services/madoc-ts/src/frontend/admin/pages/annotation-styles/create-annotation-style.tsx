@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { AnnotationBuckets, AnnotationStyles } from '../../../../types/annotation-styles';
+import { HotSpot } from '../../../shared/atoms/HotSpot';
 import { SystemListItem } from '../../../shared/atoms/SystemListItem';
 import { SystemBackground, SystemGrid, SystemMenu, SystemMenuItem } from '../../../shared/atoms/SystemUI';
 import { getDefaultAnnotationStyles } from '../../../shared/capture-models/AnnotationStyleContext';
@@ -15,6 +15,8 @@ import { ButtonRow, Button } from '../../../shared/navigation/Button';
 import { AdminHeader } from '../../molecules/AdminHeader';
 import {
   annotationBucketOrder,
+  AnnotationStyleBigBackground,
+  AnnotationStyleBigBox,
   AnnotationStylePreview,
   AnnotationStylePreviewList,
 } from '../../molecules/AnnotationStylePreview';
@@ -42,6 +44,7 @@ export function CreateAnnotationStyle({ existing }: { existing?: AnnotationStyle
   const { t } = useTranslation();
   const canvas = useRef<any>();
   const displayAnno = useRef<any>();
+  const [toApply, setToApply] = useState<any>();
   const [newConfig, setNewConfig] = useState<AnnotationStyles['theme']>(existing?.theme || getDefaultStyles);
   const [current, setCurrent] = useState<AnnotationBuckets>('highlighted');
   const [title, setTitle] = useState(existing?.name || 'Untitled style');
@@ -70,57 +73,33 @@ export function CreateAnnotationStyle({ existing }: { existing?: AnnotationStyle
   }, [existing, title, newConfig]);
 
   useEffect(() => {
-    if (canvas.current) {
-      // eslint-disable-next-line no-inner-declarations
-      function createInitial() {
-        const linkingAnno = {
-          type: 'Annotation',
-          motivation: ['linking'],
-          target: 'https://digirati-co-uk.github.io/wunder/canvases/0#300,900,500,500',
-        };
-        canvas.current.vault.load('fake-id', linkingAnno).then((linkingAnnoWithId: any) => {
-          displayAnno.current = canvas.current.createAnnotationDisplay(linkingAnnoWithId);
-          displayAnno.current.applyStyle(newConfig[current] || { backgroundColor: 'none', borderWidth: '0' });
-          canvas.current.annotations.add(displayAnno.current);
-        });
-      }
+    const toApply = { backgroundColor: 'none', borderWidth: '0', ...(newConfig[current] || {}) };
 
-      if (canvas.current.ready) {
-        createInitial();
-      } else {
-        canvas.current.addEventListener('ready', createInitial);
-      }
+    if (!toApply[':hover']) {
+      toApply[':hover'] = {
+        backgroundColor: toApply.backgroundColor,
+        borderColor: toApply.borderColor,
+        borderStyle: toApply.borderStyle,
+        borderWidth: toApply.borderWidth,
+      };
     }
-  }, []);
-
-  useEffect(() => {
-    if (displayAnno.current) {
-      const toApply = { backgroundColor: 'none', borderWidth: '0', ...(newConfig[current] || {}) };
-
-      if (!toApply[':hover']) {
-        toApply[':hover'] = {
-          backgroundColor: toApply.backgroundColor,
-          borderColor: toApply.borderColor,
-          borderStyle: toApply.borderStyle,
-          borderWidth: toApply.borderWidth,
-        };
-      }
-      if (!toApply[':active']) {
-        toApply[':active'] = {
-          backgroundColor: toApply.backgroundColor,
-          borderColor: toApply.borderColor,
-          borderStyle: toApply.borderStyle,
-          borderWidth: toApply.borderWidth,
-        };
-      }
-
-      displayAnno.current.applyStyle(toApply);
+    if (!toApply[':active']) {
+      toApply[':active'] = {
+        backgroundColor: toApply.backgroundColor,
+        borderColor: toApply.borderColor,
+        borderStyle: toApply.borderStyle,
+        borderWidth: toApply.borderWidth,
+      };
     }
+
+    setToApply(toApply as any);
   }, [newConfig, current]);
 
   function menu(name: AnnotationBuckets) {
     return { onClick: () => setCurrent(name), $active: current === name };
   }
+
+  const hotspot = newConfig[current].hotspot ? <HotSpot $size={newConfig[current].hotspotSize || 'lg'} /> : null;
 
   return (
     <>
@@ -142,7 +121,9 @@ export function CreateAnnotationStyle({ existing }: { existing?: AnnotationStyle
               <SystemMenuItem {...menu('contributedDocument')}>Document panel</SystemMenuItem>
               <SystemMenuItem {...menu('submissions')}>Submission panel</SystemMenuItem>
               <SystemMenuItem>
-                <span {...menu('topLevel')}>Current submission</span>
+                <SystemMenuItem as="span" {...menu('topLevel')}>
+                  Current submission
+                </SystemMenuItem>
                 <SystemMenu>
                   <SystemMenuItem {...menu('topLevel')}>Top level</SystemMenuItem>
                   <SystemMenuItem {...menu('currentLevel')}>Current level</SystemMenuItem>
@@ -176,17 +157,15 @@ export function CreateAnnotationStyle({ existing }: { existing?: AnnotationStyle
 
             <SystemListItem $block>
               <div style={{ marginBottom: '2em' }}>
-                <Helmet>
-                  <script src="https://cdn.jsdelivr.net/npm/@digirati/canvas-panel-web-components@1.0.48/dist/bundle.js" />
-                </Helmet>
-                {/* @ts-ignore */}
-                <canvas-panel
-                  ref={canvas}
-                  height={350}
-                  target="200,800,800,800"
-                  manifest-id="https://digirati-co-uk.github.io/wunder.json"
-                  canvas-id={'https://digirati-co-uk.github.io/wunder/canvases/0'}
-                />
+                <AnnotationStyleBigBackground>
+                  {toApply ? (
+                    <>
+                      <AnnotationStyleBigBox style={toApply}>{hotspot}Normal</AnnotationStyleBigBox>
+                      <AnnotationStyleBigBox style={toApply[':hover']}>{hotspot}Hover</AnnotationStyleBigBox>
+                      <AnnotationStyleBigBox style={toApply[':active']}>{hotspot}Active</AnnotationStyleBigBox>
+                    </>
+                  ) : null}
+                </AnnotationStyleBigBackground>
               </div>
 
               <AnnotationStyleForm

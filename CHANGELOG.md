@@ -25,6 +25,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Regression with dropdown (reverts fix for overflow bug in popup)
 - Fist selection on reviewer dashboard
 - Fixed caching on languages
+- Fixed rendering bugs with annotations
+- Fixed cache time bug in Firefox
+- Fixed vertical alignment of breadcrumbs
+
+### Changed
+- Updated react query to latest 2.x version (3.x is a breaking change)
 
 <!--
 ### Fixed

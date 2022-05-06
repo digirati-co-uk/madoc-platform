@@ -22,7 +22,7 @@ export const AtlasTiledImages: React.FC<{ canvas: CanvasNormalized; service: Ima
   if (!tile) {
     return (
       <worldObject height={canvas.height} width={canvas.width}>
-        <box target={{ x: 0, y: 0, width: canvas.width, height: canvas.height }} id="123" backgroundColor="#000" />
+        <box html target={{ x: 0, y: 0, width: canvas.width, height: canvas.height }} id="123" backgroundColor="#000" />
       </worldObject>
     );
   }

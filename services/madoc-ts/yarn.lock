@@ -17819,7 +17819,7 @@ react-query@^1.5.10:
     "@scarf/scarf" "^1.0.6"
     ts-toolbelt "^6.9.4"
 
-react-query@^2.16.0:
+react-query@^2.26.4:
   version "2.26.4"
   resolved "https://registry.yarnpkg.com/react-query/-/react-query-2.26.4.tgz#18239b4c0b61d0b744f0d4a91f566b294fa9f752"
   integrity sha512-sXGG0gh1ah11AcfptYOCRpGDoYMnssq6riQUpQaLSM2EOodVkexp3zNLk1MFDgfRGuXQst40Tnu17oNwni66aA==

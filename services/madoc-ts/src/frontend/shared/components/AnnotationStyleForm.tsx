@@ -130,7 +130,7 @@ export function AnnotationStyleForm(props: AnnotationStyleFormProps) {
                         <Input
                           type="button"
                           value="Small"
-                          $inactive={!state.hotspotSize || state.hotspotSize === 'sm'}
+                          $inactive={state.hotspotSize === 'sm'}
                           onClick={e => {
                             e.preventDefault();
                             dispatch({ type: ThemeActionTypes.SET_HOTSPOT_SIZE, value: 'sm' });
@@ -148,7 +148,7 @@ export function AnnotationStyleForm(props: AnnotationStyleFormProps) {
                         <Input
                           type="button"
                           value="Large"
-                          $inactive={state.hotspotSize === 'lg'}
+                          $inactive={!state.hotspotSize || state.hotspotSize === 'lg'}
                           onClick={e => {
                             e.preventDefault();
                             dispatch({ type: ThemeActionTypes.SET_HOTSPOT_SIZE, value: 'lg' });

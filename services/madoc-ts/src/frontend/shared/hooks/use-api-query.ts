@@ -105,14 +105,14 @@ export function createApiHook(
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
     return queryMethod(
-      [keyToUse, argsToUse],
+      [keyToUse, { args: argsToUse }],
       () => {
         if (typeof argsToUse === 'undefined') {
           console.error(`Bad call to apiHook.${key}(undefined) with enabled.`);
         }
         return apiToUse[key](...argsToUse);
       },
-      { enabled: typeof argsToUse !== 'undefined', ...(config || {}) }
+      { enabled: typeof argsToUse !== 'undefined', cacheTime: 1000 * 60 * 60, ...(config || {}) }
     );
   };
 }

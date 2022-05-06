@@ -59,7 +59,6 @@ export function usePrefetchData<Data = any, TKey = any, TVariables = any>(
 
     const newVars = Array.isArray(initialVars) ? vars || initialVars : { ...initialVars, ...vars };
 
-
     await Promise.all([
       cache.prefetchQuery([key, newVars] as any, (queryKey: any, queryVars: any) => {
         return getData(queryKey, queryVars, api, pathname);
@@ -120,7 +119,7 @@ export function useData<Data = any, TKey = any, TVariables = any>(
       }
       return undefined as any;
     },
-    { refetchOnMount: false, ...(config || {}), useErrorBoundary: true }
+    { refetchOnMount: false, cacheTime: 1000 * 60 * 60, ...(config || {}), useErrorBoundary: true }
   );
 }
 

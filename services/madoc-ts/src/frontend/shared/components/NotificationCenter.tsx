@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from 'react-query';
@@ -267,9 +267,8 @@ export const NotificationCenter: React.FC<{ isAdmin?: boolean }> = ({ isAdmin })
     },
     {
       refetchInterval: 2 * 60 * 1000, // Refresh every 2 minutes
-      refetchOnWindowFocus: 'always',
-      refetchOnReconnect: 'always',
       enabled: !!user,
+      staleTime: 2 * 60 * 1000,
     }
   );
   const { data, refetch } = useQuery(
@@ -278,6 +277,7 @@ export const NotificationCenter: React.FC<{ isAdmin?: boolean }> = ({ isAdmin })
       return api.notifications.getAllNotifications();
     },
     {
+      staleTime: 2 * 60 * 1000,
       enabled: internalIsOpen && user,
     }
   );
