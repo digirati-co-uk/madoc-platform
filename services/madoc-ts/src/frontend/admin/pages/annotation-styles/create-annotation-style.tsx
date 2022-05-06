@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { useHistory } from 'react-router-dom';
-import { DefaultHotSpot } from '../../../../../stories/capture-models/HotSpot.stories';
 import { AnnotationBuckets, AnnotationStyles } from '../../../../types/annotation-styles';
 import { HotSpot } from '../../../shared/atoms/HotSpot';
 import { SystemListItem } from '../../../shared/atoms/SystemListItem';
