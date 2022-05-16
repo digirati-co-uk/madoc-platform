@@ -1,6 +1,7 @@
 import React from 'react';
 import { AnnotationStyles } from '../../../../../types/annotation-styles';
 import { AnnotationStyleProvider } from '../../AnnotationStyleContext';
+import { WithModelNamespace } from '../../hooks/use-model-translation';
 import { CaptureModel } from '../../types/capture-model';
 import { AutosaveRevision } from '../features/AutosaveRevision';
 import { AutoSelectDefineRegion } from '../features/AutoSelectDefineRegion';
@@ -20,6 +21,7 @@ export type RevisionProviderFeatures = {
   directEdit?: boolean;
   preventMultiple?: boolean;
   basicUnNesting?: boolean;
+  translationNamespace?: string;
 };
 
 export const RevisionProviderWithFeatures: React.FC<{
@@ -50,34 +52,37 @@ export const RevisionProviderWithFeatures: React.FC<{
     directEdit = false,
     preventMultiple = false,
     basicUnNesting = true,
+    translationNamespace = 'capture-models',
   } = features || {};
   const { components, editor } = slotConfig || {};
 
   return (
     <ContributorProvider value={captureModel?.contributors || {}}>
-      <AnnotationStyleProvider theme={annotationTheme}>
-        <Revisions.Provider
-          key={captureModel?.id}
-          revision={revision}
-          captureModel={captureModel}
-          excludeStructures={excludeStructures}
-          initialRevision={initialRevision}
-        >
-          {/*<DebugRevisionSwitcher contributors={captureModel?.contributors} />*/}
-          <AutoSelectDefineRegion />
-          {autosave ? <AutosaveRevision minutes={2} /> : null}
-          {revisionEditMode ? <SwitchFieldAfterRevises /> : null}
-          {revisionEditMode ? <SwitchEditMode /> : null}
-          {autoSelectingRevision ? (
-            <AutoSelectingRevision directEdit={directEdit} preventMultiple={preventMultiple} />
-          ) : null}
-          {basicUnNesting ? <BasicUnNesting /> : null}
-          <CorrectingRevisionSubtree />
-          <EditorSlots.Provider config={editor} components={components}>
-            {children}
-          </EditorSlots.Provider>
-        </Revisions.Provider>
-      </AnnotationStyleProvider>
+      <WithModelNamespace namespace={translationNamespace || 'capture-models'}>
+        <AnnotationStyleProvider theme={annotationTheme}>
+          <Revisions.Provider
+            key={captureModel?.id}
+            revision={revision}
+            captureModel={captureModel}
+            excludeStructures={excludeStructures}
+            initialRevision={initialRevision}
+          >
+            {/*<DebugRevisionSwitcher contributors={captureModel?.contributors} />*/}
+            <AutoSelectDefineRegion />
+            {autosave ? <AutosaveRevision minutes={2} /> : null}
+            {revisionEditMode ? <SwitchFieldAfterRevises /> : null}
+            {revisionEditMode ? <SwitchEditMode /> : null}
+            {autoSelectingRevision ? (
+              <AutoSelectingRevision directEdit={directEdit} preventMultiple={preventMultiple} />
+            ) : null}
+            {basicUnNesting ? <BasicUnNesting /> : null}
+            <CorrectingRevisionSubtree />
+            <EditorSlots.Provider config={editor} components={components}>
+              {children}
+            </EditorSlots.Provider>
+          </Revisions.Provider>
+        </AnnotationStyleProvider>
+      </WithModelNamespace>
     </ContributorProvider>
   );
 };

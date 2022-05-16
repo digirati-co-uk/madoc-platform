@@ -1,5 +1,5 @@
 import { Middleware } from 'koa';
-import { DatabasePoolType } from 'slonik';
+import { DatabasePoolConnectionType, DatabasePoolType } from 'slonik';
 import { ChangeDiscoveryRepository } from '../activity-streams/change-discovery-repository';
 import { AnnotationStylesRepository } from '../repository/annotation-styles-repository';
 import { MediaRepository } from '../repository/media-repository';
@@ -7,11 +7,13 @@ import { NotificationRepository } from '../repository/notification-repository';
 import { PageBlocksRepository } from '../repository/page-blocks-repository';
 import { PluginRepository } from '../repository/plugin-repository';
 import { ProjectRepository } from '../repository/project-repository';
-import { SiteUserRepository } from '../repository/site-user-repository';
 import { ThemeRepository } from '../repository/theme-repository';
 
-export const postgresConnection = (pool: DatabasePoolType): Middleware => async (context, next) => {
-  await pool.connect(async connection => {
+export const postgresConnection = (pool: DatabasePoolType, useConnections = false): Middleware => async (
+  context,
+  next
+) => {
+  async function handleConnection(connection: DatabasePoolConnectionType) {
     context.connection = connection;
 
     // Set up repositories.
@@ -25,5 +27,13 @@ export const postgresConnection = (pool: DatabasePoolType): Middleware => async 
     context.annotationStyles = new AnnotationStylesRepository(connection);
 
     await next();
-  });
+  }
+
+  if (useConnections) {
+    await pool.connect(async connection => {
+      await handleConnection(connection);
+    });
+  } else {
+    await handleConnection(pool);
+  }
 };

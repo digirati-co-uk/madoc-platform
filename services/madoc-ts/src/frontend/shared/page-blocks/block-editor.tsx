@@ -279,6 +279,7 @@ export const useBlockEditor = (
         features={{
           autoSelectingRevision: true,
           autosave: false,
+          translationNamespace: 'madoc',
         }}
       >
         <OnChangeDocument

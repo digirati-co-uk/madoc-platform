@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.0.5...main)
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.0.6...main)
 
 <!--
 ### Fixed
@@ -13,6 +13,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 ### Security
 -->
+
+## [2.0.6](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.6) - 2022-05-16
+This is a hot fix release.
+
+
+### Fixed
+- Fixed cache invalidation bug on Admin
+- Reverted change to cache time on FireFox
+- Fixed invalid translations for static models
+- Missing translations for configuration
+- New configuration for pooled connections
+- Fixed query string language config
 
 
 ## [2.0.5](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.5) - 2022-05-06
