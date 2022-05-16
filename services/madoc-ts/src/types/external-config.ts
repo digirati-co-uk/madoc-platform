@@ -4,6 +4,7 @@ export type ExternalConfig = {
   cookieName?: string;
   tokenExpires?: number;
   tokenRefresh?: number;
+  pooledDatabase?: boolean;
   defaultSiteConfiguration: ProjectConfiguration;
   permissions: {
     [role: string]: string[];
