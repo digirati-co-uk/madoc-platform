@@ -4,6 +4,6 @@ export const queryConfig: ReactQueryConfig = {
   queries: {
     staleTime: 0,
     cacheTime: 1000 * 60 * 60,
-    refetchOnMount: false,
+    refetchOnMount: true,
   },
 };
