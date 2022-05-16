@@ -102,6 +102,7 @@ export const EditShorthandCaptureModel: React.FC<{
       features={{
         autosave: false,
         revisionEditMode: true,
+        translationNamespace: 'madoc',
       }}
       captureModel={rev.model}
       initialRevision={rev.revisionId}
