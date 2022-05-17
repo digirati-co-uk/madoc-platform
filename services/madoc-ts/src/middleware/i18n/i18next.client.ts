@@ -14,7 +14,7 @@ export async function createBackend(slug: string, jwt?: string, languages?: stri
       ns: ['madoc', 'capture-models'],
       defaultNS: 'madoc',
       supportedLngs: languages,
-      saveMissing: true,
+      saveMissing: process.env.NODE_ENV !== 'production',
       keySeparator: false,
       detection: {
         order: ['querystring', /* 'cookie', */ 'localStorage', 'sessionStorage', 'navigator', 'htmlTag'],
