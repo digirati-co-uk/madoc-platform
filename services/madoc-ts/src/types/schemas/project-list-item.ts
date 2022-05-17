@@ -1,4 +1,4 @@
-import { InternationalString } from '@hyperion-framework/types';
+import { InternationalString } from '@iiif/presentation-3';
 
 export type ProjectListItem = {
   id: number;

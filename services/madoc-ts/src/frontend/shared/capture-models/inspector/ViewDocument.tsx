@@ -1,5 +1,5 @@
-import { useImageService } from '@hyperion-framework/react-vault';
-import { ImageService } from '@hyperion-framework/types';
+import { useImageService } from 'react-iiif-vault';
+import { ImageService } from '@iiif/presentation-3';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';

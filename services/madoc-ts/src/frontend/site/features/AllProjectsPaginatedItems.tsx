@@ -1,4 +1,4 @@
-import { InternationalString } from '@hyperion-framework/types';
+import { InternationalString } from '@iiif/presentation-3';
 import React from 'react';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { SingleProject } from '../../shared/components/SingleProject';

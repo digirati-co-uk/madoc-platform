@@ -1,4 +1,4 @@
-import { InternationalString } from '@hyperion-framework/types';
+import { InternationalString } from '@iiif/presentation-3';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -54,7 +54,7 @@ export function ManifestCanvasGrid(props: { popup?: boolean }) {
           ) : null}
         </CroppedImage>
         {(isActive || isPreparing) && manifestSubjects && subjectMap && !showCaptureModelOnManifest ? (
-          <CanvasStatus status={subjectMap[canvas.id]} />
+          <CanvasStatus status={subjectMap[canvas.id]} floating={coveredImages} />
         ) : null}
         {hideCanvasLabels ? null : <LocaleString as={Heading5}>{canvas.label}</LocaleString>}
       </ImageStripBox>

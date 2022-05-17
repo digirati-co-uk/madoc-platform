@@ -1,4 +1,4 @@
-import { InternationalString } from '@hyperion-framework/types';
+import { InternationalString } from '@iiif/presentation-3';
 import React, { useRef } from 'react';
 import { useInfiniteQuery } from 'react-query';
 import { RoundedCard } from '../../../frontend/shared/capture-models/editor/components/RoundedCard/RoundedCard';

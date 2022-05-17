@@ -1,4 +1,4 @@
-import { useImageService } from '@hyperion-framework/react-vault';
+import { useImageService } from 'react-iiif-vault';
 import { useCallback } from 'react';
 
 export function useCroppedRegion() {

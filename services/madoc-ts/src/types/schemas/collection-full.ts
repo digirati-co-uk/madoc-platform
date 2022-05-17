@@ -1,4 +1,4 @@
-import { InternationalString, MetadataItem } from '@hyperion-framework/types';
+import { InternationalString, MetadataItem } from '@iiif/presentation-3';
 import { Pagination } from './_pagination';
 
 export type CollectionFull = {

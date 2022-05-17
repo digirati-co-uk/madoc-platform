@@ -1,4 +1,4 @@
-import { InternationalString } from '@hyperion-framework/types/iiif/descriptive';
+import { InternationalString } from '@iiif/presentation-3';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';

@@ -7,7 +7,7 @@ import { RequestError } from '../../utility/errors/request-error';
 import { userWithScope } from '../../utility/user-with-scope';
 import { sql } from 'slonik';
 import { CreateProject } from '../../types/schemas/create-project';
-import { InternationalString } from '@hyperion-framework/types';
+import { InternationalString } from '@iiif/presentation-3';
 import { ConflictError } from '../../utility/errors/conflict';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
 

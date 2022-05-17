@@ -1,4 +1,4 @@
-import { InternationalString } from '@hyperion-framework/types';
+import { InternationalString } from '@iiif/presentation-3';
 import { useTranslation } from 'react-i18next';
 import React, { CSSProperties, useMemo } from 'react';
 

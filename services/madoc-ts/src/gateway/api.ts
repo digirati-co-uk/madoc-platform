@@ -47,7 +47,7 @@ import { parseUrn } from '../utility/parse-urn';
 import { ApiRequest } from './api-definitions/_meta';
 import { fetchJson } from './fetch-json';
 import { BaseTask } from './tasks/base-task';
-import { CanvasNormalized, CollectionNormalized, Manifest } from '@hyperion-framework/types';
+import { CanvasNormalized, CollectionNormalized, Manifest } from '@iiif/presentation-3';
 import { CreateCollection } from '../types/schemas/create-collection';
 import { CollectionListResponse } from '../types/schemas/collection-list';
 import { CollectionFull } from '../types/schemas/collection-full';

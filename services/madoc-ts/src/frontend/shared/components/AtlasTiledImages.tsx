@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CanvasNormalized, ImageService } from '@hyperion-framework/types';
+import { CanvasNormalized, ImageService } from '@iiif/presentation-3';
 import { GetTile, getTileFromImageService, TileSet, useRuntime } from '@atlas-viewer/atlas';
 
 export const AtlasTiledImages: React.FC<{ canvas: CanvasNormalized; service: ImageService }> = ({

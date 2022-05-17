@@ -1,4 +1,4 @@
-import { ViewingDirection } from '@hyperion-framework/types';
+import { ViewingDirection } from '@iiif/presentation-3';
 
 export function getViewingDirection(viewingDirection: string | number): ViewingDirection {
   let viewDir: ViewingDirection = 'left-to-right';

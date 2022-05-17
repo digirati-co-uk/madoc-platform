@@ -1,4 +1,4 @@
-import { InternationalString } from '@hyperion-framework/types';
+import { InternationalString } from '@iiif/presentation-3';
 import { traverseDocument } from '../frontend/shared/capture-models/helpers/traverse-document';
 import { CaptureModel } from '../frontend/shared/capture-models/types/capture-model';
 

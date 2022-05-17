@@ -1,4 +1,4 @@
-import { VaultProvider } from '@hyperion-framework/react-vault';
+import { VaultProvider } from 'react-iiif-vault';
 import React, { Suspense, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { AnnotationStyles } from '../../../../../types/annotation-styles';

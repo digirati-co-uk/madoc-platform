@@ -1,4 +1,4 @@
-import { InternationalString } from '@hyperion-framework/types/iiif/descriptive';
+import { InternationalString } from '@iiif/presentation-3';
 
 export type EditorialContext = {
   project?: string;

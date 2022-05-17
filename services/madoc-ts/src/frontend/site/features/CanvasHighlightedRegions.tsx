@@ -1,4 +1,4 @@
-import { AnnotationPage } from '@hyperion-framework/types';
+import { AnnotationPage } from '@iiif/presentation-3';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAnnotationPage } from '../../shared/hooks/use-annotation-page';

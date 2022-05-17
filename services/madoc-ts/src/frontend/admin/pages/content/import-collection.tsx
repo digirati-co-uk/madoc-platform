@@ -1,9 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { UniversalComponent } from '../../../types';
-import { useState } from 'react';
-import React from 'react';
-import { useVaultEffect, VaultProvider } from '@hyperion-framework/react-vault';
-import { CollectionNormalized, ManifestNormalized } from '@hyperion-framework/types';
+import React, { useState } from 'react';
+import { useVaultEffect, VaultProvider } from 'react-iiif-vault';
+import { CollectionNormalized, ManifestNormalized } from '@iiif/presentation-3';
 
 const PreviewCollection: React.FC<{ id: string }> = props => {
   const [collection, setCollection] = useState<CollectionNormalized | undefined>();
@@ -16,7 +15,7 @@ const PreviewCollection: React.FC<{ id: string }> = props => {
         if (col) {
           setManifests(
             col.items.map(man => {
-              return vault.fromRef(man);
+              return vault.get(man);
             })
           );
         }

@@ -1,5 +1,5 @@
-import { ImageService } from '@hyperion-framework/types';
-import React, { useMemo, useState } from 'react';
+import { ImageService } from '@iiif/presentation-3';
+import React, { useMemo } from 'react';
 import { webglSupport } from '../../../../utility/webgl-support';
 import { AnnotationStyleProvider, useAnnotationStyles } from '../../../AnnotationStyleContext';
 import { BaseContent, ContentOptions } from '../../../types/content-types';
@@ -10,8 +10,8 @@ import {
   useCanvas,
   useImageService,
   VaultProvider,
-  useVaultEffect,
-} from '@hyperion-framework/react-vault';
+  useThumbnail,
+} from 'react-iiif-vault';
 import { AtlasAuto, getId, GetTile, TileSet, Preset, PopmotionControllerConfig } from '@atlas-viewer/atlas';
 import { ImageServiceContext } from './Atlas.helpers';
 
@@ -43,25 +43,10 @@ const Canvas: React.FC<{
 }> = ({ isEditing, onDeselect, children, onCreated, unstable_webglRenderer, controllerConfig }) => {
   const canvas = useCanvas();
   const { data: service } = useImageService() as { data?: ImageService };
+  const thumbnail = useThumbnail({ minWidth: 100 });
   const style = useAnnotationStyles();
-  const [thumbnail, setThumbnail] = useState<any | undefined>(undefined);
 
-  useVaultEffect(
-    v => {
-      if (canvas) {
-        v.getThumbnail(canvas, { minWidth: 100 }, false).then(thumb => {
-          if (thumb.best) {
-            setThumbnail(thumb.best);
-          }
-        });
-      } else {
-        setThumbnail(undefined);
-      }
-    },
-    [canvas]
-  );
-
-  const tiles: GetTile | undefined = useMemo(() => {
+  const tiles: any | undefined = useMemo(() => {
     if (canvas && service) {
       return {
         id: getId(service),

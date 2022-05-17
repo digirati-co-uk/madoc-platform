@@ -2,7 +2,7 @@ import { BaseTask } from './base-task';
 import * as tasks from './task-helpers';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
 import { ApiClient } from '../api';
-import { Canvas } from '@hyperion-framework/types';
+import { Canvas } from '@iiif/presentation-3';
 
 export const type = 'madoc-canvas-import';
 

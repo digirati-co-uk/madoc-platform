@@ -1,4 +1,4 @@
-import { InternationalString } from '@hyperion-framework/types';
+import { InternationalString } from '@iiif/presentation-3';
 import { sql } from 'slonik';
 import * as editorial from '../database/queries/site-editorial';
 import {

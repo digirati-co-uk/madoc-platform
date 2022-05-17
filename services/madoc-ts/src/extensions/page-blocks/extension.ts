@@ -1,5 +1,5 @@
 import { CaptureModel } from '../../frontend/shared/capture-models/types/capture-model';
-import { InternationalString } from '@hyperion-framework/types';
+import { InternationalString } from '@iiif/presentation-3';
 import React, { JSXElementConstructor } from 'react';
 import ReactDOM from 'react-dom';
 import { ApiClient } from '../../gateway/api';

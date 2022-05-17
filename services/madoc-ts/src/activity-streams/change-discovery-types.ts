@@ -1,4 +1,4 @@
-import { InternationalString, Manifest } from '@hyperion-framework/types';
+import { InternationalString, Manifest } from '@iiif/presentation-3';
 
 /**
  * Madoc change discovery implementation.

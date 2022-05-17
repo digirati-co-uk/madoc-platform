@@ -4,14 +4,15 @@ import {
   UnknownSizeImage,
   VariableSizeImage,
 } from '@atlas-viewer/iiif-image-api';
+import { createThumbnailHelper } from '@iiif/vault-helpers';
 import * as path from 'path';
 import { MANIFESTS_PATH } from '../../paths';
 import { BaseTask } from './base-task';
 import mkdirp from 'mkdirp';
 import { promises, existsSync } from 'fs';
 import cache from 'memory-cache';
-import { Vault } from '@hyperion-framework/vault';
-import { CanvasNormalized, Manifest, ManifestNormalized } from '@hyperion-framework/types';
+import { Vault } from '@iiif/vault';
+import { CanvasNormalized, Manifest, ManifestNormalized } from '@iiif/presentation-3';
 import { createHash } from 'crypto';
 const { readFile, writeFile } = promises;
 
@@ -112,9 +113,11 @@ export async function getThumbnail(
 ): Promise<null | undefined | FixedSizeImage | FixedSizeImageService | VariableSizeImage | UnknownSizeImage> {
   const sizes = [512, 256, 768, 1024];
 
+  const { getBestThumbnailAtSize } = createThumbnailHelper(vault);
+
   for (const size of sizes) {
     try {
-      const { best } = await vault.getThumbnail(
+      const { best } = await getBestThumbnailAtSize(
         canvas,
         {
           maxWidth: size,
@@ -140,11 +143,11 @@ export async function ensureManifestLoaded(vault: Vault, manifestId: string, man
 
   const manifestJsonId = manifestJson['@id'] ? manifestJson['@id'] : manifestJson.id;
 
-  if (state.hyperion.requests[manifestId]) {
+  if (state.iiif.requests[manifestId]) {
     let times = 0;
-    if (state.hyperion.requests[manifestId].loadingState === 'RESOURCE_LOADING') {
+    if (state.iiif.requests[manifestId].loadingState === 'RESOURCE_LOADING') {
       while (times < 10) {
-        if (state.hyperion.requests[manifestId].loadingState === 'RESOURCE_LOADING') {
+        if (state.iiif.requests[manifestId].loadingState === 'RESOURCE_LOADING') {
           await new Promise(resolve => setTimeout(resolve, 1000));
         } else {
           break;
@@ -152,11 +155,11 @@ export async function ensureManifestLoaded(vault: Vault, manifestId: string, man
         times++;
       }
     }
-    if (state.hyperion.requests[manifestId].loadingState === 'RESOURCE_ERROR') {
+    if (state.iiif.requests[manifestId].loadingState === 'RESOURCE_ERROR') {
       // I don't know? Try again?
       await vault.loadManifest(manifestJsonId, manifestJson);
     }
-  } else if (!state.hyperion.entities.Manifest[manifestJsonId]) {
+  } else if (!state.iiif.entities.Manifest[manifestJsonId]) {
     await vault.loadManifest(manifestJsonId, manifestJson).catch(err => {
       console.log(err);
     });
@@ -198,10 +201,10 @@ export async function tryGetManifest(manifestId: string, pathToManifest: string,
 
     await ensureManifestLoaded(vault, manifestId, manifestJson);
 
-    const manifest = vault.fromRef<ManifestNormalized>({ id: manifestId, type: 'Manifest' });
+    const manifest = vault.get<ManifestNormalized>({ id: manifestId, type: 'Manifest' });
     const ref: { id: string; type: 'Canvas' } = { id: canvasId, type: 'Canvas' };
     // @todo handle case where canvas does not exist.
-    const canvas = vault.fromRef<CanvasNormalized>(ref);
+    const canvas = vault.get<CanvasNormalized>(ref);
     if (Object.keys(canvas).length === 2) {
       throw new Error('Could not load manifest from vault.');
     }

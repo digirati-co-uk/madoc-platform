@@ -4,9 +4,9 @@ export const _ALLOWED_MODULES = [
   '@madoc.io/types',
   '@atlas-viewer/atlas',
   '@atlas-viewer/iiif-image-api',
-  '@hyperion-framework/presentation-2',
-  '@hyperion-framework/react-vault',
-  '@hyperion-framework/vault',
+  '@iiif/presentation-2',
+  'react-iiif-vault',
+  '@iiif/vault',
   'color-hash',
   'easy-peasy',
   'i18next',
@@ -45,12 +45,12 @@ export function useModule(name: AvailableModules) {
       return require('@atlas-viewer/atlas');
     case '@atlas-viewer/iiif-image-api':
       return require('@atlas-viewer/iiif-image-api');
-    case '@hyperion-framework/presentation-2':
-      return require('@hyperion-framework/presentation-2');
-    case '@hyperion-framework/react-vault':
-      return require('@hyperion-framework/react-vault');
-    case '@hyperion-framework/vault':
-      return require('@hyperion-framework/vault');
+    case '@iiif/presentation-2':
+      return require('@iiif/presentation-2');
+    case 'react-iiif-vault':
+      return require('react-iiif-vault');
+    case '@iiif/vault':
+      return require('@iiif/vault');
     case 'color-hash':
       return require('color-hash');
     case 'easy-peasy':

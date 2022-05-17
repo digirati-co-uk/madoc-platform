@@ -19,7 +19,7 @@ import { useApi } from '../../../../shared/hooks/use-api';
 import { useHistory } from 'react-router-dom';
 import { Pagination } from '../../../molecules/Pagination';
 import { PreviewCollection } from '../../../molecules/PreviewCollection';
-import { VaultProvider } from '@hyperion-framework/react-vault';
+import { VaultProvider } from 'react-iiif-vault';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { WidePage } from '../../../../shared/layout/WidePage';
 import { useLocationQuery } from '../../../../shared/hooks/use-location-query';

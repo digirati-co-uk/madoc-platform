@@ -8,7 +8,7 @@ import { ActivityAction, ActivityActions } from '../../../../shared/components/A
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useHistory } from 'react-router-dom';
 import { useMutation } from 'react-query';
-import { VaultProvider } from '@hyperion-framework/react-vault';
+import { VaultProvider } from 'react-iiif-vault';
 import { usePaginatedData } from '../../../../shared/hooks/use-data';
 import { ErrorIcon } from '../../../../shared/icons/ErrorIcon';
 import { Spinner } from '../../../../shared/icons/Spinner';

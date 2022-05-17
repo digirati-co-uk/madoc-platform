@@ -1,4 +1,4 @@
-import { InternationalString } from '@hyperion-framework/types/iiif/descriptive';
+import { InternationalString } from '@iiif/presentation-3';
 import React, { useMemo } from 'react';
 import { EditorialContext } from '../../../../types/schemas/site-page';
 import { SitePage } from '../../../../types/site-pages-recursive';

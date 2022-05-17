@@ -7,7 +7,7 @@ import { ApiContext } from '../shared/hooks/use-api';
 import { defaultTheme } from '../themes/default-theme';
 import { CustomThemeProvider } from '../themes/helpers/CustomThemeProvider';
 import { UniversalRoute } from '../types';
-import { VaultProvider } from '@hyperion-framework/react-vault';
+import { VaultProvider } from 'react-iiif-vault';
 import '../shared/capture-models/plugins';
 import { SiteProvider } from '../shared/hooks/use-site';
 

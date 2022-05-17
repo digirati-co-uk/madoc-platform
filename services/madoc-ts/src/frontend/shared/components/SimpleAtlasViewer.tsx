@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
-import { AnnotationPage, ImageService } from '@hyperion-framework/types';
+import { AnnotationPage, ImageService } from '@iiif/presentation-3';
 import { AtlasAuto, RegionHighlight, Runtime } from '@atlas-viewer/atlas';
-import { useCanvas, useImageService } from '@hyperion-framework/react-vault';
+import { useCanvas, useImageService } from 'react-iiif-vault';
 import { useTranslation } from 'react-i18next';
 import { CanvasViewerButton, CanvasViewerControls } from '../../site/features/CanvasViewerGrid';
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';

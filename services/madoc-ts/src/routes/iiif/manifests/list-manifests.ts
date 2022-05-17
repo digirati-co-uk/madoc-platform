@@ -4,7 +4,7 @@ import { mapMetadata } from '../../../utility/iiif-metadata';
 import { getMetadata } from '../../../utility/iiif-database-helpers';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { ManifestListResponse } from '../../../types/schemas/manifest-list';
-import { InternationalString } from '@hyperion-framework/types';
+import { InternationalString } from '@iiif/presentation-3';
 import { countResources, countSubQuery } from '../../../database/queries/resource-queries';
 import { getCanvasFilter, getManifestList } from '../../../database/queries/get-manifest-snippets';
 

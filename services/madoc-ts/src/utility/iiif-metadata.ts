@@ -1,4 +1,4 @@
-import { InternationalString } from '@hyperion-framework/types';
+import { InternationalString } from '@iiif/presentation-3';
 import { MetadataDefinition } from '../types/schemas/metadata-definition';
 
 export type MetadataField = {

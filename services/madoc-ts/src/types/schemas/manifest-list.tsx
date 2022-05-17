@@ -1,4 +1,4 @@
-import { InternationalString } from '@hyperion-framework/types';
+import { InternationalString } from '@iiif/presentation-3';
 import { Pagination } from './_pagination';
 
 export type ManifestListResponse = {

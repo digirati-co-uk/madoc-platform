@@ -1,4 +1,4 @@
-import { InternationalString } from '@hyperion-framework/types';
+import { InternationalString } from '@iiif/presentation-3';
 
 export function iiifGetLabel(label: string | InternationalString | null | undefined, defaultLabel = 'Untitled') {
   if (!label) {

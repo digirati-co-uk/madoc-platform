@@ -1,4 +1,4 @@
-import { AnnotationPage } from '@hyperion-framework/types';
+import { AnnotationPage } from '@iiif/presentation-3';
 import parseSelectorTarget from './parse-selector-target';
 
 export function annotationPageToRegions(annotationPage: AnnotationPage) {

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import styled, { css } from 'styled-components';
-import { InternationalString } from '@hyperion-framework/types';
+import { InternationalString } from '@iiif/presentation-3';
 import { useTranslation } from 'react-i18next';
 import { MetadataEmptyState } from '../atoms/MetadataConfiguration';
 import { Button } from '../navigation/Button';

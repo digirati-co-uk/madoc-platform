@@ -1,4 +1,4 @@
-import { InternationalString } from '@hyperion-framework/types/iiif/descriptive';
+import { InternationalString } from '@iiif/presentation-3';
 import React, { useEffect, useRef, useState } from 'react';
 import { SelectRef } from 'react-functional-select/dist/Select';
 import { useMutation } from 'react-query';

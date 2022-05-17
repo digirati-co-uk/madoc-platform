@@ -1,4 +1,4 @@
-import { Canvas, Collection, InternationalString, Manifest } from '@hyperion-framework/types';
+import { Canvas, Collection, InternationalString, Manifest } from '@iiif/presentation-3';
 import { Pagination } from './schemas/_pagination';
 
 export type SearchResult = {

@@ -16,7 +16,7 @@ import { useRecent } from '../hooks/use-recent';
 import { ItemStructureListItem } from '../../../types/schemas/item-structure-list';
 import { PreviewManifest } from '../../admin/molecules/PreviewManifest';
 import { PreviewCollection } from '../../admin/molecules/PreviewCollection';
-import { useVault } from '@hyperion-framework/react-vault';
+import { useVault } from 'react-iiif-vault';
 
 const ExplorerBackground = styled.div`
   background: #eee;

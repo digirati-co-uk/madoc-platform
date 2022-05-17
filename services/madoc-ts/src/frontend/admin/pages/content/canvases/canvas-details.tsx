@@ -4,8 +4,8 @@ import { UniversalComponent } from '../../../../types';
 import { CanvasFull } from '../../../../../types/canvas-full';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
-import { CanvasContext, useVaultEffect, VaultProvider } from '@hyperion-framework/react-vault';
-import { CanvasNormalized } from '@hyperion-framework/types';
+import { CanvasContext, useVaultEffect, VaultProvider } from 'react-iiif-vault';
+import { CanvasNormalized } from '@iiif/presentation-3';
 import { SimpleAtlasViewer } from '../../../../shared/components/SimpleAtlasViewer';
 
 type CanvasDetailsType = {

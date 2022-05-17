@@ -1,4 +1,4 @@
-import { ImageService } from '@hyperion-framework/types';
+import { ImageService } from '@iiif/presentation-3';
 import { useCallback } from 'react';
 import { createContext } from '../../../helpers/create-context';
 

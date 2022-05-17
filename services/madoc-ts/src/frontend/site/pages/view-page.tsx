@@ -1,4 +1,4 @@
-import { InternationalString } from '@hyperion-framework/types/iiif/descriptive';
+import { InternationalString } from '@iiif/presentation-3';
 import React, { useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { SitePage } from '../../../types/site-pages-recursive';

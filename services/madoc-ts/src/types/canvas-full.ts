@@ -1,4 +1,4 @@
-import { Canvas, InternationalString } from '@hyperion-framework/types';
+import { Canvas, InternationalString } from '@iiif/presentation-3';
 
 export type CanvasFull = {
   canvas: Canvas & {

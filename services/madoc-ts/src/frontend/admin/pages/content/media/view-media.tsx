@@ -1,5 +1,5 @@
-import { CanvasContext, useVaultEffect, VaultProvider } from '@hyperion-framework/react-vault';
-import { CanvasNormalized } from '@hyperion-framework/types';
+import { CanvasContext, useVaultEffect, VaultProvider } from 'react-iiif-vault';
+import { CanvasNormalized } from '@iiif/presentation-3';
 import React, { useState } from 'react';
 import { useMutation } from 'react-query';
 import { useHistory } from 'react-router-dom';

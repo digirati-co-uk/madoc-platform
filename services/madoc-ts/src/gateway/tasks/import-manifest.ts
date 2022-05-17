@@ -7,12 +7,12 @@ import * as importCanvas from './import-canvas';
 import * as manifestOcr from './process-manifest-ocr';
 import { createTask as createSearchIndexTask } from './search-index-task';
 import * as tasks from './task-helpers';
-import { Vault } from '@hyperion-framework/vault';
+import { Vault } from '@iiif/vault';
 import fetch from 'node-fetch';
 import { ImportCanvasTask } from './import-canvas';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
 import { ApiClient } from '../api';
-import { ContentResource } from '@hyperion-framework/types';
+import { ContentResource } from '@iiif/presentation-3';
 import del from 'del';
 
 export const type = 'madoc-manifest-import';
@@ -106,14 +106,14 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
             behavior: iiifManifest.behavior || undefined,
             rights: iiifManifest?.rights || undefined,
             navDate: iiifManifest?.navDate || undefined,
-            homepage: iiifManifest.homepage ? vault.fromRef<ContentResource>(iiifManifest.homepage) : undefined,
-            logo: iiifManifest.logo ? vault.allFromRef<ContentResource>(iiifManifest.logo) : undefined,
+            homepage: iiifManifest.homepage ? vault.get<ContentResource>(iiifManifest.homepage) : undefined,
+            logo: iiifManifest.logo ? vault.get<ContentResource>(iiifManifest.logo) : undefined,
             partOf: iiifManifest.partOf ? iiifManifest.partOf : undefined,
-            rendering: iiifManifest.rendering ? vault.allFromRef<ContentResource>(iiifManifest.rendering) : undefined,
-            seeAlso: iiifManifest.seeAlso ? vault.allFromRef<ContentResource>(iiifManifest.seeAlso) : undefined,
+            rendering: iiifManifest.rendering ? vault.get<ContentResource>(iiifManifest.rendering) : undefined,
+            seeAlso: iiifManifest.seeAlso ? vault.get<ContentResource>(iiifManifest.seeAlso) : undefined,
             service: iiifManifest.service,
             services: iiifManifest.services,
-            start: iiifManifest.start ? vault.fromRef(iiifManifest.start) : undefined,
+            start: iiifManifest.start ? vault.get(iiifManifest.start) : undefined,
           } as any;
         } catch (err) {
           console.log(err);
