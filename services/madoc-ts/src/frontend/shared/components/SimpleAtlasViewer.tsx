@@ -58,6 +58,8 @@ export const SimpleAtlasViewer = React.forwardRef<
     return null;
   }
 
+  console.log('SimpleAtlasViewer ->', { canvas, service });
+
   return (
     <div
       ref={ref}
@@ -89,8 +91,8 @@ export const SimpleAtlasViewer = React.forwardRef<
             unstable_webglRenderer={webglSupport() && unstable_webglRenderer}
           >
             <world>
-              <AtlasTiledImages key={canvas.id} canvas={canvas} service={service as ImageService} />
-              <worldObject height={canvas.height} width={canvas.width}>
+              <AtlasTiledImages key={`${canvas.id}/${service?.id}`} canvas={canvas} service={service as ImageService} />
+              <worldObject key={`${canvas.id}/world`} height={canvas.height} width={canvas.width}>
                 {highlightedRegions
                   ? highlightedRegions.map(([x, y, width, height], key) => {
                       return (

@@ -1,24 +1,28 @@
-import { CanvasContext, useVaultEffect } from 'react-iiif-vault';
+import { CanvasContext, useVault } from 'react-iiif-vault';
 import { CanvasNormalized } from '@iiif/presentation-3';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouteContext } from '../../site/hooks/use-route-context';
 import { CanvasLoader } from '../../site/pages/loaders/canvas-loader';
 import { useData } from '../hooks/use-data';
 
 export const CanvasVaultContext: React.FC = ({ children }) => {
+  const vault = useVault();
   const { canvasId } = useRouteContext();
   const [canvasRef, setCanvasRef] = useState<CanvasNormalized>();
-  const { data: canvasResponse } = useData(CanvasLoader, undefined, { enabled: !!canvasId });
+  const { data: canvasResponse } = useData(CanvasLoader, [canvasId], { enabled: !!canvasId });
   const canvas = canvasResponse?.canvas;
-
-  useVaultEffect(
-    vault => {
-      if (canvas && canvas.items) {
-        vault.load(canvas.id as any, JSON.parse(JSON.stringify(canvas))).then(c => setCanvasRef(c as any));
+  useEffect(() => {
+    if (canvas && canvas.items) {
+      try {
+        const clonedCanvas = JSON.parse(JSON.stringify(canvas));
+        vault.load({ id: clonedCanvas.id } as any, clonedCanvas).then(c => {
+          setCanvasRef(c as any);
+        });
+      } catch (e) {
+        console.log(e);
       }
-    },
-    [canvas]
-  );
+    }
+  }, [vault, canvas]);
 
   if (!canvasRef) {
     return <>{children}</>;
