@@ -38,20 +38,18 @@ export async function createBackend(slug: string, jwt?: string, languages?: stri
         ].filter(Boolean),
         backendOptions: [
           process.env.NODE_ENV === 'production' ? {} : null, // primary
-          process.env.NODE_ENV !== 'production'
-            ? {
-                loadPath: `/s/${slug}/madoc/api/locales/{{lng}}/{{ns}}`, // xhr load path for my own fallback
-                addPath: `/s/${slug}/madoc/api/locales/{{lng}}/{{ns}}`, // xhr load path for my own fallback
-                customHeaders: jwt
-                  ? {
-                      Accept: 'application/json',
-                      Authorization: `Bearer ${jwt}`,
-                    }
-                  : {
-                      Accept: 'application/json',
-                    },
-              }
-            : null,
+          {
+            loadPath: `/s/${slug}/madoc/api/locales/{{lng}}/{{ns}}`, // xhr load path for my own fallback
+            addPath: `/s/${slug}/madoc/api/locales/{{lng}}/{{ns}}`, // xhr load path for my own fallback
+            customHeaders: jwt
+              ? {
+                  Accept: 'application/json',
+                  Authorization: `Bearer ${jwt}`,
+                }
+              : {
+                  Accept: 'application/json',
+                },
+          },
         ].filter(Boolean),
       },
     });
