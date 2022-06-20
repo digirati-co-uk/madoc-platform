@@ -94,9 +94,9 @@ export function useSelectorController() {
               }
             };
 
-            controller.on(type, handlerWrapper);
+            controller.on<any>(type, handlerWrapper as any);
             return () => {
-              controller.off(type, handlerWrapper);
+              controller.off<any>(type, handlerWrapper as any);
             };
           },
           emit<T = any>(type: SelectorHelperEventTypes, event: T) {
@@ -105,9 +105,9 @@ export function useSelectorController() {
         };
       },
       on<T extends { selectorId: string } = any>(type: SelectorHelperEventTypes, handler: Handler<T>) {
-        controller.on(type, handler);
+        controller.on<any>(type, handler as any);
         return () => {
-          controller.off(type, handler);
+          controller.off<any>(type, handler as any);
         };
       },
       emit<T extends { selectorId: string } = any>(type: SelectorHelperEventTypes, event: T) {
