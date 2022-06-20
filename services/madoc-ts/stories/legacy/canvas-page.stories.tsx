@@ -1,4 +1,4 @@
-import { CanvasContext, VaultProvider } from '@hyperion-framework/react-vault';
+import { CanvasContext, VaultProvider } from 'react-iiif-vault';
 import { text } from '@storybook/addon-knobs';
 import { useState } from 'react';
 import * as React from 'react';

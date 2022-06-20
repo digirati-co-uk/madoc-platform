@@ -4,7 +4,7 @@ import * as React from 'react';
 import { TinyButton } from '../../src/frontend/shared/navigation/Button';
 import { text } from '@storybook/addon-knobs';
 import { RevisionNavigation } from '../../src/frontend/shared/capture-models/RevisionNavigation';
-import { VaultProvider } from '@hyperion-framework/react-vault';
+import { VaultProvider } from 'react-iiif-vault';
 import { ViewExternalContent } from '../../src/frontend/shared/components/ViewExternalContent';
 import '../../src/frontend/shared/capture-models/refinements/index';
 
