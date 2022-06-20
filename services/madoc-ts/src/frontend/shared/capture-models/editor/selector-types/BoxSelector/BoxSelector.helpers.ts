@@ -29,7 +29,7 @@ export function useBoxSelector(
   useEffect(() => {
     return controller
       .withSelector(id)
-      .on(
+      .on<any>(
         'image-preview-request',
         (ev?: { selectorId: string; resolve: (preview?: string) => void; reject: () => void }) => {
           if (ev && generatePreview) {
