@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@atlas-viewer/atlas@2.0.0-alpha.10":
+"@atlas-viewer/atlas@2.0.0-alpha.10", "@atlas-viewer/atlas@^2.0.0-alpha.10":
   version "2.0.0-alpha.10"
   resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-2.0.0-alpha.10.tgz#526916ee0a284e8b0137158c42d8617964004900"
   integrity sha512-cqYBMl0VxoE0XSe+zdZLrnHdc4c22Bcojn6nsu3m9i66tZl50mD5Qj08C1cAySeP6GYF96DRtu4BX2usyMhqUA==
@@ -30,17 +30,17 @@
   resolved "https://registry.yarnpkg.com/@atlas-viewer/dna/-/dna-0.5.0.tgz#aab824540b59dc3897e2ba4cdb51a53e47ed3311"
   integrity sha512-vHyMwXoCFq6ymk+wOVIkMphUo+I+wBRoA2tBf1AIUZWJMsk51cBtO2qzOaZQUh/TmrzrqEY5aEAtgBj52LVRUg==
 
-"@atlas-viewer/iiif-image-api@1.2.6", "@atlas-viewer/iiif-image-api@2.*", "@atlas-viewer/iiif-image-api@^1.2.4", "@atlas-viewer/iiif-image-api@^1.2.5", "@atlas-viewer/iiif-image-api@^2.0.2":
+"@atlas-viewer/iiif-image-api@1.2.6", "@atlas-viewer/iiif-image-api@2.*", "@atlas-viewer/iiif-image-api@^1.2.4", "@atlas-viewer/iiif-image-api@^1.2.5", "@atlas-viewer/iiif-image-api@^2.*":
   version "1.2.6"
   resolved "https://registry.yarnpkg.com/@atlas-viewer/iiif-image-api/-/iiif-image-api-1.2.6.tgz#ccb91668756a3efc9523bb7392a4b9b24eec6d38"
   integrity sha512-WD0XZUI6ONiexPaeoT5/E5bn7fcIvEOZo5NmqgJSEYrmIEKaahCs7w/T+idLq9+xvgVJCMAQmnZ8azidMI6Img==
   dependencies:
     "@hyperion-framework/types" "^1.0.0-alpha.14"
 
-"@atlas-viewer/iiif-image-api@^2.0.3":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@atlas-viewer/iiif-image-api/-/iiif-image-api-2.0.3.tgz#7a4c16ebaddbd762befa6e744ec97793f0eba888"
-  integrity sha512-Tn4KMcN6wp2AjyvYoie2ynGX7ufF8gIJuaZSqdQvqocRJcOrvHI0LxJb6ipV7zWWEyrHpGOKRxrPbYuJ4gcLzQ==
+"@atlas-viewer/iiif-image-api@^2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@atlas-viewer/iiif-image-api/-/iiif-image-api-2.0.5.tgz#ccb38185d4e582471098ded8ea8615118b6ae0bf"
+  integrity sha512-dUqBH2UBYALZ7rVNsCQieuLDyBXNNg0W7GJqjEiVjLKvxVGfaxpQdsqIGL+aianGK1797oT4B57opxLp75ghHw==
   dependencies:
     "@iiif/presentation-3" "*"
     node-fetch "^3.2.0"
@@ -2422,10 +2422,17 @@
     pirates "^4.0.0"
     source-map-support "^0.5.16"
 
-"@babel/runtime@7.16.0", "@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.5", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.5", "@babel/runtime@^7.14.0", "@babel/runtime@^7.14.6", "@babel/runtime@^7.14.8", "@babel/runtime@^7.15.4", "@babel/runtime@^7.16.0", "@babel/runtime@^7.3.1", "@babel/runtime@^7.4.4", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.3", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.3", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
+"@babel/runtime@7.16.0", "@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.5", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.5", "@babel/runtime@^7.14.0", "@babel/runtime@^7.14.6", "@babel/runtime@^7.14.8", "@babel/runtime@^7.15.4", "@babel/runtime@^7.3.1", "@babel/runtime@^7.4.4", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.3", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.3", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
   version "7.16.0"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.16.0.tgz#e27b977f2e2088ba24748bf99b5e1dece64e4f0b"
   integrity sha512-Nht8L0O8YCktmsDV6FqFue7vQLRx3Hb0B37lS5y0jDRqRxlBG4wIJHnf9/bgSE2UyipKFA01YtS+npRdTWBUyw==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
+"@babel/runtime@^7.18.3":
+  version "7.18.3"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.18.3.tgz#c7b654b57f6f63cf7f8b418ac9ca04408c4579f4"
+  integrity sha512-38Y8f7YUhce/K7RMwTp7m0uCumpv9hZkitCbBClqQIow1qSbCvGkcegKOXpEWCQLfWmevgRiWokZ1GkpfhbZug==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -3087,7 +3094,7 @@
     "@iiif/presentation-3" "^1.0.4"
     "@types/geojson" "^7946.0.8"
 
-"@iiif/parser@^1.0.9":
+"@iiif/parser@^1.*", "@iiif/parser@^1.0.9":
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/@iiif/parser/-/parser-1.0.9.tgz#52587163734ccdc2e9a47d98ef093debd768d78d"
   integrity sha512-lg00tsgNqPd+F6raye/JUa1hPQ2gDI0NqMVgwb2QG1vAyMBp/3iGMX7MWF1h4b2+68+m4f9bNvnfukLaSziaYg==
@@ -3096,7 +3103,7 @@
     "@iiif/presentation-3" "^1.0.4"
     "@types/geojson" "^7946.0.8"
 
-"@iiif/presentation-2@1.*", "@iiif/presentation-2@^1.0.1":
+"@iiif/presentation-2@1.*", "@iiif/presentation-2@^1.*", "@iiif/presentation-2@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@iiif/presentation-2/-/presentation-2-1.0.1.tgz#0d76fedfeac65b31afcc30d9a8dc17f2e57041e4"
   integrity sha512-iWF6rgAi9ksSwbH/4uJW1/49DOL1wN2mLKovu0qy1GYtCTg42bryAxYtnBsw6LrJZWykTStv7R3DynChfECmnA==
@@ -3108,14 +3115,14 @@
   dependencies:
     "@types/geojson" "^7946.0.7"
 
-"@iiif/presentation-3@1.*", "@iiif/presentation-3@1.x", "@iiif/presentation-3@^1.0.4", "@iiif/presentation-3@^1.0.5":
+"@iiif/presentation-3@1.*", "@iiif/presentation-3@1.x", "@iiif/presentation-3@^1.*", "@iiif/presentation-3@^1.0.4", "@iiif/presentation-3@^1.0.5":
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/@iiif/presentation-3/-/presentation-3-1.0.5.tgz#23208dd499a0bdc86328f32c82d6894f57fb51c1"
   integrity sha512-hIfq8q0eC//l47TEniXxvb23+8zXZjNfhtbPgJHqTUgcvG9JsYnqjjzbhVMeLPSpzqjHNCImgcrLIGwLX5P0nA==
   dependencies:
     "@types/geojson" "^7946.0.7"
 
-"@iiif/vault-helpers@^0.9.4", "@iiif/vault-helpers@^0.9.5":
+"@iiif/vault-helpers@^0.*", "@iiif/vault-helpers@^0.9.5":
   version "0.9.5"
   resolved "https://registry.yarnpkg.com/@iiif/vault-helpers/-/vault-helpers-0.9.5.tgz#e21ebad81c9d157802b367c05ac57b327155c117"
   integrity sha512-JzvYTkqKKxz29x53nfTKRIV+DmK58S/QAbIqODku3+JbCOKinh6tDqGdcdnnp5038Z6Y3mT6zjYBk89c5W+0wA==
@@ -3127,7 +3134,7 @@
     "@iiif/vault" "0.9.*"
     tiny-invariant "^1.2.0"
 
-"@iiif/vault@0.9.*", "@iiif/vault@0.9.x || 1.x", "@iiif/vault@^0.9.16", "@iiif/vault@^0.9.18":
+"@iiif/vault@0.9.*", "@iiif/vault@0.9.x || 1.x", "@iiif/vault@^0.*", "@iiif/vault@^0.9.18":
   version "0.9.18"
   resolved "https://registry.yarnpkg.com/@iiif/vault/-/vault-0.9.18.tgz#07d6a90411f45a764635c95908b5b67c873a8384"
   integrity sha512-714/6X5ZyIuiDGeElUZx1mm8nKFabtxORzfMX7MZyc4IAtASjn1HK68xfTtyolN2cFYDhqFiY3Tz08F7HNIKGQ==
@@ -3370,10 +3377,10 @@
     "@types/yargs" "^16.0.0"
     chalk "^4.0.0"
 
-"@koa/router@^10.0.0":
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/@koa/router/-/router-10.0.0.tgz#699115561afbd2740e2848ba299fc76b9e058ad6"
-  integrity sha512-z9ytrKWn/j/qUApMSJzZbUwkbLcN2ZXGq6UsqWkZb50Us+/Qpu0RwgZ6ytawVOhfFBZ1ai5iVWeD2Dcu0qcnJw==
+"@koa/router@^10.1.1":
+  version "10.1.1"
+  resolved "https://registry.yarnpkg.com/@koa/router/-/router-10.1.1.tgz#8e5a85c9b243e0bc776802c0de564561e57a5f78"
+  integrity sha512-ORNjq5z4EmQPriKbR0ER3k4Gh7YGNhWDL7JBW+8wXDrHLbWYKYSJaOJ9aN06npF5tbTxe2JBOsurpJDAvjiXKw==
   dependencies:
     debug "^4.1.1"
     http-errors "^1.7.3"
@@ -17777,20 +17784,22 @@ react-i18next@^11.7.2:
     "@babel/runtime" "^7.3.1"
     html-parse-stringify2 "2.0.1"
 
-react-iiif-vault@^0.9.6:
-  version "0.9.6"
-  resolved "https://registry.yarnpkg.com/react-iiif-vault/-/react-iiif-vault-0.9.6.tgz#1dbc90151fea720a0dc88cc88f776f53420715ac"
-  integrity sha512-j1QlcQ6mKYhyu/Fr6FM7xrhfwJ0XqcEeJuf3gDVdQmg91Q75TsyfMjVtsRi9PyQ5Mlfwc4kTfP+MZbDL4Nagkw==
+react-iiif-vault@^0.9.8:
+  version "0.9.8"
+  resolved "https://registry.yarnpkg.com/react-iiif-vault/-/react-iiif-vault-0.9.8.tgz#e2c94edef45c944f8e0b6e997689d04b9be7ef4c"
+  integrity sha512-thnc/0jWJibeTA2Nnz6y6LGDrOMyrMjbrUzUCMT5+0v8PDNSzK4JU7L+M6q6cWI+zTWJ75ER6ULMaDV+ONtQ1w==
   dependencies:
-    "@atlas-viewer/iiif-image-api" "^2.0.2"
-    "@iiif/presentation-2" "^1.0.1"
-    "@iiif/presentation-3" "^1.0.4"
-    "@iiif/vault" "^0.9.16"
-    "@iiif/vault-helpers" "^0.9.4"
+    "@atlas-viewer/atlas" "^2.0.0-alpha.10"
+    "@atlas-viewer/iiif-image-api" "^2.*"
+    "@iiif/parser" "^1.*"
+    "@iiif/presentation-2" "^1.*"
+    "@iiif/presentation-3" "^1.*"
+    "@iiif/vault" "^0.*"
+    "@iiif/vault-helpers" "^0.*"
     react "^16.10.2 || ^17.0.2"
     react-dom "^16.10.2 || ^17.0.2"
-    redux "^4.1.2"
-    rollup "^2.70.0"
+    redux "^4.2.0"
+    rollup "^2.72.1"
     typescript "^4.6.2"
 
 react-image@^4.0.1:
@@ -18318,7 +18327,7 @@ redux@^4.0.4, redux@^4.0.5:
     loose-envify "^1.4.0"
     symbol-observable "^1.2.0"
 
-redux@^4.1.2:
+redux@^4.1.2, redux@^4.2.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/redux/-/redux-4.2.0.tgz#46f10d6e29b6666df758780437651eeb2b969f13"
   integrity sha512-oSBmcKKIuIR4ME29/AeNUnl5L+hvBq7OaJWzaptTQJAntaPvxIJqfnjbaEiCzzaIz+XmVILfqAM3Ob0aXLPfjA==
@@ -18792,10 +18801,10 @@ rollup@^2.36.1:
   optionalDependencies:
     fsevents "~2.3.1"
 
-rollup@^2.70.0:
-  version "2.73.0"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.73.0.tgz#128fef4b333fd92d02d6929afbb6ee38d7feb32d"
-  integrity sha512-h/UngC3S4Zt28mB3g0+2YCMegT5yoftnQplwzPqGZcKvlld5e+kT/QRmJiL+qxGyZKOYpgirWGdLyEO1b0dpLQ==
+rollup@^2.72.1:
+  version "2.75.7"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.75.7.tgz#221ff11887ae271e37dcc649ba32ce1590aaa0b9"
+  integrity sha512-VSE1iy0eaAYNCxEXaleThdFXqZJ42qDBatAwrfnPlENEZ8erQ+0LYX4JXOLPceWfZpV1VtZwZ3dFCuOZiSyFtQ==
   optionalDependencies:
     fsevents "~2.3.2"
 
