@@ -10,8 +10,6 @@ export const CanvasImageViewer: React.FC<{ rendering?: 'webgl' | 'canvas' }> = (
   const [, highlightedRegions] = useCanvasSearch(canvasId);
   const height = useViewerHeight();
 
-  console.log('CanvasImageViewer', { canvasId });
-
   if (!canvasId) {
     return null;
   }

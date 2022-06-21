@@ -89,6 +89,10 @@ export const CanvasView: UniversalComponent<CanvasViewType> = createUniversalCom
               link: manifestId ? `/manifests/${manifestId}/canvases/${id}/plaintext` : `/canvases/${id}/plaintext`,
             },
             {
+              label: t('JSON'),
+              link: manifestId ? `/manifests/${manifestId}/canvases/${id}/json` : `/canvases/${id}/json`,
+            },
+            {
               label: t('Delete'),
               link: manifestId ? `/manifests/${manifestId}/canvases/${id}/delete` : `/canvases/${id}/delete`,
             },

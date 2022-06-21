@@ -15,6 +15,9 @@ export const CanvasVaultContext: React.FC = ({ children }) => {
     if (canvas && canvas.items) {
       try {
         const clonedCanvas = JSON.parse(JSON.stringify(canvas));
+
+        clonedCanvas.id = clonedCanvas.source_id || clonedCanvas.id;
+
         vault.load({ id: clonedCanvas.id } as any, clonedCanvas).then(c => {
           setCanvasRef(c as any);
         });

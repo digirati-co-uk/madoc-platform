@@ -22,7 +22,10 @@ const CanvasViewer: React.FC<{ canvas: CanvasFull['canvas'] }> = ({ canvas }) =>
   useVaultEffect(
     vault => {
       if (canvas) {
-        vault.load(canvas.id, JSON.parse(JSON.stringify(canvas))).then(c => {
+        const canvasJson = JSON.parse(JSON.stringify(canvas));
+        canvasJson.id = canvasJson.source_id || canvasJson.id;
+
+        vault.load(canvasJson.id, canvasJson).then(c => {
           setCanvasRef(c as any);
         });
       }

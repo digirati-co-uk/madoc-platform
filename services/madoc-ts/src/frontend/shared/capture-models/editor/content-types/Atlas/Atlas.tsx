@@ -1,5 +1,5 @@
 import { ImageService } from '@iiif/presentation-3';
-import React, { useMemo } from 'react';
+import React from 'react';
 import { webglSupport } from '../../../../utility/webgl-support';
 import { AnnotationStyleProvider, useAnnotationStyles } from '../../../AnnotationStyleContext';
 import { BaseContent, ContentOptions } from '../../../types/content-types';
@@ -10,9 +10,9 @@ import {
   useCanvas,
   useImageService,
   VaultProvider,
-  useThumbnail,
+  CanvasPanel,
 } from 'react-iiif-vault';
-import { AtlasAuto, getId, GetTile, TileSet, Preset, PopmotionControllerConfig } from '@atlas-viewer/atlas';
+import { Preset, PopmotionControllerConfig } from '@atlas-viewer/atlas';
 import { ImageServiceContext } from './Atlas.helpers';
 
 export type AtlasCustomOptions = {
@@ -43,28 +43,14 @@ const Canvas: React.FC<{
 }> = ({ isEditing, onDeselect, children, onCreated, unstable_webglRenderer, controllerConfig }) => {
   const canvas = useCanvas();
   const { data: service } = useImageService() as { data?: ImageService };
-  const thumbnail = useThumbnail({ minWidth: 100 });
   const style = useAnnotationStyles();
-
-  const tiles: any | undefined = useMemo(() => {
-    if (canvas && service) {
-      return {
-        id: getId(service),
-        width: canvas.width,
-        height: canvas.height,
-        imageService: service,
-        thumbnail: thumbnail?.type === 'fixed' ? thumbnail : undefined,
-      };
-    }
-    return undefined;
-  }, [canvas, service, thumbnail]);
 
   if (!service || !canvas) {
     return null;
   }
 
   return (
-    <AtlasAuto
+    <CanvasPanel.Viewer
       containerStyle={{ flex: '1 1 0px' }}
       onCreated={onCreated}
       mode={isEditing ? 'sketch' : 'explore'}
@@ -73,15 +59,17 @@ const Canvas: React.FC<{
     >
       <world onClick={onDeselect}>
         <AnnotationStyleProvider theme={style}>
-          <ImageServiceContext value={service}>
-            {tiles ? <TileSet x={0} y={0} height={canvas.height} width={canvas.width} tiles={tiles} /> : null}
-            <world-object id={`${canvas.id}/annotations`} x={0} y={0} height={canvas.height} width={canvas.width}>
-              {children}
-            </world-object>
-          </ImageServiceContext>
+          <CanvasContext canvas={canvas.id}>
+            <ImageServiceContext value={service}>
+              <CanvasPanel.RenderCanvas />
+              <world-object id={`${canvas.id}/annotations`} x={0} y={0} height={canvas.height} width={canvas.width}>
+                {children}
+              </world-object>
+            </ImageServiceContext>
+          </CanvasContext>
         </AnnotationStyleProvider>
       </world>
-    </AtlasAuto>
+    </CanvasPanel.Viewer>
   );
 };
 

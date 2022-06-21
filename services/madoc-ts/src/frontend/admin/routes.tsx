@@ -1,5 +1,6 @@
 import { UniversalRoute } from '../types';
 import { annotationStylesRoutes } from './pages/annotation-styles/index';
+import { CanvasJson } from './pages/content/canvases/canvas-json';
 import { CanvasPlaintext } from './pages/content/canvases/canvas-plaintext';
 import { CanvasSearchIndex } from './pages/content/canvases/canvas-search-index';
 import { CollectionView } from './pages/content/collections/collection';
@@ -187,6 +188,11 @@ export const routes: UniversalRoute[] = [
         component: CanvasPlaintext,
       },
       {
+        path: '/manifests/:manifestId/canvases/:id/json',
+        exact: true,
+        component: CanvasJson,
+      },
+      {
         path: '/manifests/:maifestId/canvases/:id/delete',
         exact: true,
         component: DeleteCanvas,
@@ -277,6 +283,11 @@ export const routes: UniversalRoute[] = [
         path: '/canvases/:id/plaintext',
         exact: true,
         component: CanvasPlaintext,
+      },
+      {
+        path: '/canvases/:id/json',
+        exact: true,
+        component: CanvasJson,
       },
       {
         path: '/canvases/:id/delete',

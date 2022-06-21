@@ -1,5 +1,5 @@
 import { Preset } from '@atlas-viewer/atlas';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ViewContent } from '../../shared/components/ViewContent';
 import { useApiCanvas } from '../../shared/hooks/use-api-canvas';
 
@@ -11,7 +11,15 @@ export const ViewContentFetch: React.FC<{
 }> = ({ id, height, children, onCreated, onPanInSketchMode }) => {
   const { data } = useApiCanvas(id);
 
-  if (!data) {
+  const canvas = useMemo(() => {
+    if (!data) return null;
+    return {
+      ...data.canvas,
+      id: data.canvas.source_id || data.canvas.id,
+    };
+  }, []);
+
+  if (!data || !canvas) {
     return <div>Loading...</div>;
   }
 
@@ -19,10 +27,10 @@ export const ViewContentFetch: React.FC<{
     <ViewContent
       height={height}
       target={[
-        { type: 'Canvas', id: 'http://canvas/' + data.canvas.id },
+        { type: 'Canvas', id: data.canvas.source_id || 'http://canvas/' + data.canvas.id },
         { type: 'Manifest', id: 'http://manifest/top' },
       ]}
-      canvas={data.canvas}
+      canvas={canvas as any}
       onCreated={onCreated}
       onPanInSketchMode={onPanInSketchMode}
     >
