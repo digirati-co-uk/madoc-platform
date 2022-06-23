@@ -58,13 +58,25 @@ jobs:
 
       - uses: actions/cache@v1
         with:
-          path: services/madoc-ts/.cache
-          key: typescript-cache
+          path: services/madoc-ts/node_modules/.vite
+          key: vite-cache
           restore-keys: |
-            typescript-cache
+            vite-cache
 
       - working-directory: services/madoc-ts
-        run: yarn run build
+        run: yarn run build:vite-producer
+
+      - working-directory: services/madoc-ts
+        run: yarn run build:vite-auth
+
+      - working-directory: services/madoc-ts
+        run: yarn run build:vite-server
+
+      - working-directory: services/madoc-ts
+        run: yarn run build:vite-scheduler
+
+      - working-directory: services/madoc-ts
+        run: yarn run build:frontend
 
       - working-directory: services/madoc-ts
         run: yarn run test
