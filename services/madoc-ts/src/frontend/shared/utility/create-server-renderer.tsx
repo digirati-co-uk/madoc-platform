@@ -138,8 +138,6 @@ export function createServerRenderer(
       }
 
       if (route.component && route.component.getKey && route.component.getData) {
-        console.log('=> FETCHING', routeContext, params);
-
         requests.push(
           prefetchCache.prefetchQuery(
             route.component.getKey(match.params, queryString, path),
