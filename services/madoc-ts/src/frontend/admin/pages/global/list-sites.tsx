@@ -2,8 +2,8 @@ import { stringify } from 'query-string';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect, useHistory, useLocation } from 'react-router-dom';
-import ReactTimeago from 'react-timeago';
 import { siteManagerHooks } from '../../../../extensions/site-manager/hooks';
+import { TimeAgo } from '../../../shared/atoms/TimeAgo';
 import { SystemCallToAction } from '../../../shared/components/SystemCallToAction';
 import { SystemOrderBy } from '../../../shared/components/SystemOrderBy';
 import { useLocationQuery } from '../../../shared/hooks/use-location-query';
@@ -138,7 +138,7 @@ export const ListSites: React.FC = () => {
                   </StatisticContainer>
                 </SystemDescription>
                 <SystemVersion>
-                  Created <ReactTimeago date={site.created} />
+                  Created <TimeAgo date={site.created} />
                 </SystemVersion>
               </SystemMetadata>
               <SystemActions>

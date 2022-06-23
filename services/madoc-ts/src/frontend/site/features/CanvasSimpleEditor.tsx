@@ -6,6 +6,7 @@ import { slotConfig } from '../../../extensions/capture-models/Paragraphs/Paragr
 import { ViewReadOnlyAnnotation } from '../../shared/atlas/ViewReadOnlyAnnotation';
 import { SubmitWithoutPreview } from '../../shared/capture-models/new/components/SubmitWithoutPreview';
 import { RevisionRequest } from '../../shared/capture-models/types/revision-request';
+import { useBrowserLayoutEffect } from '../../shared/hooks/use-browser-layout-effect';
 import { useLocalStorage } from '../../shared/hooks/use-local-storage';
 import { useReadOnlyAnnotations } from '../../shared/hooks/use-read-only-annotations';
 import { HomeIcon } from '../../shared/icons/HomeIcon';
@@ -88,7 +89,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
     setPostSubmissionMessage(false);
   }, [revision, canvasId]);
 
-  useLayoutEffect(() => {
+  useBrowserLayoutEffect(() => {
     if (gridRef.current) {
       const bounds = gridRef.current.getBoundingClientRect();
       if (bounds.height) {

@@ -8,6 +8,7 @@ import { CanvasViewerButton, CanvasViewerControls } from '../../site/features/Ca
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
 import { ViewReadOnlyAnnotation } from '../atlas/ViewReadOnlyAnnotation';
 import { GhostCanvas } from '../atoms/GhostCanvas';
+import { useBrowserLayoutEffect } from '../hooks/use-browser-layout-effect';
 import { HomeIcon } from '../icons/HomeIcon';
 import { MinusIcon } from '../icons/MinusIcon';
 import { PlusIcon } from '../icons/PlusIcon';
@@ -50,7 +51,7 @@ export const SimpleAtlasViewer = React.forwardRef<
     }
   };
 
-  useLayoutEffect(() => {
+  useBrowserLayoutEffect(() => {
     setIsLoaded(true);
   }, []);
 

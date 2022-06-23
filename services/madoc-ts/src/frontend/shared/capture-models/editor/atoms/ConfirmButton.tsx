@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useBrowserLayoutEffect } from '../../../hooks/use-browser-layout-effect';
 import { Button } from './Button';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
@@ -44,7 +45,7 @@ export const ConfirmButton: React.FC<{ message: string; defaultButton?: boolean;
   const [ready, setIsReady] = useState(false);
   const containerRef = useRef<any>();
 
-  useLayoutEffect(() => {
+  useBrowserLayoutEffect(() => {
     const element = document.createElement('div');
     document.body.appendChild(element);
     portalEl.current = element;

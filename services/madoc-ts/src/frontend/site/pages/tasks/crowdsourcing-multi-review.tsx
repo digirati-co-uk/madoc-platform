@@ -1,6 +1,7 @@
 import React, { Suspense, useCallback, useMemo } from 'react';
 import { CrowdsourcingReview } from '../../../../gateway/tasks/crowdsourcing-review';
 import { extractIdFromUrn, parseUrn } from '../../../../utility/parse-urn';
+import { TimeAgo } from '../../../shared/atoms/TimeAgo';
 import { useProjectByTask } from '../../../shared/hooks/use-project-by-task';
 import { Breadcrumbs } from '../../../shared/navigation/Breadcrumbs';
 import {
@@ -20,7 +21,6 @@ import {
 import { Heading3, Subheading3 } from '../../../shared/typography/Heading3';
 import { Link, useParams, useHistory } from 'react-router-dom';
 import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
-import TimeAgo from 'react-timeago';
 import { useApiTaskSearch } from '../../../shared/hooks/use-api-task-search';
 import { createLink } from '../../../shared/utility/create-link';
 import { useLocationQuery } from '../../../shared/hooks/use-location-query';

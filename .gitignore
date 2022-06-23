@@ -6,6 +6,7 @@ node_modules
 var/shared-database/*
 var/certs/*
 var/jwt/*
+var/.vite-cache/*
 var/test-environment
 key.pub
 .terraform

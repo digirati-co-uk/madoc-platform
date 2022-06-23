@@ -55,7 +55,7 @@ export function useResizeLayout(
     isEventTimeout.current = setTimeout(() => {
       setIsDragging(true);
       isEventDragging.current = true;
-    }, 350);
+    }, 350) as any;
   });
 
   useEventHandler({ current: typeof window !== 'undefined' ? window : undefined }, 'mouseup', () => {

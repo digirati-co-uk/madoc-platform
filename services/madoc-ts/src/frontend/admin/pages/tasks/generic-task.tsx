@@ -1,7 +1,7 @@
-import ReactTimeago from 'react-timeago';
 import { BaseTask } from '../../../../gateway/tasks/base-task';
 import React, { useState } from 'react';
 import { useMutation } from 'react-query';
+import { TimeAgo } from '../../../shared/atoms/TimeAgo';
 import { Button, ButtonRow } from '../../../shared/navigation/Button';
 import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
 import { LocaleString, useCreateLocaleString } from '../../../shared/components/LocaleString';
@@ -61,7 +61,7 @@ export const GenericTask: React.FC<{ task: BaseTask; statusBar?: JSX.Element; sn
       {Object.keys(task.state).length ? <pre>{JSON.stringify(task.state, null, 2)}</pre> : null}
       {snippet}
       {task.description ? <p>{task.description}</p> : null}
-      <p>{task.created_at ? <ReactTimeago date={task.created_at} /> : null}</p>
+      <p>{task.created_at ? <TimeAgo date={task.created_at} /> : null}</p>
       {statusBar}
       <SortedTaskList tasks={task.subtasks || []} trigger={trigger} taskStatusMap={taskStatusMap} />
     </div>

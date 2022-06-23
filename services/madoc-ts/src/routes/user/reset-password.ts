@@ -1,7 +1,7 @@
 import { siteState } from '../../middleware/site-state';
 import { RouteMiddleware } from '../../types/route-middleware';
 import validate from 'uuid-validate';
-import { siteFrontend } from '../admin/frontend';
+import { siteFrontend } from '../frontend/site-frontend';
 
 export const resetPasswordPage: RouteMiddleware = async (context, next) => {
   if (context.state.jwt) {

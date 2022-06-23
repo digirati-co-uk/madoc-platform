@@ -303,7 +303,7 @@ export class ApiClient {
         });
       };
 
-      intervalId = setInterval(tryReturn, interval);
+      intervalId = setInterval(tryReturn, interval) as any;
     });
   }
 

@@ -15,9 +15,10 @@ import { Vault } from '@iiif/vault';
 import { CanvasNormalized, Manifest, ManifestNormalized } from '@iiif/presentation-3';
 import { createHash } from 'crypto';
 const { readFile, writeFile } = promises;
+import fetch from 'node-fetch';
 
 // @ts-ignore
-global.fetch = require('node-fetch');
+global.fetch = fetch;
 
 export const STATUS = {
   NOT_STARTED: 0,

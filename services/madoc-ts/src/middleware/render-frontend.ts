@@ -1,4 +1,4 @@
-import { siteFrontend } from '../routes/admin/frontend';
+import { siteFrontend } from '../routes/frontend/site-frontend';
 import { RouteMiddleware } from '../types/route-middleware';
 import { siteState } from './site-state';
 

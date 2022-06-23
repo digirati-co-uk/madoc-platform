@@ -2,10 +2,10 @@ import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from 'react-query';
-import ReactTimeago from 'react-timeago';
 import styled, { css } from 'styled-components';
 import { Notification } from '../../../types/notifications';
 import { parseAllUrn } from '../../../utility/parse-urn';
+import { TimeAgo } from '../atoms/TimeAgo';
 import { EmptyState } from '../layout/EmptyState';
 import { useApi } from '../hooks/use-api';
 import { useSite, useUser } from '../hooks/use-site';
@@ -243,7 +243,7 @@ export const NotificationItem: React.FC<{
         )}
         <NotificationSummary>{notification.summary}</NotificationSummary>
         <NotificationTime>
-          <ReactTimeago date={new Date(notification.createdAt)} />
+          <TimeAgo date={new Date(notification.createdAt)} />
         </NotificationTime>
       </NotificationSection>
       {notification.thumbnail ? (

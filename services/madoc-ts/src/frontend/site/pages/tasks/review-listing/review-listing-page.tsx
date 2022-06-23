@@ -1,12 +1,12 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect, useParams } from 'react-router-dom';
-import ReactTimeago from 'react-timeago';
 import styled, { css } from 'styled-components';
 import { SubjectSnippet } from '../../../../../extensions/tasks/resolvers/subject-resolver';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
 import { extractIdFromUrn } from '../../../../../utility/parse-urn';
 import { SimpleStatus } from '../../../../shared/atoms/SimpleStatus';
+import { TimeAgo } from '../../../../shared/atoms/TimeAgo';
 import { DisplayBreadcrumbs } from '../../../../shared/components/Breadcrumbs';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { useData } from '../../../../shared/hooks/use-data';
@@ -140,7 +140,7 @@ function SingleReviewTableRow({ task, active }: { task: CrowdsourcingTask; activ
         </HrefLink>
       </SimpleTable.Cell>
       <SimpleTable.Cell style={{ paddingLeft: '1em' }}>
-        {task.modified_at ? <ReactTimeago date={new Date(task.modified_at)} /> : null}
+        {task.modified_at ? <TimeAgo date={new Date(task.modified_at)} /> : null}
       </SimpleTable.Cell>
       <SimpleTable.Cell>
         <SimpleStatus status={task.status} status_text={task.status_text || ''} />

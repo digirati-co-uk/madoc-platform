@@ -4,6 +4,7 @@ import { useNavigation } from '../capture-models/editor/hooks/useNavigation';
 import { Revisions } from '../capture-models/editor/stores/revisions/index';
 import { StatusTypes } from '../capture-models/types/capture-model';
 import { RevisionRequest } from '../capture-models/types/revision-request';
+import { useBrowserLayoutEffect } from '../hooks/use-browser-layout-effect';
 import { SmallButton } from '../navigation/Button';
 import { ViewDocument } from '../capture-models/inspector/ViewDocument';
 import { useContributors } from '../capture-models/new/components/ContributorContext';
@@ -118,7 +119,7 @@ export const RevisionListItem: React.FC<{ revision: RevisionRequest; editable?: 
   const selectRevision = Revisions.useStoreActions(a => a.selectRevision);
   const [, { goTo }] = useNavigation();
 
-  useLayoutEffect(() => {
+  useBrowserLayoutEffect(() => {
     if (outerDiv.current && innerDiv.current) {
       const { height: h1 } = outerDiv.current.getBoundingClientRect();
       const { height: h2 } = innerDiv.current.getBoundingClientRect();

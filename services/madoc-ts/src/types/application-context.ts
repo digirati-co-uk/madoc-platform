@@ -40,5 +40,9 @@ declare module 'koa' {
     ajv: Ajv;
     staticPage?: string | ((token: string) => Promise<string | undefined>) | ((token: string) => undefined | string);
     disposableApis: ApiClient[];
+
+    // New frontend
+    adminTemplate: string;
+    siteTemplate: string;
   }
 }

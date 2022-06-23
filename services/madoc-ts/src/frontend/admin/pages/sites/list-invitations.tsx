@@ -1,8 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import ReactTimeago from 'react-timeago';
 import { UserInvitation } from '../../../../extensions/site-manager/types';
+import { TimeAgo } from '../../../shared/atoms/TimeAgo';
 import { Button, ButtonRow } from '../../../shared/navigation/Button';
 import { HighlightInput, InputContainer, InputLabel } from '../../../shared/form/Input';
 import { SystemListItem } from '../../../shared/atoms/SystemListItem';
@@ -68,7 +68,7 @@ export const ListInvitations: React.FC = () => {
                         </li>
                         <li>
                           <strong>Expires</strong>{' '}
-                          {invitation.expires ? <ReactTimeago date={invitation.expires} /> : 'never'}
+                          {invitation.expires ? <TimeAgo date={invitation.expires} /> : 'never'}
                         </li>
                         <li>
                           <strong>Uses left</strong>{' '}

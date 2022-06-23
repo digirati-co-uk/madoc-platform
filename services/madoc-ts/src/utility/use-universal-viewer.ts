@@ -1,8 +1,9 @@
 import React, { useLayoutEffect, useState } from 'react';
 import { init, Viewer } from 'universalviewer';
+import { useBrowserLayoutEffect } from '../frontend/shared/hooks/use-browser-layout-effect';
 
 export function useEvent(viewer: Viewer | undefined, name: string, cb: (...args: any[]) => void) {
-  useLayoutEffect(() => {
+  useBrowserLayoutEffect(() => {
     if (viewer) {
       return viewer.subscribe(name, cb);
     }
@@ -16,7 +17,7 @@ export function useUniversalViewer(
 ) {
   const [uv, setUv] = useState<Viewer>();
 
-  useLayoutEffect(() => {
+  useBrowserLayoutEffect(() => {
     if (uv && ref.current) {
       if (ref.current.firstChild) {
         (ref.current.firstChild as HTMLDivElement).style.width = ref.current.offsetWidth + 'px';
@@ -26,7 +27,7 @@ export function useUniversalViewer(
     }
   }, resizeIfTheseChange);
 
-  useLayoutEffect(() => {
+  useBrowserLayoutEffect(() => {
     if (ref.current) {
       const currentUv = init(ref.current, options);
       setUv(currentUv);

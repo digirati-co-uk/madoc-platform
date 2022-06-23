@@ -1,4 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
+import { useBrowserLayoutEffect } from '../hooks/use-browser-layout-effect';
 import {
   InnerModalContainer,
   ModalBackground,
@@ -59,7 +60,7 @@ export const ModalButton: React.FC<{
   const [expanded, setIsExpanded] = useState(false);
   const containerRef = useRef<any>();
 
-  useLayoutEffect(() => {
+  useBrowserLayoutEffect(() => {
     const element = document.createElement('div');
     document.body.appendChild(element);
     portalEl.current = element;

@@ -143,8 +143,10 @@ import { importBulkManifests, importCollection, importManifest, importManifestOc
 import { loginPage } from './routes/user/login';
 import { getSiteScopes, saveSiteScopes } from './routes/admin/site-scopes';
 import { logout } from './routes/user/logout';
-import { frontendBundles, pluginBundles } from './routes/assets/frontend-bundles';
-import { adminFrontend, siteFrontend } from './routes/admin/frontend';
+import { frontendBundles } from './routes/assets/frontend-bundles';
+import { pluginBundles } from './routes/assets/plugin-bundles';
+import { adminFrontend } from './routes/frontend/admin-frontend';
+import { siteFrontend } from './routes/frontend/site-frontend';
 import { createCollection } from './routes/iiif/collections/create-collection';
 import { deleteCollectionEndpoint } from './routes/iiif/collections/delete-collection';
 import { getCollection } from './routes/iiif/collections/get-collection';
@@ -536,8 +538,7 @@ export const router = new TypedRouter({
     pluginBundles,
     { isPublic: true },
   ],
-  'assets-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleId.bundle.js', frontendBundles, { isPublic: true }],
-  'assets-sub-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleName', frontendBundles, { isPublic: true }],
+  'assets-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleName', frontendBundles, { isPublic: true }],
   'get-user-details': [TypedRouter.GET, '/s/:slug/madoc/api/me', userDetails],
 
   // Media

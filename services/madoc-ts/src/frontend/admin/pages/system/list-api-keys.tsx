@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from 'react-query';
-import ReactTimeago from 'react-timeago';
+import { TimeAgo } from '../../../shared/atoms/TimeAgo';
 import { ModalButton } from '../../../shared/components/Modal';
 import { useApi } from '../../../shared/hooks/use-api';
 import { SimpleTable } from '../../../shared/layout/SimpleTable';
@@ -78,10 +78,10 @@ export const ListApiKeys: React.FC = () => {
                       {key.user_name} ({key.user_id})
                     </SimpleTable.Cell>
                     <SimpleTable.Cell>
-                      <ReactTimeago date={new Date(key.created_at)} />
+                      <TimeAgo date={new Date(key.created_at)} />
                     </SimpleTable.Cell>
                     <SimpleTable.Cell>
-                      {key.last_used ? <ReactTimeago date={new Date(key.last_used)} /> : 'never'}
+                      {key.last_used ? <TimeAgo date={new Date(key.last_used)} /> : 'never'}
                     </SimpleTable.Cell>
                     <SimpleTable.Cell>
                       <code>{key.scope.join(' ')}</code>

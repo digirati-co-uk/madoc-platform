@@ -1,8 +1,8 @@
 import React from 'react';
-import ReactTimeago from 'react-timeago';
 import styled, { css } from 'styled-components';
 import { ChangeDiscoveryActivity } from '../../../activity-streams/change-discovery-types';
 import { parseUrn } from '../../../utility/parse-urn';
+import { TimeAgo } from '../atoms/TimeAgo';
 import { HrefLink } from '../utility/href-link';
 
 export const ActivityContainer = styled.div`
@@ -122,7 +122,7 @@ export const Activity: React.FC<{
         {activity.type} {activity.object.type}
       </ActivityTitle>
       <ActivityTime>
-        <ReactTimeago date={new Date(activity.endTime)} />
+        <TimeAgo date={new Date(activity.endTime)} />
       </ActivityTime>
       {activity.summary ? <ActivitySummary>{activity.summary}</ActivitySummary> : null}
       <ActivityLink target="_blank" href={activity.object.id}>

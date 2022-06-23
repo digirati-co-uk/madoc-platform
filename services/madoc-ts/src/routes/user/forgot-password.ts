@@ -4,7 +4,7 @@ import { gatewayHost } from '../../gateway/api.server';
 import { siteState } from '../../middleware/site-state';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { passwordHash } from '../../utility/php-password-hash';
-import { siteFrontend } from '../admin/frontend';
+import { siteFrontend } from '../frontend/site-frontend';
 
 export const forgotPassword: RouteMiddleware = async (context, next) => {
   if (context.query.redirect && !context.query.redirect.startsWith('/')) {

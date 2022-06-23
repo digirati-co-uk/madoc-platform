@@ -1,5 +1,6 @@
 node_modules
 lib
+dist
 *.log
 storybook-static
 stats.json

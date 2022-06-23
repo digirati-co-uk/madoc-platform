@@ -10,7 +10,7 @@ import './frontend/shared/plugins/globals';
 import { createPluginManager } from './middleware/create-plugin-manager';
 import { disposeApis } from './middleware/dispose-apis';
 import { errorHandler } from './middleware/error-handler';
-import { SCHEMAS_PATH } from './paths';
+import { HTML_ADMIN_PATH, HTML_SITE_PATH, SCHEMAS_PATH } from './paths';
 import { EnvConfig } from './types/env-config';
 import { createAwaiter } from './utility/awaiter';
 import { CronJobs } from './utility/cron-jobs';
@@ -71,6 +71,16 @@ export async function createApp(config: ExternalConfig, env: EnvConfig) {
       console.log('WARNING: SMTP has not been configured');
     }
   });
+
+  if (process.env.NODE_ENV !== 'development') {
+    awaitProperty(readFile(HTML_SITE_PATH), html => {
+      app.context.siteTemplate = html.toString('utf-8');
+    });
+
+    awaitProperty(readFile(HTML_ADMIN_PATH), html => {
+      app.context.adminTemplate = html.toString('utf-8');
+    });
+  }
 
   // Validator.
   app.context.ajv = new Ajv();

@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef } from 'react';
+import { useBrowserLayoutEffect } from '../../shared/hooks/use-browser-layout-effect';
 
 export function useInfiniteAction({
   canFetchMore,
@@ -13,7 +14,7 @@ export function useInfiniteAction({
 }) {
   const loadMoreButton = useRef<any>();
 
-  useLayoutEffect(() => {
+  useBrowserLayoutEffect(() => {
     if (loadMoreButton.current) {
       const observer = new IntersectionObserver(
         entries => {

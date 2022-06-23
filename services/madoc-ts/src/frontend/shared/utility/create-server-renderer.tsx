@@ -239,7 +239,7 @@ export function createServerRenderer(
       return {
         type: 'redirect',
         status: 404,
-      };
+      } as const;
     }
 
     const state = {
@@ -294,7 +294,7 @@ export function createServerRenderer(
         type: 'redirect',
         status: context.statusCode,
         to: context.url,
-      };
+      } as const;
     }
 
     const styles = sheet.getStyleTags(); // <-- getting all the tags from the sheet
@@ -327,51 +327,21 @@ export function createServerRenderer(
       )}</script>
     `;
 
-    if (process.env.NODE_ENV === 'production') {
-      return {
-        type: 'document',
-        html: `<!doctype html>
-<html ${helmet.htmlAttributes.toString()}>
-    <head>
-        ${helmet.title.toString()}
-        ${helmet.meta.toString()}
-        ${helmet.link.toString()}
-        ${styles}
-    </head>
-    <body ${helmet.bodyAttributes.toString()}>
-        <div id="react-component">${state.markup}</div>
-        
-        
-        <script crossorigin src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.0.0/dist/fetch.umd.js"></script>
-        <script crossorigin src="https://cdn.jsdelivr.net/npm/react@16.13.1/umd/react.production.min.js"></script>
-        <script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@16.13.1/umd/react-dom.production.min.js"></script>
-        <script type="application/json" id="react-data">${JSON.stringify({ basename })}</script>
-        ${routeData}
-    </body>
-</html>`,
-      };
-    }
-
     return {
       type: 'document',
-      html: `<!doctype html>
-<html ${helmet.htmlAttributes.toString()}>
-    <head>
-        ${helmet.title.toString()}
-        ${helmet.meta.toString()}
-        ${helmet.link.toString()}
-        ${styles}
-    </head>
-    <body ${helmet.bodyAttributes.toString()}>
-        <div id="react-component">${state.markup}</div>
-
-        <script crossorigin src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.0.0/dist/fetch.umd.js"></script>
-        <script crossorigin src="https://cdn.jsdelivr.net/npm/react@16.13.1/umd/react.development.js"></script>
-        <script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@16.13.1/umd/react-dom.development.js"></script>
-        <script type="application/json" id="react-data">${JSON.stringify({ basename })}</script>
-        ${routeData}
-    </body>
-</html>`,
-    };
+      htmlAttributes: helmet.htmlAttributes.toString(),
+      bodyAttributes: helmet.bodyAttributes.toString(),
+      head: `
+          ${helmet.title.toString()}
+          ${helmet.meta.toString()}
+          ${helmet.link.toString()}
+          ${styles}
+        `,
+      body: `
+          <div id="react-component">${state.markup}</div>
+          <script type="application/json" id="react-data">${JSON.stringify({ basename })}</script>
+          ${routeData}
+        `,
+    } as const;
   };
 }

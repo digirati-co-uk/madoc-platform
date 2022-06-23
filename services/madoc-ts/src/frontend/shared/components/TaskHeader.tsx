@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import TimeAgo from 'react-timeago';
 import styled from 'styled-components';
 import { BaseTask } from '../../../gateway/tasks/base-task';
 import { extractIdFromUrn } from '../../../utility/parse-urn';
@@ -20,6 +19,7 @@ import { HrefLink } from '../utility/href-link';
 import { ModalButton } from './Modal';
 import { TaskContextualMenu } from './TaskContextualMenu';
 import { UserAutocomplete } from './UserAutocomplete';
+import { TimeAgo } from '../atoms/TimeAgo';
 
 const TaskHeaderContainer = styled.div`
   background: #fff;

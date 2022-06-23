@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Redirect, useHistory } from 'react-router-dom';
-import ReactTimeago from 'react-timeago';
 import { User } from '../../../../extensions/site-manager/types';
+import { TimeAgo } from '../../../shared/atoms/TimeAgo';
 import { Tag } from '../../../shared/capture-models/editor/atoms/Tag';
 import { Button, ButtonRow } from '../../../shared/navigation/Button';
 import { SimpleTable } from '../../../shared/layout/SimpleTable';
@@ -91,11 +91,9 @@ export const ListUsers: React.FC = () => {
                 <SimpleTable.Cell>{user.email}</SimpleTable.Cell>
                 <SimpleTable.Cell>{user.is_active ? 'active' : 'inactive'}</SimpleTable.Cell>
                 <SimpleTable.Cell>
-                  <ReactTimeago date={new Date(user.created)} />
+                  <TimeAgo date={new Date(user.created)} />
                 </SimpleTable.Cell>
-                <SimpleTable.Cell>
-                  {user.modified ? <ReactTimeago date={new Date(user.modified)} /> : '-'}
-                </SimpleTable.Cell>
+                <SimpleTable.Cell>{user.modified ? <TimeAgo date={new Date(user.modified)} /> : '-'}</SimpleTable.Cell>
                 <SimpleTable.Cell>
                   <Tag>{user.role}</Tag>
                 </SimpleTable.Cell>

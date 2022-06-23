@@ -6,7 +6,7 @@ declare global {
 }
 
 const bootstrapGlobalStore: () => PluginStore = () => {
-  const globalVar = (global || window) as any;
+  const globalVar = globalThis as any;
 
   if (!globalVar.$$captureModelGlobalStore) {
     globalVar.$$captureModelGlobalStore = {

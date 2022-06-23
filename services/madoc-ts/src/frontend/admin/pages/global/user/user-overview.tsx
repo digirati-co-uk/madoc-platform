@@ -1,7 +1,7 @@
 import React from 'react';
 import { useMutation } from 'react-query';
-import ReactTimeago from 'react-timeago';
 import { GetUser } from '../../../../../extensions/site-manager/types';
+import { TimeAgo } from '../../../../shared/atoms/TimeAgo';
 import { Button } from '../../../../shared/navigation/Button';
 import { SuccessMessage } from '../../../../shared/callouts/SuccessMessage';
 import { TableContainer, TableRow, TableRowLabel } from '../../../../shared/layout/Table';
@@ -70,7 +70,7 @@ export const UserOverview: React.FC = () => {
             <strong>Created</strong>
           </TableRowLabel>
           <TableRowLabel>
-            <ReactTimeago date={new Date(data.user.created)} />
+            <TimeAgo date={new Date(data.user.created)} />
           </TableRowLabel>
         </TableRow>
         {data.user.modified ? (
@@ -79,7 +79,7 @@ export const UserOverview: React.FC = () => {
               <strong>Last modified</strong>
             </TableRowLabel>
             <TableRowLabel>
-              <ReactTimeago date={new Date(data.user.modified)} />
+              <TimeAgo date={new Date(data.user.modified)} />
             </TableRowLabel>
           </TableRow>
         ) : null}
