@@ -1,6 +1,6 @@
 import React from 'react';
 import { useMutation } from 'react-query';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { EditShorthandCaptureModel } from '../../../shared/capture-models/EditorShorthandCaptureModel';
 import { useApi } from '../../../shared/hooks/use-api';
 import { useSite, useSystemConfig, useUpdateSystemConfig } from '../../../shared/hooks/use-site';
@@ -29,7 +29,7 @@ export const SiteSystemConfiguration: React.FC = () => {
   const api = useApi();
   const config = useSystemConfig();
   const updateConfig = useUpdateSystemConfig();
-  const history = useHistory();
+  const navigate = useNavigate();
   const site = useSite();
 
   const [updateSystemConfig] = useMutation(async (newConfig: any) => {
@@ -43,7 +43,7 @@ export const SiteSystemConfiguration: React.FC = () => {
       ...(siteDetails?.config || {}),
     });
 
-    history.push(`/configure/site?success=true`);
+    navigate(`/configure/site?success=true`);
   });
 
   return (

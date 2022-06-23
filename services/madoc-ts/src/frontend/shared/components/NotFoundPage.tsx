@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Button } from '../navigation/Button';
+import { Button, ButtonRow } from '../navigation/Button';
 import { ErrorMessage } from '../callouts/ErrorMessage';
 import { WidePageWrapper } from '../layout/WidePage';
 import { mapStackTrace } from 'sourcemapped-stacktrace';
@@ -25,9 +25,12 @@ export const ErrorPage: React.FC<{ error?: Error; resetError?: () => void }> = p
   return (
     <WidePageWrapper>
       <h1>An error occurred</h1>
-      <Button as="a" href="">
-        Refresh page
-      </Button>
+      <ButtonRow>
+        <Button as="a" href="">
+          Refresh page
+        </Button>
+        {props.resetError ? <Button onClick={props.resetError}>Reset error</Button> : null}
+      </ButtonRow>
       <hr />
       {props.error ? (
         <ErrorMessage style={{ padding: '0.5em 1.5em' }}>

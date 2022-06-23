@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { CanvasNavigationMinimalist } from '../../shared/components/CanvasNavigationMinimalist';
 import { useCanvasSearch } from '../../shared/hooks/use-canvas-search';
@@ -14,17 +14,17 @@ export const CanvasManifestPagination: React.FC<{ subRoute?: string }> = ({ subR
   const [searchText] = useCanvasSearch(canvasId);
   const prefetch = usePrefetchData(CanvasLoader);
   const createLink = useRelativeLinks();
-  const { push } = useHistory();
+  const navigate = useNavigate();
   const { context } = useSlots();
 
   const beforeNavigate = useCallback(
     async (newCanvasId: number) => {
       await prefetch([newCanvasId], { ...context, canvas: newCanvasId });
-      push(
+      navigate(
         createLink({ canvasId: newCanvasId, subRoute, hash: 'canvas', query: searchText ? { searchText } : undefined })
       );
     },
-    [context, createLink, prefetch, push]
+    [context, createLink, prefetch, navigate]
   );
 
   if (!canvasId || !manifestId) {

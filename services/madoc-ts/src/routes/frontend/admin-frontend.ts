@@ -50,7 +50,7 @@ export const adminFrontend: RouteMiddleware = async context => {
     }
 
     if (process.env.NODE_ENV === 'development') {
-      return unindent(`
+      return `
         <!doctype html>
         <html ${result.htmlAttributes}>
         <head>
@@ -71,7 +71,7 @@ export const adminFrontend: RouteMiddleware = async context => {
           ${result.body}
         </body>
         </html>
-      `);
+      `;
     }
 
     return context.adminTemplate

@@ -1,6 +1,7 @@
+import React from 'react';
+import { Outlet } from 'react-router-dom';
 import { ManifestListResponse } from '../../../../types/schemas/manifest-list';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
-import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { UniversalComponent } from '../../../types';
 
 type ManifestListLoaderType = {
@@ -13,8 +14,8 @@ type ManifestListLoaderType = {
 export const ManifestListLoader: UniversalComponent<ManifestListLoaderType> = createUniversalComponent<
   ManifestListLoaderType
 >(
-  ({ route }) => {
-    return renderUniversalRoutes(route.routes);
+  () => {
+    return <Outlet />;
   },
   {
     getKey: (params, query) => {

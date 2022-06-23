@@ -1,7 +1,7 @@
 import { stringify } from 'query-string';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Redirect, useHistory, useLocation } from 'react-router-dom';
+import { Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { siteManagerHooks } from '../../../../extensions/site-manager/hooks';
 import { TimeAgo } from '../../../shared/atoms/TimeAgo';
 import { SystemCallToAction } from '../../../shared/components/SystemCallToAction';
@@ -29,7 +29,7 @@ export const ListSites: React.FC = () => {
   const { data } = siteManagerHooks.getAllSites(() => [{ desc: query.desc, order_by: query.order_by }], {
     keepPreviousData: true,
   });
-  const { push } = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
 
   const search = (query?.search || '').toLowerCase();
@@ -51,7 +51,7 @@ export const ListSites: React.FC = () => {
   }, [search, data]);
 
   if (user?.role !== 'global_admin') {
-    return <Redirect to={'/'} />;
+    return <Navigate to={'/'} />;
   }
 
   return (
@@ -80,7 +80,7 @@ export const ListSites: React.FC = () => {
           maxWidth
           items={['title', 'slug', 'modified', 'created']}
           onSearch={q => {
-            push(
+            navigate(
               `${location.pathname}${
                 q || query.order_by
                   ? `?${stringify({ order_by: query.order_by, desc: query.desc ? 'true' : undefined, search: q })}`
@@ -89,7 +89,7 @@ export const ListSites: React.FC = () => {
             );
           }}
           onChange={opt => {
-            push(
+            navigate(
               `${location.pathname}${
                 opt.value
                   ? `?${stringify({

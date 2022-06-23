@@ -1,36 +1,21 @@
-import { InternationalString } from '@iiif/presentation-3';
 import React, { useEffect, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import { SitePage } from '../../../types/site-pages-recursive';
+import { Link, useLocation } from 'react-router-dom';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { Slot } from '../../shared/page-blocks/slot';
 import { SlotProvider } from '../../shared/page-blocks/slot-context';
 import { PageEditorBar } from '../features/PageEditorBar';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
+import { usePage } from './loaders/page-loader';
 import { PageNotFound } from './page-not-found';
 
-type ViewPageProps = {
-  page?: SitePage;
-  navigation: SitePage[];
-  root?: {
-    id: number;
-    title: InternationalString;
-    parent_page?: number;
-    is_navigation_root: true;
-    depth: number;
-    path: string;
-    findPath: string[];
-  };
-  refetch: () => void;
-};
-
-export const ViewPage: React.FC<ViewPageProps> = ({ page, navigation, root, refetch }) => {
-  // Page properties.
+export const ViewPage: React.FC = () => {
+  const { data, refetch } = usePage();
+  const { page, navigation, root } = data || {};
   const title = page?.title;
   const { editMode } = useSiteConfiguration();
   const [isEditing, setIsEditing] = useState(false);
-  const { location } = useHistory();
+  const location = useLocation();
 
   useEffect(() => {
     if (!editMode) {
@@ -84,7 +69,7 @@ export const ViewPage: React.FC<ViewPageProps> = ({ page, navigation, root, refe
           </h1>
           <Slot name="header" />
           <div style={{ display: 'flex' }}>
-            {root && navigation.length && page.layout !== 'page-without-menu' ? (
+            {root && navigation?.length && page.layout !== 'page-without-menu' ? (
               <div style={{ width: 300 }}>
                 <h4>
                   {root.path === location.pathname ? (

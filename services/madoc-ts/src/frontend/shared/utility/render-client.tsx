@@ -10,11 +10,11 @@ import { ThemeProvider } from 'styled-components';
 import { createBackend } from '../../../middleware/i18n/i18next.client';
 import { render } from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, RouteObject } from 'react-router-dom';
 import { api } from '../../../gateway/api.browser';
 import React, { Suspense } from 'react';
 import { SitePlugin } from '../../../types/schemas/plugins';
-import { CreateRouteType, UniversalRoute } from '../../types';
+import { CreateRouteType } from '../../types';
 import { ResolvedTheme } from '../../../types/themes';
 import { defaultTheme } from '../capture-models/editor/themes';
 import { ErrorPage } from '../components/NotFoundPage';
@@ -30,7 +30,7 @@ import '../required-modules';
 
 export async function renderClient(
   Component: React.FC<any>,
-  createRoutes: UniversalRoute[] | ((c: any) => CreateRouteType),
+  createRoutes: RouteObject[] | ((c: any) => CreateRouteType),
   components: any,
   requireJwt = true,
   extraConfig: ReactQueryConfig = {}
@@ -43,7 +43,9 @@ export async function renderClient(
 
   // @ts-ignore
   window.umami = {
-    trackEvent: () => {},
+    trackEvent: () => {
+      // no-op
+    },
   };
 
   const remotePlugins = (dehydratedSite.plugins || []).map(async (plugin: SitePlugin) => {

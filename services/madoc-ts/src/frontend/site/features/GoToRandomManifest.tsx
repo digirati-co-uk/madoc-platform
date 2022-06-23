@@ -1,7 +1,7 @@
 import { InternationalString } from '@iiif/presentation-3';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '../../shared/navigation/Button';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { useUser } from '../../shared/hooks/use-site';
@@ -18,7 +18,7 @@ export const GoToRandomManifest: React.FC<{
 }> = ({ label, $large, navigateToModel, manifestModel, $primary }) => {
   const { projectId } = useRouteContext();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const createLink = useRelativeLinks();
   const [getRandomManifest] = useGetRandomManifest();
   const user = useUser();
@@ -36,7 +36,7 @@ export const GoToRandomManifest: React.FC<{
       onClick={() => {
         getRandomManifest().then(resp => {
           if (resp && resp.manifest) {
-            history.push(
+            navigate(
               createLink({
                 manifestId: resp.manifest,
                 query: navigateToModel && !manifestModel ? { firstModel: true } : undefined,

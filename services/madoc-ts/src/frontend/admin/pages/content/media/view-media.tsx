@@ -2,7 +2,7 @@ import { CanvasContext, useVaultEffect, VaultProvider } from 'react-iiif-vault';
 import { CanvasNormalized } from '@iiif/presentation-3';
 import React, { useState } from 'react';
 import { useMutation } from 'react-query';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { MediaItem } from '../../../../../types/media';
 import { Button, ButtonRow } from '../../../../shared/navigation/Button';
 import { Heading5 } from '../../../../shared/typography/Heading5';
@@ -102,14 +102,14 @@ export const ViewMedia: UniversalComponent<ViewMediaType> = createUniversalCompo
   () => {
     const { data } = useData(ViewMedia);
     const api = useApi();
-    const history = useHistory();
+    const navigate = useNavigate();
     const { iiif } = useLocationQuery<any>();
 
     const [deleteMedia, deleteMediaStatus] = useMutation(async () => {
       if (data) {
         await api.media.deleteMedia(data.media.id);
       }
-      history.replace(`/media`);
+      navigate(`/media`, { replace: true });
     });
 
     if (!data) {

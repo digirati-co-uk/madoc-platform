@@ -6,7 +6,7 @@ import { SystemBackground, SystemDescription, SystemMetadata, SystemName } from 
 import { ErrorMessage } from '../../../../shared/callouts/ErrorMessage';
 import { ActivityAction, ActivityActions } from '../../../../shared/components/Activity';
 import { useApi } from '../../../../shared/hooks/use-api';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import { VaultProvider } from 'react-iiif-vault';
 import { usePaginatedData } from '../../../../shared/hooks/use-data';
@@ -31,7 +31,7 @@ export const CreateManifest: React.FC = () => {
   const { t } = useTranslation();
   const [isCreating, setIsCreating] = useState(false);
   const api = useApi();
-  const history = useHistory();
+  const navigate = useNavigate();
   const query = useLocationQuery<{ manifest?: string }>();
   const [manifestList, setManifestList] = useState('');
   const [error, setError] = useState('');
@@ -41,7 +41,7 @@ export const CreateManifest: React.FC = () => {
     setIsCreating(true);
     const task = await api.importManifest(manifestId);
 
-    history.push(`/tasks/${task.id}`);
+    navigate(`/tasks/${task.id}`);
   });
 
   const [importManifests] = useMutation(async (manifestIds: string[]) => {
@@ -80,7 +80,7 @@ export const CreateManifest: React.FC = () => {
                 onImport={(_, manifestIds) => {
                   importManifests(manifestIds).then(task => {
                     if (task) {
-                      history.push(`/tasks/${task.id}`);
+                      navigate(`/tasks/${task.id}`);
                     }
                   });
                 }}
@@ -155,7 +155,7 @@ export const CreateManifest: React.FC = () => {
                       return;
                     }
                     if (list.length === 1) {
-                      history.push(`/import/manifest?manifest=${list[0]}`);
+                      navigate(`/import/manifest?manifest=${list[0]}`);
                     } else {
                       setChosenManifestList(list);
                     }

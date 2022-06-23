@@ -4,9 +4,8 @@ import { useSite } from '../../../../shared/hooks/use-site';
 import { UniversalComponent } from '../../../../types';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { CollectionFull } from '../../../../../types/schemas/collection-full';
-import { useParams } from 'react-router-dom';
+import { Outlet, useParams } from 'react-router-dom';
 import { AdminHeader } from '../../../molecules/AdminHeader';
-import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
 import { WidePage } from '../../../../shared/layout/WidePage';
 import { usePaginatedData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
@@ -19,7 +18,7 @@ type CollectionViewType = {
 };
 
 export const CollectionView: UniversalComponent<CollectionViewType> = createUniversalComponent<CollectionViewType>(
-  ({ route }) => {
+  () => {
     const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
     const site = useSite();
@@ -61,7 +60,9 @@ export const CollectionView: UniversalComponent<CollectionViewType> = createUniv
             </>
           }
         />
-        <WidePage>{renderUniversalRoutes(route.routes, { collection })}</WidePage>
+        <WidePage>
+          <Outlet />
+        </WidePage>
       </>
     );
   },

@@ -1,25 +1,12 @@
-import { UniversalRoute } from '../../types';
-import { matchRoutes, renderRoutes } from 'react-router-config';
+import { matchRoutes, RouteObject, useLocation, useRoutes } from 'react-router-dom';
 
-export function renderUniversalRoutes(routes?: UniversalRoute[], params?: any) {
-  if (!routes) {
-    console.warn('renderUniversalRoutes called without routes');
-    return null;
-  }
-  return renderRoutes(routes as any, params);
+export function RenderConfigRoutes({ routes }: { routes: RouteObject[] }) {
+  const location = useLocation();
+  console.log('matchRoutes', matchRoutes(routes, location));
+
+  return useRoutes(routes);
 }
 
-export function matchUniversalRoutes(
-  routes: UniversalRoute[],
-  pathname: string
-): Array<{
-  match: {
-    params: any;
-    url: string;
-    path: string;
-    isExact: boolean;
-  };
-  route: UniversalRoute;
-}> {
+export function matchUniversalRoutes(routes: RouteObject[], pathname: string) {
   return matchRoutes(routes as any, pathname) as any;
 }

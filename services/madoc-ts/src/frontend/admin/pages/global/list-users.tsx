@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Redirect, useHistory } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { User } from '../../../../extensions/site-manager/types';
 import { TimeAgo } from '../../../shared/atoms/TimeAgo';
 import { Tag } from '../../../shared/capture-models/editor/atoms/Tag';
@@ -20,18 +20,18 @@ export const ListUsers: React.FC = () => {
   const { data } = usePaginatedData<{ users: User[]; pagination: _Pagination }>(ListUsers);
   const query = useLocationQuery();
   const currentUser = useUser();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [userDeleted, setUserDeleted] = useState(false);
 
   useEffect(() => {
     if (query.user_deleted) {
       setUserDeleted(true);
-      history.push(`/global/users`);
+      navigate(`/global/users`);
     }
   }, [history, query.user_deleted]);
 
   if (currentUser?.role !== 'global_admin') {
-    return <Redirect to={'/'} />;
+    return <Navigate to={'/'} />;
   }
 
   return (

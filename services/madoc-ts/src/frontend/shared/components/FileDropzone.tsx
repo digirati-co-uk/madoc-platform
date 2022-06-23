@@ -1,12 +1,12 @@
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { MetadataDropzone } from '../atoms/MetadataConfiguration';
 import { useApi } from '../hooks/use-api';
 
 export const FileDropzone: React.FC = () => {
   const api = useApi();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: false,
@@ -14,7 +14,7 @@ export const FileDropzone: React.FC = () => {
       const file = acceptedFiles[0];
 
       api.media.createMedia(file).then(media => {
-        history.push(`/media/${media.id}`);
+        navigate(`/media/${media.id}`);
       });
     },
   });

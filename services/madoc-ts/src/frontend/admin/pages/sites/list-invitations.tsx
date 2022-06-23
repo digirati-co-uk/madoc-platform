@@ -92,7 +92,7 @@ export const ListInvitations: React.FC = () => {
                       </Button>
                     </ButtonRow>
                     <SystemVersion>
-                      Created <ReactTimeago date={invitation.createdAt} />
+                      Created <TimeAgo date={invitation.createdAt} />
                     </SystemVersion>
                   </SystemMetadata>
                   <SystemActions>

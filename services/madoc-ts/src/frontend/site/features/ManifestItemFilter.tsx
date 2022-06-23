@@ -2,12 +2,11 @@ import { stringify } from 'query-string';
 import React from 'react';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { Button, ButtonIcon } from '../../shared/navigation/Button';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { FilterIcon } from '../../shared/icons/FilterIcon';
-import { useProjectShadowConfiguration } from '../hooks/use-project-shadow-configuration';
 import { useRouteContext } from '../hooks/use-route-context';
 
 const ItemFilterContainer = styled.div`
@@ -48,7 +47,8 @@ export const ItemFilterPopupItem = styled.label`
 
 export const ManifestItemFilter: React.FC = () => {
   const { filter, m: page, listing } = useLocationQuery();
-  const { location, push } = useHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation();
   const { projectId } = useRouteContext();
 
@@ -66,7 +66,7 @@ export const ManifestItemFilter: React.FC = () => {
   const toggleStatus = (filterNumber: number) => (e: any) => {
     if (e.target.checked) {
       const newFilters = numericFilters.filter(n => n !== filterNumber);
-      push(
+      navigate(
         `${location.pathname}?${stringify({
           page,
           listing,
@@ -74,7 +74,7 @@ export const ManifestItemFilter: React.FC = () => {
         })}`
       );
     } else {
-      push(
+      navigate(
         `${location.pathname}?${stringify({
           page,
           listing,

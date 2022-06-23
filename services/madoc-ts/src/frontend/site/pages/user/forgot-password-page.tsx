@@ -2,7 +2,7 @@ import { stringify } from 'query-string';
 import { useEffect } from 'react';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Redirect, useHistory } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { Button } from '../../../shared/navigation/Button';
 import { FlexSpacer } from '../../../shared/layout/FlexSpacer';
 import { Heading1 } from '../../../shared/typography/Heading1';
@@ -16,7 +16,7 @@ export const ForgotPasswordPage: React.FC = () => {
   const site = useSite();
   const user = useUser();
   const form = useFormResponse<{ forgotSuccess?: boolean }>();
-  const history = useHistory();
+  const navigate = useNavigate();
   const query = useLocationQuery<{ success?: string }>();
 
   useEffect(() => {
@@ -24,15 +24,15 @@ export const ForgotPasswordPage: React.FC = () => {
       return;
     }
     if (!query.success && form?.forgotSuccess) {
-      history.push(`/forgot-password?${stringify({ success: true })}`);
+      navigate(`/forgot-password?${stringify({ success: true })}`);
     }
     if (query.success && !form?.forgotSuccess) {
-      history.push(`/forgot-password`);
+      navigate(`/forgot-password`);
     }
   }, [form?.forgotSuccess, history, query.success]);
 
   if (user) {
-    return <Redirect to="/" />;
+    return <Navigate to="/" />;
   }
 
   if (form?.forgotSuccess) {

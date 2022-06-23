@@ -1,7 +1,7 @@
 import { stringify } from 'query-string';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Redirect, useHistory } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { Button } from '../../../shared/navigation/Button';
 import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
 import { FlexSpacer } from '../../../shared/layout/FlexSpacer';
@@ -19,7 +19,7 @@ export const Register: React.FC = () => {
   const site = useSite();
   const systemConfig = useSystemConfig();
   const query = useLocationQuery();
-  const history = useHistory();
+  const navigate = useNavigate();
   const form = useFormResponse<{
     invitation?: any;
     emailError: boolean;
@@ -38,15 +38,15 @@ export const Register: React.FC = () => {
       return;
     }
     if (!query.success && form?.registerSuccess) {
-      history.push(`/register?${stringify({ success: true })}`);
+      navigate(`/register?${stringify({ success: true })}`);
     }
     if (query.success && !form?.registerSuccess) {
-      history.push(`/register`);
+      navigate(`/register`);
     }
   }, [form?.registerSuccess, history, query.success, user]);
 
   if (!user && !systemConfig.enableRegistrations) {
-    return <Redirect to="/login" />;
+    return <Navigate to="/login" />;
   }
 
   if (form?.registerSuccess) {
@@ -65,7 +65,7 @@ export const Register: React.FC = () => {
   }
 
   if (user && !form?.invitation) {
-    return <Redirect to="/" />;
+    return <Navigate to="/" />;
   }
 
   if (user && form?.invitation) {

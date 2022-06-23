@@ -1,14 +1,14 @@
 import React, { useMemo, useState } from 'react';
+import { RouteObject } from 'react-router-dom';
 import { CurrentUserWithScope, Site, SystemConfig } from '../../extensions/site-manager/types';
 import { ApiClient } from '../../gateway/api';
 import { useTranslation } from 'react-i18next';
 import { GlobalStyles } from '../shared/typography/GlobalStyles';
 import { AdminLayoutContainer, AdminLayoutMain, AdminLayoutMenu } from '../shared/components/AdminMenu';
 import { UserBar } from '../shared/components/UserBar';
-import { renderUniversalRoutes } from '../shared/utility/server-utils';
+import { RenderConfigRoutes } from '../shared/utility/server-utils';
 import { ApiContext, useIsApiRestarting } from '../shared/hooks/use-api';
 import { ErrorMessage } from '../shared/callouts/ErrorMessage';
-import { UniversalRoute } from '../types';
 import '../shared/capture-models/plugins';
 import { SiteProvider } from '../shared/hooks/use-site';
 import { AdminSidebar } from './molecules/AdminSidebar';
@@ -16,7 +16,7 @@ import { AdminSidebar } from './molecules/AdminSidebar';
 export type AdminAppProps = {
   jwt?: string;
   api: ApiClient;
-  routes: UniversalRoute[];
+  routes: RouteObject[];
   user: CurrentUserWithScope;
   site: Site;
   supportedLocales: Array<{ label: string; code: string }>;
@@ -70,7 +70,9 @@ const AdminApp: React.FC<AdminAppProps> = ({
             <AdminLayoutMenu>
               <AdminSidebar />
             </AdminLayoutMenu>
-            <AdminLayoutMain>{renderUniversalRoutes(routes)}</AdminLayoutMain>
+            <AdminLayoutMain>
+              <RenderConfigRoutes routes={routes} />
+            </AdminLayoutMain>
           </AdminLayoutContainer>
         </ApiContext.Provider>
       </SiteProvider>

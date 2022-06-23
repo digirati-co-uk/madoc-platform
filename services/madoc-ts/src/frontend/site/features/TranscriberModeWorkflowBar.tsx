@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { WorkflowBar } from '../../shared/components/WorkflowBar';
 import { useApi } from '../../shared/hooks/use-api';
 import { useManifestStructure } from '../../shared/hooks/use-manifest-structure';
@@ -24,7 +24,7 @@ export const TranscriberModeWorkflowBar: React.FC = () => {
   const { inReview } = filteredTasks;
   const { submitAllClaims, isSubmitting, canSubmit: canSubmitClaims } = useSubmitAllClaims();
   const { projectId, canvasId, manifestId } = useRouteContext();
-  const { push } = useHistory();
+  const navigate = useNavigate();
   const { data: structure } = useManifestStructure(manifestId);
 
   // In transcriber mode, all tasks should have the same status.
@@ -79,7 +79,7 @@ export const TranscriberModeWorkflowBar: React.FC = () => {
         console.log(e);
       }
 
-      push(createLink({ projectId }));
+      navigate(createLink({ projectId }));
     }
   });
 

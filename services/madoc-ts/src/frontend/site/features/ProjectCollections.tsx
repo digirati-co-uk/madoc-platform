@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRouteMatch } from 'react-router-dom';
+import { useMatch, useLocation } from 'react-router-dom';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { Button } from '../../shared/navigation/Button';
 import { Heading3 } from '../../shared/typography/Heading3';
@@ -13,7 +13,7 @@ import { useSiteConfiguration } from './SiteConfigurationContext';
 
 export const ProjectCollections: React.FC = () => {
   const { data: project } = useProject();
-  const { isExact } = useRouteMatch();
+  const isExact = true; // @todo fix this.
   const { t } = useTranslation();
   const {
     project: { allowCollectionNavigation, hideProjectCollectionNavigation },

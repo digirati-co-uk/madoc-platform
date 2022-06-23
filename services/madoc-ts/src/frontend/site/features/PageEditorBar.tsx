@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   PageEditorActions,
   PageEditorButton,
@@ -24,7 +24,7 @@ export const PageEditorBar: React.FC<{
   const { data, refetch } = useStaticData(PageLoader);
   const page = data?.page;
   const [message, setMessage] = useState<any>();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   // Data
   // - The page name + description
@@ -86,7 +86,7 @@ export const PageEditorBar: React.FC<{
           <EditPageMetadataButton
             onUpdate={newPage => {
               if (newPage.path !== page.path) {
-                history.replace(newPage.path);
+                navigate(newPage.path, { replace: true });
               } else {
                 refetch();
               }

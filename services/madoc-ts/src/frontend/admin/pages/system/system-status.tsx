@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from 'react-query';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { Pm2Status } from '../../../../types/pm2';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../../shared/atoms/Statistics';
 import { useApi } from '../../../shared/hooks/use-api';
@@ -25,7 +25,7 @@ export const SystemStatus: UniversalComponent<SystemStatusType> = createUniversa
     const user = useUser();
 
     if (user?.role !== 'global_admin') {
-      return <Redirect to={'/'} />;
+      return <Navigate to={'/'} />;
     }
 
     const { t } = useTranslation();

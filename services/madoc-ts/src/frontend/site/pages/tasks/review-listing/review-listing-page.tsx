@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Redirect, useParams } from 'react-router-dom';
+import { Navigate, Outlet, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { SubjectSnippet } from '../../../../../extensions/tasks/resolvers/subject-resolver';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
@@ -15,8 +15,6 @@ import { SimpleTable } from '../../../../shared/layout/SimpleTable';
 import { serverRendererFor } from '../../../../shared/plugins/external/server-renderer-for';
 import { HrefLink } from '../../../../shared/utility/href-link';
 import { RefetchProvider } from '../../../../shared/utility/refetch-context';
-import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
-import { UniversalRoute } from '../../../../types';
 import { useRelativeLinks } from '../../../hooks/use-relative-links';
 import { useTaskMetadata } from '../../../hooks/use-task-metadata';
 
@@ -62,7 +60,7 @@ const ThickTableRow = styled(SimpleTable.Row)<{ $active?: boolean }>`
   }
 `;
 
-export function ReviewListingPage({ route }: { route: UniversalRoute }) {
+export function ReviewListingPage() {
   const { t } = useTranslation();
   const { data, refetch } = useData<{ tasks: CrowdsourcingTask[] }>(ReviewListingPage);
   const params = useParams<{ taskId?: string }>();
@@ -73,7 +71,7 @@ export function ReviewListingPage({ route }: { route: UniversalRoute }) {
   }
 
   if (data && !params.taskId && data.tasks[0]) {
-    return <Redirect to={createLink({ taskId: undefined, subRoute: `reviews/${data.tasks[0].id}` })} />;
+    return <Navigate to={createLink({ taskId: undefined, subRoute: `reviews/${data.tasks[0].id}` })} />;
   }
 
   // 1. Make requests for all crowdsourcing tasks marked as in review.
@@ -103,14 +101,15 @@ export function ReviewListingPage({ route }: { route: UniversalRoute }) {
             </tbody>
           </SimpleTable.Table>
         </TaskListContainer>
-        <TaskPreviewContainer>{renderUniversalRoutes(route.routes, { refetchListing: refetch })}</TaskPreviewContainer>
+        <TaskPreviewContainer>
+          <Outlet />
+        </TaskPreviewContainer>
       </ReviewListingContainer>
     </RefetchProvider>
   );
 }
 
 function SingleReviewTableRow({ task, active }: { task: CrowdsourcingTask; active?: boolean }) {
-  const { t } = useTranslation();
   const { page, ...query } = useLocationQuery();
   const createLink = useRelativeLinks();
   const metadata = useTaskMetadata<{ subject?: SubjectSnippet }>(task);

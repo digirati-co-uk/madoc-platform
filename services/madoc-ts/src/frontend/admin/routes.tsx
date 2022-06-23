@@ -1,4 +1,5 @@
-import { UniversalRoute } from '../types';
+import React from 'react';
+import { RouteObject } from 'react-router-dom';
 import { annotationStylesRoutes } from './pages/annotation-styles/index';
 import { CanvasJson } from './pages/content/canvases/canvas-json';
 import { CanvasPlaintext } from './pages/content/canvases/canvas-plaintext';
@@ -97,11 +98,10 @@ import { DeleteProject } from './pages/crowdsourcing/projects/delete-project';
 import { ProjectExportTab } from './pages/crowdsourcing/projects/project-export';
 import { GenerateApiKey } from './pages/system/generate-api-key';
 
-export const routes: UniversalRoute[] = [
+export const routes: RouteObject[] = [
   {
     path: '/',
-    exact: true,
-    component: Homepage,
+    element: <Homepage />,
   },
   // Aggregations.
   ...annotationStylesRoutes,
@@ -109,297 +109,245 @@ export const routes: UniversalRoute[] = [
   // Manual routes.
   {
     path: '/collections',
-    exact: true,
-    component: CollectionList,
+    element: <CollectionList />,
   },
   {
     path: '/collections/:id',
-    component: CollectionView,
-    routes: [
+    element: <CollectionView />,
+    children: [
       {
-        path: '/collections/:id',
-        exact: true,
-        component: CollectionManifests,
+        index: true,
+        element: <CollectionManifests />,
       },
       {
         path: '/collections/:id/structure',
-        exact: true,
-        component: EditCollectionStructure,
+        element: <EditCollectionStructure />,
       },
       {
         path: '/collections/:id/metadata',
-        exact: true,
-        component: EditCollectionMetadata,
+        element: <EditCollectionMetadata />,
       },
       {
         path: '/collections/:id/delete',
-        exact: true,
-        component: DeleteCollection,
+        element: <DeleteCollection />,
       },
       {
         path: '/collections/:id/projects',
-        exact: true,
-        component: CollectionProjects,
+        element: <CollectionProjects />,
       },
       {
         path: '/collections/:id/search',
-        exact: true,
-        component: CollectionSearchIndex,
+        element: <CollectionSearchIndex />,
       },
     ],
   },
   {
     path: '/manifests',
-    exact: true,
-    component: ManifestList,
+    element: <ManifestList />,
   },
   {
     path: '/manifests/:manifestId/canvases/:id',
-    component: CanvasView,
-    routes: [
+    element: <CanvasView />,
+    children: [
       {
-        path: '/manifests/:manifestId/canvases/:id',
-        exact: true,
-        component: CanvasDetails,
+        index: true,
+        element: <CanvasDetails />,
       },
       {
         path: '/manifests/:manifestId/canvases/:id/metadata',
-        exact: true,
-        component: EditCanvasMetadata,
+        element: <EditCanvasMetadata />,
       },
       {
         path: '/manifests/:manifestId/canvases/:id/linking',
-        exact: true,
-        component: EditCanvasLinking,
+        element: <EditCanvasLinking />,
       },
       {
         path: '/manifests/:manifestId/canvases/:id/linking/:linkId',
-        exact: true,
-        component: ViewCanvasLinking,
+        element: <ViewCanvasLinking />,
       },
       {
         path: '/manifests/:manifestId/canvases/:id/search',
-        exact: true,
-        component: CanvasSearchIndex,
+        element: <CanvasSearchIndex />,
       },
       {
         path: '/manifests/:manifestId/canvases/:id/plaintext',
-        exact: true,
-        component: CanvasPlaintext,
+        element: <CanvasPlaintext />,
       },
       {
         path: '/manifests/:manifestId/canvases/:id/json',
-        exact: true,
-        component: CanvasJson,
+        element: <CanvasJson />,
       },
       {
-        path: '/manifests/:maifestId/canvases/:id/delete',
-        exact: true,
-        component: DeleteCanvas,
+        path: '/manifests/:manifestId/canvases/:id/delete',
+        element: <DeleteCanvas />,
       },
     ],
   },
   {
     path: '/manifests/:id',
-    component: ManifestView,
-    routes: [
+    element: <ManifestView />,
+    children: [
       {
-        path: '/manifests/:id',
-        exact: true,
-        component: ManifestCanvases,
+        index: true,
+        element: <ManifestCanvases />,
       },
       {
         path: '/manifests/:id/metadata',
-        exact: true,
-        component: EditManifestMetadata,
+        element: <EditManifestMetadata />,
       },
       {
         path: '/manifests/:id/structure',
-        exact: true,
-        component: EditManifestStructure,
+        element: <EditManifestStructure />,
       },
       {
         path: '/manifests/:id/linking',
-        exact: true,
-        component: EditManifestLinking,
+        element: <EditManifestLinking />,
       },
       {
         path: '/manifests/:id/projects',
-        exact: true,
-        component: ManifestProjects,
+        element: <ManifestProjects />,
       },
       {
         path: '/manifests/:id/collections',
-        exact: true,
-        component: ManifestCollections,
+        element: <ManifestCollections />,
       },
       {
         path: '/manifests/:id/delete',
-        exact: true,
-        component: DeleteManifest,
+        element: <DeleteManifest />,
       },
       {
         path: '/manifests/:id/search',
-        exact: true,
-        component: ManifestSearchIndex,
+        element: <ManifestSearchIndex />,
       },
       {
         path: '/manifests/:id/ocr',
-        exact: true,
-        component: OcrManifest,
+        element: <OcrManifest />,
       },
     ],
   },
   {
     path: '/canvases/:id',
-    component: CanvasView,
-    routes: [
+    element: <CanvasView />,
+    children: [
       {
-        path: '/canvases/:id',
-        exact: true,
-        component: CanvasDetails,
+        index: true,
+        element: <CanvasDetails />,
       },
       {
         path: '/canvases/:id/metadata',
-        exact: true,
-        component: EditCanvasMetadata,
+        element: <EditCanvasMetadata />,
       },
       {
         path: '/canvases/:id/linking',
-        exact: true,
-        component: EditCanvasLinking,
+        element: <EditCanvasLinking />,
       },
       {
         path: '/canvases/:id/linking/:linkId',
-        exact: true,
-        component: ViewCanvasLinking,
+        element: <ViewCanvasLinking />,
       },
       {
         path: '/canvases/:id/search',
-        exact: true,
-        component: CanvasSearchIndex,
+        element: <CanvasSearchIndex />,
       },
       {
         path: '/canvases/:id/plaintext',
-        exact: true,
-        component: CanvasPlaintext,
+        element: <CanvasPlaintext />,
       },
       {
         path: '/canvases/:id/json',
-        exact: true,
-        component: CanvasJson,
+        element: <CanvasJson />,
       },
       {
         path: '/canvases/:id/delete',
-        exact: true,
-        component: DeleteCanvas,
+        element: <DeleteCanvas />,
       },
     ],
   },
   {
     path: '/projects/create',
-    exact: true,
-    component: NewProjectPage,
+    element: <NewProjectPage />,
   },
   {
     path: '/projects/create/:template+',
-    exact: true,
-    component: NewProjectFromTemplate,
+    element: <NewProjectFromTemplate />,
   },
   {
     path: '/projects',
-    exact: true,
-    component: ListProjects,
+    element: <ListProjects />,
   },
   {
     path: '/projects/:id',
-    component: Project,
-    routes: [
+    element: <Project />,
+    children: [
       {
-        path: '/projects/:id',
-        exact: true,
-        component: ProjectOverview,
+        index: true,
+        element: <ProjectOverview />,
       },
       {
         path: '/projects/:id/metadata',
-        exact: true,
-        component: ProjectMetadata,
+        element: <ProjectMetadata />,
       },
       {
         path: '/projects/:id/content',
-        exact: true,
-        component: ProjectContent,
+        element: <ProjectContent />,
       },
       {
         path: '/projects/:id/configuration',
-        exact: true,
-        component: ProjectConfiguration,
+        element: <ProjectConfiguration />,
       },
       {
         path: '/projects/:id/model',
-        component: ProjectModelEditor,
-        routes: [
+        element: <ProjectModelEditor />,
+        children: [
           {
-            path: '/projects/:id/model',
-            component: CaptureModelEditorHomepage,
-            exact: true,
+            index: true,
+            element: <CaptureModelEditorHomepage />,
           },
           {
             path: '/projects/:id/model/document',
-            component: FullDocumentEditor,
-            exact: true,
+            element: <FullDocumentEditor />,
           },
           {
             path: '/projects/:id/model/structure',
-            component: FullStructureEditor,
-            exact: true,
+            element: <FullStructureEditor />,
           },
           {
             path: '/projects/:id/model/style',
-            component: ChooseAnnotationStyle,
-            exact: true,
+            element: <ChooseAnnotationStyle />,
           },
           {
             path: '/projects/:id/model/preview',
-            component: PreviewCaptureModel,
-            exact: true,
+            element: <PreviewCaptureModel />,
           },
         ],
       },
       {
         path: '/projects/:id/search',
-        component: ProjectSearchIndex,
-        exact: true,
+        element: <ProjectSearchIndex />,
       },
       {
         path: '/projects/:id/tasks',
-        component: ProjectTasks,
-        exact: true,
+        element: <ProjectTasks />,
       },
       {
         path: '/projects/:id/tasks/:taskId',
-        component: ProjectTasks,
-        exact: true,
+        element: <ProjectTasks />,
       },
       {
         path: '/projects/:id/activity',
-        component: ProjectStreams,
-        exact: true,
+        element: <ProjectStreams />,
       },
       {
         path: '/projects/:id/activity/:stream',
-        component: ProjectStreams,
-        exact: true,
+        element: <ProjectStreams />,
       },
       {
         path: '/projects/:id/export',
-        component: ProjectExportTab,
-        exact: true,
+        element: <ProjectExportTab />,
       },
       {
         path: '/projects/:id/delete',
-        component: DeleteProject,
-        exact: true,
+        element: <DeleteProject />,
       },
     ],
   },
@@ -407,51 +355,43 @@ export const routes: UniversalRoute[] = [
   // To be organised
   {
     path: '/import/collection/create',
-    exact: true,
-    component: CreateCollection,
+    element: <CreateCollection />,
   },
   {
     path: '/import/collection',
-    exact: true,
-    component: ImportCollection,
+    element: <ImportCollection />,
   },
   {
     path: '/import/manifest',
-    exact: true,
-    component: CreateManifest,
+    element: <CreateManifest />,
   },
   {
     path: '/capture-models',
-    component: CaptureModelList,
-    exact: true,
+    element: <CaptureModelList />,
   },
   {
     path: '/capture-models/:id',
-    component: CaptureModels,
-    routes: [
+    element: <CaptureModels />,
+    children: [
       {
         path: '/capture-models/:id',
-        component: ViewCaptureModel,
-        routes: [
+        element: <ViewCaptureModel />,
+        children: [
           {
-            path: '/capture-models/:id',
-            component: CaptureModelEditorHomepage,
-            exact: true,
+            index: true,
+            element: <CaptureModelEditorHomepage />,
           },
           {
             path: '/capture-models/:id/document',
-            component: FullDocumentEditor,
-            exact: true,
+            element: <FullDocumentEditor />,
           },
           {
             path: '/capture-models/:id/structure',
-            component: FullStructureEditor,
-            exact: true,
+            element: <FullStructureEditor />,
           },
           {
             path: '/capture-models/:id/preview',
-            component: PreviewCaptureModel,
-            exact: true,
+            element: <PreviewCaptureModel />,
           },
         ],
       },
@@ -459,230 +399,190 @@ export const routes: UniversalRoute[] = [
   },
   {
     path: '/tasks/:id',
-    exact: true,
-    component: TaskRouter,
+    element: <TaskRouter />,
   },
   {
     path: '/enrichment/ocr',
-    component: OcrPage,
-    routes: [
+    element: <OcrPage />,
+    children: [
       {
-        path: '/enrichment/ocr',
-        exact: true,
-        component: OcrListPage,
+        index: true,
+        element: <OcrListPage />,
       },
       {
         path: '/enrichment/ocr/manifest/:id',
-        exact: true,
-        component: OcrManifest,
+        element: <OcrManifest />,
       },
     ],
   },
   {
     path: '/enrichment/search-indexing',
-    component: SearchIndexingPage,
-    exact: true,
+    element: <SearchIndexingPage />,
   },
 
   // Export
   {
     path: '/export/site',
-    exact: true,
-    component: ExportSite,
+    element: <ExportSite />,
   },
   // Config
   {
     path: '/configure/site',
-    exact: true,
-    component: SiteConfiguration,
+    element: <SiteConfiguration />,
   },
   {
     path: '/configure/site/metadata',
-    exact: true,
-    component: MetadataConfigurationPage,
+    element: <MetadataConfigurationPage />,
   },
   {
     path: '/configure/site/project',
-    exact: true,
-    component: SiteProjectConfiguration,
+    element: <SiteProjectConfiguration />,
   },
   {
     path: '/configure/site/system',
-    exact: true,
-    component: SiteSystemConfiguration,
+    element: <SiteSystemConfiguration />,
   },
   {
     path: '/page-blocks',
-    component: PageBlocks,
-    routes: [
+    element: <PageBlocks />,
+    children: [
       {
-        path: '/page-blocks',
-        exact: true,
-        component: ListPages,
+        index: true,
+        element: <ListPages />,
       },
       {
         path: '/page-blocks/new-page',
-        exact: true,
-        component: CreateNewPage,
+        element: <CreateNewPage />,
       },
     ],
   },
   {
     path: '/media',
-    component: Media,
-    routes: [
+    element: <Media />,
+    children: [
       {
-        path: '/media',
-        exact: true,
-        component: ListMedia,
+        index: true,
+        element: <ListMedia />,
       },
       {
         path: '/media/:mediaId',
-        exact: true,
-        component: ViewMedia,
+        element: <ViewMedia />,
       },
     ],
   },
   {
     path: '/i18n',
-    exact: true,
-    component: ConfigureLanguages,
+    element: <ConfigureLanguages />,
   },
   {
     path: '/i18n/edit/:code',
-    exact: true,
-    component: EditTranslation,
+    element: <EditTranslation />,
   },
   {
     path: '/i18n/edit/:code/:namespace',
-    exact: true,
-    component: EditTranslation,
+    element: <EditTranslation />,
   },
   {
     path: '/global/status',
-    exact: true,
-    component: SystemStatus,
+    element: <SystemStatus />,
   },
   {
     path: '/global/config',
-    exact: true,
-    component: GlobalSystemConfig,
+    element: <GlobalSystemConfig />,
   },
   {
     path: '/system/development',
-    exact: true,
-    component: DevelopmentPlugin,
+    element: <DevelopmentPlugin />,
   },
   {
     path: '/system/reset',
-    exact: true,
-    component: KeyRegen,
+    element: <KeyRegen />,
   },
   {
     path: '/system/plugins',
-    exact: true,
-    component: ListPlugins,
+    element: <ListPlugins />,
   },
   {
     path: '/system/plugins/external/:owner/:repo',
-    exact: true,
-    component: ViewExternalPlugin,
+    element: <ViewExternalPlugin />,
   },
   {
     path: '/system/themes',
-    exact: true,
-    component: ListThemes,
+    element: <ListThemes />,
   },
   {
     path: '/system/activity-streams',
-    exact: true,
-    component: ActivityStreams,
+    element: <ActivityStreams />,
   },
   {
     path: '/site/permissions',
-    exact: true,
-    component: SitePermissions,
+    element: <SitePermissions />,
   },
   {
     path: '/site/details',
-    exact: true,
-    component: SiteName,
+    element: <SiteName />,
   },
   {
     path: '/site/invitations',
-    exact: true,
-    component: ListInvitations,
+    element: <ListInvitations />,
   },
   {
     path: '/site/invitations/create',
-    exact: true,
-    component: CreateInvitation,
+    element: <CreateInvitation />,
   },
   {
     path: '/site/invitations/:invitationId',
-    exact: true,
-    component: ViewInvitation,
+    element: <ViewInvitation />,
   },
 
   // Only global admins
   {
     path: '/global/sites',
-    exact: true,
-    component: ListSites,
+    element: <ListSites />,
   },
   {
     path: '/global/sites/create',
-    exact: true,
-    component: CreateSite,
+    element: <CreateSite />,
   },
   {
     path: '/global/users',
-    exact: true,
-    component: ListUsers,
+    element: <ListUsers />,
   },
   {
     path: '/global/users/create',
-    component: CreateUser,
-    exact: true,
+    element: <CreateUser />,
   },
   {
     path: '/global/api-keys',
-    component: ListApiKeys,
-    exact: true,
+    element: <ListApiKeys />,
   },
   {
     path: '/global/api-keys/create',
-    component: GenerateApiKey,
-    exact: true,
+    element: <GenerateApiKey />,
   },
   {
     path: '/global/users/:userId',
-    component: ViewUser,
-    routes: [
+    element: <ViewUser />,
+    children: [
       {
-        path: '/global/users/:userId',
-        component: UserOverview,
-        exact: true,
+        index: true,
+        element: <UserOverview />,
       },
       {
         path: '/global/users/:userId/edit',
-        component: UserUpdateDetails,
-        exact: true,
+        element: <UserUpdateDetails />,
       },
       {
         path: '/global/users/:userId/sites',
-        component: UserSites,
-        exact: true,
+        element: <UserSites />,
       },
       {
         path: '/global/users/:userId/delete',
-        component: UserDelete,
-        exact: true,
+        element: <UserDelete />,
       },
       {
         path: '/global/users/:userId/password',
-        component: UserResetPassword,
-        exact: true,
+        element: <UserResetPassword />,
       },
     ],
   },

@@ -85,7 +85,7 @@ export const siteFrontend: RouteMiddleware = async (context, next) => {
     }
 
     if (process.env.NODE_ENV === 'development') {
-      return unindent(`
+      return `
         <!doctype html>
         <html ${result.htmlAttributes}>
         <head>
@@ -106,7 +106,7 @@ export const siteFrontend: RouteMiddleware = async (context, next) => {
           ${result.body}
         </body>
         </html>
-      `);
+      `;
     }
 
     return context.siteTemplate

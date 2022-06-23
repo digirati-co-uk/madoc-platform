@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect, useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import { CrowdsourcingReview } from '../../../../../gateway/tasks/crowdsourcing-review';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
 import { NotFound } from '../../../../../utility/errors/not-found';
@@ -130,7 +130,7 @@ export function SingleReview() {
   }
 
   if (!data.task) {
-    return <Redirect to={`/tasks/${params.taskId}`} />;
+    return <Navigate to={`/tasks/${params.taskId}`} />;
   }
 
   return (

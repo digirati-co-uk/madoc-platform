@@ -14,12 +14,11 @@ import { TaskListContainer, TaskListInnerContainer } from '../../shared/atoms/Ta
 import { useLocalStorage } from '../../shared/hooks/use-local-storage';
 import { useResizeLayout } from '../../shared/hooks/use-resize-layout';
 import { useUser } from '../../shared/hooks/use-site';
-import { renderUniversalRoutes } from '../../shared/utility/server-utils';
 import { UniversalComponent } from '../../types';
 import { createUniversalComponent } from '../../shared/utility/create-universal-component';
 import { useInfiniteData } from '../../shared/hooks/use-data';
 import { Pagination as PaginationType } from '../../../types/schemas/_pagination';
-import { Redirect, useHistory, useParams } from 'react-router-dom';
+import { Navigate, Outlet, useNavigate, useParams } from 'react-router-dom';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { TaskFilterStatuses } from '../features/TaskFilterStatuses';
 import { TaskFilterType } from '../features/TaskFilterType';
@@ -36,7 +35,7 @@ type AllTasksType = {
 };
 
 export const AllTasks: UniversalComponent<AllTasksType> = createUniversalComponent<AllTasksType>(
-  ({ route }) => {
+  () => {
     const [isOpen, setIsOpen] = useLocalStorage('all-tasks-open', true);
     const { widthB, refs } = useResizeLayout('all-tasks', {
       left: true,
@@ -70,7 +69,7 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
     });
     const createLink = useRelativeLinks();
     const { t } = useTranslation();
-    const { push } = useHistory();
+    const navigate = useNavigate();
     const goToQuery = useGoToQuery();
 
     // Different statuses by type.
@@ -96,7 +95,7 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
     };
 
     if (!user) {
-      return <Redirect to="/" />;
+      return <Navigate to="/" />;
     }
 
     return (
@@ -131,7 +130,7 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
                             <TaskListItem
                               task={subtask}
                               key={subtask.id}
-                              onClick={() => push(createLink({ taskId: subtask.id, query }))}
+                              onClick={() => navigate(createLink({ taskId: subtask.id, query }))}
                               selected={subtask.id === taskId}
                             />
                           );
@@ -149,7 +148,9 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
               </TaskListContainer>
             </LayoutSidebar>
             <LayoutHandle ref={refs.resizer as any} onClick={() => setIsOpen(o => !o)} />
-            <LayoutContent $padding>{renderUniversalRoutes(route.routes)}</LayoutContent>
+            <LayoutContent $padding>
+              <Outlet />
+            </LayoutContent>
           </LayoutContainer>
         </OuterLayoutContainer>
       </div>

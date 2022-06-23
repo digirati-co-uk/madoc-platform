@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
-import { useParams, useHistory } from 'react-router-dom';
-import { MetadataDiff } from "../../../../shared/hooks/use-metadata-editor";
+import { useParams, useNavigate } from 'react-router-dom';
+import { MetadataDiff } from '../../../../shared/hooks/use-metadata-editor';
 import { UniversalComponent } from '../../../../types';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { mapMetadataList, ParsedMetadata } from '../../../../../utility/map-metadata-list';
@@ -21,7 +21,7 @@ export const EditCollectionMetadata: UniversalComponent<EditCollectionMetadataTy
 >(
   () => {
     const params = useParams<{ id: string }>();
-    const history = useHistory();
+    const navigate = useNavigate();
     const [invalidateTime, setInvalidateTime] = useState(Date.now());
     const { data, status, refetch } = useData(EditCollectionMetadata, {}, { refetchInterval: false });
     const api = useApi();
@@ -32,14 +32,14 @@ export const EditCollectionMetadata: UniversalComponent<EditCollectionMetadataTy
 
     const [saveChanges] = useMutation(async ({ diff, empty }: { diff: MetadataDiff; empty: boolean }) => {
       if (empty) {
-        history.push(`/collections/${params.id}`);
+        navigate(`/collections/${params.id}`);
         return;
       }
 
       await api.updateCollectionMetadata(Number(params.id), diff);
       await refetch();
 
-      history.push(`/collections/${params.id}`);
+      navigate(`/collections/${params.id}`);
     });
 
     if (status === 'loading' || status === 'error' || !data) {

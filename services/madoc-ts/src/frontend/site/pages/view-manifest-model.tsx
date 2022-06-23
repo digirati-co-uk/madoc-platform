@@ -16,7 +16,7 @@ import { useManifestUserTasks } from '../hooks/use-manifest-user-tasks';
 import { useProjectShadowConfiguration } from '../hooks/use-project-shadow-configuration';
 import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import '../features/ManifestHero';
 
 export function ViewManifestModel() {
@@ -44,7 +44,7 @@ export function ViewManifestModel() {
   const showPrepareMessage = !isReadOnly && canContribute;
 
   if (!shadow.showCaptureModelOnManifest) {
-    return <Redirect to={createLink({ subRoute: '' })} />;
+    return <Navigate to={createLink({ subRoute: '' })} />;
   }
 
   return (

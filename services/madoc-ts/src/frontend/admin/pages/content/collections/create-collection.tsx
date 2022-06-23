@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { CreateCollection as CreateCollectionType } from '../../../../../types/schemas/create-collection';
 import { InternationalString } from '@iiif/presentation-3';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { WidePage } from '../../../../shared/layout/WidePage';
 
@@ -25,7 +25,7 @@ export const CreateCollection: React.FC = () => {
     label: { [language || 'none']: [t('Untitled collection')] },
   });
   const api = useApi();
-  const history = useHistory();
+  const navigate = useNavigate();
   const defaultLocale = useDefaultLocale();
   const supportedLocales = useSupportedLocales();
 
@@ -34,7 +34,7 @@ export const CreateCollection: React.FC = () => {
 
     const response = await api.createCollection(collection);
 
-    history.push(`/collections/${response.id}/structure`);
+    navigate(`/collections/${response.id}/structure`);
   });
 
   return (

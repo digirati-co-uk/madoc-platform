@@ -1,12 +1,12 @@
+import { RouteObject } from 'react-router-dom';
 import { PageBlockExtension } from '../../../extensions/page-blocks/extension';
 import { ProjectTemplateExtension } from '../../../extensions/projects/extension';
 import { ThemeExtension } from '../../../extensions/themes/extension';
 import { ModuleWrapper } from '../../../types/plugins';
 import { SitePlugin } from '../../../types/schemas/plugins';
 import { RouteComponents } from '../../site/routes';
-import { UniversalRoute } from '../../types';
 import { captureModelShorthand } from '../capture-models/helpers/capture-model-shorthand';
-import { createPluginWrapper } from './create-plugin-wrapper';
+import { createPluginWrapper, createPluginWrapperFromElement } from './create-plugin-wrapper';
 
 export type PluginModule = {
   definition: SitePlugin;
@@ -206,7 +206,7 @@ export class PluginManager {
     return [
       {
         ...routeComponents.baseRoute,
-        routes: [...newRoutes, routeComponents.fallback],
+        children: [...newRoutes, routeComponents.fallback],
       },
     ];
   }
@@ -226,13 +226,15 @@ export class PluginManager {
     return returnComponents;
   }
 
-  hookRoutes(routes: UniversalRoute[], components: any, siteId: number) {
+  hookRoutes(routes: RouteObject[], components: any, siteId: number) {
     const newRoutes = [...routes];
     for (const plugin of this.plugins) {
       if (plugin.module.hookRoutes && plugin.siteId === siteId) {
         const hooked = plugin.module.hookRoutes(routes, components);
         for (const hookedRoute of hooked) {
-          hookedRoute.component = createPluginWrapper(hookedRoute.component, plugin.definition.name);
+          if (hookedRoute.element) {
+            hookedRoute.element = createPluginWrapperFromElement(hookedRoute.element, plugin.definition.name);
+          }
         }
         newRoutes.push(...hooked);
       }

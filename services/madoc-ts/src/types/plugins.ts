@@ -1,7 +1,7 @@
 import React from 'react';
+import { RouteObject } from 'react-router-dom';
 import { ProjectTemplate } from '../extensions/projects/types';
 import { RouteComponents } from '../frontend/site/routes';
-import { UniversalRoute } from '../frontend/types';
 import { BaseTheme } from './schemas/madoc-theme';
 
 export type PluginRow = {
@@ -65,7 +65,7 @@ export type RemotePlugin = {
 
 export type ModuleWrapper = {
   id: string;
-  hookRoutes?: (routes: UniversalRoute[], components: RouteComponents) => UniversalRoute[];
+  hookRoutes?: (routes: RouteObject[], components: RouteComponents) => RouteObject[];
   hookComponents?: (components: RouteComponents) => any;
   hookBlocks?: () => { [name: string]: React.FC<any> };
   themes?: Array<BaseTheme & { id: string }>;

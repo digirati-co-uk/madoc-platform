@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from 'react-query';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { Button } from '../../../../shared/navigation/Button';
 import {
   SystemAction,
@@ -48,7 +48,7 @@ export const ListThemes: React.FC = () => {
   });
 
   if (user?.role !== 'global_admin') {
-    return <Redirect to={'/'} />;
+    return <Navigate to={'/'} />;
   }
 
   return (

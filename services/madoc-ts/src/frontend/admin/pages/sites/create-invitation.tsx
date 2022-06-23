@@ -2,7 +2,7 @@ import { InternationalString } from '@iiif/presentation-3';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { siteRoles } from '../../../config';
 import { Button, ButtonRow } from '../../../shared/navigation/Button';
 import { DefaultSelect } from '../../../shared/form/DefaulSelect';
@@ -24,7 +24,7 @@ export const CreateInvitation: React.FC = () => {
   const [expires, setExpires] = useState('');
   const [count, setCount] = useState(10);
   const availableLanguages = useSupportedLocales();
-  const { push } = useHistory();
+  const navigate = useNavigate();
 
   const [saveInvitation, saveInvitationStatus] = useMutation(async () => {
     const invitation = await api.siteManager.createInvitation({
@@ -33,7 +33,7 @@ export const CreateInvitation: React.FC = () => {
       site_role: selectedRole,
       uses_left: count,
     });
-    push(`/site/invitations/${invitation.id}`);
+    navigate(`/site/invitations/${invitation.id}`);
   });
 
   return (

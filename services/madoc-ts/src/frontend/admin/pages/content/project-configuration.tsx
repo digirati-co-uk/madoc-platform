@@ -1,7 +1,6 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { WidePage } from '../../../shared/layout/WidePage';
 import { EditShorthandCaptureModel } from '../../../shared/capture-models/EditorShorthandCaptureModel';
 import { siteConfigurationModel } from '../../../shared/configuration/site-config';
@@ -20,12 +19,12 @@ function postProcessConfiguration(config: any) {
 export const SiteProjectConfiguration: React.FC = () => {
   const { data: value, refetch } = apiHooks.getSiteConfiguration(() => []);
   const api = useApi();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [saveConfig] = useMutation(async (rev: any) => {
     await api.saveSiteConfiguration(postProcessConfiguration(rev));
     await refetch();
-    history.push(`/configure/site?success=true`);
+    navigate(`/configure/site?success=true`);
   });
 
   return (

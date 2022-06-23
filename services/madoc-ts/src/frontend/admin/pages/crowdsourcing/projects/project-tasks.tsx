@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { SubjectSnippet } from '../../../../shared/components/SubjectSnippet';
 import { ViewCrowdsourcingTask } from '../../../molecules/ViewCrowdsourcingTask';
 import { ViewCrowdsourcingCanvasTask } from '../../tasks/crowdsourcing-canvas-task';
+import { Project } from './project';
 
 type ProjectTasksType = {
   params: { id: number; taskId?: string };
@@ -22,11 +23,12 @@ type ProjectTasksType = {
 };
 
 export const ProjectTasks: UniversalComponent<ProjectTasksType> = createUniversalComponent<ProjectTasksType>(
-  ({ project }) => {
+  () => {
+    const { data: project } = useData(Project);
     const { t } = useTranslation();
     const { data: task } = useData(ProjectTasks);
 
-    if (!task) {
+    if (!task || !project) {
       return <>Loading...</>;
     }
 

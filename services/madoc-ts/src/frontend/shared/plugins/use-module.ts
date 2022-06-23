@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import * as publicApi from './public-api';
 import * as ReactQuery from 'react-query';
+import * as ReactRouterDom from 'react-router-dom';
 
 export const _ALLOWED_MODULES = [
   '@madoc.io/types',
@@ -94,8 +95,8 @@ export function useModule(name: AvailableModules) {
     //   return require('react-query');
     // case 'react-router-config':
     //   return require('react-router-config');
-    // case 'react-router-dom':
-    //   return require('react-router-dom');
+    case 'react-router-dom':
+      return ReactRouterDom;
     // case 'react-stack-grid':
     //   return require('react-stack-grid');
     // case 'react-timeago':

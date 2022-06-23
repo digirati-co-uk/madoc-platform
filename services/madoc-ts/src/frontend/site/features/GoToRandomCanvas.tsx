@@ -1,7 +1,7 @@
 import { InternationalString } from '@iiif/presentation-3';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '../../shared/navigation/Button';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { useUser } from '../../shared/hooks/use-site';
@@ -18,7 +18,7 @@ export const GoToRandomCanvas: React.FC<{
 }> = ({ $primary, $large, label, navigateToModel }) => {
   const { projectId } = useRouteContext();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const createLink = useRelativeLinks();
   const { showCaptureModelOnManifest } = useProjectShadowConfiguration();
   const [getRandomCanvas] = useGetRandomCanvas();
@@ -37,7 +37,7 @@ export const GoToRandomCanvas: React.FC<{
       onClick={() => {
         getRandomCanvas().then(resp => {
           if (resp && resp.manifest && resp.canvas) {
-            history.push(
+            navigate(
               createLink({
                 manifestId: resp.manifest,
                 canvasId: resp.canvas.id,

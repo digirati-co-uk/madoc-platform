@@ -1,26 +1,33 @@
 import React from 'react';
 import { queryCache, useMutation } from 'react-query';
+import { useParams } from 'react-router-dom';
+import { apiHooks } from '../../../../shared/hooks/use-api-query';
 import { Button, ButtonRow } from '../../../../shared/navigation/Button';
 import { getStatusMapItem, ProjectStatus } from '../../../../shared/atoms/ProjectStatus';
 import { SubtaskProgress } from '../../../../shared/atoms/SubtaskProgress';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../../../shared/atoms/Statistics';
-import { ProjectFull } from '../../../../../types/project-full';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useProjectTemplate } from '../../../../shared/hooks/use-project-template';
+import { serverRendererFor } from '../../../../shared/plugins/external/server-renderer-for';
 
-export const ProjectOverview: React.FC<{ project: ProjectFull; refetch: () => Promise<void> }> = ({
-  project,
-  refetch,
-}) => {
+export const ProjectOverview: React.FC = () => {
+  const params = useParams() as { id: string };
+  const { data: project, refetch } = apiHooks.getProject(() => (params.id ? [params.id] : undefined));
   const api = useApi();
   const template = useProjectTemplate(project?.template);
   const [updateStatus, { isLoading }] = useMutation(async (newStatus: number) => {
-    await api.updateProjectStatus(project.id, newStatus);
-    await queryCache.invalidateQueries(['get-project', { id: Number(project.id) }]);
-    await refetch();
+    if (project) {
+      await api.updateProjectStatus(project.id, newStatus);
+      await queryCache.invalidateQueries(['get-project', { id: Number(project.id) }]);
+      await refetch();
+    }
   });
   const statusMapping = template?.configuration?.status?.statusMap || {};
   const statusHidden = template?.configuration?.status?.disabled;
+
+  if (!project) {
+    return null;
+  }
 
   return (
     <div>
@@ -97,3 +104,7 @@ export const ProjectOverview: React.FC<{ project: ProjectFull; refetch: () => Pr
     </div>
   );
 };
+
+serverRendererFor(ProjectOverview, {
+  hooks: [{ name: 'getProject', creator: params => [params.id] }],
+});

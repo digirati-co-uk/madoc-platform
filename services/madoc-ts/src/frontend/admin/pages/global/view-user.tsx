@@ -1,14 +1,13 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
-import { GetUser, User } from '../../../../extensions/site-manager/types';
+import { Outlet, useParams } from 'react-router-dom';
+import { GetUser } from '../../../../extensions/site-manager/types';
 import { WidePage } from '../../../shared/layout/WidePage';
 import { useData } from '../../../shared/hooks/use-data';
 import { serverRendererFor } from '../../../shared/plugins/external/server-renderer-for';
-import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { AdminHeader } from '../../molecules/AdminHeader';
 
-export const ViewUser: React.FC<{ route: any }> = ({ route }) => {
+export const ViewUser: React.FC = () => {
   const { t } = useTranslation();
   const { data } = useData<GetUser>(ViewUser);
   const { userId } = useParams<{ userId: string }>();
@@ -31,7 +30,9 @@ export const ViewUser: React.FC<{ route: any }> = ({ route }) => {
           { label: t('Delete user'), link: `/global/users/${userId}/delete` },
         ]}
       />
-      <WidePage>{renderUniversalRoutes(route.routes)}</WidePage>
+      <WidePage>
+        <Outlet />
+      </WidePage>
     </>
   );
 };

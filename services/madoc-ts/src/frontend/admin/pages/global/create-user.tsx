@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation } from 'react-query';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { globalRoles } from '../../../config';
 import { Button, ButtonRow } from '../../../shared/navigation/Button';
 import { DefaultSelect } from '../../../shared/form/DefaulSelect';
@@ -17,7 +17,7 @@ export const CreateUser: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('viewer');
-  const { push } = useHistory();
+  const navigate = useNavigate();
 
   const [createUser, createUserStatus] = useMutation(async () => {
     const user = await api.siteManager.createUser({
@@ -31,7 +31,7 @@ export const CreateUser: React.FC = () => {
       return user;
     }
 
-    push(`/global/users/${user.id}`);
+    navigate(`/global/users/${user.id}`);
   });
 
   if (createUserStatus.isSuccess && createUserStatus.data) {

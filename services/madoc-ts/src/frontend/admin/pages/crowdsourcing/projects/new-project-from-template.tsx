@@ -2,7 +2,7 @@ import { InternationalString } from '@iiif/presentation-3';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import slugify from 'slugify';
 import { CreateProject } from '../../../../../types/schemas/create-project';
 import { ErrorMessage } from '../../../../shared/callouts/ErrorMessage';

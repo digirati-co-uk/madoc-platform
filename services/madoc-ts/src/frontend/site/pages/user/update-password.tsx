@@ -1,7 +1,7 @@
 import { stringify } from 'query-string';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Redirect, useHistory } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { Button } from '../../../shared/navigation/Button';
 import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
 import { FlexSpacer } from '../../../shared/layout/FlexSpacer';
@@ -23,7 +23,7 @@ export const UpdatePasswordPage: React.FC = () => {
     invalidPassword?: boolean;
     passwordChangeSuccess?: boolean;
   }>();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [p1, setP1] = useState('');
   const [p2, setP2] = useState('');
@@ -40,18 +40,18 @@ export const UpdatePasswordPage: React.FC = () => {
 
   useEffect(() => {
     if (!query.e1 && form?.passwordError) {
-      history.push(`/profile/password?${stringify({ e1: true })}`);
+      navigate(`/profile/password?${stringify({ e1: true })}`);
     }
     if (!query.e2 && form?.invalidPassword) {
-      history.push(`/profile/password?${stringify({ e2: true })}`);
+      navigate(`/profile/password?${stringify({ e2: true })}`);
     }
     if (!query.success && form?.passwordChangeSuccess) {
-      history.push(`/profile/password?${stringify({ success: true })}`);
+      navigate(`/profile/password?${stringify({ success: true })}`);
     }
   }, [form?.invalidPassword, form?.passwordChangeSuccess, form?.passwordError, history, query, user]);
 
   if (!user) {
-    return <Redirect to={'/'} />;
+    return <Navigate to={'/'} />;
   }
 
   return (

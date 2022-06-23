@@ -1,14 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
-import { useUserDetails } from '../../../shared/hooks/use-user-details';
+import { Outlet, useLocation } from 'react-router-dom';
 import { SiteContainer, SiteContainerBackground } from '../../../shared/layout/SiteContainer';
 import { RenderFragment } from '../../../shared/components/RenderFragment';
 import { UserBar } from '../../../shared/components/UserBar';
 import { useClearFormResponse, useSite, useSiteTheme, useUser } from '../../../shared/hooks/use-site';
 import { ErrorBoundary } from '../../../shared/utility/error-boundary';
-import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { UniversalComponent } from '../../../types';
 import { useStaticData } from '../../../shared/hooks/use-data';
@@ -29,7 +27,7 @@ export type RootLoaderType = {
 };
 
 export const RootLoader: UniversalComponent<RootLoaderType> = createUniversalComponent<RootLoaderType>(
-  ({ route }) => {
+  () => {
     const site = useSite();
     const user = useUser();
     const { data } = useStaticData(RootLoader, [], {
@@ -40,7 +38,7 @@ export const RootLoader: UniversalComponent<RootLoaderType> = createUniversalCom
     const viewingDirection = useMemo(() => i18n.dir(i18n.language), [i18n]);
 
     const clearFormResponse = useClearFormResponse();
-    const { location } = useHistory();
+    const location = useLocation();
     const [initialPath] = useState(location.pathname);
     useEffect(() => {
       if (initialPath !== location.pathname) {
@@ -76,7 +74,9 @@ export const RootLoader: UniversalComponent<RootLoaderType> = createUniversalCom
         <GlobalSiteHeader menu={<GlobalSiteNavigation />} />
         <SiteContainerBackground>
           <SiteContainer lang={i18n.language} dir={viewingDirection}>
-            <ErrorBoundary>{renderUniversalRoutes(route.routes)}</ErrorBoundary>
+            <ErrorBoundary>
+              <Outlet />
+            </ErrorBoundary>
           </SiteContainer>
         </SiteContainerBackground>
         <GlobalFooter />

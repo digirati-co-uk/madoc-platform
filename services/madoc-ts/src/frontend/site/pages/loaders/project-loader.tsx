@@ -1,6 +1,7 @@
 import { stringify } from 'query-string';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Outlet } from 'react-router-dom';
 import { InfoMessage } from '../../../shared/callouts/InfoMessage';
 import { NotFoundPage } from '../../../shared/components/NotFoundPage';
 import { useLoginRedirect } from '../../../shared/components/UserBar';
@@ -9,7 +10,6 @@ import { useUser } from '../../../shared/hooks/use-site';
 import { Button } from '../../../shared/navigation/Button';
 import { AutoSlotLoader } from '../../../shared/page-blocks/auto-slot-loader';
 import { HrefLink } from '../../../shared/utility/href-link';
-import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { nullTheme, useCustomTheme } from '../../../themes/helpers/CustomThemeProvider';
 import { UniversalComponent } from '../../../types';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
@@ -23,11 +23,10 @@ type ProjectLoaderType = {
   query: unknown;
   variables: [string];
   data: ProjectFull;
-  context: { project: ProjectFull };
 };
 
 export const ProjectLoader: UniversalComponent<ProjectLoaderType> = createUniversalComponent<ProjectLoaderType>(
-  ({ route }) => {
+  () => {
     const { data: project, isError } = useStaticData(ProjectLoader);
     const redirect = useLoginRedirect(false);
     const { t } = useTranslation();
@@ -52,9 +51,7 @@ export const ProjectLoader: UniversalComponent<ProjectLoaderType> = createUniver
                 </Button>
               </InfoMessage>
             ) : null}
-            {renderUniversalRoutes(route.routes, {
-              project,
-            })}
+            <Outlet />
           </BreadcrumbContext>
         </ConfigProvider>
       </AutoSlotLoader>

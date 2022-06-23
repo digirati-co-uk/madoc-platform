@@ -2,7 +2,7 @@ import React from 'react';
 import { useMutation } from 'react-query';
 import { Button } from '../../../../shared/navigation/Button';
 import { useApi } from '../../../../shared/hooks/use-api';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Heading3 } from '../../../../shared/typography/Heading3';
 import { CollectionDeletionSummary } from '../../../../../types/deletion-summary';
 import { UniversalComponent } from '../../../../types';
@@ -22,13 +22,13 @@ export const DeleteCollection: UniversalComponent<DeleteCollectionType> = create
   () => {
     const { data } = useData(DeleteCollection);
     const { id } = useParams<{ id: string }>();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const api = useApi();
 
     const [deleteCollection, { status }] = useMutation(async () => {
       await api.deleteCollection(Number(id));
-      history.push(`/collections`);
+      navigate(`/collections`);
     });
 
     return (

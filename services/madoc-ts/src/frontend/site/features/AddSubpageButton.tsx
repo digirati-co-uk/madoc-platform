@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { CreateNormalPageRequest } from '../../../types/schemas/site-page';
 import { SitePage } from '../../../types/site-pages-recursive';
 import { Button, ButtonRow } from '../../shared/navigation/Button';
@@ -18,7 +18,7 @@ export const AddSubpageButton: React.FC<{ onCreate?: (page: SitePage) => void }>
   const { data } = useStaticData(PageLoader);
   const page = data?.page;
   const subpage = useRef<CreateNormalPageRequest>();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [addSubpage] = useMutation(async () => {
     if (page && subpage.current) {
@@ -30,7 +30,7 @@ export const AddSubpageButton: React.FC<{ onCreate?: (page: SitePage) => void }>
       if (props.onCreate) {
         props.onCreate(createdPage);
       } else {
-        history.push(createdPage.path);
+        navigate(createdPage.path);
       }
     }
   });

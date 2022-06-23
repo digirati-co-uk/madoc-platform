@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { castBool } from '../../../utility/cast-bool';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { useCurrentUser } from '../../shared/hooks/use-current-user';
@@ -61,7 +61,7 @@ export const ViewCanvasModel: React.FC = () => {
   }
 
   if (showCaptureModelOnManifest) {
-    return <Redirect to={createLink({ subRoute: '' })} />;
+    return <Navigate to={createLink({ subRoute: '' })} />;
   }
 
   if (shouldGoToNext) {

@@ -4,7 +4,6 @@ import { dehydrate, Hydrate } from 'react-query/hydration';
 import { ServerStyleSheet, ThemeProvider } from 'styled-components';
 import { CurrentUserWithScope, SystemConfig, Site } from '../../../extensions/site-manager/types';
 import { ApiClient } from '../../../gateway/api';
-import { StaticRouterContext } from 'react-router';
 import { parse } from 'query-string';
 import { api } from '../../../gateway/api.server';
 import { ListLocalisationsResponse } from '../../../routes/admin/localisation';
@@ -18,12 +17,12 @@ import { PageLoader } from '../../site/pages/loaders/page-loader';
 import { defaultTheme } from '../capture-models/editor/themes';
 import { PluginManager } from '../plugins/plugin-manager';
 import { queryConfig } from './query-config';
-import { matchUniversalRoutes } from './server-utils';
 import { renderToString } from 'react-dom/server';
 import { I18nextProvider } from 'react-i18next';
-import { StaticRouter } from 'react-router-dom';
+import { matchRoutes, RouteObject } from 'react-router-dom';
+import { StaticRouter } from 'react-router-dom/server';
 import React from 'react';
-import { CreateRouteType, UniversalRoute } from '../../types';
+import { CreateRouteType } from '../../types';
 import { Helmet } from 'react-helmet';
 import localeCodes from 'locale-codes';
 import '../required-modules';
@@ -40,7 +39,7 @@ function makeRoutes(routeComponents: any) {
 export function createServerRenderer(
   RootApplication: React.FC<{
     api: ApiClient;
-    routes: UniversalRoute[];
+    routes: RouteObject[];
     site: Site;
     user?: CurrentUserWithScope;
     systemConfig: SystemConfig;
@@ -53,7 +52,7 @@ export function createServerRenderer(
     themeOverrides?: any;
     formResponse?: any;
   }>,
-  createRoutes: ((c: any) => CreateRouteType) | UniversalRoute[],
+  createRoutes: ((c: any) => CreateRouteType) | RouteObject[],
   components: any,
   apiGateway: string,
   extraConfig: Partial<ReactQueryConfig> = {}
@@ -109,17 +108,27 @@ export function createServerRenderer(
         ? defaultRoutes
         : pluginManager.makeRoutes(createRoutes(pluginManager.hookComponents(components, site.id)), site.id);
 
-    const context: StaticRouterContext = {};
+    const context: any = {};
     const [urlPath, urlQuery] = url.split('?');
     const path = urlPath.slice(urlPath.indexOf(basename) + basename.length);
     const queryString = urlQuery ? parse(urlQuery) : {};
-    const matches = matchUniversalRoutes(routes, path);
+    const matches = matchRoutes(routes, path) || [];
     const blockCollector: BlockCollector = { blocks: [] };
     const requests = [];
     const routeContext: EditorialContext = {};
     const themeOverrides: any = {};
     let projectApplied = false;
-    for (const { match, route } of matches) {
+
+    for (const _match of matches) {
+      const isExact = _match.pathnameBase === path || _match.pathname === path;
+      const params = _match.params;
+      const component = _match.route.element?.type;
+      const route = { ..._match.route, component };
+      const match = {
+        params,
+        isExact,
+      };
+
       if (match.isExact && match.params) {
         // Extract project.
         routeContext.collection = match.params.collectionId ? Number(match.params.collectionId) : undefined;
@@ -127,50 +136,56 @@ export function createServerRenderer(
         routeContext.canvas = match.params.canvasId ? Number(match.params.canvasId) : undefined;
         routeContext.project = match.params.slug ? match.params.slug : undefined;
       }
-      if (route.component.getKey && route.component.getData) {
+
+      if (route.component && route.component.getKey && route.component.getData) {
+        console.log('=> FETCHING', routeContext, params);
+
         requests.push(
-          prefetchCache.prefetchQuery(route.component.getKey(match.params, queryString, path), (key, vars) => {
-            const data = route.component.getData
-              ? route.component.getData(key, vars, userApi, path)
-              : (undefined as any);
+          prefetchCache.prefetchQuery(
+            route.component.getKey(match.params, queryString, path),
+            (key: any, vars: any) => {
+              const data = route.component.getData
+                ? route.component.getData(key, vars, userApi, path)
+                : (undefined as any);
 
-            // Hook for page loader.
-            if (route.component === PageLoader) {
-              data.then((resp: any) => {
-                if (resp && resp.page && resp.page.slots) {
-                  for (const slotId of Object.keys(resp.page.slots)) {
-                    const slot = resp.page.slots[slotId];
-                    if (slot && slot.blocks) {
-                      blockCollector.blocks.push(...slot.blocks);
+              // Hook for page loader.
+              if (route.component === PageLoader) {
+                data.then((resp: any) => {
+                  if (resp && resp.page && resp.page.slots) {
+                    for (const slotId of Object.keys(resp.page.slots)) {
+                      const slot = resp.page.slots[slotId];
+                      if (slot && slot.blocks) {
+                        blockCollector.blocks.push(...slot.blocks);
+                      }
                     }
                   }
-                }
 
-                return resp;
-              });
-            }
+                  return resp;
+                });
+              }
 
-            // Hack for server-side theme from template.
-            if (!projectApplied && key === 'getSiteProject' && site) {
-              data.then((resp: any) => {
-                try {
-                  if (resp?.template) {
-                    const definition = api.projectTemplates.getDefinition(resp?.template, site.id);
-                    if (definition?.theme) {
-                      themeOverrides[`project-template(${definition.type})`] = definition.theme;
+              // Hack for server-side theme from template.
+              if (!projectApplied && key === 'getSiteProject' && site) {
+                data.then((resp: any) => {
+                  try {
+                    if (resp?.template) {
+                      const definition = api.projectTemplates.getDefinition(resp?.template, site.id);
+                      if (definition?.theme) {
+                        themeOverrides[`project-template(${definition.type})`] = definition.theme;
+                      }
+                      projectApplied = true;
                     }
-                    projectApplied = true;
+                  } catch (e) {
+                    // no-op.
                   }
-                } catch (e) {
-                  // no-op.
-                }
-              });
+                });
+              }
+              return data;
             }
-            return data;
-          })
+          )
         );
       }
-      const hooks = route.component.hooks || [];
+      const hooks = route.component ? route.component.hooks || [] : [];
       for (const hook of hooks) {
         const args = hook.creator(match.params, queryString);
         if (typeof args !== 'undefined') {
@@ -178,7 +193,7 @@ export function createServerRenderer(
         }
       }
 
-      const customTheme = route.component.theme;
+      const customTheme = route.component ? route.component.theme : null;
       if (customTheme && customTheme.name) {
         themeOverrides[customTheme.name] = customTheme;
       }
@@ -258,7 +273,7 @@ export function createServerRenderer(
             <ReactQueryCacheProvider>
               <Hydrate state={dehydratedState}>
                 <I18nextProvider i18n={i18next}>
-                  <StaticRouter basename={basename} location={url} context={context}>
+                  <StaticRouter basename={basename} location={url}>
                     <ThemeProvider theme={defaultTheme}>
                       <RootApplication
                         api={api}

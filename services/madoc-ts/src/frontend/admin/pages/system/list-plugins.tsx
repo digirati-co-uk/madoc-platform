@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from 'react-query';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { SitePlugin } from '../../../../types/schemas/plugins';
 import { useUser } from '../../../shared/hooks/use-site';
 import { Button, ButtonRow } from '../../../shared/navigation/Button';
@@ -105,7 +105,7 @@ export const ListPlugins: React.FC = () => {
   });
 
   if (user?.role !== 'global_admin') {
-    return <Redirect to={'/'} />;
+    return <Navigate to={'/'} />;
   }
 
   return (

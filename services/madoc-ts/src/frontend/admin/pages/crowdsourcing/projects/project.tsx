@@ -1,9 +1,9 @@
+import { Outlet } from 'react-router-dom';
 import { useProjectTemplate } from '../../../../shared/hooks/use-project-template';
 import { useSite } from '../../../../shared/hooks/use-site';
 import { UniversalComponent } from '../../../../types';
 import React from 'react';
 import { LocaleString } from '../../../../shared/components/LocaleString';
-import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { WidePage } from '../../../../shared/layout/WidePage';
 import { useTranslation } from 'react-i18next';
@@ -18,9 +18,9 @@ type ProjectType = {
 };
 
 export const Project: UniversalComponent<ProjectType> = createUniversalComponent<ProjectType>(
-  ({ route }) => {
+  () => {
     const { t } = useTranslation();
-    const { data, status, refetch } = useData(Project);
+    const { data, status } = useData(Project);
     const { slug } = useSite();
     const projectTemplate = useProjectTemplate(data?.template);
 
@@ -60,7 +60,7 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
           }
         />
         <WidePage>
-          {renderUniversalRoutes(route.routes, { captureModelId: data.capture_model_id, project: data, refetch })}
+          <Outlet />
         </WidePage>
       </>
     );

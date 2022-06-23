@@ -2,7 +2,6 @@ import React from 'react';
 import '../../shared/capture-models/refinements';
 import { useTranslation } from 'react-i18next';
 import { SubjectSnippet } from '../../../extensions/tasks/resolvers/subject-resolver';
-import { useProjectByTask } from '../../shared/hooks/use-project-by-task';
 import { EmptyState } from '../../shared/layout/EmptyState';
 import { useCreateLocaleString } from '../../shared/components/LocaleString';
 import { TaskWrapper } from '../../shared/components/TaskWrapper';
@@ -14,14 +13,24 @@ import { ViewCrowdsourcingTask } from './tasks/crowdsourcing-task.lazy';
 import { BrowserComponent } from '../../shared/utility/browser-component';
 import { useApi } from '../../shared/hooks/use-api';
 import { ViewCrowdsourcingReview } from './tasks/crowdsourcing-review';
-import { TaskContext } from './loaders/task-loader';
+import { useLoadedTask } from './loaders/task-loader';
 
-export const ViewTask: React.FC<TaskContext<any>> = ({ task, ...props }) => {
+export const ViewTask: React.FC = () => {
+  const { data, refetch } = useLoadedTask();
+  const task = data?.task;
+  const parentTask = data?.parentTask;
   const { t } = useTranslation();
   const api = useApi();
   const createLocaleString = useCreateLocaleString();
   const slug = api.getSiteSlug();
   const { subject } = useTaskMetadata<{ subject?: SubjectSnippet }>(task);
+
+  const props = {
+    parentTask,
+    task,
+    refetch,
+    subject,
+  } as any;
 
   if (!task) {
     return null;
@@ -34,7 +43,7 @@ export const ViewTask: React.FC<TaskContext<any>> = ({ task, ...props }) => {
   ) {
     return (
       <div>
-        <TaskWrapper task={task} refetch={props.refetch as any} subject={subject}>
+        <TaskWrapper task={task} refetch={refetch} subject={subject}>
           <a href={`/s/${slug}/admin/tasks/${task.id}`}>{t('View on admin dashboard')}</a>
         </TaskWrapper>
       </div>
@@ -44,9 +53,9 @@ export const ViewTask: React.FC<TaskContext<any>> = ({ task, ...props }) => {
   if (task.type === 'crowdsourcing-task') {
     return (
       <>
-        <TaskWrapper task={task} refetch={props.refetch as any} subject={subject}>
+        <TaskWrapper task={task} refetch={refetch} subject={subject}>
           <BrowserComponent fallback={<div>{t('loading')}</div>}>
-            <ViewCrowdsourcingTask task={task} {...props} />
+            <ViewCrowdsourcingTask {...props} />
           </BrowserComponent>
         </TaskWrapper>
       </>
@@ -57,8 +66,8 @@ export const ViewTask: React.FC<TaskContext<any>> = ({ task, ...props }) => {
   if (task.type === 'crowdsourcing-review') {
     return (
       <>
-        <TaskWrapper task={task} refetch={props.refetch as any} subject={subject}>
-          <ViewCrowdsourcingReview task={task} {...props} />
+        <TaskWrapper task={task} refetch={refetch} subject={subject}>
+          <ViewCrowdsourcingReview {...props} />
         </TaskWrapper>
       </>
     );
@@ -67,8 +76,8 @@ export const ViewTask: React.FC<TaskContext<any>> = ({ task, ...props }) => {
   if (task.type === 'madoc-api-action-task') {
     return (
       <>
-        <TaskWrapper task={task} refetch={props.refetch as any}>
-          <ViewApiActionTask task={task} {...props} />
+        <TaskWrapper task={task} refetch={refetch}>
+          <ViewApiActionTask {...props} />
         </TaskWrapper>
       </>
     );

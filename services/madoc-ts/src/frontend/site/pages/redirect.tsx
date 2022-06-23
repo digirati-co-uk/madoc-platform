@@ -1,17 +1,17 @@
 import React from 'react';
-import { Redirect, useLocation, useParams } from 'react-router';
+import { Navigate, useLocation, useParams } from 'react-router';
 
 export const RedirectPage: React.FC = () => {
   const { pathname, search } = useLocation();
   const { pagePath } = useParams<{ pagePath: string }>();
 
   return (
-    <Redirect
+    <Navigate
       to={{
         pathname: `/${pagePath}`,
         search,
-        state: { referrer: pathname },
       }}
+      state={{ referrer: pathname }}
     />
   );
 };

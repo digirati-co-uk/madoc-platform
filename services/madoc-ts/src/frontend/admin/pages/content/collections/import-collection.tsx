@@ -16,7 +16,7 @@ import { Input, InputContainer, InputLabel } from '../../../../shared/form/Input
 import { useMutation } from 'react-query';
 import { useTranslation } from 'react-i18next';
 import { useApi } from '../../../../shared/hooks/use-api';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Pagination } from '../../../molecules/Pagination';
 import { PreviewCollection } from '../../../molecules/PreviewCollection';
 import { VaultProvider } from 'react-iiif-vault';
@@ -28,7 +28,7 @@ export const ImportCollection: React.FC = () => {
   const { t } = useTranslation();
   const [isCreating, setIsCreating] = useState(false);
   const api = useApi();
-  const history = useHistory();
+  const navigate = useNavigate();
   const query = useLocationQuery<{ collection?: string; manifest?: string }>();
   const { data, refetch: refreshTasks } = usePaginatedData(ImportCollection);
   const [importedCollectionId, setImportedCollectionId] = useState<string | undefined>(query.collection);
@@ -66,12 +66,12 @@ export const ImportCollection: React.FC = () => {
               onImport={(collectionId, manifestIds) => {
                 importCollection({ collectionId, manifestIds }).then(task => {
                   if (task) {
-                    history.push(`/tasks/${task.id}`);
+                    navigate(`/tasks/${task.id}`);
                   }
                 });
               }}
               onClick={manifestId => {
-                history.push(`/import/collection?collection=${importedCollectionId}&manifest=${manifestId}`);
+                navigate(`/import/collection?collection=${importedCollectionId}&manifest=${manifestId}`);
               }}
             />
           </VaultProvider>
@@ -95,7 +95,7 @@ export const ImportCollection: React.FC = () => {
                   $primary
                   disabled={isCreating || !importedCollectionId}
                   onClick={() => {
-                    history.push(`/import/collection?collection=${importedCollectionId}`);
+                    navigate(`/import/collection?collection=${importedCollectionId}`);
                   }}
                 >
                   {t('Import collection')}

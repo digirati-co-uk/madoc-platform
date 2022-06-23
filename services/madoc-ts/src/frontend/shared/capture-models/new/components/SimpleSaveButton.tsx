@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useRouteContext } from '../../../../site/hooks/use-route-context';
 import { Button, ButtonRow } from '../../../navigation/Button';
 import { useViewerSaving } from '../../../hooks/use-viewer-saving';
@@ -30,7 +30,6 @@ export const SimpleSaveButton: EditorRenderingConfig['SubmitButton'] = ({ afterS
   const [isUpToDate, setIsUpToDate] = useState(true);
   const latestRevision = useRef<any>();
   const isUnMounting = useRef(false);
-  const history = useHistory();
 
   useEffect(() => {
     if (latestRevision.current && latestRevision.current !== currentRevision?.document) {
@@ -73,12 +72,17 @@ export const SimpleSaveButton: EditorRenderingConfig['SubmitButton'] = ({ afterS
   });
 
   useEffect(() => {
-    return history.listen(() => {
+    const listener = () => {
       if (!isUpToDate && latestRevision.current && saveOnNavigate) {
         isUnMounting.current = true;
         saveRevision(latestRevision.current.status);
       }
-    });
+    };
+    window.addEventListener('popstate', listener);
+
+    return () => {
+      window.removeEventListener('popstate', listener);
+    };
   }, [saveOnNavigate, history, isUpToDate]);
 
   if (!currentRevision) {

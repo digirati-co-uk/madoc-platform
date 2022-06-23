@@ -19,7 +19,7 @@ import {
   KanbanCardTextButton,
 } from '../../../shared/atoms/Kanban';
 import { Heading3, Subheading3 } from '../../../shared/typography/Heading3';
-import { Link, useParams, useHistory } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
 import { useApiTaskSearch } from '../../../shared/hooks/use-api-task-search';
 import { createLink } from '../../../shared/utility/create-link';
@@ -36,7 +36,7 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
   refetch,
 }) => {
   const { slug: _slug } = useParams<{ slug: string }>();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { preview, ...query } = useLocationQuery();
 
   const { data, refetch: refetchTask } = useApiTaskSearch<CrowdsourcingTask>({
@@ -136,7 +136,7 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
                 await refreshAll();
               }
               const rev = opt?.revisionId;
-              history.push(
+              navigate(
                 createLink({ projectId: slug, taskId: reviewTask.id, query: rev ? { preview: rev, ...query } : query })
               );
             }}
@@ -169,9 +169,7 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
         await refreshAll();
       }
       const rev = opt?.revisionId;
-      history.push(
-        createLink({ projectId: slug, taskId: reviewTask.id, query: rev ? { preview: rev, ...query } : query })
-      );
+      navigate(createLink({ projectId: slug, taskId: reviewTask.id, query: rev ? { preview: rev, ...query } : query }));
     };
 
     if (subject.type === 'manifest') {

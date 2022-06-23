@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   ActivityOrderedCollection,
   ActivityOrderedCollectionPage,
@@ -268,7 +268,7 @@ export const ViewActivityStream: React.FC<{ name: string; secondary?: string }> 
 
 const StreamOverview: React.FC = () => {
   const [customStreamUrl, setCustomStreamURL] = useState('');
-  const history = useHistory();
+  const navigate = useNavigate();
 
   return (
     <div>
@@ -289,7 +289,7 @@ const StreamOverview: React.FC = () => {
           <Button
             $primary
             onClick={() => {
-              history.push(`/system/activity-streams?remoteStream=${customStreamUrl}`);
+              navigate(`/system/activity-streams?remoteStream=${customStreamUrl}`);
             }}
           >
             View remote stream

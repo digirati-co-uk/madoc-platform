@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
-import { useParams, useHistory } from 'react-router-dom';
-import { MetadataDiff } from "../../../../shared/hooks/use-metadata-editor";
+import { useParams, useNavigate } from 'react-router-dom';
+import { MetadataDiff } from '../../../../shared/hooks/use-metadata-editor';
 import { UniversalComponent } from '../../../../types';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { mapMetadataList, ParsedMetadata } from '../../../../../utility/map-metadata-list';
@@ -21,7 +21,7 @@ export const EditCanvasMetadata: UniversalComponent<EditCanvasMetadataType> = cr
 >(
   () => {
     const params = useParams<{ id: string; manifestId?: string }>();
-    const history = useHistory();
+    const navigate = useNavigate();
     const [invalidateTime, setInvalidateTime] = useState(Date.now());
     const { data, status } = useData(EditCanvasMetadata);
     const api = useApi();
@@ -36,13 +36,13 @@ export const EditCanvasMetadata: UniversalComponent<EditCanvasMetadataType> = cr
 
     const [saveChanges] = useMutation(async ({ diff, empty }: { diff: MetadataDiff; empty: boolean }) => {
       if (empty) {
-        history.push(redirectUrl);
+        navigate(redirectUrl);
         return;
       }
 
       await api.updateCanvasMetadata(Number(params.id), diff);
 
-      history.push(redirectUrl);
+      navigate(redirectUrl);
     });
 
     if (status === 'loading' || status === 'error' || !data) {

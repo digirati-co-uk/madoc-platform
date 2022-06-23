@@ -15,7 +15,7 @@ export const ViewContentFetch: React.FC<{
     if (!data) return null;
     return {
       ...data.canvas,
-      id: data.canvas.source_id || data.canvas.id,
+      id: data.canvas.source_id || 'http://canvas/' + data.canvas.id,
     };
   }, []);
 

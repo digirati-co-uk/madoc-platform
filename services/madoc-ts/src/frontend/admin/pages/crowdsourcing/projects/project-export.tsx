@@ -1,7 +1,6 @@
 import React from 'react';
 import { UniversalComponent } from '../../../../types';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
-import { useTranslation } from 'react-i18next';
 import { usePaginatedData } from '../../../../shared/hooks/use-data';
 import { JsonProjectTemplate } from '../../../../../extensions/projects/types';
 
@@ -13,9 +12,8 @@ type ProjectExportType = {
 };
 
 export const ProjectExportTab: UniversalComponent<ProjectExportType> = createUniversalComponent<ProjectExportType>(
-  ({ route }) => {
-    const { t } = useTranslation();
-    const { resolvedData: data, status } = usePaginatedData(ProjectExportTab);
+  () => {
+    const { resolvedData: data } = usePaginatedData(ProjectExportTab);
 
     return (
       <>

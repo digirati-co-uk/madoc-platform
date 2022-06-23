@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { Redirect, useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import * as locale from 'locale-codes';
 import { ExperimentalFeature } from '../../../../shared/components/ExperimentalFeature';
 import { Button } from '../../../../shared/navigation/Button';
@@ -14,7 +14,7 @@ import { calculateTranslationProgress } from '../../../../shared/utility/calcula
 import { AdminHeader } from '../../../molecules/AdminHeader';
 
 export const EditTranslation: React.FC = () => {
-  const { code, namespace } = useParams<{ code: string; namespace?: string }>();
+  const { code, namespace } = useParams() as { code: string; namespace?: string };
   const { t, i18n } = useTranslation();
   const api = useApi();
 
@@ -40,7 +40,7 @@ export const EditTranslation: React.FC = () => {
   });
 
   if (!localeData) {
-    return <Redirect to={`/i18n`} />;
+    return <Navigate to={`/i18n`} />;
   }
 
   return (

@@ -1,16 +1,14 @@
 import React from 'react';
+import { RouteObject } from 'react-router-dom';
 import { ApiClient } from '../gateway/api';
 import { AdditionalHooks } from './shared/hooks/use-api-query';
 import { MadocTheme } from './themes/definitions/types';
 
-export type UniversalRoute = {
-  path: string;
-  exact?: boolean;
-  component: QueryComponent;
-  routes?: UniversalRoute[];
+export type CreateRouteType = {
+  routes: RouteObject[];
+  baseRoute: RouteObject;
+  fallback: RouteObject;
 };
-
-export type CreateRouteType = any;
 
 export type UniversalComponent<
   Definition extends {
@@ -20,7 +18,7 @@ export type UniversalComponent<
     variables?: any;
     context?: any;
   }
-> = React.FC<{ route?: UniversalRoute }> & {
+> = React.FC & {
   getData?: (
     key: string,
     vars: Definition['variables'],

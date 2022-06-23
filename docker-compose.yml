@@ -43,7 +43,6 @@ services:
       - ./services/madoc-ts/migrations:/home/node/app/migrations:delegated
       - ./services/madoc-ts/schemas:/home/node/app/schemas:delegated
       - ./services/madoc-ts/ecosystem.config.cjs:/home/node/app/ecosystem.config.cjs
-      - ./services/madoc-ts/webpack.config.cjs:/home/node/app/webpack.config.cjs
       - ./services/madoc-ts/vite:/home/node/app/vite:delegated
       - ./services/madoc-ts/entrypoint:/home/node/app/entrypoint:delegated
       - ./services/madoc-ts/config.json:/home/node/app/config.json
@@ -76,7 +75,6 @@ services:
       - MAIL_FROM_USER=${MAIL_FROM_USER}
     ports:
       - "127.0.0.1:${PORTS_MADOC_TS_DEBUGGER:-9230}:9230"
-      - "127.0.0.1:${PORTS_MADOC_TS_WEBPACK:-40493}:40493"
     links:
       - shared-postgres
       - madoc-ts-vite

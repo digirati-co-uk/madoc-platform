@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
+import { Outlet } from 'react-router-dom';
 import { BaseTask } from '../../../../gateway/tasks/base-task';
 import { UniversalComponent } from '../../../types';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
@@ -13,39 +13,41 @@ export type TaskContext<Task extends BaseTask, ParentTask = Task> = {
 };
 
 export type TaskLoaderType = {
-  params: { taskId: string; parentTaskId?: string };
+  params: { taskId: string; childTaskId?: string };
   variables: { id: string; parentId?: string };
-  query: {};
+  query: unknown;
   data: { task: BaseTask & { id: string }; parentTask?: BaseTask & { id: string } };
-  context: TaskContext<BaseTask>;
 };
 
+export function useLoadedTask() {
+  return useStaticData(
+    TaskLoader,
+    {},
+    {
+      cacheTime: 1000 * 60 * 60,
+      staleTime: 0,
+    }
+  );
+}
+
 export const TaskLoader: UniversalComponent<TaskLoaderType> = createUniversalComponent<TaskLoaderType>(
-  ({ route }) => {
-    const { data, refetch } = useStaticData(
-      TaskLoader,
-      {},
-      {
-        cacheTime: 1000 * 60 * 60,
-        staleTime: 0,
-      }
-    );
+  () => {
+    const { data } = useLoadedTask();
 
     const ctx = useMemo(() => (data && data.task ? { id: data.task.id, name: data.task.name } : undefined), [data]);
 
-    if (!data) {
-      return <>Loading...</>;
-    }
-
     return (
       <BreadcrumbContext task={ctx}>
-        {renderUniversalRoutes(route.routes, { task: data.task, parentTask: data.parentTask, refetch })}
+        <Outlet />
       </BreadcrumbContext>
     );
   },
   {
     getKey: params => {
-      return ['task', { id: params.taskId, parentId: params.parentTaskId }];
+      const taskId = params.childTaskId ? params.childTaskId : params.taskId;
+      const parentTaskId = params.childTaskId ? params.taskId : undefined;
+
+      return ['task', { id: taskId, parentId: parentTaskId }];
     },
     getData: async (key, vars, api) => {
       const [task, parentTask] = await Promise.all([

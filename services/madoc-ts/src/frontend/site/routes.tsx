@@ -1,30 +1,29 @@
+import React from 'react';
 import { CreateRouteType } from '../types';
 
 type BaseRouteComponents = typeof import('./components');
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface RouteComponents extends BaseRouteComponents {}
 
-export function createRoutes(components: RouteComponents): CreateRouteType {
+export function createRoutes(Components: RouteComponents): CreateRouteType {
   const routes = [
     {
-      path: '/madoc/:pagePath+',
+      path: '/madoc/*',
       exact: true,
-      component: components.RedirectPage,
+      element: <Components.RedirectPage />,
     },
     {
       path: '/collections',
       exact: true,
-      component: components.PageLoader,
-      routes: [
+      element: <Components.PageLoader />,
+      children: [
         {
           path: '/collections',
-          exact: true,
-          component: components.CollectionListLoader,
-          routes: [
+          element: <Components.CollectionListLoader />,
+          children: [
             {
-              path: '/collections',
-              component: components.AllCollections,
-              exact: true,
+              index: true,
+              element: <Components.AllCollections />,
             },
           ],
         },
@@ -32,105 +31,102 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
     },
     {
       path: '/collections/:collectionId',
-      component: components.CollectionLoader,
-      routes: [
+      element: <Components.CollectionLoader />,
+      children: [
         {
           path: '/collections/:collectionId',
           exact: true,
-          component: components.ViewCollection,
+          element: <Components.ViewCollection />,
         },
         {
           path: '/collections/:collectionId/search',
           exact: true,
-          component: components.Search,
+          element: <Components.Search />,
         },
         {
           path: '/collections/:collectionId/metadata/edit',
           exact: true,
-          component: components.SuggestMetadata,
+          element: <Components.SuggestMetadata />,
         },
         {
           path: '/collections/:collectionId/manifests/:manifestId',
-          component: components.ManifestLoader,
-          routes: [
+          element: <Components.ManifestLoader />,
+          children: [
             {
               path: '/collections/:collectionId/manifests/:manifestId',
               exact: true,
-              component: components.ViewManifest,
+              element: <Components.ViewManifest />,
             },
             {
               path: '/collections/:collectionId/manifests/:manifestId/search',
               exact: true,
-              component: components.Search,
+              element: <Components.Search />,
             },
             {
               path: '/collections/:collectionId/manifests/:manifestId/metadata/edit',
               exact: true,
-              component: components.SuggestMetadata,
+              element: <Components.SuggestMetadata />,
             },
             {
               path: '/collections/:collectionId/manifests/:manifestId/mirador',
               exact: true,
-              component: components.ViewManifestMirador,
+              element: <Components.ViewManifestMirador />,
             },
             {
               path: '/collections/:collectionId/manifests/:manifestId/uv',
               exact: true,
-              component: components.ViewManifestUV,
+              element: <Components.ViewManifestUV />,
             },
             {
               path: '/collections/:collectionId/manifests/:manifestId/c/:canvasId',
-              component: components.CanvasLoader,
-              routes: [
+              element: <Components.CanvasLoader />,
+              children: [
                 {
                   path: '/collections/:collectionId/manifests/:manifestId/c/:canvasId',
                   exact: true,
-                  component: components.ViewCanvas,
+                  element: <Components.ViewCanvas />,
                 },
                 {
                   path: '/collections/:collectionId/manifests/:manifestId/c/:canvasId/model',
                   exact: true,
-                  component: components.ViewCanvasModel,
+                  element: <Components.ViewCanvasModel />,
                 },
                 {
                   path: '/collections/:collectionId/manifests/:manifestId/c/:canvasId/metadata/edit',
                   exact: true,
-                  component: components.SuggestMetadata,
+                  element: <Components.SuggestMetadata />,
                 },
                 {
-                  path: '/:pagePath+',
-                  exact: false,
-                  component: components.PageLoader,
-                  routes: [
+                  path: '*',
+                  element: <Components.PageLoader />,
+                  children: [
                     {
-                      path: '/:pagePath+',
-                      component: components.ViewPage,
+                      path: '*',
+                      element: <Components.ViewPage />,
                     },
                   ],
                 },
               ],
             },
             {
-              path: '/:pagePath+',
-              exact: false,
-              component: components.PageLoader,
-              routes: [
+              path: '*',
+              element: <Components.PageLoader />,
+              children: [
                 {
-                  path: '/:pagePath+',
-                  component: components.ViewPage,
+                  path: '*',
+                  element: <Components.ViewPage />,
                 },
               ],
             },
           ],
         },
         {
-          path: '/:pagePath+',
-          exact: false,
-          component: components.PageLoader,
-          routes: [
+          path: '*',
+          element: <Components.PageLoader />,
+          children: [
             {
-              path: '/:pagePath+',
-              component: components.ViewPage,
+              path: '*',
+              element: <Components.ViewPage />,
             },
           ],
         },
@@ -138,18 +134,15 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
     },
     {
       path: '/manifests',
-      exact: true,
-      component: components.PageLoader,
-      routes: [
+      element: <Components.PageLoader />,
+      children: [
         {
           path: '/manifests',
-          component: components.ManifestListLoader,
-          exact: true,
-          routes: [
+          element: <Components.ManifestListLoader />,
+          children: [
             {
-              path: '/manifests',
-              component: components.AllManifests,
-              exact: true,
+              index: true,
+              element: <Components.AllManifests />,
             },
           ],
         },
@@ -157,73 +150,71 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
     },
     {
       path: '/manifests/:manifestId',
-      component: components.ManifestLoader,
-      routes: [
+      element: <Components.ManifestLoader />,
+      children: [
         {
           path: '/manifests/:manifestId',
           exact: true,
-          component: components.ViewManifest,
+          element: <Components.ViewManifest />,
         },
         {
           path: '/manifests/:manifestId/search',
           exact: true,
-          component: components.Search,
+          element: <Components.Search />,
         },
         {
           path: '/manifests/:manifestId/metadata/edit',
           exact: true,
-          component: components.SuggestMetadata,
+          element: <Components.SuggestMetadata />,
         },
         {
           path: '/manifests/:manifestId/mirador',
           exact: true,
-          component: components.ViewManifestMirador,
+          element: <Components.ViewManifestMirador />,
         },
         {
           path: '/manifests/:manifestId/uv',
           exact: true,
-          component: components.ViewManifestUV,
+          element: <Components.ViewManifestUV />,
         },
         {
           path: '/manifests/:manifestId/c/:canvasId',
-          component: components.CanvasLoader,
-          routes: [
+          element: <Components.CanvasLoader />,
+          children: [
             {
               path: '/manifests/:manifestId/c/:canvasId',
               exact: true,
-              component: components.ViewCanvas,
+              element: <Components.ViewCanvas />,
             },
             {
               path: '/manifests/:manifestId/c/:canvasId/model',
               exact: true,
-              component: components.ViewCanvasModel,
+              element: <Components.ViewCanvasModel />,
             },
             {
               path: '/manifests/:manifestId/c/:canvasId/metadata/edit',
               exact: true,
-              component: components.SuggestMetadata,
+              element: <Components.SuggestMetadata />,
             },
             {
-              path: '/:pagePath+',
-              exact: false,
-              component: components.PageLoader,
-              routes: [
+              path: '*',
+              element: <Components.PageLoader />,
+              children: [
                 {
-                  path: '/:pagePath+',
-                  component: components.ViewPage,
+                  path: '*',
+                  element: <Components.ViewPage />,
                 },
               ],
             },
           ],
         },
         {
-          path: '/:pagePath+',
-          exact: false,
-          component: components.PageLoader,
-          routes: [
+          path: '*',
+          element: <Components.PageLoader />,
+          children: [
             {
-              path: '/:pagePath+',
-              component: components.ViewPage,
+              path: '*',
+              element: <Components.ViewPage />,
             },
           ],
         },
@@ -231,18 +222,15 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
     },
     {
       path: '/projects',
-      exact: true,
-      component: components.PageLoader,
-      routes: [
+      element: <Components.PageLoader />,
+      children: [
         {
           path: '/projects',
-          component: components.ProjectListLoader,
-          exact: true,
-          routes: [
+          element: <Components.ProjectListLoader />,
+          children: [
             {
-              path: '/projects',
-              component: components.AllProjects,
-              exact: true,
+              index: true,
+              element: <Components.AllProjects />,
             },
           ],
         },
@@ -250,146 +238,143 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
     },
     {
       path: '/projects/:slug',
-      component: components.ProjectLoader,
-      routes: [
+      element: <Components.ProjectLoader />,
+      children: [
         {
           path: '/projects/:slug',
           exact: true,
-          component: components.ViewProject,
+          element: <Components.ViewProject />,
         },
         {
           path: '/projects/:slug/task-overview',
           exact: true,
-          component: components.ViewProjectTasks,
+          element: <Components.ViewProjectTasks />,
         },
         {
           path: '/projects/:slug/personal-notes',
           exact: true,
-          component: components.ViewProjectNotes,
+          element: <Components.ViewProjectNotes />,
         },
         {
           path: '/projects/:slug/search',
           exact: true,
-          component: components.Search,
+          element: <Components.Search />,
         },
         {
           path: '/projects/:slug/collections',
           exact: true,
-          component: components.CollectionListLoader,
-          routes: [
+          element: <Components.CollectionListLoader />,
+          children: [
             {
               path: '/projects/:slug/collections',
               exact: true,
-              component: components.AllCollections,
+              element: <Components.AllCollections />,
             },
           ],
         },
         {
           path: '/projects/:slug/collections/:collectionId',
-          component: components.CollectionLoader,
-          routes: [
+          element: <Components.CollectionLoader />,
+          children: [
             {
               path: '/projects/:slug/collections/:collectionId',
               exact: true,
-              component: components.ViewCollection,
+              element: <Components.ViewCollection />,
             },
             {
               path: '/projects/:slug/collections/:collectionId/search',
               exact: true,
-              component: components.Search,
+              element: <Components.Search />,
             },
             {
               path: '/projects/:slug/collections/:collectionId/metadata/edit',
               exact: true,
-              component: components.SuggestMetadata,
+              element: <Components.SuggestMetadata />,
             },
             {
               path: '/projects/:slug/collections/:collectionId/manifests/:manifestId',
-              component: components.ManifestLoader,
-              routes: [
+              element: <Components.ManifestLoader />,
+              children: [
                 {
                   path: '/projects/:slug/collections/:collectionId/manifests/:manifestId',
                   exact: true,
-                  component: components.ViewManifest,
+                  element: <Components.ViewManifest />,
                 },
                 {
                   path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/search',
                   exact: true,
-                  component: components.Search,
+                  element: <Components.Search />,
                 },
                 {
                   path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/metadata/edit',
                   exact: true,
-                  component: components.SuggestMetadata,
+                  element: <Components.SuggestMetadata />,
                 },
                 {
                   path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/mirador',
                   exact: true,
-                  component: components.ViewManifestMirador,
+                  element: <Components.ViewManifestMirador />,
                 },
                 {
                   path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/model',
                   exact: true,
-                  component: components.ViewManifestModel,
+                  element: <Components.ViewManifestModel />,
                 },
                 {
                   path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/uv',
                   exact: true,
-                  component: components.ViewManifestUV,
+                  element: <Components.ViewManifestUV />,
                 },
                 {
                   path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/c/:canvasId',
-                  component: components.CanvasLoader,
-                  routes: [
+                  element: <Components.CanvasLoader />,
+                  children: [
                     {
                       path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/c/:canvasId',
                       exact: true,
-                      component: components.ViewCanvas,
+                      element: <Components.ViewCanvas />,
                     },
                     {
                       path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/c/:canvasId/model',
                       exact: true,
-                      component: components.ViewCanvasModel,
+                      element: <Components.ViewCanvasModel />,
                     },
                     {
                       path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/c/:canvasId/metadata/edit',
                       exact: true,
-                      component: components.SuggestMetadata,
+                      element: <Components.SuggestMetadata />,
                     },
                     {
-                      path: '/:pagePath+',
-                      exact: false,
-                      component: components.PageLoader,
-                      routes: [
+                      path: '*',
+                      element: <Components.PageLoader />,
+                      children: [
                         {
-                          path: '/:pagePath+',
-                          component: components.ViewPage,
+                          path: '*',
+                          element: <Components.ViewPage />,
                         },
                       ],
                     },
                   ],
                 },
                 {
-                  path: '/:pagePath+',
-                  exact: false,
-                  component: components.PageLoader,
-                  routes: [
+                  path: '*',
+                  element: <Components.PageLoader />,
+                  children: [
                     {
-                      path: '/:pagePath+',
-                      component: components.ViewPage,
+                      path: '*',
+                      element: <Components.ViewPage />,
                     },
                   ],
                 },
               ],
             },
             {
-              path: '/:pagePath+',
-              exact: false,
-              component: components.PageLoader,
-              routes: [
+              path: '*',
+              element: <Components.PageLoader />,
+              children: [
                 {
-                  path: '/:pagePath+',
-                  component: components.ViewPage,
+                  path: '*',
+                  element: <Components.ViewPage />,
                 },
               ],
             },
@@ -397,85 +382,83 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
         },
         {
           path: '/projects/:slug/manifests',
-          component: components.ManifestListLoader,
+          element: <Components.ManifestListLoader />,
           exact: true,
-          routes: [
+          children: [
             {
               path: '/projects/:slug/manifests',
-              component: components.AllManifests,
+              element: <Components.AllManifests />,
               exact: true,
             },
           ],
         },
         {
           path: '/projects/:slug/manifests/:manifestId',
-          component: components.ManifestLoader,
-          routes: [
+          element: <Components.ManifestLoader />,
+          children: [
             {
               path: '/projects/:slug/manifests/:manifestId',
               exact: true,
-              component: components.ViewManifest,
+              element: <Components.ViewManifest />,
             },
             {
               path: '/projects/:slug/manifests/:manifestId/search',
               exact: true,
-              component: components.Search,
+              element: <Components.Search />,
             },
             {
               path: '/projects/:slug/manifests/:manifestId/metadata/edit',
               exact: true,
-              component: components.SuggestMetadata,
+              element: <Components.SuggestMetadata />,
             },
             {
               path: '/projects/:slug/manifests/:manifestId/mirador',
               exact: true,
-              component: components.ViewManifestMirador,
+              element: <Components.ViewManifestMirador />,
             },
             {
               path: '/projects/:slug/manifests/:manifestId/model',
               exact: true,
-              component: components.ViewManifestModel,
+              element: <Components.ViewManifestModel />,
             },
             {
               path: '/projects/:slug/manifests/:manifestId/c/:canvasId',
-              component: components.CanvasLoader,
-              routes: [
+              element: <Components.CanvasLoader />,
+              children: [
                 {
                   path: '/projects/:slug/manifests/:manifestId/c/:canvasId',
                   exact: true,
-                  component: components.ViewCanvas,
+                  element: <Components.ViewCanvas />,
                 },
                 {
                   path: '/projects/:slug/manifests/:manifestId/c/:canvasId/model',
                   exact: true,
-                  component: components.ViewCanvasModel,
+                  element: <Components.ViewCanvasModel />,
                 },
                 {
                   path: '/projects/:slug/manifests/:manifestId/c/:canvasId/metadata/edit',
                   exact: true,
-                  component: components.SuggestMetadata,
+                  element: <Components.SuggestMetadata />,
                 },
                 {
-                  path: '/:pagePath+',
-                  exact: false,
-                  component: components.PageLoader,
-                  routes: [
+                  path: '*',
+                  element: <Components.PageLoader />,
+                  children: [
                     {
-                      path: '/:pagePath+',
-                      component: components.ViewPage,
+                      path: '*',
+                      element: <Components.ViewPage />,
                     },
                   ],
                 },
               ],
             },
             {
-              path: '/:pagePath+',
-              exact: false,
-              component: components.PageLoader,
-              routes: [
+              path: '*',
+              element: <Components.PageLoader />,
+              children: [
                 {
-                  path: '/:pagePath+',
-                  component: components.ViewPage,
+                  path: '*',
+                  element: <Components.ViewPage />,
                 },
               ],
             },
@@ -483,21 +466,20 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
         },
         {
           path: '/projects/:slug/reviews',
-          component: components.ReviewListingPage,
+          element: <Components.ReviewListingPage />,
           exact: true,
         },
         {
           path: '/projects/:slug/reviews/:taskId',
-          component: components.ReviewListingPage,
-          routes: [
+          element: <Components.ReviewListingPage />,
+          children: [
             {
               path: '/projects/:slug/reviews/:taskId',
-              component: components.TaskLoader,
-              routes: [
+              element: <Components.TaskLoader />,
+              children: [
                 {
-                  path: '/projects/:slug/reviews/:taskId',
-                  exact: true,
-                  component: components.SingleReview,
+                  index: true,
+                  element: <Components.SingleReview />,
                 },
               ],
             },
@@ -505,39 +487,38 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
         },
         {
           path: '/projects/:slug/tasks',
-          component: components.AllTasks,
+          element: <Components.AllTasks />,
           exact: true,
         },
         {
           path: '/projects/:slug/tasks/:taskId',
-          component: components.AllTasks,
-          routes: [
+          element: <Components.AllTasks />,
+          children: [
             {
               path: '/projects/:slug/tasks/:taskId',
-              component: components.TaskLoader,
-              routes: [
+              element: <Components.TaskLoader />,
+              children: [
                 {
-                  path: '/projects/:slug/tasks/:taskId',
+                  index: true,
                   exact: true,
-                  component: components.ViewTask,
+                  element: <Components.ViewTask />,
                 },
                 {
-                  path: '/projects/:slug/tasks/:parentTaskId/subtasks/:taskId',
+                  path: 'subtasks/:childTaskId',
                   exact: true,
-                  component: components.ViewTask,
+                  element: <Components.ViewTask />,
                 },
               ],
             },
           ],
         },
         {
-          path: '/:pagePath+',
-          exact: false,
-          component: components.PageLoader,
-          routes: [
+          path: '*',
+          element: <Components.PageLoader />,
+          children: [
             {
-              path: '/:pagePath+',
-              component: components.ViewPage,
+              path: '*',
+              element: <Components.ViewPage />,
             },
           ],
         },
@@ -545,26 +526,24 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
     },
     {
       path: '/tasks',
-      component: components.AllTasks,
+      element: <Components.AllTasks />,
       exact: true,
     },
     {
       path: '/tasks/:taskId',
-      component: components.AllTasks,
-      routes: [
+      element: <Components.AllTasks />,
+      children: [
         {
           path: '/tasks/:taskId',
-          component: components.TaskLoader,
-          routes: [
+          element: <Components.TaskLoader />,
+          children: [
             {
-              path: '/tasks/:taskId',
-              exact: true,
-              component: components.ViewTask,
+              index: true,
+              element: <Components.ViewTask />,
             },
             {
-              path: '/tasks/:parentTaskId/subtasks/:taskId',
-              exact: true,
-              component: components.ViewTask,
+              path: 'subtasks/:childTaskId',
+              element: <Components.ViewTask />,
             },
           ],
         },
@@ -573,110 +552,106 @@ export function createRoutes(components: RouteComponents): CreateRouteType {
     {
       path: '/users/:id',
       exact: true,
-      component: components.ViewUser,
+      element: <Components.ViewUser />,
     },
     {
       path: '/search',
       exact: true,
-      component: components.Search,
+      element: <Components.Search />,
     },
     {
       path: '/dashboard',
-      component: components.UserHomepage,
-      routes: [
+      element: <Components.UserHomepage />,
+      children: [
         {
           path: '/dashboard',
           exact: true,
-          component: components.UserDashboard,
+          element: <Components.UserDashboard />,
         },
         {
           path: '/dashboard/contributions',
           exact: true,
-          component: components.UserContributions,
+          element: <Components.UserContributions />,
         },
         {
           path: '/dashboard/my-sites',
           exact: true,
-          component: components.MySites,
+          element: <Components.MySites />,
         },
         {
           path: '/dashboard/reviews',
           exact: true,
-          component: components.UserReviews,
+          element: <Components.UserReviews />,
         },
         {
           path: '/dashboard',
           // Fallback here.
-          component: components.UserDashboard,
+          element: <Components.UserDashboard />,
         },
       ],
     },
     {
       path: '/',
-      exact: true,
-      component: components.PageLoader,
-      routes: [
+      element: <Components.PageLoader />,
+      children: [
         {
           path: '/',
-          exact: true,
-          component: components.Homepage,
+          element: <Components.Homepage />,
         },
       ],
     },
     {
       path: '/login',
       exact: true,
-      component: components.LoginPage,
+      element: <Components.LoginPage />,
     },
     {
       path: '/forgot-password',
       exact: true,
-      component: components.ForgotPasswordPage,
+      element: <Components.ForgotPasswordPage />,
     },
     {
       path: '/activate-account',
       exact: true,
-      component: components.ResetPassword,
+      element: <Components.ResetPassword />,
     },
     {
       path: '/reset-password',
       exact: true,
-      component: components.ResetPassword,
+      element: <Components.ResetPassword />,
     },
     {
       path: '/register',
       exact: true,
-      component: components.Register,
+      element: <Components.Register />,
     },
     {
       path: '/profile',
       exact: true,
-      component: components.ProfilePage,
+      element: <Components.ProfilePage />,
     },
     {
       path: '/profile/password',
       exact: true,
-      component: components.UpdatePasswordPage,
+      element: <Components.UpdatePasswordPage />,
     },
   ];
 
   return {
     baseRoute: {
       path: '/',
-      exact: false,
-      component: components.RootLoader,
+      element: <Components.RootLoader />,
     },
     fallback: {
-      path: '/:pagePath+',
-      exact: false,
-      component: components.PageLoader,
-      routes: [
+      path: '*',
+      element: <Components.PageLoader />,
+      children: [
         {
-          path: '/:pagePath+',
-          component: components.ViewPage,
+          path: '*',
+          element: <Components.ViewPage />,
         },
       ],
     },
-    routes,
+    routes: routes,
   };
 }
