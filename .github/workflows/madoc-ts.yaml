@@ -33,9 +33,6 @@ on:
 jobs:
   madoc-ts-build:
     runs-on: ubuntu-latest
-    env:
-      NODE_OPTIONS: --max-old-space-size=4096
-
     name: Node build
     steps:
       - uses: actions/checkout@v2
