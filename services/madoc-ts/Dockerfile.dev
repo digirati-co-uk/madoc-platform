@@ -13,7 +13,6 @@ RUN yarn install --no-dev --no-interactive --frozen-lockfile
 COPY ./schemas /home/node/app/schemas
 COPY ./src /home/node/app/src
 COPY ./ecosystem.config.cjs /home/node/app/ecosystem.config.cjs
-COPY ./migrate.js /home/node/app/migrate.js
 COPY ./tsconfig.json /home/node/app/tsconfig.json
 COPY ./tsconfig.frontend.json /home/node/app/tsconfig.frontend.json
 COPY ./migrations /home/node/app/migrations

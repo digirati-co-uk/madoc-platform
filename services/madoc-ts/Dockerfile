@@ -76,7 +76,6 @@ RUN mkdir -p /home/node/app/service-jwt && \
 
 USER node
 
-COPY ./migrate.js /home/node/app/migrate.js
 COPY ./migrations /home/node/app/migrations
 COPY ./service-jwts /home/node/app/service-jwts
 COPY ./config.json /home/node/app/config.json
