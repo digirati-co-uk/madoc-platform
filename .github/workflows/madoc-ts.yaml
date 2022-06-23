@@ -33,6 +33,8 @@ on:
 jobs:
   madoc-ts-build:
     runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --max-old-space-size=4096
 
     name: Node build
     steps:
@@ -40,7 +42,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v1
         with:
-          node-version: 14
+          node-version: 18
 
       - name: Get yarn cache
         id: yarn-cache
