@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { ThemeProvider } from 'styled-components/macro';
+import { ThemeProvider } from 'styled-components';
 import { FieldInstance } from '../../src/frontend/shared/capture-models/editor/connected-components/FieldInstance';
 import { Revisions as RevisionStore } from '../../src/frontend/shared/capture-models/editor/stores/revisions/index';
 import { defaultTheme } from '../../src/frontend/shared/capture-models/editor/themes';
-import AtlasViewer from '../../src/frontend/shared/capture-models/editor/content-types/Atlas/Atlas';
+import { default as AtlasViewer } from '../../src/frontend/shared/capture-models/editor/content-types/Atlas/Atlas';
 import '../../src/frontend/shared/capture-models/editor/content-types/Atlas/index';
 import { FieldInstanceReadOnly } from '../../src/frontend/shared/capture-models/editor/components/FieldInstanceReadOnly/FieldInstanceReadOnly';
 import { useEffect, useState } from 'react';
