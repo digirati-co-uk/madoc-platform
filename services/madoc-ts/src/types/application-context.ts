@@ -16,6 +16,7 @@ import { ExternalConfig } from './external-config';
 import { router } from '../router';
 import { DatabasePoolConnectionType } from 'slonik';
 import { Ajv } from 'ajv';
+import {ApiKeyRepository} from '../repository/api-key-repository';
 
 type AllRoutes = typeof router;
 
@@ -29,6 +30,7 @@ declare module 'koa' {
     plugins: PluginRepository;
     themes: ThemeRepository;
     media: MediaRepository;
+    apiKeys: ApiKeyRepository;
     annotationStyles: AnnotationStylesRepository;
     mailer: Mailer;
     notifications: NotificationRepository;

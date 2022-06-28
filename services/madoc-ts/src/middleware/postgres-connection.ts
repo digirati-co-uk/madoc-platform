@@ -8,6 +8,7 @@ import { PageBlocksRepository } from '../repository/page-blocks-repository';
 import { PluginRepository } from '../repository/plugin-repository';
 import { ProjectRepository } from '../repository/project-repository';
 import { ThemeRepository } from '../repository/theme-repository';
+import { ApiKeyRepository } from '../repository/api-key-repository';
 
 export const postgresConnection = (pool: DatabasePoolType, useConnections = false): Middleware => async (
   context,
@@ -19,6 +20,7 @@ export const postgresConnection = (pool: DatabasePoolType, useConnections = fals
     // Set up repositories.
     context.pageBlocks = new PageBlocksRepository(connection);
     context.media = new MediaRepository(connection);
+    context.apiKeys = new ApiKeyRepository(connection);
     context.plugins = new PluginRepository(connection);
     context.themes = new ThemeRepository(connection);
     context.changeDiscovery = new ChangeDiscoveryRepository(connection);
