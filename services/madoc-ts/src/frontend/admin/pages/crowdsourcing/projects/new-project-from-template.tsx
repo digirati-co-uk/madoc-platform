@@ -2,7 +2,7 @@ import { InternationalString } from '@iiif/presentation-3';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { useParams } from 'react-router-dom';
+import {useLocation, useParams} from 'react-router-dom';
 import slugify from 'slugify';
 import { CreateProject } from '../../../../../types/schemas/create-project';
 import { ErrorMessage } from '../../../../shared/callouts/ErrorMessage';
@@ -27,7 +27,9 @@ const CUSTOM_CONFIG = 3;
 export const NewProjectFromTemplate: React.FC = () => {
   const api = useApi();
   const { t } = useTranslation();
-  const { template: chosenTemplateType } = useParams<{ template: string }>();
+  const location = useLocation();
+  const chosenTemplateType = location.pathname.split('/create/')[1];
+
   const [label, setLabel] = useState<InternationalString>({ en: [''] });
   const [summary, setSummary] = useState<InternationalString>({ en: [''] });
   const [slug, setSlug] = useState('');
