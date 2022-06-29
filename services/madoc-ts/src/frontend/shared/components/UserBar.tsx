@@ -29,7 +29,7 @@ const UserBarContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  z-index: 11; // 10 = image viewer, this allows the notification center to be above.
+  z-index: 21; // 20 = image viewer controls, this allows the notification center to be above.
   padding: 0 18px;
 `;
 

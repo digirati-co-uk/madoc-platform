@@ -37,7 +37,7 @@ const NotificationContainer = styled.div<{ $visible?: boolean }>`
   top: 36px;
   right: -40px;
   overflow: hidden;
-  z-index: 15;
+  z-index: 21;
 
   color: #000;
   background: #ffffff;

@@ -21,6 +21,7 @@ import { DefaultSingleEntity } from './DefaultSingleEntity';
 import { DefaultSingleField } from './DefaultSingleField';
 import { DefaultSubmitButton } from './DefaultSubmitButton';
 import { DefaultTopLevelEditor } from './DefaultTopLevelEditor';
+import invariant from 'tiny-invariant';
 
 // Driven by context.
 
@@ -108,30 +109,43 @@ const defaultEditorConfig: EditorConfig = {
   immutableFields: [],
 };
 
-const Context = React.createContext<EditorRenderingConfig>({
-  configuration: {
-    ...defaultEditorConfig,
-  },
-  TopLevelEditor: DefaultTopLevelEditor,
-  InlineField: DefaultInlineField,
-  InlineEntity: DefaultInlineEntity,
-  InlineSelector: DefaultInlineSelector,
-  FieldInstance: DefaultFieldInstance,
-  ManagePropertyList: DefaultManagePropertyList,
-  Breadcrumbs: DefaultBreadcrumbs,
-  SingleEntity: DefaultSingleEntity,
-  SingleField: DefaultSingleField,
-  AdjacentNavigation: DefaultAdjacentNavigation,
-  InlineProperties: DefaultInlineProperties,
-  Choice: DefaultChoice,
-  SubmitButton: DefaultSubmitButton,
-  PreviewSubmission: DefaultPreviewSubmission,
-  PostSubmission: DefaultPostSubmission,
-  EditorWrapper: DefaultEditorWrapper,
-});
+const globalDefaultContextRef: { state: EditorRenderingConfig | null } = { state: null };
+
+export function getDefaultContextValue(): EditorRenderingConfig {
+  if (!globalDefaultContextRef.state) {
+    globalDefaultContextRef.state = {
+      configuration: {
+        ...defaultEditorConfig,
+      },
+      TopLevelEditor: DefaultTopLevelEditor,
+      InlineField: DefaultInlineField,
+      InlineEntity: DefaultInlineEntity,
+      InlineSelector: DefaultInlineSelector,
+      FieldInstance: DefaultFieldInstance,
+      ManagePropertyList: DefaultManagePropertyList,
+      Breadcrumbs: DefaultBreadcrumbs,
+      SingleEntity: DefaultSingleEntity,
+      SingleField: DefaultSingleField,
+      AdjacentNavigation: DefaultAdjacentNavigation,
+      InlineProperties: DefaultInlineProperties,
+      Choice: DefaultChoice,
+      SubmitButton: DefaultSubmitButton,
+      PreviewSubmission: DefaultPreviewSubmission,
+      PostSubmission: DefaultPostSubmission,
+      EditorWrapper: DefaultEditorWrapper,
+    };
+  }
+  return globalDefaultContextRef.state;
+}
+
+const Context = React.createContext<EditorRenderingConfig | null>(null);
 
 export function useSlotContext() {
-  return useContext(Context);
+  const ctx = useContext(Context);
+  if (!ctx) {
+    return getDefaultContextValue();
+  }
+  return ctx;
 }
 
 export function useSlotConfiguration() {

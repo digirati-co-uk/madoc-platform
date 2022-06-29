@@ -497,11 +497,12 @@ export const revisionStore: RevisionsModel = {
       const oldRevision = state.revisions[revisionId];
       if (state.unsavedRevisionIds.indexOf(revisionId) !== -1) {
         const newRevision = await createRevision(oldRevision, status);
-        actions.importRevision({ revisionRequest: newRevision });
+        // actions.importRevision({ revisionRequest: newRevision });
         actions.saveRevision({ revisionId });
       } else {
+        // disable this for now.
         const newRevision = await updateRevision(oldRevision, status);
-        actions.importRevision({ revisionRequest: newRevision });
+        // actions.importRevision({ revisionRequest: newRevision });
       }
     }
   ),

@@ -261,10 +261,13 @@ export function forkDocument<Fields extends string>(
 
       const hasParentDocumentBranched = actions.parentHasBranched(parent);
       const isDocumentImmutable = !!entity.immutable; // i.e. the forking has to start later in the tree.
+      const isEmptyRootDocument = entity.allowMultiple && editValues && (isDocumentImmutable || !entity.revision);
       const isEditingIndividualFields = !!(fieldsToEdit && fieldsToEdit.length);
       const isInModelMapping = modelMapping[key as Fields] === entity.id;
       const willBranch =
-        !!parent && !isEditingIndividualFields && (hasParentDocumentBranched || (!isDocumentImmutable && !editValues));
+        !!parent &&
+        !isEditingIndividualFields &&
+        (isEmptyRootDocument || hasParentDocumentBranched || (!isDocumentImmutable && !editValues));
 
       // - if parent has branched, we NEED to branch. This can only happen if other cases pass, so we can
       // safely do this.
