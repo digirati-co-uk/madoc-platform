@@ -1,6 +1,10 @@
-const { genSalt, hash } = require('bcrypt');
-const { red, white, bold, bgMagenta, bgGreen } = require('chalk');
-const readline = require('readline').createInterface({
+import { genSalt, hash } from 'bcrypt';
+import chalk from 'chalk';
+import { createInterface } from 'readline';
+
+const { bgGreen, bgMagenta, bold, red, white } = chalk;
+
+const readline = createInterface({
   input: process.stdin,
   output: process.stdout,
 });
