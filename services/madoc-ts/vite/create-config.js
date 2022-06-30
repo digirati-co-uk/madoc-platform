@@ -5,6 +5,7 @@ const pkg = JSON.parse(readFileSync('./package.json').toString());
 
 export const ENV = [
   'NODE_ENV',
+  'MIGRATE',
   'API_GATEWAY',
   'GATEWAY_HOST',
   'NODE_APP_INSTANCE',
