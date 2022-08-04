@@ -2,7 +2,6 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { Button, SmallButton } from '../../src/frontend/shared/navigation/Button';
 import { Breadcrumbs } from '../../src/frontend/shared/navigation/Breadcrumbs';
-import {} from 'react-router-dom';
 import { SearchBox } from '../../src/frontend/shared/atoms/SearchBox';
 import { Dropdown } from '../../src/frontend/shared/capture-models/editor/atoms/Dropdown';
 import { StandardButton } from '../../src/frontend/shared/atoms/StandardButton';

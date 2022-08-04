@@ -37,233 +37,239 @@ const projects = [
 
 export const NormalUser: React.FC = () => {
   return (
-    <StorybookPaddedBox>
-      <Heading1 $margin>Welcome back Stephen</Heading1>
-      <div>
-        <TinyButton>Manage account</TinyButton>
-      </div>
-      <div>
-        <StatisticContainer>
-          <Statistic>
-            <StatisticNumber>{12}</StatisticNumber>
-            <StatisticLabel>Bookmarks</StatisticLabel>
-          </Statistic>
-          <Statistic>
-            <StatisticNumber>{0}</StatisticNumber>
-            <StatisticLabel>Accepted contributions</StatisticLabel>
-          </Statistic>
-          <Statistic>
-            <StatisticNumber>{0}</StatisticNumber>
-            <StatisticLabel>Total contributions</StatisticLabel>
-          </Statistic>
-        </StatisticContainer>
-      </div>
-      <Heading3 $margin>Active projects</Heading3>
-      <ProjectListing projects={projects} label="View project" />
-    </StorybookPaddedBox>
+    <>
+      <StorybookPaddedBox>
+        <Heading1 $margin>Welcome back Stephen</Heading1>
+        <div>
+          <TinyButton>Manage account</TinyButton>
+        </div>
+        <div>
+          <StatisticContainer>
+            <Statistic>
+              <StatisticNumber>{12}</StatisticNumber>
+              <StatisticLabel>Bookmarks</StatisticLabel>
+            </Statistic>
+            <Statistic>
+              <StatisticNumber>{0}</StatisticNumber>
+              <StatisticLabel>Accepted contributions</StatisticLabel>
+            </Statistic>
+            <Statistic>
+              <StatisticNumber>{0}</StatisticNumber>
+              <StatisticLabel>Total contributions</StatisticLabel>
+            </Statistic>
+          </StatisticContainer>
+        </div>
+        <Heading3 $margin>Active projects</Heading3>
+        <ProjectListing projects={projects} label="View project" />
+      </StorybookPaddedBox>
+    </>
   );
 };
 
 export const Contributor: React.FC = () => {
   return (
-    <StorybookPaddedBox>
-      <Heading1 $margin>Welcome back Stephen</Heading1>
-      <div>
-        <TinyButton>Manage account</TinyButton>
-      </div>
-      <div>
-        <StatisticContainer>
-          <Statistic>
-            <StatisticNumber>{12}</StatisticNumber>
-            <StatisticLabel>Bookmarks</StatisticLabel>
-          </Statistic>
-          <Statistic>
-            <StatisticNumber>{36}</StatisticNumber>
-            <StatisticLabel>Accepted contributions</StatisticLabel>
-          </Statistic>
-          <Statistic>
-            <StatisticNumber>{98}</StatisticNumber>
-            <StatisticLabel>Total contributions</StatisticLabel>
-          </Statistic>
-        </StatisticContainer>
-      </div>
+    <>
+      <StorybookPaddedBox>
+        <Heading1 $margin>Welcome back Stephen</Heading1>
+        <div>
+          <TinyButton>Manage account</TinyButton>
+        </div>
+        <div>
+          <StatisticContainer>
+            <Statistic>
+              <StatisticNumber>{12}</StatisticNumber>
+              <StatisticLabel>Bookmarks</StatisticLabel>
+            </Statistic>
+            <Statistic>
+              <StatisticNumber>{36}</StatisticNumber>
+              <StatisticLabel>Accepted contributions</StatisticLabel>
+            </Statistic>
+            <Statistic>
+              <StatisticNumber>{98}</StatisticNumber>
+              <StatisticLabel>Total contributions</StatisticLabel>
+            </Statistic>
+          </StatisticContainer>
+        </div>
 
-      <Heading3>Your contributions</Heading3>
-      <GridContainer>
-        <HalfGird $margin>
-          <Subheading3>Contributions in progress</Subheading3>
-          <TableContainer>
-            <TableRow>
-              <TableRowLabel>
-                <Status status={1} text="Accepted" />
-              </TableRowLabel>
-              <TableRowLabel>
-                <a href="#">Contribution to something something</a>
-              </TableRowLabel>
-            </TableRow>
-            <TableRow>
-              <TableRowLabel>
-                <Status status={1} text="In progress" />
-              </TableRowLabel>
-              <TableRowLabel>
-                <a href="#">Contribution to something something</a>
-              </TableRowLabel>
-            </TableRow>
-            <TableRow>
-              <TableRowLabel>
-                <Status status={1} text="In progress" />
-              </TableRowLabel>
-              <TableRowLabel>
-                <a href="#">Contribution to something something</a>
-              </TableRowLabel>
-            </TableRow>
-          </TableContainer>
-        </HalfGird>
-        <HalfGird $margin>
-          <Subheading3>Contributions in review</Subheading3>
-          <TableContainer>
-            <TableRow>
-              <TableRowLabel>
-                <Status status={5} text="In review" />
-              </TableRowLabel>
-              <TableRowLabel>
-                <a href="#">Contribution to something something</a>
-              </TableRowLabel>
-            </TableRow>
-            <TableRow>
-              <TableRowLabel>
-                <Status status={5} text="In review" />
-              </TableRowLabel>
-              <TableRowLabel>
-                <a href="#">Contribution to something something</a>
-              </TableRowLabel>
-            </TableRow>
-          </TableContainer>
-        </HalfGird>
-      </GridContainer>
-      <TinyButton>Browse all contributions</TinyButton>
+        <Heading3>Your contributions</Heading3>
+        <GridContainer>
+          <HalfGird $margin>
+            <Subheading3>Contributions in progress</Subheading3>
+            <TableContainer>
+              <TableRow>
+                <TableRowLabel>
+                  <Status status={1} text="Accepted" />
+                </TableRowLabel>
+                <TableRowLabel>
+                  <a href="#">Contribution to something something</a>
+                </TableRowLabel>
+              </TableRow>
+              <TableRow>
+                <TableRowLabel>
+                  <Status status={1} text="In progress" />
+                </TableRowLabel>
+                <TableRowLabel>
+                  <a href="#">Contribution to something something</a>
+                </TableRowLabel>
+              </TableRow>
+              <TableRow>
+                <TableRowLabel>
+                  <Status status={1} text="In progress" />
+                </TableRowLabel>
+                <TableRowLabel>
+                  <a href="#">Contribution to something something</a>
+                </TableRowLabel>
+              </TableRow>
+            </TableContainer>
+          </HalfGird>
+          <HalfGird $margin>
+            <Subheading3>Contributions in review</Subheading3>
+            <TableContainer>
+              <TableRow>
+                <TableRowLabel>
+                  <Status status={5} text="In review" />
+                </TableRowLabel>
+                <TableRowLabel>
+                  <a href="#">Contribution to something something</a>
+                </TableRowLabel>
+              </TableRow>
+              <TableRow>
+                <TableRowLabel>
+                  <Status status={5} text="In review" />
+                </TableRowLabel>
+                <TableRowLabel>
+                  <a href="#">Contribution to something something</a>
+                </TableRowLabel>
+              </TableRow>
+            </TableContainer>
+          </HalfGird>
+        </GridContainer>
+        <TinyButton>Browse all contributions</TinyButton>
 
-      <Heading3 $margin>Active projects</Heading3>
-      <ProjectListing projects={projects} label="View project" onContribute={() => void 0} />
-    </StorybookPaddedBox>
+        <Heading3 $margin>Active projects</Heading3>
+        <ProjectListing projects={projects} label="View project" onContribute={() => void 0} />
+      </StorybookPaddedBox>
+    </>
   );
 };
 
 export const Reviewer: React.FC = () => {
   return (
-    <StorybookPaddedBox>
-      <Heading1 $margin>Welcome back Stephen</Heading1>
-      <div>
-        <TinyButton>Manage account</TinyButton>
-      </div>
-      <div>
-        <StatisticContainer>
-          <Statistic>
-            <StatisticNumber>{12}</StatisticNumber>
-            <StatisticLabel>Bookmarks</StatisticLabel>
-          </Statistic>
-          <Statistic>
-            <StatisticNumber>{492}</StatisticNumber>
-            <StatisticLabel>Reviewed contributions</StatisticLabel>
-          </Statistic>
-          <Statistic>
-            <StatisticNumber>{36}</StatisticNumber>
-            <StatisticLabel>Accepted contributions</StatisticLabel>
-          </Statistic>
-          <Statistic>
-            <StatisticNumber>{98}</StatisticNumber>
-            <StatisticLabel>Total contributions</StatisticLabel>
-          </Statistic>
-        </StatisticContainer>
-      </div>
+    <>
+      <StorybookPaddedBox>
+        <Heading1 $margin>Welcome back Stephen</Heading1>
+        <div>
+          <TinyButton>Manage account</TinyButton>
+        </div>
+        <div>
+          <StatisticContainer>
+            <Statistic>
+              <StatisticNumber>{12}</StatisticNumber>
+              <StatisticLabel>Bookmarks</StatisticLabel>
+            </Statistic>
+            <Statistic>
+              <StatisticNumber>{492}</StatisticNumber>
+              <StatisticLabel>Reviewed contributions</StatisticLabel>
+            </Statistic>
+            <Statistic>
+              <StatisticNumber>{36}</StatisticNumber>
+              <StatisticLabel>Accepted contributions</StatisticLabel>
+            </Statistic>
+            <Statistic>
+              <StatisticNumber>{98}</StatisticNumber>
+              <StatisticLabel>Total contributions</StatisticLabel>
+            </Statistic>
+          </StatisticContainer>
+        </div>
 
-      <Heading3>Reviews</Heading3>
-      <TableContainer>
-        <TableRow>
-          <TableRowLabel>
-            <Status status={1} text="Accepted" />
-          </TableRowLabel>
-          <TableRowLabel>
-            <a href="#">Contribution to something something</a>
-          </TableRowLabel>
-        </TableRow>
-        <TableRow>
-          <TableRowLabel>
-            <Status status={1} text="In progress" />
-          </TableRowLabel>
-          <TableRowLabel>
-            <a href="#">Contribution to something something</a>
-          </TableRowLabel>
-        </TableRow>
-        <TableRow>
-          <TableRowLabel>
-            <Status status={1} text="In progress" />
-          </TableRowLabel>
-          <TableRowLabel>
-            <a href="#">Contribution to something something</a>
-          </TableRowLabel>
-        </TableRow>
-      </TableContainer>
-      <TinyButton>Browse all reviews</TinyButton>
+        <Heading3>Reviews</Heading3>
+        <TableContainer>
+          <TableRow>
+            <TableRowLabel>
+              <Status status={1} text="Accepted" />
+            </TableRowLabel>
+            <TableRowLabel>
+              <a href="#">Contribution to something something</a>
+            </TableRowLabel>
+          </TableRow>
+          <TableRow>
+            <TableRowLabel>
+              <Status status={1} text="In progress" />
+            </TableRowLabel>
+            <TableRowLabel>
+              <a href="#">Contribution to something something</a>
+            </TableRowLabel>
+          </TableRow>
+          <TableRow>
+            <TableRowLabel>
+              <Status status={1} text="In progress" />
+            </TableRowLabel>
+            <TableRowLabel>
+              <a href="#">Contribution to something something</a>
+            </TableRowLabel>
+          </TableRow>
+        </TableContainer>
+        <TinyButton>Browse all reviews</TinyButton>
 
-      <Heading3>Your contributions</Heading3>
-      <GridContainer>
-        <HalfGird $margin>
-          <Subheading3>Contributions in progress</Subheading3>
-          <TableContainer>
-            <TableRow>
-              <TableRowLabel>
-                <Status status={1} text="Accepted" />
-              </TableRowLabel>
-              <TableRowLabel>
-                <a href="#">Contribution to something something</a>
-              </TableRowLabel>
-            </TableRow>
-            <TableRow>
-              <TableRowLabel>
-                <Status status={1} text="In progress" />
-              </TableRowLabel>
-              <TableRowLabel>
-                <a href="#">Contribution to something something</a>
-              </TableRowLabel>
-            </TableRow>
-            <TableRow>
-              <TableRowLabel>
-                <Status status={1} text="In progress" />
-              </TableRowLabel>
-              <TableRowLabel>
-                <a href="#">Contribution to something something</a>
-              </TableRowLabel>
-            </TableRow>
-          </TableContainer>
-        </HalfGird>
-        <HalfGird $margin>
-          <Subheading3>Contributions in review</Subheading3>
-          <TableContainer>
-            <TableRow>
-              <TableRowLabel>
-                <Status status={5} text="In review" />
-              </TableRowLabel>
-              <TableRowLabel>
-                <a href="#">Contribution to something something</a>
-              </TableRowLabel>
-            </TableRow>
-            <TableRow>
-              <TableRowLabel>
-                <Status status={5} text="In review" />
-              </TableRowLabel>
-              <TableRowLabel>
-                <a href="#">Contribution to something something</a>
-              </TableRowLabel>
-            </TableRow>
-          </TableContainer>
-        </HalfGird>
-      </GridContainer>
-      <TinyButton>Browse all contributions</TinyButton>
+        <Heading3>Your contributions</Heading3>
+        <GridContainer>
+          <HalfGird $margin>
+            <Subheading3>Contributions in progress</Subheading3>
+            <TableContainer>
+              <TableRow>
+                <TableRowLabel>
+                  <Status status={1} text="Accepted" />
+                </TableRowLabel>
+                <TableRowLabel>
+                  <a href="#">Contribution to something something</a>
+                </TableRowLabel>
+              </TableRow>
+              <TableRow>
+                <TableRowLabel>
+                  <Status status={1} text="In progress" />
+                </TableRowLabel>
+                <TableRowLabel>
+                  <a href="#">Contribution to something something</a>
+                </TableRowLabel>
+              </TableRow>
+              <TableRow>
+                <TableRowLabel>
+                  <Status status={1} text="In progress" />
+                </TableRowLabel>
+                <TableRowLabel>
+                  <a href="#">Contribution to something something</a>
+                </TableRowLabel>
+              </TableRow>
+            </TableContainer>
+          </HalfGird>
+          <HalfGird $margin>
+            <Subheading3>Contributions in review</Subheading3>
+            <TableContainer>
+              <TableRow>
+                <TableRowLabel>
+                  <Status status={5} text="In review" />
+                </TableRowLabel>
+                <TableRowLabel>
+                  <a href="#">Contribution to something something</a>
+                </TableRowLabel>
+              </TableRow>
+              <TableRow>
+                <TableRowLabel>
+                  <Status status={5} text="In review" />
+                </TableRowLabel>
+                <TableRowLabel>
+                  <a href="#">Contribution to something something</a>
+                </TableRowLabel>
+              </TableRow>
+            </TableContainer>
+          </HalfGird>
+        </GridContainer>
+        <TinyButton>Browse all contributions</TinyButton>
 
-      <Heading3 $margin>Active projects</Heading3>
-      <ProjectListing projects={projects} label="View project" onContribute={() => void 0} />
-    </StorybookPaddedBox>
+        <Heading3 $margin>Active projects</Heading3>
+        <ProjectListing projects={projects} label="View project" onContribute={() => void 0} />
+      </StorybookPaddedBox>
+    </>
   );
 };
 
