@@ -26,7 +26,7 @@ export function useSearchQuery() {
         })}`
       );
     },
-    [history, pathname]
+    [pathname]
   );
 
   const rawQuery = useMemo(

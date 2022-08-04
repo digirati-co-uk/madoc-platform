@@ -3,10 +3,9 @@ import { defaultTheme } from '../../themes';
 import { FieldInstanceList } from './FieldInstanceList';
 import { ThemeProvider } from 'styled-components';
 
+import simple from '../../../../../../../fixtures/01-basic/05-multiple-fields-multiple-values.json';
+
 export default { title: 'Legacy/Field instance list' };
-
-const simple = require('../../../../../../../fixtures/01-basic/05-multiple-fields-multiple-values.json');
-
 export const SimpleExample: React.FC = () => {
   return (
     <ThemeProvider theme={defaultTheme}>

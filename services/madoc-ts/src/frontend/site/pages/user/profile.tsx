@@ -24,7 +24,7 @@ export const ProfilePage: React.FC = () => {
     if (!query.success && form?.success) {
       navigate(`/profile?${stringify({ success: true })}`);
     }
-  }, [history, query, form]);
+  }, [query, form]);
 
   if (!user) {
     return <Navigate to={'/'} />;

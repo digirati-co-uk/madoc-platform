@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import * as React from 'react';
-import { MemoryRouter } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { StatusIcon, StatusWrapper } from '../../src/frontend/shared/atoms/Status';
 import { TaskListContainer, TaskListInnerContainer } from '../../src/frontend/shared/atoms/TaskList';
@@ -15,7 +14,7 @@ export const TasksOverview = () => {
 
 export const SingleTaskSnippet = () => {
   return (
-    <MemoryRouter>
+    <>
       <div style={{ width: 350, margin: '4em auto' }}>
         <TaskItem
           label="Aberdeenshire"
@@ -93,7 +92,7 @@ export const SingleTaskSnippet = () => {
           </TaskListInnerContainer>
         </TaskListContainer>
       </div>
-    </MemoryRouter>
+    </>
   );
 };
 
@@ -193,7 +192,7 @@ export const TaskTabsExample: React.FC = () => {
 
 export const TaskHeaderExample: React.FC = () => {
   return (
-    <MemoryRouter>
+    <>
       <TaskHeaderContainer>
         <TaskHeaderThumbnail>
           <img src="https://view.nls.uk/iiif/7442/74420086.5/full/256,/0/default.jpg" />
@@ -223,7 +222,7 @@ export const TaskHeaderExample: React.FC = () => {
         </TaskHeaderStatus>
       </TaskHeaderContainer>
       <TaskTabsExample />
-    </MemoryRouter>
+    </>
   );
 };
 

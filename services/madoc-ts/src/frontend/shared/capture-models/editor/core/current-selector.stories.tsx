@@ -5,8 +5,10 @@ import { useNavigation } from './navigation';
 import { useCurrentSelector } from './current-selector';
 import { BoxSelectorProps } from '../selector-types/BoxSelector/BoxSelector';
 
+import fixtures from '../../../../../../fixtures/simple.json';
+
 const withSimpleCaptureModel = (Component: React.FC): React.FC => () => (
-  <CaptureModelProvider captureModel={require('../../../../../../fixtures/simple.json')}>
+  <CaptureModelProvider captureModel={fixtures}>
     <Component />
   </CaptureModelProvider>
 );

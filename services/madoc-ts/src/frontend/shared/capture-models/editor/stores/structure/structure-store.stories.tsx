@@ -3,10 +3,9 @@ import { CaptureModel } from '../../../types/capture-model';
 import { StructureStore } from './structure-store';
 import { useFocusedStructureEditor } from './use-focused-structure-editor';
 
+import model from '../../../../../../../fixtures/simple.json';
+
 export default { title: 'Stores/Structure Store' };
-
-const model: CaptureModel = require('../../../../../../../fixtures/simple.json');
-
 const Test: React.FC = () => {
   const tree = StructureStore.useStoreState(state => state.tree);
   const focus = StructureStore.useStoreActions(act => act.focus);

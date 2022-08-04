@@ -3,7 +3,7 @@ import { CaptureModel } from '../../../types/capture-model';
 import { DocumentEditor } from './DocumentEditor';
 import { DocumentStore } from '../../stores/document/document-store';
 
-const model: CaptureModel = require('../../../../../../../fixtures/simple.json');
+import model from '../../../../../../../fixtures/simple.json';
 
 export default {
   title: 'Capture model editor components/Document editor',

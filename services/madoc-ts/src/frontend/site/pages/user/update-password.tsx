@@ -48,7 +48,7 @@ export const UpdatePasswordPage: React.FC = () => {
     if (!query.success && form?.passwordChangeSuccess) {
       navigate(`/profile/password?${stringify({ success: true })}`);
     }
-  }, [form?.invalidPassword, form?.passwordChangeSuccess, form?.passwordError, history, query, user]);
+  }, [form?.invalidPassword, form?.passwordChangeSuccess, form?.passwordError, query, user]);
 
   if (!user) {
     return <Navigate to={'/'} />;

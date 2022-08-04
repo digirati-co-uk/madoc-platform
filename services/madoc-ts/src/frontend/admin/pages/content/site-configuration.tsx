@@ -19,7 +19,7 @@ export const SiteConfiguration: React.FC = () => {
       navigate(`/configure/site`);
       setSuccess(true);
     }
-  }, [history, query.success, success]);
+  }, [query.success, success]);
 
   return (
     <>

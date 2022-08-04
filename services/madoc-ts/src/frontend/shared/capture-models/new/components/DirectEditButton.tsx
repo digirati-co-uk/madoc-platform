@@ -98,7 +98,7 @@ export const DirectEditButton: EditorRenderingConfig['SubmitButton'] = ({
     return () => {
       window.removeEventListener('popstate', listener);
     };
-  }, [saveOnNavigate, history, isUpToDate, saveRevision]);
+  }, [saveOnNavigate, isUpToDate, saveRevision]);
 
   if (!currentRevision) {
     return null;

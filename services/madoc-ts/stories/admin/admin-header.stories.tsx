@@ -59,7 +59,7 @@ export default {
 };
 
 const Template = (props: any) => (
-  <MemoryRouter>
+  <>
     <GlobalHeader
       title={'Default site'}
       username={'Some user'}
@@ -71,7 +71,7 @@ const Template = (props: any) => (
       ]}
     />
     <AdminHeader {...props} />
-  </MemoryRouter>
+  </>
 );
 
 export const SimpleAdminHeader = Template.bind({});

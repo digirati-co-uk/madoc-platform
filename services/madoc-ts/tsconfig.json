@@ -20,7 +20,7 @@
     "noImplicitAny": true,
     "downlevelIteration": true,
     "noUnusedLocals": false,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
   },
   "exclude": [
     "node_modules",

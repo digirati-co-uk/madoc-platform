@@ -43,7 +43,7 @@ export const Register: React.FC = () => {
     if (query.success && !form?.registerSuccess) {
       navigate(`/register`);
     }
-  }, [form?.registerSuccess, history, query.success, user]);
+  }, [form?.registerSuccess, query.success, user]);
 
   if (!user && !systemConfig.enableRegistrations) {
     return <Navigate to="/login" />;

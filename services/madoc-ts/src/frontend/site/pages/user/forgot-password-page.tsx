@@ -29,7 +29,7 @@ export const ForgotPasswordPage: React.FC = () => {
     if (query.success && !form?.forgotSuccess) {
       navigate(`/forgot-password`);
     }
-  }, [form?.forgotSuccess, history, query.success]);
+  }, [form?.forgotSuccess, query.success]);
 
   if (user) {
     return <Navigate to="/" />;

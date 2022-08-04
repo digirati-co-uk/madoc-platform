@@ -9,7 +9,7 @@ import { BackgroundSplash } from '../components/BackgroundSplash/BackgroundSplas
 import { RoundedCard } from '../components/RoundedCard/RoundedCard';
 import { useNavigation } from '../hooks/useNavigation';
 
-const simple = require('../../../../../../fixtures/simple.json');
+import simple from '../../../../../../fixtures/simple.json';
 
 const withSimpleCaptureModel = (Component: React.FC): React.FC => () => (
   <ThemeProvider theme={defaultTheme}>

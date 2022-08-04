@@ -5,10 +5,9 @@ import { useFocusedStructureEditor } from '../../stores/structure/use-focused-st
 import { StructureEditor } from './StructureEditor';
 import { StructureStore } from '../../stores/structure/structure-store';
 
+import model from '../../../../../../../fixtures/simple.json';
+
 export default { title: 'Capture model editor components/Structure Editor' };
-
-const model: CaptureModel = require('../../../../../../../fixtures/simple.json');
-
 const withStructure = (Component: React.FC): React.FC => () => (
   <DocumentStore.Provider initialData={{ captureModel: model }}>
     <StructureStore.Provider initialData={{ captureModel: model }}>

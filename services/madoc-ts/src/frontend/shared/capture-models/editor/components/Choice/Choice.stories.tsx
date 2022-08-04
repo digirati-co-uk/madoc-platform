@@ -7,7 +7,7 @@ import { defaultTheme } from '../../themes';
 import { RoundedCard } from '../RoundedCard/RoundedCard';
 import { Choice } from './Choice';
 
-const simple = require('../../../../../../../fixtures/simple.json');
+import simple from '../../../../../../../fixtures/simple.json';
 
 const withSimpleCaptureModel = (Component: React.FC): React.FC => () => (
   <ThemeProvider theme={defaultTheme}>

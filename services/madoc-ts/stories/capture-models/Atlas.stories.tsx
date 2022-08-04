@@ -9,9 +9,9 @@ import { FieldInstanceReadOnly } from '../../src/frontend/shared/capture-models/
 import { useEffect, useState } from 'react';
 import { Runtime } from '@atlas-viewer/atlas';
 import { useSelectorHelper } from '../../src/frontend/shared/capture-models/editor/stores/selectors/selector-helper';
-const model = require('../../fixtures/04-selectors/05-wunder-selector.json');
-const model01 = require('../../fixtures/04-selectors/01-simple-selector.json');
-const ocrModel = require('../../fixtures/02-nesting/06-ocr.json');
+import model from '../../fixtures/04-selectors/05-wunder-selector.json';
+import model01 from '../../fixtures/04-selectors/01-simple-selector.json';
+import ocrModel from '../../fixtures/02-nesting/06-ocr.json';
 import '../../src/frontend/shared/capture-models/editor/selector-types/BoxSelector';
 
 export default { title: 'Capture models/Atlas viewer' };

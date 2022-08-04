@@ -28,7 +28,7 @@ export const ListUsers: React.FC = () => {
       setUserDeleted(true);
       navigate(`/global/users`);
     }
-  }, [history, query.user_deleted]);
+  }, [query.user_deleted]);
 
   if (currentUser?.role !== 'global_admin') {
     return <Navigate to={'/'} />;

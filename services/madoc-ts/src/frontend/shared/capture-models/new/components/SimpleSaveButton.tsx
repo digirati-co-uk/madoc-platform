@@ -83,7 +83,7 @@ export const SimpleSaveButton: EditorRenderingConfig['SubmitButton'] = ({ afterS
     return () => {
       window.removeEventListener('popstate', listener);
     };
-  }, [saveOnNavigate, history, isUpToDate]);
+  }, [saveOnNavigate, isUpToDate]);
 
   if (!currentRevision) {
     return null;

@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { CaptureModel } from '../../../types/capture-model';
 import { Button } from '../../atoms/Button';
 import { Card, CardContent } from '../../atoms/Card';
 import { mergeFlatKeys, structureToFlatStructureDefinition } from '../../core/structure-editor';
 import { SelectModelFields } from './SelectModelFields';
 import { Tag } from '../../atoms/Tag';
+import model from '../../../../../../../fixtures/simple.json';
 
 export default { title: 'Capture model editor components/Select Model Fields' };
-
-const model: CaptureModel = require('../../../../../../../fixtures/simple.json');
 
 export const Simple: React.FC = () => {
   const [isSelecting, setIsSelecting] = useState(false);
