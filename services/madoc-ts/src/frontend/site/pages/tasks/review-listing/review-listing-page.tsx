@@ -21,9 +21,20 @@ import { useTaskMetadata } from '../../../hooks/use-task-metadata';
 const TaskListContainer = styled.div`
   min-width: 0;
   flex: 1;
-  overflow-x: hidden;
-  height: 80vh;
+  overflow-x: auto;
+  height: auto;
   border-right: 3px solid #dbdbdb;
+  
+    @media (max-width: 1700px) {
+    td {
+      max-width: 15em;
+    }
+  }
+  @media (max-width: 1300px) {
+    td {
+      max-width: 8em;
+    }
+  }
 `;
 
 const TaskPreviewContainer = styled.div`
@@ -33,9 +44,11 @@ const TaskPreviewContainer = styled.div`
 
 const ReviewListingContainer = styled.div`
   display: flex;
+
   a {
     color: #2b669a;
     text-decoration: none;
+
     &:hover {
       text-decoration: underline;
     }
@@ -48,12 +61,12 @@ const ThickTableRow = styled(SimpleTable.Row)<{ $active?: boolean }>`
     css`
       background: #edf4fb;
     `}
-
   ${SimpleTable.Cell} {
     text-align: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+
     &:hover {
       background: none;
     }
