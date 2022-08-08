@@ -27,7 +27,7 @@ export const MediaExplorer: React.FC<MediaExplorerProps & {
   const { data: pages, fetchMore, canFetchMore, isFetchingMore } = useInfiniteQuery(
     ['media-explorer', {}],
     async (key, _, vars: { page?: number }) => {
-      return api.media.listMedia(vars.page);
+      return api.media.listMedia(1);
     },
     {
       getFetchMore: lastPage => {
