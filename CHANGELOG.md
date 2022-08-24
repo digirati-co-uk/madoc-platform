@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.0.7...main)
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.0.8...main)
 
 <!--
 ### Fixed
@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 ### Security
 -->
+
+## [2.0.8](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.8) - 2022-08-24
+
+### Added
+- Additional Welsh translations (@NLW-paulm)
 
 ## [2.0.7](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.7) - 2022-05-18
 This is a hot fix release.
