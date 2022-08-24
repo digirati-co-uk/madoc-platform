@@ -613,8 +613,5 @@
     "{{count}} manifests": "",
     "{{count}} manifests_plural": "",
     "{{count}} more": "",
-    "{{count}} more_plural": "",
-    "Capture Model - Chain": {
-        "Weekly Data": ""
-    }
+    "{{count}} more_plural": ""
 }
