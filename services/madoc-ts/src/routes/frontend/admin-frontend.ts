@@ -1,4 +1,4 @@
-import { unindent } from '../../../test-utility/unindent';
+import fs from 'fs';
 import { render as renderAdmin } from '../../frontend/admin/server';
 import { createBackend } from '../../middleware/i18n/i18next.server';
 import { RouteMiddleware } from '../../types/route-middleware';
@@ -50,6 +50,13 @@ export const adminFrontend: RouteMiddleware = async context => {
     }
 
     if (process.env.NODE_ENV === 'development') {
+      const viteProtocol =
+        fs.existsSync('/home/node/app/openssl-certs/local-key.pem') &&
+        fs.existsSync('/home/node/app/openssl-certs/local-cert.pem')
+          ? 'https'
+          : 'http';
+      const hostname = context.request.hostname;
+
       return `
         <!doctype html>
         <html ${result.htmlAttributes}>
@@ -58,13 +65,14 @@ export const adminFrontend: RouteMiddleware = async context => {
           <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
           <meta http-equiv="X-UA-Compatible" content="ie=edge">
           <script type="module">
-            import RefreshRuntime from 'http://${context.request.hostname}:3088/@react-refresh'
+            import RefreshRuntime from '${viteProtocol}://${hostname}:3088/@react-refresh'
             RefreshRuntime.injectIntoGlobalHook(window)
             window.$RefreshReg$ = () => {}
             window.$RefreshSig$ = () => (type) => type
             window.__vite_plugin_react_preamble_installed__ = true
+            window.__HMR_PROTOCOL__ = '${viteProtocol === 'https' ? 'wss' : 'ws'}';
           </script>
-          <script type="module" src="http://${context.request.hostname}:3088/src/frontend/admin/client.tsx"></script>
+          <script type="module" src="${viteProtocol}://${hostname}:3088/src/frontend/admin/client.tsx"></script>
           ${result.head}
         </head>
         <body ${result.bodyAttributes}>

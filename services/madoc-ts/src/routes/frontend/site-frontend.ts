@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { sql } from 'slonik';
 import { unindent } from '../../../test-utility/unindent';
 import { getProject } from '../../database/queries/project-queries';
@@ -85,6 +86,13 @@ export const siteFrontend: RouteMiddleware = async (context, next) => {
     }
 
     if (process.env.NODE_ENV === 'development') {
+      const viteProtocol =
+        fs.existsSync('/home/node/app/openssl-certs/local-key.pem') &&
+        fs.existsSync('/home/node/app/openssl-certs/local-cert.pem')
+          ? 'https'
+          : 'http';
+      const hostname = context.request.hostname;
+
       return `
         <!doctype html>
         <html ${result.htmlAttributes}>
@@ -93,13 +101,14 @@ export const siteFrontend: RouteMiddleware = async (context, next) => {
           <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
           <meta http-equiv="X-UA-Compatible" content="ie=edge">
           <script type="module">
-            import RefreshRuntime from 'http://${context.request.hostname}:3088/@react-refresh'
+            import RefreshRuntime from '${viteProtocol}://${hostname}:3088/@react-refresh'
             RefreshRuntime.injectIntoGlobalHook(window)
             window.$RefreshReg$ = () => {}
             window.$RefreshSig$ = () => (type) => type
             window.__vite_plugin_react_preamble_installed__ = true
+            window.__HMR_PROTOCOL__ = '${viteProtocol === 'https' ? 'wss' : 'ws'}';
           </script>
-          <script type="module" src="http://${context.request.hostname}:3088/src/frontend/site/client.ts"></script>
+          <script type="module" src="${viteProtocol}://${hostname}:3088/src/frontend/site/client.ts"></script>
           ${result.head}
         </head>
         <body ${result.bodyAttributes}>

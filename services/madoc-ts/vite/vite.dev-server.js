@@ -1,5 +1,8 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import fs from 'fs';
+
+const https = fs.existsSync('/certs/local-key.pem') && fs.existsSync('/certs/local-cert.pem');
 
 export default defineConfig({
   clearScreen: false,
@@ -13,11 +16,18 @@ export default defineConfig({
     sourcemap: true,
   },
   server: {
+    https: https
+      ? {
+          key: fs.readFileSync('/certs/local-key.pem'),
+          cert: fs.readFileSync('/certs/local-cert.pem'),
+        }
+      : false,
     open: false,
     port: 3088,
     strictPort: true,
     force: true,
     hmr: {
+      protocol: https ? 'wss' : 'ws',
       port: 3089,
     },
   },

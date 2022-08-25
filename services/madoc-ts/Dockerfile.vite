@@ -23,4 +23,7 @@ COPY ./entrypoint /home/node/app/entrypoint
 COPY ./npm /home/node/app/npm
 COPY ./src /home/node/app/src
 
+EXPOSE 3089
+EXPOSE 3088
+
 CMD ["yarn", "dev:vite"]

@@ -1,4 +1,4 @@
-version: "3"
+version: "3.2"
 services:
   # Internal services
 
@@ -6,8 +6,20 @@ services:
     build:
       context: services/gateway
       dockerfile: Dockerfile.dev
+    volumes:
+      - ./var/certs:/certs
     ports:
+      - "${PORTS_GATEWAY_HTTPS:-443}:443"
       - "${PORTS_GATEWAY:-8888}:8080"
+    restart: unless-stopped
+    depends_on:
+      - tasks-api
+      - model-api
+      - madoc-ts
+      - config-service
+      - storage-api
+      - okra
+      - search
     links:
       - tasks-api
       - model-api
@@ -25,7 +37,9 @@ services:
       - ./services/madoc-ts/package.json:/home/node/app/package.json:delegated
       - ./services/madoc-ts/yarn.lock:/home/node/app/yarn.lock:delegated
       - ./services/madoc-ts/src:/home/node/app/src
+      - ./services/madoc-ts/vite:/home/node/app/vite
       - ./var/.vite-cache:/home/node/app/node_modules/.vite
+      - ./var/certs:/certs
     ports:
       - "3088:3088"
       - "3089:3089"

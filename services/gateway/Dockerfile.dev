@@ -6,6 +6,8 @@ COPY ./conf.d /etc/nginx/conf.d
 
 ## DEV ONLY.
 COPY ./dev/madoc-assets.conf /etc/nginx/conf.d/services/madoc-assets.conf
+COPY ./dev/gateway-ssl.conf /etc/nginx/conf.d/gateway.conf
+COPY ./dev/gateway-shared.conf /etc/nginx/conf.d/gateway-shared.conf
 ##
 
 COPY ./www /www
