@@ -1,4 +1,5 @@
 .idea
+.run
 var/database/data
 var/files/*
 theme.zip
