@@ -340,6 +340,38 @@ export function createServerRenderer(
       )}</script>
     `;
 
+    const devLoadingScript =
+      process.env.NODE_ENV === 'production'
+        ? ''
+        : `
+      <script>document.body.classList.add('dev-loading');</script>
+      <style>
+      body > * { 
+        transition: opacity 200ms;
+      }
+      .dev-loading > * {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+      .dev-loading:after {
+        position: fixed;
+        display: flex;
+        text-align: center;
+        justify-content: center;
+        place-items: center;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 36px;
+        background: #000;
+        background: -webkit-linear-gradient( 120deg, #bd34fe 30%, #41d1ff );
+        color: #fff;
+        content: '⚡️ Vite bundling...';
+        z-index: 9999999;
+      }
+      </style>
+    `;
+
     return {
       type: 'document',
       htmlAttributes: helmet.htmlAttributes.toString(),
@@ -354,6 +386,7 @@ export function createServerRenderer(
           <div id="react-component">${state.markup}</div>
           <script type="application/json" id="react-data">${JSON.stringify({ basename })}</script>
           ${routeData}
+          ${devLoadingScript}
         `,
     } as const;
   };

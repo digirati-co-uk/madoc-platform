@@ -21,4 +21,8 @@ Promise.all([
   // - A plugin could in theory be a remote URL too, and have some fancy server-side caching
   //   of them.
   await renderClient(mod.default, routes.createRoutes, components, false);
+
+  if (process.env.NODE_ENV !== 'production') {
+    document.body.classList.remove('dev-loading');
+  }
 });
