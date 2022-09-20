@@ -8,8 +8,10 @@ import { useApi } from '../../../shared/hooks/use-api';
 import { WidePage } from '../../../shared/layout/WidePage';
 import { useData } from '../../../shared/hooks/use-data';
 import { useUser } from '../../../shared/hooks/use-site';
+import { SuccessMessage } from '../../../shared/callouts/SuccessMessage';
 import { Button, ButtonRow } from '../../../shared/navigation/Button';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
+import { HrefLink } from '../../../shared/utility/href-link';
 import { UniversalComponent } from '../../../types';
 import { AdminHeader } from '../../molecules/AdminHeader';
 
@@ -40,6 +42,12 @@ export const SystemStatus: UniversalComponent<SystemStatusType> = createUniversa
 
     const [restart, restartStatus] = useMutation(async (service: 'queue' | 'madoc' | 'auth' | 'scheduler') => {
       return api.pm2Restart(service);
+    });
+
+    const [migrateModels, migrateModelsStatus] = useMutation(async () => {
+      return api.request(`/api/madoc/crowdsourcing/model/migrate`, {
+        method: 'POST',
+      });
     });
 
     const { memory, cpu } = data
@@ -96,7 +104,21 @@ export const SystemStatus: UniversalComponent<SystemStatusType> = createUniversa
             <Button onClick={() => restart('scheduler')} disabled={restartStatus.isLoading}>
               {t('Restart scheduler')}
             </Button>
+            <Button onClick={() => migrateModels()} disabled={migrateModelsStatus.isLoading}>
+              {t('Migrate models')}
+            </Button>
           </ButtonRow>
+
+          {migrateModelsStatus.data ? (
+            (migrateModelsStatus.data as any).complete ? (
+              <SuccessMessage>Nothing to migrate</SuccessMessage>
+            ) : (
+              <SuccessMessage>
+                Migration in progress{' '}
+                <HrefLink href={`/tasks/${(migrateModelsStatus.data as any).id}`}>Go to task</HrefLink>
+              </SuccessMessage>
+            )
+          ) : null}
 
           {data
             ? data.list.map(item => {
