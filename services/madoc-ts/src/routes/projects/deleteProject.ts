@@ -34,8 +34,12 @@ export async function deleteProject(projectId: number, siteId: number, connectio
     await siteApi.searchDeleteIIIF(deletionSummary.search.id);
   }
 
-  // Delete capture model
-  await siteApi.deleteCaptureModel(capture_model_id);
+  try {
+    // Delete capture model
+    await siteApi.deleteCaptureModel(capture_model_id);
+  } catch (e) {
+    // Ignore errors here.
+  }
 
   // Delete metadata
   await connection().any(deleteProjectMetadata(projectId));
