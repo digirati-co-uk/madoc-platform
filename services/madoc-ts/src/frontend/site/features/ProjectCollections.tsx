@@ -34,7 +34,7 @@ export const ProjectCollections: React.FC = () => {
   return (
     <>
       <Heading3>{t('Collections')}</Heading3>
-      <ImageGrid>
+      <ImageGrid $size="large">
         {shownCollections.map((collection, idx) => (
           <CollectionSnippet key={idx} id={collection.id} projectId={project.slug} />
         ))}

@@ -6,6 +6,15 @@ export const GridContainer = styled.div<{ $justify?: string }>`
   align-items: flex-start;
 `;
 
+export const CSSThirdGrid = styled.div<{ $justify?: string }>`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 1em;
+  justify-content: ${props => props.$justify};
+  align-items: flex-start;
+  overflow-y: auto;
+`;
+
 export const HalfGird = styled.div<{ $margin?: boolean }>`
   width: 50%;
   ${props =>

@@ -77,7 +77,7 @@ export const PreviewManifest: React.FC<{
       <Heading3>
         <LocaleString>{manifest.label || { none: ['Untitled manifest'] }}</LocaleString>
       </Heading3>
-      <ImageGrid>
+      <ImageGrid $size="small">
         {canvases
           ? canvases.map(canvas => {
               return (

@@ -8,43 +8,8 @@ export const CroppedImage = styled.div<{
 }>`
   background: #000;
   padding: 2px;
-  height: ${props => {
-    if (props.$rect) {
-      switch (props.$size) {
-        case 'tiny':
-          return `${50 / 1.618}px`;
-        case 'small':
-          return `${150 / 1.618}px`;
-        case 'large':
-          return `${294 / 1.618}px`;
-        default:
-          return `${222 / 1.618}px`;
-      }
-    }
 
-    switch (props.$size) {
-      case 'tiny':
-        return '50px';
-      case 'small':
-        return '150px';
-      case 'large':
-        return '294px';
-      default:
-        return '222px';
-    }
-  }};
-  width: ${props => {
-    switch (props.$size) {
-      case 'tiny':
-        return '50px';
-      case 'small':
-        return '150px';
-      case 'large':
-        return '294px';
-      default:
-        return '222px';
-    }
-  }};
+  aspect-ratio: ${props => (props.$rect ? '1.618' : '1')};
   display: flex;
   justify-content: center;
   align-items: center;

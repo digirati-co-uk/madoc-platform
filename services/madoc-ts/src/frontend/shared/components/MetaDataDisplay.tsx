@@ -8,7 +8,7 @@ import { HrefLink } from '../utility/href-link';
 import { LocaleString } from './LocaleString';
 import { FacetConfig } from './MetadataFacetEditor';
 
-const MetadataDisplayContainer = styled.table<{ $variation?: 'list' | 'table'; $size?: 'lg' | 'md' | 'sm' }>`
+const MetadataDisplayContainer = styled.div<{ $variation?: 'list' | 'table'; $size?: 'lg' | 'md' | 'sm' }>`
   font-size: ${props =>
     ({
       lg: '1em',
@@ -20,8 +20,10 @@ const MetadataDisplayContainer = styled.table<{ $variation?: 'list' | 'table'; $
   max-width: 100%;
   width: 100%;
   flex-wrap: wrap;
-  padding: 1em;
+  padding: 1em 1.5em;
   overflow: hidden;
+  box-sizing: border-box;
+  min-width: calc(290 + 1.5em);
 `;
 
 const MetaDataKey = styled.td<{
@@ -118,10 +120,10 @@ const MetadataContainer = styled.tr<{ $variation?: 'list' | 'table' }>`
   ${props =>
     ({
       table: css`
-        min-width: 290px;
+        min-width: 240px;
       `,
       list: css`
-        min-width: 290px;
+        min-width: 240px;
         display: block;
         margin-bottom: 1.5em;
       `,
@@ -182,38 +184,82 @@ export const MetaDataDisplay: React.FC<{
   if (config && config.length) {
     return (
       <MetadataDisplayContainer $variation={variation}>
-        <tbody>
-          {config.map((configItem, idx: number) => {
-            const values: any[] = [];
+        <table>
+          <tbody>
+            {config.map((configItem, idx: number) => {
+              const values: any[] = [];
 
-            for (const key of configItem.keys) {
-              for (const item of metadataKeyMap[key] || []) {
-                values.push(
-                  <div key={idx + '__' + key}>
-                    <LocaleString enableDangerouslySetInnerHTML>{item.value}</LocaleString>
-                  </div>
-                );
+              for (const key of configItem.keys) {
+                for (const item of metadataKeyMap[key] || []) {
+                  values.push(
+                    <div key={idx + '__' + key}>
+                      <LocaleString enableDangerouslySetInnerHTML>{item.value}</LocaleString>
+                    </div>
+                  );
+                }
               }
-            }
 
-            if (values.length === 0) {
-              return null;
-            }
+              if (values.length === 0) {
+                return null;
+              }
 
-            return (
-              <MetadataContainer key={idx} $variation={variation}>
-                <MetaDataKey
-                  $labelStyle={labelStyle}
-                  $variation={variation}
-                  $labelWidth={labelWidth}
-                  $bordered={bordered}
-                >
-                  <LocaleString enableDangerouslySetInnerHTML>{configItem.label}</LocaleString>
-                </MetaDataKey>
-                <MetaDataValue $variation={variation}>{values}</MetaDataValue>
-              </MetadataContainer>
-            );
-          })}
+              return (
+                <MetadataContainer key={idx} $variation={variation}>
+                  <MetaDataKey
+                    $labelStyle={labelStyle}
+                    $variation={variation}
+                    $labelWidth={labelWidth}
+                    $bordered={bordered}
+                  >
+                    <LocaleString enableDangerouslySetInnerHTML>{configItem.label}</LocaleString>
+                  </MetaDataKey>
+                  <MetaDataValue $variation={variation}>{values}</MetaDataValue>
+                </MetadataContainer>
+              );
+            })}
+          </tbody>
+          {suggestEdit ? (
+            <tfoot>
+              <tr>
+                <td>
+                  <Button as={HrefLink} href={suggestEdit}>
+                    {t('Suggest edit')}
+                  </Button>
+                </td>
+              </tr>
+            </tfoot>
+          ) : null}
+        </table>
+      </MetadataDisplayContainer>
+    );
+  }
+
+  return (
+    <MetadataDisplayContainer $variation={variation}>
+      <table>
+        <tbody>
+          {metadata && metadata.length
+            ? metadata.map((metadataItem, idx: number) => {
+                if (!metadataItem) {
+                  return null; // null items.
+                }
+                return (
+                  <MetadataContainer key={idx} $variation={variation}>
+                    <MetaDataKey
+                      $labelStyle={labelStyle}
+                      $variation={variation}
+                      $labelWidth={labelWidth}
+                      $bordered={bordered}
+                    >
+                      <LocaleString enableDangerouslySetInnerHTML>{metadataItem.label}</LocaleString>
+                    </MetaDataKey>
+                    <MetaDataValue $variation={variation}>
+                      <LocaleString enableDangerouslySetInnerHTML>{metadataItem.value}</LocaleString>
+                    </MetaDataValue>
+                  </MetadataContainer>
+                );
+              })
+            : t('No metadata to display')}
         </tbody>
         {suggestEdit ? (
           <tfoot>
@@ -226,47 +272,7 @@ export const MetaDataDisplay: React.FC<{
             </tr>
           </tfoot>
         ) : null}
-      </MetadataDisplayContainer>
-    );
-  }
-
-  return (
-    <MetadataDisplayContainer $variation={variation}>
-      <tbody>
-        {metadata && metadata.length
-          ? metadata.map((metadataItem, idx: number) => {
-              if (!metadataItem) {
-                return null; // null items.
-              }
-              return (
-                <MetadataContainer key={idx} $variation={variation}>
-                  <MetaDataKey
-                    $labelStyle={labelStyle}
-                    $variation={variation}
-                    $labelWidth={labelWidth}
-                    $bordered={bordered}
-                  >
-                    <LocaleString enableDangerouslySetInnerHTML>{metadataItem.label}</LocaleString>
-                  </MetaDataKey>
-                  <MetaDataValue $variation={variation}>
-                    <LocaleString enableDangerouslySetInnerHTML>{metadataItem.value}</LocaleString>
-                  </MetaDataValue>
-                </MetadataContainer>
-              );
-            })
-          : t('No metadata to display')}
-      </tbody>
-      {suggestEdit ? (
-        <tfoot>
-          <tr>
-            <td>
-              <Button as={HrefLink} href={suggestEdit}>
-                {t('Suggest edit')}
-              </Button>
-            </td>
-          </tr>
-        </tfoot>
-      ) : null}
+      </table>
     </MetadataDisplayContainer>
   );
 };

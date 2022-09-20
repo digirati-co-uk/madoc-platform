@@ -4,16 +4,6 @@ export const ImageStripBox = styled.div<{ $size?: 'large' | 'small' }>`
   position: relative;
   flex-shrink: 0;
   padding: 5px;
-  width: ${props => {
-    switch (props.$size) {
-      case 'small':
-        return '160px';
-      case 'large':
-        return '310px';
-      default:
-        return '232px';
-    }
-  }};
   border-radius: 3px;
 
   &:hover {
@@ -23,9 +13,14 @@ export const ImageStripBox = styled.div<{ $size?: 'large' | 'small' }>`
 `;
 
 export const ImageStrip = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(
+          auto-fill,
+          200px
+  );
   overflow-x: auto;
   text-decoration: none;
+  justify-content: space-evenly;
   ${ImageStripBox} ~ ${ImageStripBox} {
     margin-left: 10px;
   }
