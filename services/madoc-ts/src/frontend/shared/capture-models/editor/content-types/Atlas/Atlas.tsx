@@ -57,7 +57,14 @@ const Canvas: React.FC<{
       unstable_webglRenderer={webglSupport() && unstable_webglRenderer}
       controllerConfig={controllerConfig}
     >
-      <world onClick={onDeselect}>
+      <world
+        onClick={e => {
+          if (onDeselect) {
+            e.stopPropagation();
+            onDeselect();
+          }
+        }}
+      >
         <AnnotationStyleProvider theme={style}>
           <CanvasContext canvas={canvas.id}>
             <ImageServiceContext value={service}>
