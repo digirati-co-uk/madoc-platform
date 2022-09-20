@@ -26,7 +26,9 @@ export const CanvasView: UniversalComponent<CanvasViewType> = createUniversalCom
     const { t } = useTranslation();
     const params = useParams<{ id: string; manifestId?: string }>();
     const { pathname } = useLocation();
-    const subRoute = pathname.split('/').pop(); // @todo test
+    const lastSegment = pathname.split('/').pop(); // @todo test
+    // eslint-disable-next-line eqeqeq
+    const subRoute = Number(lastSegment) !== Number(lastSegment) ? lastSegment : '';
     const { id, manifestId } = params;
     const { data } = useData(CanvasView);
     const site = useSite();
