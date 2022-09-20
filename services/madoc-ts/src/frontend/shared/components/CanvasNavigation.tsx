@@ -35,6 +35,7 @@ export const CanvasNavigation: React.FC<{
             canvasId: structure.data.items[idx - 1].id,
             subRoute,
             query,
+            admin,
           })}
           item={structure.data.items[idx - 1]}
         />
