@@ -146,7 +146,7 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
                   <Link to="/enrichment/search-indexing">{t('Search indexing')}</Link>
                 </li>
                 <li>
-                  <Link to="/system/themes">{t('Site permissions')}</Link>
+                  <Link to="/site/permissions">{t('Site permissions')}</Link>
                 </li>
                 <li>
                   <Link to="/site/invitations">{t('User invitations')}</Link>
