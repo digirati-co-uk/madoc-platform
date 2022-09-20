@@ -76,8 +76,6 @@ export const PageLoader: UniversalComponent<PageLoaderType> = createUniversalCom
 
     const page = data?.page;
 
-    console.log('page', page);
-
     return (
       <BreadcrumbContext subpage={page ? { path: page?.path, name: page?.title } : undefined}>
         <SlotProvider

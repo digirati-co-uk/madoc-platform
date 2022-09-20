@@ -14,6 +14,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
+## [2.1.0](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.7) - 2022-05-18
+
+### Fixed
+### Added
+### Changed
+### Removed
+
+
 ## [2.0.7](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.7) - 2022-05-18
 This is a hot fix release.
 
