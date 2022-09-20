@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { ReactNode, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { EditorialContext } from '../../../types/schemas/site-page';
@@ -6,7 +6,11 @@ import { useSiteConfiguration } from '../../site/features/SiteConfigurationConte
 import { useApi } from '../hooks/use-api';
 import { SlotProvider } from './slot-context';
 
-export const AutoSlotLoader: React.FC<{ fuzzy?: boolean; slots?: string[] }> = ({ children, slots, fuzzy }) => {
+export const AutoSlotLoader: React.FC<{ fuzzy?: boolean; slots?: string[]; children: ReactNode }> = ({
+  children,
+  slots,
+  fuzzy,
+}) => {
   const params = useParams();
   // @todo fix when this should be false.
   // const isExact = useOutlet() === null;
@@ -38,7 +42,7 @@ export const AutoSlotLoader: React.FC<{ fuzzy?: boolean; slots?: string[] }> = (
     async () => {
       return api.pageBlocks.requestSlots(parsedContext);
     },
-    { enabled: routeMatch.isExact || fuzzy }
+    { enabled: routeMatch.isExact || fuzzy, keepPreviousData: true }
   );
 
   const invalidateSlots = async () => {
