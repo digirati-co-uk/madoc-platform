@@ -30,6 +30,8 @@ export default defineConfig({
   plugins: [
     splitVendorChunkPlugin(),
     react({
+      jsxRuntime: 'classic',
+      jsxPure: true,
       babel: {
         plugins: [
           [

@@ -265,6 +265,7 @@ export function forkDocument<Fields extends string>(
       const isEditingIndividualFields = !!(fieldsToEdit && fieldsToEdit.length);
       const isInModelMapping = modelMapping[key as Fields] === entity.id;
       const willBranch =
+        !editValues &&
         !!parent &&
         !isEditingIndividualFields &&
         (isEmptyRootDocument || hasParentDocumentBranched || (!isDocumentImmutable && !editValues));

@@ -10,7 +10,6 @@ export function filterDocumentByRevision(
   revisions: CaptureModel['revisions'] = []
 ): CaptureModel['document'] | null {
   const revisionIds = recurseRevisionDependencies(revision.id, revisions);
-
   return filterCaptureModel(
     revision.id,
     document,

@@ -1,3 +1,4 @@
+import deepmerge from 'deepmerge';
 import { CaptureModel } from '../types/capture-model';
 import { isEntity } from './is-entity';
 import { generateId } from './generate-id';
@@ -14,6 +15,9 @@ export function hydrateCaptureModel<T = any>(
     id: generateId(),
     properties: {},
   };
+  if (newDoc.selector) {
+    newDoc.selector.id = generateId();
+  }
   for (const prop of properties) {
     const jsonValue = typeof (json as any)[prop] === 'undefined' ? [] : (json as any)[prop];
     const values = Array.isArray(jsonValue) ? jsonValue : [jsonValue];
@@ -25,17 +29,19 @@ export function hydrateCaptureModel<T = any>(
 
     if (values.length === 0) {
       if (keepExtraFields) {
-        newDoc.properties[prop] = {
-          ...modelTemplate,
-          id: generateId(),
-        } as any;
+        newDoc.properties[prop] = [
+          {
+            ...modelTemplate,
+            id: generateId(),
+          } as any,
+        ];
       }
       continue;
     }
 
     if (isEntity(modelTemplate)) {
       newDoc.properties[prop] = values.map((value: any) => {
-        return hydrateCaptureModel(modelTemplate, value, config);
+        return hydrateCaptureModel(deepmerge({}, modelTemplate), value, config);
       }) as any;
     } else {
       newDoc.properties[prop] = values.map((value: any) => {

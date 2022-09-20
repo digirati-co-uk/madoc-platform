@@ -280,7 +280,14 @@ export const revisionStore: RevisionsModel = {
 
   // @todo update selector in revision too (not ideal, but avoids traversing tree each time to find a selector)
   updateSelector: action((state, payload) => {
-    const selectorToUpdate = state.selector.availableSelectors.find(selector => selector.id === payload.selectorId);
+    let selectorToUpdate = state.selector.availableSelectors.find(selector => selector.id === payload.selectorId);
+    if (selectorToUpdate && selectorToUpdate.revises) {
+      const revised = state.selector.availableSelectors.find(selector => selector.id === selectorToUpdate!.revises);
+      if (revised) {
+        selectorToUpdate = revised;
+      }
+    }
+
     if (selectorToUpdate) {
       const path = state.selector.selectorPaths[selectorToUpdate.id];
       const field = getRevisionFieldFromPath<BaseField>(state, path);
@@ -293,6 +300,7 @@ export const revisionStore: RevisionsModel = {
         const existingRevisedSelector = selectorToUpdate.revisedBy
           ? selectorToUpdate.revisedBy.find((r: any) => r.revisionId === state.currentRevisionId)
           : undefined;
+
         if (existingRevisedSelector) {
           // We have already "forked" this selector, update it.
           existingRevisedSelector.state = payload.state;
@@ -497,12 +505,12 @@ export const revisionStore: RevisionsModel = {
       const oldRevision = state.revisions[revisionId];
       if (state.unsavedRevisionIds.indexOf(revisionId) !== -1) {
         const newRevision = await createRevision(oldRevision, status);
-        // actions.importRevision({ revisionRequest: newRevision });
+        actions.importRevision({ revisionRequest: newRevision });
         actions.saveRevision({ revisionId });
       } else {
         // disable this for now.
         const newRevision = await updateRevision(oldRevision, status);
-        // actions.importRevision({ revisionRequest: newRevision });
+        actions.importRevision({ revisionRequest: newRevision });
       }
     }
   ),

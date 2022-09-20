@@ -2,13 +2,13 @@ import { CaptureModel } from '../types/capture-model';
 
 export function recurseRevisionDependencies(revisionId: string, revisions: CaptureModel['revisions']): string[] {
   if (!revisions) {
-    return [];
+    return [revisionId];
   }
 
   const rev = revisions.find(r => r.id === revisionId);
 
   if (!rev) {
-    return [];
+    return [revisionId];
   }
 
   if (rev.revises) {

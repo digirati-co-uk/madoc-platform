@@ -43,11 +43,13 @@ const TO_BUNDLE = [
   'jose',
   'sourcemapped-stacktrace',
   'react-dropzone',
-  // 'styled-components',
+  'styled-components',
   'immer',
   'koa-i18next-detector',
   'node-fetch',
   'react-accessible-dropdown-menu-hook',
+  'react/jsx-runtime',
+  'react-iiif-vault',
 ];
 
 const DEDUPE = ['react', 'react-dom', 'styled-components'];
@@ -107,6 +109,7 @@ export function createConfig(name, entry) {
     plugins: [
       react({
         jsxRuntime: 'classic',
+        jsxPure: true,
       }),
     ],
   });
