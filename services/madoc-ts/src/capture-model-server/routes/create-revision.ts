@@ -16,6 +16,10 @@ export const createRevisionApi: RouteMiddleware<{ captureModelId: string }, Revi
   // Migration specific.
   await migrateModel(captureModelId, { id, siteId }, context.captureModels);
 
+  if (!revisionRequest.revision.status) {
+    revisionRequest.revision.status = 'draft';
+  }
+
   if (revisionRequest.captureModelId !== captureModelId) {
     throw new RequestError('Invalid capture model request');
   }
