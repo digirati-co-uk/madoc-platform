@@ -115,6 +115,64 @@ export const BlankSlotDropdown: React.FC<{
   );
 };
 
+function createSlotRequest(
+  slotId: string,
+  context: EditorialContext,
+  {
+    type,
+    isPage,
+    source,
+    projectId,
+  }: {
+    type: string;
+    isPage?: boolean;
+    source?: { type: string; id: string };
+    projectId?: number;
+  }
+): CreateSlotRequest {
+  if (isPage) {
+    return {
+      slotId,
+      layout: 'none',
+    };
+  }
+
+  if (source?.type === 'global') {
+    // We want them on all pages.
+    return {
+      slotId,
+      layout: 'none',
+      filters: {
+        canvas: { all: true, none: true },
+        manifest: { all: true, none: true },
+        collection: { all: true, none: true },
+        project: { all: true, none: true },
+      },
+    };
+  }
+
+  switch (type) {
+    case 'exact':
+      return {
+        slotId,
+        layout: 'none',
+        filters: exactFromContext(context, projectId),
+      };
+    case 'all':
+      return {
+        slotId,
+        layout: 'none',
+        filters: allOfTypeFromContext(context, projectId),
+      };
+  }
+
+  return {
+    // Default?
+    slotId,
+    layout: 'none',
+  };
+}
+
 export const RenderBlankSlot: React.FC<{
   id?: string;
   name: string;
@@ -134,28 +192,14 @@ export const RenderBlankSlot: React.FC<{
     // Customise for all pages of this type.
     // Advanced [ .. ]
 
-    const slotRequest: CreateSlotRequest = isPage
-      ? {
-          slotId,
-          layout: 'none',
-        }
-      : type === 'exact'
-      ? {
-          slotId,
-          layout: 'none',
-          filters: exactFromContext(context, project?.id),
-        }
-      : type === 'all'
-      ? {
-          slotId,
-          layout: 'none',
-          filters: allOfTypeFromContext(context, project?.id),
-        }
-      : {
-          // Default?
-          slotId,
-          layout: 'none',
-        };
+    const slotRequest = createSlotRequest(slotId, context, {
+      type,
+      isPage,
+      source,
+      projectId: project?.id,
+    });
+
+    console.log('Slot request', { isPage, type, source }, slotRequest);
 
     await beforeCreateSlot(slotRequest);
 
