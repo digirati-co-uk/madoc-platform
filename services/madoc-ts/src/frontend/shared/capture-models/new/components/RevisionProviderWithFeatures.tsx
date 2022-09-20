@@ -68,7 +68,7 @@ export const RevisionProviderWithFeatures: React.FC<{
             initialRevision={initialRevision}
           >
             {/*<DebugRevisionSwitcher contributors={captureModel?.contributors} />*/}
-            <AutoSelectDefineRegion />
+            {/*<AutoSelectDefineRegion />*/}
             {autosave ? <AutosaveRevision minutes={2} /> : null}
             {revisionEditMode ? <SwitchFieldAfterRevises /> : null}
             {revisionEditMode ? <SwitchEditMode /> : null}
