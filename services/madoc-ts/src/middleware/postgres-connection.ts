@@ -10,11 +10,13 @@ import { PluginRepository } from '../repository/plugin-repository';
 import { ProjectRepository } from '../repository/project-repository';
 import { ThemeRepository } from '../repository/theme-repository';
 import { ApiKeyRepository } from '../repository/api-key-repository';
+import { EnvConfig } from '../types/env-config';
 
-export const postgresConnection = (pool: DatabasePoolType, useConnections = false): Middleware => async (
-  context,
-  next
-) => {
+export const postgresConnection = (
+  pool: DatabasePoolType,
+  useConnections = false,
+  env: EnvConfig
+): Middleware => async (context, next) => {
   async function handleConnection(connection: DatabasePoolConnectionType) {
     context.connection = connection;
 
@@ -28,7 +30,9 @@ export const postgresConnection = (pool: DatabasePoolType, useConnections = fals
     context.notifications = new NotificationRepository(connection);
     context.projects = new ProjectRepository(connection);
     context.annotationStyles = new AnnotationStylesRepository(connection);
-    context.captureModels = new CaptureModelRepository(connection);
+    context.captureModels = new CaptureModelRepository(connection, {
+      capture_model_api_migrated: env.flags.capture_model_api_migrated,
+    });
 
     await next();
   }

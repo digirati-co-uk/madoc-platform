@@ -2,6 +2,7 @@ import { RouteMiddleware } from '../../types/route-middleware';
 import { castBool } from '../../utility/cast-bool';
 import { userCan } from '../../utility/user-can';
 import { optionalUserWithScope } from '../../utility/user-with-scope';
+import { migrateModel } from '../migration/migrate-model';
 
 export const revisionTemplate: RouteMiddleware = async context => {
   const { id, siteId } = optionalUserWithScope(context, ['models.contribute']);
@@ -19,6 +20,9 @@ export const revisionTemplate: RouteMiddleware = async context => {
 
   const captureModelId = context.params.captureModelId;
   const revisionId = context.params.revisionId;
+
+  // Migration specific.
+  await migrateModel(captureModelId, { id, siteId }, context.captureModels);
 
   context.response.body = await context.captureModels.getRevisionTemplate(captureModelId, revisionId, siteId, {
     userId: canSeeFullModel && !userOnly ? undefined : id,

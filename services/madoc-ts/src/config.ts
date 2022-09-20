@@ -1,4 +1,5 @@
 import { EnvConfig } from './types/env-config';
+import { castBool } from './utility/cast-bool';
 import { MailConfig } from './utility/mailer';
 
 function validNumber(t: string | undefined, defaultValue: number) {
@@ -19,6 +20,9 @@ function validNumber(t: string | undefined, defaultValue: number) {
 }
 
 export const config: EnvConfig = {
+  flags: {
+    capture_model_api_migrated: castBool(process.env.CAPTURE_MODEL_API_MIGRATED, false),
+  },
   postgres: {
     host: process.env.DATABASE_HOST as string,
     port: validNumber(process.env.DATABASE_PORT, 5432),

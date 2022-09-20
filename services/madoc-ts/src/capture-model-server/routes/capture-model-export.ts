@@ -5,15 +5,19 @@ import { BaseField } from '../../frontend/shared/capture-models/types/field-type
 import { RouteMiddleware } from '../../types/route-middleware';
 import { castBool } from '../../utility/cast-bool';
 import { optionalUserWithScope } from '../../utility/user-with-scope';
+import { migrateModel } from '../migration/migrate-model';
 
 export const captureModelExport: RouteMiddleware<{ id: string }> = async context => {
-  const { siteId } = optionalUserWithScope(context, ['models.view_published']);
-
+  const { siteId, id } = optionalUserWithScope(context, ['models.view_published']);
+  const modelId = context.params.id;
   const selectors = castBool(context.query.selectors);
   const identifiers = castBool(context.query.identifiers);
 
+  // Migration specific.
+  await migrateModel(modelId, { id, siteId }, context.captureModels);
+
   const model = await context.captureModels.getCaptureModel(
-    context.params.id,
+    modelId,
     {
       revisionStatus: 'approved',
     },

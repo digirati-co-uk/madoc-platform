@@ -4,12 +4,11 @@ import { castBool } from '../../utility/cast-bool';
 import { RequestError } from '../../utility/errors/request-error';
 import { userCan } from '../../utility/user-can';
 import { userWithScope } from '../../utility/user-with-scope';
+import { migrateModel } from '../migration/migrate-model';
 
 export const updateRevisionApi: RouteMiddleware<{ id: string }, RevisionRequest> = async (context, next) => {
   const { id, userUrn, siteId } = userWithScope(context, ['models.contribute']);
   const canCreate = userCan('models.create', context.state);
-
-  console.log({ canCreate, userUrn });
 
   const revisionRequest = context.requestBody;
   if (context.params.id !== revisionRequest.revision.id) {
@@ -21,6 +20,8 @@ export const updateRevisionApi: RouteMiddleware<{ id: string }, RevisionRequest>
   if (!revisionRequest.author) {
     revisionRequest.author = { id: userUrn, type: 'Person' };
   }
+
+  await migrateModel(revisionRequest.captureModelId, { id, siteId }, context.captureModels);
 
   context.response.body = await context.captureModels.updateRevision(revisionRequest, {
     siteId,

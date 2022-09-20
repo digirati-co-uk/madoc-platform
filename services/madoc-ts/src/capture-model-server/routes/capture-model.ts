@@ -4,6 +4,7 @@ import { parseUrn } from '../../utility/parse-urn';
 import { userCan } from '../../utility/user-can';
 import { castBool } from '../../utility/cast-bool';
 import { optionalUserWithScope } from '../../utility/user-with-scope';
+import { migrateModel } from '../migration/migrate-model';
 import { CaptureModelGetOptions } from '../types';
 import { CaptureModel } from '../../frontend/shared/capture-models/types/capture-model';
 
@@ -12,6 +13,10 @@ export const captureModelApi: RouteMiddleware<{ id: string }> = async context =>
   const canSeeFullModel = userCan('models.create', context.state);
   const canDebug = userCan('models.admin', context.state);
   const userApi = api.asUser({ siteId, userId: id }, {}, true);
+  const modelId = context.params.id;
+
+  // Migration specific.
+  await migrateModel(modelId, { id, siteId }, context.captureModels);
 
   const query = context.query as {
     author: string;
@@ -51,7 +56,7 @@ export const captureModelApi: RouteMiddleware<{ id: string }> = async context =>
     };
     context.response.body = {
       __debug_options__: debugOptions,
-      ...(await context.captureModels.getCaptureModel(context.params.id, debugOptions, siteId)),
+      ...(await context.captureModels.getCaptureModel(modelId, debugOptions, siteId)),
     };
 
     return;
@@ -67,10 +72,10 @@ export const captureModelApi: RouteMiddleware<{ id: string }> = async context =>
 
   // @todo temporary migration code.
   try {
-    context.body = await context.captureModels.getCaptureModel(context.params.id, options, siteId);
+    context.body = await context.captureModels.getCaptureModel(modelId, options, siteId);
   } catch (e) {
-    const model = await userApi.request<CaptureModel>(`/api/crowdsourcing/models/${context.params.id}`);
+    const model = await userApi.request<CaptureModel>(`/api/crowdsourcing/models/${modelId}`);
     await context.captureModels.createCaptureModel(model, siteId);
-    context.body = await context.captureModels.getCaptureModel(context.params.id, options, siteId);
+    context.body = await context.captureModels.getCaptureModel(modelId, options, siteId);
   }
 };

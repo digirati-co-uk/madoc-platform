@@ -25,7 +25,7 @@ import { filterModelGetOptions } from './server-filters/filter-model-get-options
 import { updateRevisionInDocument } from './server-filters/update-revision-in-document';
 import { CaptureModelGetOptions } from './types';
 
-export class CaptureModelRepository extends BaseRepository {
+export class CaptureModelRepository extends BaseRepository<'capture_model_api_migrated'> {
   static queries = {
     getCaptureModelByProjectId: (idOrSlug: string | number, site_id: number) => {
       const { projectSlug, projectId } = parseProjectId(idOrSlug);
@@ -1107,5 +1107,9 @@ export class CaptureModelRepository extends BaseRepository {
     // @todo this does need to be re-implemented for the search manifest functionality to work
     //   however this might be a good time to use the actual search service for that instead.
     return [];
+  }
+
+  isMigrated() {
+    return this.flags.capture_model_api_migrated;
   }
 }

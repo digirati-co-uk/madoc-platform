@@ -36,6 +36,7 @@ export const ENV = [
   'SMTP_USER',
   'SMTP_PASSWORD',
   'MAIL_FROM_USER',
+  'CAPTURE_MODEL_API_MIGRATED',
 ];
 
 // These are CJS modules

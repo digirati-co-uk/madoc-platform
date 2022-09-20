@@ -103,7 +103,7 @@ export async function createApp(config: ExternalConfig, env: EnvConfig) {
   }
 
   app.use(k2c(cookieParser(app.keys)));
-  app.use(postgresConnection(pool, config.pooledDatabase));
+  app.use(postgresConnection(pool, config.pooledDatabase, env));
   app.use(json({ pretty: process.env.NODE_ENV !== 'production' }));
   app.use(logger());
   // Disabled for now, causing issues logging in.

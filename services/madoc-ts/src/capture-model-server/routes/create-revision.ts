@@ -4,6 +4,7 @@ import { castBool } from '../../utility/cast-bool';
 import { RequestError } from '../../utility/errors/request-error';
 import { userWithScope } from '../../utility/user-with-scope';
 import { userCan } from '../../utility/user-can';
+import { migrateModel } from '../migration/migrate-model';
 
 export const createRevisionApi: RouteMiddleware<{ captureModelId: string }, RevisionRequest> = async context => {
   const { siteId, id } = userWithScope(context, ['models.contribute']);
@@ -11,6 +12,9 @@ export const createRevisionApi: RouteMiddleware<{ captureModelId: string }, Revi
   const revisionRequest = context.requestBody;
   const captureModelId = context.params.captureModelId;
   const showRevised = castBool(context.query.show_revised as string);
+
+  // Migration specific.
+  await migrateModel(captureModelId, { id, siteId }, context.captureModels);
 
   if (revisionRequest.captureModelId !== captureModelId) {
     throw new RequestError('Invalid capture model request');

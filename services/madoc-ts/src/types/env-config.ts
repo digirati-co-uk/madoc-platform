@@ -1,6 +1,7 @@
 import { MailConfig } from '../utility/mailer';
 
 export type EnvConfig = {
+  flags: Record<string, boolean>;
   postgres:
     | string
     | {
