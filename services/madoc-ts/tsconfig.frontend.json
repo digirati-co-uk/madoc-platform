@@ -21,7 +21,7 @@
     "noUnusedLocals": false,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      // "PACKAGE_NAME": ["../SERVICE_NAME"]
+      "@/*": ["./src/*"]
     }
   },
   "exclude": [

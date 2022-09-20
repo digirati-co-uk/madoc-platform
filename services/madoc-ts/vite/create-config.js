@@ -43,7 +43,7 @@ const TO_BUNDLE = [
   'jose',
   'sourcemapped-stacktrace',
   'react-dropzone',
-  'styled-components',
+  // 'styled-components',
   'immer',
   'koa-i18next-detector',
   'node-fetch',
@@ -58,6 +58,10 @@ export function createConfig(name, entry) {
     clearScreen: false,
     resolve: {
       dedupe: DEDUPE,
+      alias: {
+        'react-iiif-vault': 'react-iiif-vault/react17',
+        'react-dom/client': 'react-dom',
+      },
     },
     build: {
       dedupe: DEDUPE,
@@ -68,7 +72,7 @@ export function createConfig(name, entry) {
         entry,
       },
       manifest: true,
-      target: ['es2021', 'chrome97', 'safari13'],
+      target: ['node14'],
       minify: false,
       sourcemap: true,
       rollupOptions: {

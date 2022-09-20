@@ -4,7 +4,13 @@ import { defineConfig, splitVendorChunkPlugin } from 'vite';
 export default defineConfig({
   clearScreen: false,
   resolve: {
-    dedupe: ['react', 'react-dom'],
+    alias: {
+      'react-iiif-vault': 'react-iiif-vault/react17',
+      'react-dom/client': 'react-dom',
+    },
+  },
+  optimizeDeps: {
+    exclude: ['react-dom/client'],
   },
   base: '/s/default/madoc/',
   build: {
