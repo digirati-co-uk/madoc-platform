@@ -1,8 +1,10 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { RegionHighlight } from '../../../../atlas/RegionHighlight';
+import { ResizeWorldItem } from '../../../../atlas/ResizeWorldItem';
 import { SelectorComponent } from '../../../types/selector-types';
 import { useCroppedRegion } from '../../content-types/Atlas/Atlas.helpers';
 import { BoxSelectorProps } from './BoxSelector';
-import { BoxStyle, DrawBox, ResizeWorldItem } from '@atlas-viewer/atlas';
+import { BoxStyle, DrawBox } from '@atlas-viewer/atlas';
 import { useBoxSelector } from './BoxSelector.helpers';
 
 type RegionHighlightType = {
@@ -13,7 +15,7 @@ type RegionHighlightType = {
   height: number;
 };
 
-export const RegionHighlight: React.FC<{
+export const RegionHighlight2: React.FC<{
   id?: string;
   region: RegionHighlightType;
   isEditing: boolean;
@@ -23,7 +25,7 @@ export const RegionHighlight: React.FC<{
   style?: BoxStyle;
 }> = ({ id, interactive, region, onClick, onSave, isEditing, style = { backgroundColor: 'rgba(0,0,0,.5)' } }) => {
   const saveCallback = useCallback(
-    bounds => {
+    (bounds: any) => {
       onSave({ id: region.id, x: region.x, y: region.y, height: region.height, width: region.width, ...bounds });
     },
     [onSave, region.id, region.x, region.y, region.height, region.width]
@@ -59,13 +61,26 @@ export const RegionHighlight: React.FC<{
 const BoxSelectorAtlas: SelectorComponent<BoxSelectorProps> = props => {
   const { state, hidden, readOnly, id } = props;
   const generatePreview = useCroppedRegion();
+  const [mounted, setMounted] = useState(false);
   const { onSave, style, onClick } = useBoxSelector(props, { generatePreview });
 
-  // if (hidden && !isHighlighted) {
-  //   return null;
-  // }
+  useEffect(() => {
+    if (!state) {
+      const timeout = setTimeout(() => {
+        setMounted(true);
+      }, 500);
+
+      return () => {
+        clearTimeout(timeout);
+        setMounted(false);
+      };
+    }
+  }, [state]);
 
   if (!state) {
+    if (!mounted) {
+      return null;
+    }
     if (readOnly) {
       return null;
     }
