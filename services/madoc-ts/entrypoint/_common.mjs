@@ -13,7 +13,7 @@ export function loadBundle(bundle, pm2Name) {
     times++;
     return import(bundle).catch(async e => {
       if (times < 20) {
-        console.log('=> Error loading module, trying again...');
+        console.log('=> Error loading module, trying again...', e);
         await new Promise(resolve => setTimeout(resolve, 2000));
         return load();
       }
