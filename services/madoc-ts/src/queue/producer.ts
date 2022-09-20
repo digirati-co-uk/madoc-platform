@@ -5,13 +5,13 @@ import * as canvas from '../gateway/tasks/import-canvas';
 import * as crowdsourcing from '../gateway/tasks/crowdsourcing-task';
 import * as review from '../gateway/tasks/crowdsourcing-review';
 import { api } from '../gateway/api.server';
-import * as tasks from '../gateway/tasks/task-helpers';
 import * as crowdsourcingCanvas from '../gateway/tasks/crowdsourcing-canvas-task';
 import * as crowdsourcingManifest from '../gateway/tasks/crowdsourcing-manifest-task';
 import * as processManifestOcr from '../gateway/tasks/process-manifest-ocr';
 import * as processCanvasOcr from '../gateway/tasks/process-canvas-ocr';
 import * as searchIndex from '../gateway/tasks/search-index-task';
 import * as apiActionTask from '../gateway/tasks/api-action-task';
+import * as migrationTasks from '../capture-model-server/migration/migrate-model-task';
 
 const configOptions: WorkerOptions = {
   connection: {
@@ -114,6 +114,10 @@ const worker = new Worker(
           });
         case apiActionTask.type:
           return await apiActionTask.jobHandler(job.name, job.data.taskId, contextualApi).catch(err => {
+            throw err;
+          });
+        case migrationTasks.type:
+          return await migrationTasks.jobHandler(job.name, job.data.taskId, contextualApi).catch(err => {
             throw err;
           });
 

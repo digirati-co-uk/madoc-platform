@@ -2,6 +2,7 @@ import { Middleware } from 'koa';
 import { DatabasePoolConnectionType, DatabasePoolType } from 'slonik';
 import { ChangeDiscoveryRepository } from '../activity-streams/change-discovery-repository';
 import { AnnotationStylesRepository } from '../repository/annotation-styles-repository';
+import { CaptureModelRepository } from '../capture-model-server/capture-model-repository';
 import { MediaRepository } from '../repository/media-repository';
 import { NotificationRepository } from '../repository/notification-repository';
 import { PageBlocksRepository } from '../repository/page-blocks-repository';
@@ -27,6 +28,7 @@ export const postgresConnection = (pool: DatabasePoolType, useConnections = fals
     context.notifications = new NotificationRepository(connection);
     context.projects = new ProjectRepository(connection);
     context.annotationStyles = new AnnotationStylesRepository(connection);
+    context.captureModels = new CaptureModelRepository(connection);
 
     await next();
   }

@@ -6,18 +6,34 @@ import { CaptureModel } from '../capture-models/types/capture-model';
 
 export function createRevisionFromDocument(
   document: CaptureModel['document'],
-  { ignoreMultiple, structure }: { ignoreMultiple?: boolean; structure?: CaptureModel['structure'] } = {}
+  {
+    ignoreMultiple,
+    structure,
+    generateIds,
+  }: { ignoreMultiple?: boolean; structure?: CaptureModel['structure']; generateIds?: boolean } = {}
 ): { model: CaptureModel; revisionId: string } {
   const rid = generateId();
 
   traverseDocument(document, {
     visitField(field, prop, parent) {
+      if (generateIds) {
+        field.id = generateId();
+        if (field.selector) {
+          field.selector.id = generateId();
+        }
+      }
       field.revision = rid;
       if (prop === 'label' && parent && !parent.labelledBy) {
         parent.labelledBy = 'label';
       }
     },
     visitEntity(entity, prop) {
+      if (generateIds) {
+        entity.id = generateId();
+        if (entity.selector) {
+          entity.selector.id = generateId();
+        }
+      }
       entity.revision = rid;
       if (!ignoreMultiple) {
         entity.allowMultiple = true;

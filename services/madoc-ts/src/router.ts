@@ -211,6 +211,7 @@ import { siteCanvasTasks } from './routes/site/site-canvas-tasks';
 import { getProjectTask } from './routes/projects/get-project-task';
 import { assignRandomResource } from './routes/projects/assign-random-resource';
 import { router as activityStreamRoutes } from './activity-streams/router';
+import { router as captureModelRoutes } from './capture-model-server/router';
 import { getCollectionDeletionSummary } from './routes/iiif/collections/delete-collection-summary';
 import { deleteCanvasSummary } from './routes/iiif/canvases/delete-canvas-summary';
 import { deleteProjectSummary } from './routes/projects/delete-project-summary';
@@ -622,6 +623,7 @@ export const router = new TypedRouter({
   // Other routes.
   ...activityStreamRoutes,
   ...annotationStyles,
+  ...captureModelRoutes,
   ...getAuthRoutes(),
 
   // Development

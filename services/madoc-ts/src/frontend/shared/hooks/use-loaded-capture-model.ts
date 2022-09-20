@@ -10,7 +10,7 @@ export function useLoadedCaptureModel(modelId?: string, initialModel?: CaptureMo
     ['model-preview', { id: modelId, canvasId, modelId: initialModel?.id }],
     async () => {
       if (!modelId) {
-        throw new Error('No model');
+        return;
       }
       const captureModel = initialModel ? initialModel : await api.getCaptureModel(modelId);
       if ((!captureModel.target || !captureModel.target[0]) && !canvasId) {

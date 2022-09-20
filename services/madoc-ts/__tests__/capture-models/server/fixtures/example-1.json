@@ -1,0 +1,427 @@
+{
+  "__debug_options__": {
+    "onlyRevisionFields": false,
+    "userId": 2,
+    "fullModel": false,
+    "showAllRevisions": false,
+    "includeCanonical": false,
+    "showDeletedFields": false
+  },
+  "id": "0ba1e713-fb76-40c0-8280-ecd4bf52f78a",
+  "structure": {
+    "id": "21b43492-3cab-4424-a20b-0d4eab6bedb8",
+    "type": "choice",
+    "label": "Box drawing test",
+    "items": [
+      {
+        "id": "d05dd72b-7385-4af4-b5a7-3f628346257d",
+        "type": "model",
+        "label": "Default",
+        "fields": [
+          [
+            "boxes",
+            [
+              "description"
+            ]
+          ]
+        ],
+        "modelRoot": [
+          "boxes"
+        ]
+      }
+    ]
+  },
+  "document": {
+    "id": "0c4e8a94-3c5d-49ba-a874-d93668561334",
+    "type": "entity",
+    "label": "Box drawing test",
+    "properties": {
+      "boxes": [
+        {
+          "id": "d8c0a176-ea18-42d8-9dee-fd211887441c",
+          "type": "entity",
+          "label": "Boxes",
+          "labelledBy": "description",
+          "revision": "c24c913e-74fd-4c50-a52d-8a1df768c42b",
+          "properties": {
+            "description": [
+              {
+                "id": "fdf80f15-70af-4611-8f2a-59ddbf59423e",
+                "type": "text-field",
+                "label": "Description",
+                "value": "test abc",
+                "revision": "c24c913e-74fd-4c50-a52d-8a1df768c42b",
+                "minLines": 6,
+                "multiline": true
+              }
+            ]
+          },
+          "selector": {
+            "id": "cee75076-caf6-479e-b205-d9b5d281ba92",
+            "type": "box-selector",
+            "state": {
+              "x": 2184,
+              "y": 994,
+              "width": 159,
+              "height": 98
+            },
+            "required": true
+          },
+          "immutable": false,
+          "allowMultiple": false
+        },
+        {
+          "id": "4e77f3e6-650d-4d66-a7fd-6b95e6246635",
+          "type": "entity",
+          "label": "Boxes",
+          "labelledBy": "description",
+          "revision": "77cb7d65-61d5-44aa-9aa0-226ce017d8e8",
+          "properties": {
+            "description": [
+              {
+                "id": "fa204d7c-649e-4b7e-a0aa-821c76e1dd48",
+                "type": "text-field",
+                "label": "Description",
+                "value": "asdasdasdasd",
+                "revision": "77cb7d65-61d5-44aa-9aa0-226ce017d8e8",
+                "minLines": 6,
+                "multiline": true
+              }
+            ]
+          },
+          "selector": {
+            "id": "df490d60-abe3-4525-9129-c07562b9fc89",
+            "type": "box-selector",
+            "state": {
+              "x": 1383.4520124044975,
+              "y": 588.1818594101824,
+              "height": 186,
+              "width": 401
+            },
+            "required": true
+          },
+          "immutable": false,
+          "allowMultiple": false
+        },
+        {
+          "id": "a15b87a0-23f0-43f8-b8f7-fa7ab072a95e",
+          "type": "entity",
+          "label": "Boxes",
+          "allowMultiple": false,
+          "labelledBy": "description",
+          "properties": {
+            "description": [
+              {
+                "id": "db2c539e-56e4-4ae0-8e4e-27b4843cffa2",
+                "type": "text-field",
+                "label": "Description",
+                "value": "New one",
+                "minLines": 6,
+                "multiline": true,
+                "revision": "0533a789-8fd4-4487-9d95-b302fef6a3df"
+              }
+            ]
+          },
+          "selector": {
+            "id": "acf72572-ba5a-45d0-989a-7cffc2d9b36b",
+            "type": "box-selector",
+            "state": {
+              "x": 1680.1341637828345,
+              "y": 771.7546121282642,
+              "height": 129,
+              "width": 326
+            },
+            "required": true
+          },
+          "immutable": false,
+          "revision": "0533a789-8fd4-4487-9d95-b302fef6a3df"
+        },
+        {
+          "id": "760b66fc-ea23-4306-9f50-a3c28388dec9",
+          "type": "entity",
+          "label": "Boxes",
+          "allowMultiple": false,
+          "labelledBy": "description",
+          "properties": {
+            "description": [
+              {
+                "id": "f4b012e4-81f2-4e9b-9952-35c4bca4259c",
+                "type": "text-field",
+                "label": "Description",
+                "value": "test",
+                "minLines": 6,
+                "multiline": true,
+                "revision": "36407f17-a8ac-452f-a15b-090754018d22"
+              }
+            ]
+          },
+          "selector": {
+            "id": "ef76a7d4-0ee0-4472-b1a6-60c5b544872e",
+            "type": "box-selector",
+            "state": {
+              "x": 1119.0451641350812,
+              "y": 562.9563574813967,
+              "height": 183,
+              "width": 346
+            },
+            "required": true
+          },
+          "immutable": false,
+          "revision": "36407f17-a8ac-452f-a15b-090754018d22"
+        },
+        {
+          "id": "b2443c2e-ab51-43bd-b49b-8d394879a056",
+          "type": "entity",
+          "label": "Boxes",
+          "labelledBy": "description",
+          "revision": "574bd3c6-0cb3-488b-83fd-84fdc5e65dd0",
+          "properties": {
+            "description": [
+              {
+                "id": "07e11090-a76d-4f3f-908c-785f99477b51",
+                "type": "text-field",
+                "label": "Description",
+                "value": "B",
+                "revision": "574bd3c6-0cb3-488b-83fd-84fdc5e65dd0",
+                "minLines": 6,
+                "multiline": true
+              }
+            ]
+          },
+          "selector": {
+            "id": "0829a896-b8f5-4ede-a339-06c91f7ad2e4",
+            "type": "box-selector",
+            "state": {
+              "x": 881,
+              "y": 446,
+              "width": 226,
+              "height": 530
+            },
+            "required": true
+          }
+        },
+        {
+          "id": "7aea1918-ae09-45bd-bce2-7965bd4512ea",
+          "type": "entity",
+          "label": "Boxes",
+          "labelledBy": "description",
+          "revision": "671b6c4c-ba50-4a23-be57-87ac493b48ae",
+          "properties": {
+            "description": [
+              {
+                "id": "63f7539b-b8c9-4d96-a4a3-90743d9027df",
+                "type": "text-field",
+                "label": "Description",
+                "value": "C",
+                "revision": "671b6c4c-ba50-4a23-be57-87ac493b48ae",
+                "minLines": 6,
+                "multiline": true
+              }
+            ]
+          },
+          "selector": {
+            "id": "d999e186-dc85-448e-9f01-42665b6f4d87",
+            "type": "box-selector",
+            "state": {
+              "x": 1192,
+              "y": 272,
+              "width": 191,
+              "height": 589
+            },
+            "required": true
+          }
+        },
+        {
+          "id": "d74592e6-00f5-4189-ad90-c508beac50c7",
+          "type": "entity",
+          "label": "Boxes",
+          "labelledBy": "description",
+          "revision": "edc590f3-b59b-43a0-9a6b-e7347fc4baa8",
+          "properties": {
+            "description": [
+              {
+                "id": "962a6ae3-4d0a-449c-91f6-55d90f4c780e",
+                "type": "text-field",
+                "label": "Description",
+                "value": "A",
+                "revision": "edc590f3-b59b-43a0-9a6b-e7347fc4baa8",
+                "minLines": 6,
+                "multiline": true
+              }
+            ]
+          },
+          "selector": {
+            "id": "d2582e4a-1500-46fc-876b-135d32e16b90",
+            "type": "box-selector",
+            "state": {
+              "x": 630,
+              "y": 303,
+              "width": 227,
+              "height": 820
+            },
+            "required": true
+          }
+        },
+        {
+          "id": "95ea7db5-7adf-4eba-bacd-018da6e7d1c9",
+          "type": "entity",
+          "label": "Boxes",
+          "allowMultiple": true,
+          "labelledBy": "description",
+          "properties": {
+            "description": [
+              {
+                "id": "7d4f326c-85eb-4454-940d-684e0ff65ba6",
+                "type": "text-field",
+                "label": "Description",
+                "value": "",
+                "minLines": 6,
+                "multiline": true
+              }
+            ]
+          },
+          "selector": {
+            "id": "fdd8517a-7ebb-4bf6-92b9-0492b8b241bd",
+            "type": "box-selector",
+            "state": null,
+            "required": true
+          }
+        }
+      ]
+    }
+  },
+  "revisions": [
+    {
+      "structureId": "d05dd72b-7385-4af4-b5a7-3f628346257d",
+      "fields": [
+        [
+          "boxes",
+          [
+            "description"
+          ]
+        ]
+      ],
+      "authors": [
+        "urn:madoc:user:1"
+      ],
+      "id": "574bd3c6-0cb3-488b-83fd-84fdc5e65dd0",
+      "revises": "d05dd72b-7385-4af4-b5a7-3f628346257d",
+      "approved": true,
+      "status": "accepted",
+      "label": "Default"
+    },
+    {
+      "structureId": "d05dd72b-7385-4af4-b5a7-3f628346257d",
+      "fields": [
+        [
+          "boxes",
+          [
+            "description"
+          ]
+        ]
+      ],
+      "authors": [
+        "urn:madoc:user:1"
+      ],
+      "id": "671b6c4c-ba50-4a23-be57-87ac493b48ae",
+      "revises": "d05dd72b-7385-4af4-b5a7-3f628346257d",
+      "approved": false,
+      "status": "submitted",
+      "label": "Default"
+    },
+    {
+      "structureId": "d05dd72b-7385-4af4-b5a7-3f628346257d",
+      "fields": [
+        [
+          "boxes",
+          [
+            "description"
+          ]
+        ]
+      ],
+      "authors": [
+        "urn:madoc:user:1"
+      ],
+      "id": "edc590f3-b59b-43a0-9a6b-e7347fc4baa8",
+      "revises": "d05dd72b-7385-4af4-b5a7-3f628346257d",
+      "approved": false,
+      "status": "draft",
+      "label": "Default"
+    },
+    {
+      "fields": [
+        [
+          "boxes",
+          [
+            "description"
+          ]
+        ]
+      ],
+      "structureId": "d05dd72b-7385-4af4-b5a7-3f628346257d",
+      "id": "0533a789-8fd4-4487-9d95-b302fef6a3df",
+      "revises": "d05dd72b-7385-4af4-b5a7-3f628346257d",
+      "approved": false,
+      "authors": [
+        "urn:madoc:user:1"
+      ],
+      "status": "draft",
+      "label": "Default"
+    },
+    {
+      "fields": [
+        [
+          "boxes",
+          [
+            "description"
+          ]
+        ]
+      ],
+      "structureId": "d05dd72b-7385-4af4-b5a7-3f628346257d",
+      "id": "77cb7d65-61d5-44aa-9aa0-226ce017d8e8",
+      "revises": "d05dd72b-7385-4af4-b5a7-3f628346257d",
+      "approved": false,
+      "authors": [
+        "urn:madoc:user:1"
+      ],
+      "status": "draft",
+      "label": "Default"
+    },
+    {
+      "fields": [
+        [
+          "boxes",
+          [
+            "description"
+          ]
+        ]
+      ],
+      "structureId": "d05dd72b-7385-4af4-b5a7-3f628346257d",
+      "id": "c24c913e-74fd-4c50-a52d-8a1df768c42b",
+      "revises": "d05dd72b-7385-4af4-b5a7-3f628346257d",
+      "approved": false,
+      "status": "draft",
+      "authors": [
+        "urn:madoc:user:1"
+      ],
+      "label": "Default"
+    }
+  ],
+  "derivedFrom": "52ca54cb-96ec-4de5-81c7-3416e96af4dc",
+  "target": [
+    {
+      "id": "urn:madoc:manifest:171",
+      "type": "Manifest"
+    },
+    {
+      "id": "urn:madoc:canvas:207",
+      "type": "Canvas"
+    }
+  ],
+  "contributors": {
+    "urn:madoc:user:1": {
+      "id": "urn:madoc:user:1",
+      "type": "Person",
+      "name": "Stephen"
+    }
+  }
+}
