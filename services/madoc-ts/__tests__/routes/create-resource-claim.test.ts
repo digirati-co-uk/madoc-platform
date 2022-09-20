@@ -223,7 +223,7 @@ describe('Create resource claim', () => {
 
     apiMock.mockRoute(
       'GET',
-      '/api/crowdsourcing/model?derived_from=model-id&target_id=urn%3Amadoc%3Acanvas%3A123&target_type=Canvas',
+      '/api/madoc/crowdsourcing/model?derived_from=model-id&target_id=urn%3Amadoc%3Acanvas%3A123&target_type=Canvas',
       {
         id: 'some-model',
       }
@@ -231,7 +231,7 @@ describe('Create resource claim', () => {
 
     apiMock.mockRoute(
       'POST',
-      '/api/crowdsourcing/model/model-id/clone',
+      '/api/madoc/crowdsourcing/model/model-id/clone',
       {
         id: 'forked-model-id',
         document: {
@@ -730,7 +730,7 @@ describe('Create resource claim', () => {
 
     apiMock.mockRoute(
       'GET',
-      '/api/crowdsourcing/model?derived_from=model_id_1&target_id=urn%3Amadoc%3Acanvas%3A123&target_type=Canvas',
+      '/api/madoc/crowdsourcing/model?derived_from=model_id_1&target_id=urn%3Amadoc%3Acanvas%3A123&target_type=Canvas',
       {
         id: 'some-model',
       }
@@ -738,7 +738,7 @@ describe('Create resource claim', () => {
 
     apiMock.mockRoute(
       'POST',
-      '/api/crowdsourcing/model/model_id_1/clone',
+      '/api/madoc/crowdsourcing/model/model_id_1/clone',
       {
         id: 'forked-model-id',
         document: {
@@ -1270,7 +1270,7 @@ describe('Create resource claim', () => {
 
     apiMock.mockRoute(
       'GET',
-      '/api/crowdsourcing/model?derived_from=model-id&target_id=urn%3Amadoc%3Acanvas%3A123&target_type=Canvas',
+      '/api/madoc/crowdsourcing/model?derived_from=model-id&target_id=urn%3Amadoc%3Acanvas%3A123&target_type=Canvas',
       [
         {
           id: 'some-model',
@@ -1278,7 +1278,7 @@ describe('Create resource claim', () => {
       ]
     );
 
-    apiMock.mockRoute('GET', '/api/crowdsourcing/model/some-model', {
+    apiMock.mockRoute('GET', '/api/madoc/crowdsourcing/model/some-model', {
       id: 'some-model',
     });
 

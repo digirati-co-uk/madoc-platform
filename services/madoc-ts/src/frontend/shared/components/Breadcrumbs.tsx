@@ -1,6 +1,6 @@
 import { InternationalString } from '@iiif/presentation-3';
 import React, { useMemo, useContext } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet as _Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
@@ -18,6 +18,8 @@ type BreadcrumbContextType = {
   task?: { name: string; id: string };
   subpage?: { name: InternationalString; path: string };
 };
+
+const Helmet: any = _Helmet;
 
 export const BreadcrumbList = styled.div`
   display: flex;

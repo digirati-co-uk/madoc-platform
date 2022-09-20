@@ -2,8 +2,10 @@
 // Bottom level items need to be able to override and communicate back up the chain.
 
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { ThemeProvider } from 'styled-components';
+import { ThemeProvider as _ThemeProvider } from 'styled-components';
 import { MadocTheme } from '../definitions/types';
+
+const ThemeProvider: any = _ThemeProvider;
 
 const CustomTheme = React.createContext<{
   themeOverrides: any;

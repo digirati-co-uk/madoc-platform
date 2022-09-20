@@ -1,9 +1,11 @@
 import React, { ComponentPropsWithRef, forwardRef } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet as _Helmet } from 'react-helmet';
 import styled, { css } from 'styled-components';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { convertComponentToText } from '../../../utility/convert-component-to-text';
 import { useSite } from '../hooks/use-site';
+
+const Helmet = _Helmet as any;
 
 export const _Heading1 = styled.h1<{ $margin?: boolean }>`
   font-size: 2em;

@@ -137,7 +137,7 @@ describe('Filter document revisions', () => {
     };
 
     //
-    const newDocument = filterDocumentRevisions(model.document, ['5325ebc1-2331-4a0c-a77a-27c7413ef743']);
+    const newDocument = filterDocumentRevisions(model.document, [], false);
 
     expect(newDocument).toMatchSnapshot();
   });

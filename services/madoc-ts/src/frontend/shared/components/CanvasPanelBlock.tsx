@@ -1,6 +1,8 @@
 import React, { DetailedHTMLProps } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet as _Helmet } from 'react-helmet';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+
+const Helmet: any = _Helmet;
 
 interface CanvasPanelBlockProps {
   //
