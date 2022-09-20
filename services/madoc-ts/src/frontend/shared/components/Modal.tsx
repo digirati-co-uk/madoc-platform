@@ -1,5 +1,6 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { Suspense, useRef, useState } from 'react';
 import { useBrowserLayoutEffect } from '../hooks/use-browser-layout-effect';
+import { Spinner } from '../icons/Spinner';
 import {
   InnerModalContainer,
   ModalBackground,
@@ -71,6 +72,7 @@ export const ModalButton: React.FC<{
 
     return () => {
       portalEl.current = undefined;
+      setIsReady(false);
       document.body.removeChild(element);
     };
   }, []);
@@ -106,12 +108,14 @@ export const ModalButton: React.FC<{
                     <ModalResizeIcon onClick={() => setIsExpanded(e => !e)} />
                     <ModalCloseIcon onClick={closeModal} />
                   </ModalHeader>
-                  <ModalBody>{render({ close: closeModal })}</ModalBody>
-                  {renderFooter ? (
-                    <ModalFooter $footerAlignRight={footerAlignRight}>
-                      {renderFooter({ close: closeModal })}
-                    </ModalFooter>
-                  ) : null}
+                  <Suspense fallback={<Spinner />}>
+                    <ModalBody>{render({ close: closeModal })}</ModalBody>
+                    {renderFooter ? (
+                      <ModalFooter $footerAlignRight={footerAlignRight}>
+                        {renderFooter({ close: closeModal })}
+                      </ModalFooter>
+                    ) : null}
+                  </Suspense>
                 </InnerModalContainer>
               </ModalContainer>
             </>,
@@ -128,7 +132,7 @@ export const ModalButton: React.FC<{
         onClick={() => setIsReady(true)}
         style={style}
       >
-        {children}
+        <Suspense fallback={<Spinner />}>{children}</Suspense>
       </Component>
     </>
   );
