@@ -248,7 +248,7 @@ export function parseFilter(config?: SlotFilterConfig) {
     whitelist: null,
     blacklist: null,
     all: false,
-    none: false,
+    none: typeof config?.none === 'undefined' ? false : config.none,
   };
 
   if (config) {
