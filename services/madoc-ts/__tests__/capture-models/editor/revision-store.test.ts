@@ -2,6 +2,10 @@
  * @jest-environment node
  */
 
+const deepmerge = require('deepmerge');
+import invariant from 'tiny-invariant';
+import { extractValidRevisionChanges } from '../../../src/capture-model-server/server-filters/extract-valid-revision-changes';
+import { updateRevisionInDocument } from '../../../src/capture-model-server/server-filters/update-revision-in-document';
 import { createRevisionStore } from '../../../src/frontend/shared/capture-models/editor/stores/revisions/revisions-store';
 import { registerField } from '../../../src/frontend/shared/capture-models/plugin-api/global-store';
 import { CaptureModel } from '../../../src/frontend/shared/capture-models/types/capture-model';
@@ -21,15 +25,15 @@ registerField({
 } as any);
 
 const models: () => any[] = () => [
-  require('../../../fixtures/03-revisions/01-single-field-with-revision.json'),
-  require('../../../fixtures/03-revisions/02-single-field-with-multiple-revisions.json'),
-  require('../../../fixtures/03-revisions/03-nested-revision.json'),
-  require('../../../fixtures/03-revisions/04-dual-transcription.json'),
-  require('../../../fixtures/03-revisions/05-allow-multiple-transcriptions.json'),
-  require('../../../fixtures/04-selectors/01-simple-selector.json'),
-  require('../../../fixtures/04-selectors/02-multiple-selectors.json'),
-  require('../../../fixtures/04-selectors/03-nested-selector.json'),
-  require('../../../fixtures/04-selectors/08-hocr-output.json'),
+  deepmerge({}, require('../../../fixtures/03-revisions/01-single-field-with-revision.json')),
+  deepmerge({}, require('../../../fixtures/03-revisions/02-single-field-with-multiple-revisions.json')),
+  deepmerge({}, require('../../../fixtures/03-revisions/03-nested-revision.json')),
+  deepmerge({}, require('../../../fixtures/03-revisions/04-dual-transcription.json')),
+  deepmerge({}, require('../../../fixtures/03-revisions/05-allow-multiple-transcriptions.json')),
+  deepmerge({}, require('../../../fixtures/04-selectors/01-simple-selector.json')),
+  deepmerge({}, require('../../../fixtures/04-selectors/02-multiple-selectors.json')),
+  deepmerge({}, require('../../../fixtures/04-selectors/03-nested-selector.json')),
+  deepmerge({}, require('../../../fixtures/04-selectors/08-hocr-output.json')),
 ];
 
 describe('Revision store', () => {
@@ -242,6 +246,33 @@ describe('Revision store', () => {
       expect((store.getState().revisionSubtree as any).properties.transcription[2].label).toEqual('Transcription');
       expect((store.getState().revisionSubtree as any).properties.transcription[2].type).toEqual('text-field');
       expect((store.getState().revisionSubtree as any).properties.transcription[2].value).toEqual('');
+
+      // @ts-ignore
+      expect(store.getState().currentRevision.document.properties.transcription).toHaveLength(3);
+
+      // And we can detect the changes on the server side.
+
+      const newModel = models()[4];
+
+      const { mutations } = extractValidRevisionChanges(
+        newModel,
+        store.getState().revisions['fd847948-11bf-42ca-bfdd-cab85ea818f3'] as any,
+        {
+          allowAnonymous: true,
+          allowCustomStructure: true,
+        }
+      );
+
+      expect(Object.keys(mutations)).toHaveLength(1);
+      const first = mutations[(Object.keys(mutations) as any)[0]][0];
+      invariant(first.type === 'field');
+      expect(first.term).toEqual('transcription');
+      expect(first.field.value).toEqual('');
+
+      expect(newModel.document.properties.transcription).toHaveLength(5);
+      updateRevisionInDocument(newModel, store.getState().revisions['fd847948-11bf-42ca-bfdd-cab85ea818f3'] as any, {});
+      expect(newModel.document.properties.transcription).toHaveLength(6);
+      expect(newModel.document.properties.transcription.filter((r: any) => r.id === first.field.id)).toHaveLength(1);
     });
 
     test('duplicating field with selector', () => {
@@ -887,6 +918,11 @@ describe('Revision store', () => {
         revisionId: 'c8bb939a-7a76-4b15-9f77-81375519128c',
         cloneMode: 'EDIT_ALL_VALUES',
       });
+
+      // @ts-ignore
+      expect(store.getState().currentRevision.document.properties.paragraph[0].id).toEqual(
+        '159621fb-4f93-4cd7-a394-5a1141fc1091'
+      );
 
       // First we update the selector.
       actions.updateSelector({
