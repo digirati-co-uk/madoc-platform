@@ -26,7 +26,7 @@ export const MediaExplorer: React.FC<MediaExplorerProps & {
   const container = useRef<HTMLDivElement>(null);
   const { data: pages, fetchMore, canFetchMore, isFetchingMore } = useInfiniteQuery(
     ['media-explorer', {}],
-    async (key, _, vars: { page?: number }) => {
+    async (key, _, vars: { page?: number } = { page: 0 }) => {
       return api.media.listMedia(vars.page);
     },
     {
