@@ -17,7 +17,7 @@ export const Wrapper = styled.div`
 `;
 
 export const HeroHeading = styled.h1`
-  font-size: 48px;
+  font-size: 3em;
   line-height: 56px;
   font-weight: 600;
   grid-column: span 8;

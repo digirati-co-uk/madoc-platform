@@ -4,11 +4,32 @@ import React from 'react';
 import { SubHeading, Divider, HeroHeading, Wrapper, Actions } from './custom-ida-hero.style';
 import { TextButton } from '../../custom-components/Button/Button';
 import { Share, Bookmark } from '@styled-icons/entypo';
+import { useManifest } from '../../../site/hooks/use-manifest';
+import { LocaleString } from '../../components/LocaleString';
+import { useData } from '../../hooks/use-data';
+import { ManifestLoader } from '../../../site/pages/loaders/manifest-loader';
+import { CanvasLoader } from '../../../site/pages/loaders/canvas-loader';
 
-export function CustomIdaHero(props: { heading: string; subHeading?: string }) {
+export function CustomIdaHero(props: { subHeading?: string }) {
+  const { data: manifestResponse } = useData(ManifestLoader);
+  const { data: canvasResponse } = useData(CanvasLoader);
+
+  const manifest = manifestResponse?.manifest;
+  const canvas = canvasResponse?.canvas;
+
+  if (!canvas?.id && !manifest?.id) {
+    return <HeroHeading>...</HeroHeading>;
+  }
+
   return (
     <Wrapper>
-      <HeroHeading>{props.heading}</HeroHeading>
+      <HeroHeading>
+        {!canvas || !canvas.label ? (
+          <LocaleString>{manifest?.label}</LocaleString>
+        ) : (
+          <LocaleString>{canvas?.label}</LocaleString>
+        )}
+      </HeroHeading>
       <Actions>
         <TextButton>
           <Bookmark /> Bookmark this
@@ -27,11 +48,9 @@ blockEditorFor(CustomIdaHero, {
   type: 'custom-ida-hero',
   label: 'IDA Hero',
   defaultProps: {
-    heading: 'hello', // This will pre-populate the form
     subHeading: 'World', // This will pre-populate the form
   },
   editor: {
-    heading: { label: 'Enter a heading', type: 'text-field' },
     subHeading: { label: 'Enter a subheading', type: 'text-field' },
   },
 });

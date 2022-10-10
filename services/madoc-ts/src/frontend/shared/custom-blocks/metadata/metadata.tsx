@@ -5,9 +5,13 @@ import { MetaDataWrapper, MetaDataAccordian, Btn, MetaItemData, MetaItem, MetaLa
 import { Database, ChevronDown } from '@styled-icons/entypo/';
 import { useTranslation } from 'react-i18next';
 import { LocaleString } from '../../components/LocaleString';
+import { useManifest } from '../../../site/hooks/use-manifest';
 
 export function IDAManifestMetadata() {
-  const metadata = [{ label: 'test', value: 'testv' }];
+  const { data } = useManifest();
+  const manifest = data?.manifest;
+  const metadata = manifest?.metadata;
+
   const [expanded, setExpanded] = useState(false);
   const { t } = useTranslation();
   if (!metadata || !metadata.length) {
@@ -28,7 +32,6 @@ export function IDAManifestMetadata() {
               return (
                 <MetaItem key={idx}>
                   <Database />
-
                   <MetaLabel>
                     <LocaleString enableDangerouslySetInnerHTML>{metadataItem.label}</LocaleString> :
                   </MetaLabel>
@@ -45,7 +48,7 @@ export function IDAManifestMetadata() {
 }
 blockEditorFor(IDAManifestMetadata, {
   type: 'Metadata',
-  label: 'IDA Manifest metadata',
+  label: 'Dropdown Manifest Metadata',
   anyContext: ['manifest', 'canvas'],
   requiredContext: ['manifest'],
   editor: {},
