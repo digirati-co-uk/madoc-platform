@@ -1,30 +1,19 @@
 import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-react';
 import React, { useState } from 'react';
-import { MetaDataWrapper, MetaDataAccordian, Btn, MetaItemData, MetaItem, MetaLabel } from './metadata.style';
-import { useTranslation } from 'react-i18next';
-import { useSiteMetadataConfiguration } from '../../hooks/use-site-metadata-configuration';
-import { usePaginatedData } from '../../hooks/use-data';
-import { ManifestLoader } from '../../../site/pages/loaders/manifest-loader';
-import { useRouteContext } from '../../../site/hooks/use-route-context';
-import { Database, ChevronDown } from '@styled-icons/entypo/';
 
-export function MetaData() {
+import { MetaDataWrapper, MetaDataAccordian, Btn, MetaItemData, MetaItem, MetaLabel } from './metadata.style';
+import { Database, ChevronDown } from '@styled-icons/entypo/';
+import { useTranslation } from 'react-i18next';
+import { LocaleString } from '../../components/LocaleString';
+
+export function IDAManifestMetadata() {
+  const metadata = [{ label: 'test', value: 'testv' }];
   const [expanded, setExpanded] = useState(false);
   const { t } = useTranslation();
-  const { manifestId } = useRouteContext();
-  const { resolvedData: data } = usePaginatedData(ManifestLoader, undefined, { enabled: !!manifestId });
-  const { data: metadataConfig } = useSiteMetadataConfiguration({ enabled: true });
-
-  if (!data || !metadataConfig) {
-    return null;
-  }
-  const metadata = data.manifest.metadata;
-
   if (!metadata || !metadata.length) {
     return null;
   }
 
-  // console.log(result);
   return (
     <MetaDataWrapper expanded={expanded}>
       <Btn onClick={() => setExpanded(!expanded)}>
@@ -39,8 +28,13 @@ export function MetaData() {
               return (
                 <MetaItem key={idx}>
                   <Database />
-                  <MetaLabel>{metadataItem.label.none} :</MetaLabel>
-                  <MetaItemData>{metadataItem.value.none} </MetaItemData>
+
+                  <MetaLabel>
+                    <LocaleString enableDangerouslySetInnerHTML>{metadataItem.label}</LocaleString> :
+                  </MetaLabel>
+                  <MetaItemData>
+                    <LocaleString enableDangerouslySetInnerHTML>{metadataItem.value}</LocaleString>
+                  </MetaItemData>
                 </MetaItem>
               );
             })
@@ -49,9 +43,11 @@ export function MetaData() {
     </MetaDataWrapper>
   );
 }
-
-blockEditorFor(MetaData, {
+blockEditorFor(IDAManifestMetadata, {
   type: 'Metadata',
-  label: 'ida metadata',
+  label: 'IDA Manifest metadata',
+  anyContext: ['manifest', 'canvas'],
+  requiredContext: ['manifest'],
   editor: {},
+  defaultProps: {},
 });

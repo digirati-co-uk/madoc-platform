@@ -19,6 +19,7 @@ export const MetaDataWrapper = styled.div<{ expanded: boolean }>`
   width: 50%;
   transition: ease-in-out 0.5s;
   overflow: hidden;
+  margin-bottom: 30px;
 `;
 
 export const MetaDataAccordian = styled.div`
