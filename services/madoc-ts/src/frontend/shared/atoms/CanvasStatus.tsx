@@ -6,7 +6,6 @@ import { useApi } from '../hooks/use-api';
 import { useUser } from '../hooks/use-site';
 
 const CanvasStatusBackground = styled.div<{ $floating?: boolean }>`
-  background: #ced8ea;
   height: 10px;
 
   ${props =>

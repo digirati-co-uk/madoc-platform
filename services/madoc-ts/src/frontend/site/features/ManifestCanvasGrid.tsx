@@ -22,7 +22,14 @@ import { useRelativeLinks } from '../hooks/use-relative-links';
 import { CanvasViewer } from './CanvasViewer';
 import { usePreventCanvasNavigation } from './PreventUsersNavigatingCanvases';
 
-export function ManifestCanvasGrid(props: { popup?: boolean }) {
+export function ManifestCanvasGrid(props: {
+  background?: string;
+  popup?: boolean;
+  font?: string;
+  textColor?: string;
+  canvasBorder?: string;
+  padding?: string;
+}) {
   const { data } = useManifest();
   const createLink = useRelativeLinks();
   const { t } = useTranslation();
@@ -47,7 +54,7 @@ export function ManifestCanvasGrid(props: { popup?: boolean }) {
 
   const renderCanvasSnippet = (canvas: { id: number; label: InternationalString; thumbnail: string | null }) => {
     return (
-      <ImageStripBox>
+      <ImageStripBox $border={props.canvasBorder} $color={props.textColor}>
         <CroppedImage $covered={coveredImages} $rect={rectangularImages}>
           {canvas.thumbnail ? (
             <img alt={createLocaleString(canvas.label, t('Canvas thumbnail'))} src={canvas.thumbnail} />
@@ -63,7 +70,7 @@ export function ManifestCanvasGrid(props: { popup?: boolean }) {
 
   if (props.popup) {
     return (
-      <ImageGrid>
+      <ImageGrid $bgColor={props.background}>
         {manifest.items.map((canvas, idx) => (
           <ModalButton
             modalSize="lg"
@@ -87,7 +94,7 @@ export function ManifestCanvasGrid(props: { popup?: boolean }) {
   }
 
   return (
-    <ImageGrid>
+    <ImageGrid $bgColor={props.background}>
       {manifest.items.map((canvas, idx) => (
         <Link
           key={`${canvas.id}_${idx}`}
@@ -106,8 +113,17 @@ export function ManifestCanvasGrid(props: { popup?: boolean }) {
 blockEditorFor(ManifestCanvasGrid, {
   type: 'default.ManifestCanvasGrid',
   label: 'Manifest canvas grid',
+  defaultProps: {
+    background: '',
+    popup: false,
+    textColor: '',
+    canvasBorder: '',
+  },
   editor: {
     popup: { type: 'checkbox-field', label: 'Popup', inlineLabel: 'Show canvases in popup' },
+    background: { label: 'Grid background color', type: 'color-field' },
+    textColor: { label: 'Canvas text color', type: 'color-field' },
+    canvasBorder: { label: 'Canvas border', type: 'color-field' },
   },
   requiredContext: ['manifest'],
   anyContext: ['collection', 'manifest'],

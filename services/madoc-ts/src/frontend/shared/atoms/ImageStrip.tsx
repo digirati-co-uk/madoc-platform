@@ -1,15 +1,26 @@
 import styled from 'styled-components';
 
-export const ImageStripBox = styled.div<{ $size?: 'large' | 'small' }>`
+export const ImageStripBox = styled.div<{
+  $size?: 'large' | 'small';
+  $border?: string;
+  $color?: string;
+}>`
   position: relative;
+  background-color: white;
   flex-shrink: 0;
-  padding: 5px;
+  border: 1px solid;
+  border-color: ${props => (props.$border ? props.$border : 'transparent')};
   border-radius: 3px;
 
+  h5 {
+    color: ${props => (props.$color ? props.$color : 'black')};
+    padding: ${props => (props.$border ? '0 0 15px 8px' : '0')};
+  }
   &:hover {
     background: rgba(0, 0, 0, 0.1);
     cursor: pointer;
   }
+
 `;
 
 export const ImageStrip = styled.div`
