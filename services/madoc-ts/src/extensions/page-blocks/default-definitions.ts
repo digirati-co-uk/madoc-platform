@@ -11,6 +11,7 @@ import { HelloWorld } from '../../frontend/shared/custom-blocks/firstblock';
 import { CustomIdaHero } from '../../frontend/shared/custom-blocks/custom-ida-hero/custom-ida-hero';
 import { IDAManifestMetadata } from '../../frontend/shared/custom-blocks/metadata/metadata';
 import { FeedbackBtn } from '../../frontend/shared/custom-blocks/feedback-btn/feedback-btn';
+import { GridHeader } from '../../frontend/shared/custom-blocks/grid-header/grid-header';
 
 export const defaultPageBlockDefinitions: PageBlockDefinition<any, any, any, any>[] = [
   simpleHtmlBlock,
@@ -25,4 +26,5 @@ export const defaultPageBlockDefinitions: PageBlockDefinition<any, any, any, any
   (IDAManifestMetadata as any)[Symbol.for('slot-model')] as any,
   (CustomIdaHero as any)[Symbol.for('slot-model')] as any,
   (FeedbackBtn as any)[Symbol.for('slot-model')] as any,
+  (GridHeader as any)[Symbol.for('slot-model')] as any,
 ];

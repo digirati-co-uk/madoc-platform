@@ -71,11 +71,11 @@ export function ViewManifest() {
             <ManifestCanvasGrid />
           </Slot>
         </div>
-        <div style={{ maxWidth: 290 }}>
-          <Slot name="manifest-metadata" small>
-            <ManifestMetadata hidden={false} />
-          </Slot>
-        </div>
+        {/*<div style={{ maxWidth: 290 }}>*/}
+        {/*  <Slot name="manifest-metadata" small>*/}
+        {/*    <ManifestMetadata hidden={false} />*/}
+        {/*  </Slot>*/}
+        {/*</div>*/}
       </div>
       <Slot name="manifest-footer">
         <ManifestPagination />
