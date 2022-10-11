@@ -80,6 +80,12 @@ export const LayoutContainer = styled.div`
   min-width: 0;
 `;
 
+export const PanelTitle = styled.h5`
+  text-transform: capitalize;
+  font-size: 20px;
+  margin: 10px 0;
+`;
+
 export const LayoutContent = styled.div<{ $padding?: boolean }>`
   background: #fff;
   flex: 1 1 0px;
@@ -96,12 +102,12 @@ export const LayoutContent = styled.div<{ $padding?: boolean }>`
 
 export const LayoutSidebarMenu = styled.div`
   background: #ffffff;
-  border-right: 1px solid #bcbcbc;
+  //border-right: 1px solid #bcbcbc;
 `;
 
 export const LayoutSidebar = styled.div<{ $noScroll?: boolean }>`
   background: #ffffff;
-  border-right: 1px solid #bcbcbc;
+  //border-right: 1px solid #bcbcbc;
   overflow: auto;
   position: relative;
   ${props =>

@@ -9,7 +9,10 @@ import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
 import { CanvasLoader } from '../pages/loaders/canvas-loader';
 
-export const CanvasManifestPagination: React.FC<{ subRoute?: string }> = ({ subRoute }) => {
+export const CanvasManifestPagination: React.FC<{ subRoute?: string; size?: string | undefined }> = ({
+  subRoute,
+  size,
+}) => {
   const { manifestId, collectionId, canvasId, projectId } = useRouteContext();
   const [searchText] = useCanvasSearch(canvasId);
   const prefetch = usePrefetchData(CanvasLoader);
@@ -41,6 +44,7 @@ export const CanvasManifestPagination: React.FC<{ subRoute?: string }> = ({ subR
       collectionId={collectionId}
       query={searchText ? { searchText } : undefined}
       subRoute={subRoute}
+      size={size}
     />
   );
 };
@@ -50,5 +54,17 @@ blockEditorFor(CanvasManifestPagination, {
   label: 'Canvas manifest navigation',
   anyContext: ['canvas'],
   requiredContext: ['canvas'],
-  editor: {},
+  defaultProps: {
+    size: 'full',
+  },
+  editor: {
+    size: {
+      label: 'component size',
+      type: 'dropdown-field',
+      options: [
+        { value: 'full', text: 'Full size' },
+        { value: 'small', text: 'Small' },
+      ],
+    },
+  },
 });

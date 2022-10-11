@@ -9,6 +9,7 @@ import {
   NavIconContainer,
   NavIconNotifcation,
   OuterLayoutContainer,
+  PanelTitle,
 } from '../../shared/layout/LayoutContainer';
 import { useLocalStorage } from '../../shared/hooks/use-local-storage';
 import { useResizeLayout } from '../../shared/hooks/use-resize-layout';
@@ -46,6 +47,7 @@ export const CanvasViewer: React.FC = ({ children }) => {
 
   return (
     <>
+      <PanelTitle>{openPanel}</PanelTitle>
       <OuterLayoutContainer style={{ height }}>
         <LayoutSidebarMenu>
           {menuItems.map(menuItem => {

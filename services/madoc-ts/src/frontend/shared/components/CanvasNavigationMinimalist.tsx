@@ -4,7 +4,7 @@ import { useRouteContext } from '../../site/hooks/use-route-context';
 import { useCanvasSearch } from '../hooks/use-canvas-search';
 import { useManifestStructure } from '../hooks/use-manifest-structure';
 import { createLink } from '../utility/create-link';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { ItemStructureListItem } from '../../../types/schemas/item-structure-list';
 import { DownArrowIcon } from '../icons/DownArrowIcon';
 import { HrefLink } from '../utility/href-link';
@@ -20,10 +20,22 @@ const PaginationButton = styled.button`
   }
 `;
 
-export const PaginationContainer = styled.div`
+export const PaginationContainer = styled.div<{ $size?: string }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  ${props =>
+    props.$size === 'small' &&
+    css`
+      width: 250px;
+      border: 1px solid #6c757d;
+      padding: 0;
+      margin-left: auto;
+      button {
+        border: none;
+      }
+    `}
 `;
 
 export const PaginationText = styled.div`
@@ -109,7 +121,8 @@ export const CanvasNavigationMinimalist: React.FC<{
   collectionId?: string | number;
   subRoute?: string;
   query?: any;
-}> = ({ canvasId: id, manifestId, projectId, collectionId, subRoute, query, handleNavigation, hash }) => {
+  size?: string | undefined;
+}> = ({ canvasId: id, manifestId, projectId, collectionId, subRoute, query, handleNavigation, hash, size }) => {
   const structure = useManifestStructure(manifestId);
   const { t } = useTranslation();
 
@@ -120,7 +133,7 @@ export const CanvasNavigationMinimalist: React.FC<{
   }
 
   return (
-    <PaginationContainer style={{ display: 'flex' }}>
+    <PaginationContainer style={{ display: 'flex' }} $size={size}>
       {idx > 0 ? (
         <NavigationButton
           alignment="left"
