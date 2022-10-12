@@ -27,14 +27,6 @@ export const CroppedImage = styled.div<{
       }
     `}
 
-  ${props =>
-    props.$covered &&
-    css`
-      padding: 0;
-      border-radius: 3px;
-      background: transparent;
-    `}
-
   img {
     display: inline-block;
     object-fit: contain;
@@ -48,6 +40,9 @@ export const CroppedImage = styled.div<{
         object-fit: cover;
         transform: scale(1.1);
         transition: transform 500ms;
+        padding: 0;
+        border-radius: 3px;
+        background: transparent;
 
         &:hover {
           transform: scale(1.2);

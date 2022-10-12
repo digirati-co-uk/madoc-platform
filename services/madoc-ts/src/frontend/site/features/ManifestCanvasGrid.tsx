@@ -29,6 +29,7 @@ export function ManifestCanvasGrid(props: {
   textColor?: string;
   canvasBorder?: string;
   padding?: string;
+  imageStyle?: string;
 }) {
   const { data } = useManifest();
   const createLink = useRelativeLinks();
@@ -55,7 +56,10 @@ export function ManifestCanvasGrid(props: {
   const renderCanvasSnippet = (canvas: { id: number; label: InternationalString; thumbnail: string | null }) => {
     return (
       <ImageStripBox $border={props.canvasBorder} $color={props.textColor}>
-        <CroppedImage $covered={coveredImages} $rect={rectangularImages}>
+        <CroppedImage
+          $covered={coveredImages || props.imageStyle === 'covered'}
+          $rect={rectangularImages}
+        >
           {canvas.thumbnail ? (
             <img alt={createLocaleString(canvas.label, t('Canvas thumbnail'))} src={canvas.thumbnail} />
           ) : null}
@@ -118,12 +122,21 @@ blockEditorFor(ManifestCanvasGrid, {
     popup: false,
     textColor: '',
     canvasBorder: '',
+    imageStyle: 'fit',
   },
   editor: {
     popup: { type: 'checkbox-field', label: 'Popup', inlineLabel: 'Show canvases in popup' },
     background: { label: 'Grid background color', type: 'color-field' },
     textColor: { label: 'Canvas text color', type: 'color-field' },
     canvasBorder: { label: 'Canvas border', type: 'color-field' },
+    imageStyle: {
+      label: 'Image Style',
+      type: 'dropdown-field',
+      options: [
+        { value: 'covered', text: 'covered' },
+        { value: 'fit', text: 'fit' },
+      ],
+    },
   },
   requiredContext: ['manifest'],
   anyContext: ['collection', 'manifest'],
