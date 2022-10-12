@@ -5,6 +5,7 @@ export const ImageGrid = styled.div<{
   $bgColor?: string;
 }>`
   display: grid;
+  padding: 3rem;
   grid-template-columns: repeat(
     auto-fill,
     ${props => {

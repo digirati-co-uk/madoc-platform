@@ -8,12 +8,14 @@ interface AllProjectPaginatedItemsProps {
   customButtonLabel?: InternationalString;
   background?: string;
   radius?: string;
+  border?: string;
 }
 
 export const AllProjectsPaginatedItems: React.FC<AllProjectPaginatedItemsProps> = ({
   customButtonLabel,
   radius,
   background,
+  border,
 }) => {
   const { resolvedData: data } = useProjectList();
 
@@ -27,6 +29,7 @@ export const AllProjectsPaginatedItems: React.FC<AllProjectPaginatedItemsProps> 
           customButtonLabel={customButtonLabel}
           radius={radius}
           background={background}
+          border={border}
         />
       ))}
     </>
@@ -41,6 +44,7 @@ blockEditorFor(AllProjectsPaginatedItems, {
     customButtonLabel: '',
     background: null,
     radius: null,
+    border: null,
   },
   source: {
     name: 'All projects page',
@@ -53,5 +57,6 @@ blockEditorFor(AllProjectsPaginatedItems, {
     customButtonLabel: { type: 'text-field', label: 'Custom button label' },
     background: { type: 'color-field', label: 'Background color', defaultValue: '#eeeeee' },
     radius: { type: 'text-field', label: 'Border radius', defaultValue: '' },
+    border: { type: 'color-field', label: 'Border color', defaultValue: '#eeeeee' },
   },
 });

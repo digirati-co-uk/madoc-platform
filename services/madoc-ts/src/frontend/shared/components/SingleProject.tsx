@@ -16,6 +16,7 @@ interface SingleProjectProps {
   customButtonLabel?: InternationalString;
   project?: { id: string };
   background?: string;
+  border?: string;
   data?: Project;
   radius?: string;
 }
@@ -24,6 +25,7 @@ export function SingleProject(props: SingleProjectProps) {
   const { t } = useTranslation();
   const createLink = useRelativeLinks();
   const { data, project, customButtonLabel } = props;
+
   const accessibleTextColor = useAccessibleColor(props.background || '#eeeeee');
   const radius = props.radius ? parseInt(props.radius, 10) : undefined;
 
@@ -32,7 +34,12 @@ export function SingleProject(props: SingleProjectProps) {
   }
 
   return (
-    <ObjectContainer $background={props.background} $color={accessibleTextColor} $radius={radius}>
+    <ObjectContainer
+      $background={props.background}
+      $color={accessibleTextColor}
+      $radius={radius}
+      $border={props.border}
+    >
       <LocaleString as={Heading3}>{data.label || { en: ['...'] }}</LocaleString>
       <LocaleString as={Subheading3}>{data.summary || { en: ['...'] }}</LocaleString>
       <Button $primary as={Link} to={createLink({ projectId: project.id })}>
@@ -50,6 +57,7 @@ blockEditorFor(SingleProject, {
     customButtonLabel: '',
     project: null,
     background: null,
+    border: null,
     radius: null,
   },
   hooks: [
@@ -64,6 +72,7 @@ blockEditorFor(SingleProject, {
   editor: {
     customButtonLabel: { type: 'text-field', label: 'Custom button label' },
     background: { type: 'color-field', label: 'Background color', defaultValue: '#eeeeee' },
+    border: { type: 'color-field', label: 'Border color', defaultValue: '#eeeeee' },
     radius: { type: 'text-field', label: 'Border radius', defaultValue: '' },
     project: {
       label: 'Project',

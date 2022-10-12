@@ -67,7 +67,7 @@ export function ViewManifest() {
 
       <div style={{ display: 'flex' }}>
         <div style={{ width: '100%' }}>
-          <Slot name="manifest-content">
+          <Slot name="manifest-content" noSurface={true}>
             <ManifestCanvasGrid />
           </Slot>
         </div>

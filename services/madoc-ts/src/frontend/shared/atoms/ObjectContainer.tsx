@@ -6,11 +6,14 @@ export const ObjectContainer = styled.div<{
   $background?: string;
   $color?: string;
   $radius?: number;
+  $border?: string | undefined;
 }>`
   background: ${props => props.$background || '#eee'};
   color: ${props => props.$color || 'inherit'};
   margin-bottom: 20px;
   padding: 20px 20px 40px;
+  border: 1px solid;
+  border-color: ${props => props.$border || 'transparent'};
 
   ${props =>
     props.$radius

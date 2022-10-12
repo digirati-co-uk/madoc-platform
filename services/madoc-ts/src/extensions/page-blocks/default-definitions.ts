@@ -8,7 +8,8 @@ import simpleHtmlBlock from './simple-html-block/simple-html-block';
 import currentManifest from './current-manifest-snippet-block';
 import simpleMarkdownBlock from './simple-markdown-block/simple-markdown-block';
 import { HelloWorld } from '../../frontend/shared/custom-blocks/firstblock';
-import { CustomIdaHero } from '../../frontend/shared/custom-blocks/custom-ida-hero/custom-ida-hero';
+import { CustomManifestHeader } from '../../frontend/shared/custom-blocks/custom-ida-hero/custom-manifest-header';
+import { CustomCanvasHeader } from '../../frontend/shared/custom-blocks/custom-ida-hero/custom-canvas-header';
 import { IDAManifestMetadata } from '../../frontend/shared/custom-blocks/metadata/metadata';
 import { FeedbackBtn } from '../../frontend/shared/custom-blocks/feedback-btn/feedback-btn';
 import { GridHeader } from '../../frontend/shared/custom-blocks/grid-header/grid-header';
@@ -24,7 +25,8 @@ export const defaultPageBlockDefinitions: PageBlockDefinition<any, any, any, any
   simpleMarkdownBlock,
   (HelloWorld as any)[Symbol.for('slot-model')] as any,
   (IDAManifestMetadata as any)[Symbol.for('slot-model')] as any,
-  (CustomIdaHero as any)[Symbol.for('slot-model')] as any,
+  (CustomManifestHeader as any)[Symbol.for('slot-model')] as any,
+  (CustomCanvasHeader as any)[Symbol.for('slot-model')] as any,
   (FeedbackBtn as any)[Symbol.for('slot-model')] as any,
   (GridHeader as any)[Symbol.for('slot-model')] as any,
 ];

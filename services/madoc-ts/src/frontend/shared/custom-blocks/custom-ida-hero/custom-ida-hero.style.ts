@@ -84,8 +84,3 @@ export const SubHeading = styled.div`
     grid-row: row 2;
   }
 `;
-
-export const Bottom = styled.div`
-  grid-row: row 5;
-  grid-column: span 8;
-`;

@@ -58,7 +58,7 @@ export const MetaLabel = styled.p`
   margin: 0 5px 0 0;
 `;
 
-export const MetaItem = styled.p`
+export const MetaItem = styled.div`
   display: inline-flex;
 
   svg {

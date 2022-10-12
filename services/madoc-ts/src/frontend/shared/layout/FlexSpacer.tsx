@@ -3,6 +3,7 @@ import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-rea
 
 export const FlexSpacer = styled.div`
   flex: 1 1 0px;
+  height: 50px;
 `;
 
 blockEditorFor(FlexSpacer, {
