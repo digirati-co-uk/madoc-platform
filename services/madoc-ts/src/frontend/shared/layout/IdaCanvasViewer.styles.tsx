@@ -6,43 +6,44 @@ export const OuterLayoutContainer = styled.div`
   max-width: 100%;
   flex-direction: row;
   background: #ffffff;
-  border: 1px solid #bcbcbc;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.17);
   height: 100%;
   overflow: hidden;
   max-height: 100%;
-  flex: 1 1 0px;
+  flex: 1 1 0;
   min-height: 0;
   min-width: 0;
 `;
 
 export const NavIconContainer = styled.div<{ $active?: boolean; $disabled?: boolean }>`
   &:hover {
-    background: #eee;
+    background: rgba(8, 128, 174, 0.14);
   }
-  border-radius: 3px;
-  padding: 0.5em;
+
+  background-color: white;
+  border: 1px solid #002d4b;
+  color: #002d4b;
+  padding: 0.5em 1em;
   margin: 0.25em;
-  width: 2.5em;
+  display: flex;
+  width: auto;
   height: 2.5em;
   cursor: pointer;
   position: relative;
 
   svg {
-    fill: #666;
+    fill: #0880ae;
     width: 1.4em;
     height: 1.4em;
+    margin-right: 0.5em;
   }
 
   ${props =>
     props.$active &&
     css`
-      background: #4a64e1;
+      border: 2px solid #002d4b;
+      font-weight: 500;
       svg {
-        fill: #fff;
-      }
-      &:hover {
-        background: #4a64e1;
+        fill: #002d4b;
       }
     `}
 
@@ -78,16 +79,19 @@ export const LayoutContainer = styled.div`
   width: 100%;
   max-width: 100%;
   min-width: 0;
+
 `;
 
 export const PanelTitle = styled.h5`
   text-transform: capitalize;
   font-size: 20px;
   margin: 10px 0;
+  color: #002d4b;
 `;
 
 export const LayoutContent = styled.div<{ $padding?: boolean }>`
   background: #fff;
+  border: 2px solid #002d4b;
   flex: 1 1 0px;
   min-width: 0;
   overflow-y: auto;
@@ -101,14 +105,16 @@ export const LayoutContent = styled.div<{ $padding?: boolean }>`
 `;
 
 export const LayoutSidebarMenu = styled.div`
+  display: flex;
+  width: 100%;
   background: #ffffff;
-  border-right: 1px solid #bcbcbc;
 `;
 
 export const LayoutSidebar = styled.div<{ $noScroll?: boolean }>`
   background: #ffffff;
-  border-right: 1px solid #bcbcbc;
-  overflow: auto;
+  border: 1px solid #002d4b;
+  margin-right: 1em;
+  overflow: scroll;
   position: relative;
   ${props =>
     props.$noScroll &&
