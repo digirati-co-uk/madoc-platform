@@ -8,7 +8,7 @@ export const Wrapper = styled.div`
   grid-template-columns: repeat(12, [col] 1fr);
   grid-template-rows: repeat(5, [row] auto);
   grid-column-gap: 1rem;
-  
+
   //Tablet & Phone
   @media screen and (max-width: 900px) {
     margin: 0;
@@ -20,14 +20,14 @@ export const HeroHeading = styled.h1`
   font-size: 3em;
   line-height: 56px;
   font-weight: 600;
-  grid-column: span 8;
+  grid-column: span 7;
   grid-row: row 1;
   margin: 0;
 
   //Wide Desktop
   @media screen and (min-width: 1700px) {
-    font-size: 64px;
-    line-height: 72px;
+    font-size: 3em;
+    line-height: 56px;
   }
   //Tablet & Phone
   @media screen and (max-width: 900px) {
@@ -38,7 +38,7 @@ export const HeroHeading = styled.h1`
   }
 `;
 export const Actions = styled.div`
-  grid-column: span 4;
+  grid-column: span 5;
   grid-row: row 1;
   align-self: end;
   justify-self: end;

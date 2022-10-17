@@ -29,5 +29,4 @@ export const defaultPageBlockDefinitions: PageBlockDefinition<any, any, any, any
   (CustomCanvasHeader as any)[Symbol.for('slot-model')] as any,
   (FeedbackBtn as any)[Symbol.for('slot-model')] as any,
   (GridHeader as any)[Symbol.for('slot-model')] as any,
-
 ];

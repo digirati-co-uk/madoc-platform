@@ -15,9 +15,10 @@ export const MetaDataWrapper = styled.div<{ expanded: boolean }>`
   border: 1px solid #002d4b;
   color: #004761;
   padding: 8px;
-  height: ${props => (props.expanded ? '500px' : '50px')};
+
+  max-height: ${props => (props.expanded ? '2000px' : '50px')};
   width: 50%;
-  transition: ease-in-out 0.5s;
+  transition: max-height 0.25s ease-in-out;
   overflow: hidden;
   margin-bottom: 30px;
 `;
@@ -55,18 +56,27 @@ export const Btn = styled.button`
 export const MetaLabel = styled.p`
   text-transform: capitalize;
   color: ${Theme.grey};
-  margin: 0 5px 0 0;
+  margin: 0 5px 8px 0;
 `;
 
 export const MetaItem = styled.div`
   display: inline-flex;
+  white-space: nowrap;
+
+  p {
+    margin: 0 5px 8px 0;
+  }
 
   svg {
     margin-right: 5px;
     height: 18px;
+    min-width: 18px;
     color: #0880ae;
   }
 `;
 export const MetaItemData = styled.p`
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
