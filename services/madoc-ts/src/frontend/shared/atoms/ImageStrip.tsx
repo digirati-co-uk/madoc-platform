@@ -11,6 +11,7 @@ export const ImageStripBox = styled.div<{
   border: 1px solid;
   border-color: ${props => (props.$border ? props.$border : 'transparent')};
   border-radius: 3px;
+  max-width: ${props => (props.$size === 'small' ? '200px' : '')};
 
   h5 {
     color: ${props => (props.$color ? props.$color : 'black')};

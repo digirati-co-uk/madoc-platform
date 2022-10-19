@@ -71,3 +71,11 @@ export const AddBlockAdded = styled.div`
   color: #fff;
   padding: 0.4em;
 `;
+
+export const BlockCreatorPreview = styled.div`
+  display: flex; // so it displays the same as when on page
+  margin: 1em 0;
+  width: 100%;
+  min-height: 200px;
+  border: 3px solid #f2f2f2;
+`;

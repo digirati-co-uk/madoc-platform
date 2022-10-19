@@ -51,7 +51,7 @@ export const MediaExplorer: React.FC<MediaExplorerProps & {
     const chosenMedia = props.value;
     return (
       <div>
-        <ImageStripBox>
+        <ImageStripBox $size="small">
           <CroppedImage>{chosenMedia.thumbnail ? <img src={chosenMedia.thumbnail} alt="thumb" /> : null}</CroppedImage>
         </ImageStripBox>
         <Button onClick={() => props.updateValue(null)}>Choose another image</Button>
@@ -61,7 +61,7 @@ export const MediaExplorer: React.FC<MediaExplorerProps & {
 
   return (
     <div ref={container} style={{ maxHeight: 500, overflowY: 'scroll' }}>
-      <ImageGrid>
+      <ImageGrid $size="small" $bgColor="#f2f2f2">
         {pages?.map((page, key) => {
           return (
             <React.Fragment key={key}>

@@ -9,6 +9,7 @@ import {
   AddBlockLabel,
   AddBlockList,
   AddBlockPluginName,
+  BlockCreatorPreview,
   DefaultBlockIcon,
 } from './AddBlock';
 import { Button, SmallButton } from '../navigation/Button';
@@ -30,9 +31,9 @@ const BlockCreatorForm: React.FC<{
   return (
     <div>
       {preview ? (
-        <div style={{ padding: '1em' }}>
+        <BlockCreatorPreview>
           <RenderBlock block={preview} context={props.context} />
-        </div>
+        </BlockCreatorPreview>
       ) : null}
       {editor}
       <Button

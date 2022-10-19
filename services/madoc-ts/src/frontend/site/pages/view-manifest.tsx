@@ -14,6 +14,7 @@ import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useManifest } from '../hooks/use-manifest';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { Navigate } from 'react-router-dom';
+import { FooterImageGrid } from '../../shared/components/FooterImageGrid';
 import '../features/ManifestHero';
 
 export function ViewManifest() {
@@ -80,6 +81,7 @@ export function ViewManifest() {
       <Slot name="manifest-footer">
         <ManifestPagination />
       </Slot>
+
     </>
   );
 }
