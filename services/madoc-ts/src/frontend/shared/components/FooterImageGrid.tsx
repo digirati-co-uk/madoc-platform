@@ -20,7 +20,7 @@ const LogoContainer = styled.div`
 `;
 
 export const FooterImageGrid: React.FC<{
-  images: {
+  images?: {
     logo?: {
       id: string;
       image: string;
