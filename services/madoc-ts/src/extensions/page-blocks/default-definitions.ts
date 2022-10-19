@@ -7,8 +7,6 @@ import { PageBlockDefinition } from './extension';
 import simpleHtmlBlock from './simple-html-block/simple-html-block';
 import currentManifest from './current-manifest-snippet-block';
 import simpleMarkdownBlock from './simple-markdown-block/simple-markdown-block';
-import { HelloWorld } from '../../frontend/shared/custom-blocks/firstblock';
-import { MetaData } from '../../frontend/shared/custom-blocks/metadata/metadata';
 
 export const defaultPageBlockDefinitions: PageBlockDefinition<any, any, any, any>[] = [
   simpleHtmlBlock,
@@ -19,7 +17,4 @@ export const defaultPageBlockDefinitions: PageBlockDefinition<any, any, any, any
   (SingleProject as any)[Symbol.for('slot-model')] as any,
   (SingleCollection as any)[Symbol.for('slot-model')] as any,
   simpleMarkdownBlock,
-  (HelloWorld as any)[Symbol.for('slot-model')] as any,
-  (MetaData as any)[Symbol.for('slot-model')] as any,
 ];
-
