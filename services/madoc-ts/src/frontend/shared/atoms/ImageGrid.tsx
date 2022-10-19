@@ -1,7 +1,11 @@
 import styled, { css } from 'styled-components';
 
-export const ImageGrid = styled.div<{ $size?: 'large' | 'small' }>`
+export const ImageGrid = styled.div<{
+  $size?: 'large' | 'small';
+  $bgColor?: string;
+}>`
   display: grid;
+  padding: 3rem;
   grid-template-columns: repeat(
     auto-fill,
     ${props => {
@@ -16,6 +20,7 @@ export const ImageGrid = styled.div<{ $size?: 'large' | 'small' }>`
     }}
   );
   justify-content: space-between;
+  background-color: ${props => (props.$bgColor ? props.$bgColor : 'inherit')};
   grid-gap: 0.875em;
   width: 100%;
   //display: flex;
