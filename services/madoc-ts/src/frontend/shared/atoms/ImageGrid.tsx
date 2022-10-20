@@ -1,32 +1,30 @@
 import styled, { css } from 'styled-components';
 
+const getSize = (props: any) => {
+  switch (props.$size) {
+    case 'small':
+      return '160px';
+    case 'large':
+      return '310px';
+    default:
+      return '232px';
+  }
+};
+
 export const ImageGrid = styled.div<{ $size?: 'large' | 'small' }>`
   display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    ${props => {
-      switch (props.$size) {
-        case 'small':
-          return '160px';
-        case 'large':
-          return '310px';
-        default:
-          return '232px';
-      }
-    }}
-  );
+  grid-template-columns: repeat(auto-fit, minmax(${getSize}, 1fr));
+
   justify-content: space-between;
   grid-gap: 0.875em;
   width: 100%;
-  //display: flex;
   flex-wrap: wrap;
-  //justify-content: unset;
-  //margin: 0 -10px;
-  //& > * {
-  //  margin: 10px;
-  //}
   a {
     text-decoration: none;
+  }
+
+  > * {
+    max-width: calc(${getSize} * 1.5);
   }
 `;
 
