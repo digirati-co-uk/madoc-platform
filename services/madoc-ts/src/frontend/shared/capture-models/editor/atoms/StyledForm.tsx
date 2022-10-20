@@ -1,7 +1,9 @@
 import styled, { css } from 'styled-components';
 import React, { forwardRef, useState } from 'react';
+import { BrowserComponent } from '../../../utility/browser-component';
+import { madocLazy } from '../../../utility/madoc-lazy';
 
-const Textarea = React.lazy(() => /* webpackChunkName: "browser" */ import('react-textarea-autosize'));
+const Textarea = madocLazy(() => /* webpackChunkName: "browser" */ import('react-textarea-autosize'));
 
 export const StyledForm = styled.form`
   margin-bottom: 1em;
@@ -76,7 +78,7 @@ export const StyledFormInput: React.FC<React.DetailedHTMLProps<
 
   if (multiline) {
     return (
-      <React.Suspense fallback={null}>
+      <BrowserComponent fallback={null}>
         <StyledFormMultilineInputElement
           ref={ref}
           {...(props as any)}
@@ -88,7 +90,7 @@ export const StyledFormInput: React.FC<React.DetailedHTMLProps<
             }
           }}
         />
-      </React.Suspense>
+      </BrowserComponent>
     );
   }
 

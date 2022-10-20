@@ -13,6 +13,7 @@ import {
   ModalResizeIcon,
 } from '../layout/Modal';
 import { createPortal } from 'react-dom';
+import { BrowserComponent } from '../utility/browser-component';
 
 export const ModalButton: React.FC<{
   ref?: any;
@@ -108,14 +109,14 @@ export const ModalButton: React.FC<{
                     <ModalResizeIcon onClick={() => setIsExpanded(e => !e)} />
                     <ModalCloseIcon onClick={closeModal} />
                   </ModalHeader>
-                  <Suspense fallback={<Spinner />}>
+                  <BrowserComponent fallback={<Spinner />}>
                     <ModalBody>{render({ close: closeModal })}</ModalBody>
                     {renderFooter ? (
                       <ModalFooter $footerAlignRight={footerAlignRight}>
                         {renderFooter({ close: closeModal })}
                       </ModalFooter>
                     ) : null}
-                  </Suspense>
+                  </BrowserComponent>
                 </InnerModalContainer>
               </ModalContainer>
             </>,
@@ -132,7 +133,7 @@ export const ModalButton: React.FC<{
         onClick={() => setIsReady(true)}
         style={style}
       >
-        <Suspense fallback={<Spinner />}>{children}</Suspense>
+        <BrowserComponent fallback={<Spinner />}>{children}</BrowserComponent>
       </Component>
     </>
   );

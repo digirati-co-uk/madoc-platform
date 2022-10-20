@@ -98,7 +98,12 @@ export const GlobalSearchButton = styled.button`
   }
 `;
 
-export const SiteMenuContainer = styled.div``;
+export const SiteMenuContainer = styled.div`
+  &[data-full-width] {
+    flex-wrap: nowrap;
+    width: 100%;
+  }
+`;
 
 export const SiteHeaderBackground = styled.div`
   background: ${globalBackground};

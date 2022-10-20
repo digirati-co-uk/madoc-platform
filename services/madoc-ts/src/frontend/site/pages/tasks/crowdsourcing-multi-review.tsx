@@ -22,6 +22,7 @@ import { Heading3, Subheading3 } from '../../../shared/typography/Heading3';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
 import { useApiTaskSearch } from '../../../shared/hooks/use-api-task-search';
+import { BrowserComponent } from '../../../shared/utility/browser-component';
 import { createLink } from '../../../shared/utility/create-link';
 import { useLocationQuery } from '../../../shared/hooks/use-location-query';
 import { HrefLink } from '../../../shared/utility/href-link';
@@ -128,7 +129,7 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
     return (
       <>
         {header}
-        <Suspense fallback={<div>Loading...</div>}>
+        <BrowserComponent fallback={<div>Loading...</div>}>
           <MergeCrowdsourcingTask
             merge={reviewTask.state.currentMerge}
             goBack={async opt => {
@@ -142,7 +143,7 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
             }}
             reviewTaskId={reviewTask.id as string}
           />
-        </Suspense>
+        </BrowserComponent>
       </>
     );
   }
@@ -189,7 +190,7 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
     return (
       <>
         {header}
-        <Suspense fallback={<div>Loading...</div>}>
+        <BrowserComponent fallback={<div>Loading...</div>}>
           <PreviewCrowdsourcingTask
             allTaskIds={allTaskIds}
             lockedTasks={lockedTasks}
@@ -199,7 +200,7 @@ export const CrowdsourcingMultiReview: React.FC<{ task: CrowdsourcingReview; ref
             goBack={goBack}
             reviewTaskId={reviewTask.id as string}
           />
-        </Suspense>
+        </BrowserComponent>
       </>
     );
   }

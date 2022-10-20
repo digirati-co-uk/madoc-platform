@@ -1,9 +1,15 @@
+import { CaptureModel } from '../types/capture-model';
 import { BaseField } from '../types/field-types';
+import { isEntityList } from './is-entity';
 
 type PostFilter = (fields: BaseField[]) => BaseField[];
 
-export function filterEmptyFields(fields: BaseField[]): BaseField[] {
+export function filterEmptyFields(fields: BaseField[], parent?: CaptureModel['document']): BaseField[] {
   if (fields.length === 1) {
+    return fields;
+  }
+
+  if (isEntityList(fields)) {
     return fields;
   }
 

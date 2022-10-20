@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { BrowserComponent } from '../../../../utility/browser-component';
 import { CaptureModel, ModelFields } from '../../../types/capture-model';
 import { StructureType } from '../../../types/utility';
 import { modelFieldsToModelRoot } from '../../../utility/model-fields-to-model-root';
@@ -100,9 +101,9 @@ export const ModelEditor: React.FC<Props> = ({
         />
       </CardContent>
       <CardContent>
-        <React.Suspense fallback={<>{t('loading...')}</>}>
+        <BrowserComponent fallback={<>{t('loading...')}</>}>
           <ReorderableFieldList document={document} selected={selected} setSelected={setSelected} />
-        </React.Suspense>
+        </BrowserComponent>
       </CardContent>
       <CardContent>
         {isSelecting ? (

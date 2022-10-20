@@ -10,6 +10,7 @@ import { ModalButton } from '../../../../shared/components/Modal';
 import { TextField } from '../../../../shared/capture-models/editor/input-types/TextField/TextField';
 import { Button } from '../../../../shared/navigation/Button';
 import { ReadMoreIcon } from '../../../../shared/icons/ReadMoreIcon';
+import { BrowserComponent } from '../../../../shared/utility/browser-component';
 
 export const RequestChanges: React.FC<{
   userTaskId: string;
@@ -55,7 +56,7 @@ export const RequestChanges: React.FC<{
       autoHeight={true}
       title="Request changes"
       render={() => (
-        <Suspense fallback={<div />}>
+        <BrowserComponent fallback={<div />}>
           <label htmlFor="message">Write a message to the contributor</label>
           <TextField
             id="message"
@@ -66,7 +67,7 @@ export const RequestChanges: React.FC<{
             multiline={true}
           />
           <p>Once requested the task will be assigned back to user</p>
-        </Suspense>
+        </BrowserComponent>
       )}
       renderFooter={({ close }: any) => (
         <Button

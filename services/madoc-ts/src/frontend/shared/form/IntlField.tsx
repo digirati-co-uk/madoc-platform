@@ -1,9 +1,11 @@
 import { SmallButton } from '../navigation/Button';
 import * as React from 'react';
 import styled, { css } from 'styled-components';
+import { BrowserComponent } from '../utility/browser-component';
+import { madocLazy } from '../utility/madoc-lazy';
 import { InputContainer, InputLabel, inputStyles } from './Input';
 
-const Textarea = React.lazy(() => /* webpackChunkName: "browser" */ import('react-textarea-autosize'));
+const Textarea = madocLazy(() => /* webpackChunkName: "browser" */ import('react-textarea-autosize'));
 
 export const IntlInputContainer = styled.div<{ focused?: boolean; $margin?: boolean }>`
   background: #fff;
@@ -43,9 +45,9 @@ const IntlMultilineInternal = styled(Textarea)`
 
 export const IntlMultiline: typeof IntlMultilineInternal = ((props: any) => {
   return (
-    <React.Suspense fallback={<IntlInput {...props} />}>
+    <BrowserComponent fallback={<IntlInput {...props} />}>
       <IntlMultilineInternal {...props} />
-    </React.Suspense>
+    </BrowserComponent>
   );
 }) as any;
 

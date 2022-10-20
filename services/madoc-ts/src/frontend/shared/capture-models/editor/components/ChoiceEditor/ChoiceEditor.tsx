@@ -1,4 +1,6 @@
 import React, { useEffect } from 'react';
+import { BrowserComponent } from '../../../../utility/browser-component';
+import { madocLazy } from '../../../../utility/madoc-lazy';
 import { StructureType } from '../../../types/utility';
 import { Button } from '../../atoms/Button';
 import { Grid, GridColumn } from '../../atoms/Grid';
@@ -24,7 +26,7 @@ type Props = {
   popFocus: (payload?: any) => void;
 };
 
-export const ChoiceList = React.lazy(() => import(/* webpackChunkName: "choice-list" */ '../ChoiceList/ChoiceList'));
+export const ChoiceList = madocLazy(() => import(/* webpackChunkName: "choice-list" */ '../ChoiceList/ChoiceList'));
 
 export const ChoiceEditor: React.FC<Props> = ({
   choice,
@@ -83,9 +85,9 @@ export const ChoiceEditor: React.FC<Props> = ({
         />
       </CardContent>
       <CardContent extra>
-        <React.Suspense fallback={<>{t('loading...')}</>}>
+        <BrowserComponent fallback={<>{t('loading...')}</>}>
           <ChoiceList choice={choice} pushFocus={pushFocus} onRemove={onRemove} onReorder={reorderChoices} />
-        </React.Suspense>
+        </BrowserComponent>
       </CardContent>
       {route === 'list' ? (
         <>

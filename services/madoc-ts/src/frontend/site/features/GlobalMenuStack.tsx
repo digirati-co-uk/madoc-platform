@@ -38,9 +38,12 @@ export const GlobalMenuStack: React.FC<{
     margin?: boolean;
     halfSize?: boolean;
   };
+  menuOptions?: {
+    fullWidth?: boolean;
+  };
   hideSiteTitle?: boolean;
   maxWidth?: number;
-}> = ({ logo, hideSiteTitle, maxWidth, logoOptions = {} }) => {
+}> = ({ logo, hideSiteTitle, maxWidth, logoOptions = {}, menuOptions = {} }) => {
   const site = useSite();
   const { project } = useSiteConfiguration();
   const showSiteTitle = typeof hideSiteTitle === 'undefined' ? !project.headerOptions?.hideSiteTitle : !hideSiteTitle;
@@ -62,7 +65,7 @@ export const GlobalMenuStack: React.FC<{
           </h1>
         </SiteTitle>
       )}
-      <SiteMenuContainer>
+      <SiteMenuContainer data-full-width={menuOptions.fullWidth}>
         <GlobalSiteNavigation />
       </SiteMenuContainer>
     </SiteDetails>
@@ -79,6 +82,9 @@ blockEditorFor(GlobalMenuStack, {
       padding: false,
       margin: false,
       halfSize: false,
+    },
+    menuOptions: {
+      fullWidth: false,
     },
     maxWidth: null,
   },
@@ -103,6 +109,17 @@ blockEditorFor(GlobalMenuStack, {
         {
           label: 'Display at half size',
           value: 'halfSize',
+        },
+      ],
+    },
+    menuOptions: {
+      label: 'Menu options',
+      description: 'View options for the menu',
+      type: 'checkbox-list-field',
+      options: [
+        {
+          label: 'Full width (under)',
+          value: 'fullWidth',
         },
       ],
     },

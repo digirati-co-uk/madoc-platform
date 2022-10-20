@@ -22,14 +22,17 @@ export const AutoSlotLoader: React.FC<{ fuzzy?: boolean; slots?: string[]; child
   const parsedContext = useMemo(() => {
     const routeContext: EditorialContext = {};
 
-    routeContext.collection = routeMatch.params.collectionId ? Number(routeMatch.params.collectionId) : undefined;
-    routeContext.manifest = routeMatch.params.manifestId ? Number(routeMatch.params.manifestId) : undefined;
-    routeContext.canvas = routeMatch.params.canvasId ? Number(routeMatch.params.canvasId) : undefined;
-    routeContext.project = routeMatch.params.slug ? routeMatch.params.slug : undefined;
+    if (!fuzzy) {
+      routeContext.collection = routeMatch.params.collectionId ? Number(routeMatch.params.collectionId) : undefined;
+      routeContext.manifest = routeMatch.params.manifestId ? Number(routeMatch.params.manifestId) : undefined;
+      routeContext.canvas = routeMatch.params.canvasId ? Number(routeMatch.params.canvasId) : undefined;
+      routeContext.project = routeMatch.params.slug ? routeMatch.params.slug : undefined;
+    }
     routeContext.slotIds = slots && slots.length ? slots : undefined;
 
     return routeContext;
   }, [
+    fuzzy,
     slots,
     routeMatch.params.canvasId,
     routeMatch.params.collectionId,

@@ -74,7 +74,8 @@ export function extractValidRevisionChanges(
     // 1st traverse the revision to get the fields that need added.
     traverseDocument(filteredDocument, {
       visitField(field, term, parent) {
-        if (allowCanonicalChanges || (parent.immutable && field.revision === req.revision.id)) {
+        // Removing this immutability check. Not sure where it was required.
+        if (allowCanonicalChanges || /*parent.immutable && */ field.revision === req.revision.id) {
           allIds.push(field.id);
           mutations[parent.id] = mutations[parent.id] ? mutations[parent.id] : [];
           mutations[parent.id].push({

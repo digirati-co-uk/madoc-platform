@@ -166,7 +166,12 @@ const renderEntityList = (
       }
 
       return (
-        <ViewEntity key={entity.id} entity={entity} fluidImage={fluidImage}>
+        <ViewEntity
+          key={entity.id}
+          entity={entity}
+          fluidImage={fluidImage}
+          highlightRevisionChanges={highlightRevisionChanges}
+        >
           {renderedProps}
         </ViewEntity>
       );
@@ -185,7 +190,8 @@ const ViewEntity: React.FC<{
   entity: CaptureModel['document'];
   interactive?: boolean;
   fluidImage?: boolean;
-}> = ({ entity, collapsed, children, interactive = true, fluidImage }) => {
+  highlightRevisionChanges?: string;
+}> = ({ entity, collapsed, children, interactive = true, fluidImage, highlightRevisionChanges }) => {
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
   const selector = entity.selector ? resolveSelector(entity.selector) : undefined;
   const { t: tModel } = useModelTranslation();
@@ -212,7 +218,13 @@ const ViewEntity: React.FC<{
       {/* This is where the entity selector will go, if it exists. */}
       {isCollapsed ? null : (
         <>
-          {selector && fluidImage ? <SelectorPreview selector={selector} fluidImage={fluidImage} /> : null}
+          {selector && fluidImage ? (
+            <SelectorPreview
+              selector={selector}
+              fluidImage={fluidImage}
+              highlightRevisionChanges={highlightRevisionChanges}
+            />
+          ) : null}
           {children}
         </>
       )}
@@ -240,7 +252,7 @@ const renderProperty = (
     tModel: (s: string) => string;
   }
 ) => {
-  const label = fields.length > 1 && fields[0].pluralLabel ? fields[0].pluralLabel : fields[0].label;
+  const label = fields.length > 1 && (fields[0] && fields[0].pluralLabel ? fields[0].pluralLabel : fields[0].label);
   const filteredFields = filterRevises(fields).filter(f => {
     if (highlightRevisionChanges) {
       return f.type === 'entity' || (f.revision && f.revision === highlightRevisionChanges);
@@ -248,7 +260,7 @@ const renderProperty = (
 
     return !f.revision || filterRevisions.indexOf(f.revision) === -1;
   });
-  const description = fields[0].description;
+  const description = fields[0]?.description;
   const renderedProperties = isEntityList(filteredFields)
     ? renderEntityList(filteredFields, {
         filterRevisions,
@@ -266,7 +278,7 @@ const renderProperty = (
   return (
     <ViewProperty
       key={key}
-      label={tModel(label)}
+      label={label ? tModel(label) : ''}
       description={description ? tModel(description) : ''}
       collapsed={collapsed}
       interactive={isEntityList(filteredFields)}
@@ -313,11 +325,13 @@ export const ViewProperty: React.FC<{
   );
 };
 
-export const SelectorPreview: React.FC<{ selector?: BaseSelector; fluidImage?: boolean; inline?: boolean }> = ({
-  selector,
-  fluidImage,
-  inline,
-}) => {
+export const SelectorPreview: React.FC<{
+  selector?: BaseSelector;
+  fluidImage?: boolean;
+  inline?: boolean;
+  highlightRevisionChanges?: string;
+}> = ({ selector: _selector, fluidImage, inline, highlightRevisionChanges }) => {
+  const selector = _selector ? resolveSelector(_selector, highlightRevisionChanges) : undefined;
   const helper = useSelectorHelper();
   const { data: service } = useImageService() as { data?: ImageService };
   const croppedRegion = useCroppedRegion();

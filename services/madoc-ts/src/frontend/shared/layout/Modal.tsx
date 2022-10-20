@@ -98,6 +98,7 @@ export const ModalResizeIcon = styled(FullScreenEnterIcon)`
 `;
 
 export const ModalBody = styled.div`
+  position: relative;
   background: #fff;
   padding: 1em;
   overflow-y: auto;
