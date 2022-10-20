@@ -1,6 +1,5 @@
 import styled, { css } from 'styled-components';
 
-
 const getSize = (props: any) => {
   switch (props.$size) {
     case 'small':

@@ -18,7 +18,10 @@ import { ManifestTaskProgress } from './ManifestTaskProgress';
 import { usePreventCanvasNavigation } from './PreventUsersNavigatingCanvases';
 import { useSiteConfiguration } from './SiteConfigurationContext';
 
-export const ManifestActions: React.FC = () => {
+export type props = {
+  alignment?: string;
+};
+export const ManifestActions: React.FC<props> = ({ alignment }) => {
   const { t } = useTranslation();
   const createLink = useRelativeLinks();
   const options = useManifestPageConfiguration();
@@ -54,7 +57,7 @@ export const ManifestActions: React.FC = () => {
   return (
     <>
       {showButton ? (
-        <ButtonRow>
+        <ButtonRow $center={alignment === 'center'} $right={alignment === 'right'}>
           {showCaptureModelOnManifest ? (
             <Button as={HrefLink} href={createLink({ subRoute: 'model' })} $primary $large>
               {userManifestTask && done.length ? t('View submission') : t('Start contributing')}
@@ -68,7 +71,7 @@ export const ManifestActions: React.FC = () => {
           )}
         </ButtonRow>
       ) : null}
-      <ButtonRow>
+      <ButtonRow $center={alignment === 'center'} $right={alignment === 'right'}>
         {showIIIFLogo ? <IIIFDragIcon /> : null}
         {!options.hideOpenInMirador ? (
           <Button
@@ -102,5 +105,18 @@ blockEditorFor(ManifestActions, {
   label: 'Manifest actions',
   anyContext: ['manifest'],
   requiredContext: ['manifest'],
-  editor: {},
+  defaultProps: {
+    alignment: '',
+  },
+  editor: {
+    alignment: {
+      label: 'alignment',
+      type: 'dropdown-field',
+      options: [
+        { value: 'left', text: 'Left aligned' },
+        { value: 'center', text: 'Center aligned' },
+        { value: 'right', text: 'Right aligned' },
+      ],
+    },
+  },
 });
