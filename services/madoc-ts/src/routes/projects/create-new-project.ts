@@ -21,8 +21,12 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
   const userApi = api.asUser({ userId: id, siteId }, {}, true);
   context.disposableApis.push(userApi);
 
-  const { label, slug, summary, template, template_options, template_config } = context.requestBody;
-  const chosenTemplate = template ? api.projectTemplates.getDefinition(template, siteId) : null;
+  const { label, slug, summary, template, template_options, template_config, remote_template } = context.requestBody;
+  const chosenTemplate = template
+    ? template === 'remote'
+      ? remote_template
+      : api.projectTemplates.getDefinition(template, siteId)
+    : null;
   const setupFunctions = chosenTemplate?.setup;
 
   if (template && !chosenTemplate) {
