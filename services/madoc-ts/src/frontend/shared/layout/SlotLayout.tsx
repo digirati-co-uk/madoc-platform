@@ -40,7 +40,11 @@ export const SlotLayout = React.forwardRef(function SlotLayout(
   ref
 ) {
   if (layout === 'none' && !editing) {
-    return children;
+    return (
+      <Surface id={id} {...surfaceProps}>
+        {children}
+      </Surface>
+    );
   }
 
   if (layout === 'flex-center') {

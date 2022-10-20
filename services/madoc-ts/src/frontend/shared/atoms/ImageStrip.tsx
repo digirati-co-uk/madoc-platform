@@ -7,7 +7,6 @@ export const ImageStripBox = styled.div<{
 }>`
   position: relative;
   flex-shrink: 0;
-  padding: 5px;
   border-radius: 3px;
   background-color: white;
   max-width: ${props => (props.$size === 'small' ? '200px' : '')};
