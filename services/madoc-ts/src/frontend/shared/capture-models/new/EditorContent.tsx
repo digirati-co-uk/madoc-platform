@@ -8,6 +8,7 @@ import { TinyButton } from '../../navigation/Button';
 import { ContentExplorer } from '../../components/ContentExplorer';
 import { ViewContent } from '../../components/ViewContent';
 import { ViewExternalContent } from '../../components/ViewExternalContent';
+import { BrowserComponent } from '../../utility/browser-component';
 import { CaptureModel } from '../types/capture-model';
 
 export type EditorContentVariations = {
@@ -48,7 +49,7 @@ export const EditorContentViewer: React.FC<EditorContentVariations> = ({
       <ContentExplorer
         canvasId={canvasId}
         renderChoice={(cid, reset) => (
-          <Suspense fallback={<>Loading</>}>
+          <BrowserComponent fallback={<>Loading</>}>
             <>
               <ViewContentFetch height={height} id={cid} onCreated={onCreated} onPanInSketchMode={onPanInSketchMode} />
               {explorerReset ? (
@@ -58,7 +59,7 @@ export const EditorContentViewer: React.FC<EditorContentVariations> = ({
                 </>
               ) : null}
             </>
-          </Suspense>
+          </BrowserComponent>
         )}
       />
     );
@@ -96,7 +97,7 @@ export const EditorContentViewer: React.FC<EditorContentVariations> = ({
 
   if (canvasId) {
     return (
-      <Suspense fallback={<>{t('loading')}</>}>
+      <BrowserComponent fallback={<>{t('loading')}</>}>
         <ViewContentFetch
           id={Number(canvasId)}
           height={height}
@@ -105,7 +106,7 @@ export const EditorContentViewer: React.FC<EditorContentVariations> = ({
         >
           {children}
         </ViewContentFetch>
-      </Suspense>
+      </BrowserComponent>
     );
   }
 

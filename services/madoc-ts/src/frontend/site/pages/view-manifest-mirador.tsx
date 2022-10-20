@@ -1,4 +1,5 @@
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { BrowserComponent } from '../../shared/utility/browser-component';
 import { Mirador } from '../../shared/viewers/mirador.lazy';
 import { useApi } from '../../shared/hooks/use-api';
 import React, { useMemo } from 'react';
@@ -59,7 +60,7 @@ export const ViewManifestMirador: React.FC<{
       {hideBreadcrumbs ? null : <DisplayBreadcrumbs />}
       <div style={{ position: 'relative', height: '80vh' }}>
         {hideNavigation ? <style>{`.mirador-osd-navigation { display: none }`}</style> : null}
-        <React.Suspense fallback={<div>loading...</div>}>
+        <BrowserComponent fallback={<div>loading...</div>}>
           <Mirador
             canvasId={canvasUrl}
             onChangeCanvas={onChangeCanvas}
@@ -67,7 +68,7 @@ export const ViewManifestMirador: React.FC<{
             config={config}
             viewerConfig={{}}
           />
-        </React.Suspense>
+        </BrowserComponent>
       </div>
     </div>
   );
