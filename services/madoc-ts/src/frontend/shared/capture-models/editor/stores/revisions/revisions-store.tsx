@@ -18,7 +18,6 @@ import { CaptureModel } from '../../../types/capture-model';
 import { BaseField } from '../../../types/field-types';
 import { BaseSelector } from '../../../types/selector-types';
 import { applyModelRootToDocument } from '../../../utility/apply-model-root-to-document';
-import { processImportedRevision } from '../../../utility/process-imported-revision';
 import { RevisionsModel } from './revisions-model';
 import { createSelectorStore, updateSelectorStore } from '../selectors/selector-store';
 import { batchedSubscribe } from 'redux-batched-subscribe';
@@ -69,7 +68,11 @@ export const revisionStore: RevisionsModel = {
         return undefined;
       }
 
-      return resolveSubtreeWithIds(subtreePath, document);
+      try {
+        return resolveSubtreeWithIds(subtreePath, document);
+      } catch (e) {
+        return undefined;
+      }
     }
   ),
   revisionSubtreeField: computed(
@@ -163,9 +166,13 @@ export const revisionStore: RevisionsModel = {
     }
     const revisionDocument = state.revisions[state.currentRevisionId].document;
 
-    if (resolveSubtreeWithIds(state.revisionSubtreePath, revisionDocument).properties[term]) {
-      state.revisionSelectedFieldProperty = term;
-      state.revisionSelectedFieldInstance = id;
+    try {
+      if (resolveSubtreeWithIds(state.revisionSubtreePath, revisionDocument).properties[term]) {
+        state.revisionSelectedFieldProperty = term;
+        state.revisionSelectedFieldInstance = id;
+      }
+    } catch (e) {
+      return;
     }
   }),
 
@@ -418,13 +425,17 @@ export const revisionStore: RevisionsModel = {
         return { fields: [], currentId: undefined };
       }
 
-      const [property, currentId] = subtreePath[subtreePath.length - 1];
-      const adj = resolveSubtreeWithIds(subtreePath.slice(0, -1), document);
+      try {
+        const [property, currentId] = subtreePath[subtreePath.length - 1];
+        const adj = resolveSubtreeWithIds(subtreePath.slice(0, -1), document);
 
-      return {
-        fields: (adj.properties[property] || []) as any[],
-        currentId,
-      };
+        return {
+          fields: (adj.properties[property] || []) as any[],
+          currentId,
+        };
+      } catch (e) {
+        return { fields: [], currentId: undefined };
+      }
     }
   ),
 

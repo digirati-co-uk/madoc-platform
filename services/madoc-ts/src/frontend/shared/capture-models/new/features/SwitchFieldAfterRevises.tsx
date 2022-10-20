@@ -22,15 +22,19 @@ export const SwitchFieldAfterRevises: React.FC = () => {
       lastRevisionSubtreeField.current = revisionSubtreeField;
     } else {
       if (revisionSelectedFieldInstance && revisionSelectedFieldProperty) {
-        if (isEntity(revisionSubtree)) {
+        if (revisionSubtree && isEntity(revisionSubtree)) {
           const fields = revisionSubtree.properties[revisionSelectedFieldProperty];
           if (fields.length) {
             for (const field of fields) {
               if (field.revises === revisionSelectedFieldInstance) {
-                revisionSelectField({
-                  id: field.id,
-                  term: revisionSelectedFieldProperty,
-                });
+                try {
+                  revisionSelectField({
+                    id: field.id,
+                    term: revisionSelectedFieldProperty,
+                  });
+                } catch (e) {
+                  // test
+                }
               }
             }
           }

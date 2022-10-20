@@ -2,6 +2,7 @@ import copy from 'fast-copy';
 import { pluginStore } from '../plugin-api/globals';
 import { CaptureModel } from '../types/capture-model';
 import { BaseField } from '../types/field-types';
+import { isEmptyFieldList } from '../utility/is-field-list-empty';
 import { filterDocumentGraph } from './filter-document-graph';
 import { formPropertyValue } from './fork-field';
 import { generateId } from './generate-id';
@@ -232,6 +233,11 @@ export function forkDocument<Fields extends string>(
       if (branchFromRoot && !parent) {
         actions.branch(entity);
       }
+      // If we are in edit values mode, we want to fork the empty value.
+      if (editValues && parent && key && !actions.isParentFiltered(parent) && parent.properties[key].length === 1) {
+        actions.branch(entity);
+      }
+
       // If the parent has multiple values, and we're not editing and removing values (fork)
       if (parent && key && !actions.isParentFiltered(parent) && !editValues && removeValues) {
         // Then we want to make this the only entity, I think. This will already be pre-filtered if
