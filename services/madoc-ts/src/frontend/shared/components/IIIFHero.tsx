@@ -22,6 +22,7 @@ type IIIFHeroProps = {
     thumbnails: string[];
     link?: string;
   };
+  fullWidth?: boolean;
 };
 
 const HeroContainer = styled.div<{ $noAsset?: boolean }>`
@@ -34,6 +35,11 @@ const HeroContainer = styled.div<{ $noAsset?: boolean }>`
     css`
       height: 400px;
     `}
+
+  &[data-full-width='true'] {
+    margin-left: -2em;
+    margin-right: -2em;
+  }
 `;
 
 const HeroBackground = styled.div<{ $image?: string }>`
@@ -185,7 +191,7 @@ export const IIIFHero = (props: IIIFHeroProps) => {
   const bigImage = useRef<HTMLImageElement>(null);
 
   return (
-    <HeroContainer $noAsset={!props.asset}>
+    <HeroContainer $noAsset={!props.asset} data-full-width={props.fullWidth}>
       <HeroContent $noAsset={!props.asset}>
         <HeroTitle>{props.title}</HeroTitle>
         <HeroDescription>{props.description}</HeroDescription>

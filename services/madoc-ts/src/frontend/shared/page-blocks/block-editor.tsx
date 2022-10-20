@@ -328,14 +328,14 @@ export const BlockEditorForm: React.FC<{
         await saveChanges();
       }}
       render={() => (
-        <>
+        <div style={{ paddingBottom: '10em' }}>
           {preview ? (
             <div style={{ padding: '1em' }}>
               <RenderBlock block={preview} context={context} />
             </div>
           ) : null}
           {editor}
-        </>
+        </div>
       )}
       renderFooter={(footer: any) => (
         <div>

@@ -3,6 +3,8 @@ import { Helmet as _Helmet } from 'react-helmet';
 import styled, { css } from 'styled-components';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { convertComponentToText } from '../../../utility/convert-component-to-text';
+import { MaxWidthBackground, MaxWidthBackgroundContainer } from '../atoms/MaxWidthBackground';
+import { useAccessibleColor } from '../hooks/use-accessible-color';
 import { useSite } from '../hooks/use-site';
 
 const Helmet = _Helmet as any;
@@ -11,19 +13,93 @@ export const _Heading1 = styled.h1<{ $margin?: boolean }>`
   font-size: 2em;
   font-weight: 600;
   margin-bottom: 0.2em;
+  width: 100%;
+  position: relative;
+  z-index: 3;
   ${props =>
     props.$margin &&
     css`
       margin-bottom: 1em;
     `}
+
+  &[data-size='sm'] {
+    font-size: 1.6em;
+  }
+  &[data-size='lg'] {
+    font-size: 3.4em;
+  }
+  &[data-size='xl'] {
+    font-size: 5em;
+  }
 `;
 
-export const Heading1: React.FC<ComponentPropsWithRef<typeof _Heading1>> = forwardRef(function Heading1(
-  props: any,
+const backgroundShadow = css`
+  position: absolute;
+  content: '';
+  width: 100%;
+  height: 50%;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-image: linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.65) 100%);
+`;
+
+const Heading1Background = styled(MaxWidthBackground)`
+  &:has(img)::after {
+    ${backgroundShadow}
+  }
+`;
+
+const Heading1Container = styled(MaxWidthBackgroundContainer)`
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 1.5em;
+  margin-left: -2em;
+  margin-right: -2em;
+  padding-left: 2em;
+  padding-right: 2em;
+
+  &[data-align-start='true'] {
+    align-items: flex-start;
+  }
+  &[data-align-center='true'] {
+    align-items: center;
+  }
+
+  &[data-has-background='true']::before {
+    ${backgroundShadow}
+  }
+`;
+
+export const Heading1: React.FC<{
+  background?: string;
+  fullWidth?: boolean;
+  backgroundHeight?: number;
+  alignBackground?: 'start' | 'center' | 'end';
+  textAlign?: string;
+  fontSize?: 'sm' | 'lg' | 'md' | 'xl';
+  backgroundImage?: {
+    id: string;
+    image: string;
+    thumbnail: string;
+  } | null;
+} & ComponentPropsWithRef<typeof _Heading1>> = forwardRef(function Heading1(
+  {
+    fullWidth,
+    background,
+    textAlign,
+    backgroundHeight = 200,
+    fontSize,
+    backgroundImage,
+    alignBackground = 'end',
+    ...props
+  }: any,
   ref
 ) {
   const site = useSite();
-  return (
+  const _color = useAccessibleColor(background);
+  const color = backgroundImage ? '#fff' : _color;
+  const component = (
     <>
       {typeof props.children === 'string' && site ? (
         <Helmet>
@@ -32,9 +108,40 @@ export const Heading1: React.FC<ComponentPropsWithRef<typeof _Heading1>> = forwa
           </title>
         </Helmet>
       ) : null}
-      <_Heading1 ref={ref} {...props} />
+      <_Heading1 ref={ref} data-size={fontSize} style={{ textAlign, color: background ? color : '' }} {...props} />
     </>
   );
+
+  if (background || fullWidth) {
+    return (
+      <>
+        {fullWidth ? (
+          <>
+            <Heading1Background
+              style={{ '--max-bg-height': `${backgroundHeight}px`, backgroundColor: background } as any}
+            >
+              {backgroundImage ? <img src={backgroundImage.image} alt="" /> : null}
+            </Heading1Background>
+          </>
+        ) : null}
+        <Heading1Container
+          data-align-start={alignBackground === 'start'}
+          data-align-center={alignBackground === 'center'}
+          data-has-background={!fullWidth && !!backgroundImage}
+          style={
+            {
+              background: fullWidth ? '' : backgroundImage ? `url(${backgroundImage.image})` : background,
+              '--max-bg-height': backgroundHeight ? `${backgroundHeight}px` : '',
+            } as any
+          }
+        >
+          {component}
+        </Heading1Container>
+      </>
+    );
+  }
+
+  return component;
 }) as any;
 
 blockEditorFor(Heading1, {
@@ -42,9 +149,48 @@ blockEditorFor(Heading1, {
   label: 'Heading 1',
   editor: {
     text: { label: 'Text content', type: 'text-field' },
+    fullWidth: { label: 'Full width', type: 'checkbox-field', inlineLabel: 'Show full width' },
+    background: { label: 'Background', type: 'color-field' },
+    backgroundHeight: { label: 'Background height', type: 'text-field' },
+    alignBackground: {
+      label: 'Align title (vertical)',
+      type: 'dropdown-field',
+      options: [
+        { value: 'start', text: 'Top' },
+        { value: 'center', text: 'Center' },
+        { value: 'end', text: 'Bottom' },
+      ],
+    },
+    textAlign: {
+      label: 'Align title (vertical)',
+      type: 'dropdown-field',
+      options: [
+        { value: 'left', text: 'Left' },
+        { value: 'center', text: 'Center' },
+        { value: 'right', text: 'Right' },
+      ],
+    },
+    fontSize: {
+      label: 'Font size',
+      type: 'dropdown-field',
+      options: [
+        { value: 'sm', text: 'Small' },
+        { value: 'md', text: 'Normal' },
+        { value: 'lg', text: 'Large' },
+        { value: 'xl', text: 'Very Large' },
+      ],
+    },
+    backgroundImage: { label: 'Background image', type: 'madoc-media-explorer' },
   },
   defaultProps: {
     text: 'Example header',
+    fullWidth: false,
+    background: '',
+    backgroundHeight: 200,
+    alignBackground: 'start',
+    textAlign: 'left',
+    fontSize: 'md',
+    backgroundImage: null,
   },
   svgIcon: props => {
     return (
@@ -60,12 +206,20 @@ blockEditorFor(Heading1, {
       </svg>
     );
   },
-  mapFromProps: props => ({
-    text: convertComponentToText(props.children),
-  }),
-  mapToProps: props => ({
-    children: <>{props.text}</>,
-  }),
+  mapFromProps: props =>
+    ({
+      ...props,
+      text: convertComponentToText(props.children),
+    } as any),
+  mapToProps: props =>
+    ({
+      ...props,
+      children: <>{props.text}</>,
+      backgroundHeight:
+        Number.isFinite(Number(props.backgroundHeight)) && !Number.isNaN(Number(props.backgroundHeight))
+          ? Number(props.backgroundHeight)
+          : 200,
+    } as any),
 });
 
 export const Subheading1 = styled.p`

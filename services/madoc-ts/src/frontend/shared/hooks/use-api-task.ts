@@ -5,7 +5,7 @@ import { useApi } from './use-api';
 export function useApiTask<Task extends BaseTask = BaseTask>(taskId?: string) {
   const api = useApi();
   return useQuery(
-    ['task', { id: taskId }],
+    ['api-get-task', { id: taskId }],
     async () => {
       if (taskId) {
         return api.getTask<Task>(taskId);
