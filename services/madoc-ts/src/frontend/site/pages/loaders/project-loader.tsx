@@ -17,6 +17,8 @@ import { useStaticData } from '../../../shared/hooks/use-data';
 import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
 import { ProjectFull } from '../../../../types/project-full';
 import { ConfigProvider } from '../../features/SiteConfigurationContext';
+import { FooterImageGrid } from '../../../shared/components/FooterImageGrid';
+import { Slot } from '../../../shared/page-blocks/slot';
 
 type ProjectLoaderType = {
   params: { slug: string };
@@ -52,6 +54,9 @@ export const ProjectLoader: UniversalComponent<ProjectLoaderType> = createUniver
               </InfoMessage>
             ) : null}
             <Outlet />
+            <Slot layout="flex" name="project-footer">
+              <FooterImageGrid />
+            </Slot>
           </BreadcrumbContext>
         </ConfigProvider>
       </AutoSlotLoader>

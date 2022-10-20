@@ -31,8 +31,6 @@ export const ViewProject: React.FC = () => {
         <ProjectCollections />
         <ProjectManifests />
       </Slot>
-
-      <Slot name="project-footer" />
     </>
   );
 };

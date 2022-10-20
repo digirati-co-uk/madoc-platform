@@ -5,7 +5,8 @@ export const ImageStripBox = styled.div<{ $size?: 'large' | 'small' }>`
   flex-shrink: 0;
   padding: 5px;
   border-radius: 3px;
-
+  max-width: ${props => (props.$size === 'small' ? '200px' : '')};
+  
   &:hover {
     background: rgba(0, 0, 0, 0.1);
     cursor: pointer;
