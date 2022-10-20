@@ -366,9 +366,9 @@ export const LinkButton = styled.button<{ $inherit?: boolean }>`
   }
 `;
 
-export const ButtonRow = styled.div<{ $noMargin?: boolean; $right?: boolean }>`
+export const ButtonRow = styled.div<{ $noMargin?: boolean; $right?: boolean; $center?: boolean }>`
   display: flex;
-  justify-content: ${props => (props.$right ? 'flex-end' : 'flex-start')};
+  justify-content: ${props => (props.$right ? 'flex-end' : props.$center ? 'center' : 'flex-start')};
   align-items: ${props => (props.$right ? 'flex-end' : 'flex-start')};
 
   ${props =>
