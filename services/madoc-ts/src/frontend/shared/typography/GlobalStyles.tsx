@@ -5,7 +5,7 @@ export const GlobalStyles = createGlobalStyle`
     margin: 0;
     padding: 0;
     min-height: 100vh;
-    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+    //font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
   }
 
   *, *:before, *:after {

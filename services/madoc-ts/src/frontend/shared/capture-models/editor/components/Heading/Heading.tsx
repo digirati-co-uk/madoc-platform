@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 
 export const Heading = styled.header<{ size: 'large' | 'medium' | 'small' }>`
-  font-family: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Open Sans", "Helvetica Neue", "Icons16", sans-serif;
+  //font-family: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Open Sans", "Helvetica Neue", "Icons16", sans-serif;
   line-height: 1.4em;
   margin: .3em 0;
   ${props =>
