@@ -13,5 +13,3 @@ export type ThemeDefinitions = {
   global: GlobalTheme;
   fonts: Fonts;
 };
-
-console.log()

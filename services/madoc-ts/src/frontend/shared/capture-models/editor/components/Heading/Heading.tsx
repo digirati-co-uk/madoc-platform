@@ -1,7 +1,11 @@
 import styled, { css } from 'styled-components';
+import { themeVariable } from '../../../../../themes/helpers/themeVariable';
 
+const globalFont = themeVariable('fonts', 'fontFamily', {
+  default: 'Tahoma, sans-serif',
+});
 export const Heading = styled.header<{ size: 'large' | 'medium' | 'small' }>`
-  //font-family: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Open Sans", "Helvetica Neue", "Icons16", sans-serif;
+  font-family: ${globalFont};
   line-height: 1.4em;
   margin: .3em 0;
   ${props =>

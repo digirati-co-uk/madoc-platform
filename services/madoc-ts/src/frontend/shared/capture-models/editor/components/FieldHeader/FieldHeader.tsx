@@ -4,6 +4,11 @@ import { useModelTranslation } from '../../../hooks/use-model-translation';
 import { Tag } from '../../atoms/Tag';
 import { useTranslation } from 'react-i18next';
 import { useSelectorController, useSelectorHelper } from '../../stores/selectors/selector-helper';
+import { themeVariable } from '../../../../../themes/helpers/themeVariable';
+
+const globalFont = themeVariable('fonts', 'fontFamily', {
+  default: 'Tahoma, sans-serif',
+});
 
 type FieldHeaderProps = {
   labelFor?: string;
@@ -19,9 +24,7 @@ type FieldHeaderProps = {
 };
 
 export const FieldHeaderWrapper = styled.div`
-  font-family: ${fonts};
-  //font-family: -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans',
-  //  'Helvetica Neue', 'Icons16', sans-serif;
+  font-family: ${globalFont}
   line-height: 1.8em;
   margin: 0.5em 0;
 `;

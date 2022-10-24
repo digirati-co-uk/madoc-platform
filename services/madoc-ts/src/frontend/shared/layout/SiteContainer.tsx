@@ -9,9 +9,13 @@ const containerBackground = themeVariable('siteContainer', 'containerBackground'
 });
 
 const background = themeVariable('siteContainer', 'background', {
-  default: '#fff',
+  default: 'red',
   light: '#fff',
   dark: '#fff',
+});
+
+const globalFont = themeVariable('fonts', 'fontFamily', {
+  default: 'Tahoma, sans-serif',
 });
 
 export const SiteContainerBackground = styled.div`
@@ -21,6 +25,7 @@ export const SiteContainerBackground = styled.div`
 `;
 
 export const SiteContainer = styled.div`
+  font-family: ${globalFont};
   flex: 1 1 0;
   max-width: ${maxWidth};
   padding: 0 2em;
