@@ -35,6 +35,7 @@ export function createNewFieldInstance(
   if (newField.selector) {
     newField.selector.id = generateId();
     newField.selector.state = null;
+    newField.selector.revisedBy = undefined;
   }
   if (newField.revises) {
     newField.revises = undefined;
