@@ -79,7 +79,13 @@ export function filterCaptureModel(
     // These are instances of the root field. The first field indicates the type
     for (const field of rootField) {
       if ((field as CaptureModel['document']).type === 'entity') {
-        const filteredModel = filterCaptureModel(field.id, field as CaptureModel['document'], [flatField], predicate);
+        const filteredModel = filterCaptureModel(
+          field.id,
+          field as CaptureModel['document'],
+          [flatField],
+          predicate,
+          postFilter
+        );
         if (filteredModel) {
           if (!newDocument.properties[rootFieldKey]) {
             newDocument.properties[rootFieldKey] = [];

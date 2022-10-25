@@ -1,5 +1,5 @@
 import { Runtime } from '@atlas-viewer/atlas';
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PARAGRAPHS_PROFILE } from '../../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
 import { slotConfig } from '../../../extensions/capture-models/Paragraphs/Paragraphs.slots';
@@ -62,7 +62,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
   const { t } = useTranslation();
   const { projectId, canvasId } = useRouteContext();
   const { data: projectModel } = useCanvasModel();
-  const [{ captureModel }] = useLoadedCaptureModel(projectModel?.model?.id, undefined, canvasId);
+  const [{ captureModel }, , modelRefetch] = useLoadedCaptureModel(projectModel?.model?.id, undefined, canvasId);
   const { updateClaim, allTasksDone, markedAsUnusable } = useCanvasUserTasks();
   const { isPreparing } = useProjectStatus();
   const annotationTheme = useProjectAnnotationStyles();
@@ -83,6 +83,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
   const [postSubmission, setPostSubmission] = useState(false);
   const [postSubmissionMessage, setPostSubmissionMessage] = useState(false);
   const readOnlyAnnotations = useReadOnlyAnnotations(true);
+  const [invalidateKey, invalidate] = useReducer(i => i + 1, 0);
 
   useEffect(() => {
     setPostSubmission(false);
@@ -176,6 +177,8 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
       await updateClaim(ctx);
     }
 
+    await modelRefetch();
+
     // If we have disabled preview, we need to show the post-submission.
     if (disablePreview && ctx.revisionRequest.revision.status !== 'draft') {
       if (disableNextCanvas) {
@@ -184,6 +187,8 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
         setPostSubmission(true);
       }
     }
+
+    invalidate();
   }
 
   if (api.getIsServer() || !canvasId || !projectId || (isPreparing && !isModelAdmin)) {
@@ -194,7 +199,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
     <CanvasVaultContext>
       <RevisionProviderWithFeatures
         features={features}
-        key={revision}
+        key={revision + invalidateKey}
         revision={isSegmentation ? undefined : revision}
         captureModel={captureModel}
         slotConfig={{
