@@ -10,7 +10,7 @@ const LinkWrapper = styled.div`
     text-decoration: none;
     vertical-align: middle;
     margin: 0 1em;
-    
+
     :hover {
       color: black;
       text-decoration: underline;
@@ -30,7 +30,6 @@ export const ExternalLinks: React.FC<{
     text?: string;
   }[];
 }> = ({ links }) => {
-
   return (
     <LinkWrapper>
       {links
