@@ -21,9 +21,20 @@ import { useTaskMetadata } from '../../../hooks/use-task-metadata';
 const TaskListContainer = styled.div`
   min-width: 0;
   flex: 1;
-  overflow-x: hidden;
-  height: 80vh;
+  overflow-x: auto;
+  height: auto;
   border-right: 3px solid #dbdbdb;
+
+  @media (max-width: 1700px) {
+    td {
+      max-width: 15em;
+    }
+  }
+  @media (max-width: 1300px) {
+    td {
+      max-width: 8em;
+    }
+  }
 `;
 
 const TaskPreviewContainer = styled.div`
