@@ -61,7 +61,7 @@ export const MediaExplorer: React.FC<MediaExplorerProps & {
 
   return (
     <div ref={container} style={{ maxHeight: 500, overflowY: 'scroll' }}>
-      <ImageGrid $size="small" $bgColor="#f2f2f2">
+      <ImageGrid $size="small">
         {pages?.map((page, key) => {
           return (
             <React.Fragment key={key}>

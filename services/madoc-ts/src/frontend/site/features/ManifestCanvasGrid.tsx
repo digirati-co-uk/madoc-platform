@@ -49,17 +49,17 @@ export function ManifestCanvasGrid(props: {
   const hideCanvasLabels = manifestOptions?.hideCanvasLabels;
   const manifest = data?.manifest;
 
+  // const bg = props.background !== undefined ? props.background : '';
+  // const _color = useAccessibleColor(bg);
+
   if (!manifest || !showNavigationContent) {
     return null;
   }
 
   const renderCanvasSnippet = (canvas: { id: number; label: InternationalString; thumbnail: string | null }) => {
     return (
-      <ImageStripBox $border={props.canvasBorder} $color={props.textColor}>
-        <CroppedImage
-            $covered={coveredImages || props.imageStyle === 'covered'}
-            $rect={rectangularImages}
-        >
+      <ImageStripBox $border={props.canvasBorder} $color={props.textColor} $bgColor={props.background}>
+        <CroppedImage $covered={coveredImages || props.imageStyle === 'covered'} $rect={rectangularImages}>
           {canvas.thumbnail ? (
             <img alt={createLocaleString(canvas.label, t('Canvas thumbnail'))} src={canvas.thumbnail} />
           ) : null}
@@ -74,7 +74,7 @@ export function ManifestCanvasGrid(props: {
 
   if (props.popup) {
     return (
-      <ImageGrid $bgColor={props.background}>
+      <ImageGrid>
         {manifest.items.map((canvas, idx) => (
           <ModalButton
             modalSize="lg"
@@ -98,7 +98,7 @@ export function ManifestCanvasGrid(props: {
   }
 
   return (
-    <ImageGrid $bgColor={props.background}>
+    <ImageGrid>
       {manifest.items.map((canvas, idx) => (
         <Link
           key={`${canvas.id}_${idx}`}
@@ -126,9 +126,9 @@ blockEditorFor(ManifestCanvasGrid, {
   },
   editor: {
     popup: { type: 'checkbox-field', label: 'Popup', inlineLabel: 'Show canvases in popup' },
-    background: { label: 'Grid background color', type: 'color-field' },
-    textColor: { label: 'Canvas text color', type: 'color-field' },
-    canvasBorder: { label: 'Canvas border', type: 'color-field' },
+    background: { label: 'Card background color', type: 'color-field' },
+    textColor: { label: 'Card text color', type: 'color-field' },
+    canvasBorder: { label: 'Card border', type: 'color-field' },
     imageStyle: {
       label: 'Image Style',
       type: 'dropdown-field',
