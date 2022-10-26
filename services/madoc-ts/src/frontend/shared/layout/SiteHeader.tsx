@@ -4,7 +4,8 @@ import { themeVariable } from '../../themes/helpers/themeVariable';
 import { accent } from '../variables';
 
 const globalFont = themeVariable('fonts', 'fontFamily', {
-  default: 'Tahoma, sans-serif',
+  default:
+    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
 });
 
 const headerBackground = themeVariable('header', 'headerBackground', {

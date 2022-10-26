@@ -1,16 +1,11 @@
 import { createGlobalStyle } from 'styled-components';
-import { themeVariable } from '../../themes/helpers/themeVariable';
-
-const globalFont = themeVariable('fonts', 'fontFamily', {
-  default: 'Tahoma, sans-serif',
-});
 
 export const GlobalStyles = createGlobalStyle`
   html, body {
     margin: 0;
     padding: 0;
     min-height: 100vh;
-    font-family: ${globalFont};
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
   }
 
   *, *:before, *:after {

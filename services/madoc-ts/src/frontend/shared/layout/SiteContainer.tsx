@@ -9,13 +9,14 @@ const containerBackground = themeVariable('siteContainer', 'containerBackground'
 });
 
 const background = themeVariable('siteContainer', 'background', {
-  default: 'red',
+  default: '#fff',
   light: '#fff',
   dark: '#fff',
 });
 
 const globalFont = themeVariable('fonts', 'fontFamily', {
-  default: 'Tahoma, sans-serif',
+  default:
+    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
 });
 
 export const SiteContainerBackground = styled.div`
