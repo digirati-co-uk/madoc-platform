@@ -44,64 +44,40 @@ const backgroundShadow = css`
   background-image: linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.65) 100%);
 `;
 
-const backgroundHalf = css`
-  img {
-    width: 50%;
-    margin-left: 50%;
-  }
-`;
-
-const diamondClip = css`
-  img {
-    width: auto;
-    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-    position: absolute;
-    right: 0;
-    aspect-ratio: 1 / 1;
-    max-width: 100%;
-  }
-`;
-
-const octagonClip = css`
-  img {
-    width: auto;
-    clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
-    position: absolute;
-    right: 0;
-    aspect-ratio: 1 / 1;
-    max-width: 100%;
-  }
-`;
-
-const circleClip = css`
-  img {
-    width: auto;
-    clip-path: circle(40%);
-    position: absolute;
-    right: 0;
-    aspect-ratio: 1 / 1;
-    max-width: 100%;
-  }
-`;
-
-const Heading1Background = styled(MaxWidthBackground)<{ $imageStyle?: string }>`
+const Heading1Background = styled(MaxWidthBackground)`
   &:has(img)::after {
     ${backgroundShadow}
   }
-  ${props => {
-    switch (props.$imageStyle) {
-      case 'bgh':
-        return `${backgroundHalf}`;
-      case 'dim':
-        return `${diamondClip}`;
-      case 'cir':
-        return `${circleClip}`;
-      case 'oct':
-        return `${octagonClip}`;
-      case 'bgf':
-        return ``;
-    }
-  }};
+
+  &[data-align-right='false'] img {
+    position: absolute;
+    right: 0;
+  }
+
+  &[data-image-style='oct'] img {
+    width: auto;
+    clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+    aspect-ratio: 1 / 1;
+    max-width: 100%;
+  }
+
+  &[data-image-style='bgh'] img {
+    width: 50%;
+  }
+
+  &[data-image-style='dim'] img {
+    width: auto;
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    aspect-ratio: 1 / 1;
+    max-width: 100%;
+  }
+
+  &[data-image-style='cir'] img {
+    width: auto;
+    clip-path: circle(40%);
+    aspect-ratio: 1 / 1;
+    max-width: 100%;
+  }
 `;
 
 const Heading1Container = styled(MaxWidthBackgroundContainer)`
@@ -132,7 +108,7 @@ export const Heading1: React.FC<{
   alignBackground?: 'start' | 'center' | 'end';
   textAlign?: string;
   fontSize?: 'sm' | 'lg' | 'md' | 'xl';
-  imageStyle?: string;
+  imageStyle?: 'bgf' | 'bgh' | 'dim' | 'cir' | 'oct';
   backgroundImage?: {
     id: string;
     image: string;
@@ -174,7 +150,8 @@ export const Heading1: React.FC<{
         {fullWidth ? (
           <>
             <Heading1Background
-              $imageStyle={imageStyle}
+              data-image-style={imageStyle}
+              data-align-right={textAlign === 'right'}
               style={{ '--max-bg-height': `${backgroundHeight}px`, backgroundColor: background } as any}
             >
               {backgroundImage ? <img src={backgroundImage.image} alt="" /> : null}
