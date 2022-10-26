@@ -21,7 +21,6 @@ import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { CanvasViewer } from './CanvasViewer';
 import { usePreventCanvasNavigation } from './PreventUsersNavigatingCanvases';
-import { useAccessibleColor } from '../../shared/hooks/use-accessible-color';
 
 export function ManifestCanvasGrid(props: {
   background?: string;
@@ -128,8 +127,8 @@ blockEditorFor(ManifestCanvasGrid, {
   editor: {
     popup: { type: 'checkbox-field', label: 'Popup', inlineLabel: 'Show canvases in popup' },
     background: { label: 'Card background color', type: 'color-field' },
-    textColor: { label: 'Canvas text color', type: 'color-field' },
-    canvasBorder: { label: 'Canvas border', type: 'color-field' },
+    textColor: { label: 'Card text color', type: 'color-field' },
+    canvasBorder: { label: 'Card border', type: 'color-field' },
     imageStyle: {
       label: 'Image Style',
       type: 'dropdown-field',

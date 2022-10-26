@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Subheading5 } from '../typography/Heading5';
 
 export const ImageStripBox = styled.div<{
   $size?: 'large' | 'small';
@@ -13,9 +14,9 @@ export const ImageStripBox = styled.div<{
   border: 1px solid;
   border-color: ${props => (props.$border ? props.$border : 'transparent')};
   background-color: ${props => (props.$bgColor ? props.$bgColor : 'inherit')};
-
-  h5 {
-    color: ${props => (props.$color ? props.$color : 'black')};
+  h5,
+  ${Subheading5} {
+    color: ${props => (props.$color ? props.$color : 'inherit')}!important;
     padding: ${props => (props.$border ? '0 0 15px 8px' : '0')};
   }
 
