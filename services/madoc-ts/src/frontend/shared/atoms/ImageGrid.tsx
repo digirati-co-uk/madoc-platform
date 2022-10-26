@@ -13,12 +13,11 @@ const getSize = (props: any) => {
 
 export const ImageGrid = styled.div<{
   $size?: 'large' | 'small';
-  $bgColor?: string;
 }>`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(${getSize}, 1fr));
   justify-content: space-between;
-  background-color: ${props => (props.$bgColor ? props.$bgColor : 'inherit')};
+  background-color: inherit;
   grid-gap: 0.875em;
   width: 100%;
   flex-wrap: wrap;

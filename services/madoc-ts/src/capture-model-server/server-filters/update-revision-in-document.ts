@@ -11,9 +11,13 @@ export function updateRevisionInDocument(
     allowAnonymous?: boolean;
     allowCanonicalChanges?: boolean;
     allowCustomStructure?: boolean;
-  }
+  } = {}
 ) {
-  const { mutations } = extractValidRevisionChanges(captureModel, req, options);
+  const { mutations } = extractValidRevisionChanges(captureModel, req, {
+    allowAnonymous: options.allowAnonymous,
+    allowCustomStructure: options.allowCustomStructure,
+    allowCanonicalChanges: false,
+  });
 
   if (Object.keys(mutations).length) {
     // Apply document mutations.

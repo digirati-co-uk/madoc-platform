@@ -16,13 +16,18 @@ export function mapProperties(
     hasSelector: boolean;
     type: 'entity' | 'field';
     instances: Array<BaseField | CaptureModel['document']>;
-  }) => {}
+  }) => any
 ) {
   const properties = Object.keys(entity.properties);
 
   return properties.map(property => {
     const instances = entity.properties[property];
     const singleEntity = instances[0];
+
+    if (!singleEntity) {
+      return null;
+    }
+
     const label =
       instances.length > 1 && singleEntity.pluralLabel ? singleEntity.pluralLabel : singleEntity.label || 'Untitled';
     const isEntity = isEntityList(instances);

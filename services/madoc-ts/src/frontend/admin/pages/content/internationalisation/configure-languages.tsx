@@ -232,6 +232,9 @@ export const ConfigureLanguages: React.FC = () => {
               <tbody>
                 {suggestions.map((suggestion, i) => {
                   const data = locale.getByTag(suggestion.language);
+                  if (!data) {
+                    return null;
+                  }
                   return (
                     <SimpleTable.Row key={i}>
                       <SimpleTable.Cell>{data.name}</SimpleTable.Cell>
