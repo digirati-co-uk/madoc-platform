@@ -20,7 +20,7 @@ export const SiteContainerBackground = styled.div`
   display: flex;
 `;
 
-export const SiteContainer = styled.div`
+export const SiteContainer = styled.main`
   flex: 1 1 0;
   max-width: ${maxWidth};
   padding: 0 2em;

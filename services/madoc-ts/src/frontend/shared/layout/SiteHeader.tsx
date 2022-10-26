@@ -48,6 +48,10 @@ export const SiteDetails = styled.div`
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+
+  &[data-center='true'] {
+    align-self: center;
+  }
 `;
 
 export const SiteTitle = styled.a`

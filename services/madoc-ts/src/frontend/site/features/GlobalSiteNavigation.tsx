@@ -7,7 +7,7 @@ import { useNavigationOptions, useUser } from '../../shared/hooks/use-site';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useSiteConfiguration } from './SiteConfigurationContext';
 
-export const GlobalSiteNavigation: React.FC = () => {
+export function GlobalSiteNavigation(props: { showHomepageMenu?: boolean }) {
   const location = useLocation();
   const { t } = useTranslation();
   const user = useUser();
@@ -20,6 +20,11 @@ export const GlobalSiteNavigation: React.FC = () => {
 
   return (
     <LightNavigation>
+      {props.showHomepageMenu ? (
+        <LightNavigationItem $active={location.pathname === '/'}>
+          <HrefLink href="/">{t('Home')}</HrefLink>
+        </LightNavigationItem>
+      ) : null}
       {showProjects ? (
         <LightNavigationItem $active={location.pathname === '/projects'}>
           <HrefLink href="/projects">{t('Projects')}</HrefLink>
@@ -47,4 +52,4 @@ export const GlobalSiteNavigation: React.FC = () => {
         })}
     </LightNavigation>
   );
-};
+}
