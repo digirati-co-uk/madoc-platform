@@ -1,12 +1,7 @@
 import styled from 'styled-components';
 import { maxWidth } from '../../site/variables/global';
 import { themeVariable } from '../../themes/helpers/themeVariable';
-import { accent } from '../variables';
-
-const globalFont = themeVariable('fonts', 'fontFamily', {
-  default:
-    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
-});
+import { accent, globalFont } from '../variables';
 
 const headerBackground = themeVariable('header', 'headerBackground', {
   default: '#fff',

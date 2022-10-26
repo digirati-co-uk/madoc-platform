@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { maxWidth } from '../../site/variables/global';
 import { themeVariable } from '../../themes/helpers/themeVariable';
+import { globalFont } from '../variables';
 
 const containerBackground = themeVariable('siteContainer', 'containerBackground', {
   default: '#fff',
@@ -12,11 +13,6 @@ const background = themeVariable('siteContainer', 'background', {
   default: '#fff',
   light: '#fff',
   dark: '#fff',
-});
-
-const globalFont = themeVariable('fonts', 'fontFamily', {
-  default:
-    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
 });
 
 export const SiteContainerBackground = styled.div`

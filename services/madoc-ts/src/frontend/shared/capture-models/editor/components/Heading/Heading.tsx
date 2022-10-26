@@ -1,10 +1,5 @@
 import styled, { css } from 'styled-components';
-import { themeVariable } from '../../../../../themes/helpers/themeVariable';
-
-const globalFont = themeVariable('fonts', 'fontFamily', {
-  default:
-    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
-});
+import { globalFont } from '../../../../variables';
 
 export const Heading = styled.header<{ size: 'large' | 'medium' | 'small' }>`
   font-family: ${globalFont};
