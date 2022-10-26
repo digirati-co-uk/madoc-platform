@@ -26,7 +26,8 @@
       "type": "string"
     },
     "template_options": {},
-    "template_config": {}
+    "template_config": {},
+    "remote_template": {}
   },
   "required": [
     "label",
