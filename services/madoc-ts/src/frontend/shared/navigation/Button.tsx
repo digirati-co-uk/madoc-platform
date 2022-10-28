@@ -1,6 +1,9 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { HrefLink } from '../utility/href-link';
+import { buttonRadius, buttonColor, buttonSolid } from '../variables';
+
+console.log(buttonRadius.props);
 
 export const ButtonIcon = styled.span`
   transform: translate(-8px, -4px);
@@ -31,8 +34,7 @@ export const Button = styled.button<{
   padding: 0.4em 1em;
   font-size: 0.9em;
   line-height: 1.18em;
-  border-radius: 3px;
-  background: #fff;
+  background: red;
   color: #3579f6;
   text-decoration: none;
   display: inline-block;
