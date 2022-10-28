@@ -271,7 +271,6 @@ export const Subheading1 = styled.p`
   font-size: 1em;
   opacity: 0.8;
   margin-bottom: 1em;
-  max-width: 50em;
   & a {
     color: #5071f4;
     font-size: 0.85em;
