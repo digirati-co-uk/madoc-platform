@@ -21,7 +21,7 @@ import { useSiteConfiguration } from './SiteConfigurationContext';
 export const ContinueCanvasSubmission: React.FC = () => {
   const { t } = useTranslation();
   const { projectId, canvasId } = useRouteContext();
-  const { completedAndHide, canClaimCanvas, canUserSubmit, isLoading, canContribute, userTasks } = useCanvasUserTasks();
+  const { completed, canClaimCanvas, canUserSubmit, isLoading, canContribute, userTasks } = useCanvasUserTasks();
   const { isManifestComplete, canClaimManifest, userManifestTask } = useManifestTask();
   const config = useSiteConfiguration();
   const allowMultiple = !config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource;
@@ -56,7 +56,7 @@ export const ContinueCanvasSubmission: React.FC = () => {
     );
   }
 
-  if (project && (completedAndHide || !canUserSubmit || isManifestComplete)) {
+  if (project && (completed || !canUserSubmit || isManifestComplete)) {
     if (isLoading) {
       return <ProjectDetailWrapper />;
     }
@@ -65,7 +65,7 @@ export const ContinueCanvasSubmission: React.FC = () => {
       return <ProjectDetailWrapper message={<InfoMessage>{t('This manifest is complete')}</InfoMessage>} />;
     }
 
-    if (completedAndHide) {
+    if (completed) {
       return <ProjectDetailWrapper message={<InfoMessage>{t('This page is complete')}</InfoMessage>} />;
     }
 
