@@ -182,6 +182,7 @@
     "universalviewer": "next",
     "use-debounce": "^3.3.0",
     "use-match-media-hook": "^1.0.1",
+    "use-open-seadragon": "^1.0.0",
     "uuid": "^7.0.1",
     "uuid-validate": "^0.0.3",
     "vm2": "^3.9.6",

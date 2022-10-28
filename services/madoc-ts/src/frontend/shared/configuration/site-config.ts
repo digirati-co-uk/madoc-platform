@@ -271,6 +271,10 @@ export const siteConfigurationModel: {
         label: 'Disable next canvas prompt after submission',
         value: 'disableNextCanvas',
       },
+      {
+        label: 'Enable rotation of images',
+        value: 'enableRotation',
+      },
     ],
   },
   reviewOptions: {
