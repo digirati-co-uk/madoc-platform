@@ -5,7 +5,6 @@ import { Network } from '@styled-icons/entypo/Network';
 
 const LinkWrapper = styled.div`
   a {
-    color: #333333;
     font-size: 14px;
     text-decoration: none;
     vertical-align: middle;
