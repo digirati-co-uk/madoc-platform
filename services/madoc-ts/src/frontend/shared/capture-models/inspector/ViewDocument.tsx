@@ -11,6 +11,7 @@ import { DownArrowIcon } from '../../icons/DownArrowIcon';
 import { FieldPreview } from '../editor/components/FieldPreview/FieldPreview';
 import { useSelectorHelper } from '../editor/stores/selectors/selector-helper';
 import { filterRevises } from '../helpers/filter-revises';
+import { getLabel } from '../helpers/get-label';
 import { isEntityList } from '../helpers/is-entity';
 import { resolveSelector } from '../helpers/resolve-selector';
 import { useModelTranslation } from '../hooks/use-model-translation';
@@ -252,7 +253,7 @@ const renderProperty = (
     tModel: (s: string) => string;
   }
 ) => {
-  const label = fields.length > 1 && (fields[0] && fields[0].pluralLabel ? fields[0].pluralLabel : fields[0].label);
+  const label = fields.length > 1 && fields[0] && fields[0].pluralLabel ? fields[0].pluralLabel : fields[0].label;
   const filteredFields = filterRevises(fields).filter(f => {
     if (highlightRevisionChanges) {
       return f.type === 'entity' || (f.revision && f.revision === highlightRevisionChanges);
