@@ -18,6 +18,7 @@ export const SiteContainerBackground = styled.div`
   background: ${containerBackground};
   flex: 1 1 0;
   display: flex;
+  flex-basis: 80vh;
 `;
 
 export const SiteContainer = styled.main`

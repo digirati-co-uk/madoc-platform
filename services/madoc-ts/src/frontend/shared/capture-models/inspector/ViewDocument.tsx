@@ -253,7 +253,8 @@ const renderProperty = (
     tModel: (s: string) => string;
   }
 ) => {
-  const label = fields.length > 1 && fields[0] && fields[0].pluralLabel ? fields[0].pluralLabel : fields[0].label;
+  const label =
+    fields.length > 1 && fields[0] && fields[0].pluralLabel ? fields[0].pluralLabel : fields[0] ? fields[0].label : '';
   const filteredFields = filterRevises(fields).filter(f => {
     if (highlightRevisionChanges) {
       return f.type === 'entity' || (f.revision && f.revision === highlightRevisionChanges);
