@@ -2,6 +2,7 @@ import { generateId } from '../../frontend/shared/capture-models/helpers/generat
 import { traverseDocument } from '../../frontend/shared/capture-models/helpers/traverse-document';
 import { CaptureModel } from '../../frontend/shared/capture-models/types/capture-model';
 import { RouteMiddleware } from '../../types/route-middleware';
+import { traverseStructure } from '../../utility/traverse-structure';
 import { userWithScope } from '../../utility/user-with-scope';
 import { parseProjectId } from '../../utility/parse-project-id';
 import { NotFound } from '../../utility/errors/not-found';
@@ -22,9 +23,15 @@ export const exportProjectTemplate: RouteMiddleware<{ id: string }> = async cont
   const captureModel: CaptureModel = await userApi.getCaptureModel(project.capture_model_id);
 
   const newDocument = deepmerge({}, captureModel.document, { clone: true });
+  const newStructure = deepmerge({}, captureModel.structure as any, { clone: true });
+
+  const idMapping: Record<string, string> = {};
   const updateId = (e: any) => {
     if (e.id) {
-      e.id = generateId();
+      if (!idMapping[e.id]) {
+        idMapping[e.id] = generateId();
+      }
+      e.id = idMapping[e.id];
     }
   };
   traverseDocument(newDocument, {
@@ -32,6 +39,7 @@ export const exportProjectTemplate: RouteMiddleware<{ id: string }> = async cont
     visitField: updateId,
     visitSelector: updateId,
   });
+  traverseStructure(newStructure as any, updateId);
 
   context.response.body = {
     type: `template-${project.id}-${project.slug}`,
@@ -45,6 +53,7 @@ export const exportProjectTemplate: RouteMiddleware<{ id: string }> = async cont
     },
     captureModel: {
       document: newDocument,
+      structure: newStructure,
     },
   } as JsonProjectTemplate;
 };

@@ -143,6 +143,7 @@ const HeroAssetLabel = styled(LocaleString)`
   white-space: nowrap;
   text-overflow: ellipsis;
   margin: 0 2em;
+  overflow: hidden;
 `;
 
 const HeroAssetAttribution = styled(LocaleString)`
@@ -171,7 +172,7 @@ const HeroContent = styled.div<{ $noAsset?: boolean }>`
 
 const HeroTitle = styled(LocaleString)`
   display: block;
-  font-size: 3.8em;
+  font-size: 3.5em;
   font-weight: 600;
 `;
 

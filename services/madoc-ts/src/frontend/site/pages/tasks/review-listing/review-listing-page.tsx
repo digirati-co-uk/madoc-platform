@@ -116,8 +116,9 @@ function SingleReviewTableRow({ task, active }: { task: CrowdsourcingTask; activ
 
   return (
     <ThickTableRow $active={active}>
-      <SimpleTable.Cell style={{ textAlign: 'left' }}>
+      <SimpleTable.Cell style={{ textAlign: 'left', maxWidth: 200 }}>
         <HrefLink
+          style={{ display: 'flex', maxWidth: 200 }}
           href={createLink({
             taskId: undefined,
             subRoute: `reviews/${task.id}`,
@@ -127,8 +128,10 @@ function SingleReviewTableRow({ task, active }: { task: CrowdsourcingTask; activ
           {metadata && metadata.subject ? (
             metadata.subject.parent ? (
               <>
-                <LocaleString>{metadata.subject.parent.label}</LocaleString> -{' '}
-                <LocaleString>{metadata.subject.label}</LocaleString>
+                <LocaleString style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {metadata.subject.parent.label}
+                </LocaleString>{' '}
+                - <LocaleString>{metadata.subject.label}</LocaleString>
               </>
             ) : (
               <LocaleString>{metadata.subject.label}</LocaleString>

@@ -52,6 +52,7 @@ export type ProjectConfiguration = {
     disableSaveForLater?: boolean;
     disablePreview?: boolean;
     disableNextCanvas?: boolean;
+    enableRotation?: boolean;
   };
   projectPageOptions?: {
     hideStartContributing?: boolean;

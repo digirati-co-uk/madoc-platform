@@ -5163,6 +5163,11 @@
     "@types/keygrip" "*"
     "@types/node" "*"
 
+"@types/dom-parser@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@types/dom-parser/-/dom-parser-0.1.1.tgz#e72d5b2846ce8c2b48b12314c73af458fcbde5df"
+  integrity sha512-/kFdfefUzcrPclXoo86+31GN6Ww/UhzrC4U7eiW/M6mTNOfzgEl8etv7AtmkoelpYDE4EoUAwZIt5x1D693CaA==
+
 "@types/draft-js@*":
   version "0.11.9"
   resolved "https://registry.yarnpkg.com/@types/draft-js/-/draft-js-0.11.9.tgz#b7535fb2511e8b8c8e33ffac2199a5f2988f4fd5"
@@ -9672,6 +9677,11 @@ dom-helpers@^5.0.1:
   dependencies:
     "@babel/runtime" "^7.8.7"
     csstype "^2.6.7"
+
+dom-parser@^0.1.6:
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/dom-parser/-/dom-parser-0.1.6.tgz#696c633b535ab3291424eb5bf58ee426f64632ca"
+  integrity sha512-3nVRKbLEwmGfghLoeT1dxlK/0votalnOfasP+8VCHYDfDuCETY4LeMblfOeqww6XZk2ymZ1Uewy/hVad6Dy3yw==
 
 dom-serializer@0:
   version "0.2.2"
@@ -16875,7 +16885,7 @@ open@^8.4.0:
     is-docker "^2.1.1"
     is-wsl "^2.2.0"
 
-openseadragon@2.4.2, openseadragon@^2.4.2:
+openseadragon@2.4.2, openseadragon@^2.4.1, openseadragon@^2.4.2:
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/openseadragon/-/openseadragon-2.4.2.tgz#f25d833d0ab9941599d65a3e2b44bec546c9f15c"
   integrity sha512-398KbZwRtOYA6OmeWRY4Q0737NTacQ9Q6whmr9Lp1MNQO3p0eBz5LIASRne+4gwequcSM1vcHcjfy3dIndQziw==
@@ -18578,7 +18588,7 @@ react-docgen@^6.0.0-alpha.0:
     resolve "^1.17.0"
     strip-indent "^3.0.0"
 
-react-dom@17.0.2, "react-dom@^16.10.2 || ^17.0.2 || ^18.2.0", react-dom@^17.0.2:
+react-dom@17.0.2, react-dom@^16.10.2, "react-dom@^16.10.2 || ^17.0.2 || ^18.2.0", react-dom@^17.0.2:
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-17.0.2.tgz#ecffb6845e3ad8dbfcdc498f0d0a939736502c23"
   integrity sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==
@@ -18993,7 +19003,7 @@ react-window@^1.8.5:
     "@babel/runtime" "^7.0.0"
     memoize-one ">=3.1.1 <6"
 
-react@17.0.2, "react@^16.10.2 || ^17.0.2 || ^18.2.0", react@^17.0.2:
+react@17.0.2, react@^16.10.2, "react@^16.10.2 || ^17.0.2 || ^18.2.0", react@^17.0.2:
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react/-/react-17.0.2.tgz#d0b5cc516d29eb3eee383f75b62864cfb6800037"
   integrity sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==
@@ -22187,6 +22197,16 @@ use-memo-one@^1.1.1:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/use-memo-one/-/use-memo-one-1.1.2.tgz#0c8203a329f76e040047a35a1197defe342fab20"
   integrity sha512-u2qFKtxLsia/r8qG0ZKkbytbztzRb317XCkT7yP8wxL0tZ/CzK2G+WWie5vWvpyeP7+YoPIwbJoIHJ4Ba4k0oQ==
+
+use-open-seadragon@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/use-open-seadragon/-/use-open-seadragon-1.0.0.tgz#105777d6dcadd42acf8277f103babca3cce4bbd0"
+  integrity sha512-V9gZxYazVws/SWpHb6JriILYG6vb6esEr8fNBBbteDGl57fc849bxviKXi3Rt9yqXUVQMQdJvEvOspETce1vCQ==
+  dependencies:
+    openseadragon "^2.4.1"
+  optionalDependencies:
+    react "^16.10.2"
+    react-dom "^16.10.2"
 
 use-sync-external-store@^1.2.0:
   version "1.2.0"
