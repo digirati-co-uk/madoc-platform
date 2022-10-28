@@ -9,6 +9,7 @@
     "accent": "default",
     "siteContainer": "light",
     "footer": "dark",
-    "global": "default"
+    "global": "default",
+    "fonts": "default"
   }
 }

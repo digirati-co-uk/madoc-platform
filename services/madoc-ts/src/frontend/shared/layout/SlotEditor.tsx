@@ -10,6 +10,8 @@ export const SlotEditorContainer = styled.div<{ $small?: boolean }>`
   align-items: center;
   border-radius: 3px 3px 0 0;
   margin-top: 1em;
+  font-family: -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans',
+    'Helvetica Neue', 'Icons16', sans-serif;
 `;
 
 export const SlotEditorLabel = styled.div`
