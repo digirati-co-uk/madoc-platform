@@ -130,7 +130,7 @@ export const Heading1: React.FC<{
 ) {
   const site = useSite();
   const _color = useAccessibleColor(background);
-  const color = backgroundImage ? '#fff' : _color;
+  const color = imageStyle === 'bgf' ? '#fff' : _color;
   const component = (
     <>
       {typeof props.children === 'string' && site ? (
@@ -235,7 +235,7 @@ blockEditorFor(Heading1, {
     textAlign: 'left',
     fontSize: 'md',
     backgroundImage: null,
-    imageStyle: '',
+    imageStyle: 'bgf',
   },
   svgIcon: props => {
     return (
