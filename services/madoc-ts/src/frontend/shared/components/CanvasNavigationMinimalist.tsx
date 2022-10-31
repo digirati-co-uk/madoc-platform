@@ -24,7 +24,6 @@ export const PaginationContainer = styled.div<{ $size?: string }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   ${props =>
     props.$size === 'small' &&
     css`

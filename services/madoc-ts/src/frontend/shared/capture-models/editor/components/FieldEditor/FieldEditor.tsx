@@ -1,6 +1,7 @@
 import copy from 'fast-copy';
 import React, { useContext, useState } from 'react';
 import { Field, Form, Formik } from 'formik';
+import { BrowserComponent } from '../../../../utility/browser-component';
 import { generateId } from '../../../helpers/generate-id';
 import { PluginContext } from '../../../plugin-api/context';
 import { BaseField } from '../../../types/field-types';
@@ -48,7 +49,6 @@ export const FieldEditor: React.FC<{
 
   if (!field) {
     throw new Error(`Plugin ${props.type} does not exist`);
-
   }
 
   const editorProps = field.mapEditorProps ? field.mapEditorProps(props) : props;
@@ -59,7 +59,7 @@ export const FieldEditor: React.FC<{
   const [dataSource, setDataSource] = useState<string[]>(props.dataSources || []);
 
   return (
-    <React.Suspense fallback="loading...">
+    <BrowserComponent fallback="loading...">
       <Formik
         initialValues={props}
         onSubmit={newProps => {
@@ -222,6 +222,6 @@ export const FieldEditor: React.FC<{
           </div>
         </Form>
       </Formik>
-    </React.Suspense>
+    </BrowserComponent>
   );
 };

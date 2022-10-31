@@ -104,6 +104,8 @@ const PreviewCrowdsourcingTask: React.FC<{
     }
   }, [resize, captureModel]);
 
+  console.log({ taskData });
+
   return (
     <ThemeProvider theme={defaultTheme}>
       {isLocked ? <WarningMessage>This task is locked, there is a merge in progress</WarningMessage> : null}
@@ -112,8 +114,8 @@ const PreviewCrowdsourcingTask: React.FC<{
           captureModel ? (
             <RevisionProviderWithFeatures
               captureModel={captureModel}
-              key={taskData?.state.revisionId}
-              revision={taskData?.state.revisionId}
+              key={taskData?.state?.revisionId}
+              revision={taskData?.state?.revisionId}
               features={{
                 autosave: false,
                 autoSelectingRevision: true,

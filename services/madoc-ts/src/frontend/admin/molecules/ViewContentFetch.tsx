@@ -3,6 +3,7 @@ import React, { useMemo, Suspense } from 'react';
 import { ViewContent } from '../../shared/components/ViewContent';
 import { useApiCanvas } from '../../shared/hooks/use-api-canvas';
 import { Spinner } from '../../shared/icons/Spinner';
+import { BrowserComponent } from '../../shared/utility/browser-component';
 
 export const ViewContentFetch: React.FC<{
   id: number;
@@ -25,7 +26,7 @@ export const ViewContentFetch: React.FC<{
   }
 
   return (
-    <Suspense fallback={<Spinner />}>
+    <BrowserComponent fallback={<Spinner />}>
       <ViewContent
         height={height}
         target={[
@@ -38,6 +39,6 @@ export const ViewContentFetch: React.FC<{
       >
         {children}
       </ViewContent>
-    </Suspense>
+    </BrowserComponent>
   );
 };

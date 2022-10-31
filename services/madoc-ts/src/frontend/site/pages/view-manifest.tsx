@@ -9,6 +9,7 @@ import { ManifestMetadata } from '../features/ManifestMetadata';
 import { ManifestNotAvailableToBrowse } from '../features/ManifestNotAvailableToBrowse';
 import { ManifestPagination } from '../features/ManifestPagination';
 import { ManifestUserNotification } from '../features/ManifestUserNotification';
+import { ExternalLinks } from '../features/ExternalLinks';
 import { RequiredStatement } from '../features/RequiredStatement';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useManifest } from '../hooks/use-manifest';
@@ -50,6 +51,8 @@ export function ViewManifest() {
         <ManifestHeading />
 
         <RequiredStatement />
+
+        <ExternalLinks />
 
         <ManifestUserNotification />
       </Slot>

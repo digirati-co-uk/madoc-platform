@@ -69,7 +69,8 @@ export const AddBlockAdded = styled.div`
   right: 0;
   font-size: 0.8em;
   color: #fff;
-  padding: 0.4em;
+  p
+  adding: 0.4em;
 `;
 
 export const BlockCreatorPreview = styled.div`

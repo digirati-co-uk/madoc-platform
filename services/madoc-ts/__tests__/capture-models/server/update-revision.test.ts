@@ -1,4 +1,9 @@
+import deepmerge from 'deepmerge';
+import { filterDocumentRevisions } from '../../../src/capture-model-server/server-filters/filter-document-revisions';
+import { createRevisionStore } from '../../../src/frontend/shared/capture-models/editor/stores/revisions/revisions-store';
+import { captureModelToRevisionList } from '../../../src/frontend/shared/capture-models/helpers/capture-model-to-revision-list';
 import { CaptureModel } from '../../../src/frontend/shared/capture-models/types/capture-model';
+import { processImportedRevision } from '../../../src/frontend/shared/capture-models/utility/process-imported-revision';
 import { getValueDotNotation as dot } from '../../../src/utility/iiif-metadata';
 import invariant from 'tiny-invariant';
 import { updateRevisionInDocument } from '../../../src/capture-model-server/server-filters/update-revision-in-document';
@@ -591,5 +596,203 @@ describe('Update revision', () => {
       width: 1000,
       height: 2000,
     });
+  });
+
+  test('Updating a field with multiple items', () => {
+    const captureModel = {
+      id: 'bf154613-6bb8-4af5-b3a9-f369ee64af6b',
+      structure: {
+        id: '5bb490cf-b81d-4a1b-b982-23b89e021a80',
+        label: 'vertaling-and-transcriptie',
+        type: 'choice',
+        items: [
+          {
+            id: 'a5117e9d-8ad4-48a9-b04b-20bcc5773694',
+            type: 'model',
+            label: 'Default',
+            fields: [['Vertaling & Transcriptie', ['Vertaling', 'Transcriptie']]],
+          },
+        ],
+      },
+      document: {
+        id: 'd07a7242-294f-425b-ab8d-7ec53ab6a699',
+        type: 'entity',
+        label: 'vertaling-and-transcriptie',
+        properties: {
+          'Vertaling & Transcriptie': [
+            {
+              id: '18920ef4-13e5-45ac-9df9-5c318af4e85c',
+              type: 'entity',
+              label: 'Vertaling & Transcriptie',
+              selector: {
+                id: 'fac22505-f7e9-4853-9732-1613f3d1d749',
+                type: 'box-selector',
+                state: null,
+              },
+              properties: {
+                Vertaling: [
+                  {
+                    id: 'b2b92293-698c-4496-8a5d-932dafddeb80',
+                    type: 'text-field',
+                    label: 'Vertaling',
+                    value: '',
+                  },
+                ],
+                Transcriptie: [
+                  {
+                    id: 'f91cac15-1ddd-4a0b-b255-5e3c651f63d0',
+                    type: 'text-field',
+                    label: 'Transcriptie',
+                    value: '',
+                  },
+                ],
+              },
+              allowMultiple: true,
+            },
+          ],
+        },
+      },
+      revisions: [],
+      derivedFrom: '9a4d68a8-c32e-4506-ae10-06b26ba2b268',
+      target: [
+        {
+          id: 'urn:madoc:manifest:272096',
+          type: 'Manifest',
+        },
+        {
+          id: 'urn:madoc:canvas:272097',
+          type: 'Canvas',
+        },
+      ],
+      contributors: {},
+    } as any;
+    const revision = {
+      captureModelId: 'bf154613-6bb8-4af5-b3a9-f369ee64af6b',
+      revision: {
+        id: '54e23c06-f026-4332-8876-1a8c2de82abb',
+        fields: [['Vertaling & Transcriptie', ['Vertaling', 'Transcriptie']]],
+        approved: false,
+        structureId: 'a5117e9d-8ad4-48a9-b04b-20bcc5773694',
+        label: 'Default',
+        revises: 'a5117e9d-8ad4-48a9-b04b-20bcc5773694',
+        status: 'draft',
+      },
+      document: {
+        id: 'd07a7242-294f-425b-ab8d-7ec53ab6a699',
+        type: 'entity',
+        label: 'vertaling-and-transcriptie',
+        properties: {
+          'Vertaling & Transcriptie': [
+            {
+              id: '18920ef4-13e5-45ac-9df9-5c318af4e85c',
+              type: 'entity',
+              label: 'Vertaling & Transcriptie',
+              selector: {
+                id: 'fac22505-f7e9-4853-9732-1613f3d1d749',
+                type: 'box-selector',
+                state: null,
+                revisedBy: [
+                  {
+                    id: 'a88c6b3e-f680-4a3b-9ea0-c871cb27e342',
+                    type: 'box-selector',
+                    state: {
+                      x: 1365,
+                      y: 662,
+                      width: 449,
+                      height: 237,
+                    },
+                    revisionId: '54e23c06-f026-4332-8876-1a8c2de82abb',
+                    revises: 'fac22505-f7e9-4853-9732-1613f3d1d749',
+                  },
+                ],
+              },
+              properties: {
+                Vertaling: [
+                  {
+                    id: '6455b61a-d21d-40e8-9259-47bb883bcb79',
+                    type: 'text-field',
+                    label: 'Vertaling',
+                    value: 'test 1',
+                    revision: '54e23c06-f026-4332-8876-1a8c2de82abb',
+                    revises: 'b2b92293-698c-4496-8a5d-932dafddeb80',
+                  },
+                ],
+                Transcriptie: [
+                  {
+                    id: '764b2fa5-8dae-465e-bda1-c4349570eb16',
+                    type: 'text-field',
+                    label: 'Transcriptie',
+                    value: 'test 1',
+                    revision: '54e23c06-f026-4332-8876-1a8c2de82abb',
+                    revises: 'f91cac15-1ddd-4a0b-b255-5e3c651f63d0',
+                  },
+                ],
+              },
+              allowMultiple: true,
+              immutable: true,
+            },
+            {
+              id: '384b319c-2ade-4a85-9612-d03a542d441e',
+              type: 'entity',
+              label: 'Vertaling & Transcriptie',
+              selector: {
+                id: 'f2b28543-618f-4652-94d6-555ec5b0e3f4',
+                type: 'box-selector',
+                state: {
+                  x: 1985,
+                  y: 799,
+                  width: 442,
+                  height: 245,
+                },
+              },
+              allowMultiple: true,
+              immutable: false,
+              properties: {
+                Vertaling: [
+                  {
+                    id: '05fd43ca-d29b-4a93-b609-24c94325100b',
+                    type: 'text-field',
+                    label: 'Vertaling',
+                    value: 'test 2',
+                    revision: '54e23c06-f026-4332-8876-1a8c2de82abb',
+                  },
+                ],
+                Transcriptie: [
+                  {
+                    id: '95070d2b-9ab1-43b6-8b47-8e3f18e1b8bc',
+                    type: 'text-field',
+                    label: 'Transcriptie',
+                    value: 'test 2',
+                    revision: '54e23c06-f026-4332-8876-1a8c2de82abb',
+                  },
+                ],
+              },
+              revision: '54e23c06-f026-4332-8876-1a8c2de82abb',
+            },
+          ],
+        },
+        immutable: true,
+      },
+      source: 'structure',
+      author: {
+        type: 'Person',
+        id: 'urn:madoc:user:1',
+        name: 'Stephen',
+      },
+    } as any;
+
+    updateRevisionInDocument(captureModel, revision, { allowAnonymous: true });
+
+    expect(dot(captureModel.document, 'properties.Vertaling & Transcriptie')).toHaveLength(2);
+
+    const revDoc = processImportedRevision(revision.revision, captureModel, { filterEmpty: true });
+
+    expect(dot(revDoc, 'document.properties.Vertaling & Transcriptie')).toHaveLength(2);
+
+    const fullModelDocument = deepmerge({}, captureModel.document);
+
+    filterDocumentRevisions(fullModelDocument as any, [], true);
+
+    expect(dot(fullModelDocument, 'properties.Vertaling & Transcriptie')).toHaveLength(2);
   });
 });

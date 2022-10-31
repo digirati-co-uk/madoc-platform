@@ -36,11 +36,16 @@ const GlobalFooterContainer = styled.div`
 `;
 
 export const GlobalFooter: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const siteTheme = useSiteTheme();
 
-  if (siteTheme && siteTheme.html.footer) {
-    return <RenderFragment fragment={siteTheme.html.footer} />;
+  const themFooter =
+    siteTheme &&
+    ((siteTheme.languages[i18n.language] ? siteTheme.languages[i18n.language].html?.footer : null) ||
+      siteTheme.html.footer);
+
+  if (themFooter) {
+    return <RenderFragment fragment={themFooter} />;
   }
 
   return (

@@ -8,13 +8,19 @@ export function filterDocumentRevisions(
   onlyRevisionFields?: boolean
 ): CaptureModel['document'] {
   traverseDocument(document, {
-    beforeVisitEntity(entity, property, parent) {
+    visitEntity(entity, property, parent) {
       if (property && parent) {
-        if (onlyRevisionFields && !entity.revision) {
+        const hasRevisions = entity?.temp && entity.temp.revisions && entity.temp.revisions.length;
+        if (onlyRevisionFields && !entity.revision && !hasRevisions) {
+          console.log('deleted', entity.id);
           deleteFrom(entity.id, property, parent);
         }
 
         if (entity.revision && excludeRevisions.indexOf(entity.revision) !== -1) {
+          parent.temp = parent.temp || {};
+          parent.temp.revisions = parent.temp.revisions || [];
+          parent.temp.revisions.push(entity.revision);
+
           deleteFrom(entity.id, property, parent);
         }
       }
@@ -25,6 +31,9 @@ export function filterDocumentRevisions(
       }
 
       if (field.revision && property && parent) {
+        parent.temp = parent.temp || {};
+        parent.temp.revisions = parent.temp.revisions || [];
+        parent.temp.revisions.push(field.revision);
         if (excludeRevisions.indexOf(field.revision) !== -1) {
           deleteFrom(field.id, property, parent);
         }

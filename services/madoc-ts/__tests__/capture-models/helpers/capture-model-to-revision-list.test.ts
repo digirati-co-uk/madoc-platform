@@ -141,12 +141,6 @@ describe('capture model to revision list', () => {
                   "properties": Object {
                     "firstName": Array [
                       Object {
-                        "id": "7b45ec25-15a6-40dd-9a1d-0fd1d673df15",
-                        "label": "First name",
-                        "type": "text-field",
-                        "value": "",
-                      },
-                      Object {
                         "id": "dda6d8bc-ca6d-48e0-8bcc-a24537586346",
                         "label": "First name",
                         "revision": "fa500021-7408-4318-ab05-ac6e4d4a3096",

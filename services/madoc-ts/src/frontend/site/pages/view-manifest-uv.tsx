@@ -2,6 +2,7 @@ import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-rea
 import { useApi } from '../../shared/hooks/use-api';
 import React, { useMemo } from 'react';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { BrowserComponent } from '../../shared/utility/browser-component';
 import { useRouteContext } from '../hooks/use-route-context';
 import { UniversalViewer } from '../../shared/viewers/universal-viewer.lazy';
 
@@ -29,7 +30,7 @@ export const ViewManifestUV: React.FC<{
     <div>
       {hideBreadcrumbs ? null : <DisplayBreadcrumbs />}
       <div style={{ position: 'relative', height: '80vh' }}>
-        <React.Suspense fallback={<div>loading...</div>}>
+        <BrowserComponent fallback={<div>loading...</div>}>
           <UniversalViewer
             manifestId={`/s/${slug}/madoc/api/manifests/${manifestId}/export/source`}
             canvasIndex={canvasIndex}
@@ -37,7 +38,7 @@ export const ViewManifestUV: React.FC<{
             onChangeManifest={onChangeManifest}
             config={config}
           />
-        </React.Suspense>
+        </BrowserComponent>
       </div>
     </div>
   );

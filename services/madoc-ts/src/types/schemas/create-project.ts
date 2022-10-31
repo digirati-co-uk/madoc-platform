@@ -7,4 +7,5 @@ export type CreateProject = {
   template?: string;
   template_options?: any;
   template_config?: any;
+  remote_template?: any | null;
 };

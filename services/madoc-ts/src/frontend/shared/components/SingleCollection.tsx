@@ -25,8 +25,11 @@ interface SingleCollectionProps {
   data?: CollectionFull & { collection: CollectionFull['collection'] & { itemCount: number } };
   radius?: string;
   snippet?: boolean;
+  imageStyle?: string;
+  cardBackground?: string;
+  textColor?: string;
+  cardBorder?: string;
 }
-
 export function SingleCollection(props: SingleCollectionProps) {
   const { t } = useTranslation();
   const createLink = useRelativeLinks();
@@ -66,8 +69,13 @@ export function SingleCollection(props: SingleCollectionProps) {
                 })}
                 key={manifest.id}
               >
-                <ImageStripBox $size="small">
-                  <CroppedImage $size="small">
+                <ImageStripBox
+                  $size="small"
+                  $bgColor={props.cardBackground}
+                  $color={props.textColor}
+                  $border={props.cardBorder}
+                >
+                  <CroppedImage $size="small" $covered={props.imageStyle === 'covered'}>
                     {manifest.thumbnail ? (
                       <img alt={createLocaleString(manifest.label, t('Manifest thumbnail'))} src={manifest.thumbnail} />
                     ) : null}
@@ -161,6 +169,10 @@ blockEditorFor(SingleCollection, {
     background: null,
     radius: null,
     snippet: false,
+    cardBackground: '',
+    textColor: '',
+    cardBorder: '',
+    imageStyle: 'fit',
   },
   hooks: [
     {
@@ -180,6 +192,17 @@ blockEditorFor(SingleCollection, {
       type: 'collection-explorer',
     },
     snippet: { type: 'checkbox-field', label: 'Layout', inlineLabel: 'Show as snippet' },
+    cardBackground: { label: 'Card background color', type: 'color-field' },
+    textColor: { label: 'Card text color', type: 'color-field' },
+    cardBorder: { label: 'Card border', type: 'color-field' },
+    imageStyle: {
+      label: 'Image Style',
+      type: 'dropdown-field',
+      options: [
+        { value: 'covered', text: 'covered' },
+        { value: 'fit', text: 'fit' },
+      ],
+    },
   },
   requiredContext: [],
   anyContext: [],

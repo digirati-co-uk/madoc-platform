@@ -14,57 +14,35 @@ const GridWrapper = styled.div`
 const LogoContainer = styled.div`
   width: 100%;
   height: auto;
-
   img {
-    max-height: 63px;
+    max-height: 80px;
   }
 `;
 
 export const FooterImageGrid: React.FC<{
-  logo1?: {
-    id: string;
-    image: string;
-    thumbnail: string;
-  } | null;
-  title1?: string;
-  logo2?: {
-    id: string;
-    image: string;
-    thumbnail: string;
-  } | null;
-  title2?: string;
-  logo3?: {
-    id: string;
-    image: string;
-    thumbnail: string;
-  } | null;
-  title3?: string;
-  logo4?: {
-    id: string;
-    image: string;
-    thumbnail: string;
-  } | null;
-  title4?: string;
-}> = ({ logo1, logo2, logo3, logo4, title1, title2, title3, title4 }) => {
-  const logos = [
-    { logo: logo1, label: title1 },
-    { logo: logo2, label: title2 },
-    { logo: logo3, label: title3 },
-    { logo: logo4, label: title4 },
-  ];
-
+  images?: {
+    logo?: {
+      id: string;
+      image: string;
+      thumbnail: string;
+    };
+    label?: string;
+  }[];
+}> = ({ images }) => {
   return (
     <GridWrapper>
-      {logos
-        ? logos.map((item, i) => {
+      {images
+        ? images.map((image, i) => {
             return (
-              <div key={i}>
-                <HrefLink href="/">
-                  <LogoContainer>
-                    <img alt={item?.label} src={item?.logo?.image} />
-                  </LogoContainer>
-                </HrefLink>
-              </div>
+              image.logo && (
+                <div key={i}>
+                  <HrefLink href="/">
+                    <LogoContainer>
+                      <img alt={image.label} src={image?.logo?.image} />
+                    </LogoContainer>
+                  </HrefLink>
+                </div>
+              )
             );
           })
         : null}
@@ -119,5 +97,20 @@ blockEditorFor(FooterImageGrid, {
       label: 'Label',
       type: 'text-field',
     },
+  },
+  mapToProps(formInput: any) {
+    const images: {
+      logo?: {
+        id: string;
+        image: string;
+        thumbnail: string;
+      };
+      label?: string;
+    }[] = [];
+    if (formInput.logo1) images.push({ logo: formInput.logo1, label: formInput.title1 });
+    if (formInput.logo2) images.push({ logo: formInput.logo2, label: formInput.title2 });
+    if (formInput.logo3) images.push({ logo: formInput.logo3, label: formInput.title3 });
+    if (formInput.logo4) images.push({ logo: formInput.logo4, label: formInput.title4 });
+    return { images };
   },
 });

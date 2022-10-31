@@ -6,5 +6,6 @@ export function useCanvasModel() {
   return apiHooks.getSiteProjectCanvasModel(() => (projectId && canvasId ? [projectId, canvasId] : undefined), {
     refetchOnMount: true,
     enabled: canvasId && projectId,
+    cacheTime: 0,
   });
 }

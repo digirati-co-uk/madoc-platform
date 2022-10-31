@@ -7,7 +7,6 @@ import { PageBlockDefinition } from './extension';
 import simpleHtmlBlock from './simple-html-block/simple-html-block';
 import currentManifest from './current-manifest-snippet-block';
 import simpleMarkdownBlock from './simple-markdown-block/simple-markdown-block';
-import { HelloWorld } from '../../frontend/shared/custom-blocks/firstblock';
 import { CustomManifestHeader } from '../../frontend/shared/custom-blocks/custom-ida-hero/custom-manifest-header';
 import { CustomCanvasHeader } from '../../frontend/shared/custom-blocks/custom-ida-hero/custom-canvas-header';
 import { IDAManifestMetadata } from '../../frontend/shared/custom-blocks/metadata/metadata';
@@ -23,7 +22,6 @@ export const defaultPageBlockDefinitions: PageBlockDefinition<any, any, any, any
   (SingleProject as any)[Symbol.for('slot-model')] as any,
   (SingleCollection as any)[Symbol.for('slot-model')] as any,
   simpleMarkdownBlock,
-  (HelloWorld as any)[Symbol.for('slot-model')] as any,
   (IDAManifestMetadata as any)[Symbol.for('slot-model')] as any,
   (CustomManifestHeader as any)[Symbol.for('slot-model')] as any,
   (CustomCanvasHeader as any)[Symbol.for('slot-model')] as any,

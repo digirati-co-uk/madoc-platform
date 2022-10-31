@@ -20,7 +20,7 @@ import { useSiteConfiguration } from './SiteConfigurationContext';
 
 export type props = {
   alignment?: string;
-}
+};
 export const ManifestActions: React.FC<props> = ({ alignment }) => {
   const { t } = useTranslation();
   const createLink = useRelativeLinks();

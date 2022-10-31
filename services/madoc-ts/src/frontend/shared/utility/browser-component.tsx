@@ -2,9 +2,7 @@ import React, { ComponentType, PropsWithChildren, Suspense, useEffect, useMemo }
 import { useApi } from '../hooks/use-api';
 
 export const BrowserComponent: React.FC<{ fallback: any }> = ({ fallback, children }) => {
-  const api = useApi();
-
-  const isServer = api.getIsServer();
+  const isServer = !(globalThis as any).window;
 
   if (isServer) {
     return fallback;

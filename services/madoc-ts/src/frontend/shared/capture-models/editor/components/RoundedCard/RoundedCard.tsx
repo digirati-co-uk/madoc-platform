@@ -36,10 +36,10 @@ const CardWrapper = styled.article<{ size: CardSize; interactive: boolean }>`
   box-sizing: border-box;
   background: #fff;
   padding: ${props => getCard(props, 'padding')};
-  border-radius: ${props => getCard(props, 'radius')};
+  border-radius: 5px;
   margin-bottom: ${props => getCard(props, 'margin')};
-  box-shadow: ${props => getTheme(props).card.shadow};
-  border: 2px solid transparent;
+  //box-shadow: ${props => getTheme(props).card.shadow};
+  border: 1px solid #ddd;
   z-index: 2;
   ${props =>
     props.interactive &&
@@ -50,7 +50,7 @@ const CardWrapper = styled.article<{ size: CardSize; interactive: boolean }>`
       }
     `}
   &:hover {
-    border: 2px solid ${props => (props.interactive ? getTheme(props).colors.primary : 'transparent')};
+    border: 1px solid ${props => (props.interactive ? getTheme(props).colors.primary : '#ddd')};
   }
 `;
 

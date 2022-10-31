@@ -115,8 +115,8 @@ blockEditorFor(CanvasPageHeader, {
   },
   defaultProps: {
     subRoute: '',
-    title: '',
+    title: 'both',
     textColor: '',
     font: '',
-   },
+  },
 });

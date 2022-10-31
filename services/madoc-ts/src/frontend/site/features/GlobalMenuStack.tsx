@@ -38,16 +38,20 @@ export const GlobalMenuStack: React.FC<{
     margin?: boolean;
     halfSize?: boolean;
   };
+  menuOptions?: {
+    fullWidth?: boolean;
+  };
   hideSiteTitle?: boolean;
+  showHomepageMenu?: boolean;
   maxWidth?: number;
-}> = ({ logo, hideSiteTitle, maxWidth, logoOptions = {} }) => {
+}> = ({ logo, hideSiteTitle, maxWidth, logoOptions = {}, menuOptions = {}, showHomepageMenu }) => {
   const site = useSite();
   const { project } = useSiteConfiguration();
   const showSiteTitle = typeof hideSiteTitle === 'undefined' ? !project.headerOptions?.hideSiteTitle : !hideSiteTitle;
   const { padding = false, margin = false } = logoOptions;
 
   return (
-    <SiteDetails>
+    <SiteDetails data-center={!logo && !showSiteTitle}>
       {logo ? (
         <HrefLink href="/">
           <SiteLogoContainer $padding={padding} $margin={margin} $maxWidth={maxWidth}>
@@ -62,8 +66,8 @@ export const GlobalMenuStack: React.FC<{
           </h1>
         </SiteTitle>
       )}
-      <SiteMenuContainer>
-        <GlobalSiteNavigation />
+      <SiteMenuContainer data-full-width={menuOptions.fullWidth}>
+        <GlobalSiteNavigation showHomepageMenu={showHomepageMenu} />
       </SiteMenuContainer>
     </SiteDetails>
   );
@@ -75,10 +79,14 @@ blockEditorFor(GlobalMenuStack, {
   defaultProps: {
     logo: null,
     hideSiteTitle: false,
+    showHomepageMenu: false,
     logoOptions: {
       padding: false,
       margin: false,
       halfSize: false,
+    },
+    menuOptions: {
+      fullWidth: false,
     },
     maxWidth: null,
   },
@@ -106,6 +114,17 @@ blockEditorFor(GlobalMenuStack, {
         },
       ],
     },
+    menuOptions: {
+      label: 'Menu options',
+      description: 'View options for the menu',
+      type: 'checkbox-list-field',
+      options: [
+        {
+          label: 'Full width (under)',
+          value: 'fullWidth',
+        },
+      ],
+    },
     maxWidth: {
       label: 'Logo max width',
       type: 'text-field',
@@ -115,6 +134,11 @@ blockEditorFor(GlobalMenuStack, {
       label: 'Hide site title',
       type: 'checkbox-field',
       inlineLabel: 'Hide site title',
+    },
+    showHomepageMenu: {
+      label: 'Homepage menu',
+      type: 'checkbox-field',
+      inlineLabel: 'Show home as menu item',
     },
   },
   mapToProps(props) {

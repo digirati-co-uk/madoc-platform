@@ -668,7 +668,7 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
     model: CaptureModel,
     siteId: number,
     transaction?: DatabaseTransactionConnectionType
-  ): Promise<void> {
+  ): Promise<CaptureModel> {
     const transactionCallback = async (q: DatabaseTransactionConnectionType) => {
       await q.query(CaptureModelRepository.mutations.upsertDocument(model.document, siteId));
       await q.query(CaptureModelRepository.mutations.upsertStructure(model.structure, siteId));
@@ -684,11 +684,15 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
     };
 
     if (transaction) {
-      return transactionCallback(transaction);
+      await transactionCallback(transaction);
+
+      return model;
     }
 
     // Update whole model
     await this.connection.transaction(transactionCallback);
+
+    return model;
   }
 
   async deleteCaptureModel(model: CaptureModel | string, siteId: number): Promise<void> {

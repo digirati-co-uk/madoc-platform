@@ -22,6 +22,7 @@ type IIIFHeroProps = {
     thumbnails: string[];
     link?: string;
   };
+  fullWidth?: boolean;
 };
 
 const HeroContainer = styled.div<{ $noAsset?: boolean }>`
@@ -34,6 +35,11 @@ const HeroContainer = styled.div<{ $noAsset?: boolean }>`
     css`
       height: 400px;
     `}
+
+  &[data-full-width='true'] {
+    margin-left: -2em;
+    margin-right: -2em;
+  }
 `;
 
 const HeroBackground = styled.div<{ $image?: string }>`
@@ -137,6 +143,7 @@ const HeroAssetLabel = styled(LocaleString)`
   white-space: nowrap;
   text-overflow: ellipsis;
   margin: 0 2em;
+  overflow: hidden;
 `;
 
 const HeroAssetAttribution = styled(LocaleString)`
@@ -165,7 +172,7 @@ const HeroContent = styled.div<{ $noAsset?: boolean }>`
 
 const HeroTitle = styled(LocaleString)`
   display: block;
-  font-size: 3.8em;
+  font-size: 3.5em;
   font-weight: 600;
 `;
 
@@ -185,7 +192,7 @@ export const IIIFHero = (props: IIIFHeroProps) => {
   const bigImage = useRef<HTMLImageElement>(null);
 
   return (
-    <HeroContainer $noAsset={!props.asset}>
+    <HeroContainer $noAsset={!props.asset} data-full-width={props.fullWidth}>
       <HeroContent $noAsset={!props.asset}>
         <HeroTitle>{props.title}</HeroTitle>
         <HeroDescription>{props.description}</HeroDescription>

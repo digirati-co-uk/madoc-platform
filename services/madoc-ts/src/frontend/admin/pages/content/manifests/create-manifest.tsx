@@ -18,6 +18,7 @@ import { serverRendererFor } from '../../../../shared/plugins/external/server-re
 import { Heading3 } from '../../../../shared/typography/Heading3';
 import { Button, SmallButton } from '../../../../shared/navigation/Button';
 import { Input, InputContainer, InputLabel } from '../../../../shared/form/Input';
+import { BrowserComponent } from '../../../../shared/utility/browser-component';
 import { HrefLink } from '../../../../shared/utility/href-link';
 import { Pagination } from '../../../molecules/Pagination';
 import { PreviewCollection } from '../../../molecules/PreviewCollection';
@@ -133,7 +134,7 @@ export const CreateManifest: React.FC = () => {
                   {api.getIsServer() ? (
                     <Input type="text" disabled />
                   ) : (
-                    <React.Suspense fallback={<Input type="text" disabled />}>
+                    <BrowserComponent fallback={<Input type="text" disabled />}>
                       <IntlInputContainer style={{ width: '100%' }}>
                         <IntlInputDefault>
                           <IntlMultiline
@@ -144,7 +145,7 @@ export const CreateManifest: React.FC = () => {
                           />
                         </IntlInputDefault>
                       </IntlInputContainer>
-                    </React.Suspense>
+                    </BrowserComponent>
                   )}
                 </InputContainer>
                 <SmallButton

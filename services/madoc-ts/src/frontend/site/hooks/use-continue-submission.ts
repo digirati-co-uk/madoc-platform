@@ -14,6 +14,7 @@ export function useContinueSubmission() {
     let inProgress = 0;
     let completed = 0;
     let assigned = 0;
+
     const tasks =
       config.project.claimGranularity === 'canvas' || config.project.contributionMode === 'transcription'
         ? canvasTasks?.userTasks
@@ -33,7 +34,7 @@ export function useContinueSubmission() {
                 }
                 return true;
               }
-              if (task.status === 3 && task.state && task.state.revisionId) {
+              if ((task.status === 3 || task.status === 2) && task.state && task.state.revisionId) {
                 completed++;
                 return true;
               }

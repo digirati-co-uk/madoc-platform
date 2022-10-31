@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useApi } from '../hooks/use-api';
+import { BrowserComponent } from '../utility/browser-component';
 
 const CodeBlockLazy = React.lazy(() => import('./CodeBlock'));
 
@@ -11,17 +11,11 @@ const PreFallback = styled.pre`
 `;
 
 export const CodeBlock: React.FC = ({ children, ...props }) => {
-  const api = useApi();
-
   const fallback = <PreFallback>{children}</PreFallback>;
 
-  if (api.getIsServer()) {
-    return fallback;
-  }
-
   return (
-    <React.Suspense fallback={fallback}>
+    <BrowserComponent fallback={fallback}>
       <CodeBlockLazy {...props}>{children}</CodeBlockLazy>
-    </React.Suspense>
+    </BrowserComponent>
   );
 };

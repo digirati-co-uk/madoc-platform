@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { maxWidth } from '../../site/variables/global';
 import { themeVariable } from '../../themes/helpers/themeVariable';
-import { accent } from '../variables';
+import { accent, globalFont } from '../variables';
 
 const headerBackground = themeVariable('header', 'headerBackground', {
   default: '#fff',
@@ -40,6 +40,7 @@ export const SiteHeader = styled.div`
   margin-left: auto;
   margin-right: auto;
   background: ${headerBackground};
+  font-family: ${globalFont};
 `;
 
 export const SiteDetails = styled.div`
@@ -48,6 +49,10 @@ export const SiteDetails = styled.div`
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+
+  &[data-center='true'] {
+    align-self: center;
+  }
 `;
 
 export const SiteTitle = styled.a`
@@ -98,7 +103,13 @@ export const GlobalSearchButton = styled.button`
   }
 `;
 
-export const SiteMenuContainer = styled.div``;
+export const SiteMenuContainer = styled.div`
+  font-family: ${globalFont};
+  &[data-full-width] {
+    flex-wrap: nowrap;
+    width: 100%;
+  }
+`;
 
 export const SiteHeaderBackground = styled.div`
   background: ${globalBackground};

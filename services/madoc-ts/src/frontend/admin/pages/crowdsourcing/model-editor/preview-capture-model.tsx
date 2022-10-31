@@ -10,6 +10,7 @@ import { ContentExplorer } from '../../../../shared/components/ContentExplorer';
 import { useData } from '../../../../shared/hooks/use-data';
 import { Button, ButtonRow, TinyButton } from '../../../../shared/navigation/Button';
 import '../../../../shared/capture-models/refinements';
+import { BrowserComponent } from '../../../../shared/utility/browser-component';
 import { ViewContentFetch } from '../../../molecules/ViewContentFetch';
 import { ProjectModelEditor } from '../projects/project-model-editor';
 
@@ -47,13 +48,13 @@ export const PreviewCaptureModel: React.FC = () => {
             <ContentExplorer
               projectId={id}
               renderChoice={(canvasId, reset) => (
-                <Suspense fallback={<>Loading</>}>
+                <BrowserComponent fallback={<>Loading</>}>
                   <div>
                     <ViewContentFetch id={canvasId} />
                     <br />
                     <TinyButton onClick={reset}>Select different image</TinyButton>
                   </div>
-                </Suspense>
+                </BrowserComponent>
               )}
             />
           </div>
