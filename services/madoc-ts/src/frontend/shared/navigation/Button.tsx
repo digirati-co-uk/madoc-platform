@@ -1,9 +1,146 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { HrefLink } from '../utility/href-link';
-import { buttonRadius, buttonColor, buttonSolid } from '../variables';
+import { buttonRadius, buttonColor } from '../variables';
 
-console.log(buttonRadius.props);
+const primary = css`
+  background: #4265e9;
+  color: #fff;
+  border: 1px solid #4265e9;
+  &:active {
+    box-shadow: inset 0 2px 8px 0 rgba(39, 75, 155, 0.8);
+  }
+  &:link,
+  &:visited {
+    color: #fff;
+  }
+  &:hover {
+    background: #5371e9;
+    border-color: #5371e9;
+  }
+  &:focus-visible {
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.8);
+  }
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+
+    &:hover {
+      background: #4265e9;
+      border-color: #4265e9;
+      color: #fff;
+    }
+  }
+`;
+const success = css`
+  background: #4dac22;
+  color: #fff;
+  border: 1px solid #4dac22;
+
+  &:active {
+    background: #4dac22;
+    border-color: #4dac22;
+    box-shadow: inset 0 2px 8px 0 rgb(56, 155, 39);
+  }
+
+  &:focus,
+  &:focus:hover {
+    background: #4dac22;
+    border-color: #4dac22;
+  }
+
+  &:link,
+  &:visited {
+    color: #fff;
+  }
+
+  &:hover {
+    background: #4dac22;
+    border-color: #4dac22;
+  }
+
+  &:disabled {
+    opacity: 0.9;
+    cursor: not-allowed;
+
+    &:hover {
+      background: #4dac22;
+      border-color: #4dac22;
+      color: #fff;
+    }
+  }
+`;
+const error = css`
+  background: #fff;
+  color: #a90e21;
+  border: 1px solid #a90e21;
+
+  &:active {
+    background: #fff;
+    border-color: #a90e21;
+    box-shadow: inset 0 2px 8px 0 #ffd6dd;
+  }
+
+  &:focus,
+  &:focus:hover {
+    color: #a90e21;
+    background: #fff;
+    border-color: #a90e21;
+  }
+
+  &:link,
+  &:visited {
+    color: #a90e21;
+  }
+
+  &:hover {
+    background: #fff;
+    color: #a90e21;
+    border-color: #a90e21;
+  }
+
+  &:disabled {
+    opacity: 0.9;
+    cursor: not-allowed;
+
+    &:hover {
+      background: #fff;
+      border-color: #a90e21;
+      color: #a90e21;
+    }
+  }
+`;
+const errorPrimary = css`
+  background: #a90e21;
+  color: #fff;
+  border: 1px solid #a90e21;
+
+  &:active {
+    box-shadow: inset 0 2px 8px 0 rgba(118, 9, 51, 0.8);
+  }
+
+  &:link,
+  &:visited {
+    color: #fff;
+  }
+
+  &:focus,
+  &:focus:hover {
+    color: #fff;
+    background: #a90e21;
+    border-color: #a90e21;
+  }
+
+  &:hover {
+    background: #d91a45;
+    border-color: #a90e21;
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+`;
 
 export const ButtonIcon = styled.span`
   transform: translate(-8px, -4px);
@@ -34,16 +171,18 @@ export const Button = styled.button<{
   padding: 0.4em 1em;
   font-size: 0.9em;
   line-height: 1.18em;
-  background: red;
-  color: #3579f6;
+  border-radius: ${buttonRadius};
+  color: ${buttonColor};
+  background: inherit;
   text-decoration: none;
   display: inline-block;
   letter-spacing: 0.25px;
   vertical-align: top;
   transition: color 0.1s, background-color 0.1s, border-color 0.1s;
   white-space: nowrap;
-  border: 1px solid #4265e9;
-  
+  border: 1px solid;
+  border-color: ${buttonColor};
+   
   ${props =>
     props.$link &&
     css`
@@ -61,10 +200,10 @@ export const Button = styled.button<{
     box-shadow: inset 0 2px 8px 0 rgba(39, 75, 155, 0.8);
   }
 
-  &:link,
-  &:visited {
-    color: #3579f6;
-  }
+  //&:link,
+  //&:visited {
+  //  color: #3579f6;
+  //}
 
   &:hover {
     background: #4265e9;
@@ -95,162 +234,16 @@ export const Button = styled.button<{
   }
 
   ${ButtonIcon} svg {
-    fill: #4265e9;
+    fill: ${buttonColor};
   }
   &:hover ${ButtonIcon} svg,
   &:focus ${ButtonIcon} svg {
     fill: #fff;
   }
 
-  ${props =>
-    props.$primary &&
-    css`
-      background: #4265e9;
-      color: #fff;
-      border: 1px solid #4265e9;
-      &:active {
-        box-shadow: inset 0 2px 8px 0 rgba(39, 75, 155, 0.8);
-      }
-      &:link,
-      &:visited {
-        color: #fff;
-      }
-      &:hover {
-        background: #5371e9;
-        border-color: #5371e9;
-      }
-      &:focus-visible {
-        box-shadow: inset 0 0px 0px 2px rgba(255, 255, 255, 0.8);
-      }
-      &:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-
-        &:hover {
-          background: #4265e9;
-          border-color: #4265e9;
-          color: #fff;
-        }
-      }
-    `}
-
-  ${props =>
-    props.$success &&
-    css`
-      background: #4dac22;
-      color: #fff;
-      border: 1px solid #4dac22;
-
-      &:active {
-        background: #4dac22;
-        border-color: #4dac22;
-        box-shadow: inset 0 2px 8px 0 rgb(56, 155, 39);
-      }
-
-      &:focus,
-      &:focus:hover {
-        background: #4dac22;
-        border-color: #4dac22;
-      }
-
-      &:link,
-      &:visited {
-        color: #fff;
-      }
-
-      &:hover {
-        background: #4dac22;
-        border-color: #4dac22;
-      }
-
-      &:disabled {
-        opacity: 0.9;
-        cursor: not-allowed;
-
-        &:hover {
-          background: #4dac22;
-          border-color: #4dac22;
-          color: #fff;
-        }
-      }
-    `}
-  
-  ${props =>
-    props.$error
-      ? props.$primary
-        ? css`
-            background: #a90e21;
-            color: #fff;
-            border: 1px solid #a90e21;
-
-            &:active {
-              box-shadow: inset 0 2px 8px 0 rgba(118, 9, 51, 0.8);
-            }
-
-            &:link,
-            &:visited {
-              color: #fff;
-            }
-
-            &:focus,
-            &:focus:hover {
-              color: #fff;
-              background: #a90e21;
-              border-color: #a90e21;
-            }
-
-            &:hover {
-              background: #d91a45;
-              border-color: #a90e21;
-            }
-
-            &:disabled {
-              opacity: 0.7;
-              cursor: not-allowed;
-            }
-          `
-        : css`
-            background: #fff;
-            color: #a90e21;
-            border: 1px solid #a90e21;
-
-            &:active {
-              background: #fff;
-              border-color: #a90e21;
-              box-shadow: inset 0 2px 8px 0 #ffd6dd;
-            }
-
-            &:focus,
-            &:focus:hover {
-              color: #a90e21;
-              background: #fff;
-              border-color: #a90e21;
-            }
-
-            &:link,
-            &:visited {
-              color: #a90e21;
-            }
-
-            &:hover {
-              background: #fff;
-              color: #a90e21;
-              border-color: #a90e21;
-            }
-
-            &:disabled {
-              opacity: 0.9;
-              cursor: not-allowed;
-
-              &:hover {
-                background: #fff;
-                border-color: #a90e21;
-                color: #a90e21;
-              }
-            }
-          `
-      : css``}
-
+  ${props => props.$primary && primary}
+  ${props => props.$success && success}
+  ${props => (props.$error ? (props.$primary ? errorPrimary : error) : '')}
   ${props =>
     props.$inlineInput &&
     css`
@@ -273,7 +266,7 @@ export const RoundedButton = styled.a<{ disabled?: boolean }>`
   line-height: 22px;
   padding: 3px 10px;
   background: #ffffff;
-  color: #007bff;
+  color: ${buttonColor};
   border: 1px solid #dee2e6;
   text-decoration: none;
   border-radius: 4px;
@@ -282,9 +275,9 @@ export const RoundedButton = styled.a<{ disabled?: boolean }>`
     !props.disabled &&
     css`
       &:link,
-      &:visited {
-        color: #007bff;
-      }
+      //&:visited {
+      //  color: #007bff;
+      //}
       &:hover {
         background: #ffffff;
         border-color: #dee2e6;
@@ -319,15 +312,15 @@ export const MediumRoundedButton = styled.a`
   font-size: 16px;
   line-height: 22px;
   background: #ffffff;
-  color: #007bff;
-  border: 1px solid #dee2e6;
+  color: ${buttonColor};
+  border: 1px solid ${buttonColor};
   text-decoration: none;
   padding: 10px;
 
   &:link,
-  &:visited {
-    color: #007bff;
-  }
+  //&:visited {
+  //  color: #007bff;
+  //}
   &:hover {
     background: #ffffff;
     border-color: #dee2e6;
@@ -360,7 +353,7 @@ export const LinkButton = styled.button<{ $inherit?: boolean }>`
   margin: 0;
   padding: 0;
   font-size: inherit;
-  color: ${props => (props.$inherit ? 'inherit' : '#5071f4')};
+  color: ${props => (props.$inherit ? 'inherit' : buttonColor)};
   text-decoration: underline;
   cursor: pointer;
   &:hover {
@@ -413,7 +406,7 @@ export const RightButtonIconBox = styled.span<{ $checked?: boolean }>`
     top: 0;
     height: 24px;
     width: 24px;
-    fill: #5071f4;
+    fill: ${buttonColor};
   }
 
   ${props =>
