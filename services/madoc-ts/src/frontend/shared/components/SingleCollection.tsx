@@ -2,7 +2,6 @@ import { InternationalString } from '@iiif/presentation-3';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import styled from 'styled-components';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
 import { CollectionFull } from '../../../types/schemas/collection-full';
 import { useRelativeLinks } from '../../site/hooks/use-relative-links';

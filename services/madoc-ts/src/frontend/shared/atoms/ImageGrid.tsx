@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { ImageStripBox } from './ImageStrip';
 
 const getSize = (props: any) => {
   switch (props.$size) {
@@ -27,6 +28,34 @@ export const ImageGrid = styled.div<{
 
   > * {
     max-width: calc(${getSize} * 1.5);
+  }
+
+  &[data-view-list='true'] {
+    padding: 0 5em;
+    grid-template-columns: repeat(1, minmax(${getSize}, 1fr));
+
+    a {
+      width: 100%;
+      display: flex;
+    }
+
+    > * {
+      max-width: 100%;
+    }
+    ${ImageStripBox} {
+      width: 100%;
+      display: flex;
+
+      &:hover {
+        border: 2px dotted;
+      }
+      h5 {
+        padding-left: 1em;
+      }
+      img {
+        max-width: 150px;
+      }
+    }
   }
 `;
 

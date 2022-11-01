@@ -25,6 +25,7 @@ import { usePreventCanvasNavigation } from './PreventUsersNavigatingCanvases';
 export function ManifestCanvasGrid(props: {
   background?: string;
   popup?: boolean;
+  list?: boolean;
   font?: string;
   textColor?: string;
   canvasBorder?: string;
@@ -49,16 +50,18 @@ export function ManifestCanvasGrid(props: {
   const hideCanvasLabels = manifestOptions?.hideCanvasLabels;
   const manifest = data?.manifest;
 
-  // const bg = props.background !== undefined ? props.background : '';
-  // const _color = useAccessibleColor(bg);
-
   if (!manifest || !showNavigationContent) {
     return null;
   }
 
   const renderCanvasSnippet = (canvas: { id: number; label: InternationalString; thumbnail: string | null }) => {
     return (
-      <ImageStripBox $border={props.canvasBorder} $color={props.textColor} $bgColor={props.background}>
+      <ImageStripBox
+        data-view-list={props.list}
+        $border={props.canvasBorder}
+        $color={props.textColor}
+        $bgColor={props.background}
+      >
         <CroppedImage $covered={coveredImages || props.imageStyle === 'covered'} $rect={rectangularImages}>
           {canvas.thumbnail ? (
             <img alt={createLocaleString(canvas.label, t('Canvas thumbnail'))} src={canvas.thumbnail} />
@@ -74,7 +77,7 @@ export function ManifestCanvasGrid(props: {
 
   if (props.popup) {
     return (
-      <ImageGrid>
+      <ImageGrid data-view-list={props.list}>
         {manifest.items.map((canvas, idx) => (
           <ModalButton
             modalSize="lg"
@@ -98,7 +101,7 @@ export function ManifestCanvasGrid(props: {
   }
 
   return (
-    <ImageGrid>
+    <ImageGrid data-view-list={props.list}>
       {manifest.items.map((canvas, idx) => (
         <Link
           key={`${canvas.id}_${idx}`}
@@ -120,11 +123,13 @@ blockEditorFor(ManifestCanvasGrid, {
   defaultProps: {
     background: '',
     popup: false,
+    list: false,
     textColor: '',
     canvasBorder: '',
     imageStyle: 'fit',
   },
   editor: {
+    list: { type: 'checkbox-field', label: 'View', inlineLabel: 'Display as list' },
     popup: { type: 'checkbox-field', label: 'Popup', inlineLabel: 'Show canvases in popup' },
     background: { label: 'Card background color', type: 'color-field' },
     textColor: { label: 'Card text color', type: 'color-field' },
