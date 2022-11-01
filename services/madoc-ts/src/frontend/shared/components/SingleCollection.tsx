@@ -166,7 +166,7 @@ blockEditorFor(SingleCollection, {
   defaultProps: {
     customButtonLabel: '',
     collection: null,
-    background: null,
+    background: '#eeeeee',
     radius: null,
     snippet: false,
     cardBackground: '',
