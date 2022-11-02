@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react';
+import React, {useEffect, useLayoutEffect} from 'react';
 import { Revisions } from '../../editor/stores/revisions/index';
 import { isEntity } from '../../helpers/is-entity';
 import { resolveSelector } from '../../helpers/resolve-selector';
@@ -10,7 +10,7 @@ export const AutoSelectDefineRegion: React.FC = () => {
   const chooseSelector = Revisions.useStoreActions(a => a.chooseSelector);
   const currentSelectorId = Revisions.useStoreState(s => s.selector.currentSelectorId);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const timeout = setTimeout(() => {
       if (!currentSelectorId && revisionSubtree && !revisionSubtreeField && isEntity(revisionSubtree)) {
         if (revisionSubtree.selector) {

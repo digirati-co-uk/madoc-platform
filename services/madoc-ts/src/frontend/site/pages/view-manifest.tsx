@@ -17,6 +17,7 @@ import { useRelativeLinks } from '../hooks/use-relative-links';
 import { Navigate } from 'react-router-dom';
 import { FooterImageGrid } from '../../shared/components/FooterImageGrid';
 import '../features/ManifestHero';
+import { FeaturedItem } from '../../shared/components/FeaturedItem';
 
 export function ViewManifest() {
   const { data } = useManifest();
@@ -69,6 +70,10 @@ export function ViewManifest() {
         <ManifestPagination />
       </Slot>
 
+      <Slot name="manifest-featured-items" id="featured-items">
+        <FeaturedItem />
+      </Slot>
+
       <div style={{ display: 'flex' }}>
         <div style={{ width: '100%' }}>
           <Slot name="manifest-content" noSurface={true}>
@@ -84,7 +89,6 @@ export function ViewManifest() {
       <Slot name="manifest-footer">
         <ManifestPagination />
       </Slot>
-
     </>
   );
 }

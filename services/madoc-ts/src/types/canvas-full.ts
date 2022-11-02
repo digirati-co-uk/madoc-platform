@@ -4,6 +4,7 @@ export type CanvasFull = {
   canvas: Canvas & {
     // Some slightly different properties.
     label: InternationalString;
+    thumbnail: null | string;
     id: number;
     source_id: string;
   };

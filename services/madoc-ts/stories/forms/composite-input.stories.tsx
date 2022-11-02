@@ -162,7 +162,7 @@ export const AnnoStyle = () => {
     },
   });
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     (async function() {
       if (canvas.current) {
         const linkingAnno = {
