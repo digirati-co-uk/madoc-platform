@@ -16,5 +16,6 @@ export const defaultPageBlockDefinitions: PageBlockDefinition<any, any, any, any
   (CanvasPanelBlock as any)[Symbol.for('slot-model')] as any,
   (SingleProject as any)[Symbol.for('slot-model')] as any,
   (SingleCollection as any)[Symbol.for('slot-model')] as any,
+  (FeaturedItem as any)[Symbol.for('slot-model')] as any,
   simpleMarkdownBlock,
 ];
