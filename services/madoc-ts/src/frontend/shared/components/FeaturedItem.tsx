@@ -36,12 +36,14 @@ const FeatureCard = styled.div`
   display: flex;
   border: 1px solid;
   margin: 1em;
-  
+
   h5 {
     color: inherit;
   }
   :hover {
     border-style: dotted;
+    cursor: pointer;
+    filter: brightness(90%);
   }
 `;
 
@@ -81,7 +83,7 @@ export function FeaturedItem(props: FeaturedItemProps) {
           {items.map(item => {
             return (
               item && (
-                <Link
+                <Link key={item.id}
                   to={createLink({
                     canvasId: item.id,
                     manifestId: manifestId,
@@ -94,12 +96,7 @@ export function FeaturedItem(props: FeaturedItemProps) {
                       color: props.textColor,
                     }}
                   >
-                    <ImageStripBox
-                      $size="small"
-                      $bgColor={props.cardBackground}
-                      $color={props.textColor}
-                      $border={props.cardBorder}
-                    >
+                    <ImageStripBox $size="small" $bgColor={props.cardBackground}>
                       <CroppedImage $size="small" $covered={props.imageStyle === 'covered'}>
                         {item.thumbnail ? (
                           <img alt={createLocaleString(item.label, t('item thumbnail'))} src={item.thumbnail[0].id} />
