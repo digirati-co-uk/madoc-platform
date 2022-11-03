@@ -7,7 +7,7 @@ export const ObjectContainer = styled.div<{
   $color?: string;
   $radius?: number;
 }>`
-  background: ${props => props.$background || '#eee'};
+  background: ${props => props.$background || 'inherit'};
   color: ${props => props.$color || 'inherit'};
   margin-bottom: 20px;
   padding: 20px 20px 40px;

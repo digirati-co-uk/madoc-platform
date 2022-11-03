@@ -32,6 +32,7 @@ export const ImageStrip = styled.div`
           auto-fill,
           200px
   );
+  grid-row-gap: 1em;
   overflow-x: auto;
   text-decoration: none;
   justify-content: space-evenly;
