@@ -1,10 +1,7 @@
 import { InternationalString } from '@iiif/presentation-3';
 import React, { useRef } from 'react';
 import { RoundedCard } from '../../../frontend/shared/capture-models/editor/components/RoundedCard/RoundedCard';
-import { defaultTheme } from '../../../frontend/shared/capture-models/editor/themes';
 import { LocaleString, useCreateLocaleString } from '../../../frontend/shared/components/LocaleString';
-import { Heading3 } from '../../../frontend/shared/typography/Heading3';
-import { ThemeProvider } from 'styled-components';
 import { useManifest } from '../../../frontend/site/hooks/use-manifest';
 import { CroppedImage } from '../../../frontend/shared/atoms/Images';
 import { useTranslation } from 'react-i18next';
@@ -53,7 +50,6 @@ export const CanvasExplorer: React.FC<CanvasExplorerProps & {
     >
       <ImageGrid $size="small">
         {manifest?.items.map(item => {
-          console.log(item);
           return (
             <ImageStripBox
               onClick={() =>
