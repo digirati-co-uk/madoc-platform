@@ -2,6 +2,7 @@ import { CanvasPanelBlock } from '../../frontend/shared/components/CanvasPanelBl
 import { SingleCollection } from '../../frontend/shared/components/SingleCollection';
 import { SingleProject } from '../../frontend/shared/components/SingleProject';
 import { Surface } from '../../frontend/shared/layout/Surface';
+import { FeaturedItem } from '../../frontend/shared/components/FeaturedItem';
 import { CrowdSourcingBanner } from '../../frontend/shared/components/CrowdSourcingBanner';
 import { PageBlockDefinition } from './extension';
 import simpleHtmlBlock from './simple-html-block/simple-html-block';
@@ -16,5 +17,6 @@ export const defaultPageBlockDefinitions: PageBlockDefinition<any, any, any, any
   (CanvasPanelBlock as any)[Symbol.for('slot-model')] as any,
   (SingleProject as any)[Symbol.for('slot-model')] as any,
   (SingleCollection as any)[Symbol.for('slot-model')] as any,
+  (FeaturedItem as any)[Symbol.for('slot-model')] as any,
   simpleMarkdownBlock,
 ];
