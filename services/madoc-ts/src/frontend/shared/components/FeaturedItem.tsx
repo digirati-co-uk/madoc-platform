@@ -43,7 +43,6 @@ const FeatureCard = styled.div`
   :hover {
     border-style: dotted;
     cursor: pointer;
-    background: rgba(0, 0, 0, 0.1);
     filter: brightness(90%);
   }
 `;
@@ -84,7 +83,7 @@ export function FeaturedItem(props: FeaturedItemProps) {
           {items.map(item => {
             return (
               item && (
-                <Link
+                <Link key={item.id}
                   to={createLink({
                     canvasId: item.id,
                     manifestId: manifestId,
