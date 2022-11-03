@@ -36,6 +36,10 @@ const FeatureCard = styled.div`
   display: flex;
   border: 1px solid;
   margin: 1em;
+  
+  h5 {
+    color: inherit;
+  }
   :hover {
     border-style: dotted;
   }
@@ -73,7 +77,7 @@ export function FeaturedItem(props: FeaturedItemProps) {
     return (
       <>
         <h3 style={{ fontSize: '1.5em', color: 'inherit' }}>{props.header}</h3>
-        <FeaturesContainer data-view-column={props.column} data-alignment={props.align}>
+        <FeaturesContainer data-view-column={props.column} data-align={props.align}>
           {items.map(item => {
             return (
               item && (
@@ -117,7 +121,7 @@ export function FeaturedItem(props: FeaturedItemProps) {
   return (
     <>
       <h3 style={{ fontSize: '1.5em', color: 'inherit' }}>{props.header}</h3>
-      <FeaturesContainer data-view-column={props.column} data-alignment={props.align}>
+      <FeaturesContainer data-view-column={props.column} data-align={props.align}>
         {items.map(item => {
           return item && <CanvasSnippet key={item.id} id={item.id} manifestId={manifestId} />;
         })}
