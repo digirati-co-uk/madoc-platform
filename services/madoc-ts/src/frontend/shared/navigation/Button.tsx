@@ -166,6 +166,7 @@ export const Button = styled.button<{
   $large?: boolean;
   $disabled?: boolean;
   $link?: boolean;
+  $accColor?: string;
 }>`
   cursor: pointer;
   padding: 0.4em 1em;
@@ -181,8 +182,7 @@ export const Button = styled.button<{
   transition: color 0.1s, background-color 0.1s, border-color 0.1s;
   white-space: nowrap;
   border: 1px solid;
-  border-color: ${buttonColor};
-   
+
   ${props =>
     props.$link &&
     css`
@@ -206,8 +206,8 @@ export const Button = styled.button<{
   //}
 
   &:hover {
-    background: #4265e9;
-    border-color: #4265e9;
+    background: ${buttonColor};
+    border-color: ${buttonColor};
     color: #fff;
   }
   
@@ -232,10 +232,10 @@ export const Button = styled.button<{
       border-color: #4265e9;
     }
   }
-
-  ${ButtonIcon} svg {
-    fill: ${buttonColor};
+    ${ButtonIcon} svg {
+      fill: ${buttonColor};
   }
+
   &:hover ${ButtonIcon} svg,
   &:focus ${ButtonIcon} svg {
     fill: #fff;
@@ -266,7 +266,7 @@ export const RoundedButton = styled.a<{ disabled?: boolean }>`
   line-height: 22px;
   padding: 3px 10px;
   background: #ffffff;
-  color: ${buttonColor};
+  // color: ${buttonColor};
   border: 1px solid #dee2e6;
   text-decoration: none;
   border-radius: 4px;
@@ -312,8 +312,8 @@ export const MediumRoundedButton = styled.a`
   font-size: 16px;
   line-height: 22px;
   background: #ffffff;
-  color: ${buttonColor};
-  border: 1px solid ${buttonColor};
+  // color: ${buttonColor};
+  // border: 1px solid ${buttonColor};
   text-decoration: none;
   padding: 10px;
 
@@ -353,7 +353,7 @@ export const LinkButton = styled.button<{ $inherit?: boolean }>`
   margin: 0;
   padding: 0;
   font-size: inherit;
-  color: ${props => (props.$inherit ? 'inherit' : buttonColor)};
+  color: ${props => (props.$inherit ? 'inherit' : 'red')};
   text-decoration: underline;
   cursor: pointer;
   &:hover {
@@ -406,7 +406,7 @@ export const RightButtonIconBox = styled.span<{ $checked?: boolean }>`
     top: 0;
     height: 24px;
     width: 24px;
-    fill: ${buttonColor};
+    // fill: ${buttonColor};
   }
 
   ${props =>

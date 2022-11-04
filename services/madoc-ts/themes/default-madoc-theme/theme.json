@@ -10,6 +10,7 @@
     "siteContainer": "light",
     "footer": "dark",
     "global": "default",
-    "fonts": "default"
+    "fonts": "default",
+    "buttons": "default"
   }
 }

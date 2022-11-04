@@ -7,7 +7,7 @@ import { MadocTheme } from '../definitions/types';
 
 const ThemeProvider: any = _ThemeProvider;
 
-const CustomTheme = React.createContext<{
+export const CustomTheme = React.createContext<{
   themeOverrides: any;
   setThemeOverrides: (name: string, overrides: any) => void;
   unsetThemeOverrides: (name: string) => void;
