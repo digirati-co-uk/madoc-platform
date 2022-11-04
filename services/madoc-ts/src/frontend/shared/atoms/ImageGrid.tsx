@@ -33,19 +33,17 @@ export const ImageGrid = styled.div<{
   &[data-view-list='true'] {
     padding: 0 5em;
     grid-template-columns: repeat(1, minmax(${getSize}, 1fr));
-
     a {
       width: 100%;
       display: flex;
     }
-
     > * {
       max-width: 100%;
     }
     ${ImageStripBox} {
       width: 100%;
       display: flex;
-
+      
       &:hover {
         border: 2px dotted;
       }

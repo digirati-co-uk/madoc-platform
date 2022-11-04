@@ -16,8 +16,8 @@ import { useRelativeLinks } from '../../site/hooks/use-relative-links';
 const FeaturesContainer = styled.div`
   display: flex;
   justify-content: space-evenly;
- 
-   &[data-view-column='true'] {
+
+  &[data-view-column='true'] {
     flex-direction: column;
   }
   &[data-align='center'] {
@@ -36,8 +36,14 @@ const FeatureCard = styled.div`
   display: flex;
   border: 1px solid;
   margin: 1em;
+
+  h5 {
+    color: inherit;
+  }
   :hover {
     border-style: dotted;
+    cursor: pointer;
+    filter: brightness(90%);
   }
 `;
 
@@ -73,11 +79,11 @@ export function FeaturedItem(props: FeaturedItemProps) {
     return (
       <>
         <h3 style={{ fontSize: '1.5em', color: 'inherit' }}>{props.header}</h3>
-        <FeaturesContainer data-view-column={props.column} data-alignment={props.align}>
+        <FeaturesContainer data-view-column={props.column} data-align={props.align}>
           {items.map(item => {
             return (
               item && (
-                <Link
+                <Link key={item.id}
                   to={createLink({
                     canvasId: item.id,
                     manifestId: manifestId,
@@ -90,12 +96,7 @@ export function FeaturedItem(props: FeaturedItemProps) {
                       color: props.textColor,
                     }}
                   >
-                    <ImageStripBox
-                      $size="small"
-                      $bgColor={props.cardBackground}
-                      $color={props.textColor}
-                      $border={props.cardBorder}
-                    >
+                    <ImageStripBox $size="small" $bgColor={props.cardBackground}>
                       <CroppedImage $size="small" $covered={props.imageStyle === 'covered'}>
                         {item.thumbnail ? (
                           <img alt={createLocaleString(item.label, t('item thumbnail'))} src={item.thumbnail[0].id} />
@@ -117,7 +118,7 @@ export function FeaturedItem(props: FeaturedItemProps) {
   return (
     <>
       <h3 style={{ fontSize: '1.5em', color: 'inherit' }}>{props.header}</h3>
-      <FeaturesContainer data-view-column={props.column} data-alignment={props.align}>
+      <FeaturesContainer data-view-column={props.column} data-align={props.align}>
         {items.map(item => {
           return item && <CanvasSnippet key={item.id} id={item.id} manifestId={manifestId} />;
         })}
