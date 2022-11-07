@@ -11,6 +11,7 @@ import { createUniversalComponent } from '../../../shared/utility/create-univers
 import { UniversalComponent } from '../../../types';
 import { useStaticData } from '../../../shared/hooks/use-data';
 import { GlobalFooter } from '../../features/GlobalFooter';
+import { GlobalSiteFooter } from '../../features/GlobalSiteFooter';
 import { GlobalSiteHeader } from '../../features/GlobalSiteHeader';
 import { GlobalSiteNavigation } from '../../features/GlobalSiteNavigation';
 import { ConfigProvider, SiteConfigurationContext } from '../../features/SiteConfigurationContext';
@@ -95,6 +96,7 @@ export const RootLoader: UniversalComponent<RootLoaderType> = createUniversalCom
             </ErrorBoundary>
           </SiteContainer>
         </SiteContainerBackground>
+        <GlobalSiteFooter menu={<GlobalSiteNavigation />} />
         <GlobalFooter />
         {siteTheme && siteTheme.assets.footerJs
           ? siteTheme.assets.footerJs.map(item => (
