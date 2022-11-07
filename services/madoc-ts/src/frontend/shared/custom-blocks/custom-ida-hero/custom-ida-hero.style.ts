@@ -19,7 +19,7 @@ export const Wrapper = styled.div`
 export const HeroHeading = styled.h1`
   font-size: 3em;
   line-height: 56px;
-  font-weight: 600;
+  font-weight: 700;
   grid-column: span 7;
   grid-row: row 1;
   margin: 0;
@@ -69,18 +69,38 @@ export const Divider = styled.div`
 display: none;
 `;
 
-export const SubHeading = styled.div`
+export const HeroText = styled.div`
   grid-column: span 8;
   grid-row: row 3;
-  font-size: 18px;
+  font-size: 1.2em;
   line-height: 24px;
   padding: 1em 0;
 
   //Tablet & Phone
   @media screen and (max-width: 900px) {
-    font-size: 16px;
+    font-size: 0.8em;
     line-height: 24px;
     grid-column: span 4;
     grid-row: row 2;
   }
+`;
+
+export const HeroSubHeading = styled.p`
+  color: #002d4b;
+  font-size: 1.37em;
+  line-height: 30px;
+  font-weight: 500;
+`;
+
+export const HeroHeading2 = styled.h2`
+  color: #004761;
+  font-size: 1.75em;
+  line-height: 36px;
+  font-weight: 600;
+`;
+export const HeroSubHeading2 = styled.p`
+  color: #004761;
+  font-size: 1.25em;
+  line-height: 28px;
+  font-weight: 400;
 `;

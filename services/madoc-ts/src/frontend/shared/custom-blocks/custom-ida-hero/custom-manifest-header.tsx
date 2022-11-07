@@ -1,7 +1,7 @@
 import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-react';
 import React from 'react';
 
-import { SubHeading, Divider, HeroHeading, Wrapper, Actions } from './custom-ida-hero.style';
+import { HeroText, Divider, HeroHeading, Wrapper, Actions } from './custom-ida-hero.style';
 import { TextButton } from '../../custom-components/Button/Button';
 import { Share, Bookmark } from '@styled-icons/entypo';
 import { LocaleString } from '../../components/LocaleString';
@@ -30,7 +30,7 @@ export function CustomManifestHeader(props: { subHeading?: string }) {
         </TextButton>
       </Actions>
       <Divider />
-      <SubHeading>{props.subHeading}</SubHeading>
+      <HeroText>{props.subHeading}</HeroText>
     </Wrapper>
   );
 }

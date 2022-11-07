@@ -49,6 +49,7 @@ export const RootLoader: UniversalComponent<RootLoaderType> = createUniversalCom
 
     const themeHeader =
       siteTheme &&
+      siteTheme.languages &&
       ((siteTheme.languages[i18n.language] ? siteTheme.languages[i18n.language].html?.header : null) ||
         siteTheme.html.header);
 

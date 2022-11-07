@@ -4,7 +4,6 @@ import { specification as mediaExplorer } from '../../../extensions/capture-mode
 import { specification as projectExplorer } from '../../../extensions/capture-models/ProjectExplorer/index';
 import { specification as canvasExplorer } from '../../../extensions/capture-models/CanvasExplorer/index';
 import { pluginStore } from '../capture-models/plugin-api/globals';
-import { specification as canvasExplorer } from '../../../extensions/capture-models/CanvasExplorer/index';
 import { PluginStore } from '../capture-models/types/plugin-store';
 import { PluginContext } from '../capture-models/plugin-api/context';
 

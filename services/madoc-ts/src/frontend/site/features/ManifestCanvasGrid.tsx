@@ -131,7 +131,6 @@ blockEditorFor(ManifestCanvasGrid, {
   editor: {
     list: { type: 'checkbox-field', label: 'View', inlineLabel: 'Display as list' },
     popup: { type: 'checkbox-field', label: 'Popup', inlineLabel: 'Show canvases in popup' },
-    list: { type: 'checkbox-field', label: 'View', inlineLabel: 'Display as list' },
     background: { label: 'Card background color', type: 'color-field' },
     textColor: { label: 'Card text color', type: 'color-field' },
     canvasBorder: { label: 'Card border', type: 'color-field' },

@@ -19,6 +19,6 @@ blockEditorFor(GridHeader, {
   },
   editor: {
     header: { label: 'Enter a header', type: 'text-field' },
-    color: { label: 'Text color', type: 'color-field' }
+    color: { label: 'Text color', type: 'color-field' },
   },
 });

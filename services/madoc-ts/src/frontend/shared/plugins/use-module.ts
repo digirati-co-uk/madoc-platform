@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import * as publicApi from './public-api';
 import * as ReactQuery from 'react-query';
 import * as ReactRouterDom from 'react-router-dom';
+import * as entypo from '@styled-icons/entypo';
 
 export const _ALLOWED_MODULES = [
   '@madoc.io/types',
@@ -35,6 +36,7 @@ export const _ALLOWED_MODULES = [
   'react-timeago',
   'react-tooltip',
   'styled-components',
+  '@styled-icons/entypo',
 ] as const;
 
 export const ALLOWED_MODULES = [..._ALLOWED_MODULES];
@@ -109,6 +111,8 @@ export function useModule(name: AvailableModules) {
       return React;
     case 'styled-components':
       return styled;
+    case '@styled-icons/entypo':
+      return entypo;
     default:
       return undefined;
   }

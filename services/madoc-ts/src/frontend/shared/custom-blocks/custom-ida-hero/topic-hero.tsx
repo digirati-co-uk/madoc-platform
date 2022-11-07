@@ -1,49 +1,37 @@
 import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-react';
 import React from 'react';
 import styled from 'styled-components';
+import { Share } from '@styled-icons/entypo/Share';
+import { HeroHeading, HeroSubHeading, HeroHeading2, HeroSubHeading2 } from './custom-ida-hero.style';
+import { TextButton } from '../../custom-components/Button/Button';
 
 const TopicHeroWrapper = styled.div`
   color: #002d4b;
-  position: relative;
-  margin-right: -2em;
-  padding-left: 3em;
+  margin-right: -4em;
+  padding-left: 4em;
+  display: flex;
+  justify-content: space-between;
 
-  img {
-    position: absolute;
-    top: -1em;
-    right: 0;
-    max-height: 500px;
-    aspect-ratio: 1 / 1;
-    clip-path: circle(67% at 100% 40%);
+  h1,
+  p {
+    max-width: 30vw;
   }
-
-  h1 {
-    font-size: 48px;
-    line-height: 56px;
-    font-weight: 700;
-    max-width: 40vw;
-    margin: 0;
-  }
-
   h2 {
-    font-size: 28px;
-    line-height: 36px;
-    font-weight: 600;
     max-width: 50vw;
-    margin: 0;
   }
 `;
-
-const Blurb = styled.p`
-  font-size: 22px;
-  line-height: 30px;
-  font-weight: 500;
-  max-width: 40vw;
+const ImageMask = styled.div`
+  height: 450px;
+  width: 450px;
+  border-radius: 100%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: right;
 `;
-const Desc = styled.p`
-  font-size: 20px;
-  line-height: 28px;
-  max-width: 40vw;
+const Right = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: -2em;
 `;
 
 export type TopicHeroProps = {
@@ -54,30 +42,25 @@ export type TopicHeroProps = {
   } | null;
   heading?: string;
   blurb?: string;
-  contributions?: boolean;
   subHeading?: string;
   description?: string;
 };
-export const TopicHero: React.FC<TopicHeroProps> = ({
-  image,
-  heading,
-  blurb,
-  subHeading,
-  description,
-  contributions,
-}) => {
+export const TopicHero: React.FC<TopicHeroProps> = ({ image, heading, blurb, subHeading, description }) => {
   return (
     <TopicHeroWrapper>
-      {image ? <img src={image.image} alt="" /> : null}
-      <h1>{heading}</h1>
-      <Blurb>{blurb}</Blurb>
+      <div>
+        <HeroHeading>{heading}</HeroHeading>
+        <HeroSubHeading>{blurb}</HeroSubHeading>
 
-      {contributions && <p>CONTRIBUTIONS BY ... ... ... .. </p>}
-
-      <h2>{subHeading}</h2>
-      <Desc>{description}</Desc>
-
-      <span>share this page </span>
+        <HeroHeading2>{subHeading}</HeroHeading2>
+        <HeroSubHeading2>{description}</HeroSubHeading2>
+      </div>
+      <Right>
+        <ImageMask style={{ backgroundImage: `url("${image?.image}")` }} />
+        <TextButton>
+          <Share /> Share this page
+        </TextButton>
+      </Right>
     </TopicHeroWrapper>
   );
 };
