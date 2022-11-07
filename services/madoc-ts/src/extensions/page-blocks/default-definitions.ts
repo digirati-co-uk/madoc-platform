@@ -14,6 +14,7 @@ import simpleMarkdownBlock from './simple-markdown-block/simple-markdown-block';
 import { FeedbackBtn } from '../../frontend/shared/custom-blocks/feedback-btn/feedback-btn';
 import { GridHeader } from '../../frontend/shared/custom-blocks/grid-header/grid-header';
 import { TopicHero } from '../../frontend/shared/custom-blocks/custom-ida-hero/topic-hero';
+import {TopicAggHero} from "../../frontend/shared/custom-blocks/custom-ida-hero/topic-agg-hero";
 
 export const defaultPageBlockDefinitions: PageBlockDefinition<any, any, any, any>[] = [
   simpleHtmlBlock,
@@ -29,6 +30,7 @@ export const defaultPageBlockDefinitions: PageBlockDefinition<any, any, any, any
   // (CustomManifestHeader as any)[Symbol.for('slot-model')] as any,
   // (CustomCanvasHeader as any)[Symbol.for('slot-model')] as any,
   (TopicHero as any)[Symbol.for('slot-model')] as any,
+  (TopicAggHero as any)[Symbol.for('slot-model')] as any,
   (FeedbackBtn as any)[Symbol.for('slot-model')] as any,
   (GridHeader as any)[Symbol.for('slot-model')] as any,
 ];
