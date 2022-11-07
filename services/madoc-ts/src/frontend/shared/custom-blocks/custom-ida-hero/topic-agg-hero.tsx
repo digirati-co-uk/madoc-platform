@@ -54,7 +54,7 @@ export type TopicAggHeroProps = {
   heading?: string;
   blurb?: string;
 };
-export const TopicAggHero: React.FC<TopicAggHeroProps> = ({ image, heading, blurb, subHeading, description }) => {
+export const TopicAggHero: React.FC<TopicAggHeroProps> = ({ image, heading, blurb }) => {
   return (
     <TopicHeroWrapper>
       <BackgroundImage style={{ backgroundImage: `url("${image?.image}")` }} />
