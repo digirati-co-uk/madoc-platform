@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { maxWidth } from '../../site/variables/global';
 import { themeVariable } from '../../themes/helpers/themeVariable';
-import { accent, globalFont } from '../variables';
+import { globalFont, globalBackground, searchBorder, searchBorderFocusColor } from '../variables';
 
 const headerBackground = themeVariable('header', 'headerBackground', {
   default: '#fff',
@@ -9,28 +9,10 @@ const headerBackground = themeVariable('header', 'headerBackground', {
   midnight: '#000',
 });
 
-const globalBackground = themeVariable('header', 'globalBackground', {
-  default: '#fff',
-  dark: '#222',
-  midnight: '#000',
-});
-
 const headerText = themeVariable('header', 'headerText', {
   default: '#363453',
   dark: '#fff',
   midnight: '#fff',
-});
-
-const searchBorder = themeVariable('header', 'searchBorder', {
-  default: '2px solid #c2c2c2',
-  dark: '2px solid #000',
-  midnight: '2px solid #000',
-});
-
-const searchBorderFocusColor = themeVariable('header', 'searchBorderFocusColor', {
-  default: accent,
-  midnight: accent,
-  dark: accent,
 });
 
 export const SiteHeader = styled.div`
@@ -105,8 +87,7 @@ export const GlobalSearchButton = styled.button`
 
 export const SiteMenuContainer = styled.div`
   font-family: ${globalFont};
-  &[data-full-width] {
-    flex-wrap: nowrap;
+  &[data-full-width='true'] {
     width: 100%;
   }
 `;
