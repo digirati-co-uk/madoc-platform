@@ -9,10 +9,16 @@ export const CanvasAtlasViewer: React.FC<{
   borderColor?: string;
   tabsText?: boolean;
   sidebarHeading?: boolean;
-}> = ({ rendering = 'canvas', tabsTop, borderColor, tabsText, sidebarHeading }) => {
-
+  sidebarSpace?: boolean;
+}> = ({ rendering = 'canvas', tabsTop, borderColor, tabsText, sidebarHeading, sidebarSpace }) => {
   return (
-    <CanvasViewer border={borderColor} sidebarHeading={sidebarHeading} tabsTop={tabsTop} tabsName={tabsText}>
+    <CanvasViewer
+      border={borderColor}
+      sidebarHeading={sidebarHeading}
+      tabsTop={tabsTop}
+      tabsName={tabsText}
+      sidebarSpace={sidebarSpace}
+    >
       <CanvasImageViewer rendering={rendering} />
     </CanvasViewer>
   );
@@ -37,6 +43,11 @@ blockEditorFor(CanvasAtlasViewer, {
       inlineLabel: 'display tabs on top',
     },
     borderColor: { label: 'Border color', type: 'color-field' },
+    sidebarSpace: {
+      label: 'Sidebar spacing',
+      type: 'checkbox-field',
+      inlineLabel: 'Add margin between sidebar and cavnvas',
+    },
     tabsText: {
       label: 'Tabs text',
       type: 'checkbox-field',
@@ -54,6 +65,7 @@ blockEditorFor(CanvasAtlasViewer, {
     borderColor: '',
     tabsText: false,
     sidebarHeading: false,
+    sidebarSpace: false,
   },
   anyContext: ['canvas'],
   requiredContext: ['manifest', 'canvas'],

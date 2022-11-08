@@ -1,14 +1,6 @@
 import styled, { css } from 'styled-components';
 
 export const OuterLayoutContainer = styled.div`
-  width: 100%;
-  max-width: 100%;
-  background: #ffffff;
-  height: 100%;
-  max-height: 100%;
-  overflow: auto;
-`;
-export const FlexLayoutContainer = styled.div`
   display: flex;
   width: 100%;
   max-width: 100%;
@@ -30,7 +22,7 @@ export const NavIconContainer = styled.div<{ $active?: boolean; $disabled?: bool
   padding: 0.5em;
   margin: 0.25em;
   color: #333;
-  width: auto;
+  width: 2.5em;
   display: flex;
   height: 2.5em;
   cursor: pointer;
@@ -40,9 +32,14 @@ export const NavIconContainer = styled.div<{ $active?: boolean; $disabled?: bool
     fill: #666;
     width: 1.4em;
     height: 1.4em;
-    margin-right: 0.3em;
   }
 
+  &[data-has-label='true'] {
+    width: auto;
+    svg {
+      margin-right: 0.3em;
+    }
+  }
   ${props =>
     props.$active &&
     css`
@@ -120,7 +117,11 @@ export const LayoutSidebar = styled.div<{ $noScroll?: boolean }>`
   border-right: 1px solid #918f8f;
   overflow: auto;
   position: relative;
-  margin-right: 1em;
+
+  &[data-space='true'] {
+    margin-right: 1em;
+  }
+
   ${props =>
     props.$noScroll &&
     css`

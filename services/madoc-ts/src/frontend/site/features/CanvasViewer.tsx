@@ -9,7 +9,6 @@ import {
   NavIconContainer,
   NavIconNotifcation,
   OuterLayoutContainer,
-  FlexLayoutContainer,
   PanelTitle,
 } from '../../shared/layout/LayoutContainer';
 import { useLocalStorage } from '../../shared/hooks/use-local-storage';
@@ -27,7 +26,8 @@ export const CanvasViewer: React.FC<{
   sidebarHeading?: boolean;
   tabsTop?: boolean;
   tabsName?: boolean;
-}> = ({ border, sidebarHeading, tabsTop, tabsName, children }) => {
+  sidebarSpace?: boolean;
+}> = ({ border, sidebarHeading, tabsTop, tabsName, sidebarSpace, children }) => {
   const [openPanel, setOpenPanel] = useLocalStorage<string>(`canvas-page-selected`, 'metadata');
   const [isOpen, setIsOpen] = useLocalStorage<boolean>(`canvas-page-sidebar`, false);
   const height = useViewerHeight();
@@ -54,7 +54,7 @@ export const CanvasViewer: React.FC<{
 
   return (
     <>
-      <OuterLayoutContainer>
+      <div>
         {tabsTop && (
           <LayoutSidebarMenu style={{ display: 'flex' }}>
             {menuItems.map(menuItem => {
@@ -62,8 +62,46 @@ export const CanvasViewer: React.FC<{
                 return null;
               }
               return (
-                <>
+                <NavIconContainer
+                  data-has-label={tabsName}
+                  key={menuItem.id}
+                  $active={!menuItem.isDisabled && menuItem.id === openPanel && isOpen}
+                  data-tip={tabsName ? null : menuItem.label}
+                  $disabled={menuItem.isDisabled}
+                  onClick={() => {
+                    if (!menuItem.isDisabled) {
+                      if (isOpen && menuItem.id === openPanel) {
+                        setIsOpen(false);
+                      } else {
+                        setIsOpen(true);
+                        setOpenPanel(menuItem.id as any);
+                        if (refs.resizableDiv.current) {
+                          refs.resizableDiv.current.scrollTop = 0;
+                        }
+                      }
+                    }
+                  }}
+                >
+                  {menuItem.notifications && !(isOpen && menuItem.id === openPanel) ? (
+                    <NavIconNotifcation>{menuItem.notifications}</NavIconNotifcation>
+                  ) : null}
+                  {menuItem.icon} {tabsName && menuItem.label}
+                </NavIconContainer>
+              );
+            })}
+          </LayoutSidebarMenu>
+        )}
+        {sidebarHeading && <PanelTitle>{openPanel}</PanelTitle>}
+        <OuterLayoutContainer style={{ height }} data-flex-col={tabsTop}>
+          {!tabsTop && (
+            <LayoutSidebarMenu style={{ borderRight: '1px solid #bcbcbc' }}>
+              {menuItems.map(menuItem => {
+                if (menuItem.isHidden) {
+                  return null;
+                }
+                return (
                   <NavIconContainer
+                    data-has-label={tabsName}
                     key={menuItem.id}
                     $active={!menuItem.isDisabled && menuItem.id === openPanel && isOpen}
                     data-tip={tabsName ? null : menuItem.label}
@@ -87,53 +125,17 @@ export const CanvasViewer: React.FC<{
                     ) : null}
                     {menuItem.icon} {tabsName && menuItem.label}
                   </NavIconContainer>
-                </>
-              );
-            })}
-          </LayoutSidebarMenu>
-        )}
-        {sidebarHeading && <PanelTitle>{openPanel}</PanelTitle>}
-        <FlexLayoutContainer style={{ height }} data-flex-col={tabsTop}>
-          {!tabsTop && (
-            <LayoutSidebarMenu style={{ borderRight: '1px solid #bcbcbc' }}>
-              {menuItems.map(menuItem => {
-                if (menuItem.isHidden) {
-                  return null;
-                }
-                return (
-                  <>
-                    <NavIconContainer
-                      key={menuItem.id}
-                      $active={!menuItem.isDisabled && menuItem.id === openPanel && isOpen}
-                      data-tip={tabsName ? null : menuItem.label}
-                      $disabled={menuItem.isDisabled}
-                      onClick={() => {
-                        if (!menuItem.isDisabled) {
-                          if (isOpen && menuItem.id === openPanel) {
-                            setIsOpen(false);
-                          } else {
-                            setIsOpen(true);
-                            setOpenPanel(menuItem.id as any);
-                            if (refs.resizableDiv.current) {
-                              refs.resizableDiv.current.scrollTop = 0;
-                            }
-                          }
-                        }
-                      }}
-                    >
-                      {menuItem.notifications && !(isOpen && menuItem.id === openPanel) ? (
-                        <NavIconNotifcation>{menuItem.notifications}</NavIconNotifcation>
-                      ) : null}
-                      {menuItem.icon} {tabsName && menuItem.label}
-                    </NavIconContainer>
-                  </>
                 );
               })}
             </LayoutSidebarMenu>
           )}
           <LayoutContainer ref={refs.container as any}>
             {currentMenuItem && isOpen && !currentMenuItem.isDisabled && !currentMenuItem.isHidden ? (
-              <LayoutSidebar ref={refs.resizableDiv as any} style={{ width: widthB, border: `1px solid ${borderColor}` }}>
+              <LayoutSidebar
+                ref={refs.resizableDiv as any}
+                data-space={sidebarSpace}
+                style={{ width: widthB, border: `1px solid ${borderColor}` }}
+              >
                 {currentMenuItem.content}
               </LayoutSidebar>
             ) : null}
@@ -141,10 +143,9 @@ export const CanvasViewer: React.FC<{
             <LayoutHandle ref={refs.resizer as any} onClick={() => setIsOpen(o => !o)} />
             <LayoutContent style={{ border: `1px solid ${borderColor}` }}>{children}</LayoutContent>
           </LayoutContainer>
-        </FlexLayoutContainer>
-      </OuterLayoutContainer>
+        </OuterLayoutContainer>
+      </div>
       <ReactTooltip place="right" type="dark" effect="solid" />
     </>
   );
 };
-
