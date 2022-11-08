@@ -1,17 +1,23 @@
 import styled, { css } from 'styled-components';
 
 export const OuterLayoutContainer = styled.div`
+  width: 100%;
+  max-width: 100%;
+  background: #ffffff;
+  height: 100%;
+  max-height: 100%;
+  overflow: auto;
+`;
+export const FlexLayoutContainer = styled.div`
   display: flex;
   width: 100%;
   max-width: 100%;
   flex-direction: row;
   background: #ffffff;
-  //border: 1px solid #bcbcbc;
-  //box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.17);
   height: 100%;
   overflow: hidden;
   max-height: 100%;
-  flex: 1 1 0px;
+  flex: 1 1 0;
   min-height: 0;
   min-width: 0;
 `;
@@ -23,7 +29,9 @@ export const NavIconContainer = styled.div<{ $active?: boolean; $disabled?: bool
   border-radius: 3px;
   padding: 0.5em;
   margin: 0.25em;
-  width: 2.5em;
+  color: #333;
+  width: auto;
+  display: flex;
   height: 2.5em;
   cursor: pointer;
   position: relative;
@@ -32,12 +40,15 @@ export const NavIconContainer = styled.div<{ $active?: boolean; $disabled?: bool
     fill: #666;
     width: 1.4em;
     height: 1.4em;
+    margin-right: 0.3em;
   }
 
   ${props =>
     props.$active &&
     css`
       background: #4a64e1;
+      color: #fff;
+
       svg {
         fill: #fff;
       }
@@ -80,9 +91,15 @@ export const LayoutContainer = styled.div`
   min-width: 0;
 `;
 
+export const PanelTitle = styled.h5`
+  text-transform: capitalize;
+  font-size: 20px;
+  margin: 10px 0;
+`;
+
 export const LayoutContent = styled.div<{ $padding?: boolean }>`
   background: #fff;
-  flex: 1 1 0px;
+  flex: 1 1 0;
   min-width: 0;
   overflow-y: auto;
   display: flex;
@@ -96,14 +113,14 @@ export const LayoutContent = styled.div<{ $padding?: boolean }>`
 
 export const LayoutSidebarMenu = styled.div`
   background: #ffffff;
-  border-right: 1px solid #bcbcbc;
 `;
 
 export const LayoutSidebar = styled.div<{ $noScroll?: boolean }>`
   background: #ffffff;
-  border-right: 1px solid #bcbcbc;
+  border-right: 1px solid #918f8f;
   overflow: auto;
   position: relative;
+  margin-right: 1em;
   ${props =>
     props.$noScroll &&
     css`

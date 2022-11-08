@@ -39,15 +39,21 @@ export const CanvasViewerControls = styled(ButtonRow)`
   top: 0;
   right: 1em;
   z-index: 20;
+  display: flex;
+  flex-direction: column;
 `;
 
 export const CanvasViewerButton = styled(Button)`
-  border-radius: 0;
+  border-radius: 3px;
   padding: 0.8em;
   font-size: 1em;
   border: none;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.5);
+  color: #002d4b;
   display: flex;
+  margin-left: 0;
+  margin-bottom: 0.5em;
+
   &:focus {
     outline: 2px solid orange;
   }
