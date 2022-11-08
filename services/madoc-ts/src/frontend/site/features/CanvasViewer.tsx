@@ -52,83 +52,50 @@ export const CanvasViewer: React.FC<{
     },
   });
 
+  const sidebar = (
+    <LayoutSidebarMenu style={{ display: tabsTop ? 'flex' : '', borderRight: tabsTop ? 'none' : '1px solid #bcbcbc' }}>
+      {menuItems.map(menuItem => {
+        if (menuItem.isHidden) {
+          return null;
+        }
+        return (
+          <NavIconContainer
+            data-has-label={tabsName}
+            key={menuItem.id}
+            $active={!menuItem.isDisabled && menuItem.id === openPanel && isOpen}
+            data-tip={tabsName ? null : menuItem.label}
+            $disabled={menuItem.isDisabled}
+            onClick={() => {
+              if (!menuItem.isDisabled) {
+                if (isOpen && menuItem.id === openPanel) {
+                  setIsOpen(false);
+                } else {
+                  setIsOpen(true);
+                  setOpenPanel(menuItem.id as any);
+                  if (refs.resizableDiv.current) {
+                    refs.resizableDiv.current.scrollTop = 0;
+                  }
+                }
+              }
+            }}
+          >
+            {menuItem.notifications && !(isOpen && menuItem.id === openPanel) ? (
+              <NavIconNotifcation>{menuItem.notifications}</NavIconNotifcation>
+            ) : null}
+            {menuItem.icon} {tabsName && menuItem.label}
+          </NavIconContainer>
+        );
+      })}
+    </LayoutSidebarMenu>
+  );
+
   return (
     <>
       <div>
-        {tabsTop && (
-          <LayoutSidebarMenu style={{ display: 'flex' }}>
-            {menuItems.map(menuItem => {
-              if (menuItem.isHidden) {
-                return null;
-              }
-              return (
-                <NavIconContainer
-                  data-has-label={tabsName}
-                  key={menuItem.id}
-                  $active={!menuItem.isDisabled && menuItem.id === openPanel && isOpen}
-                  data-tip={tabsName ? null : menuItem.label}
-                  $disabled={menuItem.isDisabled}
-                  onClick={() => {
-                    if (!menuItem.isDisabled) {
-                      if (isOpen && menuItem.id === openPanel) {
-                        setIsOpen(false);
-                      } else {
-                        setIsOpen(true);
-                        setOpenPanel(menuItem.id as any);
-                        if (refs.resizableDiv.current) {
-                          refs.resizableDiv.current.scrollTop = 0;
-                        }
-                      }
-                    }
-                  }}
-                >
-                  {menuItem.notifications && !(isOpen && menuItem.id === openPanel) ? (
-                    <NavIconNotifcation>{menuItem.notifications}</NavIconNotifcation>
-                  ) : null}
-                  {menuItem.icon} {tabsName && menuItem.label}
-                </NavIconContainer>
-              );
-            })}
-          </LayoutSidebarMenu>
-        )}
+        {tabsTop && sidebar}
         {sidebarHeading && <PanelTitle>{openPanel}</PanelTitle>}
         <OuterLayoutContainer style={{ height }} data-flex-col={tabsTop}>
-          {!tabsTop && (
-            <LayoutSidebarMenu style={{ borderRight: '1px solid #bcbcbc' }}>
-              {menuItems.map(menuItem => {
-                if (menuItem.isHidden) {
-                  return null;
-                }
-                return (
-                  <NavIconContainer
-                    data-has-label={tabsName}
-                    key={menuItem.id}
-                    $active={!menuItem.isDisabled && menuItem.id === openPanel && isOpen}
-                    data-tip={tabsName ? null : menuItem.label}
-                    $disabled={menuItem.isDisabled}
-                    onClick={() => {
-                      if (!menuItem.isDisabled) {
-                        if (isOpen && menuItem.id === openPanel) {
-                          setIsOpen(false);
-                        } else {
-                          setIsOpen(true);
-                          setOpenPanel(menuItem.id as any);
-                          if (refs.resizableDiv.current) {
-                            refs.resizableDiv.current.scrollTop = 0;
-                          }
-                        }
-                      }
-                    }}
-                  >
-                    {menuItem.notifications && !(isOpen && menuItem.id === openPanel) ? (
-                      <NavIconNotifcation>{menuItem.notifications}</NavIconNotifcation>
-                    ) : null}
-                    {menuItem.icon} {tabsName && menuItem.label}
-                  </NavIconContainer>
-                );
-              })}
-            </LayoutSidebarMenu>
-          )}
+          {!tabsTop && sidebar}
           <LayoutContainer ref={refs.container as any}>
             {currentMenuItem && isOpen && !currentMenuItem.isDisabled && !currentMenuItem.isHidden ? (
               <LayoutSidebar
