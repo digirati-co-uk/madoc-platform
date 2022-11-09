@@ -1,10 +1,10 @@
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import React from 'react';
 import { useProject } from '../hooks/use-project';
 import { useApiTaskSearch } from '../../shared/hooks/use-api-task-search';
 import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
 import styled from 'styled-components';
-import {useTranslation} from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 export const ContributersWrapper = styled.div`
   h3 {
