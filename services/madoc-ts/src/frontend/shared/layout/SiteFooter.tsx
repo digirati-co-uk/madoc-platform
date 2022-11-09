@@ -1,9 +1,8 @@
 import styled from 'styled-components';
 import { maxWidth } from '../../site/variables/global';
-import { globalFont, footerColor, footerBackground, globalBackground } from '../variables'
+import { globalFont, footerColor, footerBackground, globalBackground } from '../variables';
 
 export const SiteFooter = styled.div`
-  padding: 2em;
   max-width: ${maxWidth};
   width: 100%;
   margin-left: auto;

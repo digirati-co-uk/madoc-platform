@@ -19,6 +19,10 @@ const FlexCenterLayout = styled.div`
   flex-wrap: wrap;
   align-items: center;
   flex: 1 1 0px;
+
+  .styled-editor {
+    width: auto;
+  }
 `;
 
 export const SlotLayout = React.forwardRef(function SlotLayout(
