@@ -26,6 +26,7 @@ export const GlobalFooter: React.FC = () => {
 
   const themFooter =
     siteTheme &&
+    siteTheme.languages &&
     ((siteTheme.languages[i18n.language] ? siteTheme.languages[i18n.language].html?.footer : null) ||
       siteTheme.html.footer);
 
