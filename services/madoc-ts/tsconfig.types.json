@@ -14,6 +14,7 @@
     "src/routes/",
     "src/migrate.ts",
     "src/router.ts",
+    "**/**.stories.tsx",
     "stories",
     "__tests__",
     "test-utility",

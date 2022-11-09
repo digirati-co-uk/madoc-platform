@@ -11,7 +11,7 @@ import simple from '../../../../../../../fixtures/simple.json';
 
 const withSimpleCaptureModel = (Component: React.FC): React.FC => () => (
   <ThemeProvider theme={defaultTheme}>
-    <CaptureModelProvider captureModel={simple}>
+    <CaptureModelProvider captureModel={simple as any}>
       <Component />
     </CaptureModelProvider>
   </ThemeProvider>

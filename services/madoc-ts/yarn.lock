@@ -3326,21 +3326,7 @@
   resolved "https://registry.yarnpkg.com/@iiif/presentation-2/-/presentation-2-1.0.2.tgz#c712c4a40cc5b7291b8d92646b0ec8b8215b9b3d"
   integrity sha512-EN/p+td5VrHvUsQXV26VkaDFW0HG2GPRaibPlxJRip8au8ABBrOYPIcBH69Hyk3I0UnW3xzK2VsZ9TcuQEn0Mw==
 
-"@iiif/presentation-3@*":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@iiif/presentation-3/-/presentation-3-1.0.4.tgz#9433c38c6a26e95ef94d1f9e0232962398611d70"
-  integrity sha512-L5fPMyNAZ3UaDOR7D4mcv9Z1YJIqx9/nI9kaNcq3azLB4lp5w7cv7O1her3gjIPSH/mLCOuUG5KTBOfE/SgXUg==
-  dependencies:
-    "@types/geojson" "^7946.0.7"
-
-"@iiif/presentation-3@1.*", "@iiif/presentation-3@1.x":
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@iiif/presentation-3/-/presentation-3-1.0.5.tgz#23208dd499a0bdc86328f32c82d6894f57fb51c1"
-  integrity sha512-hIfq8q0eC//l47TEniXxvb23+8zXZjNfhtbPgJHqTUgcvG9JsYnqjjzbhVMeLPSpzqjHNCImgcrLIGwLX5P0nA==
-  dependencies:
-    "@types/geojson" "^7946.0.7"
-
-"@iiif/presentation-3@>=1", "@iiif/presentation-3@^1.1.2", "@iiif/presentation-3@^1.1.3":
+"@iiif/presentation-3@*", "@iiif/presentation-3@1.*", "@iiif/presentation-3@1.x", "@iiif/presentation-3@>=1", "@iiif/presentation-3@^1.1.2", "@iiif/presentation-3@^1.1.3":
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/@iiif/presentation-3/-/presentation-3-1.1.3.tgz#7f5ea909ae22aa9ce2e9d91cec79f5f1cd0fd6fb"
   integrity sha512-Ek+25nkQouo0pXAqCsWYbAeS4jLDEBQA7iul2jzgnvoJrucxDQN2lXyNLgOUDRqpTdSqJ69iz5lm6DLaxil+Nw==
@@ -3675,7 +3661,7 @@
     path-to-regexp "^6.1.0"
 
 "@madoc.io/types@./npm/madoc-types":
-  version "0.1.1"
+  version "0.2.0"
   dependencies:
     "@types/react" "*"
     "@types/styled-components" "*"
