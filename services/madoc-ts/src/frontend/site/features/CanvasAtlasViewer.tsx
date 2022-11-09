@@ -10,7 +10,18 @@ export const CanvasAtlasViewer: React.FC<{
   tabsText?: boolean;
   sidebarHeading?: boolean;
   sidebarSpace?: boolean;
-}> = ({ rendering = 'canvas', tabsTop, borderColor, tabsText, sidebarHeading, sidebarSpace }) => {
+  verticalButtons?: boolean;
+  buttonBackground?: string;
+}> = ({
+  rendering = 'canvas',
+  tabsTop,
+  borderColor,
+  tabsText,
+  sidebarHeading,
+  sidebarSpace,
+  verticalButtons,
+  buttonBackground,
+}) => {
   return (
     <CanvasViewer
       border={borderColor}
@@ -18,6 +29,8 @@ export const CanvasAtlasViewer: React.FC<{
       tabsTop={tabsTop}
       tabsName={tabsText}
       sidebarSpace={sidebarSpace}
+      verticalButtons={verticalButtons}
+      btnColor={buttonBackground}
     >
       <CanvasImageViewer rendering={rendering} />
     </CanvasViewer>
@@ -58,6 +71,12 @@ blockEditorFor(CanvasAtlasViewer, {
       type: 'checkbox-field',
       inlineLabel: 'show heading text for sidebar',
     },
+    verticalButtons: {
+      label: 'Vertical canvas buttons',
+      type: 'checkbox-field',
+      inlineLabel: 'Display the canvas controls vertically (stacked)',
+    },
+    buttonBackground: { label: 'button background color', type: 'color-field' },
   },
   defaultProps: {
     rendering: 'webgl',
@@ -66,6 +85,8 @@ blockEditorFor(CanvasAtlasViewer, {
     tabsText: false,
     sidebarHeading: false,
     sidebarSpace: false,
+    verticalButtons: false,
+    buttonBackground: '',
   },
   anyContext: ['canvas'],
   requiredContext: ['manifest', 'canvas'],

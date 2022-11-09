@@ -27,7 +27,9 @@ export const CanvasViewer: React.FC<{
   tabsTop?: boolean;
   tabsName?: boolean;
   sidebarSpace?: boolean;
-}> = ({ border, sidebarHeading, tabsTop, tabsName, sidebarSpace, children }) => {
+  verticalButtons?: boolean;
+  btnColor?: string;
+}> = ({ border, sidebarHeading, tabsTop, tabsName, sidebarSpace, verticalButtons, btnColor, children }) => {
   const [openPanel, setOpenPanel] = useLocalStorage<string>(`canvas-page-selected`, 'metadata');
   const [isOpen, setIsOpen] = useLocalStorage<boolean>(`canvas-page-sidebar`, false);
   const height = useViewerHeight();
@@ -108,7 +110,13 @@ export const CanvasViewer: React.FC<{
             ) : null}
 
             <LayoutHandle ref={refs.resizer as any} onClick={() => setIsOpen(o => !o)} />
-            <LayoutContent style={{ border: `1px solid ${borderColor}` }}>{children}</LayoutContent>
+            <LayoutContent
+              $btnColor={btnColor}
+              style={{ border: `1px solid ${borderColor}` }}
+              data-vertical-btn={verticalButtons}
+            >
+              {children}
+            </LayoutContent>
           </LayoutContainer>
         </OuterLayoutContainer>
       </div>

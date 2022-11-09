@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { CanvasViewerButton, CanvasViewerControls } from '../../site/features/CanvasViewerGrid';
 
 export const OuterLayoutContainer = styled.div`
   display: flex;
@@ -18,6 +19,7 @@ export const NavIconContainer = styled.div<{ $active?: boolean; $disabled?: bool
   &:hover {
     background: #eee;
   }
+
   border-radius: 3px;
   padding: 0.5em;
   margin: 0.25em;
@@ -36,10 +38,12 @@ export const NavIconContainer = styled.div<{ $active?: boolean; $disabled?: bool
 
   &[data-has-label='true'] {
     width: auto;
+
     svg {
       margin-right: 0.3em;
     }
   }
+
   ${props =>
     props.$active &&
     css`
@@ -49,6 +53,7 @@ export const NavIconContainer = styled.div<{ $active?: boolean; $disabled?: bool
       svg {
         fill: #fff;
       }
+
       &:hover {
         background: #4a64e1;
       }
@@ -59,9 +64,11 @@ export const NavIconContainer = styled.div<{ $active?: boolean; $disabled?: bool
     css`
       background: transparent;
       cursor: not-allowed;
+
       svg {
         fill: #ccc;
       }
+
       &:hover {
         background: transparent;
       }
@@ -94,18 +101,45 @@ export const PanelTitle = styled.h5`
   margin: 10px 0;
 `;
 
-export const LayoutContent = styled.div<{ $padding?: boolean }>`
+export const LayoutContent = styled.div<{ $padding?: boolean; $btnColor?: string }>`
   background: #fff;
   flex: 1 1 0;
   min-width: 0;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+
   ${props =>
     props.$padding &&
     css`
       padding: 0.5em;
     `}
+  ${CanvasViewerButton} {
+    background-color: ${props => props.$btnColor};
+  }
+
+  &[data-veritcal-btn='true'] {
+    ${CanvasViewerControls} {
+      display: flex;
+      flex-direction: column;
+
+      button:first-child {
+        order: 1;
+      }
+
+      button:nth-child(2) {
+        order: 2;
+      }
+
+      button:nth-child(3) {
+        order: 0;
+      }
+
+      ${CanvasViewerButton} {
+        margin-bottom: 0.5em;
+        margin-left: 0;
+      }
+    }
 `;
 
 export const LayoutSidebarMenu = styled.div`
@@ -136,6 +170,7 @@ export const LayoutHandle = styled.div<{ $isDragging?: boolean }>`
   height: 100%;
   user-select: none;
   cursor: col-resize;
+
   &:hover,
   &:active {
     background: #ddd;
