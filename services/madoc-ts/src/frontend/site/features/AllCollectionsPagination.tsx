@@ -1,5 +1,5 @@
 import React from 'react';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { Pagination } from '../../shared/components/Pagination';
 import { useCollectionList } from '../hooks/use-collection-list';
 

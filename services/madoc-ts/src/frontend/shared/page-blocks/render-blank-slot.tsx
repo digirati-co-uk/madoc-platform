@@ -181,7 +181,7 @@ export const RenderBlankSlot: React.FC<{
 }> = ({ id, name: slotId, source, layout, children }) => {
   const { context, editable, isPage, beforeCreateSlot, onCreateSlot } = useSlots();
   const api = useApi();
-  const blockDefinitions = extractBlockDefinitions(children, false);
+  const blockDefinitions = extractBlockDefinitions(children, { recurse: false });
   const { data: project } = useProject();
 
   const [createSlot, { isLoading }] = useMutation(async (type: string) => {

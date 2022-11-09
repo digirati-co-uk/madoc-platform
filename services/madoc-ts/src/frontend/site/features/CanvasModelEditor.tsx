@@ -1,5 +1,5 @@
 import React from 'react';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { useLocalStorage } from '../../shared/hooks/use-local-storage';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { useUser } from '../../shared/hooks/use-site';

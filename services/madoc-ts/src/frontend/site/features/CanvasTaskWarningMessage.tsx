@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { WarningMessage } from '../../shared/callouts/WarningMessage';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useProjectStatus } from '../hooks/use-project-status';

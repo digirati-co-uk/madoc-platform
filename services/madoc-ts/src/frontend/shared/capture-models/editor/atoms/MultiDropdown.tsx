@@ -1,5 +1,4 @@
-import { useCallback, useMemo } from 'react';
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Select } from 'react-functional-select';
 import { DropdownOption, renderOptionLabel } from './Dropdown';
 

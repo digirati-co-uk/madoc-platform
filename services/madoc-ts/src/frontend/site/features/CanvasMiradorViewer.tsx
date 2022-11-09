@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { useApi } from '../../shared/hooks/use-api';
 import { useData, usePrefetchData } from '../../shared/hooks/use-data';
 import { ViewManifestMirador } from '../components';

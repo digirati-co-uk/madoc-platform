@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
 import { SearchIcon } from '../icons/SearchIcon';
 import { GlobalSearchButton, GlobalSearchContainer, GlobalSearchForm, GlobalSearchInput } from '../layout/SiteHeader';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { CanvasAtlasViewer } from './CanvasAtlasViewer';
 import { CanvasMiradorViewer } from './CanvasMiradorViewer';
 import { CanvasUniversalViewer } from './CanvasUniversalViewer';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { SimpleAtlasViewer } from '../../shared/components/SimpleAtlasViewer';
 import { useCanvasSearch } from '../../shared/hooks/use-canvas-search';
 import { useRouteContext } from '../hooks/use-route-context';
