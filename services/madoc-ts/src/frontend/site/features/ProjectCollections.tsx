@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMatch, useLocation } from 'react-router-dom';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { Button } from '../../shared/navigation/Button';
 import { Heading3 } from '../../shared/typography/Heading3';
 import { ImageGrid } from '../../shared/atoms/ImageGrid';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { Button } from '../../shared/navigation/Button';
 import { ErrorMessage } from '../../shared/callouts/ErrorMessage';
 import { InfoMessage } from '../../shared/callouts/InfoMessage';

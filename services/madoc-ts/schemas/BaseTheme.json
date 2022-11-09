@@ -64,10 +64,17 @@
           "enum": [
             "default"
           ]
+        },
+        "fonts": {
+          "type": "string",
+          "enum": [
+            "default"
+          ]
         }
       },
       "required": [
         "accent",
+        "fonts",
         "footer",
         "global",
         "header",
@@ -114,6 +121,9 @@
         },
         "global": {
           "$ref": "#/definitions/2c90d36b20396f72f9bf51b77fb57411"
+        },
+        "fonts": {
+          "$ref": "#/definitions/eea4564a3c2bbe3be73ec4cdbd482dd0"
         }
       }
     },
@@ -225,6 +235,17 @@
       "type": "object",
       "properties": {
         "maxWidth": {
+          "type": [
+            "string",
+            "object"
+          ]
+        }
+      }
+    },
+    "eea4564a3c2bbe3be73ec4cdbd482dd0": {
+      "type": "object",
+      "properties": {
+        "fontFamily": {
           "type": [
             "string",
             "object"

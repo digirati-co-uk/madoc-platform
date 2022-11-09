@@ -5,6 +5,7 @@ import { captureModelShorthand } from '../../../frontend/shared/capture-models/h
 import { useApi } from '../../../frontend/shared/hooks/use-api';
 import { Button } from '../../../frontend/shared/navigation/Button';
 import { ModalFooter } from '../../../frontend/shared/layout/Modal';
+import { blockEditorFor } from '../block-editor-for';
 import { PageBlockEditor, ReactPageBlockDefinition } from '../extension';
 import { StaticMarkdownBlock } from './static-markdown-block';
 

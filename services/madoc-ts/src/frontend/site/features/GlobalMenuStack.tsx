@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { SiteDetails, SiteMenuContainer, SiteTitle } from '../../shared/layout/SiteHeader';
 import { useSite } from '../../shared/hooks/use-site';
 import { HrefLink } from '../../shared/utility/href-link';

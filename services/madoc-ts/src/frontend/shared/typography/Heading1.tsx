@@ -1,7 +1,7 @@
 import React, { ComponentPropsWithRef, forwardRef } from 'react';
 import { Helmet as _Helmet } from 'react-helmet';
 import styled, { css } from 'styled-components';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { convertComponentToText } from '../../../utility/convert-component-to-text';
 import { MaxWidthBackground, MaxWidthBackgroundContainer } from '../atoms/MaxWidthBackground';
 import { useAccessibleColor } from '../hooks/use-accessible-color';

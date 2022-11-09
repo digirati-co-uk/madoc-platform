@@ -1,5 +1,5 @@
 import React from 'react';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { CanvasFull } from '../../../types/canvas-full';
 import { CanvasSnippet } from './CanvasSnippet';
 import { useRouteContext } from '../../site/hooks/use-route-context';
@@ -83,7 +83,8 @@ export function FeaturedItem(props: FeaturedItemProps) {
           {items.map(item => {
             return (
               item && (
-                <Link key={item.id}
+                <Link
+                  key={item.id}
                   to={createLink({
                     canvasId: item.id,
                     manifestId: manifestId,

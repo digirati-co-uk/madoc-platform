@@ -1,4 +1,4 @@
-import {expandModelFields, mergeFlatKeys, structureToFlatStructureDefinition} from '../../core/structure-editor';
+import { expandModelFields, mergeFlatKeys, structureToFlatStructureDefinition } from '../../core/structure-editor';
 import { List, ListContent, ListHeader, ListItem } from '../../atoms/List';
 import { Box } from '@styled-icons/entypo/Box';
 import { Edit } from '@styled-icons/entypo/Edit';

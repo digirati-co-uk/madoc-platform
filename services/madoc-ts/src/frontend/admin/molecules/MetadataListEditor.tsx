@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { InputContainer, InputLabel } from '../../shared/form/Input';
-import { MetadataDiff } from "../../shared/hooks/use-metadata-editor";
+import { MetadataDiff } from '../../shared/hooks/use-metadata-editor';
 import { useDefaultLocale, useSupportedLocales, useUser } from '../../shared/hooks/use-site';
 import { MetadataEditor, MetadataEditorProps } from './MetadataEditor';
 import { useMutation } from 'react-query';

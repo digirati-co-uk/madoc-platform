@@ -1,4 +1,4 @@
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import React from 'react';
 import styled from 'styled-components';
 import { Network } from '@styled-icons/entypo/Network';

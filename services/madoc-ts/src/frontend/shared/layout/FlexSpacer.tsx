@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 
 export const FlexSpacer = styled.div<{ size?: string; divider?: boolean }>`
   flex: 1 1 0;

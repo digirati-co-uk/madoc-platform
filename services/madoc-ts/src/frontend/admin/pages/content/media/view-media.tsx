@@ -43,7 +43,7 @@ const AtlasViewerImage: React.FC<{ media: MediaItem }> = ({ media }) => {
           '@id': `https://madoc.io/${media.id}/annotation`,
           '@type': 'oa:Annotation',
           motivation: 'sc:painting',
-          on: 'https://view.nls.uk/iiif/7446/74464117/canvas/3',
+          on: `https://madoc.io/${media.id}`,
           resource: {
             '@id': media.publicLink,
             '@type': 'dctypes:Image',

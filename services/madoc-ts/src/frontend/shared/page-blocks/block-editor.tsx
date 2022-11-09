@@ -20,7 +20,7 @@ import { createRevisionFromDocument } from '../utility/create-revision-from-docu
 import { ErrorBoundary } from '../utility/error-boundary';
 import { CustomEditorTypes } from './custom-editor-types';
 import { RenderBlock } from './render-block';
-import {BlockCreatorPreview} from "./AddBlock";
+import { BlockCreatorPreview } from './AddBlock';
 
 const EditBlock = styled(TinyButton)`
   opacity: 0;

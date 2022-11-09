@@ -1,6 +1,6 @@
 import React, { DetailedHTMLProps } from 'react';
 import { Helmet as _Helmet } from 'react-helmet';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 
 const Helmet: any = _Helmet;
 

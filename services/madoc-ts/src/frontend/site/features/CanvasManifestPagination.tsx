@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { CanvasNavigationMinimalist } from '../../shared/components/CanvasNavigationMinimalist';
 import { useCanvasSearch } from '../../shared/hooks/use-canvas-search';
 import { usePrefetchData } from '../../shared/hooks/use-data';

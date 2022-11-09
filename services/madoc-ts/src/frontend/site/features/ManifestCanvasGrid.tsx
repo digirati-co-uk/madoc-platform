@@ -2,7 +2,7 @@ import { InternationalString } from '@iiif/presentation-3';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { CanvasStatus } from '../../shared/atoms/CanvasStatus';
 import { ModalButton } from '../../shared/components/Modal';
 import { StandaloneCanvasViewer } from '../../shared/components/StandaloneCanvasViewer';

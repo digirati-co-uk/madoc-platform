@@ -204,6 +204,9 @@
         },
         "disableNextCanvas": {
           "type": "boolean"
+        },
+        "enableRotation": {
+          "type": "boolean"
         }
       }
     },
