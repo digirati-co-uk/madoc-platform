@@ -4,11 +4,13 @@ import { useProject } from '../hooks/use-project';
 import { useApiTaskSearch } from '../../shared/hooks/use-api-task-search';
 import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
 import styled from 'styled-components';
+import {useTranslation} from "react-i18next";
 
 export const ContributersWrapper = styled.div`
-  p {
+  h3 {
     text-transform: uppercase;
     font-size: 14px;
+    font-weight: 500;
     margin: 8px 0;
     color: inherit;
   }
@@ -32,6 +34,7 @@ interface ProjectContributors {
 }
 
 export function ProjectContributors(props: ProjectContributors) {
+  const { t } = useTranslation();
   const { data: project } = useProject();
   const { data } = useApiTaskSearch<CrowdsourcingTask>({
     all: true,
@@ -47,7 +50,7 @@ export function ProjectContributors(props: ProjectContributors) {
 
   return (
     <ContributersWrapper>
-      <p>contributions by</p>
+      <h3>{t('contributions by')}</h3>
       <ContributersList>
         {contributors.map((user, i) => (
           <Pill key={i} style={{ color: props.textColor, backgroundColor: props.background }}>
