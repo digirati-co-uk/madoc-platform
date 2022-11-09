@@ -1,0 +1,34 @@
+{
+  "$schema": "https://raw.githubusercontent.com/digirati-co-uk/madoc-platform/main/services/madoc-ts/schemas/BaseTheme.json",
+  "name": "pls work",
+  "version": "1.0.0",
+  "description": "pls pls work",
+  "thumbnail": "https://user-images.githubusercontent.com/8266711/118507448-25750b80-b726-11eb-9f87-d96f43c0a894.png",
+  "theme": {
+    "custom": {
+      "header": {
+        "headerBackground": "#002d4b",
+        "headerText": "white"
+      },
+      "footer": {
+        "background": "#002d4b",
+        "color": "#B1E0FF",
+        "containerBackground": "#002d4b"
+      },
+       "fonts": {
+         "fontFamily": "'IBM Plex Sans', sans-serif"
+       },
+      "buttons": {
+        "color": "#FF4154",
+        "borderRadius": "30px"
+      }
+    },
+    "header": "dark",
+    "fonts": "default",
+    "buttons": "default",
+    "accent": "default",
+    "siteContainer": "default",
+    "footer": "dark",
+    "global": "default"
+  }
+}
