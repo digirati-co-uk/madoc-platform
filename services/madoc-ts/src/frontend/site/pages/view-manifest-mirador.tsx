@@ -1,10 +1,11 @@
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { BrowserComponent } from '../../shared/utility/browser-component';
 import { Mirador } from '../../shared/viewers/mirador.lazy';
 import { useApi } from '../../shared/hooks/use-api';
 import React, { useMemo } from 'react';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { useRouteContext } from '../hooks/use-route-context';
+import { ErrorBoundary } from '../../shared/utility/error-boundary';
 
 export const ViewManifestMirador: React.FC<{
   canvasUrl?: string;
@@ -49,14 +50,14 @@ export const ViewManifestMirador: React.FC<{
         },
       },
     };
-  }, [manifestId, slug]);
+  }, [canvasUrl, manifestId, slug]);
 
   if (api.getIsServer() || !manifestId) {
     return null;
   }
 
   return (
-    <div>
+    <ErrorBoundary>
       {hideBreadcrumbs ? null : <DisplayBreadcrumbs />}
       <div style={{ position: 'relative', height: '80vh' }}>
         {hideNavigation ? <style>{`.mirador-osd-navigation { display: none }`}</style> : null}
@@ -70,7 +71,7 @@ export const ViewManifestMirador: React.FC<{
           />
         </BrowserComponent>
       </div>
-    </div>
+    </ErrorBoundary>
   );
 };
 

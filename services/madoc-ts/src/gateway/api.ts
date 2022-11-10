@@ -14,7 +14,7 @@ import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.e
 import { plainTextSource } from '../extensions/capture-models/DynamicDataSources/sources/Plaintext.source';
 import { ExtensionManager } from '../extensions/extension-manager';
 import { NotificationExtension } from '../extensions/notifications/extension';
-import { defaultPageBlockDefinitions } from '../extensions/page-blocks/default-definitions';
+import { getDefaultPageBlockDefinitions } from '../extensions/page-blocks/default-definitions';
 import { PageBlockExtension } from '../extensions/page-blocks/extension';
 import { MediaExtension } from '../extensions/media/extension';
 import { ProjectTemplateExtension } from '../extensions/projects/extension';
@@ -144,7 +144,7 @@ export class ApiClient {
       return;
     }
 
-    this.pageBlocks = new PageBlockExtension(this, defaultPageBlockDefinitions);
+    this.pageBlocks = new PageBlockExtension(this, getDefaultPageBlockDefinitions());
     this.media = new MediaExtension(this);
     this.system = new SystemExtension(this);
     this.themes = new ThemeExtension(this);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { CanvasStatus } from '../../shared/atoms/CanvasStatus';
 import { Heading3 } from '../../shared/typography/Heading3';
 import { SingleLineHeading5, Subheading5 } from '../../shared/typography/Heading5';

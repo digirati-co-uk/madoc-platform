@@ -22,6 +22,7 @@ export const ImageStripBox = styled.div<{
 
   &:hover {
     background: rgba(0, 0, 0, 0.1);
+    filter: brightness(90%);
     cursor: pointer;
   }
 `;
@@ -32,6 +33,7 @@ export const ImageStrip = styled.div`
           auto-fill,
           200px
   );
+  grid-row-gap: 1em;
   overflow-x: auto;
   text-decoration: none;
   justify-content: space-evenly;

@@ -3,7 +3,7 @@ import React, { useMemo, useContext } from 'react';
 import { Helmet as _Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { useCurrentAdminPages } from '../../site/hooks/use-current-admin-pages';
 import { useSite } from '../hooks/use-site';
 import { ErrorBoundary } from '../utility/error-boundary';

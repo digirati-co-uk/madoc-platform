@@ -190,7 +190,9 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
               return;
             }
 
-            const canAddAnnotation = selectors ? !!(field.selector && field.selector.state) : true;
+            const canAddAnnotation = selectors
+              ? !!(field.selector && field.selector.state && typeof field.value === 'string')
+              : true;
             if (canAddAnnotation && field.value) {
               annotations.push(
                 format === 'open-annotation'

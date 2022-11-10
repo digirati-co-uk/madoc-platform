@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { parseUrn } from '../../../utility/parse-urn';
 import { SmallButton } from '../../shared/navigation/Button';
 import { CSSThirdGrid, GridContainer } from '../../shared/layout/Grid';

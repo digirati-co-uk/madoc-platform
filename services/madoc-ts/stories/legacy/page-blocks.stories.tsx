@@ -1,7 +1,7 @@
 import { color, select, text } from '@storybook/addon-knobs';
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { defaultPageBlockDefinitions } from '../../src/extensions/page-blocks/default-definitions';
+import { getDefaultPageBlockDefinitions } from '../../src/extensions/page-blocks/default-definitions';
 import { PageBlockDefinition } from '../../src/extensions/page-blocks/extension';
 import {
   AddBlockContainer,
@@ -158,7 +158,7 @@ export const Surface_Heading1 = () => {
 };
 
 const blocks = [
-  ...defaultPageBlockDefinitions,
+  ...getDefaultPageBlockDefinitions(),
   Heading1[Symbol.for('slot-model')],
   {
     ...(Heading2[Symbol.for('slot-model') as any] as any),

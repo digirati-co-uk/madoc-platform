@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { Heading3 } from '../../shared/typography/Heading3';
 import { LockIcon } from '../../shared/icons/LockIcon';
 import { usePreventCanvasNavigation } from './PreventUsersNavigatingCanvases';

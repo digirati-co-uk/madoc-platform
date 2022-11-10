@@ -1,5 +1,5 @@
 import React from 'react';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { Pagination } from '../../shared/components/Pagination';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { useManifest } from '../hooks/use-manifest';

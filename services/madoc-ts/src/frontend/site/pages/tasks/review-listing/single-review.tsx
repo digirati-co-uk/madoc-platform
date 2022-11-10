@@ -63,7 +63,7 @@ function ViewSingleReview({
           </div>
         </div>
 
-        <div style={{ width: 300 }}>
+        <div style={{ maxWidth: 300 }}>
           {review && !wasRejected ? (
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               {canvasLink ? (

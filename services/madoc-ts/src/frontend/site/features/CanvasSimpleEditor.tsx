@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { PARAGRAPHS_PROFILE } from '../../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
 import { slotConfig } from '../../../extensions/capture-models/Paragraphs/Paragraphs.slots';
 import { ViewReadOnlyAnnotation } from '../../shared/atlas/ViewReadOnlyAnnotation';
+import { InfoMessage } from '../../shared/callouts/InfoMessage';
 import { SubmitWithoutPreview } from '../../shared/capture-models/new/components/SubmitWithoutPreview';
 import { RevisionRequest } from '../../shared/capture-models/types/revision-request';
 import { useBrowserLayoutEffect } from '../../shared/hooks/use-browser-layout-effect';
@@ -12,7 +13,8 @@ import { useReadOnlyAnnotations } from '../../shared/hooks/use-read-only-annotat
 import { HomeIcon } from '../../shared/icons/HomeIcon';
 import { MinusIcon } from '../../shared/icons/MinusIcon';
 import { PlusIcon } from '../../shared/icons/PlusIcon';
-import { ButtonIcon } from '../../shared/navigation/Button';
+import { RotateIcon } from '../../shared/icons/RotateIcon';
+import { Button, ButtonIcon } from '../../shared/navigation/Button';
 import { EmptyState } from '../../shared/layout/EmptyState';
 import { SmallToast } from '../../shared/callouts/SmallToast';
 import { TickIcon } from '../../shared/icons/TickIcon';
@@ -32,6 +34,7 @@ import { CanvasVaultContext } from '../../shared/components/CanvasVaultContext';
 import { useApi } from '../../shared/hooks/use-api';
 import { useCurrentUser } from '../../shared/hooks/use-current-user';
 import { useLoadedCaptureModel } from '../../shared/hooks/use-loaded-capture-model';
+import { BrowserComponent } from '../../shared/utility/browser-component';
 import { isEditingAnotherUsersRevision } from '../../shared/utility/is-editing-another-users-revision';
 import { useCanvasModel } from '../hooks/use-canvas-model';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
@@ -51,6 +54,7 @@ import {
   CanvasViewerGridContent,
   CanvasViewerGridSidebar,
 } from './CanvasViewerGrid';
+import { OpenSeadragonViewer } from './OpenSeadragonViewer.lazy';
 import { useSiteConfiguration } from './SiteConfigurationContext';
 import { TranscriberModeWorkflowBar } from './TranscriberModeWorkflowBar';
 import { useModelPageConfiguration } from '../hooks/use-model-page-configuration';
@@ -72,11 +76,13 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
     disableSaveForLater = false,
     disablePreview = false,
     disableNextCanvas = false,
+    enableRotation = false,
   } = useModelPageConfiguration();
   const mode = useContributionMode();
   const isVertical = config.project.defaultEditorOrientation === 'vertical';
   const api = useApi();
   const runtime = useRef<Runtime>();
+  const osd = useRef<any>();
   const gridRef = useRef<any>();
   const [height, setHeight] = useState(600);
   const [showPanWarning, setShowPanWarning] = useLocalStorage('pan-warning', false);
@@ -84,6 +90,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
   const [postSubmissionMessage, setPostSubmissionMessage] = useState(false);
   const readOnlyAnnotations = useReadOnlyAnnotations(true);
   const [invalidateKey, invalidate] = useReducer(i => i + 1, 0);
+  const [isOSD, setIsOSD] = useState(false);
 
   useEffect(() => {
     setPostSubmission(false);
@@ -116,17 +123,33 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
     if (runtime.current) {
       runtime.current.world.goHome();
     }
+    if (osd.current) {
+      osd.current.goHome();
+    }
   };
 
   const zoomIn = () => {
     if (runtime.current) {
       runtime.current.world.zoomIn();
     }
+    if (osd.current) {
+      osd.current.zoomIn();
+    }
   };
 
   const zoomOut = () => {
     if (runtime.current) {
       runtime.current.world.zoomOut();
+    }
+    if (osd.current) {
+      osd.current.zoomOut();
+    }
+  };
+
+  const rotate = () => {
+    setIsOSD(true);
+    if (osd.current) {
+      osd.current.rotate();
     }
   };
 
@@ -218,24 +241,42 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
 
         <CanvasViewer>
           <CanvasHighlightedRegions />
-
           <CanvasViewerGrid $vertical={isVertical} ref={gridRef}>
             <CanvasViewerGridContent $vertical={isVertical}>
-              <EditorContentViewer
-                height={height}
-                canvasId={canvasId}
-                onCreated={rt => {
-                  return ((runtime as any).current = rt.runtime);
-                }}
-                onPanInSketchMode={onPanInSketchMode}
-              >
-                {readOnlyAnnotations.map(anno => (
-                  <ViewReadOnlyAnnotation key={anno.id} {...anno} />
-                ))}
-              </EditorContentViewer>
+              {isOSD ? (
+                <>
+                  <InfoMessage style={{ lineHeight: '3.4em' }}>
+                    {t('You cannot edit annotations if you are rotating')}
+                    <Button style={{ margin: '0.8em' }} onClick={() => setIsOSD(false)}>
+                      Reset
+                    </Button>
+                  </InfoMessage>
+                  <BrowserComponent fallback={null}>
+                    <OpenSeadragonViewer ref={osd} />
+                  </BrowserComponent>
+                </>
+              ) : (
+                <EditorContentViewer
+                  height={height}
+                  canvasId={canvasId}
+                  onCreated={rt => {
+                    return ((runtime as any).current = rt.runtime);
+                  }}
+                  onPanInSketchMode={onPanInSketchMode}
+                >
+                  {readOnlyAnnotations.map(anno => (
+                    <ViewReadOnlyAnnotation key={anno.id} {...anno} />
+                  ))}
+                </EditorContentViewer>
+              )}
 
               {hideViewerControls ? null : (
                 <CanvasViewerControls>
+                  {enableRotation ? (
+                    <CanvasViewerButton onClick={rotate}>
+                      <RotateIcon title={t('atlas__rotate', { defaultValue: 'Rotate' })} />
+                    </CanvasViewerButton>
+                  ) : null}
                   <CanvasViewerButton onClick={goHome}>
                     <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
                   </CanvasViewerButton>

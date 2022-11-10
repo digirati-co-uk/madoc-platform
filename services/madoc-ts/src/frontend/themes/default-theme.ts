@@ -6,4 +6,5 @@ export const defaultTheme: MadocTheme = {
   siteContainer: 'default',
   footer: 'light',
   global: 'default',
+  fonts: 'default',
 };

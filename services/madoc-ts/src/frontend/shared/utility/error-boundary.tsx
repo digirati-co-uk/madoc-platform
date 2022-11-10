@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { ErrorPage } from '../components/NotFoundPage';
 
-type ErrorBoundaryProps = { onError?: (error: Error) => any };
+type ErrorBoundaryProps = { onError?: (error: Error, reset: () => void) => any };
 
 export class ErrorBoundary extends Component<ErrorBoundaryProps, any> {
   state: { didError: boolean; error?: Error } = { didError: false, error: undefined };
@@ -23,7 +23,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, any> {
         return <ErrorPage error={this.state.error} resetError={this.resetError} />;
       }
 
-      return this.props.onError(this.state.error as any);
+      return this.props.onError(this.state.error as any, this.resetError);
     }
 
     return this.props.children;

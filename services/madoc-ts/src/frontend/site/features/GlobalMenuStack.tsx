@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { SiteDetails, SiteMenuContainer, SiteTitle } from '../../shared/layout/SiteHeader';
 import { useSite } from '../../shared/hooks/use-site';
 import { HrefLink } from '../../shared/utility/href-link';
@@ -42,15 +42,16 @@ export const GlobalMenuStack: React.FC<{
     fullWidth?: boolean;
   };
   hideSiteTitle?: boolean;
+  showHomepageMenu?: boolean;
   maxWidth?: number;
-}> = ({ logo, hideSiteTitle, maxWidth, logoOptions = {}, menuOptions = {} }) => {
+}> = ({ logo, hideSiteTitle, maxWidth, logoOptions = {}, menuOptions = {}, showHomepageMenu }) => {
   const site = useSite();
   const { project } = useSiteConfiguration();
   const showSiteTitle = typeof hideSiteTitle === 'undefined' ? !project.headerOptions?.hideSiteTitle : !hideSiteTitle;
   const { padding = false, margin = false } = logoOptions;
 
   return (
-    <SiteDetails>
+    <SiteDetails data-center={!logo && !showSiteTitle}>
       {logo ? (
         <HrefLink href="/">
           <SiteLogoContainer $padding={padding} $margin={margin} $maxWidth={maxWidth}>
@@ -66,7 +67,7 @@ export const GlobalMenuStack: React.FC<{
         </SiteTitle>
       )}
       <SiteMenuContainer data-full-width={menuOptions.fullWidth}>
-        <GlobalSiteNavigation />
+        <GlobalSiteNavigation showHomepageMenu={showHomepageMenu} />
       </SiteMenuContainer>
     </SiteDetails>
   );
@@ -78,6 +79,7 @@ blockEditorFor(GlobalMenuStack, {
   defaultProps: {
     logo: null,
     hideSiteTitle: false,
+    showHomepageMenu: false,
     logoOptions: {
       padding: false,
       margin: false,
@@ -132,6 +134,11 @@ blockEditorFor(GlobalMenuStack, {
       label: 'Hide site title',
       type: 'checkbox-field',
       inlineLabel: 'Hide site title',
+    },
+    showHomepageMenu: {
+      label: 'Homepage menu',
+      type: 'checkbox-field',
+      inlineLabel: 'Show home as menu item',
     },
   },
   mapToProps(props) {

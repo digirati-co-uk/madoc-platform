@@ -19,7 +19,7 @@ export function captureModelFieldToW3CAnnotation(
     motivation: 'painting',
     body: {
       type: 'TextualBody',
-      value: value,
+      value: typeof value === 'string' ? value : '',
     },
     'madoc:id': madocCanvasId,
     'madoc:selectorId': selector?.id,
@@ -48,7 +48,7 @@ export function captureModelFieldToOpenAnnotation(
     motivation: 'sc:painting',
     resource: {
       '@type': 'cnt:ContentAsText',
-      chars: value,
+      chars: typeof value === 'string' ? value : '',
     },
     'madoc:id': madocCanvasId,
     'madoc:selectorId': selector?.id,

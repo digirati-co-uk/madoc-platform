@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { useAccessibleColor } from '../hooks/use-accessible-color';
 import { useGoogleFonts } from '../hooks/use-google-fonts';
 
@@ -84,11 +84,12 @@ export const Surface: React.FC<SurfaceProps> = ({
   useGoogleFonts(font);
 
   const accessibleTextColor = useAccessibleColor(background || '#fff');
+  const color = textColor ? textColor : accessibleTextColor;
 
   return (
     <SurfaceStyled
       id={id}
-      $color={accessibleTextColor}
+      $color={color}
       $background={background}
       $textAlign={textAlign}
       $font={font}

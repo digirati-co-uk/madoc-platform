@@ -1,7 +1,7 @@
 import React, { ComponentPropsWithRef, forwardRef } from 'react';
 import { Helmet as _Helmet } from 'react-helmet';
 import styled, { css } from 'styled-components';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { convertComponentToText } from '../../../utility/convert-component-to-text';
 import { MaxWidthBackground, MaxWidthBackgroundContainer } from '../atoms/MaxWidthBackground';
 import { useAccessibleColor } from '../hooks/use-accessible-color';
@@ -130,7 +130,7 @@ export const Heading1: React.FC<{
 ) {
   const site = useSite();
   const _color = useAccessibleColor(background);
-  const color = backgroundImage ? '#fff' : _color;
+  const color = imageStyle === 'bgf' ? '#fff' : _color;
   const component = (
     <>
       {typeof props.children === 'string' && site ? (
@@ -235,7 +235,7 @@ blockEditorFor(Heading1, {
     textAlign: 'left',
     fontSize: 'md',
     backgroundImage: null,
-    imageStyle: '',
+    imageStyle: 'bgf',
   },
   svgIcon: props => {
     return (
@@ -271,7 +271,6 @@ export const Subheading1 = styled.p`
   font-size: 1em;
   opacity: 0.8;
   margin-bottom: 1em;
-  max-width: 50em;
   & a {
     color: #5071f4;
     font-size: 0.85em;

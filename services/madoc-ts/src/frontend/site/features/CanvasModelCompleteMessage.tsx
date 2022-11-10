@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { InfoMessage } from '../../shared/callouts/InfoMessage';
 import { useUser } from '../../shared/hooks/use-site';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
@@ -12,7 +12,7 @@ export const CanvasModelCompleteMessage: React.FC = () => {
   const { projectId } = useRouteContext();
   const { isManifestComplete, hasExpired } = useManifestTask();
   const user = useUser();
-  const { canUserSubmit, isLoading: isLoadingTasks, completedAndHide } = useCanvasUserTasks();
+  const { canUserSubmit, isLoading: isLoadingTasks, completedAndHide, completed } = useCanvasUserTasks();
 
   const { t } = useTranslation();
 
@@ -36,7 +36,7 @@ export const CanvasModelCompleteMessage: React.FC = () => {
           ? t('Your submission has expired')
           : isManifestComplete
           ? t('This manifest is complete')
-          : completedAndHide
+          : completed
           ? t('This image is complete')
           : t('Maximum number of contributors reached')}
       </InfoMessage>

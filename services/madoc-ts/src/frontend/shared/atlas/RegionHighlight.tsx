@@ -31,7 +31,6 @@ export function RegionHighlight({
   interactive?: boolean;
   style?: BoxStyle;
 }) {
-
   const saveCallback = useCallback(
     (bounds: any) => {
       console.trace();

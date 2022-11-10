@@ -61,6 +61,8 @@ export function useCanvasUserTasks() {
       task => task.type === 'crowdsourcing-task' && task.status !== -1
     );
     const completedAndHide = !config.project.allowSubmissionsWhenCanvasComplete && canvasTask?.canvasTask?.status === 3;
+    const completed = canvasTask?.canvasTask?.status === 3;
+
     const canClaimCanvas =
       user && (config.project.claimGranularity ? config.project.claimGranularity === 'canvas' : true);
     const canUserSubmit = user && !!canvasTask?.canUserSubmit;
@@ -84,6 +86,7 @@ export function useCanvasUserTasks() {
       isManifestComplete: canvasTask?.isManifestComplete,
       allTasksDone,
       completedAndHide,
+      completed,
       canClaimCanvas,
       canUserSubmit,
       canContribute,
