@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import {BtnColor, buttonColor} from "../variables";
 
 export const OuterLayoutContainer = styled.div`
   display: flex;
@@ -37,12 +38,13 @@ export const NavIconContainer = styled.div<{ $active?: boolean; $disabled?: bool
   ${props =>
     props.$active &&
     css`
-      background: #4a64e1;
+      background: ${buttonColor};
       svg {
         fill: #fff;
       }
       &:hover {
-        background: #4a64e1;
+        background-color: ${buttonColor};
+        filter: brightness(90%);
       }
     `}
 

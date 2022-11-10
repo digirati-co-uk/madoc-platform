@@ -1,33 +1,35 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { HrefLink } from '../utility/href-link';
-import { buttonRadius, buttonColor } from '../variables';
+import { buttonRadius, buttonColor, BtnColor } from '../variables';
+
+const darkenColor = (value: number) => css`
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, ${value}) 0%, rgba(0, 0, 0, ${value}) 100%);
+`;
 
 const primary = css`
-  background: #4265e9;
-  color: #fff;
-  border: 1px solid #4265e9;
+  background-color: ${buttonColor};
+  color: ${BtnColor};
+  border: 1px solid ${buttonColor};
+  z-index: 1;
+
   &:active {
-    box-shadow: inset 0 2px 8px 0 rgba(39, 75, 155, 0.8);
-  }
-  &:link,
-  &:visited {
-    color: #fff;
+    box-shadow: inset 0 2px 8px 0 rgba(0, 0, 0, 0.15);
   }
   &:hover {
-    background: #5371e9;
-    border-color: #5371e9;
+    ${darkenColor(0.2)};
   }
+
   &:focus-visible {
     box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.8);
   }
+
   &:disabled {
     opacity: 0.7;
     cursor: not-allowed;
 
     &:hover {
-      background: #4265e9;
-      border-color: #4265e9;
+      ${darkenColor(0.2)}
       color: #fff;
     }
   }
@@ -181,59 +183,49 @@ export const Button = styled.button<{
   vertical-align: top;
   transition: color 0.1s, background-color 0.1s, border-color 0.1s;
   white-space: nowrap;
-  border: 1px solid;
-
+  border: 1px solid ${buttonColor};
+  z-index: 0;
+  
   ${props =>
     props.$link &&
     css`
       border-color: transparent;
     `}
-  
   ${props =>
     props.$large &&
     css`
       font-size: 1.15em;
       padding: 0.6em 1.2em;
     `}
-
   &:active {
-    box-shadow: inset 0 2px 8px 0 rgba(39, 75, 155, 0.8);
+    box-shadow: inset 0 2px 8px 0 rgba(0, 0, 0, 0.15);
   }
-
-  //&:link,
-  //&:visited {
-  //  color: #3579f6;
-  //}
-
+  
   &:hover {
     background: ${buttonColor};
     border-color: ${buttonColor};
-    color: #fff;
+    color: ${BtnColor};
   }
-  
+
   &:focus {
     outline: none;
-    color: #fff;
-    background: #4265e9;
-    border-color: #4265e9;
+    color: ${BtnColor};
+    background: ${buttonColor};
+    border-color: ${buttonColor};
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.8);
   }
-  
+
   &:focus:hover {
-    border-color: #4265e9;
+    ${darkenColor(0.1)};
   }
 
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
-
-    &:hover {
-      color: #4265e9;
-      background: #fff;
-      border-color: #4265e9;
-    }
   }
-    ${ButtonIcon} svg {
-      fill: ${buttonColor};
+
+  ${ButtonIcon} svg {
+    fill: ${buttonColor};
   }
 
   &:hover ${ButtonIcon} svg,
@@ -250,7 +242,7 @@ export const Button = styled.button<{
       height: 2.7em;
       border-radius: 0 3px 3px 0;
     `}
-  
+
   ${props =>
     props.$disabled &&
     css`
@@ -265,8 +257,8 @@ export const RoundedButton = styled.a<{ disabled?: boolean }>`
   font-size: 16px;
   line-height: 22px;
   padding: 3px 10px;
-  background: #ffffff;
-  // color: ${buttonColor};
+  background: ${BtnColor};
+  color: ${buttonColor};
   border: 1px solid #dee2e6;
   text-decoration: none;
   border-radius: 4px;
@@ -275,12 +267,8 @@ export const RoundedButton = styled.a<{ disabled?: boolean }>`
     !props.disabled &&
     css`
       &:link,
-      //&:visited {
-      //  color: #007bff;
-      //}
       &:hover {
-        background: #ffffff;
-        border-color: #dee2e6;
+        ${darkenColor(0.1)};
       }
       &:focus {
         outline: 1px solid #dee2e6;
@@ -312,15 +300,12 @@ export const MediumRoundedButton = styled.a`
   font-size: 16px;
   line-height: 22px;
   background: #ffffff;
-  // color: ${buttonColor};
-  // border: 1px solid ${buttonColor};
+  color: ${buttonColor};
+  border: 1px solid ${buttonColor};
   text-decoration: none;
   padding: 10px;
 
   &:link,
-  //&:visited {
-  //  color: #007bff;
-  //}
   &:hover {
     background: #ffffff;
     border-color: #dee2e6;
@@ -332,15 +317,14 @@ export const MediumRoundedButton = styled.a`
     opacity: 0.7;
     cursor: not-allowed;
     &:hover {
-      background: #4265e9;
-      border-color: #dee2e6;
+      cursor: not-allowed;
     }
   }
   &:last-of-type {
-    border-radius: 0px 4px 4px 0px;
+    border-radius: 0 4px 4px 0;
   }
   &:first-of-type {
-    border-radius: 4px 0px 0px 4px;
+    border-radius: 4px 0 0 4px;
   }
 `;
 
@@ -353,11 +337,16 @@ export const LinkButton = styled.button<{ $inherit?: boolean }>`
   margin: 0;
   padding: 0;
   font-size: inherit;
-  color: ${props => (props.$inherit ? 'inherit' : 'red')};
+  color: ${props => (props.$inherit ? 'pink' : buttonColor)};
   text-decoration: underline;
   cursor: pointer;
   &:hover {
-    color: ${props => (props.$inherit ? 'inherit' : '#42a0db')};
+    ${props =>
+      props.$inherit
+        ? css`
+            color: inherit;
+          `
+        : darkenColor(0.1)}
   }
 `;
 
@@ -406,7 +395,7 @@ export const RightButtonIconBox = styled.span<{ $checked?: boolean }>`
     top: 0;
     height: 24px;
     width: 24px;
-    // fill: ${buttonColor};
+    fill: ${buttonColor};
   }
 
   ${props =>

@@ -1,4 +1,12 @@
 import { themeVariable } from '../themes/helpers/themeVariable';
+import { useAccessibleColor } from './hooks/use-accessible-color';
+import { useSiteTheme } from './hooks/use-site';
+
+export const BtnColor = () => {
+  const siteTheme = useSiteTheme();
+  const color = siteTheme?.theme.custom.buttons.color;
+  return useAccessibleColor(color ? color : '#000000');
+};
 
 export const accent = themeVariable('accent', 'primary', {
   default: '#5b80b2',
@@ -16,13 +24,12 @@ export const globalFont = themeVariable('fonts', 'fontFamily', {
 });
 
 export const buttonRadius = themeVariable('buttons', 'borderRadius', {
-  default: '12px',
+  default: '3px',
 });
 
 export const buttonColor = themeVariable('buttons', 'color', {
-  default: '#bd11ee',
+  default: '#4265e9',
 });
-
 
 export const searchBorder = themeVariable('header', 'searchBorder', {
   default: '2px solid #c2c2c2',
