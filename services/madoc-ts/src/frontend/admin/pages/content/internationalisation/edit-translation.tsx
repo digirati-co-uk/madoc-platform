@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { Navigate, useParams } from 'react-router-dom';
 import * as locale from 'locale-codes';
 import { ExperimentalFeature } from '../../../../shared/components/ExperimentalFeature';
-import { Button } from '../../../../shared/navigation/Button';
+import { Button, ButtonRow } from '../../../../shared/navigation/Button';
 import { ProgressBar } from '../../../../shared/atoms/ProgressBar';
 import { TranslationInput } from '../../../../shared/atoms/TranslationInput';
 import { WidePage } from '../../../../shared/layout/WidePage';
@@ -39,6 +39,38 @@ export const EditTranslation: React.FC = () => {
     }
   });
 
+  const download = useCallback(() => {
+    if (data && data.content) {
+      const name = `madoc.json`;
+      const newFile = {
+        ...data.content,
+        ...modifiedData,
+      };
+      const keys = Object.keys(newFile).sort();
+
+      const element = document.createElement('a');
+      const encodedContent = encodeURIComponent(
+        JSON.stringify(
+          {
+            ...data.content,
+            ...modifiedData,
+          },
+          keys,
+          2
+        )
+      );
+      element.setAttribute('href', `data:application/json;charset=utf-8,${encodedContent}`);
+      element.setAttribute('download', name);
+
+      element.style.display = 'none';
+      document.body.appendChild(element);
+
+      element.click();
+
+      document.body.removeChild(element);
+    }
+  }, [data]);
+
   if (!localeData) {
     return <Navigate to={`/i18n`} />;
   }
@@ -70,6 +102,9 @@ export const EditTranslation: React.FC = () => {
       <WidePage>
         {namespace ? <ExperimentalFeature feature="Editing custom namespaces" discussion={567} /> : null}
         <h3>{t('Edit translation')}</h3>
+        <ButtonRow>
+          <Button onClick={download}>{t('Download JSON')}</Button>
+        </ButtonRow>
         {data ? (
           <>
             <ProgressBar.Container>
