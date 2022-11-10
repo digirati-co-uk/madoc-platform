@@ -31,7 +31,7 @@ export const BreadcrumbList = styled.div`
 `;
 
 export const BreadcrumbItem = styled.div<{ active?: boolean; $icon?: boolean; $color?: string; $activeColor?: string }>`
-  font-weight: bold;
+  font-weight: inherit;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
