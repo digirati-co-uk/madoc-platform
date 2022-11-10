@@ -26,10 +26,8 @@ export function ManifestCanvasGrid(props: {
   background?: string;
   popup?: boolean;
   list?: boolean;
-  font?: string;
   textColor?: string;
-  canvasBorder?: string;
-  padding?: string;
+  cardBorder?: string;
   imageStyle?: string;
 }) {
   const { data } = useManifest();
@@ -58,7 +56,7 @@ export function ManifestCanvasGrid(props: {
     return (
       <ImageStripBox
         data-view-list={props.list}
-        $border={props.canvasBorder}
+        $border={props.cardBorder}
         $color={props.textColor}
         $bgColor={props.background}
       >
@@ -125,7 +123,7 @@ blockEditorFor(ManifestCanvasGrid, {
     popup: false,
     list: false,
     textColor: '',
-    canvasBorder: '',
+    cardBorder: '',
     imageStyle: 'fit',
   },
   editor: {
@@ -133,7 +131,7 @@ blockEditorFor(ManifestCanvasGrid, {
     list: { type: 'checkbox-field', label: 'View', inlineLabel: 'Display as list' },
     background: { label: 'Card background color', type: 'color-field' },
     textColor: { label: 'Card text color', type: 'color-field' },
-    canvasBorder: { label: 'Card border', type: 'color-field' },
+    cardBorder: { label: 'Card border', type: 'color-field' },
     imageStyle: {
       label: 'Image Style',
       type: 'dropdown-field',
