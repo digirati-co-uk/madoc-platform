@@ -12,6 +12,7 @@ import { SingleLineHeading5 } from '../typography/Heading5';
 import { useTranslation } from 'react-i18next';
 import { SnippetContainer } from '../atoms/SnippetLarge';
 import { useRelativeLinks } from '../../site/hooks/use-relative-links';
+import { Carousel } from '../atoms/Carousel';
 
 const FeaturesContainer = styled.div`
   display: flex;
@@ -76,42 +77,45 @@ export function FeaturedItem(props: FeaturedItemProps) {
     return null;
   }
   if (!props.snippet) {
+    // @ts-ignore
     return (
       <>
         <h3 style={{ fontSize: '1.5em', color: 'inherit' }}>{props.header}</h3>
         <FeaturesContainer data-view-column={props.column} data-align={props.align}>
-          {items.map(item => {
-            return (
-              item && (
-                <Link
-                  key={item.id}
-                  to={createLink({
-                    canvasId: item.id,
-                    manifestId: manifestId,
-                  })}
-                >
-                  <FeatureCard
-                    style={{
-                      backgroundColor: props.cardBackground,
-                      borderColor: props.cardBorder,
-                      color: props.textColor,
-                    }}
+          <Carousel>
+            {items.map(item => {
+              return (
+                item && (
+                  <Link
+                    key={item.id}
+                    to={createLink({
+                      canvasId: item.id,
+                      manifestId: manifestId,
+                    })}
                   >
-                    <ImageStripBox $size="small" $bgColor={props.cardBackground}>
-                      <CroppedImage $size="small" $covered={props.imageStyle === 'covered'}>
-                        {item.thumbnail ? (
-                          <img alt={createLocaleString(item.label, t('item thumbnail'))} src={item.thumbnail[0].id} />
-                        ) : null}
-                      </CroppedImage>
-                    </ImageStripBox>
-                    <LocaleString style={{ padding: '1em' }} as={SingleLineHeading5}>
-                      {item.label}
-                    </LocaleString>
-                  </FeatureCard>
-                </Link>
-              )
-            );
-          })}
+                    <FeatureCard
+                      style={{
+                        backgroundColor: props.cardBackground,
+                        borderColor: props.cardBorder,
+                        color: props.textColor,
+                      }}
+                    >
+                      <ImageStripBox $size="small" $bgColor={props.cardBackground}>
+                        <CroppedImage $size="small" $covered={props.imageStyle === 'covered'}>
+                          {item.thumbnail ? (
+                            <img alt={createLocaleString(item.label, t('item thumbnail'))} src={item.thumbnail[0].id} />
+                          ) : null}
+                        </CroppedImage>
+                      </ImageStripBox>
+                      <LocaleString style={{ padding: '1em' }} as={SingleLineHeading5}>
+                        {item.label}
+                      </LocaleString>
+                    </FeatureCard>
+                  </Link>
+                )
+              );
+            })}
+          </Carousel>
         </FeaturesContainer>
       </>
     );

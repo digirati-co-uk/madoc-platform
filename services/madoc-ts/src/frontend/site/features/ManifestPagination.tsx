@@ -8,7 +8,7 @@ import { usePreventCanvasNavigation } from './PreventUsersNavigatingCanvases';
 export const ManifestPagination: React.FC<{
   paginationStyle?: boolean;
   position?: 'flex-end' | 'flex-start' | 'center';
-}> = ({ paginationStyle, position, size }) => {
+}> = ({ paginationStyle, position }) => {
   const { data } = useManifest();
   const { filter, listing } = useLocationQuery();
   const { showNavigationContent } = usePreventCanvasNavigation();
@@ -53,7 +53,6 @@ blockEditorFor(ManifestPagination, {
   defaultProps: {
     paginationStyle: false,
     position: 'flex-end',
-    width: 'md',
   },
   editor: {
     paginationStyle: {
@@ -68,15 +67,6 @@ blockEditorFor(ManifestPagination, {
         { value: 'flex-start', text: 'Start' },
         { value: 'center', text: 'Center' },
         { value: 'flex-end', text: 'End' },
-      ],
-    },
-    width: {
-      label: 'size',
-      type: 'dropdown-field',
-      options: [
-        { value: 'lg', text: 'large' },
-        { value: 'md', text: 'Medium' },
-        { value: 'sm', text: 'Small' },
       ],
     },
   },
