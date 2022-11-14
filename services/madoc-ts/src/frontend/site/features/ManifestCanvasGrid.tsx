@@ -1,5 +1,5 @@
 import { InternationalString } from '@iiif/presentation-3';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
@@ -21,6 +21,17 @@ import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { CanvasViewer } from './CanvasViewer';
 import { usePreventCanvasNavigation } from './PreventUsersNavigatingCanvases';
+import styled from 'styled-components';
+
+const SearchGridItems = styled.input`
+  height: 56px;
+  width: 500px;
+  border: 1px solid #5071f4;
+  padding: 1em;
+  margin: 1em auto;
+  display: flex;
+  position: relative;
+`;
 
 export function ManifestCanvasGrid(props: {
   background?: string;
@@ -47,6 +58,15 @@ export function ManifestCanvasGrid(props: {
   const rectangularImages = manifestOptions?.rectangularImages;
   const hideCanvasLabels = manifestOptions?.hideCanvasLabels;
   const manifest = data?.manifest;
+  const [items, setItems] = useState(manifest?.items);
+
+  function handleFilter(e: string) {
+    const result = manifest?.items
+      ? manifest?.items.filter(item => createLocaleString(item.label, t('Canvas thumbnail')).includes(e))
+      : '';
+
+    setItems(result ? result : []);
+  }
 
   if (!manifest || !showNavigationContent) {
     return null;
@@ -75,43 +95,49 @@ export function ManifestCanvasGrid(props: {
 
   if (props.popup) {
     return (
-      <ImageGrid data-view-list={props.list}>
-        {manifest.items.map((canvas, idx) => (
-          <ModalButton
-            modalSize="lg"
-            key={`${canvas.id}_${idx}`}
-            render={() => {
-              return (
-                <CustomRouteContext ctx={{ canvas: canvas.id }}>
-                  <CanvasViewer>
-                    <StandaloneCanvasViewer canvasId={canvas.id} />
-                  </CanvasViewer>
-                </CustomRouteContext>
-              );
-            }}
-            title={createLocaleString(canvas.label, t('Canvas thumbnail'))}
-          >
-            {renderCanvasSnippet(canvas)}
-          </ModalButton>
-        ))}
-      </ImageGrid>
+      <>
+        <SearchGridItems type="text" onChange={e => handleFilter(e.target.value)} placeholder="Search this Manifest" />
+        <ImageGrid data-view-list={props.list}>
+          {items?.map((canvas, idx) => (
+            <ModalButton
+              modalSize="lg"
+              key={`${canvas.id}_${idx}`}
+              render={() => {
+                return (
+                  <CustomRouteContext ctx={{ canvas: canvas.id }}>
+                    <CanvasViewer>
+                      <StandaloneCanvasViewer canvasId={canvas.id} />
+                    </CanvasViewer>
+                  </CustomRouteContext>
+                );
+              }}
+              title={createLocaleString(canvas.label, t('Canvas thumbnail'))}
+            >
+              {renderCanvasSnippet(canvas)}
+            </ModalButton>
+          ))}
+        </ImageGrid>
+      </>
     );
   }
 
   return (
-    <ImageGrid data-view-list={props.list}>
-      {manifest.items.map((canvas, idx) => (
-        <Link
-          key={`${canvas.id}_${idx}`}
-          to={createLink({
-            canvasId: canvas.id,
-            subRoute: directToModelPage ? 'model' : undefined,
-          })}
-        >
-          {renderCanvasSnippet(canvas)}
-        </Link>
-      ))}
-    </ImageGrid>
+    <>
+      <SearchGridItems type="text" onChange={e => handleFilter(e.target.value)} placeholder="Search this Manifest" />
+      <ImageGrid data-view-list={props.list}>
+        {items?.map((canvas, idx) => (
+          <Link
+            key={`${canvas.id}_${idx}`}
+            to={createLink({
+              canvasId: canvas.id,
+              subRoute: directToModelPage ? 'model' : undefined,
+            })}
+          >
+            {renderCanvasSnippet(canvas)}
+          </Link>
+        ))}
+      </ImageGrid>
+    </>
   );
 }
 
