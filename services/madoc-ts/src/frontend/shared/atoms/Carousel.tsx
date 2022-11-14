@@ -11,9 +11,9 @@ const CarouselWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
+
   svg {
-   height: 10px;
+    height: 10px;
   }
 `;
 
@@ -67,6 +67,11 @@ const Indicator = styled.button`
     }
   }
 `;
+const IndicatorWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
 interface CarouselProps {
   children: React.ReactNode;
 }
@@ -121,7 +126,7 @@ export const Carousel = ({ children }: CarouselProps) => {
           <Chevron />
         </Button>
       </CarouselWrapper>
-      <div>
+      <IndicatorWrapper>
         {slides?.map((slide, index) => (
           <Indicator
             data-isActive={currentSlide === index}
@@ -131,7 +136,7 @@ export const Carousel = ({ children }: CarouselProps) => {
             }}
           />
         ))}
-      </div>
+      </IndicatorWrapper>
     </CarouselOuterWrapper>
   );
 };
