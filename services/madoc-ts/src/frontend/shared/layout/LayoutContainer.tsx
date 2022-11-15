@@ -118,7 +118,7 @@ export const LayoutContent = styled.div<{ $padding?: boolean; $btnColor?: string
     background-color: ${props => props.$btnColor};
   }
 
-  &[data-veritcal-btn='true'] {
+  &[data-vertical-btn='true'] {
     ${CanvasViewerControls} {
       display: flex;
       flex-direction: column;
