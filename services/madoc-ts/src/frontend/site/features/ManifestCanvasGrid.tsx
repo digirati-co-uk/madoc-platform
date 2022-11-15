@@ -21,17 +21,7 @@ import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { CanvasViewer } from './CanvasViewer';
 import { usePreventCanvasNavigation } from './PreventUsersNavigatingCanvases';
-import styled from 'styled-components';
-
-const SearchGridItems = styled.input`
-  height: 56px;
-  width: 500px;
-  border: 1px solid #5071f4;
-  padding: 1em;
-  margin: 1em auto;
-  display: flex;
-  position: relative;
-`;
+import { FilterInput } from '../../shared/atoms/FilterInput';
 
 export function ManifestCanvasGrid(props: {
   background?: string;
@@ -96,7 +86,7 @@ export function ManifestCanvasGrid(props: {
   if (props.popup) {
     return (
       <>
-        <SearchGridItems type="text" onChange={e => handleFilter(e.target.value)} placeholder="Search this Manifest" />
+        <FilterInput type="text" onChange={e => handleFilter(e.target.value)} placeholder="Search this Manifest" />
         <ImageGrid data-view-list={props.list}>
           {items?.map((canvas, idx) => (
             <ModalButton
@@ -123,7 +113,7 @@ export function ManifestCanvasGrid(props: {
 
   return (
     <>
-      <SearchGridItems type="text" onChange={e => handleFilter(e.target.value)} placeholder="Search this Manifest" />
+      <FilterInput type="text" onChange={e => handleFilter(e.target.value)} placeholder="Search this Manifest" />
       <ImageGrid data-view-list={props.list}>
         {items?.map((canvas, idx) => (
           <Link
