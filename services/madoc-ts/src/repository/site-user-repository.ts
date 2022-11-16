@@ -25,7 +25,6 @@ import {
 import { ExternalConfig } from '../types/external-config';
 import { NotFound } from '../utility/errors/not-found';
 import { SiteNotFound } from '../utility/errors/site-not-found';
-import { getJwtCookies } from '../utility/get-jwt-cookies';
 import { parseJWT } from '../utility/parse-jwt';
 import { phpHashCompare } from '../utility/php-hash-compare';
 import { passwordHash } from '../utility/php-password-hash';
@@ -133,18 +132,18 @@ export class SiteUserRepository extends BaseRepository {
     countAllUsers: () => sql<{ total_users: number }>`select COUNT(*) as total_users from "user"`,
 
     getAllUsers: (page: number, perPage: number) => sql<UserRowWithoutPassword>`
-      select id, email, name, created, modified, role, is_active
+      select id, email, name, created, modified, role, is_active, automated
         from "user" limit ${perPage} offset ${(page - 1) * perPage};
     `,
 
     getUserById: (id: number) => sql<UserRowWithoutPassword>`
-        select id, email, name, created, modified, role, is_active
+        select id, email, name, created, modified, role, is_active, automated, config
         from "user"
         where id = ${id};
     `,
 
     getUserByEmail: (email: string) => sql<UserRowWithoutPassword>`
-        select id, lower(email) as email, name, created, modified, role, is_active
+        select id, lower(email) as email, name, created, modified, role, is_active, automated, config
         from "user"
         where email = ${email};
     `,
@@ -158,7 +157,7 @@ export class SiteUserRepository extends BaseRepository {
 
     getUsersByRoles: (siteId: number, roles: string[], includeAdmins = true) =>
       sql<SiteUser>`
-          select u.id, u.name, u.role, sp.role as site_role
+          select u.id, u.name, u.role, u.automated, sp.role as site_role
           from "user" u
                    left join site_permission sp on u.id = sp.user_id
           where sp.site_id = ${siteId}
@@ -183,19 +182,19 @@ export class SiteUserRepository extends BaseRepository {
     `,
 
     getActiveUserById: (userId: number) => sql<UserRowWithoutPassword>`
-      select id, name, lower(email) as email, role, is_active, created, modified 
+      select id, name, lower(email) as email, role, is_active, created, modified, automated, config 
       from "user" 
       where is_active = true and id = ${userId}
     `,
 
     getActiveUserByEmail: (email: string) => sql<UserRow>`
-      select id, name, lower(email) as email, created, modified, password_hash, role, is_active 
+      select id, name, lower(email) as email, created, modified, password_hash, role, is_active, automated 
       from "user" 
       where is_active = true and email = ${email}
     `,
 
     getSiteUsers: (siteId: number) => sql<SiteUser>`
-      select u.id, u.name, u.role, sp.role as site_role from "user" u
+      select u.id, u.name, u.role, u.automated, sp.role as site_role from "user" u
         left join site_permission sp on u.id = sp.user_id
       where sp.site_id = ${siteId}
     `,
@@ -273,23 +272,37 @@ export class SiteUserRepository extends BaseRepository {
     `,
 
     createUserWithId: (id: number, user: UserCreationRequest) => sql<UserRow>`
-      insert into "user" (id, email, name, is_active, role, password_hash) values (
+      insert into "user" (id, email, name, is_active, role, password_hash, created_by) values (
         ${id},
         ${user.email.toLowerCase()},
         ${user.name},
         false,
         ${user.role},
-        null
+        null,
+        ${user.creator || null}
        ) returning *
     `,
 
     createUser: (user: UserCreationRequest) => sql<UserRow>`
-      insert into "user" (email, name, is_active, role, password_hash) values (
+      insert into "user" (email, name, is_active, role, password_hash, created_by) values (
         ${user.email.toLowerCase()},
         ${user.name},
         false,
         ${user.role},
-        null
+        null,
+        ${user.creator || null}
+       ) returning *
+    `,
+
+    createAutomatedUser: (user: UserCreationRequest) => sql<UserRow>`
+      insert into "user" (email, name, is_active, role, password_hash, automated, created_by) values (
+        ${user.email.toLowerCase()},
+        ${user.name},
+        true,
+        ${user.role},
+        null,
+        true,
+        ${user.creator || null}
        ) returning *
     `,
 
@@ -462,6 +475,7 @@ export class SiteUserRepository extends BaseRepository {
       created: new Date(row.created),
       modified: row.modified ? new Date(row.modified) : undefined,
       is_active: Boolean(row.is_active),
+      automated: Boolean(row.automated),
     } as User;
   }
 
@@ -643,6 +657,7 @@ export class SiteUserRepository extends BaseRepository {
           role: user.role,
           site_role: 'admin',
           name: user.name,
+          automated: user.automated,
         };
       }
 
@@ -657,6 +672,7 @@ export class SiteUserRepository extends BaseRepository {
         role: user.role,
         site_role: 'viewer',
         name: user.name,
+        automated: user.automated,
       };
     }
   }
@@ -856,6 +872,12 @@ export class SiteUserRepository extends BaseRepository {
 
   async createUser(user: UserCreationRequest) {
     await this.connection.query(SiteUserRepository.mutations.createUser(user));
+
+    return this.getUserByEmail(user.email.toLowerCase());
+  }
+
+  async createAutomatedUser(user: UserCreationRequest) {
+    await this.connection.query(SiteUserRepository.mutations.createAutomatedUser(user));
 
     return this.getUserByEmail(user.email.toLowerCase());
   }
