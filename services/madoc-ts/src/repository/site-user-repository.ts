@@ -251,7 +251,7 @@ export class SiteUserRepository extends BaseRepository {
 
   static mutations = {
     updateUserPassword: (userId: number, hash: string) => sql`
-      update "user" set password_hash = ${hash} where id = ${userId}
+      update "user" set password_hash = ${hash} where id = ${userId} and automated = false
     `,
     setUsersRoleOnSite: (siteId: number, userId: number, role: string) =>
       upsert<SitePermissionRow>(
@@ -307,7 +307,7 @@ export class SiteUserRepository extends BaseRepository {
     `,
 
     setUserPassword: (userId: number, hash: string) => sql`
-      update "user" set password_hash = ${hash} where id = ${userId}
+      update "user" set password_hash = ${hash} where id = ${userId} and automated = false
     `,
 
     resetPassword: (id: string, sharedHash: string, userId: number, activate: boolean) => sql`
@@ -324,7 +324,7 @@ export class SiteUserRepository extends BaseRepository {
     `,
 
     deactivateUser: (userId: number) => sql`
-      update "user" set is_active = false where id = ${userId}
+      update "user" set is_active = false where id = ${userId} and automated = false
     `,
 
     deleteUser: (userId: number) => sql`
@@ -827,7 +827,7 @@ export class SiteUserRepository extends BaseRepository {
   async verifyLogin(email: string, password: string): Promise<{ user: User; sites: UserSite[] } | undefined> {
     const user = await this.getActiveUserByEmailWithPassword(email.toLowerCase());
 
-    if (!user || !password || !user.password_hash) {
+    if (!user || !password || !user.password_hash || user.automated) {
       return undefined;
     }
 
