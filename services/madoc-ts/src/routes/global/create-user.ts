@@ -8,7 +8,7 @@ import { passwordHash } from '../../utility/php-password-hash';
 import { onlyGlobalAdmin } from '../../utility/user-with-scope';
 
 export const createUser: RouteMiddleware<unknown, UserCreationRequest> = async context => {
-  const { siteId } = await onlyGlobalAdmin(context);
+  const { siteId, id } = await onlyGlobalAdmin(context);
 
   const user = context.requestBody;
 
@@ -17,6 +17,9 @@ export const createUser: RouteMiddleware<unknown, UserCreationRequest> = async c
   if (existingEmail) {
     throw new ConflictError('Email already registered');
   }
+
+  // Set creator
+  user.creator = id;
 
   const createdUser = user.automated
     ? await context.siteManager.createAutomatedUser(user)
