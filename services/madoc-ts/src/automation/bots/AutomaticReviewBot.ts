@@ -1,10 +1,18 @@
+import { SiteUser } from '../../extensions/site-manager/types';
+import { ApiClient } from '../../gateway/api';
 import { CrowdsourcingReview } from '../../gateway/tasks/crowdsourcing-review';
 import { BaseAutomation } from '../utils/BaseAutomation';
 import { ManualAction, ManualActions } from '../utils/ManualActions';
 import { TaskAutomation } from '../utils/TaskAutomation';
 
 export class AutomaticReviewBot extends BaseAutomation implements ManualActions, TaskAutomation {
-  async getTaskEvents(): Promise<Record<string, string[]>> {
+  static type = 'automatic-review-bot';
+
+  constructor(user: SiteUser, api: ApiClient) {
+    super(AutomaticReviewBot.type, user, api);
+  }
+
+  static getTaskEvents(): Record<string, string[]> {
     return {
       'crowdsourcing-review': ['created', 'assigned'],
     };
@@ -16,7 +24,7 @@ export class AutomaticReviewBot extends BaseAutomation implements ManualActions,
     }
   }
 
-  async getManualActions(): Promise<ManualAction[]> {
+  static getManualActions(): ManualAction[] {
     return [
       {
         label: 'Review all assigned',

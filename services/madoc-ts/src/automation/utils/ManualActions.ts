@@ -7,7 +7,5 @@ export type ManualAction = {
 };
 
 export interface ManualActions {
-  getManualActions(): Promise<ManualAction[]>;
-
   handleManualAction(action: string, data?: any): Promise<void>;
 }

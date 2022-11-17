@@ -1,3 +1,5 @@
+import { execBot } from '../../automation/index';
+import { parseUrn } from '../../utility/parse-urn';
 import { BaseTask } from './base-task';
 import { ApiClient } from '../api';
 import { CrowdsourcingTask } from './crowdsourcing-task';
@@ -106,6 +108,16 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           }
         }
       }
+
+      // Automation. @todo to be generalised in MAD-1188
+      if (task.assignee) {
+        const user = parseUrn(task.assignee?.id);
+        const siteId = undefined; // @todo this needs to be extracted from the task.
+        if (user) {
+          await execBot(user.id, siteId, api, task, name);
+        }
+      }
+
       break;
     }
 

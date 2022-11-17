@@ -9,14 +9,19 @@ export class BaseAutomation<T = any> implements TaskAutomation, ManualActions {
   api: ApiClient;
   config: T | null;
 
-  constructor(user: SiteUser, api: ApiClient) {
+  constructor(type: string, user: SiteUser, api: ApiClient) {
+    if (!type) {
+      throw new Error('Invalid automation');
+    }
     if (!user.automated) {
       throw new Error('Cannot automated normal user');
     }
 
     this.user = user;
     this.api = api;
-    this.config = user.config || null;
+
+    const config = user.config || {};
+    this.config = config[type] || null;
   }
 
   async getConfig(): Promise<T | null> {
@@ -31,7 +36,7 @@ export class BaseAutomation<T = any> implements TaskAutomation, ManualActions {
     // no-op by default.
   }
 
-  async getTaskEvents(): Promise<Record<string, string[]>> {
+  static getTaskEvents(): Record<string, string[]> {
     return {
       // e.g. {
       //   'crowdsourcing-task': ['status.3', 'assigned'],
@@ -39,7 +44,7 @@ export class BaseAutomation<T = any> implements TaskAutomation, ManualActions {
     };
   }
 
-  async getManualActions(): Promise<ManualAction[]> {
+  static getManualActions(): ManualAction[] {
     return [];
   }
 
