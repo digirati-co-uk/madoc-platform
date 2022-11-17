@@ -7,6 +7,7 @@ export function forkSelectorEditMode(selector: BaseSelector, revisionId: string,
     id: generateId(),
     revisionId: revisionId,
     revises: selector.id,
+    revisedBy: [],
     state: state,
   };
 }
