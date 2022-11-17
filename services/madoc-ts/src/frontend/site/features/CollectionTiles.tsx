@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { useCollectionList } from '../hooks/use-collection-list';
+import { useRelativeLinks } from '../hooks/use-relative-links';
 
 export const TileWrapper = styled.div`
   padding: 50px;
@@ -50,13 +51,9 @@ export const TileSection = styled.div`
   }
 `;
 
-export const ProjectTiles: React.FC<{ type?: string }> = ({ type }) => {
+export const CollectionTiles: React.FC<{ type?: string }> = ({ type }) => {
   const { resolvedData: data } = useCollectionList();
-
-  console.log(data)
-  const handleLink = () => {
-    console.log('go somewhere');
-  };
+  const createLink = useRelativeLinks();
 
   return (
     <TileWrapper>
@@ -68,7 +65,9 @@ export const ProjectTiles: React.FC<{ type?: string }> = ({ type }) => {
             type={type}
             image={collection.thumbnail}
             title={<LocaleString>{collection.label || { en: ['...'] }}</LocaleString>}
-            onClick={handleLink}
+            href={createLink({
+              collectionId: collection.id,
+            })}
             linkTitle={`${collection.itemCount} items`}
             subTitle={collection.type}
             published={collection.published}
@@ -79,7 +78,7 @@ export const ProjectTiles: React.FC<{ type?: string }> = ({ type }) => {
   );
 };
 
-blockEditorFor(ProjectTiles, {
+blockEditorFor(CollectionTiles, {
   type: 'default.ProjectTiles',
   label: 'Project tiles',
   anyContext: [],
@@ -93,7 +92,6 @@ blockEditorFor(ProjectTiles, {
       options: [
         { value: 'tile', text: 'Tile' },
         { value: 'brick', text: 'Brick' },
-        { value: 'card', text: 'Card' },
       ],
     },
   },

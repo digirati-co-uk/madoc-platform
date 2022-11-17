@@ -1,15 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
 import ReactTooltip from 'react-tooltip';
-// import { ArrowRight } from '@styled-icons/bootstrap/ArrowRight';
+import { LocaleString } from '../components/LocaleString';
+import { Link } from 'react-router-dom';
 
-export const Brick = styled.button`
+export const Brick = styled.a`
   background-color: #1b1b72;
   color: white;
   border-radius: 15px;
   width: 250px;
   padding: 20px;
-  //height: 60px;
   font-size: 18px;
   border: none;
   display: block;
@@ -35,13 +35,16 @@ export const TileOverlay = styled.div`
   z-index: 2;
 `;
 
-export const TileLink = styled.button`
+export const TileLink = styled.div`
   font-size: 14px;
   font-weight: 500;
   background-color: transparent;
   border: none;
   color: white;
 
+  a {
+    color: white;
+  }
   svg {
     width: 20px;
     margin: 2px;
@@ -104,30 +107,25 @@ export const Tiles: React.FC<{
   title?: any;
   subTitle?: string;
   image?: string;
-  onClick?: any;
+  href?: any;
   linkTitle?: string;
   published?: boolean;
-}> = ({ type, title, subTitle, image, published, onClick, linkTitle }) => {
+}> = ({ type, title, subTitle, image, published, href, linkTitle }) => {
   return (
     <>
-      {type === 'brick' ? (
-        <Brick
-          onClick={() => {
-            onClick();
-          }}
-        >
-          {title}
+      {type === 'brick' || !image ? (
+        <Brick href={href}>
+          <LocaleString as={Link} to={href}>
+            {title}
+          </LocaleString>
         </Brick>
       ) : (
         <Tile tabIndex={0}>
           <TileOverlay>
-            <TileLink
-              onClick={() => {
-                onClick();
-              }}
-              aria-label={'thumbnail'}
-            >
-              {linkTitle}
+            <TileLink>
+              <LocaleString as={Link} to={href}>
+                {linkTitle}
+              </LocaleString>
             </TileLink>
           </TileOverlay>
           <TileImage src={image} alt={'thumbnail'} />
