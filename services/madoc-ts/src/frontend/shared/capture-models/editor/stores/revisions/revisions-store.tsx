@@ -314,13 +314,13 @@ export const revisionStore: RevisionsModel = {
           // Also need to update the field.
         } else {
           const newSelector = forkSelectorEditMode(selectorToUpdate, state.currentRevisionId, payload.state);
-          if (selectorToUpdate.revisedBy) {
+          if (selectorToUpdate.revisedBy && selectorToUpdate !== newSelector) {
             selectorToUpdate.revisedBy.push(newSelector);
           } else {
             selectorToUpdate.revisedBy = [newSelector];
           }
 
-          if (field && field.selector) {
+          if (field && field.selector && newSelector !== field.selector) {
             if (!field.selector.revisedBy) {
               field.selector.revisedBy = [newSelector];
             } else {
