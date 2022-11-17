@@ -82,7 +82,7 @@ export function createTask(task: CrowdsourcingTask): CrowdsourcingReview {
     status_text: 'not started',
     parameters: [task.id, task.parameters[2]],
     state: {},
-    events: ['madoc-ts.created'],
+    events: ['madoc-ts.created', 'madoc-ts.assigned'],
   };
 }
 
