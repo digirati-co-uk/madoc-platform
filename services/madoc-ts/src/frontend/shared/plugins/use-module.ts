@@ -42,7 +42,9 @@ export const ALLOWED_MODULES = [..._ALLOWED_MODULES];
 type AvailableModules = typeof _ALLOWED_MODULES[number];
 
 export function useModule(name: AvailableModules) {
-  console.log('useModule', name);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('useModule', name);
+  }
 
   switch (name) {
     case '@madoc.io/types':
