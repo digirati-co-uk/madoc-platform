@@ -325,7 +325,7 @@ export class SiteUserRepository extends BaseRepository {
     `,
 
     deactivateUser: (userId: number) => sql`
-      update "user" set is_active = false where id = ${userId} and automated = false
+      update "user" set is_active = false where id = ${userId}
     `,
 
     deleteUser: (userId: number) => sql`
