@@ -199,6 +199,14 @@ export class SiteUserRepository extends BaseRepository {
       where sp.site_id = ${siteId}
     `,
 
+    getAutomatedUsers: (siteId: number) => sql<SiteUser>`
+      select u.id, u.name, u.role, u.automated, u.config, sp.role as site_role from "user" u
+        left join site_permission sp on u.id = sp.user_id
+      where u.automated = true
+        and u.is_active = true
+        and sp.site_id = ${siteId}
+    `,
+
     searchUsers: (q: string, siteId: number, roles: string[] = []) => {
       const query = `%${q || ''}%`;
 
@@ -710,6 +718,10 @@ export class SiteUserRepository extends BaseRepository {
 
   async getSiteUsers(siteId: number): Promise<readonly SiteUser[]> {
     return await this.connection.any(SiteUserRepository.query.getSiteUsers(siteId));
+  }
+
+  async getAutomatedUsers(siteId: number): Promise<readonly SiteUser[]> {
+    return await this.connection.any(SiteUserRepository.query.getAutomatedUsers(siteId));
   }
 
   /**

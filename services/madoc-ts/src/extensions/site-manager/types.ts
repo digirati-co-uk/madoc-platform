@@ -132,7 +132,7 @@ export type SiteUser = {
 
   email?: string;
   automated?: boolean;
-  config?: any;
+  config?: UserConfig | null;
 };
 
 export type CurrentUserWithScope = SiteUser & {
