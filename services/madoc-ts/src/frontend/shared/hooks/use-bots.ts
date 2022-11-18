@@ -18,7 +18,7 @@ export function useBots(): readonly [
   });
 
   function isBot(u: string | number | SiteUser | User) {
-    const find = (id: number) => listOfBots.find(user => user.id === id);
+    const find = (id: number) => listOfBots.some(user => user.id === id);
 
     if (typeof u === 'string') {
       const urn = parseUrn(u);
