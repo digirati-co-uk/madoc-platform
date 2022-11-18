@@ -63,6 +63,7 @@ export type ProjectConfiguration = {
   };
   reviewOptions?: {
     allowMerging?: boolean;
+    enableAutoReview?: boolean;
   };
   manifestPageOptions?: {
     hideStartContributing?: boolean;

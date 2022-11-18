@@ -132,7 +132,7 @@ export class SiteUserRepository extends BaseRepository {
     countAllUsers: () => sql<{ total_users: number }>`select COUNT(*) as total_users from "user"`,
 
     getAllUsers: (page: number, perPage: number) => sql<UserRowWithoutPassword>`
-      select id, email, name, created, modified, role, is_active, automated
+      select id, email, name, created, modified, role, is_active, automated, config
         from "user" limit ${perPage} offset ${(page - 1) * perPage};
     `,
 
@@ -295,14 +295,15 @@ export class SiteUserRepository extends BaseRepository {
     `,
 
     createAutomatedUser: (user: UserCreationRequest) => sql<UserRow>`
-      insert into "user" (email, name, is_active, role, password_hash, automated, created_by) values (
+      insert into "user" (email, name, is_active, role, password_hash, automated, created_by, config) values (
         ${user.email.toLowerCase()},
         ${user.name},
         true,
         ${user.role},
         null,
         true,
-        ${user.creator || null}
+        ${user.creator || null},
+        ${user.config ? sql.json(user.config) : null}
        ) returning *
     `,
 
@@ -476,6 +477,7 @@ export class SiteUserRepository extends BaseRepository {
       modified: row.modified ? new Date(row.modified) : undefined,
       is_active: Boolean(row.is_active),
       automated: Boolean(row.automated),
+      config: row.config,
     } as User;
   }
 

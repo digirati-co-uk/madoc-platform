@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
+import { getBotType } from '../../../../automation/utils/get-bot-type';
 import { User } from '../../../../extensions/site-manager/types';
 import { TimeAgo } from '../../../shared/atoms/TimeAgo';
 import { Tag } from '../../../shared/capture-models/editor/atoms/Tag';
@@ -49,6 +50,9 @@ export const ListUsers: React.FC = () => {
           <Button as={HrefLink} href={`/global/users/create`}>
             Create user
           </Button>
+          <Button as={HrefLink} href={`/global/users/create-bot`}>
+            Create bot
+          </Button>
         </ButtonRow>
         <Pagination
           page={data ? data.pagination.page : 1}
@@ -79,6 +83,9 @@ export const ListUsers: React.FC = () => {
               <SimpleTable.Header>
                 <strong>Global role</strong>
               </SimpleTable.Header>
+              <SimpleTable.Header>
+                <strong>Automated</strong>
+              </SimpleTable.Header>
             </SimpleTable.Row>
           </thead>
           <tbody>
@@ -96,6 +103,9 @@ export const ListUsers: React.FC = () => {
                 <SimpleTable.Cell>{user.modified ? <TimeAgo date={new Date(user.modified)} /> : '-'}</SimpleTable.Cell>
                 <SimpleTable.Cell>
                   <Tag>{user.role}</Tag>
+                </SimpleTable.Cell>
+                <SimpleTable.Cell>
+                  {user.automated ? <Tag>{getBotType(user.config?.bot?.type) || 'bot'}</Tag> : null}
                 </SimpleTable.Cell>
               </SimpleTable.Row>
             ))}

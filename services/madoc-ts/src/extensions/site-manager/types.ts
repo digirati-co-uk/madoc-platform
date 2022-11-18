@@ -92,10 +92,15 @@ export type User = {
   role: string;
   is_active: boolean;
   automated: boolean;
+  config?: UserConfig;
+};
+
+type UserConfig = {
+  bot?: { type: string; config?: any };
 };
 
 export type SelfUser = User & {
-  config?: any | null; // @todo add types for user config when we start using it.
+  config?: UserConfig | null; // @todo add types for user config when we start using it.
 };
 
 export type UserCreationRequest = {
@@ -104,7 +109,8 @@ export type UserCreationRequest = {
   role: string;
   skipEmail?: boolean;
   creator?: number;
-  automated?: number;
+  automated?: boolean;
+  config?: UserConfig;
 };
 
 /**

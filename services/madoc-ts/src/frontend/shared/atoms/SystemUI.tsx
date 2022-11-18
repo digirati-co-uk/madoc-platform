@@ -100,6 +100,7 @@ export const SystemListingThumbnail = styled.div`
     display: block;
     object-fit: contain;
     width: 110px;
+    height: 110px;
   }
 `;
 

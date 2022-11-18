@@ -97,6 +97,7 @@ import { DeleteCanvas } from './pages/content/canvases/delete-canvas';
 import { DeleteProject } from './pages/crowdsourcing/projects/delete-project';
 import { ProjectExportTab } from './pages/crowdsourcing/projects/project-export';
 import { GenerateApiKey } from './pages/system/generate-api-key';
+import { CreateBot } from './pages/global/create-bot';
 
 export const routes: RouteObject[] = [
   {
@@ -551,6 +552,10 @@ export const routes: RouteObject[] = [
   {
     path: '/global/users/create',
     element: <CreateUser />,
+  },
+  {
+    path: '/global/users/create-bot',
+    element: <CreateBot />,
   },
   {
     path: '/global/api-keys',
