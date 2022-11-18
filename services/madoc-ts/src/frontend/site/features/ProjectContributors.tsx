@@ -5,6 +5,7 @@ import { useApiTaskSearch } from '../../shared/hooks/use-api-task-search';
 import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { useBots } from '../../shared/hooks/use-bots';
 
 export const ContributersWrapper = styled.div`
   h3 {
@@ -31,6 +32,7 @@ export const Pill = styled.div`
 interface ProjectContributors {
   background?: string;
   textColor?: string;
+  showBots?: boolean;
 }
 
 export function ProjectContributors(props: ProjectContributors) {
@@ -43,20 +45,27 @@ export function ProjectContributors(props: ProjectContributors) {
     detail: true,
   });
 
-  const map = data?.tasks.map(task => task.assignee?.name);
-  const contributors = [...new Set(map)];
+  const users = data?.tasks.map(task => task.assignee);
+  const ids = users?.map(u => u?.id);
+  const contributors = users?.filter((user, index) => !ids?.includes(user?.id, index + 1));
 
-  if (!data) return null;
+  const [listOfBots, isBot] = useBots();
+
+  if (!data || !contributors?.length) return null;
 
   return (
     <ContributersWrapper>
       <h3>{t('contributions by')}</h3>
       <ContributersList>
-        {contributors.map((user, i) => (
-          <Pill key={i} style={{ color: props.textColor, backgroundColor: props.background }}>
-            {user}
-          </Pill>
-        ))}
+        {contributors?.map(
+          (user, i) =>
+            user &&
+            (!props.showBots && isBot(user.id) ? null : (
+              <Pill key={i} style={{ color: props.textColor, backgroundColor: props.background }}>
+                {user.name}
+              </Pill>
+            ))
+        )}
       </ContributersList>
     </ContributersWrapper>
   );
@@ -68,10 +77,16 @@ blockEditorFor(ProjectContributors, {
   defaultProps: {
     textColor: '',
     background: '',
+    showBots: false,
   },
   editor: {
     textColor: { label: 'Text color', type: 'color-field' },
     background: { label: 'Background color', type: 'color-field' },
+    showBots: {
+      label: 'Show bots',
+      type: 'checkbox-field',
+      inlineLabel: 'Show bots as contributors?',
+    },
   },
   anyContext: ['project'],
   requiredContext: ['project'],
