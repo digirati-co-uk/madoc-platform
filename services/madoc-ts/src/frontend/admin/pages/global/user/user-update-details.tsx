@@ -51,6 +51,7 @@ export const UserEditor: React.FC<{ user: User; refetch: () => Promise<any> }> =
         <InputLabel htmlFor="role">Global role</InputLabel>
         <DefaultSelect
           ref={select}
+          isDisabled={user.automated}
           inputId="role"
           initialValue={role}
           options={globalRoles}

@@ -26,7 +26,7 @@ export const ViewUser: React.FC = () => {
           { label: t('Overview'), link: `/global/users/${userId}` },
           { label: t('Edit details'), link: `/global/users/${userId}/edit` },
           { label: t('User sites'), link: `/global/users/${userId}/sites` },
-          { label: t('Reset password'), link: `/global/users/${userId}/password` },
+          data?.user.automated ? null : { label: t('Reset password'), link: `/global/users/${userId}/password` },
           { label: t('Delete user'), link: `/global/users/${userId}/delete` },
         ]}
       />

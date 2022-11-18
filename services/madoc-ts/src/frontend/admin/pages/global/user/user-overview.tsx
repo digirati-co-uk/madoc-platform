@@ -10,6 +10,8 @@ import { useApi } from '../../../../shared/hooks/use-api';
 import { useData } from '../../../../shared/hooks/use-data';
 import { Spinner } from '../../../../shared/icons/Spinner';
 import { ViewUser } from '../view-user';
+import { Tag } from '../../../../shared/capture-models/editor/atoms/Tag';
+import { getBotType } from '../../../../../automation/utils/get-bot-type';
 
 export const UserOverview: React.FC = () => {
   const { data, refetch } = useData<GetUser>(ViewUser);
@@ -39,7 +41,14 @@ export const UserOverview: React.FC = () => {
       ) : (
         <WarningMessage>User account not active</WarningMessage>
       )}
-      <h1>{data.user.name}</h1>
+      <div style={{ display: 'flex' }}>
+        <h1>{data.user.name} </h1>
+        {data.user.automated ? (
+          <Tag style={{ alignSelf: 'center', marginLeft: '.5em' }}>
+            {getBotType(data.user.config?.bot?.type) || 'bot'}
+          </Tag>
+        ) : null}
+      </div>
       <TableContainer>
         <TableRow>
           <TableRowLabel>
