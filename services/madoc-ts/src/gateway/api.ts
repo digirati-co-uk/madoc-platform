@@ -496,6 +496,7 @@ export class ApiClient {
       body: apiKey,
     });
   }
+
   async deleteApiKey(clientId: string) {
     return this.request<{ clientId: string; clientSecret: string }>(`/api/madoc/system/api-keys/${clientId}`, {
       method: 'DELETE',
@@ -515,6 +516,7 @@ export class ApiClient {
       `/api/madoc/iiif/metadata-keys`
     );
   }
+
   async getMetadataValues(label: string) {
     return this.request<{ values: Array<{ value: string; label: string; language: string; total_items: number }> }>(
       `/api/madoc/iiif/metadata-values?label=${label}`
@@ -668,11 +670,13 @@ export class ApiClient {
   async getSiteLocales() {
     return this.publicRequest<ListLocalisationsResponse>(`/madoc/api/locales`);
   }
+
   async getSiteLocale(code: string, namespace?: string, withTemplate?: boolean) {
     return this.publicRequest<Record<string, string>>(
       `/madoc/api/locales/${code}${namespace ? `/${namespace}` : ''}${withTemplate ? `?show_empty=true` : ''}`
     );
   }
+
   async getLocaleAnalysis() {
     return this.request<{
       metadata: Array<{ language: string; totals: number }>;
@@ -1084,6 +1088,7 @@ export class ApiClient {
       },
     });
   }
+
   async importManifest(id: string) {
     return this.request<ImportManifestTask>(`/api/madoc/iiif/import/manifest`, {
       method: 'POST',
@@ -1111,6 +1116,7 @@ export class ApiClient {
       },
     });
   }
+
   async getCanvasById(id: number) {
     return this.request<CanvasFull>(`/api/madoc/iiif/canvases/${id}`);
   }
@@ -1855,6 +1861,7 @@ export class ApiClient {
       body: query,
     });
   }
+
   // can be used for both canvases and manifests
   async searchIngest(resource: SearchIngestRequest) {
     return this.request<SearchIndexTask>(`/api/search/iiif`, {
