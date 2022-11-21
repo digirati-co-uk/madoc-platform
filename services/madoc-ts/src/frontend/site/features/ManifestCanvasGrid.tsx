@@ -27,6 +27,7 @@ export function ManifestCanvasGrid(props: {
   background?: string;
   popup?: boolean;
   list?: boolean;
+  enableSearch?: boolean;
   textColor?: string;
   cardBorder?: string;
   imageStyle?: string;
@@ -48,14 +49,15 @@ export function ManifestCanvasGrid(props: {
   const rectangularImages = manifestOptions?.rectangularImages;
   const hideCanvasLabels = manifestOptions?.hideCanvasLabels;
   const manifest = data?.manifest;
-  const [items, setItems] = useState(manifest?.items);
+  const [filteredItems, setItems] = useState(manifest?.items);
+  const items = props.enableSearch ? filteredItems : manifest?.items;
 
   function handleFilter(e: string) {
     const result = manifest?.items
       ? manifest?.items.filter(item => createLocaleString(item.label, t('Canvas thumbnail')).includes(e))
-      : '';
+      : [];
 
-    setItems(result ? result : []);
+    setItems(result);
   }
 
   if (!manifest || !showNavigationContent) {
@@ -83,10 +85,14 @@ export function ManifestCanvasGrid(props: {
     );
   };
 
+  const filterManifests = props.enableSearch ? (
+    <FilterInput type="text" onChange={e => handleFilter(e.target.value)} placeholder="Search this Manifest" />
+  ) : null;
+
   if (props.popup) {
     return (
       <>
-        <FilterInput type="text" onChange={e => handleFilter(e.target.value)} placeholder="Search this Manifest" />
+        {filterManifests}
         <ImageGrid data-view-list={props.list}>
           {items?.map((canvas, idx) => (
             <ModalButton
@@ -113,7 +119,7 @@ export function ManifestCanvasGrid(props: {
 
   return (
     <>
-      <FilterInput type="text" onChange={e => handleFilter(e.target.value)} placeholder="Search this Manifest" />
+      {filterManifests}
       <ImageGrid data-view-list={props.list}>
         {items?.map((canvas, idx) => (
           <Link
@@ -138,6 +144,7 @@ blockEditorFor(ManifestCanvasGrid, {
     background: '',
     popup: false,
     list: false,
+    enableSearch: false,
     textColor: '',
     cardBorder: '',
     imageStyle: 'fit',
@@ -148,6 +155,11 @@ blockEditorFor(ManifestCanvasGrid, {
     background: { label: 'Card background color', type: 'color-field' },
     textColor: { label: 'Card text color', type: 'color-field' },
     cardBorder: { label: 'Card border', type: 'color-field' },
+    enableSearch: {
+      label: 'Enable search',
+      type: 'checkbox-field',
+      inlineLabel: 'Show search box to filter canvas labels',
+    },
     imageStyle: {
       label: 'Image Style',
       type: 'dropdown-field',

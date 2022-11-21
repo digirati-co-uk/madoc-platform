@@ -115,8 +115,6 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
   const slotSurface = useRef<SurfaceProps>(props.slot?.props?.surface || {});
   const isVertical = props.layout === 'flex' || props.layout === 'flex-center';
 
-  console.log(props.pagePath);
-
   useEffect(() => {
     setBlockOrder(props.blocks.map(block => block.id));
   }, [props.blocks]);
