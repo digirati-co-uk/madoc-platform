@@ -20,7 +20,7 @@ export class BaseAutomation<T = any> implements TaskAutomation, ManualActions {
     this.user = user;
     this.api = api;
 
-    const config = user.config || {};
+    const config: any = user.config || {};
     this.config = config[type] || null;
   }
 
