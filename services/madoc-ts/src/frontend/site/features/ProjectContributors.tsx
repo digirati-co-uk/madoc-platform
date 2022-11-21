@@ -1,5 +1,5 @@
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import React from 'react';
+import { blockConfigFor } from '../../shared/plugins/external/block-config-for';
 import { useProject } from '../hooks/use-project';
 import { useApiTaskSearch } from '../../shared/hooks/use-api-task-search';
 import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useBots } from '../../shared/hooks/use-bots';
 
-export const ContributersWrapper = styled.div`
+export const ContributorsWrapper = styled.div`
   h3 {
     text-transform: uppercase;
     font-size: 14px;
@@ -16,7 +16,7 @@ export const ContributersWrapper = styled.div`
     color: inherit;
   }
 `;
-export const ContributersList = styled.div`
+export const ContributorsList = styled.div`
   display: flex;
 `;
 export const Pill = styled.div`
@@ -49,14 +49,14 @@ export function ProjectContributors(props: ProjectContributors) {
   const ids = users?.map(u => u?.id);
   const contributors = users?.filter((user, index) => !ids?.includes(user?.id, index + 1));
 
-  const [listOfBots, isBot] = useBots();
+  const [, isBot] = useBots();
 
   if (!data || !contributors?.length) return null;
 
   return (
-    <ContributersWrapper>
+    <ContributorsWrapper>
       <h3>{t('contributions by')}</h3>
-      <ContributersList>
+      <ContributorsList>
         {contributors?.map(
           (user, i) =>
             user &&
@@ -66,12 +66,12 @@ export function ProjectContributors(props: ProjectContributors) {
               </Pill>
             ))
         )}
-      </ContributersList>
-    </ContributersWrapper>
+      </ContributorsList>
+    </ContributorsWrapper>
   );
 }
 
-blockEditorFor(ProjectContributors, {
+blockConfigFor(ProjectContributors, {
   label: 'Project Contributors',
   type: 'default.ProjectContributors',
   defaultProps: {
