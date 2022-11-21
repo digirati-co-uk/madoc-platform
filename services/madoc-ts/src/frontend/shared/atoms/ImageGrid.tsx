@@ -41,10 +41,13 @@ export const ImageGrid = styled.div<{
       max-width: 100%;
     }
     ${ImageStripBox} {
+      border-width: 2px;
+      border-color: transparent;
       width: 100%;
       display: flex;
       &:hover {
-        border: 2px dotted;
+        border-style: dotted;
+        border-color: #000;
       }
       h5 {
         padding-left: 1em;

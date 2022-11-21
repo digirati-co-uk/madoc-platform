@@ -1,5 +1,5 @@
 import { InternationalString } from '@iiif/presentation-3';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
@@ -21,15 +21,15 @@ import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { CanvasViewer } from './CanvasViewer';
 import { usePreventCanvasNavigation } from './PreventUsersNavigatingCanvases';
+import { FilterInput } from '../../shared/atoms/FilterInput';
 
 export function ManifestCanvasGrid(props: {
   background?: string;
   popup?: boolean;
   list?: boolean;
-  font?: string;
+  enableSearch?: boolean;
   textColor?: string;
-  canvasBorder?: string;
-  padding?: string;
+  cardBorder?: string;
   imageStyle?: string;
 }) {
   const { data } = useManifest();
@@ -49,6 +49,16 @@ export function ManifestCanvasGrid(props: {
   const rectangularImages = manifestOptions?.rectangularImages;
   const hideCanvasLabels = manifestOptions?.hideCanvasLabels;
   const manifest = data?.manifest;
+  const [filteredItems, setItems] = useState(manifest?.items);
+  const items = props.enableSearch ? filteredItems : manifest?.items;
+
+  function handleFilter(e: string) {
+    const result = manifest?.items
+      ? manifest?.items.filter(item => createLocaleString(item.label, t('Canvas thumbnail')).includes(e))
+      : [];
+
+    setItems(result);
+  }
 
   if (!manifest || !showNavigationContent) {
     return null;
@@ -58,7 +68,7 @@ export function ManifestCanvasGrid(props: {
     return (
       <ImageStripBox
         data-view-list={props.list}
-        $border={props.canvasBorder}
+        $border={props.cardBorder}
         $color={props.textColor}
         $bgColor={props.background}
       >
@@ -75,45 +85,55 @@ export function ManifestCanvasGrid(props: {
     );
   };
 
+  const filterManifests = props.enableSearch ? (
+    <FilterInput type="text" onChange={e => handleFilter(e.target.value)} placeholder="Search this Manifest" />
+  ) : null;
+
   if (props.popup) {
     return (
-      <ImageGrid data-view-list={props.list}>
-        {manifest.items.map((canvas, idx) => (
-          <ModalButton
-            modalSize="lg"
-            key={`${canvas.id}_${idx}`}
-            render={() => {
-              return (
-                <CustomRouteContext ctx={{ canvas: canvas.id }}>
-                  <CanvasViewer>
-                    <StandaloneCanvasViewer canvasId={canvas.id} />
-                  </CanvasViewer>
-                </CustomRouteContext>
-              );
-            }}
-            title={createLocaleString(canvas.label, t('Canvas thumbnail'))}
-          >
-            {renderCanvasSnippet(canvas)}
-          </ModalButton>
-        ))}
-      </ImageGrid>
+      <>
+        {filterManifests}
+        <ImageGrid data-view-list={props.list}>
+          {items?.map((canvas, idx) => (
+            <ModalButton
+              modalSize="lg"
+              key={`${canvas.id}_${idx}`}
+              render={() => {
+                return (
+                  <CustomRouteContext ctx={{ canvas: canvas.id }}>
+                    <CanvasViewer>
+                      <StandaloneCanvasViewer canvasId={canvas.id} />
+                    </CanvasViewer>
+                  </CustomRouteContext>
+                );
+              }}
+              title={createLocaleString(canvas.label, t('Canvas thumbnail'))}
+            >
+              {renderCanvasSnippet(canvas)}
+            </ModalButton>
+          ))}
+        </ImageGrid>
+      </>
     );
   }
 
   return (
-    <ImageGrid data-view-list={props.list}>
-      {manifest.items.map((canvas, idx) => (
-        <Link
-          key={`${canvas.id}_${idx}`}
-          to={createLink({
-            canvasId: canvas.id,
-            subRoute: directToModelPage ? 'model' : undefined,
-          })}
-        >
-          {renderCanvasSnippet(canvas)}
-        </Link>
-      ))}
-    </ImageGrid>
+    <>
+      {filterManifests}
+      <ImageGrid data-view-list={props.list}>
+        {items?.map((canvas, idx) => (
+          <Link
+            key={`${canvas.id}_${idx}`}
+            to={createLink({
+              canvasId: canvas.id,
+              subRoute: directToModelPage ? 'model' : undefined,
+            })}
+          >
+            {renderCanvasSnippet(canvas)}
+          </Link>
+        ))}
+      </ImageGrid>
+    </>
   );
 }
 
@@ -124,8 +144,9 @@ blockEditorFor(ManifestCanvasGrid, {
     background: '',
     popup: false,
     list: false,
+    enableSearch: false,
     textColor: '',
-    canvasBorder: '',
+    cardBorder: '',
     imageStyle: 'fit',
   },
   editor: {
@@ -133,7 +154,12 @@ blockEditorFor(ManifestCanvasGrid, {
     list: { type: 'checkbox-field', label: 'View', inlineLabel: 'Display as list' },
     background: { label: 'Card background color', type: 'color-field' },
     textColor: { label: 'Card text color', type: 'color-field' },
-    canvasBorder: { label: 'Card border', type: 'color-field' },
+    cardBorder: { label: 'Card border', type: 'color-field' },
+    enableSearch: {
+      label: 'Enable search',
+      type: 'checkbox-field',
+      inlineLabel: 'Show search box to filter canvas labels',
+    },
     imageStyle: {
       label: 'Image Style',
       type: 'dropdown-field',

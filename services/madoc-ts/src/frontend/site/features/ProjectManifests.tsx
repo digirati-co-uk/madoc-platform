@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
@@ -12,8 +12,15 @@ import { useSubjectMap } from '../../shared/hooks/use-subject-map';
 import { useProject } from '../hooks/use-project';
 import { useProjectManifests } from '../hooks/use-project-manifests';
 import { useSiteConfiguration } from './SiteConfigurationContext';
+import { ImageStripBox } from '../../shared/atoms/ImageStrip';
 
-export const ProjectManifests: React.FC = () => {
+export function ProjectManifests(props: {
+  background?: string;
+  list?: boolean;
+  textColor?: string;
+  cardBorder?: string;
+  imageStyle?: string;
+}) {
   const { t } = useTranslation();
   const {
     project: { allowManifestNavigation, hideProjectManifestNavigation },
@@ -21,7 +28,6 @@ export const ProjectManifests: React.FC = () => {
   const { data: project } = useProject();
   const createLocaleString = useCreateLocaleString();
   const { data: manifests } = useProjectManifests();
-
   const subjects = manifests?.subjects;
   const [subjectMap] = useSubjectMap(subjects);
 
@@ -38,7 +44,7 @@ export const ProjectManifests: React.FC = () => {
   return (
     <>
       <Heading3>{t('Manifests')}</Heading3>
-      <ImageGrid>
+      <ImageGrid data-view-list={props.list}>
         {manifests.collection.items.map((manifest, idx) => (
           <Link
             key={`${manifest.id}_${idx}`}
@@ -48,8 +54,13 @@ export const ProjectManifests: React.FC = () => {
                 : `/projects/${project.slug}/collections/${manifest.id}`
             }
           >
-            <ImageGridItem $size="large">
-              <CroppedImage $size="large">
+            <ImageStripBox
+              data-view-list={props.list}
+              $border={props.cardBorder}
+              $color={props.textColor}
+              $bgColor={props.background}
+            >
+              <CroppedImage $size="large" $covered={props.imageStyle === 'covered'}>
                 {manifest.thumbnail ? (
                   <img alt={createLocaleString(manifest.label, t('Untitled manifest'))} src={manifest.thumbnail} />
                 ) : null}
@@ -62,18 +73,38 @@ export const ProjectManifests: React.FC = () => {
                   ? t('{{count}} images', { count: manifest.canvasCount })
                   : t('{{count}} manifests', { count: manifest.canvasCount })}
               </Subheading5>
-            </ImageGridItem>
+            </ImageStripBox>
           </Link>
         ))}
       </ImageGrid>
     </>
   );
-};
+}
 
 blockEditorFor(ProjectManifests, {
   type: 'default.ProjectManifests',
   label: 'Project manifests',
   anyContext: ['project'],
   requiredContext: ['project'],
-  editor: {},
+  defaultProps: {
+    background: '',
+    list: false,
+    textColor: '',
+    cardBorder: '',
+    imageStyle: 'fit',
+  },
+  editor: {
+    list: { type: 'checkbox-field', label: 'View', inlineLabel: 'Display as list' },
+    background: { label: 'Card background color', type: 'color-field' },
+    textColor: { label: 'Card text color', type: 'color-field' },
+    cardBorder: { label: 'Card border', type: 'color-field' },
+    imageStyle: {
+      label: 'Image Style',
+      type: 'dropdown-field',
+      options: [
+        { value: 'covered', text: 'covered' },
+        { value: 'fit', text: 'fit' },
+      ],
+    },
+  },
 });

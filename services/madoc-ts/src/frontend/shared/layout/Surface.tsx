@@ -48,12 +48,14 @@ const SurfaceStyled = styled.div<{
   $padding?: 'none' | 'sm' | 'md' | 'lg';
   $marginBottom?: 'none' | 'sm' | 'md' | 'lg';
   $fontSize?: 'sm' | 'md' | 'lg';
+  $fontWeight?: '400' | '500' | '700' | '300';
   $font?: string;
 }>`
   background: ${props => (props.$background ? props.$background : 'transparent')};
   color: ${props => (props.$color ? props.$color : 'inherit')};
   padding: ${parseProp('$padding', '0')};
   font-size: ${parseProp('$fontSize', '1em')};
+  font-weight: ${props => (props.$fontWeight ? props.$fontWeight : 'inherit')};
   font-family: ${props => (props.$font ? `${props.$font}, sans-serif` : 'inherit')};
   text-align: ${props => (props.$textAlign ? props.$textAlign : 'left')};
   margin-bottom: ${parseProp('$marginBottom', '0')};
@@ -68,6 +70,7 @@ export type SurfaceProps = {
   padding?: 'none' | 'sm' | 'md' | 'lg';
   marginBottom?: 'none' | 'sm' | 'md' | 'lg';
   fontSize?: 'sm' | 'md' | 'lg';
+  fontWeight?: '400' | '500' | '700' | '300';
 };
 
 export const Surface: React.FC<SurfaceProps> = ({
@@ -77,6 +80,7 @@ export const Surface: React.FC<SurfaceProps> = ({
   background,
   font,
   fontSize,
+  fontWeight,
   padding,
   children,
   marginBottom,
@@ -95,6 +99,7 @@ export const Surface: React.FC<SurfaceProps> = ({
       $font={font}
       $padding={padding}
       $fontSize={fontSize}
+      $fontWeight={fontWeight}
       $marginBottom={marginBottom}
     >
       {children}
@@ -112,6 +117,7 @@ blockEditorFor(Surface, {
     font: '',
     padding: 'none',
     fontSize: 'md',
+    fontWeight: '400',
     textAlign: 'left',
     marginBottom: 'none',
   },
@@ -146,6 +152,16 @@ blockEditorFor(Surface, {
         { value: 'sm', text: 'Small' },
         { value: 'md', text: 'Medium' },
         { value: 'lg', text: 'Large' },
+      ],
+    },
+    fontWeight: {
+      label: 'Font Weight',
+      type: 'dropdown-field',
+      options: [
+        { value: '400', text: 'Regular' },
+        { value: '500', text: 'Medium' },
+        { value: '600', text: 'Bold' },
+        { value: '300', text: 'Light' },
       ],
     },
     marginBottom: {
