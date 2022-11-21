@@ -18,6 +18,14 @@ const TopicCard = styled.div`
   position: relative;
 `;
 
+const TopicCardList = styled.div`
+  display: flex;
+  
+  :hover {
+    border: 1px dotted #002d4b;
+  }
+`;
+
 const TopicTextBox = styled.div`
   background: #fff;
   width: 100%;
@@ -28,6 +36,13 @@ const TopicTextBox = styled.div`
   position: absolute;
   bottom: 0;
   top: 92px;
+  
+  &[data-list-view] {
+    position: relative;
+    padding: 0.5em 1em;
+    top: 0;
+    bottom: 0;
+  }
 `;
 
 const TopicHeading = styled.h3`
@@ -138,12 +153,12 @@ export const ViewSingleTopic: React.FC = () => {
   if (topicResults) {
     return (
       <TopicListingContainer>
-        <h2>List of Topics </h2>
-        <ImageGrid $size={'large'} data-view-list={false}>
+        <h2>List of rescources </h2>
+        <ImageGrid data-view-list={true}>
           {topicResults.map(result => {
             return (
               result && (
-                <TopicCard key={result.id}>
+                <TopicCardList key={result.id}>
                   <CroppedImage $covered={true}>
                     {result.thumbnail ? (
                       <img alt="todo" src={result.thumbnail} />
@@ -151,14 +166,13 @@ export const ViewSingleTopic: React.FC = () => {
                       <img alt="placeholder" src="https://via.placeholder.com/125" />
                     )}
                   </CroppedImage>
-                  <TopicTextBox>
-                    <TopicHeading>{result.label}</TopicHeading>
-                    <TopicSubHeading>123 Objects</TopicSubHeading>
+                  <TopicTextBox data-list-view>
+                    <TopicHeading>{result.madoc_id}</TopicHeading>
                     <TopicSubHeading>
-                      Part of: <span>{result.type}</span>
+                      Type: <span>{result.type}</span>
                     </TopicSubHeading>
                   </TopicTextBox>
-                </TopicCard>
+                </TopicCardList>
               )
             );
           })}
