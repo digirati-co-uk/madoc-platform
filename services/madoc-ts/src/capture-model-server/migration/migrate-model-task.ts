@@ -46,10 +46,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
   switch (name) {
     case 'created': {
       const task = await api.acceptTask<MigrateModelTask>(taskId);
-      console.log('Starting task..');
       const [modelId, siteId] = task.parameters;
-
-      console.log('PARAMS ->', modelId, siteId);
       const siteApi = api.asUser({ siteId });
       if (modelId) {
         try {
@@ -58,12 +55,8 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
             method: 'POST',
           });
 
-          console.log('FINISHED?');
-
           // Mark as done.
           await api.updateTask(taskId, { status: 3 });
-
-          console.log('MARKED AS DONE');
         } catch (e) {
           await api.updateTask(taskId, { status: -1 });
         }
