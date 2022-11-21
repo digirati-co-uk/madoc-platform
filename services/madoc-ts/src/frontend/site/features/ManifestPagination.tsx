@@ -14,34 +14,22 @@ export const ManifestPagination: React.FC<{
   const { showNavigationContent } = usePreventCanvasNavigation();
 
   const pagination = data?.pagination;
+  const PaginationComponent = paginationStyle ? PaginationNumbered : Pagination;
 
   if (!pagination || !showNavigationContent) {
     return null;
   }
 
   return (
-    <>
-      {!paginationStyle ? (
-        <Pagination
-          position={position}
-          hash={'listing-header'}
-          pageParam={'m'}
-          page={pagination ? pagination.page : 1}
-          totalPages={pagination ? pagination.totalPages : 1}
-          stale={!pagination}
-          extraQuery={{ filter, listing }}
-        />
-      ) : (
-        <PaginationNumbered
-          position={position}
-          pageParam={'m'}
-          page={pagination ? pagination.page : 1}
-          totalPages={pagination ? pagination.totalPages : 1}
-          stale={!pagination}
-          extraQuery={{ filter, listing }}
-        />
-      )}
-    </>
+    <PaginationComponent
+      position={position}
+      hash={'listing-header'}
+      pageParam={'m'}
+      page={pagination ? pagination.page : 1}
+      totalPages={pagination ? pagination.totalPages : 1}
+      stale={!pagination}
+      extraQuery={{ filter, listing }}
+    />
   );
 };
 
