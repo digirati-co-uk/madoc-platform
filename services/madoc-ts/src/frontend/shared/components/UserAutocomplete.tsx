@@ -1,4 +1,4 @@
-import { Tag } from '@styled-icons/entypo';
+import { Tag } from '../capture-models/editor/atoms/Tag';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DefaultSelect } from '../form/DefaulSelect';

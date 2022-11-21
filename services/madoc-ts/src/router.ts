@@ -6,6 +6,7 @@ import { getProjectAnnotationStyle } from './routes/annotation-styles/get-projec
 import { annotationStyles } from './routes/annotation-styles/index';
 import { searchAllUsers } from './routes/global/search-all-users';
 import { systemCheck } from './routes/global/system-check';
+import { getAutomatedUsers } from './routes/manage-site/get-automated-users';
 import { updateProjectAnnotationStyle } from './routes/projects/update-project-annotation-style';
 import { siteRoot } from './routes/root';
 import {
@@ -258,6 +259,7 @@ export const router = new TypedRouter({
 
   // Manage users (on site)
   'site-admin-list-all-site-users': [TypedRouter.GET, '/api/madoc/manage-site/users', getSiteUsers],
+  'site-list-all-bot-users': [TypedRouter.GET, '/api/madoc/manage-site/bots', getAutomatedUsers],
   // User API.
   'manage-site-all-users': [TypedRouter.GET, '/api/madoc/manage-site/users/search', userAutocomplete],
   'site-admin-get-user': [TypedRouter.GET, '/api/madoc/manage-site/users/:userId', getSiteUser],

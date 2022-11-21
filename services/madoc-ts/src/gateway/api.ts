@@ -34,7 +34,7 @@ import {
   ProjectDeletionSummary,
   CollectionDeletionSummary,
 } from '../types/deletion-summary';
-import { Site, User } from '../extensions/site-manager/types';
+import { Site, SiteUser, User } from '../extensions/site-manager/types';
 import { ProjectManifestTasks } from '../types/manifest-tasks';
 import { NoteListResponse } from '../types/personal-notes';
 import { Pm2Status } from '../types/pm2';
@@ -1141,6 +1141,10 @@ export class ApiClient {
   // User API
   async getUser(id: number) {
     return this.request<{ user: User }>(`/api/madoc/users/${id}`);
+  }
+
+  async getAutomatedUsers() {
+    return this.request<{ users: SiteUser[] }>(`/api/madoc/manage-site/bots`);
   }
 
   // Capture model API.

@@ -20,7 +20,8 @@ export function extractBlockDefinitions(
       const props = singleComponent.props || {};
 
       if (singleComponent && singleComponent.type === AvailableBlocks) {
-        available.push(...(singleComponent.props.children || []));
+        const children = singleComponent.props.children || [];
+        available.push(...(Array.isArray(children) ? children : [children]));
         if (singleComponent.props.names) {
           names.push(...singleComponent.props.names);
         }

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 import { HrefLink } from '../utility/href-link';
+import { Tag } from '../capture-models/editor/atoms/Tag';
 
 const TaskItemContainer = styled.div<{ $onDark?: boolean; $selected?: boolean }>`
   background: #ffffff;
@@ -101,12 +102,13 @@ export const TaskItem: React.FC<{
   selected?: boolean;
   label: string | any;
   type: string;
-  user?: { name: string; link: string };
+  user?: { name: string; link: string; automated?: boolean };
   status: number;
   thumbnail?: string;
   $onDark?: boolean;
 }> = props => {
   const { t } = useTranslation();
+
   return (
     <TaskItemContainer
       $onDark={props.$onDark}
@@ -121,6 +123,7 @@ export const TaskItem: React.FC<{
         {props.user ? (
           <TaskItemAssignee>
             {t('assigned to')} <HrefLink href={props.user.link}>{props.user.name}</HrefLink>
+            {props.user.automated ? <Tag style={{ marginLeft: '0.5em' }}>bot</Tag> : null}
           </TaskItemAssignee>
         ) : null}
       </TaskItemBody>
