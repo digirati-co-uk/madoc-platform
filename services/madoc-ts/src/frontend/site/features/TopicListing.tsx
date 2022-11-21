@@ -20,7 +20,7 @@ const TopicCard = styled.div`
 
 const TopicCardList = styled.div`
   display: flex;
-  
+
   :hover {
     border: 1px dotted #002d4b;
   }
@@ -36,7 +36,7 @@ const TopicTextBox = styled.div`
   position: absolute;
   bottom: 0;
   top: 92px;
-  
+
   &[data-list-view] {
     position: relative;
     padding: 0.5em 1em;
@@ -128,19 +128,29 @@ export const TopicListing: React.FC = () => {
   return null;
 };
 
+type topicResultsType = {
+  // count: string | number;
+  // next?: string;
+  // previous?: string;
+  // results?: {
+  url?: string;
+  madoc_id?: string | number;
+  created?: string;
+  modified?: string;
+  type?: string;
+  thumbnail?: string;
+}[];
 export const ViewSingleTopic: React.FC = () => {
-  const [topicResults, setTopicResults] = useState<topicType[]>([]);
+  const [topicResults, setTopicResults] = useState<topicResultsType[]>([]);
 
   const fetchTopic = async () => {
     const api = async () => {
-      const data = await fetch(`https://enrichment.ida.madoc.io/madoc/search/?`, {
+      const data = await fetch(`https://enrichment.ida.madoc.io/madoc/search/?format=json`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'entity', subtype: '0d38f500-d152-4fc8-9b91-cdb45931b0c3' }),
       });
       const jsonData = await data.json();
-      console.log(data);
-
       setTopicResults(jsonData.results);
     };
     api();
@@ -155,25 +165,25 @@ export const ViewSingleTopic: React.FC = () => {
       <TopicListingContainer>
         <h2>List of rescources </h2>
         <ImageGrid data-view-list={true}>
-          {topicResults.map(result => {
-            return (
-              result && (
-                <TopicCardList key={result.id}>
-                  <CroppedImage $covered={true}>
-                    {result.thumbnail ? (
-                      <img alt="todo" src={result.thumbnail} />
-                    ) : (
-                      <img alt="placeholder" src="https://via.placeholder.com/125" />
-                    )}
-                  </CroppedImage>
-                  <TopicTextBox data-list-view>
-                    <TopicHeading>{result.madoc_id}</TopicHeading>
-                    <TopicSubHeading>
-                      Type: <span>{result.type}</span>
-                    </TopicSubHeading>
-                  </TopicTextBox>
-                </TopicCardList>
-              )
+          {topicResults.map((result, i) => {
+            return result ? (
+              <TopicCardList key={i}>
+                <CroppedImage $covered={true}>
+                  {result.thumbnail ? (
+                    <img alt="todo" src={result.thumbnail} />
+                  ) : (
+                    <img alt="placeholder" src="https://via.placeholder.com/125" />
+                  )}
+                </CroppedImage>
+                <TopicTextBox data-list-view>
+                  <TopicHeading>{result.madoc_id}</TopicHeading>
+                  <TopicSubHeading>
+                    Type: <span>{result.type}</span>
+                  </TopicSubHeading>
+                </TopicTextBox>
+              </TopicCardList>
+            ) : (
+              <p>oh no</p>
             );
           })}
         </ImageGrid>
