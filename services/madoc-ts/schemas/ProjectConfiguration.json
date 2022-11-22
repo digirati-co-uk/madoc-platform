@@ -235,6 +235,9 @@
       "properties": {
         "allowMerging": {
           "type": "boolean"
+        },
+        "enableAutoReview": {
+          "type": "boolean"
         }
       }
     },

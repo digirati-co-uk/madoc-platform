@@ -120,6 +120,10 @@ export const RootLoader: UniversalComponent<RootLoaderType> = createUniversalCom
         creator: () => [],
         name: 'getUserDetails',
       },
+      {
+        creator: () => [],
+        name: 'getAutomatedUsers',
+      },
     ],
     getKey: () => {
       return ['root-config', []];

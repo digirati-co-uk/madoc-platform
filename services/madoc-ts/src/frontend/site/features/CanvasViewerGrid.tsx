@@ -42,12 +42,13 @@ export const CanvasViewerControls = styled(ButtonRow)`
 `;
 
 export const CanvasViewerButton = styled(Button)`
-  border-radius: 0;
+  border-radius: 3px;
   padding: 0.8em;
   font-size: 1em;
   border: none;
   background: #fff;
   display: flex;
+
   &:focus {
     outline: 2px solid orange;
   }

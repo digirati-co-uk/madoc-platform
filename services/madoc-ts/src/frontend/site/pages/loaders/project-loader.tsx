@@ -9,6 +9,7 @@ import { useProjectTemplate } from '../../../shared/hooks/use-project-template';
 import { useUser } from '../../../shared/hooks/use-site';
 import { Button } from '../../../shared/navigation/Button';
 import { AutoSlotLoader } from '../../../shared/page-blocks/auto-slot-loader';
+import { AvailableBlocks } from '../../../shared/page-blocks/available-blocks';
 import { HrefLink } from '../../../shared/utility/href-link';
 import { nullTheme, useCustomTheme } from '../../../themes/helpers/CustomThemeProvider';
 import { UniversalComponent } from '../../../types';
@@ -55,7 +56,9 @@ export const ProjectLoader: UniversalComponent<ProjectLoaderType> = createUniver
             ) : null}
             <Outlet />
             <Slot layout="flex" name="project-footer">
-              <FooterImageGrid />
+              <AvailableBlocks>
+                <FooterImageGrid />
+              </AvailableBlocks>
             </Slot>
           </BreadcrumbContext>
         </ConfigProvider>

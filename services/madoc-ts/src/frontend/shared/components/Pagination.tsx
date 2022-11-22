@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { stringify } from 'query-string';
-import { SmallButton, SmallRoundedButton, MediumRoundedButton } from '../navigation/Button';
+import { SmallRoundedButton, MediumRoundedButton } from '../navigation/Button';
 
 import styled from 'styled-components';
 import { HrefLink } from '../utility/href-link';
@@ -36,6 +36,8 @@ export const Pagination: React.FC<{
   stale: boolean;
   pageParam?: string;
   extraQuery?: any;
+  position?: 'flex-end' | 'flex-start' | 'center';
+  size?: 'lg' | 'md' | 'sm';
 }> = ({
   hash,
   page: propsPage,
@@ -43,6 +45,7 @@ export const Pagination: React.FC<{
   totalPages: propsTotalPages,
   pageParam = 'page',
   extraQuery: { page: _, ...extraQuery } = {},
+  position,
 }) => {
   const [page, setStalePage] = useState(propsPage);
   const [totalPages, setStaleTotalPages] = useState(propsTotalPages);
@@ -77,7 +80,7 @@ export const Pagination: React.FC<{
   }
 
   return (
-    <PaginationContainer>
+    <PaginationContainer style={{ justifyContent: position }}>
       <SmallRoundedButton
         disabled={!prevPage || isLoading}
         as={HrefLink}
@@ -106,7 +109,8 @@ export const PaginationNumbered: React.FC<{
   stale: boolean;
   pageParam?: string;
   extraQuery?: any;
-}> = ({ page: propsPage, stale, totalPages: propsTotalPages, pageParam = 'page', extraQuery }) => {
+  position?: 'flex-end' | 'flex-start' | 'center';
+}> = ({ page: propsPage, stale, totalPages: propsTotalPages, pageParam = 'page', extraQuery, position }) => {
   const [page, setStalePage] = useState(propsPage);
   const [totalPages, setStaleTotalPages] = useState(propsTotalPages);
   const [isLoading, setIsLoading] = useState(false);
@@ -137,6 +141,7 @@ export const PaginationNumbered: React.FC<{
 
   const prevPage = stale || page > 1;
   const nextPage = stale || page < totalPages;
+
   const q = extraQuery && Object.keys(extraQuery).length ? `${stringify(extraQuery)}` : '';
 
   if (totalPages === 0) {
@@ -144,7 +149,7 @@ export const PaginationNumbered: React.FC<{
   }
 
   return (
-    <PaginationContainerNumbered>
+    <PaginationContainerNumbered style={{ justifyContent: position }}>
       {prevPage ? (
         <MediumRoundedButton as={Link} to={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}`}>
           {t('Previous page')}

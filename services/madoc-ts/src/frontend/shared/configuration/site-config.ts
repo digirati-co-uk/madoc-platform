@@ -286,6 +286,10 @@ export const siteConfigurationModel: {
         label: 'Allow merging submissions',
         value: 'allowMerging',
       },
+      {
+        label: 'Allow auto-review if assigned to automated user',
+        value: 'enableAutoReview',
+      },
     ],
   },
   projectPageOptions: {

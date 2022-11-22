@@ -27,7 +27,7 @@ export const CanvasJson = createUniversalComponent<CanvasJsonType>(
   },
   {
     getKey: params => {
-      return ['canvas-plaintext', { id: Number(params.id) }];
+      return ['view-canvas', { id: Number(params.id) }];
     },
     getData: async (key, { id }, api) => {
       return await api.getCanvasById(id);
