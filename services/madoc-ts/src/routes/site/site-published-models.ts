@@ -1,6 +1,7 @@
 import { sql } from 'slonik';
 import { getProject } from '../../database/queries/project-queries';
 import { PARAGRAPHS_PROFILE } from '../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
+import { resolveSelector } from '../../frontend/shared/capture-models/helpers/resolve-selector';
 import { serialiseCaptureModel } from '../../frontend/shared/capture-models/helpers/serialise-capture-model';
 import { traverseDocument } from '../../frontend/shared/capture-models/helpers/traverse-document';
 import { getEntityLabel } from '../../frontend/shared/capture-models/utility/get-entity-label';
@@ -146,8 +147,8 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
             // Check if there is a selector, if there is then mark it as EXTRACTED
             // Extracted entities will become annotations
             // If there is a labelledBy then use this for the annotation.
-
-            if (entity.selector && entity.selector.state) {
+            const selector = entity.selector ? resolveSelector(entity.selector, undefined, true) : null;
+            if (selector && selector.state) {
               const labelValue = getEntityLabel(entity);
               // Try to get the value of the labelledby
               if (labelValue) {
@@ -155,14 +156,14 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
                   // We have a paragraphs item.
                   annotations.push(
                     format === 'open-annotation'
-                      ? captureModelFieldToOpenAnnotation(entity.id, labelValue, entity.selector, defaultOptions)
-                      : captureModelFieldToW3CAnnotation(entity.id, labelValue, entity.selector, defaultOptions)
+                      ? captureModelFieldToOpenAnnotation(entity.id, labelValue, selector, defaultOptions)
+                      : captureModelFieldToW3CAnnotation(entity.id, labelValue, selector, defaultOptions)
                   );
                 } else {
                   annotations.push(
                     format === 'open-annotation'
-                      ? captureModelFieldToOpenAnnotation(entity.id, labelValue, entity.selector, defaultOptions)
-                      : captureModelFieldToW3CAnnotation(entity.id, labelValue, entity.selector, defaultOptions)
+                      ? captureModelFieldToOpenAnnotation(entity.id, labelValue, selector, defaultOptions)
+                      : captureModelFieldToW3CAnnotation(entity.id, labelValue, selector, defaultOptions)
                   );
                 }
                 entity.temp = entity.temp ? entity.temp : {};
@@ -189,15 +190,15 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
             if ((parent && parent.temp && parent.temp.EXTRACTED) || (field.temp && field.temp.REVISED)) {
               return;
             }
-
+            const selector = field.selector ? resolveSelector(field.selector, undefined, true) : null;
             const canAddAnnotation = selectors
-              ? !!(field.selector && field.selector.state && typeof field.value === 'string')
+              ? !!(selector && selector.state && typeof field.value === 'string')
               : true;
-            if (canAddAnnotation && field.value) {
+            if (selector && canAddAnnotation && field.value) {
               annotations.push(
                 format === 'open-annotation'
-                  ? captureModelFieldToOpenAnnotation(field.id, field.value, field.selector, defaultOptions)
-                  : captureModelFieldToW3CAnnotation(field.id, field.value, field.selector, defaultOptions)
+                  ? captureModelFieldToOpenAnnotation(field.id, field.value, selector, defaultOptions)
+                  : captureModelFieldToW3CAnnotation(field.id, field.value, selector, defaultOptions)
               );
             }
           },

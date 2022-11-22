@@ -38,6 +38,7 @@
     "atlasBackground": "#f9f9f9",
     "canvasPageShowAnnotations": "when-open",
     "canvasPageShowDocument":"when-open",
+    "forkMode": false,
     "reviewOptions": {
       "allowMerging": false
     },
