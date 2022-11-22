@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { ImageGrid } from '../../shared/atoms/ImageGrid';
 import { CroppedImage } from '../../shared/atoms/Images';
+import { SingleTopic, TopicList, TopicResults } from '../../../types/topics';
+import { useQuery } from 'react-query';
 
 const TopicListingContainer = styled.div`
   background: #ecf5fc;
@@ -11,6 +13,16 @@ const TopicListingContainer = styled.div`
   ${ImageGrid} {
     grid-gap: 3em;
   }
+`;
+
+const SingleTopicContainer = styled.div`
+  background: #ecf5fc;
+  margin-bottom: 20px;
+  padding: 20px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  height: 300px;
+  justify-content: space-between;
 `;
 
 const TopicCard = styled.div`
@@ -29,7 +41,7 @@ const TopicCardList = styled.div`
 const TopicTextBox = styled.div`
   background: #fff;
   width: 100%;
-  padding: 3em 2em;
+  padding: 1em;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -62,133 +74,174 @@ const TopicSubHeading = styled.div`
   }
 `;
 
-type topicType = {
-  // count: string | number;
-  // next?: string;
-  // previous?: string;
-  // results?: {
-  url?: string;
-  id?: string | number;
-  created?: string;
-  modified?: string;
-  type: string;
-  label?: string;
-  thumbnail?: string;
-}[];
+export const AllTopicListing: React.FC<{ url: string }> = ({ url }) => {
+  const { data } = useQuery<TopicList>(
+    ['topic-page-result', { url }],
+    async () => {
+      return fetch(`${url}/?format=json`).then(r => r.json());
+    },
+    {
+      refetchInterval: 60000,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+      refetchIntervalInBackground: false,
+    }
+  );
 
-export const TopicListing: React.FC = () => {
-  const [topics, setTopics] = useState<topicType[]>([]);
-
-  const fetchTopic = async () => {
-    const api = async () => {
-      const data = await fetch('https://enrichment.ida.madoc.io/madoc/entity/?format=json', {
-        method: 'GET',
-      });
-      const jsonData = await data.json();
-      setTopics(jsonData.results);
-    };
-    api();
-  };
-
-  useEffect(() => {
-    fetchTopic();
-  }, []);
-
-  if (topics) {
-    return (
-      <TopicListingContainer>
-        <h2>List of Topics </h2>
-        <ImageGrid $size={'large'} data-view-list={false}>
-          {topics.map(topic => {
-            return (
-              topic && (
-                <TopicCard key={topic.id}>
-                  <CroppedImage $covered={true}>
-                    {topic.thumbnail ? (
-                      <img alt="todo" src={topic.thumbnail} />
-                    ) : (
-                      <img alt="placeholder" src="https://via.placeholder.com/125" />
-                    )}
-                  </CroppedImage>
-                  <TopicTextBox>
-                    <TopicHeading>{topic.label}</TopicHeading>
-                    <TopicSubHeading>123 Objects</TopicSubHeading>
-                    <TopicSubHeading>
-                      Part of: <span>{topic.type}</span>
-                    </TopicSubHeading>
-                  </TopicTextBox>
-                </TopicCard>
-              )
-            );
-          })}
-        </ImageGrid>
-      </TopicListingContainer>
-    );
+  if (!data || !data.results) {
+    return null;
   }
-  return null;
+  return (
+    <TopicListingContainer>
+      <h2> {data.count} results </h2>
+      <ImageGrid $size={'large'} data-view-list={false}>
+        {data.results.map(result => {
+          return (
+            result && (
+              <TopicCard key={result.id}>
+                <CroppedImage $covered={true}>
+                  <img alt="placeholder" src="https://via.placeholder.com/125" />
+                </CroppedImage>
+
+                <TopicTextBox>
+                  <TopicHeading>{result.label}</TopicHeading>
+
+                  <TopicSubHeading>
+                    Part of: <span>{result.type}</span>
+                  </TopicSubHeading>
+
+                  {result.created && (
+                    <TopicSubHeading>
+                      Created: <span>{Date(result.created)}</span>
+                    </TopicSubHeading>
+                  )}
+                  {result.modified && (
+                    <TopicSubHeading>
+                      Modified: <span>{Date(result.modified)}</span>
+                    </TopicSubHeading>
+                  )}
+
+                  <TopicSubHeading>
+                    ID: <span>{result.id}</span>
+                  </TopicSubHeading>
+                </TopicTextBox>
+              </TopicCard>
+            )
+          );
+        })}
+      </ImageGrid>
+    </TopicListingContainer>
+  );
 };
 
-type topicResultsType = {
-  // count: string | number;
-  // next?: string;
-  // previous?: string;
-  // results?: {
-  url?: string;
-  madoc_id?: string | number;
-  created?: string;
-  modified?: string;
-  type?: string;
-  thumbnail?: string;
-}[];
-export const ViewSingleTopic: React.FC = () => {
-  const [topicResults, setTopicResults] = useState<topicResultsType[]>([]);
+export const TopicDetails: React.FC<{ topicId: string }> = ({ topicId }) => {
+  const { data } = useQuery<SingleTopic>(
+    ['single-topic', { topicId }],
+    async () => {
+      return fetch(`https://enrichment.ida.madoc.io/madoc/entity/${topicId}/?format=json`).then(r => r.json());
+    },
+    {
+      refetchInterval: 60000,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+      refetchIntervalInBackground: false,
+    }
+  );
 
-  const fetchTopic = async () => {
-    const api = async () => {
-      const data = await fetch(`https://enrichment.ida.madoc.io/madoc/search/?format=json`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'entity', subtype: '0d38f500-d152-4fc8-9b91-cdb45931b0c3' }),
-      });
-      const jsonData = await data.json();
-      setTopicResults(jsonData.results);
-    };
-    api();
-  };
+  if (!data) {
+    return null;
+  }
 
-  useEffect(() => {
-    fetchTopic();
-  }, []);
+  return (
+    <SingleTopicContainer>
+      <TopicSubHeading>
+        Label: <span>{data.label}</span>
+      </TopicSubHeading>
 
-  if (topicResults) {
-    return (
-      <TopicListingContainer>
-        <h2>List of rescources </h2>
-        <ImageGrid data-view-list={true}>
-          {topicResults.map((result, i) => {
-            return result ? (
+      <TopicSubHeading>
+        id: <span>{data.id}</span>
+      </TopicSubHeading>
+
+      <TopicSubHeading>
+        url: <span>{data.url}</span>
+      </TopicSubHeading>
+
+      <TopicSubHeading>
+        type: <span>{data.type}</span>
+      </TopicSubHeading>
+
+      {data.created && (
+        <TopicSubHeading>
+          created: <span>{Date(data.created)}</span>
+        </TopicSubHeading>
+      )}
+
+      {data.modified && (
+        <TopicSubHeading>
+          modified: <span>{Date(data.modified)}</span>
+        </TopicSubHeading>
+      )}
+    </SingleTopicContainer>
+  );
+};
+
+export const TopicItemsList: React.FC<{ type: string; subtype: string }> = ({ type, subtype }) => {
+  const { data } = useQuery<TopicResults>(
+    ['topic-page-result', { type, subtype }],
+    async () => {
+      return fetch(
+        `https://enrichment.ida.madoc.io/madoc/search/?format=json&type=${type}&subtype=${subtype}`
+      ).then(r => r.json());
+    },
+    {
+      refetchInterval: 60000,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+      refetchIntervalInBackground: false,
+    }
+  );
+
+  if (!data || !data.results) {
+    return null;
+  }
+  return (
+    <TopicListingContainer>
+      <h2> {data.count} results </h2>
+      <ImageGrid data-view-list={true}>
+        {data.results.map((result, i) => {
+          return (
+            result && (
               <TopicCardList key={i}>
                 <CroppedImage $covered={true}>
-                  {result.thumbnail ? (
-                    <img alt="todo" src={result.thumbnail} />
-                  ) : (
-                    <img alt="placeholder" src="https://via.placeholder.com/125" />
-                  )}
+                  <img alt="placeholder" src="https://via.placeholder.com/125" />
                 </CroppedImage>
+
                 <TopicTextBox data-list-view>
-                  <TopicHeading>{result.madoc_id}</TopicHeading>
+                  <TopicHeading>Madoc Id: {result.madoc_id}</TopicHeading>
+
                   <TopicSubHeading>
                     Type: <span>{result.type}</span>
                   </TopicSubHeading>
+
+                  {result.created && (
+                    <TopicSubHeading>
+                      Created: <span>{Date(result.created)}</span>
+                    </TopicSubHeading>
+                  )}
+                  {result.modified && (
+                    <TopicSubHeading>
+                      Modified: <span>{Date(result.modified)}</span>
+                    </TopicSubHeading>
+                  )}
                 </TopicTextBox>
               </TopicCardList>
-            ) : (
-              <p>oh no</p>
-            );
-          })}
-        </ImageGrid>
-      </TopicListingContainer>
-    );
-  }
-  return null;
+            )
+          );
+        })}
+      </ImageGrid>
+    </TopicListingContainer>
+  );
 };

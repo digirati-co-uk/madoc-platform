@@ -43,6 +43,7 @@ export const AdminSidebar: React.FC = () => {
     isManageManifests,
     isLocalisation,
     isMedia,
+    isTopics,
     isSiteGlobal,
   } = useMemo(() => {
     return {
@@ -60,6 +61,7 @@ export const AdminSidebar: React.FC = () => {
         pathname.startsWith('/enrichment/search-indexing'),
       isLocalisation: pathname.startsWith('/i18n'),
       isMedia: pathname.startsWith('/media'),
+      isTopics: pathname.startsWith('/topics'),
       isSiteGlobal: pathname.startsWith('/global'),
     };
   }, [pathname]);
@@ -127,6 +129,15 @@ export const AdminSidebar: React.FC = () => {
             <AdminMenuItemLabel>{t('Projects', { count: 2 })}</AdminMenuItemLabel>
           </AdminMenuItem>
         </AdminMenuItemContainer>
+
+        {/*<AdminMenuItemContainer style={{ visibility: 'hidden' }}>*/}
+        {/*  <AdminMenuItem as={HrefLink} href="/topics" $active={isTopics}>*/}
+        {/*    <AdminMenuItemIcon>*/}
+        {/*      <ManageCollectionsIcon />*/}
+        {/*    </AdminMenuItemIcon>*/}
+        {/*    <AdminMenuItemLabel>{t('Topics')}</AdminMenuItemLabel>*/}
+        {/*  </AdminMenuItem>*/}
+        {/*</AdminMenuItemContainer>*/}
 
         <AdminMenuItemContainer>
           <AdminMenuItem as={HrefLink} href="/media" $active={isMedia}>

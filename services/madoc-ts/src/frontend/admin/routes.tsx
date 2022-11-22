@@ -98,6 +98,7 @@ import { DeleteProject } from './pages/crowdsourcing/projects/delete-project';
 import { ProjectExportTab } from './pages/crowdsourcing/projects/project-export';
 import { GenerateApiKey } from './pages/system/generate-api-key';
 import { CreateBot } from './pages/global/create-bot';
+import { Topics } from './pages/content/topics/topics';
 
 export const routes: RouteObject[] = [
   {
@@ -514,6 +515,10 @@ export const routes: RouteObject[] = [
   {
     path: '/system/activity-streams',
     element: <ActivityStreams />,
+  },
+  {
+    path: '/topics',
+    element: <Topics />,
   },
   {
     path: '/site/permissions',

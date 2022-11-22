@@ -9,4 +9,6 @@ export default {
 const Template: any = (props: any) => <TopicListing {...props} />;
 
 export const DefaultTopicList = Template.bind({});
-DefaultTopicList.args = {};
+DefaultTopicList.args = {
+  url: 'https://enrichment.ida.madoc.io/madoc/entity',
+};
