@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { TopicListing } from '../../src/frontend/site/features/TopicListing';
+import { AllTopicListing } from '../../src/frontend/site/features/TopicListing';
 
 export default {
   title: 'Topics/TopicList',
-  component: TopicListing,
+  component: AllTopicListing,
 };
 
-const Template: any = (props: any) => <TopicListing {...props} />;
+const Template: any = (props: any) => <AllTopicListing {...props} />;
 
 export const DefaultTopicList = Template.bind({});
 DefaultTopicList.args = {

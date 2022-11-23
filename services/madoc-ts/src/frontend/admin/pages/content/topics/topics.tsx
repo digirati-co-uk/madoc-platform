@@ -52,10 +52,11 @@ export const Topics: React.FC = () => {
             onClick={() => {
               setView('topicSearch');
             }}
-          > Topic Items
+          >
+            Topic Items
           </Button>
         </AdminTabs>
-        {view === 'allTopics' ? <ViewTopicList /> : view === 'singleTopic' ? <ViewSingleTopic /> : <ViewTopicItems />}
+          {view === 'allTopics' ? <ViewTopicList /> : view === 'singleTopic' ? <ViewSingleTopic /> : <ViewTopicItems />}
       </SystemBackground>
     </>
   );

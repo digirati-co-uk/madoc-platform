@@ -1,20 +1,15 @@
 import * as React from 'react';
-import { ViewSingleTopic } from '../../src/frontend/site/features/TopicListing';
+import { TopicItemsList } from '../../src/frontend/site/features/TopicListing';
 
 export default {
-  title: 'Topics/ViewTopic',
-  component: ViewSingleTopic,
-  argTypes: {
-    query: {
-      options: ['primary', 'secondary'],
-      control: { type: 'radio' },
-    },
-  },
+  title: 'Topics/TopicItemsList',
+  component: TopicItemsList,
 };
 
-const Template: any = (props: any) => <ViewSingleTopic {...props} />;
+const Template: any = (props: any) => <TopicItemsList {...props} />;
 
-export const DefaultTopicView = Template.bind({});
-DefaultTopicView.args = {
-  query: 'test',
+export const DefaultTopicItems = Template.bind({});
+DefaultTopicItems.args = {
+  type: 'entity',
+  subtype: '0d38f500-d152-4fc8-9b91-cdb45931b0c3',
 };

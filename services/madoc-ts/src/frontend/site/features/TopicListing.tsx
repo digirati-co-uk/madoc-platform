@@ -74,6 +74,11 @@ const TopicSubHeading = styled.div`
   }
 `;
 
+const formatDate = (d: string) => {
+  const date: Date = new Date(d);
+  return date;
+};
+
 export const AllTopicListing: React.FC<{ url: string }> = ({ url }) => {
   const { data } = useQuery<TopicList>(
     ['topic-page-result', { url }],
@@ -113,12 +118,12 @@ export const AllTopicListing: React.FC<{ url: string }> = ({ url }) => {
 
                   {result.created && (
                     <TopicSubHeading>
-                      Created: <span>{Date(result.created)}</span>
+                      Created: <span>{formatDate(result.created)}</span>
                     </TopicSubHeading>
                   )}
                   {result.modified && (
                     <TopicSubHeading>
-                      Modified: <span>{Date(result.modified)}</span>
+                      Modified: <span>{formatDate(result.modified)}</span>
                     </TopicSubHeading>
                   )}
 
@@ -174,13 +179,13 @@ export const TopicDetails: React.FC<{ topicId: string }> = ({ topicId }) => {
 
       {data.created && (
         <TopicSubHeading>
-          created: <span>{Date(data.created)}</span>
+          created: <span>{formatDate(data.created)}</span>
         </TopicSubHeading>
       )}
 
       {data.modified && (
         <TopicSubHeading>
-          modified: <span>{Date(data.modified)}</span>
+          modified: <span>{formatDate(data.modified)}</span>
         </TopicSubHeading>
       )}
     </SingleTopicContainer>
@@ -228,12 +233,12 @@ export const TopicItemsList: React.FC<{ type: string; subtype: string }> = ({ ty
 
                   {result.created && (
                     <TopicSubHeading>
-                      Created: <span>{Date(result.created)}</span>
+                      Created: <span>{formatDate(result.created)}</span>
                     </TopicSubHeading>
                   )}
                   {result.modified && (
                     <TopicSubHeading>
-                      Modified: <span>{Date(result.modified)}</span>
+                      Modified: <span>{formatDate(result.modified)}</span>
                     </TopicSubHeading>
                   )}
                 </TopicTextBox>
