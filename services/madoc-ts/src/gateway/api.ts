@@ -58,6 +58,7 @@ import { ManifestListResponse } from '../types/schemas/manifest-list';
 import { CrowdsourcingManifestTask } from './tasks/crowdsourcing-manifest-task';
 import { ImportManifestTask } from './tasks/import-manifest';
 import { ImportCollectionTask } from './tasks/import-collection';
+import { SingleTopic, TopicResults } from '../types/topics';
 import { ManifestFull } from '../types/schemas/manifest-full';
 import { GetMetadata } from '../types/schemas/get-metadata';
 import { MetadataUpdate } from '../types/schemas/metadata-update';
@@ -2160,5 +2161,21 @@ export class ApiClient {
 
   async getUserDetails() {
     return this.publicRequest<UserDetails>(`/madoc/api/me`);
+  }
+
+  // topics
+  async returnTopicItems(type: string, subtype: string) {
+    return fetch(
+      `https://enrichment.ida.madoc.io/madoc/search/?${stringify({ format: 'json', type: type, subtype: subtype })}`,
+      {
+        method: 'POST',
+      }
+    ).then(r => r.json());
+  }
+
+  async getTopicDetails(topicId: string) {
+    return fetch(`https://enrichment.ida.madoc.io/madoc/entity/${topicId}/?${stringify({ format: 'json' })}`, {
+      method: 'GET',
+    }).then(r => r.json());
   }
 }

@@ -2,8 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { ImageGrid } from '../../shared/atoms/ImageGrid';
 import { CroppedImage } from '../../shared/atoms/Images';
-import { SingleTopic, TopicList, TopicResults } from '../../../types/topics';
-import { useQuery } from 'react-query';
+import { SingleTopic } from '../../../types/topics';
+import { useEnrichmentApi, useGetTopic, useGetTopicItems } from '../hooks/use-get-topic';
 
 const TopicListingContainer = styled.div`
   background: #ecf5fc;
@@ -76,23 +76,11 @@ const TopicSubHeading = styled.div`
 
 const formatDate = (d: string) => {
   const date: Date = new Date(d);
-  return date;
+  return date.toDateString();
 };
 
 export const AllTopicListing: React.FC<{ url: string }> = ({ url }) => {
-  const { data } = useQuery<TopicList>(
-    ['topic-page-result', { url }],
-    async () => {
-      return fetch(`${url}/?format=json`).then(r => r.json());
-    },
-    {
-      refetchInterval: 60000,
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-      refetchIntervalInBackground: false,
-    }
-  );
+  const { data } = useEnrichmentApi(url);
 
   if (!data || !data.results) {
     return null;
@@ -101,59 +89,48 @@ export const AllTopicListing: React.FC<{ url: string }> = ({ url }) => {
     <TopicListingContainer>
       <h2> {data.count} results </h2>
       <ImageGrid $size={'large'} data-view-list={false}>
-        {data.results.map(result => {
-          return (
-            result && (
-              <TopicCard key={result.id}>
-                <CroppedImage $covered={true}>
-                  <img alt="placeholder" src="https://via.placeholder.com/125" />
-                </CroppedImage>
+        {data.results &&
+          data.results.map((result: SingleTopic) => {
+            return (
+              result && (
+                <TopicCard key={result.id}>
+                  <CroppedImage $covered={true}>
+                    <img alt="placeholder" src="https://via.placeholder.com/125" />
+                  </CroppedImage>
 
-                <TopicTextBox>
-                  <TopicHeading>{result.label}</TopicHeading>
+                  <TopicTextBox>
+                    <TopicHeading>{result.label}</TopicHeading>
 
-                  <TopicSubHeading>
-                    Part of: <span>{result.type}</span>
-                  </TopicSubHeading>
-
-                  {result.created && (
                     <TopicSubHeading>
-                      Created: <span>{formatDate(result.created)}</span>
+                      Part of: <span>{result.type}</span>
                     </TopicSubHeading>
-                  )}
-                  {result.modified && (
-                    <TopicSubHeading>
-                      Modified: <span>{formatDate(result.modified)}</span>
-                    </TopicSubHeading>
-                  )}
 
-                  <TopicSubHeading>
-                    ID: <span>{result.id}</span>
-                  </TopicSubHeading>
-                </TopicTextBox>
-              </TopicCard>
-            )
-          );
-        })}
+                    {result.created && (
+                      <TopicSubHeading>
+                        Created: <span>{formatDate(result.created)}</span>
+                      </TopicSubHeading>
+                    )}
+                    {result.modified && (
+                      <TopicSubHeading>
+                        Modified: <span>{formatDate(result.modified)}</span>
+                      </TopicSubHeading>
+                    )}
+
+                    <TopicSubHeading>
+                      ID: <span>{result.id}</span>
+                    </TopicSubHeading>
+                  </TopicTextBox>
+                </TopicCard>
+              )
+            );
+          })}
       </ImageGrid>
     </TopicListingContainer>
   );
 };
 
 export const TopicDetails: React.FC<{ topicId: string }> = ({ topicId }) => {
-  const { data } = useQuery<SingleTopic>(
-    ['single-topic', { topicId }],
-    async () => {
-      return fetch(`https://enrichment.ida.madoc.io/madoc/entity/${topicId}/?format=json`).then(r => r.json());
-    },
-    {
-      refetchInterval: 60000,
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-      refetchIntervalInBackground: false,
-    }
-  );
+  const { data } = useGetTopic(topicId);
 
   if (!data) {
     return null;
@@ -193,60 +170,54 @@ export const TopicDetails: React.FC<{ topicId: string }> = ({ topicId }) => {
 };
 
 export const TopicItemsList: React.FC<{ type: string; subtype: string }> = ({ type, subtype }) => {
-  const { data } = useQuery<TopicResults>(
-    ['topic-page-result', { type, subtype }],
-    async () => {
-      return fetch(
-        `https://enrichment.ida.madoc.io/madoc/search/?format=json&type=${type}&subtype=${subtype}`
-      ).then(r => r.json());
-    },
-    {
-      refetchInterval: 60000,
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-      refetchIntervalInBackground: false,
-    }
-  );
+  const { data: topicResults } = useGetTopicItems(type, subtype);
+  const { data: topic } = useGetTopic(subtype);
 
-  if (!data || !data.results) {
+  const results = topicResults && topicResults.results ? topicResults.results : null;
+
+  if (!topicResults || !topic) {
     return null;
   }
   return (
     <TopicListingContainer>
-      <h2> {data.count} results </h2>
-      <ImageGrid data-view-list={true}>
-        {data.results.map((result, i) => {
-          return (
-            result && (
-              <TopicCardList key={i}>
-                <CroppedImage $covered={true}>
-                  <img alt="placeholder" src="https://via.placeholder.com/125" />
-                </CroppedImage>
+      {topicResults && (
+        <>
+          <h1> Items in: {topic.label} </h1>
+          <h2> {topicResults.count} results </h2>
+          <ImageGrid data-view-list={true}>
+            {results?.map((result, i) => {
+              return (
+                result && (
+                  <TopicCardList key={i}>
+                    <CroppedImage $covered={true}>
+                      <img alt="placeholder" src="https://via.placeholder.com/125" />
+                    </CroppedImage>
 
-                <TopicTextBox data-list-view>
-                  <TopicHeading>Madoc Id: {result.madoc_id}</TopicHeading>
+                    <TopicTextBox data-list-view>
+                      <TopicHeading>Madoc Id: {result.madoc_id}</TopicHeading>
 
-                  <TopicSubHeading>
-                    Type: <span>{result.type}</span>
-                  </TopicSubHeading>
+                      <TopicSubHeading>
+                        Type: <span>{result.type}</span>
+                      </TopicSubHeading>
 
-                  {result.created && (
-                    <TopicSubHeading>
-                      Created: <span>{formatDate(result.created)}</span>
-                    </TopicSubHeading>
-                  )}
-                  {result.modified && (
-                    <TopicSubHeading>
-                      Modified: <span>{formatDate(result.modified)}</span>
-                    </TopicSubHeading>
-                  )}
-                </TopicTextBox>
-              </TopicCardList>
-            )
-          );
-        })}
-      </ImageGrid>
+                      {result.created && (
+                        <TopicSubHeading>
+                          Created: <span>{formatDate(result.created)}</span>
+                        </TopicSubHeading>
+                      )}
+                      {result.modified && (
+                        <TopicSubHeading>
+                          Modified: <span>{formatDate(result.modified)}</span>
+                        </TopicSubHeading>
+                      )}
+                    </TopicTextBox>
+                  </TopicCardList>
+                )
+              );
+            })}
+          </ImageGrid>
+        </>
+      )}
     </TopicListingContainer>
   );
 };

@@ -56,7 +56,7 @@ export const Topics: React.FC = () => {
             Topic Items
           </Button>
         </AdminTabs>
-          {view === 'allTopics' ? <ViewTopicList /> : view === 'singleTopic' ? <ViewSingleTopic /> : <ViewTopicItems />}
+        {view === 'allTopics' ? <ViewTopicList /> : view === 'singleTopic' ? <ViewSingleTopic /> : <ViewTopicItems />}
       </SystemBackground>
     </>
   );
