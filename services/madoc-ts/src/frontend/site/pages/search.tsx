@@ -1,4 +1,5 @@
 import React from 'react';
+import { Slot } from '../../shared/page-blocks/slot';
 import { useTranslation } from 'react-i18next';
 import { CloseIcon } from '../../shared/icons/CloseIcon';
 import { LoadingBlock } from '../../shared/callouts/LoadingBlock';
@@ -25,6 +26,8 @@ import { useSearch } from '../hooks/use-search';
 import { useSearchFacets } from '../hooks/use-search-facets';
 import { useSearchQuery } from '../hooks/use-search-query';
 import { ButtonRow, TinyButton } from '../../shared/navigation/Button';
+import { StaticPage } from '../features/StaticPage';
+import { Heading1 } from "../../shared/typography/Heading1";
 
 export const Search: React.FC = () => {
   const { t } = useTranslation();
@@ -46,8 +49,10 @@ export const Search: React.FC = () => {
   } = useSearchFacets();
 
   return (
-    <>
+    <StaticPage title="search">
       <DisplayBreadcrumbs currentPage="Search" />
+      <Slot name="search-header" />
+
       <div style={{ display: 'flex' }}>
         <SearchFilterContainer style={{ width: 300 }}>
           <SearchFilterTitle>{t('Refine search')}</SearchFilterTitle>
@@ -141,6 +146,6 @@ export const Search: React.FC = () => {
           />
         </div>
       </div>
-    </>
+    </StaticPage>
   );
 };
