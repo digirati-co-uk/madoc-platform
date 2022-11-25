@@ -37,6 +37,7 @@ export function useSearchFacets() {
   };
 
   const clearSingleFacet = (key: string, values: string[]) => {
+    console.log(appliedFacets);
     setQuery(
       fulltext,
       appliedFacets.filter(facet => !(facet.k === key && values.indexOf(facet.v) !== -1)),
