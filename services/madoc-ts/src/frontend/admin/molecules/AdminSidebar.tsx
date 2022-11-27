@@ -21,6 +21,7 @@ import {
   SiteSwitcherBackButton,
   SiteSwitcherContainer,
   SiteSwitcherSiteName,
+  TopicsIcon,
 } from '../../shared/components/AdminMenu';
 import { useSite, useUser } from '../../shared/hooks/use-site';
 import { HrefLink } from '../../shared/utility/href-link';
@@ -42,6 +43,7 @@ export const AdminSidebar: React.FC = () => {
     isDashboard,
     isManageManifests,
     isLocalisation,
+    isTopics,
     isMedia,
     isSiteGlobal,
   } = useMemo(() => {
@@ -61,6 +63,7 @@ export const AdminSidebar: React.FC = () => {
       isLocalisation: pathname.startsWith('/i18n'),
       isMedia: pathname.startsWith('/media'),
       isSiteGlobal: pathname.startsWith('/global'),
+      isTopics: pathname.startsWith('/topics'),
     };
   }, [pathname]);
 
@@ -144,6 +147,26 @@ export const AdminSidebar: React.FC = () => {
             </AdminMenuItemIcon>
             <AdminMenuItemLabel>{t('Localisation')}</AdminMenuItemLabel>
           </AdminMenuItem>
+        </AdminMenuItemContainer>
+
+        <AdminMenuItemContainer>
+          <AdminMenuItem as={HrefLink} href="/topics" $active={isTopics}>
+            <AdminMenuItemIcon>
+              <TopicsIcon />
+            </AdminMenuItemIcon>
+            <AdminMenuItemLabel>{t('Topics')}</AdminMenuItemLabel>
+          </AdminMenuItem>
+          <AdminMenuSubItemContainer $open={isTopics}>
+            <AdminMenuSubItem as={HrefLink} href="/topics">
+              {t('All topic types')}
+            </AdminMenuSubItem>
+            <AdminMenuSubItem as={HrefLink} href="/topics/_/create-type">
+              {t('Create topic type')}
+            </AdminMenuSubItem>
+            <AdminMenuSubItem as={HrefLink} href="/topics/_/create-topic">
+              {t('Create topic')}
+            </AdminMenuSubItem>
+          </AdminMenuSubItemContainer>
         </AdminMenuItemContainer>
 
         <AdminMenuItemContainer>

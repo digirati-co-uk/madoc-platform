@@ -99,6 +99,9 @@ import { ProjectExportTab } from './pages/crowdsourcing/projects/project-export'
 import { GenerateApiKey } from './pages/system/generate-api-key';
 import { CreateBot } from './pages/global/create-bot';
 
+import { authorityRoutes } from './pages/enrichment/authority/index';
+import { topicRoutes } from "./pages/topics/index";
+
 export const routes: RouteObject[] = [
   {
     path: '/',
@@ -106,6 +109,8 @@ export const routes: RouteObject[] = [
   },
   // Aggregations.
   ...annotationStylesRoutes,
+  ...authorityRoutes,
+  ...topicRoutes,
 
   // Manual routes.
   {
