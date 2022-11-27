@@ -2,8 +2,8 @@ import { useCallback } from 'react';
 import { createLink } from '../../shared/utility/create-link';
 import { useRouteContext } from './use-route-context';
 
-export function useRelativeLinks() {
-  const { canvasId, taskId, manifestId, parentTaskId, collectionId, projectId } = useRouteContext();
+export function useRelativeLinks(admin = false) {
+  const { canvasId, taskId, manifestId, parentTaskId, collectionId, projectId, topic, topicType } = useRouteContext();
 
   return useCallback(
     (
@@ -14,6 +14,8 @@ export function useRelativeLinks() {
         canvasId?: string | number;
         taskId?: string;
         parentTaskId?: string;
+        topicType?: string;
+        topic?: string;
         query?: any;
         subRoute?: string;
         admin?: boolean;
@@ -27,9 +29,12 @@ export function useRelativeLinks() {
         taskId,
         parentTaskId,
         canvasId,
+        topic,
+        topicType,
+        admin,
         ...opts,
       });
     },
-    [canvasId, collectionId, manifestId, parentTaskId, projectId, taskId]
+    [canvasId, collectionId, manifestId, parentTaskId, projectId, taskId, topic, topicType, admin]
   );
 }

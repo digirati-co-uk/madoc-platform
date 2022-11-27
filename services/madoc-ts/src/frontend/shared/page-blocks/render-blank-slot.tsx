@@ -46,6 +46,20 @@ function exactFromContext(context: EditorialContext, projectId?: number): Create
       : {
           none: true,
         },
+    topicType: context.topicType
+      ? {
+          exact: context.topicType,
+        }
+      : {
+          none: true,
+        },
+    topic: context.topic
+      ? {
+          exact: context.topic,
+        }
+      : {
+          none: true,
+        },
     project: projectId
       ? {
           exact: projectId,
@@ -58,6 +72,20 @@ function exactFromContext(context: EditorialContext, projectId?: number): Create
 
 function allOfTypeFromContext(ctx: EditorialContext, projectId?: number): CreateSlotRequest['filters'] {
   const exact = exactFromContext(ctx, projectId);
+
+  if (ctx.topic) {
+    return {
+      ...exact,
+      topic: { all: true },
+    };
+  }
+
+  if (ctx.topicType) {
+    return {
+      ...exact,
+      topicType: { all: true },
+    };
+  }
 
   if (ctx.canvas) {
     return {
@@ -147,6 +175,8 @@ function createSlotRequest(
         manifest: { all: true, none: true },
         collection: { all: true, none: true },
         project: { all: true, none: true },
+        topic: { all: true, none: true },
+        topicType: { all: true, none: true },
       },
     };
   }
