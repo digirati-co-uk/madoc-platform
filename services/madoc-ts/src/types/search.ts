@@ -13,15 +13,18 @@ export type SearchResult = {
 
   /** Optional thumbnail of resource */
   madoc_thumbnail?: string;
+  thumbnail?: string;
 
   /** Label for the resource from the search result */
   label: InternationalString;
 
   /** List of contexts for the resource */
-  contexts: Array<{
-    type: string;
-    id: string;
-  }>;
+  contexts:
+    | Array<string>
+    | Array<{
+        type: string;
+        id: string;
+      }>;
 
   /**
    * List of hits.
