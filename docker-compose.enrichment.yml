@@ -1,0 +1,34 @@
+version: "3.2"
+services:
+  # Internal services
+
+  search:
+    build:
+      context: services/enrichment
+      dockerfile: Dockerfile
+    environment:
+      - BROWSABLE=False
+      - USE_DOCKER=yes
+      - IPYTHONDIR=/app/.ipython
+      - MIGRATE=True
+      - LOAD=False
+      - DEBUG=True
+      - DJANGO_DEBUG=True
+      - WAITRESS=False
+      - POSTGRES_HOST=shared-postgres
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_USER=${POSTGRES_SEARCH_API_USER}
+      - REDIS_URL=redis://gateway-redis:6379
+      - APPEND_SLASH=False
+      - ALLOWED_HOSTS=gateway,madoc.local
+      - POSTGRES_PASSWORD=${POSTGRES_SEARCH_API_PASSWORD}
+      - POSTGRES_SCHEMA=${POSTGRES_SEARCH_API_SCHEMA}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - DATABASE_URL=postgres://${POSTGRES_SEARCH_API_USER}:${POSTGRES_SEARCH_API_PASSWORD}@shared-postgres:${POSTGRES_PORT}/${POSTGRES_DB}
+      - INLINE_WORKER=True
+    links:
+      - shared-postgres
+      - gateway-redis
+    volumes:
+      - ./services/enrichment/app:/app:delegated
+
