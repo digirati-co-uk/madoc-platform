@@ -120,7 +120,9 @@ import { updateProjectStatus } from './routes/projects/update-project-status';
 import { siteManifestTasks } from './routes/site/site-manifest-tasks';
 import { getStaticPage, sitePages } from './routes/site/site-pages';
 import { siteTaskMetadata } from './routes/site/site-task-metadata';
+import { siteTopics } from './routes/site/site-topics';
 import { siteUserAutocomplete } from './routes/site/site-user-autocomplete';
+import { topicRoutes } from './routes/topics/index';
 import { forgotPassword } from './routes/user/forgot-password';
 import { getSiteUser } from './routes/user/get-site-user';
 import { loginRefresh } from './routes/user/login-refresh';
@@ -573,6 +575,7 @@ export const router = new TypedRouter({
   'site-project': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug', siteProject],
   'site-projects': [TypedRouter.GET, '/s/:slug/madoc/api/projects', siteProjects],
   'site-search': [TypedRouter.POST, '/s/:slug/madoc/api/search', siteSearch],
+  'site-topic-index': [TypedRouter.GET, '/s/:slug/madoc/api/topics/_all', siteTopics],
   'site-topic': [TypedRouter.GET, '/s/:slug/madoc/api/topics/:type/:id', siteTopic],
   'site-topic-type': [TypedRouter.GET, '/s/:slug/madoc/api/topics/:type', siteTopicType],
   'site-topic-types': [TypedRouter.GET, '/s/:slug/madoc/api/topics', siteTopicTypes],
@@ -627,6 +630,7 @@ export const router = new TypedRouter({
   ...annotationStyles,
   ...captureModelRoutes,
   ...getAuthRoutes(),
+  ...topicRoutes,
 
   // Development
   'development-plugin': [TypedRouter.POST, '/api/madoc/development/plugin-token', developmentPlugin],
