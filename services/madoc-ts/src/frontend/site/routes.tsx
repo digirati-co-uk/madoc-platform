@@ -1,5 +1,6 @@
 import React from 'react';
 import { CreateRouteType } from '../types';
+import { TopicTypeLoader } from './pages/loaders/topic-type-loader';
 
 type BaseRouteComponents = typeof import('./components');
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -524,6 +525,62 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
         },
       ],
     },
+    // Topics and topic types.
+    {
+      path: '/topics',
+      element: <Components.TopicTypeListLoader />,
+      children: [
+        {
+          path: '/topics',
+          exact: true,
+          element: <Components.ViewTopicTypes />,
+        },
+      ],
+    },
+    {
+      path: '/topics/:topicType',
+      element: <Components.TopicTypeLoader />,
+      children: [
+        {
+          path: '/topics/:topicType',
+          exact: true,
+          element: <Components.ViewTopicType />,
+        },
+        {
+          path: '/topics/:topicType/:topic',
+          exact: true,
+          element: <Components.TopicLoader />,
+          children: [
+            {
+              path: '/topics/:topicType/:topic',
+              exact: true,
+              element: <Components.ViewTopic />,
+            },
+            {
+              path: '*',
+              element: <Components.PageLoader />,
+              children: [
+                {
+                  path: '*',
+                  element: <Components.ViewPage />,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          path: '*',
+          element: <Components.PageLoader />,
+          children: [
+            {
+              path: '*',
+              element: <Components.ViewPage />,
+            },
+          ],
+        },
+      ],
+    },
+
     {
       path: '/tasks',
       element: <Components.AllTasks />,

@@ -70,13 +70,14 @@ function replaceBreaks(str: string) {
   return str.replace(/[\\n]+/, '');
 }
 
-const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; search?: string }> = ({
+const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; search?: string; admin?: boolean }> = ({
   result,
   size,
   search,
+  admin,
 }) => {
   const things = ((result && result.contexts) || []).map(value => {
-    return parseUrn(value.id);
+    return parseUrn(typeof value === 'string' ? value : value.id);
   });
   const routeContext = useRouteContext();
   const projectId = routeContext.projectId;
@@ -98,6 +99,7 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; sea
           canvasId,
           collectionId,
           query: { searchText },
+          admin,
         })}
         style={{ textDecoration: 'none' }}
       >
@@ -106,13 +108,13 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; sea
             {isManifest ? (
               <SnippetThumbnailContainer stackedThumbnail={isManifest} portrait fluid>
                 <SnippetThumbnail
-                  src={result.madoc_thumbnail}
+                  src={result.thumbnail || result.madoc_thumbnail}
                   style={{ maxHeight: 200, fitContent: 'scale-down' } as any}
                 />
               </SnippetThumbnailContainer>
             ) : (
               <CroppedImage $size={size}>
-                <img src={result.madoc_thumbnail} />
+                <img src={result.thumbnail || result.madoc_thumbnail} />
               </CroppedImage>
             )}
           </ImageStripBox>
@@ -139,11 +141,12 @@ export const SearchResults: React.FC<{
   searchResults: Array<SearchResult>;
   value?: string;
   isFetching?: boolean;
-}> = ({ isFetching, searchResults = [], value }) => (
+  admin?: boolean;
+}> = ({ isFetching, searchResults = [], value, admin }) => (
   <ResultsContainer $isFetching={isFetching}>
     {searchResults.map((result: SearchResult, index: number) => {
       return result ? (
-        <SearchItem result={result} key={`${index}__${result.resource_id}`} search={value} size="small" />
+        <SearchItem admin={admin} result={result} key={`${index}__${result.resource_id}`} search={value} size="small" />
       ) : null;
     })}
   </ResultsContainer>

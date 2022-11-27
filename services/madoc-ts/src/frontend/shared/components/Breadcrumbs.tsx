@@ -17,6 +17,8 @@ type BreadcrumbContextType = {
   canvas?: { name: InternationalString; id: number };
   task?: { name: string; id: string };
   subpage?: { name: InternationalString; path: string };
+  topicType?: { name: InternationalString; id: string };
+  topic?: { name: InternationalString; id: string };
 };
 
 const Helmet: any = _Helmet;
@@ -120,6 +122,8 @@ export const BreadcrumbContext: React.FC<BreadcrumbContextType> = ({
   canvas,
   task,
   subpage,
+  topicType,
+  topic,
 }) => {
   const parentCtx = useBreadcrumbs();
   const ctx = useMemo(() => {
@@ -142,8 +146,14 @@ export const BreadcrumbContext: React.FC<BreadcrumbContextType> = ({
     if (subpage) {
       newCtx.subpage = subpage;
     }
+    if (topicType) {
+      newCtx.topicType = topicType;
+    }
+    if (topic) {
+      newCtx.topic = topic;
+    }
     return newCtx;
-  }, [parentCtx, manifest, project, collection, canvas, task, subpage]);
+  }, [parentCtx, project, collection, manifest, canvas, task, subpage, topicType, topic]);
 
   return (
     <ErrorBoundary>
@@ -156,9 +166,15 @@ export type BreadcrumbProps = {
   currentPage?: string | undefined;
   textColor?: string | undefined;
   textColorActive?: string | undefined;
+  topicRoot?: boolean;
 };
 
-export const DisplayBreadcrumbs: React.FC<BreadcrumbProps> = ({ currentPage, textColor, textColorActive }) => {
+export const DisplayBreadcrumbs: React.FC<BreadcrumbProps> = ({
+  currentPage,
+  topicRoot,
+  textColor,
+  textColorActive,
+}) => {
   const site = useSite();
   const breads = useBreadcrumbs();
   const location = useLocation();
@@ -167,6 +183,28 @@ export const DisplayBreadcrumbs: React.FC<BreadcrumbProps> = ({ currentPage, tex
 
   const stack = useMemo(() => {
     const flatList = [];
+
+    // Topics are only at the top. In theory, you could have collection/manifest/canvases under.
+    if (breads.topicType || topicRoot) {
+      flatList.push({
+        label: { none: [t('breadcrumbs__Topics', { defaultValue: t('Topics') })] },
+        url: `/topics`,
+      });
+
+      if (breads.topicType) {
+        flatList.push({
+          label: breads.topicType.name,
+          url: `/topics/${breads.topicType.id}`,
+        });
+
+        if (breads.topic) {
+          flatList.push({
+            label: breads.topic.name,
+            url: `/topics/${breads.topicType.id}/${breads.topic.id}`,
+          });
+        }
+      }
+    }
 
     // Projects can only be in one place.
     if (breads.project) {
@@ -291,6 +329,8 @@ export const DisplayBreadcrumbs: React.FC<BreadcrumbProps> = ({ currentPage, tex
     breads.manifest,
     breads.project,
     breads.subpage,
+    breads.topic,
+    breads.topicType,
     currentPage,
     location.pathname,
     t,
