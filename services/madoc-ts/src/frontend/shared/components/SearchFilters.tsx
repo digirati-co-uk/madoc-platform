@@ -27,6 +27,10 @@ export const SearchFilterLabel = styled.label`
   display: block;
   font-size: 0.8em;
   padding: 0.5em;
+
+  :hover {
+    cursor: pointer;
+  }
 `;
 
 export const SearchFilterItem = styled.div<{ $selected?: boolean }>`

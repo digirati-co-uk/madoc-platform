@@ -21,8 +21,9 @@ const CheckText = styled.div`
   font-size: 14px;
   font-weight: normal;
   text-transform: capitalize;
+
   :hover {
-    color: pink;
+    cursor: pointer;
   }
 `;
 
@@ -40,7 +41,7 @@ const CheckWrapper = styled.div`
   position: relative;
 `;
 
-const FakeCheck = styled.div`
+const FakeCheck = styled.div<{ $color?: string }>`
   position: relative;
   margin: 10px;
   width: 12px;
@@ -48,13 +49,12 @@ const FakeCheck = styled.div`
   border: none;
   border-radius: 1px;
   background-color: transparent;
-  outline: 2px solid pink;
+  outline: ${props => (props.$color ? `2px solid ${props.$color}` : '2px solid #4265e9')};
   outline-offset: 2px;
   transition: 0.1s;
 
   &[data-is-checked='true'] {
-    background-color: pink;
-    outline: 2px solid pink;
+    background-color: ${props => (props.$color ? props.$color : '#4265e9')};
   }
 `;
 
@@ -78,11 +78,14 @@ export const CheckboxBtn: React.FC<{
   subLabel?: string | InternationalString;
   countText?: string | number;
   id?: any;
-}> = ({ disabled, checked, onChange, inLineLabel, subLabel, countText, id }) => {
+  color?: string;
+}> = ({ disabled, checked, onChange, inLineLabel, subLabel, countText, id, color }) => {
+  console.log(color);
+
   return (
     <Box aria-label={disabled ? 'disabled checkbox filter' : 'checkbox filter'}>
       <CheckWrapper>
-        <FakeCheck data-is-checked={checked} />
+        <FakeCheck data-is-checked={checked} $color={color} />
         <Check type={'checkbox'} onChange={onChange} id={id ? id : ''} checked={checked} />
       </CheckWrapper>
 
