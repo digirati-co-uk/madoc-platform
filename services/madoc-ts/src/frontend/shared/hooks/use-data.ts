@@ -119,7 +119,7 @@ export function useData<Data = any, TKey = any, TVariables = any>(
       }
       return undefined as any;
     },
-    { refetchOnMount: false, cacheTime: 1000 * 60 * 60, ...(config || {}), useErrorBoundary: true }
+    { refetchOnMount: false, cacheTime: 1000 * 60 * 60, useErrorBoundary: true, ...(config || {}) }
   );
 }
 

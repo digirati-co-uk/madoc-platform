@@ -44,7 +44,7 @@ export function ViewTopic() {
           stale={search.isLoading}
           extraQuery={query}
         />
-        <pre>{JSON.stringify(data, null, 2)}</pre>
+        <pre>{JSON.stringify(search.data, null, 2)}</pre>
       </div>
     </>
   );

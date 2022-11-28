@@ -54,7 +54,7 @@ export function CreateNewTopic() {
         <pre>{JSON.stringify(status.data)}</pre>
         {/* @todo hopefully this will change to slug field. */}
         {status.data ? (
-          <Button $primary as={HrefLink} href={`/topics/${status.data.topicType}/${status.data.response.label}`}>
+          <Button $primary as={HrefLink} href={`/topics/${status.data.topicType}/${status.data.response.id}`}>
             Go to topic
           </Button>
         ) : null}
