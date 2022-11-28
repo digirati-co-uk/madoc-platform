@@ -1,0 +1,35 @@
+{
+  "type": "object",
+  "properties": {
+    "topicTypes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/TopicTypeSnippet"
+      }
+    },
+    "pagination": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "number"
+        },
+        "totalResults": {
+          "type": "number"
+        },
+        "totalPages": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "page",
+        "totalPages",
+        "totalResults"
+      ]
+    }
+  },
+  "required": [
+    "pagination",
+    "topicTypes"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

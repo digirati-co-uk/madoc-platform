@@ -1,0 +1,294 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "slug": {
+      "type": "string"
+    },
+    "label": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "topicType": {
+      "$ref": "#/definitions/TopicTypeSnippet"
+    },
+    "otherLabels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "authorities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": [
+          "id",
+          "label"
+        ]
+      }
+    },
+    "modified": {
+      "type": "string"
+    },
+    "created": {
+      "type": "string"
+    },
+    "editorial": {
+      "type": "object",
+      "properties": {
+        "contributors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "label"
+            ]
+          }
+        },
+        "summary": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "heroImage": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string"
+            },
+            "alt": {
+              "type": "string"
+            },
+            "overlayColor": {
+              "type": "string"
+            },
+            "transparent": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "url"
+          ]
+        },
+        "description": {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "value": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "label",
+            "value"
+          ]
+        },
+        "featured": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "description": "Internal url for Search API - shouldn't be shown to the user, but can be used for unqiueness",
+                "type": "string"
+              },
+              "resource_id": {
+                "description": "Madoc identifier, usually in the form `urn:madoc:TYPE:ID`",
+                "type": "string"
+              },
+              "resource_type": {
+                "description": "Type of resource (Collection, Manifest or Canvas etc.)",
+                "type": "string"
+              },
+              "madoc_thumbnail": {
+                "description": "Optional thumbnail of resource",
+                "type": "string"
+              },
+              "thumbnail": {
+                "type": "string"
+              },
+              "label": {
+                "description": "Label for the resource from the search result",
+                "type": "object",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "contexts": {
+                "description": "List of contexts for the resource",
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "type"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "hits": {
+                "description": "List of hits.",
+                "type": "array",
+                "items": {
+                  "description": "Represents a single search hit, there may be multiple of these per resource.",
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "description": "Type of metadata returned",
+                      "type": "string"
+                    },
+                    "subtype": {
+                      "description": "Subtype of metadata returned",
+                      "type": "string"
+                    },
+                    "snippet": {
+                      "description": "Preview of search result with highlighted search as HTML",
+                      "type": "string"
+                    },
+                    "language": {
+                      "description": "ISO language string",
+                      "type": "string"
+                    },
+                    "rank": {
+                      "type": "number"
+                    },
+                    "bounding_boxes": {
+                      "description": "Bounding boxes",
+                      "type": "array",
+                      "items": {
+                        "type": "array",
+                        "items": [
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ],
+                        "minItems": 4,
+                        "maxItems": 4
+                      }
+                    }
+                  },
+                  "required": [
+                    "language",
+                    "rank",
+                    "snippet",
+                    "subtype",
+                    "type"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "contexts",
+              "hits",
+              "label",
+              "resource_id",
+              "resource_type",
+              "url"
+            ]
+          }
+        },
+        "related": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TopicSnippet"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "authorities",
+    "created",
+    "editorial",
+    "id",
+    "label",
+    "modified",
+    "otherLabels",
+    "slug"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
