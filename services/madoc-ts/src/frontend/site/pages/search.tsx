@@ -8,7 +8,10 @@ import { useSearch } from '../hooks/use-search';
 import { useSearchQuery } from '../hooks/use-search-query';
 import { StaticPage } from '../features/StaticPage';
 import { SearchPageFilters } from '../features/SearchPageFilters';
-import { SearchPageResults } from '../features/SearchPageResults';
+import { SearchResults, TotalResults } from '../../shared/components/SearchResults';
+import { Pagination } from '../../shared/components/Pagination';
+import { AppliedFacets } from '../features/AppliedFacets';
+import { Heading1 } from '../../shared/typography/Heading1';
 
 export const Search: React.FC = () => {
   const { t } = useTranslation();
@@ -21,27 +24,48 @@ export const Search: React.FC = () => {
         <DisplayBreadcrumbs />
       </Slot>
 
+      <Slot name="search-heading">
+        <Heading1>“{fulltext}” search</Heading1>
+      </Slot>
+      <Slot name="search-facets">
+        <AppliedFacets />
+      </Slot>
+
       <div style={{ display: 'flex' }}>
         <div style={{ maxWidth: 300 }}>
-          <Slot name="search-filters" small>
-            <SearchPageFilters displayFacets={displayFacets} />
+          <Slot name="search-filters1" small>
+            <SearchPageFilters />
           </Slot>
         </div>
 
         <div style={{ width: '100%' }}>
-          <Slot name="search-page-results">
+          <Slot name="search-page-results1">
             {isLoading && !searchResponse ? (
               <LoadingBlock />
             ) : (
-              <SearchPageResults
-                results={searchResponse}
-                page={page}
-                isLoading={isLoading}
-                latestData={latestData}
-                rawQuery={rawQuery}
-                ft={fulltext}
-              />
+              <TotalResults>
+                {t('Found {{count}} results', {
+                  count: searchResponse && searchResponse.pagination ? searchResponse.pagination.totalResults : 0,
+                })}
+              </TotalResults>
             )}
+            <Pagination
+              page={page}
+              totalPages={latestData && latestData.pagination ? latestData.pagination.totalPages : undefined}
+              stale={isLoading}
+              extraQuery={rawQuery}
+            />
+            <SearchResults
+              isFetching={isLoading}
+              value={fulltext}
+              searchResults={searchResponse ? searchResponse.results : []}
+            />
+            <Pagination
+              page={page}
+              totalPages={latestData && latestData.pagination ? latestData.pagination.totalPages : undefined}
+              stale={isLoading}
+              extraQuery={rawQuery}
+            />
           </Slot>
         </div>
       </div>

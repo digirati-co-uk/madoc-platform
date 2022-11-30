@@ -17,6 +17,7 @@ import { useSearchFacets } from '../hooks/use-search-facets';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { InternationalString } from '@iiif/presentation-3';
 import { CheckboxBtn } from '../../shared/atoms/CheckboxBtn';
+import { useSearch } from "../hooks/use-search";
 
 export const Pill = styled.div`
   border-radius: 3px;
@@ -31,14 +32,11 @@ export const Pill = styled.div`
 interface SearchPageFiltersProps {
   checkBoxColor?: string;
   textTest?: string;
-  displayFacets?: {
-    id: string;
-    label: InternationalString;
-    items: { key: string; label: InternationalString; values: string[]; count: number }[];
-  }[];
 }
 
-export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxColor, displayFacets, textTest }) => {
+export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxColor, textTest }) => {
+
+  const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch();
   const { t } = useTranslation();
   const { fulltext, appliedFacets } = useSearchQuery();
   const {
@@ -53,7 +51,6 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
   if (!displayFacets) {
     return null;
   }
-  console.log(textTest);
   return (
     <SearchFilterContainer>
       <SearchFilterTitle>{t('Refine search')}</SearchFilterTitle>
@@ -108,7 +105,7 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
 
 blockEditorFor(SearchPageFilters, {
   label: 'Search Page Filters',
-  type: 'search-page-filters',
+  type: 'default.search-page-filters',
   anyContext: [],
   requiredContext: [],
   defaultProps: {

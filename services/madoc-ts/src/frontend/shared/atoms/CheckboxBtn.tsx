@@ -80,7 +80,6 @@ export const CheckboxBtn: React.FC<{
   id?: any;
   color?: string;
 }> = ({ disabled, checked, onChange, inLineLabel, subLabel, countText, id, color }) => {
-  console.log(color);
 
   return (
     <Box aria-label={disabled ? 'disabled checkbox filter' : 'checkbox filter'}>

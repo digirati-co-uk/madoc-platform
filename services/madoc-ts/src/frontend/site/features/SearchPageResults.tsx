@@ -3,9 +3,10 @@ import {Pagination} from "../../shared/components/Pagination";
 import React from "react";
 import {useTranslation} from "react-i18next";
 import {InternationalString} from "@iiif/presentation-3";
+import {SearchResult} from "../../../types/search";
 
 interface SearchPageResultsProps {
-results?: {},
+results?: Array<SearchResult>,
 page?: number,
 isLoading: boolean,
     latestData: {},
