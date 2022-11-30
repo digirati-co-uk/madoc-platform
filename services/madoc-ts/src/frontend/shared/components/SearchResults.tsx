@@ -11,7 +11,7 @@ import { createLink } from '../utility/create-link';
 import { HrefLink } from '../utility/href-link';
 import { LocaleString } from './LocaleString';
 
-const ResultsContainer = styled.div<{ $isFetching?: boolean }>`
+export const ResultsContainer = styled.div<{ $isFetching?: boolean }>`
   flex: 1 1 0px;
   transition: opacity 0.2s;
 
@@ -50,6 +50,12 @@ const ResultText = styled.span`
   line-height: 1.3em;
 `;
 
+const TextContainer = styled.div`
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-height: 100px;
+`;
+
 export const ResultTitle = styled.div`
   text-decoration: none;
   color: #2962ff;
@@ -70,11 +76,16 @@ function replaceBreaks(str: string) {
   return str.replace(/[\\n]+/, '');
 }
 
-const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; search?: string }> = ({
-  result,
-  size,
-  search,
-}) => {
+export const SearchItem: React.FC<{
+  result: SearchResult;
+  size?: 'large' | 'small';
+  search?: string;
+  list?: boolean;
+  border?: string;
+  textColor?: string;
+  background?: string;
+  imageStyle?: string;
+}> = ({ result, size, search, list, border, textColor, background, imageStyle }) => {
   const things = ((result && result.contexts) || []).map(value => {
     return parseUrn(value.id);
   });
@@ -90,7 +101,7 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; sea
   const isManifest = result.resource_type === 'Manifest';
 
   return (
-    <ResultContainer>
+    <div>
       <HrefLink
         href={createLink({
           projectId,
@@ -102,7 +113,7 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; sea
         style={{ textDecoration: 'none' }}
       >
         <GridContainer>
-          <ImageStripBox $size={size} style={{ width: 200, maxHeight: 200, marginBottom: 20 }}>
+          <ImageStripBox data-view-list={list} $border={border} $color={textColor} $bgColor={background} $size={size}>
             {isManifest ? (
               <SnippetThumbnailContainer stackedThumbnail={isManifest} portrait fluid>
                 <SnippetThumbnail
@@ -111,27 +122,27 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; sea
                 />
               </SnippetThumbnailContainer>
             ) : (
-              <CroppedImage $size={size}>
+              <CroppedImage $size={size} $covered={imageStyle === 'covered'}>
                 <img src={result.madoc_thumbnail} />
               </CroppedImage>
             )}
+            <TextContainer style={{ alignSelf: 'flex-start', marginLeft: '1em' }}>
+              <LocaleString as={ResultTitle}>{result.label}</LocaleString>
+              {snippet ? (
+                <div style={{ paddingBottom: '.8em', maxWidth: 600 }}>
+                  <ResultText
+                    key={snippet}
+                    dangerouslySetInnerHTML={{
+                      __html: replaceBreaks(sanitizeLabel(snippet)),
+                    }}
+                  />
+                </div>
+              ) : null}
+            </TextContainer>
           </ImageStripBox>
-          <div style={{ alignSelf: 'flex-start', marginLeft: '1em' }}>
-            <LocaleString as={ResultTitle}>{result.label}</LocaleString>
-            {snippet ? (
-              <div style={{ paddingBottom: '.8em', maxWidth: 600 }}>
-                <ResultText
-                  key={snippet}
-                  dangerouslySetInnerHTML={{
-                    __html: replaceBreaks(sanitizeLabel(snippet)),
-                  }}
-                />
-              </div>
-            ) : null}
-          </div>
         </GridContainer>
       </HrefLink>
-    </ResultContainer>
+    </div>
   );
 };
 
@@ -139,12 +150,14 @@ export const SearchResults: React.FC<{
   searchResults: Array<SearchResult>;
   value?: string;
   isFetching?: boolean;
-}> = ({ isFetching, searchResults = [], value }) => (
-  <ResultsContainer $isFetching={isFetching}>
-    {searchResults.map((result: SearchResult, index: number) => {
-      return result ? (
-        <SearchItem result={result} key={`${index}__${result.resource_id}`} search={value} size="small" />
-      ) : null;
-    })}
-  </ResultsContainer>
-);
+}> = ({ isFetching, searchResults = [], value }) => {
+  return (
+    <ResultsContainer $isFetching={isFetching}>
+      {searchResults.map((result: SearchResult, index: number) => {
+        return result ? (
+          <SearchItem result={result} key={`${index}__${result.resource_id}`} search={value} size="small" />
+        ) : null;
+      })}
+    </ResultsContainer>
+  );
+};

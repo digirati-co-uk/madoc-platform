@@ -38,7 +38,8 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
 
   const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch();
   const { t } = useTranslation();
-  const { fulltext, appliedFacets } = useSearchQuery();
+  const { appliedFacets } = useSearchQuery();
+  console.log(displayFacets, latestData)
   const {
     inQueue,
     queueSingleFacet,

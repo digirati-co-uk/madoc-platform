@@ -2,16 +2,15 @@ import React from 'react';
 import { Slot } from '../../shared/page-blocks/slot';
 import { useTranslation } from 'react-i18next';
 import { LoadingBlock } from '../../shared/callouts/LoadingBlock';
-import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
-
 import { useSearch } from '../hooks/use-search';
 import { useSearchQuery } from '../hooks/use-search-query';
 import { StaticPage } from '../features/StaticPage';
 import { SearchPageFilters } from '../features/SearchPageFilters';
 import { SearchResults, TotalResults } from '../../shared/components/SearchResults';
-import { Pagination } from '../../shared/components/Pagination';
 import { AppliedFacets } from '../features/AppliedFacets';
 import { Heading1 } from '../../shared/typography/Heading1';
+import { SearchPagination } from '../features/SearchPagination';
+import { SearchPageResults } from "../features/SearchPageResults";
 
 export const Search: React.FC = () => {
   const { t } = useTranslation();
@@ -20,15 +19,8 @@ export const Search: React.FC = () => {
 
   return (
     <StaticPage title="search">
-      <Slot name="common-breadcrumbs">
-        <DisplayBreadcrumbs />
-      </Slot>
-
       <Slot name="search-heading">
         <Heading1>“{fulltext}” search</Heading1>
-      </Slot>
-      <Slot name="search-facets">
-        <AppliedFacets />
       </Slot>
 
       <div style={{ display: 'flex' }}>
@@ -39,7 +31,12 @@ export const Search: React.FC = () => {
         </div>
 
         <div style={{ width: '100%' }}>
-          <Slot name="search-page-results1">
+          <Slot name="search-page-pagination">
+            <SearchPagination />
+          </Slot>
+
+          <Slot name="search-page-resultse">
+            <AppliedFacets />
             {isLoading && !searchResponse ? (
               <LoadingBlock />
             ) : (
@@ -49,23 +46,18 @@ export const Search: React.FC = () => {
                 })}
               </TotalResults>
             )}
-            <Pagination
-              page={page}
-              totalPages={latestData && latestData.pagination ? latestData.pagination.totalPages : undefined}
-              stale={isLoading}
-              extraQuery={rawQuery}
-            />
-            <SearchResults
-              isFetching={isLoading}
-              value={fulltext}
-              searchResults={searchResponse ? searchResponse.results : []}
-            />
-            <Pagination
-              page={page}
-              totalPages={latestData && latestData.pagination ? latestData.pagination.totalPages : undefined}
-              stale={isLoading}
-              extraQuery={rawQuery}
-            />
+
+            <SearchPageResults />
+
+            {/*<SearchResults*/}
+            {/*  isFetching={isLoading}*/}
+            {/*  value={fulltext}*/}
+            {/*  searchResults={searchResponse ? searchResponse.results : []}*/}
+            {/*/>*/}
+          </Slot>
+
+          <Slot name="search-page-footer">
+            <SearchPagination />
           </Slot>
         </div>
       </div>
