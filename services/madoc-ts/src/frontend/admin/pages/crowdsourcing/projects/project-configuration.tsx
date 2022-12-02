@@ -46,6 +46,8 @@ export const ProjectConfiguration: React.FC = () => {
       {didSave ? <SuccessMessage>{t('Changes saved')}</SuccessMessage> : null}
       <EditShorthandCaptureModel
         key={updatedAt}
+        enableSearch
+        searchLabel={t('Search configuration')}
         immutableFields={projectTemplate?.configuration?.immutable}
         data={projectConfiguration}
         template={siteConfigurationModel}

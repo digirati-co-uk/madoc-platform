@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { Site, SystemConfig } from '../../../../extensions/site-manager/types';
 import { SuccessMessage } from '../../../shared/callouts/SuccessMessage';
@@ -33,6 +34,7 @@ const globalSystemConfigModel: Partial<{ [key in keyof SystemConfig]: any }> = {
 export const GlobalSystemConfig: React.FC = () => {
   const { data, refetch, updatedAt } = useData(GlobalSystemConfig);
   const api = useApi();
+  const { t } = useTranslation();
   const { systemConfig, allSites } = (data || {}) as { allSites: Site[]; systemConfig: SystemConfig };
 
   const globalSystemConfigModelWithSites: any = useMemo(() => {
@@ -69,6 +71,8 @@ export const GlobalSystemConfig: React.FC = () => {
         <div style={{ maxWidth: 600 }}>
           {updateSystemConfigStatus.isSuccess ? <SuccessMessage>Config updated</SuccessMessage> : null}
           <EditShorthandCaptureModel
+            enableSearch
+            searchLabel={t('Search configuration')}
             key={updatedAt}
             data={systemConfig}
             template={globalSystemConfigModelWithSites}

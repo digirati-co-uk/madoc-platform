@@ -22,6 +22,7 @@ export type RevisionProviderFeatures = {
   preventMultiple?: boolean;
   basicUnNesting?: boolean;
   translationNamespace?: string;
+  forkMode?: boolean;
 };
 
 export const RevisionProviderWithFeatures: React.FC<{
@@ -53,6 +54,7 @@ export const RevisionProviderWithFeatures: React.FC<{
     preventMultiple = false,
     basicUnNesting = true,
     translationNamespace = 'capture-models',
+    forkMode = false,
   } = features || {};
   const { components, editor } = slotConfig || {};
 
@@ -73,7 +75,7 @@ export const RevisionProviderWithFeatures: React.FC<{
             {revisionEditMode ? <SwitchFieldAfterRevises /> : null}
             {revisionEditMode ? <SwitchEditMode /> : null}
             {autoSelectingRevision ? (
-              <AutoSelectingRevision directEdit={directEdit} preventMultiple={preventMultiple} />
+              <AutoSelectingRevision forkMode={forkMode} directEdit={directEdit} preventMultiple={preventMultiple} />
             ) : null}
             {basicUnNesting ? <BasicUnNesting /> : null}
             <CorrectingRevisionSubtree />

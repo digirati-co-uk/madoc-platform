@@ -3,10 +3,11 @@ import { useNavigation } from '../../editor/hooks/useNavigation';
 import { Revisions } from '../../editor/stores/revisions/index';
 import { useRevisionList } from '../hooks/use-revision-list';
 
-export const AutoSelectingRevision: React.FC<{ directEdit?: boolean; preventMultiple?: boolean }> = ({
-  directEdit,
-  preventMultiple,
-}) => {
+export const AutoSelectingRevision: React.FC<{
+  directEdit?: boolean;
+  preventMultiple?: boolean;
+  forkMode?: boolean;
+}> = ({ directEdit, preventMultiple, forkMode }) => {
   const currentRevisionId = Revisions.useStoreState(s => s.currentRevisionId);
   const structure = Revisions.useStoreState(s => s.structure);
   const createRevision = Revisions.useStoreActions(a => a.createRevision);
@@ -36,7 +37,7 @@ export const AutoSelectingRevision: React.FC<{ directEdit?: boolean; preventMult
       if (lastWorkedOn) {
         selectRevision({ revisionId: lastWorkedOn.revision.id });
       } else {
-        if (currentView.modelRoot && currentView.modelRoot.length) {
+        if ((currentView.modelRoot && currentView.modelRoot.length) || forkMode) {
           createRevision({ revisionId: skipToStructureRevision, cloneMode: 'FORK_INSTANCE' });
         } else {
           createRevision({ revisionId: skipToStructureRevision, cloneMode: 'EDIT_ALL_VALUES' });
