@@ -17,6 +17,7 @@ import { NotificationExtension } from '../extensions/notifications/extension';
 import { getDefaultPageBlockDefinitions } from '../extensions/page-blocks/default-definitions';
 import { PageBlockExtension } from '../extensions/page-blocks/extension';
 import { MediaExtension } from '../extensions/media/extension';
+import { ProjectExportExtension } from "../extensions/project-export/extension";
 import { ProjectTemplateExtension } from '../extensions/projects/extension';
 import { SiteManagerExtension } from '../extensions/site-manager/extension';
 import { SystemExtension } from '../extensions/system/extension';
@@ -115,6 +116,7 @@ export class ApiClient {
   notifications!: NotificationExtension;
   siteManager!: SiteManagerExtension;
   projectTemplates!: ProjectTemplateExtension;
+  projectExport!: ProjectExportExtension;
   crowdsourcing!: CrowdsourcingApi;
 
   constructor(options: {
@@ -150,6 +152,7 @@ export class ApiClient {
     this.themes = new ThemeExtension(this);
     this.siteManager = new SiteManagerExtension(this);
     this.projectTemplates = new ProjectTemplateExtension(this);
+    this.projectExport = new ProjectExportExtension(this);
     const captureModelExtensions = new ExtensionManager(
       options.customCaptureModelExtensions
         ? options.customCaptureModelExtensions(this)

@@ -15,6 +15,10 @@ export const globalFont = themeVariable('fonts', 'fontFamily', {
     '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
 });
 
+export const globalFontMono = themeVariable('fonts', 'fontFamilyMono', {
+  default: 'ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace',
+});
+
 export const searchBorder = themeVariable('header', 'searchBorder', {
   default: '2px solid #c2c2c2',
   dark: '2px solid #000',

@@ -1,5 +1,6 @@
 import React from 'react';
 import { RouteObject } from 'react-router-dom';
+import { ExportConfig } from '../extensions/project-export/types';
 import { ProjectTemplate } from '../extensions/projects/types';
 import { RouteComponents } from '../frontend/site/routes';
 import { BaseTheme } from './schemas/madoc-theme';
@@ -70,4 +71,5 @@ export type ModuleWrapper = {
   hookBlocks?: () => { [name: string]: React.FC<any> };
   themes?: Array<BaseTheme & { id: string }>;
   projectTemplates?: Array<ProjectTemplate>;
+  projectExports?: Array<ExportConfig>;
 };
