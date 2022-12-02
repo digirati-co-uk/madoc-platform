@@ -76,7 +76,7 @@ export function useReadOnlyAnnotations(isModelPage = false): ReadOnlyAnnotation[
 
   const unstyledDocumentRegions = useMemo(() => {
     const regions: ReadOnlyAnnotation[] = [];
-    const ids: string[] = annotations.ids;
+    const ids: string[] = [...annotations.ids];
 
     if (showDocumentRegions && !styles.contributedDocument?.hidden) {
       if (data && data.models) {
