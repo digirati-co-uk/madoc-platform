@@ -45,6 +45,7 @@ supports a wider range of IIIF resources as a result.
 * Fixed bug where you could not delete a project if the capture model had already been deleted
 * Fixed missing structure in project export
 * Fixed bug where some empty annotations were exported
+* Fixed annotation format when exporting Presentation 3 Manifest (OA -> W3C)
 
 ### Added
 
