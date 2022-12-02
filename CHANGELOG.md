@@ -47,6 +47,7 @@ supports a wider range of IIIF resources as a result.
 * Fixed bug where some empty annotations were exported
 * Fixed annotation format when exporting Presentation 3 Manifest (OA -> W3C)
 * Fixed bug with read-only annotations disappearing
+* Fixed message "login to contribute" on published projects
 
 ### Added
 
