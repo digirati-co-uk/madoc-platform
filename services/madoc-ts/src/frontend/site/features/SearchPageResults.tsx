@@ -1,12 +1,12 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useSearchQuery } from '../hooks/use-search-query';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { SearchResult } from '../../../types/search';
 import { useSearch } from '../hooks/use-search';
-import { ResultsContainer, SearchItem } from '../../shared/components/SearchResults';
+import { ResultsContainer, SearchItem, TotalResults } from '../../shared/components/SearchResults';
 import { ImageGrid } from '../../shared/atoms/ImageGrid';
-import { ImageStripBox } from '../../shared/atoms/ImageStrip';
+import { LoadingBlock } from '../../shared/callouts/LoadingBlock';
+import { useTranslation } from 'react-i18next';
 
 interface SearchPageResultsProps {
   background?: string;
@@ -21,36 +21,44 @@ export const SearchPageResults: React.FC<SearchPageResultsProps> = ({
   cardBorder,
   textColor,
   background,
-    imageStyle
+  imageStyle,
 }) => {
-
   const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch();
   const { rawQuery, page, fulltext } = useSearchQuery();
-
+  const { t } = useTranslation();
   const searchResults = searchResponse ? searchResponse.results : [];
 
   if (!searchResults) {
     return null;
   }
-  return (
-    <ResultsContainer $isFetching={isLoading}>
-      <ImageGrid data-view-list={list}>
-        {searchResults.map((result: SearchResult, index: number) => {
-          return result ? (
-            <SearchItem
-              result={result}
-              key={`${index}__${result.resource_id}`}
-              search={fulltext}
-              background={background}
-              border={cardBorder}
-              textColor={textColor}
-              list={list}
-              imageStyle={imageStyle}
-            />
-          ) : null;
+  return isLoading && !searchResponse ? (
+    <LoadingBlock />
+  ) : (
+    <>
+      <TotalResults>
+        {t('Found {{count}} results', {
+          count: searchResponse && searchResponse.pagination ? searchResponse.pagination.totalResults : 0,
         })}
-      </ImageGrid>
-    </ResultsContainer>
+      </TotalResults>
+      <ResultsContainer $isFetching={isLoading}>
+        <ImageGrid data-view-list={list}>
+          {searchResults.map((result: SearchResult, index: number) => {
+            return result ? (
+              <SearchItem
+                result={result}
+                key={`${index}__${result.resource_id}`}
+                search={fulltext}
+                background={background}
+                border={cardBorder}
+                textColor={textColor}
+                list={list}
+                imageStyle={imageStyle}
+              />
+            ) : null;
+          })}
+        </ImageGrid>
+      </ResultsContainer>
+    </>
   );
 };
 

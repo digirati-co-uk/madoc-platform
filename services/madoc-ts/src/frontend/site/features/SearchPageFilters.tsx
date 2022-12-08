@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import {
   SearchFilterContainer,
@@ -15,31 +14,18 @@ import { LocaleString } from '../../shared/components/LocaleString';
 import { useSearchQuery } from '../hooks/use-search-query';
 import { useSearchFacets } from '../hooks/use-search-facets';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
-import { InternationalString } from '@iiif/presentation-3';
 import { CheckboxBtn } from '../../shared/atoms/CheckboxBtn';
-import { useSearch } from "../hooks/use-search";
-
-export const Pill = styled.div`
-  border-radius: 3px;
-  width: auto;
-  background-color: #ecf0ff;
-  color: #437bdd;
-  margin-right: 1em;
-  font-size: 12px;
-  padding: 5px;
-`;
+import { useSearch } from '../hooks/use-search';
 
 interface SearchPageFiltersProps {
   checkBoxColor?: string;
-  textTest?: string;
 }
 
-export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxColor, textTest }) => {
-
+export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxColor }) => {
   const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch();
   const { t } = useTranslation();
   const { appliedFacets } = useSearchQuery();
-  console.log(displayFacets, latestData)
+
   const {
     inQueue,
     queueSingleFacet,
@@ -111,10 +97,8 @@ blockEditorFor(SearchPageFilters, {
   requiredContext: [],
   defaultProps: {
     checkBoxColor: '',
-    textTest: '',
   },
   editor: {
     checkBoxColor: { label: 'Check box color', type: 'color-field' },
-    textTest: { label: 'Test for props', type: 'text-field' },
   },
 });
