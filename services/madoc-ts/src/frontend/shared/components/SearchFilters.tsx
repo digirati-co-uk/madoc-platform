@@ -7,14 +7,12 @@ export const SearchFilterContainer = styled.div`
 
 export const SearchFilterCheckbox = styled.div`
   padding: 0.1em;
-  //background: #eee;
-  border: 1px solid red;
+  background: #eee;
 `;
 
 export const SearchFilterCheckbox2 = styled.input`
   padding: 0.1em;
-  //background: #eee;
-  border: 1px solid red;
+  background: #eee;
 `;
 
 export const SearchFilterTitle = styled.h3``;

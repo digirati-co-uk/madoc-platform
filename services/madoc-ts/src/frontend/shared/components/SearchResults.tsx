@@ -101,7 +101,7 @@ export const SearchItem: React.FC<{
   const isManifest = result.resource_type === 'Manifest';
 
   return (
-    <div>
+    <>
       <HrefLink
         href={createLink({
           projectId,
@@ -142,7 +142,7 @@ export const SearchItem: React.FC<{
           </ImageStripBox>
         </GridContainer>
       </HrefLink>
-    </div>
+    </>
   );
 };
 

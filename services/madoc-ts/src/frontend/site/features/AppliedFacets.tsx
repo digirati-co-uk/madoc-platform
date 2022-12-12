@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 import { useSearchQuery } from '../hooks/use-search-query';
 import { useSearchFacets } from '../hooks/use-search-facets';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
@@ -41,12 +40,10 @@ export const RemoveFacet = styled.button`
     transition: background-color ease-in-out 0.3s;
   }
 `;
-interface AppliedFacetsProps {
-  facetColor?: string;
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface AppliedFacetsProps {}
 
-export const AppliedFacets: React.FC<AppliedFacetsProps> = ({ facetColor }) => {
-  const { t } = useTranslation();
+export const AppliedFacets: React.FC<AppliedFacetsProps> = () => {
   const { fulltext, appliedFacets } = useSearchQuery();
   const { clearSingleFacet } = useSearchFacets();
 
@@ -73,13 +70,8 @@ export const AppliedFacets: React.FC<AppliedFacetsProps> = ({ facetColor }) => {
 
 blockEditorFor(AppliedFacets, {
   label: 'Applied Facets',
-  type: 'default.appliedF-facets',
+  type: 'default.applied-facets',
   anyContext: [],
   requiredContext: [],
-  defaultProps: {
-    pillColor: '',
-  },
-  editor: {
-    pillColor: { label: 'facet color', type: 'color-field' },
-  },
+  editor: {},
 });
