@@ -60,6 +60,7 @@ const SelectorHelperReactContext = createContext(mitt());
 
 export type SelectorHelperEventTypes =
   | 'click'
+  | 'hover'
   | 'selector-updated'
   | 'highlight'
   | 'clear-highlight'

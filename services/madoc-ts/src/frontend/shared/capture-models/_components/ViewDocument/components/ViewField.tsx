@@ -25,6 +25,24 @@ export function ViewField({ field, fluidImage }: { field: BaseField; fluidImage?
     }
   }, [helper, selectorId]);
 
+
+  useEffect(() => {
+    const handleHover = () => {
+      trigger();
+    };
+    if (selectorId) {
+      helper.withSelector(selectorId).addEventListener('mouseover', () => handleHover());
+    }
+  }, [helper, selectorId]);
+
+  useEffect(() => {
+    if (selectorId) {
+      helper.withSelector(selectorId).on('event-listener', () => {
+        trigger();
+      });
+    }
+  }, [helper, selectorId]);
+
   if (!field.selector) {
     return <FieldPreview key={field.id} field={field} />;
   }

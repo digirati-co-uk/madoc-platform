@@ -18,7 +18,7 @@ export function useBoxSelector(
   }: SelectorTypeProps<BoxSelectorProps>,
   { generatePreview }: { generatePreview?: (s?: BoxSelectorProps['state']) => string | undefined } = {}
 ) {
-  const { controller, isHighlighted, onClick } = useSelectorEvents(id);
+  const { controller, isHighlighted, onClick, onMouseEnter } = useSelectorEvents(id);
   const styles = useAnnotationStyles();
   const lastPreview = useRef<string | undefined>();
   const style =
@@ -65,6 +65,7 @@ export function useBoxSelector(
   return {
     onSave,
     onClick,
+    onMouseEnter,
     controller,
     isHighlighted,
     style,
