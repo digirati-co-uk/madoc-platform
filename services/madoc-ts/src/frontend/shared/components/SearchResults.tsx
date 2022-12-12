@@ -51,9 +51,23 @@ const ResultText = styled.span`
 `;
 
 const TextContainer = styled.div`
-  text-overflow: ellipsis;
-  overflow: hidden;
-  max-height: 100px;
+  margin-left: 1em;
+
+  &[data-list-item='false'] {
+    margin-left: 0;
+  
+    span {
+      display: -webkit-box;
+      max-width: 160px;
+      height: 100px;
+      line-clamp: 4;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.625;
+    }
+  }
 `;
 
 export const ResultTitle = styled.div`
@@ -81,11 +95,12 @@ export const SearchItem: React.FC<{
   size?: 'large' | 'small';
   search?: string;
   list?: boolean;
+  hideSnippet?: boolean;
   border?: string;
   textColor?: string;
   background?: string;
   imageStyle?: string;
-}> = ({ result, size, search, list, border, textColor, background, imageStyle }) => {
+}> = ({ result, size, search, list, border, textColor, background, imageStyle, hideSnippet }) => {
   const things = ((result && result.contexts) || []).map(value => {
     return parseUrn(value.id);
   });
@@ -126,9 +141,9 @@ export const SearchItem: React.FC<{
                 <img src={result.madoc_thumbnail} />
               </CroppedImage>
             )}
-            <TextContainer style={{ alignSelf: 'flex-start', marginLeft: '1em' }}>
+            <TextContainer data-list-item={list} style={{ alignSelf: 'flex-start' }}>
               <LocaleString as={ResultTitle}>{result.label}</LocaleString>
-              {snippet ? (
+              {snippet && !hideSnippet ? (
                 <div style={{ paddingBottom: '.8em', maxWidth: 600 }}>
                   <ResultText
                     key={snippet}

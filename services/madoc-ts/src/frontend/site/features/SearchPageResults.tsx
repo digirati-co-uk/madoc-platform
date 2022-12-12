@@ -10,14 +10,16 @@ import { useTranslation } from 'react-i18next';
 
 interface SearchPageResultsProps {
   background?: string;
-  list?: boolean;
+  grid?: boolean;
+  snippet?: boolean;
   textColor?: string;
   cardBorder?: string;
   imageStyle?: string;
 }
 
 export const SearchPageResults: React.FC<SearchPageResultsProps> = ({
-  list,
+  grid,
+  snippet,
   cardBorder,
   textColor,
   background,
@@ -41,7 +43,7 @@ export const SearchPageResults: React.FC<SearchPageResultsProps> = ({
         })}
       </TotalResults>
       <ResultsContainer $isFetching={isLoading}>
-        <ImageGrid data-view-list={list}>
+        <ImageGrid data-view-list={!grid} $size={'small'}>
           {searchResults.map((result: SearchResult, index: number) => {
             return result ? (
               <SearchItem
@@ -51,7 +53,8 @@ export const SearchPageResults: React.FC<SearchPageResultsProps> = ({
                 background={background}
                 border={cardBorder}
                 textColor={textColor}
-                list={list}
+                list={!grid}
+                hideSnippet={snippet}
                 imageStyle={imageStyle}
               />
             ) : null;
@@ -69,13 +72,15 @@ blockEditorFor(SearchPageResults, {
   requiredContext: [],
   defaultProps: {
     background: '',
-    list: true,
+    grid: '',
+    snippet: '',
     textColor: '',
     cardBorder: '',
     imageStyle: 'fit',
   },
   editor: {
-    list: { type: 'checkbox-field', label: 'View', inlineLabel: 'Display as list' },
+    grid: { type: 'checkbox-field', label: 'Display as', inlineLabel: 'Display as grid' },
+    snippet: { type: 'checkbox-field', label: 'Snippet', inlineLabel: 'Hide snippet?' },
     background: { label: 'Card background color', type: 'color-field' },
     textColor: { label: 'Card text color', type: 'color-field' },
     cardBorder: { label: 'Card border', type: 'color-field' },
