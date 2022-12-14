@@ -65,7 +65,6 @@ export function useBoxSelector(
   return {
     onSave,
     onClick,
-    onMouseEnter,
     controller,
     isHighlighted,
     style,
