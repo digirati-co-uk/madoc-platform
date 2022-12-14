@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import { CanvasViewerButton, CanvasViewerControls } from '../../site/features/CanvasViewerGrid';
-import {BtnColor, buttonColor} from "../variables";
+import { buttonColor } from '../variables';
 
 export const OuterLayoutContainer = styled.div`
   display: flex;
