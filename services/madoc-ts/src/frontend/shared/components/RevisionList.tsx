@@ -36,10 +36,6 @@ const RevisionListItemContainer = styled.div<{ $selected?: boolean }>`
       box-shadow: 0 0 0 3px #4a67e4;
       border-color: #fff;
     `}
-
-  &[data-highlighted='true'] {
-    outline-color: orangered;
-  }
 `;
 
 const RevisionHeading = styled.div`
@@ -123,30 +119,12 @@ export const RevisionListItem: React.FC<{ revision: RevisionRequest; editable?: 
   const innerDiv = useRef<HTMLDivElement>(null);
 
   const [isCollapsed, setIsCollapsed] = useState(true);
+
   const contributors = useContributors();
   const author = rev.revision.authors && contributors ? contributors[rev.revision.authors[0]]?.name || '' : '';
   const currentRevisionId = Revisions.useStoreState(s => s.currentRevisionId);
   const selectRevision = Revisions.useStoreActions(a => a.selectRevision);
   const [, { goTo }] = useNavigation();
-
-  const selectors = Revisions.useStoreState(s => s.resolvedSelectors);
-  const selector = selectors[0] ? resolveSelector(selectors[0], rev.revision.id) : undefined;
-  const selectorId = selector?.id;
-
-  const ref = useRef<HTMLDivElement>(null);
-  const helper = useSelectorHelper();
-  const [isOn, trigger] = useDecayState();
-
-  useEffect(() => {
-    if (selectorId) {
-      return helper.withSelector(selectorId).on('click', () => {
-        trigger();
-        if (ref.current) {
-          ref.current.scrollIntoView({ block: 'nearest', inline: 'center' });
-        }
-      });
-    }
-  }, [helper, selectorId]);
 
   useBrowserLayoutEffect(() => {
     if (outerDiv.current && innerDiv.current) {
@@ -159,13 +137,7 @@ export const RevisionListItem: React.FC<{ revision: RevisionRequest; editable?: 
   }, []);
 
   return (
-    <RevisionListItemContainer
-      $selected={currentRevisionId === rev.revision.id}
-      ref={ref}
-      data-highlighted={isOn}
-      onMouseEnter={() => (selectorId ? helper.highlight(selectorId) : null)}
-      onMouseLeave={() => (selectorId ? helper.clearHighlight(selectorId) : null)}
-    >
+    <RevisionListItemContainer $selected={currentRevisionId === rev.revision.id}>
       <RevisionStatus $status={rev.revision.status} />
       <RevisionHeading>
         <RevisionLabel>{rev.revision.label === 'Default' ? rev.document.label : rev.revision.label}</RevisionLabel>
