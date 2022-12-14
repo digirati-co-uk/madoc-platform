@@ -1,5 +1,6 @@
 import { ApiClient } from '../api';
 import { BaseTask } from './base-task';
+import { ImportCanvasTask } from './import-canvas';
 
 export const type = 'search-index-task';
 
@@ -49,7 +50,12 @@ export function createTask(
     state: {
       indexedResources: {},
     },
-    events: ['madoc-ts.created', `madoc-ts.subtask_type_status.search-index-task.3`],
+    events: [
+      'madoc-ts.created',
+      `madoc-ts.subtask_type_status.search-index-task.3`,
+      `madoc-ts.subtask_type_status.search-index-task.1`,
+      `madoc-ts.status.1`,
+    ],
     subject: `none`,
     status: 0,
     status_text: 'pending',
@@ -60,7 +66,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
   switch (name) {
     case 'created': {
       try {
-        const task = await api.acceptTask<SearchIndexTask>(taskId);
+        const task = await api.getTask<SearchIndexTask>(taskId);
         const [resources, options = {}, siteId] = task.parameters;
         const { indexAllResources = false, recursive = true, resourceStack = [] } = options;
         const siteApi = api.asUser({ siteId });
@@ -88,9 +94,6 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         switch (resource.type) {
           case 'manifest': {
             try {
-              //   - Ingest manifest.
-              await api.indexManifest(resource.id);
-
               //   - Create task for each canvas as sub tasks.
               const manifestStructure = await siteApi.getManifestStructure(resource.id);
 
@@ -105,8 +108,75 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
                   break;
                 }
               }
+            } catch (e) {
+              // ignore error.
+            }
 
-              // Mark as done if no subtasks.
+            break;
+          }
+
+          case 'canvas': {
+            // Do nothing...
+            break;
+          }
+
+          case 'collection': {
+            try {
+              //   - Create task for each canvas as sub tasks.
+              const collectionStructure = await siteApi.getCollectionStructure(resource.id);
+
+              if (recursive) {
+                const subtasks: SearchIndexTask[] = [];
+                for (const item of collectionStructure.items) {
+                  if (item.type) {
+                    subtasks.push(createTask([{ id: item.id, type: item.type?.toLowerCase() }], siteId, options));
+                  }
+                }
+
+                if (subtasks.length) {
+                  await api.addSubtasks(subtasks, taskId);
+                  break;
+                }
+              }
+            } catch (e) {
+              // ignore error.
+            }
+
+            break;
+          }
+        }
+      } catch (err) {
+        // no-op
+      }
+
+      // Trigger a deferred index.
+      await api.updateTask<ImportCanvasTask>(taskId, { status: 1 });
+
+      break;
+    }
+    case 'subtask_type_status.search-index-task.1': {
+      await api.updateTask<ImportCanvasTask>(taskId, { status: 2 });
+      break;
+    }
+    case 'status.1': {
+      try {
+        const task = await api.getTask<SearchIndexTask>(taskId);
+        const [resources, options = {}, siteId] = task.parameters;
+        const { indexAllResources = false, recursive = true, resourceStack = [] } = options;
+        const siteApi = api.asUser({ siteId });
+
+        if (resources.length !== 1) {
+          // Invalid.
+          break;
+        }
+
+        const resource = resources[0];
+        switch (resource.type) {
+          case 'manifest': {
+            try {
+              // Ingest manifest.
+              await siteApi.indexManifest(resource.id);
+              // And mark as done.
               await api.updateTask(taskId, { status: 3 });
             } catch (e) {
               // ignore error.
@@ -119,9 +189,6 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
             try {
               //  - Ingest canvas.
               await siteApi.indexCanvas(resource.id);
-
-              // @todo check for OCR + capture models?
-
               //  - Mark as done.
               await api.updateTask(taskId, { status: 3 });
             } catch (e) {
@@ -133,10 +200,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
 
           case 'collection': {
             // @todo ingest collection.
-            //  - Make sure collection isn't in resourceStack
             //  - Ingest collection.
-            //  - Create task for each manifest.
-            //  - Add each collection id to the resourceStack
             break;
           }
         }
