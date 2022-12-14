@@ -68,6 +68,13 @@ const worker = new Worker(
 
     console.log('starting job...', job.id, job.data ? job.data.taskId : undefined);
 
+    // @todo with the addition of automation - this will need to be changed so we can fetch the Task before handing
+    //   it to the job handler. Every single handler already fetches the task, so this shouldn't be a problem
+    //   The handlers can be changed quickly. We can also change this slightly messy code to work better.
+    //   The remaining questions will be:
+    //       - Should we only fetch the user if there is a supported automation?
+    //       - Should we fetch the assignee details and pass to every job handler?
+
     try {
       switch (job.data.type) {
         case collection.type:

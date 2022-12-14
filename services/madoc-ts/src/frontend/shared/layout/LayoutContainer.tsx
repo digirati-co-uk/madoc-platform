@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { CanvasViewerButton, CanvasViewerControls } from '../../site/features/CanvasViewerGrid';
 import {BtnColor, buttonColor} from "../variables";
 
 export const OuterLayoutContainer = styled.div`
@@ -7,8 +8,6 @@ export const OuterLayoutContainer = styled.div`
   max-width: 100%;
   flex-direction: row;
   background: #ffffff;
-  //border: 1px solid #bcbcbc;
-  //box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.17);
   height: 100%;
   overflow: hidden;
   max-height: 100%;
@@ -21,10 +20,13 @@ export const NavIconContainer = styled.div<{ $active?: boolean; $disabled?: bool
   &:hover {
     background: #eee;
   }
+
   border-radius: 3px;
   padding: 0.5em;
   margin: 0.25em;
+  color: #333;
   width: 2.5em;
+  display: flex;
   height: 2.5em;
   cursor: pointer;
   position: relative;
@@ -35,13 +37,24 @@ export const NavIconContainer = styled.div<{ $active?: boolean; $disabled?: bool
     height: 1.4em;
   }
 
+  &[data-has-label='true'] {
+    width: auto;
+
+    svg {
+      margin-right: 0.3em;
+    }
+  }
+
   ${props =>
     props.$active &&
     css`
+      background: #4a64e1;
+      color: #fff;
       background: ${buttonColor};
       svg {
         fill: #fff;
       }
+
       &:hover {
         background-color: ${buttonColor};
         filter: brightness(90%);
@@ -53,9 +66,11 @@ export const NavIconContainer = styled.div<{ $active?: boolean; $disabled?: bool
     css`
       background: transparent;
       cursor: not-allowed;
+
       svg {
         fill: #ccc;
       }
+
       &:hover {
         background: transparent;
       }
@@ -82,30 +97,67 @@ export const LayoutContainer = styled.div`
   min-width: 0;
 `;
 
-export const LayoutContent = styled.div<{ $padding?: boolean }>`
+export const PanelTitle = styled.h5`
+  text-transform: capitalize;
+  font-size: 20px;
+  margin: 10px 0;
+`;
+
+export const LayoutContent = styled.div<{ $padding?: boolean; $btnColor?: string }>`
   background: #fff;
-  flex: 1 1 0px;
+  flex: 1 1 0;
   min-width: 0;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+
   ${props =>
     props.$padding &&
     css`
       padding: 0.5em;
     `}
+  ${CanvasViewerButton} {
+    background-color: ${props => props.$btnColor};
+  }
+
+  &[data-vertical-btn='true'] {
+    ${CanvasViewerControls} {
+      display: flex;
+      flex-direction: column;
+
+      button:first-child {
+        order: 1;
+      }
+
+      button:nth-child(2) {
+        order: 2;
+      }
+
+      button:nth-child(3) {
+        order: 0;
+      }
+
+      ${CanvasViewerButton} {
+        margin-bottom: 0.5em;
+        margin-left: 0;
+      }
+    }
 `;
 
 export const LayoutSidebarMenu = styled.div`
   background: #ffffff;
-  border-right: 1px solid #bcbcbc;
 `;
 
 export const LayoutSidebar = styled.div<{ $noScroll?: boolean }>`
   background: #ffffff;
-  border-right: 1px solid #bcbcbc;
+  border-right: 1px solid #918f8f;
   overflow: auto;
   position: relative;
+
+  &[data-space='true'] {
+    margin-right: 1em;
+  }
+
   ${props =>
     props.$noScroll &&
     css`
@@ -120,6 +172,7 @@ export const LayoutHandle = styled.div<{ $isDragging?: boolean }>`
   height: 100%;
   user-select: none;
   cursor: col-resize;
+
   &:hover,
   &:active {
     background: #ddd;

@@ -66,9 +66,9 @@ export const ListSites: React.FC = () => {
       />
       <SystemBackground>
         <SystemCallToAction
-          title={'Create a new site'}
+          title={t('Create a new site')}
           href={`/global/sites/create`}
-          description="Create a new space"
+          description={t('Create a new space')}
           maxWidth
         />
 

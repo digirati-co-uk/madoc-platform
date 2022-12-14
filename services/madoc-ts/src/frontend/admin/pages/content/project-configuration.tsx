@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { WidePage } from '../../../shared/layout/WidePage';
@@ -19,6 +20,7 @@ function postProcessConfiguration(config: any) {
 export const SiteProjectConfiguration: React.FC = () => {
   const { data: value, refetch } = apiHooks.getSiteConfiguration(() => []);
   const api = useApi();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [saveConfig] = useMutation(async (rev: any) => {
@@ -39,7 +41,13 @@ export const SiteProjectConfiguration: React.FC = () => {
       />
       <WidePage>
         <div style={{ maxWidth: 600 }}>
-          <EditShorthandCaptureModel data={value} template={siteConfigurationModel} onSave={saveConfig} />
+          <EditShorthandCaptureModel
+            enableSearch
+            searchLabel={t('Search configuration')}
+            data={value}
+            template={siteConfigurationModel}
+            onSave={saveConfig}
+          />
         </div>
       </WidePage>
     </>

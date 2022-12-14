@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import RichTextEditor, { EditorValue } from 'react-rte';
+import _RichTextEditor, { EditorValue } from 'react-rte';
 import styled from 'styled-components';
 import { useDebouncedCallback } from 'use-debounce';
 import { BaseField, FieldComponent } from '../../../types/field-types';
@@ -43,6 +43,11 @@ const defaultEditorToolbarConfig: any = {
   BLOCK_TYPE_DROPDOWN,
   BLOCK_TYPE_BUTTONS,
 };
+
+// This is a bundling bug. MAD-1190
+const RichTextEditor: typeof _RichTextEditor = (_RichTextEditor as any).default
+  ? (_RichTextEditor as any).default
+  : (_RichTextEditor as any);
 
 const StyledRichTextEditor = styled(RichTextEditor)`
   border-color: rgba(5, 42, 68, 0.2);

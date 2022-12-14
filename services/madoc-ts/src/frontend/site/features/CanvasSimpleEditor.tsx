@@ -108,6 +108,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
 
   const allowMultiple = !config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource;
   const hideViewerControls = !!config.project.modelPageOptions?.hideViewerControls;
+  const forkMode = !!config.project.forkMode;
   const preventFurtherSubmission = !allowMultiple && allTasksDone;
 
   const isEditing = isEditingAnotherUsersRevision(captureModel, revision, user.user);
@@ -172,6 +173,7 @@ export const CanvasSimpleEditor: React.FC<{ revision: string; isComplete?: boole
       }
     : {
         preventMultiple: !allowMultiple,
+        forkMode: forkMode,
       };
 
   const components: Partial<EditorRenderingConfig> = isPreparing

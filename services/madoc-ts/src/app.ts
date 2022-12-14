@@ -13,6 +13,7 @@ import { errorHandler } from './middleware/error-handler';
 import { HTML_ADMIN_PATH, HTML_SITE_PATH, SCHEMAS_PATH } from './paths';
 import { EnvConfig } from './types/env-config';
 import { createAwaiter } from './utility/awaiter';
+import { castBool } from './utility/cast-bool';
 import { CronJobs } from './utility/cron-jobs';
 import { Mailer } from './utility/mailer';
 import { createPostgresPool } from './database/create-postgres-pool';
@@ -40,7 +41,7 @@ export async function createApp(config: ExternalConfig, env: EnvConfig) {
   const { awaitProperty, awaiter } = createAwaiter();
 
   if (process.env.NODE_APP_INSTANCE === '0') {
-    if (process.env.NODE_ENV === 'production' || process.env.MIGRATE) {
+    if (process.env.NODE_ENV === 'production' || castBool(process.env.MIGRATE, false)) {
       await migrate();
     }
   }

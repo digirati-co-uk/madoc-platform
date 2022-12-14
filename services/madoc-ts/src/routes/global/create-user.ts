@@ -8,7 +8,7 @@ import { passwordHash } from '../../utility/php-password-hash';
 import { onlyGlobalAdmin } from '../../utility/user-with-scope';
 
 export const createUser: RouteMiddleware<unknown, UserCreationRequest> = async context => {
-  const { siteId } = await onlyGlobalAdmin(context);
+  const { siteId, id } = await onlyGlobalAdmin(context);
 
   const user = context.requestBody;
 
@@ -18,7 +18,12 @@ export const createUser: RouteMiddleware<unknown, UserCreationRequest> = async c
     throw new ConflictError('Email already registered');
   }
 
-  const createdUser = await context.siteManager.createUser(user);
+  // Set creator
+  user.creator = id;
+
+  const createdUser = user.automated
+    ? await context.siteManager.createAutomatedUser(user)
+    : await context.siteManager.createUser(user);
 
   const idHash = v4(); // Stored in database and sent to user
   const codeForUser = v4(); // Only sent to user
@@ -33,10 +38,11 @@ export const createUser: RouteMiddleware<unknown, UserCreationRequest> = async c
     { query: `?c1=${codeForUser}&c2=${idHash}` }
   );
 
-  if (user.skipEmail) {
+  // Don't send emails to BOT users, they don't have passwords.
+  if (!user.automated && user.skipEmail) {
     // We want to return the link to activate for the administrator to share with the user.
     (createdUser as any).verificationLink = `${gatewayHost}${route}`;
-  } else {
+  } else if (!user.automated) {
     try {
       const systemConfig = await context.siteManager.getSystemConfig();
       const vars = {

@@ -43,6 +43,13 @@ export const siteConfigurationModel: {
       { value: 'manifest', text: 'Manifest' },
     ],
   },
+  forkMode: {
+    type: 'checkbox-field',
+    label: 'Unique submissions',
+    description:
+      'When enabled each submission by a user will be a distinct submission and not contributing to a single document',
+    inlineLabel: 'Enable unique submissions',
+  },
   maxContributionsPerResource: {
     label: 'Contributors per resource',
     type: 'text-field',
@@ -285,6 +292,10 @@ export const siteConfigurationModel: {
       {
         label: 'Allow merging submissions',
         value: 'allowMerging',
+      },
+      {
+        label: 'Allow auto-review if assigned to automated user',
+        value: 'enableAutoReview',
       },
     ],
   },

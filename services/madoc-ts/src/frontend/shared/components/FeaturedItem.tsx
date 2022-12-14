@@ -12,6 +12,7 @@ import { SingleLineHeading5 } from '../typography/Heading5';
 import { useTranslation } from 'react-i18next';
 import { SnippetContainer } from '../atoms/SnippetLarge';
 import { useRelativeLinks } from '../../site/hooks/use-relative-links';
+import { Carousel } from '../atoms/Carousel';
 
 const FeaturesContainer = styled.div`
   display: flex;
@@ -48,6 +49,7 @@ const FeatureCard = styled.div`
 `;
 
 interface FeaturedItemProps {
+  carousel?: boolean;
   header?: string;
   canvas?: { id: string };
   canvas2?: { id: string };
@@ -72,46 +74,50 @@ export function FeaturedItem(props: FeaturedItemProps) {
   const createLocaleString = useCreateLocaleString();
   const { t } = useTranslation();
 
+  const Items = items.map(
+    item =>
+      item &&
+      (!props.snippet ? (
+        <Link
+          key={item.id}
+          to={createLink({
+            canvasId: item.id,
+            manifestId: manifestId,
+          })}
+        >
+          <FeatureCard
+            style={{
+              backgroundColor: props.cardBackground,
+              borderColor: props.cardBorder,
+              color: props.textColor,
+            }}
+          >
+            <ImageStripBox $size="small" $bgColor={props.cardBackground}>
+              <CroppedImage $size="small" $covered={props.imageStyle === 'covered'}>
+                {item.thumbnail ? (
+                  <img alt={createLocaleString(item.label, t('item thumbnail'))} src={item.thumbnail[0].id} />
+                ) : null}
+              </CroppedImage>
+            </ImageStripBox>
+            <LocaleString style={{ padding: '1em' }} as={SingleLineHeading5}>
+              {item.label}
+            </LocaleString>
+          </FeatureCard>
+        </Link>
+      ) : (
+        <CanvasSnippet key={item.id} id={item.id} manifestId={manifestId} />
+      ))
+  );
+
   if (!items || items.length === 0) {
     return null;
   }
-  if (!props.snippet) {
+  if (!props.carousel || props.column) {
     return (
       <>
         <h3 style={{ fontSize: '1.5em', color: 'inherit' }}>{props.header}</h3>
         <FeaturesContainer data-view-column={props.column} data-align={props.align}>
-          {items.map(item => {
-            return (
-              item && (
-                <Link
-                  key={item.id}
-                  to={createLink({
-                    canvasId: item.id,
-                    manifestId: manifestId,
-                  })}
-                >
-                  <FeatureCard
-                    style={{
-                      backgroundColor: props.cardBackground,
-                      borderColor: props.cardBorder,
-                      color: props.textColor,
-                    }}
-                  >
-                    <ImageStripBox $size="small" $bgColor={props.cardBackground}>
-                      <CroppedImage $size="small" $covered={props.imageStyle === 'covered'}>
-                        {item.thumbnail ? (
-                          <img alt={createLocaleString(item.label, t('item thumbnail'))} src={item.thumbnail[0].id} />
-                        ) : null}
-                      </CroppedImage>
-                    </ImageStripBox>
-                    <LocaleString style={{ padding: '1em' }} as={SingleLineHeading5}>
-                      {item.label}
-                    </LocaleString>
-                  </FeatureCard>
-                </Link>
-              )
-            );
-          })}
+          {Items}
         </FeaturesContainer>
       </>
     );
@@ -120,9 +126,7 @@ export function FeaturedItem(props: FeaturedItemProps) {
     <>
       <h3 style={{ fontSize: '1.5em', color: 'inherit' }}>{props.header}</h3>
       <FeaturesContainer data-view-column={props.column} data-align={props.align}>
-        {items.map(item => {
-          return item && <CanvasSnippet key={item.id} id={item.id} manifestId={manifestId} />;
-        })}
+        <Carousel>{Items}</Carousel>
       </FeaturesContainer>
     </>
   );
@@ -143,6 +147,7 @@ blockEditorFor(FeaturedItem, {
     cardBorder: '',
     imageStyle: 'fit',
     align: 'start',
+    carousel: 'false',
   },
   editor: {
     header: { label: 'label', type: 'text-field' },
@@ -158,8 +163,9 @@ blockEditorFor(FeaturedItem, {
       label: 'Canvas 3',
       type: 'canvas-explorer',
     },
-    snippet: { type: 'checkbox-field', label: 'Layout', inlineLabel: 'Show as snippet' },
-    column: { type: 'checkbox-field', label: 'Layout', inlineLabel: 'Show in column' },
+    snippet: { type: 'checkbox-field', label: 'Snippet', inlineLabel: 'Show as snippet' },
+    column: { type: 'checkbox-field', label: 'Column', inlineLabel: 'Show in column' },
+    carousel: { type: 'checkbox-field', label: 'Carousel', inlineLabel: 'Show in carousel' },
     align: {
       label: 'Align items',
       type: 'dropdown-field',

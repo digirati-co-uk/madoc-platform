@@ -123,6 +123,9 @@
     "atlasBackground": {
       "type": "string"
     },
+    "forkMode": {
+      "type": "boolean"
+    },
     "searchOptions": {
       "type": "object",
       "properties": {
@@ -234,6 +237,9 @@
       "type": "object",
       "properties": {
         "allowMerging": {
+          "type": "boolean"
+        },
+        "enableAutoReview": {
           "type": "boolean"
         }
       }

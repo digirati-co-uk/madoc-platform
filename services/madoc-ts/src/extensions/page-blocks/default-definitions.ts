@@ -8,7 +8,6 @@ import { PageBlockDefinition } from './extension';
 import simpleHtmlBlock from './simple-html-block/simple-html-block';
 import currentManifest from './current-manifest-snippet-block';
 import simpleMarkdownBlock from './simple-markdown-block/simple-markdown-block';
-import { ProjectContributors } from '../../frontend/site/features/ProjectContributors';
 
 export function getDefaultPageBlockDefinitions(): PageBlockDefinition<any, any, any, any>[] {
   return [
@@ -20,7 +19,6 @@ export function getDefaultPageBlockDefinitions(): PageBlockDefinition<any, any, 
     (SingleProject as any)[Symbol.for('slot-model')] as any,
     (SingleCollection as any)[Symbol.for('slot-model')] as any,
     (FeaturedItem as any)[Symbol.for('slot-model')] as any,
-    (ProjectContributors as any)[Symbol.for('slot-model')] as any,
     simpleMarkdownBlock,
   ];
 }

@@ -1,3 +1,6 @@
+import { execBot } from '../../automation/index';
+import { getSiteFromTask } from '../../utility/get-site-from-task';
+import { parseUrn } from '../../utility/parse-urn';
 import { BaseTask } from './base-task';
 import { ApiClient } from '../api';
 import { CrowdsourcingTask } from './crowdsourcing-task';
@@ -82,7 +85,7 @@ export function createTask(task: CrowdsourcingTask): CrowdsourcingReview {
     status_text: 'not started',
     parameters: [task.id, task.parameters[2]],
     state: {},
-    events: ['madoc-ts.created'],
+    events: ['madoc-ts.created', 'madoc-ts.assigned'],
   };
 }
 
@@ -92,13 +95,14 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
     case 'created': {
       // When review task is created, assign to correct user.
       const task = await api.getTaskById<CrowdsourcingReview>(taskId);
+      let assignee: any = task.assignee;
       if (task.root_task) {
         const projects = await api.getProjects(0, { root_task_id: task.root_task });
         if (projects.projects.length) {
           const project = projects.projects[0];
           if (project) {
             try {
-              await api.assignUserToReview(project.id, task.id);
+              assignee = (await api.assignUserToReview(project.id, task.id)).user;
             } catch (e) {
               // Only possible when the project is broken (collection removed)
               console.log(e);
@@ -106,6 +110,16 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           }
         }
       }
+
+      // Automation. @todo to be generalised in MAD-1188
+      if (assignee) {
+        const user = typeof assignee?.id === 'string' ? parseUrn(assignee?.id) : { id: assignee?.id };
+        const siteId = getSiteFromTask(task); // @todo this needs to be extracted from the task.
+        if (user && user.id) {
+          await execBot(user.id, siteId, api, task, name);
+        }
+      }
+
       break;
     }
 

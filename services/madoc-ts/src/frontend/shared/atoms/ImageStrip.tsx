@@ -11,13 +11,13 @@ export const ImageStripBox = styled.div<{
   flex-shrink: 0;
   border-radius: 3px;
   max-width: ${props => (props.$size === 'small' ? '200px' : '')};
-  border: 1px solid;
+  border: 1px solid transparent;
   border-color: ${props => (props.$border ? props.$border : 'transparent')};
   background-color: ${props => (props.$bgColor ? props.$bgColor : 'inherit')};
   h5,
   ${Subheading5} {
     color: ${props => (props.$color ? props.$color : 'inherit')}!important;
-    padding: ${props => (props.$border ? '0 0 15px 8px' : '0')};
+    padding: ${props => (props.$border ? '0 0 1em 0.5em' : '0')};
   }
 
   &:hover {
