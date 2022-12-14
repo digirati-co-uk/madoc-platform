@@ -9,6 +9,7 @@ import { ViewSelector } from './ViewSelector';
 
 export function ViewField({ field, fluidImage }: { field: BaseField; fluidImage?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
+
   const helper = useSelectorHelper();
   const selector = field.selector ? resolveSelector(field.selector) : undefined;
   const selectorId = selector?.id;
@@ -25,23 +26,30 @@ export function ViewField({ field, fluidImage }: { field: BaseField; fluidImage?
     }
   }, [helper, selectorId]);
 
-
   useEffect(() => {
     const handleHover = () => {
-      trigger();
+      console.log('2');
+      if (selectorId) {
+        console.log('3');
+        return helper.withSelector(selectorId).on('event-listener', e => {
+          console.log('4', e);
+        });
+      }
     };
     if (selectorId) {
-      helper.withSelector(selectorId).addEventListener('mouseover', () => handleHover());
+      console.log('1');
+      helper.withSelector(selectorId).addEventListener('onPointerEnter', () => handleHover());
+      helper.withSelector(selectorId).addEventListener('onpointerenter', () => handleHover());
     }
   }, [helper, selectorId]);
 
-  useEffect(() => {
-    if (selectorId) {
-      helper.withSelector(selectorId).on('event-listener', () => {
-        trigger();
-      });
-    }
-  }, [helper, selectorId]);
+  // useEffect(() => {
+  //   if (selectorId) {
+  //     return helper.withSelector(selectorId).on('event-listener', e => {
+  //       console.log('hover2', e);
+  //     });
+  //   }
+  // }, [helper, selectorId]);
 
   if (!field.selector) {
     return <FieldPreview key={field.id} field={field} />;
