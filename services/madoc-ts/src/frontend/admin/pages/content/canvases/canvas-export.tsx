@@ -11,7 +11,7 @@ export function CanvasExport() {
   const params = useParams<'id' | 'manifestId'>();
   const items = useProjectExports('canvas');
   const [selectedType, setSelected] = useState<string>('');
-  const [{ data, isLoading }, selected] = useExportResourcePreview(selectedType, {
+  const [{ data, isLoading }, selected, expectedFiles] = useExportResourcePreview(selectedType, {
     subject: { id: Number(params.id), type: 'canvas' },
     subjectParent: { id: Number(params.manifestId), type: 'manifest' },
     config: {},
@@ -20,7 +20,6 @@ export function CanvasExport() {
   return (
     <div>
       <h2>Canvas export</h2>
-      {/*<pre>{selected ? JSON.stringify(selected, null, 2) : null}</pre>*/}
       <RichSelectionGrid
         selected={[selectedType]}
         // onSelect={id => setSelected(s => (s.indexOf(id) === -1 ? [...s, id] : s.filter(i => i !== id)))}
@@ -42,7 +41,7 @@ export function CanvasExport() {
           <div style={{ marginTop: 10 }}>
             {data.map(file => (
               <FilePreview key={file.path} fileName={file.path}>
-                {file.content.value}
+                {file.content}
               </FilePreview>
             ))}
           </div>
