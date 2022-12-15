@@ -37,6 +37,7 @@ const Header = styled.div`
   position: sticky;
   top: 0;
   line-height: 1.9em;
+  z-index: 3;
 `;
 
 const FileName = styled.div`
@@ -137,11 +138,11 @@ export function FilePreview(props: FilePreviewProps) {
       <Header>
         {props.lazyLoad ? (
           enabled ? (
-            <Icon>
+            <Icon onClick={toggle}>
               <ArrowDownIcon />
             </Icon>
           ) : (
-            <Icon>
+            <Icon onClick={toggle}>
               <ArrowDownIcon style={{ transform: 'rotate(-90deg)' }} />
             </Icon>
           )
