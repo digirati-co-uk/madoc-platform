@@ -1,4 +1,4 @@
-const urnRegex = /urn:madoc:(collection|manifest|canvas|user|site):([0-9]+)/;
+const urnRegex = /urn:madoc:(collection|manifest|canvas|user|site|project):([0-9]+)/;
 
 const taskRegex = /urn:madoc:task:([0-9A-Za-z-]+)/;
 
