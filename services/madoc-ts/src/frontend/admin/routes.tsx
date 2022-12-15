@@ -12,6 +12,7 @@ import { ConfigureLanguages } from './pages/content/internationalisation/configu
 import { EditTranslation } from './pages/content/internationalisation/edit-translation';
 import { ViewCanvasLinking } from './pages/content/linking/view-linking';
 import { ManifestCollections } from './pages/content/manifests/manifest-collections';
+import { ManifestExport } from './pages/content/manifests/manifest-export';
 import { ListMedia } from './pages/content/media/list-media';
 import { Media } from './pages/content/media/media';
 import { ViewMedia } from './pages/content/media/view-media';
@@ -224,6 +225,10 @@ export const routes: RouteObject[] = [
       {
         path: '/manifests/:id/ocr',
         element: <OcrManifest />,
+      },
+      {
+        path: '/manifests/:id/export',
+        element: <ManifestExport />,
       },
     ],
   },
