@@ -100,6 +100,12 @@ export interface ExportConfig<Config extends Record<string, any> = any> {
     options: ExportDataOptions<Config>
   ) => Promise<ExportFileDefinition[] | undefined>;
 
+  hookConfig?: (
+    subject: SupportedExportResource,
+    options: ExportDataOptions<Config>,
+    config: ExportConfig<Config>['configuration']
+  ) => ExportConfig<Config>['configuration'] | undefined;
+
   // Display information.
   metadata: {
     label: InternationalString;
