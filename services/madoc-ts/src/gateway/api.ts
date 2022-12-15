@@ -17,7 +17,7 @@ import { NotificationExtension } from '../extensions/notifications/extension';
 import { getDefaultPageBlockDefinitions } from '../extensions/page-blocks/default-definitions';
 import { PageBlockExtension } from '../extensions/page-blocks/extension';
 import { MediaExtension } from '../extensions/media/extension';
-import { ProjectExportExtension } from "../extensions/project-export/extension";
+import { ProjectExportExtension } from '../extensions/project-export/extension';
 import { ProjectTemplateExtension } from '../extensions/projects/extension';
 import { SiteManagerExtension } from '../extensions/site-manager/extension';
 import { SystemExtension } from '../extensions/system/extension';
