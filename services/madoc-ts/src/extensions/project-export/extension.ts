@@ -3,6 +3,7 @@ import { BaseExtension, defaultDispose } from '../extension-manager';
 import { RegistryExtension } from '../registry-extension';
 import { canvasApiExport } from './export-configs/canvas/canvas-api-export';
 import { canvasPlaintextExport } from './export-configs/canvas/canvas-plaintext-export';
+import { manifestApiExport } from './export-configs/manifest/manifest-api-export';
 import { ExportConfig } from './types';
 
 export class ProjectExportExtension extends RegistryExtension<ExportConfig> implements BaseExtension {
@@ -18,6 +19,7 @@ export class ProjectExportExtension extends RegistryExtension<ExportConfig> impl
     // List of default export options.
     ProjectExportExtension.register(canvasApiExport);
     ProjectExportExtension.register(canvasPlaintextExport);
+    ProjectExportExtension.register(manifestApiExport);
   }
 
   dispose() {

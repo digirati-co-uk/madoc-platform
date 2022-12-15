@@ -110,6 +110,11 @@ export interface ExportConfig<Config extends Record<string, any> = any> {
      *
      * If you set a list of file patterns then the export can be more easily previewed
      * with your changes.
+     *
+     * Supported replacements:
+     * - {project}: numeric identifier of project
+     * - {manifest}: numeric identifier of the manifest
+     * - {canvas}: numeric identifier of canvas
      */
     filePatterns?: string[];
   };
