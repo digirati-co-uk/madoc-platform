@@ -119,6 +119,7 @@ import { indexManifest } from './routes/search/index-manifest';
 import { updateProjectStatus } from './routes/projects/update-project-status';
 import { siteManifestTasks } from './routes/site/site-manifest-tasks';
 import { getStaticPage, sitePages } from './routes/site/site-pages';
+import { listProjectsAutocomplete } from './routes/projects/list-projects-autocomplete';
 import { siteTaskMetadata } from './routes/site/site-task-metadata';
 import { siteUserAutocomplete } from './routes/site/site-user-autocomplete';
 import { forgotPassword } from './routes/user/forgot-password';
@@ -380,6 +381,11 @@ export const router = new TypedRouter({
   'get-manifest-metadata': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/metadata', getManifestMetadata],
   'get-manifest-structure': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/structure', getManifestStructure],
   'get-manifest-projects': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/projects', getManifestProjects],
+  'get-manifest-projects-autocomplete': [
+    TypedRouter.GET,
+    '/api/madoc/iiif/manifests/:id/projects-autocomplete',
+    [getManifestProjects, listProjectsAutocomplete],
+  ],
   'get-manifest-deletion-summary': [
     TypedRouter.GET,
     '/api/madoc/iiif/manifests/:id/deletion-summary',
