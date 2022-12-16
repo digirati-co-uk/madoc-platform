@@ -11,6 +11,8 @@
     "footer": "dark",
     "global": "default",
     "fonts": "default",
-    "buttons": "default"
+    "primaryButton": "default",
+    "defaultButton": "default"
+
   }
 }

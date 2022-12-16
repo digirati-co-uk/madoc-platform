@@ -1,23 +1,30 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { HrefLink } from '../utility/href-link';
-import { buttonRadius, buttonColor, BtnColor } from '../variables';
+import {
+  primaryBtnBackground,
+  primaryBtnBorder,
+  primaryBtnBorderRadius,
+  primaryBtnColor,
+  primaryBtnHover
+} from '../variables';
 
 const darkenColor = (value: number) => css`
   background-image: linear-gradient(0deg, rgba(0, 0, 0, ${value}) 0%, rgba(0, 0, 0, ${value}) 100%);
 `;
 
 const primary = css`
-  background-color: ${buttonColor};
-  color: ${BtnColor};
-  border: 1px solid ${buttonColor};
+  background-color: ${primaryBtnBackground};
+  color: ${primaryBtnColor};
+  border: ${primaryBtnBorder};
+  border-radius: ${primaryBtnBorderRadius};
   z-index: 1;
 
   &:active {
     box-shadow: inset 0 2px 8px 0 rgba(0, 0, 0, 0.15);
   }
   &:hover {
-    ${darkenColor(0.2)};
+    ${primaryBtnHover};
   }
 
   &:focus-visible {
@@ -29,8 +36,7 @@ const primary = css`
     cursor: not-allowed;
 
     &:hover {
-      ${darkenColor(0.2)}
-      color: #fff;
+      ${primaryBtnHover}
     }
   }
 `;
@@ -174,8 +180,8 @@ export const Button = styled.button<{
   padding: 0.4em 1em;
   font-size: 0.9em;
   line-height: 1.18em;
-  border-radius: ${buttonRadius};
-  color: ${buttonColor};
+  // border-radius: buttonRadius};
+  // color: buttonColor};
   background: inherit;
   text-decoration: none;
   display: inline-block;
@@ -183,7 +189,7 @@ export const Button = styled.button<{
   vertical-align: top;
   transition: color 0.1s, background-color 0.1s, border-color 0.1s;
   white-space: nowrap;
-  border: 1px solid ${buttonColor};
+  // border: 1px solid buttonColor};
   z-index: 0;
   
   ${props =>
@@ -202,16 +208,16 @@ export const Button = styled.button<{
   }
   
   &:hover {
-    background: ${buttonColor};
-    border-color: ${buttonColor};
-    color: ${BtnColor};
+    // background:{buttonColor};
+    // border-color: buttonColor};
+    // color:{BtnColor};
   }
 
   &:focus {
     outline: none;
-    color: ${BtnColor};
-    background: ${buttonColor};
-    border-color: ${buttonColor};
+    // color: {BtnColor};
+    // background:{buttonColor};
+    // border-color: {buttonColor};
     box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.8);
   }
 
@@ -225,7 +231,7 @@ export const Button = styled.button<{
   }
 
   ${ButtonIcon} svg {
-    fill: ${buttonColor};
+    // fill: buttonColor};
   }
 
   &:hover ${ButtonIcon} svg,
@@ -257,8 +263,8 @@ export const RoundedButton = styled.a<{ disabled?: boolean }>`
   font-size: 16px;
   line-height: 22px;
   padding: 3px 10px;
-  background: ${BtnColor};
-  color: ${buttonColor};
+  // background: BtnColor};
+  // color: buttonColor};
   border: 1px solid #dee2e6;
   text-decoration: none;
   border-radius: 4px;
@@ -300,8 +306,8 @@ export const MediumRoundedButton = styled.a`
   font-size: 16px;
   line-height: 22px;
   background: #ffffff;
-  color: ${buttonColor};
-  border: 1px solid ${buttonColor};
+  // color:{buttonColor};
+  // border: 1px solid buttonColor};
   text-decoration: none;
   padding: 10px;
 
@@ -337,7 +343,7 @@ export const LinkButton = styled.button<{ $inherit?: boolean }>`
   margin: 0;
   padding: 0;
   font-size: inherit;
-  color: ${props => (props.$inherit ? 'pink' : buttonColor)};
+  // color: ${props => (props.$inherit ? 'pink' : 'bttoncolor')};
   text-decoration: underline;
   cursor: pointer;
   &:hover {
@@ -395,7 +401,7 @@ export const RightButtonIconBox = styled.span<{ $checked?: boolean }>`
     top: 0;
     height: 24px;
     width: 24px;
-    fill: ${buttonColor};
+    // fill: btncolor;
   }
 
   ${props =>

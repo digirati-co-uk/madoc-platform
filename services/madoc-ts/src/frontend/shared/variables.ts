@@ -1,12 +1,4 @@
 import { themeVariable } from '../themes/helpers/themeVariable';
-import { useAccessibleColor } from './hooks/use-accessible-color';
-import { useSiteTheme } from './hooks/use-site';
-
-export const BtnColor = () => {
-  const siteTheme = useSiteTheme();
-  const color = siteTheme?.theme.custom.buttons.color;
-  return useAccessibleColor(color ? color : '#000000');
-};
 
 export const accent = themeVariable('accent', 'primary', {
   default: '#5b80b2',
@@ -23,12 +15,67 @@ export const globalFont = themeVariable('fonts', 'fontFamily', {
     '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
 });
 
-export const buttonRadius = themeVariable('buttons', 'borderRadius', {
-  default: '3px',
+export const primaryBtnColor = themeVariable('primaryButton', 'color', {
+  default: '#FFFFF',
 });
 
-export const buttonColor = themeVariable('buttons', 'color', {
+export const primaryBtnBackground = themeVariable('primaryButton', 'background', {
   default: '#4265e9',
+});
+
+export const primaryBtnBorderRadius = themeVariable('primaryButton', 'borderRadius', {
+  default: '30px',
+});
+
+export const primaryBtnBorder = themeVariable('primaryButton', 'border', {
+  default: '1px solid #4265e9',
+});
+
+export const primaryBtnHover = themeVariable('primaryButton', 'hover', {
+  default: {
+    color: '#4265e9',
+    background: 'transparent',
+    border: '1px solid #4265e9',
+  },
+});
+
+export const primaryBtnActive = themeVariable('primaryButton', 'active', {
+  default: {
+    color: '#4265e9',
+    background: 'transparent',
+    border: '1px solid #4265e9',
+  },
+});
+
+export const primaryBtnFocus = themeVariable('primaryButton', 'focus', {
+  default: {
+    color: '#4265e9',
+    background: 'transparent',
+    border: '1px solid #4265e9',
+  },
+});
+
+export const defaultButton = themeVariable('defaultButton', 'button', {
+  default: {
+    color: '#ffffff',
+    borderRadius: '30px',
+    border: '1px solid #4265e9',
+    hover: {
+      color: '#4265e9',
+      background: 'FF4154',
+      border: '1px solid #4265e9',
+    },
+    active: {
+      color: '#ffffff',
+      background: '#4265e9',
+      border: '1px solid #FF4154',
+    },
+    focus: {
+      color: '#ffffff',
+      background: '#4265e9',
+      border: '1px solid #4265e9',
+    },
+  },
 });
 
 export const searchBorder = themeVariable('header', 'searchBorder', {

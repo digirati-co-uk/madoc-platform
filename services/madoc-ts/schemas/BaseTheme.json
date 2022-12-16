@@ -71,7 +71,13 @@
             "default"
           ]
         },
-        "buttons": {
+        "primaryButton": {
+          "type": "string",
+          "enum": [
+            "default"
+          ]
+        },
+        "defaultButton": {
           "type": "string",
           "enum": [
             "default"
@@ -80,11 +86,12 @@
       },
       "required": [
         "accent",
-        "buttons",
+        "defaultButton",
         "fonts",
         "footer",
         "global",
         "header",
+        "primaryButton",
         "siteContainer"
       ]
     },
@@ -132,8 +139,11 @@
         "fonts": {
           "$ref": "#/definitions/eea4564a3c2bbe3be73ec4cdbd482dd0"
         },
-        "buttons": {
-          "$ref": "#/definitions/a0787700df9f3b24d32945e9a4e3199d"
+        "primaryButton": {
+          "$ref": "#/definitions/c36b16830bc602fc10136219f73ef1a0"
+        },
+        "defaultButton": {
+          "$ref": "#/definitions/0d3b034cf0af67fbc47c19879e33b887"
         }
       }
     },
@@ -263,10 +273,54 @@
         }
       }
     },
-    "a0787700df9f3b24d32945e9a4e3199d": {
+    "c36b16830bc602fc10136219f73ef1a0": {
       "type": "object",
       "properties": {
+        "active": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "color": {
+                  "type": "string"
+                },
+                "background": {
+                  "type": "string"
+                },
+                "border": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "background",
+                "border",
+                "color"
+              ]
+            },
+            {
+              "enum": [
+                "defualt"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "object"
+            }
+          ]
+        },
         "color": {
+          "type": [
+            "string",
+            "object"
+          ]
+        },
+        "border": {
+          "type": [
+            "string",
+            "object"
+          ]
+        },
+        "background": {
           "type": [
             "string",
             "object"
@@ -276,6 +330,149 @@
           "type": [
             "string",
             "object"
+          ]
+        },
+        "hover": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "color": {
+                  "type": "string"
+                },
+                "background": {
+                  "type": "string"
+                },
+                "border": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "background",
+                "border",
+                "color"
+              ]
+            },
+            {
+              "type": "object"
+            }
+          ]
+        },
+        "focus": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "color": {
+                  "type": "string"
+                },
+                "background": {
+                  "type": "string"
+                },
+                "border": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "background",
+                "border",
+                "color"
+              ]
+            },
+            {
+              "type": "object"
+            }
+          ]
+        }
+      }
+    },
+    "0d3b034cf0af67fbc47c19879e33b887": {
+      "type": "object",
+      "properties": {
+        "button": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "color": {
+                  "type": "string"
+                },
+                "borderRadius": {
+                  "type": "string"
+                },
+                "border": {
+                  "type": "string"
+                },
+                "hover": {
+                  "type": "object",
+                  "properties": {
+                    "color": {
+                      "type": "string"
+                    },
+                    "background": {
+                      "type": "string"
+                    },
+                    "border": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "background",
+                    "border",
+                    "color"
+                  ]
+                },
+                "active": {
+                  "type": "object",
+                  "properties": {
+                    "color": {
+                      "type": "string"
+                    },
+                    "background": {
+                      "type": "string"
+                    },
+                    "border": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "background",
+                    "border",
+                    "color"
+                  ]
+                },
+                "focus": {
+                  "type": "object",
+                  "properties": {
+                    "color": {
+                      "type": "string"
+                    },
+                    "background": {
+                      "type": "string"
+                    },
+                    "border": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "background",
+                    "border",
+                    "color"
+                  ]
+                }
+              },
+              "required": [
+                "active",
+                "border",
+                "borderRadius",
+                "color",
+                "focus",
+                "hover"
+              ]
+            },
+            {
+              "type": "object"
+            }
           ]
         }
       }

@@ -1,7 +1,7 @@
 import { stringify } from 'query-string';
 import React from 'react';
 import styled, { css } from 'styled-components';
-import { BtnColor, buttonColor } from '../variables';
+import { BtnColor } from '../variables';
 
 export type SnippetLargeProps = {
   label: string | JSX.Element;
@@ -46,20 +46,20 @@ const SnippetButton = styled.a<{ role?: string; $center?: boolean }>`
   padding: 0.4em 0;
   font-size: 0.8rem;
   text-decoration: none;
-  color: ${buttonColor};
+  //color: buttonColor};
 
   ${props =>
     props.role === 'button' &&
     css`
       padding: 0.4em 0.8em;
       border-radius: 3px;
-      border: 1px solid ${buttonColor};
+      // border: 1px solid {buttonColor};
       &:hover {
         filter: brightness(90%);
       }
       &:focus {
-        background: ${buttonColor};
-        color: ${BtnColor};
+        // background: buttonColor};
+        // color: BtnColor};
       }
     `}
 `;
