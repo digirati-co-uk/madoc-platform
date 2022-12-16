@@ -26,31 +26,6 @@ export function ViewField({ field, fluidImage }: { field: BaseField; fluidImage?
     }
   }, [helper, selectorId]);
 
-  useEffect(() => {
-    const handleHover = () => {
-      console.log('2');
-      if (selectorId) {
-        console.log('3');
-        return helper.withSelector(selectorId).on('event-listener', e => {
-          console.log('4', e);
-        });
-      }
-    };
-    if (selectorId) {
-      console.log('1');
-      helper.withSelector(selectorId).addEventListener('onPointerEnter', () => handleHover());
-      helper.withSelector(selectorId).addEventListener('onpointerenter', () => handleHover());
-    }
-  }, [helper, selectorId]);
-
-  // useEffect(() => {
-  //   if (selectorId) {
-  //     return helper.withSelector(selectorId).on('event-listener', e => {
-  //       console.log('hover2', e);
-  //     });
-  //   }
-  // }, [helper, selectorId]);
-
   if (!field.selector) {
     return <FieldPreview key={field.id} field={field} />;
   }
