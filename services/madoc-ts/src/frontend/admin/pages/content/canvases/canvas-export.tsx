@@ -73,7 +73,6 @@ export function CanvasExport() {
           <EditorSlots.TopLevelEditor />
         </EditShorthandCaptureModel>
       ) : null}
-      {config ? <pre>{JSON.stringify(config, null, 2)}</pre> : null}
 
       {selected && isLoading ? (
         <EmptyState>

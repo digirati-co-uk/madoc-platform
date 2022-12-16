@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { SupportedExportResource, SupportedExportResourceTypes } from '../../../extensions/project-export/types';
+import { filePatternsToList } from '../../../extensions/project-export/utils/file-patterns-to-list';
 import { useProjectExports } from './use-project-exports';
 
 export function useExportResources(
@@ -10,6 +11,7 @@ export function useExportResources(
     subjectParent?: SupportedExportResource;
     context?: SupportedExportResource;
     config?: any;
+    allProjects?: number[];
   }
 ) {
   const items = useProjectExports(options.subjectsType);
@@ -17,34 +19,17 @@ export function useExportResources(
 
   const expectedFiles = useMemo(() => {
     const files = [];
+
     if (selected && selected.metadata.filePatterns) {
       for (const subject of options.subjects) {
-        // This will be split
-        for (const file of selected.metadata.filePatterns) {
-          const manifest =
-            subject.type === 'manifest'
-              ? subject.id
-              : options.subjectParent?.type === 'manifest'
-              ? options.subjectParent.id
-              : options.context?.type === 'manifest'
-              ? options.context.id
-              : null;
-          const canvas = subject.type === 'canvas' ? subject.id : null;
-          const project = options.context?.type === 'project' ? options.context.id : null;
-
-          files.push({
-            subject,
-            path: file
-              .replace(/\{manifest}/g, `${manifest}`)
-              .replace(/\{canvas}/g, `${canvas}`)
-              .replace(/\{project}/g, `${project}`),
-          });
-        }
+        files.push(...filePatternsToList(selected, { subject, ...options }));
       }
     }
 
     return files;
   }, [options, selected]);
+
+  console.log('exportedFiles', expectedFiles);
 
   return [expectedFiles, selected] as const;
 }

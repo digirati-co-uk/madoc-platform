@@ -1,6 +1,7 @@
 import { ApiClient } from '../../gateway/api';
 import { BaseExtension, defaultDispose } from '../extension-manager';
 import { RegistryExtension } from '../registry-extension';
+import { canvasAnnotationExport } from './export-configs/canvas/canvas-annotation-export';
 import { canvasApiExport } from './export-configs/canvas/canvas-api-export';
 import { canvasModelExport } from './export-configs/canvas/canvas-model-export';
 import { canvasPlaintextExport } from './export-configs/canvas/canvas-plaintext-export';
@@ -21,6 +22,7 @@ export class ProjectExportExtension extends RegistryExtension<ExportConfig> impl
     ProjectExportExtension.register(canvasApiExport);
     ProjectExportExtension.register(canvasModelExport);
     ProjectExportExtension.register(canvasPlaintextExport);
+    ProjectExportExtension.register(canvasAnnotationExport);
     ProjectExportExtension.register(manifestApiExport);
   }
 

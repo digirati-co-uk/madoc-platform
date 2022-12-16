@@ -71,6 +71,10 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
     select id, source from iiif_resource where id = ${Number(context.params.id)}
   `);
 
+  const projectModels = await context.connection.any(sql<{ id: number; capture_model_id: string }>`
+    select id, capture_model_id from iiif_project where site_id = ${site.id}
+  `);
+
   const annotationPages = [];
 
   if (
@@ -117,6 +121,14 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
     case 'capture-model':
     case 'capture-model-with-pages':
     default: {
+      const allModels = await Promise.all(ms);
+      for (const model of allModels) {
+        const found = projectModels.find(m => m.capture_model_id === model.derivedFrom);
+        if (found) {
+          (model as any).projectId = found.id;
+        }
+      }
+
       // Just return the models as they are.
       context.response.body = {
         models: await Promise.all(ms),
@@ -265,8 +277,13 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
                 normalisedValueLists: true,
               });
 
+              const found = projectModels.find(pm => pm.capture_model_id === m.derivedFrom);
+              if (found) {
+                (serialised as any).projectId = found.id;
+              }
+
               if (!serialised) {
-                return { id: m.id, derivedFrom: m.derivedFrom };
+                return { id: m.id, derivedFrom: m.derivedFrom, projectId: found?.id };
               }
 
               serialised.id = m.id;

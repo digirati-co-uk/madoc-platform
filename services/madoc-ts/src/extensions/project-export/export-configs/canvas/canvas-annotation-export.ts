@@ -2,18 +2,24 @@ import { parseUrn } from '../../../../utility/parse-urn';
 import { ExportFile } from '../../server-export';
 import { ExportConfig } from '../../types';
 
-export const canvasModelExport: ExportConfig = {
-  type: 'canvas-model-export',
+export const canvasAnnotationExport: ExportConfig = {
+  type: 'canvas-annotation-export',
   metadata: {
-    label: { en: ['Canvas model export'] },
-    description: { en: ['Export capture models from projects'] },
-    filePatterns: [`/manifests/{manifest}/models/{project_id}/{format}/{canvas}.json`],
+    label: { en: ['Canvas annotation export'] },
+    description: { en: ['Export capture models as annotations'] },
+    filePatterns: [
+      // Make this work...
+      // - project_id would make multiple file patterns
+      // - uuid would be a placeholder.
+      // - format would come from config
+      `/manifests/{manifest}/annotations/{project_id}/{format}/{canvas}.json`,
+    ],
   },
   supportedTypes: ['canvas'],
   configuration: {
-    filePerProject: true,
+    filePerProject: false,
     defaultValues: {
-      format: 'json',
+      format: 'w3c-annotation',
     },
     editor: {
       project_id: {
@@ -28,10 +34,9 @@ export const canvasModelExport: ExportConfig = {
         label: 'Format',
         type: 'dropdown-field',
         options: [
-          { value: 'json', text: 'json' },
-          { value: 'capture-model', text: 'capture-model' },
-          { value: 'capture-model-with-pages', text: 'capture-model-with-pages' },
-          { value: 'capture-model-with-pages-resolved', text: 'capture-model-with-pages-resolved' },
+          { value: 'w3c-annotation', text: 'w3c-annotation' },
+          { value: 'open-annotation', text: 'open-annotation' },
+          { value: 'w3c-annotation-pages', text: 'w3c-annotation-pages' },
         ],
       } as any,
     },
@@ -57,17 +62,16 @@ export const canvasModelExport: ExportConfig = {
 
     const resp = await options.api.getSiteCanvasPublishedModels(subject.id, {
       project_id: project?.id,
-      format: options.config?.format || 'json',
+      format: options.config.format || 'w3c-annotation',
     });
 
-    // @todo it would be better if getSiteCanvasPublishedModels returned a project-id if known.
-    return resp.models.map((model: any) =>
+    return [
       ExportFile.json(
-        model,
-        `/manifests/${options.subjectParent?.id}/models/${project?.id || model.projectId || 'unknown'}/${options.config
-          ?.format || 'json'}/${subject.id}.json`,
+        resp,
+        `/manifests/${options.subjectParent?.id}/annotations/${project?.id || 'unknown'}/${options.config.format ||
+          'json'}/${subject.id}.json`,
         true
-      )
-    );
+      ),
+    ];
   },
 };

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { SupportedExportResource } from '../../../extensions/project-export/types';
+import { filePatternsToList } from '../../../extensions/project-export/utils/file-patterns-to-list';
 import { useApi } from './use-api';
 import { useProjectExports } from './use-project-exports';
 
@@ -17,49 +18,40 @@ export function useExportResourcePreview(
   const api = useApi();
   const items = useProjectExports(options.subject.type);
   const selected = selectedType ? items.find(r => r.type === selectedType) : null;
-
   const expectedFiles = useMemo(() => {
-    const files = [];
-    if (selected && selected.metadata.filePatterns) {
-      // This will be split
-      for (const file of selected.metadata.filePatterns) {
-        const manifest =
-          options.subject.type === 'manifest'
-            ? options.subject.id
-            : options.subjectParent?.type === 'manifest'
-            ? options.subjectParent.id
-            : options.context?.type === 'manifest'
-            ? options.context.id
-            : null;
-        const canvas = options.subject.type === 'canvas' ? options.subject.id : null;
-        const project = options.context?.type === 'project' ? options.context.id : null;
-
-        files.push(
-          file
-            .replace(/\{manifest}/g, `${manifest}`)
-            .replace(/\{canvas}/g, `${canvas}`)
-            .replace(/\{project}/g, `${project}`)
-        );
-      }
+    if (selected) {
+      return filePatternsToList(selected, { ...options });
     }
 
-    return files;
+    return [];
   }, [options, selected]);
 
   const query = useQuery(
     ['export-item', { type: selectedType, ...options }],
     async () => {
+      console.log('exporting...');
       if (selected) {
-        return selected.exportData(options.subject, {
-          subjectParent: options.subjectParent,
-          api,
-          config: options.config,
-          context: options.subjectParent || options.context,
-        });
+        try {
+          const promise = await selected.exportData(options.subject, {
+            subjectParent: options.subjectParent,
+            api,
+            config: options.config,
+            context: options.subjectParent || options.context,
+          });
+          console.log(promise);
+
+          return promise;
+        } catch (e) {
+          console.log(e);
+        }
       }
     },
     { enabled: options.loadFiles !== false }
   );
+
+  if (query.data) {
+    console.log('data', query.data);
+  }
 
   return [query, selected, expectedFiles] as const;
 }

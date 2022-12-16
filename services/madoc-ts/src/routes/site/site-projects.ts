@@ -10,7 +10,7 @@ export type SiteProjectsQuery = {
   // canvas_id?: number;
 };
 
-export const siteProjects: RouteMiddleware<{ slug: string }> = async (context, next) => {
+export const siteProjects: RouteMiddleware<{ slug: string }> = async context => {
   const { siteApi } = context.state;
   const page = context.query.page ? Number(context.query.page) : 1;
 
@@ -35,6 +35,4 @@ export const siteProjects: RouteMiddleware<{ slug: string }> = async (context, n
 
   context.response.status = 200;
   context.response.body = projects;
-
-  await next();
 };

@@ -109,9 +109,7 @@ export function FilePreview(props: FilePreviewProps) {
     ['lazy-loaded', { filename: props.fileName }],
     async () => {
       if (props.lazyLoad) {
-        const d = await props.lazyLoad();
-        setTimeout(() => container.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200);
-        return d;
+        return props.lazyLoad();
       }
     },
     { enabled: enabled && !!props.lazyLoad }
@@ -125,12 +123,7 @@ export function FilePreview(props: FilePreviewProps) {
   }, [isLazy, data, props.children]);
 
   function toggle() {
-    setEnabled(e => {
-      if (!e) {
-        setTimeout(() => container.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200);
-      }
-      return !e;
-    });
+    setEnabled(e => !e);
   }
 
   return (

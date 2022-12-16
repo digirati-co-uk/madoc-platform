@@ -127,6 +127,7 @@ export interface ExportConfig<Config extends Record<string, any> = any> {
 
   // Configuration, if available.
   configuration?: {
+    filePerProject?: boolean;
     defaultValues: Config;
     editor: string | CaptureModelShorthand<keyof Config> | CaptureModel['document'];
   };
