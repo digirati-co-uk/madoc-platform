@@ -2,31 +2,27 @@ import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for
 import React from 'react';
 import styled from 'styled-components';
 import { Network } from '@styled-icons/entypo/Network';
-
-const buttonColor = 'red';
+import { primaryBackground } from '../../shared/navigation/Button';
 
 const LinkWrapper = styled.div`
   margin: 1em 0;
   a {
     font-size: 14px;
+    color: black;
     text-decoration: none;
     vertical-align: middle;
     padding: 0.5em;
     margin-right: 1em;
 
     :hover {
-      color: black;
+      color: ${primaryBackground};
       cursor: pointer;
-      background: rgba(51, 51, 51, 0.1);
-
-      svg {
-        filter: brightness(90%);
-      }
     }
+
   }
 
   svg {
-    color: ${buttonColor};
+    fill: ${primaryBackground};
     height: 18px;
     margin-right: 8px;
   }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Button } from '../navigation/Button';
+import { Button, primaryBackground, primaryBorder } from '../navigation/Button';
 import { SVGProps } from 'react';
 
 const CarouselOuterWrapper = styled.div`
@@ -52,18 +52,20 @@ const Indicator = styled.button`
   height: 12px;
   width: 64px;
   background-color: transparent;
-  border: 1px solid #3579f6;
+  border: ${primaryBorder};
   align-self: end;
   margin: 1em;
 
   :hover {
-    background-color: rgba(59, 59, 93, 0.7);
+    background-color: ${primaryBackground};
+    cursor: pointer;
   }
+
   &[data-isActive='true'] {
-    background-color: #3579f6;
+    background-color: ${primaryBackground};
 
     :hover {
-      background-color: rgba(59, 59, 93, 0.7);
+      filter: brightness(90%);
     }
   }
 `;
@@ -85,10 +87,7 @@ export const Carousel = ({ children }: CarouselProps) => {
 
   const Chevron = (props: SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" xmlSpace="preserve" width="1em" height="1em" {...props}>
-      <path
-        fill="#3579f6"
-        d="M13.25 10 6.109 2.58a.697.697 0 0 1 0-.979.68.68 0 0 1 .969 0l7.83 7.908a.697.697 0 0 1 0 .979l-7.83 7.908a.68.68 0 0 1-.969 0 .697.697 0 0 1 0-.979L13.25 10z"
-      />
+      <path d="M13.25 10 6.109 2.58a.697.697 0 0 1 0-.979.68.68 0 0 1 .969 0l7.83 7.908a.697.697 0 0 1 0 .979l-7.83 7.908a.68.68 0 0 1-.969 0 .697.697 0 0 1 0-.979L13.25 10z" />
     </svg>
   );
 

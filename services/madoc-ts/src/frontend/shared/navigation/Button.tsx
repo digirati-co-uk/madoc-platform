@@ -218,7 +218,6 @@ export const Button = styled.button<{
   $large?: boolean;
   $disabled?: boolean;
   $link?: boolean;
-  $accColor?: string;
 }>`
   cursor: pointer;
   padding: 0.4em 1em;
@@ -236,6 +235,9 @@ export const Button = styled.button<{
   white-space: nowrap;
   z-index: 0;
   
+  svg {
+    fill: ${defaultColor};
+  }
   ${props =>
     props.$link &&
     css`
@@ -252,6 +254,10 @@ export const Button = styled.button<{
      background: ${defaultHoverBackground};
      border-color: ${defaultHoverBackground}; 
      color: ${defaultHoverColor}; 
+    
+    svg {
+      fill: ${defaultHoverColor};
+    }
   }
   
   &:active {

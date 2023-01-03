@@ -1,8 +1,6 @@
 import styled, { css } from 'styled-components';
 import { CanvasViewerButton, CanvasViewerControls } from '../../site/features/CanvasViewerGrid';
-// import { buttonColor } from '../variables';
-
-const buttonColor = 'red';
+import { primaryBackground, primaryColor, primaryHoverBackground, primaryHoverColor } from '../navigation/Button';
 
 export const OuterLayoutContainer = styled.div`
   display: flex;
@@ -50,16 +48,18 @@ export const NavIconContainer = styled.div<{ $active?: boolean; $disabled?: bool
   ${props =>
     props.$active &&
     css`
-      background: #4a64e1;
-      color: #fff;
-      background: ${buttonColor};
+      background: ${primaryBackground};
+      color: ${primaryColor};
       svg {
-        fill: #fff;
+        fill: ${primaryColor};
       }
-
       &:hover {
-        background-color: ${buttonColor};
-        filter: brightness(90%);
+        background: ${primaryHoverBackground};
+        color: ${primaryHoverColor};
+
+        svg {
+          fill: ${primaryHoverColor};
+        }
       }
     `}
 
