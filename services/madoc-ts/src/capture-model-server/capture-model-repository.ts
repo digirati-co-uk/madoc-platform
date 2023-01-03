@@ -148,11 +148,12 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
     ) {
       const offset = (page - 1) * perPage;
       const paging = all ? sql`` : sql`limit ${perPage} offset ${offset}`;
-      const derivedQuery = allDerivatives
-        ? sql``
-        : derivedFrom
+      const derivedQuery = derivedFrom
         ? sql`and derived_from = ${derivedFrom}`
+        : allDerivatives
+        ? sql``
         : sql`and derived_from is null`;
+
       const targetQuery = target
         ? sql`
         and jsonb_path_query_first(cm.target::jsonb, '$[*] ? (@.id == $target)', ${sql.json({
