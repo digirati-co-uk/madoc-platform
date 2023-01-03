@@ -88,11 +88,18 @@
           "enum": [
             "default"
           ]
+        },
+        "defaultButtonHover": {
+          "type": "string",
+          "enum": [
+            "default"
+          ]
         }
       },
       "required": [
         "accent",
         "defaultButton",
+        "defaultButtonHover",
         "fonts",
         "footer",
         "global",
@@ -150,10 +157,13 @@
           "$ref": "#/definitions/96fa1e676e582d671f18b94d9f4fa256"
         },
         "primaryButtonHover": {
-          "$ref": "#/definitions/821e45e9e88edccc568b74102761bc85"
+          "$ref": "#/definitions/49d1788d73cca3e2c4ba30b1eb69d9fc"
         },
         "defaultButton": {
           "$ref": "#/definitions/281b502ebb82a25f08898810d4e5adf0"
+        },
+        "defaultButtonHover": {
+          "$ref": "#/definitions/667d11123223622cbeae11ab3a418ab4"
         }
       }
     },
@@ -312,7 +322,7 @@
         }
       }
     },
-    "821e45e9e88edccc568b74102761bc85": {
+    "49d1788d73cca3e2c4ba30b1eb69d9fc": {
       "type": "object",
       "properties": {
         "color": {
@@ -338,32 +348,6 @@
     "281b502ebb82a25f08898810d4e5adf0": {
       "type": "object",
       "properties": {
-        "active": {
-          "anyOf": [
-            {
-              "type": "object",
-              "properties": {
-                "color": {
-                  "type": "string"
-                },
-                "background": {
-                  "type": "string"
-                },
-                "border": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "background",
-                "border",
-                "color"
-              ]
-            },
-            {
-              "type": "object"
-            }
-          ]
-        },
         "color": {
           "type": [
             "string",
@@ -381,57 +365,22 @@
             "string",
             "object"
           ]
-        },
-        "hover": {
-          "anyOf": [
-            {
-              "type": "object",
-              "properties": {
-                "color": {
-                  "type": "string"
-                },
-                "background": {
-                  "type": "string"
-                },
-                "border": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "background",
-                "border",
-                "color"
-              ]
-            },
-            {
-              "type": "object"
-            }
+        }
+      }
+    },
+    "667d11123223622cbeae11ab3a418ab4": {
+      "type": "object",
+      "properties": {
+        "color": {
+          "type": [
+            "string",
+            "object"
           ]
         },
-        "focus": {
-          "anyOf": [
-            {
-              "type": "object",
-              "properties": {
-                "color": {
-                  "type": "string"
-                },
-                "background": {
-                  "type": "string"
-                },
-                "border": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "background",
-                "border",
-                "color"
-              ]
-            },
-            {
-              "type": "object"
-            }
+        "background": {
+          "type": [
+            "string",
+            "object"
           ]
         }
       }

@@ -3,10 +3,6 @@ import styled, { css } from 'styled-components';
 import { HrefLink } from '../utility/href-link';
 import { themeVariable } from '../../themes/helpers/themeVariable';
 
-const darkenColor = (value: number) => css`
-  background-image: linear-gradient(0deg, rgba(0, 0, 0, ${value}) 0%, rgba(0, 0, 0, ${value}) 100%);
-`;
-
 export const primaryColor = themeVariable('primaryButton', 'color', {
   default: '#FFFFF',
 });
@@ -16,7 +12,7 @@ export const primaryBackground = themeVariable('primaryButton', 'background', {
 });
 
 export const primaryBorderRadius = themeVariable('primaryButton', 'borderRadius', {
-  default: '30px',
+  default: '3px',
 });
 
 export const primaryBorder = themeVariable('primaryButton', 'border', {
@@ -34,6 +30,27 @@ export const primaryHoverBorder = themeVariable('primaryButtonHover', 'border', 
 export const primaryHoverColor = themeVariable('primaryButtonHover', 'color', {
   default: '#4265e9',
 });
+
+export const defaultColor = themeVariable('defaultButton', 'color', {
+  default: '#4265e9',
+});
+
+export const defaultBorderRadius = themeVariable('defaultButton', 'borderRadius', {
+  default: '3px',
+});
+
+export const defaultBorder = themeVariable('defaultButton', 'border', {
+  default: '1px solid #4265e9',
+});
+
+export const defaultHoverBackground = themeVariable('defaultButtonHover', 'background', {
+  default: '#4265e9',
+});
+
+export const defaultHoverColor = themeVariable('defaultButtonHover', 'color', {
+  default: '#FFFFFF',
+});
+
 const primary = css`
   background-color: ${primaryBackground};
   color: ${primaryColor};
@@ -41,28 +58,32 @@ const primary = css`
   border-radius: ${primaryBorderRadius};
   z-index: 1;
 
-  &:active {
-    box-shadow: inset 0 2px 8px 0 rgba(0, 0, 0, 0.15);
-  }
   &:hover {
     background-color: ${primaryHoverBackground};
     color: ${primaryHoverColor};
     border: ${primaryHoverBorder};
   }
 
-  &:focus-visible {
-    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.8);
+  &:focus &:focus-visible {
+    box-shadow: inset 0 0 0 2px ${primaryHoverColor};
+  }
+
+  &:active {
+    box-shadow: inset 0 0 4px 0 ${primaryHoverColor};
   }
 
   &:disabled {
     opacity: 0.7;
     cursor: not-allowed;
 
-    // &:hover {
-    //   primaryBtnHover}
-    // }
+    &:hover {
+      background-color: ${primaryHoverBackground};
+      color: ${primaryHoverColor};
+      border: ${primaryHoverBorder};
+    }
   }
 `;
+
 const success = css`
   background: #4dac22;
   color: #fff;
@@ -203,20 +224,16 @@ export const Button = styled.button<{
   padding: 0.4em 1em;
   font-size: 0.9em;
   line-height: 1.18em;
-  // border-radius: buttonRadius};
-  // color: buttonColor};
-  //background: inherit;
-  background-color: ${primaryBackground};
-  color: ${primaryColor};
-  border: ${primaryBorder};
-  border-radius: ${primaryBorderRadius};
+  border-radius: ${defaultBorderRadius};
+  color: ${defaultColor};
+  background-color: #fff;
+  border: ${defaultBorder};
   text-decoration: none;
   display: inline-block;
   letter-spacing: 0.25px;
   vertical-align: top;
   transition: color 0.1s, background-color 0.1s, border-color 0.1s;
   white-space: nowrap;
-  // border: 1px solid buttonColor};
   z-index: 0;
   
   ${props =>
@@ -230,37 +247,38 @@ export const Button = styled.button<{
       font-size: 1.15em;
       padding: 0.6em 1.2em;
     `}
-  &:active {
-    box-shadow: inset 0 2px 8px 0 rgba(0, 0, 0, 0.15);
+
+  &:hover {
+     background: ${defaultHoverBackground};
+     border-color: ${defaultHoverBackground}; 
+     color: ${defaultHoverColor}; 
   }
   
-  &:hover {
-    // background:{buttonColor};
-    // border-color: buttonColor};
-    // color:{BtnColor};
+  &:active {
+    box-shadow: inset 0 0 4px 0 ${defaultColor};
   }
 
-  &:focus {
+  &:focus &:focus-visible {
     outline: none;
-    // color: {BtnColor};
-    // background:{buttonColor};
-    // border-color: {buttonColor};
-    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.8);
+    background: ${defaultHoverBackground}; 
+    border-color: ${defaultHoverBackground}; 
+    color: ${defaultHoverColor}; 
   }
-
-  &:focus:hover {
-    ${darkenColor(0.1)};
-  }
-
+  
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+
+    &:hover {
+      background: ${defaultHoverBackground};
+      border-color: ${defaultHoverBackground};
+      color: ${defaultHoverColor};
+    }
   }
 
   ${ButtonIcon} svg {
-    // fill: buttonColor};
+     fill: ${defaultColor};
   }
-
   &:hover ${ButtonIcon} svg,
   &:focus ${ButtonIcon} svg {
     fill: #fff;
@@ -285,13 +303,14 @@ export const Button = styled.button<{
     `}
 `;
 
+//TODO add theme support for buttons using rounded
 export const RoundedButton = styled.a<{ disabled?: boolean }>`
   cursor: pointer;
   font-size: 16px;
   line-height: 22px;
   padding: 3px 10px;
-  // background: BtnColor};
-  // color: buttonColor};
+  background: #ffffff;
+  color: #007bff;
   border: 1px solid #dee2e6;
   text-decoration: none;
   border-radius: 4px;
@@ -300,8 +319,12 @@ export const RoundedButton = styled.a<{ disabled?: boolean }>`
     !props.disabled &&
     css`
       &:link,
+      &:visited {
+        color: #007bff;
+      }
       &:hover {
-        ${darkenColor(0.1)};
+        background: #ffffff;
+        border-color: #dee2e6;
       }
       &:focus {
         outline: 1px solid #dee2e6;
@@ -333,12 +356,14 @@ export const MediumRoundedButton = styled.a`
   font-size: 16px;
   line-height: 22px;
   background: #ffffff;
-  // color:{buttonColor};
-  // border: 1px solid buttonColor};
+  color: #007bff;
+  border: 1px solid #dee2e6;
   text-decoration: none;
   padding: 10px;
-
   &:link,
+  &:visited {
+    color: #007bff;
+  }
   &:hover {
     background: #ffffff;
     border-color: #dee2e6;
@@ -350,19 +375,21 @@ export const MediumRoundedButton = styled.a`
     opacity: 0.7;
     cursor: not-allowed;
     &:hover {
-      cursor: not-allowed;
+      background: #4265e9;
+      border-color: #dee2e6;
     }
   }
   &:last-of-type {
-    border-radius: 0 4px 4px 0;
+    border-radius: 0px 4px 4px 0px;
   }
   &:first-of-type {
-    border-radius: 4px 0 0 4px;
+    border-radius: 4px 0px 0px 4px;
   }
 `;
 
 export const TinyButton = SmallButton;
 
+//TODO add theme support for link buttons
 export const LinkButton = styled.button<{ $inherit?: boolean }>`
   border: none;
   outline: none;
@@ -370,16 +397,11 @@ export const LinkButton = styled.button<{ $inherit?: boolean }>`
   margin: 0;
   padding: 0;
   font-size: inherit;
-  // color: ${props => (props.$inherit ? 'pink' : 'bttoncolor')};
+  color: ${props => (props.$inherit ? 'inherit' : '#5071f4')};
   text-decoration: underline;
   cursor: pointer;
   &:hover {
-    ${props =>
-      props.$inherit
-        ? css`
-            color: inherit;
-          `
-        : darkenColor(0.1)}
+    color: ${props => (props.$inherit ? 'inherit' : '#42a0db')};
   }
 `;
 
@@ -428,7 +450,7 @@ export const RightButtonIconBox = styled.span<{ $checked?: boolean }>`
     top: 0;
     height: 24px;
     width: 24px;
-    // fill: btncolor;
+    fill: #5071f4;
   }
 
   ${props =>

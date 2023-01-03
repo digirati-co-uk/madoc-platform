@@ -12,7 +12,9 @@
     "global": "default",
     "fonts": "default",
     "primaryButton": "default",
-    "defaultButton": "default"
+    "primaryButtonHover": "default",
+    "defaultButton": "default",
+    "defaultButtonHover": "default"
 
   }
 }

@@ -1,12 +1,10 @@
 import { ThemeVariation } from './types';
 
-export type PrimaryButton = ThemeVariation<
+export type PrimaryButtonHover = ThemeVariation<
   {
     color: string;
     background: string;
-    borderRadius: string;
     border: string;
   },
   'default'
 >;
-
