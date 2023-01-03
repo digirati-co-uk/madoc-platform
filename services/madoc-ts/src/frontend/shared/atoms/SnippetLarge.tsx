@@ -47,10 +47,11 @@ const SnippetButton = styled.a<{ role?: string; $center?: boolean }>`
   font-size: 0.8rem;
   text-decoration: none;
   color: ${defaultColor};
-  &:link,
-  &:visited {
-    color: #3773db;
-  }
+  background-color: white;
+  //&:link,
+  //&:visited {
+  //  color: #3773db;
+  //}
 
   ${props =>
     props.role === 'button' &&
@@ -63,7 +64,6 @@ const SnippetButton = styled.a<{ role?: string; $center?: boolean }>`
         color: ${defaultHoverColor};
       }
       &:focus &:focus-visible {
-        background: ${defaultHoverBackground};
         border-color: ${defaultHoverBackground};
         color: ${defaultHoverColor};
       }
