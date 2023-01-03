@@ -1,30 +1,53 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { HrefLink } from '../utility/href-link';
-import {
-  primaryBtnBackground,
-  primaryBtnBorder,
-  primaryBtnBorderRadius,
-  primaryBtnColor,
-  primaryBtnHover
-} from '../variables';
+import { themeVariable } from '../../themes/helpers/themeVariable';
 
 const darkenColor = (value: number) => css`
   background-image: linear-gradient(0deg, rgba(0, 0, 0, ${value}) 0%, rgba(0, 0, 0, ${value}) 100%);
 `;
 
+export const primaryColor = themeVariable('primaryButton', 'color', {
+  default: '#FFFFF',
+});
+
+export const primaryBackground = themeVariable('primaryButton', 'background', {
+  default: '#4265e9',
+});
+
+export const primaryBorderRadius = themeVariable('primaryButton', 'borderRadius', {
+  default: '30px',
+});
+
+export const primaryBorder = themeVariable('primaryButton', 'border', {
+  default: '1px solid #4265e9',
+});
+
+export const primaryHoverBackground = themeVariable('primaryButtonHover', 'background', {
+  default: 'inherit',
+});
+
+export const primaryHoverBorder = themeVariable('primaryButtonHover', 'border', {
+  default: '1px solid #4265e9',
+});
+
+export const primaryHoverColor = themeVariable('primaryButtonHover', 'color', {
+  default: '#4265e9',
+});
 const primary = css`
-  background-color: ${primaryBtnBackground};
-  color: ${primaryBtnColor};
-  border: ${primaryBtnBorder};
-  border-radius: ${primaryBtnBorderRadius};
+  background-color: ${primaryBackground};
+  color: ${primaryColor};
+  border: ${primaryBorder};
+  border-radius: ${primaryBorderRadius};
   z-index: 1;
 
   &:active {
     box-shadow: inset 0 2px 8px 0 rgba(0, 0, 0, 0.15);
   }
   &:hover {
-    ${primaryBtnHover};
+    background-color: ${primaryHoverBackground};
+    color: ${primaryHoverColor};
+    border: ${primaryHoverBorder};
   }
 
   &:focus-visible {
@@ -35,9 +58,9 @@ const primary = css`
     opacity: 0.7;
     cursor: not-allowed;
 
-    &:hover {
-      ${primaryBtnHover}
-    }
+    // &:hover {
+    //   primaryBtnHover}
+    // }
   }
 `;
 const success = css`
@@ -182,7 +205,11 @@ export const Button = styled.button<{
   line-height: 1.18em;
   // border-radius: buttonRadius};
   // color: buttonColor};
-  background: inherit;
+  //background: inherit;
+  background-color: ${primaryBackground};
+  color: ${primaryColor};
+  border: ${primaryBorder};
+  border-radius: ${primaryBorderRadius};
   text-decoration: none;
   display: inline-block;
   letter-spacing: 0.25px;

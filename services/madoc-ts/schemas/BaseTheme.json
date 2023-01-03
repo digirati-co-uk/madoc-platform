@@ -77,6 +77,12 @@
             "default"
           ]
         },
+        "primaryButtonHover": {
+          "type": "string",
+          "enum": [
+            "default"
+          ]
+        },
         "defaultButton": {
           "type": "string",
           "enum": [
@@ -92,6 +98,7 @@
         "global",
         "header",
         "primaryButton",
+        "primaryButtonHover",
         "siteContainer"
       ]
     },
@@ -140,10 +147,13 @@
           "$ref": "#/definitions/eea4564a3c2bbe3be73ec4cdbd482dd0"
         },
         "primaryButton": {
-          "$ref": "#/definitions/c36b16830bc602fc10136219f73ef1a0"
+          "$ref": "#/definitions/96fa1e676e582d671f18b94d9f4fa256"
+        },
+        "primaryButtonHover": {
+          "$ref": "#/definitions/821e45e9e88edccc568b74102761bc85"
         },
         "defaultButton": {
-          "$ref": "#/definitions/0d3b034cf0af67fbc47c19879e33b887"
+          "$ref": "#/definitions/281b502ebb82a25f08898810d4e5adf0"
         }
       }
     },
@@ -273,7 +283,59 @@
         }
       }
     },
-    "c36b16830bc602fc10136219f73ef1a0": {
+    "96fa1e676e582d671f18b94d9f4fa256": {
+      "type": "object",
+      "properties": {
+        "color": {
+          "type": [
+            "string",
+            "object"
+          ]
+        },
+        "border": {
+          "type": [
+            "string",
+            "object"
+          ]
+        },
+        "background": {
+          "type": [
+            "string",
+            "object"
+          ]
+        },
+        "borderRadius": {
+          "type": [
+            "string",
+            "object"
+          ]
+        }
+      }
+    },
+    "821e45e9e88edccc568b74102761bc85": {
+      "type": "object",
+      "properties": {
+        "color": {
+          "type": [
+            "string",
+            "object"
+          ]
+        },
+        "border": {
+          "type": [
+            "string",
+            "object"
+          ]
+        },
+        "background": {
+          "type": [
+            "string",
+            "object"
+          ]
+        }
+      }
+    },
+    "281b502ebb82a25f08898810d4e5adf0": {
       "type": "object",
       "properties": {
         "active": {
@@ -298,12 +360,6 @@
               ]
             },
             {
-              "enum": [
-                "defualt"
-              ],
-              "type": "string"
-            },
-            {
               "type": "object"
             }
           ]
@@ -315,12 +371,6 @@
           ]
         },
         "border": {
-          "type": [
-            "string",
-            "object"
-          ]
-        },
-        "background": {
           "type": [
             "string",
             "object"
@@ -377,97 +427,6 @@
                 "background",
                 "border",
                 "color"
-              ]
-            },
-            {
-              "type": "object"
-            }
-          ]
-        }
-      }
-    },
-    "0d3b034cf0af67fbc47c19879e33b887": {
-      "type": "object",
-      "properties": {
-        "button": {
-          "anyOf": [
-            {
-              "type": "object",
-              "properties": {
-                "color": {
-                  "type": "string"
-                },
-                "borderRadius": {
-                  "type": "string"
-                },
-                "border": {
-                  "type": "string"
-                },
-                "hover": {
-                  "type": "object",
-                  "properties": {
-                    "color": {
-                      "type": "string"
-                    },
-                    "background": {
-                      "type": "string"
-                    },
-                    "border": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "background",
-                    "border",
-                    "color"
-                  ]
-                },
-                "active": {
-                  "type": "object",
-                  "properties": {
-                    "color": {
-                      "type": "string"
-                    },
-                    "background": {
-                      "type": "string"
-                    },
-                    "border": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "background",
-                    "border",
-                    "color"
-                  ]
-                },
-                "focus": {
-                  "type": "object",
-                  "properties": {
-                    "color": {
-                      "type": "string"
-                    },
-                    "background": {
-                      "type": "string"
-                    },
-                    "border": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "background",
-                    "border",
-                    "color"
-                  ]
-                }
-              },
-              "required": [
-                "active",
-                "border",
-                "borderRadius",
-                "color",
-                "focus",
-                "hover"
               ]
             },
             {

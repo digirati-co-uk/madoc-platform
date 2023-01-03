@@ -4,7 +4,8 @@ import { HeaderTheme } from './header';
 import { AccentTheme } from './accent';
 import { Fonts } from './fonts';
 import { SiteContainerTheme } from './site-container';
-import { DefaultButtonsTheme, PrimaryButtonTheme} from './buttons';
+import { DefaultButton } from './defaultButton';
+import { PrimaryButton, primaryButtonHover } from './primaryButton';
 
 export type ThemeDefinitions = {
   header: HeaderTheme;
@@ -13,6 +14,7 @@ export type ThemeDefinitions = {
   footer: FooterTheme;
   global: GlobalTheme;
   fonts: Fonts;
-  primaryButton: PrimaryButtonTheme;
-  defaultButton: DefaultButtonsTheme;
+  primaryButton: PrimaryButton;
+  primaryButtonHover: primaryButtonHover;
+  defaultButton: DefaultButton;
 };

@@ -1,7 +1,6 @@
 import { stringify } from 'query-string';
 import React from 'react';
 import styled, { css } from 'styled-components';
-import { BtnColor } from '../variables';
 
 export type SnippetLargeProps = {
   label: string | JSX.Element;
