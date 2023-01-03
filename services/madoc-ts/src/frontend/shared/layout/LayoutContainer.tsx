@@ -11,7 +11,7 @@ export const OuterLayoutContainer = styled.div`
   height: 100%;
   overflow: hidden;
   max-height: 100%;
-  flex: 1 1 0px;
+  flex: 1 1 0;
   min-height: 0;
   min-width: 0;
 `;

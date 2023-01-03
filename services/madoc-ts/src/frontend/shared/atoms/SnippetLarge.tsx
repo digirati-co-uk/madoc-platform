@@ -1,6 +1,7 @@
 import { stringify } from 'query-string';
 import React from 'react';
 import styled, { css } from 'styled-components';
+import { defaultBorder, defaultColor, defaultHoverBackground, defaultHoverColor } from '../navigation/Button';
 
 export type SnippetLargeProps = {
   label: string | JSX.Element;
@@ -45,20 +46,26 @@ const SnippetButton = styled.a<{ role?: string; $center?: boolean }>`
   padding: 0.4em 0;
   font-size: 0.8rem;
   text-decoration: none;
-  //color: buttonColor};
+  color: ${defaultColor};
+  &:link,
+  &:visited {
+    color: #3773db;
+  }
 
   ${props =>
     props.role === 'button' &&
     css`
       padding: 0.4em 0.8em;
       border-radius: 3px;
-      // border: 1px solid {buttonColor};
+      border: ${defaultBorder};
       &:hover {
-        filter: brightness(90%);
+        background-color: ${defaultHoverBackground};
+        color: ${defaultHoverColor};
       }
-      &:focus {
-        // background: buttonColor};
-        // color: BtnColor};
+      &:focus &:focus-visible {
+        background: ${defaultHoverBackground};
+        border-color: ${defaultHoverBackground};
+        color: ${defaultHoverColor};
       }
     `}
 `;
