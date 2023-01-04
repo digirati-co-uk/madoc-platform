@@ -64,7 +64,7 @@ const primary = css`
     border: ${primaryHoverBorder};
   }
 
-  &:focus &:focus-visible {
+  &:focus, &:focus-visible {
     box-shadow: inset 0 0 0 2px ${primaryHoverColor};
   }
 
@@ -264,7 +264,7 @@ export const Button = styled.button<{
     box-shadow: inset 0 0 4px 0 ${defaultColor};
   }
 
-  &:focus &:focus-visible {
+  &:focus, &:focus-visible {
     outline: none;
     background: ${defaultHoverBackground}; 
     border-color: ${defaultHoverBackground}; 

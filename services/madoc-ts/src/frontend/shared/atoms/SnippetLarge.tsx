@@ -63,7 +63,7 @@ const SnippetButton = styled.a<{ role?: string; $center?: boolean }>`
         background-color: ${defaultHoverBackground};
         color: ${defaultHoverColor};
       }
-      &:focus &:focus-visible {
+      &:focus, &:focus-visible {
         border-color: ${defaultHoverBackground};
         color: ${defaultHoverColor};
       }
