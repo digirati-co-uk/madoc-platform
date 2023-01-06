@@ -4,7 +4,7 @@ import { HrefLink } from '../utility/href-link';
 import { themeVariable } from '../../themes/helpers/themeVariable';
 
 export const primaryColor = themeVariable('primaryButton', 'color', {
-  default: '#FFFFF',
+  default: '#FFFFFF',
 });
 
 export const primaryBackground = themeVariable('primaryButton', 'background', {
@@ -20,7 +20,7 @@ export const primaryBorder = themeVariable('primaryButton', 'border', {
 });
 
 export const primaryHoverBackground = themeVariable('primaryButtonHover', 'background', {
-  default: 'inherit',
+  default: 'transparent',
 });
 
 export const primaryHoverBorder = themeVariable('primaryButtonHover', 'border', {
@@ -51,7 +51,7 @@ export const defaultHoverColor = themeVariable('defaultButtonHover', 'color', {
   default: '#FFFFFF',
 });
 
-const primary = css`
+const primaryBtn = css`
   background-color: ${primaryBackground};
   color: ${primaryColor};
   border: ${primaryBorder};
@@ -64,10 +64,10 @@ const primary = css`
     border: ${primaryHoverBorder};
   }
 
-  &:focus, &:focus-visible {
+  &:focus,
+  &:focus-visible {
     box-shadow: inset 0 0 0 2px ${primaryHoverColor};
   }
-
   &:active {
     box-shadow: inset 0 0 4px 0 ${primaryHoverColor};
   }
@@ -83,7 +83,36 @@ const primary = css`
     }
   }
 `;
+const iconBtn = css`
+  svg {
+    fill: ${primaryBackground};
+  }
+  background: transparent;
+  border: transparent;
+  margin: 0;
+  padding: 0;
 
+  &:hover {
+    svg {
+      fill: ${primaryBackground};
+      filter: brightness(50%);
+    }
+  }
+`;
+const linkBtn = css`
+  border: none;
+  outline: none;
+  background: transparent;
+  margin: 0;
+  font-size: inherit;
+  color: #007bff;
+  text-decoration: underline;
+  padding: 0 0.4em;
+
+  :hover {
+    color: #42a0db;
+  }
+`;
 const success = css`
   background: #4dac22;
   color: #fff;
@@ -218,6 +247,7 @@ export const Button = styled.button<{
   $large?: boolean;
   $disabled?: boolean;
   $link?: boolean;
+  $icon?: boolean;
 }>`
   cursor: pointer;
   padding: 0.4em 1em;
@@ -235,27 +265,16 @@ export const Button = styled.button<{
   white-space: nowrap;
   z-index: 0;
   
-  svg {
+  svg, ${ButtonIcon} {
     fill: ${defaultColor};
   }
-  ${props =>
-    props.$link &&
-    css`
-      border-color: transparent;
-    `}
-  ${props =>
-    props.$large &&
-    css`
-      font-size: 1.15em;
-      padding: 0.6em 1.2em;
-    `}
-
+  
   &:hover {
      background: ${defaultHoverBackground};
      border-color: ${defaultHoverBackground}; 
      color: ${defaultHoverColor}; 
     
-    svg {
+    svg, ${ButtonIcon} {
       fill: ${defaultHoverColor};
     }
   }
@@ -268,7 +287,10 @@ export const Button = styled.button<{
     outline: none;
     background: ${defaultHoverBackground}; 
     border-color: ${defaultHoverBackground}; 
-    color: ${defaultHoverColor}; 
+    color: ${defaultHoverColor};
+    svg   ${ButtonIcon} {
+      fill: ${defaultHoverColor};
+    }
   }
   
   &:disabled {
@@ -281,25 +303,25 @@ export const Button = styled.button<{
       color: ${defaultHoverColor};
     }
   }
-
-  ${ButtonIcon} svg {
-     fill: ${defaultColor};
-  }
-  &:hover ${ButtonIcon} svg,
-  &:focus ${ButtonIcon} svg {
-    fill: #fff;
-  }
-
-  ${props => props.$primary && primary}
+  
+  ${props => props.$primary && primaryBtn}
   ${props => props.$success && success}
+  ${props => props.$icon && iconBtn}
+  ${props => props.$link && linkBtn}
+
   ${props => (props.$error ? (props.$primary ? errorPrimary : error) : '')}
+  ${props =>
+    props.$large &&
+    css`
+      font-size: 1.15em;
+      padding: 0.6em 1.2em;
+    `}
   ${props =>
     props.$inlineInput &&
     css`
       height: 2.7em;
       border-radius: 0 3px 3px 0;
     `}
-
   ${props =>
     props.$disabled &&
     css`
@@ -309,12 +331,12 @@ export const Button = styled.button<{
     `}
 `;
 
-//TODO add theme support for buttons using rounded
-export const RoundedButton = styled.a<{ disabled?: boolean }>`
+//pagination buttons
+export const SmallRoundedButton = styled.a<{ disabled?: boolean }>`
+  font-size: 12px;
+  line-height: 14px;
+  padding: 2px 10px;
   cursor: pointer;
-  font-size: 16px;
-  line-height: 22px;
-  padding: 3px 10px;
   background: #ffffff;
   color: #007bff;
   border: 1px solid #dee2e6;
@@ -346,17 +368,7 @@ export const RoundedButton = styled.a<{ disabled?: boolean }>`
     `}
 `;
 
-export const SmallButton = styled(Button)`
-  padding: 0.25em 0.75em;
-  font-size: 0.8em;
-`;
-
-export const SmallRoundedButton = styled(RoundedButton)`
-  font-size: 12px;
-  line-height: 14px;
-  padding: 2px 10px;
-`;
-
+//pagination buttons
 export const MediumRoundedButton = styled.a`
   cursor: pointer;
   font-size: 16px;
@@ -386,30 +398,19 @@ export const MediumRoundedButton = styled.a`
     }
   }
   &:last-of-type {
-    border-radius: 0px 4px 4px 0px;
+    border-radius: 0 4px 4px 0;
   }
   &:first-of-type {
-    border-radius: 4px 0px 0px 4px;
+    border-radius: 4px 0 0 4px;
   }
+`;
+
+export const SmallButton = styled(Button)`
+  padding: 0.25em 0.75em;
+  font-size: 0.8em;
 `;
 
 export const TinyButton = SmallButton;
-
-//TODO add theme support for link buttons
-export const LinkButton = styled.button<{ $inherit?: boolean }>`
-  border: none;
-  outline: none;
-  background: transparent;
-  margin: 0;
-  padding: 0;
-  font-size: inherit;
-  color: ${props => (props.$inherit ? 'inherit' : '#5071f4')};
-  text-decoration: underline;
-  cursor: pointer;
-  &:hover {
-    color: ${props => (props.$inherit ? 'inherit' : '#42a0db')};
-  }
-`;
 
 export const ButtonRow = styled.div<{ $noMargin?: boolean; $right?: boolean; $center?: boolean }>`
   display: flex;

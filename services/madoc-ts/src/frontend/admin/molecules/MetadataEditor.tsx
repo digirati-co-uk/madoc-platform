@@ -175,7 +175,10 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = props => {
   if (!firstItem) {
     return (
       <EmptyInputValue>
-        {t('No values exist for this')} <LinkButton onClick={() => createNewItem(false)}>{t('Add new')}</LinkButton>
+        {t('No values exist for this')}
+        <Button $link onClick={() => createNewItem(false)}>
+          {t('Add new')}
+        </Button>
       </EmptyInputValue>
     );
   }

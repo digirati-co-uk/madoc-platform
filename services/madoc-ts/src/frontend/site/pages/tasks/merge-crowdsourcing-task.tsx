@@ -23,7 +23,7 @@ import { FullScreenEnterIcon } from '../../../shared/icons/FullScreenEnterIcon';
 import { ViewContent } from '../../../shared/components/ViewContent';
 import { RevisionTopLevel } from '../../../shared/capture-models/RevisionTopLevel';
 import { ModalButton } from '../../../shared/components/Modal';
-import { Button, LinkButton } from '../../../shared/navigation/Button';
+import { Button } from '../../../shared/navigation/Button';
 import { ArrowForwardIcon } from '../../../shared/icons/ArrowForwardIcon';
 import { WarningMessage } from '../../../shared/callouts/WarningMessage';
 import { TableContainer, TableRow, TableRowLabel } from '../../../shared/layout/Table';
@@ -235,9 +235,9 @@ const MergeCrowdsourcingTask: React.FC<{
                   {merge.mergeId !== currentRevision ? (
                     <WarningMessage style={{ marginBottom: '1em' }}>
                       {t('This is read-only')},{' '}
-                      <LinkButton $inherit onClick={() => setCurrentRevision(merge.mergeId)}>
+                      <Button $link onClick={() => setCurrentRevision(merge.mergeId)}>
                         {t('switch to the main revision')}
-                      </LinkButton>{' '}
+                      </Button>{' '}
                       {t('to make changes')}
                     </WarningMessage>
                   ) : null}

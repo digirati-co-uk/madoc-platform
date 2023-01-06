@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import { InputBorderless } from '../form/Input';
-import { LinkButton } from '../navigation/Button';
+import { Button } from '../navigation/Button';
 import { SearchIcon } from '../icons/SearchIcon';
 
 const SearchContainer = styled.div<{ $isFocus?: boolean; $isAdmin?: boolean }>`
@@ -74,9 +74,9 @@ export const SearchBox: React.FC<{
           onChange={(e: any) => setSearchValue(e.target.value)}
           placeholder={placeholder}
         />
-        <LinkButton>
+        <Button $icon>
           <SearchIcon />
-        </LinkButton>
+        </Button>
       </SearchContainer>
     </form>
   );
