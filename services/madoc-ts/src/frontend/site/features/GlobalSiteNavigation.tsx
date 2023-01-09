@@ -26,17 +26,17 @@ export function GlobalSiteNavigation(props: { showHomepageMenu?: boolean }) {
         </LightNavigationItem>
       ) : null}
       {showProjects ? (
-        <LightNavigationItem $active={location.pathname === '/projects'}>
+        <LightNavigationItem $active={location.pathname.startsWith('/projects')}>
           <HrefLink href="/projects">{t('Projects')}</HrefLink>
         </LightNavigationItem>
       ) : null}
       {showCollections ? (
-        <LightNavigationItem $active={location.pathname === '/collections'}>
+        <LightNavigationItem $active={location.pathname.startsWith('/collections')}>
           <HrefLink href="/collections">{t('Collections')}</HrefLink>
         </LightNavigationItem>
       ) : null}
       {showDashboard ? (
-        <LightNavigationItem $active={location.pathname === '/dashboard'}>
+        <LightNavigationItem $active={location.pathname.startsWith('/dashboard')}>
           <HrefLink href="/dashboard">{t('User dashboard')}</HrefLink>
         </LightNavigationItem>
       ) : null}
