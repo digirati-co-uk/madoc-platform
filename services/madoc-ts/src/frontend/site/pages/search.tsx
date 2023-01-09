@@ -7,19 +7,44 @@ import { AppliedFacets } from '../features/AppliedFacets';
 import { Heading1 } from '../../shared/typography/Heading1';
 import { SearchPagination } from '../features/SearchPagination';
 import { SearchPageResults } from '../features/SearchPageResults';
+import { DisplayBreadcrumbs, useBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { useRouteContext } from '../hooks/use-route-context';
+import { LocaleString } from '../../shared/components/LocaleString';
 
 export const Search: React.FC = () => {
   const { rawQuery, page, fulltext } = useSearchQuery();
 
+  const breads = useBreadcrumbs();
+  const isGlobal = !!breads.subpage;
+
+
+  const getHeading = () => {
+    if (breads.manifest) return breads.manifest?.name;
+    else if (breads.collection) return breads.collection.name;
+    else {
+      return breads.project?.name;
+    }
+  };
+
   return (
-    <StaticPage title="search">
+    <>
+      <Slot name="common-breadcrumbs">
+        <DisplayBreadcrumbs currentPage={'search'} />
+      </Slot>
+
       <Slot name="search-heading">
-        <Heading1>“{fulltext}” search</Heading1>
+        {isGlobal ? (
+          <Heading1>“{fulltext}” search</Heading1>
+        ) : (
+          <Heading1>
+            search in <LocaleString>{getHeading()}</LocaleString>
+          </Heading1>
+        )}
       </Slot>
 
       <div style={{ display: 'flex' }}>
         <div style={{ maxWidth: 300 }}>
-          <Slot name="search-filters1" small>
+          <Slot name="search-page-filters" small>
             <SearchPageFilters />
           </Slot>
         </div>
@@ -39,6 +64,6 @@ export const Search: React.FC = () => {
           </Slot>
         </div>
       </div>
-    </StaticPage>
+    </>
   );
 };
