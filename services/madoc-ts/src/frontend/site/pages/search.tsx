@@ -17,7 +17,6 @@ export const Search: React.FC = () => {
   const breads = useBreadcrumbs();
   const isGlobal = !!breads.subpage;
 
-
   const getHeading = () => {
     if (breads.manifest) return breads.manifest?.name;
     else if (breads.collection) return breads.collection.name;
@@ -27,9 +26,9 @@ export const Search: React.FC = () => {
   };
 
   return (
-    <>
+    <StaticPage title="Search">
       <Slot name="common-breadcrumbs">
-        <DisplayBreadcrumbs currentPage={'search'} />
+        <DisplayBreadcrumbs currentPage="Search" />
       </Slot>
 
       <Slot name="search-heading">
@@ -64,6 +63,6 @@ export const Search: React.FC = () => {
           </Slot>
         </div>
       </div>
-    </>
+    </StaticPage>
   );
 };
