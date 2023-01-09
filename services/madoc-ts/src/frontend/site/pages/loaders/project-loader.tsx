@@ -46,7 +46,7 @@ export const ProjectLoader: UniversalComponent<ProjectLoaderType> = createUniver
       <AutoSlotLoader>
         <ConfigProvider project={project?.config}>
           <BreadcrumbContext project={ctx}>
-            {!user ? (
+            {!user && project?.status === 1 ? (
               <InfoMessage $wide>
                 {t('Please login to contribute to this project')}
                 <Button style={{ marginLeft: '1em' }} $primary as={HrefLink} href={`/login?${stringify({ redirect })}`}>

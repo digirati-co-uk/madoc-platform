@@ -45,6 +45,9 @@ supports a wider range of IIIF resources as a result.
 * Fixed bug where you could not delete a project if the capture model had already been deleted
 * Fixed missing structure in project export
 * Fixed bug where some empty annotations were exported
+* Fixed annotation format when exporting Presentation 3 Manifest (OA -> W3C)
+* Fixed bug with read-only annotations disappearing
+* Fixed message "login to contribute" on published projects
 
 ### Added
 
@@ -101,6 +104,7 @@ supports a wider range of IIIF resources as a result.
 * Added `createdAt` and `updatedAt` fields to capture models
 * Added ability to create automated user types
 * Added experimental Auto-review process
+* Added new interactions in the Document panel for annotations
 
 ### Changed
 
@@ -158,6 +162,7 @@ supports a wider range of IIIF resources as a result.
   see [use-module.ts](https://github.com/digirati-co-uk/madoc-platform/blob/09d566aa4560dc72b878db089b4e1b834c608ed7/services/madoc-ts/src/frontend/shared/plugins/use-module.ts))
 * Move Api keys database code to `ApiKeyRepository`
 * Added flags that can be passed into the `BaseRepository` class
+* Split out `ViewDocument` into more manageable components 
 
 ## [2.0.8](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.8) - 2022-08-24
 

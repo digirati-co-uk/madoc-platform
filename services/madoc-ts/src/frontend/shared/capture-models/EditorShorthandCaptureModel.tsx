@@ -1,4 +1,5 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Input } from './editor/atoms/Input';
 import { captureModelShorthand } from './helpers/capture-model-shorthand';
 import { generateId } from './helpers/generate-id';
 import { hydrateCaptureModel } from './helpers/hydrate-capture-model';
@@ -9,6 +10,7 @@ import { RevisionProviderWithFeatures } from './new/components/RevisionProviderW
 import { createRevisionFromDocument } from '../utility/create-revision-from-document';
 import { CaptureModel } from './types/capture-model';
 import { RevisionRequest } from './types/revision-request';
+import { InputContainer, InputLabel } from '../form/Input';
 
 export const EditShorthandCaptureModel: React.FC<{
   data?: any | undefined;
@@ -23,6 +25,8 @@ export const EditShorthandCaptureModel: React.FC<{
   keepExtraFields?: boolean;
   structure?: CaptureModel['structure'];
   children?: any;
+  enableSearch?: boolean;
+  searchLabel?: string;
 }> = ({
   data,
   onSave,
@@ -35,8 +39,12 @@ export const EditShorthandCaptureModel: React.FC<{
   fullDocument,
   immutableFields,
   structure,
+  enableSearch,
+  searchLabel,
   children,
 }) => {
+  const [search, setSearch] = useState('');
+
   const saveRevision = useCallback(
     ({ revisionRequest }: { revisionRequest: RevisionRequest }) => {
       if (onSave) {
@@ -108,6 +116,18 @@ export const EditShorthandCaptureModel: React.FC<{
       initialRevision={rev.revisionId}
       revision={rev.revisionId}
     >
+      {enableSearch ? (
+        <InputContainer wide>
+          {searchLabel ? <InputLabel>{searchLabel}</InputLabel> : null}
+          <Input type="text" value={search} placeholder={'Search...'} onChange={e => setSearch(e.target.value)} />
+          <style>
+            {search.length > 1
+              ? `fieldset[data-field-id]:not(fieldset[aria-label*="${search}" i], fieldset[data-aria-description*="${search}" i], fieldset:has(input[type="checkbox"][aria-label*="${search}" i])) {display: none}`
+              : null}
+          </style>
+        </InputContainer>
+      ) : null}
+
       <div style={{ fontSize: '0.85em', maxWidth: 550 }}>{children ? children : <EditorSlots.TopLevelEditor />}</div>
 
       <div style={{ display: 'flex' }}>

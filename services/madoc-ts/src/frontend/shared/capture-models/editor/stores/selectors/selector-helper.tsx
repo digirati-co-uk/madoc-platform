@@ -53,7 +53,7 @@
 //
 //  controller.withSelector(selectorId).dispatch('change')
 
-import React, { createContext, useContext, useMemo } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import mitt, { Handler } from 'mitt';
 
 const SelectorHelperReactContext = createContext(mitt());
@@ -78,6 +78,36 @@ export const SelectorControllerProvider: React.FC = ({ children }) => {
 
 export function useSelectorEmitter() {
   return useContext(SelectorHelperReactContext);
+}
+
+export function useSelectorEvents(id: string) {
+  const controller = useSelectorController();
+  const [isHighlighted, setIsHighlighted] = useState(false);
+
+  useEffect(() => {
+    return controller.withSelector(id).on('highlight', () => {
+      setIsHighlighted(true);
+    });
+  }, [controller, id]);
+
+  useEffect(() => {
+    return controller.withSelector(id).on('clear-highlight', () => {
+      setIsHighlighted(false);
+    });
+  }, [controller, id]);
+
+  const onClick = useCallback(
+    (e?: { x: number; y: number; width: number; height: number }) => {
+      controller.emit('click', { selectorId: id, event: e });
+    },
+    [id, controller]
+  );
+
+  return {
+    controller,
+    onClick,
+    isHighlighted,
+  };
 }
 
 export function useSelectorController() {

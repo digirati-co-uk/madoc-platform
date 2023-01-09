@@ -15,6 +15,11 @@ export const CroppedImage = styled.div<{
   align-items: center;
   overflow: hidden;
 
+  &[data-size='tiny'] {
+    width: 40px;
+    height: 40px;
+  }
+
   ${props =>
     props.$fluid &&
     css`

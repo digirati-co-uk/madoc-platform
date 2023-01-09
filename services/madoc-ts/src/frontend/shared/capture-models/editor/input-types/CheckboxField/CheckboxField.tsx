@@ -21,6 +21,7 @@ export const CheckboxField: FieldComponent<CheckboxFieldProps> = props => {
             id={props.id}
             disabled={props.disabled}
             checked={props.value}
+            aria-label={props.inlineLabel}
             onChange={v => {
               props.updateValue(v.target.checked);
             }}
