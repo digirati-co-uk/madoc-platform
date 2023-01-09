@@ -10,6 +10,7 @@ import { SnippetThumbnail, SnippetThumbnailContainer } from '../atoms/SnippetLar
 import { createLink } from '../utility/create-link';
 import { HrefLink } from '../utility/href-link';
 import { LocaleString } from './LocaleString';
+import { InternationalString } from '@iiif/presentation-3';
 
 export const ResultsContainer = styled.div<{ $isFetching?: boolean }>`
   flex: 1 1 0px;
@@ -50,12 +51,19 @@ const ResultText = styled.span`
   line-height: 1.3em;
 `;
 
+export const ResultTitle = styled.div`
+  text-decoration: none;
+  color: #2962ff;
+  font-size: 1.25rem;
+  padding-bottom: 0.625rem;
+`;
+
 const TextContainer = styled.div`
   margin-left: 1em;
 
   &[data-list-item='false'] {
     margin-left: 0;
-  
+
     span {
       display: -webkit-box;
       max-width: 160px;
@@ -67,14 +75,17 @@ const TextContainer = styled.div`
       text-overflow: ellipsis;
       line-height: 1.625;
     }
+
+    ${ResultTitle} {
+      font-size: 1rem;
+      padding-bottom: 0;
+    }
   }
 `;
 
-export const ResultTitle = styled.div`
-  text-decoration: none;
-  color: #2962ff;
-  font-size: 1.25rem;
-  padding-bottom: 0.625rem;
+export const Subtitle = styled.div`
+  margin: 0.5em 0;
+  color: #666;
 `;
 
 export const TotalResults = styled.div`
@@ -82,6 +93,18 @@ export const TotalResults = styled.div`
   color: #666;
 `;
 
+export const MetaDataList = styled.div`
+  margin-top: 2em;
+`;
+export const MetaDataItem = styled.span`
+  margin-right: 1em;
+
+  border: 1px solid #2962ff;
+  color: #2962ff;
+  border-radius: 3px;
+  padding: 0.2em;
+  font-size: 12px;
+`;
 function sanitizeLabel(str: string) {
   return str.replace(/^.*': '/, '');
 }
@@ -130,10 +153,10 @@ export const SearchItem: React.FC<{
         <GridContainer>
           <ImageStripBox data-view-list={list} $border={border} $color={textColor} $bgColor={background} $size={size}>
             {isManifest ? (
-              <SnippetThumbnailContainer stackedThumbnail={isManifest} portrait fluid>
+              <SnippetThumbnailContainer stackedThumbnail={isManifest} portrait>
                 <SnippetThumbnail
                   src={result.madoc_thumbnail}
-                  style={{ maxHeight: 200, fitContent: 'scale-down' } as any}
+                  style={{ height: 200, fitContent: 'scale-down' } as any}
                 />
               </SnippetThumbnailContainer>
             ) : (
@@ -143,6 +166,7 @@ export const SearchItem: React.FC<{
             )}
             <TextContainer data-list-item={list} style={{ alignSelf: 'flex-start' }}>
               <LocaleString as={ResultTitle}>{result.label}</LocaleString>
+              <LocaleString as={Subtitle}>{result.resource_type}</LocaleString>
               {snippet && !hideSnippet ? (
                 <div style={{ paddingBottom: '.8em', maxWidth: 600 }}>
                   <ResultText
@@ -153,6 +177,18 @@ export const SearchItem: React.FC<{
                   />
                 </div>
               ) : null}
+
+              {/*{result.metadata && (*/}
+              {/*  <MetaDataList>*/}
+              {/*    {result.metadata.map((item: any, i: number) => {*/}
+              {/*      return (*/}
+              {/*        <MetaDataItem key={i}>*/}
+              {/*          <LocaleString>{item.label}</LocaleString> : <LocaleString>{item.value}</LocaleString>*/}
+              {/*        </MetaDataItem>*/}
+              {/*      );*/}
+              {/*    })}*/}
+              {/*  </MetaDataList>*/}
+              {/*)}*/}
             </TextContainer>
           </ImageStripBox>
         </GridContainer>
