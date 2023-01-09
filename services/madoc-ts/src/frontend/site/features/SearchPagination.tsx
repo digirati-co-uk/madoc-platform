@@ -33,7 +33,7 @@ blockEditorFor(SearchPagination, {
   type: 'default.SearchPagination',
   label: 'Search pagination',
   anyContext: [],
-  requiredContext: [],
+  requiredContext: ['page'],
   defaultProps: {
     paginationStyle: false,
     position: 'flex-end',

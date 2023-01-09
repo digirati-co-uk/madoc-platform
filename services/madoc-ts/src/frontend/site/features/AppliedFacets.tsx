@@ -72,6 +72,6 @@ blockEditorFor(AppliedFacets, {
   label: 'Applied Facets',
   type: 'default.applied-facets',
   anyContext: [],
-  requiredContext: [],
+  requiredContext: ['page'],
   editor: {},
 });

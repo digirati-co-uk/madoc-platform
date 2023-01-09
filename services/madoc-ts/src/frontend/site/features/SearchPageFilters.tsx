@@ -16,6 +16,7 @@ import { useSearchFacets } from '../hooks/use-search-facets';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { CheckboxBtn } from '../../shared/atoms/CheckboxBtn';
 import { useSearch } from '../hooks/use-search';
+import { SearchBox } from '../../shared/atoms/SearchBox';
 
 interface SearchPageFiltersProps {
   checkBoxColor?: string;
@@ -24,7 +25,7 @@ interface SearchPageFiltersProps {
 export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxColor }) => {
   const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch();
   const { t } = useTranslation();
-  const { appliedFacets } = useSearchQuery();
+  const { appliedFacets, fulltext } = useSearchQuery();
 
   const {
     inQueue,
@@ -33,6 +34,7 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
     isFacetSelected,
     applyAllFacets,
     clearAllFacets,
+    setFullTextQuery,
   } = useSearchFacets();
 
   if (!displayFacets) {
@@ -41,7 +43,7 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
   return (
     <SearchFilterContainer>
       <SearchFilterTitle>{t('Refine search')}</SearchFilterTitle>
-      {/*<SearchBox onSearch={setFullTextQuery} placeholder="Keywords" value={fulltext} />*/}
+      <SearchBox onSearch={setFullTextQuery} placeholder="Keywords" value={fulltext} />
       <ButtonRow>
         <TinyButton disabled={!inQueue} onClick={() => applyAllFacets()}>
           {t('Apply')}
@@ -94,7 +96,7 @@ blockEditorFor(SearchPageFilters, {
   label: 'Search Page Filters',
   type: 'default.search-page-filters',
   anyContext: [],
-  requiredContext: [],
+  requiredContext: ['page'],
   defaultProps: {
     checkBoxColor: '',
   },

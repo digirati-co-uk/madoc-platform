@@ -69,7 +69,7 @@ blockEditorFor(SearchPageResults, {
   label: 'Search Page Results',
   type: 'default.SearchPageResults',
   anyContext: [],
-  requiredContext: [],
+  requiredContext: ['page'],
   defaultProps: {
     background: '',
     grid: '',
