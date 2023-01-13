@@ -31,6 +31,7 @@ function compatTopicType(topicType: EntityTypeMadocResponse, topics: EntitiesMad
     ...topicType,
     label: { none: [slug] },
     otherLabels: [], // @todo no other labels given.
+    pagination: topics.pagination,
     topics: topics.results.map(compatTopic),
 
     // Mocked editorial
@@ -40,7 +41,6 @@ function compatTopicType(topicType: EntityTypeMadocResponse, topics: EntitiesMad
       featured: [],
       heroImage: null,
     },
-
     // Nuke these.
     ...nuked,
   };
