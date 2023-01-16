@@ -27,10 +27,13 @@ import styled from 'styled-components';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { useTaskMetadata } from '../../../hooks/use-task-metadata';
 import { SubjectSnippet } from '../../../../../extensions/tasks/resolvers/subject-resolver';
-import { baseTab, SimpleStatus } from '../../../../shared/atoms/SimpleStatus';
+import { SimpleStatus } from '../../../../shared/atoms/SimpleStatus';
 
 const ReviewContainer = styled.div`
-position: relative`;
+  position: relative;
+  overflow-x: hidden;
+  height: 80vh;
+`;
 
 const ReviewHeader = styled.div`
   height: 43px;
@@ -40,6 +43,7 @@ const ReviewHeader = styled.div`
   line-height: 24px;
   position: sticky;
   top: 0;
+  z-index: 4;
 `;
 
 const Label = styled.div`
@@ -57,7 +61,7 @@ const ReviewActionBar = styled.div`
   display: inline-flex;
   justify-content: space-between;
   width: 100%;
-  padding: 0 0.4em;
+  padding: 0 0.6em;
 `;
 
 const ReviewActions = styled.div`
@@ -67,7 +71,16 @@ const ReviewActions = styled.div`
     border: none;
   }
 `;
-const ReviewEditor = styled.div``;
+const ReviewPreview = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  overflow-y: scroll;
+
+  > div {
+    padding: 0.6em;
+    width: auto;
+  }
+`;
 
 function ViewSingleReview({
   task,
@@ -154,31 +167,35 @@ function ViewSingleReview({
             ) : null}
           </div>
         </ReviewActionBar>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ width: 420 }}>
-            {canvas ? <EditorContentViewer height={300} canvasId={canvas.id} /> : null}
+
+        <ReviewPreview>
+          <div style={{ minWidth: '40%' }}>
             <EditorSlots.TopLevelEditor />
           </div>
-        </div>
-
-        <>
-          {canvasLink ? (
-            <EditorToolbarButton as={HrefLink} href={canvasLink}>
-              <EditorToolbarIcon>
-                <PreviewIcon />
-              </EditorToolbarIcon>
-              <EditorToolbarLabel>View resource</EditorToolbarLabel>
-            </EditorToolbarButton>
-          ) : null}
-          {manifestLink ? (
-            <EditorToolbarButton as={HrefLink} href={manifestLink}>
-              <EditorToolbarIcon>
-                <PreviewIcon />
-              </EditorToolbarIcon>
-              <EditorToolbarLabel>View manifest</EditorToolbarLabel>
-            </EditorToolbarButton>
-          ) : null}
-        </>
+          <div style={{ minWidth: '60%' }}>
+            <ReviewActions>
+              <>
+                {canvasLink ? (
+                  <EditorToolbarButton as={HrefLink} href={canvasLink}>
+                    <EditorToolbarIcon>
+                      <PreviewIcon />
+                    </EditorToolbarIcon>
+                    <EditorToolbarLabel>View resource</EditorToolbarLabel>
+                  </EditorToolbarButton>
+                ) : null}
+                {manifestLink ? (
+                  <EditorToolbarButton as={HrefLink} href={manifestLink}>
+                    <EditorToolbarIcon>
+                      <PreviewIcon />
+                    </EditorToolbarIcon>
+                    <EditorToolbarLabel>View manifest</EditorToolbarLabel>
+                  </EditorToolbarButton>
+                ) : null}
+              </>
+            </ReviewActions>
+            {canvas ? <EditorContentViewer height={300} canvasId={canvas.id} /> : null}
+          </div>
+        </ReviewPreview>
       </ReviewContainer>
     </RevisionProviderWithFeatures>
   );

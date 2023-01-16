@@ -19,15 +19,17 @@ import { useTaskMetadata } from '../../../hooks/use-task-metadata';
 import ReactTooltip from 'react-tooltip';
 
 const TaskListContainer = styled.div`
-  min-width: 0;
   flex: 1;
   overflow-x: hidden;
   height: 80vh;
   border-right: 3px solid #dbdbdb;
+  min-width: 400px;
+  width: 50%;
 `;
 
 const TaskPreviewContainer = styled.div`
-  min-width: 700px;
+  min-width: 400px;
+  width: 50%;
 `;
 
 const ReviewListingContainer = styled.div`
