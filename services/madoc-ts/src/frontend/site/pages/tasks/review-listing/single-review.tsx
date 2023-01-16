@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { CrowdsourcingReview } from '../../../../../gateway/tasks/crowdsourcing-review';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
@@ -23,11 +23,15 @@ import { useCrowdsourcingTaskDetails } from '../../../hooks/use-crowdsourcing-ta
 import { ApproveSubmission } from '../actions/approve-submission';
 import { RejectSubmission } from '../actions/reject-submission';
 import { RequestChanges } from '../actions/request-changes';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { useTaskMetadata } from '../../../hooks/use-task-metadata';
 import { SubjectSnippet } from '../../../../../extensions/tasks/resolvers/subject-resolver';
 import { SimpleStatus } from '../../../../shared/atoms/SimpleStatus';
+import { ButtonDropdown } from '../../../../shared/navigation/ButtonDropdown';
+import { ItemFilter } from '../../../../shared/components/ItemFilter';
+import { Button } from '../../../../shared/navigation/Button';
+import useDropdownMenu from "react-accessible-dropdown-menu-hook";
 
 const ReviewContainer = styled.div`
   position: relative;
@@ -71,6 +75,32 @@ const ReviewActions = styled.div`
     border: none;
   }
 `;
+
+const ReviewDropdownContainer = styled.div`
+  position: relative;
+  max-width: 150px;
+  align-self: end;
+`;
+
+const ReviewDropdownPopup = styled.div<{ $visible?: boolean }>`
+  background: #ffffff;
+  border: 1px solid #3498db;
+  z-index: 11;
+  border-radius: 4px;
+  position: absolute;
+  display: none;
+  padding: 0.3em;
+  top: 2.6em;
+  right: 0;
+  font-size: 0.9em;
+  min-width: 10em;
+  ${props =>
+    props.$visible &&
+    css`
+      display: block;
+    `}
+`;
+
 const ReviewPreview = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -100,6 +130,11 @@ function ViewSingleReview({
   } = useCrowdsourcingTaskDetails(task);
   const refetch = useRefetch();
   const metadata = useTaskMetadata<{ subject?: SubjectSnippet }>(task);
+
+  // const [isOpen, setIsOpen] = useState(false);
+  const { buttonProps, isOpen } = useDropdownMenu(1, {
+    disableFocusFirstItemOnClick: true,
+  });
 
   if (!review) {
     return <EmptyState>This task is not yet ready for review.</EmptyState>;
@@ -172,27 +207,30 @@ function ViewSingleReview({
           <div style={{ minWidth: '40%' }}>
             <EditorSlots.TopLevelEditor />
           </div>
-          <div style={{ minWidth: '60%' }}>
-            <ReviewActions>
-              <>
-                {canvasLink ? (
-                  <EditorToolbarButton as={HrefLink} href={canvasLink}>
-                    <EditorToolbarIcon>
-                      <PreviewIcon />
-                    </EditorToolbarIcon>
-                    <EditorToolbarLabel>View resource</EditorToolbarLabel>
-                  </EditorToolbarButton>
-                ) : null}
-                {manifestLink ? (
-                  <EditorToolbarButton as={HrefLink} href={manifestLink}>
-                    <EditorToolbarIcon>
-                      <PreviewIcon />
-                    </EditorToolbarIcon>
-                    <EditorToolbarLabel>View manifest</EditorToolbarLabel>
-                  </EditorToolbarButton>
-                ) : null}
-              </>
-            </ReviewActions>
+          <div style={{ minWidth: '60%', display: 'flex', flexDirection: 'column' }}>
+            <ReviewDropdownContainer>
+              <Button $link {...buttonProps}>Options</Button>
+              <ReviewDropdownPopup $visible={isOpen} role="menu">
+                <>
+                  {canvasLink ? (
+                    <EditorToolbarButton as={HrefLink} href={canvasLink}>
+                      <EditorToolbarIcon>
+                        <PreviewIcon />
+                      </EditorToolbarIcon>
+                      <EditorToolbarLabel>View resource</EditorToolbarLabel>
+                    </EditorToolbarButton>
+                  ) : null}
+                  {manifestLink ? (
+                    <EditorToolbarButton as={HrefLink} href={manifestLink}>
+                      <EditorToolbarIcon>
+                        <PreviewIcon />
+                      </EditorToolbarIcon>
+                      <EditorToolbarLabel>View manifest</EditorToolbarLabel>
+                    </EditorToolbarButton>
+                  ) : null}
+                </>
+              </ReviewDropdownPopup>
+            </ReviewDropdownContainer>
             {canvas ? <EditorContentViewer height={300} canvasId={canvas.id} /> : null}
           </div>
         </ReviewPreview>
