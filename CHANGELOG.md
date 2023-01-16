@@ -105,6 +105,7 @@ supports a wider range of IIIF resources as a result.
 * Added ability to create automated user types
 * Added experimental Auto-review process
 * Added new interactions in the Document panel for annotations
+* Added secondary view for "X hours ago" to show the date and time on click (browser preference)
 
 ### Changed
 
