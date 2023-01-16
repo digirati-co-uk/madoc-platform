@@ -4,6 +4,7 @@ const Table = styled.table`
   width: 100%;
   border: 1px solid #eee;
   border-collapse: collapse;
+  position: relative;
 `;
 
 const Row = styled.tr<{ $interactive?: boolean }>`
@@ -27,6 +28,10 @@ const Header = styled.th`
   border-collapse: collapse;
   font-weight: 600;
   border-bottom: 1px solid #eee;
+  background-color: #f7f7f7;
+  text-align: start;
+  top: 0;
+  position: sticky;
 `;
 
 export const SimpleTable = {

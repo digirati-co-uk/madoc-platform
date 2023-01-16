@@ -50,7 +50,6 @@ const ThickTableRow = styled(SimpleTable.Row)<{ $active?: boolean }>`
     `}
 
   ${SimpleTable.Cell} {
-    text-align: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -80,6 +79,7 @@ export function ReviewListingPage() {
   // 4. Display current review interface
   // 5. Add alternative version with form and then actions, with a toggle.
 
+  console.log(data);
   return (
     <RefetchProvider refetch={refetch}>
       <DisplayBreadcrumbs currentPage={t('Reviews')} />
@@ -88,6 +88,7 @@ export function ReviewListingPage() {
           <SimpleTable.Table>
             <thead>
               <SimpleTable.Row>
+                <SimpleTable.Header>Manifests</SimpleTable.Header>
                 <SimpleTable.Header>Resource</SimpleTable.Header>
                 <SimpleTable.Header>Date</SimpleTable.Header>
                 <SimpleTable.Header>Status</SimpleTable.Header>
@@ -116,37 +117,33 @@ function SingleReviewTableRow({ task, active }: { task: CrowdsourcingTask; activ
 
   return (
     <ThickTableRow $active={active}>
-      <SimpleTable.Cell style={{ textAlign: 'left', maxWidth: 200 }}>
+      {/* manifest */}
+      <SimpleTable.Cell style={{ maxWidth: 300 }}>
+        {metadata.subject && metadata.subject.parent && (
+          <LocaleString style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            {metadata.subject.parent.label}
+          </LocaleString>
+        )}
+      </SimpleTable.Cell>
+      {/* resource name */}
+      <SimpleTable.Cell>
         <HrefLink
-          style={{ display: 'flex', maxWidth: 200 }}
           href={createLink({
             taskId: undefined,
             subRoute: `reviews/${task.id}`,
             query,
           })}
         >
-          {metadata && metadata.subject ? (
-            metadata.subject.parent ? (
-              <>
-                <LocaleString style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {metadata.subject.parent.label}
-                </LocaleString>{' '}
-                - <LocaleString>{metadata.subject.label}</LocaleString>
-              </>
-            ) : (
-              <LocaleString>{metadata.subject.label}</LocaleString>
-            )
-          ) : (
-            task.name
-          )}
+          {metadata && metadata.subject ? <LocaleString>{metadata.subject.label}</LocaleString> : task.name}
         </HrefLink>
       </SimpleTable.Cell>
-      <SimpleTable.Cell style={{ paddingLeft: '1em' }}>
-        {task.modified_at ? <TimeAgo date={new Date(task.modified_at)} /> : null}
-      </SimpleTable.Cell>
+      {/* date */}
+      <SimpleTable.Cell>{task.modified_at ? <TimeAgo date={new Date(task.modified_at)} /> : null}</SimpleTable.Cell>
+      {/* status */}
       <SimpleTable.Cell>
         <SimpleStatus status={task.status} status_text={task.status_text || ''} />
       </SimpleTable.Cell>
+      {/* asignee */}
       <SimpleTable.Cell>
         {task.assignee ? (
           <HrefLink href={`/users/${extractIdFromUrn(task.assignee.id)}`}>{task.assignee.name}</HrefLink>
