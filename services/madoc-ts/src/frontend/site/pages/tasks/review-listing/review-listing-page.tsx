@@ -6,7 +6,6 @@ import { SubjectSnippet } from '../../../../../extensions/tasks/resolvers/subjec
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
 import { extractIdFromUrn } from '../../../../../utility/parse-urn';
 import { SimpleStatus } from '../../../../shared/atoms/SimpleStatus';
-import { TimeAgo } from '../../../../shared/atoms/TimeAgo';
 import { DisplayBreadcrumbs } from '../../../../shared/components/Breadcrumbs';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { useData } from '../../../../shared/hooks/use-data';
@@ -17,6 +16,7 @@ import { HrefLink } from '../../../../shared/utility/href-link';
 import { RefetchProvider } from '../../../../shared/utility/refetch-context';
 import { useRelativeLinks } from '../../../hooks/use-relative-links';
 import { useTaskMetadata } from '../../../hooks/use-task-metadata';
+import ReactTooltip from 'react-tooltip';
 
 const TaskListContainer = styled.div`
   min-width: 0;
@@ -85,7 +85,7 @@ export function ReviewListingPage() {
       <DisplayBreadcrumbs currentPage={t('Reviews')} />
       <ReviewListingContainer>
         <TaskListContainer>
-          <SimpleTable.Table>
+          <SimpleTable.Table style={{ borderColor: 'transparent' }}>
             <thead>
               <SimpleTable.Row>
                 <SimpleTable.Header>Manifests</SimpleTable.Header>
@@ -138,12 +138,21 @@ function SingleReviewTableRow({ task, active }: { task: CrowdsourcingTask; activ
         </HrefLink>
       </SimpleTable.Cell>
       {/* date */}
-      <SimpleTable.Cell>{task.modified_at ? <TimeAgo date={new Date(task.modified_at)} /> : null}</SimpleTable.Cell>
+      <SimpleTable.Cell>
+        <>
+          {task.created_at ? (
+            <div data-tip="created">{new Date(task.created_at).toLocaleDateString()}</div>
+          ) : task.modified_at ? (
+            <div data-tip="modified">{new Date(task.modified_at).toLocaleDateString()}</div>
+          ) : null}
+          <ReactTooltip place="bottom" type="dark" effect="solid" />
+        </>
+      </SimpleTable.Cell>
       {/* status */}
       <SimpleTable.Cell>
         <SimpleStatus status={task.status} status_text={task.status_text || ''} />
       </SimpleTable.Cell>
-      {/* asignee */}
+      {/* assignee */}
       <SimpleTable.Cell>
         {task.assignee ? (
           <HrefLink href={`/users/${extractIdFromUrn(task.assignee.id)}`}>{task.assignee.name}</HrefLink>
