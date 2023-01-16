@@ -79,7 +79,6 @@ export function ReviewListingPage() {
   // 4. Display current review interface
   // 5. Add alternative version with form and then actions, with a toggle.
 
-  console.log(data);
   return (
     <RefetchProvider refetch={refetch}>
       <DisplayBreadcrumbs currentPage={t('Reviews')} />
@@ -88,8 +87,8 @@ export function ReviewListingPage() {
           <SimpleTable.Table style={{ borderColor: 'transparent' }}>
             <thead>
               <SimpleTable.Row>
-                <SimpleTable.Header>Manifests</SimpleTable.Header>
-                <SimpleTable.Header>Resource</SimpleTable.Header>
+                <SimpleTable.Header>Manifest</SimpleTable.Header>
+                <SimpleTable.Header>Canvas</SimpleTable.Header>
                 <SimpleTable.Header>Date</SimpleTable.Header>
                 <SimpleTable.Header>Status</SimpleTable.Header>
                 <SimpleTable.Header>Contributor</SimpleTable.Header>
