@@ -23,6 +23,51 @@ import { useCrowdsourcingTaskDetails } from '../../../hooks/use-crowdsourcing-ta
 import { ApproveSubmission } from '../actions/approve-submission';
 import { RejectSubmission } from '../actions/reject-submission';
 import { RequestChanges } from '../actions/request-changes';
+import styled from 'styled-components';
+import { LocaleString } from '../../../../shared/components/LocaleString';
+import { useTaskMetadata } from '../../../hooks/use-task-metadata';
+import { SubjectSnippet } from '../../../../../extensions/tasks/resolvers/subject-resolver';
+import { baseTab, SimpleStatus } from '../../../../shared/atoms/SimpleStatus';
+
+const ReviewContainer = styled.div`
+position: relative`;
+
+const ReviewHeader = styled.div`
+  height: 43px;
+  background-color: #f7f7f7;
+  display: flex;
+  border-bottom: 1px solid #dddddd;
+  line-height: 24px;
+  position: sticky;
+  top: 0;
+`;
+
+const Label = styled.div`
+  font-weight: 600;
+  padding: 0.6em;
+`;
+
+const SubLabel = styled.div`
+  color: #6b6b6b;
+  padding: 0.6em;
+  font-size: 14px;
+`;
+const ReviewActionBar = styled.div`
+  border-bottom: 1px solid #dddddd;
+  display: inline-flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 0.4em;
+`;
+
+const ReviewActions = styled.div`
+  display: flex;
+
+  button {
+    border: none;
+  }
+`;
+const ReviewEditor = styled.div``;
 
 function ViewSingleReview({
   task,
@@ -41,6 +86,7 @@ function ViewSingleReview({
     manifestLink,
   } = useCrowdsourcingTaskDetails(task);
   const refetch = useRefetch();
+  const metadata = useTaskMetadata<{ subject?: SubjectSnippet }>(task);
 
   if (!review) {
     return <EmptyState>This task is not yet ready for review.</EmptyState>;
@@ -55,7 +101,59 @@ function ViewSingleReview({
         components: { SubmitButton: SimpleSaveButton },
       }}
     >
-      <div style={{ display: 'flex' }}>
+      <ReviewContainer>
+        <ReviewHeader>
+          <Label>
+            {metadata && metadata.subject ? <LocaleString>{metadata.subject.label}</LocaleString> : task.name}
+          </Label>
+
+          <SubLabel>
+            {metadata.subject && metadata.subject.parent && (
+              <LocaleString style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {metadata.subject.parent.label}
+              </LocaleString>
+            )}
+          </SubLabel>
+        </ReviewHeader>
+        <ReviewActionBar>
+          <SimpleStatus status={task.status} status_text={task.status_text || ''} />
+          <div>
+            {review && !wasRejected ? (
+              <ReviewActions>
+                <RejectSubmission
+                  userTaskId={task.id}
+                  onReject={() => {
+                    refetch();
+                  }}
+                />
+
+                <RequestChanges
+                  userTaskId={task.id}
+                  changesRequested={task.state?.changesRequested}
+                  onRequest={() => {
+                    refetch();
+                  }}
+                />
+
+                {/*<StartMerge*/}
+                {/*  allTasks={props.allTasks as any}*/}
+                {/*  reviewTaskId={data.review.id}*/}
+                {/*  userTask={task}*/}
+                {/*  // onStartMerge={(revId: string) => props.goBack({ refresh: true, revisionId: revId })}*/}
+                {/*/>*/}
+
+                <ApproveSubmission
+                  project={project}
+                  userTaskId={task.id}
+                  onApprove={() => {
+                    refetch();
+                  }}
+                  reviewTaskId={review.id}
+                />
+              </ReviewActions>
+            ) : null}
+          </div>
+        </ReviewActionBar>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ width: 420 }}>
             {canvas ? <EditorContentViewer height={300} canvasId={canvas.id} /> : null}
@@ -63,60 +161,25 @@ function ViewSingleReview({
           </div>
         </div>
 
-        <div style={{ maxWidth: 300 }}>
-          {review && !wasRejected ? (
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              {canvasLink ? (
-                <EditorToolbarButton as={HrefLink} href={canvasLink} $leftBorder>
-                  <EditorToolbarIcon>
-                    <PreviewIcon />
-                  </EditorToolbarIcon>
-                  <EditorToolbarLabel>View resource</EditorToolbarLabel>
-                </EditorToolbarButton>
-              ) : null}
-              {manifestLink ? (
-                <EditorToolbarButton as={HrefLink} href={manifestLink} $leftBorder>
-                  <EditorToolbarIcon>
-                    <PreviewIcon />
-                  </EditorToolbarIcon>
-                  <EditorToolbarLabel>View manifest</EditorToolbarLabel>
-                </EditorToolbarButton>
-              ) : null}
-
-              <RejectSubmission
-                userTaskId={task.id}
-                onReject={() => {
-                  refetch();
-                }}
-              />
-
-              <RequestChanges
-                userTaskId={task.id}
-                changesRequested={task.state?.changesRequested}
-                onRequest={() => {
-                  refetch();
-                }}
-              />
-
-              {/*<StartMerge*/}
-              {/*  allTasks={props.allTasks as any}*/}
-              {/*  reviewTaskId={data.review.id}*/}
-              {/*  userTask={task}*/}
-              {/*  // onStartMerge={(revId: string) => props.goBack({ refresh: true, revisionId: revId })}*/}
-              {/*/>*/}
-
-              <ApproveSubmission
-                project={project}
-                userTaskId={task.id}
-                onApprove={() => {
-                  refetch();
-                }}
-                reviewTaskId={review.id}
-              />
-            </div>
+        <>
+          {canvasLink ? (
+            <EditorToolbarButton as={HrefLink} href={canvasLink}>
+              <EditorToolbarIcon>
+                <PreviewIcon />
+              </EditorToolbarIcon>
+              <EditorToolbarLabel>View resource</EditorToolbarLabel>
+            </EditorToolbarButton>
           ) : null}
-        </div>
-      </div>
+          {manifestLink ? (
+            <EditorToolbarButton as={HrefLink} href={manifestLink}>
+              <EditorToolbarIcon>
+                <PreviewIcon />
+              </EditorToolbarIcon>
+              <EditorToolbarLabel>View manifest</EditorToolbarLabel>
+            </EditorToolbarButton>
+          ) : null}
+        </>
+      </ReviewContainer>
     </RevisionProviderWithFeatures>
   );
 }

@@ -71,7 +71,6 @@ export const RequestChanges: React.FC<{
       )}
       renderFooter={({ close }: any) => (
         <Button
-          style={{ marginLeft: 'auto' }}
           onClick={() => {
             close();
             requestChangesApiCall();

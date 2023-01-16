@@ -27,7 +27,6 @@ const TaskListContainer = styled.div`
 `;
 
 const TaskPreviewContainer = styled.div`
-  padding: 1em;
   min-width: 700px;
 `;
 

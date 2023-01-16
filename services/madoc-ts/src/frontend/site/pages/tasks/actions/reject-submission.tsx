@@ -52,7 +52,7 @@ export const RejectSubmission: React.FC<{ onReject: () => void; userTaskId: stri
       disabled={isLoading}
       button={true}
       autoHeight={true}
-      title="Reject submission"
+      title="Reject"
       render={() => (
         <div>
           <strong>Are you sure you want to delete this revision and mark the task as rejected?</strong>

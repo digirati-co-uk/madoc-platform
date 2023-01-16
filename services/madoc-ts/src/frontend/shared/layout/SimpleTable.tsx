@@ -27,7 +27,7 @@ const Header = styled.th`
   padding: 0.65em;
   border-collapse: collapse;
   font-weight: 600;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #dddddd;
   background-color: #f7f7f7;
   text-align: start;
   top: 0;

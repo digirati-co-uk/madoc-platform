@@ -85,7 +85,7 @@ export const ApproveSubmission: React.FC<{
       modalSize="sm"
       disabled={loading}
       autoHeight={true}
-      title={t('Approve submission') || ''}
+      title={t('Approve') || ''}
       render={() => (
         <div>
           <ul>
@@ -94,7 +94,7 @@ export const ApproveSubmission: React.FC<{
         </div>
       )}
       renderFooter={({ close }: any) => (
-        <ButtonRow style={{ margin: '0 0 0 auto' }}>
+        <ButtonRow>
           <Button
             data-cy="approve-submission"
             onClick={() => {

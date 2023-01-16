@@ -6,11 +6,12 @@ interface SimpleStatusProps {
   status_text: string;
 }
 
-const baseTab = css`
+export const baseTab = css`
   padding: 0.25em 0.8em;
   border-radius: 3px;
   font-size: 0.8em;
   display: inline-block;
+  align-self: center;
 `;
 
 const Progress = styled.div`
