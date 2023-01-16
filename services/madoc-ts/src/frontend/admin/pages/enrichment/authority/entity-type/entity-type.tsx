@@ -69,7 +69,7 @@ serverRendererFor(EntityType, {
     const entity = await api.authority.entity_type.get(vars.id);
     return {
       entity,
-      items: await api.enrichment.getTopicType(entity.label),
+      items: await api.enrichment.getTopicType(entity.slug),
     };
   },
 });

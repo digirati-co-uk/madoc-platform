@@ -1,8 +1,10 @@
 import { Pagination } from '../../../types/schemas/_pagination';
 
 export interface AuthoritySnippet {
-  name: string;
+  id: string;
   url: string;
+  authority: string;
+  identifier: string;
 }
 
 export interface Authority extends AuthoritySnippet {
@@ -74,9 +76,18 @@ export interface EnrichmentEntity {
     id: string;
     label: string;
   };
+  description: { value: string; language: string }[];
+  image_url: string;
   label: string;
   other_labels: OtherLabels;
   authorities: AuthoritySnippet[]; // Can't remember what this should be...
+  other_data: {
+    image_url: string;
+    image_caption?: string;
+  };
+
+  modified: string;
+  created: string;
 }
 
 export interface EntitySnippetMadoc {
