@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Outlet, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
@@ -16,8 +16,9 @@ import { HrefLink } from '../../../../shared/utility/href-link';
 import { RefetchProvider } from '../../../../shared/utility/refetch-context';
 import { useRelativeLinks } from '../../../hooks/use-relative-links';
 import { useTaskMetadata } from '../../../hooks/use-task-metadata';
-
+import { Button, TextButton } from '../../../../shared/navigation/Button';
 import ReactTooltip from 'react-tooltip';
+import { Chevron } from '../../../../shared/icons/Chevron';
 
 const TaskListContainer = styled.div`
   flex: 1;
@@ -35,9 +36,11 @@ const TaskPreviewContainer = styled.div`
 
 const ReviewListingContainer = styled.div`
   display: flex;
+
   a {
     color: #2b669a;
     text-decoration: none;
+
     &:hover {
       text-decoration: underline;
     }
@@ -50,11 +53,11 @@ const ThickTableRow = styled(SimpleTable.Row)<{ $active?: boolean }>`
     css`
       background: #edf4fb;
     `}
-
   ${SimpleTable.Cell} {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+
     &:hover {
       background: none;
     }
@@ -67,6 +70,10 @@ export function ReviewListingPage() {
   const params = useParams<{ taskId?: string }>();
   const createLink = useRelativeLinks();
 
+  const unsorted = [...data?.tasks];
+  const [tasks, setTasks] = useState(data?.tasks);
+  const [sort, setSort] = useState('');
+
   if (!data) {
     return <>Loading...</>;
   }
@@ -75,6 +82,42 @@ export function ReviewListingPage() {
     return <Navigate to={createLink({ taskId: undefined, subRoute: `reviews/${data.tasks[0].id}` })} />;
   }
 
+  const sortList = (sortBy: string) => {
+    switch (sortBy) {
+      case 'date':
+        return setTasks(tasks?.sort((a, b) => new Date(a.modified_at) - new Date(b.modified_at)));
+      case 'user':
+        return setTasks(tasks?.sort((a, b) => a.assignee.name.localeCompare(b.assignee.name)));
+      case 'status':
+        return setTasks(tasks?.sort((a, b) => a.status_text.localeCompare(b.status_text)));
+    }
+  };
+  const reverseSortList = (sortBy: string) => {
+    switch (sortBy) {
+      case 'date':
+        return setTasks(tasks?.sort((a, b) => new Date(b.modified_at) - new Date(a.modified_at)));
+      case 'user':
+        return setTasks(tasks?.sort((a, b) => b.assignee.name.localeCompare(a.assignee.name)));
+      case 'status':
+        return setTasks(tasks?.sort((a, b) => b.status_text.tolocaleCompare(a.status_text)));
+    }
+  };
+
+  const handleSort = (sortBy: string) => {
+    if (sort === `${sortBy}1`) {
+      // reversed - remove sort
+      setTasks(unsorted);
+      setSort('');
+    } else if (sort === sortBy) {
+      // reverse the sort
+      reverseSortList(sortBy);
+      setSort(sortBy + '1');
+    } else {
+      // sort the list
+      sortList(sortBy);
+      setSort(sortBy);
+    }
+  };
   // 1. Make requests for all crowdsourcing tasks marked as in review.
   // 2. Make an infinite list of these
   // 3. Have an extra parameter for "selectedTask" for the right side
@@ -91,13 +134,34 @@ export function ReviewListingPage() {
               <SimpleTable.Row>
                 <SimpleTable.Header>Manifest</SimpleTable.Header>
                 <SimpleTable.Header>Canvas</SimpleTable.Header>
-                <SimpleTable.Header>Date</SimpleTable.Header>
-                <SimpleTable.Header>Status</SimpleTable.Header>
-                <SimpleTable.Header>Contributor</SimpleTable.Header>
+                <SimpleTable.Header>
+                  <TextButton
+                    style={{ color: sort.includes('date') ? '#3579f6' : '' }}
+                    onClick={() => handleSort('date')}
+                  >
+                    Date <Chevron style={{ transform: 'rotate(0.25turn)' }} />
+                  </TextButton>
+                </SimpleTable.Header>
+                <SimpleTable.Header>
+                  <TextButton
+                    style={{ color: sort.includes('status') ? '#3579f6' : '' }}
+                    onClick={() => handleSort('status')}
+                  >
+                    Status <Chevron style={{ transform: 'rotate(0.25turn)' }} />
+                  </TextButton>
+                </SimpleTable.Header>
+                <SimpleTable.Header>
+                  <TextButton
+                    style={{ color: sort.includes('user') ? '#3579f6' : '' }}
+                    onClick={() => handleSort('user')}
+                  >
+                    Contributor <Chevron style={{ transform: 'rotate(0.25turn)' }} />
+                  </TextButton>
+                </SimpleTable.Header>
               </SimpleTable.Row>
             </thead>
             <tbody>
-              {data?.tasks.map(task => (
+              {tasks?.map(task => (
                 <SingleReviewTableRow key={task.id} task={task} active={task.id === params.taskId} />
               ))}
             </tbody>
