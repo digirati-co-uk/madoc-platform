@@ -28,10 +28,10 @@ import { LocaleString } from '../../../../shared/components/LocaleString';
 import { useTaskMetadata } from '../../../hooks/use-task-metadata';
 import { SubjectSnippet } from '../../../../../extensions/tasks/resolvers/subject-resolver';
 import { SimpleStatus } from '../../../../shared/atoms/SimpleStatus';
-import { ButtonDropdown } from '../../../../shared/navigation/ButtonDropdown';
-import { ItemFilter } from '../../../../shared/components/ItemFilter';
 import { Button } from '../../../../shared/navigation/Button';
-import useDropdownMenu from "react-accessible-dropdown-menu-hook";
+import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
+import { EditIcon } from '../../../../shared/icons/EditIcon';
+import { DirectEditButton } from '../../../../shared/capture-models/new/components/DirectEditButton';
 
 const ReviewContainer = styled.div`
   position: relative;
@@ -66,6 +66,7 @@ const ReviewActionBar = styled.div`
   justify-content: space-between;
   width: 100%;
   padding: 0 0.6em;
+  min-height: 42px;
 `;
 
 const ReviewActions = styled.div`
@@ -101,9 +102,9 @@ const ReviewDropdownPopup = styled.div<{ $visible?: boolean }>`
     `}
 `;
 
+// todo flex-wrap on smaller screens after resizer
 const ReviewPreview = styled.div`
   display: flex;
-  flex-wrap: wrap;
   overflow-y: scroll;
 
   > div {
@@ -131,7 +132,9 @@ function ViewSingleReview({
   const refetch = useRefetch();
   const metadata = useTaskMetadata<{ subject?: SubjectSnippet }>(task);
 
-  // const [isOpen, setIsOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  // const isLocked = props.lockedTasks && props.lockedTasks.indexOf(props.task.id) !== -1;
+  const isDone = task?.status === 3;
   const { buttonProps, isOpen } = useDropdownMenu(1, {
     disableFocusFirstItemOnClick: true,
   });
@@ -144,9 +147,15 @@ function ViewSingleReview({
     <RevisionProviderWithFeatures
       revision={revisionId}
       captureModel={captureModel}
+      features={{
+        autosave: false,
+        autoSelectingRevision: true,
+        revisionEditMode: false,
+        directEdit: true,
+      }}
       slotConfig={{
-        editor: { allowEditing: false },
-        components: { SubmitButton: SimpleSaveButton },
+        editor: { allowEditing: isEditing, deselectRevisionAfterSaving: false, saveOnNavigate: false },
+        components: { SubmitButton: DirectEditButton },
       }}
     >
       <ReviewContainer>
@@ -168,12 +177,18 @@ function ViewSingleReview({
           <div>
             {review && !wasRejected ? (
               <ReviewActions>
+
                 <RejectSubmission
                   userTaskId={task.id}
                   onReject={() => {
                     refetch();
                   }}
                 />
+
+                <EditorToolbarButton onClick={() => setIsEditing(r => !r)} disabled={isDone}>
+                  <EditorToolbarIcon>{isEditing ? <PreviewIcon /> : <EditIcon />}</EditorToolbarIcon>
+                  <EditorToolbarLabel>{isEditing ? 'preview' : 'edit'}</EditorToolbarLabel>
+                </EditorToolbarButton>
 
                 <RequestChanges
                   userTaskId={task.id}
@@ -202,14 +217,16 @@ function ViewSingleReview({
             ) : null}
           </div>
         </ReviewActionBar>
-
         <ReviewPreview>
-          <div style={{ minWidth: '40%' }}>
+          <div style={{ width: '40%' }}>
             <EditorSlots.TopLevelEditor />
+            <EditorSlots.SubmitButton captureModel={captureModel} />
           </div>
           <div style={{ minWidth: '60%', display: 'flex', flexDirection: 'column' }}>
             <ReviewDropdownContainer>
-              <Button $link {...buttonProps}>Options</Button>
+              <Button $link {...buttonProps}>
+                View options
+              </Button>
               <ReviewDropdownPopup $visible={isOpen} role="menu">
                 <>
                   {canvasLink ? (
@@ -231,7 +248,7 @@ function ViewSingleReview({
                 </>
               </ReviewDropdownPopup>
             </ReviewDropdownContainer>
-            {canvas ? <EditorContentViewer height={300} canvasId={canvas.id} /> : null}
+            {canvas ? <EditorContentViewer height={100} canvasId={canvas.id} /> : null}
           </div>
         </ReviewPreview>
       </ReviewContainer>
