@@ -99,7 +99,7 @@ export function ReviewListingPage() {
       case 'user':
         return setTasks(tasks?.sort((a, b) => b.assignee.name.localeCompare(a.assignee.name)));
       case 'status':
-        return setTasks(tasks?.sort((a, b) => b.status_text.tolocaleCompare(a.status_text)));
+        return setTasks(tasks?.sort((a, b) => b.status_text.localeCompare(a.status_text)));
     }
   };
 
