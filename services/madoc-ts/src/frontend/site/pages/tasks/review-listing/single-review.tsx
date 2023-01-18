@@ -180,7 +180,6 @@ function ViewSingleReview({
           <div>
             {review && !wasRejected ? (
               <ReviewActions>
-
                 <RejectSubmission
                   userTaskId={task.id}
                   onReject={() => {
