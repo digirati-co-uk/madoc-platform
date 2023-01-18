@@ -16,11 +16,12 @@ import { HrefLink } from '../../../../shared/utility/href-link';
 import { RefetchProvider } from '../../../../shared/utility/refetch-context';
 import { useRelativeLinks } from '../../../hooks/use-relative-links';
 import { useTaskMetadata } from '../../../hooks/use-task-metadata';
-import { TextButton } from '../../../../shared/navigation/Button';
+import { ButtonIcon, TextButton } from '../../../../shared/navigation/Button';
 import ReactTooltip from 'react-tooltip';
 import { Chevron } from '../../../../shared/icons/Chevron';
 import { useResizeLayout } from '../../../../shared/hooks/use-resize-layout';
 import { LayoutHandle } from '../../../../shared/layout/LayoutContainer';
+import ResizeHandleIcon from '../../../../shared/icons/ResizeHandleIcon';
 
 const TaskListContainer = styled.div`
   height: 80vh;
@@ -128,7 +129,11 @@ export function ReviewListingPage() {
             </tbody>
           </SimpleTable.Table>
         </TaskListContainer>
-        <LayoutHandle ref={refs.resizer as any} />
+        <LayoutHandle ref={refs.resizer as any}>
+          <ButtonIcon>
+            <ResizeHandleIcon />
+          </ButtonIcon>
+        </LayoutHandle>
         <TaskPreviewContainer>
           <Outlet />
         </TaskPreviewContainer>

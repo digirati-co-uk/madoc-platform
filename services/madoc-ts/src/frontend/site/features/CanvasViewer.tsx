@@ -20,6 +20,8 @@ import { usePersonalNotesMenu } from '../hooks/canvas-menu/personal-notes';
 import { useRevisionPanel } from '../hooks/canvas-menu/revision-panel';
 import { useTranscriptionMenu } from '../hooks/canvas-menu/transcription-panel';
 import { useViewerHeight } from '../hooks/use-viewer-height';
+import { ButtonIcon } from '../../shared/navigation/Button';
+import ResizeHandleIcon from '../../shared/icons/ResizeHandleIcon';
 
 export const CanvasViewer: React.FC<{
   border?: string;
@@ -109,7 +111,11 @@ export const CanvasViewer: React.FC<{
               </LayoutSidebar>
             ) : null}
 
-            <LayoutHandle ref={refs.resizer as any} onClick={() => setIsOpen(o => !o)} />
+            <LayoutHandle ref={refs.resizer as any} onClick={() => setIsOpen(o => !o)}>
+              <ButtonIcon>
+                <ResizeHandleIcon />
+              </ButtonIcon>
+            </LayoutHandle>
             <LayoutContent
               $btnColor={btnColor}
               style={{ border: `1px solid ${borderColor}` }}

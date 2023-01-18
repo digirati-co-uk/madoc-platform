@@ -44,6 +44,8 @@ import { AnnotationsIcon } from '../../src/frontend/shared/icons/AnnotationsIcon
 import { InfoIcon } from '../../src/frontend/shared/icons/InfoIcon';
 import { ModelDocumentIcon } from '../../src/frontend/shared/icons/ModelDocumentIcon';
 import { TranscriptionIcon } from '../../src/frontend/shared/icons/TranscriptionIcon';
+import { ButtonIcon } from '../../src/frontend/shared/navigation/Button';
+import ResizeHandleIcon from '../../src/frontend/shared/icons/ResizeHandleIcon';
 
 export default { title: 'Legacy/Canvas page' };
 
@@ -204,7 +206,11 @@ export const Main_Page = () => {
                 <MetaDataDisplay metadata={exampleMetadata} variation={'list'} labelStyle={'bold'} bordered={true} />
               </LayoutSidebar>
             )}
-            <LayoutHandle ref={refs.resizer} onClick={() => setIsOpen(o => !o)} />
+            <LayoutHandle ref={refs.resizer} onClick={() => setIsOpen(o => !o)}>
+              <ButtonIcon>
+                <ResizeHandleIcon />
+              </ButtonIcon>
+            </LayoutHandle>
             <LayoutContent>
               <URLContextExplorer
                 defaultResource={type}
@@ -276,7 +282,11 @@ export const Task_Layout: React.FC = () => {
               </TaskListContainer>
             </LayoutSidebar>
           )}
-          <LayoutHandle ref={refs.resizer} onClick={() => setIsOpen(o => !o)} />
+          <LayoutHandle ref={refs.resizer} onClick={() => setIsOpen(o => !o)}>
+            <ButtonIcon>
+              <ResizeHandleIcon />
+            </ButtonIcon>
+          </LayoutHandle>
           <LayoutContent $padding>
             <KanbanBoard>
               <KanbanBoardContainer>
