@@ -59,6 +59,9 @@ const SubLabel = styled.div`
   color: #6b6b6b;
   padding: 0.6em;
   font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 const ReviewActionBar = styled.div`
   border-bottom: 1px solid #dddddd;

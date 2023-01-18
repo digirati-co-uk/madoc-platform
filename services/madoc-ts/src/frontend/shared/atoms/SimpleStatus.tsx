@@ -16,26 +16,30 @@ export const baseTab = css`
 
 const Progress = styled.div`
   ${baseTab};
-  background: #b9ddf4;
+  background: #ffffff;
   color: #377cc4;
+  border: 1px solid #377cc4;
 `;
 
 const Review = styled.div`
   ${baseTab};
-  background: #f2e4b4;
+  background: #ffffff;
   color: #ab8e23;
+  border: 1px solid #ab8e23;
 `;
 
 const Approved = styled.div`
   ${baseTab};
-  background: #bddeab;
+  background: #ffffff;
   color: #5fa739;
+  border: 1px solid #5fa739;
 `;
 
 const Rejected = styled.div`
   ${baseTab};
-  background: #eec7b2;
+  background: #ffffff;
   color: #a55717;
+  border: 1px solid #a55717;
 `;
 
 export function SimpleStatus(props: SimpleStatusProps) {

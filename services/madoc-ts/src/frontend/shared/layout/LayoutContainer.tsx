@@ -168,8 +168,10 @@ export const LayoutHandle = styled.div<{ $isDragging?: boolean }>`
   width: 6px;
   background: #eee;
   height: 100%;
+  min-height: 200px;
   user-select: none;
   cursor: col-resize;
+  border: 2px solid hotpink;
 
   &:hover,
   &:active {
