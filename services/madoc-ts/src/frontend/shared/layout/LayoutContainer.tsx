@@ -174,6 +174,7 @@ export const LayoutHandle = styled.div<{ $isDragging?: boolean }>`
 
   svg {
     fill: #a1a1a1;
+    left: 2px;
   }
 
   &:hover,

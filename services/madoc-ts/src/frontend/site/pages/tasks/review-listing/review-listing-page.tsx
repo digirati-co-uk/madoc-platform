@@ -25,21 +25,21 @@ import ResizeHandleIcon from '../../../../shared/icons/ResizeHandleIcon';
 
 const TaskListContainer = styled.div`
   height: 80vh;
-  border-right: 3px solid #dbdbdb;
   overflow: scroll;
-  position: relative;
+  background: #fff;
 `;
 
 const TaskPreviewContainer = styled.div`
   min-width: 550px;
   flex: 1;
-  position: relative;
   width: 750px;
 `;
 
 const ReviewListingContainer = styled.div`
   display: flex;
-
+  position: relative;
+  background-color: #f7f7f7;
+  margin-bottom: 1em;
   a {
     color: #2b669a;
     text-decoration: none;
