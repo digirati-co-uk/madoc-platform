@@ -171,6 +171,7 @@ export const LayoutHandle = styled.div<{ $isDragging?: boolean }>`
   min-height: 30px;
   user-select: none;
   cursor: col-resize;
+  border-radius: 0 0 3px 3px;
 
   svg {
     fill: #a1a1a1;

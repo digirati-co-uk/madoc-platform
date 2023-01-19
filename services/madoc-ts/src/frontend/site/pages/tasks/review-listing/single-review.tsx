@@ -218,7 +218,7 @@ function ViewSingleReview({
 
                       <EditorToolbarButton onClick={() => setIsEditing(r => !r)} disabled={isDone}>
                         <EditorToolbarIcon>{isEditing ? <PreviewIcon /> : <EditIcon />}</EditorToolbarIcon>
-                        <EditorToolbarLabel>{isEditing ? 'preview' : 'edit'}</EditorToolbarLabel>
+                        <EditorToolbarLabel>{isEditing ? 'Preview' : 'Edit'}</EditorToolbarLabel>
                       </EditorToolbarButton>
 
                       <RequestChanges
@@ -260,7 +260,7 @@ function ViewSingleReview({
                     </Button>
                     <ReviewDropdownPopup $visible={isDropdownOpen} role="menu">
                       <>
-                        <EditorToolbarButton onClick={toggle} style={{ width: '100%'}}>
+                        <EditorToolbarButton onClick={toggle} style={{ width: '100%' }}>
                           <EditorToolbarIcon>
                             {isOpen ? <FullScreenExitIcon /> : <FullScreenEnterIcon />}
                           </EditorToolbarIcon>

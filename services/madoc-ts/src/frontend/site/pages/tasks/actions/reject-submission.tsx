@@ -9,7 +9,7 @@ import {
 } from '../../../../shared/navigation/EditorToolbar';
 import { ModalButton } from '../../../../shared/components/Modal';
 import { Button } from '../../../../shared/navigation/Button';
-import { DeleteForeverIcon } from '../../../../shared/icons/DeleteForeverIcon';
+import NoEntryIcon from '../../../../shared/icons/NoEntryIcon';
 
 export const RejectSubmission: React.FC<{ onReject: () => void; userTaskId: string }> = ({ onReject, userTaskId }) => {
   const api = useApi();
@@ -84,9 +84,9 @@ export const RejectSubmission: React.FC<{ onReject: () => void; userTaskId: stri
       )}
     >
       <EditorToolbarIcon>
-        <DeleteForeverIcon />
+        <NoEntryIcon />
       </EditorToolbarIcon>
-      <EditorToolbarLabel>reject submission</EditorToolbarLabel>
+      <EditorToolbarLabel>Reject</EditorToolbarLabel>
     </EditorToolbarButton>
   );
 };
