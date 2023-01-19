@@ -59,6 +59,11 @@ export const GenericTask: React.FC<{ task: BaseTask; statusBar?: JSX.Element; sn
         </ErrorMessage>
       ) : null}
       {Object.keys(task.state).length ? <pre>{JSON.stringify(task.state, null, 2)}</pre> : null}
+      {task.parameters?.length ? (
+        <pre style={{ borderRadius: 5, background: '#eee', padding: '1em', maxHeight: 300, overflowY: 'auto' }}>
+          {JSON.stringify(task.parameters, null, 2)}
+        </pre>
+      ) : null}
       {snippet}
       {task.description ? <p>{task.description}</p> : null}
       <p>{task.created_at ? <TimeAgo date={task.created_at} /> : null}</p>

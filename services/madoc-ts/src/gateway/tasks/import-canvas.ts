@@ -44,7 +44,7 @@ export function createTask(
     description: `Importing canvas from url ${canvasUrl}`,
     subject: canvasUrl,
     state: {},
-    events: ['madoc-ts.created'],
+    events: ['madoc-ts.created', 'madoc-ts.status.1'],
     status: 0,
     status_text: status[0],
     parameters: [userId, pathToManifest, manifestId, siteId],
@@ -58,6 +58,10 @@ export function changeStatus(newStatus: string, data: { state?: any; name?: stri
 export const jobHandler = async (name: string, taskId: string, api: ApiClient) => {
   switch (name) {
     case 'created': {
+      await api.updateTask<ImportCanvasTask>(taskId, { status: 1 });
+      break;
+    }
+    case 'status.1': {
       const task = await api.acceptTask<ImportCanvasTask>(taskId, {
         omitSubtasks: true,
       });
