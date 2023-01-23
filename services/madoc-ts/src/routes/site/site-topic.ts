@@ -14,18 +14,17 @@ export const siteTopic: RouteMiddleware<{ type: string; topic: string }> = async
 
   context.response.body = compatTopic(response, topicType);
 
-  // if (response.type) {
-  //   if (topicTypeSlug !== response.type) {
-  //     console.log(response.type, topicTypeSlug);
-  //     throw new NotFound('Topic not found');
-  //   }
-  // }
+  if (response.type) {
+    if (topicTypeSlug !== response.type) {
+      throw new NotFound('Topic not found');
+    }
+  }
 
   // @todo validate topic-type matches.
 };
 
 function compatTopic(topic: EntityMadocResponse, topicType: EntityTypeMadocResponse): Topic {
-  const nuked: any = { other_labels: undefined, url: undefined };
+  const nuked: any = { other_labels: undefined, url: undefined, type: undefined };
   return {
     ...topic,
     label: { none: [topic.label] },

@@ -25,27 +25,27 @@ export function ViewTopic() {
       {topicType ? <Subheading1 as={LocaleString}>{topicType?.label || { none: ['...'] }}</Subheading1> : null}
       <pre>{JSON.stringify(data, null, 2)}</pre>
 
-      {/*<div>*/}
-      {/*  <h3>Items in this topic</h3>*/}
-      {/*  <Pagination*/}
-      {/*    page={page}*/}
-      {/*    totalPages={*/}
-      {/*      search.latestData && search.latestData.pagination ? search.latestData.pagination.totalPages : undefined*/}
-      {/*    }*/}
-      {/*    stale={search.isLoading}*/}
-      {/*    extraQuery={query}*/}
-      {/*  />*/}
-      {/*  <SearchResults admin searchResults={search.data?.results || []} />*/}
-      {/*  <Pagination*/}
-      {/*    page={page}*/}
-      {/*    totalPages={*/}
-      {/*      search.latestData && search.latestData.pagination ? search.latestData.pagination.totalPages : undefined*/}
-      {/*    }*/}
-      {/*    stale={search.isLoading}*/}
-      {/*    extraQuery={query}*/}
-      {/*  />*/}
-      {/*  <pre>{JSON.stringify(search.data, null, 2)}</pre>*/}
-      {/*</div>*/}
+      <div>
+        <h3>Items in this topic</h3>
+        <Pagination
+          page={page}
+          totalPages={
+            search.latestData && search.latestData.pagination ? search.latestData.pagination.totalPages : undefined
+          }
+          stale={search.isLoading}
+          extraQuery={query}
+        />
+        <SearchResults admin searchResults={search.data?.results || []} />
+        <Pagination
+          page={page}
+          totalPages={
+            search.latestData && search.latestData.pagination ? search.latestData.pagination.totalPages : undefined
+          }
+          stale={search.isLoading}
+          extraQuery={query}
+        />
+        <pre>{JSON.stringify(search.data, null, 2)}</pre>
+      </div>
     </>
   );
 }
