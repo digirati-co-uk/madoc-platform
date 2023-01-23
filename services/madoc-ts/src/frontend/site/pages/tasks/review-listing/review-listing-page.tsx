@@ -22,6 +22,7 @@ import { Chevron } from '../../../../shared/icons/Chevron';
 import { useResizeLayout } from '../../../../shared/hooks/use-resize-layout';
 import { LayoutHandle } from '../../../../shared/layout/LayoutContainer';
 import ResizeHandleIcon from '../../../../shared/icons/ResizeHandleIcon';
+import { stringify } from 'query-string';
 
 const TaskListContainer = styled.div`
   height: 80vh;
@@ -72,9 +73,26 @@ export function ReviewListingPage() {
   const { data, refetch } = useData<{ tasks: CrowdsourcingTask[] }>(ReviewListingPage);
   const params = useParams<{ taskId?: string }>();
   const createLink = useRelativeLinks();
-  const navigate = useNavigate();
-  const { page, ...query } = useLocationQuery();
-  const location = useLocation();
+  const { page, sort_by = '', ...query } = useLocationQuery();
+
+
+  const QuerySortToggle = (field: string) => {
+    const sort = sort_by.split(',');
+    if (sort && sort.includes(`${field}:desc`)) {
+      const i = sort.indexOf(`${field}:desc`);
+      sort[i] = `${field}:asc`;
+      return `?${stringify({ ...query, sort_by: sort.join(',') })}`;
+    }
+    if (sort && sort.includes(`${field}:asc`)) {
+      const i = sort.indexOf(`${field}:asc`);
+      sort.splice(i, 1);
+
+      return `?${stringify({ ...query, sort_by: sort.join(',') })}`;
+    }
+
+    sort.push(`${field}:desc`);
+    return `?${stringify({ ...query, sort_by: sort.join(',') })}`;
+  };
 
   const { widthB, refs } = useResizeLayout(`review-dashboard-resize`, {
     left: true,
@@ -105,99 +123,44 @@ export function ReviewListingPage() {
             <thead>
               <SimpleTable.Row>
                 <SimpleTable.Header>
-                  <TextButton
-                    style={{ color: query.sort_by && query.sort_by.includes('subject:') ? '#3579f6' : '' }}
-                    onClick={e => {
-                      if (query.sort_by === 'subject:desc') {
-                        e.preventDefault();
-                        navigate(`${location.pathname}?sort_by=subject:asc`);
-                      } else if (query.sort_by === 'subject:asc') {
-                        e.preventDefault();
-                        navigate(`${location.pathname}`);
-                      } else {
-                        e.preventDefault();
-                        navigate(`${location.pathname}?sort_by=subject:desc`);
-                      }
-                    }}
+                  <HrefLink
+                    href={QuerySortToggle('subject')}
+                    style={{ color: sort_by && sort_by.includes('subject:') ? '#3579f6' : 'black' }}
                   >
                     Manifest <Chevron style={{ transform: 'rotate(0.25turn)' }} />
-                  </TextButton>
+                  </HrefLink>
                 </SimpleTable.Header>
                 <SimpleTable.Header>
-                  <TextButton
-                    style={{ color: query.sort_by && query.sort_by.includes('subject_parent') ? '#3579f6' : '' }}
-                    onClick={e => {
-                      if (query.sort_by === 'subject_parent:desc') {
-                        e.preventDefault();
-                        navigate(`${location.pathname}?sort_by=subject_parent:asc`);
-                      } else if (query.sort_by === 'subject_parent:asc') {
-                        e.preventDefault();
-                        navigate(`${location.pathname}`);
-                      } else {
-                        e.preventDefault();
-                        navigate(`${location.pathname}?sort_by=subject_parent:desc`);
-                      }
-                    }}
+                  <HrefLink
+                    href={QuerySortToggle('subject_parent')}
+                    style={{ color: sort_by && sort_by.includes('subject_parent') ? '#3579f6' : 'black' }}
                   >
                     Canvas <Chevron style={{ transform: 'rotate(0.25turn)' }} />
-                  </TextButton>
+                  </HrefLink>
                 </SimpleTable.Header>
                 <SimpleTable.Header>
-                  <TextButton
-                    style={{ color: query.sort_by && query.sort_by.includes('modified_by') ? '#3579f6' : '' }}
-                    onClick={e => {
-                      if (query.sort_by === 'modified_at:asc') {
-                        e.preventDefault();
-                        navigate(`${location.pathname}?sort_by=modified_at:desc`);
-                      } else if (query.sort_by === 'modified_at:desc') {
-                        e.preventDefault();
-                        navigate(`${location.pathname}`);
-                      } else {
-                        e.preventDefault();
-                        navigate(`${location.pathname}?sort_by=modified_at:asc`);
-                      }
-                    }}
+                  <HrefLink
+                    href={QuerySortToggle('modified_at')}
+                    style={{ color: sort_by && sort_by.includes('modified_at') ? '#3579f6' : 'black' }}
                   >
                     Date <Chevron style={{ transform: 'rotate(0.25turn)' }} />
-                  </TextButton>
+                  </HrefLink>
                 </SimpleTable.Header>
                 <SimpleTable.Header>
-                  <TextButton
-                    style={{ color: query.sort_by && query.sort_by.includes('status') ? '#3579f6' : '' }}
-                    onClick={e => {
-                      if (query.sort_by === 'status:desc') {
-                        e.preventDefault();
-                        navigate(`${location.pathname}?sort_by=status:asc`);
-                      } else if (query.sort_by === 'status:asc') {
-                        e.preventDefault();
-                        navigate(`${location.pathname}`);
-                      } else {
-                        e.preventDefault();
-                        navigate(`${location.pathname}?sort_by=status:desc`);
-                      }
-                    }}
+                  <HrefLink
+                    href={QuerySortToggle('status')}
+                    style={{ color: sort_by && sort_by.includes('status') ? '#3579f6' : 'black' }}
                   >
                     Status <Chevron style={{ transform: 'rotate(0.25turn)' }} />
-                  </TextButton>
+                  </HrefLink>
                 </SimpleTable.Header>
                 <SimpleTable.Header>
-                  <TextButton
-                    style={{ color: query.sort_by && query.sort_by.includes('user_identifier') ? '#3579f6' : '' }}
-                    onClick={e => {
-                      if (query.sort_by === 'user_identifier:desc') {
-                        e.preventDefault();
-                        navigate(`${location.pathname}?sort_by=user_identifier:asc`);
-                      } else if (query.sort_by === 'user_identifier:asc') {
-                        e.preventDefault();
-                        navigate(`${location.pathname}`);
-                      } else {
-                        e.preventDefault();
-                        navigate(`${location.pathname}?sort_by=user_identifier:desc`);
-                      }
-                    }}
+                  <HrefLink
+                    href={QuerySortToggle('user_identifier')}
+                    style={{ color: sort_by && sort_by.includes('user_identifier') ? '#3579f6' : 'black' }}
                   >
                     Contributor <Chevron style={{ transform: 'rotate(0.25turn)' }} />
-                  </TextButton>
+                  </HrefLink>
                 </SimpleTable.Header>
               </SimpleTable.Row>
             </thead>
