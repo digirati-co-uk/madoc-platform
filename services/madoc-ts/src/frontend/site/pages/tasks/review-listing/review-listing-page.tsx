@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, Outlet, useParams } from 'react-router-dom';
+import { Navigate, Outlet, useParams, useLocation, useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { SubjectSnippet } from '../../../../../extensions/tasks/resolvers/subject-resolver';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
@@ -72,8 +72,9 @@ export function ReviewListingPage() {
   const { data, refetch } = useData<{ tasks: CrowdsourcingTask[] }>(ReviewListingPage);
   const params = useParams<{ taskId?: string }>();
   const createLink = useRelativeLinks();
-
-  const [sort, setSort] = useState('');
+  const navigate = useNavigate();
+  const { page, ...query } = useLocationQuery();
+  const location = useLocation();
 
   const { widthB, refs } = useResizeLayout(`review-dashboard-resize`, {
     left: true,
@@ -103,20 +104,98 @@ export function ReviewListingPage() {
           <SimpleTable.Table style={{ borderColor: 'transparent' }}>
             <thead>
               <SimpleTable.Row>
-                <SimpleTable.Header>Manifest</SimpleTable.Header>
-                <SimpleTable.Header>Canvas</SimpleTable.Header>
                 <SimpleTable.Header>
-                  <TextButton style={{ color: sort === 'date' ? '#3579f6' : '' }} onClick={() => console.log('date')}>
+                  <TextButton
+                    style={{ color: query.sort_by && query.sort_by.includes('subject:') ? '#3579f6' : '' }}
+                    onClick={e => {
+                      if (query.sort_by === 'subject:desc') {
+                        e.preventDefault();
+                        navigate(`${location.pathname}?sort_by=subject:asc`);
+                      } else if (query.sort_by === 'subject:asc') {
+                        e.preventDefault();
+                        navigate(`${location.pathname}`);
+                      } else {
+                        e.preventDefault();
+                        navigate(`${location.pathname}?sort_by=subject:desc`);
+                      }
+                    }}
+                  >
+                    Manifest <Chevron style={{ transform: 'rotate(0.25turn)' }} />
+                  </TextButton>
+                </SimpleTable.Header>
+                <SimpleTable.Header>
+                  <TextButton
+                    style={{ color: query.sort_by && query.sort_by.includes('subject_parent') ? '#3579f6' : '' }}
+                    onClick={e => {
+                      if (query.sort_by === 'subject_parent:desc') {
+                        e.preventDefault();
+                        navigate(`${location.pathname}?sort_by=subject_parent:asc`);
+                      } else if (query.sort_by === 'subject_parent:asc') {
+                        e.preventDefault();
+                        navigate(`${location.pathname}`);
+                      } else {
+                        e.preventDefault();
+                        navigate(`${location.pathname}?sort_by=subject_parent:desc`);
+                      }
+                    }}
+                  >
+                    Canvas <Chevron style={{ transform: 'rotate(0.25turn)' }} />
+                  </TextButton>
+                </SimpleTable.Header>
+                <SimpleTable.Header>
+                  <TextButton
+                    style={{ color: query.sort_by && query.sort_by.includes('modified_by') ? '#3579f6' : '' }}
+                    onClick={e => {
+                      if (query.sort_by === 'modified_at:asc') {
+                        e.preventDefault();
+                        navigate(`${location.pathname}?sort_by=modified_at:desc`);
+                      } else if (query.sort_by === 'modified_at:desc') {
+                        e.preventDefault();
+                        navigate(`${location.pathname}`);
+                      } else {
+                        e.preventDefault();
+                        navigate(`${location.pathname}?sort_by=modified_at:asc`);
+                      }
+                    }}
+                  >
                     Date <Chevron style={{ transform: 'rotate(0.25turn)' }} />
                   </TextButton>
                 </SimpleTable.Header>
                 <SimpleTable.Header>
-                  <TextButton style={{ color: sort === 'status' ? '#3579f6' : '' }} onClick={() => setSort('status')}>
+                  <TextButton
+                    style={{ color: query.sort_by && query.sort_by.includes('status') ? '#3579f6' : '' }}
+                    onClick={e => {
+                      if (query.sort_by === 'status:desc') {
+                        e.preventDefault();
+                        navigate(`${location.pathname}?sort_by=status:asc`);
+                      } else if (query.sort_by === 'status:asc') {
+                        e.preventDefault();
+                        navigate(`${location.pathname}`);
+                      } else {
+                        e.preventDefault();
+                        navigate(`${location.pathname}?sort_by=status:desc`);
+                      }
+                    }}
+                  >
                     Status <Chevron style={{ transform: 'rotate(0.25turn)' }} />
                   </TextButton>
                 </SimpleTable.Header>
                 <SimpleTable.Header>
-                  <TextButton style={{ color: sort === 'user' ? '#3579f6' : '' }} onClick={() => setSort('user')}>
+                  <TextButton
+                    style={{ color: query.sort_by && query.sort_by.includes('user_identifier') ? '#3579f6' : '' }}
+                    onClick={e => {
+                      if (query.sort_by === 'user_identifier:desc') {
+                        e.preventDefault();
+                        navigate(`${location.pathname}?sort_by=user_identifier:asc`);
+                      } else if (query.sort_by === 'user_identifier:asc') {
+                        e.preventDefault();
+                        navigate(`${location.pathname}`);
+                      } else {
+                        e.preventDefault();
+                        navigate(`${location.pathname}?sort_by=user_identifier:desc`);
+                      }
+                    }}
+                  >
                     Contributor <Chevron style={{ transform: 'rotate(0.25turn)' }} />
                   </TextButton>
                 </SimpleTable.Header>
@@ -202,14 +281,12 @@ serverRendererFor(ReviewListingPage, {
   },
   getData: async (key, vars, api) => {
     const slug = vars.projectSlug;
-
     const project = await api.getProject(slug);
 
     return api.getTasks(vars.page, {
-      all_tasks: true,
+      all_tasks: false,
       type: 'crowdsourcing-task',
       root_task_id: project.task_id,
-      // status: 2,
       per_page: 20,
       detail: true,
       ...vars.query,
