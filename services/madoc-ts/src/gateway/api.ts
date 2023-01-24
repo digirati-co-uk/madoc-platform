@@ -1616,7 +1616,7 @@ export class ApiClient {
       detail?: boolean;
       assignee?: string;
       per_page?: number;
-      sort_by?: 'newest';
+      sort_by?: string;
       modified_date_start?: Date;
       modified_date_end?: Date;
       modified_date_interval?: string;

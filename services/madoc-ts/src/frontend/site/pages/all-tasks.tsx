@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BaseTask } from '../../../gateway/tasks/base-task';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
-import { Button, ButtonRow } from '../../shared/navigation/Button';
+import { Button, ButtonIcon, ButtonRow } from '../../shared/navigation/Button';
 import {
   LayoutContainer,
   LayoutContent,
@@ -26,6 +26,7 @@ import { TaskListItem } from '../features/TaskListItem';
 import { useGoToQuery } from '../hooks/use-go-to-query';
 import { useInfiniteAction } from '../hooks/use-infinite-action';
 import { useRelativeLinks } from '../hooks/use-relative-links';
+import ResizeHandleIcon from '../../shared/icons/ResizeHandleIcon';
 
 type AllTasksType = {
   query: any;
@@ -147,7 +148,11 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
                 </TaskListInnerContainer>
               </TaskListContainer>
             </LayoutSidebar>
-            <LayoutHandle ref={refs.resizer as any} onClick={() => setIsOpen(o => !o)} />
+            <LayoutHandle ref={refs.resizer as any} onClick={() => setIsOpen(o => !o)}>
+              <ButtonIcon>
+                <ResizeHandleIcon />
+              </ButtonIcon>
+            </LayoutHandle>
             <LayoutContent $padding>
               <Outlet />
             </LayoutContent>

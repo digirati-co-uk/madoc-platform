@@ -203,7 +203,7 @@ services:
         condition: service_healthy
 
   search:
-    image: ghcr.io/digirati-co-uk/madoc-search-service:main
+    image: ghcr.io/digirati-co-uk/madoc-search-service:latest
 #    build:
 #      context: services/search
 #      dockerfile: Dockerfile
