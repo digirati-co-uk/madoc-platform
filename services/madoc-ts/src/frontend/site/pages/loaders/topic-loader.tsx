@@ -38,10 +38,10 @@ export const TopicLoader: UniversalComponent<TopicLoaderType> = createUniversalC
   },
   {
     getKey: params => {
-      return ['topic-type', { topic: params.topic, topicType: params.topicType }];
+      return ['site-topic', { topicType: params.topicType, topic: params.topic }];
     },
     getData: async (key, vars, api) => {
-      return api.enrichment.getSiteTopic(vars.topic, vars.topicType);
+      return api.enrichment.getSiteTopic(vars.topicType, vars.topic);
     },
   }
 );

@@ -1,8 +1,10 @@
 import { Pagination } from '../../../types/schemas/_pagination';
 
 export interface AuthoritySnippet {
-  name: string;
+  id: string;
   url: string;
+  authority: string;
+  identifier: string;
 }
 
 export interface Authority extends AuthoritySnippet {
@@ -13,25 +15,11 @@ export interface Authority extends AuthoritySnippet {
 export interface EnrichmentEntitySnippet {
   url: string;
   id: string;
-  type: {
-    url: string;
-    id: string;
-    label: string;
-  };
+  created: string;
+  modified: string;
+  type: string;
   label: string;
-}
-
-export interface EnrichmentEntity {
-  url: string;
-  id: string;
-  type: {
-    url: string;
-    id: string;
-    label: string;
-  };
-  label: string;
-  other_labels: OtherLabels;
-  authorities: AuthoritySnippet[]; // Can't remember what this should be...
+  slug: string;
 }
 
 export interface EnrichmentEntityAuthority {
@@ -44,7 +32,10 @@ export interface EnrichmentEntityAuthority {
 export interface EnrichmentEntityTypeSnippet {
   url: string;
   id: string;
+  created: string;
+  modified: string;
   label: string;
+  slug: string;
 }
 
 // @todo probably will change.
@@ -77,6 +68,28 @@ export interface ResourceTag extends ResourceTagSnippet {
   modified: string;
 }
 
+export interface EnrichmentEntity {
+  url: string;
+  id: string;
+  type: {
+    url: string;
+    id: string;
+    label: string;
+  };
+  description: { value: string; language: string }[];
+  image_url: string;
+  label: string;
+  other_labels: OtherLabels;
+  authorities: AuthoritySnippet[]; // Can't remember what this should be...
+  other_data: {
+    image_url: string;
+    image_caption?: string;
+  };
+
+  modified: string;
+  created: string;
+}
+
 export interface EntitySnippetMadoc {
   url: string;
   id: string;
@@ -84,10 +97,44 @@ export interface EntitySnippetMadoc {
   modified: string;
   type: string;
   label: string;
-  other_labels: string[];
+  slug: string;
 }
 
-export interface EntityTypeMadocResponse {
+// list of entity types
+export interface EntityTypesMadocResponse {
+  pagination: Pagination;
+  results: EnrichmentEntityTypeSnippet[];
+}
+
+// Entity - List, filtered by chosen Entity Type
+export interface EntitiesMadocResponse {
   pagination: Pagination;
   results: EntitySnippetMadoc[];
+}
+
+// Entity Type - Retrieve
+export interface EntityTypeMadocResponse {
+  url: string;
+  id: string;
+  created: string;
+  modified: string;
+  label: string;
+  slug: string;
+}
+
+// Entity - Retrieve
+export interface EntityMadocResponse {
+  url: string;
+  id: string;
+  created: string;
+  modified: string;
+  type: string;
+  label: string;
+  slug: string;
+  title: string[];
+  description: string[];
+  topic_summary: string[];
+  image_url: string;
+  image_caption: string[];
+  secondary_heading: string;
 }

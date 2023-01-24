@@ -1,10 +1,10 @@
 import React from 'react';
-import { EnrichmentEntitySnippet } from '../../../../../../extensions/enrichment/authority/types';
+import { EnrichmentEntity } from '../../../../../../extensions/enrichment/authority/types';
 import { useData } from '../../../../../shared/hooks/use-data';
 import { serverRendererFor } from '../../../../../shared/plugins/external/server-renderer-for';
 
 export function Entity() {
-  const { data } = useData<EnrichmentEntitySnippet>(Entity);
+  const { data } = useData<EnrichmentEntity>(Entity);
 
   return (
     <div>

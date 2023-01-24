@@ -27,8 +27,8 @@ export class EnrichmentExtension extends BaseDjangoExtension {
   }
 
   // Site APIS.
-  getSiteTopic(id: string, type: string) {
-    return this.api.publicRequest<Topic>(`/madoc/api/topics/${type}/${id}`);
+  getSiteTopic(type: string, slug: string) {
+    return this.api.publicRequest<Topic>(`/madoc/api/topics/${type}/${slug}`);
   }
   getSiteTopicTypes(page = 1) {
     return this.api.publicRequest<TopicTypeListResponse>(`/madoc/api/topics?page=${page}`);
