@@ -26,7 +26,6 @@ export function ManifestModelCanvasPreview(props: { isModel?: boolean }) {
   const prev = manifestPagination?.prevItem && manifestPagination.prevItem.id;
 
   const isModel = props.isModel;
-  console.log(props.isModel);
 
   if (!canvasId) {
     return <ManifestCanvasGrid inPage />;
