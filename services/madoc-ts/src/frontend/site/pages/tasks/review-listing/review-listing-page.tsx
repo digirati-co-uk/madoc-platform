@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, Outlet, useParams } from 'react-router-dom';
+import { Navigate, Outlet, useNavigate, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { SubjectSnippet } from '../../../../../extensions/tasks/resolvers/subject-resolver';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
@@ -56,6 +56,10 @@ const ThickTableRow = styled(SimpleTable.Row)<{ $active?: boolean }>`
     css`
       background: #edf4fb;
     `}
+  &:hover {
+    background: #edf4fb;
+    cursor: pointer;
+  }
   ${SimpleTable.Cell} {
     white-space: nowrap;
     overflow: hidden;
@@ -185,10 +189,14 @@ export function ReviewListingPage() {
 function SingleReviewTableRow({ task, active }: { task: CrowdsourcingTask; active?: boolean }) {
   const { page, ...query } = useLocationQuery();
   const createLink = useRelativeLinks();
+  const navigate = useNavigate();
   const metadata = useTaskMetadata<{ subject?: SubjectSnippet }>(task);
 
   return (
-    <ThickTableRow $active={active}>
+    <ThickTableRow
+      $active={active}
+      onClick={() => navigate(createLink({ taskId: undefined, subRoute: `reviews/${task.id}`, query }))}
+    >
       {/* manifest */}
       <SimpleTable.Cell style={{ maxWidth: 300 }}>
         {metadata.subject && metadata.subject.parent && (
@@ -199,15 +207,7 @@ function SingleReviewTableRow({ task, active }: { task: CrowdsourcingTask; activ
       </SimpleTable.Cell>
       {/* resource name */}
       <SimpleTable.Cell>
-        <HrefLink
-          href={createLink({
-            taskId: undefined,
-            subRoute: `reviews/${task.id}`,
-            query,
-          })}
-        >
-          {metadata && metadata.subject ? <LocaleString>{metadata.subject.label}</LocaleString> : task.name}
-        </HrefLink>
+        {metadata && metadata.subject ? <LocaleString>{metadata.subject.label}</LocaleString> : task.name}
       </SimpleTable.Cell>
       {/* date modified*/}
       <SimpleTable.Cell>
