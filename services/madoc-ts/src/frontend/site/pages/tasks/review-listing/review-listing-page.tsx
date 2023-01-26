@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, Outlet, useParams, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, Outlet, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { SubjectSnippet } from '../../../../../extensions/tasks/resolvers/subject-resolver';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
@@ -16,8 +16,7 @@ import { HrefLink } from '../../../../shared/utility/href-link';
 import { RefetchProvider } from '../../../../shared/utility/refetch-context';
 import { useRelativeLinks } from '../../../hooks/use-relative-links';
 import { useTaskMetadata } from '../../../hooks/use-task-metadata';
-import { ButtonIcon, TextButton } from '../../../../shared/navigation/Button';
-import ReactTooltip from 'react-tooltip';
+import { ButtonIcon } from '../../../../shared/navigation/Button';
 import { Chevron } from '../../../../shared/icons/Chevron';
 import { useResizeLayout } from '../../../../shared/hooks/use-resize-layout';
 import { LayoutHandle } from '../../../../shared/layout/LayoutContainer';
@@ -74,7 +73,6 @@ export function ReviewListingPage() {
   const params = useParams<{ taskId?: string }>();
   const createLink = useRelativeLinks();
   const { page, sort_by = '', ...query } = useLocationQuery();
-
 
   const QuerySortToggle = (field: string) => {
     const sort = sort_by.split(',');
@@ -143,7 +141,7 @@ export function ReviewListingPage() {
                     href={QuerySortToggle('modified_at')}
                     style={{ color: sort_by && sort_by.includes('modified_at') ? '#3579f6' : 'black' }}
                   >
-                    Date <Chevron style={{ transform: 'rotate(0.25turn)' }} />
+                    Modified <Chevron style={{ transform: 'rotate(0.25turn)' }} />
                   </HrefLink>
                 </SimpleTable.Header>
                 <SimpleTable.Header>
@@ -211,16 +209,9 @@ function SingleReviewTableRow({ task, active }: { task: CrowdsourcingTask; activ
           {metadata && metadata.subject ? <LocaleString>{metadata.subject.label}</LocaleString> : task.name}
         </HrefLink>
       </SimpleTable.Cell>
-      {/* date */}
+      {/* date modified*/}
       <SimpleTable.Cell>
-        <>
-          {task.created_at ? (
-            <div data-tip="created">{new Date(task.created_at).toLocaleDateString()}</div>
-          ) : task.modified_at ? (
-            <div data-tip="modified">{new Date(task.modified_at).toLocaleDateString()}</div>
-          ) : null}
-          <ReactTooltip place="bottom" type="dark" effect="solid" />
-        </>
+        {task.modified_at ? <> {new Date(task.modified_at).toLocaleDateString()} </> : null}
       </SimpleTable.Cell>
       {/* status */}
       <SimpleTable.Cell>
