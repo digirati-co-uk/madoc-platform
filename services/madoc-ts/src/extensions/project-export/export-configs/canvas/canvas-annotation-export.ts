@@ -16,6 +16,7 @@ export const canvasAnnotationExport: ExportConfig = {
     ],
   },
   supportedTypes: ['canvas'],
+  supportedContexts: ['project_id'],
   configuration: {
     filePerProject: false,
     defaultValues: {
@@ -23,12 +24,7 @@ export const canvasAnnotationExport: ExportConfig = {
     },
     editor: {
       project_id: {
-        type: 'autocomplete-field',
-        label: 'Project',
-        dataSource: 'madoc-api://iiif/manifests/:manifest/projects-autocomplete?all=true',
-        requestInitial: true,
-        outputIdAsString: false,
-        clearable: true,
+        type: 'hidden',
       } as any,
       format: {
         label: 'Format',
@@ -49,8 +45,12 @@ export const canvasAnnotationExport: ExportConfig = {
         editor: {
           ...((editor as any) || {}),
           project_id: {
-            ...editor.project_id,
-            dataSource: editor.project_id.dataSource.replace(':manifest', options.subjectParent.id),
+            type: 'autocomplete-field',
+            label: 'Project',
+            dataSource: `madoc-api://iiif/manifests/${options.subjectParent.id}/projects-autocomplete?all=true`,
+            requestInitial: true,
+            outputIdAsString: true,
+            clearable: true,
           },
         },
       };
@@ -58,7 +58,7 @@ export const canvasAnnotationExport: ExportConfig = {
   },
 
   async exportData(subject, options) {
-    const project = options.config && options.config.project_id ? parseUrn(options.config.project_id.uri) : undefined;
+    const project = options.config && options.config.project_id ? parseUrn(options.config.project_id) : undefined;
 
     const resp = await options.api.getSiteCanvasPublishedModels(subject.id, {
       project_id: project?.id,

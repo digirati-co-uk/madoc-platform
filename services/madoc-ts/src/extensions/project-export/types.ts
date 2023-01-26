@@ -14,7 +14,7 @@ export interface ExportResourceRequest {
   subject: SupportedExportResource;
 
   // Parent.
-  subjectParent: SupportedExportResource;
+  subjectParent?: SupportedExportResource;
 
   // Context of the export (usually project)
   context: SupportedExportResource;
@@ -47,8 +47,10 @@ export interface ExportResourceRequest {
         type: 'zip';
         path: string;
         fileName: string;
-        options?: any; // Unknown at this point.
+        options: { tempDir: string }; // Unknown at this point.
       };
+
+  standalone?: boolean;
 
   // Mapping of configuration (only top level), example:
   // {
@@ -85,7 +87,7 @@ export interface ExportConfig<Config extends Record<string, any> = any> {
   type: string;
   source?: { type: string; id?: string; name: string };
   supportedTypes: Array<SupportedExportResourceTypes>;
-
+  supportedContexts?: Array<'project_id' | 'manifest_id' | 'collection_id'>;
   // What data should the export get?
   exportData(
     subject: SupportedExportResource,
@@ -137,10 +139,11 @@ export interface ExportFileDefinition {
   path: string;
   text: boolean;
   content:
-    | { type: 'text'; value: string } // Text - JSON or whatever
+    | { type: 'text'; value: string; contentType?: string } // Text - JSON or whatever
     | { type: 'html'; value: string } // HTML which could be previewed.
     | { type: 'url'; value: string }; // A URL to a remote resource (e.g. external API integration)
   metadata?: any;
+  encoding?: string | null | undefined;
 }
 
 export interface ExportManifest {
