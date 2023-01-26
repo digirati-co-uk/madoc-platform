@@ -250,6 +250,12 @@
             "string",
             "object"
           ]
+        },
+        "fontFamilyMono": {
+          "type": [
+            "string",
+            "object"
+          ]
         }
       }
     }

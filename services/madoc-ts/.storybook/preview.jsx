@@ -5,7 +5,7 @@ import HTML5toTouch from 'react-dnd-multi-backend/dist/cjs/HTML5toTouch';
 import { ApiContext } from '../src/frontend/shared/hooks/use-api';
 import { MemoryRouter } from 'react-router-dom';
 
-export const decorators = [(Story) => {
+export const decorators = [function(Story) {
   return (
 
     <MemoryRouter>
@@ -17,5 +17,5 @@ export const decorators = [(Story) => {
         </ApiContext.Provider>
       </DndProvider>
     </MemoryRouter>
-  )
+  );
 }];
