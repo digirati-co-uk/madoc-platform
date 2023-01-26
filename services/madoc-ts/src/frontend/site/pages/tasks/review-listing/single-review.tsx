@@ -38,6 +38,7 @@ import { HomeIcon } from '../../../../shared/icons/HomeIcon';
 import { MinusIcon } from '../../../../shared/icons/MinusIcon';
 import { PlusIcon } from '../../../../shared/icons/PlusIcon';
 import { useTranslation } from 'react-i18next';
+import { extractIdFromUrn } from '../../../../../utility/parse-urn';
 
 const ReviewContainer = styled.div`
   position: relative;
@@ -73,13 +74,15 @@ const ReviewActionBar = styled.div`
   border-bottom: 1px solid #dddddd;
   display: inline-flex;
   justify-content: space-between;
+  flex-wrap: wrap-reverse;
   width: 100%;
-  padding: 0 0.6em;
+  padding: 0.6em;
   min-height: 42px;
 `;
 
 const ReviewActions = styled.div`
   display: flex;
+  margin-left: auto;
 
   button {
     border: none;
@@ -120,6 +123,14 @@ const ReviewPreview = styled.div`
     padding: 0.6em;
     width: auto;
   }
+`;
+
+const Assignee = styled.div`
+  font-size: small;
+  color: #575757;
+  align-self: center;
+  overflow-y: scroll;
+  margin-left: 0.5em;
 `;
 
 function ViewSingleReview({
@@ -205,48 +216,54 @@ function ViewSingleReview({
                 </SubLabel>
               </ReviewHeader>
               <ReviewActionBar>
-                <SimpleStatus status={task.status} status_text={task.status_text || ''} />
-                <div>
-                  {review && !wasRejected ? (
-                    <ReviewActions>
-                      <RejectSubmission
-                        userTaskId={task.id}
-                        onReject={() => {
-                          refetch();
-                        }}
-                      />
-
-                      <EditorToolbarButton onClick={() => setIsEditing(r => !r)} disabled={isDone}>
-                        <EditorToolbarIcon>{isEditing ? <PreviewIcon /> : <EditIcon />}</EditorToolbarIcon>
-                        <EditorToolbarLabel>{isEditing ? 'Preview' : 'Edit'}</EditorToolbarLabel>
-                      </EditorToolbarButton>
-
-                      <RequestChanges
-                        userTaskId={task.id}
-                        changesRequested={task.state?.changesRequested}
-                        onRequest={() => {
-                          refetch();
-                        }}
-                      />
-
-                      {/*<StartMerge*/}
-                      {/*  allTasks={props.allTasks as any}*/}
-                      {/*  reviewTaskId={data.review.id}*/}
-                      {/*  userTask={task}*/}
-                      {/*  // onStartMerge={(revId: string) => props.goBack({ refresh: true, revisionId: revId })}*/}
-                      {/*/>*/}
-
-                      <ApproveSubmission
-                        project={project}
-                        userTaskId={task.id}
-                        onApprove={() => {
-                          refetch();
-                        }}
-                        reviewTaskId={review.id}
-                      />
-                    </ReviewActions>
-                  ) : null}
+                <div style={{ display: 'flex' }}>
+                  <SimpleStatus status={task.status} status_text={task.status_text || ''} />
+                  {task.assignee && (
+                    <Assignee>
+                      {t('assigned to')}:{' '}
+                      <HrefLink href={`/users/${extractIdFromUrn(task.assignee.id)}`}>{task.assignee.name}</HrefLink>
+                    </Assignee>
+                  )}
                 </div>
+                {review && !wasRejected ? (
+                  <ReviewActions>
+                    <RejectSubmission
+                      userTaskId={task.id}
+                      onReject={() => {
+                        refetch();
+                      }}
+                    />
+
+                    <EditorToolbarButton onClick={() => setIsEditing(r => !r)} disabled={isDone}>
+                      <EditorToolbarIcon>{isEditing ? <PreviewIcon /> : <EditIcon />}</EditorToolbarIcon>
+                      <EditorToolbarLabel>{isEditing ? 'Preview' : 'Edit'}</EditorToolbarLabel>
+                    </EditorToolbarButton>
+
+                    <RequestChanges
+                      userTaskId={task.id}
+                      changesRequested={task.state?.changesRequested}
+                      onRequest={() => {
+                        refetch();
+                      }}
+                    />
+
+                    {/*<StartMerge*/}
+                    {/*  allTasks={props.allTasks as any}*/}
+                    {/*  reviewTaskId={data.review.id}*/}
+                    {/*  userTask={task}*/}
+                    {/*  // onStartMerge={(revId: string) => props.goBack({ refresh: true, revisionId: revId })}*/}
+                    {/*/>*/}
+
+                    <ApproveSubmission
+                      project={project}
+                      userTaskId={task.id}
+                      onApprove={() => {
+                        refetch();
+                      }}
+                      reviewTaskId={review.id}
+                    />
+                  </ReviewActions>
+                ) : null}
               </ReviewActionBar>
               <ReviewPreview>
                 <div style={{ width: '40%' }}>

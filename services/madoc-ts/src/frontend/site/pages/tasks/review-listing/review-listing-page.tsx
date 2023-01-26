@@ -4,7 +4,6 @@ import { Navigate, Outlet, useNavigate, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { SubjectSnippet } from '../../../../../extensions/tasks/resolvers/subject-resolver';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
-import { extractIdFromUrn } from '../../../../../utility/parse-urn';
 import { SimpleStatus } from '../../../../shared/atoms/SimpleStatus';
 import { DisplayBreadcrumbs } from '../../../../shared/components/Breadcrumbs';
 import { LocaleString } from '../../../../shared/components/LocaleString';
@@ -161,7 +160,7 @@ export function ReviewListingPage() {
                     href={QuerySortToggle('user_identifier')}
                     style={{ color: sort_by && sort_by.includes('user_identifier') ? '#3579f6' : 'black' }}
                   >
-                    Contributor <Chevron style={{ transform: 'rotate(0.25turn)' }} />
+                    Asignee <Chevron style={{ transform: 'rotate(0.25turn)' }} />
                   </HrefLink>
                 </SimpleTable.Header>
               </SimpleTable.Row>
@@ -218,13 +217,7 @@ function SingleReviewTableRow({ task, active }: { task: CrowdsourcingTask; activ
         <SimpleStatus status={task.status} status_text={task.status_text || ''} />
       </SimpleTable.Cell>
       {/* assignee */}
-      <SimpleTable.Cell>
-        {task.assignee ? (
-          <HrefLink href={`/users/${extractIdFromUrn(task.assignee.id)}`}>{task.assignee.name}</HrefLink>
-        ) : (
-          ''
-        )}
-      </SimpleTable.Cell>
+      <SimpleTable.Cell>{task.assignee ? task.assignee.name : ''}</SimpleTable.Cell>
     </ThickTableRow>
   );
 }
