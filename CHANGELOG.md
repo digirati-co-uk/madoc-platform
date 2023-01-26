@@ -132,6 +132,13 @@ supports a wider range of IIIF resources as a result.
 * CSS - Reduced box-shadows in capture model editor forms
 * Changed all Atlas Viewer instances to use Canvas panel
 * Simplified styling on search results
+* Improved reviewer dashboard view 
+  * Sortable table headers 
+  * Resizable layout 
+  * Full row clickable 
+  * Focus mode & edit added
+  * Clearer language 
+  * Side by side canvas preview and improved styling 
 
 ### Removed
 

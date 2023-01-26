@@ -1,10 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, Outlet, useParams, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, Outlet, useNavigate, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { SubjectSnippet } from '../../../../../extensions/tasks/resolvers/subject-resolver';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
-import { extractIdFromUrn } from '../../../../../utility/parse-urn';
 import { SimpleStatus } from '../../../../shared/atoms/SimpleStatus';
 import { DisplayBreadcrumbs } from '../../../../shared/components/Breadcrumbs';
 import { LocaleString } from '../../../../shared/components/LocaleString';
@@ -16,8 +15,7 @@ import { HrefLink } from '../../../../shared/utility/href-link';
 import { RefetchProvider } from '../../../../shared/utility/refetch-context';
 import { useRelativeLinks } from '../../../hooks/use-relative-links';
 import { useTaskMetadata } from '../../../hooks/use-task-metadata';
-import { ButtonIcon, TextButton } from '../../../../shared/navigation/Button';
-import ReactTooltip from 'react-tooltip';
+import { ButtonIcon } from '../../../../shared/navigation/Button';
 import { Chevron } from '../../../../shared/icons/Chevron';
 import { useResizeLayout } from '../../../../shared/hooks/use-resize-layout';
 import { LayoutHandle } from '../../../../shared/layout/LayoutContainer';
@@ -57,6 +55,10 @@ const ThickTableRow = styled(SimpleTable.Row)<{ $active?: boolean }>`
     css`
       background: #edf4fb;
     `}
+  &:hover {
+    background: #edf4fb;
+    cursor: pointer;
+  }
   ${SimpleTable.Cell} {
     white-space: nowrap;
     overflow: hidden;
@@ -74,7 +76,6 @@ export function ReviewListingPage() {
   const params = useParams<{ taskId?: string }>();
   const createLink = useRelativeLinks();
   const { page, sort_by = '', ...query } = useLocationQuery();
-
 
   const QuerySortToggle = (field: string) => {
     const sort = sort_by.split(',');
@@ -143,7 +144,7 @@ export function ReviewListingPage() {
                     href={QuerySortToggle('modified_at')}
                     style={{ color: sort_by && sort_by.includes('modified_at') ? '#3579f6' : 'black' }}
                   >
-                    Date <Chevron style={{ transform: 'rotate(0.25turn)' }} />
+                    Modified <Chevron style={{ transform: 'rotate(0.25turn)' }} />
                   </HrefLink>
                 </SimpleTable.Header>
                 <SimpleTable.Header>
@@ -159,7 +160,7 @@ export function ReviewListingPage() {
                     href={QuerySortToggle('user_identifier')}
                     style={{ color: sort_by && sort_by.includes('user_identifier') ? '#3579f6' : 'black' }}
                   >
-                    Contributor <Chevron style={{ transform: 'rotate(0.25turn)' }} />
+                    Asignee <Chevron style={{ transform: 'rotate(0.25turn)' }} />
                   </HrefLink>
                 </SimpleTable.Header>
               </SimpleTable.Row>
@@ -187,10 +188,14 @@ export function ReviewListingPage() {
 function SingleReviewTableRow({ task, active }: { task: CrowdsourcingTask; active?: boolean }) {
   const { page, ...query } = useLocationQuery();
   const createLink = useRelativeLinks();
+  const navigate = useNavigate();
   const metadata = useTaskMetadata<{ subject?: SubjectSnippet }>(task);
 
   return (
-    <ThickTableRow $active={active}>
+    <ThickTableRow
+      $active={active}
+      onClick={() => navigate(createLink({ taskId: undefined, subRoute: `reviews/${task.id}`, query }))}
+    >
       {/* manifest */}
       <SimpleTable.Cell style={{ maxWidth: 300 }}>
         {metadata.subject && metadata.subject.parent && (
@@ -201,39 +206,18 @@ function SingleReviewTableRow({ task, active }: { task: CrowdsourcingTask; activ
       </SimpleTable.Cell>
       {/* resource name */}
       <SimpleTable.Cell>
-        <HrefLink
-          href={createLink({
-            taskId: undefined,
-            subRoute: `reviews/${task.id}`,
-            query,
-          })}
-        >
-          {metadata && metadata.subject ? <LocaleString>{metadata.subject.label}</LocaleString> : task.name}
-        </HrefLink>
+        {metadata && metadata.subject ? <LocaleString>{metadata.subject.label}</LocaleString> : task.name}
       </SimpleTable.Cell>
-      {/* date */}
+      {/* date modified*/}
       <SimpleTable.Cell>
-        <>
-          {task.created_at ? (
-            <div data-tip="created">{new Date(task.created_at).toLocaleDateString()}</div>
-          ) : task.modified_at ? (
-            <div data-tip="modified">{new Date(task.modified_at).toLocaleDateString()}</div>
-          ) : null}
-          <ReactTooltip place="bottom" type="dark" effect="solid" />
-        </>
+        {task.modified_at ? <> {new Date(task.modified_at).toLocaleDateString()} </> : null}
       </SimpleTable.Cell>
       {/* status */}
       <SimpleTable.Cell>
         <SimpleStatus status={task.status} status_text={task.status_text || ''} />
       </SimpleTable.Cell>
       {/* assignee */}
-      <SimpleTable.Cell>
-        {task.assignee ? (
-          <HrefLink href={`/users/${extractIdFromUrn(task.assignee.id)}`}>{task.assignee.name}</HrefLink>
-        ) : (
-          ''
-        )}
-      </SimpleTable.Cell>
+      <SimpleTable.Cell>{task.assignee ? task.assignee.name : ''}</SimpleTable.Cell>
     </ThickTableRow>
   );
 }
