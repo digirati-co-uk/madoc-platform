@@ -97,6 +97,7 @@ export function createConfig(name, entry) {
           'zlib',
           'util',
           'debug',
+          'csv-stringify',
           ...Object.keys(pkg.dependencies),
           ...Object.keys(pkg.devDependencies),
         ].filter(t => TO_BUNDLE.indexOf(t) === -1),
