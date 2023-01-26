@@ -10,6 +10,7 @@ type SupportedFile = { type: string; value: string };
 interface FilePreviewProps {
   fileName: string;
   showLines?: boolean;
+  download?: boolean;
   contentType?: string;
   children?: SupportedFile;
   lazyLoad?: () => Promise<SupportedFile | undefined | null> | undefined | SupportedFile | null;
@@ -141,7 +142,7 @@ export function FilePreview(props: FilePreviewProps) {
           )
         ) : null}
         <FileName onClick={toggle}>{props.fileName}</FileName>
-        {!isLazy || (data && enabled) ? (
+        {(!isLazy || (data && enabled)) && props.download !== false ? (
           <DownloadButton
             onClick={() =>
               createDownload(

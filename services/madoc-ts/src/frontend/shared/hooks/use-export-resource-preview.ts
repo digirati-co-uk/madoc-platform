@@ -29,18 +29,14 @@ export function useExportResourcePreview(
   const query = useQuery(
     ['export-item', { type: selectedType, ...options }],
     async () => {
-      console.log('exporting...');
       if (selected) {
         try {
-          const promise = await selected.exportData(options.subject, {
+          return await selected.exportData(options.subject, {
             subjectParent: options.subjectParent,
             api,
             config: options.config,
             context: options.subjectParent || options.context,
           });
-          console.log(promise);
-
-          return promise;
         } catch (e) {
           console.log(e);
         }
@@ -48,10 +44,6 @@ export function useExportResourcePreview(
     },
     { enabled: options.loadFiles !== false }
   );
-
-  if (query.data) {
-    console.log('data', query.data);
-  }
 
   return [query, selected, expectedFiles] as const;
 }

@@ -2,6 +2,7 @@ import { BaseTask } from '../../../../gateway/tasks/base-task';
 import React, { useState } from 'react';
 import { useMutation } from 'react-query';
 import { TimeAgo } from '../../../shared/atoms/TimeAgo';
+import { FilePreview } from '../../../shared/components/FilePreview';
 import { Button, ButtonRow } from '../../../shared/navigation/Button';
 import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
 import { LocaleString, useCreateLocaleString } from '../../../shared/components/LocaleString';
@@ -58,11 +59,25 @@ export const GenericTask: React.FC<{ task: BaseTask; statusBar?: JSX.Element; sn
           <pre>{task.state.error}</pre>
         </ErrorMessage>
       ) : null}
-      {Object.keys(task.state).length ? <pre>{JSON.stringify(task.state, null, 2)}</pre> : null}
       {snippet}
       {task.description ? <p>{task.description}</p> : null}
       <p>{task.created_at ? <TimeAgo date={task.created_at} /> : null}</p>
+      <FilePreview
+        fileName="parameters"
+        contentType="json"
+        lazyLoad={() => ({ type: 'text', value: JSON.stringify(task.parameters || {}, null, 2) })}
+      />
+
+      {Object.keys(task.state).length ? (
+        <FilePreview
+          fileName="state"
+          contentType="json"
+          lazyLoad={() => ({ type: 'text', value: JSON.stringify(task.state || {}, null, 2) })}
+        />
+      ) : null}
+
       {statusBar}
+
       <SortedTaskList tasks={task.subtasks || []} trigger={trigger} taskStatusMap={taskStatusMap} />
     </div>
   );

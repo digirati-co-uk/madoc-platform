@@ -29,7 +29,5 @@ export function useExportResources(
     return files;
   }, [options, selected]);
 
-  console.log('exportedFiles', expectedFiles);
-
   return [expectedFiles, selected] as const;
 }
