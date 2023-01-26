@@ -7,6 +7,9 @@ import { annotationStyles } from './routes/annotation-styles/index';
 import { searchAllUsers } from './routes/global/search-all-users';
 import { systemCheck } from './routes/global/system-check';
 import { getAutomatedUsers } from './routes/manage-site/get-automated-users';
+import { createProjectExport } from './routes/projects/create-project-export';
+import { getProjectRawData } from './routes/projects/get-project-raw-data';
+import { listProjectModelEntityAutocomplete } from './routes/projects/list-project-model-entity-autocomplete';
 import { updateProjectAnnotationStyle } from './routes/projects/update-project-annotation-style';
 import { siteRoot } from './routes/root';
 import {
@@ -455,6 +458,7 @@ export const router = new TypedRouter({
   'create-project': [TypedRouter.POST, '/api/madoc/projects', createNewProject],
   'list-projects': [TypedRouter.GET, '/api/madoc/projects', listProjects],
   'get-project': [TypedRouter.GET, '/api/madoc/projects/:id', getProject],
+  'export-project': [TypedRouter.POST, '/api/madoc/projects/:id/export', createProjectExport],
   'get-project-structure': [TypedRouter.GET, '/api/madoc/projects/:id/structure', getProjectStructure],
   'get-project-metadata': [TypedRouter.GET, '/api/madoc/projects/:id/metadata', getProjectMetadata],
   'update-project-metadata': [TypedRouter.PUT, '/api/madoc/projects/:id/metadata', updateProjectMetadata],
@@ -467,6 +471,11 @@ export const router = new TypedRouter({
     TypedRouter.GET,
     '/api/madoc/projects/:id/annotation-style',
     getProjectAnnotationStyle,
+  ],
+  'list-project-model-entity-autocomplete': [
+    TypedRouter.GET,
+    '/api/madoc/projects/:id/model-autocomplete',
+    listProjectModelEntityAutocomplete,
   ],
   'update-project-status': [TypedRouter.PUT, '/api/madoc/projects/:id/status', updateProjectStatus],
   'create-project-resource-claim': [TypedRouter.POST, '/api/madoc/projects/:id/claim', createResourceClaim],
@@ -483,6 +492,7 @@ export const router = new TypedRouter({
   'get-project-model': [TypedRouter.GET, '/api/madoc/projects/:id/models/:subject', getProjectModel],
   'get-project-task': [TypedRouter.GET, '/api/madoc/projects/:id/task', getProjectTask],
   'assign-random-resource': [TypedRouter.POST, '/api/madoc/projects/:id/random', assignRandomResource],
+  'get-project-data-raw': [TypedRouter.GET, '/api/madoc/projects/:id/raw-model-fields', getProjectRawData],
   'get-project-personal-note': [TypedRouter.GET, '/api/madoc/projects/:id/personal-notes/:resourceId', getProjectNote],
   'get-project-all-personal-note': [TypedRouter.GET, '/api/madoc/projects/:id/personal-notes', getAllProjectNotes],
   'update-project-personal-note': [
