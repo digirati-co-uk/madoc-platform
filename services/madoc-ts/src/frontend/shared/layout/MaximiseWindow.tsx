@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components';
 const MaximiseWindowContainer = styled.div<{ $open: boolean }>`
   height: 100%;
   background: #fff;
-  flex: 1 1 0px;
+  flex: 1 1 0;
   min-height: 0;
   min-width: 0;
   display: flex;

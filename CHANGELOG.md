@@ -48,6 +48,7 @@ supports a wider range of IIIF resources as a result.
 * Fixed annotation format when exporting Presentation 3 Manifest (OA -> W3C)
 * Fixed bug with read-only annotations disappearing
 * Fixed message "login to contribute" on published projects
+* Fixed notification showing on document panel when panel is empty
 
 ### Added
 
@@ -116,6 +117,7 @@ supports a wider range of IIIF resources as a result.
     * Project API - A JSON document with project metadata
     * Simple CSV export - exports all capture models into a csv file.
 * Added new interactions in the Document panel for annotations
+* Added secondary view for "X hours ago" to show the date and time on click (browser preference)
 
 ### Changed
 
@@ -142,6 +144,13 @@ supports a wider range of IIIF resources as a result.
 * CSS - Reduced box-shadows in capture model editor forms
 * Changed all Atlas Viewer instances to use Canvas panel
 * Simplified styling on search results
+* Improved reviewer dashboard view 
+  * Sortable table headers 
+  * Resizable layout 
+  * Full row clickable 
+  * Focus mode & edit added
+  * Clearer language 
+  * Side by side canvas preview and improved styling 
 
 ### Removed
 

@@ -322,7 +322,7 @@ export const BlockEditorForm: React.FC<{
   return (
     <ModalButton
       as={as ? as : EditBlock}
-      style={{ zIndex: 9999 }}
+      style={{ zIndex: 20 }}
       title={`Edit block: ${block.name}`}
       modalSize={'lg'}
       onClose={async () => {
