@@ -1,43 +1,36 @@
 import React from 'react';
-import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
-import { LocaleString } from '../../shared/components/LocaleString';
 import { Pagination } from '../../shared/components/Pagination';
 import { Slot } from '../../shared/page-blocks/slot';
 import { Heading1 } from '../../shared/typography/Heading1';
-import { HrefLink } from '../../shared/utility/href-link';
-import { useRelativeLinks } from '../hooks/use-relative-links';
 import { usePaginatedTopicTypes } from './loaders/topic-type-list-loader';
+import { StaticPage } from '../features/StaticPage';
+import { useTranslation } from 'react-i18next';
+import { AllTopicTypeItems } from '../features/AllTopicTypeItems';
 
 export function ViewTopicTypes() {
-  const createLink = useRelativeLinks();
+  const { t } = useTranslation();
   const { data } = usePaginatedTopicTypes();
 
   return (
-    <>
-      <Slot name="common-breadcrumbs">
-        <DisplayBreadcrumbs topicRoot />
+    <StaticPage title="All Topic types">
+      <Slot name="all-topic-types-header">
+        <Heading1>{t('All Topic Types')}</Heading1>
+
+        <Pagination
+          pageParam={'page'}
+          page={data?.pagination ? data.pagination.page : 1}
+          totalPages={data?.pagination ? data.pagination.totalPages : 1}
+          stale={!data?.pagination}
+        />
       </Slot>
 
-      {/* Custom slots.. */}
-      <Heading1>Topic types</Heading1>
-      <ul>
-        {data?.topicTypes.map(topicType => (
-          <li key={topicType.id}>
-            <HrefLink href={createLink({ topicType: topicType.slug })}>
-              <LocaleString>{topicType.label}</LocaleString>
-            </HrefLink>
-          </li>
-        ))}
-      </ul>
+      <Slot name="all-topic-types-body">
+        <AllTopicTypeItems />
+      </Slot>
 
-      <Pagination
-        pageParam={'page'}
-        page={data?.pagination ? data.pagination.page : 1}
-        totalPages={data?.pagination ? data.pagination.totalPages : 1}
-        stale={!data?.pagination}
-      />
+      <Slot name="all-topic-types-footer"></Slot>
 
-      <pre>{JSON.stringify(data, null, 2)}</pre>
-    </>
+      {/*<pre>{JSON.stringify(data, null, 2)}</pre>*/}
+    </StaticPage>
   );
 }
