@@ -10,7 +10,7 @@ export const ImageStripBox = styled.div<{
   position: relative;
   flex-shrink: 0;
   border-radius: 3px;
-  max-height: ${props => (props.$size === 'small' ? '200px' : '')};
+  max-width: ${props => (props.$size === 'small' ? '200px' : '')};
   border: 1px solid;
   border-color: ${props => (props.$border ? props.$border : 'transparent')};
   background-color: ${props => (props.$bgColor ? props.$bgColor : 'inherit')};
