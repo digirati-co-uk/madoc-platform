@@ -63,6 +63,11 @@ export const DocumentSectionField = styled.div`
   padding-bottom: 0.4em;
   margin-bottom: 0.2em;
   background: #fff;
+  outline: 3px solid transparent;
+  transition: outline-color 1s;
+  &[data-highlighted='true'] {
+    outline-color: orangered;
+  }
 `;
 
 export const DocumentCollapse = styled.div`
