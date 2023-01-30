@@ -50,7 +50,6 @@ export interface Topic {
   slug: string;
   label: InternationalString; // From string.
   topicType?: TopicTypeSnippet;
-  otherLabels: InternationalString[];
   authorities: Array<{ id: string; label: InternationalString }>;
   modified: string;
   created: string;
@@ -62,16 +61,14 @@ export interface Topic {
       label: string;
     }>;
     summary?: InternationalString;
+    subHeading?: InternationalString;
     heroImage?: {
       url: string;
       alt?: string;
       overlayColor?: string;
       transparent?: boolean;
     } | null;
-    description?: {
-      label: InternationalString;
-      value: InternationalString;
-    };
+    description?: InternationalString;
     // @todo search result format MAY change, hopefully not.
     featured?: Array<SearchResult>;
     related?: Array<TopicSnippet>;

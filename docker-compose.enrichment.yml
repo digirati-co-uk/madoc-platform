@@ -31,4 +31,5 @@ services:
       - gateway-redis
     volumes:
       - ./services/enrichment/app:/app:delegated
-
+    ports:
+      - 5020:5000
