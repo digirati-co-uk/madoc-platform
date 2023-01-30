@@ -2,10 +2,10 @@ import React from 'react';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { Slot } from '../../shared/page-blocks/slot';
-import { Heading1 } from '../../shared/typography/Heading1';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useTopicType } from './loaders/topic-type-loader';
+import { TopicTypeHero } from '../features/TopicTypeHero';
 
 export function ViewTopicType() {
   const createLink = useRelativeLinks();
@@ -17,8 +17,10 @@ export function ViewTopicType() {
         <DisplayBreadcrumbs />
       </Slot>
 
-      {/* Custom slots.. */}
-      <Heading1 as={LocaleString}>{data?.label || { none: ['...'] }}</Heading1>
+      <Slot name="topic-type-hero">
+        <TopicTypeHero />
+      </Slot>
+
       <ul>
         {data?.topics.map(topic => (
           <li key={topic.id}>
@@ -28,7 +30,7 @@ export function ViewTopicType() {
           </li>
         ))}
       </ul>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      {/*<pre>{JSON.stringify(data, null, 2)}</pre>*/}
     </>
   );
 }
