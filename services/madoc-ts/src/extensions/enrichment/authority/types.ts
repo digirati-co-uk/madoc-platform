@@ -132,9 +132,10 @@ export interface EntityMadocResponse {
   label: string;
   slug: string;
   title: string[];
-  description: string[];
-  topic_summary: string[];
+  description: string;
+  topic_summary?: string;
   image_url: string;
   image_caption: string[];
   secondary_heading: string;
+  authorities: { authority: string; identifier: string; uri: string }[];
 }
