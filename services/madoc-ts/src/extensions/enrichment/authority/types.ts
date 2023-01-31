@@ -1,4 +1,5 @@
 import { Pagination } from '../../../types/schemas/_pagination';
+import { InternationalString } from '@iiif/presentation-3';
 
 export interface AuthoritySnippet {
   id: string;
@@ -120,6 +121,10 @@ export interface EntityTypeMadocResponse {
   modified: string;
   label: string;
   slug: string;
+  other_labels?: OtherLabels;
+  other_data?: OtherLabels;
+  image_url?: string;
+  description?: InternationalString;
 }
 
 // Entity - Retrieve
@@ -131,11 +136,11 @@ export interface EntityMadocResponse {
   type: string;
   label: string;
   slug: string;
-  title: string[];
-  description: string;
+  title: InternationalString;
+  description: InternationalString;
   topic_summary?: string;
   image_url: string;
-  image_caption: string[];
+  image_caption: string;
   secondary_heading: string;
   authorities: { authority: string; identifier: string; uri: string }[];
 }

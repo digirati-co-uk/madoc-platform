@@ -28,7 +28,7 @@ export const TopicLoader: UniversalComponent<TopicLoaderType> = createUniversalC
   () => {
     const { data } = useTopic();
 
-    const ctx = useMemo(() => (data ? { id: data.slug, name: data.label } : undefined), [data]);
+    const ctx = useMemo(() => (data ? { id: data.id, name: data.label } : undefined), [data]);
 
     return (
       <BreadcrumbContext topic={ctx}>

@@ -54,6 +54,7 @@ const Right = styled.div`
 export const TopicHero: React.FC<{ h1Color?: string; h2Color?: string }> = ({ h1Color, h2Color }) => {
   const { data } = useTopic();
 
+  console.log(data);
   if (!data) {
     return null;
   }
@@ -61,7 +62,7 @@ export const TopicHero: React.FC<{ h1Color?: string; h2Color?: string }> = ({ h1
     <TopicHeroWrapper>
       <HeroText>
         <HeroHeading style={{ color: h1Color }} as={LocaleString}>
-          {data?.label}
+          {data?.label[0]}
         </HeroHeading>
 
         {data.editorial.description && (

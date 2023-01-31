@@ -16,7 +16,7 @@ export interface TopicType {
   id: string;
   slug: string;
   label: InternationalString; // From string.
-  otherLabels?: InternationalString[];
+  // otherLabels?: InternationalString[];
   pagination: Pagination;
   topics: TopicSnippet[];
 

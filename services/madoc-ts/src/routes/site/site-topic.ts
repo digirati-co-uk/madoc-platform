@@ -24,9 +24,10 @@ export const siteTopic: RouteMiddleware<{ type: string; topic: string }> = async
 };
 
 function compatTopic(topic: EntityMadocResponse, topicType: EntityTypeMadocResponse): Topic {
-  const nuked: any = { url: undefined, type: undefined, label: undefined };
+  const nuked: any = { url: undefined };
   return {
-    ...topic,
+    id: topic.id,
+    slug: topic.slug,
     label: topic.title,
     topicType: topic.type
       ? {
@@ -41,7 +42,8 @@ function compatTopic(topic: EntityMadocResponse, topicType: EntityTypeMadocRespo
       authority: auth.authority,
       label: { none: [auth.identifier] },
     })),
-
+    modified: topic.modified,
+    created: topic.created,
     // Mocked values.
     editorial: {
       related: [],

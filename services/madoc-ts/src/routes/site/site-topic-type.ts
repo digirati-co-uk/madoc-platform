@@ -13,7 +13,7 @@ export const siteTopicType: RouteMiddleware<{ type: string }> = async context =>
   const response = await siteApi.authority.getEntityType(slug);
   const topics = await siteApi.authority.getEntities(slug);
 
-  context.response.body = compatTopicType(response, topics, slug);
+  context.response.body = compatTopicType(response, topics);
 };
 
 function compatTopic(topic: EntitySnippetMadoc): TopicSnippet {
@@ -24,13 +24,11 @@ function compatTopic(topic: EntitySnippetMadoc): TopicSnippet {
 }
 
 // @todo remove once in the backend.
-function compatTopicType(topicType: EntityTypeMadocResponse, topics: EntitiesMadocResponse, slug: string): TopicType {
-  const nuked: any = { results: undefined, url: undefined };
+function compatTopicType(topicType: EntityTypeMadocResponse, topics: EntitiesMadocResponse): TopicType {
+  const nuked: any = { url: undefined, other_labels: undefined, other_data: undefined };
 
   return {
     ...topicType,
-    label: { none: [slug] },
-    otherLabels: [], // @todo no other labels given.
     pagination: topics.pagination,
     topics: topics.results.map(compatTopic),
 
@@ -39,7 +37,7 @@ function compatTopicType(topicType: EntityTypeMadocResponse, topics: EntitiesMad
       summary: { en: ['Example summary'] },
       related: [],
       featured: [],
-      heroImage: null,
+      heroImage: { url: topicType.image_url, alt: null, overlayColor: null, transparent: null },
     },
     // Nuke these.
     ...nuked,
