@@ -25,7 +25,7 @@ function compatTopic(topic: EntitySnippetMadoc): TopicSnippet {
 
 // @todo remove once in the backend.
 function compatTopicType(topicType: EntityTypeMadocResponse, topics: EntitiesMadocResponse): TopicType {
-  const nuked: any = { url: undefined, other_labels: undefined, other_data: undefined };
+  const nuked: any = { url: undefined };
 
   return {
     ...topicType,
