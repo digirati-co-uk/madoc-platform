@@ -70,6 +70,52 @@ const ThickTableRow = styled(SimpleTable.Row)<{ $active?: boolean }>`
   }
 `;
 
+const HeaderLink = styled.a`
+  color: black;
+
+  svg {
+    fill: #555555;
+    vertical-align: middle;
+    transition: background-color 0.2s, height 0.3s, transform 0.5s;
+    transition-timing-function: ease-in-out;
+    height: 2px;
+    width: 12px;
+    transform: rotatex(0deg);
+    background-color: rgba(85, 85, 85, 1);
+  }
+
+  &[data-no-sort='true'] {
+    & svg {
+      height: 1em;
+      width: 1em;
+      transform: rotatex(180deg);
+      background-color: rgba(85, 85, 85, 0);
+    }
+  }
+    
+  &[data-is-active='true'] {
+    color: #3579f6;
+
+    &[data-is-desc='true'] {
+      & svg {
+        height: 1em;
+        width: 1em;
+        transform: rotatex(0deg);
+        background-color: rgba(85, 85, 85, 0);
+      }
+    }
+
+    &[data-is-desc='false'] {
+      & svg {
+        height: 1em;
+        width: 1em;
+        transform: rotatex(180deg);
+        background-color: rgba(85, 85, 85, 0);
+      }
+    }
+  }
+`;
+
 export function ReviewListingPage() {
   const { t } = useTranslation();
   const { data, refetch } = useData<{ tasks: CrowdsourcingTask[] }>(ReviewListingPage);
@@ -78,21 +124,16 @@ export function ReviewListingPage() {
   const { page, sort_by = '', ...query } = useLocationQuery();
 
   const QuerySortToggle = (field: string) => {
-    const sort = sort_by.split(',');
+    const sort = sort_by;
     if (sort && sort.includes(`${field}:desc`)) {
-      const i = sort.indexOf(`${field}:desc`);
-      sort[i] = `${field}:asc`;
-      return `?${stringify({ ...query, sort_by: sort.join(',') })}`;
+      return `?${stringify({ ...query, sort_by: `${field}:asc` })}`;
     }
     if (sort && sort.includes(`${field}:asc`)) {
-      const i = sort.indexOf(`${field}:asc`);
-      sort.splice(i, 1);
 
-      return `?${stringify({ ...query, sort_by: sort.join(',') })}`;
+      return `?${stringify({ ...query, sort_by: '' })}`;
     }
 
-    sort.push(`${field}:desc`);
-    return `?${stringify({ ...query, sort_by: sort.join(',') })}`;
+    return `?${stringify({ ...query, sort_by: `${field}:desc` })}`;
   };
 
   const { widthB, refs } = useResizeLayout(`review-dashboard-resize`, {
@@ -124,44 +165,55 @@ export function ReviewListingPage() {
             <thead>
               <SimpleTable.Row>
                 <SimpleTable.Header>
-                  <HrefLink
+                  <HeaderLink
+                    as={HrefLink}
                     href={QuerySortToggle('subject')}
-                    style={{ color: sort_by && sort_by.includes('subject:') ? '#3579f6' : 'black' }}
+                    data-is-active={sort_by && sort_by.includes('subject:')}
+                    data-is-desc={sort_by && sort_by.includes('desc')}
                   >
-                    Manifest <Chevron style={{ transform: 'rotate(0.25turn)' }} />
-                  </HrefLink>
+                    Manifest <Chevron />
+                  </HeaderLink>
                 </SimpleTable.Header>
                 <SimpleTable.Header>
-                  <HrefLink
+                  <HeaderLink
+                    as={HrefLink}
                     href={QuerySortToggle('subject_parent')}
-                    style={{ color: sort_by && sort_by.includes('subject_parent') ? '#3579f6' : 'black' }}
+                    data-is-active={sort_by && sort_by.includes('subject_parent')}
+                    data-is-desc={sort_by && sort_by.includes('desc')}
                   >
-                    Canvas <Chevron style={{ transform: 'rotate(0.25turn)' }} />
-                  </HrefLink>
+                    Canvas <Chevron />
+                  </HeaderLink>
                 </SimpleTable.Header>
                 <SimpleTable.Header>
-                  <HrefLink
+                  <HeaderLink
+                    as={HrefLink}
                     href={QuerySortToggle('modified_at')}
-                    style={{ color: sort_by && sort_by.includes('modified_at') ? '#3579f6' : 'black' }}
+                    data-is-active={sort_by && sort_by.includes('modified_at')}
+                    data-is-desc={sort_by && sort_by.includes('desc')}
+                    data-no-sort={!sort_by}
                   >
-                    Modified <Chevron style={{ transform: 'rotate(0.25turn)' }} />
-                  </HrefLink>
+                    Modified <Chevron />
+                  </HeaderLink>
                 </SimpleTable.Header>
                 <SimpleTable.Header>
-                  <HrefLink
+                  <HeaderLink
+                    as={HrefLink}
                     href={QuerySortToggle('status')}
-                    style={{ color: sort_by && sort_by.includes('status') ? '#3579f6' : 'black' }}
+                    data-is-active={sort_by && sort_by.includes('status')}
+                    data-is-desc={sort_by && sort_by.includes('desc')}
                   >
-                    Status <Chevron style={{ transform: 'rotate(0.25turn)' }} />
-                  </HrefLink>
+                    Status <Chevron />
+                  </HeaderLink>
                 </SimpleTable.Header>
                 <SimpleTable.Header>
-                  <HrefLink
+                  <HeaderLink
+                    as={HrefLink}
                     href={QuerySortToggle('user_identifier')}
-                    style={{ color: sort_by && sort_by.includes('user_identifier') ? '#3579f6' : 'black' }}
+                    data-is-active={sort_by && sort_by.includes('user_identifier')}
+                    data-is-desc={sort_by && sort_by.includes('desc')}
                   >
-                    Asignee <Chevron style={{ transform: 'rotate(0.25turn)' }} />
-                  </HrefLink>
+                    Assignee <Chevron />
+                  </HeaderLink>
                 </SimpleTable.Header>
               </SimpleTable.Row>
             </thead>
