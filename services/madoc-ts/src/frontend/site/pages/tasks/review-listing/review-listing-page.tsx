@@ -21,6 +21,7 @@ import { LayoutHandle } from '../../../../shared/layout/LayoutContainer';
 import ResizeHandleIcon from '../../../../shared/icons/ResizeHandleIcon';
 import { stringify } from 'query-string';
 import { useInfiniteAction } from '../../../hooks/use-infinite-action';
+import { RefetchProvider } from '../../../../shared/utility/refetch-context';
 
 const TaskListContainer = styled.div`
   height: 80vh;
@@ -129,16 +130,20 @@ export function ReviewListingPage() {
     minWidthPx: 400,
   });
 
-  const { data: pages, fetchMore, canFetchMore, isFetchingMore } = useInfiniteData(ReviewListingPage, undefined, {
-    getFetchMore: lastPage => {
-      if (lastPage.pagination.totalPages === lastPage.pagination.page) {
-        return undefined;
-      }
-      return {
-        page: lastPage.pagination.page + 1,
-      };
-    },
-  });
+  const { data: pages, fetchMore, refetch, canFetchMore, isFetchingMore } = useInfiniteData(
+    ReviewListingPage,
+    undefined,
+    {
+      getFetchMore: lastPage => {
+        if (lastPage.pagination.totalPages === lastPage.pagination.page) {
+          return undefined;
+        }
+        return {
+          page: lastPage.pagination.page + 1,
+        };
+      },
+    }
+  );
   const [loadMoreButton] = useInfiniteAction({
     fetchMore,
     canFetchMore,
@@ -169,7 +174,7 @@ export function ReviewListingPage() {
   // 5. Add alternative version with form and then actions, with a toggle.
 
   return (
-    <>
+    <RefetchProvider refetch={refetch}>
       <DisplayBreadcrumbs currentPage={t('Reviews')} />
 
       <ReviewListingContainer ref={refs.container as any}>
@@ -263,7 +268,7 @@ export function ReviewListingPage() {
           <Outlet />
         </TaskPreviewContainer>
       </ReviewListingContainer>
-    </>
+    </RefetchProvider>
   );
 }
 
