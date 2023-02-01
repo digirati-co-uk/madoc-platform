@@ -32,6 +32,7 @@ const Header = styled.th`
   text-align: start;
   top: 0;
   position: sticky;
+  min-width: 92px;
 `;
 
 export const SimpleTable = {

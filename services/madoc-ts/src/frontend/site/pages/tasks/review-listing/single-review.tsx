@@ -129,7 +129,6 @@ const Assignee = styled.div`
   font-size: small;
   color: #575757;
   align-self: center;
-  overflow-y: scroll;
   margin-left: 0.5em;
 `;
 

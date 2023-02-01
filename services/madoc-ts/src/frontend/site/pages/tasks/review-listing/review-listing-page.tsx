@@ -7,29 +7,31 @@ import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-ta
 import { SimpleStatus } from '../../../../shared/atoms/SimpleStatus';
 import { DisplayBreadcrumbs } from '../../../../shared/components/Breadcrumbs';
 import { LocaleString } from '../../../../shared/components/LocaleString';
-import { useData } from '../../../../shared/hooks/use-data';
+import { useInfiniteData } from '../../../../shared/hooks/use-data';
 import { useLocationQuery } from '../../../../shared/hooks/use-location-query';
 import { SimpleTable } from '../../../../shared/layout/SimpleTable';
 import { serverRendererFor } from '../../../../shared/plugins/external/server-renderer-for';
 import { HrefLink } from '../../../../shared/utility/href-link';
-import { RefetchProvider } from '../../../../shared/utility/refetch-context';
 import { useRelativeLinks } from '../../../hooks/use-relative-links';
 import { useTaskMetadata } from '../../../hooks/use-task-metadata';
-import { ButtonIcon } from '../../../../shared/navigation/Button';
+import { Button, ButtonIcon } from '../../../../shared/navigation/Button';
 import { Chevron } from '../../../../shared/icons/Chevron';
 import { useResizeLayout } from '../../../../shared/hooks/use-resize-layout';
 import { LayoutHandle } from '../../../../shared/layout/LayoutContainer';
 import ResizeHandleIcon from '../../../../shared/icons/ResizeHandleIcon';
 import { stringify } from 'query-string';
+import { useInfiniteAction } from '../../../hooks/use-infinite-action';
+import { RefetchProvider } from '../../../../shared/utility/refetch-context';
 
 const TaskListContainer = styled.div`
   height: 80vh;
-  overflow: scroll;
+  overflow: auto;
+  position: relative;
   background: #fff;
 `;
 
 const TaskPreviewContainer = styled.div`
-  min-width: 550px;
+  min-width: 600px;
   flex: 1;
   width: 750px;
 `;
@@ -70,30 +72,57 @@ const ThickTableRow = styled(SimpleTable.Row)<{ $active?: boolean }>`
   }
 `;
 
+const HeaderLink = styled.a`
+  color: black;
+
+  svg {
+    fill: #555555;
+    vertical-align: middle;
+    transition: background-color 0.2s, height 0.3s, transform 0.5s;
+    transition-timing-function: ease-in-out;
+    height: 2px;
+    width: 12px;
+    transform: rotatex(0deg);
+    background-color: rgba(85, 85, 85, 1);
+  }
+
+  &[data-no-sort='true'] {
+    & svg {
+      height: 1em;
+      width: 1em;
+      transform: rotatex(180deg);
+      background-color: rgba(85, 85, 85, 0);
+    }
+  }
+
+  &[data-is-active='true'] {
+    color: #3579f6;
+
+    &[data-is-desc='true'] {
+      & svg {
+        height: 1em;
+        width: 1em;
+        transform: rotatex(0deg);
+        background-color: rgba(85, 85, 85, 0);
+      }
+    }
+
+    &[data-is-desc='false'] {
+      & svg {
+        height: 1em;
+        width: 1em;
+        transform: rotatex(180deg);
+        background-color: rgba(85, 85, 85, 0);
+      }
+    }
+  }
+`;
+
 export function ReviewListingPage() {
   const { t } = useTranslation();
-  const { data, refetch } = useData<{ tasks: CrowdsourcingTask[] }>(ReviewListingPage);
   const params = useParams<{ taskId?: string }>();
   const createLink = useRelativeLinks();
   const { page, sort_by = '', ...query } = useLocationQuery();
-
-  const QuerySortToggle = (field: string) => {
-    const sort = sort_by.split(',');
-    if (sort && sort.includes(`${field}:desc`)) {
-      const i = sort.indexOf(`${field}:desc`);
-      sort[i] = `${field}:asc`;
-      return `?${stringify({ ...query, sort_by: sort.join(',') })}`;
-    }
-    if (sort && sort.includes(`${field}:asc`)) {
-      const i = sort.indexOf(`${field}:asc`);
-      sort.splice(i, 1);
-
-      return `?${stringify({ ...query, sort_by: sort.join(',') })}`;
-    }
-
-    sort.push(`${field}:desc`);
-    return `?${stringify({ ...query, sort_by: sort.join(',') })}`;
-  };
 
   const { widthB, refs } = useResizeLayout(`review-dashboard-resize`, {
     left: true,
@@ -101,12 +130,41 @@ export function ReviewListingPage() {
     minWidthPx: 400,
   });
 
-  if (!data) {
-    return <>Loading...</>;
-  }
+  const { data: pages, fetchMore, refetch, canFetchMore, isFetchingMore } = useInfiniteData(
+    ReviewListingPage,
+    undefined,
+    {
+      getFetchMore: lastPage => {
+        if (lastPage.pagination.totalPages === lastPage.pagination.page) {
+          return undefined;
+        }
+        return {
+          page: lastPage.pagination.page + 1,
+        };
+      },
+    }
+  );
+  const [loadMoreButton] = useInfiniteAction({
+    fetchMore,
+    canFetchMore,
+    isFetchingMore,
+    container: refs.resizableDiv,
+  });
 
-  if (data && !params.taskId && data.tasks[0]) {
-    return <Navigate to={createLink({ taskId: undefined, subRoute: `reviews/${data.tasks[0].id}` })} />;
+  const QuerySortToggle = (field: string) => {
+    const sort = sort_by;
+    if (sort && sort.includes(`${field}:desc`)) {
+      return `?${stringify({ ...query, sort_by: `${field}:asc` })}`;
+    }
+    if (sort && sort.includes(`${field}:asc`)) {
+      return `?${stringify({ ...query, sort_by: '' })}`;
+    }
+
+    return `?${stringify({ ...query, sort_by: `${field}:desc` })}`;
+  };
+
+  if (pages && pages[0].tasks && !params.taskId && pages[0].tasks[0]) {
+    return <Navigate to={createLink({ taskId: undefined, subRoute: `reviews/${pages[0].tasks[0].id}` })} />;
   }
 
   // 1. Make requests for all crowdsourcing tasks marked as in review.
@@ -118,60 +176,89 @@ export function ReviewListingPage() {
   return (
     <RefetchProvider refetch={refetch}>
       <DisplayBreadcrumbs currentPage={t('Reviews')} />
+
       <ReviewListingContainer ref={refs.container as any}>
         <TaskListContainer ref={refs.resizableDiv as any} style={{ width: widthB }}>
-          <SimpleTable.Table style={{ borderColor: 'transparent' }}>
-            <thead>
-              <SimpleTable.Row>
-                <SimpleTable.Header>
-                  <HrefLink
-                    href={QuerySortToggle('subject')}
-                    style={{ color: sort_by && sort_by.includes('subject:') ? '#3579f6' : 'black' }}
-                  >
-                    Manifest <Chevron style={{ transform: 'rotate(0.25turn)' }} />
-                  </HrefLink>
-                </SimpleTable.Header>
-                <SimpleTable.Header>
-                  <HrefLink
-                    href={QuerySortToggle('subject_parent')}
-                    style={{ color: sort_by && sort_by.includes('subject_parent') ? '#3579f6' : 'black' }}
-                  >
-                    Canvas <Chevron style={{ transform: 'rotate(0.25turn)' }} />
-                  </HrefLink>
-                </SimpleTable.Header>
-                <SimpleTable.Header>
-                  <HrefLink
-                    href={QuerySortToggle('modified_at')}
-                    style={{ color: sort_by && sort_by.includes('modified_at') ? '#3579f6' : 'black' }}
-                  >
-                    Modified <Chevron style={{ transform: 'rotate(0.25turn)' }} />
-                  </HrefLink>
-                </SimpleTable.Header>
-                <SimpleTable.Header>
-                  <HrefLink
-                    href={QuerySortToggle('status')}
-                    style={{ color: sort_by && sort_by.includes('status') ? '#3579f6' : 'black' }}
-                  >
-                    Status <Chevron style={{ transform: 'rotate(0.25turn)' }} />
-                  </HrefLink>
-                </SimpleTable.Header>
-                <SimpleTable.Header>
-                  <HrefLink
-                    href={QuerySortToggle('user_identifier')}
-                    style={{ color: sort_by && sort_by.includes('user_identifier') ? '#3579f6' : 'black' }}
-                  >
-                    Asignee <Chevron style={{ transform: 'rotate(0.25turn)' }} />
-                  </HrefLink>
-                </SimpleTable.Header>
-              </SimpleTable.Row>
-            </thead>
-            <tbody>
-              {data.tasks?.map(task => (
-                <SingleReviewTableRow key={task.id} task={task} active={task.id === params.taskId} />
-              ))}
-            </tbody>
-          </SimpleTable.Table>
+          {!pages ? (
+            <>Loading...</>
+          ) : (
+            <>
+              <SimpleTable.Table style={{ borderColor: 'transparent' }}>
+                <thead>
+                  <SimpleTable.Row>
+                    <SimpleTable.Header>
+                      <HeaderLink
+                        as={HrefLink}
+                        href={QuerySortToggle('subject')}
+                        data-is-active={sort_by && sort_by.includes('subject:')}
+                        data-is-desc={sort_by && sort_by.includes('desc')}
+                      >
+                        Manifest <Chevron />
+                      </HeaderLink>
+                    </SimpleTable.Header>
+                    <SimpleTable.Header>
+                      <HeaderLink
+                        as={HrefLink}
+                        href={QuerySortToggle('subject_parent')}
+                        data-is-active={sort_by && sort_by.includes('subject_parent')}
+                        data-is-desc={sort_by && sort_by.includes('desc')}
+                      >
+                        Canvas <Chevron />
+                      </HeaderLink>
+                    </SimpleTable.Header>
+                    <SimpleTable.Header>
+                      <HeaderLink
+                        as={HrefLink}
+                        href={QuerySortToggle('modified_at')}
+                        data-is-active={sort_by && sort_by.includes('modified_at')}
+                        data-is-desc={sort_by && sort_by.includes('desc')}
+                        data-no-sort={!sort_by}
+                      >
+                        Modified <Chevron />
+                      </HeaderLink>
+                    </SimpleTable.Header>
+                    <SimpleTable.Header>
+                      <HeaderLink
+                        as={HrefLink}
+                        href={QuerySortToggle('status')}
+                        data-is-active={sort_by && sort_by.includes('status')}
+                        data-is-desc={sort_by && sort_by.includes('desc')}
+                      >
+                        Status <Chevron />
+                      </HeaderLink>
+                    </SimpleTable.Header>
+                    <SimpleTable.Header>
+                      <HeaderLink
+                        as={HrefLink}
+                        href={QuerySortToggle('user_identifier')}
+                        data-is-active={sort_by && sort_by.includes('user_identifier')}
+                        data-is-desc={sort_by && sort_by.includes('desc')}
+                      >
+                        Assignee <Chevron />
+                      </HeaderLink>
+                    </SimpleTable.Header>
+                  </SimpleTable.Row>
+                </thead>
+                <tbody>
+                  {pages &&
+                    pages.map(data =>
+                      (data.tasks || []).map((task: CrowdsourcingTask) => {
+                        return <SingleReviewTableRow key={task.id} task={task} active={task.id === params.taskId} />;
+                      })
+                    )}
+                </tbody>
+              </SimpleTable.Table>
+              <Button
+                ref={loadMoreButton}
+                onClick={() => fetchMore()}
+                style={{ display: canFetchMore ? 'block' : 'none' }}
+              >
+                Load more
+              </Button>
+            </>
+          )}
         </TaskListContainer>
+
         <LayoutHandle ref={refs.resizer as any}>
           <ButtonIcon>
             <ResizeHandleIcon />
