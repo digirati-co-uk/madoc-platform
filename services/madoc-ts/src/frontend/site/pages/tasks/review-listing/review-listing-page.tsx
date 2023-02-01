@@ -7,7 +7,7 @@ import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-ta
 import { SimpleStatus } from '../../../../shared/atoms/SimpleStatus';
 import { DisplayBreadcrumbs } from '../../../../shared/components/Breadcrumbs';
 import { LocaleString } from '../../../../shared/components/LocaleString';
-import { useData } from '../../../../shared/hooks/use-data';
+import { useData, useInfiniteData } from '../../../../shared/hooks/use-data';
 import { useLocationQuery } from '../../../../shared/hooks/use-location-query';
 import { SimpleTable } from '../../../../shared/layout/SimpleTable';
 import { serverRendererFor } from '../../../../shared/plugins/external/server-renderer-for';
@@ -15,21 +15,23 @@ import { HrefLink } from '../../../../shared/utility/href-link';
 import { RefetchProvider } from '../../../../shared/utility/refetch-context';
 import { useRelativeLinks } from '../../../hooks/use-relative-links';
 import { useTaskMetadata } from '../../../hooks/use-task-metadata';
-import { ButtonIcon } from '../../../../shared/navigation/Button';
+import { Button, ButtonIcon } from '../../../../shared/navigation/Button';
 import { Chevron } from '../../../../shared/icons/Chevron';
 import { useResizeLayout } from '../../../../shared/hooks/use-resize-layout';
 import { LayoutHandle } from '../../../../shared/layout/LayoutContainer';
 import ResizeHandleIcon from '../../../../shared/icons/ResizeHandleIcon';
 import { stringify } from 'query-string';
+import { useInfiniteAction } from '../../../hooks/use-infinite-action';
 
 const TaskListContainer = styled.div`
   height: 80vh;
-  overflow: scroll;
+  overflow: auto;
+  position: relative;
   background: #fff;
 `;
 
 const TaskPreviewContainer = styled.div`
-  min-width: 550px;
+  min-width: 600px;
   flex: 1;
   width: 750px;
 `;
@@ -92,7 +94,7 @@ const HeaderLink = styled.a`
       background-color: rgba(85, 85, 85, 0);
     }
   }
-    
+
   &[data-is-active='true'] {
     color: #3579f6;
 
@@ -118,23 +120,9 @@ const HeaderLink = styled.a`
 
 export function ReviewListingPage() {
   const { t } = useTranslation();
-  const { data, refetch } = useData<{ tasks: CrowdsourcingTask[] }>(ReviewListingPage);
   const params = useParams<{ taskId?: string }>();
   const createLink = useRelativeLinks();
   const { page, sort_by = '', ...query } = useLocationQuery();
-
-  const QuerySortToggle = (field: string) => {
-    const sort = sort_by;
-    if (sort && sort.includes(`${field}:desc`)) {
-      return `?${stringify({ ...query, sort_by: `${field}:asc` })}`;
-    }
-    if (sort && sort.includes(`${field}:asc`)) {
-
-      return `?${stringify({ ...query, sort_by: '' })}`;
-    }
-
-    return `?${stringify({ ...query, sort_by: `${field}:desc` })}`;
-  };
 
   const { widthB, refs } = useResizeLayout(`review-dashboard-resize`, {
     left: true,
@@ -142,12 +130,41 @@ export function ReviewListingPage() {
     minWidthPx: 400,
   });
 
-  if (!data) {
+  const { data: pages, fetchMore, canFetchMore, isFetchingMore } = useInfiniteData(ReviewListingPage, undefined, {
+    getFetchMore: lastPage => {
+      if (lastPage.pagination.totalPages === lastPage.pagination.page) {
+        return undefined;
+      }
+      return {
+        page: lastPage.pagination.page + 1,
+      };
+    },
+  });
+  const [loadMoreButton] = useInfiniteAction({
+    fetchMore,
+    canFetchMore,
+    isFetchingMore,
+    container: refs.resizableDiv,
+  });
+
+  const QuerySortToggle = (field: string) => {
+    const sort = sort_by;
+    if (sort && sort.includes(`${field}:desc`)) {
+      return `?${stringify({ ...query, sort_by: `${field}:asc` })}`;
+    }
+    if (sort && sort.includes(`${field}:asc`)) {
+      return `?${stringify({ ...query, sort_by: '' })}`;
+    }
+
+    return `?${stringify({ ...query, sort_by: `${field}:desc` })}`;
+  };
+
+  if (!pages || !pages[0].tasks) {
     return <>Loading...</>;
   }
 
-  if (data && !params.taskId && data.tasks[0]) {
-    return <Navigate to={createLink({ taskId: undefined, subRoute: `reviews/${data.tasks[0].id}` })} />;
+  if (pages[0].tasks && !params.taskId && pages[0].tasks[0]) {
+    return <Navigate to={createLink({ taskId: undefined, subRoute: `reviews/${pages[0].tasks[0].id}` })} />;
   }
 
   // 1. Make requests for all crowdsourcing tasks marked as in review.
@@ -157,7 +174,7 @@ export function ReviewListingPage() {
   // 5. Add alternative version with form and then actions, with a toggle.
 
   return (
-    <RefetchProvider refetch={refetch}>
+    <>
       <DisplayBreadcrumbs currentPage={t('Reviews')} />
       <ReviewListingContainer ref={refs.container as any}>
         <TaskListContainer ref={refs.resizableDiv as any} style={{ width: widthB }}>
@@ -218,10 +235,20 @@ export function ReviewListingPage() {
               </SimpleTable.Row>
             </thead>
             <tbody>
-              {data.tasks?.map(task => (
-                <SingleReviewTableRow key={task.id} task={task} active={task.id === params.taskId} />
-              ))}
+              {pages &&
+                pages.map(data =>
+                  (data.tasks || []).map((task: CrowdsourcingTask) => {
+                    return <SingleReviewTableRow key={task.id} task={task} active={task.id === params.taskId} />;
+                  })
+                )}
             </tbody>
+            <Button
+              ref={loadMoreButton}
+              onClick={() => fetchMore()}
+              style={{ display: canFetchMore ? 'block' : 'none' }}
+            >
+              Load more
+            </Button>
           </SimpleTable.Table>
         </TaskListContainer>
         <LayoutHandle ref={refs.resizer as any}>
@@ -233,7 +260,7 @@ export function ReviewListingPage() {
           <Outlet />
         </TaskPreviewContainer>
       </ReviewListingContainer>
-    </RefetchProvider>
+    </>
   );
 }
 
