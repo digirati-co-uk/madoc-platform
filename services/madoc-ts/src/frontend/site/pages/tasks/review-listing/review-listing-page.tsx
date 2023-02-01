@@ -7,12 +7,11 @@ import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-ta
 import { SimpleStatus } from '../../../../shared/atoms/SimpleStatus';
 import { DisplayBreadcrumbs } from '../../../../shared/components/Breadcrumbs';
 import { LocaleString } from '../../../../shared/components/LocaleString';
-import { useData, useInfiniteData } from '../../../../shared/hooks/use-data';
+import { useInfiniteData } from '../../../../shared/hooks/use-data';
 import { useLocationQuery } from '../../../../shared/hooks/use-location-query';
 import { SimpleTable } from '../../../../shared/layout/SimpleTable';
 import { serverRendererFor } from '../../../../shared/plugins/external/server-renderer-for';
 import { HrefLink } from '../../../../shared/utility/href-link';
-import { RefetchProvider } from '../../../../shared/utility/refetch-context';
 import { useRelativeLinks } from '../../../hooks/use-relative-links';
 import { useTaskMetadata } from '../../../hooks/use-task-metadata';
 import { Button, ButtonIcon } from '../../../../shared/navigation/Button';
@@ -159,11 +158,7 @@ export function ReviewListingPage() {
     return `?${stringify({ ...query, sort_by: `${field}:desc` })}`;
   };
 
-  if (!pages || !pages[0].tasks) {
-    return <>Loading...</>;
-  }
-
-  if (pages[0].tasks && !params.taskId && pages[0].tasks[0]) {
+  if (pages && pages[0].tasks && !params.taskId && pages[0].tasks[0]) {
     return <Navigate to={createLink({ taskId: undefined, subRoute: `reviews/${pages[0].tasks[0].id}` })} />;
   }
 
@@ -176,81 +171,89 @@ export function ReviewListingPage() {
   return (
     <>
       <DisplayBreadcrumbs currentPage={t('Reviews')} />
+
       <ReviewListingContainer ref={refs.container as any}>
         <TaskListContainer ref={refs.resizableDiv as any} style={{ width: widthB }}>
-          <SimpleTable.Table style={{ borderColor: 'transparent' }}>
-            <thead>
-              <SimpleTable.Row>
-                <SimpleTable.Header>
-                  <HeaderLink
-                    as={HrefLink}
-                    href={QuerySortToggle('subject')}
-                    data-is-active={sort_by && sort_by.includes('subject:')}
-                    data-is-desc={sort_by && sort_by.includes('desc')}
-                  >
-                    Manifest <Chevron />
-                  </HeaderLink>
-                </SimpleTable.Header>
-                <SimpleTable.Header>
-                  <HeaderLink
-                    as={HrefLink}
-                    href={QuerySortToggle('subject_parent')}
-                    data-is-active={sort_by && sort_by.includes('subject_parent')}
-                    data-is-desc={sort_by && sort_by.includes('desc')}
-                  >
-                    Canvas <Chevron />
-                  </HeaderLink>
-                </SimpleTable.Header>
-                <SimpleTable.Header>
-                  <HeaderLink
-                    as={HrefLink}
-                    href={QuerySortToggle('modified_at')}
-                    data-is-active={sort_by && sort_by.includes('modified_at')}
-                    data-is-desc={sort_by && sort_by.includes('desc')}
-                    data-no-sort={!sort_by}
-                  >
-                    Modified <Chevron />
-                  </HeaderLink>
-                </SimpleTable.Header>
-                <SimpleTable.Header>
-                  <HeaderLink
-                    as={HrefLink}
-                    href={QuerySortToggle('status')}
-                    data-is-active={sort_by && sort_by.includes('status')}
-                    data-is-desc={sort_by && sort_by.includes('desc')}
-                  >
-                    Status <Chevron />
-                  </HeaderLink>
-                </SimpleTable.Header>
-                <SimpleTable.Header>
-                  <HeaderLink
-                    as={HrefLink}
-                    href={QuerySortToggle('user_identifier')}
-                    data-is-active={sort_by && sort_by.includes('user_identifier')}
-                    data-is-desc={sort_by && sort_by.includes('desc')}
-                  >
-                    Assignee <Chevron />
-                  </HeaderLink>
-                </SimpleTable.Header>
-              </SimpleTable.Row>
-            </thead>
-            <tbody>
-              {pages &&
-                pages.map(data =>
-                  (data.tasks || []).map((task: CrowdsourcingTask) => {
-                    return <SingleReviewTableRow key={task.id} task={task} active={task.id === params.taskId} />;
-                  })
-                )}
-            </tbody>
-            <Button
-              ref={loadMoreButton}
-              onClick={() => fetchMore()}
-              style={{ display: canFetchMore ? 'block' : 'none' }}
-            >
-              Load more
-            </Button>
-          </SimpleTable.Table>
+          {!pages ? (
+            <>Loading...</>
+          ) : (
+            <>
+              <SimpleTable.Table style={{ borderColor: 'transparent' }}>
+                <thead>
+                  <SimpleTable.Row>
+                    <SimpleTable.Header>
+                      <HeaderLink
+                        as={HrefLink}
+                        href={QuerySortToggle('subject')}
+                        data-is-active={sort_by && sort_by.includes('subject:')}
+                        data-is-desc={sort_by && sort_by.includes('desc')}
+                      >
+                        Manifest <Chevron />
+                      </HeaderLink>
+                    </SimpleTable.Header>
+                    <SimpleTable.Header>
+                      <HeaderLink
+                        as={HrefLink}
+                        href={QuerySortToggle('subject_parent')}
+                        data-is-active={sort_by && sort_by.includes('subject_parent')}
+                        data-is-desc={sort_by && sort_by.includes('desc')}
+                      >
+                        Canvas <Chevron />
+                      </HeaderLink>
+                    </SimpleTable.Header>
+                    <SimpleTable.Header>
+                      <HeaderLink
+                        as={HrefLink}
+                        href={QuerySortToggle('modified_at')}
+                        data-is-active={sort_by && sort_by.includes('modified_at')}
+                        data-is-desc={sort_by && sort_by.includes('desc')}
+                        data-no-sort={!sort_by}
+                      >
+                        Modified <Chevron />
+                      </HeaderLink>
+                    </SimpleTable.Header>
+                    <SimpleTable.Header>
+                      <HeaderLink
+                        as={HrefLink}
+                        href={QuerySortToggle('status')}
+                        data-is-active={sort_by && sort_by.includes('status')}
+                        data-is-desc={sort_by && sort_by.includes('desc')}
+                      >
+                        Status <Chevron />
+                      </HeaderLink>
+                    </SimpleTable.Header>
+                    <SimpleTable.Header>
+                      <HeaderLink
+                        as={HrefLink}
+                        href={QuerySortToggle('user_identifier')}
+                        data-is-active={sort_by && sort_by.includes('user_identifier')}
+                        data-is-desc={sort_by && sort_by.includes('desc')}
+                      >
+                        Assignee <Chevron />
+                      </HeaderLink>
+                    </SimpleTable.Header>
+                  </SimpleTable.Row>
+                </thead>
+                <tbody>
+                  {pages &&
+                    pages.map(data =>
+                      (data.tasks || []).map((task: CrowdsourcingTask) => {
+                        return <SingleReviewTableRow key={task.id} task={task} active={task.id === params.taskId} />;
+                      })
+                    )}
+                </tbody>
+              </SimpleTable.Table>
+              <Button
+                ref={loadMoreButton}
+                onClick={() => fetchMore()}
+                style={{ display: canFetchMore ? 'block' : 'none' }}
+              >
+                Load more
+              </Button>
+            </>
+          )}
         </TaskListContainer>
+
         <LayoutHandle ref={refs.resizer as any}>
           <ButtonIcon>
             <ResizeHandleIcon />
