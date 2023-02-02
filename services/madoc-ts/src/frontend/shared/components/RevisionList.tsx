@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { useNavigation } from '../capture-models/editor/hooks/useNavigation';
 import { Revisions } from '../capture-models/editor/stores/revisions/index';
@@ -8,6 +8,10 @@ import { useBrowserLayoutEffect } from '../hooks/use-browser-layout-effect';
 import { SmallButton } from '../navigation/Button';
 import { ViewDocument } from '../capture-models/inspector/ViewDocument';
 import { useContributors } from '../capture-models/new/components/ContributorContext';
+import { useSelectorHelper } from '../capture-models/editor/stores/selectors/selector-helper';
+import { resolveSelector } from '../capture-models/helpers/resolve-selector';
+import { useDecayState } from '../hooks/use-decay-state';
+import { useApiCaptureModel } from '../hooks/use-api-capture-model';
 
 const RevisionListContainer = styled.div`
   padding: 10px;
@@ -20,6 +24,8 @@ const RevisionListItemContainer = styled.div<{ $selected?: boolean }>`
   display: flex;
   flex-wrap: wrap;
   box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.05);
+  outline: 3px solid transparent;
+  transition: outline-color 1s;
   & ~ & {
     margin-top: 0.5em;
   }
@@ -113,6 +119,7 @@ export const RevisionListItem: React.FC<{ revision: RevisionRequest; editable?: 
   const innerDiv = useRef<HTMLDivElement>(null);
 
   const [isCollapsed, setIsCollapsed] = useState(true);
+
   const contributors = useContributors();
   const author = rev.revision.authors && contributors ? contributors[rev.revision.authors[0]]?.name || '' : '';
   const currentRevisionId = Revisions.useStoreState(s => s.currentRevisionId);

@@ -9,6 +9,7 @@ import { ViewSelector } from './ViewSelector';
 
 export function ViewField({ field, fluidImage }: { field: BaseField; fluidImage?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
+
   const helper = useSelectorHelper();
   const selector = field.selector ? resolveSelector(field.selector) : undefined;
   const selectorId = selector?.id;
