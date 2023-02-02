@@ -6,12 +6,12 @@ export function getDefaultAnnotationStyles(): AnnotationStyles['theme'] {
     highlighted: {
       backgroundColor: 'rgba(75, 103, 225, 0.4)',
       borderWidth: '1px',
-      borderColor: '#4B67E1',
+      borderColor: 'rgba(75,103,225,0.99)',
     },
     hidden: {
-      borderWidth: '0px',
-      borderColor: 'rgba(0,0,0,0)',
-      backgroundColor: 'rgba(0,0,0,0)',
+      // borderWidth: '0px',
+      // borderColor: 'rgba(0,0,0,0)',
+      // backgroundColor: 'rgba(0,0,0,0)',
     },
     adjacent: {
       backgroundColor: 'rgba(141,160,203,.1)',
@@ -48,10 +48,10 @@ export function getDefaultAnnotationStyles(): AnnotationStyles['theme'] {
       backgroundColor: 'rgba(0,0,0,0)',
     },
     submissions: {
-      hidden: true,
-      borderWidth: '0px',
-      borderColor: 'rgba(0,0,0,0)',
-      backgroundColor: 'rgba(0,0,0,0)',
+      hidden: false,
+      borderWidth: '2px',
+      borderColor: 'rgba(7,11,98,0.4)',
+      backgroundColor: 'rgba(114,232,232,0.15)',
     },
   };
 }
