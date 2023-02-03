@@ -9,9 +9,9 @@ export function getDefaultAnnotationStyles(): AnnotationStyles['theme'] {
       borderColor: 'rgba(75,103,225,0.99)',
     },
     hidden: {
-      // borderWidth: '0px',
-      // borderColor: 'rgba(0,0,0,0)',
-      // backgroundColor: 'rgba(0,0,0,0)',
+      borderWidth: '0px',
+      borderColor: 'rgba(0,0,0,0)',
+      backgroundColor: 'rgba(0,0,0,0)',
     },
     adjacent: {
       backgroundColor: 'rgba(141,160,203,.1)',

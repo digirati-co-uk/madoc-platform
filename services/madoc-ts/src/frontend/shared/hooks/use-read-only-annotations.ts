@@ -12,11 +12,8 @@ import { annotationPageToRegions } from '../utility/annotation-page-to-regions';
 import { useLoadedCaptureModel } from './use-loaded-capture-model';
 import { useCanvasModel } from '../../site/hooks/use-canvas-model';
 import {
-  filterUserRevisions,
-  revisionsMapToRevisionsList,
   useRevisionList,
 } from '../capture-models/new/hooks/use-revision-list';
-
 export interface ReadOnlyAnnotation {
   id: string;
   target: { x: number; y: number; width: number; height: number };
@@ -34,7 +31,7 @@ export function useReadOnlyAnnotations(isModelPage = false): ReadOnlyAnnotation[
   const [highlightedDocumentRegion, setHighlightedDocumentRegion] = useState<string | null>(null);
   const config = useSiteConfiguration();
 
-  const { data: projectModel } = useCanvasModel();
+  const { data: canvasModel } = useCanvasModel();
   const { data } = apiHooks.getSiteCanvasPublishedModels(
     () =>
       canvasId
@@ -42,8 +39,7 @@ export function useReadOnlyAnnotations(isModelPage = false): ReadOnlyAnnotation[
         : undefined,
     { refetchOnWindowFocus: false }
   );
-  const [{ captureModel }, , modelRefetch] = useLoadedCaptureModel(projectModel?.model?.id, undefined, canvasId);
-
+  const [{ captureModel }, , modelRefetch] = useLoadedCaptureModel(canvasModel?.model?.id, undefined, canvasId);
   const modelPageShowAnnotations = config.project?.modelPageShowAnnotations || 'when-open';
   const modelPageShowDocument = config.project?.modelPageShowDocument || 'when-open';
   const canvasPageShowAnnotations = config.project?.canvasPageShowAnnotations || 'when-open';
@@ -59,6 +55,8 @@ export function useReadOnlyAnnotations(isModelPage = false): ReadOnlyAnnotation[
   const showDocumentRegions = isModelPage
     ? modelPageShowDocument === 'always' || (modelPageShowDocument === 'when-open' && isOpen && isAnno)
     : canvasPageShowDocument === 'always' || (canvasPageShowDocument === 'when-open' && isOpen && isAnno);
+
+  const showRevisions = openPanel === 'revision-panel';
 
   const annotations = useMemo(() => {
     const regions: ReadOnlyAnnotation[] = [];
@@ -109,11 +107,11 @@ export function useReadOnlyAnnotations(isModelPage = false): ReadOnlyAnnotation[
     return { regions, ids };
   }, [data, showDocumentRegions, styles.contributedDocument, annotations.ids]);
 
-  const unstyledSubmittedDocumentRegions = useMemo(() => {
+  const unstyledRevisions = useMemo(() => {
     const regions: ReadOnlyAnnotation[] = [];
     const ids: string[] = [...annotations.ids];
 
-    if (showDocumentRegions && !styles.submissions?.hidden) {
+    if (showRevisions && !styles.submissions?.hidden) {
       if (captureModel && captureModel.document) {
         traverseDocument(captureModel.document, {
           visitSelector(selector) {
@@ -151,7 +149,7 @@ export function useReadOnlyAnnotations(isModelPage = false): ReadOnlyAnnotation[
   const submittedDocumentRegions = useMemo(() => {
     const returnRegions = [];
 
-    for (const region of unstyledSubmittedDocumentRegions.regions) {
+    for (const region of unstyledRevisions.regions) {
       if (region.id === highlightedDocumentRegion || highlighted.indexOf(region.id) !== -1) {
         returnRegions.push({ ...region, style: styles.highlighted });
       } else {
@@ -160,9 +158,9 @@ export function useReadOnlyAnnotations(isModelPage = false): ReadOnlyAnnotation[
     }
     return {
       regions: returnRegions,
-      ids: unstyledSubmittedDocumentRegions.ids,
+      ids: unstyledRevisions.ids,
     };
-  }, [highlighted, highlightedDocumentRegion, styles.highlighted, unstyledSubmittedDocumentRegions]);
+  }, [highlighted, highlightedDocumentRegion, styles.highlighted, unstyledRevisions]);
 
   useEffect(() => {
     return controller.on('highlight', e => {
