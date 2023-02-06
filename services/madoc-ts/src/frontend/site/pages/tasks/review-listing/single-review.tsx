@@ -6,7 +6,12 @@ import { EditorSlots } from '../../../../shared/capture-models/new/components/Ed
 import { RevisionProviderWithFeatures } from '../../../../shared/capture-models/new/components/RevisionProviderWithFeatures';
 import { EditorContentViewer } from '../../../../shared/capture-models/new/EditorContent';
 import styled, { css } from 'styled-components';
-import { CanvasViewerButton, CanvasViewerControls, CanvasViewerGrid } from '../../../features/CanvasViewerGrid';
+import {
+  CanvasViewerButton,
+  CanvasViewerControls,
+  CanvasViewerEditorStyleReset,
+  CanvasViewerGrid,
+} from '../../../features/CanvasViewerGrid';
 import { useData } from '../../../../shared/hooks/use-data';
 import { PreviewIcon } from '../../../../shared/icons/PreviewIcon';
 import { EmptyState } from '../../../../shared/layout/EmptyState';
@@ -39,6 +44,8 @@ import { MinusIcon } from '../../../../shared/icons/MinusIcon';
 import { PlusIcon } from '../../../../shared/icons/PlusIcon';
 import { useTranslation } from 'react-i18next';
 import { extractIdFromUrn } from '../../../../../utility/parse-urn';
+import { useProjectAnnotationStyles } from '../../../hooks/use-project-annotation-styles';
+import { CanvasHighlightedRegions } from '../../../features/CanvasHighlightedRegions';
 
 const ReviewContainer = styled.div`
   position: relative;
@@ -160,6 +167,7 @@ function ViewSingleReview({
   const { t } = useTranslation();
   const gridRef = useRef<any>();
   const runtime = useRef<Runtime>();
+  const annotationTheme = useProjectAnnotationStyles();
 
   const goHome = () => {
     if (runtime.current) {
@@ -199,6 +207,7 @@ function ViewSingleReview({
               editor: { allowEditing: isEditing, deselectRevisionAfterSaving: false, saveOnNavigate: false },
               components: { SubmitButton: DirectEditButton },
             }}
+            annotationTheme={annotationTheme}
           >
             <ReviewContainer>
               <ReviewHeader>
@@ -266,7 +275,9 @@ function ViewSingleReview({
               </ReviewActionBar>
               <ReviewPreview>
                 <div style={{ width: '40%' }}>
-                  <EditorSlots.TopLevelEditor />
+                  <CanvasViewerEditorStyleReset>
+                    <EditorSlots.TopLevelEditor />
+                  </CanvasViewerEditorStyleReset>
                   <EditorSlots.SubmitButton captureModel={captureModel} />
                 </div>
                 <div style={{ minWidth: '60%', display: 'flex', flexDirection: 'column' }}>
@@ -301,6 +312,7 @@ function ViewSingleReview({
                       </>
                     </ReviewDropdownPopup>
                   </ReviewDropdownContainer>
+
                   <CanvasViewerGrid ref={gridRef}>
                     {canvas ? (
                       <EditorContentViewer

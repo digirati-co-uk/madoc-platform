@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Outlet, useNavigate, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
@@ -22,6 +22,8 @@ import ResizeHandleIcon from '../../../../shared/icons/ResizeHandleIcon';
 import { stringify } from 'query-string';
 import { useInfiniteAction } from '../../../hooks/use-infinite-action';
 import { RefetchProvider } from '../../../../shared/utility/refetch-context';
+import { useRouteContext } from '../../../hooks/use-route-context';
+import { ReviewNavigation } from './ReviewNagivation';
 
 const TaskListContainer = styled.div`
   height: 80vh;
@@ -123,12 +125,20 @@ export function ReviewListingPage() {
   const params = useParams<{ taskId?: string }>();
   const createLink = useRelativeLinks();
   const { page, sort_by = '', ...query } = useLocationQuery();
+  const navigate = useNavigate();
 
   const { widthB, refs } = useResizeLayout(`review-dashboard-resize`, {
     left: true,
     widthB: '750px',
     minWidthPx: 400,
   });
+
+  const beforeNavigate = useCallback(
+    async (newTaskId: string, page: number | string) => {
+      navigate(createLink({ taskId: undefined, subRoute: `reviews/${newTaskId}`, query, hash: page }));
+    },
+    [createLink, navigate, sort_by]
+  );
 
   const { data: pages, fetchMore, refetch, canFetchMore, isFetchingMore } = useInfiniteData(
     ReviewListingPage,
@@ -144,12 +154,15 @@ export function ReviewListingPage() {
       },
     }
   );
+
   const [loadMoreButton] = useInfiniteAction({
     fetchMore,
     canFetchMore,
     isFetchingMore,
     container: refs.resizableDiv,
   });
+
+  const { taskId, projectId } = useRouteContext();
 
   const QuerySortToggle = (field: string) => {
     const sort = sort_by;
@@ -243,7 +256,14 @@ export function ReviewListingPage() {
                   {pages &&
                     pages.map(data =>
                       (data.tasks || []).map((task: CrowdsourcingTask) => {
-                        return <SingleReviewTableRow key={task.id} task={task} active={task.id === params.taskId} />;
+                        return (
+                          <SingleReviewTableRow
+                            key={task.id}
+                            task={task}
+                            active={task.id === params.taskId}
+                            page={data.pagination.page}
+                          />
+                        );
                       })
                     )}
                 </tbody>
@@ -265,6 +285,13 @@ export function ReviewListingPage() {
           </ButtonIcon>
         </LayoutHandle>
         <TaskPreviewContainer>
+          <ReviewNavigation
+            handleNavigation={beforeNavigate}
+            taskId={taskId}
+            pages={pages}
+            projectId={projectId}
+            query={sort_by ? { sort_by } : undefined}
+          />
           <Outlet />
         </TaskPreviewContainer>
       </ReviewListingContainer>
@@ -272,8 +299,8 @@ export function ReviewListingPage() {
   );
 }
 
-function SingleReviewTableRow({ task, active }: { task: CrowdsourcingTask; active?: boolean }) {
-  const { page, ...query } = useLocationQuery();
+function SingleReviewTableRow({ task, active, page }: { task: CrowdsourcingTask; active?: boolean; page?: number }) {
+  const { ...query } = useLocationQuery();
   const createLink = useRelativeLinks();
   const navigate = useNavigate();
   const metadata = useTaskMetadata<{ subject?: SubjectSnippet }>(task);
@@ -281,7 +308,7 @@ function SingleReviewTableRow({ task, active }: { task: CrowdsourcingTask; activ
   return (
     <ThickTableRow
       $active={active}
-      onClick={() => navigate(createLink({ taskId: undefined, subRoute: `reviews/${task.id}`, query }))}
+      onClick={() => navigate(createLink({ taskId: undefined, subRoute: `reviews/${task.id}`, query, hash: page }))}
     >
       {/* manifest */}
       <SimpleTable.Cell style={{ maxWidth: 300 }}>
@@ -305,6 +332,7 @@ function SingleReviewTableRow({ task, active }: { task: CrowdsourcingTask; activ
       </SimpleTable.Cell>
       {/* assignee */}
       <SimpleTable.Cell>{task.assignee ? task.assignee.name : ''}</SimpleTable.Cell>
+      {page}
     </ThickTableRow>
   );
 }

@@ -49,6 +49,7 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
     });
     const { taskId, slug } = useParams<{ taskId?: string; slug?: string }>();
     const { page, ...query } = useLocationQuery();
+    console.log(query)
     const user = useUser();
     const isAdmin = user && user.scope && user.scope.indexOf('site.admin') !== -1;
     const isReviewer = isAdmin || (user && user.scope && user.scope.indexOf('tasks.create') !== -1);
