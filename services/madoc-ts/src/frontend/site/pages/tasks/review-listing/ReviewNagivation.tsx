@@ -19,15 +19,15 @@ export const PaginationContainer = styled.div<{ $size?: string }>`
 `;
 
 export const ReviewNavigation: React.FC<{
-  handleNavigation?: (taskId: number, page: number | string) => Promise<void> | void;
-  taskId: string;
+  handleNavigation?: (taskId: string, page: number | string) => Promise<void> | void;
+  taskId?: string;
   projectId?: string;
   subRoute?: string;
   pages?: any;
   query?: any;
   size?: string | undefined;
 }> = ({ taskId: id, pages: pages, projectId, subRoute, query, handleNavigation, size }) => {
-  const { t } = useTranslation();
+
   const hash = window.location.hash.slice(1);
   const pg = hash ? Number(hash) - 1 : 0;
   const idx = pages && pages[pg].tasks ? pages[pg].tasks.findIndex((i: CrowdsourcingTask) => i.id === id) : -1;

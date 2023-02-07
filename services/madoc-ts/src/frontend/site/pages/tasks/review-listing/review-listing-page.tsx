@@ -134,7 +134,7 @@ export function ReviewListingPage() {
   });
 
   const beforeNavigate = useCallback(
-    async (newTaskId: string, page: number | string) => {
+    async (newTaskId: string) => {
       navigate(createLink({ taskId: undefined, subRoute: `reviews/${newTaskId}`, query, hash: page }));
     },
     [createLink, navigate, sort_by]
@@ -308,7 +308,11 @@ function SingleReviewTableRow({ task, active, page }: { task: CrowdsourcingTask;
   return (
     <ThickTableRow
       $active={active}
-      onClick={() => navigate(createLink({ taskId: undefined, subRoute: `reviews/${task.id}`, query, hash: page }))}
+      onClick={() =>
+        navigate(
+          createLink({ taskId: undefined, subRoute: `reviews/${task.id}`, query, hash: page ? page.toString() : '1' })
+        )
+      }
     >
       {/* manifest */}
       <SimpleTable.Cell style={{ maxWidth: 300 }}>
