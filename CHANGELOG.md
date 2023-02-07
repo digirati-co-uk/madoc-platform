@@ -216,6 +216,7 @@ This is a hot fix release.
 - Added configuration for annotation hotspots
 - **Experimental**: New capture model
   translations ([feedback](https://github.com/digirati-co-uk/madoc-platform/discussions/567))
+- Added new block to embed items through iframe
 
 ### Fixed
 
