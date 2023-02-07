@@ -63,7 +63,8 @@ export function filterCaptureModel(
   predicate: (field: BaseField, parent: CaptureModel['document']) => boolean,
   postFilter?:
     | ((rootField: BaseField[], parent: CaptureModel['document']) => BaseField[])
-    | Array<undefined | ((rootField: BaseField[], parent: CaptureModel['document']) => BaseField[])>
+    | Array<undefined | ((rootField: BaseField[], parent: CaptureModel['document']) => BaseField[])>,
+  unlessEmptyPostFilter = true
 ): CaptureModel['document'] | null {
   const newDocument: CaptureModel['document'] = {
     id,
@@ -105,6 +106,8 @@ export function filterCaptureModel(
       }
     }
     if (postFilter && newDocument.properties[rootFieldKey]) {
+      const before = newDocument.properties[rootFieldKey];
+
       if (Array.isArray(postFilter)) {
         for (const filter of postFilter) {
           if (filter) {
@@ -113,6 +116,10 @@ export function filterCaptureModel(
         }
       } else {
         newDocument.properties[rootFieldKey] = postFilter(newDocument.properties[rootFieldKey] as any[], newDocument);
+      }
+
+      if (newDocument.properties[rootFieldKey].length === 0 && unlessEmptyPostFilter) {
+        newDocument.properties[rootFieldKey] = before;
       }
     }
   }

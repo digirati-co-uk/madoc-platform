@@ -31,9 +31,8 @@ export function createRevisionRequestFromStructure(
       if (!filterEmpty) {
         return fields;
       }
-      const containsCanonical = fields.filter(f => !f.revision);
-
-      if (fields.length === containsCanonical.length) {
+      const containsRevision = fields.filter(f => f.revision);
+      if (containsRevision.length) {
         return fields;
       }
 

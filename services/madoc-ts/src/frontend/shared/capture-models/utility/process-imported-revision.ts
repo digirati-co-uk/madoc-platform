@@ -3,6 +3,7 @@ import { expandModelFields } from '../helpers/expand-model-fields';
 import { filterEmptyFields, filterRemovedFields } from '../helpers/field-post-filters';
 import { filterCaptureModel } from '../helpers/filter-capture-model';
 import { findStructure } from '../helpers/find-structure';
+import { isEmptyRevision } from '../helpers/is-empty-revision';
 import { recurseRevisionDependencies } from '../helpers/recurse-revision-dependencies';
 import { traverseDocument } from '../helpers/traverse-document';
 import { CaptureModel } from '../types/capture-model';
@@ -21,8 +22,15 @@ export function processImportedRevision(
     revision.id,
     captureModel.document,
     flatFields,
-    field => {
-      return field.revision ? allRevisions.indexOf(field.revision) !== -1 : true;
+    (field, parent) => {
+      if (field.revision) {
+        return allRevisions.indexOf(field.revision) !== -1;
+      }
+      if (parent) {
+        return !isEmptyRevision({ document: parent });
+      }
+
+      return true;
     },
     [
       // Filter removed fields.
