@@ -156,7 +156,7 @@ services:
       - POSTGRES_SEARCH_API_SCHEMA=${POSTGRES_SEARCH_API_SCHEMA}
       - POSTGRES_SEARCH_API_PASSWORD=${POSTGRES_SEARCH_API_PASSWORD}
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready" ]
+      test: [ "CMD-SHELL", "pg_isready -u $${POSTGRES_USER}" ]
       interval: 10s
       timeout: 5s
       retries: 5
