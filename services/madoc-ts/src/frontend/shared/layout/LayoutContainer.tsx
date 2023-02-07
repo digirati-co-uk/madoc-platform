@@ -168,7 +168,7 @@ export const LayoutHandle = styled.div<{ $isDragging?: boolean }>`
   width: 12px;
   background: #ddd;
   height: 100%;
-  min-height: 30px;
+  min-height: 42px;
   user-select: none;
   cursor: col-resize;
   border-radius: 0 0 3px 3px;
@@ -176,6 +176,7 @@ export const LayoutHandle = styled.div<{ $isDragging?: boolean }>`
   svg {
     fill: #a1a1a1;
     left: 2px;
+    top: 8px;
   }
 
   &:hover,

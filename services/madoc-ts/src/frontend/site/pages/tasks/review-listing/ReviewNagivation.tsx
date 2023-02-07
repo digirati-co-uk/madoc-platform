@@ -1,20 +1,28 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { createLink } from '../../../../shared/utility/create-link';
-import styled, { css } from 'styled-components';
-import { NavigationButton } from '../../../../shared/components/CanvasNavigationMinimalist';
+import styled from 'styled-components';
+import { NavigationButton, PaginationText } from '../../../../shared/components/CanvasNavigationMinimalist';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
+import { useTranslation } from 'react-i18next';
 
-export const PaginationContainer = styled.div<{ $size?: string }>`
+const PaginationContainer = styled.div`
   display: flex;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 99;
   justify-content: space-between;
   align-items: center;
-  width: 250px;
+  width: 130px;
   padding: 0;
   margin-left: auto;
   button {
     border: none;
     background-color: transparent;
+    margin-left: auto;
+    svg {
+      fill: black !important;
+    }
   }
 `;
 
@@ -27,10 +35,10 @@ export const ReviewNavigation: React.FC<{
   query?: any;
   size?: string | undefined;
 }> = ({ taskId: id, pages: pages, projectId, subRoute, query, handleNavigation, size }) => {
-
   const hash = window.location.hash.slice(1);
   const pg = hash ? Number(hash) - 1 : 0;
   const idx = pages && pages[pg].tasks ? pages[pg].tasks.findIndex((i: CrowdsourcingTask) => i.id === id) : -1;
+  const { t } = useTranslation();
 
   if (!pages || idx === -1) {
     return null;
@@ -92,7 +100,7 @@ export const ReviewNavigation: React.FC<{
   };
 
   return (
-    <PaginationContainer style={{ display: 'flex' }} $size={size}>
+    <PaginationContainer style={{ display: 'flex' }}>
       {idx > 0 ? (
         <NavigationButton
           alignment="left"
@@ -138,6 +146,14 @@ export const ReviewNavigation: React.FC<{
       ) : (
         getNextPage()
       )}
+      {
+        <PaginationText style={{ color: '#999999' }}>
+          {t('{{page}} of {{count}}', {
+            page: idx + 1,
+            count: pages[0].pagination.totalResults,
+          })}
+        </PaginationText>
+      }
     </PaginationContainer>
   );
 };

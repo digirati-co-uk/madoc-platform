@@ -336,7 +336,6 @@ function SingleReviewTableRow({ task, active, page }: { task: CrowdsourcingTask;
       </SimpleTable.Cell>
       {/* assignee */}
       <SimpleTable.Cell>{task.assignee ? task.assignee.name : ''}</SimpleTable.Cell>
-      {page}
     </ThickTableRow>
   );
 }

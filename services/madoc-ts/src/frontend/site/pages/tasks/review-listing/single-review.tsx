@@ -76,6 +76,7 @@ const SubLabel = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  margin-right: 130px;
 `;
 const ReviewActionBar = styled.div`
   border-bottom: 1px solid #dddddd;
@@ -100,7 +101,7 @@ const ReviewDropdownContainer = styled.div`
   position: relative;
   max-width: 150px;
   align-self: end;
-  z-index: 30;
+  z-index: 11;
 `;
 
 const ReviewDropdownPopup = styled.div<{ $visible?: boolean }>`
@@ -323,7 +324,7 @@ function ViewSingleReview({
                       />
                     ) : null}
                     {isOpen && (
-                      <CanvasViewerControls style={{ top: '8em' }}>
+                      <CanvasViewerControls>
                         <CanvasViewerButton onClick={goHome}>
                           <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
                         </CanvasViewerButton>
