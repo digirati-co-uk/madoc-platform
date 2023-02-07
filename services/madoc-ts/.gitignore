@@ -6,3 +6,6 @@ storybook-static
 stats.json
 .cache
 coverage
+/test-results/
+/playwright-report/
+/playwright/.cache/

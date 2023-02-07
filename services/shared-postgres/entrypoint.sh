@@ -133,7 +133,7 @@ CREATE EXTENSION IF NOT EXISTS "ltree";
 
 EOSQL
 
-if [ $NEW_DATABASE_CREATED = 'true' ]; then
+if [[ $NEW_DATABASE_CREATED = 'true' ]]; then
     # Restore a backup if provided.
     docker_process_init_files /docker-entrypoint-initdb.d/*
 fi

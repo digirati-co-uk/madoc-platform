@@ -8,6 +8,7 @@ var/shared-database/*
 var/certs/*
 var/jwt/*
 var/.vite-cache/*
+var/scratch/*
 var/test-environment
 key.pub
 .terraform

@@ -14,6 +14,7 @@
     "start": "concurrently yarn:watch:vite-producer yarn:watch:vite-auth yarn:watch:vite-server yarn:watch:vite-scheduler",
     "build:vite": "concurrently yarn:build:vite-producer yarn:build:vite-auth yarn:build:vite-server yarn:build:vite-scheduler",
     "build:vite-producer": "vite build --config vite/vite.producer.js .",
+    "build:vite-app": "vite build --config vite/vite.app.js .",
     "build:vite-auth": "vite build --config vite/vite.auth.js .",
     "build:vite-server": "NODE_OPTIONS=--max-old-space-size=4096 vite build --config vite/vite.server.js .",
     "build:vite-scheduler": "vite build --config vite/vite.scheduler.js .",
@@ -31,7 +32,8 @@
     "link:model-helpers": "yarn link \"@capture-models/helpers\"",
     "unlink:model-helpers": "yarn unlink \"@capture-models/helpers\" && yarn install --force",
     "shim-modules": "rm -rf ./dist/node_modules && cp -R ./shim-modules/node_modules ./dist/node_modules",
-    "extract:api": "tsc -p ./tsconfig.types.json"
+    "extract:api": "tsc -p ./tsconfig.types.json",
+    "test-server": "node test-server.mjs"
   },
   "browserslist": "> 0.25%, not dead",
   "resolutions": {
@@ -201,6 +203,7 @@
     "@babel/preset-env": "^7.20.2",
     "@babel/types": "7.20.7",
     "@blueprintjs/icons": "^3.20.1",
+    "@playwright/test": "^1.30.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.1",
     "@storybook/addon-docs": "^7.0.0-beta.33",
     "@storybook/addon-essentials": "^7.0.0-beta.33",
@@ -282,6 +285,7 @@
     "jest": "^27.3.1",
     "jsdom": "^16.5.1",
     "koa-connect": "^2.1.0",
+    "playwright": "^1.30.0",
     "prettier": "^1.19.1",
     "react-is": "^16.13.1",
     "react-query-devtools": "^2.4.7",
@@ -289,6 +293,7 @@
     "storybook": "^7.0.0-beta.33",
     "strip-indent": "^4.0.0",
     "terser": "^5.14.1",
+    "testcontainers": "^9.1.1",
     "thread-loader": "^3.0.4",
     "traverse": "^0.6.6",
     "ts-jest": "^27.0.7",
