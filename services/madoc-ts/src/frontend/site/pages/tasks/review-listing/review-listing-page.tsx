@@ -24,6 +24,8 @@ import { useInfiniteAction } from '../../../hooks/use-infinite-action';
 import { RefetchProvider } from '../../../../shared/utility/refetch-context';
 import { useRouteContext } from '../../../hooks/use-route-context';
 import { ReviewNavigation } from './ReviewNagivation';
+import { EmptyState } from '../../../../shared/layout/EmptyState';
+import ListItemIcon from '../../../../shared/icons/ListItemIcon';
 
 const TaskListContainer = styled.div`
   height: 80vh;
@@ -123,6 +125,7 @@ const HeaderLink = styled.a`
 export function ReviewListingPage() {
   const { t } = useTranslation();
   const params = useParams<{ taskId?: string }>();
+  const { projectId } = useRouteContext();
   const createLink = useRelativeLinks();
   const { page, sort_by = '', ...query } = useLocationQuery();
   const navigate = useNavigate();
@@ -161,9 +164,6 @@ export function ReviewListingPage() {
     isFetchingMore,
     container: refs.resizableDiv,
   });
-
-  const { taskId, projectId } = useRouteContext();
-
   const QuerySortToggle = (field: string) => {
     const sort = sort_by;
     if (sort && sort.includes(`${field}:desc`)) {
@@ -175,10 +175,6 @@ export function ReviewListingPage() {
 
     return `?${stringify({ ...query, sort_by: `${field}:desc` })}`;
   };
-
-  if (pages && pages[0].tasks && !params.taskId && pages[0].tasks[0]) {
-    return <Navigate to={createLink({ taskId: undefined, subRoute: `reviews/${pages[0].tasks[0].id}` })} />;
-  }
 
   // 1. Make requests for all crowdsourcing tasks marked as in review.
   // 2. Make an infinite list of these
@@ -285,14 +281,23 @@ export function ReviewListingPage() {
           </ButtonIcon>
         </LayoutHandle>
         <TaskPreviewContainer>
-          <ReviewNavigation
-            handleNavigation={beforeNavigate}
-            taskId={taskId}
-            pages={pages}
-            projectId={projectId}
-            query={sort_by ? { sort_by } : undefined}
-          />
-          <Outlet />
+          {params.taskId ? (
+            <>
+              <ReviewNavigation
+                handleNavigation={beforeNavigate}
+                taskId={params.taskId}
+                pages={pages}
+                projectId={projectId}
+                query={sort_by ? { sort_by } : undefined}
+              />
+              <Outlet />
+            </>
+          ) : (
+            <EmptyState>
+              <ListItemIcon />
+              Select a list item from the left panel to view
+            </EmptyState>
+          )}
         </TaskPreviewContainer>
       </ReviewListingContainer>
     </RefetchProvider>

@@ -45,7 +45,6 @@ import { PlusIcon } from '../../../../shared/icons/PlusIcon';
 import { useTranslation } from 'react-i18next';
 import { extractIdFromUrn } from '../../../../../utility/parse-urn';
 import { useProjectAnnotationStyles } from '../../../hooks/use-project-annotation-styles';
-import { CanvasHighlightedRegions } from '../../../features/CanvasHighlightedRegions';
 
 const ReviewContainer = styled.div`
   position: relative;
@@ -354,7 +353,6 @@ export function SingleReview() {
   if (!data) {
     return <div>Loading...</div>;
   }
-
   if (!data.task) {
     return <Navigate to={`/tasks/${params.taskId}`} />;
   }
