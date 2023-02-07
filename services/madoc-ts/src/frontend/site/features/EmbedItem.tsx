@@ -14,7 +14,7 @@ export const EmbedItem: React.FC<{
 }> = ({ link, height, width }) => {
   return (
     <EmbedWrapper>
-      <iframe src={link} height={height} width={width} />
+      <iframe src={link} height={height} width={width} loading="lazy" referrerPolicy="no-referrer" sandbox="allow-scripts" />
     </EmbedWrapper>
   );
 };

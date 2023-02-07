@@ -89,6 +89,7 @@ supports a wider range of IIIF resources as a result.
 * **Page blocks** - Added block options to "Project Manifests" block
 * **Page blocks** - Added block options to "Project Manifests" block
 * **Page blocks** - Added new `project-footer` slot
+* **Page blocks** - Added new block to embed items through iframe
 * Added "reset error" option to attempt to recover from error states
 * Added configuration option for vertical canvas zoom controls layout
 * Added canvas rotation option (without annotation support)
@@ -107,6 +108,7 @@ supports a wider range of IIIF resources as a result.
 * Added experimental Auto-review process
 * Added new interactions in the Document panel for annotations
 * Added secondary view for "X hours ago" to show the date and time on click (browser preference)
+* Added "Generate PDF" option for manifests using PDiiif
 
 ### Changed
 
@@ -216,7 +218,6 @@ This is a hot fix release.
 - Added configuration for annotation hotspots
 - **Experimental**: New capture model
   translations ([feedback](https://github.com/digirati-co-uk/madoc-platform/discussions/567))
-- Added new block to embed items through iframe
 
 ### Fixed
 

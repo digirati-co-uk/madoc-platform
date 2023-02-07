@@ -17,6 +17,7 @@ import { ManifestItemFilter } from './ManifestItemFilter';
 import { ManifestTaskProgress } from './ManifestTaskProgress';
 import { usePreventCanvasNavigation } from './PreventUsersNavigatingCanvases';
 import { useSiteConfiguration } from './SiteConfigurationContext';
+import { GenerateManifestPdf } from './GenerateManifestPdf';
 
 export type props = {
   alignment?: string;
@@ -93,6 +94,9 @@ export const ManifestActions: React.FC<props> = ({ alignment }) => {
         {(isActive || isPreparing) && !options.hideFilterImages && !showCaptureModelOnManifest ? (
           <ManifestItemFilter />
         ) : null}
+
+        <GenerateManifestPdf />
+
         <ManifestTaskProgress />
         {!showCaptureModelOnManifest ? <AssignManifestToUser /> : null}
       </ButtonRow>
