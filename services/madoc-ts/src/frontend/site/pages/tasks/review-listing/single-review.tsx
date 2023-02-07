@@ -6,7 +6,12 @@ import { EditorSlots } from '../../../../shared/capture-models/new/components/Ed
 import { RevisionProviderWithFeatures } from '../../../../shared/capture-models/new/components/RevisionProviderWithFeatures';
 import { EditorContentViewer } from '../../../../shared/capture-models/new/EditorContent';
 import styled, { css } from 'styled-components';
-import { CanvasViewerButton, CanvasViewerControls, CanvasViewerGrid } from '../../../features/CanvasViewerGrid';
+import {
+  CanvasViewerButton,
+  CanvasViewerControls,
+  CanvasViewerEditorStyleReset,
+  CanvasViewerGrid,
+} from '../../../features/CanvasViewerGrid';
 import { useData } from '../../../../shared/hooks/use-data';
 import { PreviewIcon } from '../../../../shared/icons/PreviewIcon';
 import { EmptyState } from '../../../../shared/layout/EmptyState';
@@ -39,6 +44,7 @@ import { MinusIcon } from '../../../../shared/icons/MinusIcon';
 import { PlusIcon } from '../../../../shared/icons/PlusIcon';
 import { useTranslation } from 'react-i18next';
 import { extractIdFromUrn } from '../../../../../utility/parse-urn';
+import { useProjectAnnotationStyles } from '../../../hooks/use-project-annotation-styles';
 
 const ReviewContainer = styled.div`
   position: relative;
@@ -69,6 +75,7 @@ const SubLabel = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  margin-right: 130px;
 `;
 const ReviewActionBar = styled.div`
   border-bottom: 1px solid #dddddd;
@@ -93,7 +100,7 @@ const ReviewDropdownContainer = styled.div`
   position: relative;
   max-width: 150px;
   align-self: end;
-  z-index: 30;
+  z-index: 11;
 `;
 
 const ReviewDropdownPopup = styled.div<{ $visible?: boolean }>`
@@ -160,6 +167,7 @@ function ViewSingleReview({
   const { t } = useTranslation();
   const gridRef = useRef<any>();
   const runtime = useRef<Runtime>();
+  const annotationTheme = useProjectAnnotationStyles();
 
   const goHome = () => {
     if (runtime.current) {
@@ -199,6 +207,7 @@ function ViewSingleReview({
               editor: { allowEditing: isEditing, deselectRevisionAfterSaving: false, saveOnNavigate: false },
               components: { SubmitButton: DirectEditButton },
             }}
+            annotationTheme={annotationTheme}
           >
             <ReviewContainer>
               <ReviewHeader>
@@ -266,7 +275,9 @@ function ViewSingleReview({
               </ReviewActionBar>
               <ReviewPreview>
                 <div style={{ width: '40%' }}>
-                  <EditorSlots.TopLevelEditor />
+                  <CanvasViewerEditorStyleReset>
+                    <EditorSlots.TopLevelEditor />
+                  </CanvasViewerEditorStyleReset>
                   <EditorSlots.SubmitButton captureModel={captureModel} />
                 </div>
                 <div style={{ minWidth: '60%', display: 'flex', flexDirection: 'column' }}>
@@ -301,6 +312,7 @@ function ViewSingleReview({
                       </>
                     </ReviewDropdownPopup>
                   </ReviewDropdownContainer>
+
                   <CanvasViewerGrid ref={gridRef}>
                     {canvas ? (
                       <EditorContentViewer
@@ -311,7 +323,7 @@ function ViewSingleReview({
                       />
                     ) : null}
                     {isOpen && (
-                      <CanvasViewerControls style={{ top: '8em' }}>
+                      <CanvasViewerControls>
                         <CanvasViewerButton onClick={goHome}>
                           <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
                         </CanvasViewerButton>
@@ -341,7 +353,6 @@ export function SingleReview() {
   if (!data) {
     return <div>Loading...</div>;
   }
-
   if (!data.task) {
     return <Navigate to={`/tasks/${params.taskId}`} />;
   }

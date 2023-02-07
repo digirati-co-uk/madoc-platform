@@ -36,9 +36,9 @@ export const CanvasViewerContentOverlay = styled.div`
 
 export const CanvasViewerControls = styled(ButtonRow)`
   position: absolute;
-  top: 0;
+  top: 0.2em;
   right: 1em;
-  z-index: 20;
+  z-index: 10;
 `;
 
 export const CanvasViewerButton = styled(Button)`

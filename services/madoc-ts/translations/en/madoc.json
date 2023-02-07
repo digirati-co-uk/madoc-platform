@@ -867,5 +867,7 @@
   "{{count}} manifests_plural": "{{count}} manifests",
   "{{count}} more": "{{count}} more",
   "{{count}} more_plural": "{{count}} more",
-  "{{feature}} is an experimental feature": "{{feature}} is an experimental feature"
+  "{{feature}} is an experimental feature": "{{feature}} is an experimental feature",
+  "{{page}} of {{count}}": "{{page}} of {{count}}",
+  "{{page}} of {{count}}_plural": "{{page}} of {{count}}"
 }

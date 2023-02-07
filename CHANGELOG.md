@@ -140,6 +140,9 @@ supports a wider range of IIIF resources as a result.
   * Focus mode & edit added
   * Clearer language 
   * Side by side canvas preview and improved styling 
+  * Navigation between items in list 
+  * Default to no selected task
+  * Added infinite scroll
 
 ### Removed
 
