@@ -97,7 +97,7 @@ export const ContinueCanvasSubmission: React.FC = () => {
             subRoute: 'model',
             query: { revision: continueCount ? revision : undefined },
           })}
-          style={{ display: 'inline-block' }}
+          style={{ display: 'inline-block', whiteSpace: 'nowrap' }}
         >
           {continueCount
             ? t('Continue submission ({{count}})', { count: continueCount || 1 })

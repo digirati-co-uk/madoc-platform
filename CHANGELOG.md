@@ -49,6 +49,7 @@ supports a wider range of IIIF resources as a result.
 * Fixed bug with read-only annotations disappearing
 * Fixed message "login to contribute" on published projects
 * Fixed notification showing on document panel when panel is empty
+* Fixed bug where "choice" was not reset after making a submission
 
 ### Added
 
@@ -120,6 +121,7 @@ supports a wider range of IIIF resources as a result.
 * Added new interactions in the Document panel for annotations
 * Added secondary view for "X hours ago" to show the date and time on click (browser preference)
 * Added "Generate PDF" option for manifests using PDiiif
+* Added small indication under choices in the capture model UI with number of previous submissions
 
 ### Changed
 
