@@ -49,9 +49,9 @@ export function getDefaultAnnotationStyles(): AnnotationStyles['theme'] {
     },
     submissions: {
       hidden: false,
-      borderWidth: '2px',
-      borderColor: 'rgba(7,11,98,0.4)',
-      backgroundColor: 'rgba(114,232,232,0.15)',
+      borderWidth: '1px',
+      borderColor: 'rgba(87,36,203,0.5)',
+      backgroundColor: 'rgba(87,36,203,0.2)',
     },
   };
 }

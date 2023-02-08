@@ -11,9 +11,7 @@ import { useLocalStorage } from './use-local-storage';
 import { annotationPageToRegions } from '../utility/annotation-page-to-regions';
 import { useLoadedCaptureModel } from './use-loaded-capture-model';
 import { useCanvasModel } from '../../site/hooks/use-canvas-model';
-import {
-  useRevisionList,
-} from '../capture-models/new/hooks/use-revision-list';
+import { useUser } from './use-site';
 export interface ReadOnlyAnnotation {
   id: string;
   target: { x: number; y: number; width: number; height: number };
@@ -40,6 +38,7 @@ export function useReadOnlyAnnotations(isModelPage = false): ReadOnlyAnnotation[
     { refetchOnWindowFocus: false }
   );
   const [{ captureModel }, , modelRefetch] = useLoadedCaptureModel(canvasModel?.model?.id, undefined, canvasId);
+
   const modelPageShowAnnotations = config.project?.modelPageShowAnnotations || 'when-open';
   const modelPageShowDocument = config.project?.modelPageShowDocument || 'when-open';
   const canvasPageShowAnnotations = config.project?.canvasPageShowAnnotations || 'when-open';
@@ -107,28 +106,37 @@ export function useReadOnlyAnnotations(isModelPage = false): ReadOnlyAnnotation[
     return { regions, ids };
   }, [data, showDocumentRegions, styles.contributedDocument, annotations.ids]);
 
+  // show users submitted regions
+  const user = useUser();
+  const revisions = captureModel?.revisions;
+  const revisionIds = revisions?.map(r =>
+    !r.approved && r.authors?.includes(`urn:madoc:user:${user?.id}`) ? r.id : ''
+  );
   const unstyledRevisions = useMemo(() => {
     const regions: ReadOnlyAnnotation[] = [];
-    const ids: string[] = [...annotations.ids];
+    const rIds: string[] = revisionIds ? [...revisionIds.filter(r => r)] : [];
+    const ids: string[] = [];
 
     if (showRevisions && !styles.submissions?.hidden) {
       if (captureModel && captureModel.document) {
         traverseDocument(captureModel.document, {
-          visitSelector(selector) {
-            if (selector.state && ids.indexOf(selector.id) === -1) {
-              ids.push(selector.id);
-              regions.push({
-                id: selector.id,
-                target: selector.state,
-                style: styles.submissions,
-              });
+          visitSelector(selector, revision) {
+            if (revision.revision) {
+              if (selector.state && rIds.indexOf(revision.revision) !== -1) {
+                ids.push(selector.id);
+                regions.push({
+                  id: selector.id,
+                  target: selector.state,
+                  style: styles.submissions,
+                });
+              }
             }
           },
         });
       }
     }
     return { regions, ids };
-  }, [annotations.ids, captureModel, showDocumentRegions, styles.submissions]);
+  }, [captureModel, revisionIds, showRevisions, styles.submissions]);
 
   const documentRegions = useMemo(() => {
     const returnRegions = [];
@@ -152,6 +160,7 @@ export function useReadOnlyAnnotations(isModelPage = false): ReadOnlyAnnotation[
     for (const region of unstyledRevisions.regions) {
       if (region.id === highlightedDocumentRegion || highlighted.indexOf(region.id) !== -1) {
         returnRegions.push({ ...region, style: styles.highlighted });
+
       } else {
         returnRegions.push(region);
       }
