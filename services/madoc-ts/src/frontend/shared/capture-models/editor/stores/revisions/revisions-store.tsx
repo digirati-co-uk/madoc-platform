@@ -230,6 +230,9 @@ export const revisionStore: RevisionsModel = {
   popStructure: action(state => {
     state.idStack = state.idStack.slice(0, -1);
   }),
+  resetStructure: action(state => {
+    state.idStack = [];
+  }),
   setIsThankYou: action((state, payload) => {
     state.isThankYou = payload;
   }),
