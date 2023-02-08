@@ -22,10 +22,10 @@ export function useDocumentPanel(): CanvasMenuHook {
     data && data.models
       ? data.models.filter((model: any) => {
           const flatProperties = Object.values(model.document.properties);
-          const emptyFields = flatProperties.flatMap(b => b).filter((f: any) => !f.value);
+          const emptyFields = flatProperties.flatMap(b => b).filter((f: any) => f.value);
           const isApproved = model.revisions.filter((q: { approved: boolean }) => q.approved);
 
-          return flatProperties.length > 0 && emptyFields && isApproved;
+          return flatProperties.length > 0 && emptyFields.length > 0 && isApproved.length > 0;
         })
       : [];
 
