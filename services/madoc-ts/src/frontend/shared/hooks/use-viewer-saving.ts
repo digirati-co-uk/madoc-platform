@@ -11,6 +11,7 @@ export function useViewerSaving(
   const api = useApi();
   const user = useUser();
   const persistRevision = Revisions.useStoreActions(a => a.persistRevision);
+  const resetStructure = Revisions.useStoreActions(a => a.resetStructure);
 
   const [createRevision] = useMutation(
     async ({ req, status }: { req: RevisionRequest; status?: string }): Promise<RevisionRequest> => {
@@ -27,6 +28,9 @@ export function useViewerSaving(
       if (afterSave) {
         await afterSave(response, status);
       }
+      if (status === 'submitted') {
+        resetStructure();
+      }
       return response;
     }
   );
@@ -35,6 +39,9 @@ export function useViewerSaving(
       const response = await api.updateCaptureModelRevision(req, status);
       if (afterSave) {
         await afterSave(response, status);
+      }
+      if (status === 'submitted') {
+        resetStructure();
       }
       return response;
     }
