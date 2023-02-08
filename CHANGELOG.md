@@ -89,6 +89,7 @@ supports a wider range of IIIF resources as a result.
 * **Page blocks** - Added block options to "Project Manifests" block
 * **Page blocks** - Added block options to "Project Manifests" block
 * **Page blocks** - Added new `project-footer` slot
+* **Page blocks** - Added new block to embed items through iframe
 * Added "reset error" option to attempt to recover from error states
 * Added configuration option for vertical canvas zoom controls layout
 * Added canvas rotation option (without annotation support)
@@ -118,6 +119,7 @@ supports a wider range of IIIF resources as a result.
     * Simple CSV export - exports all capture models into a csv file.
 * Added new interactions in the Document panel for annotations
 * Added secondary view for "X hours ago" to show the date and time on click (browser preference)
+* Added "Generate PDF" option for manifests using PDiiif
 
 ### Changed
 
@@ -151,6 +153,9 @@ supports a wider range of IIIF resources as a result.
   * Focus mode & edit added
   * Clearer language 
   * Side by side canvas preview and improved styling 
+  * Navigation between items in list 
+  * Default to no selected task
+  * Added infinite scroll
 
 ### Removed
 

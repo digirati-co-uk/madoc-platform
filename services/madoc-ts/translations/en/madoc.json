@@ -314,6 +314,7 @@
   "Full width": "Full width",
   "Generate API Keys": "Generate API Keys",
   "Generate API key": "Generate API key",
+  "Generate PDF": "Generate PDF",
   "Global": "Global",
   "Global admin": "Global admin",
   "Global config": "Global config",
@@ -815,6 +816,8 @@
   "exclude": "exclude",
   "expires soon": "expires soon",
   "export-resource-task": "export-resource-task",
+  "generate pdf": "generate pdf",
+  "height (px)": "height (px)",
   "help__flat_collection": "This shows all of the collections and manifests in your project. When you add a collection you will see all off the manifests inside of the collection are added to this view. When you remove a collection you will have to also manually remove any manifests you want to remove.",
   "help__metadata_facet_editor": "When searching for this, search the above fields with all of these values",
   "help__metadata_facet_editor__combine": "This will combine the following fields",
@@ -852,6 +855,7 @@
   "requiredStatement": "requiredStatement",
   "search index": "search index",
   "size": "size",
+  "src or link": "src or link",
   "summary": "summary",
   "switch to the main revision": "switch to the main revision",
   "task thumbnail": "task thumbnail",
@@ -865,6 +869,7 @@
   "view manifest": "view manifest",
   "waiting": "waiting",
   "waiting for canvases": "waiting for canvases",
+  "width (px)": "width (px)",
   "{{count}} canvases": "{{count}} canvas",
   "{{count}} canvases_plural": "{{count}} canvases",
   "{{count}} images": "{{count}} images",
@@ -875,5 +880,7 @@
   "{{count}} manifests_plural": "{{count}} manifests",
   "{{count}} more": "{{count}} more",
   "{{count}} more_plural": "{{count}} more",
-  "{{feature}} is an experimental feature": "{{feature}} is an experimental feature"
+  "{{feature}} is an experimental feature": "{{feature}} is an experimental feature",
+  "{{page}} of {{count}}": "{{page}} of {{count}}",
+  "{{page}} of {{count}}_plural": "{{page}} of {{count}}"
 }
