@@ -62,6 +62,7 @@ export const ReviewNavigation: React.FC<{
               if (pages[pg - 1].tasks) {
                 handleNavigation(prevPageItem.id, pg - 1);
               }
+              console.log('2')
             }
           }}
           link={createLink({
@@ -90,6 +91,7 @@ export const ReviewNavigation: React.FC<{
               if (pages[pg + 1].tasks) {
                 handleNavigation(nextPageItem.id, pg + 2);
               }
+              console.log('2')
             }
           }}
           link={createLink({
@@ -116,6 +118,7 @@ export const ReviewNavigation: React.FC<{
               if (pages[pg].tasks) {
                 handleNavigation(pages[pg].tasks[idx - 1].id, pg + 1);
               }
+              console.log('2')
             }
           }}
           link={createLink({

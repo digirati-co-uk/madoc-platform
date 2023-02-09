@@ -45,7 +45,7 @@ import { PlusIcon } from '../../../../shared/icons/PlusIcon';
 import { useTranslation } from 'react-i18next';
 import { extractIdFromUrn } from '../../../../../utility/parse-urn';
 import { useProjectAnnotationStyles } from '../../../hooks/use-project-annotation-styles';
-import UnlockSmileyIcon from "../../../../shared/icons/UnlockSmileyIcon";
+import UnlockSmileyIcon from '../../../../shared/icons/UnlockSmileyIcon';
 
 const ReviewContainer = styled.div`
   position: relative;
@@ -376,7 +376,7 @@ export function SingleReview() {
   const { data, refetch } = useData(SingleReview);
 
   if (!data) {
-    return <div>Loading...</div>;
+    return <EmptyState>Loading...</EmptyState>;
   }
   if (!data.task) {
     return <Navigate to={`/tasks/${params.taskId}`} />;

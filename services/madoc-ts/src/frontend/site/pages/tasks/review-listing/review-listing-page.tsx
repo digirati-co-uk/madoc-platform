@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { SubjectSnippet } from '../../../../../extensions/tasks/resolvers/subject-resolver';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
@@ -19,7 +19,6 @@ import { Chevron } from '../../../../shared/icons/Chevron';
 import { useResizeLayout } from '../../../../shared/hooks/use-resize-layout';
 import { LayoutHandle } from '../../../../shared/layout/LayoutContainer';
 import ResizeHandleIcon from '../../../../shared/icons/ResizeHandleIcon';
-import { stringify } from 'query-string';
 import { useInfiniteAction } from '../../../hooks/use-infinite-action';
 import { RefetchProvider } from '../../../../shared/utility/refetch-context';
 import { useRouteContext } from '../../../hooks/use-route-context';
@@ -128,7 +127,6 @@ export function ReviewListingPage() {
   const { projectId } = useRouteContext();
   const createLink = useRelativeLinks();
   const { sort_by = '', ...query } = useLocationQuery();
-  const { hash } = useLocation();
   const navigate = useNavigate();
 
   const { widthB, refs } = useResizeLayout(`review-dashboard-resize`, {
@@ -138,7 +136,7 @@ export function ReviewListingPage() {
   });
 
   const beforeNavigate = useCallback(
-    async (newTaskId: string, page) => {
+    async (newTaskId, page) => {
       navigate(createLink({ taskId: undefined, subRoute: `reviews/${newTaskId}`, query: { sort_by }, hash: page }));
     },
     [createLink, navigate, sort_by]
