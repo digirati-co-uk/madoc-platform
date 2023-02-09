@@ -111,9 +111,10 @@ const RevisionPreviewContainer = styled.div<{ $collapsed?: boolean }>`
     `}
 `;
 
-export const RevisionListItem: React.FC<{ revision: RevisionRequest; editable?: boolean }> = ({
+export const RevisionListItem: React.FC<{ revision: RevisionRequest; editable?: boolean; onClick?: () => void }> = ({
   revision: rev,
   editable,
+  onClick,
 }) => {
   const outerDiv = useRef<HTMLDivElement>(null);
   const innerDiv = useRef<HTMLDivElement>(null);
@@ -141,16 +142,20 @@ export const RevisionListItem: React.FC<{ revision: RevisionRequest; editable?: 
       <RevisionStatus $status={rev.revision.status} />
       <RevisionHeading>
         <RevisionLabel>{rev.revision.label === 'Default' ? rev.document.label : rev.revision.label}</RevisionLabel>
-        {author ? <RevisionAuthor>{author}</RevisionAuthor> : null}
+        {author ? <RevisionAuthor>{author}</RevisionAuthor> : <span style={{ color: '#999' }}>unknown</span>}
       </RevisionHeading>
       <RevisionActions>
-        {currentRevisionId === rev.revision.id || !editable ? null : (
+        {currentRevisionId === rev.revision.id || (!editable && !onClick) ? null : (
           <SmallButton
             onClick={() => {
-              if (rev.revision.structureId) {
-                goTo(rev.revision.structureId);
+              if (onClick) {
+                onClick();
+              } else {
+                if (rev.revision.structureId) {
+                  goTo(rev.revision.structureId);
+                }
+                selectRevision({ revisionId: rev.revision.id });
               }
-              selectRevision({ revisionId: rev.revision.id });
             }}
           >
             Edit
@@ -172,16 +177,24 @@ export const RevisionListItem: React.FC<{ revision: RevisionRequest; editable?: 
   );
 };
 
-export const RevisionList: React.FC<{ revisions: RevisionRequest[]; editable?: boolean; title?: string }> = ({
-  revisions,
-  editable,
-  title,
-}) => {
+export const RevisionList: React.FC<{
+  revisions: RevisionRequest[];
+  editable?: boolean;
+  title?: string;
+  onClick?: (revision: string) => void;
+}> = ({ revisions, editable, title, onClick }) => {
   return (
     <RevisionListContainer>
       {title && revisions.length ? <RevisionListTitle>{title}</RevisionListTitle> : null}
       {revisions.map(rev => {
-        return <RevisionListItem key={rev.revision.id} editable={editable} revision={rev} />;
+        return (
+          <RevisionListItem
+            key={rev.revision.id}
+            onClick={onClick ? () => onClick(rev.revision.id) : undefined}
+            editable={editable}
+            revision={rev}
+          />
+        );
       })}
     </RevisionListContainer>
   );
