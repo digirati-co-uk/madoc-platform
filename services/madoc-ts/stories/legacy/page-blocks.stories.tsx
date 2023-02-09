@@ -176,6 +176,9 @@ export const SelectBlock = () => {
             <>
               <AddBlockList>
                 {blocks.map((block, n) => {
+                  if (!block) {
+                    return null;
+                  }
                   const Icon = block.svgIcon;
                   return (
                     <AddBlockContainer $active={n === 2}>
