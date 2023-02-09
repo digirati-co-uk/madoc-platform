@@ -7,7 +7,9 @@ import * as React from 'react';
 import { useMemo, useState } from 'react';
 import { VaultProvider } from 'react-iiif-vault';
 import { ThemeProvider } from 'styled-components';
+import { filterModelGetOptions } from '../../../src/capture-model-server/server-filters/filter-model-get-options';
 import { updateRevisionInDocument } from '../../../src/capture-model-server/server-filters/update-revision-in-document';
+import { WarningMessage } from '../../../src/frontend/shared/callouts/WarningMessage';
 import { getDefaultAnnotationStyles } from '../../../src/frontend/shared/capture-models/AnnotationStyleContext';
 import { defaultTheme } from '../../../src/frontend/shared/capture-models/editor/themes';
 import { captureModelToRevisionList } from '../../../src/frontend/shared/capture-models/helpers/capture-model-to-revision-list';
@@ -23,6 +25,7 @@ import { RevisionList } from '../../../src/frontend/shared/components/RevisionLi
 import { TaskTabBackground, TaskTabItem, TaskTabRow } from '../../../src/frontend/shared/components/TaskTabs';
 import { ViewerSavingContext } from '../../../src/frontend/shared/hooks/use-viewer-saving';
 import { AnnotationStyles } from '../../../src/types/annotation-styles';
+import { ErrorMessage } from '../../../src/frontend/shared/callouts/ErrorMessage';
 
 export interface CaptureModelTestHarnessProps {
   captureModel: CaptureModel;
@@ -32,6 +35,9 @@ export interface CaptureModelTestHarnessProps {
   coreProps?: Partial<CoreModelEditorProps>;
 
   initialTab?: number;
+
+  errorMessage?: string;
+  warningMessage?: string;
 }
 
 export type ModelStory = StoryObj<typeof CaptureModelTestHarness>;
@@ -82,13 +88,33 @@ export function CaptureModelTestHarness(props: CaptureModelTestHarnessProps) {
     canvasUri: 'https://digirati-co-uk.github.io/wunder/canvases/0',
   };
 
+  const allRevisionsWithStructures = useMemo(() => {
+    return captureModelToRevisionList(deepmerge({}, captureModel), true);
+  }, [captureModel]);
+  const allRevisions = useMemo(() => {
+    return captureModelToRevisionList(deepmerge({}, captureModel), false);
+  }, [captureModel]);
+  const computedRevision = useMemo(() => {
+    return revision
+      ? filterModelGetOptions(deepmerge({}, captureModel), { revisionId: revision, onlyRevisionFields: true })
+      : null;
+  }, [captureModel, revision]);
+
   const revisionJson = (
-    <pre data-testid="revision-json">{JSON.stringify(captureModelToRevisionList(captureModel, true), null, 2)}</pre>
+    <>
+      <pre data-testid="revision-json">{JSON.stringify(allRevisionsWithStructures, null, 2)}</pre>
+      {computedRevision ? (
+        <pre data-testid="computed-revision-json">{JSON.stringify(computedRevision, null, 2)}</pre>
+      ) : null}
+    </>
   );
+
   const modelJson = <pre data-testid="model-json">{JSON.stringify(captureModel, null, 2)}</pre>;
 
   return (
     <div>
+      {props.errorMessage ? <ErrorMessage>{props.errorMessage}</ErrorMessage> : null}
+      {props.warningMessage ? <WarningMessage>{props.warningMessage}</WarningMessage> : null}
       <TaskTabBackground>
         <TaskTabRow>
           <TaskTabItem $active={k === 0} onClick={() => setK(0)}>
@@ -169,7 +195,7 @@ export function CaptureModelTestHarness(props: CaptureModelTestHarnessProps) {
                     {revision ? <button onClick={() => setRevision('')}>Clear revision</button> : null}
                     <RevisionList
                       title="Revisions"
-                      revisions={captureModelToRevisionList(captureModel, false)}
+                      revisions={allRevisions}
                       onClick={rev => {
                         setK(0);
                         setRevision(rev);
@@ -178,7 +204,18 @@ export function CaptureModelTestHarness(props: CaptureModelTestHarnessProps) {
                   </RevisionProviderWithFeatures>
                 </DynamicVaultContext>
               ) : null}
-              {k === 4 ? <pre>{JSON.stringify(captureModelToRevisionList(captureModel, true), null, 2)}</pre> : null}
+              {k === 4 ? (
+                <>
+                  <h3>Revisions with structures</h3>
+                  <pre>{JSON.stringify(allRevisionsWithStructures, null, 2)}</pre>
+                  {revision ? (
+                    <>
+                      <h3>Computed revision</h3>
+                      <pre>{JSON.stringify(computedRevision, null, 2)}</pre>
+                    </>
+                  ) : null}
+                </>
+              ) : null}
             </ViewerSavingContext.Provider>
           </PluginProvider>
         </ThemeProvider>
@@ -210,11 +247,21 @@ CaptureModelTestHarness.getRevisions = async ({
   return JSON.parse(revPre.innerText);
 };
 
-CaptureModelTestHarness.getModel = (async ({ canvasElement }) => {
+CaptureModelTestHarness.getModel = async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<CaptureModel> => {
   const canvas = within(canvasElement);
   const modelPre = await canvas.findByTestId('model-json');
   return JSON.parse(modelPre.innerText);
-}) as ModelStory['play'];
+};
+
+CaptureModelTestHarness.getComputedRevision = async ({
+  canvasElement,
+}: {
+  canvasElement: HTMLElement;
+}): Promise<CaptureModel> => {
+  const canvas = within(canvasElement);
+  const modelPre = await canvas.findByTestId('computed-revision-json');
+  return JSON.parse(modelPre.innerText);
+};
 
 CaptureModelTestHarness.waitForViewer = (async ({ canvasElement }) => {
   const canvas = within(canvasElement);
