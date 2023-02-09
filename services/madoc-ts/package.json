@@ -38,7 +38,8 @@
   "resolutions": {
     "@atlas-viewer/atlas": "https://pkg.csb.dev/atlas-viewer/atlas/commit/842002cd/@atlas-viewer/atlas",
     "@babel/core": "^7.20.12",
-    "@babel/generator": "^7.20.7",
+    "@babel/runtime": "7.20.13",
+    "@babel/generator": "^7.20.14",
     "@babel/types": "7.20.7",
     "@iiif/vocabulary": "1.0.17",
     "@iiif/presentation-3": "^1.1.3",
@@ -52,7 +53,6 @@
     "@iiif/vault": "^0.9.19",
     "@iiif/vault-helpers": "^0.9.8",
     "@types/styled-components": "^5.1.0",
-    "@babel/runtime": "7.18.3",
     "deepmerge": "4.2.2",
     "dnd-multi-backend": "6.0.0",
     "html-entities": "1.4.0",
@@ -68,7 +68,7 @@
   "dependencies": {
     "@atlas-viewer/atlas": "https://pkg.csb.dev/atlas-viewer/atlas/commit/842002cd/@atlas-viewer/atlas",
     "@atlas-viewer/iiif-image-api": "^2.0.5",
-    "@babel/runtime": "^7.18.3",
+    "@babel/runtime": "^7.20.13",
     "@iiif/parser": "^1.0.13",
     "@iiif/presentation-2": "^1.0.2",
     "@iiif/presentation-3": "^1.1.3",
