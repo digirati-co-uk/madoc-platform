@@ -45,6 +45,7 @@ import { PlusIcon } from '../../../../shared/icons/PlusIcon';
 import { useTranslation } from 'react-i18next';
 import { extractIdFromUrn } from '../../../../../utility/parse-urn';
 import { useProjectAnnotationStyles } from '../../../hooks/use-project-annotation-styles';
+import UnlockSmileyIcon from "../../../../shared/icons/UnlockSmileyIcon";
 
 const ReviewContainer = styled.div`
   position: relative;
@@ -187,9 +188,32 @@ function ViewSingleReview({
     }
   };
 
+  console.log(metadata);
   if (!review) {
-    return <EmptyState>This task is not yet ready for review.</EmptyState>;
+    return (
+      <>
+        <ReviewHeader>
+          <Label>
+            {metadata && metadata.subject ? <LocaleString>{metadata.subject.label}</LocaleString> : task.name}
+          </Label>
+
+          <SubLabel>
+            {metadata.subject && metadata.subject.parent && (
+              <LocaleString style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {metadata.subject.parent.label}
+              </LocaleString>
+            )}
+          </SubLabel>
+        </ReviewHeader>
+        <EmptyState>
+          <UnlockSmileyIcon />
+          This task is not yet ready for review.
+          <span>This means this task has been assigned or is in progress, but nothing has been submitted</span>
+        </EmptyState>
+      </>
+    );
   }
+
   return (
     <MaximiseWindow>
       {({ toggle, isOpen }) => {
@@ -243,8 +267,10 @@ function ViewSingleReview({
                     />
 
                     <EditorToolbarButton onClick={() => setIsEditing(r => !r)} disabled={isDone}>
-                      <EditorToolbarIcon>{isEditing ? <PreviewIcon /> : <EditIcon />}</EditorToolbarIcon>
-                      <EditorToolbarLabel>{isEditing ? 'Preview' : 'Edit'}</EditorToolbarLabel>
+                      <EditorToolbarIcon>
+                        <EditIcon />
+                      </EditorToolbarIcon>
+                      <EditorToolbarLabel>{isEditing ? 'Exit Correction' : 'Make Correction'}</EditorToolbarLabel>
                     </EditorToolbarButton>
 
                     <RequestChanges
@@ -291,7 +317,7 @@ function ViewSingleReview({
                           <EditorToolbarIcon>
                             {isOpen ? <FullScreenExitIcon /> : <FullScreenEnterIcon />}
                           </EditorToolbarIcon>
-                          <EditorToolbarLabel> Focus mode</EditorToolbarLabel>
+                          <EditorToolbarLabel> {isOpen ? 'List mode' : 'Focus mode'} </EditorToolbarLabel>
                         </EditorToolbarButton>
                         {canvasLink ? (
                           <EditorToolbarButton as={HrefLink} href={canvasLink}>
