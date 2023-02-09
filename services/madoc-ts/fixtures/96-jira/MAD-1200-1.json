@@ -1,0 +1,162 @@
+{
+  "id": "0808202c-dc9f-4d4b-86c7-a4c222f611ab",
+  "structure": {
+    "id": "5bb490cf-b81d-4a1b-b982-23b89e021a80",
+    "label": "vertaling-and-transcriptie",
+    "type": "choice",
+    "items": [
+      {
+        "id": "a5117e9d-8ad4-48a9-b04b-20bcc5773694",
+        "type": "model",
+        "label": "Default",
+        "fields": [
+          [
+            "Vertaling & Transcriptie",
+            [
+              "Vertaling",
+              "Transcriptie"
+            ]
+          ]
+        ]
+      }
+    ]
+  },
+  "document": {
+    "id": "e60b0c30-230e-4bd3-b0aa-2963256c5dcd",
+    "type": "entity",
+    "label": "vertaling-and-transcriptie",
+    "properties": {
+      "Vertaling & Transcriptie": [
+        {
+          "id": "172592c8-96a0-4efd-a3e0-69e5ffce8bba",
+          "type": "entity",
+          "label": "Vertaling & Transcriptie",
+          "selector": {
+            "id": "50e00368-90d2-41f6-9c31-2e12553e11ae",
+            "type": "box-selector",
+            "state": null,
+            "revisedBy": [
+              {
+                "id": "eb2a9993-a618-42cd-92cb-b074bad91320",
+                "type": "box-selector",
+                "state": {
+                  "x": 108,
+                  "y": 576,
+                  "width": 171,
+                  "height": 782
+                },
+                "revises": "50e00368-90d2-41f6-9c31-2e12553e11ae",
+                "revisionId": "41697e71-34eb-4f1c-9019-f26fda20bd32"
+              }
+            ]
+          },
+          "immutable": true,
+          "properties": {
+            "Vertaling": [
+              {
+                "id": "410dbfe8-edbe-4c32-a0e6-d2a6b1b7264f",
+                "type": "text-field",
+                "label": "Vertaling",
+                "value": "test 1",
+                "revises": "3c8d073a-126a-426e-942c-f328ac7ae988",
+                "revision": "41697e71-34eb-4f1c-9019-f26fda20bd32",
+                "immutable": true
+              }
+            ],
+            "Transcriptie": [
+              {
+                "id": "c028819a-d914-4b95-837c-3175a7e18d29",
+                "type": "text-field",
+                "label": "Transcriptie",
+                "value": "test 2",
+                "revises": "935a73fb-0449-4685-9eff-75935d41a682",
+                "revision": "41697e71-34eb-4f1c-9019-f26fda20bd32",
+                "immutable": true
+              }
+            ]
+          },
+          "allowMultiple": true
+        },
+        {
+          "id": "e43077f1-f574-4d9c-8d9f-7fb1922ba6d9",
+          "type": "entity",
+          "label": "Vertaling & Transcriptie",
+          "revision": "41697e71-34eb-4f1c-9019-f26fda20bd32",
+          "selector": {
+            "id": "965092e6-7934-4b4c-bc83-126ccb68e816",
+            "type": "box-selector",
+            "state": {
+              "x": 111,
+              "y": 1364,
+              "width": 168,
+              "height": 633
+            }
+          },
+          "immutable": false,
+          "properties": {
+            "Vertaling": [
+              {
+                "id": "66ea7c0f-f737-457c-9645-1a533821c810",
+                "type": "text-field",
+                "label": "Vertaling",
+                "value": "test 2",
+                "revision": "41697e71-34eb-4f1c-9019-f26fda20bd32"
+              }
+            ],
+            "Transcriptie": [
+              {
+                "id": "cd3c0963-b30e-4b9d-ae4a-6aa587f6405c",
+                "type": "text-field",
+                "label": "Transcriptie",
+                "value": "test 3",
+                "revision": "41697e71-34eb-4f1c-9019-f26fda20bd32"
+              }
+            ]
+          },
+          "allowMultiple": true
+        }
+      ]
+    }
+  },
+  "revisions": [
+    {
+      "fields": [
+        [
+          "Vertaling & Transcriptie",
+          [
+            "Vertaling",
+            "Transcriptie"
+          ]
+        ]
+      ],
+      "structureId": "a5117e9d-8ad4-48a9-b04b-20bcc5773694",
+      "id": "41697e71-34eb-4f1c-9019-f26fda20bd32",
+      "revises": "a5117e9d-8ad4-48a9-b04b-20bcc5773694",
+      "approved": true,
+      "status": "accepted",
+      "authors": [
+        "urn:madoc:user:1"
+      ],
+      "label": "Default",
+      "captureModelId": "0808202c-dc9f-4d4b-86c7-a4c222f611ab"
+    }
+  ],
+  "derivedFrom": "9a4d68a8-c32e-4506-ae10-06b26ba2b268",
+  "target": [
+    {
+      "id": "urn:madoc:manifest:272096",
+      "type": "Manifest"
+    },
+    {
+      "id": "urn:madoc:canvas:272108",
+      "type": "Canvas"
+    }
+  ],
+  "contributors": {
+    "urn:madoc:user:1": {
+      "id": "urn:madoc:user:1",
+      "type": "Person",
+      "name": "Stephen"
+    }
+  }
+}
