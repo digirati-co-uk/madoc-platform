@@ -188,7 +188,6 @@ function ViewSingleReview({
     }
   };
 
-  console.log(metadata);
   if (!review) {
     return (
       <>

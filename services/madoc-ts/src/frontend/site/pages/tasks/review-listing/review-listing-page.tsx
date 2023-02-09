@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import {Navigate, Outlet, useLocation, useNavigate, useParams} from 'react-router-dom';
+import { Navigate, Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { SubjectSnippet } from '../../../../../extensions/tasks/resolvers/subject-resolver';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
@@ -312,6 +312,7 @@ function SingleReviewTableRow({ task, active, page }: { task: CrowdsourcingTask;
 
   return (
     <ThickTableRow
+      tabIndex={0}
       $active={active}
       onClick={() =>
         navigate(
