@@ -2,7 +2,6 @@ import * as React from 'react';
 import { FieldWrapper } from '../../src/frontend/shared/capture-models/editor/components/FieldWrapper/FieldWrapper';
 import { PluginProvider } from '../../src/frontend/shared/capture-models/plugin-api/context';
 import { TextField } from '../../src/frontend/shared/capture-models/editor/input-types/TextField/TextField';
-import { boolean, select, withKnobs } from '@storybook/addon-knobs';
 import { FieldEditor } from '../../src/frontend/shared/capture-models/editor/components/FieldEditor/FieldEditor';
 import '../../src/frontend/shared/capture-models/editor/input-types/TextField/index';
 

@@ -1,4 +1,3 @@
-import { boolean, select } from '@storybook/addon-knobs';
 import * as React from 'react';
 import { SnippetLarge } from '../../src/frontend/shared/atoms/SnippetLarge';
 import StackGrid from 'react-stack-grid';
@@ -603,13 +602,9 @@ export const SingleCollectionListingGrid: React.FC = () => {
 };
 
 export const ManifestMetadataContainer: React.FC = () => {
-  const layout = select(
-    'Layout direction',
-    ['left-to-right', 'top-to-bottom', 'right-to-left', 'bottom-to-top'],
-    'left-to-right'
-  );
+  const layout: any = 'left-to-right';
 
-  const metadataSize = select('Metadata size', ['lg', 'md', 'sm'], 'md');
+  const metadataSize = 'md';
   return (
     <MetadataLayoutContainer layout={layout}>
       <div style={{ flex: '1 1 0px', background: '#eee' }}>CONTENT</div>

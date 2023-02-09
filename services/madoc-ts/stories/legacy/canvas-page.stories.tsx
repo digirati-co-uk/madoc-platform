@@ -1,5 +1,4 @@
 import { CanvasContext, VaultProvider } from 'react-iiif-vault';
-import { text } from '@storybook/addon-knobs';
 import { useState } from 'react';
 import * as React from 'react';
 import {
@@ -176,7 +175,7 @@ export const Main_Page = () => {
     },
   });
 
-  const defaultManifest = text('Manifest', 'https://wellcomelibrary.org/iiif/b18035723/manifest');
+  const defaultManifest = 'https://wellcomelibrary.org/iiif/b18035723/manifest';
 
   const type = React.useMemo(() => {
     return { type: 'Manifest', id: defaultManifest };

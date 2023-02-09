@@ -206,7 +206,6 @@
     "@storybook/addon-docs": "^7.0.0-beta.45",
     "@storybook/addon-essentials": "^7.0.0-beta.45",
     "@storybook/addon-interactions": "^7.0.0-beta.45",
-    "@storybook/addon-knobs": "^6.4.0",
     "@storybook/addons": "^7.0.0-beta.45",
     "@storybook/builder-vite": "^7.0.0-beta.45",
     "@storybook/channel-postmessage": "^7.0.0-beta.45",

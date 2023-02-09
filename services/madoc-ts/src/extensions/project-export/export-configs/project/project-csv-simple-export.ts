@@ -48,8 +48,6 @@ export const projectCsvSimpleExport: ExportConfig = {
       entity: options.config.entity,
     });
 
-    console.log('allPublished', allPublished);
-
     const rowRecord: Record<string, any> = {};
     for (const item of allPublished) {
       rowRecord[item.doc_id] = rowRecord[item.doc_id] || {

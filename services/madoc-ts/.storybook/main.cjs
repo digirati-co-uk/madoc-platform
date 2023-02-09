@@ -1,3 +1,5 @@
+const { mergeConfig } = require('vite');
+
 module.exports = {
   stories: [
   // "../src/**/*.stories.mdx",
@@ -13,4 +15,13 @@ module.exports = {
     name: "@storybook/react-vite",
     options: {}
   },
+  async viteFinal(config) {
+    return mergeConfig(config, {
+      build: {
+        rollupOptions: {
+          external: ['csv-stringify'],
+        }
+      }
+    })
+  }
 };
