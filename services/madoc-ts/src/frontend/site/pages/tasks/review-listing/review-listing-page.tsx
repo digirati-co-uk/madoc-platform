@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, Outlet, useNavigate, useParams } from 'react-router-dom';
+import {Navigate, Outlet, useLocation, useNavigate, useParams} from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { SubjectSnippet } from '../../../../../extensions/tasks/resolvers/subject-resolver';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
@@ -127,7 +127,8 @@ export function ReviewListingPage() {
   const params = useParams<{ taskId?: string }>();
   const { projectId } = useRouteContext();
   const createLink = useRelativeLinks();
-  const { page, sort_by = '', ...query } = useLocationQuery();
+  const { sort_by = '', ...query } = useLocationQuery();
+  const { hash } = useLocation();
   const navigate = useNavigate();
 
   const { widthB, refs } = useResizeLayout(`review-dashboard-resize`, {
@@ -137,8 +138,8 @@ export function ReviewListingPage() {
   });
 
   const beforeNavigate = useCallback(
-    async (newTaskId: string) => {
-      navigate(createLink({ taskId: undefined, subRoute: `reviews/${newTaskId}`, query, hash: page }));
+    async (newTaskId: string, page) => {
+      navigate(createLink({ taskId: undefined, subRoute: `reviews/${newTaskId}`, query: { sort_by }, hash: page }));
     },
     [createLink, navigate, sort_by]
   );
@@ -167,13 +168,12 @@ export function ReviewListingPage() {
   const QuerySortToggle = (field: string) => {
     const sort = sort_by;
     if (sort && sort.includes(`${field}:desc`)) {
-      return `?${stringify({ ...query, sort_by: `${field}:asc` })}`;
+      return createLink({ taskId: undefined, subRoute: `reviews`, query: { sort_by: `${field}:asc` } });
     }
     if (sort && sort.includes(`${field}:asc`)) {
-      return `?${stringify({ ...query, sort_by: '' })}`;
+      return createLink({ taskId: undefined, subRoute: `reviews`, query: { sort_by: '' } });
     }
-
-    return `?${stringify({ ...query, sort_by: `${field}:desc` })}`;
+    return createLink({ taskId: undefined, subRoute: `reviews`, query: { sort_by: `${field}:desc` } });
   };
 
   // 1. Make requests for all crowdsourcing tasks marked as in review.

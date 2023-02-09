@@ -158,7 +158,6 @@ function ViewSingleReview({
   const refetch = useRefetch();
   const metadata = useTaskMetadata<{ subject?: SubjectSnippet }>(task);
 
-
   const [isEditing, setIsEditing] = useState(false);
   // const isLocked = props.lockedTasks && props.lockedTasks.indexOf(props.task.id) !== -1;
   const isDone = task?.status === 3;

@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { createLink } from '../../../../shared/utility/create-link';
 import styled from 'styled-components';
 import { NavigationButton, PaginationText } from '../../../../shared/components/CanvasNavigationMinimalist';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 
 const PaginationContainer = styled.div`
   display: flex;
@@ -34,11 +35,16 @@ export const ReviewNavigation: React.FC<{
   pages?: any;
   query?: any;
   size?: string | undefined;
-}> = ({ taskId: id, pages: pages, projectId, subRoute, query, handleNavigation, size }) => {
-  const hash = window.location.hash.slice(1);
-  const pg = hash ? Number(hash) - 1 : 0;
-  const idx = pages && pages[pg].tasks ? pages[pg].tasks.findIndex((i: CrowdsourcingTask) => i.id === id) : -1;
+}> = ({ taskId: id, pages: pages, projectId, subRoute, query, handleNavigation }) => {
+  const { hash } = useLocation();
+  const hsh = hash.slice(1);
+  const pg = hsh ? Number(hsh) - 1 : 0;
+
+  const idx = pages && pages[pg] ? pages[pg].tasks.findIndex((i: CrowdsourcingTask) => i.id === id) : -1;
   const { t } = useTranslation();
+
+  // results per page = 20
+  const totalIndex = 20 * pg + (idx + 1);
 
   if (!pages || idx === -1) {
     return null;
@@ -149,7 +155,7 @@ export const ReviewNavigation: React.FC<{
       {
         <PaginationText style={{ color: '#999999' }}>
           {t('{{page}} of {{count}}', {
-            page: idx + 1,
+            page: totalIndex,
             count: pages[0].pagination.totalResults,
           })}
         </PaginationText>
