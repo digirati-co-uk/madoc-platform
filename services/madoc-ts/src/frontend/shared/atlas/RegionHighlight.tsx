@@ -60,6 +60,7 @@ export function RegionHighlight({
           e.stopPropagation();
           onClick(region);
         }}
+        relativeStyle
         target={{ x: 0, y: 0, width: region.width, height: region.height }}
         style={style}
       />
