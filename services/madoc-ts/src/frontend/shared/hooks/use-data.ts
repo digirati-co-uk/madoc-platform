@@ -186,7 +186,7 @@ export function useInfiniteData<Data = any, TKey = any, TVariables = any>(
       }
       return undefined as any;
     },
-    { ...(config || {}), useErrorBoundary: true, keepPreviousData: true }
+    { ...(config || {}), useErrorBoundary: true }
   );
 
   if (potentialReturn.data && !Array.isArray(potentialReturn.data)) {

@@ -25,6 +25,7 @@ import { useRouteContext } from '../../../hooks/use-route-context';
 import { ReviewNavigation } from './ReviewNagivation';
 import { EmptyState } from '../../../../shared/layout/EmptyState';
 import ListItemIcon from '../../../../shared/icons/ListItemIcon';
+import { useKeyboardListNavigation } from '../../../hooks/use-keyboard-list-navigation';
 
 const TaskListContainer = styled.div`
   height: 80vh;
@@ -139,6 +140,7 @@ export function ReviewListingPage() {
     ReviewListingPage,
     undefined,
     {
+      keepPreviousData: true,
       getFetchMore: lastPage => {
         if (lastPage.pagination.totalPages === lastPage.pagination.page) {
           return undefined;
@@ -183,6 +185,7 @@ export function ReviewListingPage() {
   // 3. Have an extra parameter for "selectedTask" for the right side
   // 4. Display current review interface
   // 5. Add alternative version with form and then actions, with a toggle.
+  const containerProps = useKeyboardListNavigation('data-review-task-row');
 
   return (
     <RefetchProvider refetch={refetch}>
@@ -250,12 +253,13 @@ export function ReviewListingPage() {
                     </SimpleTable.Header>
                   </SimpleTable.Row>
                 </thead>
-                <tbody>
+                <tbody {...(containerProps as any)}>
                   {pages &&
                     pages.map(data =>
-                      (data.tasks || []).map((task: CrowdsourcingTask) => {
+                      (data.tasks || []).map((task: CrowdsourcingTask, index: number) => {
                         return (
                           <SingleReviewTableRow
+                            index={index}
                             key={task.id}
                             task={task}
                             active={task.id === params.taskId}
@@ -306,7 +310,17 @@ export function ReviewListingPage() {
   );
 }
 
-function SingleReviewTableRow({ task, active, page }: { task: CrowdsourcingTask; active?: boolean; page?: number }) {
+function SingleReviewTableRow({
+  task,
+  active,
+  page,
+  index,
+}: {
+  task: CrowdsourcingTask;
+  active?: boolean;
+  page?: number;
+  index: number;
+}) {
   const { ...query } = useLocationQuery();
   const createLink = useRelativeLinks();
   const navigate = useNavigate();
@@ -314,7 +328,8 @@ function SingleReviewTableRow({ task, active, page }: { task: CrowdsourcingTask;
 
   return (
     <ThickTableRow
-      tabIndex={0}
+      tabIndex={index === 0 ? 0 : -1}
+      data-review-task-row={index}
       $active={active}
       onClick={() =>
         navigate(
