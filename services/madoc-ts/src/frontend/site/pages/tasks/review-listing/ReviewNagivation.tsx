@@ -5,6 +5,9 @@ import { NavigationButton, PaginationText } from '../../../../shared/components/
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
+import { useInfiniteData } from '../../../../shared/hooks/use-data';
+import { useInfiniteAction } from '../../../hooks/use-infinite-action';
+import {ReviewListingPage} from "./review-listing-page";
 
 const PaginationContainer = styled.div`
   display: flex;
@@ -62,7 +65,6 @@ export const ReviewNavigation: React.FC<{
               if (pages[pg - 1].tasks) {
                 handleNavigation(prevPageItem.id, pg - 1);
               }
-              console.log('2')
             }
           }}
           link={createLink({
@@ -91,7 +93,6 @@ export const ReviewNavigation: React.FC<{
               if (pages[pg + 1].tasks) {
                 handleNavigation(nextPageItem.id, pg + 2);
               }
-              console.log('2')
             }
           }}
           link={createLink({
@@ -118,7 +119,6 @@ export const ReviewNavigation: React.FC<{
               if (pages[pg].tasks) {
                 handleNavigation(pages[pg].tasks[idx - 1].id, pg + 1);
               }
-              console.log('2')
             }
           }}
           link={createLink({

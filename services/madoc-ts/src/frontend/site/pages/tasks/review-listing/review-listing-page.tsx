@@ -135,13 +135,6 @@ export function ReviewListingPage() {
     minWidthPx: 400,
   });
 
-  const beforeNavigate = useCallback(
-    async (newTaskId, page) => {
-      navigate(createLink({ taskId: undefined, subRoute: `reviews/${newTaskId}`, query: { sort_by }, hash: page }));
-    },
-    [createLink, navigate, sort_by]
-  );
-
   const { data: pages, fetchMore, refetch, canFetchMore, isFetchingMore } = useInfiniteData(
     ReviewListingPage,
     undefined,
@@ -163,6 +156,17 @@ export function ReviewListingPage() {
     isFetchingMore,
     container: refs.resizableDiv,
   });
+
+  const beforeNavigate = useCallback(
+    async (newTaskId, page) => {
+      if (!isFetchingMore && canFetchMore) {
+        await fetchMore();
+      }
+      navigate(createLink({ taskId: undefined, subRoute: `reviews/${newTaskId}`, query: { sort_by }, hash: page }));
+    },
+    [canFetchMore, createLink, fetchMore, isFetchingMore, navigate, sort_by]
+  );
+
   const QuerySortToggle = (field: string) => {
     const sort = sort_by;
     if (sort && sort.includes(`${field}:desc`)) {

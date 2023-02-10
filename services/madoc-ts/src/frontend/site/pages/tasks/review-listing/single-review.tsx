@@ -371,9 +371,6 @@ export function SingleReview() {
   const params = useParams<{ taskId: string }>();
   const { data, refetch } = useData(SingleReview);
 
-  if (!data.task) {
-    return <Navigate to={`/tasks/${params.taskId}`} />;
-  }
   return (
     <MaximiseWindow>
       {({ toggle, isOpen }) => {
