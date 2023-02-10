@@ -1,13 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { createLink } from '../../../../shared/utility/create-link';
 import styled from 'styled-components';
 import { NavigationButton, PaginationText } from '../../../../shared/components/CanvasNavigationMinimalist';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { useInfiniteData } from '../../../../shared/hooks/use-data';
-import { useInfiniteAction } from '../../../hooks/use-infinite-action';
-import {ReviewListingPage} from "./review-listing-page";
 
 const PaginationContainer = styled.div`
   display: flex;
@@ -31,7 +28,7 @@ const PaginationContainer = styled.div`
 `;
 
 export const ReviewNavigation: React.FC<{
-  handleNavigation?: (taskId: string, page: number | string) => Promise<void> | void;
+  handleNavigation?: (taskId: string, page: number | string, getNext?: boolean) => Promise<void> | void;
   taskId?: string;
   projectId?: string;
   subRoute?: string;
@@ -91,7 +88,7 @@ export const ReviewNavigation: React.FC<{
             if (handleNavigation) {
               e.preventDefault();
               if (pages[pg + 1].tasks) {
-                handleNavigation(nextPageItem.id, pg + 2);
+                handleNavigation(nextPageItem.id, pg + 2, idx + 2 > pages[pg].tasks.length - 1);
               }
             }
           }}
@@ -140,7 +137,7 @@ export const ReviewNavigation: React.FC<{
             if (handleNavigation) {
               e.preventDefault();
               if (pages[pg].tasks) {
-                handleNavigation(pages[pg].tasks[idx + 1].id, pg + 1);
+                handleNavigation(pages[pg].tasks[idx + 1].id, pg + 1, idx + 2 > pages[pg].tasks.length - 1);
               }
             }
           }}

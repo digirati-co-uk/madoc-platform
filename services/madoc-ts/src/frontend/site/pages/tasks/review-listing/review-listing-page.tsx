@@ -158,8 +158,8 @@ export function ReviewListingPage() {
   });
 
   const beforeNavigate = useCallback(
-    async (newTaskId, page) => {
-      if (!isFetchingMore && canFetchMore) {
+    async (newTaskId, page, getNext) => {
+      if (!isFetchingMore && canFetchMore && getNext) {
         await fetchMore();
       }
       navigate(createLink({ taskId: undefined, subRoute: `reviews/${newTaskId}`, query: { sort_by }, hash: page }));
