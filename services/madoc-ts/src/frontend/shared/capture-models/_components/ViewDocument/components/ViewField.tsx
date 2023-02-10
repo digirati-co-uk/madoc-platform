@@ -26,6 +26,17 @@ export function ViewField({ field, fluidImage }: { field: BaseField; fluidImage?
     }
   }, [helper, selectorId]);
 
+  useEffect(() => {
+    if (selectorId) {
+      return helper.withSelector(selectorId).on('hover', () => {
+        trigger();
+        if (ref.current) {
+          ref.current.scrollIntoView({ block: 'nearest', inline: 'center' });
+        }
+      });
+    }
+  }, [helper, selectorId]);
+
   if (!field.selector) {
     return <FieldPreview key={field.id} field={field} />;
   }
