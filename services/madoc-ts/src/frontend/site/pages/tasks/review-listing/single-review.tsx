@@ -143,9 +143,13 @@ const Assignee = styled.div`
 function ViewSingleReview({
   task,
   review,
+  toggle,
+  isOpen,
 }: {
   task: CrowdsourcingTask & { id: string };
   review: (CrowdsourcingReview & { id: string }) | null;
+  toggle: any;
+  isOpen: boolean;
 }) {
   const {
     captureModel,
@@ -214,160 +218,152 @@ function ViewSingleReview({
   }
 
   return (
-    <MaximiseWindow>
-      {({ toggle, isOpen }) => {
-        return (
-          <RevisionProviderWithFeatures
-            revision={revisionId}
-            captureModel={captureModel}
-            features={{
-              autosave: false,
-              autoSelectingRevision: true,
-              revisionEditMode: false,
-              directEdit: true,
-            }}
-            slotConfig={{
-              editor: { allowEditing: isEditing, deselectRevisionAfterSaving: false, saveOnNavigate: false },
-              components: { SubmitButton: DirectEditButton },
-            }}
-            annotationTheme={annotationTheme}
-          >
-            <ReviewContainer>
-              <ReviewHeader>
-                <Label>
-                  {metadata && metadata.subject ? <LocaleString>{metadata.subject.label}</LocaleString> : task.name}
-                </Label>
-
-                <SubLabel>
-                  {metadata.subject && metadata.subject.parent && (
-                    <LocaleString style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {metadata.subject.parent.label}
-                    </LocaleString>
-                  )}
-                </SubLabel>
-              </ReviewHeader>
-              <ReviewActionBar>
-                <div style={{ display: 'flex' }}>
-                  <SimpleStatus status={task.status} status_text={task.status_text || ''} />
-                  {task.assignee && (
-                    <Assignee>
-                      {t('assigned to')}:{' '}
-                      <HrefLink href={`/users/${extractIdFromUrn(task.assignee.id)}`}>{task.assignee.name}</HrefLink>
-                    </Assignee>
-                  )}
-                </div>
-                {review && !wasRejected ? (
-                  <ReviewActions>
-                    <RejectSubmission
-                      userTaskId={task.id}
-                      onReject={() => {
-                        refetch();
-                      }}
-                    />
-
-                    <EditorToolbarButton onClick={() => setIsEditing(r => !r)} disabled={isDone}>
-                      <EditorToolbarIcon>
-                        <EditIcon />
-                      </EditorToolbarIcon>
-                      <EditorToolbarLabel>{isEditing ? 'Exit Correction' : 'Make Correction'}</EditorToolbarLabel>
-                    </EditorToolbarButton>
-
-                    <RequestChanges
-                      userTaskId={task.id}
-                      changesRequested={task.state?.changesRequested}
-                      onRequest={() => {
-                        refetch();
-                      }}
-                    />
-
-                    {/*<StartMerge*/}
-                    {/*  allTasks={props.allTasks as any}*/}
-                    {/*  reviewTaskId={data.review.id}*/}
-                    {/*  userTask={task}*/}
-                    {/*  // onStartMerge={(revId: string) => props.goBack({ refresh: true, revisionId: revId })}*/}
-                    {/*/>*/}
-
-                    <ApproveSubmission
-                      project={project}
-                      userTaskId={task.id}
-                      onApprove={() => {
-                        refetch();
-                      }}
-                      reviewTaskId={review.id}
-                    />
-                  </ReviewActions>
-                ) : null}
-              </ReviewActionBar>
-              <ReviewPreview>
-                <div style={{ width: '40%' }}>
-                  <CanvasViewerEditorStyleReset>
-                    <EditorSlots.TopLevelEditor />
-                  </CanvasViewerEditorStyleReset>
-                  <EditorSlots.SubmitButton captureModel={captureModel} />
-                </div>
-                <div style={{ minWidth: '60%', display: 'flex', flexDirection: 'column' }}>
-                  <ReviewDropdownContainer>
-                    <Button $link {...buttonProps}>
-                      View options
-                    </Button>
-                    <ReviewDropdownPopup $visible={isDropdownOpen} role="menu">
-                      <>
-                        <EditorToolbarButton onClick={toggle} style={{ width: '100%' }}>
-                          <EditorToolbarIcon>
-                            {isOpen ? <FullScreenExitIcon /> : <FullScreenEnterIcon />}
-                          </EditorToolbarIcon>
-                          <EditorToolbarLabel> {isOpen ? 'List mode' : 'Focus mode'} </EditorToolbarLabel>
-                        </EditorToolbarButton>
-                        {canvasLink ? (
-                          <EditorToolbarButton as={HrefLink} href={canvasLink}>
-                            <EditorToolbarIcon>
-                              <PreviewIcon />
-                            </EditorToolbarIcon>
-                            <EditorToolbarLabel>View resource</EditorToolbarLabel>
-                          </EditorToolbarButton>
-                        ) : null}
-                        {manifestLink ? (
-                          <EditorToolbarButton as={HrefLink} href={manifestLink}>
-                            <EditorToolbarIcon>
-                              <PreviewIcon />
-                            </EditorToolbarIcon>
-                            <EditorToolbarLabel>View manifest</EditorToolbarLabel>
-                          </EditorToolbarButton>
-                        ) : null}
-                      </>
-                    </ReviewDropdownPopup>
-                  </ReviewDropdownContainer>
-
-                  <CanvasViewerGrid ref={gridRef}>
-                    {canvas ? (
-                      <EditorContentViewer
-                        canvasId={canvas.id}
-                        onCreated={rt => {
-                          return ((runtime as any).current = rt.runtime);
-                        }}
-                      />
-                    ) : null}
-                    {isOpen && (
-                      <CanvasViewerControls>
-                        <CanvasViewerButton onClick={goHome}>
-                          <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
-                        </CanvasViewerButton>
-                        <CanvasViewerButton onClick={zoomOut}>
-                          <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
-                        </CanvasViewerButton>
-                        <CanvasViewerButton onClick={zoomIn}>
-                          <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
-                        </CanvasViewerButton>
-                      </CanvasViewerControls>
-                    )}
-                  </CanvasViewerGrid>
-                </div>
-              </ReviewPreview>
-            </ReviewContainer>
-          </RevisionProviderWithFeatures>
-        );
+    <RevisionProviderWithFeatures
+      revision={revisionId}
+      captureModel={captureModel}
+      features={{
+        autosave: false,
+        autoSelectingRevision: true,
+        revisionEditMode: false,
+        directEdit: true,
       }}
-    </MaximiseWindow>
+      slotConfig={{
+        editor: { allowEditing: isEditing, deselectRevisionAfterSaving: false, saveOnNavigate: false },
+        components: { SubmitButton: DirectEditButton },
+      }}
+      annotationTheme={annotationTheme}
+    >
+      <ReviewContainer>
+        <ReviewHeader>
+          <Label>
+            {metadata && metadata.subject ? <LocaleString>{metadata.subject.label}</LocaleString> : task.name}
+          </Label>
+
+          <SubLabel>
+            {metadata.subject && metadata.subject.parent && (
+              <LocaleString style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {metadata.subject.parent.label}
+              </LocaleString>
+            )}
+          </SubLabel>
+        </ReviewHeader>
+        <ReviewActionBar>
+          <div style={{ display: 'flex' }}>
+            <SimpleStatus status={task.status} status_text={task.status_text || ''} />
+            {task.assignee && (
+              <Assignee>
+                {t('assigned to')}:{' '}
+                <HrefLink href={`/users/${extractIdFromUrn(task.assignee.id)}`}>{task.assignee.name}</HrefLink>
+              </Assignee>
+            )}
+          </div>
+          {review && !wasRejected ? (
+            <ReviewActions>
+              <RejectSubmission
+                userTaskId={task.id}
+                onReject={() => {
+                  refetch();
+                }}
+              />
+
+              <EditorToolbarButton onClick={() => setIsEditing(r => !r)} disabled={isDone}>
+                <EditorToolbarIcon>
+                  <EditIcon />
+                </EditorToolbarIcon>
+                <EditorToolbarLabel>{isEditing ? 'Exit Correction' : 'Make Correction'}</EditorToolbarLabel>
+              </EditorToolbarButton>
+
+              <RequestChanges
+                userTaskId={task.id}
+                changesRequested={task.state?.changesRequested}
+                onRequest={() => {
+                  refetch();
+                }}
+              />
+
+              {/*<StartMerge*/}
+              {/*  allTasks={props.allTasks as any}*/}
+              {/*  reviewTaskId={data.review.id}*/}
+              {/*  userTask={task}*/}
+              {/*  // onStartMerge={(revId: string) => props.goBack({ refresh: true, revisionId: revId })}*/}
+              {/*/>*/}
+
+              <ApproveSubmission
+                project={project}
+                userTaskId={task.id}
+                onApprove={() => {
+                  refetch();
+                }}
+                reviewTaskId={review.id}
+              />
+            </ReviewActions>
+          ) : null}
+        </ReviewActionBar>
+        <ReviewPreview>
+          <div style={{ width: '40%' }}>
+            <CanvasViewerEditorStyleReset>
+              <EditorSlots.TopLevelEditor />
+            </CanvasViewerEditorStyleReset>
+            <EditorSlots.SubmitButton captureModel={captureModel} />
+          </div>
+          <div style={{ minWidth: '60%', display: 'flex', flexDirection: 'column' }}>
+            <ReviewDropdownContainer>
+              <Button $link {...buttonProps}>
+                View options
+              </Button>
+              <ReviewDropdownPopup $visible={isDropdownOpen} role="menu">
+                <>
+                  <EditorToolbarButton onClick={toggle} style={{ width: '100%' }}>
+                    <EditorToolbarIcon>{isOpen ? <FullScreenExitIcon /> : <FullScreenEnterIcon />}</EditorToolbarIcon>
+                    <EditorToolbarLabel> {isOpen ? 'List mode' : 'Focus mode'} </EditorToolbarLabel>
+                  </EditorToolbarButton>
+                  {canvasLink ? (
+                    <EditorToolbarButton as={HrefLink} href={canvasLink}>
+                      <EditorToolbarIcon>
+                        <PreviewIcon />
+                      </EditorToolbarIcon>
+                      <EditorToolbarLabel>View resource</EditorToolbarLabel>
+                    </EditorToolbarButton>
+                  ) : null}
+                  {manifestLink ? (
+                    <EditorToolbarButton as={HrefLink} href={manifestLink}>
+                      <EditorToolbarIcon>
+                        <PreviewIcon />
+                      </EditorToolbarIcon>
+                      <EditorToolbarLabel>View manifest</EditorToolbarLabel>
+                    </EditorToolbarButton>
+                  ) : null}
+                </>
+              </ReviewDropdownPopup>
+            </ReviewDropdownContainer>
+
+            <CanvasViewerGrid ref={gridRef}>
+              {canvas ? (
+                <EditorContentViewer
+                  canvasId={canvas.id}
+                  onCreated={rt => {
+                    return ((runtime as any).current = rt.runtime);
+                  }}
+                />
+              ) : null}
+              {isOpen && (
+                <CanvasViewerControls>
+                  <CanvasViewerButton onClick={goHome}>
+                    <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
+                  </CanvasViewerButton>
+                  <CanvasViewerButton onClick={zoomOut}>
+                    <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
+                  </CanvasViewerButton>
+                  <CanvasViewerButton onClick={zoomIn}>
+                    <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
+                  </CanvasViewerButton>
+                </CanvasViewerControls>
+              )}
+            </CanvasViewerGrid>
+          </div>
+        </ReviewPreview>
+      </ReviewContainer>
+    </RevisionProviderWithFeatures>
   );
 }
 
@@ -375,17 +371,22 @@ export function SingleReview() {
   const params = useParams<{ taskId: string }>();
   const { data, refetch } = useData(SingleReview);
 
-  if (!data) {
-    return <EmptyState>Loading...</EmptyState>;
-  }
   if (!data.task) {
     return <Navigate to={`/tasks/${params.taskId}`} />;
   }
-
   return (
-    <RefetchProvider refetch={refetch}>
-      <ViewSingleReview task={data.task} review={data.review} />
-    </RefetchProvider>
+    <MaximiseWindow>
+      {({ toggle, isOpen }) => {
+        if (!data) {
+          return <EmptyState>Loading...</EmptyState>;
+        } else
+          return (
+            <RefetchProvider refetch={refetch}>
+              <ViewSingleReview task={data.task} review={data.review} toggle={toggle} isOpen={isOpen} />
+            </RefetchProvider>
+          );
+      }}
+    </MaximiseWindow>
   );
 }
 
