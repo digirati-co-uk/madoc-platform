@@ -15,6 +15,7 @@ export function RegionHighlight({
   interactive,
   region,
   onClick,
+  onHover,
   onSave,
   maintainAspectRatio,
   disableCardinalControls,
@@ -26,6 +27,7 @@ export function RegionHighlight({
   isEditing: boolean;
   onSave: (annotation: RegionHighlightType) => void;
   onClick: (annotation: RegionHighlightType) => void;
+  onHover: (annotation: RegionHighlightType) => void;
   maintainAspectRatio?: boolean;
   disableCardinalControls?: boolean;
   interactive?: boolean;
@@ -59,6 +61,9 @@ export function RegionHighlight({
           e.preventDefault();
           e.stopPropagation();
           onClick(region);
+        }}
+        onMouseEnter={() => {
+          onHover(region);
         }}
         target={{ x: 0, y: 0, width: region.width, height: region.height }}
         style={style}

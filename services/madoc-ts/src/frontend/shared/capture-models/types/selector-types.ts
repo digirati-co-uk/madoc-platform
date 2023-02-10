@@ -45,6 +45,7 @@ export type InjectedSelectorProps<T> = {
   bucket?: AnnotationBuckets;
   isAdjacent?: boolean;
   onClick?: (selector: BaseSelector & InjectedSelectorProps<any>) => void;
+  onHover?: (selector: BaseSelector & InjectedSelectorProps<any>) => void;
 };
 
 export type SelectorTypes<Type extends SelectorTypeMap = SelectorTypeMap> = MapValues<Type>;

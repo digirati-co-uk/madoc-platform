@@ -60,6 +60,7 @@ const SelectorHelperReactContext = createContext(mitt());
 
 export type SelectorHelperEventTypes =
   | 'click'
+  | 'hover'
   | 'selector-updated'
   | 'highlight'
   | 'clear-highlight'
@@ -98,14 +99,23 @@ export function useSelectorEvents(id: string) {
 
   const onClick = useCallback(
     (e?: { x: number; y: number; width: number; height: number }) => {
+      console.log('clicked here ')
       controller.emit('click', { selectorId: id, event: e });
     },
     [id, controller]
   );
 
+  const onHover = useCallback(
+      (e?: { x: number; y: number; width: number; height: number }) => {
+        controller.emit('hover', { selectorId: id, event: e });
+      },
+      [id, controller]
+  );
+
   return {
     controller,
     onClick,
+    onHover,
     isHighlighted,
   };
 }
