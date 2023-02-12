@@ -14,6 +14,7 @@ import { useRouteContext } from '../hooks/use-route-context';
 import { AssignCanvasToUser } from './AssignCanvasToUser';
 import { CanvasManifestPagination } from './CanvasManifestPagination';
 import { CanvasTaskProgress } from './CanvasTaskProgress';
+import { CreateModelTestCase } from './CreateModelTestCase';
 import { RequiredStatement } from './RequiredStatement';
 
 export const CanvasPageHeader: React.FC<{ subRoute?: string; title?: string }> = ({ subRoute, title }) => {

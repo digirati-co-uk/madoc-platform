@@ -16,6 +16,7 @@ import {
   CanvasViewerGridContent,
   CanvasViewerGridSidebar,
 } from '../../../site/features/CanvasViewerGrid';
+import { CreateModelTestCase } from '../../../site/features/CreateModelTestCase';
 import { OpenSeadragonViewer } from '../../../site/features/OpenSeadragonViewer.lazy';
 import { TranscriberModeWorkflowBar } from '../../../site/features/TranscriberModeWorkflowBar';
 import { RouteContext } from '../../../site/hooks/use-route-context';
@@ -99,6 +100,7 @@ export interface CoreModelEditorProps {
 
   canvasViewerPins?: CanvasViewerProps['pins'];
 
+  showBugReport?: boolean;
   children?: React.ReactNode;
 }
 export function CoreModelEditor({
@@ -128,6 +130,7 @@ export function CoreModelEditor({
   enableCanvasUserStatus,
   enableHighlightedRegions,
   canvasViewerPins,
+  showBugReport,
   children,
 }: CoreModelEditorProps) {
   const { t } = useTranslation();
@@ -292,6 +295,7 @@ export function CoreModelEditor({
 
               {hideViewerControls ? null : (
                 <CanvasViewerControls>
+                  {showBugReport ? <CreateModelTestCase captureModel={captureModel} /> : null}
                   {enableRotation ? (
                     <CanvasViewerButton onClick={rotate}>
                       <RotateIcon title={t('atlas__rotate', { defaultValue: 'Rotate' })} />

@@ -5,6 +5,7 @@ import { useReadOnlyAnnotations } from '../../shared/hooks/use-read-only-annotat
 import { useApi } from '../../shared/hooks/use-api';
 import { useCurrentUser } from '../../shared/hooks/use-current-user';
 import { useLoadedCaptureModel } from '../../shared/hooks/use-loaded-capture-model';
+import { useUserPermissions } from '../../shared/hooks/use-site';
 import { isEditingAnotherUsersRevision } from '../../shared/utility/is-editing-another-users-revision';
 import { useCanvasModel } from '../hooks/use-canvas-model';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
@@ -45,6 +46,7 @@ export function CanvasSimpleEditor({ revision, isSegmentation }: CanvasSimpleEdi
   const forkMode = !!config.project.forkMode;
   const preventFurtherSubmission = !allowMultiple && allTasksDone;
   const isEditing = isEditingAnotherUsersRevision(captureModel, revision, user.user);
+  const { isAdmin } = useUserPermissions();
   const canContribute =
     user &&
     user.scope &&
@@ -86,6 +88,7 @@ export function CanvasSimpleEditor({ revision, isSegmentation }: CanvasSimpleEdi
         readOnlyAnnotations={readOnlyAnnotations}
         enableRotation={enableRotation}
         updateClaim={updateClaim}
+        showBugReport={isAdmin}
       />
     </DynamicVaultContext>
   );
