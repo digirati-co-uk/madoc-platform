@@ -1,7 +1,7 @@
 import { InternationalString } from '@iiif/presentation-3';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { CanvasStatus } from '../../shared/atoms/CanvasStatus';
 import { ModalButton } from '../../shared/components/Modal';
@@ -26,6 +26,7 @@ import { FilterInput } from '../../shared/atoms/FilterInput';
 export function ManifestCanvasGrid(props: {
   background?: string;
   popup?: boolean;
+  inPage?: boolean;
   list?: boolean;
   enableSearch?: boolean;
   textColor?: string;
@@ -51,6 +52,7 @@ export function ManifestCanvasGrid(props: {
   const manifest = data?.manifest;
   const [filteredItems, setItems] = useState(manifest?.items);
   const items = props.enableSearch ? filteredItems : manifest?.items;
+  const location = useLocation();
 
   function handleFilter(e: string) {
     const result = manifest?.items
@@ -111,6 +113,20 @@ export function ManifestCanvasGrid(props: {
             >
               {renderCanvasSnippet(canvas)}
             </ModalButton>
+          ))}
+        </ImageGrid>
+      </>
+    );
+  }
+
+  if (props.inPage) {
+    return (
+      <>
+        <ImageGrid data-view-list={props.list}>
+          {items?.map((canvas, idx) => (
+            <Link key={`${canvas.id}_${idx}`} to={`${location.pathname}/${canvas.id}`}>
+              {renderCanvasSnippet(canvas)}
+            </Link>
           ))}
         </ImageGrid>
       </>

@@ -2,13 +2,10 @@ import React from 'react';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { useCurrentUser } from '../../shared/hooks/use-current-user';
 import { Slot } from '../../shared/page-blocks/slot';
-import { ManifestActions } from '../features/ManifestActions';
-import { ManifestCanvasGrid } from '../features/ManifestCanvasGrid';
 import { ManifestHeading } from '../features/ManifestHeading';
 import { ManifestModelEditor } from '../features/ManifestModelEditor';
 import { ManifestPagination } from '../features/ManifestPagination';
 import { ManifestUserNotification } from '../features/ManifestUserNotification';
-import { PrepareCanvasCaptureModel } from '../features/PrepareCanvasCaptureModel';
 import { PrepareManifestsCaptureModel } from '../features/PrepareManifestCaptureModel';
 import { RequiredStatement } from '../features/RequiredStatement';
 import { useManifestTask } from '../hooks/use-manifest-task';
@@ -18,6 +15,7 @@ import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { Navigate } from 'react-router-dom';
 import '../features/ManifestHero';
+import { ManifestModelCanvasPreview } from '../features/ManifestModelCanvasPreview';
 
 export function ViewManifestModel() {
   const createLink = useRelativeLinks();
@@ -69,8 +67,8 @@ export function ViewManifestModel() {
             <ManifestPagination />
           </Slot>
 
-          <Slot name="manifest-model-content">
-            <ManifestCanvasGrid popup />
+          <Slot name="manifest-model-contents">
+            <ManifestModelCanvasPreview isModel />
           </Slot>
 
           <Slot name="manifest-model-footer">
