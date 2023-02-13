@@ -136,6 +136,7 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
         derivedFrom,
         all,
         target,
+        searchQuery,
       }: {
         page?: number;
         perPage?: number;
@@ -143,6 +144,7 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
         derivedFrom?: string;
         all?: boolean;
         target?: string;
+        searchQuery?: string;
       },
       site_id: number
     ) {
@@ -161,6 +163,14 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
         })}::jsonb) is not null`
         : sql``;
 
+      const search = searchQuery
+        ? `and cm.id in (${CaptureModelRepository.queries.documentSearch(
+            searchQuery,
+            { allDerivatives, derivedFrom, target },
+            site_id
+          )})`
+        : sql``;
+
       return sql<CaptureModelSnippetRow>`
           select cm.id,
                  cm.derived_from,
@@ -173,6 +183,7 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
             where cm.site_id = ${site_id}
             ${derivedQuery}
             ${targetQuery}
+            ${search}
           ${paging}
       `;
     },
@@ -199,6 +210,34 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
                    left join "user" u on u.id = r.author_id
           where r.site_id = ${site_id}
           ${paging}
+      `;
+    },
+
+    documentSearch(query: string, { derivedFrom, allDerivatives, target }: any, site_id: number) {
+      const derivedQuery = derivedFrom
+        ? sql`and cmn.derived_from = ${derivedFrom}`
+        : allDerivatives
+        ? sql``
+        : sql`and cmn.derived_from is null`;
+
+      const targetQuery = target
+        ? sql`
+        and jsonb_path_query_first(cmn.target::jsonb, '$[*] ? (@.id == $target)', ${sql.json({
+          target,
+        })}::jsonb) is not null`
+        : sql``;
+
+      return sql<{ id: string }>`
+        select r.id
+        from capture_model_document r left join capture_model cmn on r.id = cmn.document_id,
+             jsonb_to_recordset(jsonb_path_query_array(document_data -> 'properties',
+                                                       '$.*[0] ? (@.type == "entity")."properties".*[0]')) as entity(id text, value text, type text),
+             jsonb_to_recordset(jsonb_path_query_array(document_data -> 'properties',
+                                                       '$.*[0] ? (@.value != null)')) as field(id text, value text)
+        where (field.value::text ilike ${`%${query}%`} or entity.value::text ilike ${`%${query}%`})
+          and cmn.site_id = ${site_id}
+          ${derivedQuery}
+          ${targetQuery}
       `;
     },
   };
@@ -611,6 +650,7 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
       derivedFrom?: string;
       all?: boolean;
       target?: string;
+      searchQuery?: string;
     },
     siteId: number
   ): Promise<CaptureModelSnippet[]> {
@@ -1108,7 +1148,42 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
     });
   }
 
-  async searchPublished(siteId: number) {
+  async searchPublished(
+    siteId: number,
+    query: string,
+    options: {
+      manifest?: string;
+      canvas?: string;
+      collection?: string;
+      field_type?: string;
+      parent_property?: string;
+      selector_type?: string;
+      capture_model_id?: string;
+    } = {}
+  ) {
+    // Is this the correct return type?
+    // return this.listCaptureModels(
+    //   {
+    //     page: 0,
+    //     perPage: 100,
+    //     all: true,
+    //     target: options.manifest || options.canvas,
+    //     derivedFrom: options.capture_model_id,
+    //     searchQuery: query,
+    //   },
+    //   siteId
+    // );
+
+    // options.manifest / options.canvas / options.collection
+    //  | JSON query on the target field, can be grabbed from existing codebase
+    //
+    // options.field_type / options.parent_property / options.selector_type
+    //  | No easy way to achieve this at the moment. It could be shallow - and use a query, otherwise it would
+    //  | Have to be a post-filter.
+    //
+    // options.capture_model_id
+    // | Simple enough field check.
+
     // @todo this does need to be re-implemented for the search manifest functionality to work
     //   however this might be a good time to use the actual search service for that instead.
     return [];
