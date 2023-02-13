@@ -30,7 +30,7 @@ export class ExtensionManager<T extends BaseExtension> {
       try {
         ret = await (extension[name] as any).call(extension, arg, args);
       } catch (err) {
-        console.log(`Error while dispatching ${name}`, err);
+        console.log(`Error while dispatching`, name, err);
       }
     }
     return ret;
