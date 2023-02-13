@@ -50,6 +50,7 @@ supports a wider range of IIIF resources as a result.
 * Fixed message "login to contribute" on published projects
 * Fixed notification showing on document panel when panel is empty
 * Fixed bug where "choice" was not reset after making a submission
+* Fixed manifest thumbnail bug where it sometimes skipped first canvas
 
 ### Added
 
