@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, Outlet, useNavigate, useParams } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { SubjectSnippet } from '../../../../../extensions/tasks/resolvers/subject-resolver';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
@@ -19,13 +19,13 @@ import { Chevron } from '../../../../shared/icons/Chevron';
 import { useResizeLayout } from '../../../../shared/hooks/use-resize-layout';
 import { LayoutHandle } from '../../../../shared/layout/LayoutContainer';
 import ResizeHandleIcon from '../../../../shared/icons/ResizeHandleIcon';
-import { stringify } from 'query-string';
 import { useInfiniteAction } from '../../../hooks/use-infinite-action';
 import { RefetchProvider } from '../../../../shared/utility/refetch-context';
 import { useRouteContext } from '../../../hooks/use-route-context';
 import { ReviewNavigation } from './ReviewNagivation';
 import { EmptyState } from '../../../../shared/layout/EmptyState';
 import ListItemIcon from '../../../../shared/icons/ListItemIcon';
+import { useKeyboardListNavigation } from '../../../hooks/use-keyboard-list-navigation';
 
 const TaskListContainer = styled.div`
   height: 80vh;
@@ -127,7 +127,7 @@ export function ReviewListingPage() {
   const params = useParams<{ taskId?: string }>();
   const { projectId } = useRouteContext();
   const createLink = useRelativeLinks();
-  const { page, sort_by = '', ...query } = useLocationQuery();
+  const { sort_by = '', ...query } = useLocationQuery();
   const navigate = useNavigate();
 
   const { widthB, refs } = useResizeLayout(`review-dashboard-resize`, {
@@ -136,17 +136,11 @@ export function ReviewListingPage() {
     minWidthPx: 400,
   });
 
-  const beforeNavigate = useCallback(
-    async (newTaskId: string) => {
-      navigate(createLink({ taskId: undefined, subRoute: `reviews/${newTaskId}`, query, hash: page }));
-    },
-    [createLink, navigate, sort_by]
-  );
-
   const { data: pages, fetchMore, refetch, canFetchMore, isFetchingMore } = useInfiniteData(
     ReviewListingPage,
     undefined,
     {
+      keepPreviousData: true,
       getFetchMore: lastPage => {
         if (lastPage.pagination.totalPages === lastPage.pagination.page) {
           return undefined;
@@ -164,16 +158,26 @@ export function ReviewListingPage() {
     isFetchingMore,
     container: refs.resizableDiv,
   });
+
+  const beforeNavigate = useCallback(
+    async (newTaskId, page, getNext) => {
+      if (!isFetchingMore && canFetchMore && getNext) {
+        await fetchMore();
+      }
+      navigate(createLink({ taskId: undefined, subRoute: `reviews/${newTaskId}`, query: { sort_by }, hash: page }));
+    },
+    [canFetchMore, createLink, fetchMore, isFetchingMore, navigate, sort_by]
+  );
+
   const QuerySortToggle = (field: string) => {
     const sort = sort_by;
     if (sort && sort.includes(`${field}:desc`)) {
-      return `?${stringify({ ...query, sort_by: `${field}:asc` })}`;
+      return createLink({ taskId: undefined, subRoute: `reviews`, query: { sort_by: `${field}:asc` } });
     }
     if (sort && sort.includes(`${field}:asc`)) {
-      return `?${stringify({ ...query, sort_by: '' })}`;
+      return createLink({ taskId: undefined, subRoute: `reviews`, query: { sort_by: '' } });
     }
-
-    return `?${stringify({ ...query, sort_by: `${field}:desc` })}`;
+    return createLink({ taskId: undefined, subRoute: `reviews`, query: { sort_by: `${field}:desc` } });
   };
 
   // 1. Make requests for all crowdsourcing tasks marked as in review.
@@ -181,6 +185,7 @@ export function ReviewListingPage() {
   // 3. Have an extra parameter for "selectedTask" for the right side
   // 4. Display current review interface
   // 5. Add alternative version with form and then actions, with a toggle.
+  const containerProps = useKeyboardListNavigation('data-review-task-row');
 
   return (
     <RefetchProvider refetch={refetch}>
@@ -248,12 +253,13 @@ export function ReviewListingPage() {
                     </SimpleTable.Header>
                   </SimpleTable.Row>
                 </thead>
-                <tbody>
+                <tbody {...(containerProps as any)}>
                   {pages &&
                     pages.map(data =>
-                      (data.tasks || []).map((task: CrowdsourcingTask) => {
+                      (data.tasks || []).map((task: CrowdsourcingTask, index: number) => {
                         return (
                           <SingleReviewTableRow
+                            index={index}
                             key={task.id}
                             task={task}
                             active={task.id === params.taskId}
@@ -304,7 +310,17 @@ export function ReviewListingPage() {
   );
 }
 
-function SingleReviewTableRow({ task, active, page }: { task: CrowdsourcingTask; active?: boolean; page?: number }) {
+function SingleReviewTableRow({
+  task,
+  active,
+  page,
+  index,
+}: {
+  task: CrowdsourcingTask;
+  active?: boolean;
+  page?: number;
+  index: number;
+}) {
   const { ...query } = useLocationQuery();
   const createLink = useRelativeLinks();
   const navigate = useNavigate();
@@ -312,6 +328,8 @@ function SingleReviewTableRow({ task, active, page }: { task: CrowdsourcingTask;
 
   return (
     <ThickTableRow
+      tabIndex={index === 0 ? 0 : -1}
+      data-review-task-row={index}
       $active={active}
       onClick={() =>
         navigate(
