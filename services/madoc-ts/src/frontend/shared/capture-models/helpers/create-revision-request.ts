@@ -4,6 +4,7 @@ import { filterDocumentByRevision } from './filter-document-by-revision';
 import { filterCaptureModel } from './filter-capture-model';
 import { expandModelFields } from './expand-model-fields';
 import { traverseDocument } from './traverse-document';
+import copy from 'fast-copy';
 
 export function createRevisionRequestFromStructure(
   captureModel: CaptureModel,
@@ -17,7 +18,7 @@ export function createRevisionRequestFromStructure(
   const flatFields = expandModelFields(structure.fields);
   const structureDocument = filterCaptureModel(
     structure.id,
-    captureModel.document,
+    copy(captureModel.document),
     flatFields,
     field => {
       if (!field.revision) {

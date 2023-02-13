@@ -7,6 +7,8 @@ import mad1200fixture1 from '../../../fixtures/96-jira/MAD-1200-1.json';
 import mad1200fixture2 from '../../../fixtures/96-jira/MAD-1200-2.json';
 // @ts-ignore
 import mad1200fixture3 from '../../../fixtures/96-jira/MAD-1200-3.json';
+// @ts-ignore
+import mad1200fixture4 from '../../../fixtures/96-jira/MAD-1200-4.json';
 export default { title: 'Capture model interactions / MAD-1200' };
 
 // Non interactive examples.
@@ -27,6 +29,14 @@ export const Fixture2 = CaptureModelTestHarness.story({
 });
 export const Fixture3 = CaptureModelTestHarness.story({
   captureModel: mad1200fixture3,
+  target: {
+    manifestUri: 'https://www.omeka.ugent.be/manifests/iiif/2/2636/manifest',
+    canvasUri: 'https://www.omeka.ugent.be/manifests/iiif/2/2636/canvas/p1',
+  },
+});
+
+export const Fixture4 = CaptureModelTestHarness.story({
+  captureModel: mad1200fixture4,
   target: {
     manifestUri: 'https://www.omeka.ugent.be/manifests/iiif/2/2636/manifest',
     canvasUri: 'https://www.omeka.ugent.be/manifests/iiif/2/2636/canvas/p1',

@@ -26,6 +26,9 @@ export function filterDocumentRevisions(
       }
     },
     visitField(field, property, parent) {
+      const selectorRevisions = field.selector?.revisedBy?.filter(
+        r => r.revisionId && excludeRevisions.indexOf(r.revisionId) !== -1
+      );
       if (onlyRevisionFields && !field.revision) {
         deleteFrom(field.id, property, parent);
       }
