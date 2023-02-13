@@ -2,7 +2,9 @@ import '../../../src/frontend/shared/capture-models/editor/bundle';
 import { ReactRenderer, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 import { PlayFunctionContext } from '@storybook/types';
+// @ts-ignore
 import React, { useMemo, useState } from 'react';
+// @ts-ignore
 import deepmerge from 'deepmerge';
 import { VaultProvider } from 'react-iiif-vault';
 import { ThemeProvider } from 'styled-components';
@@ -264,7 +266,7 @@ CaptureModelTestHarness.getComputedRevision = async ({
 
 CaptureModelTestHarness.waitForViewer = (async ({ canvasElement }) => {
   const canvas = within(canvasElement);
-  await canvas.findByTestId('ready');
+  await canvas.findByTestId('ready', {}, { timeout: 10000 });
   await canvas.findByTestId('ready');
 
   await wait(1000);

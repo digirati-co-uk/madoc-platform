@@ -3,6 +3,7 @@ import { RevisionRequest } from '../types/revision-request';
 import { filterDocumentByRevision } from './filter-document-by-revision';
 import { filterCaptureModel } from './filter-capture-model';
 import { expandModelFields } from './expand-model-fields';
+import { traverseDocument } from './traverse-document';
 
 export function createRevisionRequestFromStructure(
   captureModel: CaptureModel,
@@ -43,9 +44,25 @@ export function createRevisionRequestFromStructure(
     }
   );
 
+  const approved = (captureModel.revisions?.filter(rev => rev.approved) || []).map(r => r.id);
+
   if (!structureDocument) {
     throw new Error(`Invalid structure ${structure.id} (${structure.label})`);
   }
+
+  // If an existing selector has revised, filter those not approved for structure requests.
+  traverseDocument(structureDocument, {
+    visitSelector(selector) {
+      if (selector.revisedBy && selector.revisedBy.length) {
+        selector.revisedBy = selector.revisedBy.filter(rev => {
+          if (rev.revisionId) {
+            return approved.includes(rev.revisionId);
+          }
+          return false;
+        });
+      }
+    },
+  });
 
   return {
     captureModelId: captureModel.id,

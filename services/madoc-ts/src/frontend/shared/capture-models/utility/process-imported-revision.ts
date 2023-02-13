@@ -1,8 +1,11 @@
+import { forkDocument } from '../helpers/create-revision-document';
 import { createRevisionRequest } from '../helpers/create-revision-request';
 import { expandModelFields } from '../helpers/expand-model-fields';
 import { filterEmptyFields, filterRemovedFields } from '../helpers/field-post-filters';
 import { filterCaptureModel } from '../helpers/filter-capture-model';
 import { findStructure } from '../helpers/find-structure';
+import { formPropertyValue } from '../helpers/fork-field';
+import { isEntityList } from '../helpers/is-entity';
 import { recurseRevisionDependencies } from '../helpers/recurse-revision-dependencies';
 import { traverseDocument } from '../helpers/traverse-document';
 import { CaptureModel } from '../types/capture-model';
@@ -21,8 +24,13 @@ export function processImportedRevision(
     revision.id,
     captureModel.document,
     flatFields,
-    field => {
-      return field.revision ? allRevisions.indexOf(field.revision) !== -1 : true;
+    (field, parent) => {
+      if (field.revision) {
+        return allRevisions.indexOf(field.revision) !== -1;
+      }
+
+      // This will show additional fields - but also empty entities.
+      return true;
     },
     [
       // Filter removed fields.

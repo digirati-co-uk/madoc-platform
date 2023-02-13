@@ -467,7 +467,7 @@ export const CollectionListing: React.FC = () => {
   const size = 'md';
   const center = true;
   const buttonRole = 'button';
-  const grid = '2-up';
+  const grid = '2-up' as string;
 
   return (
     <div style={{ background: '#eee' }}>

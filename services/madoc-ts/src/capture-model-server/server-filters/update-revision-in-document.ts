@@ -1,3 +1,4 @@
+import { fixModelBugs } from '../../frontend/shared/capture-models/helpers/capture-model-to-revision-list';
 import { traverseDocument } from '../../frontend/shared/capture-models/helpers/traverse-document';
 import { CaptureModel } from '../../frontend/shared/capture-models/types/capture-model';
 import { RevisionRequest } from '../../frontend/shared/capture-models/types/revision-request';
@@ -13,6 +14,9 @@ export function updateRevisionInDocument(
     allowCustomStructure?: boolean;
   } = {}
 ) {
+  // Model bugs.
+  fixModelBugs(captureModel);
+
   const { mutations } = extractValidRevisionChanges(captureModel, req, {
     allowAnonymous: options.allowAnonymous,
     allowCustomStructure: options.allowCustomStructure,
