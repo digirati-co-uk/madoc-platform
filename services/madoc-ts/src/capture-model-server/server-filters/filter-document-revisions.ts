@@ -12,7 +12,6 @@ export function filterDocumentRevisions(
       if (property && parent) {
         const hasRevisions = entity?.temp && entity.temp.revisions && entity.temp.revisions.length;
         if (onlyRevisionFields && !entity.revision && !hasRevisions) {
-          console.log('deleted', entity.id);
           deleteFrom(entity.id, property, parent);
         }
 

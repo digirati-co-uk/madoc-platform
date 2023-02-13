@@ -4,6 +4,7 @@ import { useSiteConfiguration } from '../../site/features/SiteConfigurationConte
 import { useProjectAnnotationStyles } from '../../site/hooks/use-project-annotation-styles';
 import { useRouteContext } from '../../site/hooks/use-route-context';
 import { useSelectorController } from '../capture-models/editor/stores/selectors/selector-helper';
+import { resolveSelector } from '../capture-models/helpers/resolve-selector';
 import { traverseDocument } from '../capture-models/helpers/traverse-document';
 import { apiHooks } from './use-api-query';
 import { useHighlightedRegions } from './use-highlighted-regions';
@@ -120,9 +121,10 @@ export function useReadOnlyAnnotations(isModelPage = false): ReadOnlyAnnotation[
     if (showRevisions && !styles.submissions?.hidden) {
       if (captureModel && captureModel.document) {
         traverseDocument(captureModel.document, {
-          visitSelector(selector, revision) {
+          visitSelector(_selector, revision) {
             if (revision.revision) {
-              if (selector.state && rIds.indexOf(revision.revision) !== -1) {
+              const selector = resolveSelector(_selector, revision.revision);
+              if (selector.state && rIds.indexOf(revision.revision) !== -1 && ids.indexOf(selector.id) === -1) {
                 ids.push(selector.id);
                 regions.push({
                   id: selector.id,
@@ -160,7 +162,6 @@ export function useReadOnlyAnnotations(isModelPage = false): ReadOnlyAnnotation[
     for (const region of unstyledRevisions.regions) {
       if (region.id === highlightedDocumentRegion || highlighted.indexOf(region.id) !== -1) {
         returnRegions.push({ ...region, style: styles.highlighted });
-
       } else {
         returnRegions.push(region);
       }

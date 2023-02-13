@@ -107,7 +107,9 @@ export function createStorybookUrl(
   } = {}
 ) {
   const hostname =
-    location.hostname === 'madoc.local' ? 'http://localhost:6500' : 'https://madoc-storybook.netlify.app/';
+    location.hostname === 'madoc.local'
+      ? 'http://localhost:6500'
+      : 'https://deploy-preview-591--madoc-storybook.netlify.app/'; // @todo change when v2.1 is released.
 
   return `${hostname}/?${stringify({
     path: '/story/capture-model-interactions-preview--preview-from-url',
