@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { NavigationButton, PaginationText } from '../../../../shared/components/CanvasNavigationMinimalist';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 
 const PaginationContainer = styled.div`
   display: flex;
@@ -27,18 +28,23 @@ const PaginationContainer = styled.div`
 `;
 
 export const ReviewNavigation: React.FC<{
-  handleNavigation?: (taskId: string, page: number | string) => Promise<void> | void;
+  handleNavigation?: (taskId: string, page: number | string, getNext?: boolean) => Promise<void> | void;
   taskId?: string;
   projectId?: string;
   subRoute?: string;
   pages?: any;
   query?: any;
   size?: string | undefined;
-}> = ({ taskId: id, pages: pages, projectId, subRoute, query, handleNavigation, size }) => {
-  const hash = window.location.hash.slice(1);
-  const pg = hash ? Number(hash) - 1 : 0;
-  const idx = pages && pages[pg].tasks ? pages[pg].tasks.findIndex((i: CrowdsourcingTask) => i.id === id) : -1;
+}> = ({ taskId: id, pages: pages, projectId, subRoute, query, handleNavigation }) => {
+  const { hash } = useLocation();
+  const hsh = hash.slice(1);
+  const pg = hsh ? Number(hsh) - 1 : 0;
+
+  const idx = pages && pages[pg] ? pages[pg].tasks.findIndex((i: CrowdsourcingTask) => i.id === id) : -1;
   const { t } = useTranslation();
+
+  // results per page = 20
+  const totalIndex = 20 * pg + (idx + 1);
 
   if (!pages || idx === -1) {
     return null;
@@ -82,7 +88,7 @@ export const ReviewNavigation: React.FC<{
             if (handleNavigation) {
               e.preventDefault();
               if (pages[pg + 1].tasks) {
-                handleNavigation(nextPageItem.id, pg + 2);
+                handleNavigation(nextPageItem.id, pg + 2, idx + 2 > pages[pg].tasks.length - 1);
               }
             }
           }}
@@ -131,7 +137,7 @@ export const ReviewNavigation: React.FC<{
             if (handleNavigation) {
               e.preventDefault();
               if (pages[pg].tasks) {
-                handleNavigation(pages[pg].tasks[idx + 1].id, pg + 1);
+                handleNavigation(pages[pg].tasks[idx + 1].id, pg + 1, idx + 2 > pages[pg].tasks.length - 1);
               }
             }
           }}
@@ -149,7 +155,7 @@ export const ReviewNavigation: React.FC<{
       {
         <PaginationText style={{ color: '#999999' }}>
           {t('{{page}} of {{count}}', {
-            page: idx + 1,
+            page: totalIndex,
             count: pages[0].pagination.totalResults,
           })}
         </PaginationText>

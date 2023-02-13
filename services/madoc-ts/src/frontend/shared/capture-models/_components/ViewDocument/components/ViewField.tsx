@@ -33,7 +33,18 @@ export function ViewField({
         }
       });
     }
-  }, [helper, selectorId]);
+  }, [helper, selectorId, trigger]);
+
+  useEffect(() => {
+    if (selectorId) {
+      return helper.withSelector(selectorId).on('hover', () => {
+        trigger();
+        if (ref.current) {
+          ref.current.scrollIntoView({ block: 'nearest', inline: 'center' });
+        }
+      });
+    }
+  }, [helper, selectorId, trigger]);
 
   if (!selector) {
     return <FieldPreview key={field.id} field={field} />;

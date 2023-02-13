@@ -422,6 +422,11 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
               element: <Components.ViewManifestModel />,
             },
             {
+              path: '/projects/:slug/manifests/:manifestId/model/:canvasId',
+              exact: true,
+              element: <Components.ViewManifestModel />,
+            },
+            {
               path: '/projects/:slug/manifests/:manifestId/c/:canvasId',
               element: <Components.CanvasLoader />,
               children: [

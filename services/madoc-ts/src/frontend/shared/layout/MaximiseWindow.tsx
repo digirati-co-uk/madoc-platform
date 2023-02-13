@@ -28,7 +28,6 @@ export const MaximiseWindow: React.FC<{
   children: (vars: { toggle: () => void; isOpen: boolean }) => React.ReactNode;
 }> = ({ children, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
-
   const toggle = useCallback(() => {
     setIsOpen(i => !i);
   }, []);
@@ -37,7 +36,7 @@ export const MaximiseWindow: React.FC<{
     if (onChange) {
       onChange(isOpen);
     }
-  }, [isOpen]);
+  }, [isOpen, onChange]);
 
   return (
     <MaximiseWindowContainer $open={isOpen}>
