@@ -462,12 +462,12 @@ const exampleStructure = {
 export const CollectionListing: React.FC = () => {
   // 2 grid: https://preview.uxpin.com/f6f0dcab8678e674e217208cea7876bb0ad04c74#/pages/133792485/simulate/sitemap?mode=i
   // 1 grid: https://www.digitalcommonwealth.org/collections?f%5Bphysical_location_ssim%5D%5B%5D=Lynn+Public+Library&only_path=true&q=title_info_primary_ssort%3AL%2A&sort=title_info_primary_ssort+asc&view=list
-  const lightBackground = boolean('Light background', false);
-  const flat = boolean('Flat container', true);
-  const size = select('Size', ['sm', 'md', 'lg'], 'md');
-  const center = boolean('Center', true);
-  const buttonRole = select('Button role', ['button', 'link'], 'button');
-  const grid = select('Grid', ['1-up', '2-up'], '2-up');
+  const lightBackground = false;
+  const flat = true;
+  const size = 'md';
+  const center = true;
+  const buttonRole = 'button';
+  const grid = '2-up';
 
   return (
     <div style={{ background: '#eee' }}>
@@ -537,12 +537,12 @@ export const CollectionListing: React.FC = () => {
 };
 
 export const SingleCollectionSimpleGrid: React.FC = () => {
-  const lightBackground = boolean('Light background', false);
-  const flat = boolean('Flat container', true);
-  const size = select('Size', ['sm', 'md', 'lg'], 'md');
-  const center = boolean('Center', true);
-  const smallLabel = boolean('Small Label', true);
-  const buttonRole = select('Button role', ['button', 'link'], 'link');
+  const lightBackground = false;
+  const flat = true;
+  const size = 'md';
+  const center = true;
+  const smallLabel = true;
+  const buttonRole = 'link';
 
   // Collections (of manuscripts)
   // Distinct card layout: https://preview.uxpin.com/f6f0dcab8678e674e217208cea7876bb0ad04c74#/pages/133798349/simulate/sitemap?mode=i
@@ -570,11 +570,11 @@ export const SingleCollectionSimpleGrid: React.FC = () => {
 };
 
 export const SingleCollectionListingGrid: React.FC = () => {
-  const lightBackground = boolean('Light background', false);
-  const flat = boolean('Flat container', true);
-  const size = select('Size', ['sm', 'md', 'lg'], 'lg');
-  const center = boolean('Center', true);
-  const buttonRole = select('Button role', ['button', 'link'], 'link');
+  const lightBackground = false;
+  const flat = true;
+  const size = 'lg';
+  const center = true;
+  const buttonRole = 'link';
 
   // Marionette
   //    - https://emuseum.huntington.org/collections/4561/arts-and-crafts-movement/objects
