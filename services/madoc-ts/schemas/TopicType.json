@@ -65,6 +65,15 @@
             }
           }
         },
+        "description": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
         "heroImage": {
           "type": "object",
           "properties": {

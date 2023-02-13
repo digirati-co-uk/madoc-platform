@@ -98,7 +98,11 @@ export interface EntitySnippetMadoc {
   modified: string;
   type: string;
   label: string;
+  type_slug: string;
+  type_other_labels: InternationalString;
   slug: string;
+  title: InternationalString;
+  image_url: string;
 }
 
 // list of entity types
@@ -121,8 +125,8 @@ export interface EntityTypeMadocResponse {
   modified: string;
   label: string;
   slug: string;
-  other_labels?: OtherLabels;
-  other_data?: OtherLabels;
+  other_labels?: InternationalString;
+  other_data?: any;
   image_url?: string;
   description?: InternationalString;
 }

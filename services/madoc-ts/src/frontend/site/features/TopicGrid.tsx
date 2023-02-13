@@ -5,7 +5,7 @@ import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useTranslation } from 'react-i18next';
 import { LocaleString, useCreateLocaleString } from '../../shared/components/LocaleString';
-import { useTopicType } from '../pages/loaders/topic-type-loader';;
+import { useTopicType } from '../pages/loaders/topic-type-loader';
 import { ImageStripBox } from '../../shared/atoms/ImageStrip';
 import { CroppedImage } from '../../shared/atoms/Images';
 import { SingleLineHeading3, Subheading3 } from '../../shared/typography/Heading3';
@@ -23,12 +23,12 @@ const Pill = styled.div`
   display: inline-block;
 `;
 
-export function TopicGrid(props: {
+export const TopicGrid: React.FC<{
   background?: string;
   textColor?: string;
   cardBorder?: string;
   imageStyle?: string;
-}) {
+}> = ({ background = '#ffffff', textColor = '#002D4B', cardBorder = '#002D4B', imageStyle = 'covered' }) => {
   const { data } = useTopicType();
   const items = data?.topics;
   const createLocaleString = useCreateLocaleString();
@@ -40,14 +40,13 @@ export function TopicGrid(props: {
 
   const renderTopicSnippet = (topic: TopicSnippet) => {
     return (
-      <ImageStripBox $border={props.cardBorder} $color={props.textColor} $bgColor={props.background}>
-        <CroppedImage $covered>
-          {/* todo await BE */}
-          {!topic.thumbnail ? (
+      <ImageStripBox $border={cardBorder} $color={textColor} $bgColor={background}>
+        <CroppedImage $covered={imageStyle === 'covered'}>
+          {topic.thumbnail?.url ? (
             <img
               style={{ objectPosition: 'top' }}
               alt={createLocaleString(topic.label, t('Topic thumbnail'))}
-              src={'https://commons.wikimedia.org/wiki/Special:FilePath/Manuelito.jpg?width=300'}
+              src={topic.thumbnail.url}
             />
           ) : null}
         </CroppedImage>
@@ -58,7 +57,7 @@ export function TopicGrid(props: {
           <Subheading3> 123 Objects</Subheading3>
 
           <Heading5 style={{ padding: 0 }}>PART OF</Heading5>
-          <Pill>{topic.slug}</Pill>
+          <Pill>{topic.topicType?.slug}</Pill>
         </div>
       </ImageStripBox>
     );

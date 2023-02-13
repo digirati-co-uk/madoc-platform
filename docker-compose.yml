@@ -231,8 +231,8 @@ services:
       - gateway-redis
     volumes:
       - ./services/enrichment/app:/app:delegated
-    ports:
-      - 5020:500
+#    ports:
+#      - 5020:5000
   okra:
     image: digirati/okra:latest
 

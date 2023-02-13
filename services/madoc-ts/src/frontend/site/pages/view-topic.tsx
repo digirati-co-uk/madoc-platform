@@ -11,9 +11,9 @@ export function ViewTopic() {
 
   return (
     <>
-      {/*<Slot name="common-breadcrumbs">*/}
-      {/*  <DisplayBreadcrumbs />*/}
-      {/*</Slot>*/}
+      <Slot name="common-breadcrumbs">
+        <DisplayBreadcrumbs />
+      </Slot>
 
       <Slot name="topic-header">
         <TopicHero />

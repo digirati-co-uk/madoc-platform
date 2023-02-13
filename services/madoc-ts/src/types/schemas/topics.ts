@@ -16,13 +16,14 @@ export interface TopicType {
   id: string;
   slug: string;
   label: InternationalString; // From string.
-  // otherLabels?: InternationalString[];
+  otherLabels?: InternationalString[];
   pagination: Pagination;
   topics: TopicSnippet[];
 
   // @todo other presentational properties. All optional
   editorial: {
     summary?: InternationalString;
+    description?: InternationalString;
     heroImage?: {
       url: string;
       alt?: string;
@@ -38,10 +39,13 @@ export interface TopicSnippet {
   id: string;
   slug: string;
   label: InternationalString; // From string.
-  topicType?: TopicTypeSnippet;
-
-  // @todo other presentation properties. All optional.
-  thumbnail?: { url: string; alt?: string };
+  created: string;
+  modified: string;
+  topicType?: {
+    slug: string;
+    label: InternationalString;
+  };
+  thumbnail?: { url?: string; alt?: string };
   totalObjects?: number;
 }
 
