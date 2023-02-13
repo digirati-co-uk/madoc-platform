@@ -176,7 +176,156 @@ describe('Capture model server bugs', () => {
       allowCanonicalChanges: true,
     });
 
-    expect(fixture.captureModel).toMatchSnapshot();
+    expect(fixture.captureModel).toMatchInlineSnapshot(`
+      {
+        "contributors": {},
+        "derivedFrom": "19abcfe1-6303-48c7-9cd2-356302bb9d47",
+        "document": {
+          "id": "78231d5f-0ac9-46fb-8914-07c6cd0bdb82",
+          "label": "klassiek-japans",
+          "properties": {
+            "vertaling en transcriptie": [
+              {
+                "allowMultiple": true,
+                "id": "4b1ef70a-fdf0-4ecd-9a1e-fe645765f9c4",
+                "label": "vertaling en transcriptie",
+                "properties": {
+                  "transcriptie": [
+                    {
+                      "id": "3ebbe019-5448-48f9-a92a-459aa59d6219",
+                      "label": "transcriptie",
+                      "type": "text-field",
+                      "value": "",
+                    },
+                    {
+                      "id": "d544a7d9-3c6c-4d62-aaaa-548330ae9da3",
+                      "immutable": true,
+                      "label": "transcriptie",
+                      "revises": "3ebbe019-5448-48f9-a92a-459aa59d6219",
+                      "revision": "f284c0e6-1b55-4268-af1a-cba8c2056946",
+                      "type": "text-field",
+                      "value": "a",
+                    },
+                  ],
+                  "vertaling": [
+                    {
+                      "id": "8e799acb-90c9-4852-9e8c-ba7903c43fa7",
+                      "label": "vertaling",
+                      "type": "text-field",
+                      "value": "",
+                    },
+                    {
+                      "id": "59cd2ead-25fd-4384-bbb8-d435fd02d1d0",
+                      "immutable": true,
+                      "label": "vertaling",
+                      "revises": "8e799acb-90c9-4852-9e8c-ba7903c43fa7",
+                      "revision": "f284c0e6-1b55-4268-af1a-cba8c2056946",
+                      "type": "text-field",
+                      "value": "a",
+                    },
+                  ],
+                },
+                "selector": {
+                  "id": "4bb0cc03-56f5-4f86-91a6-a753ccf023c4",
+                  "required": true,
+                  "revisedBy": [
+                    {
+                      "id": "2e41606c-d35a-41da-9700-b0d434f2084d",
+                      "required": true,
+                      "revises": "4bb0cc03-56f5-4f86-91a6-a753ccf023c4",
+                      "revisionId": "f284c0e6-1b55-4268-af1a-cba8c2056946",
+                      "state": {
+                        "height": 557,
+                        "width": 579,
+                        "x": 716,
+                        "y": 1594,
+                      },
+                      "type": "box-selector",
+                    },
+                  ],
+                  "state": null,
+                  "type": "box-selector",
+                },
+                "type": "entity",
+              },
+              {
+                "allowMultiple": true,
+                "id": "76abd494-2ead-4a81-995f-63e730d25b2f",
+                "immutable": false,
+                "label": "vertaling en transcriptie",
+                "properties": {
+                  "transcriptie": [
+                    {
+                      "id": "255af78e-6fef-4cd6-b65d-973584c73efa",
+                      "label": "transcriptie",
+                      "revision": "f284c0e6-1b55-4268-af1a-cba8c2056946",
+                      "type": "text-field",
+                      "value": "b",
+                    },
+                  ],
+                  "vertaling": [
+                    {
+                      "id": "6df72c26-4e94-49cd-ae2c-fa15b76ab7ae",
+                      "label": "vertaling",
+                      "revision": "f284c0e6-1b55-4268-af1a-cba8c2056946",
+                      "type": "text-field",
+                      "value": "b",
+                    },
+                  ],
+                },
+                "revision": "f284c0e6-1b55-4268-af1a-cba8c2056946",
+                "selector": {
+                  "id": "931e9391-f8b3-4453-93b5-9b879285c65d",
+                  "required": true,
+                  "state": {
+                    "height": 239,
+                    "width": 216,
+                    "x": 1488,
+                    "y": 1344,
+                  },
+                  "type": "box-selector",
+                },
+                "type": "entity",
+              },
+            ],
+          },
+          "type": "entity",
+        },
+        "id": "d3944d3b-4aaf-4eac-bbbb-7a978084866b",
+        "revisions": [],
+        "structure": {
+          "id": "925d7b59-ec4f-43b0-bc67-f6cc039de112",
+          "items": [
+            {
+              "fields": [
+                [
+                  "vertaling en transcriptie",
+                  [
+                    "vertaling",
+                    "transcriptie",
+                  ],
+                ],
+              ],
+              "id": "df80021e-a6e9-4b92-8276-7f86ea67eec7",
+              "label": "Default",
+              "type": "model",
+            },
+          ],
+          "label": "klassiek-japans",
+          "type": "choice",
+        },
+        "target": [
+          {
+            "id": "urn:madoc:manifest:173",
+            "type": "Manifest",
+          },
+          {
+            "id": "urn:madoc:canvas:286",
+            "type": "Canvas",
+          },
+        ],
+      }
+    `);
 
     //
   });

@@ -1,4 +1,5 @@
 import React from 'react';
+import { isRef } from 'react-dnd/lib/utils/isRef';
 import { filterRevises } from '../../../helpers/filter-revises';
 import { isEntityList } from '../../../helpers/is-entity';
 import { CaptureModel } from '../../../types/capture-model';
@@ -31,7 +32,17 @@ export const renderProperty = (
     fields.length > 1 && fields[0] && fields[0].pluralLabel ? fields[0].pluralLabel : fields[0] ? fields[0].label : '';
   const filteredFields = filterRevises(fields).filter(f => {
     if (highlightRevisionChanges) {
-      return f.type === 'entity' || (f.revision && f.revision === highlightRevisionChanges);
+      const revised = f.type === 'entity' || (f.revision && f.revision === highlightRevisionChanges);
+      if (!revised) {
+        if (f.selector && f.selector.revisedBy) {
+          for (const selector of f.selector.revisedBy) {
+            if (!selector.revisionId || filterRevisions.indexOf(selector.revisionId) === -1) {
+              return true;
+            }
+          }
+        }
+      }
+      return revised;
     }
 
     return !f.revision || filterRevisions.indexOf(f.revision) === -1;
@@ -45,7 +56,7 @@ export const renderProperty = (
         fluidImage,
         tModel,
       })
-    : renderFieldList(filteredFields as any, { fluidImage, tModel });
+    : renderFieldList(filteredFields as any, { fluidImage, tModel, revisionId: highlightRevisionChanges });
 
   if (!renderedProperties) {
     return null;

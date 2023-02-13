@@ -22,6 +22,7 @@ interface ForkDocumentOptions<Fields extends string> {
   branchFromRoot?: boolean;
   addRevises?: boolean;
   keepListedValues?: boolean;
+  generateNewIds?: boolean;
   fieldsToEdit?: string[];
 }
 
@@ -48,6 +49,7 @@ export function forkDocument<Fields extends string>(
     addRevises = true,
     keepListedValues = false,
     fieldsToEdit,
+    generateNewIds = false,
   } = options;
   // New document.
   const document = copy(inputDoc);
@@ -283,7 +285,7 @@ export function forkDocument<Fields extends string>(
       // - if we are forking, then we can check if the item allows multiple values and create a new one, or
       // if it does not and create a revises, similar to fields.
       // - If we do fork, we mark the item as branched for the fields to pick up
-      if (willBranch) {
+      if (willBranch || generateNewIds) {
         if ((entity.allowMultiple || hasParentDocumentBranched) && !isInModelMapping) {
           entity.id = generateId();
           entity.immutable = false;
@@ -295,9 +297,11 @@ export function forkDocument<Fields extends string>(
           entity.immutable = false;
         }
         if (entity.selector) {
+          entity.selector = copy(entity.selector);
           entity.selector.id = generateId();
           if (removeValues) {
             entity.selector.state = null;
+            entity.selector.revisedBy = [];
           }
         }
         if (revisionId) {

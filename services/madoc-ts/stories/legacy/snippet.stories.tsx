@@ -1,4 +1,3 @@
-import { boolean, select } from '@storybook/addon-knobs';
 import * as React from 'react';
 import { SnippetLarge } from '../../src/frontend/shared/atoms/SnippetLarge';
 import styled from 'styled-components';
@@ -9,13 +8,13 @@ const StorybookPaddedBox = styled.div`
   padding: 2em;
 `;
 
-export const landscapeSnippet = () => {
-  const lightBackground = boolean('Light background', false);
-  const flat = boolean('Flat container', false);
-  const size = select('Size', ['sm', 'md', 'lg'], 'sm');
-  const center = boolean('Center', false);
-  const stackedThumbnail = boolean('Stacked thumbnail', true);
-  const buttonRole = select('Button role', ['button', 'link'], 'button');
+export const LandscapeSnippet = () => {
+  const lightBackground = false;
+  const flat = false;
+  const size = 'sm';
+  const center = false;
+  const stackedThumbnail = true;
+  const buttonRole = 'button';
 
   return (
     <StorybookPaddedBox>
@@ -37,12 +36,12 @@ export const landscapeSnippet = () => {
   );
 };
 
-export const portraitSnippet = () => {
-  const lightBackground = boolean('Light background', false);
-  const flat = boolean('Flat container', false);
-  const size = select('Size', ['sm', 'md', 'lg'], 'sm');
-  const center = boolean('Center', false);
-  const buttonRole = select('Button role', ['button', 'link'], 'button');
+export const PortraitSnippet = () => {
+  const lightBackground = false;
+  const flat = false;
+  const size = 'sm';
+  const center = false;
+  const buttonRole = 'button';
 
   return (
     <StorybookPaddedBox>
@@ -64,12 +63,12 @@ export const portraitSnippet = () => {
   );
 };
 
-export const interactiveSnippet = () => {
-  const lightBackground = boolean('Light background', false);
-  const flat = boolean('Flat container', true);
-  const size = select('Size', ['sm', 'md', 'lg'], 'sm');
-  const center = boolean('Center', false);
-  const buttonRole = select('Button role', ['button', 'link'], 'button');
+export const InteractiveSnippet = () => {
+  const lightBackground = false;
+  const flat = true;
+  const size = 'sm';
+  const center = false;
+  const buttonRole = 'button';
 
   return (
     <StorybookPaddedBox>
@@ -94,13 +93,13 @@ export const interactiveSnippet = () => {
   );
 };
 
-export const landscapeSnippetLargeThumbnail = () => {
-  const lightBackground = boolean('Light background', false);
-  const flat = boolean('Flat container', false);
-  const size = select('Size', ['sm', 'md', 'lg'], 'sm');
-  const center = boolean('Center', false);
-  const stackedThumbnail = boolean('Stacked thumbnail', true);
-  const buttonRole = select('Button role', ['button', 'link'], 'button');
+export const LandscapeSnippetLargeThumbnail = () => {
+  const lightBackground = false;
+  const flat = false;
+  const size = 'sm';
+  const center = false;
+  const stackedThumbnail = true;
+  const buttonRole = 'button';
 
   return (
     <StorybookPaddedBox>
@@ -122,12 +121,12 @@ export const landscapeSnippetLargeThumbnail = () => {
   );
 };
 
-export const portraitSnippetLargeThumbnail = () => {
-  const lightBackground = boolean('Light background', false);
-  const flat = boolean('Flat container', false);
-  const size = select('Size', ['sm', 'md', 'lg'], 'sm');
-  const center = boolean('Center', false);
-  const buttonRole = select('Button role', ['button', 'link'], 'button');
+export const PortraitSnippetLargeThumbnail = () => {
+  const lightBackground = false;
+  const flat = false;
+  const size = 'sm';
+  const center = false;
+  const buttonRole = 'button';
 
   return (
     <StorybookPaddedBox>
@@ -149,12 +148,12 @@ export const portraitSnippetLargeThumbnail = () => {
   );
 };
 
-export const landscapeSnippetNoThumbnail = () => {
-  const lightBackground = boolean('Light background', false);
-  const flat = boolean('Flat container', false);
-  const size = select('Size', ['sm', 'md', 'lg'], 'sm');
-  const center = boolean('Center', false);
-  const buttonRole = select('Button role', ['button', 'link'], 'button');
+export const LandscapeSnippetNoThumbnail = () => {
+  const lightBackground = false;
+  const flat = false;
+  const size = 'sm';
+  const center = false;
+  const buttonRole = 'button';
 
   return (
     <StorybookPaddedBox>
@@ -174,12 +173,12 @@ export const landscapeSnippetNoThumbnail = () => {
   );
 };
 
-export const portraitSnippetNoThumbnail = () => {
-  const lightBackground = boolean('Light background', false);
-  const flat = boolean('Flat container', false);
-  const size = select('Size', ['sm', 'md', 'lg'], 'sm');
-  const center = boolean('Center', false);
-  const buttonRole = select('Button role', ['button', 'link'], 'button');
+export const PortraitSnippetNoThumbnail = () => {
+  const lightBackground = false;
+  const flat = false;
+  const size = 'sm';
+  const center = false;
+  const buttonRole = 'button';
 
   return (
     <StorybookPaddedBox>
@@ -200,13 +199,13 @@ export const portraitSnippetNoThumbnail = () => {
   );
 };
 
-export const portraitSnippetLong = () => {
-  const lightBackground = boolean('Light background', false);
-  const flat = boolean('Flat container', false);
-  const size = select('Size', ['sm', 'md', 'lg'], 'sm');
-  const center = boolean('Center', false);
-  const buttonRole = select('Button role', ['button', 'link'], 'button');
-  const stackedThumbnail = boolean('Stacked thumbnail', true);
+export const PortraitSnippetLong = () => {
+  const lightBackground = false;
+  const flat = false;
+  const size = 'sm';
+  const center = false;
+  const buttonRole = 'button';
+  const stackedThumbnail = true;
 
   return (
     <StorybookPaddedBox>
@@ -229,12 +228,12 @@ export const portraitSnippetLong = () => {
   );
 };
 
-export const landscapeSnippetLong = () => {
-  const lightBackground = boolean('Light background', false);
-  const flat = boolean('Flat container', false);
-  const size = select('Size', ['sm', 'md', 'lg'], 'sm');
-  const center = boolean('Center', false);
-  const buttonRole = select('Button role', ['button', 'link'], 'button');
+export const LandscapeSnippetLong = () => {
+  const lightBackground = false;
+  const flat = false;
+  const size = 'sm';
+  const center = false;
+  const buttonRole = 'button';
 
   return (
     <StorybookPaddedBox>

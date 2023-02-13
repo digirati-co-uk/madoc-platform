@@ -8,6 +8,12 @@ export const isEmptyFieldList = (fields: BaseField[]) => {
     if (field.value) {
       return false;
     }
+
+    if (field.selector) {
+      if (field.selector.revisedBy && field.selector.revisedBy.length) {
+        return false;
+      }
+    }
   }
   return true;
 };

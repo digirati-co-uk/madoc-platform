@@ -15,29 +15,29 @@ describe('filterCaptureModel', () => {
     );
 
     expect(filtered).toMatchInlineSnapshot(`
-      Object {
+      {
         "description": "",
         "id": "626422b1-abbf-4f46-b160-d9bb768b2e29",
         "label": "Nested choices",
-        "properties": Object {
-          "person": Array [
-            Object {
+        "properties": {
+          "person": [
+            {
               "allowMultiple": true,
               "description": "Describe a person",
               "id": "3036e4a5-c350-426b-82b5-8fafdfe55e27",
               "label": "Person",
               "labelledBy": "firstName",
-              "properties": Object {
-                "firstName": Array [
-                  Object {
+              "properties": {
+                "firstName": [
+                  {
                     "id": "1da67423-f4a1-49e6-8561-55c40be47c00",
                     "label": "First name",
                     "type": "text-field",
                     "value": "first first name",
                   },
                 ],
-                "lastName": Array [
-                  Object {
+                "lastName": [
+                  {
                     "id": "6b7ce0c3-2a13-4ea3-a190-822fee80176b",
                     "label": "Last name",
                     "type": "text-field",
@@ -47,23 +47,23 @@ describe('filterCaptureModel', () => {
               },
               "type": "entity",
             },
-            Object {
+            {
               "allowMultiple": true,
               "description": "Describe a person",
               "id": "41cf9550-af77-4310-82ca-130141ed215d",
               "label": "Person",
               "labelledBy": "firstName",
-              "properties": Object {
-                "firstName": Array [
-                  Object {
+              "properties": {
+                "firstName": [
+                  {
                     "id": "f8678b43-f803-40b2-8e2e-fcc014631e1a",
                     "label": "First name",
                     "type": "text-field",
                     "value": "second first name",
                   },
                 ],
-                "lastName": Array [
-                  Object {
+                "lastName": [
+                  {
                     "id": "12e92ef6-6ebc-49af-95b3-42718ac92c26",
                     "label": "Last name",
                     "type": "text-field",
@@ -84,21 +84,21 @@ describe('filterCaptureModel', () => {
     const filtered = filterCaptureModel('something', personModel.document, [['person', 'firstName']], () => true);
 
     expect(filtered).toMatchInlineSnapshot(`
-      Object {
+      {
         "description": "",
         "id": "626422b1-abbf-4f46-b160-d9bb768b2e29",
         "label": "Nested choices",
-        "properties": Object {
-          "person": Array [
-            Object {
+        "properties": {
+          "person": [
+            {
               "allowMultiple": true,
               "description": "Describe a person",
               "id": "3036e4a5-c350-426b-82b5-8fafdfe55e27",
               "label": "Person",
               "labelledBy": "firstName",
-              "properties": Object {
-                "firstName": Array [
-                  Object {
+              "properties": {
+                "firstName": [
+                  {
                     "id": "1da67423-f4a1-49e6-8561-55c40be47c00",
                     "label": "First name",
                     "type": "text-field",
@@ -108,15 +108,15 @@ describe('filterCaptureModel', () => {
               },
               "type": "entity",
             },
-            Object {
+            {
               "allowMultiple": true,
               "description": "Describe a person",
               "id": "41cf9550-af77-4310-82ca-130141ed215d",
               "label": "Person",
               "labelledBy": "firstName",
-              "properties": Object {
-                "firstName": Array [
-                  Object {
+              "properties": {
+                "firstName": [
+                  {
                     "id": "f8678b43-f803-40b2-8e2e-fcc014631e1a",
                     "label": "First name",
                     "type": "text-field",

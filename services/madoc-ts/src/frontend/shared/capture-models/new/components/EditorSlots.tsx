@@ -325,7 +325,7 @@ const InlineEntity: EditorRenderingConfig['InlineEntity'] = props => {
 };
 
 function addNames<T>(name: string, record: T): T {
-  const keys = Object.keys(record);
+  const keys = Object.keys(record as any);
 
   for (const key of keys) {
     (record as any)[key].displayName = `${name}.${key}`;

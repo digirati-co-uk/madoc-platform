@@ -48,6 +48,7 @@ export const CanvasViewerButton = styled(Button)`
   border: none;
   background: #fff;
   display: flex;
+  color: #477af1;
 
   &:focus {
     outline: 2px solid orange;
