@@ -197,7 +197,9 @@ export function CreateModelTestCase(props: { captureModel?: CaptureModel }) {
               <>
                 <li>
                   <strong style={{ userSelect: 'none' }}>manifest:</strong>{' '}
-                  <a href={options.target.manifestUri}>{options.target.manifestUri}</a>
+                  <a href={options.target.manifestUri} target="_blank" rel="noreferrer">
+                    {options.target.manifestUri}
+                  </a>
                 </li>
                 <li>
                   <strong style={{ userSelect: 'none' }}>canvas:</strong> {options.target.canvasUri}

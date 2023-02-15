@@ -30,7 +30,11 @@ export const renderProperty = (
 ) => {
   const label =
     fields.length > 1 && fields[0] && fields[0].pluralLabel ? fields[0].pluralLabel : fields[0] ? fields[0].label : '';
-  const filteredFields = filterRevises(fields).filter(f => {
+
+  const arrFixed: Array<typeof fields[number]> = fields;
+  const firstFilter = arrFixed.filter(item => filterRevisions.indexOf(item.revision ? item.revision : '') === -1);
+
+  const filteredFields = filterRevises(firstFilter).filter(f => {
     if (highlightRevisionChanges) {
       const revised = f.type === 'entity' || (f.revision && f.revision === highlightRevisionChanges);
       if (!revised) {
