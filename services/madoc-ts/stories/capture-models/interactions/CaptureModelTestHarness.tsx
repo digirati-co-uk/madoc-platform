@@ -101,6 +101,12 @@ export function CaptureModelTestHarness(props: CaptureModelTestHarnessProps) {
       : null;
   }, [captureModel, revision]);
 
+  const incompleteRevisions = (captureModel.revisions || [])
+    .filter(rev => {
+      return !rev.approved;
+    })
+    .map(rev => rev.id);
+
   const revisionJson = (
     <>
       <pre data-testid="revision-json">{JSON.stringify(allRevisionsWithStructures, null, 2)}</pre>
@@ -186,7 +192,7 @@ export function CaptureModelTestHarness(props: CaptureModelTestHarnessProps) {
                     key={JSON.stringify(captureModel.document)}
                     hideEmpty
                     document={captureModel.document}
-                    highlightRevisionChanges={revision}
+                    filterRevisions={incompleteRevisions}
                   />
                 </DynamicVaultContext>
               ) : null}
