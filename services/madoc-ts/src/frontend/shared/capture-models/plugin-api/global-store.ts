@@ -1,6 +1,5 @@
 import { BaseContent, ContentSpecification } from '../types/content-types';
-import { FieldTypeMap } from '../types/custom';
-import { BaseField, FieldSpecification } from '../types/field-types';
+import { BaseField, FieldSpecification, FieldTypeMap } from '../types/field-types';
 import { UnknownRefinement } from '../types/refinements';
 import { BaseSelector, SelectorSpecification } from '../types/selector-types';
 import { pluginStore } from './globals';

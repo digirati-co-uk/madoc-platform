@@ -36,9 +36,9 @@ const BackgroundImage = styled.div<{ $overlay?: string }>`
 const TextBox = styled.div`
   background-color: white;
   position: absolute;
-  width: 80vw;
+  width: 80%;
   padding: 4em 6em;
-  left: 10vw;
+  left: 10%;
   bottom: 0;
 `;
 

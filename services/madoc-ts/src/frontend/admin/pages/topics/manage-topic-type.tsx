@@ -48,6 +48,10 @@ export function ManageTopicType() {
             link: `/topics/${data?.slug || topicType}`,
           },
           {
+            label: 'Edit',
+            link: `/topics/${data?.slug || topicType}/_/edit`,
+          },
+          {
             label: 'Create topic',
             link: `/topics/${data?.slug || topicType}/_/create-topic`,
           },
