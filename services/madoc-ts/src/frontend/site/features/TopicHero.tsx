@@ -64,22 +64,25 @@ export const TopicHero: React.FC<{ h1Color?: string; h2Color?: string }> = ({ h1
           {data?.label}
         </HeroHeading>
 
-        {data.editorial.description && (
+        {data.description && (
           <HeroDescription style={{ color: h1Color }} as={LocaleString}>
-            {data.editorial?.description}
+            {data.description}
           </HeroDescription>
         )}
 
-        <HeroSubHeading style={{ color: h2Color }} as={LocaleString}>
-          {data.editorial.subHeading}
-        </HeroSubHeading>
-        <HeroSummary style={{ color: h2Color }} as={LocaleString}>
-          {data.editorial.summary}
-        </HeroSummary>
+        {data.secondary_heading && (
+          <HeroSubHeading style={{ color: h2Color }} as={LocaleString}>
+            {data.secondary_heading}
+          </HeroSubHeading>
+        )}
+
+        {data.topic_summary && (
+          <HeroSummary style={{ color: h2Color }} as={LocaleString}>
+            {data.topic_summary}
+          </HeroSummary>
+        )}
       </HeroText>
-      <Right>
-        <ImageMask style={{ backgroundImage: `url("${data.editorial.heroImage?.url}")` }} />
-      </Right>
+      <Right>{data.image_url && <ImageMask style={{ backgroundImage: `url("${data.image_url}")` }} />}</Right>
     </TopicHeroWrapper>
   );
 };

@@ -42,22 +42,22 @@ export const TopicGrid: React.FC<{
     return (
       <ImageStripBox $border={cardBorder} $color={textColor} $bgColor={background}>
         <CroppedImage $covered={imageStyle === 'covered'}>
-          {topic.thumbnail?.url ? (
+          {topic.image_url ? (
             <img
               style={{ objectPosition: 'top' }}
               alt={createLocaleString(topic.label, t('Topic thumbnail'))}
-              src={topic.thumbnail.url}
+              src={topic.image_url}
             />
           ) : null}
         </CroppedImage>
         <div style={{ margin: '1em' }}>
-          <LocaleString as={SingleLineHeading3}>{topic.label}</LocaleString>
+          <LocaleString as={SingleLineHeading3}>{topic.title}</LocaleString>
 
           {/* todo await BE */}
           <Subheading3> 123 Objects</Subheading3>
 
           <Heading5 style={{ padding: 0 }}>PART OF</Heading5>
-          <Pill>{topic.topicType?.slug}</Pill>
+          <Pill>{topic.type}</Pill>
         </div>
       </ImageStripBox>
     );

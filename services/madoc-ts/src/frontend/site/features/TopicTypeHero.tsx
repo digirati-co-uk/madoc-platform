@@ -64,12 +64,14 @@ export const TopicTypeHero: React.FC<{ textColor?: string; overlayColor?: string
   }
   return (
     <TopicHeroWrapper style={{ color: textColor }}>
-      <BackgroundImage $overlay={overlayColor} style={{ backgroundImage: `url("${data.editorial.heroImage?.url}")` }} />
+      <BackgroundImage $overlay={overlayColor} style={{ backgroundImage: `url("${data.image_url}")` }} />
       <TextBox>
         <TopWrapper>
           <HeroHeading as={LocaleString}>{data.label}</HeroHeading>
         </TopWrapper>
-        <HeroSubHeading as={LocaleString}>{data.editorial.summary}</HeroSubHeading>
+        {data.description && (
+            <HeroSubHeading as={LocaleString}>{data.description}</HeroSubHeading>
+        )}
       </TextBox>
     </TopicHeroWrapper>
   );
