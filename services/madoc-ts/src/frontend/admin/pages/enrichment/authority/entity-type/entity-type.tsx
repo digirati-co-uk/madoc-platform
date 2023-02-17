@@ -6,7 +6,7 @@ import { useData } from '../../../../../shared/hooks/use-data';
 import { Button } from '../../../../../shared/navigation/Button';
 import { serverRendererFor } from '../../../../../shared/plugins/external/server-renderer-for';
 import { HrefLink } from '../../../../../shared/utility/href-link';
-import { entityTypeModel } from '../entity-type-model';
+import { entityTypeModel } from '../../../../../../extensions/enrichment/models';
 
 export function EntityType() {
   const { data } = useData<{ entity: EnrichmentEntityType; items: any }>(EntityType);
@@ -26,7 +26,8 @@ export function EntityType() {
     );
   }
 
-  return (
+  // @ts-ignore
+    return (
     <div>
       <h2>{entity?.label || '...'}</h2>
       <Button onClick={() => setIsEditing(true)}>Edit</Button>

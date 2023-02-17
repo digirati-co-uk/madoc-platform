@@ -17,7 +17,7 @@ type BreadcrumbContextType = {
   canvas?: { name: InternationalString; id: number };
   task?: { name: string; id: string };
   subpage?: { name: InternationalString; path: string };
-  topicType?: { name: InternationalString; id: string };
+  topicType?: { name: InternationalString | string; id: string };
   topic?: { name: InternationalString; id: string };
 };
 

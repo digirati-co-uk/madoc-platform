@@ -3,11 +3,12 @@ import { useMutation } from 'react-query';
 import { EnrichmentEntityType } from '../../../../../../extensions/enrichment/authority/types';
 import { EditShorthandCaptureModel } from '../../../../../shared/capture-models/EditorShorthandCaptureModel';
 import { useApi } from '../../../../../shared/hooks/use-api';
-import { entityTypeModel } from './entity-type-model';
+import { entityTypeModel } from '../../../../../../extensions/enrichment/models';
 
 export function NewEntityType() {
   const api = useApi();
   const [createNewEntityType, status] = useMutation(async (data: Partial<EnrichmentEntityType>) => {
+    // @ts-ignore
     data.other_labels = (data.other_labels || []).filter(e => e.value !== '');
     return api.authority.entity_type.create(data);
   });

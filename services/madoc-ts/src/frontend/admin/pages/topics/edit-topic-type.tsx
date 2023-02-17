@@ -6,7 +6,7 @@ import { HrefLink } from '../../../shared/utility/href-link';
 import { CustomEditorTypes } from '../../../shared/page-blocks/custom-editor-types';
 import { EditShorthandCaptureModel } from '../../../shared/capture-models/EditorShorthandCaptureModel';
 import { useTopicType } from '../../../site/pages/loaders/topic-type-loader';
-import { models } from '../../../../extensions/enrichment/models';
+import { entityTypeModel } from '../../../../extensions/enrichment/models';
 
 export function EditTopicType() {
   const api = useApi();
@@ -53,7 +53,7 @@ export function EditTopicType() {
     <div>
       <CustomEditorTypes>
         <EditShorthandCaptureModel
-          template={models}
+          template={entityTypeModel}
           data={data}
           onSave={async d => {
             await createNewEntityType(d);

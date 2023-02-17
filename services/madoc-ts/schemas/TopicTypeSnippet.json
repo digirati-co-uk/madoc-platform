@@ -1,13 +1,33 @@
 {
+  "description": "Entity - List item\n\nDocumentation: https://github.com/digirati-co-uk/madoc-enrichment/blob/main/endpoint_docs.md#entity---list",
   "type": "object",
   "properties": {
-    "id": {
+    "url": {
+      "description": "URL of the Entity (won't resolve due to Gateway)",
       "type": "string"
     },
-    "slug": {
+    "id": {
+      "description": "Unique identifier of the Entity (UUID)",
+      "type": "string"
+    },
+    "created": {
+      "description": "Creation time of the Entity (ISO Timestamp)",
+      "type": "string"
+    },
+    "modified": {
+      "description": "Last modification time of the Entity (ISO Timestamp)",
       "type": "string"
     },
     "label": {
+      "description": "Unique label - not typically for display. For example, it might come from an external vocab with all caps: \"TRIBE\"\nand the label to display to the user may be simply \"Tribe\"",
+      "type": "string"
+    },
+    "slug": {
+      "description": "A unique slug, derived from the label",
+      "type": "string"
+    },
+    "other_labels": {
+      "description": "Readable labels for the Entity's Type.",
       "type": "object",
       "additionalProperties": {
         "type": "array",
@@ -15,29 +35,16 @@
           "type": "string"
         }
       }
-    },
-    "thumbnail": {
-      "type": "object",
-      "properties": {
-        "url": {
-          "type": "string"
-        },
-        "alt": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "url"
-      ]
-    },
-    "totalObjects": {
-      "type": "number"
     }
   },
   "required": [
+    "created",
     "id",
     "label",
-    "slug"
+    "modified",
+    "other_labels",
+    "slug",
+    "url"
   ],
   "$schema": "http://json-schema.org/draft-07/schema#"
 }
