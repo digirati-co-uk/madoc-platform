@@ -1,5 +1,6 @@
 import { expect } from '@storybook/jest';
 import { userEvent, within } from '@storybook/testing-library';
+import copy from 'fast-copy';
 import { CaptureModelTestHarness, wait } from './CaptureModelTestHarness';
 // @ts-ignore
 import mad1200fixture1 from '../../../fixtures/96-jira/MAD-1200-1.json';
@@ -147,6 +148,27 @@ JestTestCaseWithRevision.play = async args => {
 
 export const NoRevisionExample = CaptureModelTestHarness.story({
   captureModel: mad1200fixture2,
+  target: {
+    manifestUri: 'https://view.nls.uk/manifest/9713/97134412/manifest.json',
+    canvasUri: 'https://view.nls.uk/manifest/9713/97134412/canvas/2',
+  },
+  warningMessage: `Ensure this model shows only selects a single region correctly`,
+});
+NoRevisionExample.play = async args => {
+  await CaptureModelTestHarness.waitForViewer(args);
+
+  await wait(500);
+
+  const instances = args.canvasElement.querySelectorAll(`[data-entity-id]`);
+  expect(instances).toHaveLength(1);
+};
+
+const mad1200fixture2WithoutRoot = copy(mad1200fixture2);
+mad1200fixture2WithoutRoot.structure.items[0].modelRoot = [];
+
+mad1200fixture2WithoutRoot.document.properties.boxes[1].allowMultiple = true;
+export const NoRevisionExampleWithoutModelRoot = CaptureModelTestHarness.story({
+  captureModel: mad1200fixture2WithoutRoot,
   target: {
     manifestUri: 'https://view.nls.uk/manifest/9713/97134412/manifest.json',
     canvasUri: 'https://view.nls.uk/manifest/9713/97134412/canvas/2',
