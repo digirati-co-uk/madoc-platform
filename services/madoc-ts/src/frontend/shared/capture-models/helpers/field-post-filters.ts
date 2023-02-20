@@ -14,7 +14,7 @@ export function filterEmptyFields(fields: BaseField[], parent?: CaptureModel['do
 
   if (isEntityList(fields) && fields.length > 1) {
     // 1st is this allowMultiple?
-    const first = fields[0];
+    const first = fields.find(f => !f.revision) || fields[0];
 
     // In this case, we have a list of entites - but the templated entity might be in there.
     // This is a rough "isEntityEmpty"
