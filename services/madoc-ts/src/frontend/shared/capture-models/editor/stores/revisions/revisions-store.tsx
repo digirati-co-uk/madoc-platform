@@ -519,23 +519,25 @@ export const revisionStore: RevisionsModel = {
       const oldRevision = state.revisions[revisionId];
       if (state.unsavedRevisionIds.indexOf(revisionId) !== -1) {
         const newRevision = await createRevision(oldRevision, status);
-        actions.importRevision({ revisionRequest: newRevision });
+        // actions.importRevision({ revisionRequest: newRevision });
         actions.saveRevision({ revisionId });
       } else {
         // disable this for now.
         const newRevision = await updateRevision(oldRevision, status);
-        actions.importRevision({ revisionRequest: newRevision });
+        // actions.importRevision({ revisionRequest: newRevision });
       }
     }
   ),
 
   importRevision: action((state, { revisionRequest }) => {
+
     const foundStructure = revisionRequest.revision.structureId
       ? findStructure({ structure: state.structure } as any, revisionRequest.revision.structureId)
       : null;
     if (foundStructure && foundStructure.type === 'model' && foundStructure.modelRoot) {
       applyModelRootToDocument(revisionRequest.document, foundStructure.modelRoot);
     }
+
     state.revisions[revisionRequest.revision.id] = revisionRequest;
   }),
 
