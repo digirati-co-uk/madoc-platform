@@ -8,7 +8,7 @@ export function useManagePropertyList(property: string) {
   const [entity, { path }] = useCurrentEntity();
 
   const fields = entity.properties[property];
-  const label = fields ? fields[0].label : '';
+  const label = fields[0].label;
   const allowMultiple = Boolean(fields[0] ? fields[0].allowMultiple : false);
   const { createNewEntityInstance, createNewFieldInstance, removeInstance } = Revisions.useStoreActions(a => ({
     createNewEntityInstance: a.createNewEntityInstance,
