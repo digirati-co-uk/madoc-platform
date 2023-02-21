@@ -1,6 +1,18 @@
 import { ProjectConfiguration } from '../../../types/schemas/project-configuration';
 import { BaseField } from '../capture-models/types/field-types';
 
+export function postProcessConfiguration(config: Partial<ProjectConfiguration>): ProjectConfiguration {
+  if (config.revisionApprovalsRequired) {
+    config.revisionApprovalsRequired = Number(config.revisionApprovalsRequired);
+  }
+
+  if ((config.maxContributionsPerResource as any) === '') {
+    config.maxContributionsPerResource = false;
+  }
+
+  return config as any;
+}
+
 export const siteConfigurationModel: {
   [key in keyof ProjectConfiguration]: string | (Partial<BaseField> & any);
 } = {

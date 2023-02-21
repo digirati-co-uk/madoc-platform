@@ -33,6 +33,7 @@
           "type": "text-field",
           "label": "Transcription",
           "allowMultiple": false,
+          "revises": "762eff26-1590-4194-b93b-5a337ae40ad2",
           "revision": "04267f75-bb8d-4321-8046-12db3f9d6ceb",
           "value": "Person A created this one"
         },
@@ -41,6 +42,7 @@
           "type": "text-field",
           "label": "Transcription",
           "allowMultiple": false,
+          "revises": "762eff26-1590-4194-b93b-5a337ae40ad2",
           "revision": "81ab315e-200e-4649-bb11-99db766a5f66",
           "value": "Person B created this one"
         }
@@ -64,13 +66,15 @@
       "id": "04267f75-bb8d-4321-8046-12db3f9d6ceb",
       "fields": [
         "transcription"
-      ]
+      ],
+      "authors": ["04267f75-bb8d-4321-8046-12db3f9d6ceb"]
     },
     {
       "id": "81ab315e-200e-4649-bb11-99db766a5f66",
       "fields": [
         "transcription"
-      ]
+      ],
+      "authors": ["81ab315e-200e-4649-bb11-99db766a5f66"]
     }
   ],
   "id": "737150d3-2c72-4eeb-9fd4-42ad085cdf7f"

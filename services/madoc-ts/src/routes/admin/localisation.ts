@@ -204,7 +204,7 @@ export const getLocalisation: RouteMiddleware<{ code: string; namespace?: string
   const modelIds =
     namespace === 'capture-models'
       ? (
-          await context.connection.many(
+          await context.connection.any(
             sql<{ capture_model_id: string }>`select capture_model_id from iiif_project where site_id = ${siteId}`
           )
         ).map(m => m.capture_model_id)
@@ -345,7 +345,7 @@ export const updateLocalisation: RouteMiddleware<{ code: string; namespace?: str
   const modelIds =
     namespace === 'capture-models'
       ? (
-          await context.connection.many(
+          await context.connection.any(
             sql<{ capture_model_id: string }>`select capture_model_id from iiif_project where site_id = ${siteId}`
           )
         ).map(m => m.capture_model_id)

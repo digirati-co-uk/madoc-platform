@@ -109,34 +109,34 @@ describe('RDF Vocab', () => {
     `;
 
     expect(parseRdfVocab(xml)).toMatchInlineSnapshot(`
-      Object {
-        "classes": Array [
-          Object {
+      {
+        "classes": [
+          {
             "description": "A book, article, or other documentary resource.",
             "label": "Bibliographic Resource",
             "term": "dcterms:BibliographicResource",
             "uri": "http://purl.org/dc/terms/BibliographicResource",
           },
-          Object {
+          {
             "description": "A digital resource format.",
             "label": "File Format",
             "term": "dcterms:FileFormat",
             "uri": "http://purl.org/dc/terms/FileFormat",
           },
-          Object {
+          {
             "description": "A rate at which something recurs.",
             "label": "Frequency",
             "term": "dcterms:Frequency",
             "uri": "http://purl.org/dc/terms/Frequency",
           },
-          Object {
+          {
             "description": "The extent or range of judicial, law enforcement, or other authority.",
             "label": "Jurisdiction",
             "term": "dcterms:Jurisdiction",
             "uri": "http://purl.org/dc/terms/Jurisdiction",
           },
         ],
-        "namespaces": Object {
+        "namespaces": {
           "dcam": "http://purl.org/dc/dcam/",
           "dcterms": "http://purl.org/dc/terms/",
           "owl": "http://www.w3.org/2002/07/owl#",
@@ -144,20 +144,20 @@ describe('RDF Vocab', () => {
           "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
           "skos": "http://www.w3.org/2004/02/skos/core#",
         },
-        "properties": Array [
-          Object {
+        "properties": [
+          {
             "description": "A name given to the resource.",
             "label": "Title",
             "term": "dcterms:title",
             "uri": "http://purl.org/dc/terms/title",
           },
-          Object {
+          {
             "description": "An entity primarily responsible for making the resource.",
             "label": "Creator",
             "term": "dcterms:creator",
             "uri": "http://purl.org/dc/terms/creator",
           },
-          Object {
+          {
             "description": "The topic of the resource.",
             "label": "Subject",
             "term": "dcterms:subject",
@@ -237,34 +237,34 @@ describe('RDF Vocab', () => {
     `;
 
     expect(parseRdfVocab(xml)).toMatchInlineSnapshot(`
-      Object {
-        "classes": Array [
-          Object {
+      {
+        "classes": [
+          {
             "description": "A foaf:LabelProperty is any RDF property with texual values that serve as labels.",
             "label": "Label Property",
             "term": "foaf:LabelProperty",
             "uri": "http://xmlns.com/foaf/0.1/LabelProperty",
           },
-          Object {
+          {
             "description": "A person.",
             "label": "Person",
             "term": "foaf:Person",
             "uri": "http://xmlns.com/foaf/0.1/Person",
           },
-          Object {
+          {
             "description": null,
             "label": "Person",
             "term": "http://www.w3.org/2000/10/swap/pim/contact#Person",
             "uri": "http://www.w3.org/2000/10/swap/pim/contact#Person",
           },
-          Object {
+          {
             "description": null,
             "label": "Spatial Thing",
             "term": "http://www.w3.org/2003/01/geo/wgs84_pos#SpatialThing",
             "uri": "http://www.w3.org/2003/01/geo/wgs84_pos#SpatialThing",
           },
         ],
-        "namespaces": Object {
+        "namespaces": {
           "dc": "http://purl.org/dc/elements/1.1/",
           "foaf": "http://xmlns.com/foaf/0.1/",
           "owl": "http://www.w3.org/2002/07/owl#",
@@ -273,20 +273,20 @@ describe('RDF Vocab', () => {
           "vs": "http://www.w3.org/2003/06/sw-vocab-status/ns#",
           "wot": "http://xmlns.com/wot/0.1/",
         },
-        "properties": Array [
-          Object {
+        "properties": [
+          {
             "description": "The birthday of this Agent, represented in mm-dd string form, eg. '12-31'.",
             "label": "birthday",
             "term": "foaf:birthday",
             "uri": "http://xmlns.com/foaf/0.1/birthday",
           },
-          Object {
+          {
             "description": "The age in years of some agent.",
             "label": "age",
             "term": "foaf:age",
             "uri": "http://xmlns.com/foaf/0.1/age",
           },
-          Object {
+          {
             "description": "A string expressing what the user is happy for the general public (normally) to know about their current activity.",
             "label": "status",
             "term": "foaf:status",

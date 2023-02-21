@@ -348,7 +348,9 @@ describe('Update revision', () => {
       },
       {
         withDocument(doc) {
-          doc.properties.person[0].allowMultiple = true;
+          for (const person of doc.properties.person) {
+            person.allowMultiple = true;
+          }
           return doc;
         },
         withStructure(structure) {
@@ -401,6 +403,8 @@ describe('Update revision', () => {
     const newPerson = people.find(e => e.revision === revisionId);
 
     invariant(newPerson);
+
+    expect(newPerson.allowMultiple).toEqual(true);
 
     expect(dot(newPerson, 'properties.firstName.0').value).toEqual('Git');
     expect(dot(newPerson, 'properties.firstName.0').revision).toEqual(revisionId);

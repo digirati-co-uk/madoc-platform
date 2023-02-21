@@ -18,6 +18,7 @@ describe('capture model serialisation', () => {
               value: 'Test label',
             },
           ],
+
           name: [
             {
               id: v4(),
@@ -29,7 +30,7 @@ describe('capture model serialisation', () => {
         },
       })
     ).toMatchInlineSnapshot(`
-      Object {
+      {
         "label": "Test label",
         "name": "Test name",
       }
@@ -52,6 +53,7 @@ describe('capture model serialisation', () => {
                 value: 'Test label',
               },
             ],
+
             name: [
               {
                 id: v4(),
@@ -65,8 +67,8 @@ describe('capture model serialisation', () => {
         { addMetadata: true }
       )
     ).toMatchInlineSnapshot(`
-      Object {
-        "__meta__": Object {
+      {
+        "__meta__": {
           "label": "text-field",
           "name": "text-field",
         },
@@ -142,19 +144,19 @@ describe('capture model serialisation', () => {
     };
 
     expect(serialiseCaptureModel(complexModelWithEntity, { addMetadata: true })).toMatchInlineSnapshot(`
-      Object {
-        "__meta__": Object {
+      {
+        "__meta__": {
           "label": "text-field",
           "people.city": "text-field",
           "people.name": "text-field",
         },
         "label": "",
-        "people": Array [
-          Object {
+        "people": [
+          {
             "city": "Aberdeen",
             "name": "First persons name",
           },
-          Object {
+          {
             "city": "Glasgow",
             "name": "Second persons name",
           },
@@ -191,15 +193,15 @@ describe('capture model serialisation', () => {
     };
 
     expect(serialiseCaptureModel(complexModelWithEntity, { addSelectors: false })).toMatchInlineSnapshot(`
-      Object {
+      {
         "label": "Some value of the label",
       }
     `);
 
     expect(serialiseCaptureModel(complexModelWithEntity, { addSelectors: true })).toMatchInlineSnapshot(`
-      Object {
-        "label": Object {
-          "selector": Object {
+      {
+        "label": {
+          "selector": {
             "height": 140,
             "width": 130,
             "x": 10,
@@ -212,10 +214,10 @@ describe('capture model serialisation', () => {
 
     expect(serialiseCaptureModel(complexModelWithEntity, { addSelectors: true, rdfValue: true }))
       .toMatchInlineSnapshot(`
-      Object {
-        "label": Object {
+      {
+        "label": {
           "@value": "Some value of the label",
-          "selector": Object {
+          "selector": {
             "height": 140,
             "width": 130,
             "x": 10,
@@ -280,96 +282,96 @@ describe('capture model serialisation', () => {
     };
 
     expect(serialiseCaptureModel(complexModelWithEntity, { addSelectors: false })).toMatchInlineSnapshot(`
-Object {
-  "label": Array [
-    "Some value of the label",
-    "Second value",
-    "Some value of the label",
-  ],
-}
-`);
+      {
+        "label": [
+          "Some value of the label",
+          "Second value",
+          "Some value of the label",
+        ],
+      }
+    `);
 
     expect(serialiseCaptureModel(complexModelWithEntity, { addSelectors: true })).toMatchInlineSnapshot(`
-Object {
-  "label": Array [
-    Object {
-      "selector": Object {
-        "height": 140,
-        "width": 130,
-        "x": 10,
-        "y": 20,
-      },
-      "value": "Some value of the label",
-    },
-    Object {
-      "selector": Object {
-        "height": 180,
-        "width": 160,
-        "x": 20,
-        "y": 40,
-      },
-      "value": "Second value",
-    },
-    "Some value of the label",
-  ],
-}
-`);
+      {
+        "label": [
+          {
+            "selector": {
+              "height": 140,
+              "width": 130,
+              "x": 10,
+              "y": 20,
+            },
+            "value": "Some value of the label",
+          },
+          {
+            "selector": {
+              "height": 180,
+              "width": 160,
+              "x": 20,
+              "y": 40,
+            },
+            "value": "Second value",
+          },
+          "Some value of the label",
+        ],
+      }
+    `);
 
     expect(serialiseCaptureModel(complexModelWithEntity, { addSelectors: true, rdfValue: true }))
       .toMatchInlineSnapshot(`
-Object {
-  "label": Array [
-    Object {
-      "@value": "Some value of the label",
-      "selector": Object {
-        "height": 140,
-        "width": 130,
-        "x": 10,
-        "y": 20,
-      },
-    },
-    Object {
-      "@value": "Second value",
-      "selector": Object {
-        "height": 180,
-        "width": 160,
-        "x": 20,
-        "y": 40,
-      },
-    },
-    "Some value of the label",
-  ],
-}
-`);
+      {
+        "label": [
+          {
+            "@value": "Some value of the label",
+            "selector": {
+              "height": 140,
+              "width": 130,
+              "x": 10,
+              "y": 20,
+            },
+          },
+          {
+            "@value": "Second value",
+            "selector": {
+              "height": 180,
+              "width": 160,
+              "x": 20,
+              "y": 40,
+            },
+          },
+          "Some value of the label",
+        ],
+      }
+    `);
     expect(
       serialiseCaptureModel(complexModelWithEntity, { addSelectors: true, rdfValue: true, normalisedValueLists: true })
     ).toMatchInlineSnapshot(`
-Object {
-  "label": Array [
-    Object {
-      "@value": "Some value of the label",
-      "selector": Object {
-        "height": 140,
-        "width": 130,
-        "x": 10,
-        "y": 20,
-      },
-    },
-    Object {
-      "@value": "Second value",
-      "selector": Object {
-        "height": 180,
-        "width": 160,
-        "x": 20,
-        "y": 40,
-      },
-    },
-    Object {
-      "@value": "Some value of the label",
-    },
-  ],
-}
-`);
+      {
+        "label": [
+          {
+            "@value": "Some value of the label",
+            "selector": {
+              "height": 140,
+              "width": 130,
+              "x": 10,
+              "y": 20,
+            },
+          },
+          {
+            "@value": "Second value",
+            "selector": {
+              "height": 180,
+              "width": 160,
+              "x": 20,
+              "y": 40,
+            },
+          },
+          {
+            "@value": "Some value of the label",
+          },
+        ],
+      }
+    `);
   });
 
   test('simple model with entity selector', () => {
@@ -446,38 +448,38 @@ Object {
     };
 
     expect(serialiseCaptureModel(complexModelWithEntity)).toMatchInlineSnapshot(`
-      Object {
-        "details": Object {
+      {
+        "details": {
           "description": "The description of an object",
           "label": "The label of an object",
         },
-        "people": Array [
-          Object {
+        "people": [
+          {
             "name": "Some value of the label",
           },
         ],
       }
     `);
     expect(serialiseCaptureModel(complexModelWithEntity, { addSelectors: true })).toMatchInlineSnapshot(`
-      Object {
-        "details": Object {
-          "properties": Object {
+      {
+        "details": {
+          "properties": {
             "description": "The description of an object",
             "label": "The label of an object",
           },
-          "selector": Object {
+          "selector": {
             "height": 180,
             "width": 160,
             "x": 20,
             "y": 40,
           },
         },
-        "people": Array [
-          Object {
-            "properties": Object {
+        "people": [
+          {
+            "properties": {
               "name": "Some value of the label",
             },
-            "selector": Object {
+            "selector": {
               "height": 140,
               "width": 130,
               "x": 10,

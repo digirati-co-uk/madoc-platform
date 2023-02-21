@@ -53,6 +53,7 @@ export const CanvasModelUserStatus: React.FC<{ isEditing?: boolean }> = ({ isEdi
             subRoute: 'tasks',
             query: { subject: `urn:madoc:canvas:${canvasId}` },
           })}
+          style={{ whiteSpace: 'nowrap' }}
         >
           {t('View submissions')}
         </HrefLink>

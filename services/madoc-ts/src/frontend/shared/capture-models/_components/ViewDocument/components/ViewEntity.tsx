@@ -47,6 +47,19 @@ export function ViewEntity({
     }
   }, [helper, selectorId]);
 
+  useEffect(() => {
+    if (selectorId) {
+      return helper.withSelector(selectorId).on('hover', () => {
+        trigger();
+        setIsCollapsed(false);
+        if (ref.current) {
+          ref.current.scrollIntoView({ block: 'nearest', inline: 'center' });
+        }
+      });
+    }
+  }, [helper, selectorId]);
+
+
   return (
     <DocumentSection data-highlighted={isOn} ref={ref}>
       <DocumentHeading

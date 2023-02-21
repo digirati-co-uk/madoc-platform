@@ -51,11 +51,12 @@ const Canvas: React.FC<{
 
   return (
     <CanvasPanel.Viewer
-      containerStyle={{ flex: '1 1 0px' }}
+      containerStyle={{ flex: '1 1 0px', height: '100%' }}
       onCreated={onCreated}
       mode={isEditing ? 'sketch' : 'explore'}
       unstable_webglRenderer={webglSupport() && unstable_webglRenderer}
       controllerConfig={controllerConfig}
+      height="100%"
     >
       <world
         onClick={e => {

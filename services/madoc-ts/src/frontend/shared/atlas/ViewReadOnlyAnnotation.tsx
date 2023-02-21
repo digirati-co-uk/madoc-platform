@@ -8,7 +8,7 @@ import { ReadOnlyAnnotation } from '../hooks/use-read-only-annotations';
 const CustomHTMLPortal = HTMLPortal as any;
 
 export function ViewReadOnlyAnnotation({ id, style, target, ...props }: ReadOnlyAnnotation) {
-  const { onClick } = useSelectorEvents(id);
+  const { onClick, onHover } = useSelectorEvents(id);
   const [isOpen, setIsOpen] = useState(false);
   const atlas = useAtlas();
   const [isHover, setIsHover] = useState(false);
@@ -19,7 +19,6 @@ export function ViewReadOnlyAnnotation({ id, style, target, ...props }: ReadOnly
       const { ':hover': hoverStyles, ':active': activeStyles, ...styles } = allStyles;
       return isOpen ? activeStyles : isHover ? hoverStyles : styles;
     }
-
     return allStyles;
   }, [allStyles, hotspot, isHover, isOpen]);
 
@@ -31,8 +30,10 @@ export function ViewReadOnlyAnnotation({ id, style, target, ...props }: ReadOnly
       width={target.width}
       height={target.height}
       onClick={() => {
-        console.log('ON CLICK');
         onClick();
+      }}
+      onMouseEnter={() => {
+        onHover();
       }}
     >
       {hotspot ? (

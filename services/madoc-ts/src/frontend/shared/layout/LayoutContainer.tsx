@@ -165,15 +165,27 @@ export const LayoutSidebar = styled.div<{ $noScroll?: boolean }>`
 `;
 
 export const LayoutHandle = styled.div<{ $isDragging?: boolean }>`
-  width: 6px;
-  background: #eee;
+  width: 12px;
+  background: #ddd;
   height: 100%;
+  min-height: 42px;
   user-select: none;
   cursor: col-resize;
+  border-radius: 0 0 3px 3px;
+
+  svg {
+    fill: #a1a1a1;
+    left: 2px;
+    top: 8px;
+  }
 
   &:hover,
   &:active {
-    background: #ddd;
+    background: #a1a1a1;
+
+    svg {
+      fill: #181818;
+    }
   }
 
   ${props =>

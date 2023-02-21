@@ -2,15 +2,17 @@ import { CaptureModel } from '../types/capture-model';
 import { generateId } from './generate-id';
 
 export function captureModelShorthand(shorthand: { [key: string]: string | any }): CaptureModel['document'] {
+  const entity = shorthand.__entity__ || {};
+  const nested = shorthand.__nested__ || {};
   const model: CaptureModel['document'] = {
     id: generateId(),
     type: 'entity',
     label: 'Root',
     properties: {},
+    ...entity,
   };
-
   const metadata = shorthand;
-  const originalKeys = Object.keys(shorthand);
+  const originalKeys = Object.keys(shorthand).filter(r => r !== '__entity__' && r !== '__nested__');
 
   const processLevel = (doc: CaptureModel['document'], key: string[], originalKey: string) => {
     if (key.length === 0) {
@@ -52,6 +54,7 @@ export function captureModelShorthand(shorthand: { [key: string]: string | any }
             type: 'entity',
             label: key[0], // @todo config for mapping fields to labels
             properties: {},
+            ...(nested[key[0]] || {}),
           } as CaptureModel['document']);
 
     // Recursion.

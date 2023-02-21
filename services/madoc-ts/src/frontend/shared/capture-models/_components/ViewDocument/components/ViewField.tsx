@@ -7,10 +7,20 @@ import { BaseField } from '../../../types/field-types';
 import { FieldSection } from '../ViewDocument.styles';
 import { ViewSelector } from './ViewSelector';
 
-export function ViewField({ field, fluidImage }: { field: BaseField; fluidImage?: boolean }) {
+export function ViewField({
+  field,
+  fluidImage,
+  revisionId,
+}: {
+  field: BaseField;
+  fluidImage?: boolean;
+  revisionId?: string;
+}) {
   const ref = useRef<HTMLDivElement>(null);
+
   const helper = useSelectorHelper();
-  const selector = field.selector ? resolveSelector(field.selector) : undefined;
+
+  const selector = field.selector ? resolveSelector(field.selector, revisionId) : undefined;
   const selectorId = selector?.id;
   const [isOn, trigger] = useDecayState();
 
@@ -23,9 +33,20 @@ export function ViewField({ field, fluidImage }: { field: BaseField; fluidImage?
         }
       });
     }
-  }, [helper, selectorId]);
+  }, [helper, selectorId, trigger]);
 
-  if (!field.selector) {
+  useEffect(() => {
+    if (selectorId) {
+      return helper.withSelector(selectorId).on('hover', () => {
+        trigger();
+        if (ref.current) {
+          ref.current.scrollIntoView({ block: 'nearest', inline: 'center' });
+        }
+      });
+    }
+  }, [helper, selectorId, trigger]);
+
+  if (!selector) {
     return <FieldPreview key={field.id} field={field} />;
   }
 
@@ -37,7 +58,7 @@ export function ViewField({ field, fluidImage }: { field: BaseField; fluidImage?
       onMouseLeave={() => (selectorId ? helper.clearHighlight(selectorId) : null)}
       data-highlighted={isOn}
     >
-      <ViewSelector selector={field.selector} fluidImage={fluidImage} />
+      <ViewSelector selector={selector} fluidImage={fluidImage} />
       <FieldPreview field={field} />
     </FieldSection>
   );

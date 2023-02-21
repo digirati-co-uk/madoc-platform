@@ -1,6 +1,7 @@
 import React from 'react';
 import { RouteObject } from 'react-router-dom';
 import { annotationStylesRoutes } from './pages/annotation-styles/index';
+import { CanvasExport } from './pages/content/canvases/canvas-export';
 import { CanvasJson } from './pages/content/canvases/canvas-json';
 import { CanvasPlaintext } from './pages/content/canvases/canvas-plaintext';
 import { CanvasSearchIndex } from './pages/content/canvases/canvas-search-index';
@@ -11,6 +12,7 @@ import { ConfigureLanguages } from './pages/content/internationalisation/configu
 import { EditTranslation } from './pages/content/internationalisation/edit-translation';
 import { ViewCanvasLinking } from './pages/content/linking/view-linking';
 import { ManifestCollections } from './pages/content/manifests/manifest-collections';
+import { ManifestExport } from './pages/content/manifests/manifest-export';
 import { ListMedia } from './pages/content/media/list-media';
 import { Media } from './pages/content/media/media';
 import { ViewMedia } from './pages/content/media/view-media';
@@ -176,7 +178,7 @@ export const routes: RouteObject[] = [
       },
       {
         path: '/manifests/:manifestId/canvases/:id/json',
-        element: <CanvasJson />,
+        element: <CanvasExport />,
       },
       {
         path: '/manifests/:manifestId/canvases/:id/delete',
@@ -223,6 +225,10 @@ export const routes: RouteObject[] = [
       {
         path: '/manifests/:id/ocr',
         element: <OcrManifest />,
+      },
+      {
+        path: '/manifests/:id/export',
+        element: <ManifestExport />,
       },
     ],
   },

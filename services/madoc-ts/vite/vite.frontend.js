@@ -19,6 +19,7 @@ export default defineConfig({
         site: 'src/site.html',
         admin: 'src/admin.html',
       },
+      external: ['csv-stringify'],
     },
     outDir: `dist/frontend-site`,
     manifest: true,
