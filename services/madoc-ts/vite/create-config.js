@@ -54,9 +54,10 @@ const TO_BUNDLE = [
   'react/jsx-runtime',
   'rich-markdown-editor',
   'react-iiif-vault',
+  'react-dnd',
 ];
 
-const DEDUPE = ['react', 'react-dom', 'styled-components'];
+const DEDUPE = ['react', 'react-dom', 'styled-components', 'react-dnd', 'react-dnd-multi-backend'];
 
 export function createConfig(name, entry) {
   return ({ command, mode }) => ({
