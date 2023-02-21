@@ -29,7 +29,7 @@ export const DefaultSubmitButton: EditorRenderingConfig['SubmitButton'] = ({ aft
   );
   const deselectRevision = useDeselectRevision();
 
-  const [saveRevision, { isLoading, isSuccess, reset, status }] = useMutation(async (status: string) => {
+  const [saveRevision, { isLoading, isSuccess, reset }] = useMutation(async (status: string) => {
     if (!currentRevision) {
       throw new Error(t('Unable to save your submission'));
     }
