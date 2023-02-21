@@ -301,13 +301,13 @@ function ViewSingleReview({
           ) : null}
         </ReviewActionBar>
         <ReviewPreview>
-          <div style={{ width: '40%' }}>
+          <div style={{ width: '40%', maxWidth: 420 }}>
             <CanvasViewerEditorStyleReset>
               <EditorSlots.TopLevelEditor />
             </CanvasViewerEditorStyleReset>
             <EditorSlots.SubmitButton captureModel={captureModel} />
           </div>
-          <div style={{ minWidth: '60%', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
             <ReviewDropdownContainer>
               <Button $link {...buttonProps}>
                 View options
