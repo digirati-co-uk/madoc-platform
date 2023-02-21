@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 
-const MaximiseWindowContainer = styled.div<{ $open: boolean }>`
+export const MaximiseWindowContainer = styled.div<{ $open: boolean }>`
   height: 100%;
   background: #fff;
   flex: 1 1 0;
@@ -41,7 +41,7 @@ export const MaximiseWindow: React.FC<{
   }, [isOpen, onChange]);
 
   return (
-    <MaximiseWindowContainer $open={isOpen}>
+    <MaximiseWindowContainer $open={isOpen} data-open={isOpen}>
       {children(useMemo(() => ({ toggle, isOpen }), [isOpen, toggle]))}
     </MaximiseWindowContainer>
   );
