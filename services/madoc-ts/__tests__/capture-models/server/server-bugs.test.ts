@@ -251,7 +251,6 @@ describe('Capture model server bugs', () => {
               {
                 "allowMultiple": true,
                 "id": "76abd494-2ead-4a81-995f-63e730d25b2f",
-                "immutable": false,
                 "label": "vertaling en transcriptie",
                 "properties": {
                   "transcriptie": [
