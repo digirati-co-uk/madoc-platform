@@ -12,7 +12,7 @@ export const Search = () => {
   return (
     <StaticPage title="search">
       <Slot name="common-breadcrumbs">
-        <DisplayBreadcrumbs currentPage="Search" />
+        <DisplayBreadcrumbs />
       </Slot>
 
       <Slot name="search-page-heading">
@@ -32,7 +32,6 @@ export const Search = () => {
           </Slot>
 
           <Slot name="search-page-results">
-            <SearchPagination />
             <AppliedFacets />
             <SearchPageResults />
           </Slot>
