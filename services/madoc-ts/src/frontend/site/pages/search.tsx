@@ -1,44 +1,22 @@
 import React from 'react';
 import { Slot } from '../../shared/page-blocks/slot';
-import { useSearchQuery } from '../hooks/use-search-query';
-import { StaticPage } from '../features/StaticPage';
 import { SearchPageFilters } from '../features/SearchPageFilters';
 import { AppliedFacets } from '../features/AppliedFacets';
-import { Heading1 } from '../../shared/typography/Heading1';
 import { SearchPagination } from '../features/SearchPagination';
 import { SearchPageResults } from '../features/SearchPageResults';
-import { DisplayBreadcrumbs, useBreadcrumbs } from '../../shared/components/Breadcrumbs';
-import { useRouteContext } from '../hooks/use-route-context';
-import { LocaleString } from '../../shared/components/LocaleString';
+import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { SearchHeading } from '../features/SearchPageHeading';
+import { StaticPage } from '../features/StaticPage';
 
-export const Search: React.FC = () => {
-  const { rawQuery, page, fulltext } = useSearchQuery();
-
-  const breads = useBreadcrumbs();
-  const isGlobal = !!breads.subpage;
-
-  const getHeading = () => {
-    if (breads.manifest) return breads.manifest?.name;
-    else if (breads.collection) return breads.collection.name;
-    else {
-      return breads.project?.name;
-    }
-  };
-
+export const Search = () => {
   return (
-    <StaticPage title="Search">
+    <StaticPage title="search">
       <Slot name="common-breadcrumbs">
         <DisplayBreadcrumbs currentPage="Search" />
       </Slot>
 
-      <Slot name="search-heading">
-        {isGlobal ? (
-          <Heading1>“{fulltext}” search</Heading1>
-        ) : (
-          <Heading1>
-            search in <LocaleString>{getHeading()}</LocaleString>
-          </Heading1>
-        )}
+      <Slot name="search-page-heading">
+        <SearchHeading />
       </Slot>
 
       <div style={{ display: 'flex' }}>
@@ -54,6 +32,7 @@ export const Search: React.FC = () => {
           </Slot>
 
           <Slot name="search-page-results">
+            <SearchPagination />
             <AppliedFacets />
             <SearchPageResults />
           </Slot>
