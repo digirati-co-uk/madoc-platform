@@ -671,10 +671,13 @@ export class ApiClient {
   }
 
   async prepareResourceClaim(projectId: string | number, claim: ResourceClaim) {
-    return this.request<{ claim: CrowdsourcingTask }>(`/api/madoc/projects/${projectId}/prepare-claim`, {
-      method: 'POST',
-      body: claim,
-    });
+    return this.request<{ claim: CrowdsourcingTask; model?: { id: string } }>(
+      `/api/madoc/projects/${projectId}/prepare-claim`,
+      {
+        method: 'POST',
+        body: claim,
+      }
+    );
   }
 
   async saveResourceClaim(projectId: string | number, taskId: string, body: { status: number; revisionId?: string }) {
@@ -2209,17 +2212,19 @@ export class ApiClient {
     projectId: string | number,
     query: { entity?: string; status?: 'approved' | 'drafts' | 'all' }
   ) {
-    return this.request<Array<{
-      model_id: string;
-      key: string;
-      doc_id: string;
-      id: string;
-      type: string;
-      value: any;
-      revision: string;
-      revises: string;
-      target: CaptureModel['target'];
-    }>>(`/api/madoc/projects/${projectId}/raw-model-fields?${stringify(query)}`);
+    return this.request<
+      Array<{
+        model_id: string;
+        key: string;
+        doc_id: string;
+        id: string;
+        type: string;
+        value: any;
+        revision: string;
+        revises: string;
+        target: CaptureModel['target'];
+      }>
+    >(`/api/madoc/projects/${projectId}/raw-model-fields?${stringify(query)}`);
   }
 
   async getUserDetails() {

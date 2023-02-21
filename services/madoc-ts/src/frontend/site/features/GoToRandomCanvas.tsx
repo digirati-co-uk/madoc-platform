@@ -21,7 +21,7 @@ export const GoToRandomCanvas: React.FC<{
   const navigate = useNavigate();
   const createLink = useRelativeLinks();
   const { showCaptureModelOnManifest } = useProjectShadowConfiguration();
-  const [getRandomCanvas] = useGetRandomCanvas();
+  const [getRandomCanvas, getRandomCanvasStatus] = useGetRandomCanvas();
   const user = useUser();
   const [error, setError] = useState(false);
 
@@ -33,7 +33,7 @@ export const GoToRandomCanvas: React.FC<{
     <Button
       $primary={$primary}
       $large={$large}
-      disabled={error}
+      disabled={error || getRandomCanvasStatus.isLoading}
       onClick={() => {
         getRandomCanvas().then(resp => {
           if (resp && resp.manifest && resp.canvas) {
@@ -50,7 +50,15 @@ export const GoToRandomCanvas: React.FC<{
         });
       }}
     >
-      {error ? t('No available canvases') : label ? <LocaleString>{label}</LocaleString> : t('Go to random Canvas')}
+      {getRandomCanvasStatus.isLoading ? (
+        t('Finding canvas...')
+      ) : error ? (
+        t('No available canvases')
+      ) : label ? (
+        <LocaleString>{label}</LocaleString>
+      ) : (
+        t('Go to random Canvas')
+      )}
     </Button>
   );
 };

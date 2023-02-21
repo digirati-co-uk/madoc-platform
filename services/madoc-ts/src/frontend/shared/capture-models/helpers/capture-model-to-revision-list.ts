@@ -90,6 +90,11 @@ export function fixModelBugs(captureModel: CaptureModel) {
               },
             });
 
+            // Also need to set the list to `allowMultiple=true`
+            for (const item of list) {
+              item.allowMultiple = true;
+            }
+            // And finally set it.
             parent.properties[property] = [toAdd, ...list];
           }
         }

@@ -35,6 +35,7 @@ const TaskListContainer = styled.div`
 `;
 
 const TaskPreviewContainer = styled.div`
+  position: relative;
   min-width: 600px;
   flex: 1;
   width: 750px;
