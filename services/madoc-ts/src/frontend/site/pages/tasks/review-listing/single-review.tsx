@@ -54,7 +54,7 @@ const ReviewContainer = styled.div`
   display: flex;
   flex-direction: column;
 
-  ${MaximiseWindowContainer} [data-open="true"] & {
+  &[data-is-max-window='true'] {
     height: 100vh;
   }
 `;
@@ -241,7 +241,7 @@ function ViewSingleReview({
       }}
       annotationTheme={annotationTheme}
     >
-      <ReviewContainer>
+      <ReviewContainer data-is-max-window={isOpen}>
         <ReviewHeader>
           <Label>
             {metadata && metadata.subject ? <LocaleString>{metadata.subject.label}</LocaleString> : task.name}
