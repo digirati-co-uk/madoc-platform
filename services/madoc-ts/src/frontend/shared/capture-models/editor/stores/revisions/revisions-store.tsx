@@ -520,17 +520,27 @@ export const revisionStore: RevisionsModel = {
       if (state.unsavedRevisionIds.indexOf(revisionId) !== -1) {
         const newRevision = await createRevision(oldRevision, status);
         // actions.importRevision({ revisionRequest: newRevision });
+
+        // Apply some properties.
+        oldRevision.author = newRevision.author;
+        oldRevision.revision.status = newRevision.revision.status;
+        oldRevision.revision.authors = newRevision.revision.authors;
+        oldRevision.captureModelId = newRevision.captureModelId;
+
         actions.saveRevision({ revisionId });
       } else {
         // disable this for now.
         const newRevision = await updateRevision(oldRevision, status);
         // actions.importRevision({ revisionRequest: newRevision });
+        oldRevision.author = newRevision.author;
+        oldRevision.revision.status = newRevision.revision.status;
+        oldRevision.revision.authors = newRevision.revision.authors;
+        oldRevision.captureModelId = newRevision.captureModelId;
       }
     }
   ),
 
   importRevision: action((state, { revisionRequest }) => {
-
     const foundStructure = revisionRequest.revision.structureId
       ? findStructure({ structure: state.structure } as any, revisionRequest.revision.structureId)
       : null;
