@@ -51,6 +51,8 @@ supports a wider range of IIIF resources as a result.
 * Fixed notification showing on document panel when panel is empty
 * Fixed bug where "choice" was not reset after making a submission
 * Fixed manifest thumbnail bug where it sometimes skipped first canvas
+* Fixed bug with "Start contributing" returning invalid results
+* Fixed bug with "Max contributors" if user had already started working
 
 ### Added
 
