@@ -519,36 +519,34 @@ export const revisionStore: RevisionsModel = {
       const oldRevision = state.revisions[revisionId];
       if (state.unsavedRevisionIds.indexOf(revisionId) !== -1) {
         const newRevision = await createRevision(oldRevision, status);
-        // actions.importRevision({ revisionRequest: newRevision });
-
-        // Apply some properties.
-        oldRevision.author = newRevision.author;
-        oldRevision.revision.status = newRevision.revision.status;
-        oldRevision.revision.authors = newRevision.revision.authors;
-        oldRevision.captureModelId = newRevision.captureModelId;
+        actions.importRevision({ revisionRequest: newRevision });
 
         actions.saveRevision({ revisionId });
       } else {
         // disable this for now.
         const newRevision = await updateRevision(oldRevision, status);
-        // actions.importRevision({ revisionRequest: newRevision });
-        oldRevision.author = newRevision.author;
-        oldRevision.revision.status = newRevision.revision.status;
-        oldRevision.revision.authors = newRevision.revision.authors;
-        oldRevision.captureModelId = newRevision.captureModelId;
+        actions.importRevision({ revisionRequest: newRevision });
       }
     }
   ),
 
   importRevision: action((state, { revisionRequest }) => {
-    const foundStructure = revisionRequest.revision.structureId
-      ? findStructure({ structure: state.structure } as any, revisionRequest.revision.structureId)
-      : null;
-    if (foundStructure && foundStructure.type === 'model' && foundStructure.modelRoot) {
-      applyModelRootToDocument(revisionRequest.document, foundStructure.modelRoot);
+    const existing = state.revisions[revisionRequest.revision.id];
+    if (!existing) {
+      // Instead of replacing the revision....
+      const foundStructure = revisionRequest.revision.structureId
+        ? findStructure({ structure: state.structure } as any, revisionRequest.revision.structureId)
+        : null;
+      if (foundStructure && foundStructure.type === 'model' && foundStructure.modelRoot) {
+        applyModelRootToDocument(revisionRequest.document, foundStructure.modelRoot);
+      }
+      state.revisions[revisionRequest.revision.id] = revisionRequest;
+    } else {
+      existing.author = revisionRequest.author;
+      existing.revision.status = revisionRequest.revision.status;
+      existing.revision.authors = revisionRequest.revision.authors;
+      existing.captureModelId = revisionRequest.captureModelId;
     }
-
-    state.revisions[revisionRequest.revision.id] = revisionRequest;
   }),
 
   setRevisionLabel: action((state, { revisionId: customRevisionId, label }) => {
