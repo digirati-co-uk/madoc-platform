@@ -1,11 +1,9 @@
-import { forkDocument } from '../helpers/create-revision-document';
+import deepmerge from 'deepmerge';
 import { createRevisionRequest } from '../helpers/create-revision-request';
 import { expandModelFields } from '../helpers/expand-model-fields';
 import { filterEmptyFields, filterRemovedFields } from '../helpers/field-post-filters';
 import { filterCaptureModel } from '../helpers/filter-capture-model';
 import { findStructure } from '../helpers/find-structure';
-import { formPropertyValue } from '../helpers/fork-field';
-import { isEntityList } from '../helpers/is-entity';
 import { recurseRevisionDependencies } from '../helpers/recurse-revision-dependencies';
 import { traverseDocument } from '../helpers/traverse-document';
 import { CaptureModel } from '../types/capture-model';
@@ -22,9 +20,9 @@ export function processImportedRevision(
 
   const document = filterCaptureModel(
     revision.id,
-    captureModel.document,
+    deepmerge({}, captureModel.document),
     flatFields,
-    (field, parent) => {
+    (field, parent, key) => {
       if (field.revision) {
         return allRevisions.indexOf(field.revision) !== -1;
       }

@@ -14,6 +14,8 @@ import { WarningMessage } from '../../../src/frontend/shared/callouts/WarningMes
 import { getDefaultAnnotationStyles } from '../../../src/frontend/shared/capture-models/AnnotationStyleContext';
 import { defaultTheme } from '../../../src/frontend/shared/capture-models/editor/themes';
 import { captureModelToRevisionList } from '../../../src/frontend/shared/capture-models/helpers/capture-model-to-revision-list';
+import { createChoice } from '../../../src/frontend/shared/capture-models/helpers/create-choice';
+import { generateId } from '../../../src/frontend/shared/capture-models/helpers/generate-id';
 import { ViewDocument } from '../../../src/frontend/shared/capture-models/inspector/ViewDocument';
 import { RevisionProviderWithFeatures } from '../../../src/frontend/shared/capture-models/new/components/RevisionProviderWithFeatures';
 import { CoreModelEditor, CoreModelEditorProps } from '../../../src/frontend/shared/capture-models/new/CoreModelEditor';
@@ -27,9 +29,10 @@ import { TaskTabBackground, TaskTabItem, TaskTabRow } from '../../../src/fronten
 import { ViewerSavingContext } from '../../../src/frontend/shared/hooks/use-viewer-saving';
 import { AnnotationStyles } from '../../../src/types/annotation-styles';
 import { ErrorMessage } from '../../../src/frontend/shared/callouts/ErrorMessage';
+import { generateModelFields } from '../../../src/utility/generate-model-fields';
 
 export interface CaptureModelTestHarnessProps {
-  captureModel: CaptureModel;
+  captureModel: CaptureModel | { document: CaptureModel['document'] };
   revision?: string;
   annotationStyles?: Partial<AnnotationStyles['theme']>;
   target?: EditorContentVariations;
@@ -43,8 +46,30 @@ export interface CaptureModelTestHarnessProps {
 
 export type ModelStory = StoryObj<typeof CaptureModelTestHarness>;
 
+function modelWithStructure(input: any): CaptureModel {
+  const newModel = deepmerge({}, input);
+  if (!newModel.id) {
+    newModel.id = generateId();
+  }
+  if (!newModel.structure) {
+    const modelFields = generateModelFields(newModel.document);
+    newModel.structure = createChoice({
+      label: 'Default',
+      items: [
+        {
+          id: generateId(),
+          type: 'model',
+          label: 'Default',
+          fields: modelFields,
+        },
+      ],
+    });
+  }
+  return newModel;
+}
+
 export function CaptureModelTestHarness(props: CaptureModelTestHarnessProps) {
-  const [captureModel, setCaptureModel] = useState<CaptureModel>(() => deepmerge({}, props.captureModel));
+  const [captureModel, setCaptureModel] = useState<CaptureModel>(() => modelWithStructure(props.captureModel));
   const [k, setK] = useState(props.initialTab || 0);
   const [revision, setRevision] = useState(props.revision);
   const styles = useMemo(() => deepmerge(props.annotationStyles, getDefaultAnnotationStyles()), [

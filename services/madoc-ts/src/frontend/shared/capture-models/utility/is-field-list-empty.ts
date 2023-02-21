@@ -1,3 +1,4 @@
+import { getEmptyBorder } from '../editor/input-types/BorderField/BorderField';
 import { BaseField } from '../types/field-types';
 
 export const isEmptyFieldList = (fields: BaseField[]) => {
@@ -6,6 +7,10 @@ export const isEmptyFieldList = (fields: BaseField[]) => {
   }
   for (const field of fields) {
     if (field.value) {
+      // Hack. We need an "isEmpty" on the field definitions I think.
+      if (field.type === 'border-field') {
+        return field.value.size === 0;
+      }
       return false;
     }
 

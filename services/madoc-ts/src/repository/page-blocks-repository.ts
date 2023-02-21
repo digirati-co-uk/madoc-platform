@@ -166,11 +166,11 @@ export class PageBlocksRepository extends BaseRepository {
       csp.navigation_title as child__navigation_title,
       csp.parent_page as child__parent_page
     from site_pages page
-             left join site_pages csp on csp.parent_page = page.id and csp.hide_from_navigation = false and csp.site_id = 1
-             left join site_pages parent on parent.id = page.parent_page and parent.site_id = 1
+             left join site_pages csp on csp.parent_page = page.id and csp.hide_from_navigation = false and csp.site_id = ${siteId}
+             left join site_pages parent on parent.id = page.parent_page and parent.site_id = ${siteId}
     where ${parentPage}
       and page.hide_from_navigation = false
-      and page.site_id = 1
+      and page.site_id = ${siteId}
   `;
   }
 
