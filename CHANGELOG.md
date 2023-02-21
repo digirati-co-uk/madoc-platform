@@ -53,6 +53,7 @@ supports a wider range of IIIF resources as a result.
 * Fixed manifest thumbnail bug where it sometimes skipped first canvas
 * Fixed bug with "Start contributing" returning invalid results
 * Fixed bug with "Max contributors" if user had already started working
+* Fixed "Maximise window" to avoid cutting off the top section of the header
 
 ### Added
 
