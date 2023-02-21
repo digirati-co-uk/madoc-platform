@@ -49,14 +49,14 @@ describe('create-new-entity-instance', () => {
         'test'
       )
     ).toMatchInlineSnapshot(`
-      Object {
+      {
         "allowMultiple": true,
         "id": "[auto-generated]",
         "immutable": false,
         "label": "Some nested entity",
-        "properties": Object {
-          "label": Array [
-            Object {
+        "properties": {
+          "label": [
+            {
               "id": "[auto-generated]",
               "label": "Test field A",
               "type": "JEST_CUSTOM_FIELD",
@@ -128,14 +128,14 @@ describe('create-new-entity-instance', () => {
         'test'
       )
     ).toMatchInlineSnapshot(`
-      Object {
+      {
         "allowMultiple": true,
         "id": "[auto-generated]",
         "immutable": false,
         "label": "Some nested entity",
-        "properties": Object {
-          "label": Array [
-            Object {
+        "properties": {
+          "label": [
+            {
               "allowMultiple": true,
               "id": "[auto-generated]",
               "label": "Test field A",

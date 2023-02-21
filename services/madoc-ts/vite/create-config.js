@@ -5,6 +5,7 @@ const pkg = JSON.parse(readFileSync('./package.json').toString());
 
 export const ENV = [
   'NODE_ENV',
+  'NODE_DEBUG',
   'MIGRATE',
   'API_GATEWAY',
   'GATEWAY_HOST',
@@ -51,6 +52,7 @@ const TO_BUNDLE = [
   'node-fetch',
   'react-accessible-dropdown-menu-hook',
   'react/jsx-runtime',
+  'rich-markdown-editor',
   'react-iiif-vault',
 ];
 
@@ -93,6 +95,9 @@ export function createConfig(name, entry) {
           'stream',
           'whatwg-url',
           'zlib',
+          'util',
+          'debug',
+          'csv-stringify',
           ...Object.keys(pkg.dependencies),
           ...Object.keys(pkg.devDependencies),
         ].filter(t => TO_BUNDLE.indexOf(t) === -1),

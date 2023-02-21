@@ -93,6 +93,8 @@ export function canUserClaimCanvas(options: {
   const preventMultipleUserSubmissionsPerResource =
     options.config.modelPageOptions?.preventMultipleUserSubmissionsPerResource;
 
+  let hasUserAlreadyClaimed = false;
+
   if (preventContributionAfterRejection || preventMultipleUserSubmissionsPerResource) {
     for (const subtask of options.parentTask.subtasks || []) {
       if (
@@ -111,6 +113,8 @@ export function canUserClaimCanvas(options: {
         ) {
           return false;
         }
+
+        hasUserAlreadyClaimed = true;
       }
     }
   }
@@ -125,8 +129,21 @@ export function canUserClaimCanvas(options: {
     return true;
   }
 
+  if (hasUserAlreadyClaimed) {
+    return true;
+  }
+
   // Has to be less than the stated maximum
   const subtasks = (options.parentTask.subtasks || []).filter(canvasTaskCountsAsContribution);
 
-  return subtasks.length < maxContributors;
+  const users: string[] = [];
+  for (const task of subtasks) {
+    if (task.assignee) {
+      if (!users.includes(task.assignee.id)) {
+        users.push(task.assignee.id);
+      }
+    }
+  }
+
+  return users.length < maxContributors;
 }

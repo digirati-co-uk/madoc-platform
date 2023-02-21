@@ -1,5 +1,5 @@
+import '../../src/frontend/shared/capture-models/editor/bundle';
 import { hydrateCompressedModel } from '../../src/frontend/shared/capture-models/helpers/hydrate-compressed-model';
-import { select } from '@storybook/addon-knobs';
 import * as React from 'react';
 import { ViewDocument } from '../../src/frontend/shared/capture-models/inspector/ViewDocument';
 import { RevisionList } from '../../src/frontend/shared/components/RevisionList';
@@ -94,10 +94,11 @@ const fixtureOptions = [
 
 export default { title: 'Legacy/Model inspector' };
 
-export const View_Document = () => {
-  const { document } = select<any>('Test Model', fixtureOptions, fixtureOptions[1]);
-
-  return <ViewDocument document={document} />;
+export const View_Document_1 = () => {
+  return <ViewDocument document={fixtureOptions[0].document} />;
+};
+export const View_Document_2 = () => {
+  return <ViewDocument document={fixtureOptions[1].document} />;
 };
 
 export const Revision_List = () => {

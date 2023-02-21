@@ -37,6 +37,7 @@ export const CanvasViewerContentOverlay = styled.div`
 export const CanvasViewerControls = styled(ButtonRow)`
   position: absolute;
   right: 1em;
+  top: 0;
   z-index: 10;
 `;
 
@@ -47,6 +48,7 @@ export const CanvasViewerButton = styled(Button)`
   border: none;
   background: #fff;
   display: flex;
+  color: #477af1;
 
   &:focus {
     outline: 2px solid orange;

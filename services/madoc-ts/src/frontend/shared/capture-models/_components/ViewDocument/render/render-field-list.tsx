@@ -8,7 +8,7 @@ import { FieldPreviewWrapper } from '../ViewDocument.styles';
 
 export const renderFieldList = (
   fields: BaseField[],
-  { fluidImage }: { fluidImage?: boolean; tModel: (s: string) => string }
+  { fluidImage, revisionId }: { fluidImage?: boolean; tModel: (s: string) => string; revisionId?: string }
 ) => {
   if (!fields || isEmptyFieldList(fields)) {
     return null;
@@ -25,7 +25,7 @@ export const renderFieldList = (
   return (
     <FieldPreviewWrapper>
       {filteredFields.map(field => (
-        <ViewField key={field.id} field={field} fluidImage={fluidImage} />
+        <ViewField key={field.id} field={field} fluidImage={fluidImage} revisionId={revisionId} />
       ))}
     </FieldPreviewWrapper>
   );

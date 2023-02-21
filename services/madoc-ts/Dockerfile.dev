@@ -1,8 +1,8 @@
-FROM node:14
+FROM node:18
 
 WORKDIR /home/node/app
 
-RUN npm install -g pm2@4.5.6 ts-node
+RUN npm install -g pm2@5.2.2 ts-node
 
 COPY ./package.json /home/node/app/package.json
 COPY ./yarn.lock /home/node/app/yarn.lock

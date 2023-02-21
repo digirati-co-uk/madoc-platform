@@ -14,6 +14,7 @@ export const JWT_REQUEST_PATH = process.env.JWT_REQUEST_DIR || path.join(ROOT_PA
 export const JWT_RESPONSE_PATH = process.env.JWT_RESPONSE_DIR || path.join(ROOT_PATH, 'service-jwt-responses');
 export const OPEN_SSL_KEY_PATH = process.env.MADOC_KEY_PATH || path.join(ROOT_PATH, 'openssl-certs');
 export const STORAGE_API_PATH = path.join(FILES_PATH, 'storage-api');
+export const EXPORT_PATH = process.env.EXPORT_PATH || path.join(FILES_PATH, 'export');
 export const MANIFESTS_PATH = path.join(FILES_PATH, 'original/madoc-manifests/');
 
 export const HTML_SITE_PATH = path.join(ROOT_PATH, 'dist', 'frontend-site', 'src', 'site.html');

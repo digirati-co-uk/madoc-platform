@@ -35,7 +35,7 @@ import { Button } from '../../../../shared/navigation/Button';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import { EditIcon } from '../../../../shared/icons/EditIcon';
 import { DirectEditButton } from '../../../../shared/capture-models/new/components/DirectEditButton';
-import { MaximiseWindow } from '../../../../shared/layout/MaximiseWindow';
+import { MaximiseWindow, MaximiseWindowContainer } from '../../../../shared/layout/MaximiseWindow';
 import { FullScreenExitIcon } from '../../../../shared/icons/FullScreenExitIcon';
 import { FullScreenEnterIcon } from '../../../../shared/icons/FullScreenEnterIcon';
 import { Runtime } from '@atlas-viewer/atlas';
@@ -51,6 +51,12 @@ const ReviewContainer = styled.div`
   position: relative;
   overflow-x: hidden;
   height: 80vh;
+  display: flex;
+  flex-direction: column;
+
+  &[data-is-max-window='true'] {
+    height: 100vh;
+  }
 `;
 
 const ReviewHeader = styled.div`
@@ -67,6 +73,7 @@ const ReviewHeader = styled.div`
 const Label = styled.div`
   font-weight: 600;
   padding: 0.6em;
+  white-space: nowrap;
 `;
 
 const SubLabel = styled.div`
@@ -126,6 +133,7 @@ const ReviewDropdownPopup = styled.div<{ $visible?: boolean }>`
 const ReviewPreview = styled.div`
   display: flex;
   overflow-y: scroll;
+  flex: 1;
 
   > div {
     padding: 0.6em;
@@ -233,7 +241,7 @@ function ViewSingleReview({
       }}
       annotationTheme={annotationTheme}
     >
-      <ReviewContainer>
+      <ReviewContainer data-is-max-window={isOpen}>
         <ReviewHeader>
           <Label>
             {metadata && metadata.subject ? <LocaleString>{metadata.subject.label}</LocaleString> : task.name}
@@ -300,13 +308,13 @@ function ViewSingleReview({
           ) : null}
         </ReviewActionBar>
         <ReviewPreview>
-          <div style={{ width: '40%' }}>
+          <div style={{ width: '40%', maxWidth: 420 }}>
             <CanvasViewerEditorStyleReset>
               <EditorSlots.TopLevelEditor />
             </CanvasViewerEditorStyleReset>
             <EditorSlots.SubmitButton captureModel={captureModel} />
           </div>
-          <div style={{ minWidth: '60%', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
             <ReviewDropdownContainer>
               <Button $link {...buttonProps}>
                 View options
@@ -340,6 +348,7 @@ function ViewSingleReview({
             <CanvasViewerGrid ref={gridRef}>
               {canvas ? (
                 <EditorContentViewer
+                  height={'100%' as any}
                   canvasId={canvas.id}
                   onCreated={rt => {
                     return ((runtime as any).current = rt.runtime);

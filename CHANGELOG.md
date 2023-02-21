@@ -51,6 +51,9 @@ supports a wider range of IIIF resources as a result.
 * Fixed notification showing on document panel when panel is empty
 * Fixed bug where "choice" was not reset after making a submission
 * Fixed manifest thumbnail bug where it sometimes skipped first canvas
+* Fixed bug with "Start contributing" returning invalid results
+* Fixed bug with "Max contributors" if user had already started working
+* Fixed "Maximise window" to avoid cutting off the top section of the header
 
 ### Added
 
@@ -108,6 +111,17 @@ supports a wider range of IIIF resources as a result.
 * Added `createdAt` and `updatedAt` fields to capture models
 * Added ability to create automated user types
 * Added experimental Auto-review process
+* Added new Export mechanism
+  * Preview Manifest or Canvas exports in the Admin
+  * Run a large project export as a background task and download a zip at the end
+  * Supported exports:
+    * Canvas API - A JSON document with each canvas from the API
+    * Manifest API - A JSON document with each manifest from the API
+    * Canvas model export - Export full raw capture models for each canvas
+    * Canvas plaintext - export plaintext transcriptions for each document
+    * Canvas annotation export - a JSON document with the output of each canvas annotations (w3c/oa/json)
+    * Project API - A JSON document with project metadata
+    * Simple CSV export - exports all capture models into a csv file.
 * Added new interactions in the Document panel for annotations
 * Added secondary view for "X hours ago" to show the date and time on click (browser preference)
 * Added "Generate PDF" option for manifests using PDiiif

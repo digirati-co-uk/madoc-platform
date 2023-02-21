@@ -3,7 +3,7 @@ import { userWithScope } from '../../../utility/user-with-scope';
 import { mapMetadata } from '../../../utility/iiif-metadata';
 import { getProjectsByResource } from '../../../database/queries/get-projects-by-resource';
 
-export const getManifestProjects: RouteMiddleware<{ id: string }> = async context => {
+export const getManifestProjects: RouteMiddleware<{ id: string }> = async (context, next) => {
   const { siteId } = userWithScope(context, []);
   const manifestId = Number(context.params.id);
 
@@ -19,4 +19,6 @@ export const getManifestProjects: RouteMiddleware<{ id: string }> = async contex
         })
       : [],
   };
+
+  await next();
 };

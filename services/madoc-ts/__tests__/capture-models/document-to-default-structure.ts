@@ -71,13 +71,13 @@ describe('document to default structure', () => {
 
   test('nested paragraph', () => {
     expect(documentToDefaultStructure(paragraphs as any)).toMatchInlineSnapshot(`
-      Array [
-        Array [
+      [
+        [
           "paragraph",
-          Array [
-            Array [
+          [
+            [
               "lines",
-              Array [
+              [
                 "text",
               ],
             ],
@@ -99,38 +99,38 @@ describe('document to default structure', () => {
         },
       } as any,
       `
-      Object {
-        "document": Object {
+      {
+        "document": {
           "id": Any<String>,
           "label": "Untitled document",
-          "properties": Object {
-            "paragraph": Array [
-              Object {
+          "properties": {
+            "paragraph": [
+              {
                 "allowMultiple": true,
                 "description": "Region of the page denoting a single paragraph",
                 "id": "6778df2b-adcc-4e31-92dd-6b13ffdacde1",
                 "label": "Paragraph",
                 "labelledBy": "lines",
                 "pluralLabel": "Paragraphs",
-                "properties": Object {
-                  "lines": Array [
-                    Object {
+                "properties": {
+                  "lines": [
+                    {
                       "allowMultiple": true,
                       "description": "All of the lines inside of a paragraph",
                       "id": "9e8a07e0-4288-49f6-a808-1015c965fd2f",
                       "label": "Line",
                       "labelledBy": "text",
                       "pluralLabel": "Lines",
-                      "properties": Object {
-                        "text": Array [
-                          Object {
+                      "properties": {
+                        "text": [
+                          {
                             "allowMultiple": true,
                             "description": "Single word, phrase or the whole line",
                             "id": "0368274e-dc81-4d46-b362-99f8125dfd4f",
                             "label": "Text of line",
-                            "selector": Object {
+                            "selector": {
                               "id": "3ef44d17-793d-4db6-b0c6-30562ed77827",
-                              "state": Object {
+                              "state": {
                                 "height": 32,
                                 "width": 105,
                                 "x": 117,
@@ -143,9 +143,9 @@ describe('document to default structure', () => {
                           },
                         ],
                       },
-                      "selector": Object {
+                      "selector": {
                         "id": "d8349c6c-7aff-47d7-a66b-2033ae8c3447",
-                        "state": Object {
+                        "state": {
                           "height": 32,
                           "width": 705,
                           "x": 117,
@@ -157,9 +157,9 @@ describe('document to default structure', () => {
                     },
                   ],
                 },
-                "selector": Object {
+                "selector": {
                   "id": "00ea0eab-b367-4525-9f72-5efa4742b2ea",
-                  "state": Object {
+                  "state": {
                     "height": 2532,
                     "width": 1794,
                     "x": 102,
@@ -174,14 +174,14 @@ describe('document to default structure', () => {
           "type": "entity",
         },
         "id": Any<String>,
-        "structure": Object {
-          "fields": Array [
-            Array [
+        "structure": {
+          "fields": [
+            [
               "paragraph",
-              Array [
-                Array [
+              [
+                [
                   "lines",
-                  Array [
+                  [
                     "text",
                   ],
                 ],
