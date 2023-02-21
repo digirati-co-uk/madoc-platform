@@ -11,7 +11,7 @@ const PaginationContainer = styled.div`
   position: absolute;
   right: 0;
   top: 0;
-  z-index: 99;
+  z-index: 13;
   justify-content: space-between;
   align-items: center;
   width: 130px;

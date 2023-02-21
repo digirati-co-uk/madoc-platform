@@ -14,12 +14,12 @@ const MaximiseWindowContainer = styled.div<{ $open: boolean }>`
   ${props =>
     props.$open &&
     css`
-      position: absolute;
-      top: 0;
+      position: fixed;
+      top: 36px;
       right: 0;
       bottom: 0;
       left: 0;
-      z-index: 11;
+      z-index: 14;
     `}
 `;
 

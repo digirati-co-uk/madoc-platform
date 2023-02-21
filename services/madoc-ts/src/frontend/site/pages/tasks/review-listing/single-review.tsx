@@ -67,6 +67,7 @@ const ReviewHeader = styled.div`
 const Label = styled.div`
   font-weight: 600;
   padding: 0.6em;
+  white-space: nowrap;
 `;
 
 const SubLabel = styled.div`
