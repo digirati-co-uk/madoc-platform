@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 const MaximiseWindowContainer = styled.div<{ $open: boolean }>`
@@ -15,11 +15,13 @@ const MaximiseWindowContainer = styled.div<{ $open: boolean }>`
     props.$open &&
     css`
       position: fixed;
-      top: 36px;
+      top: 0;
       right: 0;
       bottom: 0;
       left: 0;
-      z-index: 14;
+      z-index: 22;
+      overflow-y: scroll;
+      overscroll-behavior-y: contain;
     `}
 `;
 
