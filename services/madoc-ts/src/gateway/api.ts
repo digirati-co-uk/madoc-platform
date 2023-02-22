@@ -1846,7 +1846,7 @@ export class ApiClient {
 
   // NEW SEARCH API.
   async enrichmentIngestResource(request: EnrichmentIndexPayload) {
-    return this.request(`/api/enrichment/internal/madoc/resource/`, {
+    return this.request(`/api/enrichment/resource/`, {
       method: 'POST',
       body: request,
     });
