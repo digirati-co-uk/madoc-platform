@@ -15,7 +15,7 @@ export const isEmptyFieldList = (fields: BaseField[]) => {
     }
 
     if (field.selector) {
-      if (field.selector.revisedBy && field.selector.revisedBy.length) {
+      if ((field.selector.revisedBy && field.selector.revisedBy.length) || field.selector.state) {
         return false;
       }
     }
