@@ -8,8 +8,16 @@ export const isEmptyFieldList = (fields: BaseField[]) => {
   for (const field of fields) {
     if (field.value) {
       // Hack. We need an "isEmpty" on the field definitions I think.
+      if (field.type === 'international-field') {
+        const intValues = Object.values(field.value);
+        return intValues.every((s: any) => s[0] === '');
+      }
+
       if (field.type === 'border-field') {
         return field.value.size === 0;
+      }
+      if (field.type === 'checkbox-list-field') {
+        return Object.keys(field.value).length < 1;
       }
       return false;
     }
