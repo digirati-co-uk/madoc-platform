@@ -51,7 +51,7 @@ export function ProjectContributors(props: ProjectContributors) {
 
   const [, isBot] = useBots();
 
-  if (!data || !contributors?.length) return <p>no</p>;
+  if (!data || !contributors?.length) return <p>No contributors yet</p>;
 
   return (
     <ContributorsWrapper>
