@@ -42,10 +42,10 @@ export function getDefaultAnnotationStyles(): AnnotationStyles['theme'] {
       },
     },
     contributedDocument: {
-      hidden: true,
-      borderWidth: '0px',
-      borderColor: 'rgba(0,0,0,0)',
-      backgroundColor: 'rgba(0,0,0,0)',
+      hidden: false,
+      borderWidth: '1px',
+      borderColor: 'rgba(87,36,203,0.5)',
+      backgroundColor: 'rgba(87,36,203,0.2)',
     },
     submissions: {
       hidden: false,
