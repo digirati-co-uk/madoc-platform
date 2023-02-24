@@ -16,20 +16,19 @@ export function CreateNewTopic() {
   const hasTopic = data || isLoading;
 
   const [createNewEntityType, status] = useMutation(async (input: any) => {
-    input.other_labels = (input.other_labels || []).filter((e: any) => e.value !== '');
+    // input.other_labels = (input.other_labels || []).filter((e: any) => e.value !== '');
 
     if (hasTopic) {
       if (!data) {
         return;
       }
-
       // @todo this will hopefully change.
       input.type = getValue(data.label);
+      input.type_slug = data.slug;
     }
-
     return {
-      response: await api.authority.entity.create(input),
-      topicType: input.type,
+      response: await api.enrichment.upsertTopic(input),
+      topicType: input.type_slug,
     };
   });
   const model = useMemo(() => {
@@ -48,13 +47,14 @@ export function CreateNewTopic() {
   }
 
   if (status.isSuccess) {
+    console.log(status.data?.response)
     return (
       <div>
         Added!
-        <pre>{JSON.stringify(status.data)}</pre>
+        <pre>{JSON.stringify(status.data?.response)}</pre>
         {/* @todo hopefully this will change to slug field. */}
         {status.data ? (
-          <Button $primary as={HrefLink} href={`/topics/${status.data.topicType}/${status.data.response.id}`}>
+          <Button $primary as={HrefLink} href={`/topics/${status.data.topicType}/${status.data.response.label}`}>
             Go to topic
           </Button>
         ) : null}
@@ -70,7 +70,7 @@ export function CreateNewTopic() {
     <div>
       <EditShorthandCaptureModel
         template={model}
-        data={{ label: '', type: topicType === '_' ? '' : topicType, other_labels: [{ value: '', language: '' }] }}
+        data={{ label: '', type: topicType, other_labels: [{ value: '', language: '' }] }}
         onSave={async input => {
           await createNewEntityType(input);
         }}
