@@ -23,6 +23,7 @@ export const CanvasSnippet: React.FC<{
     collectionId: collectionId,
     subRoute: model ? 'model' : undefined,
   });
+  console.log(data)
 
   if (!data) {
     return (

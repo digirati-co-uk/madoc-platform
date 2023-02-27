@@ -6,6 +6,7 @@ import { useTopicItems } from '../../shared/hooks/use-topic-items';
 import { Slot } from '../../shared/page-blocks/slot';
 import { TopicHero } from '../features/TopicHero';
 import { useParams } from 'react-router-dom';
+import { FeaturedTopicItems } from "../features/FeaturedTopicItems";
 
 export function ViewTopic() {
   const { topic } = useParams<Record<'topic', any>>();
@@ -19,6 +20,10 @@ export function ViewTopic() {
 
       <Slot name="topic-header">
         <TopicHero />
+      </Slot>
+
+      <Slot name="topic-featured">
+        <FeaturedTopicItems />
       </Slot>
 
       <div>
@@ -40,7 +45,6 @@ export function ViewTopic() {
           stale={search.isLoading}
           extraQuery={query}
         />
-        {/*<pre>{JSON.stringify(search.data, null, 2)}</pre>*/}
       </div>
     </>
   );
