@@ -86,6 +86,7 @@ import { updateInvitation } from './routes/manage-site/update-invitation';
 import { updateSiteDetails } from './routes/manage-site/update-site-details';
 import { updateUserSiteRole } from './routes/manage-site/update-user-site-role';
 import { getAllProjectNotes } from './routes/projects/get-all-project-notes';
+import { siteCompletions } from './routes/site/site-completions';
 import { siteDetails } from './routes/site/site-details';
 import { deleteManifestSummary } from './routes/iiif/manifests/delete-manifest-summary';
 import { siteManifestBuild } from './routes/site/site-manifest-build';
@@ -610,6 +611,7 @@ export const router = new TypedRouter({
     siteCanvasTasks,
   ],
   'site-configuration': [TypedRouter.GET, '/s/:slug/madoc/api/configuration', siteConfiguration],
+  'site-completion': [TypedRouter.GET, '/s/:slug/madoc/api/completions/:type', siteCompletions],
   'site-model-configuration': [TypedRouter.GET, '/s/:slug/madoc/api/configuration/model', siteModelConfiguration],
   'site-page-navigation': [TypedRouter.GET, '/s/:slug/madoc/api/pages/navigation/:paths*', sitePageNavigation],
   'site-facet-configuration': [

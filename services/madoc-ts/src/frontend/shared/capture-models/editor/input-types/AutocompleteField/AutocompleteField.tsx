@@ -25,6 +25,11 @@ export type CompletionItem = {
   label: string | InternationalString;
   resource_class?: string;
   score?: number;
+
+  // Future fields to use.
+  description?: string | InternationalString;
+
+  language?: string;
 };
 
 function renderOptionLabel(option: CompletionItem) {

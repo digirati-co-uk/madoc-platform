@@ -1,4 +1,5 @@
 import { i18n } from 'i18next';
+import { CompletionsExtension } from '../extensions/completions/extension';
 import { PluginManager } from '../frontend/shared/plugins/plugin-manager';
 import { ChangeDiscoveryRepository } from '../activity-streams/change-discovery-repository';
 import { ApiClient } from '../gateway/api';
@@ -41,6 +42,8 @@ declare module 'koa' {
     siteManager: SiteUserRepository;
     pluginManager: PluginManager;
     cron: CronJobs;
+
+    completions: CompletionsExtension;
     ajv: Ajv;
     staticPage?: string | ((token: string) => Promise<string | undefined>) | ((token: string) => undefined | string);
     disposableApis: ApiClient[];
