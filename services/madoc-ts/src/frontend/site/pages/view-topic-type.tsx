@@ -4,16 +4,22 @@ import { Slot } from '../../shared/page-blocks/slot';
 import { TopicTypeHero } from '../features/TopicTypeHero';
 import { TopicGrid } from '../features/TopicGrid';
 import { TopicTypePagination } from '../features/TopicTypePagination';
+import { FeaturedTopics } from '../features/FeaturedTopics';
+import { StaticPage } from '../features/StaticPage';
 
 export function ViewTopicType() {
   return (
-    <>
+    <StaticPage title="topic-type">
       <Slot name="common-breadcrumbs">
         <DisplayBreadcrumbs />
       </Slot>
 
       <Slot name="topic-type-hero">
         <TopicTypeHero />
+      </Slot>
+
+      <Slot name="topic-type-featured">
+        <FeaturedTopics />
       </Slot>
 
       <Slot name="topic-type-topics">
@@ -23,8 +29,6 @@ export function ViewTopicType() {
       <Slot name="topic-type-pagination">
         <TopicTypePagination />
       </Slot>
-
-      {/*<pre>{JSON.stringify(data, null, 2)}</pre>*/}
-    </>
+    </StaticPage>
   );
 }

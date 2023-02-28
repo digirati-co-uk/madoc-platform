@@ -3,7 +3,7 @@ import { BaseDjangoExtension } from './base-django-extension';
 import { EnrichmentIndexPayload } from './types';
 import { ApiKey } from '../../types/api-key';
 import { SearchQuery, SearchResponse } from '../../types/search';
-import { EntityTypeMadocResponse } from './authority/types';
+import {EntityMadocResponse, EntityTypeMadocResponse} from './authority/types';
 
 export class EnrichmentExtension extends BaseDjangoExtension {
   // /api/madoc/indexable_data/
@@ -51,6 +51,12 @@ export class EnrichmentExtension extends BaseDjangoExtension {
     });
   }
 
+  upsertTopic(topic: Partial<EntityMadocResponse>) {
+    return this.api.request<EntityMadocResponse>(`/api/enrichment/entity/`, {
+      method: 'POST',
+      body: topic,
+    });
+  }
   getTopicItems(query: SearchQuery, page = 1, madoc_id?: string) {
     return this.api.request<SearchResponse>(`/madoc/api/search`, {
       method: 'POST',
