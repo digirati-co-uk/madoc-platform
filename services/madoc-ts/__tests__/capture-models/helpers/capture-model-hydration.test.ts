@@ -41,12 +41,12 @@ describe('capture model hydration', () => {
         label: 'Testing',
       })
     ).toMatchInlineSnapshot(`
-      Object {
+      {
         "id": "[--------GENERATED-ID--------]",
         "label": "My form",
-        "properties": Object {
-          "label": Array [
-            Object {
+        "properties": {
+          "label": [
+            {
               "id": "[--------GENERATED-ID--------]",
               "label": "The label",
               "selector": undefined,
@@ -71,12 +71,12 @@ describe('capture model hydration', () => {
         { keepExtraFields: true }
       )
     ).toMatchInlineSnapshot(`
-      Object {
+      {
         "id": "[--------GENERATED-ID--------]",
         "label": "My form",
-        "properties": Object {
-          "label": Array [
-            Object {
+        "properties": {
+          "label": [
+            {
               "id": "[--------GENERATED-ID--------]",
               "label": "The label",
               "selector": undefined,
@@ -84,8 +84,8 @@ describe('capture model hydration', () => {
               "value": "Testing",
             },
           ],
-          "name": Array [
-            Object {
+          "name": [
+            {
               "id": "[--------GENERATED-ID--------]",
               "label": "Name of person",
               "type": "text-field",
@@ -104,19 +104,19 @@ describe('capture model hydration', () => {
         label: ['Testing A', 'Testing B'],
       })
     ).toMatchInlineSnapshot(`
-      Object {
+      {
         "id": "[--------GENERATED-ID--------]",
         "label": "My form",
-        "properties": Object {
-          "label": Array [
-            Object {
+        "properties": {
+          "label": [
+            {
               "id": "[--------GENERATED-ID--------]",
               "label": "The label",
               "selector": undefined,
               "type": "text-field",
               "value": "Testing A",
             },
-            Object {
+            {
               "id": "[--------GENERATED-ID--------]",
               "label": "The label",
               "selector": undefined,
@@ -137,19 +137,19 @@ describe('capture model hydration', () => {
         name: 'testing',
       })
     ).toMatchInlineSnapshot(`
-      Object {
+      {
         "id": "[--------GENERATED-ID--------]",
         "label": "My form",
-        "properties": Object {
-          "label": Array [
-            Object {
+        "properties": {
+          "label": [
+            {
               "id": "[--------GENERATED-ID--------]",
               "label": "The label",
               "selector": undefined,
               "type": "text-field",
               "value": "Testing A",
             },
-            Object {
+            {
               "id": "[--------GENERATED-ID--------]",
               "label": "The label",
               "selector": undefined,
@@ -157,8 +157,8 @@ describe('capture model hydration', () => {
               "value": "Testing B",
             },
           ],
-          "name": Array [
-            Object {
+          "name": [
+            {
               "id": "[--------GENERATED-ID--------]",
               "label": "Name of person",
               "selector": undefined,
@@ -229,12 +229,12 @@ describe('capture model hydration', () => {
     };
 
     expect(hydrateCaptureModel(complexModelWithEntity, doc)).toMatchInlineSnapshot(`
-      Object {
+      {
         "id": "[--------GENERATED-ID--------]",
         "label": "My form",
-        "properties": Object {
-          "label": Array [
-            Object {
+        "properties": {
+          "label": [
+            {
               "id": "[--------GENERATED-ID--------]",
               "label": "The label",
               "selector": undefined,
@@ -242,13 +242,13 @@ describe('capture model hydration', () => {
               "value": "Some label",
             },
           ],
-          "people": Array [
-            Object {
+          "people": [
+            {
               "id": "[--------GENERATED-ID--------]",
               "label": "Name of person",
-              "properties": Object {
-                "city": Array [
-                  Object {
+              "properties": {
+                "city": [
+                  {
                     "id": "[--------GENERATED-ID--------]",
                     "label": "City",
                     "selector": undefined,
@@ -256,8 +256,8 @@ describe('capture model hydration', () => {
                     "value": "Glasgow",
                   },
                 ],
-                "name": Array [
-                  Object {
+                "name": [
+                  {
                     "id": "[--------GENERATED-ID--------]",
                     "label": "First name",
                     "selector": undefined,
@@ -268,12 +268,12 @@ describe('capture model hydration', () => {
               },
               "type": "entity",
             },
-            Object {
+            {
               "id": "[--------GENERATED-ID--------]",
               "label": "Name of person",
-              "properties": Object {
-                "city": Array [
-                  Object {
+              "properties": {
+                "city": [
+                  {
                     "id": "[--------GENERATED-ID--------]",
                     "label": "City",
                     "selector": undefined,
@@ -281,8 +281,8 @@ describe('capture model hydration', () => {
                     "value": "Edinburgh",
                   },
                 ],
-                "name": Array [
-                  Object {
+                "name": [
+                  {
                     "id": "[--------GENERATED-ID--------]",
                     "label": "First name",
                     "selector": undefined,
@@ -307,20 +307,20 @@ describe('capture model hydration', () => {
         name: 'text-field',
       })
     ).toMatchInlineSnapshot(`
-      Object {
+      {
         "id": "[--------GENERATED-ID--------]",
         "label": "Root",
-        "properties": Object {
-          "label": Array [
-            Object {
+        "properties": {
+          "label": [
+            {
               "id": "[--------GENERATED-ID--------]",
               "label": "label",
               "type": "text-field",
               "value": null,
             },
           ],
-          "name": Array [
-            Object {
+          "name": [
+            {
               "id": "[--------GENERATED-ID--------]",
               "label": "name",
               "type": "text-field",
@@ -343,54 +343,54 @@ describe('capture model hydration', () => {
         'person.relation.label': 'text-field',
       })
     ).toMatchInlineSnapshot(`
-      Object {
+      {
         "id": "[--------GENERATED-ID--------]",
         "label": "Root",
-        "properties": Object {
-          "label": Array [
-            Object {
+        "properties": {
+          "label": [
+            {
               "id": "[--------GENERATED-ID--------]",
               "label": "label",
               "type": "text-field",
               "value": null,
             },
           ],
-          "person": Array [
-            Object {
+          "person": [
+            {
               "id": "[--------GENERATED-ID--------]",
               "label": "person",
-              "properties": Object {
-                "city": Array [
-                  Object {
+              "properties": {
+                "city": [
+                  {
                     "id": "[--------GENERATED-ID--------]",
                     "label": "city",
                     "type": "text-field",
                     "value": null,
                   },
                 ],
-                "name": Array [
-                  Object {
+                "name": [
+                  {
                     "id": "[--------GENERATED-ID--------]",
                     "label": "name",
                     "type": "text-field",
                     "value": null,
                   },
                 ],
-                "relation": Array [
-                  Object {
+                "relation": [
+                  {
                     "id": "[--------GENERATED-ID--------]",
                     "label": "relation",
-                    "properties": Object {
-                      "description": Array [
-                        Object {
+                    "properties": {
+                      "description": [
+                        {
                           "id": "[--------GENERATED-ID--------]",
                           "label": "description",
                           "type": "text-field",
                           "value": null,
                         },
                       ],
-                      "label": Array [
-                        Object {
+                      "label": [
+                        {
                           "id": "[--------GENERATED-ID--------]",
                           "label": "label",
                           "type": "text-field",
@@ -425,33 +425,33 @@ describe('capture model hydration', () => {
         },
       })
     ).toMatchInlineSnapshot(`
-      Object {
+      {
         "id": "[--------GENERATED-ID--------]",
         "label": "Root",
-        "properties": Object {
-          "label": Array [
-            Object {
+        "properties": {
+          "label": [
+            {
               "id": "[--------GENERATED-ID--------]",
               "label": "label",
               "type": "text-field",
               "value": null,
             },
           ],
-          "person": Array [
-            Object {
+          "person": [
+            {
               "id": "[--------GENERATED-ID--------]",
               "label": "person",
-              "properties": Object {
-                "city": Array [
-                  Object {
+              "properties": {
+                "city": [
+                  {
                     "id": "[--------GENERATED-ID--------]",
                     "label": "city",
-                    "options": Array [
-                      Object {
+                    "options": [
+                      {
                         "text": "Aberdeen",
                         "value": "aberdeen",
                       },
-                      Object {
+                      {
                         "text": "Glasgow",
                         "value": "glasgow",
                       },
@@ -460,8 +460,8 @@ describe('capture model hydration', () => {
                     "value": null,
                   },
                 ],
-                "name": Array [
-                  Object {
+                "name": [
+                  {
                     "id": "[--------GENERATED-ID--------]",
                     "label": "name",
                     "type": "text-field",
@@ -487,12 +487,12 @@ describe('capture model hydration', () => {
         title: 'testing a title',
       })
     ).toMatchInlineSnapshot(`
-      Object {
+      {
         "id": "[--------GENERATED-ID--------]",
         "label": "Root",
-        "properties": Object {
-          "title": Array [
-            Object {
+        "properties": {
+          "title": [
+            {
               "id": "[--------GENERATED-ID--------]",
               "label": "title",
               "selector": undefined,

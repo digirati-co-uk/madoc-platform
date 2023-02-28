@@ -1,8 +1,11 @@
 import { BaseTask } from '../../../../gateway/tasks/base-task';
 import { Status } from '../../../shared/atoms/Status';
+import { FilePreview } from '../../../shared/components/FilePreview';
+import { RootStatistics } from '../../../shared/components/RootStatistics';
 import { TableContainer, TableRow, TableRowLabel } from '../../../shared/layout/Table';
 import { UniversalComponent } from '../../../types';
 import React, { useEffect, useState } from 'react';
+import { ExportResourceTask } from './export-resource-task';
 import { GenericTask } from './generic-task';
 import { ManifestImportTask } from './manifest-import-task';
 import { ImportManifestTask } from '../../../../gateway/tasks/import-manifest';
@@ -26,6 +29,8 @@ type TaskRouterType = {
 
 function renderTask({ task }: TaskRouterType['data'], statusBar?: JSX.Element) {
   switch (task.type) {
+    case 'export-resource-task':
+      return <ExportResourceTask task={task as any} statusBar={statusBar} />;
     case 'madoc-manifest-import':
       return <ManifestImportTask task={task as ImportManifestTask} statusBar={statusBar} />;
     case 'madoc-collection-import':
@@ -68,9 +73,10 @@ export const TaskRouter: UniversalComponent<TaskRouterType> = createUniversalCom
   () => {
     const { t } = useTranslation();
     const [isDone, setIsDone] = useState(false);
-    const { resolvedData: data, status } = usePaginatedData(TaskRouter, undefined, {
-      refetchInterval: isDone ? undefined : 3000,
-      refetchOnWindowFocus: false,
+    const { latestData: data, status } = usePaginatedData(TaskRouter, undefined, {
+      refetchInterval: isDone ? undefined : 2000,
+      refetchOnWindowFocus: true,
+      keepPreviousData: true,
     });
 
     useEffect(() => {
@@ -114,11 +120,15 @@ export const TaskRouter: UniversalComponent<TaskRouterType> = createUniversalCom
           {renderTask(
             data,
             hasSubtasks ? (
-              <SubtaskProgress
-                total={(data.task.subtasks || []).length}
-                done={(data.task.subtasks || []).filter(e => e.status === 3).length}
-                progress={(data.task.subtasks || []).filter(e => e.status === 2).length}
-              />
+              data.task?.root_statistics ? (
+                <RootStatistics {...data.task.root_statistics} />
+              ) : (
+                <SubtaskProgress
+                  total={(data.task.subtasks || []).length}
+                  done={(data.task.subtasks || []).filter(e => e.status === 3).length}
+                  progress={(data.task.subtasks || []).filter(e => e.status === 2).length}
+                />
+              )
             ) : (
               <React.Fragment />
             )
@@ -129,7 +139,7 @@ export const TaskRouter: UniversalComponent<TaskRouterType> = createUniversalCom
   },
   {
     async getData(key, vars, api) {
-      const task = await api.getTaskById(vars.id);
+      const task = await api.getTask(vars.id, { root_statistics: true, all: true });
       return { task };
     },
     getKey(params, { page = 1 }) {

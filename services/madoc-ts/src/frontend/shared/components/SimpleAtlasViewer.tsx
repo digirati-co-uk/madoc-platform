@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { AnnotationPage } from '@iiif/presentation-3';
 import { RegionHighlight, Runtime } from '@atlas-viewer/atlas';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -8,6 +8,7 @@ import { CanvasViewerButton, CanvasViewerControls } from '../../site/features/Ca
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
 import { ViewReadOnlyAnnotation } from '../atlas/ViewReadOnlyAnnotation';
 import { GhostCanvas } from '../atoms/GhostCanvas';
+import { useSelectorController } from '../capture-models/editor/stores/selectors/selector-helper';
 import { useBrowserLayoutEffect } from '../hooks/use-browser-layout-effect';
 import { HomeIcon } from '../icons/HomeIcon';
 import { MinusIcon } from '../icons/MinusIcon';
@@ -31,6 +32,7 @@ export const SimpleAtlasViewer = React.forwardRef<
     project: { atlasBackground },
   } = useSiteConfiguration();
   const [isLoaded, setIsLoaded] = useState(false);
+  const controller = useSelectorController();
   const readOnlyAnnotations = useReadOnlyAnnotations(false);
 
   const goHome = () => {
@@ -54,6 +56,17 @@ export const SimpleAtlasViewer = React.forwardRef<
   useBrowserLayoutEffect(() => {
     setIsLoaded(true);
   }, []);
+
+  useEffect(() => {
+    return controller.on('zoomTo', e => {
+      const found = readOnlyAnnotations.find(r => {
+        return r.id === e.selectorId;
+      });
+      if (found) {
+        runtime.current?.world.gotoRegion(found.target);
+      }
+    });
+  }, [readOnlyAnnotations, controller]);
 
   if (!canvas) {
     return null;

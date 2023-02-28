@@ -15,6 +15,7 @@ export function RegionHighlight({
   interactive,
   region,
   onClick,
+  onHover,
   onSave,
   maintainAspectRatio,
   disableCardinalControls,
@@ -26,6 +27,7 @@ export function RegionHighlight({
   isEditing: boolean;
   onSave: (annotation: RegionHighlightType) => void;
   onClick: (annotation: RegionHighlightType) => void;
+  onHover: (annotation: RegionHighlightType) => void;
   maintainAspectRatio?: boolean;
   disableCardinalControls?: boolean;
   interactive?: boolean;
@@ -34,6 +36,7 @@ export function RegionHighlight({
   const saveCallback = useCallback(
     (bounds: any) => {
       console.trace();
+      console.log(region, bounds)
       if (isEditing) {
         onSave({ id: region.id, x: region.x, y: region.y, height: region.height, width: region.width, ...bounds });
       }
@@ -59,6 +62,10 @@ export function RegionHighlight({
           e.preventDefault();
           e.stopPropagation();
           onClick(region);
+        }}
+        relativeStyle
+        onMouseEnter={() => {
+          onHover(region);
         }}
         target={{ x: 0, y: 0, width: region.width, height: region.height }}
         style={style}

@@ -12,15 +12,15 @@ describe('revisionFilter', () => {
   });
   test('single-field-with-revision', () => {
     expect(revisionFilter(single01 as CaptureModel, '7c26cf57-5950-4849-b533-11e0ee4afa4b')).toMatchInlineSnapshot(`
-      Object {
+      {
         "captureModelId": "b329e009-1c8a-4bed-bfde-c2a587a22f97",
-        "document": Object {
+        "document": {
           "description": "",
           "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
           "label": "Simple document",
-          "properties": Object {
-            "name": Array [
-              Object {
+          "properties": {
+            "name": [
+              {
                 "description": "The name of the thing",
                 "id": "eafb62d7-71b7-47bd-b887-def8655d8d2a",
                 "label": "Name",
@@ -32,8 +32,8 @@ describe('revisionFilter', () => {
           },
           "type": "entity",
         },
-        "revision": Object {
-          "fields": Array [
+        "revision": {
+          "fields": [
             "name",
           ],
           "id": "7c26cf57-5950-4849-b533-11e0ee4afa4b",
@@ -49,51 +49,51 @@ describe('revisionFilter', () => {
   });
   test('nested-revision', () => {
     expect(revisionFilter(single03 as CaptureModel, 'fa500021-7408-4318-ab05-ac6e4d4a3096')).toMatchInlineSnapshot(`
-Object {
-  "captureModelId": "2cc4131d-4f8d-4ceb-b140-48cd513b5e4f",
-  "document": Object {
-    "description": "",
-    "id": "a8d5ff43-adb2-456a-a615-3d24fbfa05f7",
-    "label": "Nested choices",
-    "properties": Object {
-      "person": Array [
-        Object {
-          "description": "Describe a person",
-          "id": "5c8a5874-8bca-422c-be71-300612d67c72",
-          "label": "Person",
-          "properties": Object {
-            "firstName": Array [
-              Object {
-                "id": "dda6d8bc-ca6d-48e0-8bcc-a24537586346",
-                "label": "First name",
-                "revision": "fa500021-7408-4318-ab05-ac6e4d4a3096",
-                "type": "text-field",
-                "value": "Some value",
+      {
+        "captureModelId": "2cc4131d-4f8d-4ceb-b140-48cd513b5e4f",
+        "document": {
+          "description": "",
+          "id": "a8d5ff43-adb2-456a-a615-3d24fbfa05f7",
+          "label": "Nested choices",
+          "properties": {
+            "person": [
+              {
+                "description": "Describe a person",
+                "id": "5c8a5874-8bca-422c-be71-300612d67c72",
+                "label": "Person",
+                "properties": {
+                  "firstName": [
+                    {
+                      "id": "dda6d8bc-ca6d-48e0-8bcc-a24537586346",
+                      "label": "First name",
+                      "revision": "fa500021-7408-4318-ab05-ac6e4d4a3096",
+                      "type": "text-field",
+                      "value": "Some value",
+                    },
+                  ],
+                },
+                "type": "entity",
               },
             ],
           },
           "type": "entity",
         },
-      ],
-    },
-    "type": "entity",
-  },
-  "revision": Object {
-    "fields": Array [
-      Array [
-        "person",
-        Array [
-          "firstName",
-          "lastName",
-        ],
-      ],
-      "name",
-    ],
-    "id": "fa500021-7408-4318-ab05-ac6e4d4a3096",
-  },
-  "source": "structure",
-}
-`);
+        "revision": {
+          "fields": [
+            [
+              "person",
+              [
+                "firstName",
+                "lastName",
+              ],
+            ],
+            "name",
+          ],
+          "id": "fa500021-7408-4318-ab05-ac6e4d4a3096",
+        },
+        "source": "structure",
+      }
+    `);
   });
   test('dual-transcription', () => {
     expect(revisionFilter(single04 as any, 'test-person-a')).toMatchInlineSnapshot(`null`);

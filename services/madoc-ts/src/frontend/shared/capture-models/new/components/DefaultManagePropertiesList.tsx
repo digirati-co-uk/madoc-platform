@@ -99,7 +99,11 @@ export const DefaultManagePropertyList: EditorRenderingConfig['ManagePropertyLis
             const selector = item?.selector?.id;
 
             return (
-              <InstanceContainer onMouseEnter={onMouseEnter(selector)} onMouseLeave={onMouseLeave(selector)}>
+              <InstanceContainer
+                data-instance-id={id}
+                onMouseEnter={onMouseEnter(selector)}
+                onMouseLeave={onMouseLeave(selector)}
+              >
                 <InstanceComponent>{comp}</InstanceComponent>
                 <InstanceRemove onClick={() => removeItem(id)}>
                   <CloseIcon />

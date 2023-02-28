@@ -96,7 +96,7 @@ export const StartMerge: React.FC<{
       <EditorToolbarIcon>
         <CallMergeIcon />
       </EditorToolbarIcon>
-      <EditorToolbarLabel>start merge</EditorToolbarLabel>
+      <EditorToolbarLabel>Merge</EditorToolbarLabel>
     </EditorToolbarButton>
   );
 };

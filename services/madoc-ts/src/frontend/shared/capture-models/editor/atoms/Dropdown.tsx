@@ -82,6 +82,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
       getOptionValue={getValue}
       getOptionLabel={getLabel}
       renderOptionLabel={renderOptionLabel}
+      scrollMenuIntoView={false}
     />
   );
 };

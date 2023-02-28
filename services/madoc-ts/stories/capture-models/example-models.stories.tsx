@@ -1,3 +1,4 @@
+import '../../src/frontend/shared/capture-models/editor/bundle';
 import { useState } from 'react';
 import { captureModelShorthand } from '../../src/frontend/shared/capture-models/helpers/capture-model-shorthand';
 import * as React from 'react';

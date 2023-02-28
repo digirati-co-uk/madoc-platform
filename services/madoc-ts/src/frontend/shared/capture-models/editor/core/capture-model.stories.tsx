@@ -1,10 +1,9 @@
-import { CaptureModel } from '../../types/capture-model';
 import { Card } from '../atoms/Card';
 import { CaptureModelProvider } from './capture-model-provider';
 import * as React from 'react';
 import { useCaptureModel } from './capture-model';
-// @ts-ignore
-import notes from './capture-model.md';
+// // @ts-ignore
+// import notes from './capture-model.md';
 
 import model from '../../../../../../fixtures/simple.json';
 
@@ -16,7 +15,6 @@ const withSimpleCaptureModel = (Component: React.FC): React.FC => () => (
 
 export default {
   title: 'Core/Capture models',
-  parameters: { notes },
 };
 export const Label: React.FC = withSimpleCaptureModel(() => {
   const { captureModel } = useCaptureModel();

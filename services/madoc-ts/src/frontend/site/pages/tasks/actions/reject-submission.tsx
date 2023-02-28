@@ -9,7 +9,7 @@ import {
 } from '../../../../shared/navigation/EditorToolbar';
 import { ModalButton } from '../../../../shared/components/Modal';
 import { Button } from '../../../../shared/navigation/Button';
-import { DeleteForeverIcon } from '../../../../shared/icons/DeleteForeverIcon';
+import NoEntryIcon from '../../../../shared/icons/NoEntryIcon';
 
 export const RejectSubmission: React.FC<{ onReject: () => void; userTaskId: string }> = ({ onReject, userTaskId }) => {
   const api = useApi();
@@ -52,7 +52,7 @@ export const RejectSubmission: React.FC<{ onReject: () => void; userTaskId: stri
       disabled={isLoading}
       button={true}
       autoHeight={true}
-      title="Reject submission"
+      title="Reject"
       render={() => (
         <div>
           <strong>Are you sure you want to delete this revision and mark the task as rejected?</strong>
@@ -84,9 +84,9 @@ export const RejectSubmission: React.FC<{ onReject: () => void; userTaskId: stri
       )}
     >
       <EditorToolbarIcon>
-        <DeleteForeverIcon />
+        <NoEntryIcon />
       </EditorToolbarIcon>
-      <EditorToolbarLabel>reject submission</EditorToolbarLabel>
+      <EditorToolbarLabel>Reject</EditorToolbarLabel>
     </EditorToolbarButton>
   );
 };

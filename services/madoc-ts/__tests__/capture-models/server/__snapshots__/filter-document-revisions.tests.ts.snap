@@ -1,17 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Filter document revisions It can filter out new revision 1`] = `
-Object {
+{
   "id": "bb5aa1ec-bdb3-4e99-a47d-12f9bbc01d52",
   "label": "A project with boxes",
-  "properties": Object {
-    "boxes": Array [
-      Object {
+  "properties": {
+    "boxes": [
+      {
         "id": "54bf43db-765b-43fa-a71f-a9084c1187c2",
         "label": "boxes",
-        "properties": Object {
-          "description": Array [
-            Object {
+        "properties": {
+          "description": [
+            {
               "description": "What is in your box",
               "id": "3066d80b-6370-4e84-8f09-2d7eb3fbc379",
               "label": "Description",
@@ -24,9 +24,9 @@ Object {
           ],
         },
         "revision": "5325ebc1-2331-4a0c-a77a-27c7413ef743",
-        "selector": Object {
+        "selector": {
           "id": "388f0c61-e2bc-40c5-9c7c-dc4e5e1ffebe",
-          "state": Object {
+          "state": {
             "height": 408,
             "width": 480,
             "x": 860,
@@ -36,12 +36,12 @@ Object {
         },
         "type": "entity",
       },
-      Object {
+      {
         "id": "feaa163d-0668-4557-9494-6aa80659e203",
         "label": "boxes",
-        "properties": Object {
-          "description": Array [
-            Object {
+        "properties": {
+          "description": [
+            {
               "description": "What is in your box",
               "id": "b84f3423-a914-4b1b-bb7a-1248c093f334",
               "label": "Description",
@@ -52,7 +52,7 @@ Object {
             },
           ],
         },
-        "selector": Object {
+        "selector": {
           "id": "3e079573-4229-4886-8fcb-815f3d9ed729",
           "state": null,
           "type": "box-selector",
@@ -60,8 +60,8 @@ Object {
         "type": "entity",
       },
     ],
-    "test": Array [
-      Object {
+    "test": [
+      {
         "id": "ce769b17-f9c2-4eb8-a3db-c4f13da5ce81",
         "label": "test",
         "preset": "bentham",
@@ -70,7 +70,7 @@ Object {
         "type": "autocomplete-field",
         "value": null,
       },
-      Object {
+      {
         "id": "53d1e719-95c9-4be2-9889-3b947eb1e8a1",
         "label": "test",
         "preset": "bentham",

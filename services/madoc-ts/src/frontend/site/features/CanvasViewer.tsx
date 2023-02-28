@@ -19,9 +19,12 @@ import { useMetadataMenu } from '../hooks/canvas-menu/metadata-panel';
 import { usePersonalNotesMenu } from '../hooks/canvas-menu/personal-notes';
 import { useRevisionPanel } from '../hooks/canvas-menu/revision-panel';
 import { useTranscriptionMenu } from '../hooks/canvas-menu/transcription-panel';
+import { CanvasMenuHook } from '../hooks/canvas-menu/types';
 import { useViewerHeight } from '../hooks/use-viewer-height';
+import { ButtonIcon } from '../../shared/navigation/Button';
+import ResizeHandleIcon from '../../shared/icons/ResizeHandleIcon';
 
-export const CanvasViewer: React.FC<{
+export interface CanvasViewerProps {
   border?: string;
   sidebarHeading?: boolean;
   tabsTop?: boolean;
@@ -29,18 +32,59 @@ export const CanvasViewer: React.FC<{
   sidebarSpace?: boolean;
   verticalButtons?: boolean;
   btnColor?: string;
-}> = ({ border, sidebarHeading, tabsTop, tabsName, sidebarSpace, verticalButtons, btnColor, children }) => {
+
+  // Enable pins. MUST BE KEYS ON THE COMPONENT.
+  pins?: {
+    disableMetadata?: boolean;
+    disableAnnotationPanel?: boolean;
+    disableTranscriptionMenu?: boolean;
+    disableDocumentPanel?: boolean;
+    disableRevisionPanel?: boolean;
+    disablePersonalNotes?: boolean;
+  };
+
+  children?: React.ReactNode;
+}
+
+export function CanvasViewer({
+  pins = {},
+  border,
+  sidebarHeading,
+  tabsTop,
+  tabsName,
+  sidebarSpace,
+  verticalButtons,
+  btnColor,
+  children,
+}: CanvasViewerProps) {
   const [openPanel, setOpenPanel] = useLocalStorage<string>(`canvas-page-selected`, 'metadata');
   const [isOpen, setIsOpen] = useLocalStorage<boolean>(`canvas-page-sidebar`, false);
   const height = useViewerHeight();
+  const {
+    disableDocumentPanel,
+    disablePersonalNotes,
+    disableRevisionPanel,
+    disableAnnotationPanel,
+    disableTranscriptionMenu,
+    disableMetadata,
+  } = pins;
+
+  // @todo this needs a re-think.
   const menuItems = [
-    useMetadataMenu(),
-    useAnnotationPanel(openPanel === 'annotations' && isOpen),
-    useTranscriptionMenu(),
-    useDocumentPanel(),
-    useRevisionPanel(),
-    usePersonalNotesMenu(),
-  ];
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    disableMetadata ? null : useMetadataMenu(),
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    disableAnnotationPanel ? null : useAnnotationPanel(openPanel === 'annotations' && isOpen),
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    disableTranscriptionMenu ? null : useTranscriptionMenu(),
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    disableDocumentPanel ? null : useDocumentPanel(),
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    disableRevisionPanel ? null : useRevisionPanel(),
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    disablePersonalNotes ? null : usePersonalNotesMenu(),
+  ].filter(Boolean) as CanvasMenuHook[];
+
   const currentMenuItem = menuItems.find(e => e.id === openPanel);
   const borderColor = border ? border : 'transparent';
 
@@ -109,7 +153,11 @@ export const CanvasViewer: React.FC<{
               </LayoutSidebar>
             ) : null}
 
-            <LayoutHandle ref={refs.resizer as any} onClick={() => setIsOpen(o => !o)} />
+            <LayoutHandle ref={refs.resizer as any} onClick={() => setIsOpen(o => !o)}>
+              <ButtonIcon>
+                <ResizeHandleIcon />
+              </ButtonIcon>
+            </LayoutHandle>
             <LayoutContent
               $btnColor={btnColor}
               style={{ border: `1px solid ${borderColor}` }}
@@ -123,4 +171,4 @@ export const CanvasViewer: React.FC<{
       <ReactTooltip place="right" type="dark" effect="solid" />
     </>
   );
-};
+}

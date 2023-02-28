@@ -9,6 +9,7 @@ import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useProjectTemplate } from '../../../../shared/hooks/use-project-template';
 import { serverRendererFor } from '../../../../shared/plugins/external/server-renderer-for';
+import { ViewProjectExports } from '../../../features/view-project-exports';
 
 export const ProjectOverview: React.FC = () => {
   const params = useParams() as { id: string };
@@ -101,6 +102,8 @@ export const ProjectOverview: React.FC = () => {
           </Button>
         </ButtonRow>
       ) : null}
+
+      <ViewProjectExports />
     </div>
   );
 };

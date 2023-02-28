@@ -230,6 +230,9 @@ export const revisionStore: RevisionsModel = {
   popStructure: action(state => {
     state.idStack = state.idStack.slice(0, -1);
   }),
+  resetStructure: action(state => {
+    state.idStack = [];
+  }),
   setIsThankYou: action((state, payload) => {
     state.isThankYou = payload;
   }),
@@ -517,6 +520,7 @@ export const revisionStore: RevisionsModel = {
       if (state.unsavedRevisionIds.indexOf(revisionId) !== -1) {
         const newRevision = await createRevision(oldRevision, status);
         actions.importRevision({ revisionRequest: newRevision });
+
         actions.saveRevision({ revisionId });
       } else {
         // disable this for now.
@@ -527,13 +531,22 @@ export const revisionStore: RevisionsModel = {
   ),
 
   importRevision: action((state, { revisionRequest }) => {
-    const foundStructure = revisionRequest.revision.structureId
-      ? findStructure({ structure: state.structure } as any, revisionRequest.revision.structureId)
-      : null;
-    if (foundStructure && foundStructure.type === 'model' && foundStructure.modelRoot) {
-      applyModelRootToDocument(revisionRequest.document, foundStructure.modelRoot);
+    const existing = state.revisions[revisionRequest.revision.id];
+    if (!existing) {
+      // Instead of replacing the revision....
+      const foundStructure = revisionRequest.revision.structureId
+        ? findStructure({ structure: state.structure } as any, revisionRequest.revision.structureId)
+        : null;
+      if (foundStructure && foundStructure.type === 'model' && foundStructure.modelRoot) {
+        applyModelRootToDocument(revisionRequest.document, foundStructure.modelRoot);
+      }
+      state.revisions[revisionRequest.revision.id] = revisionRequest;
+    } else {
+      existing.author = revisionRequest.author;
+      existing.revision.status = revisionRequest.revision.status;
+      existing.revision.authors = revisionRequest.revision.authors;
+      existing.captureModelId = revisionRequest.captureModelId;
     }
-    state.revisions[revisionRequest.revision.id] = revisionRequest;
   }),
 
   setRevisionLabel: action((state, { revisionId: customRevisionId, label }) => {

@@ -94,6 +94,7 @@ export type RevisionsModel = {
   goToStructure: Action<RevisionsModel, string>;
   pushStructure: Action<RevisionsModel, string>;
   popStructure: Action<RevisionsModel>;
+  resetStructure: Action<RevisionsModel>;
   setIsThankYou: Action<RevisionsModel, boolean>;
   setIsPreviewing: Action<RevisionsModel, boolean>;
 

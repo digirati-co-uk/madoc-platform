@@ -140,10 +140,10 @@ describe('Extract valid user revision ids', () => {
     const user1 = extractValidUserRevisionsIds(model, 1);
 
     expect(user1).toMatchInlineSnapshot(`
-      Object {
-        "approvedRevisions": Array [],
-        "excludedRevisions": Array [],
-        "myRevisions": Array [
+      {
+        "approvedRevisions": [],
+        "excludedRevisions": [],
+        "myRevisions": [
           "5325ebc1-2331-4a0c-a77a-27c7413ef743",
         ],
       }
@@ -152,12 +152,12 @@ describe('Extract valid user revision ids', () => {
     const user2 = extractValidUserRevisionsIds(model, 2);
 
     expect(user2).toMatchInlineSnapshot(`
-      Object {
-        "approvedRevisions": Array [],
-        "excludedRevisions": Array [
+      {
+        "approvedRevisions": [],
+        "excludedRevisions": [
           "5325ebc1-2331-4a0c-a77a-27c7413ef743",
         ],
-        "myRevisions": Array [],
+        "myRevisions": [],
       }
     `);
   });
@@ -404,14 +404,14 @@ describe('Extract valid user revision ids', () => {
 
     const user1 = extractValidUserRevisionsIds(model, 1);
     expect(user1).toMatchInlineSnapshot(`
-      Object {
-        "approvedRevisions": Array [
+      {
+        "approvedRevisions": [
           "b7051f66-3937-4d7f-940e-2f9aae701ade",
           "be4df9b1-22af-4486-92a6-6355ca61ff2c",
           "a05443af-f69d-4ff1-9d7e-c0c6915f3939",
         ],
-        "excludedRevisions": Array [],
-        "myRevisions": Array [
+        "excludedRevisions": [],
+        "myRevisions": [
           "b7051f66-3937-4d7f-940e-2f9aae701ade",
           "be4df9b1-22af-4486-92a6-6355ca61ff2c",
           "9d373b5c-10b4-4d66-91cc-72e68672de62",
@@ -422,16 +422,16 @@ describe('Extract valid user revision ids', () => {
 
     const user2 = extractValidUserRevisionsIds(model, 2);
     expect(user2).toMatchInlineSnapshot(`
-      Object {
-        "approvedRevisions": Array [
+      {
+        "approvedRevisions": [
           "b7051f66-3937-4d7f-940e-2f9aae701ade",
           "be4df9b1-22af-4486-92a6-6355ca61ff2c",
           "a05443af-f69d-4ff1-9d7e-c0c6915f3939",
         ],
-        "excludedRevisions": Array [
+        "excludedRevisions": [
           "9d373b5c-10b4-4d66-91cc-72e68672de62",
         ],
-        "myRevisions": Array [],
+        "myRevisions": [],
       }
     `);
   });

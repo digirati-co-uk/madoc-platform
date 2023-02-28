@@ -14,6 +14,16 @@
       "type": "string"
     },
     "theme": {
+      "$ref": "#/definitions/MadocTheme"
+    }
+  },
+  "required": [
+    "name",
+    "theme",
+    "version"
+  ],
+  "definitions": {
+    "MadocTheme": {
       "allOf": [
         {
           "$ref": "#/definitions/MadocThemeBase"
@@ -27,19 +37,6 @@
           }
         }
       ]
-    }
-  },
-  "required": [
-    "name",
-    "theme",
-    "version"
-  ],
-  "definitions": {
-    "T": {
-      "type": "object"
-    },
-    "T_1": {
-      "type": "object"
     },
     "MadocThemeBase": {
       "type": "object",
@@ -130,12 +127,6 @@
     "5f960e3e2e87815f1d28c4d9b87c5a1f": {
       "type": "object",
       "properties": {
-        "size": {
-          "type": [
-            "number",
-            "object"
-          ]
-        },
         "headerBackground": {
           "type": [
             "string",
@@ -169,6 +160,12 @@
         "searchBorderFocusColor": {
           "type": [
             "string",
+            "object"
+          ]
+        },
+        "size": {
+          "type": [
+            "number",
             "object"
           ]
         }
@@ -211,12 +208,6 @@
     "707af62e329a855f15bc72dc96445a8e": {
       "type": "object",
       "properties": {
-        "color": {
-          "type": [
-            "string",
-            "object"
-          ]
-        },
         "background": {
           "type": [
             "string",
@@ -224,6 +215,12 @@
           ]
         },
         "containerBackground": {
+          "type": [
+            "string",
+            "object"
+          ]
+        },
+        "color": {
           "type": [
             "string",
             "object"
@@ -246,6 +243,12 @@
       "type": "object",
       "properties": {
         "fontFamily": {
+          "type": [
+            "string",
+            "object"
+          ]
+        },
+        "fontFamilyMono": {
           "type": [
             "string",
             "object"

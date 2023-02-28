@@ -63,6 +63,7 @@ export const SubmitWithoutPreview: EditorRenderingConfig['SubmitButton'] = ({ af
         ) : null}
         <Button
           data-cy="publish-button"
+          data-testid="publish-button"
           disabled={isLoading || !canSubmit}
           $primary
           onClick={() => {

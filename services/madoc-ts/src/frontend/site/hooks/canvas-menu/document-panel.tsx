@@ -17,11 +17,15 @@ export function useDocumentPanel(): CanvasMenuHook {
   );
   const { t } = useTranslation();
   const canvas = data?.canvas;
+
   const validModels =
     data && data.models
       ? data.models.filter((model: any) => {
-          const flatProperties = Object.entries(model.document.properties);
-          return flatProperties.length > 0;
+          const flatProperties = Object.values(model.document.properties);
+          const emptyFields = flatProperties.flatMap(b => b).filter((f: any) => f.value);
+          const isApproved = model.revisions.filter((q: { approved: boolean }) => q.approved);
+
+          return flatProperties.length > 0 && emptyFields.length > 0 && isApproved.length > 0;
         })
       : [];
 

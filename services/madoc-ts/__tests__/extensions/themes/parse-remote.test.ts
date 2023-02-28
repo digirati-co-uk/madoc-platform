@@ -116,7 +116,7 @@ describe('Theme repository parse remote', () => {
       'https://fonts.googleapis.com/css?family=Lato:400,550,700|Roboto:400,500',
     ]);
     expect(parsed.inlineScripts).toMatchInlineSnapshot(`
-      Array [
+      [
         "var _gaq = _gaq || [];
               _gaq.push(['_setAccount', 'UA-10859855-2']);
               _gaq.push(['_setDomainName', 'library.wales']);

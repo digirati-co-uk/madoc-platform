@@ -3,9 +3,12 @@ import styled, { css } from 'styled-components';
 export const EmptyState = styled.div<{ $box?: boolean; $noMargin?: boolean }>`
   text-align: center;
   color: #666;
-  font-size: 0.8em;
+  font-size: 1.2em;
   padding: 1.5em;
   margin: 100px 10px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   ${props =>
     props.$noMargin &&
@@ -22,5 +25,15 @@ export const EmptyState = styled.div<{ $box?: boolean; $noMargin?: boolean }>`
 
   & ~ & {
     margin-top: 0;
+  }
+  svg {
+    margin-bottom: 1.5em;
+  }
+  
+  span {
+    font-size: 0.8em;
+    width: 400px;
+    margin-top: 1em;
+    color: #717171;
   }
 `;

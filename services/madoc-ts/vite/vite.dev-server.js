@@ -5,6 +5,14 @@ import fs from 'fs';
 const https = fs.existsSync('/certs/local-key.pem') && fs.existsSync('/certs/local-cert.pem');
 
 export default defineConfig({
+  define: {
+    global: {},
+    process: {
+      env: {
+        NODE_DEBUG: false,
+      },
+    },
+  },
   clearScreen: false,
   resolve: {
     dedupe: ['react', 'react-dom'],

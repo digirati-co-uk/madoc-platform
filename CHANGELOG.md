@@ -45,6 +45,15 @@ supports a wider range of IIIF resources as a result.
 * Fixed bug where you could not delete a project if the capture model had already been deleted
 * Fixed missing structure in project export
 * Fixed bug where some empty annotations were exported
+* Fixed annotation format when exporting Presentation 3 Manifest (OA -> W3C)
+* Fixed bug with read-only annotations disappearing
+* Fixed message "login to contribute" on published projects
+* Fixed notification showing on document panel when panel is empty
+* Fixed bug where "choice" was not reset after making a submission
+* Fixed manifest thumbnail bug where it sometimes skipped first canvas
+* Fixed bug with "Start contributing" returning invalid results
+* Fixed bug with "Max contributors" if user had already started working
+* Fixed "Maximise window" to avoid cutting off the top section of the header
 
 ### Added
 
@@ -85,6 +94,7 @@ supports a wider range of IIIF resources as a result.
 * **Page blocks** - Added block options to "Project Manifests" block
 * **Page blocks** - Added block options to "Project Manifests" block
 * **Page blocks** - Added new `project-footer` slot
+* **Page blocks** - Added new block to embed items through iframe
 * Added "reset error" option to attempt to recover from error states
 * Added configuration option for vertical canvas zoom controls layout
 * Added canvas rotation option (without annotation support)
@@ -101,6 +111,21 @@ supports a wider range of IIIF resources as a result.
 * Added `createdAt` and `updatedAt` fields to capture models
 * Added ability to create automated user types
 * Added experimental Auto-review process
+* Added new Export mechanism
+  * Preview Manifest or Canvas exports in the Admin
+  * Run a large project export as a background task and download a zip at the end
+  * Supported exports:
+    * Canvas API - A JSON document with each canvas from the API
+    * Manifest API - A JSON document with each manifest from the API
+    * Canvas model export - Export full raw capture models for each canvas
+    * Canvas plaintext - export plaintext transcriptions for each document
+    * Canvas annotation export - a JSON document with the output of each canvas annotations (w3c/oa/json)
+    * Project API - A JSON document with project metadata
+    * Simple CSV export - exports all capture models into a csv file.
+* Added new interactions in the Document panel for annotations
+* Added secondary view for "X hours ago" to show the date and time on click (browser preference)
+* Added "Generate PDF" option for manifests using PDiiif
+* Added small indication under choices in the capture model UI with number of previous submissions
 
 ### Changed
 
@@ -127,6 +152,16 @@ supports a wider range of IIIF resources as a result.
 * CSS - Reduced box-shadows in capture model editor forms
 * Changed all Atlas Viewer instances to use Canvas panel
 * Simplified styling on search results
+* Improved reviewer dashboard view 
+  * Sortable table headers 
+  * Resizable layout 
+  * Full row clickable 
+  * Focus mode & edit added
+  * Clearer language 
+  * Side by side canvas preview and improved styling 
+  * Navigation between items in list 
+  * Default to no selected task
+  * Added infinite scroll
 
 ### Removed
 
@@ -158,6 +193,7 @@ supports a wider range of IIIF resources as a result.
   see [use-module.ts](https://github.com/digirati-co-uk/madoc-platform/blob/09d566aa4560dc72b878db089b4e1b834c608ed7/services/madoc-ts/src/frontend/shared/plugins/use-module.ts))
 * Move Api keys database code to `ApiKeyRepository`
 * Added flags that can be passed into the `BaseRepository` class
+* Split out `ViewDocument` into more manageable components 
 
 ## [2.0.8](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.8) - 2022-08-24
 

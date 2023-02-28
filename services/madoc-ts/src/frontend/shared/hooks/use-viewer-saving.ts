@@ -1,16 +1,29 @@
 import { Revisions } from '../capture-models/editor/stores/revisions/index';
 import { RevisionRequest } from '../capture-models/types/revision-request';
-import { useApi } from './use-api';
+import { useApi, useOptionalApi } from './use-api';
 import { useMutation } from 'react-query';
-import { useCallback } from 'react';
+import { createContext, useCallback, useContext } from 'react';
 import { useUser } from './use-site';
+
+interface ViewerSavingContextType {
+  createRevision?: (req: RevisionRequest, status?: string) => Promise<RevisionRequest> | RevisionRequest;
+  updateRevision?: (req: RevisionRequest, status?: string) => Promise<RevisionRequest> | RevisionRequest;
+}
+
+export const ViewerSavingContext = createContext<ViewerSavingContextType>({});
+
+function useViewerSavingContext() {
+  return useContext(ViewerSavingContext) || {};
+}
 
 export function useViewerSaving(
   afterSave?: (req: RevisionRequest, status: string | undefined) => Promise<void> | void
 ) {
-  const api = useApi();
+  const api = useOptionalApi();
+  const saveCtx = useViewerSavingContext(); // @todo migrate all API to this.
   const user = useUser();
   const persistRevision = Revisions.useStoreActions(a => a.persistRevision);
+  const resetStructure = Revisions.useStoreActions(a => a.resetStructure);
 
   const [createRevision] = useMutation(
     async ({ req, status }: { req: RevisionRequest; status?: string }): Promise<RevisionRequest> => {
@@ -23,18 +36,34 @@ export function useViewerSaving(
               name: user.name,
             };
 
-      const response = await api.createCaptureModelRevision(req, status);
+      const save = saveCtx?.createRevision || api?.createCaptureModelRevision.bind(api) || null;
+      let response = req;
+
+      if (save) {
+        response = await save(req, status);
+      }
       if (afterSave) {
         await afterSave(response, status);
+      }
+      if (status === 'submitted') {
+        resetStructure();
       }
       return response;
     }
   );
   const [updateRevision] = useMutation(
     async ({ req, status }: { req: RevisionRequest; status?: string }): Promise<RevisionRequest> => {
-      const response = await api.updateCaptureModelRevision(req, status);
+      let response = req;
+      const update = saveCtx?.updateRevision || api?.updateCaptureModelRevision.bind(api) || null;
+
+      if (update) {
+        response = await update(req, status);
+      }
       if (afterSave) {
         await afterSave(response, status);
+      }
+      if (status === 'submitted') {
+        resetStructure();
       }
       return response;
     }

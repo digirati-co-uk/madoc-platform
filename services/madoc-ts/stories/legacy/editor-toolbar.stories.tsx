@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ArrowBackIcon } from '../../src/frontend/shared/icons/ArrowBackIcon';
 import { EditIcon } from '../../src/frontend/shared/icons/EditIcon';
 import { DeleteForeverIcon } from '../../src/frontend/shared/icons/DeleteForeverIcon';
-import { ReadMoreIcon } from '../../src/frontend/shared/icons/ReadMoreIcon';
+import { RequestChangesIcon } from '../../src/frontend/shared/icons/RequestChangesIcon';
 import { CallMergeIcon } from '../../src/frontend/shared/icons/CallMergeIcon';
 import { GradingIcon } from '../../src/frontend/shared/icons/GradingIcon';
 import { FullScreenExitIcon } from '../../src/frontend/shared/icons/FullScreenExitIcon';
@@ -23,6 +23,8 @@ import { FullScreenEnterIcon } from '../../src/frontend/shared/icons/FullScreenE
 import { ArrowForwardIcon } from '../../src/frontend/shared/icons/ArrowForwardIcon';
 import { CompareIcon } from '../../src/frontend/shared/icons/CompareIcon';
 import { MaximiseWindow } from '../../src/frontend/shared/layout/MaximiseWindow';
+import NoEntryIcon from '../../src/frontend/shared/icons/NoEntryIcon';
+import CheckCircleIcon from '../../src/frontend/shared/icons/CheckCircleIcon';
 
 export default { title: 'Legacy/Editor toolbar' };
 
@@ -72,7 +74,7 @@ export const ReviewEditor = () => {
                 )}
               >
                 <EditorToolbarIcon>
-                  <DeleteForeverIcon />
+                  <NoEntryIcon />
                 </EditorToolbarIcon>
                 <EditorToolbarLabel>reject submission</EditorToolbarLabel>
               </EditorToolbarButton>
@@ -103,7 +105,7 @@ export const ReviewEditor = () => {
                 )}
               >
                 <EditorToolbarIcon>
-                  <ReadMoreIcon />
+                  <RequestChangesIcon />
                 </EditorToolbarIcon>
                 <EditorToolbarLabel>request changes</EditorToolbarLabel>
               </EditorToolbarButton>
@@ -168,7 +170,7 @@ export const ReviewEditor = () => {
                 )}
               >
                 <EditorToolbarIcon>
-                  <GradingIcon />
+                  <CheckCircleIcon />
                 </EditorToolbarIcon>
                 <EditorToolbarLabel>approve</EditorToolbarLabel>
               </EditorToolbarButton>
