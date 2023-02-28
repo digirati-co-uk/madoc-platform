@@ -7,6 +7,7 @@ import Ajv from 'ajv';
 import { strategies } from './auth';
 import { checkExpiredManifests } from './cron/check-expired-manifests';
 import './frontend/shared/plugins/globals';
+import { CompletionsExtension } from './extensions/completions/extension';
 import { createPluginManager } from './middleware/create-plugin-manager';
 import { disposeApis } from './middleware/dispose-apis';
 import { errorHandler } from './middleware/error-handler';
@@ -52,6 +53,7 @@ export async function createApp(config: ExternalConfig, env: EnvConfig) {
   app.context.externalConfig = config;
   app.context.routes = router;
   app.context.cron = new CronJobs();
+  app.context.completions = new CompletionsExtension();
 
   awaitProperty(createPluginManager(pool), manager => {
     app.context.pluginManager = manager;

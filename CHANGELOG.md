@@ -130,6 +130,9 @@ supports a wider range of IIIF resources as a result.
 * Added secondary view for "X hours ago" to show the date and time on click (browser preference)
 * Added "Generate PDF" option for manifests using PDiiif
 * Added small indication under choices in the capture model UI with number of previous submissions
+* Added new auto-complete endpoints migrated from Madoc 1.x
+  * [searchFAST](http://fast.oclc.org/searchfast/)
+  * [WikiData](https://www.wikidata.org)
 
 ### Changed
 
