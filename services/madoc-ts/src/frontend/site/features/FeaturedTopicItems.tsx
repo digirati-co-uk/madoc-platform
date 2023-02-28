@@ -164,6 +164,6 @@ blockEditorFor(FeaturedTopicItems, {
       ],
     },
   },
-  anyContext: ['manifest'],
-  requiredContext: ['manifest'],
+  anyContext: ['topic'],
+  requiredContext: ['topic'],
 });

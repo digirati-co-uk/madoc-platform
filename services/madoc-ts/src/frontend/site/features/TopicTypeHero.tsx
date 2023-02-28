@@ -69,9 +69,7 @@ export const TopicTypeHero: React.FC<{ textColor?: string; overlayColor?: string
         <TopWrapper>
           <HeroHeading as={LocaleString}>{data.label}</HeroHeading>
         </TopWrapper>
-        {data.description && (
-            <HeroSubHeading as={LocaleString}>{data.description}</HeroSubHeading>
-        )}
+        {data.description && <HeroSubHeading as={LocaleString}>{data.description}</HeroSubHeading>}
       </TextBox>
     </TopicHeroWrapper>
   );

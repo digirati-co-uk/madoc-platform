@@ -6,14 +6,15 @@ import { useTopicItems } from '../../shared/hooks/use-topic-items';
 import { Slot } from '../../shared/page-blocks/slot';
 import { TopicHero } from '../features/TopicHero';
 import { useParams } from 'react-router-dom';
-import { FeaturedTopicItems } from "../features/FeaturedTopicItems";
+import { FeaturedTopicItems } from '../features/FeaturedTopicItems';
+import { StaticPage } from '../features/StaticPage';
 
 export function ViewTopic() {
   const { topic } = useParams<Record<'topic', any>>();
   const [search, { query, page }] = useTopicItems(topic);
 
   return (
-    <>
+    <StaticPage title="topic">
       <Slot name="common-breadcrumbs">
         <DisplayBreadcrumbs />
       </Slot>
@@ -46,6 +47,10 @@ export function ViewTopic() {
           extraQuery={query}
         />
       </div>
-    </>
+
+      <Slot name="topic-related">
+        {/*<RelatedTopicItems />*/}
+      </Slot>
+    </StaticPage>
   );
 }

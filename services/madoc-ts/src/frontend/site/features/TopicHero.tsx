@@ -53,7 +53,6 @@ const Right = styled.div`
 
 export const TopicHero: React.FC<{ h1Color?: string; h2Color?: string }> = ({ h1Color, h2Color }) => {
   const { data } = useTopic();
-
   if (!data) {
     return null;
   }

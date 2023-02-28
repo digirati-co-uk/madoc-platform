@@ -4,6 +4,7 @@ import { Slot } from '../../shared/page-blocks/slot';
 import { TopicTypeHero } from '../features/TopicTypeHero';
 import { TopicGrid } from '../features/TopicGrid';
 import { TopicTypePagination } from '../features/TopicTypePagination';
+import { FeaturedTopics } from '../features/FeaturedTopics';
 
 export function ViewTopicType() {
   return (
@@ -14,6 +15,10 @@ export function ViewTopicType() {
 
       <Slot name="topic-type-hero">
         <TopicTypeHero />
+      </Slot>
+
+      <Slot name="topic-type-featured">
+        <FeaturedTopics />
       </Slot>
 
       <Slot name="topic-type-topics">
