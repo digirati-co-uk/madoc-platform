@@ -9,17 +9,21 @@ export type RouteContext = {
   projectId?: string;
   taskId?: string;
   parentTaskId?: string;
+  topicType?: string;
+  topic?: string;
 };
 
 export function useRouteContext<T extends RouteContext = RouteContext>(): RouteContext & T {
   const { context } = useSlots();
-  const { canvasId, slug, manifestId, collectionId, parentTaskId, taskId } = useParams<{
+  const { canvasId, slug, manifestId, collectionId, parentTaskId, taskId, topicType, topic } = useParams<{
     collectionId?: string;
     manifestId?: string;
     canvasId?: string;
     slug?: string;
     taskId?: string;
     parentTaskId?: string;
+    topicType?: string;
+    topic?: string;
   }>();
 
   return useMemo(() => {
@@ -30,6 +34,8 @@ export function useRouteContext<T extends RouteContext = RouteContext>(): RouteC
       taskId: taskId,
       parentTaskId,
       canvasId: canvasId ? Number(canvasId) : context.canvas,
+      topicType: topicType ? topicType : context.topicType,
+      topic: topic ? topic : context.topic,
     };
-  }, [context, canvasId, collectionId, manifestId, parentTaskId, slug, taskId]) as any;
+  }, [context, canvasId, collectionId, manifestId, parentTaskId, topicType, topic, slug, taskId]) as any;
 }

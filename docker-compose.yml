@@ -203,10 +203,9 @@ services:
         condition: service_healthy
 
   search:
-    image: ghcr.io/digirati-co-uk/madoc-search-service:247f854b1258e3971907e6912cef2374a1da8474
-#    build:
-#      context: services/search
-#      dockerfile: Dockerfile
+    build:
+      context: services/enrichment
+      dockerfile: Dockerfile
     environment:
       - BROWSABLE=False
       - USE_DOCKER=yes
@@ -219,15 +218,21 @@ services:
       - POSTGRES_HOST=shared-postgres
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_USER=${POSTGRES_SEARCH_API_USER}
+      - REDIS_URL=redis://gateway-redis:6379
+      - APPEND_SLASH=False
+      - ALLOWED_HOSTS=gateway,madoc.local
       - POSTGRES_PASSWORD=${POSTGRES_SEARCH_API_PASSWORD}
       - POSTGRES_SCHEMA=${POSTGRES_SEARCH_API_SCHEMA}
       - POSTGRES_DB=${POSTGRES_DB}
       - DATABASE_URL=postgres://${POSTGRES_SEARCH_API_USER}:${POSTGRES_SEARCH_API_PASSWORD}@shared-postgres:${POSTGRES_PORT}/${POSTGRES_DB}
+      - INLINE_WORKER=True
     links:
       - shared-postgres
-#    volumes:
-#      - ./services/search/search_service:/app
-
+      - gateway-redis
+    volumes:
+      - ./services/enrichment/app:/app:delegated
+    ports:
+      - 5020:500
   okra:
     image: digirati/okra:latest
 

@@ -20,6 +20,12 @@ export type SearchIndexable = {
   language_iso639_1: string;
   language_display: string;
   language_pg: string;
+
+  // New types.
+  group_id?: string | null;
+  contexts?: string[];
+  indexable_date_range_start?: string | null;
+  indexable_date_range_end?: string | null;
 };
 
 function extractValueFromModelField(field: BaseField): string {

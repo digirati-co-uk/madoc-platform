@@ -49,7 +49,7 @@ export const CanvasSearchIndex = createUniversalComponent<CanvasSearchIndexType>
         <hr />
         <pre>{JSON.stringify(data.canvas, null, 2)}</pre>
         <h4>Indexable</h4>
-        {data
+        {data && data.models
           ? data.models.results.map((result: any, key: number) => {
               return (
                 <div key={key}>
@@ -70,10 +70,18 @@ export const CanvasSearchIndex = createUniversalComponent<CanvasSearchIndexType>
       return ['canvas-search-index', { id: Number(params.id) }];
     },
     getData: async (key, { id }, api) => {
-      return {
-        canvas: await api.searchGetIIIF(`urn:madoc:canvas:${id}`),
-        models: await api.searchListModels({ iiif__madoc_id: `urn:madoc:canvas:${id}` }),
-      };
+      try {
+        return {
+          canvas: await api.searchGetIIIF(`urn:madoc:canvas:${id}`),
+          models: { results: [] },
+          // models: await api.searchListModels({ iiif__madoc_id: `urn:madoc:canvas:${id}` }),
+        };
+      } catch (e) {
+        return {
+          canvas: null,
+          models: { results: [] },
+        };
+      }
     },
   }
 );

@@ -128,6 +128,17 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
               </MenuList>
             </AdminSection>
             <AdminSection>
+              <MenuTitle>{t('Enrichment')}</MenuTitle>
+              <MenuList>
+                <li>
+                  <Link to={`/topics`}>{t('Manage Topics')}</Link>
+                </li>
+                <li>
+                  <Link to={`/authority`}>{t('Authority')}</Link>
+                </li>
+              </MenuList>
+            </AdminSection>
+            <AdminSection>
               <MenuTitle>{t('Configuration')}</MenuTitle>
               <MenuList>
                 <li>

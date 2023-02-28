@@ -4,11 +4,11 @@ import {
   ParagraphEntity,
   PARAGRAPHS_PROFILE,
 } from '../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
+import { createSearchIngest } from '../../extensions/enrichment/utilities/create-search-ingest';
 import { traverseDocument } from '../../frontend/shared/capture-models/helpers/traverse-document';
 import { BaseField } from '../../frontend/shared/capture-models/types/field-types';
 import { api } from '../../gateway/api.server';
 import { RouteMiddleware } from '../../types/route-middleware';
-import { SearchIngestRequest } from '../../types/search';
 import { captureModelToIndexables, SearchIndexable } from '../../utility/capture-model-to-indexables';
 import { optionalUserWithScope } from '../../utility/user-with-scope';
 import { getParentResources } from '../../database/queries/resource-queries';
@@ -45,12 +45,10 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
       )
     : [];
 
-  const searchPayload: SearchIngestRequest = {
-    id: `urn:madoc:canvas:${canvasId}`,
-    type: 'Canvas',
-    cascade: false,
-    cascade_canvases: false,
-    resource: {
+  const searchPayload = createSearchIngest(
+    canvasId,
+    'canvas',
+    {
       type: 'Canvas',
       id: sourceId,
       label: canvas.label as any,
@@ -62,33 +60,16 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
       requiredStatement: canvas.requiredStatement,
       navDate: (canvas as any).navDate,
     },
-    thumbnail: canvas.thumbnail ? (canvas.thumbnail[0].id as any) : null,
-    contexts: [
-      { id: siteUrn, type: 'Site' },
-      ...projectsWithin.map(({ id }) => {
-        return { id: `urn:madoc:project:${id}`, type: 'Project' };
-      }),
-      ...collectionsWithin.map(({ resource_id }) => {
-        return { id: `urn:madoc:collection:${resource_id}`, type: 'Collection' };
-      }),
-      // Should this be contexts or manifests here? Do canvases have site contexts too?
-      ...manifestsWithin.map(({ resource_id }) => {
-        return { id: `urn:madoc:manifest:${resource_id}`, type: 'Manifest' };
-      }),
-      {
-        id: `urn:madoc:canvas:${canvasId}`,
-        type: 'Canvas',
-      },
-    ],
-  };
+    siteId,
+    canvas.thumbnail ? (canvas.thumbnail[0].id as any) : null,
+    [
+      ...projectsWithin.map(({ id }) => `urn:madoc:project:${id}`),
+      ...collectionsWithin.map(({ resource_id }) => `urn:madoc:collection:${resource_id}`),
+      ...manifestsWithin.map(({ resource_id }) => `urn:madoc:manifest:${resource_id}`),
+    ]
+  );
 
-  try {
-    await api.searchGetIIIF(`urn:madoc:canvas:${canvasId}`);
-
-    await userApi.searchReIngest(searchPayload);
-  } catch (err) {
-    await userApi.searchIngest(searchPayload);
-  }
+  await userApi.enrichmentIngestResource(searchPayload);
 
   // 1. Load all capture models for this canvas on this site.
   const models = await userApi.getAllCaptureModels({
@@ -169,14 +150,16 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
       paragraph: paragraphs as any,
     };
     try {
-      await userApi.indexCaptureModel(modelId, `urn:madoc:canvas:${canvasId}`, resource);
+      // @TODO index capture model (specifically paragraphs/OCR)
+      // await userApi.indexCaptureModel(modelId, `urn:madoc:canvas:${canvasId}`, resource);
     } catch (err) {
       // no-op
     }
   }
 
+  // @todo implement RAW indexables
   // 5. Index remaining Capture models
-  if (models.length) {
+  if ((false as boolean) && models.length) {
     const indexables: SearchIndexable[] = [];
     for (const model of fullModels) {
       try {
@@ -202,6 +185,8 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
 
   // 6. Index any remaining capture model partials
   // @todo - this is not yet used.
+
+  await userApi.triggerSearchIndex(canvasId, 'canvas');
 
   context.response.body = canvas;
 };

@@ -123,9 +123,10 @@ export const SearchItem: React.FC<{
   textColor?: string;
   background?: string;
   imageStyle?: string;
-}> = ({ result, size, search, list, border, textColor, background, imageStyle, hideSnippet }) => {
+  admin?: boolean,
+}> = ({ result, size, search, list, border, textColor, background, imageStyle, hideSnippet, admin }) => {
   const things = ((result && result.contexts) || []).map(value => {
-    return parseUrn(value.id);
+    return parseUrn(typeof value === 'string' ? value : value.id);
   });
   const routeContext = useRouteContext();
   const projectId = routeContext.projectId;
@@ -147,6 +148,7 @@ export const SearchItem: React.FC<{
           canvasId,
           collectionId,
           query: { searchText },
+          admin,
         })}
         style={{ textDecoration: 'none' }}
       >
@@ -155,13 +157,13 @@ export const SearchItem: React.FC<{
             {isManifest ? (
               <SnippetThumbnailContainer stackedThumbnail={isManifest} portrait>
                 <SnippetThumbnail
-                  src={result.madoc_thumbnail}
-                  style={{ height: 200, fitContent: 'scale-down' } as any}
+                  src={result.thumbnail || result.madoc_thumbnail}
+                  style={{ maxHeight: 200, fitContent: 'scale-down' } as any}
                 />
               </SnippetThumbnailContainer>
             ) : (
               <CroppedImage $size={size} $covered={imageStyle === 'covered'}>
-                <img src={result.madoc_thumbnail} />
+                <img src={result.thumbnail || result.madoc_thumbnail} />
               </CroppedImage>
             )}
             <TextContainer data-list-item={list} style={{ alignSelf: 'flex-start' }}>
@@ -201,14 +203,13 @@ export const SearchResults: React.FC<{
   searchResults: Array<SearchResult>;
   value?: string;
   isFetching?: boolean;
-}> = ({ isFetching, searchResults = [], value }) => {
-  return (
+  admin?: boolean;
+}> = ({ isFetching, searchResults = [], value, admin }) => {
     <ResultsContainer $isFetching={isFetching}>
       {searchResults.map((result: SearchResult, index: number) => {
         return result ? (
-          <SearchItem result={result} key={`${index}__${result.resource_id}`} search={value} size="small" />
+          <SearchItem admin={admin} result={result} key={`${index}__${result.resource_id}`} search={value} size="small" />
         ) : null;
       })}
     </ResultsContainer>
-  );
 };

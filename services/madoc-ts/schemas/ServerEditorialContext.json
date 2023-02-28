@@ -13,6 +13,12 @@
     "canvas": {
       "type": "number"
     },
+    "topic": {
+      "type": "string"
+    },
+    "topicType": {
+      "type": "string"
+    },
     "page": {
       "type": "number"
     },

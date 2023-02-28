@@ -128,6 +128,58 @@
                     }
                   }
                 }
+              },
+              "topicType": {
+                "type": "object",
+                "properties": {
+                  "none": {
+                    "type": "boolean"
+                  },
+                  "all": {
+                    "type": "boolean"
+                  },
+                  "exact": {
+                    "type": "string"
+                  },
+                  "whitelist": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "blacklist": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "topic": {
+                "type": "object",
+                "properties": {
+                  "none": {
+                    "type": "boolean"
+                  },
+                  "all": {
+                    "type": "boolean"
+                  },
+                  "exact": {
+                    "type": "string"
+                  },
+                  "whitelist": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "blacklist": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
               }
             }
           },
@@ -312,6 +364,58 @@
                     "type": "array",
                     "items": {
                       "type": "number"
+                    }
+                  }
+                }
+              },
+              "topicType": {
+                "type": "object",
+                "properties": {
+                  "none": {
+                    "type": "boolean"
+                  },
+                  "all": {
+                    "type": "boolean"
+                  },
+                  "exact": {
+                    "type": "string"
+                  },
+                  "whitelist": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "blacklist": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "topic": {
+                "type": "object",
+                "properties": {
+                  "none": {
+                    "type": "boolean"
+                  },
+                  "all": {
+                    "type": "boolean"
+                  },
+                  "exact": {
+                    "type": "string"
+                  },
+                  "whitelist": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "blacklist": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
                   }
                 }
@@ -502,6 +606,58 @@
                     }
                   }
                 }
+              },
+              "topicType": {
+                "type": "object",
+                "properties": {
+                  "none": {
+                    "type": "boolean"
+                  },
+                  "all": {
+                    "type": "boolean"
+                  },
+                  "exact": {
+                    "type": "string"
+                  },
+                  "whitelist": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "blacklist": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "topic": {
+                "type": "object",
+                "properties": {
+                  "none": {
+                    "type": "boolean"
+                  },
+                  "all": {
+                    "type": "boolean"
+                  },
+                  "exact": {
+                    "type": "string"
+                  },
+                  "whitelist": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "blacklist": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
               }
             }
           },
@@ -686,6 +842,58 @@
                     "type": "array",
                     "items": {
                       "type": "number"
+                    }
+                  }
+                }
+              },
+              "topicType": {
+                "type": "object",
+                "properties": {
+                  "none": {
+                    "type": "boolean"
+                  },
+                  "all": {
+                    "type": "boolean"
+                  },
+                  "exact": {
+                    "type": "string"
+                  },
+                  "whitelist": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "blacklist": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "topic": {
+                "type": "object",
+                "properties": {
+                  "none": {
+                    "type": "boolean"
+                  },
+                  "all": {
+                    "type": "boolean"
+                  },
+                  "exact": {
+                    "type": "string"
+                  },
+                  "whitelist": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "blacklist": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
                   }
                 }
