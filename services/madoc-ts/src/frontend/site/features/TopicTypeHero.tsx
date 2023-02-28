@@ -36,9 +36,9 @@ const BackgroundImage = styled.div<{ $overlay?: string }>`
 const TextBox = styled.div`
   background-color: white;
   position: absolute;
-  width: 80vw;
+  width: 80%;
   padding: 4em 6em;
-  left: 10vw;
+  left: 10%;
   bottom: 0;
 `;
 
@@ -64,12 +64,14 @@ export const TopicTypeHero: React.FC<{ textColor?: string; overlayColor?: string
   }
   return (
     <TopicHeroWrapper style={{ color: textColor }}>
-      <BackgroundImage $overlay={overlayColor} style={{ backgroundImage: `url("${data.editorial.heroImage?.url}")` }} />
+      <BackgroundImage $overlay={overlayColor} style={{ backgroundImage: `url("${data.image_url}")` }} />
       <TextBox>
         <TopWrapper>
           <HeroHeading as={LocaleString}>{data.label}</HeroHeading>
         </TopWrapper>
-        <HeroSubHeading as={LocaleString}>{data.editorial.summary}</HeroSubHeading>
+        {data.description && (
+            <HeroSubHeading as={LocaleString}>{data.description}</HeroSubHeading>
+        )}
       </TextBox>
     </TopicHeroWrapper>
   );

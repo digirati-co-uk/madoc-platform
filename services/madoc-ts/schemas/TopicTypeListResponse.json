@@ -4,7 +4,7 @@
     "topicTypes": {
       "type": "array",
       "items": {
-        "$ref": "#/definitions/TopicTypeSnippet"
+        "$ref": "#/definitions/EnrichmentEntityTypeSnippet"
       }
     },
     "pagination": {

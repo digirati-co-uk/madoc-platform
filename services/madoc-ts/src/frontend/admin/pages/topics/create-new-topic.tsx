@@ -7,7 +7,7 @@ import { Button } from '../../../shared/navigation/Button';
 import { HrefLink } from '../../../shared/utility/href-link';
 import { useRouteContext } from '../../../site/hooks/use-route-context';
 import { useTopicType } from '../../../site/pages/loaders/topic-type-loader';
-import { entityModel } from '../enrichment/authority/entity/entity-model';
+import { entityModel } from '../../../../extensions/enrichment/models';
 
 export function CreateNewTopic() {
   const api = useApi();

@@ -1,6 +1,7 @@
 import { api } from '../../gateway/api.server';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { userWithScope } from '../../utility/user-with-scope';
+import { getValue } from '@iiif/vault-helpers';
 
 export const topicTypeAutocomplete: RouteMiddleware = async context => {
   const { siteId, id } = userWithScope(context, ['site.admin']);
@@ -9,8 +10,8 @@ export const topicTypeAutocomplete: RouteMiddleware = async context => {
 
   context.response.body = {
     completions: items.results.map(item => ({
-      uri: item.label,
-      label: item.label,
+      uri: item.slug,
+      label: getValue(item.other_labels) || item.label,
     })) as { uri: string; label: string; resource_class?: string; score?: number }[],
   };
 };

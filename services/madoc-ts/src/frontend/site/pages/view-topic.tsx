@@ -5,9 +5,11 @@ import { SearchResults } from '../../shared/components/SearchResults';
 import { useTopicItems } from '../../shared/hooks/use-topic-items';
 import { Slot } from '../../shared/page-blocks/slot';
 import { TopicHero } from '../features/TopicHero';
+import { useParams } from 'react-router-dom';
 
 export function ViewTopic() {
-  const [search, { query, page }] = useTopicItems();
+  const { topic } = useParams<Record<'topic', any>>();
+  const [search, { query, page }] = useTopicItems(topic);
 
   return (
     <>

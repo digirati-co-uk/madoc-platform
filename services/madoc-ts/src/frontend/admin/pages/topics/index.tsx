@@ -11,6 +11,7 @@ import { ManageTopicTypes } from './manage-topic-types';
 import { ManageTopic } from './manage-topic';
 import { ListTopicsInType } from './list-topics-in-type';
 import { TopicDetails } from './topic-details';
+import { EditTopicType } from './edit-topic-type';
 
 export const topicRoutes = [
   {
@@ -42,6 +43,11 @@ export const topicRoutes = [
         path: '/topics/:topicType',
         index: true,
         element: <ListTopicsInType />,
+      },
+      {
+        path: '/topics/:topicType/_/edit',
+        index: true,
+        element: <EditTopicType />,
       },
       {
         path: '/topics/:topicType/_/create-topic',
