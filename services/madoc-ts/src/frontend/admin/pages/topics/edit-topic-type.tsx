@@ -21,8 +21,7 @@ export function EditTopicType() {
     // data.other_labels = (data.other_labels || []).filter((e: any) => e.value !== '');
     const resp = api.enrichment.upsertTopicType({ id: data.id, ...updatedData });
 
-
-    refetch()
+    refetch();
 
     return resp;
   });
@@ -46,8 +45,6 @@ export function EditTopicType() {
       </div>
     );
   }
-
-  console.log(data);
 
   return (
     <div>

@@ -9,7 +9,7 @@ import { StaticPage } from '../features/StaticPage';
 
 export function ViewTopicType() {
   return (
-    <StaticPage title='topic-type'>
+    <StaticPage title="topic-type">
       <Slot name="common-breadcrumbs">
         <DisplayBreadcrumbs />
       </Slot>

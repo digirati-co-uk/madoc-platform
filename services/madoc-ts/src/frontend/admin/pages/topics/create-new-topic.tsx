@@ -47,7 +47,6 @@ export function CreateNewTopic() {
   }
 
   if (status.isSuccess) {
-    console.log(status.data?.response)
     return (
       <div>
         Added!
