@@ -38,7 +38,6 @@ export const TopicCard: React.FC<{
 }> = ({ topic, cardBorder, textColor, background }) => {
   const createLocaleString = useCreateLocaleString();
   const { t } = useTranslation();
-  console.log(topic);
 
   return (
     <TopicStripBox $border={cardBorder} $color={textColor} $bgColor={background}>
