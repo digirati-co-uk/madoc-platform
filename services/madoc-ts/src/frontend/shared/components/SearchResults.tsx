@@ -10,8 +10,6 @@ import { SnippetThumbnail, SnippetThumbnailContainer } from '../atoms/SnippetLar
 import { createLink } from '../utility/create-link';
 import { HrefLink } from '../utility/href-link';
 import { LocaleString } from './LocaleString';
-import { InternationalString } from '@iiif/presentation-3';
-
 export const ResultsContainer = styled.div<{ $isFetching?: boolean }>`
   flex: 1 1 0px;
   transition: opacity 0.2s;
@@ -205,6 +203,7 @@ export const SearchResults: React.FC<{
   isFetching?: boolean;
   admin?: boolean;
 }> = ({ isFetching, searchResults = [], value, admin }) => {
+    return (
     <ResultsContainer $isFetching={isFetching}>
       {searchResults.map((result: SearchResult, index: number) => {
         return result ? (
@@ -212,4 +211,5 @@ export const SearchResults: React.FC<{
         ) : null;
       })}
     </ResultsContainer>
+    )
 };
