@@ -1,17 +1,21 @@
 import React from 'react';
 import { useMutation } from 'react-query';
-import { EnrichmentEntityType } from '../../../../extensions/enrichment/authority/types';
 import { EditShorthandCaptureModel } from '../../../shared/capture-models/EditorShorthandCaptureModel';
 import { useApi } from '../../../shared/hooks/use-api';
 import { Button } from '../../../shared/navigation/Button';
 import { HrefLink } from '../../../shared/utility/href-link';
-import { entityTypeModel } from '../enrichment/authority/entity-type/entity-type-model';
+import { CustomEditorTypes } from '../../../shared/page-blocks/custom-editor-types';
+import { entityTypeModel } from '../../../../extensions/enrichment/models';
 
 export function CreateNewTopicType() {
   const api = useApi();
-  const [createNewEntityType, status] = useMutation(async (data: Partial<EnrichmentEntityType>) => {
-    data.other_labels = (data.other_labels || []).filter(e => e.value !== '');
-    return api.authority.entity_type.create(data);
+  const [createNewEntityType, status] = useMutation(async (data: any) => {
+
+    // @todo can change later.
+    data.image_url = `${window.location.protocol}//${window.location.host}${data.image_url.publicLink || data.image_url}`;
+    // data.other_labels = (data.other_labels || []).filter((e: any) => e.value !== '');
+    return api.enrichment.upsertTopicType(data);
+
   });
 
   if (status.isError) {
@@ -32,14 +36,16 @@ export function CreateNewTopicType() {
 
   return (
     <div>
-      <EditShorthandCaptureModel
-        template={entityTypeModel}
-        data={{ label: '', other_labels: [{ value: '', language: '' }] }}
-        onSave={async data => {
-          await createNewEntityType(data);
-        }}
-        keepExtraFields
-      />
+      <CustomEditorTypes>
+        <EditShorthandCaptureModel
+          template={entityTypeModel}
+          data={{ label: '', other_labels: { en: [''] }, description: { en: [''] }, image_url: '' }}
+          onSave={async data => {
+            await createNewEntityType(data);
+          }}
+          keepExtraFields
+        />
+      </CustomEditorTypes>
     </div>
   );
 }

@@ -1,18 +1,15 @@
 import React from 'react';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
-import { LocaleString } from '../../shared/components/LocaleString';
 import { Slot } from '../../shared/page-blocks/slot';
-import { HrefLink } from '../../shared/utility/href-link';
-import { useRelativeLinks } from '../hooks/use-relative-links';
-import { useTopicType } from './loaders/topic-type-loader';
 import { TopicTypeHero } from '../features/TopicTypeHero';
+import { TopicGrid } from '../features/TopicGrid';
+import { TopicTypePagination } from '../features/TopicTypePagination';
+import { FeaturedTopics } from '../features/FeaturedTopics';
+import { StaticPage } from '../features/StaticPage';
 
 export function ViewTopicType() {
-  const createLink = useRelativeLinks();
-  const { data } = useTopicType();
-
   return (
-    <>
+    <StaticPage title="topic-type">
       <Slot name="common-breadcrumbs">
         <DisplayBreadcrumbs />
       </Slot>
@@ -21,16 +18,17 @@ export function ViewTopicType() {
         <TopicTypeHero />
       </Slot>
 
-      <ul>
-        {data?.topics.map(topic => (
-          <li key={topic.id}>
-            <HrefLink href={createLink({ topic: topic.slug })}>
-              <LocaleString>{topic.label}</LocaleString>
-            </HrefLink>
-          </li>
-        ))}
-      </ul>
-      {/*<pre>{JSON.stringify(data, null, 2)}</pre>*/}
-    </>
+      <Slot name="topic-type-featured">
+        <FeaturedTopics />
+      </Slot>
+
+      <Slot name="topic-type-topics">
+        <TopicGrid />
+      </Slot>
+
+      <Slot name="topic-type-pagination">
+        <TopicTypePagination />
+      </Slot>
+    </StaticPage>
   );
 }

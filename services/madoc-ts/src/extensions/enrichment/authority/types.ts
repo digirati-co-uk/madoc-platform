@@ -1,4 +1,5 @@
 import { Pagination } from '../../../types/schemas/_pagination';
+import { InternationalString } from '@iiif/presentation-3';
 
 export interface AuthoritySnippet {
   id: string;
@@ -13,13 +14,78 @@ export interface Authority extends AuthoritySnippet {
 }
 
 export interface EnrichmentEntitySnippet {
+  /**
+   * URL of the Entity (won't resolve due to Gateway)
+   */
   url: string;
+
+  /**
+   * Unique identifier of the Entity (UUID)
+   */
   id: string;
+
+  /**
+   * Creation time of the Entity (ISO Timestamp)
+   */
   created: string;
+  /**
+   * Last modification time of the Entity (ISO Timestamp)
+   */
   modified: string;
-  type: string;
+  /**
+   * Unique label - not typically for display. For example, it might come from an external vocab with all caps: "TRIBE"
+   * and the label to display to the user may be simply "Tribe"
+   */
   label: string;
+  /**
+   * A unique slug, derived from the label
+   */
   slug: string;
+
+  /**
+   * [SpaCy NER type](https://github.com/digirati-co-uk/madoc-enrichment/blob/main/endpoint_docs.md#spacy-named-entity-recognition-ner-types)
+   *
+   * PERSON - People, including fictional.
+   * NORP - Nationalities or religious or political groups.
+   * FAC - Buildings, airports, highways, bridges, etc.
+   * ORG - Companies, agencies, institutions, etc.
+   * GPE - Countries, cities, states.
+   * LOC - Non-GPE locations, mountain ranges, bodies of water.
+   * PRODUCT - Objects, vehicles, foods, etc. (Not services.)
+   * EVENT - Named hurricanes, battles, wars, sports events, etc.
+   * WORK_OF_ART - Titles of books, songs, etc.
+   * LAW - Named documents made into laws.
+   * LANGUAGE - Any named language.
+   * DATE - Absolute or relative dates or periods.
+   * TIME - Times smaller than a day.
+   * PERCENT - Percentage, including "%".
+   * MONEY - Monetary values, including unit.
+   * QUANTITY - Measurements, as of weight or distance.
+   * ORDINAL - "first", "second", etc.
+   * CARDINAL - Numerals that do not fall under another type
+   */
+  type: SpaCyNERType | null;
+
+  /**
+   * Slug of the Entity's Type. (for navigation)
+   */
+  type_slug: string;
+
+  /**
+   * Readable labels for the Entity's Type.
+   */
+  type_other_labels: InternationalString;
+
+  /**
+   * Readable title for the Entity.
+   */
+  title: InternationalString;
+
+  /**
+   * Unknown image url or list of urls.
+   * @todo will change.
+   */
+  image_url: string | string[];
 }
 
 export interface EnrichmentEntityAuthority {
@@ -29,14 +95,65 @@ export interface EnrichmentEntityAuthority {
   identifier: string;
 }
 
+/**
+ * Entity - List item
+ *
+ * Documentation: https://github.com/digirati-co-uk/madoc-enrichment/blob/main/endpoint_docs.md#entity---list
+ */
 export interface EnrichmentEntityTypeSnippet {
+  /**
+   * URL of the Entity (won't resolve due to Gateway)
+   */
   url: string;
+
+  /**
+   * Unique identifier of the Entity (UUID)
+   */
   id: string;
+
+  /**
+   * Creation time of the Entity (ISO Timestamp)
+   */
   created: string;
+  /**
+   * Last modification time of the Entity (ISO Timestamp)
+   */
   modified: string;
+  /**
+   * Unique label - not typically for display. For example, it might come from an external vocab with all caps: "TRIBE"
+   * and the label to display to the user may be simply "Tribe"
+   */
   label: string;
+  /**
+   * A unique slug, derived from the label
+   */
   slug: string;
+
+  /**
+   * Readable labels for the Entity's Type.
+   */
+  other_labels: InternationalString;
 }
+
+export type SpaCyNERType =
+  | 'PERSON'
+  | 'NORP'
+  | 'FAC'
+  | 'ORG'
+  | 'GPE'
+  | 'LOC'
+  | 'PRODUCT'
+  | 'EVENT'
+  | 'WORK_OF_ART'
+  | 'LAW'
+  | 'LANGUAGE'
+  | 'DATE'
+  | 'TIME'
+  | 'PERCENT'
+  | 'MONEY'
+  | 'QUANTITY'
+  | 'ORDINAL'
+  | 'CARDINAL';
 
 // @todo probably will change.
 type OtherLabels = Array<{
@@ -47,7 +164,14 @@ type OtherLabels = Array<{
 export interface EnrichmentEntityType extends EnrichmentEntityTypeSnippet {
   created: string;
   modified: string;
-  other_labels: OtherLabels;
+
+  description: InternationalString;
+
+  image_url: string;
+
+  other_data: {
+    example_data: string;
+  };
 }
 
 export interface ResourceTagSnippet {
@@ -76,10 +200,10 @@ export interface EnrichmentEntity {
     id: string;
     label: string;
   };
-  description: { value: string; language: string }[];
+  description: InternationalString;
   image_url: string;
   label: string;
-  other_labels: OtherLabels;
+  other_labels: InternationalString;
   authorities: AuthoritySnippet[]; // Can't remember what this should be...
   other_data: {
     image_url: string;
@@ -90,17 +214,10 @@ export interface EnrichmentEntity {
   created: string;
 }
 
-export interface EntitySnippetMadoc {
-  url: string;
-  id: string;
-  created: string;
-  modified: string;
-  type: string;
-  label: string;
-  slug: string;
-}
-
-// list of entity types
+/**
+ * Entity - List
+ * Definition: https://github.com/digirati-co-uk/madoc-enrichment/blob/main/endpoint_docs.md#entity---list
+ */
 export interface EntityTypesMadocResponse {
   pagination: Pagination;
   results: EnrichmentEntityTypeSnippet[];
@@ -109,7 +226,7 @@ export interface EntityTypesMadocResponse {
 // Entity - List, filtered by chosen Entity Type
 export interface EntitiesMadocResponse {
   pagination: Pagination;
-  results: EntitySnippetMadoc[];
+  results: EnrichmentEntitySnippet[];
 }
 
 // Entity Type - Retrieve
@@ -120,6 +237,10 @@ export interface EntityTypeMadocResponse {
   modified: string;
   label: string;
   slug: string;
+  other_labels?: InternationalString;
+  other_data?: any;
+  image_url?: string;
+  description?: InternationalString;
 }
 
 // Entity - Retrieve
@@ -128,14 +249,32 @@ export interface EntityMadocResponse {
   id: string;
   created: string;
   modified: string;
+
   type: string;
+  type_slug: string;
+  type_other_labels: InternationalString;
+
   label: string;
   slug: string;
-  title: string[];
-  description: string;
-  topic_summary?: string;
+  title: InternationalString;
+  description: InternationalString;
+  topic_summary?: InternationalString;
   image_url: string;
-  image_caption: string[];
+  image_caption: InternationalString;
   secondary_heading: string;
-  authorities: { authority: string; identifier: string; uri: string }[];
+  authorities: { authority: string; id: string; url: string }[];
+
+  featured_resources: FeatureResource[];
+  related_topics: EnrichmentEntitySnippet[];
+  other_data: any;
+}
+export interface FeatureResource {
+  url: string;
+  created: string;
+  modified: string;
+  madoc_id: string;
+  label: InternationalString;
+  thumbnail: string;
+  metadata: any; // ?
+  count: number;
 }

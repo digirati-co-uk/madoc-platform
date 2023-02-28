@@ -1,6 +1,9 @@
 import { Topic, TopicType, TopicTypeListResponse } from '../../types/schemas/topics';
 import { BaseDjangoExtension } from './base-django-extension';
 import { EnrichmentIndexPayload } from './types';
+import { ApiKey } from '../../types/api-key';
+import { SearchQuery, SearchResponse } from '../../types/search';
+import {EntityMadocResponse, EntityTypeMadocResponse} from './authority/types';
 
 export class EnrichmentExtension extends BaseDjangoExtension {
   // /api/madoc/indexable_data/
@@ -39,6 +42,30 @@ export class EnrichmentExtension extends BaseDjangoExtension {
 
   getTopicType(id: string) {
     return this.api.request(`/api/enrichment/entity/${id}/`);
+  }
+
+  upsertTopicType(topicType: Partial<EntityTypeMadocResponse>) {
+    return this.api.request<EntityTypeMadocResponse>(`/api/enrichment/entity_type/`, {
+      method: 'POST',
+      body: topicType,
+    });
+  }
+
+  upsertTopic(topic: Partial<EntityMadocResponse>) {
+    return this.api.request<EntityMadocResponse>(`/api/enrichment/entity/`, {
+      method: 'POST',
+      body: topic,
+    });
+  }
+  getTopicItems(query: SearchQuery, page = 1, madoc_id?: string) {
+    return this.api.request<SearchResponse>(`/madoc/api/search`, {
+      method: 'POST',
+      body: {
+        ...query,
+        page,
+        madoc_id,
+      },
+    });
   }
 
   getAllEnrichmentTasks(page = 1) {

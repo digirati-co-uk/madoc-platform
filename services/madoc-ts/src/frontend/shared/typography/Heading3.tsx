@@ -21,6 +21,13 @@ export const Heading3 = styled.h3<{ $margin?: boolean }>`
   }
 `;
 
+export const SingleLineHeading3 = styled(Heading3)`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-decoration: none;
+  white-space: nowrap;
+`;
+
 export const Subheading3 = styled.div`
   margin-bottom: 1em;
   margin-top: 0.5em;
