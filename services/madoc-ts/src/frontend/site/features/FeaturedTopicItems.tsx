@@ -1,8 +1,5 @@
 import React from 'react';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
-import { CanvasFull } from '../../../types/canvas-full';
-import { CanvasSnippet } from '../../shared/components/CanvasSnippet';
-import { useRouteContext } from '../hooks/use-route-context';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { ImageStripBox } from '../../shared/atoms/ImageStrip';
@@ -11,23 +8,19 @@ import { LocaleString, useCreateLocaleString } from '../../shared/components/Loc
 import { SingleLineHeading5 } from '../../shared/typography/Heading5';
 import { useTranslation } from 'react-i18next';
 import { SnippetContainer } from '../../shared/atoms/SnippetLarge';
-import { useRelativeLinks } from '../../site/hooks/use-relative-links';
-import { Carousel } from '../../shared/atoms/Carousel';
 import { useTopic } from '../pages/loaders/topic-loader';
+import { useApiCanvas } from '../../shared/hooks/use-api-canvas';
 import { extractIdFromUrn } from '../../../utility/parse-urn';
+import { FeatureResource } from '../../../extensions/enrichment/authority/types';
 
-const FeaturesContainer = styled.div`
+const FeaturedItemsContainer = styled.div`
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: space-evenly;
 
-  &[data-view-column='true'] {
-    flex-direction: column;
-  }
-  &[data-align='center'] {
-    align-items: center;
-    justify-content: center;
-  }
   a {
+    text-decoration: none;
     max-width: 900px;
     width: 100%;
   }
@@ -50,108 +43,70 @@ const FeatureCard = styled.div`
   }
 `;
 
-interface FeaturedItemProps {
-  carousel?: boolean;
-  header?: string;
-  snippet?: boolean;
-  column?: boolean;
-  imageStyle?: string;
+export const FeaturedTopicItems: React.FC<{
   cardBackground?: string;
   textColor?: string;
   cardBorder?: string;
-  align?: 'center' | 'start';
-}
-
-export function FeaturedTopicItems(props: FeaturedItemProps) {
+  imageStyle?: string;
+}> = ({ cardBackground = '#ffffff', textColor = '#002D4B', cardBorder = '#002D4B', imageStyle = 'covered' }) => {
   const { data } = useTopic();
   const items = data?.featured_resources ? data?.featured_resources : [];
 
   const createLocaleString = useCreateLocaleString();
   const { t } = useTranslation();
-
   if (!data) {
     return null;
   }
-  // @ts-ignore
-  const Items = items?.map(
-    item =>
-      item &&
-      (!props.snippet ? (
-        <Link key={item.madoc_id} to={item.url}>
-          <FeatureCard
-            style={{
-              backgroundColor: props.cardBackground,
-              borderColor: props.cardBorder,
-              color: props.textColor,
-            }}
-          >
-            <ImageStripBox $size="small" $bgColor={props.cardBackground}>
-              <CroppedImage $size="small" $covered={props.imageStyle === 'covered'}>
-                {item.thumbnail ? (
-                  <img alt={createLocaleString(item.label, t('item thumbnail'))} src={item.thumbnail} />
-                ) : null}
-              </CroppedImage>
-            </ImageStripBox>
-            <LocaleString style={{ padding: '1em' }} as={SingleLineHeading5}>
-              {item.label}
-            </LocaleString>
-          </FeatureCard>
-        </Link>
-      ) : (
-        <CanvasSnippet key={item.madoc_id} id={extractIdFromUrn(item.madoc_id)} />
-      ))
-  );
-
   if (!items || items.length === 0) {
     return null;
   }
-  if (!props.carousel || props.column) {
+
+  const RenderItemSnippet = (item: FeatureResource) => {
+    const { data: itemData } = useApiCanvas(extractIdFromUrn(item.madoc_id));
+    // todo backend needs to give more data
     return (
-      <>
-        <h3 style={{ fontSize: '1.5em', color: 'inherit' }}>{props.header}</h3>
-        <FeaturesContainer data-view-column={props.column} data-align={props.align}>
-          {Items}
-        </FeaturesContainer>
-      </>
+      <Link key={'1234'} to={'1234'}>
+        <FeatureCard
+          style={{
+            backgroundColor: cardBackground,
+            borderColor: cardBorder,
+            color: textColor,
+          }}
+        >
+          <ImageStripBox $size="small" $bgColor={cardBackground}>
+            <CroppedImage $size="small" $covered={imageStyle === 'covered'}>
+              {item.thumbnail ? (
+                <img alt={createLocaleString(itemData?.canvas.label, t('item thumbnail'))} src={item.thumbnail} />
+              ) : null}
+            </CroppedImage>
+          </ImageStripBox>
+          <LocaleString style={{ padding: '1em' }} as={SingleLineHeading5}>
+            {itemData?.canvas.label}
+          </LocaleString>
+        </FeatureCard>
+      </Link>
     );
-  }
+  };
   return (
     <>
-      <h3 style={{ fontSize: '1.5em', color: 'inherit' }}>{props.header}</h3>
-      <FeaturesContainer data-view-column={props.column} data-align={props.align}>
-        <Carousel>{Items}</Carousel>
-      </FeaturesContainer>
+      <h3 style={{ fontSize: '1.5em', color: textColor, textAlign: 'center' }}>Featured on: {data.label}</h3>
+      <FeaturedItemsContainer>{items?.map(item => item && <RenderItemSnippet {...item} />)}</FeaturedItemsContainer>
     </>
   );
-}
+};
 
 blockEditorFor(FeaturedTopicItems, {
   label: 'Featured Topic Items',
   type: 'default.FeaturedTopicItems',
   defaultProps: {
     header: 'Featured Items',
-    snippet: false,
-    column: false,
     cardBackground: '#ffffff',
     textColor: '',
     cardBorder: '',
     imageStyle: 'cover',
-    align: 'start',
-    carousel: 'false',
   },
   editor: {
     header: { label: 'label', type: 'text-field' },
-    snippet: { type: 'checkbox-field', label: 'Snippet', inlineLabel: 'Show as snippet' },
-    column: { type: 'checkbox-field', label: 'Column', inlineLabel: 'Show in column' },
-    carousel: { type: 'checkbox-field', label: 'Carousel', inlineLabel: 'Show in carousel' },
-    align: {
-      label: 'Align items',
-      type: 'dropdown-field',
-      options: [
-        { value: 'center', text: 'centered' },
-        { value: 'start', text: 'start' },
-      ],
-    },
     cardBackground: { label: 'Card background color', type: 'color-field' },
     textColor: { label: 'Card text color', type: 'color-field' },
     cardBorder: { label: 'Card border', type: 'color-field' },

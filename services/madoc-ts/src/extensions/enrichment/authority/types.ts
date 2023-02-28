@@ -268,7 +268,7 @@ export interface EntityMadocResponse {
   related_topics: EnrichmentEntitySnippet[];
   other_data: any;
 }
-interface FeatureResource {
+export interface FeatureResource {
   url: string;
   created: string;
   modified: string;
