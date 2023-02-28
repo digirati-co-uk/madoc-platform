@@ -29,7 +29,7 @@ services:
     links:
       - shared-postgres
       - gateway-redis
-#    volumes:
-#      - ./services/enrichment/app:/app:delegated
-#    ports:
-#      - 5020:5000
+    volumes:
+      - ./services/enrichment/app:/app:delegated
+    ports:
+      - 5020:5000
