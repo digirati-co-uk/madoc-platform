@@ -8,7 +8,7 @@ import { CloseIcon } from '../../shared/icons/CloseIcon';
 export const AppliedFacetContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  padding: 1em 0;
+  //padding: 1em 0;
 `;
 
 export const Pill = styled.div`
