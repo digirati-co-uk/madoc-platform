@@ -221,7 +221,6 @@ export const RenderBlankSlot: React.FC<{
 
     // Customise for all pages of this type.
     // Advanced [ .. ]
-
     const slotRequest = createSlotRequest(slotId, context, {
       type,
       isPage,
@@ -229,6 +228,7 @@ export const RenderBlankSlot: React.FC<{
       projectId: project?.id,
     });
 
+    console.log(slotRequest)
     await beforeCreateSlot(slotRequest);
 
     slotRequest.blocks = blockDefinitions.map(definition => {

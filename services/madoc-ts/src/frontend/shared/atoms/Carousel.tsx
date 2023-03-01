@@ -1,6 +1,5 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Button } from '../navigation/Button';
 import { ChevronLeft, ChevronRight } from '../icons/ChevronIcon';
 
 const CarouselOuterWrapper = styled.div`

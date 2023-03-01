@@ -121,7 +121,7 @@ export const SearchItem: React.FC<{
   textColor?: string;
   background?: string;
   imageStyle?: string;
-  admin?: boolean,
+  admin?: boolean;
 }> = ({ result, size, search, list, border, textColor, background, imageStyle, hideSnippet, admin }) => {
   const things = ((result && result.contexts) || []).map(value => {
     return parseUrn(typeof value === 'string' ? value : value.id);
@@ -203,13 +203,19 @@ export const SearchResults: React.FC<{
   isFetching?: boolean;
   admin?: boolean;
 }> = ({ isFetching, searchResults = [], value, admin }) => {
-    return (
+  return (
     <ResultsContainer $isFetching={isFetching}>
       {searchResults.map((result: SearchResult, index: number) => {
         return result ? (
-          <SearchItem admin={admin} result={result} key={`${index}__${result.resource_id}`} search={value} size="small" />
+          <SearchItem
+            admin={admin}
+            result={result}
+            key={`${index}__${result.resource_id}`}
+            search={value}
+            size="small"
+          />
         ) : null;
       })}
     </ResultsContainer>
-    )
+  );
 };

@@ -1,21 +1,19 @@
 import React from 'react';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
-import { Pagination } from '../../shared/components/Pagination';
-import { SearchResults } from '../../shared/components/SearchResults';
-import { useTopicItems } from '../../shared/hooks/use-topic-items';
 import { Slot } from '../../shared/page-blocks/slot';
 import { TopicHero } from '../features/TopicHero';
-import { useParams } from 'react-router-dom';
 import { FeaturedTopicItems } from '../features/FeaturedTopicItems';
 import { StaticPage } from '../features/StaticPage';
 import { RelatedTopics } from '../features/RelatedTopics';
+import { SearchPagination } from '../features/SearchPagination';
+import { AppliedFacets } from '../features/AppliedFacets';
+import { SearchPageResults } from '../features/SearchPageResults';
+import { SearchPageFilters } from '../features/SearchPageFilters';
+import { AutoSlotLoader } from '../../shared/page-blocks/auto-slot-loader';
 
-export function ViewTopic() {
-  const { topic } = useParams<Record<'topic', any>>();
-  const [search, { query, page }] = useTopicItems(topic);
-
+export const ViewTopic = () => {
   return (
-    <StaticPage title="topic">
+    <AutoSlotLoader>
       <Slot name="common-breadcrumbs">
         <DisplayBreadcrumbs />
       </Slot>
@@ -28,30 +26,31 @@ export function ViewTopic() {
         <FeaturedTopicItems />
       </Slot>
 
-      <div>
-        <h3>Items in this topic</h3>
-        <Pagination
-          page={page}
-          totalPages={
-            search.latestData && search.latestData.pagination ? search.latestData.pagination.totalPages : undefined
-          }
-          stale={search.isLoading}
-          extraQuery={query}
-        />
-        <SearchResults admin searchResults={search.data?.results || []} />
-        <Pagination
-          page={page}
-          totalPages={
-            search.latestData && search.latestData.pagination ? search.latestData.pagination.totalPages : undefined
-          }
-          stale={search.isLoading}
-          extraQuery={query}
-        />
-      </div>
+      <Slot name="topic-result-heading">
+        <h3 style={{ fontSize: '1.5em', color: 'inherit' }}>Explore all resources</h3>
+      </Slot>
 
+      <div style={{ display: 'flex' }}>
+        <div style={{ maxWidth: 300 }}>
+          <Slot name="topic-page-filters" small>
+            <SearchPageFilters hideTitle={true} dropdown={true} />
+          </Slot>
+        </div>
+
+        <div style={{ width: '100%' }}>
+          <Slot name="topic-item-results">
+            <AppliedFacets />
+            <SearchPageResults />
+          </Slot>
+
+          <Slot name="topic-items-pagination">
+            <SearchPagination paginationStyle={true} position={'flex-start'} />
+          </Slot>
+        </div>
+      </div>
       <Slot name="topic-related">
         <RelatedTopics />
       </Slot>
-    </StaticPage>
+    </AutoSlotLoader>
   );
-}
+};

@@ -97,6 +97,8 @@ export type SlotMappingRequest = {
   collection?: { [slotName: string]: CreateSlotRequest };
   manifest?: { [slotName: string]: CreateSlotRequest };
   canvas?: { [slotName: string]: CreateSlotRequest };
+  topicType?: { [slotName: string]: CreateSlotRequest };
+  topic?: { [slotName: string]: CreateSlotRequest };
 };
 
 export type SitePageRow = {

@@ -64,7 +64,7 @@ export const FeaturedTopicItems: React.FC<{
     const { data: itemData } = useApiCanvas(extractIdFromUrn(item.madoc_id));
     // todo backend needs to give more data
     return (
-      <Link key={'1234'} to={'1234'}>
+      <Link key={itemData?.canvas.id} to={'1234'}>
         <FeatureCard
           style={{
             backgroundColor: cardBackground,
@@ -91,7 +91,9 @@ export const FeaturedTopicItems: React.FC<{
       <h3 style={{ fontSize: '1.5em', color: textColor, textAlign: 'center' }}>
         Featured on: <LocaleString>{data.title}</LocaleString>
       </h3>
-      <FeaturedItemsContainer>{items?.map(item => item && <RenderItemSnippet {...item} />)}</FeaturedItemsContainer>
+      <FeaturedItemsContainer>
+        {items?.map(item => item && <RenderItemSnippet key={item.madoc_id} {...item} />)}
+      </FeaturedItemsContainer>
     </>
   );
 };
