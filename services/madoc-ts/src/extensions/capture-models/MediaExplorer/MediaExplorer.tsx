@@ -12,14 +12,11 @@ export type MediaExplorerProps = {
   id: string;
   label: string;
   type: string;
-  value:
-    | string
-    | {
-        id: string;
-        image: string;
-        thumbnail: string;
-      }
-    | null;
+  value: {
+    id: string;
+    image: string;
+    thumbnail: string;
+  } | null;
 
   valueAsString?: boolean;
   onlyThumbnail?: boolean;
