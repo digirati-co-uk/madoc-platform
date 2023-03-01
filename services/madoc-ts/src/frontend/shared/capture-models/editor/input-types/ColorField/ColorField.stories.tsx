@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { withKnobs } from '@storybook/addon-knobs';
 import { PluginProvider } from '../../../plugin-api/context';
 import { FieldEditor } from '../../components/FieldEditor/FieldEditor';
 import { FieldInstanceList } from '../../components/FieldInstanceList/FieldInstanceList';
@@ -7,7 +6,7 @@ import { FieldWrapper } from '../../components/FieldWrapper/FieldWrapper';
 import { ColorField } from './ColorField';
 import '../../bundle';
 
-export default { title: 'Capture models/Color field', decorators: [withKnobs] };
+export default { title: 'Capture models/Color field' };
 
 export const Simple: React.FC = () => {
   const [value, setValue] = React.useState('#000000');

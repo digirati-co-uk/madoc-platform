@@ -12,6 +12,7 @@ import * as processCanvasOcr from '../gateway/tasks/process-canvas-ocr';
 import * as searchIndex from '../gateway/tasks/search-index-task';
 import * as apiActionTask from '../gateway/tasks/api-action-task';
 import * as migrationTasks from '../capture-model-server/migration/migrate-model-task';
+import * as exportResource from '../gateway/tasks/export-resource-task';
 
 const configOptions: WorkerOptions = {
   connection: {
@@ -125,6 +126,10 @@ const worker = new Worker(
           });
         case migrationTasks.type:
           return await migrationTasks.jobHandler(job.name, job.data.taskId, contextualApi).catch(err => {
+            throw err;
+          });
+        case exportResource.type:
+          return await exportResource.jobHandler(job.name, job.data.taskId, contextualApi).catch(err => {
             throw err;
           });
 

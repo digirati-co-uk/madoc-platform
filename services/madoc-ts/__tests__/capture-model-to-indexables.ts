@@ -20,7 +20,7 @@ describe('Capture model to indexables', () => {
         content_id: expect.any(String),
       },
       `
-      Object {
+      {
         "content_id": Any<String>,
         "indexable": "Some label",
         "indexable_date": null,
@@ -57,7 +57,7 @@ describe('Capture model to indexables', () => {
     expect(indexables[0]).toMatchInlineSnapshot(
       { content_id: expect.any(String) },
       `
-      Object {
+      {
         "content_id": Any<String>,
         "indexable": "Some label",
         "indexable_date": null,
@@ -79,7 +79,7 @@ describe('Capture model to indexables', () => {
     expect(indexables[1]).toMatchInlineSnapshot(
       { content_id: expect.any(String) },
       `
-      Object {
+      {
         "content_id": Any<String>,
         "indexable": "some description",
         "indexable_date": null,
@@ -266,7 +266,7 @@ describe('Capture model to indexables', () => {
     expect(indexables[0]).toMatchInlineSnapshot(
       { content_id: expect.any(String) },
       `
-      Object {
+      {
         "content_id": Any<String>,
         "indexable": "ORIGINAL VALUE",
         "indexable_date": null,
@@ -279,9 +279,9 @@ describe('Capture model to indexables', () => {
         "language_pg": "english",
         "original_content": "ORIGINAL VALUE",
         "resource_id": "urn:madoc:canvas:1",
-        "selector": Object {
-          "box-selector": Array [
-            Array [
+        "selector": {
+          "box-selector": [
+            [
               1,
               2,
               100,

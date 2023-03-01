@@ -4,10 +4,9 @@ import { FieldEditor } from '../../src/frontend/shared/capture-models/editor/com
 import { FieldInstanceList } from '../../src/frontend/shared/capture-models/editor/components/FieldInstanceList/FieldInstanceList';
 import { FieldWrapper } from '../../src/frontend/shared/capture-models/editor/components/FieldWrapper/FieldWrapper';
 import { DropdownField } from '../../src/frontend/shared/capture-models/editor/input-types/DropdownField/DropdownField';
-import { withKnobs } from '@storybook/addon-knobs';
 import '../../src/frontend/shared/capture-models/editor/input-types/DropdownField/index';
 
-export default { title: 'Capture models/Dropdown', decorators: [withKnobs] };
+export default { title: 'Capture models/Dropdown' };
 
 export const Simple: React.FC = () => {
   const [value, setValue] = React.useState<string | undefined>('');

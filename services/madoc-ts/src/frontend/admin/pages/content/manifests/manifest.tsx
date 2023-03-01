@@ -61,6 +61,7 @@ export const ManifestView: UniversalComponent<ManifestViewType> = createUniversa
             { label: t('OCR'), link: `/manifests/${id}/ocr` },
             { label: t('Delete'), link: `/manifests/${id}/delete` },
             { label: t('Search index'), link: `/manifests/${id}/search` },
+            { label: t('Export'), link: `/manifests/${id}/export` },
           ]}
         />
         <WidePage>

@@ -7,7 +7,7 @@ export const getCanvasMetadata: RouteMiddleware<{ id: string }> = async context 
   const { siteId } = optionalUserWithScope(context, ['site.view']);
   const canvasId = context.params.id;
 
-  const canvas = await context.connection.many<{
+  const canvas = await context.connection.any<{
     key: string;
     value: string;
     language: string;

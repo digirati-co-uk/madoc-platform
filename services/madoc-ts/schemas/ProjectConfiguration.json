@@ -123,6 +123,9 @@
     "atlasBackground": {
       "type": "string"
     },
+    "forkMode": {
+      "type": "boolean"
+    },
     "searchOptions": {
       "type": "object",
       "properties": {

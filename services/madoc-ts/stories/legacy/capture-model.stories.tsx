@@ -2,7 +2,6 @@ import {Revisions} from '../../src/frontend/shared/capture-models/editor/stores/
 import { URLContextExplorer } from '../../src/frontend/shared/components/ContentExplorer';
 import * as React from 'react';
 import { TinyButton } from '../../src/frontend/shared/navigation/Button';
-import { text } from '@storybook/addon-knobs';
 import { RevisionNavigation } from '../../src/frontend/shared/capture-models/RevisionNavigation';
 import { VaultProvider } from 'react-iiif-vault';
 import { ViewExternalContent } from '../../src/frontend/shared/components/ViewExternalContent';
@@ -6737,7 +6736,7 @@ const exampleModel: any = {
 };
 
 export const CaptureModelSandbox: React.FC = () => {
-  const defaultManifest = text('Manifest', 'https://wellcomelibrary.org/iiif/b18035723/manifest');
+  const defaultManifest = 'https://wellcomelibrary.org/iiif/b18035723/manifest';
 
   const type = React.useMemo(() => {
     return { type: 'Manifest', id: defaultManifest };

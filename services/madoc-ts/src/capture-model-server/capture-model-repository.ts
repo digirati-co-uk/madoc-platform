@@ -148,11 +148,12 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
     ) {
       const offset = (page - 1) * perPage;
       const paging = all ? sql`` : sql`limit ${perPage} offset ${offset}`;
-      const derivedQuery = allDerivatives
-        ? sql``
-        : derivedFrom
+      const derivedQuery = derivedFrom
         ? sql`and derived_from = ${derivedFrom}`
+        : allDerivatives
+        ? sql``
         : sql`and derived_from is null`;
+
       const targetQuery = target
         ? sql`
         and jsonb_path_query_first(cm.target::jsonb, '$[*] ? (@.id == $target)', ${sql.json({
@@ -198,6 +199,65 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
                    left join "user" u on u.id = r.author_id
           where r.site_id = ${site_id}
           ${paging}
+      `;
+    },
+
+    modelFieldRevisions({
+      projectId,
+      siteId,
+      entity,
+      status = 'approved',
+    }: {
+      siteId: number;
+      projectId: number;
+      entity?: string;
+      status?: 'all' | 'drafts' | 'approved';
+    }) {
+      const entityQuery = entity
+        ? sql`jsonb_to_recordset(cmd.document_data->'properties'->${entity})`
+        : sql`jsonb_to_record(cmd.document_data)`;
+
+      const approvedQuery =
+        status === 'all' ? sql`` : status === 'drafts' ? sql`and cmr.approved = false` : sql`and cmr.approved = true`;
+
+      return sql<{
+        model_id: string;
+        key: string;
+        doc_id: string;
+        id: string;
+        type: string;
+        value: any;
+        revision: string;
+        revises: string;
+        target: CaptureModel['target'],
+      }>`
+        with d as (with cmd as (select cm.id as model_id,
+                                       cm.target as target,
+                                       document_data
+                                from capture_model cm
+                                         left join capture_model_document cmd on cmd.id = cm.document_id
+                                where derived_from =
+                                      (select p.capture_model_id from iiif_project p where p.id = ${projectId} and p.site_id = ${siteId}))
+                   select entity.properties as doc,
+                          entity.id         as doc_id,
+                          cmd.model_id      as model_id,
+                          cmd.target        as target
+                   from cmd,
+                        ${entityQuery} as entity(
+                           "id" text,
+                           "label" text,
+                           "properties" jsonb,
+                           "revision" text,
+                           "allowMultiple" bool
+                        ))
+        select d.model_id, r.key, d.doc_id, d.target, field.*
+        from d,
+             jsonb_each(d.doc) as r,
+             jsonb_to_recordset(r.value) as field("id" text, "type" text, "value" json, "revision" text, "revises" text)
+                 left join capture_model_revision cmr on cmr.id = revision::uuid
+        where type != 'entity'
+          and revision != ''
+          ${approvedQuery};
       `;
     },
   };
@@ -1105,6 +1165,15 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
     return (await this.connection.any(CaptureModelRepository.queries.listAllRevisions(options, site_id))).map(row => {
       return CaptureModelRepository.parseRevisionRow(row)[0];
     });
+  }
+
+  async getModelFieldRevisionsByProject(options: {
+    siteId: number;
+    projectId: number;
+    entity?: string;
+    status?: 'all' | 'drafts' | 'approved';
+  }) {
+    return await this.connection.any(CaptureModelRepository.queries.modelFieldRevisions(options));
   }
 
   async searchPublished(siteId: number) {

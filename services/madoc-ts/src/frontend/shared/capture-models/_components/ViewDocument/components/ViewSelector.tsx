@@ -28,6 +28,12 @@ export const ViewSelector: React.FC<{
         setImage(cropped);
       }
     }
+    if (selector && selector.revisedBy && selector.revisedBy[0]) {
+      const cropped = croppedRegion(selector.revisedBy[0].state);
+      if (cropped) {
+        setImage(cropped);
+      }
+    }
   }, [croppedRegion, selector, service]);
 
   if (!image) {

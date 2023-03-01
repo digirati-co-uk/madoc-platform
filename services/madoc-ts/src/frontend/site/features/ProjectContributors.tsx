@@ -1,5 +1,5 @@
 import React from 'react';
-import { blockConfigFor } from '../../shared/plugins/external/block-config-for';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { useProject } from '../hooks/use-project';
 import { useApiTaskSearch } from '../../shared/hooks/use-api-task-search';
 import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
@@ -51,7 +51,7 @@ export function ProjectContributors(props: ProjectContributors) {
 
   const [, isBot] = useBots();
 
-  if (!data || !contributors?.length) return null;
+  if (!data || !contributors?.length) return <p>No contributors yet</p>;
 
   return (
     <ContributorsWrapper>
@@ -71,7 +71,7 @@ export function ProjectContributors(props: ProjectContributors) {
   );
 }
 
-blockConfigFor(ProjectContributors, {
+blockEditorFor(ProjectContributors, {
   label: 'Project Contributors',
   type: 'default.ProjectContributors',
   defaultProps: {

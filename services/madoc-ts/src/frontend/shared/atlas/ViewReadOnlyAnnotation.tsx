@@ -1,13 +1,16 @@
-import React, { useMemo, useState } from 'react';
-import { HTMLPortal, mergeStyles } from '@atlas-viewer/atlas';
+import React, { useEffect, useMemo, useState } from 'react';
+import { HTMLPortal, mergeStyles, useAtlas } from '@atlas-viewer/atlas';
 import { HotSpot } from '../atoms/HotSpot';
+import { useSelectorEvents } from '../capture-models/editor/stores/selectors/selector-helper';
 import { ReadOnlyAnnotation } from '../hooks/use-read-only-annotations';
 
 // Avoid bad types from Atlas.
 const CustomHTMLPortal = HTMLPortal as any;
 
 export function ViewReadOnlyAnnotation({ id, style, target, ...props }: ReadOnlyAnnotation) {
+  const { onClick, onHover } = useSelectorEvents(id);
   const [isOpen, setIsOpen] = useState(false);
+  const atlas = useAtlas();
   const [isHover, setIsHover] = useState(false);
   const { interactive, hotspot, hotspotSize, hidden, ...allStyles } = style;
 
@@ -20,7 +23,19 @@ export function ViewReadOnlyAnnotation({ id, style, target, ...props }: ReadOnly
   }, [allStyles, hotspot, isHover, isOpen]);
 
   return (
-    <world-object id="readonly-" x={target.x} y={target.y} width={target.width} height={target.height}>
+    <world-object
+      id={`readonly-${id}`}
+      x={target.x}
+      y={target.y}
+      width={target.width}
+      height={target.height}
+      onClick={() => {
+        onClick();
+      }}
+      onMouseEnter={() => {
+        onHover();
+      }}
+    >
       {hotspot ? (
         <>
           <box

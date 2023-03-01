@@ -62,7 +62,7 @@ const BoxSelectorAtlas: SelectorComponent<BoxSelectorProps> = props => {
   const { state, hidden, readOnly, id } = props;
   const generatePreview = useCroppedRegion();
   const [mounted, setMounted] = useState(false);
-  const { onSave, style, onClick } = useBoxSelector(props, { generatePreview });
+  const { onSave, style, onClick, onHover } = useBoxSelector(props, { generatePreview });
 
   useEffect(() => {
     if (!state) {
@@ -102,6 +102,12 @@ const BoxSelectorAtlas: SelectorComponent<BoxSelectorProps> = props => {
           props.onClick(props);
         }
         onClick(e);
+      }}
+      onHover={e => {
+        if (props.onHover) {
+          props.onHover(props);
+        }
+        onHover(e);
       }}
     />
   );

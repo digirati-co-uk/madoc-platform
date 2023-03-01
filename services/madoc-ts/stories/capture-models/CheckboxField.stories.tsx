@@ -3,11 +3,10 @@ import { FieldInstanceList } from '../../src/frontend/shared/capture-models/edit
 import { FieldWrapper } from '../../src/frontend/shared/capture-models/editor/components/FieldWrapper/FieldWrapper';
 import { PluginProvider } from '../../src/frontend/shared/capture-models/plugin-api/context';
 import { CheckboxField } from '../../src/frontend/shared/capture-models/editor/input-types/CheckboxField/CheckboxField';
-import { withKnobs } from '@storybook/addon-knobs';
 import { FieldEditor } from '../../src/frontend/shared/capture-models/editor/components/FieldEditor/FieldEditor';
 import '../../src/frontend/shared/capture-models/editor/input-types/CheckboxField/index';
 
-export default { title: 'Capture models/Checkbox', decorators: [withKnobs] };
+export default { title: 'Capture models/Checkbox' };
 
 export const Simple: React.FC = () => {
   const [value, setValue] = React.useState(true);

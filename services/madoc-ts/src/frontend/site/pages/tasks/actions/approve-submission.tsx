@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { ProjectFull } from '../../../../../types/project-full';
-import { Revisions } from '../../../../shared/capture-models/editor/stores/revisions/index';
+import { Revisions } from '../../../../shared/capture-models/editor/stores/revisions';
 import { useTranslation } from 'react-i18next';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useSite } from '../../../../shared/hooks/use-site';
@@ -11,7 +11,7 @@ import {
 } from '../../../../shared/navigation/EditorToolbar';
 import { ModalButton } from '../../../../shared/components/Modal';
 import { Button, ButtonRow } from '../../../../shared/navigation/Button';
-import { GradingIcon } from '../../../../shared/icons/GradingIcon';
+import CheckCircleIcon from '../../../../shared/icons/CheckCircleIcon';
 
 export const ApproveSubmission: React.FC<{
   onApprove: () => void;
@@ -85,7 +85,7 @@ export const ApproveSubmission: React.FC<{
       modalSize="sm"
       disabled={loading}
       autoHeight={true}
-      title={t('Approve submission') || ''}
+      title={t('Approve') || ''}
       render={() => (
         <div>
           <ul>
@@ -94,7 +94,7 @@ export const ApproveSubmission: React.FC<{
         </div>
       )}
       renderFooter={({ close }: any) => (
-        <ButtonRow style={{ margin: '0 0 0 auto' }}>
+        <ButtonRow>
           <Button
             data-cy="approve-submission"
             onClick={() => {
@@ -108,9 +108,9 @@ export const ApproveSubmission: React.FC<{
       )}
     >
       <EditorToolbarIcon>
-        <GradingIcon />
+        <CheckCircleIcon />
       </EditorToolbarIcon>
-      <EditorToolbarLabel>{t('Approve submission')}</EditorToolbarLabel>
+      <EditorToolbarLabel>{t('Approve')}</EditorToolbarLabel>
     </EditorToolbarButton>
   );
 };

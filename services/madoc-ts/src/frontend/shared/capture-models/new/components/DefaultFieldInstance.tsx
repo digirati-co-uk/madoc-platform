@@ -18,7 +18,7 @@ export const DefaultFieldInstance: React.FC<{
   const immutable = immutableFields.indexOf(property) !== -1;
   const [selector, { isBlockingForm: disableForm }] = useResolvedSelector(field);
 
-  useEffect(() => {
+    useEffect(() => {
     if (selector) {
       if (isHighlighted) {
         return helper.highlight(selector.id);
@@ -46,8 +46,16 @@ export const DefaultFieldInstance: React.FC<{
   }
 
   return (
-    <FieldSet disabled={disableForm} onFocus={onFocus} onBlur={onBlur}>
+    <FieldSet
+      onFocus={onFocus}
+      onBlur={onBlur}
+      data-field-id={field.id}
+      aria-label={field.label}
+      // This aria-description is still in draft... (causes react error)
+      data-aria-description={field.description}
+    >
       <FieldInstance
+        disabled={disableForm}
         key={field.revises ? field.revises : field.id}
         field={field}
         property={property}

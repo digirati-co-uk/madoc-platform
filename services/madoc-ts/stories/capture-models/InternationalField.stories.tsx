@@ -3,11 +3,10 @@ import * as React from 'react';
 import { FieldWrapper } from '../../src/frontend/shared/capture-models/editor/components/FieldWrapper/FieldWrapper';
 import { PluginProvider } from '../../src/frontend/shared/capture-models/plugin-api/context';
 import { InternationalField } from '../../src/frontend/shared/capture-models/editor/input-types/InternationalField/InternationalField';
-import { withKnobs } from '@storybook/addon-knobs';
 import { FieldEditor } from '../../src/frontend/shared/capture-models/editor/components/FieldEditor/FieldEditor';
 import '../../src/frontend/shared/capture-models/editor/input-types/InternationalField/index';
 
-export default { title: 'Capture models/International Field', decorators: [withKnobs] };
+export default { title: 'Capture models/International Field' };
 
 export const Simple: React.FC = () => {
   const [value, setValue] = React.useState<InternationalString>({ en: [''] });

@@ -1,4 +1,3 @@
-import { boolean } from '@storybook/addon-knobs';
 import { useState } from 'react';
 import * as React from 'react';
 import styled from 'styled-components';
@@ -16,7 +15,7 @@ const StorybookPaddedBox = styled.div`
 export default { title: 'Legacy/User dashboard' };
 
 export const NormalUser: React.FC = () => {
-  const isLoading = boolean('Set loading state', false);
+  const isLoading = false;
   const [isTempLoading, setTempLoading] = useState(false);
   const [selected, setSelected] = useState(0);
   const menu = ['Overview', 'Contributions', 'Reviews', 'All tasks'];

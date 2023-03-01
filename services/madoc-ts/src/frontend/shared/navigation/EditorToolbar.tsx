@@ -39,9 +39,9 @@ export const EditorToolbarButton = styled.button<{ $rightBorder?: boolean; $left
       background: transparent;
     }
   }
-  & ~ & {
-    border-left: 1px solid #eee;
-  }
+  //& ~ & {
+  //  border-left: 1px solid #eee;
+  //}
   ${props =>
     props.$rightBorder &&
     css`

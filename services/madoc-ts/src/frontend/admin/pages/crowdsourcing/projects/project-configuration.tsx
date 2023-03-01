@@ -5,20 +5,12 @@ import { EmptyState } from '../../../../shared/layout/EmptyState';
 import { SuccessMessage } from '../../../../shared/callouts/SuccessMessage';
 import { EditShorthandCaptureModel } from '../../../../shared/capture-models/EditorShorthandCaptureModel';
 import { useAdminLayout } from '../../../../shared/components/AdminMenu';
-import { siteConfigurationModel } from '../../../../shared/configuration/site-config';
+import { postProcessConfiguration, siteConfigurationModel } from '../../../../shared/configuration/site-config';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { apiHooks } from '../../../../shared/hooks/use-api-query';
 import { useProjectTemplate } from '../../../../shared/hooks/use-project-template';
 import { useShortMessage } from '../../../../shared/hooks/use-short-message';
 import { serverRendererFor } from '../../../../shared/plugins/external/server-renderer-for';
-
-function postProcessConfiguration(config: any) {
-  if (config.revisionApprovalsRequired) {
-    config.revisionApprovalsRequired = Number(config.revisionApprovalsRequired);
-  }
-
-  return config;
-}
 
 export const ProjectConfiguration: React.FC = () => {
   const params = useParams() as { id: string };
@@ -46,6 +38,8 @@ export const ProjectConfiguration: React.FC = () => {
       {didSave ? <SuccessMessage>{t('Changes saved')}</SuccessMessage> : null}
       <EditShorthandCaptureModel
         key={updatedAt}
+        enableSearch
+        searchLabel={t('Search configuration')}
         immutableFields={projectTemplate?.configuration?.immutable}
         data={projectConfiguration}
         template={siteConfigurationModel}

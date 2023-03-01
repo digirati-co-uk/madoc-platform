@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 
-const MaximiseWindowContainer = styled.div<{ $open: boolean }>`
+export const MaximiseWindowContainer = styled.div<{ $open: boolean }>`
   height: 100%;
   background: #fff;
-  flex: 1 1 0px;
+  flex: 1 1 0;
   min-height: 0;
   min-width: 0;
   display: flex;
@@ -14,12 +14,14 @@ const MaximiseWindowContainer = styled.div<{ $open: boolean }>`
   ${props =>
     props.$open &&
     css`
-      position: absolute;
+      position: fixed;
       top: 0;
       right: 0;
       bottom: 0;
       left: 0;
-      z-index: 11;
+      z-index: 22;
+      overflow-y: scroll;
+      overscroll-behavior-y: contain;
     `}
 `;
 
@@ -28,7 +30,6 @@ export const MaximiseWindow: React.FC<{
   children: (vars: { toggle: () => void; isOpen: boolean }) => React.ReactNode;
 }> = ({ children, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
-
   const toggle = useCallback(() => {
     setIsOpen(i => !i);
   }, []);
@@ -37,10 +38,10 @@ export const MaximiseWindow: React.FC<{
     if (onChange) {
       onChange(isOpen);
     }
-  }, [isOpen]);
+  }, [isOpen, onChange]);
 
   return (
-    <MaximiseWindowContainer $open={isOpen}>
+    <MaximiseWindowContainer $open={isOpen} data-open={isOpen}>
       {children(useMemo(() => ({ toggle, isOpen }), [isOpen, toggle]))}
     </MaximiseWindowContainer>
   );
