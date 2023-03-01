@@ -10,6 +10,11 @@ export const SearchFilterCheckbox = styled.div`
   background: #eee;
 `;
 
+export const SearchFilterCheckbox2 = styled.input`
+  padding: 0.1em;
+  background: #eee;
+`;
+
 export const SearchFilterTitle = styled.h3``;
 
 export const SearchFilterLabel = styled.label`
@@ -20,6 +25,10 @@ export const SearchFilterLabel = styled.label`
   display: block;
   font-size: 0.8em;
   padding: 0.5em;
+
+  :hover {
+    cursor: pointer;
+  }
 `;
 
 export const SearchFilterItem = styled.div<{ $selected?: boolean }>`

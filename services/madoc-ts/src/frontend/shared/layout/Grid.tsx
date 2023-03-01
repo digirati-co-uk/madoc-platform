@@ -4,6 +4,7 @@ export const GridContainer = styled.div<{ $justify?: string }>`
   display: flex;
   justify-content: ${props => props.$justify};
   align-items: flex-start;
+  width: 100%;
 `;
 
 export const CSSThirdGrid = styled.div<{ $justify?: string }>`

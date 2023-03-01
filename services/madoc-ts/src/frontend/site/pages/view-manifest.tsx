@@ -80,6 +80,7 @@ export function ViewManifest() {
           </Slot>
         </div>
       </div>
+
       <Slot name="manifest-footer">
         <ManifestPagination />
       </Slot>

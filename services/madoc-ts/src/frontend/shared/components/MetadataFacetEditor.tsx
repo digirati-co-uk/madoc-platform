@@ -120,11 +120,12 @@ const EditorColumn = styled.div`
   margin-right: 1em;
 `;
 
-type FacetConfigValue = {
+export type FacetConfigValue = {
   id: string;
   label: InternationalString;
   values: string[];
   key: string;
+  count?: string | number;
 };
 
 export type FacetConfig = {
