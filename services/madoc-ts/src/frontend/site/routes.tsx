@@ -533,11 +533,11 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
     // Topics and topic types.
     {
       path: '/topics',
+      exact: true,
       element: <Components.TopicTypeListLoader />,
       children: [
         {
           path: '/topics',
-          exact: true,
           element: <Components.ViewTopicTypes />,
         },
       ],

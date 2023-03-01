@@ -63,8 +63,10 @@ export const FeaturedTopics: React.FC<{
 };
 
 blockEditorFor(FeaturedTopics, {
+  type: 'default.featuredTopics',
   label: 'Featured Topics',
-  type: 'default.FeaturedTopics',
+  anyContext: ['topic'],
+  requiredContext: ['topic'],
   defaultProps: {
     cardBackground: '',
     textColor: '',
@@ -77,6 +79,4 @@ blockEditorFor(FeaturedTopics, {
     cardBorder: { label: 'Card border', type: 'color-field' },
     controlColor: { label: 'Carousel control colours', type: 'color-field' },
   },
-  anyContext: ['topic'],
-  requiredContext: ['topic'],
 });

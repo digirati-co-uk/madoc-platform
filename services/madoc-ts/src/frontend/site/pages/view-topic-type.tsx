@@ -6,10 +6,11 @@ import { TopicGrid } from '../features/TopicGrid';
 import { TopicTypePagination } from '../features/TopicTypePagination';
 import { FeaturedTopics } from '../features/FeaturedTopics';
 import { StaticPage } from '../features/StaticPage';
+import {AutoSlotLoader} from "../../shared/page-blocks/auto-slot-loader";
 
 export function ViewTopicType() {
   return (
-    <StaticPage title="topic-type">
+    <AutoSlotLoader>
       <Slot name="common-breadcrumbs">
         <DisplayBreadcrumbs />
       </Slot>
@@ -29,6 +30,6 @@ export function ViewTopicType() {
       <Slot name="topic-type-pagination">
         <TopicTypePagination />
       </Slot>
-    </StaticPage>
+    </AutoSlotLoader>
   );
 }

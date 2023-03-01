@@ -58,7 +58,6 @@ export const HeroSubHeading = styled.p`
 
 export const TopicTypeHero: React.FC<{ textColor?: string; overlayColor?: string }> = ({ textColor, overlayColor }) => {
   const { data } = useTopicType();
-
   if (!data) {
     return null;
   }
@@ -80,8 +79,12 @@ blockEditorFor(TopicTypeHero, {
   label: 'Topic type hero',
   anyContext: ['topic'],
   requiredContext: ['topic'],
+  defaultProps: {
+    textColor: '',
+    overlayColor: '',
+  },
   editor: {
     textColor: { label: 'Heading and summary color', type: 'color-field' },
-    OverlayColor: { label: 'Overlay color', type: 'color-field' },
+    overlayColor: { label: 'Overlay color', type: 'color-field' },
   },
 });

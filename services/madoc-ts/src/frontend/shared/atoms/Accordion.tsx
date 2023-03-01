@@ -41,10 +41,7 @@ export const Top = styled.button`
   }
 `;
 
-export const Title = styled.h2`
-  margin: 0;
-  font-size: 1.2em;
-  padding-bottom: 10px;
+export const Title = styled.h3`
   text-transform: capitalize;
 `;
 
