@@ -2,7 +2,7 @@ import React from 'react';
 import { useMutation } from 'react-query';
 import { EditShorthandCaptureModel } from '../../../../../shared/capture-models/EditorShorthandCaptureModel';
 import { useApi } from '../../../../../shared/hooks/use-api';
-import { entityModel } from './entity-model';
+import { entityModel } from '../../../../../../extensions/enrichment/models';
 
 export function NewEntity() {
   const api = useApi();

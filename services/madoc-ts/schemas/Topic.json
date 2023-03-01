@@ -1,13 +1,25 @@
 {
   "type": "object",
   "properties": {
+    "url": {
+      "type": "string"
+    },
     "id": {
       "type": "string"
     },
-    "slug": {
+    "created": {
       "type": "string"
     },
-    "label": {
+    "modified": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "type_slug": {
+      "type": "string"
+    },
+    "type_other_labels": {
       "type": "object",
       "additionalProperties": {
         "type": "array",
@@ -16,257 +28,109 @@
         }
       }
     },
-    "topicType": {
-      "$ref": "#/definitions/TopicTypeSnippet"
+    "label": {
+      "type": "string"
+    },
+    "slug": {
+      "type": "string"
+    },
+    "title": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "description": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "topic_summary": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "image_url": {
+      "type": "string"
+    },
+    "image_caption": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "secondary_heading": {
+      "type": "string"
     },
     "authorities": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
+          "authority": {
+            "type": "string"
+          },
           "id": {
             "type": "string"
           },
-          "label": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
+          "url": {
+            "type": "string"
           }
         },
         "required": [
+          "authority",
           "id",
-          "label"
+          "url"
         ]
       }
     },
-    "modified": {
-      "type": "string"
-    },
-    "created": {
-      "type": "string"
-    },
-    "editorial": {
-      "type": "object",
-      "properties": {
-        "contributors": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "label": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "id",
-              "label"
-            ]
-          }
-        },
-        "summary": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "subHeading": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "heroImage": {
-          "type": "object",
-          "properties": {
-            "url": {
-              "type": "string"
-            },
-            "alt": {
-              "type": "string"
-            },
-            "overlayColor": {
-              "type": "string"
-            },
-            "transparent": {
-              "type": "boolean"
-            }
-          },
-          "required": [
-            "url"
-          ]
-        },
-        "description": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "featured": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "url": {
-                "description": "Internal url for Search API - shouldn't be shown to the user, but can be used for unqiueness",
-                "type": "string"
-              },
-              "resource_id": {
-                "description": "Madoc identifier, usually in the form `urn:madoc:TYPE:ID`",
-                "type": "string"
-              },
-              "resource_type": {
-                "description": "Type of resource (Collection, Manifest or Canvas etc.)",
-                "type": "string"
-              },
-              "madoc_thumbnail": {
-                "description": "Optional thumbnail of resource",
-                "type": "string"
-              },
-              "thumbnail": {
-                "type": "string"
-              },
-              "label": {
-                "description": "Label for the resource from the search result",
-                "type": "object",
-                "additionalProperties": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              },
-              "contexts": {
-                "description": "List of contexts for the resource",
-                "anyOf": [
-                  {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "type": {
-                          "type": "string"
-                        },
-                        "id": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "id",
-                        "type"
-                      ]
-                    }
-                  }
-                ]
-              },
-              "hits": {
-                "description": "List of hits.",
-                "type": "array",
-                "items": {
-                  "description": "Represents a single search hit, there may be multiple of these per resource.",
-                  "type": "object",
-                  "properties": {
-                    "type": {
-                      "description": "Type of metadata returned",
-                      "type": "string"
-                    },
-                    "subtype": {
-                      "description": "Subtype of metadata returned",
-                      "type": "string"
-                    },
-                    "snippet": {
-                      "description": "Preview of search result with highlighted search as HTML",
-                      "type": "string"
-                    },
-                    "language": {
-                      "description": "ISO language string",
-                      "type": "string"
-                    },
-                    "rank": {
-                      "type": "number"
-                    },
-                    "bounding_boxes": {
-                      "description": "Bounding boxes",
-                      "type": "array",
-                      "items": {
-                        "type": "array",
-                        "items": [
-                          {
-                            "type": "number"
-                          },
-                          {
-                            "type": "number"
-                          },
-                          {
-                            "type": "number"
-                          },
-                          {
-                            "type": "number"
-                          }
-                        ],
-                        "minItems": 4,
-                        "maxItems": 4
-                      }
-                    }
-                  },
-                  "required": [
-                    "language",
-                    "rank",
-                    "snippet",
-                    "subtype",
-                    "type"
-                  ]
-                }
-              }
-            },
-            "required": [
-              "contexts",
-              "hits",
-              "label",
-              "resource_id",
-              "resource_type",
-              "url"
-            ]
-          }
-        },
-        "related": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/TopicSnippet"
-          }
-        }
+    "featured_resources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/FeatureResource"
       }
-    }
+    },
+    "related_topics": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/EnrichmentEntitySnippet"
+      }
+    },
+    "other_data": {}
   },
   "required": [
     "authorities",
     "created",
-    "editorial",
+    "description",
+    "featured_resources",
     "id",
+    "image_caption",
+    "image_url",
     "label",
     "modified",
-    "slug"
+    "other_data",
+    "related_topics",
+    "secondary_heading",
+    "slug",
+    "title",
+    "type",
+    "type_other_labels",
+    "type_slug",
+    "url"
   ],
   "$schema": "http://json-schema.org/draft-07/schema#"
 }

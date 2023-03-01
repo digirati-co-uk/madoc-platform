@@ -1,5 +1,4 @@
 import { EnrichmentEntitySnippet, EntitiesMadocResponse } from '../../extensions/enrichment/authority/types';
-import { DjangoPagination } from '../../extensions/enrichment/types';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { Pagination } from '../../types/schemas/_pagination';
 import { TopicSnippet } from '../../types/schemas/topics';

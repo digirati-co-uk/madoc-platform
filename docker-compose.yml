@@ -97,6 +97,7 @@ services:
         condition: service_healthy
 
   tasks-api:
+    platform: linux/x86_64/v8
     tty: true
     image: ghcr.io/digirati-co-uk/tasks-api:latest
     environment:
@@ -192,6 +193,7 @@ services:
       - ./configuration/defaults:/app/configurator/default_config
 
   storage-api:
+    platform: linux/x86_64/v8
     tty: true
     image: ghcr.io/digirati-co-uk/storage-api:main
     environment:
@@ -232,7 +234,9 @@ services:
     volumes:
       - ./services/enrichment/app:/app:delegated
     ports:
-      - 5020:500
+      - 5020:5000
   okra:
-    image: digirati/okra:latest
-
+    image: digirati/okra:uwsgi
+    sysctls:
+      - net.core.somaxconn=1024
+      - net.ipv4.tcp_syncookies=0

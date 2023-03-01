@@ -54,6 +54,10 @@ supports a wider range of IIIF resources as a result.
 * Fixed bug with "Start contributing" returning invalid results
 * Fixed bug with "Max contributors" if user had already started working
 * Fixed "Maximise window" to avoid cutting off the top section of the header
+* Fixed firefox bug where "Define window" button was disabled if selector required
+* Fixed Annotation styled hidden by default 
+* Fixed some fields showing in submision if empty 
+
 
 ### Added
 
@@ -126,6 +130,9 @@ supports a wider range of IIIF resources as a result.
 * Added secondary view for "X hours ago" to show the date and time on click (browser preference)
 * Added "Generate PDF" option for manifests using PDiiif
 * Added small indication under choices in the capture model UI with number of previous submissions
+* Added new auto-complete endpoints migrated from Madoc 1.x
+  * [searchFAST](http://fast.oclc.org/searchfast/)
+  * [WikiData](https://www.wikidata.org)
 
 ### Changed
 

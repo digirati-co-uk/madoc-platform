@@ -1,43 +1,36 @@
 import React from 'react';
-import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
-import { LocaleString } from '../../shared/components/LocaleString';
-import { Pagination } from '../../shared/components/Pagination';
 import { Slot } from '../../shared/page-blocks/slot';
 import { Heading1 } from '../../shared/typography/Heading1';
-import { HrefLink } from '../../shared/utility/href-link';
-import { useRelativeLinks } from '../hooks/use-relative-links';
-import { usePaginatedTopicTypes } from './loaders/topic-type-list-loader';
+import { StaticPage } from '../features/StaticPage';
+import { useTranslation } from 'react-i18next';
+import { AllTopicTypeItems } from '../features/AllTopicTypeItems';
+import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { TopicTypeListPagination } from '../features/TopicTypeListPagination';
 
 export function ViewTopicTypes() {
-  const createLink = useRelativeLinks();
-  const { data } = usePaginatedTopicTypes();
+  const { t } = useTranslation();
 
   return (
-    <>
+    <StaticPage title="All Topic types">
       <Slot name="common-breadcrumbs">
-        <DisplayBreadcrumbs topicRoot />
+        <DisplayBreadcrumbs />
       </Slot>
 
-      {/* Custom slots.. */}
-      <Heading1>Topic types</Heading1>
-      <ul>
-        {data?.topicTypes.map(topicType => (
-          <li key={topicType.id}>
-            <HrefLink href={createLink({ topicType: topicType.slug })}>
-              <LocaleString>{topicType.label}</LocaleString>
-            </HrefLink>
-          </li>
-        ))}
-      </ul>
+      <Slot name="all-topic-types-header">
+        <Heading1>{t('All Topic Types')}</Heading1>
+      </Slot>
 
-      <Pagination
-        pageParam={'page'}
-        page={data?.pagination ? data.pagination.page : 1}
-        totalPages={data?.pagination ? data.pagination.totalPages : 1}
-        stale={!data?.pagination}
-      />
+      <Slot name="all-topic-types-pagination">
+        <TopicTypeListPagination />
+      </Slot>
 
-      <pre>{JSON.stringify(data, null, 2)}</pre>
-    </>
+      <Slot name="all-topic-types-body">
+        <AllTopicTypeItems />
+      </Slot>
+
+      <Slot name="all-topic-types-footer"></Slot>
+
+      {/*<pre>{JSON.stringify(data, null, 2)}</pre>*/}
+    </StaticPage>
   );
 }

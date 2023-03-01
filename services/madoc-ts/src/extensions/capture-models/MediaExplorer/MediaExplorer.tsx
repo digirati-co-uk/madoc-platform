@@ -17,6 +17,9 @@ export type MediaExplorerProps = {
     image: string;
     thumbnail: string;
   } | null;
+
+  valueAsString?: boolean;
+  onlyThumbnail?: boolean;
 };
 
 export const MediaExplorer: React.FC<MediaExplorerProps & {
@@ -47,8 +50,8 @@ export const MediaExplorer: React.FC<MediaExplorerProps & {
     container: container,
   });
 
-  if (props.value) {
-    const chosenMedia = props.value;
+  const chosenMedia = parseChosenMedia(props.value);
+  if (chosenMedia) {
     return (
       <div>
         <ImageStripBox $size="small">
@@ -68,9 +71,17 @@ export const MediaExplorer: React.FC<MediaExplorerProps & {
               {page.mediaItems.map(media => (
                 <ImageStripBox
                   key={media.id}
-                  onClick={() =>
-                    props.updateValue({ id: media.id, image: media.publicLink, thumbnail: media.thumbnail })
-                  }
+                  onClick={() => {
+                    if (props.valueAsString) {
+                      if (props.onlyThumbnail) {
+                        props.updateValue(media.thumbnail as any);
+                      } else {
+                        props.updateValue(media.publicLink as any);
+                      }
+                    } else {
+                      props.updateValue({ id: media.id, image: media.publicLink, thumbnail: media.thumbnail });
+                    }
+                  }}
                 >
                   <CroppedImage>{media.thumbnail ? <img src={media.thumbnail} alt="thumb" /> : null}</CroppedImage>
                   <Heading5>{media.displayName}</Heading5>
@@ -86,3 +97,36 @@ export const MediaExplorer: React.FC<MediaExplorerProps & {
     </div>
   );
 };
+
+function parseChosenMedia(
+  media:
+    | null
+    | string
+    | {
+        id: string;
+        image: string;
+        thumbnail: string;
+      }
+): null | { id: string; image: string; thumbnail: string } {
+  if (!media) {
+    return null;
+  }
+
+  if (typeof media === 'string') {
+    const parsed = /public\/storage\/urn:madoc:site:(\d)+\/media\/public\/([A-Za-z0-9-]+)\/(.*)/.exec(media);
+    if (!parsed) {
+      return null;
+    }
+    const [, siteId, imageId, fileName] = parsed;
+    const [, ...parts] = fileName.split('.').reverse();
+    const fileNameWithoutExtension = parts.reverse().join('.');
+
+    return {
+      id: imageId,
+      image: `/public/storage/urn:madoc:site:${siteId}/media/public/${imageId}/${fileName}`,
+      thumbnail: `/public/storage/urn:madoc:site:${siteId}/media/public/${imageId}/256/${fileNameWithoutExtension}.jpg`,
+    };
+  }
+
+  return null;
+}

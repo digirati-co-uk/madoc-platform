@@ -1,46 +1,4 @@
 {
-  "type": "object",
-  "properties": {
-    "id": {
-      "type": "string"
-    },
-    "slug": {
-      "type": "string"
-    },
-    "label": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "array",
-        "items": {
-          "type": "string"
-        }
-      }
-    },
-    "topicType": {
-      "$ref": "#/definitions/TopicTypeSnippet"
-    },
-    "thumbnail": {
-      "type": "object",
-      "properties": {
-        "url": {
-          "type": "string"
-        },
-        "alt": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "url"
-      ]
-    },
-    "totalObjects": {
-      "type": "number"
-    }
-  },
-  "required": [
-    "id",
-    "label",
-    "slug"
-  ],
+  "$ref": "#/definitions/EnrichmentEntitySnippet",
   "$schema": "http://json-schema.org/draft-07/schema#"
 }

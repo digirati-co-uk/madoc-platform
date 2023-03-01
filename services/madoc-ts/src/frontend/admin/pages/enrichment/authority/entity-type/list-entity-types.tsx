@@ -11,9 +11,6 @@ export function ListEntityTypes() {
   const { data } = usePaginatedData<DjangoPagination<EnrichmentEntitySnippet>>(ListEntityTypes);
 
   // @todo pagination.
-
-  console.log(data);
-
   return (
     <div>
       <Heading2>List entity type s</Heading2>
