@@ -67,6 +67,7 @@ supports a wider range of IIIF resources as a result.
 * Fixed firefox bug where "Define window" button was disabled if selector required
 * Fixed Annotation styled hidden by default 
 * Fixed some fields showing in submission if empty 
+* Fixed email links sometimes not working in email clients - with option link to paste
 
 
 ### Added
