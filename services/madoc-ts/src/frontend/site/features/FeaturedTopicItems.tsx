@@ -51,7 +51,6 @@ export const FeaturedTopicItems: React.FC<{
 }> = ({ cardBackground = '#ffffff', textColor = '#002D4B', cardBorder = '#002D4B', imageStyle = 'covered' }) => {
   const { data } = useTopic();
   const items = data?.featured_resources ? data?.featured_resources : [];
-
   const createLocaleString = useCreateLocaleString();
   const { t } = useTranslation();
   if (!data) {
@@ -89,7 +88,9 @@ export const FeaturedTopicItems: React.FC<{
   };
   return (
     <>
-      <h3 style={{ fontSize: '1.5em', color: textColor, textAlign: 'center' }}>Featured on: {data.label}</h3>
+      <h3 style={{ fontSize: '1.5em', color: textColor, textAlign: 'center' }}>
+        Featured on: <LocaleString>{data.title}</LocaleString>
+      </h3>
       <FeaturedItemsContainer>{items?.map(item => item && <RenderItemSnippet {...item} />)}</FeaturedItemsContainer>
     </>
   );

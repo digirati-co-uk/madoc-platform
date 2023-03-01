@@ -116,4 +116,15 @@ export type BaseTask = {
    * Delegated task
    */
   delegated_task?: string;
+
+  /**
+   * Statistics optionally added for root tasks.
+   */
+  root_statistics?: {
+    error: number;
+    not_started: number;
+    accepted: number;
+    progress: number;
+    done: number;
+  };
 };

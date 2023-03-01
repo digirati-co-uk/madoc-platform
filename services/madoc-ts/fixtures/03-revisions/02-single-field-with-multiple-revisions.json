@@ -63,15 +63,19 @@
   "revisions": [
     {
       "id": "514c8d52-80b0-49c1-ab97-24a67f29d194",
+      "status": "draft",
       "fields": [
         "name"
-      ]
+      ],
+      "authors": ["514c8d52-80b0-49c1-ab97-24a67f29d194"]
     },
     {
       "id": "b4077dff-3bea-4783-9712-32b52a1146e3",
+      "status": "draft",
       "fields": [
         "name"
-      ]
+      ],
+      "authors": ["b4077dff-3bea-4783-9712-32b52a1146e3"]
     }
   ],
   "id": "93d09b85-9332-4b71-8e27-1294c8a963f3"

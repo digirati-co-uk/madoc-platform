@@ -1,5 +1,8 @@
+import { InternationalString } from '@iiif/presentation-3';
+import { getValue } from '@iiif/vault-helpers';
 import React, { useEffect, useState, useCallback } from 'react';
 import { Select } from 'react-functional-select';
+import { LocaleString } from '../../../../components/LocaleString';
 import { useApi, useOptionalApi } from '../../../../hooks/use-api';
 import { BaseField, FieldComponent } from '../../../types/field-types';
 import { ErrorMessage } from '../../atoms/Message';
@@ -19,15 +22,22 @@ export interface AutocompleteFieldProps extends BaseField {
 
 export type CompletionItem = {
   uri: string;
-  label: string;
+  label: string | InternationalString;
   resource_class?: string;
   score?: number;
+
+  // Future fields to use.
+  description?: string | InternationalString;
+
+  language?: string;
 };
 
 function renderOptionLabel(option: CompletionItem) {
   return (
     <>
-      <strong style={{ lineHeight: '1.8em', verticalAlign: 'middle' }}>{option.label}</strong>
+      <LocaleString as="strong" style={{ lineHeight: '1.8em', verticalAlign: 'middle' }}>
+        {option.label as any}
+      </LocaleString>
       {option.resource_class ? <Tag style={{ float: 'right', marginLeft: 10 }}>{option.resource_class}</Tag> : null}
     </>
   );
@@ -35,7 +45,9 @@ function renderOptionLabel(option: CompletionItem) {
 
 export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props => {
   const { t } = useTranslation();
-  const [options, setOptions] = useState<CompletionItem[]>(props.value ? [props.value] : []);
+  const [options, setOptions] = useState<CompletionItem[]>(
+    props.value ? [typeof props.value === 'string' ? { uri: props.value, label: 'unknown' } : props.value] : []
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [hasFetched, setHasFetched] = useState(false);
   const [error, setError] = useState('');
@@ -52,7 +64,7 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
         props.updateValue(option?.uri as any);
       } else {
         props.updateValue(
-          option ? { label: option.label, resource_class: option.resource_class, uri: option.uri } : undefined
+          option ? ({ label: option.label, resource_class: option.resource_class, uri: option.uri } as any) : undefined
         );
       }
     }

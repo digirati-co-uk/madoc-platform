@@ -195,66 +195,7 @@
           "blocks": {
             "type": "array",
             "items": {
-              "allOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "name": {
-                      "type": "string"
-                    },
-                    "type": {
-                      "type": "string"
-                    },
-                    "static_data": {},
-                    "lazy": {
-                      "type": "boolean"
-                    },
-                    "order": {
-                      "type": "number"
-                    },
-                    "i18n": {
-                      "type": "object",
-                      "properties": {
-                        "languages": {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        },
-                        "sortKey": {
-                          "type": "string"
-                        },
-                        "fallback": {
-                          "type": "boolean"
-                        }
-                      },
-                      "required": [
-                        "languages"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "lazy",
-                    "name",
-                    "static_data",
-                    "type"
-                  ]
-                },
-                {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "number"
-                    },
-                    "order": {
-                      "type": "number"
-                    }
-                  },
-                  "required": [
-                    "id"
-                  ]
-                }
-              ]
+              "$ref": "#/definitions/SiteBlock"
             }
           }
         },

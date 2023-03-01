@@ -3,6 +3,6 @@ import madocTheme from './madoc-theme';
 
 addons.setConfig({
     theme: madocTheme,
-    sidebarAnimations: false,
-    selectedPanel: 'docs',
+    // sidebarAnimations: false,
+    // selectedPanel: 'docs',
 });

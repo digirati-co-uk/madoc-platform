@@ -8,10 +8,9 @@ import {
   AutocompleteFieldProps,
   CompletionItem,
 } from '../../src/frontend/shared/capture-models/editor/input-types/AutocompleteField/AutocompleteField';
-import { withKnobs } from '@storybook/addon-knobs';
 import '../../src/frontend/shared/capture-models/editor/input-types/AutocompleteField/index';
 
-export default { title: 'Capture models/Autocomplete', decorators: [withKnobs] };
+export default { title: 'Capture models/Autocomplete' };
 
 export const Simple: React.FC = () => {
   const [value, setValue] = React.useState<CompletionItem | undefined>();

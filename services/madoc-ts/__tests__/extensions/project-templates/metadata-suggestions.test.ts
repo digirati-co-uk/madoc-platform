@@ -308,7 +308,7 @@ describe('Project template: Metadata suggestions', function() {
 
       expect(metadataCursor).toEqual(7);
       expect(keysIndex).toMatchInlineSnapshot(`
-        Object {
+        {
           "field a": 3,
           "field b": 4,
           "field c": 5,
@@ -317,9 +317,9 @@ describe('Project template: Metadata suggestions', function() {
         }
       `);
       expect(valueIndex).toMatchInlineSnapshot(`
-        Object {
-          "0": Array [
-            Object {
+        {
+          "0": [
+            {
               "auto_update": true,
               "data": null,
               "edited": false,
@@ -331,8 +331,8 @@ describe('Project template: Metadata suggestions', function() {
               "value": "Lanarkshire",
             },
           ],
-          "1": Array [
-            Object {
+          "1": [
+            {
               "auto_update": true,
               "data": null,
               "edited": false,
@@ -341,11 +341,11 @@ describe('Project template: Metadata suggestions', function() {
               "language": "none",
               "readonly": false,
               "source": "iiif",
-              "value": "<a href=\\"https://digital.nls.uk/97134426\\">View in our digital gallery</a>",
+              "value": "<a href="https://digital.nls.uk/97134426">View in our digital gallery</a>",
             },
           ],
-          "2": Array [
-            Object {
+          "2": [
+            {
               "auto_update": true,
               "data": null,
               "edited": false,
@@ -354,11 +354,11 @@ describe('Project template: Metadata suggestions', function() {
               "language": "none",
               "readonly": false,
               "source": "iiif",
-              "value": "You have permission to make copies of this work under the <a target=\\"_top\\" href=\\"http://creativecommons.org/licenses/by/4.0/\\">Creative Commons Attribution 4.0 International Licence</a> unless otherwise stated.",
+              "value": "You have permission to make copies of this work under the <a target="_top" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International Licence</a> unless otherwise stated.",
             },
           ],
-          "3": Array [
-            Object {
+          "3": [
+            {
               "auto_update": false,
               "data": null,
               "edited": true,
@@ -370,8 +370,8 @@ describe('Project template: Metadata suggestions', function() {
               "value": "TESTD",
             },
           ],
-          "4": Array [
-            Object {
+          "4": [
+            {
               "auto_update": false,
               "data": null,
               "edited": true,
@@ -383,8 +383,8 @@ describe('Project template: Metadata suggestions', function() {
               "value": "TEST V",
             },
           ],
-          "5": Array [
-            Object {
+          "5": [
+            {
               "auto_update": false,
               "data": null,
               "edited": true,
@@ -396,8 +396,8 @@ describe('Project template: Metadata suggestions', function() {
               "value": "TEST X",
             },
           ],
-          "6": Array [
-            Object {
+          "6": [
+            {
               "auto_update": false,
               "data": null,
               "edited": true,

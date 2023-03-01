@@ -94,7 +94,6 @@ import { NotStartedIcon } from '../icons/NotStartedIcon';
 import { PersonIcon } from '../icons/PersonIcon';
 import { PreviewIcon } from '../icons/PreviewIcon';
 import { ProgressIcon } from '../icons/ProgressIcon';
-import { ReadMoreIcon } from '../icons/ReadMoreIcon';
 import { SearchIcon } from '../icons/SearchIcon';
 import { SettingsIcon } from '../icons/SettingsIcon';
 import { Spinner } from '../icons/Spinner';
@@ -232,7 +231,6 @@ const Icons = {
   PersonIcon,
   PreviewIcon,
   ProgressIcon,
-  ReadMoreIcon,
   SearchIcon,
   SettingsIcon,
   Spinner,

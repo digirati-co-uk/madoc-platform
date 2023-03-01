@@ -1,0 +1,133 @@
+{
+  "id": "be8a37da-62b0-4430-b605-01d5c19e01d3",
+  "structure": {
+    "id": "21b43492-3cab-4424-a20b-0d4eab6bedb8",
+    "type": "choice",
+    "label": "Box drawing test",
+    "items": [
+      {
+        "id": "d05dd72b-7385-4af4-b5a7-3f628346257d",
+        "type": "model",
+        "label": "Default",
+        "fields": [
+          [
+            "boxes",
+            [
+              "description"
+            ]
+          ]
+        ],
+        "modelRoot": [
+          "boxes"
+        ]
+      }
+    ]
+  },
+  "document": {
+    "id": "67a1ff7d-86be-4cc1-ab4d-ae65126f5e23",
+    "type": "entity",
+    "label": "Box drawing test",
+    "properties": {
+      "boxes": [
+        {
+          "id": "1b76fdb8-c5f5-4a29-9544-8485cc77d8f2",
+          "type": "entity",
+          "label": "Boxes",
+          "selector": {
+            "id": "22753b1d-7862-453b-84fe-8ee6ccc6b44f",
+            "type": "box-selector",
+            "state": null,
+            "required": true
+          },
+          "labelledBy": "description",
+          "properties": {
+            "description": [
+              {
+                "id": "4ce6efba-96df-4d41-93e6-731500a5e21d",
+                "type": "text-field",
+                "label": "Description",
+                "value": "",
+                "minLines": 6,
+                "multiline": true
+              }
+            ]
+          },
+          "allowMultiple": true
+        },
+        {
+          "id": "a0844c53-ea68-4550-a5c9-f72492bbe517",
+          "type": "entity",
+          "label": "Boxes",
+          "revision": "b5458c19-ab20-4bf7-b89a-6da4a50742ab",
+          "selector": {
+            "id": "45857d62-98ce-4c9b-af29-562ba498cc29",
+            "type": "box-selector",
+            "state": {
+              "x": 1095,
+              "y": 568,
+              "width": 432,
+              "height": 261
+            },
+            "required": true
+          },
+          "immutable": false,
+          "labelledBy": "description",
+          "properties": {
+            "description": [
+              {
+                "id": "67613438-2c60-4292-90e6-bf938a55da87",
+                "type": "text-field",
+                "label": "Description",
+                "value": "Testing a box",
+                "minLines": 6,
+                "revision": "b5458c19-ab20-4bf7-b89a-6da4a50742ab",
+                "multiline": true
+              }
+            ]
+          },
+          "allowMultiple": false
+        }
+      ]
+    }
+  },
+  "revisions": [
+    {
+      "fields": [
+        [
+          "boxes",
+          [
+            "description"
+          ]
+        ]
+      ],
+      "structureId": "d05dd72b-7385-4af4-b5a7-3f628346257d",
+      "id": "b5458c19-ab20-4bf7-b89a-6da4a50742ab",
+      "revises": "d05dd72b-7385-4af4-b5a7-3f628346257d",
+      "approved": true,
+      "status": "accepted",
+      "authors": [
+        "urn:madoc:user:1"
+      ],
+      "label": "Default",
+      "captureModelId": "be8a37da-62b0-4430-b605-01d5c19e01d3"
+    }
+  ],
+  "derivedFrom": "52ca54cb-96ec-4de5-81c7-3416e96af4dc",
+  "target": [
+    {
+      "id": "urn:madoc:manifest:176",
+      "type": "Manifest"
+    },
+    {
+      "id": "urn:madoc:canvas:339",
+      "type": "Canvas"
+    }
+  ],
+  "contributors": {
+    "urn:madoc:user:1": {
+      "id": "urn:madoc:user:1",
+      "type": "Person",
+      "name": "Stephen"
+    }
+  }
+}

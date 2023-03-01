@@ -1,4 +1,3 @@
-import { boolean, number, select } from '@storybook/addon-knobs';
 import * as React from 'react';
 import { MetaDataDisplay } from '../../src/frontend/shared/components/MetaDataDisplay';
 
@@ -120,10 +119,10 @@ const exampleMetadata = [
 ];
 
 export const Metadata_Display = () => {
-  const variation = select('Style variation', ['table', 'list'], 'table');
-  const labelStyle = select('Label style', ['bold', 'muted', 'caps', 'small-caps'], 'bold');
-  const labelWidth = number('Label width', 16);
-  const bordered = boolean('Bordered', false);
+  const variation = 'table';
+  const labelStyle = 'bold';
+  const labelWidth = 16;
+  const bordered = false;
 
   return (
     <MetaDataDisplay

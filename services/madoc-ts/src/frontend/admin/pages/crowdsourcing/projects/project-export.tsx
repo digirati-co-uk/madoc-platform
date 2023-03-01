@@ -1,8 +1,14 @@
 import React from 'react';
+import { useMutation } from 'react-query';
+import { useParams } from 'react-router-dom';
+import { FilePreview } from '../../../../shared/components/FilePreview';
+import { useApi } from '../../../../shared/hooks/use-api';
+import { Button } from '../../../../shared/navigation/Button';
 import { UniversalComponent } from '../../../../types';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { usePaginatedData } from '../../../../shared/hooks/use-data';
 import { JsonProjectTemplate } from '../../../../../extensions/projects/types';
+import { BuildProjectExport } from '../../../features/build-project-export';
 
 type ProjectExportType = {
   params: { id: string };
@@ -17,9 +23,15 @@ export const ProjectExportTab: UniversalComponent<ProjectExportType> = createUni
 
     return (
       <>
-        <h2>Export Project</h2>
-        <hr />
-        {data && <pre>{JSON.stringify(data, null, 2)}</pre>}
+        <h2>Export Project template</h2>
+        {data ? (
+          <FilePreview
+            lazyLoad={() => ({ type: 'text', value: JSON.stringify(data, null, 2) })}
+            fileName={`template.json`}
+          />
+        ) : null}
+        <h2>Export data</h2>
+        <BuildProjectExport />
       </>
     );
   },

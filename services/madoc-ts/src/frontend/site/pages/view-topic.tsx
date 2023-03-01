@@ -8,7 +8,7 @@ import { TopicHero } from '../features/TopicHero';
 import { useParams } from 'react-router-dom';
 import { FeaturedTopicItems } from '../features/FeaturedTopicItems';
 import { StaticPage } from '../features/StaticPage';
-import {RelatedTopics} from "../features/RelatedTopics";
+import { RelatedTopics } from '../features/RelatedTopics';
 
 export function ViewTopic() {
   const { topic } = useParams<Record<'topic', any>>();

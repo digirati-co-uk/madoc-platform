@@ -8,12 +8,12 @@ describe('current form', () => {
       const reducer = createFormFieldReducer(doc.document);
 
       expect(['name', 'description'].reduce(reducer, [])).toMatchInlineSnapshot(`
-        Array [
-          Object {
-            "list": Array [
-              Object {
+        [
+          {
+            "list": [
+              {
                 "label": "Enter the name of the book",
-                "selector": Object {
+                "selector": {
                   "state": null,
                   "type": "box-selector",
                 },
@@ -24,13 +24,13 @@ describe('current form', () => {
             ],
             "type": "fields",
           },
-          Object {
-            "list": Array [
-              Object {
+          {
+            "list": [
+              {
                 "label": "Enter a description of the book",
                 "term": "description",
                 "type": "text-field",
-                "value": "The Hitchhiker's Guide to the Galaxy is the first of five books in the Hitchhiker's Guide to the Galaxy comedy science fiction \\"trilogy\\" by Douglas Adams. The novel is an adaptation of the first four parts of Adams' radio series of the same name.",
+                "value": "The Hitchhiker's Guide to the Galaxy is the first of five books in the Hitchhiker's Guide to the Galaxy comedy science fiction "trilogy" by Douglas Adams. The novel is an adaptation of the first four parts of Adams' radio series of the same name.",
               },
             ],
             "type": "fields",
@@ -44,12 +44,12 @@ describe('current form', () => {
 
       // @ts-ignore
       expect(['name', ['review', ['name', 'reviewBody']]].reduce(reducer, [])).toMatchInlineSnapshot(`
-        Array [
-          Object {
-            "list": Array [
-              Object {
+        [
+          {
+            "list": [
+              {
                 "label": "Enter the name of the book",
-                "selector": Object {
+                "selector": {
                   "state": null,
                   "type": "box-selector",
                 },
@@ -60,14 +60,14 @@ describe('current form', () => {
             ],
             "type": "fields",
           },
-          Object {
-            "list": Array [
-              Object {
+          {
+            "list": [
+              {
                 "conformsTo": "Review",
-                "fields": Array [
-                  Object {
-                    "list": Array [
-                      Object {
+                "fields": [
+                  {
+                    "list": [
+                      {
                         "label": "Short name of your review",
                         "term": "name",
                         "type": "text-field",
@@ -76,9 +76,9 @@ describe('current form', () => {
                     ],
                     "type": "fields",
                   },
-                  Object {
-                    "list": Array [
-                      Object {
+                  {
+                    "list": [
+                      {
                         "label": "Write your review",
                         "term": "reviewBody",
                         "type": "text-field",
@@ -92,12 +92,12 @@ describe('current form', () => {
                 "term": "review",
                 "type": "entity",
               },
-              Object {
+              {
                 "conformsTo": "Review",
-                "fields": Array [
-                  Object {
-                    "list": Array [
-                      Object {
+                "fields": [
+                  {
+                    "list": [
+                      {
                         "label": "Short name of your review",
                         "term": "name",
                         "type": "text-field",
@@ -106,9 +106,9 @@ describe('current form', () => {
                     ],
                     "type": "fields",
                   },
-                  Object {
-                    "list": Array [
-                      Object {
+                  {
+                    "list": [
+                      {
                         "label": "Write your review",
                         "term": "reviewBody",
                         "type": "text-field",
@@ -122,12 +122,12 @@ describe('current form', () => {
                 "term": "review",
                 "type": "entity",
               },
-              Object {
+              {
                 "conformsTo": "Review",
-                "fields": Array [
-                  Object {
-                    "list": Array [
-                      Object {
+                "fields": [
+                  {
+                    "list": [
+                      {
                         "label": "Short name of your review",
                         "term": "name",
                         "type": "text-field",
@@ -136,9 +136,9 @@ describe('current form', () => {
                     ],
                     "type": "fields",
                   },
-                  Object {
-                    "list": Array [
-                      Object {
+                  {
+                    "list": [
+                      {
                         "label": "Write your review",
                         "term": "reviewBody",
                         "type": "text-field",

@@ -104,8 +104,6 @@ const PreviewCrowdsourcingTask: React.FC<{
     }
   }, [resize, captureModel]);
 
-  console.log({ taskData });
-
   return (
     <ThemeProvider theme={defaultTheme}>
       {isLocked ? <WarningMessage>This task is locked, there is a merge in progress</WarningMessage> : null}

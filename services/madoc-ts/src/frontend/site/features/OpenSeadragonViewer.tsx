@@ -34,5 +34,10 @@ const InnerViewer = forwardRef(function InnerViewer(props: any, fwdRef) {
     },
   }));
 
-  return <div style={{ flex: '1 1 0px', minWidth: 0, width: '100%', height: 500 }} ref={ref} />;
+  return (
+    <div
+      style={{ flex: '1 1 0px', minWidth: 0, width: '100%', height: '100%', minHeight: 500, background: '#f9f9f9' }}
+      ref={ref}
+    />
+  );
 });

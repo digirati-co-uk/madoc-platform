@@ -4,6 +4,7 @@ import { Pagination, PaginationNumbered } from '../../shared/components/Paginati
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { useManifest } from '../hooks/use-manifest';
 import { usePreventCanvasNavigation } from './PreventUsersNavigatingCanvases';
+import { useRouteContext } from '../hooks/use-route-context';
 
 export const ManifestPagination: React.FC<{
   paginationStyle?: boolean;
@@ -12,11 +13,12 @@ export const ManifestPagination: React.FC<{
   const { data } = useManifest();
   const { filter, listing } = useLocationQuery();
   const { showNavigationContent } = usePreventCanvasNavigation();
+  const { canvasId } = useRouteContext();
 
   const pagination = data?.pagination;
   const PaginationComponent = paginationStyle ? PaginationNumbered : Pagination;
 
-  if (!pagination || !showNavigationContent) {
+  if (!pagination || !showNavigationContent || canvasId) {
     return null;
   }
 

@@ -89,7 +89,7 @@ const Indicator = styled.button<{
     cursor: pointer;
     background-color: rgba(59, 59, 93, 0.7);
   }
-  &[data-isActive='true'] {
+  &[data-is-active='true'] {
     background-color: ${props => (props.$color ? props.$color : '#3579f6')};
 
     :hover {
@@ -152,7 +152,7 @@ export const Carousel = ({ children, controlColor }: CarouselProps) => {
         {slides?.map((slide, index) => (
           <Indicator
             $color={controlColor}
-            data-isActive={currentSlide === index}
+            data-is-active={currentSlide === index}
             key={index}
             onClick={() => {
               setCurrentSlide(index);

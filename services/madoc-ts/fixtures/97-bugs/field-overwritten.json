@@ -1,0 +1,192 @@
+{
+  "id": "9931ee8b-2e6c-4fee-9ebe-1a12726d0162",
+  "structure": {
+    "id": "4a8b054d-a9ff-4bdf-9069-2e3d20b009e1",
+    "type": "choice",
+    "label": "IDA-MVP",
+    "items": [
+      {
+        "id": "6f361094-16b5-41d1-a6ea-cdf94e247238",
+        "type": "model",
+        "label": "Default",
+        "fields": [
+          "box",
+          "test",
+          "color",
+          "dfghjk"
+        ]
+      }
+    ],
+    "description": "",
+    "profile": [
+      "tabs"
+    ]
+  },
+  "document": {
+    "id": "1322d4bd-4937-4674-bf62-447d8e2ea807",
+    "type": "entity",
+    "label": "IDA-MVP",
+    "properties": {
+      "box": [
+        {
+          "id": "6f5a317a-a1ef-478d-a6aa-b994be03e6d1",
+          "type": "text-field",
+          "label": "box",
+          "value": "",
+          "selector": {
+            "id": "4c962a31-5fe6-40c9-84b2-4fbf48e0c95e",
+            "type": "box-selector",
+            "state": null
+          },
+          "allowMultiple": true
+        }
+      ],
+      "test": [
+        {
+          "id": "e1604795-847b-41b3-8ce5-8775d355f437",
+          "type": "text-field",
+          "label": "test",
+          "value": "added in review",
+          "selector": {
+            "id": "71491604-2164-464d-aed8-e207f7e9e0fb",
+            "type": "box-selector",
+            "state": null,
+            "revisedBy": [
+              {
+                "id": "27578ee6-1cfd-4ed7-9e7d-75634b66fc15",
+                "type": "box-selector",
+                "state": {
+                  "x": 880,
+                  "y": 254,
+                  "width": 806,
+                  "height": 730
+                },
+                "revises": "71491604-2164-464d-aed8-e207f7e9e0fb",
+                "revisedBy": [],
+                "revisionId": "cf355b2d-926f-4ac4-a525-9a812883ddde"
+              },
+              {
+                "id": "c2f560da-e2c0-4c22-97a7-c5a93f74fcc8",
+                "type": "box-selector",
+                "state": {
+                  "x": 1070,
+                  "y": 482,
+                  "width": 1289,
+                  "height": 920
+                },
+                "revises": "71491604-2164-464d-aed8-e207f7e9e0fb",
+                "revisedBy": [],
+                "revisionId": "bd5d3dc6-434c-47b7-ac57-9d1cf94448c3"
+              }
+            ]
+          }
+        }
+      ],
+      "color": [
+        {
+          "id": "a1ba3558-8277-45bc-ab32-b25bc7f3df34",
+          "type": "color-field",
+          "label": "color",
+          "value": "",
+          "clearable": true
+        },
+        {
+          "id": "9d34923f-806c-49ec-b6f4-16806aceeb3e",
+          "type": "color-field",
+          "label": "color",
+          "value": "#ffd478",
+          "revises": "a1ba3558-8277-45bc-ab32-b25bc7f3df34",
+          "revision": "cf355b2d-926f-4ac4-a525-9a812883ddde",
+          "clearable": true
+        },
+        {
+          "id": "c0cc2f26-b4a5-4213-9d28-47cefcb173ff",
+          "type": "color-field",
+          "label": "color",
+          "value": "#fefc78",
+          "revises": "a1ba3558-8277-45bc-ab32-b25bc7f3df34",
+          "revision": "bd5d3dc6-434c-47b7-ac57-9d1cf94448c3",
+          "clearable": true
+        }
+      ],
+      "dfghjk": [
+        {
+          "id": "cf90d41a-f981-4de0-879b-bcbaf0c99269",
+          "type": "checkbox-field",
+          "label": "dfghjk",
+          "value": false,
+          "selector": {
+            "id": "553e7083-f811-4fe2-a4ef-661676937970",
+            "type": "box-selector",
+            "state": null
+          }
+        }
+      ]
+    }
+  },
+  "revisions": [
+    {
+      "fields": [
+        "box",
+        "test",
+        "color",
+        "dfghjk"
+      ],
+      "structureId": "6f361094-16b5-41d1-a6ea-cdf94e247238",
+      "id": "cf355b2d-926f-4ac4-a525-9a812883ddde",
+      "revises": "6f361094-16b5-41d1-a6ea-cdf94e247238",
+      "approved": false,
+      "status": "draft",
+      "authors": [
+        "urn:madoc:user:1"
+      ],
+      "label": "Default",
+      "captureModelId": "9931ee8b-2e6c-4fee-9ebe-1a12726d0162"
+    },
+    {
+      "fields": [
+        "box",
+        "test",
+        "color",
+        "dfghjk"
+      ],
+      "structureId": "6f361094-16b5-41d1-a6ea-cdf94e247238",
+      "id": "bd5d3dc6-434c-47b7-ac57-9d1cf94448c3",
+      "revises": "6f361094-16b5-41d1-a6ea-cdf94e247238",
+      "approved": true,
+      "status": "accepted",
+      "authors": [
+        "urn:madoc:user:5"
+      ],
+      "label": "Default",
+      "captureModelId": "9931ee8b-2e6c-4fee-9ebe-1a12726d0162"
+    }
+  ],
+  "derivedFrom": "4e85e3cb-c2a3-4369-a14f-2467f65511fb",
+  "target": [
+    {
+      "id": "urn:madoc:collection:492",
+      "type": "Collection"
+    },
+    {
+      "id": "urn:madoc:manifest:556",
+      "type": "Manifest"
+    },
+    {
+      "id": "urn:madoc:canvas:3103",
+      "type": "Canvas"
+    }
+  ],
+  "contributors": {
+    "urn:madoc:user:1": {
+      "id": "urn:madoc:user:1",
+      "type": "Person",
+      "name": "Admin-McLongname"
+    },
+    "urn:madoc:user:5": {
+      "id": "urn:madoc:user:5",
+      "type": "Person",
+      "name": "Ben Admin"
+    }
+  }
+}

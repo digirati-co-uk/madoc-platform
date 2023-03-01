@@ -162,7 +162,7 @@ export const assignRandomResource: RouteMiddleware<
       throw new RequestError('Not enabled');
     }
 
-    const availableCanvases = await getAvailableCanvases(manifestId);
+    let availableCanvases = await getAvailableCanvases(manifestId);
 
     if (availableCanvases.length === 0) {
       if (requestManifestId) {
@@ -174,17 +174,34 @@ export const assignRandomResource: RouteMiddleware<
       continue;
     }
 
-    const toChooseFrom = priorityRandom ? availableCanvases.slice(0, 10) : availableCanvases;
+    const siteApi = api.asUser({ userId: id, siteId });
 
-    const key = Math.floor(toChooseFrom.length * Math.random());
+    let canvas = null;
 
-    const canvas = toChooseFrom[key];
+    while (availableCanvases.length) {
+      const toChooseFrom = priorityRandom ? availableCanvases.slice(0, 10) : availableCanvases;
+      const key = Math.floor(toChooseFrom.length * Math.random());
+      const possibleCanvas = toChooseFrom[key];
+
+      if (possibleCanvas) {
+        try {
+          await siteApi.prepareResourceClaim(project.id, {
+            collectionId: collectionId ? Number(collectionId) : undefined,
+            manifestId: manifestId ? Number(manifestId) : undefined,
+            canvasId: possibleCanvas.id,
+          });
+          canvas = possibleCanvas;
+          break;
+        } catch (e) {
+          // ignore..
+        }
+      }
+      availableCanvases = availableCanvases.filter(e => e.id !== possibleCanvas?.id);
+    }
 
     if (!canvas) {
       throw new Error();
     }
-
-    const siteApi = api.asUser({ userId: id, siteId });
 
     const resourceClaim = claim
       ? await siteApi.createResourceClaim(project.id, {

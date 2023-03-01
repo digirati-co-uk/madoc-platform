@@ -6,6 +6,7 @@ import { Carousel } from '../../shared/atoms/Carousel';
 import { useTopicType } from '../pages/loaders/topic-type-loader';
 import { TopicSnippetCard } from '../../shared/components/TopicSnippet';
 import { useRelativeLinks } from '../hooks/use-relative-links';
+import { LocaleString } from '../../shared/components/LocaleString';
 
 const FeaturesContainer = styled.div`
   display: flex;
@@ -28,7 +29,6 @@ export const FeaturedTopics: React.FC<{
   // todo change when backend has featured items
   // const items = data?.featured_items ? data?.featured_items : [];
   const items = [data?.topics[0], data?.topics[1], data?.topics[2]];
-
   if (!data) {
     return null;
   }
@@ -52,7 +52,9 @@ export const FeaturedTopics: React.FC<{
   }
   return (
     <>
-      <h3 style={{ fontSize: '1.5em', color: textColor, textAlign: 'center' }}>Featured in: {data.label}</h3>
+      <h3 style={{ fontSize: '1.5em', color: textColor, textAlign: 'center' }}>
+        Featured in: <LocaleString>{data.label}</LocaleString>
+      </h3>
       <FeaturesContainer>
         <Carousel controlColor={controlColor}>{Items}</Carousel>
       </FeaturesContainer>
