@@ -360,6 +360,10 @@ export const siteConfigurationModel: {
         value: 'hideRandomCanvas',
       },
       {
+        label: 'Show button to generate PDF',
+        value: 'generatePDF',
+      },
+      {
         label: 'Hide image filtering',
         value: 'hideFilterImages',
       },
