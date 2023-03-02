@@ -7,7 +7,6 @@ import { ChevronDown } from '../icons/ChevronIcon';
 
 export const AccordionWrapper = styled.div`
   background-color: inherit;
-  padding: 1em 0.5em;
   width: 100%;
 
   hr {
@@ -24,7 +23,7 @@ export const Top = styled.button`
 
   display: flex;
   justify-content: space-between;
-  padding: 0.2em;
+  padding: 0.3em;
 
   :hover {
     background-color: rgba(59, 59, 93, 0.1);
@@ -34,6 +33,8 @@ export const Top = styled.button`
     height: 1.5em;
     width: 1.5em;
     transition: all 0.5s ease;
+    margin-top: auto;
+    margin-bottom: auto;
 
     &[data-is-open='true'] {
       transform: rotatex(180deg);

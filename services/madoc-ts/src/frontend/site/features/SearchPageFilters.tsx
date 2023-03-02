@@ -21,15 +21,13 @@ import { Accordion } from '../../shared/atoms/Accordion';
 
 interface SearchPageFiltersProps {
   checkBoxColor?: string;
-  dropdown?: boolean;
-  hideTitle?: boolean;
+  filterHeader?: string;
 }
 
-export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxColor, dropdown, hideTitle }) => {
+export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxColor, filterHeader }) => {
   const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch();
   const { t } = useTranslation();
   const { appliedFacets, fulltext } = useSearchQuery();
-
   const {
     inQueue,
     queueSingleFacet,
@@ -45,7 +43,7 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
   }
   return (
     <SearchFilterContainer>
-      {!hideTitle && <SearchFilterTitle>{t('Refine search')}</SearchFilterTitle>}
+        <SearchFilterTitle>{filterHeader}</SearchFilterTitle>
 
       <SearchBox onSearch={setFullTextQuery} placeholder="Keywords" value={fulltext} />
 
@@ -62,68 +60,34 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
         if (facet.items.length === 0) {
           return null;
         }
-        if (dropdown) {
-          return (
-            <Accordion key={facet.id} title={facet.label}>
-              <SearchFilterItemList>
-                {facet.items.map(item => {
-                  const isSelected = isFacetSelected(item.key, item.values);
-                  const itemHash = `item__${facet.id}::${item.key}::${item.values}`;
+        return (
+          <Accordion key={facet.id} title={facet.label}>
+            <SearchFilterItemList>
+              {facet.items.map(item => {
+                const isSelected = isFacetSelected(item.key, item.values);
+                const itemHash = `item__${facet.id}::${item.key}::${item.values}`;
 
-                  return (
-                    <SearchFilterItem key={item.values.join(',')} $selected={!!isSelected}>
-                      <CheckboxBtn
-                        color={checkBoxColor}
-                        id={itemHash}
-                        checked={isSelected !== 0}
-                        onChange={(e: { target: { checked: any } }) =>
-                          e.target.checked
-                            ? queueSingleFacet(item.key, item.values)
-                            : dequeueSingleFacet(item.key, item.values)
-                        }
-                      />
-                      <SearchFilterLabel htmlFor={itemHash}>
-                        <LocaleString>{item.label}</LocaleString>
-                      </SearchFilterLabel>
-                    </SearchFilterItem>
-                  );
-                })}
-              </SearchFilterItemList>
-            </Accordion>
-          );
-        } else {
-          return (
-            <SearchFilterSection key={facet.id}>
-              <SearchFilterSectionTitle>
-                <LocaleString style={{ textTransform: 'capitalize' }}>{facet.label}</LocaleString>
-              </SearchFilterSectionTitle>
-              <SearchFilterItemList>
-                {facet.items.map(item => {
-                  const isSelected = isFacetSelected(item.key, item.values);
-                  const itemHash = `item__${facet.id}::${item.key}::${item.values}`;
-
-                  return (
-                    <SearchFilterItem key={item.values.join(',')} $selected={!!isSelected}>
-                      <CheckboxBtn
-                        color={checkBoxColor}
-                        id={itemHash}
-                        checked={isSelected !== 0}
-                        onChange={(e: { target: { checked: any } }) =>
-                          e.target.checked
-                            ? queueSingleFacet(item.key, item.values)
-                            : dequeueSingleFacet(item.key, item.values)
-                        }
-                      />
-                      <SearchFilterLabel htmlFor={itemHash}>
-                        <LocaleString>{item.label}</LocaleString>
-                      </SearchFilterLabel>
-                    </SearchFilterItem>
-                  );
-                })}
-              </SearchFilterItemList>
-            </SearchFilterSection>
-          );
-        }
+                return (
+                  <SearchFilterItem key={item.values.join(',')} $selected={!!isSelected}>
+                    <CheckboxBtn
+                      color={checkBoxColor}
+                      id={itemHash}
+                      checked={isSelected !== 0}
+                      onChange={(e: { target: { checked: any } }) =>
+                        e.target.checked
+                          ? queueSingleFacet(item.key, item.values)
+                          : dequeueSingleFacet(item.key, item.values)
+                      }
+                    />
+                    <SearchFilterLabel htmlFor={itemHash}>
+                      <LocaleString>{item.label}</LocaleString>
+                    </SearchFilterLabel>
+                  </SearchFilterItem>
+                );
+              })}
+            </SearchFilterItemList>
+          </Accordion>
+        );
       })}
     </SearchFilterContainer>
   );
@@ -136,8 +100,10 @@ blockEditorFor(SearchPageFilters, {
   requiredContext: ['page'],
   defaultProps: {
     checkBoxColor: '',
+    filterHeader: 'Refine search',
   },
   editor: {
     checkBoxColor: { label: 'Check box color', type: 'color-field' },
+    filterHeader: { label: 'filter header', type: 'text-field' },
   },
 });

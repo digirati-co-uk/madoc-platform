@@ -3,7 +3,6 @@ import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { Slot } from '../../shared/page-blocks/slot';
 import { TopicHero } from '../features/TopicHero';
 import { FeaturedTopicItems } from '../features/FeaturedTopicItems';
-import { StaticPage } from '../features/StaticPage';
 import { RelatedTopics } from '../features/RelatedTopics';
 import { SearchPagination } from '../features/SearchPagination';
 import { AppliedFacets } from '../features/AppliedFacets';
@@ -33,7 +32,7 @@ export const ViewTopic = () => {
       <div style={{ display: 'flex' }}>
         <div style={{ maxWidth: 300 }}>
           <Slot name="topic-page-filters" small>
-            <SearchPageFilters hideTitle={true} dropdown={true} />
+            <SearchPageFilters />
           </Slot>
         </div>
 
