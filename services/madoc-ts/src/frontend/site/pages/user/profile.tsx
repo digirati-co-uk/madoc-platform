@@ -1,7 +1,7 @@
 import { stringify } from 'query-string';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Redirect, useHistory } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { Button } from '../../../shared/navigation/Button';
 import { FlexSpacer } from '../../../shared/layout/FlexSpacer';
 import { Heading1 } from '../../../shared/typography/Heading1';
@@ -15,19 +15,19 @@ import { HrefLink } from '../../../shared/utility/href-link';
 export const ProfilePage: React.FC = () => {
   const user = useUser();
   const site = useSite();
-  const history = useHistory();
+  const navigate = useNavigate();
   const form = useFormResponse<{ success?: boolean }>();
   const query = useLocationQuery<{ success?: boolean }>();
   const { t } = useTranslation();
 
   useEffect(() => {
     if (!query.success && form?.success) {
-      history.push(`/profile?${stringify({ success: true })}`);
+      navigate(`/profile?${stringify({ success: true })}`);
     }
-  }, [history, query, form]);
+  }, [query, form]);
 
   if (!user) {
-    return <Redirect to={'/'} />;
+    return <Navigate to={'/'} />;
   }
 
   return (

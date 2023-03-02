@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { BrowserComponent } from '../../../../utility/browser-component';
 import { useModelTranslation } from '../../../hooks/use-model-translation';
 import { useField } from '../../../plugin-api/hooks/use-field';
 import { useSelectorStatus } from '../../../plugin-api/hooks/use-selector-status';
@@ -79,7 +80,7 @@ export const FieldWrapper: React.FC<Props> = ({
   useEffect(() => componentWillUnmount, [componentWillUnmount]);
 
   return (
-    <React.Suspense fallback={typeof fallback !== 'undefined' ? fallback : 'loading...'}>
+    <BrowserComponent fallback={typeof fallback !== 'undefined' ? fallback : 'loading...'}>
       <div style={{ marginBottom: '1em' }}>
         {hideHeader ? null : (
           <FieldHeader
@@ -101,6 +102,6 @@ export const FieldWrapper: React.FC<Props> = ({
         )}
         {fieldComponent || ''}
       </div>
-    </React.Suspense>
+    </BrowserComponent>
   );
 };

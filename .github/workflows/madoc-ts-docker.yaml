@@ -5,7 +5,7 @@ on:
     branches: ['main']
     tags: ['v*']
   pull_request:
-    branches: ['main']
+    branches: ['main', 'feature/v2.1']
     paths:
       - ".github/workflows/madoc-ts-docker.yaml"
       - "services/madoc-ts/src/**"

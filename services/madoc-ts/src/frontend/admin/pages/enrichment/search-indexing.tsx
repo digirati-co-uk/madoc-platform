@@ -1,16 +1,15 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '../../../shared/navigation/Button';
 import { WidePage } from '../../../shared/layout/WidePage';
 import { FacetConfig, MetadataFacetEditor } from '../../../shared/components/MetadataFacetEditor';
 import { useApi } from '../../../shared/hooks/use-api';
 import { apiHooks } from '../../../shared/hooks/use-api-query';
-import { UniversalRoute } from '../../../types';
 import { AdminHeader } from '../../molecules/AdminHeader';
 
-export const SearchIndexingPage: React.FC<{ route: UniversalRoute }> = ({ route }) => {
+export const SearchIndexingPage: React.FC = () => {
   const currentConfig = apiHooks.getSiteSearchFacetConfiguration(() => [], {
     retry: false,
     refetchIntervalInBackground: false,
@@ -24,10 +23,10 @@ export const SearchIndexingPage: React.FC<{ route: UniversalRoute }> = ({ route 
     await api.saveFacetConfiguration(facets);
   });
   const { t } = useTranslation();
-  const { push } = useHistory();
+  const navigate = useNavigate();
   const [reindexFullSize, reindexStatus] = useMutation(async () => {
     const task = await api.fullSearchIndex();
-    push(`/tasks/${task.id}`);
+    navigate(`/tasks/${task.id}`);
   });
 
   return (

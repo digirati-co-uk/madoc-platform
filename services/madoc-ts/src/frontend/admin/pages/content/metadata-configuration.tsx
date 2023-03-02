@@ -4,10 +4,9 @@ import { WidePage } from '../../../shared/layout/WidePage';
 import { FacetConfig, MetadataFacetEditor } from '../../../shared/components/MetadataFacetEditor';
 import { useApi } from '../../../shared/hooks/use-api';
 import { apiHooks } from '../../../shared/hooks/use-api-query';
-import { UniversalRoute } from '../../../types';
 import { AdminHeader } from '../../molecules/AdminHeader';
 
-export const MetadataConfigurationPage: React.FC<{ route: UniversalRoute }> = ({ route }) => {
+export const MetadataConfigurationPage: React.FC = () => {
   const currentConfig = apiHooks.getSiteMetadataConfiguration(() => [], {
     retry: false,
     refetchIntervalInBackground: false,

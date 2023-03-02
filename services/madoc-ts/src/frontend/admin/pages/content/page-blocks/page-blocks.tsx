@@ -1,11 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Outlet } from 'react-router-dom';
 import { WidePage } from '../../../../shared/layout/WidePage';
-import { useApi } from '../../../../shared/hooks/use-api';
-import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 
-export const PageBlocks: React.FC<any> = ({ route }) => {
+export const PageBlocks: React.FC = () => {
   const { t } = useTranslation();
 
   // api.pageBlocks.get
@@ -20,7 +19,9 @@ export const PageBlocks: React.FC<any> = ({ route }) => {
           { label: 'Page blocks', link: '/page-blocks' },
         ]}
       />
-      <WidePage>{renderUniversalRoutes(route.routes)}</WidePage>
+      <WidePage>
+        <Outlet />
+      </WidePage>
     </>
   );
 };

@@ -1,4 +1,4 @@
-import { DescriptiveProperties, LinkingProperties } from '@hyperion-framework/types';
+import { DescriptiveProperties, LinkingProperties } from '@iiif/presentation-3';
 import { ResourceLink } from '../database/queries/linking-queries';
 import { iiifGetLabel } from './iiif-get-label';
 

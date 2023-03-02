@@ -1,7 +1,7 @@
 import React from 'react';
 import { useMutation } from 'react-query';
-import ReactTimeago from 'react-timeago';
 import { GetUser } from '../../../../../extensions/site-manager/types';
+import { TimeAgo } from '../../../../shared/atoms/TimeAgo';
 import { Button } from '../../../../shared/navigation/Button';
 import { SuccessMessage } from '../../../../shared/callouts/SuccessMessage';
 import { TableContainer, TableRow, TableRowLabel } from '../../../../shared/layout/Table';
@@ -10,6 +10,8 @@ import { useApi } from '../../../../shared/hooks/use-api';
 import { useData } from '../../../../shared/hooks/use-data';
 import { Spinner } from '../../../../shared/icons/Spinner';
 import { ViewUser } from '../view-user';
+import { Tag } from '../../../../shared/capture-models/editor/atoms/Tag';
+import { getBotType } from '../../../../../automation/utils/get-bot-type';
 
 export const UserOverview: React.FC = () => {
   const { data, refetch } = useData<GetUser>(ViewUser);
@@ -39,7 +41,14 @@ export const UserOverview: React.FC = () => {
       ) : (
         <WarningMessage>User account not active</WarningMessage>
       )}
-      <h1>{data.user.name}</h1>
+      <div style={{ display: 'flex' }}>
+        <h1>{data.user.name} </h1>
+        {data.user.automated ? (
+          <Tag style={{ alignSelf: 'center', marginLeft: '.5em' }}>
+            {getBotType(data.user.config?.bot?.type) || 'bot'}
+          </Tag>
+        ) : null}
+      </div>
       <TableContainer>
         <TableRow>
           <TableRowLabel>
@@ -70,7 +79,7 @@ export const UserOverview: React.FC = () => {
             <strong>Created</strong>
           </TableRowLabel>
           <TableRowLabel>
-            <ReactTimeago date={new Date(data.user.created)} />
+            <TimeAgo date={new Date(data.user.created)} />
           </TableRowLabel>
         </TableRow>
         {data.user.modified ? (
@@ -79,7 +88,7 @@ export const UserOverview: React.FC = () => {
               <strong>Last modified</strong>
             </TableRowLabel>
             <TableRowLabel>
-              <ReactTimeago date={new Date(data.user.modified)} />
+              <TimeAgo date={new Date(data.user.modified)} />
             </TableRowLabel>
           </TableRow>
         ) : null}

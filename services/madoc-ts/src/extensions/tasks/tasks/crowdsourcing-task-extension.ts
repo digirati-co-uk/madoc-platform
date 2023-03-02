@@ -1,4 +1,4 @@
-import { InternationalString } from '@hyperion-framework/types/iiif/descriptive';
+import { InternationalString } from '@iiif/presentation-3';
 import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
 
 type CrowdsourcingTaskMetadata = {

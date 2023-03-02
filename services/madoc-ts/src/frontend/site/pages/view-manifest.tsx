@@ -9,11 +9,12 @@ import { ManifestMetadata } from '../features/ManifestMetadata';
 import { ManifestNotAvailableToBrowse } from '../features/ManifestNotAvailableToBrowse';
 import { ManifestPagination } from '../features/ManifestPagination';
 import { ManifestUserNotification } from '../features/ManifestUserNotification';
+import { ExternalLinks } from '../features/ExternalLinks';
 import { RequiredStatement } from '../features/RequiredStatement';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useManifest } from '../hooks/use-manifest';
 import { useRelativeLinks } from '../hooks/use-relative-links';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import '../features/ManifestHero';
 
 export function ViewManifest() {
@@ -28,7 +29,7 @@ export function ViewManifest() {
       return null;
     }
     if (manifest.items.length) {
-      return <Redirect to={createLink({ canvasId: manifest.items[0].id })} />;
+      return <Navigate to={createLink({ canvasId: manifest.items[0].id })} />;
     }
   }
 
@@ -36,7 +37,7 @@ export function ViewManifest() {
     if (!manifest) {
       return null;
     }
-    return <Redirect to={createLink({ canvasId: manifest?.items[0].id, subRoute: 'model' })} />;
+    return <Navigate to={createLink({ canvasId: manifest?.items[0].id, subRoute: 'model' })} />;
   }
 
   return (
@@ -49,6 +50,8 @@ export function ViewManifest() {
         <ManifestHeading />
 
         <RequiredStatement />
+
+        <ExternalLinks />
 
         <ManifestUserNotification />
       </Slot>

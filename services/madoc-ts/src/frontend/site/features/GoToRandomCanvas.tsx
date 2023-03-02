@@ -1,7 +1,7 @@
-import { InternationalString } from '@hyperion-framework/types/iiif/descriptive';
+import { InternationalString } from '@iiif/presentation-3';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '../../shared/navigation/Button';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { useUser } from '../../shared/hooks/use-site';
@@ -18,10 +18,10 @@ export const GoToRandomCanvas: React.FC<{
 }> = ({ $primary, $large, label, navigateToModel }) => {
   const { projectId } = useRouteContext();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const createLink = useRelativeLinks();
   const { showCaptureModelOnManifest } = useProjectShadowConfiguration();
-  const [getRandomCanvas] = useGetRandomCanvas();
+  const [getRandomCanvas, getRandomCanvasStatus] = useGetRandomCanvas();
   const user = useUser();
   const [error, setError] = useState(false);
 
@@ -33,11 +33,11 @@ export const GoToRandomCanvas: React.FC<{
     <Button
       $primary={$primary}
       $large={$large}
-      disabled={error}
+      disabled={error || getRandomCanvasStatus.isLoading}
       onClick={() => {
         getRandomCanvas().then(resp => {
           if (resp && resp.manifest && resp.canvas) {
-            history.push(
+            navigate(
               createLink({
                 manifestId: resp.manifest,
                 canvasId: resp.canvas.id,
@@ -50,7 +50,15 @@ export const GoToRandomCanvas: React.FC<{
         });
       }}
     >
-      {error ? t('No available canvases') : label ? <LocaleString>{label}</LocaleString> : t('Go to random Canvas')}
+      {getRandomCanvasStatus.isLoading ? (
+        t('Finding canvas...')
+      ) : error ? (
+        t('No available canvases')
+      ) : label ? (
+        <LocaleString>{label}</LocaleString>
+      ) : (
+        t('Go to random Canvas')
+      )}
     </Button>
   );
 };

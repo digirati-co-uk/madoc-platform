@@ -1,9 +1,7 @@
 import React, { useMemo } from 'react';
-import { useRouteMatch } from 'react-router-dom';
-import { Pagination } from '../../../../types/schemas/_pagination';
+import { Outlet } from 'react-router-dom';
 import { ApiArgs } from '../../../shared/hooks/use-api-query';
 import { AutoSlotLoader } from '../../../shared/page-blocks/auto-slot-loader';
-import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { UniversalComponent } from '../../../types';
 import { usePaginatedData } from '../../../shared/hooks/use-data';
@@ -34,17 +32,13 @@ export type CollectionLoaderType = {
   query: { c: string; filter?: string };
   variables: ApiArgs<'getSiteCollection'>;
   data: CollectionFull;
-  context: {
-    collection: CollectionFull;
-    pagination: Pagination;
-  };
 };
 
 export const CollectionLoader: UniversalComponent<CollectionLoaderType> = createUniversalComponent<
   CollectionLoaderType
 >(
-  ({ route, ...props }) => {
-    const { resolvedData: data, latestData } = usePaginatedData(CollectionLoader, [], {
+  () => {
+    const { resolvedData: data } = usePaginatedData(CollectionLoader, [], {
       cacheTime: 3600,
     });
 
@@ -53,12 +47,7 @@ export const CollectionLoader: UniversalComponent<CollectionLoaderType> = create
     return (
       <AutoSlotLoader>
         <BreadcrumbContext collection={ctx}>
-          {renderUniversalRoutes(route.routes, {
-            ...props,
-            collection: data?.collection,
-            pagination: latestData ? latestData.pagination : undefined,
-            collectionSubjects: data ? data.subjects : undefined,
-          })}
+          <Outlet />
         </BreadcrumbContext>
       </AutoSlotLoader>
     );

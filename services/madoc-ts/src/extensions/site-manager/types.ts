@@ -1,4 +1,4 @@
-import { InternationalString } from '@hyperion-framework/types';
+import { InternationalString } from '@iiif/presentation-3';
 
 export type Site = {
   id: number;
@@ -72,6 +72,9 @@ export type UserRowWithoutPassword = {
   role: string;
   site_role?: string;
   is_active: boolean;
+  created_by?: number | null;
+  automated: boolean;
+  config?: any | null;
 };
 
 export type GetUser = {
@@ -88,6 +91,16 @@ export type User = {
   password_hash: never;
   role: string;
   is_active: boolean;
+  automated: boolean;
+  config?: UserConfig;
+};
+
+type UserConfig = {
+  bot?: { type: string; config?: any };
+};
+
+export type SelfUser = User & {
+  config?: UserConfig | null; // @todo add types for user config when we start using it.
 };
 
 export type UserCreationRequest = {
@@ -95,6 +108,9 @@ export type UserCreationRequest = {
   name: string;
   role: string;
   skipEmail?: boolean;
+  creator?: number;
+  automated?: boolean;
+  config?: UserConfig;
 };
 
 /**
@@ -115,6 +131,8 @@ export type SiteUser = {
   site_role?: string;
 
   email?: string;
+  automated?: boolean;
+  config?: UserConfig | null;
 };
 
 export type CurrentUserWithScope = SiteUser & {
@@ -136,6 +154,9 @@ export type UserRow = {
   password_hash: string | null;
   role: string;
   is_active: boolean;
+  created_by?: number | null;
+  automated: boolean;
+  config?: any | null; // @todo add types for user config when we start using it.
 };
 
 export type LegacyUserRow = UserRow & {

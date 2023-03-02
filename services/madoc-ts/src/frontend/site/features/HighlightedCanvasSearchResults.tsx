@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { InfoMessage } from '../../shared/callouts/InfoMessage';
 import { useCanvasSearch } from '../../shared/hooks/use-canvas-search';
 import { useRelativeLinks } from '../hooks/use-relative-links';

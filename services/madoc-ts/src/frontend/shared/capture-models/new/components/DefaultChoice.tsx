@@ -3,7 +3,7 @@ import { Choice } from '../../Choice';
 import { useNavigation } from '../../editor/hooks/useNavigation';
 
 export const DefaultChoice: React.FC = () => {
-  const [currentView, { pop, push, idStack }] = useNavigation();
+  const [currentView, { pop, push, idStack, revisions }] = useNavigation();
 
   if (!currentView) {
     return null;
@@ -13,5 +13,13 @@ export const DefaultChoice: React.FC = () => {
     return null;
   }
 
-  return <Choice choice={currentView} onBackButton={() => pop()} onChoice={push} showBackButton={idStack.length > 0} />;
+  return (
+    <Choice
+      choice={currentView}
+      onBackButton={() => pop()}
+      onChoice={push}
+      showBackButton={idStack.length > 0}
+      revisions={revisions}
+    />
+  );
 };

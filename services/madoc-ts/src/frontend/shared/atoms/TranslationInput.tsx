@@ -1,6 +1,7 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { Input } from '../form/Input';
+import { useBrowserLayoutEffect } from '../hooks/use-browser-layout-effect';
 
 const TranslationInputContainer = styled.div<{ $focus?: boolean }>`
   background: #fff;
@@ -40,7 +41,7 @@ export const TranslationInput: React.FC<{ id: string; label: any; value: string;
   const ref = useRef<HTMLInputElement>();
   const [isFocus, setFocus] = useState(false);
 
-  useLayoutEffect(() => {
+  useBrowserLayoutEffect(() => {
     if (ref.current) {
       const $el = ref.current;
       const focusHandler = () => {

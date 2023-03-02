@@ -7,10 +7,9 @@ import { DocumentEditor } from '../../components/DocumentEditor/DocumentEditor';
 import { FieldEditor } from '../../components/FieldEditor/FieldEditor';
 import '../../input-types/TextField/index';
 
+import model from '../../../../../../../fixtures/simple.json';
+
 export default { title: 'Stores/Document Store' };
-
-const model: CaptureModel = require('../../../../../../../fixtures/simple.json');
-
 const Test: React.FC = () => {
   const state = DocumentStore.useStoreState(s => ({
     subtree: s.subtree,

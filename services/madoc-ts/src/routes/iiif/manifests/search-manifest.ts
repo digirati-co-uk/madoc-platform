@@ -1,6 +1,6 @@
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { sql } from 'slonik';
-import { SearchServiceSearchResponse } from '@hyperion-framework/types';
+import { SearchServiceSearchResponse } from '@iiif/presentation-3';
 import { gatewayHost } from '../../../gateway/api.server';
 
 export const searchManifest: RouteMiddleware<{ id: number }> = async context => {

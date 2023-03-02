@@ -7,6 +7,7 @@ import { RevisionNavigation } from '../../../../shared/capture-models/RevisionNa
 import { CaptureModel } from '../../../../shared/capture-models/types/capture-model';
 import { documentFragmentWrapper } from '../../../../shared/capture-models/utility/document-fragment-wrapper';
 import { useApi } from '../../../../shared/hooks/use-api';
+import { BrowserComponent } from '../../../../shared/utility/browser-component';
 import { ViewContentFetch } from '../../../molecules/ViewContentFetch';
 import { Revisions } from '../../../../shared/capture-models/editor/stores/revisions/index';
 
@@ -36,14 +37,12 @@ export const ViewOCRModel: React.FC<{ canvasId: number; link: ResourceLinkRespon
       <Revisions.Provider captureModel={captureModel}>
         <div style={{ display: 'flex', flexDirection: 'row' }}>
           <div style={{ width: '50%' }}>
-            {api.getIsServer() ? null : (
-              <Suspense fallback={<>Loading</>}>
-                <div>
-                  <ViewContentFetch id={Number(canvasId)} />
-                  <br />
-                </div>
-              </Suspense>
-            )}
+            <BrowserComponent fallback={<>Loading</>}>
+              <div>
+                <ViewContentFetch id={Number(canvasId)} />
+                <br />
+              </div>
+            </BrowserComponent>
           </div>
           <div style={{ width: '50%', padding: '1em' }}>
             {api.getIsServer() ? null : (

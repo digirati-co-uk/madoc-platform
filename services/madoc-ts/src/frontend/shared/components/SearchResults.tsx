@@ -40,10 +40,9 @@ const ResultContainer = styled.li`
   width: 100%;
   list-style-type: none;
   display: flex;
-  border-radius: 5px;
   padding: 1.25rem;
   margin: 1rem 0;
-  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid #eee;
 `;
 
 const ResultText = styled.span`
@@ -65,6 +64,10 @@ export const TotalResults = styled.div`
 
 function sanitizeLabel(str: string) {
   return str.replace(/^.*': '/, '');
+}
+
+function replaceBreaks(str: string) {
+  return str.replace(/[\\n]+/, '');
 }
 
 const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; search?: string }> = ({
@@ -99,10 +102,13 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; sea
         style={{ textDecoration: 'none' }}
       >
         <GridContainer>
-          <ImageStripBox $size={size}>
+          <ImageStripBox $size={size} style={{ width: 200, maxHeight: 200, marginBottom: 20 }}>
             {isManifest ? (
               <SnippetThumbnailContainer stackedThumbnail={isManifest} portrait fluid>
-                <SnippetThumbnail src={result.madoc_thumbnail} />
+                <SnippetThumbnail
+                  src={result.madoc_thumbnail}
+                  style={{ maxHeight: 200, fitContent: 'scale-down' } as any}
+                />
               </SnippetThumbnailContainer>
             ) : (
               <CroppedImage $size={size}>
@@ -113,11 +119,11 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; sea
           <div style={{ alignSelf: 'flex-start', marginLeft: '1em' }}>
             <LocaleString as={ResultTitle}>{result.label}</LocaleString>
             {snippet ? (
-              <div style={{ paddingBottom: '.8em' }}>
+              <div style={{ paddingBottom: '.8em', maxWidth: 600 }}>
                 <ResultText
                   key={snippet}
                   dangerouslySetInnerHTML={{
-                    __html: sanitizeLabel(snippet),
+                    __html: replaceBreaks(sanitizeLabel(snippet)),
                   }}
                 />
               </div>

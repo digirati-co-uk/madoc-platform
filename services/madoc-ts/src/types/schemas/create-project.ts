@@ -1,4 +1,4 @@
-import { InternationalString } from '@hyperion-framework/types';
+import { InternationalString } from '@iiif/presentation-3';
 
 export type CreateProject = {
   label: InternationalString;
@@ -7,4 +7,5 @@ export type CreateProject = {
   template?: string;
   template_options?: any;
   template_config?: any;
+  remote_template?: any | null;
 };

@@ -1,0 +1,61 @@
+{
+  "id": "d5872f4a-a7be-4c76-a05a-839c25891ac8",
+  "document": {
+    "id": "6638203c-9b91-446a-82f8-17b2aa1ebf52",
+    "type": "entity",
+    "label": "Root",
+    "properties": {
+      "identifyRegion": [
+        {
+          "id": "ac7eea00-3fad-4d5a-939c-c980067ceda8",
+          "type": "text-field",
+          "label": "identifyRegion",
+          "value": "",
+          "selector": {
+            "id": "bd321012-9c87-447e-b5a8-9bb2c4e0845a",
+            "type": "box-selector",
+            "state": null,
+            "revisedBy": [
+              {
+                "id": "31a25ba1-034e-4f24-81f1-b12f63d179e4",
+                "type": "box-selector",
+                "state": {
+                  "x": 25,
+                  "y": 50,
+                  "width": 100,
+                  "height": 200
+                },
+                "revisionId": "0162c8b3-abc5-47cb-a118-7186400e2171",
+                "revises": "bd321012-9c87-447e-b5a8-9bb2c4e0845a",
+                "revisedBy": []
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "structure": {
+    "label": "Default",
+    "description": "",
+    "id": "073c6174-0c1a-484e-966d-4bdf5fe67b45",
+    "type": "model",
+    "fields": [
+      "identifyRegion"
+    ]
+  },
+  "revisions": [
+    {
+      "id": "0162c8b3-abc5-47cb-a118-7186400e2171",
+      "fields": [
+        "identifyRegion"
+      ],
+      "status": "draft",
+      "approved": false,
+      "structureId": "073c6174-0c1a-484e-966d-4bdf5fe67b45",
+      "label": "Default",
+      "revises": "073c6174-0c1a-484e-966d-4bdf5fe67b45",
+      "deletedFields": []
+    }
+  ]
+}

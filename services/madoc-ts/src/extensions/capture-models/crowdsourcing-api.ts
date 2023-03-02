@@ -26,11 +26,18 @@ export class CrowdsourcingApi implements BaseExtension {
   api: ApiClient;
   extensions: ExtensionManager<CaptureModelExtension> | null;
   private readonly dataSources: DynamicData[] = [];
+  newApi: boolean;
 
-  constructor(api: ApiClient, extensions: ExtensionManager<CaptureModelExtension> | null, dataSources: DynamicData[]) {
+  constructor(
+    api: ApiClient,
+    extensions: ExtensionManager<CaptureModelExtension> | null,
+    dataSources: DynamicData[],
+    newApi = true
+  ) {
     this.api = api;
     this.extensions = extensions;
     this.dataSources = dataSources;
+    this.newApi = newApi;
   }
 
   dispose() {
@@ -46,7 +53,7 @@ export class CrowdsourcingApi implements BaseExtension {
 
   async getCaptureModel(id: string, query?: { author?: string; published?: boolean }) {
     return this.api.request<{ id: string } & CaptureModel>(
-      `/api/crowdsourcing/model/${id}${query ? `?${stringify(query)}` : ''}`
+      `/api/madoc/crowdsourcing/model/${id}${query ? `?${stringify(query)}` : ''}`
     );
   }
 
@@ -56,11 +63,13 @@ export class CrowdsourcingApi implements BaseExtension {
     derived_from?: string;
     all_derivatives?: boolean;
   }) {
-    return this.api.request<CaptureModelSnippet[]>(`/api/crowdsourcing/model${query ? `?${stringify(query)}` : ''}`);
+    return this.api.request<CaptureModelSnippet[]>(
+      `/api/madoc/crowdsourcing/model${query ? `?${stringify(query)}` : ''}`
+    );
   }
 
   async updateCaptureModel(id: string, captureModel: CaptureModel) {
-    return this.api.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model/${id}`, {
+    return this.api.request<{ id: string } & CaptureModel>(`/api/madoc/crowdsourcing/model/${id}`, {
       method: 'PUT',
       body: captureModel,
     });
@@ -84,7 +93,7 @@ export class CrowdsourcingApi implements BaseExtension {
 
     return this.api.request<{
       results: ModelSearch[];
-    }>(`/api/crowdsourcing/search/published?${stringify(queryString)}`);
+    }>(`/api/madoc/crowdsourcing/search/published?${stringify(queryString)}`);
   }
 
   async createCaptureModelFromTemplate(
@@ -152,14 +161,14 @@ export class CrowdsourcingApi implements BaseExtension {
       }
     }
 
-    return this.api.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model`, {
+    return this.api.request<{ id: string } & CaptureModel>(`/api/madoc/crowdsourcing/model`, {
       method: 'POST',
       body: fullModel,
     });
   }
 
   async createCaptureModel(label: string) {
-    return this.api.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model`, {
+    return this.api.request<{ id: string } & CaptureModel>(`/api/madoc/crowdsourcing/model`, {
       method: 'POST',
       body: {
         id: generateId(),
@@ -180,14 +189,14 @@ export class CrowdsourcingApi implements BaseExtension {
   }
 
   async importCaptureModel(model: CaptureModel) {
-    return this.api.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model`, {
+    return this.api.request<{ id: string } & CaptureModel>(`/api/madoc/crowdsourcing/model`, {
       method: 'POST',
       body: model,
     });
   }
 
   async deleteCaptureModel(id: string) {
-    return this.api.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model/${id}`, {
+    return this.api.request<{ id: string } & CaptureModel>(`/api/madoc/crowdsourcing/model/${id}`, {
       method: 'DELETE',
     });
   }
@@ -201,12 +210,15 @@ export class CrowdsourcingApi implements BaseExtension {
       throw new Error('API must be enabled with extensions');
     }
 
-    const newModel = await this.api.request<{ id: string } & CaptureModel>(`/api/crowdsourcing/model/${id}/clone`, {
-      method: 'POST',
-      body: {
-        target,
-      },
-    });
+    const newModel = await this.api.request<{ id: string } & CaptureModel>(
+      `/api/madoc/crowdsourcing/model/${id}/clone`,
+      {
+        method: 'POST',
+        body: {
+          target,
+        },
+      }
+    );
 
     if (
       projectTemplate &&
@@ -238,34 +250,34 @@ export class CrowdsourcingApi implements BaseExtension {
     query?: { clone_mode?: 'EDIT_ALL_VALUES' | 'FORK_ALL_VALUES' | 'FORK_TEMPLATE' | 'FORK_INSTANCE' }
   ) {
     return this.api.request<RevisionRequest>(
-      `/api/crowdsourcing/model/${captureModelId}/fork/${revisionId}${query ? `?${stringify(query)}` : ''}`
+      `/api/madoc/crowdsourcing/model/${captureModelId}/fork/${revisionId}${query ? `?${stringify(query)}` : ''}`
     );
   }
 
   async cloneCaptureModelRevision(captureModelId: string, revisionId: string) {
-    return this.api.request<RevisionRequest>(`/api/crowdsourcing/model/${captureModelId}/clone/${revisionId}`);
+    return this.api.request<RevisionRequest>(`/api/madoc/crowdsourcing/model/${captureModelId}/clone/${revisionId}`);
   }
 
   async createCaptureModelRevision(req: RevisionRequest, status?: string) {
-    return this.api.request<RevisionRequest>(`/api/crowdsourcing/model/${req.captureModelId}/revision`, {
+    return this.api.request<RevisionRequest>(`/api/madoc/crowdsourcing/model/${req.captureModelId}/revision`, {
       method: 'POST',
       body: status ? { ...req, revision: { ...req.revision, status } } : req,
     });
   }
 
   async updateCaptureModelRevision(req: RevisionRequest, status?: string) {
-    return this.api.request<RevisionRequest>(`/api/crowdsourcing/revision/${req.revision.id}`, {
+    return this.api.request<RevisionRequest>(`/api/madoc/crowdsourcing/revision/${req.revision.id}`, {
       method: 'PUT',
       body: status ? { ...req, revision: { ...req.revision, status } } : req,
     });
   }
 
   async getCaptureModelRevision(revisionId: string) {
-    return this.api.request<RevisionRequest>(`/api/crowdsourcing/revision/${revisionId}`);
+    return this.api.request<RevisionRequest>(`/api/madoc/crowdsourcing/revision/${revisionId}`);
   }
 
   async approveCaptureModelRevision(revisionRequest: RevisionRequest) {
-    return this.api.request<RevisionRequest>(`/api/crowdsourcing/revision/${revisionRequest.revision.id}`, {
+    return this.api.request<RevisionRequest>(`/api/madoc/crowdsourcing/revision/${revisionRequest.revision.id}`, {
       method: 'PUT',
       body: {
         ...revisionRequest,
@@ -280,7 +292,7 @@ export class CrowdsourcingApi implements BaseExtension {
   }
 
   async reDraftCaptureModelRevision(revisionRequest: RevisionRequest) {
-    return this.api.request<RevisionRequest>(`/api/crowdsourcing/revision/${revisionRequest.revision.id}`, {
+    return this.api.request<RevisionRequest>(`/api/madoc/crowdsourcing/revision/${revisionRequest.revision.id}`, {
       method: 'PUT',
       body: {
         ...revisionRequest,
@@ -296,7 +308,7 @@ export class CrowdsourcingApi implements BaseExtension {
 
   async deleteCaptureModelRevision(revisionRequest: string | RevisionRequest) {
     return this.api.request<void>(
-      `/api/crowdsourcing/revision/${
+      `/api/madoc/crowdsourcing/revision/${
         typeof revisionRequest === 'string' ? revisionRequest : revisionRequest.revision.id
       }`,
       {

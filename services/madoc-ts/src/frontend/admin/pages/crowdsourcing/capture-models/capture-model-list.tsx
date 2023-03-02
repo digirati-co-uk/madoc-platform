@@ -2,7 +2,7 @@ import React from 'react';
 import { CaptureModelSnippet } from '../../../../../types/schemas/capture-model-snippet';
 import { Card, CardContent } from '../../../../shared/capture-models/editor/atoms/Card';
 import { UniversalComponent } from '../../../../types';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../../../../shared/navigation/Button';
 import { useMutation } from 'react-query';
 import { useApi } from '../../../../shared/hooks/use-api';
@@ -28,11 +28,11 @@ export const CaptureModelList: UniversalComponent<CaptureModelListType> = create
     const { t } = useTranslation();
     const { data, refetch } = useData(CaptureModelList);
     const api = useApi();
-    const history = useHistory();
+    const navigate = useNavigate();
     const [createNewModel] = useMutation(async () => {
       const model = await api.createCaptureModel('Untitled model');
       await refetch();
-      history.push(`/capture-models/${model.id}`);
+      navigate(`/capture-models/${model.id}`);
     });
 
     if (!data) {

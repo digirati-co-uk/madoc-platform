@@ -1,4 +1,4 @@
-import { InternationalString } from '@hyperion-framework/types/iiif/descriptive';
+import { InternationalString } from '@iiif/presentation-3';
 import { ApiClient } from '../../../gateway/api';
 import { BaseTask } from '../../../gateway/tasks/base-task';
 import { parseUrn } from '../../../utility/parse-urn';

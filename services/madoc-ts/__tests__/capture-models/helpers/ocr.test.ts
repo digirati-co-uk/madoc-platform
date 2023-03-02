@@ -60,13 +60,13 @@ describe('OCR Capture model', () => {
     );
 
     expect(revisionDoc).toMatchInlineSnapshot(`
-      Object {
+      {
         "id": "aa2344b4-a70b-41cf-aa62-5e211e76ee2c",
         "immutable": true,
         "label": "Untitled document",
-        "properties": Object {
-          "transcription": Array [
-            Object {
+        "properties": {
+          "transcription": [
+            {
               "allowMultiple": false,
               "description": "Region of the page denoting a single paragraph",
               "id": "b2867260-78e3-484f-8549-40a89a55d51c",
@@ -74,9 +74,9 @@ describe('OCR Capture model', () => {
               "label": "Paragraph",
               "labelledBy": "lines",
               "pluralLabel": "Paragraphs",
-              "properties": Object {
-                "lines": Array [
-                  Object {
+              "properties": {
+                "lines": [
+                  {
                     "allowMultiple": false,
                     "description": "All of the lines inside of a paragraph",
                     "id": "a9d8cae8-db25-4880-bc33-e4c0ff192939",
@@ -84,9 +84,9 @@ describe('OCR Capture model', () => {
                     "label": "Line",
                     "labelledBy": "text",
                     "pluralLabel": "Lines",
-                    "properties": Object {
-                      "text": Array [
-                        Object {
+                    "properties": {
+                      "text": [
+                        {
                           "allowMultiple": true,
                           "description": "Single word, phrase or the whole line",
                           "id": "[auto-generated]",
@@ -95,9 +95,9 @@ describe('OCR Capture model', () => {
                           "previewInline": true,
                           "revises": "a29eb861-a893-4f2d-a3d2-e420ea405e4a",
                           "revision": "[generated]",
-                          "selector": Object {
+                          "selector": {
                             "id": "[auto-generated]",
-                            "state": Object {
+                            "state": {
                               "height": 48,
                               "width": 265,
                               "x": 746,
@@ -110,9 +110,9 @@ describe('OCR Capture model', () => {
                         },
                       ],
                     },
-                    "selector": Object {
+                    "selector": {
                       "id": "98751c14-a342-4958-9803-5e0bd5d11b6a",
-                      "state": Object {
+                      "state": {
                         "height": 53,
                         "width": 1695,
                         "x": 312,
@@ -124,9 +124,9 @@ describe('OCR Capture model', () => {
                   },
                 ],
               },
-              "selector": Object {
+              "selector": {
                 "id": "750603ef-bf14-464a-b812-6540f53497dd",
-                "state": Object {
+                "state": {
                   "height": 2582,
                   "width": 1730,
                   "x": 296,
@@ -156,232 +156,246 @@ describe('OCR Capture model', () => {
     const revisionDoc = createRevisionDocument(newRevisionId, model.document, mode, modelRoot, modelMapping);
 
     expect(revisionDoc).toMatchInlineSnapshot(`
-Object {
-  "id": "aa2344b4-a70b-41cf-aa62-5e211e76ee2c",
-  "immutable": true,
-  "label": "Untitled document",
-  "properties": Object {
-    "transcription": Array [
-      Object {
-        "allowMultiple": false,
-        "description": "Region of the page denoting a single paragraph",
-        "id": "b2867260-78e3-484f-8549-40a89a55d51c",
+      {
+        "id": "aa2344b4-a70b-41cf-aa62-5e211e76ee2c",
         "immutable": true,
-        "label": "Paragraph",
-        "labelledBy": "lines",
-        "pluralLabel": "Paragraphs",
-        "properties": Object {
-          "lines": Array [
-            Object {
+        "label": "Untitled document",
+        "properties": {
+          "transcription": [
+            {
               "allowMultiple": false,
-              "description": "All of the lines inside of a paragraph",
-              "id": "[auto-generated]",
-              "immutable": false,
-              "label": "Line",
-              "labelledBy": "text",
-              "pluralLabel": "Lines",
-              "properties": Object {
-                "text": Array [
-                  Object {
-                    "allowMultiple": true,
-                    "description": "Single word, phrase or the whole line",
+              "description": "Region of the page denoting a single paragraph",
+              "id": "b2867260-78e3-484f-8549-40a89a55d51c",
+              "immutable": true,
+              "label": "Paragraph",
+              "labelledBy": "lines",
+              "pluralLabel": "Paragraphs",
+              "properties": {
+                "lines": [
+                  {
+                    "allowMultiple": false,
+                    "description": "All of the lines inside of a paragraph",
                     "id": "[auto-generated]",
-                    "label": "Text of line",
-                    "pluralField": "Text of lines",
-                    "previewInline": true,
+                    "immutable": false,
+                    "label": "Line",
+                    "labelledBy": "text",
+                    "pluralLabel": "Lines",
+                    "properties": {
+                      "text": [
+                        {
+                          "allowMultiple": true,
+                          "description": "Single word, phrase or the whole line",
+                          "id": "[auto-generated]",
+                          "label": "Text of line",
+                          "pluralField": "Text of lines",
+                          "previewInline": true,
+                          "revision": "[generated]",
+                          "selector": {
+                            "id": "[auto-generated]",
+                            "state": {
+                              "height": 39,
+                              "width": 262,
+                              "x": 312,
+                              "y": 2503,
+                            },
+                            "type": "box-selector",
+                          },
+                          "type": "text-field",
+                          "value": "bereidiern",
+                        },
+                        {
+                          "allowMultiple": true,
+                          "description": "Single word, phrase or the whole line",
+                          "id": "[auto-generated]",
+                          "label": "Text of line",
+                          "pluralField": "Text of lines",
+                          "previewInline": true,
+                          "revision": "[generated]",
+                          "selector": {
+                            "id": "[auto-generated]",
+                            "state": {
+                              "height": 38,
+                              "width": 92,
+                              "x": 617,
+                              "y": 2504,
+                            },
+                            "type": "box-selector",
+                          },
+                          "type": "text-field",
+                          "value": "und",
+                        },
+                        {
+                          "allowMultiple": true,
+                          "description": "Single word, phrase or the whole line",
+                          "id": "[auto-generated]",
+                          "label": "Text of line",
+                          "pluralField": "Text of lines",
+                          "previewInline": true,
+                          "revision": "[generated]",
+                          "selector": {
+                            "id": "[auto-generated]",
+                            "state": {
+                              "height": 48,
+                              "width": 265,
+                              "x": 746,
+                              "y": 2504,
+                            },
+                            "type": "box-selector",
+                          },
+                          "type": "text-field",
+                          "value": "beglücken.",
+                        },
+                        {
+                          "allowMultiple": true,
+                          "description": "Single word, phrase or the whole line",
+                          "id": "[auto-generated]",
+                          "label": "Text of line",
+                          "pluralField": "Text of lines",
+                          "previewInline": true,
+                          "revision": "[generated]",
+                          "selector": {
+                            "id": "[auto-generated]",
+                            "state": {
+                              "height": 37,
+                              "width": 111,
+                              "x": 1065,
+                              "y": 2504,
+                            },
+                            "type": "box-selector",
+                          },
+                          "type": "text-field",
+                          "value": "Man",
+                        },
+                        {
+                          "allowMultiple": true,
+                          "description": "Single word, phrase or the whole line",
+                          "id": "[auto-generated]",
+                          "label": "Text of line",
+                          "pluralField": "Text of lines",
+                          "previewInline": true,
+                          "revision": "[generated]",
+                          "selector": {
+                            "id": "[auto-generated]",
+                            "state": {
+                              "height": 43,
+                              "width": 126,
+                              "x": 1216,
+                              "y": 2504,
+                            },
+                            "type": "box-selector",
+                          },
+                          "type": "text-field",
+                          "value": "lernt,",
+                        },
+                        {
+                          "allowMultiple": true,
+                          "description": "Single word, phrase or the whole line",
+                          "id": "[auto-generated]",
+                          "label": "Text of line",
+                          "pluralField": "Text of lines",
+                          "previewInline": true,
+                          "revision": "[generated]",
+                          "selector": {
+                            "id": "[auto-generated]",
+                            "state": {
+                              "height": 37,
+                              "width": 153,
+                              "x": 1394,
+                              "y": 2503,
+                            },
+                            "type": "box-selector",
+                          },
+                          "type": "text-field",
+                          "value": "indem",
+                        },
+                        {
+                          "allowMultiple": true,
+                          "description": "Single word, phrase or the whole line",
+                          "id": "[auto-generated]",
+                          "label": "Text of line",
+                          "pluralField": "Text of lines",
+                          "previewInline": true,
+                          "revision": "[generated]",
+                          "selector": {
+                            "id": "[auto-generated]",
+                            "state": {
+                              "height": 27,
+                              "width": 105,
+                              "x": 1595,
+                              "y": 2512,
+                            },
+                            "type": "box-selector",
+                          },
+                          "type": "text-field",
+                          "value": "man",
+                        },
+                        {
+                          "allowMultiple": true,
+                          "description": "Single word, phrase or the whole line",
+                          "id": "[auto-generated]",
+                          "label": "Text of line",
+                          "pluralField": "Text of lines",
+                          "previewInline": true,
+                          "revision": "[generated]",
+                          "selector": {
+                            "id": "[auto-generated]",
+                            "state": {
+                              "height": 40,
+                              "width": 99,
+                              "x": 1739,
+                              "y": 2499,
+                            },
+                            "type": "box-selector",
+                          },
+                          "type": "text-field",
+                          "value": "aufs",
+                        },
+                        {
+                          "allowMultiple": true,
+                          "description": "Single word, phrase or the whole line",
+                          "id": "[auto-generated]",
+                          "label": "Text of line",
+                          "pluralField": "Text of lines",
+                          "previewInline": true,
+                          "revision": "[generated]",
+                          "selector": {
+                            "id": "[auto-generated]",
+                            "state": {
+                              "height": 37,
+                              "width": 131,
+                              "x": 1876,
+                              "y": 2500,
+                            },
+                            "type": "box-selector",
+                          },
+                          "type": "text-field",
+                          "value": "beste",
+                        },
+                      ],
+                    },
+                    "revises": "a9d8cae8-db25-4880-bc33-e4c0ff192939",
                     "revision": "[generated]",
-                    "selector": Object {
+                    "selector": {
                       "id": "[auto-generated]",
-                      "state": Object {
-                        "height": 39,
-                        "width": 262,
+                      "state": {
+                        "height": 53,
+                        "width": 1695,
                         "x": 312,
-                        "y": 2503,
-                      },
-                      "type": "box-selector",
-                    },
-                    "type": "text-field",
-                    "value": "bereidiern",
-                  },
-                  Object {
-                    "allowMultiple": true,
-                    "description": "Single word, phrase or the whole line",
-                    "id": "[auto-generated]",
-                    "label": "Text of line",
-                    "pluralField": "Text of lines",
-                    "previewInline": true,
-                    "revision": "[generated]",
-                    "selector": Object {
-                      "id": "[auto-generated]",
-                      "state": Object {
-                        "height": 38,
-                        "width": 92,
-                        "x": 617,
-                        "y": 2504,
-                      },
-                      "type": "box-selector",
-                    },
-                    "type": "text-field",
-                    "value": "und",
-                  },
-                  Object {
-                    "allowMultiple": true,
-                    "description": "Single word, phrase or the whole line",
-                    "id": "[auto-generated]",
-                    "label": "Text of line",
-                    "pluralField": "Text of lines",
-                    "previewInline": true,
-                    "revision": "[generated]",
-                    "selector": Object {
-                      "id": "[auto-generated]",
-                      "state": Object {
-                        "height": 48,
-                        "width": 265,
-                        "x": 746,
-                        "y": 2504,
-                      },
-                      "type": "box-selector",
-                    },
-                    "type": "text-field",
-                    "value": "beglücken.",
-                  },
-                  Object {
-                    "allowMultiple": true,
-                    "description": "Single word, phrase or the whole line",
-                    "id": "[auto-generated]",
-                    "label": "Text of line",
-                    "pluralField": "Text of lines",
-                    "previewInline": true,
-                    "revision": "[generated]",
-                    "selector": Object {
-                      "id": "[auto-generated]",
-                      "state": Object {
-                        "height": 37,
-                        "width": 111,
-                        "x": 1065,
-                        "y": 2504,
-                      },
-                      "type": "box-selector",
-                    },
-                    "type": "text-field",
-                    "value": "Man",
-                  },
-                  Object {
-                    "allowMultiple": true,
-                    "description": "Single word, phrase or the whole line",
-                    "id": "[auto-generated]",
-                    "label": "Text of line",
-                    "pluralField": "Text of lines",
-                    "previewInline": true,
-                    "revision": "[generated]",
-                    "selector": Object {
-                      "id": "[auto-generated]",
-                      "state": Object {
-                        "height": 43,
-                        "width": 126,
-                        "x": 1216,
-                        "y": 2504,
-                      },
-                      "type": "box-selector",
-                    },
-                    "type": "text-field",
-                    "value": "lernt,",
-                  },
-                  Object {
-                    "allowMultiple": true,
-                    "description": "Single word, phrase or the whole line",
-                    "id": "[auto-generated]",
-                    "label": "Text of line",
-                    "pluralField": "Text of lines",
-                    "previewInline": true,
-                    "revision": "[generated]",
-                    "selector": Object {
-                      "id": "[auto-generated]",
-                      "state": Object {
-                        "height": 37,
-                        "width": 153,
-                        "x": 1394,
-                        "y": 2503,
-                      },
-                      "type": "box-selector",
-                    },
-                    "type": "text-field",
-                    "value": "indem",
-                  },
-                  Object {
-                    "allowMultiple": true,
-                    "description": "Single word, phrase or the whole line",
-                    "id": "[auto-generated]",
-                    "label": "Text of line",
-                    "pluralField": "Text of lines",
-                    "previewInline": true,
-                    "revision": "[generated]",
-                    "selector": Object {
-                      "id": "[auto-generated]",
-                      "state": Object {
-                        "height": 27,
-                        "width": 105,
-                        "x": 1595,
-                        "y": 2512,
-                      },
-                      "type": "box-selector",
-                    },
-                    "type": "text-field",
-                    "value": "man",
-                  },
-                  Object {
-                    "allowMultiple": true,
-                    "description": "Single word, phrase or the whole line",
-                    "id": "[auto-generated]",
-                    "label": "Text of line",
-                    "pluralField": "Text of lines",
-                    "previewInline": true,
-                    "revision": "[generated]",
-                    "selector": Object {
-                      "id": "[auto-generated]",
-                      "state": Object {
-                        "height": 40,
-                        "width": 99,
-                        "x": 1739,
                         "y": 2499,
                       },
                       "type": "box-selector",
                     },
-                    "type": "text-field",
-                    "value": "aufs",
-                  },
-                  Object {
-                    "allowMultiple": true,
-                    "description": "Single word, phrase or the whole line",
-                    "id": "[auto-generated]",
-                    "label": "Text of line",
-                    "pluralField": "Text of lines",
-                    "previewInline": true,
-                    "revision": "[generated]",
-                    "selector": Object {
-                      "id": "[auto-generated]",
-                      "state": Object {
-                        "height": 37,
-                        "width": 131,
-                        "x": 1876,
-                        "y": 2500,
-                      },
-                      "type": "box-selector",
-                    },
-                    "type": "text-field",
-                    "value": "beste",
+                    "type": "entity",
                   },
                 ],
               },
-              "revises": "a9d8cae8-db25-4880-bc33-e4c0ff192939",
-              "revision": "[generated]",
-              "selector": Object {
-                "id": "[auto-generated]",
-                "state": Object {
-                  "height": 53,
-                  "width": 1695,
-                  "x": 312,
-                  "y": 2499,
+              "selector": {
+                "id": "750603ef-bf14-464a-b812-6540f53497dd",
+                "state": {
+                  "height": 2582,
+                  "width": 1730,
+                  "x": 296,
+                  "y": 310,
                 },
                 "type": "box-selector",
               },
@@ -389,23 +403,9 @@ Object {
             },
           ],
         },
-        "selector": Object {
-          "id": "750603ef-bf14-464a-b812-6540f53497dd",
-          "state": Object {
-            "height": 2582,
-            "width": 1730,
-            "x": 296,
-            "y": 310,
-          },
-          "type": "box-selector",
-        },
         "type": "entity",
-      },
-    ],
-  },
-  "type": "entity",
-}
-`);
+      }
+    `);
   });
   test.todo('When I see a many typos I can make a correction for multiple lines');
   test.todo('When I want to replace the whole transcription, I can fork the whole model');

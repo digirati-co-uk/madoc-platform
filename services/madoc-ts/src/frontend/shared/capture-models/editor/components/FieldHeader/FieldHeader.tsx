@@ -130,7 +130,8 @@ export const FieldHeader: React.FC<FieldHeaderProps> = ({
       <FieldHeaderTop>
         <FieldHeaderLeft>
           <FieldHeaderTitle htmlFor={labelFor}>
-            {tModel(label)} {showTerm && term ? <Tag size="tiny">{term}</Tag> : null}
+            {tModel(label) || <span style={{ opacity: 0.5 }}>{t('Untitled')}</span>}{' '}
+            {showTerm && term ? <Tag size="tiny">{term}</Tag> : null}
           </FieldHeaderTitle>
           {description ? <FieldHeaderSubtitle htmlFor={labelFor}>{tModel(description)}</FieldHeaderSubtitle> : null}
         </FieldHeaderLeft>

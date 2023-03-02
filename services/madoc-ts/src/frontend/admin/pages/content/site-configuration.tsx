@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { SuccessMessage } from '../../../shared/callouts/SuccessMessage';
 import { RoundedCard } from '../../../shared/capture-models/editor/components/RoundedCard/RoundedCard';
 import { WidePage } from '../../../shared/layout/WidePage';
@@ -10,16 +10,16 @@ import { AdminHeader } from '../../molecules/AdminHeader';
 
 export const SiteConfiguration: React.FC = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const query = useLocationQuery<{ success?: string }>();
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     if (query.success && !success) {
-      history.push(`/configure/site`);
+      navigate(`/configure/site`);
       setSuccess(true);
     }
-  }, [history, query.success, success]);
+  }, [query.success, success]);
 
   return (
     <>

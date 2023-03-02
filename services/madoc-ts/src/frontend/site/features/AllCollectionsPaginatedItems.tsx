@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { Button, ButtonRow } from '../../shared/navigation/Button';
 import { Heading3, Subheading3 } from '../../shared/typography/Heading3';
 import { SingleLineHeading5, Subheading5 } from '../../shared/typography/Heading5';

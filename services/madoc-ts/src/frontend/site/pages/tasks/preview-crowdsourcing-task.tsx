@@ -9,6 +9,7 @@ import { DirectEditButton } from '../../../shared/capture-models/new/components/
 import { EditorSlots } from '../../../shared/capture-models/new/components/EditorSlots';
 import { RevisionProviderWithFeatures } from '../../../shared/capture-models/new/components/RevisionProviderWithFeatures';
 import { EditorContentViewer } from '../../../shared/capture-models/new/EditorContent';
+import { useBrowserLayoutEffect } from '../../../shared/hooks/use-browser-layout-effect';
 import { HomeIcon } from '../../../shared/icons/HomeIcon';
 import { MinusIcon } from '../../../shared/icons/MinusIcon';
 import { PlusIcon } from '../../../shared/icons/PlusIcon';
@@ -93,7 +94,7 @@ const PreviewCrowdsourcingTask: React.FC<{
     }
   }, []);
 
-  useLayoutEffect(() => {
+  useBrowserLayoutEffect(() => {
     resize();
     if (window) {
       window.addEventListener('resize', resize);
@@ -111,8 +112,8 @@ const PreviewCrowdsourcingTask: React.FC<{
           captureModel ? (
             <RevisionProviderWithFeatures
               captureModel={captureModel}
-              key={taskData?.state.revisionId}
-              revision={taskData?.state.revisionId}
+              key={taskData?.state?.revisionId}
+              revision={taskData?.state?.revisionId}
               features={{
                 autosave: false,
                 autoSelectingRevision: true,

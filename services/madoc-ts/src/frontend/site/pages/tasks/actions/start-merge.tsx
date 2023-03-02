@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
+import { TimeAgo } from '../../../../shared/atoms/TimeAgo';
 import { Revisions } from '../../../../shared/capture-models/editor/stores/revisions/index';
 import { useApi } from '../../../../shared/hooks/use-api';
 import {
@@ -8,7 +9,6 @@ import {
   EditorToolbarLabel,
 } from '../../../../shared/navigation/EditorToolbar';
 import { ModalButton } from '../../../../shared/components/Modal';
-import ReactTimeago from 'react-timeago';
 import { Button } from '../../../../shared/navigation/Button';
 import { CallMergeIcon } from '../../../../shared/icons/CallMergeIcon';
 
@@ -72,8 +72,7 @@ export const StartMerge: React.FC<{
                         });
                       }}
                     />
-                    {task.creator?.name || task.name}{' '}
-                    {task.modified_at ? <ReactTimeago date={task.modified_at} /> : null}
+                    {task.creator?.name || task.name} {task.modified_at ? <TimeAgo date={task.modified_at} /> : null}
                   </label>
                 </li>
               )
@@ -97,7 +96,7 @@ export const StartMerge: React.FC<{
       <EditorToolbarIcon>
         <CallMergeIcon />
       </EditorToolbarIcon>
-      <EditorToolbarLabel>start merge</EditorToolbarLabel>
+      <EditorToolbarLabel>Merge</EditorToolbarLabel>
     </EditorToolbarButton>
   );
 };

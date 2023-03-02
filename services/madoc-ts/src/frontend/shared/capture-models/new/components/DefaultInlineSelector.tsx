@@ -9,7 +9,6 @@ export const DefaultInlineSelector: EditorRenderingConfig['InlineSelector'] = ()
   const { configuration } = useSlotContext();
   const [selector] = useResolvedSelector(entity);
 
-
   if (!selector) {
     return null;
   }

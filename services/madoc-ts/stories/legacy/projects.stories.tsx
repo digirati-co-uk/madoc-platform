@@ -30,10 +30,10 @@ const projects: ProjectList['projects'] = [
 
 export const ExampleProjectSnippets: React.FC = () => {
   return (
-    <MemoryRouter>
+    <>
       <div style={{ padding: '2em' }}>
         <ProjectListing projects={projects} onContribute={id => console.log('chose', id)} />
       </div>
-    </MemoryRouter>
+    </>
   );
 };

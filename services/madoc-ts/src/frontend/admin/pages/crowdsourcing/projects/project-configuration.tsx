@@ -1,36 +1,36 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ProjectFull } from '../../../../../types/project-full';
+import { useParams } from 'react-router-dom';
 import { EmptyState } from '../../../../shared/layout/EmptyState';
 import { SuccessMessage } from '../../../../shared/callouts/SuccessMessage';
 import { EditShorthandCaptureModel } from '../../../../shared/capture-models/EditorShorthandCaptureModel';
 import { useAdminLayout } from '../../../../shared/components/AdminMenu';
-import { siteConfigurationModel } from '../../../../shared/configuration/site-config';
+import { postProcessConfiguration, siteConfigurationModel } from '../../../../shared/configuration/site-config';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { apiHooks } from '../../../../shared/hooks/use-api-query';
 import { useProjectTemplate } from '../../../../shared/hooks/use-project-template';
 import { useShortMessage } from '../../../../shared/hooks/use-short-message';
+import { serverRendererFor } from '../../../../shared/plugins/external/server-renderer-for';
 
-function postProcessConfiguration(config: any) {
-  if (config.revisionApprovalsRequired) {
-    config.revisionApprovalsRequired = Number(config.revisionApprovalsRequired);
-  }
+export const ProjectConfiguration: React.FC = () => {
+  const params = useParams() as { id: string };
+  const { data: project } = apiHooks.getProject(() => (params.id ? [params.id] : undefined));
 
-  return config;
-}
-
-export const ProjectConfiguration: React.FC<{ project: ProjectFull; refetch: () => Promise<void> }> = ({ project }) => {
   const { scrollToTop } = useAdminLayout();
   const api = useApi();
-  const { data: projectConfiguration, refetch, updatedAt } = apiHooks.getSiteConfiguration(() => [
-    { project_id: project.id },
-  ]);
+  const { data: projectConfiguration, refetch, updatedAt } = apiHooks.getSiteConfiguration(() =>
+    params.id ? [{ project_id: params.id }] : undefined
+  );
   const { t } = useTranslation();
   const [didSave, setDidSave] = useShortMessage();
-  const projectTemplate = useProjectTemplate(project.template);
+  const projectTemplate = useProjectTemplate(project?.template);
 
   if (projectTemplate?.configuration?.frozen) {
     return <EmptyState>{t('There is no configuration for this project type')}</EmptyState>;
+  }
+
+  if (!project) {
+    return null;
   }
 
   return (
@@ -38,6 +38,8 @@ export const ProjectConfiguration: React.FC<{ project: ProjectFull; refetch: () 
       {didSave ? <SuccessMessage>{t('Changes saved')}</SuccessMessage> : null}
       <EditShorthandCaptureModel
         key={updatedAt}
+        enableSearch
+        searchLabel={t('Search configuration')}
         immutableFields={projectTemplate?.configuration?.immutable}
         data={projectConfiguration}
         template={siteConfigurationModel}
@@ -51,3 +53,10 @@ export const ProjectConfiguration: React.FC<{ project: ProjectFull; refetch: () 
     </div>
   );
 };
+
+serverRendererFor(ProjectConfiguration, {
+  hooks: [
+    { name: 'getProject', creator: params => [params.id] },
+    { name: 'getSiteConfiguration', creator: params => [{ project_id: params.id }] },
+  ],
+});

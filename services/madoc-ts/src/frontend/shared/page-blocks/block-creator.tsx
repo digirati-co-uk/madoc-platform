@@ -9,9 +9,11 @@ import {
   AddBlockLabel,
   AddBlockList,
   AddBlockPluginName,
+  BlockCreatorPreview,
   DefaultBlockIcon,
 } from './AddBlock';
 import { Button, SmallButton } from '../navigation/Button';
+import { FilterInput } from '../atoms/FilterInput';
 import { WhiteTickIcon } from '../icons/TickIcon';
 import { useApi } from '../hooks/use-api';
 import { useSite } from '../hooks/use-site';
@@ -30,9 +32,9 @@ const BlockCreatorForm: React.FC<{
   return (
     <div>
       {preview ? (
-        <div style={{ padding: '1em' }}>
+        <BlockCreatorPreview>
           <RenderBlock block={preview} context={props.context} />
-        </div>
+        </BlockCreatorPreview>
       ) : null}
       {editor}
       <Button
@@ -92,10 +94,39 @@ export const BlockCreator: React.FC<{
     });
   }, [blockTypes, props.pagePath, sourceId, sourceType]);
 
+  const contextBlocks = useMemo(() => {
+    const context = JSON.parse(JSON.stringify(props.context));
+    return blockTypes.filter(block => {
+      if (block?.anyContext?.some(b => Object.keys(context).indexOf(b) >= 0)) {
+        return block;
+      }
+      return false;
+    });
+  }, [blockTypes, props.context]);
+
+  const [filteredBlocks, setFilteredBlocks] = useState(availableBlocks);
+
+  function handleFilter(e: string) {
+    const result = availableBlocks
+      ? availableBlocks.filter(block => block.label.toLowerCase().includes(e.toLowerCase()))
+      : '';
+
+    setFilteredBlocks(result ? result : []);
+  }
+
   const pagePathBlocks = useMemo(() => {
     return blockTypes.filter(block => {
       if (block?.source?.type === 'custom-page' && props.pagePath) {
         return block?.source.id === props.pagePath;
+      }
+      return false;
+    });
+  }, [blockTypes, props.pagePath]);
+
+  const pluginBlocks = useMemo(() => {
+    return blockTypes.filter(block => {
+      if (block?.source?.type === 'plugin') {
+        return block?.source.id;
       }
       return false;
     });
@@ -162,10 +193,23 @@ export const BlockCreator: React.FC<{
           <AddBlockList>{pagePathBlocks.map(renderBlock)}</AddBlockList>
         </>
       ) : null}
+      {contextBlocks && contextBlocks.length ? (
+        <>
+          <h4>Context specific blocks</h4>
+          <AddBlockList>{contextBlocks.map(renderBlock)}</AddBlockList>
+        </>
+      ) : null}
+      {pluginBlocks && pluginBlocks.length ? (
+        <>
+          <h4>Blocks from plugin</h4>
+          <AddBlockList>{pluginBlocks.map(renderBlock)}</AddBlockList>
+        </>
+      ) : null}
       {availableBlocks && availableBlocks.length ? (
         <>
           <h4>All blocks</h4>
-          <AddBlockList>{availableBlocks.map(renderBlock)}</AddBlockList>
+          <FilterInput type="text" onChange={e => handleFilter(e.target.value)} placeholder="Search all blocks" />
+          <AddBlockList>{filteredBlocks.map(renderBlock)}</AddBlockList>
         </>
       ) : null}
     </>

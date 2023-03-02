@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRouteMatch } from 'react-router-dom';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { useMatch, useLocation } from 'react-router-dom';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { Button } from '../../shared/navigation/Button';
 import { Heading3 } from '../../shared/typography/Heading3';
 import { ImageGrid } from '../../shared/atoms/ImageGrid';
@@ -13,7 +13,7 @@ import { useSiteConfiguration } from './SiteConfigurationContext';
 
 export const ProjectCollections: React.FC = () => {
   const { data: project } = useProject();
-  const { isExact } = useRouteMatch();
+  const isExact = true; // @todo fix this.
   const { t } = useTranslation();
   const {
     project: { allowCollectionNavigation, hideProjectCollectionNavigation },
@@ -34,7 +34,7 @@ export const ProjectCollections: React.FC = () => {
   return (
     <>
       <Heading3>{t('Collections')}</Heading3>
-      <ImageGrid>
+      <ImageGrid $size="large">
         {shownCollections.map((collection, idx) => (
           <CollectionSnippet key={idx} id={collection.id} projectId={project.slug} />
         ))}

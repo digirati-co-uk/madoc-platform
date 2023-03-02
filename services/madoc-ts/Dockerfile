@@ -1,26 +1,35 @@
-FROM node:14 as build
+FROM node:18 as build
 
 WORKDIR /home/node/app
 
-ADD ./package.json /home/node/app/package.json
-ADD ./yarn.lock /home/node/app/yarn.lock
+COPY ./package.json /home/node/app/package.json
+COPY ./yarn.lock /home/node/app/yarn.lock
 COPY ./npm /home/node/app/npm
 
-RUN yarn install
+RUN yarn install --no-interactive --frozen-lockfile
 
-COPY ./src /home/node/app/src
-COPY ./schemas /home/node/app/schemas
-COPY ./webpack.config.js /home/node/app/webpack.config.js
+# These may not be required.
 COPY ./tsconfig.json /home/node/app/tsconfig.json
 COPY ./tsconfig.frontend.json /home/node/app/tsconfig.frontend.json
+
+# These are required
+COPY ./src /home/node/app/src
+COPY ./schemas /home/node/app/schemas
 COPY ./generate-schemas.js /home/node/app/generate-schemas.js
-ADD ./themes /home/node/app/themes
+COPY ./themes /home/node/app/themes
+COPY ./vite /home/node/app/vite
+COPY ./vite.config.js /home/node/app/vite.config.js
 
 ENV NODE_ENV=production
 
-RUN yarn build
+RUN yarn generate-schema
+RUN yarn build:vite-producer
+RUN yarn build:vite-auth
+RUN yarn build:vite-scheduler
+RUN yarn build:frontend
+RUN yarn build:vite-server
 
-FROM node:14 as modules
+FROM node:18 as modules
 
 WORKDIR /home/node/app
 
@@ -30,20 +39,17 @@ COPY --from=build /home/node/app/npm /home/node/app/npm
 
 RUN yarn install --no-interactive --frozen-lockfile --production=true
 
-FROM node:14
+FROM node:18
 
 WORKDIR /home/node/app
 
-RUN npm install -g pm2@4.5.6
+RUN npm install -g pm2@5
 
 COPY --from=build /home/node/app/package.json /home/node/app/package.json
 COPY --from=build /home/node/app/yarn.lock /home/node/app/yarn.lock
 COPY --from=modules /home/node/app/node_modules /home/node/app/node_modules
-COPY --from=build /home/node/app/lib /home/node/app/lib
-COPY ./schemas /home/node/app/schemas
-COPY ./webpack.config.js /home/node/app/webpack.config.js
-COPY ./ecosystem.config.js /home/node/app/ecosystem.config.js
-COPY ./themes /home/node/app/themes
+COPY --from=build /home/node/app/dist /home/node/app/dist
+COPY ./ecosystem.config.cjs /home/node/app/ecosystem.config.cjs
 COPY ./npm /home/node/app/npm
 
 ENV SERVER_PORT=3000
@@ -70,13 +76,13 @@ RUN mkdir -p /home/node/app/service-jwt && \
 
 USER node
 
-COPY ./migrate.js /home/node/app/migrate.js
 COPY ./migrations /home/node/app/migrations
 COPY ./service-jwts /home/node/app/service-jwts
 COPY ./config.json /home/node/app/config.json
 COPY ./translations /home/node/app/translations
+COPY ./themes /home/node/app/themes
 COPY ./schemas /home/node/app/schemas
-COPY ./generate-schemas.js /home/node/app/generate-schemas.js
+COPY ./entrypoint /home/node/app/entrypoint
 
-CMD ["pm2-runtime", "start", "./ecosystem.config.js"]
+CMD ["pm2-runtime", "start", "./ecosystem.config.cjs"]
 

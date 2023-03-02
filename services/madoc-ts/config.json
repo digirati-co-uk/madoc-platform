@@ -38,6 +38,7 @@
     "atlasBackground": "#f9f9f9",
     "canvasPageShowAnnotations": "when-open",
     "canvasPageShowDocument":"when-open",
+    "forkMode": false,
     "reviewOptions": {
       "allowMerging": false
     },
@@ -54,6 +55,7 @@
       "hideSearchButton": false,
       "hideRandomManifest": false,
       "hideRandomCanvas": false,
+      "generatePDF": false,
       "reviewerDashboard": false
     },
     "manifestPageOptions": {

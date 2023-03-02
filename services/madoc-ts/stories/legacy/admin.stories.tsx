@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { MemoryRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import { AdminHeader } from '../../src/frontend/admin/molecules/AdminHeader';
 import * as React from 'react';
@@ -52,7 +51,7 @@ import { SiteProvider } from '../../src/frontend/shared/hooks/use-site';
 export default { title: 'Legacy/Admin' };
 
 export const adminHeader = () => (
-  <MemoryRouter>
+  <>
     <GlobalHeader
       title={'Default site'}
       username={'Some user'}
@@ -64,12 +63,12 @@ export const adminHeader = () => (
       ]}
     />
     <AdminHeader title="My awesome project" />
-  </MemoryRouter>
+  </>
 );
 
 export const AdminPageBuilding = () => {
   return (
-    <MemoryRouter>
+    <>
       <GlobalHeader
         title={'Default site'}
         username={'Some user'}
@@ -142,12 +141,12 @@ export const AdminPageBuilding = () => {
           <div>Some content here...</div>
         </SlotOutlineContainer>
       </WidePage>
-    </MemoryRouter>
+    </>
   );
 };
 
 export const AdminHeaderWithBreadcrumbsAndMenu = () => (
-  <MemoryRouter>
+  <>
     <SiteProvider value={{ site: { slug: '#', id: 1 } }}>
       <AdminHeader
         title="My awesome project"
@@ -169,11 +168,11 @@ export const AdminHeaderWithBreadcrumbsAndMenu = () => (
         <p>Test some content on this page.</p>
       </WidePage>
     </SiteProvider>
-  </MemoryRouter>
+  </>
 );
 
 export const AdminHeaderWithBreadcrumbsAndMenuAndSearch = () => (
-  <MemoryRouter>
+  <>
     <SiteProvider value={{ site: { slug: '#', id: 1 } }}>
       <GlobalHeader
         title={'Default site'}
@@ -207,7 +206,7 @@ export const AdminHeaderWithBreadcrumbsAndMenuAndSearch = () => (
         <p>Test some content on this page.</p>
       </WidePage>
     </SiteProvider>
-  </MemoryRouter>
+  </>
 );
 
 export const LightNavigationExample = () => (
@@ -232,7 +231,7 @@ export const Admin_Menu = () => {
   const [menu, changeMenu] = useState(false);
 
   return (
-    <MemoryRouter>
+    <>
       <SiteProvider value={{ site: { slug: '#', id: 1 } as any }}>
         <GlobalHeader
           title={'Default site'}
@@ -333,6 +332,6 @@ export const Admin_Menu = () => {
           </AdminLayoutMain>
         </AdminLayoutContainer>
       </SiteProvider>
-    </MemoryRouter>
+    </>
   );
 };

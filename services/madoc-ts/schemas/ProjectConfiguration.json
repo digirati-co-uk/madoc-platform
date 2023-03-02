@@ -120,6 +120,12 @@
       ],
       "type": "string"
     },
+    "atlasBackground": {
+      "type": "string"
+    },
+    "forkMode": {
+      "type": "boolean"
+    },
     "searchOptions": {
       "type": "object",
       "properties": {
@@ -138,6 +144,38 @@
       "type": "string"
     },
     "longExpiryTime": {
+      "type": "string"
+    },
+    "modelPageShowAnnotations": {
+      "enum": [
+        "always",
+        "highlighted",
+        "when-open"
+      ],
+      "type": "string"
+    },
+    "modelPageShowDocument": {
+      "enum": [
+        "always",
+        "highlighted",
+        "when-open"
+      ],
+      "type": "string"
+    },
+    "canvasPageShowAnnotations": {
+      "enum": [
+        "always",
+        "highlighted",
+        "when-open"
+      ],
+      "type": "string"
+    },
+    "canvasPageShowDocument": {
+      "enum": [
+        "always",
+        "highlighted",
+        "when-open"
+      ],
       "type": "string"
     },
     "modelPageOptions": {
@@ -169,6 +207,9 @@
         },
         "disableNextCanvas": {
           "type": "boolean"
+        },
+        "enableRotation": {
+          "type": "boolean"
         }
       }
     },
@@ -188,6 +229,17 @@
           "type": "boolean"
         },
         "reviewerDashboard": {
+          "type": "boolean"
+        }
+      }
+    },
+    "reviewOptions": {
+      "type": "object",
+      "properties": {
+        "allowMerging": {
+          "type": "boolean"
+        },
+        "enableAutoReview": {
           "type": "boolean"
         }
       }
@@ -217,6 +269,9 @@
           "type": "boolean"
         },
         "coveredImages": {
+          "type": "boolean"
+        },
+        "rectangularImages": {
           "type": "boolean"
         },
         "hideCanvasLabels": {
@@ -274,6 +329,14 @@
           "type": "boolean"
         },
         "canvas": {
+          "type": "boolean"
+        }
+      }
+    },
+    "shadow": {
+      "type": "object",
+      "properties": {
+        "showCaptureModelOnManifest": {
           "type": "boolean"
         }
       }

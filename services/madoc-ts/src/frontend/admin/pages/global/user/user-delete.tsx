@@ -1,6 +1,6 @@
 import React from 'react';
 import { useMutation } from 'react-query';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { GetUser } from '../../../../../extensions/site-manager/types';
 import { Button } from '../../../../shared/navigation/Button';
 import { WarningMessage } from '../../../../shared/callouts/WarningMessage';
@@ -9,14 +9,14 @@ import { useData } from '../../../../shared/hooks/use-data';
 import { ViewUser } from '../view-user';
 
 export const UserDelete: React.FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const api = useApi();
   const { data } = useData<GetUser>(ViewUser);
   const userId = data?.user.id;
   const [deleteUser, deleteUserStatus] = useMutation(async () => {
     if (userId) {
       await api.siteManager.deleteUser(userId);
-      history.push(`/global/users?user_deleted=true`);
+      navigate(`/global/users?user_deleted=true`);
     }
   });
 

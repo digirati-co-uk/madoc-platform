@@ -1,8 +1,10 @@
 import { i18n } from 'i18next';
+import { CompletionsExtension } from '../extensions/completions/extension';
 import { PluginManager } from '../frontend/shared/plugins/plugin-manager';
 import { ChangeDiscoveryRepository } from '../activity-streams/change-discovery-repository';
 import { ApiClient } from '../gateway/api';
 import { AnnotationStylesRepository } from '../repository/annotation-styles-repository';
+import { CaptureModelRepository } from '../capture-model-server/capture-model-repository';
 import { MediaRepository } from '../repository/media-repository';
 import { NotificationRepository } from '../repository/notification-repository';
 import { PageBlocksRepository } from '../repository/page-blocks-repository';
@@ -16,6 +18,7 @@ import { ExternalConfig } from './external-config';
 import { router } from '../router';
 import { DatabasePoolConnectionType } from 'slonik';
 import { Ajv } from 'ajv';
+import { ApiKeyRepository } from '../repository/api-key-repository';
 
 type AllRoutes = typeof router;
 
@@ -29,16 +32,24 @@ declare module 'koa' {
     plugins: PluginRepository;
     themes: ThemeRepository;
     media: MediaRepository;
+    apiKeys: ApiKeyRepository;
     annotationStyles: AnnotationStylesRepository;
     mailer: Mailer;
     notifications: NotificationRepository;
     projects: ProjectRepository;
     changeDiscovery: ChangeDiscoveryRepository;
+    captureModels: CaptureModelRepository;
     siteManager: SiteUserRepository;
     pluginManager: PluginManager;
     cron: CronJobs;
+
+    completions: CompletionsExtension;
     ajv: Ajv;
     staticPage?: string | ((token: string) => Promise<string | undefined>) | ((token: string) => undefined | string);
     disposableApis: ApiClient[];
+
+    // New frontend
+    adminTemplate: string;
+    siteTemplate: string;
   }
 }

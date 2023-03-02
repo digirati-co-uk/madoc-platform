@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../shared/atoms/Statistics';
 import { SubtaskProgress } from '../../shared/atoms/SubtaskProgress';
 import { useProject } from '../hooks/use-project';
@@ -21,19 +21,19 @@ export const ProjectStatistics: React.FC = () => {
     <>
       <StatisticContainer>
         <Statistic>
-          <StatisticNumber>{project.statistics['0'] || 0}</StatisticNumber>
+          <StatisticNumber>{Math.max(0, project.statistics['0'] || 0)}</StatisticNumber>
           <StatisticLabel>{t('Not started')}</StatisticLabel>
         </Statistic>
         <Statistic>
-          <StatisticNumber>{project.statistics['1'] || 0}</StatisticNumber>
+          <StatisticNumber>{Math.max(0, project.statistics['1'] || 0)}</StatisticNumber>
           <StatisticLabel>{t('In progress')}</StatisticLabel>
         </Statistic>
         <Statistic>
-          <StatisticNumber>{project.statistics['2'] || 0}</StatisticNumber>
+          <StatisticNumber>{Math.max(0, project.statistics['2'] || 0)}</StatisticNumber>
           <StatisticLabel>{t('In review')}</StatisticLabel>
         </Statistic>
         <Statistic>
-          <StatisticNumber>{project.statistics['3'] || 0}</StatisticNumber>
+          <StatisticNumber>{Math.max(0, project.statistics['3'] || 0)}</StatisticNumber>
           <StatisticLabel>{t('Completed')}</StatisticLabel>
         </Statistic>
       </StatisticContainer>

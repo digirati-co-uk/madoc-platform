@@ -1,11 +1,11 @@
-import { useRouteMatch } from 'react-router-dom';
+import { useOutlet } from 'react-router-dom';
 import { apiHooks } from '../../shared/hooks/use-api-query';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useProject } from './use-project';
 
 export function useProjectManifests() {
   const { data: project } = useProject();
-  const { isExact } = useRouteMatch();
+  const isExact = useOutlet() === null;
   const {
     project: { hideCompletedResources },
   } = useSiteConfiguration();

@@ -53,13 +53,14 @@
 //
 //  controller.withSelector(selectorId).dispatch('change')
 
-import React, { createContext, useContext, useMemo } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import mitt, { Handler } from 'mitt';
 
 const SelectorHelperReactContext = createContext(mitt());
 
 export type SelectorHelperEventTypes =
   | 'click'
+  | 'hover'
   | 'selector-updated'
   | 'highlight'
   | 'clear-highlight'
@@ -80,6 +81,44 @@ export function useSelectorEmitter() {
   return useContext(SelectorHelperReactContext);
 }
 
+export function useSelectorEvents(id: string) {
+  const controller = useSelectorController();
+  const [isHighlighted, setIsHighlighted] = useState(false);
+
+  useEffect(() => {
+    return controller.withSelector(id).on('highlight', () => {
+      setIsHighlighted(true);
+    });
+  }, [controller, id]);
+
+  useEffect(() => {
+    return controller.withSelector(id).on('clear-highlight', () => {
+      setIsHighlighted(false);
+    });
+  }, [controller, id]);
+
+  const onClick = useCallback(
+    (e?: { x: number; y: number; width: number; height: number }) => {
+      controller.emit('click', { selectorId: id, event: e });
+    },
+    [id, controller]
+  );
+
+  const onHover = useCallback(
+    (e?: { x: number; y: number; width: number; height: number }) => {
+      controller.emit('hover', { selectorId: id, event: e });
+    },
+    [id, controller]
+  );
+
+  return {
+    controller,
+    onClick,
+    onHover,
+    isHighlighted,
+  };
+}
+
 export function useSelectorController() {
   const controller = useContext(SelectorHelperReactContext);
 
@@ -94,9 +133,9 @@ export function useSelectorController() {
               }
             };
 
-            controller.on(type, handlerWrapper);
+            controller.on<any>(type, handlerWrapper as any);
             return () => {
-              controller.off(type, handlerWrapper);
+              controller.off<any>(type, handlerWrapper as any);
             };
           },
           emit<T = any>(type: SelectorHelperEventTypes, event: T) {
@@ -105,9 +144,9 @@ export function useSelectorController() {
         };
       },
       on<T extends { selectorId: string } = any>(type: SelectorHelperEventTypes, handler: Handler<T>) {
-        controller.on(type, handler);
+        controller.on<any>(type, handler as any);
         return () => {
-          controller.off(type, handler);
+          controller.off<any>(type, handler as any);
         };
       },
       emit<T extends { selectorId: string } = any>(type: SelectorHelperEventTypes, event: T) {

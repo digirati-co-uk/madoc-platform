@@ -7,12 +7,14 @@ import Ajv from 'ajv';
 import { strategies } from './auth';
 import { checkExpiredManifests } from './cron/check-expired-manifests';
 import './frontend/shared/plugins/globals';
+import { CompletionsExtension } from './extensions/completions/extension';
 import { createPluginManager } from './middleware/create-plugin-manager';
 import { disposeApis } from './middleware/dispose-apis';
 import { errorHandler } from './middleware/error-handler';
-import { SCHEMAS_PATH } from './paths';
+import { HTML_ADMIN_PATH, HTML_SITE_PATH, SCHEMAS_PATH } from './paths';
 import { EnvConfig } from './types/env-config';
 import { createAwaiter } from './utility/awaiter';
+import { castBool } from './utility/cast-bool';
 import { CronJobs } from './utility/cron-jobs';
 import { Mailer } from './utility/mailer';
 import { createPostgresPool } from './database/create-postgres-pool';
@@ -40,7 +42,7 @@ export async function createApp(config: ExternalConfig, env: EnvConfig) {
   const { awaitProperty, awaiter } = createAwaiter();
 
   if (process.env.NODE_APP_INSTANCE === '0') {
-    if (process.env.NODE_ENV === 'production' || process.env.MIGRATE) {
+    if (process.env.NODE_ENV === 'production' || castBool(process.env.MIGRATE, false)) {
       await migrate();
     }
   }
@@ -51,6 +53,7 @@ export async function createApp(config: ExternalConfig, env: EnvConfig) {
   app.context.externalConfig = config;
   app.context.routes = router;
   app.context.cron = new CronJobs();
+  app.context.completions = new CompletionsExtension();
 
   awaitProperty(createPluginManager(pool), manager => {
     app.context.pluginManager = manager;
@@ -71,6 +74,16 @@ export async function createApp(config: ExternalConfig, env: EnvConfig) {
       console.log('WARNING: SMTP has not been configured');
     }
   });
+
+  if (process.env.NODE_ENV !== 'development') {
+    awaitProperty(readFile(HTML_SITE_PATH), html => {
+      app.context.siteTemplate = html.toString('utf-8');
+    });
+
+    awaitProperty(readFile(HTML_ADMIN_PATH), html => {
+      app.context.adminTemplate = html.toString('utf-8');
+    });
+  }
 
   // Validator.
   app.context.ajv = new Ajv();
@@ -93,7 +106,7 @@ export async function createApp(config: ExternalConfig, env: EnvConfig) {
   }
 
   app.use(k2c(cookieParser(app.keys)));
-  app.use(postgresConnection(pool, config.pooledDatabase));
+  app.use(postgresConnection(pool, config.pooledDatabase, env));
   app.use(json({ pretty: process.env.NODE_ENV !== 'production' }));
   app.use(logger());
   // Disabled for now, causing issues logging in.

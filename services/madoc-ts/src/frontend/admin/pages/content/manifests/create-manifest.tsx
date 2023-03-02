@@ -6,9 +6,9 @@ import { SystemBackground, SystemDescription, SystemMetadata, SystemName } from 
 import { ErrorMessage } from '../../../../shared/callouts/ErrorMessage';
 import { ActivityAction, ActivityActions } from '../../../../shared/components/Activity';
 import { useApi } from '../../../../shared/hooks/use-api';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useMutation } from 'react-query';
-import { VaultProvider } from '@hyperion-framework/react-vault';
+import { VaultProvider } from 'react-iiif-vault';
 import { usePaginatedData } from '../../../../shared/hooks/use-data';
 import { ErrorIcon } from '../../../../shared/icons/ErrorIcon';
 import { Spinner } from '../../../../shared/icons/Spinner';
@@ -18,6 +18,7 @@ import { serverRendererFor } from '../../../../shared/plugins/external/server-re
 import { Heading3 } from '../../../../shared/typography/Heading3';
 import { Button, SmallButton } from '../../../../shared/navigation/Button';
 import { Input, InputContainer, InputLabel } from '../../../../shared/form/Input';
+import { BrowserComponent } from '../../../../shared/utility/browser-component';
 import { HrefLink } from '../../../../shared/utility/href-link';
 import { Pagination } from '../../../molecules/Pagination';
 import { PreviewCollection } from '../../../molecules/PreviewCollection';
@@ -31,7 +32,7 @@ export const CreateManifest: React.FC = () => {
   const { t } = useTranslation();
   const [isCreating, setIsCreating] = useState(false);
   const api = useApi();
-  const history = useHistory();
+  const navigate = useNavigate();
   const query = useLocationQuery<{ manifest?: string }>();
   const [manifestList, setManifestList] = useState('');
   const [error, setError] = useState('');
@@ -41,7 +42,7 @@ export const CreateManifest: React.FC = () => {
     setIsCreating(true);
     const task = await api.importManifest(manifestId);
 
-    history.push(`/tasks/${task.id}`);
+    navigate(`/tasks/${task.id}`);
   });
 
   const [importManifests] = useMutation(async (manifestIds: string[]) => {
@@ -80,7 +81,7 @@ export const CreateManifest: React.FC = () => {
                 onImport={(_, manifestIds) => {
                   importManifests(manifestIds).then(task => {
                     if (task) {
-                      history.push(`/tasks/${task.id}`);
+                      navigate(`/tasks/${task.id}`);
                     }
                   });
                 }}
@@ -133,7 +134,7 @@ export const CreateManifest: React.FC = () => {
                   {api.getIsServer() ? (
                     <Input type="text" disabled />
                   ) : (
-                    <React.Suspense fallback={<Input type="text" disabled />}>
+                    <BrowserComponent fallback={<Input type="text" disabled />}>
                       <IntlInputContainer style={{ width: '100%' }}>
                         <IntlInputDefault>
                           <IntlMultiline
@@ -144,7 +145,7 @@ export const CreateManifest: React.FC = () => {
                           />
                         </IntlInputDefault>
                       </IntlInputContainer>
-                    </React.Suspense>
+                    </BrowserComponent>
                   )}
                 </InputContainer>
                 <SmallButton
@@ -155,7 +156,7 @@ export const CreateManifest: React.FC = () => {
                       return;
                     }
                     if (list.length === 1) {
-                      history.push(`/import/manifest?manifest=${list[0]}`);
+                      navigate(`/import/manifest?manifest=${list[0]}`);
                     } else {
                       setChosenManifestList(list);
                     }

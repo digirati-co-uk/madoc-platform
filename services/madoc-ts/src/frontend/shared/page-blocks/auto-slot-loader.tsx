@@ -1,27 +1,38 @@
-import React, { useMemo } from 'react';
+import React, { ReactNode, useMemo } from 'react';
 import { useQuery } from 'react-query';
-import { useRouteMatch } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { EditorialContext } from '../../../types/schemas/site-page';
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
 import { useApi } from '../hooks/use-api';
 import { SlotProvider } from './slot-context';
 
-export const AutoSlotLoader: React.FC<{ fuzzy?: boolean; slots?: string[] }> = ({ children, slots, fuzzy }) => {
-  const routeMatch = useRouteMatch<any>();
+export const AutoSlotLoader: React.FC<{ fuzzy?: boolean; slots?: string[]; children: ReactNode }> = ({
+  children,
+  slots,
+  fuzzy,
+}) => {
+  const params = useParams();
+  // @todo fix when this should be false.
+  // const isExact = useOutlet() === null;
+  const routeMatch = { isExact: true, params };
+
   const api = useApi();
   const { editMode } = useSiteConfiguration();
 
   const parsedContext = useMemo(() => {
     const routeContext: EditorialContext = {};
 
-    routeContext.collection = routeMatch.params.collectionId ? Number(routeMatch.params.collectionId) : undefined;
-    routeContext.manifest = routeMatch.params.manifestId ? Number(routeMatch.params.manifestId) : undefined;
-    routeContext.canvas = routeMatch.params.canvasId ? Number(routeMatch.params.canvasId) : undefined;
-    routeContext.project = routeMatch.params.slug ? routeMatch.params.slug : undefined;
+    if (!fuzzy) {
+      routeContext.collection = routeMatch.params.collectionId ? Number(routeMatch.params.collectionId) : undefined;
+      routeContext.manifest = routeMatch.params.manifestId ? Number(routeMatch.params.manifestId) : undefined;
+      routeContext.canvas = routeMatch.params.canvasId ? Number(routeMatch.params.canvasId) : undefined;
+      routeContext.project = routeMatch.params.slug ? routeMatch.params.slug : undefined;
+    }
     routeContext.slotIds = slots && slots.length ? slots : undefined;
 
     return routeContext;
   }, [
+    fuzzy,
     slots,
     routeMatch.params.canvasId,
     routeMatch.params.collectionId,
@@ -34,7 +45,7 @@ export const AutoSlotLoader: React.FC<{ fuzzy?: boolean; slots?: string[] }> = (
     async () => {
       return api.pageBlocks.requestSlots(parsedContext);
     },
-    { enabled: routeMatch.isExact || fuzzy }
+    { enabled: routeMatch.isExact || fuzzy, keepPreviousData: true }
   );
 
   const invalidateSlots = async () => {

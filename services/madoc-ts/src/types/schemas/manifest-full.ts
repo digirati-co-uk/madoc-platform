@@ -1,4 +1,4 @@
-import { InternationalString, MetadataItem, ViewingDirection } from '@hyperion-framework/types';
+import { InternationalString, MetadataItem, ViewingDirection } from '@iiif/presentation-3';
 import { Pagination } from './_pagination';
 
 export type ManifestFull = {

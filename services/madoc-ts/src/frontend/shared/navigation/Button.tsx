@@ -351,6 +351,33 @@ export const MediumRoundedButton = styled.a`
 
 export const TinyButton = SmallButton;
 
+export const TextButton = styled.button<{ $inherit?: boolean }>`
+  border: none;
+  outline: none;
+  background: transparent;
+  margin: 0;
+  padding: 0;
+  font-size: inherit;
+  color: ${props => (props.$inherit ? 'inherit' : '#000000')};
+  cursor: pointer;
+  font-weight: inherit;
+  svg {
+    fill: ${props => (props.$inherit ? 'inherit' : '#555555')};
+    color: ${props => (props.$inherit ? 'inherit' : '#555555')};
+    height: 16px;
+    width: 16px;
+    vertical-align: middle;
+  }
+  &:hover {
+    color: ${props => (props.$inherit ? 'inherit' : '#555555')};
+    background: ${props => (props.$inherit ? 'inherit' : '#f9f9f9')};
+    border-bottom: 1px dotted #555555;
+  }
+  &:focus {
+    color: ${props => (props.$inherit ? 'inherit' : '#397cf6')};
+  }
+`;
+
 export const LinkButton = styled.button<{ $inherit?: boolean }>`
   border: none;
   outline: none;
@@ -366,9 +393,9 @@ export const LinkButton = styled.button<{ $inherit?: boolean }>`
   }
 `;
 
-export const ButtonRow = styled.div<{ $noMargin?: boolean; $right?: boolean }>`
+export const ButtonRow = styled.div<{ $noMargin?: boolean; $right?: boolean; $center?: boolean }>`
   display: flex;
-  justify-content: ${props => (props.$right ? 'flex-end' : 'flex-start')};
+  justify-content: ${props => (props.$right ? 'flex-end' : props.$center ? 'center' : 'flex-start')};
   align-items: ${props => (props.$right ? 'flex-end' : 'flex-start')};
 
   ${props =>

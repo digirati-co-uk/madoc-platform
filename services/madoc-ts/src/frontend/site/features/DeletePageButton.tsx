@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button, ButtonRow } from '../../shared/navigation/Button';
 import { PageEditorButton } from '../../shared/page-blocks/PageEditor';
 import { ModalButton } from '../../shared/components/Modal';
@@ -15,7 +15,7 @@ export const DeletePageButton: React.FC<{ onDelete?: (defaultCallback: () => voi
   const api = useApi();
   const { data } = useStaticData(PageLoader);
   const page = data?.page;
-  const history = useHistory();
+  const navigate = useNavigate();
   const { navigation } = useSiteConfiguration();
 
   const [deletePage] = useMutation(async () => {
@@ -23,9 +23,9 @@ export const DeletePageButton: React.FC<{ onDelete?: (defaultCallback: () => voi
       await api.pageBlocks.deletePage(page.path);
       const defaultCallback = () => {
         if (navigation[0]) {
-          history.push(navigation[0].path);
+          navigate(navigation[0].path);
         } else {
-          history.push('/');
+          navigate('/');
         }
       };
       if (props.onDelete) {

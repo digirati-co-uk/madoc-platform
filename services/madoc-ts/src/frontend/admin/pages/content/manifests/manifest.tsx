@@ -4,9 +4,8 @@ import { useSite } from '../../../../shared/hooks/use-site';
 import { UniversalComponent } from '../../../../types';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { ManifestFull } from '../../../../../types/schemas/manifest-full';
-import { useParams } from 'react-router-dom';
+import { Outlet, useParams } from 'react-router-dom';
 import { AdminHeader } from '../../../molecules/AdminHeader';
-import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
 import { WidePage } from '../../../../shared/layout/WidePage';
 import { usePaginatedData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
@@ -19,7 +18,7 @@ type ManifestViewType = {
 };
 
 export const ManifestView: UniversalComponent<ManifestViewType> = createUniversalComponent<ManifestViewType>(
-  ({ route }) => {
+  () => {
     const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
     const { resolvedData } = usePaginatedData(ManifestView);
@@ -62,9 +61,12 @@ export const ManifestView: UniversalComponent<ManifestViewType> = createUniversa
             { label: t('OCR'), link: `/manifests/${id}/ocr` },
             { label: t('Delete'), link: `/manifests/${id}/delete` },
             { label: t('Search index'), link: `/manifests/${id}/search` },
+            { label: t('Export'), link: `/manifests/${id}/export` },
           ]}
         />
-        <WidePage>{renderUniversalRoutes(route.routes)}</WidePage>
+        <WidePage>
+          <Outlet />
+        </WidePage>
       </>
     );
   },

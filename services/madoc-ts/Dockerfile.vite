@@ -1,0 +1,29 @@
+FROM node:18 as build
+
+WORKDIR /home/node/app
+
+ADD ./package.json /home/node/app/package.json
+ADD ./yarn.lock /home/node/app/yarn.lock
+COPY ./npm /home/node/app/npm
+
+RUN yarn install
+
+FROM node:18
+
+WORKDIR /home/node/app
+
+COPY --from=build /home/node/app/package.json /home/node/app/package.json
+COPY --from=build /home/node/app/yarn.lock /home/node/app/yarn.lock
+COPY --from=build /home/node/app/node_modules /home/node/app/node_modules
+COPY ./schemas /home/node/app/schemas
+COPY ./vite.config.js /home/node/app/vite.config.js
+COPY ./themes /home/node/app/themes
+COPY ./vite /home/node/app/vite
+COPY ./entrypoint /home/node/app/entrypoint
+COPY ./npm /home/node/app/npm
+COPY ./src /home/node/app/src
+
+EXPOSE 3089
+EXPOSE 3088
+
+CMD ["yarn", "dev:vite"]

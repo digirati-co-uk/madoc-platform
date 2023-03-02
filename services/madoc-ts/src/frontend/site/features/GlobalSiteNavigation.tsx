@@ -1,14 +1,14 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { LightNavigation, LightNavigationItem } from '../../shared/navigation/LightNavigation';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { useNavigationOptions, useUser } from '../../shared/hooks/use-site';
 import { HrefLink } from '../../shared/utility/href-link';
 import { useSiteConfiguration } from './SiteConfigurationContext';
 
-export const GlobalSiteNavigation: React.FC = () => {
-  const history = useHistory();
+export function GlobalSiteNavigation(props: { showHomepageMenu?: boolean }) {
+  const location = useLocation();
   const { t } = useTranslation();
   const user = useUser();
   const { navigation, project } = useSiteConfiguration();
@@ -20,25 +20,30 @@ export const GlobalSiteNavigation: React.FC = () => {
 
   return (
     <LightNavigation>
+      {props.showHomepageMenu ? (
+        <LightNavigationItem $active={location.pathname === '/'}>
+          <HrefLink href="/">{t('Home')}</HrefLink>
+        </LightNavigationItem>
+      ) : null}
       {showProjects ? (
-        <LightNavigationItem $active={history.location.pathname === '/projects'}>
+        <LightNavigationItem $active={location.pathname.startsWith('/projects')}>
           <HrefLink href="/projects">{t('Projects')}</HrefLink>
         </LightNavigationItem>
       ) : null}
       {showCollections ? (
-        <LightNavigationItem $active={history.location.pathname === '/collections'}>
+        <LightNavigationItem $active={location.pathname.startsWith('/collections')}>
           <HrefLink href="/collections">{t('Collections')}</HrefLink>
         </LightNavigationItem>
       ) : null}
       {showDashboard ? (
-        <LightNavigationItem $active={history.location.pathname === '/dashboard'}>
+        <LightNavigationItem $active={location.pathname.startsWith('/dashboard')}>
           <HrefLink href="/dashboard">{t('User dashboard')}</HrefLink>
         </LightNavigationItem>
       ) : null}
       {showNavLinks &&
         navigation.map(nav => {
           return (
-            <LightNavigationItem key={nav.id} $active={history.location.pathname === nav.path}>
+            <LightNavigationItem key={nav.id} $active={location.pathname === nav.path}>
               <HrefLink href={nav.path}>
                 <LocaleString>{nav.navigationTitle ? nav.navigationTitle : nav.title}</LocaleString>
               </HrefLink>
@@ -47,4 +52,4 @@ export const GlobalSiteNavigation: React.FC = () => {
         })}
     </LightNavigation>
   );
-};
+}

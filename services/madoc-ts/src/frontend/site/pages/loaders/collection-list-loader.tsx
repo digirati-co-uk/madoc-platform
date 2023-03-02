@@ -1,8 +1,8 @@
 import React from 'react';
+import { Outlet } from 'react-router-dom';
 import { ProjectFull } from '../../../../types/project-full';
 import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
-import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { UniversalComponent } from '../../../types';
 import { Pagination as PaginationType } from '../../../../types/schemas/_pagination';
 
@@ -17,8 +17,12 @@ type CollectionListLoaderType = {
 export const CollectionListLoader: UniversalComponent<CollectionListLoaderType> = createUniversalComponent<
   CollectionListLoaderType
 >(
-  ({ route }) => {
-    return <BreadcrumbContext>{route ? renderUniversalRoutes(route.routes) : null}</BreadcrumbContext>;
+  () => {
+    return (
+      <BreadcrumbContext>
+        <Outlet />
+      </BreadcrumbContext>
+    );
   },
   {
     getKey: (params, query) => {

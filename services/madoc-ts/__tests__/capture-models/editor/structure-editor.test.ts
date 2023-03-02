@@ -119,6 +119,7 @@ describe('structure editor', () => {
                 value: '',
               },
             ],
+
             lastName: [
               {
                 id: 'f2',
@@ -130,24 +131,24 @@ describe('structure editor', () => {
           },
         })
       ).toMatchInlineSnapshot(`
-        Object {
-          "fields": Array [
-            Object {
-              "key": Array [
+        {
+          "fields": [
+            {
+              "key": [
                 "firstName",
               ],
               "label": "First name",
               "type": "text-field",
             },
-            Object {
-              "key": Array [
+            {
+              "key": [
                 "lastName",
               ],
               "label": "Last name",
               "type": "text-field",
             },
           ],
-          "key": Array [],
+          "key": [],
           "label": "Person",
           "type": "model",
         }

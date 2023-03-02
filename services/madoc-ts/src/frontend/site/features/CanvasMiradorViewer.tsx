@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef } from 'react';
-import { useHistory } from 'react-router-dom';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { useNavigate } from 'react-router-dom';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { useApi } from '../../shared/hooks/use-api';
 import { useData, usePrefetchData } from '../../shared/hooks/use-data';
 import { ViewManifestMirador } from '../components';
@@ -15,13 +15,13 @@ export const CanvasMiradorViewer: React.FC = () => {
   const canvas = canvasResponse?.canvas;
   const lastCanvasUrl = useRef<string>();
   const canvasUrl = canvas?.source_id;
-  const { push } = useHistory();
+  const navigate = useNavigate();
   const createLink = useRelativeLinks();
   const api = useApi();
   const onChangeCanvas = useCallback((manifestUrl: string, newCanvasUrl: string) => {
     api.getCanvasSource(newCanvasUrl).then(async resp => {
       await prefetch([resp.id]);
-      push(createLink({ canvasId: resp.id }));
+      navigate(createLink({ canvasId: resp.id }));
     });
   }, []);
 

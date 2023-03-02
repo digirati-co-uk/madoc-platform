@@ -60,8 +60,10 @@ export function filterCaptureModel(
   id: string,
   document: CaptureModel['document'] | Omit<CaptureModel['document'], 'id'>,
   flatFields: string[][],
-  predicate: (field: BaseField, parent: CaptureModel['document']) => boolean,
-  postFilter?: ((rootField: BaseField[]) => BaseField[]) | Array<undefined | ((rootField: BaseField[]) => BaseField[])>
+  predicate: (field: BaseField, parent: CaptureModel['document'], property: string) => boolean,
+  postFilter?:
+    | ((rootField: BaseField[], parent: CaptureModel['document']) => BaseField[])
+    | Array<undefined | ((rootField: BaseField[], parent: CaptureModel['document']) => BaseField[])>
 ): CaptureModel['document'] | null {
   const newDocument: CaptureModel['document'] = {
     id,
@@ -77,7 +79,13 @@ export function filterCaptureModel(
     // These are instances of the root field. The first field indicates the type
     for (const field of rootField) {
       if ((field as CaptureModel['document']).type === 'entity') {
-        const filteredModel = filterCaptureModel(field.id, field as CaptureModel['document'], [flatField], predicate);
+        const filteredModel = filterCaptureModel(
+          field.id,
+          field as CaptureModel['document'],
+          [flatField],
+          predicate,
+          postFilter
+        );
         if (filteredModel) {
           if (!newDocument.properties[rootFieldKey]) {
             newDocument.properties[rootFieldKey] = [];
@@ -86,7 +94,7 @@ export function filterCaptureModel(
           newDocument.properties[rootFieldKey].push(filteredModel as any);
         }
       } else {
-        if (predicate(field as any, document as any)) {
+        if (predicate(field as any, document as any, rootFieldKey)) {
           if (!newDocument.properties[rootFieldKey]) {
             newDocument.properties[rootFieldKey] = [];
           }
@@ -100,11 +108,11 @@ export function filterCaptureModel(
       if (Array.isArray(postFilter)) {
         for (const filter of postFilter) {
           if (filter) {
-            newDocument.properties[rootFieldKey] = filter(newDocument.properties[rootFieldKey] as any[]);
+            newDocument.properties[rootFieldKey] = filter(newDocument.properties[rootFieldKey] as any[], newDocument);
           }
         }
       } else {
-        newDocument.properties[rootFieldKey] = postFilter(newDocument.properties[rootFieldKey] as any[]);
+        newDocument.properties[rootFieldKey] = postFilter(newDocument.properties[rootFieldKey] as any[], newDocument);
       }
     }
   }

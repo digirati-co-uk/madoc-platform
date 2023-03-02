@@ -19,7 +19,7 @@
  *
  * New canvases imported will have the new fields and will bypass this step.
  */
-import { convertPresentation2 } from '@hyperion-framework/presentation-2-parser';
+import { convertPresentation2 } from '@iiif/parser/presentation-2';
 
 import { existsSync, readFileSync } from 'fs';
 import { DatabasePoolConnectionType, sql } from 'slonik';

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Redirect, useHistory } from 'react-router-dom';
-import ReactTimeago from 'react-timeago';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { getBotType } from '../../../../automation/utils/get-bot-type';
 import { User } from '../../../../extensions/site-manager/types';
+import { TimeAgo } from '../../../shared/atoms/TimeAgo';
 import { Tag } from '../../../shared/capture-models/editor/atoms/Tag';
 import { Button, ButtonRow } from '../../../shared/navigation/Button';
 import { SimpleTable } from '../../../shared/layout/SimpleTable';
@@ -20,18 +21,18 @@ export const ListUsers: React.FC = () => {
   const { data } = usePaginatedData<{ users: User[]; pagination: _Pagination }>(ListUsers);
   const query = useLocationQuery();
   const currentUser = useUser();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [userDeleted, setUserDeleted] = useState(false);
 
   useEffect(() => {
     if (query.user_deleted) {
       setUserDeleted(true);
-      history.push(`/global/users`);
+      navigate(`/global/users`);
     }
-  }, [history, query.user_deleted]);
+  }, [query.user_deleted]);
 
   if (currentUser?.role !== 'global_admin') {
-    return <Redirect to={'/'} />;
+    return <Navigate to={'/'} />;
   }
 
   return (
@@ -48,6 +49,9 @@ export const ListUsers: React.FC = () => {
         <ButtonRow>
           <Button as={HrefLink} href={`/global/users/create`}>
             Create user
+          </Button>
+          <Button as={HrefLink} href={`/global/users/create-bot`}>
+            Create bot
           </Button>
         </ButtonRow>
         <Pagination
@@ -79,6 +83,9 @@ export const ListUsers: React.FC = () => {
               <SimpleTable.Header>
                 <strong>Global role</strong>
               </SimpleTable.Header>
+              <SimpleTable.Header>
+                <strong>Automated</strong>
+              </SimpleTable.Header>
             </SimpleTable.Row>
           </thead>
           <tbody>
@@ -91,13 +98,14 @@ export const ListUsers: React.FC = () => {
                 <SimpleTable.Cell>{user.email}</SimpleTable.Cell>
                 <SimpleTable.Cell>{user.is_active ? 'active' : 'inactive'}</SimpleTable.Cell>
                 <SimpleTable.Cell>
-                  <ReactTimeago date={new Date(user.created)} />
+                  <TimeAgo date={new Date(user.created)} />
                 </SimpleTable.Cell>
-                <SimpleTable.Cell>
-                  {user.modified ? <ReactTimeago date={new Date(user.modified)} /> : '-'}
-                </SimpleTable.Cell>
+                <SimpleTable.Cell>{user.modified ? <TimeAgo date={new Date(user.modified)} /> : '-'}</SimpleTable.Cell>
                 <SimpleTable.Cell>
                   <Tag>{user.role}</Tag>
+                </SimpleTable.Cell>
+                <SimpleTable.Cell>
+                  {user.automated ? <Tag>{getBotType(user.config?.bot?.type) || 'bot'}</Tag> : null}
                 </SimpleTable.Cell>
               </SimpleTable.Row>
             ))}

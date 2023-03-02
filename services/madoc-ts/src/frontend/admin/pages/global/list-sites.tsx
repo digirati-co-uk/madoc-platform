@@ -1,9 +1,9 @@
 import { stringify } from 'query-string';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Redirect, useHistory, useLocation } from 'react-router-dom';
-import ReactTimeago from 'react-timeago';
+import { Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { siteManagerHooks } from '../../../../extensions/site-manager/hooks';
+import { TimeAgo } from '../../../shared/atoms/TimeAgo';
 import { SystemCallToAction } from '../../../shared/components/SystemCallToAction';
 import { SystemOrderBy } from '../../../shared/components/SystemOrderBy';
 import { useLocationQuery } from '../../../shared/hooks/use-location-query';
@@ -29,7 +29,7 @@ export const ListSites: React.FC = () => {
   const { data } = siteManagerHooks.getAllSites(() => [{ desc: query.desc, order_by: query.order_by }], {
     keepPreviousData: true,
   });
-  const { push } = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
 
   const search = (query?.search || '').toLowerCase();
@@ -51,7 +51,7 @@ export const ListSites: React.FC = () => {
   }, [search, data]);
 
   if (user?.role !== 'global_admin') {
-    return <Redirect to={'/'} />;
+    return <Navigate to={'/'} />;
   }
 
   return (
@@ -66,9 +66,9 @@ export const ListSites: React.FC = () => {
       />
       <SystemBackground>
         <SystemCallToAction
-          title={'Create a new site'}
+          title={t('Create a new site')}
           href={`/global/sites/create`}
-          description="Create a new space"
+          description={t('Create a new space')}
           maxWidth
         />
 
@@ -80,7 +80,7 @@ export const ListSites: React.FC = () => {
           maxWidth
           items={['title', 'slug', 'modified', 'created']}
           onSearch={q => {
-            push(
+            navigate(
               `${location.pathname}${
                 q || query.order_by
                   ? `?${stringify({ order_by: query.order_by, desc: query.desc ? 'true' : undefined, search: q })}`
@@ -89,7 +89,7 @@ export const ListSites: React.FC = () => {
             );
           }}
           onChange={opt => {
-            push(
+            navigate(
               `${location.pathname}${
                 opt.value
                   ? `?${stringify({
@@ -138,7 +138,7 @@ export const ListSites: React.FC = () => {
                   </StatisticContainer>
                 </SystemDescription>
                 <SystemVersion>
-                  Created <ReactTimeago date={site.created} />
+                  Created <TimeAgo date={site.created} />
                 </SystemVersion>
               </SystemMetadata>
               <SystemActions>

@@ -33,14 +33,13 @@ on:
 jobs:
   madoc-ts-build:
     runs-on: ubuntu-latest
-
     name: Node build
     steps:
       - uses: actions/checkout@v2
       - name: Setup node
         uses: actions/setup-node@v1
         with:
-          node-version: 14
+          node-version: 18
 
       - name: Get yarn cache
         id: yarn-cache
@@ -58,13 +57,25 @@ jobs:
 
       - uses: actions/cache@v1
         with:
-          path: services/madoc-ts/.cache
-          key: typescript-cache
+          path: services/madoc-ts/node_modules/.vite
+          key: vite-cache
           restore-keys: |
-            typescript-cache
+            vite-cache
 
       - working-directory: services/madoc-ts
-        run: yarn run build
+        run: yarn run build:vite-producer
+
+      - working-directory: services/madoc-ts
+        run: yarn run build:vite-auth
+
+      - working-directory: services/madoc-ts
+        run: yarn run build:vite-server
+
+      - working-directory: services/madoc-ts
+        run: yarn run build:vite-scheduler
+
+      - working-directory: services/madoc-ts
+        run: yarn run build:frontend
 
       - working-directory: services/madoc-ts
         run: yarn run test

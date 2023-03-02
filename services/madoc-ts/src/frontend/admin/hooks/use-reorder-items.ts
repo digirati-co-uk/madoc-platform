@@ -1,6 +1,6 @@
 import { ItemStructureListItem } from '../../../types/schemas/item-structure-list';
 import { useEffect, useMemo, useState } from 'react';
-import { InternationalString } from '@hyperion-framework/types';
+import { InternationalString } from '@iiif/presentation-3';
 import { useMutation } from 'react-query';
 
 export function useReorderItems({

@@ -41,12 +41,12 @@ describe('capture model hydration', () => {
         label: 'Testing',
       })
     ).toMatchInlineSnapshot(`
-      Object {
+      {
         "id": "[--------GENERATED-ID--------]",
         "label": "My form",
-        "properties": Object {
-          "label": Array [
-            Object {
+        "properties": {
+          "label": [
+            {
               "id": "[--------GENERATED-ID--------]",
               "label": "The label",
               "selector": undefined,
@@ -67,32 +67,35 @@ describe('capture model hydration', () => {
         {
           label: 'Testing',
         },
+
         { keepExtraFields: true }
       )
     ).toMatchInlineSnapshot(`
-Object {
-  "id": "[--------GENERATED-ID--------]",
-  "label": "My form",
-  "properties": Object {
-    "label": Array [
-      Object {
+      {
         "id": "[--------GENERATED-ID--------]",
-        "label": "The label",
-        "selector": undefined,
-        "type": "text-field",
-        "value": "Testing",
-      },
-    ],
-    "name": Object {
-      "id": "[--------GENERATED-ID--------]",
-      "label": "Name of person",
-      "type": "text-field",
-      "value": "",
-    },
-  },
-  "type": "entity",
-}
-`);
+        "label": "My form",
+        "properties": {
+          "label": [
+            {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "The label",
+              "selector": undefined,
+              "type": "text-field",
+              "value": "Testing",
+            },
+          ],
+          "name": [
+            {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "Name of person",
+              "type": "text-field",
+              "value": "",
+            },
+          ],
+        },
+        "type": "entity",
+      }
+    `);
   });
 
   test('it can hydrate model with multiple values', () => {
@@ -101,19 +104,19 @@ Object {
         label: ['Testing A', 'Testing B'],
       })
     ).toMatchInlineSnapshot(`
-      Object {
+      {
         "id": "[--------GENERATED-ID--------]",
         "label": "My form",
-        "properties": Object {
-          "label": Array [
-            Object {
+        "properties": {
+          "label": [
+            {
               "id": "[--------GENERATED-ID--------]",
               "label": "The label",
               "selector": undefined,
               "type": "text-field",
               "value": "Testing A",
             },
-            Object {
+            {
               "id": "[--------GENERATED-ID--------]",
               "label": "The label",
               "selector": undefined,
@@ -134,39 +137,39 @@ Object {
         name: 'testing',
       })
     ).toMatchInlineSnapshot(`
-Object {
-  "id": "[--------GENERATED-ID--------]",
-  "label": "My form",
-  "properties": Object {
-    "label": Array [
-      Object {
+      {
         "id": "[--------GENERATED-ID--------]",
-        "label": "The label",
-        "selector": undefined,
-        "type": "text-field",
-        "value": "Testing A",
-      },
-      Object {
-        "id": "[--------GENERATED-ID--------]",
-        "label": "The label",
-        "selector": undefined,
-        "type": "text-field",
-        "value": "Testing B",
-      },
-    ],
-    "name": Array [
-      Object {
-        "id": "[--------GENERATED-ID--------]",
-        "label": "Name of person",
-        "selector": undefined,
-        "type": "text-field",
-        "value": "testing",
-      },
-    ],
-  },
-  "type": "entity",
-}
-`);
+        "label": "My form",
+        "properties": {
+          "label": [
+            {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "The label",
+              "selector": undefined,
+              "type": "text-field",
+              "value": "Testing A",
+            },
+            {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "The label",
+              "selector": undefined,
+              "type": "text-field",
+              "value": "Testing B",
+            },
+          ],
+          "name": [
+            {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "Name of person",
+              "selector": undefined,
+              "type": "text-field",
+              "value": "testing",
+            },
+          ],
+        },
+        "type": "entity",
+      }
+    `);
   });
 
   const complexModelWithEntity: CaptureModel['document'] = {
@@ -226,75 +229,75 @@ Object {
     };
 
     expect(hydrateCaptureModel(complexModelWithEntity, doc)).toMatchInlineSnapshot(`
-Object {
-  "id": "[--------GENERATED-ID--------]",
-  "label": "My form",
-  "properties": Object {
-    "label": Array [
-      Object {
+      {
         "id": "[--------GENERATED-ID--------]",
-        "label": "The label",
-        "selector": undefined,
-        "type": "text-field",
-        "value": "Some label",
-      },
-    ],
-    "people": Array [
-      Object {
-        "id": "[--------GENERATED-ID--------]",
-        "label": "Name of person",
-        "properties": Object {
-          "city": Array [
-            Object {
+        "label": "My form",
+        "properties": {
+          "label": [
+            {
               "id": "[--------GENERATED-ID--------]",
-              "label": "City",
+              "label": "The label",
               "selector": undefined,
               "type": "text-field",
-              "value": "Glasgow",
+              "value": "Some label",
             },
           ],
-          "name": Array [
-            Object {
+          "people": [
+            {
               "id": "[--------GENERATED-ID--------]",
-              "label": "First name",
-              "selector": undefined,
-              "type": "text-field",
-              "value": "Stephen",
+              "label": "Name of person",
+              "properties": {
+                "city": [
+                  {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "City",
+                    "selector": undefined,
+                    "type": "text-field",
+                    "value": "Glasgow",
+                  },
+                ],
+                "name": [
+                  {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "First name",
+                    "selector": undefined,
+                    "type": "text-field",
+                    "value": "Stephen",
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+            {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "Name of person",
+              "properties": {
+                "city": [
+                  {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "City",
+                    "selector": undefined,
+                    "type": "text-field",
+                    "value": "Edinburgh",
+                  },
+                ],
+                "name": [
+                  {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "First name",
+                    "selector": undefined,
+                    "type": "text-field",
+                    "value": "Bob",
+                  },
+                ],
+              },
+              "type": "entity",
             },
           ],
         },
         "type": "entity",
-      },
-      Object {
-        "id": "[--------GENERATED-ID--------]",
-        "label": "Name of person",
-        "properties": Object {
-          "city": Array [
-            Object {
-              "id": "[--------GENERATED-ID--------]",
-              "label": "City",
-              "selector": undefined,
-              "type": "text-field",
-              "value": "Edinburgh",
-            },
-          ],
-          "name": Array [
-            Object {
-              "id": "[--------GENERATED-ID--------]",
-              "label": "First name",
-              "selector": undefined,
-              "type": "text-field",
-              "value": "Bob",
-            },
-          ],
-        },
-        "type": "entity",
-      },
-    ],
-  },
-  "type": "entity",
-}
-`);
+      }
+    `);
   });
 
   test('short hand capture model', () => {
@@ -304,30 +307,30 @@ Object {
         name: 'text-field',
       })
     ).toMatchInlineSnapshot(`
-Object {
-  "id": "[--------GENERATED-ID--------]",
-  "label": "Root",
-  "properties": Object {
-    "label": Array [
-      Object {
+      {
         "id": "[--------GENERATED-ID--------]",
-        "label": "label",
-        "type": "text-field",
-        "value": null,
-      },
-    ],
-    "name": Array [
-      Object {
-        "id": "[--------GENERATED-ID--------]",
-        "label": "name",
-        "type": "text-field",
-        "value": null,
-      },
-    ],
-  },
-  "type": "entity",
-}
-`);
+        "label": "Root",
+        "properties": {
+          "label": [
+            {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "label",
+              "type": "text-field",
+              "value": null,
+            },
+          ],
+          "name": [
+            {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "name",
+              "type": "text-field",
+              "value": null,
+            },
+          ],
+        },
+        "type": "entity",
+      }
+    `);
   });
 
   test('nested short hand capture model', () => {
@@ -340,58 +343,62 @@ Object {
         'person.relation.label': 'text-field',
       })
     ).toMatchInlineSnapshot(`
-Object {
-  "id": "[--------GENERATED-ID--------]",
-  "label": "Root",
-  "properties": Object {
-    "label": Array [
-      Object {
+      {
         "id": "[--------GENERATED-ID--------]",
-        "label": "label",
-        "type": "text-field",
-        "value": null,
-      },
-    ],
-    "person": Array [
-      Object {
-        "id": "[--------GENERATED-ID--------]",
-        "label": "person",
-        "properties": Object {
-          "city": Array [
-            Object {
+        "label": "Root",
+        "properties": {
+          "label": [
+            {
               "id": "[--------GENERATED-ID--------]",
-              "label": "city",
+              "label": "label",
               "type": "text-field",
               "value": null,
             },
           ],
-          "name": Array [
-            Object {
+          "person": [
+            {
               "id": "[--------GENERATED-ID--------]",
-              "label": "name",
-              "type": "text-field",
-              "value": null,
-            },
-          ],
-          "relation": Array [
-            Object {
-              "id": "[--------GENERATED-ID--------]",
-              "label": "relation",
-              "properties": Object {
-                "description": Array [
-                  Object {
+              "label": "person",
+              "properties": {
+                "city": [
+                  {
                     "id": "[--------GENERATED-ID--------]",
-                    "label": "description",
+                    "label": "city",
                     "type": "text-field",
                     "value": null,
                   },
                 ],
-                "label": Array [
-                  Object {
+                "name": [
+                  {
                     "id": "[--------GENERATED-ID--------]",
-                    "label": "label",
+                    "label": "name",
                     "type": "text-field",
                     "value": null,
+                  },
+                ],
+                "relation": [
+                  {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "relation",
+                    "properties": {
+                      "description": [
+                        {
+                          "id": "[--------GENERATED-ID--------]",
+                          "label": "description",
+                          "type": "text-field",
+                          "value": null,
+                        },
+                      ],
+                      "label": [
+                        {
+                          "id": "[--------GENERATED-ID--------]",
+                          "label": "label",
+                          "type": "text-field",
+                          "value": null,
+                        },
+                      ],
+                    },
+                    "type": "entity",
                   },
                 ],
               },
@@ -400,12 +407,8 @@ Object {
           ],
         },
         "type": "entity",
-      },
-    ],
-  },
-  "type": "entity",
-}
-`);
+      }
+    `);
   });
 
   test('nested short hand capture model with extra options', () => {
@@ -422,57 +425,57 @@ Object {
         },
       })
     ).toMatchInlineSnapshot(`
-Object {
-  "id": "[--------GENERATED-ID--------]",
-  "label": "Root",
-  "properties": Object {
-    "label": Array [
-      Object {
+      {
         "id": "[--------GENERATED-ID--------]",
-        "label": "label",
-        "type": "text-field",
-        "value": null,
-      },
-    ],
-    "person": Array [
-      Object {
-        "id": "[--------GENERATED-ID--------]",
-        "label": "person",
-        "properties": Object {
-          "city": Array [
-            Object {
+        "label": "Root",
+        "properties": {
+          "label": [
+            {
               "id": "[--------GENERATED-ID--------]",
-              "label": "city",
-              "options": Array [
-                Object {
-                  "text": "Aberdeen",
-                  "value": "aberdeen",
-                },
-                Object {
-                  "text": "Glasgow",
-                  "value": "glasgow",
-                },
-              ],
-              "type": "dropdown",
-              "value": null,
-            },
-          ],
-          "name": Array [
-            Object {
-              "id": "[--------GENERATED-ID--------]",
-              "label": "name",
+              "label": "label",
               "type": "text-field",
               "value": null,
             },
           ],
+          "person": [
+            {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "person",
+              "properties": {
+                "city": [
+                  {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "city",
+                    "options": [
+                      {
+                        "text": "Aberdeen",
+                        "value": "aberdeen",
+                      },
+                      {
+                        "text": "Glasgow",
+                        "value": "glasgow",
+                      },
+                    ],
+                    "type": "dropdown",
+                    "value": null,
+                  },
+                ],
+                "name": [
+                  {
+                    "id": "[--------GENERATED-ID--------]",
+                    "label": "name",
+                    "type": "text-field",
+                    "value": null,
+                  },
+                ],
+              },
+              "type": "entity",
+            },
+          ],
         },
         "type": "entity",
-      },
-    ],
-  },
-  "type": "entity",
-}
-`);
+      }
+    `);
   });
 
   test('hydrating compressed model', () => {
@@ -484,22 +487,22 @@ Object {
         title: 'testing a title',
       })
     ).toMatchInlineSnapshot(`
-Object {
-  "id": "[--------GENERATED-ID--------]",
-  "label": "Root",
-  "properties": Object {
-    "title": Array [
-      Object {
+      {
         "id": "[--------GENERATED-ID--------]",
-        "label": "title",
-        "selector": undefined,
-        "type": "text-field",
-        "value": "testing a title",
-      },
-    ],
-  },
-  "type": "entity",
-}
-`);
+        "label": "Root",
+        "properties": {
+          "title": [
+            {
+              "id": "[--------GENERATED-ID--------]",
+              "label": "title",
+              "selector": undefined,
+              "type": "text-field",
+              "value": "testing a title",
+            },
+          ],
+        },
+        "type": "entity",
+      }
+    `);
   });
 });

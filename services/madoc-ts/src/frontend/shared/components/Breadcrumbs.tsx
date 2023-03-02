@@ -1,9 +1,9 @@
-import { InternationalString } from '@hyperion-framework/types';
+import { InternationalString } from '@iiif/presentation-3';
 import React, { useMemo, useContext } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet as _Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { useCurrentAdminPages } from '../../site/hooks/use-current-admin-pages';
 import { useSite } from '../hooks/use-site';
 import { ErrorBoundary } from '../utility/error-boundary';
@@ -19,6 +19,8 @@ type BreadcrumbContextType = {
   subpage?: { name: InternationalString; path: string };
 };
 
+const Helmet: any = _Helmet;
+
 export const BreadcrumbList = styled.div`
   display: flex;
   padding: 0.5em 0;
@@ -28,11 +30,12 @@ export const BreadcrumbList = styled.div`
   align-items: center;
 `;
 
-export const BreadcrumbItem = styled.div<{ active?: boolean; $icon?: boolean }>`
-  font-weight: bold;
+export const BreadcrumbItem = styled.div<{ active?: boolean; $icon?: boolean; $color?: string; $activeColor?: string }>`
+  font-weight: inherit;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
   ${props =>
     props.$icon &&
     css`
@@ -43,6 +46,7 @@ export const BreadcrumbItem = styled.div<{ active?: boolean; $icon?: boolean }>`
       flex-direction: column;
       justify-content: center;
       border-radius: 3px;
+
       &:hover {
         background: #f0f0f0;
       }
@@ -52,7 +56,7 @@ export const BreadcrumbItem = styled.div<{ active?: boolean; $icon?: boolean }>`
   a {
     cursor: pointer;
     text-decoration: none;
-    color: rgba(0, 0, 0, 0.7);
+    color: ${props => (props.$color ? props.$color : 'rgba(0, 0, 0, 0.7)')};
     &:hover {
       color: rgba(0, 0, 0, 1);
     }
@@ -60,7 +64,7 @@ export const BreadcrumbItem = styled.div<{ active?: boolean; $icon?: boolean }>`
       props.active &&
       css`
         cursor: initial;
-        color: rgba(0, 0, 0, 1);
+        color: ${props.$activeColor ? props.$activeColor : 'rgba(0, 0, 0, 1)'};
       `}
   }
 `;
@@ -148,7 +152,13 @@ export const BreadcrumbContext: React.FC<BreadcrumbContextType> = ({
   );
 };
 
-export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ currentPage }) => {
+export type BreadcrumbProps = {
+  currentPage?: string | undefined;
+  textColor?: string | undefined;
+  textColorActive?: string | undefined;
+};
+
+export const DisplayBreadcrumbs: React.FC<BreadcrumbProps> = ({ currentPage, textColor, textColorActive }) => {
   const site = useSite();
   const breads = useBreadcrumbs();
   const location = useLocation();
@@ -303,7 +313,7 @@ export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ current
       ) : null}
       {stack.map((s, n) => (
         <React.Fragment key={s.url}>
-          <BreadcrumbItem active={s.url === location.pathname}>
+          <BreadcrumbItem active={s.url === location.pathname} $activeColor={textColorActive} $color={textColor}>
             {s.url === location.pathname ? (
               <LocaleString>{s.label}</LocaleString>
             ) : (
@@ -320,7 +330,7 @@ export const DisplayBreadcrumbs: React.FC<{ currentPage?: string }> = ({ current
           <ViewInAdmin>{t('View in Admin')}</ViewInAdmin>
           {adminLinks.map(link => {
             return (
-              <BreadcrumbItem key={link.link}>
+              <BreadcrumbItem key={link.link} $activeColor={textColorActive} $color={textColor}>
                 <a href={link.link}>{link.label}</a>
               </BreadcrumbItem>
             );
@@ -335,5 +345,12 @@ blockEditorFor(DisplayBreadcrumbs, {
   type: 'default.DisplayBreadcrumbs',
   label: 'Display breadcrumbs',
   anyContext: ['collection', 'manifest', 'canvas', 'project'],
-  editor: {},
+  defaultProps: {
+    textColor: '',
+    textColorActive: '',
+  },
+  editor: {
+    textColor: { label: 'Text color', type: 'color-field' },
+    textColorActive: { label: 'Text color active', type: 'color-field' },
+  },
 });

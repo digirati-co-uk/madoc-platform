@@ -1,7 +1,7 @@
 import { stringify } from 'query-string';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { Button } from '../../../shared/navigation/Button';
 import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
 import { FlexSpacer } from '../../../shared/layout/FlexSpacer';
@@ -22,7 +22,7 @@ export const LoginPage: React.FC = () => {
   const { redirect } = useLocationQuery();
 
   if (user) {
-    return <Redirect to="/" />;
+    return <Navigate to="/" />;
   }
 
   return (

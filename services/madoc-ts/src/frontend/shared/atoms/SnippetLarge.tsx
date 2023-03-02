@@ -68,7 +68,7 @@ const SnippetButton = styled.a<{ role?: string; $center?: boolean }>`
     `}
 `;
 
-const SnippetContainer = styled.div<{
+export const SnippetContainer = styled.div<{
   portrait?: boolean;
   margin?: boolean;
   flat?: boolean;

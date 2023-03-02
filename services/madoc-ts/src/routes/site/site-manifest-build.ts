@@ -1,10 +1,10 @@
-import { AnnotationPage } from '@hyperion-framework/types';
-import { Vault } from '@hyperion-framework/vault';
+import { AnnotationPage } from '@iiif/presentation-3';
+import { Vault } from '@iiif/vault';
 import { sql } from 'slonik';
 import { deprecationGetItemsJson } from '../../deprecations/01-local-source-canvas';
 import { gatewayHost } from '../../gateway/api.server';
 import { RouteMiddleware } from '../../types/route-middleware';
-import { IIIFBuilder } from '../../utility/iiif-builder/iiif-builder';
+import { IIIFBuilder } from 'iiif-builder';
 import { createMetadataReducer } from '../../utility/iiif-metadata';
 
 type IIIFExportRow = {
@@ -477,10 +477,11 @@ export const siteManifestBuild: RouteMiddleware<{
         const annoVer = configOptions.sourceIds ? 'source' : version;
 
         if (configOptions.addUniversalAnnotations) {
+          const format = version === '3.0' ? 'w3c-annotation' : 'open-annotation';
           canvas.addAnnotations({
             id: projectSlug
-              ? `${baseUrl}/madoc/api/canvases/${canvasRow.id}/models?format=open-annotation&version=${annoVer}&m=${manifestId}&selectors=true&project=${projectSlug}`
-              : `${baseUrl}/madoc/api/canvases/${canvasRow.id}/models?format=open-annotation&version=${annoVer}&m=${manifestId}&selectors=true`,
+              ? `${baseUrl}/madoc/api/canvases/${canvasRow.id}/models?format=${format}&version=${annoVer}&m=${manifestId}&selectors=true&project=${projectSlug}`
+              : `${baseUrl}/madoc/api/canvases/${canvasRow.id}/models?format=${format}&version=${annoVer}&m=${manifestId}&selectors=true`,
             type: 'AnnotationPage',
             label: { none: ['Annotations'] },
           });
@@ -535,7 +536,7 @@ export const siteManifestBuild: RouteMiddleware<{
       context.response.body = {
         manifestId: newManifest.id,
         madocId: manifestRow.id,
-        store: vault.getState().hyperion,
+        store: vault.getState().iiif,
       };
       break;
     case '3.0':

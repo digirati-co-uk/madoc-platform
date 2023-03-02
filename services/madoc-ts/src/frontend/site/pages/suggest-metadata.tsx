@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import {
   UpdateCanvasMetadataRequest,
   UpdateCollectionMetadataRequest,
@@ -115,7 +115,7 @@ export const SuggestMetadata: React.FC = () => {
   });
 
   if (!user || !canSuggest) {
-    return <Redirect to={createLink({ subRoute: '' })} />;
+    return <Navigate to={createLink({ subRoute: '' })} />;
   }
 
   if (createSuggestionStatus.isSuccess) {
@@ -131,7 +131,7 @@ export const SuggestMetadata: React.FC = () => {
   }
 
   if (loadedMetadata.error) {
-    return <Redirect to={createLink({ subRoute: '' })} />;
+    return <Navigate to={createLink({ subRoute: '' })} />;
   }
 
   return (

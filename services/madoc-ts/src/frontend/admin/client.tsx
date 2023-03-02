@@ -6,6 +6,10 @@ Promise.all([
   import('./index'),
   // The routes themselves.
   import('./routes'),
-]).then(([mod, routes]) => {
-  renderClient(mod.default, routes.routes, {}, true, queryConfig);
+]).then(async ([mod, routes]) => {
+  await renderClient(mod.default, routes.routes, {}, true, queryConfig);
+
+  if (process.env.NODE_ENV !== 'production') {
+    document.body.classList.remove('dev-loading');
+  }
 });

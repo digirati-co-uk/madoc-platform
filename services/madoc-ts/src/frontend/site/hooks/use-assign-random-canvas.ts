@@ -1,5 +1,5 @@
 import { useMutation } from 'react-query';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useApi } from '../../shared/hooks/use-api';
 import { useManifestTask } from './use-manifest-task';
 import { useRelativeLinks } from './use-relative-links';
@@ -10,7 +10,7 @@ export function useAssignRandomCanvas() {
   const { refetch } = useManifestTask();
   const { projectId, manifestId, collectionId } = useRouteContext();
   const api = useApi();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   // Mutations.
   const [getRandomCanvas, randomCanvas] = useMutation(async () => {
@@ -33,7 +33,7 @@ export function useAssignRandomCanvas() {
         })
         .then(async resp => {
           await refetch();
-          history.push(
+          navigate(
             createLink({
               taskId: resp.claim.id,
             })

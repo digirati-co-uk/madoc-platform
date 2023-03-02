@@ -1,4 +1,3 @@
-import { boolean, select } from '@storybook/addon-knobs';
 import * as React from 'react';
 import { SnippetLarge } from '../../src/frontend/shared/atoms/SnippetLarge';
 import StackGrid from 'react-stack-grid';
@@ -463,12 +462,12 @@ const exampleStructure = {
 export const CollectionListing: React.FC = () => {
   // 2 grid: https://preview.uxpin.com/f6f0dcab8678e674e217208cea7876bb0ad04c74#/pages/133792485/simulate/sitemap?mode=i
   // 1 grid: https://www.digitalcommonwealth.org/collections?f%5Bphysical_location_ssim%5D%5B%5D=Lynn+Public+Library&only_path=true&q=title_info_primary_ssort%3AL%2A&sort=title_info_primary_ssort+asc&view=list
-  const lightBackground = boolean('Light background', false);
-  const flat = boolean('Flat container', true);
-  const size = select('Size', ['sm', 'md', 'lg'], 'md');
-  const center = boolean('Center', true);
-  const buttonRole = select('Button role', ['button', 'link'], 'button');
-  const grid = select('Grid', ['1-up', '2-up'], '2-up');
+  const lightBackground = false;
+  const flat = true;
+  const size = 'md';
+  const center = true;
+  const buttonRole = 'button';
+  const grid = '2-up' as string;
 
   return (
     <div style={{ background: '#eee' }}>
@@ -538,12 +537,12 @@ export const CollectionListing: React.FC = () => {
 };
 
 export const SingleCollectionSimpleGrid: React.FC = () => {
-  const lightBackground = boolean('Light background', false);
-  const flat = boolean('Flat container', true);
-  const size = select('Size', ['sm', 'md', 'lg'], 'md');
-  const center = boolean('Center', true);
-  const smallLabel = boolean('Small Label', true);
-  const buttonRole = select('Button role', ['button', 'link'], 'link');
+  const lightBackground = false;
+  const flat = true;
+  const size = 'md';
+  const center = true;
+  const smallLabel = true;
+  const buttonRole = 'link';
 
   // Collections (of manuscripts)
   // Distinct card layout: https://preview.uxpin.com/f6f0dcab8678e674e217208cea7876bb0ad04c74#/pages/133798349/simulate/sitemap?mode=i
@@ -571,11 +570,11 @@ export const SingleCollectionSimpleGrid: React.FC = () => {
 };
 
 export const SingleCollectionListingGrid: React.FC = () => {
-  const lightBackground = boolean('Light background', false);
-  const flat = boolean('Flat container', true);
-  const size = select('Size', ['sm', 'md', 'lg'], 'lg');
-  const center = boolean('Center', true);
-  const buttonRole = select('Button role', ['button', 'link'], 'link');
+  const lightBackground = false;
+  const flat = true;
+  const size = 'lg';
+  const center = true;
+  const buttonRole = 'link';
 
   // Marionette
   //    - https://emuseum.huntington.org/collections/4561/arts-and-crafts-movement/objects
@@ -603,13 +602,9 @@ export const SingleCollectionListingGrid: React.FC = () => {
 };
 
 export const ManifestMetadataContainer: React.FC = () => {
-  const layout = select(
-    'Layout direction',
-    ['left-to-right', 'top-to-bottom', 'right-to-left', 'bottom-to-top'],
-    'left-to-right'
-  );
+  const layout: any = 'left-to-right';
 
-  const metadataSize = select('Metadata size', ['lg', 'md', 'sm'], 'md');
+  const metadataSize = 'md';
   return (
     <MetadataLayoutContainer layout={layout}>
       <div style={{ flex: '1 1 0px', background: '#eee' }}>CONTENT</div>

@@ -5,10 +5,9 @@ import { StructureStore } from '../../stores/structure/structure-store';
 import { useFocusedStructureEditor } from '../../stores/structure/use-focused-structure-editor';
 import { ChoiceEditor } from './ChoiceEditor';
 
+import model from '../../../../../../../fixtures/simple.json';
+
 export default { title: 'Capture model editor components/Choice Editor' };
-
-const model: CaptureModel = require('../../../../../../../fixtures/simple.json');
-
 const SimpleInner: React.FC = () => {
   const focus = StructureStore.useStoreActions(act => act.focus);
   const current = StructureStore.useStoreState(state => state.focus.structure);

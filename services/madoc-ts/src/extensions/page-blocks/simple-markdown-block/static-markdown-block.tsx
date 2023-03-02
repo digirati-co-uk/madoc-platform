@@ -914,7 +914,7 @@ const MarkdownBlockGlobalStyles = createGlobalStyle`
       }
     }
   }
-`;
+` as any;
 
 export const StaticMarkdownBlock: React.FC<{ markdown: string }> = ({ markdown }) => {
   const htmlContent = useMemo(() => {

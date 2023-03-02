@@ -1,22 +1,20 @@
-import { InternationalString } from '@hyperion-framework/types/iiif/descriptive';
+import { InternationalString } from '@iiif/presentation-3';
 import React, { useMemo } from 'react';
+import { Outlet } from 'react-router-dom';
 import { EditorialContext } from '../../../../types/schemas/site-page';
 import { SitePage } from '../../../../types/site-pages-recursive';
-import { MetadataEmptyState } from '../../../shared/atoms/MetadataConfiguration';
 import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
 import { useApi } from '../../../shared/hooks/use-api';
 import { SlotProvider } from '../../../shared/page-blocks/slot-context';
-import { Heading1 } from '../../../shared/typography/Heading1';
-import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
 import { UniversalComponent } from '../../../types';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { useStaticData } from '../../../shared/hooks/use-data';
-import { PageNotFound } from '../page-not-found';
+import { useRouteContext } from '../../hooks/use-route-context';
 
 export type PageLoaderType = {
   params: { pagePath?: string };
   variables: { pagePath: string; isStatic?: boolean };
-  query: {};
+  query: unknown;
   data: {
     page?: SitePage;
     navigation?: SitePage[];
@@ -30,43 +28,47 @@ export type PageLoaderType = {
       findPath: string[];
     };
   };
-  context: any;
 };
 
+export function usePage() {
+  return useStaticData(
+    PageLoader,
+    {},
+    {
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      refetchInterval: false,
+      refetchIntervalInBackground: false,
+      retry: false,
+      useErrorBoundary: false,
+    }
+  );
+}
+
 export const PageLoader: UniversalComponent<PageLoaderType> = createUniversalComponent<PageLoaderType>(
-  ({ route, ...props }) => {
-    const { data, refetch, isLoading, isError } = useStaticData(
-      PageLoader,
-      {},
-      {
-        refetchOnWindowFocus: false,
-        refetchOnMount: false,
-        refetchInterval: false,
-        refetchIntervalInBackground: false,
-        retry: false,
-        useErrorBoundary: false,
-      }
-    );
+  () => {
+    const routeContext = useRouteContext();
+    const { data, refetch, isLoading } = usePage();
     const api = useApi();
     const user = api.getIsServer() ? undefined : api.getCurrentUser();
 
     const context = useMemo(() => {
       const partialContext: EditorialContext = {};
 
-      if (props.project) {
-        partialContext.project = props.project.id;
+      if (routeContext.projectId) {
+        partialContext.project = routeContext.projectId;
       }
-      if (props.collection) {
-        partialContext.collection = props.collection.id;
+      if (routeContext.collectionId) {
+        partialContext.collection = routeContext.collectionId;
       }
-      if (props.manifest) {
-        partialContext.manifest = props.manifest.id;
+      if (routeContext.manifestId) {
+        partialContext.manifest = routeContext.manifestId;
       }
-      if (props.canvas) {
-        partialContext.canvas = props.canvas.id;
+      if (routeContext.canvasId) {
+        partialContext.canvas = routeContext.canvasId;
       }
       return partialContext;
-    }, [props.canvas, props.collection, props.manifest, props.project]);
+    }, [routeContext.projectId, routeContext.collectionId, routeContext.manifestId, routeContext.canvasId]);
 
     if (isLoading) {
       return <>Loading...</>;
@@ -85,12 +87,7 @@ export const PageLoader: UniversalComponent<PageLoaderType> = createUniversalCom
           }}
           context={context}
         >
-          {renderUniversalRoutes(route.routes, {
-            page: page,
-            navigation: data?.navigation,
-            root: data?.root,
-            refetch,
-          })}
+          <Outlet />
         </SlotProvider>
       </BreadcrumbContext>
     );

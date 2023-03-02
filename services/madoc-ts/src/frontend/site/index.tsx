@@ -2,19 +2,19 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { CurrentUserWithScope, SystemConfig, Site } from '../../extensions/site-manager/types';
 import { ApiClient } from '../../gateway/api';
 import { ResolvedTheme } from '../../types/themes';
-import { renderUniversalRoutes } from '../shared/utility/server-utils';
+import { RenderConfigRoutes } from '../shared/utility/server-utils';
 import { ApiContext } from '../shared/hooks/use-api';
 import { defaultTheme } from '../themes/default-theme';
 import { CustomThemeProvider } from '../themes/helpers/CustomThemeProvider';
-import { UniversalRoute } from '../types';
-import { VaultProvider } from '@hyperion-framework/react-vault';
+import { VaultProvider } from 'react-iiif-vault';
 import '../shared/capture-models/plugins';
+import { RouteObject } from 'react-router-dom';
 import { SiteProvider } from '../shared/hooks/use-site';
 
 export type SiteAppProps = {
   jwt?: string;
   api: ApiClient;
-  routes: UniversalRoute[];
+  routes: RouteObject[];
   siteSlug?: string;
   user?: CurrentUserWithScope;
   site: Site;
@@ -91,7 +91,9 @@ const SiteApp: React.FC<SiteAppProps> = ({
             ]
           )}
         >
-          <ApiContext.Provider value={api}>{renderUniversalRoutes(routes)}</ApiContext.Provider>
+          <ApiContext.Provider value={api}>
+            <RenderConfigRoutes routes={routes} />
+          </ApiContext.Provider>
         </SiteProvider>
       </VaultProvider>
     </CustomThemeProvider>

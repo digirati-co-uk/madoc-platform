@@ -1,4 +1,4 @@
-version: "3"
+version: "3.2"
 services:
   # Internal services
 
@@ -6,8 +6,20 @@ services:
     build:
       context: services/gateway
       dockerfile: Dockerfile.dev
+    volumes:
+      - ./var/certs:/certs
     ports:
+      - "${PORTS_GATEWAY_HTTPS:-443}:443"
       - "${PORTS_GATEWAY:-8888}:8080"
+    restart: unless-stopped
+    depends_on:
+      - tasks-api
+      - model-api
+      - madoc-ts
+      - config-service
+      - storage-api
+      - okra
+      - search
     links:
       - tasks-api
       - model-api
@@ -17,20 +29,36 @@ services:
       - okra
       - search
 
+  madoc-ts-vite:
+    build:
+      context: services/madoc-ts
+      dockerfile: Dockerfile.vite
+    volumes:
+      - ./services/madoc-ts/package.json:/home/node/app/package.json:delegated
+      - ./services/madoc-ts/yarn.lock:/home/node/app/yarn.lock:delegated
+      - ./services/madoc-ts/src:/home/node/app/src
+      - ./services/madoc-ts/vite:/home/node/app/vite
+      - ./var/.vite-cache:/home/node/app/node_modules/.vite
+      - ./var/certs:/certs
+    ports:
+      - "3088:3088"
+      - "3089:3089"
+
   madoc-ts:
     tty: true
     build:
       context: services/madoc-ts
       dockerfile: Dockerfile.dev
     volumes:
-      - ./services/madoc-ts/lib:/home/node/app/lib:delegated
+      - ./services/madoc-ts/dist:/home/node/app/dist:delegated
       - ./services/madoc-ts/src:/home/node/app/src
       - ./services/madoc-ts/package.json:/home/node/app/package.json:delegated
       - ./services/madoc-ts/yarn.lock:/home/node/app/yarn.lock:delegated
       - ./services/madoc-ts/migrations:/home/node/app/migrations:delegated
       - ./services/madoc-ts/schemas:/home/node/app/schemas:delegated
-      - ./services/madoc-ts/ecosystem.config.js:/home/node/app/ecosystem.config.js
-      - ./services/madoc-ts/webpack.config.js:/home/node/app/webpack.config.js
+      - ./services/madoc-ts/ecosystem.config.cjs:/home/node/app/ecosystem.config.cjs
+      - ./services/madoc-ts/vite:/home/node/app/vite:delegated
+      - ./services/madoc-ts/entrypoint:/home/node/app/entrypoint:delegated
       - ./services/madoc-ts/config.json:/home/node/app/config.json
       - ./services/madoc-ts/service-jwts:/home/node/app/service-jwts
       - ./services/madoc-ts/themes:/home/node/app/themes
@@ -52,6 +80,7 @@ services:
       - STORAGE_FILE_DIRECTORY=/home/node/app/files
       - MADOC_INSTALLATION_CODE=${MADOC_INSTALLATION_CODE}
       - MIGRATE=true
+      - NODE_ENV=development
       - SMTP_HOST=${SMTP_HOST}
       - SMTP_PORT=${SMTP_PORT}
       - SMTP_SECURITY=${SMTP_SECURITY}
@@ -60,9 +89,9 @@ services:
       - MAIL_FROM_USER=${MAIL_FROM_USER}
     ports:
       - "127.0.0.1:${PORTS_MADOC_TS_DEBUGGER:-9230}:9230"
-      - "127.0.0.1:${PORTS_MADOC_TS_WEBPACK:-40493}:40493"
     links:
       - shared-postgres
+      - madoc-ts-vite
     depends_on:
       shared-postgres:
         condition: service_healthy
@@ -174,7 +203,7 @@ services:
         condition: service_healthy
 
   search:
-    image: ghcr.io/digirati-co-uk/madoc-search-service:main
+    image: ghcr.io/digirati-co-uk/madoc-search-service:247f854b1258e3971907e6912cef2374a1da8474
 #    build:
 #      context: services/search
 #      dockerfile: Dockerfile

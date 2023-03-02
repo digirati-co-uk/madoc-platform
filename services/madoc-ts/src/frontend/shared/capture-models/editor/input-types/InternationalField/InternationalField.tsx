@@ -1,5 +1,5 @@
 import { BaseField, FieldComponent } from '../../../types/field-types';
-import { InternationalString } from '@hyperion-framework/types';
+import { InternationalString } from '@iiif/presentation-3';
 import React from 'react';
 import { MetadataEditor } from '../../../../../admin/molecules/MetadataEditor';
 import { useDefaultLocale, useSupportedLocales } from '../../../../hooks/use-site';

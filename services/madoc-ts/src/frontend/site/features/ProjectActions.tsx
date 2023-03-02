@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { Button, ButtonRow } from '../../shared/navigation/Button';
 import { useUser } from '../../shared/hooks/use-site';
 import { useProject } from '../hooks/use-project';

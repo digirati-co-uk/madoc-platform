@@ -4,9 +4,10 @@ import React, { useEffect } from 'react';
 import { useCurrentForm } from './current-form';
 import { useNavigation } from './navigation';
 import '../input-types/TextField/index';
+import fixture from '../../../../../../fixtures/simple.json';
 
 const withSimpleCaptureModel = (Component: React.FC): React.FC => () => (
-  <CaptureModelProvider captureModel={require('../../../../../../fixtures/simple.json')}>
+  <CaptureModelProvider captureModel={fixture}>
     <Component />
   </CaptureModelProvider>
 );

@@ -4,7 +4,6 @@ import { Heading1 } from '../../src/frontend/shared/typography/Heading1';
 import { UserPermissions } from '../../src/frontend/shared/components/UserPermissions';
 import { Heading3, Subheading3 } from '../../src/frontend/shared/typography/Heading3';
 import { ProjectListing } from '../../src/frontend/shared/atoms/ProjectListing';
-import { MemoryRouter } from 'react-router-dom';
 import {
   Statistic,
   StatisticContainer,
@@ -38,7 +37,7 @@ const projects = [
 
 export const NormalUser: React.FC = () => {
   return (
-    <MemoryRouter>
+    <>
       <StorybookPaddedBox>
         <Heading1 $margin>Welcome back Stephen</Heading1>
         <div>
@@ -63,13 +62,13 @@ export const NormalUser: React.FC = () => {
         <Heading3 $margin>Active projects</Heading3>
         <ProjectListing projects={projects} label="View project" />
       </StorybookPaddedBox>
-    </MemoryRouter>
+    </>
   );
 };
 
 export const Contributor: React.FC = () => {
   return (
-    <MemoryRouter>
+    <>
       <StorybookPaddedBox>
         <Heading1 $margin>Welcome back Stephen</Heading1>
         <div>
@@ -150,13 +149,13 @@ export const Contributor: React.FC = () => {
         <Heading3 $margin>Active projects</Heading3>
         <ProjectListing projects={projects} label="View project" onContribute={() => void 0} />
       </StorybookPaddedBox>
-    </MemoryRouter>
+    </>
   );
 };
 
 export const Reviewer: React.FC = () => {
   return (
-    <MemoryRouter>
+    <>
       <StorybookPaddedBox>
         <Heading1 $margin>Welcome back Stephen</Heading1>
         <div>
@@ -270,7 +269,7 @@ export const Reviewer: React.FC = () => {
         <Heading3 $margin>Active projects</Heading3>
         <ProjectListing projects={projects} label="View project" onContribute={() => void 0} />
       </StorybookPaddedBox>
-    </MemoryRouter>
+    </>
   );
 };
 

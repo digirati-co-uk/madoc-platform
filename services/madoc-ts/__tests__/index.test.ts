@@ -9,10 +9,10 @@ describe('test', () => {
       });
 
       expect(list).toMatchInlineSnapshot(`
-        Object {
-          "label": Object {
-            "items": Array [
-              Object {
+        {
+          "label": {
+            "items": [
+              {
                 "id": 1,
                 "key": "label",
                 "language": "en",
@@ -34,16 +34,16 @@ describe('test', () => {
       });
 
       expect(list).toMatchInlineSnapshot(`
-        Object {
-          "label": Object {
-            "items": Array [
-              Object {
+        {
+          "label": {
+            "items": [
+              {
                 "id": 1,
                 "key": "label",
                 "language": "en",
                 "value": "First label",
               },
-              Object {
+              {
                 "id": 2,
                 "key": "label",
                 "language": "es",
@@ -65,10 +65,10 @@ describe('test', () => {
       });
 
       expect(list).toMatchInlineSnapshot(`
-        Object {
-          "label": Object {
-            "items": Array [
-              Object {
+        {
+          "label": {
+            "items": [
+              {
                 "id": 1,
                 "key": "label",
                 "language": "en",
@@ -77,9 +77,9 @@ describe('test', () => {
             ],
             "type": "values",
           },
-          "summary": Object {
-            "items": Array [
-              Object {
+          "summary": {
+            "items": [
+              {
                 "id": 3,
                 "key": "summary",
                 "language": "en",
@@ -101,12 +101,12 @@ describe('test', () => {
       });
 
       expect(list).toMatchInlineSnapshot(`
-        Object {
-          "metadata": Array [
-            Object {
-              "label": Object {
-                "items": Array [
-                  Object {
+        {
+          "metadata": [
+            {
+              "label": {
+                "items": [
+                  {
                     "id": 1,
                     "key": "metadata.0.label",
                     "language": "en",
@@ -115,9 +115,9 @@ describe('test', () => {
                 ],
                 "type": "values",
               },
-              "value": Object {
-                "items": Array [
-                  Object {
+              "value": {
+                "items": [
+                  {
                     "id": 2,
                     "key": "metadata.0.value",
                     "language": "en",
@@ -143,12 +143,12 @@ describe('test', () => {
       });
 
       expect(list).toMatchInlineSnapshot(`
-        Object {
-          "metadata": Array [
-            Object {
-              "label": Object {
-                "items": Array [
-                  Object {
+        {
+          "metadata": [
+            {
+              "label": {
+                "items": [
+                  {
                     "id": 1,
                     "key": "metadata.0.label",
                     "language": "en",
@@ -157,9 +157,9 @@ describe('test', () => {
                 ],
                 "type": "values",
               },
-              "value": Object {
-                "items": Array [
-                  Object {
+              "value": {
+                "items": [
+                  {
                     "id": 2,
                     "key": "metadata.0.value",
                     "language": "en",
@@ -170,10 +170,10 @@ describe('test', () => {
               },
             },
             ,
-            Object {
-              "label": Object {
-                "items": Array [
-                  Object {
+            {
+              "label": {
+                "items": [
+                  {
                     "id": 3,
                     "key": "metadata.2.label",
                     "language": "en",
@@ -182,9 +182,9 @@ describe('test', () => {
                 ],
                 "type": "values",
               },
-              "value": Object {
-                "items": Array [
-                  Object {
+              "value": {
+                "items": [
+                  {
                     "id": 4,
                     "key": "metadata.2.value",
                     "language": "en",
@@ -205,7 +205,7 @@ describe('test', () => {
         template: ['label'],
       });
 
-      expect(list).toMatchInlineSnapshot(`Object {}`);
+      expect(list).toMatchInlineSnapshot(`{}`);
     });
   });
 
@@ -292,11 +292,11 @@ describe('test', () => {
       };
 
       expect(extractLinks(manifest as any, 'iiif')).toMatchInlineSnapshot(`
-        Array [
-          Object {
+        [
+          {
             "format": "application/json",
             "label": "See also",
-            "properties": Object {
+            "properties": {
               "profile": "http://wellcomelibrary.org/profiles/res",
             },
             "property": "seeAlso",
@@ -304,10 +304,10 @@ describe('test', () => {
             "type": "Dataset",
             "uri": "https://wellcomelibrary.org/data/b18035723.json",
           },
-          Object {
+          {
             "format": "application/ld+json",
             "label": "See also",
-            "properties": Object {
+            "properties": {
               "profile": "http://iiif.io/community/profiles/discovery/schema",
             },
             "property": "seeAlso",
@@ -315,10 +315,10 @@ describe('test', () => {
             "type": "Dataset",
             "uri": "https://wellcomelibrary.org/resource/schemaorg/b18035723",
           },
-          Object {
+          {
             "format": "application/ld+json",
             "label": "See also",
-            "properties": Object {
+            "properties": {
               "profile": "http://iiif.io/community/profiles/discovery/dc",
             },
             "property": "seeAlso",
@@ -326,9 +326,9 @@ describe('test', () => {
             "type": "Dataset",
             "uri": "https://wellcomelibrary.org/resource/dublincore/b18035723",
           },
-          Object {
+          {
             "label": "Service",
-            "properties": Object {
+            "properties": {
               "accessHint": "open",
               "profile": "http://wellcomelibrary.org/ld/iiif-ext/access-control-hints",
             },
@@ -337,15 +337,15 @@ describe('test', () => {
             "type": "Service",
             "uri": "https://wellcomelibrary.org/iiif/b18035723-0/access-control-hints-service",
           },
-          Object {
+          {
             "label": "Service",
-            "properties": Object {
+            "properties": {
               "profile": "http://iiif.io/api/search/0/search",
-              "service": Array [
-                Object {
+              "service": [
+                {
                   "id": "https://wellcomelibrary.org/annoservices/autocomplete/b18035723",
-                  "label": Object {
-                    "none": Array [
+                  "label": {
+                    "none": [
                       "Get suggested words in this manifest",
                     ],
                   },
@@ -359,9 +359,9 @@ describe('test', () => {
             "type": "SearchService1",
             "uri": "https://wellcomelibrary.org/annoservices/search/b18035723",
           },
-          Object {
+          {
             "label": "Service",
-            "properties": Object {
+            "properties": {
               "profile": "http://universalviewer.io/tracking-extensions-profile",
               "trackingLabel": "Format: monograph, Institution: n/a, Identifier: b18035723, Digicode: diggenetics, Collection code: n/a",
             },

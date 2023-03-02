@@ -1,10 +1,9 @@
 import React from 'react';
+import { Outlet } from 'react-router-dom';
 import { WidePage } from '../../../shared/layout/WidePage';
-import { renderUniversalRoutes } from '../../../shared/utility/server-utils';
-import { UniversalRoute } from '../../../types';
 import { AdminHeader } from '../../molecules/AdminHeader';
 
-export const OcrPage: React.FC<{ route: UniversalRoute }> = ({ route }) => {
+export const OcrPage: React.FC = () => {
   return (
     <>
       <AdminHeader
@@ -14,7 +13,9 @@ export const OcrPage: React.FC<{ route: UniversalRoute }> = ({ route }) => {
         ]}
         title="OCR Processing"
       />
-      <WidePage>{renderUniversalRoutes(route.routes)}</WidePage>
+      <WidePage>
+        <Outlet />
+      </WidePage>
     </>
   );
 };

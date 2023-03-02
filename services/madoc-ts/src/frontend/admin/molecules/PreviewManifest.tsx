@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { CanvasNormalized, ManifestNormalized } from '@hyperion-framework/types';
-import { useVaultEffect } from '@hyperion-framework/react-vault';
+import { CanvasNormalized, ManifestNormalized } from '@iiif/presentation-3';
+import { CanvasContext, useThumbnail, useVaultEffect } from 'react-iiif-vault';
 import { ErrorMessage } from '../../shared/callouts/ErrorMessage';
 import { Heading3 } from '../../shared/typography/Heading3';
 import { LocaleString } from '../../shared/components/LocaleString';
@@ -10,31 +10,17 @@ import { SingleLineHeading5 } from '../../shared/typography/Heading5';
 import { SmallButton } from '../../shared/navigation/Button';
 import { useTranslation } from 'react-i18next';
 
-const CanvasThumbnail: React.FC<{ canvas: CanvasNormalized; height: number }> = ({ canvas, height }) => {
-  const [thumbnail, setThumbnail] = useState<string | undefined>();
-
-  useVaultEffect(vault => {
-    vault
-      .getThumbnail(
-        canvas,
-        {
-          minHeight: 64,
-          minWidth: 64,
-        },
-        true
-      )
-      .then(t => {
-        if (t.best) {
-          setThumbnail(t.best.id);
-        }
-      });
+const CanvasThumbnail: React.FC<{ height: number }> = () => {
+  const thumbnail = useThumbnail({
+    minHeight: 64,
+    minWidth: 64,
   });
 
   if (!thumbnail) {
     return <>loading...</>;
   }
 
-  return <img alt="thumbnail" src={thumbnail} />;
+  return <img alt="thumbnail" src={thumbnail.id} />;
 };
 
 export const PreviewManifest: React.FC<{
@@ -71,11 +57,7 @@ export const PreviewManifest: React.FC<{
 
         setManifest(man);
         if (man) {
-          setCanvases(
-            man.items.map(can => {
-              return vault.fromRef(can);
-            })
-          );
+          setCanvases(vault.get(man.items));
         }
       });
     },
@@ -95,7 +77,7 @@ export const PreviewManifest: React.FC<{
       <Heading3>
         <LocaleString>{manifest.label || { none: ['Untitled manifest'] }}</LocaleString>
       </Heading3>
-      <ImageGrid>
+      <ImageGrid $size="small">
         {canvases
           ? canvases.map(canvas => {
               return (
@@ -110,7 +92,9 @@ export const PreviewManifest: React.FC<{
                   }}
                 >
                   <CroppedImage $size="small">
-                    <CanvasThumbnail canvas={canvas} height={100} />
+                    <CanvasContext canvas={canvas.id}>
+                      <CanvasThumbnail height={100} />
+                    </CanvasContext>
                   </CroppedImage>
                   <SingleLineHeading5>
                     <LocaleString>{canvas.label || { none: ['Untitled canvas'] }}</LocaleString>

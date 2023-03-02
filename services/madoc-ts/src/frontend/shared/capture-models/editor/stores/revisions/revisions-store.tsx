@@ -18,7 +18,6 @@ import { CaptureModel } from '../../../types/capture-model';
 import { BaseField } from '../../../types/field-types';
 import { BaseSelector } from '../../../types/selector-types';
 import { applyModelRootToDocument } from '../../../utility/apply-model-root-to-document';
-import { processImportedRevision } from '../../../utility/process-imported-revision';
 import { RevisionsModel } from './revisions-model';
 import { createSelectorStore, updateSelectorStore } from '../selectors/selector-store';
 import { batchedSubscribe } from 'redux-batched-subscribe';
@@ -69,7 +68,11 @@ export const revisionStore: RevisionsModel = {
         return undefined;
       }
 
-      return resolveSubtreeWithIds(subtreePath, document);
+      try {
+        return resolveSubtreeWithIds(subtreePath, document);
+      } catch (e) {
+        return undefined;
+      }
     }
   ),
   revisionSubtreeField: computed(
@@ -163,9 +166,13 @@ export const revisionStore: RevisionsModel = {
     }
     const revisionDocument = state.revisions[state.currentRevisionId].document;
 
-    if (resolveSubtreeWithIds(state.revisionSubtreePath, revisionDocument).properties[term]) {
-      state.revisionSelectedFieldProperty = term;
-      state.revisionSelectedFieldInstance = id;
+    try {
+      if (resolveSubtreeWithIds(state.revisionSubtreePath, revisionDocument).properties[term]) {
+        state.revisionSelectedFieldProperty = term;
+        state.revisionSelectedFieldInstance = id;
+      }
+    } catch (e) {
+      return;
     }
   }),
 
@@ -222,6 +229,9 @@ export const revisionStore: RevisionsModel = {
   }),
   popStructure: action(state => {
     state.idStack = state.idStack.slice(0, -1);
+  }),
+  resetStructure: action(state => {
+    state.idStack = [];
   }),
   setIsThankYou: action((state, payload) => {
     state.isThankYou = payload;
@@ -280,7 +290,14 @@ export const revisionStore: RevisionsModel = {
 
   // @todo update selector in revision too (not ideal, but avoids traversing tree each time to find a selector)
   updateSelector: action((state, payload) => {
-    const selectorToUpdate = state.selector.availableSelectors.find(selector => selector.id === payload.selectorId);
+    let selectorToUpdate = state.selector.availableSelectors.find(selector => selector.id === payload.selectorId);
+    if (selectorToUpdate && selectorToUpdate.revises) {
+      const revised = state.selector.availableSelectors.find(selector => selector.id === selectorToUpdate!.revises);
+      if (revised) {
+        selectorToUpdate = revised;
+      }
+    }
+
     if (selectorToUpdate) {
       const path = state.selector.selectorPaths[selectorToUpdate.id];
       const field = getRevisionFieldFromPath<BaseField>(state, path);
@@ -293,6 +310,7 @@ export const revisionStore: RevisionsModel = {
         const existingRevisedSelector = selectorToUpdate.revisedBy
           ? selectorToUpdate.revisedBy.find((r: any) => r.revisionId === state.currentRevisionId)
           : undefined;
+
         if (existingRevisedSelector) {
           // We have already "forked" this selector, update it.
           existingRevisedSelector.state = payload.state;
@@ -410,13 +428,17 @@ export const revisionStore: RevisionsModel = {
         return { fields: [], currentId: undefined };
       }
 
-      const [property, currentId] = subtreePath[subtreePath.length - 1];
-      const adj = resolveSubtreeWithIds(subtreePath.slice(0, -1), document);
+      try {
+        const [property, currentId] = subtreePath[subtreePath.length - 1];
+        const adj = resolveSubtreeWithIds(subtreePath.slice(0, -1), document);
 
-      return {
-        fields: (adj.properties[property] || []) as any[],
-        currentId,
-      };
+        return {
+          fields: (adj.properties[property] || []) as any[],
+          currentId,
+        };
+      } catch (e) {
+        return { fields: [], currentId: undefined };
+      }
     }
   ),
 
@@ -498,8 +520,10 @@ export const revisionStore: RevisionsModel = {
       if (state.unsavedRevisionIds.indexOf(revisionId) !== -1) {
         const newRevision = await createRevision(oldRevision, status);
         actions.importRevision({ revisionRequest: newRevision });
+
         actions.saveRevision({ revisionId });
       } else {
+        // disable this for now.
         const newRevision = await updateRevision(oldRevision, status);
         actions.importRevision({ revisionRequest: newRevision });
       }
@@ -507,13 +531,22 @@ export const revisionStore: RevisionsModel = {
   ),
 
   importRevision: action((state, { revisionRequest }) => {
-    const foundStructure = revisionRequest.revision.structureId
-      ? findStructure({ structure: state.structure } as any, revisionRequest.revision.structureId)
-      : null;
-    if (foundStructure && foundStructure.type === 'model' && foundStructure.modelRoot) {
-      applyModelRootToDocument(revisionRequest.document, foundStructure.modelRoot);
+    const existing = state.revisions[revisionRequest.revision.id];
+    if (!existing) {
+      // Instead of replacing the revision....
+      const foundStructure = revisionRequest.revision.structureId
+        ? findStructure({ structure: state.structure } as any, revisionRequest.revision.structureId)
+        : null;
+      if (foundStructure && foundStructure.type === 'model' && foundStructure.modelRoot) {
+        applyModelRootToDocument(revisionRequest.document, foundStructure.modelRoot);
+      }
+      state.revisions[revisionRequest.revision.id] = revisionRequest;
+    } else {
+      existing.author = revisionRequest.author;
+      existing.revision.status = revisionRequest.revision.status;
+      existing.revision.authors = revisionRequest.revision.authors;
+      existing.captureModelId = revisionRequest.captureModelId;
     }
-    state.revisions[revisionRequest.revision.id] = revisionRequest;
   }),
 
   setRevisionLabel: action((state, { revisionId: customRevisionId, label }) => {

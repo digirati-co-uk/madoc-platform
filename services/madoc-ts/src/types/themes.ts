@@ -7,6 +7,7 @@ export type ThemeRow = {
   enabled: boolean;
   created_at: number;
   theme: any;
+  extra: ExtraThemeConfig | null;
 };
 
 export type ThemeSiteRow = {
@@ -24,6 +25,28 @@ export type ThemeListItem = {
   installed: boolean;
   version: string;
   thumbnail: string | null;
+  extra?: ExtraThemeConfig;
+};
+
+export type ExtraThemeConfig = {
+  // Extra fields
+  classNames?: {
+    main?: string;
+    html?: string;
+  };
+  remote?: {
+    header?: string;
+    footer?: string;
+    languages?: Record<string, { header?: string; footer?: string }>;
+  };
+  stylesheets?: string[];
+  scripts?: string[];
+  footerScripts?: string[];
+  options?: ExtraOptions;
+};
+
+export type ExtraOptions = {
+  userBarAbove?: boolean;
 };
 
 export type DiskTheme = {
@@ -33,7 +56,8 @@ export type DiskTheme = {
     description?: string;
     version?: string;
     thumbnail?: string;
-    theme: any;
+    theme?: any;
+    extra?: ExtraThemeConfig;
   };
   source?: { type: string; id?: string; name: string };
 };
@@ -45,9 +69,28 @@ export type ResolvedTheme = {
   html: {
     header?: string;
     footer?: string;
+    main?: string;
+    inlineJs?: string[];
+    footerInlineJs?: string[];
+  };
+  classNames: {
+    main?: string;
+    html?: string;
   };
   assets: {
     css: string[];
     js: string[];
+    footerJs: string[];
   };
+  languages: Record<
+    string,
+    {
+      html?: {
+        header?: string;
+        footer?: string;
+        inlineJs?: string[];
+      };
+    }
+  >;
+  options: ExtraOptions;
 };

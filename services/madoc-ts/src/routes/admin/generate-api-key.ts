@@ -1,7 +1,6 @@
 import { v4 } from 'uuid';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { ApiKey } from '../../types/api-key';
-import { sql } from 'slonik';
 import { hash } from 'bcrypt';
 import { onlyGlobalAdmin } from '../../utility/user-with-scope';
 
@@ -28,20 +27,16 @@ export const generateApiKey: RouteMiddleware<unknown, ApiKey> = async context =>
 
   const hashedSecret = await hash(clientSecret, 12);
 
-  await context.connection.query(
-    sql`
-      insert into api_key (label, client_id, client_secret, user_id, user_name, password_attempts, site_id, scope)
-      values (
-        ${key.label}, 
-        ${clientId}, 
-        ${hashedSecret}, 
-        ${id}, 
-        ${name}, 
-        0, 
-        ${siteId}, 
-        ${sql.array(key.scope, 'text')}
-      );
-    `
+  await context.apiKeys.createApiKey(
+    {
+      label: key.label,
+      clientId,
+      clientSecret: hashedSecret,
+      userId: id,
+      userName: name,
+      scope: key.scope,
+    },
+    siteId
   );
 
   context.response.status = 200;

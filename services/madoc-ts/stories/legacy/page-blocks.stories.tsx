@@ -1,7 +1,6 @@
-import { color, select, text } from '@storybook/addon-knobs';
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { defaultPageBlockDefinitions } from '../../src/extensions/page-blocks/default-definitions';
+import { getDefaultPageBlockDefinitions } from '../../src/extensions/page-blocks/default-definitions';
 import { PageBlockDefinition } from '../../src/extensions/page-blocks/extension';
 import {
   AddBlockContainer,
@@ -93,7 +92,7 @@ const Surface: React.FC<SurfaceProps> = ({
 }) => {
   useGoogleFonts(font);
 
-  const accessibleTextColor = useAccessibleColor(background, textColor);
+  const accessibleTextColor = useAccessibleColor(background);
 
   return (
     <SurfaceStyled
@@ -110,13 +109,13 @@ const Surface: React.FC<SurfaceProps> = ({
 };
 
 export const Surface_Default = () => {
-  const background = color('Background', '#eee');
-  const textColor = color('Color', '#000');
-  const content = text('Content', 'The content of the surface.');
-  const paddingSize = select('Padding size', ['sm', 'md', 'lg'], 'sm');
-  const fontSize = select('Font size', ['sm', 'md', 'lg'], 'sm');
-  const font = text('Font (from google)', 'Oswald');
-  const textAlign = select('Text alignment', ['left', 'center', 'right'], 'left');
+  const content = 'The content of the surface.';
+  const background = '#444';
+  const textColor = '#fff';
+  const paddingSize = 'md';
+  const fontSize = 'md';
+  const font = 'PT Serif';
+  const textAlign = 'center';
 
   return (
     <Surface
@@ -133,14 +132,14 @@ export const Surface_Default = () => {
 };
 
 export const Surface_Heading1 = () => {
-  const background = color('Background', '#444');
-  const textColor = color('Color', '#fff');
-  const heading = text('Heading', 'The content of the surface.');
-  const subheading = text('Subheading', 'The subheading under the title');
-  const paddingSize = select('Padding size', ['sm', 'md', 'lg'], 'md');
-  const fontSize = select('Font size', ['sm', 'md', 'lg'], 'md');
-  const font = text('Font (from google)', 'PT Serif');
-  const textAlign = select('Text alignment', ['left', 'center', 'right'], 'center');
+  const background = '#444';
+  const textColor = '#fff';
+  const heading = 'The content of the surface.';
+  const subheading = 'The subheading under the title';
+  const paddingSize = 'md';
+  const fontSize = 'md';
+  const font = 'PT Serif';
+  const textAlign = 'center';
 
   return (
     <Surface
@@ -158,7 +157,7 @@ export const Surface_Heading1 = () => {
 };
 
 const blocks = [
-  ...defaultPageBlockDefinitions,
+  ...getDefaultPageBlockDefinitions(),
   Heading1[Symbol.for('slot-model')],
   {
     ...(Heading2[Symbol.for('slot-model') as any] as any),
@@ -176,9 +175,12 @@ export const SelectBlock = () => {
             <>
               <AddBlockList>
                 {blocks.map((block, n) => {
+                  if (!block) {
+                    return null;
+                  }
                   const Icon = block.svgIcon;
                   return (
-                    <AddBlockContainer $active={n === 2}>
+                    <AddBlockContainer key={n} $active={n === 2}>
                       <AddBlockIconWrapper>
                         {Icon ? (
                           <Icon />

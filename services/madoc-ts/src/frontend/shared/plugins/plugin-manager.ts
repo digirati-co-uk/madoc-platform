@@ -1,12 +1,13 @@
+import { RouteObject } from 'react-router-dom';
 import { PageBlockExtension } from '../../../extensions/page-blocks/extension';
+import { ProjectExportExtension } from '../../../extensions/project-export/extension';
 import { ProjectTemplateExtension } from '../../../extensions/projects/extension';
 import { ThemeExtension } from '../../../extensions/themes/extension';
 import { ModuleWrapper } from '../../../types/plugins';
 import { SitePlugin } from '../../../types/schemas/plugins';
 import { RouteComponents } from '../../site/routes';
-import { UniversalRoute } from '../../types';
 import { captureModelShorthand } from '../capture-models/helpers/capture-model-shorthand';
-import { createPluginWrapper } from './create-plugin-wrapper';
+import { createPluginWrapper, createPluginWrapperFromElement } from './create-plugin-wrapper';
 
 export type PluginModule = {
   definition: SitePlugin;
@@ -25,6 +26,7 @@ export class PluginManager {
     for (const plugin of this.plugins) {
       this.registerBlocks(plugin);
       this.registerProjectTemplates(plugin);
+      this.registerProjectExport(plugin);
       this.registerThemes(plugin);
     }
   }
@@ -104,6 +106,33 @@ export class PluginManager {
     }
   }
 
+  registerProjectExport(plugin: PluginModule) {
+    if (plugin.module.projectExports) {
+      for (const projectExport of plugin.module.projectExports) {
+        ProjectExportExtension.registerPlugin({
+          pluginId: plugin.definition.id,
+          siteId: plugin.siteId,
+          definition: {
+            ...projectExport,
+            source: { id: plugin.definition.id, name: plugin.definition.name, type: 'plugin' },
+          },
+        });
+      }
+    }
+  }
+
+  unregisterProjectExport(plugin: PluginModule) {
+    if (plugin.module.projectExports) {
+      for (const projectExport of plugin.module.projectExports) {
+        ProjectExportExtension.removePlugin({
+          pluginId: plugin.definition.id,
+          siteId: plugin.siteId,
+          type: projectExport.type,
+        });
+      }
+    }
+  }
+
   registerProjectTemplates(plugin: PluginModule) {
     if (plugin.module.projectTemplates) {
       for (const projectTemplate of plugin.module.projectTemplates) {
@@ -151,6 +180,7 @@ export class PluginManager {
       this.plugins = this.plugins.slice(0, idx).concat(this.plugins.slice(idx + 1));
       this.unregisterBlocks(found);
       this.unregisterProjectTemplates(found);
+      this.unregisterProjectExport(found);
       this.unregisterThemes(found);
     }
   }
@@ -166,6 +196,7 @@ export class PluginManager {
     }
     this.registerBlocks(newPlugin);
     this.registerProjectTemplates(newPlugin);
+    this.registerProjectExport(newPlugin);
     this.registerThemes(newPlugin);
   }
 
@@ -190,6 +221,7 @@ export class PluginManager {
       this.plugins[idx].module = module;
       this.registerBlocks(this.plugins[idx]);
       this.registerProjectTemplates(this.plugins[idx]);
+      this.registerProjectExport(this.plugins[idx]);
       this.registerThemes(this.plugins[idx]);
       if (revision) {
         this.plugins[idx].definition.development = {
@@ -206,7 +238,7 @@ export class PluginManager {
     return [
       {
         ...routeComponents.baseRoute,
-        routes: [...newRoutes, routeComponents.fallback],
+        children: [...newRoutes, routeComponents.fallback],
       },
     ];
   }
@@ -226,13 +258,15 @@ export class PluginManager {
     return returnComponents;
   }
 
-  hookRoutes(routes: UniversalRoute[], components: any, siteId: number) {
+  hookRoutes(routes: RouteObject[], components: any, siteId: number) {
     const newRoutes = [...routes];
     for (const plugin of this.plugins) {
       if (plugin.module.hookRoutes && plugin.siteId === siteId) {
         const hooked = plugin.module.hookRoutes(routes, components);
         for (const hookedRoute of hooked) {
-          hookedRoute.component = createPluginWrapper(hookedRoute.component, plugin.definition.name);
+          if (hookedRoute.element) {
+            hookedRoute.element = createPluginWrapperFromElement(hookedRoute.element, plugin.definition.name);
+          }
         }
         newRoutes.push(...hooked);
       }

@@ -7,7 +7,7 @@ import { RequestError } from '../../utility/errors/request-error';
 import { userWithScope } from '../../utility/user-with-scope';
 import { sql } from 'slonik';
 import { CreateProject } from '../../types/schemas/create-project';
-import { InternationalString } from '@hyperion-framework/types';
+import { InternationalString } from '@iiif/presentation-3';
 import { ConflictError } from '../../utility/errors/conflict';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
 
@@ -21,8 +21,12 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
   const userApi = api.asUser({ userId: id, siteId }, {}, true);
   context.disposableApis.push(userApi);
 
-  const { label, slug, summary, template, template_options, template_config } = context.requestBody;
-  const chosenTemplate = template ? api.projectTemplates.getDefinition(template, siteId) : null;
+  const { label, slug, summary, template, template_options, template_config, remote_template } = context.requestBody;
+  const chosenTemplate = template
+    ? template === 'remote'
+      ? remote_template
+      : api.projectTemplates.getDefinition(template, siteId)
+    : null;
   const setupFunctions = chosenTemplate?.setup;
 
   if (template && !chosenTemplate) {

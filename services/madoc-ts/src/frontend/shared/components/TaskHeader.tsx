@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import TimeAgo from 'react-timeago';
 import styled from 'styled-components';
 import { BaseTask } from '../../../gateway/tasks/base-task';
 import { extractIdFromUrn } from '../../../utility/parse-urn';
@@ -20,6 +19,9 @@ import { HrefLink } from '../utility/href-link';
 import { ModalButton } from './Modal';
 import { TaskContextualMenu } from './TaskContextualMenu';
 import { UserAutocomplete } from './UserAutocomplete';
+import { TimeAgo } from '../atoms/TimeAgo';
+import { useBots } from '../hooks/use-bots';
+import { Tag } from '../capture-models/editor/atoms/Tag';
 
 const TaskHeaderContainer = styled.div`
   background: #fff;
@@ -100,6 +102,8 @@ export const TaskHeader: React.FC<{ task: BaseTask; refetch?: () => Promise<void
   const { t } = useTranslation();
   const subject = metadata.subject;
 
+  const [listOfBots, isBot] = useBots();
+
   const manifestLink =
     subject && subject.type === 'manifest'
       ? createLink({ manifestId: subject.id, taskId: undefined, parentTaskId: undefined, projectId: project?.slug })
@@ -157,6 +161,7 @@ export const TaskHeader: React.FC<{ task: BaseTask; refetch?: () => Promise<void
             <TaskHeaderAction>
               {t('assigned to')}{' '}
               <HrefLink href={`/users/${extractIdFromUrn(task.assignee.id)}`}>{task.assignee.name}</HrefLink>
+              {isBot(task.assignee.id) ? <Tag style={{ marginLeft: '0.5em' }}>bot</Tag> : null}
             </TaskHeaderAction>
           ) : null}
           <TaskContextualMenu task={task} refetch={refetch} />

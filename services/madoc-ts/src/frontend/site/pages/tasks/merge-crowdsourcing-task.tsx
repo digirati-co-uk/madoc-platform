@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CrowdsourcingReviewMerge } from '../../../../gateway/tasks/crowdsourcing-review';
+import { TimeAgo } from '../../../shared/atoms/TimeAgo';
 import { defaultTheme } from '../../../shared/capture-models/editor/themes';
 import { Revisions } from '../../../shared/capture-models/editor/stores/revisions/index';
 import { useApi } from '../../../shared/hooks/use-api';
@@ -26,7 +27,6 @@ import { Button, LinkButton } from '../../../shared/navigation/Button';
 import { ArrowForwardIcon } from '../../../shared/icons/ArrowForwardIcon';
 import { WarningMessage } from '../../../shared/callouts/WarningMessage';
 import { TableContainer, TableRow, TableRowLabel } from '../../../shared/layout/Table';
-import TimeAgo from 'react-timeago';
 import { Heading3 } from '../../../shared/typography/Heading3';
 import { SaveMergeChanges } from './actions/save-merge-changes';
 import { DiscardMerge } from './actions/discard-merge';

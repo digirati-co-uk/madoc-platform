@@ -14,9 +14,10 @@ import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.e
 import { plainTextSource } from '../extensions/capture-models/DynamicDataSources/sources/Plaintext.source';
 import { ExtensionManager } from '../extensions/extension-manager';
 import { NotificationExtension } from '../extensions/notifications/extension';
-import { defaultPageBlockDefinitions } from '../extensions/page-blocks/default-definitions';
+import { getDefaultPageBlockDefinitions } from '../extensions/page-blocks/default-definitions';
 import { PageBlockExtension } from '../extensions/page-blocks/extension';
 import { MediaExtension } from '../extensions/media/extension';
+import { ProjectExportExtension } from '../extensions/project-export/extension';
 import { ProjectTemplateExtension } from '../extensions/projects/extension';
 import { SiteManagerExtension } from '../extensions/site-manager/extension';
 import { SystemExtension } from '../extensions/system/extension';
@@ -34,7 +35,7 @@ import {
   ProjectDeletionSummary,
   CollectionDeletionSummary,
 } from '../types/deletion-summary';
-import { Site, User } from '../extensions/site-manager/types';
+import { Site, SiteUser, User } from '../extensions/site-manager/types';
 import { ProjectManifestTasks } from '../types/manifest-tasks';
 import { NoteListResponse } from '../types/personal-notes';
 import { Pm2Status } from '../types/pm2';
@@ -47,7 +48,7 @@ import { parseUrn } from '../utility/parse-urn';
 import { ApiRequest } from './api-definitions/_meta';
 import { fetchJson } from './fetch-json';
 import { BaseTask } from './tasks/base-task';
-import { CanvasNormalized, CollectionNormalized, Manifest } from '@hyperion-framework/types';
+import { CanvasNormalized, CollectionNormalized, Manifest } from '@iiif/presentation-3';
 import { CreateCollection } from '../types/schemas/create-collection';
 import { CollectionListResponse } from '../types/schemas/collection-list';
 import { CollectionFull } from '../types/schemas/collection-full';
@@ -56,6 +57,7 @@ import { ItemStructureList, ItemStructureListItem, UpdateStructureList } from '.
 import { CreateCanvas } from '../types/schemas/create-canvas';
 import { ManifestListResponse } from '../types/schemas/manifest-list';
 import { CrowdsourcingManifestTask } from './tasks/crowdsourcing-manifest-task';
+import { ExportResourceTask } from './tasks/export-resource-task';
 import { ImportManifestTask } from './tasks/import-manifest';
 import { ImportCollectionTask } from './tasks/import-collection';
 import { ManifestFull } from '../types/schemas/manifest-full';
@@ -115,6 +117,7 @@ export class ApiClient {
   notifications!: NotificationExtension;
   siteManager!: SiteManagerExtension;
   projectTemplates!: ProjectTemplateExtension;
+  projectExport!: ProjectExportExtension;
   crowdsourcing!: CrowdsourcingApi;
 
   constructor(options: {
@@ -144,12 +147,13 @@ export class ApiClient {
       return;
     }
 
-    this.pageBlocks = new PageBlockExtension(this, defaultPageBlockDefinitions);
+    this.pageBlocks = new PageBlockExtension(this, getDefaultPageBlockDefinitions());
     this.media = new MediaExtension(this);
     this.system = new SystemExtension(this);
     this.themes = new ThemeExtension(this);
     this.siteManager = new SiteManagerExtension(this);
     this.projectTemplates = new ProjectTemplateExtension(this);
+    this.projectExport = new ProjectExportExtension(this);
     const captureModelExtensions = new ExtensionManager(
       options.customCaptureModelExtensions
         ? options.customCaptureModelExtensions(this)
@@ -264,8 +268,20 @@ export class ApiClient {
 
   async wrapTask<After, Task extends BaseTask = BaseTask>(
     target: Promise<Task>,
-    after: (task: Task) => Promise<After>,
-    { interval = 1000, progress }: { interval?: number; progress?: (remaining: number) => void } = {}
+    after: (task: Task) => After | Promise<After>,
+    {
+      interval = 1000,
+      progress,
+      percent,
+      setRootStatistics,
+      root,
+    }: {
+      interval?: number;
+      percent?: (p: number) => void;
+      setRootStatistics?: (stats: BaseTask['root_statistics']) => void;
+      progress?: (remaining: number) => void;
+      root?: boolean;
+    } = {}
   ): Promise<After> {
     const task = await target;
     const taskId = task?.id;
@@ -283,7 +299,7 @@ export class ApiClient {
           return;
         }
         loading = true;
-        this.getTask(taskId, { all: true }).then(latestTask => {
+        this.getTask(taskId, { all: true, root_statistics: root }).then(latestTask => {
           loading = false;
           if (latestTask.status === 3) {
             clearInterval(intervalId);
@@ -295,6 +311,32 @@ export class ApiClient {
             reject(latestTask);
           }
 
+          if (setRootStatistics) {
+            if (latestTask.root_statistics) {
+              setRootStatistics(latestTask.root_statistics);
+            }
+          }
+
+          if (percent) {
+            if (latestTask.root_statistics) {
+              const remaining = latestTask.root_statistics.done + latestTask.root_statistics.error;
+              const total =
+                remaining +
+                latestTask.root_statistics.progress +
+                latestTask.root_statistics.accepted +
+                latestTask.root_statistics.not_started;
+
+              if (total > 0) {
+                percent(remaining / total);
+              }
+            } else if (latestTask.subtasks) {
+              const remaining = latestTask.subtasks.filter(t => t.status === 3 || t.status === -1).length || 0;
+              const total = latestTask.subtasks.length;
+
+              percent(remaining / total);
+            }
+          }
+
           if (progress) {
             const remaining = latestTask.subtasks?.filter(t => t.status !== 3).length || 0;
 
@@ -303,7 +345,7 @@ export class ApiClient {
         });
       };
 
-      intervalId = setInterval(tryReturn, interval);
+      intervalId = setInterval(tryReturn, interval) as any;
     });
   }
 
@@ -384,6 +426,7 @@ export class ApiClient {
               window.location.pathname + window.location.search
             )}`;
 
+            console.log(response.debugResponse);
             throw new ApiError('Unknown error', response.debugResponse);
           }
 
@@ -577,6 +620,16 @@ export class ApiClient {
     });
   }
 
+  async createProjectExport(
+    id: string,
+    options: import('../routes/projects/create-project-export').ProjectExportRequest
+  ) {
+    return this.request<{ task: ExportResourceTask }>(`/api/madoc/projects/${id}/export`, {
+      method: 'POST',
+      body: options,
+    });
+  }
+
   async getProjectDeletionSummary(id: number) {
     return this.request<ProjectDeletionSummary>(`/api/madoc/projects/${id}/deletion-summary`);
   }
@@ -618,10 +671,13 @@ export class ApiClient {
   }
 
   async prepareResourceClaim(projectId: string | number, claim: ResourceClaim) {
-    return this.request<{ claim: CrowdsourcingTask }>(`/api/madoc/projects/${projectId}/prepare-claim`, {
-      method: 'POST',
-      body: claim,
-    });
+    return this.request<{ claim: CrowdsourcingTask; model?: { id: string } }>(
+      `/api/madoc/projects/${projectId}/prepare-claim`,
+      {
+        method: 'POST',
+        body: claim,
+      }
+    );
   }
 
   async saveResourceClaim(projectId: string | number, taskId: string, body: { status: number; revisionId?: string }) {
@@ -1143,6 +1199,10 @@ export class ApiClient {
     return this.request<{ user: User }>(`/api/madoc/users/${id}`);
   }
 
+  async getAutomatedUsers() {
+    return this.request<{ users: SiteUser[] }>(`/api/madoc/manage-site/bots`);
+  }
+
   // Capture model API.
 
   /**
@@ -1509,6 +1569,7 @@ export class ApiClient {
       assignee?: boolean;
       detail?: boolean;
       subjects?: string[];
+      root_statistics?: boolean;
     }
   ) {
     return this.request<Task & { id: string }>(
@@ -1612,7 +1673,7 @@ export class ApiClient {
       detail?: boolean;
       assignee?: string;
       per_page?: number;
-      sort_by?: 'newest';
+      sort_by?: string;
       modified_date_start?: Date;
       modified_date_end?: Date;
       modified_date_interval?: string;
@@ -2145,6 +2206,25 @@ export class ApiClient {
     }>(`/madoc/api/users/autocomplete?${stringify({ q, roles }, { arrayFormat: 'comma' })}`, {
       method: 'GET',
     });
+  }
+
+  async getProjectFieldsRaw(
+    projectId: string | number,
+    query: { entity?: string; status?: 'approved' | 'drafts' | 'all' }
+  ) {
+    return this.request<
+      Array<{
+        model_id: string;
+        key: string;
+        doc_id: string;
+        id: string;
+        type: string;
+        value: any;
+        revision: string;
+        revises: string;
+        target: CaptureModel['target'];
+      }>
+    >(`/api/madoc/projects/${projectId}/raw-model-fields?${stringify(query)}`);
   }
 
   async getUserDetails() {

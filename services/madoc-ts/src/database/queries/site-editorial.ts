@@ -1,4 +1,4 @@
-import { InternationalString } from '@hyperion-framework/types/iiif/descriptive';
+import { InternationalString } from '@iiif/presentation-3';
 import { sql } from 'slonik';
 import {
   CreateNormalPageRequest,
@@ -248,7 +248,7 @@ export function parseFilter(config?: SlotFilterConfig) {
     whitelist: null,
     blacklist: null,
     all: false,
-    none: false,
+    none: typeof config?.none === 'undefined' ? false : config.none,
   };
 
   if (config) {

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocationQuery } from '../../../../shared/hooks/use-location-query';
 import { UniversalComponent } from '../../../../types';
 import { Button } from '../../../../shared/navigation/Button';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Pagination } from '../../../molecules/Pagination';
 import { useTranslation } from 'react-i18next';
 import { ImageStripBox } from '../../../../shared/atoms/ImageStrip';
@@ -30,7 +30,7 @@ export const ManifestList: UniversalComponent<ManifestListType> = createUniversa
   () => {
     const { status, resolvedData: data } = usePaginatedData(ManifestList);
     const { t } = useTranslation();
-    const { push, location } = useHistory();
+    const navigate = useNavigate();
     const { query } = useLocationQuery();
     const [search, setSearch] = useState(query);
     const createLocaleString = useCreateLocaleString();
@@ -61,7 +61,7 @@ export const ManifestList: UniversalComponent<ManifestListType> = createUniversa
             <form
               onSubmit={e => {
                 e.preventDefault();
-                push(`${location.pathname}?${stringify({ page: undefined, query: search || undefined })}`);
+                navigate(`?${stringify({ page: undefined, query: search || undefined })}`);
               }}
             >
               <InputContainer wide>

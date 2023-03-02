@@ -1,5 +1,6 @@
 import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import styled, { css } from 'styled-components';
+import { useBrowserLayoutEffect } from '../hooks/use-browser-layout-effect';
 
 export const DashboardTabs = styled.ul<{ $loading?: boolean }>`
   margin: 0;
@@ -57,7 +58,7 @@ export const AnimatedDashboardTabs: React.FC<React.DetailedHTMLProps<
   const width = useRef(0);
   const animRef = useRef<number>();
 
-  useLayoutEffect(() => {
+  useBrowserLayoutEffect(() => {
     if (ref.current) {
       width.current = ref.current?.getBoundingClientRect().width;
     }
@@ -68,7 +69,7 @@ export const AnimatedDashboardTabs: React.FC<React.DetailedHTMLProps<
       if (ref.current) {
         ref.current.style.backgroundPosition = `${(width.current + 50) % width.current}px`;
       }
-    }, 16);
+    }, 16) as any;
     return () => {
       if (animRef.current) {
         clearTimeout(animRef.current);

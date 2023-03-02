@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { useNavigate } from 'react-router-dom';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
 import { SearchIcon } from '../icons/SearchIcon';
 import { GlobalSearchButton, GlobalSearchContainer, GlobalSearchForm, GlobalSearchInput } from '../layout/SiteHeader';
 
 export const GlobalSearch: React.FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const { t } = useTranslation();
   const { project } = useSiteConfiguration();
@@ -22,7 +22,7 @@ export const GlobalSearch: React.FC = () => {
       <GlobalSearchForm
         onSubmit={e => {
           e.preventDefault();
-          history.push(`/search?fulltext=${query}`);
+          navigate(`/search?fulltext=${query}`);
           setQuery('');
         }}
       >

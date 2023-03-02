@@ -1,34 +1,35 @@
-import { VaultProvider } from '@hyperion-framework/react-vault';
+import { VaultProvider } from 'react-iiif-vault';
 import React, { Suspense, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { AnnotationStyles } from '../../../../../types/annotation-styles';
 import { useCaptureModel } from '../../../../shared/capture-models/editor/components/EditorContext/EditorContext';
 import { BackToChoicesButton } from '../../../../shared/capture-models/new/components/BackToChoicesButton';
 import { EditorSlots } from '../../../../shared/capture-models/new/components/EditorSlots';
 import { RevisionProviderWithFeatures } from '../../../../shared/capture-models/new/components/RevisionProviderWithFeatures';
-import { CaptureModel } from '../../../../shared/capture-models/types/capture-model';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { ContentExplorer } from '../../../../shared/components/ContentExplorer';
+import { useData } from '../../../../shared/hooks/use-data';
 import { Button, ButtonRow, TinyButton } from '../../../../shared/navigation/Button';
 import '../../../../shared/capture-models/refinements';
+import { BrowserComponent } from '../../../../shared/utility/browser-component';
 import { ViewContentFetch } from '../../../molecules/ViewContentFetch';
+import { ProjectModelEditor } from '../projects/project-model-editor';
 
-export const PreviewCaptureModel: React.FC<{
-  structure: CaptureModel['structure'];
-  document: CaptureModel['document'];
-  annotationTheme?: AnnotationStyles['theme'];
-  revisionNumber: number;
-}> = ({ document, structure, revisionNumber, annotationTheme }) => {
+export const PreviewCaptureModel: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const captureModel = useCaptureModel();
+  const { data } = useData(ProjectModelEditor);
   const api = useApi();
   const [preview, setPreview] = useState(false);
+
+  if (!data) {
+    return null;
+  }
+
+  const { captureModel, annotationTheme } = data;
 
   return (
     <VaultProvider>
       <h3>Preview</h3>
       <RevisionProviderWithFeatures
-        key={revisionNumber}
         slotConfig={{
           editor: {
             allowEditing: true,
@@ -39,21 +40,21 @@ export const PreviewCaptureModel: React.FC<{
           revisionEditMode: true,
           basicUnNesting: true,
         }}
-        captureModel={{ ...captureModel, structure, document }}
-        annotationTheme={annotationTheme}
+        captureModel={{ ...captureModel }}
+        annotationTheme={annotationTheme as any}
       >
         <div style={{ display: 'flex', flexDirection: 'row' }}>
           <div style={{ width: '67%' }}>
             <ContentExplorer
               projectId={id}
               renderChoice={(canvasId, reset) => (
-                <Suspense fallback={<>Loading</>}>
+                <BrowserComponent fallback={<>Loading</>}>
                   <div>
                     <ViewContentFetch id={canvasId} />
                     <br />
                     <TinyButton onClick={reset}>Select different image</TinyButton>
                   </div>
-                </Suspense>
+                </BrowserComponent>
               )}
             />
           </div>

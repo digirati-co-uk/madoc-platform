@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { SitePlugin } from '../../../../types/schemas/plugins';
 import { Button } from '../../../shared/navigation/Button';
@@ -119,7 +119,7 @@ export const DevelopmentPlugin: React.FC = () => {
   });
 
   if (user?.role !== 'global_admin') {
-    return <Redirect to={'/'} />;
+    return <Navigate to={'/'} />;
   }
 
   if (data) {

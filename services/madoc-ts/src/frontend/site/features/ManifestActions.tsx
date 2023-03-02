@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { Button, ButtonRow } from '../../shared/navigation/Button';
 import { IIIFDragIcon } from '../../shared/components/IIIFDragIcon';
 import { HrefLink } from '../../shared/utility/href-link';
@@ -17,8 +17,12 @@ import { ManifestItemFilter } from './ManifestItemFilter';
 import { ManifestTaskProgress } from './ManifestTaskProgress';
 import { usePreventCanvasNavigation } from './PreventUsersNavigatingCanvases';
 import { useSiteConfiguration } from './SiteConfigurationContext';
+import { GenerateManifestPdf } from './GenerateManifestPdf';
 
-export const ManifestActions: React.FC = () => {
+export type props = {
+  alignment?: string;
+};
+export const ManifestActions: React.FC<props> = ({ alignment }) => {
   const { t } = useTranslation();
   const createLink = useRelativeLinks();
   const options = useManifestPageConfiguration();
@@ -54,7 +58,7 @@ export const ManifestActions: React.FC = () => {
   return (
     <>
       {showButton ? (
-        <ButtonRow>
+        <ButtonRow $center={alignment === 'center'} $right={alignment === 'right'}>
           {showCaptureModelOnManifest ? (
             <Button as={HrefLink} href={createLink({ subRoute: 'model' })} $primary $large>
               {userManifestTask && done.length ? t('View submission') : t('Start contributing')}
@@ -68,7 +72,7 @@ export const ManifestActions: React.FC = () => {
           )}
         </ButtonRow>
       ) : null}
-      <ButtonRow>
+      <ButtonRow $center={alignment === 'center'} $right={alignment === 'right'}>
         {showIIIFLogo ? <IIIFDragIcon /> : null}
         {!options.hideOpenInMirador ? (
           <Button
@@ -90,6 +94,9 @@ export const ManifestActions: React.FC = () => {
         {(isActive || isPreparing) && !options.hideFilterImages && !showCaptureModelOnManifest ? (
           <ManifestItemFilter />
         ) : null}
+
+        {options.generatePDF ? <GenerateManifestPdf /> : null}
+
         <ManifestTaskProgress />
         {!showCaptureModelOnManifest ? <AssignManifestToUser /> : null}
       </ButtonRow>
@@ -102,5 +109,18 @@ blockEditorFor(ManifestActions, {
   label: 'Manifest actions',
   anyContext: ['manifest'],
   requiredContext: ['manifest'],
-  editor: {},
+  defaultProps: {
+    alignment: '',
+  },
+  editor: {
+    alignment: {
+      label: 'alignment',
+      type: 'dropdown-field',
+      options: [
+        { value: 'left', text: 'Left aligned' },
+        { value: 'center', text: 'Center aligned' },
+        { value: 'right', text: 'Right aligned' },
+      ],
+    },
+  },
 });

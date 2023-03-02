@@ -6,6 +6,10 @@ import { getProjectAnnotationStyle } from './routes/annotation-styles/get-projec
 import { annotationStyles } from './routes/annotation-styles/index';
 import { searchAllUsers } from './routes/global/search-all-users';
 import { systemCheck } from './routes/global/system-check';
+import { getAutomatedUsers } from './routes/manage-site/get-automated-users';
+import { createProjectExport } from './routes/projects/create-project-export';
+import { getProjectRawData } from './routes/projects/get-project-raw-data';
+import { listProjectModelEntityAutocomplete } from './routes/projects/list-project-model-entity-autocomplete';
 import { updateProjectAnnotationStyle } from './routes/projects/update-project-annotation-style';
 import { siteRoot } from './routes/root';
 import {
@@ -82,6 +86,7 @@ import { updateInvitation } from './routes/manage-site/update-invitation';
 import { updateSiteDetails } from './routes/manage-site/update-site-details';
 import { updateUserSiteRole } from './routes/manage-site/update-user-site-role';
 import { getAllProjectNotes } from './routes/projects/get-all-project-notes';
+import { siteCompletions } from './routes/site/site-completions';
 import { siteDetails } from './routes/site/site-details';
 import { deleteManifestSummary } from './routes/iiif/manifests/delete-manifest-summary';
 import { siteManifestBuild } from './routes/site/site-manifest-build';
@@ -118,6 +123,7 @@ import { indexManifest } from './routes/search/index-manifest';
 import { updateProjectStatus } from './routes/projects/update-project-status';
 import { siteManifestTasks } from './routes/site/site-manifest-tasks';
 import { getStaticPage, sitePages } from './routes/site/site-pages';
+import { listProjectsAutocomplete } from './routes/projects/list-projects-autocomplete';
 import { siteTaskMetadata } from './routes/site/site-task-metadata';
 import { siteUserAutocomplete } from './routes/site/site-user-autocomplete';
 import { forgotPassword } from './routes/user/forgot-password';
@@ -143,8 +149,10 @@ import { importBulkManifests, importCollection, importManifest, importManifestOc
 import { loginPage } from './routes/user/login';
 import { getSiteScopes, saveSiteScopes } from './routes/admin/site-scopes';
 import { logout } from './routes/user/logout';
-import { frontendBundles, pluginBundles } from './routes/assets/frontend-bundles';
-import { adminFrontend, siteFrontend } from './routes/admin/frontend';
+import { frontendBundles } from './routes/assets/frontend-bundles';
+import { pluginBundles } from './routes/assets/plugin-bundles';
+import { adminFrontend } from './routes/frontend/admin-frontend';
+import { siteFrontend } from './routes/frontend/site-frontend';
 import { createCollection } from './routes/iiif/collections/create-collection';
 import { deleteCollectionEndpoint } from './routes/iiif/collections/delete-collection';
 import { getCollection } from './routes/iiif/collections/get-collection';
@@ -209,6 +217,7 @@ import { siteCanvasTasks } from './routes/site/site-canvas-tasks';
 import { getProjectTask } from './routes/projects/get-project-task';
 import { assignRandomResource } from './routes/projects/assign-random-resource';
 import { router as activityStreamRoutes } from './activity-streams/router';
+import { router as captureModelRoutes } from './capture-model-server/router';
 import { getCollectionDeletionSummary } from './routes/iiif/collections/delete-collection-summary';
 import { deleteCanvasSummary } from './routes/iiif/canvases/delete-canvas-summary';
 import { deleteProjectSummary } from './routes/projects/delete-project-summary';
@@ -255,6 +264,7 @@ export const router = new TypedRouter({
 
   // Manage users (on site)
   'site-admin-list-all-site-users': [TypedRouter.GET, '/api/madoc/manage-site/users', getSiteUsers],
+  'site-list-all-bot-users': [TypedRouter.GET, '/api/madoc/manage-site/bots', getAutomatedUsers],
   // User API.
   'manage-site-all-users': [TypedRouter.GET, '/api/madoc/manage-site/users/search', userAutocomplete],
   'site-admin-get-user': [TypedRouter.GET, '/api/madoc/manage-site/users/:userId', getSiteUser],
@@ -375,6 +385,11 @@ export const router = new TypedRouter({
   'get-manifest-metadata': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/metadata', getManifestMetadata],
   'get-manifest-structure': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/structure', getManifestStructure],
   'get-manifest-projects': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/projects', getManifestProjects],
+  'get-manifest-projects-autocomplete': [
+    TypedRouter.GET,
+    '/api/madoc/iiif/manifests/:id/projects-autocomplete',
+    [getManifestProjects, listProjectsAutocomplete],
+  ],
   'get-manifest-deletion-summary': [
     TypedRouter.GET,
     '/api/madoc/iiif/manifests/:id/deletion-summary',
@@ -444,6 +459,7 @@ export const router = new TypedRouter({
   'create-project': [TypedRouter.POST, '/api/madoc/projects', createNewProject],
   'list-projects': [TypedRouter.GET, '/api/madoc/projects', listProjects],
   'get-project': [TypedRouter.GET, '/api/madoc/projects/:id', getProject],
+  'export-project': [TypedRouter.POST, '/api/madoc/projects/:id/export', createProjectExport],
   'get-project-structure': [TypedRouter.GET, '/api/madoc/projects/:id/structure', getProjectStructure],
   'get-project-metadata': [TypedRouter.GET, '/api/madoc/projects/:id/metadata', getProjectMetadata],
   'update-project-metadata': [TypedRouter.PUT, '/api/madoc/projects/:id/metadata', updateProjectMetadata],
@@ -456,6 +472,11 @@ export const router = new TypedRouter({
     TypedRouter.GET,
     '/api/madoc/projects/:id/annotation-style',
     getProjectAnnotationStyle,
+  ],
+  'list-project-model-entity-autocomplete': [
+    TypedRouter.GET,
+    '/api/madoc/projects/:id/model-autocomplete',
+    listProjectModelEntityAutocomplete,
   ],
   'update-project-status': [TypedRouter.PUT, '/api/madoc/projects/:id/status', updateProjectStatus],
   'create-project-resource-claim': [TypedRouter.POST, '/api/madoc/projects/:id/claim', createResourceClaim],
@@ -472,6 +493,7 @@ export const router = new TypedRouter({
   'get-project-model': [TypedRouter.GET, '/api/madoc/projects/:id/models/:subject', getProjectModel],
   'get-project-task': [TypedRouter.GET, '/api/madoc/projects/:id/task', getProjectTask],
   'assign-random-resource': [TypedRouter.POST, '/api/madoc/projects/:id/random', assignRandomResource],
+  'get-project-data-raw': [TypedRouter.GET, '/api/madoc/projects/:id/raw-model-fields', getProjectRawData],
   'get-project-personal-note': [TypedRouter.GET, '/api/madoc/projects/:id/personal-notes/:resourceId', getProjectNote],
   'get-project-all-personal-note': [TypedRouter.GET, '/api/madoc/projects/:id/personal-notes', getAllProjectNotes],
   'update-project-personal-note': [
@@ -536,8 +558,7 @@ export const router = new TypedRouter({
     pluginBundles,
     { isPublic: true },
   ],
-  'assets-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleId.bundle.js', frontendBundles, { isPublic: true }],
-  'assets-sub-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleName', frontendBundles, { isPublic: true }],
+  'assets-bundles': [TypedRouter.GET, '/s/:slug/madoc/assets/:bundleName', frontendBundles, { isPublic: true }],
   'get-user-details': [TypedRouter.GET, '/s/:slug/madoc/api/me', userDetails],
 
   // Media
@@ -590,6 +611,7 @@ export const router = new TypedRouter({
     siteCanvasTasks,
   ],
   'site-configuration': [TypedRouter.GET, '/s/:slug/madoc/api/configuration', siteConfiguration],
+  'site-completion': [TypedRouter.GET, '/s/:slug/madoc/api/completions/:type', siteCompletions],
   'site-model-configuration': [TypedRouter.GET, '/s/:slug/madoc/api/configuration/model', siteModelConfiguration],
   'site-page-navigation': [TypedRouter.GET, '/s/:slug/madoc/api/pages/navigation/:paths*', sitePageNavigation],
   'site-facet-configuration': [
@@ -621,6 +643,7 @@ export const router = new TypedRouter({
   // Other routes.
   ...activityStreamRoutes,
   ...annotationStyles,
+  ...captureModelRoutes,
   ...getAuthRoutes(),
 
   // Development

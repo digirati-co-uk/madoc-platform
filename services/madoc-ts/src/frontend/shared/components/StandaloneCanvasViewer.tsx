@@ -1,5 +1,5 @@
-import { CanvasContext, useVaultEffect } from '@hyperion-framework/react-vault';
-import { CanvasNormalized } from '@hyperion-framework/types';
+import { CanvasContext, useVaultEffect } from 'react-iiif-vault';
+import { CanvasNormalized } from '@iiif/presentation-3';
 import React, { useState } from 'react';
 import { CanvasFull } from '../../../types/canvas-full';
 import { useViewerHeight } from '../../site/hooks/use-viewer-height';
@@ -13,7 +13,9 @@ export const CanvasViewer: React.FC<{ canvas: CanvasFull['canvas'] }> = ({ canva
   useVaultEffect(
     vault => {
       if (canvas) {
-        vault.load(canvas.id, JSON.parse(JSON.stringify(canvas))).then(c => {
+        const canvasJson = JSON.parse(JSON.stringify(canvas));
+        canvasJson.id = canvasJson.source_id || canvasJson.id;
+        vault.load(canvasJson.id, canvasJson).then(c => {
           setCanvasRef(c as any);
         });
       }

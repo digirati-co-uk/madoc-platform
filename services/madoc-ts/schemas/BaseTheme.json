@@ -14,6 +14,16 @@
       "type": "string"
     },
     "theme": {
+      "$ref": "#/definitions/MadocTheme"
+    }
+  },
+  "required": [
+    "name",
+    "theme",
+    "version"
+  ],
+  "definitions": {
+    "MadocTheme": {
       "allOf": [
         {
           "$ref": "#/definitions/MadocThemeBase"
@@ -27,19 +37,6 @@
           }
         }
       ]
-    }
-  },
-  "required": [
-    "name",
-    "theme",
-    "version"
-  ],
-  "definitions": {
-    "T": {
-      "type": "object"
-    },
-    "T_1": {
-      "type": "object"
     },
     "MadocThemeBase": {
       "type": "object",
@@ -64,10 +61,17 @@
           "enum": [
             "default"
           ]
+        },
+        "fonts": {
+          "type": "string",
+          "enum": [
+            "default"
+          ]
         }
       },
       "required": [
         "accent",
+        "fonts",
         "footer",
         "global",
         "header",
@@ -114,18 +118,15 @@
         },
         "global": {
           "$ref": "#/definitions/2c90d36b20396f72f9bf51b77fb57411"
+        },
+        "fonts": {
+          "$ref": "#/definitions/eea4564a3c2bbe3be73ec4cdbd482dd0"
         }
       }
     },
     "5f960e3e2e87815f1d28c4d9b87c5a1f": {
       "type": "object",
       "properties": {
-        "size": {
-          "type": [
-            "number",
-            "object"
-          ]
-        },
         "headerBackground": {
           "type": [
             "string",
@@ -159,6 +160,12 @@
         "searchBorderFocusColor": {
           "type": [
             "string",
+            "object"
+          ]
+        },
+        "size": {
+          "type": [
+            "number",
             "object"
           ]
         }
@@ -201,12 +208,6 @@
     "707af62e329a855f15bc72dc96445a8e": {
       "type": "object",
       "properties": {
-        "color": {
-          "type": [
-            "string",
-            "object"
-          ]
-        },
         "background": {
           "type": [
             "string",
@@ -218,6 +219,12 @@
             "string",
             "object"
           ]
+        },
+        "color": {
+          "type": [
+            "string",
+            "object"
+          ]
         }
       }
     },
@@ -225,6 +232,23 @@
       "type": "object",
       "properties": {
         "maxWidth": {
+          "type": [
+            "string",
+            "object"
+          ]
+        }
+      }
+    },
+    "eea4564a3c2bbe3be73ec4cdbd482dd0": {
+      "type": "object",
+      "properties": {
+        "fontFamily": {
+          "type": [
+            "string",
+            "object"
+          ]
+        },
+        "fontFamilyMono": {
           "type": [
             "string",
             "object"

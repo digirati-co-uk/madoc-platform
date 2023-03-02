@@ -4,8 +4,8 @@ import { CanvasNavigation } from '../../../../shared/components/CanvasNavigation
 import { useSite } from '../../../../shared/hooks/use-site';
 import { UniversalComponent } from '../../../../types';
 import { LocaleString } from '../../../../shared/components/LocaleString';
-import { useLocation, useParams, useRouteMatch } from 'react-router-dom';
-import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
+import { Outlet, useLocation, useParams } from 'react-router-dom';
+
 import { CanvasFull } from '../../../../../types/canvas-full';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
@@ -16,19 +16,19 @@ import { ManifestFull } from '../../../../../types/schemas/manifest-full';
 
 type CanvasViewType = {
   data: CanvasFull;
-  query: {};
+  query: unknown;
   params: { id: string };
   variables: { id: number };
-  context: { manifest?: ManifestFull['manifest'] };
 };
 
 export const CanvasView: UniversalComponent<CanvasViewType> = createUniversalComponent<CanvasViewType>(
-  ({ route }) => {
+  () => {
     const { t } = useTranslation();
     const params = useParams<{ id: string; manifestId?: string }>();
-    const match = useRouteMatch();
     const { pathname } = useLocation();
-    const subRoute = pathname.slice(match.url.length + 1);
+    const lastSegment = pathname.split('/').pop(); // @todo test
+    // eslint-disable-next-line eqeqeq
+    const subRoute = Number(lastSegment) !== Number(lastSegment) ? lastSegment : '';
     const { id, manifestId } = params;
     const { data } = useData(CanvasView);
     const site = useSite();
@@ -89,14 +89,18 @@ export const CanvasView: UniversalComponent<CanvasViewType> = createUniversalCom
               link: manifestId ? `/manifests/${manifestId}/canvases/${id}/plaintext` : `/canvases/${id}/plaintext`,
             },
             {
+              label: t('JSON'),
+              link: manifestId ? `/manifests/${manifestId}/canvases/${id}/json` : `/canvases/${id}/json`,
+            },
+            {
               label: t('Delete'),
               link: manifestId ? `/manifests/${manifestId}/canvases/${id}/delete` : `/canvases/${id}/delete`,
             },
           ]}
         />
         <WidePage>
-          {renderUniversalRoutes(route.routes, { canvas, manifest: manifestResponse?.manifest })}
-          <CanvasNavigation manifestId={manifestId} canvasId={id} admin subRoute={subRoute} />
+          <Outlet />
+          <CanvasNavigation manifestId={manifestId} canvasId={id as string} admin subRoute={subRoute} />
         </WidePage>
       </>
     );

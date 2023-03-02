@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { AnnotationStyles } from '../../../../../types/annotation-styles';
 import { ProjectFull } from '../../../../../types/project-full';
 import { EditorContext } from '../../../../shared/capture-models/editor/components/EditorContext/EditorContext';
 import { defaultTheme } from '../../../../shared/capture-models/editor/themes';
@@ -9,8 +8,7 @@ import { DashboardTab, DashboardTabs } from '../../../../shared/components/Dashb
 import { useProjectTemplate } from '../../../../shared/hooks/use-project-template';
 import { UniversalComponent } from '../../../../types';
 import React, { useState } from 'react';
-import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
-import { Link, useHistory, useParams } from 'react-router-dom';
+import { Link, Outlet, useLocation, useParams } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { useMutation } from 'react-query';
 import { useApi } from '../../../../shared/hooks/use-api';
@@ -35,20 +33,17 @@ type ProjectModelEditorType = {
 export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = createUniversalComponent<
   ProjectModelEditorType
 >(
-  ({ route }) => {
+  () => {
     const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
-    const { data, status, refetch } = useData(ProjectModelEditor, {}, { refetchInterval: false });
+    const { data, status } = useData(ProjectModelEditor, {}, { refetchInterval: false });
     const [newStructure, setNewStructure] = useState<CaptureModel['structure'] | undefined>();
     const [newDocument, setNewDocument] = useState<CaptureModel['document'] | undefined>();
-    const { location } = useHistory();
-    const [revisionNumber, setRevisionNumber] = useState(0);
+    const location = useLocation();
     const api = useApi();
     const model = data?.captureModel;
     const config = useProjectTemplate(data?.template);
     const editorConfig = config?.configuration?.captureModels;
-    const annotationTheme = data?.annotationTheme;
-    const styleId = data?.style_id;
 
     const [updateModel, updateModelStatus] = useMutation(async (m: CaptureModel) => {
       if (m.id) {
@@ -56,7 +51,6 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
 
         setNewStructure(newModel.structure);
         setNewDocument(newModel.document);
-        setRevisionNumber(n => n + 1);
       }
     }, {});
 
@@ -72,11 +66,7 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
       return (
         <EditorContext captureModel={model}>
           <ModelEditorProvider template={data.template}>
-            <PreviewCaptureModel
-              structure={newStructure ? newStructure : model.structure}
-              document={newDocument ? newDocument : model.document}
-              revisionNumber={revisionNumber}
-            />
+            <PreviewCaptureModel />
           </ModelEditorProvider>
         </EditorContext>
       );
@@ -139,14 +129,7 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
           >
             <ModelEditorProvider template={data.template}>
               <AutoStructure />
-              {renderUniversalRoutes(route.routes, {
-                structure: newStructure ? newStructure : model.structure,
-                document: newDocument ? newDocument : model.document,
-                revisionNumber,
-                annotationTheme,
-                styleId,
-                refetch,
-              })}
+              <Outlet />
             </ModelEditorProvider>
           </EditorContext>
         </ThemeProvider>

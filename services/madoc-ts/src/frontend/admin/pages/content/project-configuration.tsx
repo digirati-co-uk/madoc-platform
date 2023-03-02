@@ -1,31 +1,24 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { WidePage } from '../../../shared/layout/WidePage';
 import { EditShorthandCaptureModel } from '../../../shared/capture-models/EditorShorthandCaptureModel';
-import { siteConfigurationModel } from '../../../shared/configuration/site-config';
+import { postProcessConfiguration, siteConfigurationModel } from '../../../shared/configuration/site-config';
 import { useApi } from '../../../shared/hooks/use-api';
 import { apiHooks } from '../../../shared/hooks/use-api-query';
 import { AdminHeader } from '../../molecules/AdminHeader';
 
-function postProcessConfiguration(config: any) {
-  if (config.revisionApprovalsRequired) {
-    config.revisionApprovalsRequired = Number(config.revisionApprovalsRequired);
-  }
-
-  return config;
-}
-
 export const SiteProjectConfiguration: React.FC = () => {
   const { data: value, refetch } = apiHooks.getSiteConfiguration(() => []);
   const api = useApi();
-  const history = useHistory();
+  const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const [saveConfig] = useMutation(async (rev: any) => {
     await api.saveSiteConfiguration(postProcessConfiguration(rev));
     await refetch();
-    history.push(`/configure/site?success=true`);
+    navigate(`/configure/site?success=true`);
   });
 
   return (
@@ -40,7 +33,13 @@ export const SiteProjectConfiguration: React.FC = () => {
       />
       <WidePage>
         <div style={{ maxWidth: 600 }}>
-          <EditShorthandCaptureModel data={value} template={siteConfigurationModel} onSave={saveConfig} />
+          <EditShorthandCaptureModel
+            enableSearch
+            searchLabel={t('Search configuration')}
+            data={value}
+            template={siteConfigurationModel}
+            onSave={saveConfig}
+          />
         </div>
       </WidePage>
     </>

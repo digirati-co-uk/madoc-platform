@@ -5,13 +5,14 @@ import * as canvas from '../gateway/tasks/import-canvas';
 import * as crowdsourcing from '../gateway/tasks/crowdsourcing-task';
 import * as review from '../gateway/tasks/crowdsourcing-review';
 import { api } from '../gateway/api.server';
-import * as tasks from '../gateway/tasks/task-helpers';
 import * as crowdsourcingCanvas from '../gateway/tasks/crowdsourcing-canvas-task';
 import * as crowdsourcingManifest from '../gateway/tasks/crowdsourcing-manifest-task';
 import * as processManifestOcr from '../gateway/tasks/process-manifest-ocr';
 import * as processCanvasOcr from '../gateway/tasks/process-canvas-ocr';
 import * as searchIndex from '../gateway/tasks/search-index-task';
 import * as apiActionTask from '../gateway/tasks/api-action-task';
+import * as migrationTasks from '../capture-model-server/migration/migrate-model-task';
+import * as exportResource from '../gateway/tasks/export-resource-task';
 
 const configOptions: WorkerOptions = {
   connection: {
@@ -68,6 +69,13 @@ const worker = new Worker(
 
     console.log('starting job...', job.id, job.data ? job.data.taskId : undefined);
 
+    // @todo with the addition of automation - this will need to be changed so we can fetch the Task before handing
+    //   it to the job handler. Every single handler already fetches the task, so this shouldn't be a problem
+    //   The handlers can be changed quickly. We can also change this slightly messy code to work better.
+    //   The remaining questions will be:
+    //       - Should we only fetch the user if there is a supported automation?
+    //       - Should we fetch the assignee details and pass to every job handler?
+
     try {
       switch (job.data.type) {
         case collection.type:
@@ -114,6 +122,14 @@ const worker = new Worker(
           });
         case apiActionTask.type:
           return await apiActionTask.jobHandler(job.name, job.data.taskId, contextualApi).catch(err => {
+            throw err;
+          });
+        case migrationTasks.type:
+          return await migrationTasks.jobHandler(job.name, job.data.taskId, contextualApi).catch(err => {
+            throw err;
+          });
+        case exportResource.type:
+          return await exportResource.jobHandler(job.name, job.data.taskId, contextualApi).catch(err => {
             throw err;
           });
 

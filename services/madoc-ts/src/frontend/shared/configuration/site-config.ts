@@ -1,6 +1,18 @@
 import { ProjectConfiguration } from '../../../types/schemas/project-configuration';
 import { BaseField } from '../capture-models/types/field-types';
 
+export function postProcessConfiguration(config: Partial<ProjectConfiguration>): ProjectConfiguration {
+  if (config.revisionApprovalsRequired) {
+    config.revisionApprovalsRequired = Number(config.revisionApprovalsRequired);
+  }
+
+  if ((config.maxContributionsPerResource as any) === '') {
+    config.maxContributionsPerResource = false;
+  }
+
+  return config as any;
+}
+
 export const siteConfigurationModel: {
   [key in keyof ProjectConfiguration]: string | (Partial<BaseField> & any);
 } = {
@@ -42,6 +54,13 @@ export const siteConfigurationModel: {
       // Disabled option.
       { value: 'manifest', text: 'Manifest' },
     ],
+  },
+  forkMode: {
+    type: 'checkbox-field',
+    label: 'Unique submissions',
+    description:
+      'When enabled each submission by a user will be a distinct submission and not contributing to a single document',
+    inlineLabel: 'Enable unique submissions',
   },
   maxContributionsPerResource: {
     label: 'Contributors per resource',
@@ -271,6 +290,10 @@ export const siteConfigurationModel: {
         label: 'Disable next canvas prompt after submission',
         value: 'disableNextCanvas',
       },
+      {
+        label: 'Enable rotation of images',
+        value: 'enableRotation',
+      },
     ],
   },
   reviewOptions: {
@@ -281,6 +304,10 @@ export const siteConfigurationModel: {
       {
         label: 'Allow merging submissions',
         value: 'allowMerging',
+      },
+      {
+        label: 'Allow auto-review if assigned to automated user',
+        value: 'enableAutoReview',
       },
     ],
   },
@@ -331,6 +358,10 @@ export const siteConfigurationModel: {
       {
         label: 'Hide go to random canvas button',
         value: 'hideRandomCanvas',
+      },
+      {
+        label: 'Show button to generate PDF',
+        value: 'generatePDF',
       },
       {
         label: 'Hide image filtering',

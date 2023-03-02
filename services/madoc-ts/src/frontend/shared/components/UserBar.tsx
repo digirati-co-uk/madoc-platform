@@ -2,7 +2,7 @@ import { stringify } from 'query-string';
 import React, { useEffect, useMemo } from 'react';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { siteRoles } from '../../config';
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
@@ -29,7 +29,7 @@ const UserBarContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  z-index: 11; // 10 = image viewer, this allows the notification center to be above.
+  z-index: 21; // 20 = image viewer controls, this allows the notification center to be above.
   padding: 0 18px;
 `;
 
@@ -71,7 +71,7 @@ const UserBarInstallation = styled.div`
 
 export function useLoginRedirect(admin = false) {
   const site = useSite();
-  const { location } = useHistory();
+  const location = useLocation();
   const query = useLocationQuery();
   const queryKeys = Object.keys(query || {});
 
@@ -120,7 +120,7 @@ export const UserBar: React.FC<{
   admin?: boolean;
 }> = ({ user, admin }) => {
   const { t } = useTranslation();
-  const { location } = useHistory();
+  const location = useLocation();
   const systemConfig = useSystemConfig();
   const redirect = useLoginRedirect(admin);
   const showAdmin = user && user.scope.indexOf('site.admin') !== -1;

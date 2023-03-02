@@ -34,6 +34,7 @@ export const CheckboxFieldList: FieldComponent<CheckboxListFieldProps> = props =
               name={props.id}
               value={option.value}
               id={props.id}
+              aria-label={option.label}
               checked={props.value[option.value]}
               onChange={v => {
                 props.updateValue({

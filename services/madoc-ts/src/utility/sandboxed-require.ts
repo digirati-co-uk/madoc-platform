@@ -1,15 +1,45 @@
 import * as fs from 'fs';
+import React from 'react';
+import * as ReactQuery from 'react-query';
+import * as ReactRouterDom from 'react-router-dom';
+import styled from 'styled-components';
 import { NodeVM, VMScript } from 'vm2';
 import * as publicApi from '../frontend/shared/plugins/public-api';
-import { ALLOWED_MODULES } from '../frontend/shared/plugins/use-module';
 
 const vm = new NodeVM({
   require: {
-    external: ALLOWED_MODULES,
+    mock: {
+      '@madoc.io/types': publicApi,
+      'react-router-dom': ReactRouterDom,
+      'react-query': ReactQuery,
+      react: React,
+      'styled-components': styled,
+    },
   },
-  sandbox: {
-    Madoc: publicApi,
-  },
+
+  // require: {
+  //   // external: {
+  //   //   transitive: false,
+  //   //   modules: ALLOWED_MODULES as any,
+  //   // },
+  //   external: true,
+  //   mock: {
+  //     '@madoc.io/types': publicApi,
+  //   },
+  // },
+  // wrapper: 'none',
+  // sandbox: {
+  //   Madoc: publicApi,
+  //
+  //   // global.Madoc, global.React, global.reactRouterDom
+  //   React: React,
+  //   reactRouteDom: ReactRouterDom,
+  //   global: {
+  //     React: React,
+  //     reactRouteDom: ReactRouterDom,
+  //     Madoc: publicApi,
+  //   },
+  // },
 });
 
 export async function sandboxedRequire(name: string) {

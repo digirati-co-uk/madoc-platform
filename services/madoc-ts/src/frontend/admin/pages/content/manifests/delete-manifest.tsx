@@ -3,9 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { ManifestDeletionSummary } from '../../../../../types/deletion-summary';
 import { useData } from '../../../../shared/hooks/use-data';
 import { UniversalComponent } from '../../../../types';
-import { ManifestFull } from '../../../../../types/schemas/manifest-full';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '../../../../shared/navigation/Button';
 import { useApi } from '../../../../shared/hooks/use-api';
 
@@ -21,7 +20,7 @@ export const DeleteManifest: UniversalComponent<DeleteManifestType> = createUniv
     const { data } = useData(DeleteManifest);
     const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const api = useApi();
 
@@ -68,7 +67,7 @@ export const DeleteManifest: UniversalComponent<DeleteManifestType> = createUniv
         ) : null}
         <Button
           onClick={() => {
-            history.push(`/manifests`);
+            navigate(`/manifests`);
             api.deleteManifest(Number(id));
           }}
         >

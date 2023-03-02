@@ -1,10 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { Redirect, useLocation } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { DashboardTab, DashboardTabs } from '../../shared/components/DashboardTabs';
 import { useUser } from '../../shared/hooks/use-site';
 import { useUserDetails } from '../../shared/hooks/use-user-details';
 import { HrefLink } from '../../shared/utility/href-link';
-import { renderUniversalRoutes } from '../../shared/utility/server-utils';
 import { UniversalComponent } from '../../types';
 import { createUniversalComponent } from '../../shared/utility/create-universal-component';
 import { useStaticData } from '../../shared/hooks/use-data';
@@ -17,9 +16,9 @@ import { isAdmin, isContributor, isReviewer } from '../../shared/utility/user-ro
 import { UserGreeting } from '../features/UserGreeting';
 
 type UserHomepageType = {
-  query: {};
-  params: {};
-  context: {};
+  query: unknown;
+  params: Record<string, never>;
+  variables: Record<string, never>;
   data: {
     userDetails: UserDetails;
     reviewerTasks?: { tasks: CrowdsourcingReview[]; pagination: Pagination };
@@ -29,11 +28,10 @@ type UserHomepageType = {
     isSiteContributor: boolean;
     projects: any[];
   };
-  variables: {};
 };
 
 export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversalComponent<UserHomepageType>(
-  ({ route }) => {
+  () => {
     const { data, error } = useStaticData(UserHomepage, {}, { retry: false });
     const location = useLocation();
     const user = useUser();
@@ -43,7 +41,7 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
     const showReviews = data && isReviewer(data.userDetails);
 
     if (error || !user) {
-      return <Redirect to={'/'} />;
+      return <Navigate to={'/'} />;
     }
 
     if (!data) {
@@ -73,7 +71,7 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
           ) : null}
         </DashboardTabs>
 
-        {renderUniversalRoutes(route.routes)}
+        <Outlet />
       </div>
     );
   },

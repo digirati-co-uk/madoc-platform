@@ -14,6 +14,7 @@ import {
   EditorToolbarSpacer,
   EditorToolbarTitle,
 } from '../navigation/EditorToolbar';
+import { BrowserComponent } from '../utility/browser-component';
 import { HrefLink } from '../utility/href-link';
 import { ArrowBackIcon } from '../icons/ArrowBackIcon';
 import { CaptureModelHeader } from '../capture-models/CaptureModelHeader';
@@ -42,7 +43,7 @@ export const CaptureModelViewer: React.FC<{
   const [{ captureModel, canvas, target }] = useLoadedCaptureModel(modelId, initialModel, overrideCanvasId);
 
   return (
-    <React.Suspense fallback={<div>loading...</div>}>
+    <BrowserComponent fallback={<div>loading...</div>}>
       <MaximiseWindow>
         {({ toggle, isOpen }) =>
           captureModel ? (
@@ -100,6 +101,6 @@ export const CaptureModelViewer: React.FC<{
           )
         }
       </MaximiseWindow>
-    </React.Suspense>
+    </BrowserComponent>
   );
 };

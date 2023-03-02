@@ -47,7 +47,7 @@ export const ConfigureLanguages: React.FC = () => {
 
   const [disableTranslation, disableTranslationStatus] = useMutation(async (tag: string) => {
     await api.updateLocalePreferences({
-      displayLanguages: displayLanguages.filter(t => t !== tag),
+      displayLanguages: displayLanguages.filter(ta => ta !== tag),
     });
     await locales.refetch();
   });
@@ -68,7 +68,7 @@ export const ConfigureLanguages: React.FC = () => {
 
   const [disableContent, disableContentStatus] = useMutation(async (tag: string) => {
     await api.updateLocalePreferences({
-      contentLanguages: flatContentLocales.filter((t: string) => t !== tag),
+      contentLanguages: flatContentLocales.filter((ta: string) => ta !== tag),
     });
     await locales.refetch();
   });
@@ -148,10 +148,10 @@ export const ConfigureLanguages: React.FC = () => {
         {availableLocales.length ? (
           <SimpleTable.Table>
             <tbody>
-              {availableLocales.map(availableLocale => {
+              {availableLocales.map((availableLocale, i) => {
                 const data = locale.getByTag(availableLocale.code);
                 return (
-                  <SimpleTable.Row>
+                  <SimpleTable.Row key={i}>
                     <SimpleTable.Cell>
                       <TickIcon />
                     </SimpleTable.Cell>
@@ -203,10 +203,10 @@ export const ConfigureLanguages: React.FC = () => {
         {contentLocales.length ? (
           <SimpleTable.Table>
             <tbody>
-              {contentLocales.map(contentLocale => {
+              {contentLocales.map((contentLocale, i) => {
                 const data = locale.getByTag(contentLocale.tag);
                 return (
-                  <SimpleTable.Row>
+                  <SimpleTable.Row key={i}>
                     <SimpleTable.Cell>{data.name}</SimpleTable.Cell>
                     <SimpleTable.Cell>{data.local}</SimpleTable.Cell>
                     <SimpleTable.Cell>{data.tag}</SimpleTable.Cell>
@@ -230,10 +230,13 @@ export const ConfigureLanguages: React.FC = () => {
             <p>{t('The following languages were found in content you imported')}</p>
             <SimpleTable.Table>
               <tbody>
-                {suggestions.map(suggestion => {
+                {suggestions.map((suggestion, i) => {
                   const data = locale.getByTag(suggestion.language);
+                  if (!data) {
+                    return null;
+                  }
                   return (
-                    <SimpleTable.Row>
+                    <SimpleTable.Row key={i}>
                       <SimpleTable.Cell>{data.name}</SimpleTable.Cell>
                       <SimpleTable.Cell>{data.local}</SimpleTable.Cell>
                       <SimpleTable.Cell>{data.tag}</SimpleTable.Cell>

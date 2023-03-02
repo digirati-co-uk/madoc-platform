@@ -2,7 +2,6 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { Button, SmallButton } from '../../src/frontend/shared/navigation/Button';
 import { Breadcrumbs } from '../../src/frontend/shared/navigation/Breadcrumbs';
-import { MemoryRouter } from 'react-router-dom';
 import { SearchBox } from '../../src/frontend/shared/atoms/SearchBox';
 import { Dropdown } from '../../src/frontend/shared/capture-models/editor/atoms/Dropdown';
 import { StandardButton } from '../../src/frontend/shared/atoms/StandardButton';
@@ -28,7 +27,7 @@ export const buttons = () => (
 );
 
 export const breadcrumbs = () => (
-  <MemoryRouter>
+  <>
     <SiteProvider value={{ site: { slug: '#', id: 1 } }}>
       <Breadcrumbs
         items={[
@@ -38,7 +37,7 @@ export const breadcrumbs = () => (
         ]}
       />
     </SiteProvider>
-  </MemoryRouter>
+  </>
 );
 
 export const searchBox = () => <SearchBox large={true} onSearch={val => alert('you searched for ' + val)} />;

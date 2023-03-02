@@ -4,6 +4,7 @@
     "outDir": "./.storybook/types",
     "esModuleInterop": true,
     "declaration": true,
+    "resolveJsonModule": true,
     "emitDeclarationOnly": true,
   },
   "include": [

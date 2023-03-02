@@ -2,7 +2,7 @@ import { generateId } from '../../frontend/shared/capture-models/helpers/generat
 import { BaseTask } from './base-task';
 import * as importManifest from './import-manifest';
 import * as tasks from './task-helpers';
-import { Vault } from '@hyperion-framework/vault';
+import { Vault } from '@iiif/vault';
 import fetch from 'node-fetch';
 import { ImportManifestTask } from './import-manifest';
 import { iiifGetLabel } from '../../utility/iiif-get-label';

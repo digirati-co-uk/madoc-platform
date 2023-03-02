@@ -2,16 +2,21 @@ import * as React from 'react';
 import { CaptureModel } from '../../../types/capture-model';
 import { Revisions } from './';
 
+import fixtures from '../../../../../../../fixtures/03-revisions/01-single-field-with-revision.json';
+
+import fixtures0 from '../../../../../../../fixtures/03-revisions/02-single-field-with-multiple-revisions.json';
+
+import fixtures01 from '../../../../../../../fixtures/03-revisions/03-nested-revision.json';
+
+import fixtures012 from '../../../../../../../fixtures/03-revisions/04-dual-transcription.json';
+
+import fixtures0123 from '../../../../../../../fixtures/03-revisions/05-allow-multiple-transcriptions.json';
+
+import fixtures01234 from '../../../../../../../fixtures/04-selectors/01-simple-selector.json';
+
 export default { title: 'Stores/Revision Store' };
 
-const models: () => CaptureModel[] = () => [
-  require('../../../../../../../fixtures/03-revisions/01-single-field-with-revision.json'),
-  require('../../../../../../../fixtures/03-revisions/02-single-field-with-multiple-revisions.json'),
-  require('../../../../../../../fixtures/03-revisions/03-nested-revision.json'),
-  require('../../../../../../../fixtures/03-revisions/04-dual-transcription.json'),
-  require('../../../../../../../fixtures/03-revisions/05-allow-multiple-transcriptions.json'),
-  require('../../../../../../../fixtures/04-selectors/01-simple-selector.json'),
-];
+const models: () => CaptureModel[] = () => [fixtures, fixtures0, fixtures01, fixtures012, fixtures0123, fixtures01234];
 
 const Test: React.FC = () => {
   const state = Revisions.useStoreState(s => s);

@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "emitDeclarationOnly": true,
+  },
+  "include": [
+    "__tests__"
+  ],
+  "exclude": [
+    "npm",
+    "lib"
+  ]
+}

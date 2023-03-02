@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { useNavigate } from 'react-router-dom';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { CanvasNavigationMinimalist } from '../../shared/components/CanvasNavigationMinimalist';
 import { useCanvasSearch } from '../../shared/hooks/use-canvas-search';
 import { usePrefetchData } from '../../shared/hooks/use-data';
@@ -9,22 +9,25 @@ import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
 import { CanvasLoader } from '../pages/loaders/canvas-loader';
 
-export const CanvasManifestPagination: React.FC<{ subRoute?: string }> = ({ subRoute }) => {
+export const CanvasManifestPagination: React.FC<{ subRoute?: string; size?: string | undefined }> = ({
+  subRoute,
+  size,
+}) => {
   const { manifestId, collectionId, canvasId, projectId } = useRouteContext();
   const [searchText] = useCanvasSearch(canvasId);
   const prefetch = usePrefetchData(CanvasLoader);
   const createLink = useRelativeLinks();
-  const { push } = useHistory();
+  const navigate = useNavigate();
   const { context } = useSlots();
 
   const beforeNavigate = useCallback(
     async (newCanvasId: number) => {
       await prefetch([newCanvasId], { ...context, canvas: newCanvasId });
-      push(
+      navigate(
         createLink({ canvasId: newCanvasId, subRoute, hash: 'canvas', query: searchText ? { searchText } : undefined })
       );
     },
-    [context, createLink, prefetch, push]
+    [context, createLink, prefetch, navigate]
   );
 
   if (!canvasId || !manifestId) {
@@ -41,6 +44,7 @@ export const CanvasManifestPagination: React.FC<{ subRoute?: string }> = ({ subR
       collectionId={collectionId}
       query={searchText ? { searchText } : undefined}
       subRoute={subRoute}
+      size={size}
     />
   );
 };
@@ -50,5 +54,17 @@ blockEditorFor(CanvasManifestPagination, {
   label: 'Canvas manifest navigation',
   anyContext: ['canvas'],
   requiredContext: ['canvas'],
-  editor: {},
+  defaultProps: {
+    size: 'full',
+  },
+  editor: {
+    size: {
+      label: 'component size',
+      type: 'dropdown-field',
+      options: [
+        { value: 'full', text: 'Full size' },
+        { value: 'small', text: 'Small' },
+      ],
+    },
+  },
 });

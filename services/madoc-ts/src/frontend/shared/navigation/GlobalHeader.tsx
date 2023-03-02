@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import styled, { css } from 'styled-components';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 
@@ -65,7 +65,7 @@ export const GlobalHeader: React.FC<{
   title: string;
   links: Array<{ link: string; label: string }>;
   username: string;
-}> = ({ username, title, links }) => {
+}> = memo(({ username, title, links }) => {
   const { buttonProps, itemProps, isOpen } = useDropdownMenu(links.length, {
     disableFocusFirstItemOnClick: links.length === 0,
   });
@@ -85,4 +85,4 @@ export const GlobalHeader: React.FC<{
       </GlobalHeaderMenuContainer>
     </GlobalHeaderContainer>
   );
-};
+});

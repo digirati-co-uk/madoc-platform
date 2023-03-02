@@ -20,6 +20,7 @@ import { createRevisionFromDocument } from '../utility/create-revision-from-docu
 import { ErrorBoundary } from '../utility/error-boundary';
 import { CustomEditorTypes } from './custom-editor-types';
 import { RenderBlock } from './render-block';
+import { BlockCreatorPreview } from './AddBlock';
 
 const EditBlock = styled(TinyButton)`
   opacity: 0;
@@ -321,21 +322,21 @@ export const BlockEditorForm: React.FC<{
   return (
     <ModalButton
       as={as ? as : EditBlock}
-      style={{ zIndex: 9999 }}
+      style={{ zIndex: 20 }}
       title={`Edit block: ${block.name}`}
       modalSize={'lg'}
       onClose={async () => {
         await saveChanges();
       }}
       render={() => (
-        <>
+        <div style={{ paddingBottom: '10em' }}>
           {preview ? (
-            <div style={{ padding: '1em' }}>
+            <BlockCreatorPreview>
               <RenderBlock block={preview} context={context} />
-            </div>
+            </BlockCreatorPreview>
           ) : null}
           {editor}
-        </>
+        </div>
       )}
       renderFooter={(footer: any) => (
         <div>

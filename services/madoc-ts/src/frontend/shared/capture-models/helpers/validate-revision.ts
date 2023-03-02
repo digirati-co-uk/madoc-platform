@@ -1,3 +1,4 @@
+import { RequestError } from '../../../../utility/errors/request-error';
 import { CaptureModel } from '../types/capture-model';
 import { RevisionRequest } from '../types/revision-request';
 import { expandModelFields } from './expand-model-fields';
@@ -25,19 +26,20 @@ export function validateRevision(
     // Even if this does not match the structure, it still _needs_ to be
     // describe the fields correctly in order to be valid.
     const filteredDocument = filterDocumentByRevision(req.document, req.revision, captureModel.revisions);
-    if (!filteredDocument && req.revision.deletedFields?.length === 0) {
-      throw new Error('Invalid revision');
+
+    if (!filteredDocument && (req.revision.deletedFields || []).length === 0) {
+      throw new RequestError('Invalid revision');
     }
 
     // If the source is `structure` we want to make sure a user was associated. We add this to the revision.
     // This will be added by the consuming service. (In addition to checking `allowCanonicalChanges`)
     const author = req.author;
     if (!allowAnonymous && !author) {
-      throw new Error('No user associated with change');
+      throw new RequestError('No user associated with change');
     }
 
     if (!req.revision.structureId) {
-      throw new Error('Revision requires structure ID, use { allowCanonicalChanges: true } to override');
+      throw new RequestError('Revision requires structure ID, use { allowCanonicalChanges: true } to override');
     }
 
     if (!allowCustomStructure) {
@@ -53,7 +55,7 @@ export function validateRevision(
       // Then we need to traverse, from the structure root (can split doc with utility)
       // And only save new fields from the model root – downwards. MAKE SURE THEY ARE CONNECTED
       if (!structure || structure.type === 'choice') {
-        throw new Error('Invalid structureId in revision');
+        throw new RequestError('Invalid structureId in revision');
       }
 
       // Diff the keys.
@@ -61,16 +63,21 @@ export function validateRevision(
       const keysInRevision = new Set(expandModelFields(req.revision.fields).map(f => f.join('.')));
 
       if (keysInRevision.size !== keysInStructure.size) {
-        throw new Error('Revision fields do not match structure, use { allowCustomStructure: true } to override');
+        throw new RequestError(
+          'Revision fields do not match structure, use { allowCustomStructure: true } to override'
+        );
       }
 
       for (const key of keysInRevision) {
         if (!keysInStructure.has(key)) {
-          throw new Error(
+          throw new RequestError(
             `Revision fields do not match structure, missing ${key}, use { allowCustomStructure: true } to override`
           );
         }
       }
     }
+    return filteredDocument;
   }
+
+  return req.document;
 }

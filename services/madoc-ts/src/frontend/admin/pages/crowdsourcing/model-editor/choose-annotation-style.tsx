@@ -28,7 +28,7 @@ export function ChooseAnnotationStyle(props: any) {
   const { t } = useTranslation();
   const { data } = useData<{ styles: AnnotationStyles[] }>(ListAnnotationStyles);
   const api = useApi();
-  const { id: projectId } = useParams<{ id: string }>();
+  const { id: projectId } = useParams() as { id: string };
 
   const [chooseStyle, chooseStyleStatus] = useMutation(async (id: number) => {
     await api.updateProjectAnnotationStyle(projectId, id);

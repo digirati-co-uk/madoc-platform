@@ -5,9 +5,21 @@ import { useTranslation } from 'react-i18next';
 import { useApi } from '../hooks/use-api';
 import { useUser } from '../hooks/use-site';
 
-const CanvasStatusBackground = styled.div`
+const CanvasStatusBackground = styled.div<{ $floating?: boolean }>`
   background: #ced8ea;
   height: 10px;
+
+  ${props =>
+    props.$floating &&
+    css`
+      position: absolute;
+      z-index: 3;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      border-radius: 3px;
+      box-shadow: 0 1px 3px rgb(0 0 0 / 30%);
+    `}
 `;
 
 const CanvasStatusItem = styled.div<{ $status: number }>`
@@ -33,7 +45,7 @@ const CanvasStatusItem = styled.div<{ $status: number }>`
   }}
 `;
 
-export const CanvasStatus: React.FC<{ status: number }> = ({ status }) => {
+export const CanvasStatus: React.FC<{ status: number; floating?: boolean }> = ({ status, floating }) => {
   const { t } = useTranslation();
   const api = useApi();
   const user = useUser();
@@ -46,7 +58,7 @@ export const CanvasStatus: React.FC<{ status: number }> = ({ status }) => {
 
   return (
     <>
-      <CanvasStatusBackground>
+      <CanvasStatusBackground $floating={floating}>
         <CanvasStatusItem data-tip={tooltip} $status={status} />
       </CanvasStatusBackground>
       {api.getIsServer() || !user || user.site_role === 'viewer' ? null : (

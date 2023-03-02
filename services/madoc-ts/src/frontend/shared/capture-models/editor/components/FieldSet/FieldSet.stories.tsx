@@ -6,12 +6,12 @@ import { FieldSet, FieldSetRenderField } from './FieldSet';
 
 import '../../input-types/TextField';
 
-export default { title: 'Capture model editor components/Fieldset' };
+import model0 from '../../../../../../../fixtures/01-basic/01-single-field.json';
+import model1 from '../../../../../../../fixtures/01-basic/02-multiple-fields.json';
+import model2 from '../../../../../../../fixtures/02-nesting/03-deeply-nested-subset.json';
+import model from '../../../../../../../fixtures/02-nesting/04-deeply-nested-mixed-instance.json';
 
-const model0 = require('../../../../../../../fixtures/01-basic/01-single-field.json');
-const model1 = require('../../../../../../../fixtures/01-basic/02-multiple-fields.json');
-const model2 = require('../../../../../../../fixtures/02-nesting/03-deeply-nested-subset.json');
-const model = require('../../../../../../../fixtures/02-nesting/04-deeply-nested-mixed-instance.json');
+export default { title: 'Capture model editor components/Fieldset' };
 
 const firstOption = model1.structure.items[0].fields.reduce(createFormFieldReducer(model1.document), []);
 

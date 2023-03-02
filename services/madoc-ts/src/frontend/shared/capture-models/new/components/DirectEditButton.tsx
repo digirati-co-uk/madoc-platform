@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { useHistory } from 'react-router-dom';
 import { useCanvasModel } from '../../../../site/hooks/use-canvas-model';
 import { useRouteContext } from '../../../../site/hooks/use-route-context';
+import { useBrowserLayoutEffect } from '../../../hooks/use-browser-layout-effect';
 import { Button, ButtonRow } from '../../../navigation/Button';
 import { useApi } from '../../../hooks/use-api';
 import { useLoadedCaptureModel } from '../../../hooks/use-loaded-capture-model';
@@ -33,7 +33,6 @@ export const DirectEditButton: EditorRenderingConfig['SubmitButton'] = ({
   const [isUpToDate, setIsUpToDate] = useState(true);
   const latestRevision = useRef<any>();
   const isUnMounting = useRef(false);
-  const history = useHistory();
 
   useEffect(() => {
     if (latestRevision.current && latestRevision.current !== currentRevision?.document) {
@@ -86,14 +85,20 @@ export const DirectEditButton: EditorRenderingConfig['SubmitButton'] = ({
     }
   });
 
-  useEffect(() => {
-    return history.listen(() => {
+  useBrowserLayoutEffect(() => {
+    const listener = () => {
       if (!isUpToDate && latestRevision.current && saveOnNavigate) {
         isUnMounting.current = true;
         saveRevision(latestRevision.current.status);
       }
-    });
-  }, [saveOnNavigate, history, isUpToDate, saveRevision]);
+    };
+
+    window.addEventListener('popstate', listener);
+
+    return () => {
+      window.removeEventListener('popstate', listener);
+    };
+  }, [saveOnNavigate, isUpToDate, saveRevision]);
 
   if (!currentRevision) {
     return null;

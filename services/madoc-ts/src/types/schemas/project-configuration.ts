@@ -28,6 +28,7 @@ export type ProjectConfiguration = {
   universalViewerCanvasPage?: boolean;
   contributionMode?: 'transcription' | 'annotation';
   atlasBackground?: string;
+  forkMode?: boolean;
   // New search options - need to migrate others to this.
   searchOptions?: {
     nonLatinFulltext?: boolean;
@@ -52,6 +53,7 @@ export type ProjectConfiguration = {
     disableSaveForLater?: boolean;
     disablePreview?: boolean;
     disableNextCanvas?: boolean;
+    enableRotation?: boolean;
   };
   projectPageOptions?: {
     hideStartContributing?: boolean;
@@ -62,12 +64,14 @@ export type ProjectConfiguration = {
   };
   reviewOptions?: {
     allowMerging?: boolean;
+    enableAutoReview?: boolean;
   };
   manifestPageOptions?: {
     hideStartContributing?: boolean;
     hideOpenInMirador?: boolean;
     hideSearchButton?: boolean;
     hideRandomCanvas?: boolean;
+    generatePDF?: boolean;
     hideFilterImages?: boolean;
     directModelPage?: boolean;
     showIIIFLogo?: boolean;

@@ -39,7 +39,7 @@ describe('create-new-field-instance', () => {
         'test'
       )
     ).toMatchInlineSnapshot(`
-      Object {
+      {
         "allowMultiple": true,
         "id": "[auto-generated]",
         "label": "Test field A",
@@ -71,7 +71,7 @@ describe('create-new-field-instance', () => {
         'test'
       )
     ).toMatchInlineSnapshot(`
-      Object {
+      {
         "allowMultiple": true,
         "id": "[auto-generated]",
         "label": "Test field A",
@@ -104,11 +104,11 @@ describe('create-new-field-instance', () => {
         'test'
       )
     ).toMatchInlineSnapshot(`
-      Object {
+      {
         "allowMultiple": true,
         "id": "[auto-generated]",
         "label": "Test field A",
-        "selector": Object {
+        "selector": {
           "id": "[auto-generated]",
           "state": null,
           "type": "box-selector",
@@ -142,11 +142,11 @@ describe('create-new-field-instance', () => {
         'test'
       )
     ).toMatchInlineSnapshot(`
-      Object {
+      {
         "allowMultiple": true,
         "id": "[auto-generated]",
         "label": "Test field A",
-        "selector": Object {
+        "selector": {
           "id": "[auto-generated]",
           "state": null,
           "type": "box-selector",

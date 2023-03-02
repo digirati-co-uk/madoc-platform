@@ -17,6 +17,7 @@ import { useUserDetails } from '../../../shared/hooks/use-user-details';
 import { serverRendererFor } from '../../../shared/plugins/external/server-renderer-for';
 import { AdminHeader } from '../../molecules/AdminHeader';
 import { SimpleTable } from '../../../shared/layout/SimpleTable';
+import { useBots } from '../../../shared/hooks/use-bots';
 
 export const SitePermissions = () => {
   const { t } = useTranslation();
@@ -27,6 +28,7 @@ export const SitePermissions = () => {
   const [selectedUser, setSelectedUser] = useState<AutocompleteUser | undefined>();
   const [selectedRole, setSelectedRole] = useState('');
   const currentUser = useUserDetails();
+  const [listOfBots, isBot] = useBots();
 
   const isGlobalAdmin = currentUser && currentUser.user.role === 'global_admin';
   const selectedUserExistingRole = data?.users.find(u => u.id === selectedUser?.id)?.site_role;
@@ -81,9 +83,10 @@ export const SitePermissions = () => {
                 <div>
                   <label htmlFor="role">Site role</label>
                   <DefaultSelect
+                    isDisabled={selectedUser ? isBot(selectedUser.id) : false}
                     ref={select}
                     inputId="role"
-                    initialValue={selectedRole}
+                    initialValue={selectedUser?.role}
                     options={siteRoles}
                     renderOptionLabel={({ label }) => <div style={{ lineHeight: '1.8em' }}>{label}</div>}
                     getOptionLabel={({ label }) => label}

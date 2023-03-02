@@ -17,7 +17,7 @@ export const getProjectMetadata: RouteMiddleware<{ id: string }> = async context
   );
 
   try {
-    const collection = await context.connection.many(getDerivedMetadata(collection_id, 'collection', siteId));
+    const collection = await context.connection.any(getDerivedMetadata(collection_id, 'collection', siteId));
 
     context.response.body = {
       fields: collection,

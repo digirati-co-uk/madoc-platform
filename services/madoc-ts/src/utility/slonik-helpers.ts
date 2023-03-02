@@ -12,14 +12,14 @@ export const inserts = (rows: ValueExpressionType[]) => {
   );
 };
 
-export function upsert<T>(
+export function upsert<T, Return = T>(
   table: string,
   primaryKeys: Array<keyof T>,
   inputData: T[],
   keys: Array<keyof T>,
   { jsonKeys = [], dateKeys = [] }: { jsonKeys?: Array<keyof T>; dateKeys?: Array<keyof T> } = {}
 ) {
-  return sql`
+  return sql<Return>`
         insert into ${sql.identifier([table])} (${sql.join(
     keys.map(key => sql.identifier([key as string])),
     sql`,`
@@ -29,7 +29,10 @@ export function upsert<T>(
                 return sql`${sql.join(
                   keys.map(key => {
                     if (jsonKeys.indexOf(key) !== -1) {
-                      return JSON.stringify(dataItem[key]) || null;
+                      if (!dataItem[key]) {
+                        return null;
+                      }
+                      return sql.json(dataItem[key]) || null;
                     }
                     if (dateKeys.indexOf(key) !== -1) {
                       return new Date(dataItem[key])

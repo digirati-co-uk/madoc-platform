@@ -1,4 +1,4 @@
-import { InternationalString } from '@hyperion-framework/types';
+import { InternationalString } from '@iiif/presentation-3';
 import { ProjectTemplate, ProjectTemplateConfig } from '../extensions/projects/types';
 import { AnnotationStyles } from './annotation-styles';
 import { ProjectConfiguration } from './schemas/project-configuration';

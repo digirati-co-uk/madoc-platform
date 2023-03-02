@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { useProject } from '../../site/hooks/use-project';
 import { useProjectTemplate } from '../hooks/use-project-template';
 import { makeColorAccessible } from '../utility/make-color-accessible';
@@ -31,6 +31,8 @@ export const ProjectStatusContainer = styled.div<{ $status?: number; $color?: st
       color: ${color};
     `;
   }};
+  border-radius: 5px;
+  box-shadow: 0 3px 15px 0 rgb(0 0 0 / 16%);
   padding: 0.5em;
   margin: 1em 0;
 `;
@@ -98,4 +100,3 @@ blockEditorFor(ProjectStatus, {
   requiredContext: ['project'],
   editor: {},
 });
-

@@ -4,6 +4,8 @@ import { TableContainer, TableRow, TableRowLabel } from '../../shared/layout/Tab
 import { useData } from '../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../shared/utility/create-universal-component';
 import { UniversalComponent } from '../../types';
+import { Tag } from '../../shared/capture-models/editor/atoms/Tag';
+import { getBotType } from '../../../automation/utils/get-bot-type';
 
 type ViewUserType = {
   query: any;
@@ -23,7 +25,14 @@ export const ViewUser: UniversalComponent<ViewUserType> = createUniversalCompone
 
     return (
       <>
-        <h1>{data.user.name}</h1>
+        <div style={{ display: 'flex' }}>
+          <h1>{data.user.name}</h1>
+          {data.user.automated ? (
+            <Tag style={{ alignSelf: 'center', marginLeft: '.5em' }}>
+              {getBotType(data.user.config?.bot?.type) || 'bot'}
+            </Tag>
+          ) : null}
+        </div>
         <TableContainer>
           <TableRow>
             <TableRowLabel>

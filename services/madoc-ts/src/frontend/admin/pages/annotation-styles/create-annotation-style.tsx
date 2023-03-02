@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { AnnotationBuckets, AnnotationStyles } from '../../../../types/annotation-styles';
 import { HotSpot } from '../../../shared/atoms/HotSpot';
 import { SystemListItem } from '../../../shared/atoms/SystemListItem';
@@ -42,14 +42,12 @@ function getDefaultStyles() {
 
 export function CreateAnnotationStyle({ existing }: { existing?: AnnotationStyles }) {
   const { t } = useTranslation();
-  const canvas = useRef<any>();
-  const displayAnno = useRef<any>();
   const [toApply, setToApply] = useState<any>();
   const [newConfig, setNewConfig] = useState<AnnotationStyles['theme']>(existing?.theme || getDefaultStyles);
   const [current, setCurrent] = useState<AnnotationBuckets>('highlighted');
   const [title, setTitle] = useState(existing?.name || 'Untitled style');
   const api = useApi();
-  const { push } = useHistory();
+  const navigate = useNavigate();
   const [createNew, createNewStatus] = useMutation(async () => {
     if (existing) {
       await api.updateAnnotationStyle({
@@ -60,7 +58,7 @@ export function CreateAnnotationStyle({ existing }: { existing?: AnnotationStyle
       setChanged(false);
     } else {
       const newTheme = await api.createAnnotationStyle(title, { theme: newConfig });
-      push(`/site/annotation-styles/${newTheme.id}`);
+      navigate(`/site/annotation-styles/${newTheme.id}`);
     }
   });
   const [changed, setChanged] = useState(false);
@@ -68,7 +66,7 @@ export function CreateAnnotationStyle({ existing }: { existing?: AnnotationStyle
   useEffect(() => {
     setChanged(true);
     if (!existing) {
-      history.pushState({}, '', `#${btoa(JSON.stringify(newConfig))}`);
+      navigate(`#${btoa(JSON.stringify(newConfig))}`, { replace: true });
     }
   }, [existing, title, newConfig]);
 

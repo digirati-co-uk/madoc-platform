@@ -3,8 +3,7 @@ import { defaultTheme } from '../../../../shared/capture-models/editor/themes';
 import { CaptureModel } from '../../../../shared/capture-models/types/capture-model';
 import { UniversalComponent } from '../../../../types';
 import React, { useState } from 'react';
-import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
-import { Link, useParams } from 'react-router-dom';
+import { Link, Outlet, useParams } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { useMutation } from 'react-query';
 import { useApi } from '../../../../shared/hooks/use-api';
@@ -23,7 +22,7 @@ type ViewCaptureModelType = {
 export const ViewCaptureModel: UniversalComponent<ViewCaptureModelType> = createUniversalComponent<
   ViewCaptureModelType
 >(
-  ({ route }) => {
+  () => {
     const { id } = useParams<{ id: string }>();
     const { data, status } = useData(ViewCaptureModel, {}, { refetchInterval: false });
     const [newStructure, setNewStructure] = useState<CaptureModel['structure'] | undefined>();
@@ -86,7 +85,7 @@ export const ViewCaptureModel: UniversalComponent<ViewCaptureModelType> = create
             }}
             captureModel={data}
           >
-            {renderUniversalRoutes(route.routes)}
+            <Outlet />
           </EditorContext>
         </ThemeProvider>
       </>

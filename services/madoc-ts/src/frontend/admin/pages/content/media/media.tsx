@@ -1,10 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Outlet } from 'react-router-dom';
 import { WidePage } from '../../../../shared/layout/WidePage';
-import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 
-export const Media: React.FC<any> = ({ route }) => {
+export const Media: React.FC = () => {
   const { t } = useTranslation();
 
   return (
@@ -17,7 +17,9 @@ export const Media: React.FC<any> = ({ route }) => {
           { label: 'Media', link: '/media' },
         ]}
       />
-      <WidePage>{renderUniversalRoutes(route.routes)}</WidePage>
+      <WidePage>
+        <Outlet />
+      </WidePage>
     </>
   );
 };

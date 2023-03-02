@@ -40,7 +40,7 @@
           ]
         },
         {
-          "$ref": "#/definitions/T_1"
+          "$ref": "#/definitions/T"
         }
       ]
     },

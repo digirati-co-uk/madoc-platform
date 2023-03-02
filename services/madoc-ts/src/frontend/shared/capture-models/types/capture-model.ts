@@ -28,6 +28,7 @@ export type Revision = {
   approved?: boolean;
   revises?: string;
   deletedFields?: string[] | null;
+  captureModelId?: string;
 };
 
 export type StatusTypes = 'draft' | 'submitted' | 'accepted';

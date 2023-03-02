@@ -10,13 +10,12 @@ export function filterDocumentByRevision(
   revisions: CaptureModel['revisions'] = []
 ): CaptureModel['document'] | null {
   const revisionIds = recurseRevisionDependencies(revision.id, revisions);
-
   return filterCaptureModel(
     revision.id,
     document,
     expandModelFields(revision.fields),
     (field, parent) => {
-      if (parent.selector && parent.selector.revisedBy) {
+      if (parent.selector && parent.selector.revisedBy && parent.selector.revisedBy.length) {
         for (const selector of parent.selector.revisedBy) {
           if (selector.revisionId && revisionIds.indexOf(selector.revisionId) !== -1) {
             field.immutable = true;
@@ -33,7 +32,7 @@ export function filterDocumentByRevision(
         return true;
       }
 
-      if (field.selector && field.selector.revisedBy) {
+      if (field.selector && field.selector.revisedBy && field.selector.revisedBy.length) {
         for (const selector of field.selector.revisedBy) {
           if (selector.revisionId && revisionIds.indexOf(selector.revisionId) !== -1) {
             if (field.revision !== revision.id) {
@@ -51,12 +50,17 @@ export function filterDocumentByRevision(
       const newFields: BaseField[] = [];
       for (const field of fields) {
         if (field.selector && field.selector.revisedBy) {
-          const newField = {
-            ...field,
-            immutable: field.revision === revision.id,
-            revisedBy: field.selector.revisedBy.filter(r => r.revisionId === revision.id),
-          };
-          newFields.push(newField);
+          const found = field.selector.revisedBy.filter(r => r.revisionId === revision.id);
+          if (found.length) {
+            const newField = {
+              ...field,
+              immutable: field.revision === revision.id,
+              revisedBy: field.selector.revisedBy.filter(r => r.revisionId === revision.id),
+            };
+            newFields.push(newField);
+          } else {
+            newFields.push(field);
+          }
         } else {
           newFields.push(field);
         }

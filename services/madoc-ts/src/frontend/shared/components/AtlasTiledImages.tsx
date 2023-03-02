@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { CanvasNormalized, ImageService } from '@hyperion-framework/types';
+import React, { Fragment, useEffect, useState } from 'react';
+import { CanvasNormalized, ImageService } from '@iiif/presentation-3';
 import { GetTile, getTileFromImageService, TileSet, useRuntime } from '@atlas-viewer/atlas';
 
 export const AtlasTiledImages: React.FC<{ canvas: CanvasNormalized; service: ImageService }> = ({
@@ -21,11 +21,11 @@ export const AtlasTiledImages: React.FC<{ canvas: CanvasNormalized; service: Ima
 
   if (!tile) {
     return (
-      <worldObject height={canvas.height} width={canvas.width}>
+      <worldObject id={`canvas/${canvas.id}`} height={canvas.height} width={canvas.width}>
         <box html target={{ x: 0, y: 0, width: canvas.width, height: canvas.height }} id="123" backgroundColor="#000" />
       </worldObject>
     );
   }
 
-  return <TileSet tiles={tile} x={0} y={0} width={canvas.width} height={canvas.height} />;
+  return <TileSet key={(service as any).id} tiles={tile} x={0} y={0} width={canvas.width} height={canvas.height} />;
 };

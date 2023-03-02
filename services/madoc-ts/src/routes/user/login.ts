@@ -1,6 +1,6 @@
 import { siteState } from '../../middleware/site-state';
 import { RouteMiddleware } from '../../types/route-middleware';
-import { siteFrontend } from '../admin/frontend';
+import { siteFrontend } from '../frontend/site-frontend';
 
 export const loginPage: RouteMiddleware<{ slug: string }, { email: string; password: string }> = async (
   context,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useManifestStructure } from '../../shared/hooks/use-manifest-structure';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
@@ -17,7 +17,7 @@ export const RedirectToNextCanvas: React.FC<{ subRoute?: string }> = ({ subRoute
   }
 
   if (idx < structure.data.items.length - 1) {
-    return <Redirect to={createLink({ manifestId, canvasId: structure.data.items[idx + 1].id, subRoute })} />;
+    return <Navigate to={createLink({ manifestId, canvasId: structure.data.items[idx + 1].id, subRoute })} />;
   }
 
   return null;

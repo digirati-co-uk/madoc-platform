@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { CollectionNormalized, ManifestNormalized } from '@hyperion-framework/types';
-import { useVaultEffect } from '@hyperion-framework/react-vault';
+import { CollectionNormalized, ManifestNormalized } from '@iiif/presentation-3';
+import { useVaultEffect } from 'react-iiif-vault';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../shared/layout/Table';
 import { Button, SmallButton } from '../../shared/navigation/Button';
@@ -38,11 +38,7 @@ export const PreviewCollection: React.FC<{
 
           if (col) {
             setCollection(col);
-            setManifests(
-              col.items.map(man => {
-                return vault.fromRef(man);
-              })
-            );
+            setManifests(vault.get(col.items));
           } else {
             // error?
           }
@@ -55,11 +51,7 @@ export const PreviewCollection: React.FC<{
   useVaultEffect(
     vault => {
       if (props.manifestIds && props.manifestIds.length) {
-        setManifests(
-          props.manifestIds.map(man => {
-            return vault.fromRef({ id: man, type: 'Manifest' });
-          })
-        );
+        setManifests(vault.get(props.manifestIds));
       }
     },
     [props.manifestIds]

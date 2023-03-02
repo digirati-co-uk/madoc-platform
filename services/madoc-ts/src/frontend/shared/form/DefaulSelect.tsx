@@ -9,6 +9,7 @@ type TemporaryReactFunctionalSelectProps = {
   isInvalid?: boolean;
   isLoading?: boolean;
   isClearable?: boolean;
+  isDisabled?: boolean;
   noOptionsMsg?: string;
   filterMatchFrom?: string;
   options: Array<any>;
@@ -63,6 +64,7 @@ export const DefaultSelect = React.forwardRef<any, TemporaryReactFunctionalSelec
       filterMatchFrom="any"
       getOptionValue={(option: any) => option.id}
       {...props}
+      isDisabled={props.isDisabled}
     />
   );
 });

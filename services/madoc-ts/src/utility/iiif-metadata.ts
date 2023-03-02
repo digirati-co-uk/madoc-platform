@@ -1,4 +1,4 @@
-import { InternationalString } from '@hyperion-framework/types';
+import { InternationalString } from '@iiif/presentation-3';
 import { MetadataDefinition } from '../types/schemas/metadata-definition';
 
 export type MetadataField = {
@@ -34,6 +34,19 @@ export const setValueDotNotation = (property: any, key: string, setValue: (prop:
 
   setValue(property);
 };
+
+export function getValueDotNotation<T = any>(property: any, key: string): T {
+  // eslint-disable-next-line eqeqeq
+  const properties = key ? key.split('.').map((r: string | number) => (r == Number(r) ? Number(r) : r)) : [];
+  for (let i = 0; i < properties.length; i++) {
+    if (!property[properties[i]]) {
+      return undefined as any;
+    }
+    property = property[properties[i]];
+  }
+
+  return property as T;
+}
 
 export const createMetadataReducer = <T, M extends MetadataField = MetadataField>(createRow: (field: M) => T) => (
   acc: any,

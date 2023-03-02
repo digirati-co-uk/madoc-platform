@@ -2,6 +2,10 @@
  * @jest-environment node
  */
 
+const deepmerge = require('deepmerge');
+import invariant from 'tiny-invariant';
+import { extractValidRevisionChanges } from '../../../src/capture-model-server/server-filters/extract-valid-revision-changes';
+import { updateRevisionInDocument } from '../../../src/capture-model-server/server-filters/update-revision-in-document';
 import { createRevisionStore } from '../../../src/frontend/shared/capture-models/editor/stores/revisions/revisions-store';
 import { registerField } from '../../../src/frontend/shared/capture-models/plugin-api/global-store';
 import { CaptureModel } from '../../../src/frontend/shared/capture-models/types/capture-model';
@@ -21,15 +25,15 @@ registerField({
 } as any);
 
 const models: () => any[] = () => [
-  require('../../../fixtures/03-revisions/01-single-field-with-revision.json'),
-  require('../../../fixtures/03-revisions/02-single-field-with-multiple-revisions.json'),
-  require('../../../fixtures/03-revisions/03-nested-revision.json'),
-  require('../../../fixtures/03-revisions/04-dual-transcription.json'),
-  require('../../../fixtures/03-revisions/05-allow-multiple-transcriptions.json'),
-  require('../../../fixtures/04-selectors/01-simple-selector.json'),
-  require('../../../fixtures/04-selectors/02-multiple-selectors.json'),
-  require('../../../fixtures/04-selectors/03-nested-selector.json'),
-  require('../../../fixtures/04-selectors/08-hocr-output.json'),
+  deepmerge({}, require('../../../fixtures/03-revisions/01-single-field-with-revision.json')),
+  deepmerge({}, require('../../../fixtures/03-revisions/02-single-field-with-multiple-revisions.json')),
+  deepmerge({}, require('../../../fixtures/03-revisions/03-nested-revision.json')),
+  deepmerge({}, require('../../../fixtures/03-revisions/04-dual-transcription.json')),
+  deepmerge({}, require('../../../fixtures/03-revisions/05-allow-multiple-transcriptions.json')),
+  deepmerge({}, require('../../../fixtures/04-selectors/01-simple-selector.json')),
+  deepmerge({}, require('../../../fixtures/04-selectors/02-multiple-selectors.json')),
+  deepmerge({}, require('../../../fixtures/04-selectors/03-nested-selector.json')),
+  deepmerge({}, require('../../../fixtures/04-selectors/08-hocr-output.json')),
 ];
 
 describe('Revision store', () => {
@@ -43,15 +47,15 @@ describe('Revision store', () => {
       expect(store.getState().currentRevisionId).toEqual('7c26cf57-5950-4849-b533-11e0ee4afa4b');
 
       expect(store.getState().currentRevision).toMatchInlineSnapshot(`
-        Object {
+        {
           "captureModelId": "b329e009-1c8a-4bed-bfde-c2a587a22f97",
-          "document": Object {
+          "document": {
             "description": "",
             "id": "3353dc03-9f35-49e7-9b81-4090fa533c64",
             "label": "Simple document",
-            "properties": Object {
-              "name": Array [
-                Object {
+            "properties": {
+              "name": [
+                {
                   "description": "The name of the thing",
                   "id": "eafb62d7-71b7-47bd-b887-def8655d8d2a",
                   "label": "Name",
@@ -63,8 +67,8 @@ describe('Revision store', () => {
             },
             "type": "entity",
           },
-          "revision": Object {
-            "fields": Array [
+          "revision": {
+            "fields": [
               "name",
             ],
             "id": "7c26cf57-5950-4849-b533-11e0ee4afa4b",
@@ -166,23 +170,23 @@ describe('Revision store', () => {
       selectRevision({ revisionId: '18e0d089-e87c-448f-9ef2-3282a44cf6d2' });
 
       expect(store.getState().selector.selectorPaths).toMatchInlineSnapshot(`
-        Object {
-          "007a5ace-b1a4-49ca-8dd3-c78aee2d5409": Array [
-            Array [
+        {
+          "007a5ace-b1a4-49ca-8dd3-c78aee2d5409": [
+            [
               "person",
               "56405dc7-b910-45e0-8ade-898594276795",
             ],
-            Array [
+            [
               "firstName",
               "9a55a096-4a79-46b0-8111-d9775d074a14",
             ],
           ],
-          "05a99c13-eedd-4a14-940a-f774fc461ca4": Array [
-            Array [
+          "05a99c13-eedd-4a14-940a-f774fc461ca4": [
+            [
               "person",
               "cc2570c7-b3a5-4e5b-8f3d-3b3693769969",
             ],
-            Array [
+            [
               "firstName",
               "c3434721-19f7-4402-9bfb-1e11875a0de0",
             ],
@@ -242,6 +246,33 @@ describe('Revision store', () => {
       expect((store.getState().revisionSubtree as any).properties.transcription[2].label).toEqual('Transcription');
       expect((store.getState().revisionSubtree as any).properties.transcription[2].type).toEqual('text-field');
       expect((store.getState().revisionSubtree as any).properties.transcription[2].value).toEqual('');
+
+      // @ts-ignore
+      expect(store.getState().currentRevision.document.properties.transcription).toHaveLength(3);
+
+      // And we can detect the changes on the server side.
+
+      const newModel = models()[4];
+
+      const { mutations } = extractValidRevisionChanges(
+        newModel,
+        store.getState().revisions['fd847948-11bf-42ca-bfdd-cab85ea818f3'] as any,
+        {
+          allowAnonymous: true,
+          allowCustomStructure: true,
+        }
+      );
+
+      expect(Object.keys(mutations)).toHaveLength(1);
+      const first = mutations[(Object.keys(mutations) as any)[0]][0];
+      invariant(first.type === 'field');
+      expect(first.term).toEqual('transcription');
+      expect(first.field.value).toEqual('');
+
+      expect(newModel.document.properties.transcription).toHaveLength(5);
+      updateRevisionInDocument(newModel, store.getState().revisions['fd847948-11bf-42ca-bfdd-cab85ea818f3'] as any, {});
+      expect(newModel.document.properties.transcription).toHaveLength(6);
+      expect(newModel.document.properties.transcription.filter((r: any) => r.id === first.field.id)).toHaveLength(1);
     });
 
     test('duplicating field with selector', () => {
@@ -277,13 +308,13 @@ describe('Revision store', () => {
       const selector = store.getState().selector.selectorPaths[selectorId];
 
       expect(selector[0]).toMatchInlineSnapshot(`
-        Array [
+        [
           "paragraph",
           "159621fb-4f93-4cd7-a394-5a1141fc1091",
         ]
       `);
       expect(selector[1]).toMatchInlineSnapshot(`
-        Array [
+        [
           "lines",
           "64e82cb7-16f8-432e-b2b7-3828233a134c",
         ]
@@ -338,16 +369,16 @@ describe('Revision store', () => {
           },
         },
         `
-        Object {
+        {
           "allowMultiple": true,
           "description": "Describe a person",
           "id": Any<String>,
           "immutable": false,
           "label": "Person",
           "labelledBy": "firstName",
-          "properties": Object {
-            "firstName": Array [
-              Object {
+          "properties": {
+            "firstName": [
+              {
                 "id": Any<String>,
                 "label": "First name",
                 "revision": "0e29f176-aeeb-4bf3-a92c-d64654e29c90",
@@ -355,8 +386,8 @@ describe('Revision store', () => {
                 "value": "",
               },
             ],
-            "lastName": Array [
-              Object {
+            "lastName": [
+              {
                 "id": Any<String>,
                 "label": "Last name",
                 "revision": "0e29f176-aeeb-4bf3-a92c-d64654e29c90",
@@ -401,7 +432,7 @@ describe('Revision store', () => {
           selector: { id: expect.any(String) },
         },
         `
-        Object {
+        {
           "allowMultiple": true,
           "description": "All of the lines inside of a paragraph",
           "id": Any<String>,
@@ -409,9 +440,9 @@ describe('Revision store', () => {
           "label": "Line",
           "labelledBy": "text",
           "pluralLabel": "Lines",
-          "properties": Object {
-            "text": Array [
-              Object {
+          "properties": {
+            "text": [
+              {
                 "allowMultiple": true,
                 "description": "Single word, phrase or the whole line",
                 "id": Any<String>,
@@ -419,7 +450,7 @@ describe('Revision store', () => {
                 "multiline": false,
                 "pluralField": "Text of lines",
                 "revision": "c8bb939a-7a76-4b15-9f77-81375519128c",
-                "selector": Object {
+                "selector": {
                   "id": Any<String>,
                   "state": null,
                   "type": "box-selector",
@@ -430,7 +461,7 @@ describe('Revision store', () => {
             ],
           },
           "revision": "c8bb939a-7a76-4b15-9f77-81375519128c",
-          "selector": Object {
+          "selector": {
             "id": Any<String>,
             "state": null,
             "type": "box-selector",
@@ -581,18 +612,18 @@ describe('Revision store', () => {
         expect(revisionSelectState.revisionSelectedFieldProperty).toEqual('firstName');
         expect(revisionSelectState.revisionSelectedFieldInstance).toEqual('9a55a096-4a79-46b0-8111-d9775d074a14');
         expect(revisionSelectState.revisionSubtreeField).toMatchInlineSnapshot(`
-                  Object {
-                    "id": "9a55a096-4a79-46b0-8111-d9775d074a14",
-                    "label": "First name",
-                    "selector": Object {
-                      "id": "007a5ace-b1a4-49ca-8dd3-c78aee2d5409",
-                      "state": null,
-                      "type": "box-selector",
-                    },
-                    "type": "text-field",
-                    "value": "second first name",
-                  }
-              `);
+          {
+            "id": "9a55a096-4a79-46b0-8111-d9775d074a14",
+            "label": "First name",
+            "selector": {
+              "id": "007a5ace-b1a4-49ca-8dd3-c78aee2d5409",
+              "state": null,
+              "type": "box-selector",
+            },
+            "type": "text-field",
+            "value": "second first name",
+          }
+        `);
       });
       it('should remove the selected field when navigating', () => {
         revisionPopSubtree(undefined);
@@ -761,7 +792,7 @@ describe('Revision store', () => {
           },
         },
         `
-        Object {
+        {
           "allowMultiple": true,
           "description": "Single word, phrase or the whole line",
           "id": Any<String>,
@@ -769,7 +800,7 @@ describe('Revision store', () => {
           "multiline": false,
           "pluralField": "Text of lines",
           "revision": Any<String>,
-          "selector": Object {
+          "selector": {
             "id": Any<String>,
             "state": null,
             "type": "box-selector",
@@ -814,10 +845,10 @@ describe('Revision store', () => {
           revisedBy: expect.any(Array),
         },
         `
-        Object {
+        {
           "id": Any<String>,
           "revisedBy": Any<Array>,
-          "state": Object {
+          "state": {
             "height": 40,
             "width": 30,
             "x": 10,
@@ -854,9 +885,9 @@ describe('Revision store', () => {
           id: expect.any(String),
         },
         `
-        Object {
+        {
           "id": Any<String>,
-          "state": Object {
+          "state": {
             "height": 4,
             "width": 3,
             "x": 1,
@@ -887,6 +918,11 @@ describe('Revision store', () => {
         revisionId: 'c8bb939a-7a76-4b15-9f77-81375519128c',
         cloneMode: 'EDIT_ALL_VALUES',
       });
+
+      // @ts-ignore
+      expect(store.getState().currentRevision.document.properties.paragraph[0].id).toEqual(
+        '159621fb-4f93-4cd7-a394-5a1141fc1091'
+      );
 
       // First we update the selector.
       actions.updateSelector({

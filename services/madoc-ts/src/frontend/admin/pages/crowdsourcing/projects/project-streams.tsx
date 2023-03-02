@@ -2,19 +2,22 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { madocStreams } from '../../../../../activity-streams/madoc-streams';
-import { ProjectFull } from '../../../../../types/project-full';
+import { useData } from '../../../../shared/hooks/use-data';
 import { Button } from '../../../../shared/navigation/Button';
 import { EmptyState } from '../../../../shared/layout/EmptyState';
 import { SystemBackground } from '../../../../shared/atoms/SystemUI';
 import { SystemListItem } from '../../../../shared/atoms/SystemListItem';
 import { apiHooks } from '../../../../shared/hooks/use-api-query';
 import { useProjectTemplate } from '../../../../shared/hooks/use-project-template';
+import { serverRendererFor } from '../../../../shared/plugins/external/server-renderer-for';
 import { HrefLink } from '../../../../shared/utility/href-link';
 import { ViewActivityStream } from '../../sites/activity-streams';
+import { Project } from './project';
 
-export const ProjectStreams = ({ project }: { project: ProjectFull }) => {
+export const ProjectStreams = () => {
   const { t } = useTranslation();
   const params = useParams<{ id: string; stream?: string }>();
+  const { data: project } = useData(Project);
   const { data: projectConfiguration } = apiHooks.getSiteConfiguration(() => [{ project_id: Number(params.id) }]);
   const template = useProjectTemplate(project?.template);
   const noActivity = template?.configuration?.activity?.noActivity;
@@ -23,7 +26,7 @@ export const ProjectStreams = ({ project }: { project: ProjectFull }) => {
     return <EmptyState>{t('No activity streams for this project')}</EmptyState>;
   }
 
-  if (!projectConfiguration) {
+  if (!projectConfiguration || !project) {
     return null;
   }
 
@@ -73,3 +76,7 @@ export const ProjectStreams = ({ project }: { project: ProjectFull }) => {
     </div>
   );
 };
+
+serverRendererFor(ProjectStreams, {
+  hooks: [{ name: 'getSiteConfiguration', creator: params => [{ project_id: Number(params.id) }] }],
+});

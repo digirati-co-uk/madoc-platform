@@ -5,10 +5,15 @@ import { isEntity } from '../../helpers/is-entity';
 import { EditorRenderingConfig, EditorSlots, ProfileProvider } from './EditorSlots';
 
 export const DefaultTopLevelEditor: EditorRenderingConfig['TopLevelEditor'] = () => {
-  const state = Revisions.useStoreState(s => s);
+  const state = Revisions.useStoreState(s => ({
+    currentRevisionId: s.currentRevisionId,
+    revisionSubtreeField: s.revisionSubtreeField,
+    revisionSubtree: s.revisionSubtree,
+    revisionSubtreePath: s.revisionSubtreePath,
+  }));
   const [currentView] = useNavigation();
 
-  if (currentView && currentView.type === 'choice') {
+  if (currentView && currentView.type === 'choice' && !state.currentRevisionId && !state.revisionSubtree) {
     return <EditorSlots.Choice key={state.currentRevisionId || undefined} />;
   }
 
@@ -22,19 +27,19 @@ export const DefaultTopLevelEditor: EditorRenderingConfig['TopLevelEditor'] = ()
         </EditorSlots.EditorWrapper>
       );
     }
+  }
 
-    if (state.revisionSubtree && isEntity(state.revisionSubtree)) {
-      return (
-        <EditorSlots.EditorWrapper>
-          <ProfileProvider profile={state.revisionSubtree.profile}>
-            <EditorSlots.ViewEntity
-              key={state.currentRevisionId || undefined}
-              showTitle={state.revisionSubtreePath.length > 0}
-            />
-          </ProfileProvider>
-        </EditorSlots.EditorWrapper>
-      );
-    }
+  if (state.revisionSubtree && isEntity(state.revisionSubtree)) {
+    return (
+      <EditorSlots.EditorWrapper>
+        <ProfileProvider profile={state.revisionSubtree.profile}>
+          <EditorSlots.ViewEntity
+            key={state.currentRevisionId || undefined}
+            showTitle={state.revisionSubtreePath.length > 0}
+          />
+        </ProfileProvider>
+      </EditorSlots.EditorWrapper>
+    );
   }
 
   // We get to this spot if we do not have any auto selecting revisions. This

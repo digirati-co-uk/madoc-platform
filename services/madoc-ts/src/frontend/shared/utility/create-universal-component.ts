@@ -1,10 +1,10 @@
 import { ApiClient } from '../../../gateway/api';
 import React from 'react';
-import { QueryComponent, UniversalRoute } from '../../types';
+import { QueryComponent } from '../../types';
 import { AdditionalHooks } from '../hooks/use-api-query';
 
 export function createUniversalComponent<
-  Definition extends { query: any; params: any; variables: any; data: any; context?: {} },
+  Definition extends { query: any; params: any; variables: any; data: any },
   GetData = (
     key: string,
     vars: Definition['variables'],
@@ -14,7 +14,7 @@ export function createUniversalComponent<
   Ret = [string, Definition['variables']],
   GetKey = (params: Definition['params'], query: Definition['query'], pathname: string) => Ret
 >(
-  Component: React.FC<{ route: UniversalRoute } & Definition['context']>,
+  Component: React.FC,
   options: {
     getKey?: GetKey;
     getData?: GetData;

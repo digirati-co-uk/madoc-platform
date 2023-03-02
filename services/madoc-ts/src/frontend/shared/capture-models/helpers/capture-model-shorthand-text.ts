@@ -1,24 +1,28 @@
-import slugify from 'slugify';
-import { templatedValueFormat } from '../../utility/templated-value-format';
+import slugifyFn from 'slugify';
+import { TemplatedValue, templatedValueFormat } from '../../utility/templated-value-format';
 import { CaptureModel } from '../types/capture-model';
 import { BaseField } from '../types/field-types';
 import { generateId } from './generate-id';
 
-export function captureModelShorthandText(text: string, defaultType = 'international-field'): CaptureModel['document'] {
-  const model: CaptureModel['document'] = {
-    id: generateId(),
-    type: 'entity',
-    label: 'Root',
-    properties: {},
-  };
-  const bulkItems = (text || '').split('\n');
-  const fields = bulkItems.map(t =>
-    templatedValueFormat<
-      'many' | 'default' | 'type' | 'lang' | 'langs' | 'defaultLang' | 'description' | 'pluralLabel'
-    >(t)
-  );
+function addTemplateValuesToDocument(
+  model: CaptureModel['document'],
+  fields: TemplatedValue[],
+  { slugify = true, defaultType = 'international-field' }: { slugify?: boolean; defaultType?: string } = {}
+) {
+  const collectedEntities: Record<any, any> = {};
+
   for (const fieldDef of fields) {
-    const key = slugify(fieldDef.value.toLowerCase());
+    if (fieldDef.value.split(' ')[0].indexOf('.') !== -1) {
+      const [entity, ...parts] = fieldDef.value.split('.');
+      collectedEntities[entity] = collectedEntities[entity] ? collectedEntities[entity] : [];
+      collectedEntities[entity].push({
+        ...fieldDef,
+        value: parts.join('.'),
+      });
+      continue;
+    }
+
+    const key = slugify ? slugifyFn(fieldDef.value.toLowerCase()) : fieldDef.value;
     const field: BaseField = {
       id: generateId(),
       type: defaultType,
@@ -105,5 +109,50 @@ export function captureModelShorthandText(text: string, defaultType = 'internati
     }
     model.properties[key] = [field];
   }
+
+  const entities = Object.keys(collectedEntities);
+  for (const label of entities) {
+    const key = slugify ? slugifyFn(label) : label;
+    const newEntity: CaptureModel['document'] = {
+      id: generateId(),
+      type: 'entity',
+      label: key,
+      properties: {},
+    };
+
+    const entityFields = collectedEntities[label];
+
+    addTemplateValuesToDocument(newEntity, entityFields, { slugify, defaultType });
+
+    model.properties[key] = [newEntity];
+  }
+}
+
+export function captureModelShorthandText(
+  text: string,
+  {
+    slugify = true,
+    defaultType = 'international-field',
+    entityLabel = 'Root',
+  }: { slugify?: boolean; defaultType?: string; entityLabel?: string } = {}
+): CaptureModel['document'] {
+  const model: CaptureModel['document'] = {
+    id: generateId(),
+    type: 'entity',
+    label: entityLabel,
+    properties: {},
+  };
+  const bulkItems = (text || '')
+    .split('\n')
+    .map(t => t.trim())
+    .filter(Boolean);
+  const fields = bulkItems.map(t =>
+    templatedValueFormat<
+      'many' | 'default' | 'type' | 'lang' | 'langs' | 'defaultLang' | 'description' | 'pluralLabel'
+    >(t)
+  );
+
+  addTemplateValuesToDocument(model, fields, { slugify, defaultType });
+
   return model;
 }

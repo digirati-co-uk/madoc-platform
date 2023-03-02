@@ -1,10 +1,11 @@
 import { stringify } from 'query-string';
 import { useMemo } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 
 export function useGoToQuery(ignore: string[] = ['page']) {
-  const { location, push } = useHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
   const originalQuery = useLocationQuery();
   const query = useMemo(() => {
     const toReturn: any = {};
@@ -18,6 +19,6 @@ export function useGoToQuery(ignore: string[] = ['page']) {
   }, [originalQuery, ...ignore]);
 
   return (newQuery: any = {}) => {
-    push(`${location.pathname}?${stringify({ ...query, ...newQuery }, { arrayFormat: 'comma' })}`);
+    navigate(`${location.pathname}?${stringify({ ...query, ...newQuery }, { arrayFormat: 'comma' })}`);
   };
 }

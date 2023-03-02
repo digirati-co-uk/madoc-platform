@@ -74,7 +74,7 @@ describe('Create resource claim', () => {
       },
       params => {
         expect(params).toMatchInlineSnapshot(`
-          Array [
+          [
             1,
             1,
           ]
@@ -103,7 +103,7 @@ describe('Create resource claim', () => {
       },
       params => {
         expect(params).toMatchInlineSnapshot(`
-          Array [
+          [
             1,
             2001,
             123,
@@ -120,7 +120,7 @@ describe('Create resource claim', () => {
       },
       params => {
         expect(params).toMatchInlineSnapshot(`
-          Array [
+          [
             2001,
             1,
           ]
@@ -144,19 +144,19 @@ describe('Create resource claim', () => {
       },
       body => {
         expect(body).toMatchInlineSnapshot(`
-          Object {
-            "context": Array [
+          {
+            "context": [
               "urn:madoc:project:1",
             ],
-            "events": Array [
+            "events": [
               "madoc-ts.subtask_created",
               "madoc-ts.status.3",
             ],
             "name": "Test manifest 1",
-            "parameters": Array [
+            "parameters": [
               false,
             ],
-            "state": Object {
+            "state": {
               "approvalsRequired": 1,
             },
             "status": 0,
@@ -184,16 +184,16 @@ describe('Create resource claim', () => {
       },
       body => {
         expect(body).toMatchInlineSnapshot(`
-                  Object {
-                    "context": Array [
+                  {
+                    "context": [
                       "urn:madoc:project:1",
                     ],
-                    "events": Array [
+                    "events": [
                       "madoc-ts.status.3",
                     ],
                     "name": "undefined - Canvas label",
-                    "parameters": Array [],
-                    "state": Object {
+                    "parameters": [],
+                    "state": {
                       "approvalsRequired": 1,
                     },
                     "status": 1,
@@ -213,7 +213,7 @@ describe('Create resource claim', () => {
       },
       params => {
         expect(params).toMatchInlineSnapshot(`
-          Array [
+          [
             1,
             1,
           ]
@@ -223,7 +223,7 @@ describe('Create resource claim', () => {
 
     apiMock.mockRoute(
       'GET',
-      '/api/crowdsourcing/model?derived_from=model-id&target_id=urn%3Amadoc%3Acanvas%3A123&target_type=Canvas',
+      '/api/madoc/crowdsourcing/model?derived_from=model-id&target_id=urn%3Amadoc%3Acanvas%3A123&target_type=Canvas',
       {
         id: 'some-model',
       }
@@ -231,7 +231,7 @@ describe('Create resource claim', () => {
 
     apiMock.mockRoute(
       'POST',
-      '/api/crowdsourcing/model/model-id/clone',
+      '/api/madoc/crowdsourcing/model/model-id/clone',
       {
         id: 'forked-model-id',
         document: {
@@ -240,13 +240,13 @@ describe('Create resource claim', () => {
       } as CaptureModel,
       body => {
         expect(body).toMatchInlineSnapshot(`
-          Object {
-            "target": Array [
-              Object {
+          {
+            "target": [
+              {
                 "id": "urn:madoc:manifest:2001",
                 "type": "Manifest",
               },
-              Object {
+              {
                 "id": "urn:madoc:canvas:123",
                 "type": "Canvas",
               },
@@ -258,27 +258,27 @@ describe('Create resource claim', () => {
 
     apiMock.mockRoute('POST', '/api/tasks/1/subtasks', { id: '1' }, body => {
       expect(body).toMatchInlineSnapshot(`
-        Object {
-          "assignee": Object {
+        {
+          "assignee": {
             "id": "urn:madoc:user:1",
             "name": "test",
           },
-          "context": Array [
+          "context": [
             "urn:madoc:project:1",
           ],
-          "events": Array [
+          "events": [
             "madoc-ts.status.-1",
             "madoc-ts.status.2",
             "madoc-ts.status.3",
             "madoc-ts.status.4",
           ],
           "name": "test: submission undefined",
-          "parameters": Array [
+          "parameters": [
             "forked-model-id",
             null,
             "canvas",
           ],
-          "state": Object {},
+          "state": {},
           "status": 0,
           "status_text": "assigned",
           "subject": "urn:madoc:canvas:123",
@@ -361,7 +361,7 @@ describe('Create resource claim', () => {
       },
       params => {
         expect(params).toMatchInlineSnapshot(`
-          Array [
+          [
             1,
             1,
           ]
@@ -477,7 +477,7 @@ describe('Create resource claim', () => {
       },
       params => {
         expect(params).toMatchInlineSnapshot(`
-          Array [
+          [
             1,
             2001,
             123,
@@ -494,7 +494,7 @@ describe('Create resource claim', () => {
       },
       params => {
         expect(params).toMatchInlineSnapshot(`
-          Array [
+          [
             2001,
             1,
           ]
@@ -581,7 +581,7 @@ describe('Create resource claim', () => {
       },
       params => {
         expect(params).toMatchInlineSnapshot(`
-          Array [
+          [
             1,
             1,
           ]
@@ -610,7 +610,7 @@ describe('Create resource claim', () => {
       },
       params => {
         expect(params).toMatchInlineSnapshot(`
-          Array [
+          [
             1,
             2001,
             123,
@@ -627,7 +627,7 @@ describe('Create resource claim', () => {
       },
       params => {
         expect(params).toMatchInlineSnapshot(`
-          Array [
+          [
             2001,
             1,
           ]
@@ -651,19 +651,19 @@ describe('Create resource claim', () => {
       },
       body => {
         expect(body).toMatchInlineSnapshot(`
-          Object {
-            "context": Array [
+          {
+            "context": [
               "urn:madoc:project:1",
             ],
-            "events": Array [
+            "events": [
               "madoc-ts.subtask_created",
               "madoc-ts.status.3",
             ],
             "name": "Test manifest 1",
-            "parameters": Array [
+            "parameters": [
               false,
             ],
-            "state": Object {
+            "state": {
               "approvalsRequired": 1,
             },
             "status": 0,
@@ -691,16 +691,16 @@ describe('Create resource claim', () => {
       },
       body => {
         expect(body).toMatchInlineSnapshot(`
-                  Object {
-                    "context": Array [
+                  {
+                    "context": [
                       "urn:madoc:project:1",
                     ],
-                    "events": Array [
+                    "events": [
                       "madoc-ts.status.3",
                     ],
                     "name": "undefined - Canvas label",
-                    "parameters": Array [],
-                    "state": Object {
+                    "parameters": [],
+                    "state": {
                       "approvalsRequired": 1,
                     },
                     "status": 1,
@@ -720,7 +720,7 @@ describe('Create resource claim', () => {
       },
       params => {
         expect(params).toMatchInlineSnapshot(`
-          Array [
+          [
             1,
             1,
           ]
@@ -730,7 +730,7 @@ describe('Create resource claim', () => {
 
     apiMock.mockRoute(
       'GET',
-      '/api/crowdsourcing/model?derived_from=model_id_1&target_id=urn%3Amadoc%3Acanvas%3A123&target_type=Canvas',
+      '/api/madoc/crowdsourcing/model?derived_from=model_id_1&target_id=urn%3Amadoc%3Acanvas%3A123&target_type=Canvas',
       {
         id: 'some-model',
       }
@@ -738,7 +738,7 @@ describe('Create resource claim', () => {
 
     apiMock.mockRoute(
       'POST',
-      '/api/crowdsourcing/model/model_id_1/clone',
+      '/api/madoc/crowdsourcing/model/model_id_1/clone',
       {
         id: 'forked-model-id',
         document: {
@@ -747,13 +747,13 @@ describe('Create resource claim', () => {
       } as CaptureModel,
       body => {
         expect(body).toMatchInlineSnapshot(`
-          Object {
-            "target": Array [
-              Object {
+          {
+            "target": [
+              {
                 "id": "urn:madoc:manifest:2001",
                 "type": "Manifest",
               },
-              Object {
+              {
                 "id": "urn:madoc:canvas:123",
                 "type": "Canvas",
               },
@@ -765,27 +765,27 @@ describe('Create resource claim', () => {
 
     apiMock.mockRoute('POST', '/api/tasks/1/subtasks', { id: '1', status: 0 }, body => {
       expect(body).toMatchInlineSnapshot(`
-        Object {
-          "assignee": Object {
+        {
+          "assignee": {
             "id": "urn:madoc:user:456",
             "name": "Test user",
           },
-          "context": Array [
+          "context": [
             "urn:madoc:project:1",
           ],
-          "events": Array [
+          "events": [
             "madoc-ts.status.-1",
             "madoc-ts.status.2",
             "madoc-ts.status.3",
             "madoc-ts.status.4",
           ],
           "name": "Test user: submission undefined",
-          "parameters": Array [
+          "parameters": [
             "forked-model-id",
             null,
             "canvas",
           ],
-          "state": Object {},
+          "state": {},
           "status": 0,
           "status_text": "assigned",
           "subject": "urn:madoc:canvas:123",
@@ -888,17 +888,17 @@ describe('Create resource claim', () => {
     await createResourceClaim(ctx);
 
     expect(ctx.response).toMatchInlineSnapshot(`
-      Object {
-        "body": Object {
-          "claim": Object {
-            "assignee": Object {
+      {
+        "body": {
+          "claim": {
+            "assignee": {
               "id": "urn:madoc:user:1",
               "name": "test",
             },
             "id": "manifest-crowd-task-1",
             "status": 1,
             "subject": "urn:madoc:manifest:456",
-            "subtasks": Array [],
+            "subtasks": [],
             "type": "crowdsourcing-task",
           },
         },
@@ -1260,7 +1260,7 @@ describe('Create resource claim', () => {
       },
       params => {
         expect(params).toMatchInlineSnapshot(`
-          Array [
+          [
             1,
             1,
           ]
@@ -1270,7 +1270,7 @@ describe('Create resource claim', () => {
 
     apiMock.mockRoute(
       'GET',
-      '/api/crowdsourcing/model?derived_from=model-id&target_id=urn%3Amadoc%3Acanvas%3A123&target_type=Canvas',
+      '/api/madoc/crowdsourcing/model?derived_from=model-id&target_id=urn%3Amadoc%3Acanvas%3A123&target_type=Canvas',
       [
         {
           id: 'some-model',
@@ -1278,34 +1278,34 @@ describe('Create resource claim', () => {
       ]
     );
 
-    apiMock.mockRoute('GET', '/api/crowdsourcing/model/some-model', {
+    apiMock.mockRoute('GET', '/api/madoc/crowdsourcing/model/some-model', {
       id: 'some-model',
     });
 
     // And now we assert that the task created is what we expect.
     apiMock.mockRoute('POST', '/api/tasks/canvas-crowd-task-1/subtasks', {}, body => {
       expect(body).toMatchInlineSnapshot(`
-        Object {
-          "assignee": Object {
+        {
+          "assignee": {
             "id": "urn:madoc:user:1",
             "name": "test",
           },
-          "context": Array [
+          "context": [
             "urn:madoc:project:1",
           ],
-          "events": Array [
+          "events": [
             "madoc-ts.status.-1",
             "madoc-ts.status.2",
             "madoc-ts.status.3",
             "madoc-ts.status.4",
           ],
           "name": "test: submission undefined",
-          "parameters": Array [
+          "parameters": [
             "some-model",
             null,
             "canvas",
           ],
-          "state": Object {
+          "state": {
             "userManifestTask": "manifest-crowd-task-2",
           },
           "status": 0,
@@ -1319,7 +1319,7 @@ describe('Create resource claim', () => {
 
     apiMock.mockRoute('PATCH', '/api/tasks/manifest-crowd-task-2', {}, body => {
       expect(body).toMatchInlineSnapshot(`
-        Object {
+        {
           "status": 1,
           "status_text": "in progress",
         }
@@ -1944,7 +1944,7 @@ describe('Create resource claim', () => {
     // Check that it correctly updates the status.
     apiMock.mockRoute('PATCH', '/api/tasks/canvas-user-task-3', {}, body => {
       expect(body).toMatchInlineSnapshot(`
-        Object {
+        {
           "status": 2,
           "status_text": "Submitted",
         }

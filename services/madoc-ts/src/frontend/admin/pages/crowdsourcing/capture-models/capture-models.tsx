@@ -1,12 +1,11 @@
 import React from 'react';
-import { renderUniversalRoutes } from '../../../../shared/utility/server-utils';
 import { useTranslation } from 'react-i18next';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { WidePage } from '../../../../shared/layout/WidePage';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
-import { useParams } from 'react-router-dom';
+import { Outlet, useParams } from 'react-router-dom';
 
-export const CaptureModels = createUniversalComponent(({ route }) => {
+export const CaptureModels = createUniversalComponent(() => {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
 
@@ -24,7 +23,9 @@ export const CaptureModels = createUniversalComponent(({ route }) => {
           { label: t('Structure'), link: `/capture-models/${id}/structure` },
         ]}
       />
-      <WidePage>{renderUniversalRoutes(route.routes)}</WidePage>
+      <WidePage>
+        <Outlet />
+      </WidePage>
     </>
   );
 }, {});

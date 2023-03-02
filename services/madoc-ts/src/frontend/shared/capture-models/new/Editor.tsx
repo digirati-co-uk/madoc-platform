@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { CanvasFull } from '../../../../types/canvas-full';
 import { useSiteConfiguration } from '../../../site/features/SiteConfigurationContext';
 import { useApi } from '../../hooks/use-api';
+import { BrowserComponent } from '../../utility/browser-component';
 import { CaptureModel } from '../types/capture-model';
 import { RevisionRequest } from '../types/revision-request';
 import { RevisionProviderWithFeatures } from './components/RevisionProviderWithFeatures';
@@ -78,7 +79,7 @@ export const Editor: React.FC<EditorProps> = ({
   }
 
   return (
-    <React.Suspense fallback={<div>loading...</div>}>
+    <BrowserComponent fallback={<div>loading...</div>}>
       <RevisionProviderWithFeatures
         captureModel={captureModel}
         revision={revisionId}
@@ -94,6 +95,6 @@ export const Editor: React.FC<EditorProps> = ({
           </div>
         </div>
       </RevisionProviderWithFeatures>
-    </React.Suspense>
+    </BrowserComponent>
   );
 };

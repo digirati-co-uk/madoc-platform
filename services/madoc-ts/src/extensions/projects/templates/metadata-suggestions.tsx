@@ -1,4 +1,4 @@
-import { InternationalString } from '@hyperion-framework/types';
+import { InternationalString } from '@iiif/presentation-3';
 import React, { useMemo } from 'react';
 import invariant from 'tiny-invariant';
 import { TextFieldProps } from '../../../frontend/shared/capture-models/editor/input-types/TextField/TextField';

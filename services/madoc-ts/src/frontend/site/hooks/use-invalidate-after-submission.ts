@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useCanvasModel } from './use-canvas-model';
 import { useCollection } from './use-collection';
 import { useManifest } from './use-manifest';
 import { useProject } from './use-project';
@@ -16,6 +17,7 @@ export function useInvalidateAfterSubmission() {
   const getSiteCollection = useCollection();
   const getSiteProjectCanvasTasks = useProjectCanvasTasks();
   const getSiteProjectManifestTasks = useProjectManifestTasks();
+  const getSiteProjectCanvasModel = useCanvasModel();
 
   return useCallback(async () => {
     await Promise.all([
@@ -23,6 +25,7 @@ export function useInvalidateAfterSubmission() {
       manifestId ? getSiteManifest.refetch() : null,
       collectionId ? getSiteCollection.refetch() : null,
       projectId && canvasId ? getSiteProjectCanvasTasks.refetch() : null,
+      projectId && canvasId ? getSiteProjectCanvasModel.refetch() : null,
       projectId && manifestId ? getSiteProjectManifestTasks.refetch() : null,
     ]);
   }, [
@@ -31,6 +34,7 @@ export function useInvalidateAfterSubmission() {
     getSiteCollection,
     getSiteManifest,
     getSiteProject,
+    getSiteProjectCanvasModel,
     getSiteProjectCanvasTasks,
     getSiteProjectManifestTasks,
     manifestId,

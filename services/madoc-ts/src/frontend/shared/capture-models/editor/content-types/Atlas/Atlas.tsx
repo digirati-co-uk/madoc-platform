@@ -1,5 +1,5 @@
-import { ImageService } from '@hyperion-framework/types';
-import React, { useMemo, useState } from 'react';
+import { ImageService } from '@iiif/presentation-3';
+import React from 'react';
 import { webglSupport } from '../../../../utility/webgl-support';
 import { AnnotationStyleProvider, useAnnotationStyles } from '../../../AnnotationStyleContext';
 import { BaseContent, ContentOptions } from '../../../types/content-types';
@@ -10,9 +10,9 @@ import {
   useCanvas,
   useImageService,
   VaultProvider,
-  useVaultEffect,
-} from '@hyperion-framework/react-vault';
-import { AtlasAuto, getId, GetTile, TileSet, Preset, PopmotionControllerConfig } from '@atlas-viewer/atlas';
+  CanvasPanel,
+} from 'react-iiif-vault';
+import { Preset, PopmotionControllerConfig } from '@atlas-viewer/atlas';
 import { ImageServiceContext } from './Atlas.helpers';
 
 export type AtlasCustomOptions = {
@@ -44,59 +44,40 @@ const Canvas: React.FC<{
   const canvas = useCanvas();
   const { data: service } = useImageService() as { data?: ImageService };
   const style = useAnnotationStyles();
-  const [thumbnail, setThumbnail] = useState<any | undefined>(undefined);
-
-  useVaultEffect(
-    v => {
-      if (canvas) {
-        v.getThumbnail(canvas, { minWidth: 100 }, false).then(thumb => {
-          if (thumb.best) {
-            setThumbnail(thumb.best);
-          }
-        });
-      } else {
-        setThumbnail(undefined);
-      }
-    },
-    [canvas]
-  );
-
-  const tiles: GetTile | undefined = useMemo(() => {
-    if (canvas && service) {
-      return {
-        id: getId(service),
-        width: canvas.width,
-        height: canvas.height,
-        imageService: service,
-        thumbnail: thumbnail?.type === 'fixed' ? thumbnail : undefined,
-      };
-    }
-    return undefined;
-  }, [canvas, service, thumbnail]);
 
   if (!service || !canvas) {
     return null;
   }
 
   return (
-    <AtlasAuto
-      containerStyle={{ flex: '1 1 0px' }}
+    <CanvasPanel.Viewer
+      containerStyle={{ flex: '1 1 0px', height: '100%' }}
       onCreated={onCreated}
       mode={isEditing ? 'sketch' : 'explore'}
       unstable_webglRenderer={webglSupport() && unstable_webglRenderer}
       controllerConfig={controllerConfig}
+      height="100%"
     >
-      <world onClick={onDeselect}>
+      <world
+        onClick={e => {
+          if (onDeselect) {
+            e.stopPropagation();
+            onDeselect();
+          }
+        }}
+      >
         <AnnotationStyleProvider theme={style}>
-          <ImageServiceContext value={service}>
-            {tiles ? <TileSet x={0} y={0} height={canvas.height} width={canvas.width} tiles={tiles} /> : null}
-            <world-object id={`${canvas.id}/annotations`} x={0} y={0} height={canvas.height} width={canvas.width}>
-              {children}
-            </world-object>
-          </ImageServiceContext>
+          <CanvasContext canvas={canvas.id}>
+            <ImageServiceContext value={service}>
+              <CanvasPanel.RenderCanvas />
+              <world-object id={`${canvas.id}/annotations`} x={0} y={0} height={canvas.height} width={canvas.width}>
+                {children}
+              </world-object>
+            </ImageServiceContext>
+          </CanvasContext>
         </AnnotationStyleProvider>
       </world>
-    </AtlasAuto>
+    </CanvasPanel.Viewer>
   );
 };
 

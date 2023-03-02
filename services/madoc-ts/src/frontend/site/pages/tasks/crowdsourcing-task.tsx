@@ -54,7 +54,7 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task,
         {changesRequested ? (
           <WarningMessage $banner>
             <strong>{t('The following changes were requested')}</strong>
-            <p>{changesRequested}</p>
+            <p style={{ whiteSpace: 'pre' }}>{changesRequested}</p>
           </WarningMessage>
         ) : null}
         {mayExpire ? <WarningMessage $banner>{t('Your contribution may expire soon')}</WarningMessage> : null}

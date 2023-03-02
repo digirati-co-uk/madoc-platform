@@ -1,5 +1,9 @@
+import { InternationalString } from '@iiif/presentation-3';
+import { getValue } from '@iiif/vault-helpers';
 import React, { useEffect, useState, useCallback } from 'react';
 import { Select } from 'react-functional-select';
+import { LocaleString } from '../../../../components/LocaleString';
+import { useApi, useOptionalApi } from '../../../../hooks/use-api';
 import { BaseField, FieldComponent } from '../../../types/field-types';
 import { ErrorMessage } from '../../atoms/Message';
 import { Tag } from '../../atoms/Tag';
@@ -13,19 +17,27 @@ export interface AutocompleteFieldProps extends BaseField {
   requestInitial?: boolean;
   dataSource: string;
   disabled?: boolean;
+  outputIdAsString?: boolean;
 }
 
 export type CompletionItem = {
   uri: string;
-  label: string;
+  label: string | InternationalString;
   resource_class?: string;
   score?: number;
+
+  // Future fields to use.
+  description?: string | InternationalString;
+
+  language?: string;
 };
 
 function renderOptionLabel(option: CompletionItem) {
   return (
     <>
-      <strong style={{ lineHeight: '1.8em', verticalAlign: 'middle' }}>{option.label}</strong>
+      <LocaleString as="strong" style={{ lineHeight: '1.8em', verticalAlign: 'middle' }}>
+        {option.label as any}
+      </LocaleString>
       {option.resource_class ? <Tag style={{ float: 'right', marginLeft: 10 }}>{option.resource_class}</Tag> : null}
     </>
   );
@@ -33,10 +45,13 @@ function renderOptionLabel(option: CompletionItem) {
 
 export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props => {
   const { t } = useTranslation();
-  const [options, setOptions] = useState<CompletionItem[]>(props.value ? [props.value] : []);
+  const [options, setOptions] = useState<CompletionItem[]>(
+    props.value ? [typeof props.value === 'string' ? { uri: props.value, label: 'unknown' } : props.value] : []
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [hasFetched, setHasFetched] = useState(false);
   const [error, setError] = useState('');
+  const api = useOptionalApi();
 
   const onOptionChange = (option: CompletionItem | undefined) => {
     if (!option) {
@@ -45,9 +60,13 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
     }
 
     if (!props.value || option.uri !== props.value.uri) {
-      props.updateValue(
-        option ? { label: option.label, resource_class: option.resource_class, uri: option.uri } : undefined
-      );
+      if (props.outputIdAsString) {
+        props.updateValue(option?.uri as any);
+      } else {
+        props.updateValue(
+          option ? ({ label: option.label, resource_class: option.resource_class, uri: option.uri } as any) : undefined
+        );
+      }
     }
   };
 
@@ -62,16 +81,29 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
           setIsLoading(false);
           return;
         }
+        const fetcher = (): Promise<{ completions: CompletionItem[] }> => {
+          if (props.dataSource.startsWith('madoc-api://')) {
+            const source = props.dataSource.slice('madoc-api://'.length);
+            if (!api) {
+              throw new Error('Invalid URL');
+            }
+            return api.request(`/api/madoc/${source.replace(/%/, value || '')}`);
+          }
+          return fetch(`${props.dataSource}`.replace(/%/, value || '')).then(
+            r => r.json() as Promise<{ completions: CompletionItem[] }>
+          );
+        };
+
         // Make API Request.
-        fetch(`${props.dataSource}`.replace(/%/, value || ''))
-          .then(r => r.json() as Promise<{ completions: CompletionItem[] }>)
+        fetcher()
           .then(items => {
             setOptions(items.completions);
             setIsLoading(false);
             setHasFetched(true);
             setError('');
           })
-          .catch(() => {
+          .catch(e => {
+            console.error(e);
             setError(t('There was a problem fetching results'));
           });
       }

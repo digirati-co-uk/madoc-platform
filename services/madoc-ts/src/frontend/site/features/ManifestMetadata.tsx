@@ -1,5 +1,5 @@
 import React from 'react';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { MetaDataDisplay } from '../../shared/components/MetaDataDisplay';
 import { usePaginatedData } from '../../shared/hooks/use-data';
 import { useUser } from '../../shared/hooks/use-site';

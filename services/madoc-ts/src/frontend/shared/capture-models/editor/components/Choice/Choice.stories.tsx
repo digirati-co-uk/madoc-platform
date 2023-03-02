@@ -7,11 +7,11 @@ import { defaultTheme } from '../../themes';
 import { RoundedCard } from '../RoundedCard/RoundedCard';
 import { Choice } from './Choice';
 
-const simple = require('../../../../../../../fixtures/simple.json');
+import simple from '../../../../../../../fixtures/simple.json';
 
 const withSimpleCaptureModel = (Component: React.FC): React.FC => () => (
   <ThemeProvider theme={defaultTheme}>
-    <CaptureModelProvider captureModel={simple}>
+    <CaptureModelProvider captureModel={simple as any}>
       <Component />
     </CaptureModelProvider>
   </ThemeProvider>
@@ -51,19 +51,19 @@ export const StaticExample: React.FC = () => (
   </ThemeProvider>
 );
 
-export const UsingHook: React.FC = withSimpleCaptureModel(() => {
-  const [currentView, { pop, push, idStack }] = useNavigation();
-
-  if (currentView.type !== 'choice') {
-    return (
-      <RoundedCard>
-        <h3>
-          We are on <strong>{currentView.label}</strong>
-        </h3>
-        <Button onClick={() => pop()}>go back</Button>
-      </RoundedCard>
-    );
-  }
-
-  return <Choice onChoice={push} choice={currentView} showBackButton={!!idStack.length} onBackButton={pop} />;
-});
+// export const UsingHook: React.FC = withSimpleCaptureModel(() => {
+//   const [currentView, { pop, push, idStack }] = useNavigation();
+//
+//   if (currentView.type !== 'choice') {
+//     return (
+//       <RoundedCard>
+//         <h3>
+//           We are on <strong>{currentView.label}</strong>
+//         </h3>
+//         <Button onClick={() => pop()}>go back</Button>
+//       </RoundedCard>
+//     );
+//   }
+//
+//   return <Choice onChoice={push} choice={currentView} showBackButton={!!idStack.length} onBackButton={pop} />;
+// });

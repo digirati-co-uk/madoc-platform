@@ -1,9 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-react';
+import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { parseUrn } from '../../../utility/parse-urn';
 import { SmallButton } from '../../shared/navigation/Button';
-import { GridContainer, ThirdGrid } from '../../shared/layout/Grid';
+import { CSSThirdGrid, GridContainer } from '../../shared/layout/Grid';
 import { Heading3 } from '../../shared/typography/Heading3';
 import { ContinueTaskDisplay } from '../../shared/components/ContinueTaskDisplay';
 import { useContributorTasks } from '../../shared/hooks/use-contributor-tasks';
@@ -40,9 +40,9 @@ export const ProjectContributionButton: React.FC = () => {
 
     for (const task of firstThree) {
       taskComponents.push(
-        <ThirdGrid key={task.id}>
+        <div key={task.id}>
           <ContinueTaskDisplay task={task} manifestModel={showCaptureModelOnManifest} />
-        </ThirdGrid>
+        </div>
       );
     }
   }
@@ -60,9 +60,9 @@ export const ProjectContributionButton: React.FC = () => {
       const parsed = parseUrn(task.subject);
       if (parsed && parsed.type === 'canvas') {
         taskComponents.push(
-          <ThirdGrid key={task.id}>
+          <div key={task.id}>
             <ContinueTaskDisplay task={task} next manifestModel={showCaptureModelOnManifest} />
-          </ThirdGrid>
+          </div>
         );
       }
     }
@@ -75,7 +75,7 @@ export const ProjectContributionButton: React.FC = () => {
   return (
     <div>
       <Heading3 $margin>{t('Continue where you left off')}</Heading3>
-      <GridContainer>{taskComponents}</GridContainer>
+      <CSSThirdGrid $justify="flex-start">{taskComponents}</CSSThirdGrid>
       <SmallButton
         as={HrefLink}
         href={createLink({ projectId: project.id, subRoute: 'tasks', query: { type: 'crowdsourcing-task' } })}

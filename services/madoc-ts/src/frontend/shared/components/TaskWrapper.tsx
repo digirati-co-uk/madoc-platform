@@ -4,7 +4,7 @@ import { BaseTask } from '../../../gateway/tasks/base-task';
 import { ExpandGrid } from '../layout/Grid';
 import { TaskHeader } from './TaskHeader';
 
-export const TaskWrapper: React.FC<{ task: BaseTask; subject?: SubjectSnippet; refetch?: () => Promise<void> }> = ({
+export const TaskWrapper: React.FC<{ task: BaseTask; subject?: SubjectSnippet; refetch?: () => Promise<any> }> = ({
   task,
   refetch,
   children,

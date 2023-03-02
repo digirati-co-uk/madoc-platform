@@ -1,5 +1,4 @@
-import { useCallback, useMemo } from 'react';
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Select } from 'react-functional-select';
 import { Tag } from './Tag';
 
@@ -83,6 +82,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
       getOptionValue={getValue}
       getOptionLabel={getLabel}
       renderOptionLabel={renderOptionLabel}
+      scrollMenuIntoView={false}
     />
   );
 };

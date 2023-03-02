@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { Redirect, useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import { RemotePlugin } from '../../../../types/plugins';
 import { Button } from '../../../shared/navigation/Button';
 import { SystemListItem } from '../../../shared/atoms/SystemListItem';
@@ -22,7 +22,7 @@ import { serverRendererFor } from '../../../shared/plugins/external/server-rende
 import { AdminHeader } from '../../molecules/AdminHeader';
 
 export const ViewExternalPlugin: React.FC = () => {
-  const { owner, repo } = useParams<{ owner: string; repo: string }>();
+  const { owner, repo } = useParams() as { owner: string; repo: string };
   const { t } = useTranslation();
   const { data } = useData<RemotePlugin>(ViewExternalPlugin);
   const api = useApi();
@@ -35,7 +35,7 @@ export const ViewExternalPlugin: React.FC = () => {
   });
 
   if (user?.role !== 'global_admin') {
-    return <Redirect to={'/'} />;
+    return <Navigate to={'/'} />;
   }
 
   return (

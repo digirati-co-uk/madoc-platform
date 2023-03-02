@@ -1,8 +1,11 @@
-const { resolve, join } = require('path');
-const TJS = require('typescript-json-schema');
-const { writeFileSync, readdirSync } = require('fs');
-const crypto = require('crypto');
-const traverse = require('traverse');
+import traverse from 'traverse';
+import { join, resolve, dirname } from 'path';
+import TJS from 'typescript-json-schema';
+import { readdirSync, writeFileSync } from 'fs';
+import crypto from 'crypto';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const files = readdirSync(join(__dirname, './src/types/schemas')).map(f => join(__dirname, './src/types/schemas', f));
 

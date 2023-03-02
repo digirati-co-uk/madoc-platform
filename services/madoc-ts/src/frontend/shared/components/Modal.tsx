@@ -1,4 +1,6 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { Suspense, useRef, useState } from 'react';
+import { useBrowserLayoutEffect } from '../hooks/use-browser-layout-effect';
+import { Spinner } from '../icons/Spinner';
 import {
   InnerModalContainer,
   ModalBackground,
@@ -11,6 +13,7 @@ import {
   ModalResizeIcon,
 } from '../layout/Modal';
 import { createPortal } from 'react-dom';
+import { BrowserComponent } from '../utility/browser-component';
 
 export const ModalButton: React.FC<{
   ref?: any;
@@ -59,7 +62,7 @@ export const ModalButton: React.FC<{
   const [expanded, setIsExpanded] = useState(false);
   const containerRef = useRef<any>();
 
-  useLayoutEffect(() => {
+  useBrowserLayoutEffect(() => {
     const element = document.createElement('div');
     document.body.appendChild(element);
     portalEl.current = element;
@@ -70,6 +73,7 @@ export const ModalButton: React.FC<{
 
     return () => {
       portalEl.current = undefined;
+      setIsReady(false);
       document.body.removeChild(element);
     };
   }, []);
@@ -105,12 +109,14 @@ export const ModalButton: React.FC<{
                     <ModalResizeIcon onClick={() => setIsExpanded(e => !e)} />
                     <ModalCloseIcon onClick={closeModal} />
                   </ModalHeader>
-                  <ModalBody>{render({ close: closeModal })}</ModalBody>
-                  {renderFooter ? (
-                    <ModalFooter $footerAlignRight={footerAlignRight}>
-                      {renderFooter({ close: closeModal })}
-                    </ModalFooter>
-                  ) : null}
+                  <BrowserComponent fallback={<Spinner />}>
+                    <ModalBody>{render({ close: closeModal })}</ModalBody>
+                    {renderFooter ? (
+                      <ModalFooter $footerAlignRight={footerAlignRight}>
+                        {renderFooter({ close: closeModal })}
+                      </ModalFooter>
+                    ) : null}
+                  </BrowserComponent>
                 </InnerModalContainer>
               </ModalContainer>
             </>,
@@ -127,7 +133,7 @@ export const ModalButton: React.FC<{
         onClick={() => setIsReady(true)}
         style={style}
       >
-        {children}
+        <BrowserComponent fallback={<Spinner />}>{children}</BrowserComponent>
       </Component>
     </>
   );

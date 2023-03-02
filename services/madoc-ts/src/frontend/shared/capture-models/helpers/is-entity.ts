@@ -1,7 +1,7 @@
 import { CaptureModel } from '../types/capture-model';
 
 export function isEntity(input: any): input is CaptureModel['document'] {
-  return input.type === 'entity';
+  return input && input.type === 'entity';
 }
 
 export function isEntityList(input: any[]): input is CaptureModel['document'][] {
