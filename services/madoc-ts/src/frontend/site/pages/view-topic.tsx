@@ -9,6 +9,7 @@ import { AppliedFacets } from '../features/AppliedFacets';
 import { SearchPageResults } from '../features/SearchPageResults';
 import { SearchPageFilters } from '../features/SearchPageFilters';
 import { AutoSlotLoader } from '../../shared/page-blocks/auto-slot-loader';
+import { TopicActions } from '../features/TopicActions';
 
 export const ViewTopic = () => {
   return (
@@ -26,7 +27,9 @@ export const ViewTopic = () => {
       </Slot>
 
       <Slot name="topic-result-heading">
+        {/*  todo this should prob be its own block */}
         <h3 style={{ fontSize: '1.5em', color: 'inherit' }}>Explore all resources</h3>
+        <TopicActions />
       </Slot>
 
       <div style={{ display: 'flex' }}>

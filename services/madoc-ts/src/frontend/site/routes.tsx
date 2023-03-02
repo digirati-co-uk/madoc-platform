@@ -562,6 +562,11 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
               element: <Components.ViewTopic />,
             },
             {
+              path: '/topics/:topicType/:topic/search',
+              exact: true,
+              element: <Components.Search />,
+            },
+            {
               path: '*',
               element: <Components.PageLoader />,
               children: [
