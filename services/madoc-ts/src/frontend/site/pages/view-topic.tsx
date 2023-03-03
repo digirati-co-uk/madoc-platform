@@ -26,7 +26,7 @@ export const ViewTopic = () => {
         <FeaturedTopicItems />
       </Slot>
 
-      <Slot name="topic-result-heading">
+      <Slot name="topic-result-heading" id="topic">
         {/*  todo this should prob be its own block */}
         <h3 style={{ fontSize: '1.5em', color: 'inherit' }}>Explore all resources</h3>
         <TopicActions />

@@ -2,6 +2,7 @@ import { stringify } from 'query-string';
 import { useCallback, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
+import { useRouteContext } from './use-route-context';
 
 export type FacetQueryValue = { k: string; v: string };
 
@@ -9,6 +10,7 @@ export function useSearchQuery() {
   const query = useLocationQuery<{ fulltext?: string; facets?: string; page?: string }>();
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const { topic } = useRouteContext();
   const fulltext = query.fulltext || '';
   const appliedFacets: FacetQueryValue[] = useMemo(() => (query.facets ? JSON.parse(query.facets) : []), [
     query.facets,
@@ -17,13 +19,14 @@ export function useSearchQuery() {
 
   const setQuery = useCallback(
     (newFulltext: string, newFacets: Array<FacetQueryValue>, newPage?: number) => {
+      const hash = topic ? '#topic' : '';
       // @todo New list of facets applied to location.
       navigate(
         `${pathname}?${stringify({
           fulltext: newFulltext,
           facets: newFacets.length ? JSON.stringify(newFacets) : undefined,
           page: newPage && newPage > 1 ? newPage : undefined,
-        })}`
+        })}${hash}`
       );
     },
     [pathname]
