@@ -3,13 +3,13 @@ import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { Slot } from '../../shared/page-blocks/slot';
 import { TopicHero } from '../features/TopicHero';
 import { FeaturedTopicItems } from '../features/FeaturedTopicItems';
-import { StaticPage } from '../features/StaticPage';
 import { RelatedTopics } from '../features/RelatedTopics';
 import { SearchPagination } from '../features/SearchPagination';
 import { AppliedFacets } from '../features/AppliedFacets';
 import { SearchPageResults } from '../features/SearchPageResults';
 import { SearchPageFilters } from '../features/SearchPageFilters';
 import { AutoSlotLoader } from '../../shared/page-blocks/auto-slot-loader';
+import { TopicActions } from '../features/TopicActions';
 
 export const ViewTopic = () => {
   return (
@@ -27,13 +27,15 @@ export const ViewTopic = () => {
       </Slot>
 
       <Slot name="topic-result-heading">
+        {/*  todo this should prob be its own block */}
         <h3 style={{ fontSize: '1.5em', color: 'inherit' }}>Explore all resources</h3>
+        <TopicActions />
       </Slot>
 
       <div style={{ display: 'flex' }}>
         <div style={{ maxWidth: 300 }}>
           <Slot name="topic-page-filters" small>
-            <SearchPageFilters hideTitle={true} dropdown={true} />
+            <SearchPageFilters />
           </Slot>
         </div>
 

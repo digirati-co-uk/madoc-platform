@@ -21,7 +21,10 @@ export function ManageTags({
 }) {
   const api = useApi();
   const createLink = useRelativeLinks();
-  const existingEntities = search.entity_tags as { entity: EnrichmentEntity }[];
+  const existingEntities =
+    type === 'manifest'
+      ? (search.entity_tags as { entity: EnrichmentEntity }[])
+      : (search.canvas.entity_tags as { entity: EnrichmentEntity }[]);
 
   // @todo no way to delete?
 
