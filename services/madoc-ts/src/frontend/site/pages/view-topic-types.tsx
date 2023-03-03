@@ -29,8 +29,6 @@ export function ViewTopicTypes() {
       </Slot>
 
       <Slot name="all-topic-types-footer"></Slot>
-
-      {/*<pre>{JSON.stringify(data, null, 2)}</pre>*/}
     </StaticPage>
   );
 }
