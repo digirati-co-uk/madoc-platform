@@ -3,7 +3,7 @@ import { CaptureModelShorthand } from '../../frontend/shared/capture-models/type
 
 export const entityTypeModel: CaptureModelShorthand<EnrichmentEntityType> = {
   other_labels: { type: 'international-field', label: 'Display label' },
-  label: { type: 'text-field', label: 'Canonical label (this will effect the slug)' },
+  label: { type: 'text-field', label: 'Canonical label', description: '(this will effect the slug)' },
   description: { type: 'international-field', label: 'Description' },
   image_url: { type: 'madoc-media-explorer', label: 'Image', valueAsString: true },
   // other_data.
@@ -12,7 +12,7 @@ export const entityTypeModel: CaptureModelShorthand<EnrichmentEntityType> = {
 
 export const entityModel: CaptureModelShorthand<EnrichmentEntity> = {
   other_labels: { type: 'international-field', label: 'Display label' },
-  label: { type: 'text-field', label: 'Canonical label (this will effect the slug)' },
+  label: { type: 'text-field', label: 'Canonical label', description: '(this will effect the slug)' },
   description: { type: 'international-field', label: 'Description' },
   image_url: { type: 'madoc-media-explorer', label: 'Image', valueAsString: true },
   __nested__: {
