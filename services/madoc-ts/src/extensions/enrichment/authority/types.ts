@@ -2,8 +2,8 @@ import { Pagination } from '../../../types/schemas/_pagination';
 import { InternationalString } from '@iiif/presentation-3';
 
 export interface AuthoritySnippet {
-  id: string;
-  url: string;
+  // id: string;
+  uri: string;
   authority: string;
   identifier: string;
 }
@@ -261,7 +261,7 @@ export interface EntityMadocResponse {
   image_url: string;
   image_caption: InternationalString;
   secondary_heading: string;
-  authorities: { authority: string; id: string; url: string }[];
+  authorities: AuthoritySnippet[];
 
   featured_resources: FeatureResource[];
   related_topics: EnrichmentEntitySnippet[];

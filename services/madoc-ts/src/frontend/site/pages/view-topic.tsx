@@ -10,6 +10,7 @@ import { SearchPageResults } from '../features/SearchPageResults';
 import { SearchPageFilters } from '../features/SearchPageFilters';
 import { AutoSlotLoader } from '../../shared/page-blocks/auto-slot-loader';
 import { TopicActions } from '../features/TopicActions';
+import { TopicAuthorities } from '../features/TopicAuthorities';
 
 export const ViewTopic = () => {
   return (
@@ -18,8 +19,9 @@ export const ViewTopic = () => {
         <DisplayBreadcrumbs />
       </Slot>
 
-      <Slot name="topic-header">
+      <Slot name="topic-headers">
         <TopicHero />
+        <TopicAuthorities />
       </Slot>
 
       <Slot name="topic-featured">

@@ -10,6 +10,7 @@ export const entityTypeModel: CaptureModelShorthand<EnrichmentEntityType> = {
   'other_data.example_data': { type: 'text-field', label: 'Example data' },
 };
 
+
 export const entityModel: CaptureModelShorthand<EnrichmentEntity> = {
   other_labels: { type: 'international-field', label: 'Display label' },
   label: { type: 'text-field', label: 'Canonical label', description: '(this will effect the slug)' },
@@ -17,6 +18,8 @@ export const entityModel: CaptureModelShorthand<EnrichmentEntity> = {
   image_url: { type: 'madoc-media-explorer', label: 'Image', valueAsString: true },
   __nested__: {
     other_labels: { allowMultiple: true, label: 'Other label', pluralLabel: 'Other labels', labelledBy: 'value' },
+    other_data: { allowMultiple: true, label: 'Other Data', pluralLabel: 'Other Data', labelledBy: 'value' },
+    authorities: { allowMultiple: true, label: 'Authority', pluralLabel: 'Authorities', labelledBy: 'value' },
   },
   // other_data.
   'other_data.example_data': { type: 'text-field', label: 'Example data' },
@@ -27,4 +30,10 @@ export const entityModel: CaptureModelShorthand<EnrichmentEntity> = {
     requestInitial: true,
     outputIdAsString: true,
   },
+  //links
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  'authorities.uri': { type: 'text-field', label: 'URI / URL' },
+  'authorities.authority': { type: 'text-field', label: 'Authority label' },
+  'authorities.identifier': { type: 'text-field', label: 'Authority identifier' },
 };
