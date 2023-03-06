@@ -5,11 +5,34 @@ import { HrefLink } from '../../../shared/utility/href-link';
 import { useRelativeLinks } from '../../../site/hooks/use-relative-links';
 import { useTopicType } from '../../../site/pages/loaders/topic-type-loader';
 import { TopicSnippetCard } from '../../../shared/components/TopicSnippet';
-import { Heading3 } from '../../../shared/typography/Heading3';
-import { TimeAgo } from '../../../shared/atoms/TimeAgo';
+import { Heading3, Subheading3 } from '../../../shared/typography/Heading3';
 import styled from 'styled-components';
 
-const InfoContainer = styled.div`
+const TopicTypeContainer = styled.div`
+  display: flex;
+`;
+
+const TypeImage = styled.div`
+  position: relative;
+  width: 100vw;
+  height: 50vh;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+`;
+
+const TypeDetails = styled.div`
+  position: absolute;
+  background-color: rgba(241, 238, 238, 0.9);
+  padding: 1em;
+  bottom: 0;
+  width: 100%;
+
   ul {
     padding: 0;
 
@@ -22,47 +45,40 @@ const InfoContainer = styled.div`
 export function ListTopicsInType() {
   const createLink = useRelativeLinks(true);
   const { data } = useTopicType();
-  console.log(data);
-
   return (
     <>
-      <Heading1 as={LocaleString}>{data?.label || { none: ['...'] }}</Heading1>
-      <InfoContainer>
-        <ul style={{ listStyle: 'none' }}>
-          <li>
-            <b>ID</b>: {data.id}
-          </li>
-          <li>
-            <b>Created</b>: <TimeAgo date={data.created} />
-          </li>
-          <li>
-            <b>Slug</b>: {data.slug}
-          </li>
-          <li>
-            <b>Label</b>: <LocaleString>{data?.label}</LocaleString>
-          </li>
-          <li>
-            <b>Other labels</b>: <LocaleString>{data?.other_labels}</LocaleString>
-          </li>
-          <li>
-            <b>Description</b>: <LocaleString>{data?.description}</LocaleString>
-          </li>
-          <li>
-            <b>summary</b>: <LocaleString>{data?.editorial.summary}</LocaleString>
-          </li>
-          <li>
-            <b>Topics</b>: {data?.pagination.totalResults}
-          </li>
-          <li>
-            <b>Image</b>:
-          </li>
-          <li>
-            <img style={{ maxWidth: '150px' }} src={data?.image_url} />
-          </li>
-        </ul>
-      </InfoContainer>
+      <TopicTypeContainer>
+        <TypeImage>
+          <img src={data?.image_url} />
+
+          <TypeDetails>
+            <Heading1 as={LocaleString}>{data?.label || { none: ['...'] }}</Heading1>
+            <ul style={{ listStyle: 'none' }}>
+              <li>
+                <b>ID</b>: {data?.id}
+              </li>
+              <li>
+                <b>Slug</b>: {data?.slug}
+              </li>
+              <li>
+                <b>Label</b>: <LocaleString>{data?.label}</LocaleString>
+              </li>
+              <li>
+                <b>Other labels</b>: <LocaleString>{data?.other_labels}</LocaleString>
+              </li>
+              <li>
+                <b>Description</b>: <LocaleString>{data?.description}</LocaleString>
+              </li>
+              <li>
+                <b>Topics</b>: {data?.pagination.totalResults}
+              </li>
+            </ul>
+          </TypeDetails>
+        </TypeImage>
+      </TopicTypeContainer>
 
       <Heading3> Topics in this type:</Heading3>
+      {data?.pagination.totalResults === 0 && <Subheading3>No topics in this type</Subheading3>}
       {data?.topics.map(topic => (
         <HrefLink href={createLink({ topic: topic.slug })} key={topic.id}>
           <TopicSnippetCard topic={topic} cardBorder="black" size={'small'} />

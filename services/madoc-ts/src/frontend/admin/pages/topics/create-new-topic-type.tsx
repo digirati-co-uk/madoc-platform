@@ -10,12 +10,12 @@ import { entityTypeModel } from '../../../../extensions/enrichment/models';
 export function CreateNewTopicType() {
   const api = useApi();
   const [createNewEntityType, status] = useMutation(async (data: any) => {
-
+    if (!data) return;
     // @todo can change later.
-    data.image_url = `${window.location.protocol}//${window.location.host}${data.image_url.publicLink || data.image_url}`;
+    data.image_url = `${window.location.protocol}//${window.location.host}${data.image_url.publicLink ||
+      data.image_url}`;
     // data.other_labels = (data.other_labels || []).filter((e: any) => e.value !== '');
     return api.enrichment.upsertTopicType(data);
-
   });
 
   if (status.isError) {

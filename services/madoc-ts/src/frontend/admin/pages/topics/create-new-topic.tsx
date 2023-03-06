@@ -7,6 +7,7 @@ import { Button } from '../../../shared/navigation/Button';
 import { HrefLink } from '../../../shared/utility/href-link';
 import { useRouteContext } from '../../../site/hooks/use-route-context';
 import { useTopicType } from '../../../site/pages/loaders/topic-type-loader';
+import { CustomEditorTypes } from '../../../shared/page-blocks/custom-editor-types';
 import { entityModel } from '../../../../extensions/enrichment/models';
 
 export function CreateNewTopic() {
@@ -22,6 +23,9 @@ export function CreateNewTopic() {
       if (!data) {
         return;
       }
+      // @todo can change later.
+      input.image_url = `${window.location.protocol}//${window.location.host}${input.image_url.publicLink ||
+        input.image_url}`;
       // @todo this will hopefully change.
       input.type = getValue(data.label);
       input.type_slug = data.slug;
@@ -67,14 +71,22 @@ export function CreateNewTopic() {
 
   return (
     <div>
-      <EditShorthandCaptureModel
-        template={model}
-        data={{ label: '', type: topicType, other_labels: [{ value: '', language: '' }] }}
-        onSave={async input => {
-          await createNewEntityType(input);
-        }}
-        keepExtraFields
-      />
+      <CustomEditorTypes>
+        <EditShorthandCaptureModel
+          template={model}
+          data={{
+            label: '',
+            other_labels: { en: [''] },
+            description: { en: [''] },
+            image_url: '',
+            type: topicType,
+          }}
+          onSave={async input => {
+            await createNewEntityType(input);
+          }}
+          keepExtraFields
+        />
+      </CustomEditorTypes>
     </div>
   );
 }

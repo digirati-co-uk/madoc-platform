@@ -16,6 +16,7 @@ export function ListTopicItems() {
 
   return (
     <div>
+      Items : {data?.pagination.totalResults}
       <Pagination
         page={page}
         totalPages={latestData && latestData.pagination ? latestData.pagination.totalPages : undefined}

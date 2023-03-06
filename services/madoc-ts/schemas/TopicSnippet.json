@@ -1,4 +1,85 @@
 {
-  "$ref": "#/definitions/EnrichmentEntitySnippet",
+  "type": "object",
+  "properties": {
+    "url": {
+      "description": "URL of the Entity (won't resolve due to Gateway)",
+      "type": "string"
+    },
+    "id": {
+      "description": "Unique identifier of the Entity (UUID)",
+      "type": "string"
+    },
+    "created": {
+      "description": "Creation time of the Entity (ISO Timestamp)",
+      "type": "string"
+    },
+    "modified": {
+      "description": "Last modification time of the Entity (ISO Timestamp)",
+      "type": "string"
+    },
+    "label": {
+      "description": "Unique label - not typically for display. For example, it might come from an external vocab with all caps: \"TRIBE\"\nand the label to display to the user may be simply \"Tribe\"",
+      "type": "string"
+    },
+    "slug": {
+      "description": "A unique slug, derived from the label",
+      "type": "string"
+    },
+    "type": {
+      "$ref": "#/definitions/SpaCyNERType",
+      "description": "[SpaCy NER type](https://github.com/digirati-co-uk/madoc-enrichment/blob/main/endpoint_docs.md#spacy-named-entity-recognition-ner-types)\n\nPERSON - People, including fictional.\nNORP - Nationalities or religious or political groups.\nFAC - Buildings, airports, highways, bridges, etc.\nORG - Companies, agencies, institutions, etc.\nGPE - Countries, cities, states.\nLOC - Non-GPE locations, mountain ranges, bodies of water.\nPRODUCT - Objects, vehicles, foods, etc. (Not services.)\nEVENT - Named hurricanes, battles, wars, sports events, etc.\nWORK_OF_ART - Titles of books, songs, etc.\nLAW - Named documents made into laws.\nLANGUAGE - Any named language.\nDATE - Absolute or relative dates or periods.\nTIME - Times smaller than a day.\nPERCENT - Percentage, including \"%\".\nMONEY - Monetary values, including unit.\nQUANTITY - Measurements, as of weight or distance.\nORDINAL - \"first\", \"second\", etc.\nCARDINAL - Numerals that do not fall under another type"
+    },
+    "type_slug": {
+      "description": "Slug of the Entity's Type. (for navigation)",
+      "type": "string"
+    },
+    "type_other_labels": {
+      "description": "Readable labels for the Entity's Type.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "title": {
+      "description": "Readable title for the Entity.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "image_url": {
+      "description": "Unknown image url or list of urls.",
+      "anyOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "string"
+        }
+      ]
+    }
+  },
+  "required": [
+    "created",
+    "id",
+    "image_url",
+    "label",
+    "modified",
+    "slug",
+    "title",
+    "type",
+    "type_other_labels",
+    "type_slug",
+    "url"
+  ],
   "$schema": "http://json-schema.org/draft-07/schema#"
 }

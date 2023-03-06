@@ -12,6 +12,7 @@ import { ManageTopic } from './manage-topic';
 import { ListTopicsInType } from './list-topics-in-type';
 import { TopicDetails } from './topic-details';
 import { EditTopicType } from './edit-topic-type';
+import { EditTopic } from './edit-topic';
 
 export const topicRoutes = [
   {
@@ -74,6 +75,11 @@ export const topicRoutes = [
         path: '/topics/:topicType/:topic/items',
         index: true,
         element: <ListTopicItems />,
+      },
+      {
+        path: '/topics/:topicType/:topic/_/edit',
+        index: true,
+        element: <EditTopic />,
       },
       {
         path: '/topics/:topicType/:topic/delete',

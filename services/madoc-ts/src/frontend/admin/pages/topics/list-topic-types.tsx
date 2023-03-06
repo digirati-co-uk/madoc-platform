@@ -12,7 +12,6 @@ export function ListTopicTypes() {
   const createLink = useRelativeLinks(true);
   const { data } = usePaginatedTopicTypes();
 
-  console.log(data);
   return (
     <>
       {data?.topicTypes.map(topicType => (
