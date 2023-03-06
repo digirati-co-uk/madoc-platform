@@ -206,8 +206,7 @@ export interface EnrichmentEntity {
   other_labels: InternationalString;
   authorities: AuthoritySnippet[]; // Can't remember what this should be...
   other_data: {
-    image_url: string;
-    image_caption?: string;
+    example_data: string;
   };
 
   modified: string;

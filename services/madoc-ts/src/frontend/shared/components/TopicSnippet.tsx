@@ -14,6 +14,11 @@ const TopicSnippetContainer = styled(SnippetContainer)`
   padding: 0;
   margin-left: auto;
   margin-right: auto;
+    
+  &[data-is-small='true'] {
+    height: 150px;
+    margin: 1em 0 1em 0;
+  }
 `;
 const CardText = styled.div`
   margin: 0 1em;
@@ -28,7 +33,7 @@ const TypePill = styled.div`
   border-radius: 4px;
   font-size: 12px;
   padding: 4px;
-  margin-top: 0.5em;
+  margin: 0.5em 0;
   display: inline-block;
 `;
 
@@ -37,12 +42,14 @@ export const TopicSnippetCard: React.FC<{
   background?: string;
   textColor?: string;
   cardBorder?: string;
-}> = ({ topic, cardBorder, textColor, background }) => {
+  size?: string;
+}> = ({ topic, cardBorder, textColor, background, size }) => {
   const createLocaleString = useCreateLocaleString();
   const { t } = useTranslation();
 
   return (
     <TopicSnippetContainer
+      data-is-small={size === 'small'}
       style={{ border: cardBorder ? `1px solid ${cardBorder}` : '', backgroundColor: background ? background : '' }}
       interactive
       flat

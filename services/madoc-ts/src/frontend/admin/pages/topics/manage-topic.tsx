@@ -55,6 +55,10 @@ export function ManageTopic() {
             link: `/topics/${topicType}/${data?.slug || topic}/items`,
           },
           {
+            label: t('Edit'),
+            link: `/topics/${topicType}/${data?.slug || topic}/_/edit`,
+          },
+          {
             label: t('Delete'),
             link: `/topics/${topicType}/${data?.slug || topic}/delete`,
           },
