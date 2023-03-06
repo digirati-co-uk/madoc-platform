@@ -79,23 +79,7 @@
     "authorities": {
       "type": "array",
       "items": {
-        "type": "object",
-        "properties": {
-          "authority": {
-            "type": "string"
-          },
-          "id": {
-            "type": "string"
-          },
-          "url": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "authority",
-          "id",
-          "url"
-        ]
+        "$ref": "#/definitions/AuthoritySnippet"
       }
     },
     "featured_resources": {

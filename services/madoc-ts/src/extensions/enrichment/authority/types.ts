@@ -208,7 +208,7 @@ export interface EnrichmentEntity {
   other_data: {
     example_data: string;
   };
-
+  featured_resources: FeatureResource[];
   modified: string;
   created: string;
 }

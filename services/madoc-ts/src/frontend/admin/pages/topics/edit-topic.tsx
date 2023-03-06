@@ -13,7 +13,6 @@ export function EditTopic() {
   const api = useApi();
   const { topicType } = useRouteContext();
   const { data, refetch } = useTopic();
-
   const [createNewEntityType, status] = useMutation(async (updatedData: any) => {
     if (!data) return;
     if (typeof updatedData.image_url !== 'string' || !updatedData.image_url.startsWith('http')) {

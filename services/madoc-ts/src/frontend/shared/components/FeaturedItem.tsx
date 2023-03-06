@@ -153,15 +153,15 @@ blockEditorFor(FeaturedItem, {
     header: { label: 'label', type: 'text-field' },
     canvas: {
       label: 'Canvas',
-      type: 'canvas-explorer',
+      type: 'manifest-canvas-explorer',
     },
     canvas2: {
       label: 'Canvas 2',
-      type: 'canvas-explorer',
+      type: 'manifest-canvas-explorer',
     },
     canvas3: {
       label: 'Canvas 3',
-      type: 'canvas-explorer',
+      type: 'manifest-canvas-explorer',
     },
     snippet: { type: 'checkbox-field', label: 'Snippet', inlineLabel: 'Show as snippet' },
     column: { type: 'checkbox-field', label: 'Column', inlineLabel: 'Show in column' },

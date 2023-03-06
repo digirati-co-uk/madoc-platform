@@ -10,12 +10,12 @@ export const entityTypeModel: CaptureModelShorthand<EnrichmentEntityType> = {
   'other_data.example_data': { type: 'text-field', label: 'Example data' },
 };
 
-
 export const entityModel: CaptureModelShorthand<EnrichmentEntity> = {
   other_labels: { type: 'international-field', label: 'Display label' },
   label: { type: 'text-field', label: 'Canonical label', description: '(this will effect the slug)' },
   description: { type: 'international-field', label: 'Description' },
   image_url: { type: 'madoc-media-explorer', label: 'Image', valueAsString: true },
+  featured_resources: { type: 'topic-item-explorer', label: 'featured resources' },
   __nested__: {
     other_labels: { allowMultiple: true, label: 'Other label', pluralLabel: 'Other labels', labelledBy: 'value' },
     other_data: { allowMultiple: true, label: 'Other Data', pluralLabel: 'Other Data', labelledBy: 'value' },

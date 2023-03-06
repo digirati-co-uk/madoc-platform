@@ -1,4 +1,6 @@
 {
+  " Featured resource": " Featured resource",
+  " Featured_resources": " Featured_resources",
   "(this will effect the slug)": "(this will effect the slug)",
   "...": "...",
   "A longer description for your form field, appears under the label (like this)": "A longer description for your form field, appears under the label (like this)",
@@ -869,6 +871,8 @@
   "exclude": "exclude",
   "expires soon": "expires soon",
   "export-resource-task": "export-resource-task",
+  "featured resource": "featured resource",
+  "featured resources": "featured resources",
   "filter header": "filter header",
   "generate pdf": "generate pdf",
   "height (px)": "height (px)",
