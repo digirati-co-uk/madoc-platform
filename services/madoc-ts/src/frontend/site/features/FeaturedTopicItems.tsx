@@ -59,6 +59,7 @@ export const FeaturedTopicItems: React.FC<{
   if (!items || items.length === 0) {
     return null;
   }
+  console.log(items[0])
 
   const RenderItemSnippet = (item: FeatureResource) => {
     const { data: itemData } = useApiCanvas(extractIdFromUrn(item.madoc_id));

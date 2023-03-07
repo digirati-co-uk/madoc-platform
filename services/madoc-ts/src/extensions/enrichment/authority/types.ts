@@ -14,6 +14,8 @@ export interface Authority extends AuthoritySnippet {
 }
 
 export interface EnrichmentEntitySnippet {
+  description: any;
+  count: number;
   /**
    * URL of the Entity (won't resolve due to Gateway)
    */
