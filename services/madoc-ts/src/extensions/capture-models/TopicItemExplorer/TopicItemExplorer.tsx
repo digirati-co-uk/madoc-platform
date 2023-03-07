@@ -7,29 +7,22 @@ import { useTranslation } from 'react-i18next';
 import { ImageStripBox } from '../../../frontend/shared/atoms/ImageStrip';
 import { ImageGrid } from '../../../frontend/shared/atoms/ImageGrid';
 import { Heading5 } from '../../../frontend/shared/typography/Heading5';
-import { CanvasSnippet } from '../../../frontend/shared/components/CanvasSnippet';
 import { useParams } from 'react-router-dom';
-import { extractIdFromUrn } from '../../../utility/parse-urn';
 import { useInfiniteQuery } from 'react-query';
 import { useApi } from '../../../frontend/shared/hooks/use-api';
 import { useInfiniteAction } from '../../../frontend/site/hooks/use-infinite-action';
 import { Button } from '../../../frontend/shared/navigation/Button';
+import { FeatureResource } from '../../enrichment/authority/types';
+import { FieldComponent } from '../../../frontend/shared/capture-models/types/field-types';
 
 export type TopicItemExplorerProps = {
   id: string;
   label: string;
   type: string;
-  value: {
-    madoc_id: string;
-    label: InternationalString;
-    thumbnail?: string;
-    count: number;
-  } | null;
+  value: FeatureResource | null;
 };
 
-export const TopicItemExplorer: React.FC<TopicItemExplorerProps & {
-  updateValue: (value: TopicItemExplorerProps['value']) => void;
-}> = props => {
+export const TopicItemExplorer: FieldComponent<TopicItemExplorerProps> = ({ value, updateValue }) => {
   const api = useApi();
   const { t } = useTranslation();
   const container = useRef<HTMLDivElement>(null);
@@ -60,41 +53,52 @@ export const TopicItemExplorer: React.FC<TopicItemExplorerProps & {
     container: container,
   });
 
-  if (props.value) {
+  if (value) {
     return (
       <div>
-        <RoundedCard interactive size="small" onClick={() => props.updateValue(null)}>
-          <CanvasSnippet id={extractIdFromUrn(props.value.madoc_id)} />
+        <RoundedCard interactive size="small" onClick={() => updateValue(null)}>
+          <CroppedImage data-size="small">
+            {value.thumbnail ? (
+              <img alt={createLocaleString(value.label, t('Item thumbnail'))} src={value.thumbnail} />
+            ) : null}
+          </CroppedImage>
+          <LocaleString as={Heading5}>{value.label}</LocaleString>
         </RoundedCard>
       </div>
     );
   }
 
   return (
-    <div ref={container} style={{ maxHeight: 500, overflowY: 'scroll' }}>
+    <div ref={container} style={{ maxHeight: 500, overflowY: 'scroll', border: '1px solid grey', padding: '0.5em' }}>
       <ImageGrid $size="small">
         {pages?.map((page, key) => {
-          console.log(pages);
           return (
             <React.Fragment key={key}>
               {page.results.map(item => (
                 <ImageStripBox
+                  $border={'#000000'}
+                  $bgColor={'#eee'}
                   onClick={() =>
-                    props.updateValue({
-                      count: 0,
+                    updateValue({
                       madoc_id: item.resource_id,
                       label: item.label,
                       thumbnail: item.madoc_thumbnail,
+                      type: item.resource_type,
+                      url: item.url,
+                      created: '',
+                      modified: '',
+                      metadata: '',
+                      count: 0,
                     })
                   }
                   key={item.resource_id}
                 >
                   <CroppedImage>
                     {item.madoc_thumbnail ? (
-                      <img alt={createLocaleString(item.label, t('Canvas thumbnail'))} src={item.madoc_thumbnail} />
+                      <img alt={createLocaleString(item.label, t('Item thumbnail'))} src={item.madoc_thumbnail} />
                     ) : null}
-                    <LocaleString as={Heading5}>{item.label}</LocaleString>
                   </CroppedImage>
+                  <LocaleString as={Heading5}>{item.label}</LocaleString>
                 </ImageStripBox>
               ))}
             </React.Fragment>

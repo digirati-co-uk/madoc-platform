@@ -51,6 +51,7 @@ export function EditTopic() {
   return (
     <div>
       <CustomEditorTypes>
+        <pre>{JSON.stringify(data.featured_resources, null, 2)}</pre>
         <EditShorthandCaptureModel
           template={entityModel}
           data={data}

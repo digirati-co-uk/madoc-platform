@@ -271,9 +271,10 @@ export interface FeatureResource {
   url: string;
   created: string;
   modified: string;
+  type: string;
   madoc_id: string;
   label: InternationalString;
-  thumbnail: string;
+  thumbnail?: string;
   metadata: any; // ?
   count: number;
 }
