@@ -53,7 +53,7 @@ export const TopicCard: React.FC<{
       <div style={{ margin: '1em' }}>
         <LocaleString as={SingleLineHeading3}>{topic.title}</LocaleString>
 
-        <Subheading3> todo awaiting BE</Subheading3>
+        <Subheading3>{topic.count} Objects</Subheading3>
 
         <Heading5 style={{ padding: 0 }}>PART OF</Heading5>
         <TypePill>{topic.type}</TypePill>
