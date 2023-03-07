@@ -13,8 +13,10 @@ export function GlobalSiteNavigation(props: { showHomepageMenu?: boolean }) {
   const user = useUser();
   const { navigation, project } = useSiteConfiguration();
   const { enableProjects, enableCollections } = useNavigationOptions();
+  const enableTopics = project.allowTopicNavigation;
   const showProjects = enableProjects && !project.headerOptions?.hideProjectsLink;
   const showCollections = enableCollections && !project.headerOptions?.hideCollectionsLink;
+  const showTopics = enableTopics && !project.headerOptions?.hideTopicLink;
   const showDashboard = user && !project.headerOptions?.hideDashboardLink;
   const showNavLinks = !project.headerOptions?.hidePageNavLinks;
 
@@ -33,6 +35,11 @@ export function GlobalSiteNavigation(props: { showHomepageMenu?: boolean }) {
       {showCollections ? (
         <LightNavigationItem $active={location.pathname.startsWith('/collections')}>
           <HrefLink href="/collections">{t('Collections')}</HrefLink>
+        </LightNavigationItem>
+      ) : null}
+      {showTopics ? (
+        <LightNavigationItem $active={location.pathname.startsWith('/topic')}>
+          <HrefLink href="/topics">{t('Topics')}</HrefLink>
         </LightNavigationItem>
       ) : null}
       {showDashboard ? (

@@ -1,5 +1,6 @@
 export type ProjectConfiguration = {
   allowCollectionNavigation: boolean;
+  allowTopicNavigation: boolean;
   allowManifestNavigation: boolean;
   allowCanvasNavigation: boolean;
   claimGranularity: 'canvas' | 'manifest';
@@ -83,6 +84,7 @@ export type ProjectConfiguration = {
     hideProjectsLink?: boolean;
     hideCollectionsLink?: boolean;
     hideDashboardLink?: boolean;
+    hideTopicLink?: boolean;
     hidePageNavLinks?: boolean;
     hideSearchBar?: boolean;
   };

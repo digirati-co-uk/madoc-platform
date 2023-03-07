@@ -5,6 +5,7 @@
   "defaultSiteConfiguration": {
     "allowCollectionNavigation": true,
     "allowManifestNavigation": true,
+    "allowTopicNavigation": true,
     "allowCanvasNavigation": true,
     "randomlyAssignCanvas": false,
     "priorityRandomness": true,
@@ -70,6 +71,7 @@
       "hideProjectsLink": false,
       "hideCollectionsLink": false,
       "hideDashboardLink": false,
+      "hideTopicLink": false,
       "hidePageNavLinks": false,
       "hideSearchBar": false
     },

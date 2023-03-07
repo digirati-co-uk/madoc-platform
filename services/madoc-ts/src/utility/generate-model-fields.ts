@@ -15,7 +15,6 @@ export function generateModelFields(doc: CaptureModel['document']): ModelFields 
       if (parent && parent.temp && parent.temp.value) {
         parent.temp.value.push(key);
       }
-      console.log(field, key, parent.temp)
     },
 
     visitEntity: (entity, key, parent) => {
