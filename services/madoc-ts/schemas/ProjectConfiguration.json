@@ -7,6 +7,9 @@
     "allowManifestNavigation": {
       "type": "boolean"
     },
+    "allowTopicNavigation": {
+      "type": "boolean"
+    },
     "allowCanvasNavigation": {
       "type": "boolean"
     },
@@ -294,6 +297,9 @@
         "hideDashboardLink": {
           "type": "boolean"
         },
+        "hideTopicLink": {
+          "type": "boolean"
+        },
         "hidePageNavLinks": {
           "type": "boolean"
         },
@@ -345,6 +351,7 @@
   "required": [
     "adminsAreReviewers",
     "allowCanvasNavigation",
+    "allowTopicNavigation",
     "allowCollectionNavigation",
     "allowManifestNavigation",
     "allowSubmissionsWhenCanvasComplete",

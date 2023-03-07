@@ -23,6 +23,11 @@ export const siteConfigurationModel: {
     type: 'checkbox-field',
     inlineLabel: 'Allow collection navigation',
   },
+  allowTopicNavigation: {
+    label: 'Topic navigation',
+    type: 'checkbox-field',
+    inlineLabel: 'Allow topic navigation',
+  },
   allowManifestNavigation: {
     label: 'Manifest navigation',
     description:
@@ -405,6 +410,10 @@ export const siteConfigurationModel: {
       {
         label: 'Hide the dashboard link',
         value: 'hideDashboardLink',
+      },
+      {
+        label: 'Hide the Topic link',
+        value: 'hideTopicLink',
       },
       {
         label: 'Hide the page navigation links',
