@@ -8,6 +8,7 @@ import { useApi, useIsApiRestarting } from '../../shared/hooks/use-api';
 import { AutoSlotLoader } from '../../shared/page-blocks/auto-slot-loader';
 import { Slot } from '../../shared/page-blocks/slot';
 import { GlobalMenuStack } from './GlobalMenuStack';
+import { DropDownMenu } from './DropdownMenu';
 
 export const GlobalSiteHeader: React.FC<{ menu?: any }> = () => {
   const api = useApi();
@@ -21,6 +22,7 @@ export const GlobalSiteHeader: React.FC<{ menu?: any }> = () => {
         <SiteHeader>
           <Slot name="global-header" noSurface layout="flex-center" source={{ id: 'global-header', type: 'global' }}>
             <GlobalMenuStack />
+            <DropDownMenu />
             <FlexSpacer />
             <GlobalSearch />
           </Slot>

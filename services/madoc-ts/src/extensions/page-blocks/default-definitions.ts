@@ -9,6 +9,7 @@ import simpleHtmlBlock from './simple-html-block/simple-html-block';
 import currentManifest from './current-manifest-snippet-block';
 import simpleMarkdownBlock from './simple-markdown-block/simple-markdown-block';
 import { EmbedItem } from '../../frontend/site/features/EmbedItem';
+import { DropDownMenu } from '../../frontend/site/features/DropdownMenu';
 
 export function getDefaultPageBlockDefinitions(): PageBlockDefinition<any, any, any, any>[] {
   return [
@@ -21,6 +22,7 @@ export function getDefaultPageBlockDefinitions(): PageBlockDefinition<any, any, 
     (SingleCollection as any)[Symbol.for('slot-model')] as any,
     (FeaturedItem as any)[Symbol.for('slot-model')] as any,
     (EmbedItem as any)[Symbol.for('slot-model')] as any,
+    (DropDownMenu as any)[Symbol.for('slot-model')] as any,
     simpleMarkdownBlock,
   ];
 }
