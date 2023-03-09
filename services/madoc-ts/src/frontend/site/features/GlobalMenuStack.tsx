@@ -44,7 +44,11 @@ export const GlobalMenuStack: React.FC<{
   hideSiteTitle?: boolean;
   showHomepageMenu?: boolean;
   maxWidth?: number;
-}> = ({ logo, hideSiteTitle, maxWidth, logoOptions = {}, menuOptions = {}, showHomepageMenu }) => {
+  newNavItems?: {
+    slug?: string;
+    text?: string;
+  }[];
+}> = ({ logo, hideSiteTitle, maxWidth, logoOptions = {}, menuOptions = {}, showHomepageMenu, newNavItems }) => {
   const site = useSite();
   const { project } = useSiteConfiguration();
   const showSiteTitle = typeof hideSiteTitle === 'undefined' ? !project.headerOptions?.hideSiteTitle : !hideSiteTitle;
@@ -67,7 +71,7 @@ export const GlobalMenuStack: React.FC<{
         </SiteTitle>
       )}
       <SiteMenuContainer data-full-width={menuOptions.fullWidth}>
-        <GlobalSiteNavigation showHomepageMenu={showHomepageMenu} />
+        <GlobalSiteNavigation showHomepageMenu={showHomepageMenu} extraNavItems={newNavItems} />
       </SiteMenuContainer>
     </SiteDetails>
   );
@@ -89,6 +93,12 @@ blockEditorFor(GlobalMenuStack, {
       fullWidth: false,
     },
     maxWidth: null,
+    slug1: '',
+    text1: '',
+    slug2: '',
+    text2: '',
+    slug3: '',
+    text3: '',
   },
   editor: {
     logo: {
@@ -140,6 +150,16 @@ blockEditorFor(GlobalMenuStack, {
       type: 'checkbox-field',
       inlineLabel: 'Show home as menu item',
     },
+    slug1: {
+      type: 'text-field',
+      label: 'Extra Nav item slug',
+      description: 'paste the relative slug as shown on the site eg: topics/topic_type/topic',
+    },
+    text1: { type: 'text-field', label: 'Extra Nav item display text' },
+    slug2: { type: 'text-field', label: 'Extra Nav item slug' },
+    text2: { type: 'text-field', label: 'Extra Nav item display text' },
+    slug3: { type: 'text-field', label: 'Extra Nav item slug' },
+    text3: { type: 'text-field', label: 'Extra Nav item display text' },
   },
   mapToProps(props) {
     const maxWidth = Number(props.maxWidth);
@@ -147,6 +167,20 @@ blockEditorFor(GlobalMenuStack, {
       ...props,
       maxWidth: !Number.isNaN(maxWidth) && Number.isFinite(maxWidth) ? maxWidth : undefined,
     } as any;
+  },
+  // I dont know if we can have 2 mapToProps here?
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  mapToProps(formInput: any) {
+    const newNavItems: {
+      slug?: string;
+      text?: string;
+    }[] = [];
+    if (formInput.slug1) newNavItems.push({ slug: formInput.slug1, text: formInput.text1 });
+    if (formInput.slug2) newNavItems.push({ slug: formInput.slug2, text: formInput.text2 });
+    if (formInput.slug3) newNavItems.push({ slug: formInput.slug3, text: formInput.text3 });
+    return { newNavItems };
   },
   source: {
     id: 'global-header',
