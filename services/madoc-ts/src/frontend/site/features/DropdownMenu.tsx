@@ -3,9 +3,8 @@ import styled from 'styled-components';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { GlobalSiteNavigation } from './GlobalSiteNavigation';
 import { CloseIcon } from '../../shared/icons/CloseIcon';
-import { ChevronDown } from '../../shared/icons/ChevronIcon';
-import { HrefLink } from '../../shared/utility/href-link';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 
 const DropdownMenuWrapper = styled.div``;
 
@@ -64,6 +63,19 @@ const NavHeader = styled.div`
 const NavWrapper = styled.div`
   display: flex;
   flex-direction: column;
+
+  ul {
+    display: flex;
+    flex-direction: column;
+  }
+
+  li {
+    font-size: 18px;
+    font-weight: 400;
+    color: white;
+    text-decoration: none;
+    margin: 0.5em 0;
+  }
 `;
 
 const CloseBtn = styled.button`
@@ -76,64 +88,28 @@ const CloseBtn = styled.button`
   :hover {
     svg {
       fill: white;
+      transform: rotatez(180deg);
+      transition: 0.8s;
     }
   }
   svg {
+    transform: rotatez(0deg);
+    transition: 0.8s;
     fill: #b1e0ff;
     vertical-align: middle;
     margin-right: 0.5em;
   }
 `;
-
-const MenuItemHeader = styled.div`
-  font-size: 18px;
-  font-weight: 400;
-  color: white;
-  text-decoration: none;
-  margin: 0.5em 0;
-  svg {
-    fill: #ffffff;
-    vertical-align: middle;
-    margin-right: 0.5em;
-    transform: rotateX(180deg);
-
-    :hover {
-      fill: #b1e0ff;
-    }
-
-    &[data-is-item-open='true'] {
-      fill: #b1e0ff;
-      transform: rotateX(0deg);
-      :hover {
-        fill: white;
-      }
-    }
-  }
-`;
-
-const MenuItemWrapper = styled.div`
-  height: 0;
-  overflow: hidden;
-  transition: height 0.5s;
-  margin: 0.5em;
-
-  &[data-is-item-open='true'] {
-    transition: height 0.5s;
-    height: 100px;
-  }
-  a {
-    color: #b1e0ff;
-    font-size: 18px;
-    font-weight: 300;
-    padding: 1em;
-  }
-`;
 export const DropDownMenu: React.FC<{
   showHomepageMenu?: boolean;
-}> = ({ showHomepageMenu }) => {
+  newNavItems?: {
+    slug?: string;
+    text?: string;
+  }[];
+}> = ({ showHomepageMenu, newNavItems }) => {
   const [open, setOpen] = useState(false);
-  const [itemOpen, setItemOpen] = useState(false);
   const { t } = useTranslation();
+  const location = useLocation();
   return (
     <DropdownMenuWrapper>
       <MenuButton
@@ -142,37 +118,15 @@ export const DropDownMenu: React.FC<{
           setOpen(!open);
         }}
       >
-        Menu
+        {t('Menu')}
       </MenuButton>
 
       <DropdownContainer data-is-open={open}>
         <div>
-          <NavHeader>Menu</NavHeader>
+          <NavHeader>{t('Menu')}</NavHeader>
 
           <NavWrapper>
-            <MenuItemHeader
-              onClick={() => {
-                setItemOpen(!itemOpen);
-              }}
-            >
-              <ChevronDown data-is-item-open={itemOpen} /> Something
-            </MenuItemHeader>
-
-            <MenuItemWrapper data-is-item-open={itemOpen}>
-              <a>something</a>
-            </MenuItemWrapper>
-
-            <MenuItemHeader as={HrefLink} href="/">
-              {t('Home')}
-            </MenuItemHeader>
-            <MenuItemHeader as={HrefLink} href="/">
-              {t('Home')}
-            </MenuItemHeader>
-            <MenuItemHeader as={HrefLink} href="/">
-              {t('Home')}
-            </MenuItemHeader>
-
-            {/*<GlobalSiteNavigation showHomepageMenu={showHomepageMenu} />*/}
+            <GlobalSiteNavigation showHomepageMenu={showHomepageMenu} extraNavItems={newNavItems} />
           </NavWrapper>
         </div>
         <CloseBtn
@@ -193,6 +147,12 @@ blockEditorFor(DropDownMenu, {
   label: 'Dropdown menu)',
   defaultProps: {
     showHomepageMenu: false,
+    slug1: '',
+    text1: '',
+    slug2: '',
+    text2: '',
+    slug3: '',
+    text3: '',
   },
   editor: {
     showHomepageMenu: {
@@ -200,5 +160,25 @@ blockEditorFor(DropDownMenu, {
       type: 'checkbox-field',
       inlineLabel: 'Show home as menu item',
     },
+    slug1: {
+      type: 'text-field',
+      label: 'Extra Nav item slug',
+      description: 'paste the relative slug as shown on the site eg: topics/topic_type/topic',
+    },
+    text1: { type: 'text-field', label: 'Extra Nav item display text' },
+    slug2: { type: 'text-field', label: 'Extra Nav item slug' },
+    text2: { type: 'text-field', label: 'Extra Nav item display text' },
+    slug3: { type: 'text-field', label: 'Extra Nav item slug' },
+    text3: { type: 'text-field', label: 'Extra Nav item display text' },
+  },
+  mapToProps(formInput: any) {
+    const newNavItems: {
+      slug?: string;
+      text?: string;
+    }[] = [];
+    if (formInput.slug1) newNavItems.push({ slug: formInput.slug1, text: formInput.text1 });
+    if (formInput.slug2) newNavItems.push({ slug: formInput.slug2, text: formInput.text2 });
+    if (formInput.slug3) newNavItems.push({ slug: formInput.slug3, text: formInput.text3 });
+    return { newNavItems };
   },
 });
