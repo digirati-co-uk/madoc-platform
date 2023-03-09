@@ -168,6 +168,10 @@ blockEditorFor(GlobalMenuStack, {
       maxWidth: !Number.isNaN(maxWidth) && Number.isFinite(maxWidth) ? maxWidth : undefined,
     } as any;
   },
+  // I dont know if we can have 2 mapToProps here?
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   mapToProps(formInput: any) {
     const newNavItems: {
       slug?: string;
