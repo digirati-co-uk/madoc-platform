@@ -8,8 +8,6 @@ import { useApi, useIsApiRestarting } from '../../shared/hooks/use-api';
 import { AutoSlotLoader } from '../../shared/page-blocks/auto-slot-loader';
 import { Slot } from '../../shared/page-blocks/slot';
 import { GlobalMenuStack } from './GlobalMenuStack';
-import { DropDownMenu } from './DropdownMenu';
-import { SiteLogoNavItem } from '../../shared/components/SiteLogoNavItem';
 
 export const GlobalSiteHeader: React.FC<{ menu?: any }> = () => {
   const api = useApi();

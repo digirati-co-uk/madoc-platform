@@ -161,26 +161,21 @@ blockEditorFor(GlobalMenuStack, {
     slug3: { type: 'text-field', label: 'Extra Nav item slug' },
     text3: { type: 'text-field', label: 'Extra Nav item display text' },
   },
-  mapToProps(props) {
+  mapToProps(props: any) {
     const maxWidth = Number(props.maxWidth);
-    return {
-      ...props,
-      maxWidth: !Number.isNaN(maxWidth) && Number.isFinite(maxWidth) ? maxWidth : undefined,
-    } as any;
-  },
-  // I dont know if we can have 2 mapToProps here?
-
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  mapToProps(formInput: any) {
     const newNavItems: {
       slug?: string;
       text?: string;
     }[] = [];
-    if (formInput.slug1) newNavItems.push({ slug: formInput.slug1, text: formInput.text1 });
-    if (formInput.slug2) newNavItems.push({ slug: formInput.slug2, text: formInput.text2 });
-    if (formInput.slug3) newNavItems.push({ slug: formInput.slug3, text: formInput.text3 });
-    return { newNavItems };
+
+    if (props.slug1) newNavItems.push({ slug: props.slug1, text: props.text1 });
+    if (props.slug2) newNavItems.push({ slug: props.slug2, text: props.text2 });
+    if (props.slug3) newNavItems.push({ slug: props.slug3, text: props.text3 });
+    return {
+      ...props,
+      newNavItems,
+      maxWidth: !Number.isNaN(maxWidth) && Number.isFinite(maxWidth) ? maxWidth : undefined,
+    } as any;
   },
   source: {
     id: 'global-header',
