@@ -48,7 +48,6 @@ export function usePage() {
 export const PageLoader: UniversalComponent<PageLoaderType> = createUniversalComponent<PageLoaderType>(
   () => {
     const routeContext = useRouteContext();
-    console.log(routeContext);
     const { data, refetch, isLoading } = usePage();
     const api = useApi();
     const user = api.getIsServer() ? undefined : api.getCurrentUser();

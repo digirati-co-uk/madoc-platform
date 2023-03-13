@@ -239,7 +239,6 @@ export const RenderBlankSlot: React.FC<{
     });
 
     const newSlot = await api.pageBlocks.createSlot(slotRequest);
-    console.log('1', newSlot)
 
     await onCreateSlot(newSlot);
 
