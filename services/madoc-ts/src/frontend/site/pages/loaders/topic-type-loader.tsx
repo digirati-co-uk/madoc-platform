@@ -5,8 +5,9 @@ import { UniversalComponent } from '../../../types';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { usePaginatedData } from '../../../shared/hooks/use-data';
 import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
+import { AutoSlotLoader } from '../../../shared/page-blocks/auto-slot-loader';
 
-export type TaskLoaderType = {
+export type TopicTypeLoaderType = {
   params: { topicType: string };
   variables: { topicType: string; page: number };
   query: { page?: string };
@@ -16,20 +17,21 @@ export type TaskLoaderType = {
 export function useTopicType() {
   const params = useParams<{ topicType?: string }>();
   return usePaginatedData(TopicTypeLoader, undefined, { enabled: params.topicType && params.topicType !== '_' });
+
 }
 
-export const TopicTypeLoader: UniversalComponent<TaskLoaderType> = createUniversalComponent<TaskLoaderType>(
+export const TopicTypeLoader: UniversalComponent<TopicTypeLoaderType> = createUniversalComponent<TopicTypeLoaderType>(
   () => {
     const { data } = useTopicType();
 
-    const ctx = useMemo(() => (data ? { id: data.slug, name: data.label } : { id: '', name: { none: ['...'] } }), [
-      data,
-    ]);
+    const ctx = useMemo(() => (data ? { id: data.slug, name: data.label } : undefined), [data]);
 
     return (
-      <BreadcrumbContext topicType={ctx}>
-        <Outlet />
-      </BreadcrumbContext>
+      <AutoSlotLoader>
+        <BreadcrumbContext topicType={ctx}>
+          <Outlet />
+        </BreadcrumbContext>
+      </AutoSlotLoader>
     );
   },
   {
@@ -37,7 +39,7 @@ export const TopicTypeLoader: UniversalComponent<TaskLoaderType> = createUnivers
       return ['site-topic-type', { topicType: params.topicType, page: Number(query.page) || 1 }];
     },
     getData: async (key, vars, api) => {
-      return api.enrichment.getSiteTopicType(vars.topicType, vars.page);
+      return await api.enrichment.getSiteTopicType(vars.topicType, vars.page);
     },
   }
 );

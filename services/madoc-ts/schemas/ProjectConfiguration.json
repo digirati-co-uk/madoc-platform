@@ -4,10 +4,10 @@
     "allowCollectionNavigation": {
       "type": "boolean"
     },
-    "allowManifestNavigation": {
+    "allowTopicNavigation": {
       "type": "boolean"
     },
-    "allowTopicNavigation": {
+    "allowManifestNavigation": {
       "type": "boolean"
     },
     "allowCanvasNavigation": {
@@ -351,10 +351,10 @@
   "required": [
     "adminsAreReviewers",
     "allowCanvasNavigation",
-    "allowTopicNavigation",
     "allowCollectionNavigation",
     "allowManifestNavigation",
     "allowSubmissionsWhenCanvasComplete",
+    "allowTopicNavigation",
     "claimGranularity",
     "contributionWarningTime",
     "defaultEditorOrientation",

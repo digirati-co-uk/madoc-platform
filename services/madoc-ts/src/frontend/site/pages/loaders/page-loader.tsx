@@ -48,6 +48,7 @@ export function usePage() {
 export const PageLoader: UniversalComponent<PageLoaderType> = createUniversalComponent<PageLoaderType>(
   () => {
     const routeContext = useRouteContext();
+    console.log(routeContext);
     const { data, refetch, isLoading } = usePage();
     const api = useApi();
     const user = api.getIsServer() ? undefined : api.getCurrentUser();
@@ -67,8 +68,21 @@ export const PageLoader: UniversalComponent<PageLoaderType> = createUniversalCom
       if (routeContext.canvasId) {
         partialContext.canvas = routeContext.canvasId;
       }
+      if (routeContext.topicType) {
+        partialContext.topicType = routeContext.topicType;
+      }
+      if (routeContext.topic) {
+        partialContext.topic = routeContext.topic;
+      }
       return partialContext;
-    }, [routeContext.projectId, routeContext.collectionId, routeContext.manifestId, routeContext.canvasId]);
+    }, [
+      routeContext.projectId,
+      routeContext.collectionId,
+      routeContext.manifestId,
+      routeContext.canvasId,
+      routeContext.topicType,
+      routeContext.topic,
+    ]);
 
     if (isLoading) {
       return <>Loading...</>;

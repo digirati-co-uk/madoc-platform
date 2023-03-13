@@ -8,17 +8,16 @@ import { SearchPagination } from '../features/SearchPagination';
 import { AppliedFacets } from '../features/AppliedFacets';
 import { SearchPageResults } from '../features/SearchPageResults';
 import { SearchPageFilters } from '../features/SearchPageFilters';
-import { AutoSlotLoader } from '../../shared/page-blocks/auto-slot-loader';
 import { TopicActions } from '../features/TopicActions';
 
 export const ViewTopic = () => {
   return (
-    <AutoSlotLoader>
+    <>
       <Slot name="common-breadcrumbs">
         <DisplayBreadcrumbs />
       </Slot>
 
-      <Slot name="topic-header">
+      <Slot name="topic-hero-head">
         <TopicHero />
       </Slot>
 
@@ -26,15 +25,14 @@ export const ViewTopic = () => {
         <FeaturedTopicItems />
       </Slot>
 
-      <Slot name="topic-result-heading" id="topic">
-        {/*  todo this should prob be its own block */}
+      <Slot name="topic-result-heading">
         <h3 style={{ fontSize: '1.5em', color: 'inherit' }}>Explore all resources</h3>
         <TopicActions />
       </Slot>
 
       <div style={{ display: 'flex' }}>
         <div style={{ maxWidth: 300 }}>
-          <Slot name="topic-page-filters" small>
+          <Slot name="topic-results-filters" small>
             <SearchPageFilters />
           </Slot>
         </div>
@@ -46,13 +44,15 @@ export const ViewTopic = () => {
           </Slot>
 
           <Slot name="topic-items-pagination">
-            <SearchPagination paginationStyle={true} position={'flex-start'} />
+            <SearchPagination />
           </Slot>
         </div>
+
       </div>
+
       <Slot name="topic-related">
         <RelatedTopics />
       </Slot>
-    </AutoSlotLoader>
+    </>
   );
 };

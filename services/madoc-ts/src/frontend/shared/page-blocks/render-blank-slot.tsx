@@ -180,7 +180,6 @@ function createSlotRequest(
       },
     };
   }
-
   switch (type) {
     case 'exact':
       return {
@@ -228,7 +227,6 @@ export const RenderBlankSlot: React.FC<{
       projectId: project?.id,
     });
 
-    console.log(slotRequest)
     await beforeCreateSlot(slotRequest);
 
     slotRequest.blocks = blockDefinitions.map(definition => {
@@ -241,6 +239,7 @@ export const RenderBlankSlot: React.FC<{
     });
 
     const newSlot = await api.pageBlocks.createSlot(slotRequest);
+    console.log('1', newSlot)
 
     await onCreateSlot(newSlot);
 

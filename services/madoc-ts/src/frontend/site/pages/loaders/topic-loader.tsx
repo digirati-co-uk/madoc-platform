@@ -5,6 +5,7 @@ import { UniversalComponent } from '../../../types';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { useStaticData } from '../../../shared/hooks/use-data';
 import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
+import { AutoSlotLoader } from '../../../shared/page-blocks/auto-slot-loader';
 
 export type TopicLoaderType = {
   params: { topicType: string; topic: string };
@@ -27,13 +28,14 @@ export function useTopic() {
 export const TopicLoader: UniversalComponent<TopicLoaderType> = createUniversalComponent<TopicLoaderType>(
   () => {
     const { data } = useTopic();
-
     const ctx = useMemo(() => (data ? { id: data.slug, name: data.title } : undefined), [data]);
 
     return (
-      <BreadcrumbContext topic={ctx}>
-        <Outlet />
-      </BreadcrumbContext>
+      <AutoSlotLoader>
+        <BreadcrumbContext topic={ctx}>
+          <Outlet />
+        </BreadcrumbContext>
+      </AutoSlotLoader>
     );
   },
   {
@@ -41,7 +43,7 @@ export const TopicLoader: UniversalComponent<TopicLoaderType> = createUniversalC
       return ['site-topic', { topicType: params.topicType, topic: params.topic }];
     },
     getData: async (key, vars, api) => {
-      return api.enrichment.getSiteTopic(vars.topicType, vars.topic);
+      return await api.enrichment.getSiteTopic(vars.topicType, vars.topic);
     },
   }
 );

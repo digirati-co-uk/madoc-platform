@@ -63,10 +63,10 @@ export const FeaturedTopics: React.FC<{
 };
 
 blockEditorFor(FeaturedTopics, {
-  type: 'default.featuredTopics',
+  type: 'default.FeaturedTopics',
   label: 'Featured Topics',
-  anyContext: ['topic'],
-  requiredContext: ['topic'],
+  anyContext: ['topicType'],
+  requiredContext: ['topicType'],
   defaultProps: {
     cardBackground: '',
     textColor: '',

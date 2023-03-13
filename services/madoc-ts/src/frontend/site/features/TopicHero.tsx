@@ -88,10 +88,9 @@ export const TopicHero: React.FC<{ h1Color?: string; h2Color?: string }> = ({ h1
 };
 
 blockEditorFor(TopicHero, {
-  type: 'default.topicHero',
+  type: 'default.TopicHero',
   label: 'Topic hero',
   anyContext: [],
-  requiredContext: ['topic'],
   defaultProps: {
     h1Color: '#000000',
     h2Color: '#000000',

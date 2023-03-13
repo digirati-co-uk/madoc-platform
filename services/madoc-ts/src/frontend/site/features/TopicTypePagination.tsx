@@ -18,7 +18,7 @@ export const TopicTypePagination = () => {
 blockEditorFor(TopicTypePagination, {
   type: 'default.TopicTypePagination',
   label: 'Topic type pagination',
-  anyContext: ['topicType'],
+  anyContext: ['topicType', 'topic'],
   requiredContext: ['topicType'],
   editor: {},
 });
