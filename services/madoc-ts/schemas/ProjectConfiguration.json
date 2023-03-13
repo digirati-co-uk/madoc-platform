@@ -4,6 +4,9 @@
     "allowCollectionNavigation": {
       "type": "boolean"
     },
+    "allowTopicNavigation": {
+      "type": "boolean"
+    },
     "allowManifestNavigation": {
       "type": "boolean"
     },
@@ -294,6 +297,9 @@
         "hideDashboardLink": {
           "type": "boolean"
         },
+        "hideTopicLink": {
+          "type": "boolean"
+        },
         "hidePageNavLinks": {
           "type": "boolean"
         },
@@ -348,6 +354,7 @@
     "allowCollectionNavigation",
     "allowManifestNavigation",
     "allowSubmissionsWhenCanvasComplete",
+    "allowTopicNavigation",
     "claimGranularity",
     "contributionWarningTime",
     "defaultEditorOrientation",

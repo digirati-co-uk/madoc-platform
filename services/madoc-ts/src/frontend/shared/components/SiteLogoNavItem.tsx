@@ -1,11 +1,10 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
-import { SiteDetails, SiteMenuContainer, SiteTitle } from '../../shared/layout/SiteHeader';
-import { useSite } from '../../shared/hooks/use-site';
-import { HrefLink } from '../../shared/utility/href-link';
-import { GlobalSiteNavigation } from './GlobalSiteNavigation';
-import { useSiteConfiguration } from './SiteConfigurationContext';
+import { SiteDetails, SiteTitle } from '../layout/SiteHeader';
+import { useSite } from '../hooks/use-site';
+import { HrefLink } from '../utility/href-link';
+import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
 
 const SiteLogoContainer = styled.div<{ $padding?: boolean; $margin?: boolean; $maxWidth?: number }>`
   ${props =>
@@ -27,7 +26,7 @@ const SiteLogoContainer = styled.div<{ $padding?: boolean; $margin?: boolean; $m
     `}
 `;
 
-export const GlobalMenuStack: React.FC<{
+export const SiteLogoNavItem: React.FC<{
   logo?: {
     id: string;
     image: string;
@@ -38,17 +37,9 @@ export const GlobalMenuStack: React.FC<{
     margin?: boolean;
     halfSize?: boolean;
   };
-  menuOptions?: {
-    fullWidth?: boolean;
-  };
   hideSiteTitle?: boolean;
-  showHomepageMenu?: boolean;
   maxWidth?: number;
-  newNavItems?: {
-    slug?: string;
-    text?: string;
-  }[];
-}> = ({ logo, hideSiteTitle, maxWidth, logoOptions = {}, menuOptions = {}, showHomepageMenu, newNavItems }) => {
+}> = ({ logo, hideSiteTitle, maxWidth, logoOptions = {} }) => {
   const site = useSite();
   const { project } = useSiteConfiguration();
   const showSiteTitle = typeof hideSiteTitle === 'undefined' ? !project.headerOptions?.hideSiteTitle : !hideSiteTitle;
@@ -70,35 +61,22 @@ export const GlobalMenuStack: React.FC<{
           </h1>
         </SiteTitle>
       )}
-      <SiteMenuContainer data-full-width={menuOptions.fullWidth}>
-        <GlobalSiteNavigation showHomepageMenu={showHomepageMenu} extraNavItems={newNavItems} />
-      </SiteMenuContainer>
     </SiteDetails>
   );
 };
 
-blockEditorFor(GlobalMenuStack, {
-  type: 'default.GlobalMenuStack',
-  label: 'Global menu (stack)',
+blockEditorFor(SiteLogoNavItem, {
+  type: 'default.SiteLogoNavItem',
+  label: 'Site Logo Nav Item',
   defaultProps: {
     logo: null,
     hideSiteTitle: false,
-    showHomepageMenu: false,
     logoOptions: {
       padding: false,
       margin: false,
       halfSize: false,
     },
-    menuOptions: {
-      fullWidth: false,
-    },
     maxWidth: null,
-    slug1: '',
-    text1: '',
-    slug2: '',
-    text2: '',
-    slug3: '',
-    text3: '',
   },
   editor: {
     logo: {
@@ -124,17 +102,6 @@ blockEditorFor(GlobalMenuStack, {
         },
       ],
     },
-    menuOptions: {
-      label: 'Menu options',
-      description: 'View options for the menu',
-      type: 'checkbox-list-field',
-      options: [
-        {
-          label: 'Full width (under)',
-          value: 'fullWidth',
-        },
-      ],
-    },
     maxWidth: {
       label: 'Logo max width',
       type: 'text-field',
@@ -145,35 +112,11 @@ blockEditorFor(GlobalMenuStack, {
       type: 'checkbox-field',
       inlineLabel: 'Hide site title',
     },
-    showHomepageMenu: {
-      label: 'Homepage menu',
-      type: 'checkbox-field',
-      inlineLabel: 'Show home as menu item',
-    },
-    slug1: {
-      type: 'text-field',
-      label: 'Extra Nav item slug',
-      description: 'paste the relative slug as shown on the site eg: topics/topic_type/topic',
-    },
-    text1: { type: 'text-field', label: 'Extra Nav item display text' },
-    slug2: { type: 'text-field', label: 'Extra Nav item slug' },
-    text2: { type: 'text-field', label: 'Extra Nav item display text' },
-    slug3: { type: 'text-field', label: 'Extra Nav item slug' },
-    text3: { type: 'text-field', label: 'Extra Nav item display text' },
   },
-  mapToProps(props: any) {
+  mapToProps(props) {
     const maxWidth = Number(props.maxWidth);
-    const newNavItems: {
-      slug?: string;
-      text?: string;
-    }[] = [];
-
-    if (props.slug1) newNavItems.push({ slug: props.slug1, text: props.text1 });
-    if (props.slug2) newNavItems.push({ slug: props.slug2, text: props.text2 });
-    if (props.slug3) newNavItems.push({ slug: props.slug3, text: props.text3 });
     return {
       ...props,
-      newNavItems,
       maxWidth: !Number.isNaN(maxWidth) && Number.isFinite(maxWidth) ? maxWidth : undefined,
     } as any;
   },

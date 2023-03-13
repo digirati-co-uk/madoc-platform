@@ -95,9 +95,9 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
 
 blockEditorFor(SearchPageFilters, {
   label: 'Search Page Filters',
-  type: 'default.search-page-filters',
+  type: 'default.SearchPageFilters',
   anyContext: [],
-  requiredContext: ['page'],
+  requiredContext: [],
   defaultProps: {
     checkBoxColor: '',
     filterHeader: 'Refine search',

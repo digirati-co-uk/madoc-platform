@@ -34,8 +34,8 @@ export const TopicActions: React.FC<props> = ({ alignment }) => {
 blockEditorFor(TopicActions, {
   type: 'default.TopicActions',
   label: 'Topic actions',
-  anyContext: ['topic'],
-  requiredContext: ['topic'],
+  anyContext: [],
+  requiredContext: [],
   defaultProps: {
     alignment: '',
   },

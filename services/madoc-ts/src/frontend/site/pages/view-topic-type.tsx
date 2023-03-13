@@ -5,11 +5,10 @@ import { TopicTypeHero } from '../features/TopicTypeHero';
 import { TopicGrid } from '../features/TopicGrid';
 import { TopicTypePagination } from '../features/TopicTypePagination';
 import { FeaturedTopics } from '../features/FeaturedTopics';
-import { AutoSlotLoader } from '../../shared/page-blocks/auto-slot-loader';
 
 export function ViewTopicType() {
   return (
-    <AutoSlotLoader>
+    <>
       <Slot name="common-breadcrumbs">
         <DisplayBreadcrumbs />
       </Slot>
@@ -18,17 +17,17 @@ export function ViewTopicType() {
         <TopicTypeHero />
       </Slot>
 
-      <Slot name="topic-type-featured">
+      <Slot name="featured-topics">
         <FeaturedTopics />
       </Slot>
 
-      <Slot name="topic-type-topics">
+      <Slot name="topics-grid">
         <TopicGrid />
       </Slot>
 
       <Slot name="topic-type-pagination">
         <TopicTypePagination />
       </Slot>
-    </AutoSlotLoader>
+    </>
   );
 }

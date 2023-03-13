@@ -64,7 +64,7 @@ export const TopicSnippetCard: React.FC<{
           {topic.title}
         </LocaleString>
 
-        <Subheading3> todo awaiting BE</Subheading3>
+        <LocaleString as={Heading5}>{topic.description}</LocaleString>
 
         <div>
           <Heading5 style={{ padding: 0, color: textColor }}>PART OF</Heading5>
