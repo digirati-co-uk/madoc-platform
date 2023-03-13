@@ -123,6 +123,6 @@ blockEditorFor(FeaturedTopicItems, {
       ],
     },
   },
-  anyContext: ['topic'],
-  requiredContext: ['topic'],
+  anyContext: [],
+  requiredContext: [],
 });

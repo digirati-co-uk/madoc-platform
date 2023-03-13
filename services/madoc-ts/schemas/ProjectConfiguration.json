@@ -4,6 +4,9 @@
     "allowCollectionNavigation": {
       "type": "boolean"
     },
+    "allowTopicNavigation": {
+      "type": "boolean"
+    },
     "allowManifestNavigation": {
       "type": "boolean"
     },
@@ -355,6 +358,7 @@
     "allowCollectionNavigation",
     "allowManifestNavigation",
     "allowSubmissionsWhenCanvasComplete",
+    "allowTopicNavigation",
     "claimGranularity",
     "contributionWarningTime",
     "defaultEditorOrientation",

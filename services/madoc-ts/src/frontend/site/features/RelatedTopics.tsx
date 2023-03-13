@@ -72,6 +72,6 @@ blockEditorFor(RelatedTopics, {
     textColor: { label: 'Card text color', type: 'color-field' },
     cardBorder: { label: 'Card border', type: 'color-field' },
   },
-  anyContext: ['topic'],
-  requiredContext: ['topic'],
+  anyContext: [],
+  requiredContext: [],
 });

@@ -67,8 +67,21 @@ export const PageLoader: UniversalComponent<PageLoaderType> = createUniversalCom
       if (routeContext.canvasId) {
         partialContext.canvas = routeContext.canvasId;
       }
+      if (routeContext.topicType) {
+        partialContext.topicType = routeContext.topicType;
+      }
+      if (routeContext.topic) {
+        partialContext.topic = routeContext.topic;
+      }
       return partialContext;
-    }, [routeContext.projectId, routeContext.collectionId, routeContext.manifestId, routeContext.canvasId]);
+    }, [
+      routeContext.projectId,
+      routeContext.collectionId,
+      routeContext.manifestId,
+      routeContext.canvasId,
+      routeContext.topicType,
+      routeContext.topic,
+    ]);
 
     if (isLoading) {
       return <>Loading...</>;

@@ -75,10 +75,10 @@ export const TopicTypeHero: React.FC<{ textColor?: string; overlayColor?: string
 };
 
 blockEditorFor(TopicTypeHero, {
-  type: 'default.topicTypeHero',
+  type: 'default.TopicTypeHero',
   label: 'Topic type hero',
-  anyContext: ['topic'],
-  requiredContext: ['topic'],
+  anyContext: ['topicType', 'topic'],
+  requiredContext: ['topicType'],
   defaultProps: {
     textColor: '',
     overlayColor: '',

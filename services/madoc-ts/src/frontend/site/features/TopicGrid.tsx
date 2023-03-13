@@ -39,6 +39,8 @@ export const TopicGrid: React.FC<{
 blockEditorFor(TopicGrid, {
   type: 'default.TopicGrid',
   label: 'Topic Grid',
+  anyContext: ['topicType'],
+  requiredContext: ['topicType'],
   defaultProps: {
     background: '',
     textColor: '',
@@ -49,6 +51,4 @@ blockEditorFor(TopicGrid, {
     textColor: { label: 'Card text color', type: 'color-field' },
     cardBorder: { label: 'Card border', type: 'color-field' },
   },
-  requiredContext: ['topicType'],
-  anyContext: ['topicType'],
 });

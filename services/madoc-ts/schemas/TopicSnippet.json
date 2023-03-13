@@ -1,6 +1,10 @@
 {
   "type": "object",
   "properties": {
+    "description": {},
+    "count": {
+      "type": "number"
+    },
     "url": {
       "description": "URL of the Entity (won't resolve due to Gateway)",
       "type": "string"
@@ -69,7 +73,9 @@
     }
   },
   "required": [
+    "count",
     "created",
+    "description",
     "id",
     "image_url",
     "label",
