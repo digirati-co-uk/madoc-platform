@@ -85,7 +85,7 @@
     "featured_resources": {
       "type": "array",
       "items": {
-        "$ref": "#/definitions/FeatureResource"
+        "$ref": "#/definitions/FeaturedResource"
       }
     },
     "related_topics": {

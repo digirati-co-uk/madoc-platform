@@ -46,7 +46,7 @@ function renderOptionLabel(option: CompletionItem) {
 export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props => {
   const { t } = useTranslation();
   const [options, setOptions] = useState<CompletionItem[]>(
-    props.value ? [typeof props.value === 'string' ? { uri: props.value, label: 'unknown' } : props.value] : []
+    props.value ? [typeof props.value === 'string' ? { uri: props.value, label: props.value } : props.value] : []
   );
   const [isLoading, setIsLoading] = useState(false);
   const [hasFetched, setHasFetched] = useState(false);
@@ -113,6 +113,7 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
 
   useEffect(() => {
     if (props.requestInitial) {
+      console.log(props.value)
       onSearchChange(props.value?.uri || '');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

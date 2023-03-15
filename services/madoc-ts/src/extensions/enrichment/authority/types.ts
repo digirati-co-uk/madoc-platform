@@ -76,6 +76,7 @@ export interface EnrichmentEntitySnippet {
   /**
    * Readable labels for the Entity's Type.
    */
+  //todo change to type_title
   type_other_labels: InternationalString;
 
   /**
@@ -134,6 +135,7 @@ export interface EnrichmentEntityTypeSnippet {
   /**
    * Readable labels for the Entity's Type.
    */
+  //todo change to title
   other_labels: InternationalString;
 }
 
@@ -157,19 +159,15 @@ export type SpaCyNERType =
   | 'ORDINAL'
   | 'CARDINAL';
 
-// @todo probably will change.
-type OtherLabels = Array<{
-  value: string;
-  language: string;
-}>;
-
 export interface EnrichmentEntityType extends EnrichmentEntityTypeSnippet {
   created: string;
-  modified: string;
-
   description: InternationalString;
 
+  featured_topics?: EnrichmentEntitySnippet[];
+
   image_url: string;
+
+  modified: string;
 
   other_data: {
     example_data: string;
@@ -197,22 +195,23 @@ export interface ResourceTag extends ResourceTagSnippet {
 export interface EnrichmentEntity {
   url: string;
   id: string;
-  type: {
-    url: string;
-    id: string;
-    label: string;
-  };
+  type: SpaCyNERType | null;
+  type_slug: string;
+  //todo change to type_title
+  type_other_labels: InternationalString;
+  title: InternationalString;
   description: InternationalString;
   image_url: string;
   label: string;
-  other_labels: InternationalString;
   authorities: AuthoritySnippet[]; // Can't remember what this should be...
   other_data: {
     example_data: string;
   };
-  featured_resources: FeatureResource[];
+  featured_resources: FeaturedResource[];
   modified: string;
   created: string;
+  topic_summary?: InternationalString;
+  secondary_heading?: InternationalString;
 }
 
 /**
@@ -238,10 +237,12 @@ export interface EntityTypeMadocResponse {
   modified: string;
   label: string;
   slug: string;
+  //todo change to title
   other_labels?: InternationalString;
   other_data?: any;
   image_url?: string;
   description?: InternationalString;
+  featured_topics?: EnrichmentEntitySnippet[];
 }
 
 // Entity - Retrieve
@@ -253,6 +254,7 @@ export interface EntityMadocResponse {
 
   type: string;
   type_slug: string;
+  //todo change to type_title
   type_other_labels: InternationalString;
 
   label: string;
@@ -265,18 +267,18 @@ export interface EntityMadocResponse {
   secondary_heading: string;
   authorities: AuthoritySnippet[];
 
-  featured_resources: FeatureResource[];
+  featured_resources: FeaturedResource[];
   related_topics: EnrichmentEntitySnippet[];
   other_data: any;
 }
-export interface FeatureResource {
+export interface FeaturedResource {
   url: string;
   created: string;
   modified: string;
   type: string;
   madoc_id: string;
-  label: InternationalString;
+  label?: InternationalString;
   thumbnail?: string;
-  metadata: any; // ?
+  metadata?: any; // ?
   count: number;
 }

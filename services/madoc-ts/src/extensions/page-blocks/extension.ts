@@ -155,6 +155,8 @@ export class PageBlockExtension extends RegistryExtension<PageBlockDefinition<an
       collection: params.collection,
       manifest: params.manifest,
       canvas: params.canvas,
+      topic: params.topic,
+      topicType: params.topicType,
       slotIds: params.slotIds,
     });
   }

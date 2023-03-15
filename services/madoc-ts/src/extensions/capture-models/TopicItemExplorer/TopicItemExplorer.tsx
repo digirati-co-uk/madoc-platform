@@ -12,14 +12,14 @@ import { useInfiniteQuery } from 'react-query';
 import { useApi } from '../../../frontend/shared/hooks/use-api';
 import { useInfiniteAction } from '../../../frontend/site/hooks/use-infinite-action';
 import { Button } from '../../../frontend/shared/navigation/Button';
-import { FeatureResource } from '../../enrichment/authority/types';
+import { FeaturedResource } from '../../enrichment/authority/types';
 import { FieldComponent } from '../../../frontend/shared/capture-models/types/field-types';
 
 export type TopicItemExplorerProps = {
   id: string;
   label: string;
   type: string;
-  value: FeatureResource | null;
+  value: FeaturedResource | null;
 };
 
 export const TopicItemExplorer: FieldComponent<TopicItemExplorerProps> = ({ value, updateValue }) => {
@@ -85,10 +85,10 @@ export const TopicItemExplorer: FieldComponent<TopicItemExplorerProps> = ({ valu
                       thumbnail: item.madoc_thumbnail,
                       type: item.resource_type,
                       url: item.url,
-                      created: '',
-                      modified: '',
-                      metadata: '',
-                      count: 0,
+                      created: 'anything',
+                      modified: 'anythign',
+                      metadata: null,
+                      count: 1,
                     })
                   }
                   key={item.resource_id}

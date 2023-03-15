@@ -7,11 +7,9 @@ import { CustomEditorTypes } from '../../../shared/page-blocks/custom-editor-typ
 import { EditShorthandCaptureModel } from '../../../shared/capture-models/EditorShorthandCaptureModel';
 import { useTopic } from '../../../site/pages/loaders/topic-loader';
 import { entityModel } from '../../../../extensions/enrichment/models';
-import { useRouteContext } from '../../../site/hooks/use-route-context';
 
 export function EditTopic() {
   const api = useApi();
-  const { topicType } = useRouteContext();
   const { data, refetch } = useTopic();
   const [createNewEntityType, status] = useMutation(async (updatedData: any) => {
     if (!data) return;
@@ -51,7 +49,6 @@ export function EditTopic() {
   return (
     <div>
       <CustomEditorTypes>
-        <pre>{JSON.stringify(data.featured_resources, null, 2)}</pre>
         <EditShorthandCaptureModel
           template={entityModel}
           data={data}

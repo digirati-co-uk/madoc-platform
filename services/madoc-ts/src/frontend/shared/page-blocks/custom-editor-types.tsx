@@ -4,6 +4,7 @@ import { specification as mediaExplorer } from '../../../extensions/capture-mode
 import { specification as projectExplorer } from '../../../extensions/capture-models/ProjectExplorer/index';
 import { specification as manifestCanvasExplorer } from '../../../extensions/capture-models/ManifestCanvasExplorer/index';
 import { specification as topicItemExplorer } from '../../../extensions/capture-models/TopicItemExplorer/index';
+import { specification as topicExplorer } from '../../../extensions/capture-models/TopicExplorer/index';
 import { pluginStore } from '../capture-models/plugin-api/globals';
 import { PluginStore } from '../capture-models/types/plugin-store';
 import { PluginContext } from '../capture-models/plugin-api/context';
@@ -20,6 +21,7 @@ export const CustomEditorTypes: React.FC = ({ children }) => {
         [collectionExplorer.type]: collectionExplorer,
         [manifestCanvasExplorer.type]: manifestCanvasExplorer,
         [topicItemExplorer.type]: topicItemExplorer,
+        [topicExplorer.type]: topicExplorer,
       },
     };
   }, []);

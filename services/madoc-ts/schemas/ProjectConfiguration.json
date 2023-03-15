@@ -10,9 +10,6 @@
     "allowManifestNavigation": {
       "type": "boolean"
     },
-    "allowTopicNavigation": {
-      "type": "boolean"
-    },
     "allowCanvasNavigation": {
       "type": "boolean"
     },
@@ -354,7 +351,6 @@
   "required": [
     "adminsAreReviewers",
     "allowCanvasNavigation",
-    "allowTopicNavigation",
     "allowCollectionNavigation",
     "allowManifestNavigation",
     "allowSubmissionsWhenCanvasComplete",
