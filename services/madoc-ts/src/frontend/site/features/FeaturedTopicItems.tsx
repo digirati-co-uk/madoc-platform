@@ -11,7 +11,7 @@ import { SnippetContainer } from '../../shared/atoms/SnippetLarge';
 import { useTopic } from '../pages/loaders/topic-loader';
 import { useApiCanvas } from '../../shared/hooks/use-api-canvas';
 import { extractIdFromUrn } from '../../../utility/parse-urn';
-import { FeatureResource } from '../../../extensions/enrichment/authority/types';
+import { FeaturedResource } from '../../../extensions/enrichment/authority/types';
 
 const FeaturedItemsContainer = styled.div`
   display: flex;
@@ -59,9 +59,7 @@ export const FeaturedTopicItems: React.FC<{
   if (!items || items.length === 0) {
     return null;
   }
-  console.log(items[0])
-
-  const RenderItemSnippet = (item: FeatureResource) => {
+  const RenderItemSnippet = (item: FeaturedResource) => {
     const { data: itemData } = useApiCanvas(extractIdFromUrn(item.madoc_id));
     // todo backend needs to give more data
     return (

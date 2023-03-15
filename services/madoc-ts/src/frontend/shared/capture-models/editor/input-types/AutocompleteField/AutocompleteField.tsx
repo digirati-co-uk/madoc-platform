@@ -113,7 +113,6 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
 
   useEffect(() => {
     if (props.requestInitial) {
-      console.log(props.value)
       onSearchChange(props.value?.uri || '');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
