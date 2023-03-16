@@ -18,8 +18,7 @@ export function EditTopicType() {
       updatedData.image_url = `${window.location.protocol}//${window.location.host}${updatedData.image_url}`;
     }
 
-    // data.other_labels = (data.other_labels || []).filter((e: any) => e.value !== '');
-    const resp = api.enrichment.upsertTopicType({ id: data.id, ...updatedData });
+    const resp = api.enrichment.upsertTopicType({ id: data.id, label: data.label, ...updatedData });
 
     refetch();
 
