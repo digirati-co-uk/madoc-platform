@@ -23,15 +23,17 @@ export const FeaturedTopics: React.FC<{
   textColor?: string;
   cardBorder?: string;
   controlColor?: string;
-}> = ({ cardBackground = '#ffffff', textColor = '#002D4B', cardBorder = '#002D4B', controlColor = '#002D4B' }) => {
+}> = ({ cardBackground, textColor, cardBorder , controlColor }) => {
+
   const { data } = useTopicType();
   const createLink = useRelativeLinks();
   // todo change when backend has featured items
-  // const items = data?.featured_items ? data?.featured_items : [];
-  const items = [data?.topics[0], data?.topics[1], data?.topics[2]];
+  const items = data?.topics.length ? [data?.topics[0], data?.topics[1], data?.topics[2]] : [];
+
   if (!data) {
     return null;
   }
+
   const Items = items?.map(item => {
     return (
       item && (
@@ -53,7 +55,7 @@ export const FeaturedTopics: React.FC<{
   return (
     <>
       <h3 style={{ fontSize: '1.5em', color: textColor, textAlign: 'center' }}>
-        Featured in: <LocaleString>{data.label}</LocaleString>
+        Featured in: <LocaleString>{data.title}</LocaleString>
       </h3>
       <FeaturesContainer>
         <Carousel controlColor={controlColor}>{Items}</Carousel>
@@ -68,10 +70,10 @@ blockEditorFor(FeaturedTopics, {
   anyContext: ['topicType'],
   requiredContext: ['topicType'],
   defaultProps: {
-    cardBackground: '',
-    textColor: '',
-    cardBorder: '',
-    controlColor: '',
+    cardBackground: '#ffffff',
+    textColor: '#002D4B',
+    cardBorder: '#002D4B',
+    controlColor: '#002D4B',
   },
   editor: {
     cardBackground: { label: 'Card background color', type: 'color-field' },

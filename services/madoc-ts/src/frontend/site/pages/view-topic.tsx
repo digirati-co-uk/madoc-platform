@@ -27,8 +27,7 @@ export const ViewTopic = () => {
         <FeaturedTopicItems />
       </Slot>
 
-      <Slot name="topic-result-heading">
-        <h3 style={{ fontSize: '1.5em', color: 'inherit' }}>Explore all resources</h3>
+      <Slot name="topics-result-heading">
         <TopicActions />
       </Slot>
 
@@ -49,7 +48,6 @@ export const ViewTopic = () => {
             <SearchPagination />
           </Slot>
         </div>
-
       </div>
 
       <Slot name="topic-related">

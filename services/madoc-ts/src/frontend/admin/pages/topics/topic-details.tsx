@@ -46,7 +46,7 @@ export function TopicDetails() {
     <>
       <TopicContainer>
         <TopicImage>
-          <img src={data?.image_url} />
+          <img src={data?.other_data?.main_image.url} />
 
           <Details>
             <Heading1 as={LocaleString}>{data?.title || { none: ['...'] }}</Heading1>
@@ -67,10 +67,10 @@ export function TopicDetails() {
                 <b>Description</b>: <LocaleString>{data?.description}</LocaleString>
               </li>
               <li>
-                <b>Summary</b>: <LocaleString>{data?.topic_summary}</LocaleString>
+                <b>Summary</b>: <LocaleString>{data?.other_data?.topic_summary}</LocaleString>
               </li>
               <li>
-                <b>secondary Heading</b>: <LocaleString>{data?.secondary_heading}</LocaleString>
+                <b>secondary Heading</b>: <LocaleString>{data?.other_data?.secondary_heading}</LocaleString>
               </li>
               <li>
                 <b>Type</b>: {data?.type}

@@ -38,9 +38,9 @@ export const TopicAuthorities: React.FC<{
       {links
         ? links.map((link, i) => {
             return (
-              link.uri && (
-                <a key={i} href={link.uri} target="_blank" rel="noreferrer" style={{ color: textColor }}>
-                  <Network style={{ color: iconColor }} /> {link.authority}: {link.identifier}
+              link.url && (
+                <a key={i} href={link.url} target="_blank" rel="noreferrer" style={{ color: textColor }}>
+                  <Network style={{ color: iconColor }} /> {link.authority}
                 </a>
               )
             );

@@ -1,5 +1,5 @@
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
-import React, { useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { useTopicType } from '../pages/loaders/topic-type-loader';
@@ -84,25 +84,41 @@ export const HeroHeading = styled.h1`
 export const TopicTypeHero: React.FC<{ textColor?: string; overlayColor?: string }> = ({ textColor, overlayColor }) => {
   const { data } = useTopicType();
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const ref = useRef<HTMLDivElement>(null);
+
+  const [isClamped, setIsClamped] = useState(false);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    const initClamped = el ? el.offsetHeight < el.scrollHeight || el.offsetWidth < el.scrollWidth : false;
+    setIsClamped(initClamped);
+  }, []);
+
   if (!data) {
     return null;
   }
+
   return (
     <TopicHeroWrapper style={{ color: textColor }}>
       <BackgroundImage $overlay={overlayColor} style={{ backgroundImage: `url("${data.image_url}")` }} />
       <TextBox data-is-expanded={isExpanded}>
         <TopWrapper>
-          <HeroHeading as={LocaleString}>{data.label}</HeroHeading>
+          <HeroHeading as={LocaleString}>{data.title}</HeroHeading>
         </TopWrapper>
-        {data.description && <HeroSubHeading as={LocaleString}>{data.description}</HeroSubHeading>}
-        <TextButton
-          style={{ color: '#005D74' }}
-          onClick={() => {
-            setIsExpanded(!isExpanded);
-          }}
-        >
-          {isExpanded ? 'collapse' : 'read more'}
-        </TextButton>
+        <HeroSubHeading ref={ref}>
+          <LocaleString>{data.description}</LocaleString>
+        </HeroSubHeading>
+        {isClamped && (
+          <TextButton
+            style={{ color: '#005D74' }}
+            onClick={() => {
+              setIsExpanded(!isExpanded);
+            }}
+          >
+            {isExpanded ? 'collapse' : 'read more'}
+          </TextButton>
+        )}
       </TextBox>
     </TopicHeroWrapper>
   );

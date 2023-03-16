@@ -55,8 +55,8 @@ export const TopicSnippetCard: React.FC<{
       flat
     >
       <CroppedImage $size="small" $covered>
-        {topic.image_url ? (
-          <img alt={createLocaleString(topic.label, t('item thumbnail'))} src={topic.image_url} />
+        {topic.other_data.thumbnail ? (
+          <img alt={createLocaleString(topic.other_data.thumbnail.alt)} src={topic.other_data.thumbnail.url} />
         ) : null}
       </CroppedImage>
       <CardText>
@@ -64,11 +64,14 @@ export const TopicSnippetCard: React.FC<{
           {topic.title}
         </LocaleString>
 
-        <LocaleString as={Heading5}>{topic.description}</LocaleString>
+        {/*<LocaleString as={Heading5}>{topic.description}</LocaleString>*/}
 
         <div>
-          <Heading5 style={{ padding: 0, color: textColor }}>PART OF</Heading5>
-          <TypePill>{topic.type}</TypePill>
+          <Heading5 style={{ padding: 0, color: textColor }}>{t('PART OF')}</Heading5>
+          <TypePill as={LocaleString}>{topic.type_title}</TypePill>
+          <Subheading3>
+            {topic.tagged_resource_count} {t('Resources')}
+          </Subheading3>
         </div>
       </CardText>
     </TopicSnippetContainer>

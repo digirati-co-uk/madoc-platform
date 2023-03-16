@@ -1,8 +1,9 @@
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
-import React from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useTopic } from '../pages/loaders/topic-loader';
 import { LocaleString } from '../../shared/components/LocaleString';
+import { TextButton } from '../../shared/navigation/Button';
 
 const TopicHeroWrapper = styled.div`
   display: flex;
@@ -11,6 +12,11 @@ const TopicHeroWrapper = styled.div`
 const HeroText = styled.div`
   display: flex;
   flex-direction: column;
+
+  button {
+    width: 100px;
+    margin-left: auto;
+  }
 `;
 
 const HeroHeading = styled.h1`
@@ -32,15 +38,29 @@ const HeroSubHeading = styled.h2`
   font-weight: 600;
   margin-bottom: 12px;
 `;
-const HeroDescription = styled.p`
+const HeroDescription = styled.div`
   font-size: 1em;
   line-height: 28px;
   font-weight: 400;
+
+  max-height: 300px;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: max-height 0.8s;
+  
+  &[data-is-expanded='true'] {
+    transition: max-height 0.8s;
+    display: flex;
+    max-height: 999px;
+  }
 `;
 
 const ImageMask = styled.div`
-  height: 500px;
-  width: 500px;
+  height: 400px;
+  width: 400px;
   border-radius: 100%;
   background-size: contain;
   background-position: center;
@@ -54,6 +74,16 @@ const Right = styled.div`
 
 export const TopicHero: React.FC<{ h1Color?: string; h2Color?: string }> = ({ h1Color, h2Color }) => {
   const { data } = useTopic();
+  const ref = useRef<HTMLDivElement>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isClamped, setIsClamped] = useState(false);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    const initClamped = el ? el.offsetHeight < el.scrollHeight || el.offsetWidth < el.scrollWidth : false;
+    setIsClamped(initClamped);
+  }, []);
+
   if (!data) {
     return null;
   }
@@ -64,25 +94,41 @@ export const TopicHero: React.FC<{ h1Color?: string; h2Color?: string }> = ({ h1
           {data?.title}
         </HeroHeading>
 
-        {data.description && (
-          <HeroDescription style={{ color: h1Color }} as={LocaleString}>
-            {data.description}
-          </HeroDescription>
-        )}
+        <>
+          {data.description && (
+            <HeroDescription ref={ref} style={{ color: h1Color }} data-is-expanded={isExpanded}>
+              <LocaleString>{data.description}</LocaleString>
+            </HeroDescription>
+          )}
+          {isClamped && (
+            <TextButton
+              style={{ color: '#005D74' }}
+              onClick={() => {
+                setIsExpanded(!isExpanded);
+              }}
+            >
+              {isExpanded ? 'collapse' : 'read more'}
+            </TextButton>
+          )}
+        </>
 
-        {data.secondary_heading && (
+        {data.other_data?.secondary_heading && (
           <HeroSubHeading style={{ color: h2Color }} as={LocaleString}>
-            {data.secondary_heading}
+            {data.other_data?.secondary_heading}
           </HeroSubHeading>
         )}
 
-        {data.topic_summary && (
+        {data.other_data?.topic_summary && (
           <HeroSummary style={{ color: h2Color }} as={LocaleString}>
-            {data.topic_summary}
+            {data.other_data?.topic_summary}
           </HeroSummary>
         )}
       </HeroText>
-      <Right>{data.image_url && <ImageMask style={{ backgroundImage: `url("${data.image_url}")` }} />}</Right>
+      <Right>
+        {data.other_data?.main_image.url && (
+          <ImageMask style={{ backgroundImage: `url("${data.other_data?.main_image.url}")` }} />
+        )}
+      </Right>
     </TopicHeroWrapper>
   );
 };

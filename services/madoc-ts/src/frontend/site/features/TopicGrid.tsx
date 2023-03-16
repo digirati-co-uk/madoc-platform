@@ -11,10 +11,11 @@ export const TopicGrid: React.FC<{
   textColor?: string;
   cardBorder?: string;
   imageStyle?: string;
-}> = ({ background = '#ffffff', textColor = '#002D4B', cardBorder = '#002D4B' }) => {
+}> = ({ background, textColor, cardBorder }) => {
   const { data } = useTopicType();
   const items = data?.topics;
   const createLink = useRelativeLinks();
+
   if (!data) {
     return null;
   }
@@ -42,9 +43,9 @@ blockEditorFor(TopicGrid, {
   anyContext: ['topicType'],
   requiredContext: ['topicType'],
   defaultProps: {
-    background: '',
-    textColor: '',
-    cardBorder: '',
+    background: '#ffffff',
+    textColor: '#002D4B',
+    cardBorder: '#002D4B',
   },
   editor: {
     background: { label: 'Card background color', type: 'color-field' },

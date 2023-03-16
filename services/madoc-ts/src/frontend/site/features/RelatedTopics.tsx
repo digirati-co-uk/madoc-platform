@@ -5,7 +5,13 @@ import { Link } from 'react-router-dom';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useTopic } from '../pages/loaders/topic-loader';
 import { TopicCard } from '../../shared/components/TopicCard';
+import { useTranslation } from 'react-i18next';
 
+const RelatedWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
 const RelatedContainer = styled.div`
   align-self: center;
   display: flex;
@@ -25,10 +31,10 @@ export const RelatedTopics: React.FC<{
   textColor?: string;
   cardBorder?: string;
   controlColor?: string;
-}> = ({ cardBackground = '#ffffff', textColor = '#002D4B', cardBorder = '#002D4B' }) => {
+}> = ({ cardBackground, textColor, cardBorder }) => {
   const { data } = useTopic();
   const createLink = useRelativeLinks();
-
+  const { t } = useTranslation();
   const items = data?.related_topics ? data?.related_topics : [];
 
   if (!data) {
@@ -38,8 +44,8 @@ export const RelatedTopics: React.FC<{
     return null;
   }
   return (
-    <>
-      <h3 style={{ fontSize: '1.5em', color: textColor, textAlign: 'center' }}>Related topics</h3>
+    <RelatedWrapper>
+      <h3 style={{ fontSize: '1.5em', color: textColor, textAlign: 'center' }}>{t('Related topics')}</h3>
       <RelatedContainer>
         {items?.map(
           item =>
@@ -55,7 +61,7 @@ export const RelatedTopics: React.FC<{
             )
         )}
       </RelatedContainer>
-    </>
+    </RelatedWrapper>
   );
 };
 
@@ -64,14 +70,14 @@ blockEditorFor(RelatedTopics, {
   type: 'default.RelatedTopics',
   defaultProps: {
     cardBackground: '',
-    textColor: '',
-    cardBorder: '',
+    textColor: '#002D4B',
+    cardBorder: '#002D4B',
   },
   editor: {
     cardBackground: { label: 'Card background color', type: 'color-field' },
     textColor: { label: 'Card text color', type: 'color-field' },
     cardBorder: { label: 'Card border', type: 'color-field' },
   },
-  anyContext: [],
-  requiredContext: [],
+  anyContext: ['topic'],
+  requiredContext: ['topic'],
 });

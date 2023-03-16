@@ -61,10 +61,7 @@ export function ListTopicsInType() {
                 <b>Slug</b>: {data?.slug}
               </li>
               <li>
-                <b>Label</b>: <LocaleString>{data?.label}</LocaleString>
-              </li>
-              <li>
-                <b>Other labels</b>: <LocaleString>{data?.other_labels}</LocaleString>
+                <b>Title</b>: <LocaleString>{data?.title}</LocaleString>
               </li>
               <li>
                 <b>Description</b>: <LocaleString>{data?.description}</LocaleString>

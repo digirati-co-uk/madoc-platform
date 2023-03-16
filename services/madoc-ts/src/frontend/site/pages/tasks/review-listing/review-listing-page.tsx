@@ -14,7 +14,7 @@ import { serverRendererFor } from '../../../../shared/plugins/external/server-re
 import { HrefLink } from '../../../../shared/utility/href-link';
 import { useRelativeLinks } from '../../../hooks/use-relative-links';
 import { useTaskMetadata } from '../../../hooks/use-task-metadata';
-import { Button, ButtonIcon } from '../../../../shared/navigation/Button';;
+import { Button, ButtonIcon } from '../../../../shared/navigation/Button';
 import { useResizeLayout } from '../../../../shared/hooks/use-resize-layout';
 import { LayoutHandle } from '../../../../shared/layout/LayoutContainer';
 import ResizeHandleIcon from '../../../../shared/icons/ResizeHandleIcon';
@@ -25,7 +25,7 @@ import { ReviewNavigation } from './ReviewNagivation';
 import { EmptyState } from '../../../../shared/layout/EmptyState';
 import ListItemIcon from '../../../../shared/icons/ListItemIcon';
 import { useKeyboardListNavigation } from '../../../hooks/use-keyboard-list-navigation';
-import {ChevronDown} from "../../../../shared/icons/ChevronIcon";
+import { ChevronDown } from '../../../../shared/icons/ChevronIcon';
 
 const TaskListContainer = styled.div`
   height: 80vh;
