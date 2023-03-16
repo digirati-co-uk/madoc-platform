@@ -85,6 +85,7 @@ export const TopicTypeHero: React.FC<{ textColor?: string; overlayColor?: string
   const { data } = useTopicType();
   const [isExpanded, setIsExpanded] = useState(false);
 
+  console.log(data)
   const ref = useRef<HTMLDivElement>(null);
 
   const [isClamped, setIsClamped] = useState(false);
@@ -130,8 +131,8 @@ blockEditorFor(TopicTypeHero, {
   anyContext: ['topicType', 'topic'],
   requiredContext: ['topicType'],
   defaultProps: {
-    textColor: '',
-    overlayColor: '',
+    textColor: '#002d4b',
+    overlayColor: '#002d4b',
   },
   editor: {
     textColor: { label: 'Heading and summary color', type: 'color-field' },

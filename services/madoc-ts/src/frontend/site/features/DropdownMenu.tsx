@@ -41,7 +41,7 @@ const DropdownContainer = styled.div`
   left: 0;
   right: 0;
   background-color: #002d4b;
-  z-index: 999;
+  z-index: 1;
 
   padding: 0 5em;
 
