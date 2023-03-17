@@ -1,17 +1,9 @@
-import { InternationalString } from '@iiif/presentation-3';
 import React, { useRef } from 'react';
-import { RoundedCard } from '../../../frontend/shared/capture-models/editor/components/RoundedCard/RoundedCard';
 import { LocaleString, useCreateLocaleString } from '../../../frontend/shared/components/LocaleString';
 import { CroppedImage } from '../../../frontend/shared/atoms/Images';
-import { useTranslation } from 'react-i18next';
 import { ImageStripBox } from '../../../frontend/shared/atoms/ImageStrip';
 import { ImageGrid } from '../../../frontend/shared/atoms/ImageGrid';
 import { Heading5 } from '../../../frontend/shared/typography/Heading5';
-import { useParams } from 'react-router-dom';
-import { useInfiniteQuery } from 'react-query';
-import { useApi } from '../../../frontend/shared/hooks/use-api';
-import { useInfiniteAction } from '../../../frontend/site/hooks/use-infinite-action';
-import { Button } from '../../../frontend/shared/navigation/Button';
 import { EnrichmentEntitySnippet } from '../../enrichment/authority/types';
 import { FieldComponent } from '../../../frontend/shared/capture-models/types/field-types';
 import { useTopicType } from '../../../frontend/site/pages/loaders/topic-type-loader';
@@ -26,8 +18,6 @@ export type TopicExplorerProps = {
 };
 
 export const TopicExplorer: FieldComponent<TopicExplorerProps> = ({ value, updateValue }) => {
-  const api = useApi();
-  const { t } = useTranslation();
   const container = useRef<HTMLDivElement>(null);
   const createLocaleString = useCreateLocaleString();
 
@@ -50,16 +40,13 @@ export const TopicExplorer: FieldComponent<TopicExplorerProps> = ({ value, updat
             key={topic.id}
             $border={'#000000'}
             $bgColor={'#eee'}
-            onClick={() =>
-              updateValue({
-                title: topic.title,
-                image_url: topic.image_url,
-              })
-            }
+            onClick={() => {
+              updateValue(topic);
+            }}
           >
             <CroppedImage>
-              {topic.image_url ? (
-                <img alt={createLocaleString(topic.image_url, t('Item thumbnail'))} src={topic.image_url} />
+              {topic.other_data.thumbnail ? (
+                <img alt={createLocaleString(topic.other_data.thumbnail.alt)} src={topic.other_data.thumbnail.url} />
               ) : null}
             </CroppedImage>
             <LocaleString as={Heading5}>{topic.title}</LocaleString>
